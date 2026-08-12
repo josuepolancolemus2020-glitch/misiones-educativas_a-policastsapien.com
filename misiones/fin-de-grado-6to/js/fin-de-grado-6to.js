@@ -27,7 +27,7 @@ const _pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
 const _shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 function fb(id, msg, isOk) {
   const el = document.getElementById(id);
-  if(el) { el.textContent = msg; el.className = 'fb show ' + (isOk ? 'ok' : 'err'); }
+  if(el) { el.innerHTML = Fr(msg); el.className = 'fb show ' + (isOk ? 'ok' : 'err'); }
 }
 // Aritmética que comparten la operativa y el generador de tareas
 function _mcdDe(a, b){ while (b) { const t = a % b; a = b; b = t; } return a; }
@@ -141,7 +141,7 @@ const fcData=[
   {w:'Noticia',a:'📰 informa un <strong>hecho real y reciente</strong>: qué pasó, quién, cuándo y dónde.'}
 ];
 let fcIdx=0;
-function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=fcData[fcIdx].a; document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
+function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=Fr(fcData[fcIdx].a); document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
 function flipCard(){ sfx('flip'); document.getElementById('fcInner').classList.toggle('flipped'); if(!xpTracker.fc.has(fcIdx)){ xpTracker.fc.add(fcIdx); pts(1); } if(xpTracker.fc.size===fcData.length){ fin('s-flash'); unlockAchievement('flash_master'); } }
 function nextFC(){ sfx('click'); fcIdx=(fcIdx+1)%fcData.length; upFC(); }
 function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; upFC(); }
@@ -164,7 +164,7 @@ function buildMemo(){
   memoDeck.forEach((c,i)=>{
     const b=document.createElement('button');
     b.className='memo-card'; b.setAttribute('aria-label','Carta de memoria '+(i+1));
-    b.innerHTML=`<span class="memo-face memo-front">❓</span><span class="memo-face memo-back${c.kind==='t'?' memo-term':''}">${c.txt}</span>`;
+    b.innerHTML=`<span class="memo-face memo-front">❓</span><span class="memo-face memo-back${c.kind==='t'?' memo-term':''}">${Fr(c.txt)}</span>`;
     b.onclick=()=>flipMemo(b,i);
     grid.appendChild(b);
   });
@@ -212,9 +212,9 @@ function showQz(){
   if(qzIdx>=qzData.length){ document.getElementById('qzQ').textContent='🎉 ¡Quiz completado!'; document.getElementById('qzOpts').innerHTML=''; fin('s-quiz'); unlockAchievement('primer_quiz'); return; }
   const q=qzData[qzIdx];
   document.getElementById('qzProg').textContent=`Pregunta ${qzIdx+1} de ${qzData.length}`;
-  document.getElementById('qzQ').textContent=q.q;
+  document.getElementById('qzQ').innerHTML=Fr(q.q);
   const opts=document.getElementById('qzOpts'); opts.innerHTML='';
-  q.o.forEach((o,i)=>{ const b=document.createElement('button'); b.className='qz-opt'; b.textContent=o; b.onclick=()=>{ if(qzDone)return; document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); qzSel=i; sfx('click'); }; opts.appendChild(b); });
+  q.o.forEach((o,i)=>{ const b=document.createElement('button'); b.className='qz-opt'; b.innerHTML=Fr(o); b.onclick=()=>{ if(qzDone)return; document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); qzSel=i; sfx('click'); }; opts.appendChild(b); });
   qzDone=false;
 }
 function checkQz(){
@@ -306,7 +306,7 @@ function buildClass(){
   document.getElementById('items-right').innerHTML='';
 
   function _mkBankItem(text,type){
-    const el=document.createElement('div'); el.className='wb-item'; el.textContent=text; el.dataset.t=type;
+    const el=document.createElement('div'); el.className='wb-item'; el.innerHTML=Fr(text); el.dataset.txt=text; el.dataset.t=type;
     el.setAttribute('role','button'); el.setAttribute('tabindex','0');
     el.onclick=(ev)=>{ ev.stopPropagation(); sfx('click');
       if(clsSelected===el){ el.classList.remove('wb-sel'); clsSelected=null; }
@@ -315,12 +315,12 @@ function buildClass(){
     return el;
   }
   function _mkDropItem(text,type){
-    const el=document.createElement('div'); el.className='drop-item'; el.textContent=text; el.dataset.t=type;
+    const el=document.createElement('div'); el.className='drop-item'; el.innerHTML=Fr(text); el.dataset.txt=text; el.dataset.t=type;
     el.onclick=(ev)=>{
       ev.stopPropagation();
       if(clsSelected){ // hay un elemento del banco seleccionado: se inserta en esta caja, sin sacar el tocado
         const listEl=el.parentElement;
-        const selText=clsSelected.textContent, selType=clsSelected.dataset.t;
+        const selText=clsSelected.dataset.txt, selType=clsSelected.dataset.t;
         clsSelected.remove(); clsSelected=null; _clsUpdateReady();
         listEl.appendChild(_mkDropItem(selText,selType)); sfx('click'); return;
       }
@@ -331,7 +331,7 @@ function buildClass(){
   function _colClick(listId){
     return ()=>{
       if(!clsSelected){ fb('fbCls','Primero toca un elemento del banco para seleccionarlo.',false); return; }
-      const text=clsSelected.textContent, type=clsSelected.dataset.t;
+      const text=clsSelected.dataset.txt, type=clsSelected.dataset.t;
       clsSelected.remove(); clsSelected=null; _clsUpdateReady();
       document.getElementById(listId).appendChild(_mkDropItem(text,type)); sfx('click');
     };
@@ -405,15 +405,15 @@ function showCmp(){
   if(cmpIdx>=cmpData.length){ document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!'; document.getElementById('cmpOpts').innerHTML=''; fin('s-completa'); return; }
   const d=cmpData[cmpIdx];
   document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;
-  document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');
+  document.getElementById('cmpSent').innerHTML=Fr(d.s.replace('___','<span class="blank">___</span>'));
   const opts=document.getElementById('cmpOpts'); opts.innerHTML=''; cmpSel=-1; cmpDone=false;
-  d.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='cmp-opt'; b.textContent=o; b.onclick=()=>{ if(cmpDone)return; document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); cmpSel=i; sfx('click'); }; opts.appendChild(b); });
+  d.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='cmp-opt'; b.innerHTML=Fr(o); b.onclick=()=>{ if(cmpDone)return; document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); cmpSel=i; sfx('click'); }; opts.appendChild(b); });
 }
 function checkCmp(){
   if(cmpSel<0) return fb('fbCmp','Selecciona una opción.',false);
   cmpDone=true;
   const opts=document.querySelectorAll('.cmp-opt');
-  if(cmpSel===cmpData[cmpIdx].c){ opts[cmpSel].classList.add('correct'); document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`); fb('fbCmp','¡Correcto! +5 XP',true); if(!xpTracker.cmp.has(cmpIdx)){ xpTracker.cmp.add(cmpIdx); pts(5); } sfx('ok'); }
+  if(cmpSel===cmpData[cmpIdx].c){ opts[cmpSel].classList.add('correct'); document.getElementById('cmpSent').innerHTML=Fr(cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${cmpData[cmpIdx].opts[cmpSel]}</span>`)); fb('fbCmp','¡Correcto! +5 XP',true); if(!xpTracker.cmp.has(cmpIdx)){ xpTracker.cmp.add(cmpIdx); pts(5); } sfx('ok'); }
   else{ opts[cmpSel].classList.add('wrong'); opts[cmpData[cmpIdx].c].classList.add('correct'); fb('fbCmp','Incorrecto. Revisa bien la respuesta.',false); sfx('no'); }
   setTimeout(()=>{ cmpIdx++; document.getElementById('fbCmp').classList.remove('show'); showCmp(); },1600);
 }
@@ -430,7 +430,7 @@ function answerMQ(wrapId, btn, isOk, msg) {
     allBtns.forEach(b => { if (b.onclick.toString().includes('true,')) b.classList.add('mq-ok'); });
   }
   const fbEl = document.getElementById(wrapId + '-fb');
-  if (fbEl) { fbEl.textContent = (isOk ? '✔ ' : '💡 ') + msg; fbEl.className = 'mq-fb show ' + (isOk ? 'ok' : 'err'); }
+  if (fbEl) { fbEl.innerHTML = (isOk ? '✔ ' : '💡 ') + Fr(msg); fbEl.className = 'mq-fb show ' + (isOk ? 'ok' : 'err'); }
   if (isOk) sfx('ok'); else sfx('no');
 }
 
@@ -472,11 +472,11 @@ function buildPredice() {
     card.className = 'predice-card';
     card.innerHTML = `
       <div class="predice-num">Predicción ${i + 1} de ${prediceData.length}</div>
-      <div class="predice-q">${item.q}</div>
+      <div class="predice-q">${Fr(item.q)}</div>
       <button class="pd-explore-btn" onclick="togglePredExplore(${i})" id="pd-btn-${i}">🔍 Explorar la pista</button>
       <div class="pd-explore" id="pd-explore-${i}" style="display:none;"></div>
       <div class="predice-opts" id="predice-opts-${i}">
-        ${item.opts.map((o, j) => `<button class="predice-btn" onclick="answerPredice(${i},${j})" id="pb-${i}-${j}">${o}</button>`).join('')}
+        ${item.opts.map((o, j) => `<button class="predice-btn" onclick="answerPredice(${i},${j})" id="pb-${i}-${j}">${Fr(o)}</button>`).join('')}
       </div>
       <div class="predice-fb" id="predice-fb-${i}"></div>`;
     container.appendChild(card);
@@ -491,14 +491,14 @@ function answerPredice(qi, ai) {
   const isOk = (ai === item.correct);
   if (isOk) {
     opts[ai].classList.add('predice-ok');
-    fbEl.textContent = '✔ ' + item.feedback;
+    fbEl.innerHTML = '✔ ' + Fr(item.feedback);
     fbEl.className = 'predice-fb show ok';
     if (!xpTracker.predice.has(qi)) { xpTracker.predice.add(qi); pts(3); }
     sfx('ok');
   } else {
     opts[ai].classList.add('predice-no');
     opts[item.correct].classList.add('predice-ok');
-    fbEl.textContent = '💡 ' + item.wrongFeedback;
+    fbEl.innerHTML = '💡 ' + Fr(item.wrongFeedback);
     fbEl.className = 'predice-fb show err';
     sfx('no');
   }
@@ -592,7 +592,7 @@ function startReto(){
     const _fill=document.getElementById('retoBarFill'); if(_fill){_fill.style.width='100%';_fill.style.background='var(--jade)';}
   retoTimerInt=setInterval(()=>{ retoSec--; sfx('tick'); document.getElementById('retoTimer').textContent='⏱ '+retoSec; if(retoSec<=10) document.getElementById('retoTimer').style.color='var(--red)'; const fill=document.getElementById('retoBarFill'); if(fill){fill.style.width=(retoSec/30*100)+'%';if(retoSec<=10)fill.style.background='var(--red)';} if(retoSec<=0){ clearInterval(retoTimerInt); endReto(); } },1000);
 }
-function showRetoWord(){ const pool=retoPairs[currentRetoPairIdx].pool; if(retoPool.length===0) retoPool=_shuffle([...pool,...pool]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').textContent=retoCurrent.w; }
+function showRetoWord(){ const pool=retoPairs[currentRetoPairIdx].pool; if(retoPool.length===0) retoPool=_shuffle([...pool,...pool]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').innerHTML=Fr(retoCurrent.w); }
 function ansReto(t){
     if(!retoRunning||!retoCurrent)return;
     const firstPlay=!xpTracker.reto.has(1);
@@ -604,7 +604,7 @@ function ansReto(t){
       const _fb=document.getElementById('fbReto');
       if(_fb){
         const rp=retoPairs[currentRetoPairIdx];
-        _fb.textContent=`«${retoCurrent.w}» va en: ${retoCurrent.t==='A'?rp.btnA:rp.btnB}`;
+        _fb.innerHTML=Fr(`«${retoCurrent.w}» va en: ${retoCurrent.t==='A'?rp.btnA:rp.btnB}`);
         _fb.className='fb show err';
         setTimeout(()=>_fb.classList.remove('show'),2000);
       }
@@ -724,9 +724,9 @@ function lab1Render(){
       ${[2,3,4,5,6,8,10].map(v=>`<button class="btn ${v===n?'btn-pri':'btn-d'}" data-n="${v}">${v} pedazos</button>`).join('')}
     </div>
     ${svg}
-    <p style="text-align:center;font-family:'Fredoka',sans-serif;font-size:1.15rem;margin:0.5rem 0;">Sombreado: <strong>${k}/${n}</strong> = <strong>${k===0?'0':dec}</strong></p>
+    <p style="text-align:center;font-family:'Fredoka',sans-serif;font-size:1.15rem;margin:0.5rem 0;">Sombreado: <strong>${Fr(k+'/'+n)}</strong> = <strong>${k===0?'0':dec}</strong></p>
     <div style="border:1.5px dashed var(--pri);border-radius:10px;padding:0.6rem 0.8rem;text-align:center;">
-      🎯 Desafío ${lab1Reto+1} de ${LAB1_RETOS.length}: <strong>${reto.txt}</strong>
+      🎯 Desafío ${lab1Reto+1} de ${LAB1_RETOS.length}: <strong>${Fr(reto.txt)}</strong>
       <div style="margin-top:0.5rem;"><button class="btn btn-g" id="lab1Check">✅ Comprobar</button></div>
     </div>
     <div id="fbLab1" class="fb" role="alert"></div>`;
@@ -907,7 +907,7 @@ function radarRender(){
 // y las respuestas quedan ocultas hasta presionar "👁 Respuestas".
 function _tgRint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function _tgLines(n){ let s=''; for(let i=0;i<n;i++) s+='<div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.4rem;height:1.3rem;">&nbsp;</div>'; return s; }
-function _tgTask(out,i,inner){ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content">${inner}</div>`; out.appendChild(div); }
+function _tgTask(out,i,inner){ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=Fr(`<div class="tg-task-num">${i+1}</div><div class="tg-task-content">${inner}</div>`); out.appendChild(div); }
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
 
 // 🍕 Sumas y restas de fracciones heterogéneas (con resultado positivo)
@@ -1253,24 +1253,24 @@ function genEval(){
   out.appendChild(bar);
   const cpItems=_pickF(M.cp,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  cpItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; const qHtml=item.q.replace('___','<input class="eval-cp-input" type="text" data-ecp="'+i+'" autocomplete="off" style="min-width:110px;">'); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbEcp${i}" aria-live="polite"></div>`; s1.appendChild(d); });
+  cpItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; const qHtml=Fr(item.q).replace('___','<input class="eval-cp-input" type="text" data-ecp="'+i+'" autocomplete="off" style="min-width:110px;">'); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${Fr(item.a)}</div><div class="eval-item-feedback" id="evalFbEcp${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
   const tfItems=_pickF(M.tf,5, rng);
   const s2=document.createElement('div'); s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  tfItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="V"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="F"> Falso</label></div><div style="margin-top:0.4rem;margin-left:1.7rem;font-size:0.82rem;color:var(--gray);">Justifica por qué: <span style="display:inline-block;min-width:180px;border-bottom:1px solid var(--border);">&nbsp;</span></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbEtf${i}" aria-live="polite"></div>`; s2.appendChild(d); });
+  tfItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${Fr(item.q)}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="V"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="F"> Falso</label></div><div style="margin-top:0.4rem;margin-left:1.7rem;font-size:0.82rem;color:var(--gray);">Justifica por qué: <span style="display:inline-block;min-width:180px;border-bottom:1px solid var(--border);">&nbsp;</span></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbEtf${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
   const mcItems=_pickF(evalMCBank.filter(x=>x.materia===m),5, rng);
   const s3=document.createElement('div'); s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
-  mcItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q.replace(/\n/g,'<br>')}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbEmc${i}" aria-live="polite"></div>`; s3.appendChild(d); });
+  mcItems.forEach((item,i)=>{ const d=document.createElement('div'); d.className='eval-item eval-auto-item'; const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${Fr(op)}</label>`).join(''); d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${Fr(item.q.replace(/\n/g,'<br>'))}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${Fr(item.o[item.a])}</div><div class="eval-item-feedback" id="evalFbEmc${i}" aria-live="polite"></div>`; s3.appendChild(d); });
   out.appendChild(s3);
   const prItems=_pickF(M.pr,5, rng); const shuffledDefs=_shuffleF(prItems, rng); const letters=['A','B','C','D','E'];
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item eval-auto-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">·</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">·</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${Fr(item.term)}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
-  shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
+  shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${Fr(item.def)}</div>`; });
   colRight+='</div>';
   const ansKey=prItems.map((item,i)=>{ const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)]; return `${i+16}→${letter}`; }).join(' · ');
   matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbEpr" aria-live="polite"></div>`;
@@ -1286,7 +1286,7 @@ function genEval(){
 function _normTxt(s){ return (s||'').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ/ ]/gi,'').replace(/\s+/g,' ').trim(); }
 function setEvalFeedback(id, ok, msg) {
   const el = document.getElementById(id); if (!el) return;
-  el.textContent = msg; el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
+  el.innerHTML = Fr(msg); el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
 }
 function gradeEval(){
   if(!window._evalGradeData){ showToast('⚠️ Genera una evaluación primero'); return; }
@@ -1312,26 +1312,26 @@ function printEval(){
   sfx('click');
   const d=window._evalPrintData; const forma=d.forma||1; const M=MATERIA_EVAL[d.materia];
   let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div>`;
-  d.cp.forEach((it,i)=>{ const q=it.q.replace('___','<span class="cp-blank"></span>'); s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`; });
+  d.cp.forEach((it,i)=>{ const q=Fr(it.q).replace('___','<span class="cp-blank"></span>'); s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`; });
   let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div>`;
-  d.tf.forEach((it,i)=>{ s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`; });
+  d.tf.forEach((it,i)=>{ s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${Fr(it.q)}</span></div>`; });
   let s3=`<div class="sec-title"><span>III. Selección Múltiple · Rellena el círculo de la respuesta correcta</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div><div class="mc-grid${d.materia==='esp'?' mc-una-col':''}">`;
-  d.mc.forEach((it,i)=>{ const opts=it.o.map((op,oi)=>`<label class="mc-opt"><span class="mc-circ"></span> ${op}</label>`).join(''); s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q.replace(/\n/g,'<br>')}</span></div><div class="mc-opts">${opts}</div></div>`; });
+  d.mc.forEach((it,i)=>{ const opts=it.o.map((op,oi)=>`<label class="mc-opt"><span class="mc-circ"></span> ${Fr(op)}</label>`).join(''); s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${Fr(it.q.replace(/\n/g,'<br>'))}</span></div><div class="mc-opts">${opts}</div></div>`; });
   s3+=`</div>`;
   let colL='<div class="pr-col"><div class="pr-head">📘 Términos</div>';
-  d.pr.terms.forEach((it,i)=>{ colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`; });
+  d.pr.terms.forEach((it,i)=>{ colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${Fr(it.term)}</div>`; });
   colL+='</div>';
   let colR='<div class="pr-col"><div class="pr-head">📗 Definiciones</div>';
-  d.pr.shuffledDefs.forEach((it,i)=>{ colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`; });
+  d.pr.shuffledDefs.forEach((it,i)=>{ colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${Fr(it.def)}</div>`; });
   colR+='</div>';
   let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25 pts</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;
   let pR='';
   pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;
-  d.cp.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`; });
+  d.cp.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.a)}</td></tr>`; });
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;
   d.tf.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`; });
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;
-  d.mc.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`; });
+  d.mc.forEach((it,i)=>{ pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${Fr(it.o[it.a])}</td></tr>`; });
   pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;
   d.pr.terms.forEach((it,i)=>{ const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]; pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`; });
   pR+=`</table></div>`;
@@ -1354,7 +1354,7 @@ function printEval(){
 // los mini-textos de Español necesitan su espacio. La letra queda fija en
 // tamaño legible, nada se parte por dentro (break-inside) y la pauta del
 // docente arranca SIEMPRE en su propia página.
-const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba de ${M.nombre} · Repaso de Fin de Grado 6º · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:${M.acc};}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:${M.acc};margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid ${M.acc};background:${M.bg};display:flex;justify-content:space-between;align-items:center;color:${M.acc};break-inside:avoid;page-break-inside:avoid;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:${M.acc};}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;break-inside:avoid;page-break-inside:avoid;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-grid.mc-una-col{grid-template-columns:1fr;}.mc-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-circ{display:inline-block;width:11px;height:11px;border:1.4px solid #333;border-radius:50%;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;break-inside:avoid;page-break-inside:avoid;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;page-break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:${M.acc};margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:${M.bg};border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:${M.acc};min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid ${M.acc};padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:${M.acc};}.p-sub{font-size:9pt;color:${M.acc};font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid ${M.borde};border-radius:4px;padding:0.35rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}.p-ttl{font-size:11pt;font-weight:700;color:${M.acc};border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:${M.acc};}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:${M.acc};font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid ${M.acc};height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:${M.acc};font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:${M.bg};border-radius:4px;break-inside:avoid;page-break-inside:avoid;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid ${M.acc};}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba de ${M.nombre} · Repaso de Fin de Grado 6º · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.35rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:${M.acc};}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:${M.acc};margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.2rem 0.5rem;margin:0.34rem 0 0.2rem;border-left:4px solid ${M.acc};background:${M.bg};display:flex;justify-content:space-between;align-items:center;color:${M.acc};break-inside:avoid;page-break-inside:avoid;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:${M.acc};}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.35;padding:0.16rem 0.2rem;border-bottom:1px solid #eee;break-inside:avoid;page-break-inside:avoid;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.2rem 0.4rem;margin-bottom:0.14rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.35;display:flex;gap:0.3rem;margin-bottom:0.12rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.14rem 0.55rem;}.mc-grid.mc-una-col{grid-template-columns:1fr;}.mc-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-circ{display:inline-block;width:11px;height:11px;border:1.4px solid #333;border-radius:50%;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.35;padding:0.14rem 0.2rem;border-bottom:1px solid #eee;break-inside:avoid;page-break-inside:avoid;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;page-break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.12rem 0.5rem;margin-top:0.1rem;}.pr-head{font-size:9pt;font-weight:700;color:${M.acc};margin-bottom:0.12rem;}.pr-item{font-size:10pt;padding:0.13rem 0.32rem;background:${M.bg};border-radius:3px;margin-bottom:0.08rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:${M.acc};min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid ${M.acc};padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:${M.acc};}.p-sub{font-size:9pt;color:${M.acc};font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid ${M.borde};border-radius:4px;padding:0.35rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}.p-ttl{font-size:11pt;font-weight:700;color:${M.acc};border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:${M.acc};}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:${M.acc};font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid ${M.acc};height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:${M.acc};font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.15rem 0.5rem;background:${M.bg};border-radius:4px;break-inside:avoid;page-break-inside:avoid;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid ${M.acc};}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
 .zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
@@ -1369,7 +1369,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pru
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación de Repaso · Prueba de Fin de Grado 6º · ${M.nombre} · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Prueba de ${M.nombre} · Repaso de Fin de Grado 6º · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | ${M.nombre} · Educación Básica</div></div><div class="p-grid">${pR}</div>
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}${typeof Fr!=="undefined"?Fr.css:""}.fr{font-size:0.8em;margin:0 0.06em;}.fr>b{padding:0 0.13em;}.fr>b.fd{margin-top:0.03em;padding-top:0.03em;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación de Repaso · Prueba de Fin de Grado 6º · ${M.nombre} · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Prueba de ${M.nombre} · Repaso de Fin de Grado 6º · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | ${M.nombre} · Educación Básica</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">${M.nombre} · Forma ${forma}</span></div></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
@@ -1480,7 +1480,7 @@ function genEvalOp() {
   s1.innerHTML = '<div class="eval-section-title">I. Fracciones <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Con denominadores distintos, busca el común denominador y SIMPLIFICA el resultado. Escribe la fracción con barra: 3/4.</p>';
   frItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-fr="${i}" autocomplete="off"></div><div class="eval-answer">${it.ansShow}</div><div class="eval-item-feedback" id="evalFbFr${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.text)}</span><input class="eval-cp-input" type="text" data-fr="${i}" autocomplete="off"></div><div class="eval-answer">${Fr(it.ansShow)}</div><div class="eval-item-feedback" id="evalFbFr${i}" aria-live="polite"></div>`;
     s1.appendChild(d);
   });
   out.appendChild(s1);
@@ -1489,7 +1489,7 @@ function genEvalOp() {
   s2.innerHTML = '<div class="eval-section-title">II. Decimales <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. Multiplica sin punto y colócalo al final contando cifras decimales; comprueba las divisiones multiplicando.</p>';
   deItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-de="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ansShow}</div><div class="eval-item-feedback" id="evalFbDe${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.text)}</span><input class="eval-cp-input" type="text" data-de="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${Fr(it.ansShow)}</div><div class="eval-item-feedback" id="evalFbDe${i}" aria-live="polite"></div>`;
     s2.appendChild(d);
   });
   out.appendChild(s2);
@@ -1498,7 +1498,7 @@ function genEvalOp() {
   s3.innerHTML = '<div class="eval-section-title">III. m.c.m. y M.C.D. <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. m.c.m.: el menor múltiplo común. M.C.D.: el mayor divisor común.</p>';
   teItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-te="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansShow}</div><div class="eval-item-feedback" id="evalFbTe${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.text)}</span><input class="eval-cp-input" type="text" data-te="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${Fr(it.ansShow)}</div><div class="eval-item-feedback" id="evalFbTe${i}" aria-live="polite"></div>`;
     s3.appendChild(d);
   });
   out.appendChild(s3);
@@ -1507,7 +1507,7 @@ function genEvalOp() {
   s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Resuelve en tu cuaderno con la operación que toque y escribe la respuesta numérica.</p>';
   prItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${it.ansShow}</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.text)}</span><input class="eval-cp-input" type="text" data-pr="${i}" autocomplete="off" inputmode="decimal"></div><div class="eval-answer">${Fr(it.ansShow)}</div><div class="eval-item-feedback" id="evalFbPr${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
@@ -1516,7 +1516,7 @@ function genEvalOp() {
   s5.innerHTML = '<div class="eval-section-title">V. Reto del promedio <span class="eval-pts">10 pts</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel desafío. Piensa al revés: ¿cuánto debe sumar el total para lograr ese promedio?</p>';
   meItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-me="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansShow}</div><div class="eval-item-feedback" id="evalFbMe${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.text)}</span><input class="eval-cp-input" type="text" data-me="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${Fr(it.ansShow)}</div><div class="eval-item-feedback" id="evalFbMe${i}" aria-live="polite"></div>`;
     s5.appendChild(d);
   });
   out.appendChild(s5);
@@ -1560,21 +1560,21 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  const filaTabla = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Ejercicio</th><th>Respuesta</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.text}</td><td></td></tr>`).join('')}</table>`;
+  const filaTabla = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Ejercicio</th><th>Respuesta</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${Fr(it.text)}</td><td></td></tr>`).join('')}</table>`;
   let s1 = `<div class="sec-title"><span>I. Fracciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Común denominador con el m.c.m. y resultado SIMPLIFICADO. 4 pts c/u.</p>${filaTabla(d.frItems)}`;
   let s2 = `<div class="sec-title"><span>II. Decimales</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">El punto decimal se coloca contando las cifras decimales. 4 pts c/u.</p>${filaTabla(d.deItems)}`;
   let s3 = `<div class="sec-title"><span>III. m.c.m. y M.C.D.</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">m.c.m.: menor múltiplo común · M.C.D.: mayor divisor común. 4 pts c/u.</p>${filaTabla(d.teItems)}`;
   let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Resuelve mostrando tu procedimiento y escribe la respuesta. 10 pts c/u.</p>`;
-  d.prItems.forEach((it, i) => { s4 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div><div class="opx-space"></div>`; });
+  d.prItems.forEach((it, i) => { s4 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${Fr(it.text)}</span><span class="opx-blank"></span></div><div class="opx-space"></div>`; });
   let s5 = `<div class="sec-title"><span>V. Reto del promedio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div>`;
-  d.meItems.forEach((it, i) => { s5 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div><div class="opx-space"></div>`; });
+  d.meItems.forEach((it, i) => { s5 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${Fr(it.text)}</span><span class="opx-blank"></span></div><div class="opx-space"></div>`; });
   let pR = '';
-  pR += `<div class="p-sec"><div class="p-ttl">I. Fracciones</div><table class="p-tbl">${d.frItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">II. Decimales</div><table class="p-tbl">${d.deItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">III. m.c.m. y M.C.D.</div><table class="p-tbl">${d.teItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Reto del promedio</div><table class="p-tbl">${d.meItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa · Repaso de Fin de Grado 6º · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;break-inside:avoid;page-break-inside:avoid;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;break-inside:avoid;page-break-inside:avoid;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.rnd-tbl tr{break-inside:avoid;page-break-inside:avoid;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas: Prueba Operativa · Repaso de Fin de Grado 6º · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 20 · III: 20 · IV: 30 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Repaso de Fin de Grado 6º · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div></body></html>`;
+  pR += `<div class="p-sec"><div class="p-ttl">I. Fracciones</div><table class="p-tbl">${d.frItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ansShow)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">II. Decimales</div><table class="p-tbl">${d.deItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ansShow)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">III. m.c.m. y M.C.D.</div><table class="p-tbl">${d.teItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ansShow)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas</div><table class="p-tbl">${d.prItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ansShow)}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Reto del promedio</div><table class="p-tbl">${d.meItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ansShow)}</td></tr>`).join('')}</table></div>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa · Repaso de Fin de Grado 6º · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.35rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;break-inside:avoid;page-break-inside:avoid;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.16rem 0.1rem;border-bottom:1px dotted #ddd;break-inside:avoid;page-break-inside:avoid;}.opx-space{height:22px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.1rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.rnd-tbl tr{break-inside:avoid;page-break-inside:avoid;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}${typeof Fr!=="undefined"?Fr.css:""}.fr{font-size:0.8em;margin:0 0.06em;}.fr>b{padding:0 0.13em;}.fr>b.fd{margin-top:0.03em;padding-top:0.03em;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas: Prueba Operativa · Repaso de Fin de Grado 6º · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 20 · III: 20 · IV: 30 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Repaso de Fin de Grado 6º · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);

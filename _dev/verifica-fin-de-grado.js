@@ -103,6 +103,33 @@ async function lanzar() {
   await page.evaluate(() => gradeEvalOp());
   ok('se califica en línea', /Resultado: \d+\/100 pts/.test(await page.locator('#evalOpAutoResult').innerText()));
 
+  console.log('Las fracciones se escriben apiladas, y el examen sigue cabiendo en una hoja');
+  const apiladas = await page.evaluate(() => document.querySelectorAll('.fr').length);
+  ok('en pantalla las fracciones van con la raya en medio', apiladas > 0, apiladas);
+  /* La fracción apilada engorda el renglón. Si se pasa del alto de la hoja,
+     el examen de Matemáticas salta a DOS hojas: 43 hojas de más por grado,
+     y el maestro lo descubre con la fotocopiadora andando. Se miden LAS 20
+     FORMAS porque cada una trae enunciados de distinto largo. */
+  const MM = 96 / 25.4, UTIL = 261.4;      // carta menos los márgenes del @page
+  const medidor = await browser.newPage({ viewport: { width: Math.round((215.9 - 20) * MM), height: 1200 } });
+  await medidor.emulateMedia({ media: 'print' });
+  await page.evaluate(() => { window.open = function () { return { document: { write: d => { window.__doc = d; }, close: () => { } }, print: () => { } }; }; });
+  const altos = { 'Matemáticas': [], 'operativa': [] };
+  for (let f = 1; f <= 20; f++) {
+    await page.evaluate(n => { evalSwitchMode('mat'); document.getElementById('evalFormaSel').value = String(n); genEval(); printEval(); }, f);
+    await medidor.setContent(await page.evaluate(() => window.__doc), { waitUntil: 'load' });
+    altos['Matemáticas'].push(await medidor.evaluate(mm => document.getElementById('evalPage').getBoundingClientRect().height / mm, MM));
+    await page.evaluate(n => { evalSwitchMode('op'); document.getElementById('evalOpFormaSel').value = String(n); genEvalOp(); printEvalOp(); }, f);
+    await medidor.setContent(await page.evaluate(() => window.__doc), { waitUntil: 'load' });
+    altos['operativa'].push(await medidor.evaluate(mm => document.getElementById('evalPage').getBoundingClientRect().height / mm, MM));
+  }
+  await medidor.close();
+  Object.entries(altos).forEach(([nombre, v]) => {
+    const peor = Math.max(...v), forma = v.indexOf(peor) + 1;
+    ok(`las 20 formas de ${nombre} caben en una hoja`, peor <= UTIL, `la forma ${forma} mide ${peor.toFixed(1)} mm y el papel deja ${UTIL}`);
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+
   console.log('Nada de guiones largos a la vista del alumno');
   const cuerpo = await page.evaluate(() => document.body.innerText);
   ok('ni un guion largo en la pantalla de la misión', !cuerpo.includes('—'));

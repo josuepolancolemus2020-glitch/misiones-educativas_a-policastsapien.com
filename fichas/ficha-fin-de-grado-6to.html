@@ -117,6 +117,15 @@
   .err div { margin-bottom: 2px; }
   .err b.mal { color: #9b1c1c; } .err b.why { color: #92400e; } .err b.ok { color: var(--res); }
 
+  /* Fracción escrita como en el cuaderno: numerador arriba, raya en medio
+     y denominador abajo. Es la forma que el alumno ve en el pizarrón; «3/4»
+     es como se teclea, no como se lee. */
+  .fr { display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+        vertical-align: middle; line-height: 1.06; font-size: 0.86em; margin: 0 0.12em; text-align: center; }
+  .fr > b { display: block; font-weight: inherit; padding: 0 0.18em; }
+  .fr > b.fd { border-top: 0.085em solid currentColor; margin-top: 0.05em; padding-top: 0.05em; }
+  .fr-mix { margin-right: 0.1em; }
+
   /* Actividades */
   .acts h3 { border-bottom: 2px solid var(--ac-claro); padding-bottom: 3px; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
@@ -249,35 +258,35 @@ opciones: ahí escribes tú.</p>
 
 <div class="materia-tag">🔵 Matemáticas · Bloque 1 de 4</div>
 <h2>🍕 Fracciones: leerlas, compararlas y sumarlas</h2>
-<p>Una fracción te dice en cuántos pedazos iguales partiste algo y cuántos tomaste. El de abajo, el denominador, dice el tamaño del pedazo; el de arriba, el numerador, dice cuántos tomaste. Toda fracción es también una división: por eso 7/8 es lo mismo que 7 ÷ 8, que da 0.875. Para comparar o para sumar, los pedazos tienen que ser del mismo tamaño; si los denominadores son distintos, busca un denominador común y cambia las dos fracciones antes de operar.</p>
+<p>Una fracción te dice en cuántos pedazos iguales partiste algo y cuántos tomaste. El de abajo, el denominador, dice el tamaño del pedazo; el de arriba, el numerador, dice cuántos tomaste. Toda fracción es también una división: por eso <span class="fr"><b>7</b><b class="fd">8</b></span> es lo mismo que 7 ÷ 8, que da 0.875. Para comparar o para sumar, los pedazos tienen que ser del mismo tamaño; si los denominadores son distintos, busca un denominador común y cambia las dos fracciones antes de operar.</p>
 
 <div class="caja regla">⚡ <b>Regla:</b> Para sumar o restar fracciones de distinto denominador, busca un denominador común, convierte las dos y suma solo los numeradores: el denominador se queda igual.</div>
 
-<div class="caja truco">🎯 <b>Truco:</b> De fracción a decimal, divide arriba entre abajo. De decimal a fracción, escribe las cifras sobre 10, 100 o 1000 según cuántas haya después del punto, y simplifica: 0.75 tiene dos cifras después del punto, así que es 75/100, y simplificando entre 25 queda 3/4.</div>
+<div class="caja truco">🎯 <b>Truco:</b> De fracción a decimal, divide arriba entre abajo. De decimal a fracción, escribe las cifras sobre 10, 100 o 1000 según cuántas haya después del punto, y simplifica: 0.75 tiene dos cifras después del punto, así que es <span class="fr"><b>75</b><b class="fd">100</b></span>, y simplificando entre 25 queda <span class="fr"><b>3</b><b class="fd">4</b></span>.</div>
 
-<div class="caja hn">🇭🇳 <b>En Honduras:</b> En la pulpería te venden media libra de café: media libra es 1/2 y también 0.5. Son dos maneras de escribir el mismo pedazo.</div>
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> En la pulpería te venden media libra de café: media libra es <span class="fr"><b>1</b><b class="fd">2</b></span> y también 0.5. Son dos maneras de escribir el mismo pedazo.</div>
 
 <div class="ejem">
-  <div class="ejem-t">Ejemplo resuelto 1: <span>Ordena de menor a mayor: 3/4, 2/3 y 5/8.</span></div>
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Ordena de menor a mayor: <span class="fr"><b>3</b><b class="fd">4</b></span>, <span class="fr"><b>2</b><b class="fd">3</b></span> <span class="fr"><b>5</b><b class="fd">8</b></span>.</span></div>
   <ol>
     <li>Busca un denominador común de 4, 3 y 8: el 24 sirve, porque los tres caben exacto en 24.</li>
-    <li>Convierte cada una: 3/4 = 18/24 (24 ÷ 4 = 6 y 3 x 6 = 18), 2/3 = 16/24 y 5/8 = 15/24.</li>
+    <li>Convierte cada una: <span class="fr"><b>3</b><b class="fd">4</b></span> = <span class="fr"><b>18</b><b class="fd">24</b></span> (24 ÷ 4 = 6 y 3 x 6 = 18), <span class="fr"><b>2</b><b class="fd">3</b></span> = <span class="fr"><b>16</b><b class="fd">24</b></span> <span class="fr"><b>5</b><b class="fd">8</b></span> = <span class="fr"><b>15</b><b class="fd">24</b></span>.</li>
     <li>Ya con el mismo denominador solo miras los numeradores: 15 es el menor y 18 el mayor.</li>
     <li>Escribe el orden con las fracciones originales, no con las convertidas.</li>
   </ol>
-  <div class="res">De menor a mayor: 5/8, 2/3, 3/4.</div>
+  <div class="res">De menor a mayor: <span class="fr"><b>5</b><b class="fd">8</b></span>, <span class="fr"><b>2</b><b class="fd">3</b></span>, <span class="fr"><b>3</b><b class="fd">4</b></span>.</div>
 </div>
 
 <div class="ejem">
-  <div class="ejem-t">Ejemplo resuelto 2: <span>Doña Rosa usó 1 y 1/3 de taza de harina en la mañana y 2/5 de taza en la tarde. ¿Cuánta harina usó en total?</span></div>
+  <div class="ejem-t">Ejemplo resuelto 2: <span>Doña Rosa usó <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">3</b></span> de taza de harina en la mañana y <span class="fr"><b>2</b><b class="fd">5</b></span> de taza en la tarde. ¿Cuánta harina usó en total?</span></div>
   <ol>
-    <li>Un número mixto es un entero con su fracción, y aquí lo escribimos con una 'y' en medio (1 y 1/3) para que no se confunda con 11/3.</li>
-    <li>Convierte el número mixto a fracción: 1 y 1/3 = (1 x 3 + 1)/3 = 4/3.</li>
-    <li>Denominador común de 3 y 5: el 15. Entonces 4/3 = 20/15 y 2/5 = 6/15.</li>
-    <li>Suma solo los numeradores: 20/15 + 6/15 = 26/15.</li>
-    <li>Vuelve a número mixto: 26 ÷ 15 da 1 y sobran 11, así que 26/15 = 1 y 11/15.</li>
+    <li>Un número mixto es un entero con su fracción al lado: <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">3</b></span> se lee «uno y un tercio», y no es lo mismo que <span class="fr"><b>11</b><b class="fd">3</b></span>.</li>
+    <li>Convierte el número mixto a fracción: <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">3</b></span> = (1 x 3 + 1)/3 = <span class="fr"><b>4</b><b class="fd">3</b></span>.</li>
+    <li>Denominador común de 3 y 5: el 15. Entonces <span class="fr"><b>4</b><b class="fd">3</b></span> = <span class="fr"><b>20</b><b class="fd">15</b></span> <span class="fr"><b>2</b><b class="fd">5</b></span> = <span class="fr"><b>6</b><b class="fd">15</b></span>.</li>
+    <li>Suma solo los numeradores: <span class="fr"><b>20</b><b class="fd">15</b></span> + <span class="fr"><b>6</b><b class="fd">15</b></span> = <span class="fr"><b>26</b><b class="fd">15</b></span>.</li>
+    <li>Vuelve a número mixto: 26 ÷ 15 da 1 y sobran 11, así que <span class="fr"><b>26</b><b class="fd">15</b></span> = <span class="fr-mix">1</span><span class="fr"><b>11</b><b class="fd">15</b></span>.</li>
   </ol>
-  <div class="res">Usó 1 y 11/15 de taza de harina.</div>
+  <div class="res">Usó <span class="fr-mix">1</span><span class="fr"><b>11</b><b class="fd">15</b></span> de taza de harina.</div>
 </div>
 
   </div>
@@ -290,19 +299,19 @@ opciones: ahí escribes tú.</p>
 
 <table>
   <tr><th>Fracción</th><th>División</th><th>Decimal</th></tr>
-  <tr><td class="k">1/4</td><td>1 ÷ 4</td><td>0.25</td></tr>
-  <tr><td class="k">1/5</td><td>1 ÷ 5</td><td>0.2</td></tr>
-  <tr><td class="k">1/8</td><td>1 ÷ 8</td><td>0.125</td></tr>
-  <tr><td class="k">2/5</td><td>2 ÷ 5</td><td>0.4</td></tr>
-  <tr><td class="k">7/8</td><td>7 ÷ 8</td><td>0.875</td></tr>
-  <tr><td class="k">9/10</td><td>9 ÷ 10</td><td>0.9</td></tr>
+  <tr><td class="k"><span class="fr"><b>1</b><b class="fd">4</b></span></td><td>1 ÷ 4</td><td>0.25</td></tr>
+  <tr><td class="k"><span class="fr"><b>1</b><b class="fd">5</b></span></td><td>1 ÷ 5</td><td>0.2</td></tr>
+  <tr><td class="k"><span class="fr"><b>1</b><b class="fd">8</b></span></td><td>1 ÷ 8</td><td>0.125</td></tr>
+  <tr><td class="k"><span class="fr"><b>2</b><b class="fd">5</b></span></td><td>2 ÷ 5</td><td>0.4</td></tr>
+  <tr><td class="k"><span class="fr"><b>7</b><b class="fd">8</b></span></td><td>7 ÷ 8</td><td>0.875</td></tr>
+  <tr><td class="k"><span class="fr"><b>9</b><b class="fd">10</b></span></td><td>9 ÷ 10</td><td>0.9</td></tr>
 </table>
 
 <div class="err">
   <div class="err-t">Cuidado con este error</div>
-  <div><b class="mal">Mal:</b> 2/5 + 1/3 = 3/8</div>
-  <div><b class="why">¿Por qué está mal?</b> Sumaste arriba con arriba y abajo con abajo. Los quintos y los tercios no son pedazos del mismo tamaño. Fíjate además que 3/8 es menor que 2/5: el total nunca puede quedar más pequeño que una de las partes.</div>
-  <div><b class="ok">Correcto:</b> Denominador común 15: 2/5 = 6/15 y 1/3 = 5/15, entonces 6/15 + 5/15 = 11/15.</div>
+  <div><b class="mal">Mal:</b> <span class="fr"><b>2</b><b class="fd">5</b></span> + <span class="fr"><b>1</b><b class="fd">3</b></span> = <span class="fr"><b>3</b><b class="fd">8</b></span></div>
+  <div><b class="why">¿Por qué está mal?</b> Sumaste arriba con arriba y abajo con abajo. Los quintos y los tercios no son pedazos del mismo tamaño. Fíjate además que <span class="fr"><b>3</b><b class="fd">8</b></span> es menor que <span class="fr"><b>2</b><b class="fd">5</b></span>: el total nunca puede quedar más pequeño que una de las partes.</div>
+  <div><b class="ok">Correcto:</b> Denominador común 15: <span class="fr"><b>2</b><b class="fd">5</b></span> = <span class="fr"><b>6</b><b class="fd">15</b></span> <span class="fr"><b>1</b><b class="fd">3</b></span> = <span class="fr"><b>5</b><b class="fd">15</b></span>, entonces <span class="fr"><b>6</b><b class="fd">15</b></span> + <span class="fr"><b>5</b><b class="fd">15</b></span> = <span class="fr"><b>11</b><b class="fd">15</b></span>.</div>
 </div>
 
 <div class="materia-tag">🔵 Matemáticas · Bloque 2 de 4</div>
@@ -313,6 +322,8 @@ opciones: ahí escribes tú.</p>
 
 <div class="caja regla">⚡ <b>Regla:</b> Al dividir entre un decimal, corre el punto del divisor hasta volverlo entero y corre el punto del dividendo los mismos lugares. El resultado no cambia.</div>
 
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> Si 2.5 libras de frijol cuestan L.42.50, corres el punto un lugar en los dos números y te queda 425 ÷ 25 = 17: cada libra sale a L.17.00. Eso es lo que haces cada vez que sacas el precio por libra en el mercado.</div>
+
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Fracciones y Multiplicar, dividir y el punto…</span><span>Página 3 de 31</span></div>
 </section>
@@ -321,17 +332,15 @@ opciones: ahí escribes tú.</p>
 <section class="pagina p-mat">
   <div class="contenido">
 
-<div class="caja hn">🇭🇳 <b>En Honduras:</b> Si 2.5 libras de frijol cuestan L.42.50, corres el punto un lugar en los dos números y te queda 425 ÷ 25 = 17: cada libra sale a L.17.00. Eso es lo que haces cada vez que sacas el precio por libra en el mercado.</div>
-
 <div class="ejem">
-  <div class="ejem-t">Ejemplo resuelto 1: <span>Halla el factor que falta: 3/4 x ? = 9/20.</span></div>
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Halla el factor que falta: <span class="fr"><b>3</b><b class="fd">4</b></span> x ? = <span class="fr"><b>9</b><b class="fd">20</b></span>.</span></div>
   <ol>
-    <li>Para hallar un factor que falta, divide el resultado entre el factor que ya tienes: 9/20 ÷ 3/4.</li>
-    <li>Dividir es multiplicar por la invertida: 9/20 x 4/3.</li>
-    <li>Multiplica arriba con arriba y abajo con abajo: 36/60.</li>
-    <li>Simplifica entre 12: 36 ÷ 12 = 3 y 60 ÷ 12 = 5, o sea 3/5. Comprueba: 3/4 x 3/5 = 9/20.</li>
+    <li>Para hallar un factor que falta, divide el resultado entre el factor que ya tienes: <span class="fr"><b>9</b><b class="fd">20</b></span> ÷ <span class="fr"><b>3</b><b class="fd">4</b></span>.</li>
+    <li>Dividir es multiplicar por la invertida: <span class="fr"><b>9</b><b class="fd">20</b></span> x <span class="fr"><b>4</b><b class="fd">3</b></span>.</li>
+    <li>Multiplica arriba con arriba y abajo con abajo: <span class="fr"><b>36</b><b class="fd">60</b></span>.</li>
+    <li>Simplifica entre 12: 36 ÷ 12 = 3 y 60 ÷ 12 = 5, o sea <span class="fr"><b>3</b><b class="fd">5</b></span>. Comprueba: <span class="fr"><b>3</b><b class="fd">4</b></span> x <span class="fr"><b>3</b><b class="fd">5</b></span> = <span class="fr"><b>9</b><b class="fd">20</b></span>.</li>
   </ol>
-  <div class="res">El factor que falta es 3/5.</div>
+  <div class="res">El factor que falta es <span class="fr"><b>3</b><b class="fd">5</b></span>.</div>
 </div>
 
 <div class="ejem">
@@ -347,8 +356,8 @@ opciones: ahí escribes tú.</p>
 
 <table>
   <tr><th>Operación</th><th>Qué haces</th><th>Ejemplo</th></tr>
-  <tr><td class="k">Multiplicar fracciones</td><td>Arriba con arriba y abajo con abajo</td><td>3/7 x 2/5 = 6/35</td></tr>
-  <tr><td class="k">Dividir fracciones</td><td>Invierte la segunda y multiplica</td><td>3/4 ÷ 2/5 = 3/4 x 5/2 = 15/8 = 1 y 7/8</td></tr>
+  <tr><td class="k">Multiplicar fracciones</td><td>Arriba con arriba y abajo con abajo</td><td><span class="fr"><b>3</b><b class="fd">7</b></span> x <span class="fr"><b>2</b><b class="fd">5</b></span> = <span class="fr"><b>6</b><b class="fd">35</b></span></td></tr>
+  <tr><td class="k">Dividir fracciones</td><td>Invierte la segunda y multiplica</td><td><span class="fr"><b>3</b><b class="fd">4</b></span> ÷ <span class="fr"><b>2</b><b class="fd">5</b></span> = <span class="fr"><b>3</b><b class="fd">4</b></span> x <span class="fr"><b>5</b><b class="fd">2</b></span> = <span class="fr"><b>15</b><b class="fd">8</b></span> = <span class="fr-mix">1</span><span class="fr"><b>7</b><b class="fd">8</b></span></td></tr>
   <tr><td class="k">Multiplicar decimales</td><td>Multiplica sin punto y cuenta los decimales</td><td>1.2 x 0.4 = 0.48</td></tr>
   <tr><td class="k">Dividir decimales</td><td>Corre el punto en los dos números</td><td>7.2 ÷ 0.8 = 72 ÷ 8 = 9</td></tr>
 </table>
@@ -485,9 +494,9 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 
 <div class="err">
   <div class="err-t">Sumar los de abajo también</div>
-  <div><b class="mal">Mal:</b> El alumno escribe 1/4 + 2/4 = 3/8. Suma los de arriba (1 + 2 = 3) y también los de abajo (4 + 4 = 8). En un problema de la pulpería: 1/4 de libra de café más 2/4 de libra de café le da 3/8 de libra, o sea menos de media libra.</div>
-  <div><b class="why">¿Por qué está mal?</b> El denominador no es un número que se suma: dice en cuántos pedazos iguales se partió la unidad, y esos pedazos siguen siendo cuartos antes y después de juntarlos. Fíjese en lo que salió: 3/8 es menos que 2/4 (2/4 son 4/8), o sea menos que una de las dos partes que juntó. Si al sumar pedazos el resultado sale más chico que una de las partes, la cuenta ya avisó que está mala.</div>
-  <div><b class="ok">Correcto:</b> Con el mismo denominador se suman solo los numeradores y el denominador se queda igual: 1/4 + 2/4 = 3/4. Tres cuartos de libra es más que 2/4 y más que 1/4, que es lo que tiene que pasar cuando se juntan dos pedazos. Si los denominadores son distintos, primero se busca el m.c.m. para igualarlos: en 1/2 + 1/3, el m.c.m. de 2 y 3 es 6, entonces 3/6 + 2/6 = 5/6.</div>
+  <div><b class="mal">Mal:</b> El alumno escribe <span class="fr"><b>1</b><b class="fd">4</b></span> + <span class="fr"><b>2</b><b class="fd">4</b></span> = <span class="fr"><b>3</b><b class="fd">8</b></span>. Suma los de arriba (1 + 2 = 3) y también los de abajo (4 + 4 = 8). En un problema de la pulpería: <span class="fr"><b>1</b><b class="fd">4</b></span> de libra de café más <span class="fr"><b>2</b><b class="fd">4</b></span> de libra de café le da <span class="fr"><b>3</b><b class="fd">8</b></span> de libra, o sea menos de media libra.</div>
+  <div><b class="why">¿Por qué está mal?</b> El denominador no es un número que se suma: dice en cuántos pedazos iguales se partió la unidad, y esos pedazos siguen siendo cuartos antes y después de juntarlos. Fíjese en lo que salió: <span class="fr"><b>3</b><b class="fd">8</b></span> es menos que <span class="fr"><b>2</b><b class="fd">4</b></span> (<span class="fr"><b>2</b><b class="fd">4</b></span> son <span class="fr"><b>4</b><b class="fd">8</b></span>), o sea menos que una de las dos partes que juntó. Si al sumar pedazos el resultado sale más chico que una de las partes, la cuenta ya avisó que está mala.</div>
+  <div><b class="ok">Correcto:</b> Con el mismo denominador se suman solo los numeradores y el denominador se queda igual: <span class="fr"><b>1</b><b class="fd">4</b></span> + <span class="fr"><b>2</b><b class="fd">4</b></span> = <span class="fr"><b>3</b><b class="fd">4</b></span>. Tres cuartos de libra es más que <span class="fr"><b>2</b><b class="fd">4</b></span> y más que <span class="fr"><b>1</b><b class="fd">4</b></span>, que es lo que tiene que pasar cuando se juntan dos pedazos. Si los denominadores son distintos, primero se busca el m.c.m. para igualarlos: en <span class="fr"><b>1</b><b class="fd">2</b></span> + <span class="fr"><b>1</b><b class="fd">3</b></span>, el m.c.m. de 2 y 3 es 6, entonces <span class="fr"><b>3</b><b class="fd">6</b></span> + <span class="fr"><b>2</b><b class="fd">6</b></span> = <span class="fr"><b>5</b><b class="fd">6</b></span>.</div>
 </div>
 
 <div class="err">
@@ -521,9 +530,9 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 
 <div class="err">
   <div class="err-t">Dividir fracciones al revés y dejar la respuesta sin simplificar</div>
-  <div><b class="mal">Mal:</b> En 3/4 dividido entre 1/2 el alumno voltea la primera fracción y hace 4/3 por 1/2 = 4/6, o multiplica derecho y escribe 3/8. Y cuando le sale bien 6/4, deja 6/4 escrito así, sin simplificar.</div>
-  <div><b class="why">¿Por qué está mal?</b> En una división de fracciones la primera se queda tal como está y la que se invierte es la segunda, la del divisor. Dividir 3/4 entre 1/2 es preguntar cuántas mitades caben en 3/4, y cabe más de una: por eso la respuesta tiene que salir mayor que 1, y las dos cuentas malas dan 4/6 (que es 2/3) y 3/8, las dos menores que 1. Y una respuesta sin simplificar es una respuesta a medias: en la prueba 6/4 y 3/2 valen lo mismo, pero la hoja pide la fracción en su forma más simple.</div>
-  <div><b class="ok">Correcto:</b> 3/4 dividido entre 1/2: la primera se queda, la segunda se invierte y se multiplica: 3/4 por 2/1 = 6/4. Ahora se simplifica dividiendo arriba y abajo entre el M.C.D. de 6 y 4, que es 2: 6 entre 2 = 3 y 4 entre 2 = 2, queda 3/2, o sea 1 1/2. Se comprueba con la pregunta: en 3/4 de tortilla cabe una mitad entera (que es 2/4) y todavía sobra 1/4, que es la mitad de una mitad; por eso caben 1 1/2 mitades, igual que 3/2. Correcto.</div>
+  <div><b class="mal">Mal:</b> En <span class="fr"><b>3</b><b class="fd">4</b></span> dividido entre <span class="fr"><b>1</b><b class="fd">2</b></span> el alumno voltea la primera fracción y hace <span class="fr"><b>4</b><b class="fd">3</b></span> por <span class="fr"><b>1</b><b class="fd">2</b></span> = <span class="fr"><b>4</b><b class="fd">6</b></span>, o multiplica derecho y escribe <span class="fr"><b>3</b><b class="fd">8</b></span>. Y cuando le sale bien <span class="fr"><b>6</b><b class="fd">4</b></span>, deja <span class="fr"><b>6</b><b class="fd">4</b></span> escrito así, sin simplificar.</div>
+  <div><b class="why">¿Por qué está mal?</b> En una división de fracciones la primera se queda tal como está y la que se invierte es la segunda, la del divisor. Dividir <span class="fr"><b>3</b><b class="fd">4</b></span> entre <span class="fr"><b>1</b><b class="fd">2</b></span> es preguntar cuántas mitades caben en <span class="fr"><b>3</b><b class="fd">4</b></span>, y cabe más de una: por eso la respuesta tiene que salir mayor que 1, y las dos cuentas malas dan <span class="fr"><b>4</b><b class="fd">6</b></span> (que es <span class="fr"><b>2</b><b class="fd">3</b></span>) y <span class="fr"><b>3</b><b class="fd">8</b></span>, las dos menores que 1. Y una respuesta sin simplificar es una respuesta a medias: en la prueba <span class="fr"><b>6</b><b class="fd">4</b></span> <span class="fr"><b>3</b><b class="fd">2</b></span> valen lo mismo, pero la hoja pide la fracción en su forma más simple.</div>
+  <div><b class="ok">Correcto:</b> <span class="fr"><b>3</b><b class="fd">4</b></span> dividido entre <span class="fr"><b>1</b><b class="fd">2</b></span>: la primera se queda, la segunda se invierte y se multiplica: <span class="fr"><b>3</b><b class="fd">4</b></span> por <span class="fr"><b>2</b><b class="fd">1</b></span> = <span class="fr"><b>6</b><b class="fd">4</b></span>. Ahora se simplifica dividiendo arriba y abajo entre el M.C.D. de 6 y 4, que es 2: 6 entre 2 = 3 y 4 entre 2 = 2, queda <span class="fr"><b>3</b><b class="fd">2</b></span>, o sea <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">2</b></span>. Se comprueba con la pregunta: en <span class="fr"><b>3</b><b class="fd">4</b></span> de tortilla cabe una mitad entera (que es <span class="fr"><b>2</b><b class="fd">4</b></span>) y todavía sobra <span class="fr"><b>1</b><b class="fd">4</b></span>, que es la mitad de una mitad; por eso caben <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">2</b></span> mitades, igual que <span class="fr"><b>3</b><b class="fd">2</b></span>. Correcto.</div>
 </div>
 
   </div>
@@ -834,7 +843,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <ol>
   <li>El decimal 0.25 escrito como fracción irreducible es <span class="linea-resp"></span>.</li>
   <li>El número 350 es divisible entre 2, entre 5 y también entre <span class="linea-resp"></span>, porque termina en cero.</li>
-  <li>3/8 + 1/8 = <span class="linea-resp"></span> (escribe el resultado simplificado).</li>
+  <li><span class="fr"><b>3</b><b class="fd">8</b></span> + <span class="fr"><b>1</b><b class="fd">8</b></span> = <span class="linea-resp"></span> (escribe el resultado simplificado).</li>
   <li>El promedio de las notas 6, 8 y 10 es <span class="linea-resp"></span>.</li>
   <li>El área de un cuadrado que mide 7 cm de lado es <span class="linea-resp"></span> centímetros cuadrados.</li>
   <li>El mínimo común múltiplo (m.c.m.) de 5 y 9 es <span class="linea-resp"></span>.</li>
@@ -846,25 +855,17 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 
 <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span> · Escribe V o F en la línea.</h3>
 <ol>
-  <li>____ La fracción 4/5 es igual al decimal 0.8.</li>
-  <li>____ Para sumar 1/3 + 1/4 se suman los numeradores entre sí y los denominadores entre sí, así que el resultado es 2/7.</li>
+  <li>____ La fracción <span class="fr"><b>4</b><b class="fd">5</b></span> es igual al decimal 0.8.</li>
+  <li>____ Para sumar <span class="fr"><b>1</b><b class="fd">3</b></span> + <span class="fr"><b>1</b><b class="fd">4</b></span> se suman los numeradores entre sí y los denominadores entre sí, así que el resultado es <span class="fr"><b>2</b><b class="fd">7</b></span>.</li>
   <li>____ El número 415 es divisible entre 3.</li>
   <li>____ Para dividir una fracción entre otra se multiplica la primera por la segunda invertida.</li>
   <li>____ El área de un círculo de 5 cm de radio es 78.5 centímetros cuadrados (pi = 3.14).</li>
   <li>____ Una pirámide tiene dos bases iguales, una arriba y otra abajo.</li>
   <li>____ El volumen de un prisma rectangular se halla multiplicando el área de la base por la altura.</li>
-  <li>____ La fracción 3/4 es menor que 2/3.</li>
+  <li>____ La fracción <span class="fr"><b>3</b><b class="fd">4</b></span> es menor que <span class="fr"><b>2</b><b class="fd">3</b></span>.</li>
   <li>____ El mínimo común múltiplo de 3 y 12 es 36.</li>
   <li>____ Si el promedio de dos notas es 70, entonces la suma de esas dos notas es 140.</li>
 </ol>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades</span><span>Página 17 de 31</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 18 ═══════════ -->
-<section class="pagina p-mat acts">
-  <div class="contenido">
 
 <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> · Encierra en un círculo la letra correcta.</h3>
 
@@ -878,23 +879,31 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades</span><span>Página 17 de 31</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 18 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">2</span>¿Qué fracción multiplicada por 3/4 da como resultado 9/20?</div>
+  <div class="preg-q"><span class="preg-n">2</span>¿Qué fracción multiplicada por <span class="fr"><b>3</b><b class="fd">4</b></span> da como resultado <span class="fr"><b>9</b><b class="fd">20</b></span>?</div>
   <div class="preg-ops">
-    <span class="op"><i>a</i> 27/80</span>
-    <span class="op"><i>b</i> 5/3</span>
-    <span class="op"><i>c</i> 3/5</span>
-    <span class="op"><i>d</i> 9/5</span>
+    <span class="op"><i>a</i> <span class="fr"><b>27</b><b class="fd">80</b></span></span>
+    <span class="op"><i>b</i> <span class="fr"><b>5</b><b class="fd">3</b></span></span>
+    <span class="op"><i>c</i> <span class="fr"><b>3</b><b class="fd">5</b></span></span>
+    <span class="op"><i>d</i> <span class="fr"><b>9</b><b class="fd">5</b></span></span>
   </div>
 </div>
 
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el resultado de 7/8 ÷ 7/4, simplificado?</div>
+  <div class="preg-q"><span class="preg-n">3</span>¿Cuál es el resultado de <span class="fr"><b>7</b><b class="fd">8</b></span> ÷ <span class="fr"><b>7</b><b class="fd">4</b></span>, simplificado?</div>
   <div class="preg-ops">
-    <span class="op"><i>a</i> 1/2</span>
+    <span class="op"><i>a</i> <span class="fr"><b>1</b><b class="fd">2</b></span></span>
     <span class="op"><i>b</i> 2</span>
-    <span class="op"><i>c</i> 49/32</span>
-    <span class="op"><i>d</i> 1/4</span>
+    <span class="op"><i>c</i> <span class="fr"><b>49</b><b class="fd">32</b></span></span>
+    <span class="op"><i>d</i> <span class="fr"><b>1</b><b class="fd">4</b></span></span>
   </div>
 </div>
 
@@ -930,7 +939,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">7</span>¿Qué número decimal es igual a la fracción 7/8?</div>
+  <div class="preg-q"><span class="preg-n">7</span>¿Qué número decimal es igual a la fracción <span class="fr"><b>7</b><b class="fd">8</b></span>?</div>
   <div class="preg-ops">
     <span class="op"><i>a</i> 0.78</span>
     <span class="op"><i>b</i> 1.14</span>
@@ -940,12 +949,12 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">8</span>Marta caminó 2 1/3 km en la mañana y 5/6 km en la tarde. ¿Cuánto caminó en todo el día?</div>
+  <div class="preg-q"><span class="preg-n">8</span>Marta caminó <span class="fr-mix">2</span><span class="fr"><b>1</b><b class="fd">3</b></span> km en la mañana y <span class="fr"><b>5</b><b class="fd">6</b></span> km en la tarde. ¿Cuánto caminó en todo el día?</div>
   <div class="preg-ops">
-    <span class="op"><i>a</i> 2 2/3 km</span>
-    <span class="op"><i>b</i> 3 1/2 km</span>
-    <span class="op"><i>c</i> 2 7/9 km</span>
-    <span class="op"><i>d</i> 3 1/6 km</span>
+    <span class="op"><i>a</i> <span class="fr-mix">2</span><span class="fr"><b>2</b><b class="fd">3</b></span> km</span>
+    <span class="op"><i>b</i> <span class="fr-mix">3</span><span class="fr"><b>1</b><b class="fd">2</b></span> km</span>
+    <span class="op"><i>c</i> <span class="fr-mix">2</span><span class="fr"><b>7</b><b class="fd">9</b></span> km</span>
+    <span class="op"><i>d</i> <span class="fr-mix">3</span><span class="fr"><b>1</b><b class="fd">6</b></span> km</span>
   </div>
 </div>
 
@@ -971,10 +980,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <div class="preg">
   <div class="preg-q"><span class="preg-n">10</span>¿Cuál de estas series está ordenada de menor a mayor?</div>
   <div class="preg-ops">
-    <span class="op"><i>a</i> 3/5, 2/5, 1/4</span>
-    <span class="op"><i>b</i> 1/4, 2/5, 3/5</span>
-    <span class="op"><i>c</i> 2/5, 1/4, 3/5</span>
-    <span class="op"><i>d</i> 1/4, 3/5, 2/5</span>
+    <span class="op"><i>a</i> <span class="fr"><b>3</b><b class="fd">5</b></span>, <span class="fr"><b>2</b><b class="fd">5</b></span>, <span class="fr"><b>1</b><b class="fd">4</b></span></span>
+    <span class="op"><i>b</i> <span class="fr"><b>1</b><b class="fd">4</b></span>, <span class="fr"><b>2</b><b class="fd">5</b></span>, <span class="fr"><b>3</b><b class="fd">5</b></span></span>
+    <span class="op"><i>c</i> <span class="fr"><b>2</b><b class="fd">5</b></span>, <span class="fr"><b>1</b><b class="fd">4</b></span>, <span class="fr"><b>3</b><b class="fd">5</b></span></span>
+    <span class="op"><i>d</i> <span class="fr"><b>1</b><b class="fd">4</b></span>, <span class="fr"><b>3</b><b class="fd">5</b></span>, <span class="fr"><b>2</b><b class="fd">5</b></span></span>
   </div>
 </div>
 
@@ -989,13 +998,9 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <tr><td>6. ____ Velocidad</td><td>F. El número más pequeño, distinto de cero, que es múltiplo de dos o más números a la vez.</td></tr>
   <tr><td>7. ____ Área del círculo</td><td>G. La distancia recorrida dividida entre el tiempo que se tardó en recorrerla.</td></tr>
   <tr><td>8. ____ Volumen del cilindro</td><td>H. Se da cuando una figura se dobla por una línea y las dos mitades coinciden exactamente.</td></tr>
-  <tr><td>9. ____ Pirámide</td><td>I. Un número entero acompañado de una fracción menor que uno, como 2 3/4.</td></tr>
+  <tr><td>9. ____ Pirámide</td><td>I. Un número entero acompañado de una fracción menor que uno, como <span class="fr-mix">2</span><span class="fr"><b>3</b><b class="fd">4</b></span>.</td></tr>
   <tr><td>10. ____ Simetría reflexiva</td><td>J. Se calcula multiplicando el área del círculo de la base por la altura del cuerpo.</td></tr>
 </table>
-
-<h3>V. Resuelve con procedimiento <span class="val">(Valor: 20 puntos c/u)</span> · Escribe todos los pasos en el espacio.</h3>
-
-<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve y deja el resultado como número mixto: 3 1/4 menos 5/6.</div><div class="desarrollo" style="height:74px;"></div></div>
 
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 19 de 31</span></div>
@@ -1005,15 +1010,19 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <section class="pagina p-mat acts">
   <div class="contenido">
 
-<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Resuelve y simplifica: 9/10 ÷ 3/5.</div><div class="desarrollo" style="height:126px;"></div></div>
+<h3>V. Resuelve con procedimiento <span class="val">(Valor: 20 puntos c/u)</span> · Escribe todos los pasos en el espacio.</h3>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">3</span>En la pulpería el litro de aceite cuesta L.32.50. Doña Carmen compra 1.8 litros. ¿Cuánto tiene que pagar?</div><div class="desarrollo" style="height:126px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve y deja el resultado como número mixto: <span class="fr-mix">3</span><span class="fr"><b>1</b><b class="fd">4</b></span> menos <span class="fr"><b>5</b><b class="fd">6</b></span>.</div><div class="desarrollo" style="height:87px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Un rollo de mecate de 9.6 metros se corta en pedazos de 0.8 metros cada uno. ¿Cuántos pedazos salen?</div><div class="desarrollo" style="height:126px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Resuelve y simplifica: <span class="fr"><b>9</b><b class="fd">10</b></span> ÷ <span class="fr"><b>3</b><b class="fd">5</b></span>.</div><div class="desarrollo" style="height:87px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">5</span>Halla el mínimo común múltiplo de 9 y 12 descomponiendo cada número en factores primos.</div><div class="desarrollo" style="height:126px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>En la pulpería el litro de aceite cuesta L.32.50. Doña Carmen compra 1.8 litros. ¿Cuánto tiene que pagar?</div><div class="desarrollo" style="height:87px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El patio de la escuela es un cuadrado de 12 m de lado. En el centro hay una fuente circular de 2 m de radio. ¿Cuántos metros cuadrados de patio quedan libres? (pi = 3.14)</div><div class="desarrollo" style="height:126px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Un rollo de mecate de 9.6 metros se corta en pedazos de 0.8 metros cada uno. ¿Cuántos pedazos salen?</div><div class="desarrollo" style="height:87px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">5</span>Halla el mínimo común múltiplo de 9 y 12 descomponiendo cada número en factores primos.</div><div class="desarrollo" style="height:87px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El patio de la escuela es un cuadrado de 12 m de lado. En el centro hay una fuente circular de 2 m de radio. ¿Cuántos metros cuadrados de patio quedan libres? (pi = 3.14)</div><div class="desarrollo" style="height:87px;"></div></div>
 
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 20 de 31</span></div>
@@ -1201,37 +1210,37 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <div class="preg">
   <div class="preg-q"><span class="preg-n">1</span>Don Beto le echó 0.4 de litro de aceite al motor. ¿Qué fracción representa el decimal 0.4?</div>
   <div class="preg-ops">
-    <span class="op"><i></i> a) 4/100</span>
-    <span class="op"><i></i> b) 2/5</span>
-    <span class="op"><i></i> c) 1/4</span>
-    <span class="op"><i></i> d) 4/5</span>
+    <span class="op"><i></i> a) <span class="fr"><b>4</b><b class="fd">100</b></span></span>
+    <span class="op"><i></i> b) <span class="fr"><b>2</b><b class="fd">5</b></span></span>
+    <span class="op"><i></i> c) <span class="fr"><b>1</b><b class="fd">4</b></span></span>
+    <span class="op"><i></i> d) <span class="fr"><b>4</b><b class="fd">5</b></span></span>
   </div>
 </div>
 
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">2</span>Tres botellas tienen 3/4, 1/2 y 5/8 de litro de jugo. ¿Cuál es el orden de esas fracciones de menor a mayor?</div>
+  <div class="preg-q"><span class="preg-n">2</span>Tres botellas tienen <span class="fr"><b>3</b><b class="fd">4</b></span>, <span class="fr"><b>1</b><b class="fd">2</b></span> <span class="fr"><b>5</b><b class="fd">8</b></span> de litro de jugo. ¿Cuál es el orden de esas fracciones de menor a mayor?</div>
   <div class="preg-ops">
-    <span class="op"><i></i> a) 1/2, 5/8, 3/4</span>
-    <span class="op"><i></i> b) 3/4, 5/8, 1/2</span>
-    <span class="op"><i></i> c) 1/2, 3/4, 5/8</span>
-    <span class="op"><i></i> d) 5/8, 1/2, 3/4</span>
+    <span class="op"><i></i> a) <span class="fr"><b>1</b><b class="fd">2</b></span>, <span class="fr"><b>5</b><b class="fd">8</b></span>, <span class="fr"><b>3</b><b class="fd">4</b></span></span>
+    <span class="op"><i></i> b) <span class="fr"><b>3</b><b class="fd">4</b></span>, <span class="fr"><b>5</b><b class="fd">8</b></span>, <span class="fr"><b>1</b><b class="fd">2</b></span></span>
+    <span class="op"><i></i> c) <span class="fr"><b>1</b><b class="fd">2</b></span>, <span class="fr"><b>3</b><b class="fd">4</b></span>, <span class="fr"><b>5</b><b class="fd">8</b></span></span>
+    <span class="op"><i></i> d) <span class="fr"><b>5</b><b class="fd">8</b></span>, <span class="fr"><b>1</b><b class="fd">2</b></span>, <span class="fr"><b>3</b><b class="fd">4</b></span></span>
   </div>
 </div>
 
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">3</span>Doña Rosa usó 1 1/4 libras de maíz en la mañana y 2/3 de libra en la tarde. ¿Cuántas libras de maíz usó en total?</div>
+  <div class="preg-q"><span class="preg-n">3</span>Doña Rosa usó <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">4</b></span> libras de maíz en la mañana y <span class="fr"><b>2</b><b class="fd">3</b></span> de libra en la tarde. ¿Cuántas libras de maíz usó en total?</div>
   <div class="preg-ops">
-    <span class="op"><i></i> a) 1 3/7</span>
-    <span class="op"><i></i> b) 2 11/12</span>
-    <span class="op"><i></i> c) 7/12</span>
-    <span class="op"><i></i> d) 1 11/12</span>
+    <span class="op"><i></i> a) <span class="fr-mix">1</span><span class="fr"><b>3</b><b class="fd">7</b></span></span>
+    <span class="op"><i></i> b) <span class="fr-mix">2</span><span class="fr"><b>11</b><b class="fd">12</b></span></span>
+    <span class="op"><i></i> c) <span class="fr"><b>7</b><b class="fd">12</b></span></span>
+    <span class="op"><i></i> d) <span class="fr-mix">1</span><span class="fr"><b>11</b><b class="fd">12</b></span></span>
   </div>
 </div>
 
 <div class="preg">
-  <div class="preg-q"><span class="preg-n">4</span>De un listón de 3/4 de metro se cortan pedazos de 1/8 de metro cada uno. ¿Cuántos pedazos salen?</div>
+  <div class="preg-q"><span class="preg-n">4</span>De un listón de <span class="fr"><b>3</b><b class="fd">4</b></span> de metro se cortan pedazos de <span class="fr"><b>1</b><b class="fd">8</b></span> de metro cada uno. ¿Cuántos pedazos salen?</div>
   <div class="preg-ops">
-    <span class="op"><i></i> a) 3/32</span>
+    <span class="op"><i></i> a) <span class="fr"><b>3</b><b class="fd">32</b></span></span>
     <span class="op"><i></i> b) 8</span>
     <span class="op"><i></i> c) 6</span>
     <span class="op"><i></i> d) 24</span>
@@ -1268,6 +1277,14 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro</span><span>Página 26 de 31</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 27 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
 <div class="preg">
   <div class="preg-q"><span class="preg-n">8</span>Del mercado sale un bus cada 9 minutos y otro cada 12 minutos. Si a las 6:00 salieron juntos, ¿cuántos minutos pasan hasta que vuelvan a salir juntos?</div>
   <div class="preg-ops">
@@ -1277,14 +1294,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
     <span class="op"><i></i> d) 36 minutos</span>
   </div>
 </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro</span><span>Página 26 de 31</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 27 ═══════════ -->
-<section class="pagina sim">
-  <div class="contenido">
 
 <div class="preg">
   <div class="preg-q"><span class="preg-n">9</span>Un comal redondo mide 40 centímetros de diámetro. ¿Cuál es su área? (tome pi = 3.14)</div>
@@ -1467,11 +1476,11 @@ Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si
 
 <h3 style="color:var(--mat-osc);">🔵 Actividades de Matemáticas</h3>
 <div class="pauta">
-  <div><span class="pt">I. Completar:</span> 1. 1/4 &nbsp; 2. 10 &nbsp; 3. 1/2 &nbsp; 4. 8 &nbsp; 5. 49 &nbsp; 6. 45 &nbsp; 7. 60 &nbsp; 8. cilindro &nbsp; 9. 55.50 &nbsp; 10. 8</div>
+  <div><span class="pt">I. Completar:</span> 1. <span class="fr"><b>1</b><b class="fd">4</b></span> &nbsp; 2. 10 &nbsp; 3. <span class="fr"><b>1</b><b class="fd">2</b></span> &nbsp; 4. 8 &nbsp; 5. 49 &nbsp; 6. 45 &nbsp; 7. 60 &nbsp; 8. cilindro &nbsp; 9. 55.50 &nbsp; 10. 8</div>
   <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3F, 4V, 5V, 6F, 7V, 8F, 9F, 10V</div>
   <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3a, 4d, 5b, 6a, 7c, 8d, 9a, 10b</div>
   <div><span class="pt">IV. Pareados:</span> 1F, 2A, 3E, 4I, 5B, 6G, 7D, 8J, 9C, 10H</div>
-  <div><span class="pt">V. Procedimiento:</span> 1. 2 5/12 &nbsp; 2. 3/2, que es 1 1/2 &nbsp; 3. L.58.50 &nbsp; 4. 12 pedazos &nbsp; 5. 36 &nbsp; 6. 131.44 metros cuadrados</div>
+  <div><span class="pt">V. Procedimiento:</span> 1. <span class="fr-mix">2</span><span class="fr"><b>5</b><b class="fd">12</b></span> &nbsp; 2. <span class="fr"><b>3</b><b class="fd">2</b></span>, que es <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">2</b></span> &nbsp; 3. L.58.50 &nbsp; 4. 12 pedazos &nbsp; 5. 36 &nbsp; 6. 131.44 metros cuadrados</div>
 </div>
 
 <h3 style="color:var(--esp-osc);">🟡 Actividades de Español</h3>
