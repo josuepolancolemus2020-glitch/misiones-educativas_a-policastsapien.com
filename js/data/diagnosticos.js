@@ -73,4 +73,9 @@ const DIAGNOSTICOS = {
     { etapa: 6, q: 'En el ciclo de diseño, ¿qué se hace justo después de probar el prototipo?', o: ['Se olvida el proyecto', 'Se mejora con lo aprendido en la prueba', 'Se empieza otro problema distinto', 'Se vende el robot'], a: 1 },
     { etapa: 6, q: 'Antes de diseñar un robot, lo primero es…', o: ['Comprar los materiales', 'Identificar bien el problema y a quién afecta', 'Escribir el programa', 'Pintarlo bonito'], a: 1 },
   ],
+  // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
+  meta: [
+    { etapa: 1, q: 'En el mercado, la libra de frijoles cuesta L.22.40. ¿Cuánto cuestan 3.5 libras?', o: ['L.25.90', 'L.67.20', 'L.78.40', 'L.784.00'], a: 2 },
+    { etapa: 1, q: '¿Cómo se encuentra la idea principal de un texto?', o: ['Copiando la primera oración', 'Preguntándose de qué trata TODO el texto', 'Buscando la palabra más repetida', 'Leyendo solo el título'], a: 1 },
+  ],
 };

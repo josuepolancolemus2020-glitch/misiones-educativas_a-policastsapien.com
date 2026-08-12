@@ -14,6 +14,10 @@ const RUTAS = {
   robots:  { nombre: 'Ruta de los Robots', emoji: '🤖', color: 'tec'  },
   // Inglés (Pre-A1 → A2, alineadas a Cambridge Starters/Movers/Flyers)
   primeras: { nombre: 'Ruta de las Primeras Palabras', emoji: '🗣️', color: 'ing' },
+  /* Repaso General: las pruebas de fin de grado. Cada etapa será un grado
+     (hoy arranca con 6º); la ruta junta TODAS las materias del año, por eso
+     no cuelga de ninguna materia clásica sino de la materia 'repaso'. */
+  meta: { nombre: 'Ruta de la Meta', emoji: '🎯', color: 'rep' },
 };
 
 const MISSIONS = [
@@ -74,6 +78,7 @@ const MISSIONS = [
   { id: 54, title: 'Programando un Robot',                                subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 5, xp: 35, icon: '🕹️', pais: 'HN', url: 'misiones/2y3ciclo-programando-robot/programando-robot.html' },
   { id: 55, title: 'Robots que Resuelven Problemas',                    subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 6, xp: 35, icon: '🏆', pais: 'HN', url: 'misiones/2y3ciclo-robots-problemas/robots-problemas.html' },
   { id: 57, title: 'Hello! Saludos y Presentarme',                        subject: 'inglés',      color: 'ing',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'primeras', etapa: 1, xp: 30, icon: '🗣️', pais: 'HN', url: 'misiones/2y3ciclo-ingles-saludos/saludos-ingles.html' },
+  { id: 58, title: 'Prueba de Fin de Grado: 6º Grado',                    subject: 'repaso',      color: 'rep',  grade: '6º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 1, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-6to/fin-de-grado-6to.html' },
 ];
 
 /* ─────────────────────────────────────────────

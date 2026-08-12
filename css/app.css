@@ -13,6 +13,9 @@
   --bach: #7c3aed; --bach-bg: #faf5ff; --bach-border: rgba(124,58,237,.2);
   --tec:  #0e7490; --tec-bg:  #ecfeff; --tec-border:  rgba(14,116,144,.2);
   --ing:  #be185d; --ing-bg:  #fff1f5; --ing-border:  rgba(190,24,93,.2);
+  /* Repaso General (pruebas de fin de grado): morado, para que no se
+     confunda con ninguna materia clásica: junta a todas. */
+  --rep:  #7c3aed; --rep-bg:  #f3efff; --rep-border:  rgba(124,58,237,.2);
 
   --bg:      #f0f4f9;
   --surface: #ffffff;
@@ -855,6 +858,7 @@ a { text-decoration: none; color: inherit; }
 .subj-chip.csoc { background: var(--csoc-bg); color: var(--csoc); border-color: var(--csoc-border); }
 .subj-chip.tec  { background: var(--tec-bg);  color: var(--tec);  border-color: var(--tec-border); }
 .subj-chip.ing  { background: var(--ing-bg);  color: var(--ing);  border-color: var(--ing-border); }
+.subj-chip.rep  { background: var(--rep-bg);  color: var(--rep);  border-color: var(--rep-border); }
 
 /* ====== FEATURED CARD ====== */
 .featured-card {
@@ -991,6 +995,7 @@ a { text-decoration: none; color: inherit; }
 .pill.csoc { --pill: var(--csoc); --pill-rgb: 220, 38, 38;  --pill-bg: var(--csoc-bg); }
 .pill.tec  { --pill: var(--tec);  --pill-rgb: 14, 116, 144; --pill-bg: var(--tec-bg);  }
 .pill.ing  { --pill: var(--ing);  --pill-rgb: 190, 24, 93;  --pill-bg: var(--ing-bg);  }
+.pill.rep  { --pill: var(--rep);  --pill-rgb: 124, 58, 237; --pill-bg: var(--rep-bg);  }
 
 /* «Todas»: aro con los colores de las seis materias girando alrededor */
 .pill-all {
@@ -1058,6 +1063,7 @@ a { text-decoration: none; color: inherit; }
 .mc-icon.bach { background: var(--bach-bg); color: var(--bach); }
 .mc-icon.tec  { background: var(--tec-bg);  color: var(--tec); }
 .mc-icon.ing  { background: var(--ing-bg);  color: var(--ing); }
+.mc-icon.rep  { background: var(--rep-bg);  color: var(--rep); }
 
 .mc-subj.esp  { background: var(--esp-bg);  color: var(--esp); }
 .mc-subj.mat  { background: var(--mat-bg);  color: var(--mat); }
@@ -1066,6 +1072,7 @@ a { text-decoration: none; color: inherit; }
 .mc-subj.bach { background: var(--bach-bg); color: var(--bach); }
 .mc-subj.tec  { background: var(--tec-bg);  color: var(--tec); }
 .mc-subj.ing  { background: var(--ing-bg);  color: var(--ing); }
+.mc-subj.rep  { background: var(--rep-bg);  color: var(--rep); }
 
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -2759,6 +2766,7 @@ a { text-decoration: none; color: inherit; }
 .camp-sa-tec-pro { background: #cffafe; color: #155e75; border: 2px solid #67e8f9; }
 .camp-sa-tec-rob { background: #e0e7ff; color: #3730a3; border: 2px solid #a5b4fc; }
 .camp-sa-ing { background: #fce7f3; color: #9d174d; border: 2px solid #f9a8d4; }
+.camp-sa-rep { background: #ede9fe; color: #5b21b6; border: 2px solid #c4b5fd; }
 
 @keyframes campPop {
   0%   { transform: scale(.7); opacity: 0; }
@@ -2825,6 +2833,7 @@ a { text-decoration: none; color: inherit; }
 .camp-q-header-tec-pro { background: #cffafe; }
 .camp-q-header-tec-rob { background: #e0e7ff; }
 .camp-q-header-ing { background: #fce7f3; }
+.camp-q-header-rep { background: #ede9fe; }
 .camp-q-subj-icon { font-size: 20px; }
 .camp-q-subj-label {
   font-weight: 800;
@@ -3123,6 +3132,7 @@ a { text-decoration: none; color: inherit; }
 .camp-ms-bh-tec-pro { background: #cffafe; color: #155e75; }
 .camp-ms-bh-tec-rob { background: #e0e7ff; color: #3730a3; }
 .camp-ms-bh-ing { background: #fce7f3; color: #9d174d; }
+.camp-ms-bh-rep { background: #ede9fe; color: #5b21b6; }
 .camp-ms-tog {
   padding: 3px 9px;
   border-radius: 6px;
@@ -3224,6 +3234,7 @@ a { text-decoration: none; color: inherit; }
 .ruta-pct.csoc { color: var(--csoc); background: var(--csoc-bg); }
 .ruta-pct.tec  { color: var(--tec);  background: var(--tec-bg);  }
 .ruta-pct.ing  { color: var(--ing);  background: var(--ing-bg);  }
+.ruta-pct.rep  { color: var(--rep);  background: var(--rep-bg);  }
 
 .ruta-bar {
   height: 6px;
@@ -3238,6 +3249,7 @@ a { text-decoration: none; color: inherit; }
 .ruta-bar-fill.cnat { background: var(--cnat); }
 .ruta-bar-fill.csoc { background: var(--csoc); }
 .ruta-bar-fill.tec  { background: var(--tec);  }
+.ruta-bar-fill.rep  { background: var(--rep);  }
 
 .ruta-mapa { padding: 4px 14px 12px; }
 
@@ -3729,6 +3741,7 @@ a { text-decoration: none; color: inherit; }
 .camp-sp-tec-pro { background: linear-gradient(150deg, #06b6d4, #155e75); }
 .camp-sp-tec-rob { background: linear-gradient(150deg, #6366f1, #3730a3); }
 .camp-sp-ing { background: linear-gradient(150deg, #ec4899, #9d174d); }
+.camp-sp-rep { background: linear-gradient(150deg, #8b5cf6, #5b21b6); }
 .camp-elegir-btn {
   display: block; margin: 10px auto 0;
   border: 2px dashed #8b5cf6;
