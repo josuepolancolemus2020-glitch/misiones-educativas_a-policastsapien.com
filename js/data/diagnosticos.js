@@ -77,6 +77,8 @@ const DIAGNOSTICOS = {
   meta: [
     { etapa: 1, q: 'Una caja trae 7 lápices. ¿Cuántos lápices hay en 36 cajas?', o: ['43', '252', '245', '2,52'], a: 1 },
     { etapa: 1, q: '«Doña Rosa quedó satisfecha con su cosecha». ¿Qué significa ahí la palabra satisfecha?', o: ['Cansada', 'Enojada', 'Contenta', 'Apurada'], a: 2 },
+    { etapa: 2, q: '¿Qué fracción impropia vale lo mismo que el número mixto 3 1/4?', o: ['4/3', '7/4', '13/4', '31/4'], a: 2 },
+    { etapa: 2, q: '«La campesina siguió subiendo y no se dio por vencida». ¿Qué significa ahí no se dio por vencida?', o: ['Que no dejó de intentarlo', 'Que se cansó y bajó', 'Que perdió el camino', 'Que llegó de primera'], a: 0 },
     { etapa: 3, q: 'En el mercado, la libra de frijoles cuesta L.22.40. ¿Cuánto cuestan 3.5 libras?', o: ['L.25.90', 'L.67.20', 'L.78.40', 'L.784.00'], a: 2 },
     { etapa: 3, q: '¿Cómo se encuentra la idea principal de un texto?', o: ['Copiando la primera oración', 'Preguntándose de qué trata TODO el texto', 'Buscando la palabra más repetida', 'Leyendo solo el título'], a: 1 },
   ],

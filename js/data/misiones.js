@@ -82,6 +82,7 @@ const MISSIONS = [
      aunque la primera que se escribió fuera la de 6º. El maestro de cuarto
      entra por la etapa 1 y no por la mitad de la ruta. */
   { id: 59, title: 'Prueba de Fin de Grado: 4º Grado',                    subject: 'repaso',      color: 'rep',  grade: '4º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 1, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-4to/fin-de-grado-4to.html' },
+  { id: 60, title: 'Prueba de Fin de Grado: 5º Grado',                    subject: 'repaso',      color: 'rep',  grade: '5º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 2, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-5to/fin-de-grado-5to.html' },
   { id: 58, title: 'Prueba de Fin de Grado: 6º Grado',                    subject: 'repaso',      color: 'rep',  grade: '6º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 3, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-6to/fin-de-grado-6to.html' },
 ];
 

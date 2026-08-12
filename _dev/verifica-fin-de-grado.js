@@ -13,7 +13,7 @@
      pauta en página aparte y la orden de rellenar el círculo (nunca ✗);
    - que la prueba operativa se genere y califique;
    - que el catálogo estrene la materia Repaso General: chip con conteo,
-     filtro que deja solo las de esta materia, y 59 misiones en Todas.
+     filtro que deja solo las de esta materia, y 60 misiones en Todas.
 
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-fin-de-grado.js
@@ -29,6 +29,7 @@ const BASE = 'http://localhost:8123';
 const GRADOS = [
   { slug: '6to', grado: '6º', tabs: 18, esp: ['pino', 'colibrí', 'feria'] },
   { slug: '4to', grado: '4º', tabs: 18, esp: ['tortuga', 'abuela', 'conejo', 'bosque', 'río'] },
+  { slug: '5to', grado: '5º', tabs: 18, esp: ['montaña', 'ganso', 'león', 'ruinas', 'hueso', 'carta', 'anuncio'] },
 ];
 
 let fallos = 0;
@@ -154,13 +155,13 @@ async function lanzar() {
   await page2.goto(BASE + '/index.html?view=misiones', { waitUntil: 'networkidle' });
   await page2.waitForTimeout(300);
   ok('la portada carga sin errores', errores2.length === 0, errores2[0]);
-  ok('el filtro Todas cuenta 59 misiones', (await page2.locator('.pill-all .pill-count').innerText()).trim() === '59');
+  ok('el filtro Todas cuenta 60 misiones', (await page2.locator('.pill-all .pill-count').innerText()).trim() === '60');
   const pillRep = page2.locator('.pill.rep');
-  ok('el chip Repaso General existe y cuenta 2', (await pillRep.locator('.pill-count').innerText()).trim() === '2');
+  ok('el chip Repaso General existe y cuenta 3', (await pillRep.locator('.pill-count').innerText()).trim() === '3');
   await pillRep.click();
   await page2.waitForTimeout(300);
   const tarjetas = await page2.locator('#missions-container .mission-card').count();
-  ok('el filtro deja solo las misiones de Fin de Grado', tarjetas === 2);
+  ok('el filtro deja solo las misiones de Fin de Grado', tarjetas === 3);
   const rotulos = await page2.locator('#missions-container').innerText();
   GRADOS.forEach(G => ok(`la tarjeta de ${G.grado} está en el catálogo`, rotulos.includes(`Prueba de Fin de Grado: ${G.grado} Grado`)));
 
