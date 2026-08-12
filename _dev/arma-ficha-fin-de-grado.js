@@ -266,7 +266,11 @@ B(`<h3>III. Lee el texto y contesta <span class="val">(Valor: 10 puntos c/u)</sp
   <div class="ejem-txt">${esc(C.actEsp.lectura.texto)}</div>
 </div>`);
 C.actEsp.lectura.preguntas.forEach((it, i) => B(pregunta(it, i + 1, false)));
-B(`<h3>IV. ¿Qué tipo de texto es? <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea: cuento, fábula, carta, noticia o instructivo.</h3>
+/* La lista de tipos NO se escribe a mano: se saca de las respuestas del
+   propio grado. Escrita a mano, el grado que estrene un tipo nuevo (el
+   anuncio en 4º) le pediría al alumno una palabra que no está en la lista. */
+const tiposDelGrado = [...new Set(C.actEsp.tipos.map(t => t.tipo))].sort();
+B(`<h3>IV. ¿Qué tipo de texto es? <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea: ${tiposDelGrado.slice(0, -1).join(', ')} o ${tiposDelGrado[tiposDelGrado.length - 1]}.</h3>
 <ol>
 ${C.actEsp.tipos.map(t => `  <li>«${esc(t.fragmento)}» <span class="linea-resp"></span></li>`).join('\n')}
 </ol>`);
