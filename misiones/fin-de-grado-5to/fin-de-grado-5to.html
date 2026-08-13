@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Prueba de Fin de Grado: 5º Grado | policastsapien.com</title>
+<meta name="description" content="Misión Prueba de Fin de Grado de 5º grado: repasa Español y Matemáticas de todo el año con juegos, retos, evaluaciones con 20 formas y constancia. PolicastSapien.">
+<meta property="og:title" content="Misión Prueba de Fin de Grado: 5º Grado">
+<meta property="og:description" content="Repasa Español y Matemáticas de todo el año y llega listo a tu prueba. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/fin-de-grado-5to/fin-de-grado-5to.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/fin-de-grado-5to.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=repaso" class="xp-back-btn" title="Regresar a las misiones de Repaso General">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#7c3aed 0%,#1565c0 55%,#c49000 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🎓</div>
+      <div class="mascot-tooltip">¡Bienvenido al gran repaso! Español y Matemáticas de todo tu año, en una sola misión.</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Prueba de Fin de Grado: 5º Grado</span></h1>
+      <p class="sub">¡Repasa Español y Matemáticas de todo el año y llega listo a tu prueba! 🎯</p>
+      <div class="badge">🎯 Ruta de la Meta · Etapa 2 · Repaso General (Español y Matemáticas)</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de repasar, usa tu intuición. Así llegaba un alumno a la prueba de verdad: con lo que recuerda del año. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora repasa las reglas!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🎓 ¿Qué es la Prueba de Fin de Grado?</h2>
+    <p style="margin-bottom:0.7rem;">Al terminar el grado, la Secretaría de Educación aplica una prueba que junta <strong>todo lo del año</strong>: primero Matemáticas y después Español. Cada pregunta trae cuatro opciones y se contesta <strong>rellenando el círculo</strong> de la respuesta correcta. Esta misión repasa esos mismos temas, con preguntas nuevas.</p>
+    <div class="tip">
+      <span class="ti">🖊️</span>
+      <div><strong>La regla del examen:</strong> se elige UNA sola respuesta y se rellena su círculo completo. Nada de ✗ ni de marcar dos: una pregunta con dos marcas se cuenta mala.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">🧭</span>
+      <div><strong>La estrategia de los campeones:</strong> lee la pregunta completa, descarta las opciones imposibles, resuelve con calma y al final revisa que ninguna pregunta quede sin contestar.</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Así se ve una pregunta del examen</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Pregunta</span><span class="ds-val" style="font-size:0.95rem;">¿Qué fracción impropia es igual al número mixto 3 2/5?</span></div>
+        <div class="demo-arrow">descarto lo imposible ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Opciones</span><span class="ds-val" style="font-size:0.95rem;">a) 32/5 ✘ &nbsp; b) 17/5 &nbsp; c) 6/5 ✘ &nbsp; d) 5/17 ✘</span></div>
+        <div class="demo-arrow">= </div>
+        <div class="demo-step ds-end"><span class="ds-label">Respuesta</span><span class="ds-val" style="font-size:1rem;">b) 17/5 → relleno su círculo ⬤</span></div>
+      </div>
+      <p class="demo-note">✅ El 32/5 sale de pegar el 3 con el 2 sin hacer la cuenta: es la trampa favorita del examen. Lo correcto es 3 × 5 = 15, más el 2, son 17 quintos. ¡Tú ya no caes ahí!</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📖 Bloque de Español: leer con lupa</h2>
+    <p style="margin-bottom:0.6rem;">La prueba de Español es de <strong>comprensión lectora</strong>: textos cortos con preguntas. Vienen textos que informan, avisos, instructivos y descripciones, y cada pregunta se ataca distinto:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🎯 El tema del texto</h4>
+        <p>«¿De qué trata el texto?»</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Es lo que abarca TODO el texto, de la primera línea a la última. Si la opción solo aparece en un renglón, es un detalle y no el tema.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔍 Literal, causa e inferencia</h4>
+        <p>«Según el texto…» y «¿Por qué…?»</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">La literal está escrita tal cual: vuelve al texto y búscala. La causa y la inferencia se deducen con pistas del texto, no con lo que tú creas.</p>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">💬</span>
+      <div><strong>Por el contexto se sabe:</strong> «¿qué significa esta palabra en el texto?» Cambia la palabra por cada opción y vuelve a leer la oración: la correcta la deja diciendo lo mismo. Con las <strong>frases hechas</strong> es igual, pero no vale traducirlas palabra por palabra: «meter la pata» no habla de ninguna pata.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">📰</span>
+      <div><strong>¿Qué clase de texto es?:</strong> si da datos para aprender algo, informativo; si dice qué se va a hacer, dónde y cuándo, es un aviso; si trae materiales y pasos numerados, instructivo; si te lo hace ver como si estuviera delante, descripción.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 «Cuando le preguntaron quién había quebrado el cántaro, Elvin se hizo el desentendido y siguió barriendo el corredor.» ¿Qué quiere decir «se hizo el desentendido»?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! Hacerse el desentendido es fingir que uno no sabe nada del asunto. Por eso Elvin sigue barriendo como si nada.')">Fingió que no sabía nada</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'El texto no dice que se enojara: dice que siguió barriendo tranquilo. Las frases hechas se resuelven con la oración completa.')">Se enojó mucho</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'No se fue: el mismo texto dice que siguió barriendo el corredor.')">Salió corriendo de la casa</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>🔢 Bloque de Matemáticas: las cuentas del año</h2>
+    <p style="margin-bottom:0.6rem;">La prueba de Matemáticas junta <strong>fracciones, decimales, divisores y problemas</strong>. Lo que más cae:</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:left;font-family:'Fredoka',sans-serif;margin:0.6rem 0;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">📚 Tema</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">🔑 La clave</th>
+        </tr></thead>
+        <tbody>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Fracciones equivalentes</td><td style="padding:0.45rem;border:1px solid var(--border);">Multiplico arriba y abajo por el mismo número: 3/5 = 6/10 = 12/20 · valen lo mismo, solo están partidas en más pedazos</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Mixto ↔ impropia</td><td style="padding:0.45rem;border:1px solid var(--border);">3 2/5: multiplico 3 × 5 y le sumo 2 → 17/5 · al revés: 19/4 son 4 enteros y sobran 3, o sea 4 3/4</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Comparar fracciones</td><td style="padding:0.45rem;border:1px solid var(--border);">Si abajo son iguales, manda el de arriba: 5/8 es menor que 7/8. Si abajo son distintos, primero el mismo denominador · 5/8 y 2/3 son 15/24 y 16/24, así que 2/3 es la mayor</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Sumar y restar fracciones</td><td style="padding:0.45rem;border:1px solid var(--border);">Mismo denominador: solo trabajo arriba. Distinto: primero el común denominador · 1/2 + 1/3 = 3/6 + 2/6 = 5/6</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Multiplicar decimales</td><td style="padding:0.45rem;border:1px solid var(--border);">Multiplico sin punto y al final lo coloco contando las cifras decimales: 4.25 × 6 = 25.50 · por 10 el punto corre un lugar a la derecha</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Dividir un decimal</td><td style="padding:0.45rem;border:1px solid var(--border);">El punto del cociente va justo encima del punto del dividendo: 96.6 ÷ 7 = 13.8</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Divisores y primos</td><td style="padding:0.45rem;border:1px solid var(--border);">Divisores de 20: 1, 2, 4, 5, 10 y 20 · en factores primos: 20 = 2 × 2 × 5</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">m.c.m. y M.C.D.</td><td style="padding:0.45rem;border:1px solid var(--border);">Cosas que se repiten y vuelven a COINCIDIR → m.c.m.(6, 8) = 24 · repartir sin que sobre nada → M.C.D.(18, 24) = 6</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Números romanos</td><td style="padding:0.45rem;border:1px solid var(--border);">I, V, X, L, C, D, M · una letra menor DESPUÉS suma y ANTES resta: XI es 11 y IX es 9</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 Don Chepe riega su milpa cada 6 días y le echa abono cada 8 días. Hoy hizo las dos cosas. ¿Dentro de cuántos días le vuelven a tocar juntas por primera vez?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ahí sumaste 6 + 8. Coincidir no es sumar: hay que buscar el primer múltiplo que compartan los dos números.')">A los 14 días</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! Múltiplos de 6: 6, 12, 18, 24… y de 8: 8, 16, 24… El primero que comparten es 24, el m.c.m.')">A los 24 días</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'48 sale de multiplicar 6 × 8. Sí es un múltiplo común, pero no el MENOR: antes está el 24.')">A los 48 días</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📐 Geometría y datos: el círculo, el área y las gráficas</h2>
+    <p style="margin-bottom:0.6rem;">Las últimas preguntas de Matemáticas son de <strong>figuras, medidas y gráficas</strong>. Esto es lo que hay que llevar sabido:</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Partes del círculo</span>
+      <span class="ae-flecha">→ el radio va del centro al borde y el diámetro cruza entero →</span>
+      <span class="ae-res">radio 7 cm: el diámetro mide <strong>14 cm</strong>, siempre el doble</span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Ángulo central</span>
+      <span class="ae-flecha">→ tiene su vértice en el centro del círculo y sus dos lados son radios →</span>
+      <span class="ae-res">es el corte de un pastel: si se parte en 4 tajadas iguales, cada tajada abre un ángulo central de <strong>90°</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Área del rectángulo</span>
+      <span class="ae-flecha">→ largo × ancho →</span>
+      <span class="ae-res">9 cm por 4 cm: 9 × 4 = <strong>36 cm²</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Área del triángulo</span>
+      <span class="ae-flecha">→ base × altura ÷ 2 →</span>
+      <span class="ae-res">base 8 m y altura 5 m: 8 × 5 ÷ 2 = <strong>20 m²</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Perímetro del polígono regular</span>
+      <span class="ae-flecha">→ lado × número de lados, y al revés →</span>
+      <span class="ae-res">hexágono de lado 9 cm: 9 × 6 = <strong>54 cm</strong> · si el perímetro es 54, el lado es 54 ÷ 6 = <strong>9 cm</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Longitud de la circunferencia</span>
+      <span class="ae-flecha">→ 3.14 × diámetro →</span>
+      <span class="ae-res">diámetro 30 cm: 3.14 × 30 = <strong>94.2 cm</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">📊</span>
+      <div><strong>La recta y las gráficas:</strong> en la recta numérica, el tramo que va del 2 al 3 está partido en diez partes iguales y cada parte vale una décima; contando cinco desde el 2 se llega a 2.5, justo a la mitad. En una gráfica de líneas se busca primero el dato en la orilla de abajo y desde ahí se sube hasta el punto.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 El huerto de la escuela es un triángulo de 12 m de base y 5 m de altura. ¿Cuál es su área?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'60 es base × altura: eso es el rectángulo entero. Al triángulo todavía le falta dividir entre 2.')">60 m²</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Ahí sumaste 12 + 5. El área no se suma: se multiplica, y en el triángulo se divide entre 2 al final.')">17 m²</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! 12 × 5 = 60 y 60 ÷ 2 = 30 m². El triángulo es la mitad del rectángulo que lo encierra.')">30 m²</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>🖊️ La escritura también cuenta</h2>
+    <p style="margin-bottom:0.6rem;">La prueba de Español termina con <strong>dos ejercicios de escritura</strong>: escribir una <strong>carta</strong> con todas sus partes y escribir un <strong>anuncio</strong> que llame la atención. Ahí no hay opciones: cuentan tu <strong>ortografía</strong> y la <strong>claridad de tus ideas</strong>.</p>
+    <div class="tip">
+      <span class="ti">✉️</span>
+      <div><strong>Para la carta:</strong> no se le puede olvidar ninguna parte. Arriba el lugar y la fecha, «Comayagua, 20 de noviembre»; después el saludo, «Querida abuela:»; luego el cuerpo, que es lo que le quieres contar o pedir; al final la despedida, «Con cariño,» y tu nombre firmando abajo.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">📣</span>
+      <div><strong>Para el anuncio:</strong> pocas palabras y bien escogidas. Va qué se ofrece o qué se va a hacer, cuándo, dónde y a quién buscar. Un título corto en letra grande es lo que hace que la gente se detenga a leerlo.</div>
+    </div>
+    <p style="font-size:0.82rem;color:var(--gray);margin-top:0.6rem;">En la sección ✍️ Escritura de esta misión redactas en tu cuaderno y después te revisas con la pauta, como lo haría tu maestro.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Lo que cae en la prueba</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Diez tipos de pregunta cubren casi todo el examen. Si dominas estos diez, la prueba no te sorprende:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">📖 ¿De qué trata?</div><div class="t-info">El tema del texto: lo que abarca todo, no un detalle</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">💬 ¿Qué significa aquí?</div><div class="t-info">Palabras y frases hechas: la pista está en la oración</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔍 Según el texto…</div><div class="t-info">Literal, causa e inferencia: la respuesta vive en el texto</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">📰 Aviso e instructivo</div><div class="t-info">Qué clase de texto es y qué hay que hacer</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">✍️ ___ que falta</div><div class="t-info">Completar el texto: la palabra que encaja y concuerda</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">✉️ Carta y anuncio</div><div class="t-info">Escritura: la carta con todas sus partes y un anuncio que llame la atención</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">🍕 3 2/5 = 17/5</div><div class="t-info">Fracciones: equivalentes, mixtas, sumar, restar, comparar</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">💰 4.25 × 6 = 25.50</div><div class="t-info">Decimales: multiplicar, dividir y comprar en lempiras</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔁 m.c.m. · M.C.D. · XI</div><div class="t-info">Divisores, factores primos, coincidir, repartir y romanos</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">📐 C = 3.14 × diámetro</div><div class="t-info">El círculo, el área, el perímetro y las gráficas</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes: ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Los distractores del examen no son al azar: cada opción mala es un error que alguien comete de verdad. Estos son los seis favoritos:</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Restar fracciones «arriba y abajo»</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«3/4 − 1/3 = 2/1».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se restó 3 − 1 arriba y 4 − 3 abajo. Los denominadores no se restan: dicen de qué tamaño son las partes, y cuartos con tercios no se pueden juntar. Primero hay que dejar las dos con el mismo denominador.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>3/4 = 9/12 y 1/3 = 4/12, entonces 9/12 − 4/12 = <strong>5/12</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Pegar los números del número mixto</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«2 3/5 = 23/5».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se juntaron el 2 y el 3 como si fueran cifras de un mismo número. El entero hay que volverlo quintos: 2 enteros son 10 quintos, y a esos se les agregan los 3 que ya había.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2 × 5 = 10, más 3, son 13: 2 3/5 = <strong>13/5</strong> ✔ (comprueba: 23/5 pasaría de 4 enteros, y ahí solo hay 2)</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Multiplicar por 10 sin correr el punto</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«2.7 × 10 = 2.70».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Agregarle un cero a la derecha del punto no cambia nada: 2.70 vale exactamente lo mismo que 2.7. Al multiplicar por 10, lo que se mueve es el PUNTO, un lugar a la derecha.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2.7 × 10 = <strong>27</strong> ✔ (por 100 corre dos lugares: 2.7 × 100 = 270)</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Olvidar el «entre 2» del triángulo</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«El solar triangular mide 10 m de base y 6 m de altura: su área es 60 m²».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Base por altura da el rectángulo entero. El triángulo es la MITAD de ese rectángulo, así que falta el último paso.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>10 × 6 = 60 y 60 ÷ 2 = <strong>30 m²</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Meter el radio donde va el diámetro</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«La rueda de la carreta tiene 25 cm de radio: su circunferencia es 3.14 × 25 = 78.5 cm».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Esa fórmula corta trabaja con el DIÁMETRO, no con el radio. Si el problema da el radio, primero se saca el diámetro multiplicando por 2. Así, la respuesta salió a la mitad de lo que mide de verdad.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>diámetro = 2 × 25 = 50 cm, entonces 3.14 × 50 = <strong>157 cm</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 6: Confundir el tema del texto con un detalle</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>Un texto cuenta cómo se siembra el maíz en Honduras: se limpia la tierra con el machete, se siembra, se abona y al final se tapisca. El alumno contesta que el texto trata «del machete».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El machete aparece en un solo renglón: eso es un detalle. El tema es lo que abarca TODO el texto, del primer renglón al último. El distractor sale del texto a propósito, para que se vea creíble.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>el texto trata de <strong>cómo se siembra el maíz</strong> ✔ (pruébalo así: ¿de esto habla el texto entero, o solo una línea?)</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio 1: La pizza de fracciones</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Parte la pizza y sombrea porciones: mira las tres caras del mismo número, la fracción, el número mixto y el decimal. Con la segunda pizza puedes pasar del entero. ⭐ +2 XP por desafío logrado (primeros 5)</p>
+    <div id="widget-fraccion-lab"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>📐 Laboratorio 2: El taller del área</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Cambia las medidas del rectángulo, del triángulo y del círculo, y mira salir la cuenta del área y de la circunferencia. ⭐ +2 XP por desafío logrado (primeros 5)</p>
+    <div id="widget-area-lab"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards: Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria del Repaso</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o fórmula. ¡Español y Matemáticas mezclados!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>📖 El cuento del repaso</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">En la prueba de verdad hay un texto largo con varias preguntas. Lee el cuento completo y contesta las cuatro: idea principal, literal, inferencial y vocabulario. ⭐ +3 XP por acierto (primera vez)</p>
+    <div id="textoLargoWrap"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos, de las dos materias!</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica la palabra</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏛️ La máquina de los números romanos</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Unas veces te dan el número y otras las letras: escríbelo del otro modo. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-romanos"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🔎 El detective de la palabra</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Lee el mini-texto y toca la palabra que significa lo que se pide: así son las preguntas de vocabulario del examen. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-detective"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>📡 ¿m.c.m. o M.C.D.?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece una situación: decide en un toque si se resuelve con m.c.m. o con M.C.D. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-mcmmcd"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Escritura" onclick="go('s-explica')">
+    <span class="nsb-icon">✍️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Como en el examen de verdad!</span><span class="nsb-name">Escritura</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>✍️ Escritura: redacta como en el examen</h2>
+    <p style="margin-bottom:0.5rem;">La prueba de Español termina escribiendo. Aquí no hay opciones: debes <strong>redactar en tu cuaderno</strong> y luego revisarte con la pauta, como haría tu maestro.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada consigna (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final: ¡Clasifica contra el reloj! (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Aparece un elemento: decide a qué grupo pertenece antes de que el tiempo se acabe. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('A')"></button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('B')"></button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✔ 0 correctas | ✗ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés! Hay una sopa de Matemáticas y otra de Español.</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autoasígnate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="fracciones">🍕 Fracciones y números mixtos</option>
+        <option value="decimales">💰 Multiplicar y dividir decimales (lempiras)</option>
+        <option value="mcmmcd">🔁 Divisores, factores primos, m.c.m. y M.C.D.</option>
+        <option value="romanos">🏛️ Números romanos</option>
+        <option value="geometria">📐 Área, perímetro y circunferencia</option>
+        <option value="graficos">📊 Recta numérica y gráficos</option>
+        <option value="pensamiento">🧠 Pensamiento y escritura</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnMat" role="tab" aria-selected="true" onclick="evalSwitchMode('mat')">🔢 Prueba de Matemáticas</button>
+    <button class="eval-mode-btn" id="evalModeBtnEsp" role="tab" aria-selected="false" onclick="evalSwitchMode('esp')">📖 Prueba de Español</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2 id="eval-print-title">Evaluación de Repaso · Prueba de Fin de Grado 5º · Matemáticas</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación de Repaso</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Como en la prueba de verdad, hay una parte de <strong>Matemáticas</strong> y otra de <strong>Español</strong> (cámbialas con los botones de arriba). Resuélvela <strong>en línea</strong> y presiona <strong>Calificar prueba</strong>, o imprímela para resolverla en papel. Hay <strong>20 formas</strong>: cada forma genera siempre el mismo examen y su pauta.</p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas: Prueba Operativa · Repaso de Fin de Grado 5º · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 20 pts · III: 20 pts · IV: 30 pts · V: 10 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa: Repaso de Fin de Grado</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Cálculo puro: resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio para imprimir: repasa las dos materias del año con teoría, ejemplos resueltos, errores comunes, actividades y un simulacro de la prueba, más la pauta del maestro.</p>
+      <a href="../../fichas/ficha-fin-de-grado-5to.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Esta misión repasa el temario de la Prueba de Fin de Grado de 5º: comprensión lectora, vocabulario y frases hechas, clases de texto, escritura de la carta y del anuncio, fracciones equivalentes y números mixtos, sumar, restar y comparar fracciones, multiplicar y dividir decimales, divisores y factores primos, m.c.m. y M.C.D., números romanos, el círculo y su circunferencia, área del rectángulo y del triángulo, perímetro de polígonos regulares, recta numérica y gráficas de líneas. Para profundizar en un tema, visita su misión completa desde el catálogo: Las Fracciones, Números Decimales, División de Decimales, Múltiplos, Divisores y Primos, Teoría de Números: Divisibilidad, m.c.m. y M.C.D., Recta Numérica, Suma y Resta, Perímetro y Área de Cuadriláteros, Área de Polígonos Regulares, Área de Círculos y Polígonos, Los Tipos de Textos, y las misiones de la Ruta de la Palabra.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Prueba de Fin de Grado: 5º Grado</div>
+    <div class="diploma-mascot" aria-hidden="true">🎓</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> La prueba</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">✍️</span> Escritura</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <!-- Fracciones escritas como en el cuaderno: numerador arriba y raya en medio -->
+  <script src="../../js/metas-fracciones.js"></script>
+  <script src="js/fin-de-grado-5to.js"></script>
+  <!-- Accesibilidad de aula compartida + registro local de evidencia (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+
+</body>
+</html>

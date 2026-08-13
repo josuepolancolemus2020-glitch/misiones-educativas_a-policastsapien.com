@@ -1,0 +1,1578 @@
+{
+ "meta": {
+  "grado": "5º",
+  "ciclo": "Educación Básica, 5º grado",
+  "qr": "qr-mision-fin-de-grado-5to.png",
+  "tema": "Repaso general del año: fracciones equivalentes y números mixtos, sumas y restas de fracciones, decimales, números romanos, divisores y múltiplos, el círculo, los polígonos, el área y el perímetro; comprensión lectora, vocabulario, tipos de texto y escritura",
+  "objetivos": [
+   "Reconocer y escribir <strong>fracciones equivalentes</strong> y simplificar una fracción hasta dejarla en su forma más sencilla.",
+   "Convertir un <strong>número mixto en fracción impropia</strong> y una <strong>fracción impropia en número mixto</strong>.",
+   "<strong>Sumar y restar fracciones</strong> de igual y de distinto denominador, incluso tres a la vez y con números mixtos.",
+   "<strong>Comparar y ordenar fracciones</strong> y reconocer qué dibujo representa una fracción.",
+   "<strong>Multiplicar decimales</strong> colocando bien el punto, y multiplicar por 10 y por 100.",
+   "<strong>Dividir un decimal entre un número entero</strong> y resolver compras con lempiras.",
+   "Leer y escribir <strong>números romanos</strong>.",
+   "Hallar los <strong>divisores</strong> de un número, descomponerlo en <strong>factores primos</strong> y saber cuándo se usa el <strong>M.C.D.</strong> y cuándo el <strong>m.c.m.</strong>",
+   "Reconocer los elementos del <strong>círculo</strong>: radio, diámetro, circunferencia y ángulo central.",
+   "Nombrar los <strong>polígonos</strong> por su número de lados y de ángulos, y calcular el <strong>perímetro</strong> de un polígono regular.",
+   "Calcular el <strong>área</strong> del rectángulo y del triángulo y la <strong>longitud de la circunferencia</strong> usando 3.14.",
+   "Hallar el <strong>tema</strong> de un texto, contestar preguntas <strong>literales e inferenciales</strong>, descubrir el significado de una <strong>palabra o una frase por el contexto</strong>, reconocer los <strong>tipos de texto</strong> y escribir una <strong>carta</strong> y un <strong>anuncio</strong>."
+  ],
+  "comoEs": "La Secretaría de Educación aplica esta prueba al terminar el grado. Primero contestas la parte de\n<strong>Matemáticas</strong>, después hay un <strong>receso de veinte minutos</strong>, y luego la de <strong>Español</strong>.\nCada pregunta trae cuatro opciones y una sola es correcta. Al final de Español hay <strong>dos ejercicios de\nescritura</strong> donde no hay opciones: en quinto grado son una <strong>carta</strong> y un <strong>anuncio</strong>,\ny ahí escribes tú.",
+  "felicitacion": "Recorriste las dos materias que se evalúan en la\n  Prueba de Fin de Grado: las fracciones equivalentes y los números mixtos, las sumas y las restas de fracciones,\n  los decimales, los números romanos, los divisores y los múltiplos, el círculo, los polígonos, el área y el\n  perímetro; y el tema del texto, lo que el texto dice y lo que deja entender, el significado por el contexto,\n  los tipos de texto y tu propia escritura. Llegas listo. 🎓✨"
+ },
+ "teoriaMat": {
+  "bloques": [
+   {
+    "titulo": "🍕 Fracciones: equivalentes, mixtas, sumadas y restadas",
+    "intro": "Una fracción dice en cuántos pedazos iguales partiste algo y cuántos tomaste. El de abajo, el denominador, dice el tamaño del pedazo; el de arriba, el numerador, dice cuántos agarraste. Dos fracciones distintas pueden valer lo mismo: media tortilla es 1/2 y también 2/4, porque se partió más chico pero se tomaron más pedazos. Esas son las fracciones equivalentes. Cuando el numerador es mayor que el denominador, la fracción pasa de un entero y también se puede escribir como número mixto: un entero con su fracción al lado. Para comparar dos fracciones, o para sumarlas y restarlas, los pedazos tienen que ser del mismo tamaño; por eso lo primero que se busca es un denominador común. En la pulpería lo compruebas sin cuentas: si pides 3/4 de libra de queso te dan más que si pides 2/3, porque con denominador 12 son 9/12 contra 8/12.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Lo que le haces al numerador se lo haces al denominador. Si multiplicas los dos por el mismo número, o si los divides entre el mismo número, la fracción cambia de cara pero vale igual: 2/3 = 8/12, porque los dos se multiplicaron por 4."
+     },
+     {
+      "tipo": "truco",
+      "texto": "De número mixto a fracción impropia: multiplica el entero por el denominador y súmale el numerador; el denominador no cambia. De fracción impropia a número mixto: divide arriba entre abajo; el cociente es el entero y el residuo se queda arriba."
+     },
+     {
+      "tipo": "regla",
+      "texto": "Para sumar o restar con el mismo denominador, se operan solo los numeradores y el denominador se queda quieto: el denominador nunca se suma. Si los denominadores son distintos, primero se busca el m.c.m., se convierten las dos fracciones y hasta entonces se opera."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Convierte 23/4 a número mixto y 3 2/5 a fracción impropia.",
+      "pasos": [
+       "Para el primero, divide: 23 ÷ 4 da 5 y sobran 3, porque 4 x 5 = 20 y de 20 a 23 hay 3.",
+       "El cociente 5 es el entero y el residuo 3 se queda arriba, con el mismo denominador: 5 3/4.",
+       "Para el segundo, multiplica el entero por el denominador: 3 x 5 = 15.",
+       "Súmale el numerador: 15 + 2 = 17. El denominador no se toca, así que queda 17/5."
+      ],
+      "resultado": "23/4 es 5 3/4, y 3 2/5 es 17/5."
+     },
+     {
+      "enunciado": "Don Vicente caminó 2 1/2 kilómetros en la mañana y 1 3/4 kilómetros en la tarde. ¿Cuánto caminó en todo el día?",
+      "pasos": [
+       "Vuelve impropia cada fracción mixta: 2 x 2 + 1 = 5, o sea 5/2; y 1 x 4 + 3 = 7, o sea 7/4.",
+       "Busca denominador común: el m.c.m. de 2 y 4 es 4. Entonces 5/2 = 10/4, y 7/4 se queda igual.",
+       "Suma solo los numeradores: 10/4 + 7/4 = 17/4.",
+       "Vuelve a número mixto: 17 ÷ 4 da 4 y sobra 1, o sea 4 1/4. Revisa que tenga sentido: caminó más de 4 kilómetros, y eso es más que cada tramo por separado."
+      ],
+      "resultado": "Caminó 4 1/4 kilómetros en todo el día."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Lo que te piden",
+      "Qué haces",
+      "Ejemplo"
+     ],
+     "filas": [
+      [
+       "Una fracción equivalente",
+       "Multiplica arriba y abajo por el mismo número",
+       "3/4 se vuelve 9/12"
+      ],
+      [
+       "Simplificar",
+       "Divide arriba y abajo entre el mismo número",
+       "18/24 se vuelve 3/4"
+      ],
+      [
+       "De mixto a impropia",
+       "El entero por el denominador, más el numerador",
+       "2 3/5 se vuelve 13/5"
+      ],
+      [
+       "De impropia a mixto",
+       "Divide: el cociente entero y el residuo arriba",
+       "19/6 se vuelve 3 1/6"
+      ],
+      [
+       "Comparar dos fracciones",
+       "Ponlas con el mismo denominador y mira arriba",
+       "5/8 y 2/3 son 15/24 y 16/24"
+      ],
+      [
+       "Sumar o restar",
+       "Igual denominador, solo arriba; distinto, m.c.m. primero",
+       "5/6 menos 3/8 = 20/24 menos 9/24 = 11/24"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Como 11 es mayor que 8, la fracción 9/11 es mayor que 9/8.",
+     "porque": "Comparaste los denominadores como si fueran cantidades sueltas. El denominador dice el tamaño del pedazo, y mientras más grande es ese número, más chiquito es el pedazo. Fíjate además que 9/8 pasa de un entero y 9/11 todavía no lo completa: ahí ya se ve cuál es mayor.",
+     "bien": "Se ponen las dos con el mismo denominador, o se piensa en enteros: 9/8 es un entero y un pedacito más, mientras que a 9/11 le faltan dos onceavos para llegar al entero. Entonces 9/8 es la mayor."
+    }
+   },
+   {
+    "titulo": "💰 Decimales, la recta numérica y los números romanos",
+    "intro": "El punto decimal separa los enteros de los pedazos: la primera cifra después del punto es la de los décimos, la segunda la de los centésimos y la tercera la de los milésimos. Por eso el dinero se escribe con dos cifras después del punto. Para multiplicar y dividir decimales el trabajo es el mismo de siempre; lo único nuevo es dónde queda el punto. Los decimales también se ven en la recta numérica: el tramo entre dos enteros se parte en diez pedacitos iguales, cada rayita es un décimo y la de en medio es el punto cinco, así que la flecha parada justo en medio del 2 y el 3 señala 2.5. Y hay otra forma de escribir números que todavía se usa en los relojes, en los capítulos de los libros y en los siglos: los números romanos.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Al multiplicar decimales, multiplica como si no hubiera punto y después cuenta cuántas cifras decimales traían los factores juntos: esas mismas van en la respuesta. Multiplicar por 10 es más rápido todavía, porque el punto solo corre un lugar a la derecha; por 100, dos lugares."
+     },
+     {
+      "tipo": "regla",
+      "texto": "Al dividir un decimal entre un número entero, divide como siempre y sube el punto al resultado justo arriba del punto del dividendo. Si al bajar una cifra no alcanza para dividir, se escribe un cero en el cociente y se sigue."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Los números romanos se leen de izquierda a derecha sumando, pero cuando una letra menor va delante de una mayor, se resta: XI es 10 + 1 = 11 y IX es 10 menos 1 = 9. Las letras I, X y C se repiten hasta tres veces seguidas; V, L y D no se repiten nunca."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "En la pulpería el litro de leche cuesta L.24.75. Doña Lidia se lleva 6 litros. ¿Cuánto paga?",
+      "pasos": [
+       "Multiplica sin fijarte en el punto: 2475 x 6 = 14850.",
+       "Cuenta las cifras decimales de los factores: 24.75 tiene dos y el 6 no tiene ninguna, o sea dos en total.",
+       "Corre el punto dos lugares desde la derecha en 14850 y queda 148.50.",
+       "Revisa si tiene sentido: 6 litros a casi L.25.00 cada uno andan por los L.150.00, así que el resultado calza."
+      ],
+      "resultado": "Doña Lidia paga L.148.50."
+     },
+     {
+      "enunciado": "Cinco compañeros pagaron entre todos L.96.75 por el material del cartel, en partes iguales. ¿Cuánto puso cada uno?",
+      "pasos": [
+       "Es un reparto en partes iguales, así que se divide: 96.75 ÷ 5.",
+       "Divide cifra por cifra como si fueran enteros: 9 entre 5 da 1 y sobran 4; con el 6 se hace 46, que entre 5 da 9 y sobra 1.",
+       "Ya se acabaron los enteros: el punto del resultado va justo arriba del punto del dividendo. Se sigue bajando: 17 entre 5 da 3 y sobran 2; con el 5 se hace 25, que entre 5 da 5 exacto.",
+       "Queda 19.35. Comprueba multiplicando: 19.35 x 5 = 96.75."
+      ],
+      "resultado": "Cada uno puso L.19.35."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Letra",
+      "Cuánto vale",
+      "Cómo se ve escrita"
+     ],
+     "filas": [
+      [
+       "I",
+       "1",
+       "III es 3 y IV es 4, porque el I delante del V resta"
+      ],
+      [
+       "V",
+       "5",
+       "VII es 7 y IX es 9"
+      ],
+      [
+       "X",
+       "10",
+       "XI es 11, XIV es 14 y XL es 40"
+      ],
+      [
+       "L",
+       "50",
+       "LX es 60 y XC es 90"
+      ],
+      [
+       "C",
+       "100",
+       "CL es 150 y CD es 400"
+      ],
+      [
+       "M",
+       "1000",
+       "MM es 2000"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Escribir el 40 en números romanos así: XXXX.",
+     "porque": "La X se puede repetir hasta tres veces seguidas, no cuatro. Cuando hacen falta cuatro, se usa la resta: se pone la letra chica delante de la grande.",
+     "bien": "El 40 se escribe XL, que es 50 menos 10. Por lo mismo, el 9 es IX y no VIIII, y el 400 es CD y no CCCC."
+    }
+   },
+   {
+    "titulo": "🔎 Divisores, factores primos, M.C.D. y m.c.m.",
+    "intro": "Un divisor de un número es el que cabe en él exacto, sin dejar residuo. Los divisores salen por parejas, y por eso se encuentran rápido: para el 45 basta con probar 1 x 45, 3 x 15 y 5 x 9, y ya están todos. Un número primo es el que solo tiene dos divisores, el 1 y él mismo; los demás son compuestos y se pueden partir en factores primos, que es como sacarles las piezas con que están hechos. De ahí salen las dos preguntas que más se confunden en la prueba: el máximo común divisor sirve para REPARTIR en grupos iguales sin que sobre nada, y el mínimo común múltiplo sirve para saber cuándo dos cosas que se repiten vuelven a COINCIDIR el mismo día.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Para hallar todos los divisores de un número, prueba desde el 1 y anótalos por parejas: cada vez que uno cabe exacto, su compañero también es divisor. Cuando las parejas empiezan a repetirse, ya no hay más."
+     },
+     {
+      "tipo": "idea",
+      "texto": "En la descomposición en factores primos TODOS los factores tienen que ser primos: 2, 3, 5, 7, 11. Se va dividiendo entre el primo más pequeño que quepa, hasta llegar a 1."
+     },
+     {
+      "tipo": "truco",
+      "texto": "El M.C.D. sale igual o más pequeño que el menor de los números, y sirve para repartir. El m.c.m. sale igual o más grande que el mayor, y sirve para volver a coincidir. Si tu respuesta sale al otro lado, contestaste la pregunta cambiada."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Escribe todos los divisores de 48 y descompón el 48 en sus factores primos.",
+      "pasos": [
+       "Busca las parejas que dan 48: 1 x 48, 2 x 24, 3 x 16, 4 x 12 y 6 x 8. El 5 no cabe exacto y el 7 tampoco.",
+       "Ordena lo encontrado: 1, 2, 3, 4, 6, 8, 12, 16, 24 y 48. Son diez divisores.",
+       "Ahora las piezas: 48 ÷ 2 = 24, 24 ÷ 2 = 12, 12 ÷ 2 = 6, 6 ÷ 2 = 3 y 3 ÷ 3 = 1.",
+       "Junta los primos que usaste: 2 x 2 x 2 x 2 x 3. Comprueba multiplicando: 16 x 3 = 48."
+      ],
+      "resultado": "Los divisores son 1, 2, 3, 4, 6, 8, 12, 16, 24 y 48, y 48 = 2 x 2 x 2 x 2 x 3."
+     },
+     {
+      "enunciado": "En la escuela hay que repartir 42 cuadernos y 56 lápices en paquetes iguales, sin que sobre nada. ¿Cuántos paquetes salen como máximo y qué lleva cada uno?",
+      "pasos": [
+       "Como se trata de repartir sin que sobre, la pregunta es de M.C.D.",
+       "Divisores de 42: 1, 2, 3, 6, 7, 14, 21 y 42. Divisores de 56: 1, 2, 4, 7, 8, 14, 28 y 56.",
+       "El mayor que aparece en las dos listas es 14: ese es el M.C.D.",
+       "Reparte: 42 ÷ 14 = 3 cuadernos y 56 ÷ 14 = 4 lápices en cada paquete."
+      ],
+      "resultado": "Salen 14 paquetes, cada uno con 3 cuadernos y 4 lápices."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Número",
+      "Todos sus divisores",
+      "En factores primos"
+     ],
+     "filas": [
+      [
+       "12",
+       "1, 2, 3, 4, 6, 12",
+       "2 x 2 x 3"
+      ],
+      [
+       "18",
+       "1, 2, 3, 6, 9, 18",
+       "2 x 3 x 3"
+      ],
+      [
+       "24",
+       "1, 2, 3, 4, 6, 8, 12, 24",
+       "2 x 2 x 2 x 3"
+      ],
+      [
+       "30",
+       "1, 2, 3, 5, 6, 10, 15, 30",
+       "2 x 3 x 5"
+      ],
+      [
+       "36",
+       "1, 2, 3, 4, 6, 9, 12, 18, 36",
+       "2 x 2 x 3 x 3"
+      ],
+      [
+       "50",
+       "1, 2, 5, 10, 25, 50",
+       "2 x 5 x 5"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Escribir que el 24 en factores primos es 4 x 6.",
+     "porque": "Es cierto que 4 x 6 = 24, pero ni el 4 ni el 6 son primos: los dos se pueden partir todavía más. La descomposición se termina cuando ya no queda ningún número compuesto.",
+     "bien": "Se sigue partiendo: el 4 es 2 x 2 y el 6 es 2 x 3. Entonces 24 = 2 x 2 x 2 x 3, y ahí sí todos son primos."
+    }
+   },
+   {
+    "titulo": "📐 El círculo, los polígonos, el área y el perímetro",
+    "intro": "El perímetro es el contorno de una figura, lo que mide el alambre que la rodea, y se mide en centímetros o en metros. El área es la superficie que cubre, lo que se pisa o se siembra, y se mide en unidades cuadradas. En el círculo hay cuatro palabras que la prueba pregunta seguido: el radio va del centro al borde, el diámetro atraviesa el círculo pasando por el centro y mide dos radios, la circunferencia es la línea que lo rodea y el ángulo central es el que tiene su punta en el centro y sus lados son dos radios, como el corte de un pastel. Los polígonos se nombran por su número de lados, y tienen tantos ángulos como lados; si el polígono es regular, todos sus lados miden lo mismo.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Área del rectángulo: base por altura. Área del triángulo: base por altura y el resultado entre dos, porque el triángulo es la mitad del rectángulo que lo encierra."
+     },
+     {
+      "tipo": "regla",
+      "texto": "La longitud de la circunferencia es 3.14 por el diámetro. Si lo que te dan es el radio, primero lo duplicas: 2 por 3.14 por el radio."
+     },
+     {
+      "tipo": "truco",
+      "texto": "En un polígono regular todos los lados son iguales, así que el perímetro es el lado por el número de lados. Y al revés: el lado es el perímetro dividido entre el número de lados."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "El techo de la champa de la escuela tiene forma de triángulo: la base mide 9 metros y la altura 4 metros. ¿Cuál es su área?",
+      "pasos": [
+       "El área del triángulo es la base por la altura, y todo eso dividido entre dos.",
+       "Multiplica primero: 9 x 4 = 36.",
+       "Divide entre dos: 36 ÷ 2 = 18.",
+       "Como estás midiendo área, la unidad va al cuadrado: metros cuadrados."
+      ],
+      "resultado": "El techo tiene 18 metros cuadrados de área."
+     },
+     {
+      "enunciado": "El reloj del aula es redondo y su radio mide 15 centímetros. ¿Cuánto mide el contorno del reloj? Usa pi = 3.14.",
+      "pasos": [
+       "El contorno de un círculo es la circunferencia, y la fórmula trabaja con el diámetro.",
+       "El diámetro es dos radios: 15 x 2 = 30 centímetros.",
+       "Multiplica por 3.14: 3.14 x 30 = 94.2.",
+       "El contorno es una línea, así que la unidad va sencilla: centímetros, no centímetros cuadrados."
+      ],
+      "resultado": "El contorno del reloj mide 94.2 centímetros."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Polígono",
+      "Lados",
+      "Ángulos"
+     ],
+     "filas": [
+      [
+       "Pentágono",
+       "5",
+       "5"
+      ],
+      [
+       "Hexágono",
+       "6",
+       "6"
+      ],
+      [
+       "Heptágono",
+       "7",
+       "7"
+      ],
+      [
+       "Octágono",
+       "8",
+       "8"
+      ],
+      [
+       "Eneágono",
+       "9",
+       "9"
+      ],
+      [
+       "Decágono",
+       "10",
+       "10"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "El área de un triángulo de 9 metros de base y 4 metros de altura es 36 metros cuadrados.",
+     "porque": "Se te quedó el paso de dividir entre dos. Ese 36 es el área del RECTÁNGULO completo; el triángulo es la mitad de esa figura, así que su área tiene que salir la mitad.",
+     "bien": "9 x 4 = 36 y 36 ÷ 2 = 18. El área del triángulo es 18 metros cuadrados."
+    }
+   }
+  ]
+ },
+ "teoriaEsp": {
+  "bloques": [
+   {
+    "titulo": "🎯 El tema del texto: de qué trata todo, no una línea",
+    "intro": "Al terminar de leer, la prueba te pregunta de qué trata el texto. La respuesta correcta es una sola oración que cubre TODO lo que leíste, de la primera línea a la última. Si contestas con un dato suelto, contestaste un detalle: también está en el texto, también es verdad, pero solo ocupa un renglón. Los detalles no sobran, están ahí para explicar el tema y darle ejemplos, pero no lo sustituyen. En la prueba esta pregunta se disfraza de varias maneras: de qué trata el texto, cuál es el mejor título, de qué habla principalmente. Las tres piden lo mismo.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "El tema cubre el texto completo. Si al leer la opción te sobra texto por fuera, o sea si quedan renglones que esa opción no toca, entonces es un detalle y no el tema."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Ponle título mental al texto en cinco palabras, antes de mirar las opciones. Después busca la opción que se parezca a tu título. Así llegas con una respuesta pensada y no te dejas llevar por la primera que suena conocida."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Cuidado con la opción verdadera pero chiquita. Casi siempre hay un distractor copiado del texto, con sus mismas palabras, que el alumno siente seguro porque lo reconoce. Verdadero no es lo mismo que principal."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "En la escuela de la aldea San José, los alumnos de quinto barren el aula, riegan las matas del corredor y sacan la basura a la fosa. Cada semana le toca a una fila distinta. La maestra pegó en la pared una lista con los nombres y el día de cada quien. Desde que está la lista, nadie discute a quién le toca. Pregunta: ¿de qué trata el texto?",
+      "pasos": [
+       "Pregunto de quién o de qué habla el texto: del aseo del aula.",
+       "Pregunto qué dice de eso: que los alumnos se lo reparten por turnos apuntados en una lista.",
+       "Junto las dos respuestas en una oración y reviso que cubra todo: el barrido, las matas, la basura, los turnos y la lista caben adentro.",
+       "Descarto los detalles: que rieguen las matas es cierto, pero es una sola tarea de las tres que nombra el texto."
+      ],
+      "resultado": "El texto trata de cómo los alumnos de quinto se reparten el aseo del aula por turnos, porque esa oración abarca todos los renglones."
+     },
+     {
+      "enunciado": "Doña Tomasa vende pan de coco a la orilla de la carretera, cerca de La Ceiba. Hornea desde las tres de la mañana en un horno de barro que le hizo su papá. A las seis ya tiene las canastas llenas y a las diez no le queda nada. Con ese pan levantó su casa y sacó adelante a sus cuatro hijos. Pregunta: ¿cuál es el mejor título para este texto?",
+      "pasos": [
+       "Busco de qué habla: del trabajo de doña Tomasa vendiendo pan de coco.",
+       "Busco qué dice: que madruga a hornear, que vende todo temprano y que de ahí ha vivido su familia.",
+       "Descarto el título que solo toma una parte, como El horno de barro de su papá: eso ocupa medio renglón.",
+       "Descarto el título demasiado general, como La carretera a La Ceiba: no dice nada de lo que el texto cuenta."
+      ],
+      "resultado": "El mejor título es El pan de coco de doña Tomasa, porque nombra el trabajo del que habla el texto entero."
+     }
+    ],
+    "tabla": {
+     "titulo": "Cómo se descartan las opciones",
+     "encabezados": [
+      "Si la opción dice...",
+      "¿Abarca todo el texto?",
+      "Entonces es..."
+     ],
+     "filas": [
+      [
+       "Una fecha, un nombre o un número",
+       "No, ocupa un renglón",
+       "Un detalle"
+      ],
+      [
+       "Lo que hace un solo personaje",
+       "No, si el texto habla de más cosas",
+       "Un detalle"
+      ],
+      [
+       "De qué habla el texto y qué dice de eso",
+       "Sí, de la primera línea a la última",
+       "El tema"
+      ],
+      [
+       "Algo que el texto ni siquiera menciona",
+       "No aparece por ningún lado",
+       "Una opción para descartar"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Contestar que el texto de la escuela trata de que la maestra pegó una lista en la pared.",
+     "porque": "Es verdad y está escrito, y por eso se siente segura. Pero la lista es una sola oración del texto: deja fuera el barrido, las matas, la basura y los turnos.",
+     "bien": "Antes de rellenar el círculo, pregúntate si esa opción cubre el texto entero. Si te sobran renglones por fuera, es un detalle."
+    }
+   },
+   {
+    "titulo": "🔍 Lo que el texto dice, lo que describe y lo que hay que deducir",
+    "intro": "Las preguntas de comprensión vienen de tres clases y conviene reconocerlas por cómo empiezan. La literal te pide algo escrito con todas sus letras: la buscas y la subrayas. La de descripción te pregunta cómo era una cosa, un lugar o un personaje: la respuesta también está escrita, pero repartida en las palabras con que el autor lo pinta. Y la inferencial te pide algo que el autor no escribió pero dejó ver: la deduces juntando pistas. En las tres la respuesta se sostiene en el texto, nunca en lo que tú te imaginas: si no puedes señalar con el dedo dónde la encontraste, todavía no es tu respuesta.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Cuando la pregunta dice según el texto, la respuesta está escrita. Búscala, subráyala y hasta entonces mira las opciones."
+     },
+     {
+      "tipo": "truco",
+      "texto": "En las preguntas de cómo era, junta los adjetivos que el texto usa. Si el texto dice angosto y de piedra suelta, la respuesta se parece a eso, no a bonito ni a peligroso, aunque tú te lo imagines así."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Una inferencia no es adivinar: es la única conclusión razonable que sale de las pistas. Y en las preguntas de por qué, cree más en lo que el personaje HACE que en lo que dice."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Aquella tarde el río creció de repente y la bestia de don Juan quedó del otro lado, amarrada a un guayabo. Tres hombres se acercaron a la orilla y se devolvieron: el agua venía muy fuerte. Doña Ercilia, que no sabe nadar, se metió agarrada de un lazo y trajo la bestia jalándola. Esa bestia era todo lo que la familia tenía. Pregunta: ¿por qué doña Ercilia se metió al río?",
+      "pasos": [
+       "Reviso si la respuesta está escrita: el texto nunca dice el motivo, así que la pregunta es inferencial.",
+       "Junto la primera pista: no sabe nadar y aun así entró, cuando tres hombres se habían devuelto.",
+       "Junto la segunda pista: esa bestia era todo lo que la familia tenía.",
+       "Deduzco lo único razonable: se arriesgó porque de ese animal vive su familia, no porque no viera el peligro."
+      ],
+      "resultado": "Se metió porque la bestia era el único bien de su familia, y eso se sostiene con dos cosas que el texto sí cuenta: que no sabe nadar y entró igual, y que de ese animal dependían todos."
+     },
+     {
+      "enunciado": "El camino que sube a la aldea es angosto y de pura piedra suelta. Cuando llueve se pone resbaloso y el carro no agarra. Los que suben a pie llegan con los zapatos blancos de polvo en verano y con lodo hasta la rodilla en invierno. Pregunta: según el texto, ¿cómo es el camino?",
+      "pasos": [
+       "Miro cómo empieza la pregunta: dice según el texto, así que la respuesta está escrita.",
+       "Busco las palabras con que el autor lo describe: angosto, de piedra suelta, resbaloso cuando llueve.",
+       "Descarto lo que yo me imagino: el texto no dice que sea bonito, ni corto, ni peligroso.",
+       "Escojo la opción que use esas mismas palabras o unas que signifiquen lo mismo."
+      ],
+      "resultado": "El camino es angosto, pedregoso y resbaloso cuando llueve, y así lo dicen las dos primeras oraciones del texto."
+     }
+    ],
+    "tabla": {
+     "titulo": "Cómo se pregunta cada una",
+     "encabezados": [
+      "La pregunta dice...",
+      "Qué te piden",
+      "Qué haces"
+     ],
+     "filas": [
+      [
+       "Según el texto, ¿qué?, ¿dónde?, ¿cuándo?",
+       "Un dato escrito",
+       "Lo buscas y lo subrayas"
+      ],
+      [
+       "¿Cómo era?, ¿cómo son?",
+       "La descripción escrita",
+       "Juntas los adjetivos que usa el texto"
+      ],
+      [
+       "¿Por qué?, ¿para qué?",
+       "La causa o la intención",
+       "Juntas dos pistas y deduces"
+      ],
+      [
+       "¿Qué se puede deducir?",
+       "Lo que el texto deja ver",
+       "Miras lo que el personaje hace"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Contestar que la montaña del texto era bonita, porque el alumno se imagina las montañas así.",
+     "porque": "Trajo su propia idea en vez de leer las palabras del texto. En una prueba de lectura no se califica lo que uno se imagina: se califica lo que el texto dice.",
+     "bien": "Se subrayan las palabras con que el texto describe la montaña, por ejemplo empinada y llena de rocas, y se escoge la opción que diga eso mismo."
+    }
+   },
+   {
+    "titulo": "🔤 La palabra que no conoces, la frase hecha y la palabra que falta",
+    "intro": "En la prueba hay tres preguntas parecidas y las tres se resuelven leyendo la oración completa. En la primera te subrayan una palabra difícil y te preguntan qué significa AHÍ, en ese texto: la respuesta está en las palabras que la rodean, o sea en su contexto. En la segunda te subrayan una frase entera, de esas cuyas palabras juntas significan otra cosa, como quedarse con la boca abierta: esas no se entienden palabra por palabra, se entienden completas. Y en la tercera te dan un texto con un espacio en blanco y cuatro palabras para escoger: ahí hay que fijarse en dos cosas, que la palabra tenga sentido y que concuerde en género y en número con lo que la acompaña. En las tres sirve la misma técnica: sustituir, o sea meter cada opción en el lugar y leer la oración entera.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "La misma palabra cambia de significado según el texto. Banco puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que ya sabes: busca el que sirve ahí."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Técnica de sustituir: tapa la palabra o el espacio en blanco con el dedo, mete la opción A y lee la oración completa; después la B, la C y la D. Descarta las que suenan raras, las que no concuerdan y las que cambian lo que pasa."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Fíjate en las palabras vecinas que avisan. Es decir y o sea traen la explicación pegada. Pero y en cambio traen lo contrario. Como e igual que traen una comparación. Y los dos puntos casi siempre traen el significado servido."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "El camión venía cargado de sandías y en la subida el motor empezó a resollar. Don Beto le bajó el cambio, pero a media cuesta se quedó parado. Tuvieron que bajar la mitad de la carga para que pudiera seguir. Pregunta: en el texto, la palabra resollar significa:",
+      "pasos": [
+       "Leo la oración completa: en la subida el motor empezó a resollar.",
+       "Busco las pistas del vecindario: venía muy cargado, iba en subida, se quedó parado y tuvieron que bajarle carga.",
+       "Junto las pistas: todas hablan de un motor haciendo un esfuerzo que no aguanta.",
+       "Sustituyo para comprobar: en la subida el motor empezó a sonar con esfuerzo. Encaja y explica lo que pasa después."
+      ],
+      "resultado": "Resollar significa respirar o sonar con esfuerzo, porque el texto lo rodea de pistas de que el motor no daba más."
+     },
+     {
+      "enunciado": "El zompopo corta pedacitos de hoja y se los lleva al hormiguero. Con esas hojas no se alimenta: adentro del nido las ___ y sobre ellas crece un hongo, que es lo que de verdad come. Pregunta: ¿qué palabra falta para completar el texto? Las opciones son: vende, mastica, mastican, dibuja.",
+      "pasos": [
+       "Leo la oración entera, incluso lo que viene después del espacio: sobre ellas crece un hongo.",
+       "Pruebo por el sentido: vende y dibuja no tienen nada que ver con lo que hace un zompopo con las hojas.",
+       "Me quedan mastica y mastican, que significan lo mismo pero no están en el mismo número.",
+       "Miro quién hace la acción: el zompopo, uno solo. Entonces el verbo va en singular."
+      ],
+      "resultado": "La palabra que falta es mastica, porque tiene sentido con el hongo que crece encima y concuerda con el zompopo, que está en singular."
+     }
+    ],
+    "tabla": {
+     "titulo": "Frases hechas que se preguntan seguido",
+     "encabezados": [
+      "La frase",
+      "Qué significa de verdad",
+      "Ejemplo"
+     ],
+     "filas": [
+      [
+       "Quedarse con la boca abierta",
+       "Asombrarse mucho",
+       "Se quedó con la boca abierta al ver el arcoíris"
+      ],
+      [
+       "No pegar el ojo",
+       "No poder dormir",
+       "No pegó el ojo con el ruido del aguacero"
+      ],
+      [
+       "Echar una mano",
+       "Ayudar",
+       "Le echó una mano con la leña"
+      ],
+      [
+       "Meter la pata",
+       "Equivocarse",
+       "Metió la pata y dijo el nombre cambiado"
+      ],
+      [
+       "Costar un ojo de la cara",
+       "Ser muy caro",
+       "La medicina le costó un ojo de la cara"
+      ],
+      [
+       "Estar en las nubes",
+       "Estar distraído",
+       "Estaba en las nubes y no oyó la pregunta"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Contestar que estar en las nubes significa que la persona iba volando o que estaba en un avión.",
+     "porque": "Tomó la frase palabra por palabra. Una frase hecha se entiende completa: sus palabras juntas significan algo distinto de lo que significan por separado.",
+     "bien": "Se lee la oración donde está la frase y se mira qué le pasa a la persona. En Estaba en las nubes y no oyó la pregunta, la frase significa que estaba distraído."
+    }
+   },
+   {
+    "titulo": "📚 Textos que informan, avisan y ordenan; y tu escritura: la carta y el anuncio",
+    "intro": "No todos los textos se leen igual, y cada uno deja marcas visibles. El texto informativo explica cómo es algo de la realidad y va lleno de datos. La noticia cuenta un hecho real y reciente, y contesta qué, quién, cuándo y dónde en las primeras líneas. El anuncio o aviso llama a la gente con pocas palabras: dice qué se va a hacer, cuándo y dónde. El instructivo lleva materiales y pasos numerados con verbos que mandan. Y al final de la prueba te toca escribir a ti: en quinto grado se piden dos escritos, una carta con todas sus partes y un anuncio que llame la atención. Los dos se califican por lo mismo: que se entienda la idea, que no falte ningún dato y que la ortografía esté cuidada.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Cada tipo de texto se reconoce por su forma antes que por su tema. Un escrito sobre el maíz puede ser noticia, instructivo o cuento: lo que decide es cómo está armado, no de qué habla."
+     },
+     {
+      "tipo": "regla",
+      "texto": "La carta lleva cinco partes y ninguna es de adorno: lugar y fecha, saludo con dos puntos, cuerpo del mensaje, despedida y firma de quien escribe. Si le falta el saludo o la firma, deja de ser carta."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Un anuncio se revisa con cuatro preguntas: ¿qué se anuncia?, ¿cuándo?, ¿dónde? y ¿a quién se invita? Si alguna se queda sin contestar, la gente no llega. Y va con pocas palabras y letras grandes, porque se lee de pasada."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "AVISO. El domingo 9 de junio, a las ocho de la mañana, haremos la limpieza de la quebrada. Traiga machete y saco. Nos reunimos en la cancha. ¡Lo esperamos! Pregunta: ¿qué tipo de texto es y cómo lo sabes?",
+      "pasos": [
+       "Miro la forma: son pocas líneas, con un llamado al final.",
+       "Miro qué contesta: qué se va a hacer (la limpieza de la quebrada), cuándo (el domingo 9 a las ocho) y dónde (la cancha).",
+       "Descarto la noticia: la noticia informa de algo que YA pasó, y esto invita a algo que va a pasar.",
+       "Descarto el instructivo: no da pasos numerados para hacer algo por uno mismo."
+      ],
+      "resultado": "Es un anuncio o aviso, porque convoca a la gente a un evento y dice qué, cuándo y dónde, con pocas palabras."
+     },
+     {
+      "enunciado": "Andrea quiere invitar a su madrina, que vive en Tegucigalpa, a la clausura de su escuela. Pregunta: ¿qué partes no puede olvidar en su carta?",
+      "pasos": [
+       "Arriba, el lugar y la fecha: Comayagua, 14 de noviembre de 2026.",
+       "El saludo dirigido a una persona, con dos puntos: Querida madrina Julia:",
+       "El cuerpo, con la invitación completa: qué es, qué día, a qué hora y en dónde. Y de usted, porque le habla a una persona mayor.",
+       "La despedida y la firma con su nombre: Se despide con cariño, Andrea."
+      ],
+      "resultado": "La carta lleva lugar y fecha, saludo, cuerpo, despedida y firma; sin saludo o sin firma el escrito ya no es una carta."
+     }
+    ],
+    "tabla": {
+     "titulo": "La marca que delata a cada tipo",
+     "encabezados": [
+      "Tipo de texto",
+      "Marca que se ve",
+      "Para qué sirve"
+     ],
+     "filas": [
+      [
+       "Texto informativo",
+       "Datos verdaderos, a veces subtítulos",
+       "Explicar cómo es algo de la realidad"
+      ],
+      [
+       "Noticia",
+       "Qué, quién, cuándo y dónde en las primeras líneas",
+       "Informar un hecho real y reciente"
+      ],
+      [
+       "Anuncio o aviso",
+       "Pocas palabras, letras grandes y un llamado",
+       "Invitar u ofrecer algo"
+      ],
+      [
+       "Instructivo",
+       "Materiales y pasos numerados",
+       "Enseñar a hacer algo"
+      ],
+      [
+       "Carta",
+       "Lugar y fecha, saludo, despedida y firma",
+       "Decirle algo a una persona que no está"
+      ],
+      [
+       "Fábula",
+       "Animales que hablan y moraleja al final",
+       "Dejar una enseñanza"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Escribir el anuncio del concurso así: Habrá un concurso muy bonito en la escuela y los invitamos a todos a participar porque van a repartir premios.",
+     "porque": "Está escrito como un párrafo de conversación y no contesta lo que hay que contestar: no dice qué día, ni a qué hora, ni dónde, ni cómo se inscribe uno. Un anuncio sin esos datos no lleva gente a ninguna parte.",
+     "bien": "Se ponen los datos completos y en pocas palabras: Concurso de deletreo. Viernes 20 de octubre, a las nueve de la mañana, en el aula de quinto grado. Inscríbete con tu maestra hasta el jueves. Habrá premios para los tres primeros lugares."
+    }
+   }
+  ]
+ },
+ "actMat": {
+  "completar": [
+   {
+    "texto": "La fracción equivalente a 2/5 con denominador 20 es ___.",
+    "respuesta": "8/20",
+    "solucion": "De 5 a 20 el denominador se multiplicó por 4 (20 ÷ 5 = 4), así que al numerador se le hace lo mismo: 2 x 4 = 8. Queda 8/20, que simplificada vuelve a ser 2/5."
+   },
+   {
+    "texto": "El número mixto 3 1/4 escrito como fracción impropia es ___.",
+    "respuesta": "13/4",
+    "solucion": "Se multiplica el entero por el denominador y se le suma el numerador: 3 x 4 = 12 y 12 + 1 = 13. El denominador no cambia, así que queda 13/4."
+   },
+   {
+    "texto": "La fracción impropia 22/7 escrita como número mixto es ___.",
+    "respuesta": "3 1/7",
+    "solucion": "Se divide 22 entre 7: da 3 y sobra 1, porque 7 x 3 = 21. El 3 es el entero y el residuo 1 se queda arriba con el mismo denominador: 3 1/7."
+   },
+   {
+    "texto": "5/12 + 4/12 = ___ (escribe el resultado simplificado).",
+    "respuesta": "3/4",
+    "solucion": "Son fracciones de igual denominador: se suman solo los numeradores y el denominador se queda igual. 5 + 4 = 9, o sea 9/12. Al dividir arriba y abajo entre 3 queda 3/4."
+   },
+   {
+    "texto": "En números romanos, el 14 se escribe ___.",
+    "respuesta": "XIV",
+    "solucion": "El 14 son 10 más 4. El 10 es X y el 4 es IV, porque el I delante del V resta uno. Juntos dan XIV. No se escribe XIIII: la I no se repite cuatro veces."
+   },
+   {
+    "texto": "6.4 x 10 = ___",
+    "respuesta": "64",
+    "solucion": "Al multiplicar por 10, el punto corre un lugar a la derecha: 6.4 se vuelve 64. Comprobación: 6.4 sumado diez veces da 64."
+   },
+   {
+    "texto": "84.6 ÷ 6 = ___",
+    "respuesta": "14.1",
+    "solucion": "Se divide como si fueran enteros y el punto del resultado va arriba del punto del dividendo: 8 entre 6 da 1 y sobran 2; 24 entre 6 da 4 exacto; se baja el 6 después del punto y 6 entre 6 da 1. Queda 14.1. Comprobación: 14.1 x 6 = 84.6."
+   },
+   {
+    "texto": "El máximo común divisor (M.C.D.) de 18 y 27 es ___.",
+    "respuesta": "9",
+    "solucion": "Divisores de 18: 1, 2, 3, 6, 9, 18. Divisores de 27: 1, 3, 9, 27. El mayor que aparece en las dos listas es 9. Comprobación: 18 ÷ 9 = 2 y 27 ÷ 9 = 3, las dos exactas."
+   },
+   {
+    "texto": "El polígono regular de cinco lados y cinco ángulos se llama ___.",
+    "respuesta": "pentágono",
+    "solucion": "Pentágono. Todo polígono tiene tantos ángulos como lados, así que cinco lados son cinco ángulos. El de seis es el hexágono, el de nueve el eneágono y el de diez el decágono."
+   },
+   {
+    "texto": "El área de un triángulo de 10 cm de base y 6 cm de altura es ___ centímetros cuadrados.",
+    "respuesta": "30",
+    "solucion": "Área del triángulo es base por altura entre dos: 10 x 6 = 60 y 60 ÷ 2 = 30 centímetros cuadrados. Quien contesta 60 se olvidó de dividir entre dos y midió el rectángulo completo."
+   }
+  ],
+  "vf": [
+   {
+    "texto": "Las fracciones 3/4 y 9/12 son equivalentes.",
+    "a": true,
+    "solucion": "Verdadero. Si a 3/4 le multiplicas arriba y abajo por 3 te da 9/12, así que valen lo mismo. También se ve al revés: 9/12 dividido arriba y abajo entre 3 vuelve a 3/4."
+   },
+   {
+    "texto": "El número mixto 2 3/5 es igual a la fracción impropia 23/5.",
+    "a": false,
+    "solucion": "Falso. No se pegan los números: se multiplica el entero por el denominador y se le suma el numerador. 2 x 5 = 10 y 10 + 3 = 13, así que 2 3/5 es 13/5. La fracción 23/5 valdría más de cuatro enteros."
+   },
+   {
+    "texto": "Al restar 11/12 menos 5/12 el resultado es 6/12, que simplificado queda 1/2.",
+    "a": true,
+    "solucion": "Verdadero. Tienen el mismo denominador, así que se restan solo los numeradores y abajo se deja el mismo 12: 11 menos 5 = 6, o sea 6/12. Al dividir arriba y abajo entre 6 queda 1/2. Cuando los denominadores ya son iguales no hay que buscar m.c.m."
+   },
+   {
+    "texto": "La fracción 7/8 es menor que 5/6.",
+    "a": false,
+    "solucion": "Falso. Con denominador común 24: 7/8 = 21/24 y 5/6 = 20/24. Como 21 es mayor que 20, la mayor es 7/8. A 7/8 le falta un octavo para el entero y a 5/6 le falta un sexto, que es un pedazo más grande."
+   },
+   {
+    "texto": "En números romanos, XL vale 40.",
+    "a": true,
+    "solucion": "Verdadero. La X vale 10 y la L vale 50; como la letra menor va delante de la mayor, se resta: 50 menos 10 = 40. Por eso el 40 no se escribe XXXX."
+   },
+   {
+    "texto": "Al multiplicar 3.5 x 10 el resultado es 3.50.",
+    "a": false,
+    "solucion": "Falso. Al multiplicar por 10 el punto corre un lugar a la derecha, así que 3.5 x 10 = 35. Escribir 3.50 es dejar el mismo número con un cero de más: 3.50 y 3.5 valen igual."
+   },
+   {
+    "texto": "Al dividir 45.6 ÷ 4 el resultado es 11.4.",
+    "a": true,
+    "solucion": "Verdadero. 4 entre 4 da 1; 5 entre 4 da 1 y sobra 1; 16 entre 4 da 4. El punto se sube en su lugar y queda 11.4. Comprobación: 11.4 x 4 = 45.6."
+   },
+   {
+    "texto": "Todos los números impares son primos.",
+    "a": false,
+    "solucion": "Falso. El 9 es impar y no es primo, porque además del 1 y del 9 se divide exacto entre 3. Lo mismo pasa con el 15 (1, 3, 5, 15) y con el 21 (1, 3, 7, 21)."
+   },
+   {
+    "texto": "El diámetro de un círculo mide la mitad del radio.",
+    "a": false,
+    "solucion": "Falso, es al revés: el radio es la mitad del diámetro, y el diámetro mide dos radios. Si el radio mide 15 cm, el diámetro mide 30 cm."
+   },
+   {
+    "texto": "Un eneágono tiene nueve lados y nueve ángulos.",
+    "a": true,
+    "solucion": "Verdadero. Todo polígono tiene tantos ángulos como lados, y el eneágono es el de nueve lados. El de diez lados y diez ángulos es el decágono."
+   }
+  ],
+  "mc": [
+   {
+    "texto": "¿Cuál de estas fracciones es equivalente a 4/6?",
+    "o": [
+     "6/8",
+     "10/15",
+     "8/10",
+     "4/12"
+    ],
+    "a": 1,
+    "solucion": "La segunda. Si simplificas 4/6 entre 2 queda 2/3, y 10/15 dividido entre 5 también queda 2/3. Las otras dan 3/4, 4/5 y 1/3."
+   },
+   {
+    "texto": "Doña Aurora usó 3 2/3 tazas de masa. ¿Cómo se escribe ese número mixto como fracción impropia?",
+    "o": [
+     "8/3",
+     "23/3",
+     "11/3",
+     "9/3"
+    ],
+    "a": 2,
+    "solucion": "La tercera. Se multiplica el entero por el denominador y se le suma el numerador: 3 x 3 = 9 y 9 + 2 = 11, o sea 11/3. El 23/3 sale de pegar los números, el 9/3 de olvidar el numerador y el 8/3 de sumar los tres números (3 + 3 + 2) en vez de multiplicar primero."
+   },
+   {
+    "texto": "En la merienda se repartió 1/8 de sandía en la mañana, 3/8 al mediodía y 2/8 en la tarde. ¿Qué parte de la sandía se repartió en todo el día?",
+    "o": [
+     "3/4",
+     "1/2",
+     "6/24",
+     "5/8"
+    ],
+    "a": 0,
+    "solucion": "La primera. Los tres tienen el mismo denominador, así que se suman los numeradores: 1 + 3 + 2 = 6, o sea 6/8. Simplificando entre 2 queda 3/4. El 6/24 sale de sumar también los denominadores."
+   },
+   {
+    "texto": "¿Cuál es el resultado de 5/6 menos 1/4?",
+    "o": [
+     "4/2",
+     "1/2",
+     "4/10",
+     "7/12"
+    ],
+    "a": 3,
+    "solucion": "La cuarta. El m.c.m. de 6 y 4 es 12: 5/6 = 10/12 y 1/4 = 3/12. Entonces 10/12 menos 3/12 = 7/12. El 4/2 sale de restar arriba con arriba y abajo con abajo; el 4/10, de restar arriba y sumar abajo."
+   },
+   {
+    "texto": "La libra de frijoles cuesta L.23.75. Don Aníbal compra 4 libras. ¿Cuánto paga?",
+    "o": [
+     "L.27.75",
+     "L.95.00",
+     "L.9.50",
+     "L.950.00"
+    ],
+    "a": 1,
+    "solucion": "La segunda. Se multiplica sin ver el punto: 2375 x 4 = 9500. El primer factor tiene dos cifras decimales, así que se separan dos desde la derecha: 95.00. Comprobación rápida: 4 libras a casi L.24.00 andan por los L.96.00."
+   },
+   {
+    "texto": "Seis compañeros pagaron entre todos L.87.90 por la pintura del mural, en partes iguales. ¿Cuánto puso cada uno?",
+    "o": [
+     "L.13.15",
+     "L.146.50",
+     "L.1.465",
+     "L.14.65"
+    ],
+    "a": 3,
+    "solucion": "La cuarta. Se divide 87.90 ÷ 6: 8 entre 6 da 1 y sobran 2; 27 entre 6 da 4 y sobran 3; se sube el punto y 39 entre 6 da 6 y sobran 3; 30 entre 6 da 5. Queda 14.65. Comprobación: 14.65 x 6 = 87.90."
+   },
+   {
+    "texto": "En una recta numérica, el tramo que va del 6 al 7 está partido en diez pedacitos iguales. Julio marcó con una chinche la tercera rayita después del 6. ¿En qué número quedó la chinche?",
+    "o": [
+     "6.03",
+     "3",
+     "6.7",
+     "6.3"
+    ],
+    "a": 3,
+    "solucion": "La cuarta. Cada rayita entre dos enteros vale un décimo, así que tres rayitas son tres décimos: 0.3. La chinche quedó en 6.3, todavía cerca del 6. El 6.03 son tres centésimas, mucho menos que una rayita; el 3 sale de contar las rayitas y olvidar el 6; y el 6.7 sale de contar las rayitas al revés, empezando desde el 7."
+   },
+   {
+    "texto": "A la aldea sube el camión de la pulpería cada 4 días y el carro del correo cada 6 días. Hoy subieron los dos. ¿Dentro de cuántos días vuelven a subir el mismo día?",
+    "o": [
+     "2 días",
+     "24 días",
+     "12 días",
+     "10 días"
+    ],
+    "a": 2,
+    "solucion": "La tercera. Como se pregunta cuándo vuelven a coincidir, se busca el m.c.m. de 4 y 6. Múltiplos de 4: 4, 8, 12. Múltiplos de 6: 6, 12. El primero común es 12. El 2 es el M.C.D., el 24 es el producto y el 10 es la suma."
+   },
+   {
+    "texto": "El borde de una mesita que tiene forma de hexágono regular mide 174 cm en total. ¿Cuánto mide cada lado?",
+    "o": [
+     "34.8 cm",
+     "29 cm",
+     "1044 cm",
+     "28 cm"
+    ],
+    "a": 1,
+    "solucion": "La segunda. En un polígono regular todos los lados son iguales, y el hexágono tiene seis: 174 ÷ 6 = 29 cm. El 34.8 sale de dividir entre 5 y el 1044 de multiplicar en vez de dividir. Comprobación: 29 x 6 = 174."
+   },
+   {
+    "texto": "Una pila de agua es redonda y mide 4 metros de diámetro. ¿Cuánto mide su contorno? Usa pi = 3.14.",
+    "o": [
+     "12.56 m",
+     "6.28 m",
+     "16 m",
+     "25.12 m"
+    ],
+    "a": 0,
+    "solucion": "La primera. La longitud de la circunferencia es 3.14 por el diámetro: 3.14 x 4 = 12.56 metros. El 6.28 sale de usar el radio en lugar del diámetro y el 25.12 de duplicar el diámetro como si fuera radio."
+   }
+  ],
+  "pareados": [
+   {
+    "termino": "Fracciones equivalentes",
+    "definicion": "Las que se escriben distinto pero valen lo mismo, porque arriba y abajo se multiplicó o se dividió por el mismo número."
+   },
+   {
+    "termino": "Número mixto",
+    "definicion": "Un número entero con una fracción al lado, como 2 3/4."
+   },
+   {
+    "termino": "Máximo común divisor (M.C.D.)",
+    "definicion": "El número más grande que divide exacto a dos números a la vez, y sirve para repartir sin que sobre nada."
+   },
+   {
+    "termino": "Mínimo común múltiplo (m.c.m.)",
+    "definicion": "El número más pequeño, distinto de cero, en que dos cosas que se repiten vuelven a coincidir."
+   },
+   {
+    "termino": "Número primo",
+    "definicion": "El que tiene solamente dos divisores: el uno y él mismo."
+   },
+   {
+    "termino": "Diámetro",
+    "definicion": "La línea recta que atraviesa el círculo pasando por el centro; mide dos radios."
+   },
+   {
+    "termino": "Ángulo central",
+    "definicion": "El que tiene su vértice en el centro del círculo y sus dos lados son radios."
+   },
+   {
+    "termino": "Circunferencia",
+    "definicion": "La línea que rodea al círculo; su longitud se halla multiplicando 3.14 por el diámetro."
+   },
+   {
+    "termino": "Decágono",
+    "definicion": "El polígono de diez lados y diez ángulos."
+   },
+   {
+    "termino": "Área del triángulo",
+    "definicion": "Se obtiene multiplicando la base por la altura y dividiendo ese resultado entre dos."
+   }
+  ],
+  "procedimiento": [
+   {
+    "enunciado": "Resuelve y deja el resultado simplificado: 3/10 + 1/4 + 2/5.",
+    "respuesta": "19/20",
+    "solucion": "Paso 1: se busca un denominador común para los tres. El m.c.m. de 10, 4 y 5 es 20. Paso 2: se convierte cada fracción. 20 ÷ 10 = 2, entonces 3/10 = 6/20; 20 ÷ 4 = 5, entonces 1/4 = 5/20; 20 ÷ 5 = 4, entonces 2/5 = 8/20. Paso 3: se suman solo los numeradores. 6 + 5 + 8 = 19, o sea 19/20. Paso 4: se revisa si se puede simplificar. El 19 es primo y no cabe exacto en 20, así que ya está en su forma más simple."
+   },
+   {
+    "enunciado": "Resuelve y deja el resultado como número mixto: 4 1/2 + 2 3/4.",
+    "respuesta": "7 1/4",
+    "solucion": "Paso 1: se vuelven impropias las dos fracciones mixtas. 4 x 2 + 1 = 9, o sea 9/2; y 2 x 4 + 3 = 11, o sea 11/4. Paso 2: el m.c.m. de 2 y 4 es 4, entonces 9/2 = 18/4 y 11/4 se queda igual. Paso 3: se suman los numeradores. 18/4 + 11/4 = 29/4. Paso 4: se vuelve mixto. 29 ÷ 4 da 7 y sobra 1, o sea 7 1/4. Revisión: 4 más 2 son 6, y las dos fracciones juntas pasan de un entero, así que el resultado tenía que andar por 7."
+   },
+   {
+    "enunciado": "Resuelve: 7/8 menos 2/3.",
+    "respuesta": "5/24",
+    "solucion": "Paso 1: los denominadores son distintos, así que se busca el m.c.m. de 8 y 3, que es 24. Paso 2: se convierten las dos. 24 ÷ 8 = 3, entonces 7/8 = 21/24; 24 ÷ 3 = 8, entonces 2/3 = 16/24. Paso 3: se restan los numeradores. 21 menos 16 = 5, o sea 5/24. Revisión: el resultado tiene que ser menor que 7/8, y lo es."
+   },
+   {
+    "enunciado": "En la pulpería el kilo de azúcar cuesta L.19.50. Doña Marta compra 7 kilos y paga con un billete de L.150.00. ¿Cuánto le devuelven?",
+    "respuesta": "L.13.50",
+    "solucion": "Paso 1: se busca el gasto multiplicando sin ver el punto. 1950 x 7 = 13650. Paso 2: 19.50 tiene dos cifras decimales, así que se separan dos desde la derecha: L.136.50. Paso 3: se le quita el gasto al billete. 150.00 menos 136.50 = 13.50. Comprobación: 136.50 + 13.50 = 150.00."
+   },
+   {
+    "enunciado": "Descompón el 90 en factores primos y escribe después todos sus divisores.",
+    "respuesta": "90 = 2 x 3 x 3 x 5, y sus divisores son 1, 2, 3, 5, 6, 9, 10, 15, 18, 30, 45 y 90",
+    "solucion": "Paso 1: se divide entre el primo más chico que quepa. 90 ÷ 2 = 45; 45 ÷ 3 = 15; 15 ÷ 3 = 5; 5 ÷ 5 = 1. Los factores primos son 2 x 3 x 3 x 5, y multiplicados dan 90. Paso 2: los divisores salen por parejas. 1 x 90, 2 x 45, 3 x 30, 5 x 18, 6 x 15 y 9 x 10. Paso 3: se ordenan: 1, 2, 3, 5, 6, 9, 10, 15, 18, 30, 45 y 90. Son doce divisores."
+   },
+   {
+    "enunciado": "El patio de la escuela es un rectángulo de 18 metros de largo y 9 metros de ancho. Calcula su área y su perímetro, y escribe bien las unidades.",
+    "respuesta": "Área 162 metros cuadrados y perímetro 54 metros",
+    "solucion": "Paso 1: el área del rectángulo es base por altura. 18 x 9 = 162, y como son dos medidas multiplicadas la unidad va al cuadrado: 162 metros cuadrados. Paso 2: el perímetro es lo que mide el contorno, o sea los cuatro lados sumados. 18 + 9 + 18 + 9 = 54 metros, y va en metros simples porque es una línea. Truco para revisar: el área sirve para saber cuánta grama hay que sembrar y el perímetro para saber cuánto alambre hay que comprar."
+   }
+  ]
+ },
+ "actEsp": {
+  "completar": [
+   {
+    "texto": "Cuando decimos en una sola oración de qué trata todo el texto, estamos diciendo su ___.",
+    "respuesta": "tema",
+    "solucion": "Tema (también vale idea principal, y el maestro debe aceptarla). El tema abarca el texto completo; un detalle es un dato que aparece en un solo renglón. Truco para el alumno: si al leer la opción le sobran renglones del texto por fuera, era detalle."
+   },
+   {
+    "texto": "Si la respuesta está escrita en el texto con esas mismas palabras, la pregunta es de comprensión ___.",
+    "respuesta": "literal",
+    "solucion": "Literal. El alumno regresa al texto, ubica el renglón y lo subraya. La anuncian palabras como según el texto, qué pasó, quién, cuándo y dónde. No exige deducir nada."
+   },
+   {
+    "texto": "Si la respuesta no está escrita y hay que juntar pistas para deducirla, la pregunta es de comprensión ___.",
+    "respuesta": "inferencial",
+    "solucion": "Inferencial. La respuesta no aparece copiada en ninguna línea: se arma con dos o tres pistas del texto. La anuncian por qué, para qué, qué se puede deducir. Se acepta también inferencial de causa."
+   },
+   {
+    "texto": "Las palabras que rodean a una palabra difícil y ayudan a entender qué significa forman su ___.",
+    "respuesta": "contexto",
+    "solucion": "Contexto. Es el vecindario de la palabra, y casi siempre trae una explicación, una comparación o una palabra opuesta. Por eso la prueba pregunta qué significa la palabra EN EL TEXTO y no en general."
+   },
+   {
+    "texto": "El escrito de pocas palabras y letras grandes que invita a la gente a un evento y dice cuándo y dónde será se llama ___.",
+    "respuesta": "anuncio",
+    "solucion": "Anuncio (también vale aviso). Se lee de pasada, así que va corto y con los datos completos: qué, cuándo, dónde y a quién se invita. Si le falta la fecha o el lugar, la gente no llega."
+   },
+   {
+    "texto": "Una carta empieza arriba con el lugar y la ___ en que se escribe.",
+    "respuesta": "fecha",
+    "solucion": "Fecha. Lugar y fecha van juntos en la primera línea (por ejemplo: Comayagua, 14 de noviembre de 2026). Sirven para saber desde dónde y cuándo se escribió, que es lo primero que mira quien la recibe."
+   },
+   {
+    "texto": "Al final de la carta, después de la despedida, va la ___ de quien escribe.",
+    "respuesta": "firma",
+    "solucion": "Firma. Sin ella el que recibe la carta no sabe de quién es, y en la prueba se descuentan puntos por cada parte que falte. Las cinco partes son: lugar y fecha, saludo, cuerpo, despedida y firma."
+   },
+   {
+    "texto": "Los alumnos de quinto grado ___ el patio de la escuela todos los viernes.",
+    "respuesta": "barren",
+    "solucion": "Barren (valen igual limpian, riegan o cualquier verbo en plural que tenga sentido). Lo que se califica aquí es la concordancia: el sujeto es los alumnos, tercera persona del plural, así que el verbo va en plural. Errores típicos: barre o barría, que están en singular."
+   },
+   {
+    "texto": "Salimos temprano de la casa; ___, llegamos tarde por el lodo del camino.",
+    "respuesta": "sin embargo",
+    "solucion": "Sin embargo (también valen aun así o a pesar de eso). Es un conector de oposición: lo segundo va en contra de lo que se esperaba después de lo primero. No cabe aquí por eso ni por lo tanto, que anuncian consecuencia, porque salir temprano no es la causa de llegar tarde."
+   },
+   {
+    "texto": "El guanacaste es un árbol muy ___: tres personas juntas no alcanzan a abrazar su tronco.",
+    "respuesta": "grueso",
+    "solucion": "Grueso (valen igual grande, ancho o corpulento, en masculino singular). La pista viene después de los dos puntos: si tres personas juntas no alcanzan a abrazar el tronco, se está hablando de su grosor. Se descuenta si la palabra no concuerda con árbol, que es masculino singular: gruesa o gruesos no calzan."
+   }
+  ],
+  "vf": [
+   {
+    "texto": "El tema de un texto se puede decir en una sola oración que abarca todo lo leído.",
+    "a": true,
+    "solucion": "Verdadero. Esa es la prueba del tema: si al taparlo el texto pierde el sentido, era el tema; si el texto se entiende igual sin eso, era un detalle."
+   },
+   {
+    "texto": "Si una opción está copiada del texto con sus mismas palabras, entonces siempre es la respuesta correcta.",
+    "a": false,
+    "solucion": "Falso. El distractor más común de la prueba es justamente ese: una oración verdadera, copiada del texto, que contesta otra cosa o que solo cubre un renglón. Verdadero no es lo mismo que correcto para esa pregunta."
+   },
+   {
+    "texto": "Una pregunta que empieza con por qué casi siempre pide deducir la causa.",
+    "a": true,
+    "solucion": "Verdadero. El por qué pide la causa, y muchas veces el texto no la escribe: hay que juntar pistas. Aun así la respuesta se sostiene en el texto, no en lo que uno se imagina."
+   },
+   {
+    "texto": "Las frases hechas, como quedarse con la boca abierta, se entienden palabra por palabra.",
+    "a": false,
+    "solucion": "Falso. Una frase hecha significa algo distinto de lo que dicen sus palabras sueltas: quedarse con la boca abierta es asombrarse, no tener la boca abierta. Se entiende leyendo la oración completa y viendo qué le pasa a la persona."
+   },
+   {
+    "texto": "En un anuncio conviene escribir pocas palabras y decir cuándo y dónde será el evento.",
+    "a": true,
+    "solucion": "Verdadero. El anuncio se lee de pasada, pegado en una pared, así que va corto y con los datos completos. Un anuncio bonito sin fecha ni lugar no sirve para nada."
+   },
+   {
+    "texto": "Una carta se puede mandar sin firma, porque quien la recibe ya sabe de quién es.",
+    "a": false,
+    "solucion": "Falso. La firma es una de las cinco partes de la carta y no se quita. En la prueba, cada parte que falte cuesta puntos: lugar y fecha, saludo, cuerpo, despedida y firma."
+   },
+   {
+    "texto": "En el instructivo los pasos se escriben en el mismo orden en que hay que hacerlos.",
+    "a": true,
+    "solucion": "Verdadero. El instructivo sirve para que otro logre lo mismo sin preguntar nada, y eso solo funciona si los pasos van en orden y con verbos que mandan: corte, mezcle, riegue."
+   },
+   {
+    "texto": "Para escoger la palabra que falta en un texto hay que leer la oración entera, incluso lo que viene después del espacio.",
+    "a": true,
+    "solucion": "Verdadero. Muchas veces la pista está después del espacio en blanco. Y además de que tenga sentido, la palabra debe concordar en género y número con lo que la acompaña."
+   },
+   {
+    "texto": "Cada palabra tiene un solo significado, así que basta con recordar el que uno ya aprendió.",
+    "a": false,
+    "solucion": "Falso. Una palabra puede significar cosas distintas según la oración donde esté, y la prueba pregunta qué significa AHÍ. Por eso primero se lee la oración completa y después se escoge."
+   },
+   {
+    "texto": "En una fábula los animales hablan, pero la fábula nunca deja una enseñanza.",
+    "a": false,
+    "solucion": "Falso. Al contrario: la enseñanza es su marca. La fábula cierra con una moraleja, casi siempre escrita aparte en una o dos líneas, y para eso los animales representan conductas de las personas."
+   }
+  ],
+  "lectura": {
+   "titulo": "La guara roja, el ave de Honduras",
+   "texto": "La guara roja es el ave nacional de Honduras. Se reconoce de lejos por sus colores: el cuerpo rojo, las alas con amarillo y azul, y una cola larga y puntiaguda. Un ave adulta llega a medir cerca de un metro contando esa cola. Vive en los bosques calientes del país. Las más conocidas son las de Copán, que vuelan sobre las ruinas todas las tardes, y las de La Mosquitia, que andan siempre en parejas o en grupos pequeños. Come frutas, semillas y flores. Su pico es grueso y curvo, y con él parte semillas duras que otros pájaros no pueden abrir. Al volar de un árbol a otro deja caer semillas lejos de donde las tomó, y así ayuda a que el bosque se siembre solo. Hace su nido dentro de los troncos huecos de los árboles viejos. La pareja pone dos o tres huevos y los dos padres se turnan para alimentar a los pichones. La guara roja está en peligro. Hay gente que saca los pichones del nido para venderlos como mascota, y cuando se talan los árboles viejos el ave se queda sin dónde anidar. Hoy varios grupos crían guaras y las devuelven al bosque, y en Copán ya vuelan libres muchas de las que nacieron así.",
+   "preguntas": [
+    {
+     "texto": "¿De qué trata principalmente el texto?",
+     "o": [
+      "De los árboles viejos que se talan en el país",
+      "De la guara roja: cómo es, dónde vive y por qué está en peligro",
+      "De las ruinas de Copán y de la gente que las visita",
+      "De las semillas duras que comen los pájaros"
+     ],
+     "a": 1,
+     "tipo": "tema",
+     "solucion": "Correcta la segunda opción. Todo el texto habla de la guara roja: sus colores, dónde vive, qué come, dónde anida y por qué está en peligro. Las otras tres son detalles: los árboles talados salen al final, las ruinas se nombran una vez y las semillas son solo su alimento. Ninguna abarca el texto completo, que es la prueba del tema."
+    },
+    {
+     "texto": "Según el texto, ¿dónde hace su nido la guara roja?",
+     "o": [
+      "En el suelo, entre las hojas secas",
+      "En las paredes de las ruinas de Copán",
+      "Dentro de los troncos huecos de los árboles viejos",
+      "En nidos de ramas encima de las palmas"
+     ],
+     "a": 2,
+     "tipo": "literal",
+     "solucion": "Correcta la tercera opción. Está escrito con esas palabras: hace su nido dentro de los troncos huecos de los árboles viejos. Las ruinas de Copán aparecen en el texto, pero como el lugar por donde vuela, no donde anida."
+    },
+    {
+     "texto": "Según el texto, ¿cómo es el pico de la guara roja?",
+     "o": [
+      "Largo y delgado como una aguja",
+      "Pequeño, plano y de color claro",
+      "Recto y del mismo tamaño que su cabeza",
+      "Grueso y curvo"
+     ],
+     "a": 3,
+     "tipo": "literal",
+     "solucion": "Correcta la cuarta opción. El texto lo describe así: su pico es grueso y curvo, y con él parte semillas duras. Las otras tres describen picos de otras aves y ninguna palabra de esas aparece en el texto."
+    },
+    {
+     "texto": "¿Por qué dice el texto que la guara ayuda a que el bosque se siembre solo?",
+     "o": [
+      "Porque siembra semillas con el pico en la tierra floja",
+      "Porque deja caer semillas lejos del árbol donde las tomó",
+      "Porque hace su nido en los troncos de los árboles viejos",
+      "Porque los grupos que la crían siembran árboles nuevos"
+     ],
+     "a": 1,
+     "tipo": "inferencial",
+     "solucion": "Correcta la segunda opción. El texto explica que al volar de un árbol a otro deja caer semillas lejos de donde las tomó: de esas semillas nacen árboles en sitios nuevos. El nido y los grupos que la crían son verdaderos, pero no son la razón de esa frase."
+    },
+    {
+     "texto": "En el texto, la palabra anidar quiere decir:",
+     "o": [
+      "hacer el nido y criar ahí a sus pichones",
+      "volar en grupo por la tarde",
+      "partir semillas con el pico",
+      "cambiar de color las plumas"
+     ],
+     "a": 0,
+     "tipo": "vocabulario",
+     "solucion": "Correcta la primera opción. La pista está en la misma oración: cuando se talan los árboles viejos el ave se queda sin dónde anidar, y lo que la guara hace dentro de esos troncos es su nido. Volar en grupo por la tarde y partir semillas con el pico sí están en el texto, pero ninguna de las dos se pierde por talar un árbol; lo de cambiar de color no aparece en ninguna línea."
+    },
+    {
+     "texto": "En el texto, la frase está en peligro quiere decir que la guara roja:",
+     "o": [
+      "se enferma con facilidad en el bosque",
+      "asusta a la gente que se le acerca",
+      "podría desaparecer si no se la cuida",
+      "vuela más bajo de lo que debería"
+     ],
+     "a": 2,
+     "tipo": "vocabulario",
+     "solucion": "Correcta la tercera opción. La frase no habla de un susto ni de una enfermedad: lo que viene después lo explica, porque le sacan los pichones y le talan los árboles donde anida. Por eso hay grupos que las crían y las devuelven al bosque."
+    }
+   ]
+  },
+  "tipos": [
+   {
+    "fragmento": "¡Gran feria del maíz! Este sábado 14, a las nueve de la mañana, en la cancha de la escuela. Habrá tamales, atol y juegos para los niños.",
+    "tipo": "anuncio",
+    "solucion": "Anuncio. Convoca a la gente a algo que todavía no ha pasado y contesta en pocas líneas qué, cuándo y dónde. No narra ni informa de un hecho ya ocurrido."
+   },
+   {
+    "fragmento": "Ayer, en Comayagua, la Secretaría de Educación entregó cuarenta pupitres a la escuela de la aldea El Rincón, informó el director del centro.",
+    "tipo": "noticia",
+    "solucion": "Noticia. En la primera línea ya están el cuándo (ayer), el dónde (Comayagua), el quién (la Secretaría de Educación) y el qué (entregó pupitres), y además cita una fuente. Esa entrada cargada de datos reales es propia de la noticia."
+   },
+   {
+    "fragmento": "Ingredientes: dos tazas de arroz, agua, canela y azúcar. Paso 1: remoje el arroz desde la noche anterior.",
+    "tipo": "instructivo",
+    "solucion": "Instructivo. Lo delatan la lista de ingredientes y los pasos numerados con verbos de orden (remoje). Sirve para que alguien haga algo, no para entretener ni para informar."
+   },
+   {
+    "fragmento": "Querida madrina Julia: le escribo desde Choluteca para contarle que ya estoy en quinto grado y que la espero en la clausura de mi escuela.",
+    "tipo": "carta",
+    "solucion": "Carta. Empieza con un saludo dirigido a una persona concreta seguido de dos puntos, y quien escribe le habla de usted. Terminará con despedida y firma."
+   },
+   {
+    "fragmento": "El zorro le dijo al gallo que bajara del palo, que ya nadie se comía a los gallos; el gallo, sin moverse, le contestó que entonces esperara a que llegaran los perros.",
+    "tipo": "fábula",
+    "solucion": "Fábula. Los personajes son animales que hablan y se muestran astutos como personas. Un texto así cierra con una moraleja."
+   },
+   {
+    "fragmento": "Aquella tarde, Selvin encontró debajo del puente una caja de lata con una llave adentro, y desde entonces no volvió a dormir tranquilo.",
+    "tipo": "cuento",
+    "solucion": "Cuento. Narra hechos inventados de un personaje con nombre y deja intriga para que el lector siga leyendo. No informa un hecho verdadero ni deja una enseñanza escrita aparte."
+   },
+   {
+    "fragmento": "SE VENDE ternera de ocho meses. Interesados presentarse en la casa de don Aurelio, en la aldea Las Lajas, a partir del lunes.",
+    "tipo": "anuncio",
+    "solucion": "Anuncio. Ofrece algo y dice dónde y desde cuándo buscarlo, en pocas palabras. No es noticia porque no informa de un hecho ocurrido, sino que hace un llamado a quien esté interesado."
+   },
+   {
+    "fragmento": "Esta mañana los vecinos terminaron de reparar el camino que sube a la escuela, después de dos semanas de trabajo, informó el patronato de la aldea.",
+    "tipo": "noticia",
+    "solucion": "Noticia. Cuenta un hecho real y reciente (esta mañana), dice quiénes lo hicieron y quién lo informa. No invita a nada ni tiene personajes inventados."
+   }
+  ],
+  "pareados": [
+   {
+    "termino": "Tema del texto",
+    "definicion": "Lo que se contesta cuando preguntan de qué trata todo lo que leíste, dicho en una oración."
+   },
+   {
+    "termino": "Detalle",
+    "definicion": "Un dato pequeño que ocupa un renglón y que no abarca el texto completo."
+   },
+   {
+    "termino": "Pregunta literal",
+    "definicion": "La que se contesta señalando el renglón donde la respuesta está escrita."
+   },
+   {
+    "termino": "Pregunta inferencial",
+    "definicion": "La que se contesta juntando dos o más pistas, porque el texto no lo dice completo."
+   },
+   {
+    "termino": "Contexto",
+    "definicion": "Las palabras que rodean a otra y ayudan a saber qué significa en ese texto."
+   },
+   {
+    "termino": "Frase hecha",
+    "definicion": "Un grupo de palabras que juntas significan algo distinto de lo que dice cada una."
+   },
+   {
+    "termino": "Anuncio",
+    "definicion": "Escrito corto que invita u ofrece algo y dice qué, cuándo y dónde."
+   },
+   {
+    "termino": "Carta",
+    "definicion": "Escrito dirigido a una persona, con lugar y fecha, saludo, mensaje, despedida y firma."
+   },
+   {
+    "termino": "Instructivo",
+    "definicion": "Escrito que enseña a hacer algo, con materiales y pasos numerados en orden."
+   },
+   {
+    "termino": "Texto informativo",
+    "definicion": "Escrito que explica cómo es algo de la realidad, con datos verdaderos y ejemplos."
+   }
+  ],
+  "escritura": [
+   {
+    "consigna": "Escribe una carta a una persona de tu familia que viva lejos para invitarla a la clausura de tu escuela. Dile qué día es, a qué hora y en dónde. La carta debe llevar todas sus partes.",
+    "guia": "Una buena respuesta trae las cinco partes completas: lugar y fecha arriba, saludo dirigido a esa persona con dos puntos (Querida tía Marina:), cuerpo, despedida y firma con el nombre del alumno. En el cuerpo tienen que estar los tres datos de la invitación: el día, la hora y el lugar; si falta uno, la persona invitada no puede llegar. El trato es de usted en toda la carta, porque le escribe a alguien mayor, y el tono es cariñoso y respetuoso. Suma calidad si agrega una razón personal para que vaya (que va a recitar, que le van a entregar un diploma). Se descuenta si falta el saludo o la firma, si mezcla el tú y el usted, o si escribe una lista de datos en vez de dirigirse a una persona."
+   },
+   {
+    "consigna": "En tu escuela se hará una feria de comidas para juntar fondos y arreglar el techo del aula. Elabora un anuncio que llame la atención de las familias del pueblo y las invite a llegar.",
+    "guia": "Una buena respuesta contesta las cuatro preguntas del anuncio: qué se va a hacer (la feria de comidas), cuándo (día y hora), dónde (el lugar exacto) y a quién se invita. Va escrito en pocas palabras, con un título grande que se lea de lejos y una frase que llame (¡Lo esperamos!, ¡Venga con su familia!). Suma calidad decir para qué es el fondo, porque eso convence a la gente a llegar. Se descuenta si le falta la fecha o el lugar, si lo escribe como un párrafo largo de conversación en vez de un cartel, o si no se entiende qué se está anunciando."
+   },
+   {
+    "consigna": "Describe en por lo menos ocho renglones el camino que recorres de tu casa a la escuela: cómo es, qué se ve y qué se oye, y qué te pasa cuando llueve.",
+    "guia": "Una buena respuesta describe con palabras que se puedan ver y oír: si el camino es angosto o ancho, de tierra, de piedra o pavimentado, qué árboles o casas se pasan, qué animales se oyen. Debe contestar también lo que pide el final de la consigna, que es qué cambia cuando llueve. Los adjetivos tienen que concordar con lo que describen (una quebrada honda, un camino lodoso). Suma calidad un hecho concreto que muestre cómo es (que hay que quitarse los zapatos para cruzar la quebrada). Se descuenta si solo escribe una lista de palabras sueltas sin oraciones, si no llega a los ocho renglones o si no dice nada de la lluvia."
+   }
+  ]
+ },
+ "simulacro": {
+  "instruccion": "Lee con cuidado cada texto y cada problema. Después rellena por completo el círculo de la letra de la respuesta correcta. Cada pregunta tiene una sola respuesta correcta: si rellenas más de un círculo, la pregunta no se te cuenta.",
+  "matematicas": [
+   {
+    "texto": "¿Cuál de estas fracciones es menor que 7/8?",
+    "o": [
+     "9/8",
+     "3/4",
+     "15/8",
+     "8/7"
+    ],
+    "a": 1,
+    "tema": "comparar-fracciones",
+    "solucion": "Con denominador común 8: 3/4 = 6/8, y 6/8 es menor que 7/8. Las otras tres pasan del entero (9/8, 15/8 y 8/7), así que ninguna puede ser menor que 7/8, que todavía no llega al entero."
+   },
+   {
+    "texto": "Doña Rita explica la fracción 5/3 con cintas de papel del mismo tamaño. ¿Cuál de estos dibujos representa esa fracción?",
+    "o": [
+     "Una cinta partida en 5 partes iguales, con 3 partes pintadas",
+     "Una cinta partida en 3 partes iguales, con 2 partes pintadas",
+     "Dos cintas partidas en 3 partes iguales cada una: la primera con sus 3 partes pintadas y la segunda con 2 pintadas",
+     "Una cinta partida en 3 partes iguales con las 3 pintadas, y otra cinta entera sin partir y sin pintar"
+    ],
+    "a": 2,
+    "tema": "fraccion-figura",
+    "solucion": "La tercera. En 5/3 el de abajo dice en cuántas partes iguales se parte cada cinta (3) y el de arriba cuántas de esas partes se pintan (5). Con una sola cinta no alcanza, porque solo tiene 3 partes: se pintan las 3 de la primera y 2 de la segunda. La primera opción está volteada y vale 3/5; la segunda es 2/3 y ni siquiera llega al entero; la cuarta es 3/3, o sea un entero justo, y 5/3 pasa del entero."
+   },
+   {
+    "texto": "Marina caminó 1 1/2 kilómetros en la mañana y 2 1/4 kilómetros en la tarde. ¿Cuánto caminó en todo el día?",
+    "o": [
+     "3 2/6",
+     "4 1/4",
+     "3 1/4",
+     "3 3/4"
+    ],
+    "a": 3,
+    "tema": "suma-mixtos",
+    "solucion": "Se vuelven impropias: 1 1/2 = 3/2 y 2 1/4 = 9/4. Con denominador común 4: 6/4 + 9/4 = 15/4, y 15 ÷ 4 da 3 con residuo 3, o sea 3 3/4 kilómetros. El 3 2/6 sale de sumar numeradores con numeradores y denominadores con denominadores."
+   },
+   {
+    "texto": "De un galón de pintura quedaban 9/10. Se gastaron 2/5 del galón en la puerta. ¿Cuánta pintura queda ahora?",
+    "o": [
+     "7/10",
+     "3/5",
+     "1/2",
+     "11/10"
+    ],
+    "a": 2,
+    "tema": "resta-fracciones",
+    "solucion": "El m.c.m. de 10 y 5 es 10: 2/5 = 4/10. Entonces 9/10 menos 4/10 = 5/10, que simplificado es 1/2. El 7/10 sale de restarle el 2 al 9 sin convertir los quintos, y el 11/10 de sumarle ese mismo 2 en vez de restarlo."
+   },
+   {
+    "texto": "¿Cuál es el resultado de 2.375 x 12?",
+    "o": [
+     "28.5",
+     "285",
+     "2.85",
+     "28.05"
+    ],
+    "a": 0,
+    "tema": "multiplicacion-decimales",
+    "solucion": "Se multiplica sin punto: 2375 x 12 = 28500. El primer factor tiene tres cifras decimales y el segundo ninguna, así que se separan tres desde la derecha: 28.500, o sea 28.5. El 285 y el 2.85 salen de correr el punto a otro lugar, y el 28.05 de meter un cero que no hace falta."
+   },
+   {
+    "texto": "¿Cuál es el resultado de 76.8 ÷ 6?",
+    "o": [
+     "1.28",
+     "12.8",
+     "128",
+     "12.08"
+    ],
+    "a": 1,
+    "tema": "division-decimales",
+    "solucion": "7 entre 6 da 1 y sobra 1; 16 entre 6 da 2 y sobran 4; se sube el punto y 48 entre 6 da 8. Queda 12.8. Comprobación: 12.8 x 6 = 76.8. El 12.08 sale de meter un cero que no hace falta."
+   },
+   {
+    "texto": "El abuelo de Karen cumplió 90 años y en la tarjeta escribieron su edad en números romanos. ¿Cómo se escribe el 90?",
+    "o": [
+     "CX",
+     "LXXXX",
+     "XC",
+     "IC"
+    ],
+    "a": 2,
+    "tema": "numeros-romanos",
+    "solucion": "El 90 es 100 menos 10, y la letra menor va delante: XC. El LXXXX está mal porque la X no se repite cuatro veces, el CX es 110 (100 más 10) y el IC no existe: el I solo resta al V y a la X."
+   },
+   {
+    "texto": "¿Cómo se expresa el 60 en sus factores primos?",
+    "o": [
+     "6 x 10",
+     "2 x 30",
+     "4 x 3 x 5",
+     "2 x 2 x 3 x 5"
+    ],
+    "a": 3,
+    "tema": "factores-primos",
+    "solucion": "Se va dividiendo entre el primo más chico que quepa: 60 ÷ 2 = 30, 30 ÷ 2 = 15, 15 ÷ 3 = 5, 5 ÷ 5 = 1. Quedan 2 x 2 x 3 x 5, y todos son primos. Las otras tres multiplicaciones también dan 60, pero traen números compuestos (6, 10, 30 y 4)."
+   },
+   {
+    "texto": "Doña Elsa dibujó su parcela sobre una cuadrícula en la que cada cuadro mide un metro cuadrado. Contó 18 cuadros llenos y 6 cuadros llenos hasta la mitad. ¿Cuál es el área aproximada de la parcela?",
+    "o": [
+     "21 metros cuadrados",
+     "24 metros cuadrados",
+     "18 metros cuadrados",
+     "30 metros cuadrados"
+    ],
+    "a": 0,
+    "tema": "area-aproximada",
+    "solucion": "Los 6 cuadros a la mitad se juntan de dos en dos y valen 3 cuadros completos: 6 ÷ 2 = 3. Entonces 18 + 3 = 21 metros cuadrados. El 24 sale de contar los medios como si fueran enteros y el 18 de no contarlos."
+   },
+   {
+    "texto": "En la escuela midieron la planta de frijol cada cinco días: el día 5 medía 4 cm, el día 10 medía 11 cm, el día 15 medía 19 cm y el día 20 medía 26 cm. ¿Cuánto creció entre el día 10 y el día 20?",
+    "o": [
+     "7 cm",
+     "15 cm",
+     "26 cm",
+     "37 cm"
+    ],
+    "a": 1,
+    "tema": "grafico-lineas",
+    "solucion": "Se le quita la medida del día 10 a la del día 20: 26 menos 11 = 15 cm. El 7 es lo que creció entre el día 15 y el día 20 (26 menos 19), el 26 es la altura final sin restar nada y el 37 sale de sumar las dos medidas."
+   }
+  ],
+  "espanol": [
+   {
+    "texto": "En el patio de la escuela de la aldea El Guayabo hay una pila de agua. En la mañana los alumnos llenan ahí sus botellas, al mediodía se lavan las manos antes de la merienda y en la tarde el conserje riega con esa agua las matas del corredor. Cuando la pila se seca, el día se le complica a toda la escuela.\n\n¿De qué trata principalmente el texto?",
+    "o": [
+     "De la merienda que se sirve al mediodía",
+     "De la pila de agua de la escuela y de todo lo que se hace con ella",
+     "Del conserje que riega las matas del corredor",
+     "De las botellas que llevan los alumnos"
+    ],
+    "a": 1,
+    "tema": "tema",
+    "solucion": "Todas las oraciones hablan de la pila y del uso que se le da a lo largo del día. La merienda, el conserje y las botellas aparecen una sola vez y solo como parte de ese uso: son detalles, y el tema tiene que abarcar el texto completo."
+   },
+   {
+    "texto": "El zompopo es una hormiga de patas largas y cabeza grande. Camina en fila cargando pedazos de hoja sobre el lomo, y las filas salen del hormiguero al oscurecer. Desde lejos parece que las hojas caminaran solas.\n\nSegún el texto, ¿cómo es el zompopo?",
+    "o": [
+     "De patas largas y cabeza grande",
+     "De patas cortas y cabeza pequeña",
+     "De color rojo y sin alas",
+     "Del mismo tamaño que una abeja"
+    ],
+    "a": 0,
+    "tema": "descripcion",
+    "solucion": "La primera oración lo describe con esas mismas palabras: patas largas y cabeza grande. Del color, de las alas y del tamaño comparado con otro insecto el texto no dice nada, así que esas opciones no se pueden sostener."
+   },
+   {
+    "texto": "Wilmer llegó a la escuela con el cuaderno mojado y la camisa pegada al cuerpo. Dejó los zapatos en el corredor, llenos de lodo hasta arriba. Su casa queda del otro lado de la quebrada y anoche llovió toda la noche.\n\n¿Por qué llegó Wilmer con el cuaderno mojado?",
+    "o": [
+     "Porque se le derramó el agua de la botella",
+     "Porque lavó el cuaderno antes de salir",
+     "Porque tuvo que cruzar la quebrada crecida por la lluvia",
+     "Porque el techo del aula estaba goteando"
+    ],
+    "a": 2,
+    "tema": "inferencial",
+    "solucion": "El texto no dice el motivo: hay que juntar pistas. La camisa pegada al cuerpo, los zapatos llenos de lodo, la casa del otro lado de la quebrada y la lluvia de toda la noche llevan a una sola conclusión razonable. La botella y el techo del aula no se mencionan en ninguna línea."
+   },
+   {
+    "texto": "La cosecha se perdió y en la aldea no había qué vender. Aun así, don Sixto no se dio por vencido: sembró de nuevo en cuanto llovió y anduvo tocando puertas hasta que le fiaron la semilla. Era un hombre tenaz.\n\n¿Qué significa en el texto la palabra tenaz?",
+    "o": [
+     "Que no se rinde",
+     "Que se enoja rápido",
+     "Que trabaja poco",
+     "Que habla mucho"
+    ],
+    "a": 0,
+    "tema": "vocabulario",
+    "solucion": "La explicación viene antes de la palabra: no se dio por vencido, sembró de nuevo y anduvo tocando puertas. Todo eso describe a alguien que insiste. Del carácter, del trabajo poco y de lo hablador el texto no dice nada."
+   },
+   {
+    "texto": "Cuando le contaron que su hijo había ganado la beca, a doña Herminia se le hizo un nudo en la garganta y no pudo decir nada. Los vecinos llegaron a felicitarla toda la tarde.\n\n¿Qué significa en el texto la frase se le hizo un nudo en la garganta?",
+    "o": [
+     "Que se atragantó con la comida",
+     "Que se enojó con los vecinos",
+     "Que la emoción no la dejó hablar",
+     "Que le dolía la garganta"
+    ],
+    "a": 2,
+    "tema": "frase-en-contexto",
+    "solucion": "La frase no se entiende palabra por palabra: hay que mirar qué le está pasando a la persona. Acaba de recibir una buena noticia y los vecinos llegan a felicitarla, así que lo que la dejó callada fue la emoción, no la comida ni un dolor."
+   },
+   {
+    "texto": "¡Feria de la lectura! Este viernes 20, de nueve a doce del día, en el corredor de la escuela. Habrá libros prestados, cuentos leídos en voz alta y una rifa de cuadernos. Traiga a su familia.\n\nSegún el texto, ¿qué se va a realizar el viernes 20 en el corredor de la escuela?",
+    "o": [
+     "Una reunión de padres de familia",
+     "Una feria de la lectura",
+     "Una venta de cuadernos usados",
+     "Una rifa de bicicletas"
+    ],
+    "a": 1,
+    "tema": "anuncio",
+    "solucion": "El anuncio lo dice desde el título: feria de la lectura, con su día, su hora y su lugar. Los cuadernos salen en el texto, pero rifados y no vendidos; de las bicicletas y de la reunión de padres no se habla."
+   },
+   {
+    "texto": "Cómo sembrar una mata de yuca. 1. Corte una estaca de veinte centímetros de un tallo maduro. 2. Deje la estaca a la sombra dos días. 3. Entiérrela inclinada, con las yemas hacia arriba. 4. Riéguela cada tercer día hasta que broten las hojas.\n\nSegún el texto, ¿qué se debe hacer antes de enterrar la estaca?",
+    "o": [
+     "Regarla cada tercer día",
+     "Quitarle todas las yemas",
+     "Cortarle las hojas que tenga",
+     "Dejarla a la sombra dos días"
+    ],
+    "a": 3,
+    "tema": "instructivo",
+    "solucion": "En un instructivo el orden manda. Enterrar es el paso 3, así que lo que va antes es el paso 2: dejar la estaca a la sombra dos días. Regar es el paso 4, o sea después, y lo de quitar las yemas y cortar hojas no aparece."
+   },
+   {
+    "texto": "Las tortugas golfinas llegan cada año a las playas del sur de Honduras. Salen del mar de noche, cavan un hoyo en la arena con las patas traseras, ponen sus huevos y regresan al agua antes de que amanezca. Los huevos se quedan tapados con arena hasta que nacen las crías.\n\nSegún el texto, ¿cuándo salen del mar las tortugas golfinas?",
+    "o": [
+     "De noche",
+     "Al mediodía",
+     "Cuando ya amaneció",
+     "Solo en invierno"
+    ],
+    "a": 0,
+    "tema": "literal",
+    "solucion": "Está escrito en la segunda oración: salen del mar de noche. El amanecer también aparece, pero como la hora en que regresan al agua, no en la que salen."
+   },
+   {
+    "texto": "El pino crece en las montañas de Honduras y llega a ser muy alto. Su madera es ___ y por eso se usa para hacer muebles, puertas y techos.\n\n¿Qué palabra falta para completar el texto?",
+    "o": [
+     "resistentes",
+     "resistiendo",
+     "resistir",
+     "resistente"
+    ],
+    "a": 3,
+    "tema": "palabra-que-falta",
+    "solucion": "Hay que leer la oración entera y fijarse en la concordancia. La palabra acompaña a su madera, que es singular, así que va resistente. El plural resistentes no concuerda, y resistir y resistiendo son formas del verbo que ahí no calzan."
+   },
+   {
+    "texto": "Cuando sonó la campana del recreo, Nelson no salió al patio. Se quedó sentado copiando en su cuaderno lo que el maestro había escrito en la pizarra. Ayer estuvo enfermo y no vino a clases.\n\n¿Qué se puede deducir de lo que hizo Nelson?",
+    "o": [
+     "Que no le gusta jugar con sus compañeros",
+     "Que estaba castigado por el maestro",
+     "Que quería ponerse al día con lo que perdió",
+     "Que se sentía enfermo otra vez"
+    ],
+    "a": 2,
+    "tema": "inferencial",
+    "solucion": "El texto no dice por qué se quedó, pero deja dos pistas: ayer no vino a clases y lo que copia es lo que el maestro escribió en la pizarra. De ahí sale que estaba recuperando lo perdido. El castigo y el disgusto por jugar no aparecen, y si se sintiera enfermo no estaría copiando."
+   }
+  ]
+ },
+ "errores": {
+  "errores": [
+   {
+    "titulo": "El número mixto pegado como si fuera una fracción",
+    "materia": "mat",
+    "mal": "Le piden convertir 2 1/4 a fracción impropia y el alumno escribe 21/4. Junta el 2 y el 1 y les deja el mismo denominador.",
+    "porque": "Un número mixto no se pega: el entero hay que convertirlo en pedazos del mismo tamaño que la fracción. Mire lo que salió: 21/4 son más de cinco enteros, y el número que le dieron es apenas dos y un poquito. Cuando la respuesta sale del doble o del triple de lo que se está midiendo, la cuenta ya avisó que está mala.",
+    "bien": "Se multiplica el entero por el denominador y se le suma el numerador: 2 x 4 = 8 y 8 + 1 = 9, entonces 2 1/4 = 9/4. Para revisarlo se vuelve atrás: 9 ÷ 4 da 2 y sobra 1, o sea 2 1/4. Y se comprueba con la cabeza: 9/4 son dos enteros y un cuarto, justo lo que decía el número mixto."
+   },
+   {
+    "titulo": "Sumar o restar fracciones sin igualar los denominadores",
+    "materia": "mat",
+    "mal": "El alumno escribe 7/8 menos 1/2 = 6/6, o sea 1. Restó 7 menos 1 arriba y 8 menos 2 abajo. En otra pregunta, con 1/3 + 1/4, contesta 2/7.",
+    "porque": "El denominador no es una cantidad que se sume ni que se reste: dice el tamaño del pedazo. Los octavos y las mitades no son pedazos iguales, así que no se pueden juntar hasta que midan lo mismo. Y fíjese en el resultado: a 7/8 le quitó algo y le salió un entero, que es MÁS de lo que tenía; en la otra, juntó dos pedazos y le salió 2/7, que es menos que 1/3. Las dos respuestas son imposibles.",
+    "bien": "Primero se busca el m.c.m. de los denominadores y se convierten las dos fracciones. En la primera, el m.c.m. de 8 y 2 es 8: 1/2 = 4/8, entonces 7/8 menos 4/8 = 3/8, que es menor que 7/8, como tenía que ser. En la segunda, el m.c.m. de 3 y 4 es 12: 4/12 + 3/12 = 7/12, que es mayor que cada sumando."
+   },
+   {
+    "titulo": "El punto decimal que se pierde",
+    "materia": "mat",
+    "mal": "El alumno divide 84.5 entre 5 y contesta 169, porque hizo la división sin ver el punto y ya no lo puso. Otro multiplica 3.148 por 25, hace 3148 x 25 = 78700 y contesta 787. Y comprando 4 libras de queso a L.23.75 la libra contesta L.950.00.",
+    "porque": "Al hacer la cuenta como si fueran enteros el punto desaparece de la vista, y si nadie lo vuelve a poner en su lugar la respuesta queda diez o cien veces más grande de lo que es. En el dinero eso se nota rapidito: nadie paga L.950.00 por cuatro libras de queso. Y en una división entre 5 el resultado tiene que salir MENOR que lo que se repartió: 169 es el doble de 84.5.",
+    "bien": "Al multiplicar se cuentan las cifras decimales de los dos factores y el resultado lleva esa misma cantidad: 3.148 tiene tres y el 25 ninguna, así que de 78700 se separan tres desde la derecha y queda 78.700, o sea 78.7. Al dividir un decimal entre un entero, el punto del cociente se sube justo arriba del punto del dividendo: 84.5 ÷ 5 = 16.9. Y antes de contestar conviene calcular por encima: 4 libras a casi L.24.00 andan por los L.96.00."
+   },
+   {
+    "titulo": "El área contestada donde pedían el perímetro",
+    "materia": "mat",
+    "mal": "Le piden el área de un huerto de 8 metros por 5 metros y el alumno contesta 26, que es lo que mide el contorno. En otra pregunta contesta bien el número pero escribe metros donde iban metros cuadrados.",
+    "porque": "El perímetro mide el contorno y se suma: sirve para saber cuánto alambre lleva la cerca. El área mide la superficie y se multiplica: sirve para saber cuánta grama o cuántas baldosas se necesitan. Como el número solo no dice nada, la unidad es la que delata el error: si le piden cuánta tierra hay que preparar y contesta en metros simples, midió el borde y no el terreno.",
+    "bien": "Huerto de 8 m por 5 m: el área es 8 x 5 = 40 metros cuadrados, y el perímetro es 8 + 5 + 8 + 5 = 26 metros. Regla para acordarse: una medida sola va en metros, dos medidas multiplicadas van en metros cuadrados. Y en el triángulo no se olvide el paso de dividir entre dos, porque el triángulo es la mitad del rectángulo que lo encierra."
+   },
+   {
+    "titulo": "La circunferencia calculada con el radio sin duplicarlo",
+    "materia": "mat",
+    "mal": "Le dan un reloj de 9 centímetros de radio y le piden el contorno. El alumno multiplica 3.14 x 9 y contesta 28.26 centímetros.",
+    "porque": "La fórmula de la circunferencia trabaja con el DIÁMETRO, y lo que le dieron fue el radio, que es la mitad. Al usarlo tal cual, el contorno le sale a la mitad del que es. Es el mismo descuido al revés cuando le dan el diámetro y lo usa como si fuera radio: ahí el resultado sale del doble.",
+    "bien": "Primero se saca el diámetro: 9 x 2 = 18 centímetros. Después se multiplica: 3.14 x 18 = 56.52 centímetros. También sirve la fórmula corrida, 2 x 3.14 x radio, que es lo mismo. Antes de contestar conviene mirar el número: el contorno de un círculo siempre sale como tres veces su diámetro, ni más ni menos."
+   },
+   {
+    "titulo": "Marcar el detalle que más llama la atención",
+    "materia": "esp",
+    "mal": "El texto cuenta cómo la escuela se organizó para arreglar el techo del aula: quiénes juntaron el dinero, quiénes compraron las láminas y quiénes trabajaron el sábado. De pasada dice que doña Fidelina regaló treinta tamales. Le preguntan de qué trata el texto y el alumno contesta: de los treinta tamales que regaló doña Fidelina.",
+    "porque": "El tema es de lo que trata el texto completo, y un detalle ocupa un renglón, aunque sea el dato que más se queda pegado en la memoria. Los números y los nombres se recuerdan fácil, pero eso no los convierte en el tema.",
+    "bien": "El tema es el que cubre todos los renglones: que la escuela entera se organizó para arreglar el techo del aula. Prueba rápida: se lee la opción y se pregunta si el texto completo habla de eso. De los tamales habla una línea; del trabajo repartido hablan todos los párrafos."
+   },
+   {
+    "titulo": "Escoger la opción que repite las palabras del texto",
+    "materia": "esp",
+    "mal": "El texto dice: 'El bus sale de la terminal a las seis, pero ese martes esperó hasta las siete a que cambiaran una llanta'. Le preguntan a qué hora salió el bus ese martes y el alumno marca la opción que dice a las seis, porque esa hora la vio escrita en el texto.",
+    "porque": "Reconocer las palabras da confianza, y por eso la prueba pone a propósito una opción copiada del texto que contesta OTRA cosa. Ahí lo escrito es cierto (a las seis sale siempre), pero la pregunta era por ese martes.",
+    "bien": "Se lee la pregunta completa y se subraya el renglón que la contesta, no el que se parece. Aquí la pregunta dice ese martes, y el texto dice que ese día esperó hasta las siete. Regla del examen: la opción tiene que contestar la pregunta, no solo aparecer en el texto."
+   },
+   {
+    "titulo": "Entender la frase hecha al pie de la letra",
+    "materia": "esp",
+    "mal": "El texto dice: 'Cuando oyó de noche el río bajando crecido, a Marlon se le fue el alma a los pies'. Le preguntan qué significa esa frase y el alumno contesta que el alma se le bajó hasta los pies, o que le dolieron los pies.",
+    "porque": "Tradujo la frase palabra por palabra. Las frases hechas se entienden completas: sus palabras juntas significan algo distinto de lo que significa cada una por separado, y quien las lee sueltas contesta a otra cosa.",
+    "bien": "Se lee la oración entera y se mira qué le está pasando a la persona. Aquí Marlon oye de noche el río bajando crecido, así que la frase significa que se asustó mucho. Y si una frase suena rara traducida palabra por palabra, es señal de que hay que buscarle el significado de conjunto."
+   }
+  ],
+  "estrategia": [
+   "Duerme temprano la noche antes y desayuna: son dos pruebas en el mismo día y la de Español viene cuando ya estás cansado.",
+   "Deja lista la mochila la víspera: dos lápices con punta, borrador y regla.",
+   "Lee cada pregunta completa, hasta el punto final, antes de mirar las opciones.",
+   "En Matemáticas, haz la cuenta en la hoja y revisa dónde quedó el punto decimal antes de escoger: casi todas las opciones equivocadas de esas preguntas son el punto corrido de lugar.",
+   "En Español, subraya en el texto el renglón donde encontraste la respuesta. Si no lo puedes señalar, todavía no es tu respuesta.",
+   "En los dos ejercicios de escritura, antes de empezar cuenta con los dedos las partes que te piden: la carta lleva cinco y el anuncio contesta cuatro preguntas.",
+   "Rellena completo el círculo de la letra que escogiste y no dejes ninguna pregunta en blanco: una respuesta pensada vale más que un espacio vacío."
+  ]
+ }
+}
