@@ -27,10 +27,10 @@ const BASE = 'http://localhost:8123';
    que aparecer en su prueba de Español: es lo que distingue una prueba de
    verdad de una copia de la de otro grado. */
 const GRADOS = [
-  { slug: '6to', grado: '6º', tabs: 18, esp: ['pino', 'colibrí', 'feria'] },
-  { slug: '4to', grado: '4º', tabs: 18, esp: ['tortuga', 'abuela', 'conejo', 'bosque', 'río'] },
-  { slug: '5to', grado: '5º', tabs: 18, esp: ['montaña', 'ganso', 'león', 'ruinas', 'hueso', 'carta', 'anuncio'] },
-  { slug: '7mo', grado: '7º', tabs: 18, esp: ['cuento', 'diálogo', 'expresión', 'mensaje', 'personaje', 'comentario'] },
+  { slug: '6to', grado: '6º', tabs: 18, lab: '#widget-fraccion-lab', esp: ['pino', 'colibrí', 'feria'] },
+  { slug: '4to', grado: '4º', tabs: 18, lab: '#widget-fraccion-lab', esp: ['tortuga', 'abuela', 'conejo', 'bosque', 'río'] },
+  { slug: '5to', grado: '5º', tabs: 18, lab: '#widget-fraccion-lab', esp: ['montaña', 'ganso', 'león', 'ruinas', 'hueso', 'carta', 'anuncio'] },
+  { slug: '7mo', grado: '7º', tabs: 18, lab: '#widget-recta-enteros', esp: ['cuento', 'diálogo', 'expresión', 'mensaje', 'personaje', 'comentario'] },
 ];
 
 let fallos = 0;
@@ -73,7 +73,7 @@ async function lanzar() {
   ok('el quiz pinta 4 opciones', await page.locator('.qz-opt').count() === 4);
   ok('el cuento del repaso trae sus 4 preguntas', await page.locator('#textoLargoWrap .mini-quiz-wrap').count() === 4);
   await page.evaluate(() => go('s-lab'));
-  ok('la pizza de fracciones se pinta', await page.locator('#widget-fraccion-lab svg path').count() > 0);
+  ok('el primer laboratorio se dibuja', await page.locator(G.lab + ' svg path').count() > 0, G.lab);
   ok('el segundo laboratorio se pinta', (await page.locator('#s-lab .card:nth-child(2) > div').innerText()).length > 20);
   await page.evaluate(() => go('s-sopa'));
   await page.waitForTimeout(150);

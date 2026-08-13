@@ -747,7 +747,9 @@ function lab1Render(){
   for(let n=LAB1_MIN;n<=LAB1_MAX;n++){
     const x=_lab1X(n), alto=(n%5===0)?9:6;
     ticks+=`<path d="M ${x} ${45-alto} L ${x} ${45+alto}" stroke="var(--dark)" stroke-width="${n===0?2.4:1.4}"></path>`;
-    etiquetas+=`<text x="${x}" y="${70}" text-anchor="middle" font-size="11" fill="${n===sel?'var(--pri)':'var(--gray)'}" font-weight="${n===sel?'700':'400'}">${_sg(n)}</text>`;
+    // Los de dos cifras van más chicos: con 21 px por hueco, «−10» a tamaño
+    // 11 se monta encima del vecino y la recta deja de leerse.
+    etiquetas+=`<text x="${x}" y="${70}" text-anchor="middle" font-size="${Math.abs(n)>=10?9:11}" fill="${n===sel?'var(--pri)':'var(--gray)'}" font-weight="${n===sel?'700':'400'}">${_sg(n)}</text>`;
     clics+=`<rect x="${x-10}" y="6" width="21" height="72" fill="transparent" data-n="${n}" style="cursor:pointer;"></rect>`;
   }
   // El tramo del número hasta el cero: eso es el valor absoluto, dibujado
@@ -821,17 +823,24 @@ function _lab2Eq(){
   if(lab2Paso===1) return ['<strong>' + r.a + 'x</strong>', _sg(r.c - r.b)];
   return ['<strong>x</strong>', _sg((r.c - r.b) / r.a)];
 }
+/* La buena NO puede caer siempre en el primer botón: el alumno aprendería a
+   tocar el de arriba y a no leer. Se rota con el desafío y el paso, que es
+   una cuenta y no un sorteo: al volver a pintar después de fallar, los
+   botones siguen donde estaban y no se toca por equivocación. */
 function _lab2Opciones(){
   const r=LAB2_RETOS[lab2Reto];
+  let ops;
   if(lab2Paso===0){
-    const quita = r.b<0 ? 'Sumar ' + Math.abs(r.b) : 'Restar ' + r.b;
-    return [{lb:quita+' a los dos lados', ok:true},
-            {lb:(r.b<0?'Restar '+Math.abs(r.b):'Sumar '+r.b)+' a los dos lados', ok:false},
-            {lb:'Dividir los dos lados entre '+r.a, ok:false}];
+    ops=[{lb:(r.b<0?'Sumar '+Math.abs(r.b):'Restar '+r.b)+' a los dos lados', ok:true},
+         {lb:(r.b<0?'Restar '+Math.abs(r.b):'Sumar '+r.b)+' a los dos lados', ok:false},
+         {lb:'Dividir los dos lados entre '+r.a, ok:false}];
+  } else {
+    ops=[{lb:'Dividir los dos lados entre '+r.a, ok:true},
+         {lb:'Restar '+r.a+' a los dos lados', ok:false},
+         {lb:'Multiplicar los dos lados por '+r.a, ok:false}];
   }
-  return [{lb:'Dividir los dos lados entre '+r.a, ok:true},
-          {lb:'Restar '+r.a+' a los dos lados', ok:false},
-          {lb:'Multiplicar los dos lados por '+r.a, ok:false}];
+  const giro=(lab2Reto+lab2Paso)%3;
+  return ops.slice(giro).concat(ops.slice(0,giro));
 }
 function lab2Render(){
   const box=document.getElementById('widget-balanza'); if(!box) return;
@@ -858,7 +867,7 @@ function lab2Render(){
     const op=_lab2Opciones()[parseInt(b.dataset.op,10)];
     if(op.ok){
       sfx('ok'); lab2Paso++;
-      fb('fbLab2', lab2Paso===1?`Bien: quitando ${Math.abs(r.b)} de los dos lados, la balanza sigue equilibrada.`:'Bien: al dividir los dos lados, la letra queda sola.', true);
+      fb('fbLab2', lab2Paso===1?`Bien: ${r.b<0?'sumando':'quitando'} ${Math.abs(r.b)} en los dos lados, la balanza sigue equilibrada.`:'Bien: al dividir los dos lados, la letra queda sola.', true);
       setTimeout(lab2Render,900);
     } else {
       sfx('no');
@@ -1148,8 +1157,48 @@ function genGeometriaTask(out,count){
     else { const m=_tgRint(3,30); _tgTask(out,i,`<strong>C es el punto medio del segmento AB. Si AC mide ${m} cm, ¿cuánto mide AB?</strong>${_tgLines(1)}<div class="tg-answer">✔ ${2*m} cm (el punto medio parte el segmento en dos partes iguales)</div>`); }
   }
 }
+/* 📖 Lengua: sin esta, el generador de tareas se queda SOLO con Matemáticas.
+   Es la sección que el maestro copia en el pizarrón, y esta misión repasa las
+   DOS materias que se evalúan el mismo día: un generador sin Español le deja
+   media asignatura sin práctica que repartir. */
+const LENGUA_EXPR=[
+  ['se le salía el corazón','estaba muy asustado o muy emocionado'],
+  ['costar un ojo de la cara','ser carísimo'],
+  ['no pegar un ojo','no poder dormir'],
+  ['meter la pata','equivocarse'],
+  ['echar una mano','ayudar'],
+  ['estar en las nubes','estar distraído'],
+  ['tomarle el pelo a alguien','burlarse de alguien'],
+  ['ponerse las pilas','esforzarse más']
+];
+const LENGUA_PALABRAS=[
+  ['insólito','La cosecha de ese año fue insólita: nadie recordaba una milpa tan cargada.'],
+  ['vasto','Desde el cerro se veía un vasto llano que no acababa nunca.'],
+  ['sigiloso','El gato entró sigiloso, sin que crujiera ni una tabla.'],
+  ['persistente','La lluvia persistente no paró en tres días.'],
+  ['nítido','Con el cielo limpio, el sonido del río se oía nítido desde la casa.'],
+  ['austero','Don Chico llevaba una vida austera: lo justo y nada de sobra.']
+];
+const LENGUA_ESCRITURA=[
+  'Escribe un cuento dialogado de al menos ocho renglones. Elige el tema: un viaje en bus que se descompone, una tarde de tormenta o un encuentro con un desconocido. Cada vez que hable un personaje, empieza el renglón con su raya.',
+  'Escribe un comentario de cinco a ocho renglones sobre esta pregunta: ¿por qué son necesarios los cambios en la vida? Da al menos dos razones y cierra con tu opinión.',
+  'Describe un lugar de tu comunidad para alguien que no lo conoce, sin nombrarlo. Usa lo que se ve, lo que se oye y lo que se huele.',
+  'Cuenta en un párrafo algo que te pasó y termina diciendo qué mensaje o enseñanza te dejó.'
+];
+function genLenguaTask(out,count){
+  _instrBlock(out,'Instrucción: lengua',['Contesta cada una en el espacio, con letra clara y cuidando la ortografía.','<strong>Recuerda:</strong> el significado de una palabra o de una expresión se descubre por el resto de la oración, no por cómo suena.']);
+  for(let i=0;i<count;i++){
+    const tipo=_tgRint(0,2);
+    if(tipo===0){ const e=LENGUA_EXPR[_tgRint(0,LENGUA_EXPR.length-1)];
+      _tgTask(out,i,`<strong>¿Qué significa la expresión «${e[0]}»? Escríbelo con tus palabras y úsala después en una oración tuya.</strong>${_tgLines(2)}<div class="tg-answer">✔ ${e[1]}. La oración es libre, pero la expresión tiene que quedar bien usada.</div>`); }
+    else if(tipo===1){ const p=LENGUA_PALABRAS[_tgRint(0,LENGUA_PALABRAS.length-1)];
+      _tgTask(out,i,`<strong>«${p[1]}» ¿Qué significa ahí la palabra <em>${p[0]}</em>? Explica en qué parte de la oración lo descubriste.</strong>${_tgLines(2)}<div class="tg-answer">✔ Se deduce por el contexto de la propia oración: lo que importa es que señale las palabras que se lo dijeron.</div>`); }
+    else { const c=LENGUA_ESCRITURA[_tgRint(0,LENGUA_ESCRITURA.length-1)];
+      _tgTask(out,i,`<strong>${c}</strong>${_tgLines(6)}<div class="tg-answer">✔ Respuesta libre. Se califica que la idea se entienda, que respete lo que se pide y que la ortografía esté cuidada.</div>`); }
+  }
+}
 let ansVisible=false;
-function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='enteros') genEnterosTask(out,count); else if(type==='fracciones') genFraccionesTask(out,count); else if(type==='decimales') genDecimalesTask(out,count); else if(type==='potencias') genPotenciasTask(out,count); else if(type==='ecuaciones') genEcuacionesTask(out,count); else if(type==='proporcion') genProporcionTask(out,count); else if(type==='geometria') genGeometriaTask(out,count); fin('s-tareas'); }
+function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='enteros') genEnterosTask(out,count); else if(type==='fracciones') genFraccionesTask(out,count); else if(type==='decimales') genDecimalesTask(out,count); else if(type==='potencias') genPotenciasTask(out,count); else if(type==='ecuaciones') genEcuacionesTask(out,count); else if(type==='proporcion') genProporcionTask(out,count); else if(type==='geometria') genGeometriaTask(out,count); else if(type==='lengua') genLenguaTask(out,count); fin('s-tareas'); }
 function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none'); sfx('click'); }
 
 // ===================== ESCRITURA: EXPLICA Y REDACTA =====================
@@ -1161,7 +1210,7 @@ const explicaData = [
     q: 'Redacta un CUENTO DIALOGADO con su título. Elige uno de estos tres temas: 1) La noche que se fue la luz. 2) El pasajero del último bus. 3) Lo que encontramos en la quebrada. Deben hablar por lo menos dos personajes.',
     hint: '💡 Pista: lo que dice cada personaje empieza en un renglón nuevo y con la raya de diálogo, que es una rayita larga. Antes de lo que se dice va el verbo con dos puntos: «Entonces don Chepe dijo:».',
     rubric: ['✓ Lleva título y se nota qué tema eligió, con inicio, desarrollo y final', '✓ Hablan al menos dos personajes, y cada intervención lleva su raya de diálogo en renglón aparte', '✓ Usa los dos puntos antes de lo que se dice, y cuida la ortografía y los signos de interrogación'],
-    suggested: 'Título: «La noche que se fue la luz». El apagón agarró a la familia en la cena. La abuela sacó el candil y lo puso en el centro de la mesa. Entonces Nilo preguntó: (raya de diálogo) ¿Y ahora qué hacemos, abuela? Ella se rió y contestó: (raya de diálogo) Lo que se hacía antes de que existiera la luz: contar historias. Esa noche nadie encendió nada y nadie se quiso ir a dormir.'
+    suggested: 'Título: «La noche que se fue la luz». El apagón agarró a la familia en la cena. La abuela sacó el candil y lo puso en el centro de la mesa. Entonces Nilo preguntó: «¿Y ahora qué hacemos, abuela?». Ella se rió y contestó: «Lo que se hacía antes de que existiera la luz: contar historias». Esa noche nadie encendió nada y nadie se quiso ir a dormir. ✍️ En tu cuaderno, cada una de esas dos intervenciones va en renglón aparte y empieza con la raya de diálogo, en lugar de las comillas.'
   },
   {
     q: 'Lee esta idea: «Aprender algo nuevo casi siempre incomoda al principio». Escribe un COMENTARIO de al menos cuatro líneas: di si estás de acuerdo y defiéndelo con dos argumentos, cada uno con su explicación.',
@@ -1249,24 +1298,24 @@ const evalTFBankMat=[
 ];
 const evalTFBankEsp=[
   {q:'El tema de un texto es aquello de lo que trata todo el texto.',a:true},
-  {q:'Una inferencia se saca de las pistas que da el texto, aunque la respuesta no esté escrita.',a:true},
+  {q:'Una inferencia se saca de las pistas del texto, aunque la respuesta no esté escrita.',a:true},
   {q:'El significado de una palabra no cambia según la oración donde aparezca.',a:false},
   {q:'En un cuento dialogado, la raya de diálogo marca lo que dice cada personaje.',a:true},
   {q:'Un texto informativo cuenta una historia inventada con personajes.',a:false},
   {q:'La expresión «no pegar el ojo» significa pasar la noche sin dormir.',a:true},
-  {q:'El mensaje de un relato siempre viene escrito con esas mismas palabras en el texto.',a:false}
+  {q:'El mensaje de un relato siempre viene escrito con esas palabras en el texto.',a:false}
 ];
 // Banco de selección múltiple de las DOS materias (el Campeonísimo lo lee tal
 // cual con «Actualizar banco»; el campo materia decide en qué prueba sale).
 const evalMCBank=[
   {materia:'mat',q:'En una semana el precio del quintal de frijol pasó de L.1,250 a L.1,180. ¿Qué número representa ese cambio?',o:['a) +70','b) −70','c) −1,180','d) +1,250'],a:1},
   {materia:'mat',q:'¿Cuál es el resultado de |(−7)(2) + 5|?',o:['a) 9','b) −9','c) 19','d) −19'],a:0},
-  {materia:'mat',q:'Marcos debe L.240 en la pulpería. Su hermana le da L.150 y su tío L.60. Si paga todo lo que puede, ¿cuántos lempiras le quedan?',o:['a) −450','b) −30','c) 30','d) 450'],a:1},
-  {materia:'mat',q:'Una secante corta dos rectas paralelas. Uno de los ángulos que se forman mide 65°. ¿Cuánto mide su ángulo suplementario?',o:['a) 25°','b) 35°','c) 115°','d) 125°'],a:2},
+  {materia:'mat',q:'Marcos debe L.240 en la pulpería. Su hermana le da L.150 y su tío L.60. Si paga lo que puede, ¿cuántos lempiras le quedan?',o:['a) −450','b) −30','c) 30','d) 450'],a:1},
+  {materia:'mat',q:'Una secante corta dos rectas paralelas y uno de los ángulos mide 65°. ¿Cuánto mide su suplementario?',o:['a) 25°','b) 35°','c) 115°','d) 125°'],a:2},
   {materia:'mat',q:'En el mercado, la libra de queso cuesta L.46.50. ¿Cuánto cuestan 2.5 libras?',o:['a) L.116.25','b) L.11.625','c) L.49.00','d) L.1,162.50'],a:0},
   {materia:'mat',q:'Se pagaron L.2,430 por 900 bloques. ¿Cuál es el precio de cada bloque?',o:['a) L.2.70','b) L.27.00','c) L.3.70','d) L.0.27'],a:0},
-  {materia:'mat',q:'Rosa compró 3 libras de arroz y una bolsa de sal de L.12. En total gastó L.87. Si x es el precio de la libra de arroz, ¿qué ecuación representa el enunciado?',o:['a) 12x + 3 = 87','b) 3x + 12 = 87','c) 3x − 12 = 87','d) 12x − 3 = 87'],a:1},
-  {materia:'mat',q:'Cinco obreros descargan un camión en 12 horas. ¿Cuántas horas tardan 10 obreros trabajando igual de rápido?',o:['a) 24 horas','b) 10 horas','c) 6 horas','d) 2 horas'],a:2},
+  {materia:'mat',q:'Rosa compró 3 libras de arroz y una bolsa de sal de L.12, y gastó L.87. Si x es el precio de la libra de arroz, ¿qué ecuación lo representa?',o:['a) 12x + 3 = 87','b) 3x + 12 = 87','c) 3x − 12 = 87','d) 12x − 3 = 87'],a:1},
+  {materia:'mat',q:'Cinco obreros descargan un camión en 12 horas. ¿Cuántas horas tardan 10 obreros igual de rápidos?',o:['a) 24 horas','b) 10 horas','c) 6 horas','d) 2 horas'],a:2},
   {materia:'esp',q:'El agua de la quebrada llega a la aldea por una manguera que los vecinos remendaron entre todos. Con ella se cocina, se lava y se riega el huerto de la escuela. Cuando alguien deja una llave abierta, la casa del final del camino se queda sin nada. Por eso el patronato puso un turno y lo respeta hasta el que vive más cerca.\n\n¿Cuál es el tema del texto?',o:['a) El huerto de la escuela.','b) La manguera remendada.','c) La casa del final del camino.','d) El agua de la aldea y el acuerdo para repartirla.'],a:3},
   {materia:'esp',q:'Doña Fina se levanta a las tres y media. Prende el fuego, echa el nixtamal al molino y a las cinco ya tiene el comal caliente. Los primeros clientes llegan cuando todavía está oscuro: los albañiles que salen para la obra y las muchachas que agarran el bus de las seis.\n\nSegún el texto, ¿a qué hora tiene el comal caliente doña Fina?',o:['a) A las tres y media.','b) A las cinco.','c) A las seis.','d) Cuando llegan los albañiles.'],a:1},
   {materia:'esp',q:'El anemómetro es un aparato sencillo: tres copas montadas en un eje que gira con el viento. Mientras más fuerte sopla, más rápido dan vueltas, y ese giro se convierte en un número. Con él, los que estudian el clima saben si viene una tormenta antes de que se vea una nube.\n\nPor su contenido y su forma, ¿qué tipo de texto es?',o:['a) Un cuento dialogado.','b) Una carta.','c) Un texto informativo.','d) Un texto narrativo.'],a:2},
