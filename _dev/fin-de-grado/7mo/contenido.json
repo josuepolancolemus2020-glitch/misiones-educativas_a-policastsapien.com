@@ -1,0 +1,1570 @@
+{
+ "meta": {
+  "grado": "7º",
+  "ciclo": "Educación Básica, 7º grado",
+  "qr": "qr-mision-fin-de-grado-7mo.png",
+  "tema": "Repaso general del año: números enteros y valor absoluto, fracciones y decimales con signo, potencias, la recta numérica, rectas paralelas y sus ángulos, ecuaciones y lenguaje algebraico, proporcionalidad directa e inversa y porcentaje; comprensión lectora, vocabulario y expresiones por el contexto, tipos de texto y escritura",
+  "objetivos": [
+   "Escribir con <strong>signo</strong> lo que sube y lo que baja en la vida real, y ubicar esos números en la <strong>recta numérica</strong>.",
+   "Calcular el <strong>valor absoluto</strong>, incluso cuando hay una operación dentro de las barras.",
+   "<strong>Sumar y restar números enteros</strong> con deudas y abonos, y <strong>comparar y ordenar</strong> enteros.",
+   "Sumar y restar <strong>fracciones con signo</strong> y resolver operaciones combinadas.",
+   "Sumar, restar, <strong>multiplicar y dividir decimales</strong> con lempiras, y dividir entre 10 y entre 100.",
+   "Resolver <strong>potencias de un número negativo</strong> y saber cuándo el resultado sale positivo y cuándo negativo.",
+   "Reconocer la <strong>mediatriz</strong> y el <strong>punto medio</strong> de un segmento.",
+   "Hallar la medida de los <strong>ángulos</strong> que se forman cuando una secante corta dos <strong>rectas paralelas</strong>.",
+   "Resolver <strong>ecuaciones de uno y de dos pasos</strong>, plantear la ecuación desde un enunciado y <strong>traducir a símbolos</strong> lo que está dicho con palabras.",
+   "Distinguir la <strong>proporcionalidad directa</strong> de la <strong>inversa</strong> y resolver cada una como toca.",
+   "Calcular el <strong>porcentaje</strong> de una cantidad y leer <strong>gráficos de barras y circulares</strong>.",
+   "Hallar el <strong>tema</strong> de un texto, responder preguntas <strong>literales, inferenciales y de causa</strong>, descubrir el significado de una <strong>palabra o de una expresión por el contexto</strong>, reconocer los <strong>tipos de texto</strong> y escribir un <strong>cuento dialogado</strong> y un <strong>comentario</strong>."
+  ],
+  "comoEs": "La Secretaría de Educación aplica esta prueba al terminar el grado. Primero contestas la parte de\n<strong>Matemáticas</strong>, después hay un <strong>receso de veinte minutos</strong>, y luego la de <strong>Español</strong>.\nCada pregunta trae cuatro opciones y una sola es correcta. Al final de Español hay <strong>dos ejercicios de\nescritura</strong> donde no hay opciones: en séptimo grado son un <strong>cuento dialogado</strong>, con el tema que tú\nescoges entre tres títulos, y un <strong>comentario</strong> en el que das tu opinión sobre un texto y una imagen. Ahí\nescribes tú.",
+  "felicitacion": "Recorriste las dos materias que se evalúan en la\n  Prueba de Fin de Grado: los números con signo y el valor absoluto, las fracciones y los decimales, las\n  potencias, la recta numérica, las rectas paralelas y sus ángulos, las ecuaciones, la proporcionalidad y el\n  porcentaje; y el tema del texto, lo que dice y lo que deja deducir, el significado por el contexto, los tipos\n  de texto y tu propia escritura. Llegas listo. 🎓✨"
+ },
+ "teoriaMat": {
+  "bloques": [
+   {
+    "titulo": "🔢 Números enteros: el signo, el orden y el valor absoluto",
+    "intro": "Hasta sexto grado los números empezaban en el cero y solo subían. En séptimo aparecen los que están del otro lado: los negativos. No son un invento de la escuela, son la manera de escribir lo que baja, lo que se debe y lo que queda por debajo de una referencia. En la recta numérica el cero manda: a la derecha están los positivos y a la izquierda los negativos, y cuanto más te alejas del cero hacia la izquierda, más pequeño es el número. El valor absoluto contesta otra pregunta distinta: no de qué lado está, sino qué tan lejos del cero está.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Para sumar dos enteros del mismo signo se suman las cantidades y se deja ese mismo signo. Si los signos son distintos, se resta el más pequeño del más grande y se deja el signo del más grande."
+     },
+     {
+      "tipo": "idea",
+      "texto": "En la recta numérica, el número que está más a la izquierda es siempre el menor. Por eso -10 es menor que -3, aunque el 10 sea más grande que el 3: lo que se compara es la posición, no la cifra."
+     },
+     {
+      "tipo": "hn",
+      "texto": "En la libreta de la pulpería lo ves todos los días: lo que se debe se anota de un lado y lo que se abona del otro. Una deuda de L.85 es -85, un abono de L.60 es +60, y la cuenta se cierra sumando los dos."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Don Beto debía L.120 en la pulpería. El lunes abonó L.75 y el viernes L.60. ¿Cómo queda su cuenta?",
+      "pasos": [
+       "La deuda se escribe con signo negativo, porque está por debajo del cero: -120.",
+       "Los abonos entran a favor, así que llevan signo positivo: +75 y +60.",
+       "Se suma paso a paso: -120 + 75 da -45, porque los signos son distintos y se resta 75 de 120 dejando el signo del más grande.",
+       "Se sigue con el otro abono: -45 + 60 da +15, otra vez restando y dejando el signo del más grande, que ahora es el 60."
+      ],
+      "resultado": "La cuenta queda en +15: don Beto ya no debe nada y le quedan L.15 a favor."
+     },
+     {
+      "enunciado": "Halla el resultado de |(-6)(-2) - 20|.",
+      "pasos": [
+       "Las dos barras son como un paréntesis: primero se resuelve todo lo de adentro y hasta el final se mira el signo.",
+       "Se multiplica lo primero: (-6) por (-2) da +12, porque dos negativos multiplicados dan positivo.",
+       "Se sigue con la resta: 12 - 20 da -8.",
+       "Ahora sí se aplica el valor absoluto: la distancia de -8 al cero es 8, y una distancia nunca es negativa."
+      ],
+      "resultado": "El resultado es 8."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Lo que pasa",
+      "El número con signo",
+      "Por qué"
+     ],
+     "filas": [
+      [
+       "Debe L.85 en la pulpería",
+       "-85",
+       "Lo que se debe se cuenta por debajo del cero"
+      ],
+      [
+       "Le abonan L.60 a la cuenta",
+       "+60",
+       "Lo que entra se cuenta por encima del cero"
+      ],
+      [
+       "El quintal de maíz subió L.40",
+       "+40",
+       "Subir es avanzar hacia la derecha en la recta"
+      ],
+      [
+       "La temperatura bajó 4 grados",
+       "-4",
+       "Bajar es retroceder hacia la izquierda"
+      ],
+      [
+       "El buzo está a 8 metros bajo el mar",
+       "-8",
+       "El nivel del mar es el cero de esa medida"
+      ],
+      [
+       "El bote está justo en el nivel del mar",
+       "0",
+       "El cero no es positivo ni negativo"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Ordenar de menor a mayor los números -2, -9, 0 y 4 y escribir: -2, -9, 0, 4.",
+     "porque": "Se ordenaron mirando solo las cifras, como si los negativos fueran positivos. Pero -9 está más lejos del cero hacia la izquierda que -2, así que es el MENOR de los dos. Entre negativos, la cifra más grande es el número más pequeño.",
+     "bien": "De menor a mayor: -9, -2, 0, 4. Truco para revisar: dibuja la recta y ve leyendo de izquierda a derecha, que es el orden de menor a mayor."
+    }
+   },
+   {
+    "titulo": "✖️ Fracciones con signo, decimales y potencias",
+    "intro": "Las fracciones y los decimales ya los trabajaste en los grados anteriores; lo nuevo de séptimo es que ahora también llevan signo, y que el signo tiene sus propias reglas al multiplicar y al dividir. Son reglas cortas y se aprenden de una vez: signos iguales dan positivo, signos distintos dan negativo. La potencia no es más que una multiplicación repetida, así que hereda esa misma regla, y ahí aparece el detalle que más puntos cuesta: si el exponente es par el resultado sale positivo, y si es impar sale negativo. Con los decimales el trabajo es el de siempre; lo único que hay que vigilar es dónde cae el punto.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Al multiplicar o dividir, dos signos iguales dan resultado positivo y dos signos distintos dan resultado negativo. En una potencia se ve en el exponente: si es par los signos se emparejan y queda positivo; si es impar sobra uno y queda negativo."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Para dividir entre 10, entre 100 o entre 1000 no hace falta hacer la división: el punto corre hacia la izquierda tantos lugares como ceros tenga el divisor. Así, 7.5 ÷ 10 = 0.75 y 7.5 ÷ 100 = 0.075."
+     },
+     {
+      "tipo": "hn",
+      "texto": "El maestro reparte una cinta de 4.8 metros entre los 10 alumnos del grupo de danza: 4.8 ÷ 10 = 0.48 metros para cada uno, o sea 48 centímetros. Corrió el punto un lugar y ya estaba."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Resuelve y deja el resultado simplificado: 3/8 + (-5/6).",
+      "pasos": [
+       "Sumar un número negativo es lo mismo que restar, así que la operación es 3/8 menos 5/6.",
+       "Los pedazos no son del mismo tamaño, así que hay que buscar denominador común: el m.c.m. de 8 y 6 es 24.",
+       "Se convierten las dos fracciones: 3/8 = 9/24 (porque 24 ÷ 8 = 3 y 3 x 3 = 9) 5/6 = 20/24 (porque 24 ÷ 6 = 4 y 5 x 4 = 20).",
+       "Se restan los numeradores y el denominador se queda igual: 9 menos 20 da -11, así que el resultado es -11/24.",
+       "Se revisa si se puede simplificar: 11 es primo y no cabe en 24, así que ya está en su forma más simple."
+      ],
+      "resultado": "El resultado es -11/24, un número negativo, porque lo que se quitó era mayor que lo que había."
+     },
+     {
+      "enunciado": "El litro de leche cuesta L.24.50. Don Ramón lleva 3.4 litros y paga con un billete de L.100. ¿Cuánto le devuelven?",
+      "pasos": [
+       "Primero se multiplica sin fijarse en el punto: 2450 x 34 = 83300.",
+       "Se cuentan las cifras decimales de los dos factores: 24.50 tiene dos y 3.4 tiene una, en total tres.",
+       "Se corre el punto tres lugares desde la derecha en 83300 y queda 83.300, o sea L.83.30.",
+       "Para el vuelto se resta del billete: 100.00 menos 83.30 = 16.70."
+      ],
+      "resultado": "La leche cuesta L.83.30 y le devuelven L.16.70."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Operación",
+      "Cómo queda el signo",
+      "Ejemplo"
+     ],
+     "filas": [
+      [
+       "Multiplicar dos negativos",
+       "Positivo",
+       "(-3) x (-4) = 12"
+      ],
+      [
+       "Multiplicar signos distintos",
+       "Negativo",
+       "(-6) x 2 = -12"
+      ],
+      [
+       "Dividir dos negativos",
+       "Positivo",
+       "-18 ÷ (-3) = 6"
+      ],
+      [
+       "Dividir signos distintos",
+       "Negativo",
+       "-20 ÷ 5 = -4"
+      ],
+      [
+       "Potencia de exponente par",
+       "Positivo",
+       "(-2)⁴ = 16"
+      ],
+      [
+       "Potencia de exponente impar",
+       "Negativo",
+       "(-2)³ = -8"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Resolver (-4)³ y escribir 64.",
+     "porque": "Las cifras están bien, lo que se perdió fue el signo. El paréntesis dice que lo que se multiplica tres veces es el -4 completo, con su signo y todo. Al multiplicar los dos primeros el signo se cancela, pero queda un tercer negativo suelto que nadie empareja, y ese manda.",
+     "bien": "(-4)³ = (-4)(-4)(-4). Primero (-4)(-4) = 16, y después 16 x (-4) = -64. Regla para revisar en un segundo: exponente 3, que es impar, entonces el resultado es negativo."
+    }
+   },
+   {
+    "titulo": "📐 Punto medio, mediatriz y los ángulos de las paralelas",
+    "intro": "La geometría de séptimo trabaja con dos ideas que se ven en cualquier construcción del pueblo. La primera es partir algo exacto por la mitad: ahí aparecen el punto medio, que es el punto que deja las dos partes iguales, y la mediatriz, que es la recta que pasa por ese punto formando ángulo recto. La segunda es lo que ocurre cuando una recta atraviesa dos paralelas: se forman ocho ángulos, pero no hay ocho medidas distintas. Solo hay dos, una grande y una pequeña, y entre las dos suman 180 grados. Si conoces uno, ya los conoces todos.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Cuando una secante corta dos rectas paralelas, los ángulos que quedan en la misma posición o cruzados (correspondientes, alternos internos, alternos externos y opuestos por el vértice) miden lo mismo. Los que quedan pegados uno al lado del otro sobre la misma recta suman 180 grados."
+     },
+     {
+      "tipo": "idea",
+      "texto": "El punto medio es un PUNTO y la mediatriz es una RECTA. La mediatriz pasa por el punto medio, pero además cruza el segmento formando cuatro ángulos rectos: por eso no basta con partir a la mitad, hay que partir en ángulo recto."
+     },
+     {
+      "tipo": "truco",
+      "texto": "La mediatriz se halla sin regla graduada: se dobla el papel de modo que un extremo del segmento caiga justo encima del otro, y la marca del doblez es la mediatriz. Ahí mismo se ve el punto medio, donde el doblez cruza el segmento."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Dos rectas paralelas están cortadas por una secante. Uno de los ángulos que se forman mide 115 grados. ¿Cuánto miden los demás?",
+      "pasos": [
+       "Al cortar dos paralelas se forman ocho ángulos, pero solo hay dos medidas: la del ángulo dado y la de su compañero.",
+       "El ángulo que queda pegado al de 115 grados sobre la misma recta lo completa hasta la línea recta: 180 menos 115 = 65 grados.",
+       "Todos los que se ven iguales al de 115 grados miden 115 grados: su opuesto por el vértice, su correspondiente y sus alternos.",
+       "Todos los que se ven iguales al de 65 grados miden 65 grados."
+      ],
+      "resultado": "Cuatro ángulos miden 115 grados y los otros cuatro miden 65 grados; cualquier pareja pegada suma 180 grados."
+     },
+     {
+      "enunciado": "El segmento MN mide 14 cm y P es su punto medio. ¿Cuánto mide MP? Si por P se traza la mediatriz de MN, ¿qué ángulo forma con el segmento?",
+      "pasos": [
+       "El punto medio parte el segmento en dos partes de la misma medida, así que cada parte es la mitad del total.",
+       "Se divide: 14 ÷ 2 = 7. Entonces MP mide 7 cm y PN también mide 7 cm.",
+       "Se comprueba sumando las dos partes: 7 + 7 = 14 cm, que es lo que medía el segmento entero.",
+       "La mediatriz no solo pasa por el punto medio: cruza el segmento perpendicularmente, o sea formando ángulo recto."
+      ],
+      "resultado": "MP mide 7 cm y la mediatriz forma con MN un ángulo de 90 grados."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "Pareja de ángulos",
+      "Dónde quedan",
+      "Cuánto miden"
+     ],
+     "filas": [
+      [
+       "Opuestos por el vértice",
+       "Uno frente al otro en el mismo cruce",
+       "Iguales"
+      ],
+      [
+       "Correspondientes",
+       "En el mismo lugar de cada cruce y del mismo lado de la secante",
+       "Iguales"
+      ],
+      [
+       "Alternos internos",
+       "Por dentro de las paralelas, uno a cada lado de la secante",
+       "Iguales"
+      ],
+      [
+       "Alternos externos",
+       "Por fuera de las paralelas, uno a cada lado de la secante",
+       "Iguales"
+      ],
+      [
+       "Pegados sobre la misma recta",
+       "Uno al lado del otro, formando juntos una línea recta",
+       "Suman 180 grados"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "El segmento RS mide 18 cm y T es su punto medio. El alumno contesta que RT mide 36 cm.",
+     "porque": "Multiplicó donde había que dividir. El punto medio parte el segmento en dos, así que cada mitad tiene que ser MENOR que el segmento entero. Una respuesta de 36 cm dice que la mitad es más grande que el todo, y eso avisa solo de que la cuenta está mala.",
+     "bien": "Se divide entre 2: 18 ÷ 2 = 9. RT mide 9 cm y TS también mide 9 cm. Comprobación: 9 + 9 = 18 cm."
+    }
+   },
+   {
+    "titulo": "⚖️ Ecuaciones, lenguaje algebraico, proporcionalidad y porcentaje",
+    "intro": "Una ecuación es una balanza: los dos lados del signo igual pesan lo mismo, y lo que le hagas a un lado tienes que hacérselo al otro para que no se incline. Resolverla es ir quitando lo que estorba, siempre con la operación contraria, hasta dejar sola la letra. Antes de eso hay un paso que se salta mucha gente y es el que más cuesta: traducir el enunciado a símbolos. Y en los problemas de proporciones hay que decidir primero qué clase de relación es: si las dos cantidades suben juntas es directa, y si una sube mientras la otra baja es inversa. Confundirlas cambia la respuesta por completo.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Para despejar la letra se hace la operación contraria y se hace en los DOS lados: lo que suma pasa restando, lo que multiplica pasa dividiendo. Al final se comprueba metiendo el valor hallado en la ecuación original."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Proporcionalidad directa: más de una cosa, más de la otra (más metros de tela, más lempiras), y se resuelve con la regla de tres. Proporcionalidad inversa: más de una cosa, menos de la otra (más trabajadores, menos días), y ahí se multiplican las dos cantidades conocidas y se divide entre la tercera."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Los porcentajes fáciles se sacan de memoria: el 50 por ciento es la mitad, el 25 por ciento es la cuarta parte y el 10 por ciento sale corriendo el punto un lugar a la izquierda. El 10 por ciento de 250 es 25, y con eso ya puedes armar el 20 o el 30 por ciento sumando."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Marta compró 3 libras de frijol y una libra de azúcar que costaba L.9. En total pagó L.66. Escribe la ecuación y halla el precio de la libra de frijol.",
+      "pasos": [
+       "Se le pone letra a lo que no se sabe: n es el precio de una libra de frijol.",
+       "Se traduce el enunciado: tres libras de frijol son 3n, y a eso se le suma el azúcar, que son 9. El total es 66, así que la ecuación es 3n + 9 = 66.",
+       "Se quita el 9 restando 9 en los dos lados: 3n = 57.",
+       "Se quita el 3 dividiendo entre 3 en los dos lados: n = 19.",
+       "Se comprueba en la ecuación original: 3 x 19 = 57, y 57 + 9 = 66. Cuadra."
+      ],
+      "resultado": "La ecuación es 3n + 9 = 66 y la libra de frijol cuesta L.19."
+     },
+     {
+      "enunciado": "Tres tractores aran una parcela en 8 días. ¿Cuántos días tardarán 4 tractores trabajando al mismo ritmo?",
+      "pasos": [
+       "Primero se decide qué clase de proporción es: con más tractores el trabajo se acaba en menos días, así que es inversa.",
+       "En la inversa el trabajo total no cambia. Se multiplican las dos cantidades conocidas: 3 x 8 = 24 días de tractor.",
+       "Se reparte ese trabajo entre los tractores nuevos: 24 ÷ 4 = 6.",
+       "Se revisa que tenga sentido: son más tractores que antes, así que la respuesta tiene que ser menor que 8 días. Lo es."
+      ],
+      "resultado": "Cuatro tractores tardan 6 días."
+     }
+    ],
+    "tabla": {
+     "encabezados": [
+      "En palabras",
+      "En símbolos",
+      "Dónde está la trampa"
+     ],
+     "filas": [
+      [
+       "Un número aumentado en 8",
+       "n + 8",
+       "Aumentar es sumar"
+      ],
+      [
+       "Un número disminuido en 3",
+       "n - 3",
+       "Disminuir es restar"
+      ],
+      [
+       "El doble de un número",
+       "2n",
+       "Doble es multiplicar por 2"
+      ],
+      [
+       "El triple de un número aumentado en 5",
+       "3n + 5",
+       "Primero el triple y después la suma"
+      ],
+      [
+       "La mitad de un número",
+       "n ÷ 2",
+       "Mitad es dividir entre 2"
+      ],
+      [
+       "Cinco menos un número",
+       "5 - n",
+       "No es lo mismo que n - 5"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Le piden el 15% de 200 y contesta 3000, porque multiplicó 200 por 15 y ahí se quedó.",
+     "porque": "Se le olvidó la mitad de la palabra: por ciento quiere decir entre cien. Multiplicar es solo el primer paso; falta repartir ese producto en cien partes. Y hay una revisión que no falla: mientras el porcentaje sea menor que 100, el resultado tiene que ser MENOR que la cantidad de la que se saca. Un 15 por ciento que sale quince veces más grande que el total avisa solo.",
+     "bien": "Se multiplica y después se divide entre 100: 200 x 15 = 3000, y 3000 ÷ 100 = 30. El 15 por ciento de 200 es 30. Se comprueba por otro camino: el 10 por ciento de 200 son 20 y el 5 por ciento es la mitad de eso, o sea 10; juntos dan 30."
+    }
+   }
+  ]
+ },
+ "teoriaEsp": {
+  "bloques": [
+   {
+    "titulo": "🎯 El tema del texto: de qué habla y qué dice de eso",
+    "intro": "Cuando terminas de leer, hay dos preguntas que parecen la misma y no lo son. La primera es de qué habla el texto: eso se contesta con dos o tres palabras (los elefantes, el manglar, la feria del pueblo). La segunda es qué dice el texto de eso: y esa ya se contesta con una oración completa. En la prueba te van a preguntar de las dos maneras, con «¿de qué trata el texto?» o con «¿qué se dice de los elefantes?», y la respuesta correcta siempre es la que junta las dos mitades. Una opción que solo nombra el asunto se queda corta; una que cuenta un dato suelto se pasa de pequeña.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "El tema tiene que abarcar TODO el texto. Si al leer una opción te sobran párrafos por fuera, esa opción es un dato suelto y no el tema, por muy cierta que sea."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Hazte las dos preguntas seguidas: ¿de quién o de qué habla? y ¿qué dice de eso? Junta las dos respuestas en una sola oración. Esa oración es el tema, aunque no esté escrita con esas mismas palabras en ninguna línea."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Cuidado con la opción verdadera pero chiquita. En la prueba casi siempre hay una que sí aparece en el texto y por eso se siente segura, pero solo ocupa un renglón. Verdadero no es lo mismo que principal."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "En el patio de muchas escuelas de Honduras hay un guanacaste. No lo sembraron solo por la sombra: sus vainas sirven de jabón para lavar, de sus ramas se cuelgan las hamacas y en agosto se llena de pájaros que vienen por la semilla. Un guanacaste viejo pasa de los veinte metros y le da sombra a un patio entero. Pregunta: ¿qué se dice del guanacaste en el texto?",
+      "pasos": [
+       "Contesto la primera mitad: ¿de qué habla? Del guanacaste que hay en el patio de las escuelas.",
+       "Contesto la segunda mitad: ¿qué dice de eso? Que no sirve solo para una cosa, sino para varias a la vez.",
+       "Junto las dos mitades en una oración: el guanacaste del patio le sirve a la escuela de muchas maneras.",
+       "Descarto las opciones pequeñas: que pase de los veinte metros es un dato cierto del texto, pero solo ocupa la última línea."
+      ],
+      "resultado": "Se dice que el guanacaste sirve para muchas cosas a la vez: da sombra al patio, sus vainas sirven de jabón, sostiene las hamacas y alimenta a los pájaros."
+     },
+     {
+      "enunciado": "En muchas casas del campo todavía se cocina con leña en fogón abierto. El humo se queda dentro y con los años daña los pulmones de quien cocina. Por eso varias comunidades cambiaron el fogón por una estufa con chimenea de lámina, que saca el humo afuera y además gasta menos leña. Doña Rufina dice que ahora hace el doble de tortillas con la misma carga. Pregunta: ¿cuál es el mejor título para este texto?",
+      "pasos": [
+       "Busco de qué habla: de la estufa con chimenea comparada con el fogón abierto.",
+       "Busco qué dice: que saca el humo de la casa y gasta menos leña.",
+       "Descarto un título de una sola parte, como Doña Rufina y sus tortillas: deja fuera casi todo el texto.",
+       "Descarto un título general de más, como La cocina del campo: no dice nada de lo que el texto explica."
+      ],
+      "resultado": "El mejor título es Por qué la estufa con chimenea gana al fogón abierto, porque nombra las dos cosas comparadas y la razón que da el texto."
+     }
+    ],
+    "tabla": {
+     "titulo": "Cómo se distinguen en la hoja",
+     "encabezados": [
+      "En qué te fijas",
+      "El tema",
+      "Un dato suelto"
+     ],
+     "filas": [
+      [
+       "Cuánto abarca",
+       "El texto completo",
+       "Un renglón o un párrafo"
+      ],
+      [
+       "Si lo quito",
+       "El texto pierde el sentido",
+       "El texto se entiende igual"
+      ],
+      [
+       "Cómo suena",
+       "Una oración general",
+       "Un nombre, una fecha, un número"
+      ],
+      [
+       "Cómo se contesta",
+       "De qué habla y qué dice de eso",
+       "Solo con lo que dice una línea"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Contestar la pregunta «¿qué se dice del guanacaste?» con la respuesta «que es un árbol muy grande».",
+     "porque": "Se quedó en la primera mitad. El dato es cierto y hasta está en el texto, pero solo ocupa la última línea: no dice nada de las vainas, ni de las hamacas, ni de los pájaros. Nombrar el asunto no es todavía contestar qué se dice de él.",
+     "bien": "Antes de marcar, dite la respuesta completa en voz baja: habla del guanacaste del patio y dice que sirve para varias cosas a la vez. La opción que se parezca a esa oración entera es la correcta."
+    }
+   },
+   {
+    "titulo": "🔍 Lo que dice, lo que se deduce y cómo es el personaje",
+    "intro": "Las preguntas de comprensión no son todas del mismo tipo y conviene reconocer cuál te están haciendo antes de contestar. La literal te pide algo escrito con todas sus letras: se busca y se subraya. La inferencial te pide algo que el autor no escribió pero dejó ver: se deduce juntando pistas. Y hay una pregunta de causa que en séptimo aparece mucho, la del «¿por qué?», que a veces es literal (el texto da la razón) y a veces inferencial (hay que sacarla). Aparte están las de descripción: te preguntan cómo es un personaje o un lugar, y la respuesta se arma con los rasgos que el texto va soltando poco a poco.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Toda respuesta tiene que poder defenderse señalando el texto con el dedo. En la literal señalas la oración. En la inferencial señalas las dos o tres pistas que te llevaron a deducirla."
+     },
+     {
+      "tipo": "truco",
+      "texto": "En las preguntas de por qué, fíjate primero en si el texto trae la palabra porque. Si la trae, la respuesta está escrita y es literal. Si no la trae, la respuesta hay que deducirla de lo que el personaje hizo."
+     },
+     {
+      "tipo": "idea",
+      "texto": "En las descripciones cree más en lo que el personaje HACE que en lo que dice de sí mismo. Un texto rara vez escribe «era trabajador»: lo que escribe es que se levantaba a las cuatro, y eso es lo que hay que leer."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Wilmer llegó al aula con el uniforme salpicado de lodo hasta las rodillas. Dejó los zapatos afuera y se sentó de último, aunque su pupitre estaba adelante. Cuando el maestro preguntó quién había cruzado la quebrada esa mañana, Wilmer no levantó la mano; fue el único que llegó tarde y el único que llegó mojado. Pregunta: ¿qué se puede deducir de Wilmer?",
+      "pasos": [
+       "Reviso si la respuesta está escrita: el texto nunca dice qué le pasó, así que la pregunta es inferencial.",
+       "Junto la primera pista: llegó con lodo hasta las rodillas y con los zapatos para dejarlos afuera.",
+       "Junto la segunda pista: el maestro preguntó justo por la quebrada, y Wilmer fue el único que llegó tarde y mojado.",
+       "Deduzco lo único razonable: cruzó la quebrada crecida para llegar a clases, aunque no lo quiso decir."
+      ],
+      "resultado": "Se deduce que cruzó la quebrada crecida para llegar a la escuela, y eso se sostiene con tres cosas que el texto sí cuenta: el lodo, la hora y el silencio cuando preguntaron."
+     },
+     {
+      "enunciado": "Tiene las manos anchas y llenas de callos, y las uñas siempre con un poco de barro debajo. Camina despacio, pero desde las cinco de la mañana ya anda entre los surcos. Cuando habla, habla poco; cuando enseña a sembrar, no le hace falta hablar. Pregunta: ¿cómo se describe a esta persona en el texto?",
+      "pasos": [
+       "Recojo los rasgos del cuerpo: manos anchas, callos, barro bajo las uñas. Son manos de trabajo, no de oficina.",
+       "Recojo los rasgos de conducta: anda entre los surcos desde las cinco de la mañana.",
+       "Recojo los rasgos del modo de ser: habla poco y enseña haciendo.",
+       "Junto todo en una sola idea, sin agregar nada que el texto no diga: no dice su edad ni su nombre, así que eso no se inventa."
+      ],
+      "resultado": "Se describe a un campesino callado y trabajador, y cada palabra de esa respuesta se puede señalar en el texto."
+     }
+    ],
+    "tabla": {
+     "titulo": "Cómo se pregunta cada una",
+     "encabezados": [
+      "Tipo de pregunta",
+      "Cómo empieza",
+      "Qué haces"
+     ],
+     "filas": [
+      [
+       "Literal",
+       "Según el texto..., ¿qué hizo?, ¿dónde?, ¿cuándo?",
+       "Buscas la oración y la subrayas"
+      ],
+      [
+       "De causa",
+       "¿Por qué...?, ¿qué provocó que...?",
+       "Buscas la palabra porque; si no está, deduces"
+      ],
+      [
+       "Inferencial",
+       "Se puede deducir que..., ¿qué pretendía?",
+       "Juntas dos o tres pistas y sacas la conclusión"
+      ],
+      [
+       "De descripción",
+       "¿Cómo es el personaje?, ¿cómo es el lugar?",
+       "Reúnes los rasgos que el texto va soltando"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Contestar que Wilmer llegó tarde porque se quedó dormido.",
+     "porque": "Es una explicación posible en la vida, pero en el texto no hay una sola pista que la sostenga: nadie habla de la hora a la que se levantó. Lo que el texto sí puso fueron el lodo, los zapatos afuera y la pregunta del maestro sobre la quebrada.",
+     "bien": "Una inferencia no es adivinar: es la única conclusión que sale de las pistas escritas. Si tu respuesta se sostiene con algo que sabes de tu casa pero que el texto no dice, no es inferencia, es invención."
+    }
+   },
+   {
+    "titulo": "🔤 La palabra difícil, la expresión y la frase que falta",
+    "intro": "En la prueba te van a subrayar una palabra y te van a preguntar qué significa EN ESE TEXTO. No es prueba de memoria ni necesitas diccionario: la respuesta está en las palabras que rodean a la subrayada, que se llaman contexto. Y en séptimo aparece un pariente más difícil, la expresión: un grupo de palabras que juntas significan algo que no dice ninguna de ellas por separado. «Le costó un ojo de la cara» no habla de ojos, habla de precio. La tercera pregunta de esta familia te da un texto con un hueco y cuatro frases para llenarlo: ahí la frase escogida tiene que encajar en el sentido y además concordar en persona y en número con el resto de la oración.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "La misma palabra cambia de significado según el texto. Banco puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que ya te sabes: busca el que sirve ahí."
+     },
+     {
+      "tipo": "truco",
+      "texto": "Técnica de sustituir: tapa con el dedo la palabra o la frase subrayada, mete la opción A y lee la oración entera. Después la B, la C y la D. Descarta las que suenan raras o cambian lo que pasa."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Una expresión no se traduce palabra por palabra: se cambia entera por otra manera de decir lo mismo. Pregúntate qué le está pasando de verdad al personaje en ese momento, no qué dicen las palabras sueltas."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "El camino que sube al caserío es tan angosto que dos motos no pueden pasar al mismo tiempo: una tiene que orillarse y esperar a que la otra baje. Cuando llueve, además, se pone resbaloso, y en esa subida ya nadie se arriesga. Pregunta: en el texto, la palabra angosto significa:",
+      "pasos": [
+       "Leo la oración completa donde está la palabra, no solo la palabra.",
+       "Busco la pista pegada: los dos puntos anuncian la explicación, y dice que una moto tiene que orillarse para que pase la otra.",
+       "Si no caben dos motos a la vez, lo que falta es ancho. Entonces angosto tiene que ver con el ancho del camino.",
+       "Sustituyo para comprobar: el camino es tan estrecho que dos motos no pueden pasar al mismo tiempo. Encaja perfecto."
+      ],
+      "resultado": "Angosto significa estrecho, de poco ancho, porque el texto explica en seguida que dos motos no caben a la vez."
+     },
+     {
+      "enunciado": "Cuando el maestro dijo que iban a leer en voz alta delante de todo el grado, a Karen se le fue el alma a los pies. Se quedó mirando el cuaderno sin pasar la página. Al final leyó, y leyó bien, pero las manos le temblaron hasta el último renglón. Pregunta: ¿qué significa en el texto la expresión se le fue el alma a los pies?",
+      "pasos": [
+       "Reconozco que es una expresión: ni el alma ni los pies tienen que ver con lo que está pasando.",
+       "Miro qué le ocurre a Karen justo antes: le acaban de decir que va a leer delante de todos.",
+       "Miro qué hace después: se queda quieta mirando el cuaderno y le tiemblan las manos hasta el final.",
+       "Cambio la expresión entera por otra manera de decirlo y leo de nuevo: a Karen le entró un miedo grande de repente. La oración sigue teniendo sentido."
+      ],
+      "resultado": "Significa que sintió de golpe un miedo grande, y lo confirman las manos temblando y la página sin pasar."
+     }
+    ],
+    "tabla": {
+     "titulo": "Las pistas del vecindario y qué anuncian",
+     "encabezados": [
+      "Si ves esto",
+      "Lo que viene es",
+      "Ejemplo"
+     ],
+     "filas": [
+      [
+       "Dos puntos, es decir, o sea",
+       "La explicación de la palabra",
+       "el vado, es decir, la parte donde el río se cruza a pie"
+      ],
+      [
+       "Pero, en cambio, sin embargo",
+       "Lo contrario de la palabra",
+       "venía manso, pero bajó bramando"
+      ],
+      [
+       "Como, igual que, parecido a",
+       "Una comparación que aclara",
+       "sensibles como un dedo"
+      ],
+      [
+       "Por ejemplo, tales como",
+       "Casos que ilustran la palabra",
+       "granos básicos, por ejemplo maíz y frijol"
+      ],
+      [
+       "Lo que el personaje hace después",
+       "La pista para entender una expresión",
+       "se le fue el alma a los pies y le temblaron las manos"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Completar el hueco de «Antes de que saliera el sol, los pescadores ___ las redes en la orilla» con la frase «puse a ordenar».",
+     "porque": "La frase se escogió porque suena parecida a lo que hace un pescador, sin mirar quién es el sujeto de la oración. El sujeto es los pescadores, que son varios y no soy yo, así que el verbo tiene que ir en ellos y no en primera persona.",
+     "bien": "Se lee la oración completa con la frase adentro antes de marcar. Con «extendían y revisaban» queda: los pescadores extendían y revisaban las redes en la orilla. Concuerda en persona y en número, y además tiene sentido."
+    }
+   },
+   {
+    "titulo": "📚 Tipos de texto, el mensaje y tu escritura: cuento dialogado y comentario",
+    "intro": "No todos los textos se leen igual, y en la prueba te van a preguntar de qué tipo es el que acabas de leer. Cada uno deja marcas visibles: la fábula termina en enseñanza y sus personajes son animales que actúan como personas; la noticia contesta qué, quién, cuándo y dónde en las primeras líneas; la descripción dice cómo es algo; el comentario da una opinión y la defiende con razones. También te van a preguntar por el mensaje, que es la idea que el autor te deja al terminar. Y al final escribes tú, y en séptimo grado son dos cosas: un cuento en el que hablan los personajes y un comentario en el que opinas.",
+    "reglas": [
+     {
+      "tipo": "regla",
+      "texto": "Cada tipo de texto se reconoce por su forma antes que por su tema. Un texto sobre el café puede ser noticia, descripción o comentario: lo que decide es cómo está armado, no de qué habla."
+     },
+     {
+      "tipo": "truco",
+      "texto": "En el cuento dialogado, cuando un personaje va a hablar se abre renglón nuevo y se empieza con la raya de diálogo, que es un guion largo. Si el narrador anuncia lo que alguien va a decir, se ponen dos puntos antes. Así se sabe quién habla sin tener que explicarlo."
+     },
+     {
+      "tipo": "idea",
+      "texto": "Para el comentario usa esta fórmula de tres partes: digo lo que pienso, doy dos razones distintas y cierro repitiendo mi postura. Una opinión sin razones no vale puntos, aunque esté bien escrita, y «porque me gusta» no es una razón."
+     }
+    ],
+    "ejemplos": [
+     {
+      "enunciado": "Dos hermanos recibieron una parcela cada uno. El mayor sembró de una vez y no volvió a limpiar; el menor sembró después, pero desyerbó cada semana. En la cosecha, la parcela del mayor apenas dio dos sacos, y la del menor, once. El mayor dijo que había tenido mala suerte. Pregunta: ¿qué mensaje deja el texto?",
+      "pasos": [
+       "Miro qué hizo cada personaje: uno sembró temprano y abandonó, el otro sembró tarde y estuvo encima del cultivo.",
+       "Miro cómo terminó cada uno: dos sacos contra once.",
+       "Comparo las dos cosas: lo que separa los resultados no es la fecha de la siembra, es el trabajo de cada semana.",
+       "Descarto la explicación del personaje: el mayor habla de mala suerte, pero el texto ya mostró la verdadera razón."
+      ],
+      "resultado": "El mensaje es que el trabajo constante rinde más que empezar temprano y después abandonar."
+     },
+     {
+      "enunciado": "A mí me parece que el rastrojo no se debe quemar. En primer lugar, el fuego se pasa al monte vecino y ahí ya nadie lo controla. En segundo lugar, la tierra queda floja y con la primera lluvia se va al río. Por eso creo que es mejor incorporarlo al suelo. Pregunta: ¿qué tipo de texto es y cómo lo sabes?",
+      "pasos": [
+       "Miro cómo empieza: con una opinión declarada, a mí me parece que.",
+       "Miro lo que viene después: dos razones presentadas con en primer lugar y en segundo lugar.",
+       "Miro el cierre: vuelve a la postura del principio con por eso creo que.",
+       "Descarto la noticia: no informa de un hecho ocurrido, con lugar y fecha, sino de lo que piensa quien escribe."
+      ],
+      "resultado": "Es un comentario, porque da una opinión, la sostiene con dos razones distintas y cierra volviendo a su postura."
+     }
+    ],
+    "tabla": {
+     "titulo": "La marca que delata a cada tipo",
+     "encabezados": [
+      "Tipo de texto",
+      "La marca que se ve",
+      "Para qué sirve"
+     ],
+     "filas": [
+      [
+       "Cuento",
+       "Personajes, un problema y un final; a veces con diálogos",
+       "Entretener contando algo imaginado"
+      ],
+      [
+       "Fábula",
+       "Animales que actúan como personas y una enseñanza",
+       "Dejar una lección de conducta"
+      ],
+      [
+       "Noticia",
+       "Qué, quién, cuándo y dónde en las primeras líneas",
+       "Informar de un hecho real y reciente"
+      ],
+      [
+       "Texto informativo",
+       "Datos comprobables, sin personajes inventados",
+       "Explicar cómo es algo de la realidad"
+      ],
+      [
+       "Descripción",
+       "Rasgos que se ven, se oyen o se tocan",
+       "Decir cómo es una persona, un animal o un lugar"
+      ],
+      [
+       "Comentario",
+       "Una opinión y las razones que la sostienen",
+       "Convencer a quien lee"
+      ]
+     ]
+    },
+    "error": {
+     "mal": "Escribir el cuento dialogado como un párrafo corrido, sin abrir renglón cuando habla un personaje: «El niño le dijo al abuelo que ya no había agua y el abuelo le contestó que fuera al pozo».",
+     "porque": "Ahí no hay diálogo, hay un narrador contando lo que se dijeron. La instrucción de la prueba pide un cuento DIALOGADO, o sea con los personajes hablando, y eso se marca con los dos puntos y con la raya al empezar cada intervención. Sin esas marcas se pierden los puntos aunque la historia esté buena.",
+     "bien": "El narrador cuenta y los personajes hablan por su cuenta. Después de una línea del narrador, se abre renglón nuevo y se empieza con la raya de diálogo para lo que dice el niño; luego otro renglón nuevo, con su raya, para lo que contesta el abuelo. Se lee de un vistazo quién dijo cada cosa."
+    }
+   }
+  ]
+ },
+ "actMat": {
+  "completar": [
+   {
+    "texto": "El valor absoluto de -14 se escribe |-14| y es igual a ___.",
+    "respuesta": "14",
+    "solucion": "14. El valor absoluto es la distancia que hay del número al cero, y una distancia nunca es negativa. Tanto -14 como 14 están a catorce unidades del cero."
+   },
+   {
+    "texto": "De los números -8, -3, 0 y 2, el menor es ___.",
+    "respuesta": "-8",
+    "solucion": "-8. En la recta numérica es el que queda más a la izquierda. Entre dos negativos, el de la cifra más grande es el número más pequeño: -8 es menor que -3."
+   },
+   {
+    "texto": "El resultado de -9 + 4 es ___.",
+    "respuesta": "-5",
+    "solucion": "-5. Los signos son distintos, así que se resta la cifra menor de la mayor (9 menos 4 = 5) y se deja el signo del mayor, que es el 9 con signo negativo."
+   },
+   {
+    "texto": "El resultado de la potencia (-3)³ es ___.",
+    "respuesta": "-27",
+    "solucion": "-27. Se multiplica el -3 tres veces: (-3)(-3) = 9 y 9 x (-3) = -27. Como el exponente 3 es impar, queda un signo negativo sin pareja y el resultado es negativo."
+   },
+   {
+    "texto": "Si 6n = -42, entonces n = ___.",
+    "respuesta": "-7",
+    "solucion": "-7. Se divide entre 6 en los dos lados: -42 ÷ 6 = -7, negativo porque los signos son distintos. Comprobación: 6 x (-7) = -42."
+   },
+   {
+    "texto": "Si t = 4, el valor de la expresión 5t es ___.",
+    "respuesta": "20",
+    "solucion": "20. Cuando una letra va pegada a un número se está multiplicando: 5t quiere decir 5 por t. Se sustituye la letra por su valor: 5 x 4 = 20."
+   },
+   {
+    "texto": "Al dividir 8.6 entre 10 se obtiene ___.",
+    "respuesta": "0.86",
+    "solucion": "0.86. Para dividir entre 10 se corre el punto un lugar hacia la izquierda. Si fuera entre 100 se correrían dos lugares y quedaría 0.086."
+   },
+   {
+    "texto": "Una secante corta dos rectas paralelas y uno de los ángulos mide 130 grados; el ángulo que le queda pegado sobre la misma recta mide ___ grados.",
+    "respuesta": "50",
+    "solucion": "50. Los dos ángulos juntos forman una línea recta, así que suman 180 grados: 180 menos 130 = 50 grados."
+   },
+   {
+    "texto": "El 25% de 48 alumnos son ___ alumnos.",
+    "respuesta": "12",
+    "solucion": "12. El 25 por ciento es la cuarta parte: 48 ÷ 4 = 12. También sale así: 48 x 25 = 1200, y 1200 ÷ 100 = 12."
+   },
+   {
+    "texto": "Si 9 cuadernos iguales cuestan L.108, cada cuaderno cuesta L.___",
+    "respuesta": "12",
+    "solucion": "12. Es proporcionalidad directa: se divide el total entre la cantidad, 108 ÷ 9 = 12. Comprobación: 12 x 9 = 108."
+   }
+  ],
+  "vf": [
+   {
+    "texto": "El número -12 es mayor que -5.",
+    "a": false,
+    "solucion": "Falso. En la recta numérica -12 queda más a la izquierda que -5, así que es menor. Entre negativos, mientras más grande la cifra, más pequeño el número."
+   },
+   {
+    "texto": "El valor absoluto de un número nunca es negativo.",
+    "a": true,
+    "solucion": "Verdadero. El valor absoluto mide la distancia al cero, y una distancia no puede ser negativa. Por eso |-7| = 7 y |7| = 7."
+   },
+   {
+    "texto": "El resultado de -6 + 6 es cero.",
+    "a": true,
+    "solucion": "Verdadero. Son números opuestos: están a la misma distancia del cero, uno a cada lado, y al sumarse se cancelan. Es lo que pasa cuando alguien debe L.6 y abona exactamente L.6."
+   },
+   {
+    "texto": "Al multiplicar dos números negativos el resultado es negativo.",
+    "a": false,
+    "solucion": "Falso. Dos signos iguales dan resultado positivo: (-3) x (-4) = 12. El resultado sale negativo cuando los signos son distintos, como en (-3) x 4 = -12."
+   },
+   {
+    "texto": "El resultado de (-5)² es -25.",
+    "a": false,
+    "solucion": "Falso. El paréntesis dice que se multiplica el -5 completo por sí mismo: (-5)(-5) = 25. El exponente 2 es par, así que los signos se emparejan y el resultado es positivo."
+   },
+   {
+    "texto": "En la ecuación n - 7 = 3 el valor de n es 10.",
+    "a": true,
+    "solucion": "Verdadero. Se suma 7 en los dos lados y queda n = 10. Comprobación: 10 menos 7 = 3."
+   },
+   {
+    "texto": "En una relación de proporcionalidad inversa, si una cantidad se duplica la otra también se duplica.",
+    "a": false,
+    "solucion": "Falso. En la inversa, si una cantidad se duplica la otra se reduce a la mitad: si el doble de trabajadores hace el mismo muro, tardan la mitad de los días. Lo que se duplica junto es la proporcionalidad directa."
+   },
+   {
+    "texto": "El 10% de 300 es 30.",
+    "a": true,
+    "solucion": "Verdadero. El 10 por ciento sale corriendo el punto un lugar a la izquierda: 300 se vuelve 30. También así: 300 x 10 = 3000, y 3000 ÷ 100 = 30."
+   },
+   {
+    "texto": "Los ángulos alternos externos que se forman al cortar dos rectas paralelas con una secante tienen la misma medida.",
+    "a": true,
+    "solucion": "Verdadero. Quedan por fuera de las paralelas, uno a cada lado de la secante, y miden lo mismo. Solo suman 180 grados los ángulos que quedan pegados uno al lado del otro sobre la misma recta."
+   },
+   {
+    "texto": "La mediatriz parte un segmento en dos partes iguales, pero puede cruzarlo con cualquier ángulo.",
+    "a": false,
+    "solucion": "Falso. La mediatriz cruza el segmento perpendicularmente, o sea formando ángulos de 90 grados. Una recta que lo parte a la mitad con otro ángulo pasa por el punto medio, pero no es la mediatriz."
+   }
+  ],
+  "mc": [
+   {
+    "texto": "Doña Fidelia debía L.240 en la pulpería. Abonó L.150 el martes y L.60 el sábado. ¿Cómo queda su cuenta?",
+    "o": [
+     "Debe L.30",
+     "Debe L.90",
+     "Le quedan L.30 a favor",
+     "Debe L.450"
+    ],
+    "a": 0,
+    "solucion": "La deuda es -240 y los abonos entran positivos: -240 + 150 = -90, y -90 + 60 = -30. Sigue debiendo L.30. Los L.450 salen de sumarlo todo sin signos, y los L.90 de olvidar el segundo abono."
+   },
+   {
+    "texto": "¿Cuál es el resultado de |(-4)(3) + 7|?",
+    "o": [
+     "19",
+     "5",
+     "-5",
+     "-19"
+    ],
+    "a": 1,
+    "solucion": "Primero lo de adentro: (-4) x 3 = -12, porque los signos son distintos. Después -12 + 7 = -5. Y al final el valor absoluto: |-5| = 5. El 19 sale de quitar los signos antes de operar, y las respuestas negativas de olvidar las barras."
+   },
+   {
+    "texto": "En el campeonato de la escuela, la diferencia de goles de cuatro equipos fue -8, -3, 0 y 5. ¿Cuál es el orden de menor a mayor?",
+    "o": [
+     "0, -3, -8, 5",
+     "-3, -8, 0, 5",
+     "-8, -3, 0, 5",
+     "5, 0, -3, -8"
+    ],
+    "a": 2,
+    "solucion": "Se leen de izquierda a derecha en la recta numérica: primero el más lejano del cero por la izquierda. -8 es el menor, después -3, luego 0 y por último 5. La cuarta opción es el orden al revés, de mayor a menor."
+   },
+   {
+    "texto": "¿Cuál es el resultado de -2/5 + 1/4?",
+    "o": [
+     "3/20",
+     "-13/20",
+     "-1/20",
+     "-3/20"
+    ],
+    "a": 3,
+    "solucion": "Denominador común 20: -2/5 = -8/20 1/4 = 5/20. Entonces -8/20 + 5/20 = -3/20. Sale negativo porque lo que se quita es mayor que lo que se agrega. El -13/20 sale de sumar las dos cantidades en vez de restarlas."
+   },
+   {
+    "texto": "El litro de gasolina cuesta L.28.75. Don Julio le echó 4.2 litros a la motocicleta. ¿Cuánto pagó?",
+    "o": [
+     "L.32.95",
+     "L.1207.50",
+     "L.24.55",
+     "L.120.75"
+    ],
+    "a": 3,
+    "solucion": "Se multiplica sin punto: 2875 x 42 = 120750. Entre los dos factores hay tres cifras decimales (dos en 28.75 y una en 4.2), así que se corren tres lugares desde la derecha: 120.750, o sea L.120.75. El L.32.95 sale de sumar en vez de multiplicar, el L.24.55 de restar, y el L.1207.50 de correr el punto un lugar de menos."
+   },
+   {
+    "texto": "Un rollo de manguera de 15.6 metros se corta en pedazos de 1.2 metros cada uno. ¿Cuántos pedazos salen?",
+    "o": [
+     "13 pedazos",
+     "18.72 pedazos",
+     "1.3 pedazos",
+     "130 pedazos"
+    ],
+    "a": 0,
+    "solucion": "Se corre el punto un lugar en los dos números para quitar el decimal del divisor: 156 ÷ 12 = 13. Comprobación: 13 x 1.2 = 15.6 metros. El 18.72 sale de multiplicar en vez de dividir."
+   },
+   {
+    "texto": "¿Cuál es el resultado de la potencia (-2)⁵?",
+    "o": [
+     "32",
+     "-32",
+     "-10",
+     "10"
+    ],
+    "a": 1,
+    "solucion": "Se multiplica el -2 cinco veces: 2 x 2 x 2 x 2 x 2 = 32, y como el exponente 5 es impar el resultado es negativo, o sea -32. El -10 y el 10 salen de multiplicar 2 x 5 en vez de elevar."
+   },
+   {
+    "texto": "Una secante corta dos rectas paralelas y uno de los ocho ángulos que se forman mide 68 grados. ¿Cuánto miden los demás?",
+    "o": [
+     "Todos miden 68 grados",
+     "Unos 68 grados y otros 112 grados",
+     "Unos 68 grados y otros 22 grados",
+     "Unos 68 grados y otros 90 grados"
+    ],
+    "a": 1,
+    "solucion": "Solo hay dos medidas distintas. Cuatro ángulos miden 68 grados y los otros cuatro son sus suplementarios: 180 menos 68 = 112 grados. El 22 sale de restar de 90, que es lo que se hace con los complementarios, no con estos."
+   },
+   {
+    "texto": "¿Cuál es el valor de y si 5y - 8 = 27?",
+    "o": [
+     "y = 35",
+     "y = 3.8",
+     "y = 7",
+     "y = -7"
+    ],
+    "a": 2,
+    "solucion": "Se suma 8 en los dos lados: 5y = 35. Se divide entre 5 en los dos lados: y = 7. Comprobación: 5 x 7 = 35, y 35 menos 8 = 27. El 35 es quedarse a medio camino y el 3.8 sale de restar el 8 en vez de sumarlo."
+   },
+   {
+    "texto": "Si 6 metros de tela cuestan L.288, ¿cuánto cuestan 14 metros de la misma tela?",
+    "o": [
+     "L.48",
+     "L.4032",
+     "L.672",
+     "L.302"
+    ],
+    "a": 2,
+    "solucion": "Es proporcionalidad directa. Primero el precio de un metro: 288 ÷ 6 = 48. Después por los metros que se llevan: 48 x 14 = 672. El L.48 es el precio de un solo metro, o sea quedarse a medio camino; el L.4032 sale de multiplicar 288 x 14 sin dividir antes; y el L.302 de sumar en vez de multiplicar."
+   }
+  ],
+  "pareados": [
+   {
+    "termino": "Número entero",
+    "definicion": "Cualquiera de los números positivos, los negativos y el cero, todos sin parte decimal."
+   },
+   {
+    "termino": "Valor absoluto",
+    "definicion": "La distancia que hay de un número al cero, y por eso nunca puede ser negativa."
+   },
+   {
+    "termino": "Números opuestos",
+    "definicion": "Dos números que están a la misma distancia del cero, uno a cada lado, y sumados dan cero."
+   },
+   {
+    "termino": "Punto medio",
+    "definicion": "El punto que parte un segmento en dos partes de la misma medida."
+   },
+   {
+    "termino": "Mediatriz",
+    "definicion": "Recta que pasa por el punto medio de un segmento y lo cruza formando ángulos de 90 grados."
+   },
+   {
+    "termino": "Ángulos alternos externos",
+    "definicion": "Pareja que queda por fuera de las paralelas, uno a cada lado de la secante, y mide lo mismo."
+   },
+   {
+    "termino": "Ángulos suplementarios",
+    "definicion": "Dos ángulos que juntos suman 180 grados y forman una línea recta."
+   },
+   {
+    "termino": "Ecuación",
+    "definicion": "Igualdad con una letra desconocida que se cumple con un solo valor de esa letra."
+   },
+   {
+    "termino": "Proporcionalidad inversa",
+    "definicion": "Relación en la que una cantidad sube y la otra baja: más trabajadores, menos días."
+   },
+   {
+    "termino": "Porcentaje",
+    "definicion": "Parte de un total contada como si el total estuviera dividido en cien partes."
+   }
+  ],
+  "procedimiento": [
+   {
+    "enunciado": "Resuelve paso a paso: -18 + 25 - 32 + 10.",
+    "respuesta": "-15",
+    "solucion": "Paso 1: se opera de izquierda a derecha. -18 + 25 = 7, porque los signos son distintos y se resta 18 de 25 dejando el signo del mayor. Paso 2: 7 - 32 = -25, porque ahora se quita más de lo que hay. Paso 3: -25 + 10 = -15. Otra manera de comprobarlo: se juntan los positivos (25 + 10 = 35) y los negativos (18 + 32 = 50), y después 35 menos 50 = -15."
+   },
+   {
+    "enunciado": "Resuelve y deja el resultado como número mixto: 5/6 - (-1/4).",
+    "respuesta": "13/12, que es 1 1/12",
+    "solucion": "Paso 1: restar un número negativo es lo mismo que sumar, así que la operación se vuelve 5/6 + 1/4. Paso 2: se busca denominador común. El m.c.m. de 6 y 4 es 12. Paso 3: se convierten las dos fracciones. 5/6 = 10/12 y 1/4 = 3/12. Paso 4: se suman los numeradores. 10/12 + 3/12 = 13/12. Paso 5: se vuelve mixto. 13 ÷ 12 = 1 con residuo 1, o sea 1 1/12."
+   },
+   {
+    "enunciado": "Doña Marina compró 3.5 libras de queso a L.46.00 la libra y pagó con un billete de L.200. ¿Cuánto le devolvieron?",
+    "respuesta": "L.39.00",
+    "solucion": "Paso 1: se multiplica sin ver el punto. 46 x 35 = 1610. Paso 2: se cuentan las cifras decimales de los dos factores. 46.00 tiene dos y 3.5 tiene una, en total tres. Paso 3: se corre el punto tres lugares desde la derecha en 1610.00, y queda 161.00, o sea L.161.00. Paso 4: se resta del billete. 200.00 menos 161.00 = 39.00. Comprobación por encima: 3.5 libras a casi L.46 son como L.161, y del billete de L.200 sobran unos L.39."
+   },
+   {
+    "enunciado": "Halla el valor de n y comprueba tu respuesta: 7n + 12 = -30.",
+    "respuesta": "n = -6",
+    "solucion": "Paso 1: se resta 12 en los dos lados. 7n = -30 menos 12 = -42. Paso 2: se divide entre 7 en los dos lados. n = -42 ÷ 7 = -6, negativo porque los signos son distintos. Paso 3: se comprueba en la ecuación original. 7 x (-6) = -42, y -42 + 12 = -30. Cuadra."
+   },
+   {
+    "enunciado": "Seis mujeres desgranan todo el maíz de la cosecha en 10 días. ¿Cuántos días tardarían 4 mujeres trabajando al mismo ritmo?",
+    "respuesta": "15 días",
+    "solucion": "Paso 1: se decide qué clase de proporción es. Con menos manos el trabajo tarda más, así que es inversa. Paso 2: se multiplican las dos cantidades conocidas para saber el trabajo total. 6 x 10 = 60 días de trabajo de una persona. Paso 3: se reparte entre las que ahora trabajan. 60 ÷ 4 = 15 días. Paso 4: se revisa el sentido. Son menos personas que antes, así que la respuesta tiene que ser mayor que 10 días. Lo es."
+   },
+   {
+    "enunciado": "En una sección de 40 alumnos, el 35% participó en la feria científica. ¿Cuántos alumnos participaron y cuántos no participaron?",
+    "respuesta": "14 participaron y 26 no participaron",
+    "solucion": "Paso 1: se multiplica la cantidad por el porcentaje. 40 x 35 = 1400. Paso 2: se divide entre 100. 1400 ÷ 100 = 14 alumnos participaron. Paso 3: los que no participaron son el resto. 40 menos 14 = 26 alumnos. Comprobación: el 35 por ciento que participó más el 65 por ciento que no participó dan el 100 por ciento, y 14 + 26 = 40 alumnos."
+   }
+  ]
+ },
+ "actEsp": {
+  "completar": [
+   {
+    "texto": "Cuando el texto no dice el motivo con todas sus letras y hay que deducirlo juntando pistas, se dice que el lector hace una ___.",
+    "respuesta": "inferencia",
+    "solucion": "Inferencia. La respuesta no está copiada en ninguna línea: se arma con dos o tres pistas del texto. Se acepta también deducción. No se acepta suposición: una inferencia se sostiene en lo escrito y una suposición no."
+   },
+   {
+    "texto": "Un grupo de palabras que juntas significan algo distinto de lo que dice cada palabra por separado se llama ___.",
+    "respuesta": "expresión",
+    "solucion": "Expresión. Se acepta igual frase hecha o modismo. Por ejemplo, «le costó un ojo de la cara» no habla de ojos sino de un precio muy alto. Por eso una expresión no se traduce palabra por palabra: se cambia entera por otra manera de decir lo mismo."
+   },
+   {
+    "texto": "La enseñanza o la idea que el autor le deja al lector cuando termina de leer es el ___ del texto.",
+    "respuesta": "mensaje",
+    "solucion": "Mensaje. Se acepta también enseñanza. No es lo mismo que la moraleja: la moraleja es el mensaje de la fábula y va escrito aparte al final, mientras que el mensaje de un cuento o de un artículo casi nunca está escrito y hay que sacarlo de lo que pasa."
+   },
+   {
+    "texto": "El texto que dice cómo es una persona, un animal o un lugar se llama ___.",
+    "respuesta": "descripción",
+    "solucion": "Descripción. Se reconoce porque no cuenta hechos que avanzan en el tiempo, sino rasgos que se ven, se oyen o se tocan. En ella los adjetivos tienen que concordar en género y en número con lo que describen."
+   },
+   {
+    "texto": "En un cuento dialogado, cada vez que habla un personaje su intervención empieza en renglón nuevo con la ___ de diálogo.",
+    "respuesta": "raya",
+    "solucion": "Raya. Es el guion largo que se pone al empezar el renglón para avisar de que ahí habla un personaje. Se acepta también guion de diálogo, que es como lo llama la propia prueba. Sin esa marca el lector no sabe quién dijo cada cosa."
+   },
+   {
+    "texto": "El escrito en el que das tu opinión sobre un tema y la defiendes con razones se llama ___.",
+    "respuesta": "comentario",
+    "solucion": "Comentario. Lleva tres partes: la postura, las razones y el cierre que vuelve a la postura. Se acepta también texto de opinión. No se acepta noticia: la noticia informa de un hecho y no opina."
+   },
+   {
+    "texto": "Los alumnos de séptimo grado ___ el mural de la entrada el viernes pasado.",
+    "respuesta": "pintaron",
+    "solucion": "Pintaron. Lo que se califica es la concordancia: el sujeto es los alumnos, tercera persona del plural, así que el verbo va en plural. Se aceptan igual terminaron o repintaron, en plural y en pasado. El error típico es escribir pintó, arrastrado por el singular de séptimo grado, que no es el sujeto."
+   },
+   {
+    "texto": "Estudió toda la semana; ___, la prueba le salió más difícil de lo que esperaba.",
+    "respuesta": "sin embargo",
+    "solucion": "Sin embargo. Se aceptan igual no obstante o aun así. Es un conector de oposición: la segunda parte dice lo contrario de lo que se esperaba después de la primera. No cabe aquí un conector de consecuencia como por eso, porque estudiar no causa que la prueba salga más difícil."
+   },
+   {
+    "texto": "En un comentario, después de decir lo que piensas hay que dar por lo menos dos ___ que sostengan tu opinión.",
+    "respuesta": "razones",
+    "solucion": "Razones. Se acepta igual argumentos. Tienen que ser dos razones distintas, no la misma dicha dos veces, y tienen que poder discutirse: «porque me gusta» no explica nada que el lector pueda comprobar."
+   },
+   {
+    "texto": "El texto que informa de un hecho real y reciente, diciendo qué pasó, quién, cuándo y dónde, se llama ___.",
+    "respuesta": "noticia",
+    "solucion": "Noticia. Su marca es que lo más importante va en las primeras líneas y casi siempre cita una fuente. Quien lee solo el primer párrafo ya se enteró del hecho; los detalles vienen después, de mayor a menor importancia."
+   }
+  ],
+  "vf": [
+   {
+    "texto": "Una expresión como «le costó un ojo de la cara» se entiende leyendo palabra por palabra.",
+    "a": false,
+    "solucion": "Falso. En una expresión las palabras juntas significan algo distinto de lo que dice cada una por su lado: ahí no se habla de ojos, se habla de que algo fue carísimo. Se entiende cambiando la expresión entera por otra manera de decir lo mismo."
+   },
+   {
+    "texto": "El tema de un texto se puede decir en una sola oración que abarque todo lo leído.",
+    "a": true,
+    "solucion": "Verdadero. Esa oración junta de qué habla el texto y qué dice de eso. Si la oración deja párrafos por fuera, entonces no era el tema sino un dato suelto."
+   },
+   {
+    "texto": "En una descripción de un lugar sobra decir los colores y los sonidos: basta con decir dónde queda.",
+    "a": false,
+    "solucion": "Falso. Describir es hacer que el lector vea y oiga el lugar sin haber estado ahí, y para eso sirven precisamente los colores, los tamaños, los olores y los sonidos. Decir dónde queda es ubicarlo, no describirlo."
+   },
+   {
+    "texto": "El mensaje de un texto siempre está escrito en la última línea con la palabra moraleja.",
+    "a": false,
+    "solucion": "Falso. Eso pasa en la fábula, que escribe su enseñanza aparte al final. En los demás textos el mensaje casi nunca está escrito: se saca de lo que hacen los personajes y de cómo termina la historia."
+   },
+   {
+    "texto": "En un cuento dialogado se ponen dos puntos cuando el narrador anuncia lo que un personaje va a decir.",
+    "a": true,
+    "solucion": "Verdadero. Los dos puntos avisan de que viene la voz del personaje, y la intervención empieza en renglón nuevo con su raya de diálogo. Son las dos marcas que pide la instrucción de la prueba."
+   },
+   {
+    "texto": "La frase que falta en un texto se escoge solo porque suena bonita, aunque no concuerde con el resto de la oración.",
+    "a": false,
+    "solucion": "Falso. La frase escogida tiene que encajar en el sentido y además concordar en persona y en número con el sujeto. Por eso se lee la oración completa con la frase adentro antes de marcar."
+   },
+   {
+    "texto": "Una pregunta que empieza con «¿por qué...?» casi siempre pide encontrar una causa.",
+    "a": true,
+    "solucion": "Verdadero. A veces la causa está escrita y la anuncia la palabra porque, y entonces la pregunta es literal. Si no está escrita, hay que deducirla de lo que el personaje hizo, y entonces es inferencial."
+   },
+   {
+    "texto": "Un texto informativo puede llevar personajes inventados que hablan entre ellos.",
+    "a": false,
+    "solucion": "Falso. El texto informativo explica cómo es algo de la realidad con datos que se pueden comprobar. Los personajes inventados que hablan son propios del cuento y de la fábula."
+   },
+   {
+    "texto": "En un comentario se da una opinión y se defiende con razones.",
+    "a": true,
+    "solucion": "Verdadero. Tiene tres partes: se declara la postura, se dan por lo menos dos razones distintas y se cierra volviendo a la postura. Sin razones no hay comentario, hay solo un gusto personal."
+   },
+   {
+    "texto": "En una descripción los adjetivos tienen que concordar en género y en número con lo que describen.",
+    "a": true,
+    "solucion": "Verdadero. Se escribe una quebrada honda y un camino lodoso; no una quebrada hondo. La concordancia es de las cosas que primero salta a la vista cuando se lee un escrito en voz alta."
+   }
+  ],
+  "lectura": {
+   "titulo": "Los manglares: la muralla que nadie ve",
+   "texto": "En la costa de Honduras, donde el río se junta con el mar, crecen unos árboles que viven con los pies metidos en agua salada. Son los mangles, y al monte que forman se le llama manglar. Sus raíces salen del tronco por encima del agua y se hunden en el lodo como zancos, y por eso la corriente no se los lleva. Ese enredo de raíces hace tres trabajos a la vez. Primero, frena las olas y el viento cuando entra un temporal, así que las casas que quedan detrás sufren menos. Segundo, atrapa el lodo que baja del río y sostiene la tierra de la orilla, que si no se iría al mar poco a poco. Y tercero, sirve de criadero: los camarones, los cangrejos y muchos peces pasan ahí sus primeros meses, escondidos entre las raíces donde los peces grandes no alcanzan a entrar. Por eso, cuando se tumba un manglar para levantar casas o para abrir una piscina de camarones, la orilla se empieza a comer el mar y la pesca baja en toda la zona. Hoy varias comunidades cuidan el suyo y siembran mangle nuevo, porque aprendieron que ese monte lodoso y feo es la muralla que los protege.",
+   "preguntas": [
+    {
+     "texto": "¿De qué trata principalmente el texto?",
+     "o": [
+      "De los camarones y los cangrejos que se pescan en la costa",
+      "Del manglar, el monte de raíces que protege la orilla y sirve de criadero",
+      "De los temporales que golpean la costa de Honduras",
+      "De las casas que se levantan a la orilla del mar"
+     ],
+     "a": 1,
+     "tipo": "tema",
+     "solucion": "Correcta la segunda opción. Todo el texto habla del manglar: cómo es, dónde crece, qué tres trabajos hace y qué pasa cuando se tumba. Las otras tres aparecen dentro del texto, pero solo como partes: los camarones salen en el tercer trabajo, el temporal en el primero y las casas en una sola oración. Ninguna abarca el texto completo."
+    },
+    {
+     "texto": "Según el texto, ¿qué hacen las raíces del mangle?",
+     "o": [
+      "Flotan sueltas sobre el agua salada",
+      "Crecen hacia arriba buscando el sol",
+      "Se secan cada vez que sube la marea",
+      "Se hunden en el lodo y sostienen el árbol"
+     ],
+     "a": 3,
+     "tipo": "literal",
+     "solucion": "Correcta la cuarta opción. Está escrito al principio: las raíces «salen del tronco por encima del agua y se hunden en el lodo como zancos, y por eso la corriente no se los lleva». Las otras tres dicen cosas que el texto no afirma en ninguna línea."
+    },
+    {
+     "texto": "Según el texto, ¿qué animales pasan sus primeros meses dentro del manglar?",
+     "o": [
+      "Los camarones, los cangrejos y muchos peces",
+      "Solamente los peces grandes",
+      "Las aves y las tortugas de tierra",
+      "El ganado que baja a beber agua"
+     ],
+     "a": 0,
+     "tipo": "literal",
+     "solucion": "Correcta la primera opción. El texto lo dice con esas mismas palabras al hablar del tercer trabajo del manglar. Los peces grandes también se nombran, pero justo para decir lo contrario: son los que no alcanzan a entrar entre las raíces."
+    },
+    {
+     "texto": "Si en una comunidad se tumbara todo el manglar, ¿qué es más probable que ocurriera?",
+     "o": [
+      "Que el río dejara de bajar lodo",
+      "Que las olas del temporal se volvieran más pequeñas",
+      "Que la orilla se fuera perdiendo y bajara la pesca",
+      "Que nacieran más camarones en el mar abierto"
+     ],
+     "a": 2,
+     "tipo": "inferencial",
+     "solucion": "Correcta la tercera opción. El texto no dice qué pasaría en esa comunidad, hay que deducirlo. Explica que el manglar sostiene la tierra de la orilla y sirve de criadero, así que sin él la orilla se pierde y la pesca baja. Las otras tres van en contra de lo que el texto explica."
+    },
+    {
+     "texto": "En el texto, la palabra criadero significa:",
+     "o": [
+      "un lugar donde se vende pescado",
+      "una red para atrapar camarones",
+      "una enfermedad que sufren los peces",
+      "un lugar donde los animales pequeños crecen protegidos"
+     ],
+     "a": 3,
+     "tipo": "vocabulario",
+     "solucion": "Correcta la cuarta opción. Los dos puntos anuncian la explicación: en seguida dice que ahí pasan sus primeros meses «escondidos entre las raíces donde los peces grandes no alcanzan a entrar». Eso es crecer protegido, no venderse ni enfermarse."
+    },
+    {
+     "texto": "En la última oración, la expresión «la muralla que los protege» quiere decir que el manglar:",
+     "o": [
+      "les sirve de defensa contra el mar y el viento",
+      "es una pared de piedra que ellos levantaron",
+      "les tapa la vista del mar desde las casas",
+      "separa una comunidad de la otra"
+     ],
+     "a": 0,
+     "tipo": "expresión",
+     "solucion": "Correcta la primera opción. Es una expresión: no hay ninguna pared de verdad. Lo que hace el manglar, según el propio texto, es frenar las olas y el viento del temporal y sostener la orilla, o sea defender a la comunidad. Por eso se le llama muralla."
+    }
+   ]
+  },
+  "tipos": [
+   {
+    "fragmento": "Aquella tarde, Nery se quedó mirando la puerta del granero, que estaba abierta de par en par y nadie sabía quién la había abierto.",
+    "tipo": "cuento",
+    "solucion": "Cuento. Narra hechos inventados de un personaje con nombre, en un momento concreto, y deja una intriga para que el lector siga leyendo. No informa de un hecho real ni deja una enseñanza escrita aparte."
+   },
+   {
+    "fragmento": "Ayer, en Puerto Cortés, la Secretaría de Educación entregó cuatro aulas nuevas a un centro básico del sector Río Blanco, informó la directora del centro.",
+    "tipo": "noticia",
+    "solucion": "Noticia. En la primera línea ya están el cuándo (ayer), el dónde (Puerto Cortés), el quién (la Secretaría de Educación) y el qué (entregó cuatro aulas), y además cita una fuente. Esa entrada cargada de datos reales es la marca de la noticia."
+   },
+   {
+    "fragmento": "El corredor de la casa es largo y fresco. En una esquina cuelga una hamaca de manila, y en la pared hay un almanaque de hace tres años que nadie ha querido bajar.",
+    "tipo": "descripción",
+    "solucion": "Descripción. No cuenta hechos que avancen en el tiempo: dice cómo es un lugar, con rasgos que se pueden ver. Si fuera cuento, algo le pasaría a alguien en ese corredor."
+   },
+   {
+    "fragmento": "El sapo le dijo a la garza que no podía volar tan alto, porque el cielo era de las aves, y la garza le contestó que el suelo también tenía dueño.",
+    "tipo": "fábula",
+    "solucion": "Fábula. Los personajes son animales que hablan y discuten como personas, cada uno defendiendo una conducta. Un texto así cierra con una enseñanza."
+   },
+   {
+    "fragmento": "El pino ocotero resiste el fuego mejor que otros árboles porque su corteza es gruesa y se quema por fuera sin que la llama llegue a la parte viva del tronco.",
+    "tipo": "texto informativo",
+    "solucion": "Texto informativo. Explica cómo es algo de la realidad y da la razón, con datos que se pueden comprobar. No hay personajes ni hechos que ocurran en un día concreto."
+   },
+   {
+    "fragmento": "Para mí, la cancha no debería prestarse solo a los equipos grandes. Primero, los niños también pagan la cuota del barrio; y segundo, si nadie los deja entrar no van a aprender nunca.",
+    "tipo": "comentario",
+    "solucion": "Comentario. Empieza declarando una opinión (para mí) y la sostiene con dos razones distintas, ordenadas con primero y segundo. No informa de un hecho ocurrido: dice lo que piensa quien escribe y por qué lo piensa."
+   },
+   {
+    "fragmento": "Cuando el tren dejó de pasar por el pueblo, mi abuelo siguió saliendo cada tarde a sentarse en el mismo riel, y decía que un día iba a volver.",
+    "tipo": "cuento",
+    "solucion": "Cuento. Narra en pasado lo que le ocurre a un personaje y crea un final abierto. No es noticia porque no informa de un hecho reciente con fuente, ni es descripción porque los hechos avanzan en el tiempo."
+   },
+   {
+    "fragmento": "La iguana verde pone entre veinte y setenta huevos en un hoyo que ella misma cava en la arena, y después lo tapa para que el sol los caliente.",
+    "tipo": "texto informativo",
+    "solucion": "Texto informativo. Da a conocer cómo se comporta un animal, con cifras y detalles verificables. La iguana no habla ni actúa como persona, así que no es fábula."
+   }
+  ],
+  "pareados": [
+   {
+    "termino": "Inferencia",
+    "definicion": "Conclusión que saca el lector juntando pistas, porque el texto no lo dice completo."
+   },
+   {
+    "termino": "Expresión",
+    "definicion": "Grupo de palabras que juntas significan algo distinto de lo que dice cada una por su lado."
+   },
+   {
+    "termino": "Mensaje del texto",
+    "definicion": "La idea o la enseñanza que el autor le deja al lector cuando termina de leer."
+   },
+   {
+    "termino": "Descripción",
+    "definicion": "Texto que dice cómo es una persona, un animal o un lugar."
+   },
+   {
+    "termino": "Comentario",
+    "definicion": "Escrito en el que se opina sobre un tema y se defiende esa opinión con razones."
+   },
+   {
+    "termino": "Cuento dialogado",
+    "definicion": "Narración en la que los personajes hablan, y cada intervención empieza en renglón nuevo."
+   },
+   {
+    "termino": "Personaje",
+    "definicion": "Cada uno de los seres que actúan y hablan dentro de una narración."
+   },
+   {
+    "termino": "Texto narrativo",
+    "definicion": "El que cuenta, en un orden, los hechos que les van pasando a unos personajes."
+   },
+   {
+    "termino": "Texto informativo",
+    "definicion": "El que explica cómo es algo de la realidad, con datos que se pueden comprobar."
+   },
+   {
+    "termino": "Argumento",
+    "definicion": "Razón que se da para sostener una opinión y convencer a quien lee."
+   }
+  ],
+  "escritura": [
+   {
+    "consigna": "Escribe un cuento dialogado de por lo menos doce renglones en el que hablen dos personajes. Escoge uno de estos tres títulos: 1) El préstamo de la bicicleta; 2) La noche que se fue la luz; 3) El caballo que volvió solo. Recuerda que cada vez que habla un personaje se empieza un renglón nuevo con su raya de diálogo, y que se ponen dos puntos cuando el narrador anuncia lo que alguien va a decir.",
+    "guia": "Una buena respuesta copia arriba el título escogido y cuenta una historia con inicio, problema y final, no una conversación suelta. Tiene que haber por lo menos cuatro intervenciones habladas, cada una en renglón nuevo y con su raya de diálogo al principio, y por lo menos una vez los dos puntos cuando el narrador anuncia que alguien va a hablar. Los verbos van en pasado y se sostienen hasta el final. Suma calidad que se note quién es cada personaje por su manera de hablar, y que el narrador diga entre medio lo que hacen mientras hablan. Se descuenta si escribe todo en párrafo corrido contando lo que se dijeron en vez de hacerlos hablar, si no se distingue quién dice cada cosa, o si deja el cuento sin cerrar."
+   },
+   {
+    "consigna": "En tu comunidad se propone que los alumnos de séptimo grado den una hora a la semana de apoyo a los niños de primero que todavía no leen bien. ¿Estás de acuerdo o no? Escribe un comentario de por lo menos diez renglones: di lo que piensas, defiéndelo con dos razones distintas y cierra con una oración de conclusión.",
+    "guia": "Una buena respuesta declara la postura con claridad en la primera oración (estoy de acuerdo o no estoy de acuerdo). Después presenta dos razones que sean de verdad distintas, no la misma dicha dos veces: por ejemplo, el niño de primero que aprende, por un lado, y lo que gana el de séptimo al explicar, por el otro. Cada razón va acompañada de un ejemplo de su comunidad o de su escuela. Se esperan conectores de orden y de causa (en primer lugar, además, ya que, por eso), y un cierre que retome la postura. Se descuenta si solo dice que le gusta o no le gusta sin razones, si las dos razones repiten la misma idea, o si al terminar de leer no se sabe cuál es su posición."
+   },
+   {
+    "consigna": "Describe en por lo menos ocho renglones a una persona de tu comunidad a la que todos conocen por su trabajo: cómo es por fuera, cómo es su modo de ser y qué hace un día cualquiera. No escribas su nombre hasta la última oración.",
+    "guia": "Una buena respuesta describe con palabras que se pueden ver y oír: las manos, la ropa, la manera de caminar, la voz, lo que siempre lleva consigo. Debe contestar las tres cosas que pide la consigna, y no quedarse solo en el aspecto físico: el modo de ser se muestra con lo que la persona hace, no con la palabra buena o trabajadora. Los adjetivos tienen que concordar en género y en número con lo que describen. Suma calidad un detalle concreto que solo se sabe si se le ha visto de cerca. Se descuenta si escribe una lista de palabras sueltas sin oraciones, si no llega a los ocho renglones, o si adelanta el nombre desde el principio y pierde el efecto que pide la consigna."
+   }
+  ]
+ },
+ "simulacro": {
+  "instruccion": "Lee con cuidado cada texto y cada problema. Después rellena por completo el círculo de la letra de la respuesta correcta. Cada pregunta tiene una sola respuesta correcta: si rellenas más de un círculo, la pregunta no se te cuenta. En la parte de Matemáticas revisa siempre el signo antes de marcar.",
+  "matematicas": [
+   {
+    "texto": "El termómetro del centro de salud marcó 38 grados a las diez de la mañana y 35 grados al mediodía. ¿Qué número representa ese cambio de temperatura?",
+    "o": [
+     "+3",
+     "-3",
+     "-35",
+     "+38"
+    ],
+    "a": 1,
+    "tema": "numero-con-signo",
+    "solucion": "La temperatura bajó, y lo que baja se escribe con signo negativo. El cambio es 35 menos 38 = -3. El +3 sale de restar al revés y olvidar que bajó; el -35 y el +38 son las temperaturas medidas, no el cambio."
+   },
+   {
+    "texto": "¿Cuál es el resultado de |(-8) + 3|?",
+    "o": [
+     "5",
+     "-5",
+     "11",
+     "-11"
+    ],
+    "a": 0,
+    "tema": "valor-absoluto",
+    "solucion": "Las barras son como un paréntesis: primero se hace lo de adentro. (-8) + 3 = -5, porque los signos son distintos y se resta 3 de 8 dejando el signo del mayor. Después el valor absoluto: |-5| = 5. El 11 sale de sumar 8 y 3 quitando los signos desde el principio."
+   },
+   {
+    "texto": "Julio debía L.150 en la pulpería. Su papá le dio L.90 y su tía L.40, y con ese dinero abonó a la cuenta. ¿Cuánto debe todavía?",
+    "o": [
+     "Ya no debe nada",
+     "L.280",
+     "L.20",
+     "L.60"
+    ],
+    "a": 2,
+    "tema": "suma-enteros",
+    "solucion": "La deuda es -150 y los abonos entran positivos: -150 + 90 = -60, y -60 + 40 = -20. Todavía debe L.20. Los L.280 salen de sumarlo todo sin signos, y los L.60 de quedarse en el primer abono y olvidar el de la tía."
+   },
+   {
+    "texto": "¿Cuál es el resultado de -3/4 + 1/2?",
+    "o": [
+     "-5/4",
+     "1/4",
+     "-2/6",
+     "-1/4"
+    ],
+    "a": 3,
+    "tema": "fracciones-signo",
+    "solucion": "Con denominador común 4: -3/4 + 2/4 = -1/4. Queda negativo porque lo que se quita es más de lo que se agrega. El -5/4 sale de sumar las dos cantidades en vez de restarlas, el 1/4 de perder el signo y el -2/6 de sumar arriba con arriba y abajo con abajo."
+   },
+   {
+    "texto": "Una libra de café molido cuesta L.62.50. Doña Aurelia lleva 1.6 libras. ¿Cuánto paga?",
+    "o": [
+     "L.64.10",
+     "L.100.00",
+     "L.1000.00",
+     "L.10.00"
+    ],
+    "a": 1,
+    "tema": "multiplicacion-decimales",
+    "solucion": "Se multiplica sin punto: 6250 x 16 = 100000. Entre los dos factores hay tres cifras decimales, así que se corren tres lugares desde la derecha: 100.000, o sea L.100.00 exactos. El L.64.10 sale de sumar en vez de multiplicar, y los otros dos de correr mal el punto."
+   },
+   {
+    "texto": "¿Cuál es el resultado de la potencia (-3)⁴?",
+    "o": [
+     "81",
+     "-81",
+     "12",
+     "-12"
+    ],
+    "a": 0,
+    "tema": "potencia-negativa",
+    "solucion": "Se multiplica el -3 cuatro veces: 3 x 3 x 3 x 3 = 81. Como el exponente 4 es par, los cuatro signos negativos se emparejan y el resultado queda positivo. El 12 y el -12 salen de multiplicar 3 x 4 en vez de elevar."
+   },
+   {
+    "texto": "Dos rectas paralelas están cortadas por una secante. Uno de los ángulos que se forman mide 124 grados. ¿Cuánto mide el ángulo que le queda pegado, sobre la misma recta?",
+    "o": [
+     "124 grados",
+     "236 grados",
+     "56 grados",
+     "304 grados"
+    ],
+    "a": 2,
+    "tema": "angulos-paralelas",
+    "solucion": "Los dos ángulos pegados forman juntos una línea recta, así que suman 180 grados: 180 menos 124 = 56. El 124 es la medida de los que se ven iguales al dado, no la del que está pegado; el 236 sale de restar de 360, que es la vuelta completa y no la línea recta; y el 304 de sumar en vez de restar."
+   },
+   {
+    "texto": "Nery compró un cuaderno de L.25 y además 4 lapiceros iguales. En total gastó L.73. Si n representa el precio de un lapicero, ¿qué ecuación representa el enunciado?",
+    "o": [
+     "25n + 4 = 73",
+     "4n + 25 = 73",
+     "4n - 25 = 73",
+     "25n - 4 = 73"
+    ],
+    "a": 1,
+    "tema": "ecuacion-planteo",
+    "solucion": "La letra n es el precio de UN lapicero, y compró cuatro: 4n. A eso se le suma el cuaderno, que costó L.25, y el total es 73. Queda 4n + 25 = 73, y de ahí saldría n = 12. La primera opción cambia los papeles del 4 y del 25, y las que restan no cuadran porque las dos compras se suman."
+   },
+   {
+    "texto": "Cuatro albañiles levantan la cerca de la escuela en 15 días. ¿Cuántos días tardarían 6 albañiles trabajando al mismo ritmo?",
+    "o": [
+     "22.5 días",
+     "90 días",
+     "9 días",
+     "10 días"
+    ],
+    "a": 3,
+    "tema": "proporcionalidad-inversa",
+    "solucion": "Es proporcionalidad inversa: con más albañiles se tarda menos. Se multiplican las cantidades conocidas para saber el trabajo total, 4 x 15 = 60 días de albañil, y se reparte entre los que ahora trabajan, 60 ÷ 6 = 10 días. El 22.5 sale de aplicar la regla de tres directa, que aquí no toca; el 90 de multiplicar 15 por 6 sin repartir; y el 9 de restar 15 menos 6. Además, cualquier respuesta mayor que 15 días es imposible: son más albañiles que antes."
+   },
+   {
+    "texto": "De los 60 alumnos que hicieron la prueba, el 15% la reprobó. ¿Cuántos alumnos la reprobaron?",
+    "o": [
+     "9 alumnos",
+     "15 alumnos",
+     "51 alumnos",
+     "4 alumnos"
+    ],
+    "a": 0,
+    "tema": "porcentaje",
+    "solucion": "Se multiplica y se divide entre 100: 60 x 15 = 900, y 900 ÷ 100 = 9 alumnos. El 15 es el porcentaje copiado tal cual; el 51 son los que aprobaron, que es la pregunta contraria; y el 4 sale de dividir 60 entre 15 en vez de sacar el porcentaje."
+   }
+  ],
+  "espanol": [
+   {
+    "texto": "Cuando el maestro pidió que llevaran un cuaderno de campo, los alumnos de séptimo empezaron a anotar cada mañana a qué hora salía el sol, si había llovido en la noche y qué árboles estaban floreando. A los tres meses ya podían decir en qué semana florea el jocote y cuándo llegan las golondrinas. Ese cuaderno es hoy el registro más completo que hay del clima de la aldea.\n\n¿De qué trata principalmente el texto?",
+    "o": [
+     "De las golondrinas que llegan a la aldea cada año",
+     "Del jocote y de la semana en que florea",
+     "Del cuaderno de campo con el que los alumnos registraron el clima de su aldea",
+     "Del maestro de séptimo grado y de las tareas que deja"
+    ],
+    "a": 2,
+    "tema": "tema",
+    "solucion": "Todas las oraciones hablan del cuaderno: quién lo empezó, qué se anota en él y en qué se convirtió a los tres meses. Las golondrinas y el jocote aparecen una sola vez, como ejemplos de lo que se anotó, y del maestro solo se dice que lo pidió. Ninguno de los tres abarca el texto completo."
+   },
+   {
+    "texto": "El sábado, los alumnos de séptimo grado salieron a las seis de la mañana a limpiar la orilla de la quebrada. Llenaron catorce sacos de basura antes del mediodía. La directora prestó la camioneta para llevarlos al basurero, y doña Nicolasa les regaló horchata al terminar.\n\nSegún el texto, ¿quién prestó la camioneta?",
+    "o": [
+     "La directora",
+     "Doña Nicolasa",
+     "El alcalde del municipio",
+     "Un alumno de séptimo grado"
+    ],
+    "a": 0,
+    "tema": "literal",
+    "solucion": "La respuesta está escrita en la tercera oración: la directora prestó la camioneta. Doña Nicolasa también aparece, pero haciendo otra cosa, que fue regalar la horchata; del alcalde y de los alumnos el texto no dice nada de la camioneta."
+   },
+   {
+    "texto": "Sandra guardó la naranja del recreo en la mochila y no la volvió a sacar en todo el día. A la salida se quedó parada junto al portón hasta que el patio se vació. Cuando llegó su abuela con el niño de tres años, Sandra abrió la mochila y se agachó a su lado.\n\n¿Qué se puede deducir de lo que hizo Sandra?",
+    "o": [
+     "Que no le gustan las naranjas",
+     "Que se le había olvidado la merienda dentro de la mochila",
+     "Que estaba esperando que la regañaran",
+     "Que guardó su merienda para dársela a su hermanito"
+    ],
+    "a": 3,
+    "tema": "inferencial",
+    "solucion": "El texto no lo dice: hay que juntar las pistas. Guardó la naranja en vez de comérsela, esperó a que el patio se vaciara, y en cuanto llegó el niño de tres años abrió la mochila y se agachó a su lado. Si se le hubiera olvidado no habría esperado junto al portón, y de que no le gusten las naranjas o de un regaño no hay ninguna pista."
+   },
+   {
+    "texto": "Doña Elodia cerró la pulpería a las tres de la tarde, cosa que no hacía nunca. Puso en la puerta un papel que decía «vuelvo mañana» y se fue al centro de salud con su nieto en brazos. El niño llevaba dos días con calentura y esa mañana no quiso comer.\n\n¿Por qué cerró doña Elodia la pulpería antes de tiempo?",
+    "o": [
+     "Porque ya había vendido todo lo que tenía",
+     "Porque su nieto estaba enfermo y lo llevó al centro de salud",
+     "Porque ese día era feriado en el pueblo",
+     "Porque se fue la luz en todo el barrio"
+    ],
+    "a": 1,
+    "tema": "causa",
+    "solucion": "La causa no está escrita con la palabra porque, así que hay que deducirla de lo que hizo: se fue al centro de salud cargando al nieto, y el texto aclara que el niño llevaba dos días con calentura y no quiso comer. De la venta, del feriado y de la luz no hay ni una pista en el texto."
+   },
+   {
+    "texto": "El maíz se guarda en el silo bien seco, porque si le queda humedad se apelmaza y se echa a perder. Por eso don Justo lo asolea dos días enteros sobre un plástico antes de guardarlo, y lo mueve con el rastrillo cada tanto para que quede parejo.\n\n¿Qué significa en el texto la palabra asolea?",
+    "o": [
+     "Lo pone al sol para que se seque",
+     "Lo guarda bajo techo",
+     "Lo lava con agua limpia",
+     "Lo muele para hacer masa"
+    ],
+    "a": 0,
+    "tema": "vocabulario",
+    "solucion": "El vecindario de la palabra lo explica: el maíz tiene que quedar seco, y don Justo hace eso dos días enteros sobre un plástico antes de guardarlo. Lavarlo le agregaría humedad, que es justo lo contrario; guardarlo bajo techo y molerlo son otras acciones que el texto no está nombrando ahí."
+   },
+   {
+    "texto": "Cuando el bus se paró en media cuesta con toda la gente adentro, al chofer se le puso la piel de gallina. Se bajó sin decir nada, revisó el freno y no dejó que nadie se moviera hasta que las llantas quedaron bien trabadas con dos piedras.\n\n¿Qué significa en el texto la expresión se le puso la piel de gallina?",
+    "o": [
+     "Que le dio frío en la cuesta",
+     "Que se enojó con los pasajeros",
+     "Que sintió de golpe un susto grande",
+     "Que le dio risa lo que estaba pasando"
+    ],
+    "a": 2,
+    "tema": "expresion",
+    "solucion": "Es una expresión y no se lee palabra por palabra. Lo que hace después lo aclara: se baja de inmediato, revisa el freno y no deja que nadie se mueva hasta asegurar el bus. Eso es susto, no frío ni enojo, y menos risa: nadie que se esté riendo traba las llantas con piedras."
+   },
+   {
+    "texto": "La casa de la esquina tiene el corredor lleno de macetas hechas con botes de leche, todas con sábila y con hierbabuena. La puerta nunca está cerrada del todo y desde la calle se oye una radio vieja, siempre con noticias. En la pared de este lado hay una pizarra donde alguien va anotando lo que fía.\n\nSegún el texto, ¿cómo es la casa de la esquina?",
+    "o": [
+     "Una casa abandonada, sin nadie adentro",
+     "Una casa nueva y de dos pisos",
+     "Una escuela pequeña de la aldea",
+     "Una casa con corredor, macetas y una pizarra de fiados"
+    ],
+    "a": 3,
+    "tema": "descripcion",
+    "solucion": "Los rasgos que da el texto son esos tres: el corredor con macetas, la puerta entreabierta con la radio sonando y la pizarra de los fiados. Abandonada se contradice con la radio y con la pizarra en uso, y de que sea nueva, de dos pisos o una escuela el texto no dice nada."
+   },
+   {
+    "texto": "Al principio Lucía solo pudo comprar dos gallinas. Vendía los huevos y con eso compraba maíz para ellas y para su casa. Al año tenía nueve; al tercero pasaba de cuarenta y ya tenía un puesto fijo en el mercado. Su vecina empezó el mismo día con quince gallinas prestadas y las fue vendiendo cada vez que le hizo falta dinero; hoy no le queda ninguna.\n\n¿Qué mensaje deja el texto?",
+    "o": [
+     "Que criar gallinas es un mal negocio",
+     "Que lo que se levanta de a poco y no se toca es lo que dura",
+     "Que es mejor pedir prestado que empezar con poco",
+     "Que el mercado del pueblo es el mejor lugar para vender"
+    ],
+    "a": 1,
+    "tema": "mensaje",
+    "solucion": "Las dos empezaron el mismo día y terminaron al revés: la que empezó con dos y no las tocó llegó a cuarenta, y la que empezó con quince prestadas se quedó sin ninguna. Lo que las separa no es con cuánto empezaron, sino lo que hicieron después. Las otras tres opciones van en contra de lo que el propio texto muestra."
+   },
+   {
+    "texto": "El aguacero agarró a los alumnos a media cancha. Todos ___ debajo del corredor y se quedaron ahí, apretados, viendo cómo el agua arrastraba las hojas hasta el portón.\n\n¿Qué frase falta para completar la idea del texto?",
+    "o": [
+     "me metí corriendo",
+     "metiéndose de prisa",
+     "se metieron corriendo",
+     "te vas a meter"
+    ],
+    "a": 2,
+    "tema": "frase-que-falta",
+    "solucion": "El sujeto es Todos, que son varios, así que la frase tiene que ir en tercera persona del plural y en pasado, igual que el verbo se quedaron que viene después. Solo se metieron corriendo cumple las dos cosas. Las otras están en primera persona, en segunda persona o sin conjugar."
+   },
+   {
+    "texto": "Yo pienso que el basurero del pueblo no debería estar a la orilla de la quebrada. En primer lugar, cuando llueve el agua arrastra la basura hasta donde la gente lava. En segundo lugar, el mal olor llega hasta las casas de abajo. Por eso creo que hay que moverlo a otro sitio.\n\n¿Qué tipo de texto es el anterior?",
+    "o": [
+     "Una noticia, porque informa de algo que pasó en el pueblo",
+     "Un comentario, porque da una opinión y la defiende con razones",
+     "Una descripción, porque dice cómo es la quebrada",
+     "Un instructivo, porque dice lo que hay que hacer"
+    ],
+    "a": 1,
+    "tema": "tipo-texto",
+    "solucion": "Empieza con una postura (yo pienso que), da dos razones marcadas con en primer lugar y en segundo lugar, y cierra volviendo a su postura: eso es un comentario. No informa de un hecho ocurrido con lugar y fecha, no describe la quebrada y no da pasos numerados para hacer nada."
+   }
+  ]
+ },
+ "errores": {
+  "errores": [
+   {
+    "titulo": "El signo que se pierde al restar un negativo",
+    "materia": "mat",
+    "mal": "El alumno resuelve 8 - (-5) y escribe 3, porque vio dos signos de menos y restó. En la libreta de la pulpería le pasa lo mismo: a una cuenta de -12 le quitan una deuda de -5 y contesta que ahora debe 17.",
+    "porque": "Quitar una deuda no es hundirse más, es mejorar. Restar un número negativo es lo mismo que sumar su opuesto, porque quitar algo que estaba en contra deja el resultado más arriba, no más abajo. Fíjese en lo que salió: si a alguien que debe L.12 le perdonan L.5 de deuda, no puede terminar debiendo L.17.",
+    "bien": "Se cambian los dos signos seguidos por una suma: 8 - (-5) = 8 + 5 = 13. Y en la cuenta de la pulpería, -12 - (-5) = -12 + 5 = -7, o sea que sigue debiendo, pero L.7 en vez de L.12. Regla corta para revisar: menos con menos da más."
+   },
+   {
+    "titulo": "El valor absoluto quitado antes de hacer la cuenta de adentro",
+    "materia": "mat",
+    "mal": "Le piden |(-7) + 4| y el alumno quita los signos de una vez: hace 7 + 4 y escribe 11.",
+    "porque": "Las dos barras funcionan como un paréntesis: primero se resuelve TODO lo que está adentro y hasta el final se mira la distancia al cero. Quitar los signos antes cambia la operación por otra distinta, y el resultado se dispara. Por eso el 11 aparece tanto en las opciones equivocadas: es exactamente lo que sale de tomar el atajo.",
+    "bien": "Primero lo de adentro: (-7) + 4 = -3, porque los signos son distintos y se resta 4 de 7 dejando el signo del mayor. Después el valor absoluto: |-3| = 3. Regla para revisar: el resultado de un valor absoluto nunca es negativo, pero tampoco es la suma de las cifras sin signo."
+   },
+   {
+    "titulo": "La potencia de un negativo con el signo puesto al tanteo",
+    "materia": "mat",
+    "mal": "El alumno escribe (-6)² = -36 y (-6)³ = 216. Las cifras le salen bien las dos veces; lo que pone al tanteo es el signo, a veces negativo porque el número lo era y a veces positivo porque se le olvida.",
+    "porque": "El paréntesis dice que lo que se multiplica es el -6 completo, con su signo. Cada pareja de negativos se cancela: si el exponente es par no sobra ninguno y el resultado queda positivo; si es impar sobra uno suelto y el resultado queda negativo. No es cuestión de acordarse, es de contar.",
+    "bien": "(-6)² = (-6)(-6) = 36, positivo porque el exponente 2 es par. (-6)³ = (-6)(-6)(-6) = 36 x (-6) = -216, negativo porque el exponente 3 es impar. Revisión de un segundo: mire el exponente antes de escribir el signo, par positivo e impar negativo."
+   },
+   {
+    "titulo": "La regla de tres usada donde la proporción es inversa",
+    "materia": "mat",
+    "mal": "Cuatro pintores pintan la escuela en 12 días. Le preguntan cuántos días tardarían 8 pintores y contesta 24 días, porque duplicó los pintores y duplicó los días.",
+    "porque": "Aplicó la regla de tres directa a una relación que es inversa. En la directa las dos cantidades suben juntas (más metros de tela, más lempiras). Aquí no: si llegan más pintores el trabajo se acaba ANTES. Una respuesta mayor que 12 días ya avisa sola de que algo se hizo al revés, sin necesidad de repasar la cuenta.",
+    "bien": "En la inversa se multiplican las dos cantidades conocidas para saber el trabajo total y se reparte entre la tercera: 4 x 12 = 48 días de pintor, y 48 ÷ 8 = 6 días. Cuadra con el sentido común: el doble de gente, la mitad del tiempo. Prueba rápida antes de operar: pregúntese si al aumentar una cantidad la otra sube o baja."
+   },
+   {
+    "titulo": "La ecuación resuelta de un solo lado",
+    "materia": "mat",
+    "mal": "En 4n + 6 = 38 el alumno escribe 4n = 38 + 6 = 44 y después n = 11. Pasó el 6 al otro lado, pero sumándolo en vez de restándolo.",
+    "porque": "Una ecuación es una balanza y se mantiene igualada mientras se le haga lo mismo a los dos lados. Para quitar un 6 que está sumando hay que restar 6, y restarlo tanto a la izquierda como a la derecha. Al sumarlo de un solo lado la balanza se inclina y el valor que sale ya no cumple la igualdad.",
+    "bien": "Se resta 6 en los dos lados: 4n = 32. Se divide entre 4 en los dos lados: n = 8. Y se comprueba metiendo el valor en la ecuación original, que es el paso que casi nadie hace y que descubre el error solo: 4 x 8 = 32, y 32 + 6 = 38. Con el 11 daría 50, que no es 38."
+   },
+   {
+    "titulo": "Contestar de qué habla el texto sin decir qué dice de eso",
+    "materia": "esp",
+    "mal": "El texto cuenta que el vivero de la escuela produce mil arbolitos al año, que los alumnos los siembran en la orilla de la quebrada y que ya se ven los primeros árboles grandes. Le preguntan qué se dice del vivero y el alumno contesta: que produce mil arbolitos al año.",
+    "porque": "Escogió el dato que más se le quedó pegado, que además es un número, y los números se recuerdan solos. Pero esa respuesta nombra únicamente lo que sale del vivero: deja fuera quiénes siembran, dónde siembran y qué se ha logrado ya. El tema junta las dos mitades, de qué habla y qué dice de eso.",
+    "bien": "Se dice que el vivero de la escuela abastece de arbolitos la orilla de la quebrada y que el trabajo ya está dando resultado. Prueba rápida antes de marcar: lea la opción y pregúntese si al texto le sobra algo por fuera. Si le sobra, es un dato suelto y no el tema."
+   },
+   {
+    "titulo": "La frase que falta escogida por lo que suena y no por lo que concuerda",
+    "materia": "esp",
+    "mal": "El texto dice: 'Antes de que saliera el sol, los pescadores ___ las redes en la orilla y contaban lo que habían sacado esa noche'. El alumno escoge 'puse a ordenar', porque ordenar redes es algo que hacen los pescadores.",
+    "porque": "Miró si la acción encajaba con el oficio, pero no miró quién la hace. El sujeto es los pescadores, que son varios y no soy yo, así que la frase tiene que ir en tercera persona del plural. Además, el verbo contaban que viene después ya marca la persona y el tiempo de toda la oración, y una frase en primera persona la rompe.",
+    "bien": "Se mete cada opción en el hueco y se lee la oración COMPLETA, hasta el punto final. Con la correcta queda: los pescadores extendían y revisaban las redes en la orilla y contaban lo que habían sacado. Concuerda en persona y en número, y tiene sentido. Las que se sienten raras al leerlas enteras se descartan."
+   },
+   {
+    "titulo": "El cuento dialogado escrito sin marcar quién habla",
+    "materia": "esp",
+    "mal": "Le piden un cuento dialogado y entrega un párrafo corrido: 'El niño le dijo al abuelo que ya no había agua en el pozo y el abuelo le contestó que fuera a la quebrada'. La historia se entiende, pero ahí no habla nadie: todo lo cuenta el narrador.",
+    "porque": "La instrucción pide un cuento DIALOGADO, o sea con los personajes hablando por su cuenta, y eso se marca con dos señales que la prueba nombra: los dos puntos cuando el narrador anuncia lo que alguien va a decir, y la raya de diálogo al empezar cada intervención en renglón nuevo. Sin esas marcas se pierden puntos aunque la historia esté bien contada, porque no se está haciendo lo que se pidió.",
+    "bien": "El narrador cuenta y los personajes hablan. Después de la línea del narrador se abre renglón nuevo y se empieza con la raya para lo que dice el niño; luego otro renglón nuevo, con su raya, para lo que contesta el abuelo. Así se lee de un vistazo quién dijo cada cosa. Antes de entregar, cuente las intervenciones habladas: si no hay ninguna, todavía no es un cuento dialogado."
+   }
+  ],
+  "estrategia": [
+   "Duerme temprano la víspera y desayuna: la prueba trae las dos materias en el mismo día y el hambre se siente en la segunda parte.",
+   "Alista dos lápices con punta, borrador y regla la noche antes, no la mañana del examen.",
+   "Lee cada pregunta completa hasta el punto final antes de mirar las opciones: media pregunta leída es media respuesta equivocada.",
+   "En los problemas con signo, escribe la operación en el borrador con los signos puestos: en séptimo grado se pierden más puntos por un signo perdido que por una cuenta mal hecha.",
+   "En lectura, subraya en el texto el renglón donde encontraste la respuesta; si no puedes subrayarlo, todavía no es tu respuesta.",
+   "En la parte de escritura no hay opciones: lee la instrucción dos veces, apunta en el borrador tres líneas con lo que vas a contar o a defender, y después escribe cuidando la ortografía.",
+   "Rellena completo el círculo de la respuesta que escogiste y no dejes ninguna pregunta en blanco; la que se te trabe, márcala al lado del número y regresa a ella al final."
+  ]
+ }
+}

@@ -280,14 +280,14 @@
 
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-amber">
-    <h2>🧪 Laboratorio 1: La pizza de fracciones</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Parte la pizza y sombrea porciones: mira cómo la fracción y el decimal cambian juntos. Luego acepta los desafíos. ⭐ +2 XP por desafío logrado (primeros 5)</p>
-    <div id="widget-fraccion-lab"></div>
+    <h2>🧪 Laboratorio 1: La recta de los enteros</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Toca un número y mira cuántos pasos hay de él hasta el cero: esa distancia es su valor absoluto. Luego acepta los desafíos. ⭐ +2 XP por desafío logrado (primeros 5)</p>
+    <div id="widget-recta-enteros"></div>
   </div>
   <div class="card ac-teal">
-    <h2>📦 Laboratorio 2: La fábrica del volumen</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Arma la caja con largo, ancho y alto, y cuenta los cubos que caben adentro. ⭐ +2 XP por desafío logrado (primeros 5)</p>
-    <div id="widget-volumen-lab"></div>
+    <h2>⚖️ Laboratorio 2: La balanza de la ecuación</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige qué hacerle a los DOS lados hasta dejar la letra sola: así se resuelve una ecuación, sin pasar nada de un lado al otro. ⭐ +2 XP por desafío logrado (primeros 5)</p>
+    <div id="widget-balanza"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
@@ -415,9 +415,9 @@
 
 <div class="sec" id="s-widgets" role="tabpanel">
   <div class="card ac-teal">
-    <h2>📊 La máquina del promedio</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparecen las calificaciones de un alumno: calcula su promedio como lo hará tu maestro. ⭐ +2 XP por acierto (primeros 6)</p>
-    <div id="widget-promedio"></div>
+    <h2>📊 La regla de tres</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece una tabla con un hueco: colócale los datos y halla el que falta. Vienen mezcladas la directa y la inversa. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-regla-tres"></div>
   </div>
   <div class="card ac-gold">
     <h2>🔎 El detective de la palabra</h2>
@@ -425,9 +425,9 @@
     <div id="widget-detective"></div>
   </div>
   <div class="card ac-blue">
-    <h2>📡 ¿m.c.m. o M.C.D.?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece una situación: decide en un toque si se resuelve con m.c.m. o con M.C.D. ⭐ +2 XP por acierto (primeros 6)</p>
-    <div id="widget-mcmmcd"></div>
+    <h2>📡 ¿Directa o inversa?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece una situación: decide en un toque si la proporcionalidad es directa o inversa. Más obreros, menos días. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-directa-inversa"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Escritura" onclick="go('s-explica')">
     <span class="nsb-icon">✍️</span>
@@ -506,13 +506,13 @@
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autoasígnate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
     <div class="tg-controls">
       <select class="tg-sel" id="tgType">
-        <option value="fracciones">🍕 Sumar y restar fracciones</option>
-        <option value="decimales">💰 Compras con decimales (lempiras)</option>
-        <option value="mcmmcd">🔁 m.c.m. y M.C.D.</option>
-        <option value="viajes">🚌 Viajes: distancia, velocidad y tiempo</option>
-        <option value="geometria">📐 Área y volumen</option>
-        <option value="promedio">📊 Promedios</option>
-        <option value="pensamiento">🧠 Pensamiento y escritura</option>
+        <option value="enteros">🔢 Enteros y valor absoluto</option>
+        <option value="fracciones">🍕 Fracciones con signo</option>
+        <option value="decimales">💰 Decimales con lempiras</option>
+        <option value="potencias">⚡ Potencias</option>
+        <option value="ecuaciones">⚖️ Ecuaciones de uno y dos pasos</option>
+        <option value="proporcion">📊 Proporcionalidad y porcentaje</option>
+        <option value="geometria">📐 Ángulos y geometría</option>
       </select>
       <select class="tg-sel" id="tgCount">
         <option value="5">5 tareas</option>

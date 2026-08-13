@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Prueba de Fin de Grado: 7º Grado</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: esta ficha abarca DOS, así que el
+       marco (portada, pies, simulacro, rúbrica) va en el MORADO de
+       Repaso General #7c3aed, y cada bloque de estudio lleva el color
+       de su materia: AZUL #1565c0 Matemáticas · DORADO #b45309 Español.
+       El alumno sabe qué está estudiando sin leer el título, y el
+       maestro reconoce sus dos materias dentro del mismo cuadernillo.
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · Cada página se comprueba con node _dev/verifica-ficha-paginas.js:
+       el papel deja 257,4 mm y una hoja que se pase se parte en dos.
+     · La pauta + nota del docente SIEMPRE en hojas sueltas (al final)
+     · En papel el círculo se RELLENA: la ✗ significa MALO en el aula */
+  :root {
+    --rep: #7c3aed; --rep-osc: #4c1d95; --rep-claro: #f3efff;
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --esp: #b45309; --esp-osc: #78350f; --esp-claro: #fefce8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #d7d3e6;
+    --num: #1e40af; --den: #c2410c; --res: #15803d;
+    --ac: var(--rep); --ac-osc: var(--rep-osc); --ac-claro: var(--rep-claro);
+  }
+  /* El color de la página lo fija su materia: todo lo de adentro
+     (títulos, tablas, cajas, números de ítem) lo hereda de --ac. */
+  .pagina.p-mat { --ac: var(--mat); --ac-osc: var(--mat-osc); --ac-claro: var(--mat-claro); }
+  .pagina.p-esp { --ac: var(--esp); --ac-osc: var(--esp-osc); --ac-claro: var(--esp-claro); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef0f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  /* ─── PÁGINAS: bloques fijos con número, nada se corta ─── */
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ac-osc); }
+  /* Cinta de materia en el borde: se ve con las hojas apiladas */
+  .pagina.p-mat::before, .pagina.p-esp::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: var(--ac);
+  }
+
+  /* Línea de identificación a TODO lo ancho */
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  /* Encabezado con QR */
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ac-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ac-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  /* Rótulo de materia al abrir cada bloque */
+  .materia-tag { display: inline-block; font-size: 8.5pt; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+                 color: #fff; background: var(--ac); border-radius: 999px; padding: 2px 11px; margin-bottom: 6px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  .contenido > h2:first-child, .materia-tag + h2 { margin-top: 4px; }
+  h3 { font-size: 11pt; color: var(--ac-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ac-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ac-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ac); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f7fb; }
+  td.k { font-weight: 700; color: var(--ac-osc); white-space: nowrap; }
+
+  /* Ejemplo resuelto paso a paso: el corazón de una guía de papel,
+     porque en casa no hay quien explique el procedimiento. */
+  .ejem { border: 1.5px solid var(--linea); border-left: 5px solid var(--ac); border-radius: 9px;
+          padding: 9px 12px; margin: 9px 0; background: #fcfcff; break-inside: avoid; }
+  .ejem-t { font-size: 10pt; font-weight: 800; color: var(--ac-osc); margin-bottom: 5px; }
+  .ejem-t span { font-weight: 400; color: var(--tinta); }
+  .ejem ol { margin: 4px 0 4px 22px; font-size: 10pt; }
+  .ejem ol li { margin-bottom: 2px; }
+  .ejem ol li::marker { font-weight: 800; color: var(--ac); }
+  .ejem .res { margin-top: 5px; font-size: 10.5pt; font-weight: 800; color: var(--res); }
+  .ejem .res::before { content: '✔ '; }
+  .ejem-txt { font-size: 10pt; font-style: italic; background: #fff; border: 1px dashed var(--linea);
+              border-radius: 6px; padding: 6px 9px; margin-bottom: 5px; text-align: justify; }
+
+  /* Error común: mal / por qué / bien, en tres renglones */
+  .err { border: 1.5px solid #f0c9c9; border-radius: 9px; padding: 8px 11px; margin: 8px 0; background: #fff7f7; break-inside: avoid; font-size: 10pt; }
+  .err-t { font-weight: 800; color: #9b1c1c; margin-bottom: 4px; font-size: 10.5pt; }
+  .err-t::before { content: '✖ '; }
+  .err div { margin-bottom: 2px; }
+  .err b.mal { color: #9b1c1c; } .err b.why { color: #92400e; } .err b.ok { color: var(--res); }
+
+  /* Fracción escrita como en el cuaderno: numerador arriba, raya en medio
+     y denominador abajo. Es la forma que el alumno ve en el pizarrón; «3/4»
+     es como se teclea, no como se lee. */
+  .fr { display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+        vertical-align: middle; line-height: 1.06; font-size: 0.86em; margin: 0 0.12em; text-align: center; }
+  .fr > b { display: block; font-weight: inherit; padding: 0 0.18em; }
+  .fr > b.fd { border-top: 0.085em solid currentColor; margin-top: 0.05em; padding-top: 0.05em; }
+  .fr-mix { margin-right: 0.1em; }
+
+  /* Actividades */
+  .acts h3 { border-bottom: 2px solid var(--ac-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ac); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  /* Selección múltiple: letras SIN círculo impreso, para que el niño
+     pueda encerrarlas y que su trazo se vea */
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n { display: inline-block; flex: 0 0 22px; width: 22px; height: 22px; background: var(--ac); color: #fff;
+            border-radius: 6px; text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900; }
+  /* Cuando el ítem trae mini-texto, el texto va ARRIBA (con el número) y la
+     pregunta debajo, como en el cuadernillo oficial: primero se lee, después
+     se pregunta. */
+  .preg-q2 { font-weight: 700; color: var(--tinta); margin: 4px 0 4px 30px; }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ac-osc); }
+  .preg-ops .op i::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  /* ─── SIMULACRO: aquí sí van los círculos, porque se contesta como
+     la prueba de verdad, RELLENANDO el círculo de la letra. ─── */
+  .sim-instr { background: var(--rep-claro); border: 1.5px solid #d9cdf7; border-radius: 9px;
+               padding: 9px 13px; font-size: 10pt; margin-bottom: 9px; break-inside: avoid; }
+  .sim-instr b { color: var(--rep-osc); }
+  .sim .preg-ops .op { align-items: center; gap: 6px; }
+  .sim .preg-ops .op i { display: inline-flex; align-items: center; justify-content: center;
+                         width: 14px; height: 14px; border: 1.4px solid #444; border-radius: 50%;
+                         font-size: 8pt; color: #444; font-weight: 700; }
+  .sim .preg-ops .op i::after { content: ''; }
+  .sim-txt { font-size: 10pt; background: #fbfbfe; border: 1px solid var(--linea); border-radius: 7px;
+             padding: 7px 10px; margin: 0 0 5px 30px; text-align: justify; }
+
+  /* Espacio para desarrollar el procedimiento con lápiz */
+  .desarrollo { border: 1px dashed #b9c2cf; border-radius: 8px; height: 74px; margin: 4px 0 9px; background:
+                repeating-linear-gradient(180deg, transparent 0 24px, #e6ebf2 24px 25px); }
+
+  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--rep-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--rep-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rep); box-shadow: 0 6px 16px rgba(124,58,237,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pagina.p-mat .contenido, .pagina.p-esp .contenido { padding-left: 11px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .ilus, .felic, .pauta, .ejem, .err, .materia-tag, .sim-instr, .pagina.p-mat::before, .pagina.p-esp::before
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+<div class="fh">
+  <div class="fh-txt">
+    <div class="f-badge">📄 Ficha Didáctica: Prueba de Fin de Grado, 7º Grado</div>
+    <div class="f-meta"><b>Asignaturas:</b> Matemáticas y Español &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, 7º grado</div>
+    <div class="f-meta"><b>Tema:</b> Repaso general del año: números enteros y valor absoluto, fracciones y decimales con signo, potencias, la recta numérica, rectas paralelas y sus ángulos, ecuaciones y lenguaje algebraico, proporcionalidad directa e inversa y porcentaje; comprensión lectora, vocabulario y expresiones por el contexto, tipos de texto y escritura</div>
+  </div>
+  <div class="fh-qr">
+    <img src="../img/qr-mision-fin-de-grado-7mo.png" alt="QR de la misión">
+    <span>📷 Juega la misión en tu teléfono</span>
+  </div>
+</div>
+
+<div class="caja regla">📌 <b>Esta ficha es distinta a las demás:</b> no repasa un tema, repasa <b>todo el año</b> y las <b>dos materias</b> que se evalúan en la Prueba de Fin de Grado. Por eso es más larga: estúdiala por partes, no de una sentada. Las hojas con la franja <b>azul</b> son de Matemáticas y las de la franja <b>dorada</b> son de Español.</div>
+
+<h2>🎯 Objetivos de Aprendizaje</h2>
+<ol class="objetivos">
+  <li>Escribir con <strong>signo</strong> lo que sube y lo que baja en la vida real, y ubicar esos números en la <strong>recta numérica</strong>.</li>
+  <li>Calcular el <strong>valor absoluto</strong>, incluso cuando hay una operación dentro de las barras.</li>
+  <li><strong>Sumar y restar números enteros</strong> con deudas y abonos, y <strong>comparar y ordenar</strong> enteros.</li>
+  <li>Sumar y restar <strong>fracciones con signo</strong> y resolver operaciones combinadas.</li>
+  <li>Sumar, restar, <strong>multiplicar y dividir decimales</strong> con lempiras, y dividir entre 10 y entre 100.</li>
+  <li>Resolver <strong>potencias de un número negativo</strong> y saber cuándo el resultado sale positivo y cuándo negativo.</li>
+  <li>Reconocer la <strong>mediatriz</strong> y el <strong>punto medio</strong> de un segmento.</li>
+  <li>Hallar la medida de los <strong>ángulos</strong> que se forman cuando una secante corta dos <strong>rectas paralelas</strong>.</li>
+  <li>Resolver <strong>ecuaciones de uno y de dos pasos</strong>, plantear la ecuación desde un enunciado y <strong>traducir a símbolos</strong> lo que está dicho con palabras.</li>
+  <li>Distinguir la <strong>proporcionalidad directa</strong> de la <strong>inversa</strong> y resolver cada una como toca.</li>
+  <li>Calcular el <strong>porcentaje</strong> de una cantidad y leer <strong>gráficos de barras y circulares</strong>.</li>
+  <li>Hallar el <strong>tema</strong> de un texto, responder preguntas <strong>literales, inferenciales y de causa</strong>, descubrir el significado de una <strong>palabra o de una expresión por el contexto</strong>, reconocer los <strong>tipos de texto</strong> y escribir un <strong>cuento dialogado</strong> y un <strong>comentario</strong>.</li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Presentación y objetivos</span><span>Página 1 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<h2>📋 Cómo es la Prueba de Fin de Grado</h2>
+<p>La Secretaría de Educación aplica esta prueba al terminar el grado. Primero contestas la parte de
+<strong>Matemáticas</strong>, después hay un <strong>receso de veinte minutos</strong>, y luego la de <strong>Español</strong>.
+Cada pregunta trae cuatro opciones y una sola es correcta. Al final de Español hay <strong>dos ejercicios de
+escritura</strong> donde no hay opciones: en séptimo grado son un <strong>cuento dialogado</strong>, con el tema que tú
+escoges entre tres títulos, y un <strong>comentario</strong> en el que das tu opinión sobre un texto y una imagen. Ahí
+escribes tú.</p>
+
+<div class="caja idea">🖊️ <b>La regla de oro del examen:</b> se <b>rellena completo el círculo</b> de la letra escogida. Nunca se marca con una equis: en el aula la equis significa que algo está malo. Y una pregunta con dos círculos rellenados no se cuenta.</div>
+
+<div class="caja truco">🗺️ <b>Cómo usar esta ficha:</b> primero estudia las hojas azules de Matemáticas y contesta sus actividades; después las doradas de Español con las suyas. Deja el <b>simulacro del final</b> para la víspera del examen y contéstalo de corrido, sin ver las hojas de estudio: así sabrás de verdad cómo llegas.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Presentación y objetivos</span><span>Página 2 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 1 de 4</div>
+<h2>🔢 Números enteros: el signo, el orden y el valor absoluto</h2>
+<p>Hasta sexto grado los números empezaban en el cero y solo subían. En séptimo aparecen los que están del otro lado: los negativos. No son un invento de la escuela, son la manera de escribir lo que baja, lo que se debe y lo que queda por debajo de una referencia. En la recta numérica el cero manda: a la derecha están los positivos y a la izquierda los negativos, y cuanto más te alejas del cero hacia la izquierda, más pequeño es el número. El valor absoluto contesta otra pregunta distinta: no de qué lado está, sino qué tan lejos del cero está.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Para sumar dos enteros del mismo signo se suman las cantidades y se deja ese mismo signo. Si los signos son distintos, se resta el más pequeño del más grande y se deja el signo del más grande.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> En la recta numérica, el número que está más a la izquierda es siempre el menor. Por eso -10 es menor que -3, aunque el 10 sea más grande que el 3: lo que se compara es la posición, no la cifra.</div>
+
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> En la libreta de la pulpería lo ves todos los días: lo que se debe se anota de un lado y lo que se abona del otro. Una deuda de L.85 es -85, un abono de L.60 es +60, y la cuenta se cierra sumando los dos.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Don Beto debía L.120 en la pulpería. El lunes abonó L.75 y el viernes L.60. ¿Cómo queda su cuenta?</span></div>
+  <ol>
+    <li>La deuda se escribe con signo negativo, porque está por debajo del cero: -120.</li>
+    <li>Los abonos entran a favor, así que llevan signo positivo: +75 y +60.</li>
+    <li>Se suma paso a paso: -120 + 75 da -45, porque los signos son distintos y se resta 75 de 120 dejando el signo del más grande.</li>
+    <li>Se sigue con el otro abono: -45 + 60 da +15, otra vez restando y dejando el signo del más grande, que ahora es el 60.</li>
+  </ol>
+  <div class="res">La cuenta queda en +15: don Beto ya no debe nada y le quedan L.15 a favor.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>Halla el resultado de |(-6)(-2) - 20|.</span></div>
+  <ol>
+    <li>Las dos barras son como un paréntesis: primero se resuelve todo lo de adentro y hasta el final se mira el signo.</li>
+    <li>Se multiplica lo primero: (-6) por (-2) da +12, porque dos negativos multiplicados dan positivo.</li>
+    <li>Se sigue con la resta: 12 - 20 da -8.</li>
+    <li>Ahora sí se aplica el valor absoluto: la distancia de -8 al cero es 8, y una distancia nunca es negativa.</li>
+  </ol>
+  <div class="res">El resultado es 8.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Números enteros</span><span>Página 3 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<table>
+  <tr><th>Lo que pasa</th><th>El número con signo</th><th>Por qué</th></tr>
+  <tr><td class="k">Debe L.85 en la pulpería</td><td>-85</td><td>Lo que se debe se cuenta por debajo del cero</td></tr>
+  <tr><td class="k">Le abonan L.60 a la cuenta</td><td>+60</td><td>Lo que entra se cuenta por encima del cero</td></tr>
+  <tr><td class="k">El quintal de maíz subió L.40</td><td>+40</td><td>Subir es avanzar hacia la derecha en la recta</td></tr>
+  <tr><td class="k">La temperatura bajó 4 grados</td><td>-4</td><td>Bajar es retroceder hacia la izquierda</td></tr>
+  <tr><td class="k">El buzo está a 8 metros bajo el mar</td><td>-8</td><td>El nivel del mar es el cero de esa medida</td></tr>
+  <tr><td class="k">El bote está justo en el nivel del mar</td><td>0</td><td>El cero no es positivo ni negativo</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Ordenar de menor a mayor los números -2, -9, 0 y 4 y escribir: -2, -9, 0, 4.</div>
+  <div><b class="why">¿Por qué está mal?</b> Se ordenaron mirando solo las cifras, como si los negativos fueran positivos. Pero -9 está más lejos del cero hacia la izquierda que -2, así que es el MENOR de los dos. Entre negativos, la cifra más grande es el número más pequeño.</div>
+  <div><b class="ok">Correcto:</b> De menor a mayor: -9, -2, 0, 4. Truco para revisar: dibuja la recta y ve leyendo de izquierda a derecha, que es el orden de menor a mayor.</div>
+</div>
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 2 de 4</div>
+<h2>✖️ Fracciones con signo, decimales y potencias</h2>
+<p>Las fracciones y los decimales ya los trabajaste en los grados anteriores; lo nuevo de séptimo es que ahora también llevan signo, y que el signo tiene sus propias reglas al multiplicar y al dividir. Son reglas cortas y se aprenden de una vez: signos iguales dan positivo, signos distintos dan negativo. La potencia no es más que una multiplicación repetida, así que hereda esa misma regla, y ahí aparece el detalle que más puntos cuesta: si el exponente es par el resultado sale positivo, y si es impar sale negativo. Con los decimales el trabajo es el de siempre; lo único que hay que vigilar es dónde cae el punto.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Al multiplicar o dividir, dos signos iguales dan resultado positivo y dos signos distintos dan resultado negativo. En una potencia se ve en el exponente: si es par los signos se emparejan y queda positivo; si es impar sobra uno y queda negativo.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Para dividir entre 10, entre 100 o entre 1000 no hace falta hacer la división: el punto corre hacia la izquierda tantos lugares como ceros tenga el divisor. Así, 7.5 ÷ 10 = 0.75 y 7.5 ÷ 100 = 0.075.</div>
+
+<div class="caja hn">🇭🇳 <b>En Honduras:</b> El maestro reparte una cinta de 4.8 metros entre los 10 alumnos del grupo de danza: 4.8 ÷ 10 = 0.48 metros para cada uno, o sea 48 centímetros. Corrió el punto un lugar y ya estaba.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Números enteros y Fracciones con signo, decimales…</span><span>Página 4 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Resuelve y deja el resultado simplificado: <span class="fr"><b>3</b><b class="fd">8</b></span> + (-<span class="fr"><b>5</b><b class="fd">6</b></span>).</span></div>
+  <ol>
+    <li>Sumar un número negativo es lo mismo que restar, así que la operación es <span class="fr"><b>3</b><b class="fd">8</b></span> menos <span class="fr"><b>5</b><b class="fd">6</b></span>.</li>
+    <li>Los pedazos no son del mismo tamaño, así que hay que buscar denominador común: el m.c.m. de 8 y 6 es 24.</li>
+    <li>Se convierten las dos fracciones: <span class="fr"><b>3</b><b class="fd">8</b></span> = <span class="fr"><b>9</b><b class="fd">24</b></span> (porque 24 ÷ 8 = 3 y 3 x 3 = 9) <span class="fr"><b>5</b><b class="fd">6</b></span> = <span class="fr"><b>20</b><b class="fd">24</b></span> (porque 24 ÷ 6 = 4 y 5 x 4 = 20).</li>
+    <li>Se restan los numeradores y el denominador se queda igual: 9 menos 20 da -11, así que el resultado es -<span class="fr"><b>11</b><b class="fd">24</b></span>.</li>
+    <li>Se revisa si se puede simplificar: 11 es primo y no cabe en 24, así que ya está en su forma más simple.</li>
+  </ol>
+  <div class="res">El resultado es -<span class="fr"><b>11</b><b class="fd">24</b></span>, un número negativo, porque lo que se quitó era mayor que lo que había.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>El litro de leche cuesta L.24.50. Don Ramón lleva 3.4 litros y paga con un billete de L.100. ¿Cuánto le devuelven?</span></div>
+  <ol>
+    <li>Primero se multiplica sin fijarse en el punto: 2450 x 34 = 83300.</li>
+    <li>Se cuentan las cifras decimales de los dos factores: 24.50 tiene dos y 3.4 tiene una, en total tres.</li>
+    <li>Se corre el punto tres lugares desde la derecha en 83300 y queda 83.300, o sea L.83.30.</li>
+    <li>Para el vuelto se resta del billete: 100.00 menos 83.30 = 16.70.</li>
+  </ol>
+  <div class="res">La leche cuesta L.83.30 y le devuelven L.16.70.</div>
+</div>
+
+<table>
+  <tr><th>Operación</th><th>Cómo queda el signo</th><th>Ejemplo</th></tr>
+  <tr><td class="k">Multiplicar dos negativos</td><td>Positivo</td><td>(-3) x (-4) = 12</td></tr>
+  <tr><td class="k">Multiplicar signos distintos</td><td>Negativo</td><td>(-6) x 2 = -12</td></tr>
+  <tr><td class="k">Dividir dos negativos</td><td>Positivo</td><td>-18 ÷ (-3) = 6</td></tr>
+  <tr><td class="k">Dividir signos distintos</td><td>Negativo</td><td>-20 ÷ 5 = -4</td></tr>
+  <tr><td class="k">Potencia de exponente par</td><td>Positivo</td><td>(-2)⁴ = 16</td></tr>
+  <tr><td class="k">Potencia de exponente impar</td><td>Negativo</td><td>(-2)³ = -8</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Resolver (-4)³ y escribir 64.</div>
+  <div><b class="why">¿Por qué está mal?</b> Las cifras están bien, lo que se perdió fue el signo. El paréntesis dice que lo que se multiplica tres veces es el -4 completo, con su signo y todo. Al multiplicar los dos primeros el signo se cancela, pero queda un tercer negativo suelto que nadie empareja, y ese manda.</div>
+  <div><b class="ok">Correcto:</b> (-4)³ = (-4)(-4)(-4). Primero (-4)(-4) = 16, y después 16 x (-4) = -64. Regla para revisar en un segundo: exponente 3, que es impar, entonces el resultado es negativo.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Fracciones con signo, decimales y potencias</span><span>Página 5 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 3 de 4</div>
+<h2>📐 Punto medio, mediatriz y los ángulos de las paralelas</h2>
+<p>La geometría de séptimo trabaja con dos ideas que se ven en cualquier construcción del pueblo. La primera es partir algo exacto por la mitad: ahí aparecen el punto medio, que es el punto que deja las dos partes iguales, y la mediatriz, que es la recta que pasa por ese punto formando ángulo recto. La segunda es lo que ocurre cuando una recta atraviesa dos paralelas: se forman ocho ángulos, pero no hay ocho medidas distintas. Solo hay dos, una grande y una pequeña, y entre las dos suman 180 grados. Si conoces uno, ya los conoces todos.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Cuando una secante corta dos rectas paralelas, los ángulos que quedan en la misma posición o cruzados (correspondientes, alternos internos, alternos externos y opuestos por el vértice) miden lo mismo. Los que quedan pegados uno al lado del otro sobre la misma recta suman 180 grados.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> El punto medio es un PUNTO y la mediatriz es una RECTA. La mediatriz pasa por el punto medio, pero además cruza el segmento formando cuatro ángulos rectos: por eso no basta con partir a la mitad, hay que partir en ángulo recto.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> La mediatriz se halla sin regla graduada: se dobla el papel de modo que un extremo del segmento caiga justo encima del otro, y la marca del doblez es la mediatriz. Ahí mismo se ve el punto medio, donde el doblez cruza el segmento.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Dos rectas paralelas están cortadas por una secante. Uno de los ángulos que se forman mide 115 grados. ¿Cuánto miden los demás?</span></div>
+  <ol>
+    <li>Al cortar dos paralelas se forman ocho ángulos, pero solo hay dos medidas: la del ángulo dado y la de su compañero.</li>
+    <li>El ángulo que queda pegado al de 115 grados sobre la misma recta lo completa hasta la línea recta: 180 menos 115 = 65 grados.</li>
+    <li>Todos los que se ven iguales al de 115 grados miden 115 grados: su opuesto por el vértice, su correspondiente y sus alternos.</li>
+    <li>Todos los que se ven iguales al de 65 grados miden 65 grados.</li>
+  </ol>
+  <div class="res">Cuatro ángulos miden 115 grados y los otros cuatro miden 65 grados; cualquier pareja pegada suma 180 grados.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Punto medio, mediatriz y los ángulos de las…</span><span>Página 6 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>El segmento MN mide 14 cm y P es su punto medio. ¿Cuánto mide MP? Si por P se traza la mediatriz de MN, ¿qué ángulo forma con el segmento?</span></div>
+  <ol>
+    <li>El punto medio parte el segmento en dos partes de la misma medida, así que cada parte es la mitad del total.</li>
+    <li>Se divide: 14 ÷ 2 = 7. Entonces MP mide 7 cm y PN también mide 7 cm.</li>
+    <li>Se comprueba sumando las dos partes: 7 + 7 = 14 cm, que es lo que medía el segmento entero.</li>
+    <li>La mediatriz no solo pasa por el punto medio: cruza el segmento perpendicularmente, o sea formando ángulo recto.</li>
+  </ol>
+  <div class="res">MP mide 7 cm y la mediatriz forma con MN un ángulo de 90 grados.</div>
+</div>
+
+<table>
+  <tr><th>Pareja de ángulos</th><th>Dónde quedan</th><th>Cuánto miden</th></tr>
+  <tr><td class="k">Opuestos por el vértice</td><td>Uno frente al otro en el mismo cruce</td><td>Iguales</td></tr>
+  <tr><td class="k">Correspondientes</td><td>En el mismo lugar de cada cruce y del mismo lado de la secante</td><td>Iguales</td></tr>
+  <tr><td class="k">Alternos internos</td><td>Por dentro de las paralelas, uno a cada lado de la secante</td><td>Iguales</td></tr>
+  <tr><td class="k">Alternos externos</td><td>Por fuera de las paralelas, uno a cada lado de la secante</td><td>Iguales</td></tr>
+  <tr><td class="k">Pegados sobre la misma recta</td><td>Uno al lado del otro, formando juntos una línea recta</td><td>Suman 180 grados</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> El segmento RS mide 18 cm y T es su punto medio. El alumno contesta que RT mide 36 cm.</div>
+  <div><b class="why">¿Por qué está mal?</b> Multiplicó donde había que dividir. El punto medio parte el segmento en dos, así que cada mitad tiene que ser MENOR que el segmento entero. Una respuesta de 36 cm dice que la mitad es más grande que el todo, y eso avisa solo de que la cuenta está mala.</div>
+  <div><b class="ok">Correcto:</b> Se divide entre 2: 18 ÷ 2 = 9. RT mide 9 cm y TS también mide 9 cm. Comprobación: 9 + 9 = 18 cm.</div>
+</div>
+
+<div class="materia-tag">🔵 Matemáticas · Bloque 4 de 4</div>
+<h2>⚖️ Ecuaciones, lenguaje algebraico, proporcionalidad y porcentaje</h2>
+<p>Una ecuación es una balanza: los dos lados del signo igual pesan lo mismo, y lo que le hagas a un lado tienes que hacérselo al otro para que no se incline. Resolverla es ir quitando lo que estorba, siempre con la operación contraria, hasta dejar sola la letra. Antes de eso hay un paso que se salta mucha gente y es el que más cuesta: traducir el enunciado a símbolos. Y en los problemas de proporciones hay que decidir primero qué clase de relación es: si las dos cantidades suben juntas es directa, y si una sube mientras la otra baja es inversa. Confundirlas cambia la respuesta por completo.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Punto medio, mediatriz y los ángulos de las…</span><span>Página 7 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="caja regla">⚡ <b>Regla:</b> Para despejar la letra se hace la operación contraria y se hace en los DOS lados: lo que suma pasa restando, lo que multiplica pasa dividiendo. Al final se comprueba metiendo el valor hallado en la ecuación original.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Proporcionalidad directa: más de una cosa, más de la otra (más metros de tela, más lempiras), y se resuelve con la regla de tres. Proporcionalidad inversa: más de una cosa, menos de la otra (más trabajadores, menos días), y ahí se multiplican las dos cantidades conocidas y se divide entre la tercera.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Los porcentajes fáciles se sacan de memoria: el 50 por ciento es la mitad, el 25 por ciento es la cuarta parte y el 10 por ciento sale corriendo el punto un lugar a la izquierda. El 10 por ciento de 250 es 25, y con eso ya puedes armar el 20 o el 30 por ciento sumando.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>Marta compró 3 libras de frijol y una libra de azúcar que costaba L.9. En total pagó L.66. Escribe la ecuación y halla el precio de la libra de frijol.</span></div>
+  <ol>
+    <li>Se le pone letra a lo que no se sabe: n es el precio de una libra de frijol.</li>
+    <li>Se traduce el enunciado: tres libras de frijol son 3n, y a eso se le suma el azúcar, que son 9. El total es 66, así que la ecuación es 3n + 9 = 66.</li>
+    <li>Se quita el 9 restando 9 en los dos lados: 3n = 57.</li>
+    <li>Se quita el 3 dividiendo entre 3 en los dos lados: n = 19.</li>
+    <li>Se comprueba en la ecuación original: 3 x 19 = 57, y 57 + 9 = 66. Cuadra.</li>
+  </ol>
+  <div class="res">La ecuación es 3n + 9 = 66 y la libra de frijol cuesta L.19.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>Tres tractores aran una parcela en 8 días. ¿Cuántos días tardarán 4 tractores trabajando al mismo ritmo?</span></div>
+  <ol>
+    <li>Primero se decide qué clase de proporción es: con más tractores el trabajo se acaba en menos días, así que es inversa.</li>
+    <li>En la inversa el trabajo total no cambia. Se multiplican las dos cantidades conocidas: 3 x 8 = 24 días de tractor.</li>
+    <li>Se reparte ese trabajo entre los tractores nuevos: 24 ÷ 4 = 6.</li>
+    <li>Se revisa que tenga sentido: son más tractores que antes, así que la respuesta tiene que ser menor que 8 días. Lo es.</li>
+  </ol>
+  <div class="res">Cuatro tractores tardan 6 días.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Ecuaciones, lenguaje algebraico, proporcionalidad…</span><span>Página 8 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<table>
+  <tr><th>En palabras</th><th>En símbolos</th><th>Dónde está la trampa</th></tr>
+  <tr><td class="k">Un número aumentado en 8</td><td>n + 8</td><td>Aumentar es sumar</td></tr>
+  <tr><td class="k">Un número disminuido en 3</td><td>n - 3</td><td>Disminuir es restar</td></tr>
+  <tr><td class="k">El doble de un número</td><td>2n</td><td>Doble es multiplicar por 2</td></tr>
+  <tr><td class="k">El triple de un número aumentado en 5</td><td>3n + 5</td><td>Primero el triple y después la suma</td></tr>
+  <tr><td class="k">La mitad de un número</td><td>n ÷ 2</td><td>Mitad es dividir entre 2</td></tr>
+  <tr><td class="k">Cinco menos un número</td><td>5 - n</td><td>No es lo mismo que n - 5</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Le piden el 15% de 200 y contesta 3000, porque multiplicó 200 por 15 y ahí se quedó.</div>
+  <div><b class="why">¿Por qué está mal?</b> Se le olvidó la mitad de la palabra: por ciento quiere decir entre cien. Multiplicar es solo el primer paso; falta repartir ese producto en cien partes. Y hay una revisión que no falla: mientras el porcentaje sea menor que 100, el resultado tiene que ser MENOR que la cantidad de la que se saca. Un 15 por ciento que sale quince veces más grande que el total avisa solo.</div>
+  <div><b class="ok">Correcto:</b> Se multiplica y después se divide entre 100: 200 x 15 = 3000, y 3000 ÷ 100 = 30. El 15 por ciento de 200 es 30. Se comprueba por otro camino: el 10 por ciento de 200 son 20 y el 5 por ciento es la mitad de eso, o sea 10; juntos dan 30.</div>
+</div>
+
+<div class="materia-tag">🔵 Matemáticas</div>
+<h2>⚠️ Errores que más cuestan puntos</h2>
+<p>Las opciones equivocadas del examen no están puestas al azar: cada una es un error que alguien comete
+de verdad. Si reconoces el error, reconoces la trampa.</p>
+
+<div class="err">
+  <div class="err-t">El signo que se pierde al restar un negativo</div>
+  <div><b class="mal">Mal:</b> El alumno resuelve 8 - (-5) y escribe 3, porque vio dos signos de menos y restó. En la libreta de la pulpería le pasa lo mismo: a una cuenta de -12 le quitan una deuda de -5 y contesta que ahora debe 17.</div>
+  <div><b class="why">¿Por qué está mal?</b> Quitar una deuda no es hundirse más, es mejorar. Restar un número negativo es lo mismo que sumar su opuesto, porque quitar algo que estaba en contra deja el resultado más arriba, no más abajo. Fíjese en lo que salió: si a alguien que debe L.12 le perdonan L.5 de deuda, no puede terminar debiendo L.17.</div>
+  <div><b class="ok">Correcto:</b> Se cambian los dos signos seguidos por una suma: 8 - (-5) = 8 + 5 = 13. Y en la cuenta de la pulpería, -12 - (-5) = -12 + 5 = -7, o sea que sigue debiendo, pero L.7 en vez de L.12. Regla corta para revisar: menos con menos da más.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: Ecuaciones, lenguaje algebraico, proporcionalidad…</span><span>Página 9 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">El valor absoluto quitado antes de hacer la cuenta de adentro</div>
+  <div><b class="mal">Mal:</b> Le piden |(-7) + 4| y el alumno quita los signos de una vez: hace 7 + 4 y escribe 11.</div>
+  <div><b class="why">¿Por qué está mal?</b> Las dos barras funcionan como un paréntesis: primero se resuelve TODO lo que está adentro y hasta el final se mira la distancia al cero. Quitar los signos antes cambia la operación por otra distinta, y el resultado se dispara. Por eso el 11 aparece tanto en las opciones equivocadas: es exactamente lo que sale de tomar el atajo.</div>
+  <div><b class="ok">Correcto:</b> Primero lo de adentro: (-7) + 4 = -3, porque los signos son distintos y se resta 4 de 7 dejando el signo del mayor. Después el valor absoluto: |-3| = 3. Regla para revisar: el resultado de un valor absoluto nunca es negativo, pero tampoco es la suma de las cifras sin signo.</div>
+</div>
+
+<div class="err">
+  <div class="err-t">La potencia de un negativo con el signo puesto al tanteo</div>
+  <div><b class="mal">Mal:</b> El alumno escribe (-6)² = -36 y (-6)³ = 216. Las cifras le salen bien las dos veces; lo que pone al tanteo es el signo, a veces negativo porque el número lo era y a veces positivo porque se le olvida.</div>
+  <div><b class="why">¿Por qué está mal?</b> El paréntesis dice que lo que se multiplica es el -6 completo, con su signo. Cada pareja de negativos se cancela: si el exponente es par no sobra ninguno y el resultado queda positivo; si es impar sobra uno suelto y el resultado queda negativo. No es cuestión de acordarse, es de contar.</div>
+  <div><b class="ok">Correcto:</b> (-6)² = (-6)(-6) = 36, positivo porque el exponente 2 es par. (-6)³ = (-6)(-6)(-6) = 36 x (-6) = -216, negativo porque el exponente 3 es impar. Revisión de un segundo: mire el exponente antes de escribir el signo, par positivo e impar negativo.</div>
+</div>
+
+<div class="err">
+  <div class="err-t">La regla de tres usada donde la proporción es inversa</div>
+  <div><b class="mal">Mal:</b> Cuatro pintores pintan la escuela en 12 días. Le preguntan cuántos días tardarían 8 pintores y contesta 24 días, porque duplicó los pintores y duplicó los días.</div>
+  <div><b class="why">¿Por qué está mal?</b> Aplicó la regla de tres directa a una relación que es inversa. En la directa las dos cantidades suben juntas (más metros de tela, más lempiras). Aquí no: si llegan más pintores el trabajo se acaba ANTES. Una respuesta mayor que 12 días ya avisa sola de que algo se hizo al revés, sin necesidad de repasar la cuenta.</div>
+  <div><b class="ok">Correcto:</b> En la inversa se multiplican las dos cantidades conocidas para saber el trabajo total y se reparte entre la tercera: 4 x 12 = 48 días de pintor, y 48 ÷ 8 = 6 días. Cuadra con el sentido común: el doble de gente, la mitad del tiempo. Prueba rápida antes de operar: pregúntese si al aumentar una cantidad la otra sube o baja.</div>
+</div>
+
+<div class="err">
+  <div class="err-t">La ecuación resuelta de un solo lado</div>
+  <div><b class="mal">Mal:</b> En 4n + 6 = 38 el alumno escribe 4n = 38 + 6 = 44 y después n = 11. Pasó el 6 al otro lado, pero sumándolo en vez de restándolo.</div>
+  <div><b class="why">¿Por qué está mal?</b> Una ecuación es una balanza y se mantiene igualada mientras se le haga lo mismo a los dos lados. Para quitar un 6 que está sumando hay que restar 6, y restarlo tanto a la izquierda como a la derecha. Al sumarlo de un solo lado la balanza se inclina y el valor que sale ya no cumple la igualdad.</div>
+  <div><b class="ok">Correcto:</b> Se resta 6 en los dos lados: 4n = 32. Se divide entre 4 en los dos lados: n = 8. Y se comprueba metiendo el valor en la ecuación original, que es el paso que casi nadie hace y que descubre el error solo: 4 x 8 = 32, y 32 + 6 = 38. Con el 11 daría 50, que no es 38.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: errores comunes</span><span>Página 10 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 11 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="materia-tag">🟡 Español · Bloque 1 de 4</div>
+<h2>🎯 El tema del texto: de qué habla y qué dice de eso</h2>
+<p>Cuando terminas de leer, hay dos preguntas que parecen la misma y no lo son. La primera es de qué habla el texto: eso se contesta con dos o tres palabras (los elefantes, el manglar, la feria del pueblo). La segunda es qué dice el texto de eso: y esa ya se contesta con una oración completa. En la prueba te van a preguntar de las dos maneras, con «¿de qué trata el texto?» o con «¿qué se dice de los elefantes?», y la respuesta correcta siempre es la que junta las dos mitades. Una opción que solo nombra el asunto se queda corta; una que cuenta un dato suelto se pasa de pequeña.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> El tema tiene que abarcar TODO el texto. Si al leer una opción te sobran párrafos por fuera, esa opción es un dato suelto y no el tema, por muy cierta que sea.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Hazte las dos preguntas seguidas: ¿de quién o de qué habla? y ¿qué dice de eso? Junta las dos respuestas en una sola oración. Esa oración es el tema, aunque no esté escrita con esas mismas palabras en ninguna línea.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Cuidado con la opción verdadera pero chiquita. En la prueba casi siempre hay una que sí aparece en el texto y por eso se siente segura, pero solo ocupa un renglón. Verdadero no es lo mismo que principal.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>¿qué se dice del guanacaste en el texto?</span></div>
+  <div class="ejem-txt">En el patio de muchas escuelas de Honduras hay un guanacaste. No lo sembraron solo por la sombra: sus vainas sirven de jabón para lavar, de sus ramas se cuelgan las hamacas y en agosto se llena de pájaros que vienen por la semilla. Un guanacaste viejo pasa de los veinte metros y le da sombra a un patio entero. Pregunta:</div>
+  <ol>
+    <li>Contesto la primera mitad: ¿de qué habla? Del guanacaste que hay en el patio de las escuelas.</li>
+    <li>Contesto la segunda mitad: ¿qué dice de eso? Que no sirve solo para una cosa, sino para varias a la vez.</li>
+    <li>Junto las dos mitades en una oración: el guanacaste del patio le sirve a la escuela de muchas maneras.</li>
+    <li>Descarto las opciones pequeñas: que pase de los veinte metros es un dato cierto del texto, pero solo ocupa la última línea.</li>
+  </ol>
+  <div class="res">Se dice que el guanacaste sirve para muchas cosas a la vez: da sombra al patio, sus vainas sirven de jabón, sostiene las hamacas y alimenta a los pájaros.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: El tema del texto</span><span>Página 11 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 12 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿cuál es el mejor título para este texto?</span></div>
+  <div class="ejem-txt">En muchas casas del campo todavía se cocina con leña en fogón abierto. El humo se queda dentro y con los años daña los pulmones de quien cocina. Por eso varias comunidades cambiaron el fogón por una estufa con chimenea de lámina, que saca el humo afuera y además gasta menos leña. Doña Rufina dice que ahora hace el doble de tortillas con la misma carga. Pregunta:</div>
+  <ol>
+    <li>Busco de qué habla: de la estufa con chimenea comparada con el fogón abierto.</li>
+    <li>Busco qué dice: que saca el humo de la casa y gasta menos leña.</li>
+    <li>Descarto un título de una sola parte, como Doña Rufina y sus tortillas: deja fuera casi todo el texto.</li>
+    <li>Descarto un título general de más, como La cocina del campo: no dice nada de lo que el texto explica.</li>
+  </ol>
+  <div class="res">El mejor título es Por qué la estufa con chimenea gana al fogón abierto, porque nombra las dos cosas comparadas y la razón que da el texto.</div>
+</div>
+
+<table>
+  <tr><th>En qué te fijas</th><th>El tema</th><th>Un dato suelto</th></tr>
+  <tr><td class="k">Cuánto abarca</td><td>El texto completo</td><td>Un renglón o un párrafo</td></tr>
+  <tr><td class="k">Si lo quito</td><td>El texto pierde el sentido</td><td>El texto se entiende igual</td></tr>
+  <tr><td class="k">Cómo suena</td><td>Una oración general</td><td>Un nombre, una fecha, un número</td></tr>
+  <tr><td class="k">Cómo se contesta</td><td>De qué habla y qué dice de eso</td><td>Solo con lo que dice una línea</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Contestar la pregunta «¿qué se dice del guanacaste?» con la respuesta «que es un árbol muy grande».</div>
+  <div><b class="why">¿Por qué está mal?</b> Se quedó en la primera mitad. El dato es cierto y hasta está en el texto, pero solo ocupa la última línea: no dice nada de las vainas, ni de las hamacas, ni de los pájaros. Nombrar el asunto no es todavía contestar qué se dice de él.</div>
+  <div><b class="ok">Correcto:</b> Antes de marcar, dite la respuesta completa en voz baja: habla del guanacaste del patio y dice que sirve para varias cosas a la vez. La opción que se parezca a esa oración entera es la correcta.</div>
+</div>
+
+<div class="materia-tag">🟡 Español · Bloque 2 de 4</div>
+<h2>🔍 Lo que dice, lo que se deduce y cómo es el personaje</h2>
+<p>Las preguntas de comprensión no son todas del mismo tipo y conviene reconocer cuál te están haciendo antes de contestar. La literal te pide algo escrito con todas sus letras: se busca y se subraya. La inferencial te pide algo que el autor no escribió pero dejó ver: se deduce juntando pistas. Y hay una pregunta de causa que en séptimo aparece mucho, la del «¿por qué?», que a veces es literal (el texto da la razón) y a veces inferencial (hay que sacarla). Aparte están las de descripción: te preguntan cómo es un personaje o un lugar, y la respuesta se arma con los rasgos que el texto va soltando poco a poco.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> Toda respuesta tiene que poder defenderse señalando el texto con el dedo. En la literal señalas la oración. En la inferencial señalas las dos o tres pistas que te llevaron a deducirla.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: El tema del texto y Lo que dice, lo que se deduce…</span><span>Página 12 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 13 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="caja truco">🎯 <b>Truco:</b> En las preguntas de por qué, fíjate primero en si el texto trae la palabra porque. Si la trae, la respuesta está escrita y es literal. Si no la trae, la respuesta hay que deducirla de lo que el personaje hizo.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> En las descripciones cree más en lo que el personaje HACE que en lo que dice de sí mismo. Un texto rara vez escribe «era trabajador»: lo que escribe es que se levantaba a las cuatro, y eso es lo que hay que leer.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>¿qué se puede deducir de Wilmer?</span></div>
+  <div class="ejem-txt">Wilmer llegó al aula con el uniforme salpicado de lodo hasta las rodillas. Dejó los zapatos afuera y se sentó de último, aunque su pupitre estaba adelante. Cuando el maestro preguntó quién había cruzado la quebrada esa mañana, Wilmer no levantó la mano; fue el único que llegó tarde y el único que llegó mojado. Pregunta:</div>
+  <ol>
+    <li>Reviso si la respuesta está escrita: el texto nunca dice qué le pasó, así que la pregunta es inferencial.</li>
+    <li>Junto la primera pista: llegó con lodo hasta las rodillas y con los zapatos para dejarlos afuera.</li>
+    <li>Junto la segunda pista: el maestro preguntó justo por la quebrada, y Wilmer fue el único que llegó tarde y mojado.</li>
+    <li>Deduzco lo único razonable: cruzó la quebrada crecida para llegar a clases, aunque no lo quiso decir.</li>
+  </ol>
+  <div class="res">Se deduce que cruzó la quebrada crecida para llegar a la escuela, y eso se sostiene con tres cosas que el texto sí cuenta: el lodo, la hora y el silencio cuando preguntaron.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿cómo se describe a esta persona en el texto?</span></div>
+  <div class="ejem-txt">Tiene las manos anchas y llenas de callos, y las uñas siempre con un poco de barro debajo. Camina despacio, pero desde las cinco de la mañana ya anda entre los surcos. Cuando habla, habla poco; cuando enseña a sembrar, no le hace falta hablar. Pregunta:</div>
+  <ol>
+    <li>Recojo los rasgos del cuerpo: manos anchas, callos, barro bajo las uñas. Son manos de trabajo, no de oficina.</li>
+    <li>Recojo los rasgos de conducta: anda entre los surcos desde las cinco de la mañana.</li>
+    <li>Recojo los rasgos del modo de ser: habla poco y enseña haciendo.</li>
+    <li>Junto todo en una sola idea, sin agregar nada que el texto no diga: no dice su edad ni su nombre, así que eso no se inventa.</li>
+  </ol>
+  <div class="res">Se describe a un campesino callado y trabajador, y cada palabra de esa respuesta se puede señalar en el texto.</div>
+</div>
+
+<table>
+  <tr><th>Tipo de pregunta</th><th>Cómo empieza</th><th>Qué haces</th></tr>
+  <tr><td class="k">Literal</td><td>Según el texto..., ¿qué hizo?, ¿dónde?, ¿cuándo?</td><td>Buscas la oración y la subrayas</td></tr>
+  <tr><td class="k">De causa</td><td>¿Por qué...?, ¿qué provocó que...?</td><td>Buscas la palabra porque; si no está, deduces</td></tr>
+  <tr><td class="k">Inferencial</td><td>Se puede deducir que..., ¿qué pretendía?</td><td>Juntas dos o tres pistas y sacas la conclusión</td></tr>
+  <tr><td class="k">De descripción</td><td>¿Cómo es el personaje?, ¿cómo es el lugar?</td><td>Reúnes los rasgos que el texto va soltando</td></tr>
+</table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: Lo que dice, lo que se deduce y cómo es el personaje</span><span>Página 13 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 14 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Contestar que Wilmer llegó tarde porque se quedó dormido.</div>
+  <div><b class="why">¿Por qué está mal?</b> Es una explicación posible en la vida, pero en el texto no hay una sola pista que la sostenga: nadie habla de la hora a la que se levantó. Lo que el texto sí puso fueron el lodo, los zapatos afuera y la pregunta del maestro sobre la quebrada.</div>
+  <div><b class="ok">Correcto:</b> Una inferencia no es adivinar: es la única conclusión que sale de las pistas escritas. Si tu respuesta se sostiene con algo que sabes de tu casa pero que el texto no dice, no es inferencia, es invención.</div>
+</div>
+
+<div class="materia-tag">🟡 Español · Bloque 3 de 4</div>
+<h2>🔤 La palabra difícil, la expresión y la frase que falta</h2>
+<p>En la prueba te van a subrayar una palabra y te van a preguntar qué significa EN ESE TEXTO. No es prueba de memoria ni necesitas diccionario: la respuesta está en las palabras que rodean a la subrayada, que se llaman contexto. Y en séptimo aparece un pariente más difícil, la expresión: un grupo de palabras que juntas significan algo que no dice ninguna de ellas por separado. «Le costó un ojo de la cara» no habla de ojos, habla de precio. La tercera pregunta de esta familia te da un texto con un hueco y cuatro frases para llenarlo: ahí la frase escogida tiene que encajar en el sentido y además concordar en persona y en número con el resto de la oración.</p>
+
+<div class="caja regla">⚡ <b>Regla:</b> La misma palabra cambia de significado según el texto. Banco puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que ya te sabes: busca el que sirve ahí.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> Técnica de sustituir: tapa con el dedo la palabra o la frase subrayada, mete la opción A y lee la oración entera. Después la B, la C y la D. Descarta las que suenan raras o cambian lo que pasa.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Una expresión no se traduce palabra por palabra: se cambia entera por otra manera de decir lo mismo. Pregúntate qué le está pasando de verdad al personaje en ese momento, no qué dicen las palabras sueltas.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>El camino que sube al caserío es tan angosto que dos motos no pueden pasar al mismo tiempo: una tiene que orillarse y esperar a que la otra baje. Cuando llueve, además, se pone resbaloso, y en esa subida ya nadie se arriesga. Pregunta: en el texto, la palabra angosto significa:</span></div>
+  <ol>
+    <li>Leo la oración completa donde está la palabra, no solo la palabra.</li>
+    <li>Busco la pista pegada: los dos puntos anuncian la explicación, y dice que una moto tiene que orillarse para que pase la otra.</li>
+    <li>Si no caben dos motos a la vez, lo que falta es ancho. Entonces angosto tiene que ver con el ancho del camino.</li>
+    <li>Sustituyo para comprobar: el camino es tan estrecho que dos motos no pueden pasar al mismo tiempo. Encaja perfecto.</li>
+  </ol>
+  <div class="res">Angosto significa estrecho, de poco ancho, porque el texto explica en seguida que dos motos no caben a la vez.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: Lo que dice, lo que se deduce y cómo es el personaje…</span><span>Página 14 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 15 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿qué significa en el texto la expresión se le fue el alma a los pies?</span></div>
+  <div class="ejem-txt">Cuando el maestro dijo que iban a leer en voz alta delante de todo el grado, a Karen se le fue el alma a los pies. Se quedó mirando el cuaderno sin pasar la página. Al final leyó, y leyó bien, pero las manos le temblaron hasta el último renglón. Pregunta:</div>
+  <ol>
+    <li>Reconozco que es una expresión: ni el alma ni los pies tienen que ver con lo que está pasando.</li>
+    <li>Miro qué le ocurre a Karen justo antes: le acaban de decir que va a leer delante de todos.</li>
+    <li>Miro qué hace después: se queda quieta mirando el cuaderno y le tiemblan las manos hasta el final.</li>
+    <li>Cambio la expresión entera por otra manera de decirlo y leo de nuevo: a Karen le entró un miedo grande de repente. La oración sigue teniendo sentido.</li>
+  </ol>
+  <div class="res">Significa que sintió de golpe un miedo grande, y lo confirman las manos temblando y la página sin pasar.</div>
+</div>
+
+<table>
+  <tr><th>Si ves esto</th><th>Lo que viene es</th><th>Ejemplo</th></tr>
+  <tr><td class="k">Dos puntos, es decir, o sea</td><td>La explicación de la palabra</td><td>el vado, es decir, la parte donde el río se cruza a pie</td></tr>
+  <tr><td class="k">Pero, en cambio, sin embargo</td><td>Lo contrario de la palabra</td><td>venía manso, pero bajó bramando</td></tr>
+  <tr><td class="k">Como, igual que, parecido a</td><td>Una comparación que aclara</td><td>sensibles como un dedo</td></tr>
+  <tr><td class="k">Por ejemplo, tales como</td><td>Casos que ilustran la palabra</td><td>granos básicos, por ejemplo maíz y frijol</td></tr>
+  <tr><td class="k">Lo que el personaje hace después</td><td>La pista para entender una expresión</td><td>se le fue el alma a los pies y le temblaron las manos</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Completar el hueco de «Antes de que saliera el sol, los pescadores ___ las redes en la orilla» con la frase «puse a ordenar».</div>
+  <div><b class="why">¿Por qué está mal?</b> La frase se escogió porque suena parecida a lo que hace un pescador, sin mirar quién es el sujeto de la oración. El sujeto es los pescadores, que son varios y no soy yo, así que el verbo tiene que ir en ellos y no en primera persona.</div>
+  <div><b class="ok">Correcto:</b> Se lee la oración completa con la frase adentro antes de marcar. Con «extendían y revisaban» queda: los pescadores extendían y revisaban las redes en la orilla. Concuerda en persona y en número, y además tiene sentido.</div>
+</div>
+
+<div class="materia-tag">🟡 Español · Bloque 4 de 4</div>
+<h2>📚 Tipos de texto, el mensaje y tu escritura: cuento dialogado y comentario</h2>
+<p>No todos los textos se leen igual, y en la prueba te van a preguntar de qué tipo es el que acabas de leer. Cada uno deja marcas visibles: la fábula termina en enseñanza y sus personajes son animales que actúan como personas; la noticia contesta qué, quién, cuándo y dónde en las primeras líneas; la descripción dice cómo es algo; el comentario da una opinión y la defiende con razones. También te van a preguntar por el mensaje, que es la idea que el autor te deja al terminar. Y al final escribes tú, y en séptimo grado son dos cosas: un cuento en el que hablan los personajes y un comentario en el que opinas.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: La palabra difícil, la expresión y la frase que falta…</span><span>Página 15 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 16 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="caja regla">⚡ <b>Regla:</b> Cada tipo de texto se reconoce por su forma antes que por su tema. Un texto sobre el café puede ser noticia, descripción o comentario: lo que decide es cómo está armado, no de qué habla.</div>
+
+<div class="caja truco">🎯 <b>Truco:</b> En el cuento dialogado, cuando un personaje va a hablar se abre renglón nuevo y se empieza con la raya de diálogo, que es un guion largo. Si el narrador anuncia lo que alguien va a decir, se ponen dos puntos antes. Así se sabe quién habla sin tener que explicarlo.</div>
+
+<div class="caja idea">💡 <b>Idea clave:</b> Para el comentario usa esta fórmula de tres partes: digo lo que pienso, doy dos razones distintas y cierro repitiendo mi postura. Una opinión sin razones no vale puntos, aunque esté bien escrita, y «porque me gusta» no es una razón.</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 1: <span>¿qué mensaje deja el texto?</span></div>
+  <div class="ejem-txt">Dos hermanos recibieron una parcela cada uno. El mayor sembró de una vez y no volvió a limpiar; el menor sembró después, pero desyerbó cada semana. En la cosecha, la parcela del mayor apenas dio dos sacos, y la del menor, once. El mayor dijo que había tenido mala suerte. Pregunta:</div>
+  <ol>
+    <li>Miro qué hizo cada personaje: uno sembró temprano y abandonó, el otro sembró tarde y estuvo encima del cultivo.</li>
+    <li>Miro cómo terminó cada uno: dos sacos contra once.</li>
+    <li>Comparo las dos cosas: lo que separa los resultados no es la fecha de la siembra, es el trabajo de cada semana.</li>
+    <li>Descarto la explicación del personaje: el mayor habla de mala suerte, pero el texto ya mostró la verdadera razón.</li>
+  </ol>
+  <div class="res">El mensaje es que el trabajo constante rinde más que empezar temprano y después abandonar.</div>
+</div>
+
+<div class="ejem">
+  <div class="ejem-t">Ejemplo resuelto 2: <span>¿qué tipo de texto es y cómo lo sabes?</span></div>
+  <div class="ejem-txt">A mí me parece que el rastrojo no se debe quemar. En primer lugar, el fuego se pasa al monte vecino y ahí ya nadie lo controla. En segundo lugar, la tierra queda floja y con la primera lluvia se va al río. Por eso creo que es mejor incorporarlo al suelo. Pregunta:</div>
+  <ol>
+    <li>Miro cómo empieza: con una opinión declarada, a mí me parece que.</li>
+    <li>Miro lo que viene después: dos razones presentadas con en primer lugar y en segundo lugar.</li>
+    <li>Miro el cierre: vuelve a la postura del principio con por eso creo que.</li>
+    <li>Descarto la noticia: no informa de un hecho ocurrido, con lugar y fecha, sino de lo que piensa quien escribe.</li>
+  </ol>
+  <div class="res">Es un comentario, porque da una opinión, la sostiene con dos razones distintas y cierra volviendo a su postura.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: Tipos de texto, el mensaje y tu escritura</span><span>Página 16 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 17 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<table>
+  <tr><th>Tipo de texto</th><th>La marca que se ve</th><th>Para qué sirve</th></tr>
+  <tr><td class="k">Cuento</td><td>Personajes, un problema y un final; a veces con diálogos</td><td>Entretener contando algo imaginado</td></tr>
+  <tr><td class="k">Fábula</td><td>Animales que actúan como personas y una enseñanza</td><td>Dejar una lección de conducta</td></tr>
+  <tr><td class="k">Noticia</td><td>Qué, quién, cuándo y dónde en las primeras líneas</td><td>Informar de un hecho real y reciente</td></tr>
+  <tr><td class="k">Texto informativo</td><td>Datos comprobables, sin personajes inventados</td><td>Explicar cómo es algo de la realidad</td></tr>
+  <tr><td class="k">Descripción</td><td>Rasgos que se ven, se oyen o se tocan</td><td>Decir cómo es una persona, un animal o un lugar</td></tr>
+  <tr><td class="k">Comentario</td><td>Una opinión y las razones que la sostienen</td><td>Convencer a quien lee</td></tr>
+</table>
+
+<div class="err">
+  <div class="err-t">Cuidado con este error</div>
+  <div><b class="mal">Mal:</b> Escribir el cuento dialogado como un párrafo corrido, sin abrir renglón cuando habla un personaje: «El niño le dijo al abuelo que ya no había agua y el abuelo le contestó que fuera al pozo».</div>
+  <div><b class="why">¿Por qué está mal?</b> Ahí no hay diálogo, hay un narrador contando lo que se dijeron. La instrucción de la prueba pide un cuento DIALOGADO, o sea con los personajes hablando, y eso se marca con los dos puntos y con la raya al empezar cada intervención. Sin esas marcas se pierden los puntos aunque la historia esté buena.</div>
+  <div><b class="ok">Correcto:</b> El narrador cuenta y los personajes hablan por su cuenta. Después de una línea del narrador, se abre renglón nuevo y se empieza con la raya de diálogo para lo que dice el niño; luego otro renglón nuevo, con su raya, para lo que contesta el abuelo. Se lee de un vistazo quién dijo cada cosa.</div>
+</div>
+
+<div class="materia-tag">🟡 Español</div>
+<h2>⚠️ Errores que más cuestan puntos</h2>
+
+<div class="err">
+  <div class="err-t">Contestar de qué habla el texto sin decir qué dice de eso</div>
+  <div><b class="mal">Mal:</b> El texto cuenta que el vivero de la escuela produce mil arbolitos al año, que los alumnos los siembran en la orilla de la quebrada y que ya se ven los primeros árboles grandes. Le preguntan qué se dice del vivero y el alumno contesta: que produce mil arbolitos al año.</div>
+  <div><b class="why">¿Por qué está mal?</b> Escogió el dato que más se le quedó pegado, que además es un número, y los números se recuerdan solos. Pero esa respuesta nombra únicamente lo que sale del vivero: deja fuera quiénes siembran, dónde siembran y qué se ha logrado ya. El tema junta las dos mitades, de qué habla y qué dice de eso.</div>
+  <div><b class="ok">Correcto:</b> Se dice que el vivero de la escuela abastece de arbolitos la orilla de la quebrada y que el trabajo ya está dando resultado. Prueba rápida antes de marcar: lea la opción y pregúntese si al texto le sobra algo por fuera. Si le sobra, es un dato suelto y no el tema.</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: Tipos de texto, el mensaje y tu escritura y errores…</span><span>Página 17 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 18 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
+<div class="err">
+  <div class="err-t">La frase que falta escogida por lo que suena y no por lo que concuerda</div>
+  <div><b class="mal">Mal:</b> El texto dice: 'Antes de que saliera el sol, los pescadores ___ las redes en la orilla y contaban lo que habían sacado esa noche'. El alumno escoge 'puse a ordenar', porque ordenar redes es algo que hacen los pescadores.</div>
+  <div><b class="why">¿Por qué está mal?</b> Miró si la acción encajaba con el oficio, pero no miró quién la hace. El sujeto es los pescadores, que son varios y no soy yo, así que la frase tiene que ir en tercera persona del plural. Además, el verbo contaban que viene después ya marca la persona y el tiempo de toda la oración, y una frase en primera persona la rompe.</div>
+  <div><b class="ok">Correcto:</b> Se mete cada opción en el hueco y se lee la oración COMPLETA, hasta el punto final. Con la correcta queda: los pescadores extendían y revisaban las redes en la orilla y contaban lo que habían sacado. Concuerda en persona y en número, y tiene sentido. Las que se sienten raras al leerlas enteras se descartan.</div>
+</div>
+
+<div class="err">
+  <div class="err-t">El cuento dialogado escrito sin marcar quién habla</div>
+  <div><b class="mal">Mal:</b> Le piden un cuento dialogado y entrega un párrafo corrido: 'El niño le dijo al abuelo que ya no había agua en el pozo y el abuelo le contestó que fuera a la quebrada'. La historia se entiende, pero ahí no habla nadie: todo lo cuenta el narrador.</div>
+  <div><b class="why">¿Por qué está mal?</b> La instrucción pide un cuento DIALOGADO, o sea con los personajes hablando por su cuenta, y eso se marca con dos señales que la prueba nombra: los dos puntos cuando el narrador anuncia lo que alguien va a decir, y la raya de diálogo al empezar cada intervención en renglón nuevo. Sin esas marcas se pierden puntos aunque la historia esté bien contada, porque no se está haciendo lo que se pidió.</div>
+  <div><b class="ok">Correcto:</b> El narrador cuenta y los personajes hablan. Después de la línea del narrador se abre renglón nuevo y se empieza con la raya para lo que dice el niño; luego otro renglón nuevo, con su raya, para lo que contesta el abuelo. Así se lee de un vistazo quién dijo cada cosa. Antes de entregar, cuente las intervenciones habladas: si no hay ninguna, todavía no es un cuento dialogado.</div>
+</div>
+
+<h2>🧭 La víspera y el día del examen</h2>
+<ol class="objetivos">
+  <li>Duerme temprano la víspera y desayuna: la prueba trae las dos materias en el mismo día y el hambre se siente en la segunda parte.</li>
+  <li>Alista dos lápices con punta, borrador y regla la noche antes, no la mañana del examen.</li>
+  <li>Lee cada pregunta completa hasta el punto final antes de mirar las opciones: media pregunta leída es media respuesta equivocada.</li>
+  <li>En los problemas con signo, escribe la operación en el borrador con los signos puestos: en séptimo grado se pierden más puntos por un signo perdido que por una cuenta mal hecha.</li>
+  <li>En lectura, subraya en el texto el renglón donde encontraste la respuesta; si no puedes subrayarlo, todavía no es tu respuesta.</li>
+  <li>En la parte de escritura no hay opciones: lee la instrucción dos veces, apunta en el borrador tres líneas con lo que vas a contar o a defender, y después escribe cuidando la ortografía.</li>
+  <li>Rellena completo el círculo de la respuesta que escogiste y no dejes ninguna pregunta en blanco; la que se te trabe, márcala al lado del número y regresa a ella al final.</li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: errores comunes y estrategia</span><span>Página 18 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 19 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<div class="materia-tag">🔵 Matemáticas</div>
+<h2>✍️ ¡Ponte a Prueba! Actividades de Matemáticas</h2>
+<h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+<ol>
+  <li>El valor absoluto de -14 se escribe |-14| y es igual a <span class="linea-resp"></span>.</li>
+  <li>De los números -8, -3, 0 y 2, el menor es <span class="linea-resp"></span>.</li>
+  <li>El resultado de -9 + 4 es <span class="linea-resp"></span>.</li>
+  <li>El resultado de la potencia (-3)³ es <span class="linea-resp"></span>.</li>
+  <li>Si 6n = -42, entonces n = <span class="linea-resp"></span>.</li>
+  <li>Si t = 4, el valor de la expresión 5t es <span class="linea-resp"></span>.</li>
+  <li>Al dividir 8.6 entre 10 se obtiene <span class="linea-resp"></span>.</li>
+  <li>Una secante corta dos rectas paralelas y uno de los ángulos mide 130 grados; el ángulo que le queda pegado sobre la misma recta mide <span class="linea-resp"></span> grados.</li>
+  <li>El 25% de 48 alumnos son <span class="linea-resp"></span> alumnos.</li>
+  <li>Si 9 cuadernos iguales cuestan L.108, cada cuaderno cuesta L.<span class="linea-resp"></span></li>
+</ol>
+
+<h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span> · Escribe V o F en la línea.</h3>
+<ol>
+  <li>____ El número -12 es mayor que -5.</li>
+  <li>____ El valor absoluto de un número nunca es negativo.</li>
+  <li>____ El resultado de -6 + 6 es cero.</li>
+  <li>____ Al multiplicar dos números negativos el resultado es negativo.</li>
+  <li>____ El resultado de (-5)² es -25.</li>
+  <li>____ En la ecuación n - 7 = 3 el valor de n es 10.</li>
+  <li>____ En una relación de proporcionalidad inversa, si una cantidad se duplica la otra también se duplica.</li>
+  <li>____ El 10% de 300 es 30.</li>
+  <li>____ Los ángulos alternos externos que se forman al cortar dos rectas paralelas con una secante tienen la misma medida.</li>
+  <li>____ La mediatriz parte un segmento en dos partes iguales, pero puede cruzarlo con cualquier ángulo.</li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: actividades</span><span>Página 19 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 20 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> · Encierra en un círculo la letra correcta.</h3>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">1</span>Doña Fidelia debía L.240 en la pulpería. Abonó L.150 el martes y L.60 el sábado. ¿Cómo queda su cuenta?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> Debe L.30</span>
+    <span class="op"><i>b</i> Debe L.90</span>
+    <span class="op"><i>c</i> Le quedan L.30 a favor</span>
+    <span class="op"><i>d</i> Debe L.450</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el resultado de |(-4)(3) + 7|?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 19</span>
+    <span class="op"><i>b</i> 5</span>
+    <span class="op"><i>c</i> -5</span>
+    <span class="op"><i>d</i> -19</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">3</span>En el campeonato de la escuela, la diferencia de goles de cuatro equipos fue -8, -3, 0 y 5. ¿Cuál es el orden de menor a mayor?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 0, -3, -8, 5</span>
+    <span class="op"><i>b</i> -3, -8, 0, 5</span>
+    <span class="op"><i>c</i> -8, -3, 0, 5</span>
+    <span class="op"><i>d</i> 5, 0, -3, -8</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el resultado de -<span class="fr"><b>2</b><b class="fd">5</b></span> + <span class="fr"><b>1</b><b class="fd">4</b></span>?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> <span class="fr"><b>3</b><b class="fd">20</b></span></span>
+    <span class="op"><i>b</i> -<span class="fr"><b>13</b><b class="fd">20</b></span></span>
+    <span class="op"><i>c</i> -<span class="fr"><b>1</b><b class="fd">20</b></span></span>
+    <span class="op"><i>d</i> -<span class="fr"><b>3</b><b class="fd">20</b></span></span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">5</span>El litro de gasolina cuesta L.28.75. Don Julio le echó 4.2 litros a la motocicleta. ¿Cuánto pagó?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> L.32.95</span>
+    <span class="op"><i>b</i> L.1207.50</span>
+    <span class="op"><i>c</i> L.24.55</span>
+    <span class="op"><i>d</i> L.120.75</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">6</span>Un rollo de manguera de 15.6 metros se corta en pedazos de 1.2 metros cada uno. ¿Cuántos pedazos salen?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 13 pedazos</span>
+    <span class="op"><i>b</i> 18.72 pedazos</span>
+    <span class="op"><i>c</i> 1.3 pedazos</span>
+    <span class="op"><i>d</i> 130 pedazos</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">7</span>¿Cuál es el resultado de la potencia (-2)⁵?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> 32</span>
+    <span class="op"><i>b</i> -32</span>
+    <span class="op"><i>c</i> -10</span>
+    <span class="op"><i>d</i> 10</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">8</span>Una secante corta dos rectas paralelas y uno de los ocho ángulos que se forman mide 68 grados. ¿Cuánto miden los demás?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> Todos miden 68 grados</span>
+    <span class="op"><i>b</i> Unos 68 grados y otros 112 grados</span>
+    <span class="op"><i>c</i> Unos 68 grados y otros 22 grados</span>
+    <span class="op"><i>d</i> Unos 68 grados y otros 90 grados</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: actividades (sigue)</span><span>Página 20 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 21 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">9</span>¿Cuál es el valor de y si 5y - 8 = 27?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> y = 35</span>
+    <span class="op"><i>b</i> y = 3.8</span>
+    <span class="op"><i>c</i> y = 7</span>
+    <span class="op"><i>d</i> y = -7</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">10</span>Si 6 metros de tela cuestan L.288, ¿cuánto cuestan 14 metros de la misma tela?</div>
+  <div class="preg-ops">
+    <span class="op"><i>a</i> L.48</span>
+    <span class="op"><i>b</i> L.4032</span>
+    <span class="op"><i>c</i> L.672</span>
+    <span class="op"><i>d</i> L.302</span>
+  </div>
+</div>
+
+<h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B que corresponde.</h3>
+<table>
+  <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+  <tr><td>1. ____ Número entero</td><td>A. La distancia que hay de un número al cero, y por eso nunca puede ser negativa.</td></tr>
+  <tr><td>2. ____ Valor absoluto</td><td>B. Recta que pasa por el punto medio de un segmento y lo cruza formando ángulos de 90 grados.</td></tr>
+  <tr><td>3. ____ Números opuestos</td><td>C. Relación en la que una cantidad sube y la otra baja: más trabajadores, menos días.</td></tr>
+  <tr><td>4. ____ Punto medio</td><td>D. Dos ángulos que juntos suman 180 grados y forman una línea recta.</td></tr>
+  <tr><td>5. ____ Mediatriz</td><td>E. Dos números que están a la misma distancia del cero, uno a cada lado, y sumados dan cero.</td></tr>
+  <tr><td>6. ____ Ángulos alternos externos</td><td>F. Cualquiera de los números positivos, los negativos y el cero, todos sin parte decimal.</td></tr>
+  <tr><td>7. ____ Ángulos suplementarios</td><td>G. Pareja que queda por fuera de las paralelas, uno a cada lado de la secante, y mide lo mismo.</td></tr>
+  <tr><td>8. ____ Ecuación</td><td>H. Parte de un total contada como si el total estuviera dividido en cien partes.</td></tr>
+  <tr><td>9. ____ Proporcionalidad inversa</td><td>I. El punto que parte un segmento en dos partes de la misma medida.</td></tr>
+  <tr><td>10. ____ Porcentaje</td><td>J. Igualdad con una letra desconocida que se cumple con un solo valor de esa letra.</td></tr>
+</table>
+
+<h3>V. Resuelve con procedimiento <span class="val">(Valor: 20 puntos c/u)</span> · Escribe todos los pasos en el espacio.</h3>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve paso a paso: -18 + 25 - 32 + 10.</div><div class="desarrollo" style="height:133px;"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: actividades (sigue)</span><span>Página 21 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 22 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Resuelve y deja el resultado como número mixto: <span class="fr"><b>5</b><b class="fd">6</b></span> - (-<span class="fr"><b>1</b><b class="fd">4</b></span>).</div><div class="desarrollo" style="height:123px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Doña Marina compró 3.5 libras de queso a L.46.00 la libra y pagó con un billete de L.200. ¿Cuánto le devolvieron?</div><div class="desarrollo" style="height:123px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Halla el valor de n y comprueba tu respuesta: 7n + 12 = -30.</div><div class="desarrollo" style="height:123px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">5</span>Seis mujeres desgranan todo el maíz de la cosecha en 10 días. ¿Cuántos días tardarían 4 mujeres trabajando al mismo ritmo?</div><div class="desarrollo" style="height:123px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">6</span>En una sección de 40 alumnos, el 35% participó en la feria científica. ¿Cuántos alumnos participaron y cuántos no participaron?</div><div class="desarrollo" style="height:123px;"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Matemáticas: actividades (sigue)</span><span>Página 22 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 23 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<div class="materia-tag">🟡 Español</div>
+<h2>✍️ ¡Ponte a Prueba! Actividades de Español</h2>
+<h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+<ol>
+  <li>Cuando el texto no dice el motivo con todas sus letras y hay que deducirlo juntando pistas, se dice que el lector hace una <span class="linea-resp"></span>.</li>
+  <li>Un grupo de palabras que juntas significan algo distinto de lo que dice cada palabra por separado se llama <span class="linea-resp"></span>.</li>
+  <li>La enseñanza o la idea que el autor le deja al lector cuando termina de leer es el <span class="linea-resp"></span> del texto.</li>
+  <li>El texto que dice cómo es una persona, un animal o un lugar se llama <span class="linea-resp"></span>.</li>
+  <li>En un cuento dialogado, cada vez que habla un personaje su intervención empieza en renglón nuevo con la <span class="linea-resp"></span> de diálogo.</li>
+  <li>El escrito en el que das tu opinión sobre un tema y la defiendes con razones se llama <span class="linea-resp"></span>.</li>
+  <li>Los alumnos de séptimo grado <span class="linea-resp"></span> el mural de la entrada el viernes pasado.</li>
+  <li>Estudió toda la semana; <span class="linea-resp"></span>, la prueba le salió más difícil de lo que esperaba.</li>
+  <li>En un comentario, después de decir lo que piensas hay que dar por lo menos dos <span class="linea-resp"></span> que sostengan tu opinión.</li>
+  <li>El texto que informa de un hecho real y reciente, diciendo qué pasó, quién, cuándo y dónde, se llama <span class="linea-resp"></span>.</li>
+</ol>
+
+<h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span> · Escribe V o F en la línea.</h3>
+<ol>
+  <li>____ Una expresión como «le costó un ojo de la cara» se entiende leyendo palabra por palabra.</li>
+  <li>____ El tema de un texto se puede decir en una sola oración que abarque todo lo leído.</li>
+  <li>____ En una descripción de un lugar sobra decir los colores y los sonidos: basta con decir dónde queda.</li>
+  <li>____ El mensaje de un texto siempre está escrito en la última línea con la palabra moraleja.</li>
+  <li>____ En un cuento dialogado se ponen dos puntos cuando el narrador anuncia lo que un personaje va a decir.</li>
+  <li>____ La frase que falta en un texto se escoge solo porque suena bonita, aunque no concuerde con el resto de la oración.</li>
+  <li>____ Una pregunta que empieza con «¿por qué...?» casi siempre pide encontrar una causa.</li>
+  <li>____ Un texto informativo puede llevar personajes inventados que hablan entre ellos.</li>
+  <li>____ En un comentario se da una opinión y se defiende con razones.</li>
+  <li>____ En una descripción los adjetivos tienen que concordar en género y en número con lo que describen.</li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: actividades</span><span>Página 23 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 24 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<h3>III. Lee el texto y contesta <span class="val">(Valor: 10 puntos c/u)</span></h3>
+<div class="ejem">
+  <div class="ejem-t">Los manglares: la muralla que nadie ve</div>
+  <div class="ejem-txt">En la costa de Honduras, donde el río se junta con el mar, crecen unos árboles que viven con los pies metidos en agua salada. Son los mangles, y al monte que forman se le llama manglar. Sus raíces salen del tronco por encima del agua y se hunden en el lodo como zancos, y por eso la corriente no se los lleva. Ese enredo de raíces hace tres trabajos a la vez. Primero, frena las olas y el viento cuando entra un temporal, así que las casas que quedan detrás sufren menos. Segundo, atrapa el lodo que baja del río y sostiene la tierra de la orilla, que si no se iría al mar poco a poco. Y tercero, sirve de criadero: los camarones, los cangrejos y muchos peces pasan ahí sus primeros meses, escondidos entre las raíces donde los peces grandes no alcanzan a entrar. Por eso, cuando se tumba un manglar para levantar casas o para abrir una piscina de camarones, la orilla se empieza a comer el mar y la pesca baja en toda la zona. Hoy varias comunidades cuidan el suyo y siembran mangle nuevo, porque aprendieron que ese monte lodoso y feo es la muralla que los protege.</div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">1</span>¿De qué trata principalmente el texto?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> De los camarones y los cangrejos que se pescan en la costa</span>
+    <span class="op full"><i>b</i> Del manglar, el monte de raíces que protege la orilla y sirve de criadero</span>
+    <span class="op full"><i>c</i> De los temporales que golpean la costa de Honduras</span>
+    <span class="op full"><i>d</i> De las casas que se levantan a la orilla del mar</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">2</span>Según el texto, ¿qué hacen las raíces del mangle?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> Flotan sueltas sobre el agua salada</span>
+    <span class="op full"><i>b</i> Crecen hacia arriba buscando el sol</span>
+    <span class="op full"><i>c</i> Se secan cada vez que sube la marea</span>
+    <span class="op full"><i>d</i> Se hunden en el lodo y sostienen el árbol</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">3</span>Según el texto, ¿qué animales pasan sus primeros meses dentro del manglar?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> Los camarones, los cangrejos y muchos peces</span>
+    <span class="op full"><i>b</i> Solamente los peces grandes</span>
+    <span class="op full"><i>c</i> Las aves y las tortugas de tierra</span>
+    <span class="op full"><i>d</i> El ganado que baja a beber agua</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">4</span>Si en una comunidad se tumbara todo el manglar, ¿qué es más probable que ocurriera?</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> Que el río dejara de bajar lodo</span>
+    <span class="op full"><i>b</i> Que las olas del temporal se volvieran más pequeñas</span>
+    <span class="op full"><i>c</i> Que la orilla se fuera perdiendo y bajara la pesca</span>
+    <span class="op full"><i>d</i> Que nacieran más camarones en el mar abierto</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: actividades (sigue)</span><span>Página 24 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 25 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">5</span>En el texto, la palabra criadero significa:</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> un lugar donde se vende pescado</span>
+    <span class="op full"><i>b</i> una red para atrapar camarones</span>
+    <span class="op full"><i>c</i> una enfermedad que sufren los peces</span>
+    <span class="op full"><i>d</i> un lugar donde los animales pequeños crecen protegidos</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">6</span>En la última oración, la expresión «la muralla que los protege» quiere decir que el manglar:</div>
+  <div class="preg-ops">
+    <span class="op full"><i>a</i> les sirve de defensa contra el mar y el viento</span>
+    <span class="op full"><i>b</i> es una pared de piedra que ellos levantaron</span>
+    <span class="op full"><i>c</i> les tapa la vista del mar desde las casas</span>
+    <span class="op full"><i>d</i> separa una comunidad de la otra</span>
+  </div>
+</div>
+
+<h3>IV. ¿Qué tipo de texto es? <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea: comentario, cuento, descripción, fábula, noticia o texto informativo.</h3>
+<ol>
+  <li>«Aquella tarde, Nery se quedó mirando la puerta del granero, que estaba abierta de par en par y nadie sabía quién la había abierto.» <span class="linea-resp"></span></li>
+  <li>«Ayer, en Puerto Cortés, la Secretaría de Educación entregó cuatro aulas nuevas a un centro básico del sector Río Blanco, informó la directora del centro.» <span class="linea-resp"></span></li>
+  <li>«El corredor de la casa es largo y fresco. En una esquina cuelga una hamaca de manila, y en la pared hay un almanaque de hace tres años que nadie ha querido bajar.» <span class="linea-resp"></span></li>
+  <li>«El sapo le dijo a la garza que no podía volar tan alto, porque el cielo era de las aves, y la garza le contestó que el suelo también tenía dueño.» <span class="linea-resp"></span></li>
+  <li>«El pino ocotero resiste el fuego mejor que otros árboles porque su corteza es gruesa y se quema por fuera sin que la llama llegue a la parte viva del tronco.» <span class="linea-resp"></span></li>
+  <li>«Para mí, la cancha no debería prestarse solo a los equipos grandes. Primero, los niños también pagan la cuota del barrio; y segundo, si nadie los deja entrar no van a aprender nunca.» <span class="linea-resp"></span></li>
+  <li>«Cuando el tren dejó de pasar por el pueblo, mi abuelo siguió saliendo cada tarde a sentarse en el mismo riel, y decía que un día iba a volver.» <span class="linea-resp"></span></li>
+  <li>«La iguana verde pone entre veinte y setenta huevos en un hoyo que ella misma cava en la arena, y después lo tapa para que el sol los caliente.» <span class="linea-resp"></span></li>
+</ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: actividades (sigue)</span><span>Página 25 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 26 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<h3>V. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B.</h3>
+<table>
+  <tr><th style="width:42%;">Columna A</th><th>Columna B</th></tr>
+  <tr><td>1. ____ Inferencia</td><td>A. Cada uno de los seres que actúan y hablan dentro de una narración.</td></tr>
+  <tr><td>2. ____ Expresión</td><td>B. Texto que dice cómo es una persona, un animal o un lugar.</td></tr>
+  <tr><td>3. ____ Mensaje del texto</td><td>C. El que cuenta, en un orden, los hechos que les van pasando a unos personajes.</td></tr>
+  <tr><td>4. ____ Descripción</td><td>D. La idea o la enseñanza que el autor le deja al lector cuando termina de leer.</td></tr>
+  <tr><td>5. ____ Comentario</td><td>E. El que explica cómo es algo de la realidad, con datos que se pueden comprobar.</td></tr>
+  <tr><td>6. ____ Cuento dialogado</td><td>F. Escrito en el que se opina sobre un tema y se defiende esa opinión con razones.</td></tr>
+  <tr><td>7. ____ Personaje</td><td>G. Narración en la que los personajes hablan, y cada intervención empieza en renglón nuevo.</td></tr>
+  <tr><td>8. ____ Texto narrativo</td><td>H. Razón que se da para sostener una opinión y convencer a quien lee.</td></tr>
+  <tr><td>9. ____ Texto informativo</td><td>I. Grupo de palabras que juntas significan algo distinto de lo que dice cada una por su lado.</td></tr>
+  <tr><td>10. ____ Argumento</td><td>J. Conclusión que saca el lector juntando pistas, porque el texto no lo dice completo.</td></tr>
+</table>
+
+<h3>VI. Escritura <span class="val">(Valor: 30 puntos c/u)</span> · Escribe en el espacio, con buena letra y cuidando la ortografía.</h3>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Escribe un cuento dialogado de por lo menos doce renglones en el que hablen dos personajes. Escoge uno de estos tres títulos: 1) El préstamo de la bicicleta; 2) La noche que se fue la luz; 3) El caballo que volvió solo. Recuerda que cada vez que habla un personaje se empieza un renglón nuevo con su raya de diálogo, y que se ponen dos puntos cuando el narrador anuncia lo que alguien va a decir.</div><div class="desarrollo" style="height:239px;"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: actividades (sigue)</span><span>Página 26 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 27 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>En tu comunidad se propone que los alumnos de séptimo grado den una hora a la semana de apoyo a los niños de primero que todavía no leen bien. ¿Estás de acuerdo o no? Escribe un comentario de por lo menos diez renglones: di lo que piensas, defiéndelo con dos razones distintas y cierra con una oración de conclusión.</div><div class="desarrollo" style="height:363px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Describe en por lo menos ocho renglones a una persona de tu comunidad a la que todos conocen por su trabajo: cómo es por fuera, cómo es su modo de ser y qué hace un día cualquiera. No escribas su nombre hasta la última oración.</div><div class="desarrollo" style="height:363px;"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Español: actividades (sigue)</span><span>Página 27 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 28 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<h2>📝 Simulacro: así se siente la prueba de verdad</h2>
+<div class="sim-instr"><b>INSTRUCCIONES:</b> Lee con cuidado cada texto y cada problema. Después rellena por completo el círculo de la letra de la respuesta correcta. Cada pregunta tiene una sola respuesta correcta: si rellenas más de un círculo, la pregunta no se te cuenta. En la parte de Matemáticas revisa siempre el signo antes de marcar.</div>
+<h3 style="color:var(--mat-osc);">Primera parte: Matemáticas</h3>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">1</span>El termómetro del centro de salud marcó 38 grados a las diez de la mañana y 35 grados al mediodía. ¿Qué número representa ese cambio de temperatura?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) +3</span>
+    <span class="op"><i></i> b) -3</span>
+    <span class="op"><i></i> c) -35</span>
+    <span class="op"><i></i> d) +38</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el resultado de |(-8) + 3|?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 5</span>
+    <span class="op"><i></i> b) -5</span>
+    <span class="op"><i></i> c) 11</span>
+    <span class="op"><i></i> d) -11</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">3</span>Julio debía L.150 en la pulpería. Su papá le dio L.90 y su tía L.40, y con ese dinero abonó a la cuenta. ¿Cuánto debe todavía?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) Ya no debe nada</span>
+    <span class="op"><i></i> b) L.280</span>
+    <span class="op"><i></i> c) L.20</span>
+    <span class="op"><i></i> d) L.60</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">4</span>¿Cuál es el resultado de -<span class="fr"><b>3</b><b class="fd">4</b></span> + <span class="fr"><b>1</b><b class="fd">2</b></span>?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) -<span class="fr"><b>5</b><b class="fd">4</b></span></span>
+    <span class="op"><i></i> b) <span class="fr"><b>1</b><b class="fd">4</b></span></span>
+    <span class="op"><i></i> c) -<span class="fr"><b>2</b><b class="fd">6</b></span></span>
+    <span class="op"><i></i> d) -<span class="fr"><b>1</b><b class="fd">4</b></span></span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">5</span>Una libra de café molido cuesta L.62.50. Doña Aurelia lleva 1.6 libras. ¿Cuánto paga?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) L.64.10</span>
+    <span class="op"><i></i> b) L.100.00</span>
+    <span class="op"><i></i> c) L.1000.00</span>
+    <span class="op"><i></i> d) L.10.00</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">6</span>¿Cuál es el resultado de la potencia (-3)⁴?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 81</span>
+    <span class="op"><i></i> b) -81</span>
+    <span class="op"><i></i> c) 12</span>
+    <span class="op"><i></i> d) -12</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Simulacro</span><span>Página 28 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 29 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">7</span>Dos rectas paralelas están cortadas por una secante. Uno de los ángulos que se forman mide 124 grados. ¿Cuánto mide el ángulo que le queda pegado, sobre la misma recta?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 124 grados</span>
+    <span class="op"><i></i> b) 236 grados</span>
+    <span class="op"><i></i> c) 56 grados</span>
+    <span class="op"><i></i> d) 304 grados</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">8</span>Nery compró un cuaderno de L.25 y además 4 lapiceros iguales. En total gastó L.73. Si n representa el precio de un lapicero, ¿qué ecuación representa el enunciado?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 25n + 4 = 73</span>
+    <span class="op"><i></i> b) 4n + 25 = 73</span>
+    <span class="op"><i></i> c) 4n - 25 = 73</span>
+    <span class="op"><i></i> d) 25n - 4 = 73</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">9</span>Cuatro albañiles levantan la cerca de la escuela en 15 días. ¿Cuántos días tardarían 6 albañiles trabajando al mismo ritmo?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 22.5 días</span>
+    <span class="op"><i></i> b) 90 días</span>
+    <span class="op"><i></i> c) 9 días</span>
+    <span class="op"><i></i> d) 10 días</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="preg-q"><span class="preg-n">10</span>De los 60 alumnos que hicieron la prueba, el 15% la reprobó. ¿Cuántos alumnos la reprobaron?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) 9 alumnos</span>
+    <span class="op"><i></i> b) 15 alumnos</span>
+    <span class="op"><i></i> c) 51 alumnos</span>
+    <span class="op"><i></i> d) 4 alumnos</span>
+  </div>
+</div>
+
+<h3 style="color:var(--esp-osc);">Segunda parte: Español</h3>
+<div class="sim-instr">Lee cada texto con cuidado. La respuesta siempre está en el texto: si no puedes señalar el renglón donde la encontraste, todavía no es tu respuesta.</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">11</span>Cuando el maestro pidió que llevaran un cuaderno de campo, los alumnos de séptimo empezaron a anotar cada mañana a qué hora salía el sol, si había llovido en la noche y qué árboles estaban floreando. A los tres meses ya podían decir en qué semana florea el jocote y cuándo llegan las golondrinas. Ese cuaderno es hoy el registro más completo que hay del clima de la aldea.</div>
+  <div class="preg-q2">¿De qué trata principalmente el texto?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) De las golondrinas que llegan a la aldea cada año</span>
+    <span class="op full"><i></i> b) Del jocote y de la semana en que florea</span>
+    <span class="op full"><i></i> c) Del cuaderno de campo con el que los alumnos registraron el clima de su aldea</span>
+    <span class="op full"><i></i> d) Del maestro de séptimo grado y de las tareas que deja</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Simulacro (sigue)</span><span>Página 29 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 30 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">12</span>El sábado, los alumnos de séptimo grado salieron a las seis de la mañana a limpiar la orilla de la quebrada. Llenaron catorce sacos de basura antes del mediodía. La directora prestó la camioneta para llevarlos al basurero, y doña Nicolasa les regaló horchata al terminar.</div>
+  <div class="preg-q2">Según el texto, ¿quién prestó la camioneta?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) La directora</span>
+    <span class="op"><i></i> b) Doña Nicolasa</span>
+    <span class="op"><i></i> c) El alcalde del municipio</span>
+    <span class="op"><i></i> d) Un alumno de séptimo grado</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">13</span>Sandra guardó la naranja del recreo en la mochila y no la volvió a sacar en todo el día. A la salida se quedó parada junto al portón hasta que el patio se vació. Cuando llegó su abuela con el niño de tres años, Sandra abrió la mochila y se agachó a su lado.</div>
+  <div class="preg-q2">¿Qué se puede deducir de lo que hizo Sandra?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Que no le gustan las naranjas</span>
+    <span class="op full"><i></i> b) Que se le había olvidado la merienda dentro de la mochila</span>
+    <span class="op full"><i></i> c) Que estaba esperando que la regañaran</span>
+    <span class="op full"><i></i> d) Que guardó su merienda para dársela a su hermanito</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">14</span>Doña Elodia cerró la pulpería a las tres de la tarde, cosa que no hacía nunca. Puso en la puerta un papel que decía «vuelvo mañana» y se fue al centro de salud con su nieto en brazos. El niño llevaba dos días con calentura y esa mañana no quiso comer.</div>
+  <div class="preg-q2">¿Por qué cerró doña Elodia la pulpería antes de tiempo?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Porque ya había vendido todo lo que tenía</span>
+    <span class="op full"><i></i> b) Porque su nieto estaba enfermo y lo llevó al centro de salud</span>
+    <span class="op full"><i></i> c) Porque ese día era feriado en el pueblo</span>
+    <span class="op full"><i></i> d) Porque se fue la luz en todo el barrio</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">15</span>El maíz se guarda en el silo bien seco, porque si le queda humedad se apelmaza y se echa a perder. Por eso don Justo lo asolea dos días enteros sobre un plástico antes de guardarlo, y lo mueve con el rastrillo cada tanto para que quede parejo.</div>
+  <div class="preg-q2">¿Qué significa en el texto la palabra asolea?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) Lo pone al sol para que se seque</span>
+    <span class="op"><i></i> b) Lo guarda bajo techo</span>
+    <span class="op"><i></i> c) Lo lava con agua limpia</span>
+    <span class="op"><i></i> d) Lo muele para hacer masa</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Simulacro (sigue)</span><span>Página 30 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 31 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">16</span>Cuando el bus se paró en media cuesta con toda la gente adentro, al chofer se le puso la piel de gallina. Se bajó sin decir nada, revisó el freno y no dejó que nadie se moviera hasta que las llantas quedaron bien trabadas con dos piedras.</div>
+  <div class="preg-q2">¿Qué significa en el texto la expresión se le puso la piel de gallina?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) Que le dio frío en la cuesta</span>
+    <span class="op"><i></i> b) Que se enojó con los pasajeros</span>
+    <span class="op"><i></i> c) Que sintió de golpe un susto grande</span>
+    <span class="op"><i></i> d) Que le dio risa lo que estaba pasando</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">17</span>La casa de la esquina tiene el corredor lleno de macetas hechas con botes de leche, todas con sábila y con hierbabuena. La puerta nunca está cerrada del todo y desde la calle se oye una radio vieja, siempre con noticias. En la pared de este lado hay una pizarra donde alguien va anotando lo que fía.</div>
+  <div class="preg-q2">Según el texto, ¿cómo es la casa de la esquina?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Una casa abandonada, sin nadie adentro</span>
+    <span class="op full"><i></i> b) Una casa nueva y de dos pisos</span>
+    <span class="op full"><i></i> c) Una escuela pequeña de la aldea</span>
+    <span class="op full"><i></i> d) Una casa con corredor, macetas y una pizarra de fiados</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">18</span>Al principio Lucía solo pudo comprar dos gallinas. Vendía los huevos y con eso compraba maíz para ellas y para su casa. Al año tenía nueve; al tercero pasaba de cuarenta y ya tenía un puesto fijo en el mercado. Su vecina empezó el mismo día con quince gallinas prestadas y las fue vendiendo cada vez que le hizo falta dinero; hoy no le queda ninguna.</div>
+  <div class="preg-q2">¿Qué mensaje deja el texto?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Que criar gallinas es un mal negocio</span>
+    <span class="op full"><i></i> b) Que lo que se levanta de a poco y no se toca es lo que dura</span>
+    <span class="op full"><i></i> c) Que es mejor pedir prestado que empezar con poco</span>
+    <span class="op full"><i></i> d) Que el mercado del pueblo es el mejor lugar para vender</span>
+  </div>
+</div>
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">19</span>El aguacero agarró a los alumnos a media cancha. Todos ___ debajo del corredor y se quedaron ahí, apretados, viendo cómo el agua arrastraba las hojas hasta el portón.</div>
+  <div class="preg-q2">¿Qué frase falta para completar la idea del texto?</div>
+  <div class="preg-ops">
+    <span class="op"><i></i> a) me metí corriendo</span>
+    <span class="op"><i></i> b) metiéndose de prisa</span>
+    <span class="op"><i></i> c) se metieron corriendo</span>
+    <span class="op"><i></i> d) te vas a meter</span>
+  </div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Simulacro (sigue)</span><span>Página 31 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 32 ═══════════ -->
+<section class="pagina sim">
+  <div class="contenido">
+
+<div class="preg">
+  <div class="sim-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">20</span>Yo pienso que el basurero del pueblo no debería estar a la orilla de la quebrada. En primer lugar, cuando llueve el agua arrastra la basura hasta donde la gente lava. En segundo lugar, el mal olor llega hasta las casas de abajo. Por eso creo que hay que moverlo a otro sitio.</div>
+  <div class="preg-q2">¿Qué tipo de texto es el anterior?</div>
+  <div class="preg-ops">
+    <span class="op full"><i></i> a) Una noticia, porque informa de algo que pasó en el pueblo</span>
+    <span class="op full"><i></i> b) Un comentario, porque da una opinión y la defiende con razones</span>
+    <span class="op full"><i></i> c) Una descripción, porque dice cómo es la quebrada</span>
+    <span class="op full"><i></i> d) Un instructivo, porque dice lo que hay que hacer</span>
+  </div>
+</div>
+
+<div class="felic">
+  🏅 <b>¡Terminaste el repaso completo de tu grado!</b> Recorriste las dos materias que se evalúan en la
+  Prueba de Fin de Grado: los números con signo y el valor absoluto, las fracciones y los decimales, las
+  potencias, la recta numérica, las rectas paralelas y sus ángulos, las ecuaciones, la proporcionalidad y el
+  porcentaje; y el tema del texto, lo que dice y lo que deja deducir, el significado por el contexto, los tipos
+  de texto y tu propia escritura. Llegas listo. 🎓✨
+</div>
+
+<h2>📏 Rúbrica de Evaluación</h2>
+<table class="rubrica">
+  <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+  <tr><td>Copió en su cuaderno los contenidos de estudio de las dos materias.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>Resolvió las actividades de Matemáticas sobre esta ficha.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>Resolvió las actividades de Español sobre esta ficha.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>Contestó el simulacro rellenando el círculo, sin dejar preguntas en blanco.</td><td class="lg">Simulacro en el aula, la víspera</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+</table>
+<p style="font-size:9pt;color:var(--gris);">Ya sabes sacar el promedio: suma las cuatro notas y divide entre cuatro.
+Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si escribes con faltas de ortografía.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Simulacro y Cierre</span><span>Página 32 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 33 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<h2>✅ Pauta de Respuestas: Hoja del Docente</h2>
+<p style="font-size:10pt;color:var(--gris);">Estas hojas se imprimen <strong>sueltas</strong>: son solo para el docente o para la autoevaluación guiada.</p>
+
+<h3 style="color:var(--mat-osc);">🔵 Actividades de Matemáticas</h3>
+<div class="pauta">
+  <div><span class="pt">I. Completar:</span> 1. 14 &nbsp; 2. -8 &nbsp; 3. -5 &nbsp; 4. -27 &nbsp; 5. -7 &nbsp; 6. 20 &nbsp; 7. 0.86 &nbsp; 8. 50 &nbsp; 9. 12 &nbsp; 10. 12</div>
+  <div><span class="pt">II. Verdadero o Falso:</span> 1F, 2V, 3V, 4F, 5F, 6V, 7F, 8V, 9V, 10F</div>
+  <div><span class="pt">III. Selección múltiple:</span> 1a, 2b, 3c, 4d, 5d, 6a, 7b, 8b, 9c, 10c</div>
+  <div><span class="pt">IV. Pareados:</span> 1F, 2A, 3E, 4I, 5B, 6G, 7D, 8J, 9C, 10H</div>
+  <div><span class="pt">V. Procedimiento:</span> 1. -15 &nbsp; 2. <span class="fr"><b>13</b><b class="fd">12</b></span>, que es <span class="fr-mix">1</span><span class="fr"><b>1</b><b class="fd">12</b></span> &nbsp; 3. L.39.00 &nbsp; 4. n = -6 &nbsp; 5. 15 días &nbsp; 6. 14 participaron y 26 no participaron</div>
+</div>
+
+<h3 style="color:var(--esp-osc);">🟡 Actividades de Español</h3>
+<div class="pauta">
+  <div><span class="pt">I. Completar:</span> 1. inferencia &nbsp; 2. expresión &nbsp; 3. mensaje &nbsp; 4. descripción &nbsp; 5. raya &nbsp; 6. comentario &nbsp; 7. pintaron &nbsp; 8. sin embargo &nbsp; 9. razones &nbsp; 10. noticia</div>
+  <div><span class="pt">II. Verdadero o Falso:</span> 1F, 2V, 3F, 4F, 5V, 6F, 7V, 8F, 9V, 10V</div>
+  <div><span class="pt">III. Lectura:</span> 1b, 2d, 3a, 4c, 5d, 6a</div>
+  <div><span class="pt">IV. Tipo de texto:</span> 1. cuento &nbsp; 2. noticia &nbsp; 3. descripción &nbsp; 4. fábula &nbsp; 5. texto informativo &nbsp; 6. comentario &nbsp; 7. cuento &nbsp; 8. texto informativo</div>
+  <div><span class="pt">V. Pareados:</span> 1J, 2I, 3D, 4B, 5F, 6G, 7A, 8C, 9E, 10H</div>
+</div>
+
+<h3>📝 Simulacro</h3>
+<div class="pauta">
+  <div><span class="pt">Matemáticas (1 al 10):</span> 1b, 2a, 3c, 4d, 5b, 6a, 7c, 8b, 9d, 10a</div>
+  <div><span class="pt">Español (11 al 20):</span> 11c, 12a, 13d, 14b, 15a, 16c, 17d, 18b, 19c, 20b</div>
+</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Hoja del Docente</span><span>Página 33 de 34</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 34 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+<h3>✍️ Cómo se califica la escritura</h3>
+<div class="pauta">
+  <div><span class="pt">Consigna 1:</span> Una buena respuesta copia arriba el título escogido y cuenta una historia con inicio, problema y final, no una conversación suelta. Tiene que haber por lo menos cuatro intervenciones habladas, cada una en renglón nuevo y con su raya de diálogo al principio, y por lo menos una vez los dos puntos cuando el narrador anuncia que alguien va a hablar. Los verbos van en pasado y se sostienen hasta el final. Suma calidad que se note quién es cada personaje por su manera de hablar, y que el narrador diga entre medio lo que hacen mientras hablan. Se descuenta si escribe todo en párrafo corrido contando lo que se dijeron en vez de hacerlos hablar, si no se distingue quién dice cada cosa, o si deja el cuento sin cerrar.</div>
+  <div><span class="pt">Consigna 2:</span> Una buena respuesta declara la postura con claridad en la primera oración (estoy de acuerdo o no estoy de acuerdo). Después presenta dos razones que sean de verdad distintas, no la misma dicha dos veces: por ejemplo, el niño de primero que aprende, por un lado, y lo que gana el de séptimo al explicar, por el otro. Cada razón va acompañada de un ejemplo de su comunidad o de su escuela. Se esperan conectores de orden y de causa (en primer lugar, además, ya que, por eso), y un cierre que retome la postura. Se descuenta si solo dice que le gusta o no le gusta sin razones, si las dos razones repiten la misma idea, o si al terminar de leer no se sabe cuál es su posición.</div>
+  <div><span class="pt">Consigna 3:</span> Una buena respuesta describe con palabras que se pueden ver y oír: las manos, la ropa, la manera de caminar, la voz, lo que siempre lleva consigo. Debe contestar las tres cosas que pide la consigna, y no quedarse solo en el aspecto físico: el modo de ser se muestra con lo que la persona hace, no con la palabra buena o trabajadora. Los adjetivos tienen que concordar en género y en número con lo que describen. Suma calidad un detalle concreto que solo se sabe si se le ha visto de cerca. Se descuenta si escribe una lista de palabras sueltas sin oraciones, si no llega a los ocho renglones, o si adelanta el nombre desde el principio y pierde el efecto que pide la consigna.</div>
+</div>
+
+<div class="nota-doc">
+  <strong>Nota para el docente:</strong> esta ficha está basada en la misión «Prueba de Fin de Grado: 7º Grado»
+  de la plataforma M.E.T.A.S y es la más extensa de la serie a propósito: no repasa un tema sino el temario
+  completo del año en las dos materias que la prueba oficial evalúa. Puede trabajarse por partes: las hojas de
+  franja azul en los días de Matemáticas y las de franja dorada en los de Español, dejando el simulacro para la
+  víspera del examen. Los ítems de esta ficha son <strong>distintos</strong> a los de la misión interactiva, así que
+  el estudiante que ya jugó la misión encuentra aquí práctica nueva y no respuestas memorizadas. En la misión
+  (código QR de la portada) hay además dos pruebas conceptuales calificables en línea, una por materia, con
+  veinte formas distintas para imprimir una versión diferente por fila. Al calificar la escritura, use la guía
+  de arriba: lo que se evalúa es que la idea se entienda, no que la letra sea bonita.
+</div>
+
+<div class="caja idea">🖨️ <b>Si no puede fotocopiar las 34 hojas para todo el grado:</b> imprima solo
+las de <b>actividades y simulacro (páginas 19 a 32)</b>, que son las que el alumno rellena, y
+trabaje las hojas de estudio con una sola copia, proyectándolas o dictando lo esencial para que las copien
+en el cuaderno. La rúbrica ya cuenta ese trabajo de copia como una de las cuatro notas.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 7º · Hoja del Docente (sigue)</span><span>Página 34 de 34</span></div>
+</section>
+
+</div>
+</body>
+</html>
