@@ -192,7 +192,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .drop-cols{display:flex;gap:1rem;}
 .drop-col{flex:1;border:2px dashed var(--border);border-radius:12px;min-height:120px;padding:0.7rem;cursor:pointer;}
 .drop-col h4{font-family:'Fredoka',sans-serif;font-size:0.9rem;text-align:center;margin-bottom:0.6rem;padding-bottom:0.4rem;border-bottom:2px solid var(--border);color:var(--dark);}
-.drop-item{font-family:'Fredoka',sans-serif;font-size:0.82rem;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:0.3rem 0.6rem;margin:0.25rem 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--dark);}
+/* El reparto va pegado a la izquierda, no repartido a los extremos: la
+   fracción se pinta apilada y un número mixto («1 1/2») son DOS trozos —el
+   entero y la fracción—. Con el hueco repartido, el 1 se iba a un borde del
+   recuadro y el 1/2 al otro, y dejaba de leerse como un solo número. */
+.drop-item{font-family:'Fredoka',sans-serif;font-size:0.82rem;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:0.3rem 0.6rem;margin:0.25rem 0;cursor:pointer;display:flex;justify-content:flex-start;align-items:center;color:var(--dark);}
 .drop-item:hover{background:var(--pri-gl);}
 .cls-ok{border-color:var(--jade)!important;background:var(--jade-gl)!important;}
 .cls-no{border-color:var(--red)!important;background:var(--red-gl)!important;}
@@ -438,6 +442,25 @@ body.letra-grande li,
 body.letra-grande h2,
 body.letra-grande h3,
 body.letra-grande .sopa-cell{font-size:125%!important;line-height:1.6;}
+
+/* La fracción apilada es un <span>, y la regla de arriba infla TODOS los
+   <span> un 25 % con !important: el 3/4 acabaría más grande que la palabra
+   que lo acompaña, y en una misión de fracciones eso se lee como si el
+   número importara más que la frase. Se le devuelve su proporción con el
+   texto que lo rodea, que ya viene agrandado. */
+body.letra-grande .fr{font-size:0.86em!important;}
+body.letra-grande .fr-mix{font-size:inherit!important;}
+
+/* ── El hueco del ejercicio, dentro de la fracción ──
+   «1/2 = ___/4» se pinta apilado como cualquier otra fracción, y el hueco
+   queda de numerador. Ahí el espacio para escribir traía SU PROPIA raya, y
+   con la de la fracción justo debajo salían dos líneas paralelas: el alumno
+   no sabía cuál de las dos era la raya de la fracción. Manda la de la
+   fracción, que además se estira hasta el ancho del hueco —que es donde va
+   a escribir—. Estirar la raya al ancho del número más largo es lo correcto
+   siempre: en 100/25 la raya tiene que cubrir el 100, no el 25. */
+.fr>b{align-self:stretch;}
+.fr .tg-blank,.fr .blank{border-bottom:none;min-width:2.2em;}
 
 /* ===== COMPONENTES ESPECÍFICOS FRACCIONES ===== */
 /* Tabla comparativa (tipos de fracciones) */
