@@ -102,6 +102,9 @@ const mal = (f, sec, it, por) => malas.push(`Forma ${f} · ${sec} · ${por} · �
 const imposible = (f, sec, it, por) => imposibles.push(`Forma ${f} · ${sec} · ${por} · «${it.text}» → ${it.ansShow}`);
 // La pauta que ve el maestro tiene que llevar dentro la misma respuesta que
 // califica la pantalla: si se separan, corrige bien y el papel dice otra cosa.
+// pautaOk se lo pregunta al calificador de la misión (ver opKey); pautaLleva
+// busca un número suelto dentro de la explicación, para los pasos intermedios.
+const pautaOk = (f, sec, it) => { if (it.pautaCalifica !== true) mal(f, sec, it, 'lo que imprime la pauta la pantalla lo daría por MALO'); };
 const pautaLleva = (it, esperado) => (String(it.ansShow).replace(/,/g, '').match(/\d+(?:\.\d+)?/g) || []).some(n => Math.abs(parseFloat(n) - esperado) < 1e-9);
 // Un decimal con un cero pegado al final («345.620», «62.80») enseña a escribir
 // los decimales como no los escribe nadie y el alumno duda de si le sobra una
@@ -112,6 +115,12 @@ let items = 0;
 for (let f = 1; f <= 20; f++) {
   const d = JSON.parse(operativa(f));
 
+  // Composición de cada sección: una forma a la que se le cae un ejercicio, o
+  // que repite dos veces el mismo tipo, se imprime igual de bonita y vale menos
+  // de 100 puntos. Se cuenta por tipo de enunciado.
+  const compo = {};
+  const cuenta = k => { compo[k] = (compo[k] || 0) + 1; };
+
   // I. Fracciones y números mixtos: se rehace la cuenta del enunciado
   ok_fr: {
     if (d.fr.length !== 5) { mal(f, 'I fracciones', { text: '(sección)', ansShow: d.fr.length }, 'la sección no trae 5 ejercicios'); break ok_fr; }
@@ -119,6 +128,7 @@ for (let f = 1; f <= 20; f++) {
       items++;
       let m;
       if ((m = it.text.match(/^Calcula y simplifica: (\d+)\/(\d+) ([+−]) (\d+)\/(\d+) =$/))) {
+        cuenta(m[3] === '+' ? 'fr suma' : 'fr resta');
         const n1 = +m[1], d1 = +m[2], n2 = +m[4], d2 = +m[5], comun = mcm(d1, d2);
         const a = n1 * (comun / d1), b = n2 * (comun / d2);
         const rn = m[3] === '+' ? a + b : a - b;
@@ -130,6 +140,7 @@ for (let f = 1; f <= 20; f++) {
         // le da los 4 puntos a una respuesta equivocada.
         (it.ansTxt || []).forEach(a2 => { const p = fracDe(a2); if (!p || p[0] * comun !== Math.abs(rn) * p[1]) mal(f, 'I fracciones', it, `acepta «${a2}», que no vale ${canon(Math.abs(rn), comun)}`); });
       } else if ((m = it.text.match(/^Escribe (\d+) (\d+)\/(\d+) como fracción impropia:$/))) {
+        cuenta('fr mixto→impropia');
         const e = +m[1], n = +m[2], den = +m[3];
         if (n >= den) imposible(f, 'I fracciones', it, 'el número mixto del enunciado no es propio (numerador ≥ denominador)');
         const esperado = (e * den + n) + '/' + den;
@@ -137,6 +148,7 @@ for (let f = 1; f <= 20; f++) {
         if (mcd(e * den + n, den) !== 1) mal(f, 'I fracciones', it, 'la impropia todavía se puede simplificar: hay dos respuestas buenas y solo una se acepta');
         if (String(it.ansTxt) !== esperado) mal(f, 'I fracciones', it, `acepta ${JSON.stringify(it.ansTxt)} y debería aceptar solo ${esperado}`);
       } else if ((m = it.text.match(/^Escribe (\d+)\/(\d+) como número mixto:$/))) {
+        cuenta('fr impropia→mixto');
         const imp = +m[1], den = +m[2], e = Math.floor(imp / den), n = imp % den;
         if (n === 0) imposible(f, 'I fracciones', it, 'la impropia es un entero exacto: no hay número mixto que escribir');
         if (imp <= den) imposible(f, 'I fracciones', it, 'la fracción del enunciado no es impropia');
@@ -146,7 +158,7 @@ for (let f = 1; f <= 20; f++) {
         if (!/^\d+ \d+\/\d+$/.test(it.ansShow)) mal(f, 'I fracciones', it, 'el número mixto de la pauta va sin el espacio');
         if (String(it.ansTxt) !== esperado) mal(f, 'I fracciones', it, `acepta ${JSON.stringify(it.ansTxt)} y debería aceptar solo ${esperado}`);
       } else { mal(f, 'I fracciones', it, 'enunciado que este arnés no sabe recalcular'); return; }
-      if (it.pautaCalifica !== true) mal(f, 'I fracciones', it, 'lo que imprime la pauta la pantalla lo daría por MALO');
+      pautaOk(f, 'I fracciones', it);
     });
   }
 
@@ -155,34 +167,37 @@ for (let f = 1; f <= 20; f++) {
     items++;
     let m;
     if ((m = it.text.match(/^Calcula: ([\d.]+) × (\d+) =$/))) {
-      const a = aEnt(m[1]), b = +m[2], v = a.v * b;
+      cuenta('de ×');
+      const a = aEnt(m[1]), b = +m[2], esperado = (a.v * b) / Math.pow(10, a.d);
       if (ceroSobrante(m[1])) imposible(f, 'II decimales', it, 'el enunciado escribe un decimal con un cero sobrante');
-      if (!igual(it.ansNum, v / Math.pow(10, a.d))) mal(f, 'II decimales', it, `debería ser ${v / Math.pow(10, a.d)}`);
+      if (!igual(it.ansNum, esperado)) mal(f, 'II decimales', it, `debería ser ${esperado}`);
       if (ceroSobrante(it.ansShow)) imposible(f, 'II decimales', it, 'la pauta escribe la respuesta con un cero sobrante al final');
-      if (!pautaLleva(it, v / Math.pow(10, a.d))) mal(f, 'II decimales', it, 'la pauta no muestra la respuesta');
     } else if ((m = it.text.match(/^Calcula: ([\d.]+) ÷ (\d+) =$/))) {
+      cuenta('de ÷');
       const a = aEnt(m[1]), b = +m[2];
       if (ceroSobrante(m[1])) imposible(f, 'II decimales', it, 'el enunciado escribe un decimal con un cero sobrante');
       if (a.v % b !== 0) imposible(f, 'II decimales', it, `división con residuo (${m[1]} ÷ ${b} no da un decimal exacto)`);
       const esperado = (a.v / b) / Math.pow(10, a.d);
       if (!igual(it.ansNum, esperado)) mal(f, 'II decimales', it, `debería ser ${esperado}`);
       if (ceroSobrante(it.ansShow)) imposible(f, 'II decimales', it, 'la pauta escribe la respuesta con un cero sobrante al final');
-      if (!pautaLleva(it, esperado)) mal(f, 'II decimales', it, 'la pauta no muestra la respuesta');
     } else if ((m = it.text.match(/^La libra de .+ cuesta L\.([\d.]+)\. ¿Cuánto cuestan (\d+) libras\?$/))) {
+      cuenta('de lempiras ×');
       const p = aEnt(m[1]), n = +m[2], esperado = (p.v * n) / 100;
       if (n < 2) imposible(f, 'II decimales', it, 'una sola libra: no hay multiplicación que hacer');
       if (!igual(it.ansNum, esperado)) mal(f, 'II decimales', it, `debería ser ${esperado}`);
+      // En lempiras los centavos van SIEMPRE con dos cifras: «L.58.40» es como
+      // se escribe el dinero, y ahí el cero final no sobra.
       if (!/^L\.\d+\.\d\d$/.test(it.ansShow)) mal(f, 'II decimales', it, 'la pauta no escribe los lempiras con sus dos centavos');
-      if (!pautaLleva(it, esperado)) mal(f, 'II decimales', it, 'la pauta no muestra la respuesta');
     } else if ((m = it.text.match(/^Se pagaron L\.([\d.]+) por (\d+) libras de queso\. ¿Cuánto cuesta cada libra\?$/))) {
+      cuenta('de lempiras ÷');
       const t = aEnt(m[1]), n = +m[2];
       if (t.v % n !== 0) imposible(f, 'II decimales', it, `división con residuo (L.${m[1]} ÷ ${n} no da centavos exactos)`);
       const esperado = (t.v / n) / 100;
       if (esperado <= 0) imposible(f, 'II decimales', it, 'la libra saldría a cero');
       if (!igual(it.ansNum, esperado)) mal(f, 'II decimales', it, `debería ser ${esperado}`);
       if (!/^L\.\d+\.\d\d$/.test(it.ansShow)) mal(f, 'II decimales', it, 'la pauta no escribe los lempiras con sus dos centavos');
-      if (!pautaLleva(it, esperado)) mal(f, 'II decimales', it, 'la pauta no muestra la respuesta');
-    } else mal(f, 'II decimales', it, 'enunciado que este arnés no sabe recalcular');
+    } else { mal(f, 'II decimales', it, 'enunciado que este arnés no sabe recalcular'); return; }
+    pautaOk(f, 'II decimales', it);
   });
 
   // III. Divisores, factores primos, m.c.m. y M.C.D.
@@ -191,31 +206,35 @@ for (let f = 1; f <= 20; f++) {
     items++;
     let m;
     if ((m = it.text.match(/^Escribe todos los divisores de (\d+), de menor a mayor:$/))) {
+      cuenta('te divisores');
       const n = +m[1], ds = []; for (let i = 1; i <= n; i++) if (n % i === 0) ds.push(i);
       if (it.ansShow !== ds.join(', ')) mal(f, 'III teoría', it, `los divisores de ${n} son ${ds.join(', ')}`);
       // Con comas y sin ellas: el calificador borra los signos, así que «1, 2, 3»
       // y «1,2,3» no llegan iguales y las dos formas tienen que estar aceptadas.
       if (!(it.ansTxt || []).includes(ds.join(', ')) || !(it.ansTxt || []).includes(ds.join(''))) mal(f, 'III teoría', it, 'no acepta las dos formas de escribir la lista (con comas y sin ellas)');
     } else if ((m = it.text.match(/^Descompón (\d+) en factores primos:$/))) {
+      cuenta('te factores');
       const n = +m[1], fs2 = []; let r = n, p = 2; while (r > 1) { while (r % p === 0) { fs2.push(p); r /= p; } p++; }
       if (!fs2.every(esPrimo)) mal(f, 'III teoría', it, 'la descomposición trae un factor que no es primo');
       if (fs2.reduce((a, b) => a * b, 1) !== n) mal(f, 'III teoría', it, `los factores no multiplican ${n}`);
       if (it.ansShow !== fs2.join(' × ')) mal(f, 'III teoría', it, `debería ser ${fs2.join(' × ')}`);
       if (fs2.length < 2) imposible(f, 'III teoría', it, 'el número es primo: no hay descomposición que escribir');
     } else if ((m = it.text.match(/^Calcula el m\.c\.m\. de (\d+) y (\d+)\.$/))) {
+      cuenta('te m.c.m.');
       const a = +m[1], b = +m[2], esperado = mcm(a, b);
       mcmTextos.push(it.text);
       if (a === b) imposible(f, 'III teoría', it, 'los dos números son el mismo');
       if (!igual(it.ansNum, esperado)) mal(f, 'III teoría', it, `el m.c.m. de ${a} y ${b} es ${esperado}`);
       if (it.ansShow !== String(esperado)) mal(f, 'III teoría', it, `la pauta debería decir ${esperado}`);
     } else if ((m = it.text.match(/^Calcula el M\.C\.D\. de (\d+) y (\d+)\.$/))) {
+      cuenta('te M.C.D.');
       const a = +m[1], b = +m[2], esperado = mcd(a, b);
       if (a === b) imposible(f, 'III teoría', it, 'los dos números son el mismo');
       if (!igual(it.ansNum, esperado)) mal(f, 'III teoría', it, `el M.C.D. de ${a} y ${b} es ${esperado}`);
       if (it.ansShow !== String(esperado)) mal(f, 'III teoría', it, `la pauta debería decir ${esperado}`);
     } else { mal(f, 'III teoría', it, 'enunciado que este arnés no sabe recalcular'); return; }
-    if (it.ansTxt && it.pautaCalifica !== true) mal(f, 'III teoría', it, 'lo que imprime la pauta la pantalla lo daría por MALO');
-    if (it.ansNum !== undefined && it.ansNum === 0) imposible(f, 'III teoría', it, 'la respuesta vale cero');
+    pautaOk(f, 'III teoría', it);
+    if (it.ansNum === 0) imposible(f, 'III teoría', it, 'la respuesta vale cero');
   });
   // Dos veces el mismo m.c.m. son ocho de los veinte puntos de la sección en una
   // sola cuenta: el que la sabe cobra doble por saber lo mismo.
@@ -226,6 +245,7 @@ for (let f = 1; f <= 20; f++) {
     items++;
     let m, esperado;
     if ((m = it.text.match(/^En la pulpería, el litro de aceite cuesta L\.([\d.]+)\. Doña Marta compra (\d+) litros y paga con un billete de L\.(\d+)\.00\. ¿Cuánto recibe de vuelto\?$/))) {
+      cuenta('pr vuelto');
       const p = aEnt(m[1]), cant = +m[2], billete = +m[3];
       if (![100, 200, 500].includes(billete)) mal(f, 'IV problemas', it, `L.${billete} no es un billete que circule`);
       const gasto = p.v * cant, vuelto = billete * 100 - gasto;
@@ -233,21 +253,26 @@ for (let f = 1; f <= 20; f++) {
       if (vuelto <= 0) imposible(f, 'IV problemas', it, 'vuelto negativo o cero: paga con un billete que no alcanza');
       if (!it.ansShow.includes('gastó L.' + (gasto / 100).toFixed(2))) mal(f, 'IV problemas', it, `la pauta no explica el gasto de L.${(gasto / 100).toFixed(2)} del primer paso`);
     } else if ((m = it.text.match(/^Don Chepe riega el vivero cada (\d+) días y le echa abono cada (\d+) días\..*¿Dentro de cuántos días vuelve a hacer las dos el mismo día\?$/))) {
+      cuenta('pr m.c.m.');
       const a = +m[1], b = +m[2];
       if (a === b) imposible(f, 'IV problemas', it, 'los dos plazos son iguales: no hay m.c.m. que buscar');
       esperado = mcm(a, b);
       if (!it.ansShow.includes(`m.c.m. de ${a} y ${b}`)) mal(f, 'IV problemas', it, 'la pauta no dice de qué números es el m.c.m.');
     } else if ((m = it.text.match(/^Un solar rectangular mide (\d+) m de largo y (\d+) m de ancho\. ¿Cuántos metros cuadrados tiene\?$/))) {
+      cuenta('pr tercero');
       esperado = (+m[1]) * (+m[2]);
     } else if ((m = it.text.match(/^Un rótulo con forma de triángulo mide (\d+) cm de base y (\d+) cm de altura\. ¿Cuál es su área\?$/))) {
+      cuenta('pr tercero');
       const b = +m[1], h = +m[2];
       if ((b * h) % 2 !== 0) imposible(f, 'IV problemas', it, 'el área del triángulo no sale exacta: cae en medio centímetro cuadrado');
       esperado = b * h / 2;
     } else if ((m = it.text.match(/^El contorno de un \S+ regular mide (\d+) cm\. ¿Cuánto mide cada uno de sus (\d+) lados\?$/))) {
+      cuenta('pr tercero');
       const per = +m[1], lados = +m[2];
       if (per % lados !== 0) imposible(f, 'IV problemas', it, `división con residuo (${per} ÷ ${lados} no da un lado exacto)`);
       esperado = per / lados;
     } else if ((m = it.text.match(/^Una tapadera redonda tiene (\d+) cm de diámetro\. ¿Cuánto mide su circunferencia\? \(π = 3\.14\)$/))) {
+      cuenta('pr tercero');
       const diam = +m[1];
       esperado = 314 * diam / 100;   // 3.14 × d, con enteros para no arrastrar la coma flotante
       if (ceroSobrante(it.ansShow.split(' ')[0])) imposible(f, 'IV problemas', it, 'la pauta escribe la respuesta con un cero sobrante al final');
@@ -255,26 +280,30 @@ for (let f = 1; f <= 20; f++) {
     } else { mal(f, 'IV problemas', it, 'enunciado que este arnés no sabe recalcular'); return; }
     if (esperado === 0) imposible(f, 'IV problemas', it, 'la respuesta vale cero');
     if (!igual(it.ansNum, esperado)) mal(f, 'IV problemas', it, `debería ser ${esperado}`);
-    if (!pautaLleva(it, esperado)) mal(f, 'IV problemas', it, 'la pauta no muestra la respuesta');
+    pautaOk(f, 'IV problemas', it);
   });
-  if (d.pr.length !== 3) malas.push(`Forma ${f} · IV problemas · la sección no trae 3 problemas sino ${d.pr.length}`);
 
   // V. Reto de la circunferencia: dos pasos, la vuelta y las vueltas
   d.me.forEach(it => {
     items++;
     const m = it.text.match(/^La llanta de la carreta de don Tulio tiene (\d+) cm de diámetro\. ¿Cuántos centímetros avanza la carreta en (\d+) vueltas completas de la llanta\? \(π = 3\.14\)$/);
     if (!m) return mal(f, 'V reto', it, 'enunciado que este arnés no sabe recalcular');
+    cuenta('me reto');
     const diam = +m[1], vueltas = +m[2];
     const porVuelta = 314 * diam / 100, total = 314 * diam * vueltas / 100;
     if (vueltas < 2) imposible(f, 'V reto', it, 'una sola vuelta: el reto se queda sin su segundo paso');
     if (!igual(it.ansNum, total)) mal(f, 'V reto', it, `debería ser ${total}`);
-    if (!pautaLleva(it, total)) mal(f, 'V reto', it, 'la pauta no muestra la respuesta');
+    pautaOk(f, 'V reto', it);
     // El primer paso también tiene que estar en la pauta: sin él, el maestro no
     // puede darle los puntos del paso 1 al que se equivocó solo en el segundo.
     if (!it.ansShow.includes(`3.14 × ${diam} = `)) mal(f, 'V reto', it, 'la pauta no explica el primer paso');
     if (!pautaLleva(it, porVuelta)) mal(f, 'V reto', it, `la pauta no muestra lo que avanza en una vuelta (${porVuelta})`);
     (String(it.ansShow).match(/\d+\.\d+/g) || []).forEach(n => { if (ceroSobrante(n)) imposible(f, 'V reto', it, `la pauta escribe ${n} con un cero sobrante al final`); });
   });
+
+  // La forma completa: 5 + 5 + 5 + 3 + 1 = 100 puntos, sin tipos repetidos
+  const esperada = { 'fr suma': 2, 'fr resta': 1, 'fr mixto→impropia': 1, 'fr impropia→mixto': 1, 'de ×': 2, 'de ÷': 1, 'de lempiras ×': 1, 'de lempiras ÷': 1, 'te divisores': 1, 'te factores': 1, 'te m.c.m.': 2, 'te M.C.D.': 1, 'pr vuelto': 1, 'pr m.c.m.': 1, 'pr tercero': 1, 'me reto': 1 };
+  Object.keys(esperada).forEach(k => { if (compo[k] !== esperada[k]) malas.push(`Forma ${f} · composición · «${k}» sale ${compo[k] || 0} vez/veces y deberían ser ${esperada[k]}`); });
 }
 
 console.log(`La aritmética de la operativa es exacta en las 20 formas (${items} ejercicios recalculados)`);
