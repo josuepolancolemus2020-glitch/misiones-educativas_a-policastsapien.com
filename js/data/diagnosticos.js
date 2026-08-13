@@ -80,6 +80,8 @@ const DIAGNOSTICOS = {
     { etapa: 2, q: '¿Qué fracción impropia vale lo mismo que el número mixto 3 1/4?', o: ['4/3', '7/4', '13/4', '31/4'], a: 2 },
     { etapa: 2, q: '«La campesina siguió subiendo y no se dio por vencida». ¿Qué significa ahí no se dio por vencida?', o: ['Que no dejó de intentarlo', 'Que se cansó y bajó', 'Que perdió el camino', 'Que llegó de primera'], a: 0 },
     { etapa: 3, q: 'En el mercado, la libra de frijoles cuesta L.22.40. ¿Cuánto cuestan 3.5 libras?', o: ['L.25.90', 'L.67.20', 'L.78.40', 'L.784.00'], a: 2 },
+    { etapa: 4, q: 'El galón de combustible estaba a L.105 y hoy está a L.95. ¿Qué número representa ese cambio?', o: ['+10', '−10', '−95', '+105'], a: 1 },
+    { etapa: 4, q: 'Cuatro obreros levantan un muro en 50 días. ¿Cuántos obreros hacen falta para levantarlo en 10 días?', o: ['20', '8', '40', '200'], a: 0 },
     { etapa: 3, q: '¿Cómo se encuentra la idea principal de un texto?', o: ['Copiando la primera oración', 'Preguntándose de qué trata TODO el texto', 'Buscando la palabra más repetida', 'Leyendo solo el título'], a: 1 },
   ],
 };

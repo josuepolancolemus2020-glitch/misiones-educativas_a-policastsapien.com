@@ -84,6 +84,7 @@ const MISSIONS = [
   { id: 59, title: 'Prueba de Fin de Grado: 4º Grado',                    subject: 'repaso',      color: 'rep',  grade: '4º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 1, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-4to/fin-de-grado-4to.html' },
   { id: 60, title: 'Prueba de Fin de Grado: 5º Grado',                    subject: 'repaso',      color: 'rep',  grade: '5º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 2, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-5to/fin-de-grado-5to.html' },
   { id: 58, title: 'Prueba de Fin de Grado: 6º Grado',                    subject: 'repaso',      color: 'rep',  grade: '6º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 3, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-6to/fin-de-grado-6to.html' },
+  { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 
 /* ─────────────────────────────────────────────
