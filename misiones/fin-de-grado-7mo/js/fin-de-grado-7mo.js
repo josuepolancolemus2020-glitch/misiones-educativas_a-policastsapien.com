@@ -1588,7 +1588,11 @@ function _isTxtMatch(student, accepted) { const v = _normTxt(student); return !!
    pantalla escribe «−7» y el alumno teclea «-7», y las dos son la misma
    respuesta. Sin esto, en 7º toda respuesta negativa se leía como positiva. */
 function _isNumMatch(student, expected) {
-  const raw = (student || '').toString().replace(/[\u2212\u2013\u2014]/g, '-').replace(/[^\d.,\-]/g, '').replace(/,/g, '');
+  /* La L. del lempira se quita ENTERA, con su punto. Antes se borraba solo la
+     letra y quedaba «.132.37», que parseFloat lee como 0.132: el alumno que
+     contestaba «L.132.37», copiando cómo se lo enseña la pauta, salía malo con
+     la respuesta buena, y en la sección del dinero eso son 8 de 100 puntos. */
+  const raw = (student || '').toString().replace(/[\u2212\u2013\u2014]/g, '-').replace(/[Ll]\s*\.?/g, '').replace(/[^\d.,\-]/g, '').replace(/,/g, '');
   if (!raw) return false;
   const n = parseFloat(raw);
   return !isNaN(n) && Math.abs(n - expected) < 0.005;
@@ -1605,15 +1609,18 @@ function _isNumMatch(student, expected) {
 // I. Enteros y valor absoluto (5 × 4 = 20 pts)
 function genOpEnteros(){
   const items=[];
+  /* Si la tirada se empeña en dar cero, se mueve el DATO, no la respuesta:
+     subiendo solo r la pauta diría un número que el enunciado no da, y el
+     examen impreso saldría con la clave equivocada. */
   { let a,b,r,g=0; do{ a=_opRint(5,25); b=_opRint(2,30); r=b-a; }while(r===0&&++g<20);
-    if(r===0) r=b-a+1;
+    if(r===0){ b++; r=1; }
     items.push({ text:`Calcula: (−${a}) + ${b} =`, ansNum:r, ansShow:_sg(r) }); }
   { const a=_opRint(3,20), b=_opRint(2,18);
     items.push({ text:`Calcula: ${a} − (−${b}) =`, ansNum:a+b, ansShow:String(a+b) }); }
   { const a=_opRint(2,12), b=_opRint(2,9), iguales=_opRint(0,1)===1, r=iguales?a*b:-(a*b);
     items.push({ text:`Calcula: (−${a}) × ${iguales?'(−'+b+')':b} =`, ansNum:r, ansShow:_sg(r) }); }
   { let a,b,c,dentro,g=0; do{ a=_opRint(2,9); b=_opRint(2,9); c=_opRint(1,20); dentro=c-a*b; }while(dentro===0&&++g<20);
-    if(dentro===0) dentro=-1;
+    if(dentro===0){ c++; dentro=1; }   // se mueve el dato, no la respuesta (ver arriba)
     items.push({ text:`Calcula: |(−${a})(${b}) + ${c}| =`, ansNum:Math.abs(dentro), ansShow:String(Math.abs(dentro)) }); }
   { const exp=_opRint(2,3), base=_opRint(2, exp===3?8:11), val=Math.pow(base,exp)*(exp===3?-1:1);
     items.push({ text:`Calcula: (−${base})${exp===3?'³':'²'} =`, ansNum:val, ansShow:_sg(val) }); }
@@ -1636,9 +1643,19 @@ function genOpNumeros(){
     items.push({ text:`La libra de ${prods[_opRint(0,prods.length-1)]} cuesta L.${precio.toFixed(2)}. ¿Cuánto cuestan ${libras} libras?`, ansNum:total, ansShow:'L.'+total.toFixed(2) }); }
   { const precio=_opRint(150,900)/100, cant=[10,20,25,50,100][_opRint(0,4)], total=Math.round(precio*cant*100)/100;
     items.push({ text:`Por ${cant} bloques se pagaron L.${total.toFixed(2)}. ¿Cuánto cuesta cada bloque?`, ansNum:precio, ansShow:'L.'+precio.toFixed(2) }); }
-  { const n=_opRint(11,999)/10, r=Math.round(n*10)/100;
+  /* Ni el dato ni la respuesta pueden terminar en cero: «55.0 ÷ 10 = 5.50»
+     enseña a escribir los decimales como no los escribe nadie y el alumno se
+     queda dudando de si le sobra una cifra. En LEMPIRAS sí van los dos
+     centavos —eso es dinero—, pero aquí son decimales pelados. */
+  { let k,g=0; do{ k=_opRint(11,999); }while(k%10===0&&++g<20);
+    if(k%10===0) k+=7;
+    const n=k/10, r=k/100;
     items.push({ text:`Calcula: ${n.toFixed(1)} ÷ 10 =`, ansNum:r, ansShow:r.toFixed(2) }); }
-  { const x=_opRint(1200,9800)/100, y=_opRint(50,1100)/100, r=Math.round((x-y)*100)/100;
+  { let xc,yc,g=0; do{ xc=_opRint(1200,9800); yc=_opRint(50,1100); }while((xc%10===0||yc%10===0||(xc-yc)%10===0)&&++g<20);
+    // Red de seguridad determinista: se fijan las unidades a dos cifras que no
+    // se anulen entre sí (…7 − …4 = …3), por muy mala que salga la tirada.
+    if(xc%10===0||yc%10===0||(xc-yc)%10===0){ xc=xc-(xc%10)+7; yc=yc-(yc%10)+4; }
+    const x=xc/100, y=yc/100, r=(xc-yc)/100;
     items.push({ text:`Calcula: ${x.toFixed(2)} − ${y.toFixed(2)} =`, ansNum:r, ansShow:r.toFixed(2) }); }
   return items;
 }
@@ -1662,7 +1679,12 @@ function genOpEcuaciones(){
 // IV. Problemas de la vida real (3 × 10 = 30 pts)
 function genOpProblemas(){
   const items=[];
-  { const u=_opRint(2,9), precio=_opRint(8,60), n=_opRint(3,20);
+  /* Las libras que se preguntan NO pueden ser las mismas que se dieron: «si 8
+     libras cuestan L.432, ¿cuánto cuestan 8 libras?» trae la respuesta escrita
+     en el propio enunciado y regala 10 de los 100 puntos sin medir nada. */
+  { const u=_opRint(2,9), precio=_opRint(8,60); let n,g=0;
+    do{ n=_opRint(3,20); }while(n===u&&++g<20);
+    if(n===u) n=u+1;
     items.push({ text:`Si ${u} libras de café cuestan L.${_fmtNum(u*precio)}, ¿cuánto cuestan ${n} libras al mismo precio?`, ansNum:n*precio, ansShow:`L.${_fmtNum(n*precio)}: directa, ${_fmtNum(u*precio)} × ${n} ÷ ${u}` }); }
   { const k=_opRint(2,4), a=_opRint(2,10), c=a*k, m=_opRint(2,15), b=m*k;
     items.push({ text:`Si ${a} obreros levantan un muro en ${b} días, ¿cuántos días tardan ${c} obreros trabajando igual de rápido?`, ansNum:m, ansShow:`${m} días: inversa, ${a} × ${b} ÷ ${c}` }); }

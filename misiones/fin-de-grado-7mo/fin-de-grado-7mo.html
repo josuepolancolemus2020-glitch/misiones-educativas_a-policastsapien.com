@@ -78,41 +78,49 @@
     <div class="demo-visual">
       <div class="demo-title">🔬 Así se ve una pregunta del examen</div>
       <div class="demo-steps">
-        <div class="demo-step ds-start"><span class="ds-label">Pregunta</span><span class="ds-val" style="font-size:0.95rem;">¿Cuál es el resultado de 1/2 + 1/4?</span></div>
+        <div class="demo-step ds-start"><span class="ds-label">Pregunta</span><span class="ds-val" style="font-size:0.95rem;">El galón de gasolina bajó de L.105 a L.95. ¿Qué número representa ese cambio?</span></div>
         <div class="demo-arrow">descarto lo imposible ↓</div>
-        <div class="demo-step ds-mid"><span class="ds-label">Opciones</span><span class="ds-val" style="font-size:0.95rem;">a) 2/6 ✘ &nbsp; b) 3/4 &nbsp; c) 2/4 ✘ &nbsp; d) 1/8 ✘</span></div>
+        <div class="demo-step ds-mid"><span class="ds-label">Opciones</span><span class="ds-val" style="font-size:0.95rem;">a) +10 ✘ &nbsp; b) −10 &nbsp; c) +200 ✘ &nbsp; d) −95 ✘</span></div>
         <div class="demo-arrow">= </div>
-        <div class="demo-step ds-end"><span class="ds-label">Respuesta</span><span class="ds-val" style="font-size:1rem;">b) 3/4 → relleno su círculo ⬤</span></div>
+        <div class="demo-step ds-end"><span class="ds-label">Respuesta</span><span class="ds-val" style="font-size:1rem;">b) −10 → relleno su círculo ⬤</span></div>
       </div>
-      <p class="demo-note">✅ El 2/6 sale de sumar arriba y abajo: es la trampa favorita del examen. ¡Tú ya no caes ahí!</p>
+      <p class="demo-note">✅ El +10 sale de restar 105 − 95 y olvidarse del signo: es la trampa favorita del examen. Lo que BAJA se anota con signo menos. ¡Tú ya no caes ahí!</p>
     </div>
   </div>
 
   <div class="card ac-gold">
     <h2>📖 Bloque de Español: leer con lupa</h2>
-    <p style="margin-bottom:0.6rem;">La prueba de Español es de <strong>comprensión lectora</strong>: textos cortos con preguntas. Hay cuatro tipos de pregunta, y cada una se ataca distinto:</p>
+    <p style="margin-bottom:0.6rem;">La prueba de Español es de <strong>comprensión lectora</strong>: textos cortos con preguntas. Vienen textos narrativos, informativos y literarios, y cada pregunta se ataca distinto:</p>
     <div class="vs-grid">
       <div class="vs-box vs-a">
-        <h4>🎯 Idea principal</h4>
+        <h4>🎯 El tema del texto</h4>
         <p>«¿De qué trata el texto?»</p>
-        <p style="font-size:0.82rem;margin-top:0.3rem;">Es lo que abarca TODO el texto, no un detalle suelto. Si la opción solo aparece en una línea, no es la idea principal.</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Es lo que abarca TODO el texto, del primer renglón al último. Si la opción solo aparece en una línea, es un detalle y no el tema.</p>
       </div>
       <div class="vs-box vs-b">
-        <h4>🔍 Literal e inferencial</h4>
+        <h4>🔍 Literal, causa e inferencia</h4>
         <p>«Según el texto…» y «¿Por qué…?»</p>
-        <p style="font-size:0.82rem;margin-top:0.3rem;">La literal está escrita tal cual: vuelve al texto y búscala. La inferencial se deduce con pistas del texto, no con lo que tú creas.</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">La literal está escrita tal cual: vuelve al texto y búscala. La causa y la inferencia se deducen con las pistas del texto, no con lo que tú creas.</p>
       </div>
     </div>
     <div class="tip" style="margin-top:0.6rem;">
       <span class="ti">💬</span>
-      <div><strong>Vocabulario en contexto:</strong> «¿qué significa la palabra X en el texto?» Prueba cambiando la palabra por cada opción: la correcta es la que deja la oración diciendo lo mismo.</div>
+      <div><strong>Por el contexto se sabe:</strong> «¿qué significa esta palabra en el texto?» Cámbiala por cada opción y vuelve a leer la oración: la correcta la deja diciendo lo mismo. Con las <strong>expresiones</strong> es igual, pero no vale entenderlas palabra por palabra: «estar en las nubes» no habla de ninguna nube.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">👤</span>
+      <div><strong>El personaje, el lugar y el mensaje:</strong> cómo es alguien se saca de lo que HACE, no de un adjetivo suelto: el que entrega la hoja y se queda solo en la grada está preocupado. Y el mensaje casi nunca viene escrito: es la enseñanza que deja lo que le pasó al personaje.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">📰</span>
+      <div><strong>¿Qué clase de texto es?:</strong> si cuenta lo que le pasó a alguien, narrativo; si da datos reales para aprender algo, informativo; si está escrito para gustar y hacer sentir, literario. Y cuando falta una <strong>frase</strong>, se prueban las tres en el hueco: la buena encaja con lo que dice antes y con lo que dice después.</div>
     </div>
     <div class="mini-quiz-wrap" id="mqBlock1">
-      <p class="mq-pregunta">🤔 «El cusuco sale de noche a buscar insectos. De día duerme en su cueva. Sus placas lo protegen como una armadura.» ¿De qué trata el texto?</p>
+      <p class="mq-pregunta">🤔 «Wilmer estuvo en las nubes toda la clase: la maestra le preguntó dos veces y ni la oyó.» ¿Qué significa ahí «estuvo en las nubes»?</p>
       <div class="mq-opts">
-        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Eso es un detalle: solo aparece en una línea.')">De las cuevas</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! Todo el texto habla de cómo vive el cusuco: comida, sueño y protección.')">De cómo vive el cusuco</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Los insectos solo se mencionan como comida: es un detalle.')">De los insectos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Nadie se sube a una nube. Una expresión no se entiende palabra por palabra.')">Que se subió a un lugar alto</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! Estar en las nubes es estar distraído, y la misma oración lo confirma: le preguntaron dos veces y ni oyó.')">Que estaba distraído</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'El texto no dice que estuviera enfermo: dice que no oyó a la maestra, que es otra cosa.')">Que estaba enfermo</button>
       </div>
       <div class="mq-fb" id="mqBlock1-fb"></div>
     </div>
@@ -120,7 +128,7 @@
 
   <div class="card ac-blue">
     <h2>🔢 Bloque de Matemáticas: las cuentas del año</h2>
-    <p style="margin-bottom:0.6rem;">La prueba de Matemáticas junta <strong>fracciones, decimales, teoría de números y problemas</strong>. Lo que más cae:</p>
+    <p style="margin-bottom:0.6rem;">La prueba de Matemáticas junta <strong>números con signo, fracciones, decimales, potencias y ecuaciones</strong>. Lo que más cae:</p>
     <div style="overflow-x:auto;">
       <table style="width:100%;border-collapse:collapse;text-align:left;font-family:'Fredoka',sans-serif;margin:0.6rem 0;">
         <thead><tr style="background:var(--pri-gl);">
@@ -128,49 +136,77 @@
           <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">🔑 La clave</th>
         </tr></thead>
         <tbody>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Fracción ↔ decimal</td><td style="padding:0.45rem;border:1px solid var(--border);">3/4 = 3 ÷ 4 = 0.75 · y 0.6 son 6 décimas: 6/10</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Sumar fracciones</td><td style="padding:0.45rem;border:1px solid var(--border);">Mismo denominador: solo sumo arriba. Distinto: primero el común denominador</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Multiplicar decimales</td><td style="padding:0.45rem;border:1px solid var(--border);">Multiplico sin punto y al final lo coloco contando las cifras decimales</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">m.c.m. y M.C.D.</td><td style="padding:0.45rem;border:1px solid var(--border);">¿Cuándo COINCIDEN dos cosas? → m.c.m. · ¿REPARTIR sin sobras? → M.C.D.</td></tr>
-        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Viajes</td><td style="padding:0.45rem;border:1px solid var(--border);">tiempo = distancia ÷ velocidad · distancia = velocidad × tiempo</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">El número con signo</td><td style="padding:0.45rem;border:1px solid var(--border);">Lo que sube, gana o se abona lleva más · lo que baja, se debe o se pierde lleva menos · si el galón baja de L.105 a L.95, el cambio es −10</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Valor absoluto</td><td style="padding:0.45rem;border:1px solid var(--border);">La distancia hasta el cero, y una distancia nunca es negativa: |−9| = 9 · si adentro hay cuentas, primero se resuelven: |(−7)(2) + 5| = |−9| = 9</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Sumar y restar enteros</td><td style="padding:0.45rem;border:1px solid var(--border);">Restar un negativo es sumar: 8 − (−2) = 10 · deuda de L.240 con abonos de L.150 y L.60: −240 + 210 = −30, todavía debe L.30</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Comparar y ordenar</td><td style="padding:0.45rem;border:1px solid var(--border);">Manda el que queda más a la DERECHA en la recta: −2 es mayor que −9, aunque el nueve sea el número más grande · de menor a mayor: −9, −2, 0, 3</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Fracciones con signo</td><td style="padding:0.45rem;border:1px solid var(--border);">Mismo denominador: solo trabajo arriba y me fijo en el signo · −3/4 + 1/4 = −2/4, que es −1/2 · al multiplicar, signos iguales dan más y distintos dan menos</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Decimales con lempiras</td><td style="padding:0.45rem;border:1px solid var(--border);">Multiplico sin punto y al final lo coloco contando las cifras decimales: L.46.50 × 2.5 = L.116.25 · L.2,430 entre 900 bloques son L.2.70 cada uno</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Potencia de base negativa</td><td style="padding:0.45rem;border:1px solid var(--border);">El signo lo decide el exponente: par deja positivo, impar deja negativo · (−2)⁴ = 16 y (−2)³ = −8</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Ecuaciones</td><td style="padding:0.45rem;border:1px solid var(--border);">Lo que le hagas a un lado, hazlo al otro · 3x + 7 = 22: quito 7 de los dos lados (3x = 15) y divido los dos entre 3 (x = 5)</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">Del enunciado a los símbolos</td><td style="padding:0.45rem;border:1px solid var(--border);">«el doble de un número disminuido en 3» es 2x − 3 · «3 libras de arroz y una bolsa de sal de L.12 costaron L.87» es 3x + 12 = 87</td></tr>
         </tbody>
       </table>
     </div>
     <div class="mini-quiz-wrap" id="mqBlock2">
-      <p class="mq-pregunta">🤔 En la feria, dos ruedas dan la vuelta cada 4 y cada 6 minutos. Si arrancan juntas, ¿qué calculas para saber cuándo vuelven a coincidir?</p>
+      <p class="mq-pregunta">🤔 Doña Rosa debe L.300 en la pulpería. Hoy fue y abonó L.180. ¿Qué número representa lo que todavía debe?</p>
       <div class="mq-opts">
-        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! Coincidir es de m.c.m.: m.c.m.(4, 6) = 12 minutos.')">El m.c.m.</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'El M.C.D. es para repartir en partes iguales, no para coincidir.')">El M.C.D.</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'El promedio es para calificaciones y datos, no para vueltas que coinciden.')">El promedio</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ahí sumaste la deuda con el abono. Un abono no hace crecer la deuda: la baja.')">+480</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! La deuda es −300 y el abono se le suma: −300 + 180 = −120. Todavía debe L.120.')">−120</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'El signo está bien, pero la cuenta no: pagar acerca el número al cero, no lo aleja.')">−480</button>
       </div>
       <div class="mq-fb" id="mqBlock2-fb"></div>
     </div>
   </div>
 
   <div class="card ac-jade">
-    <h2>📐 Geometría y datos: área, volumen y promedio</h2>
-    <p style="margin-bottom:0.6rem;">Las últimas preguntas de Matemáticas son de <strong>figuras, cuerpos y tablas</strong>. Tres fórmulas resuelven casi todo:</p>
+    <h2>📐 Geometría y datos: la recta, los ángulos y los porcentajes</h2>
+    <p style="margin-bottom:0.6rem;">Las últimas preguntas de Matemáticas son de <strong>segmentos, ángulos, proporcionalidad y gráficos</strong>. Esto es lo que hay que llevar sabido:</p>
     <div class="aprende-ejemplo">
-      <span class="ae-op">Área del círculo</span>
-      <span class="ae-flecha">→ 3.14 × radio × radio →</span>
-      <span class="ae-res">radio 2 m: 3.14 × 2 × 2 = <strong>12.56 m²</strong></span>
+      <span class="ae-op">Punto medio</span>
+      <span class="ae-flecha">→ parte el segmento en dos pedazos iguales →</span>
+      <span class="ae-res">si C es el punto medio de AB y AC mide 9 cm, AB mide <strong>18 cm</strong></span>
     </div>
     <div class="aprende-ejemplo">
-      <span class="ae-op">Volumen del prisma</span>
-      <span class="ae-flecha">→ largo × ancho × alto →</span>
-      <span class="ae-res">4 × 3 × 2 = <strong>24 m³</strong></span>
+      <span class="ae-op">Mediatriz</span>
+      <span class="ae-flecha">→ pasa por el punto medio formando ángulo recto →</span>
+      <span class="ae-res">corta el segmento a la mitad y con <strong>90°</strong>: los dos pedazos quedan iguales</span>
     </div>
     <div class="aprende-ejemplo">
-      <span class="ae-op">Promedio</span>
-      <span class="ae-flecha">→ sumo todo y divido entre cuántos son →</span>
-      <span class="ae-res">(80 + 90 + 100) ÷ 3 = <strong>90</strong></span>
+      <span class="ae-op">Ángulos suplementarios</span>
+      <span class="ae-flecha">→ los dos juntos suman 180° →</span>
+      <span class="ae-res">si uno mide 65°, el otro mide 180 − 65 = <strong>115°</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Una secante y dos paralelas</span>
+      <span class="ae-flecha">→ los alternos externos son IGUALES →</span>
+      <span class="ae-res">si uno mide 65°, su alterno externo mide <strong>65°</strong>, no lo que le falta para 180</span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Regla de tres directa</span>
+      <span class="ae-flecha">→ una sube y la otra sube: multiplico en cruz →</span>
+      <span class="ae-res">8 libras de café cuestan L.320; 20 libras: 320 × 20 ÷ 8 = <strong>L.800</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Regla de tres inversa</span>
+      <span class="ae-flecha">→ una sube y la otra baja: multiplico la primera fila y divido →</span>
+      <span class="ae-res">6 albañiles tardan 20 días; 12 albañiles: 6 × 20 ÷ 12 = <strong>10 días</strong></span>
+    </div>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Porcentaje</span>
+      <span class="ae-flecha">→ multiplico por el número del porcentaje y divido entre 100 →</span>
+      <span class="ae-res">el 30% de 60 alumnos: 60 × 30 ÷ 100 = <strong>18 alumnos</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">📊</span>
+      <div><strong>La recta y los gráficos:</strong> en la recta numérica los negativos van a la izquierda del cero, y entre dos enteros caben los decimales: el −2.5 queda justo a mitad de camino entre el −3 y el −2. En un gráfico circular la rueda entera es el 100%, así que la mitad es el 50%; y si de 200 alumnos el 25% prefiere el fútbol, son 200 × 25 ÷ 100 = 50 alumnos.</div>
     </div>
     <div class="mini-quiz-wrap" id="mqBlock3">
-      <p class="mq-pregunta">🤔 Una caja mide 5 m de largo, 2 m de ancho y 3 m de alto. ¿Cuál es su volumen?</p>
+      <p class="mq-pregunta">🤔 Una secante corta dos rectas paralelas y uno de los ángulos mide 70°. ¿Cuánto mide su alterno externo?</p>
       <div class="mq-opts">
-        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'10 es solo largo × ancho: falta multiplicar por el alto.')">10 m³</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Ese es el error de sumar las medidas: el volumen se multiplica.')">10 m</button>
-        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! 5 × 2 × 3 = 30 m³.')">30 m³</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'110° es el suplementario, lo que le falta para 180°. El alterno externo no completa: repite.')">110°</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! Entre dos paralelas, los ángulos alternos externos miden lo mismo: 70°.')">70°</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'20° es el complementario, lo que le falta para 90°. Aquí no hay que restar nada.')">20°</button>
       </div>
       <div class="mq-fb" id="mqBlock3-fb"></div>
     </div>
@@ -178,16 +214,16 @@
 
   <div class="card ac-purple">
     <h2>🖊️ La escritura también cuenta</h2>
-    <p style="margin-bottom:0.6rem;">La prueba de Español termina con <strong>dos ejercicios de escritura</strong>: contar una historia a partir de dibujos en secuencia y dar tu opinión con argumentos. Ahí no hay opciones: cuentan tu <strong>ortografía</strong> y la <strong>claridad de tus ideas</strong>.</p>
+    <p style="margin-bottom:0.6rem;">La prueba de Español termina con <strong>dos ejercicios de escritura</strong>: escribir un <strong>cuento dialogado</strong> y escribir un <strong>comentario</strong> dando tu opinión con razones. Ahí no hay opciones: cuentan tu <strong>ortografía</strong> y la <strong>claridad de tus ideas</strong>.</p>
     <div class="tip">
-      <span class="ti">✍️</span>
-      <div><strong>Para la historia:</strong> mira TODOS los cuadros antes de escribir, ponle título, y usa palabras de orden: primero, después, al final.</div>
+      <span class="ti">🗣️</span>
+      <div><strong>Para el cuento dialogado:</strong> ponle título y que hablen por lo menos dos personajes. Lo que dice cada uno empieza en renglón aparte y con la raya de diálogo, que es una rayita larga puesta al principio del renglón. Antes de lo que se dice van los dos puntos: «Entonces don Chepe dijo:».</div>
     </div>
     <div class="tip" style="margin-top:0.5rem;">
       <span class="ti">💪</span>
-      <div><strong>Para la opinión:</strong> di lo que piensas y defiéndelo con al menos dos razones. «Porque sí» no es una razón.</div>
+      <div><strong>Para el comentario:</strong> di tu postura desde el primer renglón y defiéndela con dos razones DISTINTAS, cada una explicada. «Porque sí» no es una razón, y la misma razón dicha de dos maneras tampoco son dos. Cierra retomando lo que dijiste al principio.</div>
     </div>
-    <p style="font-size:0.82rem;color:var(--gray);margin-top:0.6rem;">En la sección ✍️ Escritura de esta misión vas a practicar los dos, con pauta para revisarte.</p>
+    <p style="font-size:0.82rem;color:var(--gray);margin-top:0.6rem;">En la sección ✍️ Escritura de esta misión redactas en tu cuaderno y después te revisas con la pauta, como lo haría tu maestro.</p>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
@@ -199,16 +235,20 @@
 <div class="sec" id="s-tipos" role="tabpanel">
   <div class="card ac-blue">
     <h2>📊 Lo que cae en la prueba</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Ocho tipos de pregunta cubren casi todo el examen. Si dominas estos ocho, la prueba no te sorprende:</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Doce tipos de pregunta cubren casi todo el examen. Si dominas estos doce, la prueba no te sorprende:</p>
     <div class="type-grid">
-      <div class="type-chip tc-teal"><div class="t-art">📖 ¿De qué trata?</div><div class="t-info">Idea principal: lo que abarca todo el texto</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">💬 ¿Qué significa?</div><div class="t-info">Vocabulario en contexto: cambia la palabra y prueba</div></div>
-      <div class="type-chip tc-jade"><div class="t-art">🔍 Según el texto…</div><div class="t-info">Literal e inferencial: la respuesta vive en el texto</div></div>
-      <div class="type-chip tc-purple"><div class="t-art">✍️ ___ que falta</div><div class="t-info">Completar: concordancia y conectores</div></div>
-      <div class="type-chip tc-amber"><div class="t-art">🍕 3/4 = 0.75</div><div class="t-info">Fracciones y decimales: sumar, restar, × y ÷</div></div>
-      <div class="type-chip tc-blue"><div class="t-art">🔁 m.c.m. · M.C.D.</div><div class="t-info">Coincidir → m.c.m. · repartir → M.C.D.</div></div>
-      <div class="type-chip tc-teal"><div class="t-art">📐 A = 3.14×r×r</div><div class="t-info">Área, volumen y sólidos</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">📊 (a+b+c)÷3</div><div class="t-info">Promedio de calificaciones</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">📖 ¿De qué trata?</div><div class="t-info">El tema del texto: lo que abarca todo, no un detalle</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">💬 ¿Qué significa aquí?</div><div class="t-info">Palabras y expresiones: la pista está en la misma oración</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔍 Según el texto…</div><div class="t-info">Literal, causa e inferencia: la respuesta vive en el texto</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">👤 ¿Cómo es y qué enseña?</div><div class="t-info">Personajes, lugares y el mensaje que deja el texto</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">📰 ¿Qué clase de texto es?</div><div class="t-info">Narrativo, informativo o literario</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">✍️ La ___ que falta</div><div class="t-info">Completar: la frase que encaja antes y después</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">🗣️ Cuento y comentario</div><div class="t-info">Escritura: el diálogo con su raya y la opinión con razones</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🔢 |−9| = 9</div><div class="t-info">Enteros: sumar, restar, comparar y el valor absoluto</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">⚡ (−2)³ = −8</div><div class="t-info">Fracciones con signo, decimales en lempiras y potencias</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">⚖️ 3x + 7 = 22</div><div class="t-info">Ecuaciones de uno y dos pasos, y traducir el enunciado</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">📉 Más obreros, menos días</div><div class="t-info">Proporcionalidad directa, inversa y porcentaje</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">📐 Alternos externos</div><div class="t-info">Ángulos, punto medio, mediatriz, la recta y los gráficos</div></div>
     </div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
@@ -221,51 +261,69 @@
 <div class="sec" id="s-errores" role="tabpanel">
   <div class="card ac-amber">
     <h2>⚠️ Errores Comunes: ¡No caigas en ellos!</h2>
-    <p style="font-size:0.88rem;margin-bottom:1rem;">Los distractores del examen no son al azar: cada opción mala es un error que alguien comete de verdad. Estos son los cinco favoritos:</p>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Los distractores del examen no son al azar: cada opción mala es un error que alguien comete de verdad. Estos son los siete favoritos:</p>
     <div class="error-cards">
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Sumar fracciones «arriba y abajo»</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Restar un negativo como si fuera restar</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«1/2 + 1/4 = 2/6».</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Los denominadores no se suman: dicen de qué tamaño son las partes. Con denominadores distintos, primero se busca el común denominador.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>1/2 = 2/4, entonces 2/4 + 1/4 = <strong>3/4</strong> ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«8 − (−2) = 6».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Quitar una deuda no deja menos: deja más. Los dos signos menos seguidos se juntan y valen un más, así que restar un negativo es SUMAR.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>8 − (−2) = 8 + 2 = <strong>10</strong> ✔ (si te perdonan L.2 de deuda, te quedan L.2 más, no menos)</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Perder el punto decimal</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Creer que −9 es mayor que −2</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«12.25 × 4 = 490».</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se multiplicó 1225 × 4 = 4900 y el punto se olvidó. Las dos cifras decimales del factor deben volver al resultado.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>12.25 × 4 = <strong>49.00</strong> ✔ (estima antes: 12 × 4 son como 48)</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«−9 es mayor que −2, porque nueve es más que dos».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Con el signo menos el orden se voltea. En la recta el mayor es el que queda más a la DERECHA, y el −9 está más lejos hacia la izquierda. Con deudas se ve solo: deber L.9 es estar peor que deber L.2.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>−9 es <strong>menor</strong> que −2 ✔ (de menor a mayor: −9, −2, 0, 3)</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Confundir el m.c.m. con el M.C.D.</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Borrar los signos dentro del valor absoluto</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«Para cortar dos cintas en pedazos iguales lo más largos posible, busco el m.c.m.»</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Cortar y repartir sin sobras es de divisores: se busca el MAYOR divisor común. El m.c.m. es para cosas que se repiten y deben coincidir.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>cintas de 36 y 48 m → M.C.D. = <strong>12 m</strong> cada pedazo ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«|(−7)(2) + 5| = 14 + 5 = 19».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Las barras no le quitan el signo a cada número por separado. Primero se resuelve TODA la cuenta que va adentro, y de ese resultado se toma la distancia hasta el cero.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>(−7)(2) = −14, luego −14 + 5 = −9, y |−9| = <strong>9</strong> ✔</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Confundir área con volumen</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Dejarle el menos a una potencia de exponente par</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«La paila mide 2, 3 y 4 metros: su volumen es 2 + 3 + 4 = 9».</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El volumen no se suma: se multiplica. Y lleva unidades cúbicas (m³), porque cuenta cubitos que caben adentro.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2 × 3 × 4 = <strong>24 m³</strong> ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«(−2)⁴ = −16».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El exponente 4 dice que el −2 se multiplica cuatro veces por sí mismo. Los signos menos se anulan de dos en dos, y cuatro son dos parejas: no queda ninguno.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>(−2)(−2)(−2)(−2) = <strong>16</strong> ✔ (con exponente impar sí queda: (−2)³ = −8)</span></div>
         </div>
       </div>
 
       <div class="error-card">
-        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Contestar con lo que uno cree, no con lo que dice el texto</span></div>
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Dejar la ecuación a medio resolver</span></div>
         <div class="error-body">
-          <div class="error-row"><span class="er-label wrong">Mal:</span><span>Elegir la opción «bonita» sin volver a leer el texto.</span></div>
-          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Las preguntas dicen «según el texto»: la respuesta vive ahí, no en lo que tú sabes de antes. El distractor suena lógico a propósito.</span></div>
-          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Volver al texto y <strong>señalar la línea</strong> que respalda tu respuesta ✔</span></div>
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«3x + 7 = 22, entonces x = 15».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se hizo solo el primer paso. Al quitar 7 de los dos lados queda 3x = 15, y eso no es x todavía: es TRES veces x. Falta dividir los dos lados entre 3.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>3x = 15 y 15 ÷ 3, entonces x = <strong>5</strong> ✔ (compruébalo: 3 × 5 + 7 = 22)</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 6: Multiplicar en cruz cuando la proporcionalidad es inversa</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>«6 albañiles levantan el muro en 20 días, entonces 12 albañiles tardan 40 días».</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Con el doble de gente el trabajo no dura el doble: dura la mitad. Cuando una cantidad sube y la otra BAJA no se multiplica en cruz; se multiplica la primera pareja y se divide entre el dato nuevo.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>6 × 20 = 120, y 120 ÷ 12 = <strong>10 días</strong> ✔ (antes de calcular, pregúntate si el resultado debe subir o bajar)</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 7: Entender una expresión palabra por palabra</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>En «Wilmer metió la pata en la reunión», contestar que Wilmer metió el pie en un hoyo.</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Una expresión es un grupo de palabras que juntas significan otra cosa. Leída literal sale un disparate, y el examen pone esa opción a propósito, porque suena a lo que dicen las palabras.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>meter la pata es <strong>equivocarse</strong> ✔ (pruébalo cambiando la expresión por su significado: la oración tiene que seguir teniendo sentido)</span></div>
         </div>
       </div>
 
@@ -345,7 +403,7 @@
   </div>
   <div class="card ac-purple">
     <h2>📖 El cuento del repaso</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">En la prueba de verdad hay un texto largo con varias preguntas. Lee el cuento completo y contesta las cuatro: idea principal, literal, inferencial y vocabulario. ⭐ +3 XP por acierto (primera vez)</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">En la prueba de verdad hay un texto largo con varias preguntas. Lee el cuento completo y contesta las cuatro: el tema, la literal, la de inferencia y la de la expresión. ⭐ +3 XP por acierto (primera vez)</p>
     <div id="textoLargoWrap"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
@@ -588,10 +646,10 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 31 páginas, la más amplia de la plataforma: repasa las dos materias del año con teoría, ejemplos resueltos, errores comunes, actividades y un simulacro de la prueba, más la pauta del maestro.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio para imprimir: repasa las dos materias del año con teoría, ejemplos resueltos, errores comunes, actividades y un simulacro de la prueba, más la pauta del maestro.</p>
       <a href="../../fichas/ficha-fin-de-grado-7mo.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
-    <p style="font-size:0.9rem;margin-bottom:1rem;">Esta misión repasa el temario de la Prueba de Fin de Grado de 7º: comprensión lectora, vocabulario, escritura, fracciones, decimales, teoría de números, geometría y promedio. Para profundizar en un tema, visita su misión completa desde el catálogo: Las Fracciones, Números Decimales, División de Decimales, Teoría de Números, Área de Círculos y Polígonos, y las misiones de la Ruta de la Palabra.</p>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Esta misión repasa el temario de la Prueba de Fin de Grado de 7º: el tema del texto y el detalle, comprensión literal, causa e inferencia, el significado de una palabra y de una expresión por el contexto, la descripción de personajes y lugares, el mensaje que deja un texto, los textos narrativos, informativos y literarios, la frase que falta, el cuento dialogado y el comentario de opinión; y en Matemáticas, el número con signo, el valor absoluto, sumar, restar, comparar y ordenar enteros, las fracciones con signo, los decimales con lempiras, las potencias de base negativa, la recta numérica, el punto medio y la mediatriz, los ángulos que forma una secante al cortar dos rectas paralelas, las ecuaciones de uno y dos pasos, traducir un enunciado a símbolos, la proporcionalidad directa e inversa, el porcentaje y la lectura de gráficos. Para profundizar en un tema, visita su misión completa desde el catálogo: Las Fracciones, Números Decimales, División de Decimales, Ángulos y Bisectriz, Los Tipos de Textos, Marcadores Textuales, La Acentuación, y las misiones de la Ruta de la Palabra.</p>
     <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
        target="_blank" rel="noopener noreferrer"
        class="btn btn-pri"

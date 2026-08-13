@@ -1383,7 +1383,12 @@ function _fmtNum(n) { return n.toLocaleString('en-US'); }
 function _isTxtMatch(student, accepted) { const v = _normTxt(student); return !!v && accepted.some(a => _normTxt(a) === v); }
 // Acepta enteros y decimales, con o sin "L.", coma o espacios: 78.40 = 78.4
 function _isNumMatch(student, expected) {
-  const raw = (student || '').toString().replace(/[^\d.,\-]/g, '').replace(/,/g, '');
+  /* La L. del lempira se quita ENTERA, con su punto. Se borraba solo la letra
+     y quedaba «.132.37», que parseFloat lee como 0.132: el alumno que
+     contestaba «L.132.37», copiando cómo se lo enseña la pauta, salía malo con
+     la respuesta buena, y en la sección del dinero eso son varios puntos.
+     Se unifican también las tres rayitas que puede teclear un teléfono. */
+  const raw = (student || '').toString().replace(/[\u2212\u2013\u2014]/g, '-').replace(/[Ll]\s*\.?/g, '').replace(/[^\d.,\-]/g, '').replace(/,/g, '');
   if (!raw) return false;
   const n = parseFloat(raw);
   return !isNaN(n) && Math.abs(n - expected) < 0.005;
