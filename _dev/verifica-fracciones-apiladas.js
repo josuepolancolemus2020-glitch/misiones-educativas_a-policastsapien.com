@@ -233,6 +233,34 @@ async function lanzar() {
   if (peor.z < MINZOOM) mal(`la prueba ${peor.cual} de la Forma ${peor.forma} se encoge al ${Math.round(peor.z * 100)} % para caber en la hoja (mínimo ${Math.round(MINZOOM * 100)} %): quítale aire, no tamaño de letra`);
   else bien(`las 30 formas de las dos pruebas caben sin encogerse (la más apretada, la ${peor.cual} de la Forma ${peor.forma}, al ${Math.round(peor.z * 100)} %)`);
 
+  console.log('\n8. La ficha impresa también las escribe apiladas');
+  /* La ficha es la mitad de papel de la misión: en un aula de 43 con tres
+     teléfonos, es lo que de verdad llega a todos. Si la pantalla apila y el
+     papel no, el alumno ve la fracción escrita de dos maneras el mismo día. */
+  const ficha = await browser.newPage({ viewport: { width: 794, height: 1000 } });
+  await ficha.emulateMedia({ media: 'print' });
+  const rf = await ficha.goto(URL.replace(/misiones\/.*$/, 'fichas/ficha-fracciones.html'), { waitUntil: 'load' }).catch(() => null);
+  if (!rf || !rf.ok()) mal('no se pudo abrir fichas/ficha-fracciones.html');
+  else {
+    const fr = await ficha.evaluate(() => {
+      const sucias = [];
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      let n;
+      while ((n = w.nextNode())) if (/\d\/\d/.test(n.nodeValue)) sucias.push(n.nodeValue.trim().slice(0, 60));
+      const bar = document.querySelector('.frac-big .fbar');
+      return { apiladas: document.querySelectorAll('.fr').length, sucias, rayaGrande: bar ? Math.round(bar.getBoundingClientRect().width) : -1 };
+    });
+    if (!fr.apiladas) mal('la ficha no apila ninguna fracción: ¿se cayó ../js/metas-fracciones.js?');
+    else if (fr.sucias.length) mal(`la ficha deja fracciones con pleca: ${fr.sucias.slice(0, 3).join(' | ')}`);
+    else bien(`la ficha escribe sus ${fr.apiladas} fracciones apiladas`);
+    /* La raya de la fracción grande de la mini-demostración llegó a medir CERO
+       —sus dos márgenes se la comían— y el dibujo que explica que la raya se
+       lee «de» salía sin raya. */
+    if (fr.rayaGrande <= 0) mal('la fracción grande de la mini-demostración se quedó sin raya');
+    else bien(`la fracción grande lleva su raya (${fr.rayaGrande} px)`);
+  }
+  await ficha.close();
+
   await browser.close();
   console.log(fallos === 0
     ? '\n✅ La misión escribe las fracciones como el maestro las dibuja en el pizarrón.'
