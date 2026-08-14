@@ -525,8 +525,85 @@ async function pruebaPublicada(browser) {
   const guardado2 = await page.evaluate(() =>
     JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].blancos);
   comprueba(guardado2 === 16, 'y el contador va por 16 (quedó ' + guardado2 + ')');
-  comprueba(/no están en el conteo de la pantalla/.test(seg),
-    'el papel avisa que estos NO están contados: hay que sumarlos antes de contratar los buses');
+  comprueba(/no están en el conteo de la pantalla/.test(seg) && /Apuntar a mano/.test(seg),
+    'el papel avisa que estos NO están contados y adónde hay que pasarlos para que cuenten');
+
+  /* ── 🖊️ Apuntar a mano ──
+     Lo que aquí cuesta dinero son las tres formas de que el número esté
+     mal: que el apuntado a mano NO cuente (bus corto y niños en el
+     portón), que cuente DOS veces si además contesta el enlace (bus de
+     más, pagado de su bolsa), y que se pierda al traer las respuestas.
+     Y una cuarta que cuesta credibilidad: que se le cuele al padre por
+     el espejo, que solo puede enseñar lo que la nube sabe. */
+  await page.fill('#cv-am-nom', 'Yeimi Sarahí Cárcamo');
+  await page.click('[data-cvamg="6"]');
+  await page.fill('#cv-am-sec', '1');
+  await page.fill('#cv-am-per', '4');
+  await page.click('#cv-am-add');
+  await page.waitForTimeout(700);
+  const cif2 = await page.$$eval('.ad-cv-cif', ns => ns.map(n => n.querySelector('b').textContent.trim()));
+  comprueba(cif2[0] === '11', 'el apuntado a mano SÍ cuenta: 7 + 4 = 11 personas (dijo «' + cif2[0] + '»)');
+  comprueba(cif2[1] === '4', 'y 4 familias');
+  const txt2 = await page.textContent('#ad-tab-body');
+  comprueba(/L 2,750/.test(txt2), 'y su aporte entra en el dinero (11 × 250)');
+  comprueba(/Yeimi Sarahí Cárcamo/.test(txt2) && /a mano/.test(txt2),
+    'sale en la MISMA lista de los que van, marcado como puesto a mano');
+
+  /* El espejo enseña lo que ve el padre, y el padre no ve esto */
+  const esp2 = await page.textContent('.ad-cv-espejo');
+  comprueba(/\b37\b/.test(esp2) && !/\b41\b/.test(esp2),
+    'el espejo sigue en 37: el padre no ve a los apuntados a mano');
+
+  /* Traerlas otra vez NO puede llevárselos por delante */
+  await page.click('#cv-refrescar');
+  await page.waitForTimeout(1200);
+  const cif3 = await page.$$eval('.ad-cv-cif', ns => ns.map(n => n.querySelector('b').textContent.trim()));
+  comprueba(cif3[0] === '11', 'traer las respuestas NO borra a los apuntados a mano (sigue en ' + cif3[0] + ')');
+
+  /* Y si esa misma familia contesta el enlace, no se cuenta dos veces */
+  RESP.push({ va: true, alumno: 'Yeimi Sarahí Cárcamo', grado: '6', seccion: '1', personas: 4, tel: '99994444', nota: '' });
+  await page.click('#cv-refrescar');
+  await page.waitForTimeout(1200);
+  const cif4 = await page.$$eval('.ad-cv-cif', ns => ns.map(n => n.querySelector('b').textContent.trim()));
+  comprueba(cif4[0] === '11' && cif4[1] === '4',
+    'si además contesta el enlace, NO se cuenta dos veces (dijo ' + cif4[0] + ' personas, ' + cif4[1] + ' familias)');
+  comprueba(/además contestó el enlace/.test(await page.textContent('#ad-tab-body')),
+    'y se lo dice al maestro, para que la quite de su lista a mano');
+
+  /* Apuntar dos veces al mismo tampoco puede sumar: corrige */
+  await page.fill('#cv-am-nom', 'Wilmer Alexis Franco');
+  await page.click('[data-cvamg="4"]');
+  await page.fill('#cv-am-sec', '2');
+  await page.fill('#cv-am-per', '2');
+  await page.click('#cv-am-add');
+  await page.waitForTimeout(700);
+  await page.fill('#cv-am-nom', 'Wilmer Alexis Franco');
+  await page.click('[data-cvamg="4"]');
+  await page.fill('#cv-am-sec', '2');
+  await page.fill('#cv-am-per', '3');
+  await page.click('#cv-am-add');
+  await page.waitForTimeout(700);
+  const cif5 = await page.$$eval('.ad-cv-cif', ns => ns.map(n => n.querySelector('b').textContent.trim()));
+  comprueba(cif5[0] === '14' && cif5[1] === '5',
+    'apuntar dos veces al mismo CORRIGE en vez de sumar (dijo ' + cif5[0] + ' personas, ' + cif5[1] + ' familias)');
+
+  /* Corregir «al final van 4, no 3» tiene que costar un toque */
+  await page.locator('[data-cvmper][data-d="1"]').first().click();
+  await page.waitForTimeout(500);
+  const cif6 = await page.$$eval('.ad-cv-cif', ns => ns.map(n => n.querySelector('b').textContent.trim()));
+  comprueba(cif6[0] === '15', 'el + de la fila sube una persona (dijo «' + cif6[0] + '»)');
+
+  /* Y su boleto sale con los demás, con folio de verdad */
+  const bol = await page.evaluate(() => {
+    let h = ''; const o = window.adPrintAbrir;
+    window.adPrintAbrir = x => { h = x; return null; };
+    const d = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    window.convImprimirBoletos(d.grupos[0].convocatorias[0]);
+    window.adPrintAbrir = o;
+    return h;
+  });
+  comprueba(/Wilmer Alexis Franco/.test(bol) && /Ada Sarai Sevilla/.test(bol),
+    'el boleto del apuntado a mano se imprime en el mismo lote que los del enlace');
 
   /* Traer a mano tampoco puede dispararse solo */
   const antes = veces;

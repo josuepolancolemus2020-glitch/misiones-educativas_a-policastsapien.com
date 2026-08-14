@@ -5091,6 +5091,29 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   font-size: 10.5px; font-weight: 900; text-transform: uppercase;
   letter-spacing: .4px; color: #475569;
 }
+/* Los apuntados a mano van en la MISMA lista que los del enlace —en el
+   portón el maestro tiene una lista, no dos— pero se distinguen: cuando
+   el número no cuadre con lo que enseña el enlace, tiene que poder ver
+   de un vistazo cuáles puso él. */
+.ad-cv-tag {
+  display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1;
+  border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 900;
+  color: #475569; white-space: nowrap; vertical-align: middle;
+}
+/* Corregir «al final van 4, no 3» tiene que costar un toque: es lo que
+   más cambia entre que la madre lo dice y el sábado por la mañana. */
+.ad-cv-mini { display: inline-flex; gap: 5px; margin-top: 5px; }
+.ad-cv-mini button {
+  border: 1.5px solid var(--border); background: var(--surface); color: var(--muted);
+  border-radius: 8px; min-width: 30px; padding: 3px 7px; font-size: 13px; font-weight: 900;
+  font-family: inherit; cursor: pointer; line-height: 1.2;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.ad-cv-mini button:active { transform: scale(.9); }
+.ad-cv-repes {
+  margin-top: 14px; padding: 10px 12px; border-radius: 12px;
+  background: #fffbeb; border: 1.5px dashed #fcd34d;
+}
 
 /* La vista previa del mensaje se ve COMO SE VA A VER en WhatsApp: el
    maestro lo lee ahí y corrige antes de mandarlo a doscientas personas,

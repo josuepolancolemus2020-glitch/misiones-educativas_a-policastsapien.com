@@ -191,6 +191,10 @@ function convNueva(p, d) {
     /* cuántos boletos en blanco se han impreso ya: el lote que sigue
        arranca en el siguiente número para que no se repita un folio */
     blancos: 0,
+    /* los que el maestro apunta él, porque su familia no tiene teléfono
+       ni internet. Van aparte de `resp` a propósito: traer las respuestas
+       reemplaza `resp` entero, y estos no se pueden perder por eso. */
+    manual: [],
     resp: [], respFecha: '', creada: adHoy(),
   };
 }
@@ -225,20 +229,62 @@ function convEnlace(c) {
   return (location.protocol === 'file:' ? 'https://metas.policastsapien.com/' : base) + CONV_PAGINA + '?c=' + c.codigo;
 }
 
+/* ── Los que apunta el maestro a mano ──
+   Las familias sin teléfono y sin internet no contestan el enlace nunca:
+   se lo dicen de palabra en el portón. Si esas se quedaran fuera de las
+   cuentas, el maestro contrataría buses cortos para la mitad de su aula,
+   que es el fallo contrario al del arranque y cuesta lo mismo.
+
+   ⚠️ ESTO NO ES EL ARRANQUE, aunque se le parezca. El arranque es un
+   número de empuje: gente que no existe, puesta para que la lista no
+   arranque en cero, y por eso NO entra en estas cuentas. Los apuntados a
+   mano son personas de verdad con nombre y apellido, así que SÍ entran:
+   suben al bus, comen y pagan.
+
+   Lo que sí se cuida es contarlas una sola vez. Si la madre le dijo al
+   maestro que sí y DESPUÉS contestó el enlace, la fila queda por
+   duplicado; se detecta con la misma huella que usa el servidor para
+   corregir en vez de duplicar (nombre + grado + sección, normalizados).
+   La de a mano se marca y se deja de contar, pero NO se borra sola: lo
+   que el maestro escribió lo quita él. */
+function convManual(c) {
+  const enNube = {};
+  (Array.isArray(c.resp) ? c.resp : []).forEach(x => {
+    enNube[convHuella(x.alumno, x.grado, x.seccion)] = 1;
+  });
+  return (Array.isArray(c.manual) ? c.manual : []).map(x => Object.assign({}, x, {
+    aMano: 1,
+    repetido: enNube[convHuella(x.alumno, x.grado, x.seccion)] ? 1 : 0,
+  }));
+}
+/* Todo el que va, venga de donde venga y sin repetir a nadie. Es lo que
+   se lista, lo que se cuenta y lo que se imprime en boletos. */
+function convTodas(c) {
+  return (Array.isArray(c.resp) ? c.resp : []).concat(convManual(c).filter(x => !x.repetido));
+}
+window.convTodas = convTodas;
+
 /* ── Las cuentas que decide el maestro ──
    ⚠️ Aquí NO entra el arranque (las personas que el maestro añade para
    que la lista no arranque en cero). Estas cifras son las que le hacen
    firmar un contrato de buses y contar dinero: si se les suma un número
    de empuje, contrata un bus para gente que no existe y lo paga de su
    bolsa. El arranque solo toca lo que VE EL PADRE, y en la pantalla del
-   maestro se enseña aparte y rotulado. */
+   maestro se enseña aparte y rotulado.
+
+   Los apuntados a mano SÍ entran: ver convManual. */
 function convTotales(c) {
-  const r = Array.isArray(c.resp) ? c.resp : [];
+  const r = convTodas(c);
   const si = r.filter(x => x.va);
   const personas = si.reduce((a, x) => a + (Number(x.personas) || 0), 0);
   const cap = Math.max(5, Number(c.capacidad) || CONV_CAP_DEF);
   const buses = Math.ceil(personas / cap) || 0;
   const asientos = buses * cap;
+  /* Lo que ve el padre sale SOLO del enlace: el servidor no sabe nada de
+     los que el maestro apuntó en su cuaderno, así que el espejo tiene que
+     enseñar esta cifra y no la de arriba. Su pantalla nunca le miente. */
+  const nube = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
+  const aMano = si.filter(x => x.aMano);
   return {
     familias: si.length, personas, no: r.filter(x => !x.va).length, total: r.length,
     cap, buses, asientos, sobran: asientos - personas,
@@ -248,6 +294,11 @@ function convTotales(c) {
     ultimo: buses ? personas - (buses - 1) * cap : 0,
     dinero: personas * (Number(c.aporte) || 0),
     costo: buses * (Number(c.costoBus) || 0),
+    nubeFamilias: nube.length,
+    nubePersonas: nube.reduce((a, x) => a + (Number(x.personas) || 0), 0),
+    manoFamilias: aMano.length,
+    manoPersonas: aMano.reduce((a, x) => a + (Number(x.personas) || 0), 0),
+    repetidos: convManual(c).filter(x => x.repetido).length,
   };
 }
 function convConsejo(t, c) {
@@ -525,7 +576,9 @@ function convHtmlEmpuje(c, t) {
   const ms = convCierreMs(c);
   const falta = ms == null ? null : ms - Date.now();
   const cupos = Number(c.cupos) || 0;
-  const ven = t.personas + arr;
+  /* Del ENLACE, no del total: los apuntados a mano no viajaron a la nube,
+     así que el padre no los ve y aquí tampoco pueden salir. */
+  const ven = t.nubePersonas + arr;
   return `
     <div class="ad-cv-espejo">
       <div class="ad-cv-espejo-t">👀 Lo que ve el padre al abrir el enlace</div>
@@ -538,13 +591,19 @@ function convHtmlEmpuje(c, t) {
           : `<span>⏳ el reloj le dice que faltan <b>${adEsc(convFaltaTxt(falta))}</b></span>`}
       </div>
       ${arr ? `<p class="pa-optional-hint" style="margin:6px 0 0">De esas ${ven}, <strong>${arr} las pusiste tú</strong>
-        como arranque y ${t.personas} contestaron de verdad. Tus buses y tu dinero se calculan
-        con las ${t.personas}, nunca con las ${ven}.</p>` : ''}
+        como arranque y ${t.nubePersonas} contestaron por el enlace. Tus buses y tu dinero se calculan
+        con las que van de verdad, nunca con las ${ven}.</p>` : ''}
+      ${t.manoPersonas ? `<p class="pa-optional-hint" style="margin:6px 0 0">Tus <strong>${t.manoPersonas}
+        apuntada${t.manoPersonas === 1 ? '' : 's'} a mano</strong> no salen aquí: el enlace no las conoce.
+        Arriba sí cuentan, que es donde importa.</p>` : ''}
     </div>`;
 }
 
 function convHtmlConteo(c, t, d) {
-  const r = (Array.isArray(c.resp) ? c.resp : []).slice();
+  /* Enlace y a mano en UNA sola lista: en el portón el maestro no tiene
+     dos listas, tiene una, y quien va, va. De dónde salió cada uno se
+     enseña con una marca en su renglón. */
+  const r = convTodas(c);
   const si = r.filter(x => x.va);
   const no = r.filter(x => !x.va);
   /* Por grado, que es como se reparten los buses */
@@ -603,13 +662,21 @@ function convHtmlConteo(c, t, d) {
       <p class="pa-optional-hint">Toca un teléfono para escribirle por WhatsApp —para el aporte o para
         avisarle un cambio de hora.</p>
       ${si.map(x => `<div class="ad-gasto-row">
-        <span><strong>${adEsc(x.alumno)}</strong>${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}<br>
+        <span><strong>${adEsc(x.alumno)}</strong>${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}${
+          x.aMano ? ' <span class="ad-cv-tag">🖊️ a mano</span>' : ''}<br>
           <small>🎟️ ${adEsc(convFolioDe(c, x))} · ${x.personas} persona${x.personas === 1 ? '' : 's'}${Number(c.aporte) > 0
-            ? ' · ' + adEsc(adLps(Number(c.aporte) * x.personas)) : ''}</small></span>
+            ? ' · ' + adEsc(adLps(Number(c.aporte) * x.personas)) : ''}</small>${x.aMano ? `
+          <span class="ad-cv-mini">
+            <button data-cvmper="${adEsc(x.id)}" data-d="-1" aria-label="Una persona menos">−</button>
+            <button data-cvmper="${adEsc(x.id)}" data-d="1" aria-label="Una persona más">+</button>
+            <button data-cvmdel="${adEsc(x.id)}" aria-label="Quitar de la lista">🗑</button>
+          </span>` : ''}</span>
         <span>${x.tel ? '<button class="ad-al-code" data-cvtel="' + adEsc(x.tel) + '" data-cvnom="' + adEsc(x.alumno) + '">📲 ' + adEsc(x.tel) + '</button>' : ''}</span>
       </div>`).join('')}
       ${convHtmlPuentes(c, d)}
     </div>` : ''}
+
+    ${convHtmlAMano(c, t, d)}
 
     ${convHtmlBoletos(c, si)}
 
@@ -694,12 +761,14 @@ function convHtmlBoletos(c, si) {
         <strong>en blanco</strong> ya los puedes imprimir.</p>`}
 
       <div class="ad-cv-blancos">
-        <div class="ad-cv-blancos-t">🖊️ En blanco — para los que apuntas tú</div>
-        <p class="pa-optional-hint" style="margin:6px 0 0">Hay familias <strong>sin teléfono y sin
-          internet</strong>: esas no contestan el enlace, te lo dicen de palabra y las apuntas tú. Estos
-          boletos salen con el evento, la fecha y el <strong>folio ya impresos</strong>, y con rayas para
-          escribir a mano el nombre, el grupo y para cuántos vale. Se entregan igual que los demás:
-          nadie sube al bus sin su papel.</p>
+        <div class="ad-cv-blancos-t">🖊️ En blanco — para llevar en el bolsillo</div>
+        <p class="pa-optional-hint" style="margin:6px 0 0">Para cuando te apuntan y te pagan
+          <strong>en el momento</strong>, en el portón o en el recreo, sin la aplicación delante. Salen con
+          el evento, la fecha y el <strong>folio ya impresos</strong>, y con rayas para escribir a mano el
+          nombre, el grupo y para cuántos vale. Entregas el papel ahí mismo y nadie se queda sin recibo.</p>
+        <p class="pa-optional-hint">Si ya tienes el teléfono en la mano, es mejor
+          <strong>🖊️ Apuntar a mano</strong> aquí arriba: así cuenta en los buses y le sale su boleto
+          lleno con los demás.</p>
         <div class="pa-field" style="margin-top:10px"><label>¿Cuántos necesitas?</label>
           <input id="cv-blancos-n" class="pa-inp-field" type="number" min="1" max="210" step="1"
             value="14" style="max-width:120px" inputmode="numeric"></div>
@@ -710,9 +779,9 @@ function convHtmlBoletos(c, si) {
         <p class="pa-optional-hint">El próximo lote empieza en el folio
           <strong>${adEsc(convFolioBlanco(c, desde))}</strong> y sigue corrido: si el jueves imprimes otra
           tanda, no se te repite ninguno.</p>
-        <p class="pa-optional-hint">⚠️ Los que apuntes en papel <strong>no entran en el conteo de arriba</strong>,
-          que solo cuenta a los que contestaron por el enlace. Las colillas que te queden llenas son tu
-          cuenta: <strong>súmalas antes de contratar los buses</strong>.</p>
+        <p class="pa-optional-hint">⚠️ Un boleto en blanco <strong>no cuenta solo</strong>: el papel ya lo
+          tiene la familia, pero los buses se contratan con lo de arriba. Al volver al aula, pasa esas
+          colillas a <strong>🖊️ Apuntar a mano</strong> y listo.</p>
       </div>
     </div>`;
 }
@@ -732,7 +801,9 @@ function convFolioBlanco(c, n) {
 window.convFolioBlanco = convFolioBlanco;
 
 function convImprimirBoletos(c) {
-  const si = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
+  /* Enlace y a mano, en el mismo lote: el que apuntó el maestro sube al
+     mismo bus y necesita el mismo papel. */
+  const si = convTodas(c).filter(x => x.va);
   if (!si.length) { toast('Todavía no hay nadie que vaya'); return; }
   const orden = si.slice().sort((a, b) =>
     String(a.grado || '').localeCompare(String(b.grado || ''), 'es', { numeric: true }) ||
@@ -820,11 +891,11 @@ function convImprimirBlancos(c, cuantos, desde) {
   let tiras = '';
   for (let i = 0; i < n; i++) tiras += tira(i);
   convBoletosAbrir(c, tiras,
-    `<p>Estos boletos van <strong>sin nombre</strong>: son para las familias que no contestaron el
-enlace y usted apuntó. Escriba el nombre y el grupo <strong>en las dos mitades</strong> —el folio ya
-viene impreso en las dos—, entregue la parte ancha al recibir el aporte y quédese con la colilla firmada.</p>
-<p>⚠️ Los que apunte aquí <strong>no están en el conteo de la pantalla</strong>: cuente estas colillas y
-súmelas antes de contratar los buses.</p>`);
+    `<p>Estos boletos van <strong>sin nombre</strong>: son para apuntar y cobrar en el momento, sin la
+aplicación delante. Escriba el nombre y el grupo <strong>en las dos mitades</strong> —el folio ya viene
+impreso en las dos—, entregue la parte ancha al recibir el aporte y quédese con la colilla firmada.</p>
+<p>⚠️ Estos <strong>no están en el conteo de la pantalla</strong>. Al volver al aula, pase estas colillas
+a <strong>🖊️ Apuntar a mano</strong>: ahí sí cuentan para los buses y para el dinero.</p>`);
 }
 
 /* La hoja es la misma para los dos: mismo tamaño de tira, mismas siete
@@ -901,6 +972,82 @@ ${aviso}</div>
 </body></html>`;
   const w = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');
   if (w && typeof adPrintAbrir !== 'function') { w.document.write(html); w.document.close(); }
+}
+
+/* ══════════════ 🖊️ APUNTAR A MANO ══════════════
+   La otra mitad del problema de los boletos en blanco. El papel resuelve
+   que la familia sin teléfono se lleve su recibo; esto resuelve que
+   ADEMÁS entre en las cuentas, que es lo que decide cuántos buses se
+   contratan y cuánto dinero se espera recoger. Con el papel solo, el
+   maestro tenía que sumar colillas a mano el viernes por la noche.
+
+   Tres decisiones:
+
+   · Se guardan APARTE de `resp` (en `c.manual`). Traer las respuestas
+     reemplaza `resp` entero con lo que venga de la nube; si estos
+     vivieran ahí, el maestro los perdería la primera vez que tocara
+     «Traer las respuestas» —y no se enteraría hasta el portón.
+   · La huella es la MISMA que usa el servidor (nombre + grado +
+     sección). Así, si la madre acaba contestando el enlace después, la
+     fila de a mano se reconoce como la misma persona y deja de contar.
+     Sin eso, el que se apunta dos veces paga un bus de más.
+   · El grado se toca, no se escribe, y sale ya puesto el del maestro:
+     casi todos los que apunta son de su propio grado, y en un teléfono
+     cada campo que se escribe es un campo donde se abandona. */
+const CONV_GRADOS = ['Prebásica', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Media'];
+/* Lo que el maestro dejó puesto la última vez: apuntar a cinco alumnos
+   del mismo grado no puede costar cinco toques en la misma pastilla. */
+let _convAmG = null;
+
+function convHtmlAMano(c, t, d) {
+  const rep = convManual(c).filter(x => x.repetido);
+  const g = _convAmG != null ? _convAmG : ((d && d.grado) || '');
+  const lista = (d && Array.isArray(d.lista)) ? d.lista.filter(a => a.nombre) : [];
+  return `
+    <div class="pa-card">
+      <div class="pa-card-title">🖊️ Apuntar a mano</div>
+      <p class="pa-optional-hint">Para la familia <strong>sin teléfono y sin internet</strong>, que te lo
+        dice de palabra. Lo que apuntes aquí <strong>cuenta igual que una respuesta del enlace</strong>:
+        entra en las personas, en los buses y en el dinero de arriba, y se le imprime su boleto con los
+        demás. ${t.manoFamilias ? 'Llevas <strong>' + t.manoFamilias + ' familia' +
+        (t.manoFamilias === 1 ? '' : 's') + '</strong> apuntada' + (t.manoFamilias === 1 ? '' : 's') +
+        ' así (' + t.manoPersonas + ' persona' + (t.manoPersonas === 1 ? '' : 's') + ').' : ''}</p>
+
+      <div class="pa-field"><label>Nombre del alumno</label>
+        <input id="cv-am-nom" class="pa-inp-field" list="cv-am-lista" autocomplete="off"
+          placeholder="Nombre y apellidos">
+        ${lista.length ? `<datalist id="cv-am-lista">${lista.map(a =>
+          '<option value="' + adEsc(a.nombre) + '">').join('')}</datalist>` : ''}</div>
+      <div class="pa-field"><label>Grado</label>
+        <div class="ad-meses" style="margin:4px 0 0">${CONV_GRADOS.map(x =>
+          `<button type="button" class="ad-mes-btn${x === g ? ' ad-mes-on' : ''}" data-cvamg="${adEsc(x)}"
+            >${x === 'Prebásica' || x === 'Media' ? adEsc(x) : adEsc(x) + 'º'}</button>`).join('')}</div></div>
+      <div class="pa-row-2">
+        <div class="pa-field"><label>Sección</label>
+          <input id="cv-am-sec" class="pa-inp-field" value="${adEsc((d && d.seccion) || '')}" placeholder="A, B, 1…"></div>
+        <div class="pa-field"><label>¿Cuántas personas van?</label>
+          <input id="cv-am-per" class="pa-inp-field" type="number" min="1" max="12" step="1" value="1" inputmode="numeric"></div>
+      </div>
+      <div class="pa-field"><label>Teléfono del encargado (opcional)</label>
+        <input id="cv-am-tel" class="pa-inp-field" placeholder="9999 8888" inputmode="tel">
+        <p class="pa-optional-hint">Si lo tienes, ponlo: aunque no use internet, un mensaje le llega.</p></div>
+      <button class="pa-generate-btn" id="cv-am-add">➕ Apuntar</button>
+      <p class="pa-optional-hint">Se apuntan <strong>personas</strong>, no solo el alumno: si va el niño
+        con su mamá, son 2. El bus no distingue.</p>
+
+      ${rep.length ? `
+      <div class="ad-cv-repes">
+        <div class="ad-cv-blancos-t">⚠️ ${rep.length} apuntado${rep.length === 1 ? '' : 's'} que además contestó el enlace</div>
+        <p class="pa-optional-hint" style="margin:6px 0 8px">${rep.length === 1 ? 'Esta familia' : 'Estas familias'}
+          contestaron después por su cuenta, así que <strong>ya ${rep.length === 1 ? 'está' : 'están'} en la
+          lista de arriba</strong>. No ${rep.length === 1 ? 'se cuenta' : 'se cuentan'} dos veces, pero
+          quítal${rep.length === 1 ? 'a' : 'as'} de aquí para no confundirte.</p>
+        ${rep.map(x => `<div class="ad-gasto-row">
+          <span>${adEsc(x.alumno)}${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}</span>
+          <span><button class="ad-al-del" data-cvmdel="${adEsc(x.id)}" aria-label="Quitar de los apuntados a mano">✕</button></span>
+        </div>`).join('')}
+      </div>` : ''}
+    </div>`;
 }
 
 /* Los dos puentes a lo que el maestro YA tiene aquí: el dinero se cobra
@@ -1131,6 +1278,70 @@ function convEnganchar(body, c, d, t, pub) {
     renderAdmin();
   });
 
+  /* ── Apuntar a mano ── */
+  body.querySelectorAll('[data-cvamg]').forEach(b =>
+    b.addEventListener('click', () => {
+      /* Se pinta a mano en vez de re-renderizar: un renderAdmin() aquí
+         borraría el nombre que el maestro acaba de escribir arriba. */
+      _convAmG = b.dataset.cvamg;
+      body.querySelectorAll('[data-cvamg]').forEach(o => o.classList.toggle('ad-mes-on', o === b));
+    }));
+
+  const bAm = document.getElementById('cv-am-add');
+  if (bAm) bAm.addEventListener('click', async () => {
+    const v = id => { const e = document.getElementById(id); return e ? String(e.value).trim() : ''; };
+    const alumno = v('cv-am-nom');
+    if (alumno.length < 3) {
+      await metasAlert('Escribe el nombre del alumno. Sin nombre no se le puede imprimir el boleto ni buscarlo en la lista el día de la salida.',
+        { icono: '🖊️', titulo: 'Falta el nombre' });
+      return;
+    }
+    const grado = _convAmG != null ? _convAmG : ((d && d.grado) || '');
+    const seccion = v('cv-am-sec');
+    const personas = Math.max(1, Math.min(12, Math.round(Number(v('cv-am-per')) || 1)));
+    const tel = v('cv-am-tel');
+    const cc = convGuardar(x => {
+      x.manual = Array.isArray(x.manual) ? x.manual : [];
+      /* Apuntar dos veces al mismo CORRIGE, no suma: es la misma regla
+         que el servidor aplica a las respuestas del enlace, y por la
+         misma razón —el maestro no se acuerda de a quién ya apuntó y una
+         fila repetida es un asiento pagado de más. */
+      const h = convHuella(alumno, grado, seccion);
+      const y = x.manual.find(m => convHuella(m.alumno, m.grado, m.seccion) === h);
+      if (y) { y.personas = personas; y.tel = tel || y.tel; y.alumno = alumno; }
+      else {
+        x.manual.push({
+          id: 'M' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+          va: 1, alumno, grado, seccion, personas, tel, nota: '', fecha: adHoy(),
+        });
+      }
+    });
+    if (!cc) return;
+    renderAdmin();
+    toast('🖊️ ' + alumno.split(/\s+/)[0] + ' apuntado · ' + personas + ' persona' + (personas === 1 ? '' : 's'));
+  });
+
+  body.querySelectorAll('[data-cvmper]').forEach(b =>
+    b.addEventListener('click', () => {
+      const id = b.dataset.cvmper, dd = Number(b.dataset.d) || 0;
+      convGuardar(x => {
+        const y = (x.manual || []).find(m => m.id === id);
+        if (y) y.personas = Math.max(1, Math.min(12, (Number(y.personas) || 1) + dd));
+      });
+      renderAdmin();
+    }));
+
+  body.querySelectorAll('[data-cvmdel]').forEach(b =>
+    b.addEventListener('click', async () => {
+      const id = b.dataset.cvmdel;
+      const y = (Array.isArray(c.manual) ? c.manual : []).find(m => m.id === id);
+      if (!await metasConfirm('Se quita a **' + adEsc((y && y.alumno) || 'esta familia') +
+        '** de tu lista. Si ya le entregaste su boleto, avísale.\n\n¿Quitarla?',
+        { icono: '🗑️', titulo: 'Quitar de la lista', okTxt: 'Sí, quitar' })) return;
+      convGuardar(x => { x.manual = (x.manual || []).filter(m => m.id !== id); });
+      renderAdmin();
+    }));
+
   const bCopLi = document.getElementById('cv-copiar-lista');
   if (bCopLi) bCopLi.addEventListener('click', () => adCopiar(convTextoLista(c, t),
     () => toast('📋 Lista copiada'), () => toast('No se pudo copiar')));
@@ -1201,19 +1412,26 @@ async function convTraer(avisar) {
 }
 
 function convTextoLista(c, t) {
-  const r = Array.isArray(c.resp) ? c.resp : [];
+  const r = convTodas(c);
   const si = r.filter(x => x.va), no = r.filter(x => !x.va);
   const L = [];
   L.push((c.icono || '📣') + ' ' + (c.titulo || 'Convocatoria') + (c.fecha ? ' — ' + convFechaLarga(c.fecha) : ''));
   L.push('Personas: ' + t.personas + ' · Familias: ' + t.familias +
          ' · Buses de ' + t.cap + ': ' + t.buses + ' (sobran ' + t.sobran + ' asientos)');
   if (Number(c.aporte) > 0) L.push('Se recogería: ' + adLps(t.dinero));
+  /* De dónde salió cada uno: esta lista se pega en el grupo de maestros o
+     se le manda al director, y ahí hay que poder explicar por qué el
+     número no cuadra con lo que enseña el enlace. */
+  if (t.manoFamilias) {
+    L.push('De ellos, ' + t.manoFamilias + ' familia' + (t.manoFamilias === 1 ? '' : 's') +
+           ' (' + t.manoPersonas + ' persona' + (t.manoPersonas === 1 ? '' : 's') + ') apuntadas a mano.');
+  }
   L.push('');
   L.push('VAN (' + si.length + '):');
   si.forEach((x, i) => L.push((i + 1) + '. ' + x.alumno +
     (x.grado ? ' — ' + adGradoSeccion(x.grado, x.seccion) : '') +
     ' — ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') + (x.tel ? ' — ' + x.tel : '') +
-    ' — boleto ' + convFolioDe(c, x)));
+    ' — boleto ' + convFolioDe(c, x) + (x.aMano ? ' — a mano' : '')));
   if (no.length) {
     L.push('');
     L.push('NO VAN (' + no.length + '):');
@@ -1247,7 +1465,7 @@ async function convAEconomia(c) {
 async function convAControl(c) {
   const d = adLoad();
   const norm = convNorm;
-  const si = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
+  const si = convTodas(c).filter(x => x.va);
   const datos = {};
   let hallados = 0;
   (d.lista || []).forEach(a => {

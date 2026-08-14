@@ -717,33 +717,53 @@ madre lleva en la galería. **Si cambia una, cambia la otra.**
 El boleto **solo se le da si la respuesta ENTRÓ**. Sobre un envío que se
 quedó sin señal sería un asiento que nadie apartó.
 
-### Y los boletos EN BLANCO, para los que apunta el maestro
+### La familia sin teléfono: apuntarla a mano y su boleto en blanco
 
 El enlace no llega a todo el mundo, y no por descuido: **hay familias sin
 teléfono y sin internet**. Esas no contestan nunca; le dicen al maestro
-«yo mando a la niña» en el portón y él las apunta. Si el boleto solo
-saliera de las respuestas de la nube, esas familias se quedarían sin
-recibo del dinero que pagaron y sin pase para subir —justo las que menos
-pueden reclamar después—.
+«yo mando a la niña» en el portón. Si la herramienta solo supiera de la
+nube, esas familias se quedarían fuera de las cuentas y sin recibo del
+dinero que pagaron —justo las que menos pueden reclamar después—.
 
-Por eso el mismo botón imprime **tiras en blanco**: misma tira, misma
-colilla y mismas siete por hoja, con el evento, la fecha y el folio ya
-puestos, y con rayas para escribir a mano el nombre, el grupo y para
-cuántos vale. En el portón nadie tiene que notar que ese se llenó a mano.
+Se resuelve con **dos cosas, y no hacen lo mismo**:
 
-Dos reglas:
+| | qué hace | cuándo |
+|---|---|---|
+| 🖊️ **Apuntar a mano** | la mete en las cuentas y le imprime su boleto lleno con los demás | con el teléfono en la mano |
+| 🎟️ **Boleto en blanco** | papel con folio, para llenar con lápiz | en el portón, cobrando en el momento |
 
-1. **El folio no se repite jamás.** Los blancos se numeran corridos
-   (`R4TP-M01`, `M02`…) y el contador vive en la convocatoria (`blancos`),
-   así que el lote del jueves arranca donde acabó el del lunes. Y no
-   pueden chocar con uno de la nube: aquellos son cuatro letras de
-   `CONV_ALFA`, que no tiene ni 0 ni 1. Que se salte números no rompe
-   nada; que se repitan, sí.
-2. **Estos NO entran en `convTotales`.** El conteo de arriba es el de los
-   que contestaron por el enlace, y así se dice en la pantalla y en el
-   papel: las colillas llenas son la cuenta del maestro y **las suma él
-   antes de contratar los buses**. Un conteo que mezclara papel y nube
-   sin decirlo es un bus contratado a ciegas.
+El papel **no cuenta solo**, y las dos pantallas lo dicen: al volver al
+aula, esas colillas se pasan a Apuntar a mano.
+
+**Apuntar a mano — tres reglas:**
+
+1. **Se guarda en `c.manual`, NUNCA en `c.resp`.** `convTraer` reemplaza
+   `resp` entero con lo que venga de la nube; ahí dentro, lo apuntado se
+   perdería en el primer «Traer las respuestas» y el maestro no se
+   enteraría hasta el portón.
+2. **SÍ entra en `convTotales`, y esto es lo contrario del arranque.** El
+   arranque es un número de empuje —gente que no existe— y por eso no
+   cuenta; los apuntados a mano son personas con nombre y apellido que
+   suben al bus y pagan. Lo que sí queda fuera es el **espejo**: el padre
+   ve lo que sabe la nube (`nubePersonas` + arranque), nunca el total. Su
+   pantalla no le miente en ninguna de las dos direcciones.
+3. **Contarlos dos veces cuesta un bus.** La llave es la **misma huella**
+   que usa el servidor (nombre + grado + sección, normalizados): apuntar
+   dos veces al mismo corrige, y si esa familia acaba contestando el
+   enlace, la fila de a mano se marca y deja de contar —pero **no se
+   borra sola**: lo que el maestro escribió lo quita él.
+
+**El boleto en blanco — dos reglas:**
+
+1. **El folio no se repite jamás.** Se numeran corridos (`R4TP-M01`,
+   `M02`…) y el contador vive en la convocatoria (`blancos`), así que el
+   lote del jueves arranca donde acabó el del lunes. Y no pueden chocar
+   con uno de la nube: aquellos son cuatro letras de `CONV_ALFA`, que no
+   tiene ni 0 ni 1. Que se salte números no rompe nada; que se repitan, sí.
+2. **Misma tira, misma colilla, mismas siete por hoja.** En el portón
+   nadie tiene que notar que ese se llenó a mano, y el folio va impreso en
+   las **dos mitades**: es lo que empareja la colilla del maestro con el
+   papel de la familia.
 
 **Antes de publicar un cambio de la convocatoria:**
 
@@ -756,8 +776,11 @@ node _dev/verifica-boletos.js        → los boletos impresos, contando las pág
 El primero vigila las dos cifras que cuestan dinero —el día del evento y
 cuántos buses—, las dos formas de perder una respuesta —contarla doble y
 no contarla—, que el arranque no se cuele en las cuentas del maestro, que
-el folio del padre sea el del maestro y que **el contador de los blancos
-quede guardado**, para que la segunda tanda no repita la primera. El
+el folio del padre sea el del maestro, que **el contador de los blancos
+quede guardado** para que la segunda tanda no repita la primera, y las
+cuatro del apuntado a mano: que **cuente**, que **no se pierda** al traer
+las respuestas, que **no cuente dos veces** si esa familia además
+contesta el enlace, y que **no se le cuele al padre** por el espejo. El
 segundo cuenta las páginas del PDF: 42 familias tienen que dar **6
 hojas**, ni una más; el boleto tiene que seguir siendo una TIRA ancha y no
 un cuadro con un hueco en medio; y el que sale en blanco tiene que llevar
