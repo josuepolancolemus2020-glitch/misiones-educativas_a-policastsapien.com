@@ -5156,3 +5156,36 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   padding: 12px 14px; margin: 10px 0 12px; font-size: 13.5px; line-height: 1.55;
   color: #111b21; white-space: normal; word-break: break-word;
 }
+/* La burbuja del aviso NO es una previa: es donde se escribe lo que le va
+   a llegar a ESA familia. Se ve igual que el mensaje de WhatsApp —el
+   maestro tiene que leerlo como lo va a leer la madre— pero se puede
+   escribir encima. La raya de puntos es lo único que lo delata; sin ella
+   nadie descubre que se puede tocar. */
+.ad-wa-edit {
+  display: block; width: 100%; font-family: inherit; resize: vertical;
+  border-style: dashed; overflow: hidden; min-height: 96px;
+  white-space: pre-wrap; -webkit-appearance: none; appearance: none;
+}
+.ad-wa-edit:focus {
+  outline: none; border-style: solid; border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, .15);
+}
+.ad-wa-edit:disabled { opacity: .6; }
+/* Que el mensaje de una familia esté cambiado es justo lo que el maestro
+   tiene que ver ANTES de tocar mandar: si creyera que va el de todos, se
+   entera por la llamada de la madre. */
+.ad-cv-retoq {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: -6px 0 12px; padding: 8px 11px; border-radius: 10px;
+  background: #fffbeb; border: 1.5px solid #fcd34d;
+  font-size: 12px; line-height: 1.45; color: #78350f;
+}
+.ad-cv-retoq[hidden] { display: none; }
+.ad-cv-retoq span { flex: 1; min-width: 150px; }
+.ad-cv-retoq button {
+  border: 1.5px solid #fcd34d; background: var(--surface); color: #92400e;
+  border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 900;
+  font-family: inherit; cursor: pointer; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.ad-cv-retoq button:active { transform: scale(.96); }

@@ -848,10 +848,12 @@ async function pruebaAvisos(browser) {
     'la familia sin teléfono sale aparte y con su nombre, para decírselo en el portón');
 
   /* ── La previa enseña el mensaje de ESA familia, ya armado ── */
-  const previa = await page.textContent('#cv-av-previa');
+  const previa = await page.inputValue('#cv-av-previa');
   comprueba(/Carlos Josué Meza/.test(previa) && !/\{alumno\}/.test(previa),
-    'la vista previa trae el nombre de la familia que toca, no el marcador');
+    'el mensaje que se va a mandar trae el nombre de la familia que toca, no el marcador');
   comprueba(/6:30 a\. m\./.test(previa), 'y la hora de salida puesta');
+  comprueba(await page.isEditable('#cv-av-previa'),
+    'y se puede escribir encima: es la casilla del mensaje, no una vitrina');
 
   /* ── Guardar no puede borrarle el teléfono al maestro ──
      Su número es la red de seguridad del padre al que se le cae el
@@ -928,6 +930,75 @@ async function pruebaAvisos(browser) {
   await page.waitForTimeout(400);
   comprueba(await ahora() === 'Ashly Belén Miranda',
     'si WhatsApp no llegó a abrirse, «La última no salió» devuelve a esa familia a la cola');
+
+  /* ── RETOCAR EL MENSAJE DE UNA SOLA FAMILIA ──
+     Siempre hay una a la que hay que decirle otra cosa: «usted ya me
+     trajo el aporte, solo venga por el boleto». Lo que aquí cuesta caro
+     es que ese retoque se le pegue a las demás —el maestro creería que le
+     escribió a una y le habría dicho a las veintisiete que ya pagaron— y
+     lo contrario: que salga el de todos cuando él está viendo el suyo
+     escrito en la pantalla y le da a mandar.
+
+     Entra con Ashly a la cabeza de la cola, que es donde la dejó la
+     comprobación de arriba. */
+  const ultimoWa = async () => decodeURIComponent(
+    await page.evaluate(() => window.__wa[window.__wa.length - 1] || ''));
+  const oculto = async () => page.getAttribute('#cv-av-retoq', 'hidden');
+  comprueba(await oculto() !== null, 'sin tocar nada, no hay etiqueta de mensaje retocado');
+
+  await page.fill('#cv-av-previa', 'Doña, usted ya me trajo el aporte de Ashly. Solo venga por el boleto.');
+  await page.waitForTimeout(250);
+  comprueba(await oculto() === null,
+    'al cambiarlo, la pantalla avisa que ese mensaje es solo de esa familia');
+
+  /* Se manda SIN salir del campo: si hubiera que tocar fuera primero para
+     que se guardara, saldría el mensaje de todos y el maestro se
+     enteraría por la llamada de la madre. */
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(500);
+  const waRet = await ultimoWa();
+  comprueba(waRet.includes('usted ya me trajo el aporte de Ashly'),
+    'y lo que sale por WhatsApp es lo retocado, aunque no se haya salido del campo');
+  comprueba(!waRet.includes('Boleto R4TP'), 'no se le manda el de todos por detrás');
+
+  /* Y AQUÍ ESTÁ LO QUE DE VERDAD IMPORTA: a las demás no se les pega */
+  await page.click('#cv-av-atras');
+  await page.waitForTimeout(300);
+  await page.click('#cv-av-atras');
+  await page.waitForTimeout(400);
+  const otra = await ahora();
+  const previaOtra = await page.inputValue('#cv-av-previa');
+  comprueba(otra === 'Ada Sarai Sevilla' && !previaOtra.includes('ya me trajo el aporte'),
+    'a la familia siguiente (' + otra + ') NO se le pega el retoque de Ashly');
+  comprueba(/^Boleto R4TP-\w+ de Ada Sarai Sevilla/.test(previaOtra),
+    'a ella le sigue tocando el mensaje de todas, con sus propios datos');
+  comprueba(await oculto() !== null, 'y en el suyo no aparece la etiqueta de retocado');
+
+  /* El retoque aguanta cerrar la aplicación: se escribió a las nueve de
+     la noche y el teléfono se quedó sin batería. */
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  await page.evaluate(() => { window.__wa = []; window.open = u => { window.__wa.push(String(u)); return null; }; });
+  await entrar();
+  await page.click('#cv-av-salto');
+  await page.waitForTimeout(400);
+  comprueba(await ahora() === 'Ashly Belén Miranda' &&
+    (await page.inputValue('#cv-av-previa')).includes('ya me trajo el aporte'),
+    'después de cerrar y volver a abrir, el retoque de Ashly sigue escrito');
+
+  /* Cambiar el mensaje de TODAS no puede pisarle el suyo por detrás */
+  await page.fill('#cv-av-txt', 'Recuerde que {alumno} sale el {fecha}.');
+  await page.waitForTimeout(300);
+  comprueba((await page.inputValue('#cv-av-previa')).includes('ya me trajo el aporte'),
+    'cambiar el mensaje de todas NO le borra a Ashly el suyo, que se escribió a propósito');
+
+  /* Y se deshace de un toque */
+  await page.click('#cv-av-desretoq');
+  await page.waitForTimeout(600);
+  comprueba((await page.inputValue('#cv-av-previa'))
+      .includes('Recuerde que Ashly Belén Miranda sale el sábado 15 de agosto'),
+    '«Volver al de todos» le devuelve el mensaje general, ya personalizado');
+  comprueba(await oculto() !== null, 'y la etiqueta de retocado desaparece');
 
   /* ── Cambiar de plantilla empieza una tanda NUEVA ──
      Es lo que impide que el aviso del cambio de hora se quede sin llegar

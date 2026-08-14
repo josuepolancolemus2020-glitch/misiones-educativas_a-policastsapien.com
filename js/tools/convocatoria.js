@@ -1176,6 +1176,18 @@ const CONV_MARCAS = [
    «ahorita no», no «a esta no». Mañana vuelven a salir en su sitio. */
 let _convAvSalto = {};
 
+/* ⚠️ DE QUIÉN es el mensaje que hay ahora en la casilla. Se guarda aquí
+   —y lo repone la cola cada vez que se repinta— porque la cola cambia de
+   familia en cada envío mientras que la parte de arriba de la tarjeta se
+   pinta UNA sola vez. Al escribir en el mensaje de todas se rellenaba la
+   casilla con los datos de la familia que tocaba al ENTRAR: el maestro
+   iba por la tercera y en la casilla le aparecía el folio y el grupo de
+   la primera. Se veía como un adorno mal puesto, pero desde que la
+   casilla se puede retocar, ese texto es el que se guarda y el que sale
+   por WhatsApp: la madre de la tercera recibía el boleto de la primera y
+   las dos se presentaban en el portón con el mismo folio. */
+let _convAvMuestra = null;
+
 function convAvisoDef(c) {
   const a = (c && c.aviso && typeof c.aviso === 'object') ? c.aviso : {};
   const p = Number(a.plant);
@@ -1184,6 +1196,7 @@ function convAvisoDef(c) {
     texto: typeof a.texto === 'string' ? a.texto : CONV_AVISOS[0].texto,
     quien: (a.quien === 'noVan' || a.quien === 'todos') ? a.quien : 'van',
     enviados: Array.isArray(a.enviados) ? a.enviados : [],
+    retoques: (a.retoques && typeof a.retoques === 'object') ? a.retoques : {},
   };
 }
 
@@ -1256,7 +1269,46 @@ function convAvisoRellenar(texto, c, x) {
   };
   return String(texto || '').replace(/\{[a-zA-Z]+\}/g, m => (m in val ? val[m] : m));
 }
-function convAvisoTexto(c, x) { return convAvisoRellenar(convAvisoDef(c).texto, c, x); }
+/* ── El retoque: lo que se le cambia a UNA sola familia ──
+   La plantilla sirve para las veintisiete, pero siempre hay una a la que
+   hay que decirle otra cosa: «usted ya pagó, solo venga por el boleto»,
+   «el niño no puede ir sin el permiso firmado», «disculpe, a usted le
+   dije mal la hora». Sin esto, el maestro tenía dos malas salidas:
+   cambiar la plantilla —y mandársela así a todos los que faltan— o
+   mandar el mensaje que no era y ponerse a escribir dentro de WhatsApp,
+   que es justo el trabajo que esta pantalla existe para quitar.
+
+   El retoque se guarda por HUELLA, la de siempre, y por eso sobrevive a
+   cerrar la aplicación: el maestro retoca el de doña María a las nueve
+   de la noche, se le acaba la batería, y al volver sigue ahí.
+
+   ⚠️ MANDA EL RETOQUE SOBRE LA PLANTILLA. Si esa familia tiene uno, se
+   le manda el suyo aunque después se cambie el texto de todas. Es lo que
+   el maestro escribió a propósito para ella; que un cambio general se lo
+   borrara por detrás sería mandarle otra vez el mensaje equivocado. La
+   pantalla se lo dice con su etiqueta y se deshace de un toque. */
+function convAvisoRetoques(c) {
+  const r = convAvisoDef(c).retoques;
+  return (r && typeof r === 'object') ? r : {};
+}
+function convAvisoRetoque(c, x) {
+  if (!x) return null;
+  const t = convAvisoRetoques(c)[convHuella(x.alumno, x.grado, x.seccion)];
+  return typeof t === 'string' ? t : null;
+}
+function convAvisoTexto(c, x) {
+  const r = convAvisoRetoque(c, x);
+  return r != null ? r : convAvisoRellenar(convAvisoDef(c).texto, c, x);
+}
+/* Lo que se le va a mandar a esa familia, contando lo que el maestro
+   tenga escrito en la pantalla ahora mismo. Un solo sitio para las tres
+   cosas que tienen que decir lo mismo: la casilla de editar, el botón de
+   copiar y lo que sale por WhatsApp. */
+function convAvisoParaFamilia(c, x, textoVivo) {
+  const r = convAvisoRetoque(c, x);
+  if (r != null) return r;
+  return convAvisoRellenar(textoVivo == null ? convAvisoDef(c).texto : textoVivo, c, x);
+}
 
 /* Lo que el maestro tenga escrito AHORA MISMO, aunque todavía no haya
    guardado: la vista previa tiene que ir con lo que está viendo. */
@@ -1332,11 +1384,25 @@ function convHtmlAvisoCola(c) {
   const x = faltan[0] || null;
   const muestra = x || dest[0] || convAvisoQuienes(c, convAvisoDef(c).quien)[0] || null;
   const pct = dest.length ? Math.round(hechos * 100 / dest.length) : 0;
+  _convAvMuestra = muestra;
+  /* La previa NO es una previa: es la casilla donde se escribe lo que va
+     a salir. El maestro lee el mensaje ya armado, ve que a esta familia
+     hay que decirle otra cosa, y lo cambia ahí mismo sin tocar el de las
+     demás. Estaba de solo lectura y esa era la mitad que faltaba. */
+  const retocado = !!x && convAvisoRetoque(c, x) != null;
   return `
-    <p class="pa-optional-hint" style="margin-bottom:4px">${muestra
-      ? 'Así le va a llegar a <strong>' + adEsc(muestra.alumno) + '</strong>:'
-      : 'Así se va a leer:'}</p>
-    <div class="ad-wa-previa" id="cv-av-previa">${adEsc(convAvisoRellenar(convAvisoVivo(c), c, muestra)).replace(/\n/g, '<br>')}</div>
+    <p class="pa-optional-hint" style="margin-bottom:4px">${!muestra ? 'Así se va a leer:'
+      : x ? 'Esto es lo que le va a llegar a <strong>' + adEsc(muestra.alumno) +
+        '</strong>. <strong>Puedes cambiarlo aquí mismo</strong>, y se cambia solo el de ' +
+        adEsc(adPrimerNombre(muestra.alumno) || 'esta familia') + ':'
+      : 'Lo último que mandaste, a <strong>' + adEsc(muestra.alumno) + '</strong>:'}</p>
+    <textarea id="cv-av-previa" class="ad-wa-previa ad-wa-edit" rows="5" maxlength="900"
+      ${x ? '' : 'disabled'}>${adEsc(convAvisoParaFamilia(c, muestra, convAvisoVivo(c)))}</textarea>
+    <div class="ad-cv-retoq" id="cv-av-retoq" ${retocado ? '' : 'hidden'}>
+      <span>✏️ Este lo escribiste <strong>solo para ${adEsc(x ? adPrimerNombre(x.alumno) : '')}</strong>.
+        A las demás les sigue llegando el mensaje de abajo.</span>
+      <button type="button" id="cv-av-desretoq">↩️ Volver al de todos</button>
+    </div>
 
     ${dest.length ? `
     <div class="ad-cv-cola">
@@ -1764,7 +1830,13 @@ function convAvisoEnganchar(body, c) {
       convGuardar(x => {
         const av = convAvisoDef(x);
         nueva = i !== av.plant;
-        x.aviso = { plant: i, texto: p.texto, quien: p.quien, enviados: nueva ? [] : av.enviados };
+        /* Los retoques se van con la tanda: lo que el maestro le escribió
+           a doña María era para el aviso del boleto, y pegárselo al del
+           cambio de hora le mandaría a ella un mensaje que no viene a
+           cuento —y que él ya no está mirando. */
+        x.aviso = { plant: i, texto: p.texto, quien: p.quien,
+                    enviados: nueva ? [] : av.enviados,
+                    retoques: nueva ? {} : av.retoques };
       });
       if (nueva) _convAvSalto = {};
       renderAdmin();
@@ -1800,11 +1872,19 @@ function convAvisoEnganchar(body, c) {
      cada tecla obliga a escribir todo el almacén del maestro en el
      teléfono y se nota en un aparato de los que hay en el aula. Lo
      escrito se guarda al salir del campo y en cada envío. */
-  const muestra = convAvisoFaltan(c)[0] || convAvisoDestinos(c)[0] ||
-                  convAvisoQuienes(c, convAvisoDef(c).quien)[0] || null;
   $ta.addEventListener('input', () => {
     const $p = document.getElementById('cv-av-previa');
-    if ($p) $p.innerHTML = adEsc(convAvisoRellenar($ta.value, c, muestra)).replace(/\n/g, '<br>');
+    const $b = document.getElementById('cv-av-retoq');
+    /* La familia se lee de _convAvMuestra, que la cola repone en cada
+       envío: capturarla aquí la dejaría clavada en la que tocaba al
+       entrar (ver la nota de _convAvMuestra). */
+    if (!$p || !_convAvMuestra) return;
+    /* Si a esa familia le escribió algo suyo, cambiar la plantilla NO se
+       lo pisa: lo escribió a propósito para ella y se lo estaría
+       borrando por detrás, sin que lo viera. */
+    if ($b && !$b.hidden) return;
+    $p.value = convAvisoRellenar($ta.value, c, _convAvMuestra);
+    convAvisoCrecer($p);
   });
   $ta.addEventListener('blur', () => { convGuardar(); });
 
@@ -1830,13 +1910,71 @@ function convAvisoAbrir(c, x) {
     : 'https://web.whatsapp.com/send?phone=' + tel + '&text=' + enc, '_blank');
 }
 
+/* La casilla crece con lo que se escribe: un mensaje de seis renglones
+   dentro de una casilla de tres se lee por una rendija, y el maestro
+   está comprobando justamente que dice lo que tiene que decir. */
+function convAvisoCrecer($p) {
+  if (!$p) return;
+  $p.style.height = 'auto';
+  $p.style.height = ($p.scrollHeight + 2) + 'px';
+}
+
+/* Guarda —o quita— lo que el maestro tenga escrito para ESTA familia. Si
+   lo dejó igual que el mensaje de todas, no se guarda nada: un retoque
+   idéntico solo sería una etiqueta de más en la pantalla. */
+function convAvisoGuardarRetoque(x) {
+  const $p = document.getElementById('cv-av-previa');
+  if (!$p || !x) return null;
+  const vivo = String($p.value);
+  const h = convHuella(x.alumno, x.grado, x.seccion);
+  return convGuardar(y => {
+    const av = convAvisoDef(y);
+    if (vivo === convAvisoRellenar(av.texto, y, x)) delete av.retoques[h];
+    else av.retoques[h] = vivo;
+    y.aviso = av;
+  });
+}
+
 function convAvisoColaEnganchar(c) {
   const el = id => document.getElementById(id);
   const x = convAvisoFaltan(c)[0] || null;
 
+  /* ── La casilla donde se retoca el mensaje de esta familia ── */
+  const $p = el('cv-av-previa');
+  if ($p) convAvisoCrecer($p);
+  if ($p && x) {
+    const base = () => convAvisoRellenar(convAvisoVivo(c), c, x);
+    $p.addEventListener('input', () => {
+      convAvisoCrecer($p);
+      const $b = el('cv-av-retoq');
+      if ($b) $b.hidden = ($p.value === base());
+    });
+    /* Se guarda al salir de la casilla, no en cada tecla: escribir en el
+       almacén del maestro cuarenta veces por renglón se nota en los
+       teléfonos que hay en el aula. Antes de mandar y antes de copiar se
+       vuelve a guardar, así que no hace falta que salga del campo. */
+    $p.addEventListener('blur', () => { convAvisoGuardarRetoque(x); });
+  }
+
+  const bDes = el('cv-av-desretoq');
+  if (bDes && x) bDes.addEventListener('click', () => {
+    convGuardar(y => {
+      const av = convAvisoDef(y);
+      delete av.retoques[convHuella(x.alumno, x.grado, x.seccion)];
+      y.aviso = av;
+    });
+    convAvisoRepintar();
+    toast('↩️ Le vuelve a llegar el mensaje de todos');
+  });
+
   const bIr = el('cv-av-ir');
   if (bIr && x) bIr.addEventListener('click', () => {
     const h = convHuella(x.alumno, x.grado, x.seccion);
+    /* Lo que se manda es lo que el maestro está VIENDO en la casilla,
+       aunque no haya salido de ella: si tocara mandar con el retoque a
+       medio escribir y saliera el de todos, se enteraría por la queja de
+       la madre. */
+    convAvisoGuardarRetoque(x);
     /* Se apunta ANTES de abrir WhatsApp. En el teléfono, abrir otra
        aplicación puede llevarse esta página por delante; volver y
        encontrarse a la misma familia es mandarle el aviso dos veces, y
@@ -1862,7 +2000,7 @@ function convAvisoColaEnganchar(c) {
 
   const bCop = el('cv-av-copiar');
   if (bCop && x) bCop.addEventListener('click', () => {
-    const cc = convGuardar() || c;
+    const cc = convAvisoGuardarRetoque(x) || convGuardar() || c;
     adCopiar(convAvisoTexto(cc, x),
       () => toast('📋 Copiado: pégalo en su chat'), () => toast('No se pudo copiar'));
   });

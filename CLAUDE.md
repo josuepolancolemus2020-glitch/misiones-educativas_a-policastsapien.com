@@ -807,6 +807,27 @@ iba—, y quedan tres toques por familia.
 5. **Saltar no es borrar.** La familia saltada vuelve al FINAL de la
    cola: se saltó porque no era el momento, no para dejarla sin avisar.
 
+**El mensaje se retoca familia por familia.** La plantilla sirve para las
+veintisiete, pero siempre hay una a la que hay que decirle otra cosa
+(«usted ya me trajo el aporte, solo venga por el boleto»). Por eso la
+burbuja verde **no es una vista previa: es la casilla donde se escribe**
+lo que va a salir a ese número. Lo que se cambia ahí se guarda por
+`huella` (`aviso.retoques`), así que aguanta cerrar la aplicación, y
+**manda sobre la plantilla**: si después se cambia el mensaje de todas,
+el retoque NO se pisa —se escribió a propósito para ella— y la pantalla
+lo dice con su etiqueta, que se deshace de un toque. Los retoques se van
+con la tanda cuando se cambia de plantilla.
+
+⚠️ **De quién es el mensaje que hay en la casilla se lee de
+`_convAvMuestra`, nunca de una variable capturada al pintar.** La cola
+cambia de familia en cada envío, pero la parte de arriba de la tarjeta se
+pinta una sola vez: al escribir en el mensaje de todas se rellenaba la
+casilla con los datos de la familia que tocaba al ENTRAR. Parecía un
+adorno mal puesto y dejó de serlo en cuanto la casilla se pudo retocar:
+ese texto es el que se guarda y el que sale por WhatsApp, así que la
+tercera madre recibía el folio de la primera y las dos llegaban al portón
+con el mismo número de boleto.
+
 El botón de mandar va **arriba** y lo de escribir el aviso, abajo —igual
 que el mensaje para el grupo—. El aviso se escribe una vez; el botón se
 toca cuarenta, y si al volver de WhatsApp hubiera que pasar por las
@@ -841,7 +862,11 @@ Vigila también el aviso en lote: que a cada familia le llegue **su**
 nombre y **su** folio y no los de la anterior, que el número salga con el
 país delante, que la cuenta sobreviva a cerrar la aplicación, que cambiar
 de plantilla la reinicie, que el sin teléfono salga con su nombre y que
-guardar no le borre al maestro su propio WhatsApp. El
+guardar no le borre al maestro su propio WhatsApp. Y las cuatro del
+retoque: que lo escrito para una familia **salga por WhatsApp aunque no
+se haya salido del campo**, que **no se le pegue a la siguiente**, que
+aguante cerrar la aplicación y que cambiar el mensaje de todas **no se lo
+borre por detrás**. El
 segundo cuenta las páginas del PDF: 42 familias tienen que dar **6
 hojas**, ni una más; el boleto tiene que seguir siendo una TIRA ancha y no
 un cuadro con un hueco en medio; y el que sale en blanco tiene que llevar
