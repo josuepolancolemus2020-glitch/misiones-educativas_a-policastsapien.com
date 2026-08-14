@@ -2049,12 +2049,17 @@ function switchView(id) {
 ───────────────────────────────────────────── */
 
 const AJ_ROLES = {
-  docente:  { ic: '🧑‍🏫', n: 'Docente',  d: 'Tu aula, tus alumnos y tus herramientas.' },
-  director: { ic: '🏫', n: 'Director/a', d: 'Además de tu aula, ves los docentes registrados de tu escuela.' },
-  rector:   { ic: '🎓', n: 'Rector/a',   d: 'Ves los docentes registrados de todas las escuelas.' },
-  admin:    { ic: '🛡️', n: 'Administrador del proyecto', d: 'Acceso completo: quién se registra, roles y todos los datos.' },
+  docente:    { ic: '🧑‍🏫', n: 'Docente',  d: 'Administras tu grado: tu aula, tus alumnos y tus herramientas.' },
+  director:   { ic: '🏫', n: 'Director/a', d: 'Acompañas la gestión de los docentes de tu escuela: sus grupos, sus alumnos y los casos que te permitan.' },
+  asistencia: { ic: '🧑‍💼', n: 'Asistencia', d: 'Apoyas a la Dirección con sus mismos permisos: los grupos y alumnos de tu escuela, y los casos que te permitan.' },
+  rector:     { ic: '🎓', n: 'Rector/a',   d: 'Verificas lo que hacen todos: los grupos y la matrícula de todas las escuelas.' },
+  admin:      { ic: '🛡️', n: 'Administrador del proyecto', d: 'Acceso completo: quién se registra, roles y todos los datos.' },
 };
 function _ajRol(d) { return AJ_ROLES[d.rol] ? d.rol : 'docente'; }
+/* director y asistencia son LO MISMO en toda esta pantalla: si algún día
+   entra otro rol de dirección, se añade aquí y en _metas_es_direccion
+   (SUPABASE-ROLES-V2.sql), y en ningún otro sitio. */
+function _ajEsDireccion(rol) { return rol === 'director' || rol === 'asistencia'; }
 
 let _ajLista = null;  // última lista traída de la nube (se limpia al salir)
 
@@ -2183,7 +2188,7 @@ function renderAjustes() {
         <button class="padre-wa-btn" onclick="ajCargarBuzon()">📬 Abrir el buzón</button>
         <div id="aj-buzon" class="aj-lista"></div>
       </div>`;
-  } else if (rol === 'rector' || rol === 'director') {
+  } else if (rol === 'rector' || _ajEsDireccion(rol)) {
     html += `
       <div class="setting-group teacher-panel-group">
         <div class="teacher-panel-head">
@@ -2191,10 +2196,27 @@ function renderAjustes() {
           <label class="setting-label" style="margin-bottom:0;">${rol === 'rector' ? 'Docentes de todas las escuelas' : 'Docentes de mi escuela'}</label>
         </div>
         <p class="teacher-panel-desc">${rol === 'rector'
-          ? 'Los docentes registrados en la plataforma, agrupables por escuela (sin datos de contacto).'
-          : 'Los docentes registrados con el mismo nombre de escuela que el tuyo (sin datos de contacto).'}</p>
+          ? 'Los docentes registrados en la plataforma, cada uno con sus grupos y su matrícula (sin nombres de alumnos ni datos de contacto).'
+          : 'Los docentes con el mismo nombre de escuela que el tuyo, cada uno con sus grupos y sus alumnos. Los casos delegables (como las convocatorias) se abren solo con el permiso de cada maestro: aquí mismo se lo pides.'}</p>
         <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar la lista</button>
         <div id="aj-lista" class="aj-lista"></div>
+      </div>`;
+  } else {
+    // ── Tarjeta del MAESTRO: los permisos sobre SU registro ──
+    //    Él es el dueño: concede, niega o revoca lo que la Dirección le
+    //    pida, o da un permiso sin esperar a que se lo pidan. Se carga
+    //    sola al entrar: un pedido que el maestro nunca ve es un pedido
+    //    que se queda esperando para siempre.
+    html += `
+      <div class="setting-group teacher-panel-group">
+        <div class="teacher-panel-head">
+          <i class="fa-solid fa-key teacher-panel-icon"></i>
+          <label class="setting-label" style="margin-bottom:0;">Permisos para la Dirección</label>
+        </div>
+        <p class="teacher-panel-desc">Tu registro es <strong>tuyo</strong>. La Dirección de tu escuela ve
+          tus grupos y tu lista; lo demás (como el manejo de tus convocatorias) solo si tú se lo permites,
+          y puedes quitárselo cuando quieras.</p>
+        <div id="aj-permisos" class="aj-lista"><p class="padre-hint" style="margin-top:10px;">⏳ Revisando…</p></div>
       </div>`;
   }
 
@@ -2220,6 +2242,7 @@ function renderAjustes() {
 
   cont.innerHTML = html;
   if (_ajLista) ajPintarLista();
+  if (document.getElementById('aj-permisos')) ajCargarPermisos();
   ajRefrescarPerfil();
 }
 
@@ -2301,13 +2324,49 @@ async function ajGuardarPerfil() {
   }
 }
 
-/* Trae la lista que el ROL permite (el servidor decide filas y columnas) */
+/* Una llamada RPC con la sesión puesta. Devuelve el JSON del servidor o
+   null si no se pudo conectar; un 404 avisa con motivo 'no_rpc' (el SQL
+   de esa función todavía no se corrió en Supabase). */
+async function _ajRpc(fn, extra) {
+  const d = _docenteCfg();
+  if (!d.codigo || !d.clave) return null;
+  const { url, key } = _padreSbCfg();
+  try {
+    const r = await fetch(url + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ p_codigo: d.codigo, p_clave: d.clave }, extra || {}))
+    });
+    if (r.status === 404) return { ok: false, motivo: 'no_rpc' };
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (_) { return null; }
+}
+
+/* Trae la lista que el ROL permite (el servidor decide filas y columnas).
+   Dirección y rector piden la versión CON GRUPOS (metas_rol_grupos); si
+   ese SQL aún no está corrido en la nube (404), se cae a la lista de
+   siempre para que la tarjeta no quede muerta. */
 async function ajCargarEquipo() {
   const d = _docenteCfg();
   if (!d.codigo || !d.clave) return;
   if (navigator.onLine === false) { toast('📴 Ver los registros necesita internet'); return; }
   const cont = document.getElementById('aj-lista');
   if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">⏳ Cargando…</p>';
+  const rolLocal = _ajRol(_docenteCfg());
+  if (rolLocal === 'rector' || _ajEsDireccion(rolLocal)) {
+    const jg = await _ajRpc('metas_rol_grupos');
+    if (jg && jg.ok) {
+      _ajLista = { rol: jg.rol, grupos: true, docentes: Array.isArray(jg.docentes) ? jg.docentes : [] };
+      ajPintarLista();
+      return;
+    }
+    if (jg && jg.motivo === 'escuela') {
+      if (cont) cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">🏫 Primero escribe el nombre de tu escuela en «Editar mi perfil»: la lista se arma emparejando ese nombre.</p>';
+      return;
+    }
+    // motivo 'no_rpc' (o un tropiezo raro): sigue la lista de siempre
+  }
   const { url, key } = _padreSbCfg();
   try {
     const r = await fetch(url + '/rest/v1/rpc/metas_rol_listar', {
@@ -2362,6 +2421,7 @@ function ajPintarLista() {
                      onchange="ajCambiarRol(this)">
                <option value="docente"${rx === 'docente' ? ' selected' : ''}>🧑‍🏫 Docente</option>
                <option value="director"${rx === 'director' ? ' selected' : ''}>🏫 Director/a</option>
+               <option value="asistencia"${rx === 'asistencia' ? ' selected' : ''}>🧑‍💼 Asistencia</option>
                <option value="rector"${rx === 'rector' ? ' selected' : ''}>🎓 Rector/a</option>
              </select>
              <button class="aj-reset-btn" data-correo="${_pEsc(x.correo || '')}" data-nombre="${_pEsc(x.nombre || '')}"
@@ -2378,10 +2438,228 @@ function ajPintarLista() {
             ${esAdmin && x.correo ? `<div class="aj-fila-det">📧 ${_pEsc(x.correo)}${x.telefono ? ' · 📱 ' + _pEsc(x.telefono) : ''}</div>` : ''}
             ${lugar ? `<div class="aj-fila-det">🏫 ${_pEsc(lugar)}</div>` : ''}
             ${x.creado ? `<div class="aj-fila-det">🗓️ Se registró el ${_ajFecha(x.creado)}</div>` : ''}
+            ${_ajGruposHtml(x)}
             ${control}
           </div>
         </details>`;
     }).join('')}`;
+}
+
+/* ── La gestión del maestro, vista desde la Dirección ──
+   Los grupos vienen del espejo de su aula ya filtrados por el servidor
+   (matrícula sin los 🧪 de prueba). La lista de alumnos y los casos
+   delegables solo se ofrecen a director/asistencia; el rector verifica
+   con los conteos y no necesita nombres de niños de otras escuelas. */
+function _ajGrupoTxt(g) {
+  return (typeof window.adGradoSeccion === 'function')
+    ? window.adGradoSeccion(g.grado, g.seccion)
+    : [String(g.grado || '').trim(), String(g.seccion || '').trim()].filter(Boolean).join('-');
+}
+function _ajGruposHtml(x) {
+  if (!_ajLista || !_ajLista.grupos) return '';
+  const esDir = _ajEsDireccion(_ajLista.rol);
+  const gs = Array.isArray(x.grupos) ? x.grupos : [];
+  const nom = _pEsc(x.nombre || '');
+  let html = '';
+  if (!gs.length) {
+    html += `<div class="aj-fila-det">📭 Todavía no ha subido grupos a su cuenta.</div>`;
+  } else {
+    html += gs.map(g => {
+      const mat = Number(g.matricula) || 0;
+      const sexos = (g.ninas || g.varones) ? ` (♀ ${Number(g.ninas) || 0} · ♂ ${Number(g.varones) || 0})` : '';
+      return `
+        <div class="aj-fila-det aj-grupo-fila">👥 <strong>${_pEsc(_ajGrupoTxt(g))}</strong>
+          · ${mat} alumno${mat === 1 ? '' : 's'}${sexos}
+          ${g.escuela ? ` · ${_pEsc(g.escuela)}` : ''}
+          ${esDir ? ` <button class="aj-mini-btn" data-nombre="${nom}" data-grupo="${_pEsc(g.id || '')}"
+              data-titulo="${_pEsc(_ajGrupoTxt(g))}" onclick="ajVerAlumnos(this)">👀 Ver la lista</button>` : ''}
+        </div>`;
+    }).join('');
+  }
+  if (x.movido) html += `<div class="aj-fila-det">🕓 Último movimiento de su aula: ${_ajFecha(x.movido)}</div>`;
+  if (esDir) {
+    const est = (x.permisos && x.permisos.convocatorias) || '';
+    html += `<div class="aj-fila-det aj-permiso-fila">📣 Convocatorias: ${
+      est === 'concedido'
+        ? `permiso concedido <button class="aj-mini-btn" data-nombre="${nom}" onclick="ajAbrirConvs(this)">📣 Abrir sus convocatorias</button>`
+        : est === 'pedido'
+          ? '⏳ permiso pedido — falta que el maestro conteste'
+          : `${est === 'denegado' ? 'permiso negado' : est === 'revocado' ? 'permiso retirado' : 'sin permiso'}
+             <button class="aj-mini-btn" data-nombre="${nom}" onclick="ajPedirPermiso(this)">🙏 Pedir permiso</button>`
+    }</div>`;
+  }
+  html += `<div class="aj-detalle" data-detalle-de="${nom}"></div>`;
+  return html;
+}
+
+async function ajVerAlumnos(btn) {
+  const caja = btn.closest('.aj-reg-body')?.querySelector('.aj-detalle');
+  if (!caja) return;
+  caja.innerHTML = '<p class="padre-hint">⏳ Trayendo la lista…</p>';
+  const j = await _ajRpc('metas_rol_alumnos', {
+    p_nombre_docente: btn.dataset.nombre, p_grupo_id: btn.dataset.grupo });
+  if (!j || !j.ok) {
+    caja.innerHTML = `<p class="padre-hint">⚠️ ${j && j.motivo === 'escuela'
+      ? 'Ese maestro ya no aparece con tu misma escuela.'
+      : 'No se pudo traer la lista. Intenta de nuevo.'}</p>`;
+    return;
+  }
+  const als = Array.isArray(j.alumnos) ? j.alumnos : [];
+  caja.innerHTML = `
+    <div class="aj-alumnos">
+      <div class="aj-fila-det"><strong>${_pEsc(btn.dataset.titulo || '')}</strong> · ${als.length} alumno${als.length === 1 ? '' : 's'}</div>
+      ${als.length ? `<ol class="aj-alumnos-ol">${als.map(a =>
+        `<li value="${Number(String(a.num).replace(/\D/g, '')) || 0}">${_pEsc(a.nombre || '')}${a.sexo === 'F' ? ' ♀' : a.sexo === 'M' ? ' ♂' : ''}</li>`).join('')}</ol>`
+        : '<p class="padre-hint">El grupo está sin alumnos todavía.</p>'}
+    </div>`;
+}
+
+async function ajPedirPermiso(btn) {
+  const nombre = btn.dataset.nombre || '';
+  const sigue = await metasConfirm(`Se le pedirá a **${nombre}** el permiso para ver y manejar sus convocatorias.\n\nEl maestro decide: puede conceder, negar o quitarlo después.`,
+    { icono: '🙏', titulo: 'Pedir permiso', okTxt: 'Sí, pedirlo' });
+  if (!sigue) return;
+  btn.disabled = true;
+  const j = await _ajRpc('metas_permiso_pedir', {
+    p_nombre_docente: nombre, p_permiso: 'convocatorias' });
+  btn.disabled = false;
+  if (j && j.ok) {
+    toast('✅ Permiso pedido. El maestro lo verá en sus Ajustes.');
+    ajCargarEquipo();
+  } else {
+    toast(j && j.motivo === 'espera' ? '⏳ Muy seguido: espera un momento e intenta de nuevo.'
+      : '⚠️ No se pudo pedir. Intenta de nuevo.');
+  }
+}
+
+async function ajAbrirConvs(btn) {
+  const caja = btn.closest('.aj-reg-body')?.querySelector('.aj-detalle');
+  if (!caja) return;
+  caja.innerHTML = '<p class="padre-hint">⏳ Trayendo sus convocatorias…</p>';
+  const nombre = btn.dataset.nombre || '';
+  const j = await _ajRpc('metas_rol_conv_listar', { p_nombre_docente: nombre });
+  if (!j || !j.ok) {
+    caja.innerHTML = `<p class="padre-hint">⚠️ ${j && j.motivo === 'permiso'
+      ? 'El maestro retiró el permiso.' : 'No se pudo traer. Intenta de nuevo.'}</p>`;
+    if (j && j.motivo === 'permiso') ajCargarEquipo();
+    return;
+  }
+  const cs = Array.isArray(j.convocatorias) ? j.convocatorias : [];
+  if (!cs.length) {
+    caja.innerHTML = '<p class="padre-hint">Este maestro no tiene convocatorias publicadas.</p>';
+    return;
+  }
+  caja.innerHTML = cs.map(c => `
+    <div class="aj-fila-det aj-conv-fila">${c.cerrada ? '🔒' : '📣'} <strong>${_pEsc(c.titulo || c.codigo)}</strong>
+      ${c.fecha ? ' · ' + _pEsc(c.fecha) : ''}${c.cerrada ? ' · cerrada' : ''}
+      · ${Number(c.familias) || 0} familia${Number(c.familias) === 1 ? '' : 's'}, ${Number(c.personas) || 0} persona${Number(c.personas) === 1 ? '' : 's'}
+      <button class="aj-mini-btn" data-nombre="${_pEsc(nombre)}" data-conv="${_pEsc(c.codigo)}"
+        data-titulo="${_pEsc(c.titulo || c.codigo)}" onclick="ajVerRespuestas(this)">👀 Ver quiénes van</button>
+    </div>`).join('') +
+    `<p class="padre-hint">Lo apuntado a mano y los pagos viven en el equipo del maestro y no salen por aquí.</p>`;
+}
+
+async function ajVerRespuestas(btn) {
+  const caja = btn.closest('.aj-reg-body')?.querySelector('.aj-detalle');
+  if (!caja) return;
+  const j = await _ajRpc('metas_rol_conv_respuestas', {
+    p_nombre_docente: btn.dataset.nombre, p_conv: btn.dataset.conv });
+  if (!j || !j.ok) {
+    toast(j && j.motivo === 'permiso' ? '⚠️ El maestro retiró el permiso.' : '⚠️ No se pudo traer. Intenta de nuevo.');
+    return;
+  }
+  const rs = (Array.isArray(j.respuestas) ? j.respuestas : []).filter(r => r.va);
+  const noVan = (Array.isArray(j.respuestas) ? j.respuestas : []).length - rs.length;
+  const grupoTxt = r => (typeof window.adGradoSeccion === 'function')
+    ? window.adGradoSeccion(r.grado, r.seccion)
+    : [r.grado, r.seccion].filter(Boolean).join('-');
+  caja.innerHTML = `
+    <div class="aj-fila-det"><strong>${_pEsc(btn.dataset.titulo || '')}</strong> ·
+      ${rs.reduce((t, r) => t + (Number(r.personas) || 0), 0)} personas en ${rs.length} familia${rs.length === 1 ? '' : 's'}
+      ${noVan ? ` · ${noVan} avisó que no va` : ''}</div>
+    ${rs.length ? `<ul class="aj-alumnos-ol">${rs.map(r =>
+      `<li>${_pEsc(r.alumno || '')} (${_pEsc(grupoTxt(r))}) — ${Number(r.personas) || 0} persona${Number(r.personas) === 1 ? '' : 's'}${r.nota ? ' · ' + _pEsc(r.nota) : ''}</li>`).join('')}</ul>`
+      : '<p class="padre-hint">Todavía nadie ha contestado que va.</p>'}`;
+}
+
+/* ── El lado del MAESTRO: sus permisos ── */
+async function ajCargarPermisos() {
+  const caja = document.getElementById('aj-permisos');
+  if (!caja) return;
+  if (navigator.onLine === false) {
+    caja.innerHTML = '<p class="padre-hint" style="margin-top:10px;">📴 Ver los permisos necesita internet. Se revisará al volver la señal.</p>';
+    return;
+  }
+  const j = await _ajRpc('metas_permisos_listar');
+  if (!j || !j.ok) {
+    caja.innerHTML = '<p class="padre-hint" style="margin-top:10px;">' + (j && j.motivo === 'no_rpc'
+      ? 'La nube todavía no tiene esta parte instalada.'
+      : '⚠️ No se pudo revisar. Se intentará de nuevo al abrir esta pantalla.') + '</p>';
+    return;
+  }
+  const mios = Array.isArray(j.mios) ? j.mios : [];
+  const direccion = Array.isArray(j.direccion) ? j.direccion : [];
+  const nombrePermiso = p => p === 'convocatorias' ? '📣 Manejar mis convocatorias' : p;
+  const pendientes = mios.filter(m => m.estado === 'pedido');
+  const resto = mios.filter(m => m.estado !== 'pedido');
+  let html = '';
+  if (pendientes.length) {
+    html += pendientes.map(m => `
+      <div class="aj-fila-det aj-permiso-fila">🙏 <strong>${_pEsc(m.nombre)}</strong>
+        (${_pEsc((AJ_ROLES[m.rol] || AJ_ROLES.docente).n)}) te pide: ${_pEsc(nombrePermiso(m.permiso))}
+        <button class="aj-mini-btn" data-id="${m.id}" data-estado="concedido" onclick="ajResponderPermiso(this)">✅ Conceder</button>
+        <button class="aj-mini-btn" data-id="${m.id}" data-estado="denegado" onclick="ajResponderPermiso(this)">🚫 Negar</button>
+      </div>`).join('');
+  }
+  html += resto.map(m => `
+    <div class="aj-fila-det aj-permiso-fila">${m.estado === 'concedido' ? '✅' : '🚫'}
+      <strong>${_pEsc(m.nombre)}</strong>: ${_pEsc(nombrePermiso(m.permiso))} —
+      ${m.estado === 'concedido' ? 'concedido' : m.estado === 'denegado' ? 'negado' : 'retirado'}
+      ${m.estado === 'concedido'
+        ? `<button class="aj-mini-btn" data-id="${m.id}" data-estado="revocado" onclick="ajResponderPermiso(this)">↩️ Quitarlo</button>`
+        : `<button class="aj-mini-btn" data-id="${m.id}" data-estado="concedido" onclick="ajResponderPermiso(this)">✅ Concederlo</button>`}
+    </div>`).join('');
+  const yaTienen = new Set(mios.map(m => m.nombre));
+  const sinDar = direccion.filter(x => !yaTienen.has(x.nombre));
+  if (sinDar.length) {
+    html += sinDar.map(x => `
+      <div class="aj-fila-det aj-permiso-fila">${(AJ_ROLES[x.rol] || AJ_ROLES.docente).ic}
+        <strong>${_pEsc(x.nombre)}</strong> (${_pEsc((AJ_ROLES[x.rol] || AJ_ROLES.docente).n)})
+        <button class="aj-mini-btn" data-nombre="${_pEsc(x.nombre)}" onclick="ajDarPermiso(this)">📣 Darle mis convocatorias</button>
+      </div>`).join('');
+  }
+  caja.innerHTML = html ||
+    '<p class="padre-hint" style="margin-top:10px;">Nadie te ha pedido permisos, y tu escuela aún no tiene cuentas de Dirección registradas.</p>';
+}
+
+async function ajResponderPermiso(btn) {
+  const estado = btn.dataset.estado;
+  if (estado === 'revocado') {
+    const sigue = await metasConfirm('La Dirección dejará de ver y manejar tus convocatorias **desde este momento**. Puedes volver a concederlo cuando quieras.',
+      { icono: '↩️', titulo: 'Quitar el permiso', okTxt: 'Sí, quitarlo' });
+    if (!sigue) return;
+  }
+  btn.disabled = true;
+  const j = await _ajRpc('metas_permiso_responder', { p_id: Number(btn.dataset.id), p_estado: estado });
+  btn.disabled = false;
+  if (j && j.ok) {
+    toast(estado === 'concedido' ? '✅ Permiso concedido' : estado === 'denegado' ? '🚫 Permiso negado' : '↩️ Permiso retirado');
+    ajCargarPermisos();
+  } else {
+    toast('⚠️ No se pudo guardar. Intenta de nuevo.');
+  }
+}
+
+async function ajDarPermiso(btn) {
+  const nombre = btn.dataset.nombre || '';
+  const sigue = await metasConfirm(`**${nombre}** podrá ver y manejar tus convocatorias (quiénes van y sus teléfonos), hasta que tú se lo quites.`,
+    { icono: '📣', titulo: 'Dar el permiso', okTxt: 'Sí, darlo' });
+  if (!sigue) return;
+  btn.disabled = true;
+  const j = await _ajRpc('metas_permiso_dar', { p_nombre_direccion: nombre, p_permiso: 'convocatorias' });
+  btn.disabled = false;
+  if (j && j.ok) { toast('✅ Permiso concedido'); ajCargarPermisos(); }
+  else toast(j && j.motivo === 'espera' ? '⏳ Muy seguido: espera un momento.' : '⚠️ No se pudo guardar. Intenta de nuevo.');
 }
 
 /* ── Altas por día / mes / año (solo admin) ──

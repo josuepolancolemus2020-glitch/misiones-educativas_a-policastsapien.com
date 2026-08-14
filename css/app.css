@@ -4751,6 +4751,8 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   background: #eef4fb; color: #1565c0; border: 1px solid #d5e4f5;
 }
 .aj-rol-director { background: #fdf3e3; color: #b26a00; border-color: #f3ddb3; }
+/* asistencia = los mismos permisos que director; el mismo tono lo dice */
+.aj-rol-asistencia { background: #fdf3e3; color: #b26a00; border-color: #f3ddb3; }
 .aj-rol-rector   { background: #f0e9fb; color: #6a3cb5; border-color: #ded0f2; }
 .aj-rol-admin    { background: #e8f7ee; color: #1c7c43; border-color: #bfe6cd; }
 .aj-rol-desc { font-size: 0.82rem; color: var(--muted); margin: 4px 0 10px; }
@@ -4847,6 +4849,24 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .aj-reg-chip { white-space: nowrap; flex: 0 0 auto; margin: 0; }
 .aj-reg-body { padding: 0 2px 12px; }
 .aj-reg-body .aj-fila-rol { margin-top: 8px; }
+
+/* La gestión del maestro vista desde la Dirección (ago-2026):
+   grupos, listas y permisos delegables dentro de cada registro. */
+.aj-grupo-fila, .aj-permiso-fila, .aj-conv-fila { padding: 3px 0; }
+.aj-mini-btn {
+  font-size: 0.74rem; font-weight: 700; cursor: pointer; margin: 2px 0 2px 4px;
+  padding: 4px 10px; border-radius: 999px;
+  border: 1.5px solid #d5e4f5; background: #f4f8fd; color: #1565c0;
+  white-space: nowrap;
+}
+.aj-mini-btn:active { transform: scale(0.97); }
+.aj-mini-btn:disabled { opacity: 0.6; }
+.aj-detalle:not(:empty) {
+  margin-top: 8px; padding: 10px 12px; border-radius: 12px;
+  border: 1px solid #eceff3; background: #fafbfc;
+}
+.aj-alumnos-ol { margin: 6px 0 2px; padding-left: 26px; }
+.aj-alumnos-ol li { font-size: 0.82rem; color: var(--text); padding: 2px 0; }
 
 .aj-altas-btn {
   width: 100%; margin-top: 8px; padding: 12px 14px; cursor: pointer;

@@ -137,7 +137,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
 
-<script src="js/metas-registro.js?v=142"></script>
+<script src="js/metas-registro.js?v=143"></script>
 <script>
 'use strict';
 /* Misma configuración predeterminada que js/metas-supabase.js */
@@ -193,7 +193,16 @@ async function entrar(){
     let j = await r.json();
     if (Array.isArray(j)) j = j[0] || {};
     if (j && j.ok) {
-      DOCENTE = { codigo: j.codigo, clave: clave, nombre: j.nombre || '', correo: correo };
+      /* Se COMPLETA la sesión guardada en vez de reemplazarla: aquí solo
+         entra el par código+clave. Reescribirla entera borraba el rol, la
+         escuela y el código de aula del equipo, y un director quedaba
+         pintado como docente hasta volver a abrir Ajustes. */
+      let previo = {};
+      try { previo = JSON.parse(localStorage.getItem('METAS_DOCENTE_V1')) || {}; } catch(e) {}
+      DOCENTE = Object.assign({}, previo, {
+        codigo: j.codigo, clave: clave, nombre: j.nombre || '', correo: correo,
+        rol: j.rol || previo.rol || 'docente'
+      });
       try { localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify(DOCENTE)); } catch(e) {}
       const cc = document.querySelector('.clave-card');
       if (cc) cc.innerHTML = '<div id="estado">👩‍🏫 <strong>' + esc(DOCENTE.nombre || DOCENTE.correo) +
