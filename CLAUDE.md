@@ -717,6 +717,34 @@ madre lleva en la galería. **Si cambia una, cambia la otra.**
 El boleto **solo se le da si la respuesta ENTRÓ**. Sobre un envío que se
 quedó sin señal sería un asiento que nadie apartó.
 
+### Y los boletos EN BLANCO, para los que apunta el maestro
+
+El enlace no llega a todo el mundo, y no por descuido: **hay familias sin
+teléfono y sin internet**. Esas no contestan nunca; le dicen al maestro
+«yo mando a la niña» en el portón y él las apunta. Si el boleto solo
+saliera de las respuestas de la nube, esas familias se quedarían sin
+recibo del dinero que pagaron y sin pase para subir —justo las que menos
+pueden reclamar después—.
+
+Por eso el mismo botón imprime **tiras en blanco**: misma tira, misma
+colilla y mismas siete por hoja, con el evento, la fecha y el folio ya
+puestos, y con rayas para escribir a mano el nombre, el grupo y para
+cuántos vale. En el portón nadie tiene que notar que ese se llenó a mano.
+
+Dos reglas:
+
+1. **El folio no se repite jamás.** Los blancos se numeran corridos
+   (`R4TP-M01`, `M02`…) y el contador vive en la convocatoria (`blancos`),
+   así que el lote del jueves arranca donde acabó el del lunes. Y no
+   pueden chocar con uno de la nube: aquellos son cuatro letras de
+   `CONV_ALFA`, que no tiene ni 0 ni 1. Que se salte números no rompe
+   nada; que se repitan, sí.
+2. **Estos NO entran en `convTotales`.** El conteo de arriba es el de los
+   que contestaron por el enlace, y así se dice en la pantalla y en el
+   papel: las colillas llenas son la cuenta del maestro y **las suma él
+   antes de contratar los buses**. Un conteo que mezclara papel y nube
+   sin decirlo es un bus contratado a ciegas.
+
 **Antes de publicar un cambio de la convocatoria:**
 
 ```
@@ -727,12 +755,14 @@ node _dev/verifica-boletos.js        → los boletos impresos, contando las pág
 
 El primero vigila las dos cifras que cuestan dinero —el día del evento y
 cuántos buses—, las dos formas de perder una respuesta —contarla doble y
-no contarla—, que el arranque no se cuele en las cuentas del maestro y
-que el folio del padre sea el del maestro. El segundo cuenta las páginas
-del PDF: 42 familias tienen que dar **6 hojas**, ni una más, y el boleto
-tiene que seguir siendo una TIRA ancha y no un cuadro con un hueco en
-medio. La nube no
-se toca: se pone un Supabase de mentira con `page.route`, así corre sin
+no contarla—, que el arranque no se cuele en las cuentas del maestro, que
+el folio del padre sea el del maestro y que **el contador de los blancos
+quede guardado**, para que la segunda tanda no repita la primera. El
+segundo cuenta las páginas del PDF: 42 familias tienen que dar **6
+hojas**, ni una más; el boleto tiene que seguir siendo una TIRA ancha y no
+un cuadro con un hueco en medio; y el que sale en blanco tiene que llevar
+sus rayas para escribir y el folio impreso **en las dos mitades**. La nube
+no se toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
 ## Normativa: el Buzón del lector recoge, no publica

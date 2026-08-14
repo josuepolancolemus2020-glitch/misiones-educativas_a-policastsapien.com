@@ -492,6 +492,42 @@ async function pruebaPublicada(browser) {
   comprueba(/^R4TP-[A-Z0-9]{4}$/.test(folio), 'el folio se lee y se dicta: ' + folio);
   comprueba(texto.includes(folio), 'y sale junto al nombre en la lista de los que van');
 
+  /* ── Los boletos en blanco, para los que apunta el maestro ──
+     Lo que aquí cuesta caro es que se repita un folio: dos familias con
+     el mismo papel en el portón es justo lo que el folio existe para
+     evitar. El contador tiene que quedar GUARDADO en el equipo, porque
+     el maestro imprime hoy diez y el jueves seis más. */
+  const impresos = [];
+  await page.evaluate(() => {
+    window.__blancos = [];
+    window.adPrintAbrir = h => { window.__blancos.push(h); return null; };
+  });
+  await page.fill('#cv-blancos-n', '10');
+  comprueba(/2 hojas/.test(await page.textContent('#cv-blancos-hojas')),
+    'diez boletos son 2 hojas, y lo dice ANTES de mandarlos a la impresora');
+  await page.click('#cv-blancos');
+  await page.waitForTimeout(600);
+  impresos.push(await page.evaluate(() => window.__blancos[0] || ''));
+  const guardado1 = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].blancos);
+  comprueba(guardado1 === 10, 'después de imprimir 10, el contador queda en 10 (quedó ' + guardado1 + ')');
+  comprueba(/R4TP-M01/.test(impresos[0]) && /R4TP-M10/.test(impresos[0]) && !/R4TP-M11/.test(impresos[0]),
+    'y ese lote va del M01 al M10');
+
+  /* La segunda tanda: tiene que arrancar donde acabó la primera */
+  await page.evaluate(() => { window.adPrintAbrir = h => { window.__blancos.push(h); return null; }; });
+  await page.fill('#cv-blancos-n', '6');
+  await page.click('#cv-blancos');
+  await page.waitForTimeout(600);
+  const seg = await page.evaluate(() => window.__blancos[1] || '');
+  comprueba(!/R4TP-M01\b/.test(seg) && /R4TP-M11/.test(seg) && /R4TP-M16/.test(seg),
+    'la segunda tanda arranca en el M11 y no repite ninguno de la primera');
+  const guardado2 = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].blancos);
+  comprueba(guardado2 === 16, 'y el contador va por 16 (quedó ' + guardado2 + ')');
+  comprueba(/no están en el conteo de la pantalla/.test(seg),
+    'el papel avisa que estos NO están contados: hay que sumarlos antes de contratar los buses');
+
   /* Traer a mano tampoco puede dispararse solo */
   const antes = veces;
   await page.click('#cv-refrescar');

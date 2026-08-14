@@ -5079,6 +5079,19 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 .ad-cv-espejo-g span { font-size: 12.5px; color: var(--text); }
 .ad-cv-espejo-g b { font-weight: 900; color: #9a3412; }
 
+/* Los boletos EN BLANCO se separan a la vista de los que salen de las
+   respuestas: son para otra gente —la que no tiene teléfono— y el
+   maestro tiene que ver de un golpe cuál botón es cuál. Fondo propio y
+   raya de puntos, como el borde recortable del papel que producen. */
+.ad-cv-blancos {
+  margin-top: 14px; padding: 11px 13px; border-radius: 12px;
+  background: #f8fafc; border: 1.5px dashed #cbd5e1;
+}
+.ad-cv-blancos-t {
+  font-size: 10.5px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: .4px; color: #475569;
+}
+
 /* La vista previa del mensaje se ve COMO SE VA A VER en WhatsApp: el
    maestro lo lee ahí y corrige antes de mandarlo a doscientas personas,
    que es donde ya no hay vuelta atrás. */

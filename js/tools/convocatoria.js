@@ -188,6 +188,9 @@ function convNueva(p, d) {
     maestro: convMaestroDef(), wa: convWaDef(), escuela: (d && d.escuela) || '',
     capacidad: CONV_CAP_DEF, costoBus: 0, cupos: 0, arranque: 0,
     codigo: '', pin: '', cerrada: 0,
+    /* cuántos boletos en blanco se han impreso ya: el lote que sigue
+       arranca en el siguiente número para que no se repita un folio */
+    blancos: 0,
     resp: [], respFecha: '', creada: adHoy(),
   };
 }
@@ -605,9 +608,10 @@ function convHtmlConteo(c, t, d) {
             ? ' · ' + adEsc(adLps(Number(c.aporte) * x.personas)) : ''}</small></span>
         <span>${x.tel ? '<button class="ad-al-code" data-cvtel="' + adEsc(x.tel) + '" data-cvnom="' + adEsc(x.alumno) + '">📲 ' + adEsc(x.tel) + '</button>' : ''}</span>
       </div>`).join('')}
-      ${convHtmlBoletos(c, si)}
       ${convHtmlPuentes(c, d)}
     </div>` : ''}
+
+    ${convHtmlBoletos(c, si)}
 
     ${no.length ? `
     <div class="pa-card">
@@ -651,18 +655,81 @@ function convHtmlConteo(c, t, d) {
      no cupiera en su hoja son 6 hojas más de tinta y de tiempo, así
      que el alto está medido y se comprueba con
      _dev/verifica-boletos.js, que cuenta las páginas del PDF y vigila
-     que la tira siga siendo más ancha que alta. */
+     que la tira siga siendo más ancha que alta.
+
+   ── Y LOS BOLETOS EN BLANCO ──
+   El enlace no llega a todo el mundo, y no por descuido: en el aula hay
+   familias SIN teléfono y SIN internet. Esas no van a contestar nunca;
+   le dicen al maestro «yo mando a la niña» en el portón y él las apunta
+   en su cuaderno. Si el boleto solo saliera de las respuestas de la
+   nube, esas familias se quedarían sin recibo del dinero que pagaron y
+   sin pase para subir — justo las que menos pueden reclamar después.
+
+   Por eso el mismo botón imprime tiras EN BLANCO: con el evento, la
+   fecha y el folio ya puestos, y con rayas para escribir a mano el
+   nombre, el grupo y para cuántos vale. Se entregan igual que los
+   otros, y la colilla firmada vale igual de respaldo.
+
+   ⚠️ EL FOLIO SIGUE SIENDO ÚNICO. Los blancos se numeran corridos
+   (M01, M02…) y el contador se guarda en la convocatoria, así que el
+   segundo lote arranca donde acabó el primero. Dos boletos con el mismo
+   folio en el portón son exactamente el problema que el folio existe
+   para evitar. Y no chocan nunca con los de la nube: aquellos son
+   cuatro letras de CONV_ALFA, que no tiene ni 0 ni 1. */
 function convHtmlBoletos(c, si) {
-  if (!si.length) return '';
   const hojas = Math.ceil(si.length / 7);
+  const desde = convBlancoDesde(c);
   return `
-    <div class="ad-btn-row" style="margin-top:12px">
-      <button class="pa-generate-btn" id="cv-boletos">🎟️ Imprimir los ${si.length} boletos</button>
-    </div>
-    <p class="pa-optional-hint">Salen <strong>${hojas} hoja${hojas === 1 ? '' : 's'}</strong> (siete por hoja).
-      Recorta, y entrégale el suyo a cada familia <strong>cuando recibas el aporte</strong>: el boleto
-      es el recibo y el pase para subir al bus. La colilla de la izquierda la firmas y te la quedas tú.</p>`;
+    <div class="pa-card">
+      <div class="pa-card-title">🎟️ Los boletos</div>
+      ${si.length ? `
+      <p class="pa-optional-hint">Uno por familia, con lo que ya contestaron puesto. Recorta, y entrégale
+        el suyo a cada una <strong>cuando recibas el aporte</strong>: el boleto es el recibo y el pase para
+        subir al bus. La colilla de la izquierda la firmas y te la quedas tú.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="cv-boletos">🎟️ Imprimir los ${si.length} boletos</button>
+      </div>
+      <p class="pa-optional-hint">Salen <strong>${hojas} hoja${hojas === 1 ? '' : 's'}</strong> (siete por hoja).</p>`
+      : `<p class="pa-optional-hint">Todavía no ha contestado nadie por el enlace, pero los boletos
+        <strong>en blanco</strong> ya los puedes imprimir.</p>`}
+
+      <div class="ad-cv-blancos">
+        <div class="ad-cv-blancos-t">🖊️ En blanco — para los que apuntas tú</div>
+        <p class="pa-optional-hint" style="margin:6px 0 0">Hay familias <strong>sin teléfono y sin
+          internet</strong>: esas no contestan el enlace, te lo dicen de palabra y las apuntas tú. Estos
+          boletos salen con el evento, la fecha y el <strong>folio ya impresos</strong>, y con rayas para
+          escribir a mano el nombre, el grupo y para cuántos vale. Se entregan igual que los demás:
+          nadie sube al bus sin su papel.</p>
+        <div class="pa-field" style="margin-top:10px"><label>¿Cuántos necesitas?</label>
+          <input id="cv-blancos-n" class="pa-inp-field" type="number" min="1" max="210" step="1"
+            value="14" style="max-width:120px" inputmode="numeric"></div>
+        <p class="pa-optional-hint" id="cv-blancos-hojas" style="margin:-4px 0 8px"></p>
+        <div class="ad-btn-row">
+          <button class="pa-generate-btn ad-btn-sec" id="cv-blancos">🖊️ Imprimir boletos en blanco</button>
+        </div>
+        <p class="pa-optional-hint">El próximo lote empieza en el folio
+          <strong>${adEsc(convFolioBlanco(c, desde))}</strong> y sigue corrido: si el jueves imprimes otra
+          tanda, no se te repite ninguno.</p>
+        <p class="pa-optional-hint">⚠️ Los que apuntes en papel <strong>no entran en el conteo de arriba</strong>,
+          que solo cuenta a los que contestaron por el enlace. Las colillas que te queden llenas son tu
+          cuenta: <strong>súmalas antes de contratar los buses</strong>.</p>
+      </div>
+    </div>`;
 }
+
+/* Del contador guardado sale el primer número del lote que sigue. Se
+   guarda en la convocatoria (no en una variable suelta) porque el
+   maestro imprime hoy diez y el jueves seis más, cerrando la aplicación
+   en medio. */
+function convBlancoDesde(c) { return Math.max(0, Number(c.blancos) || 0) + 1; }
+/* El folio del boleto en blanco. La «M» es de «a mano», y el número va
+   con dos cifras para que se lea de un vistazo entre cuarenta papeles.
+   No puede chocar con un folio de la nube: aquellos son CÓDIGO + cuatro
+   letras de CONV_ALFA (sin 0/O/1/I/L), y este lleva dígitos. */
+function convFolioBlanco(c, n) {
+  return String(c.codigo || '') + '-M' + String(n).padStart(2, '0');
+}
+window.convFolioBlanco = convFolioBlanco;
 
 function convImprimirBoletos(c) {
   const si = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
@@ -699,6 +766,71 @@ function convImprimirBoletos(c) {
       </div>
     </div>`;
   };
+  convBoletosAbrir(c, orden.map(boleto).join(''),
+    `<p>Recorte por la raya —seis tiras rectas por hoja—. Entregue cada boleto
+<strong>cuando reciba el aporte</strong>: es el recibo de la familia y su pase para subir al bus.
+La colilla de la izquierda la firma quien paga y se la queda usted.</p>`);
+}
+
+/* ── Los boletos EN BLANCO ──
+   Misma tira, mismo tamaño y misma colilla: en el portón nadie tiene que
+   notar que este se llenó a mano. Lo único que cambia es que el nombre,
+   el grupo y las personas van en RAYAS para escribir encima, y que el
+   folio se imprime corrido en vez de calcularse del nombre.
+
+   Las rayas van con su rótulo DEBAJO y chiquito: encima se escribe, y un
+   rótulo grande le come el sitio al lápiz. El maestro escribe lo mismo
+   en las dos mitades —la suya y la de la familia— y por eso el folio ya
+   viene impreso en las dos: es lo que empareja los dos papeles cuando
+   alguien discuta en el portón. */
+function convImprimirBlancos(c, cuantos, desde) {
+  const n = Math.max(1, Math.min(210, Math.round(Number(cuantos) || 0)));
+  const d0 = Math.max(1, Math.round(Number(desde) || 1));
+  const ap = Number(c.aporte) || 0;
+  const cuando = convFechaLarga(c.fecha) + (c.hora ? ' · ' + c.hora : '');
+  const tira = i => {
+    const folio = adEsc(convFolioBlanco(c, d0 + i));
+    return `
+    <div class="bo bo-bl">
+      <div class="bo-col">
+        <div class="bo-col-t">COLILLA · para el maestro</div>
+        <div class="bo-col-f">${folio}</div>
+        <div class="bo-lin"></div><span class="bo-rot">alumno</span>
+        <div class="bo-lin"></div><span class="bo-rot">grupo · personas · L</span>
+        <div class="bo-firma">firma de quien paga</div>
+      </div>
+      <div class="bo-cuerpo">
+        <div class="bo-tit">${adEsc((c.icono || '🎟️') + ' ' + (c.titulo || 'Salida'))}</div>
+        <div class="bo-sub">${adEsc(cuando)}${c.punto ? ' · sube en ' + adEsc(c.punto) : ''}</div>
+        <div class="bo-nomb">
+          <div class="bo-nomb-a"><div class="bo-lin bo-lin-g"></div><span class="bo-rot">nombre del alumno</span></div>
+          <div class="bo-nomb-b"><div class="bo-lin bo-lin-g"></div><span class="bo-rot">grupo</span></div>
+        </div>
+        <div class="bo-pie">${ap
+          ? 'Entregado al recibir el aporte. Presente este boleto para subir.'
+          : 'Presente este boleto para subir.'}${c.escuela ? ' · ' + adEsc(c.escuela) : ''}</div>
+      </div>
+      <div class="bo-cajas">
+        <div class="bo-caja-i"><b class="bo-hueco"></b><span>personas</span></div>
+        <div class="bo-caja-i"><b class="bo-hueco">${ap ? 'L' : ''}</b><span>${ap ? 'aporte' : 'sin costo'}</span></div>
+        <div class="bo-caja-i bo-folio"><b>${folio}</b><span>folio</span></div>
+      </div>
+    </div>`;
+  };
+  let tiras = '';
+  for (let i = 0; i < n; i++) tiras += tira(i);
+  convBoletosAbrir(c, tiras,
+    `<p>Estos boletos van <strong>sin nombre</strong>: son para las familias que no contestaron el
+enlace y usted apuntó. Escriba el nombre y el grupo <strong>en las dos mitades</strong> —el folio ya
+viene impreso en las dos—, entregue la parte ancha al recibir el aporte y quédese con la colilla firmada.</p>
+<p>⚠️ Los que apunte aquí <strong>no están en el conteo de la pantalla</strong>: cuente estas colillas y
+súmelas antes de contratar los buses.</p>`);
+}
+
+/* La hoja es la misma para los dos: mismo tamaño de tira, mismas siete
+   por hoja y mismo recorte recto. Se escribe UNA vez para que no se
+   arreglen los milímetros en un sitio y se queden torcidos en el otro. */
+function convBoletosAbrir(c, tiras, aviso) {
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Boletos — ${adEsc(c.titulo || 'Salida')}</title>
 <style>
@@ -741,16 +873,31 @@ body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;padding:0
 /* El folio en una sola pieza: partido en dos renglones se lee como dos
    cosas distintas y se dicta mal por teléfono. */
 .bo-folio b{font-family:'Courier New',monospace;font-size:10px;white-space:nowrap;}
+/* ── Las rayas del boleto en blanco ──
+   El alto está medido para que quepa un lápiz encima: por debajo de 4 mm
+   el nombre se sale por arriba de la raya y el papel queda sucio. El
+   rótulo va debajo, a 5,5 px, porque lo lee el maestro una vez y no
+   puede robarle sitio a lo que se escribe. */
+.bo-lin{border-bottom:1px solid #999;height:4.6mm;margin-top:.6mm;}
+.bo-rot{display:block;font-size:5.5px;line-height:1.3;color:#888;text-transform:uppercase;letter-spacing:.2px;}
+/* El nombre se escribe grande: es lo que se lee en el portón con el bus
+   andando, igual que en el boleto impreso. */
+.bo-lin-g{height:7mm;border-bottom:1.4px solid #666;}
+.bo-nomb{display:flex;gap:3mm;margin-top:1mm;}
+.bo-nomb-a{flex:1;min-width:0;}
+.bo-nomb-b{width:24mm;flex:0 0 24mm;}
+.bo-bl .bo-pie{margin-top:1mm;}
+/* La cifra tampoco viene puesta: la escribe el maestro al recibir el
+   aporte, así que la caja lleva raya en vez de número. */
+.bo-hueco{border-bottom:1.2px solid #999;min-height:4.6mm;text-align:left;padding-left:1mm;color:#777;}
 .noprint{padding:6mm 6mm 0;}
 .noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
 .noprint p{font-size:12px;color:#444;margin-top:3mm;max-width:170mm;line-height:1.5;}
 @media print{.noprint{display:none;}}
 </style></head><body>
 <div class="noprint"><button onclick="window.print()">🖨️ Imprimir los boletos</button>
-<p>Recorte por la raya —seis tiras rectas por hoja—. Entregue cada boleto
-<strong>cuando reciba el aporte</strong>: es el recibo de la familia y su pase para subir al bus.
-La colilla de la izquierda la firma quien paga y se la queda usted.</p></div>
-<div class="grid">${orden.map(boleto).join('')}</div>
+${aviso}</div>
+<div class="grid">${tiras}</div>
 </body></html>`;
   const w = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');
   if (w && typeof adPrintAbrir !== 'function') { w.document.write(html); w.document.close(); }
@@ -958,6 +1105,32 @@ function convEnganchar(body, c, d, t, pub) {
   const bBol = document.getElementById('cv-boletos');
   if (bBol) bBol.addEventListener('click', () => convImprimirBoletos(c));
 
+  /* Los boletos en blanco. El contador se guarda ANTES de que el maestro
+     cierre la ventana de impresión: si se guardara al volver, el que
+     imprime, reparte y vuelve mañana sacaría otra vez el M01 y tendría
+     dos boletos con el mismo folio en la calle. Que se salten números
+     (por una ventana emergente bloqueada, por ejemplo) no rompe nada; que
+     se repitan, sí. */
+  const $n = document.getElementById('cv-blancos-n');
+  const $h = document.getElementById('cv-blancos-hojas');
+  const cuantosBl = () => Math.max(1, Math.min(210, Math.round(Number($n && $n.value) || 0) || 1));
+  const pintaHojas = () => {
+    if (!$h) return;
+    const n = cuantosBl(), hj = Math.ceil(n / 7);
+    $h.innerHTML = 'Salen <strong>' + hj + ' hoja' + (hj === 1 ? '' : 's') + '</strong>, siete por hoja.';
+  };
+  if ($n) $n.addEventListener('input', pintaHojas);
+  pintaHojas();
+  const bBla = document.getElementById('cv-blancos');
+  if (bBla) bBla.addEventListener('click', () => {
+    const n = cuantosBl(), desde = convBlancoDesde(c);
+    /* Se imprime lo GUARDADO, no lo que había al pintar: si el maestro
+       acaba de corregir la hora de salida en los campos de abajo, el
+       papel tiene que salir con la hora nueva. */
+    convImprimirBlancos(convGuardar(x => { x.blancos = desde + n - 1; }) || c, n, desde);
+    renderAdmin();
+  });
+
   const bCopLi = document.getElementById('cv-copiar-lista');
   if (bCopLi) bCopLi.addEventListener('click', () => adCopiar(convTextoLista(c, t),
     () => toast('📋 Lista copiada'), () => toast('No se pudo copiar')));
@@ -1107,3 +1280,4 @@ async function convAControl(c) {
 
 window.adRenderConvocatoria = adRenderConvocatoria;
 window.convImprimirBoletos = convImprimirBoletos;
+window.convImprimirBlancos = convImprimirBlancos;
