@@ -765,11 +765,67 @@ aula, esas colillas se pasan a Apuntar a mano.
    las **dos mitades**: es lo que empareja la colilla del maestro con el
    papel de la familia.
 
+### El aviso en lote: se escribe una vez y se manda cuarenta
+
+La convocatoria PREGUNTA y ahí se acaba, pero entre el «sí voy» y el bus
+pasan cinco días y siempre hay algo que decir: que vengan por el boleto,
+que cambió la hora, que falta el aporte, que llovió. Eso se venía
+haciendo escribiendo el mismo mensaje cuarenta veces y copiando a mano el
+nombre de cada alumno; a la décima el maestro lo manda al grupo de la
+escuela, donde la mitad no lo lee y la otra mitad no sabe si es para
+ella.
+
+El aviso se escribe **una vez, con marcadores** (`{alumno}`, `{grupo}`,
+`{folio}`, `{aporte}`…) y la pantalla lo personaliza y va abriendo el
+chat de cada familia.
+
+⚠️ **No se manda de un golpe, y no es un descuido.** WhatsApp no deja
+escribirle a cuarenta números desde una página web sin pagar su servicio
+de empresa. Prometerlo sería mentirle al maestro. Lo que sí se quita es
+todo lo demás —escribir, buscar el contacto, acordarse de por quién
+iba—, y quedan tres toques por familia.
+
+**Cinco reglas:**
+
+1. **La cuenta no se pierde.** A quién ya se le mandó se guarda en el
+   equipo (por `huella`, la de siempre). El maestro manda doce, le toca
+   clase, cierra la aplicación y vuelve al trece. Sin esto, a la segunda
+   interrupción hay familias que reciben el mismo aviso tres veces y
+   otras ninguna.
+2. **El que no tiene teléfono se ve, con su nombre.** Son las mismas
+   familias de los boletos en blanco. Si no salieran en pantalla, el
+   maestro cerraría creyendo que avisó a todos.
+3. **Cambiar de plantilla empieza una tanda nueva**, y por eso la cuenta
+   vuelve a cero: si se conservara, a los doce que ya recibieron el aviso
+   del boleto no les llegaría nunca el del cambio de hora. Retocar el
+   texto a mano NO reinicia nada —eso es corregir una errata a media
+   tanda.
+4. **El número lleva país.** El padre escribe ocho dígitos, que es como
+   se marca aquí; `wa.me` sin el país abre WhatsApp sin chat. El prefijo
+   sale del número del **propio maestro** (`convPrefijo`), así que esto
+   mismo sirve en Guatemala o El Salvador sin tocar código.
+5. **Saltar no es borrar.** La familia saltada vuelve al FINAL de la
+   cola: se saltó porque no era el momento, no para dejarla sin avisar.
+
+El botón de mandar va **arriba** y lo de escribir el aviso, abajo —igual
+que el mensaje para el grupo—. El aviso se escribe una vez; el botón se
+toca cuarenta, y si al volver de WhatsApp hubiera que pasar por las
+plantillas y los marcadores para llegar a él, se abandona en la quinta
+familia.
+
+⚠️ **Dos elementos no pueden compartir `id`.** El botón «Mandarlo por
+WhatsApp» se llamaba `cv-wa` igual que el campo del teléfono del maestro;
+como el botón se pinta antes, `getElementById` lo devolvía a él y al
+guardar una convocatoria publicada `c.wa` se llenaba con el `value` vacío
+de un `<button>`. El número del maestro se borraba del equipo Y de la
+nube, sin ruido — y ese es justo el número al que la pantalla del padre
+manda la respuesta cuando se le cae el internet.
+
 **Antes de publicar un cambio de la convocatoria:**
 
 ```
 node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-convocatoria.js   → el padre, el maestro, el arranque, el reloj y el folio
+node _dev/verifica-convocatoria.js   → el padre, el maestro, el arranque, el reloj, el folio y el aviso en lote
 node _dev/verifica-boletos.js        → los boletos impresos, contando las páginas del PDF
 ```
 
@@ -780,7 +836,12 @@ el folio del padre sea el del maestro, que **el contador de los blancos
 quede guardado** para que la segunda tanda no repita la primera, y las
 cuatro del apuntado a mano: que **cuente**, que **no se pierda** al traer
 las respuestas, que **no cuente dos veces** si esa familia además
-contesta el enlace, y que **no se le cuele al padre** por el espejo. El
+contesta el enlace, y que **no se le cuele al padre** por el espejo.
+Vigila también el aviso en lote: que a cada familia le llegue **su**
+nombre y **su** folio y no los de la anterior, que el número salga con el
+país delante, que la cuenta sobreviva a cerrar la aplicación, que cambiar
+de plantilla la reinicie, que el sin teléfono salga con su nombre y que
+guardar no le borre al maestro su propio WhatsApp. El
 segundo cuenta las páginas del PDF: 42 familias tienen que dar **6
 hojas**, ni una más; el boleto tiene que seguir siendo una TIRA ancha y no
 un cuadro con un hueco en medio; y el que sale en blanco tiene que llevar

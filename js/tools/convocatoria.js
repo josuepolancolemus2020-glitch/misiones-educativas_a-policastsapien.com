@@ -163,12 +163,12 @@ async function convRPC(fn, body) {
    dentro de una convocatoria → la lista; en la lista → Comunicados. */
 function adConvNivel() { return _adConvId ? 2 : (_adConvOn ? 1 : 0); }
 function adConvAtras() {
-  if (_adConvId) { _adConvId = null; _adConvTraido = ''; return true; }
+  if (_adConvId) { _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; return true; }
   if (_adConvOn) { _adConvOn = 0; return true; }
   return false;
 }
-function adConvEntrar() { _adConvOn = 1; _adConvId = null; _adConvTraido = ''; }
-function adConvCerrar() { _adConvOn = 0; _adConvId = null; _adConvTraido = ''; }
+function adConvEntrar() { _adConvOn = 1; _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; }
+function adConvCerrar() { _adConvOn = 0; _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; }
 window.adConvNivel = adConvNivel;
 window.adConvAtras = adConvAtras;
 window.adConvEntrar = adConvEntrar;
@@ -504,7 +504,7 @@ function adRenderConvocatoria(body, d) {
       renderAdmin();
     }));
   body.querySelectorAll('[data-cvid]').forEach(b =>
-    b.addEventListener('click', () => { _adConvId = b.dataset.cvid; renderAdmin(); }));
+    b.addEventListener('click', () => { _adConvId = b.dataset.cvid; _convAvSalto = {}; renderAdmin(); }));
 }
 
 /* ══════════════ PANTALLA: una convocatoria ══════════════ */
@@ -553,7 +553,7 @@ function convHtmlMensaje(c) {
         mensaje de hoy está enterrado mañana.</p>
       <div class="ad-wa-previa">${adEsc(convMensaje(c)).replace(/\n/g, '<br>')}</div>
       <div class="ad-btn-row">
-        <button class="pa-generate-btn" id="cv-wa">📲 Mandarlo por WhatsApp</button>
+        <button class="pa-generate-btn" id="cv-wa-enviar">📲 Mandarlo por WhatsApp</button>
         <button class="pa-generate-btn ad-btn-sec" id="cv-copiar">📋 Copiar el mensaje</button>
         <button class="pa-generate-btn ad-btn-sec" id="cv-copiar-link">🔗 Copiar solo el enlace</button>
         <button class="pa-generate-btn ad-btn-sec" id="cv-abrir">👁️ Verlo como lo ve un padre</button>
@@ -671,10 +671,13 @@ function convHtmlConteo(c, t, d) {
             <button data-cvmper="${adEsc(x.id)}" data-d="1" aria-label="Una persona más">+</button>
             <button data-cvmdel="${adEsc(x.id)}" aria-label="Quitar de la lista">🗑</button>
           </span>` : ''}</span>
-        <span>${x.tel ? '<button class="ad-al-code" data-cvtel="' + adEsc(x.tel) + '" data-cvnom="' + adEsc(x.alumno) + '">📲 ' + adEsc(x.tel) + '</button>' : ''}</span>
+        <span>${x.tel ? '<button class="ad-al-code" data-cvtel="' + adEsc(x.tel) +
+          '" data-cvhuella="' + adEsc(convHuella(x.alumno, x.grado, x.seccion)) + '">📲 ' + adEsc(x.tel) + '</button>' : ''}</span>
       </div>`).join('')}
       ${convHtmlPuentes(c, d)}
     </div>` : ''}
+
+    ${r.length ? convHtmlAvisos(c) : ''}
 
     ${convHtmlAMano(c, t, d)}
 
@@ -1063,6 +1066,341 @@ function convHtmlPuentes(c, d) {
       no los conoce nadie más que su maestro).</p>`;
 }
 
+/* ══════════════ 📲 AVISARLES A LOS QUE YA CONTESTARON ══════════════
+
+   La convocatoria PREGUNTA y ahí se acaba. Pero entre el «sí voy» y el
+   bus pasan cinco días, y en esos cinco días siempre hay algo que
+   decirle a las familias: que vengan por su boleto, que la hora cambió,
+   que falta el aporte, que llovió y se pasa para el otro sábado.
+
+   Eso se venía haciendo escribiendo el mismo mensaje cuarenta veces,
+   copiando a mano el nombre de cada alumno. A la décima el maestro se
+   cansa y lo manda al grupo de la escuela, donde la mitad no lo lee y
+   la otra mitad no sabe si es para ella. Aquí el aviso se escribe UNA
+   vez con marcadores ({alumno}, {grupo}, {folio}…) y la pantalla lo
+   personaliza para cada familia y le va abriendo el chat.
+
+   ⚠️ POR QUÉ UNO POR UNO Y NO DE UN GOLPE. WhatsApp no deja mandarle a
+   cuarenta números desde una página web —nadie puede, sin pagar su
+   servicio de empresa— y prometerlo sería mentirle al maestro. Lo que
+   sí se puede quitar es todo lo demás: escribir el texto, buscar el
+   contacto, acordarse de por quién iba. Quedan tres toques por familia
+   en vez de un minuto largo, y la cuenta la lleva la pantalla.
+
+   CINCO REGLAS, Y NINGUNA ES DE ADORNO:
+
+   1. LA CUENTA NO SE PIERDE. A quién ya se le mandó se guarda en el
+      equipo, con la misma huella de siempre. El maestro manda doce,
+      cierra la aplicación porque le tocó clase, y vuelve al trece. Sin
+      esto, a la segunda interrupción hay familias que reciben el mismo
+      aviso tres veces y otras que no reciben ninguno.
+   2. EL QUE NO TIENE TELÉFONO SE VE, CON SU NOMBRE. Son las mismas
+      familias de los boletos en blanco. Si no salieran en pantalla, el
+      maestro cerraría creyendo que avisó a todos.
+   3. CAMBIAR DE PLANTILLA EMPIEZA UNA TANDA NUEVA. Del aviso del
+      boleto al del cambio de hora hay otra lista de destinatarios: si
+      se conservara la cuenta, a los doce que ya recibieron el primero
+      no les llegaría nunca el segundo. Retocar el texto a mano NO
+      reinicia nada —eso es corregir una errata a media tanda.
+   4. EL NÚMERO LLEVA PAÍS. El padre escribe ocho dígitos, que es como
+      se marca aquí; wa.me sin el país delante abre WhatsApp sin chat y
+      hay que buscar el contacto a mano, cuarenta veces.
+   5. SALTAR NO ES BORRAR. La familia que se salta vuelve al FINAL de la
+      cola, no desaparece: se saltó porque no era el momento, no porque
+      no haya que avisarle.                                            */
+
+/* Lo que el maestro NO va a escribir solo a las once de la noche. El
+   primero es el que ya venía escribiendo a mano, palabra por palabra. */
+const CONV_AVISOS = [
+  {
+    icono: '🎟️', nombre: 'Venga por su boleto', quien: 'van',
+    texto: 'Buenas, le escribo por «{evento}» de {alumno}. Si no ha venido a traer su boleto, ' +
+      'puede pasar por la escuela. Abordamos el bus a partir de {hora}, con el boleto en mano. ' +
+      'Muchas gracias por apoyar la escuela.',
+  },
+  {
+    icono: '⏰', nombre: 'Recordatorio del día', quien: 'van',
+    texto: 'Buenas, le recuerdo que «{evento}» es el {fecha}. {alumno} tiene que estar en {punto} ' +
+      'a las {hora}, con su boleto {folio} en la mano. Van {personas}. Gracias.',
+  },
+  {
+    icono: '🕐', nombre: 'Cambió la hora o el lugar', quien: 'van',
+    texto: 'Buenas, le aviso de un cambio en «{evento}» de {alumno}: ESCRIBA AQUÍ QUÉ CAMBIÓ. ' +
+      'Todo lo demás queda igual. Disculpe la molestia, y por favor avísele a quien lo va a llevar.',
+  },
+  {
+    icono: '💵', nombre: 'Falta el aporte', quien: 'van',
+    texto: 'Buenas, le escribo por «{evento}» de {alumno}. Para apartarle el asiento falta el aporte: ' +
+      '{aporte} por {personas}. Puede traerlo a la escuela y ahí mismo le entrego su boleto. ' +
+      'Muchas gracias por apoyar la escuela.',
+  },
+  {
+    icono: '⛔', nombre: 'Se suspende o se cambia el día', quien: 'todos',
+    texto: 'Buenas, le aviso que «{evento}» NO se va a hacer el {fecha}. Le confirmo el día nuevo en ' +
+      'cuanto lo tenga. Si ya dio el aporte, se le devuelve o se le guarda para el día nuevo, como ' +
+      'usted prefiera. Disculpe la molestia.',
+  },
+  {
+    icono: '🙏', nombre: 'Gracias, ya pasó', quien: 'van',
+    texto: 'Buenas, gracias por dejar ir a {alumno} a «{evento}». Todo salió bien y volvieron ' +
+      'contando lo que vieron. Gracias por apoyar la escuela.',
+  },
+  {
+    icono: '📣', nombre: 'Otro aviso', quien: 'todos',
+    texto: 'Buenas, le escribo por «{evento}» de {alumno}. ',
+  },
+];
+
+/* El marcador y lo que se lee al lado. La explicación importa tanto como
+   el marcador: «{personas}» pone «3 personas», con su palabra y su
+   plural, porque un maestro escribiendo «van {personas} personas» a las
+   once de la noche acaba mandando «van 3 personas personas» a cuarenta
+   familias y eso ya no se recoge. */
+const CONV_MARCAS = [
+  ['{alumno}', 'el nombre completo del alumno'],
+  ['{nombre}', 'solo su primer nombre'],
+  ['{grupo}', 'su grado y sección (6º-1)'],
+  ['{personas}', 'cuántas van, con su palabra («3 personas»)'],
+  ['{folio}', 'el folio de su boleto'],
+  ['{aporte}', 'lo que le toca pagar a esa familia'],
+  ['{evento}', 'el título de la convocatoria'],
+  ['{fecha}', 'el día del evento'],
+  ['{hora}', 'la hora de salida'],
+  ['{punto}', 'dónde se sube al bus'],
+  ['{lugar}', 'a dónde van'],
+  ['{maestro}', 'tu nombre'],
+  ['{escuela}', 'la escuela'],
+];
+
+/* Los saltados en ESTA visita. No se guardan a propósito: saltar es
+   «ahorita no», no «a esta no». Mañana vuelven a salir en su sitio. */
+let _convAvSalto = {};
+
+function convAvisoDef(c) {
+  const a = (c && c.aviso && typeof c.aviso === 'object') ? c.aviso : {};
+  const p = Number(a.plant);
+  return {
+    plant: (p >= 0 && p < CONV_AVISOS.length) ? p : 0,
+    texto: typeof a.texto === 'string' ? a.texto : CONV_AVISOS[0].texto,
+    quien: (a.quien === 'noVan' || a.quien === 'todos') ? a.quien : 'van',
+    enviados: Array.isArray(a.enviados) ? a.enviados : [],
+  };
+}
+
+/* ── El número, como lo quiere WhatsApp ──
+   El prefijo sale del número del PROPIO maestro: así esto mismo sirve en
+   Guatemala o en El Salvador sin tocar una línea de código. Si no lo
+   puso, 504. Solo se le antepone a los números cortos (ocho o nueve
+   dígitos, que es como se marca en Centroamérica); uno de diez o más ya
+   trae lo suyo y tocarlo lo rompería. */
+const CONV_PAIS_DEF = '504';
+function convPrefijo(c) {
+  const w = String((c && c.wa) || '').replace(/\D/g, '');
+  return (w.length > 8 && w.length <= 12) ? w.slice(0, w.length - 8) : CONV_PAIS_DEF;
+}
+function convTelWa(c, tel) {
+  const n = String(tel || '').replace(/\D/g, '');
+  if (n.length < 7) return '';                 /* no es un teléfono */
+  return n.length < 10 ? convPrefijo(c) + n : n;
+}
+window.convTelWa = convTelWa;
+
+/* Se ordena por grado y nombre, igual que los boletos: el maestro suele
+   estar avisando y repartiendo a la vez, y así las dos cosas van al
+   mismo paso. */
+function convAvisoQuienes(c, quien) {
+  const r = convTodas(c).filter(x => quien === 'noVan' ? !x.va : (quien === 'todos' || x.va));
+  return r.sort((a, b) =>
+    String(a.grado || '').localeCompare(String(b.grado || ''), 'es', { numeric: true }) ||
+    String(a.alumno || '').localeCompare(String(b.alumno || ''), 'es'));
+}
+function convAvisoDestinos(c) {
+  return convAvisoQuienes(c, convAvisoDef(c).quien).filter(x => convTelWa(c, x.tel));
+}
+function convAvisoSinTel(c) {
+  return convAvisoQuienes(c, convAvisoDef(c).quien).filter(x => !convTelWa(c, x.tel));
+}
+/* Los que faltan, con los saltados al final. */
+function convAvisoFaltan(c) {
+  const hechos = {};
+  convAvisoDef(c).enviados.forEach(h => { hechos[h] = 1; });
+  const van = [], luego = [];
+  convAvisoDestinos(c).forEach(x => {
+    const h = convHuella(x.alumno, x.grado, x.seccion);
+    if (!hechos[h]) (_convAvSalto[h] ? luego : van).push(x);
+  });
+  return van.concat(luego);
+}
+
+/* Los marcadores se cambian por los datos de ESA familia. Se hace en un
+   solo sitio y lo usan los tres: la vista previa, lo que se copia y lo
+   que sale por WhatsApp. Lo que promete la pantalla es lo que lee la
+   madre. */
+function convAvisoRellenar(texto, c, x) {
+  const per = Number(x && x.personas) || 0;
+  const ap = Number(c.aporte) || 0;
+  const val = {
+    '{alumno}': String((x && x.alumno) || ''),
+    '{nombre}': String((x && x.alumno) || '').trim().split(/\s+/)[0] || '',
+    '{grupo}': x ? adGradoSeccion(x.grado, x.seccion) : '',
+    '{personas}': per + ' persona' + (per === 1 ? '' : 's'),
+    '{folio}': x ? convFolioDe(c, x) : '',
+    '{aporte}': adLps(ap * per),
+    '{evento}': c.titulo || '',
+    '{fecha}': convFechaLarga(c.fecha),
+    '{hora}': c.hora || '',
+    '{punto}': c.punto || '',
+    '{lugar}': c.lugar || '',
+    '{maestro}': c.maestro || '',
+    '{escuela}': c.escuela || '',
+  };
+  return String(texto || '').replace(/\{[a-zA-Z]+\}/g, m => (m in val ? val[m] : m));
+}
+function convAvisoTexto(c, x) { return convAvisoRellenar(convAvisoDef(c).texto, c, x); }
+
+/* Lo que el maestro tenga escrito AHORA MISMO, aunque todavía no haya
+   guardado: la vista previa tiene que ir con lo que está viendo. */
+function convAvisoVivo(c) {
+  const ta = document.getElementById('cv-av-txt');
+  return ta ? String(ta.value) : convAvisoDef(c).texto;
+}
+
+/* El botón de mandar va ARRIBA y lo de escribir el aviso, abajo. Es la
+   misma forma que ya tiene el mensaje para el grupo —primero lo que se
+   hace, después lo que se ajusta— y aquí importa más: el maestro sale a
+   WhatsApp y vuelve veintisiete veces, y si al volver tuviera que pasar
+   por las plantillas, los marcadores y el mensaje entero para llegar al
+   botón, abandona en la quinta familia. El aviso se escribe una vez; el
+   botón se toca cuarenta. */
+function convHtmlAvisos(c) {
+  const av = convAvisoDef(c);
+  const n = q => convAvisoQuienes(c, q).length;
+  return `
+    <div class="pa-card">
+      <div class="pa-card-title">📲 Avisarles a todos por WhatsApp</div>
+      <p class="pa-optional-hint">Para lo que sale <strong>entre el «sí voy» y el bus</strong>: que vengan
+        por el boleto, que cambió la hora, que falta el aporte. Escribes el aviso <strong>una sola
+        vez</strong> y la pantalla te va abriendo el chat de cada familia con el mensaje ya puesto y con
+        <strong>su</strong> nombre, su grupo y su folio dentro.</p>
+      <p class="pa-optional-hint">⚠️ WhatsApp <strong>no deja mandarle a cuarenta números de un solo
+        golpe</strong> desde una página: eso no lo puede hacer nadie sin pagar su servicio de empresa. Lo
+        que sí se quita es todo lo demás —escribir, buscar el contacto, acordarte de por quién ibas—.
+        Quedan <strong>tres toques por familia</strong>, y la cuenta la lleva la pantalla.</p>
+
+      <div id="cv-av-cola">${convHtmlAvisoCola(c)}</div>
+
+      <div class="pa-field" style="margin-top:16px"><label>¿De qué es el aviso?</label>
+        <div class="ad-meses" style="margin:4px 0 0">${CONV_AVISOS.map((p, i) =>
+          `<button type="button" class="ad-mes-btn${i === av.plant ? ' ad-mes-on' : ''}"
+            data-cvavp="${i}">${p.icono} ${adEsc(p.nombre)}</button>`).join('')}</div>
+        <p class="pa-optional-hint">Al tocar una, empiezas un aviso <strong>nuevo</strong>: la cuenta de a
+          quién ya le mandaste vuelve a cero. Si solo estás corrigiendo el texto, escríbelo abajo y la
+          cuenta no se toca.</p></div>
+
+      <div class="pa-field"><label>¿A quiénes?</label>
+        <div class="ad-meses" style="margin:4px 0 0">
+          <button type="button" class="ad-mes-btn${av.quien === 'van' ? ' ad-mes-on' : ''}"
+            data-cvavq="van">✅ Los que van (${n('van')})</button>
+          <button type="button" class="ad-mes-btn${av.quien === 'noVan' ? ' ad-mes-on' : ''}"
+            data-cvavq="noVan">🚫 Los que no van (${n('noVan')})</button>
+          <button type="button" class="ad-mes-btn${av.quien === 'todos' ? ' ad-mes-on' : ''}"
+            data-cvavq="todos">👥 Todos (${n('todos')})</button>
+        </div></div>
+
+      <div class="pa-field"><label>El mensaje</label>
+        <textarea id="cv-av-txt" class="pa-paste-area" rows="6" maxlength="900">${adEsc(av.texto)}</textarea>
+        <p class="pa-optional-hint">Toca un marcador para meterlo donde tengas el cursor. Cada uno se
+          cambia por el dato de <strong>esa</strong> familia:</p>
+        <div class="ad-meses ad-cv-marcas">${CONV_MARCAS.map(([m, q]) =>
+          `<button type="button" class="ad-mes-btn" data-cvavm="${adEsc(m)}"
+            title="${adEsc(q)}">${adEsc(m)}</button>`).join('')}</div>
+        <p class="pa-optional-hint" id="cv-av-quees">${adEsc(CONV_MARCAS[0][0])} es ${adEsc(CONV_MARCAS[0][1])}.</p>
+      </div>
+
+      <div id="cv-av-dif">${convHtmlAvisoDifusion(c)}</div>
+    </div>`;
+}
+
+/* La cola se repinta sola, sin volver a pintar la pantalla entera: el
+   maestro está a mitad de una lista de veintisiete y un salto al
+   principio de la página en cada envío hace que abandone en el quinto. */
+function convHtmlAvisoCola(c) {
+  const dest = convAvisoDestinos(c);
+  const faltan = convAvisoFaltan(c);
+  const sinTel = convAvisoSinTel(c);
+  const hechos = dest.length - faltan.length;
+  const x = faltan[0] || null;
+  const muestra = x || dest[0] || convAvisoQuienes(c, convAvisoDef(c).quien)[0] || null;
+  const pct = dest.length ? Math.round(hechos * 100 / dest.length) : 0;
+  return `
+    <p class="pa-optional-hint" style="margin-bottom:4px">${muestra
+      ? 'Así le va a llegar a <strong>' + adEsc(muestra.alumno) + '</strong>:'
+      : 'Así se va a leer:'}</p>
+    <div class="ad-wa-previa" id="cv-av-previa">${adEsc(convAvisoRellenar(convAvisoVivo(c), c, muestra)).replace(/\n/g, '<br>')}</div>
+
+    ${dest.length ? `
+    <div class="ad-cv-cola">
+      <div class="ad-cv-blancos-t">📲 Llevas ${hechos} de ${dest.length}</div>
+      <div class="ad-cv-barra"><i style="width:${pct}%"></i></div>
+      ${x ? `
+      <div class="ad-cv-ahora">
+        <b>${adEsc(x.alumno)}</b>
+        <span>${adEsc(adGradoSeccion(x.grado, x.seccion))}${x.va ? ' · ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') : ''} · 📲 ${adEsc(x.tel)}</span>
+      </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="cv-av-ir">📲 Abrirle WhatsApp y mandarle</button>
+        <button class="pa-generate-btn ad-btn-sec" id="cv-av-salto">⏭️ Esta después</button>
+        <button class="pa-generate-btn ad-btn-sec" id="cv-av-copiar">📋 Copiar su mensaje</button>
+      </div>
+      <p class="pa-optional-hint">Se abre su chat con el mensaje escrito; tú tocas enviar. Cuando vuelvas
+        aquí ya te espera la siguiente: faltan <strong>${faltan.length}</strong>.</p>`
+      : `<p class="pa-optional-hint" style="margin:8px 0 0">✅ <strong>Ya les mandaste a
+        ${dest.length === 1 ? 'la única familia' : 'las ' + dest.length + ' familias'} con teléfono.</strong>
+        Si tienes que volver a avisarles lo mismo, empieza de nuevo aquí abajo.</p>`}
+      ${hechos ? `
+      <div class="ad-btn-row" style="margin-top:8px">
+        <button class="pa-generate-btn ad-btn-sec" id="cv-av-atras">↩️ La última no salió</button>
+        <button class="pa-generate-btn ad-btn-sec" id="cv-av-reset">🔁 Empezar el aviso de nuevo</button>
+      </div>` : ''}
+    </div>`
+    : `<p class="pa-optional-hint">Ninguno de los que elegiste dejó teléfono, así que no hay a quién
+        mandarle. A esas familias hay que decírselo en el portón.</p>`}
+
+    ${sinTel.length ? `
+    <div class="ad-cv-repes">
+      <div class="ad-cv-blancos-t">📵 ${sinTel.length} sin teléfono</div>
+      <p class="pa-optional-hint" style="margin:6px 0 8px">A ${sinTel.length === 1 ? 'esta familia' : 'estas familias'}
+        <strong>no les llega</strong> este aviso: no dejaron número. Díselo en el portón o mándale el
+        recado con el alumno; son las mismas de los boletos en blanco.</p>
+      ${sinTel.map(y => `<div class="ad-gasto-row">
+        <span>${adEsc(y.alumno)}${y.grado ? ' · ' + adEsc(adGradoSeccion(y.grado, y.seccion)) : ''}</span>
+        <span>${y.aMano ? '<span class="ad-cv-tag">🖊️ a mano</span>' : ''}</span></div>`).join('')}
+    </div>` : ''}`;
+}
+
+/* La otra manera de hacerlo, contada entera y con lo que cuesta. Va al
+   final de la tarjeta y no en medio: el maestro que ya está mandando no
+   tiene por qué leer esto cuarenta veces. Se repinta con la cola porque
+   depende de a quiénes esté avisando. */
+function convHtmlAvisoDifusion(c) {
+  const dest = convAvisoDestinos(c);
+  if (dest.length < 2) return '';
+  return `
+    <div class="ad-cv-blancos">
+      <div class="ad-cv-blancos-t">📋 Si prefieres una lista de difusión</div>
+      <p class="pa-optional-hint" style="margin:6px 0 8px">WhatsApp tiene «listas de difusión»: escribes
+        una vez y sale para todos. Dos cosas antes de casarte con eso: el mensaje va
+        <strong>igual para todos</strong> —sin nombre, sin folio y sin lo que le toca pagar a cada quien—,
+        y <strong>solo le llega a quien tenga tu número guardado</strong> en su teléfono. Los demás no lo
+        reciben, y no se entera ni él ni tú.</p>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="cv-av-tels">📋 Copiar los ${dest.length} teléfonos</button>
+      </div>
+      <p class="pa-optional-hint">Salen con el país delante y con el nombre al lado, para que puedas
+        guardarlos como contactos: sin eso, la difusión no le llega a nadie.</p>
+    </div>`;
+}
+
 function convHtmlDatos(c, pub) {
   const g = (c.gana || []).concat(['', '', '']).slice(0, 3);
   return `
@@ -1165,6 +1503,16 @@ function convLeerCampos(c) {
   c.costoBus = Math.max(0, Number(v('cv-costobus')) || 0);
   c.cupos = Math.max(0, Number(v('cv-cupos')) || 0);
   c.arranque = Math.max(0, Number(v('cv-arranque')) || 0);
+  /* El aviso solo está en pantalla cuando ya hay a quién avisarle. Se lee
+     comprobando que el campo EXISTA: leerlo a ciegas devolvería cadena
+     vacía desde cualquier otra pantalla y le borraría al maestro el
+     mensaje que tenía escrito a medias. */
+  const ta = document.getElementById('cv-av-txt');
+  if (ta) {
+    const av = convAvisoDef(c);
+    av.texto = String(ta.value);
+    c.aviso = av;
+  }
   return c;
 }
 function convGuardar(mut) {
@@ -1180,7 +1528,9 @@ function convGuardar(mut) {
 }
 
 function convEnganchar(body, c, d, t, pub) {
-  document.getElementById('cv-volver').addEventListener('click', () => { _adConvId = null; renderAdmin(); });
+  document.getElementById('cv-volver').addEventListener('click', () => {
+    _adConvId = null; _convAvSalto = {}; renderAdmin();
+  });
 
   document.getElementById('cv-guardar').addEventListener('click', async () => {
     const cc = convGuardar();
@@ -1219,7 +1569,15 @@ function convEnganchar(body, c, d, t, pub) {
     toast('🚀 Publicada: ya puedes mandar el mensaje');
   });
 
-  const bWa = document.getElementById('cv-wa');
+  /* ⚠️ El botón se llama «cv-wa-enviar» y NO «cv-wa». Se llamaron igual
+     que el campo del teléfono del maestro, y como el botón se pinta
+     antes, getElementById devolvía el BOTÓN: al guardar una convocatoria
+     ya publicada, `c.wa` se llenaba con el value vacío de un <button> y
+     el número del maestro se borraba —del equipo y de la nube—. Ese es
+     justo el número al que la pantalla del padre le manda la respuesta
+     cuando se le cae el internet, así que se perdía en silencio la red
+     de seguridad. Dos elementos no pueden compartir id. */
+  const bWa = document.getElementById('cv-wa-enviar');
   if (bWa) bWa.addEventListener('click', () => {
     const enc = encodeURIComponent(convMensaje(c));
     const movil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -1346,15 +1704,20 @@ function convEnganchar(body, c, d, t, pub) {
   if (bCopLi) bCopLi.addEventListener('click', () => adCopiar(convTextoLista(c, t),
     () => toast('📋 Lista copiada'), () => toast('No se pudo copiar')));
 
+  /* Tocar el teléfono de una fila abre su chat con el MISMO aviso que
+     está escrito abajo, ya personalizado. Antes salía un renglón suelto
+     («le escribo por la salida») y el maestro tenía que escribir el
+     resto ahí mismo, cuarenta veces. Un solo texto, dos caminos. */
   body.querySelectorAll('[data-cvtel]').forEach(b =>
     b.addEventListener('click', () => {
-      const tel = String(b.dataset.cvtel || '').replace(/\D/g, '');
-      const txt = 'Buenas, le escribo por «' + (c.titulo || 'la salida') + '» de ' + b.dataset.cvnom + '.';
-      const movil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      window.open(movil
-        ? 'https://wa.me/' + tel + '?text=' + encodeURIComponent(txt)
-        : 'https://web.whatsapp.com/send?phone=' + tel + '&text=' + encodeURIComponent(txt), '_blank');
+      const cc = convUna(adLoad(), _adConvId) || c;
+      const h = String(b.dataset.cvhuella || '');
+      const x = convTodas(cc).find(y => convHuella(y.alumno, y.grado, y.seccion) === h);
+      if (!x) return;
+      convAvisoAbrir(cc, x);
     }));
+
+  convAvisoEnganchar(body, c);
 
   const bEco = document.getElementById('cv-a-eco');
   if (bEco) bEco.addEventListener('click', () => convAEconomia(c));
@@ -1380,6 +1743,158 @@ function convEnganchar(body, c, d, t, pub) {
     _adConvTraido = c.id;
     convTraer(false);
   }
+}
+
+/* ── Los botones del aviso ──
+   Se parten en dos: los de arriba (plantilla, a quiénes, marcadores) se
+   enganchan una vez con la pantalla, y los de la COLA se vuelven a
+   enganchar cada vez que la cola se repinta. La cola se repinta sola
+   —sin renderAdmin()— porque el maestro está a mitad de una lista de
+   veintisiete y un salto al principio de la página en cada envío es lo
+   que hace que abandone en el quinto. */
+function convAvisoEnganchar(body, c) {
+  const $ta = document.getElementById('cv-av-txt');
+  if (!$ta) return;
+
+  body.querySelectorAll('[data-cvavp]').forEach(b =>
+    b.addEventListener('click', () => {
+      const i = +b.dataset.cvavp, p = CONV_AVISOS[i];
+      if (!p) return;
+      let nueva = false;
+      convGuardar(x => {
+        const av = convAvisoDef(x);
+        nueva = i !== av.plant;
+        x.aviso = { plant: i, texto: p.texto, quien: p.quien, enviados: nueva ? [] : av.enviados };
+      });
+      if (nueva) _convAvSalto = {};
+      renderAdmin();
+      toast(nueva ? '🆕 Aviso nuevo: la cuenta empieza otra vez' : '↩️ Mensaje repuesto');
+    }));
+
+  /* Cambiar a quiénes NO reinicia la cuenta: la huella es de la persona,
+     así que el que ya recibió el aviso lo recibió, y al ensanchar la
+     lista se sigue por los que faltan en vez de volver a molestar a los
+     mismos. */
+  body.querySelectorAll('[data-cvavq]').forEach(b =>
+    b.addEventListener('click', () => {
+      const q = b.dataset.cvavq;
+      convGuardar(x => { const av = convAvisoDef(x); av.quien = q; x.aviso = av; });
+      renderAdmin();
+    }));
+
+  body.querySelectorAll('[data-cvavm]').forEach(b =>
+    b.addEventListener('click', () => {
+      const m = b.dataset.cvavm;
+      const s = $ta.selectionStart, e = $ta.selectionEnd, v = $ta.value;
+      $ta.value = v.slice(0, s) + m + v.slice(e);
+      $ta.focus();
+      $ta.setSelectionRange(s + m.length, s + m.length);
+      const q = (CONV_MARCAS.find(y => y[0] === m) || [])[1];
+      const $q = document.getElementById('cv-av-quees');
+      if ($q && q) $q.textContent = m + ' es ' + q + '.';
+      convGuardar();
+      convAvisoRepintar();
+    }));
+
+  /* La previa se repinta con cada letra, pero SOLO la previa: guardar en
+     cada tecla obliga a escribir todo el almacén del maestro en el
+     teléfono y se nota en un aparato de los que hay en el aula. Lo
+     escrito se guarda al salir del campo y en cada envío. */
+  const muestra = convAvisoFaltan(c)[0] || convAvisoDestinos(c)[0] ||
+                  convAvisoQuienes(c, convAvisoDef(c).quien)[0] || null;
+  $ta.addEventListener('input', () => {
+    const $p = document.getElementById('cv-av-previa');
+    if ($p) $p.innerHTML = adEsc(convAvisoRellenar($ta.value, c, muestra)).replace(/\n/g, '<br>');
+  });
+  $ta.addEventListener('blur', () => { convGuardar(); });
+
+  convAvisoColaEnganchar(c);
+}
+
+function convAvisoRepintar() {
+  const cc = convUna(adLoad(), _adConvId);
+  const cont = document.getElementById('cv-av-cola');
+  if (!cc || !cont) return;
+  cont.innerHTML = convHtmlAvisoCola(cc);
+  const dif = document.getElementById('cv-av-dif');
+  if (dif) dif.innerHTML = convHtmlAvisoDifusion(cc);
+  convAvisoColaEnganchar(cc);
+}
+
+function convAvisoAbrir(c, x) {
+  const tel = convTelWa(c, x.tel);
+  const enc = encodeURIComponent(convAvisoTexto(c, x));
+  const movil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  window.open(movil
+    ? 'https://wa.me/' + tel + '?text=' + enc
+    : 'https://web.whatsapp.com/send?phone=' + tel + '&text=' + enc, '_blank');
+}
+
+function convAvisoColaEnganchar(c) {
+  const el = id => document.getElementById(id);
+  const x = convAvisoFaltan(c)[0] || null;
+
+  const bIr = el('cv-av-ir');
+  if (bIr && x) bIr.addEventListener('click', () => {
+    const h = convHuella(x.alumno, x.grado, x.seccion);
+    /* Se apunta ANTES de abrir WhatsApp. En el teléfono, abrir otra
+       aplicación puede llevarse esta página por delante; volver y
+       encontrarse a la misma familia es mandarle el aviso dos veces, y
+       la madre que recibe dos veces «venga por su boleto» viene dos
+       veces. Si de verdad no salió, «La última no salió» la devuelve. */
+    const cc = convGuardar(y => {
+      const av = convAvisoDef(y);
+      if (av.enviados.indexOf(h) < 0) av.enviados.push(h);
+      y.aviso = av;
+    }) || c;
+    delete _convAvSalto[h];
+    convAvisoAbrir(cc, x);
+    convAvisoRepintar();
+  });
+
+  const bSal = el('cv-av-salto');
+  if (bSal && x) bSal.addEventListener('click', () => {
+    _convAvSalto[convHuella(x.alumno, x.grado, x.seccion)] = 1;
+    const sig = convAvisoFaltan(c)[0];
+    convAvisoRepintar();
+    if (sig && sig.alumno === x.alumno) toast('Es la única que falta');
+  });
+
+  const bCop = el('cv-av-copiar');
+  if (bCop && x) bCop.addEventListener('click', () => {
+    const cc = convGuardar() || c;
+    adCopiar(convAvisoTexto(cc, x),
+      () => toast('📋 Copiado: pégalo en su chat'), () => toast('No se pudo copiar'));
+  });
+
+  const bAtr = el('cv-av-atras');
+  if (bAtr) bAtr.addEventListener('click', () => {
+    convGuardar(y => {
+      const av = convAvisoDef(y);
+      av.enviados = av.enviados.slice(0, -1);
+      y.aviso = av;
+    });
+    convAvisoRepintar();
+    toast('↩️ Vuelve a la cola');
+  });
+
+  const bRes = el('cv-av-reset');
+  if (bRes) bRes.addEventListener('click', async () => {
+    if (!await metasConfirm('Se borra la cuenta de **a quién ya le mandaste** este aviso y la cola vuelve a empezar por la primera familia. El mensaje no se toca.\n\n¿Empezar de nuevo?',
+      { icono: '🔁', titulo: 'Empezar el aviso de nuevo', okTxt: 'Sí, empezar' })) return;
+    convGuardar(y => { const av = convAvisoDef(y); av.enviados = []; y.aviso = av; });
+    _convAvSalto = {};
+    convAvisoRepintar();
+  });
+
+  const bTel = el('cv-av-tels');
+  if (bTel) bTel.addEventListener('click', () => {
+    const L = convAvisoDestinos(c).map(y => y.alumno +
+      (y.grado ? ' (' + adGradoSeccion(y.grado, y.seccion) + ')' : '') + ' +' + convTelWa(c, y.tel));
+    adCopiar(L.join('\n'),
+      () => toast('📋 ' + L.length + ' teléfono' + (L.length === 1 ? '' : 's') + ' copiado' + (L.length === 1 ? '' : 's')),
+      () => toast('No se pudo copiar'));
+  });
 }
 
 async function convTraer(avisar) {

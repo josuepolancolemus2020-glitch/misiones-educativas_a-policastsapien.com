@@ -761,6 +761,231 @@ async function pruebaBoletoSinInternet(browser) {
   await page.close();
 }
 
+/* ══════════════ 12) El aviso en lote a las familias ══════════════
+   Entre el «sí voy» y el bus hay cinco días y siempre algo que avisar.
+   Lo que aquí cuesta caro:
+
+   · MANDARLE EL MENSAJE DE OTRO. Si los marcadores no se cambian por los
+     datos de ESA familia, la madre de Ashly recibe el folio de Ada y en
+     el portón discuten dos familias con el mismo papel.
+   · QUE NO LLEGUE. El padre escribe ocho dígitos; wa.me sin el país
+     delante abre WhatsApp sin chat, y el maestro lo descubre en la
+     familia número cuarenta.
+   · PERDER LA CUENTA. Manda doce, le toca clase, cierra la aplicación.
+     Si la cuenta no se guarda, al volver empieza otra vez: unas familias
+     reciben el aviso tres veces y otras ninguna.
+   · CAMBIAR DE AVISO Y NO ENTERARSE. Del boleto al cambio de hora hay
+     otra lista: si la cuenta no volviera a cero, a los que ya recibieron
+     el primero no les llegaría nunca el segundo.
+   · CREER QUE AVISÓ A TODOS. La familia sin teléfono tiene que salir en
+     pantalla y con su nombre, o el maestro cierra tranquilo.           */
+async function pruebaAvisos(browser) {
+  console.log('\n── EL AVISO EN LOTE ──');
+  const RESP = [
+    { va: true, alumno: 'Ada Sarai Sevilla', grado: '6', seccion: '1', personas: 3, tel: '9999-1111', nota: '' },
+    { va: true, alumno: 'Ashly Belén Miranda', grado: '6', seccion: '1', personas: 2, tel: '99992222', nota: '' },
+    { va: true, alumno: 'Carlos Josué Meza', grado: '5', seccion: '2', personas: 2, tel: '50499993333', nota: '' },
+    /* La familia sin teléfono: contestó por el enlace desde el aparato de
+       una vecina y no dejó número. A esta hay que decírselo en el portón. */
+    { va: true, alumno: 'Óscar Danilo Zelaya', grado: '5', seccion: '2', personas: 1, tel: '', nota: '' },
+    { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '99995555', nota: 'Por el aporte' },
+  ];
+  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  await page.clock.install({ time: HOY });
+  await page.route('**/rest/v1/rpc/**', async route => {
+    const fn = route.request().url().split('/rpc/')[1].split('?')[0];
+    await route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'metas_conv_respuestas' ? RESP : true) });
+  });
+  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+
+  /* Los wa.me que se abren se apuntan en vez de abrirse: así se puede
+     revisar QUÉ número y QUÉ texto le habría llegado a cada familia. */
+  const sembrar = async () => page.evaluate(() => {
+    window.__wa = [];
+    window.open = u => { window.__wa.push(String(u)); return null; };
+    localStorage.setItem('METAS_ADMIN_V1', JSON.stringify({ v: 2, activo: 'G1', grupos: [{
+      id: 'G1', escuela: 'Escuela John Arnold Cook', grado: '6', seccion: '1', materias: ['Español'],
+      lista: [], colectas: [], asistencia: [], notas: {}, controles: [], bitacora: [], lectura: [],
+      convocatorias: [{ id: 'V1', icono: '🚌', titulo: 'Excursión al Museo Ferroviario de El Progreso',
+        gancho: 'x', gana: ['a', 'b', 'c'], lugar: 'Museo Ferroviario de El Progreso',
+        fecha: '2026-08-15', hora: '6:30 a. m.', regreso: '3:00 p. m.', punto: 'Portón de la escuela',
+        aporte: 250, incluye: 'transporte, entrada', cobro: '', nota: '', limite: '2026-08-11',
+        dirigido: 'Para las familias de toda la escuela', maestro: 'Prof. Josué Polanco',
+        wa: '50499998888', escuela: 'Escuela John Arnold Cook', capacidad: 55, costoBus: 3500,
+        cupos: 110, arranque: 30, limiteHora: '16:00', manual: [],
+        codigo: 'R4TP', pin: 'K7M2QP', cerrada: 0, resp: [], respFecha: '', creada: '2026-08-08' }],
+    }] }));
+  });
+  const entrar = async () => {
+    await page.evaluate(() => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-admin').classList.add('active');
+      renderAdmin();
+      document.querySelector('[data-adtab="com"]').click();
+    });
+    await page.click('#ad-ir-conv');
+    await page.waitForSelector('[data-cvid]');
+    await page.click('[data-cvid]');
+    await page.waitForSelector('#cv-av-txt');
+  };
+  await sembrar();
+  await entrar();
+
+  /* ── A quién le toca y en qué orden ──
+     Se avisa por grado, igual que se reparten los boletos: el maestro
+     suele estar haciendo las dos cosas a la vez. */
+  const ahora = async () => (await page.textContent('.ad-cv-ahora b')).trim();
+  comprueba(await ahora() === 'Carlos Josué Meza', 'la cola arranca por el primer grado (5º), no por el orden en que contestaron');
+  const cabeza = await page.textContent('.ad-cv-cola .ad-cv-blancos-t');
+  comprueba(/Llevas 0 de 3/.test(cabeza),
+    'cuenta 3 con teléfono de los 4 que van: el que no dejó número no entra (dijo «' + cabeza.trim() + '»)');
+
+  /* ── El que no tiene teléfono se ve, con su nombre ── */
+  const cuerpo = await page.textContent('#ad-tab-body');
+  comprueba(/1 sin teléfono/.test(cuerpo) && /Óscar Danilo Zelaya/.test(cuerpo),
+    'la familia sin teléfono sale aparte y con su nombre, para decírselo en el portón');
+
+  /* ── La previa enseña el mensaje de ESA familia, ya armado ── */
+  const previa = await page.textContent('#cv-av-previa');
+  comprueba(/Carlos Josué Meza/.test(previa) && !/\{alumno\}/.test(previa),
+    'la vista previa trae el nombre de la familia que toca, no el marcador');
+  comprueba(/6:30 a\. m\./.test(previa), 'y la hora de salida puesta');
+
+  /* ── Guardar no puede borrarle el teléfono al maestro ──
+     Su número es la red de seguridad del padre al que se le cae el
+     internet: la pantalla del padre le manda ahí la respuesta ya
+     escrita. Estuvo desapareciendo solo, y sin ruido: el botón «Mandarlo
+     por WhatsApp» compartía el id con este campo, así que al guardar una
+     convocatoria publicada se leía el value vacío de un botón y el
+     número se iba del equipo Y de la nube. De ese número sale además el
+     prefijo de país con el que se le escribe a las familias. */
+  await page.click('#cv-guardar');
+  await page.waitForTimeout(900);
+  const waMaestro = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].wa);
+  comprueba(waMaestro === '50499998888',
+    'guardar NO le borra su propio WhatsApp, que es a donde le llega la respuesta del padre sin internet (quedó «' + waMaestro + '»)');
+  await page.waitForSelector('.ad-cv-ahora');
+
+  /* ── Mandarle: número con país y texto suyo ── */
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(500);
+  const wa1 = await page.evaluate(() => window.__wa[0] || '');
+  comprueba(/wa\.me\/50499993333|phone=50499993333/.test(wa1),
+    'el que ya traía país se manda tal cual, sin doblarlo');
+  comprueba(decodeURIComponent(wa1).includes('Carlos Josué Meza'),
+    'y el mensaje va con SU nombre dentro');
+
+  comprueba(await ahora() === 'Ada Sarai Sevilla', 'al volver, la cola ya está en la siguiente familia');
+  comprueba(/Llevas 1 de 3/.test(await page.textContent('.ad-cv-cola .ad-cv-blancos-t')),
+    'y la cuenta subió a 1 de 3');
+
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(500);
+  const wa2 = decodeURIComponent(await page.evaluate(() => window.__wa[1] || ''));
+  const url2 = await page.evaluate(() => window.__wa[1] || '');
+  /* EL FALLO QUE NO SE VE HASTA LA FAMILIA CUARENTA: ocho dígitos sin
+     país abren WhatsApp sin chat. El prefijo sale del número del propio
+     maestro (504…), así esto mismo sirve en Guatemala sin tocar código. */
+  comprueba(/wa\.me\/50499991111|phone=50499991111/.test(url2),
+    'los ocho dígitos del padre («9999-1111») salen con el 504 delante');
+  comprueba(wa2.includes('Ada Sarai Sevilla') && !wa2.includes('Carlos Josué Meza'),
+    'a la segunda familia le llega SU mensaje, no una copia del anterior');
+
+  /* ── El folio y el aporte también son suyos ── */
+  await page.fill('#cv-av-txt', 'Boleto {folio} de {alumno} ({grupo}), {personas}, {aporte}.');
+  await page.dispatchEvent('#cv-av-txt', 'blur');
+  await page.waitForTimeout(300);
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(500);
+  const wa3 = decodeURIComponent(await page.evaluate(() => window.__wa[2] || ''));
+  const folio3 = await page.evaluate(() => convFolio('R4TP', convHuella('Ashly Belén Miranda', '6', '1')));
+  comprueba(wa3.includes(folio3), 'el folio del mensaje es el de esa familia (' + folio3 + ')');
+  comprueba(wa3.includes('6º-1'), 'y su grupo, escrito 6º-1');
+  comprueba(wa3.includes('2 personas') && wa3.includes('L 500'),
+    'y lo que le toca pagar a ELLA: 2 personas × L 250 = L 500 (dijo «' + wa3.split('),')[1] + '»)');
+  comprueba(!/1 personas|\{/.test(wa3), 'sin plurales rotos y sin marcadores sin cambiar');
+
+  /* ── La cuenta no se pierde al cerrar la aplicación ──
+     El texto se aplana antes de mirarlo: los saltos de línea del HTML no
+     son lo que se está comprobando. */
+  const cola = async () => (await page.textContent('#cv-av-cola')).replace(/\s+/g, ' ');
+  comprueba(/Ya les mandaste a las 3 familias/.test(await cola()),
+    'con las tres mandadas, la cola se da por terminada');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  await page.evaluate(() => { window.__wa = []; window.open = u => { window.__wa.push(String(u)); return null; }; });
+  await entrar();
+  comprueba(/Ya les mandaste a las 3 familias/.test(await cola()),
+    'y después de cerrar y volver a abrir, sigue sabiendo a quién ya le mandó');
+  comprueba((await page.inputValue('#cv-av-txt')).includes('{folio}'),
+    'el mensaje que escribió el maestro tampoco se perdió');
+
+  /* ── La última no salió: vuelve a la cola ── */
+  await page.click('#cv-av-atras');
+  await page.waitForTimeout(400);
+  comprueba(await ahora() === 'Ashly Belén Miranda',
+    'si WhatsApp no llegó a abrirse, «La última no salió» devuelve a esa familia a la cola');
+
+  /* ── Cambiar de plantilla empieza una tanda NUEVA ──
+     Es lo que impide que el aviso del cambio de hora se quede sin llegar
+     a los que ya recibieron el del boleto. */
+  await page.click('[data-cvavp="2"]');
+  await page.waitForSelector('#cv-av-txt');
+  await page.waitForTimeout(400);
+  comprueba(/Llevas 0 de 3/.test(await page.textContent('.ad-cv-cola .ad-cv-blancos-t')),
+    'al cambiar de plantilla la cuenta vuelve a cero: el aviso nuevo le llega a TODOS');
+  comprueba((await page.inputValue('#cv-av-txt')).includes('ESCRIBA AQUÍ QUÉ CAMBIÓ'),
+    'y el texto se cambia por el de la plantilla nueva');
+
+  /* ── Saltar no es borrar ── */
+  const primero = await ahora();
+  await page.click('#cv-av-salto');
+  await page.waitForTimeout(400);
+  comprueba(await ahora() !== primero, 'saltar pasa a la siguiente familia');
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(400);
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(400);
+  comprueba(await ahora() === primero,
+    'y la saltada vuelve al FINAL de la cola: se saltó porque no era el momento, no para dejarla sin avisar');
+
+  /* ── Los que NO van también se pueden avisar ── */
+  await page.click('[data-cvavq="noVan"]');
+  await page.waitForSelector('.ad-cv-ahora');
+  comprueba(await ahora() === 'Hilda Marina Paz',
+    'se le puede avisar a los que dijeron que no (por si baja el aporte y se animan)');
+
+  /* ── Tocar el teléfono de una fila manda el MISMO aviso, ya armado ── */
+  await page.click('[data-cvavq="van"]');
+  await page.waitForSelector('.ad-cv-ahora');
+  await page.evaluate(() => { window.__wa = []; });
+  await page.locator('[data-cvtel]').first().click();
+  await page.waitForTimeout(400);
+  const waFila = decodeURIComponent(await page.evaluate(() => window.__wa[0] || ''));
+  comprueba(/504\d{8}/.test(await page.evaluate(() => window.__wa[0] || '')),
+    'tocar el teléfono de una fila también manda con el país delante');
+  comprueba(waFila.includes('ESCRIBA AQUÍ QUÉ CAMBIÓ') && !/\{alumno\}/.test(waFila),
+    'y con el aviso que el maestro tiene escrito, ya personalizado');
+
+  /* ── Los teléfonos para una lista de difusión ── */
+  const tels = await page.evaluate(() => {
+    let copiado = '';
+    navigator.clipboard.writeText = t => { copiado = t; return Promise.resolve(); };
+    document.getElementById('cv-av-tels').click();
+    return copiado;
+  });
+  comprueba(/\+50499991111/.test(tels) && /Ada Sarai Sevilla/.test(tels),
+    'los teléfonos se copian con país y con nombre, para guardarlos como contactos');
+  comprueba(!/Óscar Danilo Zelaya/.test(tels), 'y el que no dejó número no sale en esa lista');
+  comprueba(/tu número guardado/.test(await page.textContent('#cv-av-dif')),
+    'y se le avisa que la difusión solo le llega a quien tenga su número guardado');
+
+  await page.close();
+}
+
 (async () => {
   const browser = await chromium.launch(
     process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
@@ -776,6 +1001,7 @@ async function pruebaBoletoSinInternet(browser) {
     await pruebaEmpuje(browser);
     await pruebaBoleto(browser, folio);
     await pruebaBoletoSinInternet(browser);
+    await pruebaAvisos(browser);
   } finally {
     await browser.close();
   }

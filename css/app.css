@@ -5115,6 +5115,39 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   background: #fffbeb; border: 1.5px dashed #fcd34d;
 }
 
+/* ── La cola del aviso por WhatsApp ──
+   El maestro está mandando el mismo aviso a veintisiete familias, una
+   por una, saliendo a WhatsApp y volviendo. Lo único que necesita ver al
+   volver es DE QUIÉN le toca ahora y cuánto le falta; por eso la cola va
+   en su propia caja con el verde de WhatsApp y no mezclada con el resto
+   de la tarjeta. */
+.ad-cv-cola {
+  margin-top: 14px; padding: 11px 13px; border-radius: 12px;
+  background: #f0fdf4; border: 1.5px solid #bbf7d0;
+}
+/* La barra dice de un vistazo lo que falta. Va fina a propósito: la
+   cifra de arriba es la que se lee, esto solo la acompaña. */
+.ad-cv-barra {
+  height: 8px; border-radius: 999px; background: #dcfce7;
+  overflow: hidden; margin: 7px 0 10px;
+}
+.ad-cv-barra i { display: block; height: 100%; background: #16a34a; border-radius: 999px; }
+/* A quién le toca ahora: es lo que el maestro busca con la vista al
+   volver de WhatsApp, así que va grande y separado de todo lo demás. */
+.ad-cv-ahora {
+  background: var(--surface); border: 1.5px solid #86efac; border-radius: 10px;
+  padding: 9px 11px; margin-bottom: 10px;
+}
+.ad-cv-ahora b { display: block; font-size: 15.5px; font-weight: 900; line-height: 1.25; }
+.ad-cv-ahora span { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+/* Los marcadores son etiquetas para tocar, no botones de acción: se
+   escriben en monoespaciado porque lo que hacen es meter texto tal cual
+   en el mensaje, y así se distinguen de las palabras de alrededor. */
+.ad-cv-marcas { margin: 4px 0 0; }
+.ad-cv-marcas .ad-mes-btn {
+  font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold;
+}
+
 /* La vista previa del mensaje se ve COMO SE VA A VER en WhatsApp: el
    maestro lo lee ahí y corrige antes de mandarlo a doscientas personas,
    que es donde ya no hay vuelta atrás. */
