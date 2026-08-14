@@ -5115,6 +5115,54 @@ a.camp-home-card { text-decoration: none; color: inherit; }
   background: #fffbeb; border: 1.5px dashed #fcd34d;
 }
 
+/* ── 💵 Quién ya pagó ──
+   Las dos cifras de dinero se pintan DISTINTO entre sí a propósito: lo
+   recogido es lo que ya está en la mano y lo que falta es a lo que hay
+   que salir. Pintadas iguales, el maestro suma mal de un vistazo y
+   contrata los buses con la cifra que no era. */
+.ad-cv-cobrado { background: #f0fdf4; border-color: #bbf7d0; }
+.ad-cv-cobrado b, .ad-cv-cobrado span { color: #15803d; }
+.ad-cv-debe { background: #fffbeb; border-color: #fcd34d; }
+.ad-cv-debe b, .ad-cv-debe span { color: #b45309; }
+
+/* El grado agrupa las filas porque así es como se cobra: el maestro
+   sale al recreo con lo de 6º, cobra, y vuelve. Una lista corrida de
+   cuarenta nombres de toda la escuela no se recorre en un teléfono. */
+.ad-cv-grado { margin-top: 14px; }
+.ad-cv-grado-t {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  flex-wrap: wrap; padding: 6px 2px 7px; border-bottom: 2px solid var(--border);
+  margin-bottom: 7px;
+}
+.ad-cv-grado-t span { font-size: 14px; font-weight: 900; color: var(--text); }
+.ad-cv-grado-t small { font-size: 11.5px; font-weight: 900; color: var(--muted); }
+
+/* La fila entera es el botón —no una casilla chiquita al lado—: se toca
+   de pie, en el recreo, con el dinero en la otra mano. Y lleva el
+   nombre completo, no el primero: en un aula hay dos Josué. */
+.ad-cv-pg {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  padding: 9px 11px; margin-bottom: 7px; color: var(--text); font-family: inherit;
+  font-size: 13.5px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.ad-cv-pg:active { transform: scale(.99); }
+.ad-cv-pg-mk { font-size: 19px; line-height: 1; flex: 0 0 auto; }
+.ad-cv-pg-n { flex: 1; min-width: 0; line-height: 1.3; }
+.ad-cv-pg-n strong { font-size: 14px; font-weight: 900; }
+.ad-cv-pg-n small { font-size: 11px; color: var(--muted); }
+.ad-cv-pg-m { flex: 0 0 auto; text-align: right; min-width: 74px; }
+.ad-cv-pg-m b { display: block; font-size: 14.5px; font-weight: 900; white-space: nowrap; }
+.ad-cv-pg-m span { display: block; font-size: 10px; color: var(--muted); white-space: nowrap; }
+/* Pagada del todo: verde y calmada. El abono va en ámbar porque NO está
+   resuelta —queda dinero por cobrar— y de lejos tiene que distinguirse
+   de la verde, que es la que ya no hay que volver a mirar. */
+.ad-cv-pg-on { background: #f0fdf4; border-color: #86efac; }
+.ad-cv-pg-on .ad-cv-pg-m b { color: #15803d; }
+.ad-cv-pg-abono { background: #fffbeb; border-color: #fcd34d; }
+.ad-cv-pg-abono .ad-cv-pg-m b { color: #b45309; }
+
 /* ── La cola del aviso por WhatsApp ──
    El maestro está mandando el mismo aviso a veintisiete familias, una
    por una, saliendo a WhatsApp y volviendo. Lo único que necesita ver al

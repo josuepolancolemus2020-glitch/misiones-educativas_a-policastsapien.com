@@ -264,6 +264,95 @@ function convTodas(c) {
 }
 window.convTodas = convTodas;
 
+/* ══════════════ 💵 EL CONTROL DE PAGOS ══════════════
+   La convocatoria PREGUNTA quién va; esto anota QUIÉN YA PAGÓ. Son dos
+   cosas distintas y las dos hacen falta el mismo viernes: con la
+   primera se contratan los buses, con la segunda se sabe si el dinero
+   alcanza para pagarlos.
+
+   Se venía llevando en un cuaderno aparte, y ahí se pierde de las dos
+   maneras, que cuestan lo mismo: el maestro le cobra dos veces a la
+   madre que ya pagó —y queda mal delante de ella— o deja subir al bus a
+   quien no ha dado nada y pone él la diferencia de su bolsa.
+
+   ⚠️ POR QUÉ NO SE USA LA COLECTA DE 💰 ECONOMÍA. Aquella se lleva por
+   NÚMERO DE LISTA, así que solo sabe de los alumnos del grupo propio.
+   Aquí contesta la escuela entera —el enlace se manda al grupo grande— y
+   buena parte de los que van son de otros grados, que no tienen número
+   en ninguna lista suya. El puente a Economía sigue donde estaba, para
+   quien quiera llevar allí las cuentas de su propio grupo.
+
+   TRES REGLAS, Y NINGUNA ES DE ADORNO:
+
+   1. SE GUARDA EN `c.pagos`, NUNCA DENTRO DE `c.resp`. Traer las
+      respuestas reemplaza `resp` entero con lo que venga de la nube: un
+      pago guardado ahí se borraría en el primer «Traer las respuestas»
+      y el maestro se enteraría cobrándole otra vez a quien ya le pagó.
+      Es la misma razón por la que los apuntados a mano viven aparte.
+   2. LA LLAVE ES LA HUELLA DE SIEMPRE (nombre + grado + sección). Así el
+      pago sigue pegado a su familia venga del enlace o del cuaderno, y
+      no se despega si el maestro corrige después cuántas personas van.
+   3. EL PAGO NO VIAJA A LA NUBE. Lo que sale por el enlace es el evento
+      y cuántos van en total; quién pagó y cuánto es plata de las
+      familias y se queda en el equipo del maestro, igual que los
+      teléfonos y los nombres.
+
+   Se guarda el MONTO y no un sí/no porque el ABONO es lo normal en un
+   aula: la madre trae L 100 de los L 250 el lunes y el resto el jueves.
+   Lo que se le sigue debiendo se calcula, nunca se escribe. */
+function convPagos(c) {
+  return (c && c.pagos && typeof c.pagos === 'object') ? c.pagos : {};
+}
+/* Lo que le toca a esa familia. El aporte es POR PERSONA y no por
+   alumno: en una excursión va el niño y va la mamá, y las dos comen y
+   ocupan asiento. */
+function convToca(c, x) {
+  return (Number(c.aporte) || 0) * (Number(x && x.personas) || 0);
+}
+function convPago(c, x) {
+  if (!x) return null;
+  const p = convPagos(c)[convHuella(x.alumno, x.grado, x.seccion)];
+  if (!p || typeof p !== 'object') return null;
+  return { monto: Math.max(0, Number(p.monto) || 0), fecha: String(p.fecha || '') };
+}
+function convDebe(c, x) {
+  const p = convPago(c, x);
+  return Math.max(0, convToca(c, x) - (p ? p.monto : 0));
+}
+window.convPago = convPago;
+window.convDebe = convDebe;
+
+/* Por grado, y dentro de cada grado por nombre. Es como se cobra —el
+   maestro sale al recreo con lo de 6º y vuelve— y como se busca a
+   alguien en una lista. La pantalla y el papel usan ESTA misma
+   partición: si cada uno ordenara a su manera, el maestro tendría que ir
+   emparejando dos listas distintas con el dinero en la mano. */
+function convPorGrado(lista) {
+  const m = {};
+  lista.forEach(x => {
+    const k = adGradoSeccion(x.grado, x.seccion) || String(x.grado || '').trim() || 'Sin grado';
+    (m[k] = m[k] || []).push(x);
+  });
+  return Object.keys(m).sort((a, b) => a.localeCompare(b, 'es', { numeric: true }))
+    .map(k => ({
+      k,
+      filas: m[k].slice().sort((a, b) =>
+        String(a.alumno || '').localeCompare(String(b.alumno || ''), 'es')),
+    }));
+}
+function convGradoTotales(c, filas) {
+  const t = { fam: filas.length, personas: 0, toca: 0, pagado: 0, debe: 0, pagadas: 0 };
+  filas.forEach(x => {
+    const p = convPago(c, x), d = convDebe(c, x);
+    t.personas += Number(x.personas) || 0;
+    t.toca += convToca(c, x);
+    t.pagado += p ? p.monto : 0;
+    t.debe += d;
+    if (p && d <= 0) t.pagadas++;
+  });
+  return t;
+}
+
 /* ── Las cuentas que decide el maestro ──
    ⚠️ Aquí NO entra el arranque (las personas que el maestro añade para
    que la lista no arranque en cero). Estas cifras son las que le hacen
@@ -285,6 +374,13 @@ function convTotales(c) {
      enseñar esta cifra y no la de arriba. Su pantalla nunca le miente. */
   const nube = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
   const aMano = si.filter(x => x.aMano);
+  /* El dinero que YA está en la mano del maestro, y el que le falta por
+     cobrar. `falta` se suma familia por familia y NO se resta de lo
+     esperado: si una pagó de más —trajo un billete redondo y dijo «para
+     la gasolina»—, la resta escondería lo que otra sigue debiendo, que es
+     justo a quien hay que ir a buscar. */
+  const recogido = si.reduce((a, x) => { const p = convPago(c, x); return a + (p ? p.monto : 0); }, 0);
+  const falta = si.reduce((a, x) => a + convDebe(c, x), 0);
   return {
     familias: si.length, personas, no: r.filter(x => !x.va).length, total: r.length,
     cap, buses, asientos, sobran: asientos - personas,
@@ -299,6 +395,10 @@ function convTotales(c) {
     manoFamilias: aMano.length,
     manoPersonas: aMano.reduce((a, x) => a + (Number(x.personas) || 0), 0),
     repetidos: convManual(c).filter(x => x.repetido).length,
+    recogido, falta,
+    pagadas: si.filter(x => convPago(c, x) && convDebe(c, x) <= 0).length,
+    abonaron: si.filter(x => convPago(c, x) && convDebe(c, x) > 0).length,
+    deudoras: si.filter(x => convDebe(c, x) > 0).length,
   };
 }
 function convConsejo(t, c) {
@@ -627,6 +727,7 @@ function convHtmlConteo(c, t, d) {
         <div class="ad-cv-cif"><b>${t.familias}</b><span>familias</span></div>
         <div class="ad-cv-cif ad-cv-buses"><b>${t.buses}</b><span>bus${t.buses === 1 ? '' : 'es'} de ${t.cap}</span></div>
         ${Number(c.aporte) > 0 ? `<div class="ad-cv-cif ad-cv-plata"><b>${adEsc(adLps(t.dinero))}</b><span>se recogería</span></div>` : ''}
+        ${Number(c.aporte) > 0 && (t.recogido || t.pagadas) ? `<div class="ad-cv-cif ad-cv-plata ad-cv-cobrado"><b>${adEsc(adLps(t.recogido))}</b><span>ya recogido</span></div>` : ''}
         ${t.no ? `<div class="ad-cv-cif ad-cv-no"><b>${t.no}</b><span>no van</span></div>` : ''}
       </div>
       <p class="pa-optional-hint" style="margin-top:10px">${convConsejo(t, c)}</p>
@@ -677,6 +778,8 @@ function convHtmlConteo(c, t, d) {
       ${convHtmlPuentes(c, d)}
     </div>` : ''}
 
+    ${convHtmlPagos(c, t)}
+
     ${r.length ? convHtmlAvisos(c) : ''}
 
     ${convHtmlAMano(c, t, d)}
@@ -693,6 +796,337 @@ function convHtmlConteo(c, t, d) {
         <span>${adEsc(x.alumno)}${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}</span>
         <span><small>${adEsc(x.nota || '—')}</small></span></div>`).join('')}
     </div>` : ''}`;
+}
+
+/* ══════════════ 💵 PANTALLA: QUIÉN YA PAGÓ ══════════════
+   Se toca la fila y queda pagada por lo que le toca, que es el caso de
+   nueve de cada diez; se toca otra vez para escribir un abono o para
+   quitar la marca. Es la MISMA forma de anotar que ya tiene la colecta
+   de 💰 Economía, y a propósito: el maestro no tiene por qué aprenderse
+   dos maneras distintas de marcar que alguien le dio dinero.
+
+   Va repartida POR GRADO, igual que el papel. Una lista corrida de
+   cuarenta nombres de toda la escuela no se recorre en un teléfono, y
+   además no es como se cobra: se cobra por grado, en el recreo. */
+function convHtmlPagos(c, t) {
+  const ap = Number(c.aporte) || 0;
+  const si = convTodas(c).filter(x => x.va);
+  /* Sin aporte no hay nada que cobrar y la tarjeta solo estorbaría: hay
+     convocatorias que no piden un centavo (una reunión, un acto). */
+  if (!ap || !si.length) return '';
+  const grupos = convPorGrado(si);
+  const pend = t.deudoras;
+  return `
+    <div class="pa-card">
+      <div class="pa-card-title">💵 Quién ya pagó</div>
+      <p class="pa-optional-hint"><strong>Toca una familia</strong> para anotar que dio lo que le toca.
+        <strong>Tócala otra vez</strong> para escribir un <strong>abono</strong> —trajo L 100 de los
+        ${adEsc(adLps(ap))}— o para quitar la marca. Lo que quede marcado es
+        <strong>dinero en tu mano</strong>, y con eso se pagan los buses.</p>
+      <div class="ad-cv-cifras">
+        <div class="ad-cv-cif ad-cv-plata ad-cv-cobrado"><b>${adEsc(adLps(t.recogido))}</b><span>recogido</span></div>
+        <div class="ad-cv-cif ad-cv-plata ad-cv-debe"><b>${adEsc(adLps(t.falta))}</b><span>falta por cobrar</span></div>
+        <div class="ad-cv-cif ad-cv-plata"><b>${t.pagadas} de ${t.familias}</b><span>familias al día</span></div>
+      </div>
+      ${Number(c.costoBus) > 0 ? `<p class="pa-optional-hint" style="margin-top:10px">${t.recogido >= t.costo
+        ? '✅ Con lo recogido ya cubres los <strong>' + adEsc(adLps(t.costo)) + '</strong> de los buses.'
+        : '⚠️ Los buses cuestan <strong>' + adEsc(adLps(t.costo)) + '</strong> y llevas <strong>' +
+          adEsc(adLps(t.recogido)) + '</strong>: te faltan <strong>' + adEsc(adLps(t.costo - t.recogido)) +
+          '</strong> por cobrar antes de pagarlos.'}</p>` : ''}
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn" id="cv-pg-imprimir">🖨️ Imprimir el listado por grado</button>
+        ${pend ? '<button class="pa-generate-btn ad-btn-sec" id="cv-pg-avisar">📲 Cobrarles a ' +
+          (pend === 1 ? 'la familia que falta' : 'las ' + pend + ' que faltan') + '</button>' : ''}
+      </div>
+      <p class="pa-optional-hint">El listado sale <strong>una hoja por grado</strong>, con el nombre, cuántos
+        van, su folio, su teléfono, lo que le toca, lo que ya dio y una raya para que firme quien paga. Es
+        lo que te llevas al recreo a cobrar y lo que entregas en la Dirección.</p>
+
+      ${grupos.map(g => {
+        const tg = convGradoTotales(c, g.filas);
+        return `
+        <div class="ad-cv-grado">
+          <div class="ad-cv-grado-t"><span>🏫 ${adEsc(g.k)}</span>
+            <small>${tg.pagadas} de ${tg.fam} · ${adEsc(adLps(tg.pagado))}${tg.debe
+              ? ' · faltan ' + adEsc(adLps(tg.debe)) : ' · al día'}</small></div>
+          ${g.filas.map(x => {
+            const p = convPago(c, x);
+            const debe = convDebe(c, x);
+            return `
+            <button class="ad-cv-pg${!p ? '' : debe > 0 ? ' ad-cv-pg-abono' : ' ad-cv-pg-on'}"
+              data-cvpg="${adEsc(convHuella(x.alumno, x.grado, x.seccion))}">
+              <span class="ad-cv-pg-mk">${!p ? '⬜' : debe > 0 ? '🟡' : '✅'}</span>
+              <span class="ad-cv-pg-n"><strong>${adEsc(x.alumno)}</strong>${x.aMano
+                ? ' <span class="ad-cv-tag">🖊️ a mano</span>' : ''}<br>
+                <small>${x.personas} persona${x.personas === 1 ? '' : 's'} · le toca
+                  ${adEsc(adLps(convToca(c, x)))} · 🎟️ ${adEsc(convFolioDe(c, x))}</small></span>
+              <span class="ad-cv-pg-m"><b>${p ? adEsc(adLps(p.monto)) : '—'}</b>
+                <span>${!p ? 'sin pagar' : debe > 0 ? 'faltan ' + adEsc(adLps(debe))
+                  : 'pagó el ' + adEsc(adFechaBonita(p.fecha))}</span></span>
+            </button>`;
+          }).join('')}
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+/* ── Anotar (o corregir) lo que dio una familia ──
+   El primer toque anota lo que le toca, entero, con la fecha de hoy: es
+   lo que pasa nueve de cada diez veces y no puede costar más de un
+   toque con cuarenta familias en fila. El segundo abre la casilla, que
+   es donde caben las tres cosas raras y reales: el abono, el hermano
+   que paga menos y la marca puesta por error.
+
+   La fecha del primer pago NO se cambia al corregir el monto: el dinero
+   entró el día que entró, y esa fecha es la que la madre recuerda si
+   algún día hay que discutirlo. */
+async function convPagoTocar(c, x) {
+  const h = convHuella(x.alumno, x.grado, x.seccion);
+  const p = convPago(c, x);
+  const toca = convToca(c, x);
+  if (!p) {
+    convGuardar(y => {
+      y.pagos = convPagos(y);
+      y.pagos[h] = { monto: toca, fecha: adHoy() };
+    });
+    renderAdmin();
+    toast('💵 ' + (adPrimerNombre(x.alumno) || 'Anotado') + ' · ' + adLps(toca));
+    return;
+  }
+  const r = await metasPrompt('¿Cuánto ha dado en total la familia de **' + adEsc(x.alumno) +
+    '**? Le tocan **' + adLps(toca) + '** por ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') +
+    '.\n\nEscribe lo que llevas recibido (un abono de **100**, por ejemplo). El **0** o vacío quita la marca.',
+    { icono: '💵', titulo: 'Aporte de la familia', inputmode: 'decimal',
+      value: String(p.monto), okTxt: 'Guardar',
+      valida: v => {
+        const s = String(v).trim();
+        if (s === '') return '';
+        return isNaN(Number(s.replace(',', '.'))) ? 'Escribe un número (o vacío para quitar la marca).' : '';
+      } });
+  if (r === null) return;                       /* canceló: no se toca nada */
+  const s = String(r).trim();
+  const n = s === '' ? 0 : Number(s.replace(',', '.'));
+  convGuardar(y => {
+    y.pagos = convPagos(y);
+    if (!(n > 0)) delete y.pagos[h];
+    else y.pagos[h] = { monto: n, fecha: p.fecha || adHoy() };
+  });
+  renderAdmin();
+  toast(n > 0 ? '💵 ' + adLps(n) + ' anotados' : '↩️ Marca quitada');
+}
+
+/* ══════════════ 🖨️ EL LISTADO POR GRADO, EN PAPEL ══════════════
+   Lo que el maestro se lleva al recreo a cobrar y lo que entrega en la
+   Dirección cuando le piden cuentas. En la pantalla el control sirve
+   para anotar; en el papel sirve para COBRAR, que es otra cosa: se
+   cobra de pie, en el portón, sin la aplicación delante y con el lápiz
+   en la mano.
+
+   Cuatro decisiones, y ninguna es de adorno:
+
+   · LA PRIMERA HOJA ES EL RESUMEN. Cuánto se esperaba, cuánto hay y
+     cuánto falta, grado por grado, con las rayas de firma. Es la que se
+     entrega y la que se firma; sin ella habría que ir sumando seis
+     hojas a mano delante del director.
+   · CADA GRADO EMPIEZA EN SU HOJA. Se reparten: la de 6º al maestro de
+     6º. Con los grados corridos habría que fotocopiar la hoja entera
+     para poder dársela a dos personas.
+   · AL QUE NO HA PAGADO SE LE DEJA LA CASILLA EN BLANCO, con su raya.
+     Esta hoja se usa cobrando: lo que ya entró va impreso con su fecha,
+     y lo que falta es un hueco donde se escribe. Al volver al aula, eso
+     escrito a lápiz se pasa a la pantalla.
+   · EL ENCABEZADO SE REPITE EN CADA PÁGINA (va en el <thead>). Un grado
+     de cuarenta familias pasa a la segunda hoja, y una hoja suelta sin
+     el nombre del grado ni las columnas no se puede ni leer ni archivar.
+
+   El ancho está medido: en carta con los márgenes de 10 mm del @page
+   quedan 196 mm útiles, y las nueve columnas suman exactamente eso.
+   Se comprueba con _dev/verifica-listado-pagos.js, que cuenta las
+   páginas del PDF y mira que ninguna fila se salga del papel. */
+function convImprimirListado(c) {
+  const si = convTodas(c).filter(x => x.va);
+  if (!si.length) { toast('Todavía no hay nadie que vaya'); return; }
+  const ap = Number(c.aporte) || 0;
+  const grupos = convPorGrado(si);
+  const tot = convGradoTotales(c, si);
+  const tc = convTotales(c);
+  const hoy = adFechaBonita(adHoy());
+  const cuando = convFechaLarga(c.fecha) + (c.hora ? ' · sale ' + c.hora : '');
+
+  const enc = `
+    <div class="enc">
+      <div class="enc-t">${adEsc((c.icono || '📣') + ' ' + (c.titulo || 'Convocatoria'))}</div>
+      <div class="enc-s">${adEsc([c.escuela, cuando, c.lugar].filter(Boolean).join(' · '))}</div>
+      <div class="enc-s">Aporte: <b>${adEsc(adLps(ap))} por persona</b>${c.incluye
+        ? ' (' + adEsc(c.incluye) + ')' : ''} · Listado al <b>${adEsc(hoy)}</b>${c.maestro
+        ? ' · ' + adEsc(c.maestro) : ''}</div>
+    </div>`;
+
+  /* Las rayas de firma van al pie de CADA hoja, no solo al final: la del
+     grado se archiva sola y sin firma no respalda a nadie. */
+  const firmas = quien => `
+    <div class="firmas">
+      <div><span class="raya"></span>${adEsc(quien)}</div>
+      <div><span class="raya"></span>Recibido en Dirección</div>
+    </div>`;
+
+  const fila = (x, i) => {
+    const p = convPago(c, x);
+    const debe = convDebe(c, x);
+    return `
+      <tr class="${debe > 0 ? 'debe' : 'ok'}">
+        <td class="c">${i + 1}</td>
+        <td>${adEsc(x.alumno)}${x.aMano ? ' <i>(a mano)</i>' : ''}</td>
+        <td class="c">${x.personas}</td>
+        <td class="c fo">${adEsc(convFolioDe(c, x))}</td>
+        <td class="c">${adEsc(x.tel || '—')}</td>
+        <td class="n">${adEsc(adLps(convToca(c, x)))}</td>
+        <td class="n">${p ? adEsc(adLps(p.monto)) + '<i>' + adEsc(adFechaBonita(p.fecha)) + '</i>' : ''}${
+          /* La raya para escribir se le pone a TODO el que deba algo, no
+             solo al que no ha dado nada: el que abonó L 100 va a traer
+             los otros 150 y el maestro tiene que apuntarlos en el mismo
+             renglón, con la hoja apoyada en la pared del portón. */
+          debe > 0 ? '<span class="hueco"></span>' : ''}</td>
+        <td class="n">${debe > 0 ? '<b>' + adEsc(adLps(debe)) + '</b>' : '—'}</td>
+        <td></td>
+      </tr>`;
+  };
+
+  const hojaGrado = g => {
+    const tg = convGradoTotales(c, g.filas);
+    return `
+    <div class="hoja">
+      ${enc}
+      <table>
+        <colgroup><col style="width:8mm"><col style="width:45mm"><col style="width:12mm">
+          <col style="width:25mm"><col style="width:22mm"><col style="width:18mm">
+          <col style="width:19mm"><col style="width:17mm"><col style="width:29mm"></colgroup>
+        <thead>
+          <tr class="band"><th colspan="9">🏫 ${adEsc(g.k)} · ${tg.fam} familia${tg.fam === 1 ? '' : 's'}
+            · ${tg.personas} persona${tg.personas === 1 ? '' : 's'} · le toca ${adEsc(adLps(tg.toca))}
+            · recogido ${adEsc(adLps(tg.pagado))} · ${tg.debe
+              ? 'FALTA ' + adEsc(adLps(tg.debe)) : 'AL DÍA'}</th></tr>
+          <tr class="cols">
+            <th class="c">Nº</th><th>Alumno</th><th class="c">Pers.</th><th class="c">Boleto</th>
+            <th class="c">Teléfono</th><th class="n">Le toca</th><th class="n">Pagó</th>
+            <th class="n">Falta</th><th>Firma de quien paga</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${g.filas.map(fila).join('')}
+          <tr class="suma">
+            <td colspan="5">TOTAL ${adEsc(g.k)} — ${tg.pagadas} de ${tg.fam} al día</td>
+            <td class="n">${adEsc(adLps(tg.toca))}</td>
+            <td class="n">${adEsc(adLps(tg.pagado))}</td>
+            <td class="n">${adEsc(adLps(tg.debe))}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="nota">Lo que se cobre en el portón se escribe aquí a lápiz y después se pasa a
+        💵 <b>Quién ya pagó</b>, que es donde salen las cuentas.</p>
+      ${firmas(c.maestro || 'Maestro responsable')}
+    </div>`;
+  };
+
+  const resumen = `
+    <div class="hoja">
+      ${enc}
+      <table>
+        <colgroup><col style="width:45mm"><col style="width:22mm"><col style="width:22mm">
+          <col style="width:36mm"><col style="width:36mm"><col style="width:34mm"></colgroup>
+        <thead>
+          <tr class="band"><th colspan="6">💵 Resumen del aporte, grado por grado</th></tr>
+          <tr class="cols"><th>Grado</th><th class="c">Familias</th><th class="c">Personas</th>
+            <th class="n">Le toca</th><th class="n">Recogido</th><th class="n">Falta</th></tr>
+        </thead>
+        <tbody>
+          ${grupos.map(g => {
+            const tg = convGradoTotales(c, g.filas);
+            return `<tr class="${tg.debe > 0 ? 'debe' : 'ok'}">
+              <td>${adEsc(g.k)}</td><td class="c">${tg.fam}</td><td class="c">${tg.personas}</td>
+              <td class="n">${adEsc(adLps(tg.toca))}</td><td class="n">${adEsc(adLps(tg.pagado))}</td>
+              <td class="n">${tg.debe > 0 ? '<b>' + adEsc(adLps(tg.debe)) + '</b>' : '—'}</td></tr>`;
+          }).join('')}
+          <tr class="suma"><td>TOTAL</td><td class="c">${tot.fam}</td><td class="c">${tot.personas}</td>
+            <td class="n">${adEsc(adLps(tot.toca))}</td><td class="n">${adEsc(adLps(tot.pagado))}</td>
+            <td class="n">${adEsc(adLps(tot.debe))}</td></tr>
+        </tbody>
+      </table>
+      ${Number(c.costoBus) > 0 ? `<p class="nota"><b>Los buses:</b> ${tc.buses} ×
+        ${adEsc(adLps(c.costoBus))} = <b>${adEsc(adLps(tc.costo))}</b>. Recogido hasta hoy:
+        <b>${adEsc(adLps(tot.pagado))}</b>${tot.pagado < tc.costo
+          ? ' — faltan <b>' + adEsc(adLps(tc.costo - tot.pagado)) + '</b> por cobrar antes de pagarlos'
+          : ''}.</p>` : ''}
+      <p class="nota">Las hojas que siguen son una por grado, para repartirlas y cobrar con ellas.</p>
+      ${firmas(c.maestro || 'Maestro responsable')}
+    </div>`;
+
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>Aportes — ${adEsc(c.titulo || 'Convocatoria')}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size:9px;}
+/* 10 mm de margen dejan 196 mm útiles en carta, y las nueve columnas de
+   abajo suman 195: el milímetro que sobra NO es de adorno, porque con
+   border-collapse el borde de fuera cuenta medio píxel a cada lado y a
+   196 clavados la tabla se pasaba del papel. Si alguna columna crece,
+   otra tiene que encoger: una tabla más ancha que la hoja se corta por
+   la derecha, y lo que se pierde es la firma —lo único de esta hoja que
+   no se puede volver a poner después—. */
+@page{size:letter;margin:10mm;}
+.hoja{page-break-after:always;}
+.hoja:last-child{page-break-after:auto;}
+.enc{border-bottom:2px solid #ea580c;padding-bottom:2mm;margin-bottom:3mm;}
+.enc-t{font-size:13px;font-weight:900;line-height:1.2;}
+.enc-s{font-size:8.5px;color:#333;margin-top:.8mm;line-height:1.35;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+/* El encabezado va en <thead> para que el navegador lo REPITA en cada
+   página: un grado de cuarenta familias pasa a la segunda hoja, y una
+   hoja suelta sin el nombre del grado no se puede ni leer ni archivar. */
+.band th{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:10px;
+  font-weight:900;text-align:left;padding:1.6mm 2mm;line-height:1.3;}
+.cols th{background:#f1f5f9;border:1px solid #cbd5e1;font-size:7.5px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.2px;color:#334155;padding:1.2mm 1mm;text-align:left;}
+td{border:1px solid #cbd5e1;padding:1.4mm 1mm;font-size:8.5px;line-height:1.25;
+  vertical-align:middle;word-wrap:break-word;overflow-wrap:break-word;}
+.c{text-align:center;}
+.n{text-align:right;white-space:nowrap;}
+.fo{font-family:'Courier New',monospace;font-size:7.5px;}
+td i{display:block;font-style:normal;font-size:6.5px;color:#666;}
+/* Ninguna fila se parte entre dos hojas: media fila arriba y media
+   abajo deja el nombre en una página y su firma en la otra. */
+tr{page-break-inside:avoid;break-inside:avoid;}
+.debe td{background:#fffbeb;}
+.suma td{background:#f1f5f9;font-weight:900;font-size:9px;}
+/* El hueco donde se escribe a lápiz lo que se cobre en el portón. Alto
+   medido: por debajo de 3,5 mm la cifra se sale por arriba de la raya. */
+.hueco{display:block;border-bottom:1px solid #94a3b8;height:3.6mm;}
+.nota{font-size:8px;color:#444;margin-top:2.5mm;line-height:1.4;}
+.firmas{display:flex;gap:12mm;margin-top:9mm;}
+.firmas div{flex:1;text-align:center;font-size:8px;color:#444;}
+.raya{display:block;border-top:1px solid #333;margin-bottom:1.2mm;}
+/* Los anchos van en un <colgroup> y NO en la fila de los rótulos. Con
+   table-layout fijo el navegador mira la PRIMERA fila de la tabla, y esa
+   es la franja del grado, que es una sola celda con colspan: los anchos
+   escritos en la fila de abajo se ignoran y las nueve columnas salen
+   todas iguales —el nombre partido en cuatro renglones y la firma sin
+   sitio—. El colgroup manda sobre las dos. */
+.noprint{padding:6mm 6mm 0;}
+.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
+.noprint p{font-size:12px;color:#444;margin-top:3mm;max-width:170mm;line-height:1.5;}
+@media print{.noprint{display:none;}}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">🖨️ Imprimir el listado</button>
+<p>La <strong>primera hoja</strong> es el resumen con el total: esa es la que se entrega y se firma.
+Las que siguen son <strong>una por grado</strong>, para repartirlas y cobrar con ellas.</p>
+<p>Al que todavía no ha pagado se le deja la casilla en blanco a propósito: se escribe ahí lo que dé, y al
+volver al aula se pasa a <strong>💵 Quién ya pagó</strong>, que es donde salen las cuentas.</p></div>
+${resumen}
+${grupos.map(hojaGrado).join('')}
+</body></html>`;
+  const w = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');
+  if (w && typeof adPrintAbrir !== 'function') { w.document.write(html); w.document.close(); }
 }
 
 /* ══════════════ 🎟️ EL BOLETO ══════════════
@@ -749,6 +1183,7 @@ function convHtmlConteo(c, t, d) {
 function convHtmlBoletos(c, si) {
   const hojas = Math.ceil(si.length / 7);
   const desde = convBlancoDesde(c);
+  const t = convTotales(c);
   return `
     <div class="pa-card">
       <div class="pa-card-title">🎟️ Los boletos</div>
@@ -756,6 +1191,9 @@ function convHtmlBoletos(c, si) {
       <p class="pa-optional-hint">Uno por familia, con lo que ya contestaron puesto. Recorta, y entrégale
         el suyo a cada una <strong>cuando recibas el aporte</strong>: el boleto es el recibo y el pase para
         subir al bus. La colilla de la izquierda la firmas y te la quedas tú.</p>
+      ${Number(c.aporte) > 0 ? `<p class="pa-optional-hint">Llevas <strong>${t.pagadas} de ${t.familias}</strong>
+        familias al día. Quién ha pagado y quién no lo anotas en <strong>💵 Quién ya pagó</strong>, aquí
+        arriba: los boletos se imprimen todos, pero solo se entregan contra el dinero.</p>` : ''}
       <div class="ad-btn-row">
         <button class="pa-generate-btn" id="cv-boletos">🎟️ Imprimir los ${si.length} boletos</button>
       </div>
@@ -1128,10 +1566,15 @@ const CONV_AVISOS = [
     texto: 'Buenas, le aviso de un cambio en «{evento}» de {alumno}: ESCRIBA AQUÍ QUÉ CAMBIÓ. ' +
       'Todo lo demás queda igual. Disculpe la molestia, y por favor avísele a quien lo va a llevar.',
   },
+  /* Este va a los que DEBEN, no a todos: mandarle «falta el aporte» a la
+     madre que ya pagó el lunes es la forma más rápida de que deje de
+     leer los mensajes del maestro. El marcador es {falta} —lo que le
+     queda debiendo— y no {aporte}, que es lo que le tocaba en total: a
+     quien abonó L 100 de L 250 hay que pedirle 150, no 250 otra vez. */
   {
-    icono: '💵', nombre: 'Falta el aporte', quien: 'van',
-    texto: 'Buenas, le escribo por «{evento}» de {alumno}. Para apartarle el asiento falta el aporte: ' +
-      '{aporte} por {personas}. Puede traerlo a la escuela y ahí mismo le entrego su boleto. ' +
+    icono: '💵', nombre: 'Falta el aporte', quien: 'deben',
+    texto: 'Buenas, le escribo por «{evento}» de {alumno}. Para apartarle el asiento faltan {falta} ' +
+      'del aporte. Puede traerlo a la escuela y ahí mismo le entrego su boleto {folio}. ' +
       'Muchas gracias por apoyar la escuela.',
   },
   {
@@ -1163,6 +1606,8 @@ const CONV_MARCAS = [
   ['{personas}', 'cuántas van, con su palabra («3 personas»)'],
   ['{folio}', 'el folio de su boleto'],
   ['{aporte}', 'lo que le toca pagar a esa familia'],
+  ['{pagado}', 'lo que ya te ha dado'],
+  ['{falta}', 'lo que le queda debiendo'],
   ['{evento}', 'el título de la convocatoria'],
   ['{fecha}', 'el día del evento'],
   ['{hora}', 'la hora de salida'],
@@ -1188,13 +1633,18 @@ let _convAvSalto = {};
    las dos se presentaban en el portón con el mismo folio. */
 let _convAvMuestra = null;
 
+/* Cuál de las plantillas es la del cobro. Se guarda en una constante en
+   vez de escribir el 3 a mano: el día que se meta un aviso nuevo en
+   medio, el botón «Cobrarles a los que faltan» abriría el que no era. */
+const CONV_AVISO_COBRO = 3;
+
 function convAvisoDef(c) {
   const a = (c && c.aviso && typeof c.aviso === 'object') ? c.aviso : {};
   const p = Number(a.plant);
   return {
     plant: (p >= 0 && p < CONV_AVISOS.length) ? p : 0,
     texto: typeof a.texto === 'string' ? a.texto : CONV_AVISOS[0].texto,
-    quien: (a.quien === 'noVan' || a.quien === 'todos') ? a.quien : 'van',
+    quien: (a.quien === 'noVan' || a.quien === 'todos' || a.quien === 'deben') ? a.quien : 'van',
     enviados: Array.isArray(a.enviados) ? a.enviados : [],
     retoques: (a.retoques && typeof a.retoques === 'object') ? a.retoques : {},
   };
@@ -1222,7 +1672,9 @@ window.convTelWa = convTelWa;
    estar avisando y repartiendo a la vez, y así las dos cosas van al
    mismo paso. */
 function convAvisoQuienes(c, quien) {
-  const r = convTodas(c).filter(x => quien === 'noVan' ? !x.va : (quien === 'todos' || x.va));
+  const r = convTodas(c).filter(x => quien === 'noVan' ? !x.va
+    : quien === 'deben' ? (x.va && convDebe(c, x) > 0)
+    : (quien === 'todos' || x.va));
   return r.sort((a, b) =>
     String(a.grado || '').localeCompare(String(b.grado || ''), 'es', { numeric: true }) ||
     String(a.alumno || '').localeCompare(String(b.alumno || ''), 'es'));
@@ -1259,6 +1711,8 @@ function convAvisoRellenar(texto, c, x) {
     '{personas}': per + ' persona' + (per === 1 ? '' : 's'),
     '{folio}': x ? convFolioDe(c, x) : '',
     '{aporte}': adLps(ap * per),
+    '{pagado}': adLps(x ? ((convPago(c, x) || {}).monto || 0) : 0),
+    '{falta}': adLps(x ? convDebe(c, x) : 0),
     '{evento}': c.titulo || '',
     '{fecha}': convFechaLarga(c.fecha),
     '{hora}': c.hora || '',
@@ -1353,11 +1807,16 @@ function convHtmlAvisos(c) {
         <div class="ad-meses" style="margin:4px 0 0">
           <button type="button" class="ad-mes-btn${av.quien === 'van' ? ' ad-mes-on' : ''}"
             data-cvavq="van">✅ Los que van (${n('van')})</button>
+          ${Number(c.aporte) > 0 ? `<button type="button" class="ad-mes-btn${av.quien === 'deben' ? ' ad-mes-on' : ''}"
+            data-cvavq="deben">💵 Los que deben (${n('deben')})</button>` : ''}
           <button type="button" class="ad-mes-btn${av.quien === 'noVan' ? ' ad-mes-on' : ''}"
             data-cvavq="noVan">🚫 Los que no van (${n('noVan')})</button>
           <button type="button" class="ad-mes-btn${av.quien === 'todos' ? ' ad-mes-on' : ''}"
             data-cvavq="todos">👥 Todos (${n('todos')})</button>
-        </div></div>
+        </div>
+        ${av.quien === 'deben' ? `<p class="pa-optional-hint">Solo a las familias que todavía deben
+          algo${Number(c.aporte) > 0 ? ' del aporte' : ''}. A la que ya pagó <strong>no le llega</strong>:
+          pedirle dos veces el mismo dinero es la forma más rápida de que deje de leer tus mensajes.</p>` : ''}</div>
 
       <div class="pa-field"><label>El mensaje</label>
         <textarea id="cv-av-txt" class="pa-paste-area" rows="6" maxlength="900">${adEsc(av.texto)}</textarea>
@@ -1429,8 +1888,16 @@ function convHtmlAvisoCola(c) {
         <button class="pa-generate-btn ad-btn-sec" id="cv-av-reset">🔁 Empezar el aviso de nuevo</button>
       </div>` : ''}
     </div>`
-    : `<p class="pa-optional-hint">Ninguno de los que elegiste dejó teléfono, así que no hay a quién
-        mandarle. A esas familias hay que decírselo en el portón.</p>`}
+    : convAvisoQuienes(c, convAvisoDef(c).quien).length
+      ? `<p class="pa-optional-hint">Ninguno de los que elegiste dejó teléfono, así que no hay a quién
+        mandarle. A esas familias hay que decírselo en el portón.</p>`
+      /* Que no haya NADIE en el grupo elegido no es lo mismo que que
+         nadie tenga teléfono, y con el cobro pasa a diario: es la buena
+         noticia de que ya pagaron todos. Decirle «ninguno dejó teléfono»
+         le haría buscar un problema que no existe. */
+      : `<p class="pa-optional-hint">${convAvisoDef(c).quien === 'deben'
+        ? '✅ <strong>No hay a quién cobrarle:</strong> todas las familias están al día.'
+        : 'No hay nadie en ese grupo todavía.'}</p>`}
 
     ${sinTel.length ? `
     <div class="ad-cv-repes">
@@ -1700,6 +2167,46 @@ function convEnganchar(body, c, d, t, pub) {
        papel tiene que salir con la hora nueva. */
     convImprimirBlancos(convGuardar(x => { x.blancos = desde + n - 1; }) || c, n, desde);
     renderAdmin();
+  });
+
+  /* ── 💵 Quién ya pagó ──
+     Se busca a la familia por su HUELLA y no por su sitio en la lista:
+     la lista se reordena sola cuando entra una respuesta nueva, y un
+     índice guardado en el botón acabaría anotándole el pago al de al
+     lado. Se lee del almacén, no de la `c` que se pintó, porque entre
+     el pintado y el toque pudo entrar una respuesta de la nube. */
+  body.querySelectorAll('[data-cvpg]').forEach(b =>
+    b.addEventListener('click', () => {
+      const cc = convUna(adLoad(), _adConvId) || c;
+      const h = String(b.dataset.cvpg || '');
+      const x = convTodas(cc).find(y => convHuella(y.alumno, y.grado, y.seccion) === h);
+      if (x) convPagoTocar(cc, x);
+    }));
+
+  const bPgI = document.getElementById('cv-pg-imprimir');
+  if (bPgI) bPgI.addEventListener('click', () => {
+    /* Se imprime lo GUARDADO, igual que los boletos: si el maestro acaba
+       de corregir el aporte en los campos de abajo, el papel tiene que
+       salir con la cifra nueva y no con la que había al pintar. */
+    convImprimirListado(convGuardar() || c);
+  });
+
+  /* Cobrarles a los que faltan: es el aviso de siempre, pero apuntado a
+     los que deben. Empieza tanda nueva a propósito —la lista de a
+     quiénes va es otra— y lleva al maestro hasta la cola, que si no se
+     queda mirando la pantalla sin saber que ya cambió más abajo. */
+  const bPgA = document.getElementById('cv-pg-avisar');
+  if (bPgA) bPgA.addEventListener('click', () => {
+    convGuardar(y => {
+      y.aviso = { plant: CONV_AVISO_COBRO, texto: CONV_AVISOS[CONV_AVISO_COBRO].texto,
+                  quien: 'deben', enviados: [], retoques: {} };
+    });
+    _convAvSalto = {};
+    renderAdmin();
+    setTimeout(() => {
+      const el = document.getElementById('cv-av-cola');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 90);
   });
 
   /* ── Apuntar a mano ── */
@@ -2071,7 +2578,10 @@ function convTextoLista(c, t) {
   L.push((c.icono || '📣') + ' ' + (c.titulo || 'Convocatoria') + (c.fecha ? ' — ' + convFechaLarga(c.fecha) : ''));
   L.push('Personas: ' + t.personas + ' · Familias: ' + t.familias +
          ' · Buses de ' + t.cap + ': ' + t.buses + ' (sobran ' + t.sobran + ' asientos)');
-  if (Number(c.aporte) > 0) L.push('Se recogería: ' + adLps(t.dinero));
+  if (Number(c.aporte) > 0) {
+    L.push('Se recogería: ' + adLps(t.dinero) +
+           ' · Ya recogido: ' + adLps(t.recogido) + ' · Falta: ' + adLps(t.falta));
+  }
   /* De dónde salió cada uno: esta lista se pega en el grupo de maestros o
      se le manda al director, y ahí hay que poder explicar por qué el
      número no cuadra con lo que enseña el enlace. */
@@ -2081,10 +2591,21 @@ function convTextoLista(c, t) {
   }
   L.push('');
   L.push('VAN (' + si.length + '):');
-  si.forEach((x, i) => L.push((i + 1) + '. ' + x.alumno +
-    (x.grado ? ' — ' + adGradoSeccion(x.grado, x.seccion) : '') +
-    ' — ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') + (x.tel ? ' — ' + x.tel : '') +
-    ' — boleto ' + convFolioDe(c, x) + (x.aMano ? ' — a mano' : '')));
+  si.forEach((x, i) => {
+    /* Si hay aporte, el estado del pago va en el MISMO renglón: esta
+       lista se le pega al director o al maestro de otro grado, y una
+       lista de quién va sin decir quién pagó obliga a mandar dos. */
+    const p = Number(c.aporte) > 0 ? convPago(c, x) : null;
+    const debe = Number(c.aporte) > 0 ? convDebe(c, x) : 0;
+    const plata = Number(c.aporte) <= 0 ? ''
+      : !p ? ' — SIN PAGAR (' + adLps(convToca(c, x)) + ')'
+      : debe > 0 ? ' — abonó ' + adLps(p.monto) + ', debe ' + adLps(debe)
+      : ' — pagó ' + adLps(p.monto);
+    L.push((i + 1) + '. ' + x.alumno +
+      (x.grado ? ' — ' + adGradoSeccion(x.grado, x.seccion) : '') +
+      ' — ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') + (x.tel ? ' — ' + x.tel : '') +
+      ' — boleto ' + convFolioDe(c, x) + (x.aMano ? ' — a mano' : '') + plata);
+  });
   if (no.length) {
     L.push('');
     L.push('NO VAN (' + no.length + '):');
@@ -2152,3 +2673,7 @@ async function convAControl(c) {
 window.adRenderConvocatoria = adRenderConvocatoria;
 window.convImprimirBoletos = convImprimirBoletos;
 window.convImprimirBlancos = convImprimirBlancos;
+window.convImprimirListado = convImprimirListado;
+window.convTotales = convTotales;
+window.convPorGrado = convPorGrado;
+window.convGradoTotales = convGradoTotales;

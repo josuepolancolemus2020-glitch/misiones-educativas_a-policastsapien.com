@@ -765,6 +765,83 @@ aula, esas colillas se pasan a Apuntar a mano.
    las **dos mitades**: es lo que empareja la colilla del maestro con el
    papel de la familia.
 
+### Quién ya pagó: se anota aquí, no en un cuaderno aparte
+
+La convocatoria PREGUNTA quién va; el **control de aportes** anota **quién
+ya pagó**. Son dos cosas y las dos hacen falta el mismo viernes: con la
+primera se contratan los buses, con la segunda se sabe si el dinero
+alcanza para pagarlos. En un cuaderno aparte esto se pierde de las dos
+maneras, y las dos cuestan lo mismo: se le cobra dos veces a la madre que
+ya pagó —y el maestro queda mal delante de ella— o sube al bus quien no ha
+dado nada y la diferencia la pone él.
+
+⚠️ **No sirve la colecta de 💰 Economía**, y por eso hay dos. Aquella se
+lleva por **número de lista**, así que solo sabe de los alumnos del grupo
+propio; aquí contesta la escuela entera —el enlace se manda al grupo
+grande— y buena parte de los que van son de otros grados, sin número en
+ninguna lista suya. El puente a Economía sigue donde estaba para quien
+quiera llevar allí las cuentas de su propio grupo.
+
+**Cuatro reglas:**
+
+1. **Se guarda en `c.pagos`, NUNCA dentro de `c.resp`.** «Traer las
+   respuestas» reemplaza `resp` entero con lo que venga de la nube: un
+   pago guardado ahí se borraría solo, y el maestro se enteraría
+   cobrándole otra vez a quien ya le pagó. Es la misma razón por la que
+   los apuntados a mano viven en `c.manual`.
+2. **La llave es la huella de siempre** (nombre + grado + sección). El
+   pago sigue pegado a su familia venga del enlace o del cuaderno, y no
+   se despega si después se corrige cuántas personas van.
+3. **Se guarda el MONTO, no un sí/no.** El abono es lo normal: la madre
+   trae L 100 de los L 250 el lunes y el resto el jueves. Lo que se le
+   sigue debiendo **se calcula**, nunca se escribe. Un toque en la fila la
+   deja pagada por lo que le toca —el caso de nueve de cada diez— y el
+   segundo abre la casilla para el abono o para quitar la marca; es la
+   misma forma de anotar que ya tiene la colecta de Economía, a propósito.
+4. **El pago no viaja a la nube.** Por el enlace sale el evento y cuántos
+   van en total; quién pagó y cuánto es plata de las familias y se queda
+   en el equipo, igual que los teléfonos.
+
+**El aviso de cobro va solo a los que deben.** La plantilla «💵 Falta el
+aporte» lleva `quien: 'deben'` y el marcador `{falta}` —lo que queda
+debiendo—, no `{aporte}`: a quien abonó L 100 de L 250 hay que pedirle
+150, no 250 otra vez. Y a la que pagó el lunes no se le pide nada:
+pedirle dos veces el mismo dinero es la forma más rápida de que deje de
+leer los mensajes del maestro.
+
+⚠️ **`CONV_AVISO_COBRO` guarda cuál plantilla es la del cobro.** Si se
+mete un aviso nuevo en medio de `CONV_AVISOS`, el botón «Cobrarles a los
+que faltan» abriría el que no era.
+
+### El listado por grado: la pantalla anota, el papel cobra
+
+En la pantalla el control sirve para **anotar**; la hoja sirve para
+**cobrar**, que es otra cosa: se cobra de pie, en el recreo o en el
+portón, sin la aplicación delante y con el lápiz en la mano.
+
+- **La primera hoja es el resumen** —cuánto se esperaba, cuánto hay y
+  cuánto falta, grado por grado, con las rayas de firma—. Es la que se
+  entrega y la que se firma; sin ella hay que sumar seis hojas a mano
+  delante del director.
+- **Cada grupo empieza en su hoja**, porque se reparten: la de 6º-1 al
+  maestro de 6º-1. Y **el grupo es grado + sección**: «6º-1» y «6º-2» son
+  dos hojas, dos maestros y dos listas.
+- **El encabezado va en el `<thead>`** para que el navegador lo repita en
+  cada página. Un grupo de 43 familias pasa a la segunda hoja, y una hoja
+  suelta sin el nombre del grado ni las columnas no se puede ni leer ni
+  archivar.
+- **Al que debe algo se le deja su raya para escribir**, también al que
+  abonó a medias: va a traer el resto y hay que apuntarlo en su renglón.
+- **Los anchos van en un `<colgroup>`**, no en la fila de los rótulos. Con
+  `table-layout` fijo el navegador mira la PRIMERA fila, y esa es la
+  franja del grado —una sola celda con `colspan`—: los anchos escritos
+  abajo se ignoran y las nueve columnas salen todas iguales.
+- **Las nueve columnas suman 195 mm y no 196.** El milímetro que sobra no
+  es de adorno: con `border-collapse` el borde de fuera cuenta medio píxel
+  a cada lado y a 196 clavados la tabla se pasaba del papel. Lo que se
+  corta por la derecha es **la firma**, que es lo único de esa hoja que no
+  se puede volver a poner.
+
 ### El aviso en lote: se escribe una vez y se manda cuarenta
 
 La convocatoria PREGUNTA y ahí se acaba, pero entre el «sí voy» y el bus
@@ -845,13 +922,23 @@ manda la respuesta cuando se le cae el internet.
 **Antes de publicar un cambio de la convocatoria:**
 
 ```
-node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-convocatoria.js   → el padre, el maestro, el arranque, el reloj, el folio y el aviso en lote
+node _dev/servidor-estatico.js       (en otra terminal)
+node _dev/verifica-convocatoria.js   → el padre, el maestro, el arranque, el reloj, el folio, el aviso en lote y los pagos
 node _dev/verifica-boletos.js        → los boletos impresos, contando las páginas del PDF
+node _dev/verifica-listado-pagos.js  → el listado de aportes por grado, contando las páginas del PDF
 ```
 
+⚠️ **Lo que se le manda a la nube se comprueba ANTES de recargar la
+página.** Con el service worker ya instalado, las llamadas de la página
+recargada no pasan por el `page.route` de la sonda y no hay nada que
+mirar: una comprobación puesta después del `reload` pasa siempre, diga lo
+que diga el código.
+
 El primero vigila las dos cifras que cuestan dinero —el día del evento y
-cuántos buses—, las dos formas de perder una respuesta —contarla doble y
+cuántos buses—, las cuatro del control de aportes —que un pago **no se
+pierda** al traer las respuestas, que un abono **corrija en vez de
+sumar**, que el cobro le llegue **solo al que debe** y por **lo que le
+falta**, y que la plata de las familias **no salga por el enlace**—, las dos formas de perder una respuesta —contarla doble y
 no contarla—, que el arranque no se cuele en las cuentas del maestro, que
 el folio del padre sea el del maestro, que **el contador de los blancos
 quede guardado** para que la segunda tanda no repita la primera, y las
@@ -870,9 +957,14 @@ borre por detrás**. El
 segundo cuenta las páginas del PDF: 42 familias tienen que dar **6
 hojas**, ni una más; el boleto tiene que seguir siendo una TIRA ancha y no
 un cuadro con un hueco en medio; y el que sale en blanco tiene que llevar
-sus rayas para escribir y el folio impreso **en las dos mitades**. La nube
-no se toca: se pone un Supabase de mentira con `page.route`, así corre sin
-internet y sin ensuciar datos reales.
+sus rayas para escribir y el folio impreso **en las dos mitades**. El
+tercero mide el listado de aportes: que **nada se salga del ancho del
+papel** —lo que se corta por la derecha es la firma—, que cada grupo tenga
+**su hoja**, que estén el nombre, el folio y el teléfono de cada familia,
+que **la suma de los grados dé el total** del resumen y que todo el que
+deba algo lleve **su raya para escribir**. La nube no se toca: se pone un
+Supabase de mentira con `page.route`, así corre sin internet y sin
+ensuciar datos reales.
 
 ## Normativa: el Buzón del lector recoge, no publica
 

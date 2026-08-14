@@ -1057,6 +1057,205 @@ async function pruebaAvisos(browser) {
   await page.close();
 }
 
+/* ══════════════ 13) 💵 QUIÉN YA PAGÓ ══════════════
+
+   El control de los aportes es la otra mitad de la convocatoria: con el
+   conteo se contratan los buses, con esto se sabe si el dinero alcanza
+   para pagarlos. Y aquí hay dinero de familias de por medio, así que lo
+   que se vigila es lo que cuesta caro de verdad:
+
+   · QUE EL PAGO NO SE PIERDA AL TRAER LAS RESPUESTAS. Traer reemplaza
+     `resp` entero con lo que venga de la nube. Un pago guardado ahí se
+     borraría solo, y el maestro se enteraría cobrándole otra vez a la
+     madre que ya le pagó — delante de ella y sin poder demostrar nada.
+   · QUE UN ABONO CORRIJA Y NO SUME. La madre trae L 100 de los L 250 el
+     lunes y el resto el jueves; si el segundo apunte se sumara al
+     primero, la hoja diría que pagó de más y el niño subiría al bus con
+     el dinero a medias.
+   · QUE LO QUE FALTA SEA LO QUE FALTA. La cifra de arriba es la que le
+     hace decidir si contrata el bus o lo devuelve.
+   · QUE EL COBRO SOLO LE LLEGUE AL QUE DEBE. Mandarle «falta el aporte»
+     a la que pagó el lunes es la forma más rápida de que deje de leer
+     los mensajes del maestro. Y a la que abonó hay que pedirle lo que
+     falta, no el total otra vez.
+   · QUE NO VIAJE A LA NUBE. Quién pagó y cuánto es plata de las
+     familias; por el enlace solo sale el evento y cuántos van.          */
+async function pruebaPagos(browser) {
+  console.log('\n── 💵 QUIÉN YA PAGÓ ──');
+  const RESP = [
+    { va: true, alumno: 'Ada Sarai Sevilla', grado: '6', seccion: '1', personas: 3, tel: '99991111', nota: '' },
+    { va: true, alumno: 'Ashly Belén Miranda', grado: '6', seccion: '1', personas: 2, tel: '99992222', nota: '' },
+    { va: true, alumno: 'Carlos Josué Meza', grado: '5', seccion: '2', personas: 2, tel: '99993333', nota: '' },
+    { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '99995555', nota: 'Por el aporte' },
+  ];
+  const subidas = [];                     /* lo que se le manda a la nube */
+  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  await page.clock.install({ time: HOY });
+  await page.route('**/rest/v1/rpc/**', async route => {
+    const fn = route.request().url().split('/rpc/')[1].split('?')[0];
+    subidas.push({ fn, cuerpo: route.request().postData() || '' });
+    await route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'metas_conv_respuestas' ? RESP : true) });
+  });
+  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  await page.evaluate(() => {
+    window.__wa = [];
+    window.open = u => { window.__wa.push(String(u)); return null; };
+    localStorage.setItem('METAS_ADMIN_V1', JSON.stringify({ v: 2, activo: 'G1', grupos: [{
+      id: 'G1', escuela: 'Escuela John Arnold Cook', grado: '6', seccion: '1', materias: ['Español'],
+      lista: [], colectas: [], asistencia: [], notas: {}, controles: [], bitacora: [], lectura: [],
+      convocatorias: [{ id: 'V1', icono: '🚌', titulo: 'Excursión al Museo Ferroviario de El Progreso',
+        gancho: 'x', gana: ['a', 'b', 'c'], lugar: 'Museo Ferroviario de El Progreso',
+        fecha: '2026-08-15', hora: '6:30 a. m.', regreso: '3:00 p. m.', punto: 'Portón de la escuela',
+        aporte: 250, incluye: 'transporte, entrada', cobro: '', nota: '', limite: '2026-08-11',
+        dirigido: 'Para las familias de toda la escuela', maestro: 'Prof. Josué Polanco',
+        wa: '50499998888', escuela: 'Escuela John Arnold Cook', capacidad: 55, costoBus: 3500,
+        cupos: 110, arranque: 30, limiteHora: '16:00', manual: [],
+        codigo: 'R4TP', pin: 'K7M2QP', cerrada: 0, resp: [], respFecha: '', creada: '2026-08-08' }],
+    }] }));
+  });
+  const entrar = async () => {
+    await page.evaluate(() => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-admin').classList.add('active');
+      renderAdmin();
+      document.querySelector('[data-adtab="com"]').click();
+    });
+    await page.click('#ad-ir-conv');
+    await page.waitForSelector('[data-cvid]');
+    await page.click('[data-cvid]');
+    await page.waitForSelector('.ad-cv-pg');
+    await page.waitForTimeout(900);
+  };
+  await entrar();
+
+  /* La fila de cada familia, buscada por su nombre: la lista se reordena
+     sola cuando entra una respuesta, y un índice fijo acabaría anotándole
+     el pago al de al lado. */
+  const fila = nom => page.locator('.ad-cv-pg', { hasText: nom }).first();
+  /* El texto se aplana: los saltos de línea de la plantilla no son lo
+     que se está comprobando. */
+  const filaTxt = async nom => (await fila(nom).textContent()).replace(/\s+/g, ' ');
+  const cifra = async rot => {
+    const n = page.locator('.ad-cv-cif', { hasText: rot }).first();
+    return (await n.locator('b').textContent()).trim();
+  };
+  const pagos = () => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].pagos || {});
+
+  comprueba(await page.locator('[data-cvpg]').count() === 3,
+    'salen los 3 que van, y solo ellos: a quien dijo que no, no se le cobra nada');
+  const gr = await page.$$eval('.ad-cv-grado-t span', ns => ns.map(n => n.textContent.trim()));
+  comprueba(gr.length === 2 && /5º-2/.test(gr[0]) && /6º-1/.test(gr[1]),
+    'repartidos por grado y en orden (5º antes que 6º), que es como se cobra');
+  comprueba(/le toca L 750/.test(await filaTxt('Ada Sarai Sevilla')),
+    'a la de 3 personas le tocan L 750, no L 250: el aporte es por persona');
+
+  /* ── Un toque = pagó lo que le toca ── */
+  await fila('Ada Sarai Sevilla').click();
+  await page.waitForTimeout(700);
+  comprueba(await cifra('recogido') === 'L 750', 'un toque la deja pagada por sus L 750');
+  comprueba(await cifra('falta por cobrar') === 'L 1,000',
+    'y lo que falta baja a L 1,000 (los otros dos: 500 + 500)');
+  const p1 = await pagos();
+  const claves = Object.keys(p1);
+  comprueba(claves.length === 1 && claves[0] === 'ada sarai sevilla|6|1',
+    'se guarda con la HUELLA de siempre, no con su sitio en la lista (quedó «' + claves[0] + '»)');
+  comprueba(p1[claves[0]].monto === 750 && p1[claves[0]].fecha === '2026-08-08',
+    'con el monto y el día en que entró el dinero');
+
+  /* ── ⚠️ TRAER LAS RESPUESTAS NO PUEDE BORRAR UN PAGO ──
+     Es la comprobación que de verdad importa: si el pago viviera dentro
+     de `resp`, aquí se perdería y el maestro le cobraría dos veces a la
+     misma madre. */
+  await page.click('#cv-refrescar');
+  await page.waitForTimeout(1300);
+  comprueba(await cifra('recogido') === 'L 750',
+    'traer las respuestas NO borra lo ya pagado (sigue en ' + await cifra('recogido') + ')');
+
+  /* ── El abono CORRIGE, no suma ── */
+  await fila('Ashly Belén Miranda').click();
+  await page.waitForTimeout(600);
+  await fila('Ashly Belén Miranda').click();
+  await page.waitForSelector('#mdlg-inp');
+  comprueba(/Le tocan .*L 500/.test(await page.textContent('.mdlg-body')),
+    'al tocarla otra vez recuerda cuánto le tocaba en total');
+  await page.fill('#mdlg-inp', '100');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(800);
+  comprueba(await cifra('recogido') === 'L 850',
+    'el abono CORRIGE y no suma: 750 + 100 = 850, no 750 + 500 + 100 (dijo ' +
+    await cifra('recogido') + ')');
+  comprueba(/faltan L 400/.test(await filaTxt('Ashly Belén Miranda')),
+    'y su renglón dice que le faltan L 400 de los 500');
+  comprueba(await cifra('falta por cobrar') === 'L 900',
+    'lo que falta por cobrar en total: L 900 (400 de ella + 500 del otro)');
+
+  /* ── LA PLATA DE LAS FAMILIAS NO SALE POR EL ENLACE ──
+     Se comprueba ANTES de recargar a propósito: con el service worker
+     ya instalado, las llamadas de la página recargada no pasan por la
+     nube de mentira y no habría nada que mirar. */
+  await page.click('#cv-guardar');
+  await page.waitForTimeout(1200);
+  const pub = subidas.filter(s => s.fn === 'metas_conv_publicar').map(s => s.cuerpo).join(' ');
+  comprueba(pub.length > 0 && !/pagos/.test(pub) && !/"monto"/.test(pub),
+    'lo que sube a la nube no lleva quién pagó ni cuánto');
+  await page.waitForSelector('.ad-cv-pg');
+
+  /* ── El cobro solo le llega al que debe ── */
+  await page.click('#cv-pg-avisar');
+  await page.waitForSelector('.ad-cv-ahora');
+  await page.waitForTimeout(400);
+  const cola = (await page.textContent('#cv-av-cola')).replace(/\s+/g, ' ');
+  comprueba(/Llevas 0 de 2/.test(cola),
+    'se le cobra a 2, no a las 3: la que ya pagó queda fuera (dijo «' +
+    (cola.match(/Llevas \d+ de \d+/) || [''])[0] + '»)');
+  comprueba(!/Ada Sarai Sevilla/.test(cola),
+    'y a la que pagó entera NO se le pide el aporte otra vez');
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(500);
+  const wa = decodeURIComponent(await page.evaluate(() => window.__wa[window.__wa.length - 1] || ''));
+  comprueba(/Carlos Josué Meza/.test(wa) && /faltan L 500/.test(wa),
+    'al que no ha dado nada se le piden sus L 500 completos');
+  await page.click('#cv-av-ir');
+  await page.waitForTimeout(500);
+  const wa2 = decodeURIComponent(await page.evaluate(() => window.__wa[window.__wa.length - 1] || ''));
+  comprueba(/Ashly Belén Miranda/.test(wa2) && /faltan L 400/.test(wa2) && !/L 500/.test(wa2),
+    'y a la que abonó se le piden los L 400 que faltan, no los 500 otra vez');
+
+  /* ── Aguanta cerrar la aplicación ── */
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  await page.evaluate(() => { window.__wa = []; window.open = u => { window.__wa.push(String(u)); return null; }; });
+  await entrar();
+  comprueba(await cifra('recogido') === 'L 850',
+    'después de cerrar y volver a abrir, lo cobrado sigue anotado');
+
+  /* ── Quitar la marca: el 0 la borra ── */
+  await fila('Ada Sarai Sevilla').click();
+  await page.waitForSelector('#mdlg-inp');
+  await page.fill('#mdlg-inp', '0');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(800);
+  comprueba(await cifra('recogido') === 'L 100' && Object.keys(await pagos()).length === 1,
+    'poner 0 quita la marca y su fila vuelve a estar sin pagar');
+
+  /* ── Lo que se copia para el director lleva las tres cifras ── */
+  const txt = await page.evaluate(() => {
+    let copiado = '';
+    navigator.clipboard.writeText = t => { copiado = t; return Promise.resolve(); };
+    document.getElementById('cv-copiar-lista').click();
+    return copiado;
+  });
+  comprueba(/Ya recogido: L 100/.test(txt) && /Falta: L 1,650/.test(txt),
+    'la lista que se copia dice lo recogido y lo que falta, no solo quién va');
+  comprueba(/SIN PAGAR/.test(txt) && /abonó L 100/.test(txt),
+    'y familia por familia: quién no ha dado nada y quién abonó a medias');
+
+  await page.close();
+}
+
 (async () => {
   const browser = await chromium.launch(
     process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
@@ -1073,6 +1272,7 @@ async function pruebaAvisos(browser) {
     await pruebaBoleto(browser, folio);
     await pruebaBoletoSinInternet(browser);
     await pruebaAvisos(browser);
+    await pruebaPagos(browser);
   } finally {
     await browser.close();
   }
