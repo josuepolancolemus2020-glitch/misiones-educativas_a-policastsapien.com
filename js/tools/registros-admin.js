@@ -440,6 +440,126 @@ function adGrupoChipTxt(g) {
   return adGradoSeccion(g.grado, g.seccion) || 'Nuevo grupo';
 }
 
+/* ══════════════ ORDENAR LOS GRUPOS ARRASTRÁNDOLOS ══════════════
+   El maestro que da clases en dos colegios acaba con diez o doce grupos
+   en la barra, y los abre en un orden que solo él sabe: el de la primera
+   hora, el de la tarde, el que lleva las notas de otro compañero. El
+   orden en que se crearon no es el orden en que se usan, y a partir del
+   quinto grupo hay que ir leyendo chip por chip para encontrar el suyo.
+
+   Se mueven con el dedo, y eso obliga a tres decisiones:
+
+   1. NO SE USA EL ARRASTRE DEL NAVEGADOR (draggable). En un teléfono no
+      existe: es de ratón. Aquí se hace con eventos de puntero, que son
+      los mismos para el dedo y para el ratón.
+   2. SE AGARRA MANTENIENDO TOCADO (medio segundo), no al primer roce.
+      Un toque corto SIGUE SIENDO cambiar de grupo —que es lo que se hace
+      cuarenta veces al día— y un dedo que baja para hacer scroll no
+      puede llevarse un grupo por delante. Con el ratón basta con
+      arrastrar, que ahí no hay scroll que estorbe.
+   3. EL HUECO ENSEÑA DÓNDE VA A CAER. Se suelta viendo el sitio, no
+      adivinándolo.
+
+   Al soltar, el orden se lee del DOM —que es exactamente lo que el
+   maestro acaba de ver— y se guarda en sus grupos. */
+function adGruposArrastrar(bar) {
+  if (!bar || bar.querySelectorAll('.ad-gr-chip[data-gid]').length < 2) return;
+  const LARGO = 380;      /* lo que hay que mantener tocado, en ms */
+  let mov = null;         /* el arrastre en curso */
+  let espera = null, chip0 = null, ini = null;
+
+  const olvidar = () => { clearTimeout(espera); espera = null; chip0 = null; ini = null; };
+  /* Mientras se mueve un grupo, el dedo NO desliza la página: si no, la
+     barra se va hacia arriba y el chip se suelta donde nadie quería. */
+  const frenaScroll = e => { if (mov) e.preventDefault(); };
+
+  const levantar = (chip, x, y) => {
+    olvidar();
+    const r = chip.getBoundingClientRect();
+    const f = chip.cloneNode(true);
+    f.classList.add('ad-gr-fantasma');
+    f.style.width = r.width + 'px'; f.style.height = r.height + 'px';
+    document.body.appendChild(f);
+    chip.classList.add('ad-gr-hueco');
+    document.body.classList.add('ad-gr-moviendo');
+    mov = { chip, f, dx: x - r.left, dy: y - r.top, movido: false };
+    document.addEventListener('touchmove', frenaScroll, { passive: false });
+    /* Un tironcito avisa de que ya lo tiene agarrado: sin eso el maestro
+       no sabe si se enganchó y suelta antes de tiempo. */
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (_) {} }
+    arrastrar(x, y);
+  };
+
+  const arrastrar = (x, y) => {
+    if (!mov) return;
+    mov.f.style.left = (x - mov.dx) + 'px';
+    mov.f.style.top = (y - mov.dy) + 'px';
+    /* El fantasma no estorba la búsqueda: lleva pointer-events:none */
+    const bajo = document.elementFromPoint(x, y);
+    const dest = bajo && bajo.closest ? bajo.closest('.ad-gr-chip[data-gid]') : null;
+    if (!dest || dest === mov.chip || dest.parentNode !== bar) return;
+    const r = dest.getBoundingClientRect();
+    bar.insertBefore(mov.chip, x > r.left + r.width / 2 ? dest.nextSibling : dest);
+    mov.movido = true;
+  };
+
+  const soltar = () => {
+    olvidar();
+    if (!mov) return;
+    const { chip, f, movido } = mov;
+    mov = null;
+    document.removeEventListener('touchmove', frenaScroll, { passive: false });
+    f.remove();
+    chip.classList.remove('ad-gr-hueco');
+    document.body.classList.remove('ad-gr-moviendo');
+    /* El toque que suelta no puede además cambiar de grupo: el maestro
+       estaba ordenando, no entrando. */
+    const tragar = ev => { ev.stopPropagation(); ev.preventDefault(); };
+    bar.addEventListener('click', tragar, true);
+    setTimeout(() => bar.removeEventListener('click', tragar, true), 400);
+    if (!movido) return;
+    const orden = [...bar.querySelectorAll('.ad-gr-chip[data-gid]')].map(n => n.dataset.gid);
+    const sitio = id => { const i = orden.indexOf(id); return i < 0 ? 999 : i; };
+    const st = adState();
+    st.grupos.sort((a, b) => sitio(a.id) - sitio(b.id));
+    st.grOrden = 1;               /* ya lo descubrió: la pista se calla */
+    adStateSave(st);
+    /* NO se vuelve a pintar la pantalla: la barra ya está en el orden
+       nuevo, y repintarla justo al soltar arranca de debajo del dedo el
+       elemento que iba a recibir el toque. Solo se retira la pista. */
+    const pista = document.querySelector('.ad-gr-tip');
+    if (pista) pista.remove();
+    toast('✅ Grupos en tu orden');
+  };
+
+  bar.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    const chip = e.target.closest ? e.target.closest('.ad-gr-chip[data-gid]') : null;
+    if (!chip) return;
+    chip0 = chip; ini = { x: e.clientX, y: e.clientY };
+    document.addEventListener('pointermove', enMover);
+    document.addEventListener('pointerup', enSoltar);
+    document.addEventListener('pointercancel', enSoltar);
+    if (e.pointerType !== 'mouse') espera = setTimeout(() => levantar(chip, ini.x, ini.y), LARGO);
+  });
+
+  function enMover(e) {
+    if (mov) { arrastrar(e.clientX, e.clientY); return; }
+    if (!chip0) return;
+    const d = Math.abs(e.clientX - ini.x) + Math.abs(e.clientY - ini.y);
+    /* Con ratón se arrastra directo; con el dedo, moverse antes de tiempo
+       es que está deslizando la página, y entonces esto no va con él. */
+    if (e.pointerType === 'mouse') { if (d > 6) levantar(chip0, e.clientX, e.clientY); }
+    else if (d > 12) olvidar();
+  }
+  function enSoltar() {
+    soltar();
+    document.removeEventListener('pointermove', enMover);
+    document.removeEventListener('pointerup', enSoltar);
+    document.removeEventListener('pointercancel', enSoltar);
+  }
+}
+
 /* ── RENDER PRINCIPAL ── */
 function renderAdmin() {
   const cont = document.getElementById('admin-content');
@@ -465,17 +585,26 @@ function renderAdmin() {
   /* Barra de grupos: el maestro puede tener varios (incluso en dos
      colegios); todo lo de abajo (lista, economía, asistencia, notas)
      es DEL GRUPO ACTIVO. */
+  /* El colegio solo se pinta si el maestro trabaja en MÁS DE UNO. Con
+     once grupos de la misma escuela, repetir «JOHN ARNOLD COOK» once
+     veces no distingue nada y sí duplica el alto de la barra: en un
+     teléfono eran seis renglones de chips antes de llegar a lo suyo. El
+     nombre sigue en el título del chip y en la ficha del grupo. */
+  const escuelas = new Set(st.grupos.map(g => String(g.escuela || '').trim().toLowerCase()));
+  const verEsc = escuelas.size > 1;
   const chips = st.grupos.map(g => `
     <button class="ad-gr-chip ${g.id === st.activo ? 'ad-gr-on' : ''}" data-gid="${g.id}"
             title="${adEsc(adGrupoTitulo(g))}" aria-label="${adEsc(adGrupoTitulo(g))}">
       <span class="ad-gr-gs">${adEsc(adGrupoChipTxt(g))}</span>
-      ${g.escuela ? `<span class="ad-gr-esc">${adEsc(g.escuela)}</span>` : ''}
+      ${verEsc && g.escuela ? `<span class="ad-gr-esc">${adEsc(g.escuela)}</span>` : ''}
     </button>`).join('');
   cont.innerHTML = `
-    <div class="ad-gr-bar">
+    <div class="ad-gr-bar" id="ad-gr-bar">
       ${chips}
       <button class="ad-gr-chip ad-gr-add" id="ad-gr-add" title="Agregar otro grado o colegio">➕ Otro grupo</button>
     </div>
+    ${st.grupos.length > 1 && !st.grOrden ? `<p class="ad-gr-tip">✋ <strong>Mantén tocado un grupo</strong>
+      y muévelo: quedan en el orden que tú quieras, con el de la primera hora adelante.</p>` : ''}
     <div class="pa-tabs-out ad-tabs">
       <button class="pa-otab ${_adTab === 'lista' ? 'pa-otab-active' : ''}" data-adtab="lista">👥 Alumnos</button>
       <button class="pa-otab ${_adTab === 'eco'   ? 'pa-otab-active' : ''}" data-adtab="eco">💰 Economía</button>
@@ -498,6 +627,7 @@ function renderAdmin() {
       if (typeof adConvCerrar === 'function') adConvCerrar();
       renderAdmin();
     }));
+  adGruposArrastrar(document.getElementById('ad-gr-bar'));
   document.getElementById('ad-gr-add').addEventListener('click', async () => {
     if (!await metasConfirm('Un grupo nuevo tiene su PROPIA lista de alumnos, claves de familia, economía, asistencia y notas.\n\nÚsalo si atiendes **otro grado/sección** o trabajas en **otro colegio**. ¿Crear el grupo?',
       { icono: '🏫', titulo: 'Otro grupo', okTxt: 'Sí, crear' })) return;

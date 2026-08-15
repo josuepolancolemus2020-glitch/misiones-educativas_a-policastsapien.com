@@ -105,6 +105,49 @@ alguna vez hay que cambiar el formato, se cambia ahí y en ningún otro sitio.
 llevan su propia copia de la regla (`grupoTxt`), marcada con la misma nota. Si
 cambia una, cambian las tres: la madre y el maestro tienen que leer lo mismo.
 
+## Normativa: la barra de grupos se ordena con el dedo
+
+Un maestro con dos colegios llega a tener **diez o doce grupos** en la
+barra de Mi aula, y los que abre a diario son dos o tres. El orden en que
+se crearon no es el orden en que se usan: a partir del quinto hay que ir
+leyendo chip por chip. Por eso se **arrastran** (`adGruposArrastrar`, en
+`js/tools/registros-admin.js`) y el orden se guarda con sus grupos.
+
+Cuatro reglas, y las cuatro salen de que esto se usa con el dedo:
+
+1. **No se usa `draggable` del navegador**: es de ratón y en un teléfono
+   no existe. Se hace con eventos de puntero, que valen para los dos.
+2. **Se agarra manteniendo tocado** (~380 ms), no al primer roce. Un
+   toque corto **sigue siendo cambiar de grupo** —que es lo que se hace
+   cuarenta veces al día— y un dedo que baja para deslizar la página no
+   puede llevarse un grupo por delante. Con ratón basta con arrastrar.
+3. **El hueco enseña dónde va a caer**, y mientras se mueve la página no
+   desliza (`touchmove` con `preventDefault`).
+4. **Al soltar NO se repinta la pantalla.** La barra ya está en el orden
+   nuevo, y repintarla justo al soltar le arranca de debajo del dedo el
+   elemento que iba a recibir el toque. Solo se guarda y se retira la
+   pista.
+
+**El nombre del colegio solo se pinta si hay más de uno.** Con once
+grupos de la misma escuela, repetir «JOHN ARNOLD COOK» once veces no
+distingue nada y duplicaba el alto de la barra: eran seis renglones de
+chips en un teléfono antes de llegar a lo suyo. Con dos colegios vuelve,
+porque entonces es lo único que separa un 6º del otro.
+
+Y el chip activo va **relleno**, no solo con el borde de otro color: en
+la pantalla de un teléfono al sol un borde de milímetro y medio no se
+distingue, y equivocarse de grupo es pasar lista en el aula que no era.
+
+```
+node _dev/servidor-estatico.js       (en otra terminal)
+node _dev/verifica-orden-grupos.js
+```
+
+La sonda mueve un grupo **con el dedo** (eventos de puntero de verdad,
+no `dragAndDrop`): que se mueva, que el orden aguante cerrar la
+aplicación, que un deslizamiento no revuelva la barra, que un toque corto
+siga cambiando de grupo y que moverlo NO cambie de grupo.
+
 ## Lo que NO se toca
 
 Estas cosas trabajan con los **dígitos pelados** del grado y de la sección.

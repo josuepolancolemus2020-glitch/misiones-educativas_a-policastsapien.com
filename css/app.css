@@ -4472,19 +4472,82 @@ a.camp-home-card { text-decoration: none; color: inherit; }
 }
 .ad-al-code:active { background: var(--brand); color: #fff; }
 
-/* barra de grupos (multi-aula / dos colegios) */
-.ad-gr-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+/* ══════════ BARRA DE GRUPOS (multi-aula / dos colegios) ══════════
+   Un maestro con dos colegios llega a tener diez o doce grupos, y los
+   que abre a diario son dos o tres. Por eso los chips SE ARRASTRAN: el
+   de la primera hora se pone primero y ahí se queda. El orden se guarda
+   con sus grupos, así que aguanta cerrar la aplicación y viaja con el
+   espejo docente.
+
+   El chip activo va RELLENO y no solo con el borde de otro color. En la
+   pantalla de un teléfono al sol un borde de milímetro y medio no se
+   distingue, y equivocarse de grupo es pasar lista en el aula que no
+   era. */
+.ad-gr-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .ad-gr-chip {
-  cursor: pointer; text-align: left;
-  background: var(--card); border: 1.5px solid var(--border);
-  border-radius: 10px; padding: 7px 12px;
-  display: flex; flex-direction: column; gap: 1px;
+  position: relative; cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; justify-content: center; gap: 1px;
+  min-width: 66px; padding: 8px 12px 8px 23px;
+  background: linear-gradient(180deg, #fff, #f7fafc);
+  border: 1.5px solid var(--border); border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(15,23,42,.05);
+  color: var(--text); touch-action: manipulation;
+  transition: transform .14s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, border-color .2s, background .2s;
 }
-.ad-gr-chip .ad-gr-gs { font-weight: 900; font-size: 13px; color: var(--text); }
-.ad-gr-chip .ad-gr-esc { font-size: 10.5px; color: var(--muted); }
-.ad-gr-on { border-color: var(--brand); background: var(--bg); box-shadow: 0 0 0 1.5px var(--brand) inset; }
-.ad-gr-on .ad-gr-gs { color: var(--brand); }
-.ad-gr-add { justify-content: center; color: var(--brand); font-weight: 800; font-size: 12.5px; border-style: dashed; }
+/* El asa (dos hileras de puntitos) NO es adorno: es lo que dice que el
+   chip se puede agarrar, sin gastar un renglón de instrucciones en una
+   pantalla que ya va llena. */
+.ad-gr-chip::before {
+  content: ''; position: absolute; left: 8px; top: 50%; width: 7px; height: 16px;
+  transform: translateY(-50%); color: var(--faint); opacity: .6;
+  background-image: radial-gradient(currentColor 1.1px, transparent 1.4px);
+  background-size: 4px 5px;
+}
+.ad-gr-chip .ad-gr-gs { font-weight: 900; font-size: 14px; line-height: 1.15; }
+/* El colegio en versalitas: con dos escuelas el maestro lo lee de un
+   vistazo y no compite con el grado, que es lo que de verdad busca. */
+.ad-gr-chip .ad-gr-esc {
+  font-size: 9.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+  color: var(--muted); line-height: 1.3;
+  max-width: 132px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+@media (hover: hover) {
+  .ad-gr-chip:hover { transform: translateY(-1px); border-color: #cbd8ea; box-shadow: 0 5px 14px rgba(15,23,42,.10); }
+}
+.ad-gr-chip:active { transform: scale(.97); }
+.ad-gr-on {
+  border-color: transparent; color: #fff;
+  background: linear-gradient(135deg, var(--brand-mid), var(--brand));
+  box-shadow: 0 5px 16px rgba(30,58,124,.30);
+}
+.ad-gr-on .ad-gr-gs { color: #fff; }
+.ad-gr-on .ad-gr-esc { color: rgba(255,255,255,.78); }
+.ad-gr-on::before { color: #fff; opacity: .55; }
+.ad-gr-add {
+  padding: 8px 15px; align-items: center; justify-content: center; min-width: 0;
+  color: var(--brand); font-weight: 800; font-size: 12.5px;
+  background: rgba(30,58,124,.045); border: 1.5px dashed rgba(30,58,124,.3); box-shadow: none;
+}
+.ad-gr-add::before { display: none; }
+/* La pista se calla en cuanto el maestro mueve el primero: ya lo sabe, y
+   un aviso que no se apaga acaba siendo parte del ruido de la pantalla. */
+.ad-gr-tip { font-size: 11px; color: var(--muted); margin: -2px 0 10px; line-height: 1.4; }
+
+/* ── Mientras se mueve un grupo ── */
+/* El hueco enseña DÓNDE va a caer: sin él, el maestro suelta a ciegas y
+   tiene que volver a mirar la barra para saber si acertó. */
+.ad-gr-hueco {
+  background: rgba(30,58,124,.07); border: 1.5px dashed rgba(30,58,124,.35);
+  box-shadow: none; transform: none;
+}
+.ad-gr-hueco > *, .ad-gr-hueco::before { visibility: hidden; }
+/* El que va en el dedo: levantado, un poco más grande y torcido, para
+   que se vea que está en el aire y no pegado a la barra. */
+.ad-gr-fantasma {
+  position: fixed; z-index: 9999; margin: 0; pointer-events: none;
+  transform: scale(1.06) rotate(-1.5deg); box-shadow: 0 16px 32px rgba(15,23,42,.30);
+}
+body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: none; }
 
 /* eliminar grupo (discreto, al fondo) */
 .ad-grupo-del {
