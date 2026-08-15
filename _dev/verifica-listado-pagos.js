@@ -10,9 +10,16 @@
      última es la firma de quien paga. Si la tabla se pasa de los 196 mm
      útiles de una carta, lo que se corta por la derecha es justo esa
      firma —y una hoja de dinero sin firma no respalda a nadie—.
-   · QUE CADA GRADO EMPIECE EN SU HOJA. Se reparten: la de 6º al maestro
-     de 6º. Con dos grados en la misma hoja habría que fotocopiarla para
-     poder dársela a dos personas.
+   · QUE NO GASTE HOJAS DE BALDE. Cuando contesta la escuela entera son
+     doce grupos de tres o cuatro familias, y una hoja por grupo eran
+     doce hojas con dos dedos de tinta y el resto en blanco. Compacto
+     tiene que caber en las hojas que se le miden aquí; cada hoja de más
+     se paga de un bolsillo que no da para eso.
+   · QUE LA OTRA FORMA SIGA SIRVIENDO. Con el botón «una hoja por
+     grado» (body.reparto) cada grupo vuelve a empezar hoja, con su
+     encabezado y su firma: es la que se reparte, la de 6º al maestro de
+     6º. Las dos formas dicen lo MISMO; lo único que cambia es dónde
+     parte la hoja.
    · QUE ESTÉN TODOS LOS DATOS. Nombre, cuántos van, folio del boleto,
      teléfono, lo que le toca, lo que dio y lo que debe. Falta uno y hay
      que volver al teléfono, que es lo que esta hoja existe para evitar.
@@ -64,14 +71,16 @@ const NOMS = ['Génesis Nicolle Zelaya Fúnez', 'Emanuel Josué Cruz Maldonado',
   'María de los Ángeles Hernández Sabillón', 'Ada Sarai Sevilla'];
 
 /* La escuela entera contesta: por eso hay grados que no son el del
-   maestro, que es justo lo que la colecta de Economía no sabe hacer. */
+   maestro, que es justo lo que la colecta de Economía no sabe hacer.
+   La sección se saca de una vuelta distinta a la del grado para que
+   salgan grupos de verdad (6º-1 y 6º-2 son dos listas, no una). */
 function respuestas(n, grados, secs) {
   const s = Math.max(1, secs || 1);
   const r = [];
   for (let i = 0; i < n; i++) {
     r.push({
       va: true, alumno: NOMS[i % NOMS.length] + ' ' + (i + 1),
-      grado: grados[i % grados.length], seccion: String((i % s) + 1),
+      grado: grados[i % grados.length], seccion: String((Math.floor(i / grados.length) % s) + 1),
       personas: (i % 4) + 1, tel: '9999' + String(1000 + i), nota: '',
     });
   }
@@ -115,7 +124,14 @@ function huella(x) {
   return (norm(x.alumno) + '|' + norm(x.grado) + '|' + norm(x.seccion)).slice(0, 120);
 }
 
-async function mide(browser, cuantos, grados, secs, etiqueta) {
+/* Cuenta las páginas que escupe el PDF, que es la verdad de la
+   impresora: lo pintado en pantalla siempre parece caber. */
+async function paginasDe(hoja, pdf) {
+  await hoja.pdf({ path: pdf, format: 'Letter', printBackground: true });
+  return (fs.readFileSync(pdf).toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
+}
+
+async function mide(browser, cuantos, grados, secs, maxHojas, etiqueta) {
   const resp = respuestas(cuantos, grados, secs);
   const c = convocatoria(resp, pagosDe(resp));
 
@@ -159,41 +175,69 @@ async function mide(browser, cuantos, grados, secs, etiqueta) {
   const hoja = await browser.newPage({ viewport: { width: ANCHO, height: ALTO } });
   await hoja.emulateMedia({ media: 'print' });
   await hoja.goto('file://' + archivo);
-  const datos = await hoja.evaluate(alto => ({
-    hojas: document.querySelectorAll('.hoja').length,
-    huecos: document.querySelectorAll('.hueco').length,
-    firmas: document.querySelectorAll('.firmas').length,
-    /* Lo que de verdad cuesta caro: que la tabla se pase del ancho del
-       papel. Lo que se corta por la derecha es la columna de la firma. */
-    desborde: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
-    anchoTabla: Math.max(...[...document.querySelectorAll('table')].map(n => Math.round(n.getBoundingClientRect().width))),
-    /* Cuántas páginas ocupa cada hoja de grado por su alto: sirve para
-       saber si el número de páginas del PDF cuadra con lo pintado. */
-    paginasPorHoja: [...document.querySelectorAll('.hoja')]
-      .map(n => Math.ceil(n.getBoundingClientRect().height / alto)),
-    /* Ningún renglón puede quedar más alto que la hoja: uno solo así
-       arrastraría a los demás y partiría la lista por donde no toca. */
-    filaMasAlta: Math.max(...[...document.querySelectorAll('tbody tr')]
-      .map(n => Math.round(n.getBoundingClientRect().height))),
-    texto: document.body.textContent.replace(/\s+/g, ' '),
-  }), ALTO);
-  await hoja.pdf({ path: pdf, format: 'Letter', printBackground: true });
-  await hoja.close();
+  const lee = () => hoja.evaluate(() => {
+    /* Lo que NO se ve no cuenta: las dos formas llevan en el papel las
+       mismas piezas y se esconden con CSS según la que esté puesta. */
+    const visible = n => n.getClientRects().length > 0;
+    return {
+      bloques: [...document.querySelectorAll('.hoja')].filter(visible).length,
+      huecos: document.querySelectorAll('.hueco').length,
+      firmas: [...document.querySelectorAll('.firmas')].filter(visible).length,
+      encabezados: [...document.querySelectorAll('.enc')].filter(visible).length,
+      sumas: [...document.querySelectorAll('.suma')].filter(visible).length,
+      /* Lo que de verdad cuesta caro: que la tabla se pase del ancho del
+         papel. Lo que se corta por la derecha es la columna de la firma. */
+      desborde: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
+      anchoTabla: Math.max(...[...document.querySelectorAll('table')].map(n => Math.round(n.getBoundingClientRect().width))),
+      /* Ningún renglón puede quedar más alto que la hoja: uno solo así
+         arrastraría a los demás y partiría la lista por donde no toca. */
+      filaMasAlta: Math.max(...[...document.querySelectorAll('tbody tr')]
+        .map(n => Math.round(n.getBoundingClientRect().height))),
+      texto: document.body.textContent.replace(/\s+/g, ' '),
+    };
+  });
+  const datos = await lee();
+  const paginas = await paginasDe(hoja, pdf);
 
-  const paginas = (fs.readFileSync(pdf).toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
-  const esperadas = datos.paginasPorHoja.reduce((a, b) => a + b, 0);
+  /* ── Y ahora la otra forma: una hoja por grado, para repartirlas ── */
+  await hoja.evaluate(() => document.body.classList.add('reparto'));
+  const rep = await lee();
+  const paginasRep = await paginasDe(hoja, path.join(TMP, base + '-reparto.pdf'));
+  await hoja.evaluate(() => document.body.classList.remove('reparto'));
+  await hoja.close();
 
   /* Los GRUPOS son grado + sección: «6º-1» y «6º-2» son dos hojas, dos
      maestros y dos listas, aunque los dos sean sexto. */
   const grupos = salida.grupos.length;
   console.log('\n  ── ' + etiqueta + ' (' + grupos + ' grupos) ──');
-  comprueba(datos.hojas === grupos + 1,
-    'sale el resumen y una hoja por grupo: ' + (grupos + 1) +
-    ' en total (salieron ' + datos.hojas + ')');
-  comprueba(paginas === esperadas,
-    'y el PDF trae esas ' + esperadas + ' páginas, ni una de más (trajo ' + paginas + ')');
-  comprueba(paginas >= grupos + 1,
-    'ningún grupo comparte hoja con otro');
+
+  /* ── COMPACTO: lo que sale por defecto ── */
+  comprueba(paginas <= maxHojas,
+    'compacto cabe en ' + maxHojas + ' hoja' + (maxHojas === 1 ? '' : 's') +
+    ' (el PDF trajo ' + paginas + ')');
+  comprueba(grupos < 3 || paginas < grupos + 1,
+    'y gasta menos que una hoja por grado: ' + paginas + ' contra ' + (grupos + 1));
+  comprueba(datos.encabezados === 1,
+    'el encabezado del evento va UNA vez, no uno por grupo (salieron ' + datos.encabezados + ')');
+  comprueba(datos.firmas === 1,
+    'y una sola raya de firma, al final del documento (salieron ' + datos.firmas + ')');
+
+  /* ── REPARTIENDO: cada grado con su hoja, su encabezado y su firma ── */
+  comprueba(rep.bloques === grupos + 1,
+    'repartiendo salen el resumen y una hoja por grupo: ' + (grupos + 1) +
+    ' (salieron ' + rep.bloques + ')');
+  comprueba(paginasRep >= grupos + 1,
+    'y ningún grupo comparte hoja con otro (' + paginasRep + ' páginas para ' + grupos + ' grupos)');
+  comprueba(rep.encabezados === grupos + 1 && rep.firmas === grupos + 1,
+    'cada hoja repartida lleva su encabezado y su firma: la de 6º viaja sola al maestro de 6º');
+  /* El renglón de totales de cada grupo solo sale repartiendo: compacto
+     lo dice la franja del grado, y repetirlo doce veces gasta hoja. */
+  comprueba(datos.sumas === 1 && rep.sumas === grupos + 1,
+    'los totales de cada grupo salen repartiendo y no compacto (' +
+    datos.sumas + ' compacto, ' + rep.sumas + ' repartiendo)');
+  comprueba(rep.texto.replace(/Sale compacto.*?posibles\./g, '').indexOf('Firma de quien paga') >= 0 &&
+    salida.nombres.every(n => rep.texto.indexOf(n) >= 0),
+    'y dice lo mismo que la compacta: los mismos nombres y las mismas columnas');
 
   /* EL ANCHO: lo que se sale por la derecha es la firma. */
   comprueba(datos.desborde === 0,
@@ -216,8 +260,8 @@ async function mide(browser, cuantos, grados, secs, etiqueta) {
   comprueba(!sinTel.length,
     'y sus teléfonos, para cobrarle al que no aparece' +
     (sinTel.length ? ' (faltó ' + sinTel[0] + ')' : ''));
-  comprueba(/Firma de quien paga/.test(datos.texto) && datos.firmas === datos.hojas,
-    'cada hoja lleva su raya de firma y la columna donde firma quien paga');
+  comprueba(/Firma de quien paga/.test(datos.texto),
+    'está la columna donde firma quien paga');
 
   /* LAS CUENTAS: la suma de los grados es el total del resumen. */
   const sumaToca = salida.grupos.reduce((a, g) => a + g.t.toca, 0);
@@ -249,14 +293,15 @@ async function mide(browser, cuantos, grados, secs, etiqueta) {
     process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
   console.log('💵 EL LISTADO DE APORTES POR GRADO — medido en el PDF');
   try {
-    /* La escuela entera, que es de donde vienen las respuestas */
-    await mide(browser, 42, ['1', '2', '3', '4', '5', '6'], 2, '42 familias de seis grados');
+    /* LA ESCUELA ENTERA, que es de donde vienen las respuestas y el caso
+       que trajo esta regla: doce grupos de tres o cuatro familias eran
+       trece hojas casi en blanco. Compacto tiene que caber en tres. */
+    await mide(browser, 42, ['1', '2', '3', '4', '5', '6'], 2, 3, '42 familias de seis grados');
     /* El maestro que solo lleva el suyo, con sus dos secciones */
-    await mide(browser, 30, ['6'], 2, '30 familias de sexto');
+    await mide(browser, 30, ['6'], 2, 2, '30 familias de sexto');
     /* EL AULA GRANDE DE VERDAD: 43 familias de UN solo grupo. Es la que
-       pasa a la segunda hoja, y donde se ve si el encabezado se repite y
-       si el PDF cuadra con lo pintado. */
-    await mide(browser, 43, ['6'], 1, '43 familias de un solo grupo');
+       pasa a la segunda hoja, y donde se ve si el encabezado se repite. */
+    await mide(browser, 43, ['6'], 1, 2, '43 familias de un solo grupo');
   } finally {
     await browser.close();
     fs.rmSync(TMP, { recursive: true, force: true });

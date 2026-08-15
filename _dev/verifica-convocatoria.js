@@ -1256,6 +1256,198 @@ async function pruebaPagos(browser) {
   await page.close();
 }
 
+/* ══════════════ 🗑 QUITAR A ALGUIEN QUE SE APUNTÓ POR ERROR ══════════════
+   Por el enlace, que anda suelto en un grupo de cientos de personas,
+   entra también lo que no tiene que entrar: la prueba que hizo el
+   propio maestro para ver cómo se veía, el que se equivocó de
+   convocatoria, el nombre de broma. Eso cuenta personas, cuenta dinero
+   y cuenta ASIENTOS.
+
+   Lo que se vigila aquí es lo que cuesta caro:
+
+   · QUE DEJE DE CONTAR. Personas, familias, buses y dinero.
+   · QUE NO VUELVA SOLA en el siguiente «Traer las respuestas». Si el
+     escondite viviera dentro de `resp`, volvería en el primer refresco
+     y el maestro se enteraría contando gente en el portón.
+   · QUE SÍ VUELVA SI LA FAMILIA CONTESTA OTRA VEZ. Es la otra mitad, y
+     la que de verdad importa: una respuesta escondida para siempre es
+     una madre que cree que apartó su asiento y un niño que se queda en
+     el portón.
+   · QUE SE BORRE TAMBIÉN EN EL SERVIDOR, para que el «ya somos 37» que
+     ve el padre deje de contarla.
+   · QUE SE PUEDA DEVOLVER, porque el maestro quita renglones con
+     cuarenta nombres delante y el teléfono en la mano.
+   · QUE EL ESCONDITE NO VIAJE A LA NUBE. */
+async function pruebaQuitar(browser) {
+  console.log('\n── 🗑 QUITAR A QUIEN SE APUNTÓ POR ERROR ──');
+  /* `act` es la marca de tiempo que manda el servidor: con ella se
+     distingue «esta es la misma fila que se quitó» de «esta familia
+     volvió a contestar». */
+  const FILA = (alumno, grado, personas, act) => ({
+    va: true, alumno, grado, seccion: '1', personas, tel: '9999' + personas + '111',
+    nota: '', actualizado_en: act,
+  });
+  const estado = {
+    resp: [
+      FILA('Alumno Prueba', '1', 4, '2026-08-08T10:00:00Z'),
+      FILA('Ada Sarai Sevilla', '6', 3, '2026-08-08T11:00:00Z'),
+      FILA('Carlos Josué Meza', '5', 2, '2026-08-08T12:00:00Z'),
+    ],
+    llamadas: [], quitarOk: true,
+  };
+  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  await page.clock.install({ time: HOY });
+  await page.route('**/rest/v1/rpc/**', async route => {
+    const fn = route.request().url().split('/rpc/')[1].split('?')[0];
+    const cuerpo = JSON.parse(route.request().postData() || '{}');
+    estado.llamadas.push({ fn, cuerpo });
+    let salida = true;
+    if (fn === 'metas_conv_respuestas') salida = estado.resp;
+    else if (fn === 'metas_conv_quitar') {
+      salida = estado.quitarOk;
+      /* El servidor de verdad borra la fila: si no, el siguiente refresco
+         la traería otra vez y no se estaría probando nada. */
+      if (estado.quitarOk) estado.resp = estado.resp.filter(r =>
+        !(r.alumno.toLowerCase().replace(/\s+/g, ' ') + '|' + r.grado + '|' + r.seccion)
+          .startsWith(String(cuerpo.p_huella || '@').slice(0, 12)));
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(salida) });
+  });
+  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  await page.evaluate(() => {
+    localStorage.setItem('METAS_ADMIN_V1', JSON.stringify({ v: 2, activo: 'G1', grupos: [{
+      id: 'G1', escuela: 'Escuela John Arnold Cook', grado: '6', seccion: '1', materias: ['Español'],
+      lista: [], colectas: [], asistencia: [], notas: {}, controles: [], bitacora: [], lectura: [],
+      convocatorias: [{ id: 'V1', icono: '🚌', titulo: 'Excursión al Museo Ferroviario de El Progreso',
+        gancho: 'x', gana: ['a', 'b', 'c'], lugar: 'Museo Ferroviario de El Progreso',
+        fecha: '2026-08-15', hora: '6:30 a. m.', regreso: '3:00 p. m.', punto: 'Portón de la escuela',
+        aporte: 250, incluye: 'transporte, entrada', cobro: '', nota: '', limite: '2026-08-11',
+        dirigido: 'Para las familias de toda la escuela', maestro: 'Prof. Josué Polanco',
+        wa: '50499998888', escuela: 'Escuela John Arnold Cook', capacidad: 55, costoBus: 3500,
+        cupos: 110, arranque: 30, limiteHora: '16:00', manual: [],
+        codigo: 'R4TP', pin: 'K7M2QP', cerrada: 0, resp: [], respFecha: '', creada: '2026-08-08' }],
+    }] }));
+  });
+  const entrar = async () => {
+    await page.evaluate(() => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-admin').classList.add('active');
+      renderAdmin();
+      document.querySelector('[data-adtab="com"]').click();
+    });
+    await page.click('#ad-ir-conv');
+    await page.waitForSelector('[data-cvid]');
+    await page.click('[data-cvid]');
+    await page.waitForSelector('#cv-refrescar');
+    await page.waitForTimeout(900);
+  };
+  await entrar();
+
+  const cifra = async rot => {
+    const n = page.locator('.ad-cv-cif', { hasText: rot }).first();
+    return (await n.locator('b').textContent()).trim();
+  };
+  const guardado = () => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0]);
+  const enPantalla = async () => (await page.textContent('#view-admin')).replace(/\s+/g, ' ');
+
+  comprueba(await cifra('personas') === '9', 'antes de quitar nada van 9 personas (4 + 3 + 2)');
+  comprueba(await page.locator('[data-cvdel]').count() === 3,
+    'cada respuesta del enlace trae su 🗑 para quitarla');
+
+  /* ── Se quita la prueba del propio maestro ── */
+  await page.locator('.ad-gasto-row', { hasText: 'Alumno Prueba' })
+    .locator('[data-cvdel]').first().click();
+  await page.waitForSelector('#mdlg-ok');
+  comprueba(/vuelve a salir/i.test(await page.textContent('.mdlg-body')),
+    'el aviso dice que si la familia vuelve a contestar, vuelve a salir');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(900);
+
+  comprueba(await cifra('personas') === '5', 'deja de contar: quedan 5 personas (9 − 4)');
+  comprueba(await cifra('familias') === '2', 'y 2 familias');
+  comprueba(await page.locator('[data-cvdel]').count() === 2,
+    'y desaparece de la lista de los que van: quedan 2 renglones');
+  comprueba(await page.locator('[data-cvdevolver]').count() === 1,
+    'y sale en el cajón de los quitados, para devolverla si te equivocaste de renglón');
+  const quitar = estado.llamadas.filter(l => l.fn === 'metas_conv_quitar').pop();
+  comprueba(!!quitar && /alumno prueba\|1\|1/.test(quitar.cuerpo.p_huella || ''),
+    'se le pide al servidor que la borre, con la huella de siempre');
+  comprueba(!!quitar && quitar.cuerpo.p_pin === 'K7M2QP',
+    'y con el PIN, que es lo que impide que un extraño borre respuestas ajenas');
+  const g1 = await guardado();
+  comprueba(!!g1.quitados && !!g1.quitados['alumno prueba|1|1'],
+    'el escondite se guarda FUERA de resp, en `quitados`');
+  comprueba(!(g1.resp || []).some(r => r.alumno === 'Alumno Prueba'),
+    'y como el servidor confirmó el borrado, la fila sale también de la copia local');
+
+  /* ── ⚠️ NO VUELVE SOLA AL TRAER LAS RESPUESTAS ──
+     El servidor vuelve a mandarla (como si el borrado no hubiera
+     entrado): tiene que seguir escondida y reintentarse el borrado. */
+  estado.quitarOk = false;
+  estado.resp = [FILA('Alumno Prueba', '1', 4, '2026-08-08T10:00:00Z'),
+                 FILA('Ada Sarai Sevilla', '6', 3, '2026-08-08T11:00:00Z'),
+                 FILA('Carlos Josué Meza', '5', 2, '2026-08-08T12:00:00Z')];
+  await page.click('#cv-refrescar');
+  await page.waitForTimeout(1400);
+  comprueba(await cifra('personas') === '5',
+    'traer las respuestas NO la devuelve a las cuentas (dijo ' + await cifra('personas') + ')');
+  comprueba(await page.locator('[data-cvdel]').count() === 2, 'ni a la lista');
+  const reintentos = estado.llamadas.filter(l => l.fn === 'metas_conv_quitar').length;
+  comprueba(reintentos >= 2, 'y el borrado que no entró se reintenta solo al traer las respuestas');
+
+  /* ── ⚠️ PERO SÍ VUELVE SI LA FAMILIA CONTESTA OTRA VEZ ──
+     Otra marca de tiempo = respuesta nueva. Esconderla sería perderla, y
+     una respuesta perdida es un niño esperando en el portón. */
+  estado.resp = [FILA('Alumno Prueba', '1', 2, '2026-08-09T08:30:00Z'),
+                 FILA('Ada Sarai Sevilla', '6', 3, '2026-08-08T11:00:00Z'),
+                 FILA('Carlos Josué Meza', '5', 2, '2026-08-08T12:00:00Z')];
+  await page.click('#cv-refrescar');
+  await page.waitForTimeout(1400);
+  comprueba(await page.locator('[data-cvdel]').count() === 3 &&
+    /Alumno Prueba/.test(await enPantalla()),
+    'si esa familia vuelve a contestar el enlace, VUELVE a salir en la lista');
+  comprueba(await cifra('personas') === '7', 'y vuelve a contar (5 + las 2 que dijo ahora)');
+  const g2 = await guardado();
+  comprueba(!g2.quitados || !g2.quitados['alumno prueba|1|1'],
+    'el escondite se suelta solo: no se queda esperando a taparla otra vez');
+
+  /* ── Se quita otra vez, ahora sin señal para el servidor ── */
+  await page.locator('.ad-gasto-row', { hasText: 'Alumno Prueba' })
+    .locator('[data-cvdel]').first().click();
+  await page.waitForSelector('#mdlg-ok');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(900);
+  comprueba(await cifra('personas') === '5', 'sin señal se quita igual de las cuentas del maestro');
+  const g3 = await guardado();
+  comprueba((g3.resp || []).some(r => r.alumno === 'Alumno Prueba'),
+    'pero la fila sigue en la copia local: el padre la sigue contando y su espejo no puede mentir');
+
+  /* ── Devolverla: el maestro se equivocó de renglón ── */
+  await page.locator('[data-cvdevolver]').first().click();
+  await page.waitForSelector('#mdlg-ok');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(900);
+  comprueba(await cifra('personas') === '7', 'devolverla la vuelve a poner en las cuentas');
+  comprueba(/Alumno Prueba/.test(await enPantalla()), 'y en la lista de los que van');
+
+  /* ── El escondite no viaja a la nube ── */
+  await page.locator('.ad-gasto-row', { hasText: 'Alumno Prueba' })
+    .locator('[data-cvdel]').first().click();
+  await page.waitForSelector('#mdlg-ok');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(900);
+  await page.click('#cv-guardar');
+  await page.waitForTimeout(1200);
+  const pub = estado.llamadas.filter(l => l.fn === 'metas_conv_publicar')
+    .map(l => JSON.stringify(l.cuerpo)).join(' ');
+  comprueba(pub.length > 0 && !/quitados/.test(pub) && !/Alumno Prueba/.test(pub),
+    'lo que sube a la nube no lleva a quién quitó el maestro ni por qué');
+
+  await page.close();
+}
+
 (async () => {
   const browser = await chromium.launch(
     process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
@@ -1273,6 +1465,7 @@ async function pruebaPagos(browser) {
     await pruebaBoletoSinInternet(browser);
     await pruebaAvisos(browser);
     await pruebaPagos(browser);
+    await pruebaQuitar(browser);
   } finally {
     await browser.close();
   }

@@ -249,7 +249,7 @@ function convEnlace(c) {
    que el maestro escribió lo quita él. */
 function convManual(c) {
   const enNube = {};
-  (Array.isArray(c.resp) ? c.resp : []).forEach(x => {
+  convDelEnlace(c).forEach(x => {
     enNube[convHuella(x.alumno, x.grado, x.seccion)] = 1;
   });
   return (Array.isArray(c.manual) ? c.manual : []).map(x => Object.assign({}, x, {
@@ -257,12 +257,153 @@ function convManual(c) {
     repetido: enNube[convHuella(x.alumno, x.grado, x.seccion)] ? 1 : 0,
   }));
 }
+
+/* ══════════════ 🗑 QUITAR A ALGUIEN QUE CONTESTÓ EL ENLACE ══════════════
+   El enlace anda suelto en un grupo de cientos de personas y por ahí
+   entra lo que tiene que entrar y también lo otro: la prueba que hizo
+   el propio maestro para ver cómo se veía, el que se equivocó de
+   convocatoria, el nombre escrito de broma. Eso cuenta personas, cuenta
+   dinero y cuenta ASIENTOS: un bus se contrata por gente que no existe.
+   Hasta ahora solo se podía quitar lo apuntado a mano.
+
+   CUATRO REGLAS, Y NINGUNA ES DE ADORNO:
+
+   1. SE GUARDA EN `c.quitados`, NUNCA borrando de `c.resp` a secas.
+      Traer las respuestas reemplaza `resp` entero con lo que venga de
+      la nube: lo borrado ahí volvería solo en el siguiente «Traer las
+      respuestas» y el maestro se enteraría contando gente en el portón.
+      Es la misma razón por la que los pagos y lo apuntado a mano viven
+      fuera de `resp`.
+   2. LA LLAVE ES LA HUELLA DE SIEMPRE (nombre + grado + sección).
+   3. SE INTENTA BORRAR TAMBIÉN EN EL SERVIDOR, para que el «ya somos
+      37» que ve el padre deje de contarla. Si no hay señal, se esconde
+      igual aquí y se reintenta al traer las respuestas: la pantalla del
+      maestro no se queda esperando internet.
+   4. ⚠️ SI LA FAMILIA VUELVE A CONTESTAR, VUELVE A SALIR. Esto es lo
+      que no se puede saltar. Esconder para siempre una huella sería
+      perder una respuesta en silencio —la madre cree que apartó su
+      asiento y el maestro no la ve—, que es el error más caro de esta
+      herramienta. Por eso el escondite guarda la marca de tiempo de la
+      fila (`act`) y se suelta sola en cuanto el servidor trae una
+      distinta. */
+function convQuitados(c) {
+  return (c && c.quitados && typeof c.quitados === 'object') ? c.quitados : {};
+}
+/* Las respuestas del enlace que SIGUEN contando. Todo lo que el maestro
+   ve, cuenta, cobra e imprime sale de aquí; el espejo de lo que ve el
+   padre no, porque ese tiene que enseñar lo que hay en el servidor. */
+function convDelEnlace(c) {
+  const q = convQuitados(c);
+  return (Array.isArray(c.resp) ? c.resp : [])
+    .filter(x => !q[convHuella(x.alumno, x.grado, x.seccion)]);
+}
 /* Todo el que va, venga de donde venga y sin repetir a nadie. Es lo que
    se lista, lo que se cuenta y lo que se imprime en boletos. */
 function convTodas(c) {
-  return (Array.isArray(c.resp) ? c.resp : []).concat(convManual(c).filter(x => !x.repetido));
+  return convDelEnlace(c).concat(convManual(c).filter(x => !x.repetido));
 }
 window.convTodas = convTodas;
+window.convQuitados = convQuitados;
+
+/* Borrar la fila en el servidor. Devuelve `true` solo si el servidor lo
+   confirma: con un `false` la respuesta sigue allá y el padre la sigue
+   contando, y eso hay que poder decírselo al maestro. */
+async function convQuitarNube(c, huella) {
+  if (!c.codigo || !c.pin) return false;
+  return await convRPC('metas_conv_quitar',
+    { p_codigo: c.codigo, p_pin: c.pin, p_huella: huella }) === true;
+}
+
+/* Se corre cada vez que se traen las respuestas, y hace dos cosas:
+
+   · ADOPTA la marca de tiempo de las filas que se quitaron antes de
+     saberla (una convocatoria vieja, guardada sin ella). Se adopta y se
+     queda escondida: si se soltara, volvería a salir sola y el maestro
+     tendría que quitarla otra vez cada día.
+   · SUELTA la huella cuya fila cambió en el servidor. Eso solo pasa si
+     la familia volvió a contestar el enlace, y entonces vuelve a la
+     lista: una respuesta escondida es una respuesta perdida. */
+function convQuitadosSincronizar(c) {
+  const q = convQuitados(c);
+  if (!Object.keys(q).length) return q;
+  (Array.isArray(c.resp) ? c.resp : []).forEach(x => {
+    const h = convHuella(x.alumno, x.grado, x.seccion);
+    const t = q[h];
+    if (!t) return;
+    if (!t.act) { t.act = String(x.act || ''); return; }
+    if (x.act && String(x.act) !== String(t.act)) delete q[h];
+  });
+  c.quitados = q;
+  return q;
+}
+
+/* ── Quitar a alguien que contestó el enlace ──
+   Se guarda la fila ENTERA en el escondite, no solo su huella: es lo
+   que permite volver a ponerla si el maestro se equivocó de renglón —y
+   se equivoca, con cuarenta nombres y el teléfono en la mano—. Cuando
+   el servidor confirma el borrado, allá ya no queda nada que traer. */
+async function convQuitarRespuesta(c, x) {
+  const h = convHuella(x.alumno, x.grado, x.seccion);
+  const enNube = !!c.codigo;
+  if (!await metasConfirm('Se quita a **' + adEsc(x.alumno) + '** de tu lista' +
+    (x.va ? ' y de tus cuentas: ya no ocupa asiento, ni aporte, ni boleto.' : '.') +
+    (enNube ? '\n\nSe borra también del enlace, así que el contador que ven las familias baja.' : '') +
+    '\n\n⚠️ Si esa familia vuelve a contestar el enlace, **vuelve a salir**: eso no se puede esconder. ' +
+    'Y si te equivocaste, la vuelves a poner desde **🗑 Quitados de la lista**, al final de esta pantalla.',
+    { icono: '🗑️', titulo: 'Quitar de la lista', okTxt: 'Sí, quitarla' })) return;
+  adUndoGuardar('Quitar una respuesta de la convocatoria');
+  const borrada = enNube ? await convQuitarNube(c, h) : false;
+  convGuardar(y => {
+    y.quitados = convQuitados(y);
+    y.quitados[h] = {
+      alumno: x.alumno || '', grado: x.grado || '', seccion: x.seccion || '',
+      personas: Number(x.personas) || 0, tel: x.tel || '', nota: x.nota || '',
+      va: x.va ? 1 : 0, act: String(x.act || ''), nube: borrada ? 1 : 0, fecha: adHoy(),
+    };
+    /* Confirmado el borrado, la fila sale también de la copia local: así
+       el espejo de «lo que ve el padre» baja con el contador de verdad. */
+    if (borrada) {
+      y.resp = (Array.isArray(y.resp) ? y.resp : [])
+        .filter(r => convHuella(r.alumno, r.grado, r.seccion) !== h);
+    }
+  });
+  renderAdmin();
+  toast(borrada ? '🗑️ Quitada de tu lista y del enlace'
+    : enNube ? '🗑️ Quitada de tu lista · sin señal para el enlace, se reintenta solo'
+    : '🗑️ Quitada de tu lista');
+}
+
+/* ── Volver a ponerla ──
+   Si el servidor ya la borró no hay nada que traer de vuelta, así que
+   la fila guardada se reingresa como apuntada a mano: mismo nombre,
+   mismo grado y misma huella, o sea el MISMO folio de boleto que la
+   familia ya tiene guardado en su teléfono. */
+async function convDevolver(c, huella) {
+  const t = convQuitados(c)[huella];
+  if (!t) return;
+  if (!await metasConfirm('**' + adEsc(t.alumno) + '** vuelve a la lista y a las cuentas' +
+    (t.nube ? ', apuntada a mano: en el enlace ya se había borrado.' : '.') +
+    '\n\n¿La devuelvo?', { icono: '↩️', titulo: 'Volver a ponerla', okTxt: 'Sí, devolverla' })) return;
+  convGuardar(y => {
+    const q = convQuitados(y);
+    const g = q[huella];
+    delete q[huella];
+    y.quitados = q;
+    if (g && g.nube) {
+      y.manual = Array.isArray(y.manual) ? y.manual : [];
+      if (!y.manual.some(m => convHuella(m.alumno, m.grado, m.seccion) === huella)) {
+        y.manual.push({
+          id: 'M' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+          va: g.va ? 1 : 0, alumno: g.alumno, grado: g.grado, seccion: g.seccion,
+          personas: Math.max(1, Number(g.personas) || 1), tel: g.tel || '',
+          nota: g.nota || '', fecha: adHoy(),
+        });
+      }
+    }
+  });
+  renderAdmin();
+  toast('↩️ ' + (adPrimerNombre(t.alumno) || 'La familia') + ' vuelve a la lista');
+}
 
 /* ══════════════ 💵 EL CONTROL DE PAGOS ══════════════
    La convocatoria PREGUNTA quién va; esto anota QUIÉN YA PAGÓ. Son dos
@@ -371,7 +512,12 @@ function convTotales(c) {
   const asientos = buses * cap;
   /* Lo que ve el padre sale SOLO del enlace: el servidor no sabe nada de
      los que el maestro apuntó en su cuaderno, así que el espejo tiene que
-     enseñar esta cifra y no la de arriba. Su pantalla nunca le miente. */
+     enseñar esta cifra y no la de arriba. Su pantalla nunca le miente.
+     Por eso aquí se lee `c.resp` PELADO, sin quitar los quitados: mientras
+     el borrado no haya entrado en el servidor —sin señal, por ejemplo— el
+     padre los sigue contando, y el espejo tiene que decir eso. Cuando el
+     servidor confirma el borrado, la fila sale de `c.resp` y el espejo baja
+     solo. */
   const nube = (Array.isArray(c.resp) ? c.resp : []).filter(x => x.va);
   const aMano = si.filter(x => x.aMano);
   /* El dinero que YA está en la mano del maestro, y el que le falta por
@@ -761,7 +907,9 @@ function convHtmlConteo(c, t, d) {
     <div class="pa-card">
       <div class="pa-card-title">✅ Los que van (${si.length})</div>
       <p class="pa-optional-hint">Toca un teléfono para escribirle por WhatsApp —para el aporte o para
-        avisarle un cambio de hora.</p>
+        avisarle un cambio de hora. Si alguien se apuntó <strong>por error</strong> —una prueba tuya, un
+        nombre de broma, el que se equivocó de convocatoria—, quítalo con <strong>🗑</strong>: deja de
+        ocupar asiento, aporte y boleto.</p>
       ${si.map(x => `<div class="ad-gasto-row">
         <span><strong>${adEsc(x.alumno)}</strong>${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}${
           x.aMano ? ' <span class="ad-cv-tag">🖊️ a mano</span>' : ''}<br>
@@ -771,7 +919,11 @@ function convHtmlConteo(c, t, d) {
             <button data-cvmper="${adEsc(x.id)}" data-d="-1" aria-label="Una persona menos">−</button>
             <button data-cvmper="${adEsc(x.id)}" data-d="1" aria-label="Una persona más">+</button>
             <button data-cvmdel="${adEsc(x.id)}" aria-label="Quitar de la lista">🗑</button>
-          </span>` : ''}</span>
+          </span>` : `
+          <span class="ad-cv-mini">
+            <button data-cvdel="${adEsc(convHuella(x.alumno, x.grado, x.seccion))}"
+              aria-label="Quitar a ${adEsc(x.alumno)} de la lista">🗑 Quitar</button>
+          </span>`}</span>
         <span>${x.tel ? '<button class="ad-al-code" data-cvtel="' + adEsc(x.tel) +
           '" data-cvhuella="' + adEsc(convHuella(x.alumno, x.grado, x.seccion)) + '">📲 ' + adEsc(x.tel) + '</button>' : ''}</span>
       </div>`).join('')}
@@ -794,8 +946,46 @@ function convHtmlConteo(c, t, d) {
         ${motivos['Por el aporte'] ? 'Si el dinero es lo que frena a varios, todavía estás a tiempo de bajarlo o de buscar ayuda.' : ''}</p>` : ''}
       ${no.map(x => `<div class="ad-gasto-row">
         <span>${adEsc(x.alumno)}${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}</span>
-        <span><small>${adEsc(x.nota || '—')}</small></span></div>`).join('')}
-    </div>` : ''}`;
+        <span><small>${adEsc(x.nota || '—')}</small>
+          ${/* Aquí también se quita: por el enlace entra el que se
+                equivocó de convocatoria y dijo que no a una salida que no
+                era la suya. El de a mano se quita por su id, como en su
+                propia tarjeta. */''}
+          <button class="ad-al-del" ${x.aMano ? 'data-cvmdel="' + adEsc(x.id) + '"'
+            : 'data-cvdel="' + adEsc(convHuella(x.alumno, x.grado, x.seccion)) + '"'
+          } aria-label="Quitar a ${adEsc(x.alumno)} de la lista">✕</button></span></div>`).join('')}
+    </div>` : ''}
+
+    ${convHtmlQuitados(c)}`;
+}
+
+/* ── 🗑 Los que se quitaron ──
+   La lista no se enseña para presumirla: se enseña porque el maestro
+   quita renglones con cuarenta nombres delante y el teléfono en la
+   mano, y se equivoca. Sin este cajón, quitar a quien no era se
+   arreglaría volviendo a preguntarle a la familia. */
+function convHtmlQuitados(c) {
+  const q = convQuitados(c);
+  const hs = Object.keys(q);
+  if (!hs.length) return '';
+  return `
+    <div class="pa-card">
+      <div class="pa-card-title">🗑 Quitados de la lista (${hs.length})</div>
+      <p class="pa-optional-hint">No cuentan para nada: ni asiento, ni aporte, ni boleto. Si quitaste a
+        quien no era, <strong>devuélvela</strong> y vuelve a su sitio con su mismo folio.</p>
+      ${hs.map(h => {
+        const x = q[h];
+        return `<div class="ad-gasto-row">
+        <span>${adEsc(x.alumno)}${x.grado ? ' · ' + adEsc(adGradoSeccion(x.grado, x.seccion)) : ''}<br>
+          <small>${x.va ? x.personas + ' persona' + (x.personas === 1 ? '' : 's') : 'había dicho que no'}${
+            x.nube ? ' · borrada también del enlace' : ' · sigue contando en el enlace'}</small></span>
+        <span><button class="ad-al-code" data-cvdevolver="${adEsc(h)}">↩️ Devolverla</button></span>
+      </div>`;
+      }).join('')}
+      <p class="pa-optional-hint" style="margin-top:8px">⚠️ Si esa familia <strong>vuelve a contestar el
+        enlace</strong>, vuelve a salir sola en la lista de arriba. Una respuesta escondida es una
+        respuesta perdida, y eso deja gente en el portón.</p>
+    </div>`;
 }
 
 /* ══════════════ 💵 PANTALLA: QUIÉN YA PAGÓ ══════════════
@@ -838,9 +1028,11 @@ function convHtmlPagos(c, t) {
         ${pend ? '<button class="pa-generate-btn ad-btn-sec" id="cv-pg-avisar">📲 Cobrarles a ' +
           (pend === 1 ? 'la familia que falta' : 'las ' + pend + ' que faltan') + '</button>' : ''}
       </div>
-      <p class="pa-optional-hint">El listado sale <strong>una hoja por grado</strong>, con el nombre, cuántos
-        van, su folio, su teléfono, lo que le toca, lo que ya dio y una raya para que firme quien paga. Es
-        lo que te llevas al recreo a cobrar y lo que entregas en la Dirección.</p>
+      <p class="pa-optional-hint">El listado sale <strong>compacto</strong> —el resumen y detrás los grados,
+        uno tras otro, para gastar las menos hojas posibles— con el nombre, cuántos van, su folio, su
+        teléfono, lo que le toca, lo que ya dio y una raya para que firme quien paga. Es lo que te llevas
+        al recreo a cobrar y lo que entregas en la Dirección. Si necesitas <strong>repartir</strong> las
+        listas, en la ventana de impresión hay un botón para sacar <strong>una hoja por grado</strong>.</p>
 
       ${grupos.map(g => {
         const tg = convGradoTotales(c, g.filas);
@@ -928,9 +1120,18 @@ async function convPagoTocar(c, x) {
      cuánto falta, grado por grado, con las rayas de firma. Es la que se
      entrega y la que se firma; sin ella habría que ir sumando seis
      hojas a mano delante del director.
-   · CADA GRADO EMPIEZA EN SU HOJA. Se reparten: la de 6º al maestro de
-     6º. Con los grados corridos habría que fotocopiar la hoja entera
-     para poder dársela a dos personas.
+   · SALE COMPACTO: LOS GRADOS VAN SEGUIDOS. Empezó saliendo una hoja
+     por grado siempre, y en una escuela que contesta entera eso son
+     doce grupos de tres o cuatro familias: doce hojas con dos dedos de
+     tinta y el resto en blanco. En un aula sin fotocopiadora propia,
+     cada hoja se paga. Ahora los grupos se encadenan y solo saltan de
+     hoja cuando no caben enteros — de trece hojas a dos.
+   · PERO SE PUEDE VOLVER A UNA HOJA POR GRADO, con su botón en la
+     ventana de impresión (`body.reparto`). Esa forma no se tira: es la
+     que sirve para REPARTIR, la de 6º al maestro de 6º, y con los
+     grados corridos habría que fotocopiar la hoja para dársela a dos
+     personas. Lo que cambia entre las dos formas es dónde parte la
+     hoja, nunca lo que dice el papel.
    · AL QUE NO HA PAGADO SE LE DEJA LA CASILLA EN BLANCO, con su raya.
      Esta hoja se usa cobrando: lo que ya entró va impreso con su fecha,
      y lo que falta es un hueco donde se escribe. Al volver al aula, eso
@@ -953,8 +1154,13 @@ function convImprimirListado(c) {
   const hoy = adFechaBonita(adHoy());
   const cuando = convFechaLarga(c.fecha) + (c.hora ? ' · sale ' + c.hora : '');
 
-  const enc = `
-    <div class="enc">
+  /* El encabezado se pinta una vez arriba. La copia que lleva cada grupo
+     solo se ve cuando se imprime para repartir: entonces su hoja viaja
+     sola al maestro de 6º y sin el título no dice ni de qué evento es.
+     Repetirlo en lo compacto son quince milímetros por grupo, que en
+     doce grupos es casi una hoja entera de nada. */
+  const enc = solo => `
+    <div class="enc${solo ? ' ' + solo : ''}">
       <div class="enc-t">${adEsc((c.icono || '📣') + ' ' + (c.titulo || 'Convocatoria'))}</div>
       <div class="enc-s">${adEsc([c.escuela, cuando, c.lugar].filter(Boolean).join(' · '))}</div>
       <div class="enc-s">Aporte: <b>${adEsc(adLps(ap))} por persona</b>${c.incluye
@@ -962,10 +1168,12 @@ function convImprimirListado(c) {
         ? ' · ' + adEsc(c.maestro) : ''}</div>
     </div>`;
 
-  /* Las rayas de firma van al pie de CADA hoja, no solo al final: la del
-     grado se archiva sola y sin firma no respalda a nadie. */
-  const firmas = quien => `
-    <div class="firmas">
+  /* Repartiendo, las rayas de firma van al pie de CADA hoja: la del
+     grado se archiva sola y sin firma no respalda a nadie. Compacto es
+     un solo documento y van una vez, al final — una firma cada cuatro
+     centímetros no respalda más, solo gasta papel. */
+  const firmas = (quien, solo) => `
+    <div class="firmas${solo ? ' ' + solo : ''}">
       <div><span class="raya"></span>${adEsc(quien)}</div>
       <div><span class="raya"></span>Recibido en Dirección</div>
     </div>`;
@@ -995,8 +1203,8 @@ function convImprimirListado(c) {
   const hojaGrado = g => {
     const tg = convGradoTotales(c, g.filas);
     return `
-    <div class="hoja">
-      ${enc}
+    <div class="hoja grupo">
+      ${enc('solo-reparto')}
       <table>
         <colgroup><col style="width:8mm"><col style="width:45mm"><col style="width:12mm">
           <col style="width:25mm"><col style="width:22mm"><col style="width:18mm">
@@ -1014,7 +1222,12 @@ function convImprimirListado(c) {
         </thead>
         <tbody>
           ${g.filas.map(fila).join('')}
-          <tr class="suma">
+          ${/* El renglón de totales solo hace falta repartiendo, que es
+                cuando la hoja del grado viaja sola y hay que cuadrar las
+                columnas de dinero al pie. Compacto ya lo dice la franja
+                de arriba —le toca, recogido y lo que falta—, y repetirlo
+                doce veces es medio dedo de hoja en blanco. */''}
+          <tr class="suma solo-reparto">
             <td colspan="5">TOTAL ${adEsc(g.k)} — ${tg.pagadas} de ${tg.fam} al día</td>
             <td class="n">${adEsc(adLps(tg.toca))}</td>
             <td class="n">${adEsc(adLps(tg.pagado))}</td>
@@ -1023,15 +1236,15 @@ function convImprimirListado(c) {
           </tr>
         </tbody>
       </table>
-      <p class="nota">Lo que se cobre en el portón se escribe aquí a lápiz y después se pasa a
+      <p class="nota solo-reparto">Lo que se cobre en el portón se escribe aquí a lápiz y después se pasa a
         💵 <b>Quién ya pagó</b>, que es donde salen las cuentas.</p>
-      ${firmas(c.maestro || 'Maestro responsable')}
+      ${firmas(c.maestro || 'Maestro responsable', 'solo-reparto')}
     </div>`;
   };
 
   const resumen = `
-    <div class="hoja">
-      ${enc}
+    <div class="hoja resumen">
+      ${enc('')}
       <table>
         <colgroup><col style="width:45mm"><col style="width:22mm"><col style="width:22mm">
           <col style="width:36mm"><col style="width:36mm"><col style="width:34mm"></colgroup>
@@ -1058,8 +1271,17 @@ function convImprimirListado(c) {
         <b>${adEsc(adLps(tot.pagado))}</b>${tot.pagado < tc.costo
           ? ' — faltan <b>' + adEsc(adLps(tc.costo - tot.pagado)) + '</b> por cobrar antes de pagarlos'
           : ''}.</p>` : ''}
-      <p class="nota">Las hojas que siguen son una por grado, para repartirlas y cobrar con ellas.</p>
-      ${firmas(c.maestro || 'Maestro responsable')}
+      <p class="nota solo-compacta">Abajo va grado por grado, en el mismo orden, con el nombre de cada
+        familia y una raya para que firme quien paga. Lo que se cobre en el portón se escribe ahí a lápiz
+        y al volver al aula se pasa a 💵 <b>Quién ya pagó</b>, que es donde salen las cuentas.</p>
+      <p class="nota solo-reparto">Las hojas que siguen son una por grado, para repartirlas y cobrar con ellas.</p>
+      ${firmas(c.maestro || 'Maestro responsable', 'solo-reparto')}
+    </div>`;
+
+  /* La firma de lo compacto: una sola, al final del documento entero. */
+  const cierre = `
+    <div class="hoja cierre solo-compacta">
+      ${firmas(c.maestro || 'Maestro responsable', '')}
     </div>`;
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
@@ -1075,20 +1297,43 @@ body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size
    la derecha, y lo que se pierde es la firma —lo único de esta hoja que
    no se puede volver a poner después—. */
 @page{size:letter;margin:10mm;}
-.hoja{page-break-after:always;}
-.hoja:last-child{page-break-after:auto;}
+/* ── COMPACTO (lo normal) vs UNA HOJA POR GRADO (para repartir) ──
+   Lo que cambia entre los dos es DÓNDE PARTE LA HOJA, nunca lo que
+   dice el papel. Compacto los grupos van seguidos y solo saltan cuando
+   no caben enteros; repartiendo, cada grupo empieza hoja y se lleva su
+   encabezado y su firma, porque esa hoja viaja sola al maestro de 6º.
+   Doce grupos de tres familias eran doce hojas casi en blanco, y en un
+   aula sin fotocopiadora propia cada hoja se paga. */
+.hoja{page-break-after:auto;}
+body.reparto .hoja{page-break-after:always;}
+body.reparto .hoja:last-child{page-break-after:auto;}
+/* Los grupos NO llevan «break-inside: avoid». Se probó y sale más
+   caro: un grupo que no cabe entero en lo que queda de hoja se va
+   completo a la siguiente y deja media página en blanco —justo lo que
+   se estaba quitando—. Con 43 familias de un mismo grado eso era una
+   hoja de más. Se dejan correr y lo que se cuida es que la franja del
+   grado no se quede sola al pie (el <thead> de abajo). */
+body:not(.reparto) .grupo{margin-top:2.5mm;}
+body:not(.reparto) .solo-reparto{display:none;}
+body.reparto .solo-compacta{display:none;}
 .enc{border-bottom:2px solid #ea580c;padding-bottom:2mm;margin-bottom:3mm;}
 .enc-t{font-size:13px;font-weight:900;line-height:1.2;}
 .enc-s{font-size:8.5px;color:#333;margin-top:.8mm;line-height:1.35;}
 table{width:100%;border-collapse:collapse;table-layout:fixed;}
 /* El encabezado va en <thead> para que el navegador lo REPITA en cada
    página: un grado de cuarenta familias pasa a la segunda hoja, y una
-   hoja suelta sin el nombre del grado no se puede ni leer ni archivar. */
+   hoja suelta sin el nombre del grado no se puede ni leer ni archivar.
+   Y no se queda solo al pie de una página: una franja de grado con la
+   fila de rótulos y nada debajo no es el principio de nada. */
+thead{break-inside:avoid;break-after:avoid;}
 .band th{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-size:10px;
-  font-weight:900;text-align:left;padding:1.6mm 2mm;line-height:1.3;}
+  font-weight:900;text-align:left;padding:1.2mm 2mm;line-height:1.25;}
 .cols th{background:#f1f5f9;border:1px solid #cbd5e1;font-size:7.5px;font-weight:900;
-  text-transform:uppercase;letter-spacing:.2px;color:#334155;padding:1.2mm 1mm;text-align:left;}
-td{border:1px solid #cbd5e1;padding:1.4mm 1mm;font-size:8.5px;line-height:1.25;
+  text-transform:uppercase;letter-spacing:.2px;color:#334155;padding:.9mm 1mm;text-align:left;}
+/* El relleno se aprieta; el TAMAÑO DE LETRA del cuerpo no se toca. Esta
+   hoja se lee de pie en el portón y a veces con mala luz: lo que se
+   recorta para que quepa es aire, nunca lo que hay que leer. */
+td{border:1px solid #cbd5e1;padding:1mm;font-size:8.5px;line-height:1.2;
   vertical-align:middle;word-wrap:break-word;overflow-wrap:break-word;}
 .c{text-align:center;}
 .n{text-align:right;white-space:nowrap;}
@@ -1103,9 +1348,10 @@ tr{page-break-inside:avoid;break-inside:avoid;}
    medido: por debajo de 3,5 mm la cifra se sale por arriba de la raya. */
 .hueco{display:block;border-bottom:1px solid #94a3b8;height:3.6mm;}
 .nota{font-size:8px;color:#444;margin-top:2.5mm;line-height:1.4;}
-.firmas{display:flex;gap:12mm;margin-top:9mm;}
+.firmas{display:flex;gap:12mm;margin-top:9mm;break-inside:avoid;}
 .firmas div{flex:1;text-align:center;font-size:8px;color:#444;}
 .raya{display:block;border-top:1px solid #333;margin-bottom:1.2mm;}
+.cierre{margin-top:6mm;}
 /* Los anchos van en un <colgroup> y NO en la fila de los rótulos. Con
    table-layout fijo el navegador mira la PRIMERA fila de la tabla, y esa
    es la franja del grado, que es una sola celda con colspan: los anchos
@@ -1113,17 +1359,37 @@ tr{page-break-inside:avoid;break-inside:avoid;}
    todas iguales —el nombre partido en cuatro renglones y la firma sin
    sitio—. El colgroup manda sobre las dos. */
 .noprint{padding:6mm 6mm 0;}
-.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;}
+.noprint button{padding:8px 16px;font-size:14px;font-weight:bold;cursor:pointer;margin:0 6px 6px 0;}
 .noprint p{font-size:12px;color:#444;margin-top:3mm;max-width:170mm;line-height:1.5;}
 @media print{.noprint{display:none;}}
 </style></head><body>
 <div class="noprint"><button onclick="window.print()">🖨️ Imprimir el listado</button>
-<p>La <strong>primera hoja</strong> es el resumen con el total: esa es la que se entrega y se firma.
-Las que siguen son <strong>una por grado</strong>, para repartirlas y cobrar con ellas.</p>
-<p>Al que todavía no ha pagado se le deja la casilla en blanco a propósito: se escribe ahí lo que dé, y al
-volver al aula se pasa a <strong>💵 Quién ya pagó</strong>, que es donde salen las cuentas.</p></div>
+<button id="cv-modo">🗂️ Sacarlo en una hoja por grado</button>
+<p id="cv-modo-txt">Sale <strong>compacto</strong>: el resumen arriba y los grados uno detrás de otro, para
+gastar las menos hojas posibles. Al que todavía no ha pagado se le deja la casilla en blanco a propósito:
+se escribe ahí lo que dé, y al volver al aula se pasa a <strong>💵 Quién ya pagó</strong>, que es donde
+salen las cuentas.</p>
+<p>Si necesitas <strong>repartir</strong> las listas —la de 6º-1 al maestro de 6º-1— toca el botón de
+arriba y cada grado sale en su propia hoja, con su encabezado y su firma.</p></div>
 ${resumen}
 ${grupos.map(hojaGrado).join('')}
+${cierre}
+<script>
+/* El maestro elige en la misma ventana de impresión y ve el cambio antes
+   de gastar papel: volver atrás a la aplicación para cambiar de forma es
+   justo donde se abandona y se imprime lo que salga. */
+(function () {
+  var b = document.getElementById('cv-modo');
+  var t = document.getElementById('cv-modo-txt');
+  b.addEventListener('click', function () {
+    var rep = document.body.classList.toggle('reparto');
+    b.textContent = rep ? '📄 Volver a lo compacto (menos hojas)' : '🗂️ Sacarlo en una hoja por grado';
+    t.innerHTML = rep
+      ? 'Sale <strong>una hoja por grado</strong>, cada una con su encabezado y su firma, para repartirlas.'
+      : 'Sale <strong>compacto</strong>: el resumen arriba y los grados uno detrás de otro, para gastar las menos hojas posibles.';
+  });
+})();
+<\/script>
 </body></html>`;
   const w = (typeof adPrintAbrir === 'function') ? adPrintAbrir(html) : window.open('', '_blank');
   if (w && typeof adPrintAbrir !== 'function') { w.document.write(html); w.document.close(); }
@@ -2273,6 +2539,24 @@ function convEnganchar(body, c, d, t, pub) {
       renderAdmin();
     }));
 
+  /* ── 🗑 Quitar a alguien que contestó el enlace, y devolverlo ──
+     Igual que los pagos: se busca por HUELLA y se lee del almacén, no de
+     la `c` que se pintó. Entre el pintado y el toque pudo entrar una
+     respuesta de la nube y recolocar la lista entera. */
+  body.querySelectorAll('[data-cvdel]').forEach(b =>
+    b.addEventListener('click', () => {
+      const cc = convUna(adLoad(), _adConvId) || c;
+      const h = String(b.dataset.cvdel || '');
+      const x = convDelEnlace(cc).find(y => convHuella(y.alumno, y.grado, y.seccion) === h);
+      if (x) convQuitarRespuesta(cc, x);
+    }));
+
+  body.querySelectorAll('[data-cvdevolver]').forEach(b =>
+    b.addEventListener('click', () => {
+      const cc = convUna(adLoad(), _adConvId) || c;
+      convDevolver(cc, String(b.dataset.cvdevolver || ''));
+    }));
+
   const bCopLi = document.getElementById('cv-copiar-lista');
   if (bCopLi) bCopLi.addEventListener('click', () => adCopiar(convTextoLista(c, t),
     () => toast('📋 Lista copiada'), () => toast('No se pudo copiar')));
@@ -2559,10 +2843,33 @@ async function convTraer(avisar) {
   const dd = adLoad();
   const cc = convUna(dd, _adConvId);
   if (!cc) return;
+  /* La marca de tiempo del servidor viaja con la fila: es lo que después
+     distingue «esta es la misma respuesta que el maestro quitó» de «esta
+     familia volvió a contestar», y de eso depende que una respuesta
+     nueva no se quede escondida para siempre. */
   cc.resp = filas.map(f => ({
     va: !!f.va, alumno: f.alumno || '', grado: f.grado || '', seccion: f.seccion || '',
     personas: Number(f.personas) || 0, tel: f.tel || '', nota: f.nota || '',
+    act: String(f.actualizado_en || ''),
   }));
+  convQuitadosSincronizar(cc);
+  /* Los borrados que se quedaron sin señal se reintentan aquí, que es
+     donde el maestro ya está mirando la lista. Mientras no entren, el
+     padre los sigue contando y el espejo lo dice.
+
+     Se reintenta con TODO lo que el servidor siga mandando, incluso lo
+     que ya dijo haber borrado: si la fila vuelve a venir es que allá
+     sigue estando, y creerle a la confirmación de ayer dejaría al padre
+     contando para siempre a alguien que no va. Borrar dos veces no
+     rompe nada; lo caro es no borrar. */
+  const pend = Object.keys(convQuitados(cc));
+  for (const h of pend) {
+    if (!cc.resp.some(r => convHuella(r.alumno, r.grado, r.seccion) === h)) continue;
+    if (await convQuitarNube(cc, h)) {
+      cc.quitados[h].nube = 1;
+      cc.resp = cc.resp.filter(r => convHuella(r.alumno, r.grado, r.seccion) !== h);
+    }
+  }
   const n = new Date();
   cc.respFecha = adFechaBonita(adHoy()) + ' a las ' +
     String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');

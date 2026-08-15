@@ -823,9 +823,28 @@ portón, sin la aplicación delante y con el lápiz en la mano.
   cuánto falta, grado por grado, con las rayas de firma—. Es la que se
   entrega y la que se firma; sin ella hay que sumar seis hojas a mano
   delante del director.
-- **Cada grupo empieza en su hoja**, porque se reparten: la de 6º-1 al
-  maestro de 6º-1. Y **el grupo es grado + sección**: «6º-1» y «6º-2» son
-  dos hojas, dos maestros y dos listas.
+- **Sale compacto: los grupos van seguidos.** Empezó saliendo una hoja
+  por grupo siempre, y cuando contesta la escuela entera eso son doce
+  grupos de tres o cuatro familias: **trece hojas** con dos dedos de
+  tinta y el resto en blanco. En un aula sin fotocopiadora propia cada
+  hoja se paga. Ahora las mismas 42 familias caben en **tres**. Lo que
+  se recortó fue aire: el encabezado va una vez y no doce, el renglón de
+  totales de cada grupo se calla porque **la franja del grado ya dice lo
+  mismo**, y las firmas van una vez al final. El **tamaño de letra del
+  cuerpo no se toca**: esta hoja se lee de pie en el portón y a veces con
+  mala luz.
+- **Y se puede volver a una hoja por grado**, con su botón en la ventana
+  de impresión (`body.reparto`). Esa forma no se tira, porque es la que
+  sirve para **repartir**: la de 6º-1 al maestro de 6º-1, con su
+  encabezado y su firma, que si no habría que fotocopiar la hoja para
+  dársela a dos personas. Las dos formas **dicen lo mismo**; lo único que
+  cambia es dónde parte la hoja. Y **el grupo es grado + sección**:
+  «6º-1» y «6º-2» son dos listas, dos maestros y dos hojas.
+- **Los grupos NO llevan `break-inside: avoid`.** Se probó y sale más
+  caro: el grupo que no cabe entero en lo que queda de hoja se va
+  completo a la siguiente y deja media página en blanco —justo lo que se
+  estaba quitando—. Lo que sí se cuida es que la franja del grado no se
+  quede sola al pie (`thead { break-after: avoid }`).
 - **El encabezado va en el `<thead>`** para que el navegador lo repita en
   cada página. Un grupo de 43 familias pasa a la segunda hoja, y una hoja
   suelta sin el nombre del grado ni las columnas no se puede ni leer ni
@@ -841,6 +860,45 @@ portón, sin la aplicación delante y con el lápiz en la mano.
   a cada lado y a 196 clavados la tabla se pasaba del papel. Lo que se
   corta por la derecha es **la firma**, que es lo único de esa hoja que no
   se puede volver a poner.
+
+### Quitar a quien se apuntó por error
+
+El enlace anda suelto en un grupo de cientos de personas, y por ahí entra
+lo que tiene que entrar y también lo otro: la **prueba que hizo el propio
+maestro** para ver cómo se veía, el que se equivocó de convocatoria, el
+nombre escrito de broma. Eso cuenta personas, cuenta dinero y cuenta
+**asientos**: se contrata un bus para gente que no existe. Hasta ahora
+solo se podía quitar lo apuntado a mano.
+
+Cada respuesta del enlace lleva su **🗑 Quitar**, y lo quitado se ve en
+**🗑 Quitados de la lista**, al final de la pantalla, con su botón para
+devolverla. Cuatro reglas:
+
+1. **Se guarda en `c.quitados`, NUNCA borrando de `c.resp` a secas.**
+   `convTraer` reemplaza `resp` entero con lo que venga de la nube: lo
+   borrado ahí volvería en el primer «Traer las respuestas» y el maestro
+   se enteraría contando gente en el portón. Es la misma razón por la que
+   viven aparte los pagos y lo apuntado a mano.
+2. **Se borra también en el servidor** (`metas_conv_quitar`, con el PIN),
+   para que el «ya somos 37» que ve el padre deje de contarla. Sin señal
+   se esconde igual aquí y **se reintenta al traer las respuestas** —y se
+   reintenta con todo lo que el servidor siga mandando, aunque ya haya
+   dicho que lo borró: si la fila vuelve a venir, es que allá sigue—.
+   Mientras no entre, el espejo de «lo que ve el padre» **la sigue
+   contando**, porque eso es lo que él ve.
+3. ⚠️ **Si la familia vuelve a contestar, VUELVE A SALIR.** Es la regla
+   que no se puede saltar. Esconder una huella para siempre es perder una
+   respuesta en silencio: la madre cree que apartó su asiento y el niño se
+   queda en el portón. Por eso el escondite guarda la marca de tiempo de
+   la fila (`act`, que viene del servidor) y se suelta solo en cuanto
+   llega una distinta.
+4. **Se puede devolver.** El maestro quita renglones con cuarenta nombres
+   delante y el teléfono en la mano. Si el servidor ya la borró, la fila
+   guardada vuelve como **apuntada a mano** —misma huella, o sea el mismo
+   folio de boleto que la familia tiene guardado en su teléfono—.
+
+Lo quitado **no viaja a la nube**: `convDatosPublicos` es una lista
+cerrada de lo que sube, y `quitados` no está en ella.
 
 ### El aviso en lote: se escribe una vez y se manda cuarenta
 
@@ -953,18 +1011,24 @@ guardar no le borre al maestro su propio WhatsApp. Y las cuatro del
 retoque: que lo escrito para una familia **salga por WhatsApp aunque no
 se haya salido del campo**, que **no se le pegue a la siguiente**, que
 aguante cerrar la aplicación y que cambiar el mensaje de todas **no se lo
-borre por detrás**. El
+borre por detrás**. Y las cinco de quitar a quien se apuntó por error:
+que **deje de contar**, que **no vuelva sola** al traer las respuestas,
+que **sí vuelva si esa familia contesta otra vez**, que el borrado se le
+pida al servidor **con el PIN** y se reintente sin señal, y que lo
+quitado **no viaje a la nube**. El
 segundo cuenta las páginas del PDF: 42 familias tienen que dar **6
 hojas**, ni una más; el boleto tiene que seguir siendo una TIRA ancha y no
 un cuadro con un hueco en medio; y el que sale en blanco tiene que llevar
 sus rayas para escribir y el folio impreso **en las dos mitades**. El
 tercero mide el listado de aportes: que **nada se salga del ancho del
-papel** —lo que se corta por la derecha es la firma—, que cada grupo tenga
-**su hoja**, que estén el nombre, el folio y el teléfono de cada familia,
-que **la suma de los grados dé el total** del resumen y que todo el que
-deba algo lleve **su raya para escribir**. La nube no se toca: se pone un
-Supabase de mentira con `page.route`, así corre sin internet y sin
-ensuciar datos reales.
+papel** —lo que se corta por la derecha es la firma—, que **no gaste
+hojas de balde** (42 familias de doce grupos, en tres hojas y no en
+trece), que la forma de **repartir** siga dando una hoja por grupo con su
+encabezado y su firma, que estén el nombre, el folio y el teléfono de
+cada familia, que **la suma de los grados dé el total** del resumen y que
+todo el que deba algo lleve **su raya para escribir**. La nube no se
+toca: se pone un Supabase de mentira con `page.route`, así corre sin
+internet y sin ensuciar datos reales.
 
 ## Normativa: el Buzón del lector recoge, no publica
 

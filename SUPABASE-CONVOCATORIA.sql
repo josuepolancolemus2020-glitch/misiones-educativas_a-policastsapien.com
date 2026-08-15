@@ -26,6 +26,9 @@
 --      - metas_conv_ver(codigo)                   → cualquiera ve el evento
 --      - metas_conv_responder(...)                → el padre contesta
 --      - metas_conv_respuestas(codigo, pin)       → el maestro lee todo
+--      - metas_conv_quitar(codigo, pin, huella)   → el maestro quita una
+--        respuesta que se apuntó por error (una prueba suya, un nombre
+--        de broma): deja de contar personas, asientos y dinero.
 --   4) Higiene: las convocatorias de más de 60 días se borran solas al
 --      crear una nueva. Una salida es un evento del mes, no un archivo.
 --
@@ -217,6 +220,48 @@ $$;
 revoke all on function public.metas_conv_respuestas(text, text) from public;
 grant execute on function public.metas_conv_respuestas(text, text) to anon, authenticated;
 
+-- ── El maestro QUITA una respuesta (exige el PIN) ──
+-- Por el enlace entra lo que tiene que entrar y también lo otro: la
+-- prueba que hizo el propio maestro para ver cómo se veía, el que se
+-- equivocó de convocatoria, el nombre escrito de broma. Eso cuenta
+-- personas, cuenta dinero y cuenta ASIENTOS, y un bus se contrata por
+-- gente que no existe.
+--
+-- Se borra de verdad, y por eso hace falta esta puerta: escondiéndola
+-- solo en el teléfono del maestro, el contador que ve el padre («ya
+-- somos 37») seguiría contándola para siempre.
+--
+-- Devuelve `true` también cuando no había nada que borrar: lo que el
+-- maestro pidió —que esa fila no esté— ya se cumple, y su teléfono
+-- necesita saberlo para dejar de reintentarlo.
+--
+-- SI LA FAMILIA VUELVE A CONTESTAR, ENTRA OTRA VEZ. Es a propósito:
+-- una respuesta que no puede volver a entrar es una familia que se
+-- queda fuera del bus creyendo que apartó su asiento.
+create or replace function public.metas_conv_quitar(p_codigo text, p_pin text, p_huella text)
+returns boolean
+language plpgsql security definer set search_path = public, extensions
+as $$
+declare
+  cod text := upper(regexp_replace(coalesce(p_codigo,''), '[^A-Za-z0-9]', '', 'g'));
+  hue text := left(trim(coalesce(p_huella,'')), 120);
+begin
+  if hue = '' then return false; end if;
+  if not exists (
+    select 1 from public.convocatorias c
+    where c.codigo = cod
+      and c.pin_hash = encode(extensions.digest(
+        convert_to(coalesce(p_pin,'') || cod, 'UTF8'), 'sha256'), 'hex')
+  ) then
+    return false;                 -- sin el PIN, nadie borra respuestas ajenas
+  end if;
+  delete from public.convocatoria_respuestas where codigo = cod and huella = hue;
+  return true;
+end
+$$;
+revoke all on function public.metas_conv_quitar(text, text, text) from public;
+grant execute on function public.metas_conv_quitar(text, text, text) to anon, authenticated;
+
 -- ============================================================
 -- Verificación rápida (opcional, pegar después del Run):
 --   select public.metas_conv_crear('R4TP','123456','{"t":"Excursión"}'::jsonb);  -- true
@@ -225,5 +270,8 @@ grant execute on function public.metas_conv_respuestas(text, text) to anon, auth
 --   select public.metas_conv_responder('R4TP','ana lopez|6|1',true,'Ana López','6','1',2,'99887766','');  -- true (corrige, no duplica)
 --   select * from public.metas_conv_ver('R4TP');            -- familias 1, personas 2
 --   select * from public.metas_conv_respuestas('R4TP','123456');  -- 1 fila
+--   select public.metas_conv_quitar('R4TP','999999','ana lopez|6|1');  -- false (PIN malo)
+--   select public.metas_conv_quitar('R4TP','123456','ana lopez|6|1');  -- true
+--   select * from public.metas_conv_respuestas('R4TP','123456');  -- 0 filas
 --   delete from public.convocatorias where codigo = 'R4TP';       -- se lleva las respuestas
 -- ============================================================
