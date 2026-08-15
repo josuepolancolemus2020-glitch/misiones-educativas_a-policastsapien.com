@@ -66,6 +66,82 @@ revoke all on function public._metas_es_direccion(text) from public, anon, authe
 
 
 -- ────────────────────────────────────────────────────────────
+-- 1-bis) EL ALCANCE DE LA DIRECCIÓN NO SE AUTO-EDITA.
+--    Todo lo que ve un director cuelga de que su ESCUELA (y su
+--    municipio) empareje con la del maestro. Ese campo lo edita
+--    cualquiera con su propia clave (metas_perfil_editar). Si una
+--    cuenta de Dirección pudiera reescribirlo, se mudaría a otra
+--    escuela y leería las listas de niños de allá: la única frontera
+--    entre escuelas sería un campo que el propio director cambia.
+--    Por eso, para director y asistencia, la escuela y el municipio
+--    los fija EL ADMIN (metas_rol_escuela_corregir) y su propia
+--    edición de perfil ya no los toca. Un docente raso sí edita su
+--    escuela: la necesita para emparejarse, y editarla no le abre
+--    nada de nadie (sigue siendo docente).
+-- ────────────────────────────────────────────────────────────
+create or replace function public.metas_perfil_editar(
+  p_codigo text, p_clave text,
+  p_escuela text default null, p_tipo text default null,
+  p_telefono text default null, p_departamento text default null,
+  p_municipio text default null, p_lugar text default null
+) returns jsonb
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_dir boolean;
+begin
+  if not public._metas_docente_ok(p_codigo, p_clave) then
+    return jsonb_build_object('ok', false, 'motivo', 'clave');
+  end if;
+  select public._metas_es_direccion(rol) into v_dir from public.docentes
+  where codigo = upper(trim(coalesce(p_codigo,'')));
+
+  update public.docentes d set
+    -- la escuela y el municipio de una cuenta de Dirección los fija el
+    -- admin, no ella misma: son su alcance, no un dato de contexto más
+    escuela      = case when v_dir or p_escuela is null then d.escuela else left(trim(p_escuela), 120) end,
+    municipio    = case when v_dir or p_municipio is null then d.municipio else left(trim(p_municipio), 60) end,
+    tipo         = case when p_tipo         is null then d.tipo         else left(trim(p_tipo), 40)         end,
+    telefono     = case when p_telefono     is null then d.telefono     else left(trim(p_telefono), 40)     end,
+    departamento = case when p_departamento is null then d.departamento else left(trim(p_departamento), 60) end,
+    lugar        = case when p_lugar        is null then d.lugar         else left(trim(p_lugar), 120)       end
+  where d.codigo = upper(trim(coalesce(p_codigo,'')));
+  return jsonb_build_object('ok', found, 'escuela_fija', coalesce(v_dir, false));
+end
+$$;
+revoke all on function public.metas_perfil_editar(text,text,text,text,text,text,text,text) from public;
+grant execute on function public.metas_perfil_editar(text,text,text,text,text,text,text,text) to anon, authenticated;
+
+
+-- ────────────────────────────────────────────────────────────
+-- 1-ter) MISMA ESCUELA = mismo nombre Y mismo municipio.
+--    En Honduras se repiten los nombres genéricos («Escuela República
+--    de Honduras», «14 de Julio») en pueblos distintos. Emparejar solo
+--    por el nombre fusiona dos escuelas y un director acabaría viendo
+--    los niños de la otra. El desempate es el MUNICIPIO, pero tolerante:
+--    si uno de los dos no lo escribió, no se separan (el caso común de
+--    hoy, con perfiles a medio llenar, no debe quedar ciego). Cuando
+--    los dos lo escriben y difieren, ahí sí son dos escuelas distintas.
+--    El admin alinea escuela+municipio de una institución que arranca.
+-- ────────────────────────────────────────────────────────────
+create or replace function public._metas_misma_escuela(
+  esc_a text, muni_a text, esc_b text, muni_b text
+) returns boolean language sql immutable
+as $$
+  select length(public.metas_norm(coalesce(esc_a,''))) >= 4
+     and public.metas_norm(coalesce(esc_a,'')) = public.metas_norm(coalesce(esc_b,''))
+     and (public.metas_norm(coalesce(muni_a,'')) = ''
+          or public.metas_norm(coalesce(muni_b,'')) = ''
+          or public.metas_norm(coalesce(muni_a,'')) = public.metas_norm(coalesce(muni_b,'')))
+$$;
+revoke all on function public._metas_misma_escuela(text,text,text,text) from public, anon, authenticated;
+
+-- La firma vieja de dos argumentos ya no se usa; se quita para que no
+-- queden dos versiones al re-correr este archivo.
+drop function if exists public._metas_misma_escuela(text,text);
+
+
+-- ────────────────────────────────────────────────────────────
 -- 2) metas_rol_listar aprende el rol asistencia (misma vista que
 --    el director: los docentes de su escuela, sin contacto).
 -- ────────────────────────────────────────────────────────────
@@ -194,15 +270,18 @@ grant execute on function public.metas_rol_cambiar(text,text,text,text) to anon,
 
 
 -- ────────────────────────────────────────────────────────────
--- 4) CORREGIR LA ESCUELA de una cuenta — SOLO el admin.
---    La lista de un director se arma emparejando el nombre de escuela
---    del perfil; cuando una institución arranca (varios maestros
---    escribiendo «John A. Cook», «Esc. John Arnold Cook»…), alguien
---    tiene que poder alinear los nombres sin pedirle a cada maestro
---    que edite su perfil.
+-- 4) CORREGIR LA ESCUELA (y el municipio) de una cuenta — SOLO el admin.
+--    La lista de un director se arma emparejando escuela+municipio del
+--    perfil; cuando una institución arranca (varios maestros escribiendo
+--    «John A. Cook», «Esc. John Arnold Cook»…, y municipios dispares)
+--    alguien tiene que poder alinearlos sin pedirle a cada maestro que
+--    edite su perfil. Es además la única vía de fijar la escuela de una
+--    cuenta de Dirección, que ya no la edita ella misma. El municipio es
+--    opcional: si no se manda, se deja como está.
 -- ────────────────────────────────────────────────────────────
+drop function if exists public.metas_rol_escuela_corregir(text,text,text,text);
 create or replace function public.metas_rol_escuela_corregir(
-  p_codigo text, p_clave text, p_correo text, p_escuela text
+  p_codigo text, p_clave text, p_correo text, p_escuela text, p_municipio text default null
 ) returns jsonb
 language plpgsql security definer set search_path = public
 as $$
@@ -210,6 +289,7 @@ declare
   yo record;
   v_correo text := lower(trim(coalesce(p_correo,'')));
   v_escuela text := left(trim(coalesce(p_escuela,'')), 120);
+  v_municipio text := left(trim(coalesce(p_municipio,'')), 60);
 begin
   begin
     if not public.metas_rate_ok() then
@@ -231,7 +311,9 @@ begin
     return jsonb_build_object('ok', false, 'motivo', 'escuela_corta');
   end if;
 
-  update public.docentes d set escuela = v_escuela
+  update public.docentes d set
+    escuela = v_escuela,
+    municipio = case when p_municipio is null then d.municipio else v_municipio end
   where lower(d.correo) = v_correo
     and d.correo is not null and d.correo <> '';
   if not found then
@@ -240,8 +322,8 @@ begin
   return jsonb_build_object('ok', true, 'escuela', v_escuela);
 end
 $$;
-revoke all on function public.metas_rol_escuela_corregir(text,text,text,text) from public;
-grant execute on function public.metas_rol_escuela_corregir(text,text,text,text) to anon, authenticated;
+revoke all on function public.metas_rol_escuela_corregir(text,text,text,text,text) from public;
+grant execute on function public.metas_rol_escuela_corregir(text,text,text,text,text) to anon, authenticated;
 
 
 -- ────────────────────────────────────────────────────────────
@@ -303,14 +385,7 @@ as $$
 $$;
 revoke all on function public._metas_docente_por_nombre(text) from public, anon, authenticated;
 
--- ¿Son de la misma escuela? (el mismo emparejamiento de metas_rol_listar)
-create or replace function public._metas_misma_escuela(a text, b text)
-returns boolean language sql immutable
-as $$
-  select length(public.metas_norm(coalesce(a,''))) >= 4
-     and public.metas_norm(coalesce(a,'')) = public.metas_norm(coalesce(b,''))
-$$;
-revoke all on function public._metas_misma_escuela(text,text) from public, anon, authenticated;
+-- (_metas_misma_escuela, ahora con municipio, se define arriba en 1-ter)
 
 
 -- ── 5a) La Dirección PIDE un permiso a un maestro de su escuela ──
@@ -348,7 +423,7 @@ begin
   if d.codigo is null or d.codigo = yo.codigo then
     return jsonb_build_object('ok', false, 'motivo', 'no_existe');
   end if;
-  if not public._metas_misma_escuela(yo.escuela, d.escuela) then
+  if not public._metas_misma_escuela(yo.escuela, yo.municipio, d.escuela, d.municipio) then
     return jsonb_build_object('ok', false, 'motivo', 'escuela');
   end if;
 
@@ -407,7 +482,7 @@ begin
   if not public._metas_es_direccion(dir.rol) then
     return jsonb_build_object('ok', false, 'motivo', 'no_direccion');
   end if;
-  if not public._metas_misma_escuela(yo.escuela, dir.escuela) then
+  if not public._metas_misma_escuela(yo.escuela, yo.municipio, dir.escuela, dir.municipio) then
     return jsonb_build_object('ok', false, 'motivo', 'escuela');
   end if;
 
@@ -522,7 +597,7 @@ begin
       from public.docentes d
       where public._metas_es_direccion(d.rol)
         and d.codigo <> yo.codigo
-        and public.metas_norm(coalesce(d.escuela,'')) = public.metas_norm(yo.escuela)
+        and public._metas_misma_escuela(yo.escuela, yo.municipio, d.escuela, d.municipio)
       limit 50
     ) s;
   end if;
@@ -582,6 +657,23 @@ begin
 end
 $$;
 revoke all on function public._metas_grupos_de(text) from public, anon, authenticated;
+
+-- Los grupos de un docente que un director de p_escuela_dir tiene por
+-- qué ver. Un maestro puede atender DOS colegios (cada grupo lleva su
+-- propia escuela): el director de uno no puede ver la lista de niños del
+-- grupo del OTRO. Regla: se ve el grupo con escuela vacía (hereda la del
+-- perfil del maestro, que ya emparejó para llegar aquí) y el grupo cuya
+-- escuela coincide con la del director. El municipio no se compara por
+-- grupo —el grupo no lo guarda—: ya se comparó a nivel de maestro.
+create or replace function public._metas_grupos_visibles(p_codigo text, p_escuela_dir text)
+returns jsonb language sql stable
+as $$
+  select coalesce(jsonb_agg(g), '[]'::jsonb)
+  from jsonb_array_elements(public._metas_grupos_de(p_codigo)) g
+  where public.metas_norm(coalesce(g->>'escuela','')) = ''
+     or public.metas_norm(coalesce(g->>'escuela','')) = public.metas_norm(coalesce(p_escuela_dir,''))
+$$;
+revoke all on function public._metas_grupos_visibles(text,text) from public, anon, authenticated;
 
 -- Un campo de un grupo garantizado como ARREGLO (lista, convocatorias…)
 create or replace function public._metas_arreglo(v jsonb)
@@ -648,7 +740,11 @@ begin
             from jsonb_array_elements(public._metas_arreglo(g->'lista')) a
             where coalesce(a->>'prueba','') <> 'true'
               and upper(coalesce(a->>'sexo','')) = 'M')))
-        from jsonb_array_elements(public._metas_grupos_de(d.codigo)) g
+        -- la Dirección ve solo los grupos DE SU escuela (un maestro con
+        -- dos colegios no le abre el otro); el rector verifica todos
+        from jsonb_array_elements(case when v_es_dir
+          then public._metas_grupos_visibles(d.codigo, yo.escuela)
+          else public._metas_grupos_de(d.codigo) end) g
       ), '[]'::jsonb),
       -- el estado de MIS permisos con este docente (solo Dirección)
       'permisos', case when v_es_dir then coalesce((
@@ -660,7 +756,10 @@ begin
       ) as fila
     from public.docentes d
     where case
-      when v_es_dir then public.metas_norm(coalesce(d.escuela,'')) = public.metas_norm(yo.escuela)
+      -- la Dirección no se ve a sí misma (su aula la gestiona en su Zona
+      -- Docente, no aquí) y empareja por escuela+municipio
+      when v_es_dir then d.codigo <> yo.codigo
+        and public._metas_misma_escuela(yo.escuela, yo.municipio, d.escuela, d.municipio)
       else true end
     order by d.creado_en desc
     limit case when v_es_dir then 200 else 500 end
@@ -700,15 +799,17 @@ begin
   end if;
 
   d := public._metas_docente_por_nombre(p_nombre_docente);
-  if d.codigo is null then
+  if d.codigo is null or d.codigo = yo.codigo then
     return jsonb_build_object('ok', false, 'motivo', 'no_existe');
   end if;
-  if not public._metas_misma_escuela(yo.escuela, d.escuela) then
+  if not public._metas_misma_escuela(yo.escuela, yo.municipio, d.escuela, d.municipio) then
     return jsonb_build_object('ok', false, 'motivo', 'escuela');
   end if;
 
+  -- SOLO entre los grupos visibles para esta escuela: si el maestro
+  -- atiende otro colegio, el grupo de allá no se abre desde aquí
   select g into v_grupo
-  from jsonb_array_elements(public._metas_grupos_de(d.codigo)) g
+  from jsonb_array_elements(public._metas_grupos_visibles(d.codigo, yo.escuela)) g
   where g->>'id' = trim(coalesce(p_grupo_id,''))
   limit 1;
   if v_grupo is null then
@@ -746,16 +847,22 @@ grant execute on function public.metas_rol_alumnos(text,text,text,text) to anon,
 --    familias y no viajan a la nube ni para él).
 -- ────────────────────────────────────────────────────────────
 
--- Los códigos de convocatoria que hay en el aula de un docente
-create or replace function public._metas_convs_de(p_codigo text)
+-- Los códigos de convocatoria que un director de p_escuela_dir puede
+-- manejar de este maestro: solo las de los grupos DE SU escuela. Un
+-- maestro con dos colegios no le abre las convocatorias del otro, ni
+-- aunque le conceda el permiso (el permiso es sobre el aula de aquí).
+create or replace function public._metas_convs_de(p_codigo text, p_escuela_dir text)
 returns text[] language sql stable
 as $$
   select coalesce(array_agg(distinct cv->>'codigo'), '{}')
-  from jsonb_array_elements(public._metas_grupos_de(p_codigo)) g,
+  from jsonb_array_elements(public._metas_grupos_visibles(p_codigo, p_escuela_dir)) g,
        jsonb_array_elements(public._metas_arreglo(g->'convocatorias')) cv
   where coalesce(cv->>'codigo','') <> ''
 $$;
-revoke all on function public._metas_convs_de(text) from public, anon, authenticated;
+revoke all on function public._metas_convs_de(text,text) from public, anon, authenticated;
+-- La firma vieja de un argumento ya no se usa: se quita para no dejar
+-- dos versiones al re-correr este archivo.
+drop function if exists public._metas_convs_de(text);
 
 -- ── 7a) Listar las convocatorias del maestro (evento + conteos) ──
 create or replace function public.metas_rol_conv_listar(
@@ -781,7 +888,7 @@ begin
   if d.codigo is null then
     return jsonb_build_object('ok', false, 'motivo', 'no_existe');
   end if;
-  if not public._metas_misma_escuela(yo.escuela, d.escuela) then
+  if not public._metas_misma_escuela(yo.escuela, yo.municipio, d.escuela, d.municipio) then
     return jsonb_build_object('ok', false, 'motivo', 'escuela');
   end if;
   if not public._metas_permiso_ok(d.codigo, yo.codigo, 'convocatorias') then
@@ -803,7 +910,7 @@ begin
                    where r.codigo = c.codigo and r.va),
       'actualizada', c.actualizada_en) as fila
     from public.convocatorias c
-    where c.codigo = any (public._metas_convs_de(d.codigo))
+    where c.codigo = any (public._metas_convs_de(d.codigo, yo.escuela))
     limit 100
   ) s;
 
@@ -842,7 +949,7 @@ begin
   if d.codigo is null then
     return jsonb_build_object('ok', false, 'motivo', 'no_existe');
   end if;
-  if not public._metas_misma_escuela(yo.escuela, d.escuela) then
+  if not public._metas_misma_escuela(yo.escuela, yo.municipio, d.escuela, d.municipio) then
     return jsonb_build_object('ok', false, 'motivo', 'escuela');
   end if;
   if not public._metas_permiso_ok(d.codigo, yo.codigo, 'convocatorias') then
@@ -850,7 +957,7 @@ begin
   end if;
   -- la convocatoria tiene que ser DE ESE maestro: el permiso no abre
   -- las de nadie más
-  if not (v_conv = any (public._metas_convs_de(d.codigo))) then
+  if not (v_conv = any (public._metas_convs_de(d.codigo, yo.escuela))) then
     return jsonb_build_object('ok', false, 'motivo', 'no_existe');
   end if;
 

@@ -2125,16 +2125,23 @@ function renderAjustes() {
       <div id="aj-edit-form" style="display:none;margin-top:12px;border-top:1px solid #e0e0e0;padding-top:12px;">
         <p style="font-size:0.8rem;color:#555;margin:0 0 10px;">El <strong>nombre</strong> y el <strong>correo</strong>
           no se cambian aquí: son las llaves de tu cuenta y del avance de tus alumnos.</p>
-        <input id="aj-ed-escuela" class="pa-inp-field" maxlength="120" placeholder="Nombre de tu escuela"
-               value="${_pEsc(d.escuela || '')}" style="margin-bottom:8px;">
+        ${_ajEsDireccion(rol) ? `
+        <p style="font-size:0.78rem;color:#b26a00;background:#fdf8ee;border:1px solid #f3ddb3;border-radius:10px;padding:8px 10px;margin:0 0 8px;">
+          🏫 Tu <strong>escuela</strong> y tu <strong>municipio</strong> definen a qué docentes acompañas, así
+          que los ajusta tu administrador, no tú. Si están mal, escríbele desde «Escríbele al creador».</p>
+        <input class="pa-inp-field" value="${_pEsc(d.escuela || '')}" disabled style="margin-bottom:8px;opacity:0.7;">`
+        : `<input id="aj-ed-escuela" class="pa-inp-field" maxlength="120" placeholder="Nombre de tu escuela"
+               value="${_pEsc(d.escuela || '')}" style="margin-bottom:8px;">`}
         <div style="display:flex;gap:8px;margin-bottom:8px;">
           <button id="aj-tipo-pub" class="doc-tipo-btn${(d.tipo || 'Pública') === 'Pública' ? ' doc-tipo-sel' : ''}" onclick="ajTipo('Pública')">🏫 Pública</button>
           <button id="aj-tipo-pri" class="doc-tipo-btn${d.tipo === 'Privada' ? ' doc-tipo-sel' : ''}" onclick="ajTipo('Privada')">🏛 Privada</button>
         </div>
         <input id="aj-ed-departamento" class="pa-inp-field" maxlength="60" placeholder="Departamento"
                value="${_pEsc(d.departamento || '')}" style="margin-bottom:8px;">
-        <input id="aj-ed-municipio" class="pa-inp-field" maxlength="80" placeholder="Municipio"
-               value="${_pEsc(d.municipio || '')}" style="margin-bottom:8px;">
+        ${_ajEsDireccion(rol)
+          ? `<input class="pa-inp-field" value="${_pEsc(d.municipio || '')}" disabled style="margin-bottom:8px;opacity:0.7;" placeholder="Municipio">`
+          : `<input id="aj-ed-municipio" class="pa-inp-field" maxlength="80" placeholder="Municipio"
+               value="${_pEsc(d.municipio || '')}" style="margin-bottom:8px;">`}
         <input id="aj-ed-lugar" class="pa-inp-field" maxlength="200" placeholder="Lugar / referencia de la escuela"
                value="${_pEsc(d.lugar || '')}" style="margin-bottom:8px;">
         <input id="aj-ed-telefono" class="pa-inp-field" maxlength="40" type="tel" placeholder="Teléfono / WhatsApp"
@@ -2201,17 +2208,22 @@ function renderAjustes() {
         <button class="padre-wa-btn" onclick="ajCargarEquipo()">🔄 Cargar la lista</button>
         <div id="aj-lista" class="aj-lista"></div>
       </div>`;
-  } else {
-    // ── Tarjeta del MAESTRO: los permisos sobre SU registro ──
-    //    Él es el dueño: concede, niega o revoca lo que la Dirección le
-    //    pida, o da un permiso sin esperar a que se lo pidan. Se carga
-    //    sola al entrar: un pedido que el maestro nunca ve es un pedido
-    //    que se queda esperando para siempre.
+  }
+
+  // ── Tarjeta del MAESTRO: los permisos sobre SU registro ──
+  //    Todo el que tiene aula es dueño de un registro que la Dirección
+  //    podría querer gestionar: el docente, pero también el director y la
+  //    asistencia (que también dan clase). Por eso esta tarjeta la ve
+  //    cualquiera con aula, no solo el docente raso: si un director le
+  //    pide a la asistencia el manejo de SUS convocatorias, la asistencia
+  //    tiene que verlo y contestarlo — antes se quedaba esperando para
+  //    siempre. El admin y el rector no tienen aula que delegar.
+  if (rol !== 'admin' && rol !== 'rector') {
     html += `
       <div class="setting-group teacher-panel-group">
         <div class="teacher-panel-head">
           <i class="fa-solid fa-key teacher-panel-icon"></i>
-          <label class="setting-label" style="margin-bottom:0;">Permisos para la Dirección</label>
+          <label class="setting-label" style="margin-bottom:0;">Permisos sobre mi aula</label>
         </div>
         <p class="teacher-panel-desc">Tu registro es <strong>tuyo</strong>. La Dirección de tu escuela ve
           tus grupos y tu lista; lo demás (como el manejo de tus convocatorias) solo si tú se lo permites,
@@ -2262,12 +2274,15 @@ async function ajRefrescarPerfil() {
     const j = await r.json();
     if (!j || !j.ok) return;
     const cur = _docenteCfg();
-    let cambio = false;
+    let cambio = false, rolCambio = false;
     ['nombre', 'correo', 'escuela', 'tipo', 'telefono', 'departamento', 'municipio', 'lugar', 'rol'].forEach(k => {
       const v = j[k] == null ? '' : String(j[k]);
-      if (v !== String(cur[k] == null ? '' : cur[k])) { cur[k] = v; cambio = true; }
+      if (v !== String(cur[k] == null ? '' : cur[k])) { cur[k] = v; cambio = true; if (k === 'rol') rolCambio = true; }
     });
     if (cambio) {
+      // si el admin cambió el rol en caliente, la lista traída con el rol
+      // viejo no vale: pintaría los controles de antes (ver #4). Se tira.
+      if (rolCambio) _ajLista = null;
       _docenteSave(cur);
       const vista = document.getElementById('view-ajustes');
       if (vista && vista.classList.contains('active')) renderAjustes();
@@ -2293,11 +2308,16 @@ async function ajGuardarPerfil() {
   if (!d.codigo || !d.clave) return;
   if (navigator.onLine === false) { toast('📴 Guardar el perfil necesita internet'); return; }
   const val = id => (document.getElementById(id)?.value || '').trim();
+  // Una cuenta de Dirección no edita su escuela ni su municipio (son su
+  // alcance; los fija el admin): esos campos ni existen en el formulario,
+  // así que se dejan como están en vez de mandar '' y borrarlos.
+  const esDir = _ajEsDireccion(_ajRol(d));
   const cuerpo = {
     p_codigo: d.codigo, p_clave: d.clave,
-    p_escuela: val('aj-ed-escuela'), p_tipo: _ajTipoSel || d.tipo || 'Pública',
+    p_escuela: esDir ? (d.escuela || '') : val('aj-ed-escuela'),
+    p_tipo: _ajTipoSel || d.tipo || 'Pública',
     p_telefono: val('aj-ed-telefono'), p_departamento: val('aj-ed-departamento'),
-    p_municipio: val('aj-ed-municipio'), p_lugar: val('aj-ed-lugar'),
+    p_municipio: esDir ? (d.municipio || '') : val('aj-ed-municipio'), p_lugar: val('aj-ed-lugar'),
   };
   toast('⏳ Guardando…');
   const { url, key } = _padreSbCfg();
@@ -2311,8 +2331,11 @@ async function ajGuardarPerfil() {
     const j = await r.json();
     if (j && j.ok) {
       const cur = _docenteCfg();
-      cur.escuela = cuerpo.p_escuela; cur.tipo = cuerpo.p_tipo; cur.telefono = cuerpo.p_telefono;
-      cur.departamento = cuerpo.p_departamento; cur.municipio = cuerpo.p_municipio; cur.lugar = cuerpo.p_lugar;
+      // el servidor manda: si dice que la escuela es fija, no se toca en
+      // el equipo aunque el formulario trajera algo
+      if (!j.escuela_fija) { cur.escuela = cuerpo.p_escuela; cur.municipio = cuerpo.p_municipio; }
+      cur.tipo = cuerpo.p_tipo; cur.telefono = cuerpo.p_telefono;
+      cur.departamento = cuerpo.p_departamento; cur.lugar = cuerpo.p_lugar;
       _docenteSave(cur);
       toast('✅ Perfil guardado');
       renderAjustes();
@@ -2399,6 +2422,11 @@ function _ajFecha(iso) {
 function ajPintarLista() {
   const cont = document.getElementById('aj-lista');
   if (!cont || !_ajLista) return;
+  // Qué registros están abiertos AHORA, para reabrirlos tras repintar: un
+  // director que pide un permiso desde dentro del registro de un maestro
+  // no debe perder de vista ese registro ni su lugar en la lista.
+  const abiertos = new Set(
+    [...cont.querySelectorAll('.aj-reg[open] .aj-reg-nombre')].map(e => e.textContent));
   const q = ((document.getElementById('aj-buscar')?.value || '').trim().toLowerCase());
   const esAdmin = _ajLista.rol === 'admin';
   const filas = _ajLista.docentes.filter(x => !q ||
@@ -2429,7 +2457,7 @@ function ajPintarLista() {
            </div>`
         : '';
       return `
-        <details class="aj-reg">
+        <details class="aj-reg"${abiertos.has(x.nombre || '') ? ' open' : ''}>
           <summary class="aj-reg-sum">
             <span class="aj-reg-nombre">${_pEsc(x.nombre || '')}</span>
             <span class="aj-rol-badge aj-rol-${rx} aj-reg-chip">${AJ_ROLES[rx].ic} ${AJ_ROLES[rx].n}</span>
@@ -2450,10 +2478,22 @@ function ajPintarLista() {
    (matrícula sin los 🧪 de prueba). La lista de alumnos y los casos
    delegables solo se ofrecen a director/asistencia; el rector verifica
    con los conteos y no necesita nombres de niños de otras escuelas. */
-function _ajGrupoTxt(g) {
-  return (typeof window.adGradoSeccion === 'function')
-    ? window.adGradoSeccion(g.grado, g.seccion)
-    : [String(g.grado || '').trim(), String(g.seccion || '').trim()].filter(Boolean).join('-');
+/* NORMATIVA · CÓMO SE ESCRIBE UN GRUPO (ver adGradoSeccion en
+   registros-admin.js): un grupo se lee «6º-1», con la marca de ordinal.
+   Esta pantalla carga después de registros-admin.js, así que casi siempre
+   usa la función maestra. El fallback existe por si ese archivo no llegó
+   a cargar (caché a medio actualizar): entonces replica la MISMA regla
+   —ordinal + guion solo entre partes cortas—, no un «6-1» inventado. Si
+   la regla cambia, cambia en adGradoSeccion y este fallback la sigue. */
+function _ajGrupoTxt(g) { return _ajGradoSeccion(g.grado, g.seccion); }
+function _ajGradoSeccion(grado, seccion) {
+  if (typeof window.adGradoSeccion === 'function') return window.adGradoSeccion(grado, seccion);
+  const gr = String(grado || '').trim();
+  const m = gr.match(/^(\d{1,2})\s*[ºo°]?$/i);
+  const g = m ? m[1] + 'º' : gr;
+  const s = String(seccion || '').trim();
+  if (!g || !s) return g || s;
+  return (g.length <= 4 && s.length <= 3) ? g + '-' + s : g + ' ' + s;
 }
 function _ajGruposHtml(x) {
   if (!_ajLista || !_ajLista.grupos) return '';
@@ -2514,6 +2554,15 @@ async function ajVerAlumnos(btn) {
     </div>`;
 }
 
+/* Refleja en la lista ya cargada el nuevo estado del permiso de un
+   maestro, sin volver a pedirla a la nube: así el registro abierto y el
+   scroll no se pierden (ver #5). */
+function _ajFijarPermiso(nombre, estado) {
+  if (!_ajLista || !Array.isArray(_ajLista.docentes)) return;
+  const x = _ajLista.docentes.find(d => (d.nombre || '') === nombre);
+  if (x) { x.permisos = x.permisos || {}; x.permisos.convocatorias = estado; ajPintarLista(); }
+}
+
 async function ajPedirPermiso(btn) {
   const nombre = btn.dataset.nombre || '';
   const sigue = await metasConfirm(`Se le pedirá a **${nombre}** el permiso para ver y manejar sus convocatorias.\n\nEl maestro decide: puede conceder, negar o quitarlo después.`,
@@ -2525,7 +2574,7 @@ async function ajPedirPermiso(btn) {
   btn.disabled = false;
   if (j && j.ok) {
     toast('✅ Permiso pedido. El maestro lo verá en sus Ajustes.');
-    ajCargarEquipo();
+    _ajFijarPermiso(nombre, j.estado || 'pedido');
   } else {
     toast(j && j.motivo === 'espera' ? '⏳ Muy seguido: espera un momento e intenta de nuevo.'
       : '⚠️ No se pudo pedir. Intenta de nuevo.');
@@ -2541,7 +2590,9 @@ async function ajAbrirConvs(btn) {
   if (!j || !j.ok) {
     caja.innerHTML = `<p class="padre-hint">⚠️ ${j && j.motivo === 'permiso'
       ? 'El maestro retiró el permiso.' : 'No se pudo traer. Intenta de nuevo.'}</p>`;
-    if (j && j.motivo === 'permiso') ajCargarEquipo();
+    // se refleja el estado nuevo en memoria, sin borrar el aviso recién
+    // pintado (recargar de la nube lo tapaba antes de leerlo)
+    if (j && j.motivo === 'permiso') { const x = _ajLista && _ajLista.docentes.find(d => (d.nombre||'') === nombre); if (x && x.permisos) { x.permisos.convocatorias = 'revocado'; } }
     return;
   }
   const cs = Array.isArray(j.convocatorias) ? j.convocatorias : [];
@@ -2570,22 +2621,34 @@ async function ajVerRespuestas(btn) {
   }
   const rs = (Array.isArray(j.respuestas) ? j.respuestas : []).filter(r => r.va);
   const noVan = (Array.isArray(j.respuestas) ? j.respuestas : []).length - rs.length;
-  const grupoTxt = r => (typeof window.adGradoSeccion === 'function')
-    ? window.adGradoSeccion(r.grado, r.seccion)
-    : [r.grado, r.seccion].filter(Boolean).join('-');
   caja.innerHTML = `
     <div class="aj-fila-det"><strong>${_pEsc(btn.dataset.titulo || '')}</strong> ·
       ${rs.reduce((t, r) => t + (Number(r.personas) || 0), 0)} personas en ${rs.length} familia${rs.length === 1 ? '' : 's'}
-      ${noVan ? ` · ${noVan} avisó que no va` : ''}</div>
+      ${noVan ? ` · ${noVan} ${noVan === 1 ? 'avisó que no va' : 'avisaron que no van'}` : ''}</div>
     ${rs.length ? `<ul class="aj-alumnos-ol">${rs.map(r =>
-      `<li>${_pEsc(r.alumno || '')} (${_pEsc(grupoTxt(r))}) — ${Number(r.personas) || 0} persona${Number(r.personas) === 1 ? '' : 's'}${r.nota ? ' · ' + _pEsc(r.nota) : ''}</li>`).join('')}</ul>`
+      `<li>${_pEsc(r.alumno || '')} (${_pEsc(_ajGradoSeccion(r.grado, r.seccion))}) — ${Number(r.personas) || 0} persona${Number(r.personas) === 1 ? '' : 's'}${r.nota ? ' · ' + _pEsc(r.nota) : ''}</li>`).join('')}</ul>`
       : '<p class="padre-hint">Todavía nadie ha contestado que va.</p>'}`;
 }
 
-/* ── El lado del MAESTRO: sus permisos ── */
+/* ── El lado del MAESTRO: sus permisos ──
+   Se engancha una sola vez al evento 'online': si el maestro dejó abierta
+   esta pantalla sin señal (el caso normal en un pueblo) y la señal vuelve,
+   los permisos se revisan solos. Sin esto, el mensaje «se revisará al
+   volver la señal» era una promesa que nadie cumplía, justo el pedido que
+   la tarjeta existe para no perder. */
+let _ajOnlineEnganchado = false;
+function _ajEngancharOnline() {
+  if (_ajOnlineEnganchado) return;
+  _ajOnlineEnganchado = true;
+  window.addEventListener('online', () => {
+    if (document.getElementById('aj-permisos')) ajCargarPermisos();
+    if (document.getElementById('aj-lista') && _ajLista) ajCargarEquipo();
+  });
+}
 async function ajCargarPermisos() {
   const caja = document.getElementById('aj-permisos');
   if (!caja) return;
+  _ajEngancharOnline();
   if (navigator.onLine === false) {
     caja.innerHTML = '<p class="padre-hint" style="margin-top:10px;">📴 Ver los permisos necesita internet. Se revisará al volver la señal.</p>';
     return;
@@ -2628,8 +2691,14 @@ async function ajCargarPermisos() {
         <button class="aj-mini-btn" data-nombre="${_pEsc(x.nombre)}" onclick="ajDarPermiso(this)">📣 Darle mis convocatorias</button>
       </div>`).join('');
   }
-  caja.innerHTML = html ||
-    '<p class="padre-hint" style="margin-top:10px;">Nadie te ha pedido permisos, y tu escuela aún no tiene cuentas de Dirección registradas.</p>';
+  // La lista de Dirección solo se arma si el maestro tiene su escuela
+  // puesta (el servidor la empareja por nombre). Sin escuela, «no hay
+  // Dirección» sería un diagnóstico falso: lo que falta es su propia
+  // escuela. Se le dice lo que de verdad tiene que hacer.
+  const sinEscuela = !((_docenteCfg().escuela || '').trim());
+  caja.innerHTML = html || (sinEscuela
+    ? '<p class="padre-hint" style="margin-top:10px;">🏫 Escribe primero el nombre de tu escuela en «Editar mi perfil»: así tu Dirección puede encontrarte y tú puedes darle permisos.</p>'
+    : '<p class="padre-hint" style="margin-top:10px;">Nadie te ha pedido permisos, y tu escuela aún no tiene cuentas de Dirección registradas.</p>');
 }
 
 async function ajResponderPermiso(btn) {
