@@ -163,12 +163,12 @@ async function convRPC(fn, body) {
    dentro de una convocatoria → la lista; en la lista → Comunicados. */
 function adConvNivel() { return _adConvId ? 2 : (_adConvOn ? 1 : 0); }
 function adConvAtras() {
-  if (_adConvId) { _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; return true; }
+  if (_adConvId) { _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; _convAbBusca = ''; return true; }
   if (_adConvOn) { _adConvOn = 0; return true; }
   return false;
 }
-function adConvEntrar() { _adConvOn = 1; _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; }
-function adConvCerrar() { _adConvOn = 0; _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; }
+function adConvEntrar() { _adConvOn = 1; _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; _convAbBusca = ''; }
+function adConvCerrar() { _adConvOn = 0; _adConvId = null; _adConvTraido = ''; _convAvSalto = {}; _convAbBusca = ''; }
 window.adConvNivel = adConvNivel;
 window.adConvAtras = adConvAtras;
 window.adConvEntrar = adConvEntrar;
@@ -750,7 +750,7 @@ function adRenderConvocatoria(body, d) {
       renderAdmin();
     }));
   body.querySelectorAll('[data-cvid]').forEach(b =>
-    b.addEventListener('click', () => { _adConvId = b.dataset.cvid; _convAvSalto = {}; renderAdmin(); }));
+    b.addEventListener('click', () => { _adConvId = b.dataset.cvid; _convAvSalto = {}; _convAbBusca = ''; renderAdmin(); }));
 }
 
 /* ══════════════ PANTALLA: una convocatoria ══════════════ */
@@ -774,6 +774,10 @@ function convRenderUna(body, d) {
         : 'Todavía <strong>no está publicada</strong>: llena los datos de abajo y toca «Publicar».'}</p>
     </div>
 
+    ${/* El día de la salida, la subida al bus va ANTES que nada: ese día
+          el maestro no abre esto para copiar el mensaje de WhatsApp,
+          lo abre en el portón con el bus andando. */''}
+    ${pub && convAbordoArriba(c) ? convHtmlAbordo(c) : ''}
     ${pub ? convHtmlMensaje(c) + convHtmlConteo(c, t, d) : ''}
     ${convHtmlDatos(c, pub)}
     ${pub ? '' : `
@@ -894,6 +898,10 @@ function convHtmlConteo(c, t, d) {
       ${convHtmlEmpuje(c, t)}
     </div>
 
+    ${/* El día de la salida la subida al bus sube al principio de la
+          pantalla; los demás días vive aquí, debajo del conteo. */''}
+    ${convAbordoArriba(c) ? '' : convHtmlAbordo(c)}
+
     ${gk.length ? `
     <div class="pa-card">
       <div class="pa-card-title">🏫 Por grado</div>
@@ -930,7 +938,10 @@ function convHtmlConteo(c, t, d) {
       ${convHtmlPuentes(c, d)}
     </div>` : ''}
 
-    ${convHtmlPagos(c, t)}
+    ${/* En su propio cajón: la subida al bus lo repinta sin tocar el
+          resto de la pantalla, para que lo cobrado en el portón se vea
+          aquí en el momento. */''}
+    <div id="cv-pagos">${convHtmlPagos(c, t)}</div>
 
     ${r.length ? convHtmlAvisos(c) : ''}
 
@@ -1071,17 +1082,23 @@ function convHtmlPagos(c, t) {
 
    La fecha del primer pago NO se cambia al corregir el monto: el dinero
    entró el día que entró, y esa fecha es la que la madre recuerda si
-   algún día hay que discutirlo. */
-async function convPagoTocar(c, x) {
+   algún día hay que discutirlo.
+
+   `enPorton` es para cuando se cobra desde la subida al bus: ahí NO se
+   puede repintar la pantalla entera, porque el maestro está a mitad de
+   una lista de cuarenta con el bus esperando y un salto al principio de
+   la página le hace perder el sitio y el nombre que estaba buscando. */
+async function convPagoTocar(c, x, enPorton) {
   const h = convHuella(x.alumno, x.grado, x.seccion);
   const p = convPago(c, x);
   const toca = convToca(c, x);
+  const repinta = () => { if (enPorton) convAbordoRepintar(); else renderAdmin(); };
   if (!p) {
     convGuardar(y => {
       y.pagos = convPagos(y);
       y.pagos[h] = { monto: toca, fecha: adHoy() };
     });
-    renderAdmin();
+    repinta();
     toast('💵 ' + (adPrimerNombre(x.alumno) || 'Anotado') + ' · ' + adLps(toca));
     return;
   }
@@ -1103,8 +1120,456 @@ async function convPagoTocar(c, x) {
     if (!(n > 0)) delete y.pagos[h];
     else y.pagos[h] = { monto: n, fecha: p.fecha || adHoy() };
   });
-  renderAdmin();
+  repinta();
   toast(n > 0 ? '💵 ' + adLps(n) + ' anotados' : '↩️ Marca quitada');
+}
+
+/* ── Los botones del control de pagos ──
+   Van aparte porque esta tarjeta se repinta sola cuando se cobra en el
+   portón (ver convAbordoRepintar): sus botones son otros después del
+   repintado, y sin volver a engancharlos quedarían de adorno.
+
+   Se busca a la familia por su HUELLA y no por su sitio en la lista: la
+   lista se reordena sola cuando entra una respuesta nueva, y un índice
+   guardado en el botón acabaría anotándole el pago al de al lado. Se lee
+   del almacén, no de la `c` que se pintó, porque entre el pintado y el
+   toque pudo entrar una respuesta de la nube. */
+function convPagosEnganchar(scope, c) {
+  scope.querySelectorAll('[data-cvpg]').forEach(b =>
+    b.addEventListener('click', () => {
+      const cc = convUna(adLoad(), _adConvId) || c;
+      const h = String(b.dataset.cvpg || '');
+      const x = convTodas(cc).find(y => convHuella(y.alumno, y.grado, y.seccion) === h);
+      if (x) convPagoTocar(cc, x);
+    }));
+
+  const bPgI = scope.querySelector('#cv-pg-imprimir');
+  if (bPgI) bPgI.addEventListener('click', () => {
+    /* Se imprime lo GUARDADO, igual que los boletos: si el maestro acaba
+       de corregir el aporte en los campos de abajo, el papel tiene que
+       salir con la cifra nueva y no con la que había al pintar. */
+    convImprimirListado(convGuardar() || c);
+  });
+
+  /* Cobrarles a los que faltan: es el aviso de siempre, pero apuntado a
+     los que deben. Empieza tanda nueva a propósito —la lista de a
+     quiénes va es otra— y lleva al maestro hasta la cola, que si no se
+     queda mirando la pantalla sin saber que ya cambió más abajo. */
+  const bPgA = scope.querySelector('#cv-pg-avisar');
+  if (bPgA) bPgA.addEventListener('click', () => {
+    convGuardar(y => {
+      y.aviso = { plant: CONV_AVISO_COBRO, texto: CONV_AVISOS[CONV_AVISO_COBRO].texto,
+                  quien: 'deben', enviados: [], retoques: {} };
+    });
+    _convAvSalto = {};
+    renderAdmin();
+    setTimeout(() => {
+      const el = document.getElementById('cv-av-cola');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 90);
+  });
+}
+
+/* ══════════════ 🚌 LA SUBIDA AL BUS ══════════════
+   El día de la salida se acaban las listas y empieza el portón: dos
+   maestros, cuarenta familias, un bus con el motor andando y gente que
+   llega a pagar en ese momento porque siempre hay quien paga a última
+   hora. Ahí no se abre un cuaderno ni se busca un nombre en una lista
+   de la escuela entera: se necesita ver de un golpe QUIÉN PUEDE SUBIR y
+   QUIÉN TIENE QUE PAGAR PRIMERO.
+
+   Es el 📋 pase de lista del bus, y a propósito se ve igual: chips que
+   se tocan, uno por familia. El maestro ya sabe usarlo, y el día de la
+   excursión no es día de aprender una pantalla nueva.
+
+   CUATRO REGLAS, Y NINGUNA ES DE ADORNO:
+
+   1. SE GUARDA EN `c.abordo`, NUNCA DENTRO DE `c.resp`. Es la misma
+      razón de siempre: traer las respuestas reemplaza `resp` entero, y
+      lo apuntado ahí se borraría solo. Aquí eso significaría perder la
+      cuenta de quién está DENTRO del bus, con el bus a punto de salir.
+      Y tampoco viaja a la nube (`convDatosPublicos` es lista cerrada):
+      por el enlace sale el evento y cuántos van, nunca quién subió.
+   2. UN TOQUE SUBE A LA FAMILIA ENTERA. Con cuarenta familias en fila y
+      el bus esperando, cada toque de más es un minuto de portón. El
+      SEGUNDO toque abre la casilla, que es donde caben las dos cosas
+      raras y reales: que vinieran menos de los que dijo, y que el
+      maestro se equivocara de chip.
+   3. AL QUE DEBE NO SE LE SUBE EN SILENCIO. Se pinta en ámbar con lo
+      que falta, y al tocarlo la pantalla pregunta si ya lo dio. Cobrar
+      en el portón es justo lo que esta herramienta existe para no
+      olvidar: al que sube sin pagar no se le vuelve a ver el pelo hasta
+      la semana siguiente, y la diferencia la pone el maestro.
+   4. SE CUENTAN PERSONAS, NO FAMILIAS. En el bus va el niño y va la
+      mamá, y los asientos son de personas. Lo que se cuenta al subir es
+      lo que de verdad se montó, no lo que se había apuntado.
+
+   ⚠️ Y NO SE REPINTA LA PANTALLA ENTERA (`convAbordoRepintar`, sin
+   `renderAdmin`). Es la misma regla que la cola de avisos y la barra de
+   grupos: el maestro está a mitad de una lista larga, con un nombre
+   escrito en el buscador, y un salto al principio de la página en cada
+   familia que sube es lo que hace que cierre la aplicación y siga en un
+   papel. Se repinta también el control de pagos, porque lo cobrado en
+   el portón tiene que verse ahí mismo: si no, el maestro creería que no
+   se guardó y se lo cobraría dos veces a la misma madre. */
+function convAbordo(c) {
+  return (c && c.abordo && typeof c.abordo === 'object') ? c.abordo : {};
+}
+function convSubio(c, x) {
+  if (!x) return null;
+  const s = convAbordo(c)[convHuella(x.alumno, x.grado, x.seccion)];
+  if (!s || typeof s !== 'object') return null;
+  return { personas: Math.max(0, Number(s.personas) || 0),
+           hora: String(s.hora || ''), fecha: String(s.fecha || '') };
+}
+window.convSubio = convSubio;
+
+/* La hora a la que subió. Sirve para el reclamo del lunes («mi hijo sí
+   llegó»): el registro dice a qué hora se montó y con cuántos. */
+function convHoraAhora() {
+  const d = new Date();
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+/* Lo que el maestro mira en el portón. `debe` es SOLO lo de los que aún
+   no han subido: es el dinero que tiene delante, en la fila, no el
+   total pendiente de la semana —ese ya está en el control de pagos—. */
+function convAbordoTotales(c) {
+  const si = convTodas(c).filter(x => x.va);
+  const t = { fam: si.length, personas: 0, subFam: 0, subPersonas: 0, faltaFam: 0,
+              faltaPersonas: 0, debenFam: 0, debe: 0, debiendoFam: 0, debiendo: 0 };
+  si.forEach(x => {
+    const per = Math.max(0, Number(x.personas) || 0);
+    const s = convSubio(c, x), d = convDebe(c, x);
+    t.personas += per;
+    if (s) {
+      t.subFam++; t.subPersonas += s.personas;
+      if (d > 0) { t.debiendoFam++; t.debiendo += d; }
+    } else {
+      t.faltaFam++; t.faltaPersonas += per;
+      if (d > 0) { t.debenFam++; t.debe += d; }
+    }
+  });
+  return t;
+}
+
+/* La subida se pone ARRIBA DEL TODO el día de la salida, y se queda
+   arriba en cuanto empieza a subir gente. Ese día el maestro no abre
+   esto para copiar el mensaje de WhatsApp ni para mirar cuántos buses
+   necesita: lo abre en el portón, con el bus andando. Los otros días
+   vuelve a su sitio, debajo del conteo. */
+function convAbordoArriba(c) {
+  return (c.fecha && c.fecha === adHoy()) || Object.keys(convAbordo(c)).length > 0;
+}
+
+/* Dos palabras del nombre: es lo que cabe en un chip sin cortar, y es
+   como se llama a una familia en el portón. El nombre entero va en el
+   `title`, en la fila de cobro y en todas las ventanas. */
+function convNombreCorto(n) {
+  return String(n || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).join(' ');
+}
+
+/* Lo que se escribe en el buscador se compara contra esto: nombre,
+   grupo y folio, todo normalizado. El folio importa porque la familia
+   llega enseñando su boleto, no diciendo su nombre completo. */
+function convAbordoBuscable(c, x) {
+  return convNorm(String(x.alumno || '') + ' ' + adGradoSeccion(x.grado, x.seccion) + ' ' +
+                  convFolioDe(c, x));
+}
+
+let _convAbBusca = '';                  /* lo escrito en el buscador del portón */
+
+function convHtmlAbordo(c) {
+  return '<div id="cv-abordo">' + convHtmlAbordoDentro(c) + '</div>';
+}
+
+function convHtmlAbordoDentro(c) {
+  const si = convTodas(c).filter(x => x.va);
+  if (!si.length) return '';
+  const ap = Number(c.aporte) || 0;
+  const a = convAbordoTotales(c);
+  const t = convTotales(c);
+  const grupos = convPorGrado(si);
+  /* Ordenadas por grado y nombre, igual que todo lo demás: el maestro
+     está mirando los chips y la fila de cobro a la vez. */
+  const orden = l => l.slice().sort((p, q) =>
+    String(p.grado || '').localeCompare(String(q.grado || ''), 'es', { numeric: true }) ||
+    String(p.alumno || '').localeCompare(String(q.alumno || ''), 'es'));
+  const cola = orden(si.filter(x => !convSubio(c, x) && convDebe(c, x) > 0));
+  const faltan = orden(si.filter(x => !convSubio(c, x)));
+
+  const consejo = !a.subFam
+    ? 'Nadie ha subido todavía. Toca a la familia <strong>en el momento en que se monta</strong>: la cuenta se lleva sola y no hay que acordarse de nada.'
+    : !a.faltaFam
+      ? '✅ <strong>Ya subieron todos</strong>: ' + a.subPersonas + ' persona' +
+        (a.subPersonas === 1 ? '' : 's') + '. Puedes arrancar.'
+      : 'Faltan por subir <strong>' + a.faltaPersonas + ' persona' +
+        (a.faltaPersonas === 1 ? '' : 's') + '</strong> de ' + a.faltaFam +
+        ' familia' + (a.faltaFam === 1 ? '' : 's') + '.' +
+        (a.debenFam ? ' De esas, <strong>' + a.debenFam + '</strong> tiene' + (a.debenFam === 1 ? '' : 'n') +
+          ' que pagar antes: <strong>' + adLps(a.debe) + '</strong>.' : '');
+
+  return `
+    <div class="pa-card">
+      <div class="pa-card-title">🚌 Subida al bus</div>
+      <p class="pa-optional-hint">Es el pase de lista del bus. <strong>Toca a la familia cuando
+        suba</strong>: el chip se pone verde y la cuenta baja sola. ${ap ? `La que todavía debe sale en
+        <strong>ámbar con lo que falta</strong>, y antes de subirla te pregunta si ya te lo dio.` : ''}
+        <strong>Tócala otra vez</strong> si vinieron menos de los que dijo o si te equivocaste de chip.</p>
+      <div class="ad-cv-cifras">
+        <div class="ad-cv-cif ad-cv-ab-si"><b>${a.subPersonas}</b><span>ya subieron</span></div>
+        <div class="ad-cv-cif"><b>${a.faltaPersonas}</b><span>faltan por subir</span></div>
+        ${ap ? `<div class="ad-cv-cif ad-cv-plata ad-cv-debe"><b>${adEsc(adLps(a.debe))}</b><span>por cobrar aquí</span></div>` : ''}
+      </div>
+      <p class="pa-optional-hint" style="margin-top:10px">${consejo}</p>
+      ${a.subPersonas > t.asientos ? `<p class="pa-optional-hint">⚠️ Ya van <strong>${a.subPersonas}</strong>
+        y los ${t.buses} bus${t.buses === 1 ? '' : 'es'} tienen <strong>${t.asientos} asientos</strong>.
+        Cuenta antes de arrancar: nadie viaja de pie en carretera.</p>` : ''}
+      ${a.debiendoFam ? `<p class="pa-optional-hint">⚠️ <strong>${a.debiendoFam}</strong>
+        familia${a.debiendoFam === 1 ? '' : 's'} subió debiendo <strong>${adEsc(adLps(a.debiendo))}</strong>.
+        Cóbralo en el regreso, ahí las tienes a todas juntas: el lunes ya no.</p>` : ''}
+      <div class="pa-field"><label for="cv-ab-buscar">Buscar a una familia</label>
+        <input type="search" id="cv-ab-buscar" class="pa-inp-field" value="${adEsc(_convAbBusca)}"
+          placeholder="Su nombre, o las 4 letras del folio" autocomplete="off"></div>
+      ${grupos.map(g => {
+        const sub = g.filas.filter(x => convSubio(c, x)).length;
+        return `
+        <div class="ad-cv-grado" data-cvabg>
+          <div class="ad-cv-grado-t"><span>🏫 ${adEsc(g.k)}</span>
+            <small>${sub} de ${g.filas.length} subida${g.filas.length === 1 ? '' : 's'}</small></div>
+          <div class="ad-chips">
+            ${g.filas.map(x => {
+              const s = convSubio(c, x);
+              const debe = convDebe(c, x);
+              const per = Math.max(0, Number(x.personas) || 0);
+              const cls = s ? (debe > 0 ? 'ad-chip-on ad-cv-ab-deb' : 'ad-chip-on')
+                : debe > 0 ? 'ad-chip-exc' : '';
+              const ico = s ? (debe > 0 ? '🚌💵' : '🚌') : debe > 0 ? '💵' : '⬜';
+              return `<button class="ad-chip ad-cv-ab ${cls}"
+                data-cvab="${adEsc(convHuella(x.alumno, x.grado, x.seccion))}"
+                data-cvabtxt="${adEsc(convAbordoBuscable(c, x))}"
+                title="${adEsc(x.alumno)} · ${adEsc(convFolioDe(c, x))}">
+                <span class="ad-chip-num">${ico} ${s ? s.personas : per}</span>
+                <span class="ad-chip-nom">${adEsc(convNombreCorto(x.alumno))}</span>
+                ${/* En ámbar SOLO lo que falta por cobrar: en verde lo que
+                      ya está resuelto, esté arriba o esperando. */''}
+                <span class="ad-chip-monto${!s && debe > 0 ? ' ad-chip-monto-esp' : ''}">${s
+                  ? (s.hora ? 'subió ' + adEsc(s.hora) : 'a bordo')
+                  : debe > 0 ? 'debe ' + adEsc(adLps(debe)) : '✅ al día'}</span>
+              </button>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+      <p class="pa-optional-hint" id="cv-ab-nada" hidden>No hay nadie con eso. Prueba con el
+        <strong>primer nombre</strong> o con las cuatro letras del folio.</p>
+    </div>
+
+    ${cola.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">💵 Cobran aquí, fuera del bus (${cola.length})</div>
+      <p class="pa-optional-hint">Estas no han pagado y todavía no han subido. Atiéndelas
+        <strong>fuera del bus</strong> —una fila aparte, en la acera— mientras el otro maestro va
+        subiendo a las que están al día: así la puerta no se tapa y en diez minutos están todos
+        arriba. <strong>💵 Pagó</strong> anota el dinero y la sube de una vez.</p>
+      ${cola.map(x => {
+        const debe = convDebe(c, x);
+        const p = convPago(c, x);
+        const h = adEsc(convHuella(x.alumno, x.grado, x.seccion));
+        return `<div class="ad-cv-ab-fila" data-cvabtxt="${adEsc(convAbordoBuscable(c, x))}">
+          <span class="ad-cv-ab-quien"><strong>${adEsc(x.alumno)}</strong> · ${adEsc(adGradoSeccion(x.grado, x.seccion))}<br>
+            <small>${x.personas} persona${x.personas === 1 ? '' : 's'} · 🎟️ ${adEsc(convFolioDe(c, x))}${
+              p ? ' · abonó ' + adEsc(adLps(p.monto)) + ' de ' + adEsc(adLps(convToca(c, x))) : ''}</small></span>
+          <span class="ad-cv-ab-btns">
+            <button class="ad-cv-ab-cobra" data-cvabcobra="${h}">💵 Pagó ${adEsc(adLps(debe))} · sube</button>
+            <button class="ad-al-code" data-cvabpago="${h}" aria-label="Anotarle otro monto a ${adEsc(x.alumno)}">✏️ Otro monto</button>
+            <button class="ad-al-code" data-cvabsube="${h}" aria-label="Que suba sin pagar ${adEsc(x.alumno)}">🚌 Sube sin pagar</button>
+          </span>
+        </div>`;
+      }).join('')}
+      <p class="pa-optional-hint" style="margin-top:8px">Si el otro maestro no lleva el teléfono,
+        imprímele el <strong>listado por grado</strong> de 💵 Quién ya pagó: va con el folio, cuántos
+        van y lo que debe cada familia, y al volver al aula se pasa a la pantalla.</p>
+    </div>` : ''}
+
+    ${a.subFam && faltan.length ? `
+    <div class="pa-card">
+      <div class="pa-card-title">⏳ Todavía no han subido (${faltan.length})</div>
+      <p class="pa-optional-hint">Antes de arrancar, estos son los que faltan. <strong>📞 Llamar</strong>
+        marca el número de la familia: cinco minutos de espera cuestan menos que dejar a un niño en el
+        portón —o que salir a buscarlo a media carretera.</p>
+      ${faltan.map(x => {
+        const tel = String(x.tel || '').replace(/\D/g, '');
+        const h = adEsc(convHuella(x.alumno, x.grado, x.seccion));
+        return `<div class="ad-cv-ab-fila" data-cvabtxt="${adEsc(convAbordoBuscable(c, x))}">
+          <span class="ad-cv-ab-quien"><strong>${adEsc(x.alumno)}</strong> · ${adEsc(adGradoSeccion(x.grado, x.seccion))}<br>
+            <small>${x.personas} persona${x.personas === 1 ? '' : 's'} · 🎟️ ${adEsc(convFolioDe(c, x))}${
+              convDebe(c, x) > 0 ? ' · debe ' + adEsc(adLps(convDebe(c, x))) : ' · ✅ al día'}</small></span>
+          <span class="ad-cv-ab-btns">
+            ${/* Va por el mismo camino que el chip (`data-cvab`) y no por
+                  el de «sube sin pagar»: desde aquí también hay que
+                  preguntarle por el aporte al que debe. */''}
+            <button class="ad-cv-ab-cobra" data-cvab="${h}">🚌 Ya subió</button>
+            ${tel ? `<a class="ad-al-code" href="tel:${adEsc(tel)}">📞 Llamar</a>`
+              : '<span class="ad-cv-tag">sin teléfono</span>'}
+          </span>
+        </div>`;
+      }).join('')}
+    </div>` : ''}`;
+}
+
+/* Buscar en el portón. Se esconde con el DOM y NO repintando: el
+   maestro está escribiendo, y repintar le quitaría el teclado y la
+   letra a medias. El grado entero se esconde si no le queda nadie, que
+   si no la pantalla se llena de títulos vacíos. */
+function convAbordoFiltrar() {
+  const cont = document.getElementById('cv-abordo');
+  if (!cont) return;
+  const q = convNorm(_convAbBusca);
+  cont.querySelectorAll('[data-cvabtxt]').forEach(el => {
+    el.hidden = !!q && String(el.dataset.cvabtxt || '').indexOf(q) < 0;
+  });
+  cont.querySelectorAll('[data-cvabg]').forEach(g => {
+    g.hidden = !!q && !g.querySelector('[data-cvabtxt]:not([hidden])');
+  });
+  const nada = document.getElementById('cv-ab-nada');
+  if (nada) nada.hidden = !q || !!cont.querySelector('[data-cvabtxt]:not([hidden])');
+}
+
+function convAbordoRepintar() {
+  const cc = convUna(adLoad(), _adConvId);
+  const cont = document.getElementById('cv-abordo');
+  if (!cc || !cont) { renderAdmin(); return; }
+  cont.innerHTML = convHtmlAbordoDentro(cc);
+  convAbordoEnganchar(cont, cc);
+  convAbordoFiltrar();
+  /* Lo cobrado en el portón tiene que verse también en el control de
+     pagos: si ahí siguiera diciendo «sin pagar», el maestro le cobraría
+     otra vez a quien acaba de pagarle delante de él. */
+  const pg = document.getElementById('cv-pagos');
+  if (pg) {
+    pg.innerHTML = convHtmlPagos(cc, convTotales(cc));
+    convPagosEnganchar(pg, cc);
+  }
+}
+
+/* Se busca a la familia por su HUELLA y se lee del almacén, igual que
+   en los pagos: entre el pintado y el toque pudo entrar una respuesta
+   de la nube y recolocar la lista entera. */
+function convAbordoQuien(h) {
+  const cc = convUna(adLoad(), _adConvId);
+  if (!cc) return null;
+  const x = convTodas(cc).find(y => convHuella(y.alumno, y.grado, y.seccion) === h);
+  return x ? { c: cc, x } : null;
+}
+
+function convAbordoEnganchar(scope, c) {
+  const $b = scope.querySelector('#cv-ab-buscar');
+  if ($b) $b.addEventListener('input', () => { _convAbBusca = $b.value; convAbordoFiltrar(); });
+
+  scope.querySelectorAll('[data-cvab]').forEach(b =>
+    b.addEventListener('click', () => {
+      const q = convAbordoQuien(String(b.dataset.cvab || ''));
+      if (q) convAbordoTocar(q.c, q.x);
+    }));
+
+  scope.querySelectorAll('[data-cvabcobra]').forEach(b =>
+    b.addEventListener('click', () => {
+      const q = convAbordoQuien(String(b.dataset.cvabcobra || ''));
+      if (q) convAbordoSubir(q.c, q.x, 1);
+    }));
+
+  scope.querySelectorAll('[data-cvabsube]').forEach(b =>
+    b.addEventListener('click', () => {
+      const q = convAbordoQuien(String(b.dataset.cvabsube || ''));
+      if (q) convAbordoSubir(q.c, q.x, 0);
+    }));
+
+  /* Otro monto: es la casilla de siempre del control de pagos, para el
+     abono del portón («traigo 100 y el resto el lunes»). No sube a
+     nadie: el que abona sigue en la fila hasta que se monta. */
+  scope.querySelectorAll('[data-cvabpago]').forEach(b =>
+    b.addEventListener('click', () => {
+      const q = convAbordoQuien(String(b.dataset.cvabpago || ''));
+      if (q) convPagoTocar(q.c, q.x, true);
+    }));
+}
+
+/* Subir a una familia. `cobra` anota de una vez lo que le faltaba: es
+   el caso del portón —la madre paga y se monta en el mismo movimiento—
+   y tiene que costar UN toque. La fecha del pago no se pisa si ya había
+   abonado antes: el dinero entró el día que entró. */
+function convAbordoSubir(c, x, cobra) {
+  const h = convHuella(x.alumno, x.grado, x.seccion);
+  const per = Math.max(0, Number(x.personas) || 0);
+  const debe = convDebe(c, x);
+  const p = convPago(c, x);
+  convGuardar(y => {
+    if (cobra && debe > 0) {
+      y.pagos = convPagos(y);
+      y.pagos[h] = { monto: convToca(c, x), fecha: (p && p.fecha) || adHoy() };
+    }
+    y.abordo = convAbordo(y);
+    y.abordo[h] = { personas: per, hora: convHoraAhora(), fecha: adHoy() };
+  });
+  convAbordoRepintar();
+  const nom = adPrimerNombre(x.alumno) || 'La familia';
+  toast((cobra && debe > 0 ? '💵 ' + adLps(debe) + ' · ' : '🚌 ') + nom + ' sube con ' + per +
+    ' persona' + (per === 1 ? '' : 's') + (!cobra && debe > 0 ? ' · queda debiendo ' + adLps(debe) : ''));
+}
+
+async function convAbordoTocar(c, x) {
+  const h = convHuella(x.alumno, x.grado, x.seccion);
+  const s = convSubio(c, x);
+  const grupo = adGradoSeccion(x.grado, x.seccion);
+
+  /* Ya está arriba: la casilla para las dos cosas reales —vinieron
+     menos, o me equivoqué de chip—. Se enseña el nombre ENTERO: el chip
+     lleva dos palabras y en un grado hay dos Génesis. */
+  if (s) {
+    const r = await metasPrompt('**' + adEsc(x.alumno) + '**' + (grupo ? ' · ' + adEsc(grupo) : '') +
+      ' subió con **' + s.personas + ' persona' + (s.personas === 1 ? '' : 's') + '**' +
+      (s.hora ? ' a las ' + adEsc(s.hora) : '') +
+      '.\n\nSi vinieron menos de los que decía, escribe **cuántas subieron de verdad**. El **0** la baja del bus.',
+      { icono: '🚌', titulo: 'Corregir la subida', inputmode: 'numeric',
+        value: String(s.personas), okTxt: 'Guardar',
+        valida: v => {
+          const t = String(v).trim();
+          if (t === '') return '';
+          const n = Number(t.replace(',', '.'));
+          return (isNaN(n) || n < 0) ? 'Escribe cuántas personas subieron (0 la baja del bus).' : '';
+        } });
+    if (r === null) return;
+    const t = String(r).trim();
+    const n = t === '' ? 0 : Math.max(0, Math.round(Number(t.replace(',', '.')) || 0));
+    convGuardar(y => {
+      y.abordo = convAbordo(y);
+      if (!n) delete y.abordo[h];
+      else y.abordo[h] = { personas: n, hora: s.hora || convHoraAhora(), fecha: s.fecha || adHoy() };
+    });
+    convAbordoRepintar();
+    const nom = adPrimerNombre(x.alumno) || 'La familia';
+    toast(n ? '🚌 ' + nom + ' · ' + n + ' a bordo' : '↩️ ' + nom + ' baja del bus');
+    return;
+  }
+
+  /* Le falta el aporte: no se sube en silencio. Es la última vez que el
+     maestro tiene delante a esa madre con el dinero en la cartera. */
+  const debe = convDebe(c, x);
+  if (debe > 0) {
+    const ok = await metasConfirm('**' + adEsc(x.alumno) + '**' + (grupo ? ' · ' + adEsc(grupo) : '') +
+      ' · ' + x.personas + ' persona' + (x.personas === 1 ? '' : 's') +
+      '\n\nLe faltan **' + adLps(debe) + '**.\n\n¿Ya te los dio? Lo anoto y sube.',
+      { icono: '💵', titulo: 'Falta el aporte', okTxt: '✅ Pagó · que suba', cancelTxt: 'Todavía no' });
+    if (!ok) {
+      toast('💵 ' + (adPrimerNombre(x.alumno) || 'Esa familia') + ' debe ' + adLps(debe) +
+        ' · atiéndela fuera del bus');
+      return;
+    }
+    convAbordoSubir(c, x, 1);
+    return;
+  }
+  convAbordoSubir(c, x, 0);
 }
 
 /* ══════════════ 🖨️ EL LISTADO POR GRADO, EN PAPEL ══════════════
@@ -2328,7 +2793,7 @@ function convGuardar(mut) {
 
 function convEnganchar(body, c, d, t, pub) {
   document.getElementById('cv-volver').addEventListener('click', () => {
-    _adConvId = null; _convAvSalto = {}; renderAdmin();
+    _adConvId = null; _convAvSalto = {}; _convAbBusca = ''; renderAdmin();
   });
 
   document.getElementById('cv-guardar').addEventListener('click', async () => {
@@ -2435,45 +2900,9 @@ function convEnganchar(body, c, d, t, pub) {
     renderAdmin();
   });
 
-  /* ── 💵 Quién ya pagó ──
-     Se busca a la familia por su HUELLA y no por su sitio en la lista:
-     la lista se reordena sola cuando entra una respuesta nueva, y un
-     índice guardado en el botón acabaría anotándole el pago al de al
-     lado. Se lee del almacén, no de la `c` que se pintó, porque entre
-     el pintado y el toque pudo entrar una respuesta de la nube. */
-  body.querySelectorAll('[data-cvpg]').forEach(b =>
-    b.addEventListener('click', () => {
-      const cc = convUna(adLoad(), _adConvId) || c;
-      const h = String(b.dataset.cvpg || '');
-      const x = convTodas(cc).find(y => convHuella(y.alumno, y.grado, y.seccion) === h);
-      if (x) convPagoTocar(cc, x);
-    }));
-
-  const bPgI = document.getElementById('cv-pg-imprimir');
-  if (bPgI) bPgI.addEventListener('click', () => {
-    /* Se imprime lo GUARDADO, igual que los boletos: si el maestro acaba
-       de corregir el aporte en los campos de abajo, el papel tiene que
-       salir con la cifra nueva y no con la que había al pintar. */
-    convImprimirListado(convGuardar() || c);
-  });
-
-  /* Cobrarles a los que faltan: es el aviso de siempre, pero apuntado a
-     los que deben. Empieza tanda nueva a propósito —la lista de a
-     quiénes va es otra— y lleva al maestro hasta la cola, que si no se
-     queda mirando la pantalla sin saber que ya cambió más abajo. */
-  const bPgA = document.getElementById('cv-pg-avisar');
-  if (bPgA) bPgA.addEventListener('click', () => {
-    convGuardar(y => {
-      y.aviso = { plant: CONV_AVISO_COBRO, texto: CONV_AVISOS[CONV_AVISO_COBRO].texto,
-                  quien: 'deben', enviados: [], retoques: {} };
-    });
-    _convAvSalto = {};
-    renderAdmin();
-    setTimeout(() => {
-      const el = document.getElementById('cv-av-cola');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 90);
-  });
+  convPagosEnganchar(body, c);
+  convAbordoEnganchar(body, c);
+  convAbordoFiltrar();
 
   /* ── Apuntar a mano ── */
   body.querySelectorAll('[data-cvamg]').forEach(b =>

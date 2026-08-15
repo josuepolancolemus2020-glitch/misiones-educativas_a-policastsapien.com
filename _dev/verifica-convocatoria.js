@@ -1146,7 +1146,9 @@ async function pruebaPagos(browser) {
 
   comprueba(await page.locator('[data-cvpg]').count() === 3,
     'salen los 3 que van, y solo ellos: a quien dijo que no, no se le cobra nada');
-  const gr = await page.$$eval('.ad-cv-grado-t span', ns => ns.map(n => n.textContent.trim()));
+  /* Dentro de #cv-pagos: la subida al bus reparte por grado con los
+     mismos títulos, y sin acotar se estarían mirando los suyos. */
+  const gr = await page.$$eval('#cv-pagos .ad-cv-grado-t span', ns => ns.map(n => n.textContent.trim()));
   comprueba(gr.length === 2 && /5º-2/.test(gr[0]) && /6º-1/.test(gr[1]),
     'repartidos por grado y en orden (5º antes que 6º), que es como se cobra');
   comprueba(/le toca L 750/.test(await filaTxt('Ada Sarai Sevilla')),
@@ -1448,6 +1450,214 @@ async function pruebaQuitar(browser) {
   await page.close();
 }
 
+/* ══════════════ 🚌 LA SUBIDA AL BUS ══════════════
+   El día de la salida: dos maestros, cuarenta familias, un bus con el
+   motor andando y gente que llega a pagar en ese momento. Lo que se
+   vigila aquí es lo que cuesta caro en el portón:
+
+   · QUE CUENTE PERSONAS Y NO FAMILIAS. Los asientos son de personas: en
+     el bus va el niño y va la mamá.
+   · QUE SUBIR CUESTE UN TOQUE. Con cuarenta en fila, cada toque de más
+     es un minuto de portón.
+   · QUE AL QUE DEBE NO SE LE SUBA EN SILENCIO, y que pagando en el
+     portón suba de una vez —y que ese pago SE VEA en el control de
+     pagos, o el maestro se lo cobraría otra vez el lunes.
+   · ⚠️ QUE TRAER LAS RESPUESTAS NO BORRE LO SUBIDO. Si viviera dentro
+     de `resp` se perdería en el primer refresco, y el maestro se
+     enteraría contando cabezas con el bus andando.
+   · QUE NO VIAJE A LA NUBE: por el enlace sale cuántos van, nunca quién
+     se montó.
+   · QUE EL BUSCADOR ENCUENTRE POR FOLIO, que es lo que la familia
+     enseña en el portón, y que buscar no borre lo ya marcado. */
+async function pruebaAbordo(browser) {
+  console.log('\n── 🚌 LA SUBIDA AL BUS ──');
+  const RESP = [
+    { va: true, alumno: 'Ada Sarai Sevilla', grado: '6', seccion: '1', personas: 3, tel: '99991111', nota: '' },
+    { va: true, alumno: 'Ashly Belén Miranda', grado: '6', seccion: '1', personas: 2, tel: '99992222', nota: '' },
+    { va: true, alumno: 'Carlos Josué Meza', grado: '5', seccion: '2', personas: 2, tel: '99993333', nota: '' },
+    { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '99995555', nota: 'Por el aporte' },
+  ];
+  const subidas = [];
+  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  await page.clock.install({ time: HOY });
+  await page.route('**/rest/v1/rpc/**', async route => {
+    const fn = route.request().url().split('/rpc/')[1].split('?')[0];
+    subidas.push({ fn, cuerpo: route.request().postData() || '' });
+    await route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'metas_conv_respuestas' ? RESP : true) });
+  });
+  await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  /* La salida es HOY: es el día en que se usa esto. */
+  await page.evaluate(() => {
+    localStorage.setItem('METAS_ADMIN_V1', JSON.stringify({ v: 2, activo: 'G1', grupos: [{
+      id: 'G1', escuela: 'Escuela John Arnold Cook', grado: '6', seccion: '1', materias: ['Español'],
+      lista: [], colectas: [], asistencia: [], notas: {}, controles: [], bitacora: [], lectura: [],
+      convocatorias: [{ id: 'V1', icono: '🚌', titulo: 'Excursión al Museo Ferroviario de El Progreso',
+        gancho: 'x', gana: ['a', 'b', 'c'], lugar: 'Museo Ferroviario de El Progreso',
+        fecha: '2026-08-08', hora: '6:30 a. m.', regreso: '3:00 p. m.', punto: 'Portón de la escuela',
+        aporte: 250, incluye: 'transporte, entrada', cobro: '', nota: '', limite: '2026-08-07',
+        dirigido: 'Para las familias de toda la escuela', maestro: 'Prof. Josué Polanco',
+        wa: '50499998888', escuela: 'Escuela John Arnold Cook', capacidad: 55, costoBus: 3500,
+        cupos: 110, arranque: 30, limiteHora: '16:00', manual: [],
+        codigo: 'R4TP', pin: 'K7M2QP', cerrada: 0, resp: [], respFecha: '', creada: '2026-08-01' }],
+    }] }));
+  });
+  const entrar = async () => {
+    await page.evaluate(() => {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-admin').classList.add('active');
+      renderAdmin();
+      document.querySelector('[data-adtab="com"]').click();
+    });
+    await page.click('#ad-ir-conv');
+    await page.waitForSelector('[data-cvid]');
+    await page.click('[data-cvid]');
+    await page.waitForSelector('.ad-cv-ab');
+    await page.waitForTimeout(900);
+  };
+  await entrar();
+
+  const chip = nom => page.locator('.ad-cv-ab', { hasText: nom }).first();
+  const cifra = async rot => {
+    const n = page.locator('.ad-cv-cif', { hasText: rot }).first();
+    return (await n.locator('b').textContent()).trim();
+  };
+  const abordo = () => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].abordo || {});
+  const pagos = () => page.evaluate(() =>
+    JSON.parse(localStorage.getItem('METAS_ADMIN_V1')).grupos[0].convocatorias[0].pagos || {});
+
+  /* ── El día de la salida, lo primero de la pantalla ── */
+  const orden = await page.evaluate(() => {
+    const t = Array.from(document.querySelectorAll('#ad-tab-body .pa-card-title')).map(n => n.textContent.trim());
+    return t;
+  });
+  comprueba(/Subida al bus/.test(orden[1] || ''),
+    'el día de la salida la subida al bus va arriba del todo, antes del mensaje de WhatsApp');
+  comprueba(await page.locator('[data-cvab]').count() === 3,
+    'sale una familia por chip, y solo las que van (la que dijo que no, no sube)');
+  comprueba(await cifra('ya subieron') === '0' && await cifra('faltan por subir') === '7',
+    'arranca en 0 y faltan 7 PERSONAS (3+2+2), no 3 familias');
+  comprueba(await cifra('por cobrar aquí') === 'L 1,750',
+    'y dice cuánto dinero tiene que cobrar en el portón: L 1,750');
+
+  /* ── Al que debe no se le sube en silencio ── */
+  await chip('Ada Sarai').click();
+  await page.waitForSelector('.mdlg-body');
+  const av = (await page.textContent('.mdlg-body')).replace(/\s+/g, ' ');
+  comprueba(/Le faltan L 750/.test(av),
+    'antes de subir a la que debe, la pantalla dice cuánto le falta (L 750, por sus 3 personas)');
+  await page.click('#mdlg-cancel');
+  await page.waitForTimeout(500);
+  comprueba(await cifra('ya subieron') === '0' && Object.keys(await abordo()).length === 0,
+    '«Todavía no» NO la sube: se queda en la fila de cobro');
+  comprueba(/Ada Sarai Sevilla/.test(await page.textContent('#cv-abordo')),
+    'y sale en la fila de los que cobran fuera del bus');
+
+  /* ── La que ya pagó sube de UN toque, sin preguntar nada ── */
+  await page.evaluate(() => {
+    const d = JSON.parse(localStorage.getItem('METAS_ADMIN_V1'));
+    d.grupos[0].convocatorias[0].pagos = { 'ashly belen miranda|6|1': { monto: 500, fecha: '2026-08-05' } };
+    localStorage.setItem('METAS_ADMIN_V1', JSON.stringify(d));
+  });
+  await entrar();
+  await chip('Ashly Belén').click();
+  await page.waitForTimeout(600);
+  comprueba(await page.locator('.mdlg-body').count() === 0,
+    'a la que está al día no se le pregunta nada: un toque y arriba');
+  comprueba(await cifra('ya subieron') === '2' && await cifra('faltan por subir') === '5',
+    'sube con sus 2 personas y la cuenta baja sola (quedan 5 por subir)');
+  const ab1 = await abordo();
+  comprueba(Object.keys(ab1).length === 1 && ab1['ashly belen miranda|6|1'] &&
+    ab1['ashly belen miranda|6|1'].personas === 2,
+    'se guarda con la HUELLA de siempre y con cuántas personas se montaron');
+  comprueba(/^\d\d:\d\d$/.test(String(ab1['ashly belen miranda|6|1'].hora || '')),
+    'con la hora a la que subió, que es lo que contesta el reclamo del lunes');
+
+  /* ── ⚠️ TRAER LAS RESPUESTAS NO PUEDE BORRAR LO SUBIDO ── */
+  await page.click('#cv-refrescar');
+  await page.waitForTimeout(1300);
+  comprueba(await cifra('ya subieron') === '2',
+    'traer las respuestas NO borra lo que ya subió (sigue en ' + await cifra('ya subieron') + ')');
+
+  /* ── Paga en el portón: un toque anota el dinero Y la sube ── */
+  await page.click('[data-cvabcobra]');
+  await page.waitForTimeout(700);
+  comprueba(await cifra('ya subieron') === '4',
+    'el botón de «Pagó» la sube en el mismo toque (van 4 personas)');
+  const pg1 = await pagos();
+  comprueba(pg1['carlos josue meza|5|2'] && pg1['carlos josue meza|5|2'].monto === 500,
+    'y le anota sus L 500 completos, no una marca a medias');
+  comprueba(await cifra('por cobrar aquí') === 'L 750',
+    'lo que queda por cobrar en el portón baja a L 750 (solo el de las 3 personas)');
+  /* Que el pago se VEA en el control de pagos, o el lunes se le cobra
+     otra vez a quien pagó delante del bus. */
+  const enPagos = (await page.textContent('#cv-pagos')).replace(/\s+/g, ' ');
+  comprueba(/Carlos Josué Meza/.test(enPagos) && /L 1,000/.test(enPagos),
+    'lo cobrado en el portón se ve en el momento en 💵 Quién ya pagó (L 1,000 recogidos)');
+
+  /* ── El buscador: por folio, que es lo que enseña la familia ── */
+  const folio = await page.evaluate(() => window.convFolio('R4TP', 'ada sarai sevilla|6|1'));
+  await page.fill('#cv-ab-buscar', folio.split('-')[1]);
+  await page.waitForTimeout(300);
+  /* Los CHIPS, que es lo que se filtra: el mismo `data-cvab` lo lleva el
+     botón «Ya subió» de la lista de los que faltan. */
+  const visibles = await page.locator('.ad-cv-ab:not([hidden])').count();
+  comprueba(visibles === 1, 'buscando por el folio del boleto queda una sola familia (quedaron ' + visibles + ')');
+  comprueba(await chip('Ada Sarai').isVisible(), 'y es la del folio que se buscó');
+
+  /* ── Buscar no repinta la pantalla: lo marcado sigue marcado ── */
+  comprueba(await cifra('ya subieron') === '4', 'buscar no borra lo ya subido');
+
+  /* ── Segundo toque: vinieron menos de los que dijo ── */
+  await page.fill('#cv-ab-buscar', 'Ashly');
+  await page.waitForTimeout(250);
+  await chip('Ashly Belén').click();
+  await page.waitForSelector('#mdlg-inp');
+  await page.fill('#mdlg-inp', '1');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(700);
+  comprueba(await cifra('ya subieron') === '3',
+    'si vinieron menos, el segundo toque corrige: 2 → 1, y a bordo van 3');
+  comprueba(await page.inputValue('#cv-ab-buscar') === 'Ashly',
+    'y al subir a alguien NO se repinta la pantalla entera: lo escrito en el buscador sigue ahí');
+
+  /* ── El 0 la baja del bus ── */
+  await chip('Ashly Belén').click();
+  await page.waitForSelector('#mdlg-inp');
+  await page.fill('#mdlg-inp', '0');
+  await page.click('#mdlg-ok');
+  await page.waitForTimeout(700);
+  comprueba(await cifra('ya subieron') === '2' && !(await abordo())['ashly belen miranda|6|1'],
+    'el 0 la baja del bus (quedan las 2 del que pagó en el portón)');
+
+  /* ── LO SUBIDO NO VIAJA A LA NUBE ──
+     Se comprueba ANTES de recargar: con el service worker instalado, las
+     llamadas de la página recargada no pasan por la nube de mentira. */
+  await page.fill('#cv-ab-buscar', '');
+  await page.click('#cv-guardar');
+  await page.waitForTimeout(1200);
+  /* Ojo: `hora` SÍ viaja, pero es la de salida del evento —lo que lee el
+     padre—. Lo que no puede salir es el cajón `abordo` ni el nombre de
+     quien se montó. */
+  const pub = subidas.filter(s => s.fn === 'metas_conv_publicar').map(s => s.cuerpo).join(' ');
+  comprueba(pub.length > 0 && !/abordo/.test(pub) && !/Carlos Josué Meza/.test(pub),
+    'lo que sube a la nube no lleva quién se montó ni a qué hora');
+
+  /* ── Aguanta cerrar la aplicación ── */
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => typeof window.renderAdmin === 'function');
+  await entrar();
+  comprueba(await cifra('ya subieron') === '2',
+    'después de cerrar y volver a abrir, lo subido sigue anotado');
+  const falta = (await page.textContent('#cv-abordo')).replace(/\s+/g, ' ');
+  comprueba(/Todavía no han subido/.test(falta) && /Ada Sarai Sevilla/.test(falta),
+    'y con el bus a punto de salir dice quién falta, con su teléfono para llamarla');
+
+  await page.close();
+}
+
 (async () => {
   const browser = await chromium.launch(
     process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
@@ -1465,6 +1675,7 @@ async function pruebaQuitar(browser) {
     await pruebaBoletoSinInternet(browser);
     await pruebaAvisos(browser);
     await pruebaPagos(browser);
+    await pruebaAbordo(browser);
     await pruebaQuitar(browser);
   } finally {
     await browser.close();

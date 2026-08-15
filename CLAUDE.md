@@ -904,6 +904,68 @@ portón, sin la aplicación delante y con el lápiz en la mano.
   corta por la derecha es **la firma**, que es lo único de esa hoja que no
   se puede volver a poner.
 
+### El día de la salida: la subida al bus
+
+Las listas sirven hasta el viernes; el sábado empieza el portón, y ahí lo
+que hay son **dos maestros, cuarenta familias, un bus con el motor
+andando y gente que llega a pagar en ese momento** —porque siempre hay
+quien paga a última hora—. Con un cuaderno eso se resuelve de dos
+maneras y las dos salen caras: se sube al que no ha dado nada, o se para
+la fila entera mientras se busca un nombre en la lista de la escuela.
+
+🚌 **Subida al bus** es el **pase de lista del bus**, y se ve igual a
+propósito: los mismos chips que el maestro toca todos los días. El día
+de la salida no es día de aprender una pantalla nueva. Vive en
+`js/tools/convocatoria.js` (`convAbordo`, `convHtmlAbordoDentro`,
+`convAbordoTocar`).
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. **Se guarda en `c.abordo`, NUNCA dentro de `c.resp`.** Es la razón de
+   siempre —`convTraer` reemplaza `resp` entero con lo que venga de la
+   nube—, y aquí significaría perder la cuenta de **quién está DENTRO
+   del bus** con el bus a punto de salir. Tampoco viaja a la nube:
+   `convDatosPublicos` es lista cerrada y `abordo` no está en ella. Por
+   el enlace sale cuántos van, nunca quién se montó.
+2. **Un toque sube a la familia entera.** Con cuarenta en fila, cada
+   toque de más es un minuto de portón. El **segundo** toque abre la
+   casilla, que es donde caben las dos cosas raras y reales: que
+   vinieran menos de los que dijo, y que el maestro se equivocara de
+   chip (el **0** la baja del bus).
+3. **Al que debe no se le sube en silencio.** Su chip va en **ámbar con
+   lo que falta** —el mismo ámbar del abono— y al tocarlo la pantalla
+   pregunta si ya lo dio. Es la última vez que el maestro tiene delante
+   a esa madre con el dinero en la cartera: al que sube sin pagar no se
+   le vuelve a ver hasta la semana siguiente, y la diferencia la pone
+   él. Lo cobrado ahí **se anota como pago normal** (misma huella, mismo
+   `c.pagos`), así que el lunes no se le cobra dos veces.
+4. **Se cuentan personas, no familias.** Los asientos son de personas:
+   va el niño y va la mamá. Y lo que se cuenta al subir es **lo que de
+   verdad se montó**, no lo que se había apuntado.
+
+**Los que pagan a última hora van en su propia fila, fuera del bus.**
+Con dos maestros, uno sube a los que están al día por la puerta y el
+otro cobra en la acera; si la fila del dinero tapa la puerta, no suben
+ni unos ni otros. La tarjeta 💵 **Cobran aquí, fuera del bus** lista solo
+a los que deben **y no han subido**, con un botón que **anota el pago y
+los sube en el mismo toque**. Al que no lleva el teléfono se le imprime
+el listado por grado de 💵 Quién ya pagó, que es el mismo papel.
+
+⚠️ **Al subir a alguien NO se repinta la pantalla entera**
+(`convAbordoRepintar`, sin `renderAdmin`). Es la misma regla de la cola
+de avisos y de la barra de grupos: el maestro está a mitad de una lista
+larga, con un nombre escrito en el buscador, y un salto al principio de
+la página en cada familia que sube es lo que hace que cierre la
+aplicación y siga en un papel. Se repinta **también el control de
+pagos** (`#cv-pagos`), porque lo cobrado en el portón tiene que verse
+ahí en el momento: si no, el maestro creería que no se guardó.
+
+Dos detalles que salen del portón y no de la pantalla: **el buscador
+encuentra por folio**, que es lo que la familia enseña —no dice su
+nombre completo—, y **⏳ Todavía no han subido** lleva el teléfono con
+📞 para llamar antes de arrancar. Cinco minutos de espera cuestan menos
+que dejar a un niño en el portón.
+
 ### Quitar a quien se apuntó por error
 
 El enlace anda suelto en un grupo de cientos de personas, y por ahí entra

@@ -5246,6 +5246,56 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-cv-pg-abono { background: #fffbeb; border-color: #fcd34d; }
 .ad-cv-pg-abono .ad-cv-pg-m b { color: #b45309; }
 
+/* ── 🚌 LA SUBIDA AL BUS ──
+   Es el pase de lista del bus y se ve igual a propósito: los mismos
+   chips de siempre. Solo cambian dos cosas, y las dos porque esto se usa
+   en el portón, de pie y con el bus andando:
+
+   · EL CHIP ES MÁS ANCHO. En el pase de lista basta el número y el
+     primer nombre porque el maestro conoce a sus 43. Aquí contesta la
+     escuela entera: hay dos Génesis y no son del mismo grado, así que
+     el chip lleva dos palabras del nombre, cuántas personas van y lo que
+     debe. Un nombre cortado en «Géne…» no sirve para llamar a nadie.
+   · EL ÁMBAR SIGNIFICA «PAGA PRIMERO». Es el mismo ámbar del abono en
+     el control de pagos: dinero sin cobrar. De un vistazo, y sin leer,
+     el maestro sabe a quién puede subir y a quién manda a la fila de
+     la acera. */
+.ad-cv-ab {
+  flex: 1 1 128px; min-width: 118px; max-width: 190px;
+  align-items: flex-start; text-align: left; padding: 8px 10px;
+}
+.ad-cv-ab .ad-chip-nom { max-width: 100%; white-space: normal; overflow: visible; }
+.ad-cv-ab .ad-chip-monto { white-space: nowrap; }
+/* Subió DEBIENDO: verde porque está dentro del bus —eso es lo que se
+   está contando— pero con el borde ámbar de lo que sigue sin cobrar. */
+.ad-cv-ab-deb { border-color: #d97706; }
+.ad-cv-ab-deb .ad-chip-monto { color: #b45309; }
+.ad-cv-ab-si { background: #f0fdf4; border-color: #bbf7d0; }
+.ad-cv-ab-si b { color: #15803d; }
+/* El buscador esconde con [hidden], y `display:flex` del chip le gana a
+   la regla del navegador si no se dice aquí. */
+#cv-abordo [hidden] { display: none !important; }
+
+/* La fila de cobro: el nombre a la izquierda y los botones debajo en un
+   teléfono, porque el botón de cobrar tiene que ser ancho —se toca con
+   el pulgar, con el dinero en la otra mano y sin mirar—. */
+.ad-cv-ab-fila {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 9px 2px; border-bottom: 1px solid var(--border);
+}
+.ad-cv-ab-quien { flex: 1 1 160px; min-width: 0; font-size: 13.5px; line-height: 1.35; }
+.ad-cv-ab-quien strong { font-weight: 900; }
+.ad-cv-ab-quien small { font-size: 11px; color: var(--muted); }
+.ad-cv-ab-btns { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ad-cv-ab-cobra {
+  cursor: pointer; border: none; border-radius: 10px; padding: 9px 13px;
+  background: #16a34a; color: #fff; font-family: inherit;
+  font-size: 13px; font-weight: 900; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.ad-cv-ab-cobra:active { transform: scale(.97); }
+.ad-cv-ab-btns a.ad-al-code { text-decoration: none; display: inline-block; }
+
 /* ── La cola del aviso por WhatsApp ──
    El maestro está mandando el mismo aviso a veintisiete familias, una
    por una, saliendo a WhatsApp y volviendo. Lo único que necesita ver al
