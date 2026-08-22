@@ -15,6 +15,7 @@ const DIAGNOSTICOS = {
     { etapa: 6, q: '¿Qué indica el numerador de una fracción?', o: ['En cuántas partes se divide el entero', 'Cuántas partes se toman del entero', 'El resultado de una suma', 'El nombre de la fracción'], a: 1 },
     { etapa: 7, q: '¿Cuánto es 2/3 × 4/5?', o: ['8/15', '6/8', '2/15', '8/8'], a: 0 },
     { etapa: 8, q: '¿Cuál fracción es equivalente a 0.75?', o: ['7/5', '1/4', '7/10', '3/4'], a: 3 },
+    { etapa: 9, q: '¿Cuánto es 0.2 × 0.3?', o: ['0.6', '0.06', '6', '0.5'], a: 1 },
     { etapa: 10, q: '¿A qué división entera equivale 1.5 ÷ 0.3?', o: ['150 ÷ 3', '15 ÷ 30', '15 ÷ 3'], a: 2 },
     { etapa: 11, q: '¿Cuánto es 23 × 4?', o: ['82', '92', '812', '96'], a: 1 },
   ],

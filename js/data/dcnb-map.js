@@ -30,6 +30,7 @@ const DCNB_MAP = {
   23: { g: { 4: [8], 5: [5], 6: [5], 7: [2, 3, 4] } },   // Las Fracciones — concepto, comparar, sumar y restar (la mult/div va en la 62)
   62: { g: { 6: [5, 6, 7], 7: [2, 3, 4] } },              // Mult. y División de Fracciones — 6º may-jul; 7º dentro de racionales
   8:  { g: { 4: [6, 7], 5: [6, 7], 6: [3, 4], 7: [2, 3, 4] } }, // Números Decimales
+  63: { g: { 5: [6, 7], 6: [3, 4] } },                    // Multiplicación de Decimales — 5º jun-jul (por natural); 6º mar-abr (decimal por decimal)
   15: { g: { 5: [7], 6: [4] } },                          // División de Decimales — 5º entre natural; 6º entre decimal
   7:  { g: { 6: [2], 7: [9, 10] } },                      // Ángulos y Bisectriz — 6º feb; 7º sep-oct (geometría formal)
   31: { g: { 4: [6], 5: [4, 8] } },                       // Perímetro y Área de Cuadriláteros — 5º abr (cuadrados/rect.) y ago (rombo/trapecio)
