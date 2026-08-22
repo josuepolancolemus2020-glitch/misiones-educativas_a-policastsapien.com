@@ -52,12 +52,12 @@
   }
 
   /* Línea de identificación a TODO lo ancho */
-  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
   .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
   .idline .raya.corta { flex: 0 0 70px; }
 
   /* Encabezado con QR */
-  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
   .fh-txt { flex: 1; }
   .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ac-osc); }
   .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
@@ -70,17 +70,17 @@
   .materia-tag { display: inline-block; font-size: 8.5pt; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
                  color: #fff; background: var(--ac); border-radius: 999px; padding: 2px 11px; margin-bottom: 6px; }
 
-  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
   .contenido > h2:first-child, .materia-tag + h2 { margin-top: 4px; }
-  h3 { font-size: 11pt; color: var(--ac-osc); margin: 11px 0 6px; }
-  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
-  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
-  li { margin-bottom: 3px; }
+  h3 { font-size: 11pt; color: var(--ac-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
 
   ol.objetivos { list-style: decimal outside; margin-left: 26px; }
-  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
 
-  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
   .idea { background: #fff8e6; border: 1px solid #f0dca6; }
   .idea b { color: #b07d00; }
   .regla { background: var(--ac-claro); border: 1px solid var(--linea); }
@@ -90,9 +90,9 @@
   .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
   .truco b { color: #7c3aed; }
 
-  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
-  th { background: var(--ac); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
-  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ac); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
   tr:nth-child(even) td { background: #f7f7fb; }
   td.k { font-weight: 700; color: var(--ac-osc); white-space: nowrap; }
 
@@ -130,22 +130,22 @@
   .acts h3 { border-bottom: 2px solid var(--ac-claro); padding-bottom: 3px; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
-  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
   .acts ol li::marker { font-weight: 800; color: var(--ac); }
   .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
 
   /* Selección múltiple: letras SIN círculo impreso, para que el niño
      pueda encerrarlas y que su trazo se vea */
-  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
   .preg:last-child { border-bottom: none; }
-  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
   .preg-n { display: inline-block; flex: 0 0 22px; width: 22px; height: 22px; background: var(--ac); color: #fff;
             border-radius: 6px; text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900; }
   /* Cuando el ítem trae mini-texto, el texto va ARRIBA (con el número) y la
      pregunta debajo, como en el cuadernillo oficial: primero se lee, después
      se pregunta. */
   .preg-q2 { font-weight: 700; color: var(--tinta); margin: 4px 0 4px 30px; }
-  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
   .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
   .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ac-osc); }
   .preg-ops .op i::after { content: ')'; }
@@ -168,16 +168,16 @@
   .desarrollo { border: 1px dashed #b9c2cf; border-radius: 8px; height: 74px; margin: 4px 0 9px; background:
                 repeating-linear-gradient(180deg, transparent 0 24px, #e6ebf2 24px 25px); }
 
-  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
   .felic b { color: var(--rep-osc); }
 
-  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
   table.rubrica td.lg { white-space: nowrap; }
 
-  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
   .pauta .pt { font-weight: 800; color: var(--rep-osc); }
   .pauta > div { margin-bottom: 4px; }
-  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
 
   .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rep); box-shadow: 0 6px 16px rgba(124,58,237,.4); font-family: Arial, sans-serif; }
   .imprimir-btn:active { transform: scale(.97); }
@@ -186,7 +186,7 @@
   @media print {
     body { background: #fff; }
     .doc { max-width: none; }
-    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
     .pagina:last-child { page-break-after: auto; }
     .pagina .contenido { padding: 0 2px; }
     .pagina.p-mat .contenido, .pagina.p-esp .contenido { padding-left: 11px; }
@@ -238,14 +238,6 @@
   <li>Encontrar el <strong>tema</strong> de un texto, contestar preguntas <strong>literales e inferenciales</strong>, hallar el <strong>significado de una palabra por el contexto</strong>, reconocer los <strong>tipos de texto</strong> y escribir una <strong>anécdota</strong> y un <strong>instructivo</strong>.</li>
 </ol>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Presentación y objetivos</span><span>Página 1 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 2 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
-
 <h2>📋 Cómo es la Prueba de Fin de Grado</h2>
 <p>La Secretaría de Educación aplica esta prueba al terminar el grado. Primero contestas la parte de
 <strong>Matemáticas</strong>, luego hay un receso, y después la de <strong>Español</strong>. Cada pregunta trae cuatro
@@ -257,10 +249,10 @@ opciones: ahí escribes tú.</p>
 <div class="caja truco">🗺️ <b>Cómo usar esta ficha:</b> primero estudia las hojas azules de Matemáticas y contesta sus actividades; después las doradas de Español con las suyas. Deja el <b>simulacro del final</b> para la víspera del examen y contéstalo de corrido, sin ver las hojas de estudio: así sabrás de verdad cómo llegas.</div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Presentación y objetivos</span><span>Página 2 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Presentación y objetivos</span><span>Página 1 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
 <section class="pagina p-mat">
   <div class="contenido">
 
@@ -297,10 +289,10 @@ opciones: ahí escribes tú.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Números hasta cientos de miles</span><span>Página 3 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Números hasta cientos de miles</span><span>Página 2 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
 <section class="pagina p-mat">
   <div class="contenido">
 
@@ -331,14 +323,6 @@ opciones: ahí escribes tú.</p>
 
 <div class="caja truco">🎯 <b>Truco:</b> Cuando solo hay sumas y restas, se resuelve de izquierda a derecha, en el orden en que están escritas. Y al terminar, revisa por encima: si el resultado no tiene sentido, la cuenta ya te avisó.</div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Números hasta cientos de miles y Sumar, restar…</span><span>Página 4 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 5 ═══════════ -->
-<section class="pagina p-mat">
-  <div class="contenido">
-
 <div class="ejem">
   <div class="ejem-t">Ejemplo resuelto 1: <span>Resuelve 3847 + 968 y comprueba el resultado.</span></div>
   <ol>
@@ -351,6 +335,14 @@ opciones: ahí escribes tú.</p>
   </ol>
   <div class="res">3847 + 968 = 4815.</div>
 </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Números hasta cientos de miles y Sumar, restar…</span><span>Página 3 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
 
 <div class="ejem">
   <div class="ejem-t">Ejemplo resuelto 2: <span>Multiplica 253 x 47.</span></div>
@@ -378,19 +370,19 @@ opciones: ahí escribes tú.</p>
   <div><b class="ok">Correcto:</b> 8000 menos 2456 = 5544. Comprueba sumando: 5544 + 2456 = 8000. Esa comprobación tarda diez segundos y salva la pregunta.</div>
 </div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Sumar, restar, multiplicar y dividir sin perder…</span><span>Página 5 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 6 ═══════════ -->
-<section class="pagina p-mat">
-  <div class="contenido">
-
 <div class="materia-tag">🔵 Matemáticas · Bloque 3 de 4</div>
 <h2>💧 Decimales y fracciones: los pedazos del número</h2>
 <p>El punto separa los enteros de los pedazos. La primera cifra después del punto son los décimos y la segunda los centésimos, que es lo que en el dinero llamamos centavos. Para sumar o restar decimales solo hay una regla que importa: el punto debajo del punto, y los lugares que falten se rellenan con ceros, que no cambian el valor. La fracción cuenta lo mismo de otra manera: el número de abajo dice en cuántos pedazos iguales se partió la cosa y el de arriba cuántos se tomaron. Y en la recta numérica también caben los decimales: entre el 3 y el 4 está el 3.5, justo en la mitad.</p>
 
 <div class="caja regla">⚡ <b>Regla:</b> Para sumar o restar decimales, escribe el punto debajo del punto y completa con ceros los lugares que falten: 45.6 se puede escribir 45.60 y vale igual.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Sumar, restar, multiplicar y dividir sin perder…</span><span>Página 4 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
 
 <div class="caja truco">🎯 <b>Truco:</b> En la fracción, cuenta primero TODOS los pedazos iguales de la figura, que van abajo, y después los sombreados, que van arriba. Si lo haces al revés, la fracción sale volteada.</div>
 
@@ -418,14 +410,6 @@ opciones: ahí escribes tú.</p>
   <div class="res">Le quedaron L.73.25.</div>
 </div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Decimales y fracciones</span><span>Página 6 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 7 ═══════════ -->
-<section class="pagina p-mat">
-  <div class="contenido">
-
 <table>
   <tr><th>Se lee</th><th>Fracción</th><th>Decimal</th></tr>
   <tr><td class="k">un medio</td><td><span class="fr"><b>1</b><b class="fd">2</b></span></td><td>0.5</td></tr>
@@ -443,6 +427,14 @@ opciones: ahí escribes tú.</p>
   <div><b class="ok">Correcto:</b> Se completa 3.5 con un cero, queda 3.50, y se suma punto debajo de punto: 3.50 + 0.42 = 3.92.</div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Decimales y fracciones</span><span>Página 5 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
 <div class="materia-tag">🔵 Matemáticas · Bloque 4 de 4</div>
 <h2>📐 Ángulos, figuras, perímetro y medidas</h2>
 <p>Un ángulo se nombra por lo abierto que está: el recto es la esquina de una hoja de papel y mide 90 grados; el agudo es más cerrado y el obtuso más abierto; el llano queda estirado como una línea, con sus 180 grados. Los triángulos se clasifican por sus lados y los cuadriláteros por sus lados y sus ángulos. El perímetro es lo que mide el borde, o sea el alambre que da la vuelta: se suma. Y en las medidas hay una sola idea: cuando pasas de una unidad grande a una chica multiplicas, porque salen más pedazos; cuando pasas de la chica a la grande divides.</p>
@@ -450,14 +442,6 @@ opciones: ahí escribes tú.</p>
 <div class="caja regla">⚡ <b>Regla:</b> Los ángulos se nombran por su medida: agudo si mide menos de 90 grados, recto si mide 90 justos, obtuso si mide más de 90 pero menos de 180, y llano si mide 180.</div>
 
 <div class="caja regla">⚡ <b>Regla:</b> El perímetro es la medida del borde: se suman todos los lados. Lo que compras para cercar el solar es el perímetro, no otra cosa.</div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Decimales y fracciones y Ángulos, figuras…</span><span>Página 7 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 8 ═══════════ -->
-<section class="pagina p-mat">
-  <div class="contenido">
 
 <div class="caja truco">🎯 <b>Truco:</b> De metros a centímetros se multiplica por 100, porque cada metro trae 100 centímetros; de centímetros a metros se divide entre 100. Con las yardas y los pies es igual: una yarda trae 3 pies, y un galón llena 5 botellas.</div>
 
@@ -483,6 +467,14 @@ opciones: ahí escribes tú.</p>
   <div class="res">El bus llega a las 10:45 de la mañana.</div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Ángulos, figuras, perímetro y medidas</span><span>Página 6 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
 <table>
   <tr><th>Figura</th><th>Cómo se reconoce</th><th>Dónde la ves</th></tr>
   <tr><td class="k">Triángulo equilátero</td><td>Sus tres lados miden igual</td><td>La señal de tránsito de ceda el paso</td></tr>
@@ -493,14 +485,6 @@ opciones: ahí escribes tú.</p>
   <tr><td class="k">Rombo</td><td>Cuatro lados iguales, pero sin ángulos rectos</td><td>La figura de los diamantes de la baraja</td></tr>
   <tr><td class="k">Trapecio</td><td>Cuatro lados, y solo dos de ellos son paralelos</td><td>Una maceta vista de frente</td></tr>
 </table>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Ángulos, figuras, perímetro y medidas</span><span>Página 8 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 9 ═══════════ -->
-<section class="pagina p-mat">
-  <div class="contenido">
 
 <div class="err">
   <div class="err-t">Cuidado con este error</div>
@@ -521,20 +505,20 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <div><b class="ok">Correcto:</b> 468 + 275 = 743. Unidades: 8 + 5 = 13, se escribe 3 y se lleva 1. Decenas: 6 + 7 = 13, más 1 que llevaba son 14: se escribe 4 y se lleva 1. Centenas: 4 + 2 = 6, más 1 son 7. Revisión por encima: 468 es casi 500 y 275 es casi 300, así que el resultado tiene que andar cerca de 750.</div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Ángulos, figuras, perímetro y medidas y errores…</span><span>Página 7 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina p-mat">
+  <div class="contenido">
+
 <div class="err">
   <div class="err-t">Restar el de arriba del de abajo para que salga más fácil</div>
   <div><b class="mal">Mal:</b> El alumno resuelve 632 menos 178 y contesta 546. En cada columna le quitó el número más chico al más grande, sin fijarse en cuál iba arriba: 8 menos 2, 7 menos 3 y 6 menos 1.</div>
   <div><b class="why">¿Por qué está mal?</b> En la resta el orden manda: siempre se le quita el de abajo al de arriba. Cuando el de arriba es más chico no se voltea la columna, se pide prestado a la columna de al lado. Al voltearla, la respuesta sale más grande de lo que debe, y aquí se pasa por 92.</div>
   <div><b class="ok">Correcto:</b> 632 menos 178 = 454. Unidades: a 2 no se le puede quitar 8, se presta de las decenas y queda 12 menos 8 = 4, y las decenas bajan de 3 a 2. Decenas: a 2 no se le puede quitar 7, se presta de las centenas y queda 12 menos 7 = 5, y las centenas bajan de 6 a 5. Centenas: 5 menos 1 = 4. Comprobación: 454 + 178 = 632.</div>
 </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: Ángulos, figuras, perímetro y medidas y errores…</span><span>Página 9 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 10 ═══════════ -->
-<section class="pagina p-mat">
-  <div class="contenido">
 
 <div class="err">
   <div class="err-t">El segundo renglón de la multiplicación sin correr</div>
@@ -558,10 +542,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: errores comunes</span><span>Página 10 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: errores comunes</span><span>Página 8 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 11 ═══════════ -->
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
 <section class="pagina p-esp">
   <div class="contenido">
 
@@ -588,10 +572,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: El tema del texto</span><span>Página 11 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: El tema del texto</span><span>Página 9 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 12 ═══════════ -->
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
 <section class="pagina p-esp">
   <div class="contenido">
 
@@ -628,17 +612,17 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 
 <div class="caja regla">⚡ <b>Regla:</b> Toda respuesta tiene que poder defenderse señalando el texto con el dedo. En la literal señalas la oración; en la inferencial señalas las pistas que te llevaron a deducirla.</div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: El tema del texto y Lo que el texto dice y lo que…</span><span>Página 12 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 13 ═══════════ -->
-<section class="pagina p-esp">
-  <div class="contenido">
-
 <div class="caja truco">🎯 <b>Truco:</b> Si la pregunta empieza con según el texto, qué, quién, dónde o cuándo, la respuesta está escrita: búscala y subráyala antes de marcar. Si empieza con por qué, para qué o cómo era, hay que deducirla.</div>
 
 <div class="caja idea">💡 <b>Idea clave:</b> Para saber cómo es un personaje, fíjate en lo que hace, no en lo que dice de sí mismo. Un niño que le da la mitad de su merienda a otro es generoso aunque el texto nunca escriba esa palabra.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: El tema del texto y Lo que el texto dice y lo que…</span><span>Página 10 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 11 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
 
 <div class="ejem">
   <div class="ejem-t">Ejemplo resuelto 1: <span>¿Cómo es Lucía, según lo que hace?</span></div>
@@ -672,20 +656,20 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <tr><td class="k">De personaje</td><td>¿Cómo era?, ¿qué sentía?, ¿qué se puede deducir?</td><td>Miras lo que el personaje hace, no lo que dice</td></tr>
 </table>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: Lo que el texto dice y lo que deja entender</span><span>Página 13 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 14 ═══════════ -->
-<section class="pagina p-esp">
-  <div class="contenido">
-
 <div class="err">
   <div class="err-t">Cuidado con este error</div>
   <div><b class="mal">Mal:</b> Contestar que Lucía es una niña descuidada porque llevó el cuaderno mojado.</div>
   <div><b class="why">¿Por qué está mal?</b> El alumno se quedó con el primer renglón y no leyó lo que Lucía hizo después. El cuaderno se mojó por la lluvia y la quebrada crecida, no por descuido de ella.</div>
   <div><b class="ok">Correcto:</b> En las preguntas de cómo es un personaje, junta todo lo que hace de principio a fin. Lucía copió la clase y se quedó en el recreo arreglándola: eso es responsabilidad.</div>
 </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: Lo que el texto dice y lo que deja entender</span><span>Página 11 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 12 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
 
 <div class="materia-tag">🟡 Español · Bloque 3 de 4</div>
 <h2>🔤 La palabra que no conoces y la palabra que falta</h2>
@@ -709,14 +693,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <div class="res">Marchito significa seco y sin fuerza, y las pistas son el sol fuerte, el pozo bajo y las tres semanas sin lluvia.</div>
 </div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: Lo que el texto dice y lo que deja entender y La…</span><span>Página 14 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 15 ═══════════ -->
-<section class="pagina p-esp">
-  <div class="contenido">
-
 <div class="ejem">
   <div class="ejem-t">Ejemplo resuelto 2: <span>¿Qué palabra falta en la línea y por qué?</span></div>
   <div class="ejem-txt">Mi tía Chabela crió tres gallinas en el solar de su casa. Cada mañana les echa maíz quebrado y les cambia el agua del bebedero. Desde que empezó a cuidarlas así, sus gallinas ____ un huevo cada día y ya no hay que comprarlos en la pulpería.</div>
@@ -728,6 +704,14 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </ol>
   <div class="res">Falta la palabra ponen: el sujeto sus gallinas está en plural, así que el verbo va en plural y en presente.</div>
 </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: La palabra que no conoces y la palabra que falta</span><span>Página 12 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 13 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
 
 <table>
   <tr><th>Si ves...</th><th>Lo que viene es...</th><th>Ejemplo</th></tr>
@@ -748,14 +732,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <h2>📚 Los tipos de texto y tu propia escritura</h2>
 <p>No todos los textos se leen igual, y en la prueba te van a preguntar de qué tipo es el que acabas de leer. Cada uno deja marcas que se ven de lejos: el narrativo cuenta algo que pasó, con personajes y un final; el informativo explica cómo es algo de verdad y trae datos; el anuncio ofrece algo y dice precio, lugar y fecha; el instructivo lleva materiales y pasos numerados. Reconocer la marca es cuestión de segundos si sabes cuál buscar. Y al final de la prueba escribes tú: una anécdota, que es algo que te pasó de verdad, y un instructivo para enseñarle a otro a hacer algo.</p>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: La palabra que no conoces y la palabra que falta…</span><span>Página 15 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 16 ═══════════ -->
-<section class="pagina p-esp">
-  <div class="contenido">
-
 <div class="caja regla">⚡ <b>Regla:</b> Cada tipo de texto se reconoce por su forma antes que por su tema. Un texto sobre el maíz puede ser cuento, noticia, anuncio o instructivo: lo que decide es cómo está armado, no de qué habla.</div>
 
 <div class="caja truco">🎯 <b>Truco:</b> Para escribir una anécdota, cuéntala en tres partes: cómo empezó, qué pasó y cómo terminó. Ponle título y escríbela en pasado, porque ya ocurrió.</div>
@@ -774,6 +750,14 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <div class="res">Es un anuncio, porque ofrece un producto y da los datos del cliente: qué venden, dónde, cuándo y a qué precio.</div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: La palabra que no conoces y la palabra que falta…</span><span>Página 13 de 29</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 14 ═══════════ -->
+<section class="pagina p-esp">
+  <div class="contenido">
+
 <div class="ejem">
   <div class="ejem-t">Ejemplo resuelto 2: <span>¿Qué tipo de texto es y para qué sirve?</span></div>
   <div class="ejem-txt">Cómo hacer una maceta con una botella. Materiales: una botella plástica vacía, tierra negra, una semilla y un clavo. 1. Corta la botella por la mitad, con ayuda de una persona adulta. 2. Hazle tres agujeros en el fondo. 3. Llena la botella con tierra negra hasta dos dedos del borde. 4. Entierra la semilla y riégala poquito. 5. Ponla donde le dé el sol de la mañana.</div>
@@ -785,14 +769,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </ol>
   <div class="res">Es un texto instructivo, porque lleva materiales y pasos numerados con verbos que mandan, y sirve para que el lector haga algo por sí mismo.</div>
 </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: Los tipos de texto y tu propia escritura</span><span>Página 16 de 32</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 17 ═══════════ -->
-<section class="pagina p-esp">
-  <div class="contenido">
 
 <table>
   <tr><th>Tipo de texto</th><th>Marca que se ve</th><th>Para qué sirve</th></tr>
@@ -822,10 +798,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: Los tipos de texto y tu propia escritura y errores…</span><span>Página 17 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: Los tipos de texto y tu propia escritura y errores…</span><span>Página 14 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 18 ═══════════ -->
+<!-- ═══════════ PÁGINA 15 ═══════════ -->
 <section class="pagina p-esp">
   <div class="contenido">
 
@@ -855,10 +831,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </ol>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: errores comunes y estrategia</span><span>Página 18 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: errores comunes y estrategia</span><span>Página 15 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 19 ═══════════ -->
+<!-- ═══════════ PÁGINA 16 ═══════════ -->
 <section class="pagina p-mat acts">
   <div class="contenido">
 
@@ -893,10 +869,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </ol>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades</span><span>Página 19 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades</span><span>Página 16 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 20 ═══════════ -->
+<!-- ═══════════ PÁGINA 17 ═══════════ -->
 <section class="pagina p-mat acts">
   <div class="contenido">
 
@@ -963,10 +939,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades (sigue)</span><span>Página 20 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades (sigue)</span><span>Página 17 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 21 ═══════════ -->
+<!-- ═══════════ PÁGINA 18 ═══════════ -->
 <section class="pagina p-mat acts">
   <div class="contenido">
 
@@ -1027,31 +1003,31 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 
 <h3>V. Resuelve con procedimiento <span class="val">(Valor: 20 puntos c/u)</span> · Escribe todos los pasos en el espacio.</h3>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve 82406 - 57938 y comprueba tu resultado con una suma.</div><div class="desarrollo" style="height:74px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve 82406 - 57938 y comprueba tu resultado con una suma.</div><div class="desarrollo" style="height:154px;"></div></div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades (sigue)</span><span>Página 21 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades (sigue)</span><span>Página 18 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 22 ═══════════ -->
+<!-- ═══════════ PÁGINA 19 ═══════════ -->
 <section class="pagina p-mat acts">
   <div class="contenido">
 
-<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Multiplica 465 x 38 y explica dónde va cada resultado parcial.</div><div class="desarrollo" style="height:117px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Multiplica 465 x 38 y explica dónde va cada resultado parcial.</div><div class="desarrollo" style="height:119px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Una cooperativa compró 1845 plantas de café y las repartió en partes iguales entre 45 socios. ¿Cuántas plantas recibió cada socio?</div><div class="desarrollo" style="height:117px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Una cooperativa compró 1845 plantas de café y las repartió en partes iguales entre 45 socios. ¿Cuántas plantas recibió cada socio?</div><div class="desarrollo" style="height:119px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Doña Elena compró una libra de queso en L.62.75 y un cartón de huevos en L.98.50. Pagó con un billete de L.200.00. ¿Cuánto le devolvieron?</div><div class="desarrollo" style="height:117px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Doña Elena compró una libra de queso en L.62.75 y un cartón de huevos en L.98.50. Pagó con un billete de L.200.00. ¿Cuánto le devolvieron?</div><div class="desarrollo" style="height:119px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">5</span>El patio de la escuela es un rectángulo de 25 metros de largo y 14 metros de ancho. ¿Cuántos metros de malla se necesitan para cercarlo? Escribe también esa medida en centímetros.</div><div class="desarrollo" style="height:117px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">5</span>El patio de la escuela es un rectángulo de 25 metros de largo y 14 metros de ancho. ¿Cuántos metros de malla se necesitan para cercarlo? Escribe también esa medida en centímetros.</div><div class="desarrollo" style="height:119px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El maestro empezó la clase de Español a las 8:25 de la mañana y la terminó 50 minutos después. En seguida dio 40 minutos de Matemáticas, sin descanso. ¿A qué hora terminó la clase de Matemáticas?</div><div class="desarrollo" style="height:117px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El maestro empezó la clase de Español a las 8:25 de la mañana y la terminó 50 minutos después. En seguida dio 40 minutos de Matemáticas, sin descanso. ¿A qué hora terminó la clase de Matemáticas?</div><div class="desarrollo" style="height:119px;"></div></div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades (sigue)</span><span>Página 22 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Matemáticas: actividades (sigue)</span><span>Página 19 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 23 ═══════════ -->
+<!-- ═══════════ PÁGINA 20 ═══════════ -->
 <section class="pagina p-esp acts">
   <div class="contenido">
 
@@ -1086,10 +1062,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </ol>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades</span><span>Página 23 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades</span><span>Página 20 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 24 ═══════════ -->
+<!-- ═══════════ PÁGINA 21 ═══════════ -->
 <section class="pagina p-esp acts">
   <div class="contenido">
 
@@ -1160,10 +1136,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades (sigue)</span><span>Página 24 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades (sigue)</span><span>Página 21 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 25 ═══════════ -->
+<!-- ═══════════ PÁGINA 22 ═══════════ -->
 <section class="pagina p-esp acts">
   <div class="contenido">
 
@@ -1195,26 +1171,26 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </table>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades (sigue)</span><span>Página 25 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades (sigue)</span><span>Página 22 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 26 ═══════════ -->
+<!-- ═══════════ PÁGINA 23 ═══════════ -->
 <section class="pagina p-esp acts">
   <div class="contenido">
 
 <h3>VI. Escritura <span class="val">(Valor: 30 puntos c/u)</span> · Escribe en el espacio, con buena letra y cuidando la ortografía.</h3>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Escribe una anécdota de por lo menos ocho renglones sobre algo que te haya pasado de verdad, en la escuela o en tu casa: un susto, una travesura o un día que te reíste mucho. Ponle título y cuéntala en tres partes: cómo empezó, qué pasó y cómo terminó.</div><div class="desarrollo" style="height:209px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Escribe una anécdota de por lo menos ocho renglones sobre algo que te haya pasado de verdad, en la escuela o en tu casa: un susto, una travesura o un día que te reíste mucho. Ponle título y cuéntala en tres partes: cómo empezó, qué pasó y cómo terminó.</div><div class="desarrollo" style="height:211px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Escribe un instructivo para enseñarle a un compañero a hacer algo que tú sepas hacer: un barrilete, un refresco de tamarindo, una maceta con una botella. Empieza con la lista de materiales y después escribe los pasos numerados, en el orden en que se hacen.</div><div class="desarrollo" style="height:209px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Escribe un instructivo para enseñarle a un compañero a hacer algo que tú sepas hacer: un barrilete, un refresco de tamarindo, una maceta con una botella. Empieza con la lista de materiales y después escribe los pasos numerados, en el orden en que se hacen.</div><div class="desarrollo" style="height:211px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Describe en por lo menos seis renglones a una persona de tu comunidad que tú conozcas bien: cómo es por fuera y cómo es por dentro. Cuenta también una cosa que esa persona hace y que muestre cómo es.</div><div class="desarrollo" style="height:209px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Describe en por lo menos seis renglones a una persona de tu comunidad que tú conozcas bien: cómo es por fuera y cómo es por dentro. Cuenta también una cosa que esa persona hace y que muestre cómo es.</div><div class="desarrollo" style="height:211px;"></div></div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades (sigue)</span><span>Página 26 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Español: actividades (sigue)</span><span>Página 23 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 27 ═══════════ -->
+<!-- ═══════════ PÁGINA 24 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1303,10 +1279,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro</span><span>Página 27 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro</span><span>Página 24 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 28 ═══════════ -->
+<!-- ═══════════ PÁGINA 25 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1367,10 +1343,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro (sigue)</span><span>Página 28 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro (sigue)</span><span>Página 25 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 29 ═══════════ -->
+<!-- ═══════════ PÁGINA 26 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1430,10 +1406,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro (sigue)</span><span>Página 29 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro (sigue)</span><span>Página 26 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 30 ═══════════ -->
+<!-- ═══════════ PÁGINA 27 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1479,10 +1455,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si escribes con faltas de ortografía.</p>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro y Cierre</span><span>Página 30 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Simulacro y Cierre</span><span>Página 27 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 31 ═══════════ -->
+<!-- ═══════════ PÁGINA 28 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -1514,10 +1490,10 @@ Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Hoja del Docente</span><span>Página 31 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Hoja del Docente</span><span>Página 28 de 29</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 32 ═══════════ -->
+<!-- ═══════════ PÁGINA 29 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -1540,13 +1516,13 @@ Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si
   de arriba: lo que se evalúa es que la idea se entienda, no que la letra sea bonita.
 </div>
 
-<div class="caja idea">🖨️ <b>Si no puede fotocopiar las 32 hojas para todo el grado:</b> imprima solo
-las de <b>actividades y simulacro (páginas 19 a 30)</b>, que son las que el alumno rellena, y
+<div class="caja idea">🖨️ <b>Si no puede fotocopiar las 29 hojas para todo el grado:</b> imprima solo
+las de <b>actividades y simulacro (páginas 16 a 27)</b>, que son las que el alumno rellena, y
 trabaje las hojas de estudio con una sola copia, proyectándolas o dictando lo esencial para que las copien
 en el cuaderno. La rúbrica ya cuenta ese trabajo de copia como una de las cuatro notas.</div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Hoja del Docente (sigue)</span><span>Página 32 de 32</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 4º · Hoja del Docente (sigue)</span><span>Página 29 de 29</span></div>
 </section>
 
 </div>

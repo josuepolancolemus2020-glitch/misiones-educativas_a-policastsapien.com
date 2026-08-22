@@ -319,8 +319,42 @@ Lo que la sostiene, y que no se puede improvisar:
 - **Un título nunca cierra una hoja**: baja con lo que encabeza.
 - **La hoja del docente no se toca**: se imprime suelta y no se
   fotocopia, así que ni recibe ni cede.
-- **La ficha que hoy cabe se deja en paz.** Rehacer un corte que funciona
-  mueve texto sin ganar nada.
+- **Manda el mínimo de hojas, no las que la ficha traía.** Si ahora caben
+  en menos, se imprimen en menos: cada hoja de más son 43 hojas de más en
+  el fotocopiado del grado.
+- **La ficha que hoy cabe y ya está en su mínimo se deja en paz.** Rehacer
+  un corte que funciona mueve texto sin ganar nada. Para volver a mirar
+  también esas —después de tocar el CSS, por ejemplo— está `--todas`.
+
+### El aire del CSS ya está apretado: no se aprieta más, y la letra no se toca
+
+En agosto de 2026, con las 19 fichas repartidas, ocho seguían gastando una
+hoja de más. La segunda pasada fue **quitarle aire al CSS común**: márgenes
+de los títulos, relleno de las cajas y de las celdas, hueco entre párrafos
+—**nunca el tamaño de letra del cuerpo**, que la ficha se lee en un pupitre
+y a veces con mala luz—. Con eso, siete de las ocho bajaron a siete hojas, y
+al volver a mirar las que ya cabían salieron siete más que también encogían.
+
+Los valores de esa pasada (`h2` 8px/6px, `p` 5px, `td` 2px, `.caja` 7px/6px,
+`.ilus` 8px/7px, `.pagina` 22px de pie…) son **los más apretados que siguen
+leyéndose bien, medidos**. No son un punto de partida para seguir
+recortando: si mañana hace falta sitio, se recorta contenido o se acepta la
+hoja, no se baja el cuerpo de la letra ni se aprieta más el renglón.
+
+La única que se quedó en ocho hojas es `ficha-programando-robot`, y no por
+el español —que cabe— sino porque **su inglés necesita tres milímetros
+más**. Los dos idiomas comparten los contenedores, así que van al mismo
+número de hojas y manda el que más pide. Antes que gastarle el colchón a las
+74 fichas por una, se queda en ocho.
+
+Al tocar el CSS hay que **rearmar las fichas de Fin de Grado**, que salen de
+`_dev/fin-de-grado/cabeza.html` y no se editan a mano:
+
+```
+node _dev/arma-ficha-fin-de-grado.js 4to   (y 5to, 6to, 7mo)
+```
+
+Ahí la dieta se nota de verdad: 4º pasó de 32 hojas a 29 y 7º de 34 a 32.
 
 ⚠️ **Si la ficha es bilingüe, las dos ediciones se reparten a la vez.**
 No tienen que cortar por el mismo sitio —cada contenedor recibe el HTML
@@ -333,9 +367,10 @@ rótulos `/* PÁGINA N */` **viajan con su contenido**, porque alguno lleva
 dentro una nota que hace falta («la Columna B conserva el orden del
 español: la pauta vale igual»).
 
-Y si la ficha gana o pierde una hoja, **la misión lo dice**: el «Guía de
-estudio de N páginas» de su sección Recursos se corrige solo, que si no el
-maestro manda a fotocopiar la cuenta vieja.
+Y si la ficha gana o pierde una hoja, **la misión y el índice lo dicen**: el
+«Guía de estudio de N páginas» de la sección Recursos y el «· N páginas» de
+la tarjeta en `fichas/index.html` se corrigen solos, que si no el maestro
+manda a fotocopiar la cuenta vieja.
 
 Y en la ficha manda la normativa del papel de más arriba: la selección
 múltiple lleva su círculo para **rellenar**, nunca la ✗.

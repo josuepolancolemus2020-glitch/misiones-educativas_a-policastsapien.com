@@ -58,10 +58,8 @@
         '<strong>controller</strong> understands. With no sensors, the robot would be «blind and deaf».</p>' +
 
         '<div class="caja truco">💡 <b>Handy trick:</b> the sensor is the robot’s <strong>reporter</strong>: it only reports. ' +
-        'It <strong>does not decide</strong> (that is the controller’s job) and it <strong>does not act</strong> (that is the actuator’s job).</div>',
+        'It <strong>does not decide</strong> (that is the controller’s job) and it <strong>does not act</strong> (that is the actuator’s job).</div>' +
 
-      /* ═══════════ PÁGINA 2 ═══════════ */
-      p2:
         '<h3>📡🧠💪 Mini-demo: the robot chain</h3>' +
 
         '<div class="ilus">' +
@@ -77,8 +75,10 @@
         '<h2 style="margin-top:0;">🫀 2. The body ↔ robot comparison</h2>' +
 
         '<p>When somebody talks to you, your <strong>ear</strong> picks up the sound (receptor), your <strong>brain</strong> decides ' +
-        'to answer and your <strong>muscles</strong> move your mouth (effector). The robot does exactly the same:</p>' +
+        'to answer and your <strong>muscles</strong> move your mouth (effector). The robot does exactly the same:</p>',
 
+      /* ═══════════ PÁGINA 2 ═══════════ */
+      p2:
         '<table>' +
         '<tr><th>In your body</th><th>In the robot</th><th>What does it do?</th></tr>' +
         '<tr><td class="k">👁️ The eye</td><td>Light sensor (photoresistor)</td><td>IT SENSES whether it is bright or dark</td></tr>' +
@@ -96,10 +96,8 @@
         '<h2>⚖️ 3. Sensor ≠ Actuator</h2>' +
 
         '<p>This is the most common mistake of all. The difference is simple: one <strong>brings information in</strong> and the other ' +
-        '<strong>sends action out</strong>.</p>',
+        '<strong>sends action out</strong>.</p>' +
 
-      /* ═══════════ PÁGINA 3 ═══════════ */
-      p3:
         '<table>' +
         '<tr><th style="width:50%;">📡 SENSOR (input)</th><th>💪 ACTUATOR (output)</th></tr>' +
         '<tr><td>IT SENSES and reports: «there is an obstacle 20 cm away»</td><td>IT ACTS and carries out: it turns, pushes, lights up, sounds</td></tr>' +
@@ -116,8 +114,10 @@
         '<div class="caja idea">📖 <b>Key fact:</b> a sensor <strong>can give a wrong reading</strong> if it is ' +
         '<strong>dirty, wet, blocked or badly placed</strong>, or if there is very little light. The controller believes that false ' +
         'information and <strong>decides wrong</strong>: that is why the line-following car drifts off the track when its sensor is ' +
-        'covered in mud. Before you blame the program, <strong>check the sensors</strong>.</div>' +
+        'covered in mud. Before you blame the program, <strong>check the sensors</strong>.</div>',
 
+      /* ═══════════ PÁGINA 3 ═══════════ */
+      p3:
         '<h2 style="margin-top:0;">🗺️ 5. The types of sensors</h2>' +
 
         '<table>' +
@@ -128,10 +128,8 @@
         '<tr><td class="k">🌡️ Temperature</td><td>How hot or cold it is</td><td>🖐️ The skin</td><td>Digital thermometer at the health center</td></tr>' +
         '<tr><td class="k">🔊 Sound</td><td>Noises, voices and claps</td><td>👂 Hearing</td><td>Cell phone microphone; robot that starts when you clap</td></tr>' +
         '<tr><td class="k">💧 Moisture</td><td>How much water there is in the soil or the air</td><td>🖐️ Touch (wet soil)</td><td>Watering the coffee field and the school garden</td></tr>' +
-        '</table>',
+        '</table>' +
 
-      /* ═══════════ PÁGINA 4 ═══════════ */
-      p4:
         '<div class="caja truco">🦇 <b>Fun fact:</b> the <strong>ultrasonic</strong> sensor works like a bat: ' +
         'it sends out a sound we cannot hear, waits for the <strong>echo</strong> and measures how long it takes to come back. The longer ' +
         'it takes, the farther away the obstacle is.</div>' +
@@ -161,15 +159,15 @@
         'That is a <strong>wrong reading</strong>: it reports badly and so you decide badly.</li>' +
         '<li><strong>🎨 The robot of my community:</strong> draw a robot that solves a problem in your village or neighborhood and use arrows ' +
         'to point out <strong>which sensors it carries</strong> and what each one senses.</li>' +
-        '</ul>' +
+        '</ul>',
 
+      /* ═══════════ PÁGINA 4 ═══════════ */
+      p4:
         '<div class="caja hn">🇭🇳 <b>Robotics belongs to you too:</b> you do not need to buy sensors in order to understand them: you already ' +
         'carry them in your own body. Anyone who learns to observe, measure and check what they sense is already thinking like an engineer. ' +
         'Sensors will look after the coffee, the water and the health of Honduras… and they will be run by the very students who are in this ' +
-        'classroom today! 💚</div>',
+        'classroom today! 💚</div>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h2>✍️ 8. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
@@ -213,8 +211,8 @@
         '<span class="op"><i>d</i> the list of instructions</span>' +
         '</div></div>',
 
-      /* ═══════════ PÁGINA 6 ═══════════ */
-      p6:
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>Which human sense is the light sensor like?</div>' +
         '<div class="preg-ops">' +
@@ -296,10 +294,10 @@
         '<span class="op"><i>d</i> gear</span>' +
         '</div></div>',
 
-      /* ═══════════ PÁGINA 7 ═══════════
+      /* ═══════════ PÁGINA 6 ═══════════
          La Columna B conserva el orden del español: la pauta
          1E · 2G · 3J · 4B · 5I · 6A · 7D · 8F · 9C · 10H vale igual. */
-      p7:
+      p6:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
@@ -337,8 +335,8 @@
         '<p style="font-size:9pt;color:var(--gris);">Remember that you have already learned how to work out an average: add up the total value obtained and divide it by four. ' +
         'The result is your final grade. You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
-      /* ═══════════ PÁGINA 8 · HOJA SUELTA DEL DOCENTE ═══════════ */
-      p8:
+      /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
+      p7:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +

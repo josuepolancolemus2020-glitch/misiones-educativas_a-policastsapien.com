@@ -71,14 +71,14 @@
 
         '<div class="caja truco">💡 <b>The water trick:</b> the <strong>battery</strong> is the pump that pushes, the <strong>wires</strong> ' +
         'are the channel, the <strong>switch</strong> is the floodgate and the <strong>LED</strong> is the mill that puts the water to work. ' +
-        'If the channel breaks, the mill stops.</div>',
+        'If the channel breaks, the mill stops.</div>' +
+
+        '<div class="caja idea">📖 <b>Key fact:</b> electricity is a <strong>form of energy</strong>, as you learned in ' +
+        'the mission <strong>Energy</strong>. In the LED it turns into <strong>light</strong>, in the motor into ' +
+        '<strong>movement</strong> and in the buzzer into <strong>sound</strong>.</div>',
 
       /* ═══════════ PÁGINA 2 ═══════════ */
       p2:
-        '<div class="caja idea">📖 <b>Key fact:</b> electricity is a <strong>form of energy</strong>, as you learned in ' +
-        'the mission <strong>Energy</strong>. In the LED it turns into <strong>light</strong>, in the motor into ' +
-        '<strong>movement</strong> and in the buzzer into <strong>sound</strong>.</div>' +
-
         '<h2 style="margin-top:0;">🟢🔴 2. Closed circuit and open circuit</h2>' +
 
         '<div class="tri">' +
@@ -121,10 +121,8 @@
         '</table>' +
 
         '<div class="caja regla">🎯 <b>Golden rule:</b> the <strong>lights in a house are wired in parallel</strong>. That is why, when the ' +
-        'living room bulb burns out, the kitchen one stays on.</div>',
+        'living room bulb burns out, the kitchen one stays on.</div>' +
 
-      /* ═══════════ PÁGINA 3 ═══════════ */
-      p3:
         '<h2>💪🌊🪨 4. Voltage, current and resistance</h2>' +
 
         '<table>' +
@@ -141,8 +139,10 @@
         '<h2 style="margin-top:0;">🟠🚫 5. Conductors and insulators</h2>' +
 
         '<p>A wire carries <strong>copper inside</strong> and <strong>plastic outside</strong>: one conducts the current and the ' +
-        'other one protects us. This is how materials are sorted:</p>' +
+        'other one protects us. This is how materials are sorted:</p>',
 
+      /* ═══════════ PÁGINA 3 ═══════════ */
+      p3:
         '<table>' +
         '<tr><th>Type</th><th>Does it let current through?</th><th>Examples</th><th>What is it used for?</th></tr>' +
         '<tr><td class="k">🟠 Conductor</td><td class="si">Yes</td><td>Copper, aluminum, iron, coins, water with salts</td><td>It forms the path of the circuit</td></tr>' +
@@ -162,10 +162,8 @@
         '<tr><td>Use wires whose <strong>plastic insulation</strong> is in good shape</td><td>Push wires or nails into the <strong>sockets</strong></td></tr>' +
         '<tr><td>Unplug the charger <strong>by pulling on the plug</strong></td><td>Join the two battery terminals: that is a <strong>short circuit</strong> and the battery heats up</td></tr>' +
         '<tr><td>Take <strong>used batteries</strong> to a collection point</td><td>Throw used batteries in the <strong>regular trash</strong></td></tr>' +
-        '</table>',
+        '</table>' +
 
-      /* ═══════════ PÁGINA 4 ═══════════ */
-      p4:
         '<h2>🎲 7. Unplugged activities (no computer)</h2>' +
 
         '<ul>' +
@@ -187,8 +185,10 @@
         '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
-        '</table>' +
+        '</table>',
 
+      /* ═══════════ PÁGINA 4 ═══════════ */
+      p4:
         '<ul>' +
         '<li><strong>🦺 Safety detective:</strong> walk around your home and write down <strong>3 safe practices</strong> and ' +
         '<strong>3 dangerous ones</strong> that you see with electricity. Next to each dangerous one, write how it should be fixed.</li>' +
@@ -197,10 +197,8 @@
         '<div class="caja hn">🇭🇳 <b>Electricity in your community:</b> during a <strong>power outage</strong>, the battery flashlight ' +
         'works because it carries its own closed circuit. In small villages with no power lines, the <strong>solar panel</strong> ' +
         'charges a battery during the day and at night it lights the LEDs. And the <strong>cell phone charger</strong> turns the 110 V from the ' +
-        'outlet into a small, safe voltage. Electricity, properly understood, changes the life of a community! 💚</div>',
+        'outlet into a small, safe voltage. Electricity, properly understood, changes the life of a community! 💚</div>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h2>✍️ 8. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
@@ -231,8 +229,10 @@
         '<li>____ Water with salts conducts electricity.</li>' +
         '<li>____ Used batteries go in the regular household trash.</li>' +
         '<li>____ A short circuit heats up the battery and can be dangerous.</li>' +
-        '</ol>' +
+        '</ol>',
 
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
@@ -242,10 +242,8 @@
         '<span class="op"><i>b</i> the closed path that current flows along</span>' +
         '<span class="op"><i>c</i> a dead battery</span>' +
         '<span class="op"><i>d</i> a painted bulb</span>' +
-        '</div></div>',
+        '</div></div>' +
 
-      /* ═══════════ PÁGINA 6 ═══════════ */
-      p6:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>What are the parts of a basic circuit?</div>' +
         '<div class="preg-ops">' +
@@ -327,10 +325,10 @@
         '<span class="op"><i>d</i> water</span>' +
         '</div></div>',
 
-      /* ═══════════ PÁGINA 7 ═══════════
+      /* ═══════════ PÁGINA 6 ═══════════
          La Columna B conserva el orden del español: la pauta
          1C · 2E · 3A · 4I · 5G · 6H · 7B · 8J · 9D · 10F vale igual. */
-      p7:
+      p6:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
@@ -368,8 +366,8 @@
         '<p style="font-size:9pt;color:var(--gris);">Remember that you have already learned how to work out an average: add up the total value obtained and divide it by four. ' +
         'The result is your final grade. You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
-      /* ═══════════ PÁGINA 8 · HOJA SUELTA DEL DOCENTE ═══════════ */
-      p8:
+      /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
+      p7:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +

@@ -52,12 +52,12 @@
   }
 
   /* Línea de identificación a TODO lo ancho */
-  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
   .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
   .idline .raya.corta { flex: 0 0 70px; }
 
   /* Encabezado con QR */
-  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ac); background: var(--ac-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
   .fh-txt { flex: 1; }
   .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ac-osc); }
   .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
@@ -70,17 +70,17 @@
   .materia-tag { display: inline-block; font-size: 8.5pt; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
                  color: #fff; background: var(--ac); border-radius: 999px; padding: 2px 11px; margin-bottom: 6px; }
 
-  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h2 { font-size: 12pt; color: #fff; background: var(--ac); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
   .contenido > h2:first-child, .materia-tag + h2 { margin-top: 4px; }
-  h3 { font-size: 11pt; color: var(--ac-osc); margin: 11px 0 6px; }
-  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
-  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
-  li { margin-bottom: 3px; }
+  h3 { font-size: 11pt; color: var(--ac-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
 
   ol.objetivos { list-style: decimal outside; margin-left: 26px; }
-  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
 
-  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
   .idea { background: #fff8e6; border: 1px solid #f0dca6; }
   .idea b { color: #b07d00; }
   .regla { background: var(--ac-claro); border: 1px solid var(--linea); }
@@ -90,9 +90,9 @@
   .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
   .truco b { color: #7c3aed; }
 
-  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
-  th { background: var(--ac); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
-  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ac); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
   tr:nth-child(even) td { background: #f7f7fb; }
   td.k { font-weight: 700; color: var(--ac-osc); white-space: nowrap; }
 
@@ -130,22 +130,22 @@
   .acts h3 { border-bottom: 2px solid var(--ac-claro); padding-bottom: 3px; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
-  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
   .acts ol li::marker { font-weight: 800; color: var(--ac); }
   .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
 
   /* Selección múltiple: letras SIN círculo impreso, para que el niño
      pueda encerrarlas y que su trazo se vea */
-  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
   .preg:last-child { border-bottom: none; }
-  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
   .preg-n { display: inline-block; flex: 0 0 22px; width: 22px; height: 22px; background: var(--ac); color: #fff;
             border-radius: 6px; text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900; }
   /* Cuando el ítem trae mini-texto, el texto va ARRIBA (con el número) y la
      pregunta debajo, como en el cuadernillo oficial: primero se lee, después
      se pregunta. */
   .preg-q2 { font-weight: 700; color: var(--tinta); margin: 4px 0 4px 30px; }
-  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
   .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
   .preg-ops .op i { font-style: normal; flex: 0 0 auto; font-size: 10.5pt; font-weight: 800; color: var(--ac-osc); }
   .preg-ops .op i::after { content: ')'; }
@@ -168,16 +168,16 @@
   .desarrollo { border: 1px dashed #b9c2cf; border-radius: 8px; height: 74px; margin: 4px 0 9px; background:
                 repeating-linear-gradient(180deg, transparent 0 24px, #e6ebf2 24px 25px); }
 
-  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic { background: linear-gradient(180deg, var(--rep-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
   .felic b { color: var(--rep-osc); }
 
-  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
   table.rubrica td.lg { white-space: nowrap; }
 
-  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta { background: #f5f4fb; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
   .pauta .pt { font-weight: 800; color: var(--rep-osc); }
   .pauta > div { margin-bottom: 4px; }
-  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
 
   .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--rep); box-shadow: 0 6px 16px rgba(124,58,237,.4); font-family: Arial, sans-serif; }
   .imprimir-btn:active { transform: scale(.97); }
@@ -186,7 +186,7 @@
   @media print {
     body { background: #fff; }
     .doc { max-width: none; }
-    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
     .pagina:last-child { page-break-after: auto; }
     .pagina .contenido { padding: 0 2px; }
     .pagina.p-mat .contenido, .pagina.p-esp .contenido { padding-left: 11px; }
@@ -249,7 +249,7 @@ opciones: ahí escribes tú.</p>
 <div class="caja truco">🗺️ <b>Cómo usar esta ficha:</b> primero estudia las hojas azules de Matemáticas y contesta sus actividades; después las doradas de Español con las suyas. Deja el <b>simulacro del final</b> para la víspera del examen y contéstalo de corrido, sin ver las hojas de estudio: así sabrás de verdad cómo llegas.</div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Presentación y objetivos</span><span>Página 1 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Presentación y objetivos</span><span>Página 1 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 2 ═══════════ -->
@@ -290,7 +290,7 @@ opciones: ahí escribes tú.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Fracciones</span><span>Página 2 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Fracciones</span><span>Página 2 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 3 ═══════════ -->
@@ -325,7 +325,7 @@ opciones: ahí escribes tú.</p>
 <div class="caja hn">🇭🇳 <b>En Honduras:</b> Si 2.5 libras de frijol cuestan L.42.50, corres el punto un lugar en los dos números y te queda 425 ÷ 25 = 17: cada libra sale a L.17.00. Eso es lo que haces cada vez que sacas el precio por libra en el mercado.</div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Fracciones y Multiplicar, dividir y el punto…</span><span>Página 3 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Fracciones y Multiplicar, dividir y el punto…</span><span>Página 3 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 4 ═══════════ -->
@@ -374,7 +374,7 @@ opciones: ahí escribes tú.</p>
 <p>Saber si un número se divide exacto entre otro te ahorra hacer la división completa. Los múltiplos y los divisores contestan dos preguntas distintas: el mínimo común múltiplo (m.c.m.) sirve cuando dos cosas se repiten cada cierto tiempo y quieres saber cuándo vuelven a coincidir; el máximo común divisor (M.C.D.) sirve cuando repartes en grupos iguales y no quieres que sobre nada. Y en los viajes todo sale de una sola idea: la distancia es la velocidad por el tiempo.</p>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Multiplicar, dividir y el punto decimal…</span><span>Página 4 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Multiplicar, dividir y el punto decimal…</span><span>Página 4 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 5 ═══════════ -->
@@ -425,7 +425,7 @@ opciones: ahí escribes tú.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Divisibilidad, m.c.m., M.C.D. y viajes</span><span>Página 5 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Divisibilidad, m.c.m., M.C.D. y viajes</span><span>Página 5 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 6 ═══════════ -->
@@ -473,7 +473,7 @@ opciones: ahí escribes tú.</p>
 </table>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Áreas, volúmenes, sólidos y promedio</span><span>Página 6 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Áreas, volúmenes, sólidos y promedio</span><span>Página 6 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 7 ═══════════ -->
@@ -507,7 +507,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Áreas, volúmenes, sólidos y promedio y errores…</span><span>Página 7 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: Áreas, volúmenes, sólidos y promedio y errores…</span><span>Página 7 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 8 ═══════════ -->
@@ -536,7 +536,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: errores comunes</span><span>Página 8 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: errores comunes</span><span>Página 8 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 9 ═══════════ -->
@@ -566,7 +566,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: La idea principal</span><span>Página 9 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: La idea principal</span><span>Página 9 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 10 ═══════════ -->
@@ -607,7 +607,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <div class="caja regla">⚡ <b>Regla:</b> Toda respuesta tiene que poder defenderse señalando el texto con el dedo. En la literal señalas la oración. En la inferencial señalas las pistas que te llevaron a deducirla.</div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: La idea principal y Literal e inferencial</span><span>Página 10 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: La idea principal y Literal e inferencial</span><span>Página 10 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 11 ═══════════ -->
@@ -650,7 +650,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </table>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Literal e inferencial</span><span>Página 11 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Literal e inferencial</span><span>Página 11 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 12 ═══════════ -->
@@ -686,7 +686,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Literal e inferencial y Vocabulario en contexto</span><span>Página 12 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Literal e inferencial y Vocabulario en contexto</span><span>Página 12 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 13 ═══════════ -->
@@ -724,7 +724,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 <p>No todos los textos se leen igual, y en la prueba te van a preguntar de qué tipo es el que acabas de leer. Cada tipo deja marcas visibles: la fábula termina en moraleja, la carta lleva saludo y despedida, la noticia contesta qué, quién, cuándo y dónde en las primeras líneas, el instructivo lleva pasos numerados y verbos que mandan. Reconocer la marca es cuestión de segundos si sabes cuál buscar. Y al final de la prueba tendrás que escribir tú: narrar unas imágenes y dar tu opinión con razones.</p>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Vocabulario en contexto y Tipos de texto y la parte…</span><span>Página 13 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Vocabulario en contexto y Tipos de texto y la parte…</span><span>Página 13 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 14 ═══════════ -->
@@ -762,7 +762,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Tipos de texto y la parte escrita</span><span>Página 14 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Tipos de texto y la parte escrita</span><span>Página 14 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 15 ═══════════ -->
@@ -797,7 +797,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Tipos de texto y la parte escrita y errores comunes…</span><span>Página 15 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: Tipos de texto y la parte escrita y errores comunes…</span><span>Página 15 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 16 ═══════════ -->
@@ -830,7 +830,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </ol>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: errores comunes y estrategia</span><span>Página 16 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: errores comunes y estrategia</span><span>Página 16 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 17 ═══════════ -->
@@ -867,6 +867,14 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <li>____ Si el promedio de dos notas es 70, entonces la suma de esas dos notas es 140.</li>
 </ol>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades</span><span>Página 17 de 30</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 18 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
 <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> · Encierra en un círculo la letra correcta.</h3>
 
 <div class="preg">
@@ -878,14 +886,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
     <span class="op"><i>d</i> L.61.25</span>
   </div>
 </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades</span><span>Página 17 de 31</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 18 ═══════════ -->
-<section class="pagina p-mat acts">
-  <div class="contenido">
 
 <div class="preg">
   <div class="preg-q"><span class="preg-n">2</span>¿Qué fracción multiplicada por <span class="fr"><b>3</b><b class="fd">4</b></span> da como resultado <span class="fr"><b>9</b><b class="fd">20</b></span>?</div>
@@ -948,6 +948,14 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 18 de 30</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 19 ═══════════ -->
+<section class="pagina p-mat acts">
+  <div class="contenido">
+
 <div class="preg">
   <div class="preg-q"><span class="preg-n">8</span>Marta caminó <span class="fr-mix">2</span><span class="fr"><b>1</b><b class="fd">3</b></span> km en la mañana y <span class="fr"><b>5</b><b class="fd">6</b></span> km en la tarde. ¿Cuánto caminó en todo el día?</div>
   <div class="preg-ops">
@@ -957,14 +965,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
     <span class="op"><i>d</i> <span class="fr-mix">3</span><span class="fr"><b>1</b><b class="fd">6</b></span> km</span>
   </div>
 </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 18 de 31</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 19 ═══════════ -->
-<section class="pagina p-mat acts">
-  <div class="contenido">
 
 <div class="preg">
   <div class="ejem-txt" style="margin-left:0;"><span class="preg-n" style="margin-right:6px;">9</span>De la terminal salen dos rutas de buses a las 6:00 de la mañana. Los buses de una ruta salen cada 15 minutos y los de la otra cada 20 minutos.</div>
@@ -1003,7 +1003,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </table>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 19 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 19 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 20 ═══════════ -->
@@ -1012,20 +1012,20 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 
 <h3>V. Resuelve con procedimiento <span class="val">(Valor: 20 puntos c/u)</span> · Escribe todos los pasos en el espacio.</h3>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve y deja el resultado como número mixto: <span class="fr-mix">3</span><span class="fr"><b>1</b><b class="fd">4</b></span> menos <span class="fr"><b>5</b><b class="fd">6</b></span>.</div><div class="desarrollo" style="height:87px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Resuelve y deja el resultado como número mixto: <span class="fr-mix">3</span><span class="fr"><b>1</b><b class="fd">4</b></span> menos <span class="fr"><b>5</b><b class="fd">6</b></span>.</div><div class="desarrollo" style="height:90px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Resuelve y simplifica: <span class="fr"><b>9</b><b class="fd">10</b></span> ÷ <span class="fr"><b>3</b><b class="fd">5</b></span>.</div><div class="desarrollo" style="height:87px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>Resuelve y simplifica: <span class="fr"><b>9</b><b class="fd">10</b></span> ÷ <span class="fr"><b>3</b><b class="fd">5</b></span>.</div><div class="desarrollo" style="height:90px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">3</span>En la pulpería el litro de aceite cuesta L.32.50. Doña Carmen compra 1.8 litros. ¿Cuánto tiene que pagar?</div><div class="desarrollo" style="height:87px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>En la pulpería el litro de aceite cuesta L.32.50. Doña Carmen compra 1.8 litros. ¿Cuánto tiene que pagar?</div><div class="desarrollo" style="height:90px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Un rollo de mecate de 9.6 metros se corta en pedazos de 0.8 metros cada uno. ¿Cuántos pedazos salen?</div><div class="desarrollo" style="height:87px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">4</span>Un rollo de mecate de 9.6 metros se corta en pedazos de 0.8 metros cada uno. ¿Cuántos pedazos salen?</div><div class="desarrollo" style="height:90px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">5</span>Halla el mínimo común múltiplo de 9 y 12 descomponiendo cada número en factores primos.</div><div class="desarrollo" style="height:87px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">5</span>Halla el mínimo común múltiplo de 9 y 12 descomponiendo cada número en factores primos.</div><div class="desarrollo" style="height:90px;"></div></div>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El patio de la escuela es un cuadrado de 12 m de lado. En el centro hay una fuente circular de 2 m de radio. ¿Cuántos metros cuadrados de patio quedan libres? (pi = 3.14)</div><div class="desarrollo" style="height:87px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">6</span>El patio de la escuela es un cuadrado de 12 m de lado. En el centro hay una fuente circular de 2 m de radio. ¿Cuántos metros cuadrados de patio quedan libres? (pi = 3.14)</div><div class="desarrollo" style="height:90px;"></div></div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 20 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Matemáticas: actividades (sigue)</span><span>Página 20 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 21 ═══════════ -->
@@ -1063,7 +1063,7 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </ol>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades</span><span>Página 21 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades</span><span>Página 21 de 30</span></div>
 </section>
 
 <!-- ═══════════ PÁGINA 22 ═══════════ -->
@@ -1106,14 +1106,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </div>
 </div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 22 de 31</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 23 ═══════════ -->
-<section class="pagina p-esp acts">
-  <div class="contenido">
-
 <div class="preg">
   <div class="preg-q"><span class="preg-n">4</span>Si en una comunidad desaparecieran los jicotes, ¿qué es más probable que ocurra?</div>
   <div class="preg-ops">
@@ -1144,6 +1136,14 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   </div>
 </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 22 de 30</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 23 ═══════════ -->
+<section class="pagina p-esp acts">
+  <div class="contenido">
+
 <h3>IV. ¿Qué tipo de texto es? <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea: carta, cuento, fábula, instructivo o noticia.</h3>
 <ol>
   <li>«Hace muchos años, en un caserío de La Esperanza, vivía una niña que juntaba luciérnagas en un frasco de vidrio.» <span class="linea-resp"></span></li>
@@ -1155,14 +1155,6 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <li>«Cuando el gallo cantó por tercera vez, Mario supo que el secreto del guacal enterrado ya no era solo suyo.» <span class="linea-resp"></span></li>
   <li>«Cansada de que la hormiga trabajara tanto, la chicharra le dijo que dejara la carga y se fuera a cantar con ella.» <span class="linea-resp"></span></li>
 </ol>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 23 de 31</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 24 ═══════════ -->
-<section class="pagina p-esp acts">
-  <div class="contenido">
 
 <h3>V. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B.</h3>
 <table>
@@ -1179,27 +1171,27 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
   <tr><td>10. ____ Vocabulario en contexto</td><td>J. Aquello de lo que trata el texto completo, dicho en una sola oración.</td></tr>
 </table>
 
-<h3>VI. Escritura <span class="val">(Valor: 30 puntos c/u)</span> · Escribe en el espacio, con buena letra y cuidando la ortografía.</h3>
-
-<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Escribe un cuento de por lo menos diez renglones con esta secuencia: 1) un perro flaco aparece en el portón de la escuela; 2) los alumnos le llevan tortillas y agua; 3) el perro se queda a dormir bajo el árbol del patio; 4) la maestra cuelga un letrero con su nombre nuevo: Canela. Ponle título.</div><div class="desarrollo" style="height:300px;"></div></div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 24 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 23 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 25 ═══════════ -->
+<!-- ═══════════ PÁGINA 24 ═══════════ -->
 <section class="pagina p-esp acts">
   <div class="contenido">
 
-<div class="preg"><div class="preg-q"><span class="preg-n">2</span>En tu comunidad proponen cambiar la cancha de tierra por un parque con árboles y bancas. ¿Estás de acuerdo o no? Escribe tu opinión y defiéndela con dos argumentos distintos. Cierra con una oración de conclusión.</div><div class="desarrollo" style="height:384px;"></div></div>
+<h3>VI. Escritura <span class="val">(Valor: 30 puntos c/u)</span> · Escribe en el espacio, con buena letra y cuidando la ortografía.</h3>
 
-<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Escribe una carta a la alcaldesa o al alcalde de tu municipio para pedirle que reparen el camino que lleva a tu escuela. Explícale por qué es urgente. La carta debe llevar todas sus partes.</div><div class="desarrollo" style="height:384px;"></div></div>
+<div class="preg"><div class="preg-q"><span class="preg-n">1</span>Escribe un cuento de por lo menos diez renglones con esta secuencia: 1) un perro flaco aparece en el portón de la escuela; 2) los alumnos le llevan tortillas y agua; 3) el perro se queda a dormir bajo el árbol del patio; 4) la maestra cuelga un letrero con su nombre nuevo: Canela. Ponle título.</div><div class="desarrollo" style="height:218px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">2</span>En tu comunidad proponen cambiar la cancha de tierra por un parque con árboles y bancas. ¿Estás de acuerdo o no? Escribe tu opinión y defiéndela con dos argumentos distintos. Cierra con una oración de conclusión.</div><div class="desarrollo" style="height:218px;"></div></div>
+
+<div class="preg"><div class="preg-q"><span class="preg-n">3</span>Escribe una carta a la alcaldesa o al alcalde de tu municipio para pedirle que reparen el camino que lleva a tu escuela. Explícale por qué es urgente. La carta debe llevar todas sus partes.</div><div class="desarrollo" style="height:218px;"></div></div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 25 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Español: actividades (sigue)</span><span>Página 24 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 26 ═══════════ -->
+<!-- ═══════════ PÁGINA 25 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1278,10 +1270,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro</span><span>Página 26 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro</span><span>Página 25 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 27 ═══════════ -->
+<!-- ═══════════ PÁGINA 26 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1352,10 +1344,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 27 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 26 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 28 ═══════════ -->
+<!-- ═══════════ PÁGINA 27 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1415,10 +1407,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 28 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro (sigue)</span><span>Página 27 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 29 ═══════════ -->
+<!-- ═══════════ PÁGINA 28 ═══════════ -->
 <section class="pagina sim">
   <div class="contenido">
 
@@ -1464,10 +1456,10 @@ de verdad. Si reconoces el error, reconoces la trampa.</p>
 Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si escribes con faltas de ortografía.</p>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro y Cierre</span><span>Página 29 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Simulacro y Cierre</span><span>Página 28 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 30 ═══════════ -->
+<!-- ═══════════ PÁGINA 29 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -1499,10 +1491,10 @@ Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si
 </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Hoja del Docente</span><span>Página 30 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Hoja del Docente</span><span>Página 29 de 30</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 31 ═══════════ -->
+<!-- ═══════════ PÁGINA 30 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -1525,13 +1517,13 @@ Perderás puntos si dejas trabajo sin completar, si tu letra no se entiende o si
   de arriba: lo que se evalúa es que la idea se entienda, no que la letra sea bonita.
 </div>
 
-<div class="caja idea">🖨️ <b>Si no puede fotocopiar las 31 hojas para todo el grado:</b> imprima solo
-las de <b>actividades y simulacro (páginas 17 a 29)</b>, que son las que el alumno rellena, y
+<div class="caja idea">🖨️ <b>Si no puede fotocopiar las 30 hojas para todo el grado:</b> imprima solo
+las de <b>actividades y simulacro (páginas 17 a 28)</b>, que son las que el alumno rellena, y
 trabaje las hojas de estudio con una sola copia, proyectándolas o dictando lo esencial para que las copien
 en el cuaderno. La rúbrica ya cuenta ese trabajo de copia como una de las cuatro notas.</div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Hoja del Docente (sigue)</span><span>Página 31 de 31</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Fin de Grado 6º · Hoja del Docente (sigue)</span><span>Página 30 de 30</span></div>
 </section>
 
 </div>

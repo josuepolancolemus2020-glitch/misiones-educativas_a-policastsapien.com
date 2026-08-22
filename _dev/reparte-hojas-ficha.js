@@ -319,6 +319,18 @@ function reescribeEn(rutaEn, grupos, blancos) {
    es donde se sabe el número nuevo.
    ─────────────────────────────────────────────────────────────── */
 
+// El índice de fichas también anuncia el largo de algunas: mismo problema.
+function sincronizaIndice(archivo, total, escribe) {
+  const ruta = path.join(DIR, 'index.html');
+  if (!fs.existsSync(ruta)) return false;
+  const html = fs.readFileSync(ruta, 'utf8');
+  const re = new RegExp('(href="' + archivo + '"[\\s\\S]{0,400}?· )\\d+( páginas)');
+  const nuevo = html.replace(re, (m, a, b) => a + total + b);
+  if (nuevo === html) return false;
+  if (escribe) fs.writeFileSync(ruta, nuevo);
+  return true;
+}
+
 function sincronizaMision(archivo, total, escribe) {
   const slug = archivo.replace(/^ficha-|\.html$/g, '');
   const dirMis = path.join(RAIZ, 'misiones');
@@ -407,7 +419,11 @@ const REPARTIR = ({ trozos, K, TOPE, mm, clasesFijas }) => {
   // 2. Después el reparto: con las hojas ya fijas, el corte que deja la hoja
   //    más cargada lo más liviana posible, para que el aire sobrante se
   //    reparta en vez de amontonarse en la última.
-  const meta = Math.max(minimo, K);
+  //    Manda el MÍNIMO, no las hojas que la ficha traía: si ahora caben en
+  //    menos, se imprimen en menos. Cada hoja de más son 43 hojas de más en
+  //    el fotocopiado del grado. K solo sube el número cuando el otro idioma
+  //    necesita más, porque los dos comparten los contenedores.
+  const meta = Math.max(minimo, K || 0);
   let lo = 60, hi = TOPE, mejor = empaquetar(TOPE);
   while (lo <= hi) {
     const med = Math.floor((lo + hi) / 2);
@@ -501,7 +517,7 @@ const REPARTIR = ({ trozos, K, TOPE, mm, clasesFijas }) => {
     }
 
     const K = libres.length;
-    let es = await page.evaluate(REPARTIR, { trozos: bloques, K, TOPE, mm: MM, clasesFijas: null });
+    let es = await page.evaluate(REPARTIR, { trozos: bloques, K: 0, TOPE, mm: MM, clasesFijas: null });
 
     /* ── La edición en inglés, si la hay ── */
     let nuevoEn = null, en = null, blancos = null;
@@ -582,10 +598,12 @@ const REPARTIR = ({ trozos, K, TOPE, mm, clasesFijas }) => {
       if (cambiaEn) fs.writeFileSync(rutaEn, nuevoEn);
     }
     const mision = sincronizaMision(archivo, total, !soloRevisa);
+    const indice = sincronizaIndice(archivo, total, !soloRevisa);
     tocadas++;
     console.log(`  ${soloRevisa ? '·' : '✎'} ${archivo}: ${total} hojas · ${es.altos.join(' · ')} mm`
       + (cambiaEn ? `\n      · y su inglés: ${en.altos.join(' · ')} mm` : '')
-      + (mision ? `\n      · y su misión ya anuncia ${total} páginas (${mision})` : ''));
+      + (mision ? `\n      · y su misión ya anuncia ${total} páginas (${mision})` : '')
+      + (indice ? `\n      · y el índice de fichas también` : ''));
   }
 
   await browser.close();
