@@ -82,8 +82,8 @@
 <header class="hero">
   <div class="mascot">📚</div>
   <h1>Índice de Fichas Didácticas</h1>
-  <p>Proyecto Educativo M.E.T.A.S · Guías de estudio imprimibles de 7 páginas (teoría, actividades y evaluación) para repasar antes del examen. La de Repaso General es más larga: abarca el año entero.</p>
-  <span class="count">60 fichas · 8 materias</span>
+  <p>Proyecto Educativo M.E.T.A.S · Guías de estudio imprimibles (teoría, actividades y evaluación) para repasar antes del examen. La de Repaso General es más larga: abarca el año entero.</p>
+  <span class="count" id="cuenta">fichas didácticas</span>
 </header>
 
 <div class="wrap">
@@ -109,7 +109,7 @@
 
   <!-- MATEMÁTICAS -->
   <section class="materia m-mat">
-    <h2>🔵 Matemáticas <span class="n">15 fichas</span></h2>
+    <h2>🔵 Matemáticas <span class="n">20 fichas</span></h2>
     <div class="grid">
       <a class="card" href="ficha-numeros-grandes.html"><span class="ico">🔢</span><span class="txt"><span class="t">Números Grandes: del Cien al Millón</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-valor-posicional.html"><span class="ico">🔢</span><span class="txt"><span class="t">Valor Posicional hasta el Millón</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
@@ -118,14 +118,19 @@
       <a class="card" href="ficha-multiplos-divisores.html"><span class="ico">🧮</span><span class="txt"><span class="t">Múltiplos, Divisores y Primos</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-teoria-numeros.html"><span class="ico">🕵️</span><span class="txt"><span class="t">Teoría de Números: m.c.m. y M.C.D.</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-fracciones.html"><span class="ico">🍕</span><span class="txt"><span class="t">Las Fracciones</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-fracciones-multiplicar-dividir.html"><span class="ico">🍕</span><span class="txt"><span class="t">Multiplicación y División de Fracciones</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-numeros-decimales.html"><span class="ico">🔢</span><span class="txt"><span class="t">Números Decimales</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-multiplicacion-decimales.html"><span class="ico">🧾</span><span class="txt"><span class="t">Multiplicación de Decimales</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-division-decimales.html"><span class="ico">➗</span><span class="txt"><span class="t">División de Decimales</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-potencias-raices.html"><span class="ico">🔲</span><span class="txt"><span class="t">Potencias y Raíces Cuadradas</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-numeracion-maya.html"><span class="ico">🏛️</span><span class="txt"><span class="t">Numeración y Calendario Mayas</span><span class="sub">Ruta del Número</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-angulos-basicos.html"><span class="ico">📐</span><span class="txt"><span class="t">Ángulos: Tipos y Transportador</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-angulos-bisectriz.html"><span class="ico">📐</span><span class="txt"><span class="t">Ángulos y Bisectriz</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-perimetro-cuadrilateros.html"><span class="ico">🔲</span><span class="txt"><span class="t">Perímetro y Área de Cuadriláteros</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-area-poligonos.html"><span class="ico">🔷</span><span class="txt"><span class="t">Área de Polígonos Regulares</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
       <a class="card" href="ficha-circulos-poligonos.html"><span class="ico">⭕</span><span class="txt"><span class="t">Área de Círculos y Polígonos</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-solidos-geometricos.html"><span class="ico">📦</span><span class="txt"><span class="t">Sólidos Geométricos</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
+      <a class="card" href="ficha-volumen-cuerpos.html"><span class="ico">🧊</span><span class="txt"><span class="t">Volumen de Cuerpos</span><span class="sub">Ruta de la Forma</span></span><span class="go">→</span></a>
     </div>
   </section>
 
@@ -226,5 +231,22 @@
   </footer>
 
 </div>
+
+<script>
+// El conteo se cuenta al pintar, no se escribe a mano: el índice creció de
+// 60 a 61 fichas y el encabezado siguió diciendo 60 durante meses. Cada
+// tarjeta es una ficha y cada <section class="materia"> es un apartado.
+(function () {
+  var f = document.querySelectorAll('.materia a.card').length;
+  var m = document.querySelectorAll('section.materia').length;
+  document.getElementById('cuenta').textContent =
+    f + ' fichas · ' + m + ' apartados';
+  // Y el número de cada apartado, por lo mismo.
+  document.querySelectorAll('section.materia').forEach(function (s) {
+    var n = s.querySelectorAll('a.card').length, e = s.querySelector('h2 .n');
+    if (e) e.textContent = n + (n === 1 ? ' ficha' : ' fichas');
+  });
+})();
+</script>
 </body>
 </html>

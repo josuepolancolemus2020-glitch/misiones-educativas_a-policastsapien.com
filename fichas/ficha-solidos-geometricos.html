@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Sólidos Geométricos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Selección múltiple: se RELLENA el círculo, nunca se marca con ✗.
+       La ✗ en el aula significa MALO, y pedirla para señalar lo correcto
+       enseña dos cosas contrarias con el mismo signo. Por eso cada opción
+       lleva su círculo impreso al lado, como en una hoja de respuestas. */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .demo { display: inline-flex; align-items: center; gap: 12px; font-family: 'Cambria Math', Georgia, serif; font-size: 13pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .demo .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 5px 11px; }
+  .demo .flecha { color: var(--mat); font-weight: 800; font-size: 9pt; }
+  .demo .res { color: #15803d; }
+
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  /* Errores comunes: lo que está MAL va con ✗, que es su significado real */
+  .err { border: 1px solid #f0c9c9; background: #fdf3f3; border-radius: 9px; padding: 9px 12px; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  .err b.t { color: #a02020; display: block; margin-bottom: 3px; font-size: 10.5pt; }
+  .err .mal { color: #a02020; } .err .bien { color: #15803d; font-weight: 700; }
+
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; color: var(--tinta); display: flex; align-items: baseline; gap: 6px; }
+  /* El círculo se imprime vacío y el alumno lo RELLENA */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.4px solid var(--mat-osc); border-radius: 50%;
+    align-self: center;
+  }
+  .preg-ops .op u { text-decoration: none; font-weight: 800; color: var(--mat-osc); }
+  .preg-ops .op u::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .err, .preg-n
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Sólidos Geométricos</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, 6º grado</div>
+        <div class="f-meta"><b>Tema:</b> Prismas, pirámides, conos, cilindros y esferas: caras, aristas y vértices, patrones para armar y cuerpos de revolución</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-solidos-geometricos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Distinguir una figura plana de un <strong>sólido geométrico</strong>, que ocupa lugar en el espacio.</li>
+      <li>Identificar y contar las <strong>caras</strong>, las <strong>aristas</strong> y los <strong>vértices</strong> de un poliedro.</li>
+      <li>Separar los <strong>poliedros</strong> (todas las caras planas) de los <strong>cuerpos redondos</strong> (con superficie curva).</li>
+      <li>Explicar la diferencia entre un prisma (dos bases) y una pirámide (una base y una cúspide).</li>
+      <li>Reconocer el cilindro, el cono y la esfera en objetos de la casa y de la escuela.</li>
+      <li>Leer el <strong>patrón</strong> o desarrollo de un sólido y decir qué cuerpo se arma con él.</li>
+      <li>Obtener conos, cilindros y esferas haciendo <strong>girar</strong> una figura plana sobre su eje.</li>
+      <li>Comprobar un conteo con la cuenta de Euler: caras + vértices = aristas + 2.</li>
+    </ol>
+
+    <h2>📖 1. Del papel al espacio</h2>
+    <p>Hasta ahora trabajaste con figuras <strong>planas</strong>: cuadrados, círculos, triángulos. Un
+    <strong>sólido geométrico</strong> tiene además <strong>alto</strong>: ocupa lugar, se puede llenar y se puede
+    agarrar. Un cuadrado se dibuja; un cubo se agarra.</p>
+    <div class="caja regla">📦 <b>Las tres partes que se cuentan:</b> las <b>caras</b> (las superficies), las
+    <b>aristas</b> (los filos donde se juntan dos caras) y los <b>vértices</b> (las esquinas donde se juntan las
+    aristas).</div>
+    <div class="caja regla">🧊 <b>La primera división:</b> si TODAS las caras son planas es un <b>poliedro</b>
+    (cubo, prismas, pirámides). Si alguna superficie es curva es un <b>cuerpo redondo</b> (cilindro, cono, esfera),
+    y por eso rueda.</div>
+    <div class="ilus">
+      <div class="ilus-t">Mini-demostración: el cubo, parte por parte</div>
+      <div class="demo">
+        <span class="paso">6 caras</span>
+        <span class="flecha">+</span>
+        <span class="paso">8 vértices</span>
+        <span class="flecha">= 12 aristas + 2 →</span>
+        <span class="paso"><span class="res">14 = 14 ✔</span></span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Una caja de zapatos tiene exactamente lo mismo que un dado: las dos son prismas rectangulares.</p>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>📦 2. Prismas: los de dos bases</h2>
+    <p>Un <strong>prisma</strong> tiene <strong>dos bases iguales y paralelas</strong>, unidas por caras laterales
+    rectangulares. Y toma el apellido de su base: si la base es un triángulo, es prisma triangular; si es un
+    hexágono, hexagonal.</p>
+    <div class="ilus">
+      <div class="demo">
+        <span class="paso">base de 5 lados</span>
+        <span class="flecha">5 CARAS LATERALES + 2 BASES →</span>
+        <span class="paso">prisma pentagonal: <span class="res">7 caras</span></span>
+      </div>
+    </div>
+    <div class="caja hn">🏠 <b>En la casa:</b> la caja de zapatos, la de fósforos y el ladrillo son prismas
+    rectangulares; el lápiz de seis lados es un prisma hexagonal; la tienda de campaña con dos lados triangulares
+    es un prisma triangular.</div>
+    <h2>🔺 3. Pirámides y cuerpos redondos</h2>
+    <p>La <strong>pirámide</strong> tiene <strong>una sola base</strong> y todas sus caras laterales son
+    <strong>triángulos</strong> que suben y se juntan arriba, en un vértice llamado <strong>cúspide</strong>.</p>
+    <table>
+      <tr><th>Cuerpo</th><th>Cómo se reconoce</th><th>Ejemplo real</th></tr>
+      <tr><td class="k">Prisma</td><td>dos bases iguales y paralelas</td><td>caja de zapatos</td></tr>
+      <tr><td class="k">Pirámide</td><td>una base y una cúspide</td><td>techo de cuatro aguas</td></tr>
+      <tr><td class="k">Cilindro</td><td>dos bases circulares y superficie curva</td><td>lata de leche</td></tr>
+      <tr><td class="k">Cono</td><td>una base circular y una punta</td><td>barquillo de helado</td></tr>
+      <tr><td class="k">Esfera</td><td>ni caras planas, ni aristas, ni vértices</td><td>pelota</td></tr>
+    </table>
+    <div class="caja idea">🔄 <b>De dónde salen los cuerpos redondos:</b> si haces girar un <b>rectángulo</b> sobre
+    su eje sale un cilindro; con un <b>triángulo</b> sale un cono; con un <b>semicírculo</b>, una esfera. Por eso
+    se llaman cuerpos de revolución.</div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>✂️ 4. El patrón: el sólido desdoblado</h2>
+    <p>Si abres una caja de cartón y la aplanas, tienes su <strong>patrón</strong> (o desarrollo). Se recorta, se
+    dobla por las líneas y se arma. Es la forma de construir sólidos sin comprar nada: con una hoja y unas tijeras.</p>
+    <table>
+      <tr><th>Sólido</th><th>Con qué piezas se arma su patrón</th></tr>
+      <tr><td class="k">Cubo</td><td>seis cuadrados iguales, bien colocados</td></tr>
+      <tr><td class="k">Prisma triangular</td><td>dos triángulos y tres rectángulos</td></tr>
+      <tr><td class="k">Pirámide cuadrangular</td><td>un cuadrado y cuatro triángulos</td></tr>
+      <tr><td class="k">Cilindro</td><td>dos círculos y un rectángulo que se enrolla</td></tr>
+      <tr><td class="k">Cono</td><td>un círculo y un sector que se cierra en punta</td></tr>
+    </table>
+    <div class="caja idea">⚠️ <b>Cuidado:</b> no basta con tener seis cuadrados para armar un cubo: hay que
+    colocarlos bien. De todas las formas posibles, solo <b>11 patrones</b> se doblan y cierran. En fila no cierra
+    ninguno.</div>
+    <h2>🧮 5. La cuenta de Euler y la tabla del grado</h2>
+    <p>En todo poliedro se cumple siempre que <strong>caras + vértices = aristas + 2</strong>. Sirve para comprobar
+    si contaste bien sin preguntarle a nadie.</p>
+    <table>
+      <tr><th>Sólido</th><th>Caras</th><th>Aristas</th><th>Vértices</th><th>Euler</th></tr>
+      <tr><td class="k">Cubo</td><td>6</td><td>12</td><td>8</td><td>6 + 8 = 12 + 2 ✔</td></tr>
+      <tr><td class="k">Prisma triangular</td><td>5</td><td>9</td><td>6</td><td>5 + 6 = 9 + 2 ✔</td></tr>
+      <tr><td class="k">Pirámide cuadrangular</td><td>5</td><td>8</td><td>5</td><td>5 + 5 = 8 + 2 ✔</td></tr>
+      <tr><td class="k">Pirámide triangular</td><td>4</td><td>6</td><td>4</td><td>4 + 4 = 6 + 2 ✔</td></tr>
+      <tr><td class="k">Prisma pentagonal</td><td>7</td><td>15</td><td>10</td><td>7 + 10 = 15 + 2 ✔</td></tr>
+      <tr><td class="k">Prisma hexagonal</td><td>8</td><td>18</td><td>12</td><td>8 + 12 = 18 + 2 ✔</td></tr>
+    </table>
+    <div class="caja regla">⚠️ <b>Solo para poliedros:</b> en el cilindro, el cono y la esfera esta cuenta no se
+    aplica, porque sus superficies curvas no son caras planas.</div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <p style="font-size:10pt;color:var(--gris);">Estos son los tropiezos que más se repiten. Léelos antes de resolver las actividades.</p>
+    <div class="err">
+      <b class="t">✗ Error 1: Confundir la figura plana con el sólido</b>
+      <div><span class="mal"><b>Mal:</b> «Un dado es un cuadrado» o «una pelota es un círculo».</span></div>
+      <div><b>¿Por qué?</b> El cuadrado y el círculo son planos: se dibujan en una hoja. El dado y la pelota ocupan espacio.</div>
+      <div><span class="bien">✔ Correcto: El dado es un <b>cubo</b> y la pelota una <b>esfera</b>.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 2: Llamar poliedro al cilindro</b>
+      <div><span class="mal"><b>Mal:</b> «El cilindro es poliedro porque tiene dos caras planas».</span></div>
+      <div><b>¿Por qué?</b> Sus bases sí son planas, pero la superficie de alrededor es curva. El poliedro necesita que TODAS lo sean.</div>
+      <div><span class="bien">✔ Correcto: El cilindro es un <b>cuerpo redondo</b>, igual que el cono y la esfera.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 3: Olvidar la base al contar las caras</b>
+      <div><span class="mal"><b>Mal:</b> «La pirámide cuadrangular tiene 4 caras».</span></div>
+      <div><b>¿Por qué?</b> Se contaron los cuatro triángulos y se olvidó la base, que también es una cara.</div>
+      <div><span class="bien">✔ Correcto: <b>5 caras</b>. Comprueba con Euler: 5 + 5 = 8 + 2.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 4: Confundir prisma con pirámide</b>
+      <div><span class="mal"><b>Mal:</b> Llamar pirámide a la tienda de campaña con dos lados triangulares.</span></div>
+      <div><b>¿Por qué?</b> Tiene DOS triángulos iguales enfrentados, no uno con punta. Cuenta las bases: esa es la pregunta que lo decide.</div>
+      <div><span class="bien">✔ Correcto: Es un <b>prisma triangular</b>: dos bases iguales.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 5: Creer que cualquier patrón de 6 cuadrados arma un cubo</b>
+      <div><span class="mal"><b>Mal:</b> Recortar seis cuadrados en fila y esperar que cierren.</span></div>
+      <div><b>¿Por qué?</b> Al doblar, unos se montan encima de otros y arriba y abajo quedan huecos sin tapa.</div>
+      <div><span class="bien">✔ Correcto: Hay <b>11 patrones</b> del cubo que sí cierran, como la cruz o la T.</span></div>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>La línea donde se juntan dos caras se llama <span class="linea-resp"></span>.</li>
+      <li>El punto donde se juntan varias aristas se llama <span class="linea-resp"></span>.</li>
+      <li>Un sólido con todas las caras planas se llama <span class="linea-resp"></span>.</li>
+      <li>El cubo tiene <span class="linea-resp"></span> caras.</li>
+      <li>El cubo tiene <span class="linea-resp"></span> aristas.</li>
+      <li>El cubo tiene <span class="linea-resp"></span> vértices.</li>
+      <li>El sólido que tiene dos bases iguales y paralelas es el <span class="linea-resp"></span>.</li>
+      <li>El sólido que tiene una sola base y una punta es la <span class="linea-resp"></span>.</li>
+      <li>Al girar un triángulo sobre su eje se forma un <span class="linea-resp"></span>.</li>
+      <li>Al girar un rectángulo sobre su eje se forma un <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ El cubo tiene 6 caras, 12 aristas y 8 vértices.</li>
+      <li>____ El cilindro es un poliedro.</li>
+      <li>____ La arista es la línea donde se juntan dos caras.</li>
+      <li>____ La pirámide tiene dos bases iguales y paralelas.</li>
+      <li>____ La esfera no tiene caras planas, ni aristas, ni vértices.</li>
+      <li>____ Un prisma toma el nombre de la figura de su base.</li>
+      <li>____ El cono tiene una base circular y una punta.</li>
+      <li>____ Todos los cuerpos redondos pueden rodar.</li>
+      <li>____ Cualquier grupo de seis cuadrados, doblado, forma un cubo.</li>
+      <li>____ Al girar un rectángulo sobre su eje se obtiene un cilindro.</li>
+    </ol>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Rellena el círculo de la letra de la respuesta correcta.</h3>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuántas aristas tiene un cubo?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 12</span><span class="op"><i></i><u>b</u> 8</span><span class="op"><i></i><u>c</u> 6</span><span class="op"><i></i><u>d</u> 4</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuál de estos es un cuerpo redondo?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> El prisma hexagonal</span><span class="op"><i></i><u>b</u> La esfera</span><span class="op"><i></i><u>c</u> La pirámide</span><span class="op"><i></i><u>d</u> El cubo</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>La pirámide cuadrangular tiene…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 4 caras y 4 vértices</span><span class="op"><i></i><u>b</u> 6 caras y 8 vértices</span><span class="op"><i></i><u>c</u> 5 caras y 5 vértices</span><span class="op"><i></i><u>d</u> 8 caras y 12 vértices</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué figura plana girando forma una esfera?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> Un rectángulo</span><span class="op"><i></i><u>b</u> Un triángulo</span><span class="op"><i></i><u>c</u> Un cuadrado</span><span class="op"><i></i><u>d</u> Un semicírculo</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>Un lápiz común, sin punta, tiene forma de…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> prisma hexagonal</span><span class="op"><i></i><u>b</u> cilindro</span><span class="op"><i></i><u>c</u> cono</span><span class="op"><i></i><u>d</u> pirámide</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuántas caras tiene el prisma pentagonal?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 5</span><span class="op"><i></i><u>b</u> 7</span><span class="op"><i></i><u>c</u> 10</span><span class="op"><i></i><u>d</u> 15</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>La diferencia principal entre prisma y pirámide es…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> el color</span><span class="op"><i></i><u>b</u> el material</span><span class="op"><i></i><u>c</u> el número de bases</span><span class="op"><i></i><u>d</u> el tamaño</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>Un poliedro tiene 6 caras y 12 aristas. Según la cuenta de Euler, ¿cuántos vértices tiene?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 6</span><span class="op"><i></i><u>b</u> 12</span><span class="op"><i></i><u>c</u> 4</span><span class="op"><i></i><u>d</u> 8</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>El barquillo del helado tiene forma de…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> cono</span><span class="op"><i></i><u>b</u> cilindro</span><span class="op"><i></i><u>c</u> pirámide</span><span class="op"><i></i><u>d</u> esfera</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuántos vértices tiene el cilindro?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> Dos</span><span class="op"><i></i><u>b</u> Ninguno</span><span class="op"><i></i><u>c</u> Cuatro</span><span class="op"><i></i><u>d</u> Uno</span></div>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe la letra que corresponde.</h3>
+    <table>
+      <tr><th>Concepto</th><th>Definición</th></tr>
+      <tr><td>1. ____ Cara</td><td>A. Sólido con alguna superficie curva</td></tr>
+      <tr><td>2. ____ Arista</td><td>B. Todos sus puntos a la misma distancia del centro</td></tr>
+      <tr><td>3. ____ Vértice</td><td>C. La línea donde se juntan dos caras</td></tr>
+      <tr><td>4. ____ Poliedro</td><td>D. Dos bases circulares y una superficie curva</td></tr>
+      <tr><td>5. ____ Cuerpo redondo</td><td>E. Cada superficie plana que cierra el sólido</td></tr>
+      <tr><td>6. ____ Prisma</td><td>F. Tiene una sola base y una cúspide</td></tr>
+      <tr><td>7. ____ Pirámide</td><td>G. Sólido con todas las caras planas</td></tr>
+      <tr><td>8. ____ Cilindro</td><td>H. Una base circular y una punta</td></tr>
+      <tr><td>9. ____ Cono</td><td>I. El punto donde se juntan varias aristas</td></tr>
+      <tr><td>10. ____ Esfera</td><td>J. Tiene dos bases iguales y paralelas</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Sólidos Geométricos.</b> Ahora reconoces prismas, pirámides, conos, cilindros y esferas; cuentas sus caras, aristas y vértices y compruebas el conteo con la cuenta de Euler; sabes qué sólido se arma con cada patrón y cuál sale al girar una figura plana. ¡Con eso miras una caja, una lata o un lápiz y ya sabes cómo se llama su forma! 📦✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Recortó y armó al menos dos sólidos con sus patrones en cartulina, y contó sus partes.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. arista &nbsp; 2. vértice &nbsp; 3. poliedro &nbsp; 4. 6 &nbsp; 5. 12 &nbsp; 6. 8 &nbsp; 7. prisma &nbsp; 8. pirámide &nbsp; 9. cono &nbsp; 10. cilindro</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1a, 2b, 3c, 4d, 5a, 6b, 7c, 8d, 9a, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2C, 3I, 4G, 5A, 6J, 7F, 8D, 9H, 10B</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha sale del contenido interactivo de la plataforma M.E.T.A.S,
+      «Misión Sólidos Geométricos», y sus cuatro actividades usan <strong>los mismos bancos de preguntas</strong> que la
+      evaluación de la misión: lo que el alumno practica en la pantalla es lo que resuelve en el papel.
+      Se aprovecha mucho más si se acompaña de cartulina y tijeras: que cada alumno arme un cubo y una pirámide con su patrón y después cuente las partes sobre el cuerpo armado.
+      La misión interactiva (código QR de la portada) le permite practicar con corrección inmediata antes de
+      resolver esta ficha, y en el aula sin teléfonos la ficha funciona sola.
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Sólidos Geométricos · Hoja del Docente</span><span>Página 8</span></div>
+</section>
+
+</div>
+</body>
+</html>

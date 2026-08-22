@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Multiplicación de Decimales</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: MATEMÁTICAS = AZUL
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Selección múltiple: se RELLENA el círculo, nunca se marca con ✗.
+       La ✗ en el aula significa MALO, y pedirla para señalar lo correcto
+       enseña dos cosas contrarias con el mismo signo. Por eso cada opción
+       lleva su círculo impreso al lado, como en una hoja de respuestas. */
+  :root {
+    --mat: #1565c0; --mat-osc: #0d3b7a; --mat-claro: #e8f1fb;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #cfdcec;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #eef2f7; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--mat-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 12px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--mat); background: var(--mat-claro); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--mat-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--mat-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--mat); padding: 6px 12px; border-radius: 7px; margin: 14px 0 9px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 11pt; color: var(--mat-osc); margin: 11px 0 6px; }
+  p { font-size: 11pt; margin-bottom: 7px; text-align: justify; }
+  ul, ol { margin: 5px 0 7px 26px; font-size: 11pt; }
+  li { margin-bottom: 3px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 4px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 9px 13px; margin: 8px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--mat-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--mat-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #f3e8ff; border: 1px solid #ddc9f5; }
+  .truco b { color: #7c3aed; }
+
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--mat); color: #fff; text-align: left; padding: 5px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fd; }
+  td.k { font-weight: 700; color: var(--mat-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 11px; margin: 9px 0; text-align: center; background: #fbfdff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--mat-osc); margin-bottom: 8px; }
+  .demo { display: inline-flex; align-items: center; gap: 12px; font-family: 'Cambria Math', Georgia, serif; font-size: 13pt; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .demo .paso { background: #fff; border: 1.5px solid var(--linea); border-radius: 8px; padding: 5px 11px; }
+  .demo .flecha { color: var(--mat); font-weight: 800; font-size: 9pt; }
+  .demo .res { color: #15803d; }
+
+  .pasos { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; }
+  .pasos > div { flex: 1; border: 1.5px solid var(--linea); border-radius: 9px; padding: 8px 9px; font-size: 9pt; background: #fbfdff; text-align: center; }
+  .pasos .pn { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--mat); color: #fff; font-weight: 900; line-height: 22px; font-size: 10.5pt; margin-bottom: 4px; }
+  .pasos b { display: block; color: var(--mat-osc); font-size: 9.5pt; margin-bottom: 2px; }
+
+  /* Errores comunes: lo que está MAL va con ✗, que es su significado real */
+  .err { border: 1px solid #f0c9c9; background: #fdf3f3; border-radius: 9px; padding: 9px 12px; margin: 7px 0; font-size: 10pt; break-inside: avoid; }
+  .err b.t { color: #a02020; display: block; margin-bottom: 3px; font-size: 10.5pt; }
+  .err .mal { color: #a02020; } .err .bien { color: #15803d; font-weight: 700; }
+
+  .acts h3 { border-bottom: 2px solid var(--mat-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 6px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--mat); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 5px 0 5px; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--mat); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; color: var(--tinta); display: flex; align-items: baseline; gap: 6px; }
+  /* El círculo se imprime vacío y el alumno lo RELLENA */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.4px solid var(--mat-osc); border-radius: 50%;
+    align-self: center;
+  }
+  .preg-ops .op u { text-decoration: none; font-weight: 800; color: var(--mat-osc); }
+  .preg-ops .op u::after { content: ')'; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--mat-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 10px 14px; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--mat-osc); }
+
+  table.rubrica td { padding: 4px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f3f6fb; border: 1px solid var(--linea); border-radius: 9px; padding: 11px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--mat-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 14px; padding-top: 9px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--mat); box-shadow: 0 6px 16px rgba(21,101,192,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 30px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .ilus, .felic, .pauta, .pasos > div, .pasos .pn, .err, .preg-n
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Multiplicación de Decimales</div>
+        <div class="f-meta"><b>Asignatura:</b> Matemáticas &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, 6º grado</div>
+        <div class="f-meta"><b>Tema:</b> Multiplicar sin el punto y colocarlo al final, ceros de relleno, saltos por 10 y 0.1, y compras en lempiras</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-multiplicacion-decimales.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+    <ol class="objetivos">
+      <li>Multiplicar dos números decimales como si no tuvieran punto y colocarlo después.</li>
+      <li>Contar las cifras decimales de <strong>los dos factores</strong> para saber cuántas lleva el producto.</li>
+      <li>Agregar ceros a la izquierda cuando al producto le faltan lugares decimales.</li>
+      <li>Resolver multiplicaciones por 10, 100 y 1,000 moviendo el punto a la derecha.</li>
+      <li>Resolver multiplicaciones por 0.1 y 0.01 moviendo el punto a la izquierda.</li>
+      <li>Estimar con números redondos para comprobar que el punto quedó bien puesto.</li>
+      <li>Explicar por qué al multiplicar por un decimal menor que 1 el resultado encoge.</li>
+      <li>Resolver compras reales: precio por cantidad y vuelto, escribiendo el total en lempiras.</li>
+    </ol>
+
+    <h2>📖 1. Una regla y un conteo</h2>
+    <p>Multiplicar decimales asusta por el punto, y no debería: <strong>la cuenta es la misma de siempre</strong>.
+    Lo único nuevo es dónde poner el punto al final, y eso se decide contando.</p>
+    <div class="caja regla">✖️ <b>Paso 1:</b> multiplica <b>como si no hubiera punto</b>. 2.5 × 1.3 se hace como
+    25 × 13 = 325.</div>
+    <div class="caja regla">📍 <b>Paso 2:</b> cuenta las cifras decimales de <b>los dos factores</b> y ponle esas
+    mismas al resultado. 2.5 trae una y 1.3 trae otra: dos en total, así que 325 se vuelve <b>3.25</b>.</div>
+    <div class="ilus">
+      <div class="ilus-t">Mini-demostración: primero la cuenta, después el punto</div>
+      <div class="demo">
+        <span class="paso">2.5 × 1.3</span>
+        <span class="flecha">25 × 13 = 325 · DOS CIFRAS DECIMALES →</span>
+        <span class="paso"><span class="res">3.25</span></span>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:7px 0 0;text-align:center;">✅ Aquí NO se alinean los puntos: eso es de la suma y la resta.</p>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>🔢 2. Contar las cifras decimales</h2>
+    <p>Cifra decimal es cada número que va <strong>después del punto</strong>. En 4.07 hay dos y en 0.125 hay tres.
+    El producto lleva la <strong>suma</strong> de las que traen los dos factores.</p>
+    <table>
+      <tr><th>Operación</th><th>Cifras decimales</th><th>Cuenta sin punto</th><th>Resultado</th></tr>
+      <tr><td class="k">2.5 × 1.3</td><td>1 + 1 = 2</td><td>25 × 13 = 325</td><td>3.25</td></tr>
+      <tr><td class="k">1.25 × 0.4</td><td>2 + 1 = 3</td><td>125 × 4 = 500</td><td>0.500 = 0.5</td></tr>
+      <tr><td class="k">3.4 × 6</td><td>1 + 0 = 1</td><td>34 × 6 = 204</td><td>20.4</td></tr>
+    </table>
+    <div class="caja idea">0️⃣ <b>Cuando falta lugar:</b> 0.2 × 0.3 da 6, pero hacen falta <b>dos</b> cifras
+    decimales y el 6 solo ocupa una. Se agrega un cero delante: <b>0.06</b>. Y compruébalo pensando: dos pedazos
+    chiquitos no pueden dar más de medio entero.</div>
+    <h2>➡️ 3. Por 10, por 100 y por 0.1: el punto salta</h2>
+    <p>Cuando el factor es 10, 100 o 1,000 no hace falta cuenta ninguna: el punto <strong>salta a la derecha</strong>
+    tantos lugares como ceros tenga el número. Y al multiplicar por 0.1 o 0.01, salta a la <strong>izquierda</strong>
+    y el número encoge.</p>
+    <table>
+      <tr><th>Operación</th><th>Qué pasa</th><th>Resultado</th></tr>
+      <tr><td class="k">3.47 × 10</td><td>el punto salta 1 lugar a la derecha</td><td>34.7</td></tr>
+      <tr><td class="k">3.47 × 100</td><td>salta 2 lugares a la derecha</td><td>347</td></tr>
+      <tr><td class="k">3.47 × 1,000</td><td>salta 3 lugares a la derecha</td><td>3,470</td></tr>
+      <tr><td class="k">34.7 × 0.1</td><td>salta 1 lugar a la izquierda</td><td>3.47</td></tr>
+    </table>
+    <div class="caja truco">🧠 <b>Truco:</b> multiplicar por 0.1 es lo mismo que dividir entre 10, porque 0.1 es una
+    décima parte. Por eso el número se hace más chico.</div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>🎯 4. Estimar para cazar el punto mal puesto</h2>
+    <p>El error más común no es la multiplicación: es el punto. Y hay una forma de cazarlo en tres segundos:
+    <strong>redondear y calcular de cabeza</strong> antes de dar el resultado.</p>
+    <div class="pasos">
+      <div><span class="pn">1</span><b>Redondeo</b>4.8 × 2.1 es casi 5 × 2</div>
+      <div><span class="pn">2</span><b>Calculo</b>5 × 2 = 10</div>
+      <div><span class="pn">3</span><b>Comparo</b>el resultado debe andar por 10</div>
+      <div><span class="pn">4</span><b>Reviso</b>si salió 100.8, el punto está corrido</div>
+    </div>
+    <div class="caja hn">💵 <b>Por qué importa:</b> en una cuenta de la pulpería, un punto corrido son diez veces
+    más lempiras. Estimar cuesta tres segundos y evita pagar de más o cobrar de menos.</div>
+    <h2>🛒 5. En la pulpería, todos los días</h2>
+    <p>Esta es la operación que más se usa fuera de la escuela: <strong>precio por cantidad</strong>. Y la que más
+    caro sale cuando se equivoca.</p>
+    <table>
+      <tr><th>Compra</th><th>Operación</th><th>Total</th></tr>
+      <tr><td class="k">3 libras a L 42.50</td><td>3 × 42.50</td><td>L 127.50</td></tr>
+      <tr><td class="k">2.5 metros a L 68.00</td><td>2.5 × 68</td><td>L 170.00</td></tr>
+      <tr><td class="k">Media libra a L 45.00</td><td>0.5 × 45</td><td>L 22.50</td></tr>
+      <tr><td class="k">L 350 con 0.25 de rebaja</td><td>350 × 0.25</td><td>L 87.50 de rebaja</td></tr>
+    </table>
+    <div class="caja idea">⚠️ <b>Ojo con la última fila:</b> multiplicar por 0.25 no agranda, achica. El resultado
+    es la cuarta parte. Con factores menores que 1 el resultado siempre encoge.</div>
+    <div class="caja regla">💰 <b>Y el dinero se escribe con dos decimales siempre:</b> L 157.50, no L 157.5.
+    En un recibo nunca se ve un solo decimal.</div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>⚠️ 5. Errores comunes — ¡no caigas en ellos!</h2>
+    <p style="font-size:10pt;color:var(--gris);">Estos son los tropiezos que más se repiten. Léelos antes de resolver las actividades.</p>
+    <div class="err">
+      <b class="t">✗ Error 1: Alinear los puntos como en la suma</b>
+      <div><span class="mal"><b>Mal:</b> Poner 2.5 encima de 1.3 cuadrando los puntos y sacar 3.8.</span></div>
+      <div><b>¿Por qué?</b> Eso es sumar. Al multiplicar no hay que cuadrar nada: se multiplica como si el punto no existiera.</div>
+      <div><span class="bien">✔ Correcto: 25 × 13 = 325, y con dos cifras decimales queda <b>3.25</b>.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 2: Contar las cifras de un solo factor</b>
+      <div><span class="mal"><b>Mal:</b> «1.25 × 0.4 = 5.00, porque 1.25 tiene dos decimales».</span></div>
+      <div><b>¿Por qué?</b> Se cuentan las de los DOS factores: dos de 1.25 más una de 0.4 son tres.</div>
+      <div><span class="bien">✔ Correcto: 125 × 4 = 500 con tres cifras decimales: <b>0.500 = 0.5</b>.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 3: Olvidar el cero de relleno</b>
+      <div><span class="mal"><b>Mal:</b> «0.2 × 0.3 = 0.6».</span></div>
+      <div><b>¿Por qué?</b> La cuenta da 6, pero hacen falta dos cifras decimales y el 6 solo ocupa una. Falta un cero delante.</div>
+      <div><span class="bien">✔ Correcto: <b>0.06</b>. Y compruébalo: dos pedazos chicos no pueden dar más de medio entero.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 4: Creer que multiplicar siempre agranda</b>
+      <div><span class="mal"><b>Mal:</b> «40 × 0.5 tiene que dar más de 40».</span></div>
+      <div><b>¿Por qué?</b> 0.5 es la mitad de un entero. Tomar la mitad de 40 no agranda nada.</div>
+      <div><span class="bien">✔ Correcto: 40 × 0.5 = <b>20</b>. Con factores menores que 1 el resultado encoge.</span></div>
+    </div>
+    <div class="err">
+      <b class="t">✗ Error 5: Dar el resultado sin estimar</b>
+      <div><span class="mal"><b>Mal:</b> Entregar «4.8 × 2.1 = 100.8» sin mirarlo dos veces.</span></div>
+      <div><b>¿Por qué?</b> Redondeando, 5 × 2 = 10. Un resultado diez veces más grande delata que el punto quedó corrido.</div>
+      <div><span class="bien">✔ Correcto: <b>10.08</b>. Estimar cuesta tres segundos y caza el error.</span></div>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+    <h2>✍️ 6. ¡Ponte a Prueba! Actividades</h2>
+    <h3>I. Completa los espacios <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>Para multiplicar decimales se multiplica primero como si no hubiera <span class="linea-resp"></span>.</li>
+      <li>El producto lleva tantas cifras decimales como tengan los dos <span class="linea-resp"></span> juntos.</li>
+      <li>El resultado de 2.5 × 1.3 es <span class="linea-resp"></span>.</li>
+      <li>El resultado de 0.2 × 0.3 es <span class="linea-resp"></span>.</li>
+      <li>Al multiplicar por 10 el punto salta un lugar a la <span class="linea-resp"></span>.</li>
+      <li>Al multiplicar por 0.1 el punto salta un lugar a la <span class="linea-resp"></span>.</li>
+      <li>El resultado de 3.47 × 100 es <span class="linea-resp"></span>.</li>
+      <li>Cuando faltan lugares para las cifras decimales se agregan <span class="linea-resp"></span> a la izquierda.</li>
+      <li>La primera cifra después del punto son las <span class="linea-resp"></span>.</li>
+      <li>El resultado de 40 × 0.5 es <span class="linea-resp"></span>.</li>
+    </ol>
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span></h3>
+    <ol>
+      <li>____ Para multiplicar decimales hay que alinear los puntos, como en la suma.</li>
+      <li>____ El producto lleva tantas cifras decimales como tengan los dos factores juntos.</li>
+      <li>____ El resultado de 2.5 × 1.3 es 3.25.</li>
+      <li>____ 0.2 × 0.3 es igual a 0.6.</li>
+      <li>____ Al multiplicar por 10, el punto se corre un lugar a la derecha.</li>
+      <li>____ Al multiplicar por 0.1, el número se hace más grande.</li>
+      <li>____ 40 × 0.5 da 20.</li>
+      <li>____ Estimar con números redondos sirve para saber si el punto quedó bien puesto.</li>
+      <li>____ El número 0.25 equivale a la fracción 1/4.</li>
+      <li>____ En 4.07 hay tres cifras decimales.</li>
+    </ol>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+    <h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> — Rellena el círculo de la letra de la respuesta correcta.</h3>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuánto es 3.2 × 1.5?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 4.80</span><span class="op"><i></i><u>b</u> 48</span><span class="op"><i></i><u>c</u> 0.48</span><span class="op"><i></i><u>d</u> 4.7</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Cuántas cifras decimales tiene el producto de 1.25 × 0.4?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> Dos</span><span class="op"><i></i><u>b</u> Tres</span><span class="op"><i></i><u>c</u> Una</span><span class="op"><i></i><u>d</u> Cuatro</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuánto es 0.4 × 0.2?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 0.8</span><span class="op"><i></i><u>b</u> 8</span><span class="op"><i></i><u>c</u> 0.08</span><span class="op"><i></i><u>d</u> 0.6</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Cuánto es 5.63 × 100?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 56.3</span><span class="op"><i></i><u>b</u> 5,630</span><span class="op"><i></i><u>c</u> 0.0563</span><span class="op"><i></i><u>d</u> 563</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Cuánto es 24 × 0.5?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 12</span><span class="op"><i></i><u>b</u> 48</span><span class="op"><i></i><u>c</u> 24.5</span><span class="op"><i></i><u>d</u> 2.4</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>Sin calcular: 9.8 × 4.1 anda cerca de…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 4</span><span class="op"><i></i><u>b</u> 40</span><span class="op"><i></i><u>c</u> 400</span><span class="op"><i></i><u>d</u> 0.4</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>Cuatro libras de azúcar a L 16.25 cuestan…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> L 20.25</span><span class="op"><i></i><u>b</u> L 6.50</span><span class="op"><i></i><u>c</u> L 65.00</span><span class="op"><i></i><u>d</u> L 650.00</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>El decimal 0.5 escrito como fracción es…</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 5/100</span><span class="op"><i></i><u>b</u> 1/5</span><span class="op"><i></i><u>c</u> 5/10 y no se puede reducir</span><span class="op"><i></i><u>d</u> 1/2</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál de estas operaciones da un resultado MENOR que 30?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 30 × 0.9</span><span class="op"><i></i><u>b</u> 30 × 1.1</span><span class="op"><i></i><u>c</u> 30 × 2</span><span class="op"><i></i><u>d</u> 30 × 1.5</span></div>
+    </div>
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Cuánto es 7.5 × 0.1?</div>
+      <div class="preg-ops"><span class="op"><i></i><u>a</u> 75</span><span class="op"><i></i><u>b</u> 0.75</span><span class="op"><i></i><u>c</u> 7.6</span><span class="op"><i></i><u>d</u> 0.075</span></div>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+    <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe la letra que corresponde.</h3>
+    <table>
+      <tr><th>Concepto</th><th>Definición</th></tr>
+      <tr><td>1. ____ Multiplicar decimales</td><td>A. La primera cifra después del punto</td></tr>
+      <tr><td>2. ____ Cifra decimal</td><td>B. Calcular con números redondos para ver si el resultado es razonable</td></tr>
+      <tr><td>3. ____ Factor</td><td>C. Cada número que va después del punto</td></tr>
+      <tr><td>4. ____ Producto</td><td>D. El punto salta un lugar a la derecha</td></tr>
+      <tr><td>5. ____ Décima</td><td>E. Multiplicar como si no hubiera punto y ponerlo al final</td></tr>
+      <tr><td>6. ____ Centésima</td><td>F. La tercera cifra después del punto</td></tr>
+      <tr><td>7. ____ Milésima</td><td>G. El resultado de la multiplicación</td></tr>
+      <tr><td>8. ____ Multiplicar por 10</td><td>H. El punto salta un lugar a la izquierda</td></tr>
+      <tr><td>9. ____ Multiplicar por 0.1</td><td>I. Cada uno de los números que se multiplican</td></tr>
+      <tr><td>10. ____ Estimar</td><td>J. La segunda cifra después del punto</td></tr>
+    </table>
+
+    <div class="felic">
+      🏅 <b>¡Felicidades! Has completado la Misión Multiplicación de Decimales.</b> Ahora multiplicas decimales sin miedo al punto: primero la cuenta y después el conteo de cifras. Sabes agregar el cero cuando falta lugar, mover el punto al multiplicar por 10 o por 0.1, estimar para comprobarte y cobrar bien en la pulpería. ¡Esa es la operación que más vas a usar fuera de la escuela! 🧾✨
+    </div>
+
+    <h2>📏 Rúbrica de Evaluación</h2>
+    <table class="rubrica">
+      <tr><th>Actividad</th><th>Lugar</th><th>Valor</th><th>Nota obtenida</th><th>Observación</th></tr>
+      <tr><td>Copió los contenidos de este material en su cuaderno de Matemáticas.</td><td class="lg">Tarea en el hogar</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió la sección «Ponte a Prueba» directamente en esta ficha.</td><td class="lg">Tarea en el aula, un día antes del examen</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Resolvió multiplicaciones de decimales y problemas de compras en su cuaderno, con el procedimiento completo.</td><td class="lg">Tarea en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>Prueba impresa realizada en el aula.</td><td class="lg">Evaluación en el aula</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700;">Promedio nota final →</td><td colspan="2">&nbsp; %</td></tr>
+    </table>
+    <p style="font-size:9pt;color:var(--gris);">Recuerde que ya aprendió a sacar el promedio: sume el total del valor obtenido y divídalo entre cuatro.
+    El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. punto &nbsp; 2. factores &nbsp; 3. 3.25 &nbsp; 4. 0.06 &nbsp; 5. derecha &nbsp; 6. izquierda &nbsp; 7. 347 &nbsp; 8. ceros &nbsp; 9. décimas &nbsp; 10. 20</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1F, 2V, 3V, 4F, 5V, 6F, 7V, 8V, 9V, 10F</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1a, 2b, 3c, 4d, 5a, 6b, 7c, 8d, 9a, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1E, 2C, 3I, 4G, 5A, 6J, 7F, 8D, 9H, 10B</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha sale del contenido interactivo de la plataforma M.E.T.A.S,
+      «Misión Multiplicación de Decimales», y sus cuatro actividades usan <strong>los mismos bancos de preguntas</strong> que la
+      evaluación de la misión: lo que el alumno practica en la pantalla es lo que resuelve en el papel.
+      Puede complementarse con la caja registradora del aula: precios reales de la pulpería, cantidad y vuelto, obligando siempre a estimar antes de dar el resultado.
+      La misión interactiva (código QR de la portada) le permite practicar con corrección inmediata antes de
+      resolver esta ficha, y en el aula sin teléfonos la ficha funciona sola.
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Multiplicación de Decimales · Hoja del Docente</span><span>Página 8</span></div>
+</section>
+
+</div>
+</body>
+</html>

@@ -228,6 +228,52 @@ Si hace falta sitio para algo nuevo, se recorta **espacio en blanco o lo
 que calcula la máquina**, nunca el tamaño de letra del cuerpo: el
 informe se lee en una reunión con la familia, muchas veces con poca luz.
 
+## Normativa: una misión no está terminada sin su ficha, y la ficha sin su QR
+
+La misión vive en la pantalla; el aula tiene 43 alumnos y tres teléfonos.
+Publicar una misión sin su **ficha didáctica imprimible** es publicarla
+para tres. Por eso una misión nueva no se da por terminada hasta que
+tiene sus tres piezas:
+
+| pieza | dónde |
+|---|---|
+| la ficha | `fichas/ficha-<slug>.html` |
+| su QR | `img/qr-mision-<slug>.png` |
+| el enlace en los dos sentidos | la ficha en `fichas/index.html` **con el conteo del encabezado**, y el bloque 📄 en la sección Recursos de la misión |
+
+El `<slug>` es la carpeta de la misión sin el prefijo del ciclo:
+`misiones/2ciclo-volumen-cuerpos/` → `ficha-volumen-cuerpos.html` y
+`qr-mision-volumen-cuerpos.png`.
+
+**El QR no se escribe a mano y no se copia de otra ficha.** Se genera del
+catálogo y se vuelve a leer para comprobar a dónde lleva:
+
+```
+pip install --user segno opencv-python-headless   (no van en el repositorio)
+python3 _dev/genera-qr-mision.py 62 63 64 65 66   # o sin ids: los que falten
+python3 _dev/genera-qr-mision.py --revisa         # solo comprobar
+```
+
+Sale de `MISSIONS`, así que la dirección no se teclea; y se decodifica
+antes de dar el trabajo por bueno, porque un QR equivocado no lo descubre
+nadie hasta que ya se repartieron cuarenta fotocopias. Va con corrección
+de errores **alta**: la ficha se doblará y se fotocopiará. Y el PNG se
+escribe de 1 bit a 300×300 —pesa 1 KB en vez de 10— porque quien lo abre
+lo baja con los datos de su teléfono.
+
+**Antes de publicar una ficha, se cuentan sus hojas:**
+
+```
+node _dev/servidor-estatico.js                       (en otra terminal)
+node _dev/verifica-ficha-paginas.js ficha-<slug>
+```
+
+Cada página declarada tiene que ser **una** hoja impresa. Una que se
+parte en dos son 43 hojas de más en el fotocopiado del grado.
+
+Y en la ficha manda la normativa del papel de más arriba: la selección
+múltiple lleva su círculo para **rellenar**, nunca la ✗.
+
 ## Normativa: el Control de lectura dentro de una misión
 
 Hay **dos** controles de lectura y no hacen lo mismo. Confundirlos
