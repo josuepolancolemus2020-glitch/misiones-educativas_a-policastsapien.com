@@ -38,6 +38,7 @@ const DCNB_MAP = {
   32: { g: { 6: [4] } },                                  // Área de Polígonos Regulares — abr (apotema)
   64: { g: { 4: [9], 5: [9], 6: [9, 10] } },              // Sólidos Geométricos — 4º sep (prismas y pirámides); 5º sep (modelos); 6º sep-oct (prismas, pirámides, conos, cilindros y esferas)
   65: { g: { 6: [10, 11] } },                             // Volumen de Cuerpos — oct-nov: concepto, unidades oficiales y fórmulas de cubos, prismas y cilindros
+  66: { g: { 6: [8, 11] } },                              // Numeración y Calendario Mayas — 6º ago (sistema de numeración, Bloque 1) y nov (el calendario, Bloque 3)
 
   /* ── Español (espiral: el DCNB retoma estos ejes cada mes) ── */
   3:  { g: { 4: [], 5: [], 7: [], 8: [], 9: [] } },       // Sustantivos

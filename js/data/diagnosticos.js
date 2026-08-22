@@ -18,6 +18,7 @@ const DIAGNOSTICOS = {
     { etapa: 9, q: '¿Cuánto es 0.2 × 0.3?', o: ['0.6', '0.06', '6', '0.5'], a: 1 },
     { etapa: 10, q: '¿A qué división entera equivale 1.5 ÷ 0.3?', o: ['150 ÷ 3', '15 ÷ 30', '15 ÷ 3'], a: 2 },
     { etapa: 11, q: '¿Cuánto es 23 × 4?', o: ['82', '92', '812', '96'], a: 1 },
+    { etapa: 12, q: 'En la numeración maya, ¿cuánto vale una barra?', o: ['1', '5', '10', '20'], a: 1 },
   ],
   forma: [
     { etapa: 1, q: '¿Cuánto mide un ángulo recto?', o: ['45°', '90°', '180°', '360°'], a: 1 },

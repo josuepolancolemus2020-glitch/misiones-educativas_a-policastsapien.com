@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Numeración y Calendario Mayas | policastsapien.com</title>
+<meta name="description" content="Misión Numeración y Calendario Mayas: puntos, barras y la concha del cero, el valor posicional de base 20 y el calendario de kines, uinales y tunes, con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Numeración y Calendario Mayas">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2ciclo-numeracion-maya/numeracion-maya.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/numeracion-maya.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#1565c0 0%,#00695c 45%,#bf6516 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🏛️</div>
+      <div class="mascot-tooltip">¡Hola! Soy Ixim, escriba de Copán. Con tres símbolos escribimos cualquier número, y con ellos medimos el tiempo. ¡Vamos!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Numeración y Calendario Mayas</span></h1>
+      <p class="sub">¡Escribe con puntos, barras y conchas, y cuenta el tiempo como se hacía en Copán! 🎯</p>
+      <div class="badge">🧭 Ruta del Número · Etapa 12 de 12 · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔑 Tres símbolos para todos los números</h2>
+    <p style="margin-bottom:0.7rem;">Nosotros usamos diez cifras (0, 1, 2… 9). Los mayas usaban <strong>tres símbolos</strong> y con ellos escribían cualquier número, por grande que fuera. Y lo hacían aquí: las fechas talladas de <strong>Copán</strong> están escritas con este sistema.</p>
+    <div class="tip">
+      <span class="ti">🔵</span>
+      <div><strong>El punto vale 1</strong> y <strong>la barra vale 5</strong>. Con ellos se escribe del 1 al 19: el 13 son dos barras y tres puntos. Nunca se dejan cinco puntos juntos, porque cinco puntos hacen una barra.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">🐚</span>
+      <div><strong>La concha vale 0</strong>, y esto no es un detalle: los mayas inventaron el cero <strong>mucho antes de que llegara a Europa</strong>. Es uno de los grandes aportes de América a las matemáticas del mundo.</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración: el número 23</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Nivel de arriba</span><span class="ds-val">1 punto = 1 × 20 = 20</span></div>
+        <div class="demo-arrow">se lee de abajo hacia arriba ↑</div>
+        <div class="demo-step ds-mid"><span class="ds-label">Nivel de abajo</span><span class="ds-val">3 puntos = 3</span></div>
+        <div class="demo-arrow">20 + 3 =</div>
+        <div class="demo-step ds-end"><span class="ds-label">Número</span><span class="ds-val" style="font-size:1rem;">23</span></div>
+      </div>
+      <p class="demo-note">✅ El mismo punto vale 1 abajo y 20 arriba. Eso es el valor posicional, igual que en nuestro sistema, pero de 20 en 20.</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Del 0 al 19 con puntos y barras</h2>
+    <p style="margin-bottom:0.6rem;">Dentro de cada nivel se escriben los números del <strong>0 al 19</strong>. Las barras van abajo y los puntos encima. En cuanto se juntan cinco puntos, se cambian por una barra.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">El 17</span>
+      <span class="ae-flecha">→ 5 + 5 + 5 + 1 + 1 →</span>
+      <span class="ae-res"><strong>tres barras y dos puntos</strong></span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cómo se escribe el 8 en maya?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Ocho puntos no se usan: cinco puntos se cambian por una barra. Es una barra y tres puntos.')">Ocho puntos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! Una barra (5) y tres puntos (3) hacen 8.')">Una barra y tres puntos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Dos barras son 10, que es más que 8. Es una barra y tres puntos.')">Dos barras</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: Los niveles, de 20 en 20</h2>
+    <p style="margin-bottom:0.6rem;">Para pasar del 19 se abre un <strong>nivel nuevo encima</strong>. El de abajo cuenta unidades, el segundo cuenta <strong>veintes</strong> y el tercero <strong>cuatrocientos</strong> (20 × 20).</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔢 El 20</h4>
+        <p>Un punto arriba, concha abajo</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">1 × 20 + 0 = 20. Sin la concha, ese punto solito se leería como 1.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔢 El 42</h4>
+        <p>Dos puntos arriba, dos abajo</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">2 × 20 + 2 = 42. Se divide entre 20 para saber qué va arriba.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 Un punto arriba y una barra abajo, ¿qué número es?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ahí sumaste 1 + 5. El punto de arriba vale 20: son 25.')">6</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ese sería un punto arriba y una concha abajo. Con la barra abajo son 25.')">20</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! 1 × 20 + 5 = 25.')">25</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: Sumar juntando símbolos</h2>
+    <p style="margin-bottom:0.7rem;">Sumar en maya es <strong>juntar los símbolos de los dos números</strong> y después hacer los cambios: cinco puntos se vuelven una barra, y cuatro barras suben como un punto al nivel de arriba.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">8 + 9</span>
+      <span class="ae-flecha">→ dos barras y siete puntos → cambio cinco puntos por una barra →</span>
+      <span class="ae-res"><strong>tres barras y dos puntos = 17</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">🧱</span>
+      <div><strong>Lo mismo que llevamos nosotros:</strong> cuando en nuestra suma pasamos de 9 «llevamos una». Aquí se pasa de 19, y lo que sube es un punto al piso de arriba.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 Al juntar los símbolos de 12 y 14 quedan cuatro barras y seis puntos. ¿Qué se hace?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! Cinco puntos se vuelven barra: quedan cinco barras y un punto, y cuatro barras suben como un punto: 26.')">Cambiar cinco puntos por una barra</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Los símbolos no se borran: se cambian. Cinco puntos hacen una barra.')">Borrar los puntos que sobran</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'La concha es el cero y no se usa para eso. Cinco puntos se cambian por una barra.')">Poner una concha</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: El calendario, base 20 aplicada al tiempo</h2>
+    <p style="margin-bottom:0.6rem;">Los mayas midieron el tiempo con el mismo sistema: cada periodo vale 20 veces el anterior. Salvo <strong>una excepción</strong>, y tiene su razón.</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;font-size:0.84rem;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">Periodo</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">Cuánto dura</th>
+        </tr></thead>
+        <tbody>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">☀️ Kin</td><td style="padding:0.45rem;border:1px solid var(--border);">1 día</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">🌙 Uinal</td><td style="padding:0.45rem;border:1px solid var(--border);">20 kines = 20 días</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--amber);">📅 Tun</td><td style="padding:0.45rem;border:1px solid var(--border);"><strong>18</strong> uinales = 360 días (la excepción)</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">🏛️ Katún</td><td style="padding:0.45rem;border:1px solid var(--border);">20 tunes = 7,200 días</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">🗿 Baktún</td><td style="padding:0.45rem;border:1px solid var(--border);">20 katunes = 144,000 días</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.85rem;margin-bottom:0.4rem;"><strong>¿Por qué 18 y no 20?</strong> Porque 18 × 20 = 360 se parece mucho más al año del sol que 400. Y para llegar a los 365 días añadían el <strong>uayeb</strong>, cinco días que tenían por de mala suerte.</p>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cuántos días son 3 uinales?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Ese es el número de uinales, no de días. Cada uinal son 20 días: 60.')">3 días</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! 3 × 20 = 60 días.')">60 días</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Eso serían 3 tunes menos un poco. Tres uinales son 3 × 20 = 60 días.')">360 días</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: Dos calendarios que giran juntos</h2>
+    <p style="margin-bottom:0.6rem;">Los mayas llevaban <strong>dos cuentas a la vez</strong>, como dos ruedas dentadas que giran engranadas.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>🔮 Tzolkín</h4>
+        <p><strong>260 días</strong></p>
+        <p style="font-size:0.82rem;">13 números por 20 nombres de día. Marcaba las ceremonias.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>🌽 Haab</h4>
+        <p><strong>365 días</strong></p>
+        <p style="font-size:0.82rem;">18 uinales de 20 días más los 5 del uayeb. Marcaba las siembras y las cosechas.</p>
+      </div>
+    </div>
+    <p style="font-size:0.85rem;margin:0.6rem 0 0.4rem;">Una fecha llevaba el día de los dos calendarios a la vez, y esa combinación <strong>no se repetía hasta pasados 52 años</strong>. A esa vuelta completa se le llama la <em>rueda calendárica</em>.</p>
+    <p style="font-size:0.78rem;color:var(--gray);">🏛️ Todo esto está tallado en las estelas de Copán, en el occidente de Honduras: fechas exactas escritas hace más de mil años con puntos, barras y conchas.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🔵 = 1</div><div class="t-info">El punto: del 1 al 4 se ponen sueltos</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">▬ = 5</div><div class="t-info">La barra: cinco puntos se cambian por ella</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🐚 = 0</div><div class="t-info">La concha: el cero, invento maya</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">arriba × 20</div><div class="t-info">Cada nivel vale 20 veces más</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🌙 uinal = 20 días</div><div class="t-info">El mes maya, y el tun son 18 uinales</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">🔮 260 · 🌽 365</div><div class="t-info">Tzolkín y haab, las dos ruedas del tiempo</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Poner cinco puntos juntos</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>Escribir el 7 con siete puntos.</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>En cuanto hay cinco puntos, se cambian por una barra. Es la regla que hace corto el sistema.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>El 7 es <strong>una barra y dos puntos</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Olvidar la concha</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>Escribir el 20 con un solo punto arriba y dejar el nivel de abajo vacío.</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Sin la concha no se sabe en qué piso está ese punto, y se lee como 1.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Un punto arriba y <strong>una concha abajo</strong> ✔ Para eso sirve el cero.</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Leer de arriba hacia abajo</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Un punto arriba y tres abajo son 13".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se leyó como si fueran nuestras cifras. El punto de arriba no vale 10: vale 20.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>1 × 20 + 3 = <strong>23</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Creer que el tun tiene 400 días</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Como el sistema es de base 20, el tun son 20 × 20 = 400 días".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>En el calendario los mayas hicieron una excepción a propósito: el tun son 18 uinales, para acercarse al año del sol.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>18 × 20 = <strong>360 días</strong> ✔ Y con el uayeb se llega a 365.</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Confundir el tzolkín con el haab</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El tzolkín es el calendario de 365 días".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se cambiaron los nombres. Un truco: el haab es el del sol, y el año del sol dura 365.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Tzolkín: <strong>260 días</strong> (ritual) · Haab: <strong>365 días</strong> (solar) ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: El Escriba de Copán</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Te dan un número y tú lo tallas: pon puntos, barras y conchas en cada nivel hasta que cuadre. ⭐ +2 XP por número bien escrito (primeros 6)</p>
+    <div id="widget-escriba-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>👀 Laboratorio 2: Lee la Estela</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Ahora al revés: aparece un número tallado y tú dices cuánto vale. Empieza siempre por el nivel de abajo. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-estela-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria de los Símbolos Mayas</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>➕ Suma Maya</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Junta los símbolos de dos números y haz los cambios: cinco puntos por una barra. La pantalla te enseña el cambio en el momento. ⭐ +2 XP por suma correcta (primeras 6)</p>
+    <div id="widget-sumamaya-interactive"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>📅 Calculadora del Calendario</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Convierte kines, uinales, tunes y katunes en días, y al revés. Con la excepción del tun bien puesta. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-calmaya-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🔮 La Rueda Calendárica</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Haz girar el tzolkín y el haab y mira cuándo vuelven a coincidir. Son las dos ruedas que llevaban la cuenta del tiempo. ⭐ +2 XP por vuelta completa (primeras 5)</p>
+    <div id="widget-rueda-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Números mayas 🔵</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ A ES MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= SON IGUALES</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ A ES MENOR</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autóasignate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="escribe">🔵 Escribir el número en maya</option>
+        <option value="lee">👀 Leer un número maya</option>
+        <option value="suma">➕ Sumar en maya</option>
+        <option value="calendario">📅 Cuentas del calendario</option>
+        <option value="compara">🔍 Comparar números mayas</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Numeración y Calendario Mayas · Educación Básica · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Resuélvela <strong>en línea</strong> (escribe, marca y selecciona) y presiona <strong>Calificar prueba</strong>, o imprímela para resolverla en papel. <strong>Genera una nueva evaluación cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Numeración y Calendario Mayas · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Numeración y Calendario Mayas</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre la numeración maya, el valor posicional de base 20 y el calendario de kines, uinales y tunes.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Numeración y Calendario Mayas</div>
+    <div class="diploma-mascot" aria-hidden="true">🏛️</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/numeracion-maya.js"></script>
+
+  <script src="js/interaccion_escriba.js"></script>
+  <script src="js/interaccion_estela.js"></script>
+  <script src="js/interaccion_sumamaya.js"></script>
+  <script src="js/interaccion_calmaya.js"></script>
+  <script src="js/interaccion_rueda.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetEscribaJSON) {
+        window.WidgetEscribaJSON.mount('widget-escriba-interactive');
+      }
+      if (window.WidgetEstelaJSON) {
+        window.WidgetEstelaJSON.mount('widget-estela-interactive');
+      }
+      if (window.WidgetSumamayaJSON) {
+        window.WidgetSumamayaJSON.mount('widget-sumamaya-interactive');
+      }
+      if (window.WidgetCalmayaJSON) {
+        window.WidgetCalmayaJSON.mount('widget-calmaya-interactive');
+      }
+      if (window.WidgetRuedaJSON) {
+        window.WidgetRuedaJSON.mount('widget-rueda-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>
