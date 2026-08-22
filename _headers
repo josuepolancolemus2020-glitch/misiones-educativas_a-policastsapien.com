@@ -1,0 +1,29 @@
+# Cabeceras de seguridad para Cloudflare (Workers static assets / Pages).
+# Cloudflare procesa este archivo; no lo sirve. Se aplica a TODO el sitio.
+#
+# ⚠️ GitHub Pages (el tejado de respaldo) NO lee este archivo: no sabe poner
+#    cabeceras. Estas protecciones valen en producción (Cloudflare, que es
+#    donde apunta metas.policastsapien.com). Si algún día se publica desde
+#    GitHub Pages, no las lleva.
+#
+# La CSP es DELIBERADAMENTE permisiva con lo que ya usa el sitio: scripts y
+# estilos en línea, manejadores onclick=, y new Function() en el Campeonísimo.
+# Una CSP estricta (sin 'unsafe-inline'/'unsafe-eval') apagaría media app. Lo
+# que SÍ cierra: enmarcado ajeno (clickjacking), plugins, <base> secuestrado,
+# y limita a Supabase a dónde puede conectarse y cargar imágenes la página.
+# Apretar la CSP (quitar 'unsafe-inline') es trabajo de una fase posterior:
+# exige sacar el JS en línea a archivos.
+#
+# connect-src incluye Google Fonts y cdnjs además de Supabase porque el
+# service worker los pre-cachea con cache.add() —una llamada fetch()—, y las
+# peticiones del propio service worker se rigen por connect-src, no por
+# style-src/font-src. Sin ellos, el sitio funciona en línea pero se quedaría
+# sin fuentes ni iconos SIN conexión, que es justo lo que la app cuida.
+
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; media-src 'self' data: blob:; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Strict-Transport-Security: max-age=15552000
