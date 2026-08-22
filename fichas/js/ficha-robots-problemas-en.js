@@ -49,6 +49,7 @@
         '</div>' +
 
         '<h2>🎯 Learning Objectives</h2>' +
+
         '<ol class="objetivos">' +
         '<li>Name and put in order the <strong>7 stages of the engineering design cycle</strong>.</li>' +
         '<li>Write out a <strong>problem</strong>, saying what is going wrong, who it affects and why it matters.</li>' +
@@ -59,10 +60,12 @@
         '</ol>' +
 
         '<h2>🏆 1. A robot is there to solve problems</h2>' +
+
         '<p>You already know what a robot is, what its <strong>sensors</strong> measure, how it moves with <strong>motors and ' +
         'mechanisms</strong>, where it gets its <strong>electricity</strong> and how a <strong>program</strong> is written for it. ' +
         'Now comes the most important part: using all of that to <strong>solve a real problem</strong> in your community. ' +
         'Engineers do not improvise: they follow the <strong>engineering design cycle</strong>.</p>' +
+
         '<div class="ciclo">' +
         '<div>🔍 <b>1. Identify</b></div>' +
         '<div>💡 <b>2. Brainstorm</b></div>' +
@@ -72,10 +75,12 @@
         '<div>🔁 <b>6. Improve</b></div>' +
         '<div>📢 <b>7. Communicate</b></div>' +
         '</div>' +
+
         '<div class="caja truco">💡 <b>Trick:</b> the cycle is a <strong>wheel</strong>, not a straight line. After ' +
         'improving you test again, and sometimes you find out the real problem was a different one. That is learning too!</div>' +
 
         '<h3>🔍✏️🧪 Mini-demonstration: from the problem to the improved robot</h3>' +
+
         '<div class="ilus">' +
         '<div class="ilus-t">The school garden waterer, step by step</div>' +
         '<div class="celula">' +
@@ -89,6 +94,7 @@
       /* ═══════════ PÁGINA 2 ═══════════ */
       p2:
         '<h2 style="margin-top:0;">🔁 2. The 7 stages of the design cycle</h2>' +
+
         '<table>' +
         '<tr><th>Stage</th><th>What is done?</th><th>Example: the river crossing alert</th></tr>' +
         '<tr><td class="k">🔍 1. Identify</td><td>Say what is going wrong, who it affects and why it matters; write the success criterion</td><td>In the rainy season nobody knows whether the crossing is safe</td></tr>' +
@@ -99,25 +105,30 @@
         '<tr><td class="k">🔁 6. Improve</td><td>Fix what failed and test again</td><td>Raise the sensor and add an early warning</td></tr>' +
         '<tr><td class="k">📢 7. Communicate</td><td>Present the project: problem, design, test, improvement</td><td>Explain it at the school and put a poster up by the crossing</td></tr>' +
         '</table>' +
+
         '<div class="caja idea">📖 <b>Key fact:</b> no prototype comes out right the first time. What separates a good ' +
         'team from one that gives up is <strong>writing the fault down, changing one thing at a time and testing again</strong>.</div>' +
 
         '<h2>🎯 3. Criteria and ⛔ constraints</h2>' +
+
         '<p>Before designing, the team writes two lists: the <strong>criterion</strong> says <strong>what the robot must achieve</strong> ' +
         'and it is <strong>measured</strong>; the <strong>constraint</strong> says <strong>which limit cannot be crossed</strong> ' +
         'and it is <strong>respected</strong>.</p>' +
+
         '<table>' +
         '<tr><th>Project</th><th>🎯 Success criterion (measured)</th><th>⛔ Constraints (respected)</th></tr>' +
         '<tr><td class="k">🌱 School garden waterer</td><td>Soil moist 3 days in a row with nobody turning up</td><td>200 lempiras · recycled material · no bare wires</td></tr>' +
         '<tr><td class="k">🌊 River crossing alert</td><td>Warn with the water at half the mark</td><td>No power outlet nearby · has to stand up to the rain</td></tr>' +
         '<tr><td class="k">♻️ Trash sorter</td><td>Get 19 out of every 20 containers right</td><td>3-week deadline · cardboard and a toy motor</td></tr>' +
         '</table>' +
+
         '<div class="caja regla">🎯 <b>Golden rule:</b> if the prototype does not meet the criterion, you <strong>improve the ' +
         'design</strong>… <strong>you never lower the criterion</strong> to make it look as if it worked.</div>',
 
       /* ═══════════ PÁGINA 3 ═══════════ */
       p3:
         '<h2 style="margin-top:0;">🧩 4. In the sketch, every part has to be justified</h2>' +
+
         '<table>' +
         '<tr><th>Question for the sketch</th><th>From the Robot Path</th><th>Example</th></tr>' +
         '<tr><td class="k">📡 Which sensor?</td><td>Stage 2: it measures the signal of the problem</td><td>Moisture, water level, rain, weight, movement</td></tr>' +
@@ -125,12 +136,14 @@
         '<tr><td class="k">🔋 Which energy?</td><td>Stage 4: a safe, low-voltage circuit</td><td>Rechargeable battery, solar panel, insulated wires</td></tr>' +
         '<tr><td class="k">📋 Which program?</td><td>Stage 5: exact instructions</td><td>«If the soil is dry, then turn the water on»</td></tr>' +
         '</table>' +
+
         '<div class="tri">' +
         '<div class="tnuc"><b>👥 Team roles</b><strong>Designer</strong> (the sketch), <strong>programmer</strong> (the instructions), <strong>builder</strong> (the prototype) and <strong>tester</strong> (the trials and the data). Everybody checks and has a say.</div>' +
         '<div class="torg"><b>⚖️ Ethics and safety</b>Asking <strong>who the robot benefits</strong> and <strong>who it might harm</strong>. Robots help people, they do not simply replace them. Low voltage and no sharp parts.</div>' +
         '</div>' +
 
         '<h2>🇭🇳 5. Five projects for Honduras</h2>' +
+
         '<table>' +
         '<tr><th>Project</th><th>Problem</th><th>Sensor and actuator</th></tr>' +
         '<tr><td class="k">☕ Coffee drying yard</td><td>The coffee laid out to dry gets soaked by sudden rain</td><td>Rain sensor · motor with a pulley that closes the roof</td></tr>' +
@@ -141,6 +154,7 @@
         '</table>' +
 
         '<h2>🎲 6. Unplugged activities (no computer)</h2>' +
+
         '<ul>' +
         '<li><strong>📐 A sketch on paper:</strong> draw your robot on a sheet and <strong>label its parts with arrows</strong>: ' +
         'sensor, mechanism, energy source and the main instruction of the program. Next to each part write ' +
@@ -151,18 +165,19 @@
         'It does not have to look pretty: it has to be <strong>testable</strong>.</li>' +
         '<li><strong>📢 A 2-minute presentation:</strong> present it to the class: (1) the problem and who it affects, ' +
         '(2) the design with every part justified, (3) what happened in the test, with data, (4) the improvement and (5) who it benefits.</li>' +
-        '</ul>' +
-
-        '<div class="caja hn">🇭🇳 <b>Engineering with what you have:</b> you do not need an expensive laboratory to solve problems. ' +
-        'With <strong>cardboard, a battery, a toy motor and a good design cycle</strong> you can already look after the garden, ' +
-        'warn about a rising river or sort the trash at your school. The engineers Honduras needs start ' +
-        'today, with paper and a pencil! 💚</div>',
+        '</ul>',
 
       /* ═══════════ PÁGINA 4 ═══════════ */
       p4:
+        '<div class="caja hn">🇭🇳 <b>Engineering with what you have:</b> you do not need an expensive laboratory to solve problems. ' +
+        'With <strong>cardboard, a battery, a toy motor and a good design cycle</strong> you can already look after the garden, ' +
+        'warn about a rising river or sort the trash at your school. The engineers Honduras needs start ' +
+        'today, with paper and a pencil! 💚</div>' +
+
         '<h2>✍️ 7. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>The design cycle starts by <span class="linea-resp"></span> the problem.</li>' +
         '<li>In the brainstorming stage you write down lots of <span class="linea-resp"></span>.</li>' +
@@ -177,6 +192,7 @@
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>____ The design cycle starts by identifying the problem.</li>' +
         '<li>____ The first thing a good team does is build the robot and look for the problem afterwards.</li>' +
@@ -188,10 +204,8 @@
         '<li>____ Cost, time and safety are constraints of the project.</li>' +
         '<li>____ The safety of whoever uses the robot is not the team’s business.</li>' +
         '<li>____ Communicating the result is the last stage of the design cycle.</li>' +
-        '</ol>',
+        '</ol>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
@@ -202,7 +216,10 @@
         '<span class="op"><i>c</i> communicate the result</span>' +
         '<span class="op"><i>d</i> test the robot</span>' +
         '</div>' +
-        '</div>' +
+        '</div>',
+
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>What do you do in the brainstorming stage?</div>' +
         '<div class="preg-ops">' +
@@ -212,6 +229,7 @@
         '<span class="op"><i>d</i> put the materials away</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">3</span>What does a good design sketch contain?</div>' +
         '<div class="preg-ops">' +
@@ -221,6 +239,7 @@
         '<span class="op"><i>d</i> only the robot’s name</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">4</span>What is a prototype?</div>' +
         '<div class="preg-ops">' +
@@ -230,6 +249,7 @@
         '<span class="op"><i>d</i> a robot brought in from a factory</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">5</span>During the test, what should the team do?</div>' +
         '<div class="preg-ops">' +
@@ -239,6 +259,7 @@
         '<span class="op"><i>d</i> write down what fails and what works</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">6</span>«The robot must not cost more than 200 lempiras» is an example of…</div>' +
         '<div class="preg-ops">' +
@@ -248,6 +269,7 @@
         '<span class="op"><i>d</i> a prototype</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">7</span>Which sensor suits the robot that warns about floods?</div>' +
         '<div class="preg-ops">' +
@@ -257,6 +279,7 @@
         '<span class="op"><i>d</i> touch</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">8</span>Which actuator does the school garden waterer need?</div>' +
         '<div class="preg-ops">' +
@@ -266,6 +289,7 @@
         '<span class="op"><i>d</i> a bigger battery</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">9</span>Which instruction is right for the watering robot?</div>' +
         '<div class="preg-ops">' +
@@ -275,6 +299,7 @@
         '<span class="op"><i>d</i> switch the river crossing alarm off</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">10</span>Which one is an ethical question about design?</div>' +
         '<div class="preg-ops">' +
@@ -288,6 +313,7 @@
       /* ═══════════ PÁGINA 6 ═══════════ */
       p6:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Design cycle</td><td>A. Write down lots of possible solutions before choosing</td></tr>' +
@@ -310,6 +336,7 @@
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
+
         '<table class="rubrica">' +
         '<tr><th>Activity</th><th>Where</th><th>Value</th><th>Grade earned</th><th>Comment</th></tr>' +
         '<tr><td>Copied the contents of this material into their Robotics notebook.</td><td class="lg">Homework</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
@@ -319,12 +346,14 @@
         '<tr><td>Printed test taken in class.</td><td class="lg">Classroom assessment</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td colspan="3" style="text-align:right;font-weight:700;">Final grade average →</td><td colspan="2">&nbsp; %</td></tr>' +
         '</table>' +
+
         '<p style="font-size:9pt;color:var(--gris);">Add up the total value earned and divide it by five: the result will be your final grade. ' +
         'You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +

@@ -264,12 +264,78 @@ lo baja con los datos de su teléfono.
 **Antes de publicar una ficha, se cuentan sus hojas:**
 
 ```
-node _dev/servidor-estatico.js                       (en otra terminal)
-node _dev/verifica-ficha-paginas.js ficha-<slug>
+node _dev/verifica-ficha-paginas.js ficha-<slug>     (o sin nombre: todas)
 ```
 
 Cada página declarada tiene que ser **una** hoja impresa. Una que se
-parte en dos son 43 hojas de más en el fotocopiado del grado.
+parte en dos son 43 hojas de más en el fotocopiado del grado. La sonda
+imprime a PDF de verdad y cuenta las páginas del PDF, que es la verdad de
+la impresora; medir en la pantalla ancha **miente**, porque las columnas
+se estiran y el texto ocupa menos alto del que ocupará en el papel.
+
+Y mira **las dos ediciones**. Cinco fichas de Robótica traen traducción
+de autor y el motor de idioma cambia el HTML de cada hoja entera
+(`data-i18n="p1".."p7"`): el inglés puede partirse justo donde el español
+cabe. Así estuvo `ficha-robots-problemas`, con su hoja 3 saliendo en dos,
+sin que nadie lo notara — porque la sonda solo miraba el español.
+
+### El corte de las hojas NO se decide a ojo
+
+Las fichas se armaron a mano: alguien miró la pantalla y decidió dónde
+cortaba cada hoja. A ojo se acierta hasta que se corrige una errata y el
+párrafo crece dos renglones; entonces la hoja se pasa del papel, se parte
+en dos y el pie que dice «Página 3» sale en la cuarta. **Así estaban 19
+fichas** en agosto de 2026 —la peor medía 350 mm donde el papel deja
+257,4— y nadie lo supo hasta contar las páginas del PDF.
+
+El corte lo reparte una herramienta:
+
+```
+node _dev/reparte-hojas-ficha.js                (las que hoy se parten)
+node _dev/reparte-hojas-ficha.js ficha-<slug>   (una)
+node _dev/reparte-hojas-ficha.js --revisa       (sin escribir)
+```
+
+**No recorta contenido ni toca el tamaño de letra**: mueve dónde cae el
+corte, y nada más. Lo comprueba la sonda de páginas, y de paso el texto
+tiene que salir palabra por palabra igual que antes.
+
+Lo que la sostiene, y que no se puede improvisar:
+
+- **El tope es 248 mm por hoja**, no los 257,4 que deja el papel. El
+  colchón no es de adorno: si el navegador ignora el `@page` y pone los
+  suyos (Firefox usa 12,7 mm y deja 254 mm), la hoja **sigue cabiendo**.
+  Es la misma cifra y la misma razón que en el informe del alumno.
+- **Se mide la HOJA entera y con el ancho del papel**, no el hueco del
+  contenido en una ventana ancha: el pie va dentro del relleno de abajo y
+  el margen del último bloque también cuenta. Medir solo el contenido
+  dejaba diez milímetros fuera de la cuenta.
+- **Se mide el tramo pintado, no la suma de los bloques**: entre dos
+  bloques seguidos los márgenes se colapsan, y sumar cierra la hoja antes
+  de tiempo.
+- **Primero el mínimo de hojas, después el reparto**: con las hojas ya
+  fijas se busca el corte que deja la hoja más cargada lo más liviana
+  posible, para que el aire sobrante se reparta.
+- **Un título nunca cierra una hoja**: baja con lo que encabeza.
+- **La hoja del docente no se toca**: se imprime suelta y no se
+  fotocopia, así que ni recibe ni cede.
+- **La ficha que hoy cabe se deja en paz.** Rehacer un corte que funciona
+  mueve texto sin ganar nada.
+
+⚠️ **Si la ficha es bilingüe, las dos ediciones se reparten a la vez.**
+No tienen que cortar por el mismo sitio —cada contenedor recibe el HTML
+que le dé el diccionario—, pero sí tener el **mismo número de hojas**, y
+el `-en.js` se vuelve a escribir bloque a bloque. Ahí hay dos cosas que
+costaron caro: el archivo rehecho **tiene que compilar** (uno con un error
+de sintaxis no da la cara —el botón 🌐 se queda mudo y la bilingüe imprime
+en español—, así que la herramienta lo compila antes de guardarlo), y los
+rótulos `/* PÁGINA N */` **viajan con su contenido**, porque alguno lleva
+dentro una nota que hace falta («la Columna B conserva el orden del
+español: la pauta vale igual»).
+
+Y si la ficha gana o pierde una hoja, **la misión lo dice**: el «Guía de
+estudio de N páginas» de su sección Recursos se corrige solo, que si no el
+maestro manda a fotocopiar la cuenta vieja.
 
 Y en la ficha manda la normativa del papel de más arriba: la selección
 múltiple lleva su círculo para **rellenar**, nunca la ✗.
@@ -687,9 +753,10 @@ node _dev/mide-reparto-respuestas.js        → que la correcta no caiga siempre
 
 `verifica-ficha-paginas.js` sirve para **cualquier** ficha del proyecto y
 cuenta las páginas del PDF, que es la verdad de la impresora. Al pasarlo
-por las fichas viejas salieron **20 que se parten al imprimir** (la peor,
-`ficha-programando-robot`, mide 350 mm donde el papel deja 257,4); están
-sin arreglar y esperan su propia pasada.
+por las fichas viejas salieron **19 que se partían al imprimir** (la peor,
+`ficha-programando-robot`, medía 350 mm donde el papel deja 257,4). Ya
+están repartidas: cómo se hizo y qué NO se puede improvisar está en «El
+corte de las hojas NO se decide a ojo», más arriba.
 
 **Nota de entorno:** estas herramientas necesitan Playwright, que en el
 entorno de trabajo se instala aparte (`npm install --no-save playwright`)

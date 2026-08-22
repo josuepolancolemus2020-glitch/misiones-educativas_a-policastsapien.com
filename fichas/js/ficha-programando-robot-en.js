@@ -48,6 +48,7 @@
         '</div>' +
 
         '<h2>🎯 Learning Objectives</h2>' +
+
         '<ol class="objetivos">' +
         '<li>Explain the <strong>robot cycle</strong>: read the sensors → decide → move the actuators → repeat.</li>' +
         '<li>Use the <strong>movement instructions</strong> (forward, turn) and the <strong>waiting</strong> one.</li>' +
@@ -58,13 +59,16 @@
         '</ol>' +
 
         '<h2>🔁 1. The robot cycle: a loop that never stops</h2>' +
+
         '<p>For as long as a robot is switched on it repeats <strong>the same thing over and over</strong>: it <strong>reads its sensors</strong>, ' +
         'it <strong>decides</strong> with its program, it <strong>moves its actuators</strong> and it <strong>starts again</strong>. ' +
         'That cycle is an <strong>infinite loop</strong> that repeats many times per second.</p>' +
+
         '<div class="caja truco">💡 <b>Trick:</b> faced with any robot program, ask yourself three things: what does it <strong>read</strong>? ' +
         'what does it <strong>decide</strong>? and what does it <strong>do</strong>? If any of them is missing, the robot is going to fail.</div>' +
 
         '<h3>📡🧠⚙️ Mini-demonstration: the three steps of the cycle</h3>' +
+
         '<div class="ilus">' +
         '<div class="ilus-t">The program joins the three steps together and then repeats them</div>' +
         '<div class="celula">' +
@@ -78,7 +82,9 @@
       /* ═══════════ PÁGINA 2 ═══════════ */
       p2:
         '<h2 style="margin-top:0;">👣 2. The instructions of the program</h2>' +
+
         '<p>The program is built out of <strong>exact instructions</strong>, one per line. These are the ones the simulator robot uses:</p>' +
+
         '<table>' +
         '<tr><th>Instruction</th><th>What does it do?</th><th>Common mistake</th></tr>' +
         '<tr><td class="k">👣 FORWARD</td><td>It moves the robot ONE square in the direction it is facing</td><td>Miscounting the squares</td></tr>' +
@@ -87,12 +93,15 @@
         '<tr><td class="k">⏳ WAIT</td><td>It lets time go by without moving</td><td>Forgetting it when a signal has to be waited for</td></tr>' +
         '<tr><td class="k">🎯 STOP</td><td>The final instruction: the robot stays still on the goal</td><td>Forgetting it: the robot goes straight past</td></tr>' +
         '</table>' +
+
         '<div class="caja idea">📖 <b>Key fact:</b> turning four times in a row leaves the robot <strong>exactly where it was</strong>, ' +
         'only dizzy. <strong>Turning is not moving forward.</strong></div>' +
 
         '<h2>❓ 3. Conditionals with sensors</h2>' +
+
         '<p>A <strong>conditional</strong> is the <strong>IF… THEN… ELSE…</strong> block. The robot <strong>reads a sensor</strong> ' +
         'and chooses one of the two branches. That way the same program still works even when things move around:</p>' +
+
         '<div class="pseudo"># Wall (obstacle) sensor\n' +
         '<b>IF</b> there is a wall ahead <b>THEN</b> TURN RIGHT\n' +
         '<b>ELSE</b> FORWARD\n' +
@@ -100,16 +109,19 @@
         '# Line sensor (floor color)\n' +
         '<b>IF</b> there is a black line ahead <b>THEN</b> FORWARD\n' +
         '<b>ELSE</b> TURN RIGHT</div>' +
+
         '<div class="tri">' +
         '<div class="tnuc"><b>🧱 Wall / obstacle sensor</b>It looks at the square <strong>ahead</strong>: if there is a crate or the edge of the schoolyard, it answers YES. It is used to dodge without crashing.</div>' +
         '<div class="torg"><b>⬛ Line / color sensor</b>It tells the <strong>black</strong> of the painted line apart from the light floor. It is used to follow the path down the hallway.</div>' +
         '</div>' +
+
         '<div class="caja regla">🎯 <b>Golden rule:</b> every conditional must also say what to do when the answer is <strong>NO</strong> ' +
         '(the ELSE branch). If it is missing, the robot is left «thinking» or it does something unexpected.</div>',
 
       /* ═══════════ PÁGINA 3 ═══════════ */
       p3:
         '<h2 style="margin-top:0;">🔄 4. Loops and 📦 variables</h2>' +
+
         '<table>' +
         '<tr><th>Block</th><th>What is it for?</th><th>Example in the robot</th></tr>' +
         '<tr><td class="k">🔄 REPEAT N TIMES</td><td>Doing the same thing an exact number of times</td><td>REPEAT 6 TIMES: FORWARD</td></tr>' +
@@ -117,13 +129,16 @@
         '<tr><td class="k">🔄 REPEAT WHILE…</td><td>Repeating while the sensor keeps saying yes</td><td>REPEAT WHILE there is no obstacle: FORWARD</td></tr>' +
         '<tr><td class="k">📦 VARIABLE</td><td>Storing a number under a name</td><td>objects = objects + 1</td></tr>' +
         '</table>' +
+
         '<div class="caja idea">🐞 <b>Watch out for the infinite loop!</b> Every loop needs a <strong>way to end</strong>. ' +
         '«REPEAT FOREVER: FORWARD» sends the robot straight off the schoolyard.</div>' +
 
         '<h2>📝 5. Pseudocode and 🐞 debugging</h2>' +
+
         '<p><strong>Pseudocode</strong> is the program written in <strong>plain, numbered language</strong>, before loading it ' +
         'into the robot. <strong>Debugging</strong> is testing the program step by step, finding the wrong instruction (the <strong>bug</strong>) ' +
         'and fixing it. Remember: <strong>the robot does what the program says, not what you meant to say.</strong></p>' +
+
         '<div class="pseudo"># Watering robot for the school garden 🌱\n' +
         '1. plants = 0\n' +
         '2. <b>REPEAT</b> 10 <b>TIMES</b>:\n' +
@@ -131,9 +146,12 @@
         '4.    <b>IF</b> the moisture sensor says «dry soil» <b>THEN</b> open the valve\n' +
         '5.    <b>ELSE</b> keep going\n' +
         '6.    plants = plants + 1\n' +
-        '7. STOP and report how many plants it watered</div>' +
+        '7. STOP and report how many plants it watered</div>',
 
+      /* ═══════════ PÁGINA 4 ═══════════ */
+      p4:
         '<h2>🎲 6. Unplugged activities (no computer)</h2>' +
+
         '<ul>' +
         '<li><strong>🧵 The masking-tape maze:</strong> with masking tape, mark a 5×5 grid on the classroom floor ' +
         'and lay down a <strong>black line</strong> and a few <strong>crates</strong> (boxes or backpacks). One classmate plays the ' +
@@ -167,11 +185,12 @@
         'in exactly the same way: sensors, conditionals, loops and variables. You do not need a computer to start: you need ' +
         '<strong>to think in exact steps</strong>. 💚</div>',
 
-      /* ═══════════ PÁGINA 4 ═══════════ */
-      p4:
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<h2>✍️ 7. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>The robot’s list of exact instructions is called the <span class="linea-resp"></span>.</li>' +
         '<li>The robot cycle is: read the sensors, decide, move the actuators and <span class="linea-resp"></span>.</li>' +
@@ -186,6 +205,7 @@
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>____ The program is the list of exact instructions the robot runs step by step.</li>' +
         '<li>____ The robot guesses what the programmer meant to say.</li>' +
@@ -197,10 +217,8 @@
         '<li>____ A loop that never ends causes no problem at all.</li>' +
         '<li>____ Debugging is finding and fixing the mistakes in the program.</li>' +
         '<li>____ If the final instruction is missing, the robot works out when to stop on its own.</li>' +
-        '</ol>',
+        '</ol>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
@@ -211,7 +229,10 @@
         '<span class="op"><i>c</i> its metal shell</span>' +
         '<span class="op"><i>d</i> the name its owner gave it</span>' +
         '</div>' +
-        '</div>' +
+        '</div>',
+
+      /* ═══════════ PÁGINA 6 ═══════════ */
+      p6:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>What is the cycle of a programmed robot?</div>' +
         '<div class="preg-ops">' +
@@ -221,6 +242,7 @@
         '<span class="op"><i>d</i> turn → turn → turn</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">3</span>The robot has to move forward 8 equal squares. Which block is best to use?</div>' +
         '<div class="preg-ops">' +
@@ -230,6 +252,7 @@
         '<span class="op"><i>d</i> the WAIT instruction</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">4</span>«IF the wall sensor detects an obstacle THEN turn, ELSE go forward» is…</div>' +
         '<div class="preg-ops">' +
@@ -239,6 +262,7 @@
         '<span class="op"><i>d</i> a conditional</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">5</span>What is a variable for in the program?</div>' +
         '<div class="preg-ops">' +
@@ -248,6 +272,7 @@
         '<span class="op"><i>d</i> for painting the robot</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">6</span>What is pseudocode?</div>' +
         '<div class="preg-ops">' +
@@ -257,6 +282,7 @@
         '<span class="op"><i>d</i> a special sensor</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">7</span>The robot crashed into the wall. What has to be done?</div>' +
         '<div class="preg-ops">' +
@@ -266,6 +292,7 @@
         '<span class="op"><i>d</i> switch the sensors off for good</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">8</span>Which instruction changes the robot’s direction without moving it off its square?</div>' +
         '<div class="preg-ops">' +
@@ -275,6 +302,7 @@
         '<span class="op"><i>d</i> STOP</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">9</span>Which sensor does a robot use to follow the line in the school hallway?</div>' +
         '<div class="preg-ops">' +
@@ -284,6 +312,7 @@
         '<span class="op"><i>d</i> the temperature sensor</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">10</span>A loop that never ends…</div>' +
         '<div class="preg-ops">' +
@@ -294,9 +323,10 @@
         '</div>' +
         '</div>',
 
-      /* ═══════════ PÁGINA 6 ═══════════ */
-      p6:
+      /* ═══════════ PÁGINA 7 ═══════════ */
+      p7:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Program</td><td>A. IF the sensor detects something, THEN…, ELSE…</td></tr>' +
@@ -319,6 +349,7 @@
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
+
         '<table class="rubrica">' +
         '<tr><th>Activity</th><th>Where</th><th>Value</th><th>Grade earned</th><th>Comment</th></tr>' +
         '<tr><td>Copied the contents of this material into their Robotics notebook.</td><td class="lg">Homework</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
@@ -327,12 +358,14 @@
         '<tr><td>Printed test taken in class.</td><td class="lg">Classroom assessment</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td colspan="3" style="text-align:right;font-weight:700;">Final grade average →</td><td colspan="2">&nbsp; %</td></tr>' +
         '</table>' +
+
         '<p style="font-size:9pt;color:var(--gris);">Remember that you have already learned how to work out an average: add up the total value earned and divide it by four. ' +
         'The result will be your final grade. You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
-      /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
-      p7:
+      /* ═══════════ PÁGINA 8 · HOJA SUELTA DEL DOCENTE ═══════════ */
+      p8:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +

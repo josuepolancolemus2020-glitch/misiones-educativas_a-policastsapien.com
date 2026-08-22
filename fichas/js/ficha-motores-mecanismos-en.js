@@ -44,6 +44,7 @@
         '</div>' +
 
         '<h2>🎯 Learning Objectives</h2>' +
+
         '<ol class="objetivos">' +
         '<li>Explain that the <strong>motor</strong> is the actuator that turns electrical energy into <strong>rotation</strong>.</li>' +
         '<li>Tell the <strong>DC motor</strong>, the <strong>servomotor</strong> and the <strong>gearmotor</strong> apart.</li>' +
@@ -54,15 +55,18 @@
         '</ol>' +
 
         '<h2>⚙️ 1. The motor: the actuator that provides movement</h2>' +
+
         '<p>The <strong>motor</strong> is the most important <strong>actuator</strong> in a robot: it turns the battery’s ' +
         '<strong>electrical energy</strong> into <strong>rotation</strong>. But that turning comes out ' +
         '<strong>very fast and with little force</strong>, and it is almost never useful that way. That is why the motor is connected to ' +
         '<strong>mechanisms</strong> (gears, pulleys, levers) that <strong>transmit</strong> the movement to wherever it ' +
         'is needed and <strong>transform</strong> it into the one required.</p>' +
+
         '<div class="caja truco">💡 <b>Trick:</b> the motor is the <strong>muscle</strong> and the mechanisms are the ' +
         '<strong>bones and joints</strong>. A muscle on its own lifts nothing: it needs something to push against.</div>' +
 
         '<h3>🔌📐🧰 The three motors you should know</h3>' +
+
         '<div class="ilus">' +
         '<div class="ilus-t">From the battery to the job: energy always follows the same path</div>' +
         '<div class="celula">' +
@@ -71,14 +75,16 @@
         '<div class="cn"><span class="c-emoji">🧰</span><b>Gearmotor</b>Motor + gears: it turns slower, but with far more force.</div>' +
         '</div>' +
         '<p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ The path of the energy: 🔋 battery → ⚙️ motor → 🦷 mechanism → 💪 final work.</p>' +
-        '</div>',
+        '</div>' +
+
+        '<h2 style="margin-top:0;">🦷 2. Gears: teeth that shake hands</h2>' +
+
+        '<p>A <strong>gear</strong> (or pinion) is a wheel with <strong>teeth</strong>. When the teeth of two ' +
+        'gears <strong>mesh</strong>, one drags the other along without slipping. There are <strong>two rules</strong> that never ' +
+        'fail and that you must learn by heart:</p>',
 
       /* ═══════════ PÁGINA 2 ═══════════ */
       p2:
-        '<h2 style="margin-top:0;">🦷 2. Gears: teeth that shake hands</h2>' +
-        '<p>A <strong>gear</strong> (or pinion) is a wheel with <strong>teeth</strong>. When the teeth of two ' +
-        'gears <strong>mesh</strong>, one drags the other along without slipping. There are <strong>two rules</strong> that never ' +
-        'fail and that you must learn by heart:</p>' +
         '<div class="tri">' +
         '<div class="tnuc"><b>🔄 Rule 1: the direction</b>Two gears in contact turn in <strong>opposite directions</strong>. With <strong>three</strong> gears, the first and the third turn <strong>alike</strong>: the middle one is the <strong>idler gear</strong>.</div>' +
         '<div class="torg"><b>⚖️ Rule 2: the ratio</b><strong>Small drives big</strong> = more <strong>force</strong> and less speed. <strong>Big drives small</strong> = more <strong>speed</strong> and less force.</div>' +
@@ -103,27 +109,32 @@
         '<tr><td class="k">⚙️ Equal (or with an idler)</td><td>Opposite / 1st and 3rd alike</td><td>Same</td><td>Same</td><td>Only changing the direction</td></tr>' +
         '<tr><td class="k">🌀 Worm gear</td><td>It turns the axis 90°</td><td>Very low</td><td>Very high</td><td>Corn mill, gates</td></tr>' +
         '</table>' +
+
         '<div class="caja regla">🎯 <b>Golden rule:</b> a mechanism <strong>does not create energy</strong>: it only shares it out. More ' +
         'force always costs speed, and more speed always costs force. <strong>You never win everything.</strong></div>' +
 
         '<h2>🎡 3. Pulleys and belts: the turning that travels far</h2>' +
+
         '<p>A <strong>pulley</strong> is a wheel with a <strong>groove</strong> for a rope or a ' +
         '<strong>belt</strong> to run through. With two pulleys and a belt, the turning <strong>travels a distance</strong>, without the parts ' +
         'touching each other.</p>' +
+
         '<table>' +
         '<tr><th>Setup</th><th>What does it do?</th><th>Example</th></tr>' +
         '<tr><td class="k">Open belt</td><td>Both pulleys turn in the <strong>same direction</strong></td><td>The belt of the mill</td></tr>' +
         '<tr><td class="k">Crossed belt</td><td>It <strong>reverses</strong> the direction of the turning</td><td>Workshop machines</td></tr>' +
         '<tr><td class="k">Fixed pulley</td><td>It changes the <strong>direction</strong> of the force: you pull downward</td><td>The bucket in the well</td></tr>' +
         '<tr><td class="k">Movable pulley</td><td>It helps you lift: <strong>less force</strong> is needed</td><td>The crane, the block and tackle</td></tr>' +
-        '</table>',
+        '</table>' +
+
+        '<h2 style="margin-top:0;">🪝 4. Levers and the other mechanisms</h2>' +
+
+        '<p>A <strong>lever</strong> is a <strong>rigid bar</strong> that turns on a <strong>fulcrum</strong>. ' +
+        'It multiplies a person’s force, but there is a deal: the end you push ' +
+        '<strong>travels a longer distance</strong> than the load you lift.</p>',
 
       /* ═══════════ PÁGINA 3 ═══════════ */
       p3:
-        '<h2 style="margin-top:0;">🪝 4. Levers and the other mechanisms</h2>' +
-        '<p>A <strong>lever</strong> is a <strong>rigid bar</strong> that turns on a <strong>fulcrum</strong>. ' +
-        'It multiplies a person’s force, but there is a deal: the end you push ' +
-        '<strong>travels a longer distance</strong> than the load you lift.</p>' +
         '<table>' +
         '<tr><th>Mechanism</th><th>What does it do?</th><th>Examples</th></tr>' +
         '<tr><td class="k">🪝 Lever</td><td>It multiplies the force by turning on the fulcrum</td><td>Seesaw, wheelbarrow, tongs, scissors</td></tr>' +
@@ -132,10 +143,12 @@
         '<tr><td class="k">🔁 Crank and rod</td><td>It turns <strong>rotation</strong> into <strong>back-and-forth</strong> motion</td><td>Sewing machine, saw, piston</td></tr>' +
         '<tr><td class="k">🚲 Chain and sprockets</td><td>They carry the turning over a distance without slipping</td><td>Bicycle: chainring and sprocket</td></tr>' +
         '</table>' +
+
         '<div class="caja idea">📖 <b>Key fact:</b> the <strong>fulcrum</strong> is what makes a bar into a lever. ' +
         'If you place it <strong>close to the load</strong>, you lift more weight with less force.</div>' +
 
         '<h2>🇭🇳 5. Mechanisms in real life in Honduras</h2>' +
+
         '<table>' +
         '<tr><th>Where?</th><th>Which mechanism does it use?</th><th>Force or speed?</th></tr>' +
         '<tr><td class="k">🌽 Corn mill</td><td>Crank and worm gear</td><td>Force: it turns slowly and crushes the grain</td></tr>' +
@@ -146,6 +159,7 @@
         '</table>' +
 
         '<h2>🎲 6. Unplugged activities (no computer)</h2>' +
+
         '<ul>' +
         '<li><strong>⚙️ Cardboard gears:</strong> cut out <strong>two cardboard wheels</strong>, a small one and a ' +
         'big one, and give them teeth of the same size with scissors (8 and 16, for example). Pin them onto a board so that ' +
@@ -160,18 +174,19 @@
         '<li><strong>➰ Draw the direction of rotation:</strong> in your notebook draw <strong>three gears in a row</strong> and ' +
         'paint <strong>arrows</strong> showing which way each one turns (↻ ↺ ↻). Do it again with two pulleys and an ' +
         '<strong>open</strong> belt, and then with the belt <strong>crossed</strong>. Explain in one line what changed.</li>' +
-        '</ul>' +
-
-        '<div class="caja hn">🇭🇳 <b>Engineering belongs to you too:</b> mechanisms were not invented in some faraway ' +
-        'laboratory: they are in grandmother’s mill, in the bricklayer’s wheelbarrow and in the bicycle you ride to ' +
-        'school. Anyone who learns to look for <strong>where the fulcrum is</strong> and <strong>which wheel is the big one</strong> ' +
-        'is already thinking like an engineer. Cardboard and string are all you need to start! 💚</div>',
+        '</ul>',
 
       /* ═══════════ PÁGINA 4 ═══════════ */
       p4:
+        '<div class="caja hn">🇭🇳 <b>Engineering belongs to you too:</b> mechanisms were not invented in some faraway ' +
+        'laboratory: they are in grandmother’s mill, in the bricklayer’s wheelbarrow and in the bicycle you ride to ' +
+        'school. Anyone who learns to look for <strong>where the fulcrum is</strong> and <strong>which wheel is the big one</strong> ' +
+        'is already thinking like an engineer. Cardboard and string are all you need to start! 💚</div>' +
+
         '<h2>✍️ 7. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>The motor turns electrical energy into <span class="linea-resp"></span> movement.</li>' +
         '<li>Two gears in contact turn in <span class="linea-resp"></span> directions.</li>' +
@@ -186,6 +201,7 @@
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>____ The motor turns electrical energy into movement.</li>' +
         '<li>____ Two gears that mesh their teeth turn in the same direction.</li>' +
@@ -197,10 +213,8 @@
         '<li>____ The lever needs a fulcrum in order to work.</li>' +
         '<li>____ The crank and rod turns rotation into back-and-forth motion.</li>' +
         '<li>____ The servomotor turns nonstop and never stops at an exact angle.</li>' +
-        '</ol>',
+        '</ol>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
@@ -211,7 +225,10 @@
         '<span class="op"><i>c</i> it cools the battery down</span>' +
         '<span class="op"><i>d</i> it holds up the fulcrum</span>' +
         '</div>' +
-        '</div>' +
+        '</div>',
+
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>Two gears with their teeth meshed: how do they turn?</div>' +
         '<div class="preg-ops">' +
@@ -221,6 +238,7 @@
         '<span class="op"><i>d</i> both of them upward</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">3</span>A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?</div>' +
         '<div class="preg-ops">' +
@@ -230,6 +248,7 @@
         '<span class="op"><i>d</i> it does not turn</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">4</span>A 40-tooth wheel drives a 10-tooth pinion. What happens to the pinion?</div>' +
         '<div class="preg-ops">' +
@@ -239,6 +258,7 @@
         '<span class="op"><i>d</i> it turns faster and with less force</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">5</span>In a train of THREE gears, the first and the third one…</div>' +
         '<div class="preg-ops">' +
@@ -248,6 +268,7 @@
         '<span class="op"><i>d</i> turn twice as fast</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">6</span>Which motor turns to an exact angle and stays there?</div>' +
         '<div class="preg-ops">' +
@@ -257,6 +278,7 @@
         '<span class="op"><i>d</i> the worm gear</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">7</span>What happens if the belt between two pulleys is put on crossed?</div>' +
         '<div class="preg-ops">' +
@@ -266,6 +288,7 @@
         '<span class="op"><i>d</i> the pulley gets bigger</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">8</span>What does a lever need in order to work?</div>' +
         '<div class="preg-ops">' +
@@ -275,6 +298,7 @@
         '<span class="op"><i>d</i> a fulcrum</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">9</span>Which mechanism turns rotation into back-and-forth motion?</div>' +
         '<div class="preg-ops">' +
@@ -284,6 +308,7 @@
         '<span class="op"><i>d</i> the idler gear</span>' +
         '</div>' +
         '</div>' +
+
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">10</span>To climb a steep hill on a bicycle it is best to use…</div>' +
         '<div class="preg-ops">' +
@@ -297,6 +322,7 @@
       /* ═══════════ PÁGINA 6 ═══════════ */
       p6:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Motor</td><td>A. A wheel with teeth that mesh; two in contact turn opposite ways</td></tr>' +
@@ -320,6 +346,7 @@
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
+
         '<table class="rubrica">' +
         '<tr><th>Activity</th><th>Where</th><th>Value</th><th>Grade earned</th><th>Comment</th></tr>' +
         '<tr><td>Copied the contents of this material into their Robotics notebook.</td><td class="lg">Homework</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
@@ -328,12 +355,14 @@
         '<tr><td>Printed test taken in class.</td><td class="lg">Classroom assessment</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td colspan="3" style="text-align:right;font-weight:700;">Final grade average →</td><td colspan="2">&nbsp; %</td></tr>' +
         '</table>' +
+
         '<p style="font-size:9pt;color:var(--gris);">Remember that you have already learned how to work out an average: add up the total value earned and divide it by four. ' +
         'The result will be your final grade. You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +

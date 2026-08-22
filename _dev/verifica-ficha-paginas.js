@@ -17,6 +17,12 @@
    las columnas se estiran y el texto ocupa menos alto del que ocupará
    en el papel.
 
+   Y se miran LAS DOS EDICIONES. Cinco fichas de Robótica traen
+   traducción de autor, y el motor de idioma cambia el HTML de cada hoja
+   entera: el inglés puede partirse donde el español cabe. Así estuvo
+   `ficha-robots-problemas`, con la hoja 3 saliendo en dos, sin que nadie
+   lo viera — porque esta sonda solo miraba el español.
+
    Uso:  node _dev/verifica-ficha-paginas.js                    (todas)
          node _dev/verifica-ficha-paginas.js ficha-fracciones   (una)
          node _dev/verifica-ficha-paginas.js fichas/ficha-x.html
@@ -68,31 +74,50 @@ function fichasPedidas() {
     if (declaradas === 0) { console.log(`  · ${archivo}: sin secciones .pagina, se omite`); continue; }
 
     await page.goto('file://' + abs, { waitUntil: 'load' });
-    const pdf = path.join(os.tmpdir(), archivo.replace('.html', '') + '.pdf');
-    await page.pdf({ path: pdf, format: 'Letter', printBackground: true, preferCSSPageSize: true });
 
-    // Las páginas del PDF se cuentan sin dependencias: el contador /Type /Page
-    const bin = fs.readFileSync(pdf, 'latin1');
-    const reales = (bin.match(/\/Type\s*\/Page[^s]/g) || []).length;
+    // ¿Trae edición en inglés? Entonces se cuentan las hojas de las dos.
+    const tieneEn = await page.evaluate(() => !!((window.MISION_EN || {}).html));
+    const idiomas = tieneEn ? ['es', 'en'] : ['es'];
+    let rota = false;
 
-    // ¿Cuál se desbordó? Se mide con media print Y con el ANCHO REAL del papel
-    // (la ventana del navegador es más ancha: ahí el texto ocupa menos alto y
-    // la medición miente, que es como estas fichas pasaron la revisión).
-    const altos = await page.evaluate(mm => {
-      const a = [];
-      document.querySelectorAll('.pagina').forEach((s, i) => a.push({ n: i + 1, mm: +(s.getBoundingClientRect().height / mm).toFixed(1) }));
-      return a;
-    }, MM);
-    const desbordadas = altos.filter(p => p.mm > UTIL);
+    for (const idioma of idiomas) {
+      if (idioma === 'en') {
+        await page.evaluate(() => {
+          const dic = window.MISION_EN.html;
+          document.querySelectorAll('.pagina .contenido').forEach(c => {
+            const k = c.getAttribute('data-i18n');
+            if (k && dic[k] != null) c.innerHTML = dic[k];
+          });
+        });
+      }
+      const pdf = path.join(os.tmpdir(), archivo.replace('.html', '') + '-' + idioma + '.pdf');
+      await page.pdf({ path: pdf, format: 'Letter', printBackground: true, preferCSSPageSize: true });
 
-    if (reales === declaradas && desbordadas.length === 0) {
-      console.log(`  ✔ ${archivo}: ${declaradas} páginas, ${reales} hojas`);
-    } else {
-      malas++;
-      console.log(`  ✘ ${archivo}: declara ${declaradas} páginas y el PDF trae ${reales} hojas`);
-      desbordadas.forEach(p => console.log(`      · la página ${p.n} mide ${p.mm} mm y el papel deja ${UTIL} mm: sácale contenido`));
+      // Las páginas del PDF se cuentan sin dependencias: el contador /Type /Page
+      const bin = fs.readFileSync(pdf, 'latin1');
+      const reales = (bin.match(/\/Type\s*\/Page[^s]/g) || []).length;
+
+      // ¿Cuál se desbordó? Se mide con media print Y con el ANCHO REAL del papel
+      // (la ventana del navegador es más ancha: ahí el texto ocupa menos alto y
+      // la medición miente, que es como estas fichas pasaron la revisión).
+      const altos = await page.evaluate(mm => {
+        const a = [];
+        document.querySelectorAll('.pagina').forEach((s, i) => a.push({ n: i + 1, mm: +(s.getBoundingClientRect().height / mm).toFixed(1) }));
+        return a;
+      }, MM);
+      const desbordadas = altos.filter(p => p.mm > UTIL);
+      const sello = idioma === 'en' ? ' (en inglés)' : '';
+
+      if (reales === declaradas && desbordadas.length === 0) {
+        console.log(`  ✔ ${archivo}${sello}: ${declaradas} páginas, ${reales} hojas`);
+      } else {
+        rota = true;
+        console.log(`  ✘ ${archivo}${sello}: declara ${declaradas} páginas y el PDF trae ${reales} hojas`);
+        desbordadas.forEach(p => console.log(`      · la página ${p.n} mide ${p.mm} mm y el papel deja ${UTIL} mm: sácale contenido`));
+      }
+      fs.unlinkSync(pdf);
     }
-    fs.unlinkSync(pdf);
+    if (rota) malas++;
   }
 
   await browser.close();

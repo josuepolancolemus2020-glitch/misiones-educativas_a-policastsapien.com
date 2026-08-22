@@ -42,6 +42,7 @@
         '</div>' +
 
         '<h2>🎯 Learning Objectives</h2>' +
+
         '<ol class="objetivos">' +
         '<li>Identify the <strong>parts of the basic circuit</strong>: source, wires, switch and load.</li>' +
         '<li>Explain why current needs a <strong>closed path</strong> and what an open circuit is.</li>' +
@@ -53,6 +54,7 @@
         '</ol>' +
 
         '<h2>🔌 1. The basic circuit</h2>' +
+
         '<p>An <strong>electric circuit</strong> is a <strong>closed path</strong> that current travels along. The current ' +
         'leaves one terminal of the battery, runs along the wires, goes through the load and <strong>comes back</strong> to the ' +
         'other terminal. If the path is cut at any point, <strong>nothing works</strong>.</p>' +
@@ -69,21 +71,23 @@
 
         '<div class="caja truco">💡 <b>The water trick:</b> the <strong>battery</strong> is the pump that pushes, the <strong>wires</strong> ' +
         'are the channel, the <strong>switch</strong> is the floodgate and the <strong>LED</strong> is the mill that puts the water to work. ' +
-        'If the channel breaks, the mill stops.</div>' +
-
-        '<div class="caja idea">📖 <b>Key fact:</b> electricity is a <strong>form of energy</strong>, as you learned in ' +
-        'the mission <strong>Energy</strong>. In the LED it turns into <strong>light</strong>, in the motor into ' +
-        '<strong>movement</strong> and in the buzzer into <strong>sound</strong>.</div>',
+        'If the channel breaks, the mill stops.</div>',
 
       /* ═══════════ PÁGINA 2 ═══════════ */
       p2:
+        '<div class="caja idea">📖 <b>Key fact:</b> electricity is a <strong>form of energy</strong>, as you learned in ' +
+        'the mission <strong>Energy</strong>. In the LED it turns into <strong>light</strong>, in the motor into ' +
+        '<strong>movement</strong> and in the buzzer into <strong>sound</strong>.</div>' +
+
         '<h2 style="margin-top:0;">🟢🔴 2. Closed circuit and open circuit</h2>' +
+
         '<div class="tri">' +
         '<div class="tnuc"><b>🟢 Closed — it works</b>The path is <strong>complete</strong>: the current leaves the <strong>+</strong>, goes through the load and comes back to the <strong>−</strong>. The LED lights up, the motor spins, the buzzer sounds.</div>' +
         '<div class="torg"><b>🔴 Open — it does not work</b>The path is <strong>cut</strong>: switch turned off, loose wire or a burned-out bulb in series. No current flows even with a brand-new battery.</div>' +
         '</div>' +
 
         '<h3>✏️ The symbols for drawing circuits</h3>' +
+
         '<div class="ilus">' +
         '<div class="ilus-t">This is how a basic circuit is drawn: battery, switch, resistor and LED</div>' +
         '<svg viewBox="0 0 460 150" width="430" role="img" aria-label="Basic circuit drawn with symbols">' +
@@ -109,40 +113,48 @@
         '</div>' +
 
         '<h2>➖🛣️ 3. Series circuit and parallel circuit</h2>' +
+
         '<table>' +
         '<tr><th>Connection</th><th>How many paths?</th><th>If one burns out…</th><th>Voltage</th><th>Example</th></tr>' +
         '<tr><td class="k">➖ In series</td><td>Just one</td><td class="no">They ALL go dark</td><td>They share it: they shine dimmer</td><td>Old Christmas tree lights</td></tr>' +
         '<tr><td class="k">🛣️ In parallel</td><td>One for each load</td><td class="si">The rest stay on</td><td>Each load gets all the voltage</td><td>The lights in your house</td></tr>' +
         '</table>' +
-        '<div class="caja regla">🎯 <b>Golden rule:</b> the <strong>lights in a house are wired in parallel</strong>. That is why, when the ' +
-        'living room bulb burns out, the kitchen one stays on.</div>' +
 
+        '<div class="caja regla">🎯 <b>Golden rule:</b> the <strong>lights in a house are wired in parallel</strong>. That is why, when the ' +
+        'living room bulb burns out, the kitchen one stays on.</div>',
+
+      /* ═══════════ PÁGINA 3 ═══════════ */
+      p3:
         '<h2>💪🌊🪨 4. Voltage, current and resistance</h2>' +
+
         '<table>' +
         '<tr><th>Word</th><th>What is it?</th><th>Measured in</th><th>Example</th></tr>' +
         '<tr><td class="k">💪 Voltage</td><td>The PUSH the source gives</td><td>volts (V)</td><td>AA battery = 1.5 V; wall outlet = 110 V</td></tr>' +
         '<tr><td class="k">🌊 Current</td><td>The AMOUNT of electricity going through</td><td>amperes (A)</td><td>More voltage, more current</td></tr>' +
         '<tr><td class="k">🪨 Resistance</td><td>The OBSTACLE to the flow of current</td><td>ohms (Ω)</td><td>The resistor that protects the LED</td></tr>' +
         '</table>' +
+
         '<div class="caja idea">➕➖ <b>LED polarity:</b> an LED only lights up <strong>one way round</strong>: its ' +
         '<strong>long leg</strong> goes to the <strong>+</strong> and its <strong>short leg</strong> to the <strong>−</strong>. And it always ' +
-        'carries a <strong>resistor</strong>: without one, too much current gets through and it burns out instantly.</div>',
+        'carries a <strong>resistor</strong>: without one, too much current gets through and it burns out instantly.</div>' +
 
-      /* ═══════════ PÁGINA 3 ═══════════ */
-      p3:
         '<h2 style="margin-top:0;">🟠🚫 5. Conductors and insulators</h2>' +
+
         '<p>A wire carries <strong>copper inside</strong> and <strong>plastic outside</strong>: one conducts the current and the ' +
         'other one protects us. This is how materials are sorted:</p>' +
+
         '<table>' +
         '<tr><th>Type</th><th>Does it let current through?</th><th>Examples</th><th>What is it used for?</th></tr>' +
         '<tr><td class="k">🟠 Conductor</td><td class="si">Yes</td><td>Copper, aluminum, iron, coins, water with salts</td><td>It forms the path of the circuit</td></tr>' +
         '<tr><td class="k">🚫 Insulator</td><td class="no">No</td><td>Plastic, rubber, dry wood, glass, dry cloth</td><td>It covers the wires and protects us</td></tr>' +
         '</table>' +
+
         '<div class="caja alerta">💧 <b>Careful with water!</b> Tap water, river water and even <strong>sweat</strong> ' +
         'carry <strong>salts</strong> and they do conduct electricity. That is why you <strong>never</strong> touch plugs, wires or ' +
         'appliances with <strong>wet hands</strong>.</div>' +
 
         '<h2>🦺 6. Electrical safety</h2>' +
+
         '<table>' +
         '<tr><th>✅ Do this</th><th>⛔ Never do this</th></tr>' +
         '<tr><td>Experiment only with <strong>batteries</strong> (1.5 V or 9 V)</td><td>Experiment with the <strong>110 V wall outlet</strong></td></tr>' +
@@ -150,9 +162,12 @@
         '<tr><td>Use wires whose <strong>plastic insulation</strong> is in good shape</td><td>Push wires or nails into the <strong>sockets</strong></td></tr>' +
         '<tr><td>Unplug the charger <strong>by pulling on the plug</strong></td><td>Join the two battery terminals: that is a <strong>short circuit</strong> and the battery heats up</td></tr>' +
         '<tr><td>Take <strong>used batteries</strong> to a collection point</td><td>Throw used batteries in the <strong>regular trash</strong></td></tr>' +
-        '</table>' +
+        '</table>',
 
+      /* ═══════════ PÁGINA 4 ═══════════ */
+      p4:
         '<h2>🎲 7. Unplugged activities (no computer)</h2>' +
+
         '<ul>' +
         '<li><strong>✏️ Draw the circuit:</strong> in your notebook, draw a basic circuit using the <strong>symbols</strong> ' +
         'from page 2 (battery, switch, resistor and LED) and mark the <strong>path of the current</strong> with arrows. ' +
@@ -163,6 +178,7 @@
         '<li><strong>🔎 Conductor hunters:</strong> use your circuit to test 6 objects from the classroom (nail, ruler, coin, ' +
         'eraser, key, stick) by touching them with the two wire ends. Fill in this table:</li>' +
         '</ul>' +
+
         '<table>' +
         '<tr><th style="width:34%;">Object tested</th><th>Did the bulb light up?</th><th>Conductor or insulator?</th></tr>' +
         '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
@@ -172,6 +188,7 @@
         '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '</table>' +
+
         '<ul>' +
         '<li><strong>🦺 Safety detective:</strong> walk around your home and write down <strong>3 safe practices</strong> and ' +
         '<strong>3 dangerous ones</strong> that you see with electricity. Next to each dangerous one, write how it should be fixed.</li>' +
@@ -182,11 +199,12 @@
         'charges a battery during the day and at night it lights the LEDs. And the <strong>cell phone charger</strong> turns the 110 V from the ' +
         'outlet into a small, safe voltage. Electricity, properly understood, changes the life of a community! 💚</div>',
 
-      /* ═══════════ PÁGINA 4 ═══════════ */
-      p4:
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<h2>✍️ 8. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>Current flows only if the path is <span class="linea-resp"></span>.</li>' +
         '<li>The battery is the <span class="linea-resp"></span> of energy of the circuit.</li>' +
@@ -201,6 +219,7 @@
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
+
         '<ol>' +
         '<li>____ Electric current needs a closed path in order to flow.</li>' +
         '<li>____ Dry plastic and dry wood are conductors.</li>' +
@@ -212,10 +231,8 @@
         '<li>____ Water with salts conducts electricity.</li>' +
         '<li>____ Used batteries go in the regular household trash.</li>' +
         '<li>____ A short circuit heats up the battery and can be dangerous.</li>' +
-        '</ol>',
+        '</ol>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
@@ -225,8 +242,10 @@
         '<span class="op"><i>b</i> the closed path that current flows along</span>' +
         '<span class="op"><i>c</i> a dead battery</span>' +
         '<span class="op"><i>d</i> a painted bulb</span>' +
-        '</div></div>' +
+        '</div></div>',
 
+      /* ═══════════ PÁGINA 6 ═══════════ */
+      p6:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>What are the parts of a basic circuit?</div>' +
         '<div class="preg-ops">' +
@@ -308,11 +327,12 @@
         '<span class="op"><i>d</i> water</span>' +
         '</div></div>',
 
-      /* ═══════════ PÁGINA 6 ═══════════
+      /* ═══════════ PÁGINA 7 ═══════════
          La Columna B conserva el orden del español: la pauta
          1C · 2E · 3A · 4I · 5G · 6H · 7B · 8J · 9D · 10F vale igual. */
-      p6:
+      p7:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Electric circuit</td><td>A. It opens or closes the way for the current</td></tr>' +
@@ -335,6 +355,7 @@
         '</div>' +
 
         '<h2>📏 Assessment Rubric</h2>' +
+
         '<table class="rubrica">' +
         '<tr><th>Activity</th><th>Where</th><th>Value</th><th>Grade</th><th>Comments</th></tr>' +
         '<tr><td>Copied the contents of this material into the Robotics notebook.</td><td class="lg">Homework</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
@@ -343,12 +364,14 @@
         '<tr><td>Printed test taken in class.</td><td class="lg">Classroom assessment</td><td>100</td><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td colspan="3" style="text-align:right;font-weight:700;">Final grade average →</td><td colspan="2">&nbsp; %</td></tr>' +
         '</table>' +
+
         '<p style="font-size:9pt;color:var(--gris);">Remember that you have already learned how to work out an average: add up the total value obtained and divide it by four. ' +
         'The result is your final grade. You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
-      /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
-      p7:
+      /* ═══════════ PÁGINA 8 · HOJA SUELTA DEL DOCENTE ═══════════ */
+      p8:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
