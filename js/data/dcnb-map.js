@@ -36,6 +36,7 @@ const DCNB_MAP = {
   31: { g: { 4: [6], 5: [4, 8] } },                       // Perímetro y Área de Cuadriláteros — 5º abr (cuadrados/rect.) y ago (rombo/trapecio)
   16: { g: { 5: [9, 10], 6: [4] } },                      // Área de Círculos y Polígonos — 5º sep-oct; 6º abr
   32: { g: { 6: [4] } },                                  // Área de Polígonos Regulares — abr (apotema)
+  64: { g: { 4: [9], 5: [9], 6: [9, 10] } },              // Sólidos Geométricos — 4º sep (prismas y pirámides); 5º sep (modelos); 6º sep-oct (prismas, pirámides, conos, cilindros y esferas)
 
   /* ── Español (espiral: el DCNB retoma estos ejes cada mes) ── */
   3:  { g: { 4: [], 5: [], 7: [], 8: [], 9: [] } },       // Sustantivos

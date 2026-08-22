@@ -26,6 +26,7 @@ const DIAGNOSTICOS = {
     { etapa: 3, q: '¿Cómo se llama un ángulo que mide 130°?', o: ['Agudo', 'Recto', 'Obtuso', 'Llano'], a: 2 },
     { etapa: 4, q: '¿Cuál es el área de un rectángulo de 6 × 4?', o: ['20 cm²', '24 cm²', '10 cm²', '48 cm²'], a: 1 },
     { etapa: 5, q: '¿Cuál es la fórmula del área de un polígono regular?', o: ['lado × lado', 'base × altura', '(P × apotema) ÷ 2', '4 × lado'], a: 2 },
+    { etapa: 6, q: '¿Cuántas aristas tiene un cubo?', o: ['6', '8', '12', '4'], a: 2 },
   ],
   palabra: [
     { etapa: 1, q: '¿Qué es un sustantivo?', o: ['Palabra que indica acción', 'Palabra que nombra seres y cosas', 'Palabra que describe cualidades', 'Palabra que une oraciones'], a: 1 },

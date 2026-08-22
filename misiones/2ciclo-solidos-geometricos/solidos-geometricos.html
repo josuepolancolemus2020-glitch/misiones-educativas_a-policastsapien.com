@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Sólidos Geométricos | policastsapien.com</title>
+<meta name="description" content="Misión Sólidos Geométricos: prismas, pirámides, conos, cilindros y esferas; cuenta caras, aristas y vértices, arma patrones y descubre los cuerpos de revolución con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Sólidos Geométricos">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2ciclo-solidos-geometricos/solidos-geometricos.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/solidos-geometricos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#1565c0 0%,#5e35b1 45%,#00838f 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">📦</div>
+      <div class="mascot-tooltip">¡Hola! Soy Cubo, el armador. Toda caja, lata o pelota tiene su nombre en geometría. ¡Vamos a contarles las partes!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Sólidos Geométricos</span></h1>
+      <p class="sub">¡Cuenta caras, aristas y vértices, arma patrones y descubre qué sólido sale al girar una figura! 🎯</p>
+      <div class="badge">📐 Ruta de la Forma · Etapa 6 de 7 · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔑 Del papel al espacio</h2>
+    <p style="margin-bottom:0.7rem;">Hasta ahora trabajaste con figuras <strong>planas</strong>: cuadrados, círculos, triángulos. Un <strong>sólido geométrico</strong> tiene además <strong>alto</strong>: ocupa lugar, se puede llenar y se puede agarrar. Un cuadrado se dibuja; un cubo se agarra.</p>
+    <div class="tip">
+      <span class="ti">📦</span>
+      <div><strong>Las tres partes que se cuentan:</strong> las <strong>caras</strong> (las superficies), las <strong>aristas</strong> (los filos donde se juntan dos caras) y los <strong>vértices</strong> (las esquinas donde se juntan las aristas).</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">🧊</span>
+      <div><strong>La primera división:</strong> si TODAS las caras son planas es un <strong>poliedro</strong> (cubo, prismas, pirámides). Si alguna superficie es curva es un <strong>cuerpo redondo</strong> (cilindro, cono, esfera), y por eso rueda.</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración: el cubo</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">🟦 Caras</span><span class="ds-val">6</span></div>
+        <div class="demo-arrow">los filos donde se juntan ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">📏 Aristas</span><span class="ds-val">12</span></div>
+        <div class="demo-arrow">las esquinas ↓</div>
+        <div class="demo-step ds-end"><span class="ds-label">📍 Vértices</span><span class="ds-val" style="font-size:1rem;">8 · y 6 + 8 = 12 + 2 ✔</span></div>
+      </div>
+      <p class="demo-note">✅ Una caja de zapatos tiene exactamente lo mismo que un dado: las dos son prismas rectangulares.</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Prismas, los de dos bases</h2>
+    <p style="margin-bottom:0.6rem;">Un <strong>prisma</strong> tiene <strong>dos bases iguales y paralelas</strong>, unidas por caras laterales rectangulares. Y toma el apellido de su base: si la base es un triángulo, es prisma triangular; si es un hexágono, hexagonal.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">Base de 5 lados</span>
+      <span class="ae-flecha">→ 5 caras laterales + 2 bases →</span>
+      <span class="ae-res">prisma pentagonal: <strong>7 caras</strong></span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 Una tienda de campaña con dos lados triangulares, ¿qué sólido es?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'La pirámide tiene una sola base y una punta. La tienda tiene dos triángulos iguales enfrentados.')">Pirámide triangular</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! Dos bases triangulares iguales unidas por rectángulos: prisma triangular.')">Prisma triangular</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'El cono tiene base circular y punta. La tienda tiene dos triángulos planos.')">Cono</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: Pirámides, una base y una punta</h2>
+    <p style="margin-bottom:0.6rem;">La <strong>pirámide</strong> tiene <strong>una sola base</strong> y todas sus caras laterales son <strong>triángulos</strong> que suben y se juntan arriba, en un vértice que se llama <strong>cúspide</strong>.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>📦 Prisma</h4>
+        <p>Dos bases iguales</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Caras laterales rectangulares. Se para en cualquiera de sus dos bases.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🔺 Pirámide</h4>
+        <p>Una base y una cúspide</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Caras laterales triangulares. Como las pirámides mayas de Copán.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Cuántas caras tiene en total una pirámide de base cuadrada?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Esas son solo las laterales. Falta contar la base: son 5.')">4</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! Cuatro triángulos laterales más la base cuadrada: 5 caras.')">5</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Seis caras tiene el cubo. La pirámide cuadrangular tiene 5.')">6</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: Los cuerpos redondos ruedan</h2>
+    <p style="margin-bottom:0.7rem;">El <strong>cilindro</strong> tiene dos bases circulares y una superficie curva alrededor. El <strong>cono</strong> tiene una base circular y una punta. La <strong>esfera</strong> no tiene ninguna cara plana: todos sus puntos están a la misma distancia del centro.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">🥫 lata</span>
+      <span class="ae-flecha">cilindro · 🍦 barquillo → cono ·</span>
+      <span class="ae-res">⚽ pelota → <strong>esfera</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">🔄</span>
+      <div><strong>De dónde salen:</strong> si haces girar un <strong>rectángulo</strong> sobre su eje sale un cilindro; con un <strong>triángulo</strong> sale un cono; con un <strong>semicírculo</strong>, una esfera. Por eso se llaman cuerpos de revolución.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 ¿Cuántos vértices tiene una esfera?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Una esfera no tiene ninguna esquina: es lisa por todos lados.')">Uno, el centro</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'No tiene ni dos ni uno: no tiene ninguno, porque no hay aristas que se junten.')">Dos, los polos</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! Ninguno. Sin caras planas no hay aristas, y sin aristas no hay vértices.')">Ninguno</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: El patrón, el sólido desdoblado</h2>
+    <p style="margin-bottom:0.6rem;">Si abres una caja de cartón y la aplanas, tienes su <strong>patrón</strong> (o desarrollo). Se recorta, se dobla por las líneas y se arma. Es la forma de construir sólidos sin comprar nada: con una hoja y unas tijeras.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>✅ Sí cierra</h4>
+        <p><strong>La cruz de 6 cuadrados</strong></p>
+        <p style="font-size:0.82rem;">Cuatro dan la vuelta y dos tapan arriba y abajo. Del cubo hay 11 patrones que funcionan.</p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>❌ No cierra</h4>
+        <p><strong>Los 6 en fila</strong></p>
+        <p style="font-size:0.82rem;">Al doblar se montan unos con otros y quedan huecos sin tapa. Seis cuadrados no bastan: hay que colocarlos bien.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 El patrón del cilindro está formado por…</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! Dos círculos para las bases y un rectángulo que se enrolla alrededor.')">Dos círculos y un rectángulo</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Seis cuadrados es el patrón del cubo. El cilindro lleva dos círculos y un rectángulo.')">Seis cuadrados</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Un círculo y triángulos sería otra cosa. El cilindro: dos círculos y un rectángulo enrollado.')">Un círculo y cuatro triángulos</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: La tabla que hay que saberse</h2>
+    <p style="margin-bottom:0.6rem;">Estos son los sólidos del grado con sus cuentas. Fíjate en la última columna: en los poliedros siempre se cumple que <strong>caras + vértices = aristas + 2</strong>. Sirve para comprobar si contaste bien.</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;font-size:0.82rem;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">Sólido</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">🟦 Caras</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">📏 Aristas</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">📍 Vértices</th>
+        </tr></thead>
+        <tbody>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">🧊 Cubo</td><td style="padding:0.45rem;border:1px solid var(--border);">6</td><td style="padding:0.45rem;border:1px solid var(--border);">12</td><td style="padding:0.45rem;border:1px solid var(--border);">8</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">⛺ Prisma triangular</td><td style="padding:0.45rem;border:1px solid var(--border);">5</td><td style="padding:0.45rem;border:1px solid var(--border);">9</td><td style="padding:0.45rem;border:1px solid var(--border);">6</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">🔺 Pirámide cuadrangular</td><td style="padding:0.45rem;border:1px solid var(--border);">5</td><td style="padding:0.45rem;border:1px solid var(--border);">8</td><td style="padding:0.45rem;border:1px solid var(--border);">5</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">✏️ Prisma hexagonal</td><td style="padding:0.45rem;border:1px solid var(--border);">8</td><td style="padding:0.45rem;border:1px solid var(--border);">18</td><td style="padding:0.45rem;border:1px solid var(--border);">12</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">🥫 Cilindro</td><td style="padding:0.45rem;border:1px solid var(--border);" colspan="3">cuerpo redondo: 2 bases circulares y una superficie curva</td></tr>
+        <tr><td style="padding:0.45rem;border:1px solid var(--border);font-weight:700;color:var(--sec);">⚽ Esfera</td><td style="padding:0.45rem;border:1px solid var(--border);" colspan="3">cuerpo redondo: ni caras planas, ni aristas, ni vértices</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.78rem;color:var(--gray);">⚠️ La cuenta de Euler es solo para poliedros: en el cilindro y la esfera no se aplica, porque sus superficies no son caras planas.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🧊 6 · 12 · 8</div><div class="t-info">Cubo: caras, aristas y vértices</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">📦 dos bases</div><div class="t-info">Prisma: toma el nombre de su base</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🔺 una base y cúspide</div><div class="t-info">Pirámide: caras laterales triangulares</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🥫 🍦 ⚽</div><div class="t-info">Cuerpos redondos: ruedan porque son curvos</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">✂️ patrón</div><div class="t-info">El sólido aplanado, listo para armar</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">C + V = A + 2</div><div class="t-info">La cuenta de Euler comprueba el conteo</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Confundir la figura plana con el sólido</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"Un dado es un cuadrado" o "una pelota es un círculo".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El cuadrado y el círculo son planos: se dibujan en una hoja. El dado y la pelota ocupan espacio.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>El dado es un <strong>cubo</strong> y la pelota una <strong>esfera</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Llamar poliedro al cilindro</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"El cilindro es poliedro porque tiene dos caras planas".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Sus bases sí son planas, pero la superficie de alrededor es curva. El poliedro necesita que TODAS lo sean.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>El cilindro es un <strong>cuerpo redondo</strong>, igual que el cono y la esfera ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Olvidar la base al contar las caras</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"La pirámide cuadrangular tiene 4 caras".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Se contaron los cuatro triángulos y se olvidó la base, que también es una cara.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span><strong>5 caras</strong>: cuatro laterales más la base ✔ Comprueba con Euler: 5 + 5 = 8 + 2</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Confundir prisma con pirámide</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>Llamar pirámide a la tienda de campaña con dos lados triangulares.</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Tiene DOS triángulos iguales enfrentados, no uno con punta. Cuenta las bases: esa es la pregunta que lo decide.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Es un <strong>prisma triangular</strong>: dos bases iguales ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Creer que cualquier patrón de 6 cuadrados arma un cubo</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>Recortar seis cuadrados en fila y esperar que cierren.</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Al doblar, unos se montan encima de otros y arriba y abajo quedan huecos sin tapa.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>Hay <strong>11 patrones</strong> del cubo que sí cierran, como la cruz o la T ✔ Antes de recortar, dóblalo con el dedo en el aire.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: El Armador de Patrones</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Mira el patrón desdoblado y di qué sólido se arma con él. Es lo mismo que harás con las tijeras y la cartulina. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-patron-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>🔢 Laboratorio 2: Contador de Partes</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un sólido y cuenta sus caras, aristas y vértices. La cuenta de Euler te dice al instante si contaste bien. ⭐ +2 XP por conteo completo (primeros 5)</p>
+    <div id="widget-contador-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria de los Sólidos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🧊 ¿Poliedro o Cuerpo Redondo?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece un sólido: decide su grupo mirando si todas sus caras son planas. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-grupo-interactive"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>🔄 La Máquina de Revolución</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Pon a girar una figura plana sobre su eje y adivina qué cuerpo va a barrer antes de verlo. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-revolucion-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🏠 Caza Sólidos en tu Casa</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Objetos que tienes a la mano: di qué sólido geométrico es cada uno. Después búscalos de verdad. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-caza-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Cuenta caras 🟦</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ A ES MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= SON IGUALES</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ A ES MENOR</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autóasignate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="contar">🟦 Contar caras, aristas y vértices</option>
+        <option value="euler">🧮 La cuenta de Euler</option>
+        <option value="clasifica">🧊 ¿Poliedro o cuerpo redondo?</option>
+        <option value="objeto">🏠 Objetos de la casa</option>
+        <option value="revolucion">🔄 Cuerpos por revolución</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Sólidos Geométricos · Educación Básica · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Resuélvela <strong>en línea</strong> (escribe, marca y selecciona) y presiona <strong>Calificar prueba</strong>, o imprímela para resolverla en papel. <strong>Genera una nueva evaluación cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Sólidos Geométricos · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Sólidos Geométricos</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre los sólidos geométricos, sus patrones para recortar y los cuerpos de revolución.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Sólidos Geométricos</div>
+    <div class="diploma-mascot" aria-hidden="true">📦</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/solidos-geometricos.js"></script>
+
+  <script src="js/interaccion_patron.js"></script>
+  <script src="js/interaccion_contador.js"></script>
+  <script src="js/interaccion_grupo.js"></script>
+  <script src="js/interaccion_revolucion.js"></script>
+  <script src="js/interaccion_caza.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetPatronJSON) {
+        window.WidgetPatronJSON.mount('widget-patron-interactive');
+      }
+      if (window.WidgetContadorJSON) {
+        window.WidgetContadorJSON.mount('widget-contador-interactive');
+      }
+      if (window.WidgetGrupoJSON) {
+        window.WidgetGrupoJSON.mount('widget-grupo-interactive');
+      }
+      if (window.WidgetRevolucionJSON) {
+        window.WidgetRevolucionJSON.mount('widget-revolucion-interactive');
+      }
+      if (window.WidgetCazaJSON) {
+        window.WidgetCazaJSON.mount('widget-caza-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>
