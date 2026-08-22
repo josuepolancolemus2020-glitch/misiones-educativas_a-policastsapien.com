@@ -77,14 +77,14 @@
         '<div class="cn"><span class="c-emoji">⚙️</span><b>3. Move the actuators</b>Go forward, turn, pick things up, open the water.</div>' +
         '</div>' +
         '<p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">🔄 And back to step 1: <strong>repeating</strong> is the invisible fourth step of the cycle.</p>' +
-        '</div>',
+        '</div>' +
+
+        '<h2 style="margin-top:0;">👣 2. The instructions of the program</h2>' +
+
+        '<p>The program is built out of <strong>exact instructions</strong>, one per line. These are the ones the simulator robot uses:</p>',
 
       /* ═══════════ PÁGINA 2 ═══════════ */
       p2:
-        '<h2 style="margin-top:0;">👣 2. The instructions of the program</h2>' +
-
-        '<p>The program is built out of <strong>exact instructions</strong>, one per line. These are the ones the simulator robot uses:</p>' +
-
         '<table>' +
         '<tr><th>Instruction</th><th>What does it do?</th><th>Common mistake</th></tr>' +
         '<tr><td class="k">👣 FORWARD</td><td>It moves the robot ONE square in the direction it is facing</td><td>Miscounting the squares</td></tr>' +
@@ -116,10 +116,8 @@
         '</div>' +
 
         '<div class="caja regla">🎯 <b>Golden rule:</b> every conditional must also say what to do when the answer is <strong>NO</strong> ' +
-        '(the ELSE branch). If it is missing, the robot is left «thinking» or it does something unexpected.</div>',
+        '(the ELSE branch). If it is missing, the robot is left «thinking» or it does something unexpected.</div>' +
 
-      /* ═══════════ PÁGINA 3 ═══════════ */
-      p3:
         '<h2 style="margin-top:0;">🔄 4. Loops and 📦 variables</h2>' +
 
         '<table>' +
@@ -128,8 +126,10 @@
         '<tr><td class="k">🔄 REPEAT UNTIL…</td><td>Repeating until something comes true</td><td>REPEAT UNTIL you reach the goal</td></tr>' +
         '<tr><td class="k">🔄 REPEAT WHILE…</td><td>Repeating while the sensor keeps saying yes</td><td>REPEAT WHILE there is no obstacle: FORWARD</td></tr>' +
         '<tr><td class="k">📦 VARIABLE</td><td>Storing a number under a name</td><td>objects = objects + 1</td></tr>' +
-        '</table>' +
+        '</table>',
 
+      /* ═══════════ PÁGINA 3 ═══════════ */
+      p3:
         '<div class="caja idea">🐞 <b>Watch out for the infinite loop!</b> Every loop needs a <strong>way to end</strong>. ' +
         '«REPEAT FOREVER: FORWARD» sends the robot straight off the schoolyard.</div>' +
 
@@ -146,10 +146,8 @@
         '4.    <b>IF</b> the moisture sensor says «dry soil» <b>THEN</b> open the valve\n' +
         '5.    <b>ELSE</b> keep going\n' +
         '6.    plants = plants + 1\n' +
-        '7. STOP and report how many plants it watered</div>',
+        '7. STOP and report how many plants it watered</div>' +
 
-      /* ═══════════ PÁGINA 4 ═══════════ */
-      p4:
         '<h2>🎲 6. Unplugged activities (no computer)</h2>' +
 
         '<ul>' +
@@ -178,15 +176,15 @@
         '<tr><td class="cab">5</td><td>🤖</td><td></td><td></td><td></td><td></td></tr>' +
         '</table>' +
         '<p style="font-size:9pt;color:var(--gris);margin:6px 0 0;text-align:center;">The robot 🤖 starts on A5 facing North. Which program takes it to the goal 🎯 on E1?</p>' +
-        '</div>' +
+        '</div>',
 
+      /* ═══════════ PÁGINA 4 ═══════════ */
+      p4:
         '<div class="caja hn">🇭🇳 <b>Robotics belongs to you too:</b> a robot that <strong>follows the hallway line</strong> at ' +
         'school, another one that <strong>picks up the trash in the schoolyard</strong> and another one that <strong>waters the school garden</strong> are programmed ' +
         'in exactly the same way: sensors, conditionals, loops and variables. You do not need a computer to start: you need ' +
-        '<strong>to think in exact steps</strong>. 💚</div>',
+        '<strong>to think in exact steps</strong>. 💚</div>' +
 
-      /* ═══════════ PÁGINA 5 ═══════════ */
-      p5:
         '<h2>✍️ 7. Test Yourself! Activities</h2>' +
 
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
@@ -231,8 +229,8 @@
         '</div>' +
         '</div>',
 
-      /* ═══════════ PÁGINA 6 ═══════════ */
-      p6:
+      /* ═══════════ PÁGINA 5 ═══════════ */
+      p5:
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">2</span>What is the cycle of a programmed robot?</div>' +
         '<div class="preg-ops">' +
@@ -323,8 +321,8 @@
         '</div>' +
         '</div>',
 
-      /* ═══════════ PÁGINA 7 ═══════════ */
-      p7:
+      /* ═══════════ PÁGINA 6 ═══════════ */
+      p6:
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
@@ -362,8 +360,8 @@
         '<p style="font-size:9pt;color:var(--gris);">Remember that you have already learned how to work out an average: add up the total value earned and divide it by four. ' +
         'The result will be your final grade. You will lose points if you do not finish the work, if your handwriting is not readable or if you write with spelling mistakes.</p>',
 
-      /* ═══════════ PÁGINA 8 · HOJA SUELTA DEL DOCENTE ═══════════ */
-      p8:
+      /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
+      p7:
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +

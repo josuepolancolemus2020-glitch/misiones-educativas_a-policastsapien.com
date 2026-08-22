@@ -98,8 +98,13 @@
 
   /* Cuadrícula de papel para trazar */
   table.malla { width: auto; margin: 8px auto; border-collapse: collapse; }
-  table.malla td { width: 34px; height: 34px; border: 1px solid #9aa7b5; text-align: center; font-size: 12pt; padding: 0; background: #fff; }
-  table.malla td.cab { border: none; font-size: 9pt; font-weight: 700; color: var(--rob-osc); background: none; }
+  /* La casilla es donde el alumno marca la X del recorrido: 32 px son 8,5 mm,
+     de sobra para una X y para el emoji del cajón. Y la fila de los rótulos
+     (A…E, 1…5) NO es una casilla: forzarla a cuadrada añadía 34 px de aire y
+     empujaba la cuadrícula a la hoja siguiente, que en esta ficha costaba una
+     hoja entera —43 por grado en el fotocopiado—. */
+  table.malla td { width: 34px; height: 32px; border: 1px solid #9aa7b5; text-align: center; font-size: 12pt; padding: 0; background: #fff; }
+  table.malla td.cab { border: none; height: auto; font-size: 9pt; font-weight: 700; color: var(--rob-osc); background: none; }
   table.malla td.obst { background: #ffedd5; }
   table.malla td.lin { background: #cfd8de; }
 
@@ -210,6 +215,10 @@
       <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">🔄 Y vuelve al paso 1: <strong>repetir</strong> es el cuarto paso invisible del ciclo.</p>
     </div>
 
+    <h2 style="margin-top:0;">👣 2. Las instrucciones del programa</h2>
+
+    <p>El programa se arma con <strong>instrucciones exactas</strong>, una por línea. Estas son las que usa el robot del simulador:</p>
+
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 1</span></div>
 </section>
@@ -217,10 +226,6 @@
 <!-- ═══════════ PÁGINA 2 ═══════════ -->
 <section class="pagina">
   <div class="contenido" data-i18n="p2">
-
-    <h2 style="margin-top:0;">👣 2. Las instrucciones del programa</h2>
-
-    <p>El programa se arma con <strong>instrucciones exactas</strong>, una por línea. Estas son las que usa el robot del simulador:</p>
 
     <table>
       <tr><th>Instrucción</th><th>¿Qué hace?</th><th>Error frecuente</th></tr>
@@ -255,14 +260,6 @@
     <div class="caja regla">🎯 <b>Regla de oro:</b> todo condicional debe decir también qué hacer cuando la respuesta es <strong>NO</strong>
     (la rama SINO). Si falta, el robot se queda «pensando» o hace algo inesperado.</div>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 2</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 3 ═══════════ -->
-<section class="pagina">
-  <div class="contenido" data-i18n="p3">
-
     <h2 style="margin-top:0;">🔄 4. Bucles y 📦 variables</h2>
 
     <table>
@@ -275,6 +272,14 @@
 
     <div class="caja idea">🐞 <b>¡Cuidado con el bucle infinito!</b> Todo bucle necesita una <strong>forma de terminar</strong>.
     «REPITE PARA SIEMPRE: AVANZA» hace que el robot se salga del patio.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido" data-i18n="p3">
 
     <h2>📝 5. Pseudocódigo y 🐞 depuración</h2>
 
@@ -290,14 +295,6 @@
 5.    <b>SINO</b> sigue adelante
 6.    plantas = plantas + 1
 7. DETENTE y avisa cuántas plantas regó</div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 3</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 4 ═══════════ -->
-<section class="pagina">
-  <div class="contenido" data-i18n="p4">
 
     <h2>🎲 6. Actividades desconectadas (sin computadora)</h2>
 
@@ -329,18 +326,18 @@
       <p style="font-size:9pt;color:var(--gris);margin:6px 0 0;text-align:center;">El robot 🤖 arranca en A5 mirando al Norte. ¿Qué programa lo lleva a la meta 🎯 de E1?</p>
     </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts" data-i18n="p4">
+
     <div class="caja hn">🇭🇳 <b>La robótica también es tuya:</b> un robot que <strong>sigue la línea del pasillo</strong> de la
     escuela, otro que <strong>recoge la basura del patio</strong> y otro que <strong>riega el huerto escolar</strong> se programan
     exactamente igual: sensores, condicionales, bucles y variables. No necesitas una computadora para empezar: necesitas
     <strong>pensar en pasos exactos</strong>. 💚</div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 4</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 5 ═══════════ -->
-<section class="pagina">
-  <div class="contenido acts" data-i18n="p5">
 
     <h2>✍️ 7. ¡Ponte a Prueba! Actividades</h2>
 
@@ -387,12 +384,12 @@
     </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 5</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 4</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
 <section class="pagina">
-  <div class="contenido acts" data-i18n="p6">
+  <div class="contenido acts" data-i18n="p5">
 
     <div class="preg">
       <div class="preg-q"><span class="preg-n">2</span>¿Cuál es el ciclo de un robot programado?</div>
@@ -485,12 +482,12 @@
     </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 6</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 5</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
 <section class="pagina">
-  <div class="contenido acts" data-i18n="p7">
+  <div class="contenido acts" data-i18n="p6">
 
     <h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> — Escribe en la línea la letra de la Columna B que corresponde.</h3>
 
@@ -530,12 +527,12 @@
     El resultado será su nota final. Perderá puntos si no completa el trabajo, si su letra no es legible o si escribe con faltas de ortografía.</p>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 7</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot</span><span>Página 6</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 8 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
 <section class="pagina">
-  <div class="contenido" data-i18n="p8">
+  <div class="contenido" data-i18n="p7">
 
     <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
 
@@ -572,13 +569,13 @@
     </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot · Hoja del Docente</span><span>Página 8</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Programando un Robot · Hoja del Docente</span><span>Página 7</span></div>
 </section>
 
 </div>
 
 <!-- Traducción de autor al inglés + motor de idioma (botón 🌐 EN/ES) -->
-<script src="js/ficha-programando-robot-en.js?v=50"></script>
-<script src="../js/metas-i18n.js?v=50"></script>
+<script src="js/ficha-programando-robot-en.js?v=51"></script>
+<script src="../js/metas-i18n.js?v=51"></script>
 </body>
 </html>

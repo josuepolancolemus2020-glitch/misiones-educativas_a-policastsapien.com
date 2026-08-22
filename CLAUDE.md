@@ -341,11 +341,18 @@ leyéndose bien, medidos**. No son un punto de partida para seguir
 recortando: si mañana hace falta sitio, se recorta contenido o se acepta la
 hoja, no se baja el cuerpo de la letra ni se aprieta más el renglón.
 
-La única que se quedó en ocho hojas es `ficha-programando-robot`, y no por
-el español —que cabe— sino porque **su inglés necesita tres milímetros
-más**. Los dos idiomas comparten los contenedores, así que van al mismo
-número de hojas y manda el que más pide. Antes que gastarle el colchón a las
-74 fichas por una, se queda en ocho.
+La que más costó fue `ficha-programando-robot`, y no por el español —que
+cabía— sino porque **su inglés pedía tres milímetros más**: los dos idiomas
+comparten los contenedores, así que van al mismo número de hojas y manda el
+que más pide. Esos tres milímetros NO se sacaron apretando más el CSS común:
+salieron de un error suyo. La fila de rótulos de la cuadrícula de trazado
+(A…E, 1…5) heredaba `height: 34px` de las casillas, así que un renglón de
+letras ocupaba lo que una casilla para escribir; liberarla y bajar la casilla
+de 34 a 32 px —siguen siendo 8,5 mm para marcar una X— dejó la ficha en siete
+hojas.
+
+La lección es esa: **cuando falte un milímetro, se busca el aire mal puesto
+de esa ficha, no un recorte más para las 74**.
 
 Al tocar el CSS hay que **rearmar las fichas de Fin de Grado**, que salen de
 `_dev/fin-de-grado/cabeza.html` y no se editan a mano:
