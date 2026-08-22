@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Multiplicación y División de Fracciones | policastsapien.com</title>
+<meta name="description" content="Misión Multiplicación y División de Fracciones: multiplica en línea recta, divide con el recíproco, convierte mixtas y resuelve problemas de la vida real con juegos, retos y logros. PolicastSapien.">
+<meta property="og:title" content="Misión Multiplicación y División de Fracciones">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2ciclo-fracciones-multiplicar-dividir/fracciones-multiplicar-dividir.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/fracciones-multiplicar-dividir.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
+    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Novato ✏️</span>
+</div>
+
+<header class="hero" role="banner" style="background:linear-gradient(90deg,#1565c0 0%,#00838f 45%,#e17055 100%);">
+  <div class="hero-inner">
+    <div class="hero-mascot-wrap">
+      <div class="hero-mascot" aria-hidden="true">🍕</div>
+      <div class="mascot-tooltip">¡Hola! Soy Trozo, el repartidor de pedazos. Con las fracciones no se busca denominador común: se multiplica en línea recta. ¡Vamos!</div>
+    </div>
+    <div class="hero-text">
+      <h1>Misión <span>Multiplicación y División de Fracciones</span></h1>
+      <p class="sub">¡Multiplica en línea recta, divide volteando la segunda y reparte pedazos como en la vida real! 🎯</p>
+      <div class="badge">🧭 Ruta del Número · Etapa 7 de 12 · Matemática</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<div class="sec active" id="s-predice" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔮 Predice antes de resolver</h2>
+    <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
+    <div id="prediceWidget"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
+    <span class="nsb-icon">📖</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Ahora aprende la regla!</span><span class="nsb-name">Aprende</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔑 Dos reglas y se acabó</h2>
+    <p style="margin-bottom:0.7rem;">Sumar fracciones cuesta trabajo: hay que buscar denominador común. <strong>Multiplicarlas y dividirlas es más fácil</strong>, y mucha gente no lo sabe. Con dos reglas resuelves todo lo de esta misión.</p>
+    <div class="tip">
+      <span class="ti">✖️</span>
+      <div><strong>Para multiplicar:</strong> en <strong>línea recta</strong>. Numerador por numerador arriba, denominador por denominador abajo. Aquí NO se busca denominador común: eso es cosa de la suma y la resta.</div>
+    </div>
+    <div class="tip" style="margin-top:0.5rem;">
+      <span class="ti">➗</span>
+      <div><strong>Para dividir:</strong> se voltea la <strong>segunda</strong> fracción y se multiplica. Nada más. Voltear la primera es el error que más cuesta puntos.</div>
+    </div>
+    <div class="demo-visual">
+      <div class="demo-title">🔬 Mini-demostración</div>
+      <div class="demo-steps">
+        <div class="demo-step ds-start"><span class="ds-label">Operación</span><span class="ds-val">2/3 × 4/5</span></div>
+        <div class="demo-arrow">arriba con arriba, abajo con abajo ↓</div>
+        <div class="demo-step ds-mid"><span class="ds-label">En línea recta</span><span class="ds-val">(2×4) / (3×5)</span></div>
+        <div class="demo-arrow">= </div>
+        <div class="demo-step ds-end"><span class="ds-label">Producto</span><span class="ds-val" style="font-size:1rem;">8/15, y ya está en mínima expresión</span></div>
+      </div>
+      <p class="demo-note">✅ Ni un denominador común a la vista. Si el resultado se puede reducir, se reduce: esa es la única tarea que queda.</p>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 1: Multiplicar en línea recta</h2>
+    <p style="margin-bottom:0.6rem;">Se multiplican los dos numeradores y los dos denominadores. Si uno de los factores es un <strong>número natural</strong>, se le pone denominador 1 y listo: 3 se escribe 3/1.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">3 × 2/5</span>
+      <span class="ae-flecha">→ 3/1 × 2/5 = (3×2)/(1×5) →</span>
+      <span class="ae-res"><strong>6/5</strong> (o 1 1/5)</span>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock1">
+      <p class="mq-pregunta">🤔 ¿Cuánto es 3/4 × 2/3?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,true,'¡Correcto! 3×2=6 arriba y 4×3=12 abajo: 6/12, que simplificado es 1/2.')">1/2</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Ahí sumaste los numeradores. Al multiplicar va 3×2=6 arriba y 4×3=12 abajo: 6/12 = 1/2.')">5/7</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock1',this,false,'Buscaste denominador común, que es lo de la suma. Al multiplicar: 6/12 = 1/2.')">17/12</button>
+      </div>
+      <div class="mq-fb" id="mqBlock1-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>📦 Bloque 2: El recíproco, la fracción volteada</h2>
+    <p style="margin-bottom:0.6rem;">El <strong>recíproco</strong> (o inverso) de una fracción es la misma fracción de cabeza: el de 3/4 es 4/3. Una fracción por su recíproco da siempre <strong>1</strong>, porque arriba y abajo quedan los mismos factores.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔄 Recíprocos</h4>
+        <p>3/4 → 4/3 · 7/2 → 2/7</p>
+        <p style="font-size:0.82rem;margin-top:0.3rem;">Un natural también tiene el suyo: 5 es 5/1, así que su recíproco es <strong>1/5</strong>.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>⚠️ Cuidado</h4>
+        <p>El cero <strong>no</strong> tiene recíproco</p>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Voltear 0/5 daría 5/0, y entre cero no se puede dividir.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock2">
+      <p class="mq-pregunta">🤔 ¿Cuál es el recíproco de 2/9?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ese es el mismo número. El recíproco se voltea: 9/2.')">2/9</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,true,'¡Correcto! Se voltea: 9/2. Y comprueba: 2/9 × 9/2 = 18/18 = 1.')">9/2</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock2',this,false,'Ese sería el recíproco de 2, no el de 2/9. La fracción entera se voltea: 9/2.')">1/2</button>
+      </div>
+      <div class="mq-fb" id="mqBlock2-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📦 Bloque 3: Dividir es voltear y multiplicar</h2>
+    <p style="margin-bottom:0.7rem;">Dividir entre una fracción es lo mismo que multiplicar por su recíproco. Se cambia el signo ÷ por ×, se voltea <strong>la segunda</strong> y se resuelve como una multiplicación normal.</p>
+    <div class="aprende-ejemplo">
+      <span class="ae-op">2/3 ÷ 4/5</span>
+      <span class="ae-flecha">→ cambio el signo y volteo la segunda → 2/3 × 5/4 →</span>
+      <span class="ae-res"><strong>10/12 = 5/6</strong></span>
+    </div>
+    <div class="tip" style="margin-top:0.6rem;">
+      <span class="ti">🫓</span>
+      <div><strong>Por qué funciona:</strong> 6 ÷ 1/2 pregunta cuántas mitades caben en 6 tortillas. Cada una da 2 pedazos, así que hay 12. Por eso dividir entre 1/2 es lo mismo que multiplicar por 2.</div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock3">
+      <p class="mq-pregunta">🤔 Para resolver 5/8 ÷ 3/4, ¿qué se escribe?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,true,'¡Correcto! Se voltea la SEGUNDA: 5/8 × 4/3 = 20/24 = 5/6.')">5/8 × 4/3</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Volteaste la primera. La que se voltea es la segunda: 5/8 × 4/3.')">8/5 × 3/4</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock3',this,false,'Así no se divide: hay que voltear la segunda y multiplicar, 5/8 × 4/3.')">5/8 × 3/4</button>
+      </div>
+      <div class="mq-fb" id="mqBlock3-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-blue">
+    <h2>📦 Bloque 4: Las mixtas se convierten primero</h2>
+    <p style="margin-bottom:0.6rem;">Una <strong>fracción mixta</strong> como 2 1/4 son dos cosas juntas: un entero y una fracción. Antes de multiplicar o dividir hay que volverla <strong>impropia</strong>: entero por denominador, más el numerador, sobre el mismo denominador.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-c">
+        <h4>✅ Bien</h4>
+        <p><strong>2 1/4 × 3</strong></p>
+        <p style="font-size:0.82rem;">= 9/4 × 3 = 27/4 = <strong>6 3/4</strong></p>
+      </div>
+      <div class="vs-box vs-d">
+        <h4>❌ Mal</h4>
+        <p><strong>2×3 y 1/4 aparte</strong></p>
+        <p style="font-size:0.82rem;">Daría 6 1/4 y se pierde parte del número. La mixta se convierte primero.</p>
+      </div>
+    </div>
+    <div class="mini-quiz-wrap" id="mqBlock4">
+      <p class="mq-pregunta">🤔 ¿Cómo se escribe 3 2/5 como fracción impropia?</p>
+      <div class="mq-opts">
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Ahí solo juntaste las cifras. La cuenta es (3×5+2)/5 = 17/5.')">32/5</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,false,'Ese es 3×5 sin sumar el numerador. Falta el 2: (3×5+2)/5 = 17/5.')">15/5</button>
+        <button class="mq-btn" onclick="answerMQ('mqBlock4',this,true,'¡Correcto! (3×5+2)/5 = 17/5.')">17/5</button>
+      </div>
+      <div class="mq-fb" id="mqBlock4-fb"></div>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>📦 Bloque 5: ¿Crece o encoge? Y las propiedades</h2>
+    <p style="margin-bottom:0.6rem;">Con números enteros multiplicar siempre agranda y dividir siempre achica. <strong>Con fracciones no es así</strong>, y esto sorprende a todo el mundo la primera vez. Mira la tabla y compruébalo con los ejemplos.</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-family:'Fredoka',sans-serif;margin:0.6rem 0;">
+        <thead><tr style="background:var(--pri-gl);">
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">🔍 Si operas con…</th>
+          <th style="padding:0.4rem;border:1px solid var(--border);font-size:0.72rem;">✅ El resultado…</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">× una fracción menor que 1</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">ENCOGE: 12 × 3/4 = 9</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">× una fracción mayor que 1</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">CRECE: 12 × 5/4 = 15</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">÷ una fracción menor que 1</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">CRECE: 6 ÷ 1/2 = 12</td>
+        </tr>
+        <tr>
+          <td style="padding:0.5rem;border:1px solid var(--border);font-weight:700;color:var(--pri);">× 1 (o por 4/4, 7/7…)</td>
+          <td style="padding:0.5rem;border:1px solid var(--border);">queda IGUAL: sirve para hallar equivalentes</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.85rem;margin-bottom:0.4rem;"><strong>Las propiedades siguen valiendo:</strong> el orden de los factores no cambia el producto (<em>conmutativa</em>) y al multiplicar tres fracciones puedes agruparlas como quieras (<em>asociativa</em>).</p>
+    <p style="font-size:0.78rem;color:var(--gray);">⚠️ Comprueba siempre: si el resultado se puede dividir arriba y abajo entre el mismo número, todavía no has terminado.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tipos')">
+    <span class="nsb-icon">📊</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-tipos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📊 Casos Comunes</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">2/3 × 4/5 = 8/15</div><div class="t-info">Multiplicar: en línea recta, sin denominador común</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">3 × 2/5 = 6/5</div><div class="t-info">Por un natural: se le pone denominador 1</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">3/4 → 4/3</div><div class="t-info">Recíproco: la fracción volteada</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">2/3 ÷ 4/5 = 2/3 × 5/4</div><div class="t-info">Dividir: se voltea la SEGUNDA</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">2 1/4 = 9/4</div><div class="t-info">Mixta a impropia, antes de operar</div></div>
+      <div class="type-chip tc-blue"><div class="t-art">8/12 = 2/3</div><div class="t-info">Mínima expresión: la respuesta terminada</div></div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la sección Errores Comunes" onclick="go('s-errores')">
+    <span class="nsb-icon">⚠️</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Evita los tropiezos!</span><span class="nsb-name">Errores Comunes</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-errores" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>⚠️ Errores Comunes — ¡No caigas en ellos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:1rem;">Estos son los errores que más cometen los estudiantes. Léelos, entiéndelos y ¡evítalos!</p>
+    <div class="error-cards">
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 1: Buscar denominador común para multiplicar</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"2/3 × 4/5 = 10/15 × 12/15".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>El denominador común hace falta para sumar y restar, porque no se pueden juntar partes de distinto tamaño. Al multiplicar no se juntan partes: se toma una parte de otra.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2/3 × 4/5 = <strong>8/15</strong>, en línea recta ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 2: Voltear la primera fracción al dividir</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"3/8 ÷ 2/5 = 8/3 × 2/5".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>La que se voltea es la que divide, o sea la segunda. Volteando la primera se cambia el número que se estaba repartiendo.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>3/8 ÷ 2/5 = 3/8 × <strong>5/2</strong> = 15/16 ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 3: Multiplicar una mixta por partes</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"2 1/4 × 3 = 6 1/4" (multiplicó solo el entero).</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>La mixta es un solo número: 2 enteros MÁS un cuarto. Si multiplicas solo una parte, la otra se queda sin multiplicar.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>2 1/4 = 9/4, y 9/4 × 3 = 27/4 = <strong>6 3/4</strong> ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 4: Creer que multiplicar siempre agranda</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"12 × 3/4 tiene que dar más de 12".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>Eso vale para los enteros. Multiplicar por 3/4 es quedarse con tres cuartas partes: se toma un pedazo, no se agrega nada.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>12 × 3/4 = <strong>9</strong>, menos que 12 ✔</span></div>
+        </div>
+      </div>
+
+      <div class="error-card">
+        <div class="error-header"><span class="error-icon">✖</span><span class="error-title">Error 5: Dejar el resultado sin simplificar</span></div>
+        <div class="error-body">
+          <div class="error-row"><span class="er-label wrong">Mal:</span><span>"2/3 × 3/4 = 6/12, ¡listo!".</span></div>
+          <div class="error-row"><span class="er-label why">¿Por qué está mal?</span><span>La cuenta está bien, pero la respuesta no está terminada: arriba y abajo todavía se pueden dividir entre 6.</span></div>
+          <div class="error-row"><span class="er-label correct">Correcto:</span><span>6/12 = <strong>1/2</strong>, en su mínima expresión ✔</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Laboratorio" onclick="go('s-lab')">
+    <span class="nsb-icon">🧪</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Practica lo aprendido!</span><span class="nsb-name">Laboratorio</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>🧪 Laboratorio: Los Azulejos del Producto</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Como pide el currículo: multiplicar fracciones con azulejos, viendo el área. Elige las dos fracciones y mira en la rejilla por qué el producto es lo que es. ⭐ +2 XP por ronda acertada (primeras 5)</p>
+    <div id="widget-azulejos-interactive"></div>
+  </div>
+  <div class="card ac-teal">
+    <h2>🔄 Laboratorio 2: La Máquina del Recíproco</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Mete una división, voltea la fracción correcta y la máquina la resuelve paso a paso. Si volteas la que no era, te lo dice. ⭐ +2 XP por división resuelta (primeras 5)</p>
+    <div id="widget-reciproco-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <div class="card ac-purple">
+    <h2>🧠 Juego: Memoria de las Fracciones</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
+    <div class="memo-stats" id="memoStats" aria-live="polite"></div>
+    <div class="memo-grid" id="memoGrid"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-d" onclick="resetMemo()">🔄 Mezclar de nuevo</button>
+    </div>
+    <div id="fbMemo" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✅ Verificar</button>
+      <button class="btn btn-amber" onclick="useHintQz()">💡 Pista (-2 XP)</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✅ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✅ Verificar</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🎮</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-widgets" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>📈 Radar: ¿Crece o Encoge?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece una operación: decide si el resultado será mayor o menor que el número de partida, sin calcular. El radar te enseña por qué. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-crece-interactive"></div>
+  </div>
+  <div class="card ac-blue">
+    <h2>✂️ Cancela en Cruz</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Antes de multiplicar, simplifica: toca el número de arriba y el de abajo que se pueden dividir entre lo mismo. Salen números chicos y la cuenta se hace de memoria. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-cancela-interactive"></div>
+  </div>
+  <div class="card ac-gold">
+    <h2>🔢 Mixta Exprés</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Convierte la fracción mixta en impropia antes de que se acabe el tiempo. Es el paso que más se olvida en los exámenes. ⭐ +2 XP por acierto (primeros 6)</p>
+    <div id="widget-mixta-interactive"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
+    <span class="nsb-icon">💬</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Demuestra que entendiste!</span><span class="nsb-name">Explica</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+<div class="sec" id="s-explica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>💬 Explica con tus palabras</h2>
+    <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
+    <div id="explicaContainer"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Hora del reto!</span><span class="nsb-name">Reto Final</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Producto vs entero ✖️</p>
+    <div class="game" id="gameBox" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-bar-wrap"><div class="reto-bar-fill" id="retoBarFill"></div></div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" id="retoBtn-a" onclick="ansReto('mayor')">↑ A ES MAYOR</button>
+        <button class="btn btn-g" id="retoBtn-c" onclick="ansReto('igual')">= SON IGUALES</button>
+        <button class="btn btn-sec" id="retoBtn-b" onclick="ansReto('menor')">↓ A ES MENOR</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-amber" onclick="nextRetoPair()">🔀 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🔤</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🔤 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+      <button class="btn btn-amber" onclick="sopaLinterna()">🔦 Linterna (-2 XP)</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.6rem;">Genera ejercicios nuevos cada vez: autóasignate práctica desde casa o cópialos en el pizarrón del aula. Las respuestas se muestran con 👁.</p>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="multfrac">✖️ Multiplicar fracciones</option>
+        <option value="divfrac">➗ Dividir fracciones</option>
+        <option value="mixtas">🔢 De mixta a impropia</option>
+        <option value="decantidad">🍕 La fracción de una cantidad</option>
+        <option value="simplifica">✂️ Simplificar a mínima expresión</option>
+        <option value="pensamiento">🧠 Pensamiento matemático</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">📝</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">📝 Prueba Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnOp" role="tab" aria-selected="false" onclick="evalSwitchMode('op')">📐 Prueba Operativa</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-blue">
+    <div class="eval-print-header">
+      <h2>Evaluación Final de Misión Multiplicación y División de Fracciones · Educación Básica · Matemática</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u</p>
+    </div>
+    <h2 id="eval-screen-title">📝 Evaluación Final</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">4 secciones de 25 pts c/u. Resuélvela <strong>en línea</strong> (escribe, marca y selecciona) y presiona <strong>Calificar prueba</strong>, o imprímela para resolverla en papel. <strong>Genera una nueva evaluación cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalOpWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Examen de Matemáticas — Prueba Operativa · Multiplicación y División de Fracciones · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts</p>
+    </div>
+    <h2 id="evalop-screen-title">📐 Prueba Operativa — Multiplicación y División de Fracciones</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Resuelve cada ítem en tu cuaderno y escribe la respuesta en la casilla. Presiona <strong>Calificar prueba</strong> para autoevaluarte en pantalla. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalOp()">🔄 Nueva Prueba Operativa</button>
+      <button class="btn btn-d" onclick="toggleEvalOpAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEvalOp()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEvalOp()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOpOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🏆</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>📁 Recursos del Tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:1rem;">Aquí encontrarás materiales de apoyo sobre la multiplicación y la división de fracciones, las fracciones mixtas y la simplificación.</p>
+    <a href="https://drive.google.com/drive/folders/1vUVVqFSWv-I-b_2E_e-GudZ6qjkjD8se?usp=sharing"
+       target="_blank" rel="noopener noreferrer"
+       class="btn btn-pri"
+       style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+        <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+        <path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>
+        <path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+      </svg>
+      Abrir carpeta en Google Drive
+    </a>
+  </div>
+</div>
+
+</main>
+
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Multiplicación y División de Fracciones</div>
+    <div class="diploma-mascot" aria-hidden="true">🍕</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🎮</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-explica" data-s="s-explica" onclick="go('s-explica')"><span class="ico">💬</span> Explica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🔤</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje...» 🌱</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🚀 <a href="https://policastsapien.com/" target="_blank">🌐 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔎 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/fracciones-multiplicar-dividir.js"></script>
+
+  <script src="js/interaccion_azulejos.js"></script>
+  <script src="js/interaccion_reciproco.js"></script>
+  <script src="js/interaccion_crece.js"></script>
+  <script src="js/interaccion_cancela.js"></script>
+  <script src="js/interaccion_mixta.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.WidgetAzulejosJSON) {
+        window.WidgetAzulejosJSON.mount('widget-azulejos-interactive');
+      }
+      if (window.WidgetReciprocoJSON) {
+        window.WidgetReciprocoJSON.mount('widget-reciproco-interactive');
+      }
+      if (window.WidgetCreceJSON) {
+        window.WidgetCreceJSON.mount('widget-crece-interactive');
+      }
+      if (window.WidgetCancelaJSON) {
+        window.WidgetCancelaJSON.mount('widget-cancela-interactive');
+      }
+      if (window.WidgetMixtaJSON) {
+        window.WidgetMixtaJSON.mount('widget-mixta-interactive');
+      }
+    });
+  </script>
+
+</body>
+</html>

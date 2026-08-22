@@ -27,7 +27,8 @@ const DCNB_MAP = {
   28: { g: { 5: [3] } },                                  // Múltiplos, Divisores y Primos — mar
   26: { g: { 5: [3], 6: [2] } },                          // Teoría de Números: m.c.m./M.C.D. — 5º mar; 6º feb
   25: { g: { 5: [2], 7: [5, 10] } },                      // Potencias y Raíces — 5º feb; 7º may (leyes exp.) y oct (raíces)
-  23: { g: { 4: [8], 5: [5], 6: [5, 6, 7], 7: [2, 3, 4] } }, // Fracciones — 6º suma/mult/div; 7º dentro de racionales
+  23: { g: { 4: [8], 5: [5], 6: [5], 7: [2, 3, 4] } },   // Las Fracciones — concepto, comparar, sumar y restar (la mult/div va en la 62)
+  62: { g: { 6: [5, 6, 7], 7: [2, 3, 4] } },              // Mult. y División de Fracciones — 6º may-jul; 7º dentro de racionales
   8:  { g: { 4: [6, 7], 5: [6, 7], 6: [3, 4], 7: [2, 3, 4] } }, // Números Decimales
   15: { g: { 5: [7], 6: [4] } },                          // División de Decimales — 5º entre natural; 6º entre decimal
   7:  { g: { 6: [2], 7: [9, 10] } },                      // Ángulos y Bisectriz — 6º feb; 7º sep-oct (geometría formal)
