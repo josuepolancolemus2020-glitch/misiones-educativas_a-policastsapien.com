@@ -4,6 +4,12 @@ Revisión hecha el **22 de agosto de 2026**, contra el DCNB y contra el
 catálogo de ese día: **61 misiones publicadas, de ellas 15 de Matemáticas**
 (y siguen entrando; el número de aquí es una foto, no una meta).
 
+> ✅ **Las cinco misiones de 6.º se escribieron ese mismo día** (ids 62 a 66),
+> así que hoy el catálogo va por 66 misiones y 20 de Matemáticas. Con ellas
+> **6.º grado ya no tiene ningún mes sin misión**. El resto del documento se
+> deja como se escribió, porque es el análisis de dónde estaban los huecos:
+> lo ya hecho va marcado con ✅ y lo demás sigue pendiente.
+
 **De dónde sale cada afirmación:**
 
 - el catálogo, de `js/data/misiones.js`;
@@ -23,12 +29,15 @@ Matemáticas queda así:
 
 | grado | meses con misión | **meses sin ninguna misión** |
 |---|---|---|
-| 4º | feb–ago | **sep, oct, nov** |
+| 4º | feb–sep ✅ | **oct, nov** |
 | 5º | feb–oct | **nov** |
-| **6º** | **feb–jul** | **ago, sep, oct, nov** |
+| **6º** | **feb–nov ✅** | **ninguno** |
 | 7º | feb–may, sep, oct | **jun, jul, ago, nov** |
 | 8º | — | **el año entero** |
 | 9º | — | **el año entero** |
+
+*(Lo marcado ✅ cambió con las cinco misiones del 22 de agosto: la de Sólidos
+Geométricos le tapa septiembre también a 4.º y a 5.º.)*
 
 El hueco de 6º es el que más cuesta: son **los cuatro últimos meses**, y
 justo antes de la Prueba de Fin de Grado que la Secretaría aplica al
@@ -70,7 +79,7 @@ Lo que el DCNB manda en 6º (págs. 389–393) contra lo que hay hoy:
 
 ### Las misiones que faltan en 6º
 
-1. **Multiplicación y División de Fracciones** — Ruta del Número.
+1. ✅ **Multiplicación y División de Fracciones** (id 62, publicada) — Ruta del Número.
    Es la más urgente y por dos razones. La primera: `dcnb-map.js` ya le
    asigna a *Las Fracciones* (#23) los meses **may, jun y jul de 6º** con la
    nota «suma/mult/div», pero **la misión llega hasta la resta**: el maestro
@@ -78,14 +87,14 @@ Lo que el DCNB manda en 6º (págs. 389–393) contra lo que hay hoy:
    mapa le prometió que estaba. La segunda: la Prueba de Fin de Grado de 6º
    la pide expresamente («sumar, restar, multiplicar y dividir fracciones»,
    `_dev/fin-de-grado/6to/contenido.json`).
-2. **Multiplicación de Decimales** — Ruta del Número. Hoy existe la
+2. ✅ **Multiplicación de Decimales** (id 63, publicada) — Ruta del Número. Hoy existe la
    división (#15) y no la multiplicación, que es la que va antes.
-3. **Sólidos Geométricos** — Ruta de la Forma. Cubre el Bloque 2 completo
+3. ✅ **Sólidos Geométricos** (id 64, publicada) — Ruta de la Forma. Cubre el Bloque 2 completo
    de 6º, que hoy no tiene nada más que la bisectriz.
-4. **Volumen: cubos, prismas y cilindros** — Ruta de la Forma, pegada a la
+4. ✅ **Volumen de Cuerpos: cubos, prismas y cilindros** (id 65, publicada) — Ruta de la Forma, pegada a la
    anterior. Se pueden juntar en una sola misión, pero el DCNB las trae en
    bloques distintos y separadas rinden dos etapas de ruta.
-5. **Numeración y Calendario Mayas** — Ruta del Número. Los dos temas mayas
+5. ✅ **Numeración y Calendario Mayas** (id 66, publicada) — Ruta del Número. Los dos temas mayas
    del DCNB de 6º en una sola misión, porque el calendario **es** el sistema
    de base 20 aplicado al tiempo. Ojo: la misión de Sociales *Los Mayas y
    las Culturas Precolombinas* (#43) **no** cubre la numeración vigesimal;
@@ -207,13 +216,13 @@ dentro de eso, lo que sirve a más grados:
 
 | # | misión | tapa | grados |
 |---|---|---|---|
-| 1 | Multiplicación y División de Fracciones | may–jul de 6º (hoy el mapa promete de más) | 6º, 7º |
+| ✅ | Multiplicación y División de Fracciones | may–jul de 6º | 6º, 7º |
 | 2 | Datos, Gráficas y Promedio | sep–nov de 4º, nov de 5º, el promedio de la prueba de 6º | 4º, 5º, 6º, 7º |
-| 3 | Sólidos Geométricos | ago–nov de 6º | 6º, 4º, 5º, 9º |
-| 4 | Volumen: cubos, prismas y cilindros | ago–nov de 6º | 6º, 9º |
-| 5 | Numeración y Calendario Mayas | ago–nov de 6º | 6º |
+| ✅ | Sólidos Geométricos | ago–nov de 6º | 6º, 4º, 5º, 9º |
+| ✅ | Volumen: cubos, prismas y cilindros | ago–nov de 6º | 6º, 9º |
+| ✅ | Numeración y Calendario Mayas | ago–nov de 6º | 6º |
 | 6 | División de Números Naturales | sep–nov de 4º | 4º |
-| 7 | Multiplicación de Decimales | abr de 6º | 4º, 5º, 6º |
+| ✅ | Multiplicación de Decimales | abr de 6º | 4º, 5º, 6º |
 | 8 | Medidas: longitud, peso, capacidad y tiempo | Bloque 3 de 4º | 4º, 5º |
 | 9 | Razón, Proporción y Porcentaje | jun–ago de 7º | 7º, 8º, 9º |
 | 10 | Números Enteros | 7º | 7º |
@@ -228,7 +237,20 @@ descuento).
 **Dos cosas se pueden arreglar sin escribir una misión nueva**, y valen lo
 mismo que una:
 
-- ampliar *Las Fracciones* (#23) con la multiplicación y la división, o
-  dejar de prometerlas en el comentario de `dcnb-map.js`;
-- ampliar *Perímetro y Área de Cuadriláteros* (#31) con el rombo, el
-  romboide y el trapecio, que es lo que el mapa ya dice que trae.
+- ✅ *Las Fracciones* (#23): hecho con la misión 62, y el mapa ya no promete
+  dentro de ella una multiplicación y una división que no traía;
+- **pendiente**: ampliar *Perímetro y Área de Cuadriláteros* (#31) con el
+  rombo, el romboide y el trapecio, que es lo que el mapa ya dice que trae.
+
+---
+
+## 6. Lo que queda después del 22 de agosto
+
+Con 6.º cubierto de febrero a noviembre, el hueco grande es el **III ciclo**:
+8.º y 9.º siguen sin una sola misión de Matemáticas, y 7.º sin junio, julio,
+agosto ni noviembre. En 4.º quedan octubre y noviembre, y en 5.º noviembre.
+
+De la lista de arriba siguen sin hacer, en este orden: **Datos, Gráficas y
+Promedio** (sirve a cuatro grados y al promedio que pide la Prueba de Fin de
+Grado), **División de Números Naturales** (4.º), **Medidas: longitud, peso,
+capacidad y tiempo** (4.º) y **Razón, Proporción y Porcentaje** (7.º a 9.º).
