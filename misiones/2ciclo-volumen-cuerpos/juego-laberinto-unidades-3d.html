@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌀 El Laberinto de las Unidades 3D | Misión Volumen de Cuerpos</title>
+<meta name="description" content="Recorre un laberinto en 3D y abre las puertas convirtiendo unidades cúbicas: la escalera sube y baja de mil en mil.">
+<style>
+/* ============================================================
+   Juego 3D · El Laberinto de las Unidades
+   ------------------------------------------------------------
+   El error que se repite curso tras curso: el alumno cambia de
+   cm³ a dm³ dividiendo entre 10, porque así fue con los metros y
+   los centímetros. En cúbicas la escalera va de MIL en MIL, y esa
+   corrección no entra copiando la tabla. Aquí cada puerta le pide
+   una conversión, y las respuestas equivocadas que se le ofrecen
+   son justamente ese error: ÷10 y ÷100. Equivocarse le cuesta
+   tiempo del reloj, así que la siguiente puerta la piensa.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
+  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
+.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.reloj{font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;font-weight:700;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.15rem .5rem;border-radius:9px;}
+.reloj.poco{background:rgba(224,82,82,.25);border-color:var(--rojo);color:#ffb1b1;}
+.puertas{font-size:.8rem;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 20%,#2a3352 0%,#10141f 75%);}
+/* Aquí hay DOS lienzos: el del 3D y el del minimapa. Estirar «todo
+   canvas» al 100 % le daba la pantalla entera al minimapa y tapaba
+   el laberinto: se veía el mapa de arriba y nada más. */
+#lienzo canvas:not(#minimapa){display:block;width:100%;height:100%;}
+#minimapa{position:absolute;top:.5rem;right:.5rem;width:112px;height:112px;border:2px solid rgba(201,162,39,.6);border-radius:10px;background:rgba(16,20,31,.85);}
+.pista{position:absolute;left:.5rem;top:.5rem;background:rgba(20,26,44,.88);border:1.5px solid rgba(154,165,189,.3);border-radius:10px;padding:.25rem .55rem;font-size:.74rem;color:var(--gris);max-width:52%;line-height:1.3;}
+/* mando de flechas: en un teléfono no hay teclado */
+.cruz{position:absolute;left:.6rem;bottom:.6rem;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:.25rem;}
+.fl{background:rgba(44,53,86,.9);border:2px solid rgba(201,162,39,.45);color:var(--claro);border-radius:12px;font-size:1.2rem;font-family:inherit;cursor:pointer;line-height:1;}
+.fl:active{background:var(--dorado);color:#1a1a2e;}
+.fl.n{grid-area:1/2;} .fl.o{grid-area:2/1;} .fl.e{grid-area:2/3;} .fl.s{grid-area:3/2;}
+.velo{position:absolute;inset:0;background:rgba(10,14,26,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--dorado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.preg{font-family:'Fira Code',ui-monospace,monospace;font-size:1.15rem;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.6rem .7rem;margin:.5rem 0 .8rem;word-break:break-word;}
+.ops{display:flex;flex-direction:column;gap:.4rem;}
+.op{font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;font-weight:700;padding:.6rem;border:2px solid rgba(154,165,189,.45);border-radius:12px;background:#141a2c;color:var(--claro);cursor:pointer;}
+.op:hover{border-color:var(--dorado);}
+.op:active{transform:scale(.98);}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.castigo{font-size:.84rem;color:#ffb1b1;min-height:1.15rem;margin-top:.5rem;}
+.escalera{display:flex;gap:.25rem;justify-content:center;flex-wrap:wrap;font-size:.72rem;margin:.5rem 0;}
+.escalera span{background:rgba(74,144,217,.16);border:1.5px solid rgba(74,144,217,.45);border-radius:8px;padding:.18rem .4rem;font-family:'Fira Code',ui-monospace,monospace;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;}
+.bt-p{background:var(--dorado);color:#1a1a2e;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.cruz{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,40px);}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🌀 El Laberinto de las Unidades<small id="subt">Piso 1 de 2</small></div>
+  <div class="puertas" id="puertas">🚪 0/3</div>
+  <div class="reloj" id="reloj">2:30</div>
+</div>
+
+<div id="lienzo">
+  <div class="pista" id="pista">Llega a la salida 🏁 abriendo las puertas</div>
+  <canvas id="minimapa" width="112" height="112"></canvas>
+  <div class="cruz">
+    <button class="fl n" onpointerdown="mover(0,-1)">▲</button>
+    <button class="fl o" onpointerdown="mover(-1,0)">◀</button>
+    <button class="fl e" onpointerdown="mover(1,0)">▶</button>
+    <button class="fl s" onpointerdown="mover(0,1)">▼</button>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🌀</div>
+    <h2>El Laberinto de las Unidades</h2>
+    <p>Estás dentro de la escalera de las unidades cúbicas. Camina hasta la salida 🏁, pero las puertas 🚪 solo abren si conviertes bien.</p>
+    <div class="escalera"><span>km³</span><span>×1000 ↕</span><span>m³</span><span>×1000 ↕</span><span>dm³</span><span>×1000 ↕</span><span>cm³</span><span>×1000 ↕</span><span>mm³</span></div>
+    <p style="font-size:.84rem;color:#9aa5bd;">Ojo: en las unidades cúbicas cada escalón es de <b>mil en mil</b>, no de diez en diez. Fallar una puerta te quita 15 segundos.</p>
+    <button class="bt bt-p" onclick="empezar()">Entrar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-puerta">
+  <div class="panel">
+    <h2>🚪 Puerta cerrada</h2>
+    <div class="preg" id="pt-preg"></div>
+    <div class="ops" id="pt-ops"></div>
+    <div class="castigo" id="pt-cast"></div>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🏁</div>
+    <h2 id="fin-tit">¡Saliste!</h2>
+    <p id="fin-txt"></p>
+    <div class="escalera" id="fin-esc"></div>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente piso →</button>
+    <button class="bt bt-s" onclick="reintentar()">🔄 Repetir este piso</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_laberinto_v1';
+
+/* Los pisos. El laberinto se GENERA en cada partida: si fuera
+   siempre el mismo, a la segunda vuelta el alumno se lo aprende de
+   memoria y deja de leer las puertas, que es lo único que enseña. */
+var PISOS = [
+  {n:'Piso 1 · de mil en mil', lado:11, puertas:3, seg:150},
+  {n:'Piso 2 · dos escalones', lado:15, puertas:5, seg:210}
+];
+
+/* ============================================================
+   La escalera de las unidades cúbicas
+   ============================================================ */
+var UNIDADES = ['mm³','cm³','dm³','m³','dam³','hm³','km³'];   // cada escalón, ×1000
+function nombreUnidad(i){ return UNIDADES[i]; }
+function fmtNum(x){ return Number(x).toLocaleString('es-HN'); }
+
+/* Las opciones malas NO son números al azar: son el error de
+   verdad, que es aplicar la escalera de las lineales (÷10, ÷100).
+   Una opción absurda se descarta sin pensar y no enseña nada. */
+function preguntaPuerta(dificil){
+  var saltos = dificil ? (Math.random()<0.5?1:2) : 1;
+  var desde = 1 + Math.floor(Math.random()*(UNIDADES.length-1-saltos));  // de cm³ para arriba
+  var hasta = desde + saltos;
+  var baja = Math.random() < 0.5;    // de mayor a menor (×1000) o al revés
+  var factor = Math.pow(1000, saltos);
+  var preg, buena, malas, unidadResp;
+  if(baja){
+    // de la unidad grande a la chica: se multiplica
+    var n = [2,3,4,5,7,8][Math.floor(Math.random()*6)];
+    preg = fmtNum(n)+' '+nombreUnidad(hasta)+' = ¿cuántos '+nombreUnidad(desde)+'?';
+    buena = n*factor;
+    malas = [n*Math.pow(10,saltos), n*Math.pow(100,saltos)];
+    unidadResp = nombreUnidad(desde);
+  } else {
+    // de la chica a la grande: se divide
+    var m = [2,3,4,5,6,9][Math.floor(Math.random()*6)];
+    preg = fmtNum(m*factor)+' '+nombreUnidad(desde)+' = ¿cuántos '+nombreUnidad(hasta)+'?';
+    buena = m;
+    malas = [m*Math.pow(100,saltos), m*Math.pow(10,saltos)];
+    unidadResp = nombreUnidad(hasta);
+  }
+  var ops = [{v:buena, ok:true}, {v:malas[0], ok:false}, {v:malas[1], ok:false}];
+  // sin repetidos: si un distractor coincidiera con la buena, se corre
+  var vistos = {};
+  ops = ops.filter(function(o){ if(vistos[o.v]) return false; vistos[o.v]=1; return true; });
+  while(ops.length < 3){ var extra = buena*10*(ops.length); if(!vistos[extra]){ vistos[extra]=1; ops.push({v:extra, ok:false}); } }
+  ops.sort(function(){ return Math.random()-0.5; });
+  return {preg:preg, ops:ops, buena:buena, resp:unidadResp, unidades:[nombreUnidad(desde), nombreUnidad(hasta)], saltos:saltos};
+}
+
+/* ============================================================
+   El laberinto: excavado con vuelta atrás, así siempre tiene
+   salida. Un laberinto dibujado a mano se equivoca una vez y el
+   alumno da vueltas hasta que se le acaba el reloj sin culpa suya.
+   ============================================================ */
+var MURO=1, PASO=0;
+var mapa, lado, inicio, salida, puertas = [], piso = 0, abiertas = 0;
+
+function generar(l){
+  lado = l;
+  mapa = [];
+  for(var y=0;y<l;y++){ mapa.push([]); for(var x=0;x<l;x++) mapa[y].push(MURO); }
+  var pila = [[1,1]];
+  mapa[1][1] = PASO;
+  while(pila.length){
+    var c = pila[pila.length-1], x=c[0], y=c[1];
+    var vecinos = [];
+    [[2,0],[-2,0],[0,2],[0,-2]].forEach(function(d){
+      var nx=x+d[0], ny=y+d[1];
+      if(nx>0 && ny>0 && nx<l-1 && ny<l-1 && mapa[ny][nx]===MURO) vecinos.push([nx,ny,d]);
+    });
+    if(!vecinos.length){ pila.pop(); continue; }
+    var v = vecinos[Math.floor(Math.random()*vecinos.length)];
+    mapa[y + v[2][1]/2][x + v[2][0]/2] = PASO;
+    mapa[v[1]][v[0]] = PASO;
+    pila.push([v[0], v[1]]);
+  }
+  inicio = {x:1, y:1};
+  salida = {x:l-2, y:l-2};
+  mapa[salida.y][salida.x] = PASO;
+}
+
+/* Camino más corto de la entrada a la salida: sobre él se plantan
+   las puertas, para que haya que abrirlas todas y no se puedan
+   rodear. */
+function caminoCorto(){
+  var vis = {}, cola = [[inicio.x, inicio.y]], padre = {};
+  vis[inicio.x+','+inicio.y] = true;
+  while(cola.length){
+    var c = cola.shift();
+    if(c[0]===salida.x && c[1]===salida.y) break;
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){
+      var nx=c[0]+d[0], ny=c[1]+d[1], k=nx+','+ny;
+      if(nx<0||ny<0||nx>=lado||ny>=lado) return;
+      if(mapa[ny][nx]!==PASO || vis[k]) return;
+      vis[k]=true; padre[k]=c; cola.push([nx,ny]);
+    });
+  }
+  var ruta = [], cur = [salida.x, salida.y];
+  while(cur){ ruta.unshift(cur); cur = padre[cur[0]+','+cur[1]]; }
+  return ruta;
+}
+
+function plantarPuertas(cuantas, dificil){
+  var ruta = caminoCorto();
+  puertas = [];
+  if(ruta.length < 4) return;
+  var paso = Math.max(1, Math.floor((ruta.length-2)/(cuantas+1)));
+  var puestas = {};
+  for(var i=1;i<=cuantas;i++){
+    var c = ruta[Math.min(ruta.length-2, i*paso)];
+    if(!c) continue;
+    if(c[0]===inicio.x && c[1]===inicio.y) continue;
+    var k = c[0]+','+c[1];
+    if(puestas[k]) continue;          // dos puertas en la misma celda dejarían una sin poder abrirse
+    puestas[k] = true;
+    puertas.push({x:c[0], y:c[1], abierta:false, q:preguntaPuerta(dificil)});
+  }
+}
+function puertaEn(x,y){
+  for(var i=0;i<puertas.length;i++) if(puertas[i].x===x && puertas[i].y===y) return puertas[i];
+  return null;
+}
+
+/* ============================================================
+   El escenario en 3D
+   ============================================================ */
+var esc, cam, rend, heroe, grupoMapa, grupoPuertas, seg = 0, corriendo = false, ultimo = 0;
+var pos = {x:1, y:1}, dest = null, avance = 0, gano = false;
+
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  esc.fog = new THREE.Fog(0x10141f, 9, 26);
+  cam = new THREE.PerspectiveCamera(50, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 120);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.55));
+  var l1=new THREE.DirectionalLight(0xffffff,0.7); l1.position.set(6,14,4); esc.add(l1);
+
+  grupoMapa = new THREE.Group(); esc.add(grupoMapa);
+  grupoPuertas = new THREE.Group(); esc.add(grupoPuertas);
+
+  heroe = new THREE.Group();
+  var cuerpo = new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.3,0.55,16),
+    new THREE.MeshLambertMaterial({color:0xc9a227}));
+  cuerpo.position.y = 0.42; heroe.add(cuerpo);
+  var cabeza = new THREE.Mesh(new THREE.SphereGeometry(0.22,16,12),
+    new THREE.MeshLambertMaterial({color:0xf0e2b0}));
+  cabeza.position.y = 0.86; heroe.add(cabeza);
+  esc.add(heroe);
+
+  window.addEventListener('resize', ajustar);
+  window.addEventListener('keydown', teclado);
+  animar();
+}
+
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function dibujarMapa(){
+  while(grupoMapa.children.length) grupoMapa.remove(grupoMapa.children[0]);
+  while(grupoPuertas.children.length) grupoPuertas.remove(grupoPuertas.children[0]);
+
+  var geoMuro = new THREE.BoxGeometry(1, 1.5, 1);
+  var matMuro = new THREE.MeshLambertMaterial({color:0x3b4570});
+  for(var y=0;y<lado;y++) for(var x=0;x<lado;x++){
+    if(mapa[y][x] !== MURO) continue;
+    var m = new THREE.Mesh(geoMuro, matMuro);
+    m.position.set(x, 0.75, y);
+    grupoMapa.add(m);
+  }
+  var piso3d = new THREE.Mesh(new THREE.PlaneGeometry(lado, lado),
+    new THREE.MeshLambertMaterial({color:0x1c2338}));
+  piso3d.rotation.x = -Math.PI/2;
+  piso3d.position.set(lado/2-0.5, 0, lado/2-0.5);
+  grupoMapa.add(piso3d);
+
+  var meta = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.06,0.9),
+    new THREE.MeshLambertMaterial({color:0x27ae60}));
+  meta.position.set(salida.x, 0.04, salida.y);
+  grupoMapa.add(meta);
+  var faro = new THREE.Mesh(new THREE.ConeGeometry(0.3,0.8,4),
+    new THREE.MeshLambertMaterial({color:0x27ae60}));
+  faro.position.set(salida.x, 0.5, salida.y);
+  faro.userData.faro = true;
+  grupoMapa.add(faro);
+
+  puertas.forEach(function(p){
+    var m = new THREE.Mesh(new THREE.BoxGeometry(0.96,1.3,0.96),
+      new THREE.MeshLambertMaterial({color:0xc9a227, transparent:true, opacity:0.9}));
+    m.position.set(p.x, 0.65, p.y);
+    m.userData.puerta = p;
+    grupoPuertas.add(m);
+  });
+}
+
+function seguirCamara(){
+  var px = pos.x + (dest ? (dest.x-pos.x)*avance : 0);
+  var py = pos.y + (dest ? (dest.y-pos.y)*avance : 0);
+  heroe.position.set(px, 0, py);
+  cam.position.set(px, 7.2, py + 5.4);
+  cam.lookAt(px, 0.4, py - 0.6);
+}
+
+/* ============================================================
+   Caminar
+   ============================================================ */
+function mover(dx, dy){
+  if(!corriendo || dest) return;
+  var nx = pos.x+dx, ny = pos.y+dy;
+  if(nx<0||ny<0||nx>=lado||ny>=lado) return;
+  if(mapa[ny][nx] === MURO) return;
+  var p = puertaEn(nx,ny);
+  if(p && !p.abierta){ p.rumbo = {dx:dx, dy:dy}; abrirPuerta(p); return; }
+  dest = {x:nx, y:ny}; avance = 0;
+}
+
+function teclado(e){
+  var k = e.key;
+  if(k==='ArrowUp'||k==='w'||k==='W') mover(0,-1);
+  else if(k==='ArrowDown'||k==='s'||k==='S') mover(0,1);
+  else if(k==='ArrowLeft'||k==='a'||k==='A') mover(-1,0);
+  else if(k==='ArrowRight'||k==='d'||k==='D') mover(1,0);
+  else return;
+  e.preventDefault();
+}
+
+/* ============================================================
+   La puerta
+   ============================================================ */
+var puertaActual = null;
+function abrirPuerta(p){
+  puertaActual = p;
+  document.getElementById('pt-preg').textContent = p.q.preg;
+  document.getElementById('pt-cast').textContent = '';
+  var cont = document.getElementById('pt-ops');
+  cont.innerHTML = '';
+  p.q.ops.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'op';
+    b.textContent = fmtNum(o.v)+' '+p.q.resp;
+    b.onclick = function(){ responder(o, b); };
+    cont.appendChild(b);
+  });
+  document.getElementById('velo-puerta').classList.add('ver');
+}
+
+function responder(o, boton){
+  var p = puertaActual;
+  if(o.ok){
+    boton.classList.add('buena');
+    p.abierta = true; abiertas++;
+    pintarPuertas();
+    grupoPuertas.children.forEach(function(m){
+      if(m.userData.puerta === p){ m.material.transparent = true; m.userData.abriendo = 1; }
+    });
+    setTimeout(function(){
+      document.getElementById('velo-puerta').classList.remove('ver');
+      puertaActual = null;
+      // se entra sola: obligar a tocar otra vez la misma flecha después
+      // de haber contestado bien se siente como si no hubiera abierto
+      if(p.rumbo) mover(p.rumbo.dx, p.rumbo.dy);
+    }, 380);
+  } else {
+    boton.classList.add('mala');
+    boton.disabled = true;
+    seg = Math.max(0, seg - 15);
+    var t = document.getElementById('pt-cast');
+    var u = p.q.unidades;
+    t.innerHTML = '−15 segundos. De <b>'+u[0]+'</b> a <b>'+u[1]+'</b> la escalera va de <b>mil en mil</b>'+
+      (p.q.saltos>1 ? ' y son dos escalones (×1 000 000).' : '.');
+  }
+}
+
+function pintarPuertas(){
+  document.getElementById('puertas').textContent = '🚪 '+abiertas+'/'+puertas.length;
+}
+
+/* ============================================================
+   El minimapa: sin él, en un teléfono uno se pierde en la
+   segunda esquina y abandona.
+   ============================================================ */
+function pintarMini(){
+  // el bucle de dibujo arranca ANTES de que el alumno toque «Entrar»,
+  // así que aquí todavía no hay laberinto que pintar. Sin esta línea
+  // el primer cuadro reventaba y se llevaba por delante el resto del
+  // archivo: el juego se quedaba en la portada, sin decir por qué.
+  if(!mapa || !salida) return;
+  var cv = document.getElementById('minimapa');
+  if(!cv || !cv.getContext) return;
+  var g = cv.getContext('2d');
+  var s = cv.width/lado;
+  g.clearRect(0,0,cv.width,cv.height);
+  for(var y=0;y<lado;y++) for(var x=0;x<lado;x++){
+    g.fillStyle = (mapa[y][x]===MURO) ? '#3b4570' : '#141a2c';
+    g.fillRect(x*s, y*s, s, s);
+  }
+  g.fillStyle = '#27ae60'; g.fillRect(salida.x*s, salida.y*s, s, s);
+  puertas.forEach(function(p){
+    g.fillStyle = p.abierta ? 'rgba(39,174,96,.6)' : '#c9a227';
+    g.fillRect(p.x*s, p.y*s, s, s);
+  });
+  g.fillStyle = '#ff6b6b';
+  g.beginPath(); g.arc((pos.x+0.5)*s, (pos.y+0.5)*s, s*0.45, 0, 6.3); g.fill();
+}
+
+/* ============================================================
+   El reloj
+   ============================================================ */
+function pintarReloj(){
+  var m = Math.floor(seg/60), s = Math.floor(seg%60);
+  var el = document.getElementById('reloj');
+  el.textContent = m+':'+(s<10?'0':'')+s;
+  el.classList.toggle('poco', seg <= 30);
+}
+
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  cargarPiso();
+}
+
+function cargarPiso(){
+  var p = PISOS[piso];
+  generar(p.lado);
+  plantarPuertas(p.puertas, piso > 0);
+  abiertas = 0;
+  pos = {x:inicio.x, y:inicio.y}; dest = null; avance = 0;
+  seg = p.seg; corriendo = true; gano = false;
+  document.getElementById('subt').textContent = p.n;
+  document.getElementById('pista').textContent = 'Llega a 🏁 abriendo las '+p.puertas+' puertas';
+  dibujarMapa(); pintarPuertas(); pintarReloj(); seguirCamara();
+  ultimo = 0;
+}
+
+function llegar(){
+  corriendo = false; gano = true;
+  var quedan = Math.round(seg);
+  var mejor = 0;
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE)) || {};
+    mejor = (d['mejor'+piso]|0);
+    if(quedan > mejor){ mejor = quedan; d['mejor'+piso] = quedan; }
+    d.piso = Math.max(d.piso|0, piso+1);
+    localStorage.setItem(LLAVE, JSON.stringify(d));
+  }catch(e){}
+  document.getElementById('fin-emoji').textContent = '🏁';
+  document.getElementById('fin-tit').textContent = '¡Saliste del piso '+(piso+1)+'!';
+  document.getElementById('fin-txt').textContent =
+    'Abriste '+abiertas+' puertas y te sobraron '+quedan+' segundos. Tu mejor marca aquí: '+mejor+' s.';
+  document.getElementById('fin-esc').innerHTML =
+    '<span>km³</span><span>×1000</span><span>m³</span><span>×1000</span><span>dm³</span><span>×1000</span><span>cm³</span><span>×1000</span><span>mm³</span>';
+  document.getElementById('fin-bt').textContent = (piso >= PISOS.length-1) ? '🔄 Volver al piso 1' : 'Siguiente piso →';
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function perder(){
+  corriendo = false; gano = false;
+  document.getElementById('fin-emoji').textContent = '⏳';
+  document.getElementById('fin-tit').textContent = 'Se acabó el tiempo';
+  document.getElementById('fin-txt').textContent =
+    'Te faltaron '+(puertas.length-abiertas)+' puertas. Cada error cuesta 15 segundos: piensa la escalera antes de tocar.';
+  document.getElementById('fin-esc').innerHTML =
+    '<span>de cm³ a dm³: ÷1000</span><span>de m³ a dm³: ×1000</span>';
+  document.getElementById('fin-bt').textContent = '🔄 Otra vez';
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  if(gano) piso = (piso >= PISOS.length-1) ? 0 : piso+1;
+  cargarPiso();
+}
+function reintentar(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  cargarPiso();
+}
+
+/* ============================================================
+   El bucle
+   ============================================================ */
+function animar(ahora){
+  requestAnimationFrame(animar);
+  ahora = ahora || 0;
+  if(corriendo && ultimo){ seg = Math.max(0, seg - (ahora-ultimo)/1000); pintarReloj(); }
+  ultimo = ahora;
+  if(corriendo && seg <= 0) perder();
+
+  if(dest){
+    avance = Math.min(1, avance + 0.14);
+    if(avance >= 1){
+      pos = {x:dest.x, y:dest.y}; dest = null; avance = 0;
+      if(pos.x===salida.x && pos.y===salida.y && abiertas===puertas.length) llegar();
+      else if(pos.x===salida.x && pos.y===salida.y){
+        document.getElementById('pista').textContent = 'Todavía te faltan puertas por abrir 🚪';
+      }
+    }
+  }
+  seguirCamara();
+  grupoMapa.children.forEach(function(m){ if(m.userData.faro) m.rotation.y += 0.03; });
+  grupoPuertas.children.forEach(function(m){
+    if(m.userData.abriendo){
+      m.userData.abriendo = Math.max(0, m.userData.abriendo - 0.05);
+      m.material.opacity = m.userData.abriendo * 0.9;
+      m.position.y = 0.65 + (1-m.userData.abriendo)*1.4;
+    }
+  });
+  pintarMini();
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d && d.piso) piso = Math.min(d.piso|0, PISOS.length-1); }catch(e){}
+  montar();
+  pintarReloj();
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  mover: mover,
+  empezar: empezar,
+  estado: function(){ return {piso:piso, pos:pos, abiertas:abiertas, puertas:puertas.length, seg:Math.round(seg), corriendo:corriendo}; },
+  puertas: function(){ return puertas; },
+  responderBien: function(){
+    var p = puertas.filter(function(q){ return !q.abierta; })[0];
+    if(!p) return false;
+    abrirPuerta(p);
+    var ok = p.q.ops.filter(function(o){ return o.ok; })[0];
+    responder(ok, document.createElement('button'));
+    return true;
+  },
+  pregunta: preguntaPuerta,
+  caminoCorto: function(){ return caminoCorto(); },
+  generar: function(l){ generar(l); return mapa; }
+};
+</script>
+</body>
+</html>

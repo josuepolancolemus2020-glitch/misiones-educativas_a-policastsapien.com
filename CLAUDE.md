@@ -1290,6 +1290,82 @@ todo el que deba algo lleve **su raya para escribir**. La nube no se
 toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
+## Normativa: los juegos 3D viven aparte, y no tocan la misión
+
+La misión del volumen (`misiones/2ciclo-volumen-cuerpos/`) tiene seis
+juegos en tres dimensiones, cada uno en **su propio archivo HTML,
+autocontenido**, al lado de la misión:
+
+| archivo | qué enseña |
+|---|---|
+| `juego-constructor-cubitos-3d.html` | cubo y prisma: V = l × a × h |
+| `juego-fabrica-latas-3d.html` | cilindro: V = 3.14 × r² × h |
+| `juego-desafio-tanque-3d.html` | capacidad: 1 m³ = 1 000 litros |
+| `juego-laberinto-unidades-3d.html` | la escalera cúbica, de mil en mil |
+| `juego-duelo-dimensiones-3d.html` | área (2 medidas) o volumen (3) |
+| `juego-tetris-volumen-3d.html` | sumar volúmenes y empacar |
+
+Se abren **en otra pestaña** desde el Parque de Juegos 3D de la misión y
+desde el widget de su mismo tema. Que estén aparte no es desorden: cada
+uno carga Three.js y su propio bucle de dibujo, y meterlos dentro de la
+misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **El π es 3.14**, el del libro de sexto, igual que en el resto de la
+   misión. Si la pantalla calcula con el π largo y el alumno con 3.14,
+   los números no coinciden y él cree que se equivocó. La sonda falla si
+   `Math.PI` aparece en una cuenta que ve el alumno (girar la cámara sí
+   puede usarlo: eso no lo ve nadie).
+2. **Cada juego guarda su avance en SU llave** (`j3d_cubitos_v1`,
+   `j3d_latas_v1`, `j3d_tanque_v1`, `j3d_laberinto_v1`, `j3d_duelo_v1`,
+   `j3d_tetris_v1`) y **no escribe en la de la misión**
+   (`matematica_volumen_cuerpos_v1`). La misión guarda su estado entero
+   de un golpe: un juego abierto en otra pestaña le borraría al alumno
+   el XP que acaba de ganar. La misión solo **lee** esas llaves, para
+   pintar la medalla de cada tarjeta.
+3. **Three.js se baja del CDN (r128), pero primero se mira si ya está
+   puesto** (`if (window.THREE) return listo()`). Eso es lo que permite
+   probarlos sin internet —la sonda le pone un Three.js de mentira— y lo
+   que dejaría guardar mañana una copia dentro del sitio sin tocar los
+   seis archivos.
+4. **Sin red, la pantalla lo DICE.** Un juego que se queda negro parece
+   roto y no se vuelve a abrir. El aviso promete que abriéndolo una vez
+   con señal después funciona sin ella, y eso **lo cumple `sw.js`**: la
+   rama de recursos externos ahora GUARDA lo que baja, que antes solo
+   leía de la caché. Si se toca esa rama, se rompe la promesa.
+5. **Se juega con el dedo.** Nada de `draggable` ni de teclas como único
+   mando: cruceta en pantalla en los que hace falta, y en el constructor
+   el mismo dedo gira la vista (si arrastra) o pone un cubito (si no).
+
+Y una que es de contenido: **las respuestas equivocadas que se le
+ofrecen al alumno son el error de verdad**, no números al azar. Al cubo
+se le ofrece el área de una cara y su superficie; a la conversión, el
+÷10 y el ÷100 de las unidades lineales. Un distractor absurdo se
+descarta sin pensar y no enseña nada.
+
+**Antes de publicar un cambio de los juegos 3D:**
+
+```
+node _dev/servidor-estatico.js      (en otra terminal)
+node _dev/verifica-juegos-3d.js
+```
+
+Vigila las cuentas una por una (los volúmenes, las áreas, los litros de
+los seis tanques y sesenta conversiones), que el laberinto **siempre
+tenga salida** y las puertas estén en el camino, que los cuatro pedidos
+de la fábrica **se puedan clavar** dentro del 1 % con los mandos que
+hay, que sin internet el juego avise, y que solo se usen piezas de
+Three.js que existen en r128 —un nombre mal escrito no da la cara hasta
+que el juego se abre delante del niño—. Comprueba también la misión: que
+la pestaña esté, que las seis tarjetas enlacen y que los juegos **no
+hayan escrito** en el progreso de la misión.
+
+Lo que la sonda **no** puede mirar es el dibujo en 3D: pone un Three.js
+de mentira para poder correr sin tarjeta gráfica ni internet. Que la
+pantalla se vea bien hay que mirarlo con los ojos, una vez, en el
+teléfono —que es como se prueba todo aquí—.
+
 ## Normativa: el Buzón del lector recoge, no publica
 
 `buzon.html` es una página **pública y autónoma** de M.E.T.A.S, pero lo que

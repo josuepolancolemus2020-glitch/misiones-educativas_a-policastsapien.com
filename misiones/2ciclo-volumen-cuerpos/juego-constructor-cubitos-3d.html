@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🧊 El Constructor de Cubitos 3D | Misión Volumen de Cuerpos</title>
+<meta name="description" content="Construye cubos y prismas cubito por cubito en 3D y descubre por qué el volumen es largo × ancho × alto.">
+<style>
+/* ============================================================
+   Juego 3D · El Constructor de Cubitos
+   ------------------------------------------------------------
+   La fórmula l × a × h se aprende de memoria y se olvida. Aquí
+   el alumno PONE los cubitos uno por uno: la fórmula deja de ser
+   una regla y pasa a ser lo que él acaba de hacer con las manos.
+   Por eso cada nivel empieza preguntando cuántos va a necesitar:
+   primero predice, después comprueba construyendo.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
+  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--acero); color:var(--claro);
+  font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;
+  display:flex; flex-direction:column; touch-action:none;
+}
+/* ---- barra de arriba ---- */
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
+.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.volver:hover{background:rgba(201,162,39,.15);}
+.titulo{font-size:.95rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.marcador{font-size:.8rem;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+/* ---- escenario ---- */
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 35%,#26304d 0%,#141a2c 70%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+.pista{position:absolute;left:50%;transform:translateX(-50%);bottom:.5rem;background:rgba(20,26,44,.85);border:1.5px solid rgba(154,165,189,.3);border-radius:10px;padding:.3rem .7rem;font-size:.74rem;color:var(--gris);pointer-events:none;text-align:center;max-width:92%;}
+/* ---- contador ---- */
+.cuenta{position:absolute;top:.5rem;left:.5rem;background:rgba(20,26,44,.88);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.4rem .7rem;font-size:.9rem;font-weight:700;line-height:1.35;}
+.cuenta b{color:var(--dorado);font-size:1.15rem;}
+.cuenta small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.cuenta.lleno{border-color:var(--verde);}
+.cuenta.lleno b{color:var(--verde);}
+.fuera{position:absolute;top:.5rem;right:.5rem;background:rgba(224,82,82,.9);border-radius:10px;padding:.3rem .6rem;font-size:.75rem;font-weight:700;display:none;max-width:45%;line-height:1.25;}
+/* ---- herramientas ---- */
+.barra{display:flex;gap:.4rem;padding:.5rem;background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);flex-shrink:0;overflow-x:auto;}
+.herr{flex:1;min-width:62px;background:#2c3556;border:2px solid transparent;color:var(--claro);border-radius:12px;padding:.45rem .3rem;font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer;line-height:1.3;}
+.herr .ico{display:block;font-size:1.25rem;}
+.herr.on{border-color:var(--dorado);background:rgba(201,162,39,.22);color:var(--dorado);}
+.herr:active{transform:scale(.95);}
+/* ---- ventanas ---- */
+.velo{position:absolute;inset:0;background:rgba(10,14,26,.93);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:420px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.15rem;margin-bottom:.5rem;color:var(--dorado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.medidas{display:flex;gap:.4rem;justify-content:center;margin:.7rem 0;flex-wrap:wrap;}
+.medida{background:rgba(74,144,217,.18);border:1.5px solid var(--azul);border-radius:10px;padding:.35rem .6rem;font-size:.8rem;}
+.medida b{display:block;font-size:1.2rem;color:var(--azul);}
+.casilla{width:130px;padding:.55rem;font-size:1.3rem;text-align:center;font-family:inherit;font-weight:700;border:2px solid var(--azul);border-radius:12px;background:#141a2c;color:var(--claro);margin-bottom:.6rem;}
+.bt{font-family:inherit;font-size:.92rem;font-weight:700;padding:.6rem 1.2rem;border:none;border-radius:14px;cursor:pointer;margin:.2rem;}
+.bt-p{background:var(--dorado);color:#1a1a2e;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.96);}
+.aviso{font-size:.85rem;min-height:1.3rem;margin-bottom:.5rem;line-height:1.4;}
+.aviso.mal{color:#ff9c9c;}
+.aviso.bien{color:#7ee2a8;}
+.estrellas{font-size:2rem;letter-spacing:.15rem;margin-bottom:.4rem;}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.5rem .7rem;font-size:.95rem;margin:.6rem 0;text-align:left;}
+.pasos{list-style:none;text-align:left;font-size:.82rem;color:#c6d0e4;line-height:1.6;margin:.4rem 0 .7rem;}
+.pasos li{margin-bottom:.15rem;}
+@media(max-width:380px){.titulo{font-size:.85rem;}.herr{font-size:.66rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🧊 El Constructor de Cubitos<small id="subt">Nivel 1 de 5</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="cuenta" id="cuenta"><b>0</b> cubitos<small>faltan 8</small></div>
+  <div class="fuera" id="fuera">⚠️ 1 cubito fuera de la caja</div>
+  <div class="pista" id="pista">Toca el piso o la cara de un cubito para poner otro encima</div>
+</div>
+
+<div class="barra">
+  <button class="herr on" id="h-mas"  onclick="modo('poner')"><span class="ico">➕</span>Agregar</button>
+  <button class="herr"    id="h-menos"onclick="modo('quitar')"><span class="ico">➖</span>Quitar</button>
+  <button class="herr"    onclick="girar()"><span class="ico">🔄</span>Rotar</button>
+  <button class="herr"    onclick="limpiar()"><span class="ico">🗑️</span>Limpiar</button>
+  <button class="herr"    onclick="verPlan()"><span class="ico">📐</span>Medidas</button>
+</div>
+
+<!-- predicción: primero se piensa, después se construye -->
+<div class="velo ver" id="velo-pred">
+  <div class="panel">
+    <h2 id="pred-tit">Nivel 1 · El cubo pequeño</h2>
+    <p id="pred-txt">Antes de poner el primer cubito: ¿cuántos cubitos de 1 cm³ te van a caber aquí?</p>
+    <div class="medidas" id="pred-med"></div>
+    <div class="formula" id="pred-form">V = largo × ancho × alto</div>
+    <input class="casilla" id="pred-in" type="number" inputmode="numeric" min="1" placeholder="?">
+    <div class="aviso" id="pred-av"></div>
+    <button class="bt bt-p" onclick="revisarPred()">Comprobar</button>
+    <button class="bt bt-s" onclick="rendirsePred()">No sé, muéstrame</button>
+  </div>
+</div>
+
+<!-- nivel logrado -->
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2 id="fin-tit">¡Caja llena!</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente nivel →</button>
+  </div>
+</div>
+
+<!-- sin internet la primera vez -->
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   1) La pieza de 3D se baja de la red, pero si alguien ya la
+      dejó puesta (window.THREE) se usa esa: así el juego se
+      puede probar sin salir a internet y mañana se puede
+      guardar una copia dentro del sitio sin tocar nada más.
+   ============================================================ */
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s = document.createElement('script');
+  s.src = CDN3D;
+  s.onload = function(){ window.THREE ? listo() : falla(); };
+  s.onerror = falla;
+  document.head.appendChild(s);
+}
+
+/* ============================================================
+   2) Los cinco niveles. Van de un cubo de 2 a un prisma de 40
+      cubitos: el salto de "los cuento uno por uno" a "mejor los
+      multiplico" tiene que dolerle un poco al alumno, que es
+      cuando la fórmula le sirve de verdad.
+   ============================================================ */
+var NIVELES = [
+  {n:'El cubo pequeño',      l:2, a:2, h:2, nota:'Un cubo tiene sus tres medidas iguales.'},
+  {n:'La caja de fósforos',  l:3, a:2, h:2, nota:'Ya no es un cubo: es un prisma rectangular.'},
+  {n:'La caja de zapatos',   l:4, a:3, h:2, nota:'Fíjate en las capas: cada capa tiene largo × ancho.'},
+  {n:'El cubo de Rubik',     l:3, a:3, h:3, nota:'Tres capas de 9 cubitos cada una.'},
+  {n:'La bodega',            l:5, a:4, h:2, nota:'Contarlos uno por uno ya cansa. Multiplícalos.'}
+];
+var LLAVE = 'j3d_cubitos_v1';
+var GRID = 8;              // el piso, en cubitos de lado
+var ANCLA = {x:1, z:1};    // esquina donde arranca la caja objetivo
+
+var esc, cam, rend, luzDir, grupoCubos, ghost, piso, rayo, raton;
+var nivel = 0, puestos = {}, estrellas = 0, modoActual = 'poner', anguloCam = 0, radioCam = 14, alturaCam = 10;
+var listoParaJugar = false;
+
+/* --- guardado: cada juego con su propia llave, sin tocar la de la misión --- */
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel = Math.min(d.nivel|0, NIVELES.length-1); estrellas = d.estrellas|0; } }catch(e){} }
+
+function objetivo(){ var v = NIVELES[nivel]; return v.l * v.a * v.h; }
+function clave(x,y,z){ return x+','+y+','+z; }
+function dentroObjetivo(x,y,z){
+  var v = NIVELES[nivel];
+  return x>=ANCLA.x && x<ANCLA.x+v.l && z>=ANCLA.z && z<ANCLA.z+v.a && y>=0 && y<v.h;
+}
+
+/* ============================================================
+   3) El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  esc.fog = new THREE.Fog(0x141a2c, 22, 46);
+
+  cam = new THREE.PerspectiveCamera(46, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 200);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.62));
+  luzDir = new THREE.DirectionalLight(0xffffff, 0.75);
+  luzDir.position.set(8, 16, 10);
+  esc.add(luzDir);
+
+  // el piso: una rejilla de cubitos, para que se vea que la unidad es 1 cm
+  var g = new THREE.GridHelper(GRID, GRID, 0x4a90d9, 0x37406b);
+  g.position.set(0, 0, 0);
+  esc.add(g);
+
+  piso = new THREE.Mesh(
+    new THREE.PlaneGeometry(GRID, GRID),
+    new THREE.MeshBasicMaterial({visible:false})
+  );
+  piso.rotation.x = -Math.PI/2;
+  esc.add(piso);
+
+  grupoCubos = new THREE.Group();
+  esc.add(grupoCubos);
+
+  rayo = new THREE.Raycaster();
+  raton = new THREE.Vector2();
+
+  ponerGhost();
+  colocarCamara();
+  eventos();
+  animar();
+  window.addEventListener('resize', ajustar);
+}
+
+function ajustar(){
+  var cont = document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function colocarCamara(){
+  cam.position.set(Math.cos(anguloCam)*radioCam, alturaCam, Math.sin(anguloCam)*radioCam);
+  cam.lookAt(0, 1.2, 0);
+}
+
+/* La caja objetivo se dibuja como un fantasma: se ve dónde hay
+   que llenar sin que tape los cubitos que ya se pusieron. */
+function ponerGhost(){
+  if(ghost){ esc.remove(ghost); ghost = null; }
+  var v = NIVELES[nivel];
+  ghost = new THREE.Group();
+  var caja = new THREE.Mesh(
+    new THREE.BoxGeometry(v.l, v.h, v.a),
+    new THREE.MeshBasicMaterial({color:0xc9a227, transparent:true, opacity:0.10})
+  );
+  var bordes = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(v.l, v.h, v.a)),
+    new THREE.LineBasicMaterial({color:0xc9a227})
+  );
+  ghost.add(caja); ghost.add(bordes);
+  ghost.position.set(centroX(v.l), v.h/2, centroZ(v.a));
+  esc.add(ghost);
+}
+function centroX(l){ return (ANCLA.x + l/2) - GRID/2; }
+function centroZ(a){ return (ANCLA.z + a/2) - GRID/2; }
+function posDe(x,y,z){ return new THREE.Vector3(x + 0.5 - GRID/2, y + 0.5, z + 0.5 - GRID/2); }
+
+/* ============================================================
+   4) Poner y quitar cubitos
+   ============================================================ */
+function nuevoCubo(x,y,z){
+  var fuera = !dentroObjetivo(x,y,z);
+  var mat = new THREE.MeshLambertMaterial({color: fuera ? 0x7c6f9e : 0x4a90d9});
+  var m = new THREE.Mesh(new THREE.BoxGeometry(0.96,0.96,0.96), mat);
+  var p = posDe(x,y,z);
+  m.position.copy(p);
+  m.userData = {x:x, y:y, z:z};
+  // aparece creciendo: el cubito "cae" en su sitio y se nota que se puso
+  m.scale.set(0.1,0.1,0.1);
+  m.userData.crece = 0;
+  var borde = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(0.96,0.96,0.96)),
+    new THREE.LineBasicMaterial({color: fuera ? 0xb9a7e8 : 0x9fd0ff})
+  );
+  m.add(borde);
+  grupoCubos.add(m);
+  puestos[clave(x,y,z)] = m;
+}
+
+function ponerCubo(x,y,z){
+  if(x<0||z<0||x>=GRID||z>=GRID||y<0||y>=GRID) return false;
+  if(puestos[clave(x,y,z)]) return false;
+  nuevoCubo(x,y,z);
+  pintarCuenta();
+  revisarLleno();
+  return true;
+}
+
+function quitarCubo(m){
+  var d = m.userData;
+  grupoCubos.remove(m);
+  delete puestos[clave(d.x,d.y,d.z)];
+  pintarCuenta();
+}
+
+function limpiar(){
+  Object.keys(puestos).forEach(function(k){ grupoCubos.remove(puestos[k]); });
+  puestos = {};
+  pintarCuenta();
+}
+
+function modo(m){
+  modoActual = m;
+  document.getElementById('h-mas').classList.toggle('on', m==='poner');
+  document.getElementById('h-menos').classList.toggle('on', m==='quitar');
+  document.getElementById('pista').textContent = (m==='poner')
+    ? 'Toca el piso o la cara de un cubito para poner otro encima'
+    : 'Toca un cubito para quitarlo';
+}
+
+function girar(){ anguloCam += Math.PI/4; colocarCamara(); }
+
+/* ============================================================
+   5) La cuenta, que es lo que enseña
+   ============================================================ */
+function dentroYFuera(){
+  var d = 0, f = 0;
+  Object.keys(puestos).forEach(function(k){
+    var u = puestos[k].userData;
+    dentroObjetivo(u.x,u.y,u.z) ? d++ : f++;
+  });
+  return {dentro:d, fuera:f};
+}
+
+function pintarCuenta(){
+  var c = dentroYFuera(), meta = objetivo();
+  var el = document.getElementById('cuenta');
+  var faltan = meta - c.dentro;
+  el.innerHTML = '<b>'+c.dentro+'</b> de '+meta+' cubitos<small>'+
+    (faltan>0 ? 'faltan '+faltan : (faltan===0 ? '¡la caja está llena!' : '')) +'</small>';
+  el.classList.toggle('lleno', faltan===0 && c.fuera===0);
+  var fu = document.getElementById('fuera');
+  if(c.fuera>0){
+    fu.style.display='block';
+    fu.textContent = '⚠️ '+c.fuera+(c.fuera===1?' cubito fuera':' cubitos fuera')+' de la caja';
+  } else fu.style.display='none';
+}
+
+function revisarLleno(){
+  var c = dentroYFuera();
+  if(c.dentro === objetivo() && c.fuera === 0) ganar();
+}
+
+/* ============================================================
+   6) Predicción: primero la cuenta, después las manos
+   ============================================================ */
+function abrirPred(){
+  var v = NIVELES[nivel];
+  document.getElementById('pred-tit').textContent = 'Nivel '+(nivel+1)+' · '+v.n;
+  document.getElementById('pred-med').innerHTML =
+    '<div class="medida">largo<b>'+v.l+'</b>cm</div>'+
+    '<div class="medida">ancho<b>'+v.a+'</b>cm</div>'+
+    '<div class="medida">alto<b>'+v.h+'</b>cm</div>';
+  document.getElementById('pred-form').textContent = 'V = largo × ancho × alto = ? cm³';
+  document.getElementById('pred-in').value = '';
+  document.getElementById('pred-av').textContent = '';
+  document.getElementById('pred-av').className = 'aviso';
+  document.getElementById('velo-pred').classList.add('ver');
+  document.getElementById('subt').textContent = 'Nivel '+(nivel+1)+' de '+NIVELES.length+' · '+v.n;
+  setTimeout(function(){ document.getElementById('pred-in').focus(); }, 120);
+}
+
+function revisarPred(){
+  var v = NIVELES[nivel], meta = objetivo();
+  var r = parseInt(document.getElementById('pred-in').value, 10);
+  var av = document.getElementById('pred-av');
+  if(isNaN(r)){ av.className='aviso mal'; av.textContent='Escribe un número.'; return; }
+  if(r === meta){
+    av.className='aviso bien';
+    av.textContent='¡Exacto! '+v.l+' × '+v.a+' × '+v.h+' = '+meta+' cubitos. Ahora constrúyela.';
+    estrellas += 2; pintarMarcador(); guardar();
+    setTimeout(cerrarPred, 1100);
+  } else {
+    av.className='aviso mal';
+    av.textContent = (r > meta ? 'Te pasaste. ' : 'Te quedaste corto. ') +
+      'Cuenta una capa: '+v.l+' × '+v.a+' = '+(v.l*v.a)+' cubitos, y hay '+v.h+' capas.';
+  }
+}
+
+function rendirsePred(){
+  var v = NIVELES[nivel];
+  var av = document.getElementById('pred-av');
+  av.className='aviso';
+  av.innerHTML = 'Cada capa lleva '+v.l+' × '+v.a+' = <b>'+(v.l*v.a)+'</b> cubitos, y son '+v.h+' capas: <b>'+objetivo()+'</b>.';
+  document.getElementById('pred-in').value = objetivo();
+}
+
+function cerrarPred(){
+  document.getElementById('velo-pred').classList.remove('ver');
+  listoParaJugar = true;
+}
+
+function verPlan(){ if(listoParaJugar) abrirPred(); }
+
+/* ============================================================
+   7) Ganar el nivel
+   ============================================================ */
+function ganar(){
+  var v = NIVELES[nivel];
+  estrellas += 5; pintarMarcador(); 
+  document.getElementById('fin-form').textContent =
+    'V = '+v.l+' × '+v.a+' × '+v.h+' = '+objetivo()+' cm³';
+  document.getElementById('fin-txt').textContent = v.nota;
+  document.getElementById('fin-est').textContent = '⭐⭐⭐';
+  var ultimo = (nivel >= NIVELES.length-1);
+  document.getElementById('fin-tit').textContent = ultimo ? '¡Terminaste los cinco niveles!' : '¡Caja llena!';
+  document.getElementById('fin-bt').textContent = ultimo ? '🎨 Modo libre' : 'Siguiente nivel →';
+  document.getElementById('velo-fin').classList.add('ver');
+  guardar();
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  limpiar();
+  if(nivel >= NIVELES.length-1){ modoLibre(); return; }
+  nivel++;
+  guardar();
+  ponerGhost();
+  pintarCuenta();
+  listoParaJugar = false;
+  abrirPred();
+}
+
+/* Al terminar los cinco, la caja fantasma se va y queda el piso
+   entero para construir lo que se quiera: es el premio, y de paso
+   sigue contando cubitos, que es lo que se estaba aprendiendo. */
+function modoLibre(){
+  if(ghost){ esc.remove(ghost); ghost = null; }
+  document.getElementById('subt').textContent = '🎨 Modo libre · construye lo que quieras';
+  document.getElementById('cuenta').innerHTML = '<b>0</b> cubitos<small>modo libre</small>';
+  document.getElementById('fuera').style.display = 'none';
+  document.getElementById('pista').textContent = 'Modo libre: cada cubito que pongas es 1 cm³';
+  pintarCuenta = function(){
+    var n = Object.keys(puestos).length;
+    document.getElementById('cuenta').innerHTML = '<b>'+n+'</b> cubitos<small>= '+n+' cm³</small>';
+  };
+  revisarLleno = function(){};
+  dentroObjetivo = function(){ return true; };
+  listoParaJugar = true;
+  pintarCuenta();
+}
+
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+
+/* ============================================================
+   8) Toques: en un teléfono el mismo dedo sirve para girar la
+      vista y para poner un cubito. Se distingue por lo que se
+      movió: si arrastró, giró; si no, puso.
+   ============================================================ */
+function eventos(){
+  var lienzo = document.getElementById('lienzo');
+  var abajo = null, movido = 0;
+
+  lienzo.addEventListener('pointerdown', function(e){
+    abajo = {x:e.clientX, y:e.clientY, ang:anguloCam, alt:alturaCam};
+    movido = 0;
+    lienzo.setPointerCapture && lienzo.setPointerCapture(e.pointerId);
+  });
+
+  lienzo.addEventListener('pointermove', function(e){
+    if(!abajo) return;
+    var dx = e.clientX - abajo.x, dy = e.clientY - abajo.y;
+    movido = Math.max(movido, Math.abs(dx)+Math.abs(dy));
+    if(movido > 8){
+      anguloCam = abajo.ang - dx*0.008;
+      alturaCam = Math.max(2.5, Math.min(22, abajo.alt + dy*0.05));
+      colocarCamara();
+    }
+  });
+
+  lienzo.addEventListener('pointerup', function(e){
+    if(abajo && movido <= 8) tocar(e.clientX, e.clientY);
+    abajo = null;
+  });
+  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
+
+  // rueda del ratón: acercarse y alejarse
+  lienzo.addEventListener('wheel', function(e){
+    e.preventDefault();
+    radioCam = Math.max(6, Math.min(30, radioCam + (e.deltaY>0?1:-1)));
+    colocarCamara();
+  }, {passive:false});
+
+  document.getElementById('pred-in').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') revisarPred();
+  });
+}
+
+function tocar(px, py){
+  if(!listoParaJugar) return;
+  var cont = document.getElementById('lienzo');
+  var r = cont.getBoundingClientRect();
+  raton.x = ((px - r.left)/r.width)*2 - 1;
+  raton.y = -((py - r.top)/r.height)*2 + 1;
+  rayo.setFromCamera(raton, cam);
+
+  var enCubos = rayo.intersectObjects(grupoCubos.children, false);
+  if(enCubos.length){
+    var hit = enCubos[0], m = hit.object;
+    if(modoActual === 'quitar'){ quitarCubo(m); return; }
+    // se pone el cubito nuevo pegado a la cara que se tocó
+    var n = hit.face ? hit.face.normal : {x:0,y:1,z:0};
+    var u = m.userData;
+    ponerCubo(u.x + Math.round(n.x), u.y + Math.round(n.y), u.z + Math.round(n.z));
+    return;
+  }
+
+  if(modoActual === 'quitar') return;
+  var enPiso = rayo.intersectObject(piso, false);
+  if(enPiso.length){
+    var p = enPiso[0].point;
+    var cx = Math.floor(p.x + GRID/2), cz = Math.floor(p.z + GRID/2);
+    ponerCubo(cx, 0, cz);
+  }
+}
+
+/* ============================================================
+   9) El bucle de dibujo
+   ============================================================ */
+function animar(){
+  requestAnimationFrame(animar);
+  grupoCubos.children.forEach(function(m){
+    if(m.userData.crece !== undefined && m.userData.crece < 1){
+      m.userData.crece = Math.min(1, m.userData.crece + 0.14);
+      var s = 0.1 + 0.9*m.userData.crece;
+      m.scale.set(s,s,s);
+    }
+  });
+  if(ghost) ghost.rotation.y = 0;
+  rend.render(esc, cam);
+}
+
+/* ============================================================
+   10) Arranque
+   ============================================================ */
+cargar3D(function(){
+  leer();
+  montar();
+  pintarMarcador();
+  pintarCuenta();
+  abrirPred();
+}, function(){
+  document.getElementById('velo-pred').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+// Ganchos para la sonda: la cuenta y el estado, sin tocar el dibujo.
+window.__j3d = {
+  ponerCubo: function(x,y,z){ return ponerCubo(x,y,z); },
+  llenarObjetivo: function(){
+    var v = NIVELES[nivel];
+    for(var x=0;x<v.l;x++) for(var z=0;z<v.a;z++) for(var y=0;y<v.h;y++) ponerCubo(ANCLA.x+x, y, ANCLA.z+z);
+  },
+  estado: function(){ return {nivel:nivel, objetivo:objetivo(), cuenta:dentroYFuera(), estrellas:estrellas}; },
+  predecir: function(n){ document.getElementById('pred-in').value = n; revisarPred(); },
+  niveles: NIVELES
+};
+</script>
+</body>
+</html>

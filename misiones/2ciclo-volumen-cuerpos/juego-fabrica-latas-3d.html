@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏭 La Fábrica de Latas 3D | Misión Volumen de Cuerpos</title>
+<meta name="description" content="Ajusta el radio y la altura hasta fabricar latas, botellas y barriles con el volumen exacto. V = 3.14 × r² × h.">
+<style>
+/* ============================================================
+   Juego 3D · La Fábrica de Latas
+   ------------------------------------------------------------
+   El cilindro es donde se pierde media clase: el alumno mete el
+   diámetro donde va el radio y no se entera. Aquí el radio se
+   mueve con el dedo y la lata cambia delante de él, así que
+   confundirlo se ve. Y hay una segunda cosa que no se enseña
+   casi nunca: MUCHAS latas distintas caben en el mismo volumen.
+   Por eso algunos niveles piden además una forma (alta y delgada,
+   baja y ancha): el volumen manda cuánto cabe, no qué figura es.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
+  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
+.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.95rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.marcador{font-size:.8rem;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 30%,#2b3350 0%,#141a2c 72%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+/* pedido de la fábrica */
+.pedido{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.45rem .7rem;font-size:.8rem;line-height:1.35;}
+.pedido b{color:var(--dorado);font-size:1.05rem;}
+.pedido .cond{display:block;font-size:.72rem;color:var(--azul);margin-top:.1rem;}
+/* el medidor: cuánto le falta o le sobra */
+.medidor{position:absolute;left:.5rem;right:.5rem;bottom:.5rem;background:rgba(20,26,44,.92);border:2px solid rgba(154,165,189,.3);border-radius:12px;padding:.45rem .7rem;}
+.medidor .cuenta{font-family:'Fira Code',ui-monospace,monospace;font-size:.82rem;color:#cdd8ee;margin-bottom:.3rem;word-break:break-word;}
+.medidor .cuenta em{color:var(--dorado);font-style:normal;font-weight:700;}
+.riel{height:12px;background:#141a2c;border-radius:7px;overflow:hidden;position:relative;border:1px solid rgba(154,165,189,.25);}
+.relleno{height:100%;width:0;background:linear-gradient(90deg,#4a90d9,#27ae60);transition:width .15s linear;}
+.diana{position:absolute;top:-3px;bottom:-3px;left:66.6%;width:2px;background:var(--dorado);}
+.dif{font-size:.75rem;text-align:center;margin-top:.25rem;color:var(--gris);min-height:1.05rem;}
+.dif.cerca{color:var(--verde);font-weight:700;}
+.dif.lejos{color:#ffb1b1;}
+/* mandos */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;}
+.fila{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;}
+.fila label{font-size:.78rem;width:4.4rem;flex-shrink:0;}
+.fila label b{display:block;color:var(--azul);font-size:.95rem;font-family:'Fira Code',ui-monospace,monospace;}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:26px;background:transparent;}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#141a2c;border-radius:5px;border:1px solid rgba(154,165,189,.3);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--dorado);border:2px solid #fff3cf;cursor:pointer;}
+input[type=range]::-moz-range-track{height:8px;background:#141a2c;border-radius:5px;}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--dorado);border:2px solid #fff3cf;cursor:pointer;}
+.finos{display:flex;gap:.25rem;}
+.fino{width:30px;height:28px;border-radius:8px;border:1.5px solid rgba(154,165,189,.4);background:#2c3556;color:var(--claro);font-size:1rem;font-family:inherit;cursor:pointer;line-height:1;}
+.fino:active{background:var(--azul);}
+.botones{display:flex;gap:.4rem;margin-top:.4rem;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem .8rem;border:none;border-radius:13px;cursor:pointer;flex:1;}
+.bt-p{background:var(--dorado);color:#1a1a2e;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,14,26,.93);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:420px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.15rem;margin-bottom:.5rem;color:var(--dorado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.5rem .7rem;font-size:.88rem;margin:.6rem 0;text-align:left;word-break:break-word;}
+.estrellas{font-size:2rem;letter-spacing:.15rem;margin-bottom:.4rem;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.fila label{width:4rem;font-size:.72rem;}.medidor .cuenta{font-size:.74rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🏭 La Fábrica de Latas<small id="subt">Pedido 1 de 4</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="pedido" id="pedido"></div>
+  <div class="medidor">
+    <div class="cuenta" id="cuenta"></div>
+    <div class="riel"><div class="relleno" id="relleno"></div><div class="diana"></div></div>
+    <div class="dif" id="dif"></div>
+  </div>
+</div>
+
+<div class="mandos">
+  <div class="fila">
+    <label>radio<b id="lbl-r">6.0 cm</b></label>
+    <input type="range" id="sl-r" min="5" max="500" step="1" value="60">
+    <div class="finos"><button class="fino" onclick="fino('r',-1)">−</button><button class="fino" onclick="fino('r',1)">+</button></div>
+  </div>
+  <div class="fila">
+    <label>altura<b id="lbl-h">12 cm</b></label>
+    <input type="range" id="sl-h" min="10" max="2000" step="1" value="120">
+    <div class="finos"><button class="fino" onclick="fino('h',-1)">−</button><button class="fino" onclick="fino('h',1)">+</button></div>
+  </div>
+  <div class="botones">
+    <button class="bt bt-v" onclick="fabricar()">🏭 Fabricar</button>
+    <button class="bt bt-s" onclick="pista()">💡 Pista</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🏭</div>
+    <h2>La Fábrica de Latas</h2>
+    <p>Llegó un pedido: hay que fabricar un envase con un volumen <b>exacto</b>. Mueve el <b>radio</b> y la <b>altura</b> hasta que la cuenta te dé, y toca <b>Fabricar</b>.</p>
+    <div class="formula">V = 3.14 × radio × radio × altura<br>1 cm³ = 1 mililitro · 1 000 cm³ = 1 litro</div>
+    <p style="font-size:.82rem;color:#9aa5bd;">Se acepta con hasta 1 % de diferencia: en una fábrica de verdad tampoco sale al milímetro.</p>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar el turno</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2 id="fin-tit">¡Pedido listo!</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente pedido →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+
+/* π con dos decimales, el mismo de la misión y el del libro de 6.º:
+   si la pantalla calcula con el π largo y el alumno con 3.14, los
+   números no coinciden y él cree que se equivocó. */
+var PI = 3.14;
+var TOL = 0.01;          // 1 % de diferencia, como dice el pedido
+var LLAVE = 'j3d_latas_v1';
+
+/* Los pedidos son envases de verdad: el alumno los tiene en la
+   casa y así el número deja de ser un ejercicio. La condición de
+   forma existe para que descubra que el mismo volumen cabe en
+   latas muy distintas. */
+var PEDIDOS = [
+  {n:'Lata de soda',        emoji:'🥤', ml:330,     txt:'330 mililitros',
+   cond:null, nota:'Una lata de verdad mide unos 3.3 cm de radio y 12 cm de alto.'},
+  {n:'Botella de un litro', emoji:'🍶', ml:1000,    txt:'1 litro = 1 000 cm³',
+   cond:'alta',  txtcond:'Y que sea ALTA: la altura tiene que pasar del doble del radio.',
+   nota:'Mil centímetros cúbicos son un litro. Siempre.'},
+  {n:'Bidón de 5 litros',   emoji:'🪣', ml:5000,    txt:'5 litros = 5 000 cm³',
+   cond:'ancha', txtcond:'Y que sea ANCHA: el doble del radio tiene que pasar de la altura.',
+   nota:'Mismo litraje, otra forma: el volumen no dice qué figura es.'},
+  {n:'Barril de 55 galones',emoji:'🛢️', ml:208000,  txt:'55 galones ≈ 208 litros = 208 000 cm³',
+   cond:'h80',   txtcond:'Y que sea un barril de verdad: 80 cm de alto o más.',
+   nota:'208 000 cm³. Los ceros salen de la escalera: 1 litro = 1 000 cm³.'}
+];
+
+var esc, cam, rend, rejilla, grupo, cuerpo, tapaSup, tapaInf, reglaR, reglaH;
+var pedido = 0, estrellas = 0, retoML = 0, enReto = false, girando = 0;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({pedido:pedido, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ pedido=Math.min(d.pedido|0, PEDIDOS.length); estrellas=d.estrellas|0; } }catch(e){} }
+
+function radio(){ return parseInt(document.getElementById('sl-r').value,10)/10; }  // décimas de cm
+/* Radio y altura van en DÉCIMAS de centímetro. Con la altura en
+   centímetros enteros había pedidos imposibles de clavar dentro del
+   1 %: la lata de 330 ml con radio 3.3 cm pide 9.7 cm de alto, y
+   entre 9 y 10 no hay nada. El alumno movía los dos mandos sin
+   entender por qué no le daba nunca. */
+function altura(){ return parseInt(document.getElementById('sl-h').value,10)/10; }
+function volumen(r,h){ return PI*r*r*h; }
+function metaML(){ return enReto ? retoML : PEDIDOS[pedido].ml; }
+function condActual(){ return enReto ? null : PEDIDOS[pedido].cond; }
+
+function fmt(x){
+  var r = Math.round(x*10)/10;
+  return r.toLocaleString('es-HN', {minimumFractionDigits:0, maximumFractionDigits:1});
+}
+function fmtEntero(x){ return Math.round(x).toLocaleString('es-HN'); }
+
+/* ============================================================
+   El escenario: una lata dorada sobre la banda de la fábrica
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(42, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 400);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.6));
+  var l1 = new THREE.DirectionalLight(0xffffff, 0.8); l1.position.set(6,12,8); esc.add(l1);
+  var l2 = new THREE.DirectionalLight(0x9fd0ff, 0.35); l2.position.set(-8,4,-6); esc.add(l2);
+
+  grupo = new THREE.Group();
+  esc.add(grupo);
+
+  rejilla = new THREE.GridHelper(20, 20, 0x4a90d9, 0x333c60);
+  esc.add(rejilla);
+
+  armarLata();
+  rehacerLata();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+/* La lata se arma UNA vez con medidas de 1 y después solo se
+   estira. Rehacerla en cada movimiento del dedo dejaba geometrías
+   viejas colgando en la memoria del teléfono, y a los dos minutos
+   de mover el radio el juego iba a tirones. */
+function armarLata(){
+  cuerpo = new THREE.Mesh(
+    new THREE.CylinderGeometry(1, 1, 1, 48),
+    new THREE.MeshPhongMaterial({color:0xc9a227, shininess:90, specular:0x6b5c1f})
+  );
+  grupo.add(cuerpo);
+  var matTapa = new THREE.MeshPhongMaterial({color:0xe8d48a, shininess:120, specular:0x8a7a2c});
+  var geoTapa = new THREE.CylinderGeometry(1, 1, 1, 48);
+  tapaSup = new THREE.Mesh(geoTapa, matTapa);
+  tapaInf = new THREE.Mesh(geoTapa, matTapa);
+  grupo.add(tapaSup); grupo.add(tapaInf);
+
+  // el radio se marca en la tapa y la altura al costado: es justo
+  // donde el alumno mete el diámetro creyendo que es el radio, y
+  // dibujado se ve que el radio llega solo hasta el centro
+  reglaR = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({color:0x4a90d9}));
+  reglaH = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({color:0x27ae60}));
+  grupo.add(reglaR); grupo.add(reglaH);
+
+  cam.position.set(0, 5.6, 13);
+  cam.lookAt(0, 3.2, 0);
+}
+
+/* Lo que cambia en pantalla es la PROPORCIÓN entre radio y altura,
+   no el tamaño: un barril de 200 cm y una lata de 12 cm a la misma
+   escala dejarían la lata invisible. */
+function rehacerLata(){
+  var r = radio(), h = altura();
+  var k = 7/Math.max(r*2, h);
+  var rr = r*k, hh = h*k;
+
+  cuerpo.scale.set(rr, hh, rr);
+  cuerpo.position.y = hh/2;
+  var gt = Math.max(0.04, hh*0.03);
+  tapaSup.scale.set(rr*1.03, gt, rr*1.03); tapaSup.position.y = hh;
+  tapaInf.scale.set(rr*1.03, gt, rr*1.03); tapaInf.position.y = 0;
+
+  reglaR.geometry.dispose();
+  reglaR.geometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, hh+0.06, 0), new THREE.Vector3(rr, hh+0.06, 0)
+  ]);
+  reglaH.geometry.dispose();
+  reglaH.geometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(rr+0.5, 0, 0), new THREE.Vector3(rr+0.5, hh, 0)
+  ]);
+}
+
+/* ============================================================
+   La cuenta, escrita como la haría el alumno en el cuaderno
+   ============================================================ */
+function pintar(){
+  var r = radio(), h = altura(), v = volumen(r,h), meta = metaML();
+  document.getElementById('lbl-r').textContent = fmt(r)+' cm';
+  document.getElementById('lbl-h').textContent = fmt(h)+' cm';
+  document.getElementById('cuenta').innerHTML =
+    'V = 3.14 × '+fmt(r)+' × '+fmt(r)+' × '+fmt(h)+' = <em>'+fmtEntero(v)+' cm³</em>'+
+    (v>=1000 ? ' <span style="color:#9aa5bd">('+fmt(v/1000)+' L)</span>' : ' <span style="color:#9aa5bd">('+fmtEntero(v)+' ml)</span>');
+
+  var p = Math.min(1.5, v/meta);
+  document.getElementById('relleno').style.width = (p/1.5*100)+'%';
+
+  var dif = v - meta, pct = Math.abs(dif)/meta;
+  var el = document.getElementById('dif');
+  if(pct <= TOL){ el.className='dif cerca'; el.textContent='✅ ¡Le diste! Toca Fabricar'; }
+  else if(dif > 0){ el.className = pct<0.15?'dif cerca':'dif lejos'; el.textContent='Te pasaste por '+fmtEntero(dif)+' cm³'; }
+  else { el.className = pct<0.15?'dif cerca':'dif lejos'; el.textContent='Te faltan '+fmtEntero(-dif)+' cm³'; }
+  rehacerLata();
+}
+
+function fino(cual, paso){
+  var el = document.getElementById(cual==='r'?'sl-r':'sl-h');
+  el.value = Math.max(+el.min, Math.min(+el.max, (+el.value)+paso));
+  pintar();
+}
+
+function pintarPedido(){
+  var el = document.getElementById('pedido');
+  if(enReto){
+    el.innerHTML = '🎲 <b>Reto libre</b> · fabrica '+fmtEntero(retoML)+' cm³'+
+      '<span class="cond">Los retos no se acaban: cada uno pide un volumen nuevo.</span>';
+    document.getElementById('subt').textContent = '🎲 Retos libres';
+    return;
+  }
+  var p = PEDIDOS[pedido];
+  el.innerHTML = p.emoji+' <b>'+p.n+'</b> · '+p.txt +
+    (p.cond ? '<span class="cond">'+p.txtcond+'</span>' : '');
+  document.getElementById('subt').textContent = 'Pedido '+(pedido+1)+' de '+PEDIDOS.length+' · '+p.n;
+}
+
+/* ============================================================
+   Fabricar: el volumen manda, y la forma cuando el pedido la pide
+   ============================================================ */
+function cumpleForma(r,h){
+  var c = condActual();
+  if(!c) return true;
+  if(c==='alta')  return h > 2*r;
+  if(c==='ancha') return 2*r > h;
+  if(c==='h80')   return h >= 80;
+  return true;
+}
+
+function fabricar(){
+  var r = radio(), h = altura(), v = volumen(r,h), meta = metaML();
+  var pct = Math.abs(v-meta)/meta;
+  if(pct > TOL){
+    var el = document.getElementById('dif');
+    el.className='dif lejos';
+    el.textContent = (v>meta?'Todavía se pasa por ':'Todavía faltan ')+fmtEntero(Math.abs(v-meta))+' cm³ · afina con − y +';
+    return;
+  }
+  if(!cumpleForma(r,h)){
+    var e2 = document.getElementById('dif');
+    e2.className='dif lejos';
+    e2.textContent = '📏 El volumen está bien, pero la forma no es la que pidieron.';
+    return;
+  }
+  ganar(r,h,v);
+}
+
+function ganar(r,h,v){
+  var meta = metaML();
+  var pct = Math.abs(v-meta)/meta;
+  var est = pct <= 0.002 ? 3 : (pct <= 0.005 ? 2 : 1);
+  estrellas += est*3;
+  document.getElementById('fin-est').textContent = '⭐'.repeat(est) + '·'.repeat(3-est);
+  document.getElementById('fin-form').innerHTML =
+    'V = 3.14 × '+fmt(r)+'² × '+fmt(h)+'<br>V = '+fmtEntero(v)+' cm³ = '+fmt(v/1000)+' litros';
+  if(enReto){
+    document.getElementById('fin-tit').textContent = '¡Otro reto ganado!';
+    document.getElementById('fin-txt').textContent = 'Con el mismo volumen te habrían servido otras medidas. Prueba el siguiente.';
+    document.getElementById('fin-bt').textContent = '🎲 Otro reto →';
+  } else {
+    var p = PEDIDOS[pedido];
+    var ultimo = (pedido >= PEDIDOS.length-1);
+    document.getElementById('fin-tit').textContent = ultimo ? '¡Terminaste los cuatro pedidos!' : '¡Pedido listo! '+p.emoji;
+    document.getElementById('fin-txt').textContent = p.nota;
+    document.getElementById('fin-bt').textContent = ultimo ? '🎲 Retos libres →' : 'Siguiente pedido →';
+  }
+  pintarMarcador(); guardar();
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  if(enReto){ nuevoReto(); return; }
+  if(pedido >= PEDIDOS.length-1){ enReto = true; nuevoReto(); return; }
+  pedido++; guardar(); pintarPedido(); pintar();
+}
+
+/* Los retos no se acaban: es lo que hace que se vuelva a abrir el
+   juego mañana. Salen de volúmenes redondos y alcanzables con los
+   mandos que hay. */
+function nuevoReto(){
+  var opciones = [250, 500, 750, 1500, 2000, 3000, 7500, 12000, 20000, 50000, 100000];
+  var otro = opciones[Math.floor(Math.random()*opciones.length)];
+  retoML = (otro === retoML) ? opciones[(opciones.indexOf(otro)+1)%opciones.length] : otro;
+  enReto = true;
+  pintarPedido(); pintar();
+}
+
+/* La pista despeja la altura, que es como se resuelve en el
+   cuaderno: h = V ÷ (3.14 × r²). Cuesta una estrella. */
+function pista(){
+  var r = radio(), meta = metaML();
+  var h = meta/(PI*r*r);
+  var el = document.getElementById('dif');
+  el.className = 'dif';
+  if(h < 1 || h > 200){
+    el.innerHTML = 'Con radio '+fmt(r)+' cm no alcanza: mueve primero el radio.';
+  } else {
+    el.innerHTML = 'h = '+fmtEntero(meta)+' ÷ (3.14 × '+fmt(r)+'²) ≈ <b>'+fmt(h)+' cm</b>';
+    estrellas = Math.max(0, estrellas-1); pintarMarcador(); guardar();
+  }
+}
+
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function cerrar(id){ document.getElementById(id).classList.remove('ver'); }
+
+function animar(){
+  requestAnimationFrame(animar);
+  girando += 0.006;
+  if(grupo) grupo.rotation.y = Math.sin(girando)*0.55;
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  if(pedido >= PEDIDOS.length){ enReto = true; }
+  montar();
+  document.getElementById('sl-r').addEventListener('input', pintar);
+  document.getElementById('sl-h').addEventListener('input', pintar);
+  pintarMarcador();
+  if(enReto) nuevoReto(); else pintarPedido();
+  pintar();
+  document.getElementById('velo-ini').classList.add('ver');
+}, function(){
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  poner: function(r,h){ document.getElementById('sl-r').value=Math.round(r*10); document.getElementById('sl-h').value=Math.round(h*10); pintar(); },
+  fabricar: fabricar,
+  volumen: volumen,
+  estado: function(){ return {pedido:pedido, enReto:enReto, meta:metaML(), r:radio(), h:altura(), v:volumen(radio(),altura()), estrellas:estrellas}; },
+  pedidos: PEDIDOS
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🧩 Tetris del Volumen 3D | Misión Volumen de Cuerpos</title>
+<meta name="description" content="Apila bloques 3D en un pozo hasta que la suma de sus volúmenes dé exactamente el objetivo. Volumen, suma y espacio desperdiciado.">
+<style>
+/* ============================================================
+   Juego 3D · Tetris del Volumen
+   ------------------------------------------------------------
+   Aquí se juntan dos cosas que en el cuaderno van separadas: el
+   volumen de un cuerpo (largo × ancho × alto) y la SUMA de varios
+   volúmenes, que es como se calcula de verdad una bodega o una
+   pila de cajas. Y hay una tercera que solo se aprende jugando:
+   el hueco que queda debajo de una caja mal puesta también ocupa
+   pozo y no suma nada. Ese es el «espacio desperdiciado», y es
+   por lo que un camión se llena antes de tiempo.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
+  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
+.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.9rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.66rem;color:var(--gris);font-weight:400;}
+.reloj{font-family:'Fira Code',ui-monospace,monospace;font-size:.95rem;font-weight:700;background:rgba(224,82,82,.2);border:1.5px solid rgba(224,82,82,.5);padding:.15rem .45rem;border-radius:9px;display:none;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 25%,#2a3352 0%,#10141f 78%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+/* el marcador: objetivo y suma, que es lo que hay que mirar */
+.tablero{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.35rem .6rem;}
+.tablero .gr{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.2rem;}
+.tablero b{font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;color:var(--dorado);}
+.tablero .suma b{color:var(--azul);}
+.riel{height:10px;background:#0d1120;border-radius:6px;overflow:hidden;border:1px solid rgba(154,165,189,.2);}
+.relleno{height:100%;width:0;background:linear-gradient(90deg,#4a90d9,#27ae60);transition:width .2s ease;}
+.relleno.cerca{background:linear-gradient(90deg,#c9a227,#27ae60);}
+.perdido{font-size:.7rem;color:var(--gris);text-align:right;margin-top:.15rem;}
+/* la pieza que viene */
+.pieza{position:absolute;right:.5rem;top:6.1rem;background:rgba(20,26,44,.9);border:1.5px solid rgba(74,144,217,.5);border-radius:10px;padding:.3rem .5rem;font-size:.74rem;text-align:center;line-height:1.35;}
+.pieza b{display:block;font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;color:#9fd0ff;}
+.pieza .oculto{color:var(--dorado);}
+/* mandos */
+.mando{position:absolute;left:.5rem;bottom:.5rem;display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,42px);gap:.22rem;}
+.fl{background:rgba(44,53,86,.9);border:2px solid rgba(201,162,39,.45);color:var(--claro);border-radius:11px;font-size:1.05rem;font-family:inherit;cursor:pointer;line-height:1;}
+.fl:active{background:var(--dorado);color:#1a1a2e;}
+.fl.n{grid-area:1/2;} .fl.o{grid-area:2/1;} .fl.e{grid-area:2/3;} .fl.s{grid-area:3/2;} .fl.c{grid-area:2/2;font-size:.8rem;}
+.lado{position:absolute;right:.5rem;bottom:.5rem;display:flex;flex-direction:column;gap:.28rem;}
+.bl{background:rgba(44,53,86,.9);border:2px solid rgba(74,144,217,.5);color:var(--claro);border-radius:11px;font-size:.78rem;font-family:inherit;cursor:pointer;padding:.42rem .6rem;line-height:1.15;min-width:74px;}
+.bl:active{background:var(--azul);}
+.bl.tirar{border-color:var(--verde);}
+.bl.tirar:active{background:var(--verde);}
+.bl:disabled{opacity:.4;}
+.velo{position:absolute;inset:0;background:rgba(10,14,26,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--dorado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.modos{display:flex;flex-direction:column;gap:.45rem;margin:.6rem 0;}
+.modo{font-family:inherit;font-size:.9rem;font-weight:700;padding:.6rem;border:2px solid var(--azul);border-radius:13px;background:#141a2c;color:var(--claro);cursor:pointer;line-height:1.3;text-align:left;}
+.modo small{display:block;font-size:.72rem;font-weight:400;color:var(--gris);}
+.modo:active{border-color:var(--dorado);}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.5rem .7rem;font-size:.86rem;margin:.6rem 0;text-align:left;line-height:1.6;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;}
+.bt-p{background:var(--dorado);color:#1a1a2e;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+@media(max-width:380px){.mando{grid-template-columns:repeat(3,38px);grid-template-rows:repeat(3,38px);}.bl{min-width:66px;font-size:.72rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🧩 Tetris del Volumen<small id="subt">Nivel 1</small></div>
+  <div class="reloj" id="reloj">30</div>
+</div>
+
+<div id="lienzo">
+  <div class="tablero">
+    <div class="gr"><span>🎯 Objetivo</span><b id="objetivo">0 cm³</b></div>
+    <div class="gr suma"><span>➕ Llevas</span><b id="suma">0 cm³</b></div>
+    <div class="riel"><div class="relleno" id="relleno"></div></div>
+    <div class="perdido" id="perdido">espacio desperdiciado: 0 cm³</div>
+  </div>
+  <div class="pieza" id="pieza"></div>
+  <div class="mando">
+    <button class="fl n" onpointerdown="mover(0,-1)">▲</button>
+    <button class="fl o" onpointerdown="mover(-1,0)">◀</button>
+    <button class="fl c" onpointerdown="verOtroLado()">👁</button>
+    <button class="fl e" onpointerdown="mover(1,0)">▶</button>
+    <button class="fl s" onpointerdown="mover(0,1)">▼</button>
+  </div>
+  <div class="lado">
+    <button class="bl" onpointerdown="rotar()">🔄 Girar</button>
+    <button class="bl" id="bt-tirar-caja" onpointerdown="descartar()">🗑️ Botar (3)</button>
+    <button class="bl tirar" onpointerdown="soltar()">⬇️ Soltar</button>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🧩</div>
+    <h2>Tetris del Volumen</h2>
+    <p>Caen cajas en un pozo de <b>3 × 3 × 8</b>. Cada caja trae su volumen. Apílalas hasta que la suma dé <b>exactamente</b> el objetivo.</p>
+    <div class="formula">Si te pasas del objetivo, pierdes.<br>Si el pozo se llena, también.<br>Un hueco debajo de una caja no suma, pero ocupa.</div>
+    <div class="modos">
+      <button class="modo" onclick="empezar('clasico')">🎯 Clásico<small>Cada caja dice cuánto vale. Cae más rápido en cada nivel.</small></button>
+      <button class="modo" onclick="empezar('manual')">🧮 Cálculo manual<small>La caja solo enseña sus medidas: el volumen lo sacas tú.</small></button>
+      <button class="modo" onclick="empezar('supervivencia')">⏱️ Supervivencia<small>El objetivo cambia cada 30 segundos. No se acaba nunca.</small></button>
+    </div>
+    <p style="font-size:.78rem;color:#9aa5bd;">Con el teclado: flechas para mover, Q o E para girar, espacio para soltar.</p>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🏆</div>
+    <h2 id="fin-tit"></h2>
+    <p id="fin-txt"></p>
+    <div class="formula" id="fin-form"></div>
+    <button class="bt bt-v" id="fin-bt" onclick="seguir()">Seguir →</button>
+    <button class="bt bt-s" onclick="location.reload()">🏠 Cambiar de modo</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_tetris_v1';
+
+/* El pozo: 3 de largo, 3 de ancho, 8 de alto. 72 cm³ de tope, así
+   que ningún objetivo puede acercarse a eso o sería imposible: la
+   caja mal puesta deja huecos y el pozo se llena antes. */
+var ANCHO = 3, FONDO = 3, ALTO = 8;
+var OBJETIVOS = [18, 24, 30, 36, 42, 48, 54];
+var COLORES = [0x4a90d9, 0xc9a227, 0x27ae60, 0xe07a52, 0x8f6fd6, 0x37b6c4];
+
+var esc, cam, rend, grupoPozo, grupoCajas, mallaCae, mallaSombra, bordesCae, bordesSombra;
+var alturas, sumaActual = 0, objetivo = 0, nivel = 1, botes = 3, modo = 'clasico';
+var cae = null, siguiente = null, cayendo = false, alturaCae = 0, velocidad = 1.6;
+var jugando = false, ultimoT = 0, segSuper = 30, anguloVista = 0, desperdicio = 0;
+
+function guardar(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE))||{}; d.nivel=Math.max(d.nivel|0, nivel); d.mejor=Math.max(d.mejor|0, (nivel-1)); localStorage.setItem(LLAVE, JSON.stringify(d)); }catch(e){} }
+
+/* ============================================================
+   Las cajas
+   ============================================================ */
+function nuevaCaja(){
+  var a = 1+Math.floor(Math.random()*ANCHO);
+  var f = 1+Math.floor(Math.random()*FONDO);
+  var h = 1+Math.floor(Math.random()*3);
+  var v = a*f*h;
+  // que no salga una caja imposible de meter sin pasarse
+  if(v > objetivo - sumaActual && objetivo - sumaActual > 0 && Math.random() < 0.55){
+    var falta = objetivo - sumaActual;
+    var opciones = [];
+    for(var x=1;x<=ANCHO;x++) for(var y=1;y<=FONDO;y++) for(var z=1;z<=3;z++)
+      if(x*y*z <= falta) opciones.push([x,y,z]);
+    if(opciones.length){
+      var o = opciones[Math.floor(Math.random()*opciones.length)];
+      a=o[0]; f=o[1]; h=o[2]; v=a*f*h;
+    }
+  }
+  return {a:a, f:f, h:h, v:v, color:COLORES[Math.floor(Math.random()*COLORES.length)],
+          oculta: (modo==='manual')};
+}
+
+function alturaAterrizaje(c){
+  var base = 0;
+  for(var x=c.x; x<c.x+c.a; x++)
+    for(var z=c.z; z<c.z+c.f; z++)
+      base = Math.max(base, alturas[x][z]);
+  return base;
+}
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(46, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 120);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.68));
+  var l1=new THREE.DirectionalLight(0xffffff,0.7); l1.position.set(6,14,8); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0x9fd0ff,0.3); l2.position.set(-7,6,-6); esc.add(l2);
+
+  grupoPozo = new THREE.Group(); esc.add(grupoPozo);
+  grupoCajas = new THREE.Group(); esc.add(grupoCajas);
+
+  // el pozo: solo las aristas, para que se vea lo de dentro
+  var caja = new THREE.BoxGeometry(ANCHO, ALTO, FONDO);
+  var jaula = new THREE.LineSegments(new THREE.EdgesGeometry(caja),
+    new THREE.LineBasicMaterial({color:0xc9a227, transparent:true, opacity:0.75}));
+  jaula.position.set(0, ALTO/2, 0);
+  grupoPozo.add(jaula);
+
+  var suelo = new THREE.Mesh(new THREE.BoxGeometry(ANCHO, 0.12, FONDO),
+    new THREE.MeshLambertMaterial({color:0x2b3455}));
+  suelo.position.y = -0.06; grupoPozo.add(suelo);
+  var rej = new THREE.GridHelper(ANCHO, ANCHO, 0x4a90d9, 0x4a90d9);
+  rej.position.y = 0.02; grupoPozo.add(rej);
+
+  // la caja que cae y su sombra (dónde va a caer): sin la sombra,
+  // en 3D no se acierta ni por casualidad
+  var mat = new THREE.MeshLambertMaterial({color:0x4a90d9});
+  mallaCae = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), mat);
+  esc.add(mallaCae);
+  bordesCae = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1)),
+    new THREE.LineBasicMaterial({color:0xffffff}));
+  esc.add(bordesCae);
+  mallaSombra = new THREE.Mesh(new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.13}));
+  esc.add(mallaSombra);
+  bordesSombra = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1)),
+    new THREE.LineBasicMaterial({color:0xc9a227, transparent:true, opacity:0.6}));
+  esc.add(bordesSombra);
+
+  ponerCamara();
+  window.addEventListener('resize', ajustar);
+  window.addEventListener('keydown', teclado);
+  animar();
+}
+
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function ponerCamara(){
+  var r = 11, a = anguloVista + Math.PI/4;
+  cam.position.set(Math.cos(a)*r, 8.2, Math.sin(a)*r);
+  cam.lookAt(0, 3.2, 0);
+}
+function verOtroLado(){ anguloVista += Math.PI/2; ponerCamara(); }
+
+/* ============================================================
+   Mover, girar, soltar
+   ============================================================ */
+function centro(x, ancho){ return x - ANCHO/2 + ancho/2; }
+
+function mover(dx, dz){
+  if(!cae || !jugando) return;
+  var nx = cae.x+dx, nz = cae.z+dz;
+  if(nx < 0 || nz < 0 || nx+cae.a > ANCHO || nz+cae.f > FONDO) return;
+  cae.x = nx; cae.z = nz;
+}
+
+function rotar(){
+  if(!cae || !jugando) return;
+  var a = cae.f, f = cae.a;                       // gira sobre su eje: el largo pasa a ancho
+  if(cae.x + a > ANCHO || cae.z + f > FONDO){
+    // si girando se sale del pozo, se corre lo justo para que quepa
+    var nx = Math.min(cae.x, ANCHO-a), nz = Math.min(cae.z, FONDO-f);
+    if(nx < 0 || nz < 0) return;
+    cae.x = nx; cae.z = nz;
+  }
+  cae.a = a; cae.f = f;
+}
+
+function soltar(){
+  if(!cae || !jugando) return;
+  alturaCae = alturaAterrizaje(cae);
+  aterrizar();
+}
+
+function descartar(){
+  if(!cae || !jugando || botes <= 0) return;
+  botes--;
+  pintarBotes();
+  sacarCaja();
+}
+function pintarBotes(){
+  var b = document.getElementById('bt-tirar-caja');
+  b.textContent = '🗑️ Botar ('+botes+')';
+  b.disabled = (botes <= 0);
+}
+
+function teclado(e){
+  var k = e.key;
+  if(k==='ArrowLeft') mover(-1,0);
+  else if(k==='ArrowRight') mover(1,0);
+  else if(k==='ArrowUp') mover(0,-1);
+  else if(k==='ArrowDown') mover(0,1);
+  else if(k==='q'||k==='Q'||k==='e'||k==='E') rotar();
+  else if(k===' ') soltar();
+  else return;
+  e.preventDefault();
+}
+
+/* ============================================================
+   Aterrizar: aquí se suma el volumen y se cuenta el hueco
+   ============================================================ */
+function aterrizar(){
+  var base = alturaAterrizaje(cae);
+  if(base + cae.h > ALTO) return desbordado();
+
+  // el hueco que queda debajo: no suma volumen pero ocupa pozo
+  for(var x=cae.x; x<cae.x+cae.a; x++)
+    for(var z=cae.z; z<cae.z+cae.f; z++){
+      desperdicio += (base - alturas[x][z]);
+      alturas[x][z] = base + cae.h;
+    }
+
+  var geo = new THREE.BoxGeometry(cae.a*0.97, cae.h*0.97, cae.f*0.97);
+  var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:cae.color}));
+  m.position.set(centro(cae.x, cae.a), base + cae.h/2, centro(cae.z, cae.f));
+  // las aristas van DENTRO de la caja: así se cuentan los cubitos
+  // de una pila apretada, que si no se ve un bloque de color liso
+  m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.45})));
+  grupoCajas.add(m);
+
+  sumaActual += cae.v;
+  pintarTablero();
+
+  if(sumaActual > objetivo) return pasado();
+  if(sumaActual === objetivo) return logrado();
+  sacarCaja();
+}
+
+function sacarCaja(){
+  cae = siguiente || nuevaCaja();
+  siguiente = nuevaCaja();
+  cae.x = Math.floor((ANCHO-cae.a)/2);
+  cae.z = Math.floor((FONDO-cae.f)/2);
+  alturaCae = ALTO;
+  if(alturaAterrizaje(cae) + cae.h > ALTO) return desbordado();
+  pintarSiguiente();
+}
+
+function pintarSiguiente(){
+  var el = document.getElementById('pieza');
+  var c = cae;
+  if(!c){ el.textContent=''; return; }
+  var med = c.a+' × '+c.f+' × '+c.h;
+  el.innerHTML = 'cae ahora<b>'+med+'</b>'+
+    (c.oculta ? '<span class="oculto">¿cuánto es?</span>' : '<span>= '+c.v+' cm³</span>')+
+    (siguiente ? '<hr style="border:0;border-top:1px solid rgba(154,165,189,.3);margin:.25rem 0"><span style="font-size:.66rem;color:#9aa5bd">luego: '+siguiente.a+'×'+siguiente.f+'×'+siguiente.h+'</span>' : '');
+}
+
+function pintarTablero(){
+  document.getElementById('objetivo').textContent = objetivo+' cm³';
+  document.getElementById('suma').textContent = sumaActual+' cm³';
+  var r = document.getElementById('relleno');
+  r.style.width = Math.min(100, sumaActual/objetivo*100)+'%';
+  r.classList.toggle('cerca', objetivo-sumaActual <= 6);
+  document.getElementById('perdido').textContent = 'espacio desperdiciado: '+desperdicio+' cm³';
+  document.getElementById('subt').textContent =
+    (modo==='supervivencia' ? '⏱️ Supervivencia' : (modo==='manual' ? '🧮 Cálculo manual' : '🎯 Clásico'))+
+    ' · nivel '+nivel;
+}
+
+/* ============================================================
+   Ganar y perder
+   ============================================================ */
+function logrado(){
+  jugando = false;
+  nivel++;
+  guardar();
+  document.getElementById('fin-emoji').textContent = '🏆';
+  document.getElementById('fin-tit').textContent = '¡Justo, ni uno más!';
+  document.getElementById('fin-txt').textContent =
+    'Llegaste a '+objetivo+' cm³ exactos'+(desperdicio ? ', desperdiciando '+desperdicio+' cm³ de pozo.' : ', sin desperdiciar nada. Eso es empacar bien.');
+  document.getElementById('fin-form').innerHTML =
+    'Sumar volúmenes es lo que hace un bodeguero:<br>el total de la pila = la suma de cada caja.';
+  document.getElementById('fin-bt').textContent = 'Nivel '+nivel+' →';
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function pasado(){
+  jugando = false;
+  document.getElementById('fin-emoji').textContent = '💥';
+  document.getElementById('fin-tit').textContent = 'Te pasaste del objetivo';
+  document.getElementById('fin-txt').textContent =
+    'Llevabas '+(sumaActual-cae.v)+' y le metiste una de '+cae.v+': '+sumaActual+' cm³ para un objetivo de '+objetivo+'.';
+  document.getElementById('fin-form').innerHTML =
+    'Antes de soltar, resta: objetivo − lo que llevas = lo que te cabe.<br>Y si no cabe ninguna, bótala con 🗑️.';
+  document.getElementById('fin-bt').textContent = '🔄 Otra vez';
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function desbordado(){
+  jugando = false;
+  document.getElementById('fin-emoji').textContent = '📦';
+  document.getElementById('fin-tit').textContent = 'Se llenó el pozo';
+  document.getElementById('fin-txt').textContent =
+    'Te faltaban '+(objetivo-sumaActual)+' cm³ y ya no cabe nada. Desperdiciaste '+desperdicio+' cm³ en huecos.';
+  document.getElementById('fin-form').innerHTML =
+    'El pozo tiene 3 × 3 × 8 = 72 cm³.<br>Una caja encima de un hueco tapa espacio que ya no sirve para nada.';
+  document.getElementById('fin-bt').textContent = '🔄 Otra vez';
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function seguir(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  var gano = document.getElementById('fin-emoji').textContent === '🏆';
+  if(!gano) nivel = 1;
+  rondaNueva();
+}
+
+/* ============================================================
+   Arrancar una ronda
+   ============================================================ */
+function rondaNueva(){
+  while(grupoCajas.children.length) grupoCajas.remove(grupoCajas.children[0]);
+  alturas = [];
+  for(var x=0;x<ANCHO;x++){ alturas.push([]); for(var z=0;z<FONDO;z++) alturas[x].push(0); }
+  sumaActual = 0; desperdicio = 0; botes = 3;
+  objetivo = (modo==='supervivencia')
+    ? OBJETIVOS[Math.floor(Math.random()*4)]
+    : OBJETIVOS[Math.min(OBJETIVOS.length-1, nivel-1)];
+  velocidad = 1.4 + (nivel-1)*0.45;
+  segSuper = 30;
+  document.getElementById('reloj').style.display = (modo==='supervivencia') ? 'block' : 'none';
+  siguiente = null;
+  cae = null;
+  sacarCaja();
+  pintarBotes(); pintarTablero();
+  jugando = true; ultimoT = 0;
+}
+
+function empezar(m){
+  modo = m; nivel = 1;
+  document.getElementById('velo-ini').classList.remove('ver');
+  rondaNueva();
+}
+
+/* En supervivencia el objetivo cambia cada 30 segundos. Si la suma
+   ya se pasó del objetivo nuevo, se pierde: hay que ir dejando
+   margen, que es lo que obliga a calcular antes de soltar. */
+function cambiarObjetivo(){
+  var op = OBJETIVOS.filter(function(o){ return o > sumaActual; });
+  if(!op.length) return pasado();
+  objetivo = op[Math.floor(Math.random()*op.length)];
+  segSuper = 30;
+  pintarTablero();
+}
+
+/* ============================================================
+   El bucle
+   ============================================================ */
+function animar(t){
+  requestAnimationFrame(animar);
+  t = t || 0;
+  var dt = ultimoT ? Math.min(0.05, (t-ultimoT)/1000) : 0;
+  ultimoT = t;
+
+  if(jugando && cae){
+    alturaCae -= velocidad*dt;
+    var suelo = alturaAterrizaje(cae);
+    if(alturaCae <= suelo){ alturaCae = suelo; aterrizar(); }
+    if(modo==='supervivencia'){
+      segSuper -= dt;
+      document.getElementById('reloj').textContent = Math.max(0, Math.ceil(segSuper));
+      if(segSuper <= 0) cambiarObjetivo();
+    }
+  }
+
+  if(cae){
+    var cx = centro(cae.x, cae.a), cz = centro(cae.z, cae.f);
+    mallaCae.scale.set(cae.a*0.97, cae.h*0.97, cae.f*0.97);
+    mallaCae.position.set(cx, alturaCae + cae.h/2, cz);
+    mallaCae.material.color.setHex(cae.color);
+    bordesCae.scale.copy(mallaCae.scale);
+    bordesCae.position.copy(mallaCae.position);
+    var s = alturaAterrizaje(cae);
+    mallaSombra.scale.set(cae.a*0.97, cae.h*0.97, cae.f*0.97);
+    mallaSombra.position.set(cx, s + cae.h/2, cz);
+    bordesSombra.scale.copy(mallaSombra.scale);
+    bordesSombra.position.copy(mallaSombra.position);
+    mallaCae.visible = bordesCae.visible = mallaSombra.visible = bordesSombra.visible = jugando;
+  }
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  montar();
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  empezar: empezar,
+  mover: mover, rotar: rotar, soltar: soltar, descartar: descartar,
+  estado: function(){ return {modo:modo, nivel:nivel, objetivo:objetivo, suma:sumaActual, desperdicio:desperdicio,
+    botes:botes, jugando:jugando, cae:cae, alturas:alturas}; },
+  ponerCaja: function(a,f,h){ cae = {a:a,f:f,h:h,v:a*f*h,color:COLORES[0],x:0,z:0,oculta:false}; alturaCae = ALTO; pintarSiguiente(); }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>💧 El Desafío del Tanque 3D | Misión Volumen de Cuerpos</title>
+<meta name="description" content="Calcula cuántos litros caben en tanques, pilas y barriles, y llénalos en 3D para comprobarlo. 1 m³ = 1 000 litros.">
+<style>
+/* ============================================================
+   Juego 3D · El Desafío del Tanque
+   ------------------------------------------------------------
+   «1 m³ = 1 000 litros» se copia en el cuaderno y no significa
+   nada hasta que se ve el agua subir. Aquí el alumno APUESTA un
+   número antes de llenar; después el tanque se llena delante de
+   él con el contador corriendo. Si apostó mal, lo ve él solo, sin
+   que nadie se lo diga: es la única corrección que no ofende.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
+  --agua:#2b8fd6; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
+.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.95rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.vidas{font-size:.9rem;letter-spacing:.05rem;}
+.marcador{font-size:.8rem;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 30%,#2b3350 0%,#141a2c 72%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+/* los rótulos de las medidas van pegados al borde que miden */
+.rot{position:absolute;transform:translate(-50%,-50%);background:rgba(20,26,44,.9);border:1.5px solid var(--azul);border-radius:8px;padding:.12rem .38rem;font-size:.74rem;font-family:'Fira Code',ui-monospace,monospace;white-space:nowrap;pointer-events:none;}
+.rot.alto{border-color:var(--verde);}
+.rot.radio{border-color:var(--dorado);}
+.contador{position:absolute;top:.5rem;left:50%;transform:translateX(-50%);background:rgba(20,26,44,.92);border:2px solid var(--agua);border-radius:12px;padding:.3rem .8rem;font-size:1.05rem;font-weight:700;display:none;}
+.contador b{color:#6fd0ff;}
+.tarjeta{position:absolute;top:.5rem;left:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.35rem .6rem;font-size:.78rem;max-width:60%;line-height:1.3;}
+.tarjeta b{color:var(--dorado);}
+/* mandos */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.55rem .7rem .65rem;flex-shrink:0;}
+.pregunta{font-size:.86rem;margin-bottom:.4rem;line-height:1.35;text-align:center;}
+.linea{display:flex;gap:.4rem;align-items:center;justify-content:center;}
+.casilla{width:8.5rem;padding:.5rem;font-size:1.2rem;text-align:center;font-family:'Fira Code',ui-monospace,monospace;font-weight:700;border:2px solid var(--azul);border-radius:12px;background:#141a2c;color:var(--claro);}
+.unidad{font-size:1rem;font-weight:700;color:var(--gris);}
+.botones{display:flex;gap:.4rem;margin-top:.45rem;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .6rem;border:none;border-radius:13px;cursor:pointer;flex:1;}
+.bt-p{background:var(--dorado);color:#1a1a2e;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-a{background:var(--agua);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:disabled{opacity:.45;cursor:default;}
+.bt:active:not(:disabled){transform:scale(.97);}
+.aviso{font-size:.82rem;text-align:center;min-height:1.15rem;margin-top:.35rem;line-height:1.35;}
+.aviso.mal{color:#ff9c9c;}
+.aviso.bien{color:#7ee2a8;}
+.velo{position:absolute;inset:0;background:rgba(10,14,26,.93);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.15rem;margin-bottom:.5rem;color:var(--dorado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.5rem .7rem;font-size:.86rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
+.escalera{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
+.escalera span{background:rgba(43,143,214,.16);border:1.5px solid rgba(43,143,214,.5);border-radius:8px;padding:.2rem .45rem;}
+.estrellas{font-size:2rem;letter-spacing:.15rem;margin-bottom:.4rem;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.pregunta{font-size:.78rem;}.bt{font-size:.8rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <div class="titulo">💧 El Desafío del Tanque<small id="subt">Tanque 1 de 6</small></div>
+  <div class="vidas" id="vidas">💧💧💧</div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="contador" id="contador">💧 <b>0</b> litros</div>
+</div>
+
+<div class="mandos">
+  <div class="pregunta" id="pregunta">¿Cuántos litros caben en este tanque?</div>
+  <div class="linea">
+    <input class="casilla" id="resp" type="number" inputmode="decimal" step="any" placeholder="?">
+    <span class="unidad">litros</span>
+  </div>
+  <div class="botones">
+    <button class="bt bt-v" id="bt-apostar" onclick="apostar()">🎯 Apostar</button>
+    <button class="bt bt-a" id="bt-llenar" onclick="llenar()" disabled>💧 Llenar</button>
+    <button class="bt bt-s" onclick="verComo()">💡 ¿Cómo?</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">💧</div>
+    <h2>El Desafío del Tanque</h2>
+    <p>Cada tanque trae sus medidas marcadas en los bordes. <b>Apuesta</b> cuántos litros le caben y después <b>llénalo</b> para verlo con tus ojos.</p>
+    <div class="escalera"><span>1 litro = 1 000 cm³</span><span>1 dm³ = 1 litro</span><span>1 m³ = 1 000 litros</span></div>
+    <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres gotas 💧. Cada apuesta errada te cuesta una.</p>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2 id="fin-tit">¡Le diste!</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente tanque →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+
+/* El π de sexto grado, el mismo de la misión: si la pantalla
+   calcula con el π largo y el alumno con 3.14, no coinciden y él
+   cree que se equivocó. */
+var PI = 3.14;
+var LLAVE = 'j3d_tanque_v1';
+
+/* Seis tanques que existen en un patio de Honduras. Las medidas
+   van en las unidades en que se leen de verdad (la pila en metros,
+   la cubeta en centímetros): la conversión es justamente lo que
+   hay que aprender, y darla ya hecha sería quitarle el ejercicio.
+   litros = volumen en dm³. */
+var TANQUES = [
+  {n:'La cubeta',  emoji:'🪣', forma:'prisma',   u:'cm', l:20,  a:20,  h:25,
+   litros:10,     nota:'20 × 20 × 25 = 10 000 cm³. Y 1 000 cm³ es un litro: 10 litros.'},
+  {n:'La pila',    emoji:'🚿', forma:'prisma',   u:'m',  l:1,   a:0.5, h:0.4,
+   litros:200,    nota:'0.2 m³. Y cada metro cúbico son 1 000 litros: 200 litros.'},
+  {n:'El barril',  emoji:'🛢️', forma:'cilindro', u:'cm', r:30,  h:100,
+   litros:282.6,  nota:'3.14 × 30 × 30 × 100 = 282 600 cm³, que son 282.6 litros.'},
+  {n:'El tanque de mil', emoji:'🏗️', forma:'prisma', u:'m', l:1, a:1, h:1,
+   litros:1000,   nota:'Un metro cúbico. Esta es LA equivalencia: 1 m³ = 1 000 litros.'},
+  {n:'La cisterna redonda', emoji:'⛽', forma:'cilindro', u:'cm', r:50, h:200,
+   litros:1570,   nota:'3.14 × 50 × 50 × 200 = 1 570 000 cm³ = 1 570 litros.'},
+  {n:'La cisterna del camión', emoji:'🚛', forma:'prisma', u:'m', l:2, a:1.5, h:1.2,
+   litros:3600,   nota:'3.6 m³. Por 1 000: 3 600 litros. Ese camión abastece a un caserío.'}
+];
+
+var esc, cam, rend, grupo, agua, cuerpoTanque, rots = [];
+var nivel = 0, vidas = 3, estrellas = 0, apostado = false, llenando = 0, giro = 0, respGuardada = null;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, TANQUES.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+
+function t(){ return TANQUES[nivel]; }
+function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(44, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 300);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.62));
+  var l1=new THREE.DirectionalLight(0xffffff,0.8); l1.position.set(7,14,9); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0x9fd0ff,0.3); l2.position.set(-7,5,-8); esc.add(l2);
+  esc.add(new THREE.GridHelper(18, 18, 0x4a90d9, 0x333c60));
+
+  grupo = new THREE.Group();
+  esc.add(grupo);
+  cam.position.set(0, 6.2, 13.5);
+  cam.lookAt(0, 3, 0);
+
+  armarTanque();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function limpiarRotulos(){
+  rots.forEach(function(r){ r.el.remove(); });
+  rots = [];
+}
+
+function rotulo(texto, clase, x, y, z){
+  var el = document.createElement('div');
+  el.className = 'rot '+clase;
+  el.textContent = texto;
+  document.getElementById('lienzo').appendChild(el);
+  rots.push({el:el, p:new THREE.Vector3(x,y,z)});
+}
+
+/* El tanque se dibuja siempre del mismo tamaño en pantalla: lo que
+   importa es la proporción y las medidas escritas, no que la
+   cisterna se salga del teléfono. */
+function armarTanque(){
+  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  limpiarRotulos();
+  var d = t();
+  var vidrio = new THREE.MeshPhongMaterial({color:0x9fd0ff, transparent:true, opacity:0.22, shininess:100, side:THREE.DoubleSide});
+  var matAgua = new THREE.MeshPhongMaterial({color:0x2b8fd6, transparent:true, opacity:0.82, shininess:60});
+  var lineas = new THREE.LineBasicMaterial({color:0xc9a227});
+
+  if(d.forma === 'prisma'){
+    var mayor = Math.max(d.l, d.a, d.h), k = 6/mayor;
+    var L=d.l*k, A=d.a*k, H=d.h*k;
+    cuerpoTanque = new THREE.Mesh(new THREE.BoxGeometry(L,H,A), vidrio);
+    cuerpoTanque.position.y = H/2; grupo.add(cuerpoTanque);
+    grupo.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(L,H,A)), lineas)
+      .translateY(H/2));
+    agua = new THREE.Mesh(new THREE.BoxGeometry(L*0.97, 1, A*0.97), matAgua);
+    agua.scale.y = 0.001; agua.position.y = 0; grupo.add(agua);
+    agua.userData = {alto:H, ancho:1};
+    rotulo('largo '+d.l+' '+d.u, '',      0,      -0.35, A/2);
+    rotulo('ancho '+d.a+' '+d.u, '',      L/2+0.7,-0.35, 0);
+    rotulo('alto '+d.h+' '+d.u, 'alto',   L/2+0.9, H/2,  A/2);
+  } else {
+    var may = Math.max(d.r*2, d.h), k2 = 6/may;
+    var R=d.r*k2, H2=d.h*k2;
+    cuerpoTanque = new THREE.Mesh(new THREE.CylinderGeometry(R,R,H2,44,1,true), vidrio);
+    cuerpoTanque.position.y = H2/2; grupo.add(cuerpoTanque);
+    var aro = new THREE.Mesh(new THREE.CylinderGeometry(R,R,0.06,44), new THREE.MeshPhongMaterial({color:0xc9a227,shininess:90}));
+    aro.position.y = H2; grupo.add(aro);
+    var aro2 = aro.clone(); aro2.position.y = 0; grupo.add(aro2);
+    agua = new THREE.Mesh(new THREE.CylinderGeometry(R*0.96,R*0.96,1,44), matAgua);
+    agua.scale.y = 0.001; agua.position.y = 0; grupo.add(agua);
+    agua.userData = {alto:H2, ancho:1};
+    // la línea del radio, para que no se confunda con el diámetro
+    var pr = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,H2+0.1,0), new THREE.Vector3(R,H2+0.1,0)]);
+    grupo.add(new THREE.Line(pr, new THREE.LineBasicMaterial({color:0xc9a227})));
+    rotulo('radio '+d.r+' '+d.u, 'radio', R/2, H2+0.55, 0);
+    rotulo('alto '+d.h+' '+d.u,  'alto',  R+1.1, H2/2, 0);
+  }
+  document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b>';
+  document.getElementById('subt').textContent = 'Tanque '+(nivel+1)+' de '+TANQUES.length+' · '+d.n;
+}
+
+/* Los rótulos son HTML puesto encima del dibujo: en un teléfono
+   el texto dibujado dentro del 3D sale borroso y estas medidas
+   son justamente lo que hay que leer bien. */
+function moverRotulos(){
+  var cont = document.getElementById('lienzo');
+  var an = cont.clientWidth, al = cont.clientHeight;
+  rots.forEach(function(r){
+    var v = r.p.clone();
+    grupo.localToWorld(v);
+    v.project(cam);
+    r.el.style.left = ((v.x*0.5+0.5)*an)+'px';
+    r.el.style.top  = ((-v.y*0.5+0.5)*al)+'px';
+    r.el.style.display = (v.z < 1) ? 'block' : 'none';
+  });
+}
+
+/* ============================================================
+   La apuesta
+   ============================================================ */
+function apostar(){
+  var d = t();
+  var r = parseFloat(String(document.getElementById('resp').value).replace(',','.'));
+  var av = document.getElementById('aviso');
+  if(isNaN(r)){ av.className='aviso mal'; av.textContent='Escribe cuántos litros crees que le caben.'; return; }
+  respGuardada = r;
+  // se acepta hasta medio por ciento: el alumno redondea π y sus cuentas
+  var bien = Math.abs(r - d.litros) <= Math.max(0.05, d.litros*0.005);
+  apostado = true;
+  document.getElementById('bt-llenar').disabled = false;
+  document.getElementById('bt-apostar').disabled = true;
+  if(bien){
+    av.className='aviso bien';
+    av.textContent='🎯 Apuesta hecha: '+fmt(r)+' litros. Ahora llénalo y compruébalo.';
+  } else {
+    vidas--; pintarVidas();
+    av.className='aviso mal';
+    av.textContent='Apostaste '+fmt(r)+' litros. Llénalo y mira qué pasa… 💧';
+  }
+}
+
+/* Llenar es la parte que enseña: el contador sube con el agua, y
+   al final se para en el número de verdad. */
+function llenar(){
+  if(llenando) return;
+  document.getElementById('bt-llenar').disabled = true;
+  document.getElementById('contador').style.display = 'block';
+  llenando = 0.0001;
+}
+
+function terminarLlenado(){
+  var d = t();
+  var av = document.getElementById('aviso');
+  var bien = respGuardada !== null && Math.abs(respGuardada - d.litros) <= Math.max(0.05, d.litros*0.005);
+  var est = bien ? (vidas===3?3:(vidas===2?2:1)) : 0;
+  if(bien) estrellas += 4;
+  document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '💧';
+  document.getElementById('fin-tit').textContent = bien ? '¡Le diste!' : 'No era ese número';
+  document.getElementById('fin-form').innerHTML = comoSeHace(d);
+  document.getElementById('fin-txt').textContent = d.nota;
+  var ultimo = (nivel >= TANQUES.length-1);
+  document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente tanque →';
+  if(vidas <= 0){
+    document.getElementById('fin-tit').textContent = 'Se acabaron las gotas';
+    document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este tanque';
+  }
+  pintarMarcador(); guardar();
+  document.getElementById('velo-fin').classList.add('ver');
+  av.className='aviso'; av.textContent='';
+}
+
+function comoSeHace(d){
+  if(d.forma === 'prisma'){
+    var v = d.l*d.a*d.h;
+    var enM3 = (d.u === 'm');
+    return 'V = largo × ancho × alto<br>'+
+           'V = '+d.l+' × '+d.a+' × '+d.h+' = '+fmt(v)+' '+d.u+'³<br>'+
+           (enM3 ? fmt(v)+' m³ × 1 000 = <b>'+fmt(d.litros)+' litros</b>'
+                 : fmt(v)+' cm³ ÷ 1 000 = <b>'+fmt(d.litros)+' litros</b>');
+  }
+  var vc = PI*d.r*d.r*d.h;
+  return 'V = 3.14 × radio × radio × alto<br>'+
+         'V = 3.14 × '+d.r+' × '+d.r+' × '+d.h+' = '+fmt(vc)+' cm³<br>'+
+         fmt(vc)+' cm³ ÷ 1 000 = <b>'+fmt(d.litros)+' litros</b>';
+}
+
+/* La ayuda cuesta una gota: si fuera gratis se toca antes de
+   pensar, y entonces no se piensa nunca. */
+function verComo(){
+  var d = t();
+  if(!apostado){ vidas--; pintarVidas(); }
+  var av = document.getElementById('aviso');
+  av.className='aviso';
+  av.innerHTML = d.forma==='prisma'
+    ? 'Multiplica las tres medidas y después pásalo a litros.'
+    : 'Multiplica 3.14 × radio × radio × alto, y después pásalo a litros.';
+  if(vidas <= 0){ av.className='aviso mal'; av.textContent='Se acabaron las gotas: llena el tanque y mira la cuenta.'; }
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  if(vidas <= 0){ vidas = 3; pintarVidas(); }
+  else if(nivel >= TANQUES.length-1){ nivel = 0; }
+  else nivel++;
+  guardar();
+  reiniciarNivel();
+}
+
+function reiniciarNivel(){
+  apostado = false; llenando = 0; respGuardada = null;
+  document.getElementById('resp').value = '';
+  document.getElementById('bt-apostar').disabled = false;
+  document.getElementById('bt-llenar').disabled = true;
+  document.getElementById('contador').style.display = 'none';
+  document.getElementById('aviso').textContent = '';
+  armarTanque();
+}
+
+function pintarVidas(){
+  vidas = Math.max(0, vidas);
+  document.getElementById('vidas').textContent = '💧'.repeat(vidas) + '·'.repeat(3-vidas);
+}
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function cerrar(id){ document.getElementById(id).classList.remove('ver'); }
+
+function animar(){
+  requestAnimationFrame(animar);
+  giro += 0.004;
+  if(grupo) grupo.rotation.y = Math.sin(giro)*0.5;
+  if(llenando > 0 && llenando < 1){
+    llenando = Math.min(1, llenando + 0.011);
+    var alto = agua.userData.alto;
+    agua.scale.y = Math.max(0.001, alto*llenando);
+    agua.position.y = alto*llenando/2;
+    document.querySelector('#contador b').textContent = fmt(t().litros*llenando);
+    if(llenando >= 1){ llenando = 1; setTimeout(terminarLlenado, 450); }
+  }
+  moverRotulos();
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  pintarVidas(); pintarMarcador();
+  document.getElementById('resp').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !document.getElementById('bt-apostar').disabled) apostar();
+  });
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  apostar: function(n){ document.getElementById('resp').value = n; apostar(); },
+  llenar: llenar,
+  saltarLlenado: function(){ llenando = 0.99; },
+  estado: function(){ return {nivel:nivel, litros:t().litros, vidas:vidas, estrellas:estrellas, apostado:apostado}; },
+  tanques: TANQUES,
+  cuenta: function(d){ return d.forma==='prisma' ? d.l*d.a*d.h : PI*d.r*d.r*d.h; }
+};
+</script>
+</body>
+</html>

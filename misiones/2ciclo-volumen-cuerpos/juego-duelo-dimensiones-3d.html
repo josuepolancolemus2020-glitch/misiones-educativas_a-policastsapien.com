@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚔️ Área vs Volumen: El Duelo de las Dimensiones | Misión Volumen de Cuerpos</title>
+<meta name="description" content="Combate por turnos: a los enemigos planos se les ataca con área y a los cuerpos con volumen. Aprende a distinguir 2D de 3D.">
+<style>
+/* ============================================================
+   Juego 3D · El Duelo de las Dimensiones
+   ------------------------------------------------------------
+   La confusión más cara de todo el tema: el alumno calcula el
+   área cuando le piden volumen, y como el número «sale», no se
+   entera. Aquí NO se le pregunta cuál es cuál: se le obliga a
+   elegir el ataque antes de calcular, y si elige mal, el golpe
+   rebota y lo recibe él. Los enemigos planos giran hasta ponerse
+   de canto y DESAPARECEN: no tienen grosor, y eso —que en el
+   cuaderno es una frase— aquí se ve.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
+  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd; --morado:#7c5cd6;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
+.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.xp{font-size:.8rem;background:rgba(124,92,214,.2);border:1.5px solid rgba(124,92,214,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 25%,#2a3352 0%,#10141f 78%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+/* barras de vida */
+.vidas{position:absolute;top:.5rem;left:.5rem;right:.5rem;display:flex;flex-direction:column;gap:.3rem;pointer-events:none;}
+.barra{background:rgba(20,26,44,.9);border:1.5px solid rgba(154,165,189,.35);border-radius:10px;padding:.25rem .5rem;}
+.barra .fila{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.15rem;}
+.barra .riel{height:9px;background:#0d1120;border-radius:5px;overflow:hidden;}
+.barra .relleno{height:100%;transition:width .35s ease;}
+.enemigo .relleno{background:linear-gradient(90deg,#e05252,#ff9c6e);}
+.heroe  .relleno{background:linear-gradient(90deg,#27ae60,#7ee2a8);}
+.chapa{position:absolute;left:50%;transform:translateX(-50%);top:5.9rem;background:rgba(20,26,44,.92);border:2px solid var(--dorado);border-radius:12px;padding:.3rem .8rem;font-size:.85rem;text-align:center;line-height:1.35;max-width:90%;}
+.chapa b{color:var(--dorado);}
+.chapa .dims{display:block;font-family:'Fira Code',ui-monospace,monospace;font-size:.78rem;color:#9fd0ff;}
+.golpe{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:2.6rem;font-weight:800;pointer-events:none;opacity:0;text-shadow:0 3px 12px rgba(0,0,0,.6);}
+.golpe.ver{animation:sube .9s ease-out;}
+@keyframes sube{0%{opacity:1;transform:translate(-50%,-50%) scale(.6);}100%{opacity:0;transform:translate(-50%,-160%) scale(1.3);}}
+/* mandos */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;}
+.aviso{font-size:.85rem;text-align:center;min-height:2.35rem;margin-bottom:.4rem;line-height:1.4;}
+.aviso.mal{color:#ff9c9c;}
+.aviso.bien{color:#7ee2a8;}
+.ataques{display:flex;gap:.5rem;}
+.at{flex:1;font-family:inherit;font-size:.95rem;font-weight:800;padding:.7rem .4rem;border:2px solid;border-radius:14px;cursor:pointer;background:#141a2c;line-height:1.25;}
+.at small{display:block;font-size:.66rem;font-weight:400;opacity:.85;}
+.at-area{border-color:var(--dorado);color:var(--dorado);}
+.at-vol{border-color:var(--azul);color:#9fd0ff;}
+.at:active{transform:scale(.97);}
+.at:disabled{opacity:.4;cursor:default;}
+.ops{display:flex;flex-direction:column;gap:.4rem;}
+.op{font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;font-weight:700;padding:.6rem;border:2px solid rgba(154,165,189,.45);border-radius:12px;background:#141a2c;color:var(--claro);cursor:pointer;}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.op:disabled{cursor:default;}
+.velo{position:absolute;inset:0;background:rgba(10,14,26,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--dorado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.regla{display:flex;gap:.4rem;margin:.6rem 0;}
+.regla div{flex:1;border:2px solid;border-radius:12px;padding:.5rem .4rem;font-size:.78rem;line-height:1.3;}
+.regla .r-a{border-color:var(--dorado);}
+.regla .r-v{border-color:var(--azul);}
+.regla b{display:block;font-size:1.3rem;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;}
+.bt-p{background:var(--dorado);color:#1a1a2e;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+@media(max-width:380px){.at{font-size:.85rem;}.chapa{font-size:.78rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <div class="titulo">⚔️ El Duelo de las Dimensiones<small id="subt">🌳 El bosque</small></div>
+  <div class="xp" id="xp">⭐ 0 XP</div>
+</div>
+
+<div id="lienzo">
+  <div class="vidas">
+    <div class="barra enemigo"><div class="fila"><span id="en-nom">—</span><span id="en-vida">0/0</span></div><div class="riel"><div class="relleno" id="en-rel" style="width:100%"></div></div></div>
+    <div class="barra heroe"><div class="fila"><span>🛡️ Tú</span><span id="yo-vida">100/100</span></div><div class="riel"><div class="relleno" id="yo-rel" style="width:100%"></div></div></div>
+  </div>
+  <div class="chapa" id="chapa"></div>
+  <div class="golpe" id="golpe"></div>
+</div>
+
+<div class="mandos">
+  <div class="aviso" id="aviso">Elige con qué lo atacas.</div>
+  <div class="ataques" id="ataques">
+    <button class="at at-area" id="at-area" onclick="atacar('area')">⚔️ Área<small>para lo plano · cm²</small></button>
+    <button class="at at-vol"  id="at-vol"  onclick="atacar('volumen')">🧊 Volumen<small>para los cuerpos · cm³</small></button>
+  </div>
+  <div class="ops" id="ops" style="display:none;"></div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">⚔️</div>
+    <h2>El Duelo de las Dimensiones</h2>
+    <p>Te salen enemigos de dos clases y no se atacan igual:</p>
+    <div class="regla">
+      <div class="r-a"><b>⬛</b>PLANOS<br>solo les entra el <b style="font-size:.9rem;display:inline">área</b> (cm²)</div>
+      <div class="r-v"><b>🧊</b>CUERPOS<br>solo les entra el <b style="font-size:.9rem;display:inline">volumen</b> (cm³)</div>
+    </div>
+    <p style="font-size:.84rem;color:#9aa5bd;">Si eliges el ataque que no era, el golpe <b>rebota</b> y te lo llevas tú. ¿Cómo se distinguen? Un plano tiene dos medidas; un cuerpo tiene tres.</p>
+    <button class="bt bt-p" onclick="empezar()">¡A pelear!</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🏆</div>
+    <h2 id="fin-tit"></h2>
+    <p id="fin-txt"></p>
+    <div class="regla" id="fin-regla" style="display:none;">
+      <div class="r-a"><b>⬛</b>2 medidas → área</div>
+      <div class="r-v"><b>🧊</b>3 medidas → volumen</div>
+    </div>
+    <button class="bt bt-v" id="fin-bt" onclick="siguienteZona()">Seguir →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+/* El π del libro de 6.º, igual que en toda la misión. */
+var PI = 3.14;
+var LLAVE = 'j3d_duelo_v1';
+
+/* ============================================================
+   Las figuras. Cada una sabe cuánto mide y —lo importante— cuáles
+   son los números CON LOS QUE SE CONFUNDE: el área de una cara, el
+   perímetro, el área total. Un distractor al azar se descarta sin
+   pensar; estos hay que descartarlos sabiendo.
+   ============================================================ */
+function figura(f){
+  var d = f.dims;
+  if(f.f==='cuadrado')   return {plano:true,  valor:d.l*d.l,        txt:'cuadrado de '+d.l+' cm de lado',
+    malos:[{v:4*d.l,'p':'ese es el perímetro (la orilla)'},{v:d.l*d.l*d.l,'p':'ese sería su volumen, y es plano'}]};
+  if(f.f==='rectangulo') return {plano:true,  valor:d.l*d.a,        txt:'rectángulo de '+d.l+' × '+d.a+' cm',
+    malos:[{v:2*(d.l+d.a),'p':'ese es el perímetro'},{v:d.l+d.a,'p':'sumaste en vez de multiplicar'}]};
+  if(f.f==='triangulo')  return {plano:true,  valor:d.b*d.h/2,      txt:'triángulo de base '+d.b+' cm y altura '+d.h+' cm',
+    malos:[{v:d.b*d.h,'p':'te faltó dividir entre 2'},{v:d.b+d.h,'p':'sumaste en vez de multiplicar'}]};
+  if(f.f==='circulo')    return {plano:true,  valor:PI*d.r*d.r,     txt:'círculo de radio '+d.r+' cm',
+    malos:[{v:2*PI*d.r,'p':'esa es la circunferencia (la orilla)'},{v:PI*d.r*d.r*d.r,'p':'le metiste un radio de más'}]};
+  if(f.f==='cubo')       return {plano:false, valor:d.l*d.l*d.l,    txt:'cubo de '+d.l+' cm de arista',
+    malos:[{v:d.l*d.l,'p':'esa es UNA cara, no el cuerpo entero'},{v:6*d.l*d.l,'p':'esa es su superficie: las seis caras'}]};
+  if(f.f==='prisma')     return {plano:false, valor:d.l*d.a*d.h,    txt:'prisma de '+d.l+' × '+d.a+' × '+d.h+' cm',
+    malos:[{v:d.l*d.a,'p':'esa es la base, te faltó el alto'},{v:2*(d.l*d.a+d.l*d.h+d.a*d.h),'p':'esa es su superficie'}]};
+  if(f.f==='cilindro')   return {plano:false, valor:PI*d.r*d.r*d.h, txt:'cilindro de radio '+d.r+' cm y alto '+d.h+' cm',
+    malos:[{v:PI*d.r*d.r,'p':'esa es la tapa, te faltó el alto'},{v:2*PI*d.r*d.h,'p':'esa es la etiqueta que le da la vuelta'}]};
+  return null;
+}
+
+/* Tres zonas. Van de figuras que se distinguen de un vistazo a un
+   jefe que CAMBIA de plano a cuerpo a media pelea: es la prueba de
+   que el alumno mira la figura y no se aprendió el orden. */
+var ZONAS = [
+  {n:'🌳 El bosque', fondo:0x1d3326, bichos:[
+    {nom:'Cuadrito', emoji:'🟩', f:'cuadrado',   dims:{l:5},           vida:60, golpe:12, color:0x6ac47a},
+    {nom:'Cubín',    emoji:'🧊', f:'cubo',       dims:{l:3},           vida:70, golpe:14, color:0x4a90d9},
+    {nom:'Tablón',   emoji:'🟫', f:'rectangulo', dims:{l:6,a:4},       vida:75, golpe:14, color:0xb07d4a}
+  ]},
+  {n:'🕳️ La cueva', fondo:0x2a2440, bichos:[
+    {nom:'Cajón',    emoji:'📦', f:'prisma',     dims:{l:5,a:3,h:2},   vida:85, golpe:17, color:0xc98f3a},
+    {nom:'Ojito',    emoji:'⚪', f:'circulo',    dims:{r:4},           vida:85, golpe:17, color:0xd9d0ee},
+    {nom:'Latón',    emoji:'🥫', f:'cilindro',   dims:{r:3,h:5},       vida:95, golpe:19, color:0xc9a227}
+  ]},
+  {n:'🏰 El castillo', fondo:0x3a2030, bichos:[
+    {nom:'Cuña',     emoji:'🔺', f:'triangulo',  dims:{b:8,h:5},       vida:100, golpe:20, color:0xe0a04a},
+    {nom:'Cubazo',   emoji:'🟦', f:'cubo',       dims:{l:6},           vida:110, golpe:21, color:0x4a90d9},
+    /* El jefe guarda su forma de origen: al transformarse se le
+       cambian f y dims, y sin esta copia la segunda partida
+       empezaría con el jefe ya convertido en cuerpo. */
+    {nom:'EL JEFE',  emoji:'👑', f:'rectangulo', dims:{l:9,a:4},       vida:150, golpe:24, color:0x7c5cd6,
+     jefe:true, base:{f:'rectangulo', dims:{l:9,a:4}}, mitad:{f:'prisma', dims:{l:9,a:4,h:2}}}
+  ]}
+];
+
+var esc, cam, rend, bicho, particulas, chispas = [], luzFondo;
+var zona = 0, indice = 0, vidaYo = 100, vidaEl = 0, xp = 0, esperando = false, ataqueElegido = null, giroPlano = 0, cambiado = false;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({zona:zona, xp:xp})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ zona=Math.min(d.zona|0, ZONAS.length-1); xp=d.xp|0; } }catch(e){} }
+
+function actual(){ return ZONAS[zona].bichos[indice]; }
+function fmt(x){ var r=Math.round(x*100)/100; return r.toLocaleString('es-HN',{maximumFractionDigits:2}); }
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(45, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 120);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.7));
+  var l1=new THREE.DirectionalLight(0xffffff,0.75); l1.position.set(5,10,8); esc.add(l1);
+  luzFondo = new THREE.DirectionalLight(0x8fb0ff, 0.4); luzFondo.position.set(-6,3,-7); esc.add(luzFondo);
+
+  var suelo = new THREE.Mesh(new THREE.PlaneGeometry(40,40),
+    new THREE.MeshLambertMaterial({color:0x1d2338}));
+  suelo.rotation.x = -Math.PI/2; suelo.position.y = -2.6; esc.add(suelo);
+
+  cam.position.set(0, 1.6, 9.5);
+  cam.lookAt(0, 0.2, 0);
+
+  armarChispas();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+/* Las chispas del golpe: un puñado de puntos que salen disparados
+   y se apagan. Sin ellas, acertar y fallar se ven igual. */
+function armarChispas(){
+  var n = 90, pos = new Float32Array(n*3);
+  for(var i=0;i<n*3;i++) pos[i] = 0;
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  particulas = new THREE.Points(geo, new THREE.PointsMaterial({color:0xffe08a, size:0.16, transparent:true, opacity:0}));
+  esc.add(particulas);
+  for(var j=0;j<n;j++) chispas.push({x:0,y:0,z:0,vx:0,vy:0,vz:0});
+}
+
+function reventar(color){
+  particulas.material.color.setHex(color);
+  particulas.material.opacity = 1;
+  chispas.forEach(function(c){
+    c.x = 0; c.y = 0.2; c.z = 0;
+    var a = Math.random()*Math.PI*2, b = (Math.random()-0.5)*Math.PI;
+    var v = 0.06 + Math.random()*0.12;
+    c.vx = Math.cos(a)*Math.cos(b)*v; c.vy = Math.sin(b)*v + 0.05; c.vz = Math.sin(a)*Math.cos(b)*v;
+  });
+}
+
+/* ============================================================
+   El enemigo, dibujado según lo que es
+   ============================================================ */
+function armarBicho(){
+  if(bicho){ esc.remove(bicho); bicho = null; }
+  var b = actual(), f = figura(b), d = b.dims;
+  bicho = new THREE.Group();
+  var mat = new THREE.MeshLambertMaterial({color:b.color, side:THREE.DoubleSide});
+  var cuerpo;
+  var k = 0.42;   // de centímetros a lo que se ve en pantalla
+
+  if(b.f==='cuadrado')        cuerpo = new THREE.Mesh(new THREE.PlaneGeometry(d.l*k, d.l*k), mat);
+  else if(b.f==='rectangulo') cuerpo = new THREE.Mesh(new THREE.PlaneGeometry(d.l*k, d.a*k), mat);
+  else if(b.f==='circulo')    cuerpo = new THREE.Mesh(new THREE.CircleGeometry(d.r*k, 40), mat);
+  else if(b.f==='triangulo'){
+    var forma = new THREE.Shape();
+    forma.moveTo(-d.b*k/2, -d.h*k/2); forma.lineTo(d.b*k/2, -d.h*k/2); forma.lineTo(0, d.h*k/2); forma.closePath();
+    cuerpo = new THREE.Mesh(new THREE.ShapeGeometry(forma), mat);
+  }
+  else if(b.f==='cubo')       cuerpo = new THREE.Mesh(new THREE.BoxGeometry(d.l*k, d.l*k, d.l*k), mat);
+  else if(b.f==='prisma')     cuerpo = new THREE.Mesh(new THREE.BoxGeometry(d.l*k, d.h*k, d.a*k), mat);
+  else                        cuerpo = new THREE.Mesh(new THREE.CylinderGeometry(d.r*k, d.r*k, d.h*k, 34), mat);
+
+  bicho.add(cuerpo);
+  bicho.add(new THREE.LineSegments(new THREE.EdgesGeometry(cuerpo.geometry),
+    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.55})));
+
+  // ojos: sin cara, un cubo no da ganas de pelear con él
+  var ojoGeo = new THREE.SphereGeometry(0.13, 12, 10);
+  var blanco = new THREE.MeshBasicMaterial({color:0x101828});
+  var frente = (b.f==='cilindro') ? d.r*k : (b.f==='cubo' ? d.l*k/2 : (b.f==='prisma' ? d.a*k/2 : 0.02));
+  [-0.28, 0.28].forEach(function(dx){
+    var o = new THREE.Mesh(ojoGeo, blanco);
+    o.position.set(dx, 0.25, frente + 0.06);
+    bicho.add(o);
+  });
+
+  bicho.userData.plano = f.plano;
+  esc.add(bicho);
+  giroPlano = 0;
+}
+
+/* ============================================================
+   El turno
+   ============================================================ */
+function pintarBarras(){
+  var b = actual();
+  document.getElementById('en-nom').textContent = b.emoji+' '+b.nom+(cambiado?' (¡cambió!)':'');
+  document.getElementById('en-vida').textContent = Math.max(0,Math.round(vidaEl))+'/'+b.vida;
+  document.getElementById('en-rel').style.width = Math.max(0, vidaEl/b.vida*100)+'%';
+  document.getElementById('yo-vida').textContent = Math.max(0,Math.round(vidaYo))+'/100';
+  document.getElementById('yo-rel').style.width = Math.max(0, vidaYo)+'%';
+  document.getElementById('xp').textContent = '⭐ '+xp+' XP';
+}
+
+function pintarChapa(){
+  var b = actual(), f = figura(b);
+  document.getElementById('chapa').innerHTML =
+    b.emoji+' <b>'+b.nom+'</b> · '+(f.plano ? 'es PLANO' : 'es un CUERPO')+
+    '<span class="dims">'+f.txt+'</span>';
+}
+
+function nuevoBicho(){
+  cambiado = false;
+  var b0 = actual();
+  if(b0.base){ b0.f = b0.base.f; b0.dims = b0.base.dims; }
+  vidaEl = b0.vida;
+  armarBicho(); pintarBarras(); pintarChapa();
+  document.getElementById('subt').textContent = ZONAS[zona].n+' · '+(indice+1)+' de '+ZONAS[zona].bichos.length;
+  pedirAtaque();
+}
+
+function pedirAtaque(){
+  ataqueElegido = null; esperando = false;
+  document.getElementById('ops').style.display = 'none';
+  document.getElementById('ataques').style.display = 'flex';
+  document.getElementById('at-area').disabled = false;
+  document.getElementById('at-vol').disabled = false;
+  var av = document.getElementById('aviso');
+  av.className = 'aviso';
+  av.textContent = '¿Con qué lo atacas? Cuenta cuántas medidas tiene.';
+}
+
+function atacar(tipo){
+  if(esperando) return;
+  var b = actual(), f = figura(b);
+  var correcto = f.plano ? 'area' : 'volumen';
+  if(tipo !== correcto){
+    // el golpe rebota: elegir mal cuesta, que es de lo que se trata
+    esperando = true;
+    recibir(b.golpe, f.plano
+      ? 'Le tiraste volumen a algo PLANO: no tiene grosor, el golpe lo atravesó.'
+      : 'Le tiraste área a un CUERPO: le rebotó en la cáscara.');
+    reventar(0xe05252);
+    setTimeout(function(){ if(vidaYo>0) pedirAtaque(); }, 1000);
+    return;
+  }
+  ataqueElegido = tipo;
+  mostrarOpciones(f, tipo);
+}
+
+function mostrarOpciones(f, tipo){
+  document.getElementById('ataques').style.display = 'none';
+  var av = document.getElementById('aviso');
+  av.className = 'aviso bien';
+  av.innerHTML = (tipo==='area' ? '⚔️ ¡Bien, es plano!' : '🧊 ¡Bien, es un cuerpo!')+
+    ' Ahora la fuerza del golpe: ¿cuánto <b>'+(tipo==='area'?'área':'volumen')+'</b> tiene?';
+  var ops = [{v:f.valor, ok:true, p:''}].concat(f.malos.map(function(m){ return {v:m.v, ok:false, p:m.p}; }));
+  var vistos = {};
+  ops = ops.filter(function(o){ var k=fmt(o.v); if(vistos[k]) return false; vistos[k]=1; return true; });
+  ops.sort(function(){ return Math.random()-0.5; });
+  var cont = document.getElementById('ops');
+  cont.innerHTML = ''; cont.style.display = 'flex';
+  ops.forEach(function(o){
+    var bt = document.createElement('button');
+    bt.className = 'op';
+    bt.textContent = fmt(o.v)+' '+(tipo==='area'?'cm²':'cm³');
+    bt.onclick = function(){ golpear(o, bt, f); };
+    cont.appendChild(bt);
+  });
+}
+
+function golpear(o, boton, f){
+  if(esperando) return;
+  esperando = true;
+  Array.prototype.forEach.call(document.querySelectorAll('#ops .op'), function(b){ b.disabled = true; });
+  if(o.ok){
+    boton.classList.add('buena');
+    var dano = Math.ceil(actual().vida/3);
+    vidaEl -= dano;
+    xp += 5;
+    reventar(0xffe08a);
+    volar('−'+dano, '#ffe08a');
+    var av = document.getElementById('aviso');
+    av.className='aviso bien';
+    av.textContent = '💥 ¡'+dano+' de daño!';
+    pintarBarras();
+    setTimeout(function(){
+      if(vidaEl <= 0) return vencer();
+      if(actual().jefe && !cambiado && vidaEl <= actual().vida/2) return transformarJefe();
+      pedirAtaque();
+    }, 750);
+  } else {
+    boton.classList.add('mala');
+    recibir(Math.round(actual().golpe*0.7), 'La cuenta no era esa: '+o.p+'.');
+    setTimeout(function(){ if(vidaYo>0) pedirAtaque(); }, 1100);
+  }
+}
+
+function recibir(dano, porque){
+  vidaYo -= dano;
+  volar('−'+dano, '#ff9c9c');
+  var av = document.getElementById('aviso');
+  av.className = 'aviso mal';
+  av.textContent = '💢 '+porque+' Te quitó '+dano+'.';
+  pintarBarras();
+  if(vidaYo <= 0){ setTimeout(caer, 700); }
+}
+
+function volar(txt, color){
+  var el = document.getElementById('golpe');
+  el.textContent = txt; el.style.color = color;
+  el.classList.remove('ver'); void el.offsetWidth; el.classList.add('ver');
+}
+
+/* El jefe cambia de plano a cuerpo a media pelea. Quien se aprendió
+   «este se ataca con área» y dejó de mirar, aquí lo paga. */
+function transformarJefe(){
+  cambiado = true;
+  var b = actual();
+  b.f = b.mitad.f; b.dims = b.mitad.dims;
+  armarBicho(); pintarChapa(); pintarBarras();
+  var av = document.getElementById('aviso');
+  av.className='aviso mal';
+  av.innerHTML = '👑 <b>¡El jefe se levantó del suelo!</b> Ya no es plano: le creció el grosor. Mira otra vez sus medidas.';
+  reventar(0x7c5cd6);
+  document.getElementById('ops').style.display='none';
+  setTimeout(function(){
+    document.getElementById('ataques').style.display='flex';
+    document.getElementById('at-area').disabled=false;
+    document.getElementById('at-vol').disabled=false;
+    esperando=false; ataqueElegido=null;
+  }, 1600);
+}
+
+function vencer(){
+  xp += 15; guardar();
+  if(indice < ZONAS[zona].bichos.length-1){
+    indice++;
+    setTimeout(nuevoBicho, 500);
+    return;
+  }
+  // zona limpia
+  var ultima = (zona >= ZONAS.length-1);
+  document.getElementById('fin-emoji').textContent = ultima ? '👑' : '🏆';
+  document.getElementById('fin-tit').textContent = ultima ? '¡Ganaste el castillo!' : '¡Zona limpia!';
+  document.getElementById('fin-txt').textContent = ultima
+    ? 'Le tumbaste el castillo al jefe con '+xp+' XP. Ya no confundes lo plano con lo que tiene cuerpo.'
+    : 'Ganaste '+xp+' XP. Te curas 30 de vida y sigues.';
+  document.getElementById('fin-regla').style.display = 'flex';
+  document.getElementById('fin-bt').textContent = ultima ? '🔄 Otra vuelta' : 'Siguiente zona →';
+  document.getElementById('velo-fin').classList.add('ver');
+  if(!ultima){ zona++; indice = 0; vidaYo = Math.min(100, vidaYo+30); }
+  else { zona = 0; indice = 0; vidaYo = 100; }
+  guardar();
+}
+
+function caer(){
+  document.getElementById('fin-emoji').textContent = '💀';
+  document.getElementById('fin-tit').textContent = 'Te tumbaron';
+  document.getElementById('fin-txt').textContent =
+    'La regla es corta: si tiene DOS medidas es plano y va con área; si tiene TRES, es un cuerpo y va con volumen.';
+  document.getElementById('fin-regla').style.display = 'flex';
+  document.getElementById('fin-bt').textContent = '🔄 Otra vez';
+  document.getElementById('velo-fin').classList.add('ver');
+  indice = 0; vidaYo = 100;
+}
+
+function siguienteZona(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  nuevoBicho();
+}
+
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  indice = 0; vidaYo = 100;
+  nuevoBicho();
+}
+
+/* ============================================================
+   El bucle. Lo que más enseña de todo el juego está aquí: los
+   planos GIRAN y al ponerse de canto desaparecen, porque no
+   tienen grosor. Los cuerpos giran y siempre se ven.
+   ============================================================ */
+function animar(){
+  requestAnimationFrame(animar);
+  if(bicho){
+    if(bicho.userData.plano){
+      giroPlano += 0.014;
+      bicho.rotation.y = Math.sin(giroPlano)*1.45;
+    } else {
+      bicho.rotation.y += 0.008;
+    }
+    bicho.position.y = Math.sin(Date.now()*0.002)*0.12;
+  }
+  if(particulas && particulas.material.opacity > 0){
+    var arr = particulas.geometry.attributes.position.array;
+    chispas.forEach(function(c,i){
+      c.vy -= 0.004;
+      c.x += c.vx; c.y += c.vy; c.z += c.vz;
+      arr[i*3]=c.x; arr[i*3+1]=c.y; arr[i*3+2]=c.z;
+    });
+    particulas.geometry.attributes.position.needsUpdate = true;
+    particulas.material.opacity = Math.max(0, particulas.material.opacity - 0.018);
+  }
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  pintarBarras();
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  figura: figura,
+  zonas: ZONAS,
+  empezar: empezar,
+  atacar: atacar,
+  elegir: function(quiero){
+    var ops = document.querySelectorAll('#ops .op');
+    for(var i=0;i<ops.length;i++){
+      var esBuena = ops[i].textContent.indexOf(fmt(figura(actual()).valor)+' ') === 0;
+      if(esBuena === quiero){ ops[i].click(); return true; }
+    }
+    return false;
+  },
+  estado: function(){ return {zona:zona, indice:indice, vidaYo:vidaYo, vidaEl:vidaEl, xp:xp, cambiado:cambiado, plano:figura(actual()).plano}; }
+};
+</script>
+</body>
+</html>

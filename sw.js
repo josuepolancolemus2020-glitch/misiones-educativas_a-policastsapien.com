@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v151';
+const CACHE_NAME = 'meta-app-v152';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
@@ -83,9 +83,24 @@ self.addEventListener('fetch', event => {
         .catch(() => caches.match(event.request))
     );
   } else {
-    // Imágenes y recursos externos: cache-first (no cambian frecuentemente)
+    // Imágenes y recursos externos: cache-first (no cambian frecuentemente).
+    // Y lo que se baja se GUARDA. Antes esta rama solo LEÍA de la caché,
+    // así que lo externo no entraba nunca —nadie lo metía— y dependía de
+    // la caché del navegador, que se vacía sola. Con los juegos 3D eso
+    // dejó de ser un detalle: bajan su motor de dibujo de un CDN, y la
+    // pantalla le promete al alumno que abriéndolos una vez con señal
+    // después funcionan sin ella. Esta línea es la que cumple la promesa.
     event.respondWith(
-      caches.match(event.request).then(cached => cached || fetch(event.request))
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(respuesta => {
+          if (respuesta && (respuesta.ok || respuesta.type === 'opaque')) {
+            const copia = respuesta.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copia));
+          }
+          return respuesta;
+        });
+      })
     );
   }
 });
