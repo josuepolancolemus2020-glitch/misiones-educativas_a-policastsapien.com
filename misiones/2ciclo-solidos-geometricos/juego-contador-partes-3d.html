@@ -129,6 +129,23 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
   .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
   .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
 }
+
+/* Cuando el panel no cabe —letra del sistema agrandada, teléfono
+   acostado— se aprieta solo, y si aun apretado sigue sin caber, sale
+   un aviso de que hay que deslizar. Se puede deslizar desde el
+   principio, sí, pero NADA se lo decía al alumno: un botón debajo del
+   borde, sin aviso, es un botón que no existe. Esto no depende del
+   alto de la ventana sino de si CABE, que es lo único que importa. */
+.velo.apretado .panel{padding:.6rem .75rem;}
+.velo.apretado .emoji-gr{font-size:1.4rem;margin-bottom:.1rem;}
+.velo.apretado .panel h2{font-size:.9rem;margin-bottom:.25rem;}
+.velo.apretado .panel p{font-size:.76rem;line-height:1.3;margin-bottom:.35rem;}
+.velo.apretado .estrellas{font-size:1.25rem;margin-bottom:.15rem;}
+.velo.apretado .bt{padding:.4rem .8rem;min-height:40px;font-size:.8rem;}
+.velo.desliza::after{content:'▼ desliza para ver el botón';position:fixed;left:50%;
+  transform:translateX(-50%);bottom:.45rem;background:#c9a227;color:#141826;
+  padding:.25rem .8rem;border-radius:12px;font-size:.74rem;font-weight:700;
+  z-index:40;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.5);}
 </style>
 </head>
 <body>
@@ -371,6 +388,25 @@ function vigilarHueco(){
   new ResizeObserver(function(){ ajustar(); }).observe(cont);
 }
 
+/* Mira si el panel cabe. Si no, lo aprieta; y si apretado tampoco,
+   enciende el aviso de deslizar. Se comprueba desde el bucle de
+   dibujo, unas pocas veces por segundo: los velos se abren desde
+   muchos sitios y engancharlos uno por uno se olvida siempre. */
+var _velosCada = 0;
+function ajustarVelos(){
+  if(++_velosCada % 6) return;   // ~10 veces por segundo: el aviso tiene que salir YA
+  var velos = document.querySelectorAll('.velo.ver');
+  for(var i=0;i<velos.length;i++){
+    var v = velos[i], p = v.querySelector('.panel');
+    if(!p) continue;
+    var hueco = v.clientHeight - 16;
+    if(!v.classList.contains('apretado') && p.scrollHeight > hueco) v.classList.add('apretado');
+    else if(v.classList.contains('apretado') && p.scrollHeight < hueco - 60) v.classList.remove('apretado');
+    var sobra = p.getBoundingClientRect().height > v.clientHeight - 8;
+    if(sobra !== v.classList.contains('desliza')) v.classList.toggle('desliza', sobra);
+  }
+}
+
 function ajustar(){
   var cont=document.getElementById('lienzo');
   if(!cont.clientHeight) return;
@@ -597,6 +633,7 @@ function animar(){
   requestAnimationFrame(animar);
   if(girando) angY += 0.006;
   if(grupo){ grupo.rotation.y = angY; grupo.rotation.x = angX; }
+  ajustarVelos();
   rend.render(esc, cam);
 }
 

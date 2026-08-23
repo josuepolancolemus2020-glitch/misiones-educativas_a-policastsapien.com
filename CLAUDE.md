@@ -1396,7 +1396,22 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    desplazan por dentro antes que salirse (`max-height:72vh`), y por
    debajo de 430 px de alto el panel **se aprieta para que quepa** —se
    recorta el aire, no el texto que hay que leer—. Y ningún blanco de
-   toque baja de **44 px**: es lo que un dedo acierta sin mirar.
+   toque baja de **44 px**: es lo que un dedo acierta sin mirar. Y
+   cuando aun así no cabe, **el juego lo dice**: `ajustarVelos()` mira
+   diez veces por segundo si el panel entra en la ventana, lo aprieta
+   si no (`.velo.apretado`) y, si sigue sin caber, enciende un
+   «▼ desliza para ver el botón» (`.velo.desliza`). Se podía deslizar
+   desde siempre; lo que faltaba era decirlo.
+10. **Después de cambiar de pantalla, un respiro antes de aceptar
+   toques.** En varios juegos lo nuevo sale en los MISMOS píxeles que
+   lo viejo —las respuestas donde estaban los ataques, la pregunta
+   siguiente donde estaba la anterior, el cuarto donde estaba el botón
+   de seguir—, y el segundo toque de un dedo impaciente contestaba algo
+   que el alumno no había visto: le rompía la racha, le quitaba
+   segundos o le cazaba un objeto equivocado. Son 330-400 ms en los que
+   no se acepta nada **y se ve apagado**, que es la otra mitad: un
+   botón encendido que no contesta es un teléfono que el niño da por
+   trabado.
 9. ⚠️ **El lienzo 3D no puede salirse de su hueco, y esto es lo que más
    caro costó.** Three.js escribe el tamaño del lienzo en el `style` EN
    LÍNEA del `<canvas>`, y ese style **gana sobre el CSS**. El reparto

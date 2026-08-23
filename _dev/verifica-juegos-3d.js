@@ -621,11 +621,15 @@ async function nadaTapado(p, cuando){
          es un fallo SI el alumno puede llegar a él deslizando. Se
          intenta, y si aun así no aparece, entonces sí es un botón que
          no existe. */
-      if(cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight){
+      /* Con margen de 2 px: un centro clavado en el borde cuenta como
+         fuera. `elementFromPoint` en el borde exacto devuelve nulo, y
+         el botón está medio cortado de todos modos. */
+      const fueraDe = (x, y) => x < 2 || y < 2 || x > window.innerWidth - 2 || y > window.innerHeight - 2;
+      if(fueraDe(cx, cy)){
         try{ el.scrollIntoView({block:'center', inline:'center'}); }catch(e){}
         const r2 = el.getBoundingClientRect();
         cx = r2.left + r2.width/2; cy = r2.top + r2.height/2;
-        if(cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight){
+        if(fueraDe(cx, cy)){
           malos.push({txt:(el.textContent||el.id||'').trim().slice(0,20), tapa:'FUERA DE LA VENTANA, ni deslizando'});
           return;
         }
@@ -661,7 +665,8 @@ async function todoAlcanzable(nav){
       await p.route('**cdnjs.cloudflare.com/**', r => r.abort());
       await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
       if(medida.letra) await p.addStyleTag({ content: 'html{font-size:'+medida.letra+'px;}' });
-      await p.waitForTimeout(400);
+      // se le da tiempo al juego a apretar el panel si no cabe
+      await p.waitForTimeout(700);
       const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
 
       let malos = await nadaTapado(p, 'al abrir');
