@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏭 La Fábrica de Sólidos 3D | Misión Sólidos Geométricos</title>
+<meta name="description" content="Elige los lados de la base y si es prisma o pirámide, y mira cómo cambian sus caras, aristas y vértices. Con la cuenta de Euler en vivo.">
+<style>
+/* ============================================================
+   Juego 3D · La Fábrica de Sólidos
+   ------------------------------------------------------------
+   Dos cosas se aprenden aquí y en ningún otro sitio de la misión:
+
+   1. El apellido sale de la BASE. Un prisma pentagonal se llama
+      así por sus dos pentágonos, no por sus cinco rectángulos. Al
+      mover los lados de la base y ver cambiar el nombre delante,
+      eso deja de ser una lista que memorizar.
+   2. Las cuentas tienen PATRÓN. Un prisma de n lados siempre tiene
+      n+2 caras, 3n aristas y 2n vértices; una pirámide, n+1, 2n y
+      n+1. Con la tabla se memorizan seis filas; aquí se descubre
+      la regla, que sirve para el prisma de 20 lados que no está en
+      ninguna tabla.
+
+   Y Euler se comprueba solo, en cada movimiento del dedo: caras +
+   vértices = aristas + 2, siempre.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --morado:#8b6fe0; --dorado:#c9a227;
+  --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
+.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 28%,#2c3356 0%,#121624 76%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+.pedido{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.4rem .7rem;text-align:center;font-size:.85rem;line-height:1.35;}
+.pedido b{color:var(--morado);}
+.nombre{position:absolute;left:50%;transform:translateX(-50%);top:4.1rem;background:rgba(18,22,36,.9);border:1.5px solid var(--dorado);border-radius:10px;padding:.2rem .7rem;font-size:.95rem;font-weight:700;color:var(--dorado);white-space:nowrap;}
+/* las tres cuentas y Euler */
+.cuentas{position:absolute;left:.5rem;right:.5rem;bottom:.5rem;background:rgba(18,22,36,.92);border:1.5px solid rgba(154,165,189,.35);border-radius:12px;padding:.4rem .55rem;}
+.tri{display:flex;gap:.35rem;}
+.tri div{flex:1;border:1.5px solid;border-radius:10px;padding:.25rem .2rem;text-align:center;font-size:.68rem;line-height:1.2;}
+.tri div b{display:block;font-size:1.35rem;font-family:'Fira Code',ui-monospace,monospace;}
+.c-cara{border-color:var(--morado);color:var(--morado);}
+.c-arista{border-color:var(--dorado);color:var(--dorado);}
+.c-vertice{border-color:var(--azul);color:#9fd0ff;}
+.euler{font-family:'Fira Code',ui-monospace,monospace;font-size:.76rem;text-align:center;color:var(--gris);margin-top:.3rem;}
+.euler b{color:var(--verde);}
+.aviso{font-size:.78rem;text-align:center;min-height:1.05rem;margin-top:.2rem;line-height:1.3;}
+.aviso.mal{color:#ffb1b1;} .aviso.bien{color:#7ee2a8;}
+/* mandos */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .6rem;flex-shrink:0;}
+.fila{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;}
+.fila label{font-size:.76rem;width:4.6rem;flex-shrink:0;line-height:1.2;}
+.fila label b{display:block;color:var(--azul);font-family:'Fira Code',ui-monospace,monospace;font-size:.95rem;}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:26px;background:transparent;}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#141a2c;border-radius:5px;border:1px solid rgba(154,165,189,.3);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--morado);border:2px solid #e0d4ff;cursor:pointer;}
+input[type=range]::-moz-range-track{height:8px;background:#141a2c;border-radius:5px;}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--morado);border:2px solid #e0d4ff;cursor:pointer;}
+.tipo{display:flex;gap:.4rem;margin-bottom:.4rem;}
+.tp{flex:1;font-family:inherit;font-size:.88rem;font-weight:700;padding:.5rem .3rem;border:2px solid rgba(154,165,189,.4);border-radius:12px;background:#141a2c;color:var(--claro);cursor:pointer;line-height:1.25;}
+.tp small{display:block;font-size:.64rem;font-weight:400;color:var(--gris);}
+.tp.on{border-color:var(--morado);background:rgba(139,111,224,.2);color:var(--morado);}
+.botones{display:flex;gap:.4rem;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .5rem;border:none;border-radius:13px;cursor:pointer;flex:1;line-height:1.2;}
+.bt-p{background:var(--morado);color:#141826;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.nota{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;margin:.6rem 0;text-align:left;line-height:1.7;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.pedido{font-size:.78rem;}.tri div b{font-size:1.15rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="solidos-geometricos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🏭 La Fábrica de Sólidos<small id="subt">Pedido 1 de 7</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="pedido" id="pedido"></div>
+  <div class="nombre" id="nombre">—</div>
+  <div class="cuentas">
+    <div class="tri">
+      <div class="c-cara">caras<b id="n-caras">0</b></div>
+      <div class="c-arista">aristas<b id="n-aristas">0</b></div>
+      <div class="c-vertice">vértices<b id="n-vertices">0</b></div>
+    </div>
+    <div class="euler" id="euler"></div>
+    <div class="aviso" id="aviso"></div>
+  </div>
+</div>
+
+<div class="mandos">
+  <div class="fila">
+    <label>lados de la base<b id="lbl-n">5</b></label>
+    <input type="range" id="sl-n" min="3" max="10" step="1" value="5">
+  </div>
+  <div class="tipo">
+    <button class="tp on" id="tp-prisma" onclick="ponerTipo('prisma')">📦 Prisma<small>dos bases iguales</small></button>
+    <button class="tp" id="tp-piramide" onclick="ponerTipo('piramide')">🔺 Pirámide<small>una base y una punta</small></button>
+  </div>
+  <div class="botones">
+    <button class="bt bt-v" onclick="fabricar()">🏭 Fabricar</button>
+    <button class="bt bt-s" onclick="pista()">💡 Pista</button>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🏭</div>
+    <h2>La Fábrica de Sólidos</h2>
+    <p>Llega un pedido. Mueve los <b>lados de la base</b> y elige si es <b>prisma</b> o <b>pirámide</b> hasta que salga el sólido que piden.</p>
+    <div class="nota">Prisma de n lados: n+2 caras, 3n aristas, 2n vértices<br>Pirámide de n lados: n+1 caras, 2n aristas, n+1 vértices</div>
+    <p style="font-size:.84rem;color:#9aa5bd;">No hace falta aprenderse eso: muévelo y míralo. El apellido del sólido sale siempre de su base.</p>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar el turno</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🎉</div>
+    <h2 id="fin-tit"></h2>
+    <div class="nota" id="fin-nota"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente pedido →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_fabsolidos_v1';
+
+/* El apellido sale de la base, y hasta el decágono está en el
+   grado. Más allá se dice «de n lados», que es lo honesto. */
+var APELLIDOS = {3:'triangular', 4:'cuadrangular', 5:'pentagonal', 6:'hexagonal',
+                 7:'heptagonal', 8:'octagonal', 9:'eneagonal', 10:'decagonal'};
+
+/* Las cuentas, que son un patrón y no una tabla que memorizar. */
+function partes(tipo, n){
+  return (tipo === 'prisma')
+    ? {caras:n+2, aristas:3*n, vertices:2*n}
+    : {caras:n+1, aristas:2*n, vertices:n+1};
+}
+function nombreDe(tipo, n){
+  return (tipo === 'prisma' ? 'Prisma ' : 'Pirámide ') + (APELLIDOS[n] || 'de '+n+' lados');
+}
+
+/* Siete pedidos. Los tres primeros piden el sólido por su nombre;
+   los otros lo piden por sus cuentas, que es como viene en el
+   examen y donde hay que darle la vuelta al patrón. */
+var PEDIDOS = [
+  {txt:'un <b>prisma pentagonal</b>',                     tipo:'prisma',   n:5,
+   nota:'Se llama pentagonal por sus dos bases de cinco lados,\nno por sus cinco caras laterales.'},
+  {txt:'una <b>pirámide hexagonal</b>',                   tipo:'piramide', n:6,
+   nota:'Seis triángulos que suben a la cúspide,\nsobre una sola base de seis lados.'},
+  {txt:'un <b>prisma cuadrangular</b> (el de la caja)',   tipo:'prisma',   n:4,
+   nota:'6 caras, 12 aristas, 8 vértices.\nSi además todas sus caras fueran cuadradas, sería un cubo.'},
+  {txt:'un sólido con <b>8 caras, 18 aristas y 12 vértices</b>', tipo:'prisma', n:6,
+   nota:'8 = n+2 → n vale 6. Y comprueba: 3×6 = 18 aristas, 2×6 = 12 vértices.'},
+  {txt:'un sólido con <b>5 caras y 5 vértices</b>',       tipo:'piramide', n:4,
+   nota:'Ojo: el prisma triangular también tiene 5 caras,\npero 6 vértices. El vértice es el que decide.'},
+  {txt:'el sólido con <b>menos caras que existe</b>',     tipo:'piramide', n:3,
+   nota:'Cuatro caras, y todas triángulos.\nCon tres caras no se puede cerrar nada.'},
+  {txt:'una <b>pirámide con 20 aristas</b>',              tipo:'piramide', n:10,
+   nota:'En la pirámide hay 2n aristas: n de la base\ny n que suben. 20 ÷ 2 = 10 lados.'}
+];
+
+var esc, cam, rend, grupo, cuerpo, aristas3D;
+var pedido = 0, estrellas = 0, tipo = 'prisma', giro = 0, enReto = false;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({pedido:pedido, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ pedido=Math.min(d.pedido|0, PEDIDOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function lados(){ return parseInt(document.getElementById('sl-n').value,10); }
+
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(44, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 100);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.74));
+  var l1=new THREE.DirectionalLight(0xffffff,0.6); l1.position.set(5,9,7); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0xbfd4ff,0.35); l2.position.set(-5,-3,-6); esc.add(l2);
+  esc.add(new THREE.GridHelper(9, 9, 0x4a90d9, 0x333c60));
+
+  grupo = new THREE.Group(); esc.add(grupo);
+  cam.position.set(0, 2.5, 6.2);
+  cam.lookAt(0, 0.4, 0);
+  rehacer();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+/* Un cilindro con pocos lados ES un prisma, y un cono con pocos
+   lados ES una pirámide: la máquina de dibujar los hace igual. Por
+   eso se usan esas dos figuras con el número de lados que pida el
+   alumno, en vez de armar los vértices a mano. */
+function rehacer(){
+  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  var n = lados();
+  var geo = (tipo === 'prisma')
+    ? new THREE.CylinderGeometry(1.25, 1.25, 1.8, n)
+    : new THREE.ConeGeometry(1.35, 2.1, n);
+  cuerpo = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
+    color: tipo==='prisma' ? 0x8b6fe0 : 0xc9a227, flatShading:true}));
+  cuerpo.position.y = 1.0;
+  grupo.add(cuerpo);
+  aristas3D = new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.85}));
+  aristas3D.position.y = 1.0;
+  grupo.add(aristas3D);
+  pintar();
+}
+
+function pintar(){
+  var n = lados(), p = partes(tipo, n);
+  document.getElementById('lbl-n').textContent = n;
+  document.getElementById('nombre').textContent = nombreDe(tipo, n);
+  document.getElementById('n-caras').textContent = p.caras;
+  document.getElementById('n-aristas').textContent = p.aristas;
+  document.getElementById('n-vertices').textContent = p.vertices;
+  document.getElementById('euler').innerHTML =
+    'caras + vértices = aristas + 2 → '+p.caras+' + '+p.vertices+' = '+p.aristas+' + 2 → <b>'+
+    (p.caras+p.vertices)+' = '+(p.aristas+2)+' ✔</b>';
+}
+
+function ponerTipo(t){
+  tipo = t;
+  document.getElementById('tp-prisma').classList.toggle('on', t==='prisma');
+  document.getElementById('tp-piramide').classList.toggle('on', t==='piramide');
+  rehacer();
+}
+
+function pintarPedido(){
+  var p = PEDIDOS[pedido];
+  document.getElementById('pedido').innerHTML = '📋 Fabrica ' + p.txt;
+  document.getElementById('subt').textContent = 'Pedido '+(pedido+1)+' de '+PEDIDOS.length;
+  document.getElementById('aviso').textContent = '';
+}
+
+function fabricar(){
+  var p = PEDIDOS[pedido], n = lados();
+  var av = document.getElementById('aviso');
+  var pedidoPartes = partes(p.tipo, p.n), miasPartes = partes(tipo, n);
+  if(tipo === p.tipo && n === p.n) return ganar();
+  // se le dice QUÉ falla, no solo que falla
+  av.className = 'aviso mal';
+  if(tipo !== p.tipo){
+    av.textContent = 'Ese es '+(tipo==='prisma'?'un prisma':'una pirámide')+
+      ', y el pedido lleva '+(p.tipo==='prisma'?'dos bases':'una sola base y una punta')+'.';
+  } else if(miasPartes.caras !== pedidoPartes.caras){
+    av.textContent = 'Te salen '+miasPartes.caras+' caras y el pedido pide '+pedidoPartes.caras+'.';
+  } else {
+    av.textContent = 'Casi: mira los vértices. Te salen '+miasPartes.vertices+
+      ' y el pedido pide '+pedidoPartes.vertices+'.';
+  }
+}
+
+function ganar(){
+  var p = PEDIDOS[pedido], pa = partes(p.tipo, p.n);
+  estrellas += 6;
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  document.getElementById('fin-emoji').textContent = p.tipo==='prisma' ? '📦' : '🔺';
+  document.getElementById('fin-tit').textContent = '¡'+nombreDe(p.tipo, p.n)+'!';
+  document.getElementById('fin-nota').innerHTML =
+    pa.caras+' caras · '+pa.aristas+' aristas · '+pa.vertices+' vértices<br>'+
+    p.nota.replace(/\n/g,'<br>');
+  document.getElementById('fin-txt').textContent = '';
+  var ultimo = (pedido >= PEDIDOS.length-1);
+  document.getElementById('fin-bt').textContent = ultimo ? '🔄 Otra vuelta' : 'Siguiente pedido →';
+  guardar();
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  pedido = (pedido >= PEDIDOS.length-1) ? 0 : pedido+1;
+  guardar();
+  pintarPedido();
+}
+
+/* La pista cuesta una estrella: gratis se toca antes de pensar. */
+function pista(){
+  var p = PEDIDOS[pedido];
+  var av = document.getElementById('aviso');
+  av.className = 'aviso';
+  av.textContent = (p.tipo === 'prisma')
+    ? 'Es un prisma: tiene DOS bases iguales. En un prisma, las caras son n + 2.'
+    : 'Es una pirámide: UNA base y una punta. En una pirámide, las aristas son 2n.';
+  estrellas = Math.max(0, estrellas-1);
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  guardar();
+}
+
+function cerrar(id){ document.getElementById(id).classList.remove('ver'); }
+
+function animar(){
+  requestAnimationFrame(animar);
+  giro += 0.007;
+  if(grupo) grupo.rotation.y = giro;
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  document.getElementById('sl-n').addEventListener('input', rehacer);
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  pintarPedido();
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  partes: partes,
+  nombreDe: nombreDe,
+  pedidos: PEDIDOS,
+  poner: function(t, n){ document.getElementById('sl-n').value = n; ponerTipo(t); },
+  fabricar: fabricar,
+  irA: function(i){ pedido = i; pintarPedido(); },
+  estado: function(){ return {pedido:pedido, tipo:tipo, n:lados(), partes:partes(tipo, lados()),
+    nombre:nombreDe(tipo, lados()), estrellas:estrellas, aviso:document.getElementById('aviso').textContent}; }
+};
+</script>
+</body>
+</html>

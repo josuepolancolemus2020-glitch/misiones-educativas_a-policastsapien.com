@@ -613,3 +613,45 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ===== PARQUE DE JUEGOS 3D =====================================
+   Los seis juegos viven en páginas aparte —cada uno se abre en otra
+   pestaña y trae su propio dibujo en 3D—, así que aquí solo está la
+   puerta. Dos cosas que no son de adorno:
+
+   · La MEDALLA de cada tarjeta se lee de la llave de localStorage
+     del juego, no del progreso de la misión. Un alumno que abrió
+     tres juegos y dejó dos a medias tiene que ver por dónde iba sin
+     entrar a comprobarlo, que es lo que hace que vuelva.
+   · El enlace «Jugarlo en 3D» aparece TAMBIÉN pegado al widget del
+     mismo tema (el armador de patrones, el contador de partes, la
+     máquina de revolución). Un parque al final está bien para
+     elegir, pero al que acaba de contar las caras de un cubo en una
+     pantalla plana hay que ofrecerle el sólido que SE GIRA ahí
+     mismo, no doce pantallas más adelante. */
+.juegos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0.9rem;margin-top:0.6rem;}
+.juego-card{border:2px solid var(--border);border-radius:14px;padding:1rem 0.9rem 0.9rem;background:var(--card);
+  display:flex;flex-direction:column;align-items:center;text-align:center;transition:border-color .25s,transform .25s;}
+.juego-card:hover{border-color:var(--purple);transform:translateY(-2px);}
+.juego-icon{font-size:2.4rem;line-height:1;margin-bottom:0.3rem;}
+.juego-card h3{font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--purple);margin-bottom:0.35rem;line-height:1.25;}
+.juego-card p{font-size:0.84rem;line-height:1.45;color:var(--dark);margin-bottom:0.5rem;}
+.juego-tema{font-size:0.72rem;color:var(--gray);background:var(--purple-gl);border-radius:8px;padding:0.2rem 0.5rem;margin-bottom:0.35rem;}
+.juego-medalla{font-size:0.74rem;font-weight:700;margin-bottom:0.55rem;min-height:1.05rem;}
+.juego-medalla.con{color:var(--jade);}
+.juego-medalla.sin{color:var(--gray);font-weight:400;font-style:italic;}
+.btn-juego{margin-top:auto;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;font-size:0.95rem;padding:0.55rem 1.3rem;}
+
+/* El salto al juego desde el widget de su mismo tema */
+.salto3d{display:flex;align-items:center;gap:0.6rem;margin-top:0.7rem;padding:0.6rem 0.8rem;text-decoration:none;
+  border:2px dashed var(--purple);border-radius:12px;background:var(--purple-gl);color:var(--dark);transition:background .2s;}
+.salto3d:hover{background:var(--pri-gl);}
+.salto3d .s3-ico{font-size:1.5rem;flex-shrink:0;}
+.salto3d .s3-txt{flex:1;line-height:1.3;}
+.salto3d .s3-txt strong{display:block;font-family:'Fredoka',sans-serif;font-size:0.9rem;color:var(--purple);}
+.salto3d .s3-txt small{display:block;font-size:0.76rem;color:var(--gray);margin-top:0.1rem;}
+.salto3d .s3-fl{font-size:1.1rem;flex-shrink:0;}
+
+[data-theme="dark"] .juego-card{background:var(--card-bg);}
+[data-theme="dark"] .juego-card p{color:var(--dark);}
+[data-theme="dark"] .salto3d{color:var(--dark);}

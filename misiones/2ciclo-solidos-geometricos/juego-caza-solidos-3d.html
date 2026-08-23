@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏠 Caza Sólidos 3D | Misión Sólidos Geométricos</title>
+<meta name="description" content="Un cuarto lleno de cosas de la casa: encuentra los cilindros, los prismas y las pirámides antes de que se acabe el tiempo.">
+<style>
+/* ============================================================
+   Juego 3D · Caza Sólidos en el cuarto
+   ------------------------------------------------------------
+   El sólido geométrico se aprende con dibujos de sólidos, y ahí
+   se queda: el alumno reconoce el cilindro del libro y no
+   reconoce la lata que tiene en la mano. La misión ya le pide que
+   los busque en su casa; esto es el ensayo, con las cosas de una
+   casa de aquí —la cubeta, el rollo de papel, el gorro de piñata—
+   y con el reloj corriendo, que es lo que obliga a decidir rápido
+   en vez de ir descartando con calma.
+
+   La trampa está puesta a propósito en la ronda de las pirámides:
+   el gorro y el embudo son CONOS. Tienen punta, pero su base es un
+   círculo, así que no son pirámides ni son poliedros. Es el error
+   que más se repite en el examen.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --morado:#8b6fe0; --dorado:#c9a227;
+  --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
+.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.reloj{font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;font-weight:700;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.15rem .5rem;border-radius:9px;}
+.reloj.poco{background:rgba(224,82,82,.25);border-color:var(--rojo);color:#ffb1b1;}
+.marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .45rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 22%,#333b5e 0%,#141827 78%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+.consigna{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.42rem .7rem;text-align:center;font-size:.88rem;line-height:1.35;}
+.consigna b{color:var(--morado);}
+.consigna .lleva{display:block;font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;color:var(--dorado);margin-top:.05rem;}
+.globo{position:absolute;left:50%;transform:translateX(-50%);bottom:3.6rem;background:rgba(18,22,36,.95);border:1.5px solid var(--gris);border-radius:11px;padding:.3rem .75rem;font-size:.82rem;opacity:0;transition:opacity .2s;pointer-events:none;max-width:92%;text-align:center;line-height:1.35;}
+.globo.ver{opacity:1;}
+.globo.si{border-color:var(--verde);color:#7ee2a8;}
+.globo.no{border-color:var(--rojo);color:#ffb1b1;}
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .6rem;flex-shrink:0;display:flex;gap:.4rem;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .5rem;border:none;border-radius:13px;cursor:pointer;flex:1;line-height:1.2;}
+.bt-p{background:var(--morado);color:#141826;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.nota{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;margin:.6rem 0;text-align:left;line-height:1.6;}
+.lista{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center;margin:.5rem 0;font-size:.76rem;}
+.lista span{border:1.5px solid rgba(154,165,189,.4);border-radius:9px;padding:.2rem .45rem;}
+.lista span.ok{border-color:var(--verde);color:#7ee2a8;}
+.lista span.no{border-color:var(--rojo);color:#ffb1b1;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.consigna{font-size:.79rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="solidos-geometricos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🏠 Caza Sólidos<small id="subt">Ronda 1 de 5</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+  <div class="reloj" id="reloj">45</div>
+</div>
+
+<div id="lienzo">
+  <div class="consigna" id="consigna"></div>
+  <div class="globo" id="globo"></div>
+</div>
+
+<div class="mandos">
+  <button class="bt bt-s" onclick="girarCuarto(-1)">↩️ Girar</button>
+  <button class="bt bt-v" onclick="terminarRonda()">✔️ Ya los encontré</button>
+  <button class="bt bt-s" onclick="girarCuarto(1)">↪️ Girar</button>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🏠</div>
+    <h2>Caza Sólidos</h2>
+    <p>Este cuarto está lleno de cosas de una casa. En cada ronda te piden un grupo: tócalas todas antes de que se acabe el tiempo.</p>
+    <div class="nota">Gira el cuarto: siempre hay algo escondido detrás.<br>Tocar lo que no era cuesta 5 segundos.</div>
+    <button class="bt bt-p" onclick="empezar()">A cazar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🎯</div>
+    <h2 id="fin-tit"></h2>
+    <div class="lista" id="fin-lista"></div>
+    <div class="nota" id="fin-nota"></div>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente ronda →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_caza_v1';
+
+/* Las cosas del cuarto. Son de una casa de aquí a propósito: la
+   cubeta, el rollo de papel, el gorro de piñata. Un juego con
+   floreros y jarrones de porcelana enseña lo mismo, pero el alumno
+   no lo va a encontrar en su casa cuando la misión se lo pida. */
+var COSAS = [
+  {n:'Lata de leche',   emoji:'🥫', clase:'cilindro', x:-2.2, z:-1.4, s:0.7,  color:0xc9a227},
+  {n:'Caja de zapatos', emoji:'📦', clase:'prisma',   x:-0.6, z:-1.9, s:0.95, color:0xb07d4a},
+  {n:'Pelota',          emoji:'⚽', clase:'esfera',   x: 1.1, z:-1.5, s:0.72, color:0xeeeeee},
+  {n:'Gorro de piñata', emoji:'🎉', clase:'cono',     x: 2.4, z:-1.1, s:0.85, color:0xe05a8a},
+  {n:'Dado',            emoji:'🎲', clase:'prisma',   x:-2.5, z: 0.5, s:0.55, color:0xf0f0f0},
+  {n:'Libro',           emoji:'📕', clase:'prisma',   x:-1.1, z: 0.7, s:0.8,  color:0x8b3a3a},
+  {n:'Rollo de papel',  emoji:'🧻', clase:'cilindro', x: 0.4, z: 0.9, s:0.62, color:0xf5f0e6},
+  {n:'Embudo',          emoji:'🔻', clase:'cono',     x: 1.9, z: 0.6, s:0.7,  color:0x4a90d9},
+  {n:'Naranja',         emoji:'🍊', clase:'esfera',   x: 2.9, z: 1.5, s:0.5,  color:0xe08a3a},
+  {n:'Tienda de campaña', emoji:'⛺', clase:'prismaTri', x:-2.6, z: 2.3, s:0.95, color:0x27ae60},
+  {n:'Monumento maya',  emoji:'🔺', clase:'piramide', x:-0.7, z: 2.5, s:0.95, color:0x9a8c6a},
+  {n:'Techo de la casita', emoji:'🏠', clase:'piramide', x: 1.4, z: 2.6, s:0.8, color:0xd6603a},
+  {n:'Cubeta',          emoji:'🪣', clase:'cilindro', x: 2.9, z: 2.2, s:0.75, color:0x37b6c4},
+  {n:'Vela',            emoji:'🕯️', clase:'cilindro', x: 0.2, z:-0.6, s:0.45, color:0xf2e6c8}
+];
+
+/* Cinco rondas. La última es la que enseña de verdad: el gorro y
+   el embudo tienen punta, pero su base es un círculo, así que son
+   CONOS. No son pirámides y no son poliedros. */
+var RONDAS = [
+  {q:'Toca todos los <b>cuerpos redondos</b>', vale:['cilindro','cono','esfera'],
+   seg:45, nota:'Todo lo que tiene alguna superficie curva rueda.\nSon los tres: cilindro, cono y esfera.'},
+  {q:'Toca todos los <b>prismas</b>', vale:['prisma','prismaTri'],
+   seg:40, nota:'El prisma tiene DOS bases iguales.\nLa tienda de campaña también: dos triángulos enfrentados.'},
+  {q:'Toca todos los <b>cilindros</b>', vale:['cilindro'],
+   seg:35, nota:'Dos bases circulares y una superficie curva.\nLa cubeta es casi uno: un cono al que le cortaron la punta.'},
+  {q:'Toca todos los <b>poliedros</b> (los de caras planas)', vale:['prisma','prismaTri','piramide'],
+   seg:45, nota:'Poliedro = TODAS sus caras planas.\nNi el cono ni el cilindro ni la esfera lo son.'},
+  {q:'Toca solo las <b>pirámides</b>', vale:['piramide'],
+   seg:35, nota:'⚠️ El gorro y el embudo tienen punta, pero su base\nes un CÍRCULO: son conos, no pirámides.'}
+];
+
+var esc, cam, rend, cuarto, rayo, raton, mallas = [];
+var ronda = 0, tocadas = {}, errores = 0, seg = 0, corriendo = false, ultimo = 0;
+var estrellas = 0, giroCuarto = 0, giroObjetivo = 0;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({ronda:ronda, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ ronda=Math.min(d.ronda|0, RONDAS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function r(){ return RONDAS[ronda]; }
+function esBuena(c){ return r().vale.indexOf(c.clase) >= 0; }
+function cuantasBuenas(){ return COSAS.filter(esBuena).length; }
+
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(50, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 120);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.75));
+  var l1=new THREE.DirectionalLight(0xffffff,0.62); l1.position.set(5,11,7); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0xbfd4ff,0.32); l2.position.set(-6,4,-7); esc.add(l2);
+
+  cuarto = new THREE.Group(); esc.add(cuarto);
+  var piso = new THREE.Mesh(new THREE.BoxGeometry(9, 0.2, 8),
+    new THREE.MeshLambertMaterial({color:0x2b3357}));
+  piso.position.y = -0.1; cuarto.add(piso);
+  cuarto.add(new THREE.GridHelper(8, 8, 0x4a90d9, 0x39406b));
+
+  armarCosas();
+  rayo = new THREE.Raycaster();
+  raton = new THREE.Vector2();
+  cam.position.set(0, 4.6, 7.4);
+  cam.lookAt(0, 0.4, 0);
+  eventos();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function geoDe(c){
+  var s = c.s;
+  if(c.clase === 'cilindro')  return {g:new THREE.CylinderGeometry(0.34*s, 0.34*s, 0.85*s, 26), y:0.42*s};
+  if(c.clase === 'cono')      return {g:new THREE.ConeGeometry(0.4*s, 0.95*s, 26),              y:0.47*s};
+  if(c.clase === 'esfera')    return {g:new THREE.SphereGeometry(0.4*s, 22, 16),                y:0.4*s};
+  if(c.clase === 'piramide')  return {g:new THREE.ConeGeometry(0.52*s, 0.95*s, 4),              y:0.47*s};
+  if(c.clase === 'prismaTri') return {g:new THREE.CylinderGeometry(0.5*s, 0.5*s, 0.9*s, 3),     y:0.45*s};
+  return {g:new THREE.BoxGeometry(0.75*s, 0.6*s, 0.55*s), y:0.3*s};
+}
+
+function armarCosas(){
+  mallas.forEach(function(m){ cuarto.remove(m); });
+  mallas = [];
+  COSAS.forEach(function(c, i){
+    var d = geoDe(c);
+    var m = new THREE.Mesh(d.g, new THREE.MeshLambertMaterial({color:c.color}));
+    m.position.set(c.x, d.y, c.z);
+    if(c.clase === 'prismaTri') m.rotation.z = Math.PI/2;   // la tienda se acuesta
+    m.userData = {i:i};
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(d.g),
+      new THREE.LineBasicMaterial({color:0x1a1a2e, transparent:true, opacity:0.55})));
+    cuarto.add(m);
+    mallas.push(m);
+  });
+}
+
+function eventos(){
+  var lienzo = document.getElementById('lienzo');
+  var abajo = null, movido = 0;
+  lienzo.addEventListener('pointerdown', function(e){ abajo = {x:e.clientX, g:giroObjetivo}; movido = 0; });
+  lienzo.addEventListener('pointermove', function(e){
+    if(!abajo) return;
+    var dx = e.clientX-abajo.x;
+    movido = Math.max(movido, Math.abs(dx));
+    if(movido > 8) giroObjetivo = abajo.g + dx*0.009;
+  });
+  lienzo.addEventListener('pointerup', function(e){
+    if(abajo && movido <= 8) tocar(e.clientX, e.clientY);
+    abajo = null;
+  });
+  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
+}
+
+function tocar(px, py){
+  if(!corriendo) return;
+  var cont = document.getElementById('lienzo'), b = cont.getBoundingClientRect();
+  raton.x = ((px-b.left)/b.width)*2 - 1;
+  raton.y = -((py-b.top)/b.height)*2 + 1;
+  rayo.setFromCamera(raton, cam);
+  var golpes = rayo.intersectObjects(mallas, false);
+  if(!golpes.length) return;
+  var m = golpes[0].object, c = COSAS[m.userData.i];
+  if(tocadas[m.userData.i]){ decir(c.emoji+' '+c.n+': esa ya la tocaste.', null); return; }
+  tocadas[m.userData.i] = true;
+  if(esBuena(c)){
+    m.material.color.setHex(0x27ae60);
+    estrellas += 2;
+    decir('✅ '+c.emoji+' '+c.n+' · '+etiqueta(c.clase), true);
+  } else {
+    m.material.color.setHex(0xe05252);
+    errores++;
+    seg = Math.max(0, seg-5);
+    decir('❌ '+c.emoji+' '+c.n+' es '+etiqueta(c.clase)+'. −5 segundos', false);
+  }
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  pintarConsigna();
+  if(llevaBuenas() === cuantasBuenas()) setTimeout(terminarRonda, 500);
+}
+
+function etiqueta(cl){
+  return cl==='cilindro' ? 'un cilindro' : cl==='cono' ? 'un cono' : cl==='esfera' ? 'una esfera'
+    : cl==='piramide' ? 'una pirámide' : cl==='prismaTri' ? 'un prisma triangular' : 'un prisma';
+}
+function llevaBuenas(){
+  return Object.keys(tocadas).filter(function(i){ return esBuena(COSAS[i]); }).length;
+}
+
+function decir(txt, bien){
+  var g = document.getElementById('globo');
+  g.textContent = txt;
+  g.className = 'globo ver' + (bien === true ? ' si' : (bien === false ? ' no' : ''));
+  clearTimeout(g._t);
+  g._t = setTimeout(function(){ g.className = 'globo'; }, 1900);
+}
+
+function pintarConsigna(){
+  document.getElementById('consigna').innerHTML = r().q +
+    '<span class="lleva">'+llevaBuenas()+' de '+cuantasBuenas()+'</span>';
+}
+
+function girarCuarto(d){ giroObjetivo += d*Math.PI/4; }
+
+function cargarRonda(){
+  tocadas = {}; errores = 0;
+  armarCosas();
+  seg = r().seg; corriendo = true; ultimo = 0;
+  document.getElementById('subt').textContent = 'Ronda '+(ronda+1)+' de '+RONDAS.length;
+  pintarConsigna(); pintarReloj();
+}
+
+function pintarReloj(){
+  var el = document.getElementById('reloj');
+  el.textContent = Math.max(0, Math.ceil(seg));
+  el.classList.toggle('poco', seg <= 10);
+}
+
+function terminarRonda(){
+  if(!corriendo) return;
+  corriendo = false;
+  var faltan = cuantasBuenas() - llevaBuenas();
+  var perfecto = (faltan === 0 && errores === 0);
+  if(perfecto) estrellas += 5;
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  document.getElementById('fin-emoji').textContent = perfecto ? '🏆' : (faltan ? '🔍' : '🎯');
+  document.getElementById('fin-tit').textContent = perfecto ? '¡Todos, y sin fallar uno!'
+    : (faltan ? 'Se te escaparon '+faltan : 'Los encontraste todos');
+  document.getElementById('fin-lista').innerHTML = COSAS.filter(esBuena).map(function(c, i){
+    var idx = COSAS.indexOf(c);
+    return '<span class="'+(tocadas[idx]?'ok':'no')+'">'+c.emoji+' '+c.n+'</span>';
+  }).join('');
+  document.getElementById('fin-nota').innerHTML = r().nota.replace(/\n/g,'<br>');
+  var ultima = (ronda >= RONDAS.length-1);
+  document.getElementById('fin-bt').textContent = ultima ? '🔄 Otra vuelta' : 'Siguiente ronda →';
+  guardar();
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  ronda = (ronda >= RONDAS.length-1) ? 0 : ronda+1;
+  guardar();
+  cargarRonda();
+}
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  cargarRonda();
+}
+
+function animar(t){
+  requestAnimationFrame(animar);
+  t = t || 0;
+  if(corriendo && ultimo){
+    seg = Math.max(0, seg - (t-ultimo)/1000);
+    pintarReloj();
+    if(seg <= 0) terminarRonda();
+  }
+  ultimo = t;
+  if(cuarto){
+    giroCuarto += (giroObjetivo - giroCuarto)*0.09;
+    cuarto.rotation.y = giroCuarto;
+  }
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  empezar: empezar,
+  cosas: COSAS, rondas: RONDAS,
+  esBuena: esBuena, cuantasBuenas: cuantasBuenas,
+  tocarCosa: function(i){
+    var c = COSAS[i];
+    if(tocadas[i]) return;
+    tocadas[i] = true;
+    if(esBuena(c)){ estrellas += 2; }
+    else { errores++; seg = Math.max(0, seg-5); }
+    pintarConsigna();
+    if(llevaBuenas() === cuantasBuenas()) terminarRonda();
+  },
+  irA: function(i){ ronda = i; cargarRonda(); },
+  estado: function(){ return {ronda:ronda, lleva:llevaBuenas(), total:cuantasBuenas(),
+    errores:errores, seg:Math.round(seg), corriendo:corriendo, estrellas:estrellas}; }
+};
+</script>
+</body>
+</html>

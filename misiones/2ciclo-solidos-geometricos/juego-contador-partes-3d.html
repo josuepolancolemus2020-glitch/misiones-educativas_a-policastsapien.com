@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🔍 El Contador de Partes 3D | Misión Sólidos Geométricos</title>
+<meta name="description" content="Cuenta caras, aristas y vértices tocándolas sobre el sólido, dale la vuelta para no perderte ninguna y comprueba la cuenta de Euler.">
+<style>
+/* ============================================================
+   Juego 3D · El Contador de Partes
+   ------------------------------------------------------------
+   Contar las partes de un sólido en una hoja sale mal siempre por
+   la misma razón: las de atrás no se ven. El alumno cuenta las
+   cinco caras que le dan de frente, escribe cinco, y nadie le
+   enseña dónde estaba la sexta. Aquí el sólido se GIRA con el dedo
+   y cada parte se marca al tocarla: la que falta se busca dándole
+   la vuelta, que es lo que se hace con un objeto de verdad.
+
+   Dos cosas que este juego hace y una hoja no puede:
+
+   · No deja contar dos veces lo mismo. «Esa ya la contaste» es el
+     otro error clásico, y en papel no lo ve nadie.
+   · Enseña la cuenta de Euler con SUS propios números, no con los
+     de la tabla: caras + vértices = aristas + 2, comprobada con lo
+     que el alumno acaba de tocar.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --morado:#8b6fe0; --dorado:#c9a227;
+  --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
+.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 28%,#2c3356 0%,#121624 76%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+/* la consigna y la cuenta */
+.consigna{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.45rem .7rem;text-align:center;}
+.consigna .que{font-size:.95rem;font-weight:700;line-height:1.3;}
+.consigna .que b{color:var(--morado);}
+.consigna .cuenta{font-family:'Fira Code',ui-monospace,monospace;font-size:1.35rem;font-weight:700;color:var(--dorado);margin-top:.1rem;}
+.consigna .como{font-size:.72rem;color:var(--gris);margin-top:.05rem;}
+.aviso{position:absolute;left:50%;transform:translateX(-50%);bottom:4.6rem;background:rgba(18,22,36,.95);border:1.5px solid var(--rojo);color:#ffb1b1;border-radius:10px;padding:.3rem .7rem;font-size:.8rem;opacity:0;transition:opacity .25s;pointer-events:none;max-width:92%;text-align:center;}
+.aviso.ver{opacity:1;}
+.aviso.bien{border-color:var(--verde);color:#7ee2a8;}
+/* la tabla de lo contado */
+.tabla{position:absolute;right:.5rem;bottom:.5rem;background:rgba(18,22,36,.92);border:1.5px solid rgba(154,165,189,.35);border-radius:10px;padding:.35rem .55rem;font-size:.76rem;line-height:1.5;font-family:'Fira Code',ui-monospace,monospace;}
+.tabla div span{color:var(--gris);}
+.tabla div b{color:var(--claro);}
+.tabla div.hecho b{color:var(--verde);}
+/* mandos */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .6rem;flex-shrink:0;display:flex;gap:.4rem;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .5rem;border:none;border-radius:13px;cursor:pointer;flex:1;line-height:1.2;}
+.bt-p{background:var(--morado);color:#141826;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.euler{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.6rem .7rem;font-size:1rem;margin:.6rem 0;line-height:1.7;}
+.euler b{color:var(--verde);}
+.partes{display:flex;gap:.4rem;justify-content:center;margin:.6rem 0;}
+.parte{flex:1;border:2px solid;border-radius:12px;padding:.45rem .3rem;font-size:.72rem;line-height:1.25;}
+.parte b{display:block;font-size:1.5rem;font-family:'Fira Code',ui-monospace,monospace;}
+.p-cara{border-color:var(--morado);color:var(--morado);}
+.p-arista{border-color:var(--dorado);color:var(--dorado);}
+.p-vertice{border-color:var(--azul);color:#9fd0ff;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+.ninguna{margin-top:.5rem;}
+@media(max-width:380px){.consigna .que{font-size:.85rem;}.bt{font-size:.78rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="solidos-geometricos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🔍 El Contador de Partes<small id="subt">Sólido 1 de 7</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="consigna">
+    <div class="que" id="que">Toca todas las <b>caras</b></div>
+    <div class="cuenta" id="cuenta">0</div>
+    <div class="como" id="como">Arrastra para girarlo: las de atrás también cuentan</div>
+  </div>
+  <div class="aviso" id="aviso"></div>
+  <div class="tabla" id="tabla"></div>
+</div>
+
+<div class="mandos">
+  <button class="bt bt-v" id="bt-listo" onclick="terminarParte()">✔️ Ya las conté todas</button>
+  <button class="bt bt-s" onclick="girarSolo()">🔄 Girar</button>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🔍</div>
+    <h2>El Contador de Partes</h2>
+    <p>Cada sólido tiene <b>caras</b> (las superficies), <b>aristas</b> (los filos donde se juntan dos caras) y <b>vértices</b> (las esquinas). Tócalas una por una: la que ya contaste se pinta y no vuelve a contar.</p>
+    <p style="font-size:.84rem;color:#9aa5bd;">Gíralo con el dedo. Las de atrás son las que siempre se escapan, y por eso casi nadie acierta contando en una hoja.</p>
+    <button class="bt bt-p" onclick="empezar()">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🎉</div>
+    <h2 id="fin-tit"></h2>
+    <div class="partes" id="fin-partes"></div>
+    <div class="euler" id="fin-euler"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente sólido →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_contador_v1';
+
+/* ============================================================
+   Los sólidos se escriben A MANO: vértices y caras.
+
+   No se sacan de las figuras que trae Three.js, y esa decisión es
+   lo que hace que el juego enseñe bien. Un cubo dibujado por la
+   máquina son DOCE triángulos, porque así se dibuja rápido; el
+   alumno tiene que contar SEIS caras cuadradas. Si el juego contara
+   los triángulos del dibujo, le enseñaría exactamente lo contrario
+   de lo que dice su libro.
+   ============================================================ */
+function poli(v, c){ return {v:v, c:c}; }
+
+function prismaRegular(n, r, h){
+  var v = [], c = [], i;
+  for(i=0;i<n;i++){
+    var a = i/n*Math.PI*2 + Math.PI/n;
+    v.push([Math.cos(a)*r, -h/2, Math.sin(a)*r]);
+  }
+  for(i=0;i<n;i++){
+    var a2 = i/n*Math.PI*2 + Math.PI/n;
+    v.push([Math.cos(a2)*r, h/2, Math.sin(a2)*r]);
+  }
+  var abajo = [], arriba = [];
+  for(i=0;i<n;i++){ abajo.push(n-1-i); arriba.push(n+i); }
+  c.push(abajo); c.push(arriba);
+  for(i=0;i<n;i++){ var j=(i+1)%n; c.push([i, j, n+j, n+i]); }
+  return poli(v, c);
+}
+
+function piramideRegular(n, r, h){
+  var v = [], c = [], i;
+  for(i=0;i<n;i++){
+    var a = i/n*Math.PI*2 + Math.PI/n;
+    v.push([Math.cos(a)*r, -h/2, Math.sin(a)*r]);
+  }
+  v.push([0, h/2, 0]);                       // la cúspide
+  var base = [];
+  for(i=0;i<n;i++) base.push(n-1-i);
+  c.push(base);
+  for(i=0;i<n;i++) c.push([i, (i+1)%n, n]);
+  return poli(v, c);
+}
+
+/* Siete sólidos. Los dos últimos son la trampa a propósito: un
+   cuerpo redondo no tiene aristas ni vértices, y el alumno que
+   viene contando en automático se pone a buscarlas. */
+var SOLIDOS = [
+  {n:'Cubo',                  emoji:'🧊', tipo:'poliedro', forma:prismaRegular(4, 1.05, 1.5),
+   nota:'Una caja de zapatos y un dado son lo mismo: prismas rectangulares.'},
+  {n:'Prisma triangular',     emoji:'⛺', tipo:'poliedro', forma:prismaRegular(3, 1.25, 1.6),
+   nota:'La tienda de campaña: dos bases triangulares y tres caras laterales.'},
+  {n:'Pirámide cuadrangular', emoji:'🔺', tipo:'poliedro', forma:piramideRegular(4, 1.2, 1.7),
+   nota:'Una sola base y cuatro triángulos que suben a la cúspide.'},
+  {n:'Pirámide triangular',   emoji:'🔻', tipo:'poliedro', forma:piramideRegular(3, 1.3, 1.7),
+   nota:'Cuatro caras, y todas triángulos: es el sólido con menos caras que existe.'},
+  {n:'Prisma hexagonal',      emoji:'✏️', tipo:'poliedro', forma:prismaRegular(6, 1.1, 1.7),
+   nota:'El lápiz. Seis caras laterales más las dos bases: ocho.'},
+  {n:'Cilindro',              emoji:'🥫', tipo:'redondo',  redondo:'cilindro',
+   nota:'Dos bases circulares y una superficie curva. La curva no es una cara plana.'},
+  {n:'Esfera',                emoji:'⚽', tipo:'redondo',  redondo:'esfera',
+   nota:'Ni caras planas, ni aristas, ni vértices. Por eso rueda para cualquier lado.'}
+];
+
+var PARTES = [
+  {k:'caras',    et:'caras',    color:0x8b6fe0, pinta:0xd6c6ff},
+  {k:'aristas',  et:'aristas',  color:0xc9a227, pinta:0xffe9a3},
+  {k:'vertices', et:'vértices', color:0x4a90d9, pinta:0xbfe0ff}
+];
+
+var esc, cam, rend, grupo, gCaras, gAristas, gVertices, rayo, raton;
+var nivel = 0, parte = 0, contadas = {}, resultado = {}, estrellas = 0;
+var angY = 0.6, angX = 0.35, girando = true, jugando = false;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, SOLIDOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function sol(){ return SOLIDOS[nivel]; }
+function esRedondo(){ return sol().tipo === 'redondo'; }
+
+/* Lo que hay de verdad en el sólido, para comparar con lo contado */
+function cuantas(k){
+  var s = sol();
+  if(s.tipo === 'redondo'){
+    if(s.redondo === 'esfera') return 0;
+    return (k === 'caras') ? 0 : 0;   // el cilindro tampoco tiene caras PLANAS ni aristas rectas
+  }
+  if(k === 'caras')    return s.forma.c.length;
+  if(k === 'vertices') return s.forma.v.length;
+  return aristasDe(s.forma).length;
+}
+
+function aristasDe(f){
+  var vistas = {}, lista = [];
+  f.c.forEach(function(cara){
+    for(var i=0;i<cara.length;i++){
+      var a = cara[i], b = cara[(i+1)%cara.length];
+      var k = Math.min(a,b)+'-'+Math.max(a,b);
+      if(!vistas[k]){ vistas[k] = true; lista.push([a,b]); }
+    }
+  });
+  return lista;
+}
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(44, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 100);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.72));
+  var l1=new THREE.DirectionalLight(0xffffff,0.6); l1.position.set(5,9,7); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0xbfd4ff,0.4); l2.position.set(-6,-3,-6); esc.add(l2);
+
+  grupo = new THREE.Group(); esc.add(grupo);
+  gCaras = new THREE.Group(); gAristas = new THREE.Group(); gVertices = new THREE.Group();
+  grupo.add(gCaras); grupo.add(gAristas); grupo.add(gVertices);
+
+  cam.position.set(0, 0.6, 6.4);
+  cam.lookAt(0, 0, 0);
+
+  rayo = new THREE.Raycaster();
+  raton = new THREE.Vector2();
+  eventos();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function vaciar(g){ while(g.children.length) g.remove(g.children[0]); }
+
+/* Cada cara, cada arista y cada vértice es un objeto aparte, para
+   poder tocarlos uno por uno. Es más trabajo que dibujar el sólido
+   de un golpe, pero es lo único que permite marcar lo contado. */
+function armar(){
+  vaciar(gCaras); vaciar(gAristas); vaciar(gVertices);
+  var s = sol();
+
+  if(s.tipo === 'redondo'){
+    var mat = new THREE.MeshLambertMaterial({color:0x6f7bb5, transparent:true, opacity:0.92});
+    var m = (s.redondo === 'esfera')
+      ? new THREE.Mesh(new THREE.SphereGeometry(1.35, 40, 26), mat)
+      : new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.9, 44), mat);
+    gCaras.add(m);
+    return;
+  }
+
+  var V = s.forma.v;
+  // caras
+  s.forma.c.forEach(function(cara, idx){
+    var pos = [];
+    for(var i=1;i<cara.length-1;i++){
+      pos.push.apply(pos, V[cara[0]]);
+      pos.push.apply(pos, V[cara[i]]);
+      pos.push.apply(pos, V[cara[i+1]]);
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3));
+    g.computeVertexNormals();
+    var m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({
+      color:0x6f7bb5, side:THREE.DoubleSide, transparent:true, opacity:0.93}));
+    m.userData = {tipo:'caras', id:idx};
+    gCaras.add(m);
+  });
+  // aristas: cilindritos finos, que se pueden tocar (una línea no)
+  aristasDe(s.forma).forEach(function(ar, idx){
+    var a = new THREE.Vector3(V[ar[0]][0], V[ar[0]][1], V[ar[0]][2]);
+    var b = new THREE.Vector3(V[ar[1]][0], V[ar[1]][1], V[ar[1]][2]);
+    var largo = a.distanceTo(b);
+    var m = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, largo, 8),
+      new THREE.MeshLambertMaterial({color:0x39406b}));
+    m.position.set((a.x+b.x)/2, (a.y+b.y)/2, (a.z+b.z)/2);
+    m.lookAt(b);
+    m.rotateX(Math.PI/2);
+    m.userData = {tipo:'aristas', id:idx};
+    gAristas.add(m);
+  });
+  // vértices
+  V.forEach(function(p, idx){
+    var m = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 10),
+      new THREE.MeshLambertMaterial({color:0x2b3357}));
+    m.position.set(p[0], p[1], p[2]);
+    m.userData = {tipo:'vertices', id:idx};
+    gVertices.add(m);
+  });
+}
+
+function grupoDe(k){ return k==='caras' ? gCaras : (k==='aristas' ? gAristas : gVertices); }
+
+/* ============================================================
+   Tocar
+   ============================================================ */
+function eventos(){
+  var lienzo = document.getElementById('lienzo');
+  var abajo = null, movido = 0;
+  lienzo.addEventListener('pointerdown', function(e){
+    abajo = {x:e.clientX, y:e.clientY, ay:angY, ax:angX}; movido = 0; girando = false;
+  });
+  lienzo.addEventListener('pointermove', function(e){
+    if(!abajo) return;
+    var dx = e.clientX-abajo.x, dy = e.clientY-abajo.y;
+    movido = Math.max(movido, Math.abs(dx)+Math.abs(dy));
+    if(movido > 7){
+      angY = abajo.ay + dx*0.011;
+      angX = Math.max(-1.3, Math.min(1.3, abajo.ax + dy*0.009));
+    }
+  });
+  lienzo.addEventListener('pointerup', function(e){
+    if(abajo && movido <= 7) tocar(e.clientX, e.clientY);
+    abajo = null;
+  });
+  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
+}
+
+function tocar(px, py){
+  if(!jugando) return;
+  var s = sol();
+  if(s.tipo === 'redondo'){
+    decir('En un cuerpo redondo no hay '+PARTES[parte].et+' que tocar. Usa el botón de abajo.', false);
+    return;
+  }
+  var cont = document.getElementById('lienzo'), r = cont.getBoundingClientRect();
+  raton.x = ((px-r.left)/r.width)*2 - 1;
+  raton.y = -((py-r.top)/r.height)*2 + 1;
+  rayo.setFromCamera(raton, cam);
+
+  var k = PARTES[parte].k;
+  var golpes = rayo.intersectObjects(grupoDe(k).children, false);
+  if(!golpes.length){
+    // se tocó otra parte del sólido: se dice cuál, que también enseña
+    var otras = [gCaras, gAristas, gVertices].filter(function(g){ return g !== grupoDe(k); });
+    var g2 = rayo.intersectObjects(otras[0].children.concat(otras[1].children), false);
+    if(g2.length) decir('Eso es '+ (g2[0].object.userData.tipo === 'caras' ? 'una cara' :
+      (g2[0].object.userData.tipo === 'aristas' ? 'una arista' : 'un vértice')) +
+      '. Ahora vas por las '+PARTES[parte].et+'.', false);
+    return;
+  }
+  var o = golpes[0].object, id = o.userData.id;
+  if(contadas[k][id]){ decir('Esa ya la contaste. Gíralo: te faltan las de atrás.', false); return; }
+  contadas[k][id] = true;
+  o.material.color.setHex(PARTES[parte].pinta);
+  pintarCuenta();
+}
+
+function nContadas(k){ return Object.keys(contadas[k]).length; }
+
+function pintarCuenta(){
+  var k = PARTES[parte].k;
+  document.getElementById('cuenta').textContent = esRedondo() ? '—' : nContadas(k);
+  var t = document.getElementById('tabla');
+  t.innerHTML = PARTES.map(function(p, i){
+    var hecho = resultado[p.k] !== undefined;
+    return '<div class="'+(hecho?'hecho':'')+'"><span>'+p.et+':</span> <b>'+
+      (hecho ? resultado[p.k] : (i===parte ? nContadas(p.k) : '·'))+'</b></div>';
+  }).join('');
+}
+
+function decir(txt, bien){
+  var a = document.getElementById('aviso');
+  a.textContent = txt;
+  a.className = 'aviso ver' + (bien ? ' bien' : '');
+  clearTimeout(a._t);
+  a._t = setTimeout(function(){ a.className = 'aviso'; }, 2200);
+}
+
+/* ============================================================
+   Terminar una parte
+   ============================================================ */
+function terminarParte(){
+  if(!jugando) return;
+  var k = PARTES[parte].k, real = cuantas(k), dijo = esRedondo() ? 0 : nContadas(k);
+  if(dijo !== real){
+    if(dijo < real) decir('Te faltan '+(real-dijo)+'. Gíralo: las de atrás también cuentan.', false);
+    else decir('Contaste de más. Vuelve a mirar.', false);
+    return;
+  }
+  resultado[k] = real;
+  estrellas += 3;
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  decir('¡'+real+' '+PARTES[parte].et+'! Correcto.', true);
+  parte++;
+  if(parte >= PARTES.length) return setTimeout(cerrarSolido, 700);
+  prepararParte();
+}
+
+function prepararParte(){
+  var p = PARTES[parte], s = sol();
+  document.getElementById('que').innerHTML = esRedondo()
+    ? '¿Cuántas <b>'+p.et+'</b> tiene?'
+    : 'Toca todas las <b>'+p.et+'</b>';
+  document.getElementById('como').textContent = esRedondo()
+    ? 'Piénsalo: ¿tiene alguna superficie plana o algún filo?'
+    : (p.k==='caras' ? 'Las superficies. Arrástralo para ver las de atrás.'
+      : (p.k==='aristas' ? 'Los filos donde se juntan dos caras.' : 'Las esquinas donde se juntan las aristas.'));
+  document.getElementById('bt-listo').textContent = esRedondo()
+    ? 'Ninguna: no tiene' : '✔️ Ya las conté todas';
+  pintarCuenta();
+}
+
+function cerrarSolido(){
+  var s = sol();
+  var C = resultado.caras, A = resultado.aristas, V = resultado.vertices;
+  document.getElementById('fin-emoji').textContent = s.emoji;
+  document.getElementById('fin-tit').textContent = s.n;
+  document.getElementById('fin-partes').innerHTML =
+    '<div class="parte p-cara">caras<b>'+C+'</b></div>'+
+    '<div class="parte p-arista">aristas<b>'+A+'</b></div>'+
+    '<div class="parte p-vertice">vértices<b>'+V+'</b></div>';
+  document.getElementById('fin-euler').innerHTML = (s.tipo === 'redondo')
+    ? 'La cuenta de Euler <b>no se aplica aquí</b>:<br>un cuerpo redondo no tiene caras planas.'
+    : 'caras + vértices = aristas + 2<br>'+C+' + '+V+' = '+A+' + 2<br><b>'+(C+V)+' = '+(A+2)+' ✔</b>';
+  document.getElementById('fin-txt').textContent = s.nota;
+  var ultimo = (nivel >= SOLIDOS.length-1);
+  document.getElementById('fin-bt').textContent = ultimo ? '🔄 Otra vuelta' : 'Siguiente sólido →';
+  estrellas += 5;
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  guardar();
+  document.getElementById('velo-fin').classList.add('ver');
+  jugando = false;
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  nivel = (nivel >= SOLIDOS.length-1) ? 0 : nivel+1;
+  guardar();
+  cargarSolido();
+}
+
+function cargarSolido(){
+  parte = 0; contadas = {caras:{}, aristas:{}, vertices:{}}; resultado = {};
+  var s = sol();
+  document.getElementById('subt').textContent = 'Sólido '+(nivel+1)+' de '+SOLIDOS.length+' · '+s.n;
+  armar();
+  prepararParte();
+  jugando = true; girando = true;
+}
+
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  cargarSolido();
+}
+function girarSolo(){ girando = !girando; }
+
+function animar(){
+  requestAnimationFrame(animar);
+  if(girando) angY += 0.006;
+  if(grupo){ grupo.rotation.y = angY; grupo.rotation.x = angX; }
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  empezar: empezar,
+  solidos: SOLIDOS,
+  cuantas: cuantas,
+  aristasDe: aristasDe,
+  prismaRegular: prismaRegular,
+  piramideRegular: piramideRegular,
+  contarTodas: function(){
+    var k = PARTES[parte].k;
+    grupoDe(k).children.forEach(function(m){ if(m.userData.id !== undefined) contadas[k][m.userData.id] = true; });
+    pintarCuenta();
+  },
+  terminarParte: terminarParte,
+  irA: function(i){ nivel = i; cargarSolido(); },
+  estado: function(){ return {nivel:nivel, parte:parte, contadas:{
+    caras:Object.keys(contadas.caras||{}).length,
+    aristas:Object.keys(contadas.aristas||{}).length,
+    vertices:Object.keys(contadas.vertices||{}).length}, resultado:resultado, estrellas:estrellas}; }
+};
+</script>
+</body>
+</html>

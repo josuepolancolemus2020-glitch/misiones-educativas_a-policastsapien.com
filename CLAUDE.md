@@ -1292,9 +1292,10 @@ internet y sin ensuciar datos reales.
 
 ## Normativa: los juegos 3D viven aparte, y no tocan la misión
 
-La misión del volumen (`misiones/2ciclo-volumen-cuerpos/`) tiene seis
-juegos en tres dimensiones, cada uno en **su propio archivo HTML,
-autocontenido**, al lado de la misión:
+Hay **doce** juegos en tres dimensiones, seis por misión, cada uno en
+**su propio archivo HTML, autocontenido**, al lado de su misión.
+
+En **Volumen de Cuerpos** (`misiones/2ciclo-volumen-cuerpos/`):
 
 | archivo | qué enseña |
 |---|---|
@@ -1304,6 +1305,23 @@ autocontenido**, al lado de la misión:
 | `juego-laberinto-unidades-3d.html` | la escalera cúbica, de mil en mil |
 | `juego-duelo-dimensiones-3d.html` | área (2 medidas) o volumen (3) |
 | `juego-tetris-volumen-3d.html` | sumar volúmenes y empacar |
+
+En **Sólidos Geométricos** (`misiones/2ciclo-solidos-geometricos/`):
+
+| archivo | qué enseña |
+|---|---|
+| `juego-contador-partes-3d.html` | caras, aristas y vértices · Euler |
+| `juego-armador-patrones-3d.html` | el patrón se dobla y cierra (o no) |
+| `juego-revolucion-3d.html` | cuerpos de revolución |
+| `juego-fabrica-solidos-3d.html` | prisma o pirámide · el apellido de la base |
+| `juego-caza-solidos-3d.html` | reconocerlos fuera del libro |
+| `juego-relampago-solidos-3d.html` | clasificar rápido, contrarreloj |
+
+**Los dos juegos de sólidos que no se pueden hacer en papel son los que
+más valen**, y por eso están: doblar un patrón necesita cartulina,
+tijeras y media hora —con 43 alumnos eso se hace una vez al año, si se
+hace—, y girar el sólido para contar las caras de atrás no lo permite
+ningún dibujo. El resto de la misión ya se puede hacer en el cuaderno.
 
 Se abren **en otra pestaña** desde el Parque de Juegos 3D de la misión y
 desde el widget de su mismo tema. Que estén aparte no es desorden: cada
@@ -1317,13 +1335,15 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    los números no coinciden y él cree que se equivocó. La sonda falla si
    `Math.PI` aparece en una cuenta que ve el alumno (girar la cámara sí
    puede usarlo: eso no lo ve nadie).
-2. **Cada juego guarda su avance en SU llave** (`j3d_cubitos_v1`,
-   `j3d_latas_v1`, `j3d_tanque_v1`, `j3d_laberinto_v1`, `j3d_duelo_v1`,
-   `j3d_tetris_v1`) y **no escribe en la de la misión**
-   (`matematica_volumen_cuerpos_v1`). La misión guarda su estado entero
-   de un golpe: un juego abierto en otra pestaña le borraría al alumno
-   el XP que acaba de ganar. La misión solo **lee** esas llaves, para
-   pintar la medalla de cada tarjeta.
+2. **Cada juego guarda su avance en SU llave**, todas con el prefijo
+   `j3d_` (`j3d_cubitos_v1`, `j3d_latas_v1`, `j3d_tanque_v1`,
+   `j3d_laberinto_v1`, `j3d_duelo_v1`, `j3d_tetris_v1`,
+   `j3d_contador_v1`, `j3d_patrones_v1`, `j3d_revolucion_v1`,
+   `j3d_fabsolidos_v1`, `j3d_caza_v1`, `j3d_relampago_v1`), y **no
+   escribe en la de su misión**. La misión guarda su estado entero de un
+   golpe: un juego abierto en otra pestaña le borraría al alumno el XP
+   que acaba de ganar. La misión solo **lee** esas llaves, para pintar
+   la medalla de cada tarjeta.
 3. **Three.js se baja del CDN (r128), pero primero se mira si ya está
    puesto** (`if (window.THREE) return listo()`). Eso es lo que permite
    probarlos sin internet —la sonda le pone un Three.js de mentira— y lo
@@ -1347,19 +1367,33 @@ descarta sin pensar y no enseña nada.
 **Antes de publicar un cambio de los juegos 3D:**
 
 ```
-node _dev/servidor-estatico.js      (en otra terminal)
-node _dev/verifica-juegos-3d.js
+node _dev/servidor-estatico.js           (en otra terminal)
+node _dev/verifica-juegos-3d.js          → los seis del volumen
+node _dev/verifica-juegos-3d-solidos.js  → los seis de los sólidos
 ```
 
-Vigila las cuentas una por una (los volúmenes, las áreas, los litros de
-los seis tanques y sesenta conversiones), que el laberinto **siempre
-tenga salida** y las puertas estén en el camino, que los cuatro pedidos
-de la fábrica **se puedan clavar** dentro del 1 % con los mandos que
-hay, que sin internet el juego avise, y que solo se usen piezas de
-Three.js que existen en r128 —un nombre mal escrito no da la cara hasta
-que el juego se abre delante del niño—. Comprueba también la misión: que
-la pestaña esté, que las seis tarjetas enlacen y que los juegos **no
-hayan escrito** en el progreso de la misión.
+Las dos sondas comparten el Three.js de mentira
+(`_dev/three-de-mentira.js`): si un juego nuevo usa una pieza que ese
+archivo no tiene, se le añade **ahí**, y no se copia el archivo.
+
+Vigilan las cuentas una por una. En el volumen: los volúmenes, las
+áreas, los litros de los seis tanques y sesenta conversiones; que el
+laberinto **siempre tenga salida** y las puertas estén en el camino; que
+los cuatro pedidos de la fábrica **se puedan clavar** dentro del 1 % con
+los mandos que hay. En los sólidos: que las caras, aristas y vértices
+cuadren con **la tabla del Bloque 5** de la misión y con Euler, de 3 a
+10 lados; que los seis patrones tengan las caras que dicen y que el de
+los seis en fila siga marcado como que **no cierra**; y las dos trampas
+del tema, que son las que hay que defender a muerte —**el cono no cuenta
+como pirámide** ni como poliedro, y **el prisma triangular no pasa por
+pirámide cuadrangular** aunque los dos tengan 5 caras: lo que los separa
+son los vértices—.
+
+Las dos comprueban además que sin internet el juego avise, que solo se
+usen piezas de Three.js que existen en r128 —un nombre mal escrito no da
+la cara hasta que el juego se abre delante del niño— y la misión: que la
+pestaña esté, que las seis tarjetas enlacen y que los juegos **no hayan
+escrito** en el progreso de la misión.
 
 Lo que la sonda **no** puede mirar es el dibujo en 3D: pone un Three.js
 de mentira para poder correr sin tarjeta gráfica ni internet. Que la

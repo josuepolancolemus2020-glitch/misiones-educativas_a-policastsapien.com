@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🔄 La Máquina de Revolución 3D | Misión Sólidos Geométricos</title>
+<meta name="description" content="Pon a girar una figura plana sobre su eje y mira qué cuerpo barre: rectángulo a cilindro, triángulo a cono, semicírculo a esfera.">
+<style>
+/* ============================================================
+   Juego 3D · La Máquina de Revolución
+   ------------------------------------------------------------
+   «Un rectángulo girando da un cilindro» es una frase que el
+   alumno copia y no cree, porque nunca ha visto girar nada: en la
+   pizarra se dibuja el rectángulo, se dibuja al lado el cilindro y
+   entremedio hay una flecha que no explica nada.
+
+   Aquí la figura gira de verdad y va DEJANDO el cuerpo detrás,
+   grado a grado. Y primero se predice: apostar antes de ver es lo
+   que convierte mirar en pensar.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --morado:#8b6fe0; --dorado:#c9a227;
+  --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
+.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 28%,#2c3356 0%,#121624 76%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+.chapa{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.4rem .7rem;text-align:center;font-size:.85rem;line-height:1.35;}
+.chapa b{color:var(--morado);}
+.grados{position:absolute;right:.6rem;bottom:.6rem;font-family:'Fira Code',ui-monospace,monospace;font-size:1.1rem;font-weight:700;color:var(--dorado);background:rgba(18,22,36,.9);border:1.5px solid rgba(201,162,39,.5);border-radius:10px;padding:.2rem .55rem;}
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .6rem;flex-shrink:0;}
+.ops{display:flex;flex-direction:column;gap:.4rem;}
+.op{font-family:inherit;font-size:.92rem;font-weight:700;padding:.6rem;border:2px solid rgba(154,165,189,.45);border-radius:12px;background:#141a2c;color:var(--claro);cursor:pointer;}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.op:disabled{cursor:default;}
+.botones{display:flex;gap:.4rem;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .5rem;border:none;border-radius:13px;cursor:pointer;flex:1;line-height:1.2;}
+.bt-p{background:var(--morado);color:#141826;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.nota{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;margin:.6rem 0;text-align:left;line-height:1.6;}
+.tres{display:flex;gap:.35rem;justify-content:center;margin:.6rem 0;font-size:.72rem;}
+.tres div{flex:1;border:1.5px solid rgba(139,111,224,.5);border-radius:10px;padding:.35rem .25rem;line-height:1.3;}
+.tres b{display:block;font-size:1.4rem;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.chapa{font-size:.78rem;}.op{font-size:.84rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="solidos-geometricos.html" title="Volver a la misión">←</a>
+  <div class="titulo">🔄 La Máquina de Revolución<small id="subt">Figura 1 de 6</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="chapa" id="chapa"></div>
+  <div class="grados" id="grados">0°</div>
+</div>
+
+<div class="mandos">
+  <div class="ops" id="ops"></div>
+  <div class="botones" id="botones" style="display:none;">
+    <button class="bt bt-v" onclick="girar()">🔄 Girarla</button>
+    <button class="bt bt-s" onclick="parar()">↩️ Volver a la figura</button>
+    <button class="bt bt-p" onclick="siguiente()">Siguiente →</button>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🔄</div>
+    <h2>La Máquina de Revolución</h2>
+    <p>Una figura plana puesta a girar sobre un eje va dejando un cuerpo detrás. Los que salen así se llaman <b>cuerpos de revolución</b>, y son justo los tres que ruedan.</p>
+    <div class="tres">
+      <div>rectángulo<b>🥫</b>cilindro</div>
+      <div>triángulo<b>🍦</b>cono</div>
+      <div>semicírculo<b>⚽</b>esfera</div>
+    </div>
+    <p style="font-size:.84rem;color:#9aa5bd;">Adivina cuál sale <b>antes</b> de ponerla a girar.</p>
+    <button class="bt bt-p" onclick="empezar()">Encender la máquina</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🎉</div>
+    <h2 id="fin-tit"></h2>
+    <div class="nota" id="fin-nota"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" onclick="cerrarFin()">Verla girar</button>
+    <button class="bt bt-p" onclick="siguiente()">Siguiente figura →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_revolucion_v1';
+
+/* ============================================================
+   Cada figura se escribe como su PERFIL: los puntos de la mitad
+   que se apoya en el eje. Girando ese perfil sale el cuerpo, que
+   es exactamente lo que pasa en un torno de verdad.
+
+   `espejo` dice si la figura que ve el alumno es el perfil doblado
+   (el rectángulo entero, con el eje por el medio) o el perfil tal
+   cual (el semicírculo, que gira apoyado en su diámetro). Se
+   respeta lo que dice la misión, que es como lo va a ver en el
+   examen.
+   ============================================================ */
+function arco(r, desde, hasta, n){
+  var p = [];
+  for(var i=0;i<=n;i++){
+    var a = desde + (hasta-desde)*i/n;
+    p.push([Math.cos(a)*r, Math.sin(a)*r]);
+  }
+  return p;
+}
+
+var FIGURAS = [
+  {n:'Rectángulo', emoji:'▭', espejo:true,
+   perfil:[[0,-0.95],[0.75,-0.95],[0.75,0.95],[0,0.95]],
+   sale:'Cilindro', emojiSale:'🥫',
+   preg:'Un rectángulo girando sobre su eje, ¿qué cuerpo barre?',
+   ops:['Cono','Cilindro','Prisma rectangular'], buena:1,
+   nota:'Los dos lados cortos barren las dos bases circulares;\nel lado largo barre la superficie curva.',
+   txt:'Una lata. Y por eso su patrón es un rectángulo enrollado con dos círculos.'},
+
+  {n:'Triángulo', emoji:'🔺', espejo:true,
+   perfil:[[0,-0.95],[0.8,-0.95],[0,1.05]],
+   sale:'Cono', emojiSale:'🍦',
+   preg:'Un triángulo girando sobre su eje, ¿qué cuerpo barre?',
+   ops:['Cono','Pirámide','Esfera'], buena:0,
+   nota:'La punta del triángulo se queda quieta en el eje:\npor eso el cono tiene una sola punta.',
+   txt:'El barquillo del helado. Ojo: NO es una pirámide, porque su base es un círculo.'},
+
+  {n:'Semicírculo', emoji:'◗', espejo:false,
+   perfil:arco(1.0, -Math.PI/2, Math.PI/2, 28),
+   sale:'Esfera', emojiSale:'⚽',
+   preg:'Un semicírculo girando sobre su diámetro, ¿qué cuerpo barre?',
+   ops:['Cilindro','Círculo grande','Esfera'], buena:2,
+   nota:'Todos los puntos del arco están a la misma distancia\ndel centro: girando, eso es una esfera.',
+   txt:'Y por eso la esfera no tiene ni caras planas, ni aristas, ni vértices.'},
+
+  {n:'Trapecio', emoji:'⏢', espejo:true,
+   perfil:[[0,-0.95],[0.9,-0.95],[0.45,0.95],[0,0.95]],
+   sale:'Tronco de cono', emojiSale:'🪣',
+   preg:'Un trapecio girando sobre su eje, ¿qué cuerpo barre?',
+   ops:['Un cono al que le cortaron la punta','Un cilindro','Una pirámide'], buena:0,
+   nota:'Es un cono con la punta cortada: las dos bases son\ncírculos, pero de distinto tamaño.',
+   txt:'Una cubeta, una maceta, un vaso de plástico: casi todo lo que se apila tiene esta forma.'},
+
+  {n:'Rectángulo apartado del eje', emoji:'▯', espejo:false,
+   perfil:[[0.42,-0.85],[0.85,-0.85],[0.85,0.85],[0.42,0.85],[0.42,-0.85]],
+   sale:'Tubo', emojiSale:'🧻',
+   preg:'Un rectángulo que NO toca el eje, ¿qué barre al girar?',
+   ops:['Un cilindro macizo','Un tubo: un cilindro con un hueco','Una esfera'], buena:1,
+   nota:'Lo que no toca el eje deja un hueco en el medio.\nEl hueco tiene el radio de la distancia al eje.',
+   txt:'El rollo del papel higiénico. Es la misma máquina: lo que cambia es dónde pusiste la figura.'},
+
+  {n:'Figura en L', emoji:'🪜', espejo:true,
+   perfil:[[0,-0.95],[0.95,-0.95],[0.95,-0.1],[0.45,-0.1],[0.45,0.95],[0,0.95]],
+   sale:'Dos cilindros pegados', emojiSale:'🍶',
+   preg:'Esta figura escalonada, ¿qué barre al girar?',
+   ops:['Un cono','Dos cilindros pegados, uno más ancho','Una esfera'], buena:1,
+   nota:'Cada tramo recto y vertical barre su propio cilindro:\nuno ancho abajo y uno delgado arriba.',
+   txt:'Una botella, un pedestal, un tornillo. Casi todo lo que sale de un torno es esto.'}
+];
+
+var esc, cam, rend, grupo, cuerpo, plana, eje, filo;
+var nivel = 0, estrellas = 0, phi = 0, girandoAhora = false, contestado = false, giroVista = 0;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, FIGURAS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function fig(){ return FIGURAS[nivel]; }
+
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(44, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 100);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.76));
+  var l1=new THREE.DirectionalLight(0xffffff,0.6); l1.position.set(5,8,7); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0xbfd4ff,0.35); l2.position.set(-5,-3,-6); esc.add(l2);
+
+  grupo = new THREE.Group(); esc.add(grupo);
+  cam.position.set(0, 1.1, 5.4);
+  cam.lookAt(0, 0, 0);
+  eventos();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+/* La figura plana que ve el alumno: el perfil, doblado por el eje
+   si la misión la enseña entera (el rectángulo) y tal cual si no
+   (el semicírculo, que gira apoyado en su diámetro). */
+function puntosPlanos(){
+  var f = fig(), p = f.perfil.slice();
+  if(!f.espejo) return p;
+  var espejo = [];
+  for(var i=p.length-1;i>=0;i--) espejo.push([-p[i][0], p[i][1]]);
+  return p.concat(espejo);
+}
+
+function armar(){
+  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  var f = fig();
+
+  // el eje, que es de lo que se trata
+  var pe = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0,-1.7,0), new THREE.Vector3(0,1.7,0)]);
+  eje = new THREE.Line(pe, new THREE.LineBasicMaterial({color:0xc9a227}));
+  grupo.add(eje);
+
+  // la figura plana
+  var forma = new THREE.Shape();
+  puntosPlanos().forEach(function(q,k){ k ? forma.lineTo(q[0],q[1]) : forma.moveTo(q[0],q[1]); });
+  forma.closePath();
+  var gp = new THREE.ShapeGeometry(forma);
+  plana = new THREE.Mesh(gp, new THREE.MeshLambertMaterial({
+    color:0x8b6fe0, side:THREE.DoubleSide, transparent:true, opacity:0.95}));
+  plana.add(new THREE.LineSegments(new THREE.EdgesGeometry(gp),
+    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.8})));
+  grupo.add(plana);
+
+  // el filo que va barriendo: el perfil, siempre pegado al borde
+  var pf = f.perfil.map(function(q){ return new THREE.Vector3(q[0], q[1], 0); });
+  filo = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pf),
+    new THREE.LineBasicMaterial({color:0xffe08a}));
+  filo.visible = false;
+  grupo.add(filo);
+
+  cuerpo = null;
+  phi = 0; girandoAhora = false;
+  document.getElementById('grados').textContent = '0°';
+}
+
+/* El cuerpo se rehace en cada cuadro con el trozo de vuelta que
+   lleva dado. Es la única forma de que se vea BARRER: si se
+   dibujara el cilindro entero de golpe, volvemos a la flecha de la
+   pizarra. */
+function rehacerCuerpo(){
+  if(cuerpo){ grupo.remove(cuerpo); cuerpo.geometry.dispose(); cuerpo = null; }
+  if(phi <= 0.001) return;
+  var f = fig();
+  var pts = f.perfil.map(function(q){ return new THREE.Vector2(Math.abs(q[0]), q[1]); });
+  var geo = new THREE.LatheGeometry(pts, 60, 0, phi);
+  cuerpo = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
+    color:0x4a90d9, side:THREE.DoubleSide, transparent:true, opacity:0.9}));
+  grupo.add(cuerpo);
+}
+
+function preguntar(){
+  var f = fig();
+  contestado = false;
+  document.getElementById('chapa').innerHTML = f.emoji+' <b>'+f.n+'</b> · '+f.preg;
+  document.getElementById('subt').textContent = 'Figura '+(nivel+1)+' de '+FIGURAS.length+' · '+f.n;
+  var cont = document.getElementById('ops');
+  cont.innerHTML = ''; cont.style.display = 'flex';
+  document.getElementById('botones').style.display = 'none';
+  f.ops.forEach(function(txt,i){
+    var b = document.createElement('button');
+    b.className = 'op'; b.textContent = txt;
+    b.onclick = function(){ responder(i); };
+    cont.appendChild(b);
+  });
+}
+
+function responder(i){
+  if(contestado) return;
+  contestado = true;
+  var f = fig(), bien = (i === f.buena);
+  Array.prototype.forEach.call(document.querySelectorAll('#ops .op'), function(b,k){
+    b.disabled = true;
+    if(k === f.buena) b.classList.add('buena');
+    else if(k === i) b.classList.add('mala');
+  });
+  if(bien){ estrellas += 5; document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+  guardar();
+  setTimeout(function(){
+    document.getElementById('fin-emoji').textContent = bien ? '🎉' : f.emojiSale;
+    document.getElementById('fin-tit').textContent = (bien ? '¡Sí! Sale un ' : 'Sale un ') + f.sale.toLowerCase();
+    document.getElementById('fin-nota').textContent = f.nota;
+    document.getElementById('fin-txt').textContent = f.txt;
+    document.getElementById('velo-fin').classList.add('ver');
+  }, 700);
+}
+
+function cerrarFin(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  document.getElementById('ops').style.display = 'none';
+  document.getElementById('botones').style.display = 'flex';
+  girar();
+}
+
+function girar(){ girandoAhora = true; if(filo) filo.visible = true; }
+function parar(){
+  girandoAhora = false; phi = 0;
+  if(filo) filo.visible = false;
+  rehacerCuerpo();
+  document.getElementById('grados').textContent = '0°';
+}
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  nivel = (nivel >= FIGURAS.length-1) ? 0 : nivel+1;
+  guardar();
+  armar(); preguntar();
+}
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  armar(); preguntar();
+}
+
+function eventos(){
+  var lienzo = document.getElementById('lienzo');
+  var abajo = null;
+  lienzo.addEventListener('pointerdown', function(e){ abajo = {x:e.clientX, g:giroVista}; });
+  lienzo.addEventListener('pointermove', function(e){
+    if(!abajo) return;
+    giroVista = abajo.g + (e.clientX-abajo.x)*0.011;
+  });
+  lienzo.addEventListener('pointerup', function(){ abajo = null; });
+  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  if(girandoAhora && phi < Math.PI*2){
+    phi = Math.min(Math.PI*2, phi + 0.035);
+    rehacerCuerpo();
+    if(plana) plana.rotation.y = phi;
+    if(filo) filo.rotation.y = phi;
+    document.getElementById('grados').textContent = Math.round(phi*180/Math.PI)+'°';
+    if(phi >= Math.PI*2){ girandoAhora = false; if(filo) filo.visible = false; }
+  }
+  if(grupo) grupo.rotation.y = giroVista;
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  empezar: empezar,
+  figuras: FIGURAS,
+  responder: function(i){ var b = document.querySelectorAll('#ops .op')[i]; if(b) b.click(); },
+  girar: girar,
+  saltarGiro: function(){ phi = Math.PI*2 - 0.05; },
+  irA: function(i){ nivel = i; armar(); preguntar(); },
+  puntosPlanos: puntosPlanos,
+  estado: function(){ return {nivel:nivel, phi:phi, grados:Math.round(phi*180/Math.PI),
+    girando:girandoAhora, contestado:contestado, estrellas:estrellas, sale:fig().sale}; }
+};
+</script>
+</body>
+</html>

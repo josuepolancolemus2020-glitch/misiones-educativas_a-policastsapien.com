@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚡ Relámpago de Sólidos 3D | Misión Sólidos Geométricos</title>
+<meta name="description" content="Sesenta segundos: clasifica sólidos a toda velocidad y encadena rachas. Poliedro o redondo, prisma o pirámide, cuántas caras.">
+<style>
+/* ============================================================
+   Juego 3D · Relámpago de Sólidos
+   ------------------------------------------------------------
+   Los otros cinco juegos de esta misión son para entender. Este es
+   para que lo entendido se vuelva rápido, que no es lo mismo: en
+   el examen no hay tiempo de razonar cada figura desde cero, y el
+   alumno que duda diez segundos por pregunta no termina.
+
+   La racha es lo que engancha, y también lo que enseña: se rompe
+   con un solo fallo, así que responder al azar cuando no se está
+   seguro sale caro. Y cada error dice POR QUÉ, con la figura
+   todavía girando delante.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --morado:#8b6fe0; --dorado:#c9a227;
+  --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
+.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.puntos{font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;font-weight:700;color:var(--dorado);}
+.reloj{font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;font-weight:700;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.15rem .5rem;border-radius:9px;}
+.reloj.poco{background:rgba(224,82,82,.25);border-color:var(--rojo);color:#ffb1b1;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 30%,#2f3760 0%,#121624 78%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+.preg{position:absolute;top:.5rem;left:.5rem;right:.5rem;text-align:center;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.4rem .7rem;font-size:.95rem;font-weight:700;line-height:1.3;}
+.racha{position:absolute;left:.6rem;bottom:.6rem;background:rgba(18,22,36,.9);border:1.5px solid rgba(201,162,39,.5);border-radius:10px;padding:.2rem .55rem;font-size:.8rem;font-family:'Fira Code',ui-monospace,monospace;color:var(--dorado);}
+.racha.fuego{border-color:#ff7a3a;color:#ffb37a;}
+.globo{position:absolute;left:50%;transform:translateX(-50%);bottom:.6rem;background:rgba(18,22,36,.95);border:1.5px solid var(--gris);border-radius:11px;padding:.28rem .7rem;font-size:.8rem;opacity:0;transition:opacity .18s;pointer-events:none;max-width:78%;text-align:center;line-height:1.35;}
+.globo.ver{opacity:1;}
+.globo.si{border-color:var(--verde);color:#7ee2a8;}
+.globo.no{border-color:var(--rojo);color:#ffb1b1;}
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .65rem;flex-shrink:0;}
+.ops{display:flex;gap:.4rem;}
+.ops.col{flex-direction:column;}
+.op{flex:1;font-family:inherit;font-size:1rem;font-weight:800;padding:.75rem .4rem;border:2px solid rgba(154,165,189,.45);border-radius:14px;background:#141a2c;color:var(--claro);cursor:pointer;line-height:1.25;}
+.op small{display:block;font-size:.64rem;font-weight:400;color:var(--gris);}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.22);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.24);}
+.op:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.nota{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;margin:.6rem 0;text-align:left;line-height:1.6;}
+.gordo{font-family:'Fira Code',ui-monospace,monospace;font-size:2.6rem;font-weight:700;color:var(--dorado);line-height:1.1;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;}
+.bt-p{background:var(--morado);color:#141826;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+@media(max-width:380px){.op{font-size:.88rem;}.preg{font-size:.85rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="solidos-geometricos.html" title="Volver a la misión">←</a>
+  <div class="titulo">⚡ Relámpago de Sólidos<small id="subt">60 segundos</small></div>
+  <div class="puntos" id="puntos">0</div>
+  <div class="reloj" id="reloj">60</div>
+</div>
+
+<div id="lienzo">
+  <div class="preg" id="preg">¿Listo?</div>
+  <div class="racha" id="racha">racha 0</div>
+  <div class="globo" id="globo"></div>
+</div>
+
+<div class="mandos">
+  <div class="ops" id="ops"></div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">⚡</div>
+    <h2>Relámpago de Sólidos</h2>
+    <p>Sesenta segundos. Sale un sólido girando y hay que clasificarlo <b>rápido</b>. Cada acierto seguido sube la <b>racha</b>, y la racha multiplica los puntos.</p>
+    <div class="nota">Acierto: +10 × la racha<br>Fallo: se rompe la racha y −3 segundos</div>
+    <p style="font-size:.84rem;color:#9aa5bd;" id="ini-mejor"></p>
+    <button class="bt bt-p" onclick="empezar()">¡Ya!</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🏁</div>
+    <h2 id="fin-tit">Se acabó el tiempo</h2>
+    <div class="gordo" id="fin-pts">0</div>
+    <p id="fin-txt"></p>
+    <div class="nota" id="fin-nota"></div>
+    <button class="bt bt-v" onclick="empezar()">🔄 Otra vez</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_relampago_v1';
+
+/* Los sólidos del grado, con sus cuentas. Las de los cuerpos
+   redondos van en cero a propósito: no tienen caras planas ni
+   aristas ni vértices, y eso es lo que hay que contestar. */
+var SOLIDOS = [
+  {n:'Cubo',                  fam:'prisma',   lados:4,  caras:6,  aristas:12, vertices:8},
+  {n:'Prisma triangular',     fam:'prisma',   lados:3,  caras:5,  aristas:9,  vertices:6},
+  {n:'Prisma pentagonal',     fam:'prisma',   lados:5,  caras:7,  aristas:15, vertices:10},
+  {n:'Prisma hexagonal',      fam:'prisma',   lados:6,  caras:8,  aristas:18, vertices:12},
+  {n:'Pirámide triangular',   fam:'piramide', lados:3,  caras:4,  aristas:6,  vertices:4},
+  {n:'Pirámide cuadrangular', fam:'piramide', lados:4,  caras:5,  aristas:8,  vertices:5},
+  {n:'Pirámide pentagonal',   fam:'piramide', lados:5,  caras:6,  aristas:10, vertices:6},
+  {n:'Cilindro',              fam:'redondo',  tipo:'cilindro'},
+  {n:'Cono',                  fam:'redondo',  tipo:'cono'},
+  {n:'Esfera',                fam:'redondo',  tipo:'esfera'}
+];
+function esPoliedro(s){ return s.fam !== 'redondo'; }
+
+var esc, cam, rend, grupo, malla;
+var seg = 60, puntos = 0, racha = 0, mejorRacha = 0, corriendo = false, ultimo = 0;
+var actual = null, pregActual = null, bloqueado = false, giro = 0;
+
+function mejor(){ try{ return (JSON.parse(localStorage.getItem(LLAVE))||{}).puntos|0; }catch(e){ return 0; } }
+function guardar(){
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE)) || {};
+    if(puntos > (d.puntos|0)) d.puntos = puntos;
+    if(mejorRacha > (d.racha|0)) d.racha = mejorRacha;
+    localStorage.setItem(LLAVE, JSON.stringify(d));
+  }catch(e){}
+}
+
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(44, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 100);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.76));
+  var l1=new THREE.DirectionalLight(0xffffff,0.6); l1.position.set(5,8,7); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0xbfd4ff,0.35); l2.position.set(-5,-3,-6); esc.add(l2);
+
+  grupo = new THREE.Group(); esc.add(grupo);
+  cam.position.set(0, 0.5, 5.6);
+  cam.lookAt(0, 0, 0);
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function dibujar(s){
+  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  var geo;
+  if(s.fam === 'redondo'){
+    geo = (s.tipo === 'esfera') ? new THREE.SphereGeometry(1.15, 36, 24)
+        : (s.tipo === 'cono')   ? new THREE.ConeGeometry(1.1, 2.0, 40)
+                                : new THREE.CylinderGeometry(1.0, 1.0, 1.9, 40);
+  } else if(s.fam === 'prisma'){
+    geo = new THREE.CylinderGeometry(1.15, 1.15, 1.7, s.lados);
+  } else {
+    geo = new THREE.ConeGeometry(1.3, 2.0, s.lados);
+  }
+  malla = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
+    color: s.fam==='redondo' ? 0x4a90d9 : (s.fam==='prisma' ? 0x8b6fe0 : 0xc9a227),
+    flatShading: s.fam !== 'redondo'}));
+  grupo.add(malla);
+  grupo.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.8})));
+}
+
+/* ============================================================
+   Las preguntas. Cada tipo entrena una decisión distinta, y las
+   tres se piden en el examen.
+   ============================================================ */
+function nuevaPregunta(){
+  bloqueado = false;
+  actual = SOLIDOS[Math.floor(Math.random()*SOLIDOS.length)];
+  dibujar(actual);
+  var tipos = ['grupo', 'nombre'];
+  if(esPoliedro(actual)) tipos.push('familia', 'caras');
+  var tipo = tipos[Math.floor(Math.random()*tipos.length)];
+
+  if(tipo === 'grupo'){
+    pregActual = {
+      q:'¿Poliedro o cuerpo redondo?',
+      ops:[{t:'🧊 Poliedro', s:'todas las caras planas', ok:esPoliedro(actual)},
+           {t:'⚽ Redondo',  s:'tiene superficie curva',  ok:!esPoliedro(actual)}],
+      porque: esPoliedro(actual)
+        ? 'Todas sus caras son planas: es un poliedro.'
+        : 'Tiene una superficie curva, así que rueda: es un cuerpo redondo.'
+    };
+  } else if(tipo === 'familia'){
+    pregActual = {
+      q:'¿Prisma o pirámide?',
+      ops:[{t:'📦 Prisma',   s:'dos bases iguales',        ok:actual.fam==='prisma'},
+           {t:'🔺 Pirámide', s:'una base y una punta',     ok:actual.fam==='piramide'}],
+      porque: actual.fam==='prisma'
+        ? 'Tiene dos bases iguales y paralelas: prisma.'
+        : 'Una sola base y todas las caras laterales triangulares: pirámide.'
+    };
+  } else if(tipo === 'caras'){
+    var c = actual.caras;
+    var malas = [c+1, c-1, c+2].filter(function(x){ return x > 2 && x !== c; });
+    var tres = [c, malas[0], malas[1]].filter(function(x,i,a){ return a.indexOf(x)===i; });
+    while(tres.length < 3) tres.push(c + tres.length + 1);
+    pregActual = {
+      q:'¿Cuántas <b>caras</b> tiene?',
+      ops: tres.sort(function(){ return Math.random()-0.5; }).map(function(x){
+        return {t:String(x), s:'caras', ok:(x === c)};
+      }),
+      col:false,
+      porque: actual.n+': '+c+' caras, '+actual.aristas+' aristas y '+actual.vertices+' vértices.'
+    };
+  } else {
+    var otros = SOLIDOS.filter(function(s){ return s.n !== actual.n; })
+      .sort(function(){ return Math.random()-0.5; }).slice(0,2);
+    var lista = [actual].concat(otros).sort(function(){ return Math.random()-0.5; });
+    pregActual = {
+      q:'¿Cómo se llama?',
+      col:true,
+      ops: lista.map(function(s){ return {t:s.n, s:'', ok:(s.n === actual.n)}; }),
+      porque: (actual.fam === 'redondo') ? actual.n+': cuerpo redondo.'
+        : actual.n+': el apellido sale de su base, que tiene '+actual.lados+' lados.'
+    };
+  }
+  pintarPregunta();
+}
+
+function pintarPregunta(){
+  document.getElementById('preg').innerHTML = pregActual.q;
+  var cont = document.getElementById('ops');
+  cont.className = 'ops' + (pregActual.col ? ' col' : '');
+  cont.innerHTML = '';
+  pregActual.ops.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'op';
+    b.innerHTML = o.t + (o.s ? '<small>'+o.s+'</small>' : '');
+    b.onclick = function(){ contestar(o, b); };
+    cont.appendChild(b);
+  });
+}
+
+function contestar(o, boton){
+  if(bloqueado || !corriendo) return;
+  bloqueado = true;
+  if(o.ok){
+    racha++;
+    if(racha > mejorRacha) mejorRacha = racha;
+    puntos += 10 * Math.max(1, Math.ceil(racha/3));
+    boton.classList.add('buena');
+    decir('✅ +'+(10*Math.max(1, Math.ceil(racha/3))), true);
+  } else {
+    racha = 0;
+    seg = Math.max(0, seg-3);
+    boton.classList.add('mala');
+    Array.prototype.forEach.call(document.querySelectorAll('#ops .op'), function(b, i){
+      if(pregActual.ops[i].ok) b.classList.add('buena');
+    });
+    decir('❌ '+pregActual.porque, false);
+  }
+  pintarMarcadores();
+  setTimeout(function(){ if(corriendo) nuevaPregunta(); }, o.ok ? 320 : 1250);
+}
+
+function decir(txt, bien){
+  var g = document.getElementById('globo');
+  g.textContent = txt;
+  g.className = 'globo ver ' + (bien ? 'si' : 'no');
+  clearTimeout(g._t);
+  g._t = setTimeout(function(){ g.className = 'globo'; }, bien ? 700 : 1600);
+}
+
+function pintarMarcadores(){
+  document.getElementById('puntos').textContent = puntos;
+  var r = document.getElementById('racha');
+  r.textContent = 'racha ' + racha + (racha >= 3 ? ' 🔥×'+Math.ceil(racha/3) : '');
+  r.classList.toggle('fuego', racha >= 3);
+}
+function pintarReloj(){
+  var el = document.getElementById('reloj');
+  el.textContent = Math.max(0, Math.ceil(seg));
+  el.classList.toggle('poco', seg <= 10);
+}
+
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-fin').classList.remove('ver');
+  seg = 60; puntos = 0; racha = 0; mejorRacha = 0; corriendo = true; ultimo = 0;
+  pintarMarcadores(); pintarReloj();
+  nuevaPregunta();
+}
+
+function terminar(){
+  corriendo = false;
+  var antes = mejor();
+  guardar();
+  document.getElementById('fin-emoji').textContent = puntos > antes ? '🏆' : '🏁';
+  document.getElementById('fin-tit').textContent = puntos > antes ? '¡Récord nuevo!' : 'Se acabó el tiempo';
+  document.getElementById('fin-pts').textContent = puntos;
+  document.getElementById('fin-txt').textContent =
+    'Tu mejor racha fue de '+mejorRacha+' seguidas.' + (puntos > antes ? '' : ' Tu récord: '+antes+'.');
+  document.getElementById('fin-nota').innerHTML =
+    'Poliedro = todas las caras planas.<br>'+
+    'Prisma = dos bases · Pirámide = una base y punta.<br>'+
+    'Cilindro, cono y esfera ruedan: no son poliedros.';
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function animar(t){
+  requestAnimationFrame(animar);
+  t = t || 0;
+  if(corriendo && ultimo){
+    seg = Math.max(0, seg - (t-ultimo)/1000);
+    pintarReloj();
+    if(seg <= 0) terminar();
+  }
+  ultimo = t;
+  giro += 0.013;
+  if(grupo){ grupo.rotation.y = giro; grupo.rotation.x = Math.sin(giro*0.5)*0.28; }
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  montar();
+  var m = mejor();
+  document.getElementById('ini-mejor').textContent = m ? 'Tu récord: '+m+' puntos.' : 'Todavía no tienes récord.';
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  empezar: empezar,
+  solidos: SOLIDOS,
+  esPoliedro: esPoliedro,
+  contestarBien: function(){
+    var ops = document.querySelectorAll('#ops .op');
+    for(var i=0;i<ops.length;i++) if(pregActual.ops[i].ok){ ops[i].click(); return true; }
+    return false;
+  },
+  contestarMal: function(){
+    var ops = document.querySelectorAll('#ops .op');
+    for(var i=0;i<ops.length;i++) if(!pregActual.ops[i].ok){ ops[i].click(); return true; }
+    return false;
+  },
+  pregunta: function(){ return pregActual; },
+  acabar: function(){ seg = 0.01; },
+  estado: function(){ return {seg:Math.round(seg), puntos:puntos, racha:racha, mejorRacha:mejorRacha,
+    corriendo:corriendo, solido:actual ? actual.n : null, opciones:pregActual ? pregActual.ops.length : 0}; }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>✂️ El Armador de Patrones 3D | Misión Sólidos Geométricos</title>
+<meta name="description" content="Dobla el patrón plano en 3D y mira si cierra: la cruz de seis cuadrados arma un cubo, los seis en fila no.">
+<style>
+/* ============================================================
+   Juego 3D · El Armador de Patrones
+   ------------------------------------------------------------
+   Esto es lo único de la misión que en el aula NO se puede hacer:
+   armar el patrón hace falta cartulina, tijeras, pegamento y media
+   hora, y con 43 alumnos eso se hace una vez al año, si se hace.
+   Por eso el error de «seis cuadrados cualesquiera arman un cubo»
+   llega intacto al examen: nadie ha visto nunca los seis en fila
+   doblándose y montándose unos encima de otros.
+
+   Aquí el patrón se dobla delante del alumno, con el dedo en la
+   barra, y las caras que se montan se pintan de rojo. Se ve dónde
+   falla, que es lo que no cuenta ningún dibujo.
+
+   Cómo está hecho, por si hay que tocarlo: cada cara cuelga de la
+   anterior en una BISAGRA. La cara se dibuja siempre igual —su
+   filo de doblez sobre el eje X y el cuerpo hacia +y—, así que
+   colgar una cara de otra es siempre la misma cuenta, valga para
+   un cubo, una pirámide o un cilindro enrollado.
+   ============================================================ */
+:root{
+  --acero:#1a1a2e; --acero-2:#232946; --morado:#8b6fe0; --dorado:#c9a227;
+  --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
+.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 28%,#2c3356 0%,#121624 76%);}
+#lienzo canvas{display:block;width:100%;height:100%;}
+.chapa{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.4rem .7rem;text-align:center;font-size:.85rem;line-height:1.35;}
+.chapa b{color:var(--morado);}
+.veredicto{position:absolute;left:50%;transform:translateX(-50%);bottom:.6rem;background:rgba(18,22,36,.95);border:2px solid var(--gris);border-radius:12px;padding:.35rem .8rem;font-size:.85rem;text-align:center;max-width:92%;line-height:1.35;display:none;}
+.veredicto.si{border-color:var(--verde);color:#7ee2a8;}
+.veredicto.no{border-color:var(--rojo);color:#ffb1b1;}
+.veredicto.ver{display:block;}
+/* mandos */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .6rem;flex-shrink:0;}
+.doblez{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem;}
+.doblez label{font-size:.76rem;width:4.1rem;flex-shrink:0;line-height:1.2;}
+.doblez label b{display:block;color:var(--morado);font-family:'Fira Code',ui-monospace,monospace;font-size:.95rem;}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:26px;background:transparent;}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#141a2c;border-radius:5px;border:1px solid rgba(154,165,189,.3);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--morado);border:2px solid #e0d4ff;cursor:pointer;}
+input[type=range]::-moz-range-track{height:8px;background:#141a2c;border-radius:5px;}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--morado);border:2px solid #e0d4ff;cursor:pointer;}
+.ops{display:flex;flex-direction:column;gap:.4rem;}
+.op{font-family:inherit;font-size:.92rem;font-weight:700;padding:.6rem;border:2px solid rgba(154,165,189,.45);border-radius:12px;background:#141a2c;color:var(--claro);cursor:pointer;}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.op:disabled{cursor:default;}
+.botones{display:flex;gap:.4rem;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .5rem;border:none;border-radius:13px;cursor:pointer;flex:1;line-height:1.2;}
+.bt-p{background:var(--morado);color:#141826;}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:active{transform:scale(.97);}
+.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.nota{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;margin:.6rem 0;text-align:left;line-height:1.6;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+@media(max-width:380px){.chapa{font-size:.78rem;}.op{font-size:.84rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="solidos-geometricos.html" title="Volver a la misión">←</a>
+  <div class="titulo">✂️ El Armador de Patrones<small id="subt">Patrón 1 de 6</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="chapa" id="chapa"></div>
+  <div class="veredicto" id="veredicto"></div>
+</div>
+
+<div class="mandos">
+  <div class="ops" id="ops"></div>
+  <div class="doblez" id="doblez" style="display:none;">
+    <label>doblez<b id="lbl-d">0 %</b></label>
+    <input type="range" id="sl-d" min="0" max="100" step="1" value="0">
+  </div>
+  <div class="botones" id="botones" style="display:none;">
+    <button class="bt bt-v" onclick="doblarSolo()">📐 Doblarlo</button>
+    <button class="bt bt-s" onclick="abrirSolo()">↩️ Abrirlo</button>
+    <button class="bt bt-p" id="bt-sig" onclick="siguiente()">Siguiente →</button>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">✂️</div>
+    <h2>El Armador de Patrones</h2>
+    <p>Un <b>patrón</b> es el sólido desdoblado: si abres una caja y la aplanas, eso es su patrón. Aquí vas a doblarlo tú, con la barra, y ver si <b>cierra</b> o si le quedan huecos.</p>
+    <div class="nota">Del cubo hay <b>11</b> patrones que funcionan.<br>Y muchísimos que no: seis cuadrados<br>no bastan, hay que colocarlos bien.</div>
+    <button class="bt bt-p" onclick="empezar()">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">🎉</div>
+    <h2 id="fin-tit"></h2>
+    <div class="nota" id="fin-nota"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" onclick="cerrarFin()">Doblarlo yo</button>
+    <button class="bt bt-p" onclick="siguiente()">Siguiente patrón →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="solidos-geometricos.html">Volver a la misión</a>
+  </div>
+</div>
+
+<script>
+var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+function cargar3D(listo, falla){
+  if (window.THREE) return listo();
+  var s=document.createElement('script'); s.src=CDN3D;
+  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  document.head.appendChild(s);
+}
+var LLAVE = 'j3d_patrones_v1';
+var G = Math.PI/180;
+
+/* ============================================================
+   Las caras. Todas se dibujan igual: el filo por donde se doblan
+   va sobre el eje X (en y = 0) y el cuerpo crece hacia +y. Con esa
+   regla, colgar una cara de otra es siempre la misma cuenta.
+   ============================================================ */
+function ptsCuadrado(l){ return [[-l/2,0],[l/2,0],[l/2,l],[-l/2,l]]; }
+function ptsRect(an,al){ return [[-an/2,0],[an/2,0],[an/2,al],[-an/2,al]]; }
+function ptsTriangulo(base,alto){ return [[-base/2,0],[base/2,0],[0,alto]]; }
+function ptsCirculo(r){
+  var p = [];
+  for(var i=0;i<40;i++){ var a=i/40*Math.PI*2 - Math.PI/2; p.push([Math.cos(a)*r, r+Math.sin(a)*r]); }
+  return p;
+}
+
+/* Dónde y con qué giro cuelga un hijo del borde de su padre.
+   'arriba' es el borde de enfrente; 'derecha' e 'izquierda', los
+   costados; 'abajo', el mismo filo por el que entró el padre. */
+function bisagraDe(donde, an, al){
+  if(donde === 'arriba')    return {p:[0, al, 0],      giroZ:0};
+  if(donde === 'derecha')   return {p:[an/2, al/2, 0], giroZ:-Math.PI/2};
+  if(donde === 'izquierda') return {p:[-an/2, al/2, 0],giroZ:Math.PI/2};
+  return {p:[0,0,0], giroZ:Math.PI};                      // 'abajo'
+}
+
+/* ============================================================
+   Los seis patrones
+   ============================================================ */
+function cuadrado(hijos){ return {tipo:'cuadrado', an:1, al:1, pts:ptsCuadrado(1), hijos:hijos||[]}; }
+function conBisagra(donde, cara, angulo){ cara.donde = donde; cara.angulo = angulo; return cara; }
+
+/* La cruz: cuatro cuadrados dan la vuelta y dos tapan. */
+function redCruz(){
+  return cuadrado([
+    conBisagra('arriba', cuadrado([
+      conBisagra('arriba', cuadrado([
+        conBisagra('arriba', cuadrado(), 90)
+      ]), 90),
+      conBisagra('derecha',   cuadrado(), 90),
+      conBisagra('izquierda', cuadrado(), 90)
+    ]), 90)
+  ]);
+}
+/* Los seis en fila: al doblarlos se montan y quedan dos huecos. */
+function redFila(){
+  var raiz = cuadrado(), cur = raiz;
+  for(var i=0;i<5;i++){ var s = cuadrado(); cur.hijos.push(conBisagra('arriba', s, 90)); cur = s; }
+  return raiz;
+}
+/* La zeta: otro de los once que sí cierran. */
+function redZeta(){
+  return cuadrado([
+    conBisagra('arriba', cuadrado([
+      conBisagra('derecha', cuadrado([
+        conBisagra('arriba', cuadrado([
+          conBisagra('derecha', cuadrado([
+            conBisagra('arriba', cuadrado(), 90)
+          ]), 90)
+        ]), 90)
+      ]), 90)
+    ]), 90)
+  ]);
+}
+/* La pirámide: la base y cuatro triángulos que suben a la cúspide.
+   El ángulo no es 90: se dobla justo hasta que las puntas se juntan
+   en el eje, y eso lo decide la altura del triángulo. */
+function redPiramide(){
+  var m = 0.9, apotema = 0.5;
+  var ang = Math.acos(apotema/m)/G;
+  var tri = function(){ return {tipo:'triangulo', an:1, al:m, pts:ptsTriangulo(1, m), hijos:[]}; };
+  return cuadrado([
+    conBisagra('arriba',    tri(), ang),
+    conBisagra('abajo',     tri(), ang),
+    conBisagra('derecha',   tri(), ang),
+    conBisagra('izquierda', tri(), ang)
+  ]);
+}
+/* El prisma triangular: tres rectángulos que hacen el tubo y dos
+   triángulos que lo tapan. Al enrollar una tira, cada doblez gira
+   360 ÷ número de caras: aquí, tres caras → 120 grados. */
+function redPrismaTri(){
+  var an = 1, al = 1.3, ht = Math.sqrt(3)/2*an;
+  var rect = function(hijos){ return {tipo:'rectangulo', an:an, al:al, pts:ptsRect(an,al), hijos:hijos||[]}; };
+  var tri  = function(){ return {tipo:'triangulo', an:an, al:ht, pts:ptsTriangulo(an, ht), hijos:[]}; };
+  return rect([
+    conBisagra('derecha', rect([
+      conBisagra('derecha', rect(), 120)
+    ]), 120),
+    conBisagra('arriba', tri(), 90),
+    conBisagra('abajo',  tri(), 90)
+  ]);
+}
+/* El cilindro: el rectángulo se enrolla. Se parte en tiras finas y
+   cada una gira un poquito, que es lo que hace un papel al
+   enrollarse; y los dos círculos se levantan para tapar. */
+function redCilindro(){
+  var tiras = 24, r = 0.62, alto = 1.35;
+  var anTira = 2*Math.PI*r/tiras;
+  var paso = 360/tiras;
+  var raiz = {tipo:'rectangulo', an:anTira, al:alto, pts:ptsRect(anTira,alto), hijos:[]};
+  var cur = raiz;
+  for(var i=0;i<tiras-1;i++){
+    var t = {tipo:'rectangulo', an:anTira, al:alto, pts:ptsRect(anTira,alto), hijos:[]};
+    cur.hijos.push(conBisagra('derecha', t, paso));
+    cur = t;
+  }
+  raiz.hijos.push(conBisagra('arriba', {tipo:'circulo', an:2*r, al:2*r, pts:ptsCirculo(r), hijos:[]}, 90));
+  raiz.hijos.push(conBisagra('abajo',  {tipo:'circulo', an:2*r, al:2*r, pts:ptsCirculo(r), hijos:[]}, 90));
+  return raiz;
+}
+
+var PATRONES = [
+  {n:'La cruz', emoji:'✝️', red:redCruz, cierra:true, arma:'Cubo',
+   preg:'Seis cuadrados en cruz. ¿Qué arma?',
+   ops:['Cubo','Pirámide cuadrangular','No cierra: quedan huecos'], buena:0,
+   nota:'Cuatro cuadrados dan la vuelta y los otros dos tapan arriba y abajo.',
+   txt:'Este es uno de los 11 patrones del cubo que funcionan.'},
+
+  {n:'Seis en fila', emoji:'📏', red:redFila, cierra:false, arma:null,
+   preg:'Seis cuadrados en fila. ¿Qué arma?',
+   ops:['Cubo, son seis cuadrados','No cierra: se montan y quedan huecos','Prisma hexagonal'], buena:1,
+   nota:'Al doblarlos, el quinto se monta sobre el primero y arriba y abajo quedan destapados.',
+   txt:'Tener seis cuadrados no basta: hay que colocarlos bien. Míralo doblarse y verás dónde se montan.'},
+
+  {n:'La zeta', emoji:'🪜', red:redZeta, cierra:true, arma:'Cubo',
+   preg:'Estos seis cuadrados en escalera, ¿qué arman?',
+   ops:['No cierra','Cubo','Prisma triangular'], buena:1,
+   nota:'No hace falta que parezca una cruz: hay 11 formas distintas y esta es una.',
+   txt:'Si el alumno solo conoce la cruz, este patrón le parece imposible. Y cierra igual.'},
+
+  {n:'Base y cuatro triángulos', emoji:'🔺', red:redPiramide, cierra:true, arma:'Pirámide cuadrangular',
+   preg:'Un cuadrado con cuatro triángulos pegados, ¿qué arma?',
+   ops:['Prisma cuadrangular','Pirámide cuadrangular','Cono'], buena:1,
+   nota:'Una sola base y cuatro caras laterales triangulares que se juntan en la cúspide.',
+   txt:'La pirámide tiene UNA base. Si tuviera dos, sería un prisma.'},
+
+  {n:'Tres rectángulos y dos triángulos', emoji:'⛺', red:redPrismaTri, cierra:true, arma:'Prisma triangular',
+   preg:'Tres rectángulos seguidos y dos triángulos, ¿qué arman?',
+   ops:['Prisma triangular','Pirámide triangular','Cilindro'], buena:0,
+   nota:'Los rectángulos hacen el tubo y los dos triángulos son las bases: la tienda de campaña.',
+   txt:'El prisma toma el apellido de su base: base triangular, prisma triangular.'},
+
+  {n:'Dos círculos y un rectángulo', emoji:'🥫', red:redCilindro, cierra:true, arma:'Cilindro',
+   preg:'Un rectángulo largo y dos círculos, ¿qué arman?',
+   ops:['Cono','Esfera','Cilindro'], buena:2,
+   nota:'El rectángulo se enrolla y su largo es justo la vuelta del círculo.',
+   txt:'La etiqueta de una lata es ese rectángulo: despéguela y verá que es plana.'}
+];
+
+var esc, cam, rend, raiz3D, caras3D = [], bisagras = [];
+var nivel = 0, estrellas = 0, t = 0, tObjetivo = 0, contestado = false, giroVista = 0;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, PATRONES.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function pat(){ return PATRONES[nivel]; }
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(44, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 100);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.78));
+  var l1=new THREE.DirectionalLight(0xffffff,0.55); l1.position.set(4,8,7); esc.add(l1);
+  var l2=new THREE.DirectionalLight(0xbfd4ff,0.35); l2.position.set(-5,-4,-5); esc.add(l2);
+
+  cam.position.set(0, 3.4, 6.2);
+  cam.lookAt(0, 0, 0);
+  eventos();
+  window.addEventListener('resize', ajustar);
+  animar();
+}
+function ajustar(){
+  var cont=document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+var COLORES = [0x8b6fe0, 0x4a90d9, 0x27ae60, 0xc9a227, 0xe07a52, 0x37b6c4, 0xa06fd6, 0x5aa9e6];
+
+function mallaDeCara(cara, i){
+  var forma = new THREE.Shape();
+  cara.pts.forEach(function(p, k){ k ? forma.lineTo(p[0], p[1]) : forma.moveTo(p[0], p[1]); });
+  forma.closePath();
+  var geo = new THREE.ShapeGeometry(forma);
+  var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
+    color: COLORES[i % COLORES.length], side:THREE.DoubleSide}));
+  m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.7})));
+  return m;
+}
+
+/* Se cuelga el árbol de caras: bisagra → giro → cara → sus hijas. */
+function colgar(cara, i){
+  var nodo = new THREE.Group();
+  var malla = mallaDeCara(cara, i.n++);
+  nodo.add(malla);
+  caras3D.push(malla);
+  (cara.hijos||[]).forEach(function(h){
+    var b = bisagraDe(h.donde, cara.an, cara.al);
+    var pivote = new THREE.Group();
+    pivote.position.set(b.p[0], b.p[1], b.p[2]);
+    pivote.rotation.z = b.giroZ;
+    var bis = new THREE.Group();
+    bis.userData.angulo = h.angulo;
+    bisagras.push(bis);
+    pivote.add(bis);
+    bis.add(colgar(h, i));
+    nodo.add(pivote);
+  });
+  return nodo;
+}
+
+function armar(){
+  if(raiz3D){ esc.remove(raiz3D); }
+  caras3D = []; bisagras = [];
+  raiz3D = new THREE.Group();
+  var arbol = colgar(pat().red(), {n:0});
+  raiz3D.add(arbol);
+  // el patrón se mira desde arriba mientras está plano
+  raiz3D.rotation.x = -Math.PI/2;
+  esc.add(raiz3D);
+  t = 0; tObjetivo = 0;
+  aplicarDoblez();
+}
+
+function aplicarDoblez(){
+  bisagras.forEach(function(b){ b.rotation.x = -t * b.userData.angulo * G; });
+  document.getElementById('lbl-d').textContent = Math.round(t*100)+' %';
+  document.getElementById('sl-d').value = Math.round(t*100);
+  // al doblarse, la vista pasa de mirar el papel a mirar el sólido
+  raiz3D.rotation.x = -Math.PI/2 * (1-t) - 0.25*t;
+  raiz3D.rotation.y = giroVista + t*0.5;
+}
+
+/* ============================================================
+   La pregunta
+   ============================================================ */
+function preguntar(){
+  var p = pat();
+  contestado = false;
+  document.getElementById('chapa').innerHTML = p.emoji+' <b>'+p.n+'</b> · '+p.preg;
+  document.getElementById('subt').textContent = 'Patrón '+(nivel+1)+' de '+PATRONES.length+' · '+p.n;
+  document.getElementById('veredicto').className = 'veredicto';
+  var cont = document.getElementById('ops');
+  cont.innerHTML = ''; cont.style.display = 'flex';
+  document.getElementById('doblez').style.display = 'none';
+  document.getElementById('botones').style.display = 'none';
+  p.ops.forEach(function(txt, i){
+    var b = document.createElement('button');
+    b.className = 'op'; b.textContent = txt;
+    b.onclick = function(){ responder(i, b); };
+    cont.appendChild(b);
+  });
+}
+
+function responder(i, boton){
+  if(contestado) return;
+  contestado = true;
+  var p = pat(), bien = (i === p.buena);
+  Array.prototype.forEach.call(document.querySelectorAll('#ops .op'), function(b, k){
+    b.disabled = true;
+    if(k === p.buena) b.classList.add('buena');
+    else if(k === i) b.classList.add('mala');
+  });
+  if(bien){ estrellas += 5; document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+  guardar();
+  setTimeout(function(){ mostrarFin(bien); }, 700);
+}
+
+function mostrarFin(bien){
+  var p = pat();
+  document.getElementById('fin-emoji').textContent = bien ? '🎉' : (p.cierra ? '🤔' : '⚠️');
+  document.getElementById('fin-tit').textContent = bien
+    ? (p.cierra ? '¡Sí! Arma un '+p.arma.toLowerCase() : '¡Exacto: NO cierra!')
+    : (p.cierra ? 'Arma un '+p.arma.toLowerCase() : 'No cierra');
+  document.getElementById('fin-nota').textContent = p.nota;
+  document.getElementById('fin-txt').textContent = p.txt;
+  document.getElementById('velo-fin').classList.add('ver');
+}
+
+function cerrarFin(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  document.getElementById('ops').style.display = 'none';
+  document.getElementById('doblez').style.display = 'flex';
+  document.getElementById('botones').style.display = 'flex';
+  var v = document.getElementById('veredicto');
+  var p = pat();
+  v.className = 'veredicto ver ' + (p.cierra ? 'si' : 'no');
+  v.textContent = p.cierra
+    ? 'Dóblalo con la barra y mira cómo cierra'
+    : 'Dóblalo con la barra: fíjate dónde se montan las caras';
+}
+
+function doblarSolo(){ tObjetivo = 1; }
+function abrirSolo(){ tObjetivo = 0; }
+
+function siguiente(){
+  document.getElementById('velo-fin').classList.remove('ver');
+  nivel = (nivel >= PATRONES.length-1) ? 0 : nivel+1;
+  guardar();
+  armar(); preguntar();
+}
+
+function empezar(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  armar(); preguntar();
+}
+
+function eventos(){
+  var lienzo = document.getElementById('lienzo');
+  var abajo = null;
+  lienzo.addEventListener('pointerdown', function(e){ abajo = {x:e.clientX, g:giroVista}; });
+  lienzo.addEventListener('pointermove', function(e){
+    if(!abajo) return;
+    giroVista = abajo.g + (e.clientX-abajo.x)*0.011;
+  });
+  lienzo.addEventListener('pointerup', function(){ abajo = null; });
+  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
+  document.getElementById('sl-d').addEventListener('input', function(){
+    t = tObjetivo = parseInt(this.value,10)/100;
+    aplicarDoblez();
+  });
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  if(raiz3D){
+    if(Math.abs(tObjetivo - t) > 0.004){
+      t += (tObjetivo - t) * 0.07;
+      aplicarDoblez();
+    } else if(raiz3D){
+      raiz3D.rotation.y = giroVista + t*0.5;
+    }
+  }
+  rend.render(esc, cam);
+}
+
+cargar3D(function(){
+  leer();
+  montar();
+  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+}, function(){
+  document.getElementById('velo-ini').classList.remove('ver');
+  document.getElementById('velo-red').classList.add('ver');
+});
+
+window.__j3d = {
+  empezar: empezar,
+  patrones: PATRONES,
+  responder: function(i){ var b = document.querySelectorAll('#ops .op')[i]; if(b) b.click(); },
+  doblar: function(v){ t = tObjetivo = v; if(raiz3D) aplicarDoblez(); },
+  irA: function(i){ nivel = i; armar(); preguntar(); },
+  estado: function(){ return {nivel:nivel, caras:caras3D.length, bisagras:bisagras.length,
+    t:t, estrellas:estrellas, contestado:contestado, cierra:pat().cierra}; }
+};
+</script>
+</body>
+</html>
