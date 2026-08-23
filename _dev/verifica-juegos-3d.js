@@ -566,6 +566,99 @@ async function mision(nav){
 }
 
 
+
+/* ============================================================
+   Que lo que se ve, se pueda tocar
+   ------------------------------------------------------------
+   Este bloque existe por un fallo que llegó a un teléfono de
+   verdad: el lienzo 3D se salía 133 px por debajo de su hueco y
+   quedaba encima de los botones de responder. Se veían perfectos
+   y el dedo no los tocaba nunca. El alumno se queda con la
+   pregunta en pantalla y sin forma de contestarla, y lo que hace
+   es cerrar la aplicación.
+
+   No bastaba con probar «este botón responde»: hay que preguntar,
+   control por control y en CADA momento de la partida, si el
+   elemento que recibiría el toque es ese control o hay algo
+   encima. Y hay que hacerlo con las medidas de un teléfono, que
+   es donde el reparto de la pantalla aprieta.
+   ============================================================ */
+async function nadaTapado(p, cuando){
+  return await p.evaluate(() => {
+    const malos = [];
+    const sel = 'button, input, a[href], [onclick], [onpointerdown]';
+    document.querySelectorAll(sel).forEach(el => {
+      const r = el.getBoundingClientRect();
+      if(r.width < 4 || r.height < 4) return;
+      const cs = getComputedStyle(el);
+      if(cs.visibility === 'hidden' || cs.display === 'none' || cs.pointerEvents === 'none') return;
+      if(el.disabled) return;
+      // fuera de la ventana: eso se mira aparte
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      if(cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight){
+        malos.push({txt:(el.textContent||el.id||'').trim().slice(0,20), tapa:'FUERA DE LA VENTANA'});
+        return;
+      }
+      const arriba = document.elementFromPoint(cx, cy);
+      if(arriba === el || el.contains(arriba)) return;
+      /* Que una ventana abierta tape lo de detrás es lo que tiene que
+         hacer: es un modal, y el alumno tiene que atenderlo antes de
+         seguir. Lo que NO puede pasar es que tape el DIBUJO, o
+         cualquier cosa que no sea una ventana. */
+      const veloArriba = arriba && arriba.closest ? arriba.closest('.velo.ver') : null;
+      if(veloArriba && !veloArriba.contains(el)) return;
+      malos.push({txt:(el.textContent||el.id||'').trim().slice(0,20),
+        tapa: arriba ? (arriba.tagName + (arriba.id?'#'+arriba.id:'') + (arriba.className && typeof arriba.className === 'string' ? '.'+arriba.className.split(' ')[0] : '')) : 'nada'});
+    });
+    return malos;
+  });
+}
+
+/* Se recorre el juego entero con medidas de teléfono y se comprueba
+   en cada momento. Las paradas van en TOQUES: el mismo recorrido que
+   ya se toca con el ratón. */
+async function todoAlcanzable(nav){
+  console.log('\n🖐️ Que lo que se ve, se pueda tocar (medidas de teléfono)');
+  for(const medida of [{width:393,height:873,n:'teléfono 393×873'}, {width:360,height:640,n:'pantalla chica 360×640'}]){
+    for(const [j, arranque, botones, preparar] of TOQUES){
+      const ctx = await nav.newContext({viewport:{width:medida.width, height:medida.height},
+        deviceScaleFactor:2.75, isMobile:true, hasTouch:true});
+      const p = await ctx.newPage();
+      await p.addInitScript(STUB);
+      await p.route('**cdnjs.cloudflare.com/**', r => r.abort());
+      await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+      await p.waitForTimeout(400);
+      const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
+
+      let malos = await nadaTapado(p, 'al abrir');
+      ok(malos.length === 0, nom+' · '+medida.n+': al abrir, nada tapado', malos);
+
+      if(arranque){
+        const b = p.locator(arranque).first();
+        if(await b.count()) { await b.tap({timeout:5000}).catch(()=>{}); await p.waitForTimeout(500); }
+      }
+      malos = await nadaTapado(p, 'ya jugando');
+      ok(malos.length === 0, nom+' · '+medida.n+': ya jugando, nada tapado', malos);
+
+      if(preparar){ await p.evaluate(preparar); await p.waitForTimeout(150); }
+      // se actúa una vez y se vuelve a mirar: los paneles de resultado
+      // cambian el reparto de la pantalla, que es cuando se torcía
+      for(const s of botones){
+        const loc = p.locator(s).first();
+        if(await loc.count() && await loc.isVisible()){
+          await loc.tap({timeout:5000}).catch(()=>{});
+          await p.waitForTimeout(700);
+          break;
+        }
+      }
+      malos = await nadaTapado(p, 'después de actuar');
+      ok(malos.length === 0, nom+' · '+medida.n+': después de responder, nada tapado', malos);
+
+      await ctx.close();
+    }
+  }
+}
+
 /* ============================================================
    La señal MALA, que es la del aula
    ------------------------------------------------------------
@@ -695,6 +788,7 @@ async function sinRed(nav){
     await duelo(nav);
     await tetris(nav);
     await mision(nav);
+    await todoAlcanzable(nav);
     await señalMala(nav);
     await tocarDeVerdad(nav);
     await sinRed(nav);

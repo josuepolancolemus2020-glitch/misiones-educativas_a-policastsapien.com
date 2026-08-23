@@ -63,8 +63,23 @@ module.exports = `
       this.updateProjectionMatrix=function(){}; }; f.prototype=Object.create(Obj.prototype); return f; })(),
     GridHelper: (function(){ var f=function(){ Obj.call(this); }; f.prototype=Object.create(Obj.prototype); return f; })(),
     AmbientLight: luz(), DirectionalLight: luz(), PointLight: luz(),
-    WebGLRenderer: function(){ this.domElement=document.createElement('canvas');
-      this.setSize=function(){}; this.setPixelRatio=function(){}; this.render=function(){}; },
+    /* setSize hace lo MISMO que el de verdad: escribe el tamaño en el
+       style del lienzo. Parece un detalle y no lo es: ese style en
+       línea gana sobre cualquier regla del CSS, así que si el hueco
+       cambia después, el lienzo se queda grande y se sale por debajo.
+       Con el setSize vacío que había antes, esa avería era invisible
+       para la sonda —y se fue a producción—. */
+    WebGLRenderer: function(){
+      this.domElement=document.createElement('canvas');
+      this.setSize=function(an,al,ponerEstilo){
+        this.domElement.width = an; this.domElement.height = al;
+        if(ponerEstilo !== false){
+          this.domElement.style.width = an + 'px';
+          this.domElement.style.height = al + 'px';
+        }
+      };
+      this.setPixelRatio=function(){}; this.render=function(){};
+    },
     Raycaster: function(){ this.setFromCamera=function(){};
       this.intersectObjects=function(){ return []; }; this.intersectObject=function(){ return []; }; },
     Fog: function(){}, Shape: function(){ this.moveTo=function(){}; this.lineTo=function(){}; this.closePath=function(){}; },

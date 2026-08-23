@@ -38,8 +38,20 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
    al toque, y el alumno se quedaba mirando una pregunta que no podía
    contestar—. Abajo, «manipulation»: quita el zoom del doble toque y
    deja el toque normal. */
-#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 25%,#2a3352 0%,#10141f 78%);touch-action:none;}
-#lienzo canvas{display:block;width:100%;height:100%;}
+/* overflow:hidden NO es cosmético. Three.js escribe el tamaño del
+   lienzo en su `style`, y ese style en línea gana sobre cualquier
+   regla del CSS. Si después cambia el alto del hueco —y cambia: al
+   aparecer las opciones, la franja de abajo crece y este hueco
+   encoge—, el lienzo se queda con el alto viejo y SE SALE por
+   debajo. Como este contenedor está posicionado, lo que se sale
+   queda ENCIMA de los botones: se ven, y el dedo nunca los toca.
+   Le pasó a un maestro con la pregunta en pantalla y sin poder
+   contestarla. */
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 25%,#2a3352 0%,#10141f 78%);touch-action:none;overflow:hidden;}
+/* El 100 % va con !important para ganarle al style en línea que
+   escribe Three.js: así el lienzo mide SIEMPRE lo que mide su hueco,
+   pase lo que pase con el resto de la pantalla. */
+#lienzo canvas{display:block;width:100%!important;height:100%!important;}
 /* el marcador: objetivo y suma, que es lo que hay que mirar */
 .tablero{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.35rem .6rem;}
 .tablero .gr{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.2rem;}
@@ -277,8 +289,22 @@ function montar(){
 
   ponerCamara();
   window.addEventListener('resize', ajustar);
+  vigilarHueco();
   window.addEventListener('keydown', teclado);
   animar();
+}
+
+/* El dibujo sigue al hueco. Sin esto, el lienzo se estira por CSS
+   pero su imagen se queda del tamaño viejo y sale achatada; y peor,
+   la cámara conserva la proporción vieja. `resize` de la ventana no
+   basta: aquí lo que cambia es el reparto de la pantalla —aparecen
+   las opciones y la franja de abajo crece—, sin que la ventana se
+   mueva ni un píxel. */
+function vigilarHueco(){
+  if(typeof ResizeObserver === 'undefined') return;
+  var cont = document.getElementById('lienzo');
+  if(!cont) return;
+  new ResizeObserver(function(){ ajustar(); }).observe(cont);
 }
 
 function ajustar(){

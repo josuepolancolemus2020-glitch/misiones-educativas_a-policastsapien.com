@@ -1384,6 +1384,22 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
      la barra de direcciones aparece y desaparece; con `absolute` el
      panel del resultado se ancla al documento y puede quedar medio
      fuera justo cuando hay que leerlo.
+8. ⚠️ **El lienzo 3D no puede salirse de su hueco, y esto es lo que más
+   caro costó.** Three.js escribe el tamaño del lienzo en el `style` EN
+   LÍNEA del `<canvas>`, y ese style **gana sobre el CSS**. El reparto
+   de la pantalla cambia solo —al aparecer las opciones, la franja de
+   abajo crece y el hueco del dibujo encoge—, sin que la ventana se
+   mueva un píxel, así que `resize` no salta. El lienzo se quedaba con
+   el alto viejo, se salía **133 px por debajo** y, como `#lienzo` está
+   posicionado y la franja no lo estaba, quedaba ENCIMA de los botones
+   de responder: se veían perfectos y el dedo no los tocaba nunca. Un
+   maestro se quedó con la pregunta en pantalla y sin forma de
+   contestarla. Van cuatro cierres, y los cuatro se quedan:
+   `vigilarHueco()` (un `ResizeObserver` sobre `#lienzo` que rehace el
+   tamaño —este solo ya lo arregla, y además mantiene la proporción de
+   la cámara), `overflow:hidden` en `#lienzo`, `width/height:100%
+   !important` en su `canvas` y `position:relative;z-index:2` en la
+   franja de mandos.
 
 Y una que es de contenido: **las respuestas equivocadas que se le
 ofrecen al alumno son el error de verdad**, no números al azar. Al cubo
@@ -1416,11 +1432,23 @@ como pirámide** ni como poliedro, y **el prisma triangular no pasa por
 pirámide cuadrangular** aunque los dos tengan 5 caras: lo que los separa
 son los vértices—.
 
-Las dos comprueban además **la señal mala** —que el telón tape mientras
-baja el motor, que no quede ni un botón alcanzable por debajo y que el
-juego llegue entero— y **tocan los botones con el ratón, no llamando a
-la función**: así se ve el botón tapado o desplazado, que llamando por
-dentro pasa. Comprueban también que sin internet el juego avise, que
+Las dos comprueban además **que lo que se ve se pueda tocar**: recorren
+el juego con medidas de teléfono (393×873 y 360×640) y en cada momento
+preguntan, control por control, si el elemento que recibiría el toque es
+ese control o hay algo encima —saltándose los velos abiertos, que tapan
+a propósito—. Es el guardián de la avería del lienzo, y delata al
+culpable por su nombre: `{"txt":"Cono","tapa":"CANVAS"}`. Comprueban
+también **la señal mala** —que el telón tape mientras baja el motor, que
+no quede ni un botón alcanzable por debajo y que el juego llegue
+entero— y **tocan los botones con el ratón, no llamando a la función**:
+así se ve el botón tapado o desplazado, que llamando por dentro pasa.
+
+⚠️ **El Three.js de mentira tiene que MENTIR POCO.** Su `setSize` estaba
+vacío, y por eso la avería del lienzo fue invisible para la sonda y se
+fue a producción dos veces: sin ese `style` en línea, el lienzo nunca se
+salía en la prueba. Ahora hace lo mismo que el de verdad. Cuando se le
+añada una pieza nueva, que se parezca al original en lo que TOCA AL
+DOM, no solo en que no reviente. Comprueban también que sin internet el juego avise, que
 solo se usen piezas de Three.js que existen en r128 —un nombre mal escrito no da
 la cara hasta que el juego se abre delante del niño— y la misión: que la
 pestaña esté, que las seis tarjetas enlacen y que los juegos **no hayan

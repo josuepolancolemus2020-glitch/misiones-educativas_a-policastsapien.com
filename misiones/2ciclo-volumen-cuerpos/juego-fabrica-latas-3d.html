@@ -29,8 +29,20 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .titulo{font-size:.95rem;font-weight:700;flex:1;line-height:1.15;}
 .titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
 .marcador{font-size:.8rem;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
-#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 30%,#2b3350 0%,#141a2c 72%);}
-#lienzo canvas{display:block;width:100%;height:100%;}
+/* overflow:hidden NO es cosmético. Three.js escribe el tamaño del
+   lienzo en su `style`, y ese style en línea gana sobre cualquier
+   regla del CSS. Si después cambia el alto del hueco —y cambia: al
+   aparecer las opciones, la franja de abajo crece y este hueco
+   encoge—, el lienzo se queda con el alto viejo y SE SALE por
+   debajo. Como este contenedor está posicionado, lo que se sale
+   queda ENCIMA de los botones: se ven, y el dedo nunca los toca.
+   Le pasó a un maestro con la pregunta en pantalla y sin poder
+   contestarla. */
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 30%,#2b3350 0%,#141a2c 72%);overflow:hidden;}
+/* El 100 % va con !important para ganarle al style en línea que
+   escribe Three.js: así el lienzo mide SIEMPRE lo que mide su hueco,
+   pase lo que pase con el resto de la pantalla. */
+#lienzo canvas{display:block;width:100%!important;height:100%!important;}
 /* pedido de la fábrica */
 .pedido{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.45rem .7rem;font-size:.8rem;line-height:1.35;}
 .pedido b{color:var(--dorado);font-size:1.05rem;}
@@ -46,7 +58,10 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .dif.cerca{color:var(--verde);font-weight:700;}
 .dif.lejos{color:#ffb1b1;}
 /* mandos */
-.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;}
+/* Los mandos van posicionados y por encima del lienzo. Es el tercer
+   cinturón contra lo mismo: aunque algo se saliera del dibujo, los
+   botones siguen siendo lo primero que toca el dedo. */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;position:relative;z-index:2;}
 .fila{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;}
 .fila label{font-size:.78rem;width:4.4rem;flex-shrink:0;}
 .fila label b{display:block;color:var(--azul);font-size:.95rem;font-family:'Fira Code',ui-monospace,monospace;}
@@ -247,7 +262,21 @@ function montar(){
   armarLata();
   rehacerLata();
   window.addEventListener('resize', ajustar);
+  vigilarHueco();
   animar();
+}
+
+/* El dibujo sigue al hueco. Sin esto, el lienzo se estira por CSS
+   pero su imagen se queda del tamaño viejo y sale achatada; y peor,
+   la cámara conserva la proporción vieja. `resize` de la ventana no
+   basta: aquí lo que cambia es el reparto de la pantalla —aparecen
+   las opciones y la franja de abajo crece—, sin que la ventana se
+   mueva ni un píxel. */
+function vigilarHueco(){
+  if(typeof ResizeObserver === 'undefined') return;
+  var cont = document.getElementById('lienzo');
+  if(!cont) return;
+  new ResizeObserver(function(){ ajustar(); }).observe(cont);
 }
 
 function ajustar(){
