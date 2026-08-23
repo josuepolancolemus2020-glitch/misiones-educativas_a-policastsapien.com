@@ -5,58 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🧊 El Constructor de Cubitos 3D | Misión Volumen de Cuerpos</title>
 <meta name="description" content="Construye cubos y prismas cubito por cubito en 3D y descubre por qué el volumen es largo × ancho × alto.">
+<!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos.
+     Lo que se toca ahí se toca en los doce juegos a la vez. -->
+<link rel="stylesheet" href="../../css/parque-3d.css">
 <style>
-/* ============================================================
-   Juego 3D · El Constructor de Cubitos
-   ------------------------------------------------------------
-   La fórmula l × a × h se aprende de memoria y se olvida. Aquí
-   el alumno PONE los cubitos uno por uno: la fórmula deja de ser
-   una regla y pasa a ser lo que él acaba de hacer con las manos.
-   Por eso cada nivel empieza preguntando cuántos va a necesitar:
-   primero predice, después comprueba construyendo.
-   ============================================================ */
+/* El color de esta misión. Todo lo demás —el andamio— está en
+   css/parque-3d.css, que se carga antes. */
 :root{
-  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
-  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
+  --acento:#c9a227; --acento-tinta:#1a1a2e; --franja:rgba(201,162,39,.4);
+  --marca-fondo:rgba(74,144,217,.18); --marca-borde:rgba(74,144,217,.5); --velo-fondo:rgba(10,14,26,.93);
+  --lienzo-fondo:radial-gradient(circle at 50% 35%,#26304d 0%,#141a2c 70%);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-button,input,a{touch-action:manipulation;}
-html,body{height:100%;overflow:hidden;}
-body{
-  background:var(--acero); color:var(--claro);
-  font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;
-  display:flex; flex-direction:column; touch-action:manipulation;
-}
-/* ---- barra de arriba ---- */
-.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
-.volver{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
 .volver:hover{background:rgba(201,162,39,.15);}
-.titulo{font-size:.95rem;font-weight:700;flex:1;line-height:1.15;}
-.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
-.marcador{font-size:.8rem;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
-/* ---- escenario ---- */
-/* touch-action va SOLO en el lienzo, nunca en el body.
-   «none» le dice al navegador que no haga NADA por su cuenta con el
-   dedo: eso hace falta encima del dibujo, para poder arrastrar y girar
-   sin que la página se deslice. Puesto en el body se lo lleva todo por
-   delante —en una tableta con Android los botones dejaban de responder
-   al toque, y el alumno se quedaba mirando una pregunta que no podía
-   contestar—. Abajo, «manipulation»: quita el zoom del doble toque y
-   deja el toque normal. */
-/* overflow:hidden NO es cosmético. Three.js escribe el tamaño del
-   lienzo en su `style`, y ese style en línea gana sobre cualquier
-   regla del CSS. Si después cambia el alto del hueco —y cambia: al
-   aparecer las opciones, la franja de abajo crece y este hueco
-   encoge—, el lienzo se queda con el alto viejo y SE SALE por
-   debajo. Como este contenedor está posicionado, lo que se sale
-   queda ENCIMA de los botones: se ven, y el dedo nunca los toca.
-   Le pasó a un maestro con la pregunta en pantalla y sin poder
-   contestarla. */
-#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 35%,#26304d 0%,#141a2c 70%);touch-action:none;overflow:hidden;}
-/* El 100 % va con !important para ganarle al style en línea que
-   escribe Three.js: así el lienzo mide SIEMPRE lo que mide su hueco,
-   pase lo que pase con el resto de la pantalla. */
-#lienzo canvas{display:block;width:100%!important;height:100%!important;}
+#lienzo{touch-action:none;}
 .pista{position:absolute;left:50%;transform:translateX(-50%);bottom:.5rem;background:rgba(20,26,44,.85);border:1.5px solid rgba(154,165,189,.3);border-radius:10px;padding:.3rem .7rem;font-size:.74rem;color:var(--gris);pointer-events:none;text-align:center;max-width:92%;}
 /* ---- contador ---- */
 .cuenta{position:absolute;top:.5rem;left:.5rem;background:rgba(20,26,44,.88);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.4rem .7rem;font-size:.9rem;font-weight:700;line-height:1.35;}
@@ -65,84 +26,23 @@ body{
 .cuenta.lleno{border-color:var(--verde);}
 .cuenta.lleno b{color:var(--verde);}
 .fuera{position:absolute;top:.5rem;right:.5rem;background:rgba(224,82,82,.9);border-radius:10px;padding:.3rem .6rem;font-size:.75rem;font-weight:700;display:none;max-width:45%;line-height:1.25;}
-/* ---- herramientas ---- */
-/* Los mandos van posicionados y por encima del lienzo. Es el tercer
-   cinturón contra lo mismo: aunque algo se saliera del dibujo, los
-   botones siguen siendo lo primero que toca el dedo. */
-/* Los mandos BAJAN de línea antes que salirse. A 348 px de ancho o
-   menos —un teléfono con el tamaño de pantalla de Android subido— el
-   quinto salía cortado por la derecha y parecía roto. */
 .barra{display:flex;flex-wrap:wrap;gap:.4rem;padding:.5rem;background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);flex-shrink:0;overflow-x:auto;position:relative;z-index:2;}
 .herr{flex:1 1 62px;min-width:56px;background:#2c3556;border:2px solid transparent;color:var(--claro);border-radius:12px;padding:.45rem .3rem;font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer;line-height:1.3;}
 .herr .ico{display:block;font-size:1.25rem;}
 .herr.on{border-color:var(--dorado);background:rgba(201,162,39,.22);color:var(--dorado);}
 .herr:active{transform:scale(.95);}
-/* ---- ventanas ---- */
-/* Los velos van FIJOS, no absolutos. En un teléfono la barra de
-   direcciones aparece y desaparece, y con `absolute` el panel se ancla
-   al documento en vez de a lo que se ve: puede quedar medio fuera de la
-   pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
-   `fixed` lo pega siempre a lo que el alumno tiene delante. */
-/* El panel se centra con `margin:auto`, NO con `align-items:center`.
-   Centrando con align-items y dejando `overflow-y:auto`, un panel más
-   alto que la ventana se sale por ARRIBA y ese trozo no se recupera
-   nunca: el desplazamiento no llega a números negativos. Con la letra
-   del teléfono agrandada —que es una opción de accesibilidad que usa
-   quien no ve bien— se perdía el título y hasta la pregunta. Con
-   `margin:auto` se centra cuando cabe y se desplaza entero cuando no. */
-.velo{position:fixed;inset:0;background:rgba(10,14,26,.93);display:none;align-items:flex-start;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
-.velo.ver{display:flex;}
-.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:420px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);margin:auto;}
-.panel h2{font-size:1.15rem;margin-bottom:.5rem;color:var(--dorado);}
-.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
 .medidas{display:flex;gap:.4rem;justify-content:center;margin:.7rem 0;flex-wrap:wrap;}
 .medida{background:rgba(74,144,217,.18);border:1.5px solid var(--azul);border-radius:10px;padding:.35rem .6rem;font-size:.8rem;}
 .medida b{display:block;font-size:1.2rem;color:var(--azul);}
 .casilla{width:130px;padding:.55rem;font-size:1.3rem;text-align:center;font-family:inherit;font-weight:700;border:2px solid var(--azul);border-radius:12px;background:#141a2c;color:var(--claro);margin-bottom:.6rem;}
-.bt{font-family:inherit;font-size:.92rem;font-weight:700;padding:.6rem 1.2rem;border:none;border-radius:14px;cursor:pointer;margin:.2rem;min-height:44px;}
-.bt-p{background:var(--dorado);color:#1a1a2e;}
-.bt-v{background:var(--verde);color:#fff;}
-.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
-.bt:active{transform:scale(.96);}
+.bt{font-size:.92rem;padding:.6rem 1.2rem;border-radius:14px;margin:.2rem;}
 .aviso{font-size:.85rem;min-height:1.3rem;margin-bottom:.5rem;line-height:1.4;}
 .aviso.mal{color:#ff9c9c;}
 .aviso.bien{color:#7ee2a8;}
-.estrellas{font-size:2rem;letter-spacing:.15rem;margin-bottom:.4rem;}
 .formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.5rem .7rem;font-size:.95rem;margin:.6rem 0;text-align:left;}
 .pasos{list-style:none;text-align:left;font-size:.82rem;color:#c6d0e4;line-height:1.6;margin:.4rem 0 .7rem;}
 .pasos li{margin-bottom:.15rem;}
 @media(max-width:380px){.titulo{font-size:.85rem;}.herr{font-size:.66rem;}}
-
-/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
-   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
-   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
-   borde es un botón que no existe. Se recorta el aire y el adorno; el
-   tamaño del texto que hay que leer se toca lo justo. */
-@media (max-height:430px){
-  .panel{padding:.65rem .8rem;border-radius:14px;}
-  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
-  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
-  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
-  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
-  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
-}
-
-/* Cuando el panel no cabe —letra del sistema agrandada, teléfono
-   acostado— se aprieta solo, y si aun apretado sigue sin caber, sale
-   un aviso de que hay que deslizar. Se puede deslizar desde el
-   principio, sí, pero NADA se lo decía al alumno: un botón debajo del
-   borde, sin aviso, es un botón que no existe. Esto no depende del
-   alto de la ventana sino de si CABE, que es lo único que importa. */
-.velo.apretado .panel{padding:.6rem .75rem;}
-.velo.apretado .emoji-gr{font-size:1.4rem;margin-bottom:.1rem;}
-.velo.apretado .panel h2{font-size:.9rem;margin-bottom:.25rem;}
-.velo.apretado .panel p{font-size:.76rem;line-height:1.3;margin-bottom:.35rem;}
-.velo.apretado .estrellas{font-size:1.25rem;margin-bottom:.15rem;}
-.velo.apretado .bt{padding:.4rem .8rem;min-height:40px;font-size:.8rem;}
-.velo.desliza::after{content:'▼ desliza para ver el botón';position:fixed;left:50%;
-  transform:translateX(-50%);bottom:.45rem;background:#c9a227;color:#141826;
-  padding:.25rem .8rem;border-radius:12px;font-size:.74rem;font-weight:700;
-  z-index:40;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.5);}
 </style>
 </head>
 <body>
@@ -216,38 +116,8 @@ body{
   </div>
 </div>
 
+<script src="../../js/3d/parque-3d.js"></script>
 <script>
-/* ============================================================
-   1) La pieza de 3D se baja de la red, pero si alguien ya la
-      dejó puesta (window.THREE) se usa esa: así el juego se
-      puede probar sin salir a internet y mañana se puede
-      guardar una copia dentro del sitio sin tocar nada más.
-   ============================================================ */
-var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-/* El telón de «cargando» se levanta cuando el motor ya está —o
-   cuando se sabe que no va a llegar—, nunca antes: lo que hay
-   detrás no funciona sin él. */
-function quitarCarga(){
-  var v = document.getElementById('velo-carga');
-  if(v) v.classList.remove('ver');
-}
-function cargar3D(listo, falla){
-  if (window.THREE) return listo();
-  /* Con plazo. La señal mala no siempre FALLA: muchas veces se queda
-     colgada y no contesta nunca, y entonces `onerror` no salta y el
-     telón se quedaba puesto para siempre, sin aviso y sin salida. A los
-     veinte segundos se da por perdida y sale la pantalla que explica
-     qué hacer. */
-  var yaFue = false;
-  function unaVez(fn){ return function(){ if(yaFue) return; yaFue = true; fn(); }; }
-  var seRindio = unaVez(falla);
-  var plazo = setTimeout(seRindio, 20000);
-  var s = document.createElement('script');
-  s.src = CDN3D;
-  s.onload = unaVez(function(){ clearTimeout(plazo); window.THREE ? listo() : falla(); });
-  s.onerror = function(){ clearTimeout(plazo); seRindio(); };
-  document.head.appendChild(s);
-}
 
 /* ============================================================
    2) Los cinco niveles. Van de un cubo de 2 a un prisma de 40
@@ -323,41 +193,13 @@ function montar(){
   colocarCamara();
   eventos();
   animar();
-  window.addEventListener('resize', ajustar);
-  vigilarHueco();
-}
-
-/* El dibujo sigue al hueco. Sin esto, el lienzo se estira por CSS
-   pero su imagen se queda del tamaño viejo y sale achatada; y peor,
-   la cámara conserva la proporción vieja. `resize` de la ventana no
-   basta: aquí lo que cambia es el reparto de la pantalla —aparecen
-   las opciones y la franja de abajo crece—, sin que la ventana se
-   mueva ni un píxel. */
-function vigilarHueco(){
-  if(typeof ResizeObserver === 'undefined') return;
-  var cont = document.getElementById('lienzo');
-  if(!cont) return;
-  new ResizeObserver(function(){ ajustar(); }).observe(cont);
+  Parque3D.vigilarHueco(ajustar);
 }
 
 /* Mira si el panel cabe. Si no, lo aprieta; y si apretado tampoco,
    enciende el aviso de deslizar. Se comprueba desde el bucle de
    dibujo, unas pocas veces por segundo: los velos se abren desde
    muchos sitios y engancharlos uno por uno se olvida siempre. */
-var _velosCada = 0;
-function ajustarVelos(){
-  if(++_velosCada % 6) return;   // ~10 veces por segundo: el aviso tiene que salir YA
-  var velos = document.querySelectorAll('.velo.ver');
-  for(var i=0;i<velos.length;i++){
-    var v = velos[i], p = v.querySelector('.panel');
-    if(!p) continue;
-    var hueco = v.clientHeight - 16;
-    if(!v.classList.contains('apretado') && p.scrollHeight > hueco) v.classList.add('apretado');
-    else if(v.classList.contains('apretado') && p.scrollHeight < hueco - 60) v.classList.remove('apretado');
-    var sobra = p.getBoundingClientRect().height > v.clientHeight - 8;
-    if(sobra !== v.classList.contains('desliza')) v.classList.toggle('desliza', sobra);
-  }
-}
 
 function ajustar(){
   var cont = document.getElementById('lienzo');
@@ -676,25 +518,23 @@ function animar(){
     }
   });
   if(ghost) ghost.rotation.y = 0;
-  ajustarVelos();
   rend.render(esc, cam);
 }
 
 /* ============================================================
    10) Arranque
    ============================================================ */
-cargar3D(function(){
-  quitarCarga();
+/* Baja el motor de dibujo, levanta el telón y arranca. Si no
+   llega, el andamio enseña la pantalla de «hace falta internet
+   la primera vez»: un juego que se queda negro parece roto y no
+   se vuelve a abrir. */
+Parque3D.arrancar(function(){
   leer();
   montar();
   pintarMarcador();
   pintarCuenta();
   abrirPred();
-}, function(){
-  quitarCarga();
-  document.getElementById('velo-pred').classList.remove('ver');
-  document.getElementById('velo-red').classList.add('ver');
-});
+}, 'velo-pred');
 
 // Ganchos para la sonda: la cuenta y el estado, sin tocar el dibujo.
 window.__j3d = {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v159';
+const CACHE_NAME = 'meta-app-v160';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
@@ -22,6 +22,12 @@ const STATIC_ASSETS = [
   './fichas/js/ficha-pensamiento-computacional-en.js',
   './misiones/2y3ciclo-robot-decide/js/robot-decide-en.js',
   './fichas/js/ficha-robot-decide-en.js',
+  // El andamio de los juegos 3D: telón, velos, lienzo y mandos. Sin
+  // estos dos, los doce juegos dejan de funcionar sin internet —y esa
+  // promesa está escrita en su propia pantalla—: se quedarían sin
+  // cargador, sin telón y sin CSS, o sea en blanco.
+  './js/3d/parque-3d.js',
+  './css/parque-3d.css',
   './padres.html',
   './salida.html',
   './buzon.html',

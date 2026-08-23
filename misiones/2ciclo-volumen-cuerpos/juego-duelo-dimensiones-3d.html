@@ -5,44 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>⚔️ Área vs Volumen: El Duelo de las Dimensiones | Misión Volumen de Cuerpos</title>
 <meta name="description" content="Combate por turnos: a los enemigos planos se les ataca con área y a los cuerpos con volumen. Aprende a distinguir 2D de 3D.">
+<!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos.
+     Lo que se toca ahí se toca en los doce juegos a la vez. -->
+<link rel="stylesheet" href="../../css/parque-3d.css">
 <style>
-/* ============================================================
-   Juego 3D · El Duelo de las Dimensiones
-   ------------------------------------------------------------
-   La confusión más cara de todo el tema: el alumno calcula el
-   área cuando le piden volumen, y como el número «sale», no se
-   entera. Aquí NO se le pregunta cuál es cuál: se le obliga a
-   elegir el ataque antes de calcular, y si elige mal, el golpe
-   rebota y lo recibe él. Los enemigos planos giran hasta ponerse
-   de canto y DESAPARECEN: no tienen grosor, y eso —que en el
-   cuaderno es una frase— aquí se ve.
-   ============================================================ */
+/* El color de esta misión. Todo lo demás —el andamio— está en
+   css/parque-3d.css, que se carga antes. */
 :root{
-  --acero:#1a1a2e; --acero-2:#232946; --dorado:#c9a227; --azul:#4a90d9;
-  --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd; --morado:#7c5cd6;
+  --acento:#c9a227; --acento-tinta:#1a1a2e; --franja:rgba(201,162,39,.4);
+  --marca-fondo:rgba(74,144,217,.18); --marca-borde:rgba(74,144,217,.5); --velo-fondo:rgba(10,14,26,.93);
+  --lienzo-fondo:radial-gradient(circle at 50% 25%,#2a3352 0%,#10141f 78%);
+  --morado:#7c5cd6;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
-body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;}
-.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
-.volver{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
-.titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
-.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
 .xp{font-size:.8rem;background:rgba(124,92,214,.2);border:1.5px solid rgba(124,92,214,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
-/* overflow:hidden NO es cosmético. Three.js escribe el tamaño del
-   lienzo en su `style`, y ese style en línea gana sobre cualquier
-   regla del CSS. Si después cambia el alto del hueco —y cambia: al
-   aparecer las opciones, la franja de abajo crece y este hueco
-   encoge—, el lienzo se queda con el alto viejo y SE SALE por
-   debajo. Como este contenedor está posicionado, lo que se sale
-   queda ENCIMA de los botones: se ven, y el dedo nunca los toca.
-   Le pasó a un maestro con la pregunta en pantalla y sin poder
-   contestarla. */
-#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 25%,#2a3352 0%,#10141f 78%);overflow:hidden;}
-/* El 100 % va con !important para ganarle al style en línea que
-   escribe Three.js: así el lienzo mide SIEMPRE lo que mide su hueco,
-   pase lo que pase con el resto de la pantalla. */
-#lienzo canvas{display:block;width:100%!important;height:100%!important;}
 /* barras de vida */
 .vidas{position:absolute;top:.5rem;left:.5rem;right:.5rem;display:flex;flex-direction:column;gap:.3rem;pointer-events:none;}
 .barra{background:rgba(20,26,44,.9);border:1.5px solid rgba(154,165,189,.35);border-radius:10px;padding:.25rem .5rem;}
@@ -57,15 +32,6 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .golpe{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:2.6rem;font-weight:800;pointer-events:none;opacity:0;text-shadow:0 3px 12px rgba(0,0,0,.6);}
 .golpe.ver{animation:sube .9s ease-out;}
 @keyframes sube{0%{opacity:1;transform:translate(-50%,-50%) scale(.6);}100%{opacity:0;transform:translate(-50%,-160%) scale(1.3);}}
-/* mandos */
-/* Los mandos van posicionados y por encima del lienzo. Es el tercer
-   cinturón contra lo mismo: aunque algo se saliera del dibujo, los
-   botones siguen siendo lo primero que toca el dedo. */
-/* Si los mandos crecen más que la ventana —acostado y con la letra
-   agrandada pasa—, se desplazan por dentro. Antes se salían por
-   debajo y, como la página no desliza, el botón quedaba fuera del
-   mundo. */
-.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;position:relative;z-index:2;max-height:72vh;overflow-y:auto;}
 .aviso{font-size:.85rem;text-align:center;min-height:2.35rem;margin-bottom:.4rem;line-height:1.4;}
 .aviso.mal{color:#ff9c9c;}
 .aviso.bien{color:#7ee2a8;}
@@ -83,65 +49,13 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
 .op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
 .op:disabled{cursor:default;}
-/* Los velos van FIJOS, no absolutos. En un teléfono la barra de
-   direcciones aparece y desaparece, y con `absolute` el panel se ancla
-   al documento en vez de a lo que se ve: puede quedar medio fuera de la
-   pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
-   `fixed` lo pega siempre a lo que el alumno tiene delante. */
-/* El panel se centra con `margin:auto`, NO con `align-items:center`.
-   Centrando con align-items y dejando `overflow-y:auto`, un panel más
-   alto que la ventana se sale por ARRIBA y ese trozo no se recupera
-   nunca: el desplazamiento no llega a números negativos. Con la letra
-   del teléfono agrandada —que es una opción de accesibilidad que usa
-   quien no ve bien— se perdía el título y hasta la pregunta. Con
-   `margin:auto` se centra cuando cabe y se desplaza entero cuando no. */
-.velo{position:fixed;inset:0;background:rgba(10,14,26,.94);display:none;align-items:flex-start;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
-.velo.ver{display:flex;}
-.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);margin:auto;}
-.panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--dorado);}
-.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
 .regla{display:flex;gap:.4rem;margin:.6rem 0;flex-wrap:wrap;}
 .regla div{flex:1;border:2px solid;border-radius:12px;padding:.5rem .4rem;font-size:.78rem;line-height:1.3;}
 .regla .r-a{border-color:var(--dorado);}
 .regla .r-v{border-color:var(--azul);}
 .regla b{display:block;font-size:1.3rem;}
-.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
-.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;min-height:44px;}
-.bt-p{background:var(--dorado);color:#1a1a2e;}
-.bt-v{background:var(--verde);color:#fff;}
-.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt{font-size:.9rem;padding:.55rem 1.1rem;margin:.2rem;}
 @media(max-width:380px){.at{font-size:.85rem;}.chapa{font-size:.78rem;}}
-
-/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
-   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
-   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
-   borde es un botón que no existe. Se recorta el aire y el adorno; el
-   tamaño del texto que hay que leer se toca lo justo. */
-@media (max-height:430px){
-  .panel{padding:.65rem .8rem;border-radius:14px;}
-  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
-  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
-  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
-  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
-  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
-}
-
-/* Cuando el panel no cabe —letra del sistema agrandada, teléfono
-   acostado— se aprieta solo, y si aun apretado sigue sin caber, sale
-   un aviso de que hay que deslizar. Se puede deslizar desde el
-   principio, sí, pero NADA se lo decía al alumno: un botón debajo del
-   borde, sin aviso, es un botón que no existe. Esto no depende del
-   alto de la ventana sino de si CABE, que es lo único que importa. */
-.velo.apretado .panel{padding:.6rem .75rem;}
-.velo.apretado .emoji-gr{font-size:1.4rem;margin-bottom:.1rem;}
-.velo.apretado .panel h2{font-size:.9rem;margin-bottom:.25rem;}
-.velo.apretado .panel p{font-size:.76rem;line-height:1.3;margin-bottom:.35rem;}
-.velo.apretado .estrellas{font-size:1.25rem;margin-bottom:.15rem;}
-.velo.apretado .bt{padding:.4rem .8rem;min-height:40px;font-size:.8rem;}
-.velo.desliza::after{content:'▼ desliza para ver el botón';position:fixed;left:50%;
-  transform:translateX(-50%);bottom:.45rem;background:#c9a227;color:#141826;
-  padding:.25rem .8rem;border-radius:12px;font-size:.74rem;font-weight:700;
-  z-index:40;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.5);}
 </style>
 </head>
 <body>
@@ -220,49 +134,11 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
   </div>
 </div>
 
+<script src="../../js/3d/parque-3d.js"></script>
 <script>
-var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 /* El telón de «cargando» se levanta cuando el motor ya está —o
    cuando se sabe que no va a llegar—, nunca antes: lo que hay
    detrás no funciona sin él. */
-/* Los botones de responder se atan al toque Y al clic, y el primero
-   que llegue se queda con la jugada. Es cinturón y tirantes: un
-   navegador de tableta que no sintetice el clic dejaría al alumno
-   con la pregunta en pantalla y sin poder contestarla, que es
-   justo lo que pasó. Dos disparos por el mismo dedo no hacen daño:
-   el segundo se descarta aquí, y además las funciones de responder
-   ya tienen su propio pestillo. */
-function alTocar(el, accion){
-  var usado = false;
-  function una(e){
-    if(usado) return;
-    usado = true;
-    setTimeout(function(){ usado = false; }, 400);
-    accion(e);
-  }
-  el.addEventListener('pointerup', una);
-  el.addEventListener('click', una);
-}
-function quitarCarga(){
-  var v = document.getElementById('velo-carga');
-  if(v) v.classList.remove('ver');
-}
-function cargar3D(listo, falla){
-  if (window.THREE) return listo();
-  /* Con plazo. La señal mala no siempre FALLA: muchas veces se queda
-     colgada y no contesta nunca, y entonces `onerror` no salta y el
-     telón se quedaba puesto para siempre, sin aviso y sin salida. A los
-     veinte segundos se da por perdida y sale la pantalla que explica
-     qué hacer. */
-  var yaFue = false;
-  function unaVez(fn){ return function(){ if(yaFue) return; yaFue = true; fn(); }; }
-  var seRindio = unaVez(falla);
-  var plazo = setTimeout(seRindio, 20000);
-  var s=document.createElement('script'); s.src=CDN3D;
-  s.onload = unaVez(function(){ clearTimeout(plazo); window.THREE ? listo() : falla(); });
-  s.onerror = function(){ clearTimeout(plazo); seRindio(); };
-  document.head.appendChild(s);
-}
 /* El π del libro de 6.º, igual que en toda la misión. */
 var PI = 3.14;
 var LLAVE = 'j3d_duelo_v1';
@@ -360,42 +236,14 @@ function montar(){
   cam.lookAt(0, 0.2, 0);
 
   armarChispas();
-  window.addEventListener('resize', ajustar);
-  vigilarHueco();
+  Parque3D.vigilarHueco(ajustar);
   animar();
-}
-
-/* El dibujo sigue al hueco. Sin esto, el lienzo se estira por CSS
-   pero su imagen se queda del tamaño viejo y sale achatada; y peor,
-   la cámara conserva la proporción vieja. `resize` de la ventana no
-   basta: aquí lo que cambia es el reparto de la pantalla —aparecen
-   las opciones y la franja de abajo crece—, sin que la ventana se
-   mueva ni un píxel. */
-function vigilarHueco(){
-  if(typeof ResizeObserver === 'undefined') return;
-  var cont = document.getElementById('lienzo');
-  if(!cont) return;
-  new ResizeObserver(function(){ ajustar(); }).observe(cont);
 }
 
 /* Mira si el panel cabe. Si no, lo aprieta; y si apretado tampoco,
    enciende el aviso de deslizar. Se comprueba desde el bucle de
    dibujo, unas pocas veces por segundo: los velos se abren desde
    muchos sitios y engancharlos uno por uno se olvida siempre. */
-var _velosCada = 0;
-function ajustarVelos(){
-  if(++_velosCada % 6) return;   // ~10 veces por segundo: el aviso tiene que salir YA
-  var velos = document.querySelectorAll('.velo.ver');
-  for(var i=0;i<velos.length;i++){
-    var v = velos[i], p = v.querySelector('.panel');
-    if(!p) continue;
-    var hueco = v.clientHeight - 16;
-    if(!v.classList.contains('apretado') && p.scrollHeight > hueco) v.classList.add('apretado');
-    else if(v.classList.contains('apretado') && p.scrollHeight < hueco - 60) v.classList.remove('apretado');
-    var sobra = p.getBoundingClientRect().height > v.clientHeight - 8;
-    if(sobra !== v.classList.contains('desliza')) v.classList.toggle('desliza', sobra);
-  }
-}
 
 function ajustar(){
   var cont=document.getElementById('lienzo');
@@ -500,16 +348,6 @@ function nuevoBicho(){
   pedirAtaque();
 }
 
-/* Al relevarse las opciones por los ataques —ocupan los mismos
-   píxeles— el segundo toque del alumno caía en el botón recién
-   aparecido. Se le da un respiro de 350 ms en el que no acepta nada,
-   y además se ve apagado, para que no parezca que no funcionó. */
-function respiro(cont){
-  cont.style.pointerEvents = 'none';
-  cont.style.opacity = '0.45';
-  setTimeout(function(){ cont.style.pointerEvents = ''; cont.style.opacity = ''; }, 350);
-}
-
 function apagarAtaques(apagar){
   var c = document.getElementById('ataques');
   c.style.opacity = apagar ? '0.4' : '';
@@ -527,7 +365,7 @@ function pedirAtaque(){
   var av = document.getElementById('aviso');
   av.className = 'aviso';
   av.textContent = '¿Con qué lo atacas? Cuenta cuántas medidas tiene.';
-  respiro(document.getElementById('ataques'));
+  Parque3D.respiro(document.getElementById('ataques'));
 }
 
 function atacar(tipo){
@@ -566,12 +404,12 @@ function mostrarOpciones(f, tipo){
   ops.sort(function(){ return Math.random()-0.5; });
   var cont = document.getElementById('ops');
   cont.innerHTML = ''; cont.style.display = 'flex';
-  respiro(cont);
+  Parque3D.respiro(cont);
   ops.forEach(function(o){
     var bt = document.createElement('button');
     bt.className = 'op';
     bt.textContent = fmt(o.v)+' '+(tipo==='area'?'cm²':'cm³');
-    alTocar(bt, function(){ golpear(o, bt, f); });
+    Parque3D.alTocar(bt, function(){ golpear(o, bt, f); });
     cont.appendChild(bt);
   });
 }
@@ -712,22 +550,20 @@ function animar(){
     particulas.geometry.attributes.position.needsUpdate = true;
     particulas.material.opacity = Math.max(0, particulas.material.opacity - 0.018);
   }
-  ajustarVelos();
   rend.render(esc, cam);
 }
 
-cargar3D(function(){
-  quitarCarga();
+/* Baja el motor de dibujo, levanta el telón y arranca. Si no
+   llega, el andamio enseña la pantalla de «hace falta internet
+   la primera vez»: un juego que se queda negro parece roto y no
+   se vuelve a abrir. */
+Parque3D.arrancar(function(){
   // los ataques van al toque Y al clic, igual que las respuestas
-  alTocar(document.getElementById('at-area'), function(){ atacar('area'); });
-  alTocar(document.getElementById('at-vol'),  function(){ atacar('volumen'); });
+  Parque3D.alTocar(document.getElementById('at-area'), function(){ atacar('area'); });
+  Parque3D.alTocar(document.getElementById('at-vol'),  function(){ atacar('volumen'); });
   leer();
   montar();
   pintarBarras();
-}, function(){
-  quitarCarga();
-  document.getElementById('velo-ini').classList.remove('ver');
-  document.getElementById('velo-red').classList.add('ver');
 });
 
 window.__j3d = {

@@ -1,0 +1,194 @@
+/* ============================================================
+   M.E.T.A.S · El andamio de los juegos 3D
+   ------------------------------------------------------------
+   Esto NO es la hoja de estilo de un juego: es el andamio que
+   comparten todos. Lo que hay aquí son las reglas que se
+   escribieron a base de averías reales en el teléfono de un
+   maestro, y que estuvieron COPIADAS en doce archivos: cuando
+   apareció la avería del lienzo hubo que arreglarla en doce
+   sitios, el `touch-action` en siete y el centrado de los paneles
+   en doce. Con veinte misiones más eso no se sostiene.
+
+   Cada juego carga esta hoja y después la suya:
+
+     <link rel="stylesheet" href="../../css/parque-3d.css">
+     <style> …lo suyo… </style>
+
+   y declara su color de misión pisando los tokens de abajo. Lo
+   que se toca aquí se toca en los doce a la vez, que es
+   justamente para lo que está.
+   ============================================================ */
+:root{
+  /* La paleta que comparten todos */
+  --acero:#1a1a2e; --acero-2:#232946; --azul:#4a90d9; --verde:#27ae60;
+  --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd; --dorado:#c9a227;
+
+  /* --- El color de la misión ---------------------------------
+     Cada juego pisa estos seis en su propio <style>. Son lo único
+     que separa el parque del volumen (dorado) del de los sólidos
+     (morado): el andamio es el mismo. */
+  --acento:#c9a227;                        /* franjas, botón principal, títulos */
+  --acento-tinta:#1a1a2e;                  /* la tinta que se lee ENCIMA del acento */
+  --franja:rgba(201,162,39,.4);            /* los filos de arriba y de abajo */
+  --marca-fondo:rgba(74,144,217,.18);      /* la chapa del marcador */
+  --marca-borde:rgba(74,144,217,.5);
+  --velo-fondo:rgba(10,14,26,.94);         /* el humo que tapa detrás del panel */
+  --lienzo-fondo:radial-gradient(circle at 50% 30%,#2b3350 0%,#141a2c 72%);
+  --panel-ancho:430px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+/* `touch-action` va en el LIENZO, nunca aquí. «none» le dice al
+   navegador que no haga nada por su cuenta con el dedo: encima del
+   dibujo hace falta —para arrastrar y girar sin que la página se
+   deslice—, pero puesto en el body se lo lleva todo por delante. En
+   una tableta con Android los botones dejaban de responder al toque
+   y el alumno se quedaba mirando una pregunta que no podía
+   contestar. Aquí va «manipulation»: quita el zoom del doble toque y
+   deja el toque normal. */
+body{background:var(--acero);color:var(--claro);
+  font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;
+  display:flex;flex-direction:column;touch-action:manipulation;}
+button,input,a{touch-action:manipulation;}
+
+/* ============================================================
+   La franja de arriba
+   ============================================================ */
+.top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);
+  border-bottom:2px solid var(--franja);flex-shrink:0;}
+/* 44 px: es lo que un dedo acierta sin mirar. */
+.volver{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--acento);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;
+  border:1.5px solid var(--franja);border-radius:9px;line-height:1.35;}
+.titulo{font-size:.93rem;font-weight:700;flex:1;line-height:1.15;}
+.titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
+.vidas{font-size:.9rem;letter-spacing:.05rem;}
+.marcador{font-size:.8rem;background:var(--marca-fondo);border:1.5px solid var(--marca-borde);
+  padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
+
+/* ============================================================
+   El hueco del dibujo
+   ------------------------------------------------------------
+   ⚠️ Lo que más caro ha costado del proyecto entero.
+
+   overflow:hidden NO es cosmético. Three.js escribe el tamaño del
+   lienzo en su `style`, y ese style en línea gana sobre cualquier
+   regla del CSS. Si después cambia el alto del hueco —y cambia: al
+   aparecer las opciones, la franja de abajo crece y este hueco
+   encoge—, el lienzo se queda con el alto viejo y SE SALE por
+   debajo. Como este contenedor está posicionado, lo que se sale
+   queda ENCIMA de los botones: se ven, y el dedo nunca los toca.
+   Le pasó a un maestro con la pregunta en pantalla y sin poder
+   contestarla.
+
+   Van cuatro cierres contra lo mismo, y los cuatro se quedan:
+   este `overflow:hidden`, el `width/height:100%!important` de
+   abajo, el `position:relative;z-index:2` de `.mandos`, y
+   `Parque3D.vigilarHueco()` en el JS.
+   ============================================================ */
+#lienzo{flex:1;position:relative;min-height:0;background:var(--lienzo-fondo);overflow:hidden;}
+/* El 100 % va con !important para ganarle al style en línea que
+   escribe Three.js: así el lienzo mide SIEMPRE lo que mide su hueco,
+   pase lo que pase con el resto de la pantalla.
+
+   ⚠️ `:not([id])` no es un adorno. El juego puede meter DENTRO del
+   hueco un lienzo suyo —el minimapa del Laberinto de las Unidades, de
+   112 px—, y ese tiene su tamaño y no puede estirarse a pantalla
+   completa: taparía el dibujo entero. El lienzo que crea Three.js
+   nunca lleva `id`; el que pinta el juego lo lleva siempre, porque lo
+   tiene que buscar desde su JavaScript. Esa es la señal que los
+   separa. */
+#lienzo > canvas:not([id]){display:block;width:100%!important;height:100%!important;}
+
+/* ============================================================
+   La franja de mandos
+   ------------------------------------------------------------
+   Va posicionada y por encima del lienzo: es el tercer cinturón
+   contra lo de arriba —aunque algo se saliera del dibujo, los
+   botones siguen siendo lo primero que toca el dedo—.
+
+   Y si los mandos crecen más que la ventana —acostado y con la
+   letra del sistema agrandada pasa—, se desplazan por dentro.
+   Antes se salían por debajo y, como la página no desliza, el
+   botón quedaba fuera del mundo.
+   ============================================================ */
+.mandos{background:var(--acero-2);border-top:2px solid var(--franja);padding:.5rem .7rem .6rem;
+  flex-shrink:0;position:relative;z-index:2;max-height:72vh;overflow-y:auto;}
+
+/* Toda fila de botones BAJA de línea si no cabe. Con la letra del
+   teléfono agrandada —opción de accesibilidad, no rareza— la fila de
+   tres se salía por la DERECHA y «Siguiente →» quedaba fuera de la
+   pantalla, sin forma de recuperarlo: el alumno se quedaba
+   encallado. Por la derecha no hay desplazamiento que valga. */
+.botones{display:flex;gap:.4rem;flex-wrap:wrap;}
+.bt{font-family:inherit;font-size:.88rem;font-weight:700;padding:.55rem .6rem;border:none;
+  border-radius:13px;cursor:pointer;line-height:1.2;min-height:44px;}
+.bt-p{background:var(--acento);color:var(--acento-tinta);}
+.bt-v{background:var(--verde);color:#fff;}
+.bt-a{background:var(--azul);color:#fff;}
+.bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
+.bt:disabled{opacity:.45;cursor:default;}
+.bt:active:not(:disabled){transform:scale(.97);}
+
+/* ============================================================
+   Los velos (las ventanas que tapan)
+   ------------------------------------------------------------
+   Van FIJOS, no absolutos. En un teléfono la barra de direcciones
+   aparece y desaparece, y con `absolute` el panel se ancla al
+   documento en vez de a lo que se ve: puede quedar medio fuera de
+   la pantalla justo cuando hay que leerlo —el resultado de la
+   respuesta—. `fixed` lo pega siempre a lo que el alumno tiene
+   delante.
+
+   Y el panel se centra con `margin:auto`, NO con
+   `align-items:center`. Centrando con align-items y dejando
+   `overflow-y:auto`, un panel más alto que la ventana se sale por
+   ARRIBA y ese trozo no se recupera nunca: el desplazamiento no
+   llega a números negativos. Con la letra del teléfono agrandada
+   —que es una opción de accesibilidad que usa quien no ve bien— se
+   perdía el título y hasta la pregunta. Con `margin:auto` se
+   centra cuando cabe y se desplaza entero cuando no.
+   ============================================================ */
+.velo{position:fixed;inset:0;background:var(--velo-fondo);display:none;align-items:flex-start;
+  justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+.velo.ver{display:flex;}
+.panel{background:var(--acero-2);border:2px solid var(--acento);border-radius:18px;
+  padding:1.1rem 1rem;max-width:var(--panel-ancho);width:100%;text-align:center;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);margin:auto;}
+.panel h2{font-size:1.12rem;margin-bottom:.5rem;color:var(--acento);}
+.panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
+.estrellas{font-size:2rem;letter-spacing:.15rem;margin-bottom:.4rem;}
+.emoji-gr{font-size:3rem;margin-bottom:.3rem;}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
+   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
+   borde es un botón que no existe. Se recorta el aire y el adorno; el
+   tamaño del texto que hay que leer se toca lo justo. */
+@media (max-height:430px){
+  .panel{padding:.65rem .8rem;border-radius:14px;}
+  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
+  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
+  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
+  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
+  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
+}
+
+/* Cuando el panel no cabe —letra del sistema agrandada, teléfono
+   acostado— se aprieta solo, y si aun apretado sigue sin caber, sale
+   un aviso de que hay que deslizar. Se puede deslizar desde el
+   principio, sí, pero NADA se lo decía al alumno: un botón debajo del
+   borde, sin aviso, es un botón que no existe. Esto no depende del
+   alto de la ventana sino de si CABE, que es lo único que importa;
+   quien lo mide es `Parque3D.ajustarVelos()`. */
+.velo.apretado .panel{padding:.6rem .75rem;}
+.velo.apretado .emoji-gr{font-size:1.4rem;margin-bottom:.1rem;}
+.velo.apretado .panel h2{font-size:.9rem;margin-bottom:.25rem;}
+.velo.apretado .panel p{font-size:.76rem;line-height:1.3;margin-bottom:.35rem;}
+.velo.apretado .estrellas{font-size:1.25rem;margin-bottom:.15rem;}
+.velo.apretado .bt{padding:.4rem .8rem;min-height:40px;font-size:.8rem;}
+.velo.desliza::after{content:'▼ desliza para ver el botón';position:fixed;left:50%;
+  transform:translateX(-50%);bottom:.45rem;background:var(--acento);color:var(--acento-tinta);
+  padding:.25rem .8rem;border-radius:12px;font-size:.74rem;font-weight:700;
+  z-index:40;pointer-events:none;box-shadow:0 2px 10px rgba(0,0,0,.5);}

@@ -1292,8 +1292,42 @@ internet y sin ensuciar datos reales.
 
 ## Normativa: los juegos 3D viven aparte, y no tocan la misión
 
-Hay **doce** juegos en tres dimensiones, seis por misión, cada uno en
-**su propio archivo HTML, autocontenido**, al lado de su misión.
+Hay **doce** juegos en tres dimensiones, seis por misión, cada uno en su
+propio archivo HTML al lado de su misión.
+
+**Ya NO son autocontenidos, y eso fue a propósito.** Lo eran, y salió
+caro: el andamio —el cargador de Three.js, el telón, los velos,
+`alTocar`, `vigilarHueco`, `ajustarVelos` y unas 130 líneas de CSS—
+estaba COPIADO doce veces, cerca de un tercio de cada archivo. Cuando el
+lienzo se sentó encima de los botones de responder hubo que arreglarlo
+en doce sitios; el `touch-action`, en siete; el centrado de los paneles,
+en doce. Y una de las doce copias se quedó sin el
+`width/height:100%!important` del lienzo sin que nadie lo notara. Con
+veinte misiones más, eso no se sostiene.
+
+El andamio vive en **dos archivos**, y los doce juegos los cargan:
+
+```html
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<script src="../../js/3d/parque-3d.js"></script>
+```
+
+| dónde | qué hay |
+|---|---|
+| `css/parque-3d.css` | la franja de arriba, el hueco del dibujo, los mandos, los velos y el panel que se aprieta |
+| `js/3d/parque-3d.js` | `Parque3D.arrancar`, `.cargar3D`, `.quitarCarga`, `.alTocar`, `.vigilarHueco`, `.ajustarVelos`, `.respiro`, `.cerrar` |
+| el HTML del juego | su color de misión (los tokens `--acento…`), sus propias reglas, su lógica y sus cuentas |
+
+Los dos archivos van en **`STATIC_ASSETS` de `sw.js`**: sin ellos los
+doce juegos dejan de funcionar sin internet, y esa promesa está escrita
+en su propia pantalla.
+
+Dos cosas siguen ESCRITAS en el HTML de cada juego y no se mueven: el
+telón `#velo-carga` y la pantalla `#velo-red` de «hace falta internet la
+primera vez». Tienen que estar pintadas antes de que corra una sola
+línea de JavaScript; un telón que aparece cuando el JS ya arrancó llega
+tarde justo el rato en que hace falta. Lo que el andamio maneja es su
+comportamiento, no su marcado.
 
 En **Volumen de Cuerpos** (`misiones/2ciclo-volumen-cuerpos/`):
 
@@ -1328,7 +1362,10 @@ desde el widget de su mismo tema. Que estén aparte no es desorden: cada
 uno carga Three.js y su propio bucle de dibujo, y meterlos dentro de la
 misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
 
-**Siete reglas, y ninguna es de adorno:**
+**Diez reglas, y ninguna es de adorno.** Las que llevan 🏗️ **ya no se
+copian**: viven en el andamio y las heredan los doce juegos y los que
+vengan detrás. Tocarlas ahí las toca en todos a la vez, que es
+exactamente para lo que se sacó.
 
 1. **El π es 3.14**, el del libro de sexto, igual que en el resto de la
    misión. Si la pantalla calcula con el π largo y el alumno con 3.14,
@@ -1344,19 +1381,23 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    golpe: un juego abierto en otra pestaña le borraría al alumno el XP
    que acaba de ganar. La misión solo **lee** esas llaves, para pintar
    la medalla de cada tarjeta.
-3. **Three.js se baja del CDN (r128), pero primero se mira si ya está
+3. 🏗️ **Three.js se baja del CDN (r128), pero primero se mira si ya está
    puesto** (`if (window.THREE) return listo()`). Eso es lo que permite
    probarlos sin internet —la sonda le pone un Three.js de mentira— y lo
-   que dejaría guardar mañana una copia dentro del sitio sin tocar los
-   seis archivos.
+   que dejaría guardar mañana una copia dentro del sitio **cambiando una
+   línea**, no doce. Está en `Parque3D.cargar3D`, con su plazo de 20 s
+   para rendirse: la señal mala no siempre falla, muchas veces se queda
+   colgada y no contesta nunca.
 4. **Sin red, la pantalla lo DICE.** Un juego que se queda negro parece
    roto y no se vuelve a abrir. El aviso promete que abriéndolo una vez
    con señal después funciona sin ella, y eso **lo cumple `sw.js`**: la
    rama de recursos externos ahora GUARDA lo que baja, que antes solo
    leía de la caché. Si se toca esa rama, se rompe la promesa.
-5. ⚠️ **Y con señal MALA, tampoco se puede tocar nada hasta que el
+5. 🏗️ ⚠️ **Y con señal MALA, tampoco se puede tocar nada hasta que el
    motor llegue.** Todos llevan un telón (`#velo-carga`, z-index 30)
-   que se levanta en `listo()` y en `falla()`, nunca antes. Sin él, el
+   —escrito en su HTML, que tiene que estar pintado antes de que corra
+   un solo JavaScript— que **`Parque3D.arrancar` levanta** cuando el
+   motor llega o cuando se sabe que no va a llegar, nunca antes. Sin él, el
    alumno impaciente toca «Empezar» mientras Three.js viene bajando, el
    juego revienta por dentro —`armar()` sin escena— y se queda en una
    pantalla muerta: ni pregunta, ni botones, ni aviso. Con buena señal
@@ -1369,7 +1410,7 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    buscar el Parque entre dieciocho pestañas —que en un teléfono se
    deslizan— es donde se abandona. Lo hace `abrirSeccionDelEnlace()` en
    cada misión, que lee `location.hash`.
-7. **Se juega con el dedo, y eso trae tres reglas de CSS que no son
+7. 🏗️ **Se juega con el dedo, y eso trae tres reglas de CSS que no son
    de adorno.** Nada de `draggable` ni de teclas como único mando:
    cruceta en pantalla en los que hace falta, y en el constructor el
    mismo dedo gira la vista (si arrastra) o pone un cubito (si no). Y:
@@ -1384,7 +1425,7 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
      la barra de direcciones aparece y desaparece; con `absolute` el
      panel del resultado se ancla al documento y puede quedar medio
      fuera justo cuando hay que leerlo.
-8. **La pantalla corta también es una pantalla.** El teléfono acostado
+8. 🏗️ **La pantalla corta también es una pantalla.** El teléfono acostado
    y —sobre todo— **la letra del sistema agrandada**, que es una opción
    de accesibilidad y la usa quien no ve bien, dejaban botones fuera
    del mundo: los paneles se cortaban por arriba sin poder recuperarse
@@ -1402,8 +1443,8 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    si no (`.velo.apretado`) y, si sigue sin caber, enciende un
    «▼ desliza para ver el botón» (`.velo.desliza`). Se podía deslizar
    desde siempre; lo que faltaba era decirlo.
-10. **Después de cambiar de pantalla, un respiro antes de aceptar
-   toques.** En varios juegos lo nuevo sale en los MISMOS píxeles que
+10. 🏗️ **Después de cambiar de pantalla, un respiro antes de aceptar
+   toques** (`Parque3D.respiro`). En varios juegos lo nuevo sale en los MISMOS píxeles que
    lo viejo —las respuestas donde estaban los ataques, la pregunta
    siguiente donde estaba la anterior, el cuarto donde estaba el botón
    de seguir—, y el segundo toque de un dedo impaciente contestaba algo
@@ -1412,8 +1453,8 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    no se acepta nada **y se ve apagado**, que es la otra mitad: un
    botón encendido que no contesta es un teléfono que el niño da por
    trabado.
-9. ⚠️ **El lienzo 3D no puede salirse de su hueco, y esto es lo que más
-   caro costó.** Three.js escribe el tamaño del lienzo en el `style` EN
+9. 🏗️ ⚠️ **El lienzo 3D no puede salirse de su hueco, y esto es lo que
+   más caro costó.** Three.js escribe el tamaño del lienzo en el `style` EN
    LÍNEA del `<canvas>`, y ese style **gana sobre el CSS**. El reparto
    de la pantalla cambia solo —al aparecer las opciones, la franja de
    abajo crece y el hueco del dibujo encoge—, sin que la ventana se
@@ -1423,11 +1464,19 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    de responder: se veían perfectos y el dedo no los tocaba nunca. Un
    maestro se quedó con la pregunta en pantalla y sin forma de
    contestarla. Van cuatro cierres, y los cuatro se quedan:
-   `vigilarHueco()` (un `ResizeObserver` sobre `#lienzo` que rehace el
-   tamaño —este solo ya lo arregla, y además mantiene la proporción de
-   la cámara), `overflow:hidden` en `#lienzo`, `width/height:100%
-   !important` en su `canvas` y `position:relative;z-index:2` en la
-   franja de mandos.
+   `Parque3D.vigilarHueco(ajustar)` (un `ResizeObserver` sobre
+   `#lienzo` que rehace el tamaño —este solo ya lo arregla, y además
+   mantiene la proporción de la cámara), `overflow:hidden` en `#lienzo`,
+   `width/height:100% !important` en su `canvas` y
+   `position:relative;z-index:2` en la franja de mandos.
+
+   Y una trampa que sacó a la luz el andamio: la regla del `canvas` va
+   con **`#lienzo > canvas:not([id])`**. Un juego puede meter dentro del
+   hueco un lienzo suyo —el minimapa de 112 px del Laberinto de las
+   Unidades—, y ese no puede estirarse a pantalla completa: taparía el
+   dibujo entero. El lienzo que crea Three.js nunca lleva `id`; el que
+   pinta el juego lo lleva siempre, porque lo busca desde su
+   JavaScript. Esa es la señal que los separa.
 
 Y una que es de contenido: **las respuestas equivocadas que se le
 ofrecen al alumno son el error de verdad**, no números al azar. Al cubo
@@ -1446,6 +1495,27 @@ node _dev/verifica-juegos-3d-solidos.js  → los seis de los sólidos
 Las dos sondas comparten el Three.js de mentira
 (`_dev/three-de-mentira.js`): si un juego nuevo usa una pieza que ese
 archivo no tiene, se le añade **ahí**, y no se copia el archivo.
+
+Y comparten también **los guardianes** (`_dev/lib-sonda-3d.js`): el
+andamio leído del archivo, que lo que se ve se pueda tocar, la pantalla
+corta, la señal mala, el toque con el ratón, el CDN colgado y el sin
+internet. Estaban copiados en los dos archivos de mil líneas, y ahí se
+vio lo que cuesta: la lista de piezas de Three.js permitidas se había
+separado —una tenía `LatheGeometry` y la otra no—, así que un juego del
+volumen que la usara habría fallado y el mismo juego en sólidos, no. Con
+esto, la sonda de un parque nuevo son veinte líneas:
+
+```js
+const lib = require('./lib-sonda-3d');
+const M = lib.marcador();
+const G = lib.parque({ raiz:RAIZ, dir:DIR, base:BASE, juegos:JUEGOS,
+                       toques:TOQUES, vuelta:'perimetro-cuadrilateros.html',
+                       ok:M.ok });
+G.revisarAndamio();          // el archivo, antes de abrirlo
+…lo suyo, con G.abrir(nav, juego, true)…
+await G.guardianes(nav);     // los seis de siempre
+M.resumen();
+```
 
 Vigilan las cuentas una por una. En el volumen: los volúmenes, las
 áreas, los litros de los seis tanques y sesenta conversiones; que el
