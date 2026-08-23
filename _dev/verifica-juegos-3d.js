@@ -403,6 +403,28 @@ async function duelo(nav){
      f.cubo.malos.map(m=>m.v));
   ok(f.cil.malos.some(m => casi(m.v, 28.26)), 'y al cilindro, la tapa sin el alto', f.cil.malos.map(m=>m.v));
 
+  /* Tres opciones distintas SIEMPRE. Al Cubazo se le caía una: con
+     arista 6, el volumen (216) y la superficie (6 × 6² = 216) dan el
+     mismo número, así que el distractor que enseña el tema se
+     descartaba por repetido y quedaban dos. */
+  const opciones = await p.evaluate(() => {
+    const j = window.__j3d, malos = [];
+    j.zonas.forEach(function(z){
+      z.bichos.forEach(function(b){
+        [b, b.mitad ? {f:b.mitad.f, dims:b.mitad.dims, nom:b.nom+' (jefe cambiado)'} : null]
+          .filter(Boolean).forEach(function(x){
+            const f = j.figura(x);
+            if(!f) return;
+            const vals = [f.valor].concat(f.malos.map(function(m){ return m.v; }));
+            const distintos = new Set(vals.map(function(v){ return Math.round(v*100)/100; }));
+            if(distintos.size !== 3) malos.push({bicho:x.nom || b.nom, valores:vals});
+          });
+      });
+    });
+    return malos;
+  });
+  ok(opciones.length === 0, 'todos los enemigos ofrecen TRES opciones distintas', opciones);
+
   await p.evaluate(() => window.__j3d.empezar());
   await p.waitForTimeout(200);
   const e0 = await p.evaluate(() => window.__j3d.estado());
@@ -757,6 +779,158 @@ async function tocarDeVerdad(nav){
   }
 }
 
+
+
+/* ============================================================
+   Pantalla corta: el panel entero tiene que poder alcanzarse
+   ------------------------------------------------------------
+   Centrar con `align-items:center` y desplazar con `overflow-y:auto`
+   es una trampa conocida: lo que se sale POR ARRIBA no se recupera
+   nunca, porque el desplazamiento no llega a números negativos. Se
+   perdían el título y hasta la pregunta, y en el constructor se
+   perdía «No sé, muéstrame», que es la ÚNICA salida del alumno que
+   no sabe multiplicar. Pasa con la letra del teléfono agrandada
+   —una opción de accesibilidad, no una rareza— y con el teléfono
+   acostado.
+   ============================================================ */
+async function pantallaCorta(nav){
+  console.log('\n📐 Con la pantalla corta (letra grande o teléfono acostado)');
+  for(const medida of [{width:393,height:330,n:'corta 393×330'}, {width:640,height:360,n:'acostado 640×360'}]){
+    for(const j of JUEGOS){
+      const p = await nav.newPage({ viewport:{width:medida.width, height:medida.height} });
+      await p.addInitScript(STUB);
+      await p.route('**cdnjs.cloudflare.com/**', r => r.abort());
+      await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+      await p.waitForTimeout(400);
+      const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
+      const malos = await p.evaluate(() => {
+        const fuera = [];
+        document.querySelectorAll('.velo.ver').forEach(v => {
+          const panel = v.querySelector('.panel');
+          if(!panel) return;
+          const antes = v.scrollTop;
+          v.scrollTop = 0;
+          const arriba = panel.getBoundingClientRect().top;
+          v.scrollTop = v.scrollHeight;
+          const abajo = panel.getBoundingClientRect().bottom;
+          v.scrollTop = antes;
+          if(arriba < -2) fuera.push({velo:v.id, problema:'se corta por arriba y no se alcanza', px:Math.round(arriba)});
+          if(abajo > window.innerHeight + 2) fuera.push({velo:v.id, problema:'se corta por abajo y no se alcanza', px:Math.round(abajo - window.innerHeight)});
+        });
+        return fuera;
+      });
+      ok(malos.length === 0, nom+' · '+medida.n+': el panel se alcanza entero, arriba y abajo', malos);
+      await p.close();
+    }
+  }
+}
+
+/* ============================================================
+   Las averías que encontró la auditoría, para que no vuelvan
+   ============================================================ */
+async function averiasConocidas(nav){
+  console.log('\n🩹 Averías que ya se arreglaron una vez');
+
+  // — El laberinto: el reloj se acaba con una puerta abierta —
+  {
+    const p = await abrir(nav, 'juego-laberinto-unidades-3d.html', true);
+    await p.evaluate(() => window.__j3d.empezar());
+    await p.waitForTimeout(250);
+    const r = await p.evaluate(async () => {
+      var pu = window.__j3d.puertas()[0];
+      window.abrirPuerta(pu);                       // la pregunta, en pantalla
+      var abierta = document.getElementById('velo-puerta').classList.contains('ver');
+      window.perder();                              // se acaba el tiempo justo ahora
+      var siguePuesta = document.getElementById('velo-puerta').classList.contains('ver');
+      window.reintentar();                          // «otra vez»
+      await new Promise(r => setTimeout(r, 300));
+      var tapaElPisoNuevo = document.getElementById('velo-puerta').classList.contains('ver');
+      return {abierta:abierta, siguePuesta:siguePuesta, tapaElPisoNuevo:tapaElPisoNuevo,
+              est: window.__j3d.estado()};
+    });
+    ok(r.abierta, 'laberinto: la pregunta de la puerta se abre');
+    ok(!r.siguePuesta, 'laberinto: al acabarse el reloj, esa pregunta SE CIERRA', r);
+    ok(!r.tapaElPisoNuevo, 'laberinto: y el piso siguiente no arranca tapado por ella', r);
+    ok(r.est.abiertas <= r.est.puertas, 'laberinto: nunca hay más puertas abiertas que puertas', r.est);
+    await p.close();
+  }
+
+  // — El constructor: 📐 Medidas en modo libre —
+  {
+    const p = await abrir(nav, 'juego-constructor-cubitos-3d.html', true);
+    const r = await p.evaluate(async () => {
+      // se ganan los cinco niveles de un tirón
+      for(var i=0;i<5;i++){
+        window.__j3d.predecir(window.__j3d.estado().objetivo);
+        await new Promise(r => setTimeout(r, 60));
+        window.cerrarPred();
+        window.__j3d.llenarObjetivo();
+        await new Promise(r => setTimeout(r, 80));
+        window.siguiente();
+        await new Promise(r => setTimeout(r, 80));
+      }
+      var rotulo = document.getElementById('subt').textContent;
+      var antes = window.__j3d.estado().estrellas;
+      window.verPlan();                                   // 📐 Medidas
+      await new Promise(r => setTimeout(r, 120));
+      return {rotulo:rotulo, abrioPrediccion: document.getElementById('velo-pred').classList.contains('ver'),
+              rotuloDespues: document.getElementById('subt').textContent, antes:antes};
+    });
+    ok(/Modo libre/.test(r.rotulo), 'constructor: al ganar los cinco niveles se estrena el modo libre', r.rotulo);
+    ok(!r.abrioPrediccion, 'constructor: 📐 Medidas NO reabre la predicción del nivel 5 en modo libre', r);
+    ok(/Modo libre/.test(r.rotuloDespues), 'constructor: y el rótulo del modo libre no se borra', r.rotuloDespues);
+    await p.close();
+  }
+
+  // — La fábrica de latas: los retos libres se guardan —
+  {
+    const p = await abrir(nav, 'juego-fabrica-latas-3d.html', true);
+    const r = await p.evaluate(async () => {
+      document.getElementById('velo-ini').classList.remove('ver');
+      for(var i=0;i<4;i++){
+        var pe = window.__j3d.pedidos[i];
+        var r10, hecho = false;
+        for(r10=5; r10<=500 && !hecho; r10++){
+          var rad = r10/10, h = Math.round(pe.ml/(3.14*rad*rad)*10)/10;
+          if(h < 1 || h > 200) continue;
+          var forma = pe.cond==='alta' ? (h > 2*rad) : pe.cond==='ancha' ? (2*rad > h) : pe.cond==='h80' ? (h>=80) : true;
+          if(!forma) continue;
+          if(Math.abs(3.14*rad*rad*h - pe.ml)/pe.ml > 0.01) continue;
+          window.__j3d.poner(rad, h); window.__j3d.fabricar(); hecho = true;
+        }
+        await new Promise(r => setTimeout(r, 60));
+        window.siguiente();
+        await new Promise(r => setTimeout(r, 60));
+      }
+      return {enReto: window.__j3d.estado().enReto,
+              guardado: JSON.parse(localStorage.getItem('j3d_latas_v1') || '{}')};
+    });
+    ok(r.enReto, 'latas: con los cuatro pedidos hechos se entra a los retos libres', r);
+    ok(r.guardado.pedido >= 4, 'latas: y eso queda guardado, para no volver al barril al reabrir', r.guardado);
+    await p.close();
+  }
+}
+
+/* Un CDN que se queda colgado —ni contesta ni falla— es lo normal con
+   mala señal. Sin plazo, el telón se quedaba puesto para siempre. */
+async function cdnColgado(nav){
+  console.log('\n⏰ Cuando el CDN no contesta ni falla');
+  const j = JUEGOS[0];
+  const p = await nav.newPage({ viewport:{width:393, height:873} });
+  await p.route('**cdnjs.cloudflare.com/**', async () => { await new Promise(r => setTimeout(r, 120000)); });
+  await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+  await p.waitForTimeout(600);
+  ok(await p.evaluate(() => document.getElementById('velo-carga').classList.contains('ver')),
+     'al principio el telón está puesto, esperando');
+  /* El plazo se lee del archivo: esperar veinte segundos de verdad en
+     cada corrida haría que la sonda no la corriera nadie. */
+  const fuente = fs.readFileSync(path.join(RAIZ, DIR, j), 'utf8');
+  const m = fuente.match(/setTimeout\(seRindio,\s*(\d+)\)/);
+  const plazo = m ? parseInt(m[1], 10) : 0;
+  ok(plazo > 0 && plazo <= 30000, 'y tiene plazo para rendirse ('+(plazo/1000)+' s), no espera para siempre', plazo);
+  await p.close();
+}
+
 /* ============================================================
    Sin internet: la pantalla lo dice y no se queda negra
    ============================================================ */
@@ -789,8 +963,11 @@ async function sinRed(nav){
     await tetris(nav);
     await mision(nav);
     await todoAlcanzable(nav);
+    await pantallaCorta(nav);
     await señalMala(nav);
     await tocarDeVerdad(nav);
+    await averiasConocidas(nav);
+    await cdnColgado(nav);
     await sinRed(nav);
   } finally { await nav.close(); }
   console.log('\n════════════════════════════════════════════');

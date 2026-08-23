@@ -33,7 +33,7 @@ button,input,a{touch-action:manipulation;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;user-select:none;}
 .top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
-.volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
+.volver{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
 .titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
 .titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
 .marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
@@ -88,9 +88,16 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
    al documento en vez de a lo que se ve: puede quedar medio fuera de la
    pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
    `fixed` lo pega siempre a lo que el alumno tiene delante. */
-.velo{position:fixed;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+/* El panel se centra con `margin:auto`, NO con `align-items:center`.
+   Centrando con align-items y dejando `overflow-y:auto`, un panel más
+   alto que la ventana se sale por ARRIBA y ese trozo no se recupera
+   nunca: el desplazamiento no llega a números negativos. Con la letra
+   del teléfono agrandada —que es una opción de accesibilidad que usa
+   quien no ve bien— se perdía el título y hasta la pregunta. Con
+   `margin:auto` se centra cuando cabe y se desplaza entero cuando no. */
+.velo{position:fixed;inset:0;background:rgba(10,13,24,.94);display:none;align-items:flex-start;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
 .velo.ver{display:flex;}
-.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);margin:auto;}
 .panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
 .panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
 .euler{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.6rem .7rem;font-size:1rem;margin:.6rem 0;line-height:1.7;}
@@ -184,8 +191,18 @@ function quitarCarga(){
 }
 function cargar3D(listo, falla){
   if (window.THREE) return listo();
+  /* Con plazo. La señal mala no siempre FALLA: muchas veces se queda
+     colgada y no contesta nunca, y entonces `onerror` no salta y el
+     telón se quedaba puesto para siempre, sin aviso y sin salida. A los
+     veinte segundos se da por perdida y sale la pantalla que explica
+     qué hacer. */
+  var yaFue = false;
+  function unaVez(fn){ return function(){ if(yaFue) return; yaFue = true; fn(); }; }
+  var seRindio = unaVez(falla);
+  var plazo = setTimeout(seRindio, 20000);
   var s=document.createElement('script'); s.src=CDN3D;
-  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  s.onload = unaVez(function(){ clearTimeout(plazo); window.THREE ? listo() : falla(); });
+  s.onerror = function(){ clearTimeout(plazo); seRindio(); };
   document.head.appendChild(s);
 }
 var LLAVE = 'j3d_contador_v1';

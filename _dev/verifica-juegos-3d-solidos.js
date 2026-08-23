@@ -700,6 +700,72 @@ async function tocarDeVerdad(nav){
   }
 }
 
+
+
+/* ============================================================
+   Pantalla corta: el panel entero tiene que poder alcanzarse
+   ------------------------------------------------------------
+   Centrar con `align-items:center` y desplazar con `overflow-y:auto`
+   es una trampa conocida: lo que se sale POR ARRIBA no se recupera
+   nunca, porque el desplazamiento no llega a números negativos. Se
+   perdían el título y hasta la pregunta, y en el constructor se
+   perdía «No sé, muéstrame», que es la ÚNICA salida del alumno que
+   no sabe multiplicar. Pasa con la letra del teléfono agrandada
+   —una opción de accesibilidad, no una rareza— y con el teléfono
+   acostado.
+   ============================================================ */
+async function pantallaCorta(nav){
+  console.log('\n📐 Con la pantalla corta (letra grande o teléfono acostado)');
+  for(const medida of [{width:393,height:330,n:'corta 393×330'}, {width:640,height:360,n:'acostado 640×360'}]){
+    for(const j of JUEGOS){
+      const p = await nav.newPage({ viewport:{width:medida.width, height:medida.height} });
+      await p.addInitScript(STUB);
+      await p.route('**cdnjs.cloudflare.com/**', r => r.abort());
+      await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+      await p.waitForTimeout(400);
+      const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
+      const malos = await p.evaluate(() => {
+        const fuera = [];
+        document.querySelectorAll('.velo.ver').forEach(v => {
+          const panel = v.querySelector('.panel');
+          if(!panel) return;
+          const antes = v.scrollTop;
+          v.scrollTop = 0;
+          const arriba = panel.getBoundingClientRect().top;
+          v.scrollTop = v.scrollHeight;
+          const abajo = panel.getBoundingClientRect().bottom;
+          v.scrollTop = antes;
+          if(arriba < -2) fuera.push({velo:v.id, problema:'se corta por arriba y no se alcanza', px:Math.round(arriba)});
+          if(abajo > window.innerHeight + 2) fuera.push({velo:v.id, problema:'se corta por abajo y no se alcanza', px:Math.round(abajo - window.innerHeight)});
+        });
+        return fuera;
+      });
+      ok(malos.length === 0, nom+' · '+medida.n+': el panel se alcanza entero, arriba y abajo', malos);
+      await p.close();
+    }
+  }
+}
+
+/* Un CDN que se queda colgado —ni contesta ni falla— es lo normal con
+   mala señal. Sin plazo, el telón se quedaba puesto para siempre. */
+async function cdnColgado(nav){
+  console.log('\n⏰ Cuando el CDN no contesta ni falla');
+  const j = JUEGOS[0];
+  const p = await nav.newPage({ viewport:{width:393, height:873} });
+  await p.route('**cdnjs.cloudflare.com/**', async () => { await new Promise(r => setTimeout(r, 120000)); });
+  await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+  await p.waitForTimeout(600);
+  ok(await p.evaluate(() => document.getElementById('velo-carga').classList.contains('ver')),
+     'al principio el telón está puesto, esperando');
+  /* El plazo se lee del archivo: esperar veinte segundos de verdad en
+     cada corrida haría que la sonda no la corriera nadie. */
+  const fuente = fs.readFileSync(path.join(RAIZ, DIR, j), 'utf8');
+  const m = fuente.match(/setTimeout\(seRindio,\s*(\d+)\)/);
+  const plazo = m ? parseInt(m[1], 10) : 0;
+  ok(plazo > 0 && plazo <= 30000, 'y tiene plazo para rendirse ('+(plazo/1000)+' s), no espera para siempre', plazo);
+  await p.close();
+}
+
 /* ============================================================ */
 async function sinRed(nav){
   console.log('\n🌐 Sin internet (que es como está el aula la mitad del tiempo)');
@@ -731,8 +797,10 @@ async function sinRed(nav){
     await relampago(nav);
     await mision(nav);
     await todoAlcanzable(nav);
+    await pantallaCorta(nav);
     await señalMala(nav);
     await tocarDeVerdad(nav);
+    await cdnColgado(nav);
     await sinRed(nav);
   } finally { await nav.close(); }
   console.log('\n════════════════════════════════════════════');

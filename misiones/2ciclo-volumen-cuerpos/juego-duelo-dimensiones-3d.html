@@ -25,7 +25,7 @@
 html,body{height:100%;overflow:hidden;}
 body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;}
 .top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
-.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.volver{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
 .titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
 .titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
 .xp{font-size:.8rem;background:rgba(124,92,214,.2);border:1.5px solid rgba(124,92,214,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
@@ -65,7 +65,7 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .aviso{font-size:.85rem;text-align:center;min-height:2.35rem;margin-bottom:.4rem;line-height:1.4;}
 .aviso.mal{color:#ff9c9c;}
 .aviso.bien{color:#7ee2a8;}
-.ataques{display:flex;gap:.5rem;}
+.ataques{display:flex;gap:1.1rem;}
 .at{flex:1;font-family:inherit;font-size:.95rem;font-weight:800;padding:.7rem .4rem;border:2px solid;border-radius:14px;cursor:pointer;background:#141a2c;line-height:1.25;}
 .at small{display:block;font-size:.66rem;font-weight:400;opacity:.85;}
 .at-area{border-color:var(--dorado);color:var(--dorado);}
@@ -82,9 +82,16 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
    al documento en vez de a lo que se ve: puede quedar medio fuera de la
    pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
    `fixed` lo pega siempre a lo que el alumno tiene delante. */
-.velo{position:fixed;inset:0;background:rgba(10,14,26,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+/* El panel se centra con `margin:auto`, NO con `align-items:center`.
+   Centrando con align-items y dejando `overflow-y:auto`, un panel más
+   alto que la ventana se sale por ARRIBA y ese trozo no se recupera
+   nunca: el desplazamiento no llega a números negativos. Con la letra
+   del teléfono agrandada —que es una opción de accesibilidad que usa
+   quien no ve bien— se perdía el título y hasta la pregunta. Con
+   `margin:auto` se centra cuando cabe y se desplaza entero cuando no. */
+.velo{position:fixed;inset:0;background:rgba(10,14,26,.94);display:none;align-items:flex-start;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
 .velo.ver{display:flex;}
-.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);margin:auto;}
 .panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--dorado);}
 .panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
 .regla{display:flex;gap:.4rem;margin:.6rem 0;}
@@ -120,8 +127,8 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 <div class="mandos">
   <div class="aviso" id="aviso">Elige con qué lo atacas.</div>
   <div class="ataques" id="ataques">
-    <button class="at at-area" id="at-area" onclick="atacar('area')">⚔️ Área<small>para lo plano · cm²</small></button>
-    <button class="at at-vol"  id="at-vol"  onclick="atacar('volumen')">🧊 Volumen<small>para los cuerpos · cm³</small></button>
+    <button class="at at-area" id="at-area">⚔️ Área<small>para lo plano · cm²</small></button>
+    <button class="at at-vol"  id="at-vol">🧊 Volumen<small>para los cuerpos · cm³</small></button>
   </div>
   <div class="ops" id="ops" style="display:none;"></div>
 </div>
@@ -205,8 +212,18 @@ function quitarCarga(){
 }
 function cargar3D(listo, falla){
   if (window.THREE) return listo();
+  /* Con plazo. La señal mala no siempre FALLA: muchas veces se queda
+     colgada y no contesta nunca, y entonces `onerror` no salta y el
+     telón se quedaba puesto para siempre, sin aviso y sin salida. A los
+     veinte segundos se da por perdida y sale la pantalla que explica
+     qué hacer. */
+  var yaFue = false;
+  function unaVez(fn){ return function(){ if(yaFue) return; yaFue = true; fn(); }; }
+  var seRindio = unaVez(falla);
+  var plazo = setTimeout(seRindio, 20000);
   var s=document.createElement('script'); s.src=CDN3D;
-  s.onload=function(){ window.THREE?listo():falla(); }; s.onerror=falla;
+  s.onload = unaVez(function(){ clearTimeout(plazo); window.THREE ? listo() : falla(); });
+  s.onerror = function(){ clearTimeout(plazo); seRindio(); };
   document.head.appendChild(s);
 }
 /* El π del libro de 6.º, igual que en toda la misión. */
@@ -254,7 +271,12 @@ var ZONAS = [
   ]},
   {n:'🏰 El castillo', fondo:0x3a2030, bichos:[
     {nom:'Cuña',     emoji:'🔺', f:'triangulo',  dims:{b:8,h:5},       vida:100, golpe:20, color:0xe0a04a},
-    {nom:'Cubazo',   emoji:'🟦', f:'cubo',       dims:{l:6},           vida:110, golpe:21, color:0x4a90d9},
+    /* Arista 5, no 6, y es una cuenta: con 6 el volumen (216) y la
+       superficie (6 × 6² = 216) dan el MISMO número, así que el
+       distractor que enseña el tema se caía por repetido y al alumno
+       le quedaban dos opciones en vez de tres. Con 5: 125, 150 y 25,
+       los tres distintos. */
+    {nom:'Cubazo',   emoji:'🟦', f:'cubo',       dims:{l:5},           vida:110, golpe:21, color:0x4a90d9},
     /* El jefe guarda su forma de origen: al transformarse se le
        cambian f y dims, y sin esta copia la segunda partida
        empezaría con el jefe ya convertido en cuerpo. */
@@ -265,6 +287,11 @@ var ZONAS = [
 
 var esc, cam, rend, bicho, particulas, chispas = [], luzFondo;
 var zona = 0, indice = 0, vidaYo = 100, vidaEl = 0, xp = 0, esperando = false, ataqueElegido = null, giroPlano = 0, cambiado = false;
+/* Cada partida lleva su número. Los temporizadores de la partida
+   anterior comprueban que siguen en la suya antes de hacer nada: al
+   reponer la vida en «Te tumbaron» revivía un temporizador viejo cuya
+   guarda era solo «if(vidaYo>0)», y el alumno perdía un turno. */
+var partida = 0;
 
 function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({zona:zona, xp:xp})); }catch(e){} }
 function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ zona=Math.min(d.zona|0, ZONAS.length-1); xp=d.xp|0; } }catch(e){} }
@@ -417,6 +444,16 @@ function nuevoBicho(){
   pedirAtaque();
 }
 
+/* Al relevarse las opciones por los ataques —ocupan los mismos
+   píxeles— el segundo toque del alumno caía en el botón recién
+   aparecido. Se le da un respiro de 350 ms en el que no acepta nada,
+   y además se ve apagado, para que no parezca que no funcionó. */
+function respiro(cont){
+  cont.style.pointerEvents = 'none';
+  cont.style.opacity = '0.45';
+  setTimeout(function(){ cont.style.pointerEvents = ''; cont.style.opacity = ''; }, 350);
+}
+
 function pedirAtaque(){
   ataqueElegido = null; esperando = false;
   document.getElementById('ops').style.display = 'none';
@@ -426,10 +463,12 @@ function pedirAtaque(){
   var av = document.getElementById('aviso');
   av.className = 'aviso';
   av.textContent = '¿Con qué lo atacas? Cuenta cuántas medidas tiene.';
+  respiro(document.getElementById('ataques'));
 }
 
 function atacar(tipo){
   if(esperando) return;
+  
   var b = actual(), f = figura(b);
   var correcto = f.plano ? 'area' : 'volumen';
   if(tipo !== correcto){
@@ -439,7 +478,8 @@ function atacar(tipo){
       ? 'Le tiraste volumen a algo PLANO: no tiene grosor, el golpe lo atravesó.'
       : 'Le tiraste área a un CUERPO: le rebotó en la cáscara.');
     reventar(0xe05252);
-    setTimeout(function(){ if(vidaYo>0) pedirAtaque(); }, 1000);
+    var miPartida = partida;
+    setTimeout(function(){ if(vidaYo>0 && miPartida === partida) pedirAtaque(); }, 1000);
     return;
   }
   ataqueElegido = tipo;
@@ -458,6 +498,7 @@ function mostrarOpciones(f, tipo){
   ops.sort(function(){ return Math.random()-0.5; });
   var cont = document.getElementById('ops');
   cont.innerHTML = ''; cont.style.display = 'flex';
+  respiro(cont);
   ops.forEach(function(o){
     var bt = document.createElement('button');
     bt.className = 'op';
@@ -490,7 +531,8 @@ function golpear(o, boton, f){
   } else {
     boton.classList.add('mala');
     recibir(Math.round(actual().golpe*0.7), 'La cuenta no era esa: '+o.p+'.');
-    setTimeout(function(){ if(vidaYo>0) pedirAtaque(); }, 1100);
+    var miPartida2 = partida;
+    setTimeout(function(){ if(vidaYo>0 && miPartida2 === partida) pedirAtaque(); }, 1100);
   }
 }
 
@@ -560,6 +602,7 @@ function caer(){
   document.getElementById('fin-regla').style.display = 'flex';
   document.getElementById('fin-bt').textContent = '🔄 Otra vez';
   document.getElementById('velo-fin').classList.add('ver');
+  partida++;
   indice = 0; vidaYo = 100;
 }
 
@@ -570,6 +613,7 @@ function siguienteZona(){
 
 function empezar(){
   document.getElementById('velo-ini').classList.remove('ver');
+  partida++;
   indice = 0; vidaYo = 100;
   nuevoBicho();
 }
@@ -605,6 +649,9 @@ function animar(){
 
 cargar3D(function(){
   quitarCarga();
+  // los ataques van al toque Y al clic, igual que las respuestas
+  alTocar(document.getElementById('at-area'), function(){ atacar('area'); });
+  alTocar(document.getElementById('at-vol'),  function(){ atacar('volumen'); });
   leer();
   montar();
   pintarBarras();

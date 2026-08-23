@@ -29,7 +29,7 @@ body{
 }
 /* ---- barra de arriba ---- */
 .top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(201,162,39,.35);flex-shrink:0;}
-.volver{color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
+.volver{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--dorado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(201,162,39,.4);border-radius:9px;line-height:1.35;}
 .volver:hover{background:rgba(201,162,39,.15);}
 .titulo{font-size:.95rem;font-weight:700;flex:1;line-height:1.15;}
 .titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
@@ -80,9 +80,16 @@ body{
    al documento en vez de a lo que se ve: puede quedar medio fuera de la
    pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
    `fixed` lo pega siempre a lo que el alumno tiene delante. */
-.velo{position:fixed;inset:0;background:rgba(10,14,26,.93);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+/* El panel se centra con `margin:auto`, NO con `align-items:center`.
+   Centrando con align-items y dejando `overflow-y:auto`, un panel más
+   alto que la ventana se sale por ARRIBA y ese trozo no se recupera
+   nunca: el desplazamiento no llega a números negativos. Con la letra
+   del teléfono agrandada —que es una opción de accesibilidad que usa
+   quien no ve bien— se perdía el título y hasta la pregunta. Con
+   `margin:auto` se centra cuando cabe y se desplaza entero cuando no. */
+.velo{position:fixed;inset:0;background:rgba(10,14,26,.93);display:none;align-items:flex-start;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
 .velo.ver{display:flex;}
-.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:420px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:420px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);margin:auto;}
 .panel h2{font-size:1.15rem;margin-bottom:.5rem;color:var(--dorado);}
 .panel p{font-size:.9rem;line-height:1.5;margin-bottom:.7rem;color:#dbe3f2;}
 .medidas{display:flex;gap:.4rem;justify-content:center;margin:.7rem 0;flex-wrap:wrap;}
@@ -192,10 +199,19 @@ function quitarCarga(){
 }
 function cargar3D(listo, falla){
   if (window.THREE) return listo();
+  /* Con plazo. La señal mala no siempre FALLA: muchas veces se queda
+     colgada y no contesta nunca, y entonces `onerror` no salta y el
+     telón se quedaba puesto para siempre, sin aviso y sin salida. A los
+     veinte segundos se da por perdida y sale la pantalla que explica
+     qué hacer. */
+  var yaFue = false;
+  function unaVez(fn){ return function(){ if(yaFue) return; yaFue = true; fn(); }; }
+  var seRindio = unaVez(falla);
+  var plazo = setTimeout(seRindio, 20000);
   var s = document.createElement('script');
   s.src = CDN3D;
-  s.onload = function(){ window.THREE ? listo() : falla(); };
-  s.onerror = falla;
+  s.onload = unaVez(function(){ clearTimeout(plazo); window.THREE ? listo() : falla(); });
+  s.onerror = function(){ clearTimeout(plazo); seRindio(); };
   document.head.appendChild(s);
 }
 
@@ -218,6 +234,7 @@ var ANCLA = {x:1, z:1};    // esquina donde arranca la caja objetivo
 
 var esc, cam, rend, luzDir, grupoCubos, ghost, piso, rayo, raton;
 var nivel = 0, puestos = {}, estrellas = 0, modoActual = 'poner', anguloCam = 0, radioCam = 14, alturaCam = 10;
+var enModoLibre = false;
 var listoParaJugar = false;
 
 /* --- guardado: cada juego con su propia llave, sin tocar la de la misión --- */
@@ -459,7 +476,16 @@ function cerrarPred(){
   listoParaJugar = true;
 }
 
-function verPlan(){ if(listoParaJugar) abrirPred(); }
+/* En modo libre no hay caja que predecir: reabrir la predicción del
+   nivel 5 borraba el rótulo «🎨 Modo libre» y regalaba estrellas cada
+   vez que se contestaba bien. */
+function verPlan(){
+  if(enModoLibre){
+    document.getElementById('pista').textContent = 'Modo libre: cada cubito que pongas es 1 cm³';
+    return;
+  }
+  if(listoParaJugar) abrirPred();
+}
 
 /* ============================================================
    7) Ganar el nivel
@@ -494,6 +520,7 @@ function siguiente(){
    entero para construir lo que se quiera: es el premio, y de paso
    sigue contando cubitos, que es lo que se estaba aprendiendo. */
 function modoLibre(){
+  enModoLibre = true;
   if(ghost){ esc.remove(ghost); ghost = null; }
   document.getElementById('subt').textContent = '🎨 Modo libre · construye lo que quieras';
   document.getElementById('cuenta').innerHTML = '<b>0</b> cubitos<small>modo libre</small>';
