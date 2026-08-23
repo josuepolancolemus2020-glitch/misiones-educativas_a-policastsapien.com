@@ -53,6 +53,23 @@ const R128 = new Set(['AmbientLight','BoxGeometry','BufferAttribute','BufferGeom
   'PlaneGeometry','PointLight','Points','PointsMaterial','Raycaster','RingGeometry','Scene','Shape',
   'ShapeGeometry','SphereGeometry','TorusGeometry','Vector2','Vector3','WebGLRenderer']);
 
+
+/* Qué se toca en cada juego: el botón de empezar y después el
+   primer mando de verdad. */
+const TOQUES = [
+  ['juego-constructor-cubitos-3d.html', null, ['#velo-pred .bt-s']],
+  ['juego-fabrica-latas-3d.html', '#velo-ini .bt-p', ['.botones .bt-v', '.finos .fino']],
+  ['juego-desafio-tanque-3d.html', '#velo-ini .bt-p', ['#bt-apostar', '.botones .bt-s']],
+  ['juego-laberinto-unidades-3d.html', '#velo-ini .bt-p', ['.cruz .fl.e']],
+  ['juego-duelo-dimensiones-3d.html', '#velo-ini .bt-p', ['#at-area']],
+  /* En el tetris se pone antes una caja de 1×1×1: una de 3 de ancho
+     no se puede correr a la derecha —el pozo mide 3— y el botón haría
+     bien en no hacer nada. Lo que se comprueba es el mando, no el
+     azar de la pieza que tocó. */
+  ['juego-tetris-volumen-3d.html', '#velo-ini .modo', ['.mando .fl.e', '.lado .bl.tirar'],
+   () => window.__j3d.ponerCaja(1,1,1)]
+];
+
 let fallos = 0, pruebas = 0;
 function ok(cond, txt, extra){
   pruebas++;
@@ -91,7 +108,10 @@ async function revisarFuente(){
        nom+': si la pieza de 3D ya está puesta, la usa (funciona sin red y se puede probar)');
     ok(/Hace falta internet la primera vez/.test(src),
        nom+': sin red avisa en vez de quedarse en negro');
-    ok(/href="volumen-cuerpos\.html"/.test(src), nom+': tiene la vuelta a la misión');
+    /* La vuelta cae en el Parque de Juegos 3D, no al principio de la
+       misión: el que sale de un juego quiere abrir el siguiente, y
+       buscar el Parque entre dieciocho pestañas es donde se abandona. */
+    ok(/href="volumen-cuerpos\.html#s-juegos3d"/.test(src), nom+': la vuelta cae en el Parque de Juegos 3D');
     ok(/<html lang="es">/.test(src), nom+': declara español');
     ok(/name="viewport"/.test(src), nom+': se adapta al teléfono');
     const malos = [...src.matchAll(/THREE\.([A-Za-z0-9_]+)/g)].map(m=>m[1]).filter(n=>!R128.has(n));
@@ -519,8 +539,116 @@ async function mision(nav){
   ok(await p.locator('#s-widgets a.salto3d[href="juego-laberinto-unidades-3d.html"]').isVisible(),
      'en la Escalera de Unidades está el salto al Laberinto');
 
+  /* La vuelta desde un juego: el botón ← trae con «#s-juegos3d»
+     detrás y la misión tiene que abrir esa sección, no la primera.
+     El alumno que sale de un juego va a abrir otro. */
+  await p.goto('http://localhost:8123/'+DIR+'/volumen-cuerpos.html#s-juegos3d', { waitUntil:'domcontentloaded' });
+  await p.waitForTimeout(800);
+  await p.evaluate(() => { const m = document.getElementById('metasIdModal'); if(m) m.remove(); });
+  ok(await p.locator('#s-juegos3d.active').count() === 1,
+     'volviendo de un juego, la misión abre en el Parque de Juegos 3D');
+
   ok(errores.length === 0, 'la misión no tiene errores de JavaScript', errores);
   await p.close();
+}
+
+
+/* ============================================================
+   La señal MALA, que es la del aula
+   ------------------------------------------------------------
+   Este bloque nació de un fallo que se escapó a producción: la
+   sonda inyectaba Three.js ya puesto, así que el motor estaba
+   listo antes del primer cuadro y la carrera no existía. En el
+   sitio real el motor llega de un CDN, y el alumno impaciente
+   toca «Empezar» antes. El juego reventaba por dentro y se
+   quedaba en una pantalla muerta: ni pregunta, ni botones, ni
+   aviso —«no funciona», y sin nada que mirar—.
+
+   Aquí se retrasa el CDN a propósito y se toca todo lo que hay
+   en pantalla durante la espera. Después tiene que quedar un
+   juego jugable, no un cadáver.
+   ============================================================ */
+async function señalMala(nav){
+  console.log('\n📶 Con la señal de un pueblo (el motor 3D tarda en llegar)');
+  for(const j of JUEGOS){
+    const p = await nav.newPage({ viewport:{width:412, height:820} });
+    const errores = [];
+    p.on('pageerror', e => errores.push(String(e.message).split('\n')[0]));
+    await p.route('**cdnjs.cloudflare.com/**', async route => {
+      await new Promise(r => setTimeout(r, 1500));
+      await route.fulfill({status:200, contentType:'text/javascript', body: STUB});
+    });
+    await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+    await p.waitForTimeout(300);
+    const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
+
+    // mientras carga, el telón tapa: no hay nada que tocar
+    ok(await p.locator('#velo-carga').isVisible(), nom+': mientras baja el motor, avisa y no deja tocar nada');
+    let tocables = 0;
+    for(const b of await p.locator('button:visible, input:visible').all()){
+      const caja = await b.boundingBox();
+      if(!caja) continue;
+      const dentro = await p.evaluate(c => {
+        const el = document.elementFromPoint(c.x + c.w/2, c.y + c.h/2);
+        return !!(el && el.closest('#velo-carga'));
+      }, {x:caja.x, y:caja.y, w:caja.width, h:caja.height});
+      if(!dentro) tocables++;
+    }
+    ok(tocables === 0, nom+': ni un botón alcanzable por debajo del telón', tocables);
+
+    await p.waitForTimeout(1900);                       // ya llegó el motor
+    ok(!(await p.locator('#velo-carga').isVisible()), nom+': al llegar el motor, el telón se va');
+    ok(errores.length === 0, nom+': y llegó entero, sin reventar por el camino', errores.slice(0,2));
+    await p.close();
+  }
+}
+
+/* ============================================================
+   Tocar de verdad, no llamar a la función
+   ------------------------------------------------------------
+   La sonda llamaba a los manejadores por dentro. Así pasa una
+   pantalla en la que el botón está tapado, o desplazado fuera, o
+   con otro elemento encima: la lógica contesta y el dedo no. Aquí
+   se toca con el ratón, sobre las coordenadas de verdad.
+   ============================================================ */
+async function tocarDeVerdad(nav){
+  console.log('\n👆 Tocando los botones de verdad, con el ratón');
+  for(const [j, arranque, botones, preparar] of TOQUES){
+    const p = await abrir(nav, j, true);
+    const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
+    if(arranque){
+      const b = p.locator(arranque);
+      ok(await b.count() > 0 && await b.first().isVisible(), nom+': el botón de empezar se ve');
+      await b.first().click({timeout:5000});
+      await p.waitForTimeout(450);
+    }
+    if(preparar){ await p.evaluate(preparar); await p.waitForTimeout(120); }
+    for(const sel of botones){
+      const loc = p.locator(sel).first();
+      const hay = await loc.count() > 0 && await loc.isVisible();
+      if(!hay){ ok(false, nom+': no aparece '+sel); continue; }
+      /* «Responder» no siempre es cambiar de estado: decirle al alumno
+         «te faltan tres» también es responder, y es lo que hace el
+         botón de contar cuando todavía no ha contado todo. Así que se
+         mira TODO lo que ve él: el estado, los velos y los avisos. */
+      const foto = () => p.evaluate(() => {
+        const t = [];
+        document.querySelectorAll('#aviso,#globo,.aviso,.dif,#pt-cast,#preg,#chapa,#consigna,#que,#cuenta')
+          .forEach(e => t.push(e.textContent));
+        document.querySelectorAll('#ops .op').forEach(e => t.push(e.className));
+        return JSON.stringify({e:window.__j3d.estado(), t:t, v:document.querySelectorAll('.velo.ver').length});
+      });
+      const antes = await foto();
+      let movio = false;
+      try{
+        await loc.click({timeout:5000});
+        await p.waitForTimeout(700);
+        movio = (await foto()) !== antes;
+      }catch(e){ movio = false; }
+      ok(movio, nom+': al tocar '+sel+' con el ratón, el juego responde');
+    }
+    await p.close();
+  }
 }
 
 /* ============================================================
@@ -554,6 +682,8 @@ async function sinRed(nav){
     await duelo(nav);
     await tetris(nav);
     await mision(nav);
+    await señalMala(nav);
+    await tocarDeVerdad(nav);
     await sinRed(nav);
   } finally { await nav.close(); }
   console.log('\n════════════════════════════════════════════');

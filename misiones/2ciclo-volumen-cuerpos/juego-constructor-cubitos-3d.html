@@ -78,7 +78,7 @@ body{
 <body>
 
 <div class="top">
-  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <a class="volver" href="volumen-cuerpos.html#s-juegos3d" title="Volver a la misión">←</a>
   <div class="titulo">🧊 El Constructor de Cubitos<small id="subt">Nivel 1 de 5</small></div>
   <div class="marcador" id="marcador">⭐ 0</div>
 </div>
@@ -95,6 +95,20 @@ body{
   <button class="herr"    onclick="girar()"><span class="ico">🔄</span>Rotar</button>
   <button class="herr"    onclick="limpiar()"><span class="ico">🗑️</span>Limpiar</button>
   <button class="herr"    onclick="verPlan()"><span class="ico">📐</span>Medidas</button>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar.
+     Sin esto, el alumno impaciente toca «Empezar» antes de que
+     llegue el motor de dibujo, el juego revienta por dentro y se
+     queda en una pantalla muerta: ni pregunta, ni botones, ni
+     aviso. Con buena señal no se nota nunca; con la señal de un
+     pueblo, que es donde está el aula, pasa siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
 </div>
 
 <!-- predicción: primero se piensa, después se construye -->
@@ -128,7 +142,7 @@ body{
     <h2>🌐 Hace falta internet la primera vez</h2>
     <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
     <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
-    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html#s-juegos3d">Volver a la misión</a>
   </div>
 </div>
 
@@ -140,6 +154,13 @@ body{
       guardar una copia dentro del sitio sin tocar nada más.
    ============================================================ */
 var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+/* El telón de «cargando» se levanta cuando el motor ya está —o
+   cuando se sabe que no va a llegar—, nunca antes: lo que hay
+   detrás no funciona sin él. */
+function quitarCarga(){
+  var v = document.getElementById('velo-carga');
+  if(v) v.classList.remove('ver');
+}
 function cargar3D(listo, falla){
   if (window.THREE) return listo();
   var s = document.createElement('script');
@@ -539,12 +560,14 @@ function animar(){
    10) Arranque
    ============================================================ */
 cargar3D(function(){
+  quitarCarga();
   leer();
   montar();
   pintarMarcador();
   pintarCuenta();
   abrirPred();
 }, function(){
+  quitarCarga();
   document.getElementById('velo-pred').classList.remove('ver');
   document.getElementById('velo-red').classList.add('ver');
 });

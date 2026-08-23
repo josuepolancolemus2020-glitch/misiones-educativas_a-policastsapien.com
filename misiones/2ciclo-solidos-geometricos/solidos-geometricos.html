@@ -784,7 +784,21 @@
         window.WidgetCazaJSON.mount('widget-caza-interactive');
       }
       pintarMedallas3D();
+      abrirSeccionDelEnlace();
     });
+
+    /* Los juegos 3D se abren en otra pestaña y su botón ← trae de
+       vuelta con «#s-juegos3d» detrás. Sin esto, el alumno que sale
+       de un juego cae en la primera sección de la misión y tiene que
+       volver a buscar el Parque entre dieciocho pestañas —que en un
+       teléfono se deslizan— para abrir el siguiente. */
+    function abrirSeccionDelEnlace(){
+      const id = (location.hash || '').replace('#','');
+      if(!id) return;
+      const sec = document.getElementById(id);
+      if(sec && sec.classList.contains('sec')) go(id);
+    }
+    window.addEventListener('hashchange', abrirSeccionDelEnlace);
 
     /* Cada juego 3D guarda su avance en SU llave de localStorage y no
        toca la de la misión: si escribieran en la misma, una partida

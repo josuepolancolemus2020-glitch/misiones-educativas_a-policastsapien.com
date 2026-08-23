@@ -69,7 +69,7 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 <body>
 
 <div class="top">
-  <a class="volver" href="volumen-cuerpos.html" title="Volver a la misión">←</a>
+  <a class="volver" href="volumen-cuerpos.html#s-juegos3d" title="Volver a la misión">←</a>
   <div class="titulo">🌀 El Laberinto de las Unidades<small id="subt">Piso 1 de 2</small></div>
   <div class="puertas" id="puertas">🚪 0/3</div>
   <div class="reloj" id="reloj">2:30</div>
@@ -83,6 +83,20 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
     <button class="fl o" onpointerdown="mover(-1,0)">◀</button>
     <button class="fl e" onpointerdown="mover(1,0)">▶</button>
     <button class="fl s" onpointerdown="mover(0,1)">▼</button>
+  </div>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar.
+     Sin esto, el alumno impaciente toca «Empezar» antes de que
+     llegue el motor de dibujo, el juego revienta por dentro y se
+     queda en una pantalla muerta: ni pregunta, ni botones, ni
+     aviso. Con buena señal no se nota nunca; con la señal de un
+     pueblo, que es donde está el aula, pasa siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
   </div>
 </div>
 
@@ -122,12 +136,19 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
     <h2>🌐 Hace falta internet la primera vez</h2>
     <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
     <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
-    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html">Volver a la misión</a>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="volumen-cuerpos.html#s-juegos3d">Volver a la misión</a>
   </div>
 </div>
 
 <script>
 var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+/* El telón de «cargando» se levanta cuando el motor ya está —o
+   cuando se sabe que no va a llegar—, nunca antes: lo que hay
+   detrás no funciona sin él. */
+function quitarCarga(){
+  var v = document.getElementById('velo-carga');
+  if(v) v.classList.remove('ver');
+}
 function cargar3D(listo, falla){
   if (window.THREE) return listo();
   var s=document.createElement('script'); s.src=CDN3D;
@@ -555,10 +576,12 @@ function animar(ahora){
 }
 
 cargar3D(function(){
+  quitarCarga();
   try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d && d.piso) piso = Math.min(d.piso|0, PISOS.length-1); }catch(e){}
   montar();
   pintarReloj();
 }, function(){
+  quitarCarga();
   document.getElementById('velo-ini').classList.remove('ver');
   document.getElementById('velo-red').classList.add('ver');
 });

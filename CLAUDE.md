@@ -1328,7 +1328,7 @@ desde el widget de su mismo tema. Que estén aparte no es desorden: cada
 uno carga Three.js y su propio bucle de dibujo, y meterlos dentro de la
 misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
 
-**Cinco reglas, y ninguna es de adorno:**
+**Siete reglas, y ninguna es de adorno:**
 
 1. **El π es 3.14**, el del libro de sexto, igual que en el resto de la
    misión. Si la pantalla calcula con el π largo y el alumno con 3.14,
@@ -1354,7 +1354,22 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    con señal después funciona sin ella, y eso **lo cumple `sw.js`**: la
    rama de recursos externos ahora GUARDA lo que baja, que antes solo
    leía de la caché. Si se toca esa rama, se rompe la promesa.
-5. **Se juega con el dedo.** Nada de `draggable` ni de teclas como único
+5. ⚠️ **Y con señal MALA, tampoco se puede tocar nada hasta que el
+   motor llegue.** Todos llevan un telón (`#velo-carga`, z-index 30)
+   que se levanta en `listo()` y en `falla()`, nunca antes. Sin él, el
+   alumno impaciente toca «Empezar» mientras Three.js viene bajando, el
+   juego revienta por dentro —`armar()` sin escena— y se queda en una
+   pantalla muerta: ni pregunta, ni botones, ni aviso. Con buena señal
+   no se nota nunca; con la señal del aula, pasa siempre. **Se escapó a
+   producción en los doce juegos** porque la sonda inyectaba Three.js ya
+   puesto y esa carrera no existía; ahora la sonda retrasa el CDN a
+   propósito y toca todo lo que hay durante la espera.
+6. **La vuelta cae en el Parque de Juegos 3D** (`#s-juegos3d`), no al
+   principio de la misión: el que sale de un juego va a abrir otro, y
+   buscar el Parque entre dieciocho pestañas —que en un teléfono se
+   deslizan— es donde se abandona. Lo hace `abrirSeccionDelEnlace()` en
+   cada misión, que lee `location.hash`.
+7. **Se juega con el dedo.** Nada de `draggable` ni de teclas como único
    mando: cruceta en pantalla en los que hace falta, y en el constructor
    el mismo dedo gira la vista (si arrastra) o pone un cubito (si no).
 
@@ -1389,8 +1404,12 @@ como pirámide** ni como poliedro, y **el prisma triangular no pasa por
 pirámide cuadrangular** aunque los dos tengan 5 caras: lo que los separa
 son los vértices—.
 
-Las dos comprueban además que sin internet el juego avise, que solo se
-usen piezas de Three.js que existen en r128 —un nombre mal escrito no da
+Las dos comprueban además **la señal mala** —que el telón tape mientras
+baja el motor, que no quede ni un botón alcanzable por debajo y que el
+juego llegue entero— y **tocan los botones con el ratón, no llamando a
+la función**: así se ve el botón tapado o desplazado, que llamando por
+dentro pasa. Comprueban también que sin internet el juego avise, que
+solo se usen piezas de Three.js que existen en r128 —un nombre mal escrito no da
 la cara hasta que el juego se abre delante del niño— y la misión: que la
 pestaña esté, que las seis tarjetas enlacen y que los juegos **no hayan
 escrito** en el progreso de la misión.
