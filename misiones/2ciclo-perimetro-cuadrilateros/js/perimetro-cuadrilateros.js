@@ -1240,3 +1240,49 @@ document.addEventListener('DOMContentLoaded',()=>{
   fin('s-errores',false);
 });
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+/* ============================================================
+   El Parque de Juegos 3D
+   ============================================================ */
+
+/* Los juegos 3D se abren en otra pestaña y su botón ← trae de vuelta
+   con «#s-juegos3d» detrás. Sin esto, el alumno que sale de un juego
+   cae en la primera sección de la misión y tiene que volver a buscar
+   el Parque entre dieciocho pestañas —que en un teléfono se
+   deslizan— para abrir el siguiente. */
+function abrirSeccionDelEnlace(){
+  const id = (location.hash || '').replace('#','');
+  if(!id) return;
+  const sec = document.getElementById(id);
+  if(sec && sec.classList.contains('sec')) go(id);
+}
+window.addEventListener('hashchange', abrirSeccionDelEnlace);
+
+/* Cada juego 3D guarda su avance en SU llave de localStorage y no
+   toca la de la misión: si escribieran en la misma, una partida
+   abierta en otra pestaña le borraría al alumno el XP de aquí. Aquí
+   solo se LEE, para que la tarjeta diga por dónde va. */
+function pintarMedallas3D(){
+  const marcas = {
+    cercador:     {llave:'j3d_cercador_v1',     texto: d => '🏅 terreno ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+    pintor:       {llave:'j3d_pintor_v1',       texto: d => '🏅 piso ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+    cercopintura: {llave:'j3d_cercopintura_v1', texto: d => '🏅 encargo ' + Math.min(8, (d.indice|0)+1) + ' de 8' + (d.mejorRacha ? ' · racha ' + d.mejorRacha : '')},
+    terreno:      {llave:'j3d_terreno_v1',      texto: d => '🏅 reto ' + Math.min(6, (d.reto|0)+1) + ' de 6'},
+    cuartol:      {llave:'j3d_cuartol_v1',      texto: d => '🏅 figura ' + Math.min(6, (d.indice|0)+1) + ' de 6'},
+    fabcuad:      {llave:'j3d_fabcuad_v1',      texto: d => ((d.pedido|0) >= 6 ? '🏅 los 6 pedidos · retos libres' : '🏅 pedido ' + (((d.pedido|0)+1)) + ' de 6')}
+  };
+  document.querySelectorAll('[data-medalla]').forEach(el => {
+    const m = marcas[el.dataset.medalla];
+    if(!m) return;
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(m.llave)); } catch(e) {}
+    if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); return; }
+    el.textContent = m.texto(d);
+    el.classList.add('con');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  pintarMedallas3D();
+  abrirSeccionDelEnlace();
+});

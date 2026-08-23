@@ -297,11 +297,13 @@
     <h2>📏 Lab 1: Calculadora de Perímetros</h2>
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Aparece un cuadrado o rectángulo con sus medidas: calcula su perímetro. ⭐ +2 XP por acierto (primeros 5)</p>
     <div id="labPerimetro"></div>
+    <a href="juego-cercador-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🚧</span><span class="s3-txt"><strong>Jugarlo en 3D: el Cercador</strong><small>Aquí lo calculas; allá compras la malla y la ves ponerse alrededor del terreno.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <div class="card ac-teal">
     <h2>🟦 Lab 2: Calculadora de Áreas</h2>
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Aparece una figura con sus medidas: calcula su área en unidades cuadradas. ⭐ +2 XP por acierto (primeros 5)</p>
     <div id="labArea"></div>
+    <a href="juego-pintor-canchas-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🎨</span><span class="s3-txt"><strong>Jugarlo en 3D: el Pintor de Canchas</strong><small>Aquí sale el número; allá caen las baldosas fila por fila hasta cubrirlo.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Flashcards" onclick="go('s-flash')">
     <span class="nsb-icon">🃏</span>
@@ -427,16 +429,19 @@
     <h2>⚡ Juicio de Velocidad — ¿Perímetro o Área?</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Aparece una situación: decide si se pide perímetro o área. ⭐ +2 XP por acierto (primeros 6)</p>
     <div id="widget-figura"></div>
+    <a href="juego-cerco-o-pintura-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">⚖️</span><span class="s3-txt"><strong>Jugarlo en 3D: ¿Cerco o Pintura?</strong><small>Los mismos encargos, pero además eliges la unidad y sacas la cuenta.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <div class="card ac-blue">
     <h2>📏 Calcula el Perímetro</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Se muestra una figura con sus medidas: escribe su perímetro. ⭐ +2 XP por acierto (primeros 6)</p>
     <div id="widget-perimetro"></div>
+    <a href="juego-fabrica-cuadrilateros-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">📐</span><span class="s3-txt"><strong>Jugarlo en 3D: la Fábrica de Cuadriláteros</strong><small>Mueve la base y la altura y mira cómo se rellena la fórmula sola.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <div class="card ac-gold">
     <h2>🟦 Calcula el Área</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Se muestra una figura con sus medidas: escribe su área. ⭐ +2 XP por acierto (primeros 6)</p>
     <div id="widget-area"></div>
+    <a href="juego-cuarto-en-l-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🧩</span><span class="s3-txt"><strong>Jugarlo en 3D: el Cuarto en L</strong><small>Aquí las figuras son rectángulos; allá hay que partir una figura rara antes de poder calcularla.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
     <span class="nsb-icon">💬</span>
@@ -482,6 +487,7 @@
       <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
     </div>
     <div id="fbReto" class="fb" role="alert"></div>
+    <a href="juego-terreno-grande-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🏗️</span><span class="s3-txt"><strong>Jugarlo en 3D: el Terreno más Grande</strong><small>Aquí comparas dos figuras dadas; allá las haces tú, con la misma malla, y descubres cuál gana.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
     <span class="nsb-icon">🔤</span>
@@ -589,6 +595,75 @@
   </button>
 </div>
 
+<div class="sec" id="s-juegos3d" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🎮 Parque de Juegos 3D</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;">Seis desafíos en tres dimensiones. Cada uno ataca un lío distinto: no es solo practicar, es <strong>cercar, cubrir, decidir, comparar, partir y fabricar</strong>.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">🌐 La primera vez hace falta señal, porque bajan la pieza que dibuja en 3D. Después quedan guardados en el teléfono y funcionan sin internet. Se abren en otra pestaña: tu progreso de la misión no se pierde.</p>
+    <div class="juegos-grid">
+
+      <div class="juego-card" data-juego="j3d_cercador_v1">
+        <div class="juego-icon">🚧</div>
+        <h3>El Cercador 3D</h3>
+        <p>Compra la malla exacta para cercar el terreno y míralo cerrarse. Si compras de menos, queda el hueco por donde se salen las gallinas.</p>
+        <span class="juego-tema">🚧 Perímetro · la orilla, en metros</span>
+        <span class="juego-medalla" data-medalla="cercador"></span>
+        <a href="juego-cercador-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_pintor_v1">
+        <div class="juego-icon">🎨</div>
+        <h3>El Pintor de Canchas 3D</h3>
+        <p>Cubre el piso con baldosas de un metro y compra las justas. Se ven caer fila por fila: seis filas de cinco son treinta.</p>
+        <span class="juego-tema">🎨 Área · la superficie, en metros cuadrados</span>
+        <span class="juego-medalla" data-medalla="pintor"></span>
+        <a href="juego-pintor-canchas-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_cercopintura_v1">
+        <div class="juego-icon">⚖️</div>
+        <h3>¿Cerco o Pintura?</h3>
+        <p>Llega un encargo de verdad y hay que decidir <em>antes</em> de calcular: ¿perímetro o área? ¿metros o metros cuadrados?</p>
+        <span class="juego-tema">⚖️ Elegir qué se mide · y en qué unidad</span>
+        <span class="juego-medalla" data-medalla="cercopintura"></span>
+        <a href="juego-cerco-o-pintura-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_terreno_v1">
+        <div class="juego-icon">🏗️</div>
+        <h3>El Terreno más Grande</h3>
+        <p>Con los mismos metros de malla, ¿qué rectángulo encierra más terreno? El cerco no cambia y el terreno sí. Gana el cuadrado.</p>
+        <span class="juego-tema">🏗️ Mismo perímetro · distinta área</span>
+        <span class="juego-medalla" data-medalla="terreno"></span>
+        <a href="juego-terreno-grande-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_cuartol_v1">
+        <div class="juego-icon">🧩</div>
+        <h3>El Cuarto en L</h3>
+        <p>Una figura rara no tiene fórmula. Pártela en dos rectángulos —se separan delante de ti— y suma sus áreas.</p>
+        <span class="juego-tema">🧩 Figuras compuestas · descomponer y sumar</span>
+        <span class="juego-medalla" data-medalla="cuartol"></span>
+        <a href="juego-cuarto-en-l-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_fabcuad_v1">
+        <div class="juego-icon">📐</div>
+        <h3>La Fábrica de Cuadriláteros</h3>
+        <p>Mueve la base y la altura y mira el perímetro y el área cambiar, con la fórmula rellenándose sola. Cuadrado, rectángulo, romboide y trapecio.</p>
+        <span class="juego-tema">📐 Las cuatro fórmulas · en vivo</span>
+        <span class="juego-medalla" data-medalla="fabcuad"></span>
+        <a href="juego-fabrica-cuadrilateros-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Recursos del tema" onclick="go('s-recursos')">
+    <span class="nsb-icon">📁</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
 <div class="sec" id="s-recursos" role="tabpanel">
   <div class="card ac-jade">
     <h2>📁 Recursos del Tema</h2>
@@ -663,6 +738,7 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🎓</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-juegos3d" data-s="s-juegos3d" onclick="go('s-juegos3d')"><span class="ico">🎮</span> Parque 3D</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
 </nav>
 

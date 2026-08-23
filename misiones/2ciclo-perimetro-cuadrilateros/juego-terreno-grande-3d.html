@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏗️ El Terreno más Grande 3D | Misión Perímetro y Área de Cuadriláteros</title>
+<meta name="description" content="Con la misma malla, ¿qué rectángulo encierra más terreno? Se descubre solo: gana el cuadrado.">
+<!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos.
+     Lo que se toca ahí se toca en todos los juegos a la vez. -->
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<style>
+/* ============================================================
+   Juego 3D · El Terreno más Grande
+   ------------------------------------------------------------
+   Esto es lo que en papel no se ve. Con 24 m de malla se pueden
+   cercar un 11 × 1, un 8 × 4 o un 6 × 6: la MISMA malla, y adentro
+   caben 11, 32 o 36 metros cuadrados. En el cuaderno eso son tres
+   cuentas sueltas y nadie las compara; aquí es el mismo cerco
+   cambiando de forma delante del alumno, con los mismos postes y el
+   mismo rollo, mientras el suelo de adentro crece o se encoge.
+
+   Por eso el cerco se dibuja poste a poste: se ve que son SIEMPRE
+   los mismos —la malla no cambia— y que lo que cambia es lo de
+   adentro. Si el cerco se dibujara de un trazo, el alumno tendría
+   que fiarse de que el perímetro no cambió.
+
+   Y hay dos retos donde el cuadrado exacto NO se puede (13 y 14 de
+   medio perímetro): están puestos a propósito, porque la regla de
+   verdad no es «gana el cuadrado» sino «gana el que MÁS SE PARECE a
+   un cuadrado».
+   ============================================================ */
+/* El color de esta misión. Todo lo demás —el andamio— está en
+   css/parque-3d.css, que se carga antes. */
+:root{
+  --acento:#2fc4a8; --acento-tinta:#0d2a26; --franja:rgba(47,196,168,.45);
+  --marca-fondo:rgba(47,196,168,.16); --marca-borde:rgba(47,196,168,.5); --velo-fondo:rgba(9,20,24,.94);
+  --lienzo-fondo:radial-gradient(circle at 50% 32%,#22384a 0%,#0e1720 76%);
+}
+.tarjeta{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(14,23,32,.93);
+  border:2px solid var(--franja);border-radius:12px;padding:.4rem .6rem;font-size:.84rem;line-height:1.35;text-align:center;}
+.tarjeta b{color:var(--acento);}
+.rot{position:absolute;transform:translate(-50%,-50%);background:rgba(14,23,32,.92);border:1.5px solid var(--acento);
+  border-radius:8px;padding:.1rem .34rem;font-size:.72rem;font-family:'Fira Code',ui-monospace,monospace;
+  white-space:nowrap;pointer-events:none;}
+.marca{position:absolute;bottom:.5rem;left:.5rem;right:.5rem;background:rgba(14,23,32,.92);
+  border:1.5px solid rgba(47,196,168,.4);border-radius:10px;padding:.25rem .5rem;font-size:.78rem;text-align:center;}
+.marca b{color:#7fe9d4;font-family:'Fira Code',ui-monospace,monospace;}
+.mando{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem;}
+.mando label{font-size:.76rem;width:4.6rem;flex-shrink:0;line-height:1.2;}
+.mando label b{display:block;color:var(--acento);font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:44px;background:transparent;}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#0e1720;border-radius:5px;border:1px solid rgba(154,165,189,.3);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;
+  background:var(--acento);border:2px solid #d5fff5;cursor:pointer;}
+input[type=range]::-moz-range-track{height:8px;background:#0e1720;border-radius:5px;}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--acento);border:2px solid #d5fff5;cursor:pointer;}
+.cuenta{font-family:'Fira Code',ui-monospace,monospace;font-size:.86rem;text-align:center;margin-bottom:.45rem;line-height:1.5;}
+.cuenta b{color:#7fe9d4;font-size:1.05rem;}
+.cuenta .fijo{color:var(--gris);}
+.botones{margin-top:.2rem;}
+.bt{flex:1;}
+.aviso{font-size:.82rem;text-align:center;min-height:1.15rem;margin-top:.35rem;line-height:1.35;}
+.aviso.mal{color:#ff9c9c;}
+.aviso.bien{color:#7ee2a8;}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(47,196,168,.12);border-left:4px solid var(--acento);
+  border-radius:8px;padding:.5rem .7rem;font-size:.84rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
+.chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
+.chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
+@media(max-width:380px){.cuenta{font-size:.78rem;}.bt{font-size:.8rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="perimetro-cuadrilateros.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">🏗️ El Terreno más Grande<small id="subt">Reto 1 de 6</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="marca" id="marca"></div>
+</div>
+
+<div class="mandos">
+  <div class="mando">
+    <label>base<b id="lb-base">1 m</b></label>
+    <input type="range" id="sl-base" min="1" max="20" step="1" value="1" aria-label="base del terreno">
+  </div>
+  <div class="cuenta" id="cuenta"></div>
+  <div class="botones">
+    <button class="bt bt-v" id="bt-probar" onclick="anotar()">📌 Anotar este</button>
+    <button class="bt bt-p" id="bt-listo" onclick="declarar()">🏆 Este es el mejor</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar.
+     Sin esto, el alumno impaciente toca «Empezar» antes de que
+     llegue el motor de dibujo, el juego revienta por dentro y se
+     queda en una pantalla muerta: ni pregunta, ni botones, ni
+     aviso. Con buena señal no se nota nunca; con la señal de un
+     pueblo, que es donde está el aula, pasa siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🏗️</div>
+    <h2>El Terreno más Grande</h2>
+    <p>Tienes un rollo de malla y no se puede comprar más. Mueve la base y mira: <b>el cerco mide siempre lo mismo</b>, pero el terreno de adentro cambia.</p>
+    <div class="chapas"><span>La malla NO cambia</span><span>El terreno de adentro SÍ</span><span>Busca el más grande</span></div>
+    <p style="font-size:.82rem;color:#9aa5bd;">Prueba los que quieras. Cuando creas que diste con el mejor, dilo.</p>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2 id="fin-tit">¡Ese es el más grande!</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente reto →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="perimetro-cuadrilateros.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script>
+var LLAVE = 'j3d_terreno_v1';
+
+/* Seis retos. Los cuatro primeros fijan la MALLA y buscan el terreno
+   más grande; los dos últimos fijan el TERRENO y buscan la malla más
+   corta. Son la misma verdad vista por los dos lados, y la segunda
+   mitad es la que de verdad ahorra dinero: para el mismo patio, el
+   cuadrado es el que menos cerco pide. */
+var RETOS = [
+  {modo:'malla', v:20, n:'20 m de malla', emoji:'🧵',
+   nota:'Con 20 m de malla, el 5 × 5 encierra 25 m². El 9 × 1, con la MISMA malla, solo 9.'},
+  {modo:'malla', v:24, n:'24 m de malla', emoji:'🧵',
+   nota:'Con 24 m: el 11 × 1 encierra 11 m², el 8 × 4 encierra 32, y el 6 × 6 encierra 36. Gana el cuadrado.'},
+  {modo:'malla', v:26, n:'26 m de malla', emoji:'⚠️',
+   nota:'Aquí el cuadrado exacto NO se puede: 26 ÷ 2 = 13, y 13 no se parte en dos enteros iguales. Gana el 7 × 6, que es el que MÁS SE PARECE a un cuadrado.'},
+  {modo:'malla', v:36, n:'36 m de malla', emoji:'🧵',
+   nota:'36 m de malla y 81 m² adentro con el 9 × 9. Con el 17 × 1, la misma malla encierra 17.'},
+  {modo:'terreno', v:36, n:'36 m² de terreno', emoji:'🔄',
+   nota:'Al revés: para el mismo patio de 36 m², el 6 × 6 pide 24 m de malla y el 36 × 1 pide 74. Cercar cuadrado sale más barato.'},
+  {modo:'terreno', v:48, n:'48 m² de terreno', emoji:'🔄',
+   nota:'48 m² no da cuadrado exacto: el 8 × 6 es el que más se le parece, y es el que menos malla pide (28 m).'}
+];
+
+/* Las bases posibles de cada reto. Con la malla fija son todas las
+   que dejan una altura de al menos 1 m; con el terreno fijo, los
+   divisores. Se calculan, nunca se escriben. */
+function basesDe(r){
+  var out = [];
+  if(r.modo === 'malla'){
+    var mitad = r.v/2;
+    for(var b=1; b<=mitad-1; b++) out.push(b);
+  } else {
+    for(var d=1; d<=r.v; d++) if(r.v % d === 0) out.push(d);
+  }
+  return out;
+}
+function alturaDe(r, b){ return r.modo === 'malla' ? (r.v/2 - b) : (r.v / b); }
+function areaDe(r, b){ return b * alturaDe(r, b); }
+function perimetroDe(r, b){ return 2*(b + alturaDe(r, b)); }
+/* Lo que se busca: el área MAYOR con la malla fija, o el perímetro
+   MENOR con el terreno fijo. Se busca probando todas las bases: así
+   la respuesta buena sale de la misma cuenta que ve el alumno. */
+function mejorBase(r){
+  var bs = basesDe(r), mejor = bs[0];
+  bs.forEach(function(b){
+    if(r.modo === 'malla'){ if(areaDe(r,b) > areaDe(r,mejor)) mejor = b; }
+    else { if(perimetroDe(r,b) < perimetroDe(r,mejor)) mejor = b; }
+  });
+  return mejor;
+}
+
+var esc, cam, rend, grupo, rots = [], suelo = null, postes = [];
+var reto = 0, base = 1, estrellas = 0, giro = 0, probados = {}, mejorVisto = 0;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({reto:reto, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ reto=Math.min(d.reto|0, RETOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function r(){ return RETOS[reto]; }
+function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(46, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 400);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.68));
+  var l1 = new THREE.DirectionalLight(0xffffff, 0.72); l1.position.set(7,15,9); esc.add(l1);
+  var l2 = new THREE.DirectionalLight(0x9fe6d8, 0.26); l2.position.set(-7,6,-8); esc.add(l2);
+  esc.add(new THREE.GridHelper(24, 24, 0x2fc4a8, 0x2b3a46));
+
+  grupo = new THREE.Group();
+  esc.add(grupo);
+  cam.position.set(0, 12, 15);
+  cam.lookAt(0, 0, 0);
+
+  suelo = new THREE.Mesh(new THREE.BoxGeometry(1, 0.22, 1),
+    new THREE.MeshPhongMaterial({color:0x6b9c5e, shininess:8}));
+  suelo.position.y = -0.11;
+  grupo.add(suelo);
+
+  /* Los postes se crean UNA vez, tantos como metros de malla, y solo
+     se mueven: así se ve con los ojos que son siempre los mismos. */
+  var maxPostes = 80;
+  for(var i=0;i<maxPostes;i++){
+    var pz = new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,1.1,7),
+      new THREE.MeshPhongMaterial({color:0xc9a880}));
+    pz.visible = false;
+    grupo.add(pz);
+    postes.push(pz);
+  }
+
+  nuevoReto();
+  Parque3D.vigilarHueco(ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont = document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function limpiarRotulos(){ rots.forEach(function(x){ x.el.remove(); }); rots = []; }
+function rotulo(texto, x, y, z){
+  var el = document.createElement('div');
+  el.className = 'rot';
+  el.textContent = texto;
+  document.getElementById('lienzo').appendChild(el);
+  rots.push({el:el, p:new THREE.Vector3(x,y,z)});
+}
+
+/* El terreno se dibuja SIEMPRE a la misma escala dentro de un reto:
+   si cada forma se reescalara para llenar la pantalla, el 11 × 1 y
+   el 6 × 6 se verían igual de grandes y el juego no enseñaría nada.
+   La escala la manda la forma más larga posible. */
+function escalaDe(re){
+  var bs = basesDe(re), largo = 1;
+  bs.forEach(function(b){ largo = Math.max(largo, b, alturaDe(re, b)); });
+  return 11 / largo;
+}
+
+function pintar(){
+  var re = r(), b = base, h = alturaDe(re, b), k = escalaDe(re);
+  var an = b*k, al = h*k;
+  suelo.scale.set(an, 1, al);
+
+  // un poste por metro de malla, repartidos por la orilla
+  var P = perimetroDe(re, b), n = Math.min(postes.length, Math.round(P));
+  for(var i=0;i<postes.length;i++) postes[i].visible = (i < n);
+  var paso = P / Math.max(1, n), rec = 0;
+  for(var j=0;j<n;j++){
+    var d = (j*paso) % P, x, z;
+    if(d < b){ x = -an/2 + d*k; z = -al/2; }
+    else if(d < b+h){ x = an/2; z = -al/2 + (d-b)*k; }
+    else if(d < 2*b+h){ x = an/2 - (d-b-h)*k; z = al/2; }
+    else { x = -an/2; z = al/2 - (d-2*b-h)*k; }
+    postes[j].position.set(x, 0.55, z);
+  }
+
+  limpiarRotulos();
+  rotulo(fmt(b)+' m', 0, 0.4, al/2 + 0.85);
+  rotulo(fmt(h)+' m', an/2 + 0.85, 0.4, 0);
+
+  document.getElementById('lb-base').textContent = fmt(b)+' m';
+  var A = areaDe(re, b);
+  if(A > mejorVisto) mejorVisto = A;
+  document.getElementById('cuenta').innerHTML = re.modo === 'malla'
+    ? '<span class="fijo">malla: 2 × ('+fmt(b)+' + '+fmt(h)+') = '+fmt(P)+' m (siempre igual)</span><br>'+
+      'terreno: '+fmt(b)+' × '+fmt(h)+' = <b>'+fmt(A)+' m²</b>'
+    : '<span class="fijo">terreno: '+fmt(b)+' × '+fmt(h)+' = '+fmt(A)+' m² (siempre igual)</span><br>'+
+      'malla: 2 × ('+fmt(b)+' + '+fmt(h)+') = <b>'+fmt(P)+' m</b>';
+  pintarMarca();
+}
+
+function pintarMarca(){
+  var re = r();
+  var probadas = Object.keys(probados).length;
+  var mejorTxt;
+  if(re.modo === 'malla'){
+    var mx = 0;
+    Object.keys(probados).forEach(function(b){ mx = Math.max(mx, areaDe(re, +b)); });
+    mejorTxt = probadas ? 'el mayor terreno que has probado: <b>'+fmt(mx)+' m²</b>' : 'todavía no has anotado ninguno';
+  } else {
+    var mn = Infinity;
+    Object.keys(probados).forEach(function(b){ mn = Math.min(mn, perimetroDe(re, +b)); });
+    mejorTxt = probadas ? 'la malla más corta que has probado: <b>'+fmt(mn)+' m</b>' : 'todavía no has anotado ninguna';
+  }
+  document.getElementById('marca').innerHTML = '📌 probados: '+probadas+' · '+mejorTxt;
+}
+
+function moverRotulos(){
+  var cont = document.getElementById('lienzo');
+  var an = cont.clientWidth, al = cont.clientHeight;
+  rots.forEach(function(x){
+    var v = x.p.clone();
+    grupo.localToWorld(v);
+    v.project(cam);
+    x.el.style.left = ((v.x*0.5+0.5)*an)+'px';
+    x.el.style.top  = ((-v.y*0.5+0.5)*al)+'px';
+    x.el.style.display = (v.z < 1) ? 'block' : 'none';
+  });
+}
+
+/* ============================================================
+   Probar y decidir
+   ============================================================ */
+function anotar(){
+  var re = r(), b = base;
+  probados[b] = true;
+  var av = document.getElementById('aviso');
+  av.className = 'aviso bien';
+  av.textContent = re.modo === 'malla'
+    ? '📌 Anotado: '+fmt(b)+' × '+fmt(alturaDe(re,b))+' encierra '+fmt(areaDe(re,b))+' m².'
+    : '📌 Anotado: '+fmt(b)+' × '+fmt(alturaDe(re,b))+' pide '+fmt(perimetroDe(re,b))+' m de malla.';
+  pintarMarca();
+}
+
+function declarar(){
+  var re = r(), mb = mejorBase(re), b = base;
+  var bien = (re.modo === 'malla') ? (areaDe(re,b) === areaDe(re,mb))
+                                   : (perimetroDe(re,b) === perimetroDe(re,mb));
+  var probadas = Object.keys(probados).length;
+  /* Tres estrellas si además probó de verdad. Acertar de primeras
+     con el cuadrado está bien, pero lo que enseña este juego es la
+     COMPARACIÓN: por eso la tercera estrella se gana probando. */
+  var est = bien ? (probadas >= 4 ? 3 : (probadas >= 2 ? 2 : 1)) : 0;
+  if(bien) estrellas += 4;
+  document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🏗️';
+  document.getElementById('fin-tit').textContent = bien
+    ? (re.modo === 'malla' ? '¡Ese es el más grande!' : '¡Esa es la malla más corta!')
+    : 'Hay uno mejor';
+  document.getElementById('fin-form').innerHTML = tabla(re, mb, b);
+  document.getElementById('fin-txt').textContent = re.nota;
+  var ultimo = (reto >= RETOS.length-1);
+  document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente reto →';
+  pintarMarcador(); guardar();
+  Parque3D.abrir('velo-fin');
+}
+
+/* La tabla de comparación: el más flaco, el elegido y el mejor. Ver
+   los tres juntos es lo que convierte tres cuentas sueltas en una
+   regla. */
+function tabla(re, mb, b){
+  var bs = basesDe(re);
+  var flaco = bs[0];
+  var filas = [];
+  function fila(x, rot){
+    var h = alturaDe(re, x);
+    return rot+': '+fmt(x)+' × '+fmt(h)+' → '+
+      (re.modo === 'malla' ? 'terreno <b>'+fmt(areaDe(re,x))+' m²</b>' : 'malla <b>'+fmt(perimetroDe(re,x))+' m</b>');
+  }
+  filas.push(fila(flaco, 'el más flaco'));
+  if(b !== flaco && b !== mb) filas.push(fila(b, 'el tuyo'));
+  filas.push(fila(mb, 'el mejor'));
+  var cabeza = re.modo === 'malla'
+    ? 'Con los mismos '+fmt(re.v)+' m de malla:<br>'
+    : 'Para los mismos '+fmt(re.v)+' m² de terreno:<br>';
+  return cabeza + filas.join('<br>');
+}
+
+function siguiente(){
+  Parque3D.cerrar('velo-fin');
+  if(reto >= RETOS.length-1) reto = 0; else reto++;
+  guardar();
+  nuevoReto();
+}
+
+function nuevoReto(){
+  var re = r(), bs = basesDe(re);
+  probados = {}; mejorVisto = 0;
+  var sl = document.getElementById('sl-base');
+  sl.min = 0; sl.max = bs.length-1; sl.step = 1; sl.value = 0;
+  base = bs[0];
+  document.getElementById('tarjeta').innerHTML = re.emoji+' <b>'+re.n+'</b> · '+
+    (re.modo === 'malla' ? '¿qué rectángulo encierra MÁS terreno?' : '¿qué rectángulo pide MENOS malla?');
+  document.getElementById('subt').textContent = 'Reto '+(reto+1)+' de '+RETOS.length;
+  document.getElementById('aviso').textContent = '';
+  document.getElementById('bt-listo').textContent = re.modo === 'malla' ? '🏆 Este es el mejor' : '🏆 Esta es la más corta';
+  pintar();
+}
+
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+
+function animar(){
+  requestAnimationFrame(animar);
+  giro += 0.0032;
+  if(grupo) grupo.rotation.y = Math.sin(giro)*0.36;
+  moverRotulos();
+  rend.render(esc, cam);
+}
+
+/* Baja el motor de dibujo, levanta el telón y arranca. Si no llega,
+   el andamio enseña la pantalla de «hace falta internet la primera
+   vez»: un juego que se queda negro parece roto y no se vuelve a
+   abrir. */
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+  document.getElementById('sl-base').addEventListener('input', function(ev){
+    var bs = basesDe(r());
+    base = bs[Math.max(0, Math.min(bs.length-1, +ev.target.value))];
+    pintar();
+  });
+});
+
+window.__j3d = {
+  poner: function(b){
+    var bs = basesDe(r()), i = bs.indexOf(b);
+    if(i < 0) return false;
+    document.getElementById('sl-base').value = i;
+    base = b; pintar(); return true;
+  },
+  anotar: anotar, declarar: declarar,
+  estado: function(){ return {reto:reto, modo:r().modo, base:base, altura:alturaDe(r(), base),
+                              area:areaDe(r(), base), perimetro:perimetroDe(r(), base),
+                              mejorBase:mejorBase(r()), probados:Object.keys(probados).length,
+                              estrellas:estrellas}; },
+  retos: RETOS, basesDe: basesDe, alturaDe: alturaDe, areaDe: areaDe, perimetroDe: perimetroDe, mejorBase: mejorBase
+};
+</script>
+</body>
+</html>

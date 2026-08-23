@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🧩 El Cuarto en L 3D | Misión Perímetro y Área de Cuadriláteros</title>
+<meta name="description" content="Parte la figura en rectángulos y suma sus áreas. Una figura rara no tiene fórmula: se descompone.">
+<!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos.
+     Lo que se toca ahí se toca en todos los juegos a la vez. -->
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<style>
+/* ============================================================
+   Juego 3D · El Cuarto en L
+   ------------------------------------------------------------
+   El DCNB lo pide con esas palabras: «exploran figuras equivalentes
+   en cuanto a su área (composición y descomposición de figuras)».
+   En el aula se hace con tangramas cuando hay tangramas; en papel
+   el alumno mira la figura en L, no le ve fórmula y se rinde o
+   inventa una.
+
+   Aquí el corte se hace de verdad: la figura se PARTE en dos delante
+   de él, los dos pedazos se separan y cada uno enseña sus medidas.
+   Entonces «base por altura» vuelve a servir, dos veces, y se suman.
+
+   Y hay una tercera opción de corte que NO sirve: la que deja un
+   pedazo que sigue siendo raro. Está puesta a propósito, porque la
+   regla no es «cortar», es «cortar hasta que queden RECTÁNGULOS».
+
+   El otro camino —el rectángulo entero menos el pedazo que falta—
+   está en el resultado, siempre. Son dos formas de llegar al mismo
+   número, y ver que coinciden es la mitad de la lección.
+   ============================================================ */
+/* El color de esta misión. Todo lo demás —el andamio— está en
+   css/parque-3d.css, que se carga antes. */
+:root{
+  --acento:#2fc4a8; --acento-tinta:#0d2a26; --franja:rgba(47,196,168,.45);
+  --marca-fondo:rgba(47,196,168,.16); --marca-borde:rgba(47,196,168,.5); --velo-fondo:rgba(9,20,24,.94);
+  --lienzo-fondo:radial-gradient(circle at 50% 32%,#22384a 0%,#0e1720 76%);
+  --pieza-a:#4fb0c9; --pieza-b:#e8a33d;
+}
+.tarjeta{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(14,23,32,.93);
+  border:2px solid var(--franja);border-radius:12px;padding:.4rem .6rem;font-size:.84rem;line-height:1.35;text-align:center;}
+.tarjeta b{color:var(--acento);}
+.rot{position:absolute;transform:translate(-50%,-50%);background:rgba(14,23,32,.92);border:1.5px solid var(--acento);
+  border-radius:8px;padding:.1rem .34rem;font-size:.72rem;font-family:'Fira Code',ui-monospace,monospace;
+  white-space:nowrap;pointer-events:none;}
+.rot.a{border-color:var(--pieza-a);color:#bfe8f4;}
+.rot.b{border-color:var(--pieza-b);color:#fbe3b8;}
+.consigna{font-size:.85rem;margin-bottom:.45rem;line-height:1.35;text-align:center;color:#dbe3f2;}
+.ops{display:flex;flex-direction:column;gap:.55rem;}
+/* Separadas de verdad: con 6 px, la respuesta equivocada queda a un
+   milímetro de la buena y el dedo decide por su cuenta. */
+.op{font-family:inherit;font-size:.92rem;font-weight:700;padding:.65rem .6rem;min-height:48px;
+  border:2px solid rgba(154,165,189,.45);border-radius:12px;background:#0e1720;color:var(--claro);cursor:pointer;
+  line-height:1.25;text-align:center;}
+.op small{display:block;font-size:.72rem;font-weight:400;color:var(--gris);margin-top:.1rem;}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.op:disabled{cursor:default;}
+.aviso{font-size:.82rem;text-align:center;min-height:1.15rem;margin-top:.4rem;line-height:1.35;}
+.aviso.mal{color:#ff9c9c;}
+.aviso.bien{color:#7ee2a8;}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(47,196,168,.12);border-left:4px solid var(--acento);
+  border-radius:8px;padding:.5rem .7rem;font-size:.84rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
+.chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
+.chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
+@media(max-width:380px){.consigna{font-size:.78rem;}.op{font-size:.84rem;}}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— las opciones se aprietan para que quepan las tres sin
+   tener que deslizar la franja de mandos. Se recorta el aire, nunca
+   por debajo de los 44 px que un dedo acierta sin mirar. */
+@media (max-height:430px){
+  .ops{gap:.35rem;}
+  .op{font-size:.8rem;padding:.4rem .5rem;min-height:44px;}
+  .op small{font-size:.66rem;margin-top:0;}
+  .consigna{font-size:.78rem;margin-bottom:.3rem;}
+  .aviso{margin-top:.25rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="perimetro-cuadrilateros.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">🧩 El Cuarto en L<small id="subt">Figura 1 de 6</small></div>
+  <div class="vidas" id="vidas">✂️✂️✂️</div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+</div>
+
+<div class="mandos">
+  <div class="consigna" id="consigna">¿Por dónde lo cortas para que queden dos rectángulos?</div>
+  <div class="ops" id="ops"></div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar.
+     Sin esto, el alumno impaciente toca «Empezar» antes de que
+     llegue el motor de dibujo, el juego revienta por dentro y se
+     queda en una pantalla muerta: ni pregunta, ni botones, ni
+     aviso. Con buena señal no se nota nunca; con la señal de un
+     pueblo, que es donde está el aula, pasa siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🧩</div>
+    <h2>El Cuarto en L</h2>
+    <p>Estas figuras no tienen fórmula propia. Se <b>parten en rectángulos</b>, se saca el área de cada uno y se suman.</p>
+    <div class="chapas"><span>Cortar hasta que queden RECTÁNGULOS</span><span>Cada uno: base × altura</span><span>Y se suman</span></div>
+    <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres tijeras ✂️. Cada corte que no sirve te cuesta una.</p>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2 id="fin-tit">¡Bien partido!</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente figura →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="perimetro-cuadrilateros.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script>
+var LLAVE = 'j3d_cuartol_v1';
+
+/* Seis figuras compuestas: un rectángulo grande al que le falta un
+   pedazo en una esquina. Se declaran las medidas, y las áreas y los
+   cortes salen de la figura: nada de números escritos a mano. */
+var FIGURAS = [
+  {n:'El cuarto en L',            emoji:'🛏️', W:6,  H:5, w:2, h:2, esq:'ne',
+   nota:'Dos rectángulos y una suma. Y sale igual por el otro camino: 6 × 5 = 30, menos el pedazo de 2 × 2 = 4, quedan 26.'},
+  {n:'El aula con la bodeguita',  emoji:'🏫', W:8,  H:6, w:3, h:2, esq:'nw',
+   nota:'La bodeguita es el pedazo que falta. Al aula le quedan 42 m² de piso, que es lo que se embaldosa.'},
+  {n:'El pasillo en L',           emoji:'🚪', W:7,  H:4, w:3, h:2, esq:'se',
+   nota:'22 m². Un pasillo así no tiene fórmula en ningún libro: se parte y se suma, y ya.'},
+  {n:'La casa con el corredor',   emoji:'🏠', W:9,  H:7, w:4, h:3, esq:'sw',
+   nota:'51 m². El corredor es el pedazo abierto: no se cuenta en el piso techado.'},
+  {n:'El patio con la pila',      emoji:'🧱', W:10, H:8, w:4, h:4, esq:'ne',
+   nota:'64 m² de patio. La pila ocupa 16 y esos no se barren.'},
+  {n:'El solar escalonado',       emoji:'🏗️', W:12, H:9, w:5, h:4, esq:'nw',
+   nota:'88 m². Cuanto más grande la figura, más caro sale confundirse: aquí el rectángulo entero (108) tiene 20 m² de más.'}
+];
+
+/* La figura, celda a celda. Con la rejilla en la mano, el área es
+   contar celdas y un corte se comprueba mirando si cada pedazo llena
+   su propio rectángulo. Nada de eso se escribe a mano arriba: se
+   calcula, y por eso no puede estar mal. */
+function celdas(f){
+  var out = [];
+  for(var y=0; y<f.H; y++){
+    for(var x=0; x<f.W; x++){
+      if(!enHueco(f, x, y)) out.push([x,y]);
+    }
+  }
+  return out;
+}
+function enHueco(f, x, y){
+  var x0 = (f.esq === 'ne' || f.esq === 'se') ? f.W - f.w : 0;
+  var y0 = (f.esq === 'ne' || f.esq === 'nw') ? f.H - f.h : 0;
+  return x >= x0 && x < x0 + f.w && y >= y0 && y < y0 + f.h;
+}
+function areaDe(f){ return celdas(f).length; }
+function areaEntera(f){ return f.W * f.H; }
+function areaHueco(f){ return f.w * f.h; }
+
+/* Un corte parte la figura en dos montones. Vale solo si CADA montón
+   llena por completo su propio rectángulo: si no, queda un pedazo
+   raro y «base × altura» no sirve para él. */
+function partir(f, corte){
+  var A = [], B = [];
+  celdas(f).forEach(function(c){
+    var va = (corte.eje === 'x') ? (c[0] < corte.en) : (c[1] < corte.en);
+    (va ? A : B).push(c);
+  });
+  return [A, B];
+}
+function caja(cs){
+  if(!cs.length) return null;
+  var xs = cs.map(function(c){ return c[0]; }), ys = cs.map(function(c){ return c[1]; });
+  var x0 = Math.min.apply(null,xs), x1 = Math.max.apply(null,xs);
+  var y0 = Math.min.apply(null,ys), y1 = Math.max.apply(null,ys);
+  return {x0:x0, y0:y0, b:x1-x0+1, a:y1-y0+1};
+}
+function esRectangulo(cs){
+  var k = caja(cs);
+  return !!k && (k.b * k.a === cs.length);
+}
+function corteVale(f, corte){
+  var pz = partir(f, corte);
+  return pz[0].length > 0 && pz[1].length > 0 && esRectangulo(pz[0]) && esRectangulo(pz[1]);
+}
+
+/* Los tres cortes que se le ofrecen: los dos que valen —el vertical
+   y el horizontal por el filo del hueco— y uno que no, por el medio.
+   El que no vale se elige buscando: nada de escribirlo a mano. */
+function cortesDe(f){
+  var x0 = (f.esq === 'ne' || f.esq === 'se') ? f.W - f.w : f.w;
+  var y0 = (f.esq === 'ne' || f.esq === 'nw') ? f.H - f.h : f.h;
+  var lista = [
+    {eje:'x', en:x0, txt:'⬍ Un corte de arriba abajo', sub:'a los '+x0+' m del borde izquierdo'},
+    {eje:'y', en:y0, txt:'⬌ Un corte de lado a lado',  sub:'a los '+y0+' m del borde de abajo'}
+  ];
+  // el que no vale: el primero que deje un pedazo que no sea rectángulo
+  var malo = null;
+  for(var c=1; c<f.W && !malo; c++){
+    var cand = {eje:'x', en:c};
+    if(!corteVale(f, cand)) malo = {eje:'x', en:c, txt:'⬍ Otro corte de arriba abajo', sub:'a los '+c+' m del borde izquierdo'};
+  }
+  if(!malo){
+    for(var y=1; y<f.H && !malo; y++){
+      var cand2 = {eje:'y', en:y};
+      if(!corteVale(f, cand2)) malo = {eje:'y', en:y, txt:'⬌ Otro corte de lado a lado', sub:'a los '+y+' m del borde de abajo'};
+    }
+  }
+  if(malo) lista.push(malo);
+  return lista;
+}
+
+var esc, cam, rend, grupo, rots = [], cubos = [];
+var indice = 0, vidas = 3, estrellas = 0, giro = 0, paso = 0, cortado = null;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({indice:indice, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ indice=Math.min(d.indice|0, FIGURAS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function f(){ return FIGURAS[indice]; }
+function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(46, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 400);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.7));
+  var l1 = new THREE.DirectionalLight(0xffffff, 0.72); l1.position.set(7,15,9); esc.add(l1);
+  var l2 = new THREE.DirectionalLight(0x9fe6d8, 0.26); l2.position.set(-7,6,-8); esc.add(l2);
+  esc.add(new THREE.GridHelper(24, 24, 0x2fc4a8, 0x2b3a46));
+
+  grupo = new THREE.Group();
+  esc.add(grupo);
+  cam.position.set(0, 12, 15);
+  cam.lookAt(0, 0, 0);
+
+  armarFigura();
+  Parque3D.vigilarHueco(ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont = document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function limpiarRotulos(){ rots.forEach(function(x){ x.el.remove(); }); rots = []; }
+function rotulo(texto, clase, x, y, z){
+  var el = document.createElement('div');
+  el.className = 'rot' + (clase ? ' '+clase : '');
+  el.textContent = texto;
+  document.getElementById('lienzo').appendChild(el);
+  rots.push({el:el, p:new THREE.Vector3(x,y,z)});
+}
+
+/* La figura se dibuja celda por celda —un metro cuadrado cada una—
+   para que el área se pueda CONTAR además de calcular. Al partirla,
+   los dos montones se separan y cada uno toma su color. */
+function armarFigura(){
+  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  limpiarRotulos();
+  cubos = [];
+  var d = f(), k = 11 / Math.max(d.W, d.H);
+  celdas(d).forEach(function(c){
+    var cu = new THREE.Mesh(new THREE.BoxGeometry(k*0.94, 0.3, k*0.94),
+      new THREE.MeshPhongMaterial({color:0x7f96a8, shininess:22}));
+    cu.position.set(-d.W*k/2 + k*(c[0]+0.5), 0.15, -d.H*k/2 + k*(c[1]+0.5));
+    cu.userData = {x:c[0], y:c[1]};
+    grupo.add(cu);
+    cubos.push(cu);
+  });
+  rotulo(d.W+' m', '', 0, 0.5, -d.H*k/2 - k*0.8);
+  rotulo(d.H+' m', '', -d.W*k/2 - k*0.8, 0.5, 0);
+  document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · cabe en un '+d.W+' m × '+d.H+' m, y le falta un pedazo de '+d.w+' × '+d.h;
+  document.getElementById('subt').textContent = 'Figura '+(indice+1)+' de '+FIGURAS.length;
+}
+
+/* Separa los dos montones y les pone su medida al lado. Ver los dos
+   pedazos APARTE es lo que hace que vuelvan a parecer rectángulos. */
+function pintarCorte(corte){
+  var d = f(), k = 11 / Math.max(d.W, d.H);
+  var pz = partir(d, corte), kA = caja(pz[0]), kB = caja(pz[1]);
+  cubos.forEach(function(cu){
+    var enA = (corte.eje === 'x') ? (cu.userData.x < corte.en) : (cu.userData.y < corte.en);
+    cu.material.color.setHex(enA ? 0x4fb0c9 : 0xe8a33d);
+    var sep = (corte.eje === 'x') ? (enA ? -0.5 : 0.5) : 0;
+    var sepZ = (corte.eje === 'y') ? (enA ? -0.5 : 0.5) : 0;
+    cu.position.x = -d.W*k/2 + k*(cu.userData.x+0.5) + sep;
+    cu.position.z = -d.H*k/2 + k*(cu.userData.y+0.5) + sepZ;
+  });
+  limpiarRotulos();
+  if(kA) rotulo(kA.b+' × '+kA.a+' = '+(kA.b*kA.a)+' m²', 'a',
+    -d.W*k/2 + k*(kA.x0 + kA.b/2) + (corte.eje==='x' ? -0.5 : 0), 1.1,
+    -d.H*k/2 + k*(kA.y0 + kA.a/2) + (corte.eje==='y' ? -0.5 : 0));
+  if(kB) rotulo(kB.b+' × '+kB.a+' = '+(kB.b*kB.a)+' m²', 'b',
+    -d.W*k/2 + k*(kB.x0 + kB.b/2) + (corte.eje==='x' ? 0.5 : 0), 1.1,
+    -d.H*k/2 + k*(kB.y0 + kB.a/2) + (corte.eje==='y' ? 0.5 : 0));
+}
+
+function moverRotulos(){
+  var cont = document.getElementById('lienzo');
+  var an = cont.clientWidth, al = cont.clientHeight;
+  rots.forEach(function(x){
+    var v = x.p.clone();
+    grupo.localToWorld(v);
+    v.project(cam);
+    x.el.style.left = ((v.x*0.5+0.5)*an)+'px';
+    x.el.style.top  = ((-v.y*0.5+0.5)*al)+'px';
+    x.el.style.display = (v.z < 1) ? 'block' : 'none';
+  });
+}
+
+/* ============================================================
+   Los dos pasos: dónde cortar y cuánto suma
+   ============================================================ */
+function pintarOps(lista, consigna){
+  var cont = document.getElementById('ops');
+  cont.innerHTML = '';
+  document.getElementById('consigna').textContent = consigna;
+  lista.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'op';
+    b.innerHTML = o.txt + (o.sub ? '<small>'+o.sub+'</small>' : '');
+    b.dataset.v = o.v;
+    Parque3D.alTocar(b, function(){ contestar(o, b); });
+    cont.appendChild(b);
+  });
+  /* Un respiro antes de aceptar nada: las opciones nuevas salen en
+     los MISMOS píxeles que las anteriores, y el segundo toque de un
+     dedo impaciente contestaba lo que el alumno no había visto. */
+  Parque3D.respiro(cont);
+}
+
+function pasoCorte(){
+  paso = 0; cortado = null;
+  var d = f(), cs = cortesDe(d);
+  // se baraja con el número de figura: el corte bueno no cae siempre igual
+  var orden = [[0,1,2],[2,0,1],[1,2,0],[0,2,1],[2,1,0],[1,0,2]][indice % 6];
+  var lista = orden.map(function(i){ return cs[i]; }).filter(Boolean).map(function(c, i){
+    return {txt:c.txt, sub:c.sub, v:'c'+i, corte:c};
+  });
+  pintarOps(lista, '¿Por dónde lo cortas para que queden dos rectángulos?');
+  document.getElementById('aviso').textContent = '';
+}
+
+function pasoSuma(){
+  paso = 1;
+  var d = f(), A = areaDe(d);
+  var pz = partir(d, cortado), kA = caja(pz[0]), kB = caja(pz[1]);
+  var mayor = Math.max(kA.b*kA.a, kB.b*kB.a);
+  /* Las respuestas equivocadas son los errores de verdad: el
+     rectángulo ENTERO (no quitó el pedazo que falta) y UN SOLO
+     pedazo (partió bien y se le olvidó sumar el otro). */
+  var lista = [
+    {txt: fmt(A)+' m²', v:'buena'},
+    {txt: fmt(areaEntera(d))+' m²', v:'entera'},
+    {txt: fmt(mayor)+' m²', v:'mitad'}
+  ];
+  var orden = [[0,1,2],[1,2,0],[2,0,1],[0,2,1],[1,0,2],[2,1,0]][indice % 6];
+  pintarOps(orden.map(function(i){ return lista[i]; }),
+    'Ya son dos rectángulos: ¿cuánto suma el área de la figura?');
+}
+
+function contestar(o, bt){
+  var d = f();
+  var todos = document.querySelectorAll('#ops .op');
+  var av = document.getElementById('aviso');
+
+  if(paso === 0){
+    var vale = corteVale(d, o.corte);
+    if(vale){
+      cortado = o.corte;
+      pintarCorte(o.corte);
+      todos.forEach(function(b){ b.disabled = true; });
+      bt.classList.add('buena');
+      av.className = 'aviso bien';
+      av.textContent = '✂️ Quedaron dos rectángulos. Ahora cada uno tiene su base y su altura.';
+      setTimeout(pasoSuma, 1100);
+    } else {
+      vidas--; pintarVidas();
+      bt.disabled = true; bt.classList.add('mala');
+      av.className = 'aviso mal';
+      av.innerHTML = 'Por ahí no: uno de los pedazos <b>sigue siendo raro</b>, y a una figura rara no se le puede aplicar base × altura.';
+      if(vidas <= 0) setTimeout(perder, 900);
+    }
+    return;
+  }
+
+  var bien = (o.v === 'buena');
+  todos.forEach(function(b){ b.disabled = true; b.classList.add(b.dataset.v === 'buena' ? 'buena' : 'mala'); });
+  if(bien){
+    estrellas += 4;
+    av.className = 'aviso bien'; av.textContent = '✅ ¡Ese es!';
+  } else {
+    vidas--; pintarVidas();
+    av.className = 'aviso mal';
+    av.textContent = o.v === 'entera'
+      ? 'Ese es el rectángulo ENTERO: te faltó quitar el pedazo que no está.'
+      : 'Ese es UN solo pedazo: falta sumarle el otro.';
+  }
+  pintarMarcador(); guardar();
+  setTimeout(function(){ mostrarFin(bien); }, 700);
+}
+
+/* El resultado enseña SIEMPRE los dos caminos, aunque el alumno solo
+   haya usado uno. Que dos formas distintas den el mismo número es lo
+   que convierte el truco en una idea. */
+function mostrarFin(bien){
+  var d = f(), A = areaDe(d);
+  var pz = partir(d, cortado || cortesDe(d)[0]), kA = caja(pz[0]), kB = caja(pz[1]);
+  var est = bien ? (vidas===3?3:(vidas===2?2:1)) : 0;
+  document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🧩';
+  document.getElementById('fin-tit').textContent = bien ? '¡Bien partido!' : 'Mira los dos caminos';
+  document.getElementById('fin-form').innerHTML =
+    '✂️ Partiendo en dos:<br>'+
+    kA.b+' × '+kA.a+' = '+(kA.b*kA.a)+' m²<br>'+
+    kB.b+' × '+kB.a+' = '+(kB.b*kB.a)+' m²<br>'+
+    (kA.b*kA.a)+' + '+(kB.b*kB.a)+' = <b>'+fmt(A)+' m²</b><br><br>'+
+    '🔲 Por resta:<br>'+
+    d.W+' × '+d.H+' = '+fmt(areaEntera(d))+' m² (el rectángulo entero)<br>'+
+    d.w+' × '+d.h+' = '+fmt(areaHueco(d))+' m² (el pedazo que falta)<br>'+
+    fmt(areaEntera(d))+' − '+fmt(areaHueco(d))+' = <b>'+fmt(A)+' m²</b>';
+  document.getElementById('fin-txt').textContent = d.nota;
+  var ultimo = (indice >= FIGURAS.length-1);
+  document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente figura →';
+  if(vidas <= 0){
+    document.getElementById('fin-tit').textContent = 'Se acabaron las tijeras';
+    document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde esta figura';
+  }
+  Parque3D.abrir('velo-fin');
+}
+
+function perder(){ mostrarFin(false); }
+
+function siguiente(){
+  Parque3D.cerrar('velo-fin');
+  if(vidas <= 0){ vidas = 3; pintarVidas(); }
+  else if(indice >= FIGURAS.length-1){ indice = 0; }
+  else indice++;
+  guardar();
+  armarFigura();
+  pasoCorte();
+}
+
+function pintarVidas(){
+  vidas = Math.max(0, vidas);
+  document.getElementById('vidas').textContent = '✂️'.repeat(vidas) + '·'.repeat(3-vidas);
+}
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+
+function animar(){
+  requestAnimationFrame(animar);
+  giro += 0.0032;
+  if(grupo) grupo.rotation.y = Math.sin(giro)*0.38;
+  moverRotulos();
+  rend.render(esc, cam);
+}
+
+/* Baja el motor de dibujo, levanta el telón y arranca. Si no llega,
+   el andamio enseña la pantalla de «hace falta internet la primera
+   vez»: un juego que se queda negro parece roto y no se vuelve a
+   abrir. */
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarVidas(); pintarMarcador();
+  pasoCorte();
+});
+
+window.__j3d = {
+  estado: function(){ return {indice:indice, paso:paso, area:areaDe(f()), entera:areaEntera(f()),
+                              hueco:areaHueco(f()), vidas:vidas, estrellas:estrellas,
+                              cortado: cortado ? (cortado.eje+cortado.en) : null}; },
+  figuras: FIGURAS, areaDe: areaDe, areaEntera: areaEntera, areaHueco: areaHueco,
+  cortesDe: cortesDe, corteVale: corteVale, partir: partir, caja: caja,
+  tocar: function(v){
+    var b = document.querySelector('#ops .op[data-v="'+v+'"]');
+    if(b && !b.disabled) b.click();
+  },
+  tocarCorteBueno: function(){
+    var bs = document.querySelectorAll('#ops .op');
+    for(var i=0;i<bs.length;i++){
+      var t = bs[i].textContent;
+      var cs = cortesDe(f());
+      for(var j=0;j<cs.length;j++){
+        if(t.indexOf(cs[j].sub) >= 0 && corteVale(f(), cs[j]) && !bs[i].disabled){ bs[i].click(); return true; }
+      }
+    }
+    return false;
+  }
+};
+</script>
+</body>
+</html>

@@ -193,7 +193,26 @@ function parque(cfg){
             return;
           }
         }
-        const arriba = document.elementFromPoint(cx, cy);
+        let arriba = document.elementFromPoint(cx, cy);
+        if(arriba === el || el.contains(arriba)) return;
+        /* Segundo intento, deslizando. Un mando puede estar fuera de
+           su PROPIA franja —la de mandos se desplaza por dentro cuando
+           la letra del sistema es grande—, y entonces lo que hay en su
+           sitio es el dibujo de detrás. Eso no es un botón tapado: es
+           un botón al que se llega deslizando, y la sonda ya movió esa
+           franja al mirar el control de más abajo.
+           Lo que SÍ delata esto es la avería de verdad: si el lienzo se
+           derrama encima de los mandos, sigue encima después de
+           deslizar. Por eso se comprueba otra vez y solo entonces se
+           acusa. */
+        try{ el.scrollIntoView({block:'center', inline:'center'}); }catch(e){}
+        const r3 = el.getBoundingClientRect();
+        cx = r3.left + r3.width/2; cy = r3.top + r3.height/2;
+        if(fueraDe(cx, cy)){
+          malos.push({txt:(el.textContent||el.id||'').trim().slice(0,20), tapa:'FUERA DE LA VENTANA, ni deslizando'});
+          return;
+        }
+        arriba = document.elementFromPoint(cx, cy);
         if(arriba === el || el.contains(arriba)) return;
         /* Que una ventana abierta tape lo de detrás es lo que tiene que
            hacer: es un modal, y el alumno tiene que atenderlo antes de

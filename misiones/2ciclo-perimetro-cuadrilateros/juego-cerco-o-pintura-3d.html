@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚖️ ¿Cerco o Pintura? 3D | Misión Perímetro y Área de Cuadriláteros</title>
+<meta name="description" content="Llega un encargo de verdad y hay que decidir antes de calcular: ¿perímetro o área? ¿metros o metros cuadrados?">
+<!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos.
+     Lo que se toca ahí se toca en todos los juegos a la vez. -->
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<style>
+/* ============================================================
+   Juego 3D · ¿Cerco o Pintura?
+   ------------------------------------------------------------
+   Este es el juego de la confusión clásica, y por eso la decisión
+   va ANTES de la cuenta. En el examen el alumno no se equivoca
+   multiplicando: se equivoca eligiendo qué calcular, y después
+   multiplica perfectamente lo que no era.
+
+   Los encargos vienen por PAREJAS sobre la misma cosa —el marco de
+   la ventana y el vidrio de esa misma ventana—, que es donde se ve
+   que no depende del objeto sino de lo que le van a hacer.
+
+   Y la unidad se elige aparte, porque «m» y «m²» no son un adorno
+   del final: son la prueba de qué se midió. Quien contesta «26 m²»
+   para un rollo de malla no ha entendido, aunque el número esté
+   bien.
+   ============================================================ */
+/* El color de esta misión. Todo lo demás —el andamio— está en
+   css/parque-3d.css, que se carga antes. */
+:root{
+  --acento:#2fc4a8; --acento-tinta:#0d2a26; --franja:rgba(47,196,168,.45);
+  --marca-fondo:rgba(47,196,168,.16); --marca-borde:rgba(47,196,168,.5); --velo-fondo:rgba(9,20,24,.94);
+  --lienzo-fondo:radial-gradient(circle at 50% 30%,#22384a 0%,#0e1720 78%);
+  --cerco:#f0a04b; --pintura:#5aa9e6;
+}
+.encargo{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(14,23,32,.93);
+  border:2px solid var(--franja);border-radius:12px;padding:.45rem .7rem;font-size:.88rem;line-height:1.35;text-align:center;}
+.encargo b{color:var(--acento);}
+.encargo small{display:block;font-size:.74rem;color:var(--gris);margin-top:.15rem;}
+.rot{position:absolute;transform:translate(-50%,-50%);background:rgba(14,23,32,.92);border:1.5px solid var(--acento);
+  border-radius:8px;padding:.1rem .34rem;font-size:.72rem;font-family:'Fira Code',ui-monospace,monospace;
+  white-space:nowrap;pointer-events:none;}
+.racha{position:absolute;bottom:.5rem;left:.5rem;background:rgba(14,23,32,.9);border:1.5px solid rgba(47,196,168,.4);
+  border-radius:10px;padding:.15rem .5rem;font-size:.76rem;}
+.consigna{font-size:.85rem;margin-bottom:.45rem;line-height:1.35;text-align:center;color:#dbe3f2;}
+.ops{display:flex;flex-direction:column;gap:.55rem;}
+/* Separadas de verdad: con 6 px, la respuesta equivocada queda a un
+   milímetro de la buena y el dedo decide por su cuenta. */
+.op{font-family:inherit;font-size:.92rem;font-weight:700;padding:.65rem .6rem;min-height:48px;
+  border:2px solid rgba(154,165,189,.45);border-radius:12px;background:#0e1720;color:var(--claro);cursor:pointer;
+  line-height:1.25;text-align:center;}
+.op small{display:block;font-size:.72rem;font-weight:400;color:var(--gris);margin-top:.1rem;}
+.op.cerco{border-color:var(--cerco);}
+.op.pintura{border-color:var(--pintura);}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.op:disabled{cursor:default;}
+.aviso{font-size:.82rem;text-align:center;min-height:1.15rem;margin-top:.4rem;line-height:1.35;}
+.aviso.mal{color:#ff9c9c;}
+.aviso.bien{color:#7ee2a8;}
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(47,196,168,.12);border-left:4px solid var(--acento);
+  border-radius:8px;padding:.5rem .7rem;font-size:.84rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
+.chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
+.chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
+@media(max-width:380px){.consigna{font-size:.78rem;}.op{font-size:.84rem;}}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— las opciones se aprietan para que quepan las tres sin
+   tener que deslizar la franja de mandos. Se recorta el aire, nunca
+   por debajo de los 44 px que un dedo acierta sin mirar. */
+@media (max-height:430px){
+  .ops{gap:.35rem;}
+  .op{font-size:.8rem;padding:.4rem .5rem;min-height:44px;}
+  .op small{font-size:.66rem;margin-top:0;}
+  .consigna{font-size:.78rem;margin-bottom:.3rem;}
+  .aviso{margin-top:.25rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="perimetro-cuadrilateros.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">⚖️ ¿Cerco o Pintura?<small id="subt">Encargo 1 de 8</small></div>
+  <div class="vidas" id="vidas">🛠️🛠️🛠️</div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="encargo" id="encargo"></div>
+  <div class="racha" id="racha">🔥 racha: 0</div>
+</div>
+
+<div class="mandos">
+  <div class="consigna" id="consigna">Antes de calcular: ¿qué te están pidiendo?</div>
+  <div class="ops" id="ops"></div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar.
+     Sin esto, el alumno impaciente toca «Empezar» antes de que
+     llegue el motor de dibujo, el juego revienta por dentro y se
+     queda en una pantalla muerta: ni pregunta, ni botones, ni
+     aviso. Con buena señal no se nota nunca; con la señal de un
+     pueblo, que es donde está el aula, pasa siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">⚖️</div>
+    <h2>¿Cerco o Pintura?</h2>
+    <p>Llegan encargos de verdad. Antes de sacar la cuenta hay que decidir <b>qué se mide</b> y <b>en qué unidad</b>. Después, el número.</p>
+    <div class="chapas"><span>🚧 Cerco → la orilla → metros</span><span>🎨 Pintura → la superficie → metros cuadrados</span></div>
+    <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres herramientas 🛠️. Cada decisión errada te cuesta una.</p>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="emoji-gr" id="fin-emoji">✅</div>
+    <h2 id="fin-tit">Encargo resuelto</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente encargo →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="perimetro-cuadrilateros.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script>
+var LLAVE = 'j3d_cercopintura_v1';
+
+/* Ocho encargos, y van por PAREJAS sobre la misma cosa. La ventana
+   aparece dos veces —el marco y el vidrio— porque ahí es donde se ve
+   que la respuesta no la manda el objeto sino el trabajo. */
+var ENCARGOS = [
+  {t:'Hay que poner malla alrededor del huerto de la escuela.', cosa:'El huerto', emoji:'🌱',
+   b:9, h:4, que:'perimetro',
+   nota:'Malla, alambre, cerco, cinta, marco: todo lo que RODEA se mide con el perímetro, en metros.'},
+  {t:'Hay que embaldosar el piso del aula de sexto.', cosa:'El aula', emoji:'🏫',
+   b:6, h:5, que:'area',
+   nota:'Baldosas, pintura, zacate, tela: todo lo que CUBRE se mide con el área, en metros cuadrados.'},
+  {t:'¿Cuánta cinta se necesita para el borde del cartel?', cosa:'El cartel', emoji:'📋',
+   b:3, h:2, que:'perimetro',
+   nota:'La cinta va por el borde: es la orilla del cartel. 3 + 2 + 3 + 2 = 10 m.'},
+  {t:'¿Cuánta pintura hay que comprar para la pizarra?', cosa:'La pizarra', emoji:'🖍️',
+   b:4, h:2, que:'area',
+   nota:'La pintura cubre toda la cara de la pizarra: 4 × 2 = 8 m².'},
+  {t:'¿Cuánto alambre lleva el corral cuadrado de las gallinas?', cosa:'El corral', emoji:'🐔',
+   b:7, h:7, que:'perimetro',
+   nota:'Es cuadrado: 7 × 4 = 28 m de alambre. Su área (49 m²) es lo que pisan las gallinas, no lo que se compra.'},
+  {t:'¿Cuánto zacate hay que sembrar en la cancha?', cosa:'La cancha', emoji:'⚽',
+   b:20, h:12, que:'area',
+   nota:'El zacate cubre el suelo entero: 20 × 12 = 240 m².'},
+  {t:'¿Cuánta madera lleva el MARCO de la ventana?', cosa:'La ventana', emoji:'🪟',
+   b:2, h:1, que:'perimetro',
+   nota:'El marco rodea el vidrio: 2 + 1 + 2 + 1 = 6 m de madera.'},
+  {t:'¿Cuánto mide el VIDRIO de esa misma ventana?', cosa:'La ventana', emoji:'🪟',
+   b:2, h:1, que:'area',
+   nota:'La misma ventana y otra respuesta: el vidrio es la superficie, 2 × 1 = 2 m². No manda el objeto, manda el trabajo.'}
+];
+
+function areaDe(e){ return e.b * e.h; }
+function perimetroDe(e){ return 2*(e.b + e.h); }
+function respuesta(e){ return e.que === 'area' ? areaDe(e) : perimetroDe(e); }
+function unidadDe(e){ return e.que === 'area' ? 'm²' : 'm'; }
+
+var esc, cam, rend, grupo, rots = [], borde = null, cara = null;
+var indice = 0, vidas = 3, estrellas = 0, racha = 0, mejorRacha = 0, giro = 0;
+var paso = 0, elegido = null;
+
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({indice:indice, estrellas:estrellas, mejorRacha:mejorRacha})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ indice=Math.min(d.indice|0, ENCARGOS.length-1); estrellas=d.estrellas|0; mejorRacha=d.mejorRacha|0; } }catch(e){} }
+function e(){ return ENCARGOS[indice]; }
+function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  var cont = document.getElementById('lienzo');
+  esc = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(46, cont.clientWidth/Math.max(1,cont.clientHeight), 0.1, 400);
+  rend = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  rend.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+  cont.appendChild(rend.domElement);
+
+  esc.add(new THREE.AmbientLight(0xffffff, 0.7));
+  var l1 = new THREE.DirectionalLight(0xffffff, 0.7); l1.position.set(6,14,9); esc.add(l1);
+  var l2 = new THREE.DirectionalLight(0x9fe6d8, 0.25); l2.position.set(-7,6,-8); esc.add(l2);
+  esc.add(new THREE.GridHelper(20, 20, 0x2fc4a8, 0x2b3a46));
+
+  grupo = new THREE.Group();
+  esc.add(grupo);
+  cam.position.set(0, 10, 13.5);
+  cam.lookAt(0, 0, 0);
+
+  armarCosa();
+  Parque3D.vigilarHueco(ajustar);
+  animar();
+}
+
+function ajustar(){
+  var cont = document.getElementById('lienzo');
+  if(!cont.clientHeight) return;
+  cam.aspect = cont.clientWidth/cont.clientHeight;
+  cam.updateProjectionMatrix();
+  rend.setSize(cont.clientWidth, cont.clientHeight);
+}
+
+function limpiarRotulos(){ rots.forEach(function(r){ r.el.remove(); }); rots = []; }
+function rotulo(texto, x, y, z){
+  var el = document.createElement('div');
+  el.className = 'rot';
+  el.textContent = texto;
+  document.getElementById('lienzo').appendChild(el);
+  rots.push({el:el, p:new THREE.Vector3(x,y,z)});
+}
+
+/* La cosa del encargo es siempre un rectángulo tumbado en el suelo,
+   con su BORDE y su CARA dibujados aparte: al elegir «cerco» se
+   enciende el borde, al elegir «pintura» se enciende la cara. Ver
+   encenderse lo que se eligió vale más que leer «correcto». */
+function armarCosa(){
+  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  limpiarRotulos();
+  var d = e(), k = 10.5 / Math.max(d.b, d.h);
+  var an = d.b*k, al = d.h*k;
+
+  cara = new THREE.Mesh(new THREE.BoxGeometry(an, 0.2, al),
+    new THREE.MeshPhongMaterial({color:0x64748b, shininess:20}));
+  cara.position.y = 0.1;
+  grupo.add(cara);
+
+  borde = new THREE.Group();
+  // los cuatro listones del borde: los dos largos y los dos cortos
+  [[an,-al/2,0,0],[an,al/2,0,0],[al,0,-an/2,1],[al,0,an/2,1]].forEach(function(L){
+    var pieza = new THREE.Mesh(new THREE.BoxGeometry(L[0]+0.36, 0.42, 0.36),
+      new THREE.MeshPhongMaterial({color:0x9aa5bd, shininess:30}));
+    if(L[3]){ pieza.rotation.y = Math.PI/2; pieza.position.set(L[2], 0.3, 0); }
+    else pieza.position.set(0, 0.3, L[1]);
+    borde.add(pieza);
+  });
+  grupo.add(borde);
+
+  rotulo(d.b+' m', 0, 0.7, al/2 + k*0.6);
+  rotulo(d.h+' m', an/2 + k*0.6, 0.7, 0);
+
+  document.getElementById('encargo').innerHTML =
+    d.emoji+' <b>'+d.t+'</b><small>'+d.cosa+': '+d.b+' m × '+d.h+' m</small>';
+  document.getElementById('subt').textContent = 'Encargo '+(indice+1)+' de '+ENCARGOS.length;
+  pintarPiezas(null);
+}
+
+/* Encender lo elegido y apagar lo otro. Con `null` los dos van a
+   medio brillo: todavía no se ha decidido nada. */
+function pintarPiezas(que){
+  if(!cara || !borde) return;
+  cara.material.color.setHex(que === 'area' ? 0x5aa9e6 : 0x64748b);
+  borde.children.forEach(function(pz){ pz.material.color.setHex(que === 'perimetro' ? 0xf0a04b : 0x9aa5bd); });
+}
+
+function moverRotulos(){
+  var cont = document.getElementById('lienzo');
+  var an = cont.clientWidth, al = cont.clientHeight;
+  rots.forEach(function(r){
+    var v = r.p.clone();
+    grupo.localToWorld(v);
+    v.project(cam);
+    r.el.style.left = ((v.x*0.5+0.5)*an)+'px';
+    r.el.style.top  = ((-v.y*0.5+0.5)*al)+'px';
+    r.el.style.display = (v.z < 1) ? 'block' : 'none';
+  });
+}
+
+/* ============================================================
+   Los tres pasos: qué se mide, en qué unidad, y cuánto
+   ============================================================ */
+function pintarOps(lista, consigna){
+  var cont = document.getElementById('ops');
+  cont.innerHTML = '';
+  document.getElementById('consigna').textContent = consigna;
+  lista.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'op' + (o.clase ? ' '+o.clase : '');
+    b.innerHTML = o.txt + (o.sub ? '<small>'+o.sub+'</small>' : '');
+    b.dataset.v = o.v;
+    Parque3D.alTocar(b, function(){ contestar(o, b); });
+    cont.appendChild(b);
+  });
+  /* Un respiro antes de aceptar nada: las opciones nuevas salen en
+     los MISMOS píxeles que las anteriores, y el segundo toque de un
+     dedo impaciente contestaba lo que el alumno no había visto. Se
+     ve apagado, que es la otra mitad: un botón encendido que no
+     contesta es un teléfono que el niño da por trabado. */
+  Parque3D.respiro(cont);
+}
+
+function pasoQue(){
+  paso = 0; elegido = null;
+  pintarPiezas(null);
+  pintarOps([
+    {txt:'🚧 Un CERCO', sub:'lo que rodea · el perímetro', v:'perimetro', clase:'cerco'},
+    {txt:'🎨 PINTURA o cubierta', sub:'lo que tapa la superficie · el área', v:'area', clase:'pintura'}
+  ], 'Antes de calcular: ¿qué te están pidiendo?');
+  document.getElementById('aviso').textContent = '';
+}
+
+function pasoUnidad(){
+  paso = 1;
+  pintarOps([
+    {txt:'metros (m)', sub:'se mide una longitud', v:'m'},
+    {txt:'metros cuadrados (m²)', sub:'se mide una superficie', v:'m²'}
+  ], '¿En qué unidad se contesta este encargo?');
+}
+
+function pasoNumero(){
+  paso = 2;
+  var d = e(), buena = respuesta(d), otra = (d.que === 'area') ? perimetroDe(d) : areaDe(d);
+  /* Las respuestas equivocadas son el error DE VERDAD: la otra
+     magnitud, y la suma de las dos medidas sin duplicar (el fallo de
+     «sumo base y altura y ya»). Un número al azar se descarta sin
+     pensar y no enseña nada. */
+  var tercera = d.b + d.h;
+  if(tercera === buena || tercera === otra) tercera = buena + d.b;
+  var lista = [
+    {txt: fmt(buena)+' '+unidadDe(d), v:'buena'},
+    {txt: fmt(otra)+' '+unidadDe(d),  v:'otra'},
+    {txt: fmt(tercera)+' '+unidadDe(d), v:'suelta'}
+  ];
+  // se baraja con el índice del encargo: la buena no cae siempre igual
+  var orden = [[0,1,2],[1,2,0],[2,0,1],[0,2,1],[1,0,2],[2,1,0]][indice % 6];
+  pintarOps(orden.map(function(i){ return lista[i]; }),
+    'Ahora sí: ¿cuánto da?');
+}
+
+function contestar(o, bt){
+  var d = e();
+  var cont = document.getElementById('ops');
+  var todos = cont.querySelectorAll('.op');
+  var av = document.getElementById('aviso');
+
+  if(paso === 0){
+    var bien = (o.v === d.que);
+    pintarPiezas(o.v);
+    todos.forEach(function(b){ b.disabled = true; b.classList.add(b.dataset.v === d.que ? 'buena' : 'mala'); });
+    if(bien){
+      av.className = 'aviso bien';
+      av.textContent = d.que === 'area' ? '🎨 Sí: hay que cubrir la superficie.' : '🚧 Sí: hay que rodear la orilla.';
+    } else {
+      vidas--; pintarVidas(); racha = 0; pintarRacha();
+      av.className = 'aviso mal';
+      av.innerHTML = d.que === 'area'
+        ? 'No: eso <b>cubre</b>, no rodea. Lo que se pide es el <b>área</b>.'
+        : 'No: eso <b>rodea</b>, no cubre. Lo que se pide es el <b>perímetro</b>.';
+    }
+    if(vidas <= 0) return setTimeout(perder, 800);
+    setTimeout(pasoUnidad, 900);
+    return;
+  }
+
+  if(paso === 1){
+    var u = unidadDe(d), okU = (o.v === u);
+    todos.forEach(function(b){ b.disabled = true; b.classList.add(b.dataset.v === u ? 'buena' : 'mala'); });
+    if(okU){ av.className = 'aviso bien'; av.textContent = '📏 Sí: se contesta en '+u+'.'; }
+    else {
+      vidas--; pintarVidas(); racha = 0; pintarRacha();
+      av.className = 'aviso mal';
+      av.innerHTML = u === 'm²'
+        ? 'La superficie se cuenta en cuadraditos: va en <b>m²</b>.'
+        : 'Una orilla es un largo: va en <b>m</b>, sin el cuadrito.';
+    }
+    if(vidas <= 0) return setTimeout(perder, 800);
+    setTimeout(pasoNumero, 900);
+    return;
+  }
+
+  var esBuena = (o.v === 'buena');
+  todos.forEach(function(b){ b.disabled = true; b.classList.add(b.dataset.v === 'buena' ? 'buena' : 'mala'); });
+  if(esBuena){
+    estrellas += 4; racha++; if(racha > mejorRacha) mejorRacha = racha;
+    av.className = 'aviso bien'; av.textContent = '✅ ¡Ese es!';
+  } else {
+    vidas--; pintarVidas(); racha = 0;
+    av.className = 'aviso mal';
+    av.textContent = o.v === 'otra' ? 'Ese número es el de la OTRA medida.' : 'Ese número no sale de ninguna de las dos.';
+  }
+  pintarRacha(); pintarMarcador(); guardar();
+  setTimeout(function(){ mostrarFin(esBuena); }, 700);
+}
+
+function mostrarFin(bien){
+  var d = e(), A = areaDe(d), P = perimetroDe(d);
+  document.getElementById('fin-emoji').textContent = bien ? '✅' : (d.que === 'area' ? '🎨' : '🚧');
+  document.getElementById('fin-tit').textContent = bien ? 'Encargo resuelto' : 'Casi: mira la diferencia';
+  document.getElementById('fin-form').innerHTML =
+    '🚧 Perímetro = 2 × ('+d.b+' + '+d.h+') = <b>'+fmt(P)+' m</b><br>'+
+    '🎨 Área = '+d.b+' × '+d.h+' = <b>'+fmt(A)+' m²</b><br>'+
+    '<span style="color:#9aa5bd;">Este encargo pedía: '+(d.que==='area'?'el ÁREA':'el PERÍMETRO')+
+    ' → '+fmt(respuesta(d))+' '+unidadDe(d)+'</span>';
+  document.getElementById('fin-txt').textContent = d.nota;
+  var ultimo = (indice >= ENCARGOS.length-1);
+  document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente encargo →';
+  if(vidas <= 0){
+    document.getElementById('fin-tit').textContent = 'Se acabaron las herramientas';
+    document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este encargo';
+  }
+  Parque3D.abrir('velo-fin');
+}
+
+function perder(){
+  document.getElementById('fin-emoji').textContent = '🛠️';
+  document.getElementById('fin-tit').textContent = 'Se acabaron las herramientas';
+  var d = e();
+  document.getElementById('fin-form').innerHTML =
+    '🚧 Perímetro = 2 × ('+d.b+' + '+d.h+') = <b>'+fmt(perimetroDe(d))+' m</b><br>'+
+    '🎨 Área = '+d.b+' × '+d.h+' = <b>'+fmt(areaDe(d))+' m²</b>';
+  document.getElementById('fin-txt').textContent = d.nota;
+  document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este encargo';
+  Parque3D.abrir('velo-fin');
+}
+
+function siguiente(){
+  Parque3D.cerrar('velo-fin');
+  if(vidas <= 0){ vidas = 3; pintarVidas(); }
+  else if(indice >= ENCARGOS.length-1){ indice = 0; }
+  else indice++;
+  guardar();
+  armarCosa();
+  pasoQue();
+}
+
+function pintarVidas(){
+  vidas = Math.max(0, vidas);
+  document.getElementById('vidas').textContent = '🛠️'.repeat(vidas) + '·'.repeat(3-vidas);
+}
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function pintarRacha(){ document.getElementById('racha').textContent = '🔥 racha: '+racha+(mejorRacha ? ' · mejor: '+mejorRacha : ''); }
+
+function animar(){
+  requestAnimationFrame(animar);
+  giro += 0.0035;
+  if(grupo) grupo.rotation.y = Math.sin(giro)*0.4;
+  moverRotulos();
+  rend.render(esc, cam);
+}
+
+/* Baja el motor de dibujo, levanta el telón y arranca. Si no llega,
+   el andamio enseña la pantalla de «hace falta internet la primera
+   vez»: un juego que se queda negro parece roto y no se vuelve a
+   abrir. */
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarVidas(); pintarMarcador(); pintarRacha();
+  pasoQue();
+});
+
+window.__j3d = {
+  estado: function(){ return {indice:indice, paso:paso, que:e().que, unidad:unidadDe(e()),
+                              respuesta:respuesta(e()), area:areaDe(e()), perimetro:perimetroDe(e()),
+                              vidas:vidas, estrellas:estrellas, racha:racha}; },
+  encargos: ENCARGOS, areaDe: areaDe, perimetroDe: perimetroDe, respuesta: respuesta, unidadDe: unidadDe,
+  tocar: function(v){
+    var b = document.querySelector('#ops .op[data-v="'+v+'"]');
+    if(b && !b.disabled) b.click();
+  }
+};
+</script>
+</body>
+</html>

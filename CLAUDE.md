@@ -1292,8 +1292,9 @@ internet y sin ensuciar datos reales.
 
 ## Normativa: los juegos 3D viven aparte, y no tocan la misión
 
-Hay **doce** juegos en tres dimensiones, seis por misión, cada uno en su
-propio archivo HTML al lado de su misión.
+Hay **dieciocho** juegos en tres dimensiones —hoy: seis por misión y tres
+misiones con parque, y siguen entrando—, cada uno en su propio archivo
+HTML al lado de su misión.
 
 **Ya NO son autocontenidos, y eso fue a propósito.** Lo eran, y salió
 caro: el andamio —el cargador de Three.js, el telón, los velos,
@@ -1305,7 +1306,7 @@ en doce. Y una de las doce copias se quedó sin el
 `width/height:100%!important` del lienzo sin que nadie lo notara. Con
 veinte misiones más, eso no se sostiene.
 
-El andamio vive en **dos archivos**, y los doce juegos los cargan:
+El andamio vive en **dos archivos**, y todos los juegos los cargan:
 
 ```html
 <link rel="stylesheet" href="../../css/parque-3d.css">
@@ -1319,8 +1320,8 @@ El andamio vive en **dos archivos**, y los doce juegos los cargan:
 | el HTML del juego | su color de misión (los tokens `--acento…`), sus propias reglas, su lógica y sus cuentas |
 
 Los dos archivos van en **`STATIC_ASSETS` de `sw.js`**: sin ellos los
-doce juegos dejan de funcionar sin internet, y esa promesa está escrita
-en su propia pantalla.
+juegos dejan de funcionar sin internet, y esa promesa está escrita en su
+propia pantalla.
 
 Dos cosas siguen ESCRITAS en el HTML de cada juego y no se mueven: el
 telón `#velo-carga` y la pantalla `#velo-red` de «hace falta internet la
@@ -1351,6 +1352,36 @@ En **Sólidos Geométricos** (`misiones/2ciclo-solidos-geometricos/`):
 | `juego-caza-solidos-3d.html` | reconocerlos fuera del libro |
 | `juego-relampago-solidos-3d.html` | clasificar rápido, contrarreloj |
 
+En **Perímetro y Área de Cuadriláteros**
+(`misiones/2ciclo-perimetro-cuadrilateros/`), que hasta entonces no tenía
+ni un juego que tocar:
+
+| archivo | qué enseña |
+|---|---|
+| `juego-cercador-3d.html` | perímetro: la orilla, en metros |
+| `juego-pintor-canchas-3d.html` | área: la superficie, en metros cuadrados |
+| `juego-cerco-o-pintura-3d.html` | decidir QUÉ se mide y en qué unidad |
+| `juego-terreno-grande-3d.html` | mismo perímetro, distinta área |
+| `juego-cuarto-en-l-3d.html` | figuras compuestas: descomponer y sumar |
+| `juego-fabrica-cuadrilateros-3d.html` | las cuatro fórmulas, en vivo |
+
+El temario sale del **DCNB, Quinto Grado, Bloque 3 (Medidas)**, página
+395 de `dcneb-basica-ii-ciclo.pdf`: concepto de área, fórmulas del
+cuadrado, rectángulo, rombo, romboide y trapecio, «exploran figuras
+equivalentes en cuanto a su área (composición y descomposición de
+figuras)» y —con esas palabras— «construyen diversos cuadrados y
+rectángulos, conociendo el perímetro».
+
+**Los dos que más valen son el tercero y el cuarto.** El tercero es la
+confusión clásica —perímetro o área— y por eso la decisión va ANTES de
+la cuenta: en el examen el alumno no se equivoca multiplicando, se
+equivoca eligiendo qué calcular y después multiplica perfectamente lo
+que no era. Y el cuarto **en papel no se puede hacer**: con 24 m de
+malla se pueden cercar un 11 × 1, un 8 × 4 o un 6 × 6, y adentro caben
+11, 32 o 36 m²; en el cuaderno son tres cuentas sueltas que nadie
+compara, y aquí es el mismo cerco cambiando de forma con los mismos
+postes mientras el suelo de adentro crece.
+
 **Los dos juegos de sólidos que no se pueden hacer en papel son los que
 más valen**, y por eso están: doblar un patrón necesita cartulina,
 tijeras y media hora —con 43 alumnos eso se hace una vez al año, si se
@@ -1363,8 +1394,8 @@ uno carga Three.js y su propio bucle de dibujo, y meterlos dentro de la
 misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
 
 **Diez reglas, y ninguna es de adorno.** Las que llevan 🏗️ **ya no se
-copian**: viven en el andamio y las heredan los doce juegos y los que
-vengan detrás. Tocarlas ahí las toca en todos a la vez, que es
+copian**: viven en el andamio y las heredan todos los juegos, los de hoy
+y los que vengan detrás. Tocarlas ahí las toca en todos a la vez, que es
 exactamente para lo que se sacó.
 
 1. **El π es 3.14**, el del libro de sexto, igual que en el resto de la
@@ -1487,20 +1518,21 @@ descarta sin pensar y no enseña nada.
 **Antes de publicar un cambio de los juegos 3D:**
 
 ```
-node _dev/servidor-estatico.js           (en otra terminal)
-node _dev/verifica-juegos-3d.js          → los seis del volumen
-node _dev/verifica-juegos-3d-solidos.js  → los seis de los sólidos
+node _dev/servidor-estatico.js             (en otra terminal)
+node _dev/verifica-juegos-3d.js            → los seis del volumen
+node _dev/verifica-juegos-3d-solidos.js    → los seis de los sólidos
+node _dev/verifica-juegos-3d-perimetro.js  → los seis de perímetro y área
 ```
 
-Las dos sondas comparten el Three.js de mentira
+Las sondas comparten el Three.js de mentira
 (`_dev/three-de-mentira.js`): si un juego nuevo usa una pieza que ese
 archivo no tiene, se le añade **ahí**, y no se copia el archivo.
 
 Y comparten también **los guardianes** (`_dev/lib-sonda-3d.js`): el
 andamio leído del archivo, que lo que se ve se pueda tocar, la pantalla
 corta, la señal mala, el toque con el ratón, el CDN colgado y el sin
-internet. Estaban copiados en los dos archivos de mil líneas, y ahí se
-vio lo que cuesta: la lista de piezas de Three.js permitidas se había
+internet. Estaban copiados en dos archivos de mil líneas, y ahí se vio
+lo que cuesta: la lista de piezas de Three.js permitidas se había
 separado —una tenía `LatheGeometry` y la otra no—, así que un juego del
 volumen que la usara habría fallado y el mismo juego en sólidos, no. Con
 esto, la sonda de un parque nuevo son veinte líneas:
@@ -1517,7 +1549,7 @@ await G.guardianes(nav);     // los seis de siempre
 M.resumen();
 ```
 
-Vigilan las cuentas una por una. En el volumen: los volúmenes, las
+Cada sonda vigila las cuentas de sus juegos, una por una. En el volumen: los volúmenes, las
 áreas, los litros de los seis tanques y sesenta conversiones; que el
 laberinto **siempre tenga salida** y las puertas estén en el camino; que
 los cuatro pedidos de la fábrica **se puedan clavar** dentro del 1 % con
@@ -1530,12 +1562,33 @@ como pirámide** ni como poliedro, y **el prisma triangular no pasa por
 pirámide cuadrangular** aunque los dos tengan 5 caras: lo que los separa
 son los vértices—.
 
-Las dos comprueban además **que lo que se ve se pueda tocar**: recorren
+En perímetro y área: que el perímetro sea la suma de los lados y el área
+cuadre con la figura —las dos se calculan aparte en la sonda, a partir de
+las esquinas del terreno, así que coincidir significa que los dos
+hicieron bien la misma cuenta—; que el DISTRACTOR sea el error de verdad
+y se llame por su nombre (comprar el área de malla, o el perímetro de
+baldosas); que haya un piso donde **el perímetro es MAYOR que el área**,
+porque sin ese caso el alumno aprende una regla falsa que le funciona
+hasta el examen; que en el romboide y el trapecio **la altura no sea
+ninguno de sus lados**, que es la trampa del tema; que en «el terreno más
+grande» la malla NO cambie al probar formas y gane de verdad el cuadrado
+—o, cuando el cuadrado exacto no cabe con lados enteros, el que más se le
+parece—; que las dos formas de partir el cuarto en L den lo mismo y la
+tercera de verdad NO valga; y que los seis pedidos de la fábrica **se
+puedan cumplir** con los mandos que hay.
+
+Todas comprueban además **que lo que se ve se pueda tocar**: recorren
 el juego con medidas de teléfono (393×873 y 360×640) y en cada momento
 preguntan, control por control, si el elemento que recibiría el toque es
 ese control o hay algo encima —saltándose los velos abiertos, que tapan
 a propósito—. Es el guardián de la avería del lienzo, y delata al
-culpable por su nombre: `{"txt":"Cono","tapa":"CANVAS"}`. Comprueban
+culpable por su nombre: `{"txt":"Cono","tapa":"CANVAS"}`. Y hay un matiz
+que costó una falsa alarma: un mando que se salió de SU PROPIA franja —la
+de mandos se desplaza por dentro con la letra del sistema grande— no es
+un botón tapado, sino un botón al que se llega deslizando. Por eso el
+guardián desliza y vuelve a preguntar antes de acusar; la avería de
+verdad no se escapa, porque un lienzo derramado sigue encima después de
+deslizar. Comprueban
 también **la señal mala** —que el telón tape mientras baja el motor, que
 no quede ni un botón alcanzable por debajo y que el juego llegue
 entero— y **tocan los botones con el ratón, no llamando a la función**:
