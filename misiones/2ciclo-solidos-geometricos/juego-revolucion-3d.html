@@ -23,14 +23,23 @@
   --azul:#4a90d9; --verde:#27ae60; --rojo:#e05252; --claro:#eef2f9; --gris:#9aa5bd;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+button,input,a{touch-action:manipulation;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:none;user-select:none;}
+body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;touch-action:manipulation;user-select:none;}
 .top{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--acero-2);border-bottom:2px solid rgba(139,111,224,.45);flex-shrink:0;}
 .volver{color:var(--morado);text-decoration:none;font-size:1.25rem;padding:.1rem .45rem;border:1.5px solid rgba(139,111,224,.5);border-radius:9px;line-height:1.35;}
 .titulo{font-size:.92rem;font-weight:700;flex:1;line-height:1.15;}
 .titulo small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
 .marcador{font-size:.8rem;background:rgba(139,111,224,.2);border:1.5px solid rgba(139,111,224,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
-#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 28%,#2c3356 0%,#121624 76%);}
+/* touch-action va SOLO en el lienzo, nunca en el body.
+   «none» le dice al navegador que no haga NADA por su cuenta con el
+   dedo: eso hace falta encima del dibujo, para poder arrastrar y girar
+   sin que la página se deslice. Puesto en el body se lo lleva todo por
+   delante —en una tableta con Android los botones dejaban de responder
+   al toque, y el alumno se quedaba mirando una pregunta que no podía
+   contestar—. Abajo, «manipulation»: quita el zoom del doble toque y
+   deja el toque normal. */
+#lienzo{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 28%,#2c3356 0%,#121624 76%);touch-action:none;}
 #lienzo canvas{display:block;width:100%;height:100%;}
 .chapa{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.4rem .7rem;text-align:center;font-size:.85rem;line-height:1.35;}
 .chapa b{color:var(--morado);}
@@ -47,7 +56,12 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .bt-v{background:var(--verde);color:#fff;}
 .bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
 .bt:active{transform:scale(.97);}
-.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+/* Los velos van FIJOS, no absolutos. En un teléfono la barra de
+   direcciones aparece y desaparece, y con `absolute` el panel se ancla
+   al documento en vez de a lo que se ve: puede quedar medio fuera de la
+   pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
+   `fixed` lo pega siempre a lo que el alumno tiene delante. */
+.velo{position:fixed;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
 .velo.ver{display:flex;}
 .panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 .panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}
@@ -136,6 +150,24 @@ var CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 /* El telón de «cargando» se levanta cuando el motor ya está —o
    cuando se sabe que no va a llegar—, nunca antes: lo que hay
    detrás no funciona sin él. */
+/* Los botones de responder se atan al toque Y al clic, y el primero
+   que llegue se queda con la jugada. Es cinturón y tirantes: un
+   navegador de tableta que no sintetice el clic dejaría al alumno
+   con la pregunta en pantalla y sin poder contestarla, que es
+   justo lo que pasó. Dos disparos por el mismo dedo no hacen daño:
+   el segundo se descarta aquí, y además las funciones de responder
+   ya tienen su propio pestillo. */
+function alTocar(el, accion){
+  var usado = false;
+  function una(e){
+    if(usado) return;
+    usado = true;
+    setTimeout(function(){ usado = false; }, 400);
+    accion(e);
+  }
+  el.addEventListener('pointerup', una);
+  el.addEventListener('click', una);
+}
 function quitarCarga(){
   var v = document.getElementById('velo-carga');
   if(v) v.classList.remove('ver');
@@ -323,7 +355,7 @@ function preguntar(){
   f.ops.forEach(function(txt,i){
     var b = document.createElement('button');
     b.className = 'op'; b.textContent = txt;
-    b.onclick = function(){ responder(i); };
+    alTocar(b, function(){ responder(i); });
     cont.appendChild(b);
   });
 }

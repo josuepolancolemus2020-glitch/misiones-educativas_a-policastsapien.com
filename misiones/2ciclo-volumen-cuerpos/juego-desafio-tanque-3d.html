@@ -55,7 +55,12 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .aviso{font-size:.82rem;text-align:center;min-height:1.15rem;margin-top:.35rem;line-height:1.35;}
 .aviso.mal{color:#ff9c9c;}
 .aviso.bien{color:#7ee2a8;}
-.velo{position:absolute;inset:0;background:rgba(10,14,26,.93);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+/* Los velos van FIJOS, no absolutos. En un teléfono la barra de
+   direcciones aparece y desaparece, y con `absolute` el panel se ancla
+   al documento en vez de a lo que se ve: puede quedar medio fuera de la
+   pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
+   `fixed` lo pega siempre a lo que el alumno tiene delante. */
+.velo{position:fixed;inset:0;background:rgba(10,14,26,.93);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
 .velo.ver{display:flex;}
 .panel{background:var(--acero-2);border:2px solid var(--dorado);border-radius:18px;padding:1.2rem 1.1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 .panel h2{font-size:1.15rem;margin-bottom:.5rem;color:var(--dorado);}

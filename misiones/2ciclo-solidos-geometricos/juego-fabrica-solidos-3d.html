@@ -73,7 +73,12 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .bt-v{background:var(--verde);color:#fff;}
 .bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
 .bt:active{transform:scale(.97);}
-.velo{position:absolute;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
+/* Los velos van FIJOS, no absolutos. En un teléfono la barra de
+   direcciones aparece y desaparece, y con `absolute` el panel se ancla
+   al documento en vez de a lo que se ve: puede quedar medio fuera de la
+   pantalla justo cuando hay que leerlo —el resultado de la respuesta—.
+   `fixed` lo pega siempre a lo que el alumno tiene delante. */
+.velo{position:fixed;inset:0;background:rgba(10,13,24,.94);display:none;align-items:center;justify-content:center;padding:1rem;z-index:20;overflow-y:auto;}
 .velo.ver{display:flex;}
 .panel{background:var(--acero-2);border:2px solid var(--morado);border-radius:18px;padding:1.1rem 1rem;max-width:430px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 .panel h2{font-size:1.1rem;margin-bottom:.5rem;color:var(--morado);}

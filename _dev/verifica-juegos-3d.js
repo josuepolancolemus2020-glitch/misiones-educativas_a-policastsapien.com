@@ -114,6 +114,19 @@ async function revisarFuente(){
     ok(/href="volumen-cuerpos\.html#s-juegos3d"/.test(src), nom+': la vuelta cae en el Parque de Juegos 3D');
     ok(/<html lang="es">/.test(src), nom+': declara español');
     ok(/name="viewport"/.test(src), nom+': se adapta al teléfono');
+    /* `touch-action: none` en el BODY le quita al navegador el toque
+       por defecto en toda la página. Encima del dibujo hace falta —para
+       arrastrar y girar sin que la página se deslice—, pero puesto en el
+       body se lleva por delante los botones: en una tableta con Android
+       el alumno se quedaba con la pregunta en pantalla y sin poder
+       contestarla. Va en `#lienzo`, y en ningún otro sitio. */
+    const cuerpo = (src.match(/\nbody\{[^}]*\}/) || [''])[0];
+    ok(!/touch-action:\s*none/.test(cuerpo),
+       nom+': el body no le quita el toque a toda la página', cuerpo.slice(0,120));
+    const lienzoCss = (src.match(/#lienzo\{[^}]*\}/) || [''])[0];
+    const arrastra = /pointermove/.test(src);
+    ok(!arrastra || /touch-action:\s*none/.test(lienzoCss),
+       nom+': y si se gira con el dedo, el lienzo sí lo pide');
     const malos = [...src.matchAll(/THREE\.([A-Za-z0-9_]+)/g)].map(m=>m[1]).filter(n=>!R128.has(n));
     ok(malos.length===0, nom+': solo usa piezas que existen en r128', [...new Set(malos)]);
     // el π del libro de 6.º: Math.PI en una fórmula de volumen descuadra al alumno

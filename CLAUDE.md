@@ -1369,9 +1369,21 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
    buscar el Parque entre dieciocho pestañas —que en un teléfono se
    deslizan— es donde se abandona. Lo hace `abrirSeccionDelEnlace()` en
    cada misión, que lee `location.hash`.
-7. **Se juega con el dedo.** Nada de `draggable` ni de teclas como único
-   mando: cruceta en pantalla en los que hace falta, y en el constructor
-   el mismo dedo gira la vista (si arrastra) o pone un cubito (si no).
+7. **Se juega con el dedo, y eso trae tres reglas de CSS que no son
+   de adorno.** Nada de `draggable` ni de teclas como único mando:
+   cruceta en pantalla en los que hace falta, y en el constructor el
+   mismo dedo gira la vista (si arrastra) o pone un cubito (si no). Y:
+   - **`touch-action: none` va en `#lienzo`, NUNCA en el `body`.** Ahí
+     hace falta, para arrastrar y girar sin que la página se deslice;
+     en el body se lleva por delante el toque de toda la página.
+   - **Los botones de responder se atan al toque Y al clic**
+     (`alTocar`), y el primero que llegue se queda con la jugada. Un
+     navegador de tableta que no sintetice el clic dejaría al alumno
+     con la pregunta en pantalla y sin poder contestarla.
+   - **Los velos van `position: fixed`, no `absolute`.** En un teléfono
+     la barra de direcciones aparece y desaparece; con `absolute` el
+     panel del resultado se ancla al documento y puede quedar medio
+     fuera justo cuando hay que leerlo.
 
 Y una que es de contenido: **las respuestas equivocadas que se le
 ofrecen al alumno son el error de verdad**, no números al azar. Al cubo
