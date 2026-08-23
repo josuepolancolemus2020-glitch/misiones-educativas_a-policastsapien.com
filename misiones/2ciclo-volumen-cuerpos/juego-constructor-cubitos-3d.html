@@ -96,7 +96,7 @@ body{
 .medida{background:rgba(74,144,217,.18);border:1.5px solid var(--azul);border-radius:10px;padding:.35rem .6rem;font-size:.8rem;}
 .medida b{display:block;font-size:1.2rem;color:var(--azul);}
 .casilla{width:130px;padding:.55rem;font-size:1.3rem;text-align:center;font-family:inherit;font-weight:700;border:2px solid var(--azul);border-radius:12px;background:#141a2c;color:var(--claro);margin-bottom:.6rem;}
-.bt{font-family:inherit;font-size:.92rem;font-weight:700;padding:.6rem 1.2rem;border:none;border-radius:14px;cursor:pointer;margin:.2rem;}
+.bt{font-family:inherit;font-size:.92rem;font-weight:700;padding:.6rem 1.2rem;border:none;border-radius:14px;cursor:pointer;margin:.2rem;min-height:44px;}
 .bt-p{background:var(--dorado);color:#1a1a2e;}
 .bt-v{background:var(--verde);color:#fff;}
 .bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
@@ -109,6 +109,20 @@ body{
 .pasos{list-style:none;text-align:left;font-size:.82rem;color:#c6d0e4;line-height:1.6;margin:.4rem 0 .7rem;}
 .pasos li{margin-bottom:.15rem;}
 @media(max-width:380px){.titulo{font-size:.85rem;}.herr{font-size:.66rem;}}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
+   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
+   borde es un botón que no existe. Se recorta el aire y el adorno; el
+   tamaño del texto que hay que leer se toca lo justo. */
+@media (max-height:430px){
+  .panel{padding:.65rem .8rem;border-radius:14px;}
+  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
+  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
+  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
+  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
+  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
+}
 </style>
 </head>
 <body>

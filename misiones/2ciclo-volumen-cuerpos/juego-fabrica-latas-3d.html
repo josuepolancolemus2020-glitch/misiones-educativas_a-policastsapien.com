@@ -61,20 +61,28 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 /* Los mandos van posicionados y por encima del lienzo. Es el tercer
    cinturón contra lo mismo: aunque algo se saliera del dibujo, los
    botones siguen siendo lo primero que toca el dedo. */
-.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;position:relative;z-index:2;}
-.fila{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;}
+/* Si los mandos crecen más que la ventana —acostado y con la letra
+   agrandada pasa—, se desplazan por dentro. Antes se salían por
+   debajo y, como la página no desliza, el botón quedaba fuera del
+   mundo. */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);padding:.5rem .7rem .6rem;flex-shrink:0;position:relative;z-index:2;max-height:72vh;overflow-y:auto;}
+.fila{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;flex-wrap:wrap;}
 .fila label{font-size:.78rem;width:4.4rem;flex-shrink:0;}
 .fila label b{display:block;color:var(--azul);font-size:.95rem;font-family:'Fira Code',ui-monospace,monospace;}
-input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:26px;background:transparent;}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:44px;background:transparent;}
 input[type=range]::-webkit-slider-runnable-track{height:8px;background:#141a2c;border-radius:5px;border:1px solid rgba(154,165,189,.3);}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--dorado);border:2px solid #fff3cf;cursor:pointer;}
 input[type=range]::-moz-range-track{height:8px;background:#141a2c;border-radius:5px;}
 input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--dorado);border:2px solid #fff3cf;cursor:pointer;}
-.finos{display:flex;gap:.25rem;}
+.finos{display:flex;gap:.25rem;flex-wrap:wrap;}
 .fino{width:44px;height:40px;border-radius:8px;border:1.5px solid rgba(154,165,189,.4);background:#2c3556;color:var(--claro);font-size:1rem;font-family:inherit;cursor:pointer;line-height:1;}
 .fino:active{background:var(--azul);}
-.botones{display:flex;gap:.4rem;margin-top:.4rem;}
-.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem .8rem;border:none;border-radius:13px;cursor:pointer;flex:1;}
+/* Los botones BAJAN de línea si no caben. Con la letra del teléfono
+   agrandada —opción de accesibilidad, no rareza— la fila de tres se
+   salía por la DERECHA y «Siguiente →» quedaba fuera de la pantalla,
+   sin forma de recuperarlo: el alumno se quedaba encallado. */
+.botones{display:flex;gap:.4rem;margin-top:.4rem;flex-wrap:wrap;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem .8rem;border:none;border-radius:13px;cursor:pointer;flex:1;min-height:44px;}
 .bt-p{background:var(--dorado);color:#1a1a2e;}
 .bt-v{background:var(--verde);color:#fff;}
 .bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
@@ -100,6 +108,20 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .estrellas{font-size:2rem;letter-spacing:.15rem;margin-bottom:.4rem;}
 .emoji-gr{font-size:3rem;margin-bottom:.3rem;}
 @media(max-width:380px){.fila label{width:4rem;font-size:.72rem;}.medidor .cuenta{font-size:.74rem;}}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
+   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
+   borde es un botón que no existe. Se recorta el aire y el adorno; el
+   tamaño del texto que hay que leer se toca lo justo. */
+@media (max-height:430px){
+  .panel{padding:.65rem .8rem;border-radius:14px;}
+  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
+  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
+  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
+  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
+  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
+}
 </style>
 </head>
 <body>

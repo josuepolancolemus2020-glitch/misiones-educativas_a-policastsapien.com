@@ -1384,7 +1384,20 @@ misión le pondría ese peso encima al alumno que solo va a hacer el quiz.
      la barra de direcciones aparece y desaparece; con `absolute` el
      panel del resultado se ancla al documento y puede quedar medio
      fuera justo cuando hay que leerlo.
-8. ⚠️ **El lienzo 3D no puede salirse de su hueco, y esto es lo que más
+8. **La pantalla corta también es una pantalla.** El teléfono acostado
+   y —sobre todo— **la letra del sistema agrandada**, que es una opción
+   de accesibilidad y la usa quien no ve bien, dejaban botones fuera
+   del mundo: los paneles se cortaban por arriba sin poder recuperarse
+   (centrar con `align-items:center` y desplazar con `overflow-y:auto`
+   es una trampa: el desplazamiento no llega a negativos, y por eso el
+   panel se centra con `margin:auto`), y las filas de botones se salían
+   por la DERECHA, donde no hay desplazamiento que valga. Las reglas:
+   toda fila de botones **baja de línea** (`flex-wrap`), los mandos se
+   desplazan por dentro antes que salirse (`max-height:72vh`), y por
+   debajo de 430 px de alto el panel **se aprieta para que quepa** —se
+   recorta el aire, no el texto que hay que leer—. Y ningún blanco de
+   toque baja de **44 px**: es lo que un dedo acierta sin mirar.
+9. ⚠️ **El lienzo 3D no puede salirse de su hueco, y esto es lo que más
    caro costó.** Three.js escribe el tamaño del lienzo en el `style` EN
    LÍNEA del `<canvas>`, y ese style **gana sobre el CSS**. El reparto
    de la pantalla cambia solo —al aparecer las opciones, la franja de

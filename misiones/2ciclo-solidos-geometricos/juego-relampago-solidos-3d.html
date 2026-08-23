@@ -57,8 +57,12 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 /* Los mandos van posicionados y por encima del lienzo. Es el tercer
    cinturón contra lo mismo: aunque algo se saliera del dibujo, los
    botones siguen siendo lo primero que toca el dedo. */
-.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .65rem;flex-shrink:0;position:relative;z-index:2;}
-.ops{display:flex;gap:.4rem;}
+/* Si los mandos crecen más que la ventana —acostado y con la letra
+   agrandada pasa—, se desplazan por dentro. Antes se salían por
+   debajo y, como la página no desliza, el botón quedaba fuera del
+   mundo. */
+.mandos{background:var(--acero-2);border-top:2px solid rgba(139,111,224,.45);padding:.5rem .7rem .65rem;flex-shrink:0;position:relative;z-index:2;max-height:72vh;overflow-y:auto;}
+.ops{display:flex;gap:.4rem;flex-wrap:wrap;}
 .ops.col{flex-direction:column;}
 .op{flex:1;font-family:inherit;font-size:1rem;font-weight:800;padding:.75rem .4rem;border:2px solid rgba(154,165,189,.45);border-radius:14px;background:#141a2c;color:var(--claro);cursor:pointer;line-height:1.25;}
 .op small{display:block;font-size:.64rem;font-weight:400;color:var(--gris);}
@@ -85,11 +89,25 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .nota{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.55rem .7rem;font-size:.85rem;margin:.6rem 0;text-align:left;line-height:1.6;}
 .gordo{font-family:'Fira Code',ui-monospace,monospace;font-size:2.6rem;font-weight:700;color:var(--dorado);line-height:1.1;}
 .emoji-gr{font-size:3rem;margin-bottom:.3rem;}
-.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;min-height:44px;}
 .bt-p{background:var(--morado);color:#141826;}
 .bt-v{background:var(--verde);color:#fff;}
 .bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
 @media(max-width:380px){.op{font-size:.88rem;}.preg{font-size:.85rem;}}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
+   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
+   borde es un botón que no existe. Se recorta el aire y el adorno; el
+   tamaño del texto que hay que leer se toca lo justo. */
+@media (max-height:430px){
+  .panel{padding:.65rem .8rem;border-radius:14px;}
+  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
+  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
+  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
+  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
+  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
+}
 </style>
 </head>
 <body>

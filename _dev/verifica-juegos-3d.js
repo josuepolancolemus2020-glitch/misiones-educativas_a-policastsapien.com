@@ -616,10 +616,19 @@ async function nadaTapado(p, cuando){
       if(cs.visibility === 'hidden' || cs.display === 'none' || cs.pointerEvents === 'none') return;
       if(el.disabled) return;
       // fuera de la ventana: eso se mira aparte
-      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      let cx = r.left + r.width/2, cy = r.top + r.height/2;
+      /* Que un control quede debajo del borde en una ventana corta no
+         es un fallo SI el alumno puede llegar a él deslizando. Se
+         intenta, y si aun así no aparece, entonces sí es un botón que
+         no existe. */
       if(cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight){
-        malos.push({txt:(el.textContent||el.id||'').trim().slice(0,20), tapa:'FUERA DE LA VENTANA'});
-        return;
+        try{ el.scrollIntoView({block:'center', inline:'center'}); }catch(e){}
+        const r2 = el.getBoundingClientRect();
+        cx = r2.left + r2.width/2; cy = r2.top + r2.height/2;
+        if(cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight){
+          malos.push({txt:(el.textContent||el.id||'').trim().slice(0,20), tapa:'FUERA DE LA VENTANA, ni deslizando'});
+          return;
+        }
       }
       const arriba = document.elementFromPoint(cx, cy);
       if(arriba === el || el.contains(arriba)) return;
@@ -641,7 +650,9 @@ async function nadaTapado(p, cuando){
    ya se toca con el ratón. */
 async function todoAlcanzable(nav){
   console.log('\n🖐️ Que lo que se ve, se pueda tocar (medidas de teléfono)');
-  for(const medida of [{width:393,height:873,n:'teléfono 393×873'}, {width:360,height:640,n:'pantalla chica 360×640'}]){
+  for(const medida of [{width:393,height:873,n:'teléfono 393×873'},
+                       {width:360,height:640,n:'pantalla chica 360×640'},
+                       {width:740,height:360,n:'acostado con letra grande', letra:22}]){
     for(const [j, arranque, botones, preparar] of TOQUES){
       const ctx = await nav.newContext({viewport:{width:medida.width, height:medida.height},
         deviceScaleFactor:2.75, isMobile:true, hasTouch:true});
@@ -649,6 +660,7 @@ async function todoAlcanzable(nav){
       await p.addInitScript(STUB);
       await p.route('**cdnjs.cloudflare.com/**', r => r.abort());
       await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+      if(medida.letra) await p.addStyleTag({ content: 'html{font-size:'+medida.letra+'px;}' });
       await p.waitForTimeout(400);
       const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
 
@@ -795,16 +807,31 @@ async function tocarDeVerdad(nav){
    ============================================================ */
 async function pantallaCorta(nav){
   console.log('\n📐 Con la pantalla corta (letra grande o teléfono acostado)');
-  for(const medida of [{width:393,height:330,n:'corta 393×330'}, {width:640,height:360,n:'acostado 640×360'}]){
+  /* La tercera medida es la letra del teléfono agrandada al 150 %, que
+     es una opción de accesibilidad de Android y la usa quien no ve
+     bien. Ahí es donde los paneles se salían y donde «Siguiente →» se
+     iba por la derecha, dejando al alumno encallado. */
+  for(const medida of [{width:393,height:330,n:'corta 393×330'},
+                       {width:640,height:360,n:'acostado 640×360'},
+                       {width:360,height:640,n:'letra grande 150 %', letra:24}]){
     for(const j of JUEGOS){
       const p = await nav.newPage({ viewport:{width:medida.width, height:medida.height} });
       await p.addInitScript(STUB);
+      if(medida.letra) await p.addStyleTag; // se aplica abajo, tras cargar
       await p.route('**cdnjs.cloudflare.com/**', r => r.abort());
       await p.goto(BASE + j, { waitUntil:'domcontentloaded' });
+      if(medida.letra) await p.addStyleTag({ content: 'html{font-size:'+medida.letra+'px;}' });
       await p.waitForTimeout(400);
       const nom = j.replace('juego-','').replace('-3d.html','').replace('.html','');
       const malos = await p.evaluate(() => {
         const fuera = [];
+        /* nada se puede salir por la DERECHA: ahí no hay desplazamiento
+           que valga, y lo que se sale suele ser el botón de seguir */
+        document.querySelectorAll('.velo.ver .panel, .mandos, .botones, .ataques').forEach(el => {
+          if(el.scrollWidth > el.clientWidth + 2 || el.getBoundingClientRect().right > window.innerWidth + 2)
+            fuera.push({velo:(el.id||el.className), problema:'se sale por la derecha',
+              px: Math.round(Math.max(el.scrollWidth - el.clientWidth, el.getBoundingClientRect().right - window.innerWidth))});
+        });
         document.querySelectorAll('.velo.ver').forEach(v => {
           const panel = v.querySelector('.panel');
           if(!panel) return;

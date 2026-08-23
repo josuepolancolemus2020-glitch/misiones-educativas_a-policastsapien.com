@@ -91,12 +91,26 @@ body{background:var(--acero);color:var(--claro);font-family:'Fredoka','Nunito','
 .castigo{font-size:.84rem;color:#ffb1b1;min-height:1.15rem;margin-top:.5rem;}
 .escalera{display:flex;gap:.25rem;justify-content:center;flex-wrap:wrap;font-size:.72rem;margin:.5rem 0;}
 .escalera span{background:rgba(74,144,217,.16);border:1.5px solid rgba(74,144,217,.45);border-radius:8px;padding:.18rem .4rem;font-family:'Fira Code',ui-monospace,monospace;}
-.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;}
+.bt{font-family:inherit;font-size:.9rem;font-weight:700;padding:.55rem 1.1rem;border:none;border-radius:13px;cursor:pointer;margin:.2rem;min-height:44px;}
 .bt-p{background:var(--dorado);color:#1a1a2e;}
 .bt-v{background:var(--verde);color:#fff;}
 .bt-s{background:transparent;border:2px solid var(--gris);color:var(--claro);}
 .emoji-gr{font-size:3rem;margin-bottom:.3rem;}
 @media(max-width:380px){.cruz{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,40px);}}
+
+/* Con la pantalla corta —el teléfono acostado, o la letra del sistema
+   agrandada— el panel se aprieta para que QUEPA. Se puede deslizar,
+   sí, pero nada en pantalla se lo dice al alumno: un botón debajo del
+   borde es un botón que no existe. Se recorta el aire y el adorno; el
+   tamaño del texto que hay que leer se toca lo justo. */
+@media (max-height:430px){
+  .panel{padding:.65rem .8rem;border-radius:14px;}
+  .emoji-gr{font-size:1.5rem;margin-bottom:.1rem;}
+  .panel h2{font-size:.92rem;margin-bottom:.28rem;}
+  .panel p{font-size:.78rem;line-height:1.32;margin-bottom:.38rem;}
+  .estrellas{font-size:1.3rem;margin-bottom:.2rem;}
+  .bt{padding:.42rem .8rem;min-height:40px;font-size:.82rem;}
+}
 </style>
 </head>
 <body>
