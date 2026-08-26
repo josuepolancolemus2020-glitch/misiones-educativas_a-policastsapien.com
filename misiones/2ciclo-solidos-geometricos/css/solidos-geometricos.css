@@ -640,6 +640,8 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 .juego-medalla{font-size:0.74rem;font-weight:700;margin-bottom:0.55rem;min-height:1.05rem;}
 .juego-medalla.con{color:var(--jade);}
 .juego-medalla.sin{color:var(--gray);font-weight:400;font-style:italic;}
+.juego-medalla.oro{color:#c9971a;}
+.parque-resumen{font-size:0.8rem;font-weight:700;color:var(--jade);margin-bottom:0.6rem;min-height:1rem;}
 .btn-juego{margin-top:auto;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;font-size:0.95rem;padding:0.55rem 1.3rem;}
 
 /* El salto al juego desde el widget de su mismo tema */

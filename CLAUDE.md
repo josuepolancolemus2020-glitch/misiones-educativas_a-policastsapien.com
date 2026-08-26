@@ -1315,13 +1315,48 @@ El andamio vive en **dos archivos**, y todos los juegos los cargan:
 
 | dónde | qué hay |
 |---|---|
-| `css/parque-3d.css` | la franja de arriba, el hueco del dibujo, los mandos, los velos y el panel que se aprieta |
-| `js/3d/parque-3d.js` | `Parque3D.arrancar`, `.cargar3D`, `.quitarCarga`, `.alTocar`, `.vigilarHueco`, `.ajustarVelos`, `.respiro`, `.cerrar` |
+| `css/parque-3d.css` | la franja de arriba, el hueco del dibujo, los mandos, los velos, el panel que se aprieta, y la capa del festejo (confeti, racha, avisos) |
+| `js/3d/parque-3d.js` | `Parque3D.arrancar`, `.cargar3D`, `.quitarCarga`, `.alTocar`, `.vigilarHueco`, `.ajustarVelos`, `.respiro`, `.cerrar`, `.acierto`, `.fallo`, `.festejarFin`, `.confeti`, `.aviso`, `.giroConElDedo`, `.tirar` |
 | el HTML del juego | su color de misión (los tokens `--acento…`), sus propias reglas, su lógica y sus cuentas |
 
 Los dos archivos van en **`STATIC_ASSETS` de `sw.js`**: sin ellos los
 juegos dejan de funcionar sin internet, y esa promesa está escrita en su
 propia pantalla.
+
+**El andamio hace SOLO, sin que el juego lo pida**, y un juego nuevo no
+lo tiene que copiar ni llamar:
+
+- Monta **Aa** (la letra crece; se guarda UNA vez para los dieciocho en
+  `j3d_letra_v1`, como el retoque del proyector de las lecturas: es un
+  AJUSTE compartido, no el avance de un juego, que sigue siendo de cada
+  llave) y **⛶ pantalla completa** (si el navegador no sabe, el botón ni
+  aparece) en la franja de arriba.
+- **Re-ata todo `<button onclick=…>` al toque Y al clic** (`atarOnclicks`):
+  la regla 7 estaba cumplida solo en los botones de responder y catorce
+  juegos tenían «Empezar» y «Siguiente» con el onclick pelado.
+- **Aplica el respiro él mismo** cuando un velo se abre (respira su
+  panel) o se cierra (respira la franja de mandos): la regla 10 se
+  olvidaba en casi todos los juegos, que es la misma lección de
+  `ajustarVelos`.
+
+Lo que el juego SÍ llama, cuando pasa lo suyo: **`Parque3D.acierto()`**
+al acertar (confeti + racha 🔥 compartida + vibración corta — sin
+sonido, A PROPÓSITO: cuarenta teléfonos pitando en un aula no ayudan a
+nadie), **`.fallo()`** al fallar (la racha vuelve a cero, sin castigo
+que suene feo), **`.festejarFin()`** en la medalla grande,
+**`.giroConElDedo(alGirar, alToque)`** para arrastrar/tocar el dibujo
+(captura el puntero —el ratón soltado fuera ya no deja la figura pegada
+al cursor—, distingue arrastre de toque midiendo LOS DOS ejes, ignora
+toques sobre chapas que floten encima, y un dedo por vez), y
+**`.tirar(obj)`** al vaciar grupos 3D (dispone geometrías y materiales:
+`remove()` solo los saca del árbol y la memoria de la tarjeta se iba
+comiendo en las sesiones largas). Los juegos con racha PROPIA (el
+Relámpago, Cerco o Pintura) no llaman a `acierto()` —dos rachas en
+pantalla confunden—: usan `confeti()` y `aviso()` sueltos.
+
+`touch-action:none` del `#lienzo` también vive en el CSS común: la
+sonda lo exige en cuanto un juego escucha `pointermove`, y ahora que el
+arrastre es del andamio, su regla también.
 
 Dos cosas siguen ESCRITAS en el HTML de cada juego y no se mueven: el
 telón `#velo-carga` y la pantalla `#velo-red` de «hace falta internet la

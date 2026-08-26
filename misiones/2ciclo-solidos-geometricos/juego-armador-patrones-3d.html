@@ -187,10 +187,17 @@ function redZeta(){
 }
 /* La pirámide: la base y cuatro triángulos que suben a la cúspide.
    El ángulo no es 90: se dobla justo hasta que las puntas se juntan
-   en el eje, y eso lo decide la altura del triángulo. */
+   en el eje, y eso lo decide la altura del triángulo.
+
+   ⚠️ Y se mide DESDE EL PAPEL, no desde la vertical. La cara tiene
+   que quedar a acos(apotema/m) de la base... pero inclinada hacia
+   DENTRO, así que el doblez es 180 menos eso (≈124°, más allá de la
+   vertical). Con acos a secas (≈56°) las caras quedaban abiertas
+   como una flor y las cúspides no se juntaban nunca: el juego decía
+   «pirámide» enseñando una figura que no lo era. */
 function redPiramide(){
   var m = 0.9, apotema = 0.5;
-  var ang = Math.acos(apotema/m)/G;
+  var ang = 180 - Math.acos(apotema/m)/G;
   var tri = function(){ return {tipo:'triangulo', an:1, al:m, pts:ptsTriangulo(1, m), hijos:[]}; };
   return cuadrado([
     conBisagra('arriba',    tri(), ang),
@@ -201,31 +208,53 @@ function redPiramide(){
 }
 /* El prisma triangular: tres rectángulos que hacen el tubo y dos
    triángulos que lo tapan. Al enrollar una tira, cada doblez gira
-   360 ÷ número de caras: aquí, tres caras → 120 grados. */
+   360 ÷ número de caras: aquí, tres caras → 120 grados.
+
+   ⚠️ Las caras del tubo cuelgan por el borde VERTICAL, y la bisagra
+   siempre agarra por el filo `an` (el de abajo) de la cara hija. Por
+   eso las caras segunda y tercera se declaran ACOSTADAS —an es el
+   largo del borde por el que cuelgan (al del padre) y al es lo que
+   crecen hacia el costado—, y la tercera cuelga del 'arriba' de la
+   segunda, que tras el giro de la bisagra ES su costado. Colgarlas
+   de pie por 'derecha' casaba un filo de 1 contra un borde de 1.3:
+   el patrón salía desalineado y el tubo no cerraba nunca. */
 function redPrismaTri(){
   var an = 1, al = 1.3, ht = Math.sqrt(3)/2*an;
-  var rect = function(hijos){ return {tipo:'rectangulo', an:an, al:al, pts:ptsRect(an,al), hijos:hijos||[]}; };
+  var lado = function(hijos){ return {tipo:'rectangulo', an:al, al:an, pts:ptsRect(al,an), hijos:hijos||[]}; };
   var tri  = function(){ return {tipo:'triangulo', an:an, al:ht, pts:ptsTriangulo(an, ht), hijos:[]}; };
-  return rect([
-    conBisagra('derecha', rect([
-      conBisagra('derecha', rect(), 120)
+  return {tipo:'rectangulo', an:an, al:al, pts:ptsRect(an,al), hijos:[
+    conBisagra('derecha', lado([
+      conBisagra('arriba', lado(), 120)
     ]), 120),
     conBisagra('arriba', tri(), 90),
     conBisagra('abajo',  tri(), 90)
-  ]);
+  ]};
 }
 /* El cilindro: el rectángulo se enrolla. Se parte en tiras finas y
    cada una gira un poquito, que es lo que hace un papel al
-   enrollarse; y los dos círculos se levantan para tapar. */
+   enrollarse; y los dos círculos se levantan para tapar.
+
+   ⚠️ Mismo cuidado que en el prisma: las tiras se enrollan por sus
+   bordes VERTICALES, así que de la segunda en adelante van
+   declaradas acostadas (an = alto, el filo por el que cuelgan) y
+   encadenadas por 'arriba', que tras el giro de la primera bisagra
+   es el costado. Encadenarlas de pie por 'derecha' casaba un filo
+   de 0.16 contra un borde de 1.35: el «rectángulo largo» salía
+   hecho un revoltijo ya en plano, y doblado era un nido de tiras. */
 function redCilindro(){
   var tiras = 24, r = 0.62, alto = 1.35;
   var anTira = 2*Math.PI*r/tiras;
   var paso = 360/tiras;
-  var raiz = {tipo:'rectangulo', an:anTira, al:alto, pts:ptsRect(anTira,alto), hijos:[]};
-  var cur = raiz;
-  for(var i=0;i<tiras-1;i++){
-    var t = {tipo:'rectangulo', an:anTira, al:alto, pts:ptsRect(anTira,alto), hijos:[]};
-    cur.hijos.push(conBisagra('derecha', t, paso));
+  /* Todas las tiras del mismo color y sin filo pintado: la pregunta
+     dice «UN rectángulo largo», y veinticuatro tiras de colores
+     dicen otra cosa. Enrollado, así se ve una lata lisa. */
+  var tira = function(){ return {tipo:'rectangulo', an:alto, al:anTira, pts:ptsRect(alto,anTira), hijos:[], color:0xc9a227, sinBorde:true}; };
+  var raiz = {tipo:'rectangulo', an:anTira, al:alto, pts:ptsRect(anTira,alto), hijos:[], color:0xc9a227, sinBorde:true};
+  var cur = tira();
+  raiz.hijos.push(conBisagra('derecha', cur, paso));
+  for(var i=0;i<tiras-2;i++){
+    var t = tira();
+    cur.hijos.push(conBisagra('arriba', t, paso));
     cur = t;
   }
   raiz.hijos.push(conBisagra('arriba', {tipo:'circulo', an:2*r, al:2*r, pts:ptsCirculo(r), hijos:[]}, 90));
@@ -234,48 +263,59 @@ function redCilindro(){
 }
 
 var PATRONES = [
-  {n:'La cruz', emoji:'✝️', red:redCruz, cierra:true, arma:'Cubo',
+  {n:'La cruz', emoji:'✝️', red:redCruz, cierra:true, arma:'Cubo', alFin:1.35,
    preg:'Seis cuadrados en cruz. ¿Qué arma?',
    ops:['Cubo','Pirámide cuadrangular','No cierra: quedan huecos'], buena:0,
    nota:'Cuatro cuadrados dan la vuelta y los otros dos tapan arriba y abajo.',
    txt:'Este es uno de los 11 patrones del cubo que funcionan.'},
 
-  {n:'Seis en fila', emoji:'📏', red:redFila, cierra:false, arma:null,
+  /* tope 0.9: el papel de la fila SE ATASCA antes de cerrar —las
+     caras quinta y sexta chocan contra la primera y la segunda—, y
+     el giro final (giroFin) pone la boca abierta de frente. Sin
+     esto, doblada al 100 % la fila se veía EXACTAMENTE igual que un
+     cubo cerrado, con el texto diciendo «no cierra» debajo: el
+     alumno veía un cubo y leía lo contrario. */
+  {n:'Seis en fila', emoji:'📏', red:redFila, cierra:false, arma:null, alFin:1.35, tope:0.9, giroFin:1.45,
    preg:'Seis cuadrados en fila. ¿Qué arma?',
    ops:['Cubo, son seis cuadrados','No cierra: se montan y quedan huecos','Prisma hexagonal'], buena:1,
    nota:'Al doblarlos, el quinto se monta sobre el primero y arriba y abajo quedan destapados.',
    txt:'Tener seis cuadrados no basta: hay que colocarlos bien. Míralo doblarse y verás dónde se montan.'},
 
-  {n:'La zeta', emoji:'🪜', red:redZeta, cierra:true, arma:'Cubo',
+  {n:'La zeta', emoji:'🪜', red:redZeta, cierra:true, arma:'Cubo', alFin:1.35,
    preg:'Estos seis cuadrados en escalera, ¿qué arman?',
    ops:['No cierra','Cubo','Prisma triangular'], buena:1,
    nota:'No hace falta que parezca una cruz: hay 11 formas distintas y esta es una.',
    txt:'Si el alumno solo conoce la cruz, este patrón le parece imposible. Y cierra igual.'},
 
-  {n:'Base y cuatro triángulos', emoji:'🔺', red:redPiramide, cierra:true, arma:'Pirámide cuadrangular',
+  {n:'Base y cuatro triángulos', emoji:'🔺', red:redPiramide, cierra:true, arma:'Pirámide cuadrangular', alFin:1.57,
    preg:'Un cuadrado con cuatro triángulos pegados, ¿qué arma?',
    ops:['Prisma cuadrangular','Pirámide cuadrangular','Cono'], buena:1,
    nota:'Una sola base y cuatro caras laterales triangulares que se juntan en la cúspide.',
    txt:'La pirámide tiene UNA base. Si tuviera dos, sería un prisma.'},
 
-  {n:'Tres rectángulos y dos triángulos', emoji:'⛺', red:redPrismaTri, cierra:true, arma:'Prisma triangular',
+  {n:'Tres rectángulos y dos triángulos', emoji:'⛺', red:redPrismaTri, cierra:true, arma:'Prisma triangular', alFin:-0.25,
    preg:'Tres rectángulos seguidos y dos triángulos, ¿qué arman?',
    ops:['Prisma triangular','Pirámide triangular','Cilindro'], buena:0,
    nota:'Los rectángulos hacen el tubo y los dos triángulos son las bases: la tienda de campaña.',
    txt:'El prisma toma el apellido de su base: base triangular, prisma triangular.'},
 
-  {n:'Dos círculos y un rectángulo', emoji:'🥫', red:redCilindro, cierra:true, arma:'Cilindro',
+  {n:'Dos círculos y un rectángulo', emoji:'🥫', red:redCilindro, cierra:true, arma:'Cilindro', alFin:-0.25,
    preg:'Un rectángulo largo y dos círculos, ¿qué arman?',
    ops:['Cono','Esfera','Cilindro'], buena:2,
    nota:'El rectángulo se enrolla y su largo es justo la vuelta del círculo.',
    txt:'La etiqueta de una lata es ese rectángulo: despéguela y verá que es plana.'}
 ];
 
-var esc, cam, rend, raiz3D, caras3D = [], bisagras = [];
+var esc, cam, rend, raiz3D, arbol3D, caras3D = [], bisagras = [];
 var nivel = 0, estrellas = 0, t = 0, tObjetivo = 0, contestado = false, giroVista = 0;
+var camLejos = 7.1, camObjetivo = 7.1;
+/* aciertos: qué patrones ya se acertaron. La estrella se paga UNA
+   vez por patrón: sin esto, contestar la cruz en bucle daba +5
+   infinitas veces y el marcador dejaba de medir nada. */
+var aciertos = {}, finPendiente = null, finReloj = null;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, PATRONES.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas, aciertos:aciertos})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(Math.max(d.nivel|0,0), PATRONES.length-1); estrellas=d.estrellas|0; aciertos=d.aciertos||{}; } }catch(e){} }
 function pat(){ return PATRONES[nivel]; }
 
 /* ============================================================
@@ -312,6 +352,70 @@ function ajustar(){
   cam.aspect = cont.clientWidth/cont.clientHeight;
   cam.updateProjectionMatrix();
   rend.setSize(cont.clientWidth, cont.clientHeight);
+  encuadrar();
+}
+
+/* ============================================================
+   El encuadre: la figura ENTERA, siempre
+   ------------------------------------------------------------
+   La zeta mide 3×4 cuadrados y el rectángulo del cilindro casi 4
+   de largo: con la cámara quieta se salían de la pantalla y el
+   juego preguntaba «¿estos seis cuadrados…?» enseñando cuatro. Lo
+   que no se ve, para el alumno no existe — es la misma regla del
+   proyector de las lecturas.
+
+   La caja se calcula con matemática propia, repitiendo la cuenta
+   de las bisagras (pivote → giro → cara), y no preguntándole al
+   motor: así da lo mismo con el Three.js de verdad que con el de
+   mentira de las sondas. Y se mide en el espacio del patrón, ANTES
+   del giro de la vista: girar la figura con el dedo no tiene que
+   hacer respirar el zoom.
+   ============================================================ */
+function mMult(a,b){
+  var r=new Array(12);
+  for(var f=0;f<3;f++)for(var c=0;c<3;c++)
+    r[f*3+c]=a[f*3]*b[c]+a[f*3+1]*b[3+c]+a[f*3+2]*b[6+c];
+  for(var k=0;k<3;k++)
+    r[9+k]=a[9+k]+a[k*3]*b[9]+a[k*3+1]*b[10]+a[k*3+2]*b[11];
+  return r;
+}
+function mTras(x,y,z){ return [1,0,0, 0,1,0, 0,0,1, x,y,z]; }
+function mRotX(a){ var c=Math.cos(a),s=Math.sin(a); return [1,0,0, 0,c,-s, 0,s,c, 0,0,0]; }
+function mRotZ(a){ var c=Math.cos(a),s=Math.sin(a); return [c,-s,0, s,c,0, 0,0,1, 0,0,0]; }
+function cajaDelPatron(){
+  var min=[1e9,1e9,1e9], max=[-1e9,-1e9,-1e9];
+  function anda(cara, M){
+    cara.pts.forEach(function(p){
+      var x=M[0]*p[0]+M[1]*p[1]+M[9], y=M[3]*p[0]+M[4]*p[1]+M[10], z=M[6]*p[0]+M[7]*p[1]+M[11];
+      if(x<min[0])min[0]=x; if(x>max[0])max[0]=x;
+      if(y<min[1])min[1]=y; if(y>max[1])max[1]=y;
+      if(z<min[2])min[2]=z; if(z>max[2])max[2]=z;
+    });
+    (cara.hijos||[]).forEach(function(h){
+      var b = bisagraDe(h.donde, cara.an, cara.al);
+      var M2 = mMult(M, mTras(b.p[0],b.p[1],b.p[2]));
+      M2 = mMult(M2, mRotZ(b.giroZ));
+      M2 = mMult(M2, mRotX(-t*(pat().tope||1)*h.angulo*G));
+      anda(h, M2);
+    });
+  }
+  anda(pat().red(), [1,0,0, 0,1,0, 0,0,1, 0,0,0]);
+  return {min:min, max:max};
+}
+function encuadrar(){
+  if(!arbol3D || !cam) return;
+  var c = cajaDelPatron();
+  var cx=(c.min[0]+c.max[0])/2, cy=(c.min[1]+c.max[1])/2, cz=(c.min[2]+c.max[2])/2;
+  var dx=c.max[0]-c.min[0], dy=c.max[1]-c.min[1], dz=c.max[2]-c.min[2];
+  if(!isFinite(cx)||!isFinite(dx)) return;
+  // la figura gira sobre su propio centro
+  arbol3D.position.set(-cx,-cy,-cz);
+  // y la cámara se aleja lo justo para que quepa entera
+  var radio = Math.sqrt(dx*dx+dy*dy+dz*dz)/2 || 1;
+  var fv = cam.fov*G/2;
+  if(!isFinite(fv) || fv <= 0) return;
+  var fh = Math.atan(Math.tan(fv)*(cam.aspect>0?cam.aspect:1));
+  camObjetivo = Math.max(3.6, radio/Math.sin(Math.min(fv,fh))*1.06 + 0.4);
 }
 
 var COLORES = [0x8b6fe0, 0x4a90d9, 0x27ae60, 0xc9a227, 0xe07a52, 0x37b6c4, 0xa06fd6, 0x5aa9e6];
@@ -322,8 +426,8 @@ function mallaDeCara(cara, i){
   forma.closePath();
   var geo = new THREE.ShapeGeometry(forma);
   var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
-    color: COLORES[i % COLORES.length], side:THREE.DoubleSide}));
-  m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+    color: cara.color || COLORES[i % COLORES.length], side:THREE.DoubleSide}));
+  if(!cara.sinBorde) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
     new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.7})));
   return m;
 }
@@ -350,25 +454,43 @@ function colgar(cara, i){
 }
 
 function armar(){
-  if(raiz3D){ esc.remove(raiz3D); }
+  /* tirar() y no solo remove(): el cilindro son 24 tiras con sus
+     geometrías y materiales, y sin disponerlos cada pasada dejaba
+     los viejos vivos en la memoria de la tarjeta. */
+  if(raiz3D){ Parque3D.tirar(raiz3D); raiz3D = null; }
   caras3D = []; bisagras = [];
+  /* cada patrón arranca de frente: el giro que el dedo acumuló en el
+     anterior lo dejaba aparecer de canto, justo cuando hay que leerlo */
+  giroVista = 0;
   raiz3D = new THREE.Group();
-  var arbol = colgar(pat().red(), {n:0});
-  raiz3D.add(arbol);
-  // el patrón se mira desde arriba mientras está plano
-  raiz3D.rotation.x = -Math.PI/2;
+  arbol3D = colgar(pat().red(), {n:0});
+  raiz3D.add(arbol3D);
+  // en plano, el papel casi de frente (la cuenta está en aplicarDoblez)
+  raiz3D.rotation.x = -0.62;
   esc.add(raiz3D);
   t = 0; tObjetivo = 0;
   aplicarDoblez();
 }
 
 function aplicarDoblez(){
-  bisagras.forEach(function(b){ b.rotation.x = -t * b.userData.angulo * G; });
+  // tope: hasta dónde deja llegar el papel (la fila choca y se atasca)
+  var tEf = t * (pat().tope || 1);
+  bisagras.forEach(function(b){ b.rotation.x = -tEf * b.userData.angulo * G; });
   document.getElementById('lbl-d').textContent = Math.round(t*100)+' %';
   document.getElementById('sl-d').value = Math.round(t*100);
-  // al doblarse, la vista pasa de mirar el papel a mirar el sólido
-  raiz3D.rotation.x = -Math.PI/2 * (1-t) - 0.25*t;
-  raiz3D.rotation.y = giroVista + t*0.5;
+  /* Al doblarse, la vista pasa de mirar el papel a mirar el sólido.
+     En plano el papel se pone CASI DE FRENTE (−0.62; de frente
+     exacto sería −0.50): mirado rasante, los cuadrados salían
+     trapecios y la pregunta decía «cuadrados» enseñando otra cosa.
+     Y doblado, cada sólido dice CÓMO quiere asentarse (alFin):
+     cada patrón pliega hacia un lado distinto, así que con una
+     inclinación única la pirámide crecía hacia el fondo y lo único
+     que se veía era el cuadrado de su base. El cubo y la pirámide
+     se sientan en el suelo (≈π/2) y el prisma y el cilindro quedan
+     de pie (−0.25). */
+  raiz3D.rotation.x = -0.62*(1-t) + pat().alFin*t;
+  raiz3D.rotation.y = giroVista + t*(pat().giroFin || 0.5);
+  encuadrar();
 }
 
 /* ============================================================
@@ -401,14 +523,42 @@ function responder(i, boton){
     if(k === p.buena) b.classList.add('buena');
     else if(k === i) b.classList.add('mala');
   });
-  if(bien){ estrellas += 5; document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+  if(bien){
+    Parque3D.acierto();
+    if(!aciertos[nivel]){
+      aciertos[nivel] = true;
+      estrellas += 5;
+      document.getElementById('marcador').textContent = '⭐ '+estrellas;
+    }
+  } else {
+    Parque3D.fallo();
+  }
   guardar();
-  setTimeout(function(){ mostrarFin(bien); }, 700);
+  /* El 3D dicta sentencia: en vez de tapar la pantalla con el velo a
+     los 700 ms, el patrón SE DOBLA SOLO y el velo llega cuando el
+     doblez terminó. El alumno ve al modelo darle la razón —o
+     quitársela— antes de leer la explicación. El reloj de abajo es
+     el respaldo por si la pestaña pierde los cuadros de animación. */
+  finPendiente = bien;
+  tObjetivo = 1;
+  finReloj = setTimeout(function(){ soltarFin(); }, 1800);
+}
+
+function soltarFin(){
+  if(finPendiente === null) return;
+  var b = finPendiente;
+  finPendiente = null;
+  clearTimeout(finReloj);
+  mostrarFin(b);
 }
 
 function mostrarFin(bien){
   var p = pat();
-  document.getElementById('fin-emoji').textContent = bien ? '🎉' : (p.cierra ? '🤔' : '⚠️');
+  /* el día que caen los seis, fiesta grande */
+  var todos = true;
+  for(var k=0;k<PATRONES.length;k++){ if(!aciertos[k]) todos = false; }
+  if(bien && todos){ Parque3D.festejarFin(); Parque3D.aviso('🏆 ¡Los seis patrones!'); }
+  document.getElementById('fin-emoji').textContent = bien ? (todos ? '🏆' : '🎉') : (p.cierra ? '🤔' : '⚠️');
   document.getElementById('fin-tit').textContent = bien
     ? (p.cierra ? '¡Sí! Arma un '+p.arma.toLowerCase() : '¡Exacto: NO cierra!')
     : (p.cierra ? 'Arma un '+p.arma.toLowerCase() : 'No cierra');
@@ -419,6 +569,8 @@ function mostrarFin(bien){
 
 function cerrarFin(){
   document.getElementById('velo-fin').classList.remove('ver');
+  // para doblarlo él, el patrón vuelve a estar plano
+  t = 0; tObjetivo = 0; aplicarDoblez();
   document.getElementById('ops').style.display = 'none';
   document.getElementById('doblez').style.display = 'flex';
   document.getElementById('botones').style.display = 'flex';
@@ -426,8 +578,8 @@ function cerrarFin(){
   var p = pat();
   v.className = 'veredicto ver ' + (p.cierra ? 'si' : 'no');
   v.textContent = p.cierra
-    ? 'Dóblalo con la barra y mira cómo cierra'
-    : 'Dóblalo con la barra: fíjate dónde se montan las caras';
+    ? '☝️ Arrastra hacia arriba sobre el dibujo y míralo cerrar'
+    : '☝️ Arrastra hacia arriba sobre el dibujo: fíjate dónde se montan las caras';
 }
 
 function doblarSolo(){ tObjetivo = 1; }
@@ -445,13 +597,32 @@ function empezar(){
   armar(); preguntar();
 }
 
+/* El doblez se hace CON EL DEDO SOBRE LA FIGURA, no solo con la
+   barra: arrastrar hacia arriba dobla, hacia abajo abre; de lado se
+   gira la vista, como siempre. El gesto se decide por el eje que
+   domina al empezar a moverse, y solo cuando la etapa de doblar está
+   abierta — durante la pregunta, doblar sería regalarse la
+   respuesta, así que ahí el dedo solo gira. */
 function eventos(){
   var lienzo = document.getElementById('lienzo');
   var abajo = null;
-  lienzo.addEventListener('pointerdown', function(e){ abajo = {x:e.clientX, g:giroVista}; });
+  function puedeDoblar(){ return document.getElementById('doblez').style.display !== 'none'; }
+  lienzo.addEventListener('pointerdown', function(e){
+    abajo = {x:e.clientX, y:e.clientY, g:giroVista, t0:t, eje:null};
+  });
   lienzo.addEventListener('pointermove', function(e){
     if(!abajo) return;
-    giroVista = abajo.g + (e.clientX-abajo.x)*0.011;
+    var dx = e.clientX-abajo.x, dy = e.clientY-abajo.y;
+    if(!abajo.eje){
+      if(Math.abs(dx) < 7 && Math.abs(dy) < 7) return;
+      abajo.eje = (Math.abs(dy) > Math.abs(dx) && puedeDoblar()) ? 'doblez' : 'giro';
+    }
+    if(abajo.eje === 'giro'){
+      giroVista = abajo.g + dx*0.011;
+    } else {
+      t = tObjetivo = Math.max(0, Math.min(1, abajo.t0 - dy/230));
+      aplicarDoblez();
+    }
   });
   lienzo.addEventListener('pointerup', function(){ abajo = null; });
   lienzo.addEventListener('pointercancel', function(){ abajo = null; });
@@ -465,11 +636,20 @@ function animar(){
   requestAnimationFrame(animar);
   if(raiz3D){
     if(Math.abs(tObjetivo - t) > 0.004){
-      t += (tObjetivo - t) * 0.07;
+      /* la sentencia se dobla más ligera: el velo espera al doblez y
+         un alumno con la respuesta dada no debe esperar un suspiro */
+      t += (tObjetivo - t) * (finPendiente !== null ? 0.13 : 0.07);
       aplicarDoblez();
     } else if(raiz3D){
       raiz3D.rotation.y = giroVista + t*0.5;
     }
+    if(finPendiente !== null && t > 0.93) soltarFin();
+  }
+  // la cámara llega suave a su distancia, sin saltos
+  if(Math.abs(camObjetivo - camLejos) > 0.01){
+    camLejos += (camObjetivo - camLejos) * 0.09;
+    cam.position.set(0, 0.4807*camLejos, 0.8766*camLejos);
+    cam.lookAt(0, 0, 0);
   }
   rend.render(esc, cam);
 }

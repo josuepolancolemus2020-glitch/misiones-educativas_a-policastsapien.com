@@ -592,6 +592,7 @@
     <h2>🎮 Parque de Juegos 3D</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">Seis desafíos en tres dimensiones. Cada uno ataca un concepto distinto: no es solo practicar, es <strong>construir, llenar, explorar, ajustar, combatir y encajar</strong>.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">🌐 La primera vez hace falta señal, porque bajan la pieza que dibuja en 3D. Después quedan guardados en el teléfono y funcionan sin internet. Se abren en otra pestaña: tu progreso de la misión no se pierde.</p>
+    <p class="parque-resumen" id="parque-resumen"></p>
     <div class="juegos-grid">
 
       <div class="juego-card" data-juego="j3d_cubitos_v1">
@@ -803,23 +804,58 @@
        Aquí solo se LEE, para que la tarjeta diga por dónde va. */
     function pintarMedallas3D(){
       const marcas = {
-        cubitos:   {llave:'j3d_cubitos_v1',   texto: d => '🏅 nivel ' + Math.min(5, (d.nivel|0)+1) + ' de 5'},
-        latas:     {llave:'j3d_latas_v1',     texto: d => (d.pedido >= 4 ? '🏅 los 4 pedidos · retos libres' : '🏅 pedido ' + (((d.pedido|0)+1)) + ' de 4')},
-        tanque:    {llave:'j3d_tanque_v1',    texto: d => '🏅 tanque ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-        laberinto: {llave:'j3d_laberinto_v1', texto: d => d.mejor0 ? '🏅 mejor marca: ' + d.mejor0 + ' s' : '🏅 piso ' + Math.min(2, (d.piso|0)+1) + ' de 2'},
-        duelo:     {llave:'j3d_duelo_v1',     texto: d => '🏅 ' + (d.xp|0) + ' XP · zona ' + Math.min(3, (d.zona|0)+1) + ' de 3'},
-        tetris:    {llave:'j3d_tetris_v1',    texto: d => '🏅 mejor: nivel ' + Math.max(1, d.nivel|0)}
+        cubitos:   {llave:'j3d_cubitos_v1',   oro: d => (d.nivel|0) >= 5,
+                    texto: d => (d.nivel|0) >= 5 ? '🏆 los 5 niveles · modo libre' : '🏅 nivel ' + Math.min(5, (d.nivel|0)+1) + ' de 5'},
+        latas:     {llave:'j3d_latas_v1',     oro: d => (d.pedido|0) >= 4,
+                    texto: d => ((d.pedido|0) >= 4 ? '🏆 los 4 pedidos · retos libres' : '🏅 pedido ' + (((d.pedido|0)+1)) + ' de 4')},
+        tanque:    {llave:'j3d_tanque_v1',    oro: d => !!d.completado,
+                    texto: d => d.completado ? '🏆 los 6 tanques' : '🏅 tanque ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+        laberinto: {llave:'j3d_laberinto_v1', oro: d => !!d.mejor0,
+                    texto: d => d.mejor0 ? '🏆 mejor marca: ' + d.mejor0 + ' s' : '🏅 piso ' + Math.min(2, (d.piso|0)+1) + ' de 2'},
+        duelo:     {llave:'j3d_duelo_v1',     oro: d => !!d.ganado,
+                    texto: d => d.ganado ? ('👑 campeón · ' + Math.max(1, d.vueltas|0) + ((d.vueltas|0) === 1 ? ' vuelta' : ' vueltas') + ' · ' + (d.xp|0) + ' XP')
+                                         : ('🏅 ' + (d.xp|0) + ' XP · zona ' + Math.min(3, (d.zona|0)+1) + ' de 3')},
+        tetris:    {llave:'j3d_tetris_v1',    texto: d => '🏅 mejor: nivel ' + Math.max(1, (d.mejor|0) || (d.nivel|0))}
       };
       document.querySelectorAll('[data-medalla]').forEach(el => {
         const m = marcas[el.dataset.medalla];
         if(!m) return;
         let d = null;
         try { d = JSON.parse(localStorage.getItem(m.llave)); } catch(e) {}
-        if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); return; }
+        const card = el.closest('.juego-card');
+        const btn = card ? card.querySelector('.btn-juego') : null;
+        el.classList.remove('con','sin','oro');
+        if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); if(btn) btn.textContent = '▶️ Jugar'; return; }
         el.textContent = m.texto(d);
-        el.classList.add('con');
+        /* las estrellas del juego se enseñan aquí: es la cosecha que
+           el alumno quiere ver crecer desde fuera */
+        if(d.estrellas) el.textContent += ' · ⭐' + d.estrellas;
+        const oro = !!(m.oro && m.oro(d));
+        el.classList.add(oro ? 'oro' : 'con');
+        /* el botón dice la verdad: al que ya tiene partida no se le
+           invita a «jugar» como si nada, se le invita a seguir */
+        if(btn) btn.textContent = oro ? '▶️ Otra vez' : '▶️ Seguir';
       });
+      const res = document.getElementById('parque-resumen');
+      if(res){
+        let emp = 0, oros = 0, total = 0;
+        Object.keys(marcas).forEach(k => {
+          total++;
+          let d = null;
+          try { d = JSON.parse(localStorage.getItem(marcas[k].llave)); } catch(e) {}
+          if(d){ emp++; if(marcas[k].oro && marcas[k].oro(d)) oros++; }
+        });
+        res.textContent = emp === 0 ? '' :
+          ('🎮 ' + emp + ' de ' + total + ' empezados' + (oros ? ' · 🏆 ' + oros + (oros === 1 ? ' completado' : ' completados') : ''));
+      }
     }
+
+    /* Los juegos viven en OTRA pestaña: al volver a esta, la medalla
+       de la tarjeta se quedaba vieja y el alumno no veía su avance
+       recién ganado. Se repinta al recuperar el foco. */
+    document.addEventListener('visibilitychange', () => { if(!document.hidden) pintarMedallas3D(); });
+    window.addEventListener('focus', () => pintarMedallas3D());
+    window.addEventListener('pageshow', () => pintarMedallas3D());
   </script>
 
 </body>

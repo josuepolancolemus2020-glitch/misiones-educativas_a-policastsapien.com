@@ -59,7 +59,10 @@ module.exports = `
     Scene: (function(){ var f=function(){ Obj.call(this); this.fog=null; }; f.prototype=Object.create(Obj.prototype); return f; })(),
     Group: (function(){ var f=function(){ Obj.call(this); }; f.prototype=Object.create(Obj.prototype); return f; })(),
     Mesh: hijo(), Line: hijo(), LineSegments: hijo(), Points: hijo(),
-    PerspectiveCamera: (function(){ var f=function(fov,as){ Obj.call(this); this.aspect=as;
+    /* fov se guarda como en el de verdad: el encuadre automático del
+       armador de patrones lo lee para calcular la distancia de la
+       cámara, y con un fov perdido la cuenta daba NaN. */
+    PerspectiveCamera: (function(){ var f=function(fov,as){ Obj.call(this); this.fov=fov; this.aspect=as;
       this.updateProjectionMatrix=function(){}; }; f.prototype=Object.create(Obj.prototype); return f; })(),
     GridHelper: (function(){ var f=function(){ Obj.call(this); }; f.prototype=Object.create(Obj.prototype); return f; })(),
     AmbientLight: luz(), DirectionalLight: luz(), PointLight: luz(),

@@ -1264,23 +1264,58 @@ window.addEventListener('hashchange', abrirSeccionDelEnlace);
    solo se LEE, para que la tarjeta diga por dónde va. */
 function pintarMedallas3D(){
   const marcas = {
-    cercador:     {llave:'j3d_cercador_v1',     texto: d => '🏅 terreno ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-    pintor:       {llave:'j3d_pintor_v1',       texto: d => '🏅 piso ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-    cercopintura: {llave:'j3d_cercopintura_v1', texto: d => '🏅 encargo ' + Math.min(8, (d.indice|0)+1) + ' de 8' + (d.mejorRacha ? ' · racha ' + d.mejorRacha : '')},
-    terreno:      {llave:'j3d_terreno_v1',      texto: d => '🏅 reto ' + Math.min(6, (d.reto|0)+1) + ' de 6'},
-    cuartol:      {llave:'j3d_cuartol_v1',      texto: d => '🏅 figura ' + Math.min(6, (d.indice|0)+1) + ' de 6'},
-    fabcuad:      {llave:'j3d_fabcuad_v1',      texto: d => ((d.pedido|0) >= 6 ? '🏅 los 6 pedidos · retos libres' : '🏅 pedido ' + (((d.pedido|0)+1)) + ' de 6')}
+    cercador:     {llave:'j3d_cercador_v1',     oro: d => (d.nivel|0) >= 6 || !!d.completado,
+                   texto: d => ((d.nivel|0) >= 6 || d.completado) ? '🏆 los 6 terrenos' : '🏅 terreno ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+    pintor:       {llave:'j3d_pintor_v1',       oro: d => (d.nivel|0) >= 6 || !!d.completado,
+                   texto: d => ((d.nivel|0) >= 6 || d.completado) ? '🏆 los 6 pisos' : '🏅 piso ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+    cercopintura: {llave:'j3d_cercopintura_v1', oro: d => !!d.completado,
+                   texto: d => (d.completado ? '🏆 los 8 encargos' : '🏅 encargo ' + Math.min(8, (d.indice|0)+1) + ' de 8') + (d.mejorRacha ? ' · racha ' + d.mejorRacha : '')},
+    terreno:      {llave:'j3d_terreno_v1',      oro: d => (d.reto|0) >= 6 || !!d.completado,
+                   texto: d => ((d.reto|0) >= 6 || d.completado) ? '🏆 los 6 retos' : '🏅 reto ' + Math.min(6, (d.reto|0)+1) + ' de 6'},
+    cuartol:      {llave:'j3d_cuartol_v1',      oro: d => !!d.completado,
+                   texto: d => d.completado ? '🏆 las 6 figuras' : '🏅 figura ' + Math.min(6, (d.indice|0)+1) + ' de 6'},
+    fabcuad:      {llave:'j3d_fabcuad_v1',      oro: d => (d.pedido|0) >= 6,
+                   texto: d => ((d.pedido|0) >= 6 ? '🏆 los 6 pedidos · retos libres' : '🏅 pedido ' + (((d.pedido|0)+1)) + ' de 6')}
   };
   document.querySelectorAll('[data-medalla]').forEach(el => {
     const m = marcas[el.dataset.medalla];
     if(!m) return;
     let d = null;
     try { d = JSON.parse(localStorage.getItem(m.llave)); } catch(e) {}
-    if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); return; }
+    const card = el.closest('.juego-card');
+    const btn = card ? card.querySelector('.btn-juego') : null;
+    el.classList.remove('con','sin','oro');
+    if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); if(btn) btn.textContent = '▶️ Jugar'; return; }
     el.textContent = m.texto(d);
-    el.classList.add('con');
+    /* las estrellas del juego se enseñan aquí: es la cosecha que el
+       alumno quiere ver crecer desde fuera */
+    if(d.estrellas) el.textContent += ' · ⭐' + d.estrellas;
+    const oro = !!(m.oro && m.oro(d));
+    el.classList.add(oro ? 'oro' : 'con');
+    /* el botón dice la verdad: al que ya tiene partida no se le
+       invita a «jugar» como si nada, se le invita a seguir */
+    if(btn) btn.textContent = oro ? '▶️ Otra vez' : '▶️ Seguir';
   });
+  const res = document.getElementById('parque-resumen');
+  if(res){
+    let emp = 0, oros = 0, total = 0;
+    Object.keys(marcas).forEach(k => {
+      total++;
+      let d = null;
+      try { d = JSON.parse(localStorage.getItem(marcas[k].llave)); } catch(e) {}
+      if(d){ emp++; if(marcas[k].oro && marcas[k].oro(d)) oros++; }
+    });
+    res.textContent = emp === 0 ? '' :
+      ('🎮 ' + emp + ' de ' + total + ' empezados' + (oros ? ' · 🏆 ' + oros + (oros === 1 ? ' completado' : ' completados') : ''));
+  }
 }
+
+/* Los juegos viven en OTRA pestaña: al volver a esta, la medalla de
+   la tarjeta se quedaba vieja y el alumno no veía su avance recién
+   ganado. Se repinta al recuperar el foco. */
+document.addEventListener('visibilitychange', () => { if(!document.hidden) pintarMedallas3D(); });
+window.addEventListener('focus', () => pintarMedallas3D());
+window.addEventListener('pageshow', () => pintarMedallas3D());
 
 document.addEventListener('DOMContentLoaded', () => {
   pintarMedallas3D();

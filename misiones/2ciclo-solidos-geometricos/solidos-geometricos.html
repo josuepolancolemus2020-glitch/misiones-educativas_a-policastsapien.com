@@ -595,6 +595,7 @@
     <h2>🎮 Parque de Juegos 3D</h2>
     <p style="font-size:0.9rem;margin-bottom:0.5rem;">Seis desafíos en tres dimensiones. Aquí se hace lo que en una hoja no se puede: <strong>girar el sólido para ver lo de atrás, doblar el patrón y poner a girar una figura plana</strong>.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">🌐 La primera vez hace falta señal, porque bajan la pieza que dibuja en 3D. Después quedan guardados en el teléfono y funcionan sin internet. Se abren en otra pestaña: tu progreso de la misión no se pierde.</p>
+    <p class="parque-resumen" id="parque-resumen"></p>
     <div class="juegos-grid">
 
       <div class="juego-card" data-juego="j3d_contador_v1">
@@ -806,23 +807,56 @@
        Aquí solo se LEE, para que la tarjeta diga por dónde va. */
     function pintarMedallas3D(){
       const marcas = {
-        contador:   {llave:'j3d_contador_v1',   texto: d => '🏅 sólido ' + Math.min(7, (d.nivel|0)+1) + ' de 7'},
-        patrones:   {llave:'j3d_patrones_v1',   texto: d => '🏅 patrón ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+        contador:   {llave:'j3d_contador_v1',   oro: d => !!(d.hechos && Object.keys(d.hechos).length >= 7),
+                     texto: d => (d.hechos && Object.keys(d.hechos).length >= 7) ? '🏆 los 7 sólidos' : '🏅 sólido ' + Math.min(7, (d.nivel|0)+1) + ' de 7'},
+        patrones:   {llave:'j3d_patrones_v1',   oro: d => !!(d.aciertos && Object.keys(d.aciertos).length >= 6),
+                     texto: d => (d.aciertos && Object.keys(d.aciertos).length >= 6) ? '🏆 los seis patrones' : '🏅 patrón ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
         revolucion: {llave:'j3d_revolucion_v1', texto: d => '🏅 figura ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-        fabsolidos: {llave:'j3d_fabsolidos_v1', texto: d => '🏅 pedido ' + Math.min(7, (d.pedido|0)+1) + ' de 7'},
-        caza:       {llave:'j3d_caza_v1',       texto: d => '🏅 ronda ' + Math.min(5, (d.ronda|0)+1) + ' de 5'},
-        relampago:  {llave:'j3d_relampago_v1',  texto: d => '🏅 récord: ' + (d.puntos|0) + ' pts'}
+        fabsolidos: {llave:'j3d_fabsolidos_v1', oro: d => (d.pedido|0) >= 7,
+                     texto: d => (d.pedido|0) >= 7 ? '🏆 los 7 pedidos' : '🏅 pedido ' + Math.min(7, (d.pedido|0)+1) + ' de 7'},
+        caza:       {llave:'j3d_caza_v1',       oro: d => (d.ronda|0) >= 5 || !!d.mejorVuelta,
+                     texto: d => d.mejorVuelta ? '🏆 mejor vuelta: ' + d.mejorVuelta + ' ⭐' : '🏅 ronda ' + Math.min(5, (d.ronda|0)+1) + ' de 5'},
+        relampago:  {llave:'j3d_relampago_v1',  texto: d => '🏅 récord: ' + (d.puntos|0) + ' pts' + ((d.racha|0) >= 2 ? ' · 🔥' + d.racha : '')}
       };
       document.querySelectorAll('[data-medalla]').forEach(el => {
         const m = marcas[el.dataset.medalla];
         if(!m) return;
         let d = null;
         try { d = JSON.parse(localStorage.getItem(m.llave)); } catch(e) {}
-        if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); return; }
+        const card = el.closest('.juego-card');
+        const btn = card ? card.querySelector('.btn-juego') : null;
+        el.classList.remove('con','sin','oro');
+        if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); if(btn) btn.textContent = '▶️ Jugar'; return; }
         el.textContent = m.texto(d);
-        el.classList.add('con');
+        /* las estrellas del juego se enseñan aquí: es la cosecha que
+           el alumno quiere ver crecer desde fuera */
+        if(d.estrellas) el.textContent += ' · ⭐' + d.estrellas;
+        const oro = !!(m.oro && m.oro(d));
+        el.classList.add(oro ? 'oro' : 'con');
+        /* el botón dice la verdad: al que ya tiene partida no se le
+           invita a «jugar» como si nada, se le invita a seguir */
+        if(btn) btn.textContent = oro ? '▶️ Otra vez' : '▶️ Seguir';
       });
+      const res = document.getElementById('parque-resumen');
+      if(res){
+        let emp = 0, oros = 0, total = 0;
+        Object.keys(marcas).forEach(k => {
+          total++;
+          let d = null;
+          try { d = JSON.parse(localStorage.getItem(marcas[k].llave)); } catch(e) {}
+          if(d){ emp++; if(marcas[k].oro && marcas[k].oro(d)) oros++; }
+        });
+        res.textContent = emp === 0 ? '' :
+          ('🎮 ' + emp + ' de ' + total + ' empezados' + (oros ? ' · 🏆 ' + oros + (oros === 1 ? ' completado' : ' completados') : ''));
+      }
     }
+
+    /* Los juegos viven en OTRA pestaña: al volver a esta, la medalla
+       de la tarjeta se quedaba vieja y el alumno no veía su avance
+       recién ganado. Se repinta al recuperar el foco. */
+    document.addEventListener('visibilitychange', () => { if(!document.hidden) pintarMedallas3D(); });
+    window.addEventListener('focus', () => pintarMedallas3D());
+    window.addEventListener('pageshow', () => pintarMedallas3D());
   </script>
 
 </body>
