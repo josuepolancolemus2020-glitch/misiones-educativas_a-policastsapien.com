@@ -56,6 +56,16 @@
   border-radius:8px;padding:.5rem .7rem;font-size:.84rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
 .chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
 .chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
+/* La tarjeta y la cinta flotan ENCIMA del dibujo, y el dibujo ahora se
+   toca: sin esto, el dedo que iba a poner una fila se quedaba en la
+   tarjeta y el toque no llegaba nunca al piso. */
+.tarjeta,.cinta{pointer-events:none;}
+/* El mapa de la obra: los seis pisos con las estrellas que ya
+   pagaron. Sin él, el alumno no sabe qué le falta ni a cuál volver. */
+.mapa{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin:.5rem 0;}
+.mapa span{background:rgba(47,196,168,.1);border:1.5px solid rgba(47,196,168,.35);border-radius:8px;
+  padding:.18rem .3rem;font-size:.72rem;line-height:1.3;min-width:2.6rem;}
+.mapa span.aqui{border-color:var(--acento);background:rgba(47,196,168,.22);}
 @media(max-width:380px){.pregunta{font-size:.78rem;}.bt{font-size:.8rem;}}
 </style>
 </head>
@@ -82,7 +92,7 @@
   <div class="botones">
     <button class="bt bt-v" id="bt-comprar" onclick="comprar()">🛒 Comprar</button>
     <button class="bt bt-a" id="bt-cubrir" onclick="cubrir()" disabled>🎨 Cubrir</button>
-    <button class="bt bt-s" onclick="verComo()">💡 ¿Cómo?</button>
+    <button class="bt bt-s" id="bt-como" onclick="verComo()">💡 ¿Cómo?</button>
   </div>
   <div class="aviso" id="aviso"></div>
 </div>
@@ -106,8 +116,9 @@
     <div class="emoji-gr">🎨</div>
     <h2>El Pintor de Canchas</h2>
     <p>Cada piso trae sus dos medidas. Compra las baldosas <b>justas</b> para cubrirlo y después míralas caer fila por fila.</p>
-    <div class="chapas"><span>Cada baldosa es 1 m × 1 m</span><span>Área = la superficie</span><span>Se cuentan FILAS × COLUMNAS</span></div>
+    <div class="chapas"><span>Cada baldosa es 1 m × 1 m</span><span>Área = la superficie</span><span>Se cuentan FILAS × COLUMNAS</span><span>👆 Toca el piso y pone una fila</span></div>
     <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres cajas de herramientas 🧰. Cada compra errada te cuesta una.</p>
+    <div class="mapa" id="mapa-ini"></div>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
   </div>
 </div>
@@ -118,7 +129,9 @@
     <h2 id="fin-tit">¡Piso cubierto!</h2>
     <div class="formula" id="fin-form"></div>
     <p id="fin-txt"></p>
+    <div class="mapa" id="mapa-fin"></div>
     <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente piso →</button>
+    <button class="bt bt-s" id="fin-rep" onclick="repetir()" style="display:none;">🔁 Este mismo piso</button>
   </div>
 </div>
 
@@ -159,9 +172,21 @@ function perimetroDe(p){ return 2*(p.b + p.h); }
 
 var esc, cam, rend, grupo, rots = [], baldosas = [];
 var nivel = 0, vidas = 3, estrellas = 0, comprado = null, poniendo = 0, giro = 0;
+/* La mejor marca de cada piso (0 = sin cubrir, 1-3 estrellas). Es lo
+   que corta la mina de estrellas: un piso que ya pagó no vuelve a
+   pagar, aunque la marca sí pueda mejorar. */
+var mejor = PISOS.map(function(){ return 0; });
+var ayudaCobrada = false, ultimoBien = false;
+var giroManual = 0, dedo = null, filasMano = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, PISOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas, mejor:mejor,
+  /* la misión lee `completado` para poner la medalla de oro en su tarjeta */
+  completado: mejor.every(function(x){ return x > 0; })})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, PISOS.length-1); estrellas=d.estrellas|0;
+  /* Tolerancia con lo guardado por la versión vieja: sin `mejor`, el
+     mapa arranca vacío pero el nivel y las estrellas se respetan. */
+  if(d.mejor && d.mejor.length) for(var i=0;i<PISOS.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+} }catch(e){} }
 function p(){ return PISOS[nivel]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
 
@@ -188,6 +213,14 @@ function montar(){
   cam.lookAt(0, 0, 0);
 
   armarPiso();
+  /* El arrastre gira el piso con el dedo y el toque corto pone una
+     fila de baldosas. La mecánica —captura de puntero, umbral que
+     separa girar de tocar— es del andamio; aquí solo van las dos
+     reacciones. */
+  dedo = Parque3D.giroConElDedo(function(dx){
+    giroManual += dx*0.008;
+    grupo.rotation.y = giroManual;
+  }, tocarPiso);
   Parque3D.vigilarHueco(ajustar);
   animar();
 }
@@ -215,9 +248,17 @@ function rotulo(texto, x, y, z){
    ENCENDIENDO: crear noventa mallas a media animación entrecorta el
    dibujo justo cuando hay que mirarlo. */
 function armarPiso(){
+  /* Tirar de verdad, no solo sacar del árbol: `remove()` deja los
+     buffers vivos en la memoria de la tarjeta, y seis pisos en bucle
+     en una sesión larga acababan comiéndosela en un teléfono modesto.
+     Se dispone primero y se saca después, por el Three.js de la
+     sonda: no rellena `parent` y ahí `tirar` no puede sacar. */
+  grupo.children.slice().forEach(function(h){ Parque3D.tirar(h); });
   while(grupo.children.length) grupo.remove(grupo.children[0]);
   limpiarRotulos();
   baldosas = [];
+  filasMano = 0;
+  ayudaCobrada = false;   // la ayuda cobra por piso, no por toque
   var d = p(), k = 11 / Math.max(d.b, d.h);
   var an = d.b*k, al = d.h*k;
 
@@ -243,6 +284,8 @@ function armarPiso(){
 
   document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · '+d.b+' m × '+d.h+' m';
   document.getElementById('subt').textContent = 'Piso '+(nivel+1)+' de '+PISOS.length;
+  pintarMapa();
+  pintarAyuda();
 }
 
 function moverRotulos(){
@@ -259,6 +302,98 @@ function moverRotulos(){
 }
 
 /* ============================================================
+   Cubrir el piso con el dedo, fila por fila
+   ------------------------------------------------------------
+   La pista dice «se cuentan FILAS × COLUMNAS» y durante mucho
+   tiempo el lienzo no escuchaba nada. Ahora tocar el piso pone UNA
+   fila de baldosas, y la cinta va echando la cuenta: «3 filas × 6 =
+   18 baldosas». Con el piso lleno, el total se propone en la
+   casilla y es el alumno quien toca Comprar: la multiplicación
+   HECHA con el dedo, no recitada.
+
+   No hace falta rayo 3D: las cuatro esquinas del piso se proyectan
+   a la pantalla con la misma cuenta que ya coloca los rótulos, y se
+   mira si el toque cayó dentro de ese cuadro.
+   ============================================================ */
+function proy(x, y, z){
+  var cont = document.getElementById('lienzo');
+  var w = new THREE.Vector3(x, y, z);
+  grupo.localToWorld(w);
+  w.project(cam);
+  return {x:(w.x*0.5+0.5)*cont.clientWidth, y:(-w.y*0.5+0.5)*cont.clientHeight};
+}
+function distSeg(x, y, a, b){
+  var dx = b.x-a.x, dy = b.y-a.y, l2 = dx*dx+dy*dy;
+  var f = l2 ? Math.max(0, Math.min(1, ((x-a.x)*dx+(y-a.y)*dy)/l2)) : 0;
+  var px = a.x+dx*f, py = a.y+dy*f;
+  return Math.sqrt((x-px)*(x-px)+(y-py)*(y-py));
+}
+function sobreElPiso(x, y){
+  var d = p(), k = 11 / Math.max(d.b, d.h);
+  var an = d.b*k, al = d.h*k;
+  var q = [proy(-an/2,0,-al/2), proy(an/2,0,-al/2), proy(an/2,0,al/2), proy(-an/2,0,al/2)];
+  /* Dentro del cuadrilátero proyectado: el giro del piso puede dejarlo
+     en cualquier orden, así que se mira que el punto quede del MISMO
+     lado de las cuatro orillas, sea cual sea ese lado. */
+  var s = 0, dentro = true, i, a, b;
+  for(i=0;i<4;i++){
+    a = q[i]; b = q[(i+1)%4];
+    var cr = (b.x-a.x)*(y-a.y) - (b.y-a.y)*(x-a.x);
+    if(Math.abs(cr) < 1e-9) continue;
+    if(!s) s = cr > 0 ? 1 : -1;
+    else if((cr > 0 ? 1 : -1) !== s){ dentro = false; break; }
+  }
+  if(dentro) return true;
+  /* O a un dedo de su orilla: rozar el borde del piso también es tocar
+     el piso —la misma tolerancia de ~30 px que usa el Cercador—, y de
+     paso vale cuando el piso se ve casi de canto por el giro. */
+  for(i=0;i<4;i++){ if(distSeg(x, y, q[i], q[(i+1)%4]) < 30) return true; }
+  return false;
+}
+function tocarPiso(e){
+  if(poniendo || comprado !== null) return;   // con la compra hecha, la cuenta ya está echada
+  var d = p();
+  if(filasMano >= d.h) return;                // el piso ya está lleno
+  var rc = document.getElementById('lienzo').getBoundingClientRect();
+  if(!sobreElPiso(e.clientX - rc.left, e.clientY - rc.top)) return;
+  filasMano++;
+  encenderFilas();
+}
+function encenderFilas(){
+  var d = p();
+  encenderBaldosas(filasMano * d.b);
+  var cinta = document.getElementById('cinta');
+  if(!filasMano){ cinta.style.display = 'none'; return; }
+  var todas = (filasMano === d.h);
+  cinta.innerHTML = '🎨 <b>'+filasMano+'</b> fila'+(filasMano===1?'':'s')+' × '+d.b+
+                    ' = <b>'+(filasMano*d.b)+'</b> baldosas'+(todas ? ' · ¡el piso entero!' : '');
+  cinta.style.display = 'block';
+  /* Con el piso lleno, el total se PROPONE en la casilla: el alumno
+     todavía puede corregirlo y es él quien toca Comprar. */
+  if(todas) document.getElementById('resp').value = String(d.b * d.h);
+}
+/* Enciende las primeras n baldosas y apaga el resto. La que se
+   enciende ENTRA DESDE ARRIBA y aterriza en unos ocho cuadros
+   (animar la baja): «míralas caer fila por fila» lo prometía la
+   entrada del juego y era mentira —aparecían clavadas en su sitio—.
+   Son las mismas mallas de siempre encendiéndose: crear noventa a
+   media animación entrecorta el dibujo justo cuando hay que mirarlo. */
+function encenderBaldosas(n){
+  for(var i=0;i<baldosas.length;i++){
+    var bal = baldosas[i], quiere = (i < n);
+    if(quiere && !bal.visible){
+      bal.visible = true;
+      bal._cae = 8;
+      bal.position.y = 2;
+    } else if(!quiere && bal.visible){
+      bal.visible = false;
+      bal._cae = 0;
+      bal.position.y = 0.09;
+    }
+  }
+}
+
+/* ============================================================
    La compra
    ============================================================ */
 function comprar(){
@@ -266,15 +401,21 @@ function comprar(){
   var r = parseFloat(String(document.getElementById('resp').value).replace(',','.'));
   var av = document.getElementById('aviso');
   if(isNaN(r)){ av.className='aviso mal'; av.textContent='Escribe cuántas baldosas vas a comprar.'; return; }
+  /* Media baldosa o «menos tres» no es una compra: se corrige aquí,
+     sin cobrar. La vida se reserva para el error del TEMA —confundir
+     el perímetro con el área—, no para un despiste al teclear. */
+  if(r <= 0 || r % 1 !== 0){ av.className='aviso mal'; av.textContent='Las baldosas se compran enteras: escribe un número entero mayor que cero.'; return; }
   comprado = r;
   document.getElementById('bt-cubrir').disabled = false;
   document.getElementById('bt-comprar').disabled = true;
+  pintarAyuda();   // con la compra hecha, la pista ya no cobra
   var bien = Math.abs(r - A) <= 0.01;
   if(bien){
     av.className='aviso bien';
     av.textContent='🛒 Compraste '+fmt(r)+' baldosas. Ahora cubre el piso y compruébalo.';
   } else {
     vidas--; pintarVidas();
+    Parque3D.fallo();   // la racha vuelve a cero, sin castigo visual
     av.className='aviso mal';
     /* El error de verdad tiene nombre. «Te equivocaste» no enseña
        nada; «eso es el PERÍMETRO» le da la palabra que le falta. */
@@ -288,7 +429,14 @@ function comprar(){
 function cubrir(){
   if(poniendo) return;
   document.getElementById('bt-cubrir').disabled = true;
-  document.getElementById('cinta').style.display = 'block';
+  /* La cinta deja la cuenta del dedo y pasa a contar las baldosas
+     puestas; el piso arranca vacío para que se vean caer TODAS las
+     compradas, también las filas que ya se habían puesto tocando. */
+  filasMano = 0;
+  encenderBaldosas(0);
+  var cinta = document.getElementById('cinta');
+  cinta.innerHTML = '🎨 <b>0</b> baldosas puestas';
+  cinta.style.display = 'block';
   poniendo = 0.0001;
 }
 
@@ -296,7 +444,19 @@ function terminarCubierta(){
   var d = p(), A = areaDe(d), P = perimetroDe(d);
   var bien = comprado !== null && Math.abs(comprado - A) <= 0.01;
   var est = bien ? (vidas===3?3:(vidas===2?2:1)) : 0;
-  if(bien) estrellas += 4;
+  ultimoBien = bien;
+  var completoAntes = mejor.every(function(x){ return x > 0; });
+  if(bien){
+    /* Cada piso paga sus estrellas UNA sola vez, y paga las del panel
+       (1-3), no un +4 fijo. Sin esto, repetir el aula fácil era una
+       mina de estrellas más rentable que avanzar, y el marcador
+       dejaba de decir cuánto se sabe. La marca del piso sí puede
+       mejorar; el cobro no se repite. */
+    if(!mejor[nivel]) estrellas += est;
+    if(est > mejor[nivel]) mejor[nivel] = est;
+    Parque3D.acierto();
+    if(!completoAntes && mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  }
   document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🎨';
   document.getElementById('fin-tit').textContent = bien ? '¡Piso cubierto!'
     : (comprado < A ? 'Quedó tierra a la vista' : 'Sobraron baldosas pagadas');
@@ -310,32 +470,58 @@ function terminarCubierta(){
                  : 'Sobraron '+fmt(-falta)+' baldosas pagadas. '+d.nota);
   var ultimo = (nivel >= PISOS.length-1);
   document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente piso →';
-  if(vidas <= 0){
+  /* «Se acabaron las cajas» SOLO si falló: quien cubrió bien con la
+     última caja acertó, y el acierto manda sobre el contador. */
+  if(!bien && vidas <= 0){
     document.getElementById('fin-tit').textContent = 'Se acabaron las cajas';
     document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este piso';
   }
+  /* Repetir el piso fallado sin esperar la vuelta entera: es donde
+     más se aprende, con el error recién explicado. */
+  document.getElementById('fin-rep').style.display = (!bien && vidas > 0) ? '' : 'none';
+  pintarMapa();
   pintarMarcador(); guardar();
   Parque3D.abrir('velo-fin');
   var av = document.getElementById('aviso'); av.className='aviso'; av.textContent='';
 }
 
 /* La ayuda cuesta una caja: si fuera gratis se toca antes de pensar,
-   y entonces no se piensa nunca. */
+   y entonces no se piensa nunca. Pero cobra UNA vez por piso —el
+   segundo toque es releer la pista, no volver a pedirla— y NUNCA la
+   última caja: un alumno sin salida cierra el juego, y eso cuesta
+   más que una pista regalada. El botón avisa cuando ya es gratis. */
 function verComo(){
-  var d = p();
-  if(comprado === null){ vidas--; pintarVidas(); }
+  if(comprado === null && !ayudaCobrada && vidas > 1){
+    vidas--; ayudaCobrada = true; pintarVidas();
+  }
   var av = document.getElementById('aviso');
   av.className='aviso';
-  av.textContent = 'Cuenta cuántas baldosas caben en UNA fila, y después cuántas filas hay. Multiplica.';
-  if(vidas <= 0){ av.className='aviso mal'; av.textContent='Se acabaron las cajas: cubre el piso y mira la cuenta.'; }
+  av.textContent = 'Toca el piso: cada toque pone UNA fila. Cuenta cuántas baldosas trae una fila y cuántas filas hay, y multiplica.';
+}
+function pintarAyuda(){
+  var b = document.getElementById('bt-como');
+  if(!b) return;
+  var gratis = ayudaCobrada || comprado !== null || vidas <= 1;
+  b.textContent = gratis ? '💡 Pista gratis' : '💡 ¿Cómo?';
 }
 
 function siguiente(){
   Parque3D.cerrar('velo-fin');
+  /* Sin cajas Y sin acierto, se repite el piso con cajas nuevas. El
+     acierto manda: quien cubrió bien avanza aunque haya gastado las
+     cajas por el camino. */
+  var repetirEste = (!ultimoBien && vidas <= 0);
   if(vidas <= 0){ vidas = 3; pintarVidas(); }
-  else if(nivel >= PISOS.length-1){ nivel = 0; }
-  else nivel++;
+  if(!repetirEste) nivel = (nivel >= PISOS.length-1) ? 0 : nivel + 1;
   guardar();
+  reiniciarNivel();
+}
+
+/* Volver sobre el piso fallado con la cuenta recién explicada: es
+   cuando de verdad se aprende, no seis pisos después. */
+function repetir(){
+  Parque3D.cerrar('velo-fin');
+  if(vidas <= 0){ vidas = 3; pintarVidas(); }
   reiniciarNivel();
 }
 
@@ -352,20 +538,50 @@ function reiniciarNivel(){
 function pintarVidas(){
   vidas = Math.max(0, vidas);
   document.getElementById('vidas').textContent = '🧰'.repeat(vidas) + '·'.repeat(3-vidas);
+  pintarAyuda();   // con una sola caja, el botón de la pista dice que es gratis
 }
 function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
 
+/* El mapa de la obra: los seis pisos con las estrellas que ya
+   pagaron. Se ve en la entrada y en cada resultado, para que se sepa
+   qué falta y a cuál vale la pena volver a por mejor marca. */
+function pintarMapa(){
+  var html = PISOS.map(function(d,i){
+    return '<span'+(i===nivel?' class="aqui"':'')+'>'+d.emoji+'<br>'+
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '—')+'</span>';
+  }).join('');
+  var a = document.getElementById('mapa-ini'), b = document.getElementById('mapa-fin');
+  if(a) a.innerHTML = html;
+  if(b) b.innerHTML = html;
+}
+
 function animar(){
   requestAnimationFrame(animar);
-  giro += 0.0035;
-  if(grupo) grupo.rotation.y = Math.sin(giro)*0.38;
+  /* Mientras el dedo manda —y un ratito después— el vaivén se calla;
+     al volver, se ACERCA suave a su balanceo en vez de pegar un salto
+     desde donde el alumno dejó el piso girado. */
+  if(dedo && (dedo.arrastrando() || dedo.reposo() < 2000)){
+    if(grupo) grupo.rotation.y = giroManual;
+  } else {
+    giro += 0.0035;
+    giroManual += (Math.sin(giro)*0.38 - giroManual)*0.03;
+    if(grupo) grupo.rotation.y = giroManual;
+  }
   if(poniendo > 0 && poniendo < 1){
     poniendo = Math.min(1, poniendo + 0.013);
     var A = areaDe(p());
     var puestas = Math.floor(Math.min(comprado, A) * poniendo);
-    for(var i=0;i<baldosas.length;i++) baldosas[i].visible = (i < puestas);
+    encenderBaldosas(puestas);
     document.querySelector('#cinta b').textContent = puestas;
     if(poniendo >= 1){ poniendo = 1; setTimeout(terminarCubierta, 500); }
+  }
+  /* La caída: cada baldosa recién encendida baja hasta su sitio. */
+  for(var i=0;i<baldosas.length;i++){
+    var bal = baldosas[i];
+    if(bal._cae > 0){
+      bal._cae--;
+      bal.position.y = 0.09 + (2 - 0.09) * (bal._cae / 8);
+    }
   }
   moverRotulos();
   rend.render(esc, cam);
@@ -380,7 +596,12 @@ Parque3D.arrancar(function(){
   montar();
   pintarVidas(); pintarMarcador();
   document.getElementById('resp').addEventListener('keydown', function(e){
-    if(e.key === 'Enter' && !document.getElementById('bt-comprar').disabled) comprar();
+    if(e.key !== 'Enter') return;
+    /* Enter hace lo que toque: primero comprar y, con la compra hecha,
+       cubrir. Antes solo compraba, y quien jugaba con teclado se
+       quedaba con el piso sin cubrir. */
+    if(!document.getElementById('bt-comprar').disabled) comprar();
+    else if(!document.getElementById('bt-cubrir').disabled) cubrir();
   });
 });
 
@@ -389,7 +610,8 @@ window.__j3d = {
   cubrir: cubrir,
   saltarCubierta: function(){ poniendo = 0.99; },
   estado: function(){ return {nivel:nivel, area:areaDe(p()), perimetro:perimetroDe(p()),
-                              vidas:vidas, estrellas:estrellas, comprado:comprado}; },
+                              vidas:vidas, estrellas:estrellas, comprado:comprado,
+                              mejor:mejor.slice(), filasMano:filasMano}; },
   pisos: PISOS, areaDe: areaDe, perimetroDe: perimetroDe
 };
 </script>

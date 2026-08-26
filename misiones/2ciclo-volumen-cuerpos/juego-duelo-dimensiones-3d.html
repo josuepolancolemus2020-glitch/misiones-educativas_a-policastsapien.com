@@ -18,8 +18,10 @@
   --morado:#7c5cd6;
 }
 .xp{font-size:.8rem;background:rgba(124,92,214,.2);border:1.5px solid rgba(124,92,214,.6);padding:.2rem .5rem;border-radius:9px;white-space:nowrap;}
-/* barras de vida */
-.vidas{position:absolute;top:.5rem;left:.5rem;right:.5rem;display:flex;flex-direction:column;gap:.3rem;pointer-events:none;}
+/* Barras de vida. Se llaman .barras-vida y no .vidas: el andamio
+   compartido trae una .vidas suya (el marcador de otros juegos) y
+   sus tamaños se pisaban con los de esta caja. */
+.barras-vida{position:absolute;top:.5rem;left:.5rem;right:.5rem;display:flex;flex-direction:column;gap:.3rem;pointer-events:none;}
 .barra{background:rgba(20,26,44,.9);border:1.5px solid rgba(154,165,189,.35);border-radius:10px;padding:.25rem .5rem;}
 .barra .fila{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.15rem;flex-wrap:wrap;}
 .barra .riel{height:9px;background:#0d1120;border-radius:5px;overflow:hidden;}
@@ -67,7 +69,7 @@
 </div>
 
 <div id="lienzo">
-  <div class="vidas">
+  <div class="barras-vida">
     <div class="barra enemigo"><div class="fila"><span id="en-nom">—</span><span id="en-vida">0/0</span></div><div class="riel"><div class="relleno" id="en-rel" style="width:100%"></div></div></div>
     <div class="barra heroe"><div class="fila"><span>🛡️ Tú</span><span id="yo-vida">100/100</span></div><div class="riel"><div class="relleno" id="yo-rel" style="width:100%"></div></div></div>
   </div>
@@ -114,6 +116,9 @@
 
 <div class="velo" id="velo-fin">
   <div class="panel">
+    <!-- Las estrellas de la zona; en «Te tumbaron» se esconden,
+         que una derrota con estrellas no se entiende. -->
+    <div class="estrellas" id="fin-est" style="display:none;">⭐⭐⭐</div>
     <div class="emoji-gr" id="fin-emoji">🏆</div>
     <h2 id="fin-tit"></h2>
     <p id="fin-txt"></p>
@@ -198,7 +203,7 @@ var ZONAS = [
   ]}
 ];
 
-var esc, cam, rend, bicho, particulas, chispas = [], luzFondo;
+var esc, cam, rend, bicho, particulas, chispas = [], luzFondo, dedo;
 var zona = 0, indice = 0, vidaYo = 100, vidaEl = 0, xp = 0, esperando = false, ataqueElegido = null, giroPlano = 0, cambiado = false;
 /* Cada partida lleva su número. Los temporizadores de la partida
    anterior comprueban que siguen en la suya antes de hacer nada: al
@@ -206,8 +211,13 @@ var zona = 0, indice = 0, vidaYo = 100, vidaEl = 0, xp = 0, esperando = false, a
    guarda era solo «if(vidaYo>0)», y el alumno perdía un turno. */
 var partida = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({zona:zona, xp:xp})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ zona=Math.min(d.zona|0, ZONAS.length-1); xp=d.xp|0; } }catch(e){} }
+/* Los campos nuevos (ganado, vueltas, estrellas por zona) viven
+   DENTRO de la misma llave: una llave nueva le borraría el avance al
+   teléfono que trae la versión vieja. Y se leen con tolerancia,
+   porque un guardado viejo solo trae zona y xp. */
+var ganado = false, vueltas = 0, estrellas = {};
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({zona:zona, xp:xp, ganado:ganado, vueltas:vueltas, estrellas:estrellas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ zona=Math.min(d.zona|0, ZONAS.length-1); xp=d.xp|0; ganado=!!d.ganado; vueltas=d.vueltas|0; if(d.estrellas && typeof d.estrellas==='object') estrellas=d.estrellas; } }catch(e){} }
 
 function actual(){ return ZONAS[zona].bichos[indice]; }
 function fmt(x){ var r=Math.round(x*100)/100; return r.toLocaleString('es-HN',{maximumFractionDigits:2}); }
@@ -237,6 +247,16 @@ function montar(){
 
   armarChispas();
   Parque3D.vigilarHueco(ajustar);
+  /* Girar la figura con el dedo. Para un plano, ponerlo de canto y
+     ver que desaparece es LA prueba de que no tiene grosor; que lo
+     compruebe la mano del alumno enseña más que verlo pasar solo.
+     Mientras el dedo manda —y un ratito después— el giro automático
+     del bucle se aparta. */
+  dedo = Parque3D.giroConElDedo(function(dx, dy){
+    if(!bicho) return;
+    bicho.rotation.y += dx*0.01;
+    bicho.rotation.x = Math.max(-1.1, Math.min(1.1, bicho.rotation.x + dy*0.008));
+  });
   animar();
 }
 
@@ -280,7 +300,10 @@ function reventar(color){
    El enemigo, dibujado según lo que es
    ============================================================ */
 function armarBicho(){
-  if(bicho){ esc.remove(bicho); bicho = null; }
+  /* remove() y ADEMÁS tirar(): remove solo lo saca del árbol y las
+     geometrías se quedaban vivas en la tarjeta; pelea tras pelea, en
+     un teléfono modesto la memoria se acababa. */
+  if(bicho){ esc.remove(bicho); Parque3D.tirar(bicho); bicho = null; }
   var b = actual(), f = figura(b), d = b.dims;
   bicho = new THREE.Group();
   var mat = new THREE.MeshLambertMaterial({color:b.color, side:THREE.DoubleSide});
@@ -331,10 +354,15 @@ function pintarBarras(){
   document.getElementById('xp').textContent = '⭐ '+xp+' XP';
 }
 
-function pintarChapa(){
+/* La chapa NO dice si el enemigo es plano o cuerpo: contarlo era
+   regalarle al alumno el primer paso, que es justo lo que este juego
+   evalúa —contar las medidas y decidir—. Lo confirma DESPUÉS de que
+   él acierte, para que se quede con la palabra puesta. */
+function pintarChapa(confirmado){
   var b = actual(), f = figura(b);
   document.getElementById('chapa').innerHTML =
-    b.emoji+' <b>'+b.nom+'</b> · '+(f.plano ? 'es PLANO' : 'es un CUERPO')+
+    b.emoji+' <b>'+b.nom+'</b>'+
+    (confirmado ? ' · '+(f.plano ? 'es PLANO' : 'es un CUERPO') : '')+
     '<span class="dims">'+f.txt+'</span>';
 }
 
@@ -380,6 +408,7 @@ function atacar(tipo){
        botones encendidos que no contestan es un teléfono que el niño
        da por trabado. */
     apagarAtaques(true);
+    Parque3D.fallo();
     recibir(b.golpe, f.plano
       ? 'Le tiraste volumen a algo PLANO: no tiene grosor, el golpe lo atravesó.'
       : 'Le tiraste área a un CUERPO: le rebotó en la cáscara.');
@@ -389,10 +418,12 @@ function atacar(tipo){
     return;
   }
   ataqueElegido = tipo;
+  Parque3D.acierto();
   mostrarOpciones(f, tipo);
 }
 
 function mostrarOpciones(f, tipo){
+  pintarChapa(true);   // acertado el primer paso, ahora la chapa sí lo confirma
   document.getElementById('ataques').style.display = 'none';
   var av = document.getElementById('aviso');
   av.className = 'aviso bien';
@@ -401,7 +432,14 @@ function mostrarOpciones(f, tipo){
   var ops = [{v:f.valor, ok:true, p:''}].concat(f.malos.map(function(m){ return {v:m.v, ok:false, p:m.p}; }));
   var vistos = {};
   ops = ops.filter(function(o){ var k=fmt(o.v); if(vistos[k]) return false; vistos[k]=1; return true; });
-  ops.sort(function(){ return Math.random()-0.5; });
+  /* Barajado honesto (Fisher-Yates). sort() con Math.random()-0.5
+     no reparte parejo —depende del algoritmo del navegador—, y la
+     respuesta buena caía más veces en el mismo renglón: el que juega
+     mucho se aprende el sitio sin aprenderse la cuenta. */
+  for(var i=ops.length-1; i>0; i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = ops[i]; ops[i] = ops[j]; ops[j] = t;
+  }
   var cont = document.getElementById('ops');
   cont.innerHTML = ''; cont.style.display = 'flex';
   Parque3D.respiro(cont);
@@ -423,6 +461,7 @@ function golpear(o, boton, f){
     var dano = Math.ceil(actual().vida/3);
     vidaEl -= dano;
     xp += 5;
+    Parque3D.acierto();
     reventar(0xffe08a);
     volar('−'+dano, '#ffe08a');
     var av = document.getElementById('aviso');
@@ -436,6 +475,7 @@ function golpear(o, boton, f){
     }, 750);
   } else {
     boton.classList.add('mala');
+    Parque3D.fallo();
     recibir(Math.round(actual().golpe*0.7), 'La cuenta no era esa: '+o.p+'.');
     var miPartida2 = partida;
     setTimeout(function(){ if(vidaYo>0 && miPartida2 === partida) pedirAtaque(); }, 1100);
@@ -470,7 +510,12 @@ function transformarJefe(){
   av.innerHTML = '👑 <b>¡El jefe se levantó del suelo!</b> Ya no es plano: le creció el grosor. Mira otra vez sus medidas.';
   reventar(0x7c5cd6);
   document.getElementById('ops').style.display='none';
+  /* La misma guarda de partida que los demás temporizadores: si el
+     alumno reinició en este segundo y medio, los ataques del jefe
+     viejo no pueden encenderse encima de la partida nueva. */
+  var miPartida = partida;
   setTimeout(function(){
+    if(miPartida !== partida) return;
     document.getElementById('ataques').style.display='flex';
     document.getElementById('at-area').disabled=false;
     document.getElementById('at-vol').disabled=false;
@@ -479,14 +524,22 @@ function transformarJefe(){
 }
 
 function vencer(){
-  xp += 15; guardar();
+  xp += 15; guardar();   // cada pelea ganada queda escrita: morir contra el jefe ya no borra lo mostrado
   if(indice < ZONAS[zona].bichos.length-1){
     indice++;
-    setTimeout(nuevoBicho, 500);
+    /* La misma guarda de partida que los demás temporizadores. */
+    var miPartida = partida;
+    setTimeout(function(){ if(miPartida === partida) nuevoBicho(); }, 500);
     return;
   }
   // zona limpia
+  /* Las estrellas salen de la vida que quedó, y por zona solo suben:
+     la mejor pasada no se pierde por repetir y salir peor. */
+  var est = vidaYo >= 70 ? 3 : (vidaYo >= 40 ? 2 : 1);
+  if((estrellas[zona]|0) < est) estrellas[zona] = est;
   var ultima = (zona >= ZONAS.length-1);
+  document.getElementById('fin-est').textContent = '⭐'.repeat(est)+'·'.repeat(3-est);
+  document.getElementById('fin-est').style.display = '';
   document.getElementById('fin-emoji').textContent = ultima ? '👑' : '🏆';
   document.getElementById('fin-tit').textContent = ultima ? '¡Ganaste el castillo!' : '¡Zona limpia!';
   document.getElementById('fin-txt').textContent = ultima
@@ -496,11 +549,20 @@ function vencer(){
   document.getElementById('fin-bt').textContent = ultima ? '🔄 Otra vuelta' : 'Siguiente zona →';
   document.getElementById('velo-fin').classList.add('ver');
   if(!ultima){ zona++; indice = 0; vidaYo = Math.min(100, vidaYo+30); }
-  else { zona = 0; indice = 0; vidaYo = 100; }
+  else {
+    /* Ganar NO borra el avance: la corona y la vuelta se escriben en
+       la llave ANTES de reiniciar la zona —es lo que lee la tarjeta
+       de la misión—. Antes, el reinicio guardaba zona 0 a secas y el
+       teléfono olvidaba que ya se había ganado. */
+    ganado = true; vueltas++; guardar();
+    Parque3D.festejarFin();
+    zona = 0; indice = 0; vidaYo = 100;
+  }
   guardar();
 }
 
 function caer(){
+  document.getElementById('fin-est').style.display = 'none';
   document.getElementById('fin-emoji').textContent = '💀';
   document.getElementById('fin-tit').textContent = 'Te tumbaron';
   document.getElementById('fin-txt').textContent =
@@ -532,7 +594,15 @@ function empezar(){
 function animar(){
   requestAnimationFrame(animar);
   if(bicho){
-    if(bicho.userData.plano){
+    if(dedo && (dedo.arrastrando() || dedo.reposo() < 2000)){
+      /* El dedo manda, y un ratito después también: retomar el giro
+         automático encima de la mano le arranca la figura de los
+         dedos. Para el plano se apunta por dónde iba su vaivén, para
+         que al retomar siga desde donde el alumno lo dejó y no pegue
+         un salto. */
+      if(bicho.userData.plano)
+        giroPlano = Math.asin(Math.max(-1, Math.min(1, bicho.rotation.y/1.45)));
+    } else if(bicho.userData.plano){
       giroPlano += 0.014;
       bicho.rotation.y = Math.sin(giroPlano)*1.45;
     } else {

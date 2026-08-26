@@ -33,7 +33,8 @@
   --altura:#f0a04b;
 }
 .tarjeta{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(14,23,32,.93);
-  border:2px solid var(--franja);border-radius:12px;padding:.4rem .6rem;font-size:.82rem;line-height:1.35;text-align:center;}
+  border:2px solid var(--franja);border-radius:12px;padding:.4rem .6rem;font-size:.82rem;line-height:1.35;text-align:center;
+  pointer-events:none;}
 .tarjeta b{color:var(--acento);}
 .rot{position:absolute;transform:translate(-50%,-50%);background:rgba(14,23,32,.92);border:1.5px solid var(--acento);
   border-radius:8px;padding:.1rem .34rem;font-size:.72rem;font-family:'Fira Code',ui-monospace,monospace;
@@ -43,7 +44,6 @@
 .tipo{flex:1;min-width:4.4rem;font-family:inherit;font-size:.8rem;font-weight:700;padding:.45rem .3rem;min-height:44px;
   border:2px solid rgba(154,165,189,.45);border-radius:11px;background:#0e1720;color:var(--claro);cursor:pointer;line-height:1.2;}
 .tipo.on{border-color:var(--acento);background:rgba(47,196,168,.18);}
-.tipo:disabled{opacity:.4;cursor:default;}
 .mando{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem;}
 .mando label{font-size:.74rem;width:4.9rem;flex-shrink:0;line-height:1.15;}
 .mando label b{display:block;color:var(--acento);font-family:'Fira Code',ui-monospace,monospace;font-size:.98rem;}
@@ -68,6 +68,16 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
 .chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
 @media(max-width:380px){.cuenta{font-size:.74rem;}.bt{font-size:.8rem;}.tipo{font-size:.74rem;}}
+/* Con la pantalla corta —acostado, o la letra del sistema agrandada—
+   se recorta el aire para que «Entregar» no caiga bajo el pliegue.
+   Nada baja de los 44 px que un dedo acierta sin mirar. */
+@media (max-height:430px){
+  .tipos{gap:.25rem;margin-bottom:.3rem;}
+  .tipo{font-size:.72rem;padding:.3rem .25rem;}
+  .mando{margin-bottom:.15rem;}
+  .cuenta{font-size:.72rem;margin:.2rem 0 .05rem;}
+  .aviso{margin-top:.15rem;min-height:1rem;}
+}
 </style>
 </head>
 <body>
@@ -129,6 +139,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
     <h2>La Fábrica de Cuadriláteros</h2>
     <p>Llegan pedidos con las medidas que tienen que salir. Mueve la <b>base</b> y la <b>altura</b> hasta que los números cuadren, y entrega.</p>
     <div class="chapas"><span>El perímetro va por los LADOS</span><span>El área va por la ALTURA</span><span>La altura NO es un lado</span></div>
+    <p style="font-size:.8rem;color:#9aa5bd;">☝️ También puedes arrastrar sobre el dibujo: de lado cambia la base; hacia arriba, la altura.</p>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
   </div>
 </div>
@@ -213,9 +224,12 @@ var PEDIDOS = [
 var esc, cam, rend, grupo, rots = [];
 var pedido = 0, estrellas = 0, giro = 0, enReto = false;
 var tipo = 'cuadrado', base = 6, altura = 4, menor = 4;
+/* intentos y pista de ESTE pedido: las estrellas del velo miden cómo
+   se entregó, no salen solas. limpios guarda la nota de cada pedido. */
+var intentos = 0, pisto = false, limpios = {};
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({pedido:pedido, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ pedido=Math.max(0, d.pedido|0); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({pedido:pedido, estrellas:estrellas, limpios:limpios})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ pedido=Math.max(0, d.pedido|0); estrellas=d.estrellas|0; limpios=d.limpios||{}; } }catch(e){} }
 function pe(){ return PEDIDOS[Math.min(pedido, PEDIDOS.length-1)]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
 function pts(){ return esquinas(tipo, base, altura, menor); }
@@ -268,7 +282,10 @@ function rotulo(texto, clase, x, y, z){
    cuatro triángulos de nada y así el dibujo no se despega nunca de
    los números que hay debajo. */
 function pintar(){
-  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  /* tirar() y no solo remove(): pintar corre con cada movimiento del
+     mando y sin disponer geometrías y materiales la memoria de la
+     tarjeta crecía mientras el alumno arrastraba. */
+  while(grupo.children.length) Parque3D.tirar(grupo.children[0]);
   limpiarRotulos();
   var P = pts();
   var xs = P.map(function(q){ return q[0]; }), ys = P.map(function(q){ return q[1]; });
@@ -379,6 +396,7 @@ function ponerTipo(t){
 function nuevoPedido(){
   var p = pe();
   enReto = (pedido >= PEDIDOS.length);
+  intentos = 0; pisto = false;
   if(enReto) return retoLibre();
   document.getElementById('tarjeta').innerHTML = p.emoji+' <b>'+p.t+'</b>';
   document.getElementById('subt').textContent = 'Pedido '+(pedido+1)+' de '+PEDIDOS.length;
@@ -386,7 +404,30 @@ function nuevoPedido(){
   ponerTipo(p.tipo);
   if(p.base){ base = p.base; document.getElementById('sl-base').value = base; }
   if(p.menor){ menor = p.menor; document.getElementById('sl-menor').value = menor; }
+  descolocar();
   pintar();
+}
+
+/* El pedido NO puede llegar resuelto. El primero pedía un cuadrado
+   de 36 m² y la fábrica arrancaba con el lado en 6: se ganaba
+   tocando «Entregar» sin mover nada — la primera lección que daba el
+   juego era la contraria de la que quiere dar. Aquí se corren las
+   medidas que el pedido no fija hasta que el objetivo NO se cumpla. */
+function descolocar(){
+  var o = objetivo(), vueltas = 0;
+  while(vueltas++ < 40){
+    var P = pts(), ar = areaDe(P), per = perimetroDe(P);
+    var cumpleA = (o.area === undefined || o.area === null) || Math.abs(ar - o.area) <= 0.01;
+    var cumpleP = (o.perim === undefined) || Math.abs(per - o.perim) <= 0.01;
+    if(!(cumpleA && cumpleP)) break;
+    if(!o.base) base = 1 + ((base + 2) % 20);
+    if(tipo !== 'cuadrado') altura = 1 + ((altura + 3) % 20);
+    else if(o.base) break;   // cuadrado con lado fijado: no hay nada que mover
+    if(tipo === 'trapecio' && menor >= base) menor = Math.max(1, base - 1);
+  }
+  document.getElementById('sl-base').value = base;
+  document.getElementById('sl-alt').value = altura;
+  document.getElementById('sl-menor').value = menor;
 }
 
 /* Los retos libres salen del propio catálogo de figuras: se elige un
@@ -408,6 +449,7 @@ function retoLibre(){
   ponerTipo(t);
   if(window.__reto.base){ base = b; document.getElementById('sl-base').value = b; }
   if(window.__reto.menor){ menor = m; document.getElementById('sl-menor').value = m; }
+  descolocar();
   pintar();
 }
 
@@ -428,24 +470,39 @@ function entregar(){
   if(o.perim !== undefined && Math.abs(per - o.perim) > 0.01) fallos.push('el perímetro da '+fmt(per)+' y piden '+fmt(o.perim)+' m');
 
   if(fallos.length){
+    intentos++;
+    Parque3D.fallo();
     av.className = 'aviso mal';
     av.textContent = 'Todavía no: '+fallos[0]+'.';
     return;
   }
-  estrellas += 4; pintarMarcador();
+  /* Las estrellas MIDEN la entrega: limpio a la primera y sin pista,
+     tres; con pista o un par de intentos, dos; peleado, una. Antes
+     salían tres siempre, y un marcador que siempre dice lo mismo no
+     dice nada. */
+  var est = (intentos === 0 && !pisto) ? 3 : (intentos <= 2 ? 2 : 1);
+  estrellas += est + 1; pintarMarcador();
+  if(!enReto) limpios[pedido] = est;
+  Parque3D.acierto();
+  var cerroFabrica = (!enReto && pedido === PEDIDOS.length - 1);
   pedido++; guardar();
-  document.getElementById('fin-est').textContent = '⭐⭐⭐';
-  document.getElementById('fin-tit').textContent = '¡Pedido entregado!';
+  document.getElementById('fin-est').textContent = '⭐'.repeat(est)+'·'.repeat(3-est);
+  document.getElementById('fin-tit').textContent = cerroFabrica ? '🏭 ¡La fábrica es tuya!' : '¡Pedido entregado!';
   document.getElementById('fin-form').innerHTML = document.getElementById('cuenta').innerHTML
     .replace(/<span class="fila[^"]*">/g, '').replace(/<\/span>/g, '<br>');
-  document.getElementById('fin-txt').textContent = o.nota ||
-    'Ese es. Fíjate en que el perímetro y el área cambian por su cuenta: no son dos formas de decir lo mismo.';
+  document.getElementById('fin-txt').textContent = (cerroFabrica
+    ? 'Los seis pedidos entregados. Ahora vienen los retos libres, que no se acaban nunca. '
+    : '') + (o.nota ||
+    'Ese es. Fíjate en que el perímetro y el área cambian por su cuenta: no son dos formas de decir lo mismo.');
+  if(est < 3) document.getElementById('fin-txt').textContent += ' Para las 3 ⭐: a la primera y sin pista.';
   document.getElementById('fin-bt').textContent = (pedido >= PEDIDOS.length) ? 'Reto libre →' : 'Siguiente pedido →';
+  if(cerroFabrica) Parque3D.festejarFin();
   Parque3D.abrir('velo-fin');
 }
 
 function verComo(){
   var o = objetivo();
+  pisto = true;
   var av = document.getElementById('aviso');
   av.className = 'aviso';
   if(o.perim !== undefined && o.area !== undefined)
@@ -488,9 +545,34 @@ Parque3D.arrancar(function(){
   });
   document.getElementById('sl-alt').addEventListener('input', function(ev){ altura = +ev.target.value; pintar(); });
   document.getElementById('sl-menor').addEventListener('input', function(ev){
-    menor = Math.min(+ev.target.value, base-1);
+    /* con suelo: sin el Math.max, con base 1 la menor quedaba en 0 y
+       el «trapecio» era un triángulo con el rótulo diciendo 0 m */
+    menor = Math.max(1, Math.min(+ev.target.value, base-1));
     ev.target.value = menor;
     pintar();
+  });
+  /* Las medidas también se fabrican CON EL DEDO sobre el dibujo: de
+     lado la base, hacia arriba la altura (en el cuadrado, el lado).
+     Los deslizadores quedan de mando fino. */
+  var acX = 0, acY = 0, PASO_PX = 14;
+  function moverMedida(cual, d){
+    if(cual === 'base' || tipo === 'cuadrado'){
+      base = Math.max(1, Math.min(20, base + d));
+      if(tipo === 'trapecio' && menor >= base) menor = Math.max(1, base - 1);
+      document.getElementById('sl-base').value = base;
+    } else {
+      altura = Math.max(1, Math.min(20, altura + d));
+      document.getElementById('sl-alt').value = altura;
+    }
+    document.getElementById('sl-menor').value = menor;
+    pintar();
+  }
+  Parque3D.giroConElDedo(function(dx, dy){
+    acX += dx; acY += dy;
+    while(acX >= PASO_PX){ acX -= PASO_PX; moverMedida('base', 1); }
+    while(acX <= -PASO_PX){ acX += PASO_PX; moverMedida('base', -1); }
+    while(acY <= -PASO_PX){ acY += PASO_PX; moverMedida('altura', 1); }
+    while(acY >= PASO_PX){ acY -= PASO_PX; moverMedida('altura', -1); }
   });
 });
 

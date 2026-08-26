@@ -241,9 +241,22 @@ function cortesDe(f){
 
 var esc, cam, rend, grupo, rots = [], cubos = [];
 var indice = 0, vidas = 3, estrellas = 0, giro = 0, paso = 0, cortado = null;
+/* fallosFig: los fallos de ESTA figura. Las estrellas del velo miden
+   la figura que se acaba de partir, no la culpa arrastrada de hace
+   tres: una figura perfecta tras un tropiezo viejo salía con 2⭐.
+   hechas: qué figuras se cerraron (los puntitos del subtítulo).
+   completado/vueltas: la partida entera, para que terminar las seis
+   NO borre la medalla de la tarjeta de la misión. */
+var fallosFig = 0, hechas = {}, completado = false, vueltas = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({indice:indice, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ indice=Math.min(d.indice|0, FIGURAS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+/* vidas también se guarda: recargar la página regalaba las tijeras. */
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({indice:indice, estrellas:estrellas,
+  vidas:vidas, hechas:hechas, completado:completado, vueltas:vueltas})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){
+  indice=Math.min(Math.max(d.indice|0,0), FIGURAS.length-1); estrellas=d.estrellas|0;
+  if(d.vidas !== undefined) vidas = Math.max(0, Math.min(3, d.vidas|0));
+  hechas = d.hechas||{}; completado = !!d.completado; vueltas = d.vueltas|0;
+} }catch(e){} }
 function f(){ return FIGURAS[indice]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
 
@@ -295,7 +308,10 @@ function rotulo(texto, clase, x, y, z){
    para que el área se pueda CONTAR además de calcular. Al partirla,
    los dos montones se separan y cada uno toma su color. */
 function armarFigura(){
-  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  /* tirar() y no solo remove(): cada figura son hasta 88 cajitas con
+     su geometría y su material, y sin disponerlos la memoria de la
+     tarjeta solo crecía con cada figura. */
+  while(grupo.children.length) Parque3D.tirar(grupo.children[0]);
   limpiarRotulos();
   cubos = [];
   var d = f(), k = 11 / Math.max(d.W, d.H);
@@ -310,7 +326,8 @@ function armarFigura(){
   rotulo(d.W+' m', '', 0, 0.5, -d.H*k/2 - k*0.8);
   rotulo(d.H+' m', '', -d.W*k/2 - k*0.8, 0.5, 0);
   document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · cabe en un '+d.W+' m × '+d.H+' m, y le falta un pedazo de '+d.w+' × '+d.h;
-  document.getElementById('subt').textContent = 'Figura '+(indice+1)+' de '+FIGURAS.length;
+  var puntos = FIGURAS.map(function(_, k){ return hechas[k] ? '●' : '○'; }).join('');
+  document.getElementById('subt').textContent = 'Figura '+(indice+1)+' de '+FIGURAS.length+' · '+puntos;
 }
 
 /* Separa los dos montones y les pone su medida al lado. Ver los dos
@@ -411,26 +428,37 @@ function contestar(o, bt){
       pintarCorte(o.corte);
       todos.forEach(function(b){ b.disabled = true; });
       bt.classList.add('buena');
+      Parque3D.acierto();
       av.className = 'aviso bien';
       av.textContent = '✂️ Quedaron dos rectángulos. Ahora cada uno tiene su base y su altura.';
       setTimeout(pasoSuma, 1100);
     } else {
-      vidas--; pintarVidas();
+      vidas--; fallosFig++; pintarVidas(); guardar();
+      Parque3D.fallo();
       bt.disabled = true; bt.classList.add('mala');
       av.className = 'aviso mal';
       av.innerHTML = 'Por ahí no: uno de los pedazos <b>sigue siendo raro</b>, y a una figura rara no se le puede aplicar base × altura.';
-      if(vidas <= 0) setTimeout(perder, 900);
+      /* con la última tijera perdida se apagan TODOS los cortes: en
+         los 900 ms de espera se podía tocar el corte bueno y quedaban
+         dos pantallas montadas una encima de la otra */
+      if(vidas <= 0){ todos.forEach(function(b){ b.disabled = true; }); setTimeout(perder, 900); }
     }
     return;
   }
 
   var bien = (o.v === 'buena');
-  todos.forEach(function(b){ b.disabled = true; b.classList.add(b.dataset.v === 'buena' ? 'buena' : 'mala'); });
+  /* la buena se enciende en verde y en rojo SOLO la elegida: pintar
+     de rojo también la que no tocó acusa dos errores donde hubo uno */
+  todos.forEach(function(b){ b.disabled = true; if(b.dataset.v === 'buena') b.classList.add('buena'); });
+  if(!bien) bt.classList.add('mala');
   if(bien){
+    Parque3D.acierto();
     estrellas += 4;
+    hechas[indice] = true;
     av.className = 'aviso bien'; av.textContent = '✅ ¡Ese es!';
   } else {
-    vidas--; pintarVidas();
+    vidas--; fallosFig++; pintarVidas();
+    Parque3D.fallo();
     av.className = 'aviso mal';
     av.textContent = o.v === 'entera'
       ? 'Ese es el rectángulo ENTERO: te faltó quitar el pedazo que no está.'
@@ -446,9 +474,20 @@ function contestar(o, bt){
 function mostrarFin(bien){
   var d = f(), A = areaDe(d);
   var pz = partir(d, cortado || cortesDe(d)[0]), kA = caja(pz[0]), kB = caja(pz[1]);
-  var est = bien ? (vidas===3?3:(vidas===2?2:1)) : 0;
+  var est = bien ? (fallosFig === 0 ? 3 : (fallosFig === 1 ? 2 : 1)) : 0;
   document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🧩';
   document.getElementById('fin-tit').textContent = bien ? '¡Bien partido!' : 'Mira los dos caminos';
+  /* terminar la sexta NO borra nada: la partida completa se guarda
+     ANTES de reiniciar el índice, y la tarjeta de la misión la lee */
+  if(bien && indice >= FIGURAS.length-1){
+    var todasLasSeis = true;
+    FIGURAS.forEach(function(_, k){ if(!hechas[k]) todasLasSeis = false; });
+    if(todasLasSeis){
+      completado = true; vueltas++;
+      Parque3D.festejarFin();
+      document.getElementById('fin-tit').textContent = '🏆 ¡Partiste las 6!';
+    }
+  }
   document.getElementById('fin-form').innerHTML =
     '✂️ Partiendo en dos:<br>'+
     kA.b+' × '+kA.a+' = '+(kA.b*kA.a)+' m²<br>'+
@@ -472,9 +511,12 @@ function perder(){ mostrarFin(false); }
 
 function siguiente(){
   Parque3D.cerrar('velo-fin');
-  if(vidas <= 0){ vidas = 3; pintarVidas(); }
+  if(vidas <= 0){ /* misma figura, tijeras nuevas */ }
   else if(indice >= FIGURAS.length-1){ indice = 0; }
   else indice++;
+  /* las tijeras son POR FIGURA: la tensión vive dentro de la figura
+     y la calificación ya no arrastra culpas viejas */
+  vidas = 3; fallosFig = 0; pintarVidas();
   guardar();
   armarFigura();
   pasoCorte();

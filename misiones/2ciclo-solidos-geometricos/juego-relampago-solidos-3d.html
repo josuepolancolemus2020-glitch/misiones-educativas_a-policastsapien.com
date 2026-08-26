@@ -19,6 +19,10 @@
 }
 body{user-select:none;}
 .puntos{font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;font-weight:700;color:var(--dorado);}
+/* Cuando la partida va por récord, el número se enciende. Ya era
+   dorado, así que lo que avisa es el brillo, no el color: tiene que
+   notarse de reojo, sin dejar de mirar el sólido. */
+.puntos.record{color:#ffd54f;text-shadow:0 0 9px rgba(255,213,79,.6);}
 .reloj{font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;font-weight:700;background:rgba(74,144,217,.18);border:1.5px solid rgba(74,144,217,.5);padding:.15rem .5rem;border-radius:9px;}
 .reloj.poco{background:rgba(224,82,82,.25);border-color:var(--rojo);color:#ffb1b1;}
 .preg{position:absolute;top:.5rem;left:.5rem;right:.5rem;text-align:center;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.4rem .7rem;font-size:.95rem;font-weight:700;line-height:1.3;}
@@ -30,8 +34,8 @@ body{user-select:none;}
 .globo.no{border-color:var(--rojo);color:#ffb1b1;}
 .ops{display:flex;gap:.4rem;flex-wrap:wrap;}
 .ops.col{flex-direction:column;}
-.op{flex:1;font-family:inherit;font-size:1rem;font-weight:800;padding:.75rem .4rem;border:2px solid rgba(154,165,189,.45);border-radius:14px;background:#141a2c;color:var(--claro);cursor:pointer;line-height:1.25;}
-.op small{display:block;font-size:.64rem;font-weight:400;color:var(--gris);}
+.op{flex:1;font-family:inherit;font-size:1rem;font-weight:800;padding:.75rem .4rem;border:2px solid rgba(154,165,189,.45);border-radius:14px;background:#141a2c;color:var(--claro);cursor:pointer;line-height:1.25;min-height:44px;/* lo que un dedo acierta sin mirar */}
+.op small{display:block;font-size:.74rem;font-weight:400;color:var(--gris);}
 .op.mala{border-color:var(--rojo);background:rgba(224,82,82,.22);}
 .op.buena{border-color:var(--verde);background:rgba(39,174,96,.24);}
 .op:active{transform:scale(.97);}
@@ -79,7 +83,10 @@ body{user-select:none;}
     <div class="emoji-gr">⚡</div>
     <h2>Relámpago de Sólidos</h2>
     <p>Sesenta segundos. Sale un sólido girando y hay que clasificarlo <b>rápido</b>. Cada acierto seguido sube la <b>racha</b>, y la racha multiplica los puntos.</p>
-    <div class="nota">Acierto: +10 × la racha<br>Fallo: se rompe la racha y −3 segundos</div>
+    <!-- La nota dice EXACTAMENTE lo que paga el código (10 × ⌈racha/3⌉):
+         prometer «+10 × la racha» y pagar otra cosa le enseña al alumno
+         que el marcador miente, y deja de mirarlo. -->
+    <div class="nota">Acierto: +10, y cada 3 seguidas el premio sube: ×2, ×3…<br>Cada 5 seguidas: ⏱ +3 segundos de regalo<br>Fallo: se rompe la racha y −3 segundos</div>
     <p style="font-size:.84rem;color:#9aa5bd;" id="ini-mejor"></p>
     <button class="bt bt-p" onclick="empezar()">¡Ya!</button>
   </div>
@@ -132,9 +139,16 @@ function esPoliedro(s){ return s.fam !== 'redondo'; }
 
 var esc, cam, rend, grupo, malla;
 var seg = 60, puntos = 0, racha = 0, mejorRacha = 0, corriendo = false, ultimo = 0;
-var actual = null, pregActual = null, bloqueado = false, giro = 0;
+var actual = null, pregActual = null, bloqueado = false, giro = 0, vuelco = 0;
+/* El récord al arrancar la partida, para avisar EN VIVO cuando se
+   supera: enterarse al final es enterarse tarde para pelearlo. */
+var recordPrevio = 0, porRecord = false;
 
 function mejor(){ try{ return (JSON.parse(localStorage.getItem(LLAVE))||{}).puntos|0; }catch(e){ return 0; } }
+/* d.racha entró después que d.puntos: un teléfono con la versión
+   vieja trae la llave sin ese campo, y aquí se lee como cero en vez
+   de reventar o de borrarle a alguien su récord de puntos. */
+function mejorRachaGuardada(){ try{ return (JSON.parse(localStorage.getItem(LLAVE))||{}).racha|0; }catch(e){ return 0; } }
 function guardar(){
   try{
     var d = JSON.parse(localStorage.getItem(LLAVE)) || {};
@@ -178,6 +192,13 @@ function ajustar(){
 }
 
 function dibujar(s){
+  /* Tirar de verdad, no solo sacar del árbol: `remove()` deja las
+     geometrías vivas en la tarjeta, y en 60 segundos el sólido
+     cambia decenas de veces — en un teléfono modesto, varias
+     partidas seguidas se comían la memoria. El barrido de después
+     es para el Three de mentira de la sonda, que no rellena
+     `parent` y ahí `tirar` no puede sacar. */
+  grupo.children.slice().forEach(function(h){ Parque3D.tirar(h); });
   while(grupo.children.length) grupo.remove(grupo.children[0]);
   var geo;
   if(s.fam === 'redondo'){
@@ -185,16 +206,39 @@ function dibujar(s){
         : (s.tipo === 'cono')   ? new THREE.ConeGeometry(1.1, 2.0, 40)
                                 : new THREE.CylinderGeometry(1.0, 1.0, 1.9, 40);
   } else if(s.fam === 'prisma'){
-    geo = new THREE.CylinderGeometry(1.15, 1.15, 1.7, s.lados);
+    /* El cubo se dibuja como CUBO de verdad. El cilindro de 4 lados
+       da un prisma casi-cubo (la base girada y las medidas sin
+       cuadrar), y la pregunta es justamente «¿cómo se llama?»: no se
+       le puede pedir el nombre a un dibujo que no lo es. */
+    geo = (s.n === 'Cubo') ? new THREE.BoxGeometry(1.7, 1.7, 1.7)
+        : new THREE.CylinderGeometry(1.15, 1.15, 1.7, s.lados);
   } else {
     geo = new THREE.ConeGeometry(1.3, 2.0, s.lados);
   }
   malla = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
-    color: s.fam==='redondo' ? 0x4a90d9 : (s.fam==='prisma' ? 0x8b6fe0 : 0xc9a227),
+    color: colorDe(s),
     flatShading: s.fam !== 'redondo'}));
   grupo.add(malla);
   grupo.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
     new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.8})));
+}
+
+/* El color de cada familia vive aquí y no repetido: es el mismo que
+   pinta el sólido y el que el tinte de abajo tiene que devolver. */
+function colorDe(s){ return s.fam==='redondo' ? 0x4a90d9 : (s.fam==='prisma' ? 0x8b6fe0 : 0xc9a227); }
+
+/* El sólido también contesta: se tiñe un instante de verde o rojo.
+   El alumno va mirando la figura, no el botón que acaba de tocar, y
+   sin esto la respuesta le llegaba por el rabillo del ojo. */
+function tenir(hex){
+  if(!malla || !malla.material || !malla.material.color || !malla.material.color.setHex) return;
+  var m = malla, s = actual;
+  m.material.color.setHex(hex);
+  setTimeout(function(){
+    /* si ya se dibujó otro sólido, esta malla ya no está en escena
+       y su color da igual; la nueva nació con el suyo */
+    if(m === malla && m.material && m.material.color) m.material.color.setHex(colorDe(s));
+  }, 380);
 }
 
 /* ============================================================
@@ -203,7 +247,12 @@ function dibujar(s){
    ============================================================ */
 function nuevaPregunta(){
   bloqueado = false;
-  actual = SOLIDOS[Math.floor(Math.random()*SOLIDOS.length)];
+  /* Nunca el mismo sólido dos veces seguidas: la pantalla parece que
+     no cambió y el alumno contesta lo de antes sin volver a mirar. */
+  var anterior = actual ? actual.n : null;
+  do {
+    actual = SOLIDOS[Math.floor(Math.random()*SOLIDOS.length)];
+  } while(actual.n === anterior);
   dibujar(actual);
   var tipos = ['grupo', 'nombre'];
   if(esPoliedro(actual)) tipos.push('familia', 'caras');
@@ -241,8 +290,24 @@ function nuevaPregunta(){
       porque: actual.n+': '+c+' caras, '+actual.aristas+' aristas y '+actual.vertices+' vértices.'
     };
   } else {
-    var otros = SOLIDOS.filter(function(s){ return s.n !== actual.n; })
-      .sort(function(){ return Math.random()-0.5; }).slice(0,2);
+    /* Los dos malos son VECINOS, no cualquiera: la misma familia con
+       otro número de lados (prisma pentagonal ↔ hexagonal) o la
+       trampa documentada del tema (prisma triangular ↔ pirámide
+       cuadrangular: los dos tienen 5 caras, lo que los separa son
+       los vértices). «Esfera» contra «Pirámide pentagonal» se
+       descarta sin mirar el dibujo y no enseña nada. */
+    var vecinos;
+    if(actual.fam === 'redondo'){
+      vecinos = SOLIDOS.filter(function(s){ return s.fam === 'redondo' && s.n !== actual.n; });
+    } else {
+      vecinos = SOLIDOS.filter(function(s){
+        return s.n !== actual.n && (
+          (s.fam === actual.fam && Math.abs(s.lados - actual.lados) <= 2) ||
+          (actual.n === 'Prisma triangular' && s.n === 'Pirámide cuadrangular') ||
+          (actual.n === 'Pirámide cuadrangular' && s.n === 'Prisma triangular'));
+      });
+    }
+    var otros = vecinos.sort(function(){ return Math.random()-0.5; }).slice(0,2);
     var lista = [actual].concat(otros).sort(function(){ return Math.random()-0.5; });
     pregActual = {
       q:'¿Cómo se llama?',
@@ -263,9 +328,7 @@ function pintarPregunta(){
      toque de un dedo rápido contestaba la pregunta siguiente sin
      haberla visto, le rompía la racha y le quitaba tres segundos. En
      un juego que le pide ir rápido, eso es un castigo por obedecer. */
-  cont.style.pointerEvents = 'none';
-  cont.style.opacity = '0.5';
-  setTimeout(function(){ cont.style.pointerEvents = ''; cont.style.opacity = ''; }, 330);
+  Parque3D.respiro(cont, 330);
   cont.className = 'ops' + (pregActual.col ? ' col' : '');
   cont.innerHTML = '';
   pregActual.ops.forEach(function(o){
@@ -283,9 +346,29 @@ function contestar(o, boton){
   if(o.ok){
     racha++;
     if(racha > mejorRacha) mejorRacha = racha;
-    puntos += 10 * Math.max(1, Math.ceil(racha/3));
+    var pago = 10 * Math.max(1, Math.ceil(racha/3));
+    puntos += pago;
+    var msj = '✅ +' + pago, largo = 0;
+    /* Cada 5 seguidas el reloj devuelve 3 segundos: una racha larga
+       alarga la partida en vez de solo engordar el número, que es lo
+       que hace que valga la pena cuidarla. Está prometido en la
+       portada, así que aquí se cumple tal cual. */
+    if(racha % 5 === 0){ seg += 3; pintarReloj(); msj += ' · ⏱ +3 s'; largo = 1300; }
+    /* El multiplicador sube al COMPLETAR cada 3 seguidas (la 4ª paga
+       ×2, la 7ª ×3…): ahí va el confeti. Este juego lleva SU racha,
+       así que no se usa Parque3D.acierto(), que lleva otra aparte. */
+    if(racha >= 4 && racha % 3 === 1) Parque3D.confeti();
+    /* El récord se avisa al superarlo, no al final: enterarse con el
+       tiempo agotado es enterarse tarde para pelearlo. Solo una vez
+       por partida, que repetido deja de ser noticia. */
+    if(!porRecord && recordPrevio > 0 && puntos > recordPrevio){
+      porRecord = true;
+      document.getElementById('puntos').classList.add('record');
+      msj = '🏆 ¡vas por récord! ' + msj; largo = 1500;
+    }
     boton.classList.add('buena');
-    decir('✅ +'+(10*Math.max(1, Math.ceil(racha/3))), true);
+    tenir(0x27ae60);
+    decir(msj, true, largo);
   } else {
     racha = 0;
     seg = Math.max(0, seg-3);
@@ -293,25 +376,32 @@ function contestar(o, boton){
     Array.prototype.forEach.call(document.querySelectorAll('#ops .op'), function(b, i){
       if(pregActual.ops[i].ok) b.classList.add('buena');
     });
+    tenir(0xe05252);
     decir('❌ '+pregActual.porque, false);
   }
   pintarMarcadores();
   setTimeout(function(){ if(corriendo) nuevaPregunta(); }, o.ok ? 320 : 1250);
 }
 
-function decir(txt, bien){
+/* `ms` es opcional: los avisos con noticia dentro (récord, tiempo de
+   regalo) duran más que el «+10» de siempre, que se lee de reojo. */
+function decir(txt, bien, ms){
   var g = document.getElementById('globo');
   g.textContent = txt;
   g.className = 'globo ver ' + (bien ? 'si' : 'no');
   clearTimeout(g._t);
-  g._t = setTimeout(function(){ g.className = 'globo'; }, bien ? 700 : 1600);
+  g._t = setTimeout(function(){ g.className = 'globo'; }, ms || (bien ? 700 : 1600));
 }
 
 function pintarMarcadores(){
   document.getElementById('puntos').textContent = puntos;
   var r = document.getElementById('racha');
-  r.textContent = 'racha ' + racha + (racha >= 3 ? ' 🔥×'+Math.ceil(racha/3) : '');
-  r.classList.toggle('fuego', racha >= 3);
+  /* El ×N es el multiplicador que se está PAGANDO (⌈racha/3⌉), y el
+     fuego sale cuando de verdad es ×2 — no una jugada antes: un ×
+     que no cuadra con el «+N» del globo enseña a no creerle. */
+  var mult = Math.ceil(racha/3);
+  r.textContent = 'racha ' + racha + (mult >= 2 ? ' 🔥×'+mult : '');
+  r.classList.toggle('fuego', mult >= 2);
 }
 function pintarReloj(){
   var el = document.getElementById('reloj');
@@ -323,6 +413,8 @@ function empezar(){
   document.getElementById('velo-ini').classList.remove('ver');
   document.getElementById('velo-fin').classList.remove('ver');
   seg = 60; puntos = 0; racha = 0; mejorRacha = 0; corriendo = true; ultimo = 0;
+  recordPrevio = mejor(); porRecord = false;
+  document.getElementById('puntos').classList.remove('record');
   pintarMarcadores(); pintarReloj();
   nuevaPregunta();
 }
@@ -331,6 +423,9 @@ function terminar(){
   corriendo = false;
   var antes = mejor();
   guardar();
+  /* El festejo grande del andamio, solo con récord: confeti a diario
+     deja de ser festejo. */
+  if(puntos > antes) Parque3D.festejarFin();
   document.getElementById('fin-emoji').textContent = puntos > antes ? '🏆' : '🏁';
   document.getElementById('fin-tit').textContent = puntos > antes ? '¡Récord nuevo!' : 'Se acabó el tiempo';
   document.getElementById('fin-pts').textContent = puntos;
@@ -347,15 +442,31 @@ function animar(t){
   requestAnimationFrame(animar);
   t = t || 0;
   if(corriendo && ultimo){
-    seg = Math.max(0, seg - (t-ultimo)/1000);
+    /* El delta se clampa a medio segundo: al volver de una pestaña o
+       de una llamada, requestAnimationFrame estuvo parado y el salto
+       de golpe se comía el minuto entero — partida acabada sin que
+       el niño hubiera podido contestar nada. */
+    seg = Math.max(0, seg - Math.min(0.5, (t-ultimo)/1000));
     pintarReloj();
     if(seg <= 0) terminar();
   }
   ultimo = t;
-  giro += 0.013;
-  if(grupo){ grupo.rotation.y = giro; grupo.rotation.x = Math.sin(giro*0.5)*0.28; }
+  /* El giro automático se calla mientras el dedo manda y un par de
+     segundos después: girar una figura que se te escapa sola es
+     pelear con la pantalla. */
+  if(!dedo.arrastrando() && dedo.reposo() > 2000) giro += 0.013;
+  if(grupo){ grupo.rotation.y = giro; grupo.rotation.x = vuelco + Math.sin(giro*0.5)*0.28; }
   rend.render(esc, cam);
 }
+
+/* El sólido también se gira con el dedo: verle la cara de atrás es
+   justo lo que el dibujo del libro no deja hacer. El andamio pone la
+   mecánica (captura del puntero, toque corto ignorado); aquí solo
+   se dice cuánto gira por píxel. */
+var dedo = Parque3D.giroConElDedo(function(dx, dy){
+  giro += dx * 0.008;
+  vuelco = Math.max(-1.2, Math.min(1.2, vuelco + dy * 0.006));
+});
 
 /* Baja el motor de dibujo, levanta el telón y arranca. Si no
    llega, el andamio enseña la pantalla de «hace falta internet
@@ -363,8 +474,10 @@ function animar(t){
    se vuelve a abrir. */
 Parque3D.arrancar(function(){
   montar();
-  var m = mejor();
-  document.getElementById('ini-mejor').textContent = m ? 'Tu récord: '+m+' puntos.' : 'Todavía no tienes récord.';
+  var m = mejor(), r = mejorRachaGuardada();
+  document.getElementById('ini-mejor').textContent = m
+    ? 'Tu récord: '+m+' puntos.' + (r ? ' Tu mejor racha: '+r+' seguidas.' : '')
+    : 'Todavía no tienes récord.';
 });
 
 window.__j3d = {

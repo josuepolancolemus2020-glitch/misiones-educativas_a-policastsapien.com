@@ -48,7 +48,18 @@
 .mando{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem;}
 .mando label{font-size:.76rem;width:4.6rem;flex-shrink:0;line-height:1.2;}
 .mando label b{display:block;color:var(--acento);font-family:'Fira Code',ui-monospace,monospace;font-size:1rem;}
-input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:44px;background:transparent;}
+/* − y + a los lados del deslizador. Con el dedo en un teléfono
+   barato el deslizador salta varios pasos de golpe, y aquí la
+   diferencia entre el 6 × 7 y el 7 × 6 es justo lo que se está
+   estudiando: hace falta poder moverse de una base en una. 44 px:
+   lo que un dedo acierta sin mirar. */
+.paso{flex:0 0 44px;width:44px;height:44px;font-family:inherit;font-size:1.3rem;font-weight:700;
+  background:transparent;border:1.5px solid var(--franja);border-radius:9px;color:var(--acento);
+  cursor:pointer;line-height:1;}
+/* min-width:0: sin él, en una pantalla angosta con la letra del
+   sistema agrandada el deslizador no cede sitio y la fila se sale
+   por la derecha, donde no hay desplazamiento que valga. */
+input[type=range]{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:44px;background:transparent;}
 input[type=range]::-webkit-slider-runnable-track{height:8px;background:#0e1720;border-radius:5px;border:1px solid rgba(154,165,189,.3);}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;
   background:var(--acento);border:2px solid #d5fff5;cursor:pointer;}
@@ -66,6 +77,15 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   border-radius:8px;padding:.5rem .7rem;font-size:.84rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
 .chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
 .chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
+/* Las mini-barras de lo anotado, en la orilla del dibujo. Tres
+   cuentas sueltas no se comparan solas; tres barras una al lado de
+   otra, sí: convierten lo anotado en una comparación que se VE. No
+   se pueden tocar (pointer-events:none): son un letrero, y un
+   letrero que robara un toque taparía el dibujo o un botón. */
+#barras{position:absolute;left:.5rem;bottom:3.8rem;height:52px;display:flex;align-items:flex-end;
+  gap:3px;pointer-events:none;}
+#barras i{display:block;width:9px;min-height:3px;background:rgba(154,165,189,.5);border-radius:2px 2px 0 0;}
+#barras i.record{background:var(--acento);}
 @media(max-width:380px){.cuenta{font-size:.78rem;}.bt{font-size:.8rem;}}
 </style>
 </head>
@@ -79,13 +99,16 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 
 <div id="lienzo">
   <div class="tarjeta" id="tarjeta"></div>
+  <div id="barras"></div>
   <div class="marca" id="marca"></div>
 </div>
 
 <div class="mandos">
   <div class="mando">
     <label>base<b id="lb-base">1 m</b></label>
+    <button class="paso" onclick="pasoBase(-1)" aria-label="una base menos">−</button>
     <input type="range" id="sl-base" min="1" max="20" step="1" value="1" aria-label="base del terreno">
+    <button class="paso" onclick="pasoBase(1)" aria-label="una base más">+</button>
   </div>
   <div class="cuenta" id="cuenta"></div>
   <div class="botones">
@@ -192,10 +215,22 @@ function mejorBase(r){
 }
 
 var esc, cam, rend, grupo, rots = [], suelo = null, postes = [];
-var reto = 0, base = 1, estrellas = 0, giro = 0, probados = {}, mejorVisto = 0;
+var reto = 0, base = 1, estrellas = 0, giro = 0, probados = {};
+/* mejor: las estrellas ya ganadas en cada reto. Se paga solo la
+   MEJORA (est nueva menos la ya cobrada): repetir un reto para
+   subir de 2⭐ a 3⭐ paga la diferencia, y repetirlo en bucle no
+   paga nada — el marcador vuelve a medir aprendizaje, no vueltas. */
+var mejor = {}, fallado = false;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({reto:reto, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ reto=Math.min(d.reto|0, RETOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+/* probados también se guarda: el teléfono del aula pasa de mano en
+   mano y cerrar la aplicación a media comparación perdía lo anotado. */
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({reto:reto, estrellas:estrellas,
+  mejor:mejor, probados:Object.keys(probados)})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){
+  reto=Math.min(Math.max(d.reto|0,0), RETOS.length-1); estrellas=d.estrellas|0;
+  mejor=d.mejor||{};
+  (d.probados||[]).forEach(function(b){ probados[b]=true; });
+} }catch(e){} }
 function r(){ return RETOS[reto]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
 
@@ -228,7 +263,10 @@ function montar(){
 
   /* Los postes se crean UNA vez, tantos como metros de malla, y solo
      se mueven: así se ve con los ojos que son siempre los mismos. */
-  var maxPostes = 80;
+  /* 100 y no 80: el reto de 48 m² llega a 98 m de malla con la
+     forma más flaca, y con 80 los postes se espaciaban justo en el
+     caso que más enseña. El poste por metro es el argumento. */
+  var maxPostes = 100;
   for(var i=0;i<maxPostes;i++){
     var pz = new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,1.1,7),
       new THREE.MeshPhongMaterial({color:0xc9a880}));
@@ -293,7 +331,6 @@ function pintar(){
 
   document.getElementById('lb-base').textContent = fmt(b)+' m';
   var A = areaDe(re, b);
-  if(A > mejorVisto) mejorVisto = A;
   document.getElementById('cuenta').innerHTML = re.modo === 'malla'
     ? '<span class="fijo">malla: 2 × ('+fmt(b)+' + '+fmt(h)+') = '+fmt(P)+' m (siempre igual)</span><br>'+
       'terreno: '+fmt(b)+' × '+fmt(h)+' = <b>'+fmt(A)+' m²</b>'
@@ -316,6 +353,35 @@ function pintarMarca(){
     mejorTxt = probadas ? 'la malla más corta que has probado: <b>'+fmt(mn)+' m</b>' : 'todavía no has anotado ninguna';
   }
   document.getElementById('marca').innerHTML = '📌 probados: '+probadas+' · '+mejorTxt;
+  pintarBarras();
+}
+
+/* Una barra por forma anotada: alto proporcional a su cuenta, la
+   ganadora en color acento. Tres cuentas sueltas no se comparan
+   solas; tres barras juntas, sí. */
+function pintarBarras(){
+  var cont = document.getElementById('barras');
+  if(!cont) return;
+  cont.innerHTML = '';
+  var re = r(), bs = Object.keys(probados).map(Number).sort(function(a,b){ return a-b; });
+  if(!bs.length) return;
+  var vals = bs.map(function(b){ return re.modo === 'malla' ? areaDe(re,b) : perimetroDe(re,b); });
+  var mx = Math.max.apply(null, vals);
+  var meta = re.modo === 'malla' ? mx : Math.min.apply(null, vals);
+  vals.forEach(function(v){
+    var el = document.createElement('i');
+    el.style.height = Math.max(3, Math.round(v/mx*52))+'px';
+    if(v === meta) el.className = 'record';
+    cont.appendChild(el);
+  });
+}
+
+/* Los pasos finos del deslizador: de una base en una. */
+function pasoBase(d){
+  var sl = document.getElementById('sl-base');
+  var bs = basesDe(r());
+  var i = Math.max(0, Math.min(bs.length-1, (+sl.value) + d));
+  sl.value = i; base = bs[i]; pintar();
 }
 
 function moverRotulos(){
@@ -343,6 +409,7 @@ function anotar(){
     ? '📌 Anotado: '+fmt(b)+' × '+fmt(alturaDe(re,b))+' encierra '+fmt(areaDe(re,b))+' m².'
     : '📌 Anotado: '+fmt(b)+' × '+fmt(alturaDe(re,b))+' pide '+fmt(perimetroDe(re,b))+' m de malla.';
   pintarMarca();
+  guardar();
 }
 
 function declarar(){
@@ -354,15 +421,40 @@ function declarar(){
      con el cuadrado está bien, pero lo que enseña este juego es la
      COMPARACIÓN: por eso la tercera estrella se gana probando. */
   var est = bien ? (probadas >= 4 ? 3 : (probadas >= 2 ? 2 : 1)) : 0;
-  if(bien) estrellas += 4;
-  document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🏗️';
+  fallado = !bien;
+  if(bien){
+    Parque3D.acierto();
+    /* se paga la MEJORA sobre lo ya cobrado en este reto */
+    var ya = mejor[reto]|0;
+    if(est > ya){ estrellas += (est - ya)*2; mejor[reto] = est; }
+  } else {
+    Parque3D.fallo();
+  }
+  var ultimo = (reto >= RETOS.length-1);
+  document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🔍';
   document.getElementById('fin-tit').textContent = bien
     ? (re.modo === 'malla' ? '¡Ese es el más grande!' : '¡Esa es la malla más corta!')
-    : 'Hay uno mejor';
-  document.getElementById('fin-form').innerHTML = tabla(re, mb, b);
-  document.getElementById('fin-txt').textContent = re.nota;
-  var ultimo = (reto >= RETOS.length-1);
-  document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente reto →';
+    : ('Probaste '+probadas+(probadas === 1 ? ' forma' : ' formas')+
+       (re.modo === 'malla' ? ': hay una que encierra más' : ': hay una que pide menos malla'));
+  /* Al FALLAR no se enseña cuál era: enseñarlo regalaba la respuesta
+     y encima el botón avanzaba de reto — se podía «terminar» el juego
+     con cero aciertos. Ahora fallar devuelve al terreno, con lo
+     anotado intacto: descubrirlo solo es el propósito del juego. */
+  document.getElementById('fin-form').innerHTML = bien ? tabla(re, mb, b) : tabla(re, null, b);
+  document.getElementById('fin-txt').textContent = bien ? re.nota
+    : 'Mueve la base, anota unas cuantas formas y compara: lo anotado sigue anotado.';
+  document.getElementById('fin-bt').textContent = bien
+    ? (ultimo ? 'Volver a empezar' : 'Siguiente reto →')
+    : '🔁 Seguir probando';
+  if(bien && ultimo){
+    var cerrados = 0, tres = true;
+    RETOS.forEach(function(_, k){ if(mejor[k]) cerrados++; if((mejor[k]|0) < 3) tres = false; });
+    if(cerrados >= RETOS.length){
+      Parque3D.festejarFin();
+      document.getElementById('fin-txt').textContent = re.nota + ' 🏁 ¡Los seis retos!' +
+        (tres ? ' 🥇 Y todos con sus tres estrellas.' : '');
+    }
+  }
   pintarMarcador(); guardar();
   Parque3D.abrir('velo-fin');
 }
@@ -381,7 +473,7 @@ function tabla(re, mb, b){
   }
   filas.push(fila(flaco, 'el más flaco'));
   if(b !== flaco && b !== mb) filas.push(fila(b, 'el tuyo'));
-  filas.push(fila(mb, 'el mejor'));
+  if(mb !== null) filas.push(fila(mb, 'el mejor'));
   var cabeza = re.modo === 'malla'
     ? 'Con los mismos '+fmt(re.v)+' m de malla:<br>'
     : 'Para los mismos '+fmt(re.v)+' m² de terreno:<br>';
@@ -390,20 +482,22 @@ function tabla(re, mb, b){
 
 function siguiente(){
   Parque3D.cerrar('velo-fin');
+  if(fallado){ fallado = false; return; }   // seguir probando: mismo reto, anotados intactos
   if(reto >= RETOS.length-1) reto = 0; else reto++;
+  probados = {};
   guardar();
   nuevoReto();
 }
 
 function nuevoReto(){
   var re = r(), bs = basesDe(re);
-  probados = {}; mejorVisto = 0;
   var sl = document.getElementById('sl-base');
   sl.min = 0; sl.max = bs.length-1; sl.step = 1; sl.value = 0;
   base = bs[0];
   document.getElementById('tarjeta').innerHTML = re.emoji+' <b>'+re.n+'</b> · '+
     (re.modo === 'malla' ? '¿qué rectángulo encierra MÁS terreno?' : '¿qué rectángulo pide MENOS malla?');
-  document.getElementById('subt').textContent = 'Reto '+(reto+1)+' de '+RETOS.length;
+  document.getElementById('subt').textContent = 'Reto '+(reto+1)+' de '+RETOS.length +
+    ((mejor[reto]|0) ? ' · '+'⭐'.repeat(mejor[reto]) : '');
   document.getElementById('aviso').textContent = '';
   document.getElementById('bt-listo').textContent = re.modo === 'malla' ? '🏆 Este es el mejor' : '🏆 Esta es la más corta';
   pintar();

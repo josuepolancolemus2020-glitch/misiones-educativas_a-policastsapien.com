@@ -21,7 +21,6 @@ body{user-select:none;}
 .reloj.poco{background:rgba(224,82,82,.25);border-color:var(--rojo);color:#ffb1b1;}
 .puertas{font-size:.8rem;white-space:nowrap;}
 #lienzo{touch-action:none;}
-#lienzo canvas:not(#minimapa){display:block;width:100%!important;height:100%!important;}
 #minimapa{position:absolute;top:.5rem;right:.5rem;width:112px;height:112px;border:2px solid rgba(201,162,39,.6);border-radius:10px;background:rgba(16,20,31,.85);}
 .pista{position:absolute;left:.5rem;top:.5rem;background:rgba(20,26,44,.88);border:1.5px solid rgba(154,165,189,.3);border-radius:10px;padding:.25rem .55rem;font-size:.74rem;color:var(--gris);max-width:52%;line-height:1.3;}
 /* mando de flechas: en un teléfono no hay teclado */
@@ -87,8 +86,12 @@ body{user-select:none;}
     <div class="emoji-gr">🌀</div>
     <h2>El Laberinto de las Unidades</h2>
     <p>Estás dentro de la escalera de las unidades cúbicas. Camina hasta la salida 🏁, pero las puertas 🚪 solo abren si conviertes bien.</p>
-    <div class="escalera"><span>km³</span><span>×1000 ↕</span><span>m³</span><span>×1000 ↕</span><span>dm³</span><span>×1000 ↕</span><span>cm³</span><span>×1000 ↕</span><span>mm³</span></div>
+    <!-- La escalera ENTERA, con hm³ y dam³ en medio: de km³ a m³ hay TRES
+         escalones. Pintada sin ellos decía «km³ ×1000 m³», que es
+         exactamente el error que este juego existe para quitar. -->
+    <div class="escalera"><span>km³</span><span>×1000 ↕</span><span>hm³</span><span>×1000 ↕</span><span>dam³</span><span>×1000 ↕</span><span>m³</span><span>×1000 ↕</span><span>dm³</span><span>×1000 ↕</span><span>cm³</span><span>×1000 ↕</span><span>mm³</span></div>
     <p style="font-size:.84rem;color:#9aa5bd;">Ojo: en las unidades cúbicas cada escalón es de <b>mil en mil</b>, no de diez en diez. Fallar una puerta te quita 15 segundos.</p>
+    <p id="ini-mejor" style="font-size:.84rem;color:var(--dorado);display:none;"></p>
     <button class="bt bt-p" onclick="empezar()">Entrar</button>
   </div>
 </div>
@@ -132,9 +135,12 @@ var LLAVE = 'j3d_laberinto_v1';
 /* Los pisos. El laberinto se GENERA en cada partida: si fuera
    siempre el mismo, a la segunda vuelta el alumno se lo aprende de
    memoria y deja de leer las puertas, que es lo único que enseña. */
+/* El número del piso NO va escrito en el rótulo: se cuenta al pintar
+   («Piso N de M»), así el día que entre un piso 3 el texto se corrige
+   solo. Aquí queda solo el apellido de cada piso. */
 var PISOS = [
-  {n:'Piso 1 · de mil en mil', lado:11, puertas:3, seg:150},
-  {n:'Piso 2 · dos escalones', lado:15, puertas:5, seg:210}
+  {n:'de mil en mil', lado:11, puertas:3, seg:150},
+  {n:'dos escalones', lado:15, puertas:5, seg:210}
 ];
 
 /* ============================================================
@@ -143,6 +149,19 @@ var PISOS = [
 var UNIDADES = ['mm³','cm³','dm³','m³','dam³','hm³','km³'];   // cada escalón, ×1000
 function nombreUnidad(i){ return UNIDADES[i]; }
 function fmtNum(x){ return Number(x).toLocaleString('es-HN'); }
+
+/* La escalera que se PINTA sale del mismo arreglo que pregunta las
+   puertas. Una copia escrita a mano ya mintió una vez —decía
+   «km³ ×1000 m³», saltándose hm³ y dam³— y nadie lo notó hasta
+   revisar: del mismo dato no se puede descolgar. */
+function escaleraHtml(sep){
+  var partes = [];
+  for(var i=UNIDADES.length-1;i>=0;i--){
+    partes.push('<span>'+UNIDADES[i]+'</span>');
+    if(i) partes.push('<span>'+sep+'</span>');
+  }
+  return partes.join('');
+}
 
 /* Las opciones malas NO son números al azar: son el error de
    verdad, que es aplicar la escalera de las lineales (÷10, ÷100).
@@ -257,6 +276,14 @@ function puertaEn(x,y){
    ============================================================ */
 var esc, cam, rend, heroe, grupoMapa, grupoPuertas, seg = 0, corriendo = false, ultimo = 0;
 var pos = {x:1, y:1}, dest = null, avance = 0, gano = false;
+/* El paso se mide en celdas por SEGUNDO, no por cuadro: a 0.14 por
+   cuadro, el teléfono que dibuja a 30 fps caminaba a la mitad que uno
+   de 60 con el mismo reloj descontando. 8.4 es lo que ya se veía. */
+var VEL_PASO = 8.4;
+/* El minimapa solo se repinta cuando algo suyo cambió: repintar
+   112×112 sesenta veces por segundo es batería y cuadros que el
+   dibujo 3D necesita más. */
+var miniSucio = true;
 
 function montar(){
   var cont = document.getElementById('lienzo');
@@ -285,6 +312,22 @@ function montar(){
 
   Parque3D.vigilarHueco(ajustar);
   window.addEventListener('keydown', teclado);
+  /* Deslizar sobre el dibujo también camina: el pulgar ya está encima
+     del laberinto y la cruceta queda chica en la esquina. La captura
+     del puntero y el filtro de lo que flota encima los pone el
+     andamio; el toque corto no hace nada, para que apoyar el dedo no
+     mueva al héroe sin querer. */
+  var swX = 0, swY = 0, swUlt = 0;
+  Parque3D.giroConElDedo(function(dx, dy){
+    var ahora = Date.now();
+    if(ahora - swUlt > 250){ swX = 0; swY = 0; }   // gesto nuevo, cuenta nueva
+    swUlt = ahora;
+    swX += dx; swY += dy;
+    if(Math.abs(swX) < 30 && Math.abs(swY) < 30) return;
+    if(Math.abs(swX) > Math.abs(swY)) mover(swX > 0 ? 1 : -1, 0);
+    else mover(0, swY > 0 ? 1 : -1);
+    swX = 0; swY = 0;   // y se vuelve a contar: seguir arrastrando sigue caminando
+  });
   animar();
 }
 
@@ -302,8 +345,11 @@ function ajustar(){
 }
 
 function dibujarMapa(){
-  while(grupoMapa.children.length) grupoMapa.remove(grupoMapa.children[0]);
-  while(grupoPuertas.children.length) grupoPuertas.remove(grupoPuertas.children[0]);
+  /* Tirar de verdad, no solo sacar del árbol: cada piso deja atrás
+     cien muros con sus geometrías vivas en la memoria de la tarjeta,
+     y en un teléfono modesto una sesión larga acababa comiéndosela. */
+  grupoMapa.children.slice().forEach(function(h){ grupoMapa.remove(h); Parque3D.tirar(h); });
+  grupoPuertas.children.slice().forEach(function(h){ grupoPuertas.remove(h); Parque3D.tirar(h); });
 
   var geoMuro = new THREE.BoxGeometry(1, 1.5, 1);
   var matMuro = new THREE.MeshLambertMaterial({color:0x3b4570});
@@ -351,6 +397,9 @@ function seguirCamara(){
    ============================================================ */
 function mover(dx, dy){
   if(!corriendo || dest) return;
+  // con la pregunta de una puerta en pantalla no se camina: el teclado
+  // (o una flecha que repite) movía al héroe por detrás del panel
+  if(puertaActual) return;
   var nx = pos.x+dx, ny = pos.y+dy;
   if(nx<0||ny<0||nx>=lado||ny>=lado) return;
   if(mapa[ny][nx] === MURO) return;
@@ -368,6 +417,33 @@ function teclado(e){
   else return;
   e.preventDefault();
 }
+
+/* Mantener apretada una flecha repite el paso: un pasillo de ocho
+   celdas a toque por celda cansa el dedo y el reloj no espera. El
+   primer paso lo da el onpointerdown del botón; aquí va solo la
+   repetición mientras siga apretado. */
+(function(){
+  var DIRS = {n:[0,-1], o:[-1,0], e:[1,0], s:[0,1]};
+  var flechas = document.querySelectorAll('.cruz .fl');
+  for(var i=0;i<flechas.length;i++)(function(b){
+    var d = null, t = null;
+    for(var k in DIRS) if(b.classList.contains(k)) d = DIRS[k];
+    if(!d) return;
+    function parar(){ if(t){ clearInterval(t); t = null; } }
+    b.addEventListener('pointerdown', function(){
+      parar();
+      t = setInterval(function(){
+        // si en el camino salió una puerta, el paso se suelta: repetir
+        // sería reabrir su pregunta y repintarla debajo del dedo
+        if(!corriendo || puertaActual){ parar(); return; }
+        mover(d[0], d[1]);
+      }, 160);
+    });
+    b.addEventListener('pointerup', parar);
+    b.addEventListener('pointercancel', parar);
+    b.addEventListener('pointerleave', parar);
+  })(flechas[i]);
+})();
 
 /* ============================================================
    La puerta
@@ -395,6 +471,8 @@ function responder(o, boton){
   if(o.ok){
     boton.classList.add('buena');
     p.abierta = true; abiertas++;
+    miniSucio = true;                  // la puerta cambia de color en el mapa
+    Parque3D.acierto();                // confeti y racha 🔥, la compartida de los juegos
     pintarPuertas();
     grupoPuertas.children.forEach(function(m){
       if(m.userData.puerta === p){ m.material.transparent = true; m.userData.abriendo = 1; }
@@ -407,6 +485,7 @@ function responder(o, boton){
       if(p.rumbo) mover(p.rumbo.dx, p.rumbo.dy);
     }, 380);
   } else {
+    Parque3D.fallo();                  // la racha se corta; el castigo ya lo pone el reloj
     boton.classList.add('mala');
     boton.disabled = true;
     seg = Math.max(0, seg - 15);
@@ -426,6 +505,8 @@ function pintarPuertas(){
    segunda esquina y abandona.
    ============================================================ */
 function pintarMini(){
+  // solo si algo cambió desde la última pintada
+  if(!miniSucio) return;
   // el bucle de dibujo arranca ANTES de que el alumno toque «Entrar»,
   // así que aquí todavía no hay laberinto que pintar. Sin esta línea
   // el primer cuadro reventaba y se llevaba por delante el resto del
@@ -447,13 +528,18 @@ function pintarMini(){
   });
   g.fillStyle = '#ff6b6b';
   g.beginPath(); g.arc((pos.x+0.5)*s, (pos.y+0.5)*s, s*0.45, 0, 6.3); g.fill();
+  miniSucio = false;
 }
 
 /* ============================================================
    El reloj
    ============================================================ */
 function pintarReloj(){
-  var m = Math.floor(seg/60), s = Math.floor(seg%60);
+  /* Hacia ARRIBA, como el reloj de la Convocatoria: con 89,4 s de
+     verdad se lee 1:30, no 1:29 — al alumno no se le roba un segundo
+     que todavía tiene. Y se redondea el TOTAL, no cada pieza: pieza
+     por pieza, 119,5 s daría «1:60». */
+  var total = Math.ceil(seg), m = Math.floor(total/60), s = total%60;
   var el = document.getElementById('reloj');
   el.textContent = m+':'+(s<10?'0':'')+s;
   el.classList.toggle('poco', seg <= 30);
@@ -472,30 +558,43 @@ function cargarPiso(){
   cerrarPuerta();
   pos = {x:inicio.x, y:inicio.y}; dest = null; avance = 0;
   seg = p.seg; corriendo = true; gano = false;
-  document.getElementById('subt').textContent = p.n;
-  document.getElementById('pista').textContent = 'Llega a 🏁 abriendo las '+p.puertas+' puertas';
+  // el total de pisos se cuenta del arreglo, no se escribe
+  document.getElementById('subt').textContent = 'Piso '+(piso+1)+' de '+PISOS.length+' · '+p.n;
+  // las puertas DE VERDAD plantadas: la siembra puede poner menos de
+  // las pedidas (una celda repetida se salta), y prometer 5 donde hay
+  // 4 deja al alumno buscando una puerta que no existe
+  document.getElementById('pista').textContent = 'Llega a 🏁 abriendo las '+puertas.length+' puertas';
   dibujarMapa(); pintarPuertas(); pintarReloj(); seguirCamara();
+  miniSucio = true;
   ultimo = 0;
 }
 
 function llegar(){
   corriendo = false; gano = true;
   cerrarPuerta();
+  Parque3D.festejarFin();   // el festejo grande: salió del laberinto
   var quedan = Math.round(seg);
+  /* Las estrellas se ganan por lo que SOBRÓ del reloj de ese piso:
+     salir ya vale una, y quien piensa la escalera antes de tocar
+     —que es justo lo que se entrena— se lleva las tres. */
+  var estrellas = quedan > PISOS[piso].seg*0.4 ? 3 : quedan > PISOS[piso].seg*0.2 ? 2 : 1;
   var mejor = 0;
   try{
     var d = JSON.parse(localStorage.getItem(LLAVE)) || {};
     mejor = (d['mejor'+piso]|0);
     if(quedan > mejor){ mejor = quedan; d['mejor'+piso] = quedan; }
+    // la mejor cosecha se queda: bajar de 3⭐ a 1⭐ por una mala tarde
+    // borraría un logro que ya fue verdad
+    d['estrellas'+piso] = Math.max(d['estrellas'+piso]|0, estrellas);
     d.piso = Math.max(d.piso|0, piso+1);
     localStorage.setItem(LLAVE, JSON.stringify(d));
   }catch(e){}
   document.getElementById('fin-emoji').textContent = '🏁';
-  document.getElementById('fin-tit').textContent = '¡Saliste del piso '+(piso+1)+'!';
+  var estTxt = ''; for(var i=0;i<estrellas;i++) estTxt += '⭐';
+  document.getElementById('fin-tit').textContent = '¡Saliste del piso '+(piso+1)+'! '+estTxt;
   document.getElementById('fin-txt').textContent =
     'Abriste '+abiertas+' puertas y te sobraron '+quedan+' segundos. Tu mejor marca aquí: '+mejor+' s.';
-  document.getElementById('fin-esc').innerHTML =
-    '<span>km³</span><span>×1000</span><span>m³</span><span>×1000</span><span>dm³</span><span>×1000</span><span>cm³</span><span>×1000</span><span>mm³</span>';
+  document.getElementById('fin-esc').innerHTML = escaleraHtml('×1000');
   document.getElementById('fin-bt').textContent = (piso >= PISOS.length-1) ? '🔄 Volver al piso 1' : 'Siguiente piso →';
   document.getElementById('velo-fin').classList.add('ver');
 }
@@ -539,14 +638,20 @@ function reintentar(){
 function animar(ahora){
   requestAnimationFrame(animar);
   ahora = ahora || 0;
-  if(corriendo && ultimo){ seg = Math.max(0, seg - (ahora-ultimo)/1000); pintarReloj(); }
+  /* El delta se ACOTA a un cuarto de segundo: al volver de segundo
+     plano el navegador entrega de golpe todo el rato que la pestaña
+     estuvo dormida, y eso era descontar 40 s de reloj —la derrota—
+     sin haber jugado. */
+  var dt = ultimo ? Math.min(0.25, (ahora-ultimo)/1000) : 0;
   ultimo = ahora;
+  if(corriendo && dt){ seg = Math.max(0, seg - dt); pintarReloj(); }
   if(corriendo && seg <= 0) perder();
 
   if(dest){
-    avance = Math.min(1, avance + 0.14);
+    avance = Math.min(1, avance + VEL_PASO*dt);
     if(avance >= 1){
       pos = {x:dest.x, y:dest.y}; dest = null; avance = 0;
+      miniSucio = true;
       if(pos.x===salida.x && pos.y===salida.y && abiertas===puertas.length) llegar();
       else if(pos.x===salida.x && pos.y===salida.y){
         document.getElementById('pista').textContent = 'Todavía te faltan puertas por abrir 🚪';
@@ -571,7 +676,22 @@ function animar(ahora){
    la primera vez»: un juego que se queda negro parece roto y no
    se vuelve a abrir. */
 Parque3D.arrancar(function(){
-  try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d && d.piso) piso = Math.min(d.piso|0, PISOS.length-1); }catch(e){}
+  var d = null;
+  try{ d = JSON.parse(localStorage.getItem(LLAVE)); }catch(e){}
+  if(d && d.piso) piso = Math.min(d.piso|0, PISOS.length-1);
+  /* La portada enseña la mejor marca del piso que se va a jugar: saber
+     que la vez pasada sobraron 38 s es lo que hace querer otra vuelta.
+     Los teléfonos con la versión vieja de la llave no traen estrellas
+     ni mejor: el |0 los deja pasar sin reventar ni perder su piso. */
+  var mm = d ? (d['mejor'+piso]|0) : 0;
+  if(mm > 0){
+    var pm = document.getElementById('ini-mejor');
+    var estG = ''; for(var i=0;i<(d['estrellas'+piso]|0);i++) estG += '⭐';
+    pm.textContent = '🏆 Tu mejor: '+mm+' s sobrantes'+(estG ? ' · '+estG : '');
+    pm.style.display = '';
+  }
+  // la escalera de la portada sale del mismo arreglo que las puertas
+  document.querySelector('#velo-ini .escalera').innerHTML = escaleraHtml('×1000 ↕');
   montar();
   pintarReloj();
 });

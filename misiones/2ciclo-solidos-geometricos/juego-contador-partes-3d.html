@@ -20,16 +20,26 @@
 body{user-select:none;}
 #lienzo{touch-action:none;}
 /* la consigna y la cuenta */
-.consigna{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.45rem .7rem;text-align:center;}
+/* La consigna y la tabla flotan ENCIMA del dibujo y dejan pasar el
+   dedo: así el arrastre para girar puede empezar en cualquier parte
+   de la pantalla, no solo en el hueco que dejan libre. El toque
+   corto que caiga debajo de ellas NO cuenta piezas —lo aparta
+   sobreCartel() en el JS—, porque contaría una cara que el alumno
+   no está viendo. */
+.consigna{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(18,22,36,.92);border:2px solid rgba(139,111,224,.55);border-radius:12px;padding:.45rem .7rem;text-align:center;pointer-events:none;}
 .consigna .que{font-size:.95rem;font-weight:700;line-height:1.3;}
 .consigna .que b{color:var(--morado);}
 .consigna .cuenta{font-family:'Fira Code',ui-monospace,monospace;font-size:1.35rem;font-weight:700;color:var(--dorado);margin-top:.1rem;}
 .consigna .como{font-size:.72rem;color:var(--gris);margin-top:.05rem;}
+/* los siete puntos del avance: uno por sólido ya contado y cobrado */
+.consigna .puntos{font-size:.72rem;letter-spacing:.22em;margin-top:.12rem;}
+.consigna .puntos span{color:var(--gris);}
+.consigna .puntos span.si{color:var(--morado);}
 .aviso{position:absolute;left:50%;transform:translateX(-50%);bottom:4.6rem;background:rgba(18,22,36,.95);border:1.5px solid var(--rojo);color:#ffb1b1;border-radius:10px;padding:.3rem .7rem;font-size:.8rem;opacity:0;transition:opacity .25s;pointer-events:none;max-width:92%;text-align:center;}
 .aviso.ver{opacity:1;}
 .aviso.bien{border-color:var(--verde);color:#7ee2a8;}
 /* la tabla de lo contado */
-.tabla{position:absolute;right:.5rem;bottom:.5rem;background:rgba(18,22,36,.92);border:1.5px solid rgba(154,165,189,.35);border-radius:10px;padding:.35rem .55rem;font-size:.76rem;line-height:1.5;font-family:'Fira Code',ui-monospace,monospace;}
+.tabla{position:absolute;right:.5rem;bottom:.5rem;background:rgba(18,22,36,.92);border:1.5px solid rgba(154,165,189,.35);border-radius:10px;padding:.35rem .55rem;font-size:.76rem;line-height:1.5;font-family:'Fira Code',ui-monospace,monospace;pointer-events:none;}
 .tabla div span{color:var(--gris);}
 .tabla div b{color:var(--claro);}
 .tabla div.hecho b{color:var(--verde);}
@@ -60,6 +70,7 @@ body{user-select:none;}
     <div class="que" id="que">Toca todas las <b>caras</b></div>
     <div class="cuenta" id="cuenta">0</div>
     <div class="como" id="como">Arrastra para girarlo: las de atrás también cuentan</div>
+    <div class="puntos" id="puntos" title="Sólidos ya contados"></div>
   </div>
   <div class="aviso" id="aviso"></div>
   <div class="tabla" id="tabla"></div>
@@ -101,6 +112,10 @@ body{user-select:none;}
     <div class="partes" id="fin-partes"></div>
     <div class="euler" id="fin-euler"></div>
     <p id="fin-txt"></p>
+    <!-- Solo asoma al repetir un sólido ya cobrado: sin este aviso, el
+         alumno que repite esperando estrellas cree que el juego se
+         trabó cuando el marcador no se mueve. -->
+    <p id="fin-otra" style="display:none;font-size:.8rem;color:var(--gris);"></p>
     <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente sólido →</button>
   </div>
 </div>
@@ -176,7 +191,7 @@ var SOLIDOS = [
   {n:'Prisma hexagonal',      emoji:'✏️', tipo:'poliedro', forma:prismaRegular(6, 1.1, 1.7),
    nota:'El lápiz. Seis caras laterales más las dos bases: ocho.'},
   {n:'Cilindro',              emoji:'🥫', tipo:'redondo',  redondo:'cilindro',
-   nota:'Dos bases circulares y una superficie curva. La curva no es una cara plana.'},
+   nota:'Dos caras: sus bases circulares, que sí son planas. La superficie curva no es una cara, y su borde curvo no es una arista.'},
   {n:'Esfera',                emoji:'⚽', tipo:'redondo',  redondo:'esfera',
    nota:'Ni caras planas, ni aristas, ni vértices. Por eso rueda para cualquier lado.'}
 ];
@@ -187,21 +202,37 @@ var PARTES = [
   {k:'vertices', et:'vértices', color:0x4a90d9, pinta:0xbfe0ff}
 ];
 
-var esc, cam, rend, grupo, gCaras, gAristas, gVertices, rayo, raton;
+var esc, cam, rend, grupo, gCaras, gAristas, gVertices, rayo, raton, dedo;
 var nivel = 0, parte = 0, contadas = {}, resultado = {}, estrellas = 0;
+/* Qué sólidos ya se cobraron (hechos[nivel] = true). Las estrellas de
+   cada sólido se pagan UNA vez: sin esto, repetir el cubo siete veces
+   valía lo mismo que aprenderse los siete, y el marcador dejaba de
+   decir cuánto se sabe para decir cuánto se insiste. */
+var hechos = {};
 var angY = 0.6, angX = 0.35, girando = true, jugando = false;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, SOLIDOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas, hechos:hechos})); }catch(e){} }
+/* Se lee con tolerancia: un teléfono con la versión anterior guardó
+   solo {nivel, estrellas} y no puede ni perder su avance ni reventar. */
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, SOLIDOS.length-1); estrellas=d.estrellas|0; hechos=(d.hechos && typeof d.hechos==='object')?d.hechos:{}; } }catch(e){} }
 function sol(){ return SOLIDOS[nivel]; }
 function esRedondo(){ return sol().tipo === 'redondo'; }
+/* Qué partes se cuentan TOCANDO. En los poliedros, todas; en el
+   cilindro, solo las caras (sus dos bases planas); en la esfera,
+   ninguna. Lo demás se contesta con el botón de «Ninguna». */
+function seTocan(k){ return !esRedondo() || (sol().redondo === 'cilindro' && k === 'caras'); }
 
 /* Lo que hay de verdad en el sólido, para comparar con lo contado */
 function cuantas(k){
   var s = sol();
   if(s.tipo === 'redondo'){
     if(s.redondo === 'esfera') return 0;
-    return (k === 'caras') ? 0 : 0;   // el cilindro tampoco tiene caras PLANAS ni aristas rectas
+    /* El cilindro SÍ tiene 2 caras: sus bases circulares son planas,
+       como dice la tabla del Bloque 5 de la misión («2 bases
+       circulares»). Decir «caras 0» junto a esa nota era enseñar dos
+       cosas contrarias con la misma pantalla. Lo que no tiene son
+       aristas rectas ni vértices: el borde de cada base es curvo. */
+    return (k === 'caras') ? 2 : 0;
   }
   if(k === 'caras')    return s.forma.c.length;
   if(k === 'vertices') return s.forma.v.length;
@@ -263,7 +294,16 @@ function ajustar(){
   rend.setSize(cont.clientWidth, cont.clientHeight);
 }
 
-function vaciar(g){ while(g.children.length) g.remove(g.children[0]); }
+/* tirar() y no solo remove(): cada sólido son decenas de piezas con
+   sus geometrías y materiales, y sin disponerlos cada cambio de
+   sólido dejaba los viejos vivos en la memoria de la tarjeta — en un
+   teléfono modesto una vuelta entera se la iba comiendo. El barrido
+   de después es para el Three de mentira de la sonda, que no rellena
+   `parent` y ahí `tirar` no puede sacar. */
+function vaciar(g){
+  g.children.slice().forEach(function(h){ Parque3D.tirar(h); });
+  while(g.children.length) g.remove(g.children[0]);
+}
 
 /* Cada cara, cada arista y cada vértice es un objeto aparte, para
    poder tocarlos uno por uno. Es más trabajo que dibujar el sólido
@@ -274,10 +314,26 @@ function armar(){
 
   if(s.tipo === 'redondo'){
     var mat = new THREE.MeshLambertMaterial({color:0x6f7bb5, transparent:true, opacity:0.92});
-    var m = (s.redondo === 'esfera')
-      ? new THREE.Mesh(new THREE.SphereGeometry(1.35, 40, 26), mat)
-      : new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.9, 44), mat);
-    gCaras.add(m);
+    if(s.redondo === 'esfera'){
+      gCaras.add(new THREE.Mesh(new THREE.SphereGeometry(1.35, 40, 26), mat));
+      return;
+    }
+    /* El cilindro va en TRES piezas, porque sus dos caras se cuentan
+       tocándolas igual que en los poliedros: la superficie curva (sin
+       id: no es cara, y al tocarla la pantalla lo explica) y las dos
+       bases planas, que sí lo son. El tubo va abierto para que las
+       tapas no queden dibujadas dos veces. */
+    var lado = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.9, 44, 1, true), mat);
+    lado.userData = {tipo:'curva'};
+    gCaras.add(lado);
+    [1, -1].forEach(function(dir, idx){
+      var tapa = new THREE.Mesh(new THREE.CircleGeometry(1.1, 44),
+        new THREE.MeshLambertMaterial({color:0x6f7bb5, side:THREE.DoubleSide, transparent:true, opacity:0.93}));
+      tapa.position.set(0, dir*0.95, 0);
+      tapa.rotation.x = -dir*Math.PI/2;      // solo orienta el dibujo: no es una cuenta que vea el alumno
+      tapa.userData = {tipo:'caras', id:idx};
+      gCaras.add(tapa);
+    });
     return;
   }
 
@@ -326,32 +382,40 @@ function grupoDe(k){ return k==='caras' ? gCaras : (k==='aristas' ? gAristas : g
 /* ============================================================
    Tocar
    ============================================================ */
+/* La consigna y la tabla llevan pointer-events:none para que el giro
+   pueda empezar en cualquier parte; el precio es que un toque corto
+   ahí caería sobre el lienzo y el rayo contaría una pieza que el
+   cartel tapa — una cara que el alumno no está viendo, marcada sin
+   que él sepa cuál. Por eso el toque que cae bajo un cartel no vale. */
+function sobreCartel(px, py){
+  return [document.querySelector('.consigna'), document.querySelector('.tabla')].some(function(el){
+    if(!el) return false;
+    var r = el.getBoundingClientRect();
+    return px >= r.left && px <= r.right && py >= r.top && py <= r.bottom;
+  });
+}
+
 function eventos(){
-  var lienzo = document.getElementById('lienzo');
-  var abajo = null, movido = 0;
-  lienzo.addEventListener('pointerdown', function(e){
-    abajo = {x:e.clientX, y:e.clientY, ay:angY, ax:angX}; movido = 0; girando = false;
+  /* El arrastre y el toque corto los pone el andamio: captura el
+     puntero (el ratón soltado fuera del lienzo ya no dejaba la
+     figura pegada al cursor) y separa girar de tocar. El primer
+     gesto apaga el giro automático, y no vuelve solo: contar sobre
+     una pieza que se mueve es fallar sin culpa, y para volver a
+     girarlo está el botón 🔄. */
+  dedo = Parque3D.giroConElDedo(function(dx, dy){
+    girando = false;
+    angY += dx*0.011;
+    angX = Math.max(-1.3, Math.min(1.3, angX + dy*0.009));
+  }, function(e){
+    girando = false;
+    if(sobreCartel(e.clientX, e.clientY)) return;
+    tocar(e.clientX, e.clientY);
   });
-  lienzo.addEventListener('pointermove', function(e){
-    if(!abajo) return;
-    var dx = e.clientX-abajo.x, dy = e.clientY-abajo.y;
-    movido = Math.max(movido, Math.abs(dx)+Math.abs(dy));
-    if(movido > 7){
-      angY = abajo.ay + dx*0.011;
-      angX = Math.max(-1.3, Math.min(1.3, abajo.ax + dy*0.009));
-    }
-  });
-  lienzo.addEventListener('pointerup', function(e){
-    if(abajo && movido <= 7) tocar(e.clientX, e.clientY);
-    abajo = null;
-  });
-  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
 }
 
 function tocar(px, py){
   if(!jugando) return;
-  var s = sol();
-  if(s.tipo === 'redondo'){
+  if(!seTocan(PARTES[parte].k)){
     decir('En un cuerpo redondo no hay '+PARTES[parte].et+' que tocar. Usa el botón de abajo.', false);
     return;
   }
@@ -372,7 +436,18 @@ function tocar(px, py){
     return;
   }
   var o = golpes[0].object, id = o.userData.id;
-  if(contadas[k][id]){ decir('Esa ya la contaste. Gíralo: te faltan las de atrás.', false); return; }
+  /* la trampa del cilindro, dicha en el momento en que se cae en ella */
+  if(o.userData.tipo === 'curva'){
+    decir('Esa es la superficie curva: no es una cara plana. Las caras del cilindro son sus dos bases.', false);
+    return;
+  }
+  if(contadas[k][id]){
+    /* «te faltan las de atrás» solo si es verdad: con todo contado,
+       mandarlo a girar es mandarlo a buscar piezas que no existen. */
+    if(nContadas(k) < cuantas(k)) decir('Esa ya la contaste. Gíralo: te faltan las de atrás.', false);
+    else decir('Esa ya la contaste, y ya están todas. Toca «✔️ Ya las conté todas».', true);
+    return;
+  }
   contadas[k][id] = true;
   o.material.color.setHex(PARTES[parte].pinta);
   pintarCuenta();
@@ -382,7 +457,7 @@ function nContadas(k){ return Object.keys(contadas[k]).length; }
 
 function pintarCuenta(){
   var k = PARTES[parte].k;
-  document.getElementById('cuenta').textContent = esRedondo() ? '—' : nContadas(k);
+  document.getElementById('cuenta').textContent = seTocan(k) ? nContadas(k) : '—';
   var t = document.getElementById('tabla');
   t.innerHTML = PARTES.map(function(p, i){
     var hecho = resultado[p.k] !== undefined;
@@ -402,17 +477,34 @@ function decir(txt, bien){
 /* ============================================================
    Terminar una parte
    ============================================================ */
+/* El premio se ve SOBRE lo que el alumno contó, no solo en el aviso:
+   al validar bien, las piezas contadas laten una vez. El reloj las
+   devuelve antes de que el sólido se rearme, así que quedarse con la
+   referencia vieja no hace daño. */
+function pulso(k){
+  var piezas = grupoDe(k).children.filter(function(m){ return m.userData.id !== undefined && contadas[k][m.userData.id]; });
+  piezas.forEach(function(m){ m.scale.set(1.12, 1.12, 1.12); });
+  setTimeout(function(){ piezas.forEach(function(m){ m.scale.set(1, 1, 1); }); }, 260);
+}
+
 function terminarParte(){
   if(!jugando) return;
-  var k = PARTES[parte].k, real = cuantas(k), dijo = esRedondo() ? 0 : nContadas(k);
+  var k = PARTES[parte].k, real = cuantas(k), dijo = seTocan(k) ? nContadas(k) : 0;
   if(dijo !== real){
     if(dijo < real) decir('Te faltan '+(real-dijo)+'. Gíralo: las de atrás también cuentan.', false);
     else decir('Contaste de más. Vuelve a mirar.', false);
+    Parque3D.fallo();
     return;
   }
   resultado[k] = real;
-  estrellas += 3;
-  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  /* Las estrellas de un sólido ya cobrado no se pagan otra vez; el
+     festejo sí, porque acertar sigue siendo acertar. */
+  if(!hechos[nivel]){
+    estrellas += 3;
+    document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  }
+  Parque3D.acierto();
+  pulso(k);
   decir('¡'+real+' '+PARTES[parte].et+'! Correcto.', true);
   parte++;
   if(parte >= PARTES.length) return setTimeout(cerrarSolido, 700);
@@ -420,21 +512,23 @@ function terminarParte(){
 }
 
 function prepararParte(){
-  var p = PARTES[parte], s = sol();
-  document.getElementById('que').innerHTML = esRedondo()
-    ? '¿Cuántas <b>'+p.et+'</b> tiene?'
-    : 'Toca todas las <b>'+p.et+'</b>';
-  document.getElementById('como').textContent = esRedondo()
-    ? 'Piénsalo: ¿tiene alguna superficie plana o algún filo?'
-    : (p.k==='caras' ? 'Las superficies. Arrástralo para ver las de atrás.'
-      : (p.k==='aristas' ? 'Los filos donde se juntan dos caras.' : 'Las esquinas donde se juntan las aristas.'));
-  document.getElementById('bt-listo').textContent = esRedondo()
-    ? 'Ninguna: no tiene' : '✔️ Ya las conté todas';
+  var p = PARTES[parte], s = sol(), toca = seTocan(p.k);
+  document.getElementById('que').innerHTML = toca
+    ? 'Toca todas las <b>'+p.et+'</b>'
+    : '¿Cuántas <b>'+p.et+'</b> tiene?';
+  document.getElementById('como').textContent = !toca
+    ? (p.k==='caras' ? 'Piénsalo: ¿tiene alguna superficie plana?'
+      : 'Piénsalo: ¿tiene algún filo recto o alguna esquina?')
+    : (s.tipo === 'redondo' ? 'Sus dos bases planas. La superficie curva no es una cara.'
+      : (p.k==='caras' ? 'Las superficies. Arrástralo para ver las de atrás.'
+        : (p.k==='aristas' ? 'Los filos donde se juntan dos caras.' : 'Las esquinas donde se juntan las aristas.')));
+  document.getElementById('bt-listo').textContent = toca
+    ? '✔️ Ya las conté todas' : 'Ninguna: no tiene';
   pintarCuenta();
 }
 
 function cerrarSolido(){
-  var s = sol();
+  var s = sol(), yaEstaba = !!hechos[nivel];
   var C = resultado.caras, A = resultado.aristas, V = resultado.vertices;
   document.getElementById('fin-emoji').textContent = s.emoji;
   document.getElementById('fin-tit').textContent = s.n;
@@ -442,14 +536,26 @@ function cerrarSolido(){
     '<div class="parte p-cara">caras<b>'+C+'</b></div>'+
     '<div class="parte p-arista">aristas<b>'+A+'</b></div>'+
     '<div class="parte p-vertice">vértices<b>'+V+'</b></div>';
+  /* «no tiene caras planas» era mentira para el cilindro, que tiene
+     dos: la razón de verdad es que Euler es solo para poliedros. */
   document.getElementById('fin-euler').innerHTML = (s.tipo === 'redondo')
-    ? 'La cuenta de Euler <b>no se aplica aquí</b>:<br>un cuerpo redondo no tiene caras planas.'
+    ? 'La cuenta de Euler <b>no se aplica aquí</b>:<br>es solo para poliedros, y este es un cuerpo redondo.'
     : 'caras + vértices = aristas + 2<br>'+C+' + '+V+' = '+A+' + 2<br><b>'+(C+V)+' = '+(A+2)+' ✔</b>';
   document.getElementById('fin-txt').textContent = s.nota;
+  var otra = document.getElementById('fin-otra');
+  otra.textContent = yaEstaba ? '⭐ Este sólido ya lo tenías contado: sus estrellas se ganan una sola vez.' : '';
+  otra.style.display = yaEstaba ? '' : 'none';
   var ultimo = (nivel >= SOLIDOS.length-1);
   document.getElementById('fin-bt').textContent = ultimo ? '🔄 Otra vuelta' : 'Siguiente sólido →';
-  estrellas += 5;
-  document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  if(!yaEstaba){
+    estrellas += 5;
+    document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  }
+  hechos[nivel] = true;
+  pintarPuntos();
+  /* el festejo grande, solo cuando el 7.º sólido se acaba de cerrar:
+     es la medalla del juego, no el cierre de cada vuelta */
+  if(!yaEstaba && Object.keys(hechos).length >= SOLIDOS.length) Parque3D.festejarFin();
   guardar();
   document.getElementById('velo-fin').classList.add('ver');
   jugando = false;
@@ -462,12 +568,22 @@ function siguiente(){
   cargarSolido();
 }
 
+/* El avance, a la vista: un punto por sólido, lleno si ya se cobró.
+   Sin esto, el único rastro de los siete era el subtítulo, y el que
+   repetía no sabía cuántos le faltaban para completar la vuelta. */
+function pintarPuntos(){
+  document.getElementById('puntos').innerHTML = SOLIDOS.map(function(_, i){
+    return '<span'+(hechos[i] ? ' class="si">●' : '>○')+'</span>';
+  }).join('');
+}
+
 function cargarSolido(){
   parte = 0; contadas = {caras:{}, aristas:{}, vertices:{}}; resultado = {};
   var s = sol();
   document.getElementById('subt').textContent = 'Sólido '+(nivel+1)+' de '+SOLIDOS.length+' · '+s.n;
   armar();
   prepararParte();
+  pintarPuntos();
   jugando = true; girando = true;
 }
 
@@ -479,7 +595,9 @@ function girarSolo(){ girando = !girando; }
 
 function animar(){
   requestAnimationFrame(animar);
-  if(girando) angY += 0.006;
+  /* mientras el dedo manda —y un ratito después— el giro automático
+     se aparta, aunque el 🔄 esté encendido */
+  if(girando && !(dedo && (dedo.arrastrando() || dedo.reposo() < 2000))) angY += 0.006;
   if(grupo){ grupo.rotation.y = angY; grupo.rotation.x = angX; }
   rend.render(esc, cam);
 }
@@ -492,6 +610,7 @@ Parque3D.arrancar(function(){
   leer();
   montar();
   document.getElementById('marcador').textContent = '⭐ '+estrellas;
+  pintarPuntos();   // el que vuelve ve sus puntos llenos antes de tocar «Empezar»
 });
 
 window.__j3d = {

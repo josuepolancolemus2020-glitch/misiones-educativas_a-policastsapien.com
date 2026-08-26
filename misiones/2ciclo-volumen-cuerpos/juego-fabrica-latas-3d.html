@@ -16,12 +16,19 @@
   --marca-fondo:rgba(74,144,217,.18); --marca-borde:rgba(74,144,217,.5); --velo-fondo:rgba(10,14,26,.93);
   --lienzo-fondo:radial-gradient(circle at 50% 30%,#2b3350 0%,#141a2c 72%);
 }
-/* pedido de la fábrica */
-.pedido{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.45rem .7rem;font-size:.8rem;line-height:1.35;}
+/* pedido de la fábrica — flota sobre el dibujo y NO atrapa el dedo:
+   el arrastre que estira la lata tiene que llegar al lienzo aunque
+   empiece encima de la tarjeta */
+.pedido{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(20,26,44,.9);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.45rem .7rem;font-size:.8rem;line-height:1.35;pointer-events:none;}
 .pedido b{color:var(--dorado);font-size:1.05rem;}
 .pedido .cond{display:block;font-size:.72rem;color:var(--azul);margin-top:.1rem;}
-/* el medidor: cuánto le falta o le sobra */
-.medidor{position:absolute;left:.5rem;right:.5rem;bottom:.5rem;background:rgba(20,26,44,.92);border:2px solid rgba(154,165,189,.3);border-radius:12px;padding:.45rem .7rem;}
+/* los cuatro pedidos, encendidos según se entregan: el alumno ve
+   cuánto le falta sin leer nada */
+.pedido .prog{display:block;margin-top:.2rem;font-size:.9rem;letter-spacing:.3rem;}
+.pedido .prog .falta{opacity:.3;filter:grayscale(1);}
+/* el medidor: cuánto le falta o le sobra (tampoco atrapa el dedo,
+   por lo mismo que la tarjeta del pedido) */
+.medidor{position:absolute;left:.5rem;right:.5rem;bottom:.5rem;background:rgba(20,26,44,.92);border:2px solid rgba(154,165,189,.3);border-radius:12px;padding:.45rem .7rem;pointer-events:none;}
 .medidor .cuenta{font-family:'Fira Code',ui-monospace,monospace;font-size:.82rem;color:#cdd8ee;margin-bottom:.3rem;word-break:break-word;}
 .medidor .cuenta em{color:var(--dorado);font-style:normal;font-weight:700;}
 .riel{height:12px;background:#141a2c;border-radius:7px;overflow:hidden;position:relative;border:1px solid rgba(154,165,189,.25);}
@@ -39,7 +46,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;heigh
 input[type=range]::-moz-range-track{height:8px;background:#141a2c;border-radius:5px;}
 input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--dorado);border:2px solid #fff3cf;cursor:pointer;}
 .finos{display:flex;gap:.25rem;flex-wrap:wrap;}
-.fino{width:44px;height:40px;border-radius:8px;border:1.5px solid rgba(154,165,189,.4);background:#2c3556;color:var(--claro);font-size:1rem;font-family:inherit;cursor:pointer;line-height:1;}
+/* 44px de alto mínimo: el blanco que un dedo acierta sin mirar */
+.fino{width:44px;min-height:44px;border-radius:8px;border:1.5px solid rgba(154,165,189,.4);background:#2c3556;color:var(--claro);font-size:1rem;font-family:inherit;cursor:pointer;line-height:1;}
 .fino:active{background:var(--azul);}
 .botones{margin-top:.4rem;}
 .bt{font-size:.9rem;padding:.55rem .8rem;flex:1;}
@@ -68,16 +76,16 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   <div class="fila">
     <label>radio<b id="lbl-r">6.0 cm</b></label>
     <input type="range" id="sl-r" min="5" max="500" step="1" value="60">
-    <div class="finos"><button class="fino" onclick="fino('r',-1)">−</button><button class="fino" onclick="fino('r',1)">+</button></div>
+    <div class="finos"><button class="fino" data-m="r" data-p="-1" onclick="fino('r',-1)">−</button><button class="fino" data-m="r" data-p="1" onclick="fino('r',1)">+</button></div>
   </div>
   <div class="fila">
     <label>altura<b id="lbl-h">12 cm</b></label>
     <input type="range" id="sl-h" min="10" max="2000" step="1" value="120">
-    <div class="finos"><button class="fino" onclick="fino('h',-1)">−</button><button class="fino" onclick="fino('h',1)">+</button></div>
+    <div class="finos"><button class="fino" data-m="h" data-p="-1" onclick="fino('h',-1)">−</button><button class="fino" data-m="h" data-p="1" onclick="fino('h',1)">+</button></div>
   </div>
   <div class="botones">
     <button class="bt bt-v" onclick="fabricar()">🏭 Fabricar</button>
-    <button class="bt bt-s" onclick="pista()">💡 Pista</button>
+    <button class="bt bt-s" onclick="pista()">💡 Pista (−1 ⭐)</button>
   </div>
 </div>
 
@@ -102,6 +110,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
     <p>Llegó un pedido: hay que fabricar un envase con un volumen <b>exacto</b>. Mueve el <b>radio</b> y la <b>altura</b> hasta que la cuenta te dé, y toca <b>Fabricar</b>.</p>
     <div class="formula">V = 3.14 × radio × radio × altura<br>1 cm³ = 1 mililitro · 1 000 cm³ = 1 litro</div>
     <p style="font-size:.82rem;color:#9aa5bd;">Se acepta con hasta 1 % de diferencia: en una fábrica de verdad tampoco sale al milímetro.</p>
+    <p style="font-size:.82rem;color:#9aa5bd;">👆 También en el dibujo: arrastra de lado para el radio y de arriba abajo para la altura.</p>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar el turno</button>
   </div>
 </div>
@@ -155,6 +164,11 @@ var PEDIDOS = [
 
 var esc, cam, rend, rejilla, grupo, cuerpo, tapaSup, tapaInf, reglaR, reglaH;
 var pedido = 0, estrellas = 0, retoML = 0, enReto = false, girando = 0;
+/* retoN cuenta los retos servidos: cada tercero pide además la
+   FORMA. retoCond es la condición del reto en curso (o nada).
+   giro es el mando del dedo sobre el dibujo, para pausar el vaivén
+   mientras el alumno ajusta. */
+var retoN = 0, retoCond = null, giro = null;
 
 /* Con los cuatro pedidos hechos se guarda un pedido MÁS que los que
    hay: así al reabrir el juego el alumno cae en los retos libres y no
@@ -174,7 +188,7 @@ function radio(){ return parseInt(document.getElementById('sl-r').value,10)/10; 
 function altura(){ return parseInt(document.getElementById('sl-h').value,10)/10; }
 function volumen(r,h){ return PI*r*r*h; }
 function metaML(){ return enReto ? retoML : PEDIDOS[pedido].ml; }
-function condActual(){ return enReto ? null : PEDIDOS[pedido].cond; }
+function condActual(){ return enReto ? retoCond : PEDIDOS[pedido].cond; }
 
 function fmt(x){
   var r = Math.round(x*10)/10;
@@ -244,6 +258,17 @@ function armarLata(){
   // dibujado se ve que el radio llega solo hasta el centro
   reglaR = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({color:0x4a90d9}));
   reglaH = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({color:0x27ae60}));
+  /* Cada regla son DOS puntos que se mueven, no una geometría que
+     se rehace: destruir y crear búferes decenas de veces por
+     segundo —cada paso del deslizador— es lo que pone lento un
+     teléfono modesto. Se reservan una vez y solo cambian números. */
+  reglaR.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+  reglaH.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+  /* Sin esto, el navegador recorta con la esfera envolvente del
+     primer cuadro —cuando los puntos aún estaban en cero— y las
+     reglas desaparecerían al crecer la lata. Recortar dos líneas
+     no ahorra nada, así que no se recortan. */
+  reglaR.frustumCulled = false; reglaH.frustumCulled = false;
   grupo.add(reglaR); grupo.add(reglaH);
 
   cam.position.set(0, 5.6, 13);
@@ -255,7 +280,11 @@ function armarLata(){
    escala dejarían la lata invisible. */
 function rehacerLata(){
   var r = radio(), h = altura();
-  var k = 7/Math.max(r*2, h);
+  /* La escala mira las DOS medidas contra lo que la pantalla de un
+     teléfono deja ver: solo con la mayor, una lata ancha (radio 6)
+     desbordaba el hueco por los costados y el alumno veía un muro
+     dorado sin forma — ni lata, ni tapas, ni proporción. */
+  var k = Math.min(7/h, 5.6/(r*2));
   var rr = r*k, hh = h*k;
 
   cuerpo.scale.set(rr, hh, rr);
@@ -264,14 +293,14 @@ function rehacerLata(){
   tapaSup.scale.set(rr*1.03, gt, rr*1.03); tapaSup.position.y = hh;
   tapaInf.scale.set(rr*1.03, gt, rr*1.03); tapaInf.position.y = 0;
 
-  reglaR.geometry.dispose();
-  reglaR.geometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, hh+0.06, 0), new THREE.Vector3(rr, hh+0.06, 0)
-  ]);
-  reglaH.geometry.dispose();
-  reglaH.geometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(rr+0.5, 0, 0), new THREE.Vector3(rr+0.5, hh, 0)
-  ]);
+  var pos = reglaR.geometry.attributes.position;
+  pos.array[0] = 0;  pos.array[1] = hh+0.06; pos.array[2] = 0;
+  pos.array[3] = rr; pos.array[4] = hh+0.06; pos.array[5] = 0;
+  pos.needsUpdate = true;
+  pos = reglaH.geometry.attributes.position;
+  pos.array[0] = rr+0.5; pos.array[1] = 0;  pos.array[2] = 0;
+  pos.array[3] = rr+0.5; pos.array[4] = hh; pos.array[5] = 0;
+  pos.needsUpdate = true;
 }
 
 /* ============================================================
@@ -302,17 +331,49 @@ function fino(cual, paso){
   pintar();
 }
 
+/* Mantener pulsado − o + repite. Bajar el radio 3 cm son treinta
+   toques, y al décimo el alumno suelta el juego. El toque corto
+   sigue valiendo un paso —lo pone el atado del andamio al soltar—;
+   esto solo añade la repetición mientras el dedo no se levanta. */
+(function(){
+  var t = null;
+  function para(){ if(t){ clearInterval(t); t = null; } }
+  var lista = document.querySelectorAll('.fino');
+  for(var i=0;i<lista.length;i++){
+    (function(bt){
+      bt.addEventListener('pointerdown', function(){
+        para();
+        t = setInterval(function(){ fino(bt.dataset.m, +bt.dataset.p); }, 140);
+      });
+      bt.addEventListener('pointerup', para);
+      bt.addEventListener('pointercancel', para);
+      bt.addEventListener('pointerleave', para);
+    })(lista[i]);
+  }
+})();
+
 function pintarPedido(){
   var el = document.getElementById('pedido');
+  /* Los cuatro emojis son el mapa del juego: se encienden según se
+     entregan y el alumno ve cuánto le falta sin leer nada. */
+  var prog = '<span class="prog">', i;
+  for(i=0;i<PEDIDOS.length;i++){
+    prog += '<span'+((enReto || pedido>i)?'':' class="falta"')+'>'+PEDIDOS[i].emoji+'</span>';
+  }
+  prog += '</span>';
   if(enReto){
     el.innerHTML = '🎲 <b>Reto libre</b> · fabrica '+fmtEntero(retoML)+' cm³'+
-      '<span class="cond">Los retos no se acaban: cada uno pide un volumen nuevo.</span>';
+      (retoCond
+        ? '<span class="cond">'+(retoCond==='alta'
+            ? 'Y que sea ALTA: la altura tiene que pasar del doble del radio.'
+            : 'Y que sea ANCHA: el doble del radio tiene que pasar de la altura.')+'</span>'
+        : '<span class="cond">Los retos no se acaban: cada uno pide un volumen nuevo.</span>')+prog;
     document.getElementById('subt').textContent = '🎲 Retos libres';
     return;
   }
   var p = PEDIDOS[pedido];
   el.innerHTML = p.emoji+' <b>'+p.n+'</b> · '+p.txt +
-    (p.cond ? '<span class="cond">'+p.txtcond+'</span>' : '');
+    (p.cond ? '<span class="cond">'+p.txtcond+'</span>' : '') + prog;
   document.getElementById('subt').textContent = 'Pedido '+(pedido+1)+' de '+PEDIDOS.length+' · '+p.n;
 }
 
@@ -332,12 +393,14 @@ function fabricar(){
   var r = radio(), h = altura(), v = volumen(r,h), meta = metaML();
   var pct = Math.abs(v-meta)/meta;
   if(pct > TOL){
+    Parque3D.fallo();          // la racha se corta, sin castigo
     var el = document.getElementById('dif');
     el.className='dif lejos';
     el.textContent = (v>meta?'Todavía se pasa por ':'Todavía faltan ')+fmtEntero(Math.abs(v-meta))+' cm³ · afina con − y +';
     return;
   }
   if(!cumpleForma(r,h)){
+    Parque3D.fallo();
     var e2 = document.getElementById('dif');
     e2.className='dif lejos';
     e2.textContent = '📏 El volumen está bien, pero la forma no es la que pidieron.';
@@ -351,6 +414,7 @@ function ganar(r,h,v){
   var pct = Math.abs(v-meta)/meta;
   var est = pct <= 0.002 ? 3 : (pct <= 0.005 ? 2 : 1);
   estrellas += est*3;
+  Parque3D.acierto();          // confeti y racha 🔥, la compartida de los juegos
   document.getElementById('fin-est').textContent = '⭐'.repeat(est) + '·'.repeat(3-est);
   document.getElementById('fin-form').innerHTML =
     'V = 3.14 × '+fmt(r)+'² × '+fmt(h)+'<br>V = '+fmtEntero(v)+' cm³ = '+fmt(v/1000)+' litros';
@@ -361,9 +425,10 @@ function ganar(r,h,v){
   } else {
     var p = PEDIDOS[pedido];
     var ultimo = (pedido >= PEDIDOS.length-1);
-    document.getElementById('fin-tit').textContent = ultimo ? '¡Terminaste los cuatro pedidos!' : '¡Pedido listo! '+p.emoji;
+    document.getElementById('fin-tit').textContent = ultimo ? '🏭 ¡Los cuatro pedidos!' : '¡Pedido listo! '+p.emoji;
     document.getElementById('fin-txt').textContent = p.nota;
     document.getElementById('fin-bt').textContent = ultimo ? '🎲 Retos libres →' : 'Siguiente pedido →';
+    if(ultimo) Parque3D.festejarFin();   // el festejo grande: se acabó el turno completo
   }
   pintarMarcador(); guardar();
   document.getElementById('velo-fin').classList.add('ver');
@@ -384,11 +449,24 @@ function nuevoReto(){
   var otro = opciones[Math.floor(Math.random()*opciones.length)];
   retoML = (otro === retoML) ? opciones[(opciones.indexOf(otro)+1)%opciones.length] : otro;
   enReto = true;
+  /* Cada tercer reto pide además la FORMA (alta o ancha), con las
+     mismas reglas de los pedidos: que el mismo volumen cabe en
+     latas muy distintas es lo más didáctico del juego, y sin esto
+     se quedaba solo en los cuatro pedidos y no volvía nunca. Todos
+     los volúmenes de la lista se pueden clavar en las dos formas
+     con los mandos que hay. */
+  retoN++;
+  retoCond = (retoN % 3 === 0) ? (Math.random() < 0.5 ? 'alta' : 'ancha') : null;
   pintarPedido(); pintar();
 }
 
 /* La pista despeja la altura, que es como se resuelve en el
-   cuaderno: h = V ÷ (3.14 × r²). Cuesta una estrella. */
+   cuaderno: h = V ÷ (3.14 × r²). Cuesta una estrella, y el botón
+   lo dice antes de tocar — un precio que se descubre después es
+   una trampa. Y se cobra UNA vez por dato: con el mismo radio y el
+   mismo pedido la respuesta es la misma, y cobrar por releerla era
+   cobrar dos veces la misma pista. */
+var pistaCobrada = null;      // {r, meta} del último cobro
 function pista(){
   var r = radio(), meta = metaML();
   var h = meta/(PI*r*r);
@@ -398,7 +476,10 @@ function pista(){
     el.innerHTML = 'Con radio '+fmt(r)+' cm no alcanza: mueve primero el radio.';
   } else {
     el.innerHTML = 'h = '+fmtEntero(meta)+' ÷ (3.14 × '+fmt(r)+'²) ≈ <b>'+fmt(h)+' cm</b>';
-    estrellas = Math.max(0, estrellas-1); pintarMarcador(); guardar();
+    if(!pistaCobrada || pistaCobrada.r !== r || pistaCobrada.meta !== meta){
+      pistaCobrada = {r:r, meta:meta};
+      estrellas = Math.max(0, estrellas-1); pintarMarcador(); guardar();
+    }
   }
 }
 
@@ -406,7 +487,10 @@ function pintarMarcador(){ document.getElementById('marcador').textContent = '�
 
 function animar(){
   requestAnimationFrame(animar);
-  girando += 0.006;
+  /* El vaivén se detiene mientras el dedo ajusta y un par de
+     segundos después: el alumno está midiendo con los ojos la lata
+     que acaba de estirar, y el bamboleo se la mueve. */
+  if(!(giro && (giro.arrastrando() || giro.reposo() < 2000))) girando += 0.006;
   if(grupo) grupo.rotation.y = Math.sin(girando)*0.55;
   rend.render(esc, cam);
 }
@@ -419,6 +503,24 @@ Parque3D.arrancar(function(){
   leer();
   if(pedido >= PEDIDOS.length){ enReto = true; }
   montar();
+  /* El mando en el dibujo: en un teléfono los deslizadores son
+     finos y la lata es media pantalla, así que el gesto natural es
+     estirarla — de arriba abajo la altura, de lado el radio. Se
+     escribe en los MISMOS deslizadores (los ± quedan para afinar).
+     El acumulador guarda las fracciones: un arrastre lento también
+     tiene que mover. La altura corre el doble porque su rango
+     (hasta 200 cm) dobla al del radio. */
+  var acu = {r:0, h:0};
+  giro = Parque3D.giroConElDedo(function(dx, dy){
+    acu.r += dx*2; acu.h -= dy*4;
+    var pr = Math.round(acu.r), ph = Math.round(acu.h);
+    if(!pr && !ph) return;
+    acu.r -= pr; acu.h -= ph;
+    var er = document.getElementById('sl-r'), eh = document.getElementById('sl-h');
+    er.value = Math.max(+er.min, Math.min(+er.max, (+er.value)+pr));
+    eh.value = Math.max(+eh.min, Math.min(+eh.max, (+eh.value)+ph));
+    pintar();
+  }, null);
   document.getElementById('sl-r').addEventListener('input', pintar);
   document.getElementById('sl-h').addEventListener('input', pintar);
   pintarMarcador();

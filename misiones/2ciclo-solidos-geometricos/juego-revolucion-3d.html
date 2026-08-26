@@ -34,6 +34,12 @@ body{user-select:none;}
 .tres{display:flex;gap:.35rem;justify-content:center;margin:.6rem 0;font-size:.72rem;flex-wrap:wrap;}
 .tres div{flex:1;border:1.5px solid rgba(139,111,224,.5);border-radius:10px;padding:.35rem .25rem;line-height:1.3;}
 .tres b{display:block;font-size:1.4rem;}
+/* El resumen de la vuelta: seis casillas, tres por renglón para que
+   quepan en un teléfono, con su ✓ o su ✗ del color de siempre —
+   verde lo logrado, rojo lo errado, como corrige el maestro. */
+#ronda-figuras div{flex:1 1 28%;}
+#ronda-figuras b.si{color:var(--verde);}
+#ronda-figuras b.no{color:var(--rojo);}
 @media(max-width:380px){.chapa{font-size:.78rem;}.op{font-size:.84rem;}}
 </style>
 </head>
@@ -53,7 +59,7 @@ body{user-select:none;}
 <div class="mandos">
   <div class="ops" id="ops"></div>
   <div class="botones" id="botones" style="display:none;">
-    <button class="bt bt-v" onclick="girar()">🔄 Girarla</button>
+    <button class="bt bt-v" id="bt-girar" onclick="girar()">🔄 Girarla</button>
     <button class="bt bt-s" onclick="parar()">↩️ Volver a la figura</button>
     <button class="bt bt-p" onclick="siguiente()">Siguiente →</button>
   </div>
@@ -96,6 +102,20 @@ body{user-select:none;}
     <p id="fin-txt"></p>
     <button class="bt bt-v" onclick="cerrarFin()">Verla girar</button>
     <button class="bt bt-p" onclick="siguiente()">Siguiente figura →</button>
+  </div>
+</div>
+
+<!-- El cierre de la vuelta. Antes la sexta figura desembocaba en la
+     primera sin decir nada, y las estrellas se ganaban repitiendo la
+     figura cuya respuesta ya se sabía: aquí la vuelta se cierra con
+     su cuenta y la siguiente empieza de verdad. -->
+<div class="velo" id="velo-ronda">
+  <div class="panel">
+    <div class="emoji-gr">🏁</div>
+    <h2>¡Vuelta completa!</h2>
+    <div class="tres" id="ronda-figuras"></div>
+    <p id="ronda-total"></p>
+    <button class="bt bt-p" onclick="otraVuelta()">Otra vuelta →</button>
   </div>
 </div>
 
@@ -187,9 +207,33 @@ var FIGURAS = [
 
 var esc, cam, rend, grupo, cuerpo, plana, eje, filo;
 var nivel = 0, estrellas = 0, phi = 0, girandoAhora = false, contestado = false, giroVista = 0;
+/* Lo de la vuelta vive DENTRO de la misma llave: qué figuras se
+   acertaron en esta vuelta, cuántas vueltas van y la mejor. Sin
+   esto, repetir la primera figura —cuya respuesta ya se sabía— era
+   una mina de estrellas y la vuelta terminaba en silencio. */
+var aciertos = {}, vuelta = 0, mejor = 0;
+/* El material del cuerpo es UNO para todo el juego y el perfil se
+   cachea por figura: el barrido rehace la geometría ~180 veces por
+   vuelta, y crear además 180 materiales y 180 arrays era ponerle a
+   la tarjeta de un teléfono modesto a compilar de balde. */
+var matCuerpo = null, ptsPerfil = null, ptsNivel = -1;
+/* La manivela no rehace en cada pointermove: deja el rehecho
+   pendiente y el bucle de dibujo lo cobra a lo sumo cada ~30 ms. */
+var manivelaPend = false, ultRehecho = 0, dedo = null;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, FIGURAS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify(
+  {nivel:nivel, estrellas:estrellas, aciertos:aciertos, vuelta:vuelta, mejor:mejor})); }catch(e){} }
+/* Se lee con tolerancia: un teléfono con la versión vieja trae solo
+   {nivel, estrellas} y no puede perder su avance; y un dato torcido
+   —un nivel negativo, por ejemplo— no puede reventar el juego, por
+   eso nivel se acota por abajo Y por arriba. */
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){
+  nivel=Math.min(Math.max(0, d.nivel|0), FIGURAS.length-1);
+  estrellas=Math.max(0, d.estrellas|0);
+  aciertos=(d.aciertos && typeof d.aciertos==='object') ? d.aciertos : {};
+  vuelta=Math.max(0, d.vuelta|0);
+  mejor=Math.min(Math.max(0, d.mejor|0), FIGURAS.length);
+} }catch(e){} }
 function fig(){ return FIGURAS[nivel]; }
 
 function montar(){
@@ -238,6 +282,16 @@ function puntosPlanos(){
 }
 
 function armar(){
+  /* El cuerpo sale del grupo aparte y solo se le tira la geometría:
+     su material es único y se reutiliza entre figuras, y tirar()
+     lo dispondría con todo lo demás. */
+  if(cuerpo){ grupo.remove(cuerpo); cuerpo.geometry.dispose(); cuerpo = null; }
+  /* Tirar de verdad, no solo sacar del árbol: cada figura deja eje,
+     silueta y filo con sus geometrías vivas en la memoria de la
+     tarjeta, y una sesión larga en un teléfono modesto se la come.
+     El barrido de después es para el Three de mentira de la sonda,
+     que no rellena `parent` y ahí `tirar` no puede sacar. */
+  grupo.children.slice().forEach(function(h){ Parque3D.tirar(h); });
   while(grupo.children.length) grupo.remove(grupo.children[0]);
   var f = fig();
 
@@ -266,8 +320,9 @@ function armar(){
   grupo.add(filo);
 
   cuerpo = null;
-  phi = 0; girandoAhora = false;
+  phi = 0; girandoAhora = false; manivelaPend = false;
   document.getElementById('grados').textContent = '0°';
+  rotularGirar();
 }
 
 /* El cuerpo se rehace en cada cuadro con el trozo de vuelta que
@@ -277,16 +332,43 @@ function armar(){
 function rehacerCuerpo(){
   if(cuerpo){ grupo.remove(cuerpo); cuerpo.geometry.dispose(); cuerpo = null; }
   if(phi <= 0.001) return;
-  var f = fig();
-  var pts = f.perfil.map(function(q){ return new THREE.Vector2(Math.abs(q[0]), q[1]); });
-  var geo = new THREE.LatheGeometry(pts, 60, 0, phi);
-  cuerpo = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
-    color:0x4a90d9, side:THREE.DoubleSide, transparent:true, opacity:0.9}));
+  /* Entre cuadros lo único que cambia es la geometría: el material
+     se crea una vez y se reutiliza (crear ~180 por giro dejaba a la
+     tarjeta compilando shaders de balde), y los puntos del perfil se
+     cachean por figura, que tampoco cambian dentro de una vuelta. */
+  if(!matCuerpo) matCuerpo = new THREE.MeshLambertMaterial({
+    color:0x4a90d9, side:THREE.DoubleSide, transparent:true, opacity:0.9});
+  if(ptsNivel !== nivel){
+    ptsPerfil = fig().perfil.map(function(q){ return new THREE.Vector2(Math.abs(q[0]), q[1]); });
+    ptsNivel = nivel;
+  }
+  cuerpo = new THREE.Mesh(new THREE.LatheGeometry(ptsPerfil, 60, 0, phi), matCuerpo);
   grupo.add(cuerpo);
+}
+
+/* Las tres opciones se barajan con semilla fija por figura y vuelta,
+   como las actividades de la lectura de misión: la misma figura en
+   la misma vuelta sale siempre igual —quien cierra la aplicación y
+   vuelve ve lo mismo, y la sonda ve lo que ve el alumno—, y entre
+   vueltas cambia, para que la respuesta se aprenda por su cuerpo y
+   no por su casilla. Se baraja desde el orden ORIGINAL (ops0): si
+   no, el resultado dependería de cuántas veces se preguntó. */
+function barajar(f){
+  if(!f.ops0){ f.ops0 = f.ops.slice(); f.buena0 = f.buena; }
+  var sem = (FIGURAS.indexOf(f)+1)*131 + vuelta*17 + 7;
+  function azar(){ sem = (sem*9301 + 49297) % 233280; return sem/233280; }
+  var idx = [0,1,2], k, j, t;
+  for(k = idx.length-1; k > 0; k--){
+    j = Math.floor(azar()*(k+1));
+    t = idx[k]; idx[k] = idx[j]; idx[j] = t;
+  }
+  f.ops = idx.map(function(o){ return f.ops0[o]; });
+  f.buena = idx.indexOf(f.buena0);
 }
 
 function preguntar(){
   var f = fig();
+  barajar(f);
   contestado = false;
   document.getElementById('chapa').innerHTML = f.emoji+' <b>'+f.n+'</b> · '+f.preg;
   document.getElementById('subt').textContent = 'Figura '+(nivel+1)+' de '+FIGURAS.length+' · '+f.n;
@@ -310,7 +392,16 @@ function responder(i){
     if(k === f.buena) b.classList.add('buena');
     else if(k === i) b.classList.add('mala');
   });
-  if(bien){ estrellas += 5; document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+  /* El festejo es del andamio: confeti, racha compartida y su
+     toquecito en la mano; fallar solo apaga la racha, sin castigo. */
+  if(bien) Parque3D.acierto(); else Parque3D.fallo();
+  /* Las estrellas de una figura se pagan UNA vez por vuelta: lo que
+     se anota es la PRIMERA respuesta, así repetirla no farmea ni
+     corrige, igual que en el examen de papel. */
+  if(!(nivel in aciertos)){
+    aciertos[nivel] = bien;
+    if(bien){ estrellas += 5; document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+  }
   guardar();
   setTimeout(function(){
     document.getElementById('fin-emoji').textContent = bien ? '🎉' : f.emojiSale;
@@ -328,18 +419,64 @@ function cerrarFin(){
   girar();
 }
 
-function girar(){ girandoAhora = true; if(filo) filo.visible = true; }
+/* El botón dice a qué viene: con la vuelta ya dada, «Girarla» pasa a
+   «Verla otra vez» — antes prometía un giro y no hacía nada. */
+function rotularGirar(){
+  var b = document.getElementById('bt-girar');
+  if(b) b.textContent = (phi >= Math.PI*2 - 0.01) ? '🔄 Verla otra vez' : '🔄 Girarla';
+}
+
+function girar(){
+  /* Tras la vuelta completa phi se quedaba clavado en 2π: el botón
+     encendía el filo amarillo y nada se movía, porque el bucle solo
+     avanza con phi < 2π. Se rebobina y la vuelta arranca de cero. */
+  if(phi >= Math.PI*2 - 0.01){
+    phi = 0; rehacerCuerpo();
+    if(plana) plana.rotation.y = 0;
+    if(filo) filo.rotation.y = 0;
+    document.getElementById('grados').textContent = '0°';
+  }
+  girandoAhora = true; if(filo) filo.visible = true;
+  rotularGirar();
+}
 function parar(){
-  girandoAhora = false; phi = 0;
-  if(filo) filo.visible = false;
+  girandoAhora = false; phi = 0; manivelaPend = false;
+  if(filo){ filo.visible = false; filo.rotation.y = 0; }
+  if(plana) plana.rotation.y = 0;
   rehacerCuerpo();
   document.getElementById('grados').textContent = '0°';
+  rotularGirar();
 }
 
 function siguiente(){
   document.getElementById('velo-fin').classList.remove('ver');
-  nivel = (nivel >= FIGURAS.length-1) ? 0 : nivel+1;
+  if(nivel >= FIGURAS.length-1){ finDeRonda(); return; }
+  nivel++;
   guardar();
+  armar(); preguntar();
+}
+
+/* Al cerrar la sexta figura la vuelta se cierra de verdad: las seis
+   con su ✓ o su ✗, el total y la mejor vuelta guardada. La cuenta se
+   arma ANTES de vaciar `aciertos`, que es lo que abre la siguiente. */
+function finDeRonda(){
+  var filas = '', total = 0;
+  FIGURAS.forEach(function(f, i){
+    var a = (aciertos[i] === true);
+    if(a) total++;
+    filas += '<div>'+f.emoji+'<b class="'+(a?'si':'no')+'">'+(a?'✓':'✗')+'</b>'+f.emojiSale+'</div>';
+  });
+  if(total > mejor) mejor = total;
+  document.getElementById('ronda-figuras').innerHTML = filas;
+  document.getElementById('ronda-total').innerHTML =
+    'Acertaste <b>'+total+' de '+FIGURAS.length+'</b>. Tu mejor vuelta: <b>'+mejor+' de '+FIGURAS.length+'</b>.';
+  vuelta++; aciertos = {}; nivel = 0;
+  guardar();
+  document.getElementById('velo-ronda').classList.add('ver');
+  Parque3D.festejarFin();
+}
+function otraVuelta(){
+  document.getElementById('velo-ronda').classList.remove('ver');
   armar(); preguntar();
 }
 function empezar(){
@@ -347,16 +484,29 @@ function empezar(){
   armar(); preguntar();
 }
 
+/* El arrastre lo pone el andamio (captura de puntero incluida). El
+   HORIZONTAL gira la vista, como siempre; el VERTICAL es LA MANIVELA:
+   en la fase de ver, el dedo barre el cuerpo grado a grado y puede
+   dejarlo a medio barrer — la imagen que ningún dibujo del libro da. */
 function eventos(){
-  var lienzo = document.getElementById('lienzo');
-  var abajo = null;
-  lienzo.addEventListener('pointerdown', function(e){ abajo = {x:e.clientX, g:giroVista}; });
-  lienzo.addEventListener('pointermove', function(e){
-    if(!abajo) return;
-    giroVista = abajo.g + (e.clientX-abajo.x)*0.011;
+  dedo = Parque3D.giroConElDedo(function(dx, dy){
+    giroVista += dx*0.011;
+    /* La manivela solo cuando ya se respondió (los botones de girar
+       están a la vista): antes, barrer el cuerpo con el dedo sería
+       enseñarle la respuesta que se le está preguntando. */
+    if(document.getElementById('botones').style.display === 'none') return;
+    /* Manda el eje dominante del gesto: así un arrastre horizontal
+       para mirar de lado no detiene el barrido automático. */
+    if(Math.abs(dy) <= Math.abs(dx)) return;
+    girandoAhora = false;
+    /* Subir el dedo avanza; bajar, rebobina. Acotado a la vuelta. */
+    phi = Math.max(0, Math.min(Math.PI*2, phi - dy*0.02));
+    if(plana) plana.rotation.y = phi;
+    if(filo){ filo.rotation.y = phi; filo.visible = (phi > 0.001 && phi < Math.PI*2 - 0.001); }
+    document.getElementById('grados').textContent = Math.round(phi*180/Math.PI)+'°';
+    rotularGirar();
+    manivelaPend = true;
   });
-  lienzo.addEventListener('pointerup', function(){ abajo = null; });
-  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
 }
 
 function animar(){
@@ -367,7 +517,18 @@ function animar(){
     if(plana) plana.rotation.y = phi;
     if(filo) filo.rotation.y = phi;
     document.getElementById('grados').textContent = Math.round(phi*180/Math.PI)+'°';
-    if(phi >= Math.PI*2){ girandoAhora = false; if(filo) filo.visible = false; }
+    if(phi >= Math.PI*2){ girandoAhora = false; if(filo) filo.visible = false; rotularGirar(); }
+  }
+  /* Lo que la manivela dejó pendiente se rehace aquí, a lo sumo uno
+     cada ~30 ms: rehacer la geometría en cada pointermove —llegan
+     más de sesenta por segundo— calienta un teléfono modesto sin
+     verse mejor. Al soltar el dedo se rehace ya, para que el cuerpo
+     no se quede un pelo detrás del filo. */
+  if(manivelaPend){
+    var ya = Date.now();
+    if(ya - ultRehecho >= 30 || !(dedo && dedo.arrastrando())){
+      ultRehecho = ya; manivelaPend = false; rehacerCuerpo();
+    }
   }
   if(grupo) grupo.rotation.y = giroVista;
   rend.render(esc, cam);

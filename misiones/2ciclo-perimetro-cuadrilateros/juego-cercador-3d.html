@@ -54,6 +54,20 @@
   border-radius:8px;padding:.5rem .7rem;font-size:.84rem;margin:.6rem 0;text-align:left;line-height:1.6;word-break:break-word;}
 .chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.5rem 0;}
 .chapas span{background:rgba(47,196,168,.14);border:1.5px solid rgba(47,196,168,.45);border-radius:8px;padding:.2rem .45rem;}
+/* La tarjeta y la cinta flotan ENCIMA del dibujo, y el dibujo ahora se
+   toca: sin esto, el dedo que iba a marcar el lado de arriba se quedaba
+   en la tarjeta y el toque no llegaba nunca al terreno. */
+.tarjeta,.cinta{pointer-events:none;}
+/* El lado ya recorrido se enciende también en su rótulo: en la pantalla
+   de un teléfono al sol una línea fina no se distingue; el número con el
+   fondo relleno, sí. */
+.rot.marcado{background:var(--acento);color:var(--acento-tinta);border-color:#7fe9d4;font-weight:700;}
+/* El mapa de la cosecha: los seis terrenos con las estrellas que ya
+   pagaron. Sin él, el alumno no sabe qué le falta ni a cuál volver. */
+.mapa{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin:.5rem 0;}
+.mapa span{background:rgba(47,196,168,.1);border:1.5px solid rgba(47,196,168,.35);border-radius:8px;
+  padding:.18rem .3rem;font-size:.72rem;line-height:1.3;min-width:2.6rem;}
+.mapa span.aqui{border-color:var(--acento);background:rgba(47,196,168,.22);}
 @media(max-width:380px){.pregunta{font-size:.78rem;}.bt{font-size:.8rem;}}
 </style>
 </head>
@@ -80,7 +94,7 @@
   <div class="botones">
     <button class="bt bt-v" id="bt-comprar" onclick="comprar()">🛒 Comprar</button>
     <button class="bt bt-a" id="bt-cercar" onclick="cercar()" disabled>🚧 Cercar</button>
-    <button class="bt bt-s" onclick="verComo()">💡 ¿Cómo?</button>
+    <button class="bt bt-s" id="bt-como" onclick="verComo()">💡 ¿Cómo?</button>
   </div>
   <div class="aviso" id="aviso"></div>
 </div>
@@ -104,8 +118,9 @@
     <div class="emoji-gr">🚧</div>
     <h2>El Cercador</h2>
     <p>Cada terreno trae sus lados medidos. Compra la malla <b>exacta</b> para cercarlo y después mira cómo se pone.</p>
-    <div class="chapas"><span>La malla se compra por METROS</span><span>Perímetro = la orilla</span><span>Se suman los LADOS</span></div>
+    <div class="chapas"><span>La malla se compra por METROS</span><span>Perímetro = la orilla</span><span>Se suman los LADOS</span><span>👆 Toca cada lado y se suma</span></div>
     <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres rollos 🧱. Cada compra errada te cuesta uno.</p>
+    <div class="mapa" id="mapa-ini"></div>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
   </div>
 </div>
@@ -116,7 +131,9 @@
     <h2 id="fin-tit">¡Quedó cerrado!</h2>
     <div class="formula" id="fin-form"></div>
     <p id="fin-txt"></p>
+    <div class="mapa" id="mapa-fin"></div>
     <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente terreno →</button>
+    <button class="bt bt-s" id="fin-rep" onclick="repetir()" style="display:none;">🔁 Este mismo terreno</button>
   </div>
 </div>
 
@@ -185,9 +202,21 @@ function area(t){
 
 var esc, cam, rend, grupo, rots = [];
 var nivel = 0, vidas = 3, estrellas = 0, comprado = null, poniendo = 0, giro = 0, tramos = [];
+/* La mejor marca de cada terreno (0 = sin cerrar, 1-3 estrellas). Es lo
+   que corta la mina de estrellas: un terreno que ya pagó no vuelve a
+   pagar, aunque la marca sí pueda mejorar. */
+var mejor = TERRENOS.map(function(){ return 0; });
+var ayudaCobrada = false, ultimoBien = false;
+var giroManual = 0, dedo = null;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, TERRENOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas, mejor:mejor,
+  /* la misión lee `completado` para poner la medalla de oro en su tarjeta */
+  completado: mejor.every(function(x){ return x > 0; })})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, TERRENOS.length-1); estrellas=d.estrellas|0;
+  /* Tolerancia con lo guardado por la versión vieja: sin `mejor`, el
+     mapa arranca vacío pero el nivel y las estrellas se respetan. */
+  if(d.mejor && d.mejor.length) for(var i=0;i<TERRENOS.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+} }catch(e){} }
 function t(){ return TERRENOS[nivel]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
 
@@ -214,6 +243,13 @@ function montar(){
   cam.lookAt(0, 0, 0);
 
   armarTerreno();
+  /* El arrastre gira el terreno con el dedo y el toque corto marca un
+     lado. La mecánica —captura de puntero, umbral que separa girar de
+     tocar— es del andamio; aquí solo van las dos reacciones. */
+  dedo = Parque3D.giroConElDedo(function(dx){
+    giroManual += dx*0.008;
+    grupo.rotation.y = giroManual;
+  }, tocarLado);
   Parque3D.vigilarHueco(ajustar);
   animar();
 }
@@ -233,15 +269,23 @@ function rotulo(texto, x, y, z){
   el.textContent = texto;
   document.getElementById('lienzo').appendChild(el);
   rots.push({el:el, p:new THREE.Vector3(x,y,z)});
+  return el;
 }
 
 /* El terreno se dibuja siempre del mismo tamaño en pantalla: lo que
    importa es la forma y las medidas escritas, no que la cancha de
    28 m se salga del teléfono. */
 function armarTerreno(){
+  /* Tirar de verdad, no solo sacar del árbol: `remove()` deja los
+     buffers vivos en la memoria de la tarjeta, y seis terrenos en
+     bucle en una sesión larga acababan comiéndosela en un teléfono
+     modesto. Se dispone primero y se saca después, por el Three.js de
+     la sonda: no rellena `parent` y ahí `tirar` no puede sacar. */
+  grupo.children.slice().forEach(function(h){ Parque3D.tirar(h); });
   while(grupo.children.length) grupo.remove(grupo.children[0]);
   limpiarRotulos();
   tramos = [];
+  ayudaCobrada = false;   // la ayuda cobra por terreno, no por toque
   var d = t(), p = d.pts;
   var xs = p.map(function(q){ return q[0]; }), ys = p.map(function(q){ return q[1]; });
   var an = Math.max.apply(null,xs) - Math.min.apply(null,xs);
@@ -278,10 +322,18 @@ function armarTerreno(){
       new THREE.MeshPhongMaterial({color:0xcfd8dc, transparent:true, opacity:0.75}));
     pano.visible = false;
     grupo.add(pano);
-    tramos.push({a:a, b:b, poste:poste, pano:pano, metros:L[j], desde:0});
+    /* La luz del lado: una línea levantada un pelo sobre la orilla,
+       apagada hasta que el dedo la recorre. */
+    var luz = new THREE.Line(new THREE.BufferGeometry().setFromPoints(
+      [new THREE.Vector3(a.x, 0.12, a.z), new THREE.Vector3(b.x, 0.12, b.z)]),
+      new THREE.LineBasicMaterial({color:0x7fe9d4}));
+    luz.visible = false;
+    grupo.add(luz);
     // el rótulo de cada lado, en su punto medio y a un palmo por fuera
     var mx = (a.x+b.x)/2, mz = (a.z+b.z)/2;
-    rotulo(fmt(L[j])+' m', mx*1.16, 0.9, mz*1.16);
+    var rot = rotulo(fmt(L[j])+' m', mx*1.16, 0.9, mz*1.16);
+    tramos.push({a:a, b:b, poste:poste, pano:pano, metros:L[j], desde:0,
+                 luz:luz, rot:rot, marcado:false});
   }
   var acum = 0;
   tramos.forEach(function(tr){ tr.desde = acum; acum += tr.metros; });
@@ -290,6 +342,8 @@ function armarTerreno(){
   document.getElementById('subt').textContent = 'Terreno '+(nivel+1)+' de '+TERRENOS.length;
   document.getElementById('pregunta').textContent =
     '¿Cuántos metros de malla hay que comprar para cercar todo el terreno?';
+  pintarMapa();
+  pintarAyuda();
 }
 
 function moverRotulos(){
@@ -306,6 +360,70 @@ function moverRotulos(){
 }
 
 /* ============================================================
+   Recorrer la orilla con el dedo
+   ------------------------------------------------------------
+   La pista dice «recorre la orilla con el dedo» y durante mucho
+   tiempo fue mentira: el lienzo no escuchaba nada. Ahora tocar un
+   lado lo enciende y su medida se va sumando en la cinta; con los
+   cuatro encendidos, la suma se propone en la casilla. Es el
+   perímetro HECHO con el dedo: la orilla, lado a lado.
+
+   No hace falta rayo 3D: cada lado se proyecta a la pantalla con
+   la misma cuenta que ya coloca los rótulos, y gana el que quede
+   a menos de un dedo del toque.
+   ============================================================ */
+function proy(v){
+  var cont = document.getElementById('lienzo');
+  var w = new THREE.Vector3(v.x, v.y, v.z);
+  grupo.localToWorld(w);
+  w.project(cam);
+  return {x:(w.x*0.5+0.5)*cont.clientWidth, y:(-w.y*0.5+0.5)*cont.clientHeight};
+}
+function distSeg(x, y, a, b){
+  var dx = b.x-a.x, dy = b.y-a.y, l2 = dx*dx+dy*dy;
+  var f = l2 ? Math.max(0, Math.min(1, ((x-a.x)*dx+(y-a.y)*dy)/l2)) : 0;
+  var px = a.x+dx*f, py = a.y+dy*f;
+  return Math.sqrt((x-px)*(x-px)+(y-py)*(y-py));
+}
+function tocarLado(e){
+  if(poniendo || comprado !== null) return;   // con la compra hecha, la cuenta ya está echada
+  var rc = document.getElementById('lienzo').getBoundingClientRect();
+  var x = e.clientX - rc.left, y = e.clientY - rc.top;
+  var cerca = null, min = 30;                 // ~un dedo de tolerancia
+  tramos.forEach(function(tr){
+    var d = distSeg(x, y, proy(tr.a), proy(tr.b));
+    if(d < min){ min = d; cerca = tr; }
+  });
+  if(!cerca) return;
+  cerca.marcado = !cerca.marcado;             // volver a tocar corrige
+  cerca.luz.visible = cerca.marcado;
+  if(cerca.rot) cerca.rot.classList.toggle('marcado', cerca.marcado);
+  pintarRecorrido();
+}
+function pintarRecorrido(){
+  var cinta = document.getElementById('cinta');
+  var marcados = tramos.filter(function(tr){ return tr.marcado; });
+  if(!marcados.length){ cinta.style.display = 'none'; return; }
+  var suma = 0;
+  var partes = marcados.map(function(tr){ suma += tr.metros; return fmt(tr.metros); });
+  suma = Math.round(suma*100)/100;
+  var todos = marcados.length === tramos.length;
+  cinta.innerHTML = '🚧 ' + partes.join(' + ') + ' = <b>' + fmt(suma) + '</b> m' +
+                    (todos ? ' · ¡la orilla entera!' : '');
+  cinta.style.display = 'block';
+  /* Con los cuatro lados recorridos, la suma se PROPONE en la casilla:
+     el alumno todavía puede corregirla y es él quien toca Comprar. */
+  if(todos) document.getElementById('resp').value = String(suma);
+}
+function apagarRecorrido(){
+  tramos.forEach(function(tr){
+    tr.marcado = false;
+    if(tr.luz) tr.luz.visible = false;
+    if(tr.rot) tr.rot.classList.remove('marcado');
+  });
+}
+
+/* ============================================================
    La compra
    ============================================================ */
 function comprar(){
@@ -313,15 +431,20 @@ function comprar(){
   var r = parseFloat(String(document.getElementById('resp').value).replace(',','.'));
   var av = document.getElementById('aviso');
   if(isNaN(r)){ av.className='aviso mal'; av.textContent='Escribe cuántos metros de malla vas a comprar.'; return; }
+  /* Un cero o un número negativo no es una compra: antes descontaba un
+     rollo y la cinta pintaba metros negativos. */
+  if(r <= 0){ av.className='aviso mal'; av.textContent='La malla se compra por metros: escribe un número mayor que cero.'; return; }
   comprado = r;
   document.getElementById('bt-cercar').disabled = false;
   document.getElementById('bt-comprar').disabled = true;
+  pintarAyuda();   // con la compra hecha, la pista ya no cobra
   var bien = Math.abs(r - P) <= 0.01;
   if(bien){
     av.className='aviso bien';
     av.textContent='🛒 Compraste '+fmt(r)+' m. Ahora cerca el terreno y compruébalo.';
   } else {
     vidas--; pintarVidas();
+    Parque3D.fallo();   // la racha vuelve a cero, sin castigo visual
     av.className='aviso mal';
     /* El error de verdad tiene nombre. Decirle «te equivocaste» no
        enseña nada; decirle «eso es el ÁREA» le da la palabra que le
@@ -336,7 +459,11 @@ function comprar(){
 function cercar(){
   if(poniendo) return;
   document.getElementById('bt-cercar').disabled = true;
-  document.getElementById('cinta').style.display = 'block';
+  /* La cinta deja la cuenta del dedo y pasa a contar la malla puesta. */
+  apagarRecorrido();
+  var cinta = document.getElementById('cinta');
+  cinta.innerHTML = '🚧 <b>0</b> m de malla puestos';
+  cinta.style.display = 'block';
   poniendo = 0.0001;
 }
 
@@ -344,7 +471,19 @@ function terminarCerco(){
   var d = t(), P = perimetro(d), A = area(d);
   var bien = comprado !== null && Math.abs(comprado - P) <= 0.01;
   var est = bien ? (vidas===3?3:(vidas===2?2:1)) : 0;
-  if(bien) estrellas += 4;
+  ultimoBien = bien;
+  var completoAntes = mejor.every(function(x){ return x > 0; });
+  if(bien){
+    /* Cada terreno paga sus estrellas UNA sola vez, y paga las del
+       panel (1-3), no un +4 fijo. Sin esto, repetir el huerto fácil
+       era una mina de estrellas más rentable que avanzar, y el
+       marcador dejaba de decir cuánto se sabe. La marca del terreno
+       sí puede mejorar; el cobro no se repite. */
+    if(!mejor[nivel]) estrellas += est;
+    if(est > mejor[nivel]) mejor[nivel] = est;
+    Parque3D.acierto();
+    if(!completoAntes && mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  }
   document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '🚧';
   document.getElementById('fin-tit').textContent = bien ? '¡Quedó cerrado!'
     : (comprado < P ? 'Se quedó un hueco' : 'Sobró malla pagada');
@@ -355,10 +494,16 @@ function terminarCerco(){
                  : 'Sobraron '+fmt(-falta)+' m de rollo pagado. '+d.nota);
   var ultimo = (nivel >= TERRENOS.length-1);
   document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente terreno →';
-  if(vidas <= 0){
+  /* «Se acabaron los rollos» SOLO si falló: quien cercó bien con el
+     último rollo acertó, y el acierto manda sobre el contador. */
+  if(!bien && vidas <= 0){
     document.getElementById('fin-tit').textContent = 'Se acabaron los rollos';
     document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este terreno';
   }
+  /* Repetir el terreno fallado sin esperar la vuelta entera: es donde
+     más se aprende, con el error recién explicado. */
+  document.getElementById('fin-rep').style.display = (!bien && vidas > 0) ? '' : 'none';
+  pintarMapa();
   pintarMarcador(); guardar();
   Parque3D.abrir('velo-fin');
   var av = document.getElementById('aviso'); av.className='aviso'; av.textContent='';
@@ -377,22 +522,42 @@ function comoSeHace(d){
 }
 
 /* La ayuda cuesta un rollo: si fuera gratis se toca antes de pensar,
-   y entonces no se piensa nunca. */
+   y entonces no se piensa nunca. Pero cobra UNA vez por terreno —el
+   segundo toque es releer la pista, no volver a pedirla— y NUNCA el
+   último rollo: un alumno sin salida cierra el juego, y eso cuesta
+   más que una pista regalada. El botón avisa cuando ya es gratis. */
 function verComo(){
-  var d = t();
-  if(comprado === null){ vidas--; pintarVidas(); }
+  if(comprado === null && !ayudaCobrada && vidas > 1){
+    vidas--; ayudaCobrada = true; pintarVidas();
+  }
   var av = document.getElementById('aviso');
   av.className='aviso';
-  av.textContent = 'Recorre la orilla con el dedo y ve sumando lo que mide cada lado. La altura no es un lado.';
-  if(vidas <= 0){ av.className='aviso mal'; av.textContent='Se acabaron los rollos: cerca el terreno y mira la cuenta.'; }
+  av.textContent = 'Recorre la orilla con el dedo: toca cada lado y se va sumando. La altura no es un lado.';
+}
+function pintarAyuda(){
+  var b = document.getElementById('bt-como');
+  if(!b) return;
+  var gratis = ayudaCobrada || comprado !== null || vidas <= 1;
+  b.textContent = gratis ? '💡 Pista gratis' : '💡 ¿Cómo?';
 }
 
 function siguiente(){
   Parque3D.cerrar('velo-fin');
+  /* Sin rollos Y sin acierto, se repite el terreno con rollos nuevos.
+     El acierto manda: quien cercó bien avanza aunque haya gastado los
+     rollos por el camino. */
+  var repetirEste = (!ultimoBien && vidas <= 0);
   if(vidas <= 0){ vidas = 3; pintarVidas(); }
-  else if(nivel >= TERRENOS.length-1){ nivel = 0; }
-  else nivel++;
+  if(!repetirEste) nivel = (nivel >= TERRENOS.length-1) ? 0 : nivel + 1;
   guardar();
+  reiniciarNivel();
+}
+
+/* Volver sobre el terreno fallado con la cuenta recién explicada:
+   es cuando de verdad se aprende, no seis terrenos después. */
+function repetir(){
+  Parque3D.cerrar('velo-fin');
+  if(vidas <= 0){ vidas = 3; pintarVidas(); }
   reiniciarNivel();
 }
 
@@ -409,8 +574,22 @@ function reiniciarNivel(){
 function pintarVidas(){
   vidas = Math.max(0, vidas);
   document.getElementById('vidas').textContent = '🧱'.repeat(vidas) + '·'.repeat(3-vidas);
+  pintarAyuda();   // con un solo rollo, el botón de la pista dice que es gratis
 }
 function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+
+/* El mapa de la cosecha: los seis terrenos con las estrellas que ya
+   pagaron. Se ve en la entrada y en cada resultado, para que se sepa
+   qué falta y a cuál vale la pena volver a por mejor marca. */
+function pintarMapa(){
+  var html = TERRENOS.map(function(d,i){
+    return '<span'+(i===nivel?' class="aqui"':'')+'>'+d.emoji+'<br>'+
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '—')+'</span>';
+  }).join('');
+  var a = document.getElementById('mapa-ini'), b = document.getElementById('mapa-fin');
+  if(a) a.innerHTML = html;
+  if(b) b.innerHTML = html;
+}
 
 /* Poner la malla: se recorre la orilla gastando los metros comprados.
    Si se compró de menos, la malla se acaba a medio camino y el hueco
@@ -433,8 +612,16 @@ function pintarMalla(puestos){
 
 function animar(){
   requestAnimationFrame(animar);
-  giro += 0.0035;
-  if(grupo) grupo.rotation.y = Math.sin(giro)*0.42;
+  /* Mientras el dedo manda —y un ratito después— el vaivén se calla;
+     al volver, se ACERCA suave a su balanceo en vez de pegar un salto
+     desde donde el alumno dejó el terreno girado. */
+  if(dedo && (dedo.arrastrando() || dedo.reposo() < 2000)){
+    if(grupo) grupo.rotation.y = giroManual;
+  } else {
+    giro += 0.0035;
+    giroManual += (Math.sin(giro)*0.42 - giroManual)*0.03;
+    if(grupo) grupo.rotation.y = giroManual;
+  }
   if(poniendo > 0 && poniendo < 1){
     poniendo = Math.min(1, poniendo + 0.014);
     var P = perimetro(t());
@@ -456,7 +643,12 @@ Parque3D.arrancar(function(){
   montar();
   pintarVidas(); pintarMarcador();
   document.getElementById('resp').addEventListener('keydown', function(e){
-    if(e.key === 'Enter' && !document.getElementById('bt-comprar').disabled) comprar();
+    if(e.key !== 'Enter') return;
+    /* Enter hace lo que toque: primero comprar y, con la compra hecha,
+       cercar. Antes solo compraba, y quien jugaba con teclado se
+       quedaba con el cerco sin poner. */
+    if(!document.getElementById('bt-comprar').disabled) comprar();
+    else if(!document.getElementById('bt-cercar').disabled) cercar();
   });
 });
 
@@ -465,7 +657,8 @@ window.__j3d = {
   cercar: cercar,
   saltarCerco: function(){ poniendo = 0.99; },
   estado: function(){ return {nivel:nivel, perimetro:perimetro(t()), area:area(t()),
-                              vidas:vidas, estrellas:estrellas, comprado:comprado}; },
+                              vidas:vidas, estrellas:estrellas, comprado:comprado,
+                              mejor:mejor.slice()}; },
   terrenos: TERRENOS, lados: lados, perimetro: perimetro, area: area
 };
 </script>

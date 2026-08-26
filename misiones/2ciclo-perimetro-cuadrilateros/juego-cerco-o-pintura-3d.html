@@ -34,15 +34,24 @@
   --lienzo-fondo:radial-gradient(circle at 50% 30%,#22384a 0%,#0e1720 78%);
   --cerco:#f0a04b; --pintura:#5aa9e6;
 }
+/* El encargo y la racha flotan sobre el dibujo, y el dibujo ahora se
+   CONTESTA tocándolo: si estos carteles se quedaran con el toque, la
+   pieza que asoma por detrás sería intocable justo ahí. */
 .encargo{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(14,23,32,.93);
-  border:2px solid var(--franja);border-radius:12px;padding:.45rem .7rem;font-size:.88rem;line-height:1.35;text-align:center;}
+  border:2px solid var(--franja);border-radius:12px;padding:.45rem .7rem;font-size:.88rem;line-height:1.35;text-align:center;
+  pointer-events:none;}
 .encargo b{color:var(--acento);}
 .encargo small{display:block;font-size:.74rem;color:var(--gris);margin-top:.15rem;}
 .rot{position:absolute;transform:translate(-50%,-50%);background:rgba(14,23,32,.92);border:1.5px solid var(--acento);
   border-radius:8px;padding:.1rem .34rem;font-size:.72rem;font-family:'Fira Code',ui-monospace,monospace;
   white-space:nowrap;pointer-events:none;}
 .racha{position:absolute;bottom:.5rem;left:.5rem;background:rgba(14,23,32,.9);border:1.5px solid rgba(47,196,168,.4);
-  border-radius:10px;padding:.15rem .5rem;font-size:.76rem;}
+  border-radius:10px;padding:.15rem .5rem;font-size:.76rem;pointer-events:none;}
+/* Al fallar, el chip de la racha se sacude: el cero se pone solo y
+   sin ruido, y el movimiento es lo que hace ver que la racha se fue. */
+.racha.tiembla{animation:cp-tiembla .3s;}
+@keyframes cp-tiembla{25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+@media (prefers-reduced-motion: reduce){.racha.tiembla{animation:none;}}
 .consigna{font-size:.85rem;margin-bottom:.45rem;line-height:1.35;text-align:center;color:#dbe3f2;}
 .ops{display:flex;flex-direction:column;gap:.55rem;}
 /* Separadas de verdad: con 6 px, la respuesta equivocada queda a un
@@ -183,10 +192,17 @@ function unidadDe(e){ return e.que === 'area' ? 'm²' : 'm'; }
 
 var esc, cam, rend, grupo, rots = [], borde = null, cara = null;
 var indice = 0, vidas = 3, estrellas = 0, racha = 0, mejorRacha = 0, giro = 0;
-var paso = 0, elegido = null;
+/* `vueltas` cuenta las vueltas COMPLETAS a los ocho encargos, y entra
+   en la semilla del barajado: los encargos son los mismos ocho a
+   propósito —releer es lo que la misión pide—, así que sin esto la
+   segunda vuelta se contesta con la memoria del dedo, no decidiendo. */
+var vueltas = 0, vueltaLimpia = true, enCierre = false, pulso = null;
+var paso = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({indice:indice, estrellas:estrellas, mejorRacha:mejorRacha})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ indice=Math.min(d.indice|0, ENCARGOS.length-1); estrellas=d.estrellas|0; mejorRacha=d.mejorRacha|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({indice:indice, estrellas:estrellas, mejorRacha:mejorRacha, vueltas:vueltas})); }catch(e){} }
+/* `d.vueltas|0` aguanta lo guardado por la versión anterior, que no
+   traía el campo: un teléfono con avance viejo no puede perderlo. */
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ indice=Math.min(d.indice|0, ENCARGOS.length-1); estrellas=d.estrellas|0; mejorRacha=d.mejorRacha|0; vueltas=d.vueltas|0; } }catch(e){} }
 function e(){ return ENCARGOS[indice]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
 
@@ -214,6 +230,35 @@ function montar(){
 
   armarCosa();
   Parque3D.vigilarHueco(ajustar);
+
+  /* Tocar la pieza en el dibujo TAMBIÉN contesta el paso 0: la cara
+     y el borde ya existen separados y ya se encienden al elegir, así
+     que señalar con el dedo «lo que se pinta» o «lo que se cerca» ES
+     la decisión que el juego enseña. Los botones de abajo siguen ahí
+     para quien prefiera leerla. giroConElDedo separa el toque corto
+     del arrastre: un dedo que baja deslizando no contesta por
+     accidente. */
+  Parque3D.giroConElDedo(null, function(ev){
+    if(paso !== 0 || !cara || !borde) return;
+    /* El respiro de las opciones recién pintadas vale también para el
+       dibujo: si los botones aún no aceptan toques, la pieza tampoco. */
+    var ops = document.getElementById('ops');
+    if(ops && ops.style.pointerEvents === 'none') return;
+    var caja = rend.domElement.getBoundingClientRect();
+    if(!caja.width || !caja.height) return;
+    var punto = new THREE.Vector2(
+      ((ev.clientX - caja.left) / caja.width) * 2 - 1,
+      -((ev.clientY - caja.top) / caja.height) * 2 + 1);
+    var rayo = new THREE.Raycaster();
+    rayo.setFromCamera(punto, cam);
+    var dio = rayo.intersectObjects([cara].concat(borde.children), false);
+    if(!dio.length) return;
+    /* El toque pasa por el MISMO botón de esa respuesta: así valen el
+       pintado de buena/mala, el aviso y todo lo que la pantalla ya
+       hace, sin un segundo camino que mantener. */
+    var b = document.querySelector('#ops .op[data-v="' + (dio[0].object === cara ? 'area' : 'perimetro') + '"]');
+    if(b && !b.disabled) b.click();
+  });
   animar();
 }
 
@@ -239,7 +284,11 @@ function rotulo(texto, x, y, z){
    enciende el borde, al elegir «pintura» se enciende la cara. Ver
    encenderse lo que se eligió vale más que leer «correcto». */
 function armarCosa(){
-  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  /* Tirar de verdad, no solo sacar del árbol: `remove` deja las
+     geometrías y los materiales vivos en la tarjeta, y ocho encargos
+     por vuelta en un teléfono modesto acaban comiéndosela. */
+  while(grupo.children.length) Parque3D.tirar(grupo.children[0]);
+  pulso = null;   // la pieza que latía ya no existe
   limpiarRotulos();
   var d = e(), k = 10.5 / Math.max(d.b, d.h);
   var an = d.b*k, al = d.h*k;
@@ -313,22 +362,28 @@ function pintarOps(lista, consigna){
   Parque3D.respiro(cont);
 }
 
+/* Las dos opciones cambian de sitio según el encargo y la vuelta:
+   si la buena cayera siempre en el mismo botón, al rejugar se
+   acierta con la memoria del dedo y no decidiendo, que es justo lo
+   que este juego existe para enseñar. */
+function alternar(lista){ return ((indice + vueltas) % 2) ? lista.slice().reverse() : lista; }
+
 function pasoQue(){
-  paso = 0; elegido = null;
+  paso = 0;
   pintarPiezas(null);
-  pintarOps([
+  pintarOps(alternar([
     {txt:'🚧 Un CERCO', sub:'lo que rodea · el perímetro', v:'perimetro', clase:'cerco'},
     {txt:'🎨 PINTURA o cubierta', sub:'lo que tapa la superficie · el área', v:'area', clase:'pintura'}
-  ], 'Antes de calcular: ¿qué te están pidiendo?');
+  ]), 'Antes de calcular: ¿qué te están pidiendo?');
   document.getElementById('aviso').textContent = '';
 }
 
 function pasoUnidad(){
   paso = 1;
-  pintarOps([
+  pintarOps(alternar([
     {txt:'metros (m)', sub:'se mide una longitud', v:'m'},
     {txt:'metros cuadrados (m²)', sub:'se mide una superficie', v:'m²'}
-  ], '¿En qué unidad se contesta este encargo?');
+  ]), '¿En qué unidad se contesta este encargo?');
 }
 
 function pasoNumero(){
@@ -345,8 +400,8 @@ function pasoNumero(){
     {txt: fmt(otra)+' '+unidadDe(d),  v:'otra'},
     {txt: fmt(tercera)+' '+unidadDe(d), v:'suelta'}
   ];
-  // se baraja con el índice del encargo: la buena no cae siempre igual
-  var orden = [[0,1,2],[1,2,0],[2,0,1],[0,2,1],[1,0,2],[2,1,0]][indice % 6];
+  // se baraja con el encargo Y la vuelta: al rejugar, la buena cambia de sitio
+  var orden = [[0,1,2],[1,2,0],[2,0,1],[0,2,1],[1,0,2],[2,1,0]][(indice + vueltas) % 6];
   pintarOps(orden.map(function(i){ return lista[i]; }),
     'Ahora sí: ¿cuánto da?');
 }
@@ -365,14 +420,18 @@ function contestar(o, bt){
       av.className = 'aviso bien';
       av.textContent = d.que === 'area' ? '🎨 Sí: hay que cubrir la superficie.' : '🚧 Sí: hay que rodear la orilla.';
     } else {
-      vidas--; pintarVidas(); racha = 0; pintarRacha();
+      vidas--; pintarVidas(); vueltaLimpia = false; racha = 0; pintarRacha(); sacudirRacha();
       av.className = 'aviso mal';
       av.innerHTML = d.que === 'area'
         ? 'No: eso <b>cubre</b>, no rodea. Lo que se pide es el <b>área</b>.'
         : 'No: eso <b>rodea</b>, no cubre. Lo que se pide es el <b>perímetro</b>.';
     }
     if(vidas <= 0) return setTimeout(perder, 800);
-    setTimeout(pasoUnidad, 900);
+    /* Al pasar al paso siguiente se enciende la pieza CORRECTA. Si se
+       eligió mal, dejar encendida la equivocada era el dibujo diciendo
+       una cosa mientras el aviso decía la contraria; y de un fallo se
+       sale viendo lo que sí era. Cuando se acertó, no cambia nada. */
+    setTimeout(function(){ pintarPiezas(d.que); pasoUnidad(); }, 900);
     return;
   }
 
@@ -381,7 +440,7 @@ function contestar(o, bt){
     todos.forEach(function(b){ b.disabled = true; b.classList.add(b.dataset.v === u ? 'buena' : 'mala'); });
     if(okU){ av.className = 'aviso bien'; av.textContent = '📏 Sí: se contesta en '+u+'.'; }
     else {
-      vidas--; pintarVidas(); racha = 0; pintarRacha();
+      vidas--; pintarVidas(); vueltaLimpia = false; racha = 0; pintarRacha(); sacudirRacha();
       av.className = 'aviso mal';
       av.innerHTML = u === 'm²'
         ? 'La superficie se cuenta en cuadraditos: va en <b>m²</b>.'
@@ -397,8 +456,17 @@ function contestar(o, bt){
   if(esBuena){
     estrellas += 4; racha++; if(racha > mejorRacha) mejorRacha = racha;
     av.className = 'aviso bien'; av.textContent = '✅ ¡Ese es!';
+    /* El confeti es del andamio; la racha es la de ESTE juego, así que
+       nada de Parque3D.acierto(): llevaría dos cuentas a la vez. */
+    Parque3D.confeti();
+    /* Y la pieza encendida da un latido: el festejo cae SOBRE lo que
+       se decidió bien, no en un rincón de la pantalla. */
+    pulso = {o: d.que === 'area' ? cara : borde, t: Date.now()};
+    /* Cada tres seguidas, una estrella extra: la racha tiene que valer
+       algo, o cuidarla no compite con contestar a lo loco. */
+    if(racha % 3 === 0){ estrellas++; Parque3D.aviso('🔥 ¡Racha de '+racha+'! +1 extra'); }
   } else {
-    vidas--; pintarVidas(); racha = 0;
+    vidas--; pintarVidas(); vueltaLimpia = false; racha = 0; sacudirRacha();
     av.className = 'aviso mal';
     av.textContent = o.v === 'otra' ? 'Ese número es el de la OTRA medida.' : 'Ese número no sale de ninguna de las dos.';
   }
@@ -417,7 +485,7 @@ function mostrarFin(bien){
     ' → '+fmt(respuesta(d))+' '+unidadDe(d)+'</span>';
   document.getElementById('fin-txt').textContent = d.nota;
   var ultimo = (indice >= ENCARGOS.length-1);
-  document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente encargo →';
+  document.getElementById('fin-bt').textContent = ultimo ? '🏁 Ver el resumen de la vuelta' : 'Siguiente encargo →';
   if(vidas <= 0){
     document.getElementById('fin-tit').textContent = 'Se acabaron las herramientas';
     document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este encargo';
@@ -437,10 +505,35 @@ function perder(){
   Parque3D.abrir('velo-fin');
 }
 
+/* El cierre de la vuelta: los ocho encargos decididos merecen su
+   pantalla, no un «volver a empezar» seco. Y una vuelta sin perder
+   herramientas se dice con su nombre, que es lo que se rejuega por
+   conseguir. */
+function mostrarCierre(){
+  enCierre = true;
+  document.getElementById('fin-emoji').textContent = '🏁';
+  document.getElementById('fin-tit').textContent = vueltaLimpia ? '¡Vuelta perfecta!' : '¡Vuelta completa!';
+  document.getElementById('fin-form').innerHTML =
+    '⭐ Estrellas: <b>'+estrellas+'</b><br>'+
+    '🔥 Mejor racha: <b>'+mejorRacha+'</b>'+
+    (vueltaLimpia ? '<br>🛠️ Sin perder ni una herramienta' : '');
+  document.getElementById('fin-txt').textContent =
+    'Los ocho encargos, decididos antes de calcular. Eso mismo es lo que se hace en el examen.';
+  document.getElementById('fin-bt').textContent = '🔄 Otra vuelta, con las opciones movidas';
+  Parque3D.festejarFin();
+  Parque3D.abrir('velo-fin');
+}
+
 function siguiente(){
   Parque3D.cerrar('velo-fin');
+  if(enCierre){
+    /* La vuelta nueva: mismos encargos, opciones en otro sitio. */
+    enCierre = false; indice = 0; vueltas++; vueltaLimpia = true;
+    guardar(); armarCosa(); pasoQue();
+    return;
+  }
   if(vidas <= 0){ vidas = 3; pintarVidas(); }
-  else if(indice >= ENCARGOS.length-1){ indice = 0; }
+  else if(indice >= ENCARGOS.length-1){ mostrarCierre(); return; }
   else indice++;
   guardar();
   armarCosa();
@@ -453,11 +546,25 @@ function pintarVidas(){
 }
 function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
 function pintarRacha(){ document.getElementById('racha').textContent = '🔥 racha: '+racha+(mejorRacha ? ' · mejor: '+mejorRacha : ''); }
+function sacudirRacha(){
+  var ch = document.getElementById('racha');
+  ch.classList.remove('tiembla');
+  void ch.offsetWidth;               // reencender la animación si vienen dos fallos seguidos
+  ch.classList.add('tiembla');
+}
 
 function animar(){
   requestAnimationFrame(animar);
   giro += 0.0035;
   if(grupo) grupo.rotation.y = Math.sin(giro)*0.4;
+  /* El latido de la pieza al acertar el número: crece y vuelve en
+     unos 400 ms. Va aquí y no en un CSS porque lo que late es la
+     malla 3D, no un elemento de la pantalla. */
+  if(pulso){
+    var pf = (Date.now() - pulso.t) / 400;
+    if(pf >= 1){ pulso.o.scale.set(1, 1, 1); pulso = null; }
+    else { var pe = 1 + 0.14 * Math.sin(pf * Math.PI); pulso.o.scale.set(pe, pe, pe); }
+  }
   moverRotulos();
   rend.render(esc, cam);
 }
@@ -476,7 +583,7 @@ Parque3D.arrancar(function(){
 window.__j3d = {
   estado: function(){ return {indice:indice, paso:paso, que:e().que, unidad:unidadDe(e()),
                               respuesta:respuesta(e()), area:areaDe(e()), perimetro:perimetroDe(e()),
-                              vidas:vidas, estrellas:estrellas, racha:racha}; },
+                              vidas:vidas, estrellas:estrellas, racha:racha, vueltas:vueltas}; },
   encargos: ENCARGOS, areaDe: areaDe, perimetroDe: perimetroDe, respuesta: respuesta, unidadDe: unidadDe,
   tocar: function(v){
     var b = document.querySelector('#ops .op[data-v="'+v+'"]');

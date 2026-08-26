@@ -133,6 +133,8 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
     <h2 id="fin-tit"></h2>
     <div class="nota" id="fin-nota"></div>
     <p id="fin-txt"></p>
+    <!-- El resumen de la vuelta: solo se enseña al cerrar los 7 pedidos. -->
+    <div class="nota" id="fin-resumen" style="display:none;"></div>
     <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente pedido →</button>
   </div>
 </div>
@@ -167,7 +169,12 @@ function nombreDe(tipo, n){
 
 /* Siete pedidos. Los tres primeros piden el sólido por su nombre;
    los otros lo piden por sus cuentas, que es como viene en el
-   examen y donde hay que darle la vuelta al patrón. */
+   examen y donde hay que darle la vuelta al patrón. Los marcados
+   `porCuentas` NO dicen el tipo ni al fallar: en «5 caras y 5
+   vértices» decir «ese es un prisma» es regalar la respuesta y
+   desarmar la trampa del prisma triangular contra la pirámide
+   cuadrangular. El último nombra «pirámide» en el propio pedido,
+   así que ahí decir el tipo no regala nada. */
 var PEDIDOS = [
   {txt:'un <b>prisma pentagonal</b>',                     tipo:'prisma',   n:5,
    nota:'Se llama pentagonal por sus dos bases de cinco lados,\nno por sus cinco caras laterales.'},
@@ -175,21 +182,36 @@ var PEDIDOS = [
    nota:'Seis triángulos que suben a la cúspide,\nsobre una sola base de seis lados.'},
   {txt:'un <b>prisma cuadrangular</b> (el de la caja)',   tipo:'prisma',   n:4,
    nota:'6 caras, 12 aristas, 8 vértices.\nSi además todas sus caras fueran cuadradas, sería un cubo.'},
-  {txt:'un sólido con <b>8 caras, 18 aristas y 12 vértices</b>', tipo:'prisma', n:6,
+  {txt:'un sólido con <b>8 caras, 18 aristas y 12 vértices</b>', tipo:'prisma', n:6, porCuentas:true,
    nota:'8 = n+2 → n vale 6. Y comprueba: 3×6 = 18 aristas, 2×6 = 12 vértices.'},
-  {txt:'un sólido con <b>5 caras y 5 vértices</b>',       tipo:'piramide', n:4,
+  {txt:'un sólido con <b>5 caras y 5 vértices</b>',       tipo:'piramide', n:4, porCuentas:true,
    nota:'Ojo: el prisma triangular también tiene 5 caras,\npero 6 vértices. El vértice es el que decide.'},
-  {txt:'el sólido con <b>menos caras que existe</b>',     tipo:'piramide', n:3,
+  {txt:'el sólido con <b>menos caras que existe</b>',     tipo:'piramide', n:3, porCuentas:true,
    nota:'Cuatro caras, y todas triángulos.\nCon tres caras no se puede cerrar nada.'},
   {txt:'una <b>pirámide con 20 aristas</b>',              tipo:'piramide', n:10,
    nota:'En la pirámide hay 2n aristas: n de la base\ny n que suben. 20 ÷ 2 = 10 lados.'}
 ];
 
-var esc, cam, rend, grupo, cuerpo, aristas3D;
-var pedido = 0, estrellas = 0, tipo = 'prisma', giro = 0, enReto = false;
+var esc, cam, rend, grupo, cuerpo, aristas3D, matPrisma, matPiramide, matLineas, dedo;
+var pedido = 0, estrellas = 0, tipo = 'prisma', giro = 0, giroX = 0;
+/* La cuenta del pedido en curso: cuántas veces se tocó Fabricar y si
+   la pista ya se pagó. De ahí salen el «pedido limpio» (+6) y que la
+   pista se cobre UNA sola vez por pedido. `limpios` apunta cómo salió
+   cada pedido de la vuelta y `mejor` guarda la mejor vuelta cerrada. */
+var intentos = 0, pistaPagada = false, limpios = [], mejor = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({pedido:pedido, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ pedido=Math.min(d.pedido|0, PEDIDOS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify(
+  {pedido:pedido, estrellas:estrellas, limpios:limpios, mejor:mejor})); }catch(e){} }
+/* Con tope por abajo Y por arriba: un dato torcido en el almacén no
+   puede dejar el juego en un pedido negativo. Y con tolerancia a lo
+   guardado por la versión anterior, que no traía `limpios` ni
+   `mejor`: ese teléfono no puede perder su avance ni reventar. */
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){
+  pedido = Math.max(0, Math.min(d.pedido|0, PEDIDOS.length-1));
+  estrellas = Math.max(0, d.estrellas|0);
+  if(Array.isArray(d.limpios)) limpios = d.limpios;
+  mejor = Math.max(0, d.mejor|0);
+} }catch(e){} }
 function lados(){ return parseInt(document.getElementById('sl-n').value,10); }
 
 function montar(){
@@ -207,10 +229,30 @@ function montar(){
   esc.add(new THREE.GridHelper(9, 9, 0x4a90d9, 0x333c60));
 
   grupo = new THREE.Group(); esc.add(grupo);
+  /* El grupo se sube a la altura del sólido y las piezas quedan en
+     su origen: así el tirón vertical del dedo lo inclina sobre su
+     propio centro, en vez de columpiarlo alrededor del suelo. */
+  grupo.position.y = 1.0;
   cam.position.set(0, 2.5, 6.2);
   cam.lookAt(0, 0.4, 0);
+  /* Los materiales se crean UNA vez y se comparten entre todos los
+     rehechos del deslizador; lo que se tira y se rehace en cada paso
+     son solo las geometrías (ver rehacer). */
+  matPrisma   = new THREE.MeshLambertMaterial({color:0x8b6fe0, flatShading:true});
+  matPiramide = new THREE.MeshLambertMaterial({color:0xc9a227, flatShading:true});
+  matLineas   = new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.85});
   rehacer();
   Parque3D.vigilarHueco(ajustar);
+  /* Girar el sólido arrastrando: este es el único juego cuyo tema ES
+     contar caras, aristas y vértices, y las de atrás no se ven si no
+     se puede mirar atrás. La mecánica —captura del puntero, toque
+     corto contra arrastre, ignorar los carteles que flotan encima—
+     vive en el andamio; el bucle le pregunta a `dedo` para apartar
+     el giro automático mientras el dedo manda y un ratito después. */
+  dedo = Parque3D.giroConElDedo(function(dx, dy){
+    giro += dx*0.011;
+    giroX = Math.max(-1.3, Math.min(1.3, giroX + dy*0.009));
+  });
   animar();
 }
 
@@ -225,6 +267,9 @@ function ajustar(){
   cam.aspect = cont.clientWidth/cont.clientHeight;
   cam.updateProjectionMatrix();
   rend.setSize(cont.clientWidth, cont.clientHeight);
+  /* Girar el teléfono cambia el alto del pedido y el cartel del
+     nombre se quedaba montado encima: se recoloca aquí también. */
+  colocarNombre();
 }
 
 /* Un cilindro con pocos lados ES un prisma, y un cono con pocos
@@ -232,18 +277,21 @@ function ajustar(){
    eso se usan esas dos figuras con el número de lados que pida el
    alumno, en vez de armar los vértices a mano. */
 function rehacer(){
-  while(grupo.children.length) grupo.remove(grupo.children[0]);
+  /* Las geometrías viejas se tiran DE VERDAD: remove() solo las saca
+     del árbol y sus buffers se quedan vivos en la tarjeta, y
+     arrastrar el deslizador rehace el sólido decenas de veces
+     seguidas — en un teléfono modesto esa memoria no vuelve sola.
+     Los materiales no se tocan: son los mismos siempre y tirarlos
+     obligaría a rearmarlos en cada paso del deslizador. */
+  if(cuerpo){ grupo.remove(cuerpo); cuerpo.geometry.dispose(); }
+  if(aristas3D){ grupo.remove(aristas3D); aristas3D.geometry.dispose(); }
   var n = lados();
   var geo = (tipo === 'prisma')
     ? new THREE.CylinderGeometry(1.25, 1.25, 1.8, n)
     : new THREE.ConeGeometry(1.35, 2.1, n);
-  cuerpo = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
-    color: tipo==='prisma' ? 0x8b6fe0 : 0xc9a227, flatShading:true}));
-  cuerpo.position.y = 1.0;
+  cuerpo = new THREE.Mesh(geo, tipo==='prisma' ? matPrisma : matPiramide);
   grupo.add(cuerpo);
-  aristas3D = new THREE.LineSegments(new THREE.EdgesGeometry(geo),
-    new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0.85}));
-  aristas3D.position.y = 1.0;
+  aristas3D = new THREE.LineSegments(new THREE.EdgesGeometry(geo), matLineas);
   grupo.add(aristas3D);
   pintar();
 }
@@ -276,6 +324,11 @@ function ponerTipo(t){
 
 function pintarPedido(){
   var p = PEDIDOS[pedido];
+  /* Cada pedido arranca con su cuenta en cero — por aquí pasan
+     siguiente() y el salto directo—: la pista se cobra una vez POR
+     PEDIDO, y el «limpio» no puede arrastrar los intentos del
+     pedido anterior. */
+  intentos = 0; pistaPagada = false;
   document.getElementById('pedido').innerHTML = '📋 Fabrica ' + p.txt;
   document.getElementById('subt').textContent = 'Pedido '+(pedido+1)+' de '+PEDIDOS.length;
   document.getElementById('aviso').textContent = '';
@@ -286,10 +339,28 @@ function fabricar(){
   var p = PEDIDOS[pedido], n = lados();
   var av = document.getElementById('aviso');
   var pedidoPartes = partes(p.tipo, p.n), miasPartes = partes(tipo, n);
+  intentos++;
   if(tipo === p.tipo && n === p.n) return ganar();
+  /* fallar apaga la racha compartida, sin castigo ni ruido */
+  Parque3D.fallo();
   // se le dice QUÉ falla, no solo que falla
   av.className = 'aviso mal';
-  if(tipo !== p.tipo){
+  if(p.porCuentas){
+    /* En los pedidos por cuentas el tipo ES la respuesta que se le
+       está preguntando: al armar el prisma triangular contra «5 caras
+       y 5 vértices», decir «ese es un prisma» desactivaba la trampa
+       del tema. Se comparan las cuentas —caras, vértices, aristas, en
+       ese orden— y el tipo no se nombra jamás. */
+    if(miasPartes.caras !== pedidoPartes.caras){
+      av.textContent = 'Te salen '+miasPartes.caras+' caras y el pedido pide '+pedidoPartes.caras+'.';
+    } else if(miasPartes.vertices !== pedidoPartes.vertices){
+      av.textContent = 'Casi: mira los vértices. Te salen '+miasPartes.vertices+
+        ' y el pedido pide '+pedidoPartes.vertices+'.';
+    } else {
+      av.textContent = 'Mira las aristas: te salen '+miasPartes.aristas+
+        ' y el pedido pide '+pedidoPartes.aristas+'.';
+    }
+  } else if(tipo !== p.tipo){
     av.textContent = 'Ese es '+(tipo==='prisma'?'un prisma':'una pirámide')+
       ', y el pedido lleva '+(p.tipo==='prisma'?'dos bases':'una sola base y una punta')+'.';
   } else if(miasPartes.caras !== pedidoPartes.caras){
@@ -302,15 +373,43 @@ function fabricar(){
 
 function ganar(){
   var p = PEDIDOS[pedido], pa = partes(p.tipo, p.n);
-  estrellas += 6;
+  /* El pedido limpio —al primer Fabricar y sin pista— paga 6; el
+     resuelto a fuerza de intentos o con ayuda paga 4. Y se DICE en
+     el velo: un premio que no se explica no empuja a nadie a pensar
+     antes de tocar Fabricar. */
+  var limpio = (intentos === 1 && !pistaPagada);
+  limpios[pedido] = limpio ? 'limpio' : (pistaPagada ? 'pista' : 'fallos');
+  estrellas += limpio ? 6 : 4;
+  Parque3D.acierto();
   document.getElementById('marcador').textContent = '⭐ '+estrellas;
   document.getElementById('fin-emoji').textContent = p.tipo==='prisma' ? '📦' : '🔺';
   document.getElementById('fin-tit').textContent = '¡'+nombreDe(p.tipo, p.n)+'!';
   document.getElementById('fin-nota').innerHTML =
     pa.caras+' caras · '+pa.aristas+' aristas · '+pa.vertices+' vértices<br>'+
     p.nota.replace(/\n/g,'<br>');
-  document.getElementById('fin-txt').textContent = '';
+  document.getElementById('fin-txt').textContent = limpio
+    ? '✨ Pedido limpio: a la primera y sin pista. +6 ⭐'
+    : '+4 ⭐ (un pedido limpio —a la primera y sin pista— da 6)';
   var ultimo = (pedido >= PEDIDOS.length-1);
+  var res = document.getElementById('fin-resumen');
+  if(ultimo){
+    /* Se cerró la vuelta entera: el resumen cuenta cómo salió cada
+       pedido y apunta la mejor vuelta. Lo que un teléfono con la
+       versión vieja no anotó cuenta como «con fallos»: no se presume
+       de lo que no consta. */
+    var nl = 0, np = 0, nf = 0, total = 0;
+    for(var i=0;i<PEDIDOS.length;i++){
+      var c = limpios[i];
+      if(c === 'limpio'){ nl++; total += 6; }
+      else { if(c === 'pista') np++; else nf++; total += 4; }
+    }
+    if(total > mejor) mejor = total;
+    res.style.display = '';
+    res.innerHTML = '🏁 Los '+PEDIDOS.length+' pedidos del turno<br>'+
+      '✨ Limpios: '+nl+' · 💡 Con pista: '+np+' · 🔁 Con fallos: '+nf+'<br>'+
+      'Esta vuelta: <b>'+total+' ⭐</b> · Tu mejor vuelta: <b>'+mejor+' ⭐</b>';
+    Parque3D.festejarFin();
+  } else res.style.display = 'none';
   document.getElementById('fin-bt').textContent = ultimo ? '🔄 Otra vuelta' : 'Siguiente pedido →';
   guardar();
   document.getElementById('velo-fin').classList.add('ver');
@@ -318,12 +417,19 @@ function ganar(){
 
 function siguiente(){
   document.getElementById('velo-fin').classList.remove('ver');
-  pedido = (pedido >= PEDIDOS.length-1) ? 0 : pedido+1;
+  var cerroVuelta = (pedido >= PEDIDOS.length-1);
+  pedido = cerroVuelta ? 0 : pedido+1;
+  /* la vuelta nueva lleva su propia cuenta de limpios; la mejor
+     vuelta ya quedó apuntada al cerrar la anterior */
+  if(cerroVuelta) limpios = [];
   guardar();
   pintarPedido();
 }
 
-/* La pista cuesta una estrella: gratis se toca antes de pensar. */
+/* La pista cuesta una estrella: gratis se toca antes de pensar.
+   Pero se cobra UNA sola vez por pedido: volver a leerla es gratis,
+   que cobrar cada lectura castigaba justo al que la relee para
+   entenderla. */
 function pista(){
   var p = PEDIDOS[pedido];
   var av = document.getElementById('aviso');
@@ -331,16 +437,22 @@ function pista(){
   av.textContent = (p.tipo === 'prisma')
     ? 'Es un prisma: tiene DOS bases iguales. En un prisma, las caras son n + 2.'
     : 'Es una pirámide: UNA base y una punta. En una pirámide, las aristas son 2n.';
-  estrellas = Math.max(0, estrellas-1);
-  document.getElementById('marcador').textContent = '⭐ '+estrellas;
-  guardar();
+  if(!pistaPagada){
+    pistaPagada = true;
+    estrellas = Math.max(0, estrellas-1);
+    document.getElementById('marcador').textContent = '⭐ '+estrellas;
+    guardar();
+  }
 }
 
 
 function animar(){
   requestAnimationFrame(animar);
-  giro += 0.007;
-  if(grupo) grupo.rotation.y = giro;
+  /* mientras el dedo manda —y un ratito después— el giro automático
+     se aparta: contar partes sobre una pieza que se mueve sola es
+     fallar sin culpa */
+  if(!(dedo && (dedo.arrastrando() || dedo.reposo() < 2000))) giro += 0.007;
+  if(grupo){ grupo.rotation.y = giro; grupo.rotation.x = giroX; }
   rend.render(esc, cam);
 }
 

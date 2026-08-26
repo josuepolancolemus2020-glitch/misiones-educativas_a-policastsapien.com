@@ -34,8 +34,13 @@ module.exports = `
   Col.prototype.setHex=function(h){ this.hex=h; return this; };
   function Obj(){ this.position=new V3(); this.rotation=new V3(); this.scale=new V3(1,1,1);
     this.children=[]; this.userData={}; this.visible=true; this.material=null; this.geometry=null; }
-  Obj.prototype.add=function(o){ this.children.push(o); return this; };
-  Obj.prototype.remove=function(o){ var i=this.children.indexOf(o); if(i>=0) this.children.splice(i,1); return this; };
+  /* parent se rellena como en el de verdad: Parque3D.tirar() saca el
+     objeto del árbol por su parent, y con un parent siempre vacío el
+     «while(grupo.children.length) tirar(...)» de los juegos no
+     avanzaba nunca — la página entera se quedaba colgada, pero solo
+     bajo la sonda, que es la peor forma de fallar. */
+  Obj.prototype.add=function(o){ o.parent=this; this.children.push(o); return this; };
+  Obj.prototype.remove=function(o){ var i=this.children.indexOf(o); if(i>=0){ this.children.splice(i,1); o.parent=null; } return this; };
   Obj.prototype.lookAt=function(){ return this; };
   Obj.prototype.localToWorld=function(v){ return v; };
   Obj.prototype.translateX=function(){ return this; };

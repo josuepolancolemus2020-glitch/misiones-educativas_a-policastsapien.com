@@ -811,11 +811,12 @@
                      texto: d => (d.hechos && Object.keys(d.hechos).length >= 7) ? '🏆 los 7 sólidos' : '🏅 sólido ' + Math.min(7, (d.nivel|0)+1) + ' de 7'},
         patrones:   {llave:'j3d_patrones_v1',   oro: d => !!(d.aciertos && Object.keys(d.aciertos).length >= 6),
                      texto: d => (d.aciertos && Object.keys(d.aciertos).length >= 6) ? '🏆 los seis patrones' : '🏅 patrón ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-        revolucion: {llave:'j3d_revolucion_v1', texto: d => '🏅 figura ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-        fabsolidos: {llave:'j3d_fabsolidos_v1', oro: d => (d.pedido|0) >= 7,
-                     texto: d => (d.pedido|0) >= 7 ? '🏆 los 7 pedidos' : '🏅 pedido ' + Math.min(7, (d.pedido|0)+1) + ' de 7'},
-        caza:       {llave:'j3d_caza_v1',       oro: d => (d.ronda|0) >= 5 || !!d.mejorVuelta,
-                     texto: d => d.mejorVuelta ? '🏆 mejor vuelta: ' + d.mejorVuelta + ' ⭐' : '🏅 ronda ' + Math.min(5, (d.ronda|0)+1) + ' de 5'},
+        revolucion: {llave:'j3d_revolucion_v1', oro: d => (d.vuelta|0) >= 1,
+                     texto: d => (d.vuelta|0) >= 1 ? '🏆 mejor vuelta: ' + (d.mejor|0) + ' de 6' : '🏅 figura ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+        fabsolidos: {llave:'j3d_fabsolidos_v1', oro: d => !!(d.limpios && Object.keys(d.limpios).length >= 7),
+                     texto: d => (d.limpios && Object.keys(d.limpios).length >= 7) ? '🏆 los 7 pedidos' : '🏅 pedido ' + Math.min(7, (d.pedido|0)+1) + ' de 7'},
+        caza:       {llave:'j3d_caza_v1',       oro: d => (d.mejor|0) > 0,
+                     texto: d => (d.mejor|0) > 0 ? '🏆 mejor vuelta: ' + d.mejor + ' ⭐' : '🏅 ronda ' + Math.min(5, (d.ronda|0)+1) + ' de 5'},
         relampago:  {llave:'j3d_relampago_v1',  texto: d => '🏅 récord: ' + (d.puntos|0) + ' pts' + ((d.racha|0) >= 2 ? ' · 🔥' + d.racha : '')}
       };
       document.querySelectorAll('[data-medalla]').forEach(el => {

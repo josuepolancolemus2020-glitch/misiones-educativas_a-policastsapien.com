@@ -77,7 +77,7 @@ body{user-select:none;}
     <div class="emoji-gr">🏠</div>
     <h2>Caza Sólidos</h2>
     <p>Este cuarto está lleno de cosas de una casa. En cada ronda te piden un grupo: tócalas todas antes de que se acabe el tiempo.</p>
-    <div class="nota">Gira el cuarto: siempre hay algo escondido detrás.<br>Tocar lo que no era cuesta 5 segundos.</div>
+    <div class="nota">Gira el cuarto: siempre hay algo escondido detrás.<br>Tocar lo que no era cuesta 5 segundos.<br>Tres cazas seguidas sin fallar: +2 segundos.</div>
     <button class="bt bt-p" onclick="empezar()">A cazar</button>
   </div>
 </div>
@@ -145,9 +145,17 @@ var RONDAS = [
 var esc, cam, rend, cuarto, rayo, raton, mallas = [];
 var ronda = 0, tocadas = {}, errores = 0, seg = 0, corriendo = false, ultimo = 0, yaTerminada = false;
 var estrellas = 0, giroCuarto = 0, giroObjetivo = 0;
+/* El récord es por VUELTA entera (las cinco rondas seguidas): sin él,
+   «🔄 Otra vuelta» era repetir por repetir. `relojRojoHasta` es hasta
+   cuándo parpadea el reloj tras un fallo. */
+var estrellasVuelta = 0, mejorVuelta = 0, relojRojoHasta = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({ronda:ronda, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ ronda=Math.min(d.ronda|0, RONDAS.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+/* Los campos nuevos van DENTRO de la misma llave. Un teléfono con la
+   versión anterior trae {ronda, estrellas} a secas: `d.vuelta|0` y
+   `d.mejor|0` leen ese dato viejo como cero sin reventar ni borrarle
+   el avance. */
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({ronda:ronda, estrellas:estrellas, vuelta:estrellasVuelta, mejor:mejorVuelta})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ ronda=Math.min(d.ronda|0, RONDAS.length-1); estrellas=d.estrellas|0; estrellasVuelta=d.vuelta|0; mejorVuelta=d.mejor|0; } }catch(e){} }
 function r(){ return RONDAS[ronda]; }
 function esBuena(c){ return r().vale.indexOf(c.clase) >= 0; }
 function cuantasBuenas(){ return COSAS.filter(esBuena).length; }
@@ -176,7 +184,16 @@ function montar(){
   raton = new THREE.Vector2();
   cam.position.set(0, 4.6, 7.4);
   cam.lookAt(0, 0.4, 0);
-  eventos();
+  /* El arrastre y el toque los pone el andamio, que hace lo que el
+     manejador propio no hacía: captura el puntero, mide el arrastre
+     en los DOS ejes (aquí solo se miraba |dx|, y un arrastre vertical
+     contaba como toque y cazaba lo que hubiera debajo), no mezcla dos
+     dedos en una variable, e ignora el toque sobre la consigna —que
+     antes cazaba el objeto tapado detrás del cartel—. */
+  Parque3D.giroConElDedo(
+    function(dx){ giroObjetivo += dx*0.009; },
+    function(e){ tocar(e.clientX, e.clientY); }
+  );
   Parque3D.vigilarHueco(ajustar);
   animar();
 }
@@ -231,23 +248,6 @@ function armarCosas(){
   });
 }
 
-function eventos(){
-  var lienzo = document.getElementById('lienzo');
-  var abajo = null, movido = 0;
-  lienzo.addEventListener('pointerdown', function(e){ abajo = {x:e.clientX, g:giroObjetivo}; movido = 0; });
-  lienzo.addEventListener('pointermove', function(e){
-    if(!abajo) return;
-    var dx = e.clientX-abajo.x;
-    movido = Math.max(movido, Math.abs(dx));
-    if(movido > 8) giroObjetivo = abajo.g + dx*0.009;
-  });
-  lienzo.addEventListener('pointerup', function(e){
-    if(abajo && movido <= 8) tocar(e.clientX, e.clientY);
-    abajo = null;
-  });
-  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
-}
-
 function tocar(px, py){
   if(!corriendo) return;
   var cont = document.getElementById('lienzo'), b = cont.getBoundingClientRect();
@@ -261,12 +261,29 @@ function tocar(px, py){
   tocadas[m.userData.i] = true;
   if(esBuena(c)){
     m.material.color.setHex(0x27ae60);
-    estrellas += 2;
-    decir('✅ '+c.emoji+' '+c.n+' · '+etiqueta(c.clase), true);
+    /* La celebración también vive EN el dibujo: el objeto cazado da un
+       brinco de tamaño (lo desinfla animar()). El globo queda lejos del
+       dedo; el alumno está mirando el objeto que acaba de tocar. */
+    m.userData.pulso = 1;
+    estrellas += 2; estrellasVuelta += 2;
+    var rch = Parque3D.acierto();
+    var extra = rch >= 2 ? ' · 🔥 ×'+rch : '';
+    if(rch % 3 === 0){
+      /* La racha tiene que valer algo AQUÍ dentro, y lo que se juega en
+         este cuarto es el tiempo: cada tres seguidas, +2 segundos. */
+      seg += 2;
+      extra += ' · +2 s';
+    }
+    decir('✅ '+c.emoji+' '+c.n+' · '+etiqueta(c.clase)+extra, true);
   } else {
     m.material.color.setHex(0xe05252);
     errores++;
     seg = Math.max(0, seg-5);
+    Parque3D.fallo();
+    /* El reloj parpadea en rojo un momento: el «−5 segundos» del globo
+       pasaba de largo, y el precio del fallo es tiempo — se enseña en
+       el propio reloj, que es donde duele. */
+    relojRojoHasta = Date.now() + 900;
     decir('❌ '+c.emoji+' '+c.n+' es '+etiqueta(c.clase)+'. −5 segundos', false);
   }
   document.getElementById('marcador').textContent = '⭐ '+estrellas;
@@ -322,7 +339,11 @@ function cargarRonda(){
 function pintarReloj(){
   var el = document.getElementById('reloj');
   el.textContent = Math.max(0, Math.ceil(seg));
-  el.classList.toggle('poco', seg <= 10);
+  /* Tras un fallo el rojo PARPADEA (~150 ms encendido, ~150 apagado):
+     así se distingue del rojo fijo de «queda poco» y conecta el error
+     con lo que costó. */
+  var castigo = Date.now() < relojRojoHasta && Math.floor(Date.now()/150) % 2 === 0;
+  el.classList.toggle('poco', seg <= 10 || castigo);
 }
 
 function terminarRonda(){
@@ -331,7 +352,7 @@ function terminarRonda(){
   corriendo = false;
   var faltan = cuantasBuenas() - llevaBuenas();
   var perfecto = (faltan === 0 && errores === 0);
-  if(perfecto) estrellas += 5;
+  if(perfecto){ estrellas += 5; estrellasVuelta += 5; }
   document.getElementById('marcador').textContent = '⭐ '+estrellas;
   document.getElementById('fin-emoji').textContent = perfecto ? '🏆' : (faltan ? '🔍' : '🎯');
   document.getElementById('fin-tit').textContent = perfecto ? '¡Todos, y sin fallar uno!'
@@ -343,13 +364,32 @@ function terminarRonda(){
   document.getElementById('fin-nota').innerHTML = r().nota.replace(/\n/g,'<br>');
   var ultima = (ronda >= RONDAS.length-1);
   document.getElementById('fin-bt').textContent = ultima ? '🔄 Otra vuelta' : 'Siguiente ronda →';
+  if(ultima){
+    /* El cierre de la vuelta compara contra el récord. Va DESPUÉS de la
+       nota de la ronda, que es la que enseña (el cono no es pirámide):
+       el récord la acompaña, no la sustituye. */
+    var nEl = document.getElementById('fin-nota');
+    if(estrellasVuelta > mejorVuelta){
+      mejorVuelta = estrellasVuelta;
+      nEl.innerHTML += '<br>🏆 ¡Tu mejor vuelta: '+estrellasVuelta+' ⭐!';
+      Parque3D.festejarFin();
+    } else {
+      nEl.innerHTML += '<br>Esta vuelta: '+estrellasVuelta+' ⭐ · Tu mejor: '+mejorVuelta+' ⭐';
+    }
+  }
   guardar();
   document.getElementById('velo-fin').classList.add('ver');
 }
 
 function siguiente(){
   document.getElementById('velo-fin').classList.remove('ver');
-  ronda = (ronda >= RONDAS.length-1) ? 0 : ronda+1;
+  if(ronda >= RONDAS.length-1){
+    /* «🔄 Otra vuelta»: el contador de la vuelta arranca de cero y el
+       récord se queda, que es contra lo que se corre. */
+    ronda = 0; estrellasVuelta = 0;
+  } else {
+    ronda++;
+  }
   guardar();
   cargarRonda();
 }
@@ -362,7 +402,10 @@ function animar(t){
   requestAnimationFrame(animar);
   t = t || 0;
   if(corriendo && ultimo){
-    seg = Math.max(0, seg - (t-ultimo)/1000);
+    /* El paso se acota a medio segundo: al volver de segundo plano,
+       requestAnimationFrame entrega de golpe todo el rato que estuvo
+       parado, y la ronda se perdía sola con el teléfono en el bolsillo. */
+    seg = Math.max(0, seg - Math.min(0.5, (t-ultimo)/1000));
     pintarReloj();
     if(seg <= 0) terminarRonda();
   }
@@ -370,6 +413,20 @@ function animar(t){
   if(cuarto){
     giroCuarto += (giroObjetivo - giroCuarto)*0.09;
     cuarto.rotation.y = giroCuarto;
+  }
+  /* El brinco del objeto cazado se desinfla solo, cuadro a cuadro:
+     salta a 1.35 de su tamaño y se asienta. armarCosas() rehace las
+     mallas sin `pulso`, por eso el `|| 0`. */
+  for(var i=0;i<mallas.length;i++){
+    var pu = mallas[i].userData.pulso || 0;
+    if(pu > 0.02){
+      mallas[i].userData.pulso = pu*0.88;
+      var tam = 1 + 0.35*pu;
+      mallas[i].scale.set(tam, tam, tam);
+    } else if(pu){
+      mallas[i].userData.pulso = 0;
+      mallas[i].scale.set(1, 1, 1);
+    }
   }
   rend.render(esc, cam);
 }
@@ -392,8 +449,18 @@ window.__j3d = {
     var c = COSAS[i];
     if(tocadas[i]) return;
     tocadas[i] = true;
-    if(esBuena(c)){ estrellas += 2; }
-    else { errores++; seg = Math.max(0, seg-5); }
+    /* El mismo camino que tocar(): si la racha y el bono de tiempo
+       solo vivieran en el del dedo, el estado que mira la sonda y el
+       que vive el alumno se separarían sin que nadie lo notara. */
+    if(esBuena(c)){
+      if(mallas[i]) mallas[i].userData.pulso = 1;
+      estrellas += 2; estrellasVuelta += 2;
+      if(Parque3D.acierto() % 3 === 0) seg += 2;
+    } else {
+      errores++; seg = Math.max(0, seg-5);
+      Parque3D.fallo();
+      relojRojoHasta = Date.now() + 900;
+    }
     pintarConsigna();
     if(llevaBuenas() === cuantasBuenas()) terminarRonda();
   },

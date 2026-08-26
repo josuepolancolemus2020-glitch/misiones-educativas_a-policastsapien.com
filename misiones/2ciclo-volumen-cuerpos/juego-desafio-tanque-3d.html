@@ -58,7 +58,11 @@
 <div class="mandos">
   <div class="pregunta" id="pregunta">¿Cuántos litros caben en este tanque?</div>
   <div class="linea">
-    <input class="casilla" id="resp" type="number" inputmode="decimal" step="any" placeholder="?">
+    <!-- type="text" a propósito: en Android con el teclado español,
+         «282,6» dentro de un type="number" deja el value VACÍO y la
+         pantalla parecía no aceptarle al alumno el número que sí
+         escribió. La validación vive en apostar(). -->
+    <input class="casilla" id="resp" type="text" inputmode="decimal" placeholder="?">
     <span class="unidad">litros</span>
   </div>
   <div class="botones">
@@ -89,7 +93,7 @@
     <h2>El Desafío del Tanque</h2>
     <p>Cada tanque trae sus medidas marcadas en los bordes. <b>Apuesta</b> cuántos litros le caben y después <b>llénalo</b> para verlo con tus ojos.</p>
     <div class="escalera"><span>1 litro = 1 000 cm³</span><span>1 dm³ = 1 litro</span><span>1 m³ = 1 000 litros</span></div>
-    <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres gotas 💧. Cada apuesta errada te cuesta una.</p>
+    <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres gotas 💧. Cada apuesta errada te cuesta una; darle a la primera te devuelve una.</p>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
   </div>
 </div>
@@ -144,9 +148,24 @@ var TANQUES = [
 
 var esc, cam, rend, grupo, agua, cuerpoTanque, rots = [];
 var nivel = 0, vidas = 3, estrellas = 0, apostado = false, llenando = 0, giro = 0, respGuardada = null;
+/* pagados: qué tanques ya cobraron sus estrellas — repetir la cubeta
+   no puede valer lo mismo que aprenderse la cisterna.
+   ayudaPagada y ultimoBien son de ESTE tanque; giroManual y tAntes,
+   del dedo y del reloj del bucle de dibujo. */
+var pagados = [], ayudaPagada = false, ultimoBien = false;
+var giroManual = 0, dedo = null, tAntes = 0;
 
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel=Math.min(d.nivel|0, TANQUES.length-1); estrellas=d.estrellas|0; } }catch(e){} }
+/* Las gotas van también en la llave: guardadas solo en la variable,
+   recargar la página las reponía, y ese truco se aprende en una
+   tarde. Los campos nuevos viven en la MISMA llave de siempre. */
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas, gotas:vidas, pagados:pagados})); }catch(e){} }
+function leer(){ try{ var d=JSON.parse(localStorage.getItem(LLAVE)); if(d){
+  nivel=Math.min(d.nivel|0, TANQUES.length-1); estrellas=d.estrellas|0;
+  /* con tolerancia a lo guardado por la versión vieja: sin `gotas`
+     se arranca con las tres y sin `pagados` no se pierde el avance */
+  if(typeof d.gotas === 'number') vidas = Math.max(0, Math.min(3, d.gotas|0));
+  if(Array.isArray(d.pagados)) pagados = d.pagados.filter(function(x){ return typeof x === 'number'; });
+} }catch(e){} }
 
 function t(){ return TANQUES[nivel]; }
 function fmt(x){ return (Math.round(x*100)/100).toLocaleString('es-HN',{maximumFractionDigits:2}); }
@@ -175,6 +194,12 @@ function montar(){
 
   armarTanque();
   Parque3D.vigilarHueco(ajustar);
+  /* Girar el tanque arrastrando el dedo: la mecánica —captura del
+     puntero, toque corto contra arrastre— vive en el andamio; aquí
+     solo se acumula el giro. El bucle de dibujo le pregunta a
+     `dedo` para callarse el vaivén automático mientras el dedo
+     manda y un par de segundos después. */
+  dedo = Parque3D.giroConElDedo(function(dx){ giroManual += dx*0.01; });
   animar();
 }
 
@@ -208,6 +233,12 @@ function rotulo(texto, clase, x, y, z){
    importa es la proporción y las medidas escritas, no que la
    cisterna se salga del teléfono. */
 function armarTanque(){
+  /* El tanque anterior se TIRA, no solo se saca del árbol: `remove`
+     deja los buffers vivos en la memoria de la tarjeta, y seis
+     tanques por vuelta, vuelta tras vuelta, se la comían al teléfono
+     modesto. El barrido de después es para el Three de mentira de la
+     sonda, que no rellena `parent` y ahí `tirar` no puede sacar. */
+  grupo.children.slice().forEach(function(h){ Parque3D.tirar(h); });
   while(grupo.children.length) grupo.remove(grupo.children[0]);
   limpiarRotulos();
   var d = t();
@@ -270,7 +301,12 @@ function moverRotulos(){
    ============================================================ */
 function apostar(){
   var d = t();
-  var r = parseFloat(String(document.getElementById('resp').value).replace(',','.'));
+  /* La casilla es de texto, así que aquí se valida a mano: la coma
+     vale lo mismo que el punto, porque el teclado decimal español de
+     Android ofrece coma y «282,6» es una respuesta buena, no una
+     errata. */
+  var crudo = String(document.getElementById('resp').value).replace(/\s/g,'');
+  var r = /^[0-9]+([.,][0-9]+)?$/.test(crudo) ? parseFloat(crudo.replace(',','.')) : NaN;
   var av = document.getElementById('aviso');
   if(isNaN(r)){ av.className='aviso mal'; av.textContent='Escribe cuántos litros crees que le caben.'; return; }
   respGuardada = r;
@@ -279,11 +315,16 @@ function apostar(){
   apostado = true;
   document.getElementById('bt-llenar').disabled = false;
   document.getElementById('bt-apostar').disabled = true;
+  /* la casilla se apaga con su botón: cambiar el número con la
+     apuesta ya hecha sería cambiar la apuesta sin pagarla */
+  document.getElementById('resp').disabled = true;
   if(bien){
+    Parque3D.acierto();
     av.className='aviso bien';
     av.textContent='🎯 Apuesta hecha: '+fmt(r)+' litros. Ahora llénalo y compruébalo.';
   } else {
-    vidas--; pintarVidas();
+    Parque3D.fallo();
+    vidas--; pintarVidas(); guardar();
     av.className='aviso mal';
     av.textContent='Apostaste '+fmt(r)+' litros. Llénalo y mira qué pasa… 💧';
   }
@@ -303,17 +344,34 @@ function terminarLlenado(){
   var av = document.getElementById('aviso');
   var bien = respGuardada !== null && Math.abs(respGuardada - d.litros) <= Math.max(0.05, d.litros*0.005);
   var est = bien ? (vidas===3?3:(vidas===2?2:1)) : 0;
-  if(bien) estrellas += 4;
+  ultimoBien = bien;
+  /* El marcador suma las MISMAS estrellas que enseña el panel, y
+     cada tanque las paga una sola vez: con el +4 fijo de antes,
+     repetir la cubeta valía lo mismo que la cisterna, y el marcador
+     medía paciencia en vez de puntería. */
+  if(bien && pagados.indexOf(nivel) < 0){ estrellas += est; pagados.push(nivel); }
+  /* La apuesta perfecta a la primera —sin fallar y sin pagar la
+     ayuda— devuelve una gota (nunca más de tres): quien viene
+     tocado de un tanque que le costó caro se recupera jugando bien,
+     no esperando a quedarse en cero. */
+  if(bien && !ayudaPagada && vidas < 3){
+    vidas++; pintarVidas();
+    Parque3D.aviso('💧 A la primera: recuperas una gota');
+  }
   document.getElementById('fin-est').textContent = bien ? ('⭐'.repeat(est)+'·'.repeat(3-est)) : '💧';
   document.getElementById('fin-tit').textContent = bien ? '¡Le diste!' : 'No era ese número';
   document.getElementById('fin-form').innerHTML = comoSeHace(d);
   document.getElementById('fin-txt').textContent = d.nota;
   var ultimo = (nivel >= TANQUES.length-1);
   document.getElementById('fin-bt').textContent = ultimo ? 'Volver a empezar' : 'Siguiente tanque →';
-  if(vidas <= 0){
+  /* «Se acabaron las gotas» SOLO si falló: quedarse sin gotas con la
+     apuesta buena era un regaño puesto encima de un acierto, y el
+     alumno repetía un tanque que ya había resuelto. */
+  if(vidas <= 0 && !bien){
     document.getElementById('fin-tit').textContent = 'Se acabaron las gotas';
     document.getElementById('fin-bt').textContent = '🔄 Otra vez, desde este tanque';
   }
+  if(bien && ultimo) Parque3D.festejarFin();
   pintarMarcador(); guardar();
   document.getElementById('velo-fin').classList.add('ver');
   av.className='aviso'; av.textContent='';
@@ -334,11 +392,13 @@ function comoSeHace(d){
          fmt(vc)+' cm³ ÷ 1 000 = <b>'+fmt(d.litros)+' litros</b>';
 }
 
-/* La ayuda cuesta una gota: si fuera gratis se toca antes de
-   pensar, y entonces no se piensa nunca. */
+/* La ayuda cuesta una gota, pero UNA por tanque: si fuera gratis se
+   toca antes de pensar, y entonces no se piensa nunca; y cobrarla en
+   cada toque castigaba al que vuelve a leer la MISMA pista —releer
+   no es pedir otra ayuda—. */
 function verComo(){
   var d = t();
-  if(!apostado){ vidas--; pintarVidas(); }
+  if(!apostado && !ayudaPagada){ ayudaPagada = true; vidas--; pintarVidas(); guardar(); }
   var av = document.getElementById('aviso');
   av.className='aviso';
   av.innerHTML = d.forma==='prisma'
@@ -349,7 +409,10 @@ function verComo(){
 
 function siguiente(){
   document.getElementById('velo-fin').classList.remove('ver');
-  if(vidas <= 0){ vidas = 3; pintarVidas(); }
+  /* repetir el tanque es solo para el que se quedó sin gotas Y
+     falló: con la apuesta buena manda el acierto y se avanza,
+     tenga las gotas que tenga */
+  if(vidas <= 0 && !ultimoBien){ vidas = 3; pintarVidas(); }
   else if(nivel >= TANQUES.length-1){ nivel = 0; }
   else nivel++;
   guardar();
@@ -357,8 +420,9 @@ function siguiente(){
 }
 
 function reiniciarNivel(){
-  apostado = false; llenando = 0; respGuardada = null;
+  apostado = false; llenando = 0; respGuardada = null; ayudaPagada = false;
   document.getElementById('resp').value = '';
+  document.getElementById('resp').disabled = false;
   document.getElementById('bt-apostar').disabled = false;
   document.getElementById('bt-llenar').disabled = true;
   document.getElementById('contador').style.display = 'none';
@@ -372,12 +436,23 @@ function pintarVidas(){
 }
 function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
 
-function animar(){
+/* Llenado y vaivén por TIEMPO, no por cuadro: en un teléfono de
+   90 Hz el tanque se llenaba al doble y el contador de litros —que
+   es justamente lo que enseña— pasaba volando. El tope del salto
+   evita el pegote al volver de una pestaña dormida. */
+function animar(ahora){
   requestAnimationFrame(animar);
-  giro += 0.004;
-  if(grupo) grupo.rotation.y = Math.sin(giro)*0.5;
+  if(ahora === undefined) ahora = performance.now();
+  var dt = tAntes ? Math.min((ahora - tAntes)/1000, 0.1) : 1/60;
+  tAntes = ahora;
+  /* mientras el dedo manda —y un par de segundos después— el vaivén
+     automático se calla; al volver arranca suave desde donde el dedo
+     dejó el tanque, que para eso `giro` vuelve a cero */
+  if(dedo && (dedo.arrastrando() || dedo.reposo() < 2000)) giro = 0;
+  else giro += 0.24*dt;
+  if(grupo) grupo.rotation.y = giroManual + Math.sin(giro)*0.5;
   if(llenando > 0 && llenando < 1){
-    llenando = Math.min(1, llenando + 0.011);
+    llenando = Math.min(1, llenando + 0.66*dt);
     var alto = agua.userData.alto;
     agua.scale.y = Math.max(0.001, alto*llenando);
     agua.position.y = alto*llenando/2;

@@ -1264,14 +1264,14 @@ window.addEventListener('hashchange', abrirSeccionDelEnlace);
    solo se LEE, para que la tarjeta diga por dónde va. */
 function pintarMedallas3D(){
   const marcas = {
-    cercador:     {llave:'j3d_cercador_v1',     oro: d => (d.nivel|0) >= 6 || !!d.completado,
-                   texto: d => ((d.nivel|0) >= 6 || d.completado) ? '🏆 los 6 terrenos' : '🏅 terreno ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-    pintor:       {llave:'j3d_pintor_v1',       oro: d => (d.nivel|0) >= 6 || !!d.completado,
-                   texto: d => ((d.nivel|0) >= 6 || d.completado) ? '🏆 los 6 pisos' : '🏅 piso ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
-    cercopintura: {llave:'j3d_cercopintura_v1', oro: d => !!d.completado,
-                   texto: d => (d.completado ? '🏆 los 8 encargos' : '🏅 encargo ' + Math.min(8, (d.indice|0)+1) + ' de 8') + (d.mejorRacha ? ' · racha ' + d.mejorRacha : '')},
-    terreno:      {llave:'j3d_terreno_v1',      oro: d => (d.reto|0) >= 6 || !!d.completado,
-                   texto: d => ((d.reto|0) >= 6 || d.completado) ? '🏆 los 6 retos' : '🏅 reto ' + Math.min(6, (d.reto|0)+1) + ' de 6'},
+    cercador:     {llave:'j3d_cercador_v1',     oro: d => !!(d.mejor && Object.keys(d.mejor).length >= 6),
+                   texto: d => (d.mejor && Object.keys(d.mejor).length >= 6) ? '🏆 los 6 terrenos' : '🏅 terreno ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+    pintor:       {llave:'j3d_pintor_v1',       oro: d => !!(d.mejor && Object.keys(d.mejor).length >= 6),
+                   texto: d => (d.mejor && Object.keys(d.mejor).length >= 6) ? '🏆 los 6 pisos' : '🏅 piso ' + Math.min(6, (d.nivel|0)+1) + ' de 6'},
+    cercopintura: {llave:'j3d_cercopintura_v1', oro: d => (d.vueltas|0) >= 1,
+                   texto: d => ((d.vueltas|0) >= 1 ? '🏆 los 8 encargos' : '🏅 encargo ' + Math.min(8, (d.indice|0)+1) + ' de 8') + (d.mejorRacha ? ' · racha ' + d.mejorRacha : '')},
+    terreno:      {llave:'j3d_terreno_v1',      oro: d => !!(d.mejor && Object.keys(d.mejor).length >= 6),
+                   texto: d => (d.mejor && Object.keys(d.mejor).length >= 6) ? '🏆 los 6 retos' : '🏅 reto ' + Math.min(6, (d.reto|0)+1) + ' de 6'},
     cuartol:      {llave:'j3d_cuartol_v1',      oro: d => !!d.completado,
                    texto: d => d.completado ? '🏆 las 6 figuras' : '🏅 figura ' + Math.min(6, (d.indice|0)+1) + ' de 6'},
     fabcuad:      {llave:'j3d_fabcuad_v1',      oro: d => (d.pedido|0) >= 6,

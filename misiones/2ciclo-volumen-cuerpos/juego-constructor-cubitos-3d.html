@@ -20,12 +20,15 @@
 #lienzo{touch-action:none;}
 .pista{position:absolute;left:50%;transform:translateX(-50%);bottom:.5rem;background:rgba(20,26,44,.85);border:1.5px solid rgba(154,165,189,.3);border-radius:10px;padding:.3rem .7rem;font-size:.74rem;color:var(--gris);pointer-events:none;text-align:center;max-width:92%;}
 /* ---- contador ---- */
-.cuenta{position:absolute;top:.5rem;left:.5rem;background:rgba(20,26,44,.88);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.4rem .7rem;font-size:.9rem;font-weight:700;line-height:1.35;}
+/* Los rótulos flotan ENCIMA del dibujo: sin pointer-events:none (que la
+   pista ya tenía), un toque sobre ellos plantaba o quitaba un cubito
+   detrás, donde el alumno no estaba mirando. */
+.cuenta{position:absolute;top:.5rem;left:.5rem;background:rgba(20,26,44,.88);border:2px solid rgba(201,162,39,.5);border-radius:12px;padding:.4rem .7rem;font-size:.9rem;font-weight:700;line-height:1.35;pointer-events:none;}
 .cuenta b{color:var(--dorado);font-size:1.15rem;}
 .cuenta small{display:block;font-size:.68rem;color:var(--gris);font-weight:400;}
 .cuenta.lleno{border-color:var(--verde);}
 .cuenta.lleno b{color:var(--verde);}
-.fuera{position:absolute;top:.5rem;right:.5rem;background:rgba(224,82,82,.9);border-radius:10px;padding:.3rem .6rem;font-size:.75rem;font-weight:700;display:none;max-width:45%;line-height:1.25;}
+.fuera{position:absolute;top:.5rem;right:.5rem;background:rgba(224,82,82,.9);border-radius:10px;padding:.3rem .6rem;font-size:.75rem;font-weight:700;display:none;max-width:45%;line-height:1.25;pointer-events:none;}
 .barra{display:flex;flex-wrap:wrap;gap:.4rem;padding:.5rem;background:var(--acero-2);border-top:2px solid rgba(201,162,39,.35);flex-shrink:0;overflow-x:auto;position:relative;z-index:2;}
 .herr{flex:1 1 62px;min-width:56px;background:#2c3556;border:2px solid transparent;color:var(--claro);border-radius:12px;padding:.45rem .3rem;font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer;line-height:1.3;}
 .herr .ico{display:block;font-size:1.25rem;}
@@ -40,8 +43,6 @@
 .aviso.mal{color:#ff9c9c;}
 .aviso.bien{color:#7ee2a8;}
 .formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(74,144,217,.14);border-left:4px solid var(--azul);border-radius:8px;padding:.5rem .7rem;font-size:.95rem;margin:.6rem 0;text-align:left;}
-.pasos{list-style:none;text-align:left;font-size:.82rem;color:#c6d0e4;line-height:1.6;margin:.4rem 0 .7rem;}
-.pasos li{margin-bottom:.15rem;}
 @media(max-width:380px){.titulo{font-size:.85rem;}.herr{font-size:.66rem;}}
 </style>
 </head>
@@ -140,10 +141,29 @@ var esc, cam, rend, luzDir, grupoCubos, ghost, piso, rayo, raton;
 var nivel = 0, puestos = {}, estrellas = 0, modoActual = 'poner', anguloCam = 0, radioCam = 14, alturaCam = 10;
 var enModoLibre = false;
 var listoParaJugar = false;
+/* La granja de estrellas: la predicción paga UNA sola vez por nivel. Sin
+   este mapa, reabrir 📐 Medidas y volver a contestar bien regalaba +2⭐
+   cada vez, y el marcador dejaba de decir cuánto se aprendió. */
+var predPagada = {};        // por nivel: su predicción ya pagó sus ⭐
+var predIntentos = 0;       // fallos de predicción en el nivel en curso
+var rendido = false;        // pidió «No sé, muéstrame» en este nivel
+var pusoFuera = false;      // dejó algún cubito fuera mientras construía
+var contestado = false;     // la predicción abierta ya se contestó bien
 
-/* --- guardado: cada juego con su propia llave, sin tocar la de la misión --- */
-function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas})); }catch(e){} }
-function leer(){ try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d){ nivel = Math.min(d.nivel|0, NIVELES.length-1); estrellas = d.estrellas|0; } }catch(e){} }
+/* --- guardado: cada juego con su propia llave, sin tocar la de la misión ---
+   Con los cinco niveles ganados se guarda un nivel MÁS de los que hay
+   (el mismo truco que la fábrica de latas): al reabrir se sabe que el
+   modo libre ya se estrenó, sin inventar una llave nueva. */
+function guardar(){ try{ localStorage.setItem(LLAVE, JSON.stringify(
+  {nivel: enModoLibre ? NIVELES.length : nivel, estrellas:estrellas, predPagada:predPagada})); }catch(e){} }
+function leer(){ try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d){
+  nivel = Math.min(d.nivel|0, NIVELES.length);
+  estrellas = d.estrellas|0;
+  /* tolerancia con los teléfonos que guardaron con la versión vieja: sin
+     predPagada no se pierde nada — como mucho la predicción de un nivel
+     ya jugado vuelve a pagar una única vez */
+  if(d.predPagada && typeof d.predPagada === 'object') predPagada = d.predPagada;
+} }catch(e){} }
 
 function objetivo(){ var v = NIVELES[nivel]; return v.l * v.a * v.h; }
 function clave(x,y,z){ return x+','+y+','+z; }
@@ -217,7 +237,7 @@ function colocarCamara(){
 /* La caja objetivo se dibuja como un fantasma: se ve dónde hay
    que llenar sin que tape los cubitos que ya se pusieron. */
 function ponerGhost(){
-  if(ghost){ esc.remove(ghost); ghost = null; }
+  if(ghost){ esc.remove(ghost); Parque3D.tirar(ghost); ghost = null; }
   var v = NIVELES[nivel];
   ghost = new THREE.Group();
   var caja = new THREE.Mesh(
@@ -241,6 +261,9 @@ function posDe(x,y,z){ return new THREE.Vector3(x + 0.5 - GRID/2, y + 0.5, z + 0
    ============================================================ */
 function nuevoCubo(x,y,z){
   var fuera = !dentroObjetivo(x,y,z);
+  /* queda apuntado para las estrellas del nivel: quitarlo después no lo
+     borra, porque lo que se mide es el cuidado al construir */
+  if(fuera) pusoFuera = true;
   var mat = new THREE.MeshLambertMaterial({color: fuera ? 0x7c6f9e : 0x4a90d9});
   var m = new THREE.Mesh(new THREE.BoxGeometry(0.96,0.96,0.96), mat);
   var p = posDe(x,y,z);
@@ -270,12 +293,16 @@ function ponerCubo(x,y,z){
 function quitarCubo(m){
   var d = m.userData;
   grupoCubos.remove(m);
+  /* tirar de verdad: remove() solo lo saca del árbol y la geometría se
+     queda viva en la memoria de la tarjeta — en un teléfono modesto una
+     sesión larga de poner y quitar se la iba comiendo */
+  Parque3D.tirar(m);
   delete puestos[clave(d.x,d.y,d.z)];
   pintarCuenta();
 }
 
 function limpiar(){
-  Object.keys(puestos).forEach(function(k){ grupoCubos.remove(puestos[k]); });
+  Object.keys(puestos).forEach(function(k){ grupoCubos.remove(puestos[k]); Parque3D.tirar(puestos[k]); });
   puestos = {};
   pintarCuenta();
 }
@@ -336,6 +363,10 @@ function abrirPred(){
   document.getElementById('pred-in').value = '';
   document.getElementById('pred-av').textContent = '';
   document.getElementById('pred-av').className = 'aviso';
+  /* el velo recién abierto se contesta de nuevo: si esto no se soltara,
+     al reabrir con 📐 Medidas «Comprobar» quedaría mudo y el velo no
+     tendría forma de cerrarse (pagar dos veces lo impide predPagada) */
+  contestado = false;
   document.getElementById('velo-pred').classList.add('ver');
   document.getElementById('subt').textContent = 'Nivel '+(nivel+1)+' de '+NIVELES.length+' · '+v.n;
   setTimeout(function(){ document.getElementById('pred-in').focus(); }, 120);
@@ -345,13 +376,25 @@ function revisarPred(){
   var v = NIVELES[nivel], meta = objetivo();
   var r = parseInt(document.getElementById('pred-in').value, 10);
   var av = document.getElementById('pred-av');
+  /* ya acertó y el velo se está cerrando: el segundo toque de un dedo
+     impaciente no puede volver a pagar ni encolar otro cierre */
+  if(contestado) return;
   if(isNaN(r)){ av.className='aviso mal'; av.textContent='Escribe un número.'; return; }
   if(r === meta){
+    contestado = true;
     av.className='aviso bien';
     av.textContent='¡Exacto! '+v.l+' × '+v.a+' × '+v.h+' = '+meta+' cubitos. Ahora constrúyela.';
-    estrellas += 2; pintarMarcador(); guardar();
+    /* paga solo la primera vez por nivel, y nunca al que pidió
+       «muéstrame»: copiar la respuesta recién enseñada no es predecir */
+    if(!rendido && !predPagada[nivel]){
+      estrellas += 2; predPagada[nivel] = true;
+      Parque3D.acierto();
+    }
+    pintarMarcador(); guardar();
     setTimeout(cerrarPred, 1100);
   } else {
+    predIntentos++;
+    Parque3D.fallo();
     av.className='aviso mal';
     av.textContent = (r > meta ? 'Te pasaste. ' : 'Te quedaste corto. ') +
       'Cuenta una capa: '+v.l+' × '+v.a+' = '+(v.l*v.a)+' cubitos, y hay '+v.h+' capas.';
@@ -361,6 +404,11 @@ function revisarPred(){
 function rendirsePred(){
   var v = NIVELES[nivel];
   var av = document.getElementById('pred-av');
+  /* rendirse marca el nivel: la respuesta que se le enseña ya no paga al
+     copiarla en Comprobar. Y corta la racha sin castigo ni ruido: pedir
+     ayuda es parte de aprender, no un error que suene feo */
+  rendido = true;
+  Parque3D.fallo();
   av.className='aviso';
   av.innerHTML = 'Cada capa lleva '+v.l+' × '+v.a+' = <b>'+(v.l*v.a)+'</b> cubitos, y son '+v.h+' capas: <b>'+objetivo()+'</b>.';
   document.getElementById('pred-in').value = objetivo();
@@ -387,15 +435,30 @@ function verPlan(){
    ============================================================ */
 function ganar(){
   var v = NIVELES[nivel];
-  estrellas += 5; pintarMarcador(); 
+  estrellas += 5; pintarMarcador();
   document.getElementById('fin-form').textContent =
     'V = '+v.l+' × '+v.a+' × '+v.h+' = '+objetivo()+' cm³';
-  document.getElementById('fin-txt').textContent = v.nota;
-  document.getElementById('fin-est').textContent = '⭐⭐⭐';
+  /* Las estrellas del panel cuentan CÓMO se ganó, no adornan: predecir
+     el volumen sin fallar y construir sin cubitos fuera es justo lo que
+     se está enseñando. Y se dice qué faltó: unas estrellas de menos sin
+     explicación parecen un premio roto, no una meta que alcanzar. */
+  var predBien = !rendido && predIntentos === 0;
+  var limpio = !pusoFuera;
+  var est = (rendido || predIntentos >= 2) ? 1
+          : (predBien && limpio) ? 3
+          : (predBien || limpio) ? 2 : 1;
+  document.getElementById('fin-est').textContent = ['⭐','⭐⭐','⭐⭐⭐'][est-1];
+  var faltas = [];
+  if(!predBien) faltas.push('predecir el volumen a la primera');
+  if(!limpio) faltas.push('construir sin dejar cubitos fuera de la caja');
+  document.getElementById('fin-txt').textContent = v.nota +
+    (est < 3 ? ' Para las 3 ⭐ te faltó: ' + faltas.join(' y ') + '.' : '');
   var ultimo = (nivel >= NIVELES.length-1);
   document.getElementById('fin-tit').textContent = ultimo ? '¡Terminaste los cinco niveles!' : '¡Caja llena!';
   document.getElementById('fin-bt').textContent = ultimo ? '🎨 Modo libre' : 'Siguiente nivel →';
   document.getElementById('velo-fin').classList.add('ver');
+  Parque3D.acierto();
+  if(ultimo) Parque3D.festejarFin();
   guardar();
 }
 
@@ -404,6 +467,9 @@ function siguiente(){
   limpiar();
   if(nivel >= NIVELES.length-1){ modoLibre(); return; }
   nivel++;
+  /* nivel nuevo, cuenta nueva: lo fallado o lo rendido en el anterior
+     no le puede quitar estrellas a este */
+  predIntentos = 0; rendido = false; pusoFuera = false;
   guardar();
   ponerGhost();
   pintarCuenta();
@@ -416,7 +482,11 @@ function siguiente(){
    sigue contando cubitos, que es lo que se estaba aprendiendo. */
 function modoLibre(){
   enModoLibre = true;
-  if(ghost){ esc.remove(ghost); ghost = null; }
+  if(ghost){ esc.remove(ghost); Parque3D.tirar(ghost); ghost = null; }
+  /* queda apuntado que los cinco ya se ganaron (guardar escribe un nivel
+     de más): al reabrir el juego se entra directo aquí, sin volver a
+     pedirle la predicción del nivel 5 que ya pasó */
+  guardar();
   document.getElementById('subt').textContent = '🎨 Modo libre · construye lo que quieras';
   document.getElementById('cuenta').innerHTML = '<b>0</b> cubitos<small>modo libre</small>';
   document.getElementById('fuera').style.display = 'none';
@@ -441,14 +511,41 @@ function pintarMarcador(){ document.getElementById('marcador').textContent = '�
 function eventos(){
   var lienzo = document.getElementById('lienzo');
   var abajo = null, movido = 0;
+  /* El pellizco: dos dedos acercan y alejan la cámara, como en el mapa
+     del teléfono. Antes solo existía la rueda del ratón, que en un
+     teléfono no existe. Se sigue cada dedo por su pointerId: mezclarlos
+     en una sola variable hace saltar la vista al apoyar el segundo. */
+  var dedos = {}, pellizco = null;
+  function cuantos(){ return Object.keys(dedos).length; }
+  function distancia(){
+    var ids = Object.keys(dedos);
+    var a = dedos[ids[0]], b = dedos[ids[1]];
+    return Math.max(1, Math.hypot(a.x - b.x, a.y - b.y));
+  }
 
   lienzo.addEventListener('pointerdown', function(e){
-    abajo = {x:e.clientX, y:e.clientY, ang:anguloCam, alt:alturaCam};
-    movido = 0;
+    dedos[e.pointerId] = {x:e.clientX, y:e.clientY};
+    if(cuantos() === 2){
+      /* el segundo dedo convierte el gesto en pellizco: el primero deja
+         de girar y, sobre todo, al soltar NO puede plantar un cubito */
+      abajo = null;
+      pellizco = {d0: distancia(), r0: radioCam};
+    } else if(cuantos() === 1){
+      abajo = {x:e.clientX, y:e.clientY, ang:anguloCam, alt:alturaCam};
+      movido = 0;
+    }
     lienzo.setPointerCapture && lienzo.setPointerCapture(e.pointerId);
   });
 
   lienzo.addEventListener('pointermove', function(e){
+    if(dedos[e.pointerId]) dedos[e.pointerId] = {x:e.clientX, y:e.clientY};
+    if(pellizco && cuantos() >= 2){
+      /* separar los dedos acerca (el radio baja); juntarlos aleja.
+         Mismos topes que la rueda, para que ningún camino se pase. */
+      radioCam = Math.max(6, Math.min(30, pellizco.r0 * pellizco.d0 / distancia()));
+      colocarCamara();
+      return;
+    }
     if(!abajo) return;
     var dx = e.clientX - abajo.x, dy = e.clientY - abajo.y;
     movido = Math.max(movido, Math.abs(dx)+Math.abs(dy));
@@ -459,11 +556,16 @@ function eventos(){
     }
   });
 
+  function soltarDedo(e){
+    delete dedos[e.pointerId];
+    if(cuantos() < 2) pellizco = null;
+  }
   lienzo.addEventListener('pointerup', function(e){
+    soltarDedo(e);
     if(abajo && movido <= 8) tocar(e.clientX, e.clientY);
     abajo = null;
   });
-  lienzo.addEventListener('pointercancel', function(){ abajo = null; });
+  lienzo.addEventListener('pointercancel', function(e){ soltarDedo(e); abajo = null; });
 
   // rueda del ratón: acercarse y alejarse
   lienzo.addEventListener('wheel', function(e){
@@ -517,7 +619,6 @@ function animar(){
       m.scale.set(s,s,s);
     }
   });
-  if(ghost) ghost.rotation.y = 0;
   rend.render(esc, cam);
 }
 
@@ -530,10 +631,18 @@ function animar(){
    se vuelve a abrir. */
 Parque3D.arrancar(function(){
   leer();
+  /* Los cinco niveles ya ganados vienen guardados como un nivel de más:
+     se entra directo al modo libre, sin volver a preguntar la predicción
+     del nivel 5 que ya se pasó. El que empieza de cero sigue arrancando
+     por la predicción, que es donde se piensa antes de construir. */
+  var libre = (nivel >= NIVELES.length);
+  if(libre) nivel = NIVELES.length - 1;   // NIVELES[nivel] se sigue leyendo por dentro
   montar();
   pintarMarcador();
   pintarCuenta();
-  abrirPred();
+  /* el velo de la predicción viene abierto desde el HTML: en la vía
+     directa al modo libre hay que cerrarlo, que si no tapa el piso */
+  if(libre){ cerrarPred(); modoLibre(); } else abrirPred();
 }, 'velo-pred');
 
 // Ganchos para la sonda: la cuenta y el estado, sin tocar el dibujo.
