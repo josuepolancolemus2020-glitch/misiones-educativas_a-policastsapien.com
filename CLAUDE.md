@@ -26,6 +26,40 @@ familias** (claves ya entregadas, listas, notas): ahí sí, primero se avisa.
 Los mensajes de commit se escriben **en español, contando qué le cambia al
 maestro**, no qué archivo se tocó. Se mira `git log` para tomar el tono.
 
+## Empujar no es publicar: se comprueba el despliegue
+
+`git push` dice que el commit llegó al repositorio. **No dice que el
+sitio lo esté sirviendo.** El sitio se sirve desde **GitHub Pages, rama
+`main`**, sin archivo de flujo de trabajo propio: Pages construye sola en
+cada push. Antes de decir que algo está publicado hay que mirar cómo
+quedó esa construcción:
+
+```
+https://api.github.com/repos/<usuario>/<repo>/actions/runs?per_page=20
+```
+
+y buscar **el `head_sha` del commit propio** en `completed / success`.
+Sirve sin credenciales porque el repositorio es público.
+
+⚠️ **Buscar el commit propio, no mirar la primera fila.** El 28 de agosto
+de 2026 el listado enseñaba `completed / success` arriba del todo… del
+commit ANTERIOR. El nuevo no tenía ejecución ninguna: Pages no la había
+encolado siquiera, quince minutos después del push. Mirar la primera fila
+habría dado el cambio por publicado. **No hay construcción** no es lo
+mismo que **construcción fallida**, y se parecen mucho a la vista.
+
+Y en `?status=queued` hay **zombis**: ejecuciones paradas desde el 3 de
+julio y el 6 de agosto de 2026. No estorban a las nuevas, pero despistan
+al que busque la suya por ahí.
+
+Si no arranca ninguna, la salida es **empujar un commit nuevo**, que
+provoca una construcción limpia.
+
+Y un aviso para quien lo compruebe desde una sesión de Claude Code: el
+proxy de esas sesiones **bloquea el dominio del sitio**, así que la
+página en vivo no se puede pedir con `curl` desde ahí. `api.github.com`
+sí responde, y por eso la comprobación va por la API.
+
 ## Sellar la versión en cada cambio
 
 El teléfono del maestro guarda la aplicación en caché y se queda con la
