@@ -1771,12 +1771,18 @@ nota— vive en el repositorio de la revista, con su propia sonda.
 ## Normativa: los videos de una misión los pone F.A.R.O, no el alumno
 
 **Pedido por el autor el 28 de agosto de 2026**, estrenado en «Las
-Fracciones» (`misiones/2y3ciclo-fracciones/`) y con la intención dicha de
-llevarlo a las demás misiones. Por eso vive en `js/videos-mision.js` y
-`css/videos-mision.css`, y **no dentro de la misión**: es el mismo permiso
-que ya tiene el andamio de los juegos 3D, y por la misma razón. Un aparato
-copiado a cincuenta y siete misiones se arregla en una y se queda roto en
-cincuenta y seis.
+Fracciones» (`misiones/2y3ciclo-fracciones/`) y llevado ese mismo día a
+**Matemáticas entera**: las veinte misiones de la materia tienen su
+pestaña 🎬. Van detrás las demás materias. Por eso vive en
+`js/videos-mision.js` y `css/videos-mision.css`, y **no dentro de la
+misión**: es el mismo permiso que ya tiene el andamio de los juegos 3D, y
+por la misma razón. Un aparato copiado a todas las misiones se arregla en
+una y se queda roto en las demás — y con veinte montajes ya puestos eso
+dejó de ser una advertencia y pasó a ser aritmética.
+
+Y el número no se escribe en el código: la sonda **cuenta** cuántas lo
+montan leyendo las misiones, así que la materia siguiente entra sin tocar
+esta cuenta ni la de nadie.
 
 Qué resuelve: el alumno que no entendió el texto quiere que se lo
 expliquen. En un aula sin proyector y con tres teléfonos, «búscalo en
@@ -1907,6 +1913,20 @@ Tres cosas, y ninguna toca el aparato. Están escritas al final de
 pestaña, y los tres `<script>` al final con la llamada a
 `VideosMision.montar(...)`.
 
+**La pestaña 🎬 va detrás de 📖 Aprende**, y el bloque detrás de esa
+sección. Es el orden de la cabeza del alumno: leyó y no lo entendió, y lo
+que quiere es que se lo expliquen. La flecha «siguiente» de Aprende **no
+se toca**: sigue llevando a donde llevaba. Ver un video no es un paso
+obligatorio de la misión —no da XP ni marca nada—, así que tampoco puede
+meterse en medio del camino del que no lo necesita.
+
+⚠️ **Y la clave de `montar()` es la CARPETA de la misión.** Es lo único
+que hay que cambiar al copiar el bloque, y es justo lo que se olvida: no
+da un error, da los videos de otro tema en la pantalla de un niño.
+Montarlas de veinte en veinte a mano es garantizarlo, así que el montaje
+se hizo con un guion y **lo comprueba la sonda en todas** (la 11), que
+además avisa si dos misiones comparten clave.
+
 ### ⚠️ El service worker no toca lo que se transmite
 
 Esto costó un video que se reproducía **un segundo** y saltaba al final,
@@ -1947,6 +1967,16 @@ recibiría un toque en el centro del video, que es el mismo guardián que
 caza el lienzo derramado de los juegos 3D—, que sin API no se tape nada,
 que la nube pise al catálogo y la lápida quite, y que ver un video no
 toque el progreso de la misión.
+
+Y desde que esto vive en más de una misión, dos cosas más. La **11** lee
+del archivo TODAS las que lo montan —abrirlas con Playwright cuesta un
+minuto largo y una comprobación así no la corre nadie— y mira lo que se
+multiplica al copiar el bloque: que estén las tres piezas, que el catálogo
+las conozca (que es lo que las hace funcionar sin nube), que el CSS vaya
+después del de la misión y, sobre todo, **que ninguna haya heredado la
+clave de otra**. La **12** abre una de ellas de verdad, y a propósito **no
+la del estreno**: lo que solo se ve abriéndola es que el `go()` de esa
+misión conteste, que es de quien depende el botón de la tapa del final.
 
 ## Normativa: las Sugerencias de una misión salen del teléfono
 

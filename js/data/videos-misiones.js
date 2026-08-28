@@ -108,15 +108,16 @@
 
 var VIDEOS_MISIONES = {
 
-  /* ── Las Fracciones (misiones/2y3ciclo-fracciones/) ───────────────
+  /* ── CÓMO SE LEE ESTA LISTA ───────────────────────────────────────
      La clave es la CARPETA de la misión, igual que en las Sugerencias.
 
-     Vacío a propósito: los videos los pega el administrador desde
-     F.A.R.O y los sube aquí con el botón 📋 cuando ya los ha visto
-     enteros. Mientras tanto la sección se ve, dice la verdad («todavía
-     no hay videos puestos») y no enseña nada sin revisar.
+     Las listas van vacías a propósito: los videos los pega el
+     administrador desde F.A.R.O y los sube aquí con el botón 📋 cuando
+     ya los ha visto enteros. Mientras tanto la sección se ve, dice la
+     verdad («todavía no hay videos puestos») y no enseña nada sin
+     revisar.
 
-     Un ejemplo de cómo queda una vez lleno, para no tener que buscarlo:
+     Un ejemplo de cómo queda una vez llena, para no tener que buscarlo:
 
        '2y3ciclo-fracciones': [
          { id: 'v-frac-01', yt: 'dQw4w9WgXcQ',
@@ -129,7 +130,38 @@ var VIDEOS_MISIONES = {
            ] }
        ],
   */
-  '2y3ciclo-fracciones': []
+  /* ── MATEMÁTICAS ──────────────────────────────────────────────────
+     Las veinte misiones de la materia, todas con su pestaña 🎬 Videos
+     montada. Estar aquí con la lista vacía NO es un olvido: es lo que
+     dice que la sección está puesta y esperando video, y le da al
+     administrador el renglón donde pegar lo que le escupe el botón 📋
+     de F.A.R.O.
+
+     Y la clave es la CARPETA de cada misión, una por una. Es la trampa
+     de la regla 8: al copiar el bloque de una misión a otra se hereda
+     la clave, y dos misiones acabarían enseñando los mismos videos —el
+     alumno de Ángulos viendo la explicación de las fracciones—. Aquí se
+     ven las veinte juntas, que es donde una repetida se nota. */
+  '1ciclo-segundo-grado':                            [],   /* Números Grandes: del Cien al Millón */
+  '2y3ciclo-angulo-bisectriz':                       [],   /* Ángulos y Bisectriz */
+  '2y3ciclo-numeros-decimales':                      [],   /* Números Decimales */
+  '2y3ciclo-division-decimales':                     [],   /* División de Decimales */
+  'mat-2y3ciclo-area-circulo-y-poligonos-regulares': [],   /* Área de Círculos y Polígonos */
+  '2y3ciclo-fracciones':                             [],   /* Las Fracciones */
+  '2ciclo-valor-posicional':                         [],   /* Valor Posicional hasta el Millón */
+  '2ciclo-potencias-raices':                         [],   /* Potencias y Raíces Cuadradas */
+  '2ciclo-teoria-numeros':                           [],   /* Teoría de Números: Divisibilidad, m.c.m. y M.C.D. */
+  '2ciclo-recta-numerica':                           [],   /* Recta Numérica, Suma y Resta */
+  '2ciclo-multiplos-divisores-primos':               [],   /* Múltiplos, Divisores y Primos */
+  '2ciclo-angulos-basicos':                          [],   /* Ángulos: Tipos y Transportador */
+  '2ciclo-multiplicacion-vertical':                  [],   /* Multiplicación Vertical */
+  '2ciclo-perimetro-cuadrilateros':                  [],   /* Perímetro y Área de Cuadriláteros */
+  '2ciclo-area-poligonos-regulares':                 [],   /* Área de Polígonos Regulares */
+  '2ciclo-fracciones-multiplicar-dividir':           [],   /* Multiplicación y División de Fracciones */
+  '2ciclo-multiplicacion-decimales':                 [],   /* Multiplicación de Decimales */
+  '2ciclo-solidos-geometricos':                      [],   /* Sólidos Geométricos */
+  '2ciclo-volumen-cuerpos':                          [],   /* Volumen de Cuerpos: cubos, prismas y cilindros */
+  '2ciclo-numeracion-maya':                          []   /* Numeración y Calendario Mayas */
 
 };
 

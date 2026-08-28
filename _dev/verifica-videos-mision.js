@@ -103,7 +103,8 @@ const YT_FALSO = `
   };
 `;
 
-async function abrir(navegador, { filas = [], caida = false, sinApi = false, api = true } = {}) {
+async function abrir(navegador, { filas = [], caida = false, sinApi = false, api = true,
+                                  mision = MISION } = {}) {
   const ctx = await navegador.newContext();
   const estado = { filas, caida, llamadas: [] };
   const pedidos = [];
@@ -143,7 +144,7 @@ async function abrir(navegador, { filas = [], caida = false, sinApi = false, api
   });
 
   const page = await ctx.newPage();
-  await page.goto(BASE + MISION, { waitUntil: 'domcontentloaded' });
+  await page.goto(BASE + mision, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => !!window.VideosMision, null, { timeout: 10000 });
   // Cerrar la ventana de identificación si sale
   await page.evaluate(() => { const m = document.getElementById('metasIdModal'); if (m) m.remove(); });
@@ -181,6 +182,95 @@ function revisarServiceWorker() {
     'y CUALQUIER petición por rangos, venga de donde venga');
   comprueba(/\breturn;/.test(antesDeLaCache),
     'y se sale sin respondWith: lo atiende el navegador, que sabe hacerlo');
+}
+
+/* ── EL MONTAJE DE TODAS LAS MISIONES, LEÍDO DEL ARCHIVO ──
+   La sección ya no está en una misión: está en veinte, y el aparato es
+   uno solo. Lo que se multiplica por veinte no es el aparato —ese se
+   arregla en un sitio— sino las TRES piezas de HTML que lo enganchan, y
+   ahí es donde se cuela el error caro: la clave copiada.
+
+   Se lee del archivo y no del navegador a propósito. Abrir veinte
+   misiones con Playwright cuesta un minuto largo y nadie lo corre antes
+   de publicar; leerlas cuesta un parpadeo, así que esta comprobación sí
+   se corre. Es el mismo criterio con el que se lee `sw.js` más arriba. */
+function revisarMontajes() {
+  console.log('11. Las misiones que montan la sección');
+  const fs = require('fs'), path = require('path');
+  const raiz = path.join(__dirname, '..');
+  const cat = fs.readFileSync(path.join(raiz, 'js/data/misiones.js'), 'utf8');
+  const g = {}; new Function('g', 'with(g){' + cat + '; g.M=MISSIONS;}')(g);
+  const { VIDEOS_MISIONES } = require(path.join(raiz, 'js/data/videos-misiones.js'));
+
+  const montadas = [];
+  for (const m of g.M) {
+    const html = fs.readFileSync(path.join(raiz, m.url), 'utf8');
+    if (!html.includes('id="s-videos"')) continue;
+    montadas.push({ m: m, html: html, carpeta: path.dirname(m.url).split('/').pop() });
+  }
+  comprueba(montadas.length > 0, montadas.length + ' misiones montan la sección');
+
+  const fallan = { piezas: [], clave: [], catalogo: [], orden: [], campos: [] };
+  const claves = {};
+  for (const x of montadas) {
+    /* Las tres piezas del montaje. Si falta una, la sección existe a
+       medias: la pestaña sin panel, o el panel sin el aparato que lo
+       llena, y el alumno se queda mirando «Cargando los videos…». */
+    const piezas = html => html.includes('css/videos-mision.css')
+      && /data-s="s-videos"/.test(html)
+      && /id="vmLista"/.test(html)
+      && html.includes('js/data/videos-misiones.js')
+      && html.includes('js/metas-videos.js')
+      && html.includes('js/videos-mision.js');
+    if (!piezas(x.html)) fallan.piezas.push(x.carpeta);
+
+    /* ⚠️ LA CLAVE. Es la trampa de la regla 8, y con veinte montajes es
+       la que de verdad puede pasar: se copia el bloque de una misión a
+       otra y se olvida cambiarla. No da un error —da los videos de OTRO
+       tema en la pantalla de un niño. */
+    const k = (x.html.match(/mision: '([^']*)'/) || [])[1];
+    if (k !== x.carpeta) fallan.clave.push(x.carpeta + ' → ' + k);
+    if (claves[k]) fallan.clave.push(x.carpeta + ' repite la clave de ' + claves[k]);
+    claves[k] = x.carpeta;
+
+    /* El catálogo tiene que conocerla: es la capa que funciona sin nube
+       y sin haber corrido el SQL, o sea el primer día y en el aula sin
+       señal. */
+    if (!Array.isArray(VIDEOS_MISIONES[x.carpeta])) fallan.catalogo.push(x.carpeta);
+
+    /* El CSS de la sección va DESPUÉS del de la misión: es de donde saca
+       el --pri y el --sec con los que se tiñe. Al revés se pinta con los
+       colores de otra. */
+    const iMis = x.html.search(/<link rel="stylesheet" href="css\/[^"]+">/);
+    const iVid = x.html.indexOf('css/videos-mision.css');
+    if (!(iMis >= 0 && iVid > iMis)) fallan.orden.push(x.carpeta);
+
+    /* Y el alumno no escribe aquí. Se mira el bloque del HTML, que es lo
+       que se copia de una misión a otra: el aparato ya lo comprueba
+       pintado en la 2, pero un campo escrito a mano en el hueco no lo
+       pinta el aparato y se le escaparía. */
+    const bloque = x.html.slice(x.html.indexOf('id="s-videos"'));
+    const hasta = bloque.indexOf('id="vmLista"');
+    if (/<(input|textarea|select)\b/i.test(bloque.slice(0, hasta > 0 ? hasta : 0))) fallan.campos.push(x.carpeta);
+  }
+
+  comprueba(!fallan.piezas.length,
+    'todas llevan sus tres piezas (el CSS, la pestaña con su panel y los tres scripts)' +
+    (fallan.piezas.length ? ' → ' + fallan.piezas.join(', ') : ''));
+  comprueba(!fallan.clave.length,
+    'y cada una le pregunta a la nube por SU carpeta: ninguna heredó la clave de otra' +
+    (fallan.clave.length ? ' → ' + fallan.clave.join(', ') : ''));
+  comprueba(!fallan.catalogo.length,
+    'el catálogo del repositorio conoce las ' + montadas.length + ', así que funcionan sin nube' +
+    (fallan.catalogo.length ? ' → ' + fallan.catalogo.join(', ') : ''));
+  comprueba(!fallan.orden.length,
+    'y el CSS de la sección va después del de la misión, que es de donde se tiñe' +
+    (fallan.orden.length ? ' → ' + fallan.orden.join(', ') : ''));
+  comprueba(!fallan.campos.length,
+    'ninguna metió a mano un campo de escribir en el hueco' +
+    (fallan.campos.length ? ' → ' + fallan.campos.join(', ') : ''));
+
+  return montadas.map(x => ({ carpeta: x.carpeta, url: '/' + x.m.url }));
 }
 
 (async () => {
@@ -610,6 +700,55 @@ function revisarServiceWorker() {
         .filter(e => e.tipo === 'video').length; } catch (e) { return 0; }
     });
     comprueba(ev === 1, 'pero SÍ queda apuntado en la Evidencia del maestro');
+    await ctx.close();
+  }
+
+  /* ═══ 11. El montaje de todas las misiones ═══ */
+  console.log('');
+  const montadas = revisarMontajes();
+
+  /* ═══ 12. Y una de ellas, abierta de verdad ═══
+     Lo de arriba lee el HTML; esto lo abre. Son dos cosas distintas y
+     hacen falta las dos: el montaje puede estar escrito entero y aun así
+     no arrancar —un script que la misión carga con otro nombre, un `go()`
+     que ahí no existe—, y eso solo se ve abriendo la página.
+
+     Se abre la ÚLTIMA de la lista y no la primera: la primera es la que
+     uno mira al montar, y la de más abajo es la que se monta con prisa
+     al final de la tanda. */
+  const otra = montadas.filter(x => x.carpeta !== CLAVE).pop();
+  if (otra) {
+    console.log('\n12. Una misión que no es la del estreno: ' + otra.carpeta);
+    const { ctx, page, estado, pedidos } = await abrir(nav, {
+      mision: otra.url,
+      filas: [{ id: 'v1', yt: ID_A, titulo: 'Uno', nota: '', dura: '', canal: '', ini: 0, fin: 0, del: false }]
+    });
+    comprueba(await page.isVisible('#s-videos'),
+      'la pestaña 🎬 abre su sección');
+    comprueba(await page.$('#s-videos .vm-fachada') !== null,
+      'y el aparato pintó el video que mandó la nube');
+    /* Mismo filtro que la 3: la miniatura de la fachada SÍ sale, y es
+       la gracia —una imagen en vez de un reproductor—. Lo que no puede
+       salir es el reproductor ni la API. */
+    comprueba(!pedidos.filter(u => /youtube-nocookie|iframe_api/.test(u)).length,
+      'sin tocar ▶ no ha salido ni un reproductor ni la API: la fachada también es suya');
+    comprueba(estado.llamadas.some(c => c.p_mision === otra.carpeta)
+      && !estado.llamadas.some(c => c.p_mision && c.p_mision !== otra.carpeta),
+      'y le pregunta a la nube por «' + otra.carpeta + '» y por ninguna otra');
+
+    /* La tapa del final es lo que cumple «que no salga de la misión», y
+       depende del `go()` de CADA misión: si esta lo tuviera con otro
+       nombre, el botón de seguir no llevaría a ninguna parte. */
+    await page.click('#s-videos .vm-fachada');
+    await page.waitForTimeout(600);
+    await page.evaluate(() => window.__ytPlayers[0].terminar());
+    await page.waitForTimeout(400);
+    comprueba(await page.$('#s-videos .vm-tapa') !== null,
+      'al terminar el video cae la tapa, que es lo que le tapa a YouTube sus sugerencias');
+    await page.click('#s-videos .vm-tapa .vm-btn-pri');
+    await page.waitForTimeout(400);
+    comprueba(await page.isVisible('#s-quiz'),
+      'y su botón lleva al Quiz de ESTA misión: el go() de la misión responde');
     await ctx.close();
   }
 

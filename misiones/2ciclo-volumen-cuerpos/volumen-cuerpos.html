@@ -15,6 +15,9 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/volumen-cuerpos.css">
+<!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
+     se tiñe del --pri y del --sec que la misión acaba de declarar. -->
+<link rel="stylesheet" href="../../css/videos-mision.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -209,6 +212,31 @@
     <span class="nsb-arrow">→</span>
   </button>
 </div>
+<!-- ===== VIDEOS =====
+     Los videos NO los pone el alumno: los elige el administrador desde
+     F.A.R.O y llegan por la nube (js/metas-videos.js), o vienen escritos
+     en el catálogo del repositorio (js/data/videos-misiones.js).
+
+     Este bloque va vacío a propósito. Lo llena js/videos-mision.js, que
+     es un aparato compartido: se arregla en un archivo y no en una por
+     una de las misiones que lo montan.
+
+     El mensaje de dentro es de reserva y tiene que quedarse: si el
+     aparato no llega a cargar (sin señal, un archivo caído), el alumno
+     lee una frase que se entiende en vez de un hueco en blanco. -->
+<div class="sec" id="s-videos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>🎬 Videos del tema</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.4rem;">Explicaciones en video escogidas por el equipo de M.E.T.A.S. Se ven aquí mismo, sin salir de la misión.</p>
+    <div id="vmLista">
+      <div class="vm-estado">
+        <b>Cargando los videos…</b>
+        Si esto no cambia, revisa tu conexión y vuelve a entrar a la misión.
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="sec" id="s-tipos" role="tabpanel">
   <div class="card ac-blue">
     <h2>📊 Casos Comunes</h2>
@@ -716,6 +744,7 @@
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
   <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-predice" data-s="s-predice" onclick="go('s-predice')"><span class="ico">🔮</span> Predice</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-videos" data-s="s-videos" onclick="go('s-videos')"><span class="ico">🎬</span> Videos</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tipos" data-s="s-tipos" onclick="go('s-tipos')"><span class="ico">📊</span> Tipos</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-errores" data-s="s-errores" onclick="go('s-errores')"><span class="ico">⚠️</span> Errores</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
@@ -858,5 +887,26 @@
     window.addEventListener('pageshow', () => pintarMedallas3D());
   </script>
 
+  <!-- La sección 🎬 Videos. El orden importa y es este:
+       el catálogo (dato), el puente de la nube (lo consulta el aparato)
+       y el aparato (que los usa a los dos). Va al final, después del JS
+       de la misión, porque la tapa del final llama a go(). -->
+  <script src="../../js/data/videos-misiones.js"></script>
+  <script src="../../js/metas-videos.js"></script>
+  <script src="../../js/videos-mision.js"></script>
+  <script>
+    /* La clave es la CARPETA de la misión, y tiene que ser la misma que
+       la del catálogo y la que se escribe en F.A.R.O. Si se copia este
+       bloque a otra misión y se olvida cambiarla, las dos comparten
+       videos: es la misma trampa que la clave del almacén de la repisa
+       de enlaces de F.A.R.O, y la sonda la mira. */
+    VideosMision.montar({
+      mision: '2ciclo-volumen-cuerpos',
+      destino: '#vmLista',
+      /* A dónde se va al acabar un video. El Quiz es lo que sigue de
+         verdad: se vio la explicación, ahora se comprueba. */
+      siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
+    });
+  </script>
 </body>
 </html>
