@@ -1887,7 +1887,7 @@ salió lo que enseña**: si la nube no contestó, el maestro tiene que
 poder saber que está viendo lo que traía la misión y no creer que nadie
 ha puesto nada.
 
-### Ocho reglas, y ninguna es de adorno
+### Nueve reglas, y ninguna es de adorno
 
 1. ⚠️ **En `yt` van ONCE caracteres, nunca una dirección.** Ese dato
    acaba dentro del `src` de un `<iframe>`, que es el peor sitio del
@@ -1907,19 +1907,37 @@ ha puesto nada.
    no salga de la misión»: al acabar, YouTube pinta su parrilla de
    sugerencias con «Ver en YouTube», y por ahí se va el niño. La tapa
    **no ofrece salir a YouTube**.
-4. **Si la API de YouTube no llega, NO se tapa nada.** El video puede
+4. ⚠️ **UN VIDEO A LA VEZ.** Pedido por el autor el 28 de agosto de
+   2026: «cuando uno se esté reproduciendo que otro no se pueda
+   reproducir». Dos videos abiertos son **dos audios sonando**, y en un
+   aula con tres teléfonos prestados eso pasa el primer día: el niño
+   toca el segundo sin parar el primero y ya no se entiende ninguno.
+
+   Se resuelve **cerrando el anterior**, no trabando el nuevo
+   (`cerrarOtros`). Trabarlo obligaría a encontrar antes cómo parar el
+   que suena —un paso más y un botón más— y ese es justo el punto donde
+   el alumno se sale de la sección. Cerrar no le quita nada: el video
+   cerrado **vuelve a su miniatura** y su quiz sigue en la tarjeta, a la
+   vista. Y no basta con pausar por la API: se quita el `<iframe>` del
+   documento, que es lo único que apaga el sonido cuando la API no
+   llegó.
+
+   La excepción es la tarjeta que tiene el **quiz abierto**: ahí el video
+   ya está parado y en pantalla hay respuestas recién marcadas. Esa solo
+   se calla, no se cierra.
+5. **Si la API de YouTube no llega, NO se tapa nada.** El video puede
    estar viéndose perfectamente; taparlo sería el peor fallo posible.
    Solo queda una tira pequeña debajo por si no se ve. Se pierde la
    tapa del final, y eso se acepta a cambio de no romper lo que
    funciona.
-5. **Cuando el video no se puede ver, la pantalla lo DICE**, con el
+6. **Cuando el video no se puede ver, la pantalla lo DICE**, con el
    motivo de verdad (el dueño no lo deja incrustar, el video ya no
    existe, la red lo bloquea). Un cuadro negro y mudo parece la
    aplicación rota, y una aplicación que parece rota no se vuelve a
    abrir. Es la misma regla de los juegos 3D. Y **solo ahí** aparece la
    salida a YouTube: ofrecerla siempre sería poner la puerta de salida
    al lado del video.
-6. **Los anuncios NO se pueden quitar, y no se finge.** No existe un
+7. **Los anuncios NO se pueden quitar, y no se finge.** No existe un
    parámetro de YouTube que lo haga y `youtube-nocookie.com` corta el
    rastreo, no la publicidad. Lo que se hace es recortar el video
    (`ini`/`fin`), elegir canales que no monetizan, y avisar de **Brave**,
@@ -1936,12 +1954,12 @@ ha puesto nada.
    familia, y solo se acuerdan de mirarlo el día que sale un anuncio.
    Tampoco se repite dentro del panel de «no se pudo ver aquí»: está
    arriba, en esa misma pantalla.
-7. **Ver un video no da XP ni marca la sección como hecha.** Nadie puede
+8. **Ver un video no da XP ni marca la sección como hecha.** Nadie puede
    comprobar que el niño lo miró, y un puntaje que se consigue dándole
    al play y yéndose es un puntaje regalado. Sí queda apuntado en la
    Evidencia del maestro: un video abierto le dice que el tema no se
    entendió con el texto.
-8. **La clave del catálogo es de cada misión.** Al copiar el bloque a
+9. **La clave del catálogo es de cada misión.** Al copiar el bloque a
    otra misión se hereda, y dos misiones acabarían compartiendo videos.
    Es la misma trampa que la clave del almacén de la repisa de enlaces
    de F.A.R.O, y la sonda la mira.
@@ -1987,24 +2005,39 @@ Seis decisiones, y ninguna es de adorno:
    opción, o con el `ok` apuntando fuera de la lista— **se descarta
    entera** antes de pintarla: es preferible un video sin quiz a un quiz
    trabado del que un niño solo no puede salir.
-6. **Se anuncia, y se puede contestar SIN llegar al final.** Pedido por
-   el autor el 28 de agosto de 2026, con estas palabras: «hay usuarios
-   que podrían no ver el video hasta el final». Y no es una comodidad:
-   la tapa del final **solo cae cuando YouTube dice que el video
-   terminó**, y hay videos que no se terminan nunca —el alumno que ya
-   entendió lo suyo en el minuto dos, el que pierde la señal a mitad—.
-   Los dos se quedaban sin las preguntas, y el maestro sin el dato de la
-   Evidencia, que es lo único que esa sección le devuelve.
+6. **El quiz está SIEMPRE a la vista, y se resuelve sin ver el video.**
+   Pedido por el autor el 28 de agosto de 2026, con estas palabras: «hay
+   usuarios que podrían no ver el video hasta el final» y «que siempre
+   esté visible el quiz». Y no es una comodidad: la tapa del final **solo
+   cae cuando YouTube dice que el video terminó**, y hay videos que no se
+   terminan nunca —el alumno que ya entendió lo suyo en el minuto dos, el
+   que pierde la señal a mitad, el que entra solo a repasar—. Los tres se
+   quedaban sin las preguntas, y el maestro sin el dato de la Evidencia,
+   que es lo único que esa sección le devuelve.
 
-   Va en tres sitios y cada uno hace lo suyo: la **tarjeta** dice
-   «🧠 3 preguntas al final» **antes de tocar ▶** (un quiz que solo se
-   anuncia al final es una sorpresa, y quien va con prisa elige el video
-   sin saber cuál de los seis le va a preguntar algo); debajo del
-   reproductor sale el **aviso con su botón «Responder ahora»**; y al
-   abrirlo **el video se calla** —por la API, y si no llegó, por el
+   Es **un botón y uno solo**, `🧠 Resuelve el Quiz`, en el cuerpo de la
+   tarjeta. Empezó siendo dos piezas —una marca que decía «3 preguntas al
+   final» y, al abrir el video, un aviso con su botón— y **las dos se
+   escondían por turnos**: la marca al abrir el video, el aviso al abrir
+   las preguntas. Ahora no se esconde nunca: antes de tocar ▶, con el
+   video corriendo y con las preguntas ya en pantalla.
+
+   **Y el texto no explica nada.** Decía «no hace falta verlo entero:
+   puedes contestarlas cuando quieras», que era aclarar con palabras algo
+   que ahora se ve solo, porque el botón está ahí desde el principio.
+   Dice «Resuelve el Quiz» y ya.
+
+   Tocarlo con el quiz ya abierto **no lo rehace**: lo trae a la vista.
+   Rehacerlo borraría las respuestas que el alumno acaba de marcar, y un
+   botón siempre presente que a veces no hace nada es un teléfono que el
+   niño da por trabado.
+
+   Al abrirlo **el video se calla** —por la API, y si no llegó, por el
    `postMessage` que el reproductor entiende de fábrica, que para eso ya
    va `enablejsapi=1` en la dirección—. Uno sonando detrás de las
-   preguntas es la forma más rápida de que no se conteste ninguna.
+   preguntas es la forma más rápida de que no se conteste ninguna. Y si
+   nunca se abrió el video, el botón de la tapa dice **«Ver el video»**,
+   no «Verlo otra vez»: no puede prometer una repetición que no hubo.
 
    ⚠️ **Y «Verlo otra vez» tiene que DESMARCAR el «ya se tapó».** Es lo
    que más cuesta y no se ve venir: sin eso, el alumno que contestó por
@@ -2087,13 +2120,19 @@ caza el lienzo derramado de los juegos 3D—, que sin API no se tape nada,
 que la nube pise al catálogo y la lápida quite, y que ver un video no
 toque el progreso de la misión.
 
-Y desde el 28 de agosto de 2026, dos comprobaciones más: la **3-bis**
+Y desde el 28 de agosto de 2026, tres comprobaciones más. La **3-bis**
 mira que el aviso de Brave salga **una sola vez y por encima de la
-lista**, con dos videos y también con uno abierto; y la **3-ter**, el
-quiz por adelantado —que la tarjeta lo anuncie antes de tocar ▶, que
-anunciarlo no abra las preguntas, que «Responder ahora» las abra y
-**pause el video**, que quede apuntado `sin_terminar`, y la que de verdad
-cuesta: que **«Verlo otra vez» devuelva la tapa del final**—.
+lista**, con dos videos y también con uno abierto. La **3-ter**, que
+**solo suene un video**: al abrir el segundo tiene que quedar UN
+reproductor, el primero volver a su miniatura y poder abrirse otra vez.
+Y la **3-quater**, el quiz siempre a la vista —que el botón se vea antes
+de tocar ▶ y siga viéndose con las preguntas en pantalla, que diga
+«Resuelve el Quiz» y que en la sección no quede ni rastro del «no hace
+falta verlo entero», que abra las preguntas **sin abrir el reproductor y
+sin una sola petición a YouTube**, que volver a tocarlo no borre lo
+contestado, que quede apuntado `sin_terminar`, y la que de verdad cuesta:
+que después de resolverlo por adelantado, **ver el video y llegar al
+final devuelva la tapa**—.
 
 Y desde que esto vive en más de una misión, dos cosas más. La **11** lee
 del archivo TODAS las que lo montan —abrirlas con Playwright cuesta un

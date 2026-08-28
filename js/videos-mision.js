@@ -85,6 +85,23 @@
    Hasta que el alumno no toca ▶ no sale UNA SOLA petición hacia
    YouTube. Seis videos serían seis reproductores y varios megas en la
    conexión de un pueblo, por una sección que a lo mejor nadie abre.
+
+   ═══════════════════════════════════════════════════════════════════
+   UN VIDEO A LA VEZ, Y EL QUIZ SIEMPRE A LA VISTA
+   ═══════════════════════════════════════════════════════════════════
+   Las dos las pidió el autor el 28 de agosto de 2026, y van juntas.
+
+   Dos videos abiertos son DOS AUDIOS sonando, y en un aula con tres
+   teléfonos prestados eso pasa el primer día. Al abrir uno se cierra el
+   anterior (`cerrarOtros`), en vez de trabar el nuevo: trabarlo
+   obligaría a encontrar antes cómo parar el que suena, y ese es el paso
+   donde el alumno se sale de la sección.
+
+   Y cerrar una tarjeta no le quita nada, porque su quiz sigue en ella:
+   el botón «🧠 Resuelve el Quiz» está a la vista desde antes de tocar ▶
+   —se puede resolver sin abrir el video— y no se esconde en ningún
+   momento. Antes eran dos piezas que se escondían por turnos; ahora es
+   una y siempre está.
    ===================================================================== */
 (function () {
   'use strict';
@@ -395,38 +412,47 @@
     if (v.dura) fach.appendChild(el('span', 'vm-dura', v.dura));
     card.appendChild(fach);
 
+    /* La fachada se guarda en el nodo porque hay que volver a ponerla:
+       al abrir otro video, esta tarjeta se cierra y recupera su
+       miniatura. Ver `cerrarTarjeta`. */
+    card.__vmFachada = fach;
+
     /* ── Lo escrito ── */
     var cuerpo = el('div', 'vm-cuerpo');
     cuerpo.appendChild(el('h3', 'vm-titulo', v.titulo));
     if (v.canal) cuerpo.appendChild(el('p', 'vm-canal', v.canal));
     if (v.nota) cuerpo.appendChild(el('p', 'vm-nota', '👩‍🏫 ' + v.nota));
 
-    /* Las marcas de la tarjeta, en una fila que baja de línea. Son dos
-       y dicen cosas distintas: si YA lo vio, y si TRAE preguntas.
-
-       Lo de las preguntas va aquí, ANTES de tocar ▶, a propósito. Un
-       quiz que solo se anuncia al final es una sorpresa, y quien va con
-       prisa elige el video sin saber cuál de los seis le va a preguntar
-       algo. */
-    var marcas = el('div', 'vm-marcas');
     var visto = el('span', 'vm-visto', '✓ Ya lo viste');
     visto.hidden = !ctx.vistos[ctx.mision + '|' + v.id];
-    marcas.appendChild(visto);
+    cuerpo.appendChild(visto);
+    card.__vmVisto = visto;
+
+    /* EL QUIZ, SIEMPRE A LA VISTA. Pedido por el autor el 28 de agosto
+       de 2026 con estas palabras: «que siempre esté visible el quiz».
+
+       Estuvo en dos piezas —una marca en la tarjeta que decía «2
+       preguntas al final» y, al abrir el video, un aviso con su botón—,
+       y las dos se escondían en algún momento. Ahora es UNA sola cosa y
+       no se esconde nunca: está antes de tocar ▶, mientras el video
+       corre, y con las preguntas ya en pantalla.
+
+       Y por eso mismo el texto ya no explica nada: decía «no hace falta
+       verlo entero, puedes contestarlas cuando quieras», que era una
+       aclaración de algo que ahora se ve solo —el botón está ahí desde
+       el principio—. Dice «Resuelve el Quiz» y ya. */
     if (v.preguntas && v.preguntas.length) {
-      marcas.appendChild(el('span', 'vm-quiz-chip', '🧠 ' + cuentaPreguntas(v) + ' al final'));
+      cuerpo.appendChild(botonQuiz(card, v, ctx));
     }
-    cuerpo.appendChild(marcas);
+
     card.appendChild(cuerpo);
 
     /* Al toque Y al clic. Un navegador de tableta que no sintetice el
        clic dejaría al alumno con la tarjeta delante y sin poder
        abrirla: la misma regla 7 de los juegos 3D. */
-    var abierto = false;
     function abrir(e) {
       if (e) e.preventDefault();
-      if (abierto) return;
-      abierto = true;
-      reproducir(card, fach, v, ctx, visto);
+      reproducir(card, v, ctx);
     }
     fach.addEventListener('click', abrir);
     fach.addEventListener('touchend', abrir);
@@ -434,11 +460,121 @@
     return card;
   }
 
-  /* ═══════════ REPRODUCIR ═══════════ */
-  function reproducir(card, fachada, v, ctx, visto) {
-    card.classList.add('vm-abierta');
+  /* El botón del quiz de la tarjeta. Uno solo, y siempre visible.
 
-    var marco = el('div', 'vm-marco');
+     Hace dos cosas según dónde se toque, y por eso no hay dos botones:
+     si el quiz no está abierto lo abre —callando el video si lo hubiera,
+     porque uno sonando detrás de las preguntas es la forma más rápida de
+     que no se conteste ninguna—; y si ya está abierto, lo trae a la
+     vista. Un botón siempre presente que a veces no hace nada es un
+     teléfono que el niño da por trabado. */
+  function botonQuiz(card, v, ctx) {
+    var b = el('button', 'vm-btn vm-quiz-btn', '🧠 Resuelve el Quiz');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Resuelve el Quiz: ' + cuentaPreguntas(v) + ' sobre «' + v.titulo + '»');
+
+    function tocar(e) {
+      if (e) e.preventDefault();
+      abrirQuiz(card, v, ctx);
+    }
+    /* Al toque Y al clic: la misma regla 7 de los juegos 3D. */
+    b.addEventListener('click', tocar);
+    b.addEventListener('touchend', tocar);
+    return b;
+  }
+
+  /* ═══════════ LO QUE SABE UNA TARJETA DE SÍ MISMA ═══════════
+     Vive en el nodo y no en una variable de `reproducir`, porque ahora
+     son tres los caminos que lo necesitan: abrir el video, abrir el quiz
+     SIN video, y cerrar esta tarjeta porque se abrió otra. */
+  function estadoDe(card) {
+    if (!card.__vmEstado) {
+      card.__vmEstado = { player: null, frame: null, marco: null,
+                          terminado: false, adelantado: false };
+    }
+    return card.__vmEstado;
+  }
+
+  /* El hueco donde caben el reproductor, la tapa del final y el quiz.
+     Si el video todavía no se abrió se crea vacío, en el sitio exacto de
+     la fachada: es lo que deja resolver el quiz sin ver el video. */
+  function huecoDe(card) {
+    var m = card.querySelector('.vm-marco');
+    if (m) return m;
+    m = el('div', 'vm-marco');
+    card.classList.add('vm-abierta');
+    /* La fachada se va y el hueco ocupa su sitio exacto. No se esconde
+       con hidden: dejarla debajo mantiene viva su miniatura y un hueco
+       de 16/9 de más al final de la tarjeta. */
+    card.replaceChild(m, card.__vmFachada);
+    estadoDe(card).marco = m;
+    return m;
+  }
+
+  /* ═══════════ UN VIDEO A LA VEZ ═══════════
+     Pedido por el autor el 28 de agosto de 2026: «cuando uno se esté
+     reproduciendo que otro no se pueda reproducir».
+
+     Dos videos abiertos son DOS AUDIOS a la vez, y en un aula con tres
+     teléfonos prestados eso pasa el primer día: el niño toca el segundo
+     sin haber parado el primero y ya no se entiende ninguno.
+
+     Se resuelve cerrando el anterior en vez de trabar el nuevo. Trabarlo
+     obligaría a encontrar antes cómo cerrar el que está sonando —un paso
+     más y un botón más— y el alumno acabaría saliéndose de la sección.
+     Cerrar es un solo toque y no pierde nada: el quiz de aquel video
+     sigue en su tarjeta, a la vista, porque su botón no se esconde.
+
+     La excepción es la tarjeta que tiene el QUIZ ABIERTO: ahí el video
+     ya está parado y en pantalla hay respuestas que el alumno acaba de
+     marcar. Esa solo se calla, no se tira. */
+  function cerrarOtros(card) {
+    var lista = card.parentNode;
+    if (!lista || !lista.querySelectorAll) return;
+    var abiertas = lista.querySelectorAll('.vm-card.vm-abierta');
+    for (var i = 0; i < abiertas.length; i++) {
+      var otra = abiertas[i];
+      if (otra === card) continue;
+      pausarVideo(estadoDe(otra));
+      if (otra.querySelector('.vm-tapa')) continue;   // su quiz está abierto
+      cerrarTarjeta(otra);
+    }
+  }
+
+  /* Cerrar una tarjeta es devolverle su fachada. Quitar el marco del
+     documento se lleva el `<iframe>` con él, que es lo que de verdad
+     apaga el sonido: pausar por la API no basta si la API no llegó. */
+  function cerrarTarjeta(card) {
+    var marco = card.querySelector('.vm-marco');
+    if (!marco || !card.__vmFachada) return;
+    var e = estadoDe(card);
+    try { if (e.player && e.player.destroy) e.player.destroy(); } catch (err) {}
+    card.replaceChild(card.__vmFachada, marco);
+    card.classList.remove('vm-abierta');
+    /* La tira de «¿no se ve el video?» cuelga de la tarjeta, no del
+       marco: sin esto se quedaría hablando de un video ya cerrado. */
+    var ayuda = card.querySelector('.vm-ayuda');
+    if (ayuda) ayuda.remove();
+    e.player = null; e.frame = null; e.marco = null;
+    e.terminado = false; e.adelantado = false;
+  }
+
+  /* ═══════════ REPRODUCIR ═══════════ */
+  function reproducir(card, v, ctx) {
+    if (card.querySelector('.vm-marco iframe')) return;   // ya está sonando
+
+    cerrarOtros(card);
+
+    var marco = huecoDe(card);
+    var estado = estadoDe(card);
+
+    /* Si había un quiz abierto en esta misma tarjeta, se retira: lo que
+       se ha pedido es ver el video, y la tapa lo cubre entero. */
+    var tapa = marco.querySelector('.vm-tapa');
+    if (tapa) { tapa.remove(); marco.classList.remove('vm-marco-quiz'); }
+    estado.terminado = false;
+    estado.adelantado = false;
+
     var frame = document.createElement('iframe');
     frame.setAttribute('title', v.titulo);
     frame.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture');
@@ -447,99 +583,51 @@
        de la misión para servir el video. */
     frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
     frame.setAttribute('src', direccion(v));   // ← el único atributo con dato
-    marco.appendChild(frame);
-
-    /* La fachada se va y el reproductor ocupa su sitio exacto. No se
-       esconde con hidden: dejarla debajo mantiene viva su miniatura y
-       un hueco de 16/9 de más al final de la tarjeta. */
-    card.replaceChild(marco, fachada);
-
-    /* Lo que sabe este video de sí mismo mientras está abierto. Antes
-       eran variables sueltas dentro de `vigilar`, y dejaron de servir en
-       cuanto el alumno pudo contestar el quiz SIN esperar al final: el
-       botón de contestar vive fuera de `vigilar` y necesita el mismo
-       reproductor para callarlo, y la misma marca de «ya se tapó» para
-       que el final no vuelva a taparlo encima. */
-    var estado = { player: null, terminado: false, adelantado: false, frame: frame, aviso: null };
-
-    /* EL AVISO DEL QUIZ, debajo del reproductor. Aquí estaba el aviso de
-       Brave, que ahora se dice una sola vez arriba de la sección. */
-    if (v.preguntas && v.preguntas.length) {
-      estado.aviso = avisoQuiz(marco, v, ctx, estado);
-      card.querySelector('.vm-cuerpo').appendChild(estado.aviso);
-      /* Y la marca de la tarjeta se calla: servía para elegir video en la
-         lista, y el aviso de debajo dice lo mismo con más detalle. Dos
-         veces «2 preguntas» en la misma tarjeta es la repetición que se
-         acaba de quitar del aviso de Brave, en pequeño. */
-      var chip = card.querySelector('.vm-quiz-chip');
-      if (chip) chip.hidden = true;
-    }
+    /* Delante de todo lo que ya hubiera dentro del marco, para que la
+       tapa del final siga cayendo ENCIMA. */
+    marco.insertBefore(frame, marco.firstChild);
+    estado.frame = frame;
 
     marcarVisto(ctx.mision, v);
-    visto.hidden = false;
+    if (card.__vmVisto) card.__vmVisto.hidden = false;
 
     vigilar(marco, frame, v, ctx, estado);
   }
 
-  /* ═══════════ EL AVISO DEL QUIZ, Y CONTESTAR SIN LLEGAR AL FINAL ═══
-     Pedido por el autor el 28 de agosto de 2026, y no es una comodidad:
-     es que la tapa del final SOLO cae cuando YouTube dice que el video
-     terminó, y hay videos que no se terminan nunca. El alumno que ya
-     entendió lo suyo en el minuto dos se sale de la sección; el que
-     pierde la señal a mitad, también. Los dos se quedaban sin las
-     preguntas —y el maestro, sin el dato de la Evidencia, que es lo
-     único que esa sección le devuelve—.
-
-     Tres cosas, y las tres hacen falta:
-
-       · SE ANUNCIA. Un quiz que aparece de golpe al final es una
-         sorpresa; anunciado, el alumno mira el video sabiendo que
-         después hay que contar algo, que es justo lo que hace que lo
-         mire con atención.
-       · SE PUEDE CONTESTAR YA, sin verlo entero. Es lo que pidió el
-         autor con estas palabras: «hay usuarios que podrían no ver el
-         video hasta el final».
-       · AL ABRIRLO, EL VIDEO SE CALLA. Un video sonando detrás de las
-         preguntas es la forma más rápida de que no se conteste ninguna;
-         y si la API de YouTube no llegó, se le manda igual el mensaje
-         de pausa, que el reproductor entiende de fábrica.
+  /* ═══════════ ABRIR EL QUIZ, CON VIDEO O SIN ÉL ═══════════
+     La tapa del final SOLO cae cuando YouTube dice que el video terminó,
+     y hay videos que no se terminan nunca: el alumno que ya entendió lo
+     suyo en el minuto dos, el que pierde la señal a mitad, el que abre
+     la sección solo a repasar. Los tres se quedaban sin las preguntas —y
+     el maestro, sin el dato de la Evidencia, que es lo único que esa
+     sección le devuelve—.
 
      Y NO cambia la regla de siempre: contestar no da XP. Nadie puede
      comprobar que el niño vio el video —ahora menos todavía—, y un
      puntaje que se consigue tocando un botón es un puntaje regalado. */
-  function avisoQuiz(marco, v, ctx, estado) {
-    var d = el('div', 'vm-quiz-aviso');
+  function abrirQuiz(card, v, ctx) {
+    var estado = estadoDe(card);
+    var marco = card.querySelector('.vm-marco');
 
-    var t = el('div', 'vm-quiz-aviso-txt');
-    t.appendChild(el('b', null, '🧠 Al terminar, ' + cuentaPreguntas(v) + ' sobre este video'));
-    t.appendChild(el('span', null, 'No hace falta verlo entero: puedes contestarlas cuando quieras.'));
-    d.appendChild(t);
-
-    var b = el('button', 'vm-btn vm-btn-pri', 'Responder ahora');
-    b.type = 'button';
-    /* Al toque Y al clic: la misma regla 7 de los juegos 3D. Un
-       navegador de tableta que no sintetice el clic dejaría al alumno
-       con el botón delante y sin poder tocarlo. */
-    var abriendo = false;
-    function ahora(e) {
-      if (e) e.preventDefault();
-      if (abriendo) return;
-      abriendo = true;
-      pausarVideo(estado);
-      estado.terminado = true;    // que el final no vuelva a taparlo encima
-      estado.adelantado = true;   // y que la Evidencia del maestro lo diga
-      taparFinal(marco, v, ctx, estado);
-      abriendo = false;
+    /* Ya está abierto: se trae a la vista y no se rehace. Rehacerlo
+       borraría las respuestas que el alumno acaba de marcar. */
+    if (marco && marco.querySelector('.vm-tapa')) {
+      try { marco.scrollIntoView({ block: 'nearest' }); } catch (e) { marco.scrollIntoView(); }
+      return;
     }
-    b.addEventListener('click', ahora);
-    b.addEventListener('touchend', ahora);
-    d.appendChild(b);
 
-    return d;
+    /* Cualquier otro video se calla: las preguntas no se contestan con
+       una explicación sonando en la tarjeta de al lado. */
+    cerrarOtros(card);
+    marco = huecoDe(card);
+    pausarVideo(estado);
+    estado.terminado = true;    // que el final no vuelva a taparlo encima
+    estado.adelantado = true;   // y que la Evidencia del maestro lo diga
+    taparFinal(marco, v, ctx, estado);
   }
 
   /* «3 preguntas» / «1 pregunta». Se cuenta en un solo sitio porque el
-     número sale en tres pantallas y con dos redacciones distintas
+     número sale en más de una pantalla y con dos redacciones distintas
      acabarían diciendo cosas que no cuadran. */
   function cuentaPreguntas(v) {
     var n = v.preguntas.length;
@@ -555,6 +643,7 @@
      se nombra entero en vez de '*': el mensaje no lleva nada secreto,
      pero mandarlo a quien es cuesta lo mismo. */
   function pausarVideo(estado) {
+    if (!estado || (!estado.player && !estado.frame)) return;   // no hay nada que callar
     try {
       if (estado.player && estado.player.pauseVideo) { estado.player.pauseVideo(); return; }
     } catch (e) {}
@@ -636,11 +725,10 @@
     if (marco.querySelector('.vm-tapa')) return;
     var tapa = el('div', 'vm-tapa');
 
-    /* Mientras el quiz está en pantalla, el aviso de debajo se calla:
-       ofrecer «Responder ahora» al lado de las preguntas ya abiertas no
-       dice nada y ocupa el sitio de la primera opción. Vuelve solo si
-       se le da a «Verlo otra vez». */
-    if (estado.aviso) estado.aviso.hidden = true;
+    /* El botón del quiz de la tarjeta NO se esconde aquí, y eso es lo
+       que pidió el autor: «que siempre esté visible el quiz». Con las
+       preguntas ya en pantalla deja de abrir nada y pasa a traerlas a la
+       vista, que es lo que hace falta en un texto largo. */
 
     /* SI EL VIDEO TRAE PREGUNTAS, SE PREGUNTA. Y si no, se ofrece lo de
        siempre. Mandar al alumno al Quiz de la misión era un salto raro:
@@ -674,7 +762,11 @@
   function botonesFinales(tapa, v, ctx, estado) {
     var btns = el('div', 'vm-tapa-btns');
 
-    var otra = el('button', 'vm-btn', '▶ Verlo otra vez');
+    /* Si nunca llegó a abrirse el video —el quiz se puede resolver sin
+       verlo—, el botón no puede prometer «otra vez». Dice lo que de
+       verdad va a pasar. */
+    var yaVisto = !!(estado.player || estado.frame);
+    var otra = el('button', 'vm-btn', yaVisto ? '▶ Verlo otra vez' : '▶ Ver el video');
     otra.type = 'button';
     otra.addEventListener('click', function () {
       /* El marco recupera su proporción de video: si se quedara con el
@@ -690,9 +782,15 @@
          exactamente lo que esta sección existe para evitar. */
       estado.terminado = false;
       estado.adelantado = false;
-      if (estado.aviso) estado.aviso.hidden = false;
-      try { estado.player.seekTo(v.ini || 0, true); estado.player.playVideo(); }
-      catch (e) { /* si la API se cayó, al menos la tapa se quitó */ }
+      if (estado.player) {
+        try { estado.player.seekTo(v.ini || 0, true); estado.player.playVideo(); }
+        catch (e) { /* si la API se cayó, al menos la tapa se quitó */ }
+      } else if (m) {
+        /* El quiz se abrió sin haber visto el video: ahora se pone de
+           verdad, en el mismo hueco que ya está en pantalla. */
+        var tarj = m.closest ? m.closest('.vm-card') : m.parentNode;
+        if (tarj) reproducir(tarj, v, ctx);
+      }
     });
     btns.appendChild(otra);
 
@@ -742,10 +840,12 @@
         final de un video es la forma más rápida de que no se abra
         ningún video más.
 
-     6. Y SE PUEDE CONTESTAR SIN LLEGAR AL FINAL. Añadida el 28 de
-        agosto de 2026: la tapa solo cae cuando YouTube dice que el
-        video terminó, y hay videos que no se terminan nunca. Ver
-        `avisoQuiz()`. */
+     6. Y SE PUEDE CONTESTAR SIN LLEGAR AL FINAL, incluso sin haber
+        abierto el video. Añadida el 28 de agosto de 2026: la tapa solo
+        cae cuando YouTube dice que el video terminó, y hay videos que no
+        se terminan nunca. El botón «🧠 Resuelve el Quiz» de la tarjeta
+        está siempre a la vista y no se esconde en ningún momento. Ver
+        `botonQuiz()` y `abrirQuiz()`. */
   function quizDelVideo(tapa, marco, v, ctx, estado) {
     var i = 0, aciertos = 0, contestada = false;
 

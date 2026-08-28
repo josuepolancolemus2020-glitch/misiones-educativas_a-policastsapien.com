@@ -36,12 +36,17 @@
      repetido seis veces no se lee seis veces: se deja de leer la
      primera.
 
-   · QUE EL QUIZ SE ANUNCIE Y SE PUEDA CONTESTAR SIN LLEGAR AL FINAL.
-     La tapa solo cae cuando YouTube dice que el video terminó, y hay
-     videos que no se terminan nunca. Y la que más cuesta: que «Verlo
-     otra vez» DEVUELVA la tapa del final, porque si no, quien contestó
-     por adelantado se queda con la parrilla de sugerencias de YouTube
-     en la pantalla.
+   · QUE SOLO SUENE UN VIDEO. Dos abiertos son dos audios a la vez, y
+     en un aula con tres teléfonos prestados eso pasa el primer día.
+     Al abrir uno se cierra el anterior, y el cerrado tiene que volver a
+     su miniatura y poder abrirse otra vez.
+
+   · QUE EL BOTÓN DEL QUIZ NO SE ESCONDA NUNCA, y que abra las preguntas
+     SIN abrir el video —ni gastar datos—. La tapa solo cae cuando
+     YouTube dice que el video terminó, y hay videos que no se terminan
+     nunca. Y la que más cuesta: que después de resolverlo por
+     adelantado, ver el video y llegar al final DEVUELVA la tapa, porque
+     si no, se queda la parrilla de sugerencias de YouTube en pantalla.
 
    · QUE SI NO LLEGA LA API DE YOUTUBE NO SE TAPE NADA. El video puede
      estar viéndose perfectamente; taparlo sería el peor fallo posible.
@@ -440,19 +445,66 @@ function revisarMontajes() {
     await ctx.close();
   }
 
-  /* ═══ 3-ter. El quiz se anuncia, y se puede contestar sin terminar ═══
-     Pedido por el autor el 28 de agosto de 2026: «hay usuarios que
-     podrían no ver el video hasta el final». La tapa del final solo cae
-     cuando YouTube dice que el video terminó, así que sin esta puerta
-     esos alumnos se quedaban sin las preguntas —y el maestro sin el dato
-     de la Evidencia, que es lo único que esa sección le devuelve—. */
-  console.log('\n3-ter. El quiz se anuncia antes, y se contesta sin llegar al final');
+  /* ═══ 3-ter. UN VIDEO A LA VEZ ═══
+     Pedido por el autor el 28 de agosto de 2026: «cuando uno se esté
+     reproduciendo que otro no se pueda reproducir». Dos videos abiertos
+     son dos audios sonando a la vez, y en un aula con tres teléfonos
+     prestados eso pasa el primer día. */
+  console.log('\n3-ter. Solo un video puede estar sonando');
+  {
+    const { ctx, page } = await abrir(nav, {
+      filas: [
+        { id: 'v1', yt: ID_A, titulo: 'Uno', nota: '', dura: '', canal: '', ini: 0, fin: 0, del: false },
+        { id: 'v2', yt: ID_B, titulo: 'Dos', nota: '', dura: '', canal: '', ini: 0, fin: 0, del: false }
+      ]
+    });
+    await page.waitForTimeout(600);
+
+    await page.click('#s-videos .vm-card:nth-child(1) .vm-fachada');
+    await page.waitForTimeout(500);
+    comprueba((await page.$$('#s-videos iframe')).length === 1, 'con el primero abierto hay UN reproductor');
+
+    await page.click('#s-videos .vm-card:nth-child(2) .vm-fachada');
+    await page.waitForTimeout(500);
+    comprueba((await page.$$('#s-videos iframe')).length === 1,
+      'al abrir el segundo sigue habiendo UNO: el primero se cerró, no se quedó sonando detrás');
+    const src = await page.getAttribute('#s-videos iframe', 'src');
+    comprueba(src.includes('/embed/' + ID_B), 'y el que queda es el que se acaba de tocar');
+
+    /* Y el primero vuelve a su fachada: si se quedara en negro, el
+       alumno creería que se rompió. */
+    const primera = await page.evaluate(() => {
+      const c = document.querySelectorAll('#s-videos .vm-card')[0];
+      return { fachada: !!c.querySelector('.vm-fachada'),
+               marco: !!c.querySelector('.vm-marco'),
+               abierta: c.classList.contains('vm-abierta') };
+    });
+    comprueba(primera.fachada && !primera.marco && !primera.abierta,
+      'y el primero recupera su miniatura, listo para volver a tocarlo');
+
+    /* Y se puede volver a él: cerrarlo no puede dejarlo muerto. */
+    await page.click('#s-videos .vm-card:nth-child(1) .vm-fachada');
+    await page.waitForTimeout(500);
+    const vuelta = await page.getAttribute('#s-videos iframe', 'src');
+    comprueba((await page.$$('#s-videos iframe')).length === 1 && vuelta.includes('/embed/' + ID_A),
+      'y volver al primero lo abre otra vez, cerrando el segundo');
+    await ctx.close();
+  }
+
+  /* ═══ 3-quater. El quiz, SIEMPRE a la vista ═══
+     Pedido el mismo día: «que siempre esté visible el quiz». Estuvo en
+     dos piezas que se escondían por turnos —una marca en la tarjeta y un
+     aviso bajo el reproductor—; ahora es un botón único que no se
+     esconde nunca y que abre las preguntas incluso sin haber abierto el
+     video. La tapa del final solo cae cuando YouTube dice que el video
+     terminó, y hay videos que no se terminan nunca. */
+  console.log('\n3-quater. El botón del quiz no se esconde nunca');
   {
     const PREG = [
       { p: '¿Cuál es el denominador?', ops: ['El de abajo', 'El de arriba'], ok: 0 },
       { p: '¿Qué representa el numerador?', ops: ['Las partes que se toman', 'El total'], ok: 0 }
     ];
-    const { ctx, page } = await abrir(nav, {
+    const { ctx, page, pedidos } = await abrir(nav, {
       filas: [
         { id: 'v1', yt: ID_A, titulo: 'Con preguntas', nota: '', dura: '', canal: '',
           ini: 0, fin: 0, del: false, preguntas: PREG },
@@ -462,56 +514,51 @@ function revisarMontajes() {
     });
     await page.waitForTimeout(600);
 
-    /* La tarjeta lo dice ANTES de abrir el video: quien va con prisa
-       elige sabiendo cuál de los dos le va a preguntar algo. */
-    const chips = await page.$$eval('#s-videos .vm-card',
-      ns => ns.map(n => { const c = n.querySelector('.vm-quiz-chip'); return c ? c.textContent : ''; }));
-    comprueba(/2 preguntas/.test(chips[0]), 'la tarjeta avisa de las preguntas antes de tocar ▶');
-    comprueba(chips[1] === '', 'y la del video sin preguntas no dice nada');
+    const visible = async sel => page.evaluate(s => {
+      const n = document.querySelector(s);
+      return n ? getComputedStyle(n).display !== 'none' && !!n.offsetParent : false;
+    }, sel);
 
-    await page.click('#s-videos .vm-card:first-child .vm-fachada');
-    await page.waitForFunction(() => (window.__ytPlayers || []).length > 0, null, { timeout: 8000 });
-    await page.evaluate(() => window.__ytPlayers[0].listo());
-    await page.waitForTimeout(300);
-
-    const aviso = await page.$('#s-videos .vm-card:first-child .vm-quiz-aviso');
-    comprueba(!!aviso, 'con el video abierto, el aviso del quiz sale debajo del reproductor');
-    const chipFuera = await page.evaluate(() => {
-      const n = document.querySelector('#s-videos .vm-card:first-child .vm-quiz-chip');
-      return n ? getComputedStyle(n).display : 'none';
-    });
-    comprueba(chipFuera === 'none',
-      'y la marca de la tarjeta se calla: no se dice «2 preguntas» dos veces');
-    comprueba(!(await page.$('#s-videos .vm-card:nth-child(2) .vm-quiz-aviso')),
+    const btn = '#s-videos .vm-card:nth-child(1) .vm-quiz-btn';
+    comprueba(await visible(btn), 'el botón del quiz se ve ANTES de tocar ▶');
+    comprueba(!(await page.$('#s-videos .vm-card:nth-child(2) .vm-quiz-btn')),
       'y el video sin preguntas no lo lleva');
-    comprueba(!(await page.$('#s-videos .vm-tapa')),
-      'anunciarlo NO abre las preguntas: el video sigue corriendo');
 
-    /* Contestar sin terminar. Y el video se CALLA: uno sonando detrás
-       de las preguntas es la forma más rápida de que no se conteste
-       ninguna. */
-    await page.click('#s-videos .vm-quiz-aviso .vm-btn');
+    /* El texto: ya no explica que se puede sin ver el video —eso se ve
+       solo, porque el botón está ahí desde el principio—. */
+    const txtBtn = await page.textContent(btn);
+    comprueba(/Resuelve el Quiz/i.test(txtBtn), 'y dice simplemente «Resuelve el Quiz»: ' + txtBtn.trim());
+    const seccion = await page.textContent('#s-videos');
+    comprueba(!/no hace falta verlo|sin verlo|al final/i.test(seccion),
+      'y en la sección ya no se explica que se puede contestar sin ver el video');
+
+    /* ── SIN ABRIR EL VIDEO ──
+       Es lo que de verdad resuelve el pedido: la tapa del final solo cae
+       cuando YouTube dice que el video terminó. */
+    await page.click(btn);
+    await page.waitForTimeout(400);
+    comprueba(/Pregunta 1 de 2/.test(await page.textContent('#s-videos .vm-tapa')),
+      'tocándolo se abren las preguntas sin haber abierto el video');
+    comprueba((await page.$$('#s-videos iframe')).length === 0,
+      'y NO se abre ningún reproductor: resolver el quiz no gasta datos');
+    comprueba(pedidos.filter(u => /youtube-nocookie|iframe_api/.test(u)).length === 0,
+      'ni sale una sola petición hacia YouTube');
+    comprueba(await visible(btn), 'y el botón SIGUE a la vista con las preguntas en pantalla');
+
+    /* Tocarlo otra vez no rehace el quiz: borraría lo ya contestado. */
+    await page.click('#s-videos .vm-quiz-op:nth-child(1)');
+    await page.waitForTimeout(200);
+    await page.click(btn);
     await page.waitForTimeout(300);
-    const tapa = await page.textContent('#s-videos .vm-tapa');
-    comprueba(/Pregunta 1 de 2/.test(tapa),
-      'y «Responder ahora» abre el quiz sin haber llegado al final');
-    const pausado = await page.evaluate(() => (window.__ytPlayers[0] || {})._pause > 0);
-    comprueba(pausado, 'al abrirlo, el video se pausa');
-    const avisoVisible = await page.evaluate(() => {
-      const n = document.querySelector('#s-videos .vm-quiz-aviso');
-      return n ? getComputedStyle(n).display : 'none';
-    });
-    comprueba(avisoVisible === 'none',
-      'y el aviso se calla mientras las preguntas están en pantalla');
+    comprueba(!!(await page.$('#s-videos .vm-quiz-bien')),
+      'y volver a tocarlo NO reinicia lo contestado: solo trae el quiz a la vista');
 
-    /* Contestar las dos y comprobar que queda apuntado que NO lo vio
-       entero: al maestro le cambia la lectura del dato. */
-    await page.click('#s-videos .vm-quiz-op:nth-child(1)');
-    await page.waitForTimeout(150);
+    /* Se termina y queda en la Evidencia como «sin terminar»: el maestro
+       tiene que poder distinguirlo de un video visto entero. */
     await page.click('#s-videos .vm-quiz-pie .vm-btn-pri');
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(200);
     await page.click('#s-videos .vm-quiz-op:nth-child(1)');
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(200);
     await page.click('#s-videos .vm-quiz-pie .vm-btn-pri');
     await page.waitForTimeout(300);
     const ev = await page.evaluate(() => {
@@ -522,26 +569,27 @@ function revisarMontajes() {
       } catch (e) { return []; }
     });
     comprueba(ev.length === 1 && ev[0] === '2/2 sin terminar',
-      'y en la Evidencia queda que contestó sin ver el video entero: ' + (ev[0] || 'nada'));
+      'y en la Evidencia queda que contestó sin ver el video: ' + (ev[0] || 'nada'));
 
-    /* ⚠️ LA QUE MÁS CUESTA: «Verlo otra vez» tiene que devolver la tapa
-       del final. Sin desmarcar el «ya se tapó», el alumno que contestó
-       por adelantado se quedaba SIN TAPA al acabar el video de verdad, y
-       ahí YouTube pinta su parrilla de sugerencias con «Ver en YouTube»
-       —que es exactamente lo que esta sección existe para evitar—. */
-    await page.click('#s-videos .vm-tapa .vm-btn');    // ▶ Verlo otra vez
-    await page.waitForTimeout(300);
-    comprueba(!(await page.$('#s-videos .vm-tapa')), 'al verlo otra vez, la tapa se retira');
-    const vuelve = await page.evaluate(() => {
-      const n = document.querySelector('#s-videos .vm-quiz-aviso');
-      return n ? getComputedStyle(n).display : 'none';
-    });
-    comprueba(vuelve !== 'none', 'y el aviso del quiz vuelve');
+    /* Y desde ahí se puede ver el video, que es lo que el botón promete:
+       nunca llegó a abrirse, así que no puede decir «otra vez». */
+    const tapaTxt = await page.textContent('#s-videos .vm-tapa');
+    comprueba(/Ver el video/.test(tapaTxt) && !/otra vez/i.test(tapaTxt),
+      'el botón de la tapa dice «Ver el video», no «Verlo otra vez»');
+    await page.click('#s-videos .vm-tapa .vm-btn');
+    await page.waitForTimeout(600);
+    comprueba((await page.$$('#s-videos iframe')).length === 1,
+      'y ahí sí se abre el reproductor');
+    comprueba(await visible(btn), 'con el botón del quiz todavía a la vista');
 
-    await page.evaluate(() => window.__ytPlayers[0].terminar());
-    await page.waitForTimeout(300);
+    /* ⚠️ Y la tapa del final vuelve: quien resolvió el quiz por
+       adelantado y después ve el video no puede quedarse con la parrilla
+       de sugerencias de YouTube en pantalla. */
+    await page.waitForFunction(() => (window.__ytPlayers || []).length > 0, null, { timeout: 8000 });
+    await page.evaluate(() => { window.__ytPlayers[0].listo(); window.__ytPlayers[0].terminar(); });
+    await page.waitForTimeout(400);
     comprueba(!!(await page.$('#s-videos .vm-tapa')),
-      'y al acabar de verdad, la tapa VUELVE a cubrir la parrilla de YouTube');
+      'y al acabar de verdad la tapa VUELVE a cubrir la parrilla de YouTube');
     await ctx.close();
   }
 
