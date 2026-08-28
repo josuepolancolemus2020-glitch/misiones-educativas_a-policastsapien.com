@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v162';
+const CACHE_NAME = 'meta-app-v163';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
@@ -28,6 +28,15 @@ const STATIC_ASSETS = [
   // cargador, sin telón y sin CSS, o sea en blanco.
   './js/3d/parque-3d.js',
   './css/parque-3d.css',
+  // La sección 🎬 Videos de las misiones. Sin estos cuatro, la sección
+  // no se pinta sin internet y el alumno ve un hueco en vez de la lista
+  // de lo que hay —que sí se puede enseñar sin señal, porque viene
+  // guardada—. Los VIDEOS necesitan conexión y la pantalla lo dice; la
+  // lista, no.
+  './js/videos-mision.js',
+  './css/videos-mision.css',
+  './js/data/videos-misiones.js',
+  './js/metas-videos.js',
   './padres.html',
   './salida.html',
   './buzon.html',

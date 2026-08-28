@@ -1734,6 +1734,123 @@ toca: se pone un Supabase de mentira con `page.route`.
 La otra mitad —la bandeja donde cae todo esto, el QR y el paso de envío a
 nota— vive en el repositorio de la revista, con su propia sonda.
 
+## Normativa: los videos de una misión los pone F.A.R.O, no el alumno
+
+**Pedido por el autor el 28 de agosto de 2026**, estrenado en «Las
+Fracciones» (`misiones/2y3ciclo-fracciones/`) y con la intención dicha de
+llevarlo a las demás misiones. Por eso vive en `js/videos-mision.js` y
+`css/videos-mision.css`, y **no dentro de la misión**: es el mismo permiso
+que ya tiene el andamio de los juegos 3D, y por la misma razón. Un aparato
+copiado a cincuenta y siete misiones se arregla en una y se queda roto en
+cincuenta y seis.
+
+Qué resuelve: el alumno que no entendió el texto quiere que se lo
+expliquen. En un aula sin proyector y con tres teléfonos, «búscalo en
+YouTube» es mandarlo a una pantalla donde lo que sale después no lo
+eligió nadie.
+
+**Los videos los pone el administrador desde F.A.R.O.** Es el espejo de
+las Sugerencias: allí la pantalla pública está aquí y lo recogido cae en
+la aplicación privada; aquí se escribe allá y se lee en la pantalla del
+alumno. El otro extremo del cable es `js/tools/metas-videos.js` en el
+repositorio de F.A.R.O y la tabla `supabase/sql/metas_videos.sql`.
+
+**Y el alumno no puede agregar videos, pero eso NO lo decide esta
+pantalla.** Una comprobación en el navegador se salta con la consola en
+diez segundos. Lo que lo sostiene es que con la clave publicable que va
+en este repositorio **no existe una puerta de escritura**: lo único que
+se puede llamar es una función que lee lo publicado.
+
+### Las tres capas, y por qué son tres
+
+| capa | qué aporta | dónde |
+|---|---|---|
+| catálogo | permanente, versionado, funciona sin nube y **sin haber corrido el SQL** | `js/data/videos-misiones.js` |
+| nube | se añade un video desde la tableta y aparece sin desplegar | tabla `metas_videos`, en F.A.R.O |
+| lo guardado | la lista se ve sin señal (los videos, no) | `localStorage` |
+
+Manda la nube cuando coinciden en `id`, y una **lápida** de la nube
+quita un video escrito en el catálogo —sin eso, un video retirado desde
+F.A.R.O seguiría en pantalla—. Y **la sección dice siempre de dónde
+salió lo que enseña**: si la nube no contestó, el maestro tiene que
+poder saber que está viendo lo que traía la misión y no creer que nadie
+ha puesto nada.
+
+### Ocho reglas, y ninguna es de adorno
+
+1. ⚠️ **En `yt` van ONCE caracteres, nunca una dirección.** Ese dato
+   acaba dentro del `src` de un `<iframe>`, que es el peor sitio del
+   HTML donde puede acabar algo escrito por una persona: una comilla
+   cierra el atributo y lo que siga se convierte en un atributo de
+   verdad. En vez de escapar mejor, se le quita al dato la capacidad de
+   hacer daño: en `[A-Za-z0-9_-]` no hay comillas, ni espacios, ni dos
+   puntos, ni barras, así que **`javascript:` no se puede ni escribir**.
+   Lo comprueban `vmId()` aquí y el `check` de la columna allá; las dos
+   hacen falta, porque la pantalla no puede fiarse de la base y la base
+   no puede fiarse de la pantalla.
+2. **Hay fachada: hasta que el alumno no toca ▶ no sale UNA SOLA
+   petición hacia YouTube.** Seis videos serían seis reproductores y
+   varios megas en la conexión de un pueblo, por una sección que a lo
+   mejor nadie abre.
+3. **Al terminar el video cae una tapa nuestra.** Es lo que cumple «que
+   no salga de la misión»: al acabar, YouTube pinta su parrilla de
+   sugerencias con «Ver en YouTube», y por ahí se va el niño. La tapa
+   ofrece verlo otra vez y seguir al Quiz, y **no ofrece salir a
+   YouTube**.
+4. **Si la API de YouTube no llega, NO se tapa nada.** El video puede
+   estar viéndose perfectamente; taparlo sería el peor fallo posible.
+   Solo queda una tira pequeña debajo por si no se ve. Se pierde la
+   tapa del final, y eso se acepta a cambio de no romper lo que
+   funciona.
+5. **Cuando el video no se puede ver, la pantalla lo DICE**, con el
+   motivo de verdad (el dueño no lo deja incrustar, el video ya no
+   existe, la red lo bloquea). Un cuadro negro y mudo parece la
+   aplicación rota, y una aplicación que parece rota no se vuelve a
+   abrir. Es la misma regla de los juegos 3D. Y **solo ahí** aparece la
+   salida a YouTube: ofrecerla siempre sería poner la puerta de salida
+   al lado del video.
+6. **Los anuncios NO se pueden quitar, y no se finge.** No existe un
+   parámetro de YouTube que lo haga y `youtube-nocookie.com` corta el
+   rastreo, no la publicidad. Lo que se hace es recortar el video
+   (`ini`/`fin`), elegir canales que no monetizan, y avisar de **Brave**,
+   que es un **navegador** —no un buscador— que sí los bloquea. El aviso
+   va siempre a la vista bajo el reproductor, porque quien lo instala es
+   el maestro o la familia y solo se acuerdan de mirarlo el día que sale
+   un anuncio.
+7. **Ver un video no da XP ni marca la sección como hecha.** Nadie puede
+   comprobar que el niño lo miró, y un puntaje que se consigue dándole
+   al play y yéndose es un puntaje regalado. Sí queda apuntado en la
+   Evidencia del maestro: un video abierto le dice que el tema no se
+   entendió con el texto.
+8. **La clave del catálogo es de cada misión.** Al copiar el bloque a
+   otra misión se hereda, y dos misiones acabarían compartiendo videos.
+   Es la misma trampa que la clave del almacén de la repisa de enlaces
+   de F.A.R.O, y la sonda la mira.
+
+### Cómo se monta en una misión nueva
+
+Tres cosas, y ninguna toca el aparato. Están escritas al final de
+`js/videos-mision.js`: el `<link>` del CSS **después** del de la misión
+(se tiñe de su `--pri` y su `--sec`), el bloque `#s-videos` con su
+pestaña, y los tres `<script>` al final con la llamada a
+`VideosMision.montar(...)`.
+
+**Antes de publicar un cambio de los videos:**
+
+```
+node _dev/servidor-estatico.js       (en otra terminal)
+node _dev/verifica-videos-mision.js
+```
+
+Vigila lo que cuesta caro: que por el `src` del iframe no pase nada que
+no sean once caracteres (se le tiran nueve direcciones envenenadas), que
+el alumno no tenga dónde escribir, que no se llame a YouTube hasta que
+toque ▶, que la tapa del final **tape de verdad** —se pregunta quién
+recibiría un toque en el centro del video, que es el mismo guardián que
+caza el lienzo derramado de los juegos 3D—, que sin API no se tape nada,
+que la nube pise al catálogo y la lápida quite, y que ver un video no
+toque el progreso de la misión.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo

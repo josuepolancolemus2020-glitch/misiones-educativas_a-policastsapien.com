@@ -1,0 +1,348 @@
+/* =====================================================================
+   M.E.T.A.S — css/videos-mision.css
+   La sección 🎬 Videos de una misión.
+
+   APARATO COMPARTIDO, NO COPIADO. Va a acabar en las 57 misiones y
+   siguen entrando: copiarlo significa arreglarlo en una y dejarlo roto
+   en cincuenta y seis. Es la misma razón por la que existen
+   `css/parque-3d.css` y `js/3d/parque-3d.js`.
+
+   SE TIÑE DE LA MISIÓN. Aquí no hay ni un color escrito: todo sale de
+   los tokens que la misión ya declaró (--pri, --sec, --card, --border,
+   --dark, --gray, --shadow). Por eso este archivo se enlaza DESPUÉS
+   del CSS de la misión; al revés, no hay tokens todavía.
+   ===================================================================== */
+
+/* ⚠️ POR QUÉ CASI TODO CUELGA DE `.vm-raiz`
+   ------------------------------------------
+   Este aparato se monta DENTRO de una misión, y cada misión trae su
+   propia hoja de estilos con reglas como `.card p { color: … }`. Esa
+   regla tiene más especificidad (0-1-1) que un `.vm-origen` a secas
+   (0-1-0), así que le gana: el aparato vive dentro de una `.card`.
+
+   El primer síntoma fue el título de la tapa del final saliendo GRIS
+   SOBRE NEGRO —ilegible— y lo cazó una captura de pantalla, no una
+   sonda. Con 57 misiones y 57 hojas distintas por delante, eso no se
+   arregla mirando cada una: se arregla llevando ventaja de partida.
+
+   `.vm-raiz` la pone `montar()` en el destino. Todo lo que declara
+   COLOR o TAMAÑO DE LETRA cuelga de ella; la geometría (rejilla,
+   proporciones, bordes) no lo necesita, porque ninguna misión declara
+   reglas para clases `.vm-*`. */
+
+/* ── La rejilla de tarjetas ────────────────────────────────────────
+   Una columna en el teléfono. Dos solo a partir de 700 px, que es
+   donde de verdad caben: a 600 px las tarjetas quedan tan estrechas
+   que el título se parte en cuatro renglones. */
+.vm-lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+@media (min-width: 700px) {
+  .vm-lista { grid-template-columns: repeat(2, 1fr); }
+  /* El que se está viendo ocupa el ancho entero: un reproductor a
+     media columna en una tableta es más pequeño que en el teléfono. */
+  .vm-card.vm-abierta { grid-column: 1 / -1; }
+}
+
+.vm-card {
+  background: var(--card, #fff);
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.vm-card.vm-abierta {
+  border-color: var(--pri, #c2255c);
+  box-shadow: 0 6px 24px var(--shadow, rgba(0,0,0,0.12));
+}
+
+/* ── La fachada ────────────────────────────────────────────────────
+   Lo que se ve ANTES de tocar. Y es lo único que se ve: hasta que el
+   alumno toca ▶ no sale ni una petición hacia YouTube.
+
+   No es una optimización de lujo. Seis videos son seis reproductores
+   y varios megas; con la conexión de un pueblo, la misión entera se
+   arrastra por una sección que a lo mejor nadie abre. */
+.vm-fachada {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  background: linear-gradient(135deg, var(--pri, #c2255c), var(--sec, #0f9b8e));
+  overflow: hidden;
+}
+/* La miniatura es de YouTube, así que es una petición a un tercero:
+   va perezosa y, si no llega (sin señal), se esconde sola y queda el
+   degradado de la misión debajo. Nunca un hueco roto. */
+.vm-mini {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+.vm-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  font-size: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  /* El círculo va sobre la miniatura, que puede ser de cualquier color:
+     sin este borde blanco desaparece sobre un fondo oscuro. */
+  border: 3px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+.vm-fachada:hover .vm-play,
+.vm-fachada:focus-visible .vm-play { background: var(--pri, #c2255c); }
+
+/* La duración, encima de la miniatura y abajo a la derecha, que es
+   donde YouTube la pone y donde el alumno ya la busca. */
+.vm-raiz .vm-dura {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+
+/* ── El hueco del reproductor ──────────────────────────────────────
+   `position: relative` no es de adorno: la tapa del final y el panel
+   de «no se pudo abrir» se anclan aquí dentro. */
+.vm-marco {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.vm-marco iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ── Lo escrito de la tarjeta ──────────────────────────────────────*/
+.vm-cuerpo { padding: 0.85rem 1rem 1rem; }
+.vm-raiz .vm-titulo {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--dark, #1a202c);
+  line-height: 1.3;
+  margin: 0 0 0.3rem;
+}
+.vm-raiz .vm-canal { font-size: 0.8rem; color: var(--gray, #718096); margin: 0 0 0.5rem; }
+/* La nota del maestro va con la franja de color a la izquierda: es lo
+   único de la tarjeta que escribió una persona que conoce al alumno, y
+   sin destacarla se lee como pie de foto. */
+.vm-raiz .vm-nota {
+  font-size: 0.9rem;
+  color: var(--dark, #1a202c);
+  background: var(--pri-gl, rgba(194,37,92,0.10));
+  border-left: 4px solid var(--pri, #c2255c);
+  border-radius: 0 8px 8px 0;
+  padding: 0.5rem 0.7rem;
+  margin: 0.5rem 0 0;
+  line-height: 1.45;
+}
+.vm-raiz .vm-visto {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--sec, #0f9b8e);
+  margin-top: 0.5rem;
+}
+/* ⚠️ ESTA LÍNEA NO ES DE ADORNO, y el fallo se vio con los OJOS, no con
+   la sonda. El atributo `hidden` esconde con un `display:none` que viene
+   de la hoja del navegador, y esa hoja PIERDE contra cualquier `display`
+   escrito aquí: el `inline-block` de arriba lo pisaba. El resultado era
+   que TODOS los videos salían con «✓ Ya lo viste» puesto, incluidos los
+   que el alumno no había abierto nunca. Un rótulo que miente sobre lo
+   que uno hizo es peor que no tenerlo. */
+.vm-raiz .vm-visto[hidden] { display: none; }
+
+/* ── La tapa del final ─────────────────────────────────────────────
+   ESTO ES LO QUE CUMPLE «que no salga de la misión».
+
+   Al acabar un video, YouTube pinta encima una parrilla de sugerencias
+   con «Ver en YouTube». Por ahí se va el niño, y lo siguiente que ve no
+   lo eligió ningún maestro. Esta capa cae en el MISMO instante en que
+   el reproductor dice que terminó, y cubre esa parrilla entera. */
+.vm-tapa {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, rgba(0,0,0,0.93), rgba(0,0,0,0.97));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1rem;
+  text-align: center;
+  /* Por encima del iframe, que Three.js no es el único que pinta donde
+     no le toca: el reproductor de YouTube también se estira. */
+  z-index: 4;
+  /* Con la letra del sistema grande esto no cabe, y lo de dentro es
+     justo lo que hay que poder tocar. Se desplaza por dentro antes que
+     salirse, que es la regla 8 de los juegos 3D. */
+  overflow-y: auto;
+}
+.vm-raiz .vm-tapa-tit {
+  color: #fff;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+/* Las filas de botones BAJAN DE LÍNEA. Salirse por la derecha no tiene
+   arreglo: ahí no hay desplazamiento que valga. Misma lección que los
+   velos de los juegos 3D. */
+.vm-tapa-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+/* ── Botones ───────────────────────────────────────────────────────
+   44 px de alto mínimo: es lo que un dedo acierta sin mirar. */
+.vm-raiz .vm-btn {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--border, #e2e8f0);
+  background: var(--card, #fff);
+  color: var(--dark, #1a202c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.vm-raiz .vm-btn:hover { transform: translateY(-1px); }
+.vm-raiz .vm-btn-pri {
+  background: linear-gradient(135deg, var(--pri, #c2255c), var(--sec, #0f9b8e));
+  color: #fff;
+  border-color: transparent;
+}
+.vm-raiz .vm-tapa .vm-btn { background: rgba(255,255,255,0.94); border-color: transparent; }
+.vm-raiz .vm-tapa .vm-btn-pri { background: linear-gradient(135deg, var(--pri, #c2255c), var(--sec, #0f9b8e)); color: #fff; }
+
+/* ── Cuando el video no se puede ver ───────────────────────────────
+   Sin señal, con la red de la escuela bloqueando YouTube, o porque el
+   dueño del video quitó el permiso de incrustar.
+
+   Un cuadro negro y mudo parece la aplicación rota, y una aplicación
+   que parece rota no se vuelve a abrir. Es la misma regla que los
+   juegos 3D: «Sin red, la pantalla lo DICE». */
+.vm-raiz .vm-fallo {
+  position: absolute;
+  inset: 0;
+  background: var(--card, #fff);
+  color: var(--dark, #1a202c);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 1rem;
+  text-align: center;
+  z-index: 5;
+  overflow-y: auto;
+}
+.vm-raiz .vm-fallo-tit { font-weight: 700; font-size: 1rem; }
+.vm-raiz .vm-fallo-txt { font-size: 0.87rem; color: var(--gray, #718096); max-width: 34ch; line-height: 1.45; }
+
+/* ── El aviso de Brave ─────────────────────────────────────────────
+   YouTube pone anuncios también en los videos incrustados y no hay
+   forma de quitarlos desde aquí: no existe un parámetro que lo haga.
+   Lo único que de verdad funciona es abrir M.E.T.A.S dentro de un
+   navegador que los bloquee.
+
+   Va discreto y SIEMPRE a la vista bajo el reproductor, no escondido
+   en un menú: quien tiene que leerlo es el maestro o la familia —los
+   que instalan el navegador—, y solo se les ocurre mirarlo el día que
+   sale un anuncio. */
+.vm-raiz .vm-brave {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--gray, #718096);
+  background: var(--card, #fff);
+  border: 1px dashed var(--border, #e2e8f0);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem;
+  margin-top: 0.7rem;
+}
+.vm-raiz .vm-brave a { color: var(--pri, #c2255c); font-weight: 700; }
+
+/* ── Estados de la sección entera ──────────────────────────────────*/
+.vm-raiz .vm-estado {
+  border: 2px dashed var(--border, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.3rem 1.1rem;
+  text-align: center;
+  color: var(--gray, #718096);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.vm-raiz .vm-estado b { color: var(--dark, #1a202c); display: block; margin-bottom: 0.3rem; font-size: 1rem; }
+
+/* De dónde salió la lista. Se enseña SIEMPRE y sin eufemismos: si los
+   videos vienen escritos en la misión y la nube no contestó, el alumno
+   (y sobre todo el maestro) tiene que poder saberlo, en vez de creer
+   que el administrador no ha puesto nada. */
+.vm-raiz .vm-origen {
+  font-size: 0.76rem;
+  color: var(--gray, #718096);
+  margin-top: 0.9rem;
+  text-align: right;
+}
+
+/* Sin conexión, la lista se ve igual (viene guardada) pero los videos
+   no se van a poder abrir. Decirlo ARRIBA evita seis toques que no
+   llevan a ninguna parte. */
+.vm-raiz .vm-sinred {
+  background: rgba(230, 126, 34, 0.13);
+  border: 1px solid rgba(230, 126, 34, 0.45);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.86rem;
+  color: var(--dark, #1a202c);
+  margin-bottom: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vm-card, .vm-btn { transition: none; }
+  .vm-btn:hover { transform: none; }
+}
