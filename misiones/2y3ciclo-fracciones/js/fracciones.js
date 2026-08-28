@@ -504,8 +504,18 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
 .forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}${Fr.css}.fr{font-size:0.8em;margin:0 0.06em;line-height:1;}.fr>b{padding:0 0.12em;}.fr>b.fd{border-top-width:0.075em;margin-top:0.02em;padding-top:0.02em;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Fracciones · Educación Básica · Matemáticas</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Fracciones · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
-
 // ===================== PRUEBA OPERATIVA (FRACCIONES) =====================
+/* Esta prueba pregunta LO QUE LA MISIÓN ENSEÑA, y en el mismo orden en que se
+   aprende: primero se ve la fracción en un dibujo (parte de un todo), después
+   se le pone nombre y se convierte, luego se reduce, se opera, se ordena y por
+   último se usa para resolver algo de la vida.
+
+   Antes traía cinco bloques de rellenar huecos —operar, simplificar, comparar,
+   completar la equivalente y ordenar— y tres de ellos preguntaban casi lo
+   mismo, mientras que la mitad de la misión no salía por ninguna parte: el
+   dibujo de la parte pintada, la fracción impropia y su número mixto, y los
+   problemas del recreo. Un examen operativo que no puede preguntar «¿cuánta
+   pizza se comieron entre los dos?» está midiendo otra cosa. */
 function evalSwitchMode(mode){
   sfx('click');
   const cWrap=document.getElementById('evalConceptWrap'),oWrap=document.getElementById('evalOpWrap');
@@ -530,6 +540,7 @@ function _simplifyFrac(n,d){const g=_gcdFrac(n,d);return{n:n/g,d:d/g};}
 function _fracStr(n,d){const s=_simplifyFrac(n,d);return s.d===1?String(s.n):s.n+'/'+s.d;}
 function _fracVal(n,d){return n/d;}
 function _randSimpleFrac(){const d=_fracDenomPool[_rint(0,_fracDenomPool.length-1)];const n=_rint(1,d-1);return{n,d};}
+function _unoDe(arr){return arr[_rint(0,arr.length-1)];}
 function _parseFrac(str){
   if(str===null||str===undefined)return null;
   str=str.toString().trim();
@@ -545,10 +556,33 @@ function _parseFrac(str){
   if(isNaN(v))return null;
   return{n:v,d:1};
 }
+/* El número mixto se teclea de las cuatro maneras en que se escribe a mano:
+   «1 3/4», «1  3/4», «1 y 3/4» y «1-3/4». La que NO se acepta es «13/4»
+   pegado: eso son trece cuartos, y darlo por bueno le enseñaría al alumno que
+   el entero y el numerador se escriben juntos. */
+function _parseMixto(str){
+  if(str===null||str===undefined)return null;
+  const t=str.toString().trim().replace(/\s+y\s+/i,' ').replace(/-/g,' ');
+  const m=t.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+  if(!m)return null;
+  const e=parseInt(m[1],10),n=parseInt(m[2],10),d=parseInt(m[3],10);
+  if(!d)return null;
+  return{e,n,d};
+}
 function isFracCorrect(student,expectedStr){
   const s=_parseFrac(student),e=_parseFrac(expectedStr);
   if(!s||!e)return false;
   return Math.abs(s.n*e.d-e.n*s.d)<1e-6;
+}
+/* «Escríbela como número mixto» pide DOS cosas y las dos se califican: que
+   valga lo mismo y que esté escrita como mixto de verdad —con su entero y con
+   la parte fraccionaria menor que el entero—. Un 7/4 escrito otra vez como
+   7/4 vale lo mismo y no es la respuesta a lo que se preguntó. */
+function isMixtoCorrect(student,expected){
+  const s=_parseMixto(student);
+  if(!s)return false;
+  if(s.e<1||s.n<1||s.n>=s.d)return false;
+  return Math.abs((s.e*s.d+s.n)*expected.d-(expected.e*expected.d+expected.n)*s.d)<1e-6;
 }
 function isSimplifyCorrect(student,expectedStr){
   const s=_parseFrac(student),e=_parseFrac(expectedStr);
@@ -565,6 +599,158 @@ function isOpNumCorrect(student,expectedStr){
   return Math.abs(sn-en)<1e-6;
 }
 
+/* ---- El dibujo de la fracción ----
+   La misión empieza enseñando la fracción como PARTE DE UN TODO —el pastel
+   partido en cuatro con tres pedazos pintados—, y eso no se puede preguntar
+   con texto. Va en SVG y NO con fondos de CSS: el relleno de un SVG se imprime
+   siempre, mientras que un fondo de CSS desaparece cuando el navegador imprime
+   «sin gráficos de fondo», que es como sale de casi todas las computadoras de
+   un centro educativo. La parte pintada ES la pregunta: si sale en blanco, la
+   hoja no se puede contestar. */
+const FIG_PINTA='#1565c0',FIG_VACIO='#ffffff',FIG_LINEA='#0d3b7a';
+function _figSvg(f,px){
+  const t=`role="img" aria-label="${f.n} de ${f.d} partes"`;
+  if(f.tipo==='circulo'){
+    const R=44,cx=50,cy=50,piezas=[];
+    for(let i=0;i<f.d;i++){
+      const a1=(-90+i*360/f.d)*Math.PI/180,a2=(-90+(i+1)*360/f.d)*Math.PI/180;
+      const x1=(cx+R*Math.cos(a1)).toFixed(2),y1=(cy+R*Math.sin(a1)).toFixed(2);
+      const x2=(cx+R*Math.cos(a2)).toFixed(2),y2=(cy+R*Math.sin(a2)).toFixed(2);
+      const grande=(360/f.d)>180?1:0;
+      piezas.push(`<path d="M ${cx} ${cy} L ${x1} ${y1} A ${R} ${R} 0 ${grande} 1 ${x2} ${y2} Z" fill="${i<f.n?FIG_PINTA:FIG_VACIO}" stroke="${FIG_LINEA}" stroke-width="1.3"/>`);
+    }
+    return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" ${t}>${piezas.join('')}<circle cx="50" cy="50" r="44" fill="none" stroke="${FIG_LINEA}" stroke-width="2"/></svg>`;
+  }
+  if(f.tipo==='barra'){
+    const W=132,H=42,w=W/f.d,celdas=[];
+    for(let i=0;i<f.d;i++)celdas.push(`<rect x="${(i*w).toFixed(2)}" y="0" width="${w.toFixed(2)}" height="${H}" fill="${i<f.n?FIG_PINTA:FIG_VACIO}" stroke="${FIG_LINEA}" stroke-width="1.3"/>`);
+    return `<svg viewBox="-1 -1 ${W+2} ${H+2}" width="${(px*1.5).toFixed(0)}" height="${(px*0.49).toFixed(0)}" ${t}>${celdas.join('')}</svg>`;
+  }
+  /* La recta numérica: el mapa de tipos de la misión la trae («se ubica entre
+     dos números enteros»), y es la única forma del dibujo donde cabe una
+     fracción impropia sin partir dos pasteles. */
+  const x0=10,x1=132,y=22,total=f.d*f.enteros,paso=(x1-x0)/total,partes=[];
+  partes.push(`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${FIG_LINEA}" stroke-width="2"/>`);
+  for(let i=0;i<=total;i++){
+    const x=(x0+i*paso).toFixed(2),entero=i%f.d===0;
+    /* Las marcas de las divisiones sobresalen del punto (11 y 8 contra el
+       radio 4.6): si el punto las tapara, el alumno no podría contar en
+       cuántas partes está dividido el entero, que es la mitad de la pregunta. */
+    partes.push(`<line x1="${x}" y1="${y-(entero?11:8)}" x2="${x}" y2="${y+(entero?11:8)}" stroke="${FIG_LINEA}" stroke-width="${entero?2:1.2}"/>`);
+    if(entero)partes.push(`<text x="${x}" y="${y+24}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="bold" fill="${FIG_LINEA}">${i/f.d}</text>`);
+  }
+  const xp=(x0+f.n*paso).toFixed(2);
+  partes.push(`<circle cx="${xp}" cy="${y}" r="4.6" fill="${FIG_PINTA}" stroke="${FIG_LINEA}" stroke-width="1.2"/>`);
+  return `<svg viewBox="0 0 142 44" width="${(px*1.6).toFixed(0)}" height="${(px*0.5).toFixed(0)}" ${t}>${partes.join('')}</svg>`;
+}
+/* La fracción del dibujo se genera IRREDUCIBLE a propósito. Si se pintaran 6
+   de 8, «6/8» y «3/4» serían las dos correctas y la pauta solo podría llevar
+   una: el maestro que califica cuarenta y tres hojas en papel marcaría mal la
+   otra mitad del aula. Reducir ya se pregunta en su sección. */
+function _figFraccion(d,tope){
+  const cand=[];
+  for(let n=1;n<=tope;n++)if(n!==d&&_gcdFrac(n,d)===1)cand.push(n);
+  return cand[_rint(0,cand.length-1)];
+}
+function genFigItems(){
+  const tipos=_shuffleF(['circulo','barra','recta',_opRnd()<0.5?'circulo':'barra'],_opRnd);
+  const items=[],vistas=[];
+  tipos.forEach(tipo=>{
+    let f=null,intentos=0;
+    while(!f&&intentos<80){
+      intentos++;
+      if(tipo==='recta'){
+        const d=_unoDe([2,3,4,5,6,8]),enteros=_opRnd()<0.4?2:1;
+        const n=_figFraccion(d,enteros*d-1);
+        f={tipo,d,n,enteros};
+      }else if(tipo==='circulo'){
+        /* Hasta ocho partes y no más: un círculo de doce rebanadas mide en el
+           papel lo que una moneda y sus tajadas no se pueden contar, que es
+           justo lo que se está preguntando. */
+        const d=_unoDe([2,3,4,5,6,8]);
+        f={tipo,d,n:_figFraccion(d,d-1)};
+      }else{
+        const d=_unoDe([3,4,5,6,8]);
+        f={tipo,d,n:_figFraccion(d,d-1)};
+      }
+      if(vistas.indexOf(f.n+'/'+f.d)>=0)f=null;
+    }
+    if(!f)f={tipo,d:4,n:3,enteros:1};
+    vistas.push(f.n+'/'+f.d);
+    f.ans=f.n+'/'+f.d;
+    items.push(f);
+  });
+  return items;
+}
+
+/* ---- Clasificar: propia, impropia o mixta ----
+   La tabla de tipos de la misión dice «numerador IGUAL o mayor», así que el
+   4/4 entra a propósito: es la que todos marcan como propia. */
+function genClasifItems(){
+  const clases=_shuffleF(['propia','impropia','mixta',_unoDe(['propia','impropia','mixta'])],_opRnd);
+  const items=[],vistas=[];
+  clases.forEach(clase=>{
+    let txt='',intentos=0;
+    while(!txt&&intentos<80){
+      intentos++;
+      if(clase==='propia'){const d=_unoDe([3,4,5,6,8,9,10,12]);txt=_rint(1,d-1)+'/'+d;}
+      else if(clase==='impropia'){const d=_unoDe([2,3,4,5,6,8]);txt=(_opRnd()<0.25?d:_rint(d+1,d*3))+'/'+d;}
+      else{const d=_unoDe([2,3,4,5,6,8]);txt=_rint(1,4)+' '+_rint(1,d-1)+'/'+d;}
+      if(vistas.indexOf(txt)>=0)txt='';
+    }
+    vistas.push(txt);
+    items.push({q:txt,ans:clase});
+  });
+  return items;
+}
+
+/* ---- Convertir: impropia ↔ mixta ----
+   La parte fraccionaria se arma ya irreducible (el entero y el numerador no
+   comparten divisor con el denominador), así que 7/4 → 1 3/4 tiene UNA
+   respuesta y no dos. */
+function genConvItems(){
+  const rumbos=_shuffleF(['aMixta','aMixta','aImpropia','aImpropia'],_opRnd);
+  const items=[],vistas=[];
+  rumbos.forEach(rumbo=>{
+    let it=null,intentos=0;
+    while(!it&&intentos<80){
+      intentos++;
+      const d=_unoDe([2,3,4,5,6,8]),e=_rint(1,4);
+      const cand=[];for(let n=1;n<d;n++)if(_gcdFrac(n,d)===1)cand.push(n);
+      const n=cand[_rint(0,cand.length-1)];
+      const N=e*d+n;
+      it=rumbo==='aMixta'
+        ?{rumbo,q:N+'/'+d,ans:e+' '+n+'/'+d,mixto:{e,n,d}}
+        :{rumbo,q:e+' '+n+'/'+d,ans:N+'/'+d};
+      if(vistas.indexOf(it.q)>=0)it=null;
+    }
+    if(it){vistas.push(it.q);items.push(it);}
+  });
+  return items;
+}
+
+function genSimplifyItems(cuantos){
+  const items=[];
+  for(let i=0;i<cuantos;i++){
+    let baseD=_fracDenomPool[_rint(0,_fracDenomPool.length-1)];
+    let baseN=_rint(1,baseD-1);
+    const s=_simplifyFrac(baseN,baseD);baseN=s.n;baseD=s.d;
+    const factor=_rint(2,6);
+    items.push({q:(baseN*factor)+'/'+(baseD*factor),ans:baseD===1?String(baseN):baseN+'/'+baseD});
+  }
+  return items;
+}
+function genEquivItems(cuantos){
+  const items=[];
+  for(let i=0;i<cuantos;i++){
+    const base=_randSimpleFrac(),k=_rint(2,6);
+    const hideNum=_opRnd()<0.5;
+    const N=base.n*k,D=base.d*k;
+    if(hideNum)items.push({q:`${base.n}/${base.d} = ___/${D}`,ans:String(N)});
+    else items.push({q:`${base.n}/${base.d} = ${N}/___`,ans:String(D)});
+  }
+  return items;
+}
 function genFracOpItems(){
   const items=[];
   for(let i=0;i<5;i++){
@@ -589,44 +775,14 @@ function genFracOpItems(){
   }
   return items;
 }
-function genSimplifyItems(){
-  const items=[];
-  for(let i=0;i<10;i++){
-    let baseD=_fracDenomPool[_rint(0,_fracDenomPool.length-1)];
-    let baseN=_rint(1,baseD-1);
-    const s=_simplifyFrac(baseN,baseD);baseN=s.n;baseD=s.d;
-    const factor=_rint(2,6);
-    items.push({q:(baseN*factor)+'/'+(baseD*factor),ans:baseD===1?String(baseN):baseN+'/'+baseD});
-  }
-  return items;
-}
-function genFracCmpItems(){
-  const items=[];
-  for(let i=0;i<10;i++){
-    let a=_randSimpleFrac(),b;
-    const forceEq=_opRnd()<0.2;
-    if(forceEq){const k=_rint(2,4);b={n:a.n*k,d:a.d*k};}
-    else{b=_randSimpleFrac();if(_fracVal(a.n,a.d)===_fracVal(b.n,b.d))b={n:b.n+1,d:b.d};}
-    const av=_fracVal(a.n,a.d),bv=_fracVal(b.n,b.d);
-    items.push({a:_fracStr(a.n,a.d),b:_fracStr(b.n,b.d),rel:av===bv?'eq':(av>bv?'gt':'lt')});
-  }
-  return items;
-}
-function genEquivItems(){
-  const items=[];
-  for(let i=0;i<10;i++){
-    const base=_randSimpleFrac(),k=_rint(2,6);
-    const hideNum=_opRnd()<0.5;
-    const N=base.n*k,D=base.d*k;
-    if(hideNum)items.push({q:`${base.n}/${base.d} = ___/${D}`,ans:String(N)});
-    else items.push({q:`${base.n}/${base.d} = ${N}/___`,ans:String(D)});
-  }
-  return items;
-}
-function genFracOrdItems(){
+/* Los grupos van en sentidos DISTINTOS. Salían los dos «de menor a mayor» una
+   de cada cuatro veces, y entonces la segunda tabla no pregunta nada nuevo:
+   ordenar al revés es justo donde el alumno se equivoca. */
+function genFracOrdItems(cuantos){
   const groups=[];
-  for(let g=0;g<4;g++){
-    const dir=_opRnd()<0.5?'mayor':'menor';
+  const rumbos=_shuffleF(['menor','mayor'],_opRnd);
+  for(let g=0;g<cuantos;g++){
+    const dir=rumbos[g%rumbos.length];
     const nums=[];let tries=0;
     while(nums.length<5&&tries<300){
       tries++;const cand=_randSimpleFrac();
@@ -634,9 +790,72 @@ function genFracOrdItems(){
     }
     const sortedAsc=[...nums].sort((x,y)=>_fracVal(x.n,x.d)-_fracVal(y.n,y.d));
     const correctOrder=(dir==='mayor'?[...sortedAsc].reverse():sortedAsc).map(n=>_fracStr(n.n,n.d));
-    groups.push({dir,display:_shuffleF(nums,_opRnd).map(n=>_fracStr(n.n,n.d)),correctOrder});
+    /* Barajar puede devolver el orden que se pide —una de cada ciento veinte—,
+       y entonces son 4 puntos regalados: el alumno que no toca nada los gana y
+       esa nota llega a su expediente. Se baraja hasta que salga otra cosa. */
+    let display=_shuffleF(nums,_opRnd).map(n=>_fracStr(n.n,n.d)),vueltas=0;
+    while(display.every((v,i)=>v===correctOrder[i])&&vueltas++<40)display=_shuffleF(nums,_opRnd).map(n=>_fracStr(n.n,n.d));
+    groups.push({dir,display,correctOrder});
   }
   return groups;
+}
+
+/* ---- Problemas de la vida real ----
+   La misión termina con un widget de situaciones —«Ana comió 1/4 de una pizza
+   y Luis 2/4»— y en el examen no había ni una. Es lo último que se aprende y
+   lo único que se parece a para qué sirve una fracción fuera del cuaderno; el
+   alumno que resuelve cinco operaciones sueltas y no sabe cuánta pizza queda
+   no ha entendido el tema.
+
+   Van con nombres y lugares de aquí (la pulpería, la merienda, el galón de
+   agua) porque el problema se lee de un tirón cuando la escena es la suya. */
+function genProblemItems(){
+  const plantillas=[
+    function(){ /* suma con el mismo denominador: dos pedazos del mismo pastel */
+      const d=_unoDe([4,5,6,8,10]);
+      const a=_rint(1,d-2),b=_rint(1,d-a-1);
+      const nA=_unoDe(['Marta','Kenia','Rosa','Doris']),nB=_unoDe(['Josué','Elmer','Wilmer','Óscar']);
+      return{q:`En el recreo ${nA} se comió ${a}/${d} de una pizza y ${nB} se comió ${b}/${d} de esa misma pizza. ¿Qué fracción de la pizza se comieron entre los dos?`,ans:_fracStr(a+b,d)};
+    },
+    function(){ /* resta a un entero: lo que queda */
+      const d=_unoDe([4,5,6,8,10,12]),a=_rint(1,d-1);
+      const quien=_unoDe(['La maestra','Doña Rosa','El maestro']);
+      return{q:`${quien} partió un pastel en ${d} partes iguales y en la merienda se comieron ${a}/${d}. ¿Qué fracción del pastel quedó?`,ans:_fracStr(d-a,d)};
+    },
+    function(){ /* suma con distinto denominador: la que de verdad cuesta */
+      const par=_unoDe([[2,4],[2,6],[3,6],[2,8],[4,8],[3,4],[2,3],[4,6]]);
+      const d1=par[0],d2=par[1];
+      const a=_rint(1,d1-1),b=_rint(1,d2-1);
+      const c=(d1*d2)/_gcdFrac(d1,d2);
+      const total=a*(c/d1)+b*(c/d2);
+      if(total>c)return null;
+      return{q:`Caminaste ${a}/${d1} de hora en la mañana y ${b}/${d2} de hora en la tarde. ¿Qué fracción de hora caminaste en total?`,ans:_fracStr(total,c)};
+    },
+    function(){ /* resta con distinto denominador: el galón de agua */
+      const par=_unoDe([[2,4],[2,6],[3,6],[2,8],[4,8],[3,4],[2,3],[4,6]]);
+      const d1=par[0],d2=par[1];
+      const c=(d1*d2)/_gcdFrac(d1,d2);
+      const a=_rint(1,d1-1),b=_rint(1,d2-1);
+      const an=a*(c/d1),bn=b*(c/d2);
+      if(an<=bn)return null;
+      return{q:`Un galón de agua estaba lleno hasta ${a}/${d1} de su capacidad y se usaron ${b}/${d2} del galón. ¿Qué fracción del galón quedó?`,ans:_fracStr(an-bn,c)};
+    },
+    function(){ /* la fracción de un conjunto: el todo también puede ser el grupo */
+      const total=_unoDe([12,15,16,18,20,24,30]);
+      const parte=_rint(2,total-2);
+      if(_gcdFrac(parte,total)===1&&total>12)return null;
+      return{q:`En un grupo de ${total} estudiantes, ${parte} llegaron con la tarea de Matemáticas. ¿Qué fracción del grupo llegó con la tarea?`,ans:_fracStr(parte,total)};
+    }
+  ];
+  const orden=_shuffleF(plantillas.map((f,i)=>i),_opRnd);
+  const items=[];
+  for(let i=0;i<orden.length&&items.length<3;i++){
+    for(let intento=0;intento<40&&items.length<3;intento++){
+      const it=plantillas[orden[i]]();
+      if(it){items.push(it);break;}
+    }
+  }
+  return items;
 }
 
 function genEvalOp(){
@@ -653,28 +872,35 @@ function genEvalOp(){
   evalOpAnsVisible=false;
   const out=document.getElementById('evalOpOut');out.innerHTML='';
 
-  const opItems=genFracOpItems();
-  const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Operaciones (suma y resta de fracciones) <span class="eval-pts">50 pts · 10 pts c/u</span></div>';
-  opItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.a+' '+it.op+' '+it.b+' =')}</span><input class="eval-cp-input" type="text" data-opx="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbOpx${i}" aria-live="polite"></div>`;s1.appendChild(d);});
+  // I. La fracción que está pintada
+  const figItems=genFigItems();
+  const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. ¿Qué fracción está pintada? <span class="eval-pts">20 pts · 5 pts c/u</span></div><p class="opx-instr-scr">Mira cada dibujo y escribe la fracción que representa la parte pintada. En la recta numérica, escribe la fracción del punto marcado.</p>';
+  figItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opfig-row"><span class="eval-num">${i+1}</span><span class="opfig-draw">${_figSvg(it,86)}</span><input class="eval-cp-input" type="text" data-fig="${i}" autocomplete="off" style="width:92px;" placeholder="ej. 3/4"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbFig${i}" aria-live="polite"></div>`;s1.appendChild(d);});
   out.appendChild(s1);
 
-  const simpItems=genSimplifyItems();
-  const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Simplifica a su mínima expresión <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  simpItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.q+' =')}</span><input class="eval-cp-input" type="text" data-simp="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbSimp${i}" aria-live="polite"></div>`;s2.appendChild(d);});
+  // II. Clasificar y convertir
+  const clasifItems=genClasifItems(),convItems=genConvItems();
+  const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Clasifica y convierte <span class="eval-pts">20 pts · 2 y 3 pts c/u</span></div><p class="opx-instr-scr">Primero di de qué tipo es cada fracción. Después escribe cada una de la otra forma: la impropia como número mixto y el número mixto como fracción impropia.</p>';
+  clasifItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${Fr(it.q)}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="fcls${i}" value="propia"> Propia</label><label class="eval-cmp-opt"><input type="radio" name="fcls${i}" value="impropia"> Impropia</label><label class="eval-cmp-opt"><input type="radio" name="fcls${i}" value="mixta"> Mixta</label></div><div class="eval-answer">${it.ans.charAt(0).toUpperCase()+it.ans.slice(1)}</div><div class="eval-item-feedback" id="evalFbCls${i}" aria-live="polite"></div>`;s2.appendChild(d);});
+  convItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+5}</span><span class="opx-expr">${Fr(it.q)}</span><span class="opconv-lbl">${it.rumbo==='aMixta'?'→ como número mixto':'→ como fracción impropia'}</span><input class="eval-cp-input" type="text" data-conv="${i}" autocomplete="off" style="width:100px;" placeholder="${it.rumbo==='aMixta'?'ej. 1 3/4':'ej. 7/4'}"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbConv${i}" aria-live="polite"></div>`;s2.appendChild(d);});
   out.appendChild(s2);
 
-  const cmpItems=genFracCmpItems();
-  const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Compara: ¿mayor, menor o igual? <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  cmpItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text opx-expr">${Fr(it.a)} ___ ${Fr(it.b)}</span></div><div class="eval-cmp-opts"><label class="eval-cmp-opt"><input type="radio" name="fcmp${i}" value="gt"> Mayor que (&gt;)</label><label class="eval-cmp-opt"><input type="radio" name="fcmp${i}" value="lt"> Menor que (&lt;)</label><label class="eval-cmp-opt"><input type="radio" name="fcmp${i}" value="eq"> Igual (=)</label></div><div class="eval-answer">${it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'}</div><div class="eval-item-feedback" id="evalFbCmp${i}" aria-live="polite"></div>`;s3.appendChild(d);});
+  // III. Simplificar y completar la equivalente
+  const simpItems=genSimplifyItems(3),equivItems=genEquivItems(3);
+  const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Simplifica y completa la equivalente <span class="eval-pts">12 pts · 2 pts c/u</span></div><p class="opx-instr-scr">Divide arriba y abajo entre el mismo número hasta que ya no se pueda más. En las últimas tres, busca el número que falta para que las dos fracciones valgan lo mismo.</p>';
+  simpItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.q+' =')}</span><input class="eval-cp-input" type="text" data-simp="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbSimp${i}" aria-live="polite"></div>`;s3.appendChild(d);});
+  equivItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+4}</span><span class="opx-expr">${Fr(it.q)}</span><input class="eval-cp-input" type="text" data-equiv="${i}" autocomplete="off" style="width:70px;" placeholder="?"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbEquiv${i}" aria-live="polite"></div>`;s3.appendChild(d);});
   out.appendChild(s3);
 
-  const equivItems=genEquivItems();
-  const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Completa la fracción equivalente <span class="eval-pts">10 pts · 1 pt c/u</span></div>';
-  equivItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.q)}</span><input class="eval-cp-input" type="text" data-equiv="${i}" autocomplete="off" style="width:70px;" placeholder="?"></div><div class="eval-answer">${it.ans}</div><div class="eval-item-feedback" id="evalFbEquiv${i}" aria-live="polite"></div>`;s4.appendChild(d);});
+  // IV. Suma y resta
+  const opItems=genFracOpItems();
+  const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Suma y resta de fracciones <span class="eval-pts">25 pts · 5 pts c/u</span></div><p class="opx-instr-scr">Si los denominadores son iguales, suma o resta los numeradores. Si son distintos, busca primero fracciones equivalentes con el mismo denominador.</p>';
+  opItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${Fr(it.a+' '+it.op+' '+it.b+' =')}</span><input class="eval-cp-input" type="text" data-opx="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbOpx${i}" aria-live="polite"></div>`;s4.appendChild(d);});
   out.appendChild(s4);
 
-  const ordGroups=genFracOrdItems();
-  const s5=document.createElement('div');s5.innerHTML='<div class="eval-section-title">V. Ordena cada grupo de fracciones <span class="eval-pts">20 pts · 5 pts c/u</span></div>';
+  // V. Ordenar
+  const ordGroups=genFracOrdItems(2);
+  const s5=document.createElement('div');s5.innerHTML='<div class="eval-section-title">V. Ordena las fracciones <span class="eval-pts">8 pts · 4 pts c/u</span></div>';
   ordGroups.forEach((g,gi)=>{
     const d=document.createElement('div');d.className='eval-item eval-auto-item evord-group';
     d.innerHTML=`<div class="evord-dir">${gi+1}. Ordena de ${g.dir==='mayor'?'MAYOR a menor':'MENOR a mayor'}:</div><div class="evord-list" id="evordList${gi}"></div><div class="eval-answer">${Fr(g.correctOrder.join(' · '))}</div><div class="eval-item-feedback" id="evalFbOrd${gi}" aria-live="polite"></div>`;
@@ -682,7 +908,13 @@ function genEvalOp(){
   });
   out.appendChild(s5);
 
-  window._evalOpData={ops:opItems,simp:simpItems,cmp:cmpItems,equiv:equivItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder}))};
+  // VI. Problemas
+  const probItems=genProblemItems();
+  const s6=document.createElement('div');s6.innerHTML='<div class="eval-section-title">VI. Problemas de la vida real <span class="eval-pts">15 pts · 5 pts c/u</span></div><p class="opx-instr-scr">Lee con calma, haz la operación en tu cuaderno y escribe la respuesta como fracción.</p>';
+  probItems.forEach((it,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${Fr(it.q)}</span></div><div class="opx-row" style="margin-left:1.7rem;margin-top:0.35rem;"><span class="opx-expr">Respuesta:</span><input class="eval-cp-input" type="text" data-prob="${i}" autocomplete="off" placeholder="ej. 3/4"></div><div class="eval-answer">${Fr(it.ans)}</div><div class="eval-item-feedback" id="evalFbProb${i}" aria-live="polite"></div>`;s6.appendChild(d);});
+  out.appendChild(s6);
+
+  window._evalOpData={figs:figItems,clasif:clasifItems,conv:convItems,simp:simpItems,equiv:equivItems,ops:opItems,prob:probItems,ord:ordGroups.map(g=>({dir:g.dir,current:[...g.display],correctOrder:g.correctOrder}))};
   ordGroups.forEach((g,gi)=>_renderOrdGroup(gi));
   /* ⚠️ Igual que el de la evaluación conceptual: aquí va la NOTA y de aquí la
      lee el registro del maestro. NO pasa por Fr(). */
@@ -714,14 +946,18 @@ function gradeEvalOp(){
   if(!window._evalOpData){showToast('⚠️ Genera una prueba operativa primero');return;}
   sfx('click');
   const d=window._evalOpData;
-  let total=0;const detail={ops:0,simp:0,cmp:0,equiv:0,ord:0};
-  d.ops.forEach((it,i)=>{const input=document.querySelector(`[data-opx="${i}"]`);const ok=isFracCorrect(input?input.value:'',it.ans);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.ops++;total+=10;}setEvalFeedback('evalFbOpx'+i,ok,ok?'Correcto. +10 pts':'Revisar. Respuesta esperada: '+it.ans);});
-  d.simp.forEach((it,i)=>{const input=document.querySelector(`[data-simp="${i}"]`);const ok=isSimplifyCorrect(input?input.value:'',it.ans);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.simp++;total+=1;}setEvalFeedback('evalFbSimp'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans);});
-  d.cmp.forEach((it,i)=>{const selected=document.querySelector(`input[name="fcmp${i}"]:checked`);const ok=!!selected&&selected.value===it.rel;if(ok){detail.cmp++;total+=1;}setEvalFeedback('evalFbCmp'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+(it.rel==='gt'?'Mayor que':it.rel==='lt'?'Menor que':'Igual'));});
-  d.equiv.forEach((it,i)=>{const input=document.querySelector(`[data-equiv="${i}"]`);const ok=isOpNumCorrect(input?input.value:'',it.ans);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.equiv++;total+=1;}setEvalFeedback('evalFbEquiv'+i,ok,ok?'Correcto. +1 pt':'Revisar. Respuesta esperada: '+it.ans);});
-  d.ord.forEach((g,gi)=>{const ok=g.current.every((v,i)=>v===g.correctOrder[i]);if(ok){detail.ord++;total+=5;}setEvalFeedback('evalFbOrd'+gi,ok,ok?'¡Orden correcto! +5 pts':'Orden incorrecto. Clave: '+g.correctOrder.join(' · '));});
+  let total=0;const detail={figs:0,clasif:0,conv:0,simp:0,equiv:0,ops:0,ord:0,prob:0};
+  const marcar=(input,ok)=>{if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}};
+  d.figs.forEach((it,i)=>{const input=document.querySelector(`[data-fig="${i}"]`);const ok=isFracCorrect(input?input.value:'',it.ans);marcar(input,ok);if(ok){detail.figs++;total+=5;}setEvalFeedback('evalFbFig'+i,ok,ok?'Correcto. +5 pts':'Revisar. El dibujo tiene '+it.d+' partes iguales y '+it.n+(it.tipo==='recta'?' saltos hasta el punto':' pintadas')+': '+it.ans);});
+  d.clasif.forEach((it,i)=>{const selected=document.querySelector(`input[name="fcls${i}"]:checked`);const ok=!!selected&&selected.value===it.ans;if(ok){detail.clasif++;total+=2;}setEvalFeedback('evalFbCls'+i,ok,ok?'Correcto. +2 pts':'Revisar. '+it.q+' es '+it.ans+'.');});
+  d.conv.forEach((it,i)=>{const input=document.querySelector(`[data-conv="${i}"]`);const val=input?input.value:'';const ok=it.rumbo==='aMixta'?isMixtoCorrect(val,it.mixto):isFracCorrect(val,it.ans);marcar(input,ok);if(ok){detail.conv++;total+=3;}setEvalFeedback('evalFbConv'+i,ok,ok?'Correcto. +3 pts':'Revisar. Respuesta esperada: '+it.ans);});
+  d.simp.forEach((it,i)=>{const input=document.querySelector(`[data-simp="${i}"]`);const ok=isSimplifyCorrect(input?input.value:'',it.ans);marcar(input,ok);if(ok){detail.simp++;total+=2;}setEvalFeedback('evalFbSimp'+i,ok,ok?'Correcto. +2 pts':'Revisar. Respuesta esperada: '+it.ans);});
+  d.equiv.forEach((it,i)=>{const input=document.querySelector(`[data-equiv="${i}"]`);const ok=isOpNumCorrect(input?input.value:'',it.ans);marcar(input,ok);if(ok){detail.equiv++;total+=2;}setEvalFeedback('evalFbEquiv'+i,ok,ok?'Correcto. +2 pts':'Revisar. Respuesta esperada: '+it.ans);});
+  d.ops.forEach((it,i)=>{const input=document.querySelector(`[data-opx="${i}"]`);const ok=isFracCorrect(input?input.value:'',it.ans);marcar(input,ok);if(ok){detail.ops++;total+=5;}setEvalFeedback('evalFbOpx'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.ans);});
+  d.ord.forEach((g,gi)=>{const ok=g.current.every((v,i)=>v===g.correctOrder[i]);if(ok){detail.ord++;total+=4;}setEvalFeedback('evalFbOrd'+gi,ok,ok?'¡Orden correcto! +4 pts':'Orden incorrecto. Clave: '+g.correctOrder.join(' · '));});
+  d.prob.forEach((it,i)=>{const input=document.querySelector(`[data-prob="${i}"]`);const ok=isFracCorrect(input?input.value:'',it.ans);marcar(input,ok);if(ok){detail.prob++;total+=5;}setEvalFeedback('evalFbProb'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.ans);});
   const result=document.getElementById('evalOpAutoResult');
-  if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Operaciones: ${detail.ops*10}/50 · Simplificar: ${detail.simp}/10 · Comparar: ${detail.cmp}/10 · Equivalente: ${detail.equiv}/10 · Ordenar: ${detail.ord*5}/20</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}
+  if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Dibujos: ${detail.figs*5}/20 · Clasificar: ${detail.clasif*2}/8 · Convertir: ${detail.conv*3}/12 · Simplificar y equivalentes: ${detail.simp*2+detail.equiv*2}/12 · Operaciones: ${detail.ops*5}/25 · Ordenar: ${detail.ord*4}/8 · Problemas: ${detail.prob*5}/15</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}
   if(total>=70){pts(8);showToast('🎯 Prueba operativa calificada: '+total+'/100');}
   else showToast('🧮 Prueba operativa calificada: '+total+'/100. Revisa las respuestas marcadas.');
 }
@@ -730,25 +966,41 @@ function printEvalOp(){
   if(!window._evalOpData){showToast('⚠️ Genera una prueba operativa primero');return;}
   sfx('click');
   const forma=window._currentEvalOpForm||1;const d=window._evalOpData;
-  let s1=`<div class="sec-title"><span>I. Operaciones (suma y resta de fracciones)</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 50%</span></div></div><p class="opx-instr">Resuelve cada operación con lápiz (trabaja el procedimiento en el reverso de esta hoja) y coloca la respuesta final en la línea. Valor 10% c/u.</p>`;
-  d.ops.forEach((it,i)=>{s1+=`<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">${Fr(it.a+' '+it.op+' '+it.b+' =')}</span><span class="opx-blank"></span></div>`;});
-  const simpTbl=(items)=>`<table class="rnd-tbl"><tr><th>Fracción</th><th>Simplificada</th></tr>${items.map(it=>`<tr><td>${Fr(it.q)}</td><td></td></tr>`).join('')}</table>`;
-  const simpHalf=Math.ceil(d.simp.length/2);
-  let s2=`<div class="sec-title"><span>II. Simplifica a su mínima expresión</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${simpTbl(d.simp.slice(0,simpHalf))}${simpTbl(d.simp.slice(simpHalf))}</div>`;
-  const cmpHalf=Math.ceil(d.cmp.length/2);
-  const cmpRow=(it)=>`<div class="cmp-print-row"><span class="cmp-print-num">${Fr(it.a)}</span><span class="cmp-box">&nbsp;</span><span class="cmp-print-num">${Fr(it.b)}</span></div>`;
-  let s3=`<div class="sec-title"><span>III. Compara: ¿mayor, menor o igual?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="cmp-print-grid"><div>${d.cmp.slice(0,cmpHalf).map(cmpRow).join('')}</div><div>${d.cmp.slice(cmpHalf).map(cmpRow).join('')}</div></div>`;
-  const equivTbl=(items)=>`<table class="rnd-tbl"><tr><th>Completa</th><th>Respuesta</th></tr>${items.map(it=>`<tr><td>${Fr(it.q)}</td><td></td></tr>`).join('')}</table>`;
-  const equivHalf=Math.ceil(d.equiv.length/2);
-  let s4=`<div class="sec-title"><span>IV. Completa la fracción equivalente</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10%</span></div></div><div class="rnd-print-grid">${equivTbl(d.equiv.slice(0,equivHalf))}${equivTbl(d.equiv.slice(equivHalf))}</div>`;
-  let s5=`<div class="sec-title"><span>V. Ordena cada grupo de fracciones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20%</span></div></div><div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordene de ${g.dir==='mayor'?'Mayor a Menor':'Menor a Mayor'}.</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${Fr(v)}</td>`).join('')}</tr><tr>${g.current.map(()=>'<td class="ord-print-cell"></td>').join('')}</tr></table></div>`).join('')}</div>`;
+  const sec=(rom,ttl,pct)=>`<div class="sec-title"><span>${rom}. ${ttl}</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de ${pct}%</span></div></div>`;
+
+  let s1=sec('I','¿Qué fracción está pintada?',20)+`<p class="opx-instr">Escribe en la línea la fracción que representa la parte pintada de cada dibujo. En la recta numérica, escribe la fracción del punto marcado. Valor 5% c/u.</p><div class="fig-print-grid">`;
+  d.figs.forEach((it,i)=>{s1+=`<div class="fig-box"><div class="fig-dib">${_figSvg(it,74)}</div><div class="fig-pie"><span class="qn">${i+1}.</span><span class="fig-ln"></span></div></div>`;});
+  s1+='</div>';
+
+  const clsTbl=`<table class="rnd-tbl"><tr><th>Fracción</th><th>P, I o M</th></tr>${d.clasif.map((it,i)=>`<tr><td><span class="qn">${i+1}.</span> ${Fr(it.q)}</td><td></td></tr>`).join('')}</table>`;
+  const convTbl=`<table class="rnd-tbl"><tr><th>Fracción</th><th>De la otra forma</th></tr>${d.conv.map((it,i)=>`<tr><td><span class="qn">${i+5}.</span> ${Fr(it.q)}</td><td></td></tr>`).join('')}</table>`;
+  let s2=sec('II','Clasifica y convierte',20)+`<p class="opx-instr">En la primera tabla escribe <strong>P</strong> si la fracción es propia, <strong>I</strong> si es impropia y <strong>M</strong> si es un número mixto (2% c/u). En la segunda, escribe cada fracción de la otra forma: la impropia como número mixto y el número mixto como fracción impropia (3% c/u).</p><div class="rnd-print-grid">${clsTbl}${convTbl}</div>`;
+
+  const simpTbl=`<table class="rnd-tbl"><tr><th>Simplifica</th><th>Respuesta</th></tr>${d.simp.map((it,i)=>`<tr><td><span class="qn">${i+1}.</span> ${Fr(it.q)}</td><td></td></tr>`).join('')}</table>`;
+  const equivTbl=`<table class="rnd-tbl"><tr><th>Completa</th><th>Respuesta</th></tr>${d.equiv.map((it,i)=>`<tr><td><span class="qn">${i+4}.</span> ${Fr(it.q)}</td><td></td></tr>`).join('')}</table>`;
+  let s3=sec('III','Simplifica y completa la equivalente',12)+`<p class="opx-instr">Reduce cada fracción a su mínima expresión y busca el número que falta para que las dos fracciones valgan lo mismo. Valor 2% c/u.</p><div class="rnd-print-grid">${simpTbl}${equivTbl}</div>`;
+
+  let s4=sec('IV','Suma y resta de fracciones',25)+`<p class="opx-instr">Resuelve cada operación con lápiz (trabaja el procedimiento en el reverso de esta hoja) y coloca la respuesta final en la línea. Valor 5% c/u.</p>`;
+  d.ops.forEach((it,i)=>{s4+=`<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="opx-print-expr">${Fr(it.a+' '+it.op+' '+it.b+' =')}</span><span class="opx-blank"></span></div>`;});
+
+  let s5=sec('V','Ordena las fracciones',8)+`<div class="ord-print-grid">${d.ord.map((g,gi)=>`<div class="ord-print-box"><div class="ord-print-dir">${gi+1}. Ordene de ${g.dir==='mayor'?'Mayor a Menor':'Menor a Mayor'}.</div><table class="ord-print-tbl"><tr>${g.current.map(v=>`<td>${Fr(v)}</td>`).join('')}</tr><tr>${g.current.map(()=>'<td class="ord-print-cell"></td>').join('')}</tr></table></div>`).join('')}</div>`;
+
+  let s6=sec('VI','Problemas de la vida real',15)+`<p class="opx-instr">Lee cada problema, resuélvelo en el reverso de la hoja y escribe la respuesta como fracción. Valor 5% c/u.</p>`;
+  d.prob.forEach((it,i)=>{s6+=`<div class="prob-print-row"><span class="qn">${i+1}.</span><span class="prob-txt">${Fr(it.q)}</span><span class="prob-resp"><strong>R:</strong><span class="prob-ln"></span></span></div>`;});
+
   let pR='';
-  pR+=`<div class="p-sec"><div class="p-ttl">I. Operaciones</div><table class="p-tbl">${d.ops.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">II. Simplificar</div><table class="p-tbl">${d.simp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">III. Comparar</div><table class="p-tbl">${d.cmp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.rel==='gt'?'&gt;':it.rel==='lt'?'&lt;':'='}</td></tr>`).join('')}</table></div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">IV. Equivalente</div><table class="p-tbl">${d.equiv.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Dibujos</div><table class="p-tbl">${d.figs.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Clasificar y convertir</div><table class="p-tbl">${d.clasif.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${it.ans==='propia'?'P (propia)':it.ans==='impropia'?'I (impropia)':'M (mixta)'}</td></tr>`).join('')}${d.conv.map((it,i)=>`<tr><td class="pn">${i+5}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Simplificar y equivalentes</div><table class="p-tbl">${d.simp.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}${d.equiv.map((it,i)=>`<tr><td class="pn">${i+4}.</td><td class="pa">${it.ans}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Suma y resta</div><table class="p-tbl">${d.ops.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}</table></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">VI. Problemas</div><table class="p-tbl">${d.prob.map((it,i)=>`<tr><td class="pn">${i+1}.</td><td class="pa">${Fr(it.ans)}</td></tr>`).join('')}</table></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Ordenar</div>${d.ord.map((g,gi)=>`<div class="p-ord-line"><strong>${gi+1}.</strong> ${Fr(g.correctOrder.join(' · '))}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Fracciones · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.14rem 0.5rem;margin:0.25rem 0 0.12rem;border-left:4px solid #1565c0;background:#e3f2fd;color:#1565c0;display:flex;justify-content:space-between;align-items:center;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.15rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.05rem 0.2rem;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:160px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #999;padding:0.02rem 0.4rem;text-align:left;}.cmp-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.cmp-print-row{display:flex;align-items:center;gap:0.4rem;font-size:11pt;padding:0.04rem 0;}.cmp-box{display:inline-block;width:22px;height:18px;border:1.5px solid #111;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;}.ord-print-dir{font-size:9.5pt;font-weight:700;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #999;padding:0.04rem 0.3rem;text-align:center;}.ord-print-cell{height:16px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}${Fr.css}.fr{font-size:0.8em;margin:0 0.06em;line-height:1;}.fr>b{padding:0 0.12em;}.fr>b.fd{border-top-width:0.075em;margin-top:0.02em;padding-top:0.02em;}@media print{@page{size:letter portrait;margin:10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Actividades Operativas · Fracciones · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Operaciones 50% · Simplificar 10% · Comparar 10% · Equivalente 10% · Ordenar 20%</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row" style="margin-top:0.4rem;font-weight:700;color:#1565c0;">Total obtenido: <span class="obt-line" style="min-width:80px;border-bottom:1.5px solid #1565c0;"></span> de 100%</div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Fracciones · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Fracciones · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.4rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.15rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.5rem;margin:0.22rem 0 0.1rem;border-left:4px solid #1565c0;background:#e3f2fd;color:#1565c0;display:flex;justify-content:space-between;align-items:center;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:18px;display:inline-block;}.opx-instr{font-size:8.5pt;color:#555;margin-bottom:0.1rem;line-height:1.25;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.04rem 0.2rem;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:150px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}
+/* Los dibujos van en fila: cuatro cajitas del mismo alto con su línea debajo.
+   El SVG se imprime con su relleno; un fondo de CSS no. */
+.fig-print-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0 0.6rem;margin-top:0.15rem;}.fig-box{text-align:center;}.fig-dib{height:78px;display:flex;align-items:center;justify-content:center;}.fig-pie{display:flex;align-items:baseline;justify-content:center;gap:3px;font-size:10pt;}.fig-ln{display:inline-block;width:62px;border-bottom:1.5px solid #111;height:13px;}
+.prob-print-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10pt;padding:0.08rem 0.2rem;line-height:1.35;}.prob-txt{flex:1;}.prob-resp{flex:none;align-self:flex-end;display:flex;align-items:baseline;gap:4px;white-space:nowrap;}.prob-ln{display:inline-block;width:92px;border-bottom:1.5px solid #111;height:12px;}
+.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.15rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #999;padding:0.02rem 0.4rem;text-align:left;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.15rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.25rem 0.4rem;}.ord-print-dir{font-size:9.5pt;font-weight:700;margin-bottom:0.15rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #999;padding:0.04rem 0.3rem;text-align:center;}.ord-print-cell{height:16px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.28rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.07rem 0.12rem;vertical-align:top;}.pn{font-weight:700;width:16px;color:#555;}.pa{color:#007a00;font-weight:600;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}${Fr.css}.fr{font-size:0.8em;margin:0 0.06em;line-height:1;}.fr>b{padding:0 0.12em;}.fr>b.fd{border-top-width:0.075em;margin-top:0.02em;padding-top:0.02em;}@media print{@page{size:letter portrait;margin:10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Actividades Operativas · Fracciones · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Dibujos 20% · Clasificar y convertir 20% · Simplificar y equivalentes 12% · Operaciones 25% · Ordenar 8% · Problemas 15%</p></div>${s1}${s2}${s3}${s4}${s5}${s6}<div class="total-row" style="margin-top:0.35rem;font-weight:700;color:#1565c0;">Total obtenido: <span class="obt-line" style="min-width:80px;border-bottom:1.5px solid #1565c0;"></span> de 100%</div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Fracciones · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);

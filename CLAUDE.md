@@ -839,6 +839,77 @@ entorno de trabajo se instala aparte (`npm install --no-save playwright`)
 y **se borra al terminar**, porque `node_modules` va versionado en este
 repositorio y si no queda el árbol sucio.
 
+## Normativa: la prueba operativa pregunta lo que la misión enseña
+
+La evaluación de una misión viene en dos: la **conceptual** —definiciones,
+V/F, selección, pareados— y la **operativa**, que es la de HACER. La
+segunda se copia de misión en misión y ahí es donde se tuerce: se hereda
+la forma del examen de otro tema, se le cambian los números y queda un
+examen que mide bien… otra cosa.
+
+Le pasó a **Las Fracciones** (`misiones/2y3ciclo-fracciones/`). La
+operativa traía cinco bloques de rellenar huecos —operar, simplificar,
+comparar, completar la equivalente y ordenar— y **tres preguntaban casi lo
+mismo**: comparar dos fracciones y ordenar cinco son la misma destreza dos
+veces, y simplificar y amplificar son la misma cuenta en los dos sentidos.
+Mientras tanto, media misión no salía por ninguna parte: el **dibujo de la
+parte pintada** —con el que la misión ARRANCA—, la fracción **impropia y
+su número mixto**, y los **problemas** del recreo, que son el widget con
+el que la misión termina. Se reordenó a seis secciones, una por lo que la
+misión enseña y en el orden en que se aprende:
+
+| sección | de dónde sale en la misión | pts |
+|---|---|---|
+| I. ¿Qué fracción está pintada? | 🍕 ¿Qué es una fracción? · 🔬 la representación | 20 |
+| II. Clasifica y convierte | 📊 la tabla de tipos · 🗂️ Clasifica · el Reto | 20 |
+| III. Simplifica y completa la equivalente | ✂️ Simplificar · 🧩 Empareja equivalentes | 12 |
+| IV. Suma y resta de fracciones | ✏️ Completa la operación | 25 |
+| V. Ordena las fracciones | 🔢 Ordena las Fracciones | 8 |
+| VI. Problemas de la vida real | 🍕 Situación → Respuesta | 15 |
+
+Cuatro cosas que costaron caro y que valen para cualquier misión que se
+reforme igual:
+
+1. **El dibujo va en SVG, nunca en fondos de CSS.** El navegador imprime
+   «sin gráficos de fondo» de fábrica, y ahí la parte pintada —que ES la
+   pregunta— sale en blanco. El relleno de un SVG se imprime siempre.
+2. **La fracción del dibujo se genera IRREDUCIBLE.** Si se pintaran 6 de
+   8, «6/8» y «3/4» serían las dos correctas y la pauta solo lleva una: en
+   papel el maestro marcaría mal media aula. Reducir ya se pregunta en su
+   sección.
+3. **Barajar puede devolver el orden que se pide.** Una de cada ciento
+   veinte, el grupo de «ordena las fracciones» salía ya ordenado y eran
+   cuatro puntos regalados al que no tocó nada —y esa nota llega al
+   expediente—. Se baraja hasta que salga otra cosa.
+4. **«Escríbela como número mixto» se califica como número mixto.** 7/4
+   vale lo mismo que 1 3/4 y no es la respuesta a lo que se preguntó;
+   «13/4» pegado son trece cuartos. Se aceptan las formas en que se
+   escribe a mano («1 3/4», «1 y 3/4», «1-3/4») y ninguna más.
+
+Y el presupuesto de papel manda: **el examen entero cabe en UNA hoja
+carta**. El documento se ajusta solo buscando el zoom más grande con el
+que cabe, así que pasarse no se ve como una hoja de más —se ve como un
+examen encogido que el alumno lee con lupa en el pupitre—. El piso son
+**93 %**, y lo vigila `verifica-fracciones-apiladas.js` en las 30 formas.
+Si hace falta sitio, se recorta contenido o se quita aire; **el tamaño de
+letra del cuerpo no se toca**.
+
+**Antes de publicar un cambio de la prueba operativa de Fracciones:**
+
+```
+node _dev/servidor-estatico.js                       (en otra terminal)
+node _dev/verifica-prueba-operativa-fracciones.js    → las seis secciones, los dibujos y la nota
+node _dev/verifica-fracciones-apiladas.js            → la fracción apilada y la hoja que no se encoge
+```
+
+El primero vigila lo que cuesta caro: que las secciones sumen 100, que
+**el dibujo diga la verdad** (las partes pintadas del SVG contra la clave,
+en las 30 formas) y que su fracción no se pueda simplificar, que
+contestando bien TODO dé 100 y en blanco dé 0 —que es la cuenta que acaba
+en el expediente del alumno—, que los problemas se puedan resolver, que la
+misma Forma vuelva a salir igual y que la hoja impresa lleve sus cuatro
+dibujos con su línea y la pauta en hoja aparte.
+
 ## Normativa: la Convocatoria pregunta, no anota
 
 La Convocatoria vive en **📣 Comunicados**, que es donde vive todo lo que

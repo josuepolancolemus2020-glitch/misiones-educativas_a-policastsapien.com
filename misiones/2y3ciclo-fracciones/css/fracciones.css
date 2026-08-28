@@ -352,6 +352,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 
 /* PRUEBA OPERATIVA */
 .opx-row{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;}
+/* La instrucción de cada sección: el examen ahora pregunta seis cosas
+   distintas y ninguna se entiende sola. */
+.opx-instr-scr{font-size:0.8rem;color:var(--gray);margin:0.15rem 0 0.6rem;line-height:1.45;}
+/* El dibujo de la parte pintada. Baja de línea en el teléfono: con el dibujo
+   y la casilla en la misma fila, en 360 px la casilla se salía por la
+   derecha, que es donde no hay desplazamiento que valga. */
+.opfig-row{display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;}
+.opfig-draw{display:inline-flex;align-items:center;justify-content:center;padding:0.25rem 0.4rem;background:#fff;border:1.5px solid var(--border);border-radius:10px;}
+.opfig-draw svg{display:block;max-width:100%;height:auto;}
+.opconv-lbl{font-size:0.8rem;color:var(--pri);font-weight:600;}
 .opx-expr{font-family:'Fira Code',monospace;font-weight:600;font-size:1rem;color:var(--dark);}
 .eval-cmp-opts{display:flex;gap:1rem;margin-top:0.5rem;margin-left:1.7rem;flex-wrap:wrap;}
 .eval-cmp-opt{display:flex;align-items:center;gap:0.35rem;font-size:0.85rem;color:var(--dark);}
