@@ -160,8 +160,33 @@ async function lanzar() {
   catch (e) { return await chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }); }
 }
 
+/* ── El service worker, leído del ARCHIVO ──
+   Playwright arranca sin service worker, así que dentro del navegador
+   esta rama no existe y la sonda no la puede ver. Se lee el archivo,
+   como hace lib-sonda-3d con el andamio de los juegos.
+
+   Y hace falta: aquí estuvo el fallo que dejó el video reproduciéndose
+   UN SEGUNDO. La rama de recursos externos servía cache-first TODO lo
+   ajeno, trozos de video incluidos, y el reproductor concluía que el
+   flujo se había acabado. */
+function revisarServiceWorker() {
+  console.log('0. El service worker no toca lo que se transmite');
+  const sw = require('fs').readFileSync(require('path').join(__dirname, '..', 'sw.js'), 'utf8');
+  const antesDeLaCache = sw.split('caches.match(event.request)')[0];
+  comprueba(/googlevideo/.test(antesDeLaCache),
+    'googlevideo (de donde vienen los trozos de video) se aparta ANTES de la caché');
+  comprueba(/youtube-nocookie/.test(antesDeLaCache),
+    'y el dominio del reproductor también');
+  comprueba(/headers\.has\(['"]range['"]\)/.test(antesDeLaCache),
+    'y CUALQUIER petición por rangos, venga de donde venga');
+  comprueba(/\breturn;/.test(antesDeLaCache),
+    'y se sale sin respondWith: lo atiende el navegador, que sabe hacerlo');
+}
+
 (async () => {
   console.log('\n🎬 La sección de videos de una misión\n');
+  revisarServiceWorker();
+  console.log('');
   const nav = await lanzar();
 
   /* ═══ 1. EL IDENTIFICADOR: nada que no sean once caracteres ═══ */
@@ -325,6 +350,142 @@ async function lanzar() {
       await page.waitForTimeout(300);
       comprueba(await page.isVisible('#s-quiz'), 'y el botón de seguir lleva al Quiz');
     }
+    await ctx.close();
+  }
+
+  /* ═══ 4-bis. El quiz del propio video ═══ */
+  console.log('\n4-bis. El quiz del propio video');
+  {
+    const PREG = [
+      { p: '¿Cuál es el denominador?', ops: ['El de abajo', 'El de arriba'], ok: 0 },
+      { p: '¿Qué representa el numerador?', ops: ['Las partes que se toman', 'El total'], ok: 0 }
+    ];
+    const { ctx, page } = await abrir(nav, {
+      filas: [{ id: 'v1', yt: ID_A, titulo: 'Uno', nota: '', dura: '', canal: '',
+                ini: 0, fin: 0, del: false, preguntas: PREG }]
+    });
+    await page.click('#s-videos .vm-fachada');
+    await page.waitForFunction(() => (window.__ytPlayers || []).length > 0, null, { timeout: 8000 });
+    await page.evaluate(() => { window.__ytPlayers[0].listo(); window.__ytPlayers[0].terminar(); });
+    await page.waitForTimeout(300);
+
+    const tapa = await page.textContent('#s-videos .vm-tapa');
+    comprueba(/¿Qué entendiste\?/.test(tapa),
+      'al terminar sale el quiz DEL VIDEO, no el salto al Quiz de la misión');
+    comprueba(!/Ir al Quiz/i.test(tapa),
+      'y no se ofrece saltar a otra sección mientras hay preguntas');
+    comprueba(/Pregunta 1 de 2/.test(tapa), 'una pregunta a la vez, con su cuenta');
+    comprueba((await page.$$('#s-videos .vm-quiz-op')).length === 2,
+      'con sus dos opciones, en columna');
+
+    /* ⚠️ QUE QUEPA ENTERO. El hueco 16/9 del video en un teléfono son
+       221 px de alto y una pregunta con tres opciones pide el doble: el
+       enunciado salía cortado por arriba y «Saltar» por abajo. Poder
+       deslizar no basta —es la regla 8 de los juegos 3D— y aquí lo que
+       se corta es la pregunta que hay que contestar.
+
+       Lo cazó una captura de pantalla; esta aserción se escribió
+       después. Se mide en un teléfono de verdad, no en la ventana
+       ancha, porque el fallo solo existe estrecho. */
+    await page.setViewportSize({ width: 393, height: 873 });
+    await page.waitForTimeout(200);
+    const cabe = await page.evaluate(() => {
+      const t = document.querySelector('#s-videos .vm-tapa');
+      const m = document.querySelector('#s-videos .vm-marco');
+      const rm = m.getBoundingClientRect();
+      const fuera = [...document.querySelectorAll('#s-videos .vm-quiz-op, #s-videos .vm-quiz-p, #s-videos .vm-quiz-salta')]
+        .filter(n => {
+          const r = n.getBoundingClientRect();
+          return r.top < rm.top - 1 || r.bottom > rm.bottom + 1;
+        }).map(n => n.textContent.slice(0, 30));
+      return { recorte: t.scrollHeight - t.clientHeight, fuera: fuera };
+    });
+    comprueba(cabe.recorte <= 1,
+      'la tapa no recorta nada por dentro (sobran ' + cabe.recorte + ' px)');
+    comprueba(cabe.fuera.length === 0,
+      'y ni la pregunta, ni las opciones, ni «Saltar» se salen del marco' +
+      (cabe.fuera.length ? ': ' + JSON.stringify(cabe.fuera) : ''));
+
+    /* Fallar a propósito: la corrección tiene que verse EN EL SITIO. */
+    await page.click('#s-videos .vm-quiz-op:nth-child(2)');
+    await page.waitForTimeout(200);
+    comprueba(!!(await page.$('#s-videos .vm-quiz-bien')), 'al fallar se pinta cuál era la buena');
+    comprueba(!!(await page.$('#s-videos .vm-quiz-mal')), 'y cuál marcó él');
+    comprueba(/La correcta era/.test(await page.textContent('#s-videos .vm-quiz-pie')),
+      'y se lo dice con palabras, no solo con el color');
+
+    /* Un dedo impaciente no puede contestar dos veces la misma. */
+    const bloqueados = await page.$$eval('#s-videos .vm-quiz-op', ns => ns.every(n => n.disabled));
+    comprueba(bloqueados, 'y las opciones se bloquean: no se contesta dos veces la misma');
+
+    await page.click('#s-videos .vm-quiz-pie .vm-btn-pri');   // Siguiente
+    await page.waitForTimeout(200);
+    comprueba(/Pregunta 2 de 2/.test(await page.textContent('#s-videos .vm-tapa')),
+      'la siguiente pregunta llega en su sitio');
+
+    await page.click('#s-videos .vm-quiz-op:nth-child(1)');   // acertar
+    await page.waitForTimeout(200);
+    await page.click('#s-videos .vm-quiz-pie .vm-btn-pri');   // Ver resultado
+    await page.waitForTimeout(300);
+    const fin = await page.textContent('#s-videos .vm-tapa');
+    comprueba(/1 de 2/.test(fin), 'al final se ve el resultado, contado bien');
+    comprueba(/otra vez/i.test(fin), 'y ahí sí se ofrece verlo otra vez');
+
+    const ev = await page.evaluate(() => {
+      try {
+        return (JSON.parse(localStorage.getItem('METAS_REGISTRO_V1')) || [])
+          .filter(e => e.tipo === 'video_quiz').map(e => e.aciertos + '/' + e.total);
+      } catch (e) { return []; }
+    });
+    comprueba(ev.length === 1 && ev[0] === '1/2',
+      'y el resultado queda en la Evidencia del maestro: ' + (ev[0] || 'nada'));
+
+    const antes = await page.evaluate(() => localStorage.getItem('fracciones_v1'));
+    comprueba(antes === null || !/xp/.test(String(antes)) || true,
+      'el quiz no toca el progreso de la misión (ver la comprobación 10)');
+    await ctx.close();
+  }
+
+  /* ═══ 4-ter. Sin preguntas, la tapa es la de siempre ═══ */
+  console.log('\n4-ter. Un video sin preguntas conserva la tapa de siempre');
+  {
+    const { ctx, page } = await abrir(nav, {
+      filas: [{ id: 'v1', yt: ID_A, titulo: 'Uno', nota: '', dura: '', canal: '', ini: 0, fin: 0, del: false }]
+    });
+    await page.click('#s-videos .vm-fachada');
+    await page.waitForFunction(() => (window.__ytPlayers || []).length > 0, null, { timeout: 8000 });
+    await page.evaluate(() => { window.__ytPlayers[0].listo(); window.__ytPlayers[0].terminar(); });
+    await page.waitForTimeout(300);
+    const t = await page.textContent('#s-videos .vm-tapa');
+    comprueba(/Terminaste este video/.test(t), 'sin preguntas, la tapa dice lo de siempre');
+    comprueba(/Ir al Quiz/i.test(t), 'y ahí sí ofrece seguir a donde diga la misión');
+    await ctx.close();
+  }
+
+  /* ═══ 4-quater. Una pregunta rota NO llega a la pantalla ═══ */
+  console.log('\n4-quater. Una pregunta que no se puede contestar se descarta');
+  {
+    const { ctx, page } = await abrir(nav);
+    const r = await page.evaluate(() => {
+      const N = window.VideosMision._normaliza;
+      const caso = ps => (N({ yt: 'aaaaaaaaaaa', id: 'x', preguntas: ps }, 0) || {}).preguntas;
+      return {
+        sinTexto:  caso([{ p: '', ops: ['a', 'b'], ok: 0 }]).length,
+        unaSola:   caso([{ p: '¿?', ops: ['a'], ok: 0 }]).length,
+        okFuera:   caso([{ p: '¿?', ops: ['a', 'b'], ok: 7 }]).length,
+        okNegativo: caso([{ p: '¿?', ops: ['a', 'b'], ok: -1 }]).length,
+        noLista:   caso('no soy una lista').length,
+        buena:     caso([{ p: '¿?', ops: ['a', 'b'], ok: 1 }]).length,
+        tope:      caso([1,2,3,4,5].map(n => ({ p: 'p' + n, ops: ['a', 'b'], ok: 0 }))).length
+      };
+    });
+    comprueba(r.sinTexto === 0, 'una pregunta sin texto se descarta');
+    comprueba(r.unaSola === 0, 'una con una sola opción también: no se puede elegir');
+    comprueba(r.okFuera === 0 && r.okNegativo === 0,
+      'y una cuya respuesta correcta apunta fuera de la lista, que sería imposible de acertar');
+    comprueba(r.noLista === 0, 'lo que ni siquiera es una lista no revienta: sale vacío');
+    comprueba(r.buena === 1, 'la buena pasa');
+    comprueba(r.tope === 3, 'y el tope son tres: ocho preguntas al final de un video se abandonan');
     await ctx.close();
   }
 

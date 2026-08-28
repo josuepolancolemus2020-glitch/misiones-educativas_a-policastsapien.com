@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v163';
+const CACHE_NAME = 'meta-app-v164';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
@@ -82,6 +82,41 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   const isLocal = url.origin === location.origin;
   const isImage = event.request.destination === 'image';
+
+  /* ⚠️ LO QUE SE TRANSMITE NO PASA POR AQUÍ. NUNCA.
+     ─────────────────────────────────────────────────────────────────
+     Esto costó un video que se reproducía UN SEGUNDO y se iba al final,
+     el 28 de agosto de 2026, el mismo día que se estrenó la sección
+     🎬 Videos. El fallo no estaba en el reproductor: estaba aquí.
+
+     La rama de abajo sirve «cache-first» TODO lo que no es del propio
+     dominio. Eso se escribió para el motor de dibujo de los juegos 3D,
+     que es un archivo suelto que no cambia. Pero un video no es un
+     archivo: son cientos de trozos que el reproductor va pidiendo por
+     rangos de bytes, y cada respuesta vale para ESE rango y ese
+     momento. Servirle uno guardado —o guardarle una respuesta parcial,
+     que además `cache.put` ni siquiera admite— le hace concluir que el
+     flujo se acabó, y el reproductor salta al final. Que es exactamente
+     lo que se vio.
+
+     Y la sonda no podía cazarlo: Playwright arranca sin service worker,
+     así que en la prueba esta rama no existe. Es el mismo punto ciego
+     que ya está apuntado en el CLAUDE.md a cuenta de la convocatoria.
+
+     Dos guardias, y hacen falta los dos:
+
+       1. La casa de YouTube entera, por nombre. Los trozos de video no
+          vienen de youtube.com sino de googlevideo.com, y el reproductor
+          se reparte entre cuatro dominios más.
+       2. CUALQUIER petición por rangos, venga de donde venga. Es la
+          regla de verdad: el día que se incruste un audio o un video de
+          otro sitio, este mismo fallo volvería con otra cara.
+
+     No se llama a respondWith: se sale y lo atiende el navegador, que es
+     quien sabe hacerlo. Y no, esto no rompe la promesa de los juegos 3D:
+     un video necesita internet de todas formas, y la pantalla lo dice. */
+  const CASA_YT = /(^|\.)(youtube|youtube-nocookie|googlevideo|ytimg|ggpht|youtu)\.(com|be)$/;
+  if (CASA_YT.test(url.hostname) || event.request.headers.has('range')) return;
 
   if (isLocal && !isImage) {
     // Archivos propios (HTML, CSS, JS): siempre va a la red primero y

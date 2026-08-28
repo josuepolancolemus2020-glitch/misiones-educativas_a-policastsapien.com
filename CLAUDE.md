@@ -1795,8 +1795,7 @@ ha puesto nada.
 3. **Al terminar el video cae una tapa nuestra.** Es lo que cumple «que
    no salga de la misión»: al acabar, YouTube pinta su parrilla de
    sugerencias con «Ver en YouTube», y por ahí se va el niño. La tapa
-   ofrece verlo otra vez y seguir al Quiz, y **no ofrece salir a
-   YouTube**.
+   **no ofrece salir a YouTube**.
 4. **Si la API de YouTube no llega, NO se tapa nada.** El video puede
    estar viéndose perfectamente; taparlo sería el peor fallo posible.
    Solo queda una tira pequeña debajo por si no se ve. Se pierde la
@@ -1827,6 +1826,45 @@ ha puesto nada.
    Es la misma trampa que la clave del almacén de la repisa de enlaces
    de F.A.R.O, y la sonda la mira.
 
+### El quiz del propio video
+
+Al terminar, si el video trae preguntas, la tapa **pregunta por lo que
+acaba de ver**. La primera versión mandaba al Quiz de la misión y era un
+salto raro: aquel pregunta por el tema entero, no por el video, y además
+se lleva al alumno de la sección sin comprobar nada. Las escribe quien
+eligió el video, en F.A.R.O, y son opcionales: un video sin preguntas
+conserva la tapa de siempre.
+
+Cinco decisiones, y ninguna es de adorno:
+
+1. **Una pregunta a la vez y en letra grande.** Misma lección que la
+   lectura de las misiones: las tres juntas y en letra chica son un muro
+   de texto en un teléfono, y el niño contesta por contestar.
+2. **Se corrige EN EL SITIO, no al final.** Si la corrección llega
+   después de tres preguntas, ya no se acuerda de por qué contestó eso.
+   Y no se distingue solo por el color: la buena lleva ✓ y la fallada ✗,
+   porque uno de cada doce niños no distingue el rojo del verde.
+3. **No da XP.** Sigue siendo la regla de la sección; aquí además las
+   preguntas se pueden acertar a la tercera. Lo que sí queda es el
+   resultado en la **Evidencia del maestro** (`video_quiz`, con aciertos
+   y total), que es el dato que de verdad le sirve: un video visto y tres
+   preguntas falladas le dice que el tema sigue sin entenderse.
+4. **Se puede saltar.** Un quiz obligatorio al final de un video es la
+   forma más rápida de que no se abra ningún video más.
+5. ⚠️ **`ok` es el ÍNDICE de la correcta, nunca su texto.** Si fuera el
+   texto, corregirle una tilde a la opción dejaría la pregunta sin
+   respuesta buena y nadie se enteraría hasta que un niño la fallara. Y
+   una pregunta que no se puede contestar —sin texto, con una sola
+   opción, o con el `ok` apuntando fuera de la lista— **se descarta
+   entera** antes de pintarla: es preferible un video sin quiz a un quiz
+   trabado del que un niño solo no puede salir.
+
+⚠️ **Con quiz, la tapa SALE del hueco 16/9 del video** (`vm-marco-quiz`).
+El hueco en un teléfono de 393 px mide 221 px de alto y una pregunta con
+tres opciones pide el doble: se veía el enunciado cortado por arriba y
+«Saltar» por abajo. Poder deslizar no basta —regla 8 de los juegos 3D— y
+aquí lo que se corta es la pregunta.
+
 ### Cómo se monta en una misión nueva
 
 Tres cosas, y ninguna toca el aparato. Están escritas al final de
@@ -1834,6 +1872,31 @@ Tres cosas, y ninguna toca el aparato. Están escritas al final de
 (se tiñe de su `--pri` y su `--sec`), el bloque `#s-videos` con su
 pestaña, y los tres `<script>` al final con la llamada a
 `VideosMision.montar(...)`.
+
+### ⚠️ El service worker no toca lo que se transmite
+
+Esto costó un video que se reproducía **un segundo** y saltaba al final,
+el mismo día del estreno. El fallo no estaba en el reproductor: la rama
+de recursos externos de `sw.js` servía **cache-first todo lo ajeno**, y
+un video no es un archivo —son cientos de trozos pedidos por rangos de
+bytes, y cada respuesta vale para ESE rango—. Servirle uno guardado le
+hace concluir que el flujo se acabó.
+
+Se escribió para el motor de los juegos 3D, que sí es un archivo suelto.
+Ahora, antes de la caché, se apartan dos cosas y hacen falta las dos:
+
+- **la casa de YouTube entera por nombre** (los trozos vienen de
+  `googlevideo.com`, no de `youtube.com`);
+- **cualquier petición con cabecera `range`**, venga de donde venga —el
+  día que se incruste un audio de otro sitio, el mismo fallo volvería
+  con otra cara.
+
+Se sale sin `respondWith`: lo atiende el navegador, que sabe hacerlo.
+
+**Y la sonda no podía cazarlo:** Playwright arranca sin service worker,
+así que en la prueba esa rama no existe. Por eso la sonda lee `sw.js`
+**del archivo**, como hace `lib-sonda-3d` con el andamio de los juegos.
+Es el mismo punto ciego ya apuntado a cuenta de la convocatoria.
 
 **Antes de publicar un cambio de los videos:**
 

@@ -52,8 +52,21 @@
        ini:    0,             segundo en el que empieza (0 = desde el
                               principio). Recortar es la defensa más
                               barata contra los anuncios y la paja.
-       fin:    0              segundo en el que para (0 = hasta el
+       fin:    0,             segundo en el que para (0 = hasta el
                               final).
+
+       preguntas: [           OPCIONAL. El quiz del propio video: salen
+         { p: '¿Cuál es el denominador?',   al terminarlo, en vez de
+           ops: ['El de abajo',             mandar al alumno al Quiz de
+                 'El de arriba'],           la misión —que pregunta por
+           ok: 0 }                          el tema entero y se lo lleva
+       ]                                    de la sección sin comprobar
+                              nada—. Máximo tres, y `ok` es el ÍNDICE de
+                              la correcta, NUNCA su texto: si fuera el
+                              texto, corregirle una tilde a la opción
+                              dejaría la pregunta sin respuesta buena y
+                              nadie se enteraría hasta que un niño la
+                              fallara.
      }
 
    ⚠️ LA REGLA QUE NO SE PUEDE SALTAR: EN `yt` VAN ONCE CARACTERES
@@ -109,7 +122,11 @@ var VIDEOS_MISIONES = {
          { id: 'v-frac-01', yt: 'dQw4w9WgXcQ',
            titulo: '¿Qué es una fracción?',
            nota:   'Míralo antes del Quiz. Del minuto 0 al 4.',
-           dura:   '4:05', canal: 'Smile and Learn', ini: 0, fin: 245 }
+           dura:   '4:05', canal: 'Smile and Learn', ini: 0, fin: 245,
+           preguntas: [
+             { p: '¿Qué indica el denominador?',
+               ops: ['En cuántas partes se dividió', 'Cuántas se tomaron'], ok: 0 }
+           ] }
        ],
   */
   '2y3ciclo-fracciones': []

@@ -152,8 +152,41 @@
       dura: vmTxt(v.dura, 12),
       canal: vmTxt(v.canal, 80),
       ini: ini,
-      fin: fin
+      fin: fin,
+      preguntas: vmPreguntas(v.preguntas)
     };
+  }
+
+  /* Las preguntas del propio video, limpiadas antes de pintarlas.
+
+     Todo lo que llegue de fuera pasa por aquí, y lo que no sea una
+     pregunta contestable se descarta ENTERO. La razón es la de siempre:
+     esta pantalla la abre un niño solo, y una pregunta sin respuesta
+     correcta —o con una sola opción— es una pantalla trabada de la que
+     no puede salir. Es preferible un video sin quiz a un quiz roto.
+
+     `ok` es el ÍNDICE de la buena, y se comprueba que exista de verdad:
+     un `ok` que apunte fuera de la lista dejaría el acierto imposible. */
+  function vmPreguntas(lista) {
+    if (!Array.isArray(lista)) return [];
+    var salida = [];
+    for (var i = 0; i < lista.length && salida.length < 3; i++) {
+      var q = lista[i];
+      if (!q || typeof q !== 'object') continue;
+      var texto = vmTxt(q.p, 200);
+      if (!texto) continue;
+      var ops = Array.isArray(q.ops) ? q.ops : [];
+      var limpias = [];
+      for (var j = 0; j < ops.length && limpias.length < 4; j++) {
+        var o = vmTxt(ops[j], 120);
+        if (o) limpias.push(o);
+      }
+      if (limpias.length < 2) continue;
+      var ok = parseInt(q.ok, 10);
+      if (!isFinite(ok) || ok < 0 || ok >= limpias.length) continue;
+      salida.push({ p: texto, ops: limpias, ok: ok });
+    }
+    return salida;
   }
 
   /* ═══════════ LAS DOS CAPAS ═══════════
@@ -457,12 +490,47 @@
   function taparFinal(marco, v, ctx, player) {
     if (marco.querySelector('.vm-tapa')) return;
     var tapa = el('div', 'vm-tapa');
-    tapa.appendChild(el('p', 'vm-tapa-tit', '✅ Terminaste este video'));
+
+    /* SI EL VIDEO TRAE PREGUNTAS, SE PREGUNTA. Y si no, se ofrece lo de
+       siempre. Mandar al alumno al Quiz de la misión era un salto raro:
+       aquel pregunta por el tema entero, no por lo que acaba de ver, y
+       además se lo lleva de la sección sin comprobar nada. */
+    if (v.preguntas && v.preguntas.length) {
+      /* ⚠️ CON QUIZ, LA TAPA DEJA DE ESTAR ENCAJADA EN EL 16/9.
+
+         El hueco del video en un teléfono de 393 px de ancho mide 221 px
+         de alto. Una pregunta con tres opciones no cabe ahí ni de lejos:
+         se veía el enunciado cortado por arriba y «Saltar las preguntas»
+         cortado por abajo. Se podía deslizar por dentro, pero eso es
+         justo lo que la regla 8 de los juegos 3D dice que no basta —y
+         aquí es peor, porque lo que se corta es la pregunta.
+
+         Con esta marca, el marco suelta su proporción fija y la tapa
+         entra EN FLUJO: el marco crece hasta lo que ocupe el quiz. El
+         reproductor sigue detrás, estirado y tapado. Lo cazó una
+         captura de pantalla, no una aserción. */
+      marco.classList.add('vm-marco-quiz');
+      tapa.classList.add('vm-tapa-quiz');
+      quizDelVideo(tapa, marco, v, ctx, player);
+    } else {
+      tapa.appendChild(el('p', 'vm-tapa-tit', '✅ Terminaste este video'));
+      tapa.appendChild(botonesFinales(tapa, v, ctx, player));
+    }
+    marco.appendChild(tapa);
+  }
+
+  /* Los dos botones de siempre: verlo otra vez y seguir. */
+  function botonesFinales(tapa, v, ctx, player) {
     var btns = el('div', 'vm-tapa-btns');
 
     var otra = el('button', 'vm-btn', '▶ Verlo otra vez');
     otra.type = 'button';
     otra.addEventListener('click', function () {
+      /* El marco recupera su proporción de video: si se quedara con el
+         alto que pidió el quiz, el reproductor volvería a salir dentro
+         de una caja demasiado alta y con franjas negras. */
+      var m = tapa.parentNode;
+      if (m && m.classList) m.classList.remove('vm-marco-quiz');
       tapa.remove();
       try { player.seekTo(v.ini || 0, true); player.playVideo(); }
       catch (e) { /* si la API se cayó, al menos la tapa se quitó */ }
@@ -479,9 +547,135 @@
       });
       btns.appendChild(ir);
     }
+    return btns;
+  }
 
-    tapa.appendChild(btns);
-    marco.appendChild(tapa);
+  /* ═══════════ EL QUIZ DEL PROPIO VIDEO ═══════════
+     Dos o tres preguntas sobre lo que acaba de ver, escritas por quien
+     eligió el video. Cinco decisiones, y ninguna es de adorno:
+
+     1. UNA PREGUNTA A LA VEZ, y en letra grande. Es la misma lección
+        que ya está escrita para la lectura de las misiones: las cinco
+        juntas y en letra chica son un muro de texto en un teléfono, y
+        el niño contesta por contestar.
+
+     2. SE CORRIGE EN EL SITIO, no al final. Si la corrección llega
+        después de tres preguntas, ya no se acuerda de por qué contestó
+        eso. Se pinta la buena en verde, la suya en rojo si falló, y se
+        sigue.
+
+     3. FALLAR OFRECE VOLVER AL MINUTO. Es lo que un quiz sobre un video
+        puede hacer y uno sobre un tema no: si no lo entendió, el sitio
+        donde estaba explicado son estos mismos cinco minutos.
+
+     4. NO DA XP. Sigue siendo la regla de la sección: nadie puede
+        comprobar que el niño vio el video, y aquí las preguntas se
+        pueden acertar a la tercera. Lo que sí queda es el resultado
+        apuntado en la Evidencia del maestro, que es el dato que de
+        verdad le sirve: un video visto y tres preguntas falladas le
+        dice que el tema sigue sin entenderse.
+
+     5. SE PUEDE SALTAR. Un alumno que vio el video para repasar y no
+        quiere examen tiene que poder cerrar. Un quiz obligatorio al
+        final de un video es la forma más rápida de que no se abra
+        ningún video más. */
+  function quizDelVideo(tapa, marco, v, ctx, player) {
+    var i = 0, aciertos = 0, contestada = false;
+
+    var cab = el('p', 'vm-tapa-tit', '🧠 ¿Qué entendiste?');
+    tapa.appendChild(cab);
+
+    var paso = el('p', 'vm-quiz-paso');
+    tapa.appendChild(paso);
+
+    var cuerpo = el('div', 'vm-quiz');
+    tapa.appendChild(cuerpo);
+
+    pintarPregunta();
+
+    function pintarPregunta() {
+      contestada = false;
+      cuerpo.textContent = '';
+      paso.textContent = 'Pregunta ' + (i + 1) + ' de ' + v.preguntas.length;
+      var q = v.preguntas[i];
+
+      cuerpo.appendChild(el('p', 'vm-quiz-p', q.p));
+
+      var ops = el('div', 'vm-quiz-ops');
+      q.ops.forEach(function (texto, j) {
+        var b = el('button', 'vm-quiz-op', texto);
+        b.type = 'button';
+        b.addEventListener('click', function () { responder(q, j, ops); });
+        ops.appendChild(b);
+      });
+      cuerpo.appendChild(ops);
+
+      /* Saltar el quiz, siempre a la vista. Ver la decisión 5. */
+      var salta = el('button', 'vm-quiz-salta', 'Saltar las preguntas');
+      salta.type = 'button';
+      salta.addEventListener('click', terminar);
+      cuerpo.appendChild(salta);
+    }
+
+    function responder(q, elegida, ops) {
+      /* Un dedo impaciente contesta dos veces la misma pregunta y se
+         cuenta doble. Es la misma razón por la que los juegos 3D dejan
+         un respiro después de cambiar de pantalla. */
+      if (contestada) return;
+      contestada = true;
+      if (elegida === q.ok) aciertos++;
+
+      var botones = ops.querySelectorAll('.vm-quiz-op');
+      for (var k = 0; k < botones.length; k++) {
+        botones[k].disabled = true;
+        if (k === q.ok) botones[k].classList.add('vm-quiz-bien');
+        else if (k === elegida) botones[k].classList.add('vm-quiz-mal');
+      }
+
+      var pie = el('div', 'vm-quiz-pie');
+      pie.appendChild(el('span', 'vm-quiz-dice',
+        elegida === q.ok ? '✅ Correcto' : '❌ La correcta era: ' + q.ops[q.ok]));
+
+      var sigue = el('button', 'vm-btn vm-btn-pri',
+        i + 1 < v.preguntas.length ? 'Siguiente →' : 'Ver resultado');
+      sigue.type = 'button';
+      sigue.addEventListener('click', function () {
+        i++;
+        if (i < v.preguntas.length) pintarPregunta();
+        else terminar();
+      });
+      pie.appendChild(sigue);
+      cuerpo.appendChild(pie);
+    }
+
+    function terminar() {
+      cuerpo.textContent = '';
+      paso.textContent = '';
+      var total = v.preguntas.length;
+      cab.textContent = aciertos === total
+        ? '🎉 ' + aciertos + ' de ' + total
+        : '🧠 ' + aciertos + ' de ' + total;
+
+      cuerpo.appendChild(el('p', 'vm-quiz-p',
+        aciertos === total ? '¡Entendiste el video!'
+          : aciertos > 0 ? 'Bien, pero hay algo que se te escapó.'
+          : 'Este video merece otra pasada.'));
+
+      /* Que quede en la Evidencia del maestro. Es lo que de verdad le
+         sirve: un video visto con las preguntas falladas le dice que el
+         tema sigue sin entenderse, y eso no se lo dice ninguna otra
+         pantalla. */
+      try {
+        if (window.METAS && typeof window.METAS.registrar === 'function') {
+          window.METAS.registrar('video_quiz', {
+            video: v.id, yt: v.yt, video_titulo: v.titulo,
+            aciertos: aciertos, total: total
+          });
+        }
+      } catch (e) {}
+
+      cuerpo.appendChild(botonesFinales(tapa, v, ctx, player));
+    }
   }
 
   /* El video no se puede ver, y la pantalla lo DICE.

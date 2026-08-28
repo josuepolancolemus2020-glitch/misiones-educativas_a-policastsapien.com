@@ -346,3 +346,118 @@
   .vm-card, .vm-btn { transition: none; }
   .vm-btn:hover { transform: none; }
 }
+
+/* ── EL QUIZ DEL PROPIO VIDEO ──────────────────────────────────────
+   Vive DENTRO de la tapa del final, que es un fondo casi negro sobre el
+   reproductor. Todo cuelga de .vm-raiz por lo que dice la nota de
+   arriba: la hoja de la misión le gana a un `.vm-quiz-p` a secas. */
+.vm-raiz .vm-quiz { width: 100%; max-width: 34rem; }
+
+.vm-raiz .vm-quiz-paso {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* UNA PREGUNTA A LA VEZ Y EN LETRA GRANDE. Es la misma lección que ya
+   está escrita para la lectura de las misiones: las tres juntas y en
+   letra chica son un muro de texto en un teléfono, y el niño contesta
+   por contestar. */
+.vm-raiz .vm-quiz-p {
+  color: #fff;
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0.4rem 0 0.7rem;
+}
+
+.vm-raiz .vm-quiz-ops { display: flex; flex-direction: column; gap: 0.4rem; }
+
+/* Las opciones van en COLUMNA y a todo el ancho, no en fila: en un
+   teléfono tres opciones en fila salen de nueve caracteres cada una y
+   hay que adivinar cuál dice qué. Y 44 px de alto, que es lo que un
+   dedo acierta sin mirar. */
+.vm-raiz .vm-quiz-op {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.94);
+  color: #1a202c;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.3;
+}
+.vm-raiz .vm-quiz-op:disabled { cursor: default; opacity: 0.75; }
+
+/* La corrección se ve EN EL SITIO, no al final. Si llegara después de
+   tres preguntas, el alumno ya no se acuerda de por qué contestó eso.
+   Y no se distingue solo por el color: la verde lleva ✓ y la roja ✗,
+   porque uno de cada doce niños no distingue el rojo del verde. */
+.vm-raiz .vm-quiz-bien {
+  background: #16a34a; color: #fff; border-color: #16a34a; opacity: 1 !important;
+}
+.vm-raiz .vm-quiz-bien::after { content: '  ✓'; font-weight: 800; }
+.vm-raiz .vm-quiz-mal {
+  background: #dc2626; color: #fff; border-color: #dc2626; opacity: 1 !important;
+}
+.vm-raiz .vm-quiz-mal::after { content: '  ✗'; font-weight: 800; }
+
+.vm-raiz .vm-quiz-pie {
+  display: flex;
+  flex-wrap: wrap;          /* salirse por la derecha no tiene arreglo */
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+.vm-raiz .vm-quiz-dice { color: #fff; font-size: 0.86rem; font-weight: 700; }
+
+/* Saltar, siempre a la vista pero sin gritar. Un quiz obligatorio al
+   final de un video es la forma más rápida de que no se abra ningún
+   video más. */
+.vm-raiz .vm-quiz-salta {
+  display: block;
+  margin: 0.7rem auto 0;
+  background: none;
+  border: 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+/* ⚠️ EL QUIZ NO CABE EN EL HUECO DEL VIDEO, Y NO SE PUEDE DEJAR ASÍ.
+   ─────────────────────────────────────────────────────────────────
+   El hueco 16/9 en un teléfono de 393 px de ancho mide 221 px de alto.
+   Una pregunta con tres opciones pide el doble. Encajada ahí dentro se
+   veía el enunciado cortado por arriba y «Saltar las preguntas» cortado
+   por abajo; se podía deslizar, pero la regla 8 de los juegos 3D ya
+   dice que poder deslizar no basta —y aquí lo que se corta es la
+   pregunta que hay que contestar.
+
+   Con `vm-marco-quiz` el marco suelta la proporción y la tapa entra EN
+   FLUJO: el marco crece hasta lo que ocupe el quiz, con el reproductor
+   estirado y tapado detrás. Al darle a «Verlo otra vez» se quita la
+   marca y el marco vuelve a su 16/9.
+
+   Lo cazó una captura de pantalla, no una aserción. La aserción se
+   escribió después. */
+.vm-marco.vm-marco-quiz { aspect-ratio: auto; }
+.vm-raiz .vm-tapa.vm-tapa-quiz {
+  position: relative;
+  inset: auto;
+  min-height: 100%;
+  /* Ya no hace falta desplazar por dentro: el marco crece. Dejarlo
+     puesto escondería un desbordamiento en vez de resolverlo. */
+  overflow: visible;
+  padding: 1.1rem 1rem 1.2rem;
+}
