@@ -1923,10 +1923,19 @@ ha puesto nada.
    parámetro de YouTube que lo haga y `youtube-nocookie.com` corta el
    rastreo, no la publicidad. Lo que se hace es recortar el video
    (`ini`/`fin`), elegir canales que no monetizan, y avisar de **Brave**,
-   que es un **navegador** —no un buscador— que sí los bloquea. El aviso
-   va siempre a la vista bajo el reproductor, porque quien lo instala es
-   el maestro o la familia y solo se acuerdan de mirarlo el día que sale
-   un anuncio.
+   que es un **navegador** —no un buscador— que sí los bloquea.
+
+   ⚠️ **El aviso se dice UNA VEZ y ARRIBA de la sección.** Estuvo debajo
+   de cada video y el autor lo pidió quitar el 28 de agosto de 2026
+   mirando su teléfono: con seis videos, el mismo párrafo de tres
+   renglones salía seis veces, alargaba la sección justo donde hay que
+   barrer para encontrar el video que se busca, y un aviso repetido seis
+   veces no se lee seis veces —se deja de leer la primera—. Sigue
+   **siempre a la vista y nunca escondido en un menú**, que es la razón
+   por la que existe: quien instala el navegador es el maestro o la
+   familia, y solo se acuerdan de mirarlo el día que sale un anuncio.
+   Tampoco se repite dentro del panel de «no se pudo ver aquí»: está
+   arriba, en esa misma pantalla.
 7. **Ver un video no da XP ni marca la sección como hecha.** Nadie puede
    comprobar que el niño lo miró, y un puntaje que se consigue dándole
    al play y yéndose es un puntaje regalado. Sí queda apuntado en la
@@ -1955,7 +1964,7 @@ preguntas de más **no dan ningún error**: se guardan bien allá y se caen
 en silencio antes de llegar a la pantalla, y eso se descubre —si se
 descubre— mirando el teléfono de un niño.
 
-Cinco decisiones, y ninguna es de adorno:
+Seis decisiones, y ninguna es de adorno:
 
 1. **Una pregunta a la vez y en letra grande.** Misma lección que la
    lectura de las misiones: las tres juntas y en letra chica son un muro
@@ -1978,6 +1987,36 @@ Cinco decisiones, y ninguna es de adorno:
    opción, o con el `ok` apuntando fuera de la lista— **se descarta
    entera** antes de pintarla: es preferible un video sin quiz a un quiz
    trabado del que un niño solo no puede salir.
+6. **Se anuncia, y se puede contestar SIN llegar al final.** Pedido por
+   el autor el 28 de agosto de 2026, con estas palabras: «hay usuarios
+   que podrían no ver el video hasta el final». Y no es una comodidad:
+   la tapa del final **solo cae cuando YouTube dice que el video
+   terminó**, y hay videos que no se terminan nunca —el alumno que ya
+   entendió lo suyo en el minuto dos, el que pierde la señal a mitad—.
+   Los dos se quedaban sin las preguntas, y el maestro sin el dato de la
+   Evidencia, que es lo único que esa sección le devuelve.
+
+   Va en tres sitios y cada uno hace lo suyo: la **tarjeta** dice
+   «🧠 3 preguntas al final» **antes de tocar ▶** (un quiz que solo se
+   anuncia al final es una sorpresa, y quien va con prisa elige el video
+   sin saber cuál de los seis le va a preguntar algo); debajo del
+   reproductor sale el **aviso con su botón «Responder ahora»**; y al
+   abrirlo **el video se calla** —por la API, y si no llegó, por el
+   `postMessage` que el reproductor entiende de fábrica, que para eso ya
+   va `enablejsapi=1` en la dirección—. Uno sonando detrás de las
+   preguntas es la forma más rápida de que no se conteste ninguna.
+
+   ⚠️ **Y «Verlo otra vez» tiene que DESMARCAR el «ya se tapó».** Es lo
+   que más cuesta y no se ve venir: sin eso, el alumno que contestó por
+   adelantado y volvió a ver el video se quedaba **sin tapa** al llegar
+   el final de verdad, o sea con la parrilla de sugerencias de YouTube y
+   su «Ver en YouTube» en pantalla —que es exactamente lo que esta
+   sección existe para evitar—.
+
+   En la Evidencia del maestro queda `sin_terminar`, y le cambia la
+   lectura del dato: dos preguntas falladas de un video visto entero
+   dicen que el tema no se entendió; las mismas dos de un video cortado
+   en el minuto dos dicen otra cosa.
 
 ⚠️ **Con quiz, la tapa SALE del hueco 16/9 del video** (`vm-marco-quiz`).
 El hueco en un teléfono de 393 px mide 221 px de alto y una pregunta con
@@ -2047,6 +2086,14 @@ recibiría un toque en el centro del video, que es el mismo guardián que
 caza el lienzo derramado de los juegos 3D—, que sin API no se tape nada,
 que la nube pise al catálogo y la lápida quite, y que ver un video no
 toque el progreso de la misión.
+
+Y desde el 28 de agosto de 2026, dos comprobaciones más: la **3-bis**
+mira que el aviso de Brave salga **una sola vez y por encima de la
+lista**, con dos videos y también con uno abierto; y la **3-ter**, el
+quiz por adelantado —que la tarjeta lo anuncie antes de tocar ▶, que
+anunciarlo no abra las preguntas, que «Responder ahora» las abra y
+**pause el video**, que quede apuntado `sin_terminar`, y la que de verdad
+cuesta: que **«Verlo otra vez» devuelva la tapa del final**—.
 
 Y desde que esto vive en más de una misión, dos cosas más. La **11** lee
 del archivo TODAS las que lo montan —abrirlas con Playwright cuesta un

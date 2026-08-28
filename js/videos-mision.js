@@ -72,8 +72,11 @@
      1. RECORTAR (`ini` y `fin`): el trozo que sirve, sin la paja.
      2. AVISAR de Brave, que es un NAVEGADOR (no un buscador) que
         bloquea los anuncios de YouTube. El aviso va siempre a la vista
-        bajo el reproductor, porque quien lo instala es el maestro o la
-        familia y solo se acuerdan de mirarlo el día que sale uno.
+        —nunca escondido en un menú—, porque quien lo instala es el
+        maestro o la familia y solo se acuerdan de mirarlo el día que
+        sale uno. Va UNA VEZ, arriba de la sección: estuvo debajo de
+        cada video y con seis videos salía seis veces, que es como se
+        deja de leer un aviso.
      3. Elegir canales que no monetizan, que eso es del administrador.
 
    ═══════════════════════════════════════════════════════════════════
@@ -92,6 +95,9 @@
      arriba—, pero es gratis y es lo correcto para una pantalla que
      abren niños. */
   var YT_EMBED = 'https://www.youtube-nocookie.com/embed/';
+  /* El origen del reproductor, para hablarle por postMessage cuando la
+     API no llegó. Se saca de YT_EMBED para que no puedan separarse. */
+  var YT_ORIGEN = 'https://www.youtube-nocookie.com';
   var YT_API = 'https://www.youtube.com/iframe_api';
   var YT_MIRA = 'https://www.youtube.com/watch?v=';
   var YT_MINI = 'https://i.ytimg.com/vi/';
@@ -290,10 +296,22 @@
     return YT_EMBED + v.yt + '?' + p.join('&');
   }
 
-  /* El aviso de Brave. Se arma aquí una vez y se clona: es el mismo
-     texto en todas las tarjetas y en el panel de fallo. */
-  function avisoBrave() {
-    var d = el('div', 'vm-brave');
+  /* El aviso de Brave, UNO PARA TODA LA SECCIÓN Y ARRIBA.
+
+     Estuvo debajo de CADA video, y el autor lo pidió quitar el 28 de
+     agosto de 2026 mirando su teléfono: con seis videos en la misión el
+     mismo párrafo de tres renglones salía seis veces, y lo que empuja
+     hacia abajo son las tarjetas de los demás videos. Un aviso repetido
+     seis veces no se lee seis veces —se deja de leer la primera—, y
+     encima hace la sección más larga justo donde hay que barrer para
+     encontrar el video que se busca.
+
+     Sigue SIEMPRE a la vista y sin esconder en un menú, que es la razón
+     por la que existe: quien instala el navegador es el maestro o la
+     familia, y solo se acuerdan de mirarlo el día que sale un anuncio.
+     Lo que cambia es que se dice una vez, al entrar, y no seis. */
+  function avisoBrave(clase) {
+    var d = el('div', 'vm-brave' + (clase ? ' ' + clase : ''));
     d.appendChild(el('span', null, '🦁'));
     var t = el('div');
     t.appendChild(document.createTextNode('¿Te salen anuncios? Abre M.E.T.A.S dentro del navegador '));
@@ -382,9 +400,22 @@
     cuerpo.appendChild(el('h3', 'vm-titulo', v.titulo));
     if (v.canal) cuerpo.appendChild(el('p', 'vm-canal', v.canal));
     if (v.nota) cuerpo.appendChild(el('p', 'vm-nota', '👩‍🏫 ' + v.nota));
+
+    /* Las marcas de la tarjeta, en una fila que baja de línea. Son dos
+       y dicen cosas distintas: si YA lo vio, y si TRAE preguntas.
+
+       Lo de las preguntas va aquí, ANTES de tocar ▶, a propósito. Un
+       quiz que solo se anuncia al final es una sorpresa, y quien va con
+       prisa elige el video sin saber cuál de los seis le va a preguntar
+       algo. */
+    var marcas = el('div', 'vm-marcas');
     var visto = el('span', 'vm-visto', '✓ Ya lo viste');
     visto.hidden = !ctx.vistos[ctx.mision + '|' + v.id];
-    cuerpo.appendChild(visto);
+    marcas.appendChild(visto);
+    if (v.preguntas && v.preguntas.length) {
+      marcas.appendChild(el('span', 'vm-quiz-chip', '🧠 ' + cuentaPreguntas(v) + ' al final'));
+    }
+    cuerpo.appendChild(marcas);
     card.appendChild(cuerpo);
 
     /* Al toque Y al clic. Un navegador de tableta que no sintetice el
@@ -423,12 +454,114 @@
        un hueco de 16/9 de más al final de la tarjeta. */
     card.replaceChild(marco, fachada);
 
-    card.querySelector('.vm-cuerpo').appendChild(avisoBrave());
+    /* Lo que sabe este video de sí mismo mientras está abierto. Antes
+       eran variables sueltas dentro de `vigilar`, y dejaron de servir en
+       cuanto el alumno pudo contestar el quiz SIN esperar al final: el
+       botón de contestar vive fuera de `vigilar` y necesita el mismo
+       reproductor para callarlo, y la misma marca de «ya se tapó» para
+       que el final no vuelva a taparlo encima. */
+    var estado = { player: null, terminado: false, adelantado: false, frame: frame, aviso: null };
+
+    /* EL AVISO DEL QUIZ, debajo del reproductor. Aquí estaba el aviso de
+       Brave, que ahora se dice una sola vez arriba de la sección. */
+    if (v.preguntas && v.preguntas.length) {
+      estado.aviso = avisoQuiz(marco, v, ctx, estado);
+      card.querySelector('.vm-cuerpo').appendChild(estado.aviso);
+      /* Y la marca de la tarjeta se calla: servía para elegir video en la
+         lista, y el aviso de debajo dice lo mismo con más detalle. Dos
+         veces «2 preguntas» en la misma tarjeta es la repetición que se
+         acaba de quitar del aviso de Brave, en pequeño. */
+      var chip = card.querySelector('.vm-quiz-chip');
+      if (chip) chip.hidden = true;
+    }
 
     marcarVisto(ctx.mision, v);
     visto.hidden = false;
 
-    vigilar(marco, frame, v, ctx);
+    vigilar(marco, frame, v, ctx, estado);
+  }
+
+  /* ═══════════ EL AVISO DEL QUIZ, Y CONTESTAR SIN LLEGAR AL FINAL ═══
+     Pedido por el autor el 28 de agosto de 2026, y no es una comodidad:
+     es que la tapa del final SOLO cae cuando YouTube dice que el video
+     terminó, y hay videos que no se terminan nunca. El alumno que ya
+     entendió lo suyo en el minuto dos se sale de la sección; el que
+     pierde la señal a mitad, también. Los dos se quedaban sin las
+     preguntas —y el maestro, sin el dato de la Evidencia, que es lo
+     único que esa sección le devuelve—.
+
+     Tres cosas, y las tres hacen falta:
+
+       · SE ANUNCIA. Un quiz que aparece de golpe al final es una
+         sorpresa; anunciado, el alumno mira el video sabiendo que
+         después hay que contar algo, que es justo lo que hace que lo
+         mire con atención.
+       · SE PUEDE CONTESTAR YA, sin verlo entero. Es lo que pidió el
+         autor con estas palabras: «hay usuarios que podrían no ver el
+         video hasta el final».
+       · AL ABRIRLO, EL VIDEO SE CALLA. Un video sonando detrás de las
+         preguntas es la forma más rápida de que no se conteste ninguna;
+         y si la API de YouTube no llegó, se le manda igual el mensaje
+         de pausa, que el reproductor entiende de fábrica.
+
+     Y NO cambia la regla de siempre: contestar no da XP. Nadie puede
+     comprobar que el niño vio el video —ahora menos todavía—, y un
+     puntaje que se consigue tocando un botón es un puntaje regalado. */
+  function avisoQuiz(marco, v, ctx, estado) {
+    var d = el('div', 'vm-quiz-aviso');
+
+    var t = el('div', 'vm-quiz-aviso-txt');
+    t.appendChild(el('b', null, '🧠 Al terminar, ' + cuentaPreguntas(v) + ' sobre este video'));
+    t.appendChild(el('span', null, 'No hace falta verlo entero: puedes contestarlas cuando quieras.'));
+    d.appendChild(t);
+
+    var b = el('button', 'vm-btn vm-btn-pri', 'Responder ahora');
+    b.type = 'button';
+    /* Al toque Y al clic: la misma regla 7 de los juegos 3D. Un
+       navegador de tableta que no sintetice el clic dejaría al alumno
+       con el botón delante y sin poder tocarlo. */
+    var abriendo = false;
+    function ahora(e) {
+      if (e) e.preventDefault();
+      if (abriendo) return;
+      abriendo = true;
+      pausarVideo(estado);
+      estado.terminado = true;    // que el final no vuelva a taparlo encima
+      estado.adelantado = true;   // y que la Evidencia del maestro lo diga
+      taparFinal(marco, v, ctx, estado);
+      abriendo = false;
+    }
+    b.addEventListener('click', ahora);
+    b.addEventListener('touchend', ahora);
+    d.appendChild(b);
+
+    return d;
+  }
+
+  /* «3 preguntas» / «1 pregunta». Se cuenta en un solo sitio porque el
+     número sale en tres pantallas y con dos redacciones distintas
+     acabarían diciendo cosas que no cuadran. */
+  function cuentaPreguntas(v) {
+    var n = v.preguntas.length;
+    return n + (n === 1 ? ' pregunta' : ' preguntas');
+  }
+
+  /* Callar el video al abrir el quiz por adelantado.
+
+     Se intenta primero por la API, que es lo limpio. Si no llegó
+     —conexión de aula—, se le manda al propio reproductor el mensaje
+     que entiende de fábrica: `enablejsapi=1` ya va en la dirección, así
+     que esa puerta está abierta sin necesidad de la librería. El origen
+     se nombra entero en vez de '*': el mensaje no lleva nada secreto,
+     pero mandarlo a quien es cuesta lo mismo. */
+  function pausarVideo(estado) {
+    try {
+      if (estado.player && estado.player.pauseVideo) { estado.player.pauseVideo(); return; }
+    } catch (e) {}
+    try {
+      estado.frame.contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), YT_ORIGEN);
+    } catch (e) {}
   }
 
   /* ═══════════ VIGILAR EL REPRODUCTOR ═══════════
@@ -444,8 +577,8 @@
 
        · si la API llegó y aun así el reproductor no dice «listo»,
          entonces sí: el video no está. Ahí se tapa y se explica. */
-  function vigilar(marco, frame, v, ctx) {
-    var listo = false, terminado = false;
+  function vigilar(marco, frame, v, ctx, estado) {
+    var listo = false;
 
     pedirApi(function (hayApi) {
       if (!hayApi) { tiraDeAyuda(marco, v); return; }
@@ -459,9 +592,10 @@
               /* 0 = ENDED. Es el instante exacto en el que YouTube
                  pinta su parrilla de sugerencias encima del video, con
                  «Ver en YouTube». La tapa cae aquí. */
-              if (e && e.data === 0 && !terminado) {
-                terminado = true;
-                taparFinal(marco, v, ctx, player);
+              if (e && e.data === 0 && !estado.terminado) {
+                estado.terminado = true;
+                estado.adelantado = false;   // este sí lo vio entero
+                taparFinal(marco, v, ctx, estado);
               }
             },
             onError: function (e) {
@@ -478,6 +612,10 @@
             }
           }
         });
+        /* El reproductor se guarda en el estado y no en una variable de
+           aquí: el botón «Responder ahora» vive fuera de `vigilar` y lo
+           necesita para callar el video. */
+        estado.player = player;
       } catch (e) { tiraDeAyuda(marco, v); return; }
 
       setTimeout(function () {
@@ -494,9 +632,15 @@
   }
 
   /* La tapa del final: lo que cumple «que no salga de la misión». */
-  function taparFinal(marco, v, ctx, player) {
+  function taparFinal(marco, v, ctx, estado) {
     if (marco.querySelector('.vm-tapa')) return;
     var tapa = el('div', 'vm-tapa');
+
+    /* Mientras el quiz está en pantalla, el aviso de debajo se calla:
+       ofrecer «Responder ahora» al lado de las preguntas ya abiertas no
+       dice nada y ocupa el sitio de la primera opción. Vuelve solo si
+       se le da a «Verlo otra vez». */
+    if (estado.aviso) estado.aviso.hidden = true;
 
     /* SI EL VIDEO TRAE PREGUNTAS, SE PREGUNTA. Y si no, se ofrece lo de
        siempre. Mandar al alumno al Quiz de la misión era un salto raro:
@@ -518,16 +662,16 @@
          captura de pantalla, no una aserción. */
       marco.classList.add('vm-marco-quiz');
       tapa.classList.add('vm-tapa-quiz');
-      quizDelVideo(tapa, marco, v, ctx, player);
+      quizDelVideo(tapa, marco, v, ctx, estado);
     } else {
       tapa.appendChild(el('p', 'vm-tapa-tit', '✅ Terminaste este video'));
-      tapa.appendChild(botonesFinales(tapa, v, ctx, player));
+      tapa.appendChild(botonesFinales(tapa, v, ctx, estado));
     }
     marco.appendChild(tapa);
   }
 
   /* Los dos botones de siempre: verlo otra vez y seguir. */
-  function botonesFinales(tapa, v, ctx, player) {
+  function botonesFinales(tapa, v, ctx, estado) {
     var btns = el('div', 'vm-tapa-btns');
 
     var otra = el('button', 'vm-btn', '▶ Verlo otra vez');
@@ -539,7 +683,15 @@
       var m = tapa.parentNode;
       if (m && m.classList) m.classList.remove('vm-marco-quiz');
       tapa.remove();
-      try { player.seekTo(v.ini || 0, true); player.playVideo(); }
+      /* ⚠️ Y SE DESMARCA EL «ya se tapó». Sin esto, un alumno que
+         contestó el quiz por adelantado y le dio a verlo otra vez se
+         quedaba SIN TAPA al llegar el final de verdad: YouTube pintaba
+         su parrilla de sugerencias con «Ver en YouTube», que es
+         exactamente lo que esta sección existe para evitar. */
+      estado.terminado = false;
+      estado.adelantado = false;
+      if (estado.aviso) estado.aviso.hidden = false;
+      try { estado.player.seekTo(v.ini || 0, true); estado.player.playVideo(); }
       catch (e) { /* si la API se cayó, al menos la tapa se quitó */ }
     });
     btns.appendChild(otra);
@@ -588,8 +740,13 @@
      5. SE PUEDE SALTAR. Un alumno que vio el video para repasar y no
         quiere examen tiene que poder cerrar. Un quiz obligatorio al
         final de un video es la forma más rápida de que no se abra
-        ningún video más. */
-  function quizDelVideo(tapa, marco, v, ctx, player) {
+        ningún video más.
+
+     6. Y SE PUEDE CONTESTAR SIN LLEGAR AL FINAL. Añadida el 28 de
+        agosto de 2026: la tapa solo cae cuando YouTube dice que el
+        video terminó, y hay videos que no se terminan nunca. Ver
+        `avisoQuiz()`. */
+  function quizDelVideo(tapa, marco, v, ctx, estado) {
     var i = 0, aciertos = 0, contestada = false;
 
     var cab = el('p', 'vm-tapa-tit', '🧠 ¿Qué entendiste?');
@@ -679,12 +836,18 @@
         if (window.METAS && typeof window.METAS.registrar === 'function') {
           window.METAS.registrar('video_quiz', {
             video: v.id, yt: v.yt, video_titulo: v.titulo,
-            aciertos: aciertos, total: total
+            aciertos: aciertos, total: total,
+            /* Contestado SIN llegar al final del video. Al maestro le
+               cambia la lectura: dos preguntas falladas de un video
+               visto entero dicen que el tema no se entendió; las mismas
+               dos de un video cortado en el minuto dos dicen otra cosa
+               —que ni siquiera llegó a la parte donde se explicaba—. */
+            sin_terminar: !!estado.adelantado
           });
         }
       } catch (e) {}
 
-      cuerpo.appendChild(botonesFinales(tapa, v, ctx, player));
+      cuerpo.appendChild(botonesFinales(tapa, v, ctx, estado));
     }
   }
 
@@ -699,7 +862,11 @@
     var btns = el('div', 'vm-tapa-btns');
     btns.appendChild(enlaceYouTube(v, 'vm-btn vm-btn-pri'));
     p.appendChild(btns);
-    p.appendChild(avisoBrave());
+    /* Aquí iba también el aviso de Brave y se quitó: ahora está arriba
+       de la sección, o sea a la vista en esta misma pantalla. Repetirlo
+       dentro del panel sería el mismo párrafo dos veces —y encima
+       hablando de anuncios en el sitio donde lo que hay es un video que
+       no se pudo abrir, que no es lo mismo—. */
     marco.appendChild(p);
   }
 
@@ -803,6 +970,13 @@
       destino.appendChild(vacio);
       return;
     }
+
+    /* EL AVISO DE BRAVE, UNA VEZ Y ARRIBA. Ver `avisoBrave()`: estuvo
+       debajo de cada video y con seis videos salía seis veces. Va antes
+       de la lista porque quien tiene que leerlo —el maestro, la
+       familia— lo lee al entrar; puesto abajo habría que barrer los seis
+       videos para encontrarlo. */
+    destino.appendChild(avisoBrave('vm-brave-arriba'));
 
     var rejilla = el('div', 'vm-lista');
     lista.forEach(function (v) { rejilla.appendChild(tarjeta(v, ctx)); });

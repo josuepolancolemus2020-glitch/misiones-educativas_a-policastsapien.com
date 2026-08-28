@@ -28,7 +28,20 @@
    · QUE CUANDO EL VIDEO NO SE PUEDE VER, LA PANTALLA LO DIGA. Un
      cuadro negro y mudo parece la aplicación rota, y una aplicación
      que parece rota no se vuelve a abrir. Y que ahí —solo ahí— salga
-     la salida a YouTube y el aviso de Brave.
+     la salida a YouTube.
+
+   · QUE EL AVISO DE BRAVE SE DIGA UNA VEZ Y ARRIBA. Estuvo debajo de
+     cada video y con seis videos salía seis veces; el autor lo pidió
+     quitar el 28 de agosto de 2026 mirando su teléfono. Un aviso
+     repetido seis veces no se lee seis veces: se deja de leer la
+     primera.
+
+   · QUE EL QUIZ SE ANUNCIE Y SE PUEDA CONTESTAR SIN LLEGAR AL FINAL.
+     La tapa solo cae cuando YouTube dice que el video terminó, y hay
+     videos que no se terminan nunca. Y la que más cuesta: que «Verlo
+     otra vez» DEVUELVA la tapa del final, porque si no, quien contestó
+     por adelantado se queda con la parrilla de sugerencias de YouTube
+     en la pantalla.
 
    · QUE SI NO LLEGA LA API DE YOUTUBE NO SE TAPE NADA. El video puede
      estar viéndose perfectamente; taparlo sería el peor fallo posible.
@@ -91,8 +104,13 @@ const YT_FALSO = `
     Player: function (el, opts) {
       const p = {
         el, opts,
-        _play: 0,
+        _play: 0, _pause: 0,
         seekTo: function () {}, playVideo: function () { p._play++; },
+        /* El de verdad lo tiene, y el aparato lo llama para CALLAR el
+           video cuando se abre el quiz por adelantado. Un doble sin
+           pauseVideo dejaría pasar un video sonando detrás de las
+           preguntas, que es justo lo que hay que impedir. */
+        pauseVideo: function () { p._pause++; },
         listo:     function () { opts.events.onReady && opts.events.onReady({ target: p }); },
         terminar:  function () { opts.events.onStateChange && opts.events.onStateChange({ data: 0, target: p }); },
         reventar:  function (c) { opts.events.onError && opts.events.onError({ data: c, target: p }); }
@@ -381,6 +399,152 @@ function revisarMontajes() {
     await ctx.close();
   }
 
+  /* ═══ 3-bis. El aviso de Brave: UNO, y arriba ═══
+     Estuvo debajo de cada video y el autor lo pidió quitar el 28 de
+     agosto de 2026 mirando su teléfono: con seis videos el mismo párrafo
+     de tres renglones salía seis veces. Lo que se vigila es que no
+     vuelva a colarse dentro de las tarjetas al tocar algo del aparato:
+     ni al pintar, ni al abrir un video, ni en el panel de fallo (esa la
+     mira la 5). */
+  console.log('\n3-bis. El aviso de Brave se dice UNA VEZ y arriba');
+  {
+    const { ctx, page } = await abrir(nav, {
+      filas: [
+        { id: 'v1', yt: ID_A, titulo: 'Uno', nota: '', dura: '', canal: '', ini: 0, fin: 0, del: false },
+        { id: 'v2', yt: ID_B, titulo: 'Dos', nota: '', dura: '', canal: '', ini: 0, fin: 0, del: false }
+      ]
+    });
+    await page.waitForTimeout(600);
+
+    const cuantos = () => page.$$eval('#s-videos .vm-brave', ns => ns.length);
+    comprueba(await cuantos() === 1, 'con dos videos, el aviso sale UNA vez y no dos');
+
+    /* Y ARRIBA: por encima de la primera tarjeta. Puesto abajo habría
+       que barrer los seis videos para encontrarlo, y quien tiene que
+       leerlo (el maestro, la familia) lo lee al entrar. */
+    const arriba = await page.evaluate(() => {
+      const a = document.querySelector('#s-videos .vm-brave');
+      const l = document.querySelector('#s-videos .vm-lista');
+      if (!a || !l) return false;
+      return a.getBoundingClientRect().top < l.getBoundingClientRect().top;
+    });
+    comprueba(arriba, 'y va por encima de la lista de videos, no debajo');
+
+    const enTarjeta = await page.$$eval('#s-videos .vm-card .vm-brave', ns => ns.length);
+    comprueba(enTarjeta === 0, 'ninguna tarjeta lleva el aviso dentro');
+
+    /* Al abrir un video tampoco aparece: ahí es donde vivía. */
+    await page.click('#s-videos .vm-card:first-child .vm-fachada');
+    await page.waitForTimeout(500);
+    comprueba(await cuantos() === 1, 'y al abrir un video sigue habiendo uno solo');
+    await ctx.close();
+  }
+
+  /* ═══ 3-ter. El quiz se anuncia, y se puede contestar sin terminar ═══
+     Pedido por el autor el 28 de agosto de 2026: «hay usuarios que
+     podrían no ver el video hasta el final». La tapa del final solo cae
+     cuando YouTube dice que el video terminó, así que sin esta puerta
+     esos alumnos se quedaban sin las preguntas —y el maestro sin el dato
+     de la Evidencia, que es lo único que esa sección le devuelve—. */
+  console.log('\n3-ter. El quiz se anuncia antes, y se contesta sin llegar al final');
+  {
+    const PREG = [
+      { p: '¿Cuál es el denominador?', ops: ['El de abajo', 'El de arriba'], ok: 0 },
+      { p: '¿Qué representa el numerador?', ops: ['Las partes que se toman', 'El total'], ok: 0 }
+    ];
+    const { ctx, page } = await abrir(nav, {
+      filas: [
+        { id: 'v1', yt: ID_A, titulo: 'Con preguntas', nota: '', dura: '', canal: '',
+          ini: 0, fin: 0, del: false, preguntas: PREG },
+        { id: 'v2', yt: ID_B, titulo: 'Sin preguntas', nota: '', dura: '', canal: '',
+          ini: 0, fin: 0, del: false }
+      ]
+    });
+    await page.waitForTimeout(600);
+
+    /* La tarjeta lo dice ANTES de abrir el video: quien va con prisa
+       elige sabiendo cuál de los dos le va a preguntar algo. */
+    const chips = await page.$$eval('#s-videos .vm-card',
+      ns => ns.map(n => { const c = n.querySelector('.vm-quiz-chip'); return c ? c.textContent : ''; }));
+    comprueba(/2 preguntas/.test(chips[0]), 'la tarjeta avisa de las preguntas antes de tocar ▶');
+    comprueba(chips[1] === '', 'y la del video sin preguntas no dice nada');
+
+    await page.click('#s-videos .vm-card:first-child .vm-fachada');
+    await page.waitForFunction(() => (window.__ytPlayers || []).length > 0, null, { timeout: 8000 });
+    await page.evaluate(() => window.__ytPlayers[0].listo());
+    await page.waitForTimeout(300);
+
+    const aviso = await page.$('#s-videos .vm-card:first-child .vm-quiz-aviso');
+    comprueba(!!aviso, 'con el video abierto, el aviso del quiz sale debajo del reproductor');
+    const chipFuera = await page.evaluate(() => {
+      const n = document.querySelector('#s-videos .vm-card:first-child .vm-quiz-chip');
+      return n ? getComputedStyle(n).display : 'none';
+    });
+    comprueba(chipFuera === 'none',
+      'y la marca de la tarjeta se calla: no se dice «2 preguntas» dos veces');
+    comprueba(!(await page.$('#s-videos .vm-card:nth-child(2) .vm-quiz-aviso')),
+      'y el video sin preguntas no lo lleva');
+    comprueba(!(await page.$('#s-videos .vm-tapa')),
+      'anunciarlo NO abre las preguntas: el video sigue corriendo');
+
+    /* Contestar sin terminar. Y el video se CALLA: uno sonando detrás
+       de las preguntas es la forma más rápida de que no se conteste
+       ninguna. */
+    await page.click('#s-videos .vm-quiz-aviso .vm-btn');
+    await page.waitForTimeout(300);
+    const tapa = await page.textContent('#s-videos .vm-tapa');
+    comprueba(/Pregunta 1 de 2/.test(tapa),
+      'y «Responder ahora» abre el quiz sin haber llegado al final');
+    const pausado = await page.evaluate(() => (window.__ytPlayers[0] || {})._pause > 0);
+    comprueba(pausado, 'al abrirlo, el video se pausa');
+    const avisoVisible = await page.evaluate(() => {
+      const n = document.querySelector('#s-videos .vm-quiz-aviso');
+      return n ? getComputedStyle(n).display : 'none';
+    });
+    comprueba(avisoVisible === 'none',
+      'y el aviso se calla mientras las preguntas están en pantalla');
+
+    /* Contestar las dos y comprobar que queda apuntado que NO lo vio
+       entero: al maestro le cambia la lectura del dato. */
+    await page.click('#s-videos .vm-quiz-op:nth-child(1)');
+    await page.waitForTimeout(150);
+    await page.click('#s-videos .vm-quiz-pie .vm-btn-pri');
+    await page.waitForTimeout(150);
+    await page.click('#s-videos .vm-quiz-op:nth-child(1)');
+    await page.waitForTimeout(150);
+    await page.click('#s-videos .vm-quiz-pie .vm-btn-pri');
+    await page.waitForTimeout(300);
+    const ev = await page.evaluate(() => {
+      try {
+        return (JSON.parse(localStorage.getItem('METAS_REGISTRO_V1')) || [])
+          .filter(e => e.tipo === 'video_quiz')
+          .map(e => e.aciertos + '/' + e.total + (e.sin_terminar ? ' sin terminar' : ''));
+      } catch (e) { return []; }
+    });
+    comprueba(ev.length === 1 && ev[0] === '2/2 sin terminar',
+      'y en la Evidencia queda que contestó sin ver el video entero: ' + (ev[0] || 'nada'));
+
+    /* ⚠️ LA QUE MÁS CUESTA: «Verlo otra vez» tiene que devolver la tapa
+       del final. Sin desmarcar el «ya se tapó», el alumno que contestó
+       por adelantado se quedaba SIN TAPA al acabar el video de verdad, y
+       ahí YouTube pinta su parrilla de sugerencias con «Ver en YouTube»
+       —que es exactamente lo que esta sección existe para evitar—. */
+    await page.click('#s-videos .vm-tapa .vm-btn');    // ▶ Verlo otra vez
+    await page.waitForTimeout(300);
+    comprueba(!(await page.$('#s-videos .vm-tapa')), 'al verlo otra vez, la tapa se retira');
+    const vuelve = await page.evaluate(() => {
+      const n = document.querySelector('#s-videos .vm-quiz-aviso');
+      return n ? getComputedStyle(n).display : 'none';
+    });
+    comprueba(vuelve !== 'none', 'y el aviso del quiz vuelve');
+
+    await page.evaluate(() => window.__ytPlayers[0].terminar());
+    await page.waitForTimeout(300);
+    comprueba(!!(await page.$('#s-videos .vm-tapa')),
+      'y al acabar de verdad, la tapa VUELVE a cubrir la parrilla de YouTube');
+    await ctx.close();
+  }
+
   /* ═══ 4. La tapa del final ═══ */
   console.log('\n4. Al terminar el video cae la tapa');
   {
@@ -600,11 +764,11 @@ function revisarMontajes() {
     if (panel) {
       const txt = await page.textContent('#s-videos .vm-fallo');
       comprueba(/no permite verlo dentro/i.test(txt), 'y dice el motivo de verdad: el dueño no lo permite');
-      comprueba(/Brave/i.test(txt), 'con el aviso de Brave');
       const href = await page.getAttribute('#s-videos .vm-fallo a[href*="youtube.com/watch"]', 'href');
       comprueba(!!href && href.includes(ID_A), 'y AQUÍ sí se ofrece la salida a YouTube, que es el último recurso');
-      const brave = await page.getAttribute('#s-videos .vm-fallo a[href*="brave.com"]', 'href');
-      comprueba(!!brave, 'el enlace de Brave lleva a brave.com');
+      /* El aviso de Brave YA NO se repite dentro del panel: está arriba
+         de la sección, o sea a la vista en esta misma pantalla. */
+      comprueba(!/Brave/i.test(txt), 'y el aviso de Brave NO se repite dentro del panel');
     }
     await ctx.close();
   }

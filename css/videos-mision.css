@@ -170,12 +170,21 @@
   margin: 0.5rem 0 0;
   line-height: 1.45;
 }
+/* Las dos marcas de la tarjeta —«ya lo viste» y «trae preguntas»— en
+   una fila que BAJA DE LÍNEA. Salirse por la derecha no tiene arreglo
+   en un teléfono: ahí no hay desplazamiento que valga. */
+.vm-raiz .vm-marcas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
 .vm-raiz .vm-visto {
   display: inline-block;
   font-size: 0.76rem;
   font-weight: 700;
   color: var(--sec, #0f9b8e);
-  margin-top: 0.5rem;
 }
 /* ⚠️ ESTA LÍNEA NO ES DE ADORNO, y el fallo se vio con los OJOS, no con
    la sonda. El atributo `hidden` esconde con un `display:none` que viene
@@ -185,6 +194,22 @@
    que el alumno no había abierto nunca. Un rótulo que miente sobre lo
    que uno hizo es peor que no tenerlo. */
 .vm-raiz .vm-visto[hidden] { display: none; }
+
+/* Que la tarjeta diga si el video trae preguntas ANTES de abrirlo. Un
+   quiz que solo se anuncia al final es una sorpresa, y quien va con
+   prisa elige el video sin saber cuál de los seis le va a preguntar. */
+.vm-raiz .vm-quiz-chip {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--pri-gl, rgba(194, 37, 92, 0.10));
+  color: var(--pri, #c2255c);
+}
+/* La misma trampa del `hidden` que arriba: sin esta línea la marca
+   seguiría a la vista debajo del aviso, diciendo lo mismo dos veces. */
+.vm-raiz .vm-quiz-chip[hidden] { display: none; }
 
 /* ── La tapa del final ─────────────────────────────────────────────
    ESTO ES LO QUE CUMPLE «que no salga de la misión».
@@ -287,10 +312,16 @@
    Lo único que de verdad funciona es abrir M.E.T.A.S dentro de un
    navegador que los bloquee.
 
-   Va discreto y SIEMPRE a la vista bajo el reproductor, no escondido
-   en un menú: quien tiene que leerlo es el maestro o la familia —los
-   que instalan el navegador—, y solo se les ocurre mirarlo el día que
-   sale un anuncio. */
+   Va discreto y SIEMPRE a la vista, no escondido en un menú: quien
+   tiene que leerlo es el maestro o la familia —los que instalan el
+   navegador—, y solo se les ocurre mirarlo el día que sale un anuncio.
+
+   ⚠️ PERO UNA VEZ, ARRIBA, Y NO DEBAJO DE CADA VIDEO. Estuvo dentro de
+   cada tarjeta y el autor lo pidió quitar el 28 de agosto de 2026
+   mirando su teléfono: con seis videos el mismo párrafo de tres
+   renglones salía seis veces y alargaba la sección justo donde hay que
+   barrer para encontrar el video que se busca. Un aviso repetido seis
+   veces no se lee seis veces: se deja de leer la primera. */
 .vm-raiz .vm-brave {
   display: flex;
   align-items: flex-start;
@@ -305,6 +336,53 @@
   margin-top: 0.7rem;
 }
 .vm-raiz .vm-brave a { color: var(--pri, #c2255c); font-weight: 700; }
+/* Arriba de la lista el margen va DEBAJO, no encima: encima lo pegaría
+   al título de la sección y dejaría el aire donde no hace falta. */
+.vm-raiz .vm-brave-arriba { margin: 0 0 0.2rem; }
+
+/* ── El aviso del quiz, debajo del reproductor ─────────────────────
+   Dice que al terminar hay preguntas Y deja contestarlas ya. Lo segundo
+   es lo que de verdad resuelve: la tapa del final solo cae cuando
+   YouTube dice que el video terminó, y hay videos que no se terminan
+   nunca —el alumno que ya entendió lo suyo en el minuto dos, el que
+   pierde la señal a mitad—. Los dos se quedaban sin las preguntas, y el
+   maestro sin el dato de la Evidencia.
+
+   Va con el color de la misión y no en gris: es una invitación, no una
+   letra pequeña. */
+.vm-raiz .vm-quiz-aviso {
+  display: flex;
+  /* Baja de línea. Salirse por la derecha no tiene arreglo: ahí no hay
+     desplazamiento que valga. Misma lección que los velos 3D. */
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 12px;
+  background: var(--pri-gl, rgba(194, 37, 92, 0.10));
+  border: 1px solid var(--pri, #c2255c);
+}
+/* ⚠️ La misma trampa que ya está anotada en `.vm-visto`: el `hidden` del
+   navegador trae un `display:none` de su hoja, y esa hoja PIERDE contra
+   el `display:flex` de aquí. Sin esta línea, el aviso seguiría a la
+   vista debajo del quiz abierto — ofreciendo abrir lo que ya está
+   abierto. */
+.vm-raiz .vm-quiz-aviso[hidden] { display: none; }
+.vm-raiz .vm-quiz-aviso-txt {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--gray, #718096);
+}
+.vm-raiz .vm-quiz-aviso-txt b {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--dark, #1a202c);
+}
+.vm-raiz .vm-quiz-aviso .vm-btn { font-size: 0.84rem; }
 
 /* ── Estados de la sección entera ──────────────────────────────────*/
 .vm-raiz .vm-estado {
