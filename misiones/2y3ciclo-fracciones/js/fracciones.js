@@ -545,6 +545,13 @@ function _parseFrac(str){
   if(str===null||str===undefined)return null;
   str=str.toString().trim();
   if(str==='')return null;
+  /* «1 1/4» también es una respuesta. Desde que la prueba enseña a convertir
+     impropias, el alumno contesta 3/4 + 1/2 escribiendo «1 1/4», que es lo
+     mismo y está bien escrito; sin esto se leía «1/4» y se le marcaba mal
+     justo por haber aprendido lo que la prueba le acababa de enseñar. Donde
+     se pide EXPRESAMENTE un número mixto sigue mandando _parseMixto. */
+  const mix=_parseMixto(str);
+  if(mix)return{n:mix.e*mix.d+mix.n,d:mix.d};
   if(str.includes('/')){
     const parts=str.split('/');
     if(parts.length!==2)return null;

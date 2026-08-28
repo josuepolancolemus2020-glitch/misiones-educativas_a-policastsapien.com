@@ -168,13 +168,19 @@ const NOTA = () => {
     conY: window.isMixtoCorrect('1 y 3/4', { e: 1, n: 3, d: 4 }),
     impropia: window.isMixtoCorrect('7/4', { e: 1, n: 3, d: 4 }),
     pegado: window.isMixtoCorrect('13/4', { e: 1, n: 3, d: 4 }),
-    otroValor: window.isMixtoCorrect('2 1/4', { e: 1, n: 3, d: 4 })
+    otroValor: window.isMixtoCorrect('2 1/4', { e: 1, n: 3, d: 4 }),
+    /* Y al revés: en una operación, «1 1/4» es una respuesta bien escrita
+       para 5/4. Se lo acabamos de enseñar en la sección II. */
+    enOperacion: window.isFracCorrect('1 1/4', '5/4'),
+    enOperacionMal: window.isFracCorrect('1 1/4', '1/4')
   }));
   if (!mixto.bien || !mixto.conY) mal('«1 3/4» o «1 y 3/4» no se dan por buenas, y son como se escribe a mano');
   else if (mixto.impropia) mal('«7/4» pasa como número mixto: se preguntó justo lo contrario');
   else if (mixto.pegado) mal('«13/4» pegado pasa como «1 3/4»: eso son trece cuartos');
   else if (mixto.otroValor) mal('«2 1/4» pasa donde la respuesta es 1 3/4');
-  else bien('acepta el mixto escrito a mano y rechaza la impropia, la pegada y la de otro valor');
+  else if (!mixto.enOperacion) mal('en una operación, «1 1/4» no se da por buena donde la respuesta es 5/4: es la misma cantidad y está bien escrita');
+  else if (mixto.enOperacionMal) mal('«1 1/4» pasa por 1/4: se está leyendo solo la parte fraccionaria');
+  else bien('acepta el mixto escrito a mano —también como respuesta de una operación— y rechaza la impropia, la pegada y la de otro valor');
 
   console.log('\n5. Los problemas tienen respuesta posible');
   const problemas = await page.evaluate(FORMAS => {
