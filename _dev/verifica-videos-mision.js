@@ -566,7 +566,8 @@ function revisarMontajes() {
         okNegativo: caso([{ p: '¿?', ops: ['a', 'b'], ok: -1 }]).length,
         noLista:   caso('no soy una lista').length,
         buena:     caso([{ p: '¿?', ops: ['a', 'b'], ok: 1 }]).length,
-        tope:      caso([1,2,3,4,5].map(n => ({ p: 'p' + n, ops: ['a', 'b'], ok: 0 }))).length
+        diez:      caso([1,2,3,4,5,6,7,8,9,10].map(n => ({ p: 'p' + n, ops: ['a', 'b'], ok: 0 }))).length,
+        tope:      caso([...Array(12)].map((_, n) => ({ p: 'p' + n, ops: ['a', 'b'], ok: 0 }))).length
       };
     });
     comprueba(r.sinTexto === 0, 'una pregunta sin texto se descarta');
@@ -575,7 +576,10 @@ function revisarMontajes() {
       'y una cuya respuesta correcta apunta fuera de la lista, que sería imposible de acertar');
     comprueba(r.noLista === 0, 'lo que ni siquiera es una lista no revienta: sale vacío');
     comprueba(r.buena === 1, 'la buena pasa');
-    comprueba(r.tope === 3, 'y el tope son tres: ocho preguntas al final de un video se abandonan');
+    comprueba(r.diez === 10,
+      'diez preguntas pasan enteras: es el tope que se puso en F.A.R.O y en la base');
+    comprueba(r.tope === 10,
+      'y de doce se quedan diez, que es el mismo número que dicen F.A.R.O y el check de la base');
     await ctx.close();
   }
 

@@ -166,11 +166,18 @@
      no puede salir. Es preferible un video sin quiz a un quiz roto.
 
      `ok` es el ÍNDICE de la buena, y se comprueba que exista de verdad:
-     un `ok` que apunte fuera de la lista dejaría el acierto imposible. */
+     un `ok` que apunte fuera de la lista dejaría el acierto imposible.
+
+     EL TOPE SON DIEZ. Eran tres, y el autor lo subió el 28 de agosto de
+     2026. ⚠️ Este número tiene que decir lo mismo que el `MVID_MAX_PREG`
+     de F.A.R.O y que el `check` de `metas_videos.sql`: si aquí se queda
+     corto, las preguntas de más no dan ningún error —se guardan bien
+     allá y se caen aquí en silencio—, y el administrador se entera, si
+     se entera, mirando la pantalla de un niño. */
   function vmPreguntas(lista) {
     if (!Array.isArray(lista)) return [];
     var salida = [];
-    for (var i = 0; i < lista.length && salida.length < 3; i++) {
+    for (var i = 0; i < lista.length && salida.length < 10; i++) {
       var q = lista[i];
       if (!q || typeof q !== 'object') continue;
       var texto = vmTxt(q.p, 200);
@@ -551,8 +558,11 @@
   }
 
   /* ═══════════ EL QUIZ DEL PROPIO VIDEO ═══════════
-     Dos o tres preguntas sobre lo que acaba de ver, escritas por quien
-     eligió el video. Cinco decisiones, y ninguna es de adorno:
+     Hasta DIEZ preguntas sobre lo que acaba de ver, escritas por quien
+     eligió el video. Eran tres hasta el 28 de agosto de 2026; cuántas
+     poner lo decide quien lo eligió, que es el que sabe si el video son
+     cinco minutos o el repaso de un tema entero. Cinco decisiones, y
+     ninguna es de adorno:
 
      1. UNA PREGUNTA A LA VEZ, y en letra grande. Es la misma lección
         que ya está escrita para la lectura de las misiones: las cinco
@@ -560,8 +570,8 @@
         el niño contesta por contestar.
 
      2. SE CORRIGE EN EL SITIO, no al final. Si la corrección llega
-        después de tres preguntas, ya no se acuerda de por qué contestó
-        eso. Se pinta la buena en verde, la suya en rojo si falló, y se
+        después de varias preguntas, ya no se acuerda de por qué
+        contestó eso —y con diez, menos todavía—. Se pinta la buena en verde, la suya en rojo si falló, y se
         sigue.
 
      3. FALLAR OFRECE VOLVER AL MINUTO. Es lo que un quiz sobre un video

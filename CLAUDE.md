@@ -1875,6 +1875,15 @@ se lleva al alumno de la sección sin comprobar nada. Las escribe quien
 eligió el video, en F.A.R.O, y son opcionales: un video sin preguntas
 conserva la tapa de siempre.
 
+**Hasta diez por video** (eran tres hasta el 28 de agosto de 2026, cuando
+el autor lo subió: un video largo, o el que repasa un tema entero, pide
+más). ⚠️ Ese número vive en **tres sitios** y los tres tienen que decir lo
+mismo: el tope de `vmPreguntas` aquí, `MVID_MAX_PREG` en F.A.R.O y el
+`check` de `metas_videos.sql`. Si el de aquí se queda corto, las
+preguntas de más **no dan ningún error**: se guardan bien allá y se caen
+en silencio antes de llegar a la pantalla, y eso se descubre —si se
+descubre— mirando el teléfono de un niño.
+
 Cinco decisiones, y ninguna es de adorno:
 
 1. **Una pregunta a la vez y en letra grande.** Misma lección que la
