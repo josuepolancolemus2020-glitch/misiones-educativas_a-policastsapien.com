@@ -792,10 +792,31 @@ async function pruebaAvisos(browser) {
   ];
   const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
   await page.clock.install({ time: HOY });
+  /* Se lleva la cuenta de lo que pasa por aquí porque en GitHub el traer se
+     quedaba colgado en «⏳ Trayendo las respuestas…»: la petición salía y no
+     volvía nunca. Con esto la sonda puede decir si llegó a la ruta simulada,
+     con qué nombre, y si el que reventó fue el propio simulador —una
+     excepción dentro del manejador deja la petición esperando para siempre,
+     que es exactamente lo que se veía—. */
+  const rpc = { vistas: [], fallo: '' };
   await page.route('**/rest/v1/rpc/**', async route => {
-    const fn = route.request().url().split('/rpc/')[1].split('?')[0];
-    await route.fulfill({ status: 200, contentType: 'application/json',
-      body: JSON.stringify(fn === 'metas_conv_respuestas' ? RESP : true) });
+    try {
+      const url = route.request().url();
+      const tras = url.split('/rpc/')[1];
+      const fn = tras ? tras.split('?')[0] : '(sin nombre)';
+      rpc.vistas.push(fn);
+      await route.fulfill({ status: 200, contentType: 'application/json',
+        body: JSON.stringify(fn === 'metas_conv_respuestas' ? RESP : true) });
+    } catch (e) {
+      rpc.fallo = String(e && e.message || e);
+      try { await route.abort(); } catch (_) {}
+    }
+  });
+  /* Y lo que NO pasa por la ruta: si algo se va a la nube de verdad, allí se
+     queda esperando y el maestro ve la rueda girar para siempre. */
+  page.on('request', r => {
+    const u = r.url();
+    if (/supabase\.co/.test(u) && !/\/rpc\//.test(u)) rpc.vistas.push('FUERA:' + u.slice(0, 60));
   });
   await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => typeof window.renderAdmin === 'function');
@@ -873,6 +894,8 @@ async function pruebaAvisos(browser) {
       } catch (e) { out.alLeerElGrupo = String(e && e.message || e); }
       return out;
     }).catch(e => ({ alDiagnosticar: String(e && e.message || e) }));
+    diag.rpcVistas = rpc.vistas;
+    if (rpc.fallo) diag.rpcFallo = rpc.fallo;
     throw new Error('El bloque del aviso en lote no llegó a pintarse. ' +
       JSON.stringify(diag) + '\n' +
       '  · respuestas 0 significa que convTraer no trajo nada: la tarjeta del\n' +
