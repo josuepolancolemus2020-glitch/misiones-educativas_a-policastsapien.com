@@ -25,6 +25,14 @@
 -- borrarlas**. Cerrarla del todo pide un permiso por aparato, que es la
 -- parte de semanas.
 --
+-- ✅ CORRIDO Y COMPROBADO en la base viva el 7 de septiembre de 2026.
+--    La comprobación del final dio lo que tenía que dar: una fila inventada
+--    a nombre de un maestro cualquiera entró con nota 100 (no 9999),
+--    verificado = false y docente_codigo vacío.
+--    Se deja el archivo porque es idempotente y porque hay que volver a
+--    correrlo si alguna vez se re-corre SUPABASE-AULA.sql o
+--    SUPABASE-DOCENTES-V2.sql, que redefinen dos de estas funciones.
+--
 -- EN QUÉ ORDEN
 -- ------------
 -- Este archivo va SOLO y de una vez. No hace falta re-correr ningún otro.
