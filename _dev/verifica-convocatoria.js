@@ -828,7 +828,39 @@ async function pruebaAvisos(browser) {
     await page.click('#ad-ir-conv');
     await page.waitForSelector('[data-cvid]');
     await page.click('[data-cvid]');
-    await page.waitForSelector('#cv-av-txt');
+    await esperarAvisos();
+  };
+
+  /* La tarjeta del aviso solo se pinta si YA hay respuestas (`r.length` en
+     convHtmlPantalla): sin nadie apuntado no hay a quién avisar. Las trae
+     sola `convTraer` al entrar, y esa llamada se hace UNA vez por visita
+     —_adConvTraido lo marca—, así que si el traer se cae, no se reintenta
+     nunca y `#cv-av-txt` no llega jamás.
+
+     Aquí se pagó: en GitHub la sonda moría con un «Timeout 30000ms» a secas,
+     que no dice nada de esto y parece que la pantalla está rota. Ahora se
+     reintenta el traer una vez —quitándole la marca— y, si aun así no llega,
+     se cuenta QUÉ pasó: si hubo respuestas, qué dice el cartel del refresco y
+     si el navegador se creía sin internet. */
+  const esperarAvisos = async () => {
+    const hay = async () => !!(await page.$('#cv-av-txt'));
+    for (let intento = 0; intento < 2; intento++) {
+      try { await page.waitForSelector('#cv-av-txt', { timeout: 15000 }); return; }
+      catch (_) { /* se reintenta el traer */ }
+      await page.evaluate(() => { _adConvTraido = ''; convTraer(false); });
+    }
+    if (await hay()) return;
+    const diag = await page.evaluate(() => {
+      const c = (adLoad().grupos[0].convocatorias || [])[0] || {};
+      const r = document.getElementById('cv-refresco');
+      return { respuestas: (c.resp || []).length, refresco: r ? r.textContent.trim() : '(no está)',
+               enLinea: navigator.onLine, panel: !!document.querySelector('#cv-pagos') };
+    });
+    throw new Error('El bloque del aviso en lote no llegó a pintarse. ' +
+      JSON.stringify(diag) + '\n' +
+      '  · respuestas 0 significa que convTraer no trajo nada: la tarjeta del\n' +
+      '    aviso no se pinta sin gente a quien avisar, así que el fallo está\n' +
+      '    en el traer, no en el aviso.');
   };
   await sembrar();
   await entrar();
