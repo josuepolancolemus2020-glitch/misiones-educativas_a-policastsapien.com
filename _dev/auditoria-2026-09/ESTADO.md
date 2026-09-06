@@ -44,17 +44,30 @@ madre o padre de familia, como administración y como alumna de 8º grado.
 
 ## Lo que falta después de eso
 
-1. Revisión adversarial de las lentes que no la tienen: 108 hallazgos sin verificar.
-2. La síntesis por área. Hoy solo está escrita la de producto, en `4-producto.md`.
-3. La lista priorizada de las 20 modificaciones de mayor impacto y menor esfuerzo.
-4. El informe integral y su publicación.
+1. Revisión adversarial de las lentes que no la tienen: **108 hallazgos sin verificar**
+   (accesibilidad entera, el alumno de 9º y tres cuartas partes de las lentes de UX de alumno).
+2. Rehacer el top 20 con las siete lentes que faltan dentro. La lista de hoy solo puede ordenar
+   lo que se auditó; cuando entren docente, familia y administración, puede cambiar.
+
+**Ya está hecho** (6 de septiembre, redactado en la sesión principal y no por agentes): las ocho
+síntesis por área, la lista de las 20 modificaciones y el informe integral.
 
 ## Archivos
 
 | archivo | qué es |
 |---|---|
-| `00-metodo.md` | cómo se hizo la auditoría y qué no se pudo comprobar |
-| `4-producto.md` | la sección de producto, ya redactada y deduplicada |
+| `../../AUDITORIA-INTEGRAL-2026-09.md` | el informe integral, en la raíz del repositorio: resumen y índice |
+| `00-metodo.md` | cómo se hizo la auditoría, qué se corrió de verdad y qué no se pudo comprobar |
+| `1a-tecnica-codigo.md` | arquitectura, calidad, rendimiento, dependencias y proceso |
+| `1b-tecnica-datos.md` | base de datos, autenticación, seguridad y escalabilidad |
+| `1c-tecnica-acceso.md` | accesibilidad |
+| `2a-pedagogica-curriculo.md` | DCNB, coherencia curricular, nivel cognitivo y contenido |
+| `2b-pedagogica-aprendizaje.md` | retroalimentación, progresión, gamificación y evidencias |
+| `2c-pedagogica-docente.md` | ritmos de aprendizaje y utilidad real para el docente |
+| `3-ux.md` | la aplicación probada como alumno de 4º, 5º, 6º, 7º y 9º |
+| `4-producto.md` | valor, negocio, mercado, qué sobra y qué falta |
+| `5-top-20.md` | las 20 modificaciones, con evidencia y cómo comprobar cada una |
 | `crudo/<área>-hallazgos.json` | los hallazgos de esa área, con evidencia y veredicto |
 | `crudo/<área>-resumenes.json` | el resumen ejecutivo de cada auditor y lo que encontró bien |
 | `crudo/producto-sintetizado.json` | los 33 hallazgos de producto tras fundir duplicados |
+| `maquinaria/RETOMAR.md` | los comandos exactos para continuar el miércoles sin repetir nada |
