@@ -45,6 +45,15 @@ tr:hover td{background:var(--pri-gl);}
 .b-evaluacion{background:#fff3d6;color:#9a6b00;}
 .b-prueba_operativa{background:#f0e8ff;color:#6c5ce7;}
 .b-pauta_vista{background:#ffe3e3;color:#c0392b;}
+/* La fila que llegó SIN código de aula: nadie comprobó que sea de este
+   maestro. Se marca en vez de esconderse —esconderla le haría perder
+   práctica de verdad de los alumnos que aún no escriben el código— y
+   ahora se puede borrar. */
+.sinver{display:inline-block;margin-left:4px;color:#b45309;cursor:help;}
+.btn-borrar{background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;
+  font-size:0.9rem;line-height:1;padding:0.3rem 0.45rem;min-width:32px;min-height:32px;}
+.btn-borrar:hover{background:#fee2e2;border-color:#fca5a5;}
+.fila-sinver{background:rgba(180,83,9,.06);}
 .pauta-warn{cursor:help;font-size:1rem;}
 @media (prefers-color-scheme: dark){
   .b-evaluacion{background:#3a2f10;color:#f3c96b;}
@@ -106,7 +115,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 
 <div class="tabla-wrap" id="tablaWrap" style="display:none;">
   <table>
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>Misión</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Alumno</th><th>Nº lista</th><th>Grado</th><th>Misión</th><th>Tipo</th><th>Forma</th><th>Nota</th><th>Dispositivo</th><th></th></tr></thead>
     <tbody id="tbody"></tbody>
   </table>
   <div class="vacio" id="vacio" style="display:none;">
@@ -139,7 +148,7 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
   © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
   · <a href="terminos.html">Términos de uso</a></footer>
 
-<script src="js/metas-registro.js?v=183"></script>
+<script src="js/metas-registro.js?v=184"></script>
 <script>
 'use strict';
 /* Misma configuración predeterminada que js/metas-supabase.js */
@@ -266,6 +275,48 @@ async function consultar(){
   if (btn) btn.disabled = false;
 }
 
+/* Borrar una fila de la nube. No existía NINGÚN borrado en toda la base: una
+   nota falsa era eterna y el maestro no podía quitarla. Además de defensa es
+   el derecho de supresión que promete el aviso de privacidad.
+
+   El servidor solo borra filas que esa misma consulta le devolvería a él, así
+   que esto no puede tocar lo de otro maestro aunque se manipule el id. */
+async function borrarFila(id, tr){
+  if (!DOCENTE || !DOCENTE.codigo) return;
+  if (!confirm('¿Quitar esta fila de la nube?\n\nSe borra para siempre. Úsalo con lo que no reconozcas como práctica de tus alumnos.')) return;
+  const est = document.getElementById('estado');
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/metas_resultados_borrar', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_codigo: DOCENTE.codigo, p_clave: DOCENTE.clave, p_ids: [Number(id)] })
+    });
+    if (!r.ok) {
+      /* 404 = la función todavía no existe en el servidor: falta pegar
+         SUPABASE-PUERTA-ANONIMA.sql. Se dice ASÍ, con el nombre del archivo,
+         en vez de un «HTTP 404» que no le sirve a nadie. */
+      est.textContent = (r.status === 404)
+        ? '⚠️ El servidor todavía no sabe borrar: falta correr SUPABASE-PUERTA-ANONIMA.sql en el SQL Editor de Supabase.'
+        : '⚠️ No se pudo borrar (HTTP ' + r.status + ').';
+      return;
+    }
+    const n = await r.json();
+    if (n > 0) {
+      DATOS = DATOS.filter(x => String(x.id) !== String(id));
+      if (tr) tr.remove();
+      est.textContent = '🗑 Fila quitada de la nube.';
+    } else {
+      est.textContent = '⚠️ No se quitó: esa fila no es de tu aula.';
+    }
+  } catch (e) {
+    est.textContent = '⚠️ No se pudo borrar (' + e.message + ').';
+  }
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest && ev.target.closest('.btn-borrar');
+  if (b) borrarFila(b.dataset.id, b.closest('tr'));
+});
+
 function filtrados(){
   const m=document.getElementById('fMision').value, g=document.getElementById('fGrado').value,
         a=document.getElementById('fAlumno').value, t=document.getElementById('fTipo').value;
@@ -280,6 +331,21 @@ function llenarFiltros(){
   opciones('fMision',[...new Set(DATOS.map(r=>r.mision).filter(Boolean))].sort());
   opciones('fGrado',[...new Set(DATOS.map(r=>r.grado).filter(Boolean))].sort());
   opciones('fAlumno',[...new Set(DATOS.map(r=>r.alumno).filter(Boolean))].sort());
+}
+
+/* ⚠️ `verificado` puede venir de tres maneras y las tres significan cosas
+   distintas:
+     true       → llegó con código de aula y el servidor resolvió al maestro;
+     false      → llegó sin código: nadie comprobó de quién es;
+     undefined  → el servidor TODAVÍA NO tiene la columna, o sea que aún no se
+                  ha corrido SUPABASE-PUERTA-ANONIMA.sql.
+   El tercer caso NO se marca: marcarlo pintaría de aviso todas las filas de
+   todos los maestros mientras el SQL espera a ser pegado, y un aviso que sale
+   siempre deja de leerse. */
+function selloSinVerificar(r){
+  if(r.verificado!==false) return '';
+  return ' <span class="sinver" title="Esta fila llegó sin código de aula: nadie comprobó que sea de un alumno tuyo. '
+    + 'Si no la reconoces, bórrala con 🗑.">⚠️ sin verificar</span>';
 }
 
 function pintar(){
@@ -304,8 +370,10 @@ function pintar(){
     const tr=document.createElement('tr');
     tr.innerHTML = '<td>'+esc(f)+'</td><td>'+esc(h)+'</td><td>'+esc(r.alumno||'—')+'</td><td>'+esc(r.codigo_lista||'—')+
       '</td><td>'+esc(r.grado||'—')+'</td><td>'+esc(r.mision||'—')+
-      '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span></td><td>'+esc(r.forma||'')+
-      '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>';
+      '</td><td><span class="badge b-'+esc(r.tipo)+'">'+(NOMBRE_TIPO[r.tipo]||esc(r.tipo))+'</span>'+selloSinVerificar(r)+'</td><td>'+esc(r.forma||'')+
+      '</td><td>'+nota+'</td><td>'+esc(r.dispositivo||'')+'</td>' +
+      '<td>' + (r.id ? '<button class="btn-borrar" data-id="'+esc(r.id)+'" title="Quitar esta fila de la nube">🗑</button>' : '') + '</td>';
+    if (r.verificado === false) tr.className = 'fila-sinver';
     tb.appendChild(tr);
   });
   const evals=rs.filter(r=>r.tipo==='evaluacion'&&typeof r.nota==='number').map(r=>r.nota);

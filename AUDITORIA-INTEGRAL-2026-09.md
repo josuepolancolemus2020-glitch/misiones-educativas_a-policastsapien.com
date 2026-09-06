@@ -177,7 +177,7 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
     aviso: el que había prometía que los datos «nunca salen del dispositivo», y es falso. Del
     alojamiento queda pendiente lo que es decisión del autor: mover el DNS fuera de GitHub Pages
 
-**Diez en días:** ~~cerrar «Ver Pauta»~~ · **hecho el 7 de septiembre** · cerrar la escritura anónima a la nube · ~~una identidad de
+**Diez en días:** ~~cerrar «Ver Pauta»~~ · **hecho el 7 de septiembre** · ~~cerrar la escritura anónima a la nube~~ · **hecho el 7 de septiembre (falta pegar el SQL)** · ~~una identidad de
 alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · que el maestro no pierda su trabajo · quitar el CDN del camino crítico ·
 subir la barra de secciones al principio · que la estrella se gane · que Fin de Grado no pierda
 las respuestas · ~~traer a la boleta las notas ya calculadas~~ · **hecho el 7 de septiembre** · desbloquear el zoom y el teclado.
