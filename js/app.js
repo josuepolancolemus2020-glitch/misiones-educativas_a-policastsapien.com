@@ -521,6 +521,13 @@ function setActivePill(filter) {
   });
 }
 
+// Un teclado de teléfono no pone tildes solo y un niño de 4º no las escribe:
+// «numeros» tiene que encontrar «Números Grandes». Se comparan los dos lados sin
+// tildes y palabra por palabra, así «grandes numeros» también da con ella.
+function sinTildes(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function renderMissions(filter, query) {
   const s = load();
   const country = s.country || 'HN';
@@ -554,12 +561,11 @@ function renderMissions(filter, query) {
   }
 
   if (query && query.trim()) {
-    const q = query.trim().toLowerCase();
-    list = list.filter(m =>
-      m.title.toLowerCase().includes(q) ||
-      (SUBJECT_LABELS[m.subject] || '').toLowerCase().includes(q) ||
-      rutaLabel(m).toLowerCase().includes(q)
-    );
+    const palabras = sinTildes(query).split(/\s+/).filter(Boolean);
+    list = list.filter(m => {
+      const heno = sinTildes(m.title + ' ' + (SUBJECT_LABELS[m.subject] || '') + ' ' + rutaLabel(m));
+      return palabras.every(p => heno.includes(p));
+    });
   }
 
   if (!list.length) {
@@ -2427,10 +2433,12 @@ function ajPintarLista() {
   // no debe perder de vista ese registro ni su lugar en la lista.
   const abiertos = new Set(
     [...cont.querySelectorAll('.aj-reg[open] .aj-reg-nombre')].map(e => e.textContent));
-  const q = ((document.getElementById('aj-buscar')?.value || '').trim().toLowerCase());
+  // Mismo motivo que en el buscador de misiones, y aquí pesa más: un director
+  // busca «cortes» y tiene que salirle Cortés, o «jose» y salirle José.
+  const q = sinTildes(document.getElementById('aj-buscar')?.value || '').trim();
   const esAdmin = _ajLista.rol === 'admin';
   const filas = _ajLista.docentes.filter(x => !q ||
-    [x.nombre, x.correo, x.escuela, x.municipio, x.departamento].join(' ').toLowerCase().includes(q));
+    sinTildes([x.nombre, x.correo, x.escuela, x.municipio, x.departamento].join(' ')).includes(q));
   if (!filas.length) {
     cont.innerHTML = '<p class="padre-hint" style="margin-top:10px;">Sin registros que mostrar' + (q ? ' con esa búsqueda' : '') + '.</p>';
     return;

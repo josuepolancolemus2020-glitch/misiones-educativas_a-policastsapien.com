@@ -94,6 +94,13 @@ relación coste-beneficio de todo el capítulo.
 
 `U4-02 + U5-01` · alta · error · esfuerzo horas
 
+> ✅ **Corregido el 6 de septiembre de 2026.** Los dos lados se comparan sin tildes y **palabra
+> por palabra**, así que «numeros» encuentra las mismas 3 que «números» y «grandes numeros»
+> también da con «Números Grandes». De paso salió **un segundo buscador con el mismo defecto**:
+> el de maestros del director (`aj-buscar`), donde pesa más —«cortes» tenía que encontrar Cortés
+> y «jose», José—. Los dos usan ahora un solo ayudante, `sinTildes`. Lo vigila
+> `_dev/verifica-buscador.js`, que escribe como escribe un niño.
+
 «numeros», «multiplos», «matematicas», «millon», «angulos», «numero»: todas devuelven cero
 resultados. La comparación se hace sin quitar los diacríticos.
 
