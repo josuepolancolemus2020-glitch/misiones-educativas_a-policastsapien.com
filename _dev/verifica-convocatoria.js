@@ -798,6 +798,26 @@ async function pruebaAvisos(browser) {
      con qué nombre, y si el que reventó fue el propio simulador —una
      excepción dentro del manejador deja la petición esperando para siempre,
      que es exactamente lo que se veía—. */
+  /* ⚠️ El navegador de GitHub se cree SIN INTERNET. `convRPC` empieza con
+     `if (navigator.onLine === false) return null`, que está bien puesto —sin
+     señal no tiene sentido dejar al maestro mirando la rueda—, pero en un
+     contenedor sin ruta por defecto esa bandera sale falsa aunque la red
+     funcione. Resultado: la petición no salía nunca, la sonda no veía llegar
+     nada a su nube simulada y el aviso en lote no se pintaba jamás.
+
+     Aquí la red la pone la sonda con `page.route`, así que lo que el runner
+     opine de su tarjeta de red no viene al caso: se le dice que está en línea
+     y se prueba lo que se venía a probar. Se apunta además cuántas veces se
+     llamó a `fetch`, que es lo que distingue «no salió» de «salió y nadie
+     contestó». */
+  await page.addInitScript(() => {
+    try {
+      Object.defineProperty(Navigator.prototype, 'onLine', { get: () => true, configurable: true });
+    } catch (_) {}
+    window.__fetches = 0;
+    const f = window.fetch;
+    window.fetch = function (...a) { window.__fetches++; return f.apply(this, a); };
+  });
   const rpc = { vistas: [], fallo: '' };
   await page.route('**/rest/v1/rpc/**', async route => {
     try {
@@ -895,6 +915,7 @@ async function pruebaAvisos(browser) {
       return out;
     }).catch(e => ({ alDiagnosticar: String(e && e.message || e) }));
     diag.rpcVistas = rpc.vistas;
+    diag.fetches = await page.evaluate(() => window.__fetches).catch(() => '(no se pudo leer)');
     if (rpc.fallo) diag.rpcFallo = rpc.fallo;
     throw new Error('El bloque del aviso en lote no llegó a pintarse. ' +
       JSON.stringify(diag) + '\n' +
