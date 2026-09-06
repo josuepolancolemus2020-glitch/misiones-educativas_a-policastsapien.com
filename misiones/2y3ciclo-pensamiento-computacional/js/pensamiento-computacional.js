@@ -739,17 +739,21 @@ function gradeEvalOp() {
   sfx('click');
   const d = window._evalOpData;
   let total = 0; const det = { ord: 0, ea: 0, cpl: 0, vida: 0, reto: 0 };
+  // El maestro recibe SOLO lo que califica la máquina (70 pts). Los otros 30 son
+  // producción abierta que el alumno se puntúa contra la pauta: ese número enseña a
+  // compararse, pero como nota sería inventado, así que no entra en el resultado.
+  const OP_UMBRAL = 49, OP_AUTO = 70, OP_MANUAL = 30; let autoev = 0;
   d.ordItems.forEach((it, i) => { const el = document.querySelector(`[data-ord="${i}"]`); const ok = _isOrdOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.ord += 4; total += 4; } setEvalFeedback('evalFbOrd' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. Orden correcto: ' + it.ans); });
   d.eaItems.forEach((it, i) => { const sel = document.querySelector(`input[name="opEA${i}"]:checked`); const ok = !!sel && sel.value === it.a; if (ok) { det.ea += 2; total += 2; } setEvalFeedback('evalFbEa' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. Era: ' + (it.a === 'E' ? 'Exacta' : 'Ambigua')); });
   d.cplItems.forEach((it, i) => { const sel = document.querySelector(`input[name="opC${i}"]:checked`); const ok = !!sel && Number(sel.value) === it.ans; if (ok) { det.cpl += 4; total += 4; } setEvalFeedback('evalFbCpl' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. Faltaba: ' + it.opts[it.ans]); });
-  d.vidaItems.forEach((it, i) => { const inp = document.querySelector(`[data-vida="${i}"]`); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(10, v)); if (inp) inp.value = v; det.vida += v; total += v; setEvalFeedback('evalFbVida' + i, v >= 7, 'Puntaje autoevaluado: ' + v + '/10 (compara siempre con la pauta)'); });
+  d.vidaItems.forEach((it, i) => { const inp = document.querySelector(`[data-vida="${i}"]`); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(10, v)); if (inp) inp.value = v; det.vida += v; autoev += v; setEvalFeedback('evalFbVida' + i, v >= 7, 'Puntaje autoevaluado: ' + v + '/10 (compara siempre con la pauta)'); });
   { const el = document.querySelector('[data-rd="0"]'); const ok = _isOrdOk(el ? el.value : '', d.retoD.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.reto += 10; total += 10; } setEvalFeedback('evalFbRd', ok, ok ? '¡Problema bien descompuesto! +10 pts' : 'Revisar. Orden lógico: ' + d.retoD.ans); }
   { const elL = document.querySelector('[data-dl="0"]'); const okL = _isOpNumOk(elL ? elL.value : '', d.retoP.linea); if (elL) { elL.classList.toggle('eval-input-ok', okL); elL.classList.toggle('eval-input-no', !okL); } const elT = document.querySelector('[data-dt="0"]'); const okT = !!elT && elT.value === d.retoP.tipo; if (elT) { elT.classList.toggle('eval-input-ok', okT); elT.classList.toggle('eval-input-no', !okT); } if (okL) { det.reto += 5; total += 5; } if (okT) { det.reto += 5; total += 5; } setEvalFeedback('evalFbDet', okL && okT, (okL && okT) ? '¡Paso malo atrapado! +10 pts' : 'Revisar. Paso ' + d.retoP.linea + ' → ' + OP_TIPO_TXT[d.retoP.tipo]); }
   const res = document.getElementById('evalOpAutoResult');
-  const desglose = `Ordena: ${det.ord}/20 · Exacta o ambigua: ${det.ea}/10 · Completa: ${det.cpl}/20 · Vida real: ${det.vida}/30 · Retos: ${det.reto}/20`;
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>${desglose}</span>`; }
-  if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
-  else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
+  const desglose = `Ordena: ${det.ord}/20 · Exacta o ambigua: ${det.ea}/10 · Completa: ${det.cpl}/20 · Retos: ${det.reto}/20`;
+  if (res) { res.className = 'eval-auto-result ' + (total >= OP_UMBRAL ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado automático: ${total}/${OP_AUTO} puntos</strong><br><span>${desglose}</span><br><em>Falta calificar: IV. Vida real (${OP_MANUAL} pts). Eso lo escribiste tú y lo revisa tu maestro con la pauta; tu autoevaluación fue ${autoev}/${OP_MANUAL} y no cuenta para esta nota.</em>`; }
+  if (total >= OP_UMBRAL) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/' + OP_AUTO); }
+  else showToast('🧮 Prueba operativa: ' + total + '/' + OP_AUTO + '. Revisa los ítems marcados.');
 }
 
 function printEvalOp() {

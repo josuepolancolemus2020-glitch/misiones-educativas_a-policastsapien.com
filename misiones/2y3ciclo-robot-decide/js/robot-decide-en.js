@@ -784,8 +784,14 @@
       [/\. Con «/g, '. With «'],
       [/Revisar\. El robot termina en /g, 'Check again. The robot ends at '],
       /* — prueba operativa: calificación y pauta — */
-      [/Ejecuta: (\d+)\/20 · Predice: (\d+)\/10 · Completa: (\d+)\/20 · Vida real: (\d+)\/30 · Retos: (\d+)\/20/g,
-        'Run: $1/20 · Predict: $2/10 · Complete: $3/20 · Real life: $4/30 · Challenges: $5/20'],
+      [/Ejecuta: (\d+)\/20 · Predice: (\d+)\/10 · Completa: (\d+)\/20 · Retos: (\d+)\/20/g,
+        'Run: $1/20 · Predict: $2/10 · Complete: $3/20 · Challenges: $4/20'],
+      /* La nota que se registra es solo la automática; la parte escrita la califica el maestro */
+      [/Resultado automático: (\d+)\/(\d+) puntos/g, 'Automatic score: $1/$2 points'],
+      [/Falta calificar: IV\. Problemas de la vida real \((\d+) pts\)\. Eso lo escribiste tú y lo revisa tu maestro con la pauta; tu autoevaluación fue (\d+)\/(\d+) y no cuenta para esta nota\./g,
+        'Still to be graded: IV. Real-life problems ($1 pts). You wrote that yourself and your teacher checks it against the answer key; your self-assessment was $2/$3 and it does not count towards this score.'],
+      [/🎯 Prueba operativa calificada: (\d+)\/(\d+)/g, '🎯 Practical test graded: $1/$2'],
+      [/🧮 Prueba operativa: (\d+)\/(\d+)\. Revisa los ítems marcados\./g, '🧮 Practical test: $1/$2. Check the marked items.'],
       [/Correcto\. \+(\d+) pts/g, 'Correct. +$1 pts'],
       [/Revisar\. R\/ /g, 'Check again. Ans/ '],
       [/Revisar\. Faltaba: /g, 'Check again. It was missing: '],

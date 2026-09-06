@@ -950,7 +950,11 @@ function gradeEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const d = window._evalOpData;
-  let total = 0; const det = { fall: 0, pred: 0, culp: 0, corr: 0, reto: 0 };
+  let total = 0; const det = { fall: 0, pred: 0, culp: 0, corr: 0, reto: 0, vlog: 0 };
+  // El maestro recibe SOLO lo que califica la máquina (60 pts). Los otros 40 son
+  // producción abierta que el alumno se puntúa contra la pauta: ese número enseña a
+  // compararse, pero como nota sería inventado, así que no entra en el resultado.
+  const OP_UMBRAL = 42, OP_AUTO = 60, OP_MANUAL = 40; let autoev = 0;
   // I. El robot falló (escribe la casilla donde termina de verdad)
   d.fallItems.forEach((it, i) => { const el = document.querySelector(`[data-fall="${i}"]`); const ok = _isCasillaOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.fall += 4; total += 4; } setEvalFeedback('evalFbFall' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. Termina en ' + it.ans); });
   // II. Predice el fallo (opción múltiple)
@@ -958,16 +962,16 @@ function gradeEvalOp() {
   // III. Señala al culpable (marca el número de línea)
   d.culpItems.forEach((it, i) => { const sel = document.querySelector(`input[name="opC${i}"]:checked`); const ok = !!sel && Number(sel.value) === it.linea; if (ok) { det.culp += 4; total += 4; } setEvalFeedback('evalFbCulp' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. El bug está en la Línea ' + it.linea); });
   // IV. Corrige y explica (autoevaluado 0-10)
-  d.corrigeItems.forEach((it, i) => { const inp = document.querySelector(`[data-corr="${i}"]`); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(10, v)); if (inp) inp.value = v; det.corr += v; total += v; setEvalFeedback('evalFbCorr' + i, v >= 7, 'Puntaje autoevaluado: ' + v + '/10 (compara siempre con la pauta)'); });
+  d.corrigeItems.forEach((it, i) => { const inp = document.querySelector(`[data-corr="${i}"]`); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(10, v)); if (inp) inp.value = v; det.corr += v; autoev += v; setEvalFeedback('evalFbCorr' + i, v >= 7, 'Puntaje autoevaluado: ' + v + '/10 (compara siempre con la pauta)'); });
   // V(a). Dos bugs (dos líneas, sin importar el orden)
   { const ea = document.querySelector('[data-v2a="0"]'); const eb = document.querySelector('[data-v2b="0"]'); const va = ea ? parseInt(ea.value) : NaN; const vb = eb ? parseInt(eb.value) : NaN; const objetivo = d.retoDos.lineas.slice(); let ganado = 0; const usados = []; [va, vb].forEach(n => { if (isNaN(n)) return; const idx = objetivo.findIndex((L, k) => L === n && usados.indexOf(k) < 0); if (idx >= 0) { usados.push(idx); ganado += 5; } }); const okA = ea && !isNaN(va) && objetivo.indexOf(va) >= 0; const okB = eb && !isNaN(vb) && objetivo.indexOf(vb) >= 0; if (ea) { ea.classList.toggle('eval-input-ok', okA); ea.classList.toggle('eval-input-no', !okA); } if (eb) { eb.classList.toggle('eval-input-ok', okB); eb.classList.toggle('eval-input-no', !okB); } det.reto += ganado; total += ganado; setEvalFeedback('evalFbV2', ganado === 10, ganado === 10 ? '¡Los dos bugs atrapados! +10 pts' : 'Revisar. Los bugs están en las Líneas ' + d.retoDos.lineas.join(' y ')); }
   // V(b). Bug de lógica (autoevaluado 0-10)
-  { const inp = document.querySelector('[data-vlog="0"]'); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(10, v)); if (inp) inp.value = v; det.reto += v; total += v; setEvalFeedback('evalFbVlog', v >= 7, 'Puntaje autoevaluado: ' + v + '/10 (compara con la pauta)'); }
+  { const inp = document.querySelector('[data-vlog="0"]'); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(10, v)); if (inp) inp.value = v; det.vlog += v; autoev += v; setEvalFeedback('evalFbVlog', v >= 7, 'Puntaje autoevaluado: ' + v + '/10 (compara con la pauta)'); }
   const res = document.getElementById('evalOpAutoResult');
-  const desglose = `El robot falló: ${det.fall}/20 · Predice: ${det.pred}/10 · Culpable: ${det.culp}/20 · Corrige: ${det.corr}/30 · Olimpiada: ${det.reto}/20`;
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>${desglose}</span>`; }
-  if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
-  else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
+  const desglose = `El robot falló: ${det.fall}/20 · Predice: ${det.pred}/10 · Culpable: ${det.culp}/20 · Olimpiada: ${det.reto}/10`;
+  if (res) { res.className = 'eval-auto-result ' + (total >= OP_UMBRAL ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado automático: ${total}/${OP_AUTO} puntos</strong><br><span>${desglose}</span><br><em>Falta calificar: IV. Corrige y explica + V(b). Bug de lógica (${OP_MANUAL} pts). Eso lo escribiste tú y lo revisa tu maestro con la pauta; tu autoevaluación fue ${autoev}/${OP_MANUAL} y no cuenta para esta nota.</em>`; }
+  if (total >= OP_UMBRAL) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/' + OP_AUTO); }
+  else showToast('🧮 Prueba operativa: ' + total + '/' + OP_AUTO + '. Revisa los ítems marcados.');
 }
 
 function printEvalOp() {

@@ -51,6 +51,14 @@ respuesta abierta del alumno se guarda, se lee ni se corrige**.
 
 `P2-02` · crítica · error · esfuerzo horas · impacto educativo 5/5 · comercial 4/5
 
+> ✅ **Corregido el 6 de septiembre de 2026.** En las siete misiones, el autopuntaje ya no entra
+> en el «Resultado» que lee `js/metas-registro.js`: el panel dice **«Resultado automático: N/70
+> puntos»** (N/60 en Detective de Bugs, que autopuntuaba 40) y debajo, aparte, qué falta por
+> calificar y cuánto se puso el alumno, con la frase «no cuenta para esta nota». La producción
+> abierta **se queda**: es lo más valioso de la prueba y sigue enseñando a compararse con la
+> pauta. Lo vigila `_dev/verifica-autopuntaje.js`, que no contesta nada, se pone el máximo y
+> exige que al maestro le llegue 0.
+
 La sección «Problemas de la vida real» de la prueba operativa no se califica: son tres casillas
 numéricas de 0 a 10 que el alumno rellena, y la función de calificación las suma al total sin
 comprobar nada. Ese total se pinta como «Resultado: N/100 pts», que es exactamente el texto que

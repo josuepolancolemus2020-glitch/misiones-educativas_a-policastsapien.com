@@ -961,6 +961,10 @@ function gradeEvalOp() {
   sfx('click');
   const d = window._evalOpData;
   let total = 0; const det = { eje: 0, cpl: 0, tz: 0, bug: 0, ps: 0 };
+  // El maestro recibe SOLO lo que califica la máquina (70 pts). Los otros 30 son
+  // producción abierta que el alumno se puntúa contra la pauta: ese número enseña a
+  // compararse, pero como nota sería inventado, así que no entra en el resultado.
+  const OP_UMBRAL = 49, OP_AUTO = 70, OP_MANUAL = 30; let autoev = 0;
   d.ejeItems.forEach((it, i) => { const sel = document.querySelector(`input[name="opE${i}"]:checked`); const ok = !!sel && sel.value === it.ans; if (ok) { det.eje += 4; total += 4; } setEvalFeedback('evalFbEje' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. El robot termina en ' + it.ans); });
   d.cplItems.forEach((it, i) => { const sel = document.querySelector(`input[name="opC${i}"]:checked`); const ok = !!sel && Number(sel.value) === it.ans; if (ok) { det.cpl += 4; total += 4; } setEvalFeedback('evalFbCpl' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. Faltaba: ' + it.opts[it.ans]); });
   d.tzItems.forEach((it, i) => { const el = document.querySelector(`[data-tz="${i}"]`); const ok = _isOpNumOk(el ? el.value : '', it.ans); if (el) { el.classList.toggle('eval-input-ok', ok); el.classList.toggle('eval-input-no', !ok); } if (ok) { det.tz += 2; total += 2; } setEvalFeedback('evalFbTz' + i, ok, ok ? 'Correcto. +2 pts' : 'Revisar. CUENTA termina en ' + it.ans); });
@@ -972,12 +976,12 @@ function gradeEvalOp() {
     if (okL) { det.bug += 5; total += 5; } if (okI) { det.bug += 5; total += 5; }
     setEvalFeedback('evalFbBug' + i, okL && okI, (okL && okI) ? '¡Bug atrapado y corregido! +10 pts' : 'Revisar. Línea ' + it.linea + ' → ' + it.correcta);
   });
-  d.psItems.forEach((it, i) => { const inp = document.querySelector(`[data-ps="${i}"]`); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(15, v)); if (inp) inp.value = v; det.ps += v; total += v; setEvalFeedback('evalFbPs' + i, v >= 11, 'Puntaje autoevaluado: ' + v + '/15 (compara siempre con la pauta)'); });
+  d.psItems.forEach((it, i) => { const inp = document.querySelector(`[data-ps="${i}"]`); let v = inp ? (parseInt(inp.value) || 0) : 0; v = Math.max(0, Math.min(15, v)); if (inp) inp.value = v; det.ps += v; autoev += v; setEvalFeedback('evalFbPs' + i, v >= 11, 'Puntaje autoevaluado: ' + v + '/15 (compara siempre con la pauta)'); });
   const res = document.getElementById('evalOpAutoResult');
-  const desglose = `Ejecuta: ${det.eje}/20 · Completa: ${det.cpl}/20 · Traza: ${det.tz}/10 · Depuración: ${det.bug}/20 · Pseudocódigo: ${det.ps}/30`;
-  if (res) { res.className = 'eval-auto-result ' + (total >= 70 ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado: ${total}/100 pts</strong><br><span>${desglose}</span>`; }
-  if (total >= 70) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/100'); }
-  else showToast('🧮 Prueba operativa: ' + total + '/100. Revisa los ítems marcados.');
+  const desglose = `Ejecuta: ${det.eje}/20 · Completa: ${det.cpl}/20 · Traza: ${det.tz}/10 · Depuración: ${det.bug}/20`;
+  if (res) { res.className = 'eval-auto-result ' + (total >= OP_UMBRAL ? 'eval-auto-pass' : 'eval-auto-risk'); res.innerHTML = `<strong>Resultado automático: ${total}/${OP_AUTO} puntos</strong><br><span>${desglose}</span><br><em>Falta calificar: V. Pseudocódigo (${OP_MANUAL} pts). Eso lo escribiste tú y lo revisa tu maestro con la pauta; tu autoevaluación fue ${autoev}/${OP_MANUAL} y no cuenta para esta nota.</em>`; }
+  if (total >= OP_UMBRAL) { pts(8); showToast('🎯 Prueba operativa calificada: ' + total + '/' + OP_AUTO); }
+  else showToast('🧮 Prueba operativa: ' + total + '/' + OP_AUTO + '. Revisa los ítems marcados.');
 }
 
 // Tabla de traza impresa: una fila por instrucción ejecutada y celda en blanco para el valor;

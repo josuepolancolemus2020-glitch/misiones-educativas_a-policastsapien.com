@@ -69,8 +69,9 @@ la lente de evidencias, la de coherencia curricular, el alumno de 5º grado y el
   Estadísticas, la tarjeta que ve la familia— usan la mejor.
 - El anti-trampa `pauta_vista` **solo se dispara al imprimir**: ver la pauta en pantalla no deja
   rastro.
-- En **siete misiones de Robótica**, 30 de los 100 puntos los escribe el alumno en una casilla
-  numérica y el total se registra como nota calificada.
+- ~~En **siete misiones de Robótica**, 30 de los 100 puntos los escribe el alumno en una casilla
+  numérica y el total se registra como nota calificada.~~ **Corregido el 6 de septiembre**: el
+  panel registra solo lo que califica la máquina y lo dice; ver el punto 1 del top 20.
 - El XP se vuelve a ganar recargando la página: tres recargas volteando tarjetas llevaron el
   contador de 13 a 56 puntos y emitieron una Constancia de Logro **sin una sola respuesta
   correcta**.

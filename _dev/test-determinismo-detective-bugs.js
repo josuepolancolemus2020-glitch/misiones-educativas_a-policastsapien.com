@@ -148,7 +148,11 @@ ok('pauta con respuestas en verde #007a00 (.pa)', docs[0].includes('.pa{color:#0
 ok('encabezado imprime «Programación»', docs[0].includes('Programación') && docs[1].includes('Programación'));
 ok('operativa impresa trae SVG determinista y puntos «•» en casillas vacías', docs[1].includes('<svg') && docs[1].includes('•'));
 ok('sin Forma R (semillas 300000/400000 no usadas)', !code.includes('300000') && !code.includes('400000'));
-ok('panel de resultado con texto exacto «Resultado: X/100 pts»', code.includes('Resultado: ${total}/100 pts'));
+// El panel registra SOLO lo que califica la máquina: los 40 pts de producción
+// abierta los revisa el maestro, y si entraran aquí el alumno se pondría la nota.
+ok('panel con la nota automática «Resultado automático: X/60 puntos»',
+   code.includes('Resultado automático: ${total}/${OP_AUTO} puntos') && code.includes('const OP_UMBRAL = 42, OP_AUTO = 60, OP_MANUAL = 40'));
+ok('el autopuntaje NO suma al total', !/det\.\w+ \+= v; total \+= v;/.test(code));
 
 // ── Impresión determinista: misma forma → mismo documento
 docs = [];
