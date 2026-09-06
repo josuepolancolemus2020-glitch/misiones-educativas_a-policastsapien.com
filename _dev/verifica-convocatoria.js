@@ -814,9 +814,18 @@ async function pruebaAvisos(browser) {
     try {
       Object.defineProperty(Navigator.prototype, 'onLine', { get: () => true, configurable: true });
     } catch (_) {}
-    window.__fetches = 0;
+    /* Se apunta la dirección de cada fetch y si el navegador se creía en línea
+       en ESE momento: contar a secas no distingue «convRPC se rindió antes de
+       pedir» de «pidió y nadie contestó», que es la diferencia que hay que
+       averiguar. */
+    window.__fetches = [];
     const f = window.fetch;
-    window.fetch = function (...a) { window.__fetches++; return f.apply(this, a); };
+    window.fetch = function (...a) {
+      let u = '';
+      try { u = String(a[0] && a[0].url || a[0] || ''); } catch (_) {}
+      window.__fetches.push((navigator.onLine ? '' : 'SIN-LINEA ') + u.slice(0, 70));
+      return f.apply(this, a);
+    };
   });
   const rpc = { vistas: [], fallo: '' };
   await page.route('**/rest/v1/rpc/**', async route => {
@@ -834,9 +843,12 @@ async function pruebaAvisos(browser) {
   });
   /* Y lo que NO pasa por la ruta: si algo se va a la nube de verdad, allí se
      queda esperando y el maestro ve la rueda girar para siempre. */
+  /* TODA petición a la nube, incluidas las de /rpc/. El filtro de antes las
+     excluía justo a ellas, así que no se podía distinguir «la petición no
+     salió» de «salió y la ruta no la interceptó» — y esa era la pregunta. */
   page.on('request', r => {
     const u = r.url();
-    if (/supabase\.co/.test(u) && !/\/rpc\//.test(u)) rpc.vistas.push('FUERA:' + u.slice(0, 60));
+    if (/supabase/.test(u)) rpc.vistas.push('PETICION:' + u.slice(0, 70));
   });
   await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => typeof window.renderAdmin === 'function');
