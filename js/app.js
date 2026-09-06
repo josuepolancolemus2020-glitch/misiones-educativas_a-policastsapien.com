@@ -636,18 +636,52 @@ function readRegistro() {
   } catch (_) { return []; }
 }
 
-// Mapa carpeta-de-misión → { tried, best } (mejor nota sobre 100)
+/* Mapa carpeta-de-misión → { tried, best, practica }
+   ------------------------------------------------------------------
+   `best` es la mejor nota que vale, y vale la que se sacó SIN haber abierto
+   antes la pauta. Esto es el arreglo de lo que más dolía de la auditoría: el
+   botón «👁 Ver Pauta» está al lado de «Calificar», y un alumno de 5º copió
+   las 16 respuestas sin proponérselo; su misión pasó a «Dominada · 100» y esa
+   nota llegó al maestro. Una nota copiada de la clave no mide aprender, así
+   que no puede dar por dominada una etapa.
+
+   No se borra ni se esconde nada: la nota con la pauta delante se sigue
+   guardando y se sigue enseñando, pero como lo que es —práctica— en
+   `practica`. Practicar con la clave a la vista está bien; llamarlo dominar,
+   no.
+
+   ⚠️ La regla de «pauta antes» es LA MISMA que usa el ⚠️ de registro.html y
+   consulta-nube.html: misma misión, mismo día, pauta anterior a la nota. Si
+   las dos reglas se separaran, el maestro vería el aviso en una pantalla y
+   «Dominada» en la otra, que es peor que cualquiera de las dos solas. */
+const _dia = t => String(t || '').slice(0, 10);
+
 function rutasProgress() {
   const prog = {};
-  readRegistro().forEach(ev => {
+  const eventos = readRegistro();
+  /* Cuándo se abrió la pauta de cada misión, por día. */
+  const pautas = {};
+  eventos.forEach(ev => {
+    if (!ev || ev.tipo !== 'pauta_vista' || !ev.mision) return;
+    const f = _rNorm(ev.mision);
+    (pautas[f] || (pautas[f] = [])).push(ev.t);
+  });
+  const vioLaPauta = (f, t) =>
+    (pautas[f] || []).some(tp => tp < t && _dia(tp) === _dia(t));
+
+  eventos.forEach(ev => {
     if (!ev || !ev.mision) return;
     const f = _rNorm(ev.mision);
-    const p = prog[f] || (prog[f] = { tried: false, best: null });
+    const p = prog[f] || (prog[f] = { tried: false, best: null, practica: null });
     p.tried = true;
     if ((ev.tipo === 'evaluacion' || ev.tipo === 'prueba_operativa') && typeof ev.nota === 'number') {
       const base = (typeof ev.base === 'number' && ev.base > 0) ? ev.base : 100;
       const pct  = Math.round((ev.nota / base) * 100);
-      if (p.best === null || pct > p.best) p.best = pct;
+      if (vioLaPauta(f, ev.t)) {
+        if (p.practica === null || pct > p.practica) p.practica = pct;
+      } else if (p.best === null || pct > p.best) {
+        p.best = pct;
+      }
     }
   });
   return prog;
@@ -927,7 +961,14 @@ function renderRutas() {
       if (estado === 'dominada') {
         chip = `<span class="re-chip ok"><i class="fa-solid fa-check"></i> Dominada · ${p.best}</span>`;
       } else if (estado === 'progreso') {
-        chip = `<span class="re-chip prog">En progreso${p && p.best !== null ? ' · Mejor nota ' + p.best : ''}</span>`;
+        /* Si lo único que hay es una nota sacada con la pauta a la vista, se
+           dice ASÍ y no se calla: al alumno no se le borra lo que hizo —eso
+           sería castigarlo por tocar un botón que la propia misión le pone
+           delante—, pero tampoco se le llama dominar a copiar la clave. */
+        const detalle = p && p.best !== null ? ' · Mejor nota ' + p.best
+                      : p && p.practica !== null ? ' · Practicada con la pauta · ' + p.practica
+                      : '';
+        chip = `<span class="re-chip prog">En progreso${detalle}</span>`;
       } else {
         chip = `<span class="re-chip pend">Por explorar · +${m.xp} XP</span>`;
       }

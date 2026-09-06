@@ -162,6 +162,7 @@
         if (window._evalGradeData || window._evalPrintData) {
           var res = notaDePanel('evalAutoResult');
           if (res) registrar('evaluacion', { forma: window._currentEvalForm || null, nota: res.nota, base: res.base });
+          avisarPractica('evalAutoResult');
         }
         return r;
       };
@@ -174,6 +175,7 @@
         if (window._evalOpData) {
           var res = notaDePanel('evalOpAutoResult');
           if (res) registrar('prueba_operativa', { forma: window._currentEvalOpForm || null, nota: res.nota, base: res.base });
+          avisarPractica('evalOpAutoResult');
         }
         return r;
       };
@@ -182,11 +184,37 @@
     // pauta con las respuestas. Se registra el momento para que el maestro
     // vea un aviso ⚠️ en toda evaluación calificada DESPUÉS en este equipo.
     var _pautaUltimo = 0;
+    var _pautaAbierta = false;   // en esta visita se abrió la pauta de esta misión
     function registrarPauta(forma) {
+      _pautaAbierta = true;      // esto NO se limita: se abrió, y ya está
       var ahora = Date.now();
       if (ahora - _pautaUltimo < 60000) return; // máximo 1 registro por minuto
       _pautaUltimo = ahora;
       registrar('pauta_vista', { forma: forma || null });
+    }
+
+    /* Que el alumno lo sepa EN EL MOMENTO, no solo el maestro tres días
+       después. Sin esto la pantalla le dice «100/100» y él se lo cree: nadie
+       le avisó de que mirar la pauta convierte el examen en práctica.
+
+       Y se dice sin regañar. Practicar con la clave delante está bien —es lo
+       que la propia misión invita a hacer en 44 de las 66— y no se le quita
+       nada: se le explica qué acaba de sacar y cómo se saca la otra, que es
+       generar otra forma y no mirar. */
+    function avisarPractica(idPanel) {
+      if (!_pautaAbierta) return;
+      var panel = document.getElementById(idPanel);
+      if (!panel || panel.querySelector('.metas-practica')) return;
+      var n = document.createElement('div');
+      n.className = 'metas-practica';
+      n.setAttribute('style',
+        'margin-top:10px;padding:9px 11px;border-radius:10px;border-left:4px solid #b45309;' +
+        'background:#fffbeb;color:#7c3f0a;font-size:13.5px;line-height:1.5;text-align:left');
+      n.innerHTML = '<strong>👁 Esto cuenta como práctica, no como nota.</strong><br>' +
+        'Abriste la pauta antes de calificar, así que este puntaje no se guarda como ' +
+        'evaluación. Está bien practicar así. Cuando quieras la nota de verdad: ' +
+        '<strong>genera otra forma y califica sin mirar la pauta</strong>.';
+      panel.appendChild(n);
     }
     if (typeof window.printEval === 'function') {
       var peOrig = window.printEval;
@@ -202,6 +230,49 @@
         return poOrig.apply(this, arguments);
       };
     }
+
+    /* ⚠️ Y AQUÍ estaba el agujero por el que se caía todo el anti-trampa.
+       Se registraba la pauta al IMPRIMIR, que es lo que hace el maestro, y no
+       al abrirla en la pantalla, que es lo que hace el alumno: el botón
+       «👁 Ver Pauta» está al lado de «Calificar», antes de calificar, en las
+       66 misiones. Un alumno de 5º lo tocó sin proponérselo, vio las 16
+       respuestas, las copió, calificó, y la pantalla dijo 100/100. Esa nota
+       entró en el registro y en Rutas la misión pasó a «Dominada · 100».
+
+       Lo que costaba de ver es que el aviso al maestro YA ESTABA HECHO —el ⚠️
+       de registro.html y consulta-nube.html, que cruza la pauta con la nota
+       del mismo día y el mismo equipo— y no se disparaba nunca, porque nadie
+       le contaba que la pauta se había abierto.
+
+       Se mira el DOM y no una variable de la misión: cada misión lleva su
+       propio `evalAnsVisible` y hay 66. Lo que vale es si las respuestas
+       quedaron a la vista después de tocar, que es lo que de verdad pasó. */
+    function hayRespuestasALaVista(selector) {
+      var els = document.querySelectorAll(selector);
+      for (var i = 0; i < els.length; i++) {
+        if (els[i].offsetParent !== null) return true;
+      }
+      return false;
+    }
+    function engancharPauta(nombre, selector, forma) {
+      if (typeof window[nombre] !== 'function') return;
+      var orig = window[nombre];
+      window[nombre] = function () {
+        var r = orig.apply(this, arguments);
+        /* Es un interruptor: solo cuenta cuando ABRE. Cerrarla no deshace
+           haberla visto, pero registrar el cierre ensuciaría el aviso. */
+        if (hayRespuestasALaVista(selector)) registrarPauta(forma());
+        return r;
+      };
+    }
+    engancharPauta('toggleEvalAns', '#evalOut .eval-answer',
+                   function () { return window._currentEvalForm || null; });
+    engancharPauta('toggleEvalOpAns', '#evalOpOut .eval-answer',
+                   function () { return window._currentEvalOpForm || null; });
+    /* Y la tercera, la del caso crítico, que solo tienen dos misiones y por eso
+       es la que se olvida: enseña la pauta igual y cuenta igual. */
+    engancharPauta('toggleEvalCritAns', '#evalCritOut .crit-pauta, #evalCritOut .eval-answer',
+                   function () { return window._currentEvalForm || null; });
   }
 
   // ---------- exportación ----------
