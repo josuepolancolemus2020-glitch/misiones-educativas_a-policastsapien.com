@@ -365,8 +365,8 @@ Ordenados por lo que le cuesta al alumno.
 
 | qué | dónde | severidad |
 |---|---|---|
-| Río Plátano «salió de la Lista en Peligro en 2018»: sigue en ella | Áreas Protegidas, texto y banco crítico | alta |
-| «1/2» se marca mal en `3/4 − 1/4`, y la nota llega al maestro | Fracciones, conceptual | alta |
+| ✅ Río Plátano «salió de la Lista en Peligro en 2018»: sigue en ella | Áreas Protegidas, texto y banco crítico | alta |
+| ✅ «1/2» se marca mal en `3/4 − 1/4`, y la nota llega al maestro | Fracciones, conceptual | alta |
 | El Cerro Las Minas mide 2 870 m en una misión y 2 849 m en otra | Geografía y Áreas Protegidas, 28 líneas | media |
 | 31 misiones enlazan a carpetas de Drive que no existen | sección Recursos | media |
 | La Forma 20 imprime «3/3 − 0/6 =» | Fin de Grado 6º, 4 puntos | media |
@@ -390,6 +390,16 @@ Afecta a nueve de las treinta formas.
 Y una incoherencia de plantilla que se ve: detrás del título de **doce misiones** corre la
 marquesina «NEURONA · CEREBRO · SINAPSIS · AXÓN», heredada del CSS del Sistema Nervioso
 (`P2-10`). Se arregla en una hora.
+
+> ✅ **Corregidas el 6 de septiembre de 2026 las tres marcadas con ✅**, con dos matices que
+> salieron al abrirlas. El dato de Río Plátano estaba en **tres** sitios (el Aprende, el caso
+> crítico y el panel del laboratorio); ahora dice que sigue en la lista desde 2011 —y que ya lo
+> estuvo de 1996 a 2007—, fechado a 2026, y el caso crítico pregunta **qué haría falta para que
+> salga**. En Fracciones, el completar acepta cualquier equivalente y la pauta pasa a «1/2». Y la
+> marquesina estaba mal en **20 misiones, no en doce**: se le puso a cada una su temario y lo
+> vigila `_dev/verifica-encabezados.js`.
+>
+> **Las otras siete filas de esta tabla siguen sin corregir.**
 
 ## Qué sobra
 

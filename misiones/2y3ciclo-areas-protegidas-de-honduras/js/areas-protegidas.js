@@ -1234,9 +1234,9 @@ const critCauseEffectBank=[
 // ── II. Analiza el caso y decide (2 × 10 = 20) — mini-casos abiertos
 const critCaseBank=[
   {t:'Río Plátano y la UNESCO',
-   sc:'La Reserva de Biosfera Río Plátano (Patrimonio de la Humanidad desde 1982) estuvo en la Lista del Patrimonio Mundial en Peligro de la UNESCO entre 2011 y 2018, por el avance del narcotráfico, la tala ilegal y la colonización no planificada.',
-   q:'¿Qué medidas ayudaron a que la Reserva fuera retirada de la Lista en Peligro? Propón y justifica al menos dos.',
-   g:'Combatir el narcotráfico y cerrar las pistas clandestinas; frenar la colonización y el avance de la frontera agrícola-ganadera; reforzar la vigilancia del ICF junto con los pueblos indígenas (Pech, Miskitu, Tawahka y Garífuna); aplicar planes de manejo y monitoreo; cooperación internacional. Cada medida ataca una de las causas que pusieron la Reserva en peligro.'},
+   sc:'La Reserva de Biosfera Río Plátano (Patrimonio de la Humanidad desde 1982) está en la Lista del Patrimonio Mundial en Peligro de la UNESCO desde 2011 —ya lo estuvo de 1996 a 2007— por el avance del narcotráfico, la tala ilegal y la colonización no planificada. En 2025 el Comité decidió mantenerla en la lista.',
+   q:'¿Qué medidas harían falta para que la Reserva SALGA de la Lista en Peligro? Propón y justifica al menos dos.',
+   g:'Combatir el narcotráfico y cerrar las pistas clandestinas; frenar la colonización y el avance de la frontera agrícola-ganadera; reforzar la vigilancia del ICF junto con los pueblos indígenas (Pech, Miskitu, Tawahka y Garífuna); aplicar planes de manejo y monitoreo; cooperación internacional. Cada medida ataca una de las causas que mantienen la Reserva en peligro; la UNESCO pide alcanzar un «estado de conservación deseado» antes de sacarla de la lista.'},
   {t:'Camaronera contra manglar',
    sc:'Una empresa quiere drenar un manglar costero para construir piscinas de camarón. El manglar es criadero de peces y mariscos y protege la costa de los huracanes.',
    q:'Evalúa estas 3 medidas y elige la mejor, justificando tu decisión: (1) permitir el proyecto sin límites; (2) prohibir toda actividad económica; (3) regular el cultivo fuera del manglar y restaurar las zonas dañadas.',
@@ -1469,7 +1469,7 @@ const bosqueData={
     nombre:'Bosque Latifoliado Tropical',icon:'🌿',
     ubicacion:{title:'Ubicación',info:'• Noreste de Honduras: <strong>La Mosquitia</strong> (Gracias a Dios)<br>• También: Atlántida, Colón, norte de Olancho<br>• Altitud: nivel del mar hasta ~600 metros<br>• Precipitación: >2,000 mm anuales<br>• Conectado con el bosque tropical de Nicaragua: el más grande de Centroamérica'},
     biodiversidad:{title:'Biodiversidad',info:'• <strong>Jaguar</strong>, tapir, mono araña, mono carablanca<br>• Tucán, lapa roja, quetzal de tierras bajas<br>• Caoba (Swietenia macrophylla), cedro, palo de agua<br>• Reptiles: caimán, boa constrictor, cocodrilo<br>• Mayor riqueza de especies de todo Honduras<br>• Alberga cuatro pueblos indígenas en la Reserva Río Plátano'},
-    amenazas:{title:'Amenazas',info:'• <strong>Avance de la frontera agrícola</strong> y ganadería desde el interior<br>• Narcotráfico: pistas clandestinas destruyen el bosque<br>• Tala ilegal de maderas preciosas (caoba, cedro)<br>• Colonización no planificada<br>• La Reserva Río Plátano estuvo en la Lista del Patrimonio en Peligro UNESCO (2011-2018)'},
+    amenazas:{title:'Amenazas',info:'• <strong>Avance de la frontera agrícola</strong> y ganadería desde el interior<br>• Narcotráfico: pistas clandestinas destruyen el bosque<br>• Tala ilegal de maderas preciosas (caoba, cedro)<br>• Colonización no planificada<br>• La Reserva Río Plátano sigue en la Lista del Patrimonio en Peligro de la UNESCO (desde 2011; ya lo estuvo de 1996 a 2007)'},
     importancia:{title:'Importancia',info:'• Mayor <strong>banco de biodiversidad</strong> de Honduras<br>• Hogar ancestral de Pech, Miskitu, Tawahka y Garífuna<br>• Parte fundamental del <strong>Corredor Biológico Mesoamericano</strong><br>• Fuente de agua para ríos que desembocan en el Caribe<br>• Reserva de carbono forestal de importancia global'}
   },
   manglar:{
