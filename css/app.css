@@ -2663,11 +2663,6 @@ a { text-decoration: none; color: inherit; }
   border-radius: 20px;
   padding: 4px 14px;
 }
-.camp-wheel-wrap {
-  position: relative;
-  width: 240px;
-  height: 240px;
-}
 .camp-pointer-arrow {
   position: absolute;
   top: -14px;
@@ -2680,73 +2675,12 @@ a { text-decoration: none; color: inherit; }
   z-index: 5;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
 }
-.camp-wheel {
-  width: 240px;
-  height: 240px;
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 6px 24px rgba(0,0,0,.18);
-  border: 5px solid #fff;
-  /* 4 sectores: líneas divisorias via box + colores via conic-gradient */
-  background: conic-gradient(
-    #fef3c7 0deg 90deg,
-    #dbeafe 90deg 180deg,
-    #ccfbf1 180deg 270deg,
-    #fee2e2 270deg 360deg
-  );
-}
-/* Centro de la ruleta */
-.camp-wheel::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 28px; height: 28px;
-  background: #fff;
-  border-radius: 50%;
-  transform: translate(-50%,-50%);
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
-  z-index: 3;
-}
-/* Líneas divisoras */
-.camp-wheel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    linear-gradient(0deg, transparent 49.3%, #fff 49.3%, #fff 50.7%, transparent 50.7%),
-    linear-gradient(90deg, transparent 49.3%, #fff 49.3%, #fff 50.7%, transparent 50.7%);
-  z-index: 2;
-}
-/* Sectores con ícono y etiqueta */
-.camp-wsector {
-  position: absolute;
-  width: 50%; height: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  z-index: 1;
-}
-.camp-wsector:nth-child(1) { top: 0; right: 0; }  /* ESP: top-right */
-.camp-wsector:nth-child(2) { bottom: 0; right: 0; } /* MAT: bottom-right */
-.camp-wsector:nth-child(3) { bottom: 0; left: 0; }  /* NAT: bottom-left */
-.camp-wsector:nth-child(4) { top: 0; left: 0; }    /* SOC: top-left */
-.camp-ws-icon { font-size: 22px; line-height: 1; }
-.camp-ws-short {
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: .5px;
-}
-.camp-ws-esp .camp-ws-short { color: #92400e; }
-.camp-ws-mat .camp-ws-short { color: #1d4ed8; }
-.camp-ws-cnat .camp-ws-short { color: #0f766e; }
-.camp-ws-csoc .camp-ws-short { color: #b91c1c; }
-.camp-ws-tec-pro .camp-ws-short { color: #155e75; }
-.camp-ws-tec-rob .camp-ws-short { color: #3730a3; }
-.camp-ws-ing .camp-ws-short { color: #9d174d; }
+/* La ruleta vieja de cuatro sectores (.camp-wheel, .camp-wsector, .camp-ws-*) se
+   quitó de aquí: la de ahora es .camp-w2 y se pinta con un conic-gradient sacado
+   de CAMP_SUBJECTS, así que una materia nueva ya no pide colores a mano. Estos
+   selectores llevaban tiempo sin pintar nada y aun así obligaban a inventarle un
+   color a cada materia que entraba: Repaso General se quedó sin el suyo y nadie
+   lo notó, porque no se veía. */
 
 /* Anuncio de materia seleccionada */
 .camp-subject-announce {

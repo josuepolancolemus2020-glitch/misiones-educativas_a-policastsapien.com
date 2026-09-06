@@ -17,7 +17,7 @@
 /* ── Materias y colores ──
    `key` debe coincidir con el `subject` de js/data/misiones.js.
    `cls` alimenta las clases .camp-sa-*, .camp-sp-*, .camp-q-header-*,
-   .camp-ms-bh-* y .camp-ws-* de css/app.css: debe ser ÚNICO por materia
+   y .camp-ms-bh-* de css/app.css: debe ser ÚNICO por materia
    (Programación y Robótica comparten la familia «tec» del sitio, por eso
    se distinguen como tec-pro / tec-rob). */
 const CAMP_SUBJECTS = [

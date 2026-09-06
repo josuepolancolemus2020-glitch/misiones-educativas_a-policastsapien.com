@@ -162,13 +162,15 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 
 **Nueve se hacen en horas:**
 
-1. Quitar del «Resultado» los 30 puntos que el alumno se pone solo
+1. ~~Quitar del «Resultado» los 30 puntos que el alumno se pone solo~~ · **hecho el 6 de septiembre**
 6. ~~El service worker: precachear el armazón y dejar de borrar la caché~~ · **hecho el 6 de septiembre**
 8. ~~Buscar sin tildes~~ · **hecho el 6 de septiembre**
 11. ~~Corregir los cuatro errores de contenido ya localizados~~ · **hecho el 6 de septiembre**
 12. ~~Los 31 enlaces de Drive que no llevan a ninguna parte~~ · **hecho el 6 de septiembre**
 14. ~~Quitar el autoavance de 1,6 s del quiz y del completar~~ · **hecho el 6 de septiembre**
-16. Una acción de CI que corra las sondas — **hoy dos están rojas**
+16. ~~Una acción de CI que corra las sondas~~ · **hecho el 6 de septiembre** — eran **tres** rojas, no dos,
+    y una de ellas llevaba 58 fallos que no eran averías: la sonda pedía cosas que este repositorio
+    no puede cumplir a propósito
 17. Escribir en la portada qué es esto y para quién
 18. Licencia, aviso de privacidad y alojamiento con términos válidos
 

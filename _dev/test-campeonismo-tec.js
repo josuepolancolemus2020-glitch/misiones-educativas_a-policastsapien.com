@@ -16,7 +16,7 @@
       misiones.js (salvo «bachillerato», que el juego mapea a español).
    7. Cada materia de CAMP_SUBJECTS tiene sus estilos por materia en
       css/app.css: .camp-sa-*, .camp-sp-*, .camp-q-header-*,
-      .camp-ms-bh-* y .camp-ws-*.
+      y .camp-ms-bh-*.
    8. La ruleta cubre todas las materias sin gajos repetidos.
 ============================================================= */
 'use strict';
@@ -186,7 +186,10 @@ ok(`${keys.length} materias sincronizadas: ${keys.join(', ')}`);
 
 /* ── 7. estilos por materia en app.css ───────────────────── */
 console.log('\n5) Estilos por materia en css/app.css');
-const PREFIJOS = ['camp-sa-', 'camp-sp-', 'camp-q-header-', 'camp-ms-bh-', 'camp-ws-'];
+/* Ya no se pide `camp-ws-`: esa era la ruleta vieja de cuatro sectores, que se
+   retiró del CSS. La de ahora saca sus colores de CAMP_SUBJECTS, así que una
+   materia nueva no tiene que traer un color escrito a mano para ella. */
+const PREFIJOS = ['camp-sa-', 'camp-sp-', 'camp-q-header-', 'camp-ms-bh-'];
 let faltanCss = 0;
 CAMP_SUBJECTS.forEach(s => {
   PREFIJOS.forEach(pref => {

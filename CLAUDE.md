@@ -2319,6 +2319,78 @@ En español, y explicando **por qué** está así, no qué hace la línea. Casi
 todo comentario del proyecto nace de un problema real en el aula; contarlo
 evita que alguien lo «arregle» de vuelta al problema.
 
+## Normativa: las sondas se corren de una vez, y solas
+
+Este archivo tiene nueve listas de «antes de publicar, corre esto». Nadie las
+corría todas: se corría la de lo que uno acababa de tocar y las demás se
+quedaban rojas meses. El 6 de septiembre de 2026 se corrieron todas por primera
+vez y **tres estaban en rojo**, ninguna de esa semana. Una de ellas llevaba **58
+fallos que no eran averías**: pedía cosas que este repositorio no cumple a
+propósito.
+
+Ahora se corren de un golpe, y en dos tandas porque cuestan cosas distintas:
+
+```
+npm test                       → las 32 rápidas: solo leen archivos, 12 s
+npm run test:navegador         → las 24 de Playwright, con su servidor
+```
+
+El **servidor estático lo levanta y lo baja la propia herramienta**
+(`_dev/corre-sondas.js`): era el paso que más se olvidaba, y una sonda sin
+servidor no dice «falta el servidor», dice que la página está rota.
+
+**Las sondas se descubren solas.** Una sonda nueva entra en la tanda sin tocar
+nada. Lo que queda fuera va nombrado uno por uno **con su motivo** dentro de la
+herramienta —son las doce que *escriben* fichas o piden argumentos— y se
+**imprime esa lista al terminar**: una exclusión callada es la forma más fácil
+de que una sonda se quede fuera un año sin que nadie lo note.
+
+⚠️ **Una sonda que sale roja cuando todo está bien enseña a no mirarla.** De ahí
+salen dos reglas:
+
+- **Los números se cuentan, no se escriben** — también dentro de las sondas.
+  `verifica-fin-de-grado.js` comparaba contra el literal `61` y empezó a fallar
+  el día que entró la misión 62, sin que nada estuviera roto.
+- **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
+  hasta que se compila la app de Android, así que darlo por fallo pintaba de
+  rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le
+  falta, y eso lo dice.
+- **Una sonda pide su regla solo a quien la necesita, y sabe quién es
+  mirando.** `verifica-barra-xp` le exigía a las ocho misiones del maestro la
+  media query de los 430 px. Se empezó a ponérsela y, al medir antes de darlo
+  por bueno, resultó que **su barra no se sale**: lleva cuatro elementos y solo
+  la barra de progreso no se encoge. La del alumno lleva siete, y el que la
+  desborda es el nivel (`.xp-lvl`).
+
+  ⚠️ **Y ponérsela habría sido un estropicio, no un arreglo**: esa regla
+  esconde el rótulo `.xp-lbl` porque en la barra del alumno es redundante —al
+  lado va «⭐ N»—. En la del maestro es **la única palabra que hay**: al lado
+  tiene un número pelado. Ahora la sonda mira el HTML de cada misión para saber
+  si lleva `.xp-lvl`, en vez de fiarse de una lista escrita a mano que
+  envejecería con la misión siguiente.
+
+### El CI las corre por su cuenta
+
+`.github/workflows/sondas.yml`, en dos niveles: las rápidas **en cada empujón**,
+las de navegador **de noche** (07:00 UTC) y en cada pull request.
+
+**Esto NO frena la publicación.** Pages construye por su cuenta en cada empujón
+a `main`, sin depender de ese archivo: el CI solo avisa, aparte. Un maestro no
+se queda sin su cambio porque una sonda se caiga — que es la normativa de
+siempre: publicar y corregir, no esperar.
+
+Playwright **no se versiona**: el trabajo de noche lo instala con
+`npm install --no-save playwright`, igual que se hace a mano, porque
+`node_modules` va versionado en este repositorio.
+
+### En vez de un linter, que todo compile
+
+`_dev/verifica-sintaxis.js` pasa `node --check` por los 348 archivos
+versionados. Es lo que de verdad cuesta caro aquí: **un error de sintaxis no da
+la cara**. El navegador se calla, deja de ejecutar ese archivo y la página se
+pinta igual — ya pasó con un `-en.js` mal cerrado, que dejaba el botón 🌐 mudo y
+la ficha bilingüe imprimiendo en español. Y no añade una sola dependencia.
+
 ## Detalles del repositorio
 
 - Sin framework ni compilación: HTML, CSS y JS planos que se sirven tal cual.

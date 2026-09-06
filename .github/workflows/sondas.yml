@@ -1,0 +1,71 @@
+# ============================================================
+# M.E.T.A.S · Las sondas, corridas solas
+# ------------------------------------------------------------
+# Este repositorio tiene más de sesenta sondas escritas y hasta
+# hoy nadie las corría todas: había que acordarse de cuál tocaba
+# y correrla a mano antes de publicar. Lo que pasaba es lo
+# previsible — se corría la de lo que uno acababa de tocar y las
+# demás se quedaban rojas meses. Cuando por fin se corrieron
+# todas, tres estaban en rojo y ninguna era de esa semana.
+#
+# Esto NO frena la publicación. GitHub Pages construye por su
+# cuenta en cada empujón a `main`, sin depender de este archivo:
+# aquí solo se avisa de lo que salió mal, y se avisa aparte.
+# Un maestro no se queda sin su cambio porque una sonda se caiga.
+# ============================================================
+name: Sondas
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+  # Las de navegador, cada noche a las 07:00 UTC (1:00 de la
+  # madrugada en Honduras): tardan y no tienen por qué estorbar
+  # a quien está publicando a media tarde.
+  schedule:
+    - cron: '0 7 * * *'
+
+jobs:
+
+  # ── Las rápidas: solo leen archivos. Tardan segundos, así que
+  #    van en CADA empujón. ────────────────────────────────────
+  rapidas:
+    name: Sondas rápidas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # No se instala nada: estas sondas son Node pelado a
+      # propósito, y `node_modules` ya viene versionado en el
+      # repositorio.
+      - name: Correr las sondas rápidas
+        run: node _dev/corre-sondas.js
+
+  # ── Las de Playwright: abren Chromium, imprimen a PDF y
+  #    cuentan páginas. Tardan mucho, así que van de noche o
+  #    cuando alguien las pide a mano. ─────────────────────────
+  navegador:
+    name: Sondas de navegador
+    runs-on: ubuntu-latest
+    # En un empujón cualquiera no se corren: solo de noche, a
+    # mano, o en un pull request, que es cuando conviene mirar
+    # entero lo que se va a fusionar.
+    if: github.event_name != 'push'
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # Playwright NO se guarda en el repositorio: `node_modules`
+      # va versionado y meterlo dentro ensuciaría el árbol en cada
+      # sesión. Es la misma regla que se sigue a mano.
+      - name: Instalar Playwright (aparte, no se versiona)
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Correr las sondas de navegador
+        run: node _dev/corre-sondas.js navegador

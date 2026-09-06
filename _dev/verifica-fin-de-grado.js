@@ -20,7 +20,23 @@
    ============================================================ */
 'use strict';
 const { chromium } = require('playwright');
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
 const BASE = 'http://localhost:8123';
+
+/* Cuántas misiones hay NO se escribe aquí: se cuenta del catálogo. Estaba
+   escrito «61» y el día que entró la 62 la sonda empezó a fallar sin que
+   nada estuviera roto — que es la peor clase de fallo, porque enseña a no
+   hacerle caso. Es la misma regla del proyecto: donde hay JavaScript, el
+   número se cuenta. */
+const TOTAL_MISIONES = (() => {
+  const ctx = { window: {}, document: {}, console };
+  vm.createContext(ctx);
+  const f = path.join(__dirname, '..', 'js', 'data', 'misiones.js');
+  vm.runInContext(fs.readFileSync(f, 'utf8'), ctx, { filename: f });
+  return vm.runInContext('MISSIONS', ctx).length;
+})();
 
 /* Los grados de la serie. Al estrenar uno nuevo se añade su línea y la
    sonda lo revisa entero, sin tocar nada más. `esp` son palabras que TIENEN
@@ -156,13 +172,13 @@ async function lanzar() {
   await page2.goto(BASE + '/index.html?view=misiones', { waitUntil: 'networkidle' });
   await page2.waitForTimeout(300);
   ok('la portada carga sin errores', errores2.length === 0, errores2[0]);
-  ok('el filtro Todas cuenta 61 misiones', (await page2.locator('.pill-all .pill-count').innerText()).trim() === '61');
+  ok(`el filtro Todas cuenta ${TOTAL_MISIONES} misiones`, (await page2.locator('.pill-all .pill-count').innerText()).trim() === String(TOTAL_MISIONES));
   const pillRep = page2.locator('.pill.rep');
-  ok('el chip Repaso General existe y cuenta 4', (await pillRep.locator('.pill-count').innerText()).trim() === '4');
+  ok(`el chip Repaso General existe y cuenta ${GRADOS.length}`, (await pillRep.locator('.pill-count').innerText()).trim() === String(GRADOS.length));
   await pillRep.click();
   await page2.waitForTimeout(300);
   const tarjetas = await page2.locator('#missions-container .mission-card').count();
-  ok('el filtro deja solo las misiones de Fin de Grado', tarjetas === 4);
+  ok('el filtro deja solo las misiones de Fin de Grado', tarjetas === GRADOS.length);
   const rotulos = await page2.locator('#missions-container').innerText();
   GRADOS.forEach(G => ok(`la tarjeta de ${G.grado} está en el catálogo`, rotulos.includes(`Prueba de Fin de Grado: ${G.grado} Grado`)));
 
