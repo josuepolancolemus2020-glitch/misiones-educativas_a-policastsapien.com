@@ -150,6 +150,9 @@
     '✔ Verificar': '✔ Check', '🔄 Reiniciar Quiz': '🔄 Restart quiz', '🔄 Reiniciar': '🔄 Restart',
     '🎉 ¡Quiz completado!': '🎉 Quiz completed!', '🎉 ¡Completado!': '🎉 Completed!',
     'Selecciona una respuesta.': 'Choose an answer.', 'Selecciona una opción.': 'Choose an option.',
+    // aviso del botón ▶ Siguiente cuando aún no se ha verificado; vive aquí, en el
+    // diccionario compartido, para no repetirlo en las ocho misiones bilingües
+    'Primero toca «Verificar».': 'Tap «Check» first.',
     '¡Correcto! +5 XP': 'Correct! +5 XP', '¡Correcto! +3 XP': 'Correct! +3 XP',
     'Incorrecto. Revisa la respuesta correcta.': 'Not quite. Check the correct answer.',
     'Incorrecto. Revisa bien la respuesta.': 'Not quite. Look at the answer again.',
