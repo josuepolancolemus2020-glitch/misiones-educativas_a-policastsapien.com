@@ -62,7 +62,7 @@ captura.
 | **7º** | Al buscar «enteros», «ecuaciones», «negativos» | Cero resultados |
 | **7º** | En «Clasifica» de Decimales | Le piden arrastrar y **con el dedo no se mueve nada** |
 | **9º** | En el catálogo | Busca «9º», «noveno», «bachillerato»: «Sin resultados» |
-| **9º** | En Recursos | «Abrir carpeta en Google Drive» apunta a una carpeta que no existe |
+| **9º** | En Recursos | ✅ «Abrir carpeta en Google Drive» apunta a una carpeta que no existe · *corregido el 6 de septiembre: el botón se quitó de las 31 misiones y en su lugar se dice que el recurso listo es la ficha imprimible* |
 | **9º** | En la Ruta de la Meta | Termina en 7º y se presenta como «Etapa 4 de 4», sin decir que 8º y 9º vienen |
 
 ## Los cinco problemas que salieron en todas las personas

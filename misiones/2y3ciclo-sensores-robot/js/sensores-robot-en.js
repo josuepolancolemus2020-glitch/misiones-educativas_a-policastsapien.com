@@ -256,10 +256,7 @@
         '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and assessment) to print or solve before the test. <em>It opens in English too: the language you choose here carries over.</em></p>' +
         '<a href="../../fichas/ficha-sensores-robot.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Open / print the study sheet</a>' +
         '</div>' +
-        '<p style="font-size:0.9rem;margin-bottom:1rem;">Here you will find support materials for this mission: slide decks, PDF documents, study guides and more. Your teacher keeps adding resources to this folder.</p>' +
-        '<a href="https://drive.google.com/drive/folders/1sensores_robot_recursos" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📂 Open the folder in Google Drive</a>' +
-        '<div class="tip" style="margin-top:1.2rem;"><span class="ti">💡</span>' +
-        '<div>Files open straight in your browser. You can download them or view them without a Google account.</div></div>'
+        '<p style="font-size:0.9rem;margin-bottom:0;">This mission does not have an online materials folder yet. What is ready is the <strong>printable study sheet</strong> above: it carries the theory, the activities and the test on paper, to work without a phone and without internet.</p></div>'
     },
 
     /* ══════════════════════════════════════════════════════

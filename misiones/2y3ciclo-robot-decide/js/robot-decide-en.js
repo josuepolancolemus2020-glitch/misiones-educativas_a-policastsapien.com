@@ -273,19 +273,7 @@
         '<p style="font-size:0.86rem;margin-bottom:0.85rem;">A 7-page study guide (theory, unplugged activities and a test) to print out or work through before the exam.</p>' +
         '<a href="../../fichas/ficha-robot-decide.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Open / Print the study sheet</a>' +
         '</div>' +
-        '<p style="font-size:0.9rem;margin-bottom:1rem;">Here you will find support materials for this mission: slideshows, PDF documents, study guides and more. Your teacher will keep adding resources to this folder.</p>' +
-        '<a href="https://drive.google.com/drive/folders/1robot_decide_recursos" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 87.3 78" aria-hidden="true">' +
-        '<path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H.1c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>' +
-        '<path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.3 48.2c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>' +
-        '<path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335"/>' +
-        '<path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>' +
-        '<path d="M59.8 52.7H27.5L13.75 76.5c1.35.8 2.9 1.25 4.45 1.25h50.8c1.55 0 3.1-.45 4.45-1.25z" fill="#2684fc"/>' +
-        '<path d="M73.4 26.35l-12.65-21.9c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 27.7H87.2c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>' +
-        '</svg>' +
-        'Open the folder in Google Drive</a>' +
-        '<div class="tip" style="margin-top:1.2rem;"><span class="ti">💡</span>' +
-        '<div>Files open straight in your browser. You can download them or view them without a Google account.</div></div>'
+        '<p style="font-size:0.9rem;margin-bottom:0;">This mission does not have an online materials folder yet. What is ready is the <strong>printable study sheet</strong> above: it carries the theory, the activities and the test on paper, to work without a phone and without internet.</p></div>'
     },
 
     /* ══════════════════════════════════════════════════════

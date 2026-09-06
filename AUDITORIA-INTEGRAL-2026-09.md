@@ -162,7 +162,7 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 6. El service worker: precachear el armazón y dejar de borrar la caché
 8. ~~Buscar sin tildes~~ · **hecho el 6 de septiembre**
 11. ~~Corregir los cuatro errores de contenido ya localizados~~ · **hecho el 6 de septiembre**
-12. Los 31 enlaces de Drive que no llevan a ninguna parte
+12. ~~Los 31 enlaces de Drive que no llevan a ninguna parte~~ · **hecho el 6 de septiembre**
 14. ~~Quitar el autoavance de 1,6 s del quiz y del completar~~ · **hecho el 6 de septiembre**
 16. Una acción de CI que corra las sondas — **hoy dos están rojas**
 17. Escribir en la portada qué es esto y para quién

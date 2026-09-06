@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meta-app-v175';
+const CACHE_NAME = 'meta-app-v176';
 const STATIC_ASSETS = [
   // Idioma inglés: se pre-cachea para que el botón EN/ES funcione sin red
   // desde la primera vez (antes se quedaba en español y sin avisar).
