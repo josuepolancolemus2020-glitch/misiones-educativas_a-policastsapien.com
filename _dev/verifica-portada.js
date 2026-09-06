@@ -87,9 +87,17 @@ function catalogo() {
   console.log('\n3) El número se cuenta, no se escribe');
   ok('no queda ningún marcador a la vista', !/\{\{/.test(txt), txt.slice(0, 80));
   ok(`dice ${M.length} misiones, que es lo que hay`, txt.includes(String(M.length)), txt);
+  /* El número lo escribe app.js reescribiendo el <b> entero por su id. Lo que
+     se vigila es que ESE camino exista: si alguien vuelve a pegar la cifra en
+     el HTML y quita la línea de app.js, la portada se queda con la cifra del
+     día que se escribió y nadie se entera. */
   const fuente = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
-  ok('y en el HTML sigue siendo un marcador, no una cifra pegada',
-     /\{\{MISIONES\}\}\s*<\/b>|\{\{MISIONES\}\}/.test(fuente));
+  const appjs = fs.readFileSync(path.join(RAIZ, 'js', 'app.js'), 'utf8');
+  ok('el hueco del número tiene su id', /id="valor-misiones"/.test(fuente));
+  ok('y app.js lo rellena contando MISSIONS',
+     /valor-misiones[\s\S]{0,200}MISSIONS\.length/.test(appjs));
+  ok('no quedan dobles llaves en la portada (Jekyll se las comería)',
+     !/\{\{/.test(fuente), (fuente.match(/\{\{[^}]*\}\}/g) || []).slice(0, 3));
   ok('la frase avisa de que el catálogo crece', /siguen entrando|y creciendo|hoy/i.test(txt), txt);
 
   console.log('\n4) La misma frase en los cuatro sitios');

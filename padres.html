@@ -51,8 +51,18 @@
     }
     .h-txt { min-width: 0; }
     .h-t1 { font-size: 16px; font-weight: 800; line-height: 1.2; }
-    .h-inicio {
+    /* El candado del aviso de privacidad. Va antes de «Inicio» y se lleva el
+       margin-left:auto, que es lo que los empuja a los dos a la derecha; si
+       se lo dejara a «Inicio», el candado se quedaría pegado al título. Y
+       44 px de blanco de toque: es lo que un dedo acierta sin mirar. */
+    .h-privacidad {
       margin-left: auto; flex: 0 0 auto;
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 44px; min-height: 44px;
+      color: #fff; text-decoration: none; font-size: 17px;
+    }
+    .h-inicio {
+      flex: 0 0 auto;
       color: #fff; text-decoration: none; font-size: 12px; font-weight: 700;
       background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.45);
       padding: 7px 10px; border-radius: 999px;
@@ -183,6 +193,11 @@
     <div class="h-txt">
       <div class="h-t1">Asistente M.E.T.A.S</div>
     </div>
+    <!-- El aviso de privacidad va AQUÍ y no en un pie: esta pantalla es un
+         chat con la barra de escribir clavada abajo, así que un pie no se ve
+         nunca. Y es la pantalla de la familia, que es justo a quien le
+         importa qué se hace con los datos de su hijo. -->
+    <a class="h-privacidad" href="privacidad.html" title="Aviso de privacidad">🔒</a>
     <a class="h-inicio" href="index.html">Inicio</a>
   </header>
 

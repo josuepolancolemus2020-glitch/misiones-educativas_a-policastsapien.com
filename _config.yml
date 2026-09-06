@@ -1,0 +1,22 @@
+# Configuración de GitHub Pages (que construye el sitio con Jekyll).
+#
+# Existe por UNA razón: sacar `www/` del sitio publicado. Esa carpeta es la
+# copia que se lleva Capacitor a la app de Android, va desfasada A PROPÓSITO
+# —hoy sirve meta-app-v48, ciento treinta y una versiones por detrás— y estaba
+# siendo alcanzable en /www/index.html. Un teléfono que abriera esa dirección
+# se instalaba el service worker VIEJO en su propio ámbito y se quedaba con la
+# aplicación de hace meses, sin forma de enterarse.
+#
+# `android/`, `node_modules/` y `_dev/` se van por lo mismo: son del árbol de
+# trabajo, no del sitio.
+#
+# Se deja fuera de esta lista, a propósito, todo lo demás: los .md del
+# repositorio (los manuales, las propuestas, este mismo CLAUDE.md) hoy se
+# publican convertidos a página y nadie los enlaza desde el sitio. Excluirlos
+# sería más de lo que hacía falta para arreglar lo de www/, y es una decisión
+# aparte.
+exclude:
+  - www/
+  - android/
+  - node_modules/
+  - _dev/

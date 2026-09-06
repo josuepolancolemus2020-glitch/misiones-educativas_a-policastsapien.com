@@ -108,14 +108,25 @@ footer{text-align:center;font-size:0.75rem;color:var(--gray);margin:1.2rem 0 0.5
 </div>
 
 <div class="nota-etica">
-  🔒 <strong>Privacidad:</strong> estos datos nunca salen del dispositivo por sí solos; solo tú decides exportarlos o compartirlos.
+  <!-- Aquí decía «estos datos nunca salen del dispositivo por sí solos». Era
+       verdad cuando se escribió y dejó de serlo el día que se añadió la nube:
+       cada registro se encola solo (metas-registro.js) y sube en cuanto hay
+       señal, con el nombre del alumno dentro. Una promesa de privacidad que no
+       se cumple es peor que no prometer nada, porque la familia decide con
+       ella. Se corrigió el 7 de septiembre de 2026. -->
+  🔒 <strong>Privacidad:</strong> los resultados de las misiones <strong>sí salen de este
+  equipo</strong>: se suben solos, en cuanto hay señal, para que el maestro los vea sin recoger
+  los teléfonos. Qué se manda exactamente está en el <a href="privacidad.html">aviso de
+  privacidad</a>.
   Para estudios formales se recomienda usar un <strong>código de alumno</strong> (ej. A07-M) en lugar del nombre completo, y contar con el
   consentimiento informado de madres, padres o tutores.
 </div>
 
-<footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com</footer>
+<footer>🏠 Proyecto Educativo M.E.T.A.S · 🌐 policastsapien.com<br>
+  © 2026 Familia Polanco-Castellanos · <a href="privacidad.html">Aviso de privacidad</a>
+  · <a href="terminos.html">Términos de uso</a></footer>
 
-<script src="js/metas-registro.js?v=179"></script>
+<script src="js/metas-registro.js?v=180"></script>
 <script>
 'use strict';
 const NOMBRE_TIPO = { sesion:'📱 Sesión', seccion:'✅ Sección', evaluacion:'📋 Evaluación', prueba_operativa:'🧮 Prueba operativa', lectura:'📖 Control de lectura', pauta_vista:'🔍 Vio pauta', sugerencia:'💬 Sugerencia' };

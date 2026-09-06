@@ -173,7 +173,9 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
     no puede cumplir a propósito
 17. ~~Escribir en la portada qué es esto y para quién~~ · **hecho el 7 de septiembre** — y al
     comprobar la frase salió que «66 misiones alineadas al DCNB» era falso: 19 no tienen mapa
-18. Licencia, aviso de privacidad y alojamiento con términos válidos
+18. ~~Licencia, aviso de privacidad~~ · **hecho el 7 de septiembre** — y lo peor no era la falta de
+    aviso: el que había prometía que los datos «nunca salen del dispositivo», y es falso. Del
+    alojamiento queda pendiente lo que es decisión del autor: mover el DNS fuera de GitHub Pages
 
 **Diez en días:** cerrar «Ver Pauta» · cerrar la escritura anónima a la nube · una identidad de
 alumno que no se funda · que el maestro no pierda su trabajo · quitar el CDN del camino crítico ·

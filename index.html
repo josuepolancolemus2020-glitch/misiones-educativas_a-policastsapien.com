@@ -11,7 +11,7 @@
   <meta name="description" content="Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.">
   <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/app.css?v=179">
+  <link rel="stylesheet" href="css/app.css?v=180">
   <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -61,12 +61,21 @@
            primero que se lee; al alumno que ya viene trabajando no le tapa lo
            suyo.
 
-           ⚠️ El número de misiones NO se escribe: es el marcador {{MISIONES}} y
-           lo rellena app.js contando el catálogo. Y la frase dice que la lista
-           crece, porque una cifra sola se lee como el final. -->
+           ⚠️ El número de misiones NO se escribe: lo pone app.js contando el
+           catálogo, y lo pone REESCRIBIENDO el <b> entero por su id. Empezó
+           siendo un marcador de dobles llaves, del estilo de los que usan las
+           misiones del maestro, y se cambió al caer en la cuenta de que GitHub
+           Pages construye con Jekyll, que se las come en los archivos que
+           procesa —y se las comería también dentro de este comentario, por eso
+           aquí no se escriben ni de ejemplo—: si algún día llegara a procesar
+           esta página,
+           la portada diría «Hoy  misiones» y desde aquí no se puede comprobar
+           —el proxy de las sesiones bloquea el dominio del sitio—. Así no
+           depende de eso. Y la frase dice que la lista crece, porque una cifra
+           sola se lee como el final. -->
       <section class="valor-card" aria-label="Qué es M.E.T.A.S. y para quién">
         <p class="valor-quien">👩‍🏫 Para el maestro hondureño · y es gratis</p>
-        <p class="valor-txt">Hoy <b>{{MISIONES}} misiones</b> de 4º a 9º —y siguen
+        <p class="valor-txt">Hoy <b id="valor-misiones">66 misiones</b> de 4º a 9º —y siguen
           entrando—, cada una con <b>su examen y su ficha listos para fotocopiar</b>.
           Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque
           del <b>DCNB</b>. Ábrelas una vez con señal y después
@@ -260,6 +269,16 @@
         <p class="motiv-text" id="motiv-text"></p>
         <span class="motiv-autor" id="motiv-autor"></span>
       </div>
+
+      <!-- Pie legal · va al final de la portada porque es donde se busca:
+           nadie lo lee a diario, pero el director que pregunta «¿de quién es
+           esto y qué hacen con los datos de mis alumnos?» tiene que
+           encontrarlo sin preguntarle a nadie. -->
+      <footer class="pie-legal">
+        © 2026 Proyecto Educativo M.E.T.A.S. · Familia Polanco-Castellanos<br>
+        <a href="privacidad.html">Aviso de privacidad</a> ·
+        <a href="terminos.html">Términos de uso</a>
+      </footer>
 
     </div>
   </div>
@@ -1073,28 +1092,28 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js?v=179"></script>
-  <script src="js/html2canvas.min.js?v=179"></script>
-  <script src="js/data/misiones.js?v=179"></script>
-  <script src="js/data/dcnb-map.js?v=179"></script>
-  <script src="js/data/diagnosticos.js?v=179"></script>
-  <script src="js/data/proceres.js?v=179"></script>
-  <script src="js/data/paises.js?v=179"></script>
-  <script src="js/data/frases.js?v=179"></script>
-  <script src="js/data/consejos-padres.js?v=179"></script>
-  <script src="js/tools/gobierno-escolar.js?v=179"></script>
-  <script src="js/tools/plan-accion.js?v=179"></script>
-  <script src="js/tools/registros-admin.js?v=179"></script>
-  <script src="js/tools/convocatoria.js?v=179"></script>
-  <script src="js/tools/estadisticas-alumno.js?v=179"></script>
-  <script src="js/data/lectura-normas.js?v=179"></script>
-  <script src="js/data/lectura-textos.js?v=179"></script>
-  <script src="js/tools/lectura-fluidez.js?v=179"></script>
-  <script src="js/tools/parte-mensual.js?v=179"></script>
-  <script src="js/tools/collage-maker.js?v=179"></script>
-  <script src="js/tools/formacion-docente.js?v=179"></script>
-  <script src="js/data/campeonismo-bank.js?v=179"></script>
-  <script src="js/tools/campeonismo.js?v=179"></script>
+  <script src="js/metas-dialogos.js?v=180"></script>
+  <script src="js/html2canvas.min.js?v=180"></script>
+  <script src="js/data/misiones.js?v=180"></script>
+  <script src="js/data/dcnb-map.js?v=180"></script>
+  <script src="js/data/diagnosticos.js?v=180"></script>
+  <script src="js/data/proceres.js?v=180"></script>
+  <script src="js/data/paises.js?v=180"></script>
+  <script src="js/data/frases.js?v=180"></script>
+  <script src="js/data/consejos-padres.js?v=180"></script>
+  <script src="js/tools/gobierno-escolar.js?v=180"></script>
+  <script src="js/tools/plan-accion.js?v=180"></script>
+  <script src="js/tools/registros-admin.js?v=180"></script>
+  <script src="js/tools/convocatoria.js?v=180"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=180"></script>
+  <script src="js/data/lectura-normas.js?v=180"></script>
+  <script src="js/data/lectura-textos.js?v=180"></script>
+  <script src="js/tools/lectura-fluidez.js?v=180"></script>
+  <script src="js/tools/parte-mensual.js?v=180"></script>
+  <script src="js/tools/collage-maker.js?v=180"></script>
+  <script src="js/tools/formacion-docente.js?v=180"></script>
+  <script src="js/data/campeonismo-bank.js?v=180"></script>
+  <script src="js/tools/campeonismo.js?v=180"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1104,9 +1123,9 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=179"></script>
-  <script src="js/metas-docente-sync.js?v=179"></script>
-  <script src="js/tools/pwa-install.js?v=179"></script>
+  <script src="js/app.js?v=180"></script>
+  <script src="js/metas-docente-sync.js?v=180"></script>
+  <script src="js/tools/pwa-install.js?v=180"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

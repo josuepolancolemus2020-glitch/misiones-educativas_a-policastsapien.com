@@ -220,6 +220,17 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ====== PENSADOR CARD ====== */
+/* ====== PIE LEGAL ======
+   Discreto a propósito: no compite con nada y está donde se busca. */
+.pie-legal {
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--faint);
+  padding: 18px 8px 6px;
+}
+.pie-legal a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+
 /* ====== QUÉ ES ESTO Y PARA QUIÉN ======
    Tarjeta de valor de la portada. Va discreta a propósito: el que la
    necesita la lee una vez —el maestro o la directora que abren el enlace

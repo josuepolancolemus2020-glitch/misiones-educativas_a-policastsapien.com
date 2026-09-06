@@ -361,10 +361,8 @@ function renderHome() {
      esta frase es la que lee quien está decidiendo si la plataforma le sirve:
      una cifra vieja le enseña un producto más pequeño del que hay. El día que
      entre la misión siguiente, el texto se corrige solo. */
-  const valorTxt = document.querySelector('.valor-txt');
-  if (valorTxt && valorTxt.innerHTML.indexOf('{{MISIONES}}') >= 0) {
-    valorTxt.innerHTML = valorTxt.innerHTML.replace(/\{\{MISIONES\}\}/g, MISSIONS.length);
-  }
+  const valorN = document.getElementById('valor-misiones');
+  if (valorN) valorN.textContent = MISSIONS.length + (MISSIONS.length === 1 ? ' misión' : ' misiones');
 
   // Chips de materia: misiones o "Próximamente" según país
   document.querySelectorAll('.subj-chip').forEach(chip => {
