@@ -43,7 +43,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const RAIZ = path.resolve(__dirname, '..');
 const DIR = path.join(RAIZ, 'fichas');
@@ -67,10 +67,11 @@ const VACIOS = new Set(['br', 'img', 'input', 'hr', 'meta', 'link', 'source',
   'col', 'area', 'base', 'embed', 'param', 'track', 'wbr']);
 
 
-async function lanzar() {
-  try { return await chromium.launch(); }
-  catch (e) { return await chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }); }
-}
+/* El navegador lo abre `lib-navegador.js`: primero el que trae Playwright y
+   solo si ese no arranca, uno puesto a mano. Esta función estaba COPIADA en
+   seis sondas, y las copias ya se habían separado —tres nombres distintos de
+   variable de entorno para lo mismo—. */
+const lanzar = opciones => abrir(opciones);
 
 /* ─── Partir el archivo en secciones ───────────────────────────── */
 

@@ -31,7 +31,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const RAIZ = path.resolve(__dirname, '..');
 const DIR = path.join(RAIZ, 'fichas');
@@ -41,10 +41,11 @@ const ANCHO_UTIL = 215.9 - 11 - 11;   // carta menos los márgenes del @page
 const UTIL = +(279.4 - 11 - 11).toFixed(1); // alto que deja el papel: 257.4 mm
 
 // El Chromium de Playwright y, si no está, el preinstalado del entorno.
-async function lanzar() {
-  try { return await chromium.launch(); }
-  catch (e) { return await chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }); }
-}
+/* El navegador lo abre `lib-navegador.js`: primero el que trae Playwright y
+   solo si ese no arranca, uno puesto a mano. Esta función estaba COPIADA en
+   seis sondas, y las copias ya se habían separado —tres nombres distintos de
+   variable de entorno para lo mismo—. */
+const lanzar = opciones => abrir(opciones);
 
 function fichasPedidas() {
   const arg = process.argv[2];

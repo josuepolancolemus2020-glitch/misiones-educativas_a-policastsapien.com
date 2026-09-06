@@ -44,8 +44,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-let chromium;
-try { ({ chromium } = require('playwright')); }
+let abrir;
+try { ({ abrir } = require('./lib-navegador')); }
 catch (_) {
   console.error('✘ Falta Playwright. Instálalo con:\n' +
     '    npm i -D playwright && npx playwright install chromium');
@@ -280,8 +280,7 @@ async function mideBlancos(browser, cuantos, desde) {
 }
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const browser = await abrir();
   console.log('🎟️ LOS BOLETOS DE LA CONVOCATORIA — seis por hoja carta, medido en el PDF');
   try {
     await mide(browser, 42);      /* un aula entera: seis hojas clavadas */

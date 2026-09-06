@@ -8,8 +8,7 @@
   La prueba operativa sí aceptaba equivalentes desde siempre, lo que hacía la
   contradicción más grande: la misma misión premiaba y castigaba lo mismo.
 */
-const { chromium } = require('playwright');
-const EXE = process.env.CHROME_EXE || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const { abrir } = require('./lib-navegador');
 const BASE = process.env.BASE || 'http://localhost:8123';
 
 let fallos = 0;
@@ -19,7 +18,7 @@ const ok = (bien, txt, extra) => {
 };
 
 (async () => {
-  const nav = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
+  const nav = await abrir({ args: ['--no-sandbox'] });
   const ctx = await nav.newContext({ viewport: { width: 393, height: 873 }, isMobile: true, hasTouch: true, locale: 'es-HN' });
   await ctx.route('**/*.supabase.co/**', r => r.abort());
   const pag = await ctx.newPage();

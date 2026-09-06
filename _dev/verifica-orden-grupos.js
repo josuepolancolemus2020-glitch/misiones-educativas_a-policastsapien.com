@@ -29,7 +29,7 @@
      node _dev/verifica-orden-grupos.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 let fallos = 0;
@@ -59,8 +59,7 @@ const pintar = page => page.evaluate(() => {
 });
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const browser = await abrir();
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   const errores = [];
   page.on('pageerror', e => errores.push(e.message));

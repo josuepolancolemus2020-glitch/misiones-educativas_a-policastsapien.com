@@ -19,7 +19,7 @@
          node _dev/verifica-fin-de-grado.js
    ============================================================ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
@@ -57,13 +57,11 @@ const ok = (nombre, cond, extra) => {
 
 // El Chromium propio de Playwright, y si no está (entornos con el navegador
 // preinstalado en otra versión), el que apunte CHROMIUM_BIN.
-async function lanzar() {
-  try { return await chromium.launch(); }
-  catch (e) {
-    const bin = process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium';
-    return await chromium.launch({ executablePath: bin });
-  }
-}
+/* El navegador lo abre `lib-navegador.js`: primero el que trae Playwright y
+   solo si ese no arranca, uno puesto a mano. Esta función estaba COPIADA en
+   seis sondas, y las copias ya se habían separado —tres nombres distintos de
+   variable de entorno para lo mismo—. */
+const lanzar = opciones => abrir(opciones);
 
 (async () => {
   const browser = await lanzar();

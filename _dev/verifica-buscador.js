@@ -10,8 +10,7 @@
   veces con las palabras cambiadas de orden— y exige que encuentre lo mismo
   que con la ortografía perfecta.
 */
-const { chromium } = require('playwright');
-const EXE = process.env.CHROME_EXE || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const { abrir } = require('./lib-navegador');
 const BASE = process.env.BASE || 'http://localhost:8123';
 
 // pares «como se escribe de verdad» → «como se escribiría con tildes»
@@ -33,7 +32,7 @@ const ok = (bien, txt, extra) => {
 };
 
 (async () => {
-  const nav = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
+  const nav = await abrir({ args: ['--no-sandbox'] });
   const ctx = await nav.newContext({ viewport: { width: 393, height: 873 }, isMobile: true, hasTouch: true, locale: 'es-HN' });
   await ctx.route('**/*.supabase.co/**', r => r.abort());
   const pag = await ctx.newPage();

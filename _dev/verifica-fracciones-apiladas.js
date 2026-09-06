@@ -27,7 +27,7 @@
          node _dev/verifica-fracciones-apiladas.js
    ══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const URL = 'http://localhost:8123/misiones/2y3ciclo-fracciones/fracciones.html';
 // Las catorce puertas de la misión, en el orden en que las abre el alumno
@@ -48,10 +48,11 @@ let fallos = 0;
 const mal = m => { fallos++; console.log('  ✘ ' + m); };
 const bien = m => console.log('  ✔ ' + m);
 
-async function lanzar() {
-  try { return await chromium.launch(); }
-  catch (e) { return await chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }); }
-}
+/* El navegador lo abre `lib-navegador.js`: primero el que trae Playwright y
+   solo si ese no arranca, uno puesto a mano. Esta función estaba COPIADA en
+   seis sondas, y las copias ya se habían separado —tres nombres distintos de
+   variable de entorno para lo mismo—. */
+const lanzar = opciones => abrir(opciones);
 
 (async () => {
   const browser = await lanzar();

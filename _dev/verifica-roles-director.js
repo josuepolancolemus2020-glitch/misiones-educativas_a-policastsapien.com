@@ -46,7 +46,7 @@
      node _dev/verifica-roles-director.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 
@@ -228,7 +228,7 @@ const dialogoOk = async page => {
 };
 
 (async () => {
-  const nav = await chromium.launch();
+  const nav = await abrir();
   const estado = { llamadas: [], permisos: [], seq: 70, sinV2: false };
 
   const ctx = await nav.newContext({ viewport: { width: 412, height: 915 } });

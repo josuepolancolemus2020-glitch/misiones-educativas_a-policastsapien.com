@@ -44,8 +44,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-let chromium;
-try { ({ chromium } = require('playwright')); }
+let abrir;
+try { ({ abrir } = require('./lib-navegador')); }
 catch (_) {
   console.error('✘ Falta Playwright. Instálalo con:\n' +
     '    npm i -D playwright && npx playwright install chromium');
@@ -289,8 +289,7 @@ async function mide(browser, cuantos, grados, secs, maxHojas, etiqueta) {
 }
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const browser = await abrir();
   console.log('💵 EL LISTADO DE APORTES POR GRADO — medido en el PDF');
   try {
     /* LA ESCUELA ENTERA, que es de donde vienen las respuestas y el caso

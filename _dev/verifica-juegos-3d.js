@@ -4,7 +4,7 @@
    Uso:  node _dev/servidor-estatico.js   (en otra terminal)
          node _dev/verifica-juegos-3d.js
    Si el navegador vive aparte:
-         METAS_CHROMIUM=/ruta/al/chrome node _dev/verifica-juegos-3d.js
+         CHROMIUM_BIN=/ruta/al/chrome node _dev/verifica-juegos-3d.js
 
    Qué vigila, y por qué cada cosa:
 
@@ -27,7 +27,7 @@
    internet. Que la pantalla se vea bien hay que mirarlo con los
    ojos, una vez, en el teléfono.
    ============================================================ */
-const { chromium } = require('playwright');
+const { abrir: abrirNavegador } = require('./lib-navegador');
 const path = require('path');
 const lib = require('./lib-sonda-3d');
 
@@ -627,8 +627,7 @@ async function averiasConocidas(nav){
   console.log('════════════════════════════════════════════');
   await revisarFuente();
   // misma llave que las demás sondas del proyecto
-  const nav = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const nav = await abrirNavegador();
   try{
     await constructor_(nav);
     await latas(nav);

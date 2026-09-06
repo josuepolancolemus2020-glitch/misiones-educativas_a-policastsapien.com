@@ -6,7 +6,7 @@
 
    Antes:  node _dev/servidor-estatico.js   (en otra terminal)
    Uso:    node _dev/verifica-mision-navegador.js misiones/<carpeta>/<archivo>.html  */
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const ruta = process.argv[2];
 if (!ruta) { console.error('Uso: node _dev/verifica-mision-navegador.js misiones/<carpeta>/<archivo>.html'); process.exit(2); }
@@ -21,7 +21,7 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
   /* En algunos entornos el Chromium instalado no es el que espera la versión
      de Playwright del día. METAS_CHROMIUM permite apuntarlo a mano. */
   const exe = process.env.METAS_CHROMIUM;
-  const browser = await chromium.launch(exe ? { executablePath: exe } : {});
+  const browser = await abrir();
   const page = await browser.newPage({ viewport: { width: 390, height: 780 } });
   const errores = [];
   page.on('pageerror', e => errores.push(String(e)));

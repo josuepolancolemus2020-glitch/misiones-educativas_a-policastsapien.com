@@ -31,7 +31,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const RAIZ = path.join(__dirname, '..');
 const GRADO = (process.argv[2] || '6to').replace(/[^0-9a-zA-Z]/g, '');
@@ -392,7 +392,7 @@ en el cuaderno. La rúbrica ya cuenta ese trabajo de copia como una de las cuatr
     grupos[grupos.length - 1].push(i);
   });
 
-  const browser = await chromium.launch().catch(() => chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }));
+  const browser = await abrir();
   const page = await browser.newPage({ viewport: { width: ANCHO, height: 1400 } });
   await page.emulateMedia({ media: 'print' });
   const medidor = path.join(DIR, 'medidor.html');
@@ -543,7 +543,7 @@ ${p.html.join('\n\n')}
      sobra no se deja en blanco, se le da como espacio para escribir. Una
      hoja de tarea a medio llenar invita a contestar en dos renglones; con
      el recuadro estirado, el alumno usa el sitio que tiene. */
-  const br2 = await chromium.launch().catch(() => chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }));
+  const br2 = await abrir();
   const pg2 = await br2.newPage({ viewport: { width: ANCHO, height: 1400 } });
   await pg2.emulateMedia({ media: 'print' });
   await pg2.goto('file://' + SALIDA, { waitUntil: 'load' });

@@ -67,7 +67,7 @@
      node _dev/verifica-videos-mision.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir: abrirNavegador } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const MISION = '/misiones/2y3ciclo-fracciones/fracciones.html';
@@ -179,10 +179,11 @@ async function abrir(navegador, { filas = [], caida = false, sinApi = false, api
 /* El mismo respaldo que ya usan reparte-hojas-ficha.js y las fichas de
    Fin de Grado: en las sesiones de trabajo el Chromium está puesto
    aparte y la versión de Playwright no siempre coincide con la suya. */
-async function lanzar() {
-  try { return await chromium.launch(); }
-  catch (e) { return await chromium.launch({ executablePath: process.env.CHROMIUM_BIN || '/opt/pw-browsers/chromium' }); }
-}
+/* El navegador lo abre `lib-navegador.js`: primero el que trae Playwright y
+   solo si ese no arranca, uno puesto a mano. Esta función estaba COPIADA en
+   seis sondas, y las copias ya se habían separado —tres nombres distintos de
+   variable de entorno para lo mismo—. */
+const lanzar = opciones => abrirNavegador(opciones);
 
 /* ── El service worker, leído del ARCHIVO ──
    Playwright arranca sin service worker, así que dentro del navegador

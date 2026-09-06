@@ -37,10 +37,10 @@
 
    Necesita Playwright con Chromium. Si ya hay uno instalado por otro
    lado, se le pasa su ruta:
-     METAS_CHROMIUM=/ruta/al/chrome node _dev/verifica-lectura-mision.js
+     CHROMIUM_BIN=/ruta/al/chrome node _dev/verifica-lectura-mision.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const URL = BASE + '/misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html';
@@ -86,8 +86,7 @@ async function contestaComprension(page, op) {
 }
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {}
+  const browser = await abrir(
   );
   const errores = [];
   const page = await browser.newPage({ viewport: { width: 420, height: 900 } });

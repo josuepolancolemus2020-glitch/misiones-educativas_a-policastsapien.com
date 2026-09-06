@@ -47,7 +47,7 @@
      node _dev/verifica-convocatoria.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const HOY = new Date(2026, 7, 8, 9, 0, 0);      /* sábado 8 de agosto de 2026 */
@@ -1659,8 +1659,7 @@ async function pruebaAbordo(browser) {
 }
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const browser = await abrir();
   try {
     const { huella1 } = await pruebaPadre(browser);
     await pruebaCorregir(browser, huella1);

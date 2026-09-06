@@ -43,7 +43,7 @@
      node _dev/verifica-buzon.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 const fs = require('fs');
 const path = require('path');
 
@@ -146,7 +146,7 @@ async function adjuntaFoto(page) {
 }
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await abrir();
   console.log('\n═══ 📬 EL BUZÓN DEL LECTOR ═══');
 
   /* ── 1. El nombre de la revista no aparece ─────────────────── */

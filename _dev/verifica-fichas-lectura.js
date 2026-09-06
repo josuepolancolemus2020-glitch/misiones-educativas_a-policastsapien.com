@@ -23,14 +23,14 @@
    Necesita Playwright con Chromium (npm i -D playwright && npx
    playwright install chromium). Si ya hay un Chromium instalado por otro
    lado, se le pasa su ruta:
-     METAS_CHROMIUM=/ruta/al/chrome node _dev/verifica-fichas-lectura.js
+     CHROMIUM_BIN=/ruta/al/chrome node _dev/verifica-fichas-lectura.js
 ═══════════════════════════════════════════════════════════════ */
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-let chromium;
-try { ({ chromium } = require('playwright')); }
+let abrir;
+try { ({ abrir } = require('./lib-navegador')); }
 catch (_) {
   console.error('✘ Falta Playwright. Instálalo con:\n' +
     '    npm i -D playwright && npx playwright install chromium');
@@ -58,8 +58,7 @@ const ESTADO = {
 };
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const browser = await abrir();
   console.log('📖 UNA HOJA CARTA POR FICHA — comprobación con la medida de la impresora\n');
 
   const page = await browser.newPage();

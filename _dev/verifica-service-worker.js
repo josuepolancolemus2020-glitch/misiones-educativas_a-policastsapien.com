@@ -20,9 +20,8 @@
   y espera a que tome el control. Es el punto ciego que el CLAUDE.md apunta a
   cuenta de la convocatoria y de los videos.
 */
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 const fs = require('fs');
-const EXE = process.env.CHROME_EXE || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const BASE = process.env.BASE || 'http://localhost:8123';
 
 let fallos = 0;
@@ -58,7 +57,7 @@ const hay = (e, cache, frag) => (e.entradas[cache] || []).some(u => u.indexOf(fr
   ok(/'\.\/js\/3d\/parque-3d\.js'/.test(sw) && /'\.\/css\/parque-3d\.css'/.test(sw),
      'sigue precacheado el andamio de los juegos 3D');
 
-  const nav = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
+  const nav = await abrir({ args: ['--no-sandbox'] });
   const ctx = await nav.newContext({ viewport: { width: 393, height: 873 }, isMobile: true, hasTouch: true });
   await ctx.route('**/*.supabase.co/**', r => r.abort());
   const pag = await ctx.newPage();

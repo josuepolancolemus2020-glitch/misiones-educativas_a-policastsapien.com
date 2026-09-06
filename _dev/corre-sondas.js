@@ -43,6 +43,7 @@ const NO_SON_SONDAS = {
   'servidor-estatico':      'es el servidor; lo levanta esta herramienta',
   'corre-sondas':           'es esta misma herramienta',
   'lib-sonda-3d':           'es una biblioteca que usan las sondas de los juegos',
+  'lib-navegador':          'es quien abre el navegador; no comprueba nada',
   'three-de-mentira':       'es el Three.js de mentira de esas sondas',
   'estado':                 'lleva la cuenta de la auditoría, no comprueba nada',
   'playwright-abrir':       'es un ayudante de la auditoría',
@@ -67,7 +68,12 @@ const todas = fs.readdirSync(DIR)
   .filter(n => !(n in NO_SON_SONDAS))
   .sort();
 
-const conNavegador = n => /require\((['"])playwright\1\)/.test(
+/* Una sonda es «de navegador» si pide el ayudante que lo abre —o Playwright
+   directo, por si alguna vuelve a hacerlo—. Se miró antes solo por
+   `require('playwright')`, y el día que las sondas pasaron a pedir el ayudante
+   las 24 se colaron en la tanda rápida y salieron rojas de golpe: sin servidor,
+   una sonda no dice «falta el servidor», dice que la página está rota. */
+const conNavegador = n => /require\((['"])(playwright|\.\/lib-navegador)\1\)/.test(
   fs.readFileSync(path.join(DIR, n + '.js'), 'utf8'));
 
 const sondas = todas.filter(n => (MODO === 'navegador') === conNavegador(n));

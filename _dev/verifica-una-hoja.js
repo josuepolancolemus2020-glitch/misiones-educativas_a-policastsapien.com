@@ -26,14 +26,14 @@
    playwright install chromium). Si no está, la herramienta lo dice y no
    se hace la ilusión de haber comprobado nada. Si ya hay un Chromium
    instalado por otro lado, se le pasa su ruta:
-     METAS_CHROMIUM=/ruta/al/chrome node _dev/verifica-una-hoja.js
+     CHROMIUM_BIN=/ruta/al/chrome node _dev/verifica-una-hoja.js
 ═══════════════════════════════════════════════════════════════ */
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-let chromium;
-try { ({ chromium } = require('playwright')); }
+let abrir;
+try { ({ abrir } = require('./lib-navegador')); }
 catch (_) {
   console.error('✘ Falta Playwright. Instálalo con:\n' +
     '    npm i -D playwright && npx playwright install chromium');
@@ -190,8 +190,7 @@ async function mide(browser, titulo, estado, generar, hojasEsperadas) {
 }
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {});
+  const browser = await abrir();
   console.log('📄 UNA HOJA CARTA POR INFORME — comprobación con la medida de la impresora');
   const AÑO = ['02', '03', '04', '05', '06', '07', '08', '09', '10', '11'];
   await mide(browser, 'Informe del ALUMNO · lote de 42, año escolar completo', grupo(AÑO), 'alumno', 42);

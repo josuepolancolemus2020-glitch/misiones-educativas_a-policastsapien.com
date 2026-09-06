@@ -21,7 +21,7 @@
      node _dev/verifica-lectura-numeros.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 const path = require('path');
 const NUM = require(path.resolve(__dirname, '..', 'js', 'data', 'lectura-numerales.js'));
 
@@ -34,8 +34,7 @@ const mal = m => { fallos++; console.log('  ❌ ' + m); };
 const comprueba = (cond, m) => (cond ? ok(m) : mal(m));
 
 (async () => {
-  const browser = await chromium.launch(
-    process.env.METAS_CHROMIUM ? { executablePath: process.env.METAS_CHROMIUM } : {}
+  const browser = await abrir(
   );
   const errores = [];
   const page = await browser.newPage({ viewport: { width: 420, height: 900 } });

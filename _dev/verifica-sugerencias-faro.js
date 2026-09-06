@@ -41,7 +41,7 @@
      node _dev/verifica-sugerencias-faro.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const MISION = '/misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html';
@@ -105,7 +105,7 @@ async function escribirSugerencia(page, { categoria, texto }) {
 (async () => {
   console.log('\n💬 Sugerencias de las misiones → bandeja de F.A.R.O\n');
 
-  const navegador = await chromium.launch();
+  const navegador = await abrir();
   const contexto = await navegador.newContext();
   const estado = { filas: [], llamadas: [], caido: false, atragantado: null };
 

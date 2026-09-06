@@ -13,10 +13,9 @@
   que al fallar la corrección SIGA en pantalla pasado el tiempo viejo, y que
   al pasar de pregunta el mensaje anterior se haya borrado.
 */
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 const glob = require('fs');
 const path = require('path');
-const EXE = process.env.CHROME_EXE || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const BASE = process.env.BASE || 'http://localhost:8123';
 
 // una muestra de misiones de materias distintas; el resto lo cubre la lectura
@@ -65,7 +64,7 @@ function revisarArchivos() {
 // ---------- 2 · en el navegador, sobre una muestra ----------
 (async () => {
   revisarArchivos();
-  const nav = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
+  const nav = await abrir({ args: ['--no-sandbox'] });
 
   for (const m of MUESTRA) {
     console.log('\n' + m.dir);

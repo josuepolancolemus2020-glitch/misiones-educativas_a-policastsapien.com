@@ -16,9 +16,8 @@
   La sonda hace justo eso —no contesta nada y se pone el máximo— y exige que
   el resultado sea CERO sobre la base automática.
 */
-const { chromium } = require('playwright');
+const { abrir } = require('./lib-navegador');
 const path = require('path');
-const EXE = process.env.CHROME_EXE || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const BASE = process.env.BASE || 'http://localhost:8123';
 
 // misión → página, y cuánto vale la parte automática y la que califica el maestro
@@ -39,7 +38,7 @@ const ok = (bien, txt, extra) => {
 };
 
 (async () => {
-  const nav = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
+  const nav = await abrir({ args: ['--no-sandbox'] });
 
   for (const m of MISIONES) {
     console.log('\n' + m.dir);
