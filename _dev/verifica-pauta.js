@@ -49,7 +49,7 @@ async function preparar(nav) {
   const pg = await ctx.newPage();
   await pg.addInitScript(() => {
     try {
-      localStorage.setItem('METAS_ID_V1', JSON.stringify({
+      localStorage.setItem('METAS_ALUMNO_V1', JSON.stringify({
         alumno: 'Kevin Josué Discua', num: '7', grado: '5', seccion: '1',
         docente: 'Prof. Prueba', codigo_aula: 'AULA1', escuela: 'Escuela de prueba'
       }));

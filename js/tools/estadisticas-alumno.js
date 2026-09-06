@@ -266,21 +266,89 @@ function estQuitarToma(d, i, firma) {
   return true;
 }
 
+/* De lo que el niño escribió a mano —«6», «6º», «6to», «6º-1», «6 2»,
+   «6to A», «61»— saca el grado y, SI LA ESCRIBIÓ, la sección.
+   El «61» de corrido no es un capricho: es como queda «6º-1» cuando solo se
+   miran los dígitos, y es lo que llega de verdad. */
+function estParteGrupo(txt, gDig) {
+  const s = String(txt || '').trim();
+  const ORD = '(?:[ºo°]|er|do|ro|to|mo|vo|no)?';
+  let m = s.match(new RegExp('^\\s*(\\d{1,2})\\s*' + ORD + '\\s*[-–—/ ]\\s*([0-9A-Za-zÁÉÍÓÚÑ]{1,3})\\s*$', 'i'));
+  if (m) return { grado: m[1], seccion: m[2].toUpperCase() };
+  m = s.match(new RegExp('^\\s*(\\d{1,2})\\s*' + ORD + '\\s*$', 'i'));
+  if (m) {
+    const dd = m[1];
+    if (gDig && dd.length === gDig.length + 1 && dd.indexOf(gDig) === 0) {
+      return { grado: gDig, seccion: dd.slice(gDig.length) };
+    }
+    return { grado: dd, seccion: '' };
+  }
+  return { grado: String(txt || '').replace(/\D/g, ''), seccion: '' };
+}
+
+/* Cuántos grupos tiene el maestro en ESE grado. De esto depende que una fila
+   sin sección se pueda asignar o no: con un solo 6º no hay duda; con 6º-1 y
+   6º-2, un «6» pelado no dice de quién es. */
+function estGruposDelGrado(gDig) {
+  try {
+    const st = (typeof adState === 'function') ? adState() : null;
+    const gs = (st && st.grupos) || [];
+    return gs.filter(g => String(g.grado || '').replace(/\D/g, '') === gDig).length;
+  } catch (_) { return 0; }
+}
+
+/* La MISMA normalización que `metas_norm` del servidor: sin acentos, sin
+   espacios ni signos, en mayúsculas. «José Ángel Pérez-Núñez» →
+   'JOSEANGELPEREZNUNEZ'. Se usa para que «Ana López» y «ana lopez» dejen de
+   ser dos niñas distintas en la pantalla del maestro. */
+function estNorm(t) {
+  return String(t || '').toUpperCase()
+    .replace(/[ÁÀÄÂ]/g, 'A').replace(/[ÉÈËÊ]/g, 'E').replace(/[ÍÌÏÎ]/g, 'I')
+    .replace(/[ÓÒÖÔ]/g, 'O').replace(/[ÚÙÜÛ]/g, 'U').replace(/Ñ/g, 'N')
+    .replace(/[^A-Z0-9]/g, '');
+}
+
 /* Misiones practicadas: filtra la caché de la nube para este alumno.
-   El alumno se identifica con su Nº DE LISTA (codigo_lista); el grado
-   se compara por sus dígitos (el niño escribe «6», «6º-1»…). Se muestra
-   también el nombre que llegó de la nube para que el maestro detecte un
-   número mal escrito. */
+   ------------------------------------------------------------------
+   ⚠️ Aquí estaba el fallo que se llevaba por delante el informe que FIRMA LA
+   FAMILIA. Se emparejaba por número de lista y por los dígitos del grado, y
+   NO se miraba la sección nunca: el número 7 de 6º-1 y el número 7 de 6º-2
+   eran el mismo alumno, así que la madre firmaba un informe con la práctica
+   del hijo de otra. El resto de Mi aula sí distinguía sección; el fallo vivía
+   solo en el bloque que viene de la nube.
+
+   La regla, ahora, en tres casos y ninguno inventa nada:
+
+   · el niño escribió su sección y NO es esta  → fuera, sin dudarlo;
+   · escribió su sección y es esta             → dentro;
+   · no escribió sección                       → depende: si el maestro tiene
+     un solo grupo en ese grado no hay duda y entra; si tiene dos, NO SE PUEDE
+     SABER de quién es, así que no se cuenta y se le dice cuántas quedaron
+     fuera. Contarla sería volver a meterle en el informe el trabajo de otro
+     niño, que es justo lo que se está arreglando.
+
+   Se enseña también el nombre que llegó de la nube para que el maestro
+   detecte un número mal escrito. */
 function estMisiones(d, num) {
   const cache = estNubeCache();
   if (!cache) return null;
   const dig = s => String(s || '').replace(/\D/g, '');
   const gDig = dig(d.grado);
-  const mismoGrado = g => { const x = dig(g); return !x || !gDig || x.indexOf(gDig) === 0; };
-  const filas = (cache.resultados || []).filter(r => {
+  const secGrupo = String(d.seccion || '').trim().toUpperCase();
+  const variosDelGrado = estGruposDelGrado(gDig) > 1;
+  let sinSeccion = 0;
+
+  const esDeEsteAlumno = r => {
     const n = String(r.codigo_lista || '').match(/^\d+/);
-    return n && n[0] === String(num) && mismoGrado(r.grado);
-  });
+    if (!n || n[0] !== String(num)) return false;
+    const g = estParteGrupo(r.grado, gDig);
+    if (gDig && g.grado && g.grado !== gDig) return false;
+    if (g.seccion && secGrupo) return g.seccion === secGrupo;
+    if (!g.seccion && secGrupo && variosDelGrado) { sinSeccion++; return false; }
+    return true;
+  };
+
+  const filas = (cache.resultados || []).filter(esDeEsteAlumno);
   const evals = filas.filter(r => (r.tipo === 'evaluacion' || r.tipo === 'prueba_operativa') && typeof r.nota === 'number');
   const porMision = {};
   evals.forEach(r => {
@@ -304,19 +372,27 @@ function estMisiones(d, num) {
     return m;
   }).sort((a, b) => b.ult < a.ult ? -1 : 1);
   const dominadas = lista.filter(m => m.mejor != null && m.mejor >= 70).length;
-  const nombres = [...new Set(filas.map(r => r.alumno).filter(Boolean))];
-  const ultAct = filas.map(r => r.fecha || r.creado_en || '').sort().pop() || '';
-  const prog = (cache.progreso || []).filter(p => {
-    const n = String(p.codigo_lista || '').match(/^\d+/);
-    return n && n[0] === String(num) && mismoGrado(p.grado);
+  /* «Ana López» y «ana lopez» son la misma niña. Se agrupa por la forma
+     normalizada y se enseña la que escribió mejor —la más larga—, que es la
+     que el maestro reconoce. */
+  const porNorm = {};
+  filas.map(r => r.alumno).filter(Boolean).forEach(nm => {
+    const k = estNorm(nm);
+    if (!k) return;
+    if (!porNorm[k] || nm.length > porNorm[k].length) porNorm[k] = nm;
   });
+  const nombres = Object.values(porNorm);
+  const ultAct = filas.map(r => r.fecha || r.creado_en || '').sort().pop() || '';
+  /* El progreso va por la MISMA puerta: dos reglas distintas darían un informe
+     donde las misiones son de un niño y los minutos de otro. */
+  const prog = (cache.progreso || []).filter(esDeEsteAlumno);
   let minutos = null, secciones = null;
   prog.forEach(p => {
     const r = p.resumen || {};
     if (typeof r.minutos === 'number') minutos = (minutos || 0) + r.minutos;
     if (typeof r.secciones === 'number') secciones = (secciones || 0) + r.secciones;
   });
-  return { t: cache.t, filas: lista, intentos: evals.length, dominadas, nombres, ultAct, minutos, secciones };
+  return { t: cache.t, filas: lista, intentos: evals.length, dominadas, nombres, ultAct, minutos, secciones, sinSeccion };
 }
 
 /* Todo el alumno en un solo objeto: la ÚNICA entrada de gráficos e informes */
@@ -324,6 +400,10 @@ function estDatosAlumno(d, al) {
   return {
     al,
     grado: parseInt(String(d.grado || '').replace(/\D/g, ''), 10) || null,
+    /* La sección viaja con el resto: la necesita el aviso de los registros que
+       llegaron sin ella, para poder decirle al maestro qué tiene que escribir
+       el alumno («6º-1»), y no una sección inventada. */
+    seccion: String(d.seccion || ''),
     sace: estSace(d, al.num),
     asis: estAsistencia(d, al.num),
     evals: estEvaluaciones(d, al.num),
@@ -916,11 +996,21 @@ function estMisionesHtml(x) {
     return '<p class="pa-optional-hint">Aún no se ha consultado la nube en este equipo. Toca «Consultar la nube ahora» (necesita internet una vez; después queda guardado para verlo sin señal).</p>';
   }
   const m = x.misiones;
+  /* Las que no se pudieron asignar SE DICEN, y se dicen aunque no haya ninguna
+     otra: callarlas sería volver al fallo de antes con otra cara —el maestro
+     leyendo «no hay práctica» de un niño que sí practicó—, y además tiene
+     arreglo en diez segundos, que es pedirle al alumno que escriba su sección. */
+  const sinSec = m.sinSeccion > 0
+    ? '<p class="pa-optional-hint">⚠️ Hay <b>' + m.sinSeccion + '</b> registro(s) con este nº de lista y este grado, pero <b>sin sección</b>: ' +
+      'como tienes más de un grupo en ' + adEsc(String(x.grado || '')) + 'º, no se puede saber si son de este alumno o del mismo número del otro grupo, ' +
+      'y no se cuentan. Pídele que escriba su grado con la sección (por ejemplo <b>' +
+      adEsc(adGradoSeccion(x.grado, x.seccion || '1')) + '</b>) la próxima vez que abra una misión.</p>'
+    : '';
   if (!m.filas.length) {
-    return '<p class="pa-optional-hint">No hay práctica registrada de este alumno en la nube todavía. Las misiones suben solas cuando practica con internet; sin señal, quedan en su teléfono y suben después.</p>';
+    return sinSec + '<p class="pa-optional-hint">No hay práctica registrada de este alumno en la nube todavía. Las misiones suben solas cuando practica con internet; sin señal, quedan en su teléfono y suben después.</p>';
   }
-  const aviso = m.nombres.length > 1
-    ? '<p class="pa-optional-hint">⚠️ Con este nº de lista llegaron varios nombres (' + m.nombres.map(adEsc).join(', ') + '): puede haber un número mal escrito.</p>' : '';
+  const aviso = sinSec + (m.nombres.length > 1
+    ? '<p class="pa-optional-hint">⚠️ Con este nº de lista llegaron varios nombres (' + m.nombres.map(adEsc).join(', ') + '): puede haber un número mal escrito.</p>' : '');
   return `
     <table class="ad-tabla">
       <thead><tr><th>Misión</th><th>Materia</th><th>Intentos</th><th>Mejor nota</th></tr></thead>

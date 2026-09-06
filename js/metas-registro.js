@@ -443,6 +443,50 @@
     '.metas-id-aulaok{color:#1e7d34;}' +
     '.metas-id-aulaerr{color:#c0392b;}';
 
+  function escHtml(t) {
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  /* La MISMA normalización que `metas_norm` del servidor: sin acentos, sin
+     espacios ni signos, en mayúsculas. Hace falta para no preguntarle a Ana si
+     quiere empezar de cero porque la segunda vez escribió «ana lopez». */
+  function nombreNorm(t) {
+    return String(t || '').toUpperCase()
+      .replace(/[ÁÀÄÂ]/g, 'A').replace(/[ÉÈËÊ]/g, 'E').replace(/[ÍÌÏÎ]/g, 'I')
+      .replace(/[ÓÒÖÔ]/g, 'O').replace(/[ÚÙÜÛ]/g, 'U').replace(/Ñ/g, 'N')
+      .replace(/[^A-Z0-9]/g, '');
+  }
+
+  /* La llave donde la misión guarda su avance. NO se puede preguntar: cada
+     misión declara su `SAVE_KEY` como const de módulo y hay 66. Lo que sí es
+     igual en las 66 es la FORMA de lo guardado —un objeto con `doneSections`
+     y `unlockedAch`—, así que se reconoce por ahí. Las ocho misiones del
+     maestro no la tienen, y es correcto: ese teléfono no se comparte entre
+     alumnos. */
+  function llaveDeLaMision() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || /^METAS_/.test(k)) continue;
+        var o = null;
+        try { o = JSON.parse(localStorage.getItem(k)); } catch (_) { continue; }
+        if (o && typeof o === 'object' && !Array.isArray(o) &&
+            Object.prototype.hasOwnProperty.call(o, 'doneSections') &&
+            Object.prototype.hasOwnProperty.call(o, 'unlockedAch')) return k;
+      }
+    } catch (_) {}
+    return null;
+  }
+  function seccionesHechas() {
+    var k = llaveDeLaMision();
+    if (!k) return 0;
+    try {
+      var o = JSON.parse(localStorage.getItem(k)) || {};
+      return (o.doneSections || []).length;
+    } catch (_) { return 0; }
+  }
+
   function abrirIdentificacion(alGuardar) {
     if (document.getElementById('metasIdModal')) return;
     var st = document.createElement('style'); st.textContent = ID_CSS; document.head.appendChild(st);
@@ -454,8 +498,9 @@
       '<p>Escribe tus datos <strong>una sola vez</strong> para que tu maestro sepa que estos logros son tuyos.</p>' +
       '<label for="metasIdNombre">👤 Tu nombre o código de alumno</label>' +
       '<input id="metasIdNombre" type="text" maxlength="60" autocomplete="off" placeholder="Ej: Ana López o A07">' +
-      '<label for="metasIdNum">🔢 Tu número de lista (opcional)</label>' +
+      '<label for="metasIdNum">🔢 Tu número de lista <span id="metasIdNumOpc">(opcional)</span></label>' +
       '<input id="metasIdNum" type="text" maxlength="10" inputmode="numeric" autocomplete="off" placeholder="Ej: 7">' +
+      '<div id="metasIdNumMsg" class="metas-id-aulamsg"></div>' +
       '<label for="metasIdEscuela">🏫 Tu escuela o centro educativo</label>' +
       '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
       '<label for="metasIdGrado">📚 Grado y sección</label>' +
@@ -463,6 +508,11 @@
       '<label for="metasIdAula">🔑 Código de aula (te lo da tu maestro)</label>' +
       '<input id="metasIdAula" type="text" maxlength="8" autocomplete="off" placeholder="Ej: K2M9P" style="text-transform:uppercase;letter-spacing:3px;font-weight:800;">' +
       '<div id="metasIdAulaMsg" class="metas-id-aulamsg"></div>' +
+      '<div id="metasIdReinicio" style="display:none;margin-top:10px;padding:9px 11px;border-radius:10px;' +
+        'border-left:4px solid #b45309;background:#fffbeb;color:#7c3f0a;font-size:13.5px;line-height:1.5">' +
+        '<label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-weight:400">' +
+        '<input type="checkbox" id="metasIdReiniciarChk" checked style="margin-top:3px;width:18px;height:18px;flex:0 0 auto">' +
+        '<span id="metasIdReinicioTxt"></span></label></div>' +
       '<div class="metas-id-acciones">' +
       '<button type="button" class="metas-id-btn metas-id-luego" id="metasIdLuego">Ahora no</button>' +
       '<button type="button" class="metas-id-btn metas-id-guardar" id="metasIdGuardar">✅ Guardar</button>' +
@@ -511,6 +561,50 @@
     aulaInp.addEventListener('input', function () {
       clearTimeout(_aulaTimer); _aulaTimer = setTimeout(resolverAula, 450);
     });
+    /* El rótulo se corrige solo: mientras no hay código de aula dice
+       «(opcional)» y es verdad; en cuanto lo escribe, deja de serlo. Decirle
+       «opcional» y después no dejarle guardar sería tomarle el pelo. */
+    function refrescarOpcional() {
+      var opc = document.getElementById('metasIdNumOpc');
+      if (!opc) return;
+      var hay = document.getElementById('metasIdAula').value.trim().length >= 4;
+      opc.textContent = hay ? '(tu maestro te busca por él)' : '(opcional)';
+      opc.style.color = hay ? '#b45309' : '';
+    }
+    document.getElementById('metasIdAula').addEventListener('input', refrescarOpcional);
+    refrescarOpcional();
+
+    /* El teléfono compartido, que en estas aulas es la norma: Ana juega, entra
+       Bruno y hereda el XP, las secciones y los logros de Ana —y el reporte de
+       WhatsApp de Bruno salía con el avance de ella y su nombre—. «Cambiar
+       alumno» prometía justo esto y solo reabría este modal.
+
+       No se borra nada a la brava: se pregunta, aquí mismo y con el nombre de
+       los dos delante. Y solo aparece cuando de verdad hay algo que heredar y
+       el nombre cambió; si Ana vuelve a entrar, no se le pregunta nada.
+       Sus notas no se tocan en ningún caso: cada una quedó sellada con su
+       dueño en el registro y ya viajó al maestro. */
+    var _antes = String(id.nombre || '').trim();
+    function refrescarReinicio() {
+      var caja = document.getElementById('metasIdReinicio');
+      if (!caja) return;
+      var ahora = document.getElementById('metasIdNombre').value.trim();
+      var hechas = seccionesHechas();
+      var cambia = _antes && ahora && nombreNorm(_antes) !== nombreNorm(ahora);
+      caja.style.display = (cambia && hechas > 0) ? 'block' : 'none';
+      if (cambia && hechas > 0) {
+        document.getElementById('metasIdReinicioTxt').innerHTML =
+          'En este teléfono está el avance de <strong>' + escHtml(_antes) + '</strong> (' + hechas +
+          /* «secciones» PIERDE LA TILDE en plural, igual que «misiones»: pegarle
+             «es» a «sección» daba «secciónes». Está avisado en app.js a cuenta
+             de la portada y aun así se repitió aquí. */
+          (hechas === 1 ? ' sección' : ' secciones') + '). <strong>Empezar la misión de cero para ' +
+          escHtml(ahora) + '</strong>, para que su XP y sus logros sean suyos. ' +
+          'Lo que ' + escHtml(_antes) + ' ya calificó no se pierde: se guardó con su nombre.';
+      }
+    }
+    document.getElementById('metasIdNombre').addEventListener('input', refrescarReinicio);
+    refrescarReinicio();
     if ((id.codigo_aula || '').length >= 5) resolverAula();
 
     function cerrar() { ov.remove(); st.remove(); }
@@ -522,6 +616,25 @@
       var nombre = document.getElementById('metasIdNombre').value.trim();
       if (!nombre) { document.getElementById('metasIdNombre').focus(); return; }
       var codAula = document.getElementById('metasIdAula').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+      /* El número de lista es opcional MIENTRAS no haya código de aula: quien
+         entra por su cuenta no tiene número y no se le puede exigir. Pero en
+         cuanto escribe el código de su maestro, ese número es la ÚNICA llave
+         con la que el maestro le encuentra en Estadísticas: sin él, su
+         práctica llega a la nube y el maestro lee «no hay práctica
+         registrada» de un niño que sí practicó. Por eso aquí sí se pide, y se
+         explica —no se bloquea a secas. */
+      var numEl = document.getElementById('metasIdNum');
+      var numVal = numEl.value.trim();
+      var numMsg = document.getElementById('metasIdNumMsg');
+      if (codAula && !/\d/.test(numVal)) {
+        if (numMsg) {
+          numMsg.textContent = 'Escribe tu número de lista: es con lo que tu maestro te encuentra. Si no lo sabes, pregúntaselo.';
+          numMsg.style.color = '#b45309';
+        }
+        numEl.focus();
+        return;
+      }
+      if (numMsg) numMsg.textContent = '';
       var datos = {
         nombre: nombre.slice(0, 60),
         num: document.getElementById('metasIdNum').value.trim().slice(0, 10),
@@ -542,8 +655,20 @@
         try { inp.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
         if (typeof window.updateDiplomaName === 'function') window.updateDiplomaName(datos.nombre);
       }
+      var caja = document.getElementById('metasIdReinicio');
+      var reiniciar = caja && caja.style.display !== 'none' &&
+                      document.getElementById('metasIdReiniciarChk').checked;
       cerrar();
       actualizarBarraAlumno();
+      if (reiniciar) {
+        var k = llaveDeLaMision();
+        if (k) { try { localStorage.removeItem(k); } catch (_) {} }
+        /* Se recarga porque la misión ya tiene su avance en memoria: sin esto
+           la pantalla seguiría enseñando las secciones de la anterior hasta
+           que alguien la cerrara. */
+        location.reload();
+        return;
+      }
       if (typeof alGuardar === 'function') alGuardar();
     });
   }
