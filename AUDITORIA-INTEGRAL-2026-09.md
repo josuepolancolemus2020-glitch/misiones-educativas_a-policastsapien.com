@@ -155,7 +155,7 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 [`5-top-20.md`](_dev/auditoria-2026-09/5-top-20.md). El orden es
 `(impacto educativo + impacto comercial) / esfuerzo`, con dos ajustes declarados allí.
 
-**Ocho se hacen en horas:**
+**Nueve se hacen en horas:**
 
 1. Quitar del «Resultado» los 30 puntos que el alumno se pone solo
 6. El service worker: precachear el armazón y dejar de borrar la caché
@@ -165,14 +165,15 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 14. Quitar el autoavance de 1,6 s del quiz y del completar
 16. Una acción de CI que corra las sondas — **hoy dos están rojas**
 17. Escribir en la portada qué es esto y para quién
+18. Licencia, aviso de privacidad y alojamiento con términos válidos
 
-**Nueve en días:** cerrar «Ver Pauta» · cerrar la escritura anónima a la nube · una identidad de
+**Diez en días:** cerrar «Ver Pauta» · cerrar la escritura anónima a la nube · una identidad de
 alumno que no se funda · que el maestro no pierda su trabajo · quitar el CDN del camino crítico ·
 subir la barra de secciones al principio · que la estrella se gane · que Fin de Grado no pierda
 las respuestas · traer a la boleta las notas ya calculadas · desbloquear el zoom y el teclado.
 
-**Tres en semanas**, y una de ellas —que la alumna pueda encontrar lo de su grado— es la primera
-pantalla donde cuatro de los cinco recorridos se atascaron.
+**Y una en semanas** —que la alumna pueda encontrar lo de su grado—, que es la primera pantalla
+donde cuatro de los cinco recorridos se atascaron.
 
 Lo que **no entró** por costar meses, y por qué, está al final de esa misma página: el III Ciclo de
 Matemáticas vacío, el motor copiado 66 veces, el maestro sin poder asignar, y la contraseña que
