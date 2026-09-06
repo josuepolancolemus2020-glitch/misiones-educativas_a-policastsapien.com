@@ -90,10 +90,14 @@ Ese informe lo firma la familia.
 
 ### 3. La promesa de funcionar sin internet se rompe en cada despliegue
 
-El service worker **no precachea el armazón** (ni `index.html`, ni `app.js`, ni `app.css`): hace
+~~El service worker **no precachea el armazón** (ni `index.html`, ni `app.js`, ni `app.css`): hace
 falta una segunda visita en línea. Y al activarse **borra toda la caché**, incluidas las misiones
 que el alumno había abierto con señal justamente para usarlas sin ella. `sw.js` cambió 37 veces
-entre el 13 y el 28 de agosto.
+entre el 13 y el 28 de agosto.~~
+
+**Corregido el 6 de septiembre** (punto 6 del top 20): dos cachés —una para el armazón, que se
+renueva, y otra para lo visitado, que no se toca— y el armazón precacheado desde la primera
+visita. La otra mitad, la del CDN, sigue pendiente.
 
 Al lado, la otra mitad del mismo problema: **con el CDN caído la pantalla queda en blanco 12,6
 segundos**, medido en cuatro páginas. Abortando los recursos externos, 0,28 s. Y `padres.html`,
@@ -159,7 +163,7 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 **Nueve se hacen en horas:**
 
 1. Quitar del «Resultado» los 30 puntos que el alumno se pone solo
-6. El service worker: precachear el armazón y dejar de borrar la caché
+6. ~~El service worker: precachear el armazón y dejar de borrar la caché~~ · **hecho el 6 de septiembre**
 8. ~~Buscar sin tildes~~ · **hecho el 6 de septiembre**
 11. ~~Corregir los cuatro errores de contenido ya localizados~~ · **hecho el 6 de septiembre**
 12. ~~Los 31 enlaces de Drive que no llevan a ninguna parte~~ · **hecho el 6 de septiembre**

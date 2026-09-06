@@ -72,6 +72,29 @@ el número en dos sitios:
 
 Si no se sella, el despliegue existe pero nadie lo ve.
 
+⚠️ **`CACHE_DATOS` no se sella nunca.** Desde el 6 de septiembre de 2026 `sw.js`
+tiene dos cachés y hacen cosas distintas: `CACHE_NAME` lleva el armazón y se
+renueva en cada despliegue —ese es el que se sube—, y `CACHE_DATOS` lleva lo
+que el alumno y el maestro ya visitaron: las misiones, sus imágenes, el motor
+de los juegos. Subirle el número a la segunda le borraría al alumno lo que
+tenía guardado en el teléfono, que es exactamente lo que pasaba antes: había
+una sola caché con la versión dentro, y **cada publicación se llevaba por
+delante las misiones que él había abierto con señal para usarlas sin ella**.
+Entre el 13 y el 28 de agosto de 2026 eso ocurrió 37 veces.
+
+Y el armazón —`index.html`, `app.css`, `app.js`, `misiones.js` y los datos
+pequeños de la portada— va precacheado en `ARMAZON`, para que la aplicación
+abra sin señal **desde la primera visita**. A propósito NO están los 25 scripts
+de la portada (2,8 MB): las herramientas del maestro entran solas en
+`CACHE_DATOS` la primera vez que abre en línea, y ahora se quedan.
+
+Se comprueba con un service worker de verdad, que es el punto ciego de siempre:
+
+```
+node _dev/servidor-estatico.js        (en otra terminal)
+node _dev/verifica-service-worker.js
+```
+
 ## Normativa: el SQL de Supabase se pega en el chat, SIEMPRE
 
 Los archivos `SUPABASE-*.sql` —y los de `supabase/sql/` del proyecto de la
