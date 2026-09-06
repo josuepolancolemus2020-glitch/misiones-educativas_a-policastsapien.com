@@ -850,12 +850,29 @@ async function pruebaAvisos(browser) {
       await page.evaluate(() => { _adConvTraido = ''; convTraer(false); });
     }
     if (await hay()) return;
+    /* Esto solo corre cuando ya falló, así que NUNCA se ejecuta en una pasada
+       verde: es código sin probar por definición. Por eso va entero en un
+       try/catch y devuelve lo que pueda — un diagnóstico que revienta deja el
+       fallo peor que como estaba. La primera versión lo hizo: leía
+       `adLoad().grupos`, y `adLoad()` devuelve EL GRUPO ACTIVO, no el
+       documento; el «Cannot read properties of undefined» tapó el motivo que
+       venía a enseñar. */
     const diag = await page.evaluate(() => {
-      const c = (adLoad().grupos[0].convocatorias || [])[0] || {};
-      const r = document.getElementById('cv-refresco');
-      return { respuestas: (c.resp || []).length, refresco: r ? r.textContent.trim() : '(no está)',
-               enLinea: navigator.onLine, panel: !!document.querySelector('#cv-pagos') };
-    });
+      const out = {};
+      try { out.enLinea = navigator.onLine; } catch (_) {}
+      try {
+        const r = document.getElementById('cv-refresco');
+        out.refresco = r ? r.textContent.trim() : '(no está)';
+      } catch (_) {}
+      try { out.panel = !!document.querySelector('#cv-pagos'); } catch (_) {}
+      try {
+        const g = adLoad() || {};
+        const c = (g.convocatorias || [])[0] || {};
+        out.convocatoria = c.id || '(ninguna)';
+        out.respuestas = (c.resp || []).length;
+      } catch (e) { out.alLeerElGrupo = String(e && e.message || e); }
+      return out;
+    }).catch(e => ({ alDiagnosticar: String(e && e.message || e) }));
     throw new Error('El bloque del aviso en lote no llegó a pintarse. ' +
       JSON.stringify(diag) + '\n' +
       '  · respuestas 0 significa que convTraer no trajo nada: la tarjeta del\n' +
