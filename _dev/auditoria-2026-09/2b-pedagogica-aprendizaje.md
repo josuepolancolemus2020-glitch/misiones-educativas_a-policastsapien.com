@@ -124,6 +124,13 @@ La investigación respalda la prioridad: la retroalimentación elaborada tiene u
 > `_dev/verifica-sin-autoavance.js`, que contesta mal a propósito y exige que a los 2,2 s la
 > corrección siga ahí.
 
+> ⚠️ **Y al arreglarlo salió un hallazgo nuevo, sin corregir**: en las ocho misiones bilingües,
+> los mensajes que la misión escribe **mientras se juega** no se traducen, aunque estén en el
+> diccionario compartido. Pasa con el aviso nuevo («Primero toca «Verificar».») y con el
+> «Selecciona una respuesta.» que ya existía. El motor de idioma (`js/metas-i18n.js`) traduce al
+> cambiar de idioma y su `MutationObserver` no atrapa lo que `fb()` escribe después. Es del motor,
+> no de las misiones, y no entra en el punto 14.
+
 Tras fallar, la pregunta cambia a los 1,6 segundos. Un niño de 4º no alcanza a leer la opción
 correcta. Y como la función que pinta la pregunta nueva no limpia el mensaje, el «Incorrecto.
 Revisa la respuesta correcta» sigue visible **debajo de la pregunta siguiente**, que aún no ha
