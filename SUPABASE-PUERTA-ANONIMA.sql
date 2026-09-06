@@ -205,11 +205,29 @@ grant execute on function public.metas_resultados_borrar(text,text,bigint[]) to 
 -- 'CAMBIA-ESTA-CLAVE'. `metas_suscribir_docente` creaba cuentas con el
 -- código que eligiera el cliente y sin correo: como el nombre normalizado
 -- es único, servía para BLOQUEARLE EL REGISTRO al maestro real con ese
--- nombre. Ninguna de las dos la usa la aplicación de hoy.
-revoke all on function public.metas_consultar(text) from public, anon, authenticated;
-drop function if exists public.metas_consultar(text);
-revoke all on function public.metas_suscribir_docente(text,text,text,text) from public, anon, authenticated;
-drop function if exists public.metas_suscribir_docente(text,text,text,text);
+-- nombre. Ninguna de las dos la usa la aplicación de hoy (la de hoy llama a
+-- metas_consultar_docente, que es otra).
+--
+-- ⚠️ Se buscan POR NOMBRE y se quitan TODAS sus versiones, existan o no.
+-- La primera versión de este archivo hacía `revoke` y después `drop … if
+-- exists`, y eso reventó al pegarlo: `revoke` sobre una función que ya no
+-- existe da ERROR 42883, y como el editor de Supabase corre todo en una
+-- transacción, se deshizo el script ENTERO sin aplicar nada. El `drop` se
+-- lleva los permisos con la función, así que el `revoke` sobraba.
+do $$
+declare r record;
+begin
+  for r in
+    select p.oid::regprocedure as firma
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public'
+       and p.proname in ('metas_consultar', 'metas_suscribir_docente')
+  loop
+    execute 'drop function ' || r.firma;
+  end loop;
+end
+$$;
 
 
 -- ═══════════════════════════════════════════════════════════════════════

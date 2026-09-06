@@ -88,11 +88,16 @@ async function abrirConsulta(nav, filas, alBorrar) {
     ['acota la nota a «0..base»', /greatest\(0, least\(f\.nota/],
     ['guarda el código del maestro RESUELTO', /docente_codigo/],
     ['quita la política heredada', /drop policy if exists resultados_insertar/],
-    ['retira metas_consultar heredada', /drop function if exists public\.metas_consultar\(text\)/],
-    ['retira metas_suscribir_docente', /drop function if exists public\.metas_suscribir_docente/],
+    ['retira las dos heredadas por NOMBRE', /proname in \('metas_consultar', 'metas_suscribir_docente'\)/],
+    /* La primera versión hacía `revoke` antes del `drop`, y eso reventó al
+       pegarlo: revoke sobre una función que ya no existe da ERROR 42883 y,
+       como el editor corre todo en una transacción, se deshizo el script
+       entero sin aplicar nada. */
+    ['sin revoke sobre las heredadas (aborta si ya no están)',
+     !/revoke all on function public\.metas_(consultar|suscribir_docente)\(/.test(SQL) || 'queda un revoke'],
     ['añade el borrado del maestro', /function public\.metas_resultados_borrar/],
   ];
-  debe.forEach(([q, re]) => ok(q, re.test(SQL)));
+  debe.forEach(([q, re]) => ok(q, re === true ? true : (typeof re === 'string' ? false : re.test(SQL)), typeof re === 'string' ? re : undefined));
   ok('es idempotente (create or replace / if not exists / if exists)',
      !/\bcreate table (?!if not exists)/.test(SQL) && /add column if not exists/.test(SQL));
   ok('dice cómo comprobarlo sin fiarse del «Success»', /CÓMO SE COMPRUEBA/.test(SQL));
