@@ -4,9 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1e3a7c">
+  <!-- El enlace circula REENVIADO POR WHATSAPP: llega sin vista previa y sin una
+       línea que diga qué gana quien lo abre. Esta es esa línea, y es la misma que
+       la de la portada, la del manifest y la del README: si se cambia una, se
+       cambian las cuatro. -->
+  <meta name="description" content="Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.">
   <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/app.css?v=178">
+  <link rel="stylesheet" href="css/app.css?v=179">
   <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -46,19 +51,27 @@
         </div>
       </div>
 
-      <!-- Pensador: José Cecilio del Valle, siempre visible -->
-      <div class="pensador-card">
-        <div class="pensador-foto-wrap">
-          <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
-        </div>
-        <div class="pensador-cita">
-          <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
-          <span class="pensador-autor">José Cecilio del Valle</span>
-        </div>
-      </div>
-
       <!-- Tu siguiente paso (se pinta solo cuando hay actividad o diagnóstico) -->
       <div id="home-paso"></div>
+
+      <!-- Qué es esto y para quién · el enlace se reenvía por WhatsApp y llega
+           pelado: quien lo abre —un maestro, una directora— no encontraba en
+           ninguna pantalla qué gana. Va DESPUÉS de «Tu siguiente paso» a
+           propósito: en la primera visita ese hueco está vacío y esto es lo
+           primero que se lee; al alumno que ya viene trabajando no le tapa lo
+           suyo.
+
+           ⚠️ El número de misiones NO se escribe: es el marcador {{MISIONES}} y
+           lo rellena app.js contando el catálogo. Y la frase dice que la lista
+           crece, porque una cifra sola se lee como el final. -->
+      <section class="valor-card" aria-label="Qué es M.E.T.A.S. y para quién">
+        <p class="valor-quien">👩‍🏫 Para el maestro hondureño · y es gratis</p>
+        <p class="valor-txt">Hoy <b>{{MISIONES}} misiones</b> de 4º a 9º —y siguen
+          entrando—, cada una con <b>su examen y su ficha listos para fotocopiar</b>.
+          Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque
+          del <b>DCNB</b>. Ábrelas una vez con señal y después
+          <b>trabajan sin internet</b>.</p>
+      </section>
 
       <!-- Navegación principal: los 4 accesos más usados, a un toque -->
       <h2 class="section-title">¿Qué quieres hacer hoy?</h2>
@@ -79,6 +92,20 @@
           <span class="hnb-emoji">🏫</span>
           <span class="hnb-label">Zona Docente</span>
         </button>
+      </div>
+
+      <!-- Pensador: José Cecilio del Valle. Bajó de encima de los botones a
+           debajo: arriba se comía la primera pantalla entera del teléfono y
+           empujaba fuera de la vista lo que el maestro y el alumno vienen a
+           hacer. Sigue siempre visible, que es lo que se pidió de ella. -->
+      <div class="pensador-card">
+        <div class="pensador-foto-wrap">
+          <img src="img/jose-cecilio-del-valle-edit.webp" alt="José Cecilio del Valle" class="pensador-foto">
+        </div>
+        <div class="pensador-cita">
+          <p class="pensador-text">América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.</p>
+          <span class="pensador-autor">José Cecilio del Valle</span>
+        </div>
       </div>
 
       <!-- Puerta al asistente de padres · va AQUÍ ARRIBA a propósito:
@@ -1046,28 +1073,28 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js?v=178"></script>
-  <script src="js/html2canvas.min.js?v=178"></script>
-  <script src="js/data/misiones.js?v=178"></script>
-  <script src="js/data/dcnb-map.js?v=178"></script>
-  <script src="js/data/diagnosticos.js?v=178"></script>
-  <script src="js/data/proceres.js?v=178"></script>
-  <script src="js/data/paises.js?v=178"></script>
-  <script src="js/data/frases.js?v=178"></script>
-  <script src="js/data/consejos-padres.js?v=178"></script>
-  <script src="js/tools/gobierno-escolar.js?v=178"></script>
-  <script src="js/tools/plan-accion.js?v=178"></script>
-  <script src="js/tools/registros-admin.js?v=178"></script>
-  <script src="js/tools/convocatoria.js?v=178"></script>
-  <script src="js/tools/estadisticas-alumno.js?v=178"></script>
-  <script src="js/data/lectura-normas.js?v=178"></script>
-  <script src="js/data/lectura-textos.js?v=178"></script>
-  <script src="js/tools/lectura-fluidez.js?v=178"></script>
-  <script src="js/tools/parte-mensual.js?v=178"></script>
-  <script src="js/tools/collage-maker.js?v=178"></script>
-  <script src="js/tools/formacion-docente.js?v=178"></script>
-  <script src="js/data/campeonismo-bank.js?v=178"></script>
-  <script src="js/tools/campeonismo.js?v=178"></script>
+  <script src="js/metas-dialogos.js?v=179"></script>
+  <script src="js/html2canvas.min.js?v=179"></script>
+  <script src="js/data/misiones.js?v=179"></script>
+  <script src="js/data/dcnb-map.js?v=179"></script>
+  <script src="js/data/diagnosticos.js?v=179"></script>
+  <script src="js/data/proceres.js?v=179"></script>
+  <script src="js/data/paises.js?v=179"></script>
+  <script src="js/data/frases.js?v=179"></script>
+  <script src="js/data/consejos-padres.js?v=179"></script>
+  <script src="js/tools/gobierno-escolar.js?v=179"></script>
+  <script src="js/tools/plan-accion.js?v=179"></script>
+  <script src="js/tools/registros-admin.js?v=179"></script>
+  <script src="js/tools/convocatoria.js?v=179"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=179"></script>
+  <script src="js/data/lectura-normas.js?v=179"></script>
+  <script src="js/data/lectura-textos.js?v=179"></script>
+  <script src="js/tools/lectura-fluidez.js?v=179"></script>
+  <script src="js/tools/parte-mensual.js?v=179"></script>
+  <script src="js/tools/collage-maker.js?v=179"></script>
+  <script src="js/tools/formacion-docente.js?v=179"></script>
+  <script src="js/data/campeonismo-bank.js?v=179"></script>
+  <script src="js/tools/campeonismo.js?v=179"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1077,9 +1104,9 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=178"></script>
-  <script src="js/metas-docente-sync.js?v=178"></script>
-  <script src="js/tools/pwa-install.js?v=178"></script>
+  <script src="js/app.js?v=179"></script>
+  <script src="js/metas-docente-sync.js?v=179"></script>
+  <script src="js/tools/pwa-install.js?v=179"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

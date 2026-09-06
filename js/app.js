@@ -356,6 +356,16 @@ function renderHome() {
     pasoEl.innerHTML = (rd.sug && !rd.sug.m) ? '' : pasoCardHTML(rd.sug, true);
   }
 
+  /* La tarjeta de «qué es esto»: el número de misiones se CUENTA del catálogo,
+     nunca se escribe. Es la normativa del proyecto y aquí pesa doble, porque
+     esta frase es la que lee quien está decidiendo si la plataforma le sirve:
+     una cifra vieja le enseña un producto más pequeño del que hay. El día que
+     entre la misión siguiente, el texto se corrige solo. */
+  const valorTxt = document.querySelector('.valor-txt');
+  if (valorTxt && valorTxt.innerHTML.indexOf('{{MISIONES}}') >= 0) {
+    valorTxt.innerHTML = valorTxt.innerHTML.replace(/\{\{MISIONES\}\}/g, MISSIONS.length);
+  }
+
   // Chips de materia: misiones o "Próximamente" según país
   document.querySelectorAll('.subj-chip').forEach(chip => {
     const em = chip.querySelector('em');

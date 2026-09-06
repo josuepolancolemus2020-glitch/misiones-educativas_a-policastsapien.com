@@ -1,7 +1,7 @@
 {
   "name": "M.E.T.A.S. Misiones Educativas",
   "short_name": "M.E.T.A.S.",
-  "description": "Aplicación de misiones educativas interactiva.",
+  "description": "Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",

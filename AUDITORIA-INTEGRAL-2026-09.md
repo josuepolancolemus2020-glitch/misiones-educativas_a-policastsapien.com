@@ -171,7 +171,8 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 16. ~~Una acción de CI que corra las sondas~~ · **hecho el 6 de septiembre** — eran **tres** rojas, no dos,
     y una de ellas llevaba 58 fallos que no eran averías: la sonda pedía cosas que este repositorio
     no puede cumplir a propósito
-17. Escribir en la portada qué es esto y para quién
+17. ~~Escribir en la portada qué es esto y para quién~~ · **hecho el 7 de septiembre** — y al
+    comprobar la frase salió que «66 misiones alineadas al DCNB» era falso: 19 no tienen mapa
 18. Licencia, aviso de privacidad y alojamiento con términos válidos
 
 **Diez en días:** cerrar «Ver Pauta» · cerrar la escritura anónima a la nube · una identidad de
