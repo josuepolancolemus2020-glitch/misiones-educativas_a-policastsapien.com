@@ -1,0 +1,21 @@
+## Cómo se hizo esta auditoría
+
+**Fecha:** 5 de septiembre de 2026. **Estado auditado:** el commit `9ce2ac1` («Un video a la vez, y el quiz siempre a la vista», 28 de agosto de 2026) de la rama `main`, tal y como se sirve en metas.policastsapien.com. El repositorio solo conserva 50 commits, todos de agosto de 2026; lo anterior no está en el historial.
+
+**Encargo.** Cuatro auditorías (técnica, pedagógica, UX/UI probando la aplicación como cada tipo de usuario, y de producto) con la consigna expresa de **no proteger las decisiones existentes del creador**: buscar qué está mal, qué está incompleto, qué está sobrediseñado y qué debería eliminarse. Y después, priorizar las 20 modificaciones de mayor impacto educativo y comercial con menor esfuerzo.
+
+**Método.** Se repartió el trabajo en 35 lentes de auditoría independientes (11 técnicas, 10 pedagógicas, 10 personas de UX y 4 de producto), agrupadas en nueve flujos que corrieron en paralelo. Cada lente la cubrió un auditor con el repositorio delante, con permiso de solo lectura, y con la obligación de aportar evidencia concreta (archivo y línea, salida de un comando, número medido, captura de pantalla). Las diez personas de UX **usaron la aplicación de verdad** con un navegador Chromium controlado por Playwright, en pantallas de 360×640, 393×873, 412×915 y 1280×720, con la nube apagada o simulada (nunca se tocaron datos reales de Supabase). Los auditores técnicos corrieron comprobaciones sobre el código (`node --check`, axe-core, medición de bytes y tiempos de carga, `npm audit`, lectura del SQL y del historial de git).
+
+Cada lista de hallazgos debía pasar después por un **revisor adversarial** independiente cuyo único encargo era refutarla: reabrir los archivos, repetir los comandos, reproducir con el navegador, y tumbar todo lo que fuera falso, ya resuelto, duplicado o una opinión sin consecuencia real para un alumno, un maestro o una familia hondureños. Los hallazgos marcados como críticos pasaban además por **un segundo escéptico**, con la cabeza de un maestro veterano y de un gerente de producto, que volvía a comprobar la evidencia y preguntaba si de verdad le pasa a un aula real; solo se conservaban como críticos si no los tumbaba. Los hallazgos descartados se listan al final de cada sección, con su motivo, para que el creador vea qué se consideró y por qué se cayó.
+
+## Lo que de verdad se corrió, y lo que no
+
+El método se aplicó **hasta donde alcanzó el presupuesto de la auditoría**, y decirlo con precisión importa más que decirlo bonito:
+
+- **28 de las 35 lentes** llegaron a terminar: 336 hallazgos. Las siete que faltan están nombradas en `ESTADO.md`, y cuatro las pidió el encargo por su nombre (probar la aplicación como docente, como familia, como administración y como alumna de 8º grado).
+- **228 de los 336 hallazgos pasaron la revisión adversarial.** Los 108 restantes —accesibilidad entera, el alumno de 9º y tres cuartas partes de las lentes de UX de alumno— son la lectura de un solo auditor. **Van marcados como tales en cada sección**, y hay que tratarlos así: la evidencia es reproducible, pero nadie intentó tumbarla.
+- La lista de las 20 modificaciones **no salió de los tres priorizadores independientes** que el método preveía: ese flujo no llegó a correr. La derivó el editor final a partir de los hallazgos confirmados, con la fórmula de puntaje escrita al principio de `5-top-20.md` y dos ajustes a mano que allí se declaran. Es un juicio, no un consenso de tres auditores.
+
+Un editor por área fundió lo confirmado en las ocho secciones de este informe. La maquinaria completa —los flujos, el contexto que leyó cada auditor y las instrucciones para retomar lo que falta— queda guardada en `maquinaria/`, con su `RETOMAR.md`.
+
+**Límites.** El entorno de auditoría no llega al sitio publicado ni a la nube (el proxy bloquea el dominio y Supabase), así que todo lo que depende del servidor se comprobó leyendo el SQL y simulando las respuestas; no se midió el comportamiento real de Supabase bajo carga. No se probó en teléfonos físicos ni en iOS; las medidas móviles son de Chromium emulando pantallas táctiles. F.A.R.O., la aplicación privada del administrador, vive en otro repositorio y no se auditó. Las cifras de mercado y precios de la sección de producto son estimaciones con supuestos declarados, no datos verificados.
