@@ -114,6 +114,16 @@ La investigación respalda la prioridad: la retroalimentación elaborada tiene u
 
 `P4-03` · alta · error · esfuerzo días
 
+> ✅ **Corregido el 6 de septiembre de 2026.** El quiz y el «Completa» ya no avanzan solos: la
+> corrección se queda en pantalla y el alumno pasa con **▶ Siguiente**, el patrón que
+> `angulo-bisectriz` ya usaba. Al pintar la pregunta siguiente se borra el mensaje anterior, que
+> era la otra mitad del problema. Salieron **más autoavances de los que decía el hallazgo**: 64
+> quiz y 63 «Completa» a 1 600 ms, más **un segundo autoavance de 3 500 ms escondido en la rama
+> del fallo de 21 misiones** —justo el caso que importa— y uno de 2 000 ms en Sustantivos. Y las
+> dos misiones que ya avanzaban a mano no borraban el mensaje del «Completa». Lo vigila
+> `_dev/verifica-sin-autoavance.js`, que contesta mal a propósito y exige que a los 2,2 s la
+> corrección siga ahí.
+
 Tras fallar, la pregunta cambia a los 1,6 segundos. Un niño de 4º no alcanza a leer la opción
 correcta. Y como la función que pinta la pregunta nueva no limpia el mensaje, el «Incorrecto.
 Revisa la respuesta correcta» sigue visible **debajo de la pregunta siguiente**, que aún no ha

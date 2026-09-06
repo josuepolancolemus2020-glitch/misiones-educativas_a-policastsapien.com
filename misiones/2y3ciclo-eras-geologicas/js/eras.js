@@ -397,7 +397,7 @@ const qzData = [
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
 function buildQz() { qzIdx = 0; qzSel = -1; qzDone = false; showQz(); }
-function showQz() {
+function showQz() {var _fbQ=document.getElementById('fbQz');if(_fbQ)_fbQ.classList.remove('show');
     if (qzIdx >= qzData.length) {
         document.getElementById('qzQ').textContent = '🎉 ¡Quiz completado!';
         document.getElementById('qzOpts').innerHTML = '';
@@ -414,6 +414,14 @@ function showQz() {
     });
     qzDone = false;
 }
+// El quiz ya NO avanza solo a los 1,6 s. Con el avance automático, el alumno que
+// fallaba veía la respuesta correcta medio segundo y desaparecía antes de poder
+// leerla; y el «Incorrecto» se quedaba colgado debajo de la pregunta SIGUIENTE,
+// que todavía no había contestado. Ahora avanza él, cuando ya la leyó.
+function nextQz(){
+  if(!qzDone)return fb('fbQz','Primero toca «Verificar».',false);
+  qzIdx++; qzSel=-1; qzDone=false; showQz();
+}
 function checkQz() {
     if (qzDone) return;
     if (qzSel < 0) return fb('fbQz', 'Selecciona una respuesta.', false);
@@ -428,7 +436,7 @@ function checkQz() {
         opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct');
         fb('fbQz', 'Incorrecto. Revisa la respuesta correcta.', false); sfx('no');
     }
-    setTimeout(() => { qzIdx++; qzSel = -1; showQz(); }, 1600);
+    
 }
 function resetQz() { sfx('click'); qzIdx = 0; qzSel = -1; qzDone = false; showQz(); document.getElementById('fbQz').classList.remove('show'); }
 
@@ -569,7 +577,7 @@ const cmpData = [
     { s: 'Un ___ causó la extinción de los dinosaurios.', opts: ['volcán', 'meteorito', 'terremoto'], c: 1 },
 ];
 let cmpIdx = 0, cmpSel = -1, cmpDone = false;
-function showCmp() {
+function showCmp() {var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
     if (cmpIdx >= cmpData.length) {
         document.getElementById('cmpSent').innerHTML = '🎉 ¡Completado!';
         document.getElementById('cmpOpts').innerHTML = '';
@@ -584,6 +592,11 @@ function showCmp() {
         b.onclick = () => { if (cmpDone) return; document.querySelectorAll('.cmp-opt').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); cmpSel = i; sfx('click'); };
         opts.appendChild(b);
     });
+}
+// Misma razón que en el quiz: la corrección se lee, no se persigue.
+function nextCmp(){
+  if(!cmpDone)return fb('fbCmp','Primero toca «Verificar».',false);
+  cmpIdx++; cmpSel=-1; cmpDone=false; showCmp();
 }
 function checkCmp() {
     if (cmpDone) return;
@@ -600,7 +613,7 @@ function checkCmp() {
         opts[cmpSel].classList.add('wrong'); opts[cmpData[cmpIdx].c].classList.add('correct');
         fb('fbCmp', 'Incorrecto. Revisa la respuesta.', false); sfx('no');
     }
-    setTimeout(() => { cmpIdx++; document.getElementById('fbCmp').classList.remove('show'); showCmp(); }, 1600);
+    
 }
 function resetCmp() { sfx('click'); cmpIdx = 0; cmpSel = -1; cmpDone = false; showCmp(); document.getElementById('fbCmp').classList.remove('show'); }
 

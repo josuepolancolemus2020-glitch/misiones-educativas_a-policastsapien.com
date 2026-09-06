@@ -214,7 +214,7 @@ const qzData=[
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
-function showQz(){
+function showQz(){var _fbQ=document.getElementById('fbQz');if(_fbQ)_fbQ.classList.remove('show');
   if(qzIdx>=qzData.length){
     document.getElementById('qzQ').textContent='🎉 ¡Análisis completado!';
     document.getElementById('qzOpts').innerHTML='';
@@ -231,6 +231,14 @@ function showQz(){
   });
   qzDone = false;
 }
+// El quiz ya NO avanza solo a los 1,6 s. Con el avance automático, el alumno que
+// fallaba veía la respuesta correcta medio segundo y desaparecía antes de poder
+// leerla; y el «Incorrecto» se quedaba colgado debajo de la pregunta SIGUIENTE,
+// que todavía no había contestado. Ahora avanza él, cuando ya la leyó.
+function nextQz(){
+  if(!qzDone)return fb('fbQz','Primero toca «Verificar».',false);
+  qzIdx++; qzSel=-1; qzDone=false; showQz();
+}
 function checkQz(){
   if(qzSel<0) return fb('fbQz','Selecciona un postulado gramatical.',false);
   qzDone = true;
@@ -244,7 +252,7 @@ function checkQz(){
     opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct');
     fb('fbQz','Error analítico. Revisa la fundamentación teórica.',false); sfx('no');
   }
-  setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); }, 1600);
+  
 }
 function resetQz(){
   sfx('click');
@@ -376,7 +384,7 @@ const cmpData=[
   {s:'En "Trajeron ___ las bebidas", el adjetivo funciona como Complemento Predicativo.',opts:['frías','fríos','fría'],c:0},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
-function showCmp(){
+function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
   if(cmpIdx>=cmpData.length){
     document.getElementById('cmpSent').innerHTML='🎉 ¡Módulo Morfológico Completado!';
     document.getElementById('cmpOpts').innerHTML='';
@@ -392,6 +400,11 @@ function showCmp(){
     opts.appendChild(b);
   });
 }
+// Misma razón que en el quiz: la corrección se lee, no se persigue.
+function nextCmp(){
+  if(!cmpDone)return fb('fbCmp','Primero toca «Verificar».',false);
+  cmpIdx++; cmpSel=-1; cmpDone=false; showCmp();
+}
 function checkCmp(){
   if(cmpSel<0) return fb('fbCmp','Selecciona la flexión adecuada.',false);
   cmpDone = true;
@@ -406,7 +419,7 @@ function checkCmp(){
     opts[cmpSel].classList.add('wrong'); opts[cmpData[cmpIdx].c].classList.add('correct');
     fb('fbCmp','Error de normativa. Consulta la RAE.',false); sfx('no');
   }
-  setTimeout(()=>{ cmpIdx++; showCmp(); }, 1600);
+  
 }
 
 // ===================== RETO FINAL =====================

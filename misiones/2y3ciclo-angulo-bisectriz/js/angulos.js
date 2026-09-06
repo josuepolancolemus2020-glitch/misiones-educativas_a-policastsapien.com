@@ -304,7 +304,7 @@ const cmpData=[
   {s:'Un ángulo de 180° se llama ___.',opts:['recto','llano','completo'],c:1},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
-function showCmp(){
+function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
   if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}
   const d=cmpData[cmpIdx]; document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`; document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');
   const opts=document.getElementById('cmpOpts'); opts.innerHTML=''; cmpSel=-1; cmpDone=false;

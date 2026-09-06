@@ -139,7 +139,7 @@ const qzData=[
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
-function showQz(){
+function showQz(){var _fbQ=document.getElementById('fbQz');if(_fbQ)_fbQ.classList.remove('show');
   if(qzIdx>=qzData.length){ document.getElementById('qzQ').textContent='🎉 ¡Quiz completado!'; document.getElementById('qzOpts').innerHTML=''; fin('s-quiz'); unlockAchievement('primer_quiz'); return; }
   const q=qzData[qzIdx];
   document.getElementById('qzProg').textContent=`Pregunta ${qzIdx+1} de ${qzData.length}`;
@@ -148,12 +148,20 @@ function showQz(){
   q.o.forEach((o,i)=>{ const b=document.createElement('button'); b.className='qz-opt'; b.textContent=o; b.onclick=()=>{ if(qzDone)return; document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); qzSel=i; sfx('click'); }; opts.appendChild(b); });
   qzDone=false;
 }
+// El quiz ya NO avanza solo a los 1,6 s. Con el avance automático, el alumno que
+// fallaba veía la respuesta correcta medio segundo y desaparecía antes de poder
+// leerla; y el «Incorrecto» se quedaba colgado debajo de la pregunta SIGUIENTE,
+// que todavía no había contestado. Ahora avanza él, cuando ya la leyó.
+function nextQz(){
+  if(!qzDone)return fb('fbQz','Primero toca «Verificar».',false);
+  qzIdx++; qzSel=-1; qzDone=false; showQz();
+}
 function checkQz(){
   if(qzSel<0) return fb('fbQz','Selecciona una respuesta.',false);
   qzDone=true;
   const opts=document.querySelectorAll('.qz-opt');
-  if(qzSel===qzData[qzIdx].c){ opts[qzSel].classList.add('correct'); fb('fbQz','¡Correcto! +5 XP',true); if(!xpTracker.qz.has(qzIdx)){ xpTracker.qz.add(qzIdx); pts(5); } sfx('ok'); setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },1600); }
-  else{ opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct'); const _fbMsg=qzData[qzIdx].feedback||'Incorrecto. Revisa la respuesta correcta.'; fb('fbQz',_fbMsg,false); sfx('no'); setTimeout(()=>{ qzIdx++; qzSel=-1; showQz(); },3500); }
+  if(qzSel===qzData[qzIdx].c){ opts[qzSel].classList.add('correct'); fb('fbQz','¡Correcto! +5 XP',true); if(!xpTracker.qz.has(qzIdx)){ xpTracker.qz.add(qzIdx); pts(5); } sfx('ok');  }
+  else{ opts[qzSel].classList.add('wrong'); opts[qzData[qzIdx].c].classList.add('correct'); const _fbMsg=qzData[qzIdx].feedback||'Incorrecto. Revisa la respuesta correcta.'; fb('fbQz',_fbMsg,false); sfx('no'); }
 }
 function useHintQz(){
   if(qzDone) return;
@@ -283,7 +291,7 @@ const cmpData=[
   {s:'Para saber cuándo dos eventos coinciden se usa el ___.',opts:['M.C.D.','m.c.m.','divisor'],c:1}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
-function showCmp(){
+function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
   if(cmpIdx>=cmpData.length){ document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!'; document.getElementById('cmpOpts').innerHTML=''; fin('s-completa'); return; }
   const d=cmpData[cmpIdx];
   document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;
@@ -291,13 +299,18 @@ function showCmp(){
   const opts=document.getElementById('cmpOpts'); opts.innerHTML=''; cmpSel=-1; cmpDone=false;
   d.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='cmp-opt'; b.textContent=o; b.onclick=()=>{ if(cmpDone)return; document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); cmpSel=i; sfx('click'); }; opts.appendChild(b); });
 }
+// Misma razón que en el quiz: la corrección se lee, no se persigue.
+function nextCmp(){
+  if(!cmpDone)return fb('fbCmp','Primero toca «Verificar».',false);
+  cmpIdx++; cmpSel=-1; cmpDone=false; showCmp();
+}
 function checkCmp(){
   if(cmpSel<0) return fb('fbCmp','Selecciona una opción.',false);
   cmpDone=true;
   const opts=document.querySelectorAll('.cmp-opt');
   if(cmpSel===cmpData[cmpIdx].c){ opts[cmpSel].classList.add('correct'); document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`); fb('fbCmp','¡Correcto! +5 XP',true); if(!xpTracker.cmp.has(cmpIdx)){ xpTracker.cmp.add(cmpIdx); pts(5); } sfx('ok'); }
   else{ opts[cmpSel].classList.add('wrong'); opts[cmpData[cmpIdx].c].classList.add('correct'); fb('fbCmp','Incorrecto. Revisa bien la respuesta.',false); sfx('no'); }
-  setTimeout(()=>{ cmpIdx++; document.getElementById('fbCmp').classList.remove('show'); showCmp(); },1600);
+  
 }
 
 // ===================== MINI QUIZ INLINE (SECCIÓN APRENDE) =====================
