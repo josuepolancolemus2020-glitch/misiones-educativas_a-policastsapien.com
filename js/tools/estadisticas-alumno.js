@@ -350,13 +350,23 @@ function estMisiones(d, num) {
 
   const filas = (cache.resultados || []).filter(esDeEsteAlumno);
   const evals = filas.filter(r => (r.tipo === 'evaluacion' || r.tipo === 'prueba_operativa') && typeof r.nota === 'number');
+  /* La conceptual y la operativa se guardan APARTE. Estaban fundidas en un
+     solo «mejor», y son dos pruebas distintas: una pregunta lo que sabe y la
+     otra lo que hace. Un alumno con 90 en definiciones y 40 haciendo cuentas
+     salía con un 90 y el maestro no veía el problema, que es justo el dato por
+     el que abre esta pantalla. */
   const porMision = {};
   evals.forEach(r => {
-    const m = porMision[r.mision] || (porMision[r.mision] = { mision: r.mision, intentos: 0, mejor: null, ult: '' });
+    const m = porMision[r.mision] || (porMision[r.mision] = {
+      mision: r.mision, intentos: 0, mejor: null, ult: '',
+      conceptual: null, operativa: null
+    });
     m.intentos++;
     const base = (typeof r.base === 'number' && r.base > 0) ? r.base : 100;
     const pct = Math.round((r.nota / base) * 100);
     if (m.mejor === null || pct > m.mejor) m.mejor = pct;
+    const k = r.tipo === 'prueba_operativa' ? 'operativa' : 'conceptual';
+    if (m[k] === null || pct > m[k]) m[k] = pct;
     const f = r.fecha || r.creado_en || '';
     if (f > m.ult) m.ult = f;
   });
@@ -365,10 +375,18 @@ function estMisiones(d, num) {
     const seg = String(m.url || '').split('/')[1] || '';
     try { return decodeURIComponent(seg).toLowerCase(); } catch (_) { return seg.toLowerCase(); }
   };
-  const subjDe = {};
-  if (typeof MISSIONS !== 'undefined') MISSIONS.forEach(m => { subjDe[folderDe(m)] = m.subject || ''; });
+  const subjDe = {}, tituloDe = {};
+  if (typeof MISSIONS !== 'undefined') MISSIONS.forEach(m => {
+    subjDe[folderDe(m)] = m.subject || '';
+    tituloDe[folderDe(m)] = m.title || '';
+  });
   const lista = Object.values(porMision).map(m => {
-    m.materia = subjDe[String(m.mision || '').toLowerCase()] || '';
+    const k = String(m.mision || '').toLowerCase();
+    m.materia = subjDe[k] || '';
+    /* Se enseña el TÍTULO, no el nombre de la carpeta: el maestro leía
+       «2y3ciclo-fracciones» en el informe que le da a la familia. Si la misión
+       ya no está en el catálogo se deja la carpeta, que es mejor que nada. */
+    m.titulo = tituloDe[k] || m.mision;
     return m;
   }).sort((a, b) => b.ult < a.ult ? -1 : 1);
   const dominadas = lista.filter(m => m.mejor != null && m.mejor >= 70).length;
@@ -1013,12 +1031,16 @@ function estMisionesHtml(x) {
     ? '<p class="pa-optional-hint">⚠️ Con este nº de lista llegaron varios nombres (' + m.nombres.map(adEsc).join(', ') + '): puede haber un número mal escrito.</p>' : '');
   return `
     <table class="ad-tabla">
-      <thead><tr><th>Misión</th><th>Materia</th><th>Intentos</th><th>Mejor nota</th></tr></thead>
+      <thead><tr><th>Misión</th><th>Materia</th><th>Intentos</th><th>Conceptual</th><th>Operativa</th></tr></thead>
       <tbody>
         ${m.filas.slice(0, 8).map(f => {
-          const cat = f.mejor != null ? adNotaCat(f.mejor) : null;
-          return '<tr><td>' + adEsc(f.mision) + '</td><td>' + adEsc(f.materia || '—') + '</td><td>' + f.intentos +
-            '</td><td>' + (f.mejor != null ? '<b style="color:' + cat.color + '">' + f.mejor + '</b>' : '—') + '</td></tr>';
+          const nota = v => {
+            if (v == null) return '—';
+            const c = adNotaCat(v);
+            return '<b style="color:' + c.color + '">' + v + '</b>';
+          };
+          return '<tr><td>' + adEsc(f.titulo || f.mision) + '</td><td>' + adEsc(f.materia || '—') + '</td><td>' + f.intentos +
+            '</td><td>' + nota(f.conceptual) + '</td><td>' + nota(f.operativa) + '</td></tr>';
         }).join('')}
       </tbody>
     </table>

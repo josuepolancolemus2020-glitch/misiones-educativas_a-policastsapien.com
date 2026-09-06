@@ -220,6 +220,15 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ====== PENSADOR CARD ====== */
+/* La nota que vino de la nube se distingue de la que escribió el maestro:
+   son dos cosas distintas y la boleta la firma él. Se le quita el color en
+   cuanto la corrige encima, que es cuando deja de ser de la nube. */
+.pa-inp-grade-cell.pa-de-nube {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  font-weight: 700;
+}
+
 /* ====== PIE LEGAL ======
    Discreto a propósito: no compite con nada y está donde se busca. */
 .pie-legal {

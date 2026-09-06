@@ -11,7 +11,7 @@
   <meta name="description" content="Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español, Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet y son gratis para el maestro hondureño.">
   <title>M.E.T.A.S. · Misiones Educativas Tecnológicas Asincrónicas y Sincrónicas</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/app.css?v=182">
+  <link rel="stylesheet" href="css/app.css?v=183">
   <!-- Font Awesome local (funciona sin internet); el CDN queda de respaldo una versión -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -765,6 +765,16 @@
           <button class="pa-add-btn" id="pa-add-student-btn">
             <i class="fa-solid fa-plus"></i> Agregar estudiante
           </button>
+
+          <!-- El último paso del circuito, que estaba cortado: la aplicación
+               califica al alumno, sube la nota a la nube… y el maestro corregía
+               los 43 exámenes otra vez y las tecleaba a mano. Va AQUÍ, pegado a
+               la cuadrícula y no arriba con los selectores, porque es aquí donde
+               está a punto de empezar a teclear. -->
+          <button class="pa-add-btn" id="pa-nube-btn" style="margin-top:6px;">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Traer las notas de la nube
+          </button>
+          <div id="pa-nube-msg" class="pa-optional-hint" style="margin-top:6px;"></div>
         </div>
 
         <!-- Pegar -->
@@ -1092,28 +1102,28 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js?v=182"></script>
-  <script src="js/html2canvas.min.js?v=182"></script>
-  <script src="js/data/misiones.js?v=182"></script>
-  <script src="js/data/dcnb-map.js?v=182"></script>
-  <script src="js/data/diagnosticos.js?v=182"></script>
-  <script src="js/data/proceres.js?v=182"></script>
-  <script src="js/data/paises.js?v=182"></script>
-  <script src="js/data/frases.js?v=182"></script>
-  <script src="js/data/consejos-padres.js?v=182"></script>
-  <script src="js/tools/gobierno-escolar.js?v=182"></script>
-  <script src="js/tools/plan-accion.js?v=182"></script>
-  <script src="js/tools/registros-admin.js?v=182"></script>
-  <script src="js/tools/convocatoria.js?v=182"></script>
-  <script src="js/tools/estadisticas-alumno.js?v=182"></script>
-  <script src="js/data/lectura-normas.js?v=182"></script>
-  <script src="js/data/lectura-textos.js?v=182"></script>
-  <script src="js/tools/lectura-fluidez.js?v=182"></script>
-  <script src="js/tools/parte-mensual.js?v=182"></script>
-  <script src="js/tools/collage-maker.js?v=182"></script>
-  <script src="js/tools/formacion-docente.js?v=182"></script>
-  <script src="js/data/campeonismo-bank.js?v=182"></script>
-  <script src="js/tools/campeonismo.js?v=182"></script>
+  <script src="js/metas-dialogos.js?v=183"></script>
+  <script src="js/html2canvas.min.js?v=183"></script>
+  <script src="js/data/misiones.js?v=183"></script>
+  <script src="js/data/dcnb-map.js?v=183"></script>
+  <script src="js/data/diagnosticos.js?v=183"></script>
+  <script src="js/data/proceres.js?v=183"></script>
+  <script src="js/data/paises.js?v=183"></script>
+  <script src="js/data/frases.js?v=183"></script>
+  <script src="js/data/consejos-padres.js?v=183"></script>
+  <script src="js/tools/gobierno-escolar.js?v=183"></script>
+  <script src="js/tools/plan-accion.js?v=183"></script>
+  <script src="js/tools/registros-admin.js?v=183"></script>
+  <script src="js/tools/convocatoria.js?v=183"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=183"></script>
+  <script src="js/data/lectura-normas.js?v=183"></script>
+  <script src="js/data/lectura-textos.js?v=183"></script>
+  <script src="js/tools/lectura-fluidez.js?v=183"></script>
+  <script src="js/tools/parte-mensual.js?v=183"></script>
+  <script src="js/tools/collage-maker.js?v=183"></script>
+  <script src="js/tools/formacion-docente.js?v=183"></script>
+  <script src="js/data/campeonismo-bank.js?v=183"></script>
+  <script src="js/tools/campeonismo.js?v=183"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1123,9 +1133,9 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=182"></script>
-  <script src="js/metas-docente-sync.js?v=182"></script>
-  <script src="js/tools/pwa-install.js?v=182"></script>
+  <script src="js/app.js?v=183"></script>
+  <script src="js/metas-docente-sync.js?v=183"></script>
+  <script src="js/tools/pwa-install.js?v=183"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

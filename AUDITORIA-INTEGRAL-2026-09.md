@@ -180,7 +180,7 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 **Diez en días:** ~~cerrar «Ver Pauta»~~ · **hecho el 7 de septiembre** · cerrar la escritura anónima a la nube · ~~una identidad de
 alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · que el maestro no pierda su trabajo · quitar el CDN del camino crítico ·
 subir la barra de secciones al principio · que la estrella se gane · que Fin de Grado no pierda
-las respuestas · traer a la boleta las notas ya calculadas · desbloquear el zoom y el teclado.
+las respuestas · ~~traer a la boleta las notas ya calculadas~~ · **hecho el 7 de septiembre** · desbloquear el zoom y el teclado.
 
 **Y una en semanas** —que la alumna pueda encontrar lo de su grado—, que es la primera pantalla
 donde cuatro de los cinco recorridos se atascaron.

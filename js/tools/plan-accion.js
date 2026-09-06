@@ -1277,6 +1277,121 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('goto-plan-btn')?.addEventListener('click', paAbrirPlan);
   document.getElementById('plan-back-btn')?.addEventListener('click', () => switchView('view-perfil'));
 
+  /* ── Traer las notas de la nube ─────────────────────────────────────
+     El circuito estaba cortado justo en el último paso: la aplicación
+     califica al alumno, la nota sube a la nube… y el maestro corregía los 43
+     exámenes otra vez y las tecleaba a mano. Esto es lo que convierte la
+     plataforma en algo que le ahorra trabajo, y es lo primero que pregunta
+     quien la va a comprar.
+
+     No hace falta nada nuevo del servidor: la consulta ya existe y es la que
+     usa Estadísticas (`estNubeRefrescar` / `estNubeCache`).
+
+     Tres reglas, y ninguna es de adorno:
+
+     1. **No se pisa lo escrito a mano.** El maestro pudo corregir a mano el
+        examen en papel de un alumno que no tiene teléfono. Lo que ya tiene
+        nota se deja como está y se dice cuántos se respetaron.
+     2. **Se trae la nota de ESA misión, ESA forma y ESE tipo.** Mezclar la
+        conceptual con la operativa —o dos formas distintas— sería meter en la
+        boleta una nota de otra prueba.
+     3. **Se dice de dónde salió cada nota y cuál se ignoró por venir con la
+        pauta abierta.** Una nota copiada de la clave no puede entrar en la
+        boleta sin avisar; es la misma regla que ya se aplicó en Rutas. */
+  document.getElementById('pa-nube-btn')?.addEventListener('click', async () => {
+    const msg = (t, color) => {
+      const el = document.getElementById('pa-nube-msg');
+      if (el) { el.innerHTML = t; el.style.color = color || ''; }
+    };
+    const id = parseInt(document.getElementById('pa-mision')?.value, 10) || null;
+    if (!id || typeof MISSIONS === 'undefined') {
+      return msg('Primero elige la <strong>misión</strong> de arriba: la nota que se trae es la de esa misión, no la de cualquiera.', '#b45309');
+    }
+    const m = MISSIONS.find(x => x.id === id);
+    if (!m) return msg('No encuentro esa misión en el catálogo.', '#b45309');
+    const carpeta = (function () {
+      const seg = String(m.url || '').split('/')[1] || '';
+      try { return decodeURIComponent(seg).toLowerCase(); } catch (_) { return seg.toLowerCase(); }
+    })();
+    const forma = document.getElementById('pa-forma')?.value || '';
+    const tipo  = document.getElementById('pa-tipo')?.value || 'conceptual';
+    const tipoNube = tipo === 'operativa' ? 'prueba_operativa' : 'evaluacion';
+
+    msg('⏳ Trayendo…');
+    if (typeof estNubeRefrescar === 'function' && navigator.onLine !== false) {
+      try { await estNubeRefrescar(); } catch (_) {}
+    }
+    const cache = (typeof estNubeCache === 'function') ? estNubeCache() : null;
+    if (!cache) {
+      return msg('No hay nada traído de la nube todavía. Entra una vez con internet desde 📈 Estadísticas y vuelve; después funciona sin señal.', '#b45309');
+    }
+
+    /* La pauta abierta antes, misma misión y mismo día: la misma regla que
+       usan el ⚠️ del registro y Rutas. Si las tres se separaran, el maestro
+       vería el aviso en un sitio y la nota limpia en otro. */
+    const dia = t => String(t || '').slice(0, 10);
+    const pautas = (cache.resultados || []).filter(r => r.tipo === 'pauta_vista' &&
+      String(r.mision || '').toLowerCase() === carpeta);
+    const conPauta = r => {
+      const t = r.fecha || r.creado_en || '';
+      return pautas.some(p => (p.dispositivo || '') === (r.dispositivo || '') &&
+        (p.fecha || p.creado_en || '') < t && dia(p.fecha || p.creado_en) === dia(t));
+    };
+
+    const porNum = {};
+    let ignoradasPauta = 0;
+    (cache.resultados || []).forEach(r => {
+      if (String(r.mision || '').toLowerCase() !== carpeta) return;
+      if (r.tipo !== tipoNube || typeof r.nota !== 'number') return;
+      if (forma && String(r.forma || '') !== String(forma)) return;
+      if (conPauta(r)) { ignoradasPauta++; return; }
+      const n = String(r.codigo_lista || '').match(/^\d+/);
+      if (!n) return;
+      const base = (typeof r.base === 'number' && r.base > 0) ? r.base : 100;
+      const pct = Math.round((r.nota / base) * 100);
+      const t = r.fecha || r.creado_en || '';
+      const ya = porNum[n[0]];
+      /* La ÚLTIMA, no la mejor: es la que el maestro pondría en la boleta si
+         hubiera corregido él, y «la mejor de varios intentos» ya se sabe que
+         premia repetir. */
+      if (!ya || t > ya.t) porNum[n[0]] = { nota: pct, t: t, alumno: r.alumno || '' };
+    });
+
+    let puestas = 0, respetadas = 0, sinDato = 0;
+    document.querySelectorAll('.pa-student-row').forEach(row => {
+      const num = String(parseInt(row.querySelector('.pa-inp-num').value, 10) || '');
+      const cel = row.querySelector('.pa-inp-grade-cell');
+      if (!num || !cel) return;
+      const dato = porNum[num];
+      if (!dato) { sinDato++; return; }
+      if (String(cel.value).trim() !== '') { respetadas++; return; }
+      cel.value = String(dato.nota);
+      /* Con una clase y no con un estilo en línea: así se ve de dónde salió
+         cada nota de un vistazo, y el maestro puede cambiarla encima sin que
+         se le quede el color mintiéndole. */
+      cel.classList.add('pa-de-nube');
+      cel.title = 'Traída de la nube · ' + (dato.alumno || 'sin nombre') + ' · ' + dia(dato.t);
+      cel.addEventListener('input', function quitar() {
+        cel.classList.remove('pa-de-nube');
+        cel.title = '';
+        cel.removeEventListener('input', quitar);
+      });
+      puestas++;
+    });
+
+    if (!puestas && !respetadas) {
+      return msg('No hay notas en la nube de <strong>' + paEsc(m.title) + '</strong>' +
+        (forma ? ' (forma ' + paEsc(forma) + ')' : '') + ' para estos números de lista.' +
+        (ignoradasPauta ? ' Se ignoraron ' + ignoradasPauta + ' por haberse calificado con la pauta abierta.' : ''), '#b45309');
+    }
+    msg('✅ <strong>' + puestas + '</strong> nota' + (puestas === 1 ? '' : 's') + ' traída' + (puestas === 1 ? '' : 's') +
+        ' de la nube (en azul) · <strong>la última</strong> de cada alumno, no la mejor.' +
+        (respetadas ? ' Se respetaron <strong>' + respetadas + '</strong> que ya tenías escritas.' : '') +
+        (sinDato ? ' <strong>' + sinDato + '</strong> sin práctica en la nube: esas se escriben a mano.' : '') +
+        (ignoradasPauta ? ' Se ignoraron <strong>' + ignoradasPauta + '</strong> por haberse calificado con la pauta abierta.' : ''),
+        '#0f766e');
+  });
+
   document.getElementById('pa-add-student-btn')?.addEventListener('click', () => {
     // Sugiere el número que FALTA (rellena huecos: 1,2,3,5 → propone el 4);
     // con la lista corrida propone el siguiente. Siempre editable.
