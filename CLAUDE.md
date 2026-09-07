@@ -1449,6 +1449,114 @@ todo el que deba algo lleve **su raya para escribir**. La nube no se
 toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
+## Normativa: se puede usar sin el dedo y con la vista cansada
+
+Dos cosas que se midieron el 7 de septiembre de 2026 y que dejaban gente
+fuera de la aplicación entera, no de una pantalla.
+
+### El zoom no se bloquea nunca
+
+`user-scalable=no` estaba en **21 páginas**: la portada, `mision.html`,
+`camp-vivo.html` y **los 18 juegos 3D**. Android Chrome lo respeta, así que
+un maestro présbita y un alumno con baja visión **no tenían salida
+ninguna** — la aplicación del maestro tiene rótulos de 11-12 px.
+
+La etiqueta buena, que es la que ya usaban las otras 162 páginas, es esta y
+**no hay dos formas de escribirla**:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
+
+Quitarlo no trae el zoom accidental al tocar rápido: `css/app.css` y
+`css/parque-3d.css` ya llevan `touch-action: manipulation` en botones y
+chips, que es lo que apaga el zoom del doble toque **sin apagar el pellizco**.
+Si alguna vez se añade una pantalla con controles que se tocan a ritmo, el
+`touch-action` va en el control, nunca en el `<meta>`.
+
+### Las actividades se hacen sin el dedo
+
+Medido abriendo las 74 misiones sección por sección: **2 314 elementos que
+responden al clic y a los que el teclado no llegaba**. Clasifica,
+Identifica, Empareja, el memorama, las analogías. Un alumno con discapacidad
+motora podía leer la teoría entera y **no hacer una sola actividad**.
+
+⚠️ **Y el patrón que ya estaba en 18 misiones NO servía.** `centena.js` pone
+`role="button"` y `tabindex="0"` en las fichas del banco, pero **un `<div>`
+así no responde a Enter ni a la barra espaciadora**: eso solo lo hace un
+`<button>` de verdad. Comprobado en el navegador: se enfoca, se ve
+enfocado, y al pulsar Enter no pasa nada; con un clic sí. Copiarlo a las
+otras 56 habría repartido **1 141 paradas de tabulador que no llevan a
+ninguna parte** — peor que no poder llegar, porque promete.
+
+Vive en **dos archivos compartidos** —`css/teclado-actividades.css` y
+`js/teclado-actividades.js`, los dos en `STATIC_ASSETS` de `sw.js`—, como el
+andamio de los juegos 3D, el aparato de videos y la barra de secciones.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **La tecla se atiende UNA vez, en el documento.** Las actividades rehacen
+   su HTML en cada pregunta; un oyente por elemento habría que volver a
+   poner cada vez y se olvidaría en alguna. Se mira quién tiene el foco y se
+   le da el clic.
+2. **La barra espaciadora se para** (`preventDefault`). Sin eso, además de
+   contestar **desliza la página una pantalla entera** —medido: 643 px— y el
+   alumno pierde de vista lo que estaba haciendo.
+3. ⚠️ **Se salta lo NATIVO, no lo enfocable.** Es la distinción que costó la
+   primera versión: las fichas de `centena.js` ya traen `tabindex="0"`, así
+   que «ya llega el teclado» las dejaba fuera —y son justo las que se
+   enfocan y no hacen nada—.
+4. ⚠️ **Una cuadrícula no se convierte en cuarenta paradas.** La sopa trae
+   **144 celdas**: tabular 144 veces para cruzar una actividad no es
+   accesibilidad, es una trampa. Por encima de 40 hermanos iguales se deja
+   fuera. El memorama (16) y el crucigrama (16) sí entran: esas son las
+   opciones del juego.
+5. **Lo que ya CONTIENE un control no se toca.** El velo que cierra el panel
+   de logros lleva dentro sus botones: hacerlo parada añade un salto que no
+   hace falta y duplica el del botón que ya está dentro.
+
+**Y el foco tiene que VERSE**, que es la otra mitad. Un foco invisible es el
+mismo callejón sin salida. Va un **doble anillo** —uno del color del fondo y
+otro del de la misión— porque el contorno de un solo color se pierde encima
+de una ficha oscura, que es lo que pasaba en `.wb-item`; es el mismo recurso
+que el chip activo de la barra de grupos. Las **8 misiones del maestro no
+tenían ninguna regla de foco**: ahí es el único anillo que hay.
+
+⚠️ **Al medir un elemento recién enfocado hay que esperar.** Las fichas
+llevan `transition: all .2s`, así que preguntar en el instante de enfocar
+devuelve el valor VIEJO. Eso dio dos falsas alarmas seguidas: una con el
+fondo de la barra de secciones y otra con este anillo.
+
+**Lo que NO se hizo, y por qué:**
+
+- **La sopa de letras sigue sin teclado.** No es un descuido de esta
+  normativa: se juega **arrastrando con eventos de puntero** sobre la
+  cuadrícula, no con `click` por celda, así que necesita su propio diseño
+  —tabulador que entra una vez, flechas dentro, Enter para marcar el
+  principio y el final—. Está dicho y sin hacer.
+- **El control de tamaño de letra para la aplicación del maestro.** Con el
+  zoom desbloqueado ya tiene una salida, y el control necesita su propia
+  pasada. Se probaron tres caminos y **dos se descartan medidos**: el
+  `+25 %` en cascada que usan las misiones **rompe la maquetación por 764 px**
+  (`app.css` tiene 594 tamaños en px y 30 en rem, así que la cascada no
+  reparte), y `zoom` sobre el contenedor **no desborda pero desalinea las
+  coordenadas del puntero**, lo que rompería el arrastre de la barra de
+  grupos, que tiene normativa propia. Queda por hacer, sabiendo eso.
+
+**Antes de publicar un cambio del teclado o del zoom:**
+
+```
+node _dev/servidor-estatico.js       (en otra terminal)
+node _dev/verifica-teclado.js
+```
+
+Lee del archivo **las 184 páginas** para el zoom y **las 74 misiones** para
+las dos piezas. Y en el navegador hace lo que de verdad importa: **clasifica
+una ficha sin tocar la pantalla** —tabulando de verdad, no llamando a
+`focus()`—, comprueba que Enter la selecciona, que la barra espaciadora la
+deja en su columna **y no desliza la página**, que el foco **se ve** (midiendo
+después de la transición), y que la sopa **no** se haya vuelto 144 paradas.
+
 ## Normativa: la barra de secciones va ARRIBA, y no se va
 
 La barra de pestañas de una misión (`<nav class="nav">`, con sus chips

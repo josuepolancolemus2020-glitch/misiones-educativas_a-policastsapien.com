@@ -1,0 +1,48 @@
+/* ============================================================
+   M.E.T.A.S · Las actividades se pueden hacer sin el dedo
+   ------------------------------------------------------------
+   Medido en las 74 misiones: había **2 314 elementos que responden
+   al clic y a los que el teclado no llegaba**. Clasifica, Identifica,
+   Empareja, el memorama y las analogías se arman con <div> y onclick.
+   Un alumno con discapacidad motora podía leer la teoría entera y no
+   hacer una sola actividad.
+
+   ⚠️ Y el patrón que ya estaba en 18 misiones (centena.js) NO servía:
+   pone role="button" y tabindex="0", pero un <div> así **no responde
+   a Enter ni a la barra espaciadora** —eso solo lo hace un <button>
+   de verdad—. Comprobado: se enfoca, se ve enfocado, y al pulsar
+   Enter no pasa nada. Eso es peor que no poder llegar: es una parada
+   de tabulador que promete algo y no lo cumple. Por eso el JS de al
+   lado añade la mitad que faltaba.
+
+   Aquí va la OTRA mitad que faltaba: **que se vea dónde está el
+   foco**. Un foco que no se ve es el mismo callejón sin salida, y en
+   la pantalla de un teléfono al sol el contorno de fábrica del
+   navegador no se distingue —la misma razón por la que el chip activo
+   de la barra de grupos va relleno y no solo con el borde—.
+   ============================================================ */
+
+/* Doble anillo: uno del color del fondo y otro del color de la misión.
+   Así se ve encima de una tarjeta clara, de una oscura y del color que
+   traiga cada actividad, sin tener que acertar con el contraste en 74
+   misiones. Es el mismo recurso que el chip activo de la barra. */
+.ta-tecla:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px var(--card, #fff), 0 0 0 6px var(--pri, #1565c0);
+  border-radius: 6px;
+  /* Que el anillo no se lo coma el borde del contenedor. */
+  position: relative;
+  z-index: 3;
+}
+
+/* El foco NO se pinta al tocar con el dedo —:focus-visible ya lo evita—,
+   pero algunos navegadores viejos no lo entienden y dejarían el anillo
+   puesto después de cada toque, que en una actividad de veinte fichas es
+   ruido. Por eso el respaldo se limita al foco por teclado. */
+.ta-tecla:focus:not(:focus-visible){ box-shadow: none; }
+
+/* En modo de alto contraste del sistema manda el color del sistema: el
+   nuestro se ignora y sin esto no quedaría anillo ninguno. */
+@media (forced-colors: active){
+  .ta-tecla:focus-visible{ outline: 3px solid Highlight; outline-offset: 2px; box-shadow: none; }
+}

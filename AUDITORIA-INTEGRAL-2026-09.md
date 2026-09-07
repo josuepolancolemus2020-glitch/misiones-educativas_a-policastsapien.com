@@ -185,7 +185,10 @@ al medirlas antes salió que el hallazgo se quedaba corto: estaba fuera de la pr
 otra vez al fondo · que la estrella se gane · ~~que Fin de Grado no pierda
 las respuestas~~ · **hecho el 7 de septiembre, en los cuatro grados y en las dos pruebas** — y al
 tocarlo salió algo peor que perderlas: con un banco de preguntas que cambia, devolvérselas se las
-pegaría encima de OTRAS preguntas, y esa nota acaba en el expediente · ~~traer a la boleta las notas ya calculadas~~ · **hecho el 7 de septiembre** · desbloquear el zoom y el teclado.
+pegaría encima de OTRAS preguntas, y esa nota acaba en el expediente · ~~traer a la boleta las notas ya calculadas~~ · **hecho el 7 de septiembre** · ~~desbloquear el zoom y el teclado~~ ·
+**hecho el 7 de septiembre** — el zoom estaba bloqueado en 21 páginas (incluidos los 18 juegos 3D)
+y el teclado no llegaba a 2 314 elementos en las 74 misiones, no en 48 de 66; y el patrón que este
+informe daba por bueno resultó no responder a Enter.
 
 **Y una en semanas** —que la alumna pueda encontrar lo de su grado—, que es la primera pantalla
 donde cuatro de los cinco recorridos se atascaron.
