@@ -766,6 +766,36 @@ Matemáticas se confunden en la Evidencia del maestro. Y el panel de
 resultado se sigue leyendo `Resultado: N/100 pts` **exactamente así**:
 `js/metas-registro.js` lo lee con esa forma para anotar la nota.
 
+### Lo contestado no se pierde, y tampoco se le pega a otra prueba
+
+Son cien preguntas de la conceptual más 19 cuentas de la operativa, en un
+teléfono prestado. Cambiar de materia regeneraba el examen entero y recargar
+lo regeneraba otra vez: el alumno tocaba la otra pestaña y volvía a la nada.
+Se guarda **la forma y lo contestado** (`SAVE_KEY + '_resp'` y `'_resp_op'`),
+nunca el HTML: la prueba es determinista, así que con la misma forma se vuelve
+a armar igual y las respuestas se ponen encima. Guardar el HTML habría metido
+medio megabyte por materia en el almacén del teléfono.
+
+Dos reglas, y la segunda cuesta más caro que la primera:
+
+1. **Con forma fija el contador NO avanza.** Rearmar su examen para
+   devolvérselo no puede gastarle la forma siguiente.
+2. ⚠️ **La forma no basta: se guarda una HUELLA del examen armado.** Las
+   preguntas salen del banco con `_pickF`, así que el día que entre una
+   pregunta nueva —y aquí se publica varias veces al día— la Forma 5 ya no
+   arma las mismas veinte. Devolverle entonces lo contestado le pegaría sus
+   respuestas encima de OTRAS preguntas, y esa nota sale como
+   `Resultado: N/100 pts` **al expediente del alumno**. Si la huella no
+   coincide no se devuelve nada, se le dice por qué y lo guardado se tira.
+   Si el resumen fallara devuelve `''`, que no coincide con nada: la duda se
+   salda perdiendo las respuestas, nunca calificándolas mal.
+
+⚠️ **Y los dos botones «Nueva …» llaman a `evalNueva()` / `evalOpNueva()`,
+que preguntan antes de borrar.** De ese `onclick` cuelga `_injectFormaSel` el
+**selector de Forma** —el que usa el maestro para imprimir la misma prueba
+para los 43—: al cambiar el botón hay que cambiar el ancla, o el selector
+desaparece **sin un solo error en la consola**.
+
 ### El impreso de esta misión NO se encoge a una hoja
 
 Es la **excepción pedida**, y está puesta a propósito: la prueba abarca
@@ -844,6 +874,7 @@ y la nota del docente van **en hojas sueltas al final**.
 ```
 node _dev/servidor-estatico.js              (en otra terminal)
 node _dev/verifica-fin-de-grado.js          → la misión, las dos pruebas, el impreso y el catálogo
+node _dev/verifica-fin-de-grado-respuestas.js → que no le borre las respuestas al alumno
 node _dev/test-determinismo-fin-de-grado-<grado>.js  → las 20 formas y sus cuentas
 node _dev/verifica-ficha-paginas.js ficha-fin-de-grado-<grado>  → una página, una hoja
 node _dev/verifica-nombres-propios.js       → mayúsculas de leyes, lugares y personas

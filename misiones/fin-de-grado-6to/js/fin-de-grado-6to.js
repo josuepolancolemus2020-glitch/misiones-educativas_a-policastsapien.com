@@ -1221,7 +1221,13 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
     const sel = wrap.querySelector('select');
     if (sel) sel.addEventListener('change', function () { onPick(parseInt(this.value, 10) || 1); try { saveProgress(); } catch (e) { } });
 }
-function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalMateria === 'esp' ? evalFormNumEsp : evalFormNumMat, function (v) { if (evalMateria === 'esp') evalFormNumEsp = v; else evalFormNumMat = v; }); }
+/* ⚠️ El ancla es 'evalNueva', que es lo que llama HOY el botón «Nueva
+   Evaluación». _injectFormaSel cuelga el selector de Forma AL LADO de ese
+   botón buscándolo por su onclick; el día que el botón pasó a preguntar
+   antes de borrar, dejar aquí 'genEval' habría dejado al maestro SIN el
+   selector —y sin él no puede mandar a imprimir la misma Forma para los 43—
+   sin un solo error en la consola. */
+function _evalFormaSelector() { _injectFormaSel('evalNueva', 'evalFormaSel', evalMateria === 'esp' ? evalFormNumEsp : evalFormNumMat, function (v) { if (evalMateria === 'esp') evalFormNumEsp = v; else evalFormNumMat = v; }); }
 
 function evalSwitchMode(mode) {
   sfx('click');
@@ -1237,24 +1243,31 @@ function evalSwitchMode(mode) {
     // acento de la tarjeta según la materia (azul mate, dorado español)
     const card = document.querySelector('#evalConceptWrap .card');
     if (card) { card.classList.toggle('ac-blue', mode === 'mat'); card.classList.toggle('ac-gold', mode === 'esp'); }
-    genEval();
+    /* Con la forma que ya tenía esta materia: antes se llamaba a genEval()
+       a secas y eso generaba un examen NUEVO, así que ir a la otra materia
+       y volver borraba lo contestado. */
+    const _g = evalRespLeer()[mode];
+    genEval(_g && _g.forma ? _g.forma : undefined);
   }
 }
 
-function genEval(){
-  sfx('click');
+function genEval(formaFija){
+  if(!formaFija) sfx('click');
   _evalFormaSelector();
   const m=evalMateria, M=MATERIA_EVAL[m];
   const _selF = document.getElementById('evalFormaSel');
-  if (_selF && parseInt(_selF.value, 10)) { const v=Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); if(m==='esp') evalFormNumEsp=v; else evalFormNumMat=v; }
-  const cf = (m==='esp'?evalFormNumEsp:evalFormNumMat);
+  if (!formaFija && _selF && parseInt(_selF.value, 10)) { const v=Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); if(m==='esp') evalFormNumEsp=v; else evalFormNumMat=v; }
+  /* Con forma fija se REARMA el mismo examen (para devolverle sus
+     respuestas) y el contador no avanza: avanzarlo aquí le daría otra
+     forma en el examen siguiente sin que él hubiera pedido ninguno. */
+  const cf = formaFija ? Math.min(EVAL_FORMAS, Math.max(1, formaFija)) : (m==='esp'?evalFormNumEsp:evalFormNumMat);
   const rng = _evalRng(M.semilla + cf); /* la Forma cf de ESTA materia siembra todo el azar */
   // Al registro de evidencia la prueba de Español viaja como forma 100+N (igual
   // que la Forma R viaja como 100+N): así el maestro distingue las dos materias
   // sin tocar la capa de registro ni el SQL.
   window._currentEvalForm = (m==='esp'?100+cf:cf);
   window._currentEvalMateria = m;
-  if(m==='esp') evalFormNumEsp=(evalFormNumEsp%EVAL_FORMAS)+1; else evalFormNumMat=(evalFormNumMat%EVAL_FORMAS)+1;
+  if(!formaFija){ if(m==='esp') evalFormNumEsp=(evalFormNumEsp%EVAL_FORMAS)+1; else evalFormNumMat=(evalFormNumMat%EVAL_FORMAS)+1; }
   const selWrap=document.getElementById('evalFormaSel'); if(selWrap&&selWrap.parentNode) selWrap.parentNode.remove();
   _evalFormaSelector(); saveProgress();
   document.getElementById('eval-screen-title').textContent=`📝 Prueba de ${M.nombre}: Forma ${cf}`;
@@ -1293,6 +1306,12 @@ function genEval(){
   out.appendChild(autoPanel);
   window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters},materia:m,forma:cf};
   window._evalGradeData={cp:cpItems,tf:tfItems,mc:mcItems,pr:{terms:prItems,shuffledDefs,letters},materia:m,forma:cf};
+  /* Se resume aquí y una sola vez: en cada tecla sería resumir las veinte
+     preguntas cuarenta veces por respuesta, y esto corre en un teléfono
+     barato justo mientras el alumno escribe. */
+  window._evalHuella = evalHuellaDe(window._evalGradeData);
+  evalRespVigilar();
+  evalRespPoner();
   fin('s-evaluacion');
 }
 // Normaliza texto del estudiante: minúsculas, sin tildes ni signos
@@ -1301,6 +1320,162 @@ function setEvalFeedback(id, ok, msg) {
   const el = document.getElementById(id); if (!el) return;
   el.innerHTML = Fr(msg); el.className = 'eval-item-feedback ' + (ok ? 'eval-ok' : 'eval-no');
 }
+/* ═══════════ QUE NO SE PIERDAN LAS RESPUESTAS ═══════════
+   Esta es la misión insignia —repasa el año entero y evalúa las dos
+   materias el mismo día— y perdía el trabajo del alumno de dos maneras: al
+   cambiar de materia, porque evalSwitchMode regeneraba el examen entero, y
+   al recargar la página. Cien preguntas contestadas a medias en un teléfono
+   prestado, borradas por tocar la otra pestaña. Eso no es un fallo pequeño:
+   es la definición de abandonar.
+
+   ⚠️ NO se guarda el HTML del examen. La prueba es DETERMINISTA —misma
+   forma, mismo azar, que es justo lo que comprueba
+   test-determinismo-fin-de-grado-*—, así que basta guardar la FORMA, una
+   huella del examen armado y lo contestado: se vuelve a armar igual y se le
+   devuelven sus respuestas encima. Guardar el HTML habría sido meter medio
+   megabyte por materia en el almacén de un teléfono prestado, y quedarse sin
+   sitio para lo demás. */
+const EVAL_RESP_KEY = SAVE_KEY + '_resp';
+
+/* ⚠️ La FORMA no basta para saber si las respuestas guardadas son de ESTE
+   examen. Las preguntas se sacan del banco con _pickF, así que el día que
+   entre una pregunta nueva —o se corrija una errata que cambie el orden—,
+   la Forma 5 ya no arma las mismas veinte preguntas. Devolverle entonces lo
+   contestado sería peor que perderlo: pondría sus respuestas encima de OTRAS
+   preguntas, y esa nota —la que sale como «Resultado: N/100 pts»— acaba en
+   la Evidencia del maestro y en el expediente del alumno.
+   Por eso se resume el examen entero: los enunciados, el orden de las
+   opciones (lo contestado es el número de la opción) y el barajado de las
+   definiciones (lo contestado es su letra). Si no coincide, no se devuelve
+   nada y se le dice por qué.
+   Si el resumen falla se devuelve '' —que no coincide con nada—, para que
+   la duda se salde perdiendo las respuestas y nunca calificándolas mal. */
+function evalHuellaDe(obj){
+  let t; try{ t=JSON.stringify(obj); }catch(e){ return ''; }
+  if(!t) return '';
+  let h=5381; for(let i=0;i<t.length;i++){ h=((h*33)^t.charCodeAt(i))>>>0; }
+  return t.length.toString(36)+'-'+h.toString(36);
+}
+
+function evalRespLeer(){
+  try{ const o=JSON.parse(localStorage.getItem(EVAL_RESP_KEY)); return (o&&typeof o==='object')?o:{}; }
+  catch(e){ return {}; }
+}
+function evalRespGuardar(){
+  const d=window._evalGradeData; if(!d) return;
+  const r={forma:d.forma, huella:window._evalHuella, cp:[], tf:[], mc:[], pr:[]};
+  d.cp.forEach((_,i)=>{ const el=document.querySelector('[data-ecp="'+i+'"]'); r.cp[i]=el?el.value:''; });
+  d.tf.forEach((_,i)=>{ const el=document.querySelector('#evalOut input[name="tf'+i+'"]:checked'); r.tf[i]=el?el.value:''; });
+  d.mc.forEach((_,i)=>{ const el=document.querySelector('#evalOut input[name="mc'+i+'"]:checked'); r.mc[i]=el?el.value:''; });
+  d.pr.terms.forEach((_,i)=>{ const el=document.querySelector('[data-epr="'+i+'"]'); r.pr[i]=el?el.value:''; });
+  const todo=evalRespLeer(); todo[d.materia]=r; todo._ult=d.materia;
+  try{ localStorage.setItem(EVAL_RESP_KEY, JSON.stringify(todo)); }catch(e){}
+}
+/* Se devuelven SOLO si son de ESTE examen, y quien lo dice es la huella.
+   Si no lo son se tiran, porque si no el aviso de «Nueva Evaluación» seguiría
+   avisando de unas respuestas que no están en la pantalla. */
+function evalRespPoner(){
+  const d=window._evalGradeData; if(!d) return false;
+  const todo=evalRespLeer(); const r=todo[d.materia];
+  if(!r) return false;
+  if(!r.huella || !window._evalHuella || r.huella!==window._evalHuella){
+    delete todo[d.materia];
+    try{ localStorage.setItem(EVAL_RESP_KEY, JSON.stringify(todo)); }catch(e){}
+    if(['cp','tf','mc','pr'].some(k=>(r[k]||[]).some(v=>v!=='' && v!=null))){
+      showToast('⚠️ La prueba cambió: hay que contestarla de nuevo');
+    }
+    return false;
+  }
+  let algo=false;
+  (r.cp||[]).forEach((v,i)=>{ const el=document.querySelector('[data-ecp="'+i+'"]'); if(el&&v){ el.value=v; algo=true; } });
+  (r.tf||[]).forEach((v,i)=>{ if(!v) return; const el=document.querySelector('#evalOut input[name="tf'+i+'"][value="'+v+'"]'); if(el){ el.checked=true; algo=true; } });
+  (r.mc||[]).forEach((v,i)=>{ if(v==='' || v==null) return; const el=document.querySelector('#evalOut input[name="mc'+i+'"][value="'+v+'"]'); if(el){ el.checked=true; algo=true; } });
+  (r.pr||[]).forEach((v,i)=>{ const el=document.querySelector('[data-epr="'+i+'"]'); if(el&&v){ el.value=v; algo=true; } });
+  return algo;
+}
+function evalHayRespuestas(){
+  const r=evalRespLeer()[evalMateria]; if(!r) return false;
+  return ['cp','tf','mc','pr'].some(k=>(r[k]||[]).some(v=>v!=='' && v!=null));
+}
+/* Un solo oyente para todo el examen: se engancha una vez y sobrevive a que
+   #evalOut se vuelva a pintar, porque escucha en el contenedor. */
+function evalRespVigilar(){
+  const out=document.getElementById('evalOut');
+  if(!out || out.dataset.vigilado) return;
+  out.dataset.vigilado='1';
+  ['input','change'].forEach(ev=>out.addEventListener(ev, evalRespGuardar));
+}
+/* «Nueva Evaluación» con respuestas puestas: se pregunta. Es el botón que
+   está al lado del de calificar y borra cien preguntas de un toque. */
+function evalNueva(){
+  if(evalHayRespuestas() && !confirm('Vas a generar una evaluación NUEVA de esta materia.\n\nSe pierden las respuestas que ya escribiste. ¿Seguro?')){
+    return;
+  }
+  const todo=evalRespLeer(); delete todo[evalMateria];
+  try{ localStorage.setItem(EVAL_RESP_KEY, JSON.stringify(todo)); }catch(e){}
+  genEval();
+}
+/* Al abrir la misión se vuelve a la materia que estaba y a SU forma, no a la
+   siguiente: el contador de formas avanza en cada examen nuevo, así que sin
+   esto la recarga le daba un examen distinto y lo contestado no encajaba. */
+function evalRestaurar(){
+  const todo=evalRespLeer();
+  const m=(todo._ult==='esp')?'esp':'mat';
+  if(m!==evalMateria){ evalSwitchMode(m); return; }
+  const g=todo[m];
+  genEval(g&&g.forma?g.forma:undefined);
+}
+
+
+/* ═══════════ Y LA OPERATIVA TAMPOCO PIERDE NADA ═══════════
+   Cambiar de materia no la borraba —evalSwitchMode solo esconde su tarjeta—
+   pero RECARGAR sí: genEvalOp() corre al abrir la misión y saca la forma
+   siguiente. Son 19 cuentas hechas a lápiz en la pantalla de un teléfono
+   prestado. Aquí no hace falta guardar qué campo es cuál: la prueba es
+   determinista, así que con la misma forma los campos salen en el mismo
+   orden, y de que sea la misma prueba responde la huella. */
+const EVAL_OP_RESP_KEY = SAVE_KEY + '_resp_op';
+
+function evalOpCampos(){ return [].slice.call(document.querySelectorAll('#evalOpOut input')); }
+function evalOpRespLeer(){
+  try{ const o=JSON.parse(localStorage.getItem(EVAL_OP_RESP_KEY)); return (o&&typeof o==='object')?o:null; }
+  catch(e){ return null; }
+}
+function evalOpRespGuardar(){
+  if(!window._evalOpData) return;
+  const r={forma:window._currentEvalOpForm, huella:window._evalOpHuella,
+           v:evalOpCampos().map(e=>e.value)};
+  try{ localStorage.setItem(EVAL_OP_RESP_KEY, JSON.stringify(r)); }catch(e){}
+}
+function evalOpRespPoner(){
+  const r=evalOpRespLeer(); if(!r || !window._evalOpData) return false;
+  if(!r.huella || !window._evalOpHuella || r.huella!==window._evalOpHuella){
+    try{ localStorage.removeItem(EVAL_OP_RESP_KEY); }catch(e){}
+    if((r.v||[]).some(v=>v!=='')) showToast('⚠️ La prueba operativa cambió: hay que contestarla de nuevo');
+    return false;
+  }
+  const campos=evalOpCampos(); let algo=false;
+  (r.v||[]).forEach((v,i)=>{ if(campos[i]&&v){ campos[i].value=v; algo=true; } });
+  return algo;
+}
+function evalOpRespVigilar(){
+  const out=document.getElementById('evalOpOut');
+  if(!out || out.dataset.vigilado) return;
+  out.dataset.vigilado='1';
+  ['input','change'].forEach(ev=>out.addEventListener(ev, evalOpRespGuardar));
+}
+function evalOpHayRespuestas(){ const r=evalOpRespLeer(); return !!r && (r.v||[]).some(v=>v!==''); }
+/* Igual que en la conceptual: el botón está al lado del de calificar. */
+function evalOpNueva(){
+  if(evalOpHayRespuestas() && !confirm('Vas a generar una prueba operativa NUEVA.\n\nSe pierden las respuestas que ya escribiste. ¿Seguro?')){
+    return;
+  }
+  try{ localStorage.removeItem(EVAL_OP_RESP_KEY); }catch(e){}
+  genEvalOp();
+}
+/* Al abrir la misión, SU forma y no la siguiente. */
+function evalOpRestaurar(){ const r=evalOpRespLeer(); genEvalOp(r&&r.forma?r.forma:undefined); }
+
 function gradeEval(){
   if(!window._evalGradeData){ showToast('⚠️ Genera una evaluación primero'); return; }
   sfx('click');
@@ -1484,12 +1659,17 @@ function genOpMeta(){
   return [{ text:`Sara lleva ${n1}%, ${n2}% y ${n3}% en los tres primeros parciales. ¿Qué nota necesita en el IV parcial para que su promedio del año sea ${meta}%?`, ansNum:falta, ansShow:`${falta}%: necesita que la suma llegue a ${4*meta} (${meta} × 4) y lleva ${n1+n2+n3}` }];
 }
 
-function genEvalOp() {
-  sfx('click');
-  _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
+function genEvalOp(formaFija) {
+  if(!formaFija) sfx('click');
+  _injectFormaSel('evalOpNueva', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
   const _sO = document.getElementById('evalOpFormaSel');
-  if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
-  const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra todo el azar de la prueba operativa */ evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
+  if (!formaFija && _sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
+  /* Con forma fija se rearma la misma prueba —para devolverle lo que ya
+     escribió— y el contador NO avanza: avanzarlo aquí le daría otra forma
+     en la siguiente sin que él hubiera pedido ninguna. */
+  const cf = formaFija ? Math.min(EVAL_FORMAS, Math.max(1, formaFija)) : evalOpFormNum;
+  window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra todo el azar de la prueba operativa */
+  if(!formaFija) evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('evalOpNueva', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
   document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa: Forma ${cf} · Repaso de Fin de Grado`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
@@ -1542,6 +1722,9 @@ function genEvalOp() {
   const autoPanel = document.createElement('div'); autoPanel.id = 'evalOpAutoResult'; autoPanel.className = 'eval-auto-result';
   autoPanel.innerHTML = '<strong>🧮 Prueba interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato para resolver en papel.';
   out.appendChild(autoPanel);
+  window._evalOpHuella = evalHuellaDe(window._evalOpData);
+  evalOpRespVigilar();
+  evalOpRespPoner();
   fin('s-evaluacion');
 }
 
@@ -1664,7 +1847,7 @@ async function captureDiploma() {
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
-  upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); genEval(); genEvalOp();
+  upFC(); buildQz(); buildClass(); showId(); showCmp(); buildSopa(); evalRestaurar(); evalOpRestaurar();
   buildPredice();
   buildMemo();
   buildExplica();
@@ -1684,4 +1867,4 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
-(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('evalOpNueva','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
