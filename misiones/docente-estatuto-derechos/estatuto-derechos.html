@@ -10,6 +10,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/estatuto-derechos.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
 </head>
 <body>
 
@@ -417,5 +421,6 @@
      «📽️ Presentación» (con modo libro). Se engancha sola en .cred-tools,
      .sec.active y go(). -->
 <script src="../../js/metas-presentacion.js"></script>
+<script src="../../js/barra-secciones.js"></script>
 </body>
 </html>

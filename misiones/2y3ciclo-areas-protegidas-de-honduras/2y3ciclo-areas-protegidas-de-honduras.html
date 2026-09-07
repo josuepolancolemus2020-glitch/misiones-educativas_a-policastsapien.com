@@ -15,6 +15,10 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/areas-protegidas.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -591,5 +595,6 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<script src="../../js/barra-secciones.js"></script>
 </body>
 </html>

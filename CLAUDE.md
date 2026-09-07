@@ -1449,6 +1449,113 @@ todo el que deba algo lleve **su raya para escribir**. La nube no se
 toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
+## Normativa: la barra de secciones va ARRIBA, y no se va
+
+La barra de pestañas de una misión (`<nav class="nav">`, con sus chips
+`.nav-t`) es el único mapa que tiene el alumno: dentro de cada sección
+solo hay una flecha hacia adelante, de una en una y en orden. No hay
+«atrás», no hay salto, y no hay forma de ver dónde está ni cuánto falta.
+
+Estaba **al final del documento y sin pegar**. Medido en las 74 misiones
+con un teléfono de 360×640, antes de tocar nada:
+
+| | |
+|---|---|
+| misiones donde la barra quedaba **fuera de la primera pantalla** | **74 de 74** |
+| dónde empezaba, mediana | **3 156 px = 4,9 pantallas** |
+| la peor | **6 180 px = 9,7 pantallas** |
+| pestañas | de 11 a 20, en hasta **7 filas** |
+| pegajosas | **0** |
+
+⚠️ **Y lo que de verdad costaba no era la distancia: la barra y el
+contenido se peleaban.** `go()` termina en `scrollTo({top:0})`, así que el
+alumno bajaba 2,2 pantallas hasta la barra, tocaba «Evaluación», la página
+saltaba arriba **y la barra pasaba a estar a 7,7 pantallas** —porque
+depende del alto de la sección que se esté viendo—. Usarla dos veces
+seguidas eran dos viajes completos, y la distancia cambiaba en cada uno.
+
+**La respuesta ya estaba en el repositorio:** las 8 misiones del maestro
+tenían la barra justo detrás del encabezado. Eran las 66 del alumno las que
+la llevaban al final, porque se copió el archivo 66 veces.
+
+Vive en **dos archivos compartidos** —como el andamio de los juegos 3D y el
+aparato de videos, y por la misma razón—: `css/barra-secciones.css` y
+`js/barra-secciones.js`, los dos en `STATIC_ASSETS` de `sw.js`. **La misión
+no lleva ni una línea de esto**: solo los engancha.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. **Pegajosa, no solo arriba.** En una sección de catorce pantallas, una
+   barra fija arriba del documento se pierde igual en cuanto el alumno
+   empieza a trabajar. Es lo contrario del mando del minuto de la lectura,
+   que va ABAJO porque ahí están los ojos del que acaba de leer: aquí no
+   hay un sitio donde estén los ojos, así que tiene que estar siempre.
+2. **UNA fila que se desliza de lado**, no siete. Y **hay que decir que se
+   desliza** (las sombras de los extremos): es la regla 8 de los juegos 3D
+   —«se podía deslizar desde siempre; lo que faltaba era decirlo»—.
+3. **El chip activo se trae a la vista solo**, moviendo `scrollLeft` a
+   mano. ⚠️ **Nunca con `scrollIntoView`**: ese arrastra también la página
+   y le movería de debajo del dedo lo que está leyendo.
+4. **No se toca `go()`.** Vive copiada en las 74 misiones. El JS compartido
+   escucha los cambios de clase de la barra con un `MutationObserver`, así
+   que sirve igual si el cambio vino de la pestaña, de la flecha del final
+   de una sección o de `abrirSeccionDelEnlace()` al volver de un juego 3D.
+5. **44 px de blanco de toque**, la misma regla de los juegos 3D: aquí
+   equivocarse de pestaña es perder el sitio en una misión de catorce
+   pantallas.
+6. ⚠️ **El `<link>` va DESPUÉS del CSS de la misión.** De ahí saca su color
+   (`--nav-bg`, `--pri`), y así sobrescribe el `position:static` de la
+   misión **por orden y sin un solo `!important`**. Si se colara antes, la
+   barra volvería al fondo sin dar un solo error. La sonda lo mira.
+7. ⚠️ **La barra tiene que ser OPACA, y ocho no lo eran.** Las 8 misiones
+   del maestro traen el `<nav>` sin fondo: quieto al final del documento no
+   se notaba, pegado arriba se vería el contenido pasar por debajo. El JS
+   les mide el de la página y lo pone en el marco, y **solo a esas**: las 66
+   del alumno traen el suyo en `--nav-bg` y su modo oscuro lo cambia solo.
+
+   ⚠️ Y se mide **una vez al montar, nunca al cambiar de tema**: `.nav`
+   lleva un `transition: background .3s`, así que leer el color en el
+   instante del cambio devuelve el VIEJO. Eso ya dio una falsa costura y
+   una corrección que no hacía falta.
+
+**Y no es solo deslizar:** la barra es `role="tablist"` y las secciones son
+`role="tabpanel"`. Estando al final, el tablist se anunciaba **después** de
+los veinte paneles: quien usa un lector de pantalla oía la misión entera
+antes de enterarse de que había pestañas.
+
+### Cómo se pone en una misión nueva
+
+Dos líneas, y ninguna toca el aparato:
+
+```html
+<link rel="stylesheet" href="../../css/barra-secciones.css">   <!-- tras el CSS de la misión -->
+<script src="../../js/barra-secciones.js"></script>            <!-- al final del body -->
+```
+
+**Lo que NO se hizo, y a propósito:** agrupar las 19 pestañas en cuatro
+(Aprende · Practica · Juega · Evalúa). Eso es cambiarle el nombre a lo que
+el maestro ya dice en voz alta en el aula —«abran Predice»— y es contenido
+misión por misión, no CSS. Con una fila que se desliza y el chip activo
+traído a la vista, navegar ya funciona sin tocar el contenido de ninguna.
+
+**Antes de publicar un cambio de la barra:**
+
+```
+node _dev/servidor-estatico.js            (en otra terminal)
+node _dev/verifica-barra-secciones.js
+```
+
+Lee del archivo **las 74** —abrirlas con Playwright cuesta siete minutos y
+una comprobación así no la corre nadie— para lo que se multiplica al copiar
+una misión: que estén las dos piezas y que el CSS vaya en su sitio. Y abre
+tres a propósito distintas (la del hallazgo, la más larga y una con videos
+montados) más la pantalla del maestro, para lo que solo se ve abriéndolas:
+que la barra se vea al abrir sin deslizar, que aguante con la sección a
+medio leer, que **cambiar de sección no obligue a volver a buscarla** —que
+era el bucle roto—, que se pueda hacer dos veces seguidas, que el chip
+activo se vea y **se pueda tocar** (el guardián de siempre: ¿hay algo
+encima?), y que vaya ANTES de las secciones en el documento.
+
 ## Normativa: los juegos 3D viven aparte, y no tocan la misión
 
 Hay **dieciocho** juegos en tres dimensiones —hoy: seis por misión y tres

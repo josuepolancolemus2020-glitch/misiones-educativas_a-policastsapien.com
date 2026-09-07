@@ -179,7 +179,10 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
 
 **Diez en días:** ~~cerrar «Ver Pauta»~~ · **hecho el 7 de septiembre** · ~~cerrar la escritura anónima a la nube~~ · **hecho el 7 de septiembre, SQL corrido y comprobado** · ~~una identidad de
 alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · que el maestro no pierda su trabajo · quitar el CDN del camino crítico ·
-subir la barra de secciones al principio · que la estrella se gane · ~~que Fin de Grado no pierda
+~~subir la barra de secciones al principio~~ · **hecho el 7 de septiembre, en las 74 misiones** — y
+al medirlas antes salió que el hallazgo se quedaba corto: estaba fuera de la primera pantalla en
+74 de 74, y lo que costaba no era la distancia sino que `go()` salta al principio y deja la barra
+otra vez al fondo · que la estrella se gane · ~~que Fin de Grado no pierda
 las respuestas~~ · **hecho el 7 de septiembre, en los cuatro grados y en las dos pruebas** — y al
 tocarlo salió algo peor que perderlas: con un banco de preguntas que cambia, devolvérselas se las
 pegaría encima de OTRAS preguntas, y esa nota acaba en el expediente · ~~traer a la boleta las notas ya calculadas~~ · **hecho el 7 de septiembre** · desbloquear el zoom y el teclado.

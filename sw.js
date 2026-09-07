@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v185';
+const CACHE_NAME = 'meta-app-v186';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -82,6 +82,12 @@ const STATIC_ASSETS = [
   './css/videos-mision.css',
   './js/data/videos-misiones.js',
   './js/metas-videos.js',
+  // La barra de secciones de las misiones, arriba y pegajosa. Sin estos
+  // dos el <nav> vuelve al final del documento y sin position:sticky: en
+  // una sección de catorce pantallas eso es el alumno sin forma de
+  // cambiar de sección, justamente en el aula sin señal.
+  './js/barra-secciones.js',
+  './css/barra-secciones.css',
   './padres.html',
   './salida.html',
   './buzon.html',

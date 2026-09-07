@@ -19,6 +19,10 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="css/circulos-poligonos.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
   <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
        se tiñe del --pri y del --sec que la misión acaba de declarar. -->
   <link rel="stylesheet" href="../../css/videos-mision.css">
@@ -646,5 +650,6 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<script src="../../js/barra-secciones.js"></script>
 </body>
 </html>
