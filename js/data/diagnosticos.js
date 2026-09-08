@@ -78,6 +78,14 @@ const DIAGNOSTICOS = {
     { etapa: 6, q: 'En el ciclo de diseño, ¿qué se hace justo después de probar el prototipo?', o: ['Se olvida el proyecto', 'Se mejora con lo aprendido en la prueba', 'Se empieza otro problema distinto', 'Se vende el robot'], a: 1 },
     { etapa: 6, q: 'Antes de diseñar un robot, lo primero es…', o: ['Comprar los materiales', 'Identificar bien el problema y a quién afecta', 'Escribir el programa', 'Pintarlo bonito'], a: 1 },
   ],
+  /* Ruta de la Patria (Educación Cívica): las preguntas salen del evalMCBank
+     de la misión, de lo más básico a lo que cuesta más. */
+  patria: [
+    { etapa: 1, q: '¿Cuáles son los tres símbolos patrios mayores de Honduras?', o: ['El pino, la orquídea y la guara roja', 'La Bandera, el Escudo y el Himno Nacional', 'El mapa, la moneda y la lengua', 'El venado, el volcán y el arco iris'], a: 1 },
+    { etapa: 1, q: '¿Cuántas estrellas tiene la Bandera Nacional y qué representan?', o: ['Tres, los poderes del Estado', 'Siete, las estrofas del Himno', 'Cinco, las naciones de la antigua Federación de Centroamérica', 'Cinco, los mares que rodean al país'], a: 2 },
+    { etapa: 1, q: '¿Quién escribió la letra del Himno Nacional de Honduras?', o: ['Carlos Hartling', 'Ramón Rosa', 'José Trinidad Reyes', 'Augusto C. Coello'], a: 3 },
+    { etapa: 1, q: '¿Quién es el Héroe Nacional que resistió la conquista española?', o: ['Lempira', 'Francisco Morazán', 'José Cecilio del Valle', 'José Trinidad Cabañas'], a: 0 },
+  ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [
     { etapa: 1, q: 'Una caja trae 7 lápices. ¿Cuántos lápices hay en 36 cajas?', o: ['43', '252', '245', '2,52'], a: 1 },

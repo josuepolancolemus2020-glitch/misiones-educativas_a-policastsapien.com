@@ -29,6 +29,7 @@ const CAMP_SUBJECTS = [
   { key: 'robótica',     label: 'Robótica',     short: 'ROB', icon: '🤖', color: '#4f46e5', bg: '#e0e7ff', cls: 'tec-rob' },
   { key: 'inglés',       label: 'Inglés',       short: 'ING', icon: '🗣️', color: '#be185d', bg: '#fce7f3', cls: 'ing'     },
   { key: 'repaso',       label: 'Repaso General', short: 'REP', icon: '🎓', color: '#7c3aed', bg: '#ede9fe', cls: 'rep'   },
+  { key: 'cívica',       label: 'E. Cívica',    short: 'CIV', icon: '🇭🇳', color: '#3f6212', bg: '#eaf3d4', cls: 'civ'     },
 ];
 
 /* ── Ruleta: 2 gajos por materia, generada desde CAMP_SUBJECTS ──

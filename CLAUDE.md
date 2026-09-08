@@ -1449,6 +1449,103 @@ todo el que deba algo lleve **su raya para escribir**. La nube no se
 toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
+## Normativa: estrenar una materia se hace en NUEVE archivos
+
+Estrenar una materia no es añadir una misión con un `subject` nuevo: es una
+puerta en la portada, una barra en el progreso, un gajo en la ruleta del
+Campeonísimo, una fila en el banco de evaluaciones y un nombre en la boleta.
+Si falta uno, no da error: da una materia a medias, y el maestro se entera
+buscando el examen que no aparece.
+
+**E. Cívica** (`cívica`, clase `civ`, verde del pino `#3f6212`) se estrenó el 8
+de septiembre de 2026 con la misión **Aspectos Cívicos de Honduras** (id 67,
+Ruta de la Patria 🇭🇳, etapa 1). Lo que hubo que tocar, y en ese orden:
+
+| archivo | qué se añade |
+|---|---|
+| `js/data/misiones.js` | la ruta en `RUTAS` y la misión con su `subject`, `color`, `ruta` y `etapa` |
+| `js/app.js` | la etiqueta en `SUBJECT_LABELS`, la barra en `subjects` y la ruta en `RUTAS_ORDEN` |
+| `css/app.css` | los tokens `--civ/-bg/-border` y **diez** clases: `.subj-chip`, `.pill` (con su `--pill-rgb`), `.mc-icon`, `.mc-subj`, `.ruta-pct`, `.ruta-bar-fill`, `.camp-ms-bh-`, `.camp-sa-`, `.camp-sp-` y `.camp-q-header-` |
+| `index.html` | el chip de materia y la píldora del filtro |
+| `js/tools/campeonismo.js` | la fila de `CAMP_SUBJECTS` (la ruleta se genera sola de ahí) |
+| `evaluaciones.html` | la fila de `ORDEN`, o sus exámenes no tienen dónde imprimirse |
+| `js/tools/registros-admin.js` | el nombre largo para la boleta |
+| `js/tools/plan-accion.js` | la fila de `PA_HIST_MATERIAS`: sin ella la materia sale en el selector como «Cívica» a secas, sin emoji ni nombre largo |
+| `js/data/diagnosticos.js` | las preguntas de la ruta, sacadas del `evalMCBank` |
+
+⚠️ **El color no se elige a ojo: se mide.** Se calcula la distancia de color
+contra las materias que ya existen (app y Campeonísimo, que NO usan los mismos
+códigos) y se toma una familia cromática libre. El verde oliva salió porque el
+amarillo-verdoso era el único hueco: el verde de C. Naturales es un teal
+(`#0d9488`) y a la vista no se confunden. Dos azules o dos rojos rompen la
+regla de siempre —el maestro reconoce el examen por el color sin leerlo— aunque
+los códigos sean distintos. El script de la medición está contado en
+`PLANTILLA-MISIONES.md`.
+
+**Los conteos NO se escriben.** El `<em>1 misión</em>` del chip y el
+`<span class="n">1 ficha</span>` del índice de fichas son marcadores: el
+JavaScript los sobrescribe contando. Se dejan puestos para que la página no
+parpadee vacía, pero cambiarlos a mano no sirve de nada.
+
+**Lo comprueba `node _dev/test-campeonismo-tec.js`** (está en `npm test`): mira
+que `CAMP_SUBJECTS` y `misiones.js` digan las mismas materias y que estén las
+tres clases CSS de cada una. Es la que caza la materia a medias.
+
+### La materia de E. Cívica no es Ciencias Sociales
+
+Se pensó meterla ahí y se descartó: el maestro que busca «el repaso de los
+símbolos patrios» en septiembre no lo busca dentro de Sociales, igual que no
+busca la prueba de fin de grado dentro de Matemáticas. Es la misma razón por la
+que Repaso General estrenó materia propia.
+
+Y va en su propia ruta, la **Ruta de la Patria**, no en la Ruta del Tiempo: el
+civismo no se estudia como pasado. Los símbolos, el Himno y las fechas cívicas
+se usan HOY, en el acto del lunes y en el desfile del 15 de septiembre.
+
+### El contenido cívico se verifica, y sus fuentes están anotadas
+
+Los datos de esta misión los pregunta el **Cuestionario Cívico** que se vende en
+las papelerías y que muchos centros toman como examen de septiembre. Un dato
+malo aquí no falla una pantalla: le enseña al alumno la respuesta equivocada
+para el examen que va a hacer la semana siguiente.
+
+De dónde salió cada cosa:
+
+- **El currículo**, del repositorio: `_dev/dcnb/dcneb-basica-i-ciclo-43-ciencias-sociales-primer-grado.md`
+  («Identifican los símbolos patrios», «Explican como los símbolos patrios
+  cuentan la historia de nuestra nación»), la expectativa de II ciclo
+  «Distinguen y respetan los símbolos patrios», y la lista de héroes que el
+  DCNB nombra por su nombre en `dcnb-prebasica-2015-07-comunicacion-3de7.md`:
+  Francisco Morazán, José Cecilio del Valle, José Trinidad Cabañas, José
+  Trinidad Reyes y Dionisio de Herrera, con sus fechas de nacimiento.
+- **Los símbolos y sus fechas**, de `js/data/paises.js` (que ya los traía) más
+  verificación cruzada.
+
+⚠️ **Lo que NO se escribió, y a propósito: los números de decreto donde las
+fuentes se contradicen.** El de la flor nacional aparece como No. 17 y como
+No. 96 según quién lo cuente; el del árbol, con dos fechas (1927 y 1928). Se
+escribe el AÑO, que es lo que el cuestionario pregunta y lo que nadie discute,
+y se deja fuera el número. Es la misma lección de
+`INVESTIGACION-ESTATUTO-DOCENTE.md`: **buscar no es leer**, y un número de
+decreto sacado de un extracto de buscador no acredita nada. El día que entre a
+`_dev/leyes/` el PDF de La Gaceta con esos decretos, se ponen.
+
+**Antes de publicar un cambio de esta misión o de la materia:**
+
+```
+node _dev/verifica-mision-nueva.js misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html
+node _dev/verifica-nombres-propios.js
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html
+node _dev/verifica-ficha-paginas.js ficha-aspectos-civicos
+```
+
+⚠️ **`verifica-nombres-propios.js` NO puede pedir «Lempira» con mayúscula a
+secas.** En minúscula es la MONEDA («1 lempira con 25 centavos»), que es como
+sale en las misiones de decimales y en las de fin de grado: pedirlo daba seis
+fallos con el texto perfectamente escrito. Se comprueba «cacique Lempira», que
+es inequívoco.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

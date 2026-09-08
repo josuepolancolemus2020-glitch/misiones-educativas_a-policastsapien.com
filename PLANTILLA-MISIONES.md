@@ -49,6 +49,7 @@ Reglas de ahorro y calidad:
    | **Ciencias Sociales** | `#c0392b` (rojo) | `#fbe9e7` |
    | **Robótica y Programación** | `#0e7490` (cian) | `#ecfeff` |
    | **Inglés** | `#be185d` (rosa) | `#fff1f5` |
+   | **E. Cívica** | `#3f6212` (verde del pino) | `#f5f9e8` |
 
    Reglas duras:
    - Aplica a TODOS los documentos imprimibles: `printEval` (evaluación
@@ -63,6 +64,12 @@ Reglas de ahorro y calidad:
      mate, tampoco al imprimir.
    - Al crear una misión nueva, copiar la paleta EXACTA de la tabla según la
      materia declarada en el encabezado de la evaluación.
+   - **Una materia nueva no elige su color a ojo**: se mide la distancia de
+     color contra las que ya existen y se toma una familia libre. E. Cívica
+     salió verde oliva (el del pino, árbol nacional) porque el amarillo-verdoso
+     era el único hueco: el verde de C. Naturales es un teal (`#0d9488`) y a la
+     vista no se confunden. Dos azules o dos rojos rompen la regla de arriba
+     aunque los códigos sean distintos.
 
 1-bis. **⚠️ NORMATIVA DE REDACCIÓN: SIN GUIONES LARGOS (obligatoria, jul 2026)**:
    ningún texto del proyecto lleva guion largo (`—`). Tampoco el guion medio como

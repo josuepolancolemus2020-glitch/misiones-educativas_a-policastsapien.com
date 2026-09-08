@@ -102,7 +102,13 @@ bancos.forEach(([nombre, clave]) => {
 
 // ── 6. Bancos con el tamaño que manda la plantilla ───────────────────────
 console.log('\n📚 Tamaño de los bancos');
-[['fcData', 12], ['qzData', 9], ['evalTFBank', 15], ['evalMCBank', 15], ['evalCPBank', 15], ['evalPRBank', 15], ['explicaData', 5]]
+/* «Explica con tus palabras» la montan 20 de las 74 misiones, así que su banco
+   se le pide SOLO a quien monta la sección, y se sabe quién es mirando el HTML.
+   Exigírselo a todas pintaba de rojo a las otras 54 sin que nada estuviera
+   roto, y una sonda que se equivoca enseña a no mirarla. */
+const tamanos = [['fcData', 12], ['qzData', 9], ['evalTFBank', 15], ['evalMCBank', 15], ['evalCPBank', 15], ['evalPRBank', 15]];
+if (html.includes('id="s-explica"')) tamanos.push(['explicaData', 5]);
+tamanos
   .forEach(([nombre, min]) => {
     const m = jsSrc.match(new RegExp('const ' + nombre + '\\s*=\\s*(\\[[\\s\\S]*?\\n\\]);'));
     if (!m) { mal('falta ' + nombre); return; }
@@ -131,8 +137,13 @@ console.log('\n🔌 Enganches de la plataforma');
   if (!html.includes(s)) mal('falta <script src="' + s + '"> (' + q + ')');
   else bien(q);
 });
-if (!/Resultado: \$\{total\}\/100 pts/.test(jsSrc)) mal('el panel de resultado cambió de formato y metas-registro.js no podrá leer la nota');
-else bien('el panel dice «Resultado: N/100 pts», que es lo que lee el registro');
+/* Los DOS formatos que metas-registro.js sabe leer, con su misma expresión:
+   «Resultado: 85/100 pts» y «Resultado automático: 85/100 puntos». La sonda
+   pedía solo el primero y daba por rota la lectura de la nota en las misiones
+   que usan el segundo, que la leen perfectamente. Si esto cambia, cambia en
+   los dos sitios: aquí y en notaDePanel() de js/metas-registro.js. */
+if (!/Resultado[^:]*:\s*\$\{total\}\s*\/\s*100/.test(jsSrc)) mal('el panel de resultado cambió de formato y metas-registro.js no podrá leer la nota');
+else bien('el panel dice «Resultado … N/100», que es lo que lee el registro');
 
 console.log(`\n${fallos ? '❌' : '✅'} ${fallos} fallo(s), ${avisos} aviso(s)\n`);
 process.exit(fallos ? 1 : 0);

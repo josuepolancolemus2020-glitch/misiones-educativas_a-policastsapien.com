@@ -54,8 +54,14 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
   await page.waitForTimeout(300);
   const fc = await page.textContent('#fcW');
   if (!fc || !fc.trim()) mal('la primera flashcard salió vacía'); else bien('flashcard 1: ' + fc.trim().slice(0, 40));
-  const memo = await page.evaluate(() => document.querySelectorAll('#memoGrid .memo-card, #memoGrid button').length);
-  if (memo < 12) mal('el memorama pintó ' + memo + ' cartas (se esperan 12)'); else bien('memorama con ' + memo + ' cartas');
+  /* El memorama lo trae la generación de la misión id 28, no todas. Se le pide
+     solo a quien lo monta, y se sabe quién es mirando si existe la rejilla:
+     exigírselo a las demás daba un rojo con la misión perfecta. */
+  const hayMemo = await page.evaluate(() => !!document.getElementById('memoGrid'));
+  if (hayMemo) {
+    const memo = await page.evaluate(() => document.querySelectorAll('#memoGrid .memo-card, #memoGrid button').length);
+    if (memo < 12) mal('el memorama pintó ' + memo + ' cartas (se esperan 12)'); else bien('memorama con ' + memo + ' cartas');
+  } else bien('esta misión no monta memorama');
   await page.evaluate(() => go('s-quiz'));
   await page.waitForTimeout(300);
   const qz = await page.textContent('#qzQ');
@@ -77,20 +83,30 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
   await page.evaluate(() => gradeEval());
   await page.waitForTimeout(300);
   const nota = await page.textContent('#evalAutoResult');
-  if (!/Resultado: \d+\/100 pts/.test(nota || '')) mal('el panel no dice «Resultado: N/100 pts»: ' + (nota || '').slice(0, 80));
+  /* Los dos formatos que sabe leer notaDePanel() de js/metas-registro.js:
+     «Resultado: 85/100 pts» y «Resultado automático: 85/100 puntos». */
+  if (!/Resultado[^:]*:\s*\d+\s*\/\s*100/.test(nota || '')) mal('el panel no anuncia «Resultado … N/100»: ' + (nota || '').slice(0, 80));
   else bien('califica y anuncia: ' + nota.trim().split('\n')[0].slice(0, 50));
 
   console.log('\n📐 Prueba operativa');
-  await page.evaluate(() => evalSwitchMode('op'));
-  await page.evaluate(() => genEvalOp());
-  await page.waitForTimeout(500);
-  const opItems = await page.evaluate(() => document.querySelectorAll('#evalOpOut .eval-item').length);
-  if (opItems < 15) mal('la prueba operativa generó ' + opItems + ' ítems'); else bien(opItems + ' ítems generados');
-  await page.evaluate(() => gradeEvalOp());
-  await page.waitForTimeout(300);
-  const notaOp = await page.textContent('#evalOpAutoResult');
-  if (!/Resultado: \d+\/100 pts/.test(notaOp || '')) mal('el panel operativo no dice «Resultado: N/100 pts»');
-  else bien('operativa calificada');
+  /* Igual que el memorama: hay misiones sin prueba operativa (las de contenido
+     que solo evalúan conceptos). Antes la sonda las REVENTABA con un
+     «genEvalOp is not defined» y no llegaba a comprobar nada de lo que venía
+     después, que es peor que fallar: no se comprueba ni lo que sí está. */
+  const hayOp = await page.evaluate(() => typeof genEvalOp === 'function');
+  if (!hayOp) bien('esta misión no trae prueba operativa');
+  else {
+    await page.evaluate(() => { if (typeof evalSwitchMode === 'function') evalSwitchMode('op'); });
+    await page.evaluate(() => genEvalOp());
+    await page.waitForTimeout(500);
+    const opItems = await page.evaluate(() => document.querySelectorAll('#evalOpOut .eval-item').length);
+    if (opItems < 15) mal('la prueba operativa generó ' + opItems + ' ítems'); else bien(opItems + ' ítems generados');
+    await page.evaluate(() => gradeEvalOp());
+    await page.waitForTimeout(300);
+    const notaOp = await page.textContent('#evalOpAutoResult');
+    if (!/Resultado[^:]*:\s*\d+\s*\/\s*100/.test(notaOp || '')) mal('el panel operativo no anuncia «Resultado … N/100»');
+    else bien('operativa calificada');
+  }
 
   console.log('\n🔁 Determinismo de las formas');
   const f1 = await page.evaluate(() => { evalFormNum = 7; genEval(); return document.getElementById('evalOut').textContent; });
@@ -111,6 +127,13 @@ const BASE = process.env.METAS_BASE || 'http://localhost:8080';
      aquí se avisa en vez de fallar: si algún día se ajusta el motor, este
      aviso se convierte en fallo. */
   for (const [fn, etiqueta, duro] of [['printEval', 'conceptual', true], ['printEvalOp', 'operativa', false]]) {
+    /* Misma razón que arriba: la misión que no trae prueba operativa tampoco
+       trae su printEvalOp, y pedírselo reventaba la sonda entera justo antes
+       de las últimas comprobaciones. */
+    if (!await page.evaluate((f) => typeof window[f] === 'function', fn)) {
+      bien('esta misión no imprime la ' + etiqueta);
+      continue;
+    }
     const doc = await page.evaluate((f) => {
       let capturado = '';
       const real = window.open;

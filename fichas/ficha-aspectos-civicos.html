@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Aspectos Cívicos de Honduras</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: EDUCACIÓN CÍVICA = VERDE DEL PINO (#3f6212)
+     · Colores semánticos: azul=Bandera, dorado=próceres, gris=fechas cívicas
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #3f6212; --soc-osc: #365314; --soc-claro: #f5f9e8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #dbe7c4;
+    --may: #0d6ea8; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f2f6ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fbf1; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; text-align: center; background: #fcfdf8; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (mayas / aztecas / incas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #dceefa; } .celula .cm b { color: var(--may); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 6px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #dceefa; border: 1px solid #a9d3ee; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--may); } .tri .torg b { color: var(--oro); }
+
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--soc-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f7fbef; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(63,98,18,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Aspectos Cívicos de Honduras</div>
+        <div class="f-meta"><b>Asignatura:</b> Educación Cívica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los símbolos patrios mayores y menores, el Himno Nacional, los próceres y héroes del país y las fechas cívicas del Mes de la Patria</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-aspectos-civicos.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Distinguir los <strong>símbolos patrios mayores</strong> de los <strong>menores</strong>.</li>
+      <li>Describir la <strong>Bandera Nacional</strong> y explicar qué significa cada parte.</li>
+      <li>Reconocer los elementos del <strong>Escudo Nacional</strong> y lo que representan.</li>
+      <li>Conocer a los <strong>autores del Himno Nacional</strong> y cómo se canta en los actos.</li>
+      <li>Identificar a los <strong>próceres y héroes</strong> de Honduras y lo que hizo cada uno.</li>
+      <li>Ubicar las <strong>fechas cívicas</strong> del Mes de la Patria y mostrar respeto a los símbolos.</li>
+    </ol>
+
+    <h2>🇭🇳 1. ¿Qué son los símbolos patrios?</h2>
+
+    <p>Los <strong>símbolos patrios</strong> son los signos con los que Honduras se reconoce y se presenta ante el
+    mundo. No son adornos: cada uno cuenta algo de la historia, la tierra y la gente del país. Se agrupan en
+    <strong>mayores</strong> y <strong>menores</strong>.</p>
+
+    <div class="caja truco">💡 <b>Truco:</b> los <strong>mayores</strong> son <strong>tres</strong> y representan al
+    Estado: la Bandera, el Escudo y el Himno. Los <strong>menores</strong> representan la naturaleza y el territorio.</div>
+
+    <h3>🇭🇳🛡️🎵 Mini-demostración: los tres símbolos mayores</h3>
+
+    <div class="ilus">
+      <div class="ilus-t">Los tres que representan a Honduras ante el mundo</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🇭🇳</span><b>La Bandera</b>Tres franjas y cinco estrellas. Decreto de 1866.</div>
+        <div class="cc"><span class="c-emoji">🛡️</span><b>El Escudo</b>Triángulo, volcán y dos torres. Decreto de 1825.</div>
+        <div class="cn"><span class="c-emoji">🎵</span><b>El Himno</b>Un coro y siete estrofas. Oficial desde 1915.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ Los <strong>menores</strong> son el pino, la orquídea, la guara roja, el venado cola blanca y el mapa.</p>
+    </div>
+
+    <h2 style="margin-top:0;">🇭🇳 2. La Bandera Nacional</h2>
+
+    <p>Tiene <strong>tres franjas horizontales</strong> del mismo ancho: azul turquesa arriba, <strong>blanca en
+    medio</strong> y azul turquesa abajo. En el centro de la franja blanca van <strong>cinco estrellas</strong> azul
+    turquesa. Nació por decreto del <strong>16 de febrero de 1866</strong>, y su diseño viene de la bandera de las
+    antiguas Provincias Unidas del Centro de América.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th>Parte</th><th>¿Qué representa?</th></tr>
+      <tr><td class="k">🌊 El azul turquesa</td><td>Los dos mares que bañan al país (el Caribe y el Pacífico) y el cielo de Honduras</td></tr>
+      <tr><td class="k">🕊️ El blanco del centro</td><td>La paz y la pureza del pueblo hondureño</td></tr>
+      <tr><td class="k">⭐ Las cinco estrellas</td><td>Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica: las cinco naciones de la antigua Federación de Centroamérica</td></tr>
+    </table>
+
+    <div class="caja idea">📅 <b>Dato clave:</b> el <strong>1 de septiembre</strong> es el <strong>Día de la Bandera
+    Nacional</strong> y con él empieza el Mes de la Patria.</div>
+
+    <h2>🛡️ 3. El Escudo Nacional</h2>
+
+    <p>Es el <strong>más antiguo</strong> de los tres símbolos mayores: se creó el <strong>3 de octubre de
+    1825</strong>, cuando Dionisio de Herrera era Jefe de Estado. Va en los documentos oficiales, en los sellos y en
+    la moneda.</p>
+
+    <table>
+      <tr><th>Elemento</th><th>¿Qué representa?</th></tr>
+      <tr><td class="k">🔺 El triángulo equilátero</td><td>La igualdad: sus tres lados miden lo mismo</td></tr>
+      <tr><td class="k">🌋 El volcán y las dos torres</td><td>La defensa y la soberanía del territorio</td></tr>
+      <tr><td class="k">🌈 El arco iris y el sol</td><td>La paz después de la lucha y el nacimiento de la nación libre</td></tr>
+      <tr><td class="k">🌽 Las cornucopias</td><td>La abundancia y la riqueza de la tierra</td></tr>
+      <tr><td class="k">🌲 Robles, pinos y minas</td><td>Los bosques y la riqueza minera del país</td></tr>
+    </table>
+
+    <div class="caja regla">📜 <b>Recuerda:</b> el óvalo del Escudo lleva escrito <strong>República de Honduras,
+    libre, soberana e independiente</strong>, con la fecha <strong>15 de septiembre de 1821</strong>. Al principio
+    decía «Estado de Honduras de la Federación del Centro», porque el país todavía era parte de la Federación.</div>
+
+    <h2 style="margin-top:0;">🎵 4. El Himno Nacional</h2>
+
+    <p>La <strong>letra</strong> es de <strong>Augusto C. Coello</strong>, escritor hondureño, y la
+    <strong>música</strong> de <strong>Carlos Hartling</strong>, músico alemán. Se compuso en 1903 con el nombre
+    «Canto a Honduras», se cantó por primera vez el <strong>15 de septiembre de 1904</strong> y el gobierno lo declaró
+    oficial en <strong>1915</strong>. Tiene un <strong>coro y siete estrofas</strong>.</p>
+
+    <div class="tri">
+      <div class="tnuc"><b>🎼 El coro</b>Describe la <strong>Bandera Nacional</strong>: «Tu bandera es un lampo de cielo, por un bloque de nieve cruzado…».</div>
+      <div class="torg"><b>🏫 En el acto cívico</b>Se canta el <strong>coro</strong>, la <strong>séptima estrofa</strong> y otra vez el <strong>coro</strong>, de pie, firme y en silencio.</div>
+    </div>
+
+    <div class="caja idea">🎶 <b>Dato clave:</b> las seis primeras estrofas cuentan la <strong>historia de
+    Honduras</strong> en orden; la séptima es una <strong>promesa</strong>, y por eso es la que se canta.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h3>📖 Qué cuenta cada estrofa</h3>
+
+    <table>
+      <tr><th>Estrofa</th><th>De qué habla</th></tr>
+      <tr><td class="k">1ª</td><td>La llegada de Cristóbal Colón a la costa del Caribe</td></tr>
+      <tr><td class="k">2ª</td><td>La tierra hermosa que los conquistadores quisieron para su rey</td></tr>
+      <tr><td class="k">3ª</td><td>Los tres siglos de la época colonial</td></tr>
+      <tr><td class="k">4ª</td><td>La resistencia de Lempira contra la conquista</td></tr>
+      <tr><td class="k">5ª</td><td>El ejemplo de libertad que llegó de Francia</td></tr>
+      <tr><td class="k">6ª</td><td>La Independencia de Centroamérica</td></tr>
+      <tr><td class="k">7ª</td><td>El juramento de defender la Bandera y la patria</td></tr>
+    </table>
+
+    <h2>🌿 5. Los símbolos patrios menores</h2>
+
+    <table>
+      <tr><th>Símbolo</th><th>¿Cuál es?</th><th>Desde</th></tr>
+      <tr><td class="k">🌲 Árbol nacional</td><td>El pino, el que más abunda en las montañas del país</td><td>1928</td></tr>
+      <tr><td class="k">🌺 Flor nacional</td><td>La orquídea <em>Rhyncholaelia digbyana</em></td><td>1969</td></tr>
+      <tr><td class="k">🦜 Ave nacional</td><td>La guara roja (<em>Ara macao</em>)</td><td>1993</td></tr>
+      <tr><td class="k">🦌 Mamífero nacional</td><td>El venado cola blanca</td><td>1993</td></tr>
+      <tr><td class="k">🗺️ El mapa</td><td>El territorio: 18 departamentos, entre dos mares</td><td>—</td></tr>
+    </table>
+
+    <div class="caja regla">🌹 <b>Ojo:</b> de 1946 a 1969 la flor nacional fue <strong>la rosa</strong>. Se cambió
+    porque la rosa <strong>no nace</strong> en Honduras, y un símbolo del país tenía que ser de aquí.</div>
+
+    <h2 style="margin-top:0;">🏅 6. Próceres y héroes de Honduras</h2>
+
+    <p>Un <strong>héroe</strong> defiende a su pueblo; un <strong>prócer</strong> ayuda a fundar la nación. Sus
+    nombres están hoy en calles, parques, departamentos y hasta en la moneda del país.</p>
+
+    <table>
+      <tr><th>Personaje</th><th>¿Por qué se le recuerda?</th></tr>
+      <tr><td class="k">🏹 Lempira</td><td><strong>Héroe Nacional.</strong> Cacique lenca que dirigió la mayor resistencia contra la conquista española, hacia 1537, en el Peñol de Cerquín. La <strong>moneda</strong> y un departamento llevan su nombre</td></tr>
+      <tr><td class="k">⚔️ Francisco Morazán</td><td><strong>Paladín de la Unión Centroamericana.</strong> Presidente de la República Federal de Centro América. Nació el 3 de octubre de 1792 y murió el 15 de septiembre de 1842</td></tr>
+      <tr><td class="k">📜 José Cecilio del Valle</td><td><strong>El Sabio Valle.</strong> Redactó el Acta de Independencia de Centroamérica, firmada el 15 de septiembre de 1821</td></tr>
+      <tr><td class="k">🏛️ Dionisio de Herrera</td><td>Primer <strong>Jefe de Estado</strong> de Honduras, en 1824. Bajo su gobierno se creó el Escudo Nacional</td></tr>
+      <tr><td class="k">🎖️ José Trinidad Cabañas</td><td>Presidente de Honduras, recordado por su honradez: «el caballero sin tacha y sin miedo»</td></tr>
+      <tr><td class="k">📚 José Trinidad Reyes</td><td>Sacerdote que fundó la primera universidad del país. El <strong>Día del Maestro</strong> lo honra</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h2>📅 7. Septiembre, el Mes de la Patria</h2>
+
+    <table>
+      <tr><th>Fecha</th><th>¿Qué se celebra?</th></tr>
+      <tr><td class="k">1 de septiembre</td><td>Día de la Bandera Nacional, que abre el Mes de la Patria</td></tr>
+      <tr><td class="k">10 de septiembre</td><td>Día del Niño Hondureño</td></tr>
+      <tr><td class="k">15 de septiembre</td><td>Independencia de Centroamérica (1821)</td></tr>
+      <tr><td class="k">17 de septiembre</td><td>Día del Maestro Hondureño</td></tr>
+      <tr><td class="k">11 de junio</td><td>Día del Estudiante Hondureño</td></tr>
+      <tr><td class="k">20 de julio</td><td>Día de Lempira</td></tr>
+      <tr><td class="k">3 de octubre</td><td>Natalicio de Francisco Morazán</td></tr>
+    </table>
+
+    <div class="caja hn">🤝 <b>Dato clave:</b> el 15 de septiembre de 1821 se firmó el Acta en Guatemala y se
+    independizaron <strong>cinco naciones a la vez</strong>. Por eso Guatemala, El Salvador, Honduras, Nicaragua y
+    Costa Rica celebran el <strong>mismo día</strong>.</div>
+
+    <h2>✋ 8. Cómo se respetan los símbolos</h2>
+
+    <div class="tri">
+      <div class="tnuc"><b>✅ Así sí</b>De pie, firme y en silencio mientras se canta el Himno. Quieto cuando pasa la Bandera. La Bandera se guarda limpia y doblada.</div>
+      <div class="torg"><b>🚫 Así no</b>Dejar que la Bandera toque el suelo. Usarla de mantel o de adorno. Platicar o jugar durante el acto. Dibujar encima del Escudo.</div>
+    </div>
+
+    <h2 style="margin-top:0;">📝 Actividades de Evaluación</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Resuelve con lápiz. Cada sección vale 25 puntos; la prueba completa,
+    100 puntos.</p>
+
+    <h3>I. Completa el espacio <span class="val">(Valor: 2.5 puntos c/u)</span></h3>
+
+    <ol>
+      <li>Los símbolos patrios mayores son la Bandera, el Escudo y el <span class="linea-resp"></span>.</li>
+      <li>La franja del centro de la Bandera Nacional es de color <span class="linea-resp"></span>.</li>
+      <li>La Bandera Nacional lleva <span class="linea-resp"></span> estrellas en el centro.</li>
+      <li>Las estrellas representan a las naciones de la antigua Federación de <span class="linea-resp"></span>.</li>
+      <li>La figura del centro del Escudo Nacional es un <span class="linea-resp"></span> equilátero.</li>
+      <li>La letra del Himno Nacional es de Augusto C. <span class="linea-resp"></span>.</li>
+      <li>La música del Himno Nacional es de Carlos <span class="linea-resp"></span>.</li>
+      <li>El Himno Nacional tiene un coro y <span class="linea-resp"></span> estrofas.</li>
+      <li>El árbol nacional de Honduras es el <span class="linea-resp"></span>.</li>
+      <li>La Independencia de Centroamérica se firmó en el año <span class="linea-resp"></span>.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 2.5 puntos c/u)</span> — Escribe V o F en la raya.</h3>
+
+    <ol>
+      <li><span class="linea-resp" style="min-width:40px"></span> Los símbolos patrios mayores son tres: la Bandera, el Escudo y el Himno Nacional.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> La Bandera Nacional tiene cuatro estrellas en el centro.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El azul de la Bandera representa los dos mares que bañan al país y el cielo.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El Escudo Nacional es un cuadrado con un río en el centro.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> La música del Himno Nacional la compuso Francisco Morazán.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> En los actos escolares se canta el coro y la séptima estrofa.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> La flor nacional de Honduras es la orquídea <em>Rhyncholaelia digbyana</em>.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Lempira fue el cacique lenca que dirigió la resistencia contra la conquista.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El Día de la Bandera Nacional se celebra el 15 de septiembre.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Mientras se canta el Himno Nacional hay que quedarse de pie y en silencio.</li>
+    </ol>
+
+    <h3 style="margin-top:0;">III. Selección múltiple <span class="val">(Valor: 2.5 puntos c/u)</span> — Rellena el círculo de la letra de la respuesta correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Cuáles son los tres símbolos patrios mayores?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> El pino, la orquídea y la guara roja</span>
+        <span class="op full"><i></i><b>b)</b> La Bandera, el Escudo y el Himno Nacional</span>
+        <span class="op full"><i></i><b>c)</b> El mapa, la moneda y la lengua</span>
+        <span class="op full"><i></i><b>d)</b> El venado, el volcán y el arco iris</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué representan las cinco estrellas de la Bandera?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Los cinco ríos más largos del país</span>
+        <span class="op full"><i></i><b>b)</b> Los cinco próceres de Honduras</span>
+        <span class="op full"><i></i><b>c)</b> Las naciones de la antigua Federación de Centroamérica</span>
+        <span class="op full"><i></i><b>d)</b> Los cinco departamentos más grandes</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Qué representa el color blanco de la Bandera?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Los bosques de pino</span>
+        <span class="op"><i></i><b>b)</b> La riqueza de las minas</span>
+        <span class="op"><i></i><b>c)</b> La sangre de los héroes</span>
+        <span class="op"><i></i><b>d)</b> La paz y la pureza</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué figura forma el centro del Escudo Nacional?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Un círculo</span>
+        <span class="op"><i></i><b>b)</b> Un triángulo equilátero</span>
+        <span class="op"><i></i><b>c)</b> Un cuadrado</span>
+        <span class="op"><i></i><b>d)</b> Un rombo</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Quién escribió la letra del Himno Nacional?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Carlos Hartling</span>
+        <span class="op"><i></i><b>b)</b> Ramón Rosa</span>
+        <span class="op"><i></i><b>c)</b> José Trinidad Reyes</span>
+        <span class="op"><i></i><b>d)</b> Augusto C. Coello</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Cuántas estrofas tiene el Himno Nacional?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Cinco</span>
+        <span class="op"><i></i><b>b)</b> Siete</span>
+        <span class="op"><i></i><b>c)</b> Nueve</span>
+        <span class="op"><i></i><b>d)</b> Tres</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Cuál es el árbol nacional de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> La ceiba</span>
+        <span class="op"><i></i><b>b)</b> El roble</span>
+        <span class="op"><i></i><b>c)</b> El pino</span>
+        <span class="op"><i></i><b>d)</b> El cedro</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Quién es el Héroe Nacional que resistió la conquista?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Lempira</span>
+        <span class="op"><i></i><b>b)</b> Francisco Morazán</span>
+        <span class="op"><i></i><b>c)</b> José Cecilio del Valle</span>
+        <span class="op"><i></i><b>d)</b> Dionisio de Herrera</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Por qué se recuerda a Francisco Morazán?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Por escribir el Himno Nacional</span>
+        <span class="op full"><i></i><b>b)</b> Por luchar por la unión de Centroamérica</span>
+        <span class="op full"><i></i><b>c)</b> Por fundar la primera universidad</span>
+        <span class="op full"><i></i><b>d)</b> Por diseñar la Bandera Nacional</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Qué se conmemora el 15 de septiembre?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> El Día de la Bandera</span>
+        <span class="op"><i></i><b>b)</b> El Día del Maestro</span>
+        <span class="op"><i></i><b>c)</b> La Independencia</span>
+        <span class="op"><i></i><b>d)</b> El Día de Lempira</span>
+      </div>
+    </div>
+
+    <h3>IV. Términos pareados <span class="val">(Valor: 2.5 puntos c/u)</span> — Escribe la letra de la Columna B que corresponde.</h3>
+
+    <table class="rubrica">
+      <tr><th style="width:52%">Columna A</th><th>Columna B</th></tr>
+      <tr><td>1. <span class="linea-resp" style="min-width:34px"></span> La Bandera Nacional</td><td class="lg">A. Compuso la música del Himno</td></tr>
+      <tr><td>2. <span class="linea-resp" style="min-width:34px"></span> El Escudo Nacional</td><td class="lg">B. El ave nacional de Honduras</td></tr>
+      <tr><td>3. <span class="linea-resp" style="min-width:34px"></span> Augusto C. Coello</td><td class="lg">C. Tres franjas y cinco estrellas</td></tr>
+      <tr><td>4. <span class="linea-resp" style="min-width:34px"></span> Carlos Hartling</td><td class="lg">D. El cacique lenca, Héroe Nacional</td></tr>
+      <tr><td>5. <span class="linea-resp" style="min-width:34px"></span> Las cinco estrellas</td><td class="lg">E. Redactó el Acta de Independencia</td></tr>
+      <tr><td>6. <span class="linea-resp" style="min-width:34px"></span> El Pino</td><td class="lg">F. Triángulo con volcán y dos torres</td></tr>
+      <tr><td>7. <span class="linea-resp" style="min-width:34px"></span> La Guara Roja</td><td class="lg">G. Escribió la letra del Himno</td></tr>
+      <tr><td>8. <span class="linea-resp" style="min-width:34px"></span> Lempira</td><td class="lg">H. El árbol nacional</td></tr>
+      <tr><td>9. <span class="linea-resp" style="min-width:34px"></span> Francisco Morazán</td><td class="lg">I. La antigua Federación de Centroamérica</td></tr>
+      <tr><td>10. <span class="linea-resp" style="min-width:34px"></span> José Cecilio del Valle</td><td class="lg">J. Paladín de la Unión Centroamericana</td></tr>
+    </table>
+
+    <div class="felic">🎉 <b>¡Muy bien!</b> Al terminar, revisa tus respuestas con tu maestro o maestra y practica en
+    la misión interactiva con el código QR de la primera página.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Himno &nbsp; 2. blanco &nbsp; 3. cinco &nbsp; 4. Centroamérica &nbsp; 5. triángulo &nbsp; 6. Coello &nbsp; 7. Hartling &nbsp; 8. siete &nbsp; 9. pino &nbsp; 10. 1821</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5F, 6V, 7V, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2c, 3d, 4b, 5d, 6b, 7c, 8a, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2F, 3G, 4A, 5I, 6H, 7B, 8D, 9J, 10E</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma
+      M.E.T.A.S «Misión Aspectos Cívicos de Honduras» (Educación Básica), del eje de identidad nacional del DCNB:
+      «Distinguen y respetan los símbolos patrios» y «Resignifican las conmemoraciones históricas con el objeto de
+      iniciarse en la afirmación de la identidad nacional» (expectativas de logro del Área de Ciencias Sociales), con
+      los héroes nacionales y personajes históricos que el currículo nombra: Francisco Morazán, José Cecilio del
+      Valle, José Trinidad Cabañas, José Trinidad Reyes y Dionisio de Herrera. Sirve como guía de estudio impresa
+      antes de la evaluación y como preparación del <strong>examen cívico</strong> que muchos centros aplican en
+      septiembre. Puede complementarse con actividades del Mes de la Patria: dibujar y colorear la Bandera contando
+      sus estrellas, copiar el coro del Himno Nacional, elaborar una línea de tiempo con las fechas cívicas del mes,
+      o investigar qué calles, parques o escuelas del propio municipio llevan el nombre de un prócer. Etapa 1 de la
+      Ruta de la Patria. La misión interactiva (código QR de la portada) permite al estudiante practicar con
+      retroalimentación inmediata antes de resolver esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Aspectos Cívicos de Honduras · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+</body>
+</html>
