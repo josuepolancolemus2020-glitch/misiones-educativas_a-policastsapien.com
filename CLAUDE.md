@@ -1540,6 +1540,20 @@ METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones
 node _dev/verifica-ficha-paginas.js ficha-aspectos-civicos
 ```
 
+⚠️ **El escape `\U0001F1ED` es de Python y JavaScript NO lo entiende.** Se
+publicó así el 8 de septiembre de 2026: en el Laboratorio de la misión, donde
+iba la bandera 🇭🇳, el alumno leía **«U0001F1EDU0001F1F3»**. JS solo sabe de
+`\uXXXX` y `\u{XXXXX}`, los dos con **u minúscula**; con la mayúscula se come
+la barra y pinta el texto pelado.
+
+Se coló por donde se cuela siempre: los bancos de datos se escribieron con un
+guion de Python, y ahí `'\\U0001F1ED'` deja el escape crudo en el archivo. Y no
+lo cazó **ninguna** de las 66 sondas, porque el archivo **compila**: `node
+--check` lo da por bueno, el navegador no dice nada y el estropicio solo se ve
+mirando la pantalla. Es el mismo daño que ya vigila `verifica-sintaxis.js`, así
+que ahí entró la comprobación. **En los emojis se escribe el carácter de
+verdad**, como en las otras 74 misiones.
+
 ⚠️ **`verifica-nombres-propios.js` NO puede pedir «Lempira» con mayúscula a
 secas.** En minúscula es la MONEDA («1 lempira con 25 centavos»), que es como
 sale en las misiones de decimales y en las de fin de grado: pedirlo daba seis
@@ -2838,11 +2852,20 @@ Playwright **no se versiona**: el trabajo de noche lo instala con
 
 ### En vez de un linter, que todo compile
 
-`_dev/verifica-sintaxis.js` pasa `node --check` por los 348 archivos
-versionados. Es lo que de verdad cuesta caro aquí: **un error de sintaxis no da
-la cara**. El navegador se calla, deja de ejecutar ese archivo y la página se
+`_dev/verifica-sintaxis.js` pasa `node --check` por los archivos versionados
+(hoy 366 y subiendo). Es lo que de verdad cuesta caro aquí: **un error de
+sintaxis no da la cara**. El navegador se calla, deja de ejecutar ese archivo y la página se
 pinta igual — ya pasó con un `-en.js` mal cerrado, que dejaba el botón 🌐 mudo y
 la ficha bilingüe imprimiendo en español. Y no añade una sola dependencia.
+
+Y vigila una segunda cosa de la misma familia, la que **sí compila**: los
+escapes **`\U0001F1ED`**, que son de Python y JavaScript no entiende. Ahí no
+hay error que ver: el archivo corre y el alumno lee el código en la pantalla.
+Está contado entero en la normativa de E. Cívica, que es donde se publicó.
+
+⚠️ Y esta sonda **quita los comentarios antes de buscar**, porque su propio
+bloque explica el problema escribiendo el escape: sin eso se acusaba a sí
+misma. Es la **cuarta** vez que muerde la misma trampa.
 
 ## Detalles del repositorio
 

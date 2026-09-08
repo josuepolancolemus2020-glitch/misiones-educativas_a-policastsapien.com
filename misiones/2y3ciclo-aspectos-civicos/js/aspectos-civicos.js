@@ -61,20 +61,20 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Símbolos patrios',a:'\U0001F1ED\U0001F1F3 Los signos que <strong>representan a Honduras</strong>. Los <strong>mayores</strong> son tres: Bandera, Escudo e Himno.'},
-  {w:'La Bandera Nacional',a:'\U0001F3F3\uFE0F Tres franjas: <strong>azul turquesa, blanca y azul turquesa</strong>, con <strong>cinco estrellas</strong> en el centro.'},
+  {w:'Símbolos patrios',a:'🇭🇳 Los signos que <strong>representan a Honduras</strong>. Los <strong>mayores</strong> son tres: Bandera, Escudo e Himno.'},
+  {w:'La Bandera Nacional',a:'🏳️ Tres franjas: <strong>azul turquesa, blanca y azul turquesa</strong>, con <strong>cinco estrellas</strong> en el centro.'},
   {w:'Las cinco estrellas',a:'\u2B50 Las <strong>cinco naciones</strong> de la antigua Federación de Centroamérica: Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica.'},
-  {w:'El azul de la Bandera',a:'\U0001F30A Los <strong>dos mares</strong> que bañan al país (el Caribe y el Pacífico) y el <strong>cielo</strong> de Honduras.'},
-  {w:'El blanco de la Bandera',a:'\U0001F54A\uFE0F La <strong>paz</strong> y la <strong>pureza</strong> del pueblo hondureño.'},
-  {w:'El Escudo Nacional',a:'\U0001F6E1\uFE0F Un <strong>triángulo equilátero</strong> con un volcán entre dos torres, el arco iris y el sol naciente, dentro de un óvalo.'},
-  {w:'El Himno Nacional',a:'\U0001F3B5 Letra de <strong>Augusto C. Coello</strong> y música de <strong>Carlos Hartling</strong>. Tiene un <strong>coro y siete estrofas</strong>.'},
+  {w:'El azul de la Bandera',a:'🌊 Los <strong>dos mares</strong> que bañan al país (el Caribe y el Pacífico) y el <strong>cielo</strong> de Honduras.'},
+  {w:'El blanco de la Bandera',a:'🕊️ La <strong>paz</strong> y la <strong>pureza</strong> del pueblo hondureño.'},
+  {w:'El Escudo Nacional',a:'🛡️ Un <strong>triángulo equilátero</strong> con un volcán entre dos torres, el arco iris y el sol naciente, dentro de un óvalo.'},
+  {w:'El Himno Nacional',a:'🎵 Letra de <strong>Augusto C. Coello</strong> y música de <strong>Carlos Hartling</strong>. Tiene un <strong>coro y siete estrofas</strong>.'},
   {w:'La séptima estrofa',a:'\u270B La que se canta en los actos: es el <strong>juramento</strong> de defender la Bandera y la patria.'},
-  {w:'El Pino',a:'\U0001F332 El <strong>árbol nacional</strong> desde 1928. Honduras tiene el mayor bosque de pino de Centroamérica.'},
-  {w:'La orquídea',a:'\U0001F33A La <strong>flor nacional</strong> desde 1969: la <em>Rhyncholaelia digbyana</em>. Antes lo era la rosa, que no es de aquí.'},
-  {w:'La Guara Roja',a:'\U0001F99C El <strong>ave nacional</strong> desde 1993 (<em>Ara macao</em>). Vive en Copán y en La Mosquitia.'},
-  {w:'El Venado Cola Blanca',a:'\U0001F98C El <strong>mamífero nacional</strong> desde 1993, el mismo día que la Guara Roja.'},
-  {w:'Lempira',a:'\U0001F3F9 <strong>Héroe Nacional</strong>: el cacique lenca que dirigió la resistencia contra la conquista. La moneda lleva su nombre.'},
-  {w:'Francisco Morazán',a:'\u2694\uFE0F El <strong>Paladín de la Unión Centroamericana</strong>. Nació el 3 de octubre de 1792 y murió el 15 de septiembre de 1842.'},
+  {w:'El Pino',a:'🌲 El <strong>árbol nacional</strong> desde 1928. Honduras tiene el mayor bosque de pino de Centroamérica.'},
+  {w:'La orquídea',a:'🌺 La <strong>flor nacional</strong> desde 1969: la <em>Rhyncholaelia digbyana</em>. Antes lo era la rosa, que no es de aquí.'},
+  {w:'La Guara Roja',a:'🦜 El <strong>ave nacional</strong> desde 1993 (<em>Ara macao</em>). Vive en Copán y en La Mosquitia.'},
+  {w:'El Venado Cola Blanca',a:'🦌 El <strong>mamífero nacional</strong> desde 1993, el mismo día que la Guara Roja.'},
+  {w:'Lempira',a:'🏹 <strong>Héroe Nacional</strong>: el cacique lenca que dirigió la resistencia contra la conquista. La moneda lleva su nombre.'},
+  {w:'Francisco Morazán',a:'\u2694️ El <strong>Paladín de la Unión Centroamericana</strong>. Nació el 3 de octubre de 1792 y murió el 15 de septiembre de 1842.'},
 ];
 let fcIdx=0;
 function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
@@ -110,13 +110,13 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Símbolo mayor','Símbolo menor'],headA:'\U0001F396\uFE0F Símbolo mayor',headB:'\U0001F33F Símbolo menor',colA:'mayor',colB:'menor',
+  {label:['Símbolo mayor','Símbolo menor'],headA:'🎖️ Símbolo mayor',headB:'🌿 Símbolo menor',colA:'mayor',colB:'menor',
    words:[{w:'La Bandera',t:'mayor'},{w:'El Pino',t:'menor'},{w:'El Escudo',t:'menor'},{w:'La orquídea',t:'menor'},{w:'El Himno Nacional',t:'mayor'},{w:'La Guara Roja',t:'menor'},{w:'El Venado Cola Blanca',t:'menor'},{w:'El mapa de Honduras',t:'menor'}]},
-  {label:['Está en la Bandera','Está en el Escudo'],headA:'\U0001F3F3\uFE0F En la Bandera',headB:'\U0001F6E1\uFE0F En el Escudo',colA:'ban',colB:'esc',
+  {label:['Está en la Bandera','Está en el Escudo'],headA:'🏳️ En la Bandera',headB:'🛡️ En el Escudo',colA:'ban',colB:'esc',
    words:[{w:'Cinco estrellas',t:'ban'},{w:'Un volcán',t:'esc'},{w:'Franja blanca en medio',t:'ban'},{w:'Dos torres',t:'esc'},{w:'Azul turquesa',t:'ban'},{w:'El arco iris',t:'esc'},{w:'Tres franjas',t:'ban'},{w:'Cornucopias',t:'esc'},{w:'Aljabas con flechas',t:'esc'},{w:'Robles y pinos',t:'esc'}]},
-  {label:['Prócer o héroe','No es prócer'],headA:'\U0001F3C5 Prócer o héroe',headB:'\U0001F6AB No es prócer',colA:'pro',colB:'no',
+  {label:['Prócer o héroe','No es prócer'],headA:'🏅 Prócer o héroe',headB:'🚫 No es prócer',colA:'pro',colB:'no',
    words:[{w:'Lempira',t:'pro'},{w:'Cristóbal Colón',t:'no'},{w:'Francisco Morazán',t:'pro'},{w:'Carlos Hartling',t:'no'},{w:'José Cecilio del Valle',t:'pro'},{w:'Pedro de Alvarado',t:'no'},{w:'José Trinidad Cabañas',t:'pro'},{w:'Hernán Cortés',t:'no'},{w:'Dionisio de Herrera',t:'pro'},{w:'William Walker',t:'no'}]},
-  {label:['Fecha de septiembre','Otro mes del año'],headA:'\U0001F4C5 En septiembre',headB:'\U0001F5D3\uFE0F En otro mes',colA:'sep',colB:'otro',
+  {label:['Fecha de septiembre','Otro mes del año'],headA:'📅 En septiembre',headB:'🗓️ En otro mes',colA:'sep',colB:'otro',
    words:[{w:'Día de la Bandera',t:'sep'},{w:'Día de Lempira',t:'otro'},{w:'Independencia de Centroamérica',t:'sep'},{w:'Día del Estudiante',t:'otro'},{w:'Día del Niño Hondureño',t:'sep'},{w:'Día de las Fuerzas Armadas',t:'otro'},{w:'Día del Maestro Hondureño',t:'sep'},{w:'Día de la Guara Roja',t:'otro'}]},
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
@@ -225,11 +225,11 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Símbolo mayor','Símbolo menor'],btnA:'\U0001F396\uFE0F Mayor',btnB:'\U0001F33F Menor',colA:'mayor',colB:'menor',
+  {label:['Símbolo mayor','Símbolo menor'],btnA:'🎖️ Mayor',btnB:'🌿 Menor',colA:'mayor',colB:'menor',
    words:[{w:'La Bandera',t:'mayor'},{w:'El Pino',t:'menor'},{w:'El Escudo',t:'mayor'},{w:'La orquídea',t:'menor'},{w:'El Himno',t:'mayor'},{w:'La Guara Roja',t:'menor'},{w:'El Venado',t:'menor'},{w:'El mapa',t:'menor'}]},
-  {label:['Prócer o héroe','No es prócer'],btnA:'\U0001F3C5 Prócer',btnB:'\U0001F6AB No lo es',colA:'pro',colB:'no',
+  {label:['Prócer o héroe','No es prócer'],btnA:'🏅 Prócer',btnB:'🚫 No lo es',colA:'pro',colB:'no',
    words:[{w:'Lempira',t:'pro'},{w:'Cristóbal Colón',t:'no'},{w:'Morazán',t:'pro'},{w:'Carlos Hartling',t:'no'},{w:'José Cecilio del Valle',t:'pro'},{w:'Pedro de Alvarado',t:'no'},{w:'José Trinidad Cabañas',t:'pro'},{w:'Hernán Cortés',t:'no'},{w:'Dionisio de Herrera',t:'pro'},{w:'William Walker',t:'no'}]},
-  {label:['En la Bandera','En el Escudo'],btnA:'\U0001F3F3\uFE0F Bandera',btnB:'\U0001F6E1\uFE0F Escudo',colA:'ban',colB:'esc',
+  {label:['En la Bandera','En el Escudo'],btnA:'🏳️ Bandera',btnB:'🛡️ Escudo',colA:'ban',colB:'esc',
    words:[{w:'Cinco estrellas',t:'ban'},{w:'Un volcán',t:'esc'},{w:'Tres franjas',t:'ban'},{w:'Dos torres',t:'esc'},{w:'Azul turquesa',t:'ban'},{w:'El arco iris',t:'esc'},{w:'Franja blanca',t:'ban'},{w:'Cornucopias',t:'esc'},{w:'Aljabas con flechas',t:'esc'},{w:'Robles y pinos',t:'esc'}]},
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
@@ -669,42 +669,42 @@ function printEvalCrit(){
 // ===================== LABORATORIO DE LOS SÍMBOLOS =====================
 const parteData={
   bandera:{
-    nombre:'La Bandera Nacional',icon:'\U0001F1ED\U0001F1F3',
+    nombre:'La Bandera Nacional',icon:'🇭🇳',
     estructura:{title:'¿Qué es?',info:'• El <strong>símbolo patrio mayor</strong> que representa a Honduras<br>• Se iza en las escuelas, en los edificios del Estado y en el desfile<br>• Se le rinde homenaje el <strong>1 de septiembre</strong>, Día de la Bandera'},
     funcion:{title:'¿Cómo es?',info:'• <strong>Tres franjas</strong> horizontales del mismo ancho<br>• Azul turquesa arriba, <strong>blanca en medio</strong>, azul turquesa abajo<br>• <strong>Cinco estrellas</strong> azul turquesa en el centro de la franja blanca'},
     ubicacion:{title:'¿Qué significa?',info:'• El <strong>azul:</strong> los dos mares que bañan al país y el cielo<br>• El <strong>blanco:</strong> la paz y la pureza del pueblo<br>• Las <strong>cinco estrellas:</strong> Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica'},
     dato:{title:'Dato curioso',info:'• Nació por decreto del <strong>16 de febrero de 1866</strong><br>• Se basó en la bandera de las <strong>Provincias Unidas del Centro de América</strong><br>• Nunca debe tocar el suelo ni usarse como adorno'}
   },
   escudo:{
-    nombre:'El Escudo Nacional',icon:'\U0001F6E1\uFE0F',
+    nombre:'El Escudo Nacional',icon:'🛡️',
     estructura:{title:'¿Qué es?',info:'• El <strong>símbolo patrio mayor</strong> del Estado de Honduras<br>• Va en los <strong>documentos oficiales</strong>, los sellos y la moneda<br>• Es el <strong>más antiguo</strong> de los tres símbolos mayores'},
     funcion:{title:'¿Cómo es?',info:'• Un <strong>triángulo equilátero</strong> dentro de un óvalo<br>• En su base, un <strong>volcán entre dos torres</strong>, con el arco iris y el sol naciente<br>• Arriba, una cordillera con <strong>robles y pinos</strong>, herramientas de minería, <strong>aljabas</strong> con flechas y <strong>cornucopias</strong>'},
     ubicacion:{title:'¿Qué significa?',info:'• El <strong>triángulo:</strong> la igualdad, porque sus tres lados miden lo mismo<br>• Las <strong>torres:</strong> la defensa y la soberanía del territorio<br>• Las <strong>cornucopias:</strong> la abundancia y la riqueza de la tierra'},
     dato:{title:'Dato curioso',info:'• Creado el <strong>3 de octubre de 1825</strong>, con Dionisio de Herrera de Jefe de Estado<br>• El óvalo lleva escrito: <strong>República de Honduras, libre, soberana e independiente</strong><br>• Al principio decía «Estado de Honduras de la Federación del Centro», porque el país todavía era parte de la Federación'}
   },
   himno:{
-    nombre:'El Himno Nacional',icon:'\U0001F3B5',
+    nombre:'El Himno Nacional',icon:'🎵',
     estructura:{title:'¿Qué es?',info:'• El <strong>canto</strong> con que Honduras se presenta ante el mundo<br>• Se canta de pie, firme y en silencio<br>• Es el <strong>tercer</strong> símbolo patrio mayor'},
     funcion:{title:'¿Cómo es?',info:'• Tiene un <strong>coro y siete estrofas</strong><br>• El <strong>coro describe la Bandera:</strong> «Tu bandera es un lampo de cielo…»<br>• En los actos escolares se canta el <strong>coro, la séptima estrofa y el coro</strong>'},
     ubicacion:{title:'¿Quién lo hizo?',info:'• <strong>Letra:</strong> Augusto C. Coello, escritor hondureño<br>• <strong>Música:</strong> Carlos Hartling, músico alemán<br>• Oficializado por acuerdo del gobierno en <strong>1915</strong>'},
     dato:{title:'Dato curioso',info:'• Se compuso en <strong>1903</strong> y se llamaba «Canto a Honduras»<br>• Se cantó por primera vez el <strong>15 de septiembre de 1904</strong><br>• Las seis primeras estrofas cuentan la <strong>historia del país</strong>: la llegada de Colón, la colonia, la resistencia de Lempira y la Independencia'}
   },
   menores:{
-    nombre:'Los símbolos menores',icon:'\U0001F332',
+    nombre:'Los símbolos menores',icon:'🌲',
     estructura:{title:'¿Qué son?',info:'• Los símbolos que representan la <strong>naturaleza y el territorio</strong> del país<br>• No sustituyen a los mayores: los <strong>acompañan</strong><br>• Se declararon <strong>mucho después</strong> que la Bandera, el Escudo y el Himno'},
     funcion:{title:'¿Cuáles son?',info:'• <strong>El Pino:</strong> árbol nacional (1928)<br>• <strong>La orquídea</strong> <em>Rhyncholaelia digbyana</em>: flor nacional (1969)<br>• <strong>La guara roja</strong> y <strong>el venado cola blanca</strong>: ave y mamífero nacional (1993)'},
     ubicacion:{title:'¿Dónde se ven?',info:'• El <strong>pino</strong> cubre las montañas: Honduras tiene el mayor bosque de pino de Centroamérica<br>• La <strong>guara roja</strong> vuela sobre Copán y en La Mosquitia<br>• El <strong>venado</strong> vive en bosques y sabanas de todo el país'},
     dato:{title:'Dato curioso',info:'• De 1946 a 1969 la flor nacional fue <strong>la rosa</strong>: se cambió porque no nace en Honduras<br>• La guara roja y el venado se declararon <strong>el mismo día</strong>, el 28 de junio de 1993<br>• El <strong>mapa</strong> del territorio también se cuenta entre los símbolos: 18 departamentos y dos mares'}
   },
   proceres:{
-    nombre:'Próceres y héroes',icon:'\U0001F3C5',
+    nombre:'Próceres y héroes',icon:'🏅',
     estructura:{title:'¿Quiénes son?',info:'• Las personas que <strong>hicieron la patria</strong> con su trabajo o su lucha<br>• Un <strong>héroe</strong> defiende a su pueblo; un <strong>prócer</strong> ayuda a fundar la nación<br>• Sus nombres están en calles, parques, monedas y departamentos'},
     funcion:{title:'Los principales',info:'• <strong>Lempira:</strong> cacique lenca, Héroe Nacional<br>• <strong>Francisco Morazán:</strong> el Paladín de la Unión Centroamericana<br>• <strong>José Cecilio del Valle:</strong> el Sabio Valle, redactó el Acta de Independencia'},
     ubicacion:{title:'Otros que hay que conocer',info:'• <strong>Dionisio de Herrera:</strong> primer Jefe de Estado de Honduras (1824)<br>• <strong>José Trinidad Cabañas:</strong> presidente, «el caballero sin tacha y sin miedo»<br>• <strong>José Trinidad Reyes:</strong> sacerdote, fundó la primera universidad del país'},
     dato:{title:'Dato curioso',info:'• La <strong>moneda</strong> de Honduras se llama Lempira en honor al cacique<br>• Morazán <strong>nació</strong> un 3 de octubre y <strong>murió</strong> un 15 de septiembre<br>• El <strong>Día del Maestro</strong>, 17 de septiembre, honra a José Trinidad Reyes'}
   },
   fechas:{
-    nombre:'El Mes de la Patria',icon:'\U0001F4C5',
+    nombre:'El Mes de la Patria',icon:'📅',
     estructura:{title:'¿Qué es?',info:'• <strong>Septiembre</strong>, el mes en que Honduras celebra su historia<br>• Abre el <strong>1 de septiembre</strong> con el Día de la Bandera<br>• Culmina el <strong>15 de septiembre</strong> con la Independencia'},
     funcion:{title:'Las fechas de septiembre',info:'• <strong>1:</strong> Día de la Bandera Nacional<br>• <strong>10:</strong> Día del Niño Hondureño<br>• <strong>15:</strong> Independencia de Centroamérica (1821)<br>• <strong>17:</strong> Día del Maestro Hondureño'},
     ubicacion:{title:'Otras fechas cívicas',info:'• <strong>11 de junio:</strong> Día del Estudiante Hondureño<br>• <strong>20 de julio:</strong> Día de Lempira<br>• <strong>3 de octubre:</strong> natalicio de Francisco Morazán'},
