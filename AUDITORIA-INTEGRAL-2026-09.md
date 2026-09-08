@@ -182,7 +182,9 @@ alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de famili
 ~~subir la barra de secciones al principio~~ · **hecho el 7 de septiembre, en las 74 misiones** — y
 al medirlas antes salió que el hallazgo se quedaba corto: estaba fuera de la primera pantalla en
 74 de 74, y lo que costaba no era la distancia sino que `go()` salta al principio y deja la barra
-otra vez al fondo · que la estrella se gane · ~~que Fin de Grado no pierda
+otra vez al fondo · ~~que la estrella se gane~~ · **hecho el 8 de septiembre** — eran
+**125 estrellas de regalo en 34 misiones**, y una sola regla las quita todas: antes del primer
+toque del alumno no se gana nada · ~~que Fin de Grado no pierda
 las respuestas~~ · **hecho el 7 de septiembre, en los cuatro grados y en las dos pruebas** — y al
 tocarlo salió algo peor que perderlas: con un banco de preguntas que cambia, devolvérselas se las
 pegaría encima de OTRAS preguntas, y esa nota acaba en el expediente · ~~traer a la boleta las notas ya calculadas~~ · **hecho el 7 de septiembre** · ~~desbloquear el zoom y el teclado~~ ·

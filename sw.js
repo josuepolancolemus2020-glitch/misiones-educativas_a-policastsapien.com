@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v188';
+const CACHE_NAME = 'meta-app-v189';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -94,6 +94,10 @@ const STATIC_ASSETS = [
   // aula sin señal, que es donde la aplicación tiene que valerse sola.
   './js/teclado-actividades.js',
   './css/teclado-actividades.css',
+  // Que la estrella se gane. Sin él vuelven las cuatro estrellas de
+  // regalo al abrir y el XP que se repite recargando — y el aula sin
+  // señal es justo donde la aplicación tiene que valerse sola.
+  './js/estrella-ganada.js',
   './padres.html',
   './salida.html',
   './buzon.html',

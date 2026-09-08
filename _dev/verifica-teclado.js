@@ -88,7 +88,14 @@ async function abrirMision(nav, rel) {
   console.log('── el zoom no está bloqueado en ninguna página ──');
   const todos = htmls();
   const bloqueadas = todos.filter(p => {
-    const s = fs.readFileSync(p, 'utf8');
+    /* ⚠️ Los comentarios se quitan antes de mirar. camp-vivo.html EXPLICA
+       en un comentario por qué se le quitó el `user-scalable=no`, y la
+       sonda se lo contaba como si siguiera puesto: una sonda que sale
+       roja cuando todo está bien enseña a no mirarla. Es la misma trampa
+       que ya cazaron verifica-legal y verifica-barra-secciones. */
+    const s = fs.readFileSync(p, 'utf8')
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '');
     return /user-scalable\s*=\s*no|maximum-scale\s*=\s*1/.test(s);
   }).map(p => path.relative(RAIZ, p));
   ok(`ninguna de las ${todos.length} páginas prohíbe agrandar`, !bloqueadas.length, bloqueadas.slice(0, 6));

@@ -487,7 +487,7 @@ function endReto(){
   const total = retoOk+retoErr;
   const pct = total>0?Math.round((retoOk/total)*100):0;
   fb('fbReto',`Eficacia: ${retoOk}/${total} (${pct}%)`,true);
-  fin('s-reto'); sfx('fan'); unlockAchievement('reto_hero');
+  fin('s-reto'); sfx('fan'); if(pct>=70) unlockAchievement('reto_hero');
 }
 function nextRetoPair(){
   sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0;

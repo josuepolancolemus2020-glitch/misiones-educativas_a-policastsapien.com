@@ -55,6 +55,11 @@
   .crit-rubric{margin-top:0.7rem;font-size:0.82rem;color:var(--dark);background:var(--jade-gl);border-radius:8px;padding:0.5rem 0.75rem;line-height:1.5;}
   @media (max-width:560px){.crit-de-fields{flex-direction:column;gap:0.35rem;}}
 </style>
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
 </head>
 <body>
 

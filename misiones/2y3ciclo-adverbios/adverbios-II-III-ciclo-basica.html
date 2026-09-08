@@ -81,6 +81,11 @@
     @media (max-width:560px){.crit-match-grid{grid-template-columns:1fr;}}
     @media print{.eval-cp-input,.eval-match-select,.crit-textarea,.crit-mente-input,.crit-fossil-select,.eval-item-feedback,.eval-auto-result{display:none!important;}}
   </style>
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
 </head>
 
 <body>

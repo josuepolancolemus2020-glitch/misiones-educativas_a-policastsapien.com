@@ -577,7 +577,17 @@ function ansReto(t){
     }
     document.getElementById('retoScore').textContent=`✔ ${retoOk} correctas | ✗ ${retoErr} errores`; showRetoWord();
 }
-function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(1); const total=retoOk+retoErr; const pct=total>0?Math.round((retoOk/total)*100):0; fb('fbReto',`Resultado: ${retoOk}/${total} (${pct}%) ¡Bien hecho! Prueba otra pareja con 🔀`,true); fin('s-reto'); sfx('fan'); unlockAchievement('reto_hero'); }
+/* El elogio del Reto depende del resultado. Antes decía «¡Bien hecho!»
+   con 0 de 8, en verde y con su logro: un elogio que no distingue
+   acertar de no acertar le enseña al alumno que el elogio no significa
+   nada. La escala es la misma que ya usa la Constancia. */
+function _retoElogio(pct){
+  if(pct>=90) return '¡Excelente!';
+  if(pct>=70) return '¡Bien hecho!';
+  if(pct>=40) return 'Vas bien, sigue practicando.';
+  return 'Todavía no. Repasa y vuelve a intentarlo.';
+}
+function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(1); const total=retoOk+retoErr; const pct=total>0?Math.round((retoOk/total)*100):0; fb('fbReto',`Resultado: ${retoOk}/${total} (${pct}%) ${_retoElogio(pct)} Prueba otra pareja con 🔀`,pct>=40); fin('s-reto'); sfx('fan'); if(pct>=70) unlockAchievement('reto_hero'); }
 function resetReto(){ sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✔ 0 correctas | ✗ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
 
 // ===================== GENERADOR DE TAREAS =====================

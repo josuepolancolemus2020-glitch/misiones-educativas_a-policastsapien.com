@@ -1449,6 +1449,109 @@ todo el que deba algo lleve **su raya para escribir**. La nube no se
 toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
+## Normativa: la estrella se gana
+
+Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de
+regalo, **125 en total**, con el XP en 0. El alumno entraba, no tocaba nada,
+y ya tenía cuatro estrellas.
+
+| sección | misiones que la regalaban al abrir |
+|---|---:|
+| `s-evaluacion` | 34 |
+| `s-aprende` | 33 |
+| `s-tipos` | 32 |
+| `s-errores` | 20 |
+| `s-tareas` | 5 |
+| `s-estructura` | 1 |
+
+Y por el otro lado el puntaje se inflaba: el XP **se volvía a ganar
+recargando** —`xpTracker`, el que recuerda qué tarjeta ya pagó, no se
+guardaba, así que las mismas 14 tarjetas pagaban otra vez, y la pantalla
+promete «(primera vez)» en **84 páginas**—; cada toque en «Calificar»
+regalaba **+8 XP**; y el Reto felicitaba con «¡Bien hecho!» y desbloqueaba
+su logro **con 0 de 8**.
+
+Un puntaje que se consigue sin aprender no motiva: **enseña que el puntaje
+no significa nada**. Y esa cifra sale en la Constancia que el alumno le
+enseña a su familia. Es la misma regla que este proyecto ya escribió para
+los videos —«ver un video no da XP ni marca la sección como hecha, porque
+nadie puede comprobar que el niño lo miró»— sin aplicarla al resto.
+
+Vive en **`js/estrella-ganada.js`**, en `STATIC_ASSETS` de `sw.js`, y **no
+toca ni una línea de ninguna misión**: todo son envoltorios sobre `fin`,
+`genEval`, `gradeEval`, `genTask` y `pts`, que viven copiados en las 74. Es
+el mismo permiso que ya tienen el andamio de los juegos 3D, los videos, la
+barra de secciones y el teclado.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. ⚠️ **Antes del primer toque del alumno no se gana nada.** Es la regla que
+   de verdad resuelve: cubre de un golpe las tres secciones de leer que se
+   marcaban en el arranque **y** la prueba que algunas misiones pre-generan
+   ahí mismo, sin tener que saber cuáles son ni en qué misión.
+2. ⚠️ **Por eso el `<script>` va en el `<head>`, no al final del body.** Es
+   lo único que hace que funcione: así su oyente de `DOMContentLoaded` queda
+   registrado ANTES que el de la misión y llega a envolver `fin()` antes de
+   que el arranque lo llame. Cargado al final llegaría tarde y las estrellas
+   ya estarían puestas — **sin dar un solo error**. La sonda lo mira.
+3. **Generar la PRUEBA no es hacerla.** `genEval` marcaba `s-evaluacion`:
+   tocar «Nueva Evaluación» y no contestar nada daba la estrella. Ahora la
+   da `gradeEval`, y **paga una sola vez**; al segundo «Calificar» se le
+   devuelve la barra a donde estaba **y se le dice por qué**, que una barra
+   que sube y baja sin explicación es un teléfono que el niño da por trabado.
+
+   ⚠️ **`genTask` NO va en esa lista**, y esto se vio tarde: la sección de
+   tareas **no tiene calificación** —el alumno pide sus ejercicios y los
+   resuelve en el cuaderno—, así que deshacer también su marca la dejaba
+   **imposible de completar para siempre**. Ahí basta la regla del primer
+   toque: si los pidió él, la ganó; si los generó el arranque, no.
+4. **La sección de solo leer se gana LLEGANDO AL FINAL** —y quedándose un
+   momento, no de paso al cambiar de pestaña—. Es lo único comprobable en
+   una sección que solo tiene texto.
+
+   ⚠️ **Y la lista no se escribe en ningún sitio**: son exactamente las
+   secciones que la propia misión intentó marcar al abrir. El autor ya sabía
+   cuáles eran; lo que había que cambiar era cuándo.
+
+   ⚠️ La prueba y las tareas **quedan fuera de esa lista a propósito**
+   (`CON_ACTIVIDAD`): tienen su propia forma de ganarse, y ponerles el
+   centinela del final devolvería el regalo por otra puerta —bajar hasta el
+   final del examen daría la estrella sin contestar una pregunta—.
+5. ⚠️ **Lo ya ganado NO se le quita a nadie.** `loadProgress` devuelve las
+   estrellas guardadas escribiendo directo en `done`, sin pasar por `fin`,
+   así que por ahí no se toca nada; y el envoltorio de `fin` mira **si la
+   sección ya estaba** antes de la llamada. Sin ese detalle se le borraba al
+   alumno una estrella de ayer: el arranque vuelve a llamar a `fin`, que no
+   hace nada porque ya está, y el envoltorio la quitaba igual. Costó una
+   prueba que salió con la estrella desaparecida después de recargar.
+
+**Y el elogio depende del resultado.** El Reto decía «¡Bien hecho!» en verde
+con 0 de 8. Ahora el mensaje sube por tramos —90 / 70 / 40—, el verde se
+apaga por debajo de 40, y el logro «Héroe del Reto» pide 70 %. Eso sí son
+**64 ediciones en las misiones**, porque el texto es de cada una; dos ya lo
+hacían bien con su propio criterio (`retoOk>=5`) y se dejaron en paz.
+
+⚠️ **Una edición con guion tiene que comprobar que la variable que mete
+existe ahí.** `node --check` no lo caza: al condicionar el logro con
+`pct>=70` en las 66, en dos misiones `pct` no existe en ese ámbito —usan
+`retoOk`— y habrían reventado el Reto al terminarse el tiempo. Se
+revisó después, no antes, y por poco.
+
+**Antes de publicar un cambio del puntaje:**
+
+```
+node _dev/servidor-estatico.js          (en otra terminal)
+node _dev/verifica-estrella-ganada.js
+```
+
+Lee del archivo **las 74** —que el aparato esté y que esté en el `<head>`—,
+y en el navegador hace lo que de verdad importa: abrir y **no tener ni una
+estrella**, que generar la prueba no la dé y calificarla sí, que calificar
+otra vez **no vuelva a pagar**, que la sección de leer se gane **llegando al
+final y no asomándose**, que la prueba **no** esté entre las de leer, y que
+recargar **no vuelva a pagar las mismas tarjetas** pero **sí conserve** lo
+ganado.
+
 ## Normativa: se puede usar sin el dedo y con la vista cansada
 
 Dos cosas que se midieron el 7 de septiembre de 2026 y que dejaban gente
@@ -2597,6 +2700,13 @@ salen dos reglas:
 - **Los números se cuentan, no se escriben** — también dentro de las sondas.
   `verifica-fin-de-grado.js` comparaba contra el literal `61` y empezó a fallar
   el día que entró la misión 62, sin que nada estuviera roto.
+- ⚠️ **Una sonda que busca un texto prohibido quita los COMENTARIOS antes de
+  buscar.** Ha mordido tres veces: `verifica-legal` con la promesa retirada,
+  `verifica-barra-secciones` con un archivo que explica por qué no hace falta
+  `!important` —y se acusaba a sí mismo—, y `verifica-teclado` con el
+  comentario de `camp-vivo.html` que cuenta que ahí **se quitó** el
+  `user-scalable=no`. El sitio donde se explica por qué algo ya no está es
+  justo donde ese algo sigue escrito.
 - **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
   hasta que se compila la app de Android, así que darlo por fallo pintaba de
   rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le
