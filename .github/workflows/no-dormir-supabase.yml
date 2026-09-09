@@ -47,38 +47,68 @@ on:
 
 jobs:
   despertar:
-    name: Tocar la nube
+    name: Tocar las dos nubes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Leer la dirección y la clave publicable del repositorio
-        id: cfg
+      - name: Una lectura a cada nube, para que cuente como actividad
         run: |
-          URL=$(grep -o "SB_URL_DEF = '[^']*'" js/metas-docente-sync.js | cut -d"'" -f2)
-          KEY=$(grep -o "SB_KEY_DEF = '[^']*'" js/metas-docente-sync.js | cut -d"'" -f2)
-          if [ -z "$URL" ] || [ -z "$KEY" ]; then
-            echo "✘ No se pudo leer SB_URL_DEF/SB_KEY_DEF de js/metas-docente-sync.js."
-            echo "  Si esas constantes cambiaron de nombre, hay que corregir este flujo."
-            exit 1
-          fi
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+          set -u
+          # Las direcciones y las claves se LEEN del repositorio, para que no
+          # haya dos sitios que digan lo mismo. Son las publicables: las que
+          # cualquiera ve en el navegador.
+          URL_A=$(grep -o "SB_URL_DEF = '[^']*'" js/metas-docente-sync.js | cut -d"'" -f2)
+          KEY_A=$(grep -o "SB_KEY_DEF = '[^']*'" js/metas-docente-sync.js | cut -d"'" -f2)
+          URL_B=$(grep -o "SB_URL = '[^']*'" js/metas-sugerencias.js | cut -d"'" -f2)
+          KEY_B=$(grep -o "SB_KEY = '[^']*'" js/metas-sugerencias.js | cut -d"'" -f2)
 
-      - name: Una lectura, para que cuente como actividad
-        run: |
-          CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
-            -H "apikey: ${{ steps.cfg.outputs.key }}" \
-            -H "Authorization: Bearer ${{ steps.cfg.outputs.key }}" \
-            "${{ steps.cfg.outputs.url }}/rest/v1/")
-          echo "La nube contestó $CODIGO"
-          # Se FALLA si no contesta bien: enterarse aquí cuesta un correo;
-          # enterarse en febrero, con el maestro delante, cuesta su confianza.
-          case "$CODIGO" in
-            2*) echo "✅ Despierta." ;;
-            401|403) echo "✘ La nube contestó $CODIGO: la clave o las cabeceras ya no le valen."
-                     echo "  Van las dos que manda la aplicación (apikey y Authorization: Bearer)."
-                     echo "  Si la clave publicable cambió, se cambia en js/metas-docente-sync.js y de ahí sale sola."
-                     exit 1 ;;
-            *)  echo "✘ La nube no contestó como debía ($CODIGO). Míralo antes de que se pause."; exit 1 ;;
-          esac
+          fallos=0
+
+          tocar () {
+            NOMBRE="$1"; URL="$2"; KEY="$3"
+            if [ -z "$URL" ] || [ -z "$KEY" ]; then
+              echo "✘ $NOMBRE: no se pudo leer la dirección o la clave del repositorio."
+              echo "  Si esas constantes cambiaron de nombre, hay que corregir este flujo."
+              fallos=$((fallos+1)); return
+            fi
+            echo "── $NOMBRE ── $URL"
+
+            # 1) La lectura de siempre: la raíz de la API REST, con las DOS
+            #    cabeceras que manda la aplicación. No toca ninguna tabla.
+            R=$(curl -s -w '\n%{http_code}' --max-time 30 \
+                  -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+                  "$URL/rest/v1/") || R=$'\n000'
+            C=$(printf '%s' "$R" | tail -n1)
+            B=$(printf '%s' "$R" | sed '$d' | head -c 200)
+            echo "   /rest/v1/      → $C  $B"
+            case "$C" in 2*) echo "   ✅ $NOMBRE despierta."; return ;; esac
+
+            # 2) Si la API REST no le abre a la clave publicable —pasa, y lo
+            #    que hace falta es que la petición LLEGUE al proyecto, no que
+            #    devuelva datos—, vale la salud del servicio de cuentas, que
+            #    no lleva clave y cuenta igual como actividad.
+            C2=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$URL/auth/v1/health")
+            echo "   /auth/v1/health → $C2"
+            case "$C2" in
+              2*) echo "   ✅ $NOMBRE despierta (por la salud del servicio)." ; return ;;
+            esac
+
+            echo "   ✘ $NOMBRE no contestó a ninguna de las dos. Míralo antes de que se pause."
+            fallos=$((fallos+1))
+          }
+
+          # La del maestro: sus aulas, sus notas y sus claves de familia.
+          tocar "La nube de M.E.T.A.S" "$URL_A" "$KEY_A"
+          # La de F.A.R.O: por ahí salen las sugerencias que escriben los
+          # alumnos y por ahí entran los videos de las misiones. Si esta se
+          # duerme, el alumno escribe su sugerencia y se queda en la cola sin
+          # que nadie la lea, y la sección de videos dice que la nube no
+          # contestó. Se toca desde aquí porque es desde AQUÍ desde donde se
+          # la llama, aunque el panel viva en otro repositorio.
+          tocar "La nube de F.A.R.O" "$URL_B" "$KEY_B"
+
+          # Se FALLA a propósito: enterarse por un correo del CI cuesta un
+          # minuto; enterarse en febrero, con el maestro delante, cuesta su
+          # confianza.
+          if [ "$fallos" -gt 0 ]; then exit 1; fi
