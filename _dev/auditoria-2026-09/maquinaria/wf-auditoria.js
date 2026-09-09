@@ -170,8 +170,16 @@ const LENTES = {
   ],
 }
 
-const LENTES_AREA = LENTES[AREA]
-if (!LENTES_AREA) throw new Error('área desconocida: ' + AREA)
+const SOLO = Array.isArray(args.lentes) && args.lentes.length ? args.lentes : null
+const LENTES_AREA = (LENTES[AREA] || []).filter(l => !SOLO || SOLO.includes(l.key))
+if (!LENTES[AREA]) throw new Error('área desconocida: ' + AREA)
+if (!LENTES_AREA.length) throw new Error('ninguna lente que correr en ' + AREA)
+/* Las lentes ya pagadas en la primera corrida se quedan fuera por args.lentes:
+   sus hallazgos viven en _dev/auditoria-2026-09/crudo/. Lo que se escribe
+   aquí lleva sufijo para no pisar nada. */
+const SUFIJO = AREA + (SOLO ? '-' + SOLO.join('-') : '')
+const NOTA = args.nota ? ' ' + args.nota : ''
+log(`área ${AREA} · lentes que corren: ${LENTES_AREA.map(l => l.key).join(', ')}`)
 
 /* ───────────────────────── ETAPA 1+2: auditar y verificar, en pipeline ───────────────────────── */
 
@@ -230,7 +238,7 @@ await pipeline(LENTES_AREA, auditar, revisar, consolidar)
 
 /* ───────────────────────── ETAPA 3: síntesis ───────────────────────── */
 phase('Sintetizar')
-const NOMBRE_AREA = {
+const NOMBRE_AREA = args.titulo || {
   'tecnica-codigo': 'Auditoría técnica (I): arquitectura, calidad del código, rendimiento, dependencias, pruebas y proceso',
   'tecnica-datos': 'Auditoría técnica (II): base de datos y autenticación, seguridad y escalabilidad a miles de estudiantes',
   'tecnica-acceso': 'Auditoría técnica (III): integridad de datos y sincronización sin conexión, accesibilidad y compatibilidad móvil',
@@ -243,7 +251,7 @@ const NOMBRE_AREA = {
 }[AREA]
 
 const sintesis = await agent(
-  `Eres el editor de la sección «${NOMBRE_AREA}» de la auditoría integral de M.E.T.A.S. Lee ${CONTEXTO} para el contexto. Recibes: (A) los resúmenes ejecutivos de cada auditor, (B) los hallazgos CONFIRMADOS tras revisión adversarial (con severidad ajustada y notas de revisión), (C) los hallazgos DESCARTADOS y por qué, (D) problemas que los revisores echaron en falta.\n\nTAREA 1 — escribe el archivo Markdown ${SCRATCH}/informe/${AREA}.md, en español, con esta estructura exacta:\n# ${NOMBRE_AREA}\n## Resumen (10-15 líneas: veredicto, los 3-5 problemas de fondo, y en 2-3 líneas honestas lo que está bien)\n## Hallazgos por tema (agrupa por lente/tema con ### subtítulos; cada hallazgo como «**[ID] Título** — severidad · tipo · esfuerzo · impacto educativo N/5 · impacto comercial N/5» seguido de: qué pasa, evidencia (archivo:línea, cifras, captura), por qué importa, recomendación. Deduplica: si dos lentes vieron lo mismo, fúndelos y conserva los dos IDs. Ordena dentro de cada tema de más grave a menos.)\n## Qué sobra o debería eliminarse (lista; solo lo que tenga evidencia)\n## Qué falta (lista)\n## Descartados en la revisión adversarial (tabla breve: ID · título · motivo; para que el creador vea qué se consideró y se cayó)\n## Cobertura y límites (qué NO se pudo comprobar en este entorno y por qué)\nEscribe con precisión y sin adornos; nada de elogios de relleno. Cada afirmación con su evidencia. No inventes hallazgos nuevos aquí: edita, funde y ordena.\n\nTAREA 2 — escribe ${SCRATCH}/hallazgos/${AREA}.json con un array JSON de los hallazgos confirmados finales (ya deduplicados), cada uno con: id (si fundiste, «T1-03+T2-07»), area, lente, titulo, descripcion (2-4 frases), evidencia, archivos, severidad, tipo, impacto_educativo, impacto_comercial, esfuerzo, recomendacion. Valida que sea JSON parseable (node -e).\n\nDevuelve las rutas de los dos archivos, los conteos, los 8 títulos más importantes (top), la lista de lo que sobra (eliminar) y la de faltantes.\n\n(A) RESÚMENES:\n${JSON.stringify(resumenes, null, 1)}\n\n(B) CONFIRMADOS (${salvo.length}):\n${JSON.stringify(salvo, null, 1)}\n\n(C) DESCARTADOS (${caidos.length}):\n${JSON.stringify(caidos.map(c => ({ id: c.id, titulo: c.titulo, motivo: c.motivo_refutacion })), null, 1)}\n\n(D) ECHADOS EN FALTA POR LOS REVISORES:\n${JSON.stringify(faltaron, null, 1)}`,
+  `Eres el editor de la sección «${NOMBRE_AREA}» de la auditoría integral de M.E.T.A.S. Lee ${CONTEXTO} para el contexto.${NOTA} Recibes: (A) los resúmenes ejecutivos de cada auditor, (B) los hallazgos CONFIRMADOS tras revisión adversarial (con severidad ajustada y notas de revisión), (C) los hallazgos DESCARTADOS y por qué, (D) problemas que los revisores echaron en falta.\n\nTAREA 1 — escribe el archivo Markdown ${SCRATCH}/informe/${SUFIJO}.md, en español, con esta estructura exacta:\n# ${NOMBRE_AREA}\n## Resumen (10-15 líneas: veredicto, los 3-5 problemas de fondo, y en 2-3 líneas honestas lo que está bien)\n## Hallazgos por tema (agrupa por lente/tema con ### subtítulos; cada hallazgo como «**[ID] Título** — severidad · tipo · esfuerzo · impacto educativo N/5 · impacto comercial N/5» seguido de: qué pasa, evidencia (archivo:línea, cifras, captura), por qué importa, recomendación. Deduplica: si dos lentes vieron lo mismo, fúndelos y conserva los dos IDs. Ordena dentro de cada tema de más grave a menos.)\n## Qué sobra o debería eliminarse (lista; solo lo que tenga evidencia)\n## Qué falta (lista)\n## Descartados en la revisión adversarial (tabla breve: ID · título · motivo; para que el creador vea qué se consideró y se cayó)\n## Cobertura y límites (qué NO se pudo comprobar en este entorno y por qué)\nEscribe con precisión y sin adornos; nada de elogios de relleno. Cada afirmación con su evidencia. No inventes hallazgos nuevos aquí: edita, funde y ordena.\n\nTAREA 2 — escribe ${SCRATCH}/hallazgos/${SUFIJO}.json con un array JSON de los hallazgos confirmados finales (ya deduplicados), cada uno con: id (si fundiste, «T1-03+T2-07»), area, lente, titulo, descripcion (2-4 frases), evidencia, archivos, severidad, tipo, impacto_educativo, impacto_comercial, esfuerzo, recomendacion. Valida que sea JSON parseable (node -e).\n\nDevuelve las rutas de los dos archivos, los conteos, los 8 títulos más importantes (top), la lista de lo que sobra (eliminar) y la de faltantes.\n\n(A) RESÚMENES:\n${JSON.stringify(resumenes, null, 1)}\n\n(B) CONFIRMADOS (${salvo.length}):\n${JSON.stringify(salvo, null, 1)}\n\n(C) DESCARTADOS (${caidos.length}):\n${JSON.stringify(caidos.map(c => ({ id: c.id, titulo: c.titulo, motivo: c.motivo_refutacion })), null, 1)}\n\n(D) ECHADOS EN FALTA POR LOS REVISORES:\n${JSON.stringify(faltaron, null, 1)}`,
   { label: `sintesis:${AREA}`, phase: 'Sintetizar', schema: ESQUEMA_SINTESIS, effort: 'xhigh' })
 
 return {
@@ -253,4 +261,7 @@ return {
   descartados: caidos.length,
   echados_en_falta: faltaron.length,
   sintesis,
+  /* Lo crudo viaja en el resultado, no solo en archivos del contenedor: la
+     primera corrida lo perdió dos veces por dejarlo en /tmp. */
+  salvo, caidos, resumenes, faltaron,
 }
