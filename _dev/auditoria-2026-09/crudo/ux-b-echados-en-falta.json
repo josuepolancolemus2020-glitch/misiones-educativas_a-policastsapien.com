@@ -74,5 +74,30 @@
  {
   "lente": "U13",
   "texto": "La pantalla de entrada del maestro lleva el enlace «¿Administrador del proyecto?» → panel-docente.html (js/app.js:1646), una página con vocabulario de base de datos («RLS», panel-docente.html:67) al alcance de un maestro que solo quería entrar a su aula."
+ },
+ {
+  "lente": "U9",
+  "texto": "Para el alumno de 9º, la primera tarjeta de «También puedes con estas» es El Adjetivo Avanzado (Bachillerato): `grado-alumno.js` ordena el segundo montón con el orden del catálogo y esa misión va en la posición 14, justo tras sus 14 (pw3.js). Lo suyo va primero, pero lo primero que ve al salir de lo suyo es lo más difícil de toda la plataforma, sin rótulo.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U9",
+  "texto": "La estrella de 📝 Tareas se gana tocando «Generar»: `genTask()` llama `fin('s-tareas')` (`la-celula.js:292`) y `estrella-ganada.js` la deja pasar por la regla del primer toque; medido: `doneSections:[\"s-tareas\"]` sin haber contestado un ejercicio. Sigue siendo una estrella regalada en 65 misiones, y CLAUDE.md lo admite («si los pidió él, la ganó»).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U9",
+  "texto": "Buscar «bachillerato» da 0 resultados (pw2.js) aunque `misiones.js:33` tiene `grade:'Bachillerato'`: `GradoAlumno.textoBusqueda` solo mete en el pajar los grados 4º-9º y el campo `grade` no entra en `heno` (`app.js:640-643`). El único alumno que busca esa palabra es el que la necesita.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U9",
+  "texto": "Una misión publicada el 8 de septiembre (Aspectos Cívicos, id 67) entró sin insignia «Etapa N de M» y ninguna sonda lo mira (`badges.js`: 17 sin insignia, 9 desajustes de 67; `_dev/verifica-mision-nueva.js` no comprueba la insignia): el error de U9-05 se sigue copiando con cada misión nueva.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U9",
+  "texto": "La Evaluación en pantalla ofrece 60 opciones de «Forma» (dos `<select>` de 30, medidos en pw1.js) y el texto `la-celula.html:507` sigue mandando «copia el examen en tu cuaderno»: para el alumno que repasa solo, en un teléfono, la prueba que sí le sirve (calificada en pantalla) está detrás de un selector de imprenta pensado para el maestro.",
+  "origen": "revision-2026-09-09"
  }
 ]

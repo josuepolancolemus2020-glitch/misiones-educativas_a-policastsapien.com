@@ -34,5 +34,30 @@
  {
   "lente": "T11",
   "texto": "Una lectura fallida sube el aula entera: pull() en catch devuelve cloudKeys vacío (334-336) y push() (223) toma `semilla = !cloudKeys.has(k)` para TODAS las claves, así que cada HTTP 5xx/DNS caído en el latido de 20 s provoca además una subida de hasta 1,5 MB (y syncNow dice «✅ Todo al día»). Evidencia: js/metas-docente-sync.js:223, 334-336, 386, 445."
+ },
+ {
+  "lente": "T6",
+  "texto": "El chip «Mi grado» estrenado el 9 de septiembre (js/grado-alumno.js, `<span class=\"gr-et\">`) entra ya con contraste insuficiente: axe lo marca color-contrast serious en la vista Misiones hoy (sonda.js); una modificación del top-20 añadió un fallo de la lente que la auditoría venía señalando.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "Dos ajustes de letra que no se hablan: el Aa del maestro guarda `METAS_LETRA_V1` y multiplica `--metas-fz` (js/letra-maestro.js); las misiones leen `preferenciaLetra` y `body.letra-grande`. Al abrir una misión —y las 8 docente-* no tienen ninguna de las dos— el maestro présbita vuelve a la letra chica sin aviso.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "La columna de destino de Clasifica (`.drop-col`) recibe `tabindex=0` de teclado-actividades.js pero conserva `role=\"list\"` (medido: role 'list', tabindex '0'): un lector de pantalla anuncia «lista» y nada dice que Enter suelta ahí la ficha seleccionada; falta un aria-label con la instrucción («Enter para poner aquí la palabra elegida»).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "El modal de identidad que abre cada misión al cargar (metas-registro.js, `.metas-id-card`) no recibe el foco al abrirse (activeElement = DIV, medido) ni atrapa el tabulador: un usuario de teclado o lector puede tabular por detrás del velo a la misión sin haber cerrado el diálogo; metas-dialogos.js ya tiene el patrón correcto y no se reutiliza aquí.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "El reto cronometrado hace sonar `sfx('tick')` cada segundo durante los 30 s (fracciones.js:253, patrón en las 67): en un aula con tres teléfonos prestados el tic constante es ruido para 43 y distracción para el alumno con TDAH; no hay interruptor de sonido en la barra compartida (solo el `sfx` de cada misión).",
+  "origen": "revision-2026-09-09"
  }
 ]

@@ -19,10 +19,15 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Era cierto en 9ce2ac1 y hoy no queda nada. `grep -rl user-scalable=no --include=*.html` (sin www/) solo da dos archivos y en los dos es un COMENTARIO que cuenta que se quitó (camp-vivo.html:17, misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/juego-fabrica-geometrica.html:5); index.html:5, mision.html:5 y camp-vivo.html:5 llevan `width=device-width, initial-scale=1.0` a secas. Y la segunda mitad —la app del maestro sin letra grande— también está: js/letra-maestro.js (cargado en index.html:25 y precacheado en sw.js:59) pone el botón Aa con la variable `--metas-fz` que multiplica los 633 `font-size` de app.css (medido hoy en Mi aula: `--metas-fz: 1`, `.pa-otab` y `.mc-xp` ya llevan `calc(Npx * var(--metas-fz,1))`). La recomendación del hallazgo (escalar `html{font-size}` en rem) se descartó midiendo porque app.css tiene ~600 tamaños en px; el camino que se tomó resuelve lo mismo. Lo que queda fuera y a propósito (el Aa no cabe en el encabezado de la portada) no es lo que el hallazgo denunciaba.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Era cierto en 9ce2ac1 y hoy no queda nada. `grep -rl user-scalable=no --include=*.html` (sin www/) solo da dos archivos y en los dos es un COMENTARIO que cuenta que se quitó (camp-vivo.html:17, misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/juego-fabrica-geometrica.html:5); index.html:5, mision.html:5 y camp-vivo.html:5 llevan `width=device-width, initial-scale=1.0` a secas. Y la segunda mitad —la app del maestro sin letra grande— también está: js/letra-maestro.js (cargado en index.html:25 y precacheado en sw.js:59) pone el botón Aa con la variable `--metas-fz` que multiplica los 633 `font-size` de app.css (medido hoy en Mi aula: `--metas-fz: 1`, `.pa-otab` y `.mc-xp` ya llevan `calc(Npx * var(--metas-fz,1))`). La recomendación del hallazgo (escalar `html{font-size}` en rem) se descartó midiendo porque app.css tiene ~600 tamaños en px; el camino que se tomó resuelve lo mismo. Lo que queda fuera y a propósito (el Aa no cabe en el encabezado de la portada) no es lo que el hallazgo denunciaba."
  },
  {
   "id": "T6-02",
@@ -43,10 +48,15 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Lo resuelve js/teclado-actividades.js (compartido, en STATIC_ASSETS de sw.js): marca() pone `tabindex=\"0\"` y `role=\"button\"` a todo lo que responde al clic y no es nativo (líneas 100-101) y un solo oyente `keydown` en el documento (línea 110) da el clic a quien tiene el foco, parando la barra espaciadora. Reproducido hoy en Fracciones a 360×640 (sonda3.js): `.wb-item` sale con role=button tabindex=0; focus + Enter lo selecciona (`sel-word`); focus en `.drop-col` + Enter lo suelta en la columna: el banco pasa de 10 a 9 fichas y la columna «Fracciones propias» recibe «3/4» sin tocar la pantalla. La sopa tiene su propio teclado (una parada, flechas, Enter, Esc; aria-label por celda en la línea 289). Nota para el registro: la recomendación del hallazgo —copiar el patrón de centena.js— habría sido un error, como comprueba el propio archivo: un <div> con role/tabindex no responde a Enter; hacía falta el oyente.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Lo resuelve js/teclado-actividades.js (compartido, en STATIC_ASSETS de sw.js): marca() pone `tabindex=\"0\"` y `role=\"button\"` a todo lo que responde al clic y no es nativo (líneas 100-101) y un solo oyente `keydown` en el documento (línea 110) da el clic a quien tiene el foco, parando la barra espaciadora. Reproducido hoy en Fracciones a 360×640 (sonda3.js): `.wb-item` sale con role=button tabindex=0; focus + Enter lo selecciona (`sel-word`); focus en `.drop-col` + Enter lo suelta en la columna: el banco pasa de 10 a 9 fichas y la columna «Fracciones propias» recibe «3/4» sin tocar la pantalla. La sopa tiene su propio teclado (una parada, flechas, Enter, Esc; aria-label por celda en la línea 289). Nota para el registro: la recomendación del hallazgo —copiar el patrón de centena.js— habría sido un error, como comprueba el propio archivo: un <div> con role/tabindex no responde a Enter; hacía falta el oyente."
  },
  {
   "id": "T6-03",
@@ -67,10 +77,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Todo sigue igual hoy, medido con Playwright en index.html a 360×640 (sonda.js): tras `.drawer-item[data-view=view-misiones].click()` el `activeElement` es BODY, `[aria-live]` = 0, `<main>/[role=main]` = 0, `#view-inicio h1` = 0; `#hamburger-btn` sin `aria-expanded` ni `aria-controls` (index.html:38); al abrir el menú el foco se queda en el propio botón hamburguesa y Escape NO lo cierra (`app-drawer.open` sigue true). js/app.js:2157-2183 `switchView` no llama a `.focus()` en ningún sitio; js/app.js:3317-3323 open/closeDrawer solo tocan clases. En la misión, fracciones.js:72 `go()` sigue terminando en `scrollTo({top:0})` sin enfocar la sección, y js/barra-secciones.js (que ahora observa los cambios de pestaña en las 74) tampoco mueve el foco. El modal de identidad de metas-registro.js sigue abierto tras Escape (medido: `display:flex` antes y después) y solo enfoca al fallar la validación (líneas 617, 634). axe hoy: landmark-one-main y 22 nodos `region` en inicio.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Hoy hay un sitio único para la parte de la misión: js/barra-secciones.js ya escucha con MutationObserver el cambio de `.nav-t.active`; ahí basta con `sec.querySelector('h2')||sec` con tabindex=-1 y `.focus({preventScroll:true})` para las 74 sin tocar `go()`. En app.js, `switchView` debe enfocar el `.view-title` de la vista (o un h1 oculto en inicio); `openDrawer` poner `aria-expanded=true`, enfocar el primer `.drawer-item` y cerrar con Escape (metas-dialogos.js:155 ya tiene ese patrón). Envolver los `#view-*` en `<main>`. En metas-registro.js, enfocar `#metasIdNombre` al abrir el modal de identidad y cerrarlo con Escape solo si ya hay nombre guardado (si no hay identidad, cerrarlo dejaría la misión sin alumno).",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T6-04",
@@ -91,17 +104,20 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Los valores no cambiaron: css/app.css:47 `--cnat: #0d9488`, :69 `--accent: #f59e0b`, :1150 `.mc-xp{font-size:calc(11px*var(--metas-fz,1));color:var(--accent)}` (medido hoy en la vista Misiones: `rgb(245,158,11)` a 11 px = 2,15:1 sobre blanco), :1055-1058 `.pill-count` 11 px en `color:var(--pill)`. axe hoy (sonda.js): color-contrast serious en misiones ×5 —incluida una NUEVA, `<span class=\"gr-et\">Mi grado</span>` del chip de grado estrenado el 9 de septiembre—, fichas/index.html ×9 (`<span class=\"n\">8 fichas</span>`, h2 blanco sobre #0d9488), padres.html ×1 (`<a class=\"h-inicio\">Inicio</a>`), Fracciones ×2 (`.metas-ba-txt` y la cita `.mot`). Con el Aa del maestro el texto de 11 px sube a 16, pero el color sigue siendo el mismo y el alumno no tiene ese botón.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "La evidencia vale tal cual con dos matices: hoy son 17 nodos en las cinco páginas medidas (no 25), y el chip `.gr-et` es un fallo nuevo que entró con la modificación 20 del top-20. `.mc-xp` con #b45309 y `--cnat` a #0f766e siguen siendo el arreglo barato. La sonda de axe que pide no existe: `grep -rln axe _dev/*.js` → 0.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T6-05",
   "titulo": "Las 16 pestañas de una misión miden 39 px de alto con letra de 12 px, y «letra grande» no las toca",
   "descripcion": "La barra de secciones de la misión —lo que el alumno toca más— usa `.nav-t{font-size:0.75rem;padding:0.35rem 0.7rem}`: 39 px de alto y 12 px de texto, por debajo de los 44 px que el propio CLAUDE.md fija como regla para los juegos 3D. Con `body.letra-grande` el cuerpo sube a 20 px pero las pestañas siguen en 12 px, porque la regla solo infla p/span/li/h2/h3. Lo mismo en Mi aula: sub-pestañas y chips de grupo de 37 px, botones de cabecera de 32-38 px, y la barra de identidad de la misión con botones de 26 px de alto.",
   "evidencia": "Sonda: Fracciones 35 de 36 interactivos visibles < 44 px; Adjetivos 34/35; Mi aula 18/35; inicio 9/38 (extras-*.json). `[pestañas misión]` 16 × {h:39, fz:12px}. misiones/2y3ciclo-fracciones/css/fracciones.css:76 `.nav-t{…font-size:0.75rem;padding:0.35rem 0.7rem…}`; :449-454 `body.letra-grande p, span, li, h2, h3…{font-size:125%!important}` (no incluye .nav-t). Con letra-grande a 360×640: `pFz 20px, navFz 12px, navH 39`. `.metas-ba-btn` 156×26 y 121×26 px. Mi aula: `.pa-otab` 113×37, `.ad-gr-chip` 138×37, `.back-icon-btn` 36×36.",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "error",
   "impacto_educativo": 3,
   "impacto_comercial": 2,
@@ -114,10 +130,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en parte: la pieza principal ya está y el resto no. css/barra-secciones.css:69-72 pone `.nav-t{min-height:44px}` y hoy las 16 pestañas de Fracciones miden 44 px de alto (medido a 360×640). Pero la letra sigue en 12 px y `body.letra-grande` NO la toca: medido con la clase puesta, `p` = 20 px y `.nav-t` = 12 px (fracciones.css:449-454 sigue inflando solo p/span/li/h2/h3/.sopa-cell). `.metas-ba-btn` mide 150×29 (metas-registro.js:746 `padding:0.35rem 0.8rem;font-size:0.8rem`). En Mi aula, `.pa-otab` 102×37 a 11,5 px (app.css:4231) y `.ad-gr-chip` 121×37 —aunque ahí el Aa del maestro (`--metas-fz` hasta 1,45) sí los hace crecer, porque el alto sale del padding + la letra—.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Lo que queda: (1) que la letra de `.nav-t` responda a `letra-grande` —está en un CSS compartido, css/barra-secciones.css, así que es una regla `body.letra-grande .nav-t{font-size:0.95rem}` en un solo archivo, no 74—; (2) `min-height:44px` en `.metas-ba-btn` (metas-registro.js:746) y en `.pa-otab`/`.ad-gr-chip` de app.css. El alumno ya puede pellizcar (T6-01), lo que baja la severidad, pero una pestaña de 12 px que no crece con «Letra» sigue siendo el control más tocado de la misión.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T6-06",
@@ -137,10 +156,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy en 67 misiones: `grep -l 'role=\"button\" onclick=\"openDiploma()\"' misiones/*/*.html | wc -l` → 67, dentro del `<nav class=\"nav\" role=\"tablist\">` (fracciones.html:587 y :602). axe hoy sigue dando aria-required-children critical sobre ese nav (sonda.js). Y las flechas siguen sin funcionar: con el foco en «📖 Aprende», ArrowRight deja el `activeElement` en «📖 Aprende» (medido). El nuevo js/barra-secciones.js —que ya observa la barra en las 74— no tiene ni un `keydown` (`grep -n keydown js/barra-secciones.js` → nada); el único teclado de pestañas que hay es el de la sopa en teclado-actividades.js. El rol declarado promete un patrón que no existe, en 67 misiones.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "El esfuerzo bajó: ya no hace falta un guion sobre 67 archivos. En js/barra-secciones.js, que corre en todas, un `keydown` sobre `.nav[role=tablist]` con ArrowLeft/Right/Home/End y roving tabindex resuelve la mitad; la Constancia se saca del tablist (moverla fuera del `<nav>` o quitarle role=button y darle role=tab con su panel) en las 67, o —lo más honesto y barato— cambiar `role=tablist/tab` por botones con `aria-current` desde barra-secciones.js al montar.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T6-07",
@@ -159,10 +181,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sin cambios: `grep -l retoSec misiones/*/js/*.js | wc -l` → 67 (una más que en agosto: entró Aspectos Cívicos con el mismo patrón), fracciones.js:251 `retoSec=30`, :253 `startReto(){…retoSec=30…}`, y `pts(-1)` por error sigue en 67 misiones. No existe ninguna opción de tiempo (`grep 'sin prisa|sinPrisa|más tiempo' misiones/*/js js/*.js` → solo texto de contenido). js/estrella-ganada.js cambió el elogio y el umbral del logro (70 %) pero no toca el tiempo ni la penalización. El minuto de la lectura sí es esencial y el hallazgo lo excluye bien.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "El sitio para hacerlo sin tocar 67 misiones ya existe: js/estrella-ganada.js envuelve `pts` y otras funciones copiadas en todas; un envoltorio de `startReto` que lea una preferencia «sin prisa» y ponga `retoSec=90` (o pare el intervalo) y un `pts` que ignore el -1 en ese modo cabe en el mismo archivo. Falta el interruptor en la barra que metas-registro.js ya inyecta.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T6-08",
@@ -182,17 +207,20 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en parte. La portada ya lo respeta: hoy `document.getAnimations()` da 1 al cargar (no 8) y 0 con `reducedMotion:'reduce'` emulado; y los juegos 3D también (js/3d/parque-3d.js:360-365 `sinMovimiento()` apaga el confeti). Pero las misiones no: con `prefers-reduced-motion: reduce` emulado, `launchConfetti()` de fracciones.js:61 sigue creando 60 `.confetti-piece` y 77 animaciones (medido). `grep -l prefers-reduced-motion misiones/*/css/*.css` → 3 de 75; css/barra-secciones.css:113 y css/videos-mision.css:377 sí lo tienen, pero solo para lo suyo. El confeti de los aciertos de 66 misiones sigue ignorando el ajuste del teléfono.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "La recomendación tiene un error de sitio: videos-mision.css solo lo cargan las 20 de Matemáticas. Lo que cargan las 74 es css/barra-secciones.css (ya tiene el bloque de reduced-motion: ampliarlo a `*{animation-duration:.01ms!important}`) y js/estrella-ganada.js o js/teclado-actividades.js, donde cabe envolver `launchConfetti` con `if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;` sin tocar ninguna misión.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T6-09",
   "titulo": "No hay lectura en voz alta para el alumno: speechSynthesis solo existe en padres.html y en una misión de inglés",
   "descripcion": "Un alumno ciego, con baja visión o con dislexia severa en 4º no tiene forma de oír la teoría, las preguntas ni las opciones de una misión: el único 🔊 del producto está en el asistente de padres (que además funciona bien) y en la misión de saludos en inglés. Las misiones son texto largo con letra de 12-15 px, y el texto es la puerta a todo lo demás (quiz, clasifica, evaluación). La inclusión es obligación legal según el propio CLAUDE.md; en la práctica, hoy la plataforma es solo para quien lee bien en pantalla.",
   "evidencia": "`grep -rln speechSynthesis --include=*.js --include=*.html .` (sin www/) → misiones/2y3ciclo-ingles-saludos/js/saludos-ingles.js y padres.html, nada más. js/tools/lectura-mision.js, js/metas-registro.js, js/app.js, js/3d/parque-3d.js: 0 usos. padres.html:356 sí: `<button class=\"bub-oir\" … aria-label=\"Escuchar este mensaje\">🔊</button>`. No pude verificar el artículo de la Ley Fundamental de Educación sobre inclusión: su texto no está en _dev/leyes/ (README lista Estatuto, Código de la Niñez y SACE).",
-  "severidad": "alta",
+  "severidad": "media",
   "tipo": "faltante",
   "impacto_educativo": 5,
   "impacto_comercial": 3,
@@ -205,10 +233,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] con severidad rebajada. El hecho sigue: `grep -rln speechSynthesis` (sin www/ ni node_modules) → solo misiones/2y3ciclo-ingles-saludos/js/saludos-ingles.js y padres.html; nada en metas-registro.js, lectura-mision.js, app.js ni parque-3d.js. Pero la descripción exagera: un alumno ciego o con baja visión que use TalkBack o «Seleccionar para escuchar» de Android sí oye la teoría, porque es HTML corriente (y con el teclado de T6-02 ya puede hacer las actividades). El caso real que queda sin cubrir es el niño de 4º con dislexia o lectura muy lenta, sin tecnología de apoyo instalada, que necesita el botón dentro de la misión; y `speechSynthesis` en Android solo habla español sin señal si el motor de Google tiene la voz descargada, cosa que el hallazgo da por hecha.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Poner el 🔊 en la barra que metas-registro.js inyecta en las 74 (leer la sección activa) es un día de trabajo y vale, pero hay que avisar en pantalla cuando `speechSynthesis.getVoices()` no trae ninguna voz `es-*` —en un teléfono sin el paquete de voz el botón enmudece y parecería roto— y documentar TalkBack como alternativa en MANUAL-ALUMNO.md. Bajar de 'alta' a 'media' porque no imposibilita la función: la desasiste.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T6-10",
@@ -229,10 +260,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Todo se reproduce hoy con axe (sonda.js): `select-name` critical en `<select id=\"country-select\">` (index.html:217-219: el `<label>` es hermano, sin `for`; `labels.length` = 0, sin aria-label); `page-has-heading-one` en inicio (`#view-inicio h1` = 0 aunque otras vistas sí tienen `.view-title`) y en padres.html (`<h1>` = 0); `<h4>✨ Adjetivos Calificativos</h4>` sigue en adjetivos-II-IIICiclo.html:114 tras un h2; `scrollable-region-focusable` serious en `.cmp-table-wrap` de Fracciones (medido: scrollWidth 440 sobre clientWidth 290, sin tabindex); `aria-allowed-role` en `<aside role=\"navigation\">` (index.html:1088). Y sigue sin haber sonda de axe: `grep -rln axe _dev/*.js` → 0; ninguna entrada en package.json ni en _dev/corre-sondas.js.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Los arreglos son los que dice, todos de minutos. La sonda de axe encaja en la tanda de navegador que ya existe (`npm run test:navegador`, se descubre sola): axe-core no está en el repositorio y node_modules va versionado, así que o se añade el paquete o se corre solo en CI como Playwright (`npm install --no-save`).",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T6-11",
@@ -253,10 +287,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] y hoy con un agravante: hay DOS mecanismos que no se hablan. Las misiones siguen con `body.letra-grande p, span, li, h2, h3, .sopa-cell{font-size:125%!important}` copiado por misión (fracciones.css:449-454, con sus contra-reglas `.fr` en :461-462) y la llave `preferenciaLetra`; la app del maestro estrenó el 9 de septiembre `--metas-fz` con SU llave `METAS_LETRA_V1` (js/letra-maestro.js). Un maestro que puso Aa en Mi aula abre una misión y vuelve a la letra normal. Y siguen faltando 11 carpetas sin `letra-grande` en su CSS (las 8 docente-*, angulo-bisectriz, bach-uni-adjetivos, mat-2y3ciclo-area-circulo): las 8 del maestro no tienen ni el uno ni el otro. Medido: con la clase puesta, `.nav-t` sigue en 12 px. Lo que sí hay que corregir del hallazgo: la recomendación de `html{font-size:125%}` se midió y descartó para app.css (600 tamaños en px), pero en las misiones SÍ funcionaría: fracciones.css tiene 125 `font-size` en rem y 1 en px.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Para las misiones la raíz en rem sirve (125 rem vs 1 px en fracciones.css: comprobar que las otras 73 sean parecidas antes de propagar); el bloque compartido cabe en css/barra-secciones.css, que cargan las 74, y el interruptor en la barra de metas-registro.js, leyendo `preferenciaLetra` Y `METAS_LETRA_V1` para que el ajuste del maestro le siga a la misión. Las 8 docente-* son las que más lo necesitan: el maestro présbita que hoy tiene Aa en la app lo pierde al entrar en su propia formación.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T6-12",
@@ -275,10 +312,13 @@
   ],
   "area": "tecnica-acceso",
   "lente": "T6",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sin cambios en los campos: css/app.css:1811-1812 `.ge-input{…outline:none…} .ge-input:focus{border-color:var(--brand-light)}` y :1852-1853 `.pa-inp-field` igual; js/metas-registro.js:436 `.metas-id-card input:focus…{outline:none;border-color:#1565c0}`. `grep -cE 'outline:\\s*none|outline:\\s*0' css/app.css` → 12 y en `misiones/*/css/*.css` → 69 (81 en total; el hallazgo decía 80). `--brand-light` sigue en #3b82f6 (app.css:43), 3,68:1. Los `:focus-visible` nuevos (app.css:1071, 3973, 4119, 4130, 4223 y el doble anillo de css/teclado-actividades.css) cubren botones, chips y fichas de actividad, no los inputs donde se escriben las notas. Cifra exacta y consecuencia pequeña: el maestro con teclado físico es raro; con el teclado en pantalla el campo enfocado se ve porque el propio Android lo desplaza a la vista.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Una regla global `input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--brand);outline-offset:2px}` en app.css y en BARRA/ID CSS de metas-registro.js, y quitar los 12 `outline:none` de app.css; los 69 de las misiones son de campos de las actividades y valen la misma regla desde css/teclado-actividades.css, que ya cargan todas.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T7-01",

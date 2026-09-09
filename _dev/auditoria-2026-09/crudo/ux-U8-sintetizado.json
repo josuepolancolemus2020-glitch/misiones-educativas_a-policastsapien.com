@@ -1,0 +1,225 @@
+[
+  {
+    "id": "U8-01",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "El Quiz con 0 de 9 —y la Evaluación calificada en blanco— dan confeti, estrella de sección y logro «superada»",
+    "descripcion": "Contestando siempre la opción a) (nunca es la correcta en las nueve de qzData) la alumna termina con 0/9 y, al llegar a la última pregunta, la misión llama fin('s-quiz') y unlockAchievement('primer_quiz') sin mirar los aciertos: confeti, «¡Quiz completado!» sin puntaje y la cinta «¡Logro desbloqueado! Primera prueba del sistema digestivo superada», que después sale en la Constancia con 0 %. El revisor reprodujo lo mismo en la Evaluación: generar y tocar «Calificar» sin contestar da «Resultado automático: 0/100» y la estrella, porque js/estrella-ganada.js:209 llama fin('s-evaluacion') tras gradeEval sin mirar la nota. La regla del primer toque no cubre esto: el quiz sí se toca; la estrella se da por LLEGAR al final, no por acertar. El patrón literal está en 34 misiones.",
+    "evidencia": "misiones/2y3ciclo-sistema-digestivo/js/sistema-digestivo.js:99 (if(qzIdx>=qzData.length){…fin('s-quiz');unlockAchievement('primer_quiz');return;}) y :36. grep -l \"fin('s-quiz');unlockAchievement('primer_quiz')\" misiones/*/js/*.js | wc -l → 34; «Quiz completado» sin nota en 65 JS. js/estrella-ganada.js:56 (CON_ACTIVIDAD = s-evaluacion, s-tareas: el quiz no está) y :209. Reproducido con Playwright: done=['s-quiz'], unlockedAch=['primer_quiz'], xp=0, 120 piezas de confeti; capturas ux/U8/16-quiz-final.png y ux/U8-revision/quiz-0de9.png. Evaluación en blanco: «Resultado automático: 0/100», done=['s-evaluacion'], chip .done.",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/js/sistema-digestivo.js",
+      "js/estrella-ganada.js",
+      "_dev/verifica-estrella-ganada.js"
+    ],
+    "severidad": "alta",
+    "tipo": "error",
+    "impacto_educativo": 5,
+    "impacto_comercial": 4,
+    "esfuerzo": "dias",
+    "recomendacion": "En showQz al terminar: mostrar «N de 9 correctas» y llamar fin('s-quiz') y unlockAchievement('primer_quiz') solo con ≥ 70 % (la regla 90/70/40 que ya usa el Reto). En estrella-ganada.js, condicionar el fin('s-evaluacion') de la línea 209 a que haya al menos una respuesta contestada o a una nota mínima. Guion sobre las 34 misiones y dos casos nuevos en _dev/verifica-estrella-ganada.js: quiz jugado mal → ni estrella ni logro; evaluación calificada en blanco → ni estrella. Ofrecer «Repetir solo las que fallé»."
+  },
+  {
+    "id": "U8-02",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "A la alumna de 8º se le sirve el contenido y el tono de 4º: lo que su examen pide no está en la misión",
+    "descripcion": "dcnb-map pone El Sistema Digestivo en 8º y la aplicación la rotula «Para 8º grado»; el rótulo no es falso (el DCNB de 8º repasa el sistema digestivo), pero la profundidad no llega: el DCNB pide comparar los sistemas digestivos de humano, sapo, ratón y grillo, las glándulas anexas con microorganismos y experimentos con amilasa salival, jugo gástrico y bilis, y la misión no contiene «enzima», «amilasa», «pepsina» ni «peristaltismo». Enseña «metemos el alimento por la boca» y «Sale lo que sobra», con tono («¡Hola, explorador!», «Aprendiz 🌱») y nivel de lectura (256 palabras, 14,1 por frase) de II ciclo. Lo mismo en Español: Los Sustantivos enseña «si puedes decir el o la antes, ¡es un sustantivo!» donde el DCNB de 8º pide morfosintaxis, concordancia y oración simple y compuesta. Para quien estudia sola para SU examen es el momento de abandono.",
+    "evidencia": "grep -o -i \"enzima|amilasa|pepsina|peristal\" misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html → 0 (solo «quimo» ×2 y «vellosidad» ×1). _dev/dcnb/dcneb-basica-iii-ciclo-89-ciencias-naturales-octavo-grado-1de2.md:21-22 y :114-115; _dev/dcnb/dcneb-basica-iii-ciclo-30-comunicacion-octavo-grado-4de4.md:63-86. js/data/dcnb-map.js:68 (36 → 8: [2,3,6]); js/data/misiones.js:69 («II y III Ciclo»). Medición de p4-mision-mapa.js. Capturas ux/U8/07-dig-tras-ahora-no.png, ux/U8/08-quiz.png, ux/U8/07-sust-tras-ahora-no.png. CLAUDE.md lo reconoce como «el problema de fondo».",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html",
+      "misiones/2y3ciclo-sustantivos/sustantivos-II-III-ciclo-basica.html",
+      "js/data/dcnb-map.js",
+      "js/grado-alumno.js"
+    ],
+    "severidad": "alta",
+    "tipo": "incompleto",
+    "impacto_educativo": 5,
+    "impacto_comercial": 4,
+    "esfuerzo": "meses",
+    "recomendacion": "No quitar el rótulo «Para 8º grado» (el DCNB lo respalda), sino decir en la tarjeta o en la cabecera qué cubre y qué falta: «Base del tema · Para 8º te falta: enzimas, bilis, sistemas comparados». A medio plazo, un bloque «Nivel III ciclo» dentro de la misión (texto + 5 preguntas de quiz + 1 sección de la evaluación) activado por el grado guardado en METAS_ALUMNO_V1, empezando por las 7 de C. Naturales que el mapa marca para 8º. Retirar «explorador» y «Aprendiz 🌱» cuando el grado sea ≥ 7º."
+  },
+  {
+    "id": "U8-03",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "Mi Progreso y 🏅 no dicen qué domina: dos XP que se contradicen",
+    "descripcion": "Tras 9/9 en el quiz y 14 flashcards la misión dice «⭐ 59 · Naturalista»; la portada dice «Nivel 1 · Explorador · 35 XP», que son los XP que visitMission regala por ABRIR la misión, y nunca lee el progreso de la misión. La lista dice «Visitada», sin el 9/9 ni qué sección falta; «Premios por notas de evaluación» está vacío hasta calificar un examen; y el 🏅 de la cabecera lleva a Rutas, a la Ruta del Número de Matemáticas con «0 de 13», aunque la alumna solo tocó Ciencias. Ninguna pantalla responde a «¿qué domino y qué no?». No impide usar nada ni pierde datos: es credibilidad.",
+    "evidencia": "Capturas ux/U8/22-mi-progreso.png (35 XP, Explorador, C. Naturales 1/14, «Visitada») y ux/U8/21-portada-medalla.png (Ruta del Número, 0 %, «Tus insignias» vacío); salida de p14-flujo-real.js. js/app.js:2116-2124 (s.xp += m.xp al visitar); grep 'doneSections|_v1' js/app.js → nada, solo METAS_REGISTRO_V1 para el resumen semanal (app.js:706, :1282); insignias solo por nota de evaluación (app.js:1132-1145); #notif-btn (app.js:3381) hace switchView('view-rutas'); escalas de nivel distintas (sistema-digestivo.js:52 frente a la portada).",
+    "archivos": [
+      "js/app.js",
+      "index.html",
+      "js/metas-registro.js"
+    ],
+    "severidad": "media",
+    "tipo": "error",
+    "impacto_educativo": 4,
+    "impacto_comercial": 4,
+    "esfuerzo": "semanas",
+    "recomendacion": "Un solo XP: que la portada lea el XP y doneSections de cada <slug>_v1 (o que la misión escriba en METAS_REGISTRO_V1 un resumen por sección) y deje de regalar m.xp por abrir. En Mi Progreso, por misión: secciones dominadas y pendientes con su última nota (Quiz 9/9, Evaluación —, Reto —) y un «Te falta: Evaluación» tocable. Que 🏅 abra un panel de premios propio, no la primera ruta de Matemáticas."
+  },
+  {
+    "id": "U8-04",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "«¡Misión completada! Ver mi Constancia» brilla con 0 XP; la Constancia dice «24 %» sin decir de qué, y el WhatsApp dice «completó» con 3 %",
+    "descripcion": "Al entrar en Evaluación sin haber hecho nada hay un botón verde grande «🏅 ¡Misión completada! · Ver mi Constancia» (el «siguiente sección» de la barra, con texto fijo). La Constancia sale con el porcentaje (24 % tras el quiz 9/9; 0 % con el quiz a 0/9), «¡Sigue aprendiendo!» y «Sigue completando secciones», sin listar cuáles, y con el quiz a cero lista como logro «Primera prueba del sistema digestivo superada»; ofrece «Enviar resultados» y «Cambiar alumno» aunque no haya maestro. El WhatsApp de la Constancia manda «¡Estudiante completó la Misión…! Progreso: 3 %»: «completó» con 3 % y «Estudiante» aunque METAS_ALUMNO_V1 tenga el nombre.",
+    "evidencia": "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html:542 (nsb-hint «¡Misión completada!» fijo); sistema-digestivo.js:693 (openDiploma, mensajes por tramos de pct sin desglose) y :696 (shareWA: «completó… Progreso: ${pct}%»; diplName no lee METAS_ALUMNO_V1). Capturas ux/U8/11-evaluacion.png (⭐ 0 y el botón «¡Misión completada!») y ux/U8/18-constancia.png (24 %, «Sigue aprendiendo», sin lista). Botones del diploma medidos por el revisor: Enviar resultados, WhatsApp, Guardar foto, Cerrar, Cambiar alumno.",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html",
+      "misiones/2y3ciclo-sistema-digestivo/js/sistema-digestivo.js",
+      "js/barra-secciones.js"
+    ],
+    "severidad": "media",
+    "tipo": "error",
+    "impacto_educativo": 3,
+    "impacto_comercial": 3,
+    "esfuerzo": "horas",
+    "recomendacion": "nsb-hint = «Última sección» hasta que _diplPct() llegue a 100, y entonces «¡Misión completada!». En la Constancia, bajo el porcentaje, las secciones con ✅/⬜ y la nota de cada una; el mensaje de WhatsApp dice «avanzó un N %» mientras N < 100 y lee el nombre de METAS_ALUMNO_V1; ocultar «Cambiar alumno» y «Enviar resultados» cuando no hay docente ni codigo_aula."
+  },
+  {
+    "id": "U8-06",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "Al fallar solo se lee «Incorrecto. Revisa la respuesta correcta.», y la opción elegida se pinta en verde antes de verificar",
+    "descripcion": "En el Quiz, al verificar una respuesta mal aparece «Incorrecto. Revisa la respuesta correcta.» y se pinta la buena; nada de por qué. Antes de verificar, la elegida se resalta en verde (.sel, el --pri de la misión) y después la correcta en otro verde (--jade): dos verdes para «elegida» y «correcta». En la Evaluación calificada: «Revisar. Respuesta esperada: saliva» ×15 y «Pareados: 0/5. Clave: 16→A…», sin explicación. El banco qzData no tiene campo de porqué, y el error es justo el momento en que quien estudia sola necesita el porqué.",
+    "evidencia": "misiones/2y3ciclo-sistema-digestivo/css/sistema-digestivo.css:19 y :177 (.qz-opt.sel borde rgb(22,163,74)); :15 y :178 (.qz-opt.correct borde rgb(0,184,148)), medido tras la transición. sistema-digestivo.js:104 (checkQz pinta la buena y escribe el texto fijo) y :454 (gradeEval). Capturas ux/U8/09-quiz-mal.png, ux/U8/15-quiz-verificar-mal.png, ux/U8/11h-calificado-full.png, ux/U8-revision/quiz-sel-vs-correct.png; salida de p19: 16 mensajes «Revisar. Respuesta esperada: …».",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/js/sistema-digestivo.js",
+      "misiones/2y3ciclo-sistema-digestivo/css/sistema-digestivo.css"
+    ],
+    "severidad": "media",
+    "tipo": "incompleto",
+    "impacto_educativo": 4,
+    "impacto_comercial": 2,
+    "esfuerzo": "semanas",
+    "recomendacion": "Un campo «por» en cada pregunta del banco («La bilis emulsiona las grasas, por eso la fabrica el hígado») que se muestre al fallar; .sel en azul o gris, nunca verde (una regla CSS por misión: minutos, y debería ir aparte). Al terminar el quiz, «Repasar las que fallé» que reenvíe a la tarjeta de Aprende correspondiente. Las «semanas» son escribir los porqués de las 74."
+  },
+  {
+    "id": "U8-11",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "La Evaluación en pantalla contradice sus propias instrucciones y está pensada para el maestro, no para quien estudia sola",
+    "descripcion": "El texto dice «Copia el examen en tu cuaderno y responde… después selecciona Ver Pauta», y debajo la pantalla ofrece 30 radios, 5 cajas de texto y 5 selectores para contestar en el teléfono. Delante de la alumna hay un selector de 30 «Formas» (herramienta del maestro para imprimir a 43), el botón «Imprimir» y, al calificar, «Este resultado es solo para revisión en pantalla…». Al tocar «Nueva Evaluación» salta confeti (117 piezas) antes de contestar nada: fin('s-evaluacion') al final de genEval lanza launchConfetti() antes de que estrella-ganada desmarque la sección; la estrella se retira, el festejo ya salió.",
+    "evidencia": "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html:510 (instrucción); sistema-digestivo.js:449 (genEval, selector evalFormaSel con 30 formas) y :454 (texto «solo para revisión en pantalla»). Capturas ux/U8/11d-eval-generada.png, ux/U8/11e-calificar-vacio.png, ux/U8-revision/eval-generada.png; salida de p17: radios 30, texts 5.",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/js/sistema-digestivo.js",
+      "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html"
+    ],
+    "severidad": "media",
+    "tipo": "sobrediseno",
+    "impacto_educativo": 3,
+    "impacto_comercial": 2,
+    "esfuerzo": "dias",
+    "recomendacion": "Dos modos explícitos: «Practicar en el teléfono» (sin Formas, sin Imprimir, instrucción «Contesta aquí y toca Calificar») y «Para el maestro» (Formas, Imprimir, Pauta) plegado. Sin confeti al generar: fin('s-evaluacion', false) en genEval de las 74. El resultado como tarjeta con desglose y «Repasar lo fallado», no como toast de tres frases."
+  },
+  {
+    "id": "U8-12",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "Catorce pestañas más la Constancia, sin un «por dónde empiezo para el examen»; varias son la misma actividad con otro nombre",
+    "descripcion": "Aprende · Órganos · Lab · Flashcards · Quiz · Clasifica · Identifica · Completa · Widgets · Reto · Sopa · Tareas · Evaluación · Recursos, más el botón Constancia. Widgets contiene «Ordena la secuencia» e «Identifica el Concepto», que ya existen como pestañas; Clasifica, Identifica, Completa y Reto trabajan los mismos 10 términos; «Sopa» lleva un 🤍 como icono. Quien entra a estudiar para un examen no sabe cuál es el camino corto (Aprende → Quiz → Evaluación) y la flecha «→» de cada sección la lleva por las quince en orden. Mismas pestañas en Cinco Reinos.",
+    "evidencia": "Salida de p4-mision-mapa.js (pestañas, idénticas en Cinco Reinos); misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html:360 («Ordena la secuencia» dentro de Widgets), :372 («Identifica el Concepto» dentro de Widgets), :441 y :449 (icono 🤍 de Sopa). Capturas ux/U8/42-clasifica.png, ux/U8/43-identifica.png, ux/U8/45-widgets.png, ux/U8/46-reto.png.",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html",
+      "js/barra-secciones.js"
+    ],
+    "severidad": "media",
+    "tipo": "sobrediseno",
+    "impacto_educativo": 3,
+    "impacto_comercial": 2,
+    "esfuerzo": "semanas",
+    "recomendacion": "Sin tocar el contenido: un bloque «Para tu examen en 20 min: Aprende → Quiz → Evaluación» al abrir la misión (horas por misión, con guion). Agrupar las pestañas de práctica bajo «Practica» con submenú; fusionar Widgets con Identifica y Completa (mismo banco; esto es lo que cuesta semanas); darle a Sopa un icono real. La sonda mide que la primera fila de pestañas quepa en 360 px."
+  },
+  {
+    "id": "U8-10",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "En 360×640 la cabecera de la misión se come el 35 % de la pantalla en reposo",
+    "descripcion": "Barra superior con logo, XP, WhatsApp y estrella (0-85 px, con «Aprendiz 🌱» en una segunda línea de 36 px), franja del título con la tira de palabras (85-161) y barra de pestañas (161-227): el contenido empieza a 251 px de 640. En el Quiz caben la pregunta y dos opciones; en Aprende, un párrafo. Solo la barra de pestañas es pegajosa (66 px al deslizar); lo demás se va, y cada cambio de sección vuelve arriba porque go() hace scrollTo(0).",
+    "evidencia": "Medición del revisor en 360×640: 227/640 = 35 %; salida de p10: «alto cabecera+nav (px) 227». Capturas ux/U8/33-360-aprende.png («Aprendiz 🌱» en segunda línea), ux/U8/34-360-quiz.png (dos opciones visibles), ux/U8-revision/mision-360-aprende.png.",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/css/sistema-digestivo.css",
+      "css/barra-secciones.css"
+    ],
+    "severidad": "media",
+    "tipo": "sobrediseno",
+    "impacto_educativo": 2,
+    "impacto_comercial": 2,
+    "esfuerzo": "dias",
+    "recomendacion": "Por debajo de 400 px de ancho: una sola barra superior de 48 px (flecha, título de la misión, ⭐ XP) y las pestañas; el nivel «Aprendiz», el WhatsApp y la franja morada van al panel de logros o al pie. Comprobarlo en la sonda con 360×640: cabecera + nav ≤ 120 px en reposo."
+  },
+  {
+    "id": "U8-05",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "Identidad partida: la portada no lee el nombre que la misión guardó, y el grado del chip no llega al modal",
+    "descripcion": "La alumna eligió «8º» en la portada (METAS_GRADO_VISTA_V1); la misión abre, la primera vez en ese teléfono, un modal que pide nombre, número de lista, escuela, «Grado y sección» otra vez y «Código de aula (te lo da tu maestro)». Guarda «Valeria Mejía, 8vo A» y al volver la portada sigue con «¡Hola, Estudiante!»; la Constancia también dice «Estudiante». La revisión corrigió dos cosas: el código de aula no bloquea guardar, y el modal sale una sola vez por teléfono, no en cada misión. Queda la fricción de la primera vez: escribe su grado dos veces y su nombre no aparece en nada que ella vea.",
+    "evidencia": "localStorage tras guardar: METAS_ALUMNO_V1 = {\"nombre\":\"Valeria Mejía\",…,\"grado\":\"8vo A\"} (salida de p12). js/app.js:109 (s.name.trim() || 'Estudiante', sobre el estado propio blank() de :72); js/metas-registro.js:524 (el modal precarga el grado solo desde id.grado, nunca desde METAS_GRADO_VISTA_V1), :497-498 (texto del modal), :508 (el rótulo del código de aula dice «te lo da tu maestro», sin «opcional»; el «(opcional)» de :501 es del número de lista), :855 (solo abre si !identificacion() && !idOmitidaEstaSesion()). Capturas ux/U8/06-mision-primera.png, ux/U8/20-portada-vuelta.png.",
+    "archivos": [
+      "js/metas-registro.js",
+      "js/app.js",
+      "js/grado-alumno.js"
+    ],
+    "severidad": "baja",
+    "tipo": "incompleto",
+    "impacto_educativo": 2,
+    "impacto_comercial": 3,
+    "esfuerzo": "dias",
+    "recomendacion": "Una sola identidad de alumno: la portada lee METAS_ALUMNO_V1 para el saludo, la Constancia lee el nombre de ahí, y el modal precarga el grado del chip (y al revés). El código de aula, plegado bajo «¿Tienes código de tu maestro?»; el modal, de dos campos (nombre y grado) para quien estudia sola."
+  },
+  {
+    "id": "U8-09",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "En Misiones, los filtros ocupan la primera pantalla del teléfono barato, y el chip «Todos» queda cortado sin pista",
+    "descripcion": "Buscador, fila «Mi grado», diez píldoras de materia en cinco filas (seis en 360) y la tarjeta «Rutas de Aprendizaje» van antes de la primera misión. En 393×873 la primera tarjeta empieza a 557 px y se ve una y media (la revisión corrigió los 1 113 px del auditor); en 360×640 empieza a 619 px y la alumna ve solo botones. El chip «Todos» de «Mi grado» tiene su borde derecho a 439 px con un viewport de 393: .grado-chips esconde la barra de desplazamiento y no lleva sombras ni pista de que se desliza. Las píldoras de materia repiten las puertas de la portada.",
+    "evidencia": "css/app.css:5424-5429 (overflow-x:auto; scrollbar-width:none; ::-webkit-scrollbar{display:none}). Capturas ux/U8-revision/misiones-393.png, ux/U8-revision/misiones-360.png, ux/U8/31-360-misiones.png; salida de p10: «360 primera tarjeta y= 619, chip Todos visible? false».",
+    "archivos": [
+      "index.html",
+      "css/app.css",
+      "js/app.js"
+    ],
+    "severidad": "baja",
+    "tipo": "sobrediseno",
+    "impacto_educativo": 2,
+    "impacto_comercial": 3,
+    "esfuerzo": "dias",
+    "recomendacion": "Píldoras de materia en UNA fila deslizable, como los chips de grado, con sombras de extremo en las dos filas; la tarjeta de Rutas fuera de la lista (ya tiene su puerta en la portada). Objetivo medible: primera tarjeta por debajo de 500 px en 393 y de 400 px en 360."
+  },
+  {
+    "id": "U8-07",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "Portada y misión parecen dos productos: tipografías, paleta, tamaños y una tira de palabras detrás del título",
+    "descripcion": "Portada: Outfit, azul sobre gris, párrafos de 12 px. Misión: Fredoka + Nunito, cabecera con degradado morado→azul sobre página verde menta, párrafos de 20 px, pestañas de 12 px; detrás del título corre una tira animada de palabras al 15 % de opacidad que se cruza con el icono y el título, y cada misión trae otra paleta. La consecuencia para la tarea es nula (el título se lee, nada se hace peor): es deuda estética con impacto comercial modesto, y Fredoka es «la cara de las misiones» a propósito.",
+    "evidencia": "misiones/2y3ciclo-sistema-digestivo/css/sistema-digestivo.css:62 (.hero::before con «BOCA · ESÓFAGO · …»); salida de p18-coherencia.js (INDEX body Outfit, p 12 px; MISION body Nunito, h2 Fredoka 20 px, p 20 px). Capturas ux/U8/01-portada.png frente a ux/U8/07-dig-tras-ahora-no.png, 07-reinos-tras-ahora-no.png, 07-sust-tras-ahora-no.png; ux/U8-revision/mision-360-aprende.png.",
+    "archivos": [
+      "css/app.css",
+      "misiones/2y3ciclo-sistema-digestivo/css/sistema-digestivo.css",
+      "css/barra-secciones.css"
+    ],
+    "severidad": "baja",
+    "tipo": "deuda",
+    "impacto_educativo": 1,
+    "impacto_comercial": 2,
+    "esfuerzo": "semanas",
+    "recomendacion": "Lo único barato: apagar la tira de .hero::before por debajo de 400 px (una regla CSS). Unificar tokens (letra de títulos y de texto, escala, radios, alto de cabecera) en un CSS común es un rediseño de 74 archivos, no un arreglo; va cuando se toque la cabecera por otra razón."
+  },
+  {
+    "id": "U8-08",
+    "area": "ux",
+    "lente": "U8",
+    "titulo": "Pie casero en las 74 misiones: nombres con guion bajo, Gmail personal y «Reiniciar XP» sin confirmación",
+    "descripcion": "Al final de cada misión: «Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael & Angelly Polanco», josuepolancolemus2020@gmail.com, la frase «Limita el uso del teléfono móvil…» y seis botones (Sonido, Tema, Logros, Letra, Reiniciar XP, Presentación). resetXP pone xp = 0 sin confirmación; no toca done ni unlockedAch, así que borra la barra de XP, no las secciones ni los logros. Para una alumna de 14 años es la firma de un proyecto escolar, no de un producto.",
+    "evidencia": "grep -l josuepolancolemus2020@gmail.com misiones/*/*.html | wc -l → 74; grep -l \"Reiniciar XP\" misiones/*/*.html | wc -l → 73. misiones/2y3ciclo-sistema-digestivo/js/sistema-digestivo.js:55 (resetXP). Capturas ux/U8/23-sugerencias.png (pie visible bajo el diálogo), ux/U8/24-reiniciar-xp.png.",
+    "archivos": [
+      "misiones/2y3ciclo-sistema-digestivo/sistema-digestivo.html"
+    ],
+    "severidad": "baja",
+    "tipo": "eliminar",
+    "impacto_educativo": 1,
+    "impacto_comercial": 3,
+    "esfuerzo": "horas",
+    "recomendacion": "Pie de una línea: «M.E.T.A.S · policastsapien.com · Sugerencias», sin correo personal ni nombres con guion bajo (los créditos, en una página «Acerca de»). Sonido, Tema y Letra a Ajustes de la misión; «Reiniciar XP» detrás de una confirmación en esa pantalla. Guion sobre los 74 archivos."
+  }
+]
