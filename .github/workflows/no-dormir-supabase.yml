@@ -74,27 +74,30 @@ jobs:
             fi
             echo "── $NOMBRE ── $URL"
 
-            # 1) La lectura de siempre: la raíz de la API REST, con las DOS
-            #    cabeceras que manda la aplicación. No toca ninguna tabla.
+            # 1) La llamada que de verdad se puede hacer con una clave
+            #    PUBLICABLE: la salud del servicio de cuentas. Va con la
+            #    cabecera `apikey`, que la puerta de entrada exige en todo,
+            #    y no toca ninguna tabla ni devuelve un solo dato de nadie.
+            C=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+                  -H "apikey: $KEY" "$URL/auth/v1/health")
+            echo "   /auth/v1/health → $C"
+            case "$C" in 2*) echo "   ✅ $NOMBRE despierta."; return ;; esac
+
+            # 2) Y si eso falla, la raíz de la API REST, que sirve para
+            #    ENTERARSE de qué pasa. Ojo: con una clave publicable
+            #    contesta 401 «Secret API key required» —es así a
+            #    propósito, esa puerta pide clave secreta— y una clave
+            #    secreta NO puede vivir en un repositorio público. Por eso
+            #    la lectura de arriba es la buena y esta solo explica.
             R=$(curl -s -w '\n%{http_code}' --max-time 30 \
                   -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
                   "$URL/rest/v1/") || R=$'\n000'
-            C=$(printf '%s' "$R" | tail -n1)
+            C2=$(printf '%s' "$R" | tail -n1)
             B=$(printf '%s' "$R" | sed '$d' | head -c 200)
-            echo "   /rest/v1/      → $C  $B"
-            case "$C" in 2*) echo "   ✅ $NOMBRE despierta."; return ;; esac
+            echo "   /rest/v1/       → $C2  $B"
+            case "$C2" in 2*) echo "   ✅ $NOMBRE despierta (por la API REST)."; return ;; esac
 
-            # 2) Si la API REST no le abre a la clave publicable —pasa, y lo
-            #    que hace falta es que la petición LLEGUE al proyecto, no que
-            #    devuelva datos—, vale la salud del servicio de cuentas, que
-            #    no lleva clave y cuenta igual como actividad.
-            C2=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$URL/auth/v1/health")
-            echo "   /auth/v1/health → $C2"
-            case "$C2" in
-              2*) echo "   ✅ $NOMBRE despierta (por la salud del servicio)." ; return ;;
-            esac
-
-            echo "   ✘ $NOMBRE no contestó a ninguna de las dos. Míralo antes de que se pause."
+            echo "   ✘ $NOMBRE no contestó ni a la salud ni a la API REST. Míralo antes de que se pause."
             fallos=$((fallos+1))
           }
 
