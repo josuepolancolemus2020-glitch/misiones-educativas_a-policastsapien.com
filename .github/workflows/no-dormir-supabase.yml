@@ -22,6 +22,14 @@
 # cualquiera ve en el navegador; se lee de `js/metas-docente-sync.js`
 # para no tener dos sitios que digan lo mismo.
 #
+# ⚠️ Y van las DOS cabeceras, `apikey` y `Authorization: Bearer`,
+# que es exactamente lo que manda la aplicación (mismo archivo,
+# línea del `headers`). Con solo `apikey` la nube contesta **401**
+# y el flujo falla: así salió la primera ejecución, el 9 de
+# septiembre de 2026, y así habría seguido —fallando cada tres
+# días y sin despertar nada— hasta febrero. La respuesta estaba
+# en el archivo que este flujo ya abría.
+#
 # ⚠️ Y lo que esto NO resuelve, dicho aquí para que no sorprenda:
 # GitHub apaga los `schedule` de un repositorio que lleve 60 días
 # **sin un solo empujón**. Si el autor no toca el repositorio en
@@ -61,11 +69,16 @@ jobs:
         run: |
           CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
             -H "apikey: ${{ steps.cfg.outputs.key }}" \
+            -H "Authorization: Bearer ${{ steps.cfg.outputs.key }}" \
             "${{ steps.cfg.outputs.url }}/rest/v1/")
           echo "La nube contestó $CODIGO"
           # Se FALLA si no contesta bien: enterarse aquí cuesta un correo;
           # enterarse en febrero, con el maestro delante, cuesta su confianza.
           case "$CODIGO" in
             2*) echo "✅ Despierta." ;;
+            401|403) echo "✘ La nube contestó $CODIGO: la clave o las cabeceras ya no le valen."
+                     echo "  Van las dos que manda la aplicación (apikey y Authorization: Bearer)."
+                     echo "  Si la clave publicable cambió, se cambia en js/metas-docente-sync.js y de ahí sale sola."
+                     exit 1 ;;
             *)  echo "✘ La nube no contestó como debía ($CODIGO). Míralo antes de que se pause."; exit 1 ;;
           esac
