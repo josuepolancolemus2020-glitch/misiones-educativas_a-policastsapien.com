@@ -14,6 +14,11 @@ const RUTAS = {
   robots:  { nombre: 'Ruta de los Robots', emoji: '🤖', color: 'tec'  },
   // Inglés (Pre-A1 → A2, alineadas a Cambridge Starters/Movers/Flyers)
   primeras: { nombre: 'Ruta de las Primeras Palabras', emoji: '🗣️', color: 'ing' },
+  /* Ruta de la Patria: Educación Cívica. Va aparte de la Ruta del Tiempo
+     (que es Historia) porque el civismo no se estudia como pasado: los
+     símbolos, el Himno y las fechas cívicas se usan HOY, en el acto del
+     lunes y en el desfile de septiembre. */
+  patria: { nombre: 'Ruta de la Patria', emoji: '🇭🇳', color: 'civ' },
   /* Repaso General: las pruebas de fin de grado. Cada etapa será un grado
      (hoy arranca con 6º); la ruta junta TODAS las materias del año, por eso
      no cuelga de ninguna materia clásica sino de la materia 'repaso'. */
@@ -83,6 +88,10 @@ const MISSIONS = [
   { id: 54, title: 'Programando un Robot',                                subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 5, xp: 35, icon: '🕹️', pais: 'HN', url: 'misiones/2y3ciclo-programando-robot/programando-robot.html' },
   { id: 55, title: 'Robots que Resuelven Problemas',                    subject: 'robótica',    color: 'tec',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'robots',  etapa: 6, xp: 35, icon: '🏆', pais: 'HN', url: 'misiones/2y3ciclo-robots-problemas/robots-problemas.html' },
   { id: 57, title: 'Hello! Saludos y Presentarme',                        subject: 'inglés',      color: 'ing',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'primeras', etapa: 1, xp: 30, icon: '🗣️', pais: 'HN', url: 'misiones/2y3ciclo-ingles-saludos/saludos-ingles.html' },
+  /* Educación Cívica. La primera de la Ruta de la Patria: los símbolos, el
+     Himno, los próceres y las fechas del Mes de la Patria, que es lo que el
+     alumno de septiembre necesita estudiar. */
+  { id: 67, title: 'Aspectos Cívicos de Honduras',                        subject: 'cívica',      color: 'civ',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'patria',  etapa: 1, xp: 35, icon: '🇭🇳', pais: 'HN', url: 'misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html' },
   /* La Ruta de la Meta va POR GRADO, no por orden de llegada: la etapa 1 es 4º
      aunque la primera que se escribió fuera la de 6º. El maestro de cuarto
      entra por la etapa 1 y no por la mitad de la ruta. */

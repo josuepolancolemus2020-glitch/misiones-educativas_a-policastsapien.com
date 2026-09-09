@@ -49,6 +49,41 @@ for (const rel of archivos) {
   }
 }
 
+/* ── El escape que compila y sale en pantalla ──────────────────────────
+   `\U0001F1ED` es un escape de PYTHON, no de JavaScript. JS solo entiende
+   `\uXXXX` y `\u{XXXXX}`, los dos con u minúscula; con la mayúscula se
+   come la barra y pinta el texto pelado. Eso salió publicado el 8 de
+   septiembre de 2026 en el Laboratorio de la misión de Aspectos Cívicos:
+   donde iba la bandera 🇭🇳 el alumno leía «U0001F1EDU0001F1F3».
+
+   Entra aquí y no en otra sonda porque es exactamente el mismo daño que
+   esta vigila: el archivo COMPILA, `node --check` lo da por bueno, el
+   navegador no dice nada y el estropicio solo se ve mirando la pantalla.
+   Y se cuela por donde se coló: al escribir bancos de datos con un guion
+   de Python, `'\\U0001F1ED'` deja el escape crudo en el archivo.
+
+   ⚠️ Los COMENTARIOS se quitan antes de mirar, que es la regla de siempre:
+   este bloque explica el problema escribiendo el escape, así que buscarlo a
+   secas hacía que la sonda se acusara a sí misma. Es la cuarta vez que
+   muerde la misma trampa (verifica-legal, verifica-barra-secciones y
+   verifica-teclado fueron las tres primeras). */
+const sinComentarios = t => String(t)
+  .replace(/\/\*[\s\S]*?\*\//g, '')   // de bloque
+  .replace(/(^|[^:])\/\/.*$/gm, '$1'); // de línea, sin comerse el // de una URL
+let escapes = 0;
+for (const rel of archivos) {
+  const txt = sinComentarios(fs.readFileSync(path.join(RAIZ, rel), 'utf8'));
+  const encontrados = txt.match(/\\U[0-9A-Fa-f]{8}/g);
+  if (encontrados) {
+    escapes++;
+    const unico = [...new Set(encontrados)];
+    console.log(`  ✗ ${rel}\n      ${encontrados.length} escape(s) de Python que JS no entiende: ${unico.slice(0, 4).join(' ')}${unico.length > 4 ? '…' : ''}`);
+    console.log('      se escribe el emoji de verdad, o \\u{1F1ED} con u minúscula y llaves');
+  }
+}
+
 console.log('\n' + '─'.repeat(50));
-if (malos) { console.log(`✖ ${malos} de ${archivos.length} archivos no compilan: lo que haya dentro no se ejecuta y la pantalla no lo dice.`); process.exit(1); }
-console.log(`✅ Los ${archivos.length} archivos de JavaScript compilan.`);
+if (malos) { console.log(`✖ ${malos} de ${archivos.length} archivos no compilan: lo que haya dentro no se ejecuta y la pantalla no lo dice.`); }
+if (escapes) { console.log(`✖ ${escapes} archivo(s) con escapes \\U de Python: compilan, pero el alumno lee el código en vez del emoji.`); }
+if (malos || escapes) process.exit(1);
+console.log(`✅ Los ${archivos.length} archivos de JavaScript compilan, y ninguno lleva escapes que JS no entienda.`);

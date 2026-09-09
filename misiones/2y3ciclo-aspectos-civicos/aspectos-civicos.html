@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misión Aspectos Cívicos de Honduras | policastsapien.com</title>
+<meta name="description" content="Misión Aspectos Cívicos de Honduras: los símbolos patrios mayores y menores, la Bandera Nacional, el Escudo, el Himno Nacional con su coro y sus siete estrofas, los próceres y héroes del país y las fechas cívicas del Mes de la Patria. Misión educativa interactiva. PolicastSapien.">
+<meta property="og:title" content="Misión Aspectos Cívicos de Honduras">
+<meta property="og:description" content="Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Misiones PolicastSapien">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<link rel="stylesheet" href="css/aspectos-civicos.css">
+<!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
+     de la misión a propósito: de ahí saca su color, y así sobrescribe su
+     position:static sin un solo !important. -->
+<link rel="stylesheet" href="../../css/barra-secciones.css">
+<!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
+     Va con js/teclado-actividades.js, que pone las paradas de tabulador
+     y hace que Enter y la barra espaciadora sirvan de algo. -->
+<link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La estrella se gana: antes del primer toque del alumno no se marca
+     ninguna sección, generar una prueba no la da y el XP no se vuelve a
+     ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
+     antes de que el arranque de la misión lo llame. -->
+<script src="../../js/estrella-ganada.js"></script>
+</head>
+<body>
+
+<div class="xp-bar" role="status" aria-label="Barra de progreso XP">
+  <a href="../../index.html?view=misiones&filter=c%C3%ADvica" class="xp-back-btn" title="Regresar a misiones de E. Cívica">
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
+    <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
+  </a>
+  <span class="xp-lbl">🎮 XP</span>
+  <div class="xp-track" aria-hidden="true"><div class="xp-fill" id="xpFill"></div></div>
+  <a href="#" class="xp-share-wa" onclick="compartirMision(); return false;" title="Compartir misión por WhatsApp" aria-label="Compartir misión por WhatsApp">
+    <img src="../../img/comparte_whatsapp.webp" alt="WhatsApp" class="xp-share-icon">
+  </a>
+  <span class="xp-pts" id="xpPts">⭐ 0</span>
+  <span class="xp-lvl" id="xpLvl">Aprendiz 🌱</span>
+</div>
+
+<header class="hero" role="banner">
+  <div class="hero-inner">
+    <div class="hero-mascot" aria-hidden="true">🇭🇳</div>
+    <div class="hero-text">
+      <h1>Misión <span>Aspectos Cívicos de Honduras</span></h1>
+      <p class="sub">¡Conoce tus símbolos patrios, tu Himno y a los héroes que hicieron la patria! 🇭🇳🎵🏅</p>
+      <div class="badge">🇭🇳 Ruta de la Patria · Etapa 1 · Educación Cívica</div>
+    </div>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+
+<!-- ===== APRENDE ===== -->
+<div class="sec active" id="s-aprende" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🇭🇳 ¿Qué son los símbolos patrios?</h2>
+    <p>Los <strong>símbolos patrios</strong> son los signos con los que Honduras se reconoce y se presenta ante el
+    mundo. No son adornos: cada uno cuenta algo de la historia, la tierra y la gente del país. Se dividen en dos
+    grupos.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🎖️ Símbolos mayores</h4>
+        <p>Son <strong>tres</strong>: la <strong>Bandera</strong>, el <strong>Escudo</strong> y el
+        <strong>Himno Nacional</strong>. Representan al Estado en los actos oficiales y fuera del país.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌿 Símbolos menores</h4>
+        <p>Representan la <strong>naturaleza y el territorio</strong>: el <strong>Pino</strong>, la
+        <strong>orquídea</strong>, la <strong>guara roja</strong>, el <strong>venado cola blanca</strong> y el
+        <strong>mapa</strong> del país.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">💡</span>
+      <div><strong>Dato clave:</strong> los tres mayores nacieron primero: el <b>Escudo</b> en 1825, la <b>Bandera</b> en 1866 y el <b>Himno</b> en 1915. Los menores llegaron mucho después.</div>
+    </div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🏳️ La Bandera Nacional</h2>
+    <p>Tiene <strong>tres franjas horizontales</strong> del mismo ancho: azul turquesa arriba, <strong>blanca en
+    medio</strong> y azul turquesa abajo. En el centro de la franja blanca van <strong>cinco estrellas</strong> azul
+    turquesa. Cada parte significa algo:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🌊 El azul</div><div class="t-info">Los dos mares que bañan al país y el cielo de Honduras</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🕊️ El blanco</div><div class="t-info">La paz y la pureza del pueblo hondureño</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">⭐ Las cinco estrellas</div><div class="t-info">Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">📅 Su fecha</div><div class="t-info">Decreto del 16 de febrero de 1866</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🔗</span>
+      <div><strong>Recuerda:</strong> las cinco estrellas recuerdan a las <b>cinco naciones</b> que formaron la antigua <b>Federación de Centroamérica</b>, y con ellas el deseo de volver a unirse.</div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🛡️ El Escudo Nacional</h2>
+    <p>Es el símbolo <strong>más antiguo</strong> de los tres: se creó el <strong>3 de octubre de 1825</strong>,
+    cuando Dionisio de Herrera era Jefe de Estado. Va en los documentos oficiales, en los sellos y en la moneda.</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🔺 El triángulo</h4>
+        <p>Un <strong>triángulo equilátero</strong>: sus tres lados miden lo mismo, y eso representa la
+        <strong>igualdad</strong>. Dentro, un <strong>volcán entre dos torres</strong>, el arco iris y el sol naciente.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🌾 Lo que lo rodea</h4>
+        <p>Arriba, una cordillera con <strong>robles y pinos</strong>, herramientas de minería,
+        <strong>aljabas</strong> con flechas y <strong>cornucopias</strong>, que son los cuernos de la abundancia.</p>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="ti">📜</span>
+      <div>El óvalo lleva escrito: <strong>República de Honduras, libre, soberana e independiente</strong>, con la fecha <strong>15 de septiembre de 1821</strong>.</div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+    <span class="nsb-icon">🎖️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SÍMBOLOS (HIMNO, MENORES, PRÓCERES, FECHAS) ===== -->
+<div class="sec" id="s-estructura" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🎵 El Himno Nacional</h2>
+    <p>La <strong>letra</strong> es de <strong>Augusto C. Coello</strong>, escritor hondureño, y la
+    <strong>música</strong> de <strong>Carlos Hartling</strong>, músico alemán. Se compuso en 1903 con el nombre
+    «Canto a Honduras», se cantó por primera vez el <strong>15 de septiembre de 1904</strong> y el gobierno lo
+    declaró oficial en <strong>1915</strong>.</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🎼 Cómo es</div><div class="t-info">Un coro y siete estrofas</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🏳️ El coro</div><div class="t-info">Describe la Bandera Nacional</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">📖 Las seis primeras</div><div class="t-info">Cuentan la historia de Honduras</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">✋ La séptima</div><div class="t-info">Es el juramento de defender la patria</div></div>
+    </div>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🎶 El coro, que todos cantan</span><br>
+      <span>«Tu bandera es un <span class="hl">lampo de cielo</span> por un bloque de <span class="hl2">nieve</span> cruzado; y se ven en su fondo sagrado <span class="hl3">cinco estrellas</span> de pálido azul…»</span>
+    </div>
+    <div class="tip">
+      <span class="ti">🏫</span>
+      <div><strong>En el acto de tu escuela</strong> se canta el <b>coro</b>, la <b>séptima estrofa</b> y otra vez el <b>coro</b>. Se canta de pie, firme y en silencio.</div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>📖 Las siete estrofas, una por una</h2>
+    <p>Las seis primeras cuentan la historia del país; la séptima es la promesa de defenderlo:</p>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">1️⃣ Primera</div><div class="t-info">La llegada de Cristóbal Colón a la costa del Caribe</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">2️⃣ Segunda</div><div class="t-info">La tierra hermosa que los conquistadores quisieron para su rey</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">3️⃣ Tercera</div><div class="t-info">Los tres siglos de la época colonial</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">4️⃣ Cuarta</div><div class="t-info">La resistencia de Lempira contra la conquista</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">5️⃣ Quinta</div><div class="t-info">El ejemplo de libertad que llegó de Francia</div></div>
+      <div class="type-chip tc-teal"><div class="t-art">6️⃣ Sexta</div><div class="t-info">La Independencia de Centroamérica</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">7️⃣ Séptima</div><div class="t-info">El juramento de defender la Bandera y la patria</div></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🌿 Los símbolos patrios menores</h2>
+    <div class="type-grid">
+      <div class="type-chip tc-teal"><div class="t-art">🌲 El Pino</div><div class="t-info">Árbol nacional desde 1928. Honduras tiene el mayor bosque de pino de Centroamérica</div></div>
+      <div class="type-chip tc-gold"><div class="t-art">🌺 La orquídea</div><div class="t-info">Flor nacional desde 1969: la <em>Rhyncholaelia digbyana</em></div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🦜 La guara roja</div><div class="t-info">Ave nacional desde 1993 (<em>Ara macao</em>)</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🦌 El venado cola blanca</div><div class="t-info">Mamífero nacional desde 1993, el mismo día que la guara</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">🗺️ El mapa</div><div class="t-info">18 departamentos, entre el mar Caribe y el océano Pacífico</div></div>
+    </div>
+    <div class="tip">
+      <span class="ti">🌹</span>
+      <div><strong>Ojo:</strong> de 1946 a 1969 la flor nacional fue <b>la rosa</b>. Se cambió porque la rosa <b>no nace</b> en Honduras, y un símbolo del país tenía que ser de aquí.</div>
+    </div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>🏅 Próceres y héroes de Honduras</h2>
+    <p>Un <strong>héroe</strong> defiende a su pueblo; un <strong>prócer</strong> ayuda a fundar la nación. Estos son
+    los que hay que conocer:</p>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>🏹 Lempira</h4>
+        <p><strong>Héroe Nacional.</strong> Cacique lenca que dirigió la mayor resistencia contra la conquista
+        española, hacia <strong>1537</strong>, en el Peñol de Cerquín. La <strong>moneda</strong> de Honduras y un
+        departamento llevan su nombre.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>⚔️ Francisco Morazán</h4>
+        <p><strong>Paladín de la Unión Centroamericana.</strong> Nació en Tegucigalpa el <strong>3 de octubre de
+        1792</strong>. Presidente de la República Federal de Centro América; luchó por mantener unidas a las cinco
+        naciones. Murió el <strong>15 de septiembre de 1842</strong>.</p>
+      </div>
+    </div>
+    <div class="type-grid">
+      <div class="type-chip tc-gold"><div class="t-art">📜 José Cecilio del Valle</div><div class="t-info">El Sabio Valle: redactó el Acta de Independencia de Centroamérica</div></div>
+      <div class="type-chip tc-amber"><div class="t-art">🏛️ Dionisio de Herrera</div><div class="t-info">Primer Jefe de Estado de Honduras, en 1824</div></div>
+      <div class="type-chip tc-jade"><div class="t-art">🎖️ José Trinidad Cabañas</div><div class="t-info">Presidente honrado: «el caballero sin tacha y sin miedo»</div></div>
+      <div class="type-chip tc-purple"><div class="t-art">📚 José Trinidad Reyes</div><div class="t-info">Sacerdote: fundó la primera universidad del país</div></div>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>📅 Septiembre, el Mes de la Patria</h2>
+    <div class="ex-box">
+      <span class="ex-tag ex-d">🗓️ Las fechas del mes</span><br>
+      <span><span class="hl">1 de septiembre:</span> Día de la Bandera Nacional, que abre el mes → <span class="hl2">10 de septiembre:</span> Día del Niño Hondureño → <span class="hl3">15 de septiembre:</span> Independencia de Centroamérica (1821) → <span class="hl">17 de septiembre:</span> Día del Maestro Hondureño</span>
+    </div>
+    <p style="margin-top:0.8rem;">Y fuera de septiembre hay otras fechas cívicas que también se celebran:
+    el <strong>11 de junio</strong>, Día del Estudiante Hondureño; el <strong>20 de julio</strong>, Día de Lempira;
+    y el <strong>3 de octubre</strong>, natalicio de Francisco Morazán.</p>
+    <div class="tip">
+      <span class="ti">🤝</span>
+      <div>El <b>15 de septiembre de 1821</b> se firmó el Acta en Guatemala y se independizaron <b>cinco naciones a la vez</b>. Por eso Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica celebran el <b>mismo día</b>.</div>
+    </div>
+  </div>
+
+  <div class="card ac-amber">
+    <h2>✋ Cómo se respetan los símbolos</h2>
+    <div class="vs-grid">
+      <div class="vs-box vs-a">
+        <h4>✅ Así sí</h4>
+        <p>De pie, firme y en <strong>silencio</strong> mientras se canta el Himno. Quieto cuando pasa la Bandera.
+        La Bandera se guarda <strong>limpia y doblada</strong>, y se iza al empezar el día.</p>
+      </div>
+      <div class="vs-box vs-b">
+        <h4>🚫 Así no</h4>
+        <p>Dejar que la Bandera <strong>toque el suelo</strong>. Usarla de mantel o de adorno. Platicar o jugar
+        durante el acto cívico. Escribir o dibujar encima del Escudo.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+    <span class="nsb-icon">🔬</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== LAB ===== -->
+<div class="sec" id="s-lab" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🔬 Laboratorio de los Símbolos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Selecciona un tema y un aspecto para explorarlo. ¡Combínalos todos para aprender!</p>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>La Bandera Nacional</strong> → <strong>¿Qué es?</strong></div>
+    <div class="lab-stage">
+      <div id="lab-display" class="lab-display-box">
+        <!-- Rellenado por JS -->
+      </div>
+    </div>
+    <div class="lab-controls">
+      <div class="lab-group">
+        <span class="lab-group-label">🔬 Tema:</span>
+        <button class="lab-btn lab-cont-btn" data-parte="bandera" onclick="labShowParte('bandera')">🇭🇳 La Bandera</button>
+        <button class="lab-btn lab-cont-btn" data-parte="escudo" onclick="labShowParte('escudo')">🛡️ El Escudo</button>
+        <button class="lab-btn lab-cont-btn" data-parte="himno" onclick="labShowParte('himno')">🎵 El Himno</button>
+        <button class="lab-btn lab-cont-btn" data-parte="menores" onclick="labShowParte('menores')">🌲 Símbolos menores</button>
+        <button class="lab-btn lab-cont-btn" data-parte="proceres" onclick="labShowParte('proceres')">🏅 Próceres</button>
+        <button class="lab-btn lab-cont-btn" data-parte="fechas" onclick="labShowParte('fechas')">📅 Mes de la Patria</button>
+      </div>
+      <div class="lab-group">
+        <span class="lab-group-label">📌 Aspecto:</span>
+        <button class="lab-btn lab-asp-btn" data-aspecto="estructura" onclick="labShowAspecto('estructura')">🔎 ¿Qué es?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">⚙️ ¿Cómo es?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🌍 ¿Qué significa?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">💡 Dato curioso</button>
+      </div>
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
+    <span class="nsb-icon">🃏</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div class="sec" id="s-flash" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
+    <div class="fc-wrap">
+      <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
+        <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
+        <div class="fc-back"><div class="fca" id="fcA"></div></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-d" onclick="prevFC()">◀ Anterior</button>
+      <span class="fc-ctr" id="fcCtr" aria-live="polite">1 / 14</span>
+      <button class="btn btn-pri" onclick="nextFC()">Siguiente ▶</button>
+    </div>
+    <div id="fbFlash" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-quiz')">
+    <span class="nsb-icon">🧠</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="sec" id="s-quiz" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>🧠 Quiz de Comprensión</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
+    <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
+    <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkQz()">✔ Verificar</button><button class="btn btn-pri" onclick="nextQz()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetQz()">🔄 Reiniciar Quiz</button>
+    </div>
+    <div id="fbQz" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-clasifica')">
+    <span class="nsb-icon">🗂️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== CLASIFICA ===== -->
+<div class="sec" id="s-clasifica" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗂️ Clasifica los Conceptos</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
+    <div class="word-bank" id="clsBank" role="list"></div>
+    <div class="drop-cols">
+      <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
+      <div class="drop-col" id="col-right" role="list" aria-label="Columna derecha"><h4 id="col-right-head">Columna B</h4><div id="items-right"></div></div>
+    </div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkClass()">✔ Verificar</button>
+      <button class="btn btn-pri" onclick="nextClassGroup()">🔄 Variar grupo</button>
+      <button class="btn btn-d" onclick="resetClass()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbCls" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-identifica')">
+    <span class="nsb-icon">🔍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== IDENTIFICA ===== -->
+<div class="sec" id="s-identifica" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🔍 Identifica el concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
+    <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
+    <div class="id-sent" id="idSent" role="group"></div>
+    <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextId()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetId()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbId" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-completa')">
+    <span class="nsb-icon">✏️</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== COMPLETA ===== -->
+<div class="sec" id="s-completa" role="tabpanel">
+  <div class="card ac-amber">
+    <h2>✏️ Completa la oración</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
+    <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
+    <div class="cmp-sent" id="cmpSent"></div>
+    <div class="cmp-opts" id="cmpOpts" role="group"></div>
+    <button class="btn btn-g" onclick="checkCmp()">✔ Verificar</button><button class="btn btn-pri" onclick="nextCmp()">▶ Siguiente</button>
+    <div id="fbCmp" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-widgets')">
+    <span class="nsb-icon">🧩</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== WIDGETS ===== -->
+<div class="sec" id="s-widgets" role="tabpanel">
+
+  <div class="card ac-teal">
+    <h2>🔗 Ordena la secuencia</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por secuencia)</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para poner los pasos en el orden correcto de principio a fin:</p>
+    <div class="sort-list" id="routeList"></div>
+    <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Nueva secuencia</button>
+    </div>
+    <div id="fbRoute" class="fb" role="alert"></div>
+  </div>
+
+  <div class="card ac-gold">
+    <h2>🔬 Identifica el Concepto</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por pista)</p>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué símbolo, prócer o fecha cívica se describe?</p>
+    <div class="neuron-desc" id="neuronDesc">Cargando...</div>
+    <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuron" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextNeuron()">▶ Siguiente</button>
+      <button class="btn btn-d" onclick="resetNeuron()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-jade">
+    <h2>🔗 Empareja: Parte del símbolo → Qué significa</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="neuroProg" aria-live="polite">1 de 6</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Qué representa esta parte del símbolo?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Las cinco estrellas</div>
+    <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbNeuro" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetNeuro()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="card ac-purple">
+    <h2>✋ ¿Se respeta o no se respeta?</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p class="id-prog" id="enferProg" aria-live="polite">1 de 8</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Decide si esa conducta respeta al símbolo patrio:</p>
+    <div class="neuro-trans-display" id="enferDisease">Estar de pie y en silencio mientras se canta el Himno</div>
+    <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
+    <div id="fbEnfer" class="fb" role="alert"></div>
+    <div style="margin-top:0.8rem;">
+      <button class="btn btn-d" onclick="resetEnfer()">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-reto')">
+    <span class="nsb-icon">🏆</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== RETO ===== -->
+<div class="sec" id="s-reto" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
+    <div class="game" aria-live="polite">
+      <div class="reto-timer" id="retoTimer">⏱ 30</div>
+      <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
+      <div class="reto-btns">
+        <button class="btn btn-pri" onclick="">🎖️ Mayor</button>
+        <button class="btn btn-sec" onclick="">🌿 Menor</button>
+      </div>
+      <div class="reto-score" id="retoScore" aria-live="polite">✅ 0 correctas | ❌ 0 errores</div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="startReto()">🚀 ¡Iniciar!</button>
+      <button class="btn btn-g" onclick="nextRetoPair()">🔄 Variar pareja</button>
+      <button class="btn btn-d" onclick="resetReto()">🔄 Reiniciar</button>
+    </div>
+    <div id="fbReto" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-sopa')">
+    <span class="nsb-icon">🤍</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== SOPA ===== -->
+<div class="sec" id="s-sopa" role="tabpanel">
+  <div class="card ac-teal">
+    <h2>🤍 Sopa de Letras</h2>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
+    <div class="sopa-words" id="sopaWords"></div>
+    <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
+    <div class="sopa-container">
+      <div class="sopa-grid" id="sopaGrid"></div>
+    </div>
+    <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-pri" onclick="nextSopaSet()">🔄 Variar sopa</button>
+    </div>
+    <div id="fbSopa" class="fb" role="alert"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-tareas')">
+    <span class="nsb-icon">📋</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== TAREAS ===== -->
+<div class="sec" id="s-tareas" role="tabpanel">
+  <div class="card ac-gold">
+    <h2>📋 Generador de Tareas</h2>
+    <div class="tg-controls">
+      <select class="tg-sel" id="tgType">
+        <option value="identify">🔍 Identificar</option>
+        <option value="classify">🗂️ Clasificar</option>
+        <option value="complete">✏️ Completar oraciones</option>
+        <option value="explain">💡 Explicar</option>
+      </select>
+      <select class="tg-sel" id="tgCount">
+        <option value="5">5 tareas</option>
+        <option value="8" selected>8 tareas</option>
+        <option value="10">10 tareas</option>
+        <option value="15">15 tareas</option>
+      </select>
+      <button class="btn btn-pri" onclick="genTask()">⚡ Generar</button>
+      <button class="btn btn-d" onclick="toggleAns()">👁 Respuestas</button>
+    </div>
+    <div id="tgOut"></div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-evaluacion')">
+    <span class="nsb-icon">🎓</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== EVALUACIÓN ===== -->
+<div class="sec" id="s-evaluacion" role="tabpanel">
+  <div class="eval-mode-toggle" role="tablist" aria-label="Tipo de evaluación">
+    <button class="eval-mode-btn active" id="evalModeBtnConcept" role="tab" aria-selected="true" onclick="evalSwitchMode('concept')">🎓 Evaluación Conceptual</button>
+    <button class="eval-mode-btn" id="evalModeBtnCrit" role="tab" aria-selected="false" onclick="evalSwitchMode('crit')">🧠 Pensamiento Crítico</button>
+  </div>
+  <div id="evalConceptWrap">
+  <div class="card ac-purple">
+    <div class="eval-print-header">
+      <h2>Evaluación Final · Aspectos Cívicos de Honduras · Educación Básica · Educación Cívica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
+    </div>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — Aspectos Cívicos de Honduras</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
+      <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="gradeEval()">🧮 Calificar prueba</button>
+      <button class="btn btn-amber" onclick="printEval()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalOut"></div>
+  </div>
+  </div>
+  <div id="evalCritWrap" style="display:none;">
+  <div class="card ac-amber">
+    <div class="eval-print-header">
+      <h2>Evaluación Competencial · Pensamiento Crítico · Aspectos Cívicos de Honduras · Educación Básica</h2>
+      <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
+    </div>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Aspectos Cívicos de Honduras</h2>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <div class="eval-controls">
+      <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
+      <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
+      <button class="btn btn-g" onclick="calcCritTotal()">🧮 Calcular Total</button>
+      <button class="btn btn-amber" onclick="printEvalCrit()">🖨️ Imprimir</button>
+    </div>
+    <div id="evalCritOut"></div>
+  </div>
+  </div>
+  <div id="eval-pauta-sheet"></div>
+  <button class="next-sec-btn" onclick="openDiploma()" style="background:linear-gradient(135deg,var(--pri),var(--sec));">
+    <span class="nsb-icon">🏅</span>
+    <span class="nsb-label"><span class="nsb-hint">¡Misión completada!</span><span class="nsb-name">Ver mi Constancia</span></span>
+    <span class="nsb-arrow">🗿</span>
+  </button>
+</div>
+
+<div class="sec" id="s-recursos" role="tabpanel">
+  <div class="card ac-blue">
+    <h2>📁 Recursos del Tema</h2>
+    <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas (teoría, actividades y evaluación) para imprimir o resolver antes del examen.</p>
+      <a href="../../fichas/ficha-aspectos-civicos.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:0;">Esta misión todavía no tiene carpeta de materiales en línea. Lo que sí está listo es la <strong>ficha imprimible</strong> de aquí arriba: lleva la teoría, las actividades y la evaluación en papel, para trabajar sin teléfono y sin internet.</p>
+  </div>
+</div>
+
+</main>
+
+<!-- DIPLOMA -->
+<div class="diploma-overlay" id="diplomaOverlay" role="dialog" aria-modal="true">
+  <div class="diploma-card">
+    <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
+    <div class="diploma-title">CONSTANCIA DE LOGRO</div>
+    <div class="diploma-sub">Misión Aspectos Cívicos de Honduras</div>
+    <div class="diploma-mascot" aria-hidden="true">🇭🇳</div>
+    <div class="diploma-name" id="diplName">Estudiante</div>
+    <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
+    <div class="diploma-bar-wrap"><div class="diploma-bar" id="diplBar" style="width:0%"></div></div>
+    <div class="diploma-msg" id="diplMsg">¡Sigue adelante!</div>
+    <div class="diploma-date" id="diplDate"></div>
+    <div class="diploma-ach" id="diplAch"></div>
+    <div class="diploma-fam">🏠 Proyecto Educativo M.E.T.A.S</div>
+    <hr style="margin:0.8rem 0;border-color:var(--border);">
+    <input class="diploma-input" type="text" placeholder="Escribe tu nombre aquí..." oninput="updateDiplomaName(this.value)">
+    <div class="diploma-actions">
+      <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+      <button class="btn btn-pri" onclick="captureDiploma()">📷 Guardar foto</button>
+      <button class="btn btn-d" onclick="closeDiploma()">✖ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="ach-panel" id="achPanel" role="region" aria-label="Logros desbloqueados">
+  <h4>🏅 Mis Logros</h4>
+  <div id="achList"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="tablist" aria-label="Secciones de la misión">
+  <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🎖️</span> Símbolos</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-widgets" data-s="s-widgets" onclick="go('s-widgets')"><span class="ico">🧩</span> Widgets</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-sopa" data-s="s-sopa" onclick="go('s-sopa')"><span class="ico">🤍</span> Sopa</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
+  <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
+</nav>
+
+<footer class="credits">
+  <p class="fam">🏠 Proyecto Educativo M.E.T.A.S</p>
+  <p class="ppl">Desarrolladores: Josué E. Polanco_Evelyn Castellanos_Jael &amp; Angelly Polanco</p>
+  <div class="mot">«Limita el uso del teléfono móvil solo como herramienta de aprendizaje de lo contrario puede ser perjudicial» 🌱 · Lee, interactúa, recuerda el saber.</div>
+  <div class="cred-contact">
+    <span>💬 <a href="mailto:josuepolancolemus2020@gmail.com">📧 josuepolancolemus2020@gmail.com</a></span>
+    <span>🌐 <a href="https://policastsapien.com/" target="_blank">🔗 policastsapien.com</a></span>
+  </div>
+  <div class="cred-tools">
+    <button class="cred-btn" id="sndBtn" onclick="toggleSnd()">🔊 Sonido</button>
+    <button class="cred-btn" id="themeBtn" onclick="toggleTheme()">🌙 Tema</button>
+    <button class="cred-btn" id="achBtn" onclick="toggleAchPanel()">🏅 Logros</button>
+    <button class="cred-btn" onclick="toggleLetra()">🔤 Letra</button>
+    <button class="cred-btn" onclick="resetXP()">🔄 Reiniciar XP</button>
+  </div>
+</footer>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="js/aspectos-civicos.js"></script>
+  <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
+  <script src="../../js/metas-presentacion.js"></script>
+  <script src="../../js/metas-registro.js"></script>
+<script src="../../js/barra-secciones.js"></script>
+<script src="../../js/teclado-actividades.js"></script>
+</body>
+</html>

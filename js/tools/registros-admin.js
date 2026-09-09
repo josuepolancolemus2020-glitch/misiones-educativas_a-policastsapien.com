@@ -3570,7 +3570,8 @@ function adSugMateriaNom(a) {
     if (x) return x.nom;
   }
   const nom = { 'español': 'Español', 'matemáticas': 'Matemáticas', 'naturales': 'Ciencias Naturales',
-    'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'programación': 'Programación', 'robótica': 'Robótica' }[k];
+    'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'programación': 'Programación', 'robótica': 'Robótica',
+    'cívica': 'Educación Cívica' }[k];
   return nom || (k.charAt(0).toUpperCase() + k.slice(1));
 }
 

@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v190';
+const CACHE_NAME = 'meta-app-v193';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -33,7 +33,7 @@ const ARMAZON = [
   './index.html',
   './manifest.json',
   './css/app.css',
-  // Las tipografías. La CSS pesa 5 KB y trae las cuatro familias sin bajar
+  // Las tipografías. La CSS pesa 6 KB y trae todas las familias sin bajar
   // ni un byte de más: cada @font-face declara su unicode-range, así que
   // el navegador solo pide la letra que la página de verdad pinta. De ahí
   // se precachea únicamente Outfit, que es la del armazón del maestro:

@@ -492,3 +492,36 @@ html.fs-lg{font-size:20px;}
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ===== La Fábrica Geométrica (sección 🏭) =====
+   La tarjeta que lanza el juego. Se parece a propósito a las tarjetas de
+   los juegos 3D de las otras misiones: el alumno que ya abrió una sabe
+   qué va a pasar al tocarla —se abre en otra pestaña— sin leer nada. */
+.fab-card{
+  display:flex; align-items:center; gap:0.9rem; flex-wrap:wrap;
+  border:2px solid var(--border); border-radius:14px;
+  background:var(--card); padding:0.9rem; margin-bottom:0.8rem;
+}
+.fab-icon{font-size:2.4rem; line-height:1; flex:none}
+.fab-body{flex:1; min-width:190px}
+.fab-body h3{margin:0 0 0.2rem; font-family:'Fredoka',sans-serif; font-size:1rem; color:var(--dark)}
+.fab-body p{margin:0; font-size:0.78rem; color:var(--gray); line-height:1.4}
+/* La medalla la escribe el JS leyendo la llave del juego: aquí solo se
+   deja el sitio, para que la tarjeta no dé un salto al ponerse al día. */
+.fab-medalla{
+  display:inline-block; margin-top:0.4rem;
+  font-size:0.76rem; font-weight:700; color:var(--gray);
+}
+.fab-medalla.con{color:var(--pri)}
+.fab-medalla.oro{color:#b8860b}
+[data-theme="dark"] .fab-medalla.oro{color:#fdcb6e}
+/* 44 px de blanco de toque: equivocarse aquí es salir de la misión. */
+.fab-btn{flex:none; min-height:44px; display:inline-flex; align-items:center; text-decoration:none}
+.fab-nota{
+  font-size:0.78rem; color:var(--gray); line-height:1.45; margin:0;
+  border-left:3px solid var(--jade); padding-left:0.6rem;
+}
+@media (max-width:520px){
+  .fab-card{flex-direction:column; align-items:stretch; text-align:center}
+  .fab-btn{justify-content:center}
+}

@@ -10,11 +10,8 @@
        @import de app.css, y una hoja de estilo externa BLOQUEA el pintado. Con el
        CDN colgado —lo que hace la señal de un pueblo— la portada no pintaba NUNCA.
        Va antes de app.css para que el @font-face esté cuando la hoja lo pida. -->
-  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=190">
-  <link rel="stylesheet" href="css/app.css?v=190">
-  <!-- Font Awesome, local y nada más: el respaldo del CDN se quitó, porque un
-       <link> externo bloquea el pintado y ya estaba aquí el mismo archivo. -->
-  <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=193">
+  <link rel="stylesheet" href="css/app.css?v=193">
   <link rel="apple-touch-icon" href="img/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
   <style>
@@ -50,6 +47,11 @@
       white-space: nowrap;
     }
     .btn-back:hover { background: var(--border); }
+    /* La flecha era un icono de Font Awesome, y esta página se bajaba los
+       102 KB de la biblioteca entera —de un CDN de otro país, bloqueando el
+       pintado— para pintar ESA sola. Ahora es un SVG que hereda el color y
+       el tamaño del botón (currentColor, 1em); no hace falta alinearlo,
+       porque .btn-back ya es flex con align-items:center. */
     .topbar-brand {
       font-weight: 800;
       font-size: 1rem;
@@ -280,7 +282,9 @@
   <!-- Barra superior de navegación -->
   <nav class="mision-topbar">
     <a href="index.html" class="btn-back">
-      <i class="fa-solid fa-arrow-left"></i> Volver
+      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none"
+           stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg> Volver
     </a>
     <span class="topbar-brand">M.E.T.A.S.</span>
     <span class="xp-badge" id="xp-badge">⭐ 0 XP</span>
@@ -294,6 +298,6 @@
     </div>
   </main>
 
-  <script src="js/motor-misiones.js?v=190"></script>
+  <script src="js/motor-misiones.js?v=193"></script>
 </body>
 </html>

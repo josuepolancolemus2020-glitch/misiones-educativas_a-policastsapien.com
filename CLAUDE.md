@@ -117,8 +117,8 @@ dónde estaba el problema: sin CSS externo, 88 ms con el mismo CDN colgado.
 Venían de fuera **81 páginas** pidiendo Google Fonts —74 misiones y 8 fichas
 del maestro—, el `@import` de la primera línea de `css/app.css`, y **65
 misiones** bajando Font Awesome entero. Hoy: **cero**. Ni una hoja de estilo,
-ni un `preconnect`, ni un `@import` sale del sitio. La portada pinta en
-428 ms y una misión en 200, con el CDN igual de colgado.
+ni un `preconnect`, ni un `@import` sale del sitio, en ninguna página. La
+portada pinta en 428 ms y una misión en 200, con el CDN igual de colgado.
 
 **Cinco reglas, y ninguna es de adorno:**
 
@@ -140,13 +140,22 @@ ni un `preconnect`, ni un `@import` sale del sitio. La portada pinta en
    pintado **y** va en cadena —el navegador tiene que bajar y leer `app.css`
    entera antes de enterarse de que hace falta otra cosa, en otro servidor—.
    Las letras van en su propio `<link>`, **antes** del CSS que las usa.
-5. **No se trae una biblioteca de iconos por un icono.** Las 65 misiones
-   bajaban los 102 KB de Font Awesome, del otro lado del mundo y bloqueando,
-   para pintar **uno**: la flecha de volver. Ahora es un SVG de cinco líneas
-   que hereda el color y el tamaño (`currentColor`, `1em`), así que el CSS de
-   las 65 no se tocó. La aplicación del maestro sí usa cuarenta iconos y se
-   queda con su Font Awesome **local**, que ya estaba; lo que se le quitó fue
-   la copia del CDN que cargaba **además**, una versión por detrás.
+5. **No se trae una biblioteca de iconos por un icono.** Las 65 misiones —y
+   `mision.html`— bajaban los 102 KB de Font Awesome, del otro lado del mundo
+   y bloqueando, para pintar **uno**: la flecha de volver. Ahora es un SVG de
+   cinco líneas que hereda el color y el tamaño (`currentColor`, `1em`), así
+   que el CSS de las 65 no se tocó. Quien lo usa de verdad —la aplicación del
+   maestro, con cuarenta iconos, y el juego de la Fábrica Geométrica, con
+   catorce— se queda con él, pero **local**, que ya estaba en el repositorio.
+
+**Cuando entre una misión o un juego nuevo, se le da el mismo trato**, y esto
+pasa: el 9 de septiembre de 2026, mientras se hacía este cambio, entraron por
+`main` una misión (Aspectos Cívicos) y un juego (Fábrica Geométrica) pidiendo
+las letras y los iconos al CDN, como hacía todo lo demás. El juego traía
+además una letra que no teníamos, **JetBrains Mono**; se alojó, no se cambió
+por Fira Code —que también es monoespaciada y ya estaba—: la letra la eligió
+quien hizo el juego. La sonda es la que lo caza, y de paso cazó `mision.html`,
+que llevaba desde siempre bajándose Font Awesome entero por su flecha.
 
 ⚠️ **Y en `sw.js` había una mentira que nadie podía ver:** pre-cacheaba la
 **CSS** de Google Fonts y nunca los `.woff2` de `fonts.gstatic.com`, así que
@@ -167,6 +176,17 @@ CSS y **nunca la han cargado** —llevan la letra del sistema desde siempre—. 
 dejan como están: darles ahora la letra buena les mueve la maquetación, y esos
 paneles están medidos al píxel y tienen sonda propia.
 
+⚠️ **Y algo que hay que saber al medir una maquetación desde hoy:** hasta el 9
+de septiembre de 2026 las letras venían del CDN y **llegaban tarde**, así que
+toda medida tomada en una sonda se tomaba con la letra del SISTEMA, no con la
+nuestra. Se vio en el juego de la Fábrica Geométrica: acostado (740×360) su
+botón «Vaciar los huecos» caía 4 px por debajo del borde en cuanto la letra
+llegaba a tiempo —o sea, en el teléfono de cualquiera que tuviera señal—, y la
+sonda lo daba por bueno porque medía antes de que llegara. Ahora las letras
+están puestas desde el primer momento y **lo que mide la sonda es lo que ve el
+alumno**. Las sondas que cuentan hojas de papel —informes, fichas, boletos,
+listados— siguen todas en verde, y desde hoy cuentan con la letra de verdad.
+
 **Antes de publicar un cambio de las tipografías o de los enlaces de la
 cabecera:**
 
@@ -175,11 +195,12 @@ node _dev/servidor-estatico.js     (en otra terminal)
 node _dev/verifica-cdn-fuera.js
 ```
 
-Lee **del archivo** las 184 páginas y las 82 hojas de estilo —abrirlas con
-Playwright no lo corre nadie— para lo que se multiplica al copiar una misión:
-que no se cuele una hoja de estilo externa, que quien pinta con una de las
-cuatro letras la enlace, y que la flecha de volver no traiga otra vez Font
-Awesome. Y abre tres con los tres servidores **colgados** —no abortados:
+Lee **del archivo** todas las páginas y todas las hojas de estilo del
+repositorio —abrirlas con Playwright no lo corre nadie, y las cuenta ella,
+que no se escriben— para lo que se multiplica al copiar una misión: que no se
+cuele una hoja de estilo externa, que quien pinta con una de esas letras la
+enlace, y que **nadie cargue Font Awesome entero por una flecha** —con
+catorce iconos de verdad sí vale, y eso pasa en un juego—. Y abre tres con los tres servidores **colgados** —no abortados:
 abortar sería hacerle un favor al código viejo—: que pinten, que no salga ni
 una petición hacia ellos, que la letra que se ve sea la nuestra y salga del
 sitio, y que la flecha se vea y **se pueda tocar**.
@@ -1538,6 +1559,117 @@ todo el que deba algo lleve **su raya para escribir**. La nube no se
 toca: se pone un Supabase de mentira con `page.route`, así corre sin
 internet y sin ensuciar datos reales.
 
+## Normativa: estrenar una materia se hace en NUEVE archivos
+
+Estrenar una materia no es añadir una misión con un `subject` nuevo: es una
+puerta en la portada, una barra en el progreso, un gajo en la ruleta del
+Campeonísimo, una fila en el banco de evaluaciones y un nombre en la boleta.
+Si falta uno, no da error: da una materia a medias, y el maestro se entera
+buscando el examen que no aparece.
+
+**E. Cívica** (`cívica`, clase `civ`, verde del pino `#3f6212`) se estrenó el 8
+de septiembre de 2026 con la misión **Aspectos Cívicos de Honduras** (id 67,
+Ruta de la Patria 🇭🇳, etapa 1). Lo que hubo que tocar, y en ese orden:
+
+| archivo | qué se añade |
+|---|---|
+| `js/data/misiones.js` | la ruta en `RUTAS` y la misión con su `subject`, `color`, `ruta` y `etapa` |
+| `js/app.js` | la etiqueta en `SUBJECT_LABELS`, la barra en `subjects` y la ruta en `RUTAS_ORDEN` |
+| `css/app.css` | los tokens `--civ/-bg/-border` y **diez** clases: `.subj-chip`, `.pill` (con su `--pill-rgb`), `.mc-icon`, `.mc-subj`, `.ruta-pct`, `.ruta-bar-fill`, `.camp-ms-bh-`, `.camp-sa-`, `.camp-sp-` y `.camp-q-header-` |
+| `index.html` | el chip de materia y la píldora del filtro |
+| `js/tools/campeonismo.js` | la fila de `CAMP_SUBJECTS` (la ruleta se genera sola de ahí) |
+| `evaluaciones.html` | la fila de `ORDEN`, o sus exámenes no tienen dónde imprimirse |
+| `js/tools/registros-admin.js` | el nombre largo para la boleta |
+| `js/tools/plan-accion.js` | la fila de `PA_HIST_MATERIAS`: sin ella la materia sale en el selector como «Cívica» a secas, sin emoji ni nombre largo |
+| `js/data/diagnosticos.js` | las preguntas de la ruta, sacadas del `evalMCBank` |
+
+⚠️ **El color no se elige a ojo: se mide.** Se calcula la distancia de color
+contra las materias que ya existen (app y Campeonísimo, que NO usan los mismos
+códigos) y se toma una familia cromática libre. El verde oliva salió porque el
+amarillo-verdoso era el único hueco: el verde de C. Naturales es un teal
+(`#0d9488`) y a la vista no se confunden. Dos azules o dos rojos rompen la
+regla de siempre —el maestro reconoce el examen por el color sin leerlo— aunque
+los códigos sean distintos. El script de la medición está contado en
+`PLANTILLA-MISIONES.md`.
+
+**Los conteos NO se escriben.** El `<em>1 misión</em>` del chip y el
+`<span class="n">1 ficha</span>` del índice de fichas son marcadores: el
+JavaScript los sobrescribe contando. Se dejan puestos para que la página no
+parpadee vacía, pero cambiarlos a mano no sirve de nada.
+
+**Lo comprueba `node _dev/test-campeonismo-tec.js`** (está en `npm test`): mira
+que `CAMP_SUBJECTS` y `misiones.js` digan las mismas materias y que estén las
+tres clases CSS de cada una. Es la que caza la materia a medias.
+
+### La materia de E. Cívica no es Ciencias Sociales
+
+Se pensó meterla ahí y se descartó: el maestro que busca «el repaso de los
+símbolos patrios» en septiembre no lo busca dentro de Sociales, igual que no
+busca la prueba de fin de grado dentro de Matemáticas. Es la misma razón por la
+que Repaso General estrenó materia propia.
+
+Y va en su propia ruta, la **Ruta de la Patria**, no en la Ruta del Tiempo: el
+civismo no se estudia como pasado. Los símbolos, el Himno y las fechas cívicas
+se usan HOY, en el acto del lunes y en el desfile del 15 de septiembre.
+
+### El contenido cívico se verifica, y sus fuentes están anotadas
+
+Los datos de esta misión los pregunta el **Cuestionario Cívico** que se vende en
+las papelerías y que muchos centros toman como examen de septiembre. Un dato
+malo aquí no falla una pantalla: le enseña al alumno la respuesta equivocada
+para el examen que va a hacer la semana siguiente.
+
+De dónde salió cada cosa:
+
+- **El currículo**, del repositorio: `_dev/dcnb/dcneb-basica-i-ciclo-43-ciencias-sociales-primer-grado.md`
+  («Identifican los símbolos patrios», «Explican como los símbolos patrios
+  cuentan la historia de nuestra nación»), la expectativa de II ciclo
+  «Distinguen y respetan los símbolos patrios», y la lista de héroes que el
+  DCNB nombra por su nombre en `dcnb-prebasica-2015-07-comunicacion-3de7.md`:
+  Francisco Morazán, José Cecilio del Valle, José Trinidad Cabañas, José
+  Trinidad Reyes y Dionisio de Herrera, con sus fechas de nacimiento.
+- **Los símbolos y sus fechas**, de `js/data/paises.js` (que ya los traía) más
+  verificación cruzada.
+
+⚠️ **Lo que NO se escribió, y a propósito: los números de decreto donde las
+fuentes se contradicen.** El de la flor nacional aparece como No. 17 y como
+No. 96 según quién lo cuente; el del árbol, con dos fechas (1927 y 1928). Se
+escribe el AÑO, que es lo que el cuestionario pregunta y lo que nadie discute,
+y se deja fuera el número. Es la misma lección de
+`INVESTIGACION-ESTATUTO-DOCENTE.md`: **buscar no es leer**, y un número de
+decreto sacado de un extracto de buscador no acredita nada. El día que entre a
+`_dev/leyes/` el PDF de La Gaceta con esos decretos, se ponen.
+
+**Antes de publicar un cambio de esta misión o de la materia:**
+
+```
+node _dev/verifica-mision-nueva.js misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html
+node _dev/verifica-nombres-propios.js
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html
+node _dev/verifica-ficha-paginas.js ficha-aspectos-civicos
+```
+
+⚠️ **El escape `\U0001F1ED` es de Python y JavaScript NO lo entiende.** Se
+publicó así el 8 de septiembre de 2026: en el Laboratorio de la misión, donde
+iba la bandera 🇭🇳, el alumno leía **«U0001F1EDU0001F1F3»**. JS solo sabe de
+`\uXXXX` y `\u{XXXXX}`, los dos con **u minúscula**; con la mayúscula se come
+la barra y pinta el texto pelado.
+
+Se coló por donde se cuela siempre: los bancos de datos se escribieron con un
+guion de Python, y ahí `'\\U0001F1ED'` deja el escape crudo en el archivo. Y no
+lo cazó **ninguna** de las 66 sondas, porque el archivo **compila**: `node
+--check` lo da por bueno, el navegador no dice nada y el estropicio solo se ve
+mirando la pantalla. Es el mismo daño que ya vigila `verifica-sintaxis.js`, así
+que ahí entró la comprobación. **En los emojis se escribe el carácter de
+verdad**, como en las otras 74 misiones.
+
+⚠️ **`verifica-nombres-propios.js` NO puede pedir «Lempira» con mayúscula a
+secas.** En minúscula es la MONEDA («1 lempira con 25 centavos»), que es como
+sale en las misiones de decimales y en las de fin de grado: pedirlo daba seis
+fallos con el texto perfectamente escrito. Se comprueba «cacique Lempira», que
+es inequívoco.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de
@@ -2842,11 +2974,20 @@ Playwright **no se versiona**: el trabajo de noche lo instala con
 
 ### En vez de un linter, que todo compile
 
-`_dev/verifica-sintaxis.js` pasa `node --check` por los 348 archivos
-versionados. Es lo que de verdad cuesta caro aquí: **un error de sintaxis no da
-la cara**. El navegador se calla, deja de ejecutar ese archivo y la página se
+`_dev/verifica-sintaxis.js` pasa `node --check` por los archivos versionados
+(hoy 366 y subiendo). Es lo que de verdad cuesta caro aquí: **un error de
+sintaxis no da la cara**. El navegador se calla, deja de ejecutar ese archivo y la página se
 pinta igual — ya pasó con un `-en.js` mal cerrado, que dejaba el botón 🌐 mudo y
 la ficha bilingüe imprimiendo en español. Y no añade una sola dependencia.
+
+Y vigila una segunda cosa de la misma familia, la que **sí compila**: los
+escapes **`\U0001F1ED`**, que son de Python y JavaScript no entiende. Ahí no
+hay error que ver: el archivo corre y el alumno lee el código en la pantalla.
+Está contado entero en la normativa de E. Cívica, que es donde se publicó.
+
+⚠️ Y esta sonda **quita los comentarios antes de buscar**, porque su propio
+bloque explica el problema escribiendo el escape: sin eso se acusaba a sí
+misma. Es la **cuarta** vez que muerde la misma trampa.
 
 ## Detalles del repositorio
 

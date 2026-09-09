@@ -15,8 +15,8 @@
        @import de app.css, y una hoja de estilo externa BLOQUEA el pintado. Con el
        CDN colgado —lo que hace la señal de un pueblo— la portada no pintaba NUNCA.
        Va antes de app.css para que el @font-face esté cuando la hoja lo pida. -->
-  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=190">
-  <link rel="stylesheet" href="css/app.css?v=190">
+  <link rel="stylesheet" href="css/vendor/fuentes/fuentes.css?v=193">
+  <link rel="stylesheet" href="css/app.css?v=193">
   <!-- Font Awesome, local y nada más: el respaldo del CDN se quitó, porque un
        <link> externo bloquea el pintado y ya estaba aquí el mismo archivo. -->
   <link rel="stylesheet" href="css/vendor/fontawesome/css/all.min.css">
@@ -186,6 +186,12 @@
           <span>Repaso General</span>
           <em>1 misión</em>
         </button>
+        <!-- E. Cívica: símbolos patrios, Himno Nacional, próceres y fechas cívicas -->
+        <button class="subj-chip civ" data-subject="cívica">
+          <i class="fa-solid fa-flag"></i>
+          <span>E. Cívica</span>
+          <em>1 misión</em>
+        </button>
       </div>
 
       <!-- Featured + Recent (solo Honduras) -->
@@ -329,6 +335,9 @@
         </button>
         <button class="pill rep" data-filter="repaso" aria-pressed="false">
           <i class="fa-solid fa-graduation-cap"></i><span>Repaso General</span><b class="pill-count"></b>
+        </button>
+        <button class="pill civ" data-filter="cívica" aria-pressed="false">
+          <i class="fa-solid fa-flag"></i><span>E. Cívica</span><b class="pill-count"></b>
         </button>
       </div>
       <button class="rutas-banner" onclick="switchView('view-rutas')">
@@ -1107,28 +1116,28 @@
     </nav>
   </aside>
 
-  <script src="js/metas-dialogos.js?v=190"></script>
-  <script src="js/html2canvas.min.js?v=190"></script>
-  <script src="js/data/misiones.js?v=190"></script>
-  <script src="js/data/dcnb-map.js?v=190"></script>
-  <script src="js/data/diagnosticos.js?v=190"></script>
-  <script src="js/data/proceres.js?v=190"></script>
-  <script src="js/data/paises.js?v=190"></script>
-  <script src="js/data/frases.js?v=190"></script>
-  <script src="js/data/consejos-padres.js?v=190"></script>
-  <script src="js/tools/gobierno-escolar.js?v=190"></script>
-  <script src="js/tools/plan-accion.js?v=190"></script>
-  <script src="js/tools/registros-admin.js?v=190"></script>
-  <script src="js/tools/convocatoria.js?v=190"></script>
-  <script src="js/tools/estadisticas-alumno.js?v=190"></script>
-  <script src="js/data/lectura-normas.js?v=190"></script>
-  <script src="js/data/lectura-textos.js?v=190"></script>
-  <script src="js/tools/lectura-fluidez.js?v=190"></script>
-  <script src="js/tools/parte-mensual.js?v=190"></script>
-  <script src="js/tools/collage-maker.js?v=190"></script>
-  <script src="js/tools/formacion-docente.js?v=190"></script>
-  <script src="js/data/campeonismo-bank.js?v=190"></script>
-  <script src="js/tools/campeonismo.js?v=190"></script>
+  <script src="js/metas-dialogos.js?v=193"></script>
+  <script src="js/html2canvas.min.js?v=193"></script>
+  <script src="js/data/misiones.js?v=193"></script>
+  <script src="js/data/dcnb-map.js?v=193"></script>
+  <script src="js/data/diagnosticos.js?v=193"></script>
+  <script src="js/data/proceres.js?v=193"></script>
+  <script src="js/data/paises.js?v=193"></script>
+  <script src="js/data/frases.js?v=193"></script>
+  <script src="js/data/consejos-padres.js?v=193"></script>
+  <script src="js/tools/gobierno-escolar.js?v=193"></script>
+  <script src="js/tools/plan-accion.js?v=193"></script>
+  <script src="js/tools/registros-admin.js?v=193"></script>
+  <script src="js/tools/convocatoria.js?v=193"></script>
+  <script src="js/tools/estadisticas-alumno.js?v=193"></script>
+  <script src="js/data/lectura-normas.js?v=193"></script>
+  <script src="js/data/lectura-textos.js?v=193"></script>
+  <script src="js/tools/lectura-fluidez.js?v=193"></script>
+  <script src="js/tools/parte-mensual.js?v=193"></script>
+  <script src="js/tools/collage-maker.js?v=193"></script>
+  <script src="js/tools/formacion-docente.js?v=193"></script>
+  <script src="js/data/campeonismo-bank.js?v=193"></script>
+  <script src="js/tools/campeonismo.js?v=193"></script>
   <script>
     /* Países ENCENDIDOS: el alumno elige su país y el inicio se pinta con los
        colores de esa bandera. Las misiones siguen siendo de Honduras: en los
@@ -1138,9 +1147,9 @@
        Honduras sin que nadie pierda su XP. */
     window.METAS_PAISES_ON = true;
   </script>
-  <script src="js/app.js?v=190"></script>
-  <script src="js/metas-docente-sync.js?v=190"></script>
-  <script src="js/tools/pwa-install.js?v=190"></script>
+  <script src="js/app.js?v=193"></script>
+  <script src="js/metas-docente-sync.js?v=193"></script>
+  <script src="js/tools/pwa-install.js?v=193"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

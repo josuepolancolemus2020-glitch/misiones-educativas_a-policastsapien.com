@@ -59,7 +59,10 @@ const ok = (nombre, cond, extra) => {
    es lo mismo: es un <script> que carga el propio juego detrás de su telón,
    no una hoja de estilo que para el pintado de la página entera. */
 const CDNS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdnjs.cloudflare.com'];
-const FAMILIAS = ['Fredoka', 'Nunito', 'Fira Code', 'Outfit'];
+/* Las familias se cuentan del propio archivo de fuentes, no se escriben: el
+   día que entre una quinta —pasó con JetBrains Mono, que llegó con un juego
+   nuevo— la sonda se entera sola. */
+let FAMILIAS = [];
 
 /* ⚠️ Los comentarios se quitan ANTES de buscar. Esta trampa ya mordió tres
    veces en este repositorio: el sitio donde se explica por qué algo se
@@ -114,8 +117,8 @@ function delArchivo() {
   const css = fs.existsSync(path.join(dirF, 'fuentes.css')) ? fs.readFileSync(path.join(dirF, 'fuentes.css'), 'utf8') : '';
   ok('css/vendor/fuentes/fuentes.css existe', !!css);
   const caras = [...css.matchAll(/@font-face\s*\{([\s\S]*?)\}/g)].map(m => m[1]);
-  ok('declara las cuatro familias', FAMILIAS.every(f => css.includes(`'${f}'`)),
-     FAMILIAS.filter(f => !css.includes(`'${f}'`)));
+  FAMILIAS = [...new Set([...css.matchAll(/font-family:\s*'([^']+)'/g)].map(m => m[1]))];
+  ok(`declara sus familias (${FAMILIAS.join(', ')})`, FAMILIAS.length >= 4, FAMILIAS);
   ok('cada @font-face lleva font-display:swap', caras.length > 0 && caras.every(c => /font-display:\s*swap/.test(c)));
   ok('cada @font-face lleva su unicode-range (no se baja letra que no se pinta)',
      caras.length > 0 && caras.every(c => /unicode-range:/.test(c)));
@@ -148,7 +151,7 @@ function delArchivo() {
   }
   console.log(`  (${enlazan.length} páginas enlazan las letras locales)`);
   const soloJuegos = usanSinEnlazar.every(f => /\/juego-.*-3d\.html$/.test(f));
-  ok('quien pinta con una de las cuatro letras, la enlaza (salvo los juegos 3D, que nunca la tuvieron)',
+  ok(`quien pinta con una de las ${FAMILIAS.length} letras, la enlaza (salvo los juegos 3D, que nunca la tuvieron)`,
      soloJuegos, usanSinEnlazar.filter(f => !/\/juego-.*-3d\.html$/.test(f)));
 
   /* El service worker */
@@ -160,11 +163,22 @@ function delArchivo() {
   ok('el armazón lleva las letras de la portada (index.html abre sin señal la primera vez)',
      armazon.includes('vendor/fuentes/fuentes.css') && armazon.includes('outfit-latin.woff2'));
 
-  /* La flecha de volver: ya no hace falta Font Awesome para una flecha */
-  const conIcono = htmls.filter(f => /<i class="fa-solid fa-arrow-left/.test(fs.readFileSync(path.join(RAIZ, f), 'utf8')));
-  const soloApp = conIcono.every(f => f === 'index.html' || f === 'mision.html');
-  ok('ninguna misión trae Font Awesome entero por una flecha (la app del maestro sí lo usa, y es local)',
-     soloApp, conIcono.filter(f => f !== 'index.html' && f !== 'mision.html').slice(0, 5));
+  /* Font Awesome son 102 KB y una fuente de iconos. Traerlo entero para pintar
+     UNA flecha es lo que hacían las 65 misiones, y esa flecha es hoy un SVG de
+     cinco líneas. Traerlo para catorce iconos —el juego de la Fábrica
+     Geométrica— sí vale; lo que no puede volver es traerlo del CDN, y eso ya
+     lo mira la primera comprobación. La regla, entonces, no es «nadie lo
+     carga» sino «nadie lo carga por una flecha». */
+  const porUnaFlecha = [];
+  for (const f of htmls) {
+    const t = fs.readFileSync(path.join(RAIZ, f), 'utf8');
+    if (!/<link[^>]*fontawesome[^>]*>/i.test(t)) continue;
+    const iconos = new Set([...t.matchAll(/\bfa-([a-z0-9-]+)/g)].map(m => m[1])
+      .filter(n => !['solid', 'regular', 'brands', 'fw', 'spin', 'beat'].includes(n)));
+    if (iconos.size <= 1) porUnaFlecha.push({ pagina: f, iconos: [...iconos] });
+  }
+  ok('nadie carga Font Awesome entero por una flecha (con catorce iconos sí vale)',
+     porUnaFlecha.length === 0, porUnaFlecha.slice(0, 5));
 }
 
 /* ============ 2 · En el navegador, con los CDN colgados ============ */

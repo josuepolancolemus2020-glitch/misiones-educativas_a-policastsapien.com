@@ -92,6 +92,28 @@ const NOMBRES = [
   ['intibucá', 'Intibucá'],
   ['trujillo', 'Trujillo'],
   ['la esperanza', 'La Esperanza'],
+  /* Los trajo la misión de Aspectos Cívicos. Aquí la mayúscula pesa más que
+     en ningún otro sitio: es material que el alumno estudia para el examen
+     cívico de septiembre y que el maestro pega en la pared del aula. Un
+     prócer en minúscula en la ficha del Mes de la Patria le quita autoridad
+     a todo lo demás. */
+  ['augusto c. coello', 'Augusto C. Coello'],
+  ['carlos hartling', 'Carlos Hartling'],
+  /* ⚠️ «lempira» a secas NO se puede pedir en mayúscula: en minúscula es la
+     MONEDA («1 lempira con 25 centavos»), que es como sale en las misiones de
+     decimales y en las de fin de grado. Solo se comprueba el cacique, que es
+     inequívoco; el departamento y el héroe se escriben a mano con cuidado. */
+  ['cacique lempira', 'cacique Lempira'],
+  ['dionisio de herrera', 'Dionisio de Herrera'],
+  ['josé trinidad cabañas', 'José Trinidad Cabañas'],
+  ['josé trinidad reyes', 'José Trinidad Reyes'],
+  ['cristóbal colón', 'Cristóbal Colón'],
+  ['centroamérica', 'Centroamérica'],
+  ['guatemala', 'Guatemala'],
+  ['el salvador', 'El Salvador'],
+  ['nicaragua', 'Nicaragua'],
+  ['costa rica', 'Costa Rica'],
+  ['la mosquitia', 'La Mosquitia'],
 ];
 
 /* «Decreto 79» y «Acuerdo 1358-SE-2014» nombran una norma concreta y van con
