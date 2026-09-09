@@ -1,0 +1,78 @@
+[
+ {
+  "lente": "U11",
+  "texto": "salida.html: tras un envío que NO entró, al reabrir el enlace la portada dice «✅ Usted ya contestó — sí va» con «🎟️ Ver mi boleto» (salida.html:583-592 no mira YO.subida, que se guarda en 0 en la línea 783); reproducido en rev-salida2.js, captura s-reabrir-tras-fallo.png. La madre cree que apartó asiento en las dos pantallas, no solo en la de gracias."
+ },
+ {
+  "lente": "U11",
+  "texto": "padres.html: metas_mensaje_padre viaja sin id de evento ({p_codigo, p_texto}, padres.html:1268), así que un reintento tras una respuesta perdida (señal que se va después de que el servidor guardó) duplica el recado o la excusa en la bandeja del maestro; las sugerencias sí llevan evento_id (js/metas-sugerencias.js)."
+ },
+ {
+  "lente": "U11",
+  "texto": "padres.html: una clave con formato válido pero sin datos pasa a ser un «hijo» más: cfg.codigos queda con dos entradas y aparece el chip «👧 Cambiar de hijo» con una entrada sin alias (medido: codigos=[15K7QM «#15 de 5º-1», 15K7QN «»]; chipsMenu en 427-428). La madre ve dos hijos donde tiene uno."
+ },
+ {
+  "lente": "U11",
+  "texto": "index.html: la misma puerta de padres guarda como clave activa (METAS_PADRE_V1.codigo) cualquier código de 4+ caracteres antes de consultar (js/app.js:1401-1403, padreConsultarNube), y esa clave es la que padres.html abre al arrancar: el defecto de U11-11 tiene dos entradas y un solo arreglo no lo cierra."
+ },
+ {
+  "lente": "U11",
+  "texto": "index.html: la tarjeta «Para madres y padres» queda ENTERA fuera de la primera pantalla en 360×640 (top 795 px, viewport 640; captura i-360.png) mientras el comentario de index.html:135-137 afirma que se subió arriba «porque la familia no lo encontraba»; ninguna sonda mide esa posición."
+ },
+ {
+  "lente": "U10",
+  "texto": "El salto automático de Notas SACE parte un error de tecleo en dos materias sin avisar: «150» deja 15 en Español y el 0 cae en Inglés y se guarda como 1 (reproducido en r1.js; regla en registros-admin.js:3947-3948: salta con 2 cifras >10). Dos notas equivocadas en silencio, en dos materias."
+ },
+ {
+  "lente": "U10",
+  "texto": "La boleta SACE no tiene forma de marcar «no presentó»: la pista dice «Escribe la nota (1-100)» (registros-admin.js:3744) y el único NSP posible es dejar la celda vacía, cosa que nadie dice; el maestro que escribe 0 obtiene 1 (U10-01) y el que deja vacío no sabe si se guardó."
+ },
+ {
+  "lente": "U10",
+  "texto": "Hay DOS nubes con dos indicadores y el maestro no puede distinguirlas: el chip «☁️ al día» y #ad-sb-status hablan de la «Nube del chatbot de padres» (registros-admin.js:617, 5788), mientras el espejo de sus propios datos entre equipos (metas-docente-sync.js) informa aparte con «📴 Datos del aula: esperando internet» (413). Un «al día» puede convivir con la asistencia del día sin subir al espejo del aula."
+ },
+ {
+  "lente": "U10",
+  "texto": "docenteCopiarCodigo (app.js:1909-1911) no espera navigator.clipboard.writeText: si el navegador deniega el portapapeles la promesa se rechaza en silencio y el toast dice «📋 Código de aula copiado» igual; el maestro pega vacío en la pizarra digital o en WhatsApp."
+ },
+ {
+  "lente": "U10",
+  "texto": "El bloque «Ver el avance de mis alumnos» y el código de aula se pintan aunque el maestro no tenga ni un alumno ni un grupo (app.js:1695-1702 sin condición), y el botón lleva a consulta-nube.html, que sin señal falla con «Failed to fetch» (consulta-nube.html:273): en el aula del primer día promete un dato que no puede existir."
+ },
+ {
+  "lente": "U12",
+  "texto": "Truncado silencioso: `metas_rol_grupos` corta a 200 filas para Dirección y 500 para rector/admin (SUPABASE-ROLES-V2.sql:765) y `metas_rol_listar` a 1000/500 (:174,188,205), todas ordenadas de la más nueva a la más vieja; `ajPintarLista` imprime «N registros» sin ningún «hay más» (js/app.js:2596), así que los docentes más antiguos desaparecen de la vista sin aviso en cuanto se pasa el tope."
+ },
+ {
+  "lente": "U12",
+  "texto": "El ascenso de rol es invisible: `ajRefrescarPerfil` solo se llama desde `renderAjustes` (js/app.js:2401) y no hay toast ni aviso; un maestro con sesión abierta que el admin promueve a director sigue viendo su app de maestro hasta que, por casualidad, abre Ajustes."
+ },
+ {
+  "lente": "U12",
+  "texto": "El campo del que cuelga toda la Dirección es opcional y libre: `docenteSuscribir` valida nombre, correo y clave pero no la escuela (js/app.js:1932-1935) y no ofrece las escuelas ya registradas; una cuenta sin escuela promovida a director cae en el callejón de U12-04 y dos grafías del mismo colegio nunca se emparejan (`_metas_misma_escuela`, SQL:127-137)."
+ },
+ {
+  "lente": "U12",
+  "texto": "Costo de `metas_rol_grupos`: por cada docente listado abre el espejo METAS_ADMIN_V1 completo (asistencia, notas, controles) con `(valor->>'raw')::jsonb` (SQL:626-640) y lo vuelve a recorrer en tres subconsultas por grupo (:717-729), hasta 500 docentes por llamada para rector/admin; no lo medí con datos reales, pero es la RPC con más probabilidad de agotar el statement timeout del plan gratuito conforme crezca el proyecto."
+ },
+ {
+  "lente": "U12",
+  "texto": "Sin un solo error en consola, `ajCambiarRol` deja promover a director a una cuenta con escuela vacía (js/app.js:2933-2967) y no ofrece fijarla aunque `metas_rol_escuela_corregir` exista (SQL:283-326): el admin crea el callejón de U12-04 sin enterarse."
+ },
+ {
+  "lente": "U13",
+  "texto": "La Ruta de las Primeras Palabras (Inglés, misión 57 «Hello! Saludos y Presentarme») existe en `RUTAS` de js/data/misiones.js (13 rutas) pero NO está en `RUTAS_ORDEN` (js/app.js:707, 12 entradas), así que no se pinta en Rutas (medidas 12 tarjetas), no da insignias (app.js:1024/1137), no entra en «Tu siguiente paso» (app.js:843) y no tiene diagnóstico en diagnosticos.js (grep 'primeras' → 0): la única misión de Inglés queda fuera del mapa de rutas sin ningún error."
+ },
+ {
+  "lente": "U13",
+  "texto": "La portada no distingue al maestro con cuenta: con `METAS_DOCENTE_V1` sembrado sigue diciendo «¡Hola, Estudiante!» y mostrando la tarjeta de venta «Para el maestro hondureño · y es gratis» (r4-admin.js; `renderHome` no consulta la cuenta; saludo por defecto en js/app.js:109)."
+ },
+ {
+  "lente": "U13",
+  "texto": "En el Quiz, «✅ Verificar», «▶ Siguiente» y «🔄 Reiniciar Quiz» están visibles y activos ANTES de contestar (r2-mision.js: los tres en la lista de botones sin `(oculto)` con la pregunta recién pintada), así que el alumno puede saltar las 9 preguntas sin responder ninguna."
+ },
+ {
+  "lente": "U13",
+  "texto": "La pantalla de entrada del maestro lleva el enlace «¿Administrador del proyecto?» → panel-docente.html (js/app.js:1646), una página con vocabulario de base de datos («RLS», panel-docente.html:67) al alcance de un maestro que solo quería entrar a su aula."
+ }
+]
