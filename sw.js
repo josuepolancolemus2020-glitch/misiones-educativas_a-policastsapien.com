@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v196';
+const CACHE_NAME = 'meta-app-v197';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -52,6 +52,11 @@ const ARMAZON = [
   // las 67 tarjetas iguales — justo en el aula sin señal, que es donde
   // la aplicación tiene que valerse sola.
   './js/grado-alumno.js',
+  // El tamaño de letra del maestro. Va en el armazón porque se aplica en
+  // el <head>, ANTES del primer pintado: si faltara sin señal, la pantalla
+  // abriría pequeña y daría el salto justo cuando el maestro ya puso el
+  // dedo — y en el aula sin señal es donde más la usa.
+  './js/letra-maestro.js',
   './js/data/diagnosticos.js',
   './js/data/proceres.js',
   './js/data/paises.js',

@@ -3673,7 +3673,7 @@ function adRenderSace(body, d) {
                 ? `<img src="${d.logo}" alt="logo">`
                 : '<span>Sin logo</span>'}</div>
               <div class="ad-logo-btns">
-                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo del centro</span>
+                <span class="ad-logo-rot">Logo del centro</span>
                 <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">📷 Subir
                   <input type="file" id="ad-logo-file" accept="image/*" style="display:none;"></label>
                 ${d.logo ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logo-quitar">Quitar</button>' : ''}
@@ -3684,7 +3684,7 @@ function adRenderSace(body, d) {
                 ? `<img src="${d.logoSec}" alt="logo Secretaría">`
                 : '<img src="img/logo-secretaria.png" alt="logo oficial (por defecto)">'}</div>
               <div class="ad-logo-btns">
-                <span style="font-size:11px;font-weight:800;color:#1e3a7c;">Logo de la Secretaría${d.logoSec ? '' : ' <small style="font-weight:600;color:#7286a8;">(oficial, ya incluido)</small>'}</span>
+                <span class="ad-logo-rot">Logo de la Secretaría${d.logoSec ? '' : ' <small class="ad-logo-nota">(oficial, ya incluido)</small>'}</span>
                 <label class="pa-generate-btn ad-btn-sec ad-logo-lbl">🏛️ Subir
                   <input type="file" id="ad-logosec-file" accept="image/*" style="display:none;"></label>
                 ${d.logoSec ? '<button class="pa-generate-btn ad-btn-sec" id="ad-logosec-quitar">Quitar</button>' : ''}

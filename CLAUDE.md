@@ -2170,16 +2170,108 @@ apaga todas las secciones, dejaba la página **en blanco** y la comprobación
 pasaba igual, midiendo otra cosa. Ahora la sección se busca por **dónde vive la
 cuadrícula**.
 
-**Lo que NO se hizo, y por qué:**
+### El tamaño de letra del maestro: una variable, no una cascada
 
-- **El control de tamaño de letra para la aplicación del maestro.** Con el
-  zoom desbloqueado ya tiene una salida, y el control necesita su propia
-  pasada. Se probaron tres caminos y **dos se descartan medidos**: el
-  `+25 %` en cascada que usan las misiones **rompe la maquetación por 764 px**
-  (`app.css` tiene 594 tamaños en px y 30 en rem, así que la cascada no
-  reparte), y `zoom` sobre el contenedor **no desborda pero desalinea las
-  coordenadas del puntero**, lo que rompería el arrastre de la barra de
-  grupos, que tiene normativa propia. Queda por hacer, sabiendo eso.
+Medido el 9 de septiembre de 2026 con el aula de 43 alumnos sembrada y un
+teléfono de 390 px: de los **281 textos que el maestro tiene delante, 171
+estaban por debajo de 14 px** y 41 por debajo de 12; el más pequeño, **9**.
+Por pantalla: Mi aula 51 % de sus textos bajo 14 px, Plan de Acción 88 %,
+Parte Mensual 83 %. Con el zoom del navegador ya desbloqueado tenía una
+salida, pero el pellizco en un teléfono de 360 px obliga a deslizar de lado
+en cada renglón, y pasar lista son 43 renglones.
+
+**Los dos caminos descartados siguen descartados**, y por eso están escritos:
+el `+25 %` en cascada de las misiones rompe la maquetación por 764 px, y
+`zoom` sobre el contenedor **desalinea las coordenadas del puntero** y con eso
+se lleva por delante el arrastre de la barra de grupos.
+
+Lo que sí funciona: **una variable que multiplica cada `font-size` de
+`css/app.css`** (`--metas-fz`), con su botón **Aa** en
+`js/letra-maestro.js`. No se compone al anidarse —cada declaración se
+multiplica una vez—, no toca una sola coordenada del puntero, y a 1 pinta
+exactamente lo de siempre.
+
+**Siete reglas, y ninguna es de adorno:**
+
+1. ⚠️ **A 1 tiene que pintar lo de siempre, y se comprueba elemento por
+   elemento.** Son **633 declaraciones** convertidas de golpe: la única forma
+   de hacerlo sin cambiarle la pantalla a nadie hoy es medir los 841
+   elementos visibles antes y después y exigir los 841 idénticos. Salieron
+   idénticos.
+2. ⚠️ **El tope es 1,45 y está MEDIDO, no elegido.** A 1,6 los 43 chips de la
+   lista de asistencia **recortan el nombre del alumno** (`.ad-chip-nom`,
+   21 px de texto en 19 de hueco) y a 1,8 la tabla de Notas SACE **se sale
+   del teléfono**. A 1,45 no se sale ni se recorta nada, en las ocho
+   pestañas de Mi aula y a 360 px. El día que alguien quiera subirlo,
+   primero se arregla el chip de asistencia. Los pasos son 100 · 115 · 130 ·
+   145, y **la sonda los lee del aparato**, no los escribe.
+3. **No se baja de lo de siempre.** El problema es que la letra es pequeña;
+   un paso «más pequeña» solo serviría para que alguien se quede sin poder
+   leer la pantalla y sin saber por qué. El botón **cicla y vuelve a
+   normal**, que es el mismo gesto del **Aa** de los dieciocho juegos 3D.
+4. ⚠️ **Se guarda en SU PROPIA llave** (`METAS_LETRA_V1`), nunca dentro de
+   `METAS_ADMIN_V1`: esa llave viaja a la nube y se fusiona dato por dato con
+   el otro equipo del maestro. Es la misma razón por la que el chip de grado
+   de la alumna vive aparte.
+5. ⚠️ **Se aplica en el `<head>`, antes del primer pintado.** Al final del
+   body la pantalla abriría pequeña y daría un salto justo cuando el maestro
+   ya puso el dedo. Misma razón que `estrella-ganada.js`. Y va en el
+   `ARMAZON` de `sw.js`, porque sin señal tiene que aplicarse igual.
+6. **El botón va en los encabezados COMPACTOS** —las trece pantallas donde
+   el maestro trabaja—, a **44 px** aunque sus vecinos midan 38: hacerlo
+   igual de pequeño habría sido copiar el problema, la misma decisión que
+   con los chips de grado.
+
+   ⚠️ **En el encabezado de la portada NO cabe, y está medido:** con la
+   marca, el hamburguesa, Actualizar y la medalla, sus 124 px de botones
+   acaban en el píxel **361 de un teléfono de 360** —la medalla se sale y
+   Actualizar deja de poder tocarse—. Además es la pantalla que menos lo
+   necesita: su texto está en 15 px, no en 11. Se pone desde cualquier
+   pantalla del maestro y vale para toda la aplicación.
+7. ⚠️ **La marca de la portada NO escala**, y es la única excepción de la
+   hoja (`.brand-logo` y `.brand-sub`). Es la misma razón por la que en la
+   lectura proyectada no escalan la franja ni el título: el encabezado mide
+   el sitio que deja, y si crece con la letra se muerde la cola. Medido: con
+   la marca creciendo, a 1,45 el encabezado pasaba de 82 a **123 px de
+   alto** —un sexto de la pantalla del alumno— y los botones se iban 14 px
+   fuera del teléfono. Y no se gana nada: el subtítulo son 8,5 px
+   decorativos que nadie lee para trabajar.
+
+**Y el papel no crece.** Los informes y las fichas salen de una ventana
+aparte que no hereda la variable, y por si acaso `app.css` la fuerza a 1 en
+`@media print`: 42 alumnos tienen que seguir dando 42 páginas.
+
+**Lo que esto NO toca son las misiones**, y no es un olvido: cada misión trae
+su propio CSS y su propio `body.letra-grande`, que es el ajuste del alumno.
+Son dos superficies y dos mecanismos —`app.css` viste la portada, la lista de
+Misiones y las pantallas del maestro; el HTML de cada misión se viste solo—.
+El día que se unifiquen, se unifican los dos ajustes a la vez o quedará uno
+mandando sobre el otro, que es exactamente lo que ya pasó en la lectura
+proyectada y costó una normativa entera.
+
+⚠️ **Todo `font-size` nuevo de `app.css` va multiplicado por la variable.**
+Es lo que se multiplica al escribir CSS aquí, y la sonda lo cuenta: un
+rótulo que se queda en 11 px mientras el resto crece se lee **peor** que
+antes, porque ya no tiene con qué compararse. Así se cazaron los dos únicos
+que había —los rótulos de los logos en Notas SACE, que traían el tamaño en
+el atributo `style` desde `registros-admin.js`—.
+
+**Antes de publicar un cambio del tamaño de letra:**
+
+```
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-letra-maestro.js
+```
+
+Vigila lo que cuesta caro: que la hoja entera pase por la variable (con las
+dos excepciones contadas, no escritas), que el aparato vaya en el `<head>` y
+en el armazón, que el botón se pueda tocar a 44 px y **no se cuele en la
+portada**, que cada paso agrande sin que nada se salga ni se recorte en las
+ocho pestañas, que **todos los textos crezcan lo mismo**, que las pantallas
+del alumno **no empeoren** respecto a la escala 1, que **el arrastre de la
+barra de grupos siga funcionando con la letra en el tope** —que es lo que
+descarta volver a intentar `zoom`—, que el papel valga 1, y que el ajuste
+aguante cerrar la aplicación **sin tocar los datos del maestro**.
 
 **Antes de publicar un cambio del teclado o del zoom:**
 
