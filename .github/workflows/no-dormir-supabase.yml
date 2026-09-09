@@ -1,0 +1,71 @@
+# ============================================================
+# M.E.T.A.S · Que la nube no se duerma en vacaciones
+# ------------------------------------------------------------
+# El plan gratuito de Supabase PAUSA el proyecto tras siete días
+# sin una sola petición. Y el calendario hondureño tiene un hueco
+# de tres meses: de noviembre a febrero las aulas están cerradas,
+# nadie abre la aplicación, y la nube se apaga sola.
+#
+# Lo que eso le cuesta al maestro no es una pantalla lenta: en
+# febrero entra a preparar el año, no le carga la lista de su
+# aula, y da por hecho que perdió el trabajo del curso pasado.
+# (No lo pierde —los datos siguen ahí— pero eso él no lo sabe, y
+# reactivar el proyecto es a mano y desde el panel de Supabase.)
+#
+# Esto lo evita con una petición de lectura cada tres días. Tres
+# y no siete a propósito: con siete, una sola ejecución que falle
+# —GitHub tiene retrasos en los `schedule`— ya deja pasar el plazo.
+#
+# La petición es a la raíz de la API REST: no toca ninguna tabla,
+# no escribe nada y no lleva credenciales de nadie. La clave que
+# usa es la MISMA publicable que va en el repositorio y que
+# cualquiera ve en el navegador; se lee de `js/metas-docente-sync.js`
+# para no tener dos sitios que digan lo mismo.
+#
+# ⚠️ Y lo que esto NO resuelve, dicho aquí para que no sorprenda:
+# GitHub apaga los `schedule` de un repositorio que lleve 60 días
+# **sin un solo empujón**. Si el autor no toca el repositorio en
+# dos meses, este archivo también se duerme. Hoy se publica casi a
+# diario, así que no aplica; el día que aplique, la respuesta de
+# verdad es el plan de pago (no se pausa y trae copias diarias),
+# que es una decisión del autor y no de un archivo de flujo.
+# ============================================================
+name: Que la nube no se duerma
+
+on:
+  schedule:
+    - cron: '17 12 */3 * *'   # cada tres días; el minuto 17 para no caer en la hora en punto, que va llena
+  workflow_dispatch:
+
+jobs:
+  despertar:
+    name: Tocar la nube
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Leer la dirección y la clave publicable del repositorio
+        id: cfg
+        run: |
+          URL=$(grep -o "SB_URL_DEF = '[^']*'" js/metas-docente-sync.js | cut -d"'" -f2)
+          KEY=$(grep -o "SB_KEY_DEF = '[^']*'" js/metas-docente-sync.js | cut -d"'" -f2)
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "✘ No se pudo leer SB_URL_DEF/SB_KEY_DEF de js/metas-docente-sync.js."
+            echo "  Si esas constantes cambiaron de nombre, hay que corregir este flujo."
+            exit 1
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+
+      - name: Una lectura, para que cuente como actividad
+        run: |
+          CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            -H "apikey: ${{ steps.cfg.outputs.key }}" \
+            "${{ steps.cfg.outputs.url }}/rest/v1/")
+          echo "La nube contestó $CODIGO"
+          # Se FALLA si no contesta bien: enterarse aquí cuesta un correo;
+          # enterarse en febrero, con el maestro delante, cuesta su confianza.
+          case "$CODIGO" in
+            2*) echo "✅ Despierta." ;;
+            *)  echo "✘ La nube no contestó como debía ($CODIGO). Míralo antes de que se pause."; exit 1 ;;
+          esac

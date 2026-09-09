@@ -205,6 +205,137 @@ abortar sería hacerle un favor al código viejo—: que pinten, que no salga ni
 una petición hacia ellos, que la letra que se ve sea la nuestra y salga del
 sitio, y que la flecha se vea y **se pueda tocar**.
 
+## Normativa: los datos del maestro se FUSIONAN, no se eligen
+
+Un maestro usa el teléfono en el aula y la PC por la noche. Hasta el 9 de
+septiembre de 2026 el espejo del aula comparaba las dos copias **enteras** y
+se quedaba con la más nueva. Medido con dos equipos y la nube de mentira:
+
+| | |
+|---|---|
+| pasa lista en el **teléfono** a las 9:00, sin señal | se guarda ahí |
+| pone una nota en la **PC** a las 20:00 | sube a la nube |
+| vuelve la señal en el teléfono | **la asistencia del día desaparecía** |
+
+Y no era solo eso: el teléfono **ni siquiera llegaba a subirla** —la daba por
+resuelta— y el botón «Recuperar» **no aparecía**, porque solo salía con el
+aula vacía. Al revés pasaba lo mismo: con el reloj del teléfono adelantado, la
+que se perdía era la nota de la PC. Las dos direcciones perdían.
+
+Un día de asistencia son 43 nombres que el maestro ya no puede reconstruir: no
+estaba mirando, estaba dando clase.
+
+Ahora no se elige una copia: se **fusionan las dos, dato por dato**
+(`js/metas-fusion-aula.js`). Después del arreglo, en el mismo caso: la
+asistencia está, la nota está, y la copia fusionada **sube**, que es lo que
+impide que mañana el otro equipo vuelva a mandar la suya a medias.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **Tres versiones, no dos.** Se guarda la **BASE** —lo último que este
+   equipo y la nube tuvieron igual, en `METAS_DOCSYNC_BASE_V1`—, y es lo único
+   que distingue *lo que alguien añadió* de *lo que el otro borró*. Sin base
+   solo se puede UNIR, y unir revive un alumno que el maestro quitó; con base
+   se borra de verdad. Ocupa el doble de sitio, y si el almacén del teléfono
+   se llena, esa clave se cae de la base y se pasa a unir: quedarse sin base
+   es un incordio, perder la asistencia del día no.
+2. **Las listas se emparejan por su identidad, no por su posición.** Se busca
+   un campo único —`id` en colectas, controles, bitácora, convocatorias y
+   análisis; `f` en un día de asistencia; `num` en un alumno— y si no hay
+   ninguno se usa **el contenido**. Las tomas de lectura no llevan `id` y
+   varias caen el mismo día: ahí el contenido es la identidad buena, porque
+   una toma no se edita, se añade.
+3. ⚠️ **Editar gana a borrar.** Si un equipo borró algo y el otro lo cambió,
+   se queda lo cambiado. Devolverle al maestro un alumno que borró se arregla
+   en dos toques; quitarle una nota que acaba de escribir, no.
+4. **Solo cuando los dos cambiaron LO MISMO manda el reloj.** Es el único
+   sitio donde se elige, y por eso el reloj ya casi no decide nada.
+5. ⚠️ **La fusión no sabe ni un nombre de campo de este proyecto**, y es a
+   propósito. Con la lista de campos dentro se quedaría vieja en la primera
+   herramienta nueva —y no daría ningún error: pasaría a perder ese dato en
+   silencio, que es justo lo que vino a arreglar.
+
+**Dos redes debajo, para cuando la fusión no se pueda hacer:**
+
+- Si `MetasFusion` no está o devuelve `null` (algo no es JSON, o los dos lados
+  no tienen la misma forma), **se hace lo de siempre**: gana la más nueva. Por
+  eso el `<script>` va antes del espejo y el espejo lo llama con `typeof`: si
+  un día no carga, la aplicación sigue funcionando como antes.
+- Y una fusión **no puede devolver menos de la mitad** de la copia más llena.
+  Borrar media aula en una sincronización no pasa; un error en la fusión sí
+  podría. Ante la duda, lo de siempre.
+
+⚠️ **Y «Recuperar» ahora sale con el aula llena.** El respaldo guarda POR QUÉ
+se hizo: el de «Empezar de nuevo» es el deshacer de un borrado total y solo
+tiene sentido con el aula vacía; el de una sincronización que pisó datos es lo
+contrario, y ese botón tiene que verse **aunque el aula esté llena**. Se
+muestra cuando la copia guardada tiene algo que ahora **no está**. Y recuperar
+ya no pisa: **fusiona** lo guardado con lo que haya, porque devolver la
+asistencia de ayer no puede borrar la nota de hoy.
+
+⚠️ **Un equipo sin cambios pendientes SIEMPRE baja lo de la nube.** Antes se
+comparaban versiones incluso sin nada que subir, y un teléfono con el reloj
+adelantado dos años —que los hay— se quedaba **congelado para siempre**: veía
+su aula de siempre mientras la PC seguía trabajando. Si aquí no hay nada
+pendiente, la nube ya tiene lo nuestro, así que lo que traiga distinto es más.
+
+**Antes de publicar un cambio del espejo o de la fusión:**
+
+```
+node _dev/prueba-fusion-aula.js        → la fusión, caso por caso y sin navegador
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-fusion-sync.js      → los dos equipos, con la nube de mentira
+```
+
+El primero cuesta un segundo a propósito: es el que hay que poder correr cada
+vez que se toca. Vigila lo que cuesta caro —que no se pierda una asistencia,
+una nota, una toma de lectura ni **una clave de familia ya entregada**—, que
+borrar borre, que editar gane a borrar, que sin base no se borre nada y que
+ante lo raro devuelva `null` en vez de inventar. El segundo comprueba lo que
+solo se ve abriendo la aplicación: que el espejo la use, que la copia
+fusionada **suba**, que los dos equipos acaben con lo mismo y que sin la
+fusión no reviente nada.
+
+### Lo que NO se hizo, y por qué
+
+- **Partir `METAS_ADMIN_V1` en una llave por grupo.** Con la fusión dato por
+  dato ya no hace falta para no perder trabajo, y partirla toca
+  `registros-admin.js` entero —5 000 líneas— con una migración de los datos
+  que el maestro ya tiene. El beneficio que quedaría es de tamaño de la
+  petición, no de seguridad del dato.
+- **La hora del servidor en vez de `Date.now()`.** Sigue siendo mejor, pero
+  con la fusión el reloj solo decide cuando los dos equipos cambiaron el mismo
+  dato, que es el caso raro. Antes decidía siempre.
+- **Los respaldos y la retención.** El plan gratuito no trae copias y esto no
+  se arregla con código: es la decisión de pasar a plan de pago, que es del
+  autor. Lo que sí se hizo es que la nube **no se duerma**.
+
+## Normativa: la nube no se duerme en vacaciones
+
+El plan gratuito de Supabase **pausa el proyecto tras siete días sin una sola
+petición**, y el calendario hondureño tiene un hueco de tres meses: de
+noviembre a febrero las aulas están cerradas y nadie abre la aplicación.
+
+Lo que le cuesta al maestro no es una pantalla lenta: en febrero entra a
+preparar el año, no le carga la lista de su aula y **da por hecho que perdió
+el trabajo del curso pasado**. No lo pierde —los datos siguen ahí—, pero eso
+él no lo sabe, y reactivar el proyecto es a mano y desde el panel de Supabase.
+
+Lo evita `.github/workflows/no-dormir-supabase.yml` con una lectura **cada
+tres días**. Tres y no siete a propósito: con siete, una sola ejecución que se
+retrase —GitHub retrasa los `schedule`— ya deja pasar el plazo. La petición va
+a la raíz de la API REST: no toca ninguna tabla, no escribe nada, y la clave
+es la misma publicable que ya va en el repositorio, **leída de
+`js/metas-docente-sync.js`** para que no haya dos sitios que digan lo mismo.
+Y **falla a propósito** si la nube no contesta bien: enterarse por un correo
+del CI cuesta un minuto; enterarse en febrero, con el maestro delante, cuesta
+su confianza.
+
+⚠️ **Lo que esto NO resuelve:** GitHub apaga los `schedule` de un repositorio
+que lleve **60 días sin un solo empujón**. Hoy se publica casi a diario, así
+que no aplica; el día que aplique, la respuesta de verdad es el plan de pago
+—no se pausa y trae copias diarias—, que es una decisión del autor.
+
 ## Normativa: el SQL de Supabase se pega en el chat, SIEMPRE
 
 Los archivos `SUPABASE-*.sql` —y los de `supabase/sql/` del proyecto de la

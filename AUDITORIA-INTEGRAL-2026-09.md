@@ -131,9 +131,13 @@ una no. Con este molde, doscientas misiones son 330 000 líneas duplicadas.
 
 - **Cualquier anónimo puede escribir 500 notas falsas** a nombre de cualquier maestro cuyo nombre
   adivine parcialmente, y no existe ninguna función para borrarlas.
-- **El maestro con dos aparatos pierde trabajo hoy, en silencio.** Reproducido: asistencia marcada
+- ~~**El maestro con dos aparatos pierde trabajo hoy, en silencio.** Reproducido: asistencia marcada
   en el teléfono sin señal a las 9:00, nota puesta en la PC a las 20:00, y la asistencia
-  desaparece. El botón «Recuperar» no aparece.
+  desaparece. El botón «Recuperar» no aparece.~~ **Corregido el 9 de septiembre** (punto 5 del top
+  20): las dos copias ya no compiten, se **fusionan dato por dato**, y al medirlo salió que
+  también perdía al revés —con el reloj del teléfono adelantado se caía la nota de la PC— y que un
+  equipo con el reloj muy adelantado se quedaba congelado sin volver a bajar nada. «Recuperar» ya
+  sale con el aula llena, y recuperar fusiona en vez de pisar.
 - **No existe la escuela como entidad**, ni cuenta de alumno, ni sesión revocable, ni respaldo, ni
   política de retención, ni aviso de privacidad —con datos de menores en la nube—. La licencia es
   ambigua (ISC declarado, sin `LICENSE` ni ©) y el alojamiento prohíbe en sus términos el software
@@ -186,7 +190,8 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
     alojamiento queda pendiente lo que es decisión del autor: mover el DNS fuera de GitHub Pages
 
 **Diez en días:** ~~cerrar «Ver Pauta»~~ · **hecho el 7 de septiembre** · ~~cerrar la escritura anónima a la nube~~ · **hecho el 7 de septiembre, SQL corrido y comprobado** · ~~una identidad de
-alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · que el maestro no pierda su trabajo · ~~quitar el CDN del camino crítico~~ · **hecho el 9 de
+alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · ~~que el maestro no pierda su trabajo~~ · **hecho el 9 de septiembre (los respaldos son
+decisión de plan, no de código)** · ~~quitar el CDN del camino crítico~~ · **hecho el 9 de
 septiembre** — 81 páginas pedían las letras a Google y 65 bajaban Font Awesome entero por una
 flecha; con el CDN colgado no pintaban NUNCA, y ahora la portada pinta en 428 ms ·
 ~~subir la barra de secciones al principio~~ · **hecho el 7 de septiembre, en las 74 misiones** — y
