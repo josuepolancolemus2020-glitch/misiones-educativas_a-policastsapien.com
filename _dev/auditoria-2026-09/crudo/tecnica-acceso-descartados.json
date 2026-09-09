@@ -1,0 +1,26 @@
+[
+ {
+  "id": "T7-11",
+  "titulo": "La instalación en la señal del aula deja el precache con huecos y el SW viejo mandando durante minutos",
+  "descripcion": "precachear() corre los 56 archivos en paralelo con 12 s de tope cada uno; el navegador solo abre 6 conexiones por servidor, así que con 4 s por archivo la instalación tarda ~40 s y con la señal de un pueblo muchos archivos caen al tope y se «siguen sin él»: el armazón nuevo queda incompleto y buscarCopia salta a CACHE_DATOS, donde está la versión anterior. La sonda viva muestra el SW nuevo aún sin activar 9 s después de publicar y la siguiente recarga sirviendo lo viejo.",
+  "evidencia": "sw.js:108-124 (PLAZO_INSTALA 12000, Promise.all sobre 56 URLs, warn «se sigue sin él»); sonda-sw.js paso2b (`keys`: meta-app-v197 y meta-app-v198 coexistiendo a los 9 s) y paso3 (APPV 197 tras recargar).",
+  "severidad": "media",
+  "tipo": "riesgo",
+  "impacto_educativo": 3,
+  "impacto_comercial": 2,
+  "esfuerzo": "dias",
+  "recomendacion": "Precachear por lotes (ARMAZON primero, el resto después de activar, en segundo plano), no tolerar huecos en el ARMAZON (si falta uno, no activar esa versión), y reutilizar de la caché vieja lo que no cambió (ver T7-02).",
+  "archivos": [
+   "sw.js"
+  ],
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "verificado": false,
+  "revision": "",
+  "refutado": true,
+  "correccion": "",
+  "motivo_refutacion": "Duplica T7-01 y T7-02 con la evidencia menos precisa de los tres. Lo único medido (paso2b: dos cachés coexistiendo a los 9 s; paso3: APPV 197 tras recargar) es exactamente el efecto que T7-01 ya documenta —el SW viejo manda mientras el nuevo instala— y mi reproducción muestra que se resuelve al activar (82 s: solo meta-app-v198, APPV 198). Los «huecos» del precache nunca se produjeron: la sonda retrasa los JS 4 s, por debajo de los 12 s de PLAZO_INSTALA, así que ningún archivo se saltó; la cuenta «~40 s con 6 conexiones» es aritmética, no medición. Y las tres recomendaciones son las de los otros dos (reutilizar la caché vieja = T7-02; no servir copia de otra versión = T7-01). El único punto propio —un hueco en el ARMAZON hace persistir la mezcla— lo dejo anotado como corrección dentro de T7-01, que es donde tiene el remedio.",
+  "confianza_refutacion": 65,
+  "commit_auditado": "d940fe0"
+ }
+]

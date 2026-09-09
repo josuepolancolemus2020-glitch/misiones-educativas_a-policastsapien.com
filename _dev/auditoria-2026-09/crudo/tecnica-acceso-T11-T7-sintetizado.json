@@ -1,0 +1,441 @@
+[
+ {
+  "id": "T11-01",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "«Cerrar sesión» borra el aula del equipo aunque la subida no haya llegado, y la pantalla dice que está a salvo",
+  "descripcion": "dsLogout() lanza push(false) sin esperar la respuesta y llama a dsWipeLocal() en la línea siguiente; sin red ni siquiera intenta subir. Si la petición falla o no hay señal, los cambios pendientes —la asistencia del día, una nota— desaparecen del equipo sin haber llegado a la nube, y dsWipeLocal borra también los metadatos que decían qué estaba pendiente. El diálogo previo promete «todo está guardado en la nube de tu cuenta», el toast dice «datos del aula a salvo en tu nube» y la tarjeta de encima del botón dice «✅ Tus datos se guardan y sincronizan solos» con texto fijo. Cerrar sesión existe para el equipo compartido, que en un pueblo está sin señal o con señal que cuelga.",
+  "evidencia": "js/metas-docente-sync.js:746-749 (dsLogout), :703-709 (dsWipeLocal), :228-229 (push sin red); js/app.js:2044 (confirm), :2054 (toast), :1684 (tarjeta fija). Reproducido dos veces: (a) señal que se traga paquetes, onLine=true, RPC guardar abortada (scratchpad/tecnica-acceso/T11/escenarios2.js): tras docenteCerrarSesion() quedan solo {METAS_STATS_NUBE_V1, METAS_ADMIN_UNDO_V1}, la nube NO tiene la asistencia del 9 y el toast dice «a salvo»; (b) equipo sin internet (criticos/T11-01-offline.js): guardar llamado 0 veces, localStorage queda [], mismo toast. Con buena señal el vigía sube pendientes en ≤12 s (:682-690, :402-405); sin señal es el trabajo del día entero.",
+  "archivos": [
+   "js/metas-docente-sync.js",
+   "js/app.js"
+  ],
+  "severidad": "critica",
+  "tipo": "error",
+  "impacto_educativo": 4,
+  "impacto_comercial": 5,
+  "esfuerzo": "horas",
+  "recomendacion": "Hacer dsLogout asíncrono con plazo: esperar el push; si hay pendientes y no confirma, NO borrar y decirlo («Tienes N cambios sin subir —la asistencia de hoy—. Conéctate e inténtalo de nuevo, o cierra sin borrar el aula de este equipo»), con «Guardar copia en archivo» ahí mismo (T11-06). Añadir el caso a _dev/verifica-fusion-sync.js."
+ },
+ {
+  "id": "T11-02",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "La guarda anti-pérdida revierte los borrados legítimos y deshace «Empezar de nuevo» y «Cerrar el año» desde cualquier otro equipo",
+  "descripcion": "En pull(), si la copia de la nube pesa menos de la mitad que la local (rp*2 < lp) se conserva lo local, se le pone versión ganadora y se re-sube, ANTES de mirar si este equipo tiene pendientes y sin mirar la base ni la versión; contradice la normativa del mismo día («un equipo sin cambios pendientes SIEMPRE baja lo de la nube»). Eliminar un grupo, quitar más de la mitad de una lista, «Empezar de nuevo» y Cerrar el año se deshacen en cuanto el otro equipo sincroniza; «Imponer la copia de ESTE equipo» no sirve porque la guarda no mira la versión. Con Cerrar el año vuelven además las claves de familia viejas, que es la fuga que esa función existe para evitar.",
+  "evidencia": "js/metas-docente-sync.js:287-292; SUPABASE-DOCENTE-PAPELERA.sql:58-61 (reset deja raw:null); diálogo de reset (sync.js:473) promete «También se borran de la nube y de tus otros equipos». Reproducido con scratchpad/tecnica-acceso/T11/escenarios.js y s2b.js: S1 PC borra grupo de 43 → nube vuelve a GA:43,GB:20 y la PC recupera el grupo (true); S1b borrar 30 de 43 → vuelven los 43; S2 reset → el teléfono re-sube GA:43 y la PC lo recibe. Cerrar el año (registros-admin.js:4992-5100, criticos/t11-02-cerrar-anio.js): peso 170 374 → 68 818 dispara la guarda; el teléfono devuelve a la nube 43 alumnos viejos, 130 días de asistencia, 4 parciales, boleta 2026 y METAS_CODIGOS_V1 con las claves viejas (1ABCD). grep de rp * 2 / reset / borrar grupo en _dev/*.js → 0.",
+  "archivos": [
+   "js/metas-docente-sync.js",
+   "SUPABASE-DOCENTE-PAPELERA.sql",
+   "js/tools/registros-admin.js",
+   "_dev/verifica-fusion-sync.js"
+  ],
+  "severidad": "critica",
+  "tipo": "error",
+  "impacto_educativo": 3,
+  "impacto_comercial": 4,
+  "esfuerzo": "dias",
+  "recomendacion": "Aplicar la guarda solo cuando este equipo SÍ tiene pendientes y la base local no coincide con lo local; un valor más nuevo que coincide con lo que la base ya reconocía como borrado es un borrado. Para el reset, una marca explícita en la fila («vaciado el <fecha>») que los equipos respeten. Sonda con los tres casos (borrar grupo, Cerrar el año con grupo nuevo, reset) en verifica-fusion-sync.js."
+ },
+ {
+  "id": "T11-03",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "La fusión empareja alumnos por número de lista, pero insertar un alumno corre los números: asistencia, notas y pagos del otro equipo caen en el niño equivocado",
+  "descripcion": "metas-fusion-aula.js usa num como identidad del alumno y aus, notas, pagos y lectura van indexados por ese número. «Alumno nuevo en su lugar» (adShiftNums + adInsertarAlumno) renumera lista, asistencia, notas, colectas, lectura y claves sin comprobar si hay pendientes ni si la nube está al día. Si el teléfono, sin señal, pasó lista o anotó una nota o un pago con la numeración vieja, la fusión los pega al número —que ahora es otro niño— y la copia fusionada sube ganando versión a los dos equipos, sin ruido, hasta el informe que firma la familia. Con el reloj del teléfono adelantado y un apellido corregido, un alumno desaparece de la lista y otro sale dos veces.",
+  "evidencia": "js/metas-fusion-aula.js:58 (LLAVES = id, f, num…); js/tools/registros-admin.js:1047-1100; js/metas-docente-sync.js:305-318 (la fusionada sube). scratchpad/tecnica-acceso/T11/fusion-num.js con la propia MetasFusion.fusionar: base 4 alumnos, PC inserta «Beto» como #2, teléfono anota falta de Sara (#3) y nota 75 de Luis (#2) → «la falta del 9/9 queda en #3 = Luis», «la nota 75 queda en #2 = Beto». criticos/T11-03-nombre-y-pago.js: pago de L 250 de Sara cae en Luis; con apellido corregido y reloj adelantado la lista queda «2:Beto 3:Sara Mejía 4:Sara 5:Tomás» (Luis desaparece). _dev/prueba-fusion-aula.js no tiene caso de renumeración.",
+  "archivos": [
+   "js/metas-fusion-aula.js",
+   "js/tools/registros-admin.js",
+   "_dev/prueba-fusion-aula.js"
+  ],
+  "severidad": "critica",
+  "tipo": "error",
+  "impacto_educativo": 5,
+  "impacto_comercial": 4,
+  "esfuerzo": "semanas",
+  "recomendacion": "Un id estable por alumno (el grupo ya lo tiene) y llevar asistencia, notas, pagos y lectura por ese id; num pasa a ser un atributo mostrable. Mitigación en días: si el mapa num→nombre cambió entre la base y uno de los lados, fusionar() devuelve null (se cae a «gana la más nueva» con respaldo y aviso); y adInsertarAlumno exige estar sincronizado (sin pendientes y con la nube recién leída)."
+ },
+ {
+  "id": "T11-04",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "La app baja el aula entera de la nube cada 20 segundos mientras está abierta, y cada lectura fallida la sube entera",
+  "descripcion": "El latido llama a autoSync cada 20 s con la pestaña visible y metas_docente_estado_leer devuelve todas las filas con su valor completo, sin versiones ni condicionales; el vigía hashea todas las claves cada 8 s. Medido: 86 MB por hora con tres grupos, ~270 MB/hora con doce. Y cuando la lectura falla rápido (5xx, DNS), pull() resuelve cloudKeys vacío y push() toma todas las claves como semilla: cada fallo de lectura provoca además una subida de hasta 1,5 MB, con syncNow diciendo «✅ Todo al día». En un plan prepago es dinero del maestro. Ya señalado en agosto como T9-02.",
+  "evidencia": "js/metas-docente-sync.js:65 (AUTO_MIN), :682-693 (latido y vigía), :259-267 (pull sin condicional), :223 (semilla), :334-336, :386, :445; SUPABASE-DOCENTE-ESTADO.sql:89-102; sw.js:207 no cachea POST. scratchpad/tecnica-acceso/T11/trafico.js (out-trafico.txt): aula de 3 grupos (373 KB), equipo quieto, 90 s → 5 lecturas, 2 202 KB, intervalos 20-20-20-20 s → 86 MB/hora; 12 grupos = 1 492 KB por bajada (tamano.js).",
+  "archivos": [
+   "js/metas-docente-sync.js",
+   "SUPABASE-DOCENTE-ESTADO.sql"
+  ],
+  "severidad": "alta",
+  "tipo": "sobrediseno",
+  "impacto_educativo": 2,
+  "impacto_comercial": 5,
+  "esfuerzo": "dias",
+  "recomendacion": "RPC ligera metas_docente_estado_versiones (k, version, hash) y bajar solo las claves cuya versión cambió; quitar el latido de 20 s y sincronizar en foco, al volver la red, tras un cambio propio y a pedido; con lectura fallida no subir nada como semilla. Mostrar al maestro cuántos datos bajó la sesión hasta que esté hecho."
+ },
+ {
+  "id": "T11-05",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "localStorage guarda hasta siete copias del aula; con 6 grupos el respaldo anti-pisado ya no cabe y falla en silencio, y con 12 se agota la cuota",
+  "descripcion": "METAS_ADMIN_V1 se duplica en la base de la fusión, en el respaldo antes de pisar y en hasta cuatro fotos completas de deshacer, todas con los logos en base64 dentro, en un almacén de ~5 MB. Cada setItem fallido se traga con catch (_) {}: el respaldo que existe para recuperar una sincronización que pisó datos es lo primero que deja de escribirse, sin aviso; y si la base no cabe, la fusión pasa a UNIR y revive lo borrado. El caso de 6 grupos exige logos en los seis y un año de datos (plausible en un maestro de 7º-9º); lo general es el fallo silencioso.",
+  "evidencia": "js/metas-docente-sync.js:147 (backupLocal), :163-170 (baseSet); js/tools/registros-admin.js:119-141 (4 fotos), :4197-4211 (logo a 260 px dentro del estado). scratchpad/tecnica-acceso/T11/tamano.js (out-tamano.txt): cuota 5 100 KB; 1 grupo×43 con un año = 124 KB; 3 grupos = 373 KB / 3 014 KB con copias; 6 grupos = 746 KB → «respaldo: false, copias undo: 3»; 12 grupos = 1 492 KB → 5 013 KB, «respaldo: false, copias undo: 1». Reventón comprobado por el revisor a 5 242 876 caracteres.",
+  "archivos": [
+   "js/metas-docente-sync.js",
+   "js/tools/registros-admin.js"
+  ],
+  "severidad": "alta",
+  "tipo": "riesgo",
+  "impacto_educativo": 3,
+  "impacto_comercial": 4,
+  "esfuerzo": "semanas",
+  "recomendacion": "Sacar base, respaldo y fotos de deshacer a IndexedDB; una sola copia de deshacer o diferencias; los logos fuera del estado sincronizado. Cuando una copia de seguridad no quepa, decirlo en el chip de estado en vez de tragarlo."
+ },
+ {
+  "id": "T11-06",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "No existe exportación ni restauración del aula a un archivo: el único respaldo del maestro es un Supabase gratuito sin copias",
+  "descripcion": "No hay «Guardar copia de mi aula» ni «Restaurar desde archivo». Lo que existe: el Expediente del aula (HTML para imprimir, no restaurable), el CSV de eventos del alumno en registro.html y respaldo-rapido.cmd, que es un git push para el desarrollador; la papelera de la nube guarda solo el último «Empezar de nuevo». Con T11-01 y T11-02 abiertos, sin copias en la nube y con la cuenta como único acceso, no hay camino de vuelta si la nube se pierde, la cuenta se bloquea o el maestro cambia de teléfono sin señal.",
+  "evidencia": "grep de Blob/download/JSON en js/app.js y js/tools/*.js → solo cabeceras HTTP y CSV; js/tools/registros-admin.js:1552-1573 (Expediente vía adPrintAbrir); registro.html:94; respaldo-rapido.cmd:1-16; SUPABASE-DOCENTE-PAPELERA.sql; CLAUDE.md («El plan gratuito no trae copias y esto no se arregla con código»).",
+  "archivos": [
+   "js/app.js",
+   "js/metas-docente-sync.js"
+  ],
+  "severidad": "alta",
+  "tipo": "faltante",
+  "impacto_educativo": 3,
+  "impacto_comercial": 4,
+  "esfuerzo": "dias",
+  "recomendacion": "Botón en el perfil del maestro: «💾 Guardar copia de mi aula» (JSON con las DS_KEYS, fecha y PROF) y «Restaurar desde archivo», que fusione con lo que haya (MetasFusion.fusionar(null, actual, archivo) ya sirve). Recordatorio mensual. Es también la salida de T11-01 y de la migración de teléfono sin señal."
+ },
+ {
+  "id": "T11-11",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "Tras «Cerrar sesión» quedan copias completas del aula en el equipo, y quien entre después con cualquier cuenta docente puede llevárselas con un toque",
+  "descripcion": "dsWipeLocal no toca METAS_ADMIN_UNDO_V1 (hasta 4 fotos con lista, claves de familia, avisos y plan), METAS_STATS_NUBE_V1 (notas de alumnos bajadas), METAS_ADMIN_SB_V1 ni METAS_AVISOS_SB_V1; y con la subida OK, push().then vuelve a escribir la base con el aula entera después del borrado. adUndoRestaurar repone admin+códigos+avisos+plan sin mirar dueño ni cuenta. Sin sesión Mi aula no se alcanza por la interfaz; la exposición real es que quien entre después con cualquier cuenta docente (crear una es gratis) ve «Deshacer un accidente» del maestro anterior y se lleva su aula a su propia nube. El diálogo promete «si alguien más usa este equipo, no verá tu información».",
+  "evidencia": "js/metas-docente-sync.js:703-709 (dsWipeLocal), :246-251 (baseSet tras el push); js/tools/registros-admin.js:145-165, :783-796, :6097-6103. scratchpad/tecnica-acceso/T11/escenarios2.js: con red buena quedan {STATS_NUBE, DOCSYNC, UNDO, BASE}, «¿BASE guarda la lista?» true; undo-shot.js: tras Restaurar, METAS_ADMIN_V1 = GA:43; capturas T11/logout-papelera-visible.png y T11/e5-undo-de-otro-maestro.png.",
+  "archivos": [
+   "js/metas-docente-sync.js",
+   "js/tools/registros-admin.js"
+  ],
+  "severidad": "media",
+  "tipo": "riesgo",
+  "impacto_educativo": 1,
+  "impacto_comercial": 3,
+  "esfuerzo": "horas",
+  "recomendacion": "Incluir en dsWipeLocal las llaves UNDO, STATS_NUBE, ADMIN_SB y AVISOS_SB; en push().then no escribir base ni meta si ya no hay dueño; no pintar la papelera de accidentes de otra cuenta."
+ },
+ {
+  "id": "T11-12",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "El ✅ «Datos del aula sincronizados en todos tus equipos» solo mira si hay cambios locales pendientes: no sabe cuándo habló con la nube por última vez",
+  "descripcion": "estado() muestra el ✅ siempre que no haya claves con v≠sv y navigator.onLine no sea false; pull() devuelve {ok:false} en el catch sin guardar nada ni repintar, y no hay marca de tiempo de la última lectura buena. syncNow() muestra «✅ Todo al día» si el push resolvió true aunque el pull haya fallado. Es la pantalla que tapa T11-01, T11-04, la petición colgada y el reloj adelantado: en todos ellos el maestro lee ✅.",
+  "evidencia": "js/metas-docente-sync.js:409-418 (estado), :334-336 (pull en catch), :435-448 (syncNow).",
+  "archivos": [
+   "js/metas-docente-sync.js"
+  ],
+  "severidad": "baja",
+  "tipo": "incompleto",
+  "impacto_educativo": 1,
+  "impacto_comercial": 2,
+  "esfuerzo": "horas",
+  "recomendacion": "Guardar la hora del último pull y del último push con éxito y mostrarla («Al día con la nube hace 2 min» / «Última vez al día: hace 3 días»); ⚠️ si la última lectura falló aunque no haya pendientes."
+ },
+ {
+  "id": "T11-10",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "Que el resultado llegue al niño correcto depende de cómo escribe «grado y sección»: «sexto 1» se lee como primer grado",
+  "descripcion": "El código de aula es por maestro, no por grupo, así que el grupo se deduce del texto libre que el niño teclea en la misión (30 caracteres, sin validar). estParteGrupo interpreta mal formas comunes: «sexto 1» y «Sexto grado sección 1» dan grado 1; «6A» y «6to seccion A» pierden la sección. Si el grado no calza el resultado se descarta en silencio y el maestro lee «no hay práctica» de un niño que sí practicó. js/grado-alumno.js ya tiene el mapa «sexto: 6, septimo: 7…» y estParteGrupo no lo reutiliza.",
+  "evidencia": "scratchpad/tecnica-acceso/T11/parte.js (ejecuta la función real): «sexto 1» → {grado:1}, «Sexto grado sección 1» → {grado:1}, «6A» → {seccion:vacía}, «6to seccion A» → {seccion:vacía}. js/tools/estadisticas-alumno.js:273, :342-350, :1021; js/metas-registro.js:507, :642; SUPABASE-AULA.sql:25 (un código por docente); js/grado-alumno.js:50-51.",
+  "archivos": [
+   "js/tools/estadisticas-alumno.js",
+   "js/metas-registro.js",
+   "SUPABASE-AULA.sql",
+   "js/grado-alumno.js"
+  ],
+  "severidad": "media",
+  "tipo": "error",
+  "impacto_educativo": 4,
+  "impacto_comercial": 2,
+  "esfuerzo": "dias",
+  "recomendacion": "Código de aula por GRUPO (el grupo ya tiene id): el niño escribe código + número y grado/sección salen del grupo del maestro. Mientras tanto (horas): selector de grado y sección en vez de texto libre, y estParteGrupo reutilizando el mapa de grado-alumno.js."
+ },
+ {
+  "id": "T11-07",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "Si el navegador limpia el almacén, el maestro recupera solo sus llaves de aula y el alumno no recupera nada; nadie pide almacenamiento persistente",
+  "descripcion": "Tras una limpieza de datos del navegador el maestro vuelve a entrar y dsClaimFor baja las DS_KEYS; se pierden sin vuelta la cola de resultados pendientes del alumno, el registro local con la lectura de la misión y los quiz de video, el progreso y XP de todas las misiones y el mapa del chatbot; no existe RPC para bajar el progreso del alumno. Ningún archivo llama a navigator.storage.persist(), así que ni localStorage ni la Cache Storage del service worker («ábrela una vez con señal») están protegidas del desalojo bajo presión de espacio. El desalojo solo ocurre bajo presión y Chrome concede persistencia sola a una PWA instalada con uso; por eso media y no alta.",
+  "evidencia": "grep storage.persist|navigator.storage en js/, index.html, padres.html, sw.js, js/tools/pwa-install.js → 0; grep metas_leer_progreso|progreso_leer en js/ → 0 (solo se sube, js/metas-supabase.js:186-243); js/metas-docente-sync.js:721-744 (dsClaimFor); SUPABASE-DOCENTES-V2.sql:386 (la única lectura de progreso es para el maestro).",
+  "archivos": [
+   "js/metas-supabase.js",
+   "js/metas-docente-sync.js",
+   "js/tools/pwa-install.js",
+   "sw.js"
+  ],
+  "severidad": "media",
+  "tipo": "incompleto",
+  "impacto_educativo": 4,
+  "impacto_comercial": 3,
+  "esfuerzo": "dias",
+  "recomendacion": "navigator.storage.persist() al instalar la PWA y en la Zona Docente (una línea). Reponer el XP del alumno desde la nube requiere identidad por código de aula + número y no debería bloquear lo primero."
+ },
+ {
+  "id": "T11-09",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "La lectura dentro de la misión y el quiz del video nunca llegan al maestro: se quedan en el teléfono del niño",
+  "descripcion": "Solo evaluacion, prueba_operativa y pauta_vista entran a la cola y al servidor; encolar() descarta el resto. Los eventos lectura (palabras por minuto de la misión) y video_quiz se registran localmente y se leen solo en registro.html abierto en el mismo aparato. CLAUDE.md afirma que ese número «acaba en su expediente y en el informe que firma su madre» y videos-mision promete «Evidencia del maestro»: las dos promesas son falsas fuera del teléfono del niño. La toma que sí llega al informe es la del maestro; lo que se pierde es el dato del trabajo autónomo.",
+  "evidencia": "js/metas-supabase.js:35 (TIPOS), :78; SUPABASE-AULA.sql:128 y SUPABASE-PUERTA-ANONIMA.sql:119 (mismo filtro en el servidor); js/tools/lectura-mision.js:1866; js/videos-mision.js:937; js/tools/estadisticas-alumno.js:352; CLAUDE.md (sección del Control de lectura).",
+  "archivos": [
+   "js/metas-supabase.js",
+   "SUPABASE-AULA.sql",
+   "js/tools/estadisticas-alumno.js",
+   "CLAUDE.md"
+  ],
+  "severidad": "media",
+  "tipo": "incompleto",
+  "impacto_educativo": 3,
+  "impacto_comercial": 2,
+  "esfuerzo": "dias",
+  "recomendacion": "Añadir lectura y video_quiz a TIPOS y al filtro SQL (o un campo jsonb extra con ppm, comprensión y sin_terminar) y pintarlos en Estadísticas junto a las tomas del maestro. Corregir el texto de CLAUDE.md y de la pantalla mientras tanto."
+ },
+ {
+  "id": "T11-08",
+  "area": "tecnica-acceso",
+  "lente": "T11",
+  "titulo": "La cola de resultados del alumno tira los más viejos sin avisar y nadie ve cuántos hay pendientes",
+  "descripcion": "MAX_OUTBOX = 1000: al pasar el tope se descartan los 200 más viejos, y otros 200 si el almacén no cabe; el backfill corre una sola vez, así que lo tirado no vuelve a la cola. METAS_SB.pendientes() existe y ninguna pantalla lo usa: ni la misión ni registro.html dicen «N resultados sin subir». Los eventos siguen en METAS_REGISTRO_V1 (CSV), así que no es pérdida total; 43 alumnos × 23 pruebas en un teléfono sin señal es raro, pero que nadie vea la cola es cotidiano.",
+  "evidencia": "js/metas-supabase.js:32, :42-49, :88-105; grep pendientes() en index.html, registro.html, js/app.js, js/tools → sin uso. scratchpad/tecnica-acceso/T11/cola.js (re-corrido por el revisor): 1 200 evaluaciones sin red → {cola:1000, primeraForma:20, registro:1201}; «¿la misión le dice al alumno que tiene resultados sin subir?» → null.",
+  "archivos": [
+   "js/metas-supabase.js",
+   "js/metas-registro.js",
+   "registro.html"
+  ],
+  "severidad": "media",
+  "tipo": "incompleto",
+  "impacto_educativo": 3,
+  "impacto_comercial": 2,
+  "esfuerzo": "horas",
+  "recomendacion": "Indicador «☁️ N resultados sin subir» en la barra del alumno y en registro.html; al acercarse al tope, avisar y ofrecer el CSV antes de descartar; subir el tope o mover la cola a IndexedDB."
+ },
+ {
+  "id": "T7-03",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "Ninguna misión registra el service worker: quien llega por el QR de la ficha o por WhatsApp nunca la tiene sin internet",
+  "descripcion": "Solo index.html y padres.html llaman a navigator.serviceWorker.register. El QR impreso apunta directo a la misión y el manual documenta como vía principal el enlace de cada misión por WhatsApp: los dos caminos previstos para que el alumno llegue a una misión saltan la portada. Un teléfono que nunca abrió la portada navega sin SW y nada se guarda; la promesa «Ábrelas una vez con señal y después trabajan sin internet» no la ve nunca ni se le cumple. El SW de la portada tiene ámbito raíz, así que el hueco es exactamente ese teléfono.",
+  "evidencia": "grep -l serviceWorker misiones/*/*.html fichas/*.html mision.html → 0; index.html:1175 y padres.html:1705 (únicos registros); _dev/genera-qr-mision.py:52-54 (QR directo a la misión); MANUAL-MAESTRO.md:39-41; index.html:92-93 y manifest.json:4 (la promesa).",
+  "archivos": [
+   "js/metas-registro.js",
+   "_dev/genera-qr-mision.py",
+   "index.html",
+   "mision.html"
+  ],
+  "severidad": "alta",
+  "tipo": "incompleto",
+  "impacto_educativo": 4,
+  "impacto_comercial": 3,
+  "esfuerzo": "horas",
+  "recomendacion": "Registrar el SW con ámbito raíz (navigator.serviceWorker.register de /sw.js) desde un script que ya cargan las 75 misiones, mision.html y las fichas —por ejemplo js/metas-registro.js—, y que la sonda de fuente lo exija como exige la barra de secciones."
+ },
+ {
+  "id": "T7-01",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "Publicar con la red lenta deja index.html nuevo con app.js viejo, sin aviso, mientras el SW nuevo instala —y de forma permanente si el armazón quedó con hueco—",
+  "descripcion": "El SW sirve lo propio «red primero» con plazo de 3 s y, si la red no llega, buscarCopia mira primero el armazón precacheado del SW que manda, que sigue siendo el viejo hasta que el nuevo termina de instalar 56 archivos. Cuando el HTML llega en menos de 3 s y los JS en más, la página se arma con el sello nuevo y el app.js anterior, sin aviso; se cura sola al activar el SW nuevo (40-80 s en la sonda, hasta ~2 min). Pero si un archivo del ARMAZON supera PLAZO_INSTALA (12 s) el precache queda con hueco a propósito y buscarCopia cae a CACHE_DATOS con el app.js viejo: la mezcla no se cura al activar y persiste hasta una carga con app.js en menos de 3 s. Ese caso no se midió y ninguna sonda del repositorio lo produce.",
+  "evidencia": "sw.js:151 (PLAZO_INSTALA), :153-169 («se sigue sin él»), :164 (skipWaiting), :188 (PLAZO_RED), :199-204 (buscarCopia: CACHE_APP antes que CACHE_DATOS, ignoreSearch), :266-278; grep controllerchange|updatefound en index.html y js/ → 0. Reproducido con espejo propio (scratchpad/tecnica-acceso/T7/sonda-sw.js en :8124 y T7-revision/sonda-sw-rev.js en :8125): paso2 tras publicar v198 con JS a 4 s → selloHtml ?v=198 y window.__APPV=197; paso3 siguiente recarga → 197; a los 9 s coexisten meta-app-v197 y v198; a los 82 s solo v198, APPV=198, y sin internet abre con 198.",
+  "archivos": [
+   "sw.js",
+   "index.html",
+   "js/app.js",
+   "_dev/verifica-service-worker.js"
+  ],
+  "severidad": "media",
+  "tipo": "error",
+  "impacto_educativo": 4,
+  "impacto_comercial": 4,
+  "esfuerzo": "horas",
+  "recomendacion": "Que el plazo no devuelva una copia de otra versión: si la petición lleva ?v=NNN y la copia guardada es de otro sello, seguir esperando a la red (o servir también index.html de la copia). Que el precache nuevo copie del viejo lo que no cambió (T7-02) para que active en segundos. Una sonda que retrase la red por encima de 12 s."
+ },
+ {
+  "id": "T7-10",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "Nadie puede saber qué versión tiene un teléfono: ni en Ajustes ni en el pie hay número de versión",
+  "descripcion": "install hace skipWaiting y activate clients.claim, sin oyente de controllerchange ni updatefound, y ninguna pantalla muestra CACHE_NAME ni el sello. Cuando un maestro reporta «se ve distinto» no hay forma de saber qué tiene; el manual ya reconoce el síntoma. La mezcla portada vieja + misiones nuevas al navegar no es un defecto (cada carga es coherente por dentro; la dañina es T7-01), y quitar skipWaiting sería contraproducente en un teléfono compartido donde la PWA no se cierra nunca.",
+  "evidencia": "sw.js:164 (skipWaiting), :181 (clients.claim); grep controllerchange|updatefound → 0; grep versión index.html → 0 (el sello solo va en los src); MANUAL-MAESTRO.md:479-481 («La app instalada se ve distinta al sitio web»).",
+  "archivos": [
+   "sw.js",
+   "index.html",
+   "js/app.js"
+  ],
+  "severidad": "baja",
+  "tipo": "incompleto",
+  "impacto_educativo": 2,
+  "impacto_comercial": 3,
+  "esfuerzo": "horas",
+  "recomendacion": "Mostrar CACHE_NAME/sello en Ajustes y en el pie de la portada (minutos). Mantener skipWaiting+claim; la tira «Hay una versión nueva · Recargar» es opcional y no cura nada por sí sola."
+ },
+ {
+  "id": "T7-04",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "La portada pesa 3,3 MB y 28 scripts sin defer: las herramientas del maestro se bajan y se compilan en el teléfono de cada alumno antes de pintar la lista de misiones",
+  "descripcion": "En frío index.html trae 44 peticiones y 2 438 KB de JavaScript en 28 etiquetas sin defer ni async: el corpus de lectura (957 KB), registros-admin (333 KB), convocatoria (178 KB), html2canvas (194 KB), campeonismo (103 KB). js/app.js es el script 25 de 28 y arranca en DOMContentLoaded, así que la lista de misiones no se pinta hasta haber bajado y compilado los 24 anteriores (≈2,2 MB de herramientas del maestro). A 1 Mbps son ~30 s de descarga y varios segundos de análisis en un Android de 80 USD, para un alumno o una madre que no usan nada de eso. Las visitas siguientes salen de CACHE_DATOS; el coste es la primera visita y cada archivo cambiado tras cada publicación. Ya señalado en agosto como T9-04.",
+  "evidencia": "scratchpad/tecnica-acceso/T7/sonda-peso.js sobre index.html: html 56 KB, total 3 277 KB, 44 peticiones, script 28×2 438 KB, css 2×178 KB, img 9×236 KB; grep -c <script defer> index.html → 0; index.html:1131-1148; js/app.js:3186 (DOMContentLoaded); sw.js:26-30 («los 25 scripts de la portada (2,8 MB)»).",
+  "archivos": [
+   "index.html",
+   "js/app.js",
+   "js/data/lectura-textos.js",
+   "js/tools/registros-admin.js"
+  ],
+  "severidad": "alta",
+  "tipo": "deuda",
+  "impacto_educativo": 4,
+  "impacto_comercial": 3,
+  "esfuerzo": "dias",
+  "recomendacion": "Cargar las herramientas del maestro bajo demanda al entrar a Zona Docente (inserción de script con promesa, como el cargador de Three.js), lectura-textos.js solo al abrir 📖 Lectura y html2canvas solo al pedir la Constancia. Incluso sin partir nada: app.js antes y defer en las herramientas. Meta medible: portada < 700 KB en frío."
+ },
+ {
+  "id": "T7-02",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "Cada publicación (cuatro al día) rehace el precache desde cero: 56 viajes a la red por teléfono y ~850 KB en la lista que la portada no necesita",
+  "descripcion": "La caché nueva nace vacía y nada copia de la vieja lo que no cambió; el precache es ARMAZON (17 entradas, ≈658 KB) + STATIC_ASSETS (40, ≈1 852 KB), y CACHE_NAME subió 60 veces en 27 días. cache.add usa la caché HTTP y GitHub Pages manda ETag, así que lo que no cambió se revalida con 304: el coste normal de cada publicación es lo que cambió más 56 idas y vueltas, que en la señal del aula son tiempo de instalación (la ventana de T7-01), no megas; los 2,45 MB solo se re-bajan si la caché HTTP fue desalojada. Font Awesome sí lo pinta la portada. Lo que sobra de la lista: 16 diccionarios -en.js de robótica (816 KB) para misiones que ese teléfono quizá nunca abra, y salida.html y buzon.html, que sin nube solo enseñan «no hay internet». Ya señalado en agosto como T9-03.",
+  "evidencia": "sw.js:31-151 (listas), :163-169 (caché nueva vacía), :147-149 (salida.html y buzon.html); scratchpad/tecnica-acceso/T7/sonda-peso.js; git log --since=2026-08-13 -p -- sw.js | grep -c +const CACHE_NAME = 60 (27 en 7 días); index.html:28 y 52 clases fa- (Font Awesome sí se usa); captura T7/capturas/salida@360x640.png.",
+  "archivos": [
+   "sw.js",
+   "CLAUDE.md"
+  ],
+  "severidad": "media",
+  "tipo": "sobrediseno",
+  "impacto_educativo": 3,
+  "impacto_comercial": 4,
+  "esfuerzo": "dias",
+  "recomendacion": "En install, copiar de la caché anterior cada entrada cuyo ETag/Content-Length coincida (o nombrar por hash y cachear cache-first para siempre). Podar STATIC_ASSETS a lo que index.html pinta sin señal: fuera los -en.js de robótica, salida.html y buzon.html. Sellar por archivo cambiado, no todo el armazón en cada commit."
+ },
+ {
+  "id": "T7-09",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "html2canvas.min.js está copiado 67 veces idéntico: 13 MB en el repositorio y 67 entradas de 194 KB en la caché del teléfono",
+  "descripcion": "Cada misión trae su propia copia de html2canvas (198 689 bytes, mismo md5 en las 67) y la raíz tiene otra en js/html2canvas.min.js. sw.js guarda cada URL distinta en CACHE_DATOS: el alumno que abre diez misiones baja y guarda diez veces el mismo archivo, en el teléfono de 16 GB compartido por el aula. Es la misma deuda que ya se sacó del andamio 3D y de los videos.",
+  "evidencia": "find misiones -name html2canvas.min.js | wc -l = 67; md5 d7530aa0b7587e627484c49fdf8f13f2 en las 67 y en js/html2canvas.min.js; du -ch = 13 MB; sw.js:288-294; scratchpad/tecnica-acceso/T7/sonda-peso.js: en fracciones.html es el recurso más pesado (194 de 957 KB).",
+  "archivos": [
+   "js/html2canvas.min.js",
+   "misiones/2y3ciclo-fracciones/js/html2canvas.min.js",
+   "misiones/2y3ciclo-fracciones/fracciones.html"
+  ],
+  "severidad": "media",
+  "tipo": "eliminar",
+  "impacto_educativo": 2,
+  "impacto_comercial": 2,
+  "esfuerzo": "horas",
+  "recomendacion": "Borrar las 67 copias y enlazar ../../js/html2canvas.min.js (una sed sobre los 67 HTML y subir el sello); una sonda de fuente que falle si vuelve a aparecer un vendor duplicado en misiones/."
+ },
+ {
+  "id": "T7-05",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "El APK (www/) está congelado en la v48 del 13 de agosto —101 commits atrás, sin la fusión de datos y sin 18 misiones— y el manual lo recomienda para las tabletas del aula",
+  "descripcion": "www/ es lo que envuelve Capacitor: lleva sw.js v48 (una sola caché que borraba lo guardado en cada versión), le faltan 18 carpetas de misiones, 22 archivos JS (metas-fusion-aula.js, estrella-ganada.js, barra-secciones.js, teclado-actividades.js, grado-alumno.js…) y 4 páginas, y su metas-docente-sync.js sigue con «gana la copia más nueva», el caso documentado de asistencia perdida. Nada lo reconstruye: build:www es un robocopy de Windows que ningún workflow corre. El APK no se distribuye por ningún lado (ni .apk versionado, ni enlace, ni releases; solo carga lateral local) y _config.yml saca www/ de Pages: el daño de hoy es que el manual recomienda algo que el maestro no puede conseguir y que, donde exista, va con el sync que perdía asistencia.",
+  "evidencia": "www/sw.js:1 (meta-app-v48) vs sw.js:18 (v197); git log -1 -- www = 1a49e51 (2026-08-13); git rev-list --count 1a49e51..HEAD = 101; comm misiones vs www/misiones: faltan 18; comm js vs www/js: faltan 22; grep -c MetasFusion www/js/metas-docente-sync.js = 0 (raíz: 4); package.json:7 (robocopy); .github/workflows/*.yml sin build:www; MANUAL-MAESTRO.md:37 y :480; android/app/build.gradle versionCode 3 / versionName 1.2.",
+  "archivos": [
+   "www/sw.js",
+   "www/js/metas-docente-sync.js",
+   "package.json",
+   "MANUAL-MAESTRO.md",
+   "android/app/build.gradle"
+  ],
+  "severidad": "media",
+  "tipo": "riesgo",
+  "impacto_educativo": 4,
+  "impacto_comercial": 4,
+  "esfuerzo": "dias",
+  "recomendacion": "Decidir: o el APK vive (build:www portable en Node y corrido en el CI en cada empujón, versionCode automático, aviso dentro del APK cuando el sitio va por delante) o se retira de los manuales hasta tener ese conducto. Mientras no haya decisión, quitar la recomendación de MANUAL-MAESTRO.md:37 (minutos)."
+ },
+ {
+  "id": "T7-06",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "Dentro del APK «Imprimir» no hace nada: window.print no tiene puente nativo (las descargas sí lo tienen)",
+  "descripcion": "En un WebView de Android window.print() no hace nada sin un PrintDocumentAdapter; MainActivity.java es un BridgeActivity vacío sin PrintManager y Capacitor Android no lo trae, así que en la app instalada las fichas, informes, boletos y listados (91 archivos con window.print) son botones mudos. Las tres descargas reales del proyecto SÍ llevan ya el puente nativo (Filesystem.writeFile + Share.share cuando existe window.Capacitor). No verificado en un dispositivo; depende de que el APK exista en alguna tableta (T7-05).",
+  "evidencia": "grep -c window.print → 91 archivos; android/app/src/main/java/.../MainActivity.java (BridgeActivity vacío); js/metas-registro.js:313-318, js/tools/collage-maker.js:872-873 y js/tools/plan-accion.js:524-525 (descargas con puente); js/tools/registros-admin.js:4884 (el CSV va al portapapeles, no hay descargas ahí).",
+  "archivos": [
+   "android/app/src/main/java",
+   "android/app/capacitor.build.gradle",
+   "MANUAL-MAESTRO.md"
+  ],
+  "severidad": "baja",
+  "tipo": "incompleto",
+  "impacto_educativo": 3,
+  "impacto_comercial": 3,
+  "esfuerzo": "dias",
+  "recomendacion": "Si el APK sigue: un plugin de impresión, o generar el PDF y pasarlo por Share. Si no sigue: decir en el manual que imprimir es desde el navegador."
+ },
+ {
+  "id": "T7-07",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "manifest.json bloquea la orientación a vertical mientras 18 juegos 3D traen reglas para el teléfono acostado",
+  "descripcion": "orientation: portrait aplica a toda la PWA instalada y los juegos 3D viven en el mismo ámbito; css/parque-3d.css trae reglas para pantalla corta (max-height:430px), cuatro juegos más tienen reglas de acostado y ninguno llama a screen.orientation.lock. En el navegador sí gira; en la app instalada no, y el APK (sin screenOrientation) se comporta distinto de la PWA. Los juegos funcionan en vertical y el modo 📽️ se proyecta desde una PC: se pierde una opción, no una función.",
+  "evidencia": "manifest.json:9 y manifest-padres.json:8 (orientation: portrait); css/parque-3d.css:184 (@media max-height:430px); grep screen.orientation → 0; android/app/src/main/AndroidManifest.xml sin screenOrientation; captura scratchpad/tecnica-acceso/T7/capturas/juego3d-640x360.png (cabe acostado).",
+  "archivos": [
+   "manifest.json",
+   "manifest-padres.json",
+   "css/parque-3d.css"
+  ],
+  "severidad": "baja",
+  "tipo": "error",
+  "impacto_educativo": 3,
+  "impacto_comercial": 2,
+  "esfuerzo": "horas",
+  "recomendacion": "Quitar orientation (o poner any) en los dos manifests y subir el sello; que cada juego decida con screen.orientation.lock si hace falta."
+ },
+ {
+  "id": "T7-08",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "Los dos manifests comparten un ícono recortado e ilegible, «Notas» abre la aplicación entera dentro de su ventana, y el theme_color no coincide",
+  "descripcion": "manifest.json y manifest-padres.json usan el mismo img/icon-512.png: un logo circular con el aro pegado al borde y el texto «PoliCastSapien EDITORIAL», declarado maskable (Android lo recorta al 80 %) e ilegible a 48 px. manifest-padres.json tiene scope ./ y padres.html enlaza a index.html, así que la app «Notas» abre la aplicación entera de alumnos y maestro dentro de la ventana de la familia. theme_color #114494 frente al meta #1e3a7c. Sin id, Chrome deriva el id del start_url y las dos apps ya son distintas: ese punto no es problema.",
+  "evidencia": "manifest.json (icons purpose any+maskable con el mismo PNG); manifest-padres.json:5-6 (start_url padres.html, scope ./); img/icon-512.png; index.html:6 (theme-color #1e3a7c) vs manifest.json theme_color #114494; padres.html:201 (enlace a index.html).",
+  "archivos": [
+   "manifest.json",
+   "manifest-padres.json",
+   "img/icon-512.png",
+   "padres.html"
+  ],
+  "severidad": "baja",
+  "tipo": "incompleto",
+  "impacto_educativo": 2,
+  "impacto_comercial": 3,
+  "esfuerzo": "horas",
+  "recomendacion": "Íconos distintos con margen del 20 % para maskable y el nombre M.E.T.A.S. en el de alumnos; padres.html en /padres/ para darle scope propio (o quitar el segundo manifest); alinear theme_color."
+ },
+ {
+  "id": "T7-12",
+  "area": "tecnica-acceso",
+  "lente": "T7",
+  "titulo": "En iPhone/iPad hay pulido pendiente: backdrop-filter sin prefijo en 68 archivos e iPad sin pista de instalación",
+  "descripcion": "backdrop-filter se usa en 68 archivos y ninguno lleva -webkit-backdrop-filter, que Safari exigió hasta iOS 18 (iOS 16/17 siguen en uso): barras y velos translúcidos sin desenfoque. pwa-install.js detecta iOS por iphone|ipad|ipod en el UA, e iPadOS se presenta como Mac desde 2019, así que en iPad no sale «Compartir → Agregar a inicio». En juego-fabrica-geometrica.html:123 una lista de selectores con :focus-visible se descarta entera en Safari < 15.4. Nada bloquea; iOS es minoritario en las aulas hondureñas.",
+  "evidencia": "grep -rl backdrop-filter = 68 archivos, grep -rl -webkit-backdrop-filter = 0; css/app.css:994; js/tools/pwa-install.js:17-18 (isIOS por UA); misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/juego-fabrica-geometrica.html:123.",
+  "archivos": [
+   "css/app.css",
+   "js/tools/pwa-install.js",
+   "misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/juego-fabrica-geometrica.html"
+  ],
+  "severidad": "baja",
+  "tipo": "deuda",
+  "impacto_educativo": 1,
+  "impacto_comercial": 2,
+  "esfuerzo": "horas",
+  "recomendacion": "sed que añada -webkit-backdrop-filter junto a cada backdrop-filter (68 archivos); detectar iPad con navigator.maxTouchPoints > 1 && /Mac/.test(ua); separar las reglas :focus-visible en selectores sueltos."
+ }
+]
