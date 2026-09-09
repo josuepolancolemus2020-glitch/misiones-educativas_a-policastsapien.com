@@ -207,8 +207,15 @@ pegaría encima de OTRAS preguntas, y esa nota acaba en el expediente · ~~traer
 y el teclado no llegaba a 2 314 elementos en las 74 misiones, no en 48 de 66; y el patrón que este
 informe daba por bueno resultó no responder a Enter.
 
-**Y una en semanas** —que la alumna pueda encontrar lo de su grado—, que es la primera pantalla
-donde cuatro de los cinco recorridos se atascaron.
+**Y una en semanas** —~~que la alumna pueda encontrar lo de su grado~~—, que es la primera pantalla
+donde cuatro de los cinco recorridos se atascaron. **Hecho el 9 de septiembre**, y no hizo falta
+preguntarle el grado: ya lo había escrito al entrar en su primera misión. Ahora lo suyo va primero,
+con un «📚 Para 4º grado» encima **y nada encima de lo demás que diga de qué grado es** —se ordena,
+nunca se filtra—, y buscar «cuarto» pasó de 0 resultados a las 29 que le tocan. Midiendo salió una
+trampa que no estaba en el hallazgo: doce misiones son espirales y están al principio del catálogo,
+así que **la primera pantalla de la de 4º seguía siendo la del de 9º** hasta que se puso delante lo
+más específico de cada grado. La parte de fondo sigue pendiente y es de meses: 47 misiones sirven el
+mismo texto a un niño de 9 años y a uno de 15.
 
 Lo que **no entró** por costar meses, y por qué, está al final de esa misma página: el III Ciclo de
 Matemáticas vacío, el motor copiado 66 veces, el maestro sin poder asignar, y la contraseña que

@@ -534,7 +534,70 @@ function setActivePill(filter) {
 // «numeros» tiene que encontrar «Números Grandes». Se comparan los dos lados sin
 // tildes y palabra por palabra, así «grandes numeros» también da con ella.
 function sinTildes(s) {
-  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    /* Y el ordinal, que no es una tilde y por eso no lo quitaba el paso de
+       arriba: quien busca su grado escribe «4º» tanto como «4to» o «cuarto»,
+       y «4º» encontraba UNA misión —la que lo lleva en el título— en vez de
+       las 29 que son suyas. */
+    .replace(/[º°]/g, 'o');
+}
+
+/* ─────────────────────────────────────────────
+   EL GRADO DE LA ALUMNA
+   Medido el 9 de septiembre de 2026: una de 4º y uno de 9º abrían
+   Misiones y veían las MISMAS 67 tarjetas en el MISMO orden. Y buscar
+   «cuarto» daba cero. La lógica —qué misión es de qué grado, y las tres
+   reglas que quitan el estigma sin quitar la ayuda— vive en
+   `js/grado-alumno.js`, que se prueba sin navegador.
+───────────────────────────────────────────── */
+const GRADO_VISTA_KEY = 'METAS_GRADO_VISTA_V1';
+
+/* NO se le pregunta el grado otra vez: ya lo escribió al entrar en su
+   primera misión. Y lo que se guarda aquí es SOLO el chip de esta
+   pantalla, en su propia llave: METAS_ALUMNO_V1 viaja pegado a cada
+   resultado que llega al maestro, y una preferencia de vista no tiene por
+   qué entrar en el expediente de nadie. */
+function gradoVista() {
+  try {
+    const g = localStorage.getItem(GRADO_VISTA_KEY);
+    if (g !== null) return g;                       // ya eligió (o eligió «Todos»)
+  } catch (_) {}
+  try {
+    const id = JSON.parse(localStorage.getItem('METAS_ALUMNO_V1'));
+    const g = window.GradoAlumno ? GradoAlumno.delTexto(id && id.grado) : '';
+    return (window.GradoAlumno && GradoAlumno.GRADOS.indexOf(g) > -1) ? g : '';
+  } catch (_) { return ''; }
+}
+function setGradoVista(g) {
+  try { localStorage.setItem(GRADO_VISTA_KEY, g || ''); } catch (_) {}
+}
+
+/* Los chips 4º…9º. Se pintan una vez y se marcan en cada render. */
+function pintarChipsGrado() {
+  const cont = document.getElementById('grado-chips');
+  if (!cont || !window.GradoAlumno) return;
+  const actual = gradoVista();
+  if (!cont.dataset.listo) {
+    cont.innerHTML =
+      '<span class="gr-et">Mi grado</span>' +
+      GradoAlumno.GRADOS.map(g =>
+        `<button class="gr-chip" data-grado="${g}" aria-pressed="false">${g}º</button>`).join('') +
+      '<button class="gr-chip gr-todos" data-grado="" aria-pressed="false">Todos</button>';
+    cont.querySelectorAll('.gr-chip').forEach(b => {
+      b.addEventListener('click', () => {
+        setGradoVista(b.dataset.grado);
+        renderMissions(currentFilter, currentQuery);
+        /* No se salta al principio de la página: la alumna acaba de tocar
+           el chip y lo que quiere ver es la lista que hay debajo. */
+      });
+    });
+    cont.dataset.listo = '1';
+  }
+  cont.querySelectorAll('.gr-chip').forEach(b => {
+    const on = b.dataset.grado === actual;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
 }
 
 function renderMissions(filter, query) {
@@ -543,6 +606,7 @@ function renderMissions(filter, query) {
 
   updatePillCounts(country);
   renderProceres(country);
+  pintarChipsGrado();
 
   const container = document.getElementById('missions-container');
 
@@ -572,7 +636,11 @@ function renderMissions(filter, query) {
   if (query && query.trim()) {
     const palabras = sinTildes(query).split(/\s+/).filter(Boolean);
     list = list.filter(m => {
-      const heno = sinTildes(m.title + ' ' + (SUBJECT_LABELS[m.subject] || '') + ' ' + rutaLabel(m));
+      /* El grado entra en el pajar: «cuarto», «4to» y «4º» daban CERO
+         resultados, y es lo primero que escribe quien busca lo suyo. */
+      const gr = (window.GradoAlumno && typeof DCNB_MAP !== 'undefined')
+        ? GradoAlumno.textoBusqueda(m, DCNB_MAP) : '';
+      const heno = sinTildes(m.title + ' ' + (SUBJECT_LABELS[m.subject] || '') + ' ' + rutaLabel(m) + ' ' + gr);
       return palabras.every(p => heno.includes(p));
     });
   }
@@ -587,7 +655,7 @@ function renderMissions(filter, query) {
     return;
   }
 
-  container.innerHTML = list.map(m => {
+  const tarjeta = m => {
     const visited = s.visited.includes(m.id);
     return `
       <a class="mission-card ${visited ? 'visited' : ''}"
@@ -607,7 +675,25 @@ function renderMissions(filter, query) {
         </div>
         <i class="fa-solid fa-chevron-right mc-arrow"></i>
       </a>`;
-  }).join('');
+  };
+
+  /* Se ORDENA, nunca se filtra: lo suyo primero y lo demás debajo, entero.
+     Y se rotula SOLO lo que sí es suyo — un «esto es de 2º» encima de las
+     otras es exactamente lo que había que evitar. */
+  const grado = (window.GradoAlumno && typeof DCNB_MAP !== 'undefined')
+    ? gradoVista() : '';
+  const r = (window.GradoAlumno && typeof DCNB_MAP !== 'undefined')
+    ? GradoAlumno.repartir(list, grado, DCNB_MAP)
+    : { mias: [], demas: list };
+
+  container.innerHTML = r.mias.length
+    ? `<h3 class="mis-sep mis-sep-mias">📚 Para ${grado}º grado
+         <b>${r.mias.length}</b></h3>` + r.mias.map(tarjeta).join('') +
+      (r.demas.length
+        ? `<h3 class="mis-sep">También puedes con estas <b>${r.demas.length}</b></h3>` +
+          r.demas.map(tarjeta).join('')
+        : '')
+    : r.demas.map(tarjeta).join('');
 }
 
 /* ─────────────────────────────────────────────

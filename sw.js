@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v194';
+const CACHE_NAME = 'meta-app-v195';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -47,6 +47,11 @@ const ARMAZON = [
   './js/metas-dialogos.js',
   './js/data/misiones.js',
   './js/data/dcnb-map.js',
+  // De qué grado es cada misión. Va en el armazón porque la lista de
+  // Misiones es lo primero que abre la alumna, y sin esto vuelve a ver
+  // las 67 tarjetas iguales — justo en el aula sin señal, que es donde
+  // la aplicación tiene que valerse sola.
+  './js/grado-alumno.js',
   './js/data/diagnosticos.js',
   './js/data/proceres.js',
   './js/data/paises.js',

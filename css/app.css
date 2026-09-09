@@ -5376,3 +5376,50 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
 .ad-cv-retoq button:active { transform: scale(.96); }
+
+
+/* ── Mi grado: los chips y los dos rótulos de la lista ─────────────────
+   Medido el 9 de septiembre de 2026: una alumna de 4º y uno de 9º veían
+   las MISMAS 67 tarjetas en el MISMO orden. Se ordena, no se filtra, y
+   se rotula SOLO lo que sí es suyo: un «esto es de 2º» encima de las
+   otras es justo lo que había que evitar. */
+.grado-chips {
+  display: flex; align-items: center; gap: 6px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 2px 0 8px;
+}
+.grado-chips::-webkit-scrollbar { display: none; }
+.grado-chips .gr-et {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  letter-spacing: .02em; flex: none; padding-right: 2px;
+}
+/* 44 px de blanco de toque, la regla de siempre de este proyecto: es lo que
+   un dedo acierta sin mirar. Las píldoras de materia de al lado se quedaron
+   más bajas de antes; hacer la nueva igual de pequeña habría sido copiar el
+   problema en vez de dejarlo donde está. */
+.gr-chip {
+  flex: none; min-height: 44px; padding: 6px 14px;
+  border: 1.5px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--text);
+  font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
+  touch-action: manipulation;          /* el zoom del doble toque, no el pellizco */
+}
+.gr-chip.gr-todos { font-weight: 600; color: var(--muted); }
+/* Relleno, no solo un borde de otro color: es la misma lección que la barra
+   de grupos del maestro —en la pantalla de un teléfono al sol un borde de
+   milímetro y medio no se distingue—. */
+.gr-chip.active {
+  background: var(--brand); border-color: var(--brand); color: #fff;
+}
+
+.mis-sep {
+  display: flex; align-items: center; gap: 8px;
+  margin: 14px 0 8px; font-size: 14px; font-weight: 700;
+  color: var(--muted);
+}
+.mis-sep b {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  background: var(--bg); border-radius: 999px; padding: 1px 8px;
+}
+.mis-sep-mias { color: var(--brand); font-size: 15px; }
+.mis-sep-mias b { background: var(--brand); color: #fff; }

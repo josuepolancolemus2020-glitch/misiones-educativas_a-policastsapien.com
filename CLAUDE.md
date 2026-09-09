@@ -310,6 +310,104 @@ fusión no reviente nada.
   se arregla con código: es la decisión de pasar a plan de pago, que es del
   autor. Lo que sí se hizo es que la nube **no se duerma**.
 
+## Normativa: la alumna ve primero lo de SU grado — y no se le esconde nada
+
+Medido el 9 de septiembre de 2026, antes de tocar nada, con una alumna de 4º
+que YA había escrito su grado al entrar en su primera misión:
+
+| | |
+|---|---|
+| tarjetas en la lista | **67** |
+| las cinco primeras | Los Adjetivos · Los Verbos · Los Sustantivos · Los Pronombres · **El Adjetivo Avanzado** (de Bachillerato) |
+| buscar «cuarto» | **0 resultados** |
+| buscar «4to» | **0 resultados** |
+
+Las mismas 67, en el mismo orden, para ella y para uno de 9º. **Cuatro de los
+cinco recorridos de la auditoría se atascaron ahí**, en la primera pantalla.
+
+El dato existía y no se usaba: `js/data/dcnb-map.js` dice en qué grados entra
+cada misión, y su cabecera pedía **no usarlo en ninguna vista del estudiante**
+para que ningún niño se sintiera señalado por trabajar contenido de un grado
+inferior. El miedo es legítimo; lo que estaba mal era el remedio, porque el
+precio lo pagaba ella entera: **esconderle el dato no la protege de nada, la
+deja perdida**.
+
+**Tres reglas, y son las que quitan el estigma sin quitar la ayuda:**
+
+1. **Se ORDENA, nunca se filtra.** Lo suyo va primero; lo demás sigue ahí,
+   entero y a un dedo. La sonda cuenta que los dos montones sumen SIEMPRE el
+   catálogo completo.
+2. ⚠️ **Solo se rotula lo que SÍ es suyo.** Hay un «📚 Para 4º grado» encima de
+   sus misiones y **nada** encima de las otras que diga de qué grado son:
+   «También puedes con estas», y ya. Un «esto es de 2º» es exactamente lo que
+   había que evitar, y la sonda comprueba que ese segundo rótulo no nombre
+   ningún grado.
+3. **Nunca se adivina.** 47 de las 67 dicen «II y III Ciclo», que vale igual
+   para 4º y para 9º: repartirlas a los seis grados pondría 47 tarjetas en
+   todos y el orden no diría nada. Donde no hay dato, no hay rótulo. Las
+   fuentes son dos y ninguna se inventa: el mapa del DCNB, y el campo `grade`
+   **cuando nombra UN grado** —que no es un detalle: las Pruebas de Fin de
+   Grado no están en el mapa y son justo lo que más le importa a la alumna de
+   ese grado—.
+
+⚠️ **Y dentro de su montón NO vale el orden del catálogo.** Esto se vio
+midiendo, después de creerlo terminado: doce misiones son **espirales** —el
+DCNB retoma la gramática y la ortografía los seis años—, están al principio
+del catálogo, y con el orden de siempre lo primero que veían la de 4º y el de
+9º volvía a ser lo mismo: Los Adjetivos, Los Verbos, Los Sustantivos. **La
+mitad del arreglo se perdía justo en la primera pantalla**, que es donde se
+atascaron los recorridos. Ahora sube antes **lo más suyo**: cuantos menos
+grados comparte una misión, más arriba. La de 4º empieza por Números Grandes y
+Valor Posicional; el de 9º, por lo suyo.
+
+⚠️ **No se le pregunta el grado otra vez.** Ya lo escribió al entrar en su
+primera misión (`METAS_ALUMNO_V1`), y la lectura de lo que escribió a mano
+—«4», «4º», «4to A», «cuarto», «6º-1», «61»— es la misma que hace
+`estParteGrupo` en la pantalla del maestro.
+
+⚠️ **Y el chip se guarda en SU PROPIA llave** (`METAS_GRADO_VISTA_V1`), nunca
+dentro de `METAS_ALUMNO_V1`: esa identidad **viaja pegada a cada resultado que
+llega al maestro**, y una preferencia de vista no tiene por qué entrar en el
+expediente de nadie. La sonda lo comprueba tocando otro chip y mirando que el
+grado del alumno no cambie.
+
+**El buscador también encuentra por grado.** «cuarto», «4to» y «4º» daban 0, 0
+y 1; ahora dan las 29 que son suyas. El `º` no es una tilde y por eso no lo
+quitaba `sinTildes`: se normaliza aparte.
+
+**Los chips van a 44 px**, la regla de siempre. Las píldoras de materia de al
+lado se quedaron más bajas de antes; hacer la nueva igual de pequeña habría
+sido copiar el problema en vez de dejarlo donde está.
+
+**Antes de publicar un cambio del grado o del catálogo:**
+
+```
+node _dev/prueba-grado-alumno.js       → de qué grado es cada misión, sin navegador
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-grado-alumno.js     → la pantalla de la alumna
+```
+
+El primero cuesta un segundo y es el que hay que correr al tocar el catálogo o
+el mapa del DCNB: que ningún grado se quede sin misiones, que no se invente
+ninguna, que se ordene de lo más suyo a lo más compartido y que **la primera
+pantalla de la de 4º no sea la del de 9º**. El segundo abre la aplicación: que
+el chip salga marcado solo, que se pueda tocar, que no desaparezca ni una
+tarjeta, que el segundo rótulo **no nombre ningún grado**, que «Todos» los
+quite, que la elección aguante cerrar la aplicación y que **no toque el
+expediente del alumno**.
+
+### Lo que NO se hizo, y por qué
+
+- **Contenido distinto por nivel.** 47 misiones sirven el mismo texto a un niño
+  de 9 años y a uno de 15. Eso es meses de escritura, no una pantalla, y sigue
+  siendo el problema de fondo. Lo de aquí es que al menos encuentre lo suyo.
+- **Filtrar por grado.** Se descarta a propósito: ocultar es lo que convierte
+  el dato en una etiqueta. Con ordenar y rotular solo lo suyo, el estigma no
+  aparece por ningún lado y la ayuda sí.
+- **Rellenar el mapa del DCNB de las 20 que no lo tienen** (Robótica,
+  Programación, E. Cívica, Inglés). Once de ellas no están en el DCNB
+  hondureño, así que no es un olvido: es que no hay grado que ponerles.
+
 ## Normativa: la nube no se duerme en vacaciones
 
 El plan gratuito de Supabase **pausa el proyecto tras siete días sin una sola
