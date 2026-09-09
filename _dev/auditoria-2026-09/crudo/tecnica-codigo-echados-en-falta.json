@@ -1,0 +1,102 @@
+[
+ {
+  "lente": "T2",
+  "texto": "index.html:28 carga css/vendor/fontawesome/css/all.min.css (102 KB) como <link> bloqueante en la portada del ALUMNO, que no pinta un solo icono de esa fuente; sumado a app.css (245 KB) son 347 KB de CSS que bloquean el primer pintado: medido a 50 KB/s, first-paint 15,7 s (scratchpad/revision/T2/mide-portada.js). Cargarla solo en las vistas del maestro o con media=print+onload.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T2",
+  "texto": "metas-docente-sync.js:332-337 y :312: si localStorage.setItem revienta (almacén lleno), el catch vacío deja el dato viejo pero la meta se marca aplicada y sincronizada (`sv: remota`) y baseSet toma raw como base; scanLocal (:190) lo lee después como «edición real» y sube la copia VIEJA con versión ganadora sobre la nueva de la nube. El auditor contó catches; no vio este camino concreto de pérdida.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T2",
+  "texto": "campeonismo.js:440-442: actualizarBanco devuelve `errores` pero la pantalla solo avisa cuando fallan TODAS las misiones pendientes; con 36 leídas y 1 rota el maestro ve «✅ ¡Listo!» y esa misión no entra al torneo. 37 de las 67 misiones dependen de ese parser en vivo (solo 30 tienen banco curado en js/data/campeonismo-bank.js).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T2",
+  "texto": "_dev/test-campeonismo-tec.js:144-159 solo comprueba que se pueda leer el evalMCBank de las misiones que YA están en CAMP_BANK (imprime «sin banco propio todavía» para las demás): ninguna sonda de npm test verifica que las 37 misiones que dependen del parser en vivo tengan un banco parseable, así que una misión nueva con un banco que no se lee se publica sin que nada se ponga rojo.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T2",
+  "texto": "Contradicción de diseño entre sw.js:26-31 («precachear los 25 scripts castigaría la primera visita de un pueblo») e index.html:1130-1171, que baja esos mismos 28 scripts (3,25 MB medidos) de forma sincrónica en esa misma primera visita: el castigo ya se paga; lo único que se pierde al no precachearlos es la copia sin señal. La decisión correcta es cargar menos en la portada (T2-05), no precachear menos.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T8",
+  "texto": "Portal cautivo envenena los juegos 3D para siempre: la rama externa de `sw.js:288-294` es cache-first y `guardar()` (`sw.js:208`) acepta `type==='opaque'`; en una red escolar con portal de inicio, la petición de `three.min.js` recibe el HTML del portal como respuesta opaca, se guarda en CACHE_DATOS (que por normativa NUNCA se sella), y desde entonces `parque-3d.js:64` ve `onload` sin `window.THREE` → `falla()` → «hace falta internet» aunque haya señal. Nada la desaloja: para los locales el network-first se autocorrige; para lo externo, no.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T8",
+  "texto": "La capa «catálogo» de los videos está vacía: `js/data/videos-misiones.js` declara 20 misiones con `[]` y 0 `yt:` reales, así que la promesa «permanente, versionado, funciona sin nube y sin haber corrido el SQL» de la tabla de tres capas de CLAUDE.md no se cumple para ningún video; toda la sección 🎬 depende de que el Supabase de F.A.R.O. esté despierto (plan gratuito, pausa a los 7 días).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T8",
+  "texto": "MathJax `@3` flotante + SW cache-first = versión distinta por teléfono y sin camino de actualización: cada aparato guarda en CACHE_DATOS la 3.x que jsdelivr sirviera el día que abrió la misión y no la renueva nunca (CACHE_DATOS no se sella); dos alumnos de la misma aula pueden correr MathJax distinto y un fallo de una versión concreta no se puede corregir desde el repositorio (`circulos-poligonos.html:49`, `sw.js:288-294`).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T8",
+  "texto": "`www/` sigue arrastrando las 59 páginas con Google Fonts y Font Awesome de cdnjs (`grep -rl` bajo www/ → 59) y MathJax: el día que alguien corra `npx cap sync` sin `build:www` (el `install:android` sí lo encadena, `sync` también, pero `cap sync` a mano no) el APK saldría con los CDN que el sitio acaba de quitar, sin que ninguna sonda lo mire (`verifica-cdn-fuera.js` excluye www/).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T8",
+  "texto": "El CI (`.github/workflows/sondas.yml`) no corre `npm audit` ni `npm ci`: con node_modules versionado y `package-lock.json` presente, nada comprueba que lo versionado coincida con el lock ni avisa cuando entre un aviso nuevo; las tres vulnerabilidades de hoy (tar critical, brace-expansion high, @xmldom/xmldom high) solo las ve quien corra `npm audit` a mano.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T5",
+  "texto": "El precache se cae en silencio justo en la red para la que se hizo: sw.js:150-170 lanza las 57 descargas de ARMAZON+STATIC_ASSETS EN PARALELO (Promise.all) con PLAZO_INSTALA = 12 s por archivo y sigue sin él; en 2G (~31 KB/s) los 2,57 MB necesitan ~83 s, así que app.css (245 KB) y app.js (166 KB) compiten con logo.png y 16 -en.js y se quedan fuera del armazón sin ningún aviso — la promesa «abre sin señal desde la primera visita» no se cumple donde importa. Arreglo: precachear ARMAZON primero y solo, y STATIC_ASSETS después en segundo plano.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T5",
+  "texto": "CACHE_DATOS crece sin poda: la rama local guarda cada GET con su URL completa incluido ?v=NN (sw.js:243 guardar(event.request, …, CACHE_DATOS)), y cada sellado añade ~2,5 MB de scripts nuevos (28 scripts de index.html) que nunca se borran (el activate solo toca meta-app-*, sw.js:177-180). Con 32 sellados en 12 días son ~80 MB/mes por teléfono; no se pide navigator.storage.persist() (grep: 0), así que bajo presión de almacenamiento el navegador evicta el origen entero y con él las misiones guardadas para el aula sin señal.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T5",
+  "texto": "Mezcla de versiones tras un despliegue con señal lenta: las 14 herramientas del maestro NO están en ARMAZON, así que si registros-admin.js?v=197 tarda más de 3 s, buscarCopia (sw.js:197-202, ignoreSearch:true) sirve registros-admin.js?v=196 de CACHE_DATOS junto al app.js?v=197 recién precacheado — justo la mezcla que el comentario de sw.js:193-196 dice querer evitar, pero solo la evita para el armazón. Una función renombrada entre versiones revienta Mi aula hasta la siguiente recarga.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T5",
+  "texto": "El alumno que llega por QR está peor que antes en un sentido nuevo: mision.html e index.html:11 prometen «Funcionan sin internet» y ahora existe la infraestructura (CACHE_DATOS), pero como ninguna misión registra el SW (T5-09) la promesa depende de que ese teléfono haya abierto alguna vez la portada; conviene que verifica-service-worker.js abra una misión directa (sin pasar por index) y compruebe que queda controlada, cosa que hoy no mide.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T5",
+  "texto": "img/honduras_img/simbolos/pino.PNG (132 301 B) y venado.PNG (98 801 B) están versionados sin que nadie los referencie (grep pino.PNG|venado.PNG fuera de img/: 0), mismo caso que tipos-img/ a menor escala; y css/vendor/fontawesome lleva 656 KB de .ttf que ningún <link> ni @font-face pide.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T10",
+  "texto": "Reparto sesgado de la respuesta correcta en misiones sin sonda: `node _dev/verifica-mision-nueva.js misiones/2y3ciclo-ecosistemas/*.html` → evalMCBank (15 ítems) b: 73 %, qzData b: 56 %; potencias-raices qzData b: 70 %. Un alumno que marque «b» en todo pasa la conceptual con ≥70 (`eval-auto-pass`) y esa nota va al expediente; la sonda que lo caza está excluida del corredor (`_dev/corre-sondas.js` NO_SON_SONDAS: 'pide la carpeta').",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T10",
+  "texto": "Bancos demasiado chicos para 30 Formas: potencias-raices tiene evalMCBank/CP/PR/TF de 5-10 ítems donde la sonda exige ≥15 (25 de las 30 misiones no cubiertas fallan por esto o por el reparto). Dos Formas distintas repiten casi las mismas preguntas: el maestro que imprime Forma 1 y Forma 2 contra la copia no consigue lo que la pantalla le promete.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T10",
+  "texto": "El punto flaco del sellado no es el ?v= sino olvidar CACHE_NAME: `sw.js:199-203` (`buscarCopia`) prefiere CACHE_APP —precacheado al instalar— sobre CACHE_DATOS —lo bajado de la red—; si un despliegue cambia `js/app.js` sin subir `CACHE_NAME`, el alumno en línea ve el nuevo y sin señal recibe el viejo precacheado, y `verifica-service-worker.js:48` solo comprueba que el literal exista, no que haya cambiado respecto al último commit.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T10",
+  "texto": "`verifica-mision-navegador.js` —la única sonda que abre una misión cualquiera en navegador— está fuera del CI por un motivo caducado (`corre-sondas.js` NO_SON_SONDAS: «abre Chromium sin executablePath»), cuando su línea 9 ya usa `lib-navegador`; y su puerto por defecto sigue en 8080 (línea 13) frente al 8123 del servidor.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T10",
+  "texto": "El CI instala Playwright sin versión fija (`sondas.yml`: `npm install --no-save playwright`): la tanda nocturna de 39 sondas puede ponerse en rojo el día que Playwright publique una versión nueva, sin que nada del producto cambie — la clase de rojo que, según el propio CLAUDE.md, «enseña a no mirar la sonda».",
+  "origen": "revision-2026-09-09"
+ }
+]

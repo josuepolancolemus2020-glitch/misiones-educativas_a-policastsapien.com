@@ -308,10 +308,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Reproducido hoy sobre 145 JS de misiones/*/js (sin .min ni -en): 325 cuerpos de función byte-idénticos (tras normalizar espacios) presentes en ≥5 misiones, 20 311 líneas redundantes — MÁS que en agosto, porque entraron misiones nuevas copiando lo mismo. _injectFormaSel 67×14 líneas, _evalRng 67×10, captureDiploma 34×31, flipMemo 23×19, showToast en 7 variantes de espaciado del mismo cuerpo, gradeEval en 12 versiones (16, 17, 42 líneas…) y evalSwitchMode en 9. El propio repositorio ya pagó el precio: js/estrella-ganada.js existe como ENVOLTORIO sobre fin/genEval/gradeEval porque están copiadas en las 74, y CLAUDE.md cuenta la edición con guion en 66 misiones donde en dos `pct` no existía. La consecuencia para el aula es real: cada arreglo del examen o del diploma llega a unas misiones y a otras no.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Evidencia actualizada: 325 cuerpos / 20 311 líneas / 67 copias (no 281 / 18 249 / 66). Esfuerzo semanas se mantiene; empezar por lo byte-idéntico en las 67 (_injectFormaSel, _evalRng, showToast) que es un archivo común más un sed, y dejar gradeEval/evalSwitchMode para después porque tienen 12 y 9 versiones divergentes que hay que unificar con sonda delante.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T2-02",
@@ -331,17 +334,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy siguen las 67 copias con el mismo md5 (d7530aa0…) que js/html2canvas.min.js, 13 MB en total (`du -ch`). Cada misión la carga con `<script src=\"js/html2canvas.min.js\">` (p. ej. misiones/2y3ciclo-fracciones/fracciones.html:623) de forma sincrónica y ANTES de su propio JS, y index.html:1131 la carga sincrónica con ?v=197. Como la caché del navegador y CACHE_DATOS del SW van por URL, el alumno baja 196 KB por cada misión que abre y el teléfono guarda hasta 67 copias de la misma librería.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Precisión: en index.html hoy la usa UNA sola herramienta (js/tools/plan-accion.js:514, el collage/tarjeta), no dos. Y el arreglo es un sed sobre 67 HTML + borrar 67 archivos: esfuerzo horas, sin riesgo de datos.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T2-03",
   "titulo": "779 bloques catch vacíos que tragan errores, concentrados en la sincronización y el registro del maestro",
   "descripcion": "Un `catch {}` vacío convierte un fallo en silencio. En metas-docente-sync.js (24) y registros-admin.js (35) eso significa que una escritura en localStorage llena, un JSON corrupto o un RPC rechazado no dejan rastro: el maestro cree que sus listas y notas subieron y no subieron. En padres.html (14) la madre no se entera de que la consulta falló. No hay un solo punto que cuente ni muestre estos fallos.",
   "evidencia": "perl multilínea sobre js/, misiones/ y las páginas raíz (sin .min.js): 779 `catch(...){}` en 122 archivos; top: js/tools/registros-admin.js 35, js/metas-docente-sync.js 24, js/app.js 17, padres.html 14, js/videos-mision.js 10, js/metas-registro.js 9. Solo 4 catch llevan un comentario explicando el porqué. Total de `catch` en js/: 261, así que la mayoría de los try/catch del núcleo son vacíos. Lista completa: scratchpad/tecnica-codigo/T2/catch-vacios.txt.",
-  "severidad": "alta",
+  "severidad": "media",
   "tipo": "riesgo",
   "impacto_educativo": 3,
   "impacto_comercial": 4,
@@ -356,17 +362,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy hay 751 `catch {}` vacíos en js/ y misiones/ (registros-admin 35, metas-docente-sync 27, app.js 19, padres.html 14). Pero el escenario de cabecera del auditor —«el maestro cree que subió y no subió»— es FALSO en el camino de subida: push() hace `.catch(() => false)` (metas-docente-sync.js:390, :440), el dato sigue pendiente y estado() lo pinta «⏳ Guardando N cambio(s)» (:408-420). El caso de verdad está en el camino de BAJADA y el auditor no lo señaló: en :332-337, si `localStorage.setItem(row.k, raw)` revienta (almacén lleno; CLAUDE.md admite que pasa, porque BASE y RESPALDO triplican el aula) el catch se lo traga y la línea siguiente marca `m[row.k] = {v: remota, h: hash(raw), sv: remota}` y `baseSet(row.k, raw)` como si se hubiera aplicado. En la siguiente pasada scanLocal (:190) ve que el hash local no coincide y lo marca «edición real → pendiente»: la copia VIEJA sube con versión ganadora y pisa la nueva de la nube. Mismo patrón en :312 (rama fusionada). Rara pero real, y sin rastro.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Bajar a media: es un fallo condicionado al almacén lleno, no cotidiano, y la subida sí avisa. Corrección concreta y de horas, no de días: en metas-docente-sync.js:312 y :332 comprobar que setItem ENTRÓ (releer la clave) antes de escribir la meta y la base; si no entró, dejar la clave sin tocar y avisar por estado(). Los otros ~740 catch son en su mayoría defensivos (lectura de JSON, removeItem) y no merecen un contador global.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T2-04",
   "titulo": "mision.html es una página muerta: carga un script que nunca existió y nadie la enlaza, pero se le sella la versión en cada release",
   "descripcion": "La página se queda para siempre en «⏳ Cargando misión…» porque pide `js/motor-misiones.js`, que no está en el árbol ni en ningún commit del historial. Ningún HTML ni JS del sitio la enlaza. Sin embargo la normativa de sellado la nombra entre las cinco páginas obligatorias y lleva `?v=170`, es decir, se ha editado 170 veces una página rota. Es la prueba de que el ritual se cumple mecánicamente sin mirar lo que sella.",
   "evidencia": "Playwright: mision.html → `404 js/motor-misiones.js?v=170`, 24 nodos DOM, captura cap-mision_html.png con el reloj de arena fijo. `find . -name 'motor-misiones*'` vacío; `git log --all -- js/motor-misiones.js` vacío. `grep -rl mision.html index.html js misiones fichas *.html sw.js` → 0 referencias. mision.html:292 `<script src=\"js/motor-misiones.js?v=170\">`. CLAUDE.md, sección «Sellar la versión»: la incluye en la lista.",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "eliminar",
   "impacto_educativo": 1,
   "impacto_comercial": 2,
@@ -378,10 +387,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] mision.html sigue en el árbol, pide `js/motor-misiones.js?v=197` (mision.html:307) y ese archivo no existe ni existió (`git log --all -- js/motor-misiones.js` vacío). Ninguna página ni JS del sitio la enlaza (las únicas menciones son las sondas verifica-teclado.js:7 y verifica-service-worker.js:82, que la cuentan en una lista de páginas o usan el nombre como ruta de mentira). Y desde la auditoría se le ha vuelto a sellar 27 veces (v=170 → v=197): el ritual se cumple sin mirar lo que sella.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Severidad baja, no media: ningún alumno, maestro ni familia llega a ella (no hay enlace), así que la consecuencia es solo el ruido de sellar una página muerta. Borrarla y quitarla de la lista de sellado de CLAUDE.md y de la lista de verifica-teclado.js: minutos.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T2-05",
@@ -402,10 +414,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Medido hoy con Playwright móvil, CDN colgado, red de 50 KB/s + 300 ms (scratchpad/revision/T2/mide-portada.js): 28 `<script src>` sincrónicos, 0 defer/async, 3 254 KB transferidos; first-paint 15,7 s, FCP 18,6 s, DOMContentLoaded 61,7 s, load 66,5 s. La frase del auditor «bloquea el primer pintado» es imprecisa: 27 de los 28 scripts van al final del body (index.html:1130-1171), así que la pantalla pinta antes de que lleguen; lo que los scripts bloquean es la INTERACTIVIDAD —la lista de misiones y todos los botones los pinta app.js, que corre a los 62 s— y además compiten por el ancho de banda con el CSS del head (app.css 245 KB + Font Awesome 102 KB, los dos bloqueantes), que es por lo que el primer pintado tarda 15 s y no 7. El ARMAZON del SW no ayuda aquí: esta es la primera visita en línea, la que el precache no cubre. Y sw.js:26-31 dice que precachear los 25 scripts «castigaría la primera visita» cuando index.html ya los baja todos en esa misma visita.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Cambiar el título: no bloquea el primer pintado, bloquea la primera pantalla USABLE (62 s a 400 kbps). Lo demás se sostiene: 980 KB de lectura-textos.js y ~1 MB de herramientas del maestro en la portada del alumno. `defer` en los 28 es de una hora y no cambia el orden; después cargar lectura-textos y las herramientas al entrar a su vista.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T2-06",
@@ -424,10 +439,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] sw.js:33-70 tiene ahora ARMAZON (index.html, app.css, app.js, misiones.js, dcnb-map.js, grado-alumno.js, letra-maestro.js, las fuentes…) que se precachea en install (sw.js:150-156); buscarCopia (sw.js:181-186) hace `c.match(peticion, { ignoreSearch: true })`, así que el precache sin ?v= sí sirve a las peticiones con ?v=; y activate (sw.js:162-170) solo borra `meta-app-*` viejos y conserva CACHE_DATOS. Corrido hoy `_dev/verifica-service-worker.js` con SW real: «/index.html, /css/app.css, /js/app.js, /js/data/misiones.js quedan guardados a la PRIMERA visita» y «un despliegue crea meta-app-v198, borra el viejo y la misión guardada SIGUE ahí». Todo en verde.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Queda fuera del armazón, a propósito, lo de las herramientas del maestro (entran en CACHE_DATOS al primer uso en línea). Es una decisión razonable; el coste real de esa primera visita está en T2-05, no aquí.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] sw.js:33-70 tiene ahora ARMAZON (index.html, app.css, app.js, misiones.js, dcnb-map.js, grado-alumno.js, letra-maestro.js, las fuentes…) que se precachea en install (sw.js:150-156); buscarCopia (sw.js:181-186) hace `c.match(peticion, { ignoreSearch: true })`, así que el precache sin ?v= sí sirve a las peticiones con ?v=; y activate (sw.js:162-170) solo borra `meta-app-*` viejos y conserva CACHE_DATOS. Corrido hoy `_dev/verifica-service-worker.js` con SW real: «/index.html, /css/app.css, /js/app.js, /js/data/misiones.js quedan guardados a la PRIMERA visita» y «un despliegue crea meta-app-v198, borra el viejo y la misión guardada SIGUE ahí». Todo en verde."
  },
  {
   "id": "T2-07",
@@ -450,17 +470,22 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] El hecho que daba peso al hallazgo —«las entradas de STATIC_ASSETS van sin ?v= y caches.match nunca las empareja»— ya no es cierto: sw.js:183-185 y :266 usan `ignoreSearch: true`, y la sonda verifica-service-worker.js:52 lo exige. Lo que queda es opinión sobre el ritual: el ?v= sigue teniendo un valor real que el hallazgo minimiza —GitHub Pages sirve con max-age=600 y en la PRIMERA visita (sin SW controlando) o en un navegador sin SW, un index.html nuevo con app.js viejo de la caché HTTP es exactamente el desfase que el sello evita—. Que sean 30 ediciones a mano es un coste de proceso, no un defecto que le llegue a un alumno o maestro; y hoy no produce ningún efecto negativo.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Si se quiere, un guion de dos líneas que escriba el número en las cinco páginas y en CACHE_NAME sería pulido de horas; no es un hallazgo de sobrediseño con consecuencia.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] El hecho que daba peso al hallazgo —«las entradas de STATIC_ASSETS van sin ?v= y caches.match nunca las empareja»— ya no es cierto: sw.js:183-185 y :266 usan `ignoreSearch: true`, y la sonda verifica-service-worker.js:52 lo exige. Lo que queda es opinión sobre el ritual: el ?v= sigue teniendo un valor real que el hallazgo minimiza —GitHub Pages sirve con max-age=600 y en la PRIMERA visita (sin SW controlando) o en un navegador sin SW, un index.html nuevo con app.js viejo de la caché HTTP es exactamente el desfase que el sello evita—. Que sean 30 ediciones a mano es un coste de proceso, no un defecto que le llegue a un alumno o maestro; y hoy no produce ningún efecto negativo."
  },
  {
   "id": "T2-08",
   "titulo": "Texto escrito por el maestro va a innerHTML sin escapar en campeonismo, plan de acción, collage y gobierno escolar",
   "descripcion": "registros-admin y convocatoria tienen `adEsc` y lo usan; las demás herramientas del maestro no. Campeonismo pinta 17 veces el nombre del equipo que el maestro escribió en un input (`g.name`) y el lugar del torneo dentro de plantillas innerHTML sin ningún escape; plan de acción hace lo mismo con docente, grado, sección y evaluación al armar el documento impreso. Un equipo llamado «Los <3» o «Grupo A & B» ya rompe la pantalla o la hoja; una etiqueta pegada de WhatsApp, más. Es auto-XSS en el teléfono del maestro y, sobre todo, una inconsistencia que ninguna sonda vigila.",
   "evidencia": "Interpolaciones `${}` vs llamadas a escape por archivo: js/tools/campeonismo.js 312/0 (nombres en :816, :857, :946, :987, :1200, :1204, :1245, :1314; origen :742 `name: inp.value.trim()`; lugar :731 → :1748, :1854); js/tools/plan-accion.js 155/12 (:114 `docente = getElementById('pa-docente').value` → :181 `<b>Docente:</b> ${docente}`; :377 → :437); js/tools/collage-maker.js 14/0; js/tools/gobierno-escolar.js 6/0 (:129-132 `${n1}`/`${n2}` en innerHTML). Contraste: registros-admin.js 588/207, convocatoria.js 312/190. innerHTML total en el sitio: 3 874 asignaciones.",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "riesgo",
   "impacto_educativo": 2,
   "impacto_comercial": 3,
@@ -474,10 +499,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Reproducido hoy (scratchpad/revision/T2/camp-xss.js): en Campeonísimo, nombre de equipo `<b id=\"pwn\">Los &lt;3</b>` escrito en #camp-gi-0 (campeonismo.js:741 `name: inp.value.trim()`) → al comenzar el torneo `document.getElementById('pwn')` existe: el HTML del maestro se inyecta tal cual en las plantillas de :817, :858, :947, :988, :1201. campeonismo.js tiene 359 `${}` y 0 llamadas de escape. plan-accion.js sigue con `<b>Docente:</b> ${docente}` (:181, :437) sin pasar por su propio paEsc (:562), y gobierno-escolar.js:129-130 mete `${n1}`/`${n2}` en innerHTML. Hecho cierto y sin sonda que lo vigile.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Severidad baja, no media: es auto-XSS en el propio teléfono del maestro, los nombres de equipo tienen maxlength=18 (campeonismo.js:710) y el daño práctico es que un equipo o docente con `<` en el nombre se corta o desaparece de la pantalla y de la hoja. La corrección sigue siendo de horas: usar adEsc/paEsc en esas interpolaciones y meter un equipo `<b>x</b>` en test-campeonismo-tec.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T2-09",
@@ -496,10 +524,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] campeonismo.js:252 sigue con `new Function('return ' + txt.slice(start, i + 1))()` sobre JS bajado por fetch (:299-307), único eval del sitio. Matiz que el auditor no dio: es un camino de RESPALDO, solo para las misiones sin banco curado en js/data/campeonismo-bank.js (`pendientes`, :283-291). Pero ese respaldo hoy sostiene 37 de las 67 misiones (30 con banco curado, contadas sobre campeonismo-bank.js), y el fallo ES silencioso: actualizarBanco cuenta `errores` (:318-320) y el texto que ve el maestro (:440-442) solo avisa si fallan TODAS; si 36 entran y una no, ve «✅ ¡Listo! +N preguntas» y esa misión falta del torneo sin que nadie lo sepa. La sonda test-campeonismo-tec.js:144-159 parsea el evalMCBank solo de las 30 curadas; las 37 que dependen del parser no tienen sonda.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Se mantiene media. Antes de reescribir el parser, dos cosas de horas: mostrar `errores` con el nombre de la misión en :441, y que test-campeonismo-tec pase extraerArray por las 67 y falle si alguna no se lee. Publicar los bancos como dato (la recomendación del auditor) sigue siendo lo correcto a medio plazo.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T2-10",
@@ -519,10 +550,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Comprobadas hoy 10 de las clases de la lista (ad-nota-inp, ad-nota-row, ad-notas-grid, aj-fila-info, bottom-nav, camp-award-section, camp-ws-, camp-ri-3, pa-sync-btns): definidas en css/app.css y con 0 usos en index.html y js/ (camp-wheel-wrap ni siquiera está definida: imprecisión menor de la lista). `!important` en misiones/*/css/*.css: 2 505 hoy (396 × `border-color:var(--jade)!important`), es decir, más que los 1 294 del hallazgo porque las misiones nuevas siguen copiando el CSS entero; app.css 26. El CSS de las 74 misiones sigue sin nada común salvo parque-3d.css, barra-secciones.css, teclado-actividades.css y videos-mision.css, que son justo la prueba de que extraer funciona.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Cifras actualizadas: 2 505 !important en misiones (no 1 294). Es deuda sin consecuencia directa para el alumno; la purga de las 82 clases es de horas y sin riesgo; el CSS común de misión va de la mano de T2-01 y se mide con verifica-ficha-paginas y las sondas de maquetación antes de tocar nada.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T2-11",
@@ -542,10 +576,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] package.json:10-11 → `\"test\": \"node _dev/corre-sondas.js\"` y `test:navegador`; existe `.github/workflows/sondas.yml` (rápidas en cada push, navegador de noche) y `no-dormir-supabase.yml`; _dev/corre-sondas.js levanta y baja el servidor y descubre solas las 73 sondas (verifica/test/prueba); _dev/verifica-sintaxis.js hace `node --check` sobre 366 archivos y caza los escapes `\\U`. Lo que queda del hallazgo es menor: no hay eslint (sigue sin `no-empty`, ver T2-03) y las tres funciones muertas siguen ahí con 0 referencias (registros-admin.js:1999 adInvDuenoEt, :2003 adInvDuenoLargo, :4903 adPrintSace; `valOf` de :3648 es una const local, no una función muerta). Eso no sostiene una severidad alta ni el título «no hay CI».",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Borrar las tres funciones muertas (minutos). Un eslint mínimo con `no-empty` y `no-undef` seguiría siendo útil, pero es pulido, no un faltante.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] package.json:10-11 → `\"test\": \"node _dev/corre-sondas.js\"` y `test:navegador`; existe `.github/workflows/sondas.yml` (rápidas en cada push, navegador de noche) y `no-dormir-supabase.yml`; _dev/corre-sondas.js levanta y baja el servidor y descubre solas las 73 sondas (verifica/test/prueba); _dev/verifica-sintaxis.js hace `node --check` sobre 366 archivos y caza los escapes `\\U`. Lo que queda del hallazgo es menor: no hay eslint (sigue sin `no-empty`, ver T2-03) y las tres funciones muertas siguen ahí con 0 referencias (registros-admin.js:1999 adInvDuenoEt, :2003 adInvDuenoLargo, :4903 adPrintSace; `valOf` de :3648 es una const local, no una función muerta). Eso no sostiene una severidad alta ni el título «no hay CI»."
  },
  {
   "id": "T2-12",
@@ -565,10 +604,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T2",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Medido hoy con el mismo awk: adRenderSace 558 líneas, adPrintBoletas 451, adRenderLista 324 (creció desde 241), adRenderCom 315, convImprimirListado 302, adRenderInventario 268, adRenderAsis 260; registros-admin.js 6 121 líneas, convocatoria.js 3 415. Son plantillas de texto con el cálculo de notas y de buses dentro, sin prueba de node posible. Tiene consecuencia comprobable y no solo estética: es donde viven los `${}` sin escapar de T2-08, y el propio CLAUDE.md descarta partir METAS_ADMIN_V1 porque «toca registros-admin.js entero —5 000 líneas—»: el tamaño ya está bloqueando mejoras que el creador quería hacer.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Se mantiene media y esfuerzo semanas. Empezar por sacar a funciones puras el cálculo de adRenderSace y adPrintBoletas (lo que acaba en la boleta y el SACE) y cubrirlo con una prueba rápida en npm test antes de mover una sola línea de plantilla.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T8-01",
@@ -588,10 +630,13 @@
   "recomendacion": "Dejar UNA copia en `js/html2canvas.min.js`, borrar las 67 de misiones (y las de www al regenerar), y cargarla bajo demanda desde `captureDiploma()` con un `import()`/`<script>` dinámico solo al tocar «Guardar foto». Añadir la ruta única a STATIC_ASSETS del sw.js para que el diploma también salga sin señal. Corregir PLANTILLA-MISIONES.md para que ninguna misión nueva vuelva a copiarla.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy hay 68 copias idénticas (una más que en agosto: `find . -name html2canvas.min.js` sin www/node_modules → 68, md5 d7530aa0… en las 68, `du -ch` → 14 MB). Cada misión la pide por su ruta relativa (`misiones/2y3ciclo-fracciones/fracciones.html:623 <script src=\"js/html2canvas.min.js\">`), así que el service worker la guarda 68 veces en CACHE_DATOS y el alumno la baja en cada misión nueva; `sw.js` no la precachea (0 menciones) y `PLANTILLA-MISIONES.md:267` sigue mandando copiarla. Solo sirve a `captureDiploma()` (fracciones.js:1091), que la comprueba con `typeof html2canvas` —o sea, ya está preparada para cargarse bajo demanda—.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Matiz de evidencia: no está «cargada con urgencia» —va en la línea 623 de 656, al final del body, así que no retrasa el primer pintado—; lo que cuesta son los 200 KB por misión en la señal del aula (≈20 % de los 957 KB de fracciones.html) y 14 MB de repositorio. La recomendación sigue valiendo tal cual: una copia en `js/`, carga dinámica desde `captureDiploma()` (que ya tolera su ausencia) y corregir la plantilla.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T8-02",
@@ -610,10 +655,15 @@
   "recomendacion": "Quitar el `<link>` a cdnjs de las misiones y sustituir el `<i class=\"fa-solid fa-arrow-left\">` por un `←` de texto o un SVG inline de 20 líneas (misma clase `.xp-back-arrow`, mismo color). Se hace con un `sed` sobre las 66 páginas y se sube `?v=`. Ahorra ≈250 KB por primera visita de cada misión y elimina un origen externo de las 66 páginas.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] El 9 de septiembre se quitó Font Awesome de las misiones: `grep -rl font-awesome misiones/*/*.html` → 0; la flecha es ahora un SVG inline en cada misión (`misiones/2y3ciclo-fracciones/fracciones.html:36 <svg class=\"xp-back-arrow\" … stroke=\"currentColor\">`) y `mision.html` tampoco enlaza FA. El único HTML de misiones con clases `fa-solid` es `juego-fabrica-geometrica.html:16`, que carga la copia LOCAL `css/vendor/fontawesome/css/all.min.css` para catorce iconos de verdad. Lo vigila `_dev/verifica-cdn-fuera.js`.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] El 9 de septiembre se quitó Font Awesome de las misiones: `grep -rl font-awesome misiones/*/*.html` → 0; la flecha es ahora un SVG inline en cada misión (`misiones/2y3ciclo-fracciones/fracciones.html:36 <svg class=\"xp-back-arrow\" … stroke=\"currentColor\">`) y `mision.html` tampoco enlaza FA. El único HTML de misiones con clases `fa-solid` es `juego-fabrica-geometrica.html:16`, que carga la copia LOCAL `css/vendor/fontawesome/css/all.min.css` para catorce iconos de verdad. Lo vigila `_dev/verifica-cdn-fuera.js`."
  },
  {
   "id": "T8-03",
@@ -633,10 +683,13 @@
   "recomendacion": "Primero, vendorizar lo que se pueda (Three.js r128 y MathJax si se conserva: ver T8-04/T8-05) para que no quede ningún `<script>` de terceros salvo el iframe_api de YouTube, que se carga solo al tocar ▶. Para lo que siga siendo externo: `integrity=\"sha384-…\"` + `crossorigin=\"anonymous\"` en los `<link>`/`<script>` y `s.integrity = …; s.crossOrigin = 'anonymous'` en el cargador dinámico. Añadir en index.html, mision.html y en la plantilla un `<meta http-equiv=\"Content-Security-Policy\">` con `script-src 'self' https://www.youtube.com` (más los CDN que queden) y `frame-src https://www.youtube-nocookie.com`.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sigue sin haber un solo `integrity=` ni `Content-Security-Policy` fuera de www/node_modules (ambos grep → 0). `js/3d/parque-3d.js:33` mantiene `CDN3D = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'` y `:63 s.src = CDN3D` sin integrity ni crossOrigin; `circulos-poligonos.html:49` carga MathJax `@3` flotante. Y `sw.js:206-210` (`guardar`) acepta `respuesta.type === 'opaque'` y la rama externa `sw.js:288-294` sirve cache-first desde CACHE_DATOS, que por normativa no se sella nunca: lo que entre alterado queda fijo en ese teléfono sin fecha de caducidad. Ha mejorado el alcance: Google Fonts y Font Awesome ya no salen del sitio, así que quedan DOS orígenes externos (cdnjs para Three.js, jsdelivr para MathJax) más el iframe_api de YouTube bajo demanda.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Ajustar la recomendación al código de hoy: (1) lo barato y real es fijar versión y poner `s.integrity`+`s.crossOrigin='anonymous'` en `parque-3d.js:63` y `integrity` en el script de MathJax (que exige dejar de usar `@3` flotante, ver T8-04); (2) la CSP vale menos de lo que el hallazgo sugiere: las 74 misiones usan `onclick=` inline por todas partes, así que cualquier CSP tendría `script-src 'unsafe-inline'` y solo serviría para acotar orígenes, no contra XSS. Poner esa acotación de orígenes sigue mereciendo la pena, pero es defensa secundaria.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T8-04",
@@ -654,10 +707,13 @@
   "recomendacion": "Eliminar MathJax. Escribir las cuatro fórmulas en HTML con `<sup>`, `·` y la fracción apilada que ya trae `metas-fracciones.js` (es exactamente para lo que existe). Si se insiste en TeX, fijar `mathjax@3.2.2`, servirlo desde el repo y precachearlo; nunca `@3` flotante y nunca sin un `if (typeof MathJax === 'undefined')` que deje texto legible.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Reproducido hoy con Playwright y jsdelivr COLGADO (no abortado): `{mathjax:'undefined', crudas:4}` con `$$A = \\pi \\cdot r^2$$`, `$$A = \\frac{\\pi \\cdot r^2 \\cdot \\alpha}{360^{\\circ}}$$`, `$$P = L_{arco} + 2r$$` y `$$A = \\frac{P \\cdot a}{2}$$` visibles en pantalla (captura `revision/T8/mathjax-colgado.png`). `circulos-poligonos.html:49` sigue con `mathjax@3` flotante, sin `typeof MathJax` ni fallback en ningún JS de la misión ni de `js/`. El bloque «Lo que NO se tocó» de 5-top-20.md:755 lo deja a propósito porque va con `async` y no bloquea el pintado —cierto—, pero eso no responde al hallazgo: el problema no es la espera, es que el alumno sin señal lee TeX crudo en las CUATRO fórmulas que son el contenido de la misión. La fracción apilada de `js/metas-fracciones.js` ya existe para esto.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T8-05",
@@ -676,10 +732,13 @@
   "recomendacion": "Guardar `js/3d/three.r128.min.js` en el repo (≈600 KB, una sola vez y compartido por los 18 juegos), cambiar `CDN3D` a la ruta local y añadirla a STATIC_ASSETS. El juego entonces funciona la primera vez sin señal, no hay hash que vigilar y se retira un origen externo. Fijar en el archivo la versión y su suma SHA para que quien la actualice lo haga a conciencia.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] 18 juegos (`ls misiones/*/juego-*-3d.html` → 18) siguen dependiendo de `CDN3D` en `parque-3d.js:33`; `grep -n three sw.js` → 0, y no hay copia local (`find` de `*.min.js` fuera de www/node_modules solo encuentra html2canvas). El cargador ya contempla la salida (`:57 if (window.THREE) return listo()`). La justificación de CLAUDE.md («es un script detrás de su telón, con su aviso») describe cómo falla, no evita el fallo: el alumno que llega al aula sin señal y nunca abrió un juego con internet no juega, y eso se decide por un tercero (cdnjs) al que además el sw.js guarda cache-first en una caché que nunca se sella (ver hallazgo nuevo del portal cautivo).",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Precisar el esfuerzo y el coste: alojar `three.min.js` r128 (≈600 KB) en `js/3d/` y cambiar `CDN3D` a la ruta local es una línea, y con eso la rama LOCAL del SW (network-first con revalidación) lo guarda en CACHE_DATOS la primera vez, sin tercero. Precachearlo en ARMAZON es otra decisión: son 600 KB de más en la primera instalación de todos, también de quien nunca abre un juego 3D; basta con alojarlo y dejar que entre al abrir el primero.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T8-06",
@@ -700,10 +759,13 @@
   "recomendacion": "Crear `.gitignore` raíz con `node_modules/`, `.claude/settings.local.json`, `www/` (ver T8-07) y `*.log`; `git rm -r --cached node_modules .claude/settings.local.json`; `npm ci` en la máquina de compilación (package-lock ya fija versiones e integridad) y `npm audit fix`. Los .bat de instalación ya hacen `npm run build:www`; añadirles `npm ci` delante.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sin cambios: `ls .gitignore` → no existe en la raíz (solo los de `android/` e `.idea/`); `git ls-files | grep -c ^node_modules/` → 2426 (34 MB); `.claude/settings.local.json` sigue versionado con rutas `c:/Users/Dell/OneDrive/...` (líneas 4-6); `respaldo-rapido.cmd:5 git add -A`. `npm audit` hoy: 3 avisos, todos con `fixAvailable` y ninguno directo —`tar` critical, `brace-expansion` high, `@xmldom/xmldom` ahora HIGH (el auditor lo tenía como moderate)—; `--omit=dev` → 0. Nada llega al navegador ni al sitio (`_config.yml` excluye node_modules de Pages).",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Corregir la evidencia: `@xmldom/xmldom` está clasificada high, no moderate. Y un matiz que el hallazgo no dice: versionar node_modules es lo que permite que `npm test` y el CI corran sin instalar nada, así que si se saca hay que añadir `npm ci` a `.github/workflows/sondas.yml` (hoy solo instala Playwright con --no-save).",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T8-07",
@@ -717,7 +779,7 @@
    "android/app/build.gradle",
    ".assetsignore"
   ],
-  "severidad": "alta",
+  "severidad": "media",
   "tipo": "incompleto",
   "impacto_educativo": 3,
   "impacto_comercial": 3,
@@ -725,10 +787,13 @@
   "recomendacion": "Sacar `www/` del control de versiones (es un artefacto de compilación: `.gitignore` + `git rm -r --cached www`) y generarlo siempre en `npm run sync`. Decidir qué es la app Android: o se recompila y publica con cada hito (subiendo versionCode) o se convierte en un cascarón que carga `https://metas.policastsapien.com` (`server.url` en capacitor.config.json) y hereda el service worker, con lo que deja de envejecer. Mientras tanto, un aviso en la app de que existe una versión nueva. Si se conserva www en el repo, añadir `.nojekyll` no basta: hay que impedir que Pages sirva `/www/`.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] En parte resuelto y en parte no. Resuelto: `_config.yml` (commit a27f2f8, 6 de septiembre) excluye `www/`, `android/`, `node_modules/` y `_dev/` del sitio de Pages, así que `/www/index.html` ya no debería servirse (no comprobable desde aquí: `curl` al dominio → 000, proxy). Sigue en pie: `www/sw.js:1 meta-app-v48` frente a `sw.js:18 v197` (149 versiones), `www/js/data/misiones.js` 57 misiones frente a 67, último toque a www/ `1a49e51` del 13 de agosto, `capacitor.config.json` apunta `webDir: www`, y `build:www` es un `robocopy` de Windows que ningún workflow corre. Lo que el hallazgo afirma de más: «quien instaló el APK usa otro producto» no tiene sustento —no hay `.apk` versionado, ni release, ni enlace en el sitio; solo `install:android` (carga lateral)—. Lo que sí hay es `MANUAL-MAESTRO.md:37,480` recomendando un APK que el maestro no puede conseguir y que, si existe en alguna tableta del autor, lleva el sync que perdía la asistencia (www/metas-docente-sync.js sin MetasFusion).",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Bajar de alta a media: la parte pública (sitio viejo en /www/) ya está cerrada y el APK no se distribuye, así que hoy no hay alumnos usando la copia vieja que se sepa. Queda la decisión de producto: o `build:www` portable en Node corrido en CI con versionCode automático, o retirar el APK de los manuales hasta tenerlo. Sacar www/ del control de versiones sigue siendo lo correcto (527 archivos, 55 MB, y 59 páginas que aún piden Google Fonts y cdnjs). Solapa con T7-05 de la lente de integridad móvil, que dice lo mismo con más precisión.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T8-08",
@@ -739,7 +804,7 @@
    "sw.js",
    "js/3d/parque-3d.js"
   ],
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "riesgo",
   "impacto_educativo": 2,
   "impacto_comercial": 1,
@@ -747,10 +812,13 @@
   "recomendacion": "Lo que resuelve de raíz es vendorizar (T8-02, T8-04, T8-05): lo propio nunca es opaco. Para lo que siga externo, poner `crossorigin=\"anonymous\"` en `<link>`/`<script>` y `s.crossOrigin='anonymous'` en el cargador, y en sw.js dejar de guardar `type === 'opaque'`: guardar solo `respuesta.ok`. Comprobarlo con `navigator.storage.estimate()` antes y después de abrir un juego 3D en Chrome.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] El mecanismo se midió hoy en el Chromium de Playwright: guardar UNA respuesta opaca (`mode:'no-cors'` a otro origen) en Cache Storage sube `navigator.storage.estimate().usage` en **12 944 963 bytes**; la misma respuesta propia, 599 810 (script `revision/T8/t804-t808.js`). `sw.js:208` sigue aceptando `respuesta.type === 'opaque'` y la rama externa `sw.js:288-294` guarda en CACHE_DATOS lo que baje; `parque-3d.js:63` crea el `<script>` sin `crossOrigin`, y `circulos-poligonos.html:49` tampoco lo lleva, así que las dos respuestas llegan opacas. Lo que cambió: la lista de fuentes opacas del hallazgo (FA 6.5.0, FA 6.4.0, tres variantes de Google Fonts) ya no existe —todo eso es local desde el 9 de septiembre—; quedan Three.js y MathJax (más lo que MathJax cargue por `<script>`), o sea del orden de 26-60 MB de cuota fantasma, no «decenas» acumuladas por cada CDN. Con cuotas de cientos de MB en un teléfono (aquí 940 MB) eso no acerca al desalojo por sí solo.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Ajustar evidencia y severidad: hoy son dos orígenes externos, no seis, y el relleno medido es de ~13 MB por respuesta. El arreglo barato sigue siendo el mismo y de paso cierra T8-03/T8-05: `s.crossOrigin='anonymous'` en `parque-3d.js:63` (cdnjs manda ACAO), `crossorigin` en el script de MathJax, y en `guardar()` dejar de aceptar `opaque` —o mejor, alojar los dos y que nada externo pase por la caché—.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T8-09",
@@ -770,10 +838,15 @@
   "recomendacion": "Borrar la línea 12 de index.html (y su equivalente en mision.html si la tiene), quitar la URL de cdnjs de STATIC_ASSETS y dejar solo la copia local (añadir `css/vendor/fontawesome/webfonts/fa-brands-400.woff2` a STATIC_ASSETS si la portada usa el icono de WhatsApp). Subir `?v=`. Con T8-02 hecho, ninguna página del sitio pedirá Font Awesome a un tercero.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] `index.html:28` enlaza solo `css/vendor/fontawesome/css/all.min.css`; la línea del CDN 6.4.0 ya no existe (`grep -rn cdnjs index.html mision.html sw.js` → 0). `sw.js:130-132` precachea la copia local y sus dos woff2 (`fa-solid-900`, `fa-regular-400`), no la URL de cdnjs. Fuera de `www/` no queda ninguna referencia a font-awesome en cdnjs en todo el repositorio (las 57+2 que salen en el grep global están todas bajo `www/`).",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] `index.html:28` enlaza solo `css/vendor/fontawesome/css/all.min.css`; la línea del CDN 6.4.0 ya no existe (`grep -rn cdnjs index.html mision.html sw.js` → 0). `sw.js:130-132` precachea la copia local y sus dos woff2 (`fa-solid-900`, `fa-regular-400`), no la URL de cdnjs. Fuera de `www/` no queda ninguna referencia a font-awesome en cdnjs en todo el repositorio (las 57+2 que salen en el grep global están todas bajo `www/`)."
  },
  {
   "id": "T8-10",
@@ -792,10 +865,15 @@
   "recomendacion": "Autohospedar Nunito y Fredoka (subconjunto latino, woff2, 4 pesos) en `css/vendor/fonts/` con un `fonts.css` común, precachearlas en STATIC_ASSETS y sustituir el `<link>` a googleapis en las 81 páginas con un `sed`. Quitar Fira Code salvo donde haya código de verdad (misiones de programación). Borrar de STATIC_ASSETS la URL de Outfit, que ya no usa nadie.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Las letras se alojan desde el 9 de septiembre: `css/vendor/fuentes/fuentes.css` con Fredoka, Nunito, Fira Code, Outfit y JetBrains Mono en woff2 latino/latin-ext, cada `@font-face` con `unicode-range` y `font-display: swap` (fuentes.css:40-105); 86 páginas enlazan esa hoja; `grep -rl fonts.googleapis --include=*.html --include=*.css` fuera de www → solo comentarios (index.html:14, mision.html:9, app.css:2, fuentes.css:4,31). Fichas: 0. La parte de «Fira Code declarada en 66 hojas» deja de costar nada: con `@font-face` local el navegador solo baja la familia que la página pinta de verdad. Y Outfit, que el hallazgo daba por huérfana, es hoy la letra del armazón (`sw.js:44`). Lo vigila `_dev/verifica-cdn-fuera.js`.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Las letras se alojan desde el 9 de septiembre: `css/vendor/fuentes/fuentes.css` con Fredoka, Nunito, Fira Code, Outfit y JetBrains Mono en woff2 latino/latin-ext, cada `@font-face` con `unicode-range` y `font-display: swap` (fuentes.css:40-105); 86 páginas enlazan esa hoja; `grep -rl fonts.googleapis --include=*.html --include=*.css` fuera de www → solo comentarios (index.html:14, mision.html:9, app.css:2, fuentes.css:4,31). Fichas: 0. La parte de «Fira Code declarada en 66 hojas» deja de costar nada: con `@font-face` local el navegador solo baja la familia que la página pinta de verdad. Y Outfit, que el hallazgo daba por huérfana, es hoy la letra del armazón (`sw.js:44`). Lo vigila `_dev/verifica-cdn-fuera.js`."
  },
  {
   "id": "T8-11",
@@ -814,10 +892,13 @@
   "recomendacion": "Añadir `_dev/revisa-videos.js` que, con señal, consulte `https://www.youtube.com/oembed?url=…&format=json` por cada `yt` del catálogo (y de la nube, si se exporta a JSON) y falle con la lista de los que devuelven 401/404 (no incrustable / borrado). Correrlo antes de publicar y una vez al mes. Registrar en la Evidencia el `error` del reproductor con el ID para que el administrador vea en F.A.R.O. cuáles se caen en el aula.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sigue sin existir ninguna herramienta que compruebe que los IDs de YouTube viven y se pueden incrustar (`grep -rln 'oembed\\|noembed\\|googleapis.com/youtube' _dev/` → nada; `verifica-videos-mision.js` usa un YouTube de mentira). Pero la evidencia estaba mal: el catálogo versionado NO tiene 2 videos, tiene **0** —los dos `yt:` del grep son el ejemplo del comentario de cabecera (`videos-misiones.js:42`, que además es 'dQw4w9WgXcQ'); las 20 misiones de Matemáticas están declaradas con `[]` (líneas 145-164)—. Todo video que ve un alumno viene de la nube de F.A.R.O., fuera del alcance de las sondas del repositorio y del proyecto de Supabase que se «despierta» cada tres días. El manejo del fallo delante del niño sigue siendo bueno (`videos-mision.js:690 onError`), y el `error` no se registra en la Evidencia con el ID.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Corregir la evidencia (0 videos en el catálogo, no 2). La herramienta `_dev/revisa-videos.js` tendría que leer la nube por la misma RPC pública de lectura que usa `js/metas-videos.js` —no hay catálogo local que recorrer—, y registrar `error`+`yt` en la Evidencia para que F.A.R.O. vea qué se cae en el aula.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T8-12",
@@ -837,10 +918,13 @@
   "recomendacion": "Quitar el classpath de google-services y el bloque try/catch (no hay Firebase). Decidir la copia de seguridad a propósito: si se quiere que el maestro recupere sus datos al cambiar de teléfono, dejar `allowBackup` y documentarlo en CLAUDE.md junto a la regla de «lo que no viaja a la nube»; si no, `android:allowBackup=\"false\"` o un `dataExtractionRules` que excluya `app_webview`. Dejar `minifyEnabled false` está bien (no hay Java propio que ofuscar), pero anotarlo.",
   "area": "tecnica-codigo",
   "lente": "T8",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sin cambios: `android/build.gradle:11 classpath 'com.google.gms:google-services:4.4.4'`, `android/app/build.gradle:72-77` (try sobre `google-services.json`, que no existe: `ls android/app/*.json` → nada), `AndroidManifest.xml:5 android:allowBackup=\"true\"` sin `dataExtractionRules` ni `fullBackupContent` (en `res/xml/` solo hay `file_paths.xml`), `targetSdkVersion = 36` (variables.gradle:4), `minifyEnabled false` (build.gradle:42). Con targetSdk ≥ 31 y sin reglas, `app_webview/` con el localStorage del maestro (grupos, notas, claves de familia, PIN, pagos) entra en la copia de Google Drive, que contradice «el pago no viaja a la nube» sin que nadie lo haya decidido. Como el APK hoy no se distribuye (ver T8-07), la consecuencia es nula mientras no se publique.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T5-01",
@@ -861,10 +945,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Era cierto en 9ce2ac1 y hoy no queda ni una hoja de estilo externa. index.html:14-19 carga css/vendor/fuentes/fuentes.css (local, @font-face con unicode-range y font-display:swap) antes de app.css; css/app.css:1-5 ya no tiene el @import (solo un comentario que lo cuenta); index.html:26-28 carga Font Awesome únicamente local. grep de fonts.googleapis|cdnjs.cloudflare|fonts.gstatic en *.html y *.css fuera de www/_dev/node_modules: 4 archivos y los 4 son comentarios (mision.html:9, index.html:14, app.css:2, fuentes.css:4,31); grep de <link href=\"https://…\"> en todas las misiones: solo rel=canonical. Lo comprueba _dev/verifica-cdn-fuera.js.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Era cierto en 9ce2ac1 y hoy no queda ni una hoja de estilo externa. index.html:14-19 carga css/vendor/fuentes/fuentes.css (local, @font-face con unicode-range y font-display:swap) antes de app.css; css/app.css:1-5 ya no tiene el @import (solo un comentario que lo cuenta); index.html:26-28 carga Font Awesome únicamente local. grep de fonts.googleapis|cdnjs.cloudflare|fonts.gstatic en *.html y *.css fuera de www/_dev/node_modules: 4 archivos y los 4 son comentarios (mision.html:9, index.html:14, app.css:2, fuentes.css:4,31); grep de <link href=\"https://…\"> en todas las misiones: solo rel=canonical. Lo comprueba _dev/verifica-cdn-fuera.js."
  },
  {
   "id": "T5-02",
@@ -885,10 +974,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy index.html:1130-1171 sigue cargando 28 <script> síncronos, sin defer ni async ni carga bajo demanda (grep defer|createElement('script') en js/app.js: nada). Medido en el árbol actual: 2 496 919 B raw / 713 707 B gzip; lo que necesita el alumno (letra-maestro, dialogos, misiones, dcnb-map, grado-alumno, diagnosticos, proceres, paises, frases, consejos, app.js, fusion-aula, docente-sync, pwa-install) suma 328 530 B raw / 100 207 B gzip, o sea el 14 %. js/data/lectura-textos.js (980 073 B) solo lo usa js/tools/lectura-fluidez.js. El sw.js nuevo mantiene esas herramientas en CACHE_DATOS entre despliegues, lo que abarata las visitas siguientes en red, pero no quita ni la primera bajada ni el parseo de 2,5 MB de JS en CADA apertura de la portada en un teléfono de gama baja. CLAUDE.md lo reconoce de paso («A propósito NO están los 25 scripts de la portada (2,8 MB)») y elige no precachearlos, pero sigue cargándolos todos al abrir.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Cifras de hoy: 28 scripts / 2,50 MB raw / 714 KB gz (no 25 / 2,44 MB). La recomendación sigue valiendo: un cargador perezoso en switchView para view-admin/gobierno/plan-accion/campeonismo/estadísticas/lectura, y lectura-textos.js solo al abrir 📖 Lectura. Hay que cuidar que lo cargado a demanda se guarde igual en CACHE_DATOS (la rama local del SW ya lo hace) para no romper el offline del maestro.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T5-03",
@@ -906,10 +998,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Lo central del hallazgo —sin plazo, la caché no se usa nunca con red lenta pero viva, y se guardan respuestas !ok— está corregido en sw.js: PLAZO_RED = 3000 (sw.js:186), Promise.race entre la red y el plazo con caída a buscarCopia (sw.js:239-252), y guardar() descarta lo que no sea ok u opaque (sw.js:205-210). Queda un residuo: sigue siendo network-first con cache:'no-cache' para todo lo local, así que cada visita revalida cada recurso, pero acotado a 3 s por oleada de peticiones y con 304 rápido cuando la caché HTTP está caliente; no es el «~40 s en 2G» del hallazgo. Ese residuo no justifica mantenerlo abierto; lo que sí deja el arreglo nuevo (mezcla de versiones y crecimiento sin poda de CACHE_DATOS) va en hallazgos_que_faltaron.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Lo central del hallazgo —sin plazo, la caché no se usa nunca con red lenta pero viva, y se guardan respuestas !ok— está corregido en sw.js: PLAZO_RED = 3000 (sw.js:186), Promise.race entre la red y el plazo con caída a buscarCopia (sw.js:239-252), y guardar() descarta lo que no sea ok u opaque (sw.js:205-210). Queda un residuo: sigue siendo network-first con cache:'no-cache' para todo lo local, así que cada visita revalida cada recurso, pero acotado a 3 s por oleada de peticiones y con 304 rápido cuando la caché HTTP está caliente; no es el «~40 s en 2G» del hallazgo. Ese residuo no justifica mantenerlo abierto; lo que sí deja el arreglo nuevo (mezcla de versiones y crecimiento sin poda de CACHE_DATOS) va en hallazgos_que_faltaron."
  },
  {
   "id": "T5-04",
@@ -928,10 +1025,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] sw.js:18-21 define CACHE_APP = 'meta-app-v197' y CACHE_DATOS = 'meta-datos-v1'; el activate (sw.js:175-181) borra solo las claves que empiezan por 'meta-app-' y no son la actual, y todo lo que se baja en runtime —misiones, imágenes, Three.js opaco— se escribe en CACHE_DATOS (sw.js:243 y :288), que sobrevive al sellado. El propio comentario de cabecera cuenta los 37 borrados del hallazgo. Comprobado también que desde el 28 de agosto hubo 32 commits de sw.js y CACHE_DATOS sigue en v1.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] sw.js:18-21 define CACHE_APP = 'meta-app-v197' y CACHE_DATOS = 'meta-datos-v1'; el activate (sw.js:175-181) borra solo las claves que empiezan por 'meta-app-' y no son la actual, y todo lo que se baja en runtime —misiones, imágenes, Three.js opaco— se escribe en CACHE_DATOS (sw.js:243 y :288), que sobrevive al sellado. El propio comentario de cabecera cuenta los 37 borrados del hallazgo. Comprobado también que desde el 28 de agosto hubo 32 commits de sw.js y CACHE_DATOS sigue en v1."
  },
  {
   "id": "T5-05",
@@ -950,10 +1052,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] La mitad «no precachea el shell» está resuelta: ARMAZON (sw.js:32-63) precachea index.html, app.css, app.js, misiones.js, fuentes y datos de portada (17 entradas, 673 525 B raw / 194 828 B gz medidos hoy). Pero STATIC_ASSETS (sw.js:65-136) sigue bajando en la primera visita lo ajeno al alumno: 40 entradas, 1 896 826 B raw / 922 248 B gz, de las que 16 son los -en.js de Robótica (835 101 B raw / 227 071 gz), img/logo.png 185 922 B, img/icon-512.png 119 688 B, Font Awesome 252 KB, padres.html/salida.html/buzon.html. Total del install hoy: 2,57 MB raw / 1,12 MB gz, más que en agosto. Se instala en window.load de index.html (index.html:1173-1175), compitiendo con la primera misión. Los dos CDN sí se quitaron.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Actualizar cifras: precache total 2,57 MB raw / 1,12 MB gz (ARMAZON 195 KB gz + STATIC_ASSETS 922 KB gz). Sacar de STATIC_ASSETS los 16 -en.js (guardarlos al tocar 🌐 EN: la rama runtime ya los mete en CACHE_DATOS), logo.png, icon-512.png y padres/salida/buzon. Ver también hallazgos_que_faltaron: con PLAZO_INSTALA de 12 s por archivo y 57 descargas en paralelo, en 2G el propio armazón se cae del precache en silencio.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T5-06",
@@ -974,10 +1079,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sigue igual y creció: find misiones -name html2canvas.min.js → 67 copias (una más que en agosto), más js/html2canvas.min.js cargado síncrono en index.html:1131. misiones/2y3ciclo-la-materia/la-materia.html:606 la carga con <script> al abrir; captureDiploma (la-materia.js:727) y plan-accion.js:506 ya toleran que no esté (typeof html2canvas==='undefined'), así que la carga perezosa no rompe nada. Ninguna de las 20 modificaciones toca esto (grep html2canvas en 5-top-20.md: nada).",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Cifra: 67 copias en misiones/ + 1 en js/ (68 en total, ≈13,3 MB) y las de www/. Con el SW de hoy la copia de cada misión sí queda en CACHE_DATOS tras la primera apertura, pero como la URL es distinta por carpeta cada misión nueva la vuelve a pagar (199 KB raw / 47 KB gz).",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T5-07",
@@ -998,17 +1106,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] img/logo.png sigue siendo 508×418 y 185 922 B; lo cargan 75 misiones (grep img/logo.png en misiones/*/*.html) para pintarlo a 32×32 (la-materia.html:34 + la-materia.css .xp-back-logo), y además va en el precache (sw.js:127), o sea que lo paga también la portada en la primera visita. icon-512.png 119 688 B y logo-secretaria.png 3720×669 / 208 527 B sin cambios. No existe ningún logo-64 ni webp en img/.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Añadir que el mismo PNG está en STATIC_ASSETS del sw.js (186 KB casi incompresibles: 185 666 B gz), así que el ahorro se cobra dos veces: en cada misión y en el install del service worker.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T5-08",
   "titulo": "Font Awesome se carga dos veces en index.html y con otra versión en las misiones: 277 KB para ~57 iconos",
   "descripcion": "index.html enlaza la hoja local (línea 11) Y la del CDN 6.4.0 (línea 12); las 66 misiones piden la 6.5.0 del CDN, así que el archivo que ya está en el teléfono por index.html no se reutiliza. El shell usa unos 57 iconos distintos y ninguno de marca (fa-brands), pero paga la fuente sólida entera (150 KB woff2) más 102 KB de CSS; el proyecto ya usa emoji para casi toda su interfaz.",
   "evidencia": "index.html:11-12; grep font-awesome/ en misiones: 66 × 6.5.0, index 1 × 6.4.0. Medido en index: all.min.css 102 025 + fa-solid-900.woff2 150 124 (+ fa-regular 24 948 en precache). Iconos distintos en index.html+js/app.js+js/tools: 57; usos de fa-brands: 0. css/vendor/fontawesome ocupa 1,1 MB (con .ttf que nadie pide).",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "eliminar",
   "impacto_educativo": 2,
   "impacto_comercial": 2,
@@ -1021,10 +1132,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] con severidad rebajada. Lo que bloqueaba y lo que se duplicaba ya no está: index.html:28 carga solo la copia local (el <link> al CDN 6.4.0 se quitó) y las misiones no cargan Font Awesome —grep en misiones/*/*.html: 1 solo archivo, el juego de la Fábrica Geométrica, que usa 14 iconos—; la flecha de volver es un SVG. Lo que queda es lo secundario del hallazgo: index.html paga la fuente sólida entera (all.min.css 102 025 B → 21,7 KB gz + fa-solid-900.woff2 150 124 B) para 60 iconos distintos (grep fa-[a-z-]* en index.html+app.js+tools), y css/vendor/fontawesome sigue con 656 KB de .ttf que nadie pide (no se sirven, solo pesan en repo/APK). Es local, precacheado y se paga una vez, así que ya no es media.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Reescribir el hallazgo como «subconjunto de Font Awesome»: 172 KB (all.min.css + fa-solid-900.woff2) por 60 iconos, ≈15 KB con un subconjunto; borrar los .ttf del vendor. La parte de CDN y doble carga ya está resuelta y no debe figurar.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T5-09",
@@ -1045,10 +1159,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] grep -rl serviceWorker fuera de www/_dev/node_modules: index.html:1173 y padres.html:1704 registran; js/app.js:3245 solo lo desregistra (botón 🔄 Actualizar). Cero misiones, juegos 3D, fichas ni mision.html registran sw.js. _dev/genera-qr-mision.py:54 sigue apuntando el QR a la URL directa de la misión. Y hoy pesa MÁS que en agosto: el arreglo de las dos cachés (CACHE_DATOS) y la promesa «Funcionan sin internet» de la meta description de index.html:11 solo se cumplen en un teléfono que alguna vez abrió index.html o padres.html; el que llega por el QR de la ficha fotocopiada no recibe service worker y nada le queda offline.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Registrar '/sw.js' (ruta absoluta, ámbito raíz) desde un archivo que ya carguen todas las misiones —js/barra-secciones.js o js/estrella-ganada.js van hoy en las 74 y en STATIC_ASSETS— y desde js/3d/parque-3d.js para los juegos abiertos en pestaña nueva. Ojo con las sondas: ocho abren SIN_SW a propósito (CLAUDE.md), así que el registro debe seguir siendo tolerante a fallo y no cambiar el comportamiento en Playwright.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T5-10",
@@ -1067,10 +1184,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] misiones/2y3ciclo-numeros-decimales/tipos-img/ sigue con los 4 PNG (4 746 191 + 4 931 061 + 5 326 998 + 5 410 641 B ≈ 20 MB), los 4 versionados en git (git ls-files: 4) y 0 referencias en el HTML/JS/CSS de la misión; www/misiones/2y3ciclo-numeros-decimales/tipos-img también ocupa 20 MB. Ningún alumno los baja, así que la severidad baja es la correcta: cuesta APK y despliegue, no aula.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T5-11",
@@ -1090,10 +1210,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en lo esencial, con una parte falsa. js/app.js:245 sigue pintando `<img src=… class=\"cc-sim-img\">` sin loading=\"lazy\" ni decoding (grep loading= en app.js/index.html: nada), y los webp de img/honduras_img/simbolos suman ≈220 KB (escudo 56 970, himno 50 788, mapa 30 384 a 1000×751…) para una miniatura de 64 px. Lo que NO se sostiene es «provocan saltos de maquetación»: css/app.css:1488-1490 fija .cc-sim-img a width:64px;height:64px, así que el hueco está reservado antes de que llegue la imagen. Sin consecuencia grave: baja.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Quitar la frase de los saltos de maquetación. Mantener: loading=\"lazy\" decoding=\"async\" en la plantilla de app.js:245 y redimensionar los webp a ≈128 px (2× de 64). De paso: img/honduras_img/simbolos/pino.PNG (132 301 B) y venado.PNG (98 801 B) están en el repo sin que nadie los referencie.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T5-12",
@@ -1112,10 +1235,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T5",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] No existe _dev/verifica-peso*.js; grep de transferSize|encodedBodySize|Content-Length|presupuesto en _dev/verifica-*.js y _dev/test-*.js: ninguna sonda mide bytes ni peticiones; _dev/servidor-estatico.js no comprime (0 menciones a gzip/createGzip). Desde agosto entraron CI (.github/workflows/sondas.yml) y _dev/corre-sondas.js que descubre las sondas solas, así que hoy una sonda de presupuesto se enchufa gratis a npm test; sigue faltando, y por eso mismo T5-02, T5-06 y T5-07 siguen intactos tras 52 commits.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Cifras de hoy para el presupuesto: index.html 28 scripts / 2,50 MB raw / 714 KB gz de JS; precache del SW 2,57 MB raw / 1,12 MB gz. La sonda puede ser de las rápidas (solo leer archivos y sumar gzip de lo que index.html y una misión enlazan), sin Playwright, y entrar en npm test.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T10-01",
@@ -1135,10 +1261,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Hoy existe `.github/workflows/sondas.yml` (commit del 6 de septiembre): el trabajo `rapidas` corre `node _dev/corre-sondas.js` en CADA empujón a cualquier rama y el trabajo `navegador` (Playwright, `timeout-minutes: 60`) en pull request, a mano y cada noche a las 07:00 UTC. `package.json` ya tiene `test` y `test:navegador` (el `exit 1` desapareció). La API de GitHub lo confirma: el flujo «Sondas» sale `completed / success` en 4c10911, d940fe0, 7aebec3, 506cddc, 37508f5… (todos los empujones del 8 y 9 de septiembre), más una ejecución `schedule` en verde el 9 a las 12:08. Lo de «29 herramientas sin nombrar en CLAUDE.md» (hoy 39 de 86) ya no tiene consecuencia: `corre-sondas.js` las descubre solas leyendo `_dev/` y nombra una por una las que excluye. Lo único de la recomendación que NO se adoptó es condicionar el despliegue de Pages a que las rápidas pasen: el propio yml lo dice («Esto NO frena la publicación»), y con 12 s de sondas rápidas sería barato, pero es una decisión distinta del hallazgo «cero CI».",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Queda por decidir si Pages debe esperar a `rapidas` (12 s). Hoy un empujón con `verifica-sintaxis` en rojo se publica igual; el CI solo avisa.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Hoy existe `.github/workflows/sondas.yml` (commit del 6 de septiembre): el trabajo `rapidas` corre `node _dev/corre-sondas.js` en CADA empujón a cualquier rama y el trabajo `navegador` (Playwright, `timeout-minutes: 60`) en pull request, a mano y cada noche a las 07:00 UTC. `package.json` ya tiene `test` y `test:navegador` (el `exit 1` desapareció). La API de GitHub lo confirma: el flujo «Sondas» sale `completed / success` en 4c10911, d940fe0, 7aebec3, 506cddc, 37508f5… (todos los empujones del 8 y 9 de septiembre), más una ejecución `schedule` en verde el 9 a las 12:08. Lo de «29 herramientas sin nombrar en CLAUDE.md» (hoy 39 de 86) ya no tiene consecuencia: `corre-sondas.js` las descubre solas leyendo `_dev/` y nombra una por una las que excluye. Lo único de la recomendación que NO se adoptó es condicionar el despliegue de Pages a que las rápidas pasen: el propio yml lo dice («Esto NO frena la publicación»), y con 12 s de sondas rápidas sería barato, pero es una decisión distinta del hallazgo «cero CI»."
  },
  {
   "id": "T10-02",
@@ -1159,10 +1290,15 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] (a) `node _dev/test-campeonismo-tec.js` hoy imprime «✅ TODO EN VERDE: materias, banco, estilos y ruleta al día»; la sonda ya no pide `.camp-ws-` (comentario en `_dev/test-campeonismo-tec.js:189`: era la ruleta vieja de cuatro sectores) y `css/app.css` sigue sin esa clase porque no hace falta. (b) `_dev/verifica-fin-de-grado.js:28-32` explica que el número «se cuenta del catálogo» y la línea 173 compara contra `TOTAL_MISIONES` calculado (`ok(\\`el filtro Todas cuenta ${TOTAL_MISIONES} misiones\\`…)`), no contra el literal `'61'`. Además ambas corren ahora en el CI (T10-01), que era la mitad del argumento.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] (a) `node _dev/test-campeonismo-tec.js` hoy imprime «✅ TODO EN VERDE: materias, banco, estilos y ruleta al día»; la sonda ya no pide `.camp-ws-` (comentario en `_dev/test-campeonismo-tec.js:189`: era la ruleta vieja de cuatro sectores) y `css/app.css` sigue sin esa clase porque no hace falta. (b) `_dev/verifica-fin-de-grado.js:28-32` explica que el número «se cuenta del catálogo» y la línea 173 compara contra `TOTAL_MISIONES` calculado (`ok(\\`el filtro Todas cuenta ${TOTAL_MISIONES} misiones\\`…)`), no contra el literal `'61'`. Además ambas corren ahora en el CI (T10-01), que era la mitad del argumento."
  },
  {
   "id": "T10-03",
@@ -1183,17 +1319,22 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[RESUELTO] Existe `_dev/lib-navegador.js` (una sola forma de encontrar Chromium: `CHROMIUM_BIN`, `METAS_CHROMIUM` o el de Playwright, líneas 38-51) y lo usan 45 sondas; solo 2 archivos llaman `chromium.launch` y uno es la propia biblioteca. Existe `_dev/corre-sondas.js`, que descubre `_dev/*.js`, separa con/sin navegador por `require('./lib-navegador')`, levanta y baja el servidor en 8123 (líneas 81-111) y devuelve código de salida único; expuesto como `npm test` y `npm run test:navegador`. Residuos menores que no sostienen el hallazgo: `_dev/verifica-mision-navegador.js:13` sigue con `'http://localhost:8080'` por defecto (CLAUDE.md la manda correr con `METAS_BASE=http://localhost:8123`), y el corredor es secuencial (`spawnSync`, línea 96), sin el `xargs -P` recomendado — aceptable porque va de noche.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Corregir el 8080 de `verifica-mision-navegador.js:13` y revisar su motivo de exclusión en `NO_SON_SONDAS` («abre Chromium sin executablePath»), que ya no es cierto: la línea 9 usa `lib-navegador`.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media",
+  "resuelto": true,
+  "motivo_resolucion": "[RESUELTO] Existe `_dev/lib-navegador.js` (una sola forma de encontrar Chromium: `CHROMIUM_BIN`, `METAS_CHROMIUM` o el de Playwright, líneas 38-51) y lo usan 45 sondas; solo 2 archivos llaman `chromium.launch` y uno es la propia biblioteca. Existe `_dev/corre-sondas.js`, que descubre `_dev/*.js`, separa con/sin navegador por `require('./lib-navegador')`, levanta y baja el servidor en 8123 (líneas 81-111) y devuelve código de salida único; expuesto como `npm test` y `npm run test:navegador`. Residuos menores que no sostienen el hallazgo: `_dev/verifica-mision-navegador.js:13` sigue con `'http://localhost:8080'` por defecto (CLAUDE.md la manda correr con `METAS_BASE=http://localhost:8123`), y el corredor es secuencial (`spawnSync`, línea 96), sin el `xargs -P` recomendado — aceptable porque va de noche."
  },
  {
   "id": "T10-04",
   "titulo": "36 de las 66 misiones no las mira ninguna sonda, y el validador genérico no sirve de puerta",
   "descripcion": "Las misiones son el 109 000 de las 160 000 líneas de JS del proyecto y donde el alumno pasa el tiempo, pero la cobertura está concentrada en Robótica, Programación, Fin de Grado, Fracciones y las dos con lectura. Ciencias Naturales, Sociales, casi toda Matemáticas de 2º ciclo y Español (verbos, adverbios, acentuación, tipos de texto) no tienen ni una comprobación de que carguen sin error de consola, de que la evaluación se genere o de que el panel diga `Resultado: N/100 pts` que `metas-registro.js` necesita leer. `verifica-mision-nueva.js` (el chequeo barato) pasado sobre todas da 966 errores, porque solo entiende la plantilla de las misiones nuevas.",
   "evidencia": "Cruce `MISSIONS` (66) contra nombres en `_dev/*.js`: 19 con sonda propia; 30 nombradas por alguna sonda; 36 sin aparecer en ninguna (lista en `scratchpad/tecnica-codigo/T10/cobertura-misiones.txt`). `mision-nueva-todas.log`: 966 ❌ (54× «falta explicaData», 40× «el panel de resultado cambió de formato y metas-registro.js no podrá leer la nota»). LOC: `misiones/**/*.js` 109 177 vs `js/` 35 183.",
-  "severidad": "alta",
+  "severidad": "media",
   "tipo": "incompleto",
   "impacto_educativo": 4,
   "impacto_comercial": 3,
@@ -1207,17 +1348,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Con el catálogo de hoy (67), 30 misiones no aparecen nombradas en ninguna sonda (lista en scratchpad/revision/T10/cobertura-hoy.txt: ecosistemas, cinco reinos, sistema digestivo, la materia, la energía, potencias y raíces, teoría de números, tipos de textos, marcadores textuales, geografía de Honduras, aspectos cívicos…). Sigue sin haber una sonda de humo que ABRA las 67 en navegador y exija cero errores de consola. Pero el hallazgo hoy es más pequeño de lo que dice: ocho sondas recorren TODAS las carpetas de `misiones/` leyendo del archivo (`verifica-sintaxis`, `verifica-barra-secciones`, `verifica-teclado`, `verifica-estrella-ganada`, `verifica-cdn-fuera`, `verifica-encabezados`, `verifica-identidad`, `verifica-sin-autoavance`) y corren en CI. Y dos piezas de la evidencia no se sostienen contra el código de hoy: (1) el panel `Resultado: ${total}/100 pts` está en las 67 del alumno —solo las 8 `docente-*` no lo tienen, y esas no mandan nota—, así que «40× el panel cambió de formato» no ocurre hoy; (2) `verifica-mision-nueva.js` sobre las 30 no cubiertas ya no da ruido de plantilla: 25 fallan por motivos SUSTANTIVOS (reparto de la respuesta correcta por letra y tamaño de los bancos), no por «no entiende la plantilla».",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Severidad media, esfuerzo horas: la sonda de humo son ~40 líneas sobre `lib-navegador` recorriendo `MISSIONS` (goto en 393×873, cero errores de consola, `genEval()` produce el panel con `Resultado: N/100 pts`). Y NO retirar `verifica-mision-nueva.js`: lo que hoy denuncia en esas 30 es real (ver hallazgos que faltaron); lo que hace falta es meterla en el corredor recorriendo el catálogo.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T10-05",
   "titulo": "El «sellado» manual de ?v= es ritual sobrediseñado donde el SW manda e incompleto donde no llega",
   "descripcion": "La normativa obliga a subir el número en 5 HTML + `CACHE_NAME` en cada cambio. Hoy está consistente (v170 en todos), pero: (a) `sw.js` sirve todo lo local no-imagen con network-first y `cache:'no-cache'`, así que el `?v=` no altera nada en un teléfono con service worker —lo único que actúa es `CACHE_NAME`, y solo para purgar—; (b) las 74 páginas de misión cargan `../../js/metas-registro.js`, `videos-mision.js`, `metas-fracciones.js`, `parque-3d.js` SIN `?v=` y no registran el SW, así que ahí el sellado nunca existió y el maestro depende del `max-age` de GitHub Pages; (c) no hay sonda que compruebe que los seis números coincidan; (d) commits recientes tocaron JS compartido sin sellar (7e3334f: parque-3d.js/css + tres misiones). Es la peor combinación: trabajo manual en seis sitios y sin efecto donde más código hay.",
   "evidencia": "`sw.js:1` `CACHE_NAME='meta-app-v170'`; `grep -o '?v=' index.html…registro.html` → 26/2/1/1/1, todos 170. `sw.js` fetch: `fetch(event.request,{cache:'no-cache'})` para `isLocal && !isImage`. `grep -oE 'src=\"\\.\\./\\.\\./[^\"]+\"' misiones/2y3ciclo-fracciones/fracciones.html` → 6 JS sin `?v=`. `grep -l serviceWorker.register misiones/*/*.html | wc -l` → 0. `git show --name-only 7e3334f` → css/parque-3d.css, js/3d/parque-3d.js, 3 misiones; sin sw.js ni index.html. Única sonda que menciona CACHE_NAME: `verifica-videos-mision.js`.",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "sobrediseno",
   "impacto_educativo": 2,
   "impacto_comercial": 2,
@@ -1232,17 +1376,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en lo esencial, con dos correcciones de evidencia. Sigue así: `sw.js:266` sirve lo local con `fetch(…, {cache:'no-cache'})` red-primero y `buscarCopia` busca con `ignoreSearch: true` (`sw.js:200-203`), así que en un teléfono con service worker el `?v=` no cambia nada; el ritual sigue siendo manual en 5 HTML + `CACHE_NAME` (hoy todos en 197); ninguna sonda comprueba que coincidan (`_dev/verifica-service-worker.js:48` solo mira que el literal exista); y en `misiones/` hay 16 páginas con `?v=` en NUEVE valores distintos (1, 2, 4, 5, 48, 103, 106, 171, 173) que nadie sella nunca. Lo que NO se sostiene: (b) «las misiones no registran el SW, así que ahí el sellado nunca existió» — el SW se registra desde `index.html` con alcance raíz y controla también las páginas de `misiones/`, que reciben la misma red-primero; (d) desde 9ce2ac1 revisé los 53 commits: TODOS los que tocan js/css/html del producto tocan también `sw.js` — el ritual se está cumpliendo. Consecuencia para el maestro: ninguna hoy; es trabajo manual sin efecto.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Bajar a `baja`. La recomendación (un `_dev/sella.js` + 10 líneas en `npm test` que fallen si algún `?v=` ≠ `CACHE_NAME`) sigue valiendo, y de paso decidir qué hacer con los 16 `?v=` huérfanos de las misiones (o sellarlos con el resto o quitarlos). El riesgo real de olvidar el sello no está en el `?v=` sino en `CACHE_NAME` (ver hallazgos que faltaron).",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T10-06",
   "titulo": "node_modules versionado y sin .gitignore: por eso Playwright se instala y se borra a mano en cada sesión",
   "descripcion": "El repositorio no tiene `.gitignore` y lleva `node_modules` completo (2 426 archivos, 34 MB) por la dependencia de Capacitor. La consecuencia directa está escrita en CLAUDE.md: Playwright «se instala aparte y se borra al terminar porque `node_modules` va versionado». Eso convierte cada ejecución de sondas en un paso manual con riesgo de dejar el árbol sucio, y hace imposible un CI reproducible. Además van versionados `.claude/settings.local.json` (con rutas `c:/Users/Dell/OneDrive/…` de la máquina del autor y permisos de sesión) y 168 archivos desfasados en `www/`.",
   "evidencia": "`ls .gitignore` → no existe. `git ls-files node_modules | wc -l` → 2 426; `du -sh node_modules` → 34M; `.git` 91M. `git ls-files .claude` → `.claude/settings.local.json` (43 entradas con rutas Windows y `Bash(npm install *)`). CLAUDE.md, sección Fin de Grado: «necesitan Playwright, que … se instala aparte (`npm install --no-save playwright`) y se borra al terminar».",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "deuda",
   "impacto_educativo": 1,
   "impacto_comercial": 2,
@@ -1256,17 +1403,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en los hechos, refutada la consecuencia principal. Hechos de hoy: no hay `.gitignore`; `git ls-files node_modules` = 2 426 archivos (34 MB, solo `@capacitor/*` y `@ionic`); `.claude/settings.local.json` sigue versionado. Pero «hace imposible un CI reproducible» quedó desmentido por `sondas.yml`, que funciona precisamente porque `node_modules` va versionado («No se instala nada») e instala Playwright aparte cada noche. Lo que queda es higiene de repositorio sin consecuencia para el aula, más un riesgo pequeño: `npm install --no-save playwright` sin versión fija puede poner en rojo la tanda nocturna el día que Playwright cambie, sin que nada del producto haya cambiado.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Severidad baja. Lo útil y barato: fijar la versión de Playwright en el yml (`playwright@1.x.y`) y sacar `.claude/settings.local.json` del control de versiones. Quitar `node_modules` del repositorio es opcional: hoy es lo que hace que el CI arranque sin instalar nada.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T10-07",
   "titulo": "Sin monitoreo de errores en producción: un fallo en el teléfono del alumno solo se descubre si alguien avisa",
   "descripcion": "La normativa acepta que «las pruebas finales se hacen en línea, sobre el sitio publicado», pero no existe ningún canal que devuelva lo que pasa allí: no hay `window.onerror`, ni `unhandledrejection`, ni beacon de errores hacia Supabase, ni Sentry. Los únicos `onerror` del código son de carga de scripts/imágenes que se rinden en silencio. Con 8 despliegues en un día y sin CI, la probabilidad de publicar una misión rota es real (T10-02 lo demuestra), y el tiempo hasta enterarse se mide en semanas de clase.",
   "evidencia": "`grep -rn \"onerror|addEventListener('error'|unhandledrejection|sentry\" js/ index.html sw.js` → solo `s.onerror` de carga en `videos-mision.js:375`, `parque-3d.js:65`, `metas-i18n.js:719`, `collage-maker.js:91`, `registros-admin.js:4215`. Ninguno reporta. CLAUDE.md: «las pruebas finales se hacen en línea, sobre el sitio publicado; si algo sale torcido, se arregla con otro commit». API GitHub: 8 despliegues el 2026-08-28.",
-  "severidad": "alta",
+  "severidad": "media",
   "tipo": "faltante",
   "impacto_educativo": 4,
   "impacto_comercial": 4,
@@ -1280,10 +1430,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy sigue sin existir ningún receptor de `window.onerror` ni `unhandledrejection` en `js/`, `index.html` ni `sw.js` (grep vacío; no hay `js/metas-errores.js`), y los únicos `onerror` son de carga de `<script>`/imagen. Pero el argumento que sostenía «alta» ha cambiado: el CI ahora corre `verifica-sintaxis` (node --check sobre 366 archivos y el escape `\\U` de Python) en cada empujón y 39 sondas de navegador cada noche, y el caso citado (T10-02) está resuelto. Lo que sigue sin cubrirse es lo que solo pasa en el teléfono del alumno (un `TypeError` en una actividad con datos reales, una promesa rechazada de Supabase), y de eso sigue sin enterarse nadie salvo por WhatsApp.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Severidad media. Aviso de entorno que el auditor no da: el proxy de estas sesiones bloquea Supabase, así que el RPC `metas_error_v1` habría que probarlo con `workflow_dispatch` como se hizo con `no-dormir-supabase.yml` (que estuvo roto tres días por no poder probarse aquí). Sin datos del alumno, con tope por sesión, y con la cola sin señal de `metas-sugerencias.js`.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T10-08",
@@ -1304,17 +1457,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Sigue igual: grep de `gtag|analytics|plausible|umami|sendBeacon|metas_uso` en `js/` e `index.html` no devuelve nada; el registro de evidencia solo sale a la nube cuando el alumno se identifica. Desde el 28 de agosto entraron E. Cívica, la ordenación por grado, el teclado, la letra del maestro, fusión de aula… sin un dato de qué se abre. El impacto comercial 5 es exagerado para una plataforma que hoy tiene pocos usuarios (lo dice CLAUDE.md), pero la decisión de qué construir sigue tomándose a ciegas y eso es cierto.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Mantener media. Condición que el auditor omite y aquí importa: el contador tiene que ser sin dato personal ni identificador estable del niño (Código de la Niñez), y la puerta anónima de escritura se cerró en septiembre precisamente por seguridad — el RPC nuevo tendría que ser de solo-suma con validación en servidor, no reabrir esa puerta.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T10-09",
   "titulo": "Sin entorno de prueba: cada push es producción, y GitHub Pages arrastra tres construcciones zombi",
   "descripcion": "No hay staging ni vista previa por rama: la única forma de ver un cambio «en el teléfono de verdad» es publicarlo a los maestros. La normativa incluso lo prescribe («se publica aunque falte probarlo en el teléfono real»). La cola de Pages tiene tres ejecuciones `queued` desde julio y agosto que no van a terminar nunca y que CLAUDE.md ya documenta como trampa al comprobar el despliegue. Con una rama de auditoría activa (`claude/metas-comprehensive-audit-…`) tampoco hay forma de que alguien la mire en un teléfono sin fusionarla.",
   "evidencia": "API GitHub `actions/runs?status=queued` → total 3 (e51dc30 2026-08-06, 5e9874a 2026-08-06, 5c0b57b 2026-07-03). CLAUDE.md: «Se publica aunque falte probarlo en el teléfono real … las pruebas finales se hacen en línea, sobre el sitio publicado». Sin `.github/workflows`, sin rama `gh-pages`/`preview`, sin configuración de Cloudflare/Netlify en el repo.",
-  "severidad": "media",
+  "severidad": "baja",
   "tipo": "faltante",
   "impacto_educativo": 2,
   "impacto_comercial": 3,
@@ -1325,17 +1481,20 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en los hechos, severidad exagerada. La API hoy sigue devolviendo `status=queued` total 3 con las mismas ejecuciones zombi (e51dc30 y 5e9874a del 6 de agosto, 5c0b57b del 3 de julio) y no hay rama de vista previa ni configuración de Cloudflare/Netlify. Pero el daño real ha bajado: desde el 6 de septiembre cada empujón corre las sondas rápidas y cada pull request corre las 39 de navegador (`sondas.yml`, `if: github.event_name != 'push'`), así que la rama de auditoría SÍ tiene una comprobación antes de fusionar aunque nadie la mire en un teléfono. Para una plataforma de pocos usuarios que publica varias veces al día, «publicar y corregir» cuesta menos que un entorno de vista previa que el autor —desde tableta— no va a abrir.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Bajar a `baja`. Lo barato y concreto: cancelar las tres zombis (`gh run cancel`) para que la comprobación del despliegue de CLAUDE.md deje de tener trampa. La vista previa por rama, cuando haya usuarios que la justifiquen.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  },
  {
   "id": "T10-10",
   "titulo": "21 archivos SQL aplicados a mano sin registro de versión: no se puede saber qué esquema tiene producción",
   "descripcion": "Todo el esquema de Supabase (RLS, RPC, roles, convocatoria, sugerencias…) vive en 21 `SUPABASE-*.sql` de hasta 47 KB que el autor copia al SQL Editor desde la tableta, en un orden que hay que recordar, y con la instrucción de «volver a correr» archivos enteros cuando cambia una lista interna. Ni el repositorio ni la base guardan qué archivo, en qué versión, se aplicó y cuándo. Un despliegue de JS que llame a un RPC nuevo antes de que el SQL esté pegado falla en silencio para el maestro, y no hay sonda que lo detecte (la nube se simula en todas las pruebas).",
   "evidencia": "`ls SUPABASE-*.sql | wc -l` → 21; los mayores: SUPABASE-ROLES-V2.sql 47 073 B, SUPABASE-ROLES.sql 25 349 B, SUPABASE-DOCENTES-V2.sql 24 948 B. CLAUDE.md, «Normativa: el SQL de Supabase se pega en el chat, SIEMPRE»: «añadir una clase nueva al Buzón obligó a re-correr los dos archivos». No existe carpeta `supabase/migrations` ni tabla de versión en ningún SQL (`grep -il \"schema_version|migrations\" SUPABASE-*.sql` → nada).",
-  "severidad": "alta",
+  "severidad": "media",
   "tipo": "riesgo",
   "impacto_educativo": 3,
   "impacto_comercial": 4,
@@ -1349,10 +1508,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] Hoy son 22 `SUPABASE-*.sql` (el mayor `SUPABASE-ROLES-V2.sql`, 47 073 B); no hay `supabase/` ni tabla de versión (el único «esquema» que aparece es el de Postgres para `pg_trgm`). Y el episodio de `no-dormir-supabase.yml` de esta misma semana (publicado sin poder probarse, roto tres días) demuestra el punto: la nube no se puede verificar desde aquí y nadie sabe qué esquema tiene producción salvo el autor de memoria. Matiz que baja la severidad: el JS ya contempla el RPC ausente al menos en un camino (`js/app.js:2494-2514`: un 404 devuelve `motivo:'no_rpc'` y «se cae a la lista» local), así que el fallo no siempre es silencioso, y el autor pega el SQL el mismo día que publica el JS.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Severidad media. La sonda `verifica-esquema.js` que compare la versión esperada con `metas_esquema_version()` no puede correr en este entorno (proxy) pero SÍ en el CI con `workflow_dispatch`, que es justo el camino que CLAUDE.md ya prescribe para lo que aquí no se alcanza.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "alta"
  },
  {
   "id": "T10-11",
@@ -1373,10 +1535,13 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] en parte, parte resuelto. Sigue: 17 `test-determinismo-*.js` con su propio `const sandbox = {` (línea 11 en el de que-es-un-robot); `html2canvas.min.js` copiado 68 veces (todas idénticas, md5 d7530aa0…, 14 MB); sin ESLint. Resuelto: la comprobación de sintaxis automatizada existe (`_dev/verifica-sintaxis.js`, en `npm test` y en el CI: node --check sobre los archivos versionados más el escape `\\U`). La consecuencia para el aula es nula; es deuda de herramientas.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Mantener baja. Las 68 copias de html2canvas no son solo peso del repositorio: cada misión abierta en línea guarda su copia en `CACHE_DATOS` del teléfono, así que sustituirlas por `../../js/html2canvas.min.js` también ahorra almacén en el teléfono prestado.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "baja"
  },
  {
   "id": "T10-12",
@@ -1397,9 +1562,12 @@
   ],
   "area": "tecnica-codigo",
   "lente": "T10",
-  "verificado": false,
-  "revision": "",
+  "verificado": true,
+  "revision": "[CONFIRMADO] y peor que entonces: `www/sw.js` sigue en `meta-app-v48` y `sw.js` va por v197 (149 versiones, no 122); último commit que tocó `www/` el 13 de agosto; `build:www` sigue siendo `robocopy` (solo Windows). `MANUAL-MAESTRO.md:37` sigue ofreciendo «App Android (APK) · Tablets del aula, uso frecuente sin internet» como camino de instalación. La copia de `www/` no tiene nada de septiembre: ni `metas-fusion-aula.js`, ni `estrella-ganada.js`, ni la barra de secciones, ni el teclado, ni las letras alojadas. `verifica-barra-xp.js:121` solo AVISA del desfase, no falla.",
   "refutado": false,
-  "correccion": ""
+  "correccion": "Mantener media, pero con un riesgo que el auditor no nombra: el `metas-docente-sync.js` de `www/` es el de agosto —el que comparaba las dos copias enteras y se quedaba con la más nueva—; un maestro con la APK en la tableta y la web en la PC vuelve a perder la asistencia del día, que es justo lo que la fusión de septiembre vino a evitar. Si la APK no se va a regenerar pronto, quitar la fila del manual y dejar la PWA instalable como único camino.",
+  "revisado_el": "2026-09-09",
+  "commit_revision": "d940fe0",
+  "severidad_original": "media"
  }
 ]
