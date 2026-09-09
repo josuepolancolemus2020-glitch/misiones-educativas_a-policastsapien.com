@@ -695,7 +695,10 @@
     "verificado": true,
     "revision": "Verificado sw.js:120-128: `fetch(event.request, {cache:'no-cache'})` y `.catch(() => caches.match(...))`; no hay setTimeout ni Promise.race en todo sw.js (grep vacío). Con red presente pero muda, cada uno de los 39 archivos de la portada espera el tiempo del navegador antes de servirse de caché: la promesa «funciona sin señal» solo se cumple sin red, no con señal mala, que es el caso que CLAUDE.md describe como habitual.",
     "refutado": false,
-    "correccion": "Subo a alta: en el aula «muchas veces sin señal» del propio manual, una app que abre en 2 s sin red y se cuelga minutos con una raya de señal es exactamente «el usuario abandona», y afecta a alumnos y maestro por igual (impacto_educativo 4 que el propio auditor puso no cuadra con media). Matiz: los archivos ?v=NN son inmutables solo si el número sube en cada cambio, que es lo que exige la normativa; el cache-first que propone depende de que eso se siga cumpliendo (o del hash por archivo de T9-03)."
+    "correccion": "Subo a alta: en el aula «muchas veces sin señal» del propio manual, una app que abre en 2 s sin red y se cuelga minutos con una raya de señal es exactamente «el usuario abandona», y afecta a alumnos y maestro por igual (impacto_educativo 4 que el propio auditor puso no cuadra con media). Matiz: los archivos ?v=NN son inmutables solo si el número sube en cada cambio, que es lo que exige la normativa; el cache-first que propone depende de que eso se siga cumpliendo (o del hash por archivo de T9-03).",
+    "resuelto": true,
+    "motivo_resolucion": "Comprobado por el crítico de completitud el 9 de septiembre sobre d940fe0: sw.js:188 define PLAZO_RED = 3000 y :266-272 hace Promise.race con caída a buscarCopia (modificación 6 de la primera lista). Ya no es network-first sin plazo.",
+    "resuelto_por": "5-top-20-septiembre-6.md#6"
   },
   {
     "id": "T9-09",

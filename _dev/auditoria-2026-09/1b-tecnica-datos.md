@@ -38,6 +38,10 @@ sus alumnos, quién los respalda y cómo se borran al final del año no tiene re
 
 `T3-03 + T4-01` · crítica · error · esfuerzo días · impacto educativo 5/5 · comercial 5/5
 
+> ✅ **Corregido por la primera lista de 20** (`T3-03`, fila 3 de `5-top-20-septiembre-6.md`): Modificación 3 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
+> ✅ **Corregido por la primera lista de 20** (`T4-01`, fila 3 de `5-top-20-septiembre-6.md`): Modificación 3 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
 `metas_guardar(filas)` se ejecuta con la clave pública y acepta `alumno`, `docente`, `grado` y
 `nota` como texto libre, hasta 500 filas por llamada. No pasa por `_metas_docente_ok` ni por
 `metas_rate_ok`. Empareja al maestro por el **texto** de su nombre, con `like '%…%'`, así que
@@ -66,6 +70,8 @@ falsa es permanente. La misma puerta sirve para llenar los 500 MB del plan gratu
 ### Con dos aparatos, una edición se pierde y el respaldo es inalcanzable
 
 `T3-04 + T9-01` · crítica · riesgo · esfuerzo días · impacto educativo 4/5 · comercial 4/5
+
+> ✅ **Corregido por la primera lista de 20** (`T9-01`, fila 5 de `5-top-20-septiembre-6.md`): Modificación 5 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 9 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 `METAS_ADMIN_V1` guarda los doce grupos, su asistencia, notas, colectas, bitácora y lecturas en
 un único texto, y se sincroniza como **una sola fila** con versión igual a `Date.now()` del
@@ -350,6 +356,8 @@ grupos imprime a mitad de año informes sin las evaluaciones del primer parcial,
 
 `T9-08` · alta · error · esfuerzo horas
 
+> ✅ **Corregido por la primera lista de 20** (`T9-08`, fila 6 de `5-top-20-septiembre-6.md`): Comprobado por el crítico de completitud el 9 de septiembre sobre d940fe0: sw.js:188 define PLAZO_RED = 3000 y :266-272 hace Promise.race con caída a buscarCopia (modificación 6 de la primera lista). Ya no es network-first sin
+
 Para todo lo propio se pide siempre a la red y solo se cae a la caché si la red **falla**. Con
 señal mala (la que no falla pero no contesta) cada uno de los 39 archivos espera el tiempo de
 espera del navegador antes de servirse. La promesa de funcionar sin internet se cumple cuando no
@@ -404,6 +412,8 @@ cambio de contraseña al formato sin sal, sin que nada avise.
 ### Funciones heredadas nunca retiradas
 
 `T3-06` · alta · eliminar · esfuerzo horas
+
+> ✅ **Corregido por la primera lista de 20** (`T3-06`, fila 3 de `5-top-20-septiembre-6.md`): Modificación 3 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 Ningún archivo hace `drop` de las funciones de fases anteriores, así que salvo borrado manual
 siguen ejecutables con la clave pública: `metas_consultar(p_clave)` devuelve **todos** los

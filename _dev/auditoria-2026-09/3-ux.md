@@ -17,7 +17,7 @@ final resumen la revisión. La alumna de 8º, que faltaba en la serie, tiene su 
 **Sin internet, todo funciona.** Las cinco personas recorrieron la portada, el catálogo, doce
 misiones, el quiz, la lectura de un minuto, los juegos 3D y las pruebas de fin de grado **sin un
 solo error de JavaScript propio**. Solo fallan las peticiones externas, que es lo esperado. Para
-una plataforma que promete funcionar en un aula sin señal, eso es el cimiento, y está puesto.
+una plataforma que promete funcionar en un aula sin señal, eso es el cimiento, y está puesto. Funciona quiere decir que no revienta: lo que se abre por el QR de la ficha o por un enlace de WhatsApp, sin pasar por la portada, **no queda guardado para usarlo sin señal**, porque ninguna de las 75 misiones registra el service worker (T7-03, en `1d-tecnica-integridad-movil.md`; lo señaló el crítico de completitud).
 
 Y hay tres piezas que las personas señalaron como bien hechas, sin que se les preguntara:
 
@@ -81,6 +81,8 @@ Cuando cinco recorridos independientes tropiezan con lo mismo, deja de ser una o
 
 `U4-03 + U5-05 + U6-03 + U7-02 + U9-08` · alta · esfuerzo horas para el síntoma
 
+> ✅ **Corregido por la primera lista de 20** (`U4-03`, fila 9 de `5-top-20-septiembre-6.md`): Modificación 9 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
 > ↕ **Severidad ajustada por el revisor del 9 de septiembre** (`U5-05`: alta → media): Quitar del hallazgo la parte de «barra al pie tras 1.466 px» (ya no es así) y dejar la de nombres opacos y falta de camino. Severidad media: navegar ya funciona; lo que falta es que el niño sepa cuáles de las 19 cuentan. Esfuerzo sigue siendo semanas porque…
 
 > ✅ **Corregido antes de esta revisión** (`U6-03`, comprobado el 9 de septiembre contra `d940fe0`): La consecuencia del hallazgo —no encontrar la barra ni saber dónde se está— ya no ocurre. css/barra-secciones.css:36 y :85 (.bs-marco position:sticky; top:0; z-index:60) y js/barra-secciones.js enganchados en fracciones.html:18/653, solidos-geometricos.html:18/922, fin-de-grado-6to.html:18/696. Medido hoy en Fracciones: la…
@@ -109,6 +111,8 @@ relación coste-beneficio de todo el capítulo.
 ### 2. El buscador no entiende las palabras sin tilde
 
 `U4-02 + U5-01` · alta · error · esfuerzo horas
+
+> ✅ **Corregido por la primera lista de 20** (`U4-02`, fila 8 de `5-top-20-septiembre-6.md`): Modificación 8 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 6 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 > ✅ **Corregido antes de esta revisión** (`U5-01`, comprobado el 9 de septiembre contra `d940fe0`): Era cierto en 9ce2ac1 y hoy está corregido: js/app.js:536-543 define `sinTildes` (NFD + quita diacríticos + normaliza º/°) y js/app.js:637-645 la aplica a los dos lados y palabra por palabra (título + materia + ruta + grado). Medido hoy en el navegador con renderMissions('all', q): «multiplos» → 1 tarjeta, «matematicas» → 20,…
 

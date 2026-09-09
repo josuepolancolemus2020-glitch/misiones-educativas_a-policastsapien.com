@@ -51,6 +51,8 @@ respuesta abierta del alumno se guarda, se lee ni se corrige**.
 
 `P2-02` · crítica · error · esfuerzo horas · impacto educativo 5/5 · comercial 4/5
 
+> ✅ **Corregido por la primera lista de 20** (`P2-02`, fila 1 de `5-top-20-septiembre-6.md`): Modificación 1 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 6 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
 > ✅ **Corregido el 6 de septiembre de 2026.** En las siete misiones, el autopuntaje ya no entra
 > en el «Resultado» que lee `js/metas-registro.js`: el panel dice **«Resultado automático: N/70
 > puntos»** (N/60 en Detective de Bugs, que autopuntuaba 40) y debajo, aparte, qué falta por

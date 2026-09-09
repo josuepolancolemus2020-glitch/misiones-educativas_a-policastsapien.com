@@ -757,7 +757,10 @@
     "verificado": true,
     "revision": "Reproducido: XP ⭐0 → 8 → 16 con tres gradeEval sobre la misma Forma 1 ya generada (repro.json), y tres eventos `evaluacion`. El grep `if(total>=70){pts(8)` sin guarda da 66 misiones y ninguna con guarda por forma (fracciones.js:475 conceptual y :968 operativa). metas-registro.js:157-168 registra en cada llamada.",
     "refutado": false,
-    "correccion": "Ninguna; severidad media correcta. Solapa con P7-01 en el conteo de intentos, pero el XP inflado (Campeonísimo, foto de progreso) es problema propio."
+    "correccion": "Ninguna; severidad media correcta. Solapa con P7-01 en el conteo de intentos, pero el XP inflado (Campeonísimo, foto de progreso) es problema propio.",
+    "resuelto": true,
+    "motivo_resolucion": "Comprobado por el crítico de completitud el 9 de septiembre sobre d940fe0: el envoltorio de gradeEval en js/estrella-ganada.js:199-212 paga una sola vez (modificación 10 de la primera lista).",
+    "resuelto_por": "5-top-20-septiembre-6.md#10"
   },
   {
     "id": "P7-12",

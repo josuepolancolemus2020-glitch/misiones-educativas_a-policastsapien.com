@@ -109,6 +109,17 @@ con el motivo; `[FALSO]`, `[DUPLICADO]` y `[OPINIÓN]` sí caen como refutados.
 versión de `wf-revisar.js` se los pasaba dentro de los argumentos: era enorme y
 revisaba una copia, no lo que está en el repositorio.
 
+**El crítico de completitud no es un adorno: cambió la lista.** Corre después del juez
+y encontró que la lista incumplía su propia regla (una crítica fuera de las 20 y de
+los descartes), tres líneas mal citadas y cinco hallazgos con el estado desfasado.
+Lo que dice se pega entero al final de `5-top-20.md`, se actúa sobre lo que se
+puede el mismo día y lo demás se deja escrito como el primer paso de la tanda
+siguiente. Y ese primer paso ya está decidido: **releer contra el código de hoy
+los hallazgos que conservan el veredicto de la tanda anterior** —cruzar sus
+`archivos` con `git diff --stat <commit viejo>..<commit nuevo>` y pasar los que
+toquen un archivo cambiado por `wf-revisar.js`, un grupo por área—, antes de
+pedir otra lista.
+
 **El código que auditan tiene que estar quieto.** Durante la segunda tanda no
 se tocó el producto: las 20 modificaciones se aplicaron antes, y lo que salió
 de los auditores —tres críticos nuevos en la fusión de esta semana— se dejó

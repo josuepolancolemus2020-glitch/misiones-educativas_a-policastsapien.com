@@ -10,11 +10,12 @@ const DIR = '/home/user/misiones-educativas_a-policastsapien.com/_dev/auditoria-
 const [seccion, areas] = process.argv.slice(2);
 const p = DIR + '/' + seccion;
 let s = fs.readFileSync(p, 'utf8');
-if (s.includes('## Revisión adversarial del 9 de septiembre')) { console.log(seccion + ': ya anotada'); process.exit(0); }
+/* Si ya lleva la tabla, no se vuelve a pegar; las notas sí se completan (solo las que falten). */
+const yaTabla = s.includes('## Revisión adversarial del 9 de septiembre');
 
 const todos = {};
 for (const a of areas.split(',')) for (const h of JSON.parse(fs.readFileSync(`${DIR}/crudo/${a}-hallazgos.json`, 'utf8'))) todos[h.id] = h;
-const rev = id => { const h = todos[id]; return h && h.revisado_el === '2026-09-09' ? h : null; };
+const rev = id => { const h = todos[id]; return h && (h.revisado_el === '2026-09-09' || h.resuelto_por) ? h : null; };
 const corto = (t, n = 330) => String(t || '').replace(/^\[[A-ZÓ]+\]\s*/, '').replace(/\s+/g, ' ').slice(0, n).replace(/\s\S*$/, '') + (String(t || '').length > n ? '…' : '');
 
 let notas = 0, inline = 0;
@@ -22,7 +23,7 @@ const lineas = s.split('\n');
 const out = [];
 for (let i = 0; i < lineas.length; i++) {
   let l = lineas[i];
-  const esLineaId = /^`[TUPB]\d+-\d+`(?: \+ `[TUPB]\d+-\d+`)* ·/.test(l) || /^`[TUPB]\d+-\d+ \+ [TUPB]\d+-\d+(?: \+ [TUPB]\d+-\d+)*` ·/.test(l) || /^`[TUPB]\d+-\d+` y `[TUPB]\d+-\d+` ·/.test(l);
+  const esLineaId = /^\*\*\[[TUPB]\d+-\d+(?:\+[TUPB]\d+-\d+)*\] /.test(l) || /^`[TUPB]\d+-\d+`(?: \+ `[TUPB]\d+-\d+`)* ·/.test(l) || /^`[TUPB]\d+-\d+ \+ [TUPB]\d+-\d+(?: \+ [TUPB]\d+-\d+)*` ·/.test(l) || /^`[TUPB]\d+-\d+` y `[TUPB]\d+-\d+` ·/.test(l);
   if (esLineaId) {
     const ids = [...new Set(l.match(/[TUPB]\d+-\d+/g))];
     const hs = ids.map(rev).filter(Boolean);
@@ -31,7 +32,12 @@ for (let i = 0; i < lineas.length; i++) {
       l = l.replace('· ' + hs[0].severidad_original + ' ·', '· ' + hs[0].severidad + ' ·');
     }
     out.push(l);
+    /* Las notas que ya están debajo (de una pasada anterior) no se repiten. */
+    const yaNotado = new Set();
+    for (let j = i + 1; j < lineas.length && (lineas[j] === '' || lineas[j].startsWith('> ')); j++) for (const id of (lineas[j].match(/[TUPB]\d+-\d+/g) || [])) if (lineas[j].startsWith('> ')) yaNotado.add(id);
     for (const h of hs) {
+      if (yaNotado.has(h.id)) continue;
+      if (h.resuelto_por && !h.revisado_el) { out.push('', `> ✅ **Corregido por la primera lista de 20** (\`${h.id}\`, fila ${h.resuelto_por.split('#')[1]} de \`5-top-20-septiembre-6.md\`): ${corto(h.motivo_resolucion)}`); notas++; continue; }
       if (h.refutado) { out.push('', `> ✗ **Descartado en la revisión del 9 de septiembre** (\`${h.id}\`): ${corto(h.motivo_refutacion)}`); notas++; }
       else if (h.resuelto) { out.push('', `> ✅ **Corregido antes de esta revisión** (\`${h.id}\`, comprobado el 9 de septiembre contra \`d940fe0\`): ${corto(h.motivo_resolucion)}`); notas++; }
       else if (h.severidad_original && h.severidad_original !== h.severidad) { out.push('', `> ↕ **Severidad ajustada por el revisor del 9 de septiembre** (\`${h.id}\`: ${h.severidad_original} → ${h.severidad}): ${corto(h.correccion || h.revision, 260)}`); notas++; }
@@ -50,7 +56,7 @@ for (let i = 0; i < lineas.length; i++) {
 }
 s = out.join('\n');
 /* La tabla de la revisión, al final. */
-for (const a of areas.split(',')) {
+if (!yaTabla) for (const a of areas.split(',')) {
   const t = `${process.env.SP}/tabla-revision-${a}.md`;
   if (fs.existsSync(t)) s = s.replace(/\s*$/, '\n') + fs.readFileSync(t, 'utf8');
 }

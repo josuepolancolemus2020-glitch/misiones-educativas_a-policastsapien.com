@@ -39,6 +39,8 @@ son unas 1 500.
 
 `P9-01` · alta · incompleto · esfuerzo días · impacto educativo 4/5 · comercial 5/5
 
+> ✅ **Corregido por la primera lista de 20** (`P9-01`, fila 15 de `5-top-20-septiembre-6.md`): Modificación 15 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
 Las notas que la aplicación calcula no llegan a la boleta. El maestro las vuelve a teclear.
 
 El revisor corrigió un punto importante a favor del proyecto: **sí existe** un sitio donde el

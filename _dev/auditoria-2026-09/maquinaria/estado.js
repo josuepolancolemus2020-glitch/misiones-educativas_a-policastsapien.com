@@ -46,7 +46,7 @@ w('«Hallazgos» son los que siguen en pie: los que un revisor tumbó no se cuen
 w('');
 w('## Lo que queda');
 w('');
-w('1. **Nada de la auditoría.** Las 35 lentes corrieron y los ' + tot + ' hallazgos en pie tienen veredicto de revisor' + (tot - rev ? ' salvo ' + (tot - rev) : '') + '.');
+w('1. **Del encargo, nada.** Las 35 lentes corrieron y los ' + tot + ' hallazgos en pie tienen veredicto de revisor' + (tot - rev ? ' salvo ' + (tot - rev) : '') + '. Lo que sí queda, y lo señaló el crítico de completitud: **306 conservan el veredicto de la primera tanda, sobre `9ce2ac1`**, y en una muestra de 15 cinco estaban desfasados. Releerlos contra el código de hoy —los que toquen un archivo cambiado desde `9ce2ac1`, con `git diff --stat`— es lo primero de la siguiente tanda; hasta entonces, la columna «ya corregidos» es un piso, no una cuenta cerrada.');
 w('2. La lista de las 20 modificaciones siguientes está en `5-top-20.md`; la anterior, ya ejecutada, en `5-top-20-septiembre-6.md`.');
 w('3. Lo que los revisores echaron en falta —problemas que vieron mientras revisaban y que ningún auditor había escrito— está en `crudo/<área>-echados-en-falta.json`; no son hallazgos con evidencia completa y no entran en los conteos.');
 w('');

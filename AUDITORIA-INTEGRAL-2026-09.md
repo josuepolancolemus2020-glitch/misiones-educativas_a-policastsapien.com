@@ -21,8 +21,8 @@ Este archivo es el índice y el resumen. El detalle está en `_dev/auditoria-202
 |---|---|
 | diez minutos | este resumen, y la tabla de [`5-top-20.md`](_dev/auditoria-2026-09/5-top-20.md) |
 | una tarde | las once secciones, en el orden de la tabla de abajo |
-| ganas de arreglar algo hoy | las diecisiete «de horas» de [`5-top-20.md`](_dev/auditoria-2026-09/5-top-20.md), empezando por la 1 |
-| que decidir si esto se vende | [`4-producto.md`](_dev/auditoria-2026-09/4-producto.md), [`3b`](_dev/auditoria-2026-09/3b-ux-docente-familia-direccion.md) (el maestro, la familia y la dirección) y las modificaciones 11, 13 y 19 de la lista nueva |
+| ganas de arreglar algo hoy | las dieciocho «de horas» de [`5-top-20.md`](_dev/auditoria-2026-09/5-top-20.md), empezando por la 1 y la 2 |
+| que decidir si esto se vende | [`4-producto.md`](_dev/auditoria-2026-09/4-producto.md), [`3b`](_dev/auditoria-2026-09/3b-ux-docente-familia-direccion.md) (el maestro, la familia y la dirección) y las modificaciones 9, 12 y 14 de la lista nueva |
 
 ---
 
@@ -158,6 +158,11 @@ una no. Con este molde, doscientas misiones son 330 000 líneas duplicadas.
   lista, insertar uno «en su lugar» corre los números y la falta, la nota o el pago del otro equipo
   caen en otro niño, sin ruido, hasta el informe que firma la madre. Están en
   [`1d-tecnica-integridad-movil.md`](_dev/auditoria-2026-09/1d-tecnica-integridad-movil.md).
+
+  ⚠️ **Y del problema 1 queda una puerta abierta que la primera lista dio por cerrada**, y que
+  encontró el crítico de completitud: calificar la Evaluación en blanco enseña «Respuesta esperada»
+  en cada ítem, y copiarlo y recalificar la misma Forma da 75/100 **sin `pauta_vista` ni aviso de
+  práctica** (P7-01, reproducido dos veces sobre `d940fe0`). Es la fila 1 de la lista nueva.
 - **No existe la escuela como entidad**, ni cuenta de alumno, ni sesión revocable, ni respaldo, ni
   política de retención, ni aviso de privacidad —con datos de menores en la nube—. La licencia es
   ambigua (ISC declarado, sin `LICENSE` ni ©) y el alojamiento prohíbe en sus términos el software
@@ -251,36 +256,39 @@ cuando lo hay—. Salió de tres priorizadores independientes (impacto educativo
 comercial, menor esfuerzo), un juez con puntaje explícito y un crítico de completitud; se juzga
 contra `d940fe0` con la primera lista puesta, y los 414 hallazgos que la sostienen tienen
 revisión adversarial. **El orden es por puntaje, no por urgencia**: de las tres críticas de la
-fusión entre equipos, la que se cierra en horas es la 1 y las dos de días son la 20. ⚠️ marca las
-seis que chocan con una normativa del creador.
+fusión entre equipos, la que se cierra en horas es la 2 y las dos de días son la 20. ⚠️ marca las
+cinco que chocan con una normativa del creador.
 
 | # | modificación | esfuerzo | puntaje | hallazgos |
 |---|---|---|---|---|
-| 1 | Cerrar sesión no borra el aula hasta que la nube confirme, y el chip dice cuándo habló con ella por última vez | horas (1 d) | 8,0 | T11-01, T11-11, T11-12 |
-| 2 | El service worker llega también por el QR de la ficha, el precache pesa lo que la portada pinta, y el teléfono dice qué versión tiene | horas (1 d) | 7,0 | T7-03, T5-09, T7-02, T5-05… |
-| 3 | Al calificar, el resultado sale a la vista; calificar en blanco no da la estrella, y generar el examen no lanza confeti | horas (1 d) | 7,0 | U6-02, P4-12, U8-11 |
-| 4 | Estadísticas y sus tres lectores dicen la verdad: la pauta descuenta, «sexto 1» es sexto, y la prueba de Español de Fin de Grado se llama por su nombre ⚠️ | horas (1 d) | 7,0 | U5-02, T11-10, P8-07 |
-| 5 | Notas SACE no corrige en silencio: fuera de rango se ve en rojo, «no presentó» existe, y el salto automático no se come cifras | horas (1 d) | 7,0 | U10-01 |
-| 6 | El botón «atrás» del teléfono vuelve a la vista anterior en vez de cerrar la aplicación | horas (1 d) | 7,0 | U13-01 |
-| 7 | Segunda tanda de erratas y topes: las siete filas de contenido que quedaron, nueve cifras para 4º, la pista que regala la respuesta y la medalla de un solo terreno | horas (1 d) | 6,0 | P10-03, P10-06, P10-08, P10-09… |
-| 8 | La puerta del maestro el primer día: tres pasos arriba, el código de aula solo cuando hay alumnos, el kit de 60 minutos a un toque y un botón para recomendar a un colega | horas (1 d) | 6,0 | U10-02, U10-03, U10-08, U10-12… |
-| 9 | «Clasifica» se hace con el dedo y con el teclado en las cinco misiones que lo tienen con arrastre HTML5 | horas (1 d) | 6,0 | U7-03 |
-| 10 | Textos y botones que mienten o hablan de ratón, corregidos en lote sobre las 74 misiones | horas (1 d) | 6,0 | U6-10, U4-08, U5-12, U8-08… |
-| 11 | Asignar una misión al grupo y ver quién la hizo y quién no, con «pedirla por WhatsApp» a los que faltan | días (5 d) | 5,0 | P5-12, P8-08, P9-02, B4-03… |
-| 12 | Seguridad de un día: `esc()` donde el texto del maestro va a innerHTML, alta sin fuga de correos, un freno de login que no bloquea al dueño y un freno por clave de familia que no castigue a toda la escuela | horas (1 d) | 5,0 | T4-03, T2-08, T3-10, T4-05… |
-| 13 | Eliminar lo muerto, las puertas rotas y las cifras viejas: los 13 QR que faltan, `mision.html`, el enlace a `panel-docente`, 20 MB de PNG, los kits internos, el selector de países y los «57 misiones» ⚠️ | horas (1 d) | 5,0 | U10-07, U12-06, T3-07, P7-10… |
-| 14 | La familia no lee «¡Listo, asiento apartado!» si la respuesta no entró, y una clave mal escrita no pisa la buena ni se vuelve un segundo hijo | horas (1 d) | 5,0 | U11-01, U11-11 |
-| 15 | Accesibilidad de horas: contraste de marca, foco visible, flechas en la barra de secciones, letra grande que se recuerda y alcanza a las pestañas, y sin confeti para quien lo pide ⚠️ | horas (1 d) | 5,0 | T6-04, T6-05, T6-06, T6-08… |
-| 16 | La pestaña 🎬 Videos solo se muestra cuando hay algo que ver, y el catálogo local deja de estar vacío ⚠️ | horas (1 d) | 5,0 | U5-09, U6-04, U7-07 |
-| 17 | Comunicados con «Mandar por WhatsApp», un toast que no miente sin señal, y ni una palabra de programador delante del maestro | horas (1 d) | 5,0 | U10-05, U10-06 |
-| 18 | La estrella y el XP se ganan también en el Quiz, en la Constancia y en la portada: con 0 de 9 no hay confeti, la Constancia dice qué se dominó, y abrir una misión no regala XP | días (3 d) | 4,5 | U8-01, U8-04, U5-03, P6-11… |
-| 19 | Lo que el alumno hace llega entero al maestro —por ítem, con tiempo, con la lectura y el quiz del video— y el proyecto empieza a saber qué se usa y qué se rompe ⚠️ | días (4 d) | 4,5 | P7-04, P7-08, P7-06, T11-09… |
+| 1 | Recalificar la misma Forma cuenta como pauta, y el selector de Formas y el botón Imprimir solo se ven con cuenta docente | horas (1 d) | 9,0 | P7-01, P7-03 |
+| 2 | Cerrar sesión no borra el aula hasta que la nube confirme, y el chip dice cuándo habló con ella por última vez | horas (1 d) | 8,0 | T11-01, T11-11, T11-12 |
+| 3 | El service worker llega también por el QR de la ficha, el precache pesa lo que la portada pinta, y el teléfono dice qué versión tiene | horas (1 d) | 7,0 | T7-03, T5-09, T7-02, T5-05… |
+| 4 | Al calificar, el resultado sale a la vista; calificar en blanco no da la estrella, y generar el examen no lanza confeti | horas (1 d) | 7,0 | U6-02, P4-12, U8-11 |
+| 5 | Estadísticas y sus tres lectores dicen la verdad: la pauta descuenta, «sexto 1» es sexto, y la prueba de Español de Fin de Grado se llama por su nombre ⚠️ | horas (1 d) | 7,0 | U5-02, T11-10, P8-07 |
+| 6 | Notas SACE no corrige en silencio: fuera de rango se ve en rojo, «no presentó» existe, y el salto automático no se come cifras | horas (1 d) | 7,0 | U10-01 |
+| 7 | El botón «atrás» del teléfono vuelve a la vista anterior en vez de cerrar la aplicación | horas (1 d) | 7,0 | U13-01 |
+| 8 | Segunda tanda de erratas y topes: las siete filas de contenido que quedaron, nueve cifras para 4º, la pista que regala la respuesta y la medalla de un solo terreno | horas (1 d) | 6,0 | P10-03, P10-06, P10-08, P10-09… |
+| 9 | La puerta del maestro el primer día: tres pasos arriba, el código de aula solo cuando hay alumnos, el kit de 60 minutos a un toque y un botón para recomendar a un colega | horas (1 d) | 6,0 | U10-02, U10-03, U10-08, U10-12… |
+| 10 | «Clasifica» se hace con el dedo y con el teclado en las cinco misiones que lo tienen con arrastre HTML5 | horas (1 d) | 6,0 | U7-03 |
+| 11 | Textos y botones que mienten o hablan de ratón, corregidos en lote sobre las 74 misiones | horas (1 d) | 6,0 | U6-10, U4-08, U5-12, U8-08… |
+| 12 | Asignar una misión al grupo y ver quién la hizo y quién no, con «pedirla por WhatsApp» a los que faltan | días (5 d) | 5,0 | P5-12, P8-08, P9-02, B4-03… |
+| 13 | Seguridad de un día: `esc()` donde el texto del maestro va a innerHTML, alta sin fuga de correos, un freno de login que no bloquea al dueño y un freno por clave de familia que no castigue a toda la escuela | horas (1 d) | 5,0 | T4-03, T2-08, T3-10, T4-05… |
+| 14 | Eliminar lo muerto, las puertas rotas y las cifras viejas: los 13 QR que faltan, `mision.html`, el enlace a `panel-docente`, 20 MB de PNG, los kits internos, el selector de países y los «57 misiones» ⚠️ | horas (1 d) | 5,0 | U10-07, U12-06, T3-07, P7-10… |
+| 15 | La familia no lee «¡Listo, asiento apartado!» si la respuesta no entró, y una clave mal escrita no pisa la buena ni se vuelve un segundo hijo | horas (1 d) | 5,0 | U11-01, U11-11 |
+| 16 | Accesibilidad de horas: contraste de marca, foco visible, flechas en la barra de secciones, letra grande que se recuerda y alcanza a las pestañas, y sin confeti para quien lo pide ⚠️ | horas (1 d) | 5,0 | T6-04, T6-05, T6-06, T6-08… |
+| 17 | La pestaña 🎬 Videos solo se muestra cuando hay algo que ver, y el catálogo local deja de estar vacío ⚠️ | horas (1 d) | 5,0 | U5-09, U6-04, U7-07 |
+| 18 | Comunicados con «Mandar por WhatsApp», un toast que no miente sin señal, y ni una palabra de programador delante del maestro | horas (1 d) | 5,0 | U10-05, U10-06 |
+| 19 | La estrella y el XP se ganan también en el Quiz, en la Constancia y en la portada: con 0 de 9 no hay confeti, la Constancia dice qué se dominó, y abrir una misión no regala XP | días (3 d) | 4,5 | U8-01, U8-04, U5-03, P6-11… |
 | 20 | La guarda anti-pérdida deja de deshacer los borrados legítimos, la fusión no cambia a un niño por otro, y el almacén lleno avisa en vez de callar ⚠️ | días (3 d) | 4,0 | T11-02, T11-03, T11-05, T2-03… |
 
-Diecisiete se hacen en horas y tres en días. Lo que **no entró** y por qué —las que empatan con la
-última, la nube incremental, la portada por rol, la retroalimentación al fallar, el panel de
-Dirección con cifras, el III Ciclo de Matemáticas, el motor único— está al final de esa misma
-página, cada una con su puntaje.
+Dieciocho se hacen en horas y dos en días. **La fila 1 la puso el crítico de completitud**, que corre
+después del juez contra el encargo: la lista incumplía su propia regla —la crítica P7-01, recalificar
+la misma Forma con las respuestas a la vista, no estaba ni en las 20 ni en los descartes—; se
+reprodujo con guion y entró, y salió la que menos puntuaba sin crítico. Lo que **no entró** y por
+qué —esa, las que empatan con la última, la nube incremental, la portada por rol, la retroalimentación
+al fallar, el panel de Dirección con cifras, el III Ciclo de Matemáticas, el motor único— está al
+final de esa misma página, cada una con su puntaje; y el veredicto del crítico, entero, también.
 
 ---
 
@@ -353,7 +361,9 @@ correr.** Lo que las lentes nuevas trajeron, y que las viejas no podían ver:
   pantallas táctiles, y las de accesibilidad no incluyen ningún lector de pantalla real.
 - **Dos fechas conviven en el informe.** Las secciones del 28 de agosto y las del 9 de septiembre
   miden códigos distintos, y una cifra de las primeras puede haber cambiado; donde se comprobó, la
-  nota debajo del hallazgo lo dice.
+  nota debajo del hallazgo lo dice. **306 de los 414 hallazgos conservan el veredicto de agosto**
+  sin releerse contra el código de hoy: en una muestra de 15, el crítico encontró cinco con el
+  estado desfasado. Releerlos es lo primero de la siguiente tanda (el guion está en `5-top-20.md`).
 - **F.A.R.O.**, la aplicación privada del administrador, vive en otro repositorio y no se auditó.
 - **No hay telemetría de uso en el producto**, así que ninguna afirmación sobre qué herramientas se
   usan y cuáles no está medida: son juicios a partir del código y del contexto del aula, y están

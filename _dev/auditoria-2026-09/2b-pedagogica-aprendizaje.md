@@ -50,6 +50,10 @@ alumno note su mejora. Es la única pieza con progresión real por grado.
 
 `P7-01 + P4-01 + P7-11` · crítica · error · esfuerzo días · impacto educativo 5/5 · comercial 4/5
 
+> ✅ **Corregido por la primera lista de 20** (`P4-01`, fila 2 de `5-top-20-septiembre-6.md`): Modificación 2 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
+> ✅ **Corregido por la primera lista de 20** (`P7-11`, fila 10 de `5-top-20-septiembre-6.md`): Comprobado por el crítico de completitud el 9 de septiembre sobre d940fe0: el envoltorio de gradeEval en js/estrella-ganada.js:199-212 paga una sola vez (modificación 10 de la primera
+
 Reproducido con Playwright sobre Fracciones: primer panel «Resultado automático: 0/100», la
 pantalla lista «Revisar. Respuesta esperada: unitaria» ítem por ítem, se copian las respuestas y
 el segundo panel dice «100/100». Se registraron dos eventos con la misma forma, y la llamada a la
@@ -76,6 +80,8 @@ calificar, y cada recalificación por encima de 70 regala ocho puntos de XP en 3
 ### La identidad del alumno funde a dos niños y parte a uno en tres
 
 `P7-05` · crítica · error · esfuerzo días · impacto educativo 5/5 · comercial 4/5
+
+> ✅ **Corregido por la primera lista de 20** (`P7-05`, fila 4 de `5-top-20-septiembre-6.md`): Modificación 4 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 El modal pide nombre, grado y escuela como texto libre, y el número de lista es **opcional**.
 
@@ -113,6 +119,8 @@ La investigación respalda la prioridad: la retroalimentación elaborada tiene u
 ### La pantalla avanza sola antes de que se pueda leer la corrección
 
 `P4-03` · alta · error · esfuerzo días
+
+> ✅ **Corregido por la primera lista de 20** (`P4-03`, fila 14 de `5-top-20-septiembre-6.md`): Modificación 14 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 6 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 > ✅ **Corregido el 6 de septiembre de 2026.** El quiz y el «Completa» ya no avanzan solos: la
 > corrección se queda en pantalla y el alumno pasa con **▶ Siguiente**, el patrón que
@@ -278,6 +286,8 @@ cambia: convierte el catálogo en un plan de trabajo.
 
 `P6-01` · alta · error · esfuerzo días
 
+> ✅ **Corregido por la primera lista de 20** (`P6-01`, fila 10 de `5-top-20-septiembre-6.md`): Modificación 10 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 8 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
+
 Cada misión lleva la cuenta de qué ya pagó XP, pero **no la guarda**. Al recargar, el registro
 vuelve a vacío y las mismas acciones vuelven a pagar. Medido: 13 puntos, recargar, voltear las
 mismas catorce tarjetas, 56 puntos, dos logros y una constancia del 28 %.
@@ -288,6 +298,8 @@ la nube**, así que el maestro lo ve. Pasa en las 64 misiones con XP.
 ### En un teléfono compartido, el segundo alumno hereda el progreso del primero
 
 `P6-02` · alta · error · esfuerzo días
+
+> ✅ **Corregido por la primera lista de 20** (`P6-02`, fila 4 de `5-top-20-septiembre-6.md`): Modificación 4 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 El progreso de la misión vive en una llave sin nombre de alumno. Al pulsar «Cambiar alumno» solo
 cambia el nombre de la constancia. Medido: Ana juega, Bruno entra, y el reporte de WhatsApp de
@@ -378,6 +390,8 @@ mínimo: donde ya hay casilla, basta con registrar lo escrito y el autopuntaje a
 ### El antitrampa protege el camino que nadie usa
 
 `P7-02` · alta · error · esfuerzo horas
+
+> ✅ **Corregido por la primera lista de 20** (`P7-02`, fila 2 de `5-top-20-septiembre-6.md`): Modificación 2 de la lista del 6 de septiembre (5-top-20-septiembre-6.md), ✅ corregida el 7 de septiembre de 2026; el bloque de esa fila dice qué cambió y cómo se
 
 El registro envuelve las funciones de **imprimir** la pauta y pinta un aviso junto a la nota. Pero
 el alumno con un teléfono no imprime: toca «Ver Pauta», presente en las 66 misiones, que muestra

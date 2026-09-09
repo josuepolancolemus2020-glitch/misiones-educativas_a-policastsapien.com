@@ -319,6 +319,8 @@ Los cinco problemas de fondo:
 
 **[U13-06] Al fallar, el quiz solo dice «Incorrecto» y la corrección queda debajo de tres botones** — media · incompleto · semanas · impacto educativo 4/5 · impacto comercial 2/5
 
+> ↕ **Corrección del crítico de completitud (9 de septiembre):** no es verdad que «ningún banco trae porque/explicacion». 21 misiones traen un campo `feedback` por ítem —124 explicaciones escritas— y seis más usan `exp` (P4-02, en `2b`); lo que falta es que el motor lo pinte al fallar, no escribir las ~600 desde cero. Este auditor buscó otro nombre de campo.
+
 - **Qué pasa.** En Los Adjetivos (360×640), tras elegir a) y «Verificar», «Incorrecto. Revisa la respuesta correcta.» aparece DESPUÉS de «✅ Verificar» (y=298), «▶ Siguiente» (y=301, al lado) y «🔄 Reiniciar Quiz» (y=349, destructivo); la opción buena solo se marca con la clase `correct`, sin explicación; flota un «🗂️ →» sin rótulo (y=504) que salta a otra sección. Los tres botones están visibles desde antes de contestar. La cadena vive en 64 archivos `misiones/*/js/*.js`; los 16 archivos con `porque:` son texto de preguntas, no campos de explicación: ningún banco trae `porque`/`explicacion`.
 - **Evidencia.** Captura `F05-quiz-feedback-mal-360.png`; `b3-feedback-360.js`, `r2-mision.js`.
 - **Por qué importa.** Es el momento en que se aprende; hoy el niño solo ve que se equivocó, no por qué. «Predice» —la otra actividad— sí lo explica, y las personas de la primera corrida la nombraron como la mejor retroalimentación.
