@@ -421,13 +421,39 @@ el trabajo del curso pasado**. No lo pierde —los datos siguen ahí—, pero es
 
 Lo evita `.github/workflows/no-dormir-supabase.yml` con una lectura **cada
 tres días**. Tres y no siete a propósito: con siete, una sola ejecución que se
-retrase —GitHub retrasa los `schedule`— ya deja pasar el plazo. La petición va
-a la raíz de la API REST: no toca ninguna tabla, no escribe nada, y la clave
-es la misma publicable que ya va en el repositorio, **leída de
-`js/metas-docente-sync.js`** para que no haya dos sitios que digan lo mismo.
-Y **falla a propósito** si la nube no contesta bien: enterarse por un correo
-del CI cuesta un minuto; enterarse en febrero, con el maestro delante, cuesta
-su confianza.
+retrase —GitHub retrasa los `schedule`— ya deja pasar el plazo. La dirección y
+la clave se **leen de los archivos del repositorio** (`js/metas-docente-sync.js`
+y `js/metas-sugerencias.js`) para que no haya dos sitios que digan lo mismo. Y
+**falla a propósito** si la nube no contesta bien: enterarse por un correo del
+CI cuesta un minuto; enterarse en febrero, con el maestro delante, cuesta su
+confianza.
+
+⚠️ **La petición va a `/auth/v1/health`, NO a la raíz de la API REST**, y la
+diferencia no es de estilo: `/rest/v1/` contesta **401 «Secret API key
+required»** a cualquier clave publicable —esa puerta pide clave secreta, a
+propósito— y **una clave secreta no puede vivir en un repositorio público**. La
+salud del servicio de cuentas sí abre con la publicable, va con la cabecera
+`apikey` (la puerta de entrada la exige en todo), no toca ninguna tabla, no
+devuelve un dato de nadie, y basta: lo que evita la pausa es que la petición
+**llegue al proyecto**.
+
+⚠️ **Y se tocan las DOS nubes**, no una. La de M.E.T.A.S lleva las aulas del
+maestro; la de F.A.R.O es por donde salen las **sugerencias que escriben los
+alumnos** y por donde entran los **videos de las misiones**. Si esa segunda se
+duerme, el alumno escribe su sugerencia, se queda en la cola y nadie la lee
+nunca. Se toca desde aquí porque es desde aquí desde donde se la llama, aunque
+su panel viva en otro repositorio.
+
+⚠️ **Esto se publicó el 8 de septiembre sin poder probarse y estuvo roto tres
+días.** El proxy de las sesiones de Claude Code **bloquea también el dominio de
+Supabase**, así que no había forma de comprobarlo desde aquí; se dio por bueno
+y la primera ejecución de verdad —lanzada a mano el 9 de septiembre— falló, y
+las dos siguientes también, hasta imprimir el cuerpo de la respuesta y leer
+«Secret API key required». Habría seguido fallando cada tres días, **sin
+despertar nada**, hasta febrero. La lección, y vale para todo lo que este
+entorno no alcanza: **lo que no se puede probar aquí se lanza a mano en GitHub
+y se mira el resultado** —`workflow_dispatch` está puesto justo para eso—, y
+mientras no se haya visto en verde, no está hecho.
 
 ⚠️ **Lo que esto NO resuelve:** GitHub apaga los `schedule` de un repositorio
 que lleve **60 días sin un solo empujón**. Hoy se publica casi a diario, así
@@ -2062,8 +2088,9 @@ andamio de los juegos 3D, el aparato de videos y la barra de secciones.
 4. ⚠️ **Una cuadrícula no se convierte en cuarenta paradas.** La sopa trae
    **144 celdas**: tabular 144 veces para cruzar una actividad no es
    accesibilidad, es una trampa. Por encima de 40 hermanos iguales se deja
-   fuera. El memorama (16) y el crucigrama (16) sí entran: esas son las
-   opciones del juego.
+   fuera —y la sopa, además, se saca **por su nombre**, porque tiene teclado
+   propio (más abajo)—. El memorama (16) y el crucigrama (16) sí entran:
+   esas son las opciones del juego.
 5. **Lo que ya CONTIENE un control no se toca.** El velo que cierra el panel
    de logros lleva dentro sus botones: hacerlo parada añade un salto que no
    hace falta y duplica el del botón que ya está dentro.
@@ -2080,13 +2107,71 @@ llevan `transition: all .2s`, así que preguntar en el instante de enfocar
 devuelve el valor VIEJO. Eso dio dos falsas alarmas seguidas: una con el
 fondo de la barra de secciones y otra con este anillo.
 
+### La sopa de letras: una parada, y las flechas por dentro
+
+Era el único agujero que esta normativa dejaba escrito y sin tapar. Son **65
+misiones del alumno y 8 del maestro**, 144 celdas cada una, donde el alumno que
+no puede arrastrar podía leer la teoría entera y **no encontrar una sola
+palabra**.
+
+Lo que hizo falta no fue inventar un juego nuevo: **el juego con teclas ya
+existía y nadie lo sabía**. El `pointerup` de las 65 del alumno tiene una rama
+para cuando el dedo NO se movió —toca una celda, toca la otra, y la palabra
+queda entre las dos—, y las 8 del maestro no tienen arrastre ninguno: son dos
+toques. Así que el teclado **no imita el arrastre**, que es lo que con teclas no
+se puede hacer: hace los mismos dos toques, y por eso el alumno con teclado
+juega al mismo juego que su compañero y no a una versión de repuesto.
+
+Vive en los **mismos dos archivos compartidos** (`js/teclado-actividades.js` y
+`css/teclado-actividades.css`), así que **no se tocó ni una de las 73 misiones**.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. ⚠️ **UNA parada de tabulador, no 144.** Es la regla 4 de arriba cumplida, no
+   saltada: al tabulador se entra una vez y se sale una vez; por dentro se anda
+   con las flechas. La sonda lo cuenta tabulando de verdad.
+2. **Las flechas NO deslizan la página** (`preventDefault`). Es la misma regla
+   de la barra espaciadora: el alumno está mirando la cuadrícula y una flecha
+   que además mueve la pantalla le quita de la vista justo lo que lee.
+3. ⚠️ **El cursor sobrevive al repintado.** Las dos variantes rehacen la
+   cuadrícula entera —la del maestro, en CADA toque—. Sin devolver el foco a la
+   misma casilla, se cae al `<body>` en cuanto marca la primera letra y el
+   alumno se queda fuera de la sopa sin saber por qué: un teléfono trabado.
+4. **El principio se puede soltar** (Esc, o Enter otra vez en la misma celda).
+   Con el dedo se suelta tocando fuera; con el teclado, sin esto, una marca
+   puesta por error no se quita.
+5. ⚠️ **El estado es UNO, el del juego.** El principio marcado se guarda en la
+   variable de la propia misión (`sopaFirstClickCell`), no en una nuestra; y en
+   las del maestro, que la guardan donde desde fuera no se ve, **soltar es
+   volver a tocar esa celda**. Si no, el que marca con el dedo y remata con la
+   tecla —lo normal con teclado y pantalla táctil— acaba con dos principios
+   marcados y ninguna palabra encontrada. Costó un fallo de sonda: Esc borraba
+   la marca de aquí y dejaba la de allá, y la palabra siguiente no salía nunca.
+6. **Y se dice cómo se juega.** Es la regla de la barra de secciones: «se podía
+   deslizar desde siempre; lo que faltaba era decirlo». La ayuda de teclas sale
+   **solo cuando la cuadrícula tiene el foco**, para no robarle pantalla al que
+   juega con el dedo.
+
+⚠️ **Y si una misión no trae con qué rematar la palabra, ahí no se pone
+teclado.** Es la lección de `centena.js`: una parada de tabulador que promete y
+no cumple es peor que no poder llegar.
+
+⚠️ **De paso salió una avería que llevaba ahí desde el principio**, y la cazó la
+sonda nueva: el marcado general agrupa por la CLASE del elemento, así que en
+cuanto el alumno encontraba una palabra sus celdas pasaban a `sopa-c hallada`,
+formaban un grupo de cuatro —por debajo del tope de 40— y se volvían **cuatro
+paradas de tabulador que no llevaban a ninguna parte**. Estaba pasando en las 8
+misiones del maestro. Por eso la sopa se saca **por su nombre** (`#sopaGrid`) y
+no por el tope.
+
+⚠️ **Y la sonda vieja no abría la sopa.** Buscaba la sección por su nombre
+escrito a mano, `s-sopa`, y las 8 del maestro la llaman `sec-sopa`; como `go()`
+apaga todas las secciones, dejaba la página **en blanco** y la comprobación
+pasaba igual, midiendo otra cosa. Ahora la sección se busca por **dónde vive la
+cuadrícula**.
+
 **Lo que NO se hizo, y por qué:**
 
-- **La sopa de letras sigue sin teclado.** No es un descuido de esta
-  normativa: se juega **arrastrando con eventos de puntero** sobre la
-  cuadrícula, no con `click` por celda, así que necesita su propio diseño
-  —tabulador que entra una vez, flechas dentro, Enter para marcar el
-  principio y el final—. Está dicho y sin hacer.
 - **El control de tamaño de letra para la aplicación del maestro.** Con el
   zoom desbloqueado ya tiene una salida, y el control necesita su propia
   pasada. Se probaron tres caminos y **dos se descartan medidos**: el
@@ -2108,7 +2193,10 @@ las dos piezas. Y en el navegador hace lo que de verdad importa: **clasifica
 una ficha sin tocar la pantalla** —tabulando de verdad, no llamando a
 `focus()`—, comprueba que Enter la selecciona, que la barra espaciadora la
 deja en su columna **y no desliza la página**, que el foco **se ve** (midiendo
-después de la transición), y que la sopa **no** se haya vuelto 144 paradas.
+después de la transición), y que la sopa **no** se haya vuelto 144 paradas —y
+que, siendo una sola, se pueda **encontrar una palabra entera sin tocar la
+pantalla**, en las dos variantes: la del alumno y la del maestro, que por
+dentro no juegan igual—.
 
 ## Normativa: la barra de secciones va ARRIBA, y no se va
 

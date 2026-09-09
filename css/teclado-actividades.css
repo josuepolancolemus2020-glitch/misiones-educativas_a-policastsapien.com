@@ -46,3 +46,45 @@
 @media (forced-colors: active){
   .ta-tecla:focus-visible{ outline: 3px solid Highlight; outline-offset: 2px; box-shadow: none; }
 }
+
+/* ============================================================
+   La sopa de letras, sin el dedo
+   ------------------------------------------------------------
+   El JS de al lado hace de las 144 celdas UNA sola parada de
+   tabulador y anda por dentro con las flechas. Aquí va lo que sin
+   verse no sirve de nada: dónde está el cursor, y cómo se juega.
+   ============================================================ */
+
+/* El mismo doble anillo de arriba, y por la misma razón: encima de
+   una celda ya marcada —que va rellena del color de la misión— un
+   contorno de un solo color no se distingue. */
+#sopaGrid .sopa-cell:focus-visible,
+#sopaGrid .sopa-c:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px var(--card, #fff), 0 0 0 6px var(--pri, #1565c0);
+  position: relative;
+  z-index: 3;
+}
+#sopaGrid .sopa-cell:focus:not(:focus-visible),
+#sopaGrid .sopa-c:focus:not(:focus-visible){ box-shadow: none; }
+
+@media (forced-colors: active){
+  #sopaGrid .sopa-cell:focus-visible,
+  #sopaGrid .sopa-c:focus-visible{ outline: 3px solid Highlight; outline-offset: 2px; box-shadow: none; }
+}
+
+/* Regla 6: se dice cómo se juega, pero SOLO a quien está usando el
+   teclado. Con el dedo, tres renglones de instrucciones encima de la
+   sopa son tres renglones que le tapan la cuadrícula. */
+.sopa-teclas-ayuda{
+  display: none;
+  margin: .5rem 0 0;
+  padding: .45rem .6rem;
+  font-size: .82rem;
+  line-height: 1.35;
+  border-radius: 8px;
+  background: var(--card, #fff);
+  border: 2px solid var(--pri, #1565c0);
+  color: var(--tx, #1f2937);
+}
+#sopaGrid:focus-within + .sopa-teclas-ayuda{ display: block; }
