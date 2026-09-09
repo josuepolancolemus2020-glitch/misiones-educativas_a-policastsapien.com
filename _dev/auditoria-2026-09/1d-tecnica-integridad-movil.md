@@ -7,7 +7,7 @@ pasaron además por una segunda verificación independiente. La lente T6 (accesi
 propia sección (`1c-tecnica-acceso.md`) y no se repite aquí.
 
 Todo se juzgó contra `main` en `d940fe0` (9 de septiembre de 2026), con las 20 modificaciones
-de `5-top-20.md` ya aplicadas: entre ellas la fusión dato por dato entre equipos
+de `5-top-20-septiembre-6.md` ya aplicadas: entre ellas la fusión dato por dato entre equipos
 (`js/metas-fusion-aula.js`) y el service worker con dos cachés (`sw.js`, `CACHE_NAME` v197 +
 `CACHE_DATOS`). Las reproducciones de T11 se hicieron con una nube simulada compartida entre dos
 contextos de Playwright (`scratchpad/tecnica-acceso/T11/nube-falsa.js`); las de T7 con un
@@ -641,7 +641,7 @@ que hace permanente la mezcla (en T7-01) y la subida del aula entera tras una le
 ## Cobertura y límites
 
 - **Código auditado:** `main` en `d940fe0` (9 de septiembre de 2026), con las 20 modificaciones
-  de `5-top-20.md` ya aplicadas —la fusión dato por dato (`js/metas-fusion-aula.js`), el service
+  de `5-top-20-septiembre-6.md` ya aplicadas —la fusión dato por dato (`js/metas-fusion-aula.js`), el service
   worker con `CACHE_NAME` v197 y `CACHE_DATOS`, las letras alojadas—. Todo se juzgó contra ese
   código; los tres hallazgos críticos de T11 son consecuencias de la fusión que entró hoy y de la
   guarda que la precede, no restos de agosto.

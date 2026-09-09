@@ -302,6 +302,8 @@ propio auditor con guiones, y el revisor no las recalculó en todos los casos.
 
 ## Revisión adversarial del 9 de septiembre de 2026 (ux)
 
+Las notas «top-20 #N» de los veredictos apuntan a la lista del 6 de septiembre, ya ejecutada (`5-top-20-septiembre-6.md`); la lista vigente es `5-top-20.md`.
+
 Los 36 hallazgos de esta área que se quedaron sin revisor en la primera corrida pasaron el 9 de septiembre por un revisor adversarial, contra el código de ese día (`d940fe0`, con las 20 modificaciones ya aplicadas). Resultado: **27 siguen en pie** (8 con la severidad ajustada), **9 eran ciertos y ya están corregidos**, y **0 se cayeron**.
 
 ### Confirmados y ya corregidos

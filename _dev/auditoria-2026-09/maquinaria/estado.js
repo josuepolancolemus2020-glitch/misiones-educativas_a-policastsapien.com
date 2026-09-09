@@ -42,7 +42,7 @@ for (const [a, lentes] of Object.entries(LENTES)) {
 }
 w('| **total** | **' + nl + ' lentes** | **' + tot + '** | **' + rev + '** | **' + res + '** | **' + (tumb + desc) + '** | |');
 w('');
-w('«Hallazgos» son los que siguen en pie: los que un revisor tumbó no se cuentan aquí, pero no se borran —quedan en `crudo/<área>-hallazgos.json` con `refutado: true` y su motivo, o en `crudo/<área>-descartados.json` los de la segunda corrida— para que el creador vea qué se consideró y por qué se cayó. «Revisados» son los que pasaron por un revisor adversarial que intentó tumbarlos con el código delante. «Ya corregidos» son hallazgos que el revisor confirmó como ciertos en agosto y que el código de hoy corrige (`resuelto: true`, con `motivo_resolucion` que dice qué lo corrige).');
+w('«Hallazgos» son los que siguen en pie: los que un revisor tumbó no se cuentan aquí, pero no se borran —quedan en `crudo/<área>-hallazgos.json` con `refutado: true` y su motivo, o en `crudo/<área>-descartados.json` los de la segunda corrida— para que el creador vea qué se consideró y por qué se cayó. «Revisados» son los que pasaron por un revisor adversarial que intentó tumbarlos con el código delante. «Ya corregidos» son hallazgos ciertos que el código de hoy corrige (`resuelto: true`, con `motivo_resolucion` que dice qué lo corrige): los que el revisor del 9 de septiembre encontró corregidos al releerlos, y los que sostenían la primera lista de 20 —ya revisados el 6— y que su fila cerró del todo (`resuelto_por` apunta a la fila). Los que una fila cerró solo en parte siguen en pie.');
 w('');
 w('## Lo que queda');
 w('');
