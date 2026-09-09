@@ -97,11 +97,19 @@ entre el 13 y el 28 de agosto.~~
 
 **Corregido el 6 de septiembre** (punto 6 del top 20): dos cachés —una para el armazón, que se
 renueva, y otra para lo visitado, que no se toca— y el armazón precacheado desde la primera
-visita. La otra mitad, la del CDN, sigue pendiente.
+visita.
 
-Al lado, la otra mitad del mismo problema: **con el CDN caído la pantalla queda en blanco 12,6
+Al lado, la otra mitad del mismo problema: ~~**con el CDN caído la pantalla queda en blanco 12,6
 segundos**, medido en cuatro páginas. Abortando los recursos externos, 0,28 s. Y `padres.html`,
-que no tiene ninguna dependencia externa, pinta en **52 milisegundos**.
+que no tiene ninguna dependencia externa, pinta en **52 milisegundos**.~~
+
+**Corregido el 9 de septiembre** (punto 7 del top 20), y al volver a medirlo era peor de lo
+escrito: con el CDN **colgado** —que es lo que hace la señal de un pueblo, tragarse los paquetes
+sin contestar— la portada y una misión **no pintaron en dos minutos**. Los 12,6 s eran la red que
+acaba fallando; la que se queda colgada no tiene ese fondo. Hoy las tipografías viven en
+`css/vendor/fuentes/` y Font Awesome se fue de las 65 misiones —usaban **un** icono—: cero hojas
+de estilo externas en las 184 páginas, y la portada pinta en **428 ms** con el CDN igual de
+colgado.
 
 ### 4. La promesa «alineado al DCNB» no la sostiene el catálogo
 
@@ -178,7 +186,9 @@ La lista completa, con evidencia y con cómo comprobar cada una, está en
     alojamiento queda pendiente lo que es decisión del autor: mover el DNS fuera de GitHub Pages
 
 **Diez en días:** ~~cerrar «Ver Pauta»~~ · **hecho el 7 de septiembre** · ~~cerrar la escritura anónima a la nube~~ · **hecho el 7 de septiembre, SQL corrido y comprobado** · ~~una identidad de
-alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · que el maestro no pierda su trabajo · quitar el CDN del camino crítico ·
+alumno que no se funda~~ · **hecho el 7 de septiembre (falta la clave de familia)** · que el maestro no pierda su trabajo · ~~quitar el CDN del camino crítico~~ · **hecho el 9 de
+septiembre** — 81 páginas pedían las letras a Google y 65 bajaban Font Awesome entero por una
+flecha; con el CDN colgado no pintaban NUNCA, y ahora la portada pinta en 428 ms ·
 ~~subir la barra de secciones al principio~~ · **hecho el 7 de septiembre, en las 74 misiones** — y
 al medirlas antes salió que el hallazgo se quedaba corto: estaba fuera de la primera pantalla en
 74 de 74, y lo que costaba no era la distancia sino que `go()` salta al principio y deja la barra

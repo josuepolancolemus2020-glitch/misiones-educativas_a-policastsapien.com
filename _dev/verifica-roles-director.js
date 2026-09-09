@@ -46,7 +46,7 @@
      node _dev/verifica-roles-director.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 
@@ -208,7 +208,7 @@ function nube(estado) {
 /* Abre la app con la sesión del correo dado ya puesta y entra a Ajustes */
 async function abrirAjustes(ctx, correo) {
   const c = CUENTAS[correo];
-  const page = await ctx.newPage();
+  const page = await ctx.newPage(SIN_SW);
   await page.addInitScript(([cta, mail]) => {
     localStorage.setItem('METAS_DOCENTE_V1', JSON.stringify({
       codigo: cta.codigo, clave: 'clave-de-ensayo', nombre: cta.nombre,
@@ -231,7 +231,7 @@ const dialogoOk = async page => {
   const nav = await abrir();
   const estado = { llamadas: [], permisos: [], seq: 70, sinV2: false };
 
-  const ctx = await nav.newContext({ viewport: { width: 412, height: 915 } });
+  const ctx = await nav.newContext({ ...SIN_SW, viewport: { width: 412, height: 915 } });
   await ctx.route('**/rest/v1/**', nube(estado));
   await ctx.route('**/functions/v1/**', r => r.fulfill({ status: 200, body: '{}' }));
 

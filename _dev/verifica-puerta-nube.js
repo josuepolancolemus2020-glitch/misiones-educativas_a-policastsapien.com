@@ -34,7 +34,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 
 const RAIZ = path.resolve(__dirname, '..');
 const BASE = 'http://localhost:8123';
@@ -55,8 +55,8 @@ const fila = (id, extra) => Object.assign({
 }, extra || {});
 
 async function abrirConsulta(nav, filas, alBorrar) {
-  const ctx = await nav.newContext({ viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true });
-  const pg = await ctx.newPage();
+  const ctx = await nav.newContext({ ...SIN_SW, viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true });
+  const pg = await ctx.newPage(SIN_SW);
   await pg.route('**/rest/v1/rpc/**', async route => {
     const u = route.request().url();
     const fn = u.split('/rpc/')[1].split('?')[0];

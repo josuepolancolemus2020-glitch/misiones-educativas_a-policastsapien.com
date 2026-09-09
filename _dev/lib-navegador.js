@@ -57,4 +57,36 @@ async function abrir(opciones) {
   }
 }
 
-module.exports = { abrir };
+/* ============================================================
+   Y una segunda cosa que se abre aquí: la página SIN service worker.
+
+   Las sondas que fingen la nube con `page.route` tienen que abrirla así,
+   y no es una comodidad: es lo único que hace que comprueben lo que
+   dicen comprobar. Cuando el service worker toma el control de la
+   página —`sw.js` hace `skipWaiting()` y `clients.claim()`, así que lo
+   toma sin recargar— las peticiones pasan por él, y las que pasan por
+   él **`page.route` no las intercepta**: se van a la nube de verdad,
+   allí se quedan colgadas, y la sonda ve una pantalla que no se pinta
+   nunca. No dice «el service worker se me adelantó»; dice que la
+   pantalla está rota.
+
+   Estuvo tapado por un accidente, y por eso hay que dejarlo escrito: la
+   instalación del service worker pre-cacheaba dos direcciones de CDN
+   que en la sonda no contestan, así que tardaba lo suficiente en tomar
+   el control y a las sondas les daba tiempo de sobra. El 9 de
+   septiembre de 2026 esas dos direcciones se fueron —el CDN salió del
+   camino crítico— la instalación pasó a ser instantánea y
+   `verifica-convocatoria` se puso roja **sin que nada del producto
+   estuviera roto**. La otra mitad del aviso llevaba meses escrita en
+   CLAUDE.md: «lo que se le manda a la nube se comprueba ANTES de
+   recargar la página».
+
+   La que SÍ tiene que abrir con service worker es
+   `verifica-service-worker`, que es la que lo comprueba a él.
+
+   Uso:  const { abrir, SIN_SW } = require('./lib-navegador');
+         const page = await nav.newPage({ ...SIN_SW, viewport: {...} });
+   ============================================================ */
+const SIN_SW = { serviceWorkers: 'block' };
+
+module.exports = { abrir, SIN_SW };

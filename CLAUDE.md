@@ -95,6 +95,95 @@ node _dev/servidor-estatico.js        (en otra terminal)
 node _dev/verifica-service-worker.js
 ```
 
+## Normativa: ninguna hoja de estilo viene de otro país
+
+Una hoja de estilo **bloquea el pintado** hasta que llega. Si está en otro
+servidor y en otro país, lo que bloquea es la señal del aula.
+
+Medido el 9 de septiembre de 2026 con el CDN **colgado** —que es lo que hace
+la señal de un pueblo: no rechaza la conexión, se traga los paquetes y no
+contesta nunca—, antes de tocar nada:
+
+| página | primer pintado |
+|---|---|
+| la portada | **no pintó en 2 minutos** |
+| Las Fracciones | **no pintó en 2 minutos** |
+| Sólidos Geométricos, Fin de Grado 6º, una ficha del maestro | no pintaron en 20 s |
+| `padres.html`, que nunca pidió nada fuera | **88 ms** |
+
+Pantalla en blanco, no lenta: **blanca, y sin final**. `padres.html` decía
+dónde estaba el problema: sin CSS externo, 88 ms con el mismo CDN colgado.
+
+Venían de fuera **81 páginas** pidiendo Google Fonts —74 misiones y 8 fichas
+del maestro—, el `@import` de la primera línea de `css/app.css`, y **65
+misiones** bajando Font Awesome entero. Hoy: **cero**. Ni una hoja de estilo,
+ni un `preconnect`, ni un `@import` sale del sitio. La portada pinta en
+428 ms y una misión en 200, con el CDN igual de colgado.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **Las letras se alojan, no se cambian por `system-ui`.** Fredoka es la cara
+   de las misiones y Outfit la de la aplicación del maestro. Arreglar la
+   espera cambiando la letra habría arreglado el problema cambiando el
+   producto. Viven en `css/vendor/fuentes/`, con licencia SIL Open Font, que
+   es exactamente para esto.
+2. **Solo el subconjunto latino y el latin-ext**, y **cada `@font-face` con su
+   `unicode-range`**. El latino trae todo lo del español —tildes, ñ, ¿, ¡ y el
+   º de «6º-1»—; el latin-ext solo se baja en la página que lo necesita (la de
+   los continentes tiene una `ł` y una `ż`). Del CDN venían además el
+   cirílico, el griego, el hebreo y el vietnamita. Y por eso **la portada no
+   se trae las tres letras de las misiones**: no se baja letra que no se pinta.
+3. **`font-display: swap`, siempre.** El texto sale desde el primer momento
+   con la letra del sistema y cambia cuando llega la nuestra. El alumno con
+   mala señal **lee**; antes esperaba, y a veces para siempre.
+4. ⚠️ **Nunca un `@import` remoto.** Es lo peor de los dos mundos: bloquea el
+   pintado **y** va en cadena —el navegador tiene que bajar y leer `app.css`
+   entera antes de enterarse de que hace falta otra cosa, en otro servidor—.
+   Las letras van en su propio `<link>`, **antes** del CSS que las usa.
+5. **No se trae una biblioteca de iconos por un icono.** Las 65 misiones
+   bajaban los 102 KB de Font Awesome, del otro lado del mundo y bloqueando,
+   para pintar **uno**: la flecha de volver. Ahora es un SVG de cinco líneas
+   que hereda el color y el tamaño (`currentColor`, `1em`), así que el CSS de
+   las 65 no se tocó. La aplicación del maestro sí usa cuarenta iconos y se
+   queda con su Font Awesome **local**, que ya estaba; lo que se le quitó fue
+   la copia del CDN que cargaba **además**, una versión por detrás.
+
+⚠️ **Y en `sw.js` había una mentira que nadie podía ver:** pre-cacheaba la
+**CSS** de Google Fonts y nunca los `.woff2` de `fonts.gstatic.com`, así que
+sin señal la letra no llegaba igual. Al armazón se le suma solo **Outfit**,
+que es la letra de la portada —`index.html` sí abre sin señal la primera
+vez—; las de las misiones **no**, y no es un olvido: una misión que no se
+visitó en línea no está en la caché, así que guardarle la letra sería guardar
+la letra de una página que todavía no existe.
+
+**Lo que sí puede venir de fuera, y por qué.** Three.js en los 18 juegos 3D y
+MathJax en la misión de áreas del círculo: los dos son `<script>`, no hojas de
+estilo. Three.js lo carga el propio juego detrás de su telón, con su aviso de
+«hace falta internet la primera vez» y su normativa propia; MathJax va con
+`async`, que por definición no está en el camino crítico.
+
+**Y queda dicho lo que NO se tocó:** los 18 juegos 3D declaran `Fredoka` en su
+CSS y **nunca la han cargado** —llevan la letra del sistema desde siempre—. Se
+dejan como están: darles ahora la letra buena les mueve la maquetación, y esos
+paneles están medidos al píxel y tienen sonda propia.
+
+**Antes de publicar un cambio de las tipografías o de los enlaces de la
+cabecera:**
+
+```
+node _dev/servidor-estatico.js     (en otra terminal)
+node _dev/verifica-cdn-fuera.js
+```
+
+Lee **del archivo** las 184 páginas y las 82 hojas de estilo —abrirlas con
+Playwright no lo corre nadie— para lo que se multiplica al copiar una misión:
+que no se cuele una hoja de estilo externa, que quien pinta con una de las
+cuatro letras la enlace, y que la flecha de volver no traiga otra vez Font
+Awesome. Y abre tres con los tres servidores **colgados** —no abortados:
+abortar sería hacerle un favor al código viejo—: que pinten, que no salga ni
+una petición hacia ellos, que la letra que se ve sea la nuestra y salga del
+sitio, y que la flecha se vea y **se pueda tocar**.
+
 ## Normativa: el SQL de Supabase se pega en el chat, SIEMPRE
 
 Los archivos `SUPABASE-*.sql` —y los de `supabase/sql/` del proyecto de la
@@ -2707,6 +2796,18 @@ salen dos reglas:
   comentario de `camp-vivo.html` que cuenta que ahí **se quitó** el
   `user-scalable=no`. El sitio donde se explica por qué algo ya no está es
   justo donde ese algo sigue escrito.
+- ⚠️ **La sonda que finge la nube abre la página SIN service worker**
+  (`SIN_SW`, en `_dev/lib-navegador.js`). Cuando el service worker toma el
+  control —`sw.js` hace `skipWaiting()` y `clients.claim()`, así que lo toma
+  sin recargar—, las peticiones pasan por él, y las que pasan por él
+  **`page.route` no las intercepta**: se van a la nube de verdad, allí se
+  quedan colgadas, y la sonda ve una pantalla que no se pinta nunca. Estuvo
+  tapado por un accidente durante meses: la instalación pre-cacheaba dos
+  direcciones de CDN que en la sonda no contestan, así que tardaba lo
+  suficiente y a las sondas les daba tiempo. El 9 de septiembre de 2026 esas
+  dos direcciones se fueron y `verifica-convocatoria` se puso roja **sin que
+  nada del producto estuviera roto**. Son ocho sondas y ya lo llevan; la que
+  SÍ tiene que abrir con service worker es `verifica-service-worker`.
 - **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
   hasta que se compila la app de Android, así que darlo por fallo pintaba de
   rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le

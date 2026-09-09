@@ -43,7 +43,7 @@
      node _dev/verifica-buzon.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 const fs = require('fs');
 const path = require('path');
 
@@ -79,7 +79,7 @@ function nube(estado) {
 }
 
 async function nuevaPagina(browser, estado) {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 390, height: 844 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', nube(estado));
   page.on('dialog', d => d.accept());

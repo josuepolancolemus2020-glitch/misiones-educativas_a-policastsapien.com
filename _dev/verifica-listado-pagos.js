@@ -44,8 +44,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-let abrir;
-try { ({ abrir } = require('./lib-navegador')); }
+let abrir, SIN_SW;
+try { ({ abrir, SIN_SW } = require('./lib-navegador')); }
 catch (_) {
   console.error('✘ Falta Playwright. Instálalo con:\n' +
     '    npm i -D playwright && npx playwright install chromium');
@@ -135,7 +135,7 @@ async function mide(browser, cuantos, grados, secs, maxHojas, etiqueta) {
   const resp = respuestas(cuantos, grados, secs);
   const c = convocatoria(resp, pagosDe(resp));
 
-  const page = await browser.newPage();
+  const page = await browser.newPage(SIN_SW);
   const errores = [];
   page.on('pageerror', e => errores.push(e.message));
   await page.route('**/rest/v1/rpc/**', route => route.abort('failed'));   /* la nube no se toca */
@@ -172,7 +172,7 @@ async function mide(browser, cuantos, grados, secs, maxHojas, etiqueta) {
   fs.writeFileSync(archivo, salida.h);
   const pdf = path.join(TMP, base + '.pdf');
 
-  const hoja = await browser.newPage({ viewport: { width: ANCHO, height: ALTO } });
+  const hoja = await browser.newPage({ ...SIN_SW, viewport: { width: ANCHO, height: ALTO } });
   await hoja.emulateMedia({ media: 'print' });
   await hoja.goto('file://' + archivo);
   const lee = () => hoja.evaluate(() => {

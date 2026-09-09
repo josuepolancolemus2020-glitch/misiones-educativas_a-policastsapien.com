@@ -47,7 +47,7 @@
      node _dev/verifica-convocatoria.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const HOY = new Date(2026, 7, 8, 9, 0, 0);      /* sábado 8 de agosto de 2026 */
@@ -98,7 +98,7 @@ function nube(estado) {
 }
 
 async function nuevaPagina(browser, estado) {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 390, height: 844 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', nube(estado));
   return page;
@@ -266,7 +266,7 @@ async function pruebaCerrada(browser) {
 /* ══════════════ 5) Las cuentas del maestro ══════════════ */
 async function pruebaCuentas(browser) {
   console.log('\n── LAS CUENTAS DE LOS BUSES ──');
-  const page = await browser.newPage();
+  const page = await browser.newPage(SIN_SW);
   await page.clock.install({ time: HOY });
   /* La herramienta necesita adLps de registros-admin.js; se carga entera. */
   await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
@@ -314,7 +314,7 @@ async function pruebaCuentas(browser) {
    tiene que poder usarla igual. */
 async function pruebaPuerta(browser) {
   console.log('\n── LA PUERTA EN COMUNICADOS ──');
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 390, height: 844 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', route => route.abort('failed'));  /* sin nube */
   await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
@@ -380,7 +380,7 @@ async function pruebaPuerta(browser) {
 /* ══════════════ 7) El mensaje que se pega en WhatsApp ══════════════ */
 async function pruebaMensaje(browser) {
   console.log('\n── EL MENSAJE PARA EL GRUPO ──');
-  const page = await browser.newPage();
+  const page = await browser.newPage(SIN_SW);
   await page.clock.install({ time: HOY });
   await page.goto(BASE + '/index.html', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => typeof window.convMensaje === 'function');
@@ -422,7 +422,7 @@ async function pruebaPublicada(browser) {
     { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '', nota: 'Por el aporte' },
   ];
   let veces = 0;
-  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 430, height: 900 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', async route => {
     const fn = route.request().url().split('/rpc/')[1].split('?')[0];
@@ -790,7 +790,7 @@ async function pruebaAvisos(browser) {
     { va: true, alumno: 'Óscar Danilo Zelaya', grado: '5', seccion: '2', personas: 1, tel: '', nota: '' },
     { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '99995555', nota: 'Por el aporte' },
   ];
-  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 430, height: 900 } });
   await page.clock.install({ time: HOY });
   /* Se lleva la cuenta de lo que pasa por aquí porque en GitHub el traer se
      quedaba colgado en «⏳ Trayendo las respuestas…»: la petición salía y no
@@ -1194,7 +1194,7 @@ async function pruebaPagos(browser) {
     { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '99995555', nota: 'Por el aporte' },
   ];
   const subidas = [];                     /* lo que se le manda a la nube */
-  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 430, height: 900 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', async route => {
     const fn = route.request().url().split('/rpc/')[1].split('?')[0];
@@ -1402,7 +1402,7 @@ async function pruebaQuitar(browser) {
     ],
     llamadas: [], quitarOk: true,
   };
-  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 430, height: 900 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', async route => {
     const fn = route.request().url().split('/rpc/')[1].split('?')[0];
@@ -1583,7 +1583,7 @@ async function pruebaAbordo(browser) {
     { va: false, alumno: 'Hilda Marina Paz', grado: '6', seccion: '1', personas: 0, tel: '99995555', nota: 'Por el aporte' },
   ];
   const subidas = [];
-  const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 430, height: 900 } });
   await page.clock.install({ time: HOY });
   await page.route('**/rest/v1/rpc/**', async route => {
     const fn = route.request().url().split('/rpc/')[1].split('?')[0];

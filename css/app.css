@@ -1,4 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+/* La familia Outfit ya NO se pide aquí. Estaba como
+   `@import url('https://fonts.googleapis.com/...')` en esta primera línea, y un
+   @import remoto es lo peor de los dos mundos: bloquea el pintado Y va en
+   cadena —el navegador tiene que bajar y leer app.css entera antes de enterarse
+   de que hace falta otra cosa, en otro servidor y en otro país—. Medido el 9 de
+   septiembre de 2026 con el CDN colgado, la portada NO PINTÓ en dos minutos.
+   Ahora la trae `css/vendor/fuentes/fuentes.css`, que va en un <link> propio,
+   antes que esta hoja, en index.html y en mision.html. */
 
 /* ====== VARIABLES ====== */
 :root {

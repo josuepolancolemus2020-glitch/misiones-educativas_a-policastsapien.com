@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v189';
+const CACHE_NAME = 'meta-app-v190';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -33,6 +33,16 @@ const ARMAZON = [
   './index.html',
   './manifest.json',
   './css/app.css',
+  // Las tipografías. La CSS pesa 5 KB y trae las cuatro familias sin bajar
+  // ni un byte de más: cada @font-face declara su unicode-range, así que
+  // el navegador solo pide la letra que la página de verdad pinta. De ahí
+  // se precachea únicamente Outfit, que es la del armazón del maestro:
+  // index.html SÍ abre sin señal la primera vez, y tiene que abrir con su
+  // letra. Las de las misiones NO van aquí, y no es un olvido: una misión
+  // que no se visitó en línea no está en la caché, así que guardarle la
+  // letra sería guardar la letra de una página que no existe todavía.
+  './css/vendor/fuentes/fuentes.css',
+  './css/vendor/fuentes/outfit-latin.woff2',
   './js/app.js',
   './js/metas-dialogos.js',
   './js/data/misiones.js',
@@ -109,9 +119,12 @@ const STATIC_ASSETS = [
   './img/jose-cecilio-del-valle-edit.webp',
   './css/vendor/fontawesome/css/all.min.css',
   './css/vendor/fontawesome/webfonts/fa-solid-900.woff2',
-  './css/vendor/fontawesome/webfonts/fa-regular-400.woff2',
-  'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+  './css/vendor/fontawesome/webfonts/fa-regular-400.woff2'
+  // Aquí estaban la CSS de Google Fonts y la de Font Awesome del CDN.
+  // Se fueron con el hallazgo 7: las dos son hojas de estilo externas,
+  // y una hoja de estilo bloquea el pintado. Y la de Google además
+  // mentía: se guardaba la CSS, nunca los .woff2 de fonts.gstatic.com,
+  // así que sin señal la letra no llegaba igual.
 ];
 
 /* Al instalar: pre-cachea el armazón, las imágenes, los recursos externos y el
