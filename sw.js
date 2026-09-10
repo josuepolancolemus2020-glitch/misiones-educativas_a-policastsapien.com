@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v197';
+const CACHE_NAME = 'meta-app-v198';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -124,8 +124,15 @@ const STATIC_ASSETS = [
   './manifest-padres.json',
   './img/qr-padres.png',
   './img/logo.png',
+  // Los iconos de la aplicación instalada. Son cuatro y no dos: los dos
+  // `any` los enseña el navegador casi enteros, y los dos `maskable` son
+  // los que Android recorta con su máscara —por eso el logo va dentro del
+  // círculo del 80 %—. Si faltara el maskable, Android se quedaría con el
+  // `any` y le cortaría la palabra «EDITORIAL» al logo del editorial.
   './img/icon-192.png',
   './img/icon-512.png',
+  './img/icon-maskable-192.png',
+  './img/icon-maskable-512.png',
   './img/jose-cecilio-del-valle-edit.webp',
   './css/vendor/fontawesome/css/all.min.css',
   './css/vendor/fontawesome/webfonts/fa-solid-900.woff2',
