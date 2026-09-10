@@ -3292,6 +3292,101 @@ se quiere una bandera grande, se pone la imagen real del país con todo lo
 suyo. Nunca un degradado, nunca «solo las franjas». La nota larga y el porqué
 están en `js/data/paises.js`.
 
+## Normativa: el icono de la aplicación instalada no se recorta
+
+Cuando el maestro instala M.E.T.A.S desde su navegador —«Añadir a la pantalla
+de inicio», que es como llega la aplicación a un teléfono de un pueblo—, lo que
+le queda es el **logo del editorial**. Y ahí el teléfono NO lo enseña tal cual:
+Android le pone su **máscara** encima —círculo, cuadrado redondeado o gota,
+según la marca— y se queda con lo de dentro. Solo está garantizado el **círculo
+central del 80 %** del lienzo.
+
+El 9 de septiembre de 2026 el logo nuevo entró por `main` como una imagen
+suelta, y así medía el icono que había:
+
+| | antes | hoy |
+|---|---|---|
+| el logo dentro del icono `any` | **60 % del ancho** (el resto era un aro azul y aire) | **90 %** |
+| el logo dentro del icono `maskable` | 60 %, y la tinta **se salía 53 px** de la zona segura | **74 %, dentro** |
+| archivos | 2, y el mismo servía para las dos cosas | 4, dos por familia |
+| lo que pesan | 140 KB | **115 KB** |
+
+**Lo que cuesta caro es que esto NO SE VE AL PUBLICAR.** El archivo se sube
+bien, el navegador lo enseña entero en la pestaña, el manifest no da un solo
+error… y en la pantalla de inicio el logo sale con **«EDITORIAL» cortado por
+los lados**. Se descubre —si se descubre— mirando el teléfono de alguien que ya
+la instaló.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. ⚠️ **`any` y `maskable` son DOS archivos, nunca uno con los dos propósitos.**
+   Era lo que había (`"purpose": "any maskable"`), y obliga a elegir: o el icono
+   sale diminuto en todas partes —para que quepa en el recorte— o Android se
+   come el nombre de quien publica. Son dos trabajos distintos: el `any` lo
+   enseña el navegador casi entero y llena el 90 %; el `maskable` va entero
+   dentro del círculo del 80 %.
+2. ⚠️ **El tamaño no se escribe: se MIDE, y se mide la TINTA.** Inscribir la
+   *caja* del logo en la zona segura lo dejaba en el **60 %** del ancho, porque
+   las esquinas de la caja están vacías. Buscando el círculo más pequeño que
+   contiene la tinta de verdad sube al **74 %** — el mismo recorte y un icono
+   un cuarto más grande. Lo hace `_dev/genera-iconos-app.py`; a ojo no se
+   acierta y encima cambia con cada logo.
+3. **Del círculo se deja un colchón** (97 %). El borde de la tinta se decide con
+   un umbral, así que el halo más claro del antialiasing queda fuera de la
+   cuenta; sin colchón el logo sale tangente al recorte y ese halo se lo lleva
+   la máscara. Es la misma cifra y la misma razón que los 248 mm de la hoja
+   carta.
+4. ⚠️ **El fondo es blanco y OPACO, nunca transparente.** iOS pone lo
+   transparente sobre **negro**, y este logo es azul marino: desaparecería. Y
+   una máscara de Android sobre esquinas transparentes deja el icono con el
+   fondo en nada. El logo se diseñó sobre blanco; se guarda sobre blanco.
+5. **El original se queda en el repositorio** (`img/logo-oficial.jpg`). Sin él,
+   el próximo cambio se haría recortando a mano el icono ya recortado, que es
+   como se pierde un logo.
+
+⚠️ **Los iconos van precacheados y llevan sellado.** Están en `STATIC_ASSETS` de
+`sw.js`, así que un teléfono con el service worker puesto **seguiría enseñando
+el icono viejo para siempre** si no se sube `CACHE_NAME`. Es la normativa de
+sellado de siempre, y aquí muerde aunque no se haya tocado una línea de HTML.
+
+⚠️ **`img/logo.png` NO es este logo y no se toca.** Es el de **M.E.T.A.S** —el
+cerebro con «M.E.T.A.S» escrito arriba— y va de marca de agua dentro de las 74
+misiones (`.xp-back-logo`). El del editorial es el de la aplicación instalada.
+Son dos marcas y cada una tiene su sitio.
+
+**Cuando entre un logo nuevo, se le da el mismo trato:** se deja el original en
+`img/logo-oficial.jpg`, se corre el generador y se sella. No se recorta a mano
+y no se copia un icono de otro tamaño.
+
+```
+pip install --user pillow        (no va en el repositorio)
+python3 _dev/genera-iconos-app.py          → arma los cuatro
+python3 _dev/genera-iconos-app.py --revisa → solo mide, no escribe
+node _dev/verifica-iconos-app.js           → los abre y los mide
+```
+
+La sonda no mira el papeleo: **abre los PNG y busca la tinta píxel a píxel**
+—lee el PNG con `zlib`, que viene con Node, así que no añade una dependencia—.
+Comprueba que ningún archivo sirva a las dos familias, que la tinta del
+`maskable` **quepa en el círculo del 80 %** y que además lo aproveche (que no
+salga diminuto, que era el fallo del anterior), que el `any` llene el lienzo,
+que ninguno lleve canal alfa, que los cuatro estén en `sw.js` y que el original
+siga ahí. Cuando algo se sale, **dice el píxel exacto** que la máscara se
+llevaría.
+
+### Lo que NO se hizo, y por qué
+
+- **Quitarle la palabra «EDITORIAL» al icono.** Es lo que manda el manual de
+  cualquier icono pequeño, y aquí sería cambiar el producto para arreglar la
+  medida: el logo lo eligió el autor. Se le da todo el tamaño que el recorte
+  permite y se deja entero, que es la misma decisión que alojar las tipografías
+  en vez de cambiarlas por `system-ui`.
+- **Un `apple-touch-icon` de 180 px propio.** iOS ya baja el de 192 y una
+  reducción de 192 a 180 no se ve; el archivo de más sí se baja.
+- **Los iconos de la app de Android** (`android/app/src/main/res/mipmap-*`).
+  Esos son los del APK de Capacitor, que no se descarga de un navegador. El día
+  que se compile, se rearman ahí con las herramientas de Android Studio.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi

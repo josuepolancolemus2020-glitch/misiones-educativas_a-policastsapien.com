@@ -53,6 +53,7 @@ const NO_SON_SONDAS = {
   'reparte-hojas-ficha':    'ESCRIBE las fichas; se corre a mano',
   'repagina-ficha':         'ESCRIBE una ficha; pide el nombre',
   'genera-qr-mision':       'genera los QR; es de Python y pide ids',
+  'genera-iconos-app':      'ESCRIBE los iconos de la app instalada; es de Python',
   'dcnb-a-markdown':        'convierte el currículo; es de Python',
   'barrido-en':             'pide la misión que se quiere barrer',
   'verifica-mision-nueva':  'pide la carpeta de la misión nueva',
