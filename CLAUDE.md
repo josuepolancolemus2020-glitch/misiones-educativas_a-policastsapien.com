@@ -3541,6 +3541,54 @@ llevaría.
   Esos son los del APK de Capacitor, que no se descarga de un navegador. El día
   que se compile, se rearman ahí con las herramientas de Android Studio.
 
+## Normativa: el Kit de Capacitación no le miente al que fotocopia
+
+`kit-capacitacion.html` es la hoja que se reparte en las capacitaciones, y es
+papel de verdad: se fotocopia por participante y se guarda. **No tiene una sola
+línea de JavaScript**, así que sus cifras van escritas a mano — y una cifra
+escrita a mano envejece sola, porque nadie vuelve a leer el Kit para
+comprobarla.
+
+Envejeció dos veces, y las dos se descubrieron mirando:
+
+- Decía «**57 misiones**» y «**11 rutas**» cuando ya eran 68 y 13. Y peor que
+  la cifra: su lista de materias no nombraba **E. Cívica** —los símbolos
+  patrios y el Himno, que es lo que se estudia en septiembre— ni **Repaso
+  General**, con las Pruebas de Fin de Grado. La cifra vieja se nota; la
+  materia que falta, no: el maestro **no se entera de que existe**.
+- Y el pie prometía «**una hoja** por participante» cuando el Kit sale en
+  **cuatro**. Quien fotocopiaba para treinta leía 30 hojas donde hacen falta
+  120, y los últimos se quedaban sin el guion y sin la lista de comprobación.
+
+**Las cifras van FECHADAS y con el rumbo a la vista** —«hoy, en septiembre de
+2026, son 68 y siguen entrando»—, que es la regla del papel de más arriba y
+aquí toca porque no hay forma de contarlas al vuelo. Un «son 68» a secas le
+dice al maestro que eso es todo lo que va a haber, y esta hoja se guarda un año
+en una gaveta.
+
+Y lo comprueba una sonda, para no volver a descubrirlo mirando:
+
+```
+node _dev/servidor-estatico.js            (en otra terminal)
+node _dev/verifica-kit-capacitacion.js
+```
+
+⚠️ **Los números no se escriben dentro de la sonda**: se cuentan del catálogo
+(`js/data/misiones.js`) y del **PDF**, que es la verdad de la impresora. Una
+sonda con el número dentro se pondría roja el día que entre una misión sin que
+nada esté roto, y eso enseña a no mirarla.
+
+Mira cinco cosas, y las cinco salen de una avería de verdad: que la cifra de
+misiones y la de rutas sean las que hay, que no se haya quedado dentro una
+cifra vieja de otra tanda, que vayan fechadas, que **el párrafo que presenta el
+catálogo nombre TODAS las materias** —y se busca solo ahí, porque una materia
+nombrada de pasada en otro sitio taparía que se cayó de la lista—, y que **el
+pie prometa las hojas que de verdad salen**.
+
+Al añadir una materia o al crecer el Kit, la sonda dice qué falta por
+actualizar. Y si el Kit gana una hoja, el pie se corrige: cada hoja de más son
+treinta hojas de más en la capacitación.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi
