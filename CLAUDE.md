@@ -1560,6 +1560,103 @@ sale en las misiones de decimales y en las de fin de grado: pedirlo daba seis
 fallos con el texto perfectamente escrito. Se comprueba «cacique Lempira», que
 es inequívoco.
 
+## Normativa: la letra del Himno vive en UN archivo
+
+El Himno Nacional tiene su propia misión (`misiones/2y3ciclo-himno-nacional/`,
+id 68, Ruta de la Patria, etapa 2) y no está dentro de la de símbolos patrios.
+No es reparto de contenido: en **sexto y en noveno** se pregunta todos los años
+lo mismo —**escribe una estrofa del Himno y explícala**—, y para contestar eso
+hace falta la letra ENTERA, verso por verso, con su vocabulario. Un resumen de
+cuatro renglones dentro de una misión de símbolos no da para eso.
+
+Y ahí está lo que de verdad manda en esta misión: **la letra existe en dos
+sitios que una persona lee** —la pantalla y la ficha que se fotocopia— y **no
+puede haber dos originales**. Si alguien corrige una coma en la ficha, a partir
+de ese día el alumno estudia una letra y el maestro le corrige por la otra.
+Por eso:
+
+- **La letra vive en `js/data/himno.js`**, y solo ahí. Trae el coro y las siete
+  estrofas con sus versos, el tema de cada parte, su explicación, el
+  vocabulario y el dato. También el **coro CANTADO** aparte, que no es lo
+  mismo (ver abajo).
+- **La misión no la escribe: la pinta.** `pintarHimnoMapa()`,
+  `pintarHimnoLista()` y `pintarEjemploCantado()` arman las secciones desde
+  ese archivo, y `parteData` del Laboratorio también. En el HTML de la misión
+  **no hay un solo verso escrito a mano**.
+- **La ficha sí es HTML plano**, como las otras 74 —se arma con un guion y lo
+  que se publica es el resultado—, así que ahí la copia es inevitable. Lo que
+  no es inevitable es que se separen.
+
+Eso lo vigila una sonda propia:
+
+```
+node _dev/verifica-himno.js
+```
+
+Compara la ficha contra `js/data/himno.js` **verso por verso** (los 64 del
+Himno más los 8 del coro cantado), comprueba que la misión no lleve la letra
+escrita a mano, y hace una tercera cosa que costó encontrar: **que las citas
+del JS de la misión digan lo que dice el Himno**. Las actividades citan versos
+a propósito —«¿de qué parte es este verso?»—, así que prohibirlas no sirve; lo
+que enseña mal es una cita recortada. Ya cazó una: la operación decía
+«marcharemos a la muerte» donde el verso dice **«marcharemos, ¡oh patria!, a la
+muerte»**, y así es como el alumno lo habría escrito en el examen.
+
+Solo se juzga lo que **pretende** ser una cita: lo que comparte con el Himno
+una tirada de **cuatro palabras seguidas**. Con eso se quedan fuera solos los
+«¡Bien hecho!» y los títulos, sin listarlos uno por uno. Y se compara sin
+distinguir mayúsculas ni signos, porque «Infame eslabón» encabeza una tarjeta
+y en el Himno va a media frase.
+
+Hay **una excepción, nombrada y con su motivo** dentro de la sonda: el caso de
+pensamiento crítico donde una alumna copia el coro MAL, con las repeticiones
+que se cantan. Ese error está escrito a propósito y es lo que se le pide
+detectar.
+
+### Se escribe de un modo y se canta de otro
+
+Cantando se repite: «Tu bandera, **tu bandera** es un lampo de cielo». Esas
+repeticiones **las pide la música**, no el poema. Escrito, el verso va una sola
+vez — y copiar el coro con las repeticiones es el error más común del examen.
+
+Por eso `HIMNO_CORO_CANTADO` va **aparte** de los versos del coro, y la misión
+enseña las dos formas una al lado de la otra. Lo que se compara contra la ficha
+son las dos: 64 + 8 = **72 versos**.
+
+⚠️ Y dos cosas que parecen erratas y **no lo son**: **«enseñastes»** con -s en
+la sexta estrofa (sin esa letra al verso decasílabo le falta una sílaba) y
+**«tan sólo»** con tilde en la tercera. Están anotadas dentro de `himno.js`
+para que nadie las «arregle».
+
+### Los versos van numerados, y no es adorno
+
+En un teléfono de 360 px se parten **65 de los 72 versos** —medido—, porque un
+verso de diez sílabas no cabe de ancho. Sin el número, el alumno no sabe si lo
+que baja es el mismo verso o el siguiente, y lo que el examen le pide contar es
+justo eso: son **ocho**, ni siete ni nueve.
+
+La otra salida era encogerle la letra hasta que cupieran, y **se descartó
+medida**: a 16 px se parten 20 de 72, pero la misión arranca en
+`body.letra-grande` a propósito y esta se lee en el pupitre. El número va en el
+margen (`.hn-n`, `position:absolute`) para que el verso que se parte baje
+alineado con su propio texto y no debajo de la cifra. La ficha impresa lleva lo
+mismo (`.estrofa .v i`).
+
+**Antes de publicar un cambio de esta misión o de la letra:**
+
+```
+node _dev/verifica-himno.js                 → la pantalla y el papel, verso por verso
+node _dev/verifica-mision-nueva.js misiones/2y3ciclo-himno-nacional/himno-nacional.html
+node _dev/verifica-nombres-propios.js
+node _dev/verifica-ficha-paginas.js ficha-himno-nacional
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/2y3ciclo-himno-nacional/himno-nacional.html
+```
+
+Si se toca la letra, la ficha **se vuelve a repartir** (`node
+_dev/reparte-hojas-ficha.js ficha-himno-nacional`): son nueve hojas y un
+párrafo que crece dos renglones parte una en dos.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

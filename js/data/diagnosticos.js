@@ -85,6 +85,10 @@ const DIAGNOSTICOS = {
     { etapa: 1, q: '¿Cuántas estrellas tiene la Bandera Nacional y qué representan?', o: ['Tres, los poderes del Estado', 'Siete, las estrofas del Himno', 'Cinco, las naciones de la antigua Federación de Centroamérica', 'Cinco, los mares que rodean al país'], a: 2 },
     { etapa: 1, q: '¿Quién escribió la letra del Himno Nacional de Honduras?', o: ['Carlos Hartling', 'Ramón Rosa', 'José Trinidad Reyes', 'Augusto C. Coello'], a: 3 },
     { etapa: 1, q: '¿Quién es el Héroe Nacional que resistió la conquista española?', o: ['Lempira', 'Francisco Morazán', 'José Cecilio del Valle', 'José Trinidad Cabañas'], a: 0 },
+    { etapa: 2, q: '¿De cuántas partes consta el Himno Nacional de Honduras?', o: ['Un coro y siete estrofas', 'Solo siete estrofas', 'Un coro y tres estrofas', 'Un coro y diez estrofas'], a: 0 },
+    { etapa: 2, q: 'En los actos cívicos de la escuela, ¿qué parte del Himno se canta junto con el coro?', o: ['La primera estrofa', 'La cuarta estrofa', 'La séptima estrofa', 'Todas las estrofas'], a: 2 },
+    { etapa: 2, q: '¿Qué hace el coro del Himno Nacional?', o: ['Cuenta la llegada de Cristóbal Colón', 'Describe la Bandera y el Escudo', 'Cuenta la muerte de Lempira', 'Promete defender la patria'], a: 1 },
+    { etapa: 2, q: 'En la tercera estrofa, ¿quién cae «envuelto en su sangre»?', o: ['Francisco Morazán', 'Cristóbal Colón', 'José Cecilio del Valle', 'Lempira'], a: 3 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [

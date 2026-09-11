@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Himno Nacional de Honduras</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: EDUCACIÓN CÍVICA = VERDE DEL PINO (#3f6212)
+     · Colores semánticos: azul=el coro, dorado=las estrofas, gris=el vocabulario
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #3f6212; --soc-osc: #365314; --soc-claro: #f5f9e8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #dbe7c4;
+    --may: #0d6ea8; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f2f6ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fbf1; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; text-align: center; background: #fcfdf8; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (mayas / aztecas / incas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #dceefa; } .celula .cm b { color: var(--may); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 6px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #dceefa; border: 1px solid #a9d3ee; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--may); } .tri .torg b { color: var(--oro); }
+
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--soc-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f7fbef; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(63,98,18,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ═══ LOS VERSOS DEL HIMNO ═══
+     Van numerados del 1 al 8 y con sangría francesa. Lo primero es lo que el
+     examen pide contar —son OCHO versos, ni siete ni nueve—; lo segundo es
+     para que el verso largo que no cabe de ancho baje alineado con su texto
+     y no se lea como un verso nuevo. */
+  .estrofa { background: var(--soc-claro); border-left: 4px solid var(--soc); border-radius: 0 8px 8px 0;
+             padding: 7px 12px 7px 10px; margin: 5px 0 6px; break-inside: avoid; }
+  .estrofa .v { display: block; position: relative; padding-left: 22px; font-size: 11pt; line-height: 1.42; }
+  .estrofa .v i { position: absolute; left: 0; top: 0.15em; font-style: normal; font-size: 7.5pt;
+                  font-weight: 700; color: var(--soc); width: 15px; text-align: right; }
+  .estrofa.cantado { background: #e8f0fe; border-left-color: #1d4ed8; }
+  .estrofa.cantado .v i { color: #1d4ed8; }
+  .et-cab { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 7px; }
+  .et-cab b { font-size: 11pt; color: var(--soc-osc); }
+  .et-cab span { font-size: 9pt; font-weight: 700; color: var(--soc); background: var(--soc-claro);
+                 border-radius: 999px; padding: 1px 8px; }
+  .voc { font-size: 9.5pt; margin: 0 0 6px 0; padding-left: 2px; line-height: 1.4; }
+  .voc b { color: var(--soc-osc); }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Himno Nacional de Honduras</div>
+        <div class="f-meta"><b>Asignatura:</b> Educación Cívica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El coro y las siete estrofas del Himno Nacional, con su explicación y su vocabulario</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-himno-nacional.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Conocer a los <strong>autores</strong> del Himno Nacional y cuándo se volvió oficial.</li>
+      <li>Saber que el Himno tiene <strong>un coro y siete estrofas</strong>, de ocho versos cada una.</li>
+      <li><strong>Escribir de memoria</strong> el coro y la séptima estrofa, completos y sin repeticiones.</li>
+      <li><strong>Explicar con sus palabras</strong> qué cuenta cada estrofa del Himno.</li>
+      <li>Entender el <strong>vocabulario</strong> del Himno: lampo, pendón, eslabón, dombo, peñón…</li>
+      <li>Cantar el Himno con el <strong>respeto</strong> que se le debe en los actos cívicos.</li>
+    </ol>
+
+    <h2>🎵 1. Quién lo hizo y desde cuándo es oficial</h2>
+
+    <p>El Himno Nacional es uno de los <strong>tres símbolos patrios mayores</strong>, junto con la Bandera y el
+    Escudo. Los otros dos se ven; este se <strong>canta</strong>. Es un poema que cuenta de dónde viene Honduras,
+    desde antes de la llegada de los españoles hasta el juramento de defender la patria.</p>
+
+    <table>
+      <tr><th style="width:30%;">Dato</th><th>Cuál es</th></tr>
+      <tr><td class="k">La letra</td><td><strong>Augusto C. Coello</strong> — Escritor y político hondureño (1883-1941). Escribió la letra en 1903.</td></tr>
+      <tr><td class="k">La música</td><td><strong>Carlos Hartling</strong> — Músico alemán (1869-1920). Vivió en Honduras y compuso la música.</td></tr>
+      <tr><td class="k">Su estreno</td><td>Se compuso en 1903 con el nombre «Canto a Honduras» y se cantó por primera vez el 15 de septiembre de 1904.</td></tr>
+      <tr><td class="k">Oficial</td><td>Lo declaró oficial el gobierno de Alberto de Jesús Membreño en 1915, once años después de su estreno.</td></tr>
+    </table>
+
+    <div class="caja truco">💡 <b>Truco:</b> la <strong>L</strong>etra la escribió el hondureño (Coe<strong>ll</strong>o)
+    y la <strong>M</strong>úsica el alemán (Hartling). Si se confunden, se cambia el país de cada uno.</div>
+
+    <h2>🎼 2. Cómo está hecho: ocho partes</h2>
+
+    <p>El Himno tiene <strong>ocho partes</strong>: un <strong>coro</strong> y <strong>siete estrofas</strong>. Cada
+    una tiene <strong>ocho versos</strong>, así que el Himno completo son <strong>64 versos</strong>. Y cada parte
+    hace un trabajo distinto: el coro <strong>describe</strong>, las seis primeras estrofas
+    <strong>cuentan la historia</strong> en orden y la séptima <strong>promete</strong>.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="ilus">
+      <div class="ilus-t">Lo que hace cada parte</div>
+      <div class="celula">
+        <div class="cm"><span class="c-emoji">🎼</span><b>El coro</b>Pinta la Bandera y el Escudo. No cuenta historia.</div>
+        <div class="cc"><span class="c-emoji">📖</span><b>Estrofas 1 a 6</b>Cuentan la historia de Honduras, en orden.</div>
+        <div class="cn"><span class="c-emoji">✋</span><b>La séptima</b>Jura defender la patria. Mira al futuro.</div>
+      </div>
+      <p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">✅ En el acto cívico se canta el <strong>coro</strong>, la <strong>séptima estrofa</strong> y otra vez el <strong>coro</strong>.</p>
+    </div>
+
+    <h3>🗺️ El tema de cada parte</h3>
+
+    <p>Aprenderse primero el <strong>tema</strong> es el atajo: con él en la cabeza, los versos se acomodan solos.</p>
+
+    <table>
+      <tr><th style="width:34%;">Parte</th><th>De qué trata</th></tr>
+      <tr><td class="k">Coro</td><td>La Bandera y el Escudo</td></tr><tr><td class="k">Primera estrofa</td><td>La llegada de Cristóbal Colón</td></tr><tr><td class="k">Segunda estrofa</td><td>De dónde vino Colón, y la bandera extranjera</td></tr><tr><td class="k">Tercera estrofa</td><td>La resistencia y la muerte de Lempira</td></tr><tr><td class="k">Cuarta estrofa</td><td>Los tres siglos de colonia</td></tr><tr><td class="k">Quinta estrofa</td><td>La Revolución Francesa</td></tr><tr><td class="k">Sexta estrofa</td><td>La Independencia de Centroamérica</td></tr><tr><td class="k">Séptima estrofa</td><td>El juramento de defender la patria</td></tr>
+    </table>
+
+    <h2>📖 3. El Himno completo, parte por parte</h2>
+
+    <p>Esto es lo que hay que estudiar para el examen: la letra <strong>tal como se escribe</strong>, lo que cuenta
+    cada parte y lo que significan sus palabras difíciles.</p>
+
+    <div class="et-cab"><b>🎼 Coro</b><span>La Bandera y el Escudo</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>Tu bandera es un lampo de cielo</span><span class="v"><i>2</i>por un bloque de nieve cruzado;</span><span class="v"><i>3</i>y se ven en su fondo sagrado</span><span class="v"><i>4</i>cinco estrellas de pálido azul;</span><span class="v"><i>5</i>en tu emblema, que un mar rumoroso</span><span class="v"><i>6</i>con sus ondas bravías escuda,</span><span class="v"><i>7</i>de un volcán tras la cima desnuda</span><span class="v"><i>8</i>hay un astro de nítida luz.</span></div>
+
+    <p><b>Qué dice:</b> El coro no cuenta historia: PINTA la Bandera Nacional. El azul del cielo cruzado por un bloque de nieve son las tres franjas; las cinco estrellas, las cinco naciones de la antigua Federación de Centroamérica. Después pasa al Escudo: el mar que lo rodea con sus olas, el volcán entre las torres y, sobre la cima, el sol naciente, que es «el astro de nítida luz».</p>
+
+    <p class="voc">📚 <b>lampo:</b> Resplandor, destello de luz &nbsp;·&nbsp; <b>rumoroso:</b> Que suena con un rumor suave y continuo &nbsp;·&nbsp; <b>bravías:</b> Bravas, fuertes, indomables &nbsp;·&nbsp; <b>escuda:</b> Protege, defiende como un escudo &nbsp;·&nbsp; <b>astro:</b> Cuerpo del cielo que da luz; aquí, el sol del Escudo</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja idea">💡 <b>Dato:</b> Es la única parte que canta TODO el mundo, y la que se repite antes y después de la estrofa.</div>
+
+    <h3>🎤 Y así se CANTA el coro (no se escribe así)</h3>
+
+    <p>Al cantarlo se repiten pedazos, porque lo pide la música. <strong>En el examen el verso va una sola
+    vez</strong>: copiarlo con las repeticiones es el error más común.</p>
+
+    <div class="estrofa cantado"><span class="v"><i>1</i>Tu bandera, tu bandera es un lampo de cielo</span><span class="v"><i>2</i>por un bloque, por un bloque de nieve cruzado;</span><span class="v"><i>3</i>y se ven en su fondo sagrado</span><span class="v"><i>4</i>cinco estrellas de pálido azul;</span><span class="v"><i>5</i>en tu emblema, que un mar rumoroso</span><span class="v"><i>6</i>con sus ondas bravías escuda,</span><span class="v"><i>7</i>de un volcán, de un volcán tras la cima desnuda</span><span class="v"><i>8</i>hay un astro, hay un astro de nítida luz.</span></div>
+
+    <div class="et-cab"><b>1️⃣ Primera estrofa</b><span>La llegada de Cristóbal Colón</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>India virgen y hermosa dormías</span><span class="v"><i>2</i>de tus mares al canto sonoro,</span><span class="v"><i>3</i>cuando echada en tus cuencas de oro</span><span class="v"><i>4</i>el audaz navegante te halló;</span><span class="v"><i>5</i>y al mirar tu belleza extasiado,</span><span class="v"><i>6</i>al influjo ideal de tu encanto,</span><span class="v"><i>7</i>la orla azul de tu espléndido manto</span><span class="v"><i>8</i>con su beso de amor consagró.</span></div>
+
+    <p><b>Qué dice:</b> Le habla a Honduras como a una mujer indígena dormida junto al mar. «El audaz navegante» es Cristóbal Colón, que llegó a estas costas en 1502, en su cuarto viaje. Quedó tan admirado de lo que vio que besó la orilla del mar, «la orla azul de su manto», como quien saluda con respeto.</p>
+
+    <p class="voc">📚 <b>India virgen:</b> La tierra hondureña antes de la llegada de los europeos &nbsp;·&nbsp; <b>cuencas de oro:</b> Las bahías y ensenadas doradas de la costa &nbsp;·&nbsp; <b>audaz:</b> Atrevido, que no tiene miedo &nbsp;·&nbsp; <b>extasiado:</b> Admirado, embelesado por algo hermoso &nbsp;·&nbsp; <b>orla:</b> El borde o la orilla de una tela; aquí, la orilla del mar &nbsp;·&nbsp; <b>consagró:</b> Dedicó con respeto, hizo sagrado</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> Honduras es el único país de América donde Colón puso pie en tierra firme del continente.</div>
+
+    <div class="et-cab"><b>2️⃣ Segunda estrofa</b><span>De dónde vino Colón, y la bandera extranjera</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>De un país donde el sol se levanta,</span><span class="v"><i>2</i>más allá del Atlante azulado,</span><span class="v"><i>3</i>aquel hombre te había soñado</span><span class="v"><i>4</i>y en tu busca a la mar se lanzó.</span><span class="v"><i>5</i>Cuando erguiste la pálida frente,</span><span class="v"><i>6</i>en la viva ansiedad de tu anhelo,</span><span class="v"><i>7</i>bajo el dombo gentil de tu cielo</span><span class="v"><i>8</i>ya flotaba un extraño pendón.</span></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <p><b>Qué dice:</b> Cuenta de dónde venía: de España, que queda al oriente, «donde el sol se levanta», cruzando el Atlántico. Él ya había soñado con estas tierras y se lanzó al mar a buscarlas. El final es el momento amargo: cuando Honduras levanta la cabeza para ver qué pasa, sobre su cielo ya ondea «un extraño pendón», la bandera de otro país. Ahí empieza la conquista.</p>
+
+    <p class="voc">📚 <b>Atlante:</b> El océano Atlántico &nbsp;·&nbsp; <b>erguiste:</b> Levantaste, alzaste &nbsp;·&nbsp; <b>ansiedad:</b> Inquietud, desasosiego por algo que se espera &nbsp;·&nbsp; <b>anhelo:</b> Deseo grande &nbsp;·&nbsp; <b>dombo:</b> La bóveda, la cúpula; aquí, el cielo &nbsp;·&nbsp; <b>pendón:</b> Bandera o estandarte</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> «Atlante» es el nombre poético del océano Atlántico, y aparece dos veces en el Himno: aquí y en la cuarta estrofa.</div>
+
+    <div class="et-cab"><b>3️⃣ Tercera estrofa</b><span>La resistencia y la muerte de Lempira</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>Era inútil que el indio, tu amado,</span><span class="v"><i>2</i>se aprestara a la lucha con ira,</span><span class="v"><i>3</i>porque envuelto en su sangre Lempira,</span><span class="v"><i>4</i>en la noche profunda se hundió;</span><span class="v"><i>5</i>y de la épica hazaña, en memoria,</span><span class="v"><i>6</i>la leyenda tan sólo ha guardado</span><span class="v"><i>7</i>de un sepulcro el lugar ignorado</span><span class="v"><i>8</i>y el severo perfil de un peñón.</span></div>
+
+    <p><b>Qué dice:</b> Es la estrofa de Lempira, el cacique lenca que dirigió la resistencia contra la conquista, hacia 1537. El poema dice que la lucha fue inútil porque él cayó cubierto de su propia sangre. Y termina con algo muy cierto: de aquella hazaña no quedó ni la tumba. Nadie sabe dónde está enterrado; solo quedan la leyenda y la silueta de un cerro, el Peñol de Cerquín.</p>
+
+    <p class="voc">📚 <b>se aprestara:</b> Se preparara, se dispusiera &nbsp;·&nbsp; <b>épica:</b> Heroica, digna de contarse &nbsp;·&nbsp; <b>hazaña:</b> Hecho grande y valiente &nbsp;·&nbsp; <b>sepulcro:</b> Tumba &nbsp;·&nbsp; <b>ignorado:</b> Que no se sabe, desconocido &nbsp;·&nbsp; <b>peñón:</b> Monte de piedra; aquí, el Peñol de Cerquín</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> Es la única estrofa que nombra a una persona de Honduras, y es un héroe indígena.</div>
+
+    <div class="et-cab"><b>4️⃣ Cuarta estrofa</b><span>Los tres siglos de colonia</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>Por tres siglos tus hijos oyeron</span><span class="v"><i>2</i>el mandato imperioso del amo;</span><span class="v"><i>3</i>por tres siglos tu inútil reclamo</span><span class="v"><i>4</i>en la atmósfera azul se perdió;</span><span class="v"><i>5</i>pero un día gloria tu oído</span><span class="v"><i>6</i>percibió, poderoso y distante,</span><span class="v"><i>7</i>que allá lejos, por sobre el Atlante,</span><span class="v"><i>8</i>indignado rugía un León.</span></div>
+
+    <p><b>Qué dice:</b> Resume la época colonial: trescientos años oyendo órdenes y reclamando sin que nadie escuchara. Pero un día llega un ruido de esperanza desde muy lejos, del otro lado del Atlántico: un León que ruge indignado. Ese León es Francia, y la estrofa siguiente lo dice con su nombre.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <p class="voc">📚 <b>imperioso:</b> Que manda con autoridad y sin discutir &nbsp;·&nbsp; <b>amo:</b> El dueño, el que manda; aquí, el poder colonial &nbsp;·&nbsp; <b>reclamo:</b> Queja, protesta, petición &nbsp;·&nbsp; <b>percibió:</b> Notó, escuchó &nbsp;·&nbsp; <b>indignado:</b> Enojado por una injusticia &nbsp;·&nbsp; <b>León:</b> Figura poética de Francia, que despertó a la libertad</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> La colonia duró de 1502 a 1821: son los «tres siglos» de los que habla dos veces.</div>
+
+    <div class="et-cab"><b>5️⃣ Quinta estrofa</b><span>La Revolución Francesa</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>Era Francia, la libre, la heroica,</span><span class="v"><i>2</i>que en su sueño de siglos dormida</span><span class="v"><i>3</i>despertaba iracunda a la vida</span><span class="v"><i>4</i>al reclamo viril de Dantón;</span><span class="v"><i>5</i>era Francia que enviaba a la muerte</span><span class="v"><i>6</i>la cabeza del rey consagrado,</span><span class="v"><i>7</i>y que alzaba, soberbia a su lado,</span><span class="v"><i>8</i>el altar de la diosa Razón.</span></div>
+
+    <p><b>Qué dice:</b> Aquí el poema contesta la pregunta que dejó la estrofa anterior: el León era Francia. Cuenta la Revolución Francesa de 1789, cuando el pueblo despertó furioso llamado por Dantón, uno de sus oradores; mandó a la muerte al rey y puso en su lugar el culto a la Razón. De ahí salieron las ideas de libertad e igualdad que llegaron a América y empujaron la Independencia.</p>
+
+    <p class="voc">📚 <b>iracunda:</b> Llena de ira, furiosa &nbsp;·&nbsp; <b>viril:</b> Enérgico, valiente &nbsp;·&nbsp; <b>Dantón:</b> Georges Jacques Danton, orador de la Revolución Francesa &nbsp;·&nbsp; <b>consagrado:</b> Dedicado a Dios; el rey se creía puesto por Dios &nbsp;·&nbsp; <b>soberbia:</b> Orgullosa, altiva &nbsp;·&nbsp; <b>diosa Razón:</b> El culto a la razón que la Revolución puso en lugar de la religión</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> Es la única estrofa que habla de un país que no es Honduras ni España.</div>
+
+    <div class="et-cab"><b>6️⃣ Sexta estrofa</b><span>La Independencia de Centroamérica</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>Tú también, ¡oh mi patria!, te alzaste</span><span class="v"><i>2</i>de tu sueño servil y profundo;</span><span class="v"><i>3</i>tú también enseñastes al mundo</span><span class="v"><i>4</i>destrozado el infame eslabón.</span><span class="v"><i>5</i>Y en tu suelo bendito, tras la alta</span><span class="v"><i>6</i>cabellera de monte salvaje,</span><span class="v"><i>7</i>como un ave de negro plumaje,</span><span class="v"><i>8</i>la colonia fugaz se perdió.</span></div>
+
+    <p><b>Qué dice:</b> Es la estrofa de la Independencia. Honduras despierta de su «sueño servil», el sueño de quien vive sometido, y le enseña al mundo la cadena rota: ese es el «infame eslabón». Y la colonia se va, escondiéndose detrás de las montañas boscosas, como un pájaro negro que se pierde de vista. Ocurrió el 15 de septiembre de 1821.</p>
+
+    <p class="voc">📚 <b>te alzaste:</b> Te levantaste, te pusiste de pie &nbsp;·&nbsp; <b>servil:</b> Propio de un esclavo, sometido &nbsp;·&nbsp; <b>infame:</b> Vil, despreciable &nbsp;·&nbsp; <b>eslabón:</b> Cada anillo de una cadena; aquí, la cadena de la opresión &nbsp;·&nbsp; <b>cabellera de monte:</b> Los bosques de las montañas, vistos como cabello &nbsp;·&nbsp; <b>fugaz:</b> Que dura poco y se va deprisa</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> «Enseñastes» con -s no es una falta: los versos son de diez sílabas y sin la -s le faltaría una.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <div class="et-cab"><b>7️⃣ Séptima estrofa</b><span>El juramento de defender la patria</span></div>
+
+    <div class="estrofa"><span class="v"><i>1</i>Por guardar ese emblema divino</span><span class="v"><i>2</i>marcharemos, ¡oh patria!, a la muerte;</span><span class="v"><i>3</i>generosa será nuestra suerte</span><span class="v"><i>4</i>si morimos pensando en tu amor.</span><span class="v"><i>5</i>Defendiendo tu santa bandera,</span><span class="v"><i>6</i>y en tus pliegues gloriosos cubiertos,</span><span class="v"><i>7</i>serán muchos, Honduras, tus muertos,</span><span class="v"><i>8</i>pero todos caerán con honor.</span></div>
+
+    <p><b>Qué dice:</b> Es la única estrofa que no cuenta el pasado: promete. Dice que por guardar la Bandera («ese emblema divino») los hondureños marcharían hasta la muerte, y que esa muerte sería honrada. Por eso es la que se canta en los actos: las otras seis cuentan de dónde venimos, y esta dice qué estamos dispuestos a hacer.</p>
+
+    <p class="voc">📚 <b>emblema:</b> Símbolo que representa algo; aquí, la Bandera &nbsp;·&nbsp; <b>divino:</b> Sagrado, digno del mayor respeto &nbsp;·&nbsp; <b>generosa:</b> Noble, digna &nbsp;·&nbsp; <b>suerte:</b> Destino, lo que a uno le toca &nbsp;·&nbsp; <b>pliegues:</b> Los dobleces de la tela de la bandera &nbsp;·&nbsp; <b>honor:</b> Dignidad, buena fama por obrar bien</p>
+
+    <div class="caja idea">💡 <b>Dato:</b> Es la estrofa que se canta en las escuelas y en los partidos, junto con el coro.</div>
+
+    <h2>✋ 4. Cómo se canta y cómo se respeta</h2>
+
+    <div class="tri">
+      <div class="tnuc"><b>✅ Así sí</b>De pie, firme, con la vista al frente. Se CANTA, no se escucha: el Himno es de todos. Quieto si pasa la Bandera.</div>
+      <div class="torg"><b>🚫 Así no</b>Platicar, reírse o jugar mientras suena. Seguir sentado. Cambiarle la letra de broma. Usarlo de música de fondo.</div>
+    </div>
+
+    <h2>📝 Actividades de Evaluación</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Resuelve con lápiz. Cada sección vale 25 puntos; la prueba completa,
+    100 puntos.</p>
+
+    <h3>I. Completa el espacio <span class="val">(Valor: 2.5 puntos c/u)</span></h3>
+
+    <ol>
+      <li>La letra del Himno Nacional es de Augusto C. <span class="linea-resp"></span>.</li>
+      <li>La música del Himno Nacional es de Carlos <span class="linea-resp"></span>.</li>
+      <li>El Himno Nacional tiene un coro y <span class="linea-resp"></span> estrofas.</li>
+      <li>Cada parte del Himno tiene <span class="linea-resp"></span> versos.</li>
+      <li>El Himno se cantó por primera vez el 15 de septiembre de <span class="linea-resp"></span>.</li>
+      <li>Se declaró oficial en el año <span class="linea-resp"></span>.</li>
+      <li>En los actos escolares se canta el coro y la <span class="linea-resp"></span> estrofa.</li>
+      <li>«El audaz navegante» de la primera estrofa es <span class="linea-resp"></span>.</li>
+      <li>En la tercera estrofa, quien cae envuelto en su sangre es <span class="linea-resp"></span>.</li>
+      <li>El León que ruge al otro lado del Atlante es <span class="linea-resp"></span>.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 2.5 puntos c/u)</span> — Escribe V o F en la raya.</h3>
+
+    <ol>
+      <li><span class="linea-resp" style="min-width:40px"></span> El Himno Nacional tiene un coro y siete estrofas.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> La letra del Himno la escribió Carlos Hartling.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El coro del Himno describe la Bandera y el Escudo.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> En los actos escolares se canta la primera estrofa.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Cada estrofa del Himno tiene ocho versos.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El Himno se volvió oficial en 1915.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> En la tercera estrofa se cuenta la muerte de Francisco Morazán.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> La quinta estrofa habla de la Revolución Francesa.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> La séptima estrofa cuenta la llegada de Cristóbal Colón.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Escrito, el coro NO lleva las repeticiones que se cantan.</li>
+    </ol>
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 2.5 puntos c/u)</span> — Rellena el círculo de la letra de la respuesta correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿De cuántas partes consta el Himno Nacional?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Un coro y tres estrofas</span>
+        <span class="op full"><i></i><b>b)</b> Un coro y siete estrofas</span>
+        <span class="op full"><i></i><b>c)</b> Solo siete estrofas</span>
+        <span class="op full"><i></i><b>d)</b> Un coro y diez estrofas</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué hace el coro del Himno Nacional?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Cuenta la llegada de Colón</span>
+        <span class="op full"><i></i><b>b)</b> Describe la Bandera y el Escudo</span>
+        <span class="op full"><i></i><b>c)</b> Cuenta la muerte de Lempira</span>
+        <span class="op full"><i></i><b>d)</b> Promete defender la patria</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Cuántos versos tiene cada parte del Himno?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Cuatro</span>
+        <span class="op"><i></i><b>b)</b> Seis</span>
+        <span class="op"><i></i><b>c)</b> Ocho</span>
+        <span class="op"><i></i><b>d)</b> Diez</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Qué estrofa se canta en los actos cívicos junto con el coro?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> La primera</span>
+        <span class="op"><i></i><b>b)</b> La cuarta</span>
+        <span class="op"><i></i><b>c)</b> La sexta</span>
+        <span class="op"><i></i><b>d)</b> La séptima</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>En «un lampo de cielo», ¿qué significa lampo?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Una lámpara</span>
+        <span class="op"><i></i><b>b)</b> Un resplandor</span>
+        <span class="op"><i></i><b>c)</b> Una nube</span>
+        <span class="op"><i></i><b>d)</b> Un pedazo de tela</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Qué es un pendón, en la segunda estrofa?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Un barco</span>
+        <span class="op"><i></i><b>b)</b> Una bandera</span>
+        <span class="op"><i></i><b>c)</b> Un monte</span>
+        <span class="op"><i></i><b>d)</b> Una espada</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido acts">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué país es el León que ruge en la cuarta estrofa?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> España</span>
+        <span class="op full"><i></i><b>b)</b> Inglaterra</span>
+        <span class="op full"><i></i><b>c)</b> Francia</span>
+        <span class="op full"><i></i><b>d)</b> Portugal</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>En la sexta estrofa, ¿qué es «el infame eslabón» que se destroza?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> La cadena de la opresión colonial</span>
+        <span class="op full"><i></i><b>b)</b> Una joya del rey</span>
+        <span class="op full"><i></i><b>c)</b> El ancla de un barco</span>
+        <span class="op full"><i></i><b>d)</b> La reja de una cárcel</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Cuál es la ÚNICA estrofa que no cuenta el pasado, sino que promete?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> La primera</span>
+        <span class="op"><i></i><b>b)</b> La cuarta</span>
+        <span class="op"><i></i><b>c)</b> La sexta</span>
+        <span class="op"><i></i><b>d)</b> La séptima</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>¿Por qué la sexta estrofa dice «enseñastes» con -s?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Es una falta de ortografía</span>
+        <span class="op full"><i></i><b>b)</b> Porque el verso necesita esa sílaba</span>
+        <span class="op full"><i></i><b>c)</b> Porque así se hablaba en 1821</span>
+        <span class="op full"><i></i><b>d)</b> Porque rima con «mundo»</span>
+      </div>
+    </div>
+
+    <h3>IV. Términos pareados <span class="val">(Valor: 2.5 puntos c/u)</span> — Escribe en la raya la letra de la Columna B que corresponde.</h3>
+
+    <div class="tri">
+      <div class="tnuc" style="flex:1.1;"><b>Columna A — Palabra del Himno</b>
+        <ol style="margin-left:20px;font-size:10pt;">
+      <li><span class="linea-resp" style="min-width:34px"></span> «lampo»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «pendón»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «dombo»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «peñón»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «eslabón»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «sepulcro»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «pliegues»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «escuda»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «iracunda»</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> «fugaz»</li>
+        </ol>
+      </div>
+      <div class="torg" style="flex:1.3;"><b>Columna B — Qué significa</b>
+        <ol type="A" style="margin-left:20px;font-size:10pt;">
+      <li>Cada anillo de una cadena</li>
+      <li>Llena de ira, furiosa</li>
+      <li>Resplandor, destello de luz</li>
+      <li>Los dobleces de la tela</li>
+      <li>La bóveda del cielo</li>
+      <li>Que dura poco y se va deprisa</li>
+      <li>Monte de piedra</li>
+      <li>Protege, defiende</li>
+      <li>Bandera o estandarte</li>
+      <li>Tumba</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="felic">🏅 <b>¡Buen trabajo!</b> Si contestaste bien las cuatro secciones, ya puedes escribir el coro
+    y la séptima estrofa de memoria y explicar qué dicen. Eso es exactamente lo que pide el examen de septiembre.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras</span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Coello &nbsp; 2. Hartling &nbsp; 3. siete &nbsp; 4. ocho &nbsp; 5. 1904 &nbsp; 6. 1915 &nbsp; 7. séptima &nbsp; 8. Cristóbal Colón &nbsp; 9. Lempira &nbsp; 10. Francia</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6V, 7F, 8V, 9F, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2b, 3c, 4d, 5b, 6b, 7c, 8a, 9d, 10b</div>
+      <div><span class="pt">IV. Pareados:</span> 1C, 2I, 3E, 4G, 5A, 6J, 7D, 8H, 9B, 10F</div>
+    </div>
+
+    <div class="pauta" style="background:#fff8e6;border-color:#f0dca6;">
+      <div><span class="pt">Cómo se corrige «escribe la estrofa y explícala»:</span> son dos notas, no una.
+      <b>Escribirla</b> (50 %): los ocho versos completos, en orden y sin las repeticiones de la música. Se
+      descuenta por verso que falte o sobre, no por una tilde. <b>Explicarla</b> (50 %): que diga con sus palabras
+      de qué trata y qué significan dos o tres palabras difíciles. Volver a copiar la estrofa con otras palabras
+      NO es explicarla.</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma
+      M.E.T.A.S «Misión El Himno Nacional de Honduras» (Educación Básica), del eje de identidad nacional del DCNB:
+      «Identifican los símbolos patrios» y «Distinguen y respetan los símbolos patrios» (expectativas de logro del
+      Área de Ciencias Sociales). Existe porque cada año, en <strong>sexto</strong> y en <strong>noveno grado</strong>,
+      se le pide al estudiante escribir una estrofa del Himno y explicarla, y para eso hace falta la letra entera y
+      su vocabulario, no un resumen. La letra que aquí se imprime y la que el estudiante ve en la misión salen del
+      mismo archivo del proyecto, así que no pueden decir cosas distintas. Puede complementarse con actividades del
+      Mes de la Patria: copiar el coro a mano, ensayar la séptima estrofa para el acto del lunes, o repartir una
+      estrofa por equipo para que cada uno la explique al resto. Etapa 2 de la Ruta de la Patria. La misión
+      interactiva (código QR de la portada) permite practicar con retroalimentación inmediata antes de resolver
+      esta ficha.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · El Himno Nacional de Honduras · Hoja del Docente</span><span>Página 9</span></div>
+</section>
+
+</div>
+</body>
+</html>

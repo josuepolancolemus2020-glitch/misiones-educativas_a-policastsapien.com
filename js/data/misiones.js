@@ -92,6 +92,10 @@ const MISSIONS = [
      Himno, los próceres y las fechas del Mes de la Patria, que es lo que el
      alumno de septiembre necesita estudiar. */
   { id: 67, title: 'Aspectos Cívicos de Honduras',                        subject: 'cívica',      color: 'civ',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'patria',  etapa: 1, xp: 35, icon: '🇭🇳', pais: 'HN', url: 'misiones/2y3ciclo-aspectos-civicos/aspectos-civicos.html' },
+  /* La 67 abarca todos los símbolos; esta es SOLO el Himno, porque el examen
+     de septiembre de 6º y 9º pide escribir una estrofa y explicarla, y eso
+     necesita la letra entera, verso por verso, no un resumen. */
+  { id: 68, title: 'El Himno Nacional de Honduras',                       subject: 'cívica',      color: 'civ',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'patria',  etapa: 2, xp: 35, icon: '🎵', pais: 'HN', url: 'misiones/2y3ciclo-himno-nacional/himno-nacional.html' },
   /* La Ruta de la Meta va POR GRADO, no por orden de llegada: la etapa 1 es 4º
      aunque la primera que se escribió fuera la de 6º. El maestro de cuarto
      entra por la etapa 1 y no por la mitad de la ruta. */
