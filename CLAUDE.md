@@ -95,6 +95,371 @@ node _dev/servidor-estatico.js        (en otra terminal)
 node _dev/verifica-service-worker.js
 ```
 
+## Normativa: ninguna hoja de estilo viene de otro país
+
+Una hoja de estilo **bloquea el pintado** hasta que llega. Si está en otro
+servidor y en otro país, lo que bloquea es la señal del aula.
+
+Medido el 9 de septiembre de 2026 con el CDN **colgado** —que es lo que hace
+la señal de un pueblo: no rechaza la conexión, se traga los paquetes y no
+contesta nunca—, antes de tocar nada:
+
+| página | primer pintado |
+|---|---|
+| la portada | **no pintó en 2 minutos** |
+| Las Fracciones | **no pintó en 2 minutos** |
+| Sólidos Geométricos, Fin de Grado 6º, una ficha del maestro | no pintaron en 20 s |
+| `padres.html`, que nunca pidió nada fuera | **88 ms** |
+
+Pantalla en blanco, no lenta: **blanca, y sin final**. `padres.html` decía
+dónde estaba el problema: sin CSS externo, 88 ms con el mismo CDN colgado.
+
+Venían de fuera **81 páginas** pidiendo Google Fonts —74 misiones y 8 fichas
+del maestro—, el `@import` de la primera línea de `css/app.css`, y **65
+misiones** bajando Font Awesome entero. Hoy: **cero**. Ni una hoja de estilo,
+ni un `preconnect`, ni un `@import` sale del sitio, en ninguna página. La
+portada pinta en 428 ms y una misión en 200, con el CDN igual de colgado.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **Las letras se alojan, no se cambian por `system-ui`.** Fredoka es la cara
+   de las misiones y Outfit la de la aplicación del maestro. Arreglar la
+   espera cambiando la letra habría arreglado el problema cambiando el
+   producto. Viven en `css/vendor/fuentes/`, con licencia SIL Open Font, que
+   es exactamente para esto.
+2. **Solo el subconjunto latino y el latin-ext**, y **cada `@font-face` con su
+   `unicode-range`**. El latino trae todo lo del español —tildes, ñ, ¿, ¡ y el
+   º de «6º-1»—; el latin-ext solo se baja en la página que lo necesita (la de
+   los continentes tiene una `ł` y una `ż`). Del CDN venían además el
+   cirílico, el griego, el hebreo y el vietnamita. Y por eso **la portada no
+   se trae las tres letras de las misiones**: no se baja letra que no se pinta.
+3. **`font-display: swap`, siempre.** El texto sale desde el primer momento
+   con la letra del sistema y cambia cuando llega la nuestra. El alumno con
+   mala señal **lee**; antes esperaba, y a veces para siempre.
+4. ⚠️ **Nunca un `@import` remoto.** Es lo peor de los dos mundos: bloquea el
+   pintado **y** va en cadena —el navegador tiene que bajar y leer `app.css`
+   entera antes de enterarse de que hace falta otra cosa, en otro servidor—.
+   Las letras van en su propio `<link>`, **antes** del CSS que las usa.
+5. **No se trae una biblioteca de iconos por un icono.** Las 65 misiones —y
+   `mision.html`— bajaban los 102 KB de Font Awesome, del otro lado del mundo
+   y bloqueando, para pintar **uno**: la flecha de volver. Ahora es un SVG de
+   cinco líneas que hereda el color y el tamaño (`currentColor`, `1em`), así
+   que el CSS de las 65 no se tocó. Quien lo usa de verdad —la aplicación del
+   maestro, con cuarenta iconos, y el juego de la Fábrica Geométrica, con
+   catorce— se queda con él, pero **local**, que ya estaba en el repositorio.
+
+**Cuando entre una misión o un juego nuevo, se le da el mismo trato**, y esto
+pasa: el 9 de septiembre de 2026, mientras se hacía este cambio, entraron por
+`main` una misión (Aspectos Cívicos) y un juego (Fábrica Geométrica) pidiendo
+las letras y los iconos al CDN, como hacía todo lo demás. El juego traía
+además una letra que no teníamos, **JetBrains Mono**; se alojó, no se cambió
+por Fira Code —que también es monoespaciada y ya estaba—: la letra la eligió
+quien hizo el juego. La sonda es la que lo caza, y de paso cazó `mision.html`,
+que llevaba desde siempre bajándose Font Awesome entero por su flecha.
+
+⚠️ **Y en `sw.js` había una mentira que nadie podía ver:** pre-cacheaba la
+**CSS** de Google Fonts y nunca los `.woff2` de `fonts.gstatic.com`, así que
+sin señal la letra no llegaba igual. Al armazón se le suma solo **Outfit**,
+que es la letra de la portada —`index.html` sí abre sin señal la primera
+vez—; las de las misiones **no**, y no es un olvido: una misión que no se
+visitó en línea no está en la caché, así que guardarle la letra sería guardar
+la letra de una página que todavía no existe.
+
+**Lo que sí puede venir de fuera, y por qué.** Three.js en los 18 juegos 3D y
+MathJax en la misión de áreas del círculo: los dos son `<script>`, no hojas de
+estilo. Three.js lo carga el propio juego detrás de su telón, con su aviso de
+«hace falta internet la primera vez» y su normativa propia; MathJax va con
+`async`, que por definición no está en el camino crítico.
+
+**Y queda dicho lo que NO se tocó:** los 18 juegos 3D declaran `Fredoka` en su
+CSS y **nunca la han cargado** —llevan la letra del sistema desde siempre—. Se
+dejan como están: darles ahora la letra buena les mueve la maquetación, y esos
+paneles están medidos al píxel y tienen sonda propia.
+
+⚠️ **Y algo que hay que saber al medir una maquetación desde hoy:** hasta el 9
+de septiembre de 2026 las letras venían del CDN y **llegaban tarde**, así que
+toda medida tomada en una sonda se tomaba con la letra del SISTEMA, no con la
+nuestra. Se vio en el juego de la Fábrica Geométrica: acostado (740×360) su
+botón «Vaciar los huecos» caía 4 px por debajo del borde en cuanto la letra
+llegaba a tiempo —o sea, en el teléfono de cualquiera que tuviera señal—, y la
+sonda lo daba por bueno porque medía antes de que llegara. Ahora las letras
+están puestas desde el primer momento y **lo que mide la sonda es lo que ve el
+alumno**. Las sondas que cuentan hojas de papel —informes, fichas, boletos,
+listados— siguen todas en verde, y desde hoy cuentan con la letra de verdad.
+
+**Antes de publicar un cambio de las tipografías o de los enlaces de la
+cabecera:**
+
+```
+node _dev/servidor-estatico.js     (en otra terminal)
+node _dev/verifica-cdn-fuera.js
+```
+
+Lee **del archivo** todas las páginas y todas las hojas de estilo del
+repositorio —abrirlas con Playwright no lo corre nadie, y las cuenta ella,
+que no se escriben— para lo que se multiplica al copiar una misión: que no se
+cuele una hoja de estilo externa, que quien pinta con una de esas letras la
+enlace, y que **nadie cargue Font Awesome entero por una flecha** —con
+catorce iconos de verdad sí vale, y eso pasa en un juego—. Y abre tres con los tres servidores **colgados** —no abortados:
+abortar sería hacerle un favor al código viejo—: que pinten, que no salga ni
+una petición hacia ellos, que la letra que se ve sea la nuestra y salga del
+sitio, y que la flecha se vea y **se pueda tocar**.
+
+## Normativa: los datos del maestro se FUSIONAN, no se eligen
+
+Un maestro usa el teléfono en el aula y la PC por la noche. Hasta el 9 de
+septiembre de 2026 el espejo del aula comparaba las dos copias **enteras** y
+se quedaba con la más nueva. Medido con dos equipos y la nube de mentira:
+
+| | |
+|---|---|
+| pasa lista en el **teléfono** a las 9:00, sin señal | se guarda ahí |
+| pone una nota en la **PC** a las 20:00 | sube a la nube |
+| vuelve la señal en el teléfono | **la asistencia del día desaparecía** |
+
+Y no era solo eso: el teléfono **ni siquiera llegaba a subirla** —la daba por
+resuelta— y el botón «Recuperar» **no aparecía**, porque solo salía con el
+aula vacía. Al revés pasaba lo mismo: con el reloj del teléfono adelantado, la
+que se perdía era la nota de la PC. Las dos direcciones perdían.
+
+Un día de asistencia son 43 nombres que el maestro ya no puede reconstruir: no
+estaba mirando, estaba dando clase.
+
+Ahora no se elige una copia: se **fusionan las dos, dato por dato**
+(`js/metas-fusion-aula.js`). Después del arreglo, en el mismo caso: la
+asistencia está, la nota está, y la copia fusionada **sube**, que es lo que
+impide que mañana el otro equipo vuelva a mandar la suya a medias.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. **Tres versiones, no dos.** Se guarda la **BASE** —lo último que este
+   equipo y la nube tuvieron igual, en `METAS_DOCSYNC_BASE_V1`—, y es lo único
+   que distingue *lo que alguien añadió* de *lo que el otro borró*. Sin base
+   solo se puede UNIR, y unir revive un alumno que el maestro quitó; con base
+   se borra de verdad. Ocupa el doble de sitio, y si el almacén del teléfono
+   se llena, esa clave se cae de la base y se pasa a unir: quedarse sin base
+   es un incordio, perder la asistencia del día no.
+2. **Las listas se emparejan por su identidad, no por su posición.** Se busca
+   un campo único —`id` en colectas, controles, bitácora, convocatorias y
+   análisis; `f` en un día de asistencia; `num` en un alumno— y si no hay
+   ninguno se usa **el contenido**. Las tomas de lectura no llevan `id` y
+   varias caen el mismo día: ahí el contenido es la identidad buena, porque
+   una toma no se edita, se añade.
+3. ⚠️ **Editar gana a borrar.** Si un equipo borró algo y el otro lo cambió,
+   se queda lo cambiado. Devolverle al maestro un alumno que borró se arregla
+   en dos toques; quitarle una nota que acaba de escribir, no.
+4. **Solo cuando los dos cambiaron LO MISMO manda el reloj.** Es el único
+   sitio donde se elige, y por eso el reloj ya casi no decide nada.
+5. ⚠️ **La fusión no sabe ni un nombre de campo de este proyecto**, y es a
+   propósito. Con la lista de campos dentro se quedaría vieja en la primera
+   herramienta nueva —y no daría ningún error: pasaría a perder ese dato en
+   silencio, que es justo lo que vino a arreglar.
+
+**Dos redes debajo, para cuando la fusión no se pueda hacer:**
+
+- Si `MetasFusion` no está o devuelve `null` (algo no es JSON, o los dos lados
+  no tienen la misma forma), **se hace lo de siempre**: gana la más nueva. Por
+  eso el `<script>` va antes del espejo y el espejo lo llama con `typeof`: si
+  un día no carga, la aplicación sigue funcionando como antes.
+- Y una fusión **no puede devolver menos de la mitad** de la copia más llena.
+  Borrar media aula en una sincronización no pasa; un error en la fusión sí
+  podría. Ante la duda, lo de siempre.
+
+⚠️ **Y «Recuperar» ahora sale con el aula llena.** El respaldo guarda POR QUÉ
+se hizo: el de «Empezar de nuevo» es el deshacer de un borrado total y solo
+tiene sentido con el aula vacía; el de una sincronización que pisó datos es lo
+contrario, y ese botón tiene que verse **aunque el aula esté llena**. Se
+muestra cuando la copia guardada tiene algo que ahora **no está**. Y recuperar
+ya no pisa: **fusiona** lo guardado con lo que haya, porque devolver la
+asistencia de ayer no puede borrar la nota de hoy.
+
+⚠️ **Un equipo sin cambios pendientes SIEMPRE baja lo de la nube.** Antes se
+comparaban versiones incluso sin nada que subir, y un teléfono con el reloj
+adelantado dos años —que los hay— se quedaba **congelado para siempre**: veía
+su aula de siempre mientras la PC seguía trabajando. Si aquí no hay nada
+pendiente, la nube ya tiene lo nuestro, así que lo que traiga distinto es más.
+
+**Antes de publicar un cambio del espejo o de la fusión:**
+
+```
+node _dev/prueba-fusion-aula.js        → la fusión, caso por caso y sin navegador
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-fusion-sync.js      → los dos equipos, con la nube de mentira
+```
+
+El primero cuesta un segundo a propósito: es el que hay que poder correr cada
+vez que se toca. Vigila lo que cuesta caro —que no se pierda una asistencia,
+una nota, una toma de lectura ni **una clave de familia ya entregada**—, que
+borrar borre, que editar gane a borrar, que sin base no se borre nada y que
+ante lo raro devuelva `null` en vez de inventar. El segundo comprueba lo que
+solo se ve abriendo la aplicación: que el espejo la use, que la copia
+fusionada **suba**, que los dos equipos acaben con lo mismo y que sin la
+fusión no reviente nada.
+
+### Lo que NO se hizo, y por qué
+
+- **Partir `METAS_ADMIN_V1` en una llave por grupo.** Con la fusión dato por
+  dato ya no hace falta para no perder trabajo, y partirla toca
+  `registros-admin.js` entero —5 000 líneas— con una migración de los datos
+  que el maestro ya tiene. El beneficio que quedaría es de tamaño de la
+  petición, no de seguridad del dato.
+- **La hora del servidor en vez de `Date.now()`.** Sigue siendo mejor, pero
+  con la fusión el reloj solo decide cuando los dos equipos cambiaron el mismo
+  dato, que es el caso raro. Antes decidía siempre.
+- **Los respaldos y la retención.** El plan gratuito no trae copias y esto no
+  se arregla con código: es la decisión de pasar a plan de pago, que es del
+  autor. Lo que sí se hizo es que la nube **no se duerma**.
+
+## Normativa: la alumna ve primero lo de SU grado — y no se le esconde nada
+
+Medido el 9 de septiembre de 2026, antes de tocar nada, con una alumna de 4º
+que YA había escrito su grado al entrar en su primera misión:
+
+| | |
+|---|---|
+| tarjetas en la lista | **67** |
+| las cinco primeras | Los Adjetivos · Los Verbos · Los Sustantivos · Los Pronombres · **El Adjetivo Avanzado** (de Bachillerato) |
+| buscar «cuarto» | **0 resultados** |
+| buscar «4to» | **0 resultados** |
+
+Las mismas 67, en el mismo orden, para ella y para uno de 9º. **Cuatro de los
+cinco recorridos de la auditoría se atascaron ahí**, en la primera pantalla.
+
+El dato existía y no se usaba: `js/data/dcnb-map.js` dice en qué grados entra
+cada misión, y su cabecera pedía **no usarlo en ninguna vista del estudiante**
+para que ningún niño se sintiera señalado por trabajar contenido de un grado
+inferior. El miedo es legítimo; lo que estaba mal era el remedio, porque el
+precio lo pagaba ella entera: **esconderle el dato no la protege de nada, la
+deja perdida**.
+
+**Tres reglas, y son las que quitan el estigma sin quitar la ayuda:**
+
+1. **Se ORDENA, nunca se filtra.** Lo suyo va primero; lo demás sigue ahí,
+   entero y a un dedo. La sonda cuenta que los dos montones sumen SIEMPRE el
+   catálogo completo.
+2. ⚠️ **Solo se rotula lo que SÍ es suyo.** Hay un «📚 Para 4º grado» encima de
+   sus misiones y **nada** encima de las otras que diga de qué grado son:
+   «También puedes con estas», y ya. Un «esto es de 2º» es exactamente lo que
+   había que evitar, y la sonda comprueba que ese segundo rótulo no nombre
+   ningún grado.
+3. **Nunca se adivina.** 47 de las 67 dicen «II y III Ciclo», que vale igual
+   para 4º y para 9º: repartirlas a los seis grados pondría 47 tarjetas en
+   todos y el orden no diría nada. Donde no hay dato, no hay rótulo. Las
+   fuentes son dos y ninguna se inventa: el mapa del DCNB, y el campo `grade`
+   **cuando nombra UN grado** —que no es un detalle: las Pruebas de Fin de
+   Grado no están en el mapa y son justo lo que más le importa a la alumna de
+   ese grado—.
+
+⚠️ **Y dentro de su montón NO vale el orden del catálogo.** Esto se vio
+midiendo, después de creerlo terminado: doce misiones son **espirales** —el
+DCNB retoma la gramática y la ortografía los seis años—, están al principio
+del catálogo, y con el orden de siempre lo primero que veían la de 4º y el de
+9º volvía a ser lo mismo: Los Adjetivos, Los Verbos, Los Sustantivos. **La
+mitad del arreglo se perdía justo en la primera pantalla**, que es donde se
+atascaron los recorridos. Ahora sube antes **lo más suyo**: cuantos menos
+grados comparte una misión, más arriba. La de 4º empieza por Números Grandes y
+Valor Posicional; el de 9º, por lo suyo.
+
+⚠️ **No se le pregunta el grado otra vez.** Ya lo escribió al entrar en su
+primera misión (`METAS_ALUMNO_V1`), y la lectura de lo que escribió a mano
+—«4», «4º», «4to A», «cuarto», «6º-1», «61»— es la misma que hace
+`estParteGrupo` en la pantalla del maestro.
+
+⚠️ **Y el chip se guarda en SU PROPIA llave** (`METAS_GRADO_VISTA_V1`), nunca
+dentro de `METAS_ALUMNO_V1`: esa identidad **viaja pegada a cada resultado que
+llega al maestro**, y una preferencia de vista no tiene por qué entrar en el
+expediente de nadie. La sonda lo comprueba tocando otro chip y mirando que el
+grado del alumno no cambie.
+
+**El buscador también encuentra por grado.** «cuarto», «4to» y «4º» daban 0, 0
+y 1; ahora dan las 29 que son suyas. El `º` no es una tilde y por eso no lo
+quitaba `sinTildes`: se normaliza aparte.
+
+**Los chips van a 44 px**, la regla de siempre. Las píldoras de materia de al
+lado se quedaron más bajas de antes; hacer la nueva igual de pequeña habría
+sido copiar el problema en vez de dejarlo donde está.
+
+**Antes de publicar un cambio del grado o del catálogo:**
+
+```
+node _dev/prueba-grado-alumno.js       → de qué grado es cada misión, sin navegador
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-grado-alumno.js     → la pantalla de la alumna
+```
+
+El primero cuesta un segundo y es el que hay que correr al tocar el catálogo o
+el mapa del DCNB: que ningún grado se quede sin misiones, que no se invente
+ninguna, que se ordene de lo más suyo a lo más compartido y que **la primera
+pantalla de la de 4º no sea la del de 9º**. El segundo abre la aplicación: que
+el chip salga marcado solo, que se pueda tocar, que no desaparezca ni una
+tarjeta, que el segundo rótulo **no nombre ningún grado**, que «Todos» los
+quite, que la elección aguante cerrar la aplicación y que **no toque el
+expediente del alumno**.
+
+### Lo que NO se hizo, y por qué
+
+- **Contenido distinto por nivel.** 47 misiones sirven el mismo texto a un niño
+  de 9 años y a uno de 15. Eso es meses de escritura, no una pantalla, y sigue
+  siendo el problema de fondo. Lo de aquí es que al menos encuentre lo suyo.
+- **Filtrar por grado.** Se descarta a propósito: ocultar es lo que convierte
+  el dato en una etiqueta. Con ordenar y rotular solo lo suyo, el estigma no
+  aparece por ningún lado y la ayuda sí.
+- **Rellenar el mapa del DCNB de las 20 que no lo tienen** (Robótica,
+  Programación, E. Cívica, Inglés). Once de ellas no están en el DCNB
+  hondureño, así que no es un olvido: es que no hay grado que ponerles.
+
+## Normativa: la nube no se duerme en vacaciones
+
+El plan gratuito de Supabase **pausa el proyecto tras siete días sin una sola
+petición**, y el calendario hondureño tiene un hueco de tres meses: de
+noviembre a febrero las aulas están cerradas y nadie abre la aplicación.
+
+Lo que le cuesta al maestro no es una pantalla lenta: en febrero entra a
+preparar el año, no le carga la lista de su aula y **da por hecho que perdió
+el trabajo del curso pasado**. No lo pierde —los datos siguen ahí—, pero eso
+él no lo sabe, y reactivar el proyecto es a mano y desde el panel de Supabase.
+
+Lo evita `.github/workflows/no-dormir-supabase.yml` con una lectura **cada
+tres días**. Tres y no siete a propósito: con siete, una sola ejecución que se
+retrase —GitHub retrasa los `schedule`— ya deja pasar el plazo. La dirección y
+la clave se **leen de los archivos del repositorio** (`js/metas-docente-sync.js`
+y `js/metas-sugerencias.js`) para que no haya dos sitios que digan lo mismo. Y
+**falla a propósito** si la nube no contesta bien: enterarse por un correo del
+CI cuesta un minuto; enterarse en febrero, con el maestro delante, cuesta su
+confianza.
+
+⚠️ **La petición va a `/auth/v1/health`, NO a la raíz de la API REST**, y la
+diferencia no es de estilo: `/rest/v1/` contesta **401 «Secret API key
+required»** a cualquier clave publicable —esa puerta pide clave secreta, a
+propósito— y **una clave secreta no puede vivir en un repositorio público**. La
+salud del servicio de cuentas sí abre con la publicable, va con la cabecera
+`apikey` (la puerta de entrada la exige en todo), no toca ninguna tabla, no
+devuelve un dato de nadie, y basta: lo que evita la pausa es que la petición
+**llegue al proyecto**.
+
+⚠️ **Y se tocan las DOS nubes**, no una. La de M.E.T.A.S lleva las aulas del
+maestro; la de F.A.R.O es por donde salen las **sugerencias que escriben los
+alumnos** y por donde entran los **videos de las misiones**. Si esa segunda se
+duerme, el alumno escribe su sugerencia, se queda en la cola y nadie la lee
+nunca. Se toca desde aquí porque es desde aquí desde donde se la llama, aunque
+su panel viva en otro repositorio.
+
+⚠️ **Esto se publicó el 8 de septiembre sin poder probarse y estuvo roto tres
+días.** El proxy de las sesiones de Claude Code **bloquea también el dominio de
+Supabase**, así que no había forma de comprobarlo desde aquí; se dio por bueno
+y la primera ejecución de verdad —lanzada a mano el 9 de septiembre— falló, y
+las dos siguientes también, hasta imprimir el cuerpo de la respuesta y leer
+«Secret API key required». Habría seguido fallando cada tres días, **sin
+despertar nada**, hasta febrero. La lección, y vale para todo lo que este
+entorno no alcanza: **lo que no se puede probar aquí se lanza a mano en GitHub
+y se mira el resultado** —`workflow_dispatch` está puesto justo para eso—, y
+mientras no se haya visto en verde, no está hecho.
+
+⚠️ **Lo que esto NO resuelve:** GitHub apaga los `schedule` de un repositorio
+que lleve **60 días sin un solo empujón**. Hoy se publica casi a diario, así
+que no aplica; el día que aplique, la respuesta de verdad es el plan de pago
+—no se pausa y trae copias diarias—, que es una decisión del autor.
+
 ## Normativa: el SQL de Supabase se pega en el chat, SIEMPRE
 
 Los archivos `SUPABASE-*.sql` —y los de `supabase/sql/` del proyecto de la
@@ -1820,8 +2185,9 @@ andamio de los juegos 3D, el aparato de videos y la barra de secciones.
 4. ⚠️ **Una cuadrícula no se convierte en cuarenta paradas.** La sopa trae
    **144 celdas**: tabular 144 veces para cruzar una actividad no es
    accesibilidad, es una trampa. Por encima de 40 hermanos iguales se deja
-   fuera. El memorama (16) y el crucigrama (16) sí entran: esas son las
-   opciones del juego.
+   fuera —y la sopa, además, se saca **por su nombre**, porque tiene teclado
+   propio (más abajo)—. El memorama (16) y el crucigrama (16) sí entran:
+   esas son las opciones del juego.
 5. **Lo que ya CONTIENE un control no se toca.** El velo que cierra el panel
    de logros lleva dentro sus botones: hacerlo parada añade un salto que no
    hace falta y duplica el del botón que ya está dentro.
@@ -1838,21 +2204,171 @@ llevan `transition: all .2s`, así que preguntar en el instante de enfocar
 devuelve el valor VIEJO. Eso dio dos falsas alarmas seguidas: una con el
 fondo de la barra de secciones y otra con este anillo.
 
-**Lo que NO se hizo, y por qué:**
+### La sopa de letras: una parada, y las flechas por dentro
 
-- **La sopa de letras sigue sin teclado.** No es un descuido de esta
-  normativa: se juega **arrastrando con eventos de puntero** sobre la
-  cuadrícula, no con `click` por celda, así que necesita su propio diseño
-  —tabulador que entra una vez, flechas dentro, Enter para marcar el
-  principio y el final—. Está dicho y sin hacer.
-- **El control de tamaño de letra para la aplicación del maestro.** Con el
-  zoom desbloqueado ya tiene una salida, y el control necesita su propia
-  pasada. Se probaron tres caminos y **dos se descartan medidos**: el
-  `+25 %` en cascada que usan las misiones **rompe la maquetación por 764 px**
-  (`app.css` tiene 594 tamaños en px y 30 en rem, así que la cascada no
-  reparte), y `zoom` sobre el contenedor **no desborda pero desalinea las
-  coordenadas del puntero**, lo que rompería el arrastre de la barra de
-  grupos, que tiene normativa propia. Queda por hacer, sabiendo eso.
+Era el único agujero que esta normativa dejaba escrito y sin tapar. Son **65
+misiones del alumno y 8 del maestro**, 144 celdas cada una, donde el alumno que
+no puede arrastrar podía leer la teoría entera y **no encontrar una sola
+palabra**.
+
+Lo que hizo falta no fue inventar un juego nuevo: **el juego con teclas ya
+existía y nadie lo sabía**. El `pointerup` de las 65 del alumno tiene una rama
+para cuando el dedo NO se movió —toca una celda, toca la otra, y la palabra
+queda entre las dos—, y las 8 del maestro no tienen arrastre ninguno: son dos
+toques. Así que el teclado **no imita el arrastre**, que es lo que con teclas no
+se puede hacer: hace los mismos dos toques, y por eso el alumno con teclado
+juega al mismo juego que su compañero y no a una versión de repuesto.
+
+Vive en los **mismos dos archivos compartidos** (`js/teclado-actividades.js` y
+`css/teclado-actividades.css`), así que **no se tocó ni una de las 73 misiones**.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. ⚠️ **UNA parada de tabulador, no 144.** Es la regla 4 de arriba cumplida, no
+   saltada: al tabulador se entra una vez y se sale una vez; por dentro se anda
+   con las flechas. La sonda lo cuenta tabulando de verdad.
+2. **Las flechas NO deslizan la página** (`preventDefault`). Es la misma regla
+   de la barra espaciadora: el alumno está mirando la cuadrícula y una flecha
+   que además mueve la pantalla le quita de la vista justo lo que lee.
+3. ⚠️ **El cursor sobrevive al repintado.** Las dos variantes rehacen la
+   cuadrícula entera —la del maestro, en CADA toque—. Sin devolver el foco a la
+   misma casilla, se cae al `<body>` en cuanto marca la primera letra y el
+   alumno se queda fuera de la sopa sin saber por qué: un teléfono trabado.
+4. **El principio se puede soltar** (Esc, o Enter otra vez en la misma celda).
+   Con el dedo se suelta tocando fuera; con el teclado, sin esto, una marca
+   puesta por error no se quita.
+5. ⚠️ **El estado es UNO, el del juego.** El principio marcado se guarda en la
+   variable de la propia misión (`sopaFirstClickCell`), no en una nuestra; y en
+   las del maestro, que la guardan donde desde fuera no se ve, **soltar es
+   volver a tocar esa celda**. Si no, el que marca con el dedo y remata con la
+   tecla —lo normal con teclado y pantalla táctil— acaba con dos principios
+   marcados y ninguna palabra encontrada. Costó un fallo de sonda: Esc borraba
+   la marca de aquí y dejaba la de allá, y la palabra siguiente no salía nunca.
+6. **Y se dice cómo se juega.** Es la regla de la barra de secciones: «se podía
+   deslizar desde siempre; lo que faltaba era decirlo». La ayuda de teclas sale
+   **solo cuando la cuadrícula tiene el foco**, para no robarle pantalla al que
+   juega con el dedo.
+
+⚠️ **Y si una misión no trae con qué rematar la palabra, ahí no se pone
+teclado.** Es la lección de `centena.js`: una parada de tabulador que promete y
+no cumple es peor que no poder llegar.
+
+⚠️ **De paso salió una avería que llevaba ahí desde el principio**, y la cazó la
+sonda nueva: el marcado general agrupa por la CLASE del elemento, así que en
+cuanto el alumno encontraba una palabra sus celdas pasaban a `sopa-c hallada`,
+formaban un grupo de cuatro —por debajo del tope de 40— y se volvían **cuatro
+paradas de tabulador que no llevaban a ninguna parte**. Estaba pasando en las 8
+misiones del maestro. Por eso la sopa se saca **por su nombre** (`#sopaGrid`) y
+no por el tope.
+
+⚠️ **Y la sonda vieja no abría la sopa.** Buscaba la sección por su nombre
+escrito a mano, `s-sopa`, y las 8 del maestro la llaman `sec-sopa`; como `go()`
+apaga todas las secciones, dejaba la página **en blanco** y la comprobación
+pasaba igual, midiendo otra cosa. Ahora la sección se busca por **dónde vive la
+cuadrícula**.
+
+### El tamaño de letra del maestro: una variable, no una cascada
+
+Medido el 9 de septiembre de 2026 con el aula de 43 alumnos sembrada y un
+teléfono de 390 px: de los **281 textos que el maestro tiene delante, 171
+estaban por debajo de 14 px** y 41 por debajo de 12; el más pequeño, **9**.
+Por pantalla: Mi aula 51 % de sus textos bajo 14 px, Plan de Acción 88 %,
+Parte Mensual 83 %. Con el zoom del navegador ya desbloqueado tenía una
+salida, pero el pellizco en un teléfono de 360 px obliga a deslizar de lado
+en cada renglón, y pasar lista son 43 renglones.
+
+**Los dos caminos descartados siguen descartados**, y por eso están escritos:
+el `+25 %` en cascada de las misiones rompe la maquetación por 764 px, y
+`zoom` sobre el contenedor **desalinea las coordenadas del puntero** y con eso
+se lleva por delante el arrastre de la barra de grupos.
+
+Lo que sí funciona: **una variable que multiplica cada `font-size` de
+`css/app.css`** (`--metas-fz`), con su botón **Aa** en
+`js/letra-maestro.js`. No se compone al anidarse —cada declaración se
+multiplica una vez—, no toca una sola coordenada del puntero, y a 1 pinta
+exactamente lo de siempre.
+
+**Siete reglas, y ninguna es de adorno:**
+
+1. ⚠️ **A 1 tiene que pintar lo de siempre, y se comprueba elemento por
+   elemento.** Son **633 declaraciones** convertidas de golpe: la única forma
+   de hacerlo sin cambiarle la pantalla a nadie hoy es medir los 841
+   elementos visibles antes y después y exigir los 841 idénticos. Salieron
+   idénticos.
+2. ⚠️ **El tope es 1,45 y está MEDIDO, no elegido.** A 1,6 los 43 chips de la
+   lista de asistencia **recortan el nombre del alumno** (`.ad-chip-nom`,
+   21 px de texto en 19 de hueco) y a 1,8 la tabla de Notas SACE **se sale
+   del teléfono**. A 1,45 no se sale ni se recorta nada, en las ocho
+   pestañas de Mi aula y a 360 px. El día que alguien quiera subirlo,
+   primero se arregla el chip de asistencia. Los pasos son 100 · 115 · 130 ·
+   145, y **la sonda los lee del aparato**, no los escribe.
+3. **No se baja de lo de siempre.** El problema es que la letra es pequeña;
+   un paso «más pequeña» solo serviría para que alguien se quede sin poder
+   leer la pantalla y sin saber por qué. El botón **cicla y vuelve a
+   normal**, que es el mismo gesto del **Aa** de los dieciocho juegos 3D.
+4. ⚠️ **Se guarda en SU PROPIA llave** (`METAS_LETRA_V1`), nunca dentro de
+   `METAS_ADMIN_V1`: esa llave viaja a la nube y se fusiona dato por dato con
+   el otro equipo del maestro. Es la misma razón por la que el chip de grado
+   de la alumna vive aparte.
+5. ⚠️ **Se aplica en el `<head>`, antes del primer pintado.** Al final del
+   body la pantalla abriría pequeña y daría un salto justo cuando el maestro
+   ya puso el dedo. Misma razón que `estrella-ganada.js`. Y va en el
+   `ARMAZON` de `sw.js`, porque sin señal tiene que aplicarse igual.
+6. **El botón va en los encabezados COMPACTOS** —las trece pantallas donde
+   el maestro trabaja—, a **44 px** aunque sus vecinos midan 38: hacerlo
+   igual de pequeño habría sido copiar el problema, la misma decisión que
+   con los chips de grado.
+
+   ⚠️ **En el encabezado de la portada NO cabe, y está medido:** con la
+   marca, el hamburguesa, Actualizar y la medalla, sus 124 px de botones
+   acaban en el píxel **361 de un teléfono de 360** —la medalla se sale y
+   Actualizar deja de poder tocarse—. Además es la pantalla que menos lo
+   necesita: su texto está en 15 px, no en 11. Se pone desde cualquier
+   pantalla del maestro y vale para toda la aplicación.
+7. ⚠️ **La marca de la portada NO escala**, y es la única excepción de la
+   hoja (`.brand-logo` y `.brand-sub`). Es la misma razón por la que en la
+   lectura proyectada no escalan la franja ni el título: el encabezado mide
+   el sitio que deja, y si crece con la letra se muerde la cola. Medido: con
+   la marca creciendo, a 1,45 el encabezado pasaba de 82 a **123 px de
+   alto** —un sexto de la pantalla del alumno— y los botones se iban 14 px
+   fuera del teléfono. Y no se gana nada: el subtítulo son 8,5 px
+   decorativos que nadie lee para trabajar.
+
+**Y el papel no crece.** Los informes y las fichas salen de una ventana
+aparte que no hereda la variable, y por si acaso `app.css` la fuerza a 1 en
+`@media print`: 42 alumnos tienen que seguir dando 42 páginas.
+
+**Lo que esto NO toca son las misiones**, y no es un olvido: cada misión trae
+su propio CSS y su propio `body.letra-grande`, que es el ajuste del alumno.
+Son dos superficies y dos mecanismos —`app.css` viste la portada, la lista de
+Misiones y las pantallas del maestro; el HTML de cada misión se viste solo—.
+El día que se unifiquen, se unifican los dos ajustes a la vez o quedará uno
+mandando sobre el otro, que es exactamente lo que ya pasó en la lectura
+proyectada y costó una normativa entera.
+
+⚠️ **Todo `font-size` nuevo de `app.css` va multiplicado por la variable.**
+Es lo que se multiplica al escribir CSS aquí, y la sonda lo cuenta: un
+rótulo que se queda en 11 px mientras el resto crece se lee **peor** que
+antes, porque ya no tiene con qué compararse. Así se cazaron los dos únicos
+que había —los rótulos de los logos en Notas SACE, que traían el tamaño en
+el atributo `style` desde `registros-admin.js`—.
+
+**Antes de publicar un cambio del tamaño de letra:**
+
+```
+node _dev/servidor-estatico.js         (en otra terminal)
+node _dev/verifica-letra-maestro.js
+```
+
+Vigila lo que cuesta caro: que la hoja entera pase por la variable (con las
+dos excepciones contadas, no escritas), que el aparato vaya en el `<head>` y
+en el armazón, que el botón se pueda tocar a 44 px y **no se cuele en la
+portada**, que cada paso agrande sin que nada se salga ni se recorte en las
+ocho pestañas, que **todos los textos crezcan lo mismo**, que las pantallas
+del alumno **no empeoren** respecto a la escala 1, que **el arrastre de la
+barra de grupos siga funcionando con la letra en el tope** —que es lo que
+descarta volver a intentar `zoom`—, que el papel valga 1, y que el ajuste
+aguante cerrar la aplicación **sin tocar los datos del maestro**.
 
 **Antes de publicar un cambio del teclado o del zoom:**
 
@@ -1866,7 +2382,10 @@ las dos piezas. Y en el navegador hace lo que de verdad importa: **clasifica
 una ficha sin tocar la pantalla** —tabulando de verdad, no llamando a
 `focus()`—, comprueba que Enter la selecciona, que la barra espaciadora la
 deja en su columna **y no desliza la página**, que el foco **se ve** (midiendo
-después de la transición), y que la sopa **no** se haya vuelto 144 paradas.
+después de la transición), y que la sopa **no** se haya vuelto 144 paradas —y
+que, siendo una sola, se pueda **encontrar una palabra entera sin tocar la
+pantalla**, en las dos variantes: la del alumno y la del maestro, que por
+dentro no juegan igual—.
 
 ## Normativa: la barra de secciones va ARRIBA, y no se va
 
@@ -2870,6 +3389,101 @@ se quiere una bandera grande, se pone la imagen real del país con todo lo
 suyo. Nunca un degradado, nunca «solo las franjas». La nota larga y el porqué
 están en `js/data/paises.js`.
 
+## Normativa: el icono de la aplicación instalada no se recorta
+
+Cuando el maestro instala M.E.T.A.S desde su navegador —«Añadir a la pantalla
+de inicio», que es como llega la aplicación a un teléfono de un pueblo—, lo que
+le queda es el **logo del editorial**. Y ahí el teléfono NO lo enseña tal cual:
+Android le pone su **máscara** encima —círculo, cuadrado redondeado o gota,
+según la marca— y se queda con lo de dentro. Solo está garantizado el **círculo
+central del 80 %** del lienzo.
+
+El 9 de septiembre de 2026 el logo nuevo entró por `main` como una imagen
+suelta, y así medía el icono que había:
+
+| | antes | hoy |
+|---|---|---|
+| el logo dentro del icono `any` | **60 % del ancho** (el resto era un aro azul y aire) | **90 %** |
+| el logo dentro del icono `maskable` | 60 %, y la tinta **se salía 53 px** de la zona segura | **74 %, dentro** |
+| archivos | 2, y el mismo servía para las dos cosas | 4, dos por familia |
+| lo que pesan | 140 KB | **115 KB** |
+
+**Lo que cuesta caro es que esto NO SE VE AL PUBLICAR.** El archivo se sube
+bien, el navegador lo enseña entero en la pestaña, el manifest no da un solo
+error… y en la pantalla de inicio el logo sale con **«EDITORIAL» cortado por
+los lados**. Se descubre —si se descubre— mirando el teléfono de alguien que ya
+la instaló.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. ⚠️ **`any` y `maskable` son DOS archivos, nunca uno con los dos propósitos.**
+   Era lo que había (`"purpose": "any maskable"`), y obliga a elegir: o el icono
+   sale diminuto en todas partes —para que quepa en el recorte— o Android se
+   come el nombre de quien publica. Son dos trabajos distintos: el `any` lo
+   enseña el navegador casi entero y llena el 90 %; el `maskable` va entero
+   dentro del círculo del 80 %.
+2. ⚠️ **El tamaño no se escribe: se MIDE, y se mide la TINTA.** Inscribir la
+   *caja* del logo en la zona segura lo dejaba en el **60 %** del ancho, porque
+   las esquinas de la caja están vacías. Buscando el círculo más pequeño que
+   contiene la tinta de verdad sube al **74 %** — el mismo recorte y un icono
+   un cuarto más grande. Lo hace `_dev/genera-iconos-app.py`; a ojo no se
+   acierta y encima cambia con cada logo.
+3. **Del círculo se deja un colchón** (97 %). El borde de la tinta se decide con
+   un umbral, así que el halo más claro del antialiasing queda fuera de la
+   cuenta; sin colchón el logo sale tangente al recorte y ese halo se lo lleva
+   la máscara. Es la misma cifra y la misma razón que los 248 mm de la hoja
+   carta.
+4. ⚠️ **El fondo es blanco y OPACO, nunca transparente.** iOS pone lo
+   transparente sobre **negro**, y este logo es azul marino: desaparecería. Y
+   una máscara de Android sobre esquinas transparentes deja el icono con el
+   fondo en nada. El logo se diseñó sobre blanco; se guarda sobre blanco.
+5. **El original se queda en el repositorio** (`img/logo-oficial.jpg`). Sin él,
+   el próximo cambio se haría recortando a mano el icono ya recortado, que es
+   como se pierde un logo.
+
+⚠️ **Los iconos van precacheados y llevan sellado.** Están en `STATIC_ASSETS` de
+`sw.js`, así que un teléfono con el service worker puesto **seguiría enseñando
+el icono viejo para siempre** si no se sube `CACHE_NAME`. Es la normativa de
+sellado de siempre, y aquí muerde aunque no se haya tocado una línea de HTML.
+
+⚠️ **`img/logo.png` NO es este logo y no se toca.** Es el de **M.E.T.A.S** —el
+cerebro con «M.E.T.A.S» escrito arriba— y va de marca de agua dentro de las 74
+misiones (`.xp-back-logo`). El del editorial es el de la aplicación instalada.
+Son dos marcas y cada una tiene su sitio.
+
+**Cuando entre un logo nuevo, se le da el mismo trato:** se deja el original en
+`img/logo-oficial.jpg`, se corre el generador y se sella. No se recorta a mano
+y no se copia un icono de otro tamaño.
+
+```
+pip install --user pillow        (no va en el repositorio)
+python3 _dev/genera-iconos-app.py          → arma los cuatro
+python3 _dev/genera-iconos-app.py --revisa → solo mide, no escribe
+node _dev/verifica-iconos-app.js           → los abre y los mide
+```
+
+La sonda no mira el papeleo: **abre los PNG y busca la tinta píxel a píxel**
+—lee el PNG con `zlib`, que viene con Node, así que no añade una dependencia—.
+Comprueba que ningún archivo sirva a las dos familias, que la tinta del
+`maskable` **quepa en el círculo del 80 %** y que además lo aproveche (que no
+salga diminuto, que era el fallo del anterior), que el `any` llene el lienzo,
+que ninguno lleve canal alfa, que los cuatro estén en `sw.js` y que el original
+siga ahí. Cuando algo se sale, **dice el píxel exacto** que la máscara se
+llevaría.
+
+### Lo que NO se hizo, y por qué
+
+- **Quitarle la palabra «EDITORIAL» al icono.** Es lo que manda el manual de
+  cualquier icono pequeño, y aquí sería cambiar el producto para arreglar la
+  medida: el logo lo eligió el autor. Se le da todo el tamaño que el recorte
+  permite y se deja entero, que es la misma decisión que alojar las tipografías
+  en vez de cambiarlas por `system-ui`.
+- **Un `apple-touch-icon` de 180 px propio.** iOS ya baja el de 192 y una
+  reducción de 192 a 180 no se ve; el archivo de más sí se baja.
+- **Los iconos de la app de Android** (`android/app/src/main/res/mipmap-*`).
+  Esos son los del APK de Capacitor, que no se descarga de un navegador. El día
+  que se compile, se rearman ahí con las herramientas de Android Studio.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi
@@ -2915,6 +3529,18 @@ salen dos reglas:
   comentario de `camp-vivo.html` que cuenta que ahí **se quitó** el
   `user-scalable=no`. El sitio donde se explica por qué algo ya no está es
   justo donde ese algo sigue escrito.
+- ⚠️ **La sonda que finge la nube abre la página SIN service worker**
+  (`SIN_SW`, en `_dev/lib-navegador.js`). Cuando el service worker toma el
+  control —`sw.js` hace `skipWaiting()` y `clients.claim()`, así que lo toma
+  sin recargar—, las peticiones pasan por él, y las que pasan por él
+  **`page.route` no las intercepta**: se van a la nube de verdad, allí se
+  quedan colgadas, y la sonda ve una pantalla que no se pinta nunca. Estuvo
+  tapado por un accidente durante meses: la instalación pre-cacheaba dos
+  direcciones de CDN que en la sonda no contestan, así que tardaba lo
+  suficiente y a las sondas les daba tiempo. El 9 de septiembre de 2026 esas
+  dos direcciones se fueron y `verifica-convocatoria` se puso roja **sin que
+  nada del producto estuviera roto**. Son ocho sondas y ya lo llevan; la que
+  SÍ tiene que abrir con service worker es `verifica-service-worker`.
 - **El desfase de `www/` avisa, no falla.** Esa copia va atrasada *a propósito*
   hasta que se compila la app de Android, así que darlo por fallo pintaba de
   rojo el estado normal del repositorio. Lo que sí hace falta saber es cuánto le

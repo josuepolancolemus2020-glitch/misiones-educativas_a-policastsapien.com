@@ -22,7 +22,7 @@ let evalFormNum = 1, evalOpFormNum = 1, evalOpAnsVisible = false;
 let unlockedAch = [];
 let darkMode = false;
 let prevLevel = 0;
-const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set() };
+const xpTracker = { fc: new Set(), qz: new Set(), cls: new Set(), id: new Set(), cmp: new Set(), reto: new Set(), fab: new Set() };
 
 // ===================== SONIDO =====================
 let sndOn = true; let AC = null;
@@ -93,6 +93,7 @@ const ACHIEVEMENTS = {
   clasif_pro:{icon:'🗂️',label:'Clasificador de áreas experto'},
   id_master:{icon:'🔍',label:'Identificador de fórmulas maestro'},
   reto_hero:{icon:'🏆',label:'Héroe del reto geométrico'},
+  fabrica_maestro:{icon:'🏭',label:'Maestro de la Fábrica Geométrica'},
   nivel3:{icon:'🔭',label:'¡Explorador alcanzado! Nivel 3'},
   nivel6:{icon:'🥇',label:'¡Campeón alcanzado! Nivel 6'}
 };
@@ -109,7 +110,12 @@ function updateXPBar(){ const pct=Math.round((xp/MXP)*100); document.getElementB
 function fin(id){
   if(!done.has(id)){ done.add(id); const b=document.querySelector(`[data-s="${id}"]`); if(b) b.classList.add('done'); sfx('up'); launchConfetti(); saveProgress(); }
 }
-function getProgress(){ return Math.round((done.size/10)*100); }
+/* Las secciones que se pueden completar, en una LISTA y no en un 10
+   pelado. El día que entró la Fábrica el número escrito a mano habría
+   dejado la Constancia dando 110 %, y eso es lo que el alumno le enseña
+   a su familia. Si mañana entra otra sección, se añade aquí. */
+const SECS_COMPLETABLES = ['s-aprende','s-tipos','s-flash','s-quiz','s-clasifica','s-identifica','s-completa','s-fabrica','s-reto','s-tareas','s-evaluacion'];
+function getProgress(){ return Math.min(100, Math.round((done.size/SECS_COMPLETABLES.length)*100)); }
 
 // ===================== NAV =====================
 function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');}); document.getElementById(id).classList.add('active'); const btn=document.querySelector(`[data-s="${id}"]`); if(btn){btn.classList.add('active');btn.setAttribute('aria-selected','true');} window.scrollTo({top:0,behavior:'smooth'}); }
@@ -1073,3 +1079,85 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 // Formas deterministas v1: selectores de forma visibles desde la carga de la página
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalOp==='function') _injectFormaSel('genEvalOp','evalOpFormaSel',evalOpFormNum,function(v){evalOpFormNum=v;}); }catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+/* ===================== LA FÁBRICA GEOMÉTRICA =====================
+   El juego vive en juego-fabrica-geometrica.html y se abre en otra
+   pestaña. Guarda su avance en SU llave (j2d_fabrica_geo_v1) y NO toca
+   la de la misión: si las dos escribieran en la misma, la partida
+   abierta en la otra pestaña le borraría al alumno el XP de aquí.
+   Desde la misión solo se LEE. */
+const FAB_LLAVE = 'j2d_fabrica_geo_v1';
+const FAB_ESTACIONES = 7;
+
+function fabLeer(){
+  try{ const d = JSON.parse(localStorage.getItem(FAB_LLAVE)); return (d && typeof d === 'object') ? d : null; }
+  catch(e){ return null; }
+}
+
+/* La estrella se GANA: la da terminar las siete estaciones, no abrir el
+   juego. Abrirlo y volver es exactamente el regalo que este proyecto ya
+   quitó de las secciones de leer.
+   ⚠️ Se escribe directo en `done`, como hace loadProgress con lo ganado
+   ayer, y no llamando a fin(): el alumno vuelve del juego con la página
+   recién cargada —sin haber tocado nada todavía— y ahí js/estrella-ganada.js
+   desharía la marca, con razón. Lo ganado no se regala, pero tampoco se
+   pierde por la puerta de atrás. */
+function fabRevisar(){
+  const d = fabLeer();
+  const hechas = d && d.hechas ? Object.keys(d.hechas).length : 0;
+  const medalla = document.getElementById('fabMedalla');
+  const btn = document.getElementById('fabBtn');
+  const completo = hechas >= FAB_ESTACIONES;
+
+  if(medalla){
+    medalla.classList.remove('con','oro');
+    if(!d || hechas === 0){
+      medalla.textContent = '· sin empezar';
+    }else{
+      medalla.textContent = (completo ? '🏆 las 7 estaciones' : '🏅 ' + hechas + ' de ' + FAB_ESTACIONES + ' estaciones')
+        + ' · ' + (d.xp|0) + ' XP'
+        + ((d.mejorRacha|0) > 1 ? ' · mejor racha ' + (d.mejorRacha|0) : '');
+      medalla.classList.add(completo ? 'oro' : 'con');
+    }
+  }
+  /* El botón dice la verdad: al que ya tiene partida no se le invita a
+     «entrar» como si nada, se le invita a seguir. */
+  if(btn) btn.textContent = !d || hechas === 0 ? '▶️ Entrar a la fábrica' : (completo ? '▶️ Volver a jugar' : '▶️ Seguir en la fábrica');
+
+  if(!completo) return;
+  if(!done.has('s-fabrica')){
+    done.add('s-fabrica');
+    const chip = document.querySelector('[data-s="s-fabrica"]');
+    if(chip) chip.classList.add('done');
+    saveProgress();
+  }
+  if(!xpTracker.fab.has('fin')){
+    xpTracker.fab.add('fin');
+    pts(10);
+    unlockAchievement('fabrica_maestro');
+  }
+}
+
+/* La vuelta del juego cae en la Fábrica y no al principio de la misión:
+   el que sale de ahí va a seguir con la misión donde la dejó, y buscar
+   la pestaña entre catorce —que en un teléfono se deslizan— es donde se
+   abandona. */
+function abrirSeccionDelEnlace(){
+  const id = (location.hash || '').replace('#','');
+  if(!id) return;
+  const sec = document.getElementById(id);
+  if(sec && sec.classList.contains('sec')) go(id);
+}
+window.addEventListener('hashchange', abrirSeccionDelEnlace);
+
+/* El juego corre en OTRA pestaña del mismo sitio, así que su guardado
+   llega aquí como evento `storage`: la medalla se pone al día sola,
+   sin que el alumno tenga que recargar para ver su estrella. */
+window.addEventListener('storage', function(e){ if(!e || e.key === FAB_LLAVE) fabRevisar(); });
+document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible') fabRevisar(); });
+window.addEventListener('focus', fabRevisar);
+
+document.addEventListener('DOMContentLoaded', function(){
+  fabRevisar();
+  abrirSeccionDelEnlace();
+});

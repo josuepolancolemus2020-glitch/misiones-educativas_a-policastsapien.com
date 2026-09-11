@@ -11,13 +11,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/circulos-poligonos.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
   <link rel="stylesheet" href="css/circulos-poligonos.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
@@ -64,7 +58,7 @@
 
   <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
     <a href="../../index.html?view=misiones&filter=matemáticas" class="xp-back-btn" title="Regresar a misiones de Matemáticas">
-      <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+      <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
       <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
     </a>
     <span class="xp-lbl">🎮 XP</span>
@@ -405,7 +399,42 @@
         </div>
         <div id="fbCmp" class="fb" role="alert"></div>
       </div>
-      <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
+      <button class="next-sec-btn" aria-label="Ir a la Fábrica Geométrica" onclick="go('s-fabrica')">
+        <span class="nsb-icon">🏭</span>
+        <span class="nsb-label"><span class="nsb-hint">Siete estaciones de trabajo</span><span class="nsb-name">La Fábrica Geométrica</span></span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== FÁBRICA GEOMÉTRICA =====
+         El juego vive en su propio archivo (juego-fabrica-geometrica.html) y
+         se abre en otra pestaña, como los juegos 3D y por las mismas dos
+         razones: sus nombres de clase (.nav, .btn, .chip, .pill) chocan con
+         los de la misión, y su maquetación es de pantalla completa —body en
+         cuadrícula de 100dvh— que metida en una sección se llevaría por
+         delante la página entera.
+         Aquí solo se LEE su llave de localStorage para pintar la medalla: el
+         juego no escribe en el progreso de la misión, que si no una partida
+         abierta en otra pestaña le borraría al alumno el XP que acaba de
+         ganar. -->
+    <div class="sec" id="s-fabrica" role="tabpanel">
+      <div class="card ac-gold">
+        <span class="bloom-badge bl-a">⚙️ Nivel Bloom: Aplicar</span>
+        <h2>🏭 La Fábrica Geométrica</h2>
+        <p style="font-size:0.9rem;margin-bottom:0.5rem;">Siete estaciones de trabajo con lo mismo que acabas de estudiar: <strong>fundir</strong> el círculo que te piden, <strong>reconocer</strong> sus partes sobre la figura, <strong>forjar</strong> las fórmulas pieza por pieza, <strong>armar</strong> polígonos y ver su apotema, <strong>decidir</strong> qué se mide en cada pedido y entregarlo antes de que suene el reloj.</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">📶 Después de abrirla una vez con señal, funciona sin internet. Se abre en otra pestaña: <strong>tu progreso de la misión no se pierde</strong>. Y calcula con <strong>π = 3.14</strong>, el mismo de tu evaluación.</p>
+        <div class="fab-card">
+          <div class="fab-icon" aria-hidden="true">🏭</div>
+          <div class="fab-body">
+            <h3>Siete estaciones</h3>
+            <p>Torno · Partes del círculo · Forja de fórmulas · Taller de polígonos · Control de calidad · Turno de noche · Pedidos del pueblo</p>
+            <span class="fab-medalla" id="fabMedalla">· sin empezar</span>
+          </div>
+          <a href="juego-fabrica-geometrica.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri fab-btn" id="fabBtn">▶️ Entrar a la fábrica</a>
+        </div>
+        <p class="fab-nota" id="fabNota">⭐ La estrella de esta sección se gana <strong>terminando las siete estaciones</strong>. Al volver de la fábrica, esta pantalla se pone al día sola.</p>
+      </div>
+      <button class="next-sec-btn" aria-label="Ir al Reto Contra Reloj" onclick="go('s-reto')">
         <span class="nsb-icon">🏆</span>
         <span class="nsb-label"><span class="nsb-hint">¡Desafía tu velocidad!</span><span class="nsb-name">Reto Contra Reloj</span></span>
         <span class="nsb-arrow">→</span>
@@ -602,6 +631,7 @@
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-clasifica" data-s="s-clasifica" onclick="go('s-clasifica')"><span class="ico">🗂️</span> Clasifica</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-identifica" data-s="s-identifica" onclick="go('s-identifica')"><span class="ico">🔍</span> Identifica</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-completa" data-s="s-completa" onclick="go('s-completa')"><span class="ico">✏️</span> Completa</button>
+    <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-fabrica" data-s="s-fabrica" onclick="go('s-fabrica')"><span class="ico">🏭</span> Fábrica</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-reto" data-s="s-reto" onclick="go('s-reto')"><span class="ico">🏆</span> Reto</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
     <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">📝</span> Evaluación</button>

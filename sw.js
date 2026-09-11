@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v192';
+const CACHE_NAME = 'meta-app-v199';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -33,10 +33,30 @@ const ARMAZON = [
   './index.html',
   './manifest.json',
   './css/app.css',
+  // Las tipografías. La CSS pesa 6 KB y trae todas las familias sin bajar
+  // ni un byte de más: cada @font-face declara su unicode-range, así que
+  // el navegador solo pide la letra que la página de verdad pinta. De ahí
+  // se precachea únicamente Outfit, que es la del armazón del maestro:
+  // index.html SÍ abre sin señal la primera vez, y tiene que abrir con su
+  // letra. Las de las misiones NO van aquí, y no es un olvido: una misión
+  // que no se visitó en línea no está en la caché, así que guardarle la
+  // letra sería guardar la letra de una página que no existe todavía.
+  './css/vendor/fuentes/fuentes.css',
+  './css/vendor/fuentes/outfit-latin.woff2',
   './js/app.js',
   './js/metas-dialogos.js',
   './js/data/misiones.js',
   './js/data/dcnb-map.js',
+  // De qué grado es cada misión. Va en el armazón porque la lista de
+  // Misiones es lo primero que abre la alumna, y sin esto vuelve a ver
+  // las 67 tarjetas iguales — justo en el aula sin señal, que es donde
+  // la aplicación tiene que valerse sola.
+  './js/grado-alumno.js',
+  // El tamaño de letra del maestro. Va en el armazón porque se aplica en
+  // el <head>, ANTES del primer pintado: si faltara sin señal, la pantalla
+  // abriría pequeña y daría el salto justo cuando el maestro ya puso el
+  // dedo — y en el aula sin señal es donde más la usa.
+  './js/letra-maestro.js',
   './js/data/diagnosticos.js',
   './js/data/proceres.js',
   './js/data/paises.js',
@@ -104,14 +124,24 @@ const STATIC_ASSETS = [
   './manifest-padres.json',
   './img/qr-padres.png',
   './img/logo.png',
+  // Los iconos de la aplicación instalada. Son cuatro y no dos: los dos
+  // `any` los enseña el navegador casi enteros, y los dos `maskable` son
+  // los que Android recorta con su máscara —por eso el logo va dentro del
+  // círculo del 80 %—. Si faltara el maskable, Android se quedaría con el
+  // `any` y le cortaría la palabra «EDITORIAL» al logo del editorial.
   './img/icon-192.png',
   './img/icon-512.png',
+  './img/icon-maskable-192.png',
+  './img/icon-maskable-512.png',
   './img/jose-cecilio-del-valle-edit.webp',
   './css/vendor/fontawesome/css/all.min.css',
   './css/vendor/fontawesome/webfonts/fa-solid-900.woff2',
-  './css/vendor/fontawesome/webfonts/fa-regular-400.woff2',
-  'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+  './css/vendor/fontawesome/webfonts/fa-regular-400.woff2'
+  // Aquí estaban la CSS de Google Fonts y la de Font Awesome del CDN.
+  // Se fueron con el hallazgo 7: las dos son hojas de estilo externas,
+  // y una hoja de estilo bloquea el pintado. Y la de Google además
+  // mentía: se guardaba la CSS, nunca los .woff2 de fonts.gstatic.com,
+  // así que sin señal la letra no llegaba igual.
 ];
 
 /* Al instalar: pre-cachea el armazón, las imágenes, los recursos externos y el

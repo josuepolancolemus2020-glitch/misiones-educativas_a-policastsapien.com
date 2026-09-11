@@ -5,9 +5,20 @@
    Educativas Nacionales (Secretaría de Educación / MIDEH), verificado
    mes a mes el 21-jul-2026.
 
-   ⚠️ Este dato es EXCLUSIVO del docente: el alumno navega por rutas y
-   etapas, nunca por grados, para evitar el sesgo de "esto es de un grado
-   inferior". No usar DCNB_MAP en ninguna vista del estudiante.
+   ⚠️ Desde el 9 de septiembre de 2026 este dato SÍ se usa en la pantalla
+   del alumno, y hay que leer por qué antes de volver a cerrarlo. La regla
+   de antes decía «exclusivo del docente, no usarlo en ninguna vista del
+   estudiante», para que ningún niño se sintiera señalado por trabajar
+   contenido de un grado inferior. El miedo es legítimo; lo que estaba mal
+   era el remedio: medido, una alumna de 4º y uno de 9º abrían Misiones y
+   veían las MISMAS 67 tarjetas en el MISMO orden, sin una sola pista de
+   cuál les tocaba, y buscar «cuarto» daba cero resultados. Esconderle el
+   dato no la protegía de nada: la dejaba perdida.
+
+   Lo que se usa aquí es SOLO para ORDENAR, nunca para filtrar, y solo se
+   rotula lo que SÍ es de su grado: no hay ni un «esto es de 2º» en toda
+   la pantalla. Las tres reglas están escritas en `js/grado-alumno.js`,
+   que es el único sitio del alumno que lee este mapa.
 
    Formato: id → { g: { grado: [meses] } }
    Meses: números 2–11 (2=febrero … 11=noviembre, año escolar hondureño).

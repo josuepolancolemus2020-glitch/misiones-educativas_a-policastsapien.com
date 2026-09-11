@@ -41,7 +41,7 @@
      node _dev/verifica-sugerencias-faro.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 const MISION = '/misiones/2y3ciclo-adjetivos/adjetivos-II-IIICiclo.html';
@@ -106,7 +106,7 @@ async function escribirSugerencia(page, { categoria, texto }) {
   console.log('\n💬 Sugerencias de las misiones → bandeja de F.A.R.O\n');
 
   const navegador = await abrir();
-  const contexto = await navegador.newContext();
+  const contexto = await navegador.newContext(SIN_SW);
   const estado = { filas: [], llamadas: [], caido: false, atragantado: null };
 
   /* Se intercepta por la ruta de la función, no por el nombre del
@@ -114,7 +114,7 @@ async function escribirSugerencia(page, { categoria, texto }) {
      llega intacta al registro para poder comprobar A CUÁL de los dos
      proyectos se mandó, que es medio punto de todo esto. */
   await contexto.route('**/rest/v1/rpc/**', nube(estado));
-  const page = await contexto.newPage();
+  const page = await contexto.newPage(SIN_SW);
 
   /* ── 1. Se escribe una sugerencia y sale ───────────────────── */
   console.log('1. Se escribe una sugerencia dentro de la misión');
@@ -289,7 +289,7 @@ async function escribirSugerencia(page, { categoria, texto }) {
 
   /* ── 7. Lo ya atrapado en el teléfono también sale ──────────── */
   console.log('\n7. Las sugerencias viejas, las que nadie leyó nunca, salen también');
-  const page2 = await contexto.newPage();
+  const page2 = await contexto.newPage(SIN_SW);
   await page2.goto(BASE + MISION);
   await page2.evaluate(() => {
     // Un teléfono de antes de que existiera este camino: tiene una

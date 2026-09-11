@@ -108,6 +108,37 @@ async function abrirMision(nav, rel) {
   ok('todas cargan el CSS del foco visible', !sinCss.length, sinCss.slice(0, 5));
   ok('todas cargan el motor de teclado', !sinJs.length, sinJs.slice(0, 5));
 
+  /* ── 2-bis · Toda sopa tiene con qué rematar la palabra ──────
+     Se lee del archivo, que es lo que se multiplica al copiar una
+     misión: abrir las 73 con Playwright cuesta siete minutos y una
+     comprobación así no la corre nadie.
+
+     El teclado de la sopa remata de dos formas y le basta una: la
+     celda responde al clic (las 8 del maestro) o la misión deja a
+     mano getSopaPath + checkSopaSelection (las 65 del alumno). Una
+     sopa nueva sin ninguna de las dos NO recibe parada de tabulador
+     —es la lección de centena.js: prometer y no cumplir es peor—,
+     así que se avisa aquí y no en el teléfono de un niño. */
+  {
+    const conSopa = [], sinRemate = [];
+    for (const m of MIS) {
+      const dirJs = path.join(RAIZ, 'misiones', m.dir, 'js');
+      const js = fs.existsSync(dirJs)
+        ? fs.readdirSync(dirJs).filter(f => f.endsWith('.js'))
+            .map(f => fs.readFileSync(path.join(dirJs, f), 'utf8')).join('\n')
+        : '';
+      const todo = m.s + '\n' + js;
+      if (!/sopaGrid/.test(todo)) continue;
+      conSopa.push(m.dir);
+      const clic = /class="sopa-c[ "]/.test(todo) && /onclick="sopaToca/.test(todo);
+      const ruta = /function getSopaPath/.test(todo) && /function checkSopaSelection/.test(todo);
+      if (!clic && !ruta) sinRemate.push(m.dir);
+    }
+    console.log(`\n── las ${conSopa.length} sopas tienen con qué rematar la palabra ──`);
+    ok('hay sopas que comprobar', conSopa.length > 40, { conSopa: conSopa.length });
+    ok('ninguna se quedaría sin teclado', !sinRemate.length, sinRemate.slice(0, 6));
+  }
+
   const nav = await abrir({ args: ['--no-sandbox'] });
 
   /* ── 3 · Una actividad entera, sin tocar la pantalla ─────────
@@ -211,27 +242,167 @@ async function abrirMision(nav, rel) {
     await ctx.close();
   }
 
-  /* ── 4 · Una cuadrícula no se vuelve una trampa ──────────────
+  /* ── 4 · La sopa: UNA parada, y se puede jugar ───────────────
      La sopa trae 144 celdas. Tabular 144 veces para cruzar una
-     actividad no es accesibilidad. */
-  console.log('\n── la sopa de letras NO son 144 paradas de tabulador ──');
-  {
-    const { ctx, pg } = await abrirMision(nav, 'docente-bienvenida-metas/bienvenida-metas.html');
+     actividad no es accesibilidad, es una trampa —y esa mitad ya
+     estaba—. La otra mitad faltaba: que el alumno que no puede
+     arrastrar **encuentre una palabra**. Se comprueban las dos
+     variantes, que no juegan igual por dentro: la del alumno arma la
+     palabra con getSopaPath/checkSopaSelection y la del maestro con
+     un onclick por celda.
+
+     ⚠️ La sección se busca por dónde vive la cuadrícula, no por su
+     nombre: las 65 del alumno la llaman `s-sopa` y las 8 del maestro
+     `sec-sopa`. Escrito a mano, `go('s-sopa')` en una del maestro no
+     abre nada —y como `go` apaga todas las secciones, deja la página
+     en blanco y la comprobación pasa igual, midiendo otra cosa. */
+  console.log('\n── la sopa de letras se juega sin el dedo, y sigue siendo UNA parada ──');
+  for (const [quien, rel] of [['alumno', '2ciclo-angulos-basicos/angulos-basicos.html'],
+                              ['maestro', 'docente-bienvenida-metas/bienvenida-metas.html']]) {
+    const { ctx, pg, errores } = await abrirMision(nav, rel);
     await pg.waitForTimeout(600);
-    /* Se abre la sección como la abre el alumno. El motor marca SOLO la
-       sección abierta —es la única que se ve y la única que se puede
-       tabular—, así que forzar todas activas mide otra cosa. */
-    await pg.evaluate(() => go('s-sopa'));
+    const secId = await pg.evaluate(() => {
+      const g = document.getElementById('sopaGrid');
+      const s = g && g.closest('.sec');
+      return s ? s.id : null;
+    });
+    ok(quien + ': la sopa vive en una sección', !!secId, { secId });
+    if (!secId) { await ctx.close(); continue; }
+    await pg.evaluate(id => go(id), secId);
     await pg.waitForTimeout(700);
+
     const r = await pg.evaluate(() => ({
-      celdas: document.querySelectorAll('.sopa-c, .sopa-cell').length,
-      celdasTabulables: document.querySelectorAll('.sopa-c.ta-tecla, .sopa-cell.ta-tecla').length,
-      marcadosEnLaSeccion: document.querySelectorAll('.sec.active .ta-tecla').length,
-      marcadosEnTotal: document.querySelectorAll('.ta-tecla').length,
+      celdas: document.querySelectorAll('#sopaGrid .sopa-c, #sopaGrid .sopa-cell').length,
+      conTaTecla: document.querySelectorAll('#sopaGrid .ta-tecla').length,
+      paradas: document.querySelectorAll('#sopaGrid [tabindex]:not([tabindex="-1"])').length,
+      resto: document.querySelectorAll('.sec.active .ta-tecla').length,
+      ayuda: !!document.getElementById('sopa-ayuda-teclas'),
+      ayudaEscondida: !!document.getElementById('sopa-ayuda-teclas') &&
+        getComputedStyle(document.getElementById('sopa-ayuda-teclas')).display === 'none',
     }));
-    ok('la sopa tiene celdas', r.celdas > 40, r);
-    ok('y NINGUNA es parada de tabulador', r.celdasTabulables === 0, r);
-    ok('pero el resto de la misión sí se puede tabular', r.marcadosEnTotal > 0, r);
+    ok(quien + ': la sopa tiene celdas', r.celdas > 40, r);
+    ok(quien + ': ninguna celda entra en el marcado general', r.conTaTecla === 0, r);
+    ok(quien + ': la ayuda de teclas está, y escondida sin foco', r.ayuda && r.ayudaEscondida, r);
+
+    /* Se cruza la página con el TABULADOR de verdad, no llamando a
+       focus(): lo que se cuenta es cuántas veces se para dentro de la
+       cuadrícula. Tiene que ser UNA. */
+    /* ⚠️ Se apunta desde DENTRO de la página, con un oyente, y se
+       pregunta cada veinte tabulaciones. Preguntando después de cada
+       una son 440 idas y vueltas al navegador por misión y la sonda
+       pasa de segundos a minutos —y una sonda lenta es una sonda que
+       nadie corre, que es como dos de esta casa se quedaron rojas
+       meses—. */
+    await pg.evaluate(() => {
+      if (document.activeElement) document.activeElement.blur();
+      window.__sk = { dentro: 0, entro: false, salio: false };
+      document.addEventListener('focusin', function (e) {
+        var g = document.getElementById('sopaGrid');
+        if (g && g.contains(e.target)) { window.__sk.dentro++; window.__sk.entro = true; }
+        else if (window.__sk.entro) window.__sk.salio = true;
+      });
+    });
+    let paso = null;
+    for (let i = 0; i < 240; i++) {
+      await pg.keyboard.press('Tab');
+      if (i % 20 === 19) {
+        paso = await pg.evaluate(() => window.__sk);
+        if (paso.salio) break;
+      }
+    }
+    paso = await pg.evaluate(() => window.__sk);
+    ok(quien + ': se entra con el tabulador y cuesta UNA parada, no ' + r.celdas,
+      paso.entro && paso.dentro === 1, paso);
+
+    /* La cuenta de arriba sigue tabulando hasta salir por el otro
+       lado, así que ahora hay que volver a entrar —también con el
+       tabulador— para jugar. */
+    await pg.evaluate(() => { if (document.activeElement) document.activeElement.blur(); window.__sk.dentro = 0; window.__sk.entro = false; window.__sk.salio = false; });
+    for (let i = 0; i < 240; i++) {
+      await pg.keyboard.press('Tab');
+      if (i % 10 === 9 && (await pg.evaluate(() => window.__sk.entro))) break;
+    }
+    await pg.evaluate(() => {
+      /* Se para en la celda: si el tabulador siguió más allá dentro de
+         la tanda de diez, se vuelve a ella. */
+      var c = document.querySelector('#sopaGrid [tabindex="0"]');
+      var g = document.getElementById('sopaGrid');
+      if (c && (!document.activeElement || !g.contains(document.activeElement))) c.focus();
+    });
+
+    ok(quien + ': la ayuda se ve con el foco dentro',
+      await pg.evaluate(() => getComputedStyle(document.getElementById('sopa-ayuda-teclas')).display !== 'none'));
+
+    /* La palabra se saca del propio juego, no se escribe: cada misión
+       trae la suya y el catálogo cambia. */
+    const pal = await pg.evaluate(() => {
+      if (typeof sopaSets !== 'undefined') {
+        const w = sopaSets[currentSopaSetIdx].words[0];
+        return { w: w.w, ini: w.cells[0], fin: w.cells[w.cells.length - 1] };
+      }
+      const p = SOPA_PAL[0], c = _sopaUbic[p];
+      return { w: p, ini: c[0], fin: c[c.length - 1] };
+    });
+
+    const donde = () => pg.evaluate(() => {
+      const el = document.querySelector('#sopaGrid [tabindex="0"]');
+      if (!el) return null;
+      if (el.dataset.row !== undefined) return [+el.dataset.row, +el.dataset.col];
+      const m = /^sc(\d+)-(\d+)$/.exec(el.id || '');
+      return m ? [+m[1], +m[2]] : null;
+    });
+    async function irA(f, c) {
+      for (let i = 0; i < 60; i++) {
+        const k = await donde();
+        if (!k) return false;
+        if (k[0] === f && k[1] === c) return true;
+        await pg.keyboard.press(k[0] < f ? 'ArrowDown' : k[0] > f ? 'ArrowUp' : k[1] < c ? 'ArrowRight' : 'ArrowLeft');
+        await pg.waitForTimeout(20);
+      }
+      return false;
+    }
+
+    /* Regla 2: la flecha la consume la sopa. Sin esto, además de mover
+       el cursor desliza la página y el alumno pierde de vista lo que
+       estaba mirando —lo mismo que ya se arregló con la barra
+       espaciadora—. */
+    await pg.evaluate(() => {
+      window.__consumida = null;
+      document.addEventListener('keydown', e => { if (e.key.indexOf('Arrow') === 0) window.__consumida = e.defaultPrevented; });
+    });
+    await pg.keyboard.press('ArrowRight');
+    await pg.waitForTimeout(60);
+    ok(quien + ': la flecha mueve el cursor y NO desliza la página',
+      await pg.evaluate(() => window.__consumida === true));
+
+    ok(quien + ': las flechas llegan al principio de «' + pal.w + '»', await irA(pal.ini[0], pal.ini[1]));
+    await pg.keyboard.press('Enter'); await pg.waitForTimeout(150);
+    ok(quien + ': Enter marca el principio',
+      await pg.evaluate(() => !!document.querySelector('#sopaGrid .sopa-start, #sopaGrid .sopa-c.sel')));
+
+    /* Soltar tiene que soltarlo también en la misión: si aquí se borra
+       la marca y allá se queda puesta, la palabra siguiente ya no se
+       encuentra nunca. */
+    await pg.keyboard.press('Escape'); await pg.waitForTimeout(150);
+    ok(quien + ': Esc suelta el principio',
+      await pg.evaluate(() => !document.querySelector('#sopaGrid .sopa-start, #sopaGrid .sopa-c.sel')));
+
+    await pg.keyboard.press('Enter'); await pg.waitForTimeout(150);
+    ok(quien + ': las flechas llegan al final', await irA(pal.fin[0], pal.fin[1]));
+    await pg.keyboard.press('Enter'); await pg.waitForTimeout(500);
+
+    const f = await pg.evaluate(() => ({
+      halladas: document.querySelectorAll('#sopaGrid .sopa-found, #sopaGrid .sopa-c.hallada').length,
+      foco: (() => { const g = document.getElementById('sopaGrid'); return !!(g && g.contains(document.activeElement)); })(),
+      paradas: document.querySelectorAll('#sopaGrid [tabindex]:not([tabindex="-1"])').length,
+    }));
+    ok(quien + ': la palabra queda encontrada sin tocar la pantalla', f.halladas >= pal.w.length, { pal: pal.w, ...f });
+    /* Las dos variantes rehacen la cuadrícula entera al encontrar una
+       palabra —la del maestro, en CADA toque—. Sin devolver el cursor,
+       el foco se cae al <body> y el alumno se queda fuera de la sopa
+       sin saber por qué. */
+    ok(quien + ': el cursor sobrevive al repintado', f.foco && f.paradas === 1, f);
+    ok(quien + ': y sin errores de JavaScript', errores.length === 0, errores);
     await ctx.close();
   }
 

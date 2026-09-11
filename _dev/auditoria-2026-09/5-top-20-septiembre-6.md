@@ -1,0 +1,1250 @@
+# Las 20 modificaciones de mayor impacto y menor esfuerzo
+
+> **Esta es la lista del 6 de septiembre de 2026, y ya está ejecutada entera** (del 6 al 9 de
+> septiembre; cada fila lleva su bloque «✅ Corregido», que dice qué cambió, qué salió al hacerlo y
+> cómo se comprobó). Las notas «top-20 #N» de las secciones apuntan a esta lista. **La lista
+> vigente —las 20 siguientes, rehecha el 9 de septiembre con las 35 lentes dentro— está en
+> [`5-top-20.md`](5-top-20.md).**
+
+De los 336 hallazgos de la auditoría —321 después de quitar los duplicados de producto— esta es
+la lista corta: **lo que hay que hacer primero y en qué orden**.
+
+## Cómo se ordenó
+
+Cada hallazgo trae del auditor tres números: impacto educativo (1-5), impacto comercial (1-5) y
+esfuerzo (horas · días · semanas · meses). El orden base es
+
+```
+puntaje = (impacto educativo + impacto comercial) / esfuerzo
+esfuerzo: horas=1 · días=2 · semanas=4 · meses=8
+```
+
+Sobre ese orden se hicieron dos cosas a mano, y conviene saberlo antes de leer la tabla:
+
+1. **Se agruparon los hallazgos que se arreglan con el mismo cambio.** «El buscador no encuentra
+   *numeros*» aparece dos veces (U4-02 y U5-01) porque lo encontraron dos alumnos distintos, y
+   se arregla con una línea; la caché que se borra en cada despliegue aparece cuatro veces
+   (T2-06, T5-04, T1-10, T9-08) y es un solo trabajo sobre `sw.js`. Lo que sigue son
+   **modificaciones**, no hallazgos.
+2. **Un hallazgo crítico entra aunque cueste días.** Que cualquier anónimo pueda escribir notas
+   falsas en el registro de un maestro no espera a que haya algo más barato que hacer.
+
+Las 20 se reparten así: **nueve se hacen en horas**, diez en días y una en semanas. El 6 de
+septiembre catorce venían de hallazgos con revisión adversarial y seis eran lectura de un solo
+auditor; el 9 de septiembre pasaron todos por un revisor, contra el código ya corregido, y
+**ninguno se cayó** (la lectura de cada uno está en su sección).
+
+---
+
+## La tabla
+
+| # | modificación | de dónde sale | esfuerzo | edu | com |
+|---:|---|---|---|:-:|:-:|
+| 1 | Quitar del «Resultado» los 30 puntos que el alumno se pone solo | P2-02 ✓ | horas | 5 | 4 |
+| 2 | Cerrar «Ver Pauta» y separar practicar de calificar | U5-02 ✓ · P7-02 ✓ · P4-01 ✓ | días | 5 | 4 |
+| 3 | Cerrar la puerta de escritura anónima a la nube | T4-01 ✓ · T3-03 ✓ · T3-06 ✓ | días | 5 | 5 |
+| 4 | Que el alumno tenga una identidad que no se funda con otra | P7-05 ✓ · B4-02 ✓ · P6-02 ✓ | días | 5 | 4 |
+| 5 | Que el maestro no pierda su trabajo (ni en vacaciones) | T9-01 ✓ · T3-12 ✓ · T9-09 ✓ | días | 4 | 5 |
+| 6 | El service worker: precachear el armazón y dejar de borrar la caché | T2-06 ✓ · T5-04 ✓ · T1-10 ✓ · T9-08 ✓ | horas | 4 | 3 |
+| 7 | Quitar el CDN del camino crítico (pantalla en blanco de 12,6 s) | T5-01 ✓ | días | 5 | 4 |
+| 8 | Buscar sin tildes | U4-02 ✓ · U5-01 ✓ | horas | 3 | 3 |
+| 9 | Subir la barra de secciones al principio de la misión | U7-02 ✓ · U4-03 ✓ · U5-05 ✓ · U6-03 ✓ | días | 4 | 4 |
+| 10 | Que la estrella se gane: quitar el XP y el «completada» de regalo | U6-05 ✓ · U7-04 ✓ · P5-10 ✓ · P6-01 ✓ · P4-04 ✓ | días | 4 | 3 |
+| 11 | Corregir los errores de contenido ya localizados | P10-01 ✓ · P10-02 ✓ · P2-03 ✓ · U6-07 ✓ | horas | 4 | 3 |
+| 12 | Los 31 enlaces de Drive que no llevan a ninguna parte | U9-03 ✓ | horas | 3 | 4 |
+| 13 | Que la Prueba de Fin de Grado no pierda las respuestas | U6-01 ✓ | días | 5 | 3 |
+| 14 | Quitar el autoavance de 1,6 s del quiz y del completar | P4-03 ✓ | horas | 4 | 2 |
+| 15 | Traer a la boleta las notas que la aplicación ya calculó | P9-01 ✓ | días | 4 | 5 |
+| 16 | Una acción de CI que corra las sondas (hoy dos están rojas) | T1-11 ✓ · T10-01 ✓ · T10-02 ✓ | horas | 3 | 4 |
+| 17 | Escribir en la portada qué es esto y para quién | B1-01 ✓ | horas | 2 | 5 |
+| 18 | Licencia, aviso de privacidad y alojamiento con términos válidos | B3-01 ✓ · B3-02 ✓ · B2-03 ✓ | horas | 1 | 5 |
+| 19 | Desbloquear el zoom y hacer las actividades alcanzables con teclado | T6-01 ✓ · T6-02 ✓ | días | 5 | 3 |
+| 20 | Que la alumna pueda encontrar lo de SU grado | U4-01 ✓ · U9-01 ✓ · B4-08 ✓ | semanas | 5 | 4 |
+
+✓ = el hallazgo pasó revisión adversarial. El 6 de septiembre catorce filas tenían algún hallazgo sin revisar; el 9 de septiembre pasaron todos por un revisor (véase cada sección) y ninguno de los que sostienen estas 20 filas se cayó.
+
+---
+
+## Bloque 1 · Esta semana (horas de trabajo)
+
+### 1. Quitar del «Resultado» los 30 puntos que el alumno se pone solo
+
+**Es el mejor cambio de toda la auditoría**: es crítico, es de horas y está verificado.
+
+> ✅ **Corregido el 6 de septiembre de 2026.** En las siete misiones, el autopuntaje ya no entra
+> en el «Resultado» que lee `js/metas-registro.js`: el panel dice **«Resultado automático: N/70
+> puntos»** (N/60 en Detective de Bugs, que autopuntuaba 40) y debajo, aparte, qué falta por
+> calificar y cuánto se puso el alumno, con la frase «no cuenta para esta nota». La producción
+> abierta **se queda**: es lo más valioso de la prueba y sigue enseñando a compararse con la
+> pauta. Lo vigila `_dev/verifica-autopuntaje.js`, que no contesta nada, se pone el máximo y
+> exige que al maestro le llegue 0.
+
+En Robot Decide, la prueba operativa tiene una sección de «vida real» donde el alumno **escribe
+su propia puntuación** en una casilla:
+
+```
+misiones/2y3ciclo-robot-decide/js/robot-decide.js:898
+<input type="number" data-vida="${i}" min="0" max="10" value="0">
+:942   v = parseInt(inp.value) … det.vida += v; total += v
+```
+
+Ese `total` se pinta como `Resultado: N/100 pts`, y `js/metas-registro.js:131-138` lee
+exactamente ese patrón y lo registra como `prueba_operativa` (`:175-176`). La sonda lo reprodujo:
+un alumno que no contesta nada y se pone 30 en la casilla obtiene **«Resultado: 30/100 pts ·
+Ejecuta 0/20 · Predice 0/10 · Completa 0/20 · Vida real 30/30 · Retos 0/20»**, y esa nota llega
+al maestro.
+
+Lo mismo pasa con las rúbricas autopuntuadas de La Célula (`calcCritTotal`, 5 casillas) y
+Geografía de Honduras (`:588-600`).
+
+- **Qué hacer:** que el panel registre solo lo calificado por máquina —`Resultado automático:
+  N/70`— y que la parte de rúbrica se anote aparte, como ya hace la conceptual con «solo para
+  revisión». O convertir los problemas de vida real en opción cerrada, como las secciones I-III
+  de esa misma prueba.
+- **Cómo se comprueba:** un `grep` de `parseInt(inp.value)` dentro de cualquier `gradeEval*` que
+  alimente el «Resultado», en las 66 misiones. Debe dar cero.
+
+### 6. El service worker: precachear el armazón y dejar de borrar la caché
+
+> ✅ **Corregido el 6 de septiembre de 2026.** `sw.js` tiene ahora **dos cachés**: `CACHE_NAME`
+> lleva el armazón y se renueva en cada despliegue; `CACHE_DATOS` lleva lo ya visitado y **no se
+> toca**, así que publicar deja de borrarle al alumno las misiones que había guardado. El armazón
+> —`index.html`, `app.css`, `app.js`, `misiones.js` y los datos pequeños— se precachea, así que la
+> aplicación abre sin señal **desde la primera visita**; a propósito NO van los 25 scripts de la
+> portada, que entran solos y ahora se quedan.
+>
+> Dos cosas más que salieron al probarlo con un service worker de verdad, y que no estaban en el
+> hallazgo. **Lo precacheado no lo encontraba nadie**: se guarda como `js/app.js` y la página lo
+> pide como `js/app.js?v=177`, así que faltaba `ignoreSearch`. Y **la instalación se podía quedar
+> colgada para siempre**: toleraba que un CDN fallara, pero no que no contestara nunca, y entonces
+> el service worker nuevo no llegaba a activarse. Es la misma lección del cargador de los juegos
+> 3D. Lo vigila `_dev/verifica-service-worker.js`, que registra el service worker de verdad y
+> simula un despliegue.
+
+La promesa está escrita en la pantalla del alumno: ábrelo una vez con señal y después funciona
+sin ella. Hoy se rompe en cada despliegue, y `sw.js` cambió 37 veces entre el 13 y el 28 de
+agosto: 37 borrados de caché en quince días.
+
+- `sw.js:2-58` — `STATIC_ASSETS` tiene 37 entradas y **no incluye `index.html`, `js/app.js` ni
+  `css/app.css`**: el armazón no se precachea.
+- `sw.js:72-77` — al activarse, borra todo lo que no sea el `CACHE_NAME` nuevo. Como el nombre
+  cambia en cada despliegue (es la normativa de sellado), **cada publicación borra las misiones
+  que el alumno ya había visitado**.
+- La sonda con service worker real lo midió: tras la primera visita, la caché tiene 35 entradas y
+  `index.html: false`, `app.js: false`, `app.css: false`. Hace falta una **segunda** visita en
+  línea para que la aplicación funcione sin señal.
+
+- **Qué hacer:** añadir el armazón a `STATIC_ASSETS` —mejor: generarlo con un guion desde los
+  `<script src>` de `index.html`, para que no se desfase— y hacer el `caches.match` con
+  `{ ignoreSearch: true }` para que el precache sin `?v=` sirva a las peticiones con `?v=`. Y en
+  el `activate`, conservar lo que sigue siendo válido en vez de vaciar.
+- **Cómo se comprueba:** primera visita en línea, `setOffline`, recargar. Hoy falla.
+
+### 8. Buscar sin tildes
+
+> ✅ **Corregido el 6 de septiembre de 2026.** Los dos lados se comparan sin tildes y **palabra
+> por palabra**, así que «numeros» encuentra las mismas 3 que «números» y «grandes numeros»
+> también da con «Números Grandes». De paso salió **un segundo buscador con el mismo defecto**:
+> el de maestros del director (`aj-buscar`), donde pesa más —«cortes» tenía que encontrar Cortés
+> y «jose», José—. Los dos usan ahora un solo ayudante, `sinTildes`. Lo vigila
+> `_dev/verifica-buscador.js`, que escribe como escribe un niño.
+
+`js/app.js:556-562` compara con `.toLowerCase()` y `.includes()`, sin quitar diacríticos. Medido:
+
+| se escribe | resultados |
+|---|---:|
+| `numeros` | 0 |
+| `números` | 3 |
+| `millon` | 0 |
+| `millón` | 2 |
+| `angulos` | 0 |
+
+Un teclado de teléfono no pone tildes solo, y un niño de 4º no las escribe. Es **una línea**:
+
+```js
+const q = query.trim().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+```
+
+…aplicada a los dos lados de la comparación.
+
+### 11. Corregir los errores de contenido ya localizados
+
+> ✅ **Corregido el 6 de septiembre de 2026.** Los cuatro, con dos matices que salieron al abrirlos:
+> el dato de Río Plátano estaba en **tres sitios** (el Aprende, el caso crítico y el panel del
+> laboratorio) y el desfile del encabezado estaba mal en **20 misiones, no en 7** —«NEURONA ·
+> CEREBRO» en Geografía de Honduras, «RECTA NUMÉRICA» en Sólidos—. Lo vigilan
+> `_dev/verifica-encabezados.js` y `_dev/verifica-fracciones-equivalentes.js`.
+
+Cuatro errores concretos, todos verificados, todos de minutos cada uno. No son «erratas»: dos de
+ellos **le bajan la nota a un alumno que contestó bien**.
+
+| dónde | qué pasa |
+|---|---|
+| Áreas Protegidas (`…areas-protegidas.html:135`) | Enseña que Río Plátano **salió** de la Lista del Patrimonio en Peligro en 2018. Sigue en ella: el Comité la retuvo en 2025 (47COM 7A.4). La misión pregunta además «¿qué medidas ayudaron a que fuera retirada?» |
+| Fracciones, prueba conceptual (`P2-03`) | Marca **mal** la fracción simplificada que la misma misión enseña a simplificar |
+| Fracciones, `3/4 − 1/4 = ___` (`P10-02`) | El alumno escribe `1/2` —la respuesta simplificada— y se la marca mal. Esa nota va al registro |
+| Sólidos Geométricos (`U6-07`) | El encabezado desfila palabras de otra misión (Recta Numérica) |
+
+El de Río Plátano tiene además una lección de método: es exactamente el problema que
+`INVESTIGACION-ESTATUTO-DOCENTE.md` ya documentó —un dato hallado con buscador y no leído en la
+fuente— repetido en otra misión.
+
+### 12. Los 31 enlaces de Drive que no llevan a ninguna parte
+
+> ✅ **Corregido el 6 de septiembre de 2026.** Se quitó el botón de las 31 misiones y en su lugar
+> se dice la verdad: que esa misión todavía no tiene carpeta en línea y que **el recurso que sí
+> está listo es la ficha imprimible** de arriba. Ocho de las 31 son bilingües y llevaban **su
+> propia copia del enlace muerto en el diccionario en inglés** —eso no estaba en el hallazgo y lo
+> cazó la sonda nueva—. Los 33 enlaces que quedan tienen forma de carpeta real; que sigan
+> compartidas no se puede comprobar sin una cuenta de Google, y queda dicho.
+
+`grep` sobre `misiones/*/*.html`: 31 archivos con enlaces del tipo
+`drive.google.com/drive/folders/1la_celula_recursos` — identificadores de relleno que nunca se
+sustituyeron. El botón dice «Abrir carpeta en Google Drive» y abre un error de Google.
+
+Aparece en las tres misiones del recorrido de 9º. Cuesta más caro de lo que parece: es el momento
+en que el alumno concluye que la aplicación está rota, y esa conclusión no se deshace.
+
+- **Qué hacer:** esconder el bloque en toda misión cuyo identificador no sea real. Si no hay
+  recursos, decirlo: «Por ahora el recurso es la ficha imprimible». Y una comprobación en una
+  sonda: identificador de Drive de 28+ caracteres, sin guion bajo.
+
+### 14. Quitar el autoavance de 1,6 s del quiz y del completar
+
+> ✅ **Corregido el 6 de septiembre de 2026.** El quiz y el «Completa» ya no avanzan solos: la
+> corrección se queda en pantalla y el alumno pasa con **▶ Siguiente**, el patrón que
+> `angulo-bisectriz` ya usaba. Al pintar la pregunta siguiente se borra el mensaje anterior, que
+> era la otra mitad del problema. Salieron **más autoavances de los que decía el hallazgo**: 64
+> quiz y 63 «Completa» a 1 600 ms, más **un segundo autoavance de 3 500 ms escondido en la rama
+> del fallo de 21 misiones** —justo el caso que importa— y uno de 2 000 ms en Sustantivos. Y las
+> dos misiones que ya avanzaban a mano no borraban el mensaje del «Completa». Lo vigila
+> `_dev/verifica-sin-autoavance.js`, que contesta mal a propósito y exige que a los 2,2 s la
+> corrección siga ahí.
+
+`fracciones.js:112` y `:167` — `setTimeout(()=>{ qzIdx++; … }, 1600)`. Está en **37 misiones en
+el quiz y en 63 en el completar**.
+
+Lo que ve el alumno, medido con capturas: a los 0,3 s la respuesta correcta aparece marcada en
+verde; a los 1,75 s ya dice «Pregunta 2 de 9», la correcta ha desaparecido **y el mensaje
+"✗ Incorrecto. Revisa la respuesta correcta" sigue colgado debajo de la pregunta siguiente**,
+porque ningún `showQz` limpia el `fbQz`.
+
+O sea: el alumno que falla no llega a ver qué era lo correcto, y encima lee un «incorrecto» que
+se refiere a una pregunta que ya no está en pantalla. Es la retroalimentación al revés.
+
+El contraejemplo está en el propio repositorio: `angulos.js:216-243` usa un botón «Siguiente ▶»
+manual.
+
+- **Qué hacer:** una sustitución por lote del patrón exacto, y después una sonda que falle si
+  vuelve a aparecer `showQz();},1600`.
+
+### 16. Una acción de CI que corra las sondas — y dos están rojas hoy
+
+48 sondas, 14 048 líneas escritas, y `ls .github` no existe. `package.json:10` tiene
+`test: "echo Error: no test specified && exit 1"`. No hay linter. Hay **828 publicaciones
+directas a producción** sin ninguna comprobación automática.
+
+Y no es teórico: **dos sondas fallan hoy** —`test-campeonismo-tec.js` termina con «✗ Falta el estilo
+`.camp-ws-rep`» y `verifica-fin-de-grado.js:159` compara contra el literal `'61'` cuando
+`MISSIONS.length` es 66— y nadie se enteró, porque solo corren si
+alguien se acuerda.
+
+- **Qué hacer, en dos niveles:** en cada push, las sondas que solo leen archivos y no necesitan
+  navegador (`verifica-nombres-propios`, `valida-lectura-mision`, `audita-adjetivos-lectura`,
+  `prueba-numerales`, `prueba-acentos`, la comprobación 11 de videos) más un linter; cada noche,
+  las de Playwright con el servidor estático. Que `npm test` las lance.
+- Pages ya construye en cada push: que el CI corra en paralelo **no frena la publicación**, solo
+  avisa. Eso importa, porque la normativa del proyecto es publicar y corregir, no esperar.
+
+> ✅ **Corregido el 6 de septiembre de 2026.**
+>
+> `.github/workflows/sondas.yml`, en dos tandas, y `npm test` las lanza.
+>
+> - **En cada empujón, 32 sondas que solo leen archivos** (12 s en total). Se corren
+>   con `node _dev/corre-sondas.js`, que las **descubre solas**: una sonda nueva entra
+>   en la tanda sin tocar nada. Lo que queda fuera va nombrado uno por uno y con su
+>   motivo —son las doce herramientas que *escriben* fichas o piden argumentos—, y la
+>   herramienta **imprime esa lista al terminar**: una exclusión callada es la forma más
+>   fácil de que una sonda se quede fuera un año.
+> - **De noche (07:00 UTC) y en cada pull request, las 24 de Playwright.** El servidor
+>   estático lo levanta y lo baja la misma herramienta: era el paso que más se olvidaba,
+>   y una sonda sin servidor no dice «falta el servidor», dice que la página está rota.
+> - **En vez de un linter, `verifica-sintaxis.js`**: `node --check` sobre los 348 archivos
+>   versionados. Es lo que de verdad cuesta caro aquí —un error de sintaxis no da la cara,
+>   el navegador se calla y la página se pinta igual—, y no añade una sola dependencia a un
+>   repositorio que versiona `node_modules`.
+> - **El CI no frena Pages**, que sigue construyendo por su cuenta en cada empujón a `main`.
+>
+> **Las tres que estaban rojas** (eran tres, no dos):
+>
+> 1. `test-campeonismo-tec` pedía `.camp-ws-rep`. Al mirarlo, resultó que **toda** la
+>    familia `.camp-ws-*` y `.camp-wsector` era CSS muerto: la ruleta de cuatro sectores
+>    se sustituyó por `.camp-w2`, que saca sus colores de `CAMP_SUBJECTS`. Se quitaron los
+>    selectores y la sonda dejó de pedirlos, así que la materia siguiente ya no tendrá que
+>    inventarse un color que no pinta nada.
+> 2. `verifica-fin-de-grado.js` comparaba contra `'61'`. Ahora **cuenta** `MISSIONS.length`
+>    del catálogo, igual que el chip de Repaso General cuenta `GRADOS.length`. Es la
+>    normativa del propio proyecto: donde hay JavaScript, el número se cuenta.
+> 3. `verifica-barra-xp` daba **58 fallos**, y ninguno era una avería:
+>
+>    - **34 por el espejo de `www/`**, que va desfasado *a propósito* hasta que se compila la
+>      app de Android. Eso pasó a ser un **aviso con la cuenta** («34 de 74 copias
+>      atrasadas»), no un fallo.
+>    - **24 por las ocho misiones del maestro**, que no llevan la media query de los 430 px.
+>      Se empezó a ponérsela y **se midió antes de darlo por bueno**: su barra no se sale. Son
+>      cuatro elementos —volver, «🎓 XP», la barra y el número— y de esos solo la barra no se
+>      encoge; a 360 px cabe con sitio de sobra. La del alumno lleva siete, y el que la
+>      desborda es el nivel (`.xp-lvl`), que llega a decir «Maestro del Pensamiento 🏆».
+>
+>      Y copiarle la regla al maestro **habría sido un estropicio, no un arreglo**: esa regla
+>      esconde el rótulo `.xp-lbl` porque en la barra del alumno es redundante —al lado va
+>      «⭐ N»—. En la del maestro es **la única palabra que hay**: al lado tiene un número
+>      pelado. Se le habría quitado el rótulo a una barra que nunca se salió. Se revirtió.
+>
+>    Ahora la sonda **le pide la media query solo a quien puede desbordar**, y sabe quién es
+>    leyendo el HTML de cada misión (¿tiene `.xp-lvl`?), no de una lista escrita a mano que
+>    envejecería con la misión siguiente. Y reconoce **dos moldes medidos** —el del alumno en
+>    rem, el del maestro en px— y sigue fallando ante un tercero sin medir.
+
+### 17. Escribir en la portada qué es esto y para quién
+
+`grep -iE 'sin internet|offline|DCNB|gratis' index.html` → nada. No hay
+`<meta name="description">`. `manifest.json:4` dice «Aplicación de misiones educativas
+interactiva». `README.md` dice «enseñar gramática», que es lo que fue hace dos años.
+
+Un director que abre el enlace no encuentra escrito en ninguna parte lo que de verdad diferencia
+a este producto: que funciona sin internet, que sigue el DCNB, que trae el examen y la ficha
+listos para imprimir, y que es gratis para el maestro.
+
+- Una frase bajo el logo, la misma en `<meta name="description">`, en `manifest.json` y en el
+  `README.md`. Es media hora y es el cambio comercial más barato del informe.
+
+> ✅ **Corregido el 7 de septiembre de 2026.**
+>
+> La frase está en los cuatro sitios y **dice lo mismo en los cuatro** —lo comprueba la sonda,
+> comparando cadena contra cadena—:
+>
+> > Misiones para 4º a 9º con su examen y su ficha listos para fotocopiar. Las de Español,
+> > Matemáticas, Ciencias y Sociales llevan señalado su bloque del DCNB. Funcionan sin internet
+> > y son gratis para el maestro hondureño.
+>
+> En la portada va en su tarjeta, **medida dentro de la primera pantalla de un teléfono de
+> 393 px y sin desplazar** —una frase de valor a la que hay que bajar no la lee quien todavía
+> no sabe si le interesa—, y **después de «Tu siguiente paso»**: en la primera visita ese hueco
+> está vacío y la frase es lo primero que se lee; al alumno que ya viene trabajando no le tapa
+> lo suyo. La cita de José Cecilio del Valle **bajó debajo de los cuatro botones**, como pedía
+> el hallazgo: arriba se comía la primera pantalla entera.
+>
+> ⚠️ **El número de misiones no se escribe: se cuenta.** En la portada es el marcador
+> `{{MISIONES}}` y lo rellena `app.js` desde `MISSIONS`; en el README, que no tiene JavaScript,
+> va **fechado y con el rumbo a la vista** («hoy, a 6 de septiembre de 2026, son 66 … y siguen
+> entrando»). Es la normativa del proyecto y aquí pesa doble: una cifra vieja le enseña al
+> director un producto más pequeño del que hay.
+>
+> **Lo que costó fue comprobar que la frase no miente**, y obligó a cambiarla dos veces:
+>
+> - la primera versión decía «66 misiones alineadas al DCNB» y **es falso**: 19 de las 66 no
+>   tienen entrada en `dcnb-map.js` (las 7 de Programación, las 6 de Robótica, la de Inglés, las
+>   4 de Repaso y la de Bachillerato). Ahora nombra las cuatro materias que sí lo llevan —47 de
+>   48—, y la sonda lo verifica materia por materia contra el mapa;
+> - «cada una con su ficha» sí se sostiene, pero **no como yo lo había medido**: mi primera
+>   cuenta por el nombre de la carpeta daba 9 misiones sin ficha, y era la cuenta la que estaba
+>   mal. Leyendo el HTML de cada misión, **las 66 enlazan la suya**.
+>
+> El README dejó de vender «enseñar gramática», que era el producto de hace dos años, y pasó a
+> ser la ficha del de hoy. Lo vigila `_dev/verifica-portada.js`, que lee lo **pintado** en la
+> pantalla —no el código—, exige que no quede ni un marcador a la vista y comprueba que lo que
+> la frase afirma sea verdad.
+
+### 18. Licencia, aviso de privacidad y alojamiento con términos válidos
+
+Tres cosas que no cambian nada para el maestro y que **bloquean cualquier venta institucional**:
+
+- **Licencia ambigua.** `package.json` declara ISC —que permite a cualquiera copiar la
+  plataforma entera y venderla—; no hay archivo `LICENSE` ni © en ninguna página. Nadie sabe de
+  quién es esto.
+- **Sin aviso de privacidad ni consentimiento**, con nombres, notas, conducta, asistencia y
+  teléfonos de encargados **de menores** en la base. Un colegio privado lo pregunta en la
+  primera reunión; la Secretaría, antes.
+- **GitHub Pages como producción.** Sus términos prohíben el uso comercial y hay un techo de
+  100 GB al mes. Hoy no se roza; el día que se venda, el alojamiento es incumplimiento.
+
+> ✅ **Corregido en parte el 7 de septiembre de 2026.** Lo de la licencia y la privacidad, hecho;
+> lo del alojamiento, la mitad que se puede hacer desde el repositorio.
+>
+> **La licencia la decidió el autor: todos los derechos reservados.** `LICENSE` lo dice y
+> `package.json` apunta a él en vez de al «ISC» que traía puesto `npm init` —y que dejaba a
+> cualquiera copiar la plataforma entera y venderla—. El archivo separa a propósito **lo que no
+> hace falta pedir** (usarla, imprimir y fotocopiar las fichas y las evaluaciones, repartirlas en
+> el aula: gratis y sin avisar) de **lo que sí** (redistribuirla, derivarla, cualquier uso
+> comercial). Para el maestro no cambia nada; lo que cambia es que está escrito de quién es.
+>
+> **`privacidad.html` y `terminos.html`**, enlazados desde la portada, la pantalla de la familia,
+> el registro, la consulta de la nube, las evaluaciones y el panel del docente, con el © en el pie.
+>
+> ⚠️ **Lo más grave del punto no era la falta de aviso: era el aviso que había.**
+> `registro.html` prometía que «estos datos **nunca salen del dispositivo** por sí solos». Se
+> verificó y **es falso**: cada registro se encola solo (`metas-registro.js:109` → `encolar`) y
+> sube en `online`, `pagehide` y `visibilitychange`, **sin ninguna condición de consentimiento**
+> —solo que haya cola y haya red—, con el **nombre del alumno**, su número de lista, su grado, su
+> escuela, su maestro, su nota y su XP. Una promesa de privacidad que no se cumple es peor que
+> ninguna, porque la familia decide con ella. Corregida, y la sonda no la deja volver.
+>
+> El aviso dice lo que de verdad pasa, verificado línea a línea contra el código: qué sube solo y
+> qué no; que los teléfonos del encargado viajan dentro de `METAS_ADMIN_V1` con la cuenta del
+> maestro; que **los pagos y quién subió al bus no salen del equipo**; que la convocatoria caduca
+> a los 60 días y el Campeonísimo a las 24 horas; y —porque es verdad y no está bien— que **los
+> resultados del alumno hoy no caducan solos y no hay botón para borrarlos**, así que el borrado
+> se pide por escrito.
+>
+> **Del alojamiento se arregló la trampa, no el contrato.** `_config.yml` saca `www/` del sitio
+> publicado: era alcanzable en `/www/index.html` y sirve **`meta-app-v48`, 132 versiones por
+> detrás**, así que un teléfono que abriera esa dirección se instalaba el service worker viejo en
+> su propio ámbito. Lo que **sigue pendiente y es del autor**: los términos de GitHub Pages
+> prohíben el software comercial, y mover el DNS a Cloudflare es una decisión suya, no del
+> repositorio.
+>
+> Y una que salió por el camino: **Pages construye con Jekyll, que se come las dobles llaves**.
+> La cifra de misiones de la portada iba en un marcador `de ese estilo`; ahora `app.js` reescribe
+> el elemento entero por su id, así no depende de eso. **No se pudo comprobar en el sitio en
+> vivo**: el proxy de estas sesiones bloquea el dominio, y así queda dicho.
+>
+> Lo vigila `_dev/verifica-legal.js`.
+
+---
+
+## Bloque 2 · Las dos semanas siguientes (días de trabajo)
+
+### 2. Cerrar «Ver Pauta» y separar practicar de calificar
+
+**La nota que el maestro recibe hoy mide copiar la clave, no aprender.** Es el hallazgo que más
+duele de toda la auditoría pedagógica, y son tres piezas del mismo problema:
+
+1. **La pauta está a un toque, antes de calificar.** El alumno toca «👁 Ver Pauta», ve las 16
+   respuestas, las copia y califica. Reproducido de punta a punta: calificar en blanco →
+   `Resultado: 0/100`; rellenando con la pauta → `Resultado: 100/100`. **Las dos notas entran al
+   registro** como `evaluacion` (`[{tipo:'evaluacion',nota:0},{tipo:'evaluacion',nota:100}]`).
+   `toggleEvalAns` está en las **66 misiones**.
+2. **El anti-trampa no se entera.** `js/metas-registro.js:180-201` envuelve `printEval` y
+   `printEvalOp` —o sea, solo deja rastro si el alumno *imprime* la pauta—. Tras ver la pauta en
+   pantalla y calificar tres veces, `pauta_vista` = **0 eventos**.
+3. **Y el sistema toma la mejor.** `js/app.js:625-635` — la ruta muestra «✔ Dominada · 75» con
+   la mejor nota de todos los intentos. La instrucción escrita de Adjetivos manda literalmente a
+   ver la pauta.
+
+- **Qué hacer:** dos modos. **Practicar** (pauta visible, no registra) y **Evaluación** (pauta
+  oculta hasta después de calificar, registra una vez por forma). Envolver también
+  `toggleEvalAns`/`toggleEvalOpAns` en el mismo `registrarPauta`, y que Rutas solo cuente como
+  «Dominada» una nota sin pauta previa. Cambiar el texto de Adjetivos.
+- Lo barato de esto es la mitad 2 —envolver dos funciones— y se puede hacer **hoy**, aunque los
+  dos modos tarden una semana.
+
+> ✅ **Corregido el 7 de septiembre de 2026**, y sin los dos modos: **la pauta ES el modo.**
+>
+> Lo que costaba de ver es que **el aviso al maestro ya estaba hecho** —el ⚠️ de `registro.html` y
+> `consulta-nube.html`, que cruza la pauta con la nota del mismo día y el mismo equipo— y no se
+> disparaba nunca. `pauta_vista` solo se registraba al **imprimir**, que es lo que hace el
+> maestro, no al abrir la pauta en la pantalla, que es lo que hace el alumno. Una línea en el
+> sitio equivocado dejaba muerta toda la cadena.
+>
+> Ahora, en `js/metas-registro.js` —una vez, no en las 66 misiones—:
+>
+> - se engancha `toggleEvalAns`, `toggleEvalOpAns` y **`toggleEvalCritAns`**, que no estaba en el
+>   hallazgo y la tienen **35 misiones**;
+> - se mira el **DOM**, no la variable de la misión: cada una lleva su propio `evalAnsVisible` y
+>   hay 66. Lo que cuenta es si las respuestas quedaron a la vista, y solo cuando **abre**.
+>
+> **`rutasProgress` deja de premiar la copia.** Una nota con la pauta abierta antes ya no entra en
+> `best`: entra en `practica`, y «Dominada» sale solo de `best`. ⚠️ La regla de «pauta antes» es
+> **la misma** que la del ⚠️ del maestro —misma misión, mismo día, pauta anterior a la nota—: si
+> se separaran, el maestro vería el aviso en una pantalla y «Dominada» en la otra.
+>
+> **Y al alumno se le dice en el momento**, que es lo que faltaba: antes la pantalla le decía
+> «100/100» y él se lo creía. El panel añade «👁 Esto cuenta como práctica, no como nota», sin
+> regañar —practicar con la clave delante está bien, y 44 de las 66 misiones lo invitan por
+> escrito— y diciendo cómo se saca la de verdad: generar otra forma y calificar sin mirar.
+>
+> **No se hicieron los dos modos, a propósito.** Un selector «Practicar / Evaluación» es
+> exactamente lo que este proyecto ya aprendió a quitar: de la lectura de las misiones se retiró
+> un selector de modos porque el niño se ponía a probarlo y llegaba al minuto sin haber leído. Si
+> abrir la pauta es lo que convierte el intento en práctica, los dos modos existen sin que nadie
+> tenga que elegir uno, y no se puede fallar por descuido.
+>
+> **Tampoco se cambió el texto de las 43 misiones** que dicen «selecciona Ver Pauta para que te
+> autoevalúes». Leído entero manda **copiar el examen al cuaderno, responderlo ahí y después**
+> mirar la pauta para corregirse: eso es práctica legítima y bien explicada. Lo que estaba mal era
+> que la aplicación lo tratara como nota.
+>
+> Lo vigila `_dev/verifica-pauta.js`, que hace lo que hizo el alumno de 5º —abrir la pauta, copiar
+> las respuestas, calificar— y exige las cuatro cosas, **incluida la que no se puede romper**: que
+> sin abrir la pauta la nota siga contando como siempre.
+
+### 3. Cerrar la puerta de escritura anónima a la nube
+
+`SUPABASE-AULA.sql:103-135` define `metas_guardar(filas jsonb)` con `grant execute … to anon`,
+**sin `_metas_docente_ok` y sin `metas_rate_ok`**, aceptando lotes de hasta 500 filas. La tabla
+`resultados` no tiene ningún `check` sobre `nota`. Y `metas_consultar_docente`
+(`SUPABASE-DOCENTES-V2.sql:344-383`) empareja al maestro con
+`metas_norm(r.docente) like '%…%'`.
+
+Junto: cualquiera con la clave publicable —que va escrita en este repositorio, como debe ser—
+puede escribir 500 notas falsas a nombre de cualquier maestro cuyo nombre adivine parcialmente.
+No existe función de borrado. El maestro no puede quitarlas.
+
+Y hay funciones heredadas que nunca se retiraron y siguen concedidas a `anon`: clave docente
+compartida, alta sin correo (`T3-06`).
+
+- **Qué hacer:** rechazar filas cuyo `codigo_aula` no resuelva a un maestro (dejar de emparejar
+  por nombre); emitir un token por dispositivo al registrar el código de aula y exigirlo; acotar
+  `nota` a `[0, base]`, alumno ≤ 60, lote ≤ 200; pasar por `metas_rate_ok`; **revocar las
+  funciones heredadas**; y marcar en la pantalla del maestro las filas que llegaron sin código
+  de aula como «sin verificar».
+- Todo el SQL va escrito entero en el chat, como manda la normativa: se pega desde la tableta.
+
+> ✅ **Corregido el 7 de septiembre de 2026**, y el SQL **ya está corrido y comprobado en la base
+> viva** ese mismo día: una fila inventada a nombre de un maestro cualquiera entró con nota 100
+> —no 9999—, `verificado = false` y `docente_codigo` vacío.
+>
+> ⚠️ **La primera versión del archivo reventó al pegarla** y no aplicó nada: hacía `revoke` antes
+> del `drop` sobre `metas_suscribir_docente`, que en esa base **ya no existía**, y un `revoke`
+> sobre lo que no está da `ERROR 42883`; como el editor de Supabase corre todo en una transacción,
+> se deshizo el script entero. El `revoke` además sobraba: el `drop` se lleva los permisos con la
+> función. Ahora las heredadas se quitan **por nombre y con todas sus versiones**, recorriendo
+> `pg_proc`, así que da igual con qué firma quedaran en cada base y da igual que ya no estén.
+>
+> **Lo que el SQL hace:** el lote baja de 500 a 200; pasa por `metas_rate_ok()`, que ya existía y
+> a esta —la que ESCRIBE— no se le había puesto; la nota se acota a `[0, base]`, que no tenía
+> ningún `check`; el maestro se resuelve del **código de aula en el servidor** y se guarda su
+> `docente_codigo`, en vez de fiarse del nombre que venga escrito; se retira la política heredada
+> `resultados_insertar … with check (true)`, que dejaba insertar en la tabla saltándose la
+> función entera; y se retiran las dos heredadas que nadie quitó —`metas_consultar(p_clave)`, que
+> devolvía **todos** los resultados del proyecto a quien supiera una clave que el script traía por
+> defecto, y `metas_suscribir_docente`, que servía para **bloquearle el registro al maestro real**
+> con ese nombre—.
+>
+> Y **`metas_resultados_borrar`**: en toda la base no había un solo `delete from resultados`, así
+> que una fila falsa era eterna. Además de defensa es el **derecho de supresión** que el aviso de
+> privacidad publicado ayer promete.
+>
+> ⚠️ **Lo que NO hace, y está escrito dentro del propio archivo:** no cierra la puerta del todo.
+> Sigue aceptando filas sin código de aula, porque hay alumnos trabajando con la aplicación ya
+> guardada en su teléfono y cortarles la subida sería perderles la práctica sin que nadie se
+> entere. Lo que hace es **quitarle el disfraz**: esas filas quedan marcadas «sin verificar», el
+> maestro las ve y ahora **puede borrarlas**. El permiso por aparato es la parte de semanas.
+>
+> ⚠️ **Y el cliente funciona igual antes y después de pegar el SQL**, que es lo que de verdad
+> podía salir caro: entre publicar esto y pegarlo puede pasar una semana. `verificado` llega en
+> tres estados —`true`, `false` y **`undefined`, que es «el servidor todavía no tiene la
+> columna»**— y el tercero **no se marca**: si se marcara, la pantalla se llenaría de avisos
+> mientras el SQL espera, y un aviso que sale siempre deja de leerse. Si se toca 🗑 antes de
+> pegarlo, la pantalla dice **el nombre del archivo que falta correr**, no un «HTTP 404».
+>
+> Lo vigila `_dev/verifica-puerta-nube.js`, que prueba las dos épocas: servidor viejo y servidor
+> nuevo.
+
+### 4. Que el alumno tenga una identidad que no se funda con otra
+
+`js/tools/estadisticas-alumno.js:274-283` empareja por número de lista y **los dígitos del
+grado**, sin mirar nunca `d.seccion`. El resultado: **el número 7 de 6º-1 y el número 7 de 6º-2
+son el mismo alumno** en la pantalla de Estadísticas. El resto de Mi aula sí distingue sección
+(`adSugMismoGrupo`).
+
+Y por el otro lado se parte: la sonda registró tres identidades para una niña —`""`,
+`"Ana López"`, `"ana lopez"`— porque el modal (`metas-registro.js:389-395`) pide nombre, grado y
+escuela como texto libre y **el número de lista es opcional**. Sin número, el maestro lee «no
+hay práctica registrada» aunque la fila esté en la nube.
+
+En un teléfono compartido —que es la norma en estas aulas— «Cambiar alumno» tampoco cambia de
+dueño el XP, las secciones ni los logros (`P6-02`).
+
+- **Qué hacer:** usar el identificador que el maestro **ya emite**: la clave de familia (nº de
+  lista + 4 letras, `adClaveFamilia`), que fija grupo y alumno sin escribir nada. Mientras tanto:
+  normalizar nombres con la misma `metas_norm` del servidor, exigir el nº de lista cuando hay
+  código de aula, y filtrar en `estMisiones` por grado **y** sección.
+- Esto arregla de paso el modal de cinco campos que bloquea cada misión antes de leer una línea
+  (`U5-04`, `U9-07`): un campo en vez de cinco.
+
+> ✅ **Corregido el 7 de septiembre de 2026** la parte de «días»; **la clave de familia como campo
+> único sigue pendiente**, que es la de «semanas» (`B4-02`).
+>
+> **1 · Dos niños dejan de ser el mismo.** `estMisiones` ya no compara solo dígitos del grado:
+> saca grado **y sección** de lo que el niño escribió —`6`, `6º-1`, `6to A`, `6 2` y el `61` de
+> corrido, que es como queda `6º-1` cuando solo se miran los dígitos— y aplica tres casos, sin
+> inventar ninguno:
+>
+> - escribió su sección y **no** es esta → fuera;
+> - escribió su sección y es esta → dentro;
+> - **no escribió sección → depende del maestro, no del niño**: con un solo grupo en ese grado no
+>   hay duda y entra; con dos, no se puede saber de quién es, **no se cuenta**, y se le dice al
+>   maestro cuántas quedaron fuera y qué pedirle al alumno que escriba. Contarla sería volver a
+>   meter en el informe firmado el trabajo de otro niño.
+>
+> El progreso pasa por **la misma puerta**: dos reglas darían un informe con las misiones de un
+> niño y los minutos de otro.
+>
+> **2 · Y uno deja de ser tres.** Los nombres se agrupan con la misma normalización que
+> `metas_norm` del servidor, así que «Ana López», «ana lopez» y «ANA  LÓPEZ» son una sola niña. Y
+> el número de lista **deja de ser opcional en cuanto hay código de aula**: es la única llave con
+> la que el maestro le encuentra, y sin él su práctica llega a la nube y el maestro lee «no hay
+> práctica registrada». El rótulo se corrige solo —decir «opcional» y luego no dejar guardar sería
+> tomarle el pelo—.
+>
+> **3 · El teléfono compartido** (`P6-02`). «Cambiar alumno» prometía esto y solo reabría el
+> modal. Ahora, cuando el nombre cambia de verdad **y hay algo que heredar**, se pregunta ahí
+> mismo, con los dos nombres delante, y se borra el avance de la misión para que el XP y los
+> logros sean del que entra. Sus notas no se tocan: cada una quedó sellada con su dueño.
+>
+> ⚠️ **La llave del avance no se puede preguntar**: cada misión declara su `SAVE_KEY` como const
+> de módulo y hay 66. Lo que sí es igual en las 66 es la **forma** de lo guardado —un objeto con
+> `doneSections` y `unlockedAch`—, y por ahí se reconoce, sin tocar un solo archivo de misión.
+>
+> **Dos cosas las cazó la sonda, y las dos eran mías:** escribí «2 **secciónes**», que es
+> exactamente el error que el propio repositorio tiene documentado a cuenta de «misiónes» en la
+> portada; y la sonda sembraba con `addInitScript`, que corre en **cada** navegación, así que la
+> recarga del arreglo volvía a poner el avance de Ana y la prueba acusaba al código.
+>
+> Lo vigila `_dev/verifica-identidad.js`.
+
+### 5. Que el maestro no pierda su trabajo (ni en vacaciones)
+
+Tres cosas que juntas significan que los datos del maestro no están seguros:
+
+1. **Last-write-wins sobre una sola llave.** `js/metas-docente-sync.js:40-49` sincroniza
+   `METAS_ADMIN_V1` **entera**. Reproducido: el maestro pasa asistencia en el teléfono **sin
+   señal** a las 9:00; a las 20:00 guarda una nota en la PC; al volver la señal, `sync()` hace
+   `pull` antes que `push` (`:312-314`), la versión remota gana y **la asistencia del día
+   desaparece**. El botón «Recuperar» no aparece, porque `dsTieneRespaldo` (`:668-672`) solo lo
+   ofrece si el aula está vacía.
+2. **Sin respaldos.** Plan Free: ningún procedimiento de copia, ninguna retención, ningún borrado
+   de datos de menores.
+3. **Y el plan Free se pausa a los 7 días sin tráfico.** Las vacaciones hondureñas (noviembre a
+   febrero) apagan el proyecto. El autor ya lo sabe —`SUPABASE-FASE1.md:325-327` lo documenta—
+   pero la reactivación es a mano y sin aviso.
+
+- **Qué hacer:** partir la llave por grupo (`METAS_ADMIN_V1/G:<id>`) y fusionar por entidad con
+  marca de tiempo propia (asistencia por fecha, nota por parcial+materia+alumno), no el documento
+  entero; guardar siempre la versión pisada en `docente_estado_papelera` —que ya existe— y
+  mostrar «Recuperar» aunque el aula no esté vacía; usar la hora del servidor como versión, no
+  `Date.now()` del teléfono.
+- Lo de las vacaciones es de una hora: una GitHub Action semanal que llame a una RPC trivial. Lo
+  correcto antes de vender es el plan Pro (25 USD/mes: no se pausa, copias diarias, 8 GB).
+
+> ✅ **Corregido el 9 de septiembre de 2026 el punto 1 —el que pierde trabajo— y el punto 3 —el de
+> las vacaciones—.** El 2, los respaldos, no es código: es la decisión de pasar a plan de pago, y
+> es del autor.
+>
+> **El hallazgo se reprodujo tal cual**, con dos equipos y la nube de mentira: lista en el
+> teléfono a las 9:00 sin señal, nota en la PC a las 20:00, y al volver la señal **la asistencia
+> del día desaparecía**. Y salieron dos cosas más que no estaban escritas: el teléfono **ni
+> siquiera llegaba a subirla** —la daba por resuelta— y **al revés perdía igual**: con el reloj
+> del teléfono adelantado, la que se caía era la nota de la PC. Las dos direcciones perdían.
+>
+> **No se partió la llave por grupo, y no hizo falta.** Lo que se hizo es lo otro que pedía el
+> hallazgo, y resuelve más: **fusionar dato por dato** (`js/metas-fusion-aula.js`). Tres
+> versiones —local, nube y una BASE nueva con lo último que las dos tuvieron igual—, las listas
+> emparejadas por su identidad (`id`, la fecha `f` de un día de asistencia, el `num` del alumno) y
+> por su CONTENIDO cuando no hay ninguna —las tomas de lectura no llevan `id` y varias caen el
+> mismo día—. Medido después: la asistencia está, la nota está, y **la copia fusionada sube**, que
+> es lo que impide que mañana el otro equipo vuelva a mandar la suya a medias.
+>
+> ⚠️ **Editar gana a borrar**, y esa regla se eligió a propósito: devolverle al maestro un alumno
+> que borró se arregla en dos toques; quitarle una nota que acaba de escribir, no. Y la fusión
+> **no lleva escrito ni un nombre de campo de este proyecto**: con la lista de campos dentro se
+> quedaría vieja en la primera herramienta nueva, y no daría ningún error —pasaría a perder ese
+> dato en silencio, que es justo lo que vino a arreglar—.
+>
+> **Y sí se hizo lo del botón:** «Recuperar» ahora sale **aunque el aula esté llena**, que es
+> literalmente lo que pedía el hallazgo. El respaldo guarda por qué se hizo: el de «Empezar de
+> nuevo» solo tiene sentido con el aula vacía; el de una sincronización que pisó datos se muestra
+> cuando la copia guardada tiene algo que ahora no está. Y recuperar ya **no pisa: fusiona**,
+> porque devolver la asistencia de ayer no puede borrar la nota de hoy.
+>
+> ⚠️ **Una tercera pérdida que no estaba en el hallazgo y se vio midiendo:** un equipo **sin nada
+> pendiente** comparaba versiones igual, así que un teléfono con el reloj adelantado dos años
+> —que los hay— se quedaba **congelado para siempre**, viendo su aula de siempre mientras la PC
+> trabajaba. Si no hay nada sin subir, la nube ya tiene lo nuestro: ahora se baja siempre. Eso
+> además desactiva casi entero el «usar la hora del servidor» que pedía el hallazgo: con la
+> fusión, el reloj solo decide cuando los dos equipos cambiaron **el mismo dato**.
+>
+> **Las vacaciones:** `.github/workflows/no-dormir-supabase.yml`, una lectura cada **tres** días
+> —no semanal: con siete, una ejecución que se retrase ya deja pasar el plazo—, sin tocar tablas
+> y con la clave publicable leída del propio repositorio. Falla a propósito si la nube no
+> contesta bien. ⚠️ Y queda dicho lo que no cubre: GitHub apaga los `schedule` de un repositorio
+> con **60 días sin empujones**; hoy se publica a diario, y el día que eso cambie la respuesta
+> es el plan de pago.
+>
+> ⚠️ **Esto se publicó sin poder probarse y estuvo roto tres días.** El proxy de estas sesiones
+> bloquea el dominio de Supabase, así que se dio por bueno. Lanzado a mano el 9 de septiembre,
+> falló: la raíz de la API REST contesta **401 «Secret API key required»** a cualquier clave
+> publicable —esa puerta pide clave secreta, y una clave secreta no puede vivir en un
+> repositorio público—. Habría seguido fallando cada tres días, **sin despertar nada**, hasta
+> febrero. Ahora la petición va a `/auth/v1/health`, que sí abre con la publicable y cuenta
+> igual como actividad, y se tocan **las dos nubes**: la del maestro y la de F.A.R.O, por donde
+> salen las sugerencias de los alumnos y entran los videos de las misiones. Comprobado en verde
+> en GitHub, no supuesto.
+>
+> Lo comprueban **`_dev/prueba-fusion-aula.js`** (sin navegador, un segundo: es el que hay que
+> poder correr cada vez que se toca) y **`_dev/verifica-fusion-sync.js`** (los dos equipos de
+> verdad, con la nube de mentira).
+
+### 7. Quitar el CDN del camino crítico
+
+Medido, con la red mala de verdad:
+
+| página | primer pintado, CDN colgado | abortando los externos |
+|---|---:|---:|
+| `index.html` | **12 640 ms** | 284 ms |
+| La Materia | 12 504 ms | 132 ms |
+| Sólidos Geométricos | 12 528 ms | — |
+| `padres.html` (sin CSS externo) | **52 ms** | — |
+
+Doce segundos y medio de pantalla en blanco. `css/app.css:1` tiene
+`@import url('https://fonts.googleapis.com/…')` y `index.html:11-12` carga Font Awesome **local
+y además desde CDN**. 74 misiones piden Google Fonts, 66 piden Font Awesome del CDN.
+
+`padres.html` demuestra que el problema es exactamente ese: sin CSS externo pinta en 52 ms.
+
+- **Qué hacer:** alojar la fuente como woff2 subconjunto latino con `font-display:swap` (o usar
+  `system-ui`), quitar el `@import` y los `<link>` externos con un `sed` por lote, y cargar Font
+  Awesome solo local —ya está en `css/vendor`—. Ganancia: 12 s → menos de 0,5 s con red mala,
+  dos dependencias externas menos y unos 150 KB menos por misión.
+
+> ✅ **Corregido el 9 de septiembre de 2026.** Vuelto a medir antes de tocar nada, y el hallazgo
+> se quedaba **muy** corto: con el CDN colgado de verdad —que es lo que hace la señal de un
+> pueblo, no rechazar la conexión sino tragarse los paquetes y no contestar nunca— la portada y
+> una misión **NO PINTARON**. Ni a los veinte segundos ni a los **dos minutos**. No eran 12,6 s
+> de espera: era pantalla en blanco sin final. Los 12,6 s del hallazgo son lo que tarda una red
+> que acaba fallando; la que se queda colgada no tiene ese fondo.
+>
+> | | antes, CDN colgado | después, CDN igual de colgado |
+> |---|---|---|
+> | la portada | **no pintó en 2 min** | **428 ms** |
+> | Las Fracciones | **no pintó en 2 min** | 232 ms |
+> | Sólidos Geométricos | no pintó en 20 s | 204 ms |
+> | Fin de Grado 6º | no pintó en 20 s | 196 ms |
+> | una ficha del maestro | no pintó en 20 s | 96 ms |
+> | `padres.html` (nunca pidió nada fuera) | 88 ms | 80 ms |
+>
+> El alcance también era mayor: **81 páginas** pedían Google Fonts (74 misiones —no 73: una tiene
+> acento en el nombre y se escapaba del recuento— y 8 fichas del maestro), más el `@import` de
+> `css/app.css`, y **65 misiones** bajaban Font Awesome entero del CDN. Hoy: **cero**. Ni una
+> hoja de estilo, ni un `preconnect`, ni un `@import` sale del sitio, en ninguna página.
+>
+> **Las letras se alojan, no se cambian por `system-ui`.** Fredoka es la cara de las misiones y
+> Outfit la de la aplicación del maestro; cambiarlas por la letra del sistema habría arreglado la
+> espera cambiando el producto. Están en `css/vendor/fuentes/`, **solo el subconjunto latino y el
+> latin-ext**, con `font-display: swap` —el texto sale desde el primer momento con la letra del
+> sistema y cambia cuando llega la nuestra: el alumno con mala señal **lee**, antes esperaba— y
+> cada `@font-face` con su `unicode-range`, así que **no se baja letra que no se pinta**: se
+> comprobó que la portada no se trae las tres letras de las misiones. Del CDN venían además el
+> cirílico, el griego, el hebreo y el vietnamita.
+>
+> ⚠️ **Y el `@import` de `css/app.css` era lo peor de los dos mundos:** bloquea el pintado Y va en
+> cadena —el navegador tiene que bajar y leer `app.css` entera antes de enterarse de que hace
+> falta otra cosa, en otro servidor y en otro país—. Ahora las letras van en su propio `<link>`,
+> **antes** de `app.css`.
+>
+> **Font Awesome se quitó de las 65 misiones enteras, no se pasó a local.** Medido: de los más de
+> mil iconos que tiene, las misiones usaban **uno solo** —`fa-arrow-left`, la flecha de volver—.
+> Eran 102 KB de hoja de estilo y una fuente de iconos, del otro lado del mundo y bloqueando el
+> pintado, por una flecha. Ahora es un SVG de cinco líneas que hereda el mismo color y el mismo
+> tamaño (`currentColor`, `1em`), así que el CSS de las 65 no se tocó. La aplicación del maestro
+> sí usa cuarenta iconos y se queda con su Font Awesome **local**, que ya estaba: lo que se le
+> quitó fue la copia del CDN que cargaba **además**, una versión por detrás.
+>
+> **En `sw.js` había una mentira que nadie podía ver:** pre-cacheaba la **CSS** de Google Fonts
+> pero nunca los `.woff2` de `fonts.gstatic.com`, así que sin señal la letra no llegaba igual. Se
+> fueron las dos direcciones del CDN y entraron las de aquí. Al armazón se le suma solo
+> **Outfit**, que es la letra de la portada —`index.html` sí abre sin señal la primera vez—; las
+> de las misiones **no**, y no es un olvido: una misión que no se visitó en línea no está en la
+> caché, así que guardarle la letra sería guardar la letra de una página que todavía no existe.
+>
+> **Lo que NO se tocó, y por qué.** MathJax sigue viniendo de `cdn.jsdelivr.net` en la misión de
+> áreas del círculo, pero va con `async`: por definición no está en el camino crítico, no retrasa
+> el pintado y alojarlo es otra decisión (el paquete pasa del megabyte). Y Three.js sigue
+> viniendo de `cdnjs` en los 18 juegos 3D, que es a propósito y tiene su propia normativa: es un
+> `<script>` que el juego carga detrás de su telón, con su aviso de «hace falta internet la
+> primera vez», no una hoja de estilo que para la página entera.
+>
+> **Y queda una cosa dicha:** los 18 juegos 3D declaran `Fredoka` en su CSS y **nunca la han
+> cargado** —llevan la letra del sistema desde siempre—. Se dejaron como estaban: darles ahora la
+> letra buena les mueve la maquetación, que tiene sonda propia y paneles medidos al píxel.
+>
+> **Y una prueba de que la sonda hace falta:** mientras se hacía este cambio entraron por `main`
+> una misión nueva (Aspectos Cívicos) y un juego nuevo (Fábrica Geométrica), las dos pidiendo las
+> letras y los iconos al CDN, porque se copiaron de lo que había. La sonda las cazó las dos, y de
+> paso cazó **`mision.html`**, que llevaba desde siempre bajándose los 102 KB de Font Awesome por
+> su flecha de volver y que yo mismo había dejado pasar. El juego traía además una letra que no
+> teníamos, **JetBrains Mono**: se alojó, no se cambió por Fira Code —que también es
+> monoespaciada y ya estaba—, porque la letra la eligió quien hizo el juego.
+>
+> ⚠️ **Y una consecuencia que no se ve venir: hasta hoy, toda medida de maquetación se tomaba con
+> la letra del SISTEMA.** Las letras venían del CDN y llegaban tarde, así que la sonda medía antes
+> de que estuvieran puestas. Se vio en ese mismo juego: acostado (740×360) su botón «Vaciar los
+> huecos» caía **4 px por debajo del borde** en cuanto la letra llegaba a tiempo —o sea, en el
+> teléfono de cualquiera con señal—, y su sonda lo daba por bueno. Se le recortó aire, con
+> colchón, siguiendo la regla que su propio autor había escrito al lado. Y la buena noticia: las
+> sondas que cuentan hojas de papel —informes, fichas, boletos, listados— siguen **todas en
+> verde**, y desde hoy cuentan con la letra de verdad.
+>
+> Lo comprueba **`_dev/verifica-cdn-fuera.js`**, que lee del archivo todas las páginas y todas las
+> hojas de estilo del repositorio —y las cuenta ella, que no se escriben— —abrirlas con Playwright no lo corre nadie— y abre tres con los tres servidores
+> **colgados**: que pinten, que no salga ni una petición hacia ellos, que la letra que se ve sea
+> la nuestra y salga del sitio, y que la flecha de volver se vea y **se pueda tocar**.
+>
+> ⚠️ **Y este cambio destapó una sonda que llevaba meses pasando por suerte.**
+> `verifica-convocatoria` se puso roja sin que nada del producto estuviera roto: las ocho sondas
+> que fingen la nube con `page.route` abrían la página **con service worker**, y cuando el service
+> worker toma el control —`sw.js` hace `skipWaiting()` y `clients.claim()`, así que lo toma sin
+> recargar— las peticiones pasan por él y `page.route` **no las intercepta**: se iban a la nube de
+> verdad y allí se quedaban colgadas. Lo que las salvaba era justo lo que este punto quitó: la
+> instalación pre-cacheaba dos direcciones de CDN que en la sonda no contestan, así que tardaba lo
+> suficiente en tomar el control. Ahora las ocho abren sin él (`SIN_SW`, en
+> `_dev/lib-navegador.js`), que es lo único que hace que comprueben lo que dicen comprobar. La
+> otra mitad del aviso llevaba meses escrita en `CLAUDE.md`: «lo que se le manda a la nube se
+> comprueba ANTES de recargar la página».
+
+### 9. Subir la barra de secciones al principio de la misión
+
+**Está al final del documento.** Medido a 360×640:
+
+| misión | dónde empieza la barra | alto del documento |
+|---|---:|---:|
+| Ángulos | 5 375 px | 5 985 px |
+| Decimales | 4 507 px | — |
+| Fin de Grado 7º | tras 9 100 px de «Aprende» (**14,2 pantallas**) | — |
+
+`angulos.css:71` — `.nav{position:static}`, y en el HTML el marcador «NAV (STATIC)» va después de
+todas las secciones. Son 16-18 pestañas en seis o siete filas, al pie de un documento de catorce
+pantallas.
+
+Cuatro de los cinco alumnos del recorrido UX se perdieron aquí, y es el mismo problema que el
+proyecto ya resolvió bien en otra pantalla: el mando del minuto de la lectura va **abajo**
+porque ahí están los ojos del que acaba de leer. Aquí la barra está abajo porque nadie la movió.
+
+- **Qué hacer:** barra pegajosa arriba, una fila de chips con desplazamiento horizontal; o un
+  botón «Secciones» en la cabecera. Y agrupar las 13-18 pestañas en cuatro: **Aprende · Practica
+  · Juega · Evalúa**. Es CSS y HTML compartidos, no contenido.
+
+> ✅ **Corregido el 7 de septiembre de 2026, en las 74 misiones.** Antes de tocar nada se midieron
+> las 74 en un teléfono de 360×640, y el hallazgo se quedaba corto: la barra estaba fuera de la
+> primera pantalla en **74 de 74**, con una **mediana de 3 156 px —4,9 pantallas—** y una peor de
+> 6 180 px. Ninguna era pegajosa y llegaban a **siete filas** de chips.
+>
+> ⚠️ **Y lo que de verdad costaba no era la distancia: la barra y el contenido se peleaban.**
+> `go()` termina en `scrollTo({top:0})`, así que el alumno bajaba 2,2 pantallas hasta la barra,
+> tocaba «Evaluación», la página saltaba arriba **y la barra pasaba a estar a 7,7 pantallas**,
+> porque depende del alto de la sección que se esté viendo. Usarla dos veces seguidas eran dos
+> viajes completos, y la distancia cambiaba en cada uno. Por eso **pegajosa**, no solo arriba: es
+> lo contrario del mando del minuto de la lectura, que va abajo porque ahí están los ojos del que
+> acaba de leer; aquí no hay un sitio donde estén los ojos.
+>
+> **La respuesta ya estaba en el repositorio:** las **8 misiones del maestro** tenían la barra
+> justo detrás del encabezado. Eran las **66 del alumno** las que la llevaban al final, porque se
+> copió el archivo 66 veces. Por eso el arreglo vive en **dos archivos compartidos**
+> (`css/barra-secciones.css` y `js/barra-secciones.js`, los dos en `STATIC_ASSETS` de `sw.js`),
+> como el andamio de los juegos 3D y el aparato de videos: la misión no lleva ni una línea, solo
+> los engancha.
+>
+> Lo que cambia para el alumno, medido: la barra se ve **al abrir sin deslizar**, sigue ahí con la
+> sección a medio leer, cambiar de sección **ya no obliga a volver a buscarla**, y el chip de
+> donde está se trae a la vista solo —moviendo `scrollLeft` a mano, nunca con `scrollIntoView`,
+> que arrastraría también la página—. Va en **una fila** que se desliza, con sombras en los
+> extremos porque **hay que decir que se desliza** (regla 8 de los juegos 3D), y ningún chip baja
+> de **44 px**: equivocarse de pestaña es perder el sitio.
+>
+> **No es solo deslizar.** La barra es `role="tablist"` y las secciones `role="tabpanel"`: estando
+> al final, el tablist se anunciaba **después** de los veinte paneles. Quien usa un lector de
+> pantalla oía la misión entera antes de enterarse de que había pestañas.
+>
+> **No se toca `go()`**, que vive copiada en las 74: el JS compartido escucha los cambios de clase
+> de la barra, así que sirve igual venga el cambio de la pestaña, de la flecha del final de una
+> sección o de `abrirSeccionDelEnlace()` al volver de un juego 3D.
+>
+> **Lo que NO se hizo, y a propósito:** agrupar las 19 pestañas en cuatro. Eso es cambiarle el
+> nombre a lo que el maestro ya dice en voz alta en el aula —«abran Predice»— y es contenido
+> misión por misión, no CSS. Con la fila que se desliza y el chip activo a la vista, navegar ya
+> funciona sin tocar el contenido de ninguna.
+>
+> ⚠️ **Y una que solo se ve al pegarla arriba:** las 8 misiones del maestro traen el `<nav>` **sin
+> fondo**. Quieto al final del documento eso no se notaba; pegado arriba se vería el contenido
+> pasar por debajo. El JS les mide el de la página y lo pone, y solo a esas. La sonda pregunta
+> **quién recibiría un toque en medio de la franja** —el mismo guardián que caza el lienzo
+> derramado de los juegos 3D— en los dos temas.
+>
+> **Una corrección que resultó no hacer falta**, y queda anotada: creí ver una costura de color en
+> el modo oscuro y monté un medidor que releía el fondo en cada cambio de tema. Lo que pasaba es
+> que `.nav` lleva un `transition: background .3s` y yo estaba **midiendo a media transición**:
+> `--nav-bg` era correcto desde el principio. El medidor se quitó.
+>
+> **Y queda una cosa dicha:** en las 8 misiones del maestro el encabezado mide 750 px, así que la
+> barra sigue fuera de la primera pantalla al abrir —se pega en cuanto se desliza un poco—. Bajar
+> ese encabezado es una decisión de contenido suyo, no de esta corrección.
+>
+> Lo comprueba **`_dev/verifica-barra-secciones.js`**.
+
+### 10. Que la estrella se gane
+
+`fin-de-grado-6to.js:1668-1670` llama a `fin('s-aprende', false)` **al arrancar**. `:1283` marca
+`fin('s-evaluacion')` dentro de `genEval` —al *generar* la prueba, no al calificarla—.
+`fracciones.js:466` hace lo mismo.
+
+Lo que ve el alumno: abre la misión, no toca nada, y ya tiene estrellas en Aprende, La prueba y
+Errores. Y el cartel «¡Misión completada!» con **0 XP**.
+
+Y por el otro lado el XP se infla: se vuelve a ganar recargando la página (`P6-01`, la promesa
+«(primera vez)» no se cumple), se gana por voltear tarjetas y por clasificar mal (`P6-04`), y
+cada clic en «Calificar» regala +8 XP y suma un intento (`P7-11`). El Reto final felicita con
+confeti «¡Bien hecho!» con **0 de 8** (`P4-04`).
+
+Un puntaje que se consigue sin aprender no motiva: enseña que el puntaje no significa nada. Y es
+la misma regla que el proyecto ya escribió para los videos —«ver un video no da XP ni marca la
+sección como hecha, porque nadie puede comprobar que el niño lo miró»— sin aplicarla al resto.
+
+- **Qué hacer:** marcar Evaluación en `gradeEval`, no en `genEval`; Aprende al llegar al final de
+  su texto o al contestar los mini-quiz; la Constancia solo por encima de un umbral; y el XP una
+  sola vez por sección, comprobado contra lo guardado.
+
+> ✅ **Corregido el 8 de septiembre de 2026.** Antes de tocar nada se midieron las 74 abriéndolas y
+> **sin tocar nada**: **34 daban estrellas de regalo, 125 en total**, con el XP en 0 —`s-evaluacion`
+> en 34, `s-aprende` en 33, `s-tipos` en 32, `s-errores` en 20, `s-tareas` en 5 y `s-estructura` en
+> 1—. Vuelto a medir después: **0 de 74, 0 estrellas**, y sin un solo error de JavaScript.
+>
+> Vive en **`js/estrella-ganada.js`** (en `STATIC_ASSETS` de `sw.js`) y **no toca ni una línea de
+> ninguna misión**: son envoltorios sobre `fin`, `genEval`, `gradeEval`, `genTask` y `pts`, que
+> viven copiados en las 74. Mismo permiso que el andamio de los juegos 3D, los videos, la barra de
+> secciones y el teclado.
+>
+> ⚠️ **La regla que de verdad resuelve es una sola: antes del primer toque del alumno no se gana
+> nada.** Cubre de un golpe las tres secciones de leer que se marcaban en el arranque **y** la
+> prueba que algunas misiones pre-generan ahí mismo, sin tener que saber cuáles son ni en qué
+> misión. Por eso el `<script>` va en el **`<head>`** y no al final del body: es lo único que hace
+> que llegue a envolver `fin()` **antes** de que el arranque lo llame. Cargado al final llegaría
+> tarde y las estrellas ya estarían puestas, sin dar un solo error.
+>
+> **Generar la PRUEBA no es hacerla:** ahora su estrella la da `gradeEval`, y **paga una vez**; al
+> segundo «Calificar» se le devuelve la barra a donde estaba y **se le dice por qué**. ⚠️ `genTask`
+> quedó fuera de esa regla y se vio tarde: la sección de tareas no tiene calificación —el alumno
+> pide sus ejercicios y los resuelve en el cuaderno—, así que deshacer también su marca la dejaba
+> **imposible de completar para siempre**.
+>
+> **La sección de solo leer se gana llegando al final** —y quedándose un momento, no de paso al
+> cambiar de pestaña—. ⚠️ Y **la lista no se escribe en ningún sitio**: son exactamente las
+> secciones que la propia misión intentó marcar al abrir. El autor ya sabía cuáles eran; lo que
+> había que cambiar era cuándo. La prueba y las tareas quedan fuera a propósito: con el centinela
+> del final, bajar hasta el pie del examen daría la estrella sin contestar una pregunta.
+>
+> **El XP ya no se vuelve a ganar recargando:** `xpTracker` —el que recuerda qué tarjeta ya pagó—
+> no se guardaba, así que las mismas 14 tarjetas pagaban otra vez, y la pantalla promete «(primera
+> vez)» en **84 páginas**. Ahora se guarda en su propia llave, sin tocar el `saveProgress` de las
+> 74, que tiene **diez formas distintas**.
+>
+> **Y el elogio depende del resultado:** el Reto decía «¡Bien hecho!» en verde con 0 de 8. El
+> mensaje sube por tramos (90 / 70 / 40), el verde se apaga por debajo de 40 y el logro «Héroe del
+> Reto» pide 70 %. Eso sí son **64 ediciones en las misiones**, porque el texto es de cada una;
+> dos ya lo hacían bien con su propio criterio y se dejaron en paz.
+>
+> ⚠️ **Lo ya ganado NO se le quita a nadie**, y ese detalle costó una prueba: el arranque vuelve a
+> llamar a `fin` sobre una sección ya guardada —no hace nada, porque ya está— y el envoltorio la
+> borraba igual. Ahora mira si ya estaba antes de la llamada.
+>
+> ⚠️ **Y una edición con guion tiene que comprobar que la variable que mete existe ahí.**
+> `node --check` no lo caza: al condicionar el logro con `pct>=70` en las 66, en dos misiones `pct`
+> no existe en ese ámbito y habrían reventado el Reto al acabarse el tiempo. Se revisó después, no
+> antes, y por poco.
+>
+> Lo comprueba **`_dev/verifica-estrella-ganada.js`**.
+
+### 13. Que la Prueba de Fin de Grado no pierda las respuestas
+
+Es la misión insignia —la que repasa el año entero y evalúa dos materias el mismo día— y pierde
+el trabajo del alumno de dos maneras:
+
+- 15 respuestas marcadas en Matemáticas, se cambia a Español y se vuelve: `{marcados: 0,
+  textos: 0}`.
+- Se recarga la página: `hayResultado = false`, el examen se regenera entero.
+
+`fin-de-grado-6to.js:84` guarda en `SAVE_KEY` las secciones hechas, los logros, los números de
+forma y el XP — **todo menos las respuestas**.
+
+Un examen de 100 preguntas contestado a medias en un teléfono prestado, que se pierde al tocar la
+otra materia. Es la definición de abandonar.
+
+- **Qué hacer:** guardar respuestas y resultado por materia + forma y restaurarlos al volver; que
+  `evalSwitchMode` no regenere si ya hay examen de esa materia; pedir confirmación en «Nueva
+  Evaluación» cuando haya respuestas puestas.
+
+> ✅ **Corregido el 7 de septiembre de 2026, en los cuatro grados** (4º, 5º, 6º y 7º) y **en las
+> dos pruebas**, no solo en la conceptual del hallazgo: la operativa perdía sus 19 cuentas por la
+> misma puerta —`genEvalOp()` corre al abrir la misión y saca la forma siguiente—.
+>
+> **No se guarda el HTML del examen.** La prueba es determinista —misma forma, mismo azar, que es
+> justo lo que comprueba `test-determinismo-fin-de-grado-*`—, así que basta guardar la **forma** y
+> **lo contestado**: se vuelve a armar igual y se le devuelven sus respuestas encima. Guardar el
+> HTML habría sido medio megabyte por materia en el almacén de un teléfono prestado.
+>
+> Y con forma fija el contador **no avanza**: rearmar su examen para devolvérselo no puede
+> gastarle la forma siguiente.
+>
+> **Lo que no estaba en el hallazgo y cuesta más caro que perder las respuestas:** que se le
+> peguen encima de OTRAS preguntas. Las preguntas se sacan del banco con `_pickF`, así que el día
+> que entre una pregunta nueva —y aquí se publica varias veces al día— la Forma 5 ya no arma las
+> mismas veinte. La nota saldría como `Resultado: N/100 pts` y acabaría en la Evidencia del
+> maestro y en el expediente del alumno. Por eso se guarda una **huella del examen** (enunciados,
+> orden de las opciones y barajado de las definiciones, que es de lo que dependen las respuestas
+> guardadas); si no coincide, no se devuelve nada, **se le dice por qué** y lo guardado se tira
+> —si no, «Nueva Evaluación» seguiría avisando de unas respuestas que ya no están en pantalla—.
+> Si el resumen fallara devuelve `''`, que no coincide con nada: la duda se salda perdiendo las
+> respuestas, nunca calificándolas mal.
+>
+> **Una trampa que se llevó por delante algo que no se veía.** Los dos botones pasaron de llamar a
+> `genEval()`/`genEvalOp()` a llamar a `evalNueva()`/`evalOpNueva()` —que preguntan antes de
+> borrar—, y de ese `onclick` **cuelga `_injectFormaSel` el selector de Forma**, que es con el que
+> el maestro manda a imprimir la misma prueba para los 43. Al cambiar el botón el selector
+> desapareció **sin un solo error en la consola**. Lo cazó `verifica-fin-de-grado.js`; ahora
+> también lo vigila la sonda nueva, en los cuatro grados y en las dos pruebas.
+>
+> Lo comprueba **`_dev/verifica-fin-de-grado-respuestas.js`**: contesta, se va a Español y vuelve,
+> recarga, cancela y acepta «Nueva Evaluación», y hace lo mismo con la operativa.
+>
+> ⚠️ **Y queda dicho lo que NO se tocó:** el mismo botón `genEval()` está en **otras 62 misiones**
+> (27 con operativa), y en todas ellas recargar la página sigue regenerando el examen y borrando
+> lo contestado. Es la misma avería a menor escala —son exámenes de un tema, no del año entero— y
+> se arregla con este mismo patrón, pero son 62 archivos y no entra en este cambio.
+
+### 15. Traer a la boleta las notas que la aplicación ya calculó
+
+`grep metas_consultar` en `js/tools/plan-accion.js` → **cero resultados**. `adSugFuentes`
+(`registros-admin.js:3580-3600`) lee únicamente lo que el maestro ya escribió a mano.
+
+O sea: la aplicación califica al alumno, sube la nota a la nube… y el maestro corrige los 43
+exámenes otra vez y teclea las notas a mano. El circuito está cortado justo en el último paso, y
+es el paso que convierte la plataforma en algo que le ahorra tiempo.
+
+Hay un matiz a favor del proyecto que el revisor añadió: **sí existe** `consulta-nube.html`, que
+lista fecha, alumno, número, grado, misión, tipo y nota. Pero es una tabla para mirar; tampoco
+ahí hay «llevar esto a la boleta».
+
+Y hay un error de agrupación encima: `estMisiones` (`estadisticas-alumno.js:280-292`) junta
+`evaluacion` y `prueba_operativa` en un solo «mejor», y lo muestra bajo el nombre de la carpeta
+(`2y3ciclo-fracciones`) en vez del título de la misión.
+
+- **Qué hacer:** un botón «Traer de la nube» en el Plan de Acción que, para la misión y forma
+  elegidas, precargue la nota de cada número de lista con la misma RPC que ya usa Estadísticas, y
+  marque el origen. Separar conceptual de operativa. Usar `folderDe` —que ya existe— para
+  mostrar el título.
+- **Es la modificación con más impacto comercial de la lista** (5/5): es la respuesta a «¿y esto
+  qué me ahorra?».
+
+> ✅ **Corregido el 7 de septiembre de 2026.** Botón **«Traer las notas de la nube»** en el Plan
+> de Acción, **pegado a la cuadrícula y no arriba con los selectores**: es ahí donde el maestro
+> está a punto de empezar a teclear.
+>
+> **No hizo falta nada del servidor:** la consulta ya existía y es la que usa Estadísticas
+> (`estNubeRefrescar` / `estNubeCache`). Lo que faltaba era el último tramo.
+>
+> Tres reglas, y ninguna es de adorno:
+>
+> 1. **No se pisa lo escrito a mano.** El maestro pudo corregir en papel al alumno que no tiene
+>    teléfono. Lo que ya tiene nota se respeta, y se dice cuántas.
+> 2. **Se trae la de ESA misión, ESA forma y ESE tipo.** Mezclar la conceptual con la operativa
+>    —o dos formas— es meter en la boleta la nota de otra prueba.
+> 3. **La ÚLTIMA, no la mejor.** Es la que el maestro pondría si hubiera corregido él; «la mejor
+>    de varios intentos» ya se sabe que premia repetir.
+>
+> Y **se ignoran las calificadas con la pauta abierta**, con la misma regla que Rutas y que el ⚠️
+> del registro: una nota copiada de la clave no entra en la boleta. Al final dice qué hizo:
+> cuántas trajo, cuántas respetó, cuántas no estaban y cuántas ignoró por la pauta.
+>
+> Lo traído se marca (`.pa-de-nube`) **y se le quita la marca en cuanto el maestro escribe
+> encima**: deja de venir de la nube, y un color que miente es peor que ninguno.
+>
+> **Las otras dos partes del hallazgo, también:** `estMisiones` guardaba la conceptual y la
+> operativa fundidas en un solo «mejor» —un alumno con 90 en definiciones y 40 haciendo cuentas
+> salía con un 90, que es justo el problema que el maestro no veía— y ahora van en **dos
+> columnas**; y la tabla enseña el **título** de la misión en vez de `2y3ciclo-fracciones`.
+>
+> Lo vigila `_dev/verifica-notas-nube.js`.
+
+### 19. Desbloquear el zoom y hacer las actividades alcanzables con teclado
+
+Dos piezas, la primera de horas y la segunda de días:
+
+- **El zoom está bloqueado** (`maximum-scale=1.0, user-scalable=no`) en `index.html:5` y en 20
+  archivos más. Android Chrome lo respeta. Y la app del maestro —14 vistas, rótulos de 11-12 px—
+  **no tiene ninguna opción de letra grande**, cuando las misiones sí tienen «🔤 Letra» y los
+  juegos 3D «Aa». Quitar dos atributos y poner un control de tamaño de letra en Ajustes.
+- **En 48 de 66 misiones las actividades no existen para el teclado.** Clasifica, Identifica y la
+  sopa se arman con `<div>` y `onclick`, sin `role` ni `tabindex`: la sonda encontró 17
+  elementos clicables no enfocables solo en Fracciones. Un alumno con discapacidad motora puede
+  leer la teoría y no hacer una actividad. **El patrón correcto ya está en 18 misiones**
+  (`centena.js`): se propaga con un guion, como se hizo con el montaje de los videos.
+
+> ✅ **Corregido el 7 de septiembre de 2026**, las dos piezas, y las dos salieron más grandes que
+> el hallazgo al medirlas.
+>
+> **El zoom:** eran **21 páginas** —la portada, `mision.html`, `camp-vivo.html` y **los 18 juegos
+> 3D**—. Ya ninguna de las 184 del sitio prohíbe agrandar. Quitarlo no trae el zoom accidental al
+> tocar rápido: `app.css` y `parque-3d.css` ya llevan `touch-action: manipulation` en botones y
+> chips, que es lo que apaga el doble toque **sin apagar el pellizco**.
+>
+> **El teclado:** no eran 48 de 66 sino **74 de 74**, con **2 314 elementos** que responden al
+> clic y a los que el teclado no llegaba.
+>
+> ⚠️ **Y el patrón que este informe llamaba «correcto» NO servía.** `centena.js` pone
+> `role="button"` y `tabindex="0"` en las fichas del banco, pero **un `<div>` así no responde a
+> Enter ni a la barra espaciadora**: eso solo lo hace un `<button>` de verdad. Comprobado en el
+> navegador: se enfoca, se ve enfocado, y al pulsar Enter no pasa nada; con un clic sí.
+> Propagarlo con un guion a las otras 56 habría repartido **1 141 paradas de tabulador que no
+> llevan a ninguna parte** — peor que no poder llegar, porque promete. Esa media verdad llevaba
+> **en 18 misiones** desde antes de la auditoría.
+>
+> Lo que se hizo: **dos archivos compartidos** (`css/teclado-actividades.css` y
+> `js/teclado-actividades.js`, los dos en `STATIC_ASSETS` de `sw.js`), no un guion que copia el
+> arreglo 74 veces. Un solo oyente en el documento le da el clic a quien tiene el foco; la barra
+> espaciadora **se para**, porque si no además de contestar desliza la página **643 px medidos**;
+> y el foco **se ve**, con un doble anillo —el contorno de un solo color se pierde encima de una
+> ficha oscura, que es justo lo que pasaba en `.wb-item`—. Las **8 misiones del maestro no tenían
+> ninguna regla de foco**: ahí es el único anillo que hay.
+>
+> ⚠️ **Una cuadrícula no se vuelve cuarenta paradas.** La sopa trae **144 celdas**: tabular 144
+> veces para cruzar una actividad no es accesibilidad, es una trampa. Por encima de 40 hermanos
+> iguales se deja fuera; el memorama (16) y el crucigrama (16) sí entran, que esas son las
+> opciones del juego.
+>
+> **Y la sopa ya se juega con teclado, desde el 9 de septiembre de 2026** (mismos dos archivos
+> compartidos, cero misiones tocadas): **una** parada de tabulador y las flechas por dentro,
+> Enter para marcar el principio y el final —los mismos dos toques que el juego ya aceptaba con
+> el dedo y que nadie había visto—, Esc para soltar, el cursor devuelto a su casilla después de
+> cada repintado y la ayuda de teclas solo cuando la cuadrícula tiene el foco. Son **65 misiones
+> del alumno y 8 del maestro**, que por dentro no juegan igual: la sonda encuentra una palabra
+> entera, sin tocar la pantalla, en las dos. De paso salió una avería que llevaba ahí desde
+> siempre: al encontrar una palabra, sus celdas cambiaban de clase y **el grupo de cuatro se
+> colaba por debajo del tope**, quedando cuatro paradas de tabulador que no llevaban a ninguna
+> parte en las 8 del maestro. Y la sonda vieja **no abría la sopa**: buscaba la sección por un
+> nombre escrito a mano que en esas 8 es otro.
+>
+> **Y el control de tamaño de letra del maestro ya está**, desde el 9 de septiembre de 2026, con
+> los dos caminos descartados **seguidos descartando**. Medido antes de tocar nada, con el aula de
+> 43 alumnos sembrada y un teléfono de 390 px: de los **281 textos que el maestro tiene delante,
+> 171 estaban bajo 14 px** y 41 bajo 12; el más pequeño, **9**. Mi aula el 51 % de sus textos bajo
+> 14 px, Plan de Acción el 88 %, Parte Mensual el 83 %.
+>
+> Lo resuelve **una variable que multiplica cada `font-size` de `app.css`** (`--metas-fz`) con su
+> botón **Aa** —el mismo gesto que ya tienen los 18 juegos 3D—, no una cascada y no `zoom`: la
+> cascada rompe por 764 px y `zoom` **desalinea las coordenadas del puntero**, y con eso se
+> llevaría por delante el arrastre de la barra de grupos. Una variable sobre `font-size` no toca
+> ni una coordenada, **y la sonda lo demuestra arrastrando un grupo con la letra en el tope**.
+>
+> Son **633 declaraciones convertidas de golpe**, así que la comprobación que lo sostiene es que a
+> escala 1 los **841 elementos visibles pinten idéntico** — y salieron los 841 idénticos. El texto
+> más pequeño de Mi aula pasa de **10 a 14,5 px**.
+>
+> ⚠️ **El tope, 1,45, está medido y no elegido:** a 1,6 los 43 chips de la lista de asistencia
+> **recortan el nombre del alumno** y a 1,8 la tabla de Notas SACE **se sale del teléfono**. Y hay
+> dos cosas que quedaron fuera con su motivo escrito: el botón **no cabe en el encabezado de la
+> portada** (sus 124 px de botones acaban en el píxel 361 de un teléfono de 360: la medalla se sale
+> y Actualizar deja de poder tocarse) y **la marca de la portada no escala** (creciendo, el
+> encabezado pasaba de 82 a 123 px de alto —un sexto de la pantalla del alumno— y los botones se
+> iban 14 px fuera). De paso salieron los dos únicos rótulos que traían el tamaño en el atributo
+> `style` y se quedaban chicos mientras el resto crecía.
+>
+> Lo comprueban **`_dev/verifica-teclado.js`** —que clasifica una ficha sin tocar la pantalla y
+> encuentra una palabra de la sopa igual— y **`_dev/verifica-letra-maestro.js`**, con sus 26
+> comprobaciones.
+
+---
+
+## Bloque 3 · Lo que vale la pena aunque cueste semanas
+
+### 20. Que la alumna pueda encontrar lo de SU grado
+
+La lista de Misiones no dice el grado de ninguna misión: `js/app.js:575-595` pinta título,
+materia, ruta y XP, y **el campo `grade` de `MISSIONS` no se pinta nunca**. Buscar «cuarto» da
+cero resultados. `js/data/dcnb-map.js:8-10` dice literalmente: «No usar DCNB_MAP en ninguna vista
+del estudiante».
+
+La decisión está tomada a propósito, para evitar el sesgo de que un niño se sienta señalado por
+trabajar contenido de grado inferior. Pero el precio que se paga es que **una alumna de 4º y un
+alumno de 9º ven exactamente la misma lista de 66 tarjetas**, sin ninguna forma de saber cuál le
+toca. Cuatro de los cinco recorridos UX se atascaron aquí, en la primera pantalla.
+
+Y detrás hay algo más grande: 46 de las 66 misiones dicen «II y III Ciclo» y sirven **el mismo
+texto** a un niño de 4º y a un adolescente de 9º (`P1-02`, `P5-06`, `P8-01`).
+
+- **Qué hacer, la parte barata:** preguntar una sola vez «¿En qué grado estás?» (chips 4º…9º,
+  guardado) y usar `DCNB_MAP` para **ordenar** la lista poniendo primero lo de su grado, con una
+  etiqueta «Para 4º» visible. El sesgo se resuelve mostrando el resto sin ocultarlo, no
+  escondiéndole el dato a la niña.
+- La parte cara —contenido distinto por nivel— es de meses y no entra en esta lista.
+
+> ✅ **Corregido el 9 de septiembre de 2026 la parte barata, que es la que desatasca la primera
+> pantalla.** Reproducido tal cual con una alumna de 4º que YA había escrito su grado: 67 tarjetas,
+> las cinco primeras iguales para ella y para uno de 9º —y la quinta, El Adjetivo Avanzado, es de
+> **Bachillerato**—, «cuarto» 0 resultados y «4to» 0.
+>
+> **No hubo que preguntarle el grado**, que es lo que proponía el hallazgo: ya lo escribió al
+> entrar en su primera misión, y la lectura de lo que escribe a mano —«4to A», «6º-1», «61»— ya
+> existía en la pantalla del maestro. Lo que se añadió es el chip para cambiarlo, con su «Todos»,
+> **guardado en su propia llave**: `METAS_ALUMNO_V1` viaja pegado a cada resultado que llega al
+> maestro y una preferencia de vista no entra en el expediente de nadie.
+>
+> Las tres reglas, que son las que quitan el estigma sin quitar la ayuda: **se ordena, nunca se
+> filtra** (los dos montones suman siempre el catálogo entero); **solo se rotula lo que SÍ es
+> suyo** —«📚 Para 4º grado» arriba y «También puedes con estas» abajo, sin nombrar ningún grado, y
+> la sonda lo comprueba—; y **nunca se adivina**: las 47 que dicen «II y III Ciclo» no se reparten
+> a los seis grados, porque entonces el orden no diría nada.
+>
+> ⚠️ **Y una cosa que solo salió midiendo, con el trabajo ya dado por terminado:** doce misiones
+> son **espirales** —el DCNB retoma la gramática los seis años—, están al principio del catálogo, y
+> con el orden de siempre lo primero que veían la de 4º y el de 9º **volvía a ser lo mismo**. La
+> mitad del arreglo se perdía justo en la pantalla donde se atascaron los recorridos. Ahora sube
+> antes **lo más suyo** (cuantos menos grados comparte, más arriba): la de 4º empieza por Números
+> Grandes y Valor Posicional; el de 9º, por lo suyo.
+>
+> Y el buscador: «cuarto», «4to» y «4º» daban 0, 0 y 1; dan las **29** que son suyas. El `º` no es
+> una tilde y por eso `sinTildes` no lo quitaba.
+>
+> Por grado, contado: **4º=29 · 5º=34 · 6º=33 · 7º=27 · 8º=16 · 9º=14**, de 67. Y las Pruebas de
+> Fin de Grado, que **no están en el mapa del DCNB**, salen igual en su grado: se lee también el
+> campo `grade` cuando nombra uno solo. Sin eso, la misión que más le importa a la alumna de 4º se
+> quedaba abajo con todo lo demás.
+>
+> Lo comprueban `_dev/prueba-grado-alumno.js` (sin navegador, un segundo) y
+> `_dev/verifica-grado-alumno.js` (la pantalla de verdad). **La parte cara sigue pendiente y es la
+> de fondo**: 47 misiones sirven el mismo texto a un niño de 9 años y a uno de 15.
+
+---
+
+## Lo que NO entró, y por qué
+
+No porque no importe. Porque el encargo pedía **mayor impacto con menor esfuerzo**, y estas
+cuestan meses:
+
+| qué | impacto | por qué no entra |
+|---|---|---|
+| **El III Ciclo de Matemáticas está casi vacío**; Estadística y Medidas no existen en toda Básica (`P1-01`) | 5/5 | Es escribir misiones, no arreglar código. Es *el* trabajo de contenido del año |
+| **Para 7º-9º no hay misiones de su nivel**: «II y III Ciclo» es contenido de 4º-6º (`U7-01`) | 5/5 | Lo mismo. Y es lo que hace que «alineado al DCNB» no aguante la pregunta de un director |
+| **El motor está copiado 66 veces** y las copias ya divergieron (`T1-01`, `B4-01`) | 4/4 | Semanas o meses. Pero es la causa de que cada arreglo de esta lista haya que propagarlo con un guion a 66 archivos: mientras no se haga, todo cuesta 66 veces |
+| **El maestro no puede asignar** una misión al grupo ni ver «qué hizo mi aula hoy» (`P9-02`, `P8-08`) | 5/5 | Semanas. Es lo que convierte el catálogo en un plan de trabajo, y va justo después de la #15 |
+| **La contraseña del maestro viaja y se guarda en claro** (`T3-01`, `T4-02`) | 5 comercial | Semanas, y toca todo el camino de sesión. Bloquea la venta institucional junto con la #18 |
+| **La Forma R** (la única adecuación curricular real) sigue en 1 de 66 misiones (`P8-06`) | 5/3 | Semanas de contenido. Está bien diseñada; solo falta repetirla |
+
+Y una advertencia sobre el orden: **la #16 (CI) parece la menos urgente y no lo es**. Sin ella,
+cada una de las otras 19 modificaciones se publica a producción sin que nada la compruebe, en un
+repositorio que ya lleva 828 despliegues directos y donde dos sondas llevan rojas sin que nadie
+lo supiera.
+
+---
+
+## Cómo leer esta lista dentro de un mes
+
+Los números de impacto y esfuerzo son juicios de auditor, no medidas. Lo que sí está medido, y
+lo que sostiene cada punto, es la evidencia: archivo y línea, salida de comando, número
+cronometrado o captura. Todo está en `crudo/<área>-hallazgos.json`, con el veredicto del revisor
+adversarial en los que lo tienen.
+
+Siete lentes de las 35 del encargo no llegaron a correr —docente, familia, administración, 8º
+grado, arquitectura de la información, compatibilidad móvil e integridad de datos sin conexión—.
+Cuando corran, esta lista puede cambiar: `ESTADO.md` dice exactamente qué falta y
+`maquinaria/RETOMAR.md` cómo retomarlo.

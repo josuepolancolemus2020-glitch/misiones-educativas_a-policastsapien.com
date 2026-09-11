@@ -10,10 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
 <meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-robot-mensajero/robot-mensajero.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
 <link rel="stylesheet" href="css/robot-mensajero.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
@@ -23,7 +20,6 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -34,7 +30,7 @@
 
 <div class="xp-bar" role="status" aria-label="Barra de progreso XP">
   <a href="../../index.html?view=misiones&filter=programacion" class="xp-back-btn" title="Regresar a misiones de Programación">
-    <i class="fa-solid fa-arrow-left xp-back-arrow"></i>
+    <svg class="xp-back-arrow" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M12 5l-7 7 7 7"/></svg>
     <img src="../../img/logo.png" alt="Logo" class="xp-back-logo">
   </a>
   <span class="xp-lbl">🎮 XP</span>

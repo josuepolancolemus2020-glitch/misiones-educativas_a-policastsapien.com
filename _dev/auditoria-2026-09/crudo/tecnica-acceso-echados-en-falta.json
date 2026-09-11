@@ -1,0 +1,63 @@
+[
+ {
+  "lente": "T7",
+  "texto": "padres.html:1705 registra el MISMO sw.js: el teléfono de una madre que solo abre «Notas» baja en segundo plano los ~2,5 MB del precache (16 diccionarios -en.js de robótica = 816 KB, Font Awesome 271 KB, salida.html, buzon.html) con datos prepagos, por una página que en sí pinta en 88 ms y no usa nada de eso."
+ },
+ {
+  "lente": "T7",
+  "texto": "Las imágenes propias van cache-first para siempre y sin sello: sw.js:217 (destination image) y :280-296 sirven la copia sin revalidar, CACHE_DATOS no se limpia nunca y ninguna <img> lleva ?v= (0 en index.html y en fracciones.html). Un diagrama o un QR corregido no llega jamás a un teléfono que ya vio el viejo."
+ },
+ {
+  "lente": "T7",
+  "texto": "Nadie pide almacenamiento persistente: grep navigator.storage.persist en index.html, padres.html y js/ = 0. La Cache Storage es «best-effort» y Chrome puede desalojar el origen entero bajo presión de espacio en un teléfono de 16 GB compartido, deshaciendo en silencio el «ábrela una vez con señal» sin que nada lo note ni lo diga."
+ },
+ {
+  "lente": "T7",
+  "texto": "PLAZO_INSTALA tolera huecos también en el ARMAZON (sw.js:153-169 «se sigue sin él») y buscarCopia cae a CACHE_DATOS con ignoreSearch (sw.js:199-204): con un archivo del armazón que tarde >12 s, la mezcla HTML nuevo + app.js viejo de T7-01 deja de curarse al activar y persiste hasta una carga con app.js en <3 s. Ninguna sonda lo produce (verifica-service-worker no retrasa la red)."
+ },
+ {
+  "lente": "T11",
+  "texto": "Reloj adelantado en la PC = pérdida silenciosa en el teléfono: SUPABASE-DOCENTE-ESTADO.sql:63-79 hace `n := n + 1` aunque el `where excluded.version >= …` rechace la fila, y js/metas-docente-sync.js:236-243 marca sv=v al recibir ese n. Reproducido en T11-revision/extra.js X1: PC 10 min adelantada ya subió; el teléfono marca una falta, el vigía la sube con versión «vieja», la nube la rechaza contestando 1, el teléfono la da por subida (v===sv) y en el siguiente pull la borra (la falta desaparece del teléfono y nunca llegó a la nube; solo queda un «Recuperar» que nadie sabe que hay que tocar)."
+ },
+ {
+  "lente": "T11",
+  "texto": "Una sola petición colgada bloquea la sincronización hasta recargar: pull()/push() usan fetch sin timeout ni AbortController y sync() toma `_busy` (382-390) que solo se suelta al resolver. Reproducido en extra.js X2: con la lectura colgada (señal que se traga paquetes), 30 s después una falta pendiente lleva 0 subidas, dsSync() devuelve false y ni el vigía (schedulePush exige !_busy) ni el latido de 20 s vuelven a pasar."
+ },
+ {
+  "lente": "T11",
+  "texto": "Con el almacén lleno, pasar lista no guarda nada y nadie lo dice: registros-admin.js:189-192 adStateSave hace `try { setItem } catch (_) {}`. Reproducido en extra.js X3: aula de 3 grupos + localStorage a 5 242 876 chars → adStateSave de la asistencia del 9/9: guardado=false, sin excepción, sin toast, y al repintar la falta ya no está. Es peor que el respaldo que no cabe (T11-05): se pierde el dato de hoy mismo."
+ },
+ {
+  "lente": "T11",
+  "texto": "«↩️ Recuperar» tras un pisado de sincronización restaura la papelera de la NUBE antes que el respaldo local: recuperar() (js/metas-docente-sync.js:565-575) llama siempre metas_docente_reset_deshacer primero, y esa RPC (SUPABASE-DOCENTE-PAPELERA.sql:100-135) vuelve a poner en el estado vivo, con versión nueva y para todos los equipos, lo archivado en el ÚLTIMO «Empezar de nuevo» —que en un reset a propósito (año nuevo) nadie consumió—; aplicarRows lo aplica sin fusión y limpiarRespaldos tira la copia local. Además el botón sale (dsTieneRespaldo, motivo 'sync' + respaldoTieneMas) cada vez que el OTRO equipo borra alumnos legítimamente, porque pull() hace backupLocal antes de aplicar. No reproducido en navegador; el camino es directo en el código."
+ },
+ {
+  "lente": "T11",
+  "texto": "Una lectura fallida sube el aula entera: pull() en catch devuelve cloudKeys vacío (334-336) y push() (223) toma `semilla = !cloudKeys.has(k)` para TODAS las claves, así que cada HTTP 5xx/DNS caído en el latido de 20 s provoca además una subida de hasta 1,5 MB (y syncNow dice «✅ Todo al día»). Evidencia: js/metas-docente-sync.js:223, 334-336, 386, 445."
+ },
+ {
+  "lente": "T6",
+  "texto": "El chip «Mi grado» estrenado el 9 de septiembre (js/grado-alumno.js, `<span class=\"gr-et\">`) entra ya con contraste insuficiente: axe lo marca color-contrast serious en la vista Misiones hoy (sonda.js); una modificación del top-20 añadió un fallo de la lente que la auditoría venía señalando.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "Dos ajustes de letra que no se hablan: el Aa del maestro guarda `METAS_LETRA_V1` y multiplica `--metas-fz` (js/letra-maestro.js); las misiones leen `preferenciaLetra` y `body.letra-grande`. Al abrir una misión —y las 8 docente-* no tienen ninguna de las dos— el maestro présbita vuelve a la letra chica sin aviso.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "La columna de destino de Clasifica (`.drop-col`) recibe `tabindex=0` de teclado-actividades.js pero conserva `role=\"list\"` (medido: role 'list', tabindex '0'): un lector de pantalla anuncia «lista» y nada dice que Enter suelta ahí la ficha seleccionada; falta un aria-label con la instrucción («Enter para poner aquí la palabra elegida»).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "El modal de identidad que abre cada misión al cargar (metas-registro.js, `.metas-id-card`) no recibe el foco al abrirse (activeElement = DIV, medido) ni atrapa el tabulador: un usuario de teclado o lector puede tabular por detrás del velo a la misión sin haber cerrado el diálogo; metas-dialogos.js ya tiene el patrón correcto y no se reutiliza aquí.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "T6",
+  "texto": "El reto cronometrado hace sonar `sfx('tick')` cada segundo durante los 30 s (fracciones.js:253, patrón en las 67): en un aula con tres teléfonos prestados el tic constante es ruido para 43 y distracción para el alumno con TDAH; no hay interruptor de sonido en la barra compartida (solo el `sfx` de cada misión).",
+  "origen": "revision-2026-09-09"
+ }
+]

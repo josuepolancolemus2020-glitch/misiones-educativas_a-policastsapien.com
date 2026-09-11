@@ -51,6 +51,7 @@
 
   var META_KEY = 'METAS_DOCSYNC_V1';   // { [k]: {v:version, h:hash, sv:sentVersion} }
   var RESPALDO_KEY = 'METAS_AULA_RESPALDO_V1';  // copia de seguridad local antes de «Empezar de nuevo»
+  var BASE_KEY = 'METAS_DOCSYNC_BASE_V1';      // { [k]: raw } lo último que este equipo y la nube tuvieron IGUAL
   var RESET_PEND_KEY = 'METAS_AULA_RESET_PEND'; // '1' = falta archivar+vaciar la nube (borrado sin red)
   var OWNER_KEY = 'METAS_DS_OWNER';    // PROF-XXXX dueño de los datos del aula guardados en ESTE equipo
   var SB_URL_DEF = 'https://uljjgrikyigdrkbikcxo.supabase.co';
@@ -136,8 +137,41 @@
     if (!o || typeof o !== 'object' || !o.datos) o = { fecha: null, datos: {} };
     o.datos[k] = raw;
     o.fecha = new Date().toISOString();
+    /* Por qué se guardó, y no es un adorno: el respaldo de «Empezar de nuevo»
+       solo tiene sentido con el aula vacía —es el deshacer de un borrado
+       total—, y este otro es justo lo contrario: algo se PISÓ teniendo datos
+       delante, y ahí «Recuperar» tiene que aparecer aunque el aula esté llena.
+       Antes se escondía siempre, así que una pérdida por sincronización no
+       tenía botón de vuelta. */
+    o.motivo = 'sync';
     try { localStorage.setItem(RESPALDO_KEY, JSON.stringify(o)); } catch (_) {}
     _papeleraFecha = o.fecha;
+  }
+
+  /* ── LA BASE ──
+     Lo último que ESTE equipo y la nube tuvieron igual. Es lo que
+     convierte «elegir una copia» en «fusionar las dos»: sin ella solo se
+     puede unir —y unir nunca borra, así que un alumno que el maestro quitó
+     revive—; con ella se distingue lo AÑADIDO de lo BORRADO.
+
+     Se guarda una copia entera de cada clave, así que ocupa el doble. Si el
+     almacén del teléfono se llena, `localStorage.setItem` lanza y aquí se
+     traga: la base se queda vieja o no se guarda, la fusión pasa a unir y no
+     se pierde nada. Quedarse sin base es un incordio; perder la asistencia
+     del día, no. */
+  function baseLoad() {
+    try { var o = JSON.parse(ls(BASE_KEY)); return (o && typeof o === 'object') ? o : {}; }
+    catch (_) { return {}; }
+  }
+  function baseSet(k, raw) {
+    var o = baseLoad();
+    if (raw == null) delete o[k]; else o[k] = raw;
+    try { localStorage.setItem(BASE_KEY, JSON.stringify(o)); }
+    catch (_) {
+      /* No cupo. Se tira ESTA clave de la base en vez de dejar una base
+         mentirosa: una base vieja diría que lo que hay ahora se «borró». */
+      try { delete o[k]; localStorage.setItem(BASE_KEY, JSON.stringify(o)); } catch (__) {}
+    }
   }
 
   /* Refresca el mapa: marca con versión nueva SOLO las claves que el
@@ -203,7 +237,11 @@
       return r.json();
     }).then(function (n) {
       if (typeof n !== 'number' || n < 0) throw new Error('rechazado');
-      entradas.forEach(function (en) { var e = m[en.k]; if (e) e.sv = en.version; });
+      entradas.forEach(function (en) {
+        var e = m[en.k]; if (e) e.sv = en.version;
+        /* La nube ya tiene esto: es lo último que los dos lados tienen igual. */
+        baseSet(en.k, en.valor.raw);
+      });
       metaSave(m);
       return true;
     }).catch(function () { return false; });
@@ -227,7 +265,7 @@
     }).then(function (rows) {
       var cloudKeys = new Set();
       if (!Array.isArray(rows)) return { ok: false, cloudKeys: cloudKeys };
-      var m = scanLocal(), cambio = false, protegido = false;
+      var m = scanLocal(), cambio = false, protegido = false, fusionado = false;
       rows.forEach(function (row) {
         if (!row || DS_KEYS.indexOf(row.k) === -1) return;
         cloudKeys.add(row.k);
@@ -238,7 +276,9 @@
         var remota = Number(row.version) || 0;
         // mismo contenido: solo alinear versión (sin pisar)
         if (m[row.k] && m[row.k].h === hash(raw)) {
-          m[row.k].v = Math.max(m[row.k].v || 0, remota); m[row.k].sv = m[row.k].v; return;
+          m[row.k].v = Math.max(m[row.k].v || 0, remota); m[row.k].sv = m[row.k].v;
+          baseSet(row.k, raw);                 // los dos lados tienen esto: es la base
+          return;
         }
         var lp = peso(row.k, localRaw), rp = peso(row.k, raw);
         // GUARDA ANTI-PÉRDIDA: la nube viene MUCHO más vacía que lo local con
@@ -250,8 +290,42 @@
           protegido = true;
           return;
         }
-        // aplicar la nube solo si es más nueva (o si aquí no hay nada)
-        if (!force && remota <= local && lp > 0) return;
+        var pendiente = !!(m[row.k] && m[row.k].v !== m[row.k].sv);
+        /* ── FUSIONAR, que es lo que de verdad arregla el hallazgo ──
+           Si este equipo tiene cambios SIN SUBIR y la nube trae otra cosa,
+           las dos copias se movieron desde la base y elegir una tira el
+           trabajo de la otra. Medido: el maestro pasa lista en el teléfono
+           sin señal a las 9:00 y pone una nota en la PC a las 20:00; con
+           «gana la más nueva» desaparecía la asistencia del día, que son 43
+           nombres que ya no se pueden reconstruir. */
+        if (!force && pendiente && localRaw != null && raw != null &&
+            typeof MetasFusion !== 'undefined' && MetasFusion && MetasFusion.fusionar) {
+          /* En un empate de verdad —los dos cambiaron EL MISMO dato— manda
+             el más reciente; es el único sitio donde se elige. */
+          var fus = MetasFusion.fusionar(baseLoad()[row.k], localRaw, raw, local >= remota);
+          /* Red de seguridad: una fusión no puede devolver menos de la mitad
+             de la copia más llena. Borrar media aula en una sincronización no
+             pasa; un error en la fusión, sí podría. Ante la duda, lo de siempre. */
+          if (fus !== null && peso(row.k, fus) >= Math.max(lp, rp) * 0.5) {
+            if (lp > 0) backupLocal(row.k, localRaw);
+            _applying = true;
+            try { localStorage.setItem(row.k, fus); } catch (_) {}
+            _applying = false;
+            /* Queda PENDIENTE y con una versión que gana: la copia fusionada
+               tiene que llegar también al otro equipo, o mañana volvería a
+               mandarnos la suya a medias. */
+            m[row.k] = { v: Math.max(remota, local, ahora()) + 1, h: hash(fus), sv: 0 };
+            cambio = true; fusionado = true;
+            return;
+          }
+        }
+        /* Se conserva lo local SOLO si tiene cambios sin subir y además es más
+           nuevo. Sin lo primero, un teléfono con el reloj adelantado —que los
+           hay, y con dos años de adelanto— se quedaba con una versión enorme y
+           **no volvía a bajar nada nunca**: veía su aula congelada mientras la
+           PC seguía trabajando. Si aquí no hay nada pendiente, la nube ya tiene
+           lo nuestro, así que lo que traiga distinto es más que lo que hay. */
+        if (!force && pendiente && remota <= local && lp > 0) return;
         // RESPALDO antes de pisar algo con contenido (recuperable después)
         if (lp > 0 && localRaw != null) backupLocal(row.k, localRaw);
         _applying = true;
@@ -259,11 +333,12 @@
         catch (_) {}
         _applying = false;
         m[row.k] = { v: remota, h: hash(raw), sv: remota };
+        baseSet(row.k, raw);                   // lo aplicado es ahora la base
         cambio = true;
       });
       metaSave(m);
       if (cambio || protegido) repaint();
-      if (protegido) schedulePush();       // sube pronto la copia buena protegida
+      if (protegido || fusionado) schedulePush();   // sube pronto la copia buena / la fusionada
       return { ok: true, cloudKeys: cloudKeys };
     }).catch(function () { return { ok: false, cloudKeys: new Set() }; });
   }
@@ -413,7 +488,7 @@
       var snap = {};
       DS_KEYS.forEach(function (k) { var v = ls(k); if (v != null) snap[k] = v; });
       try {
-        localStorage.setItem(RESPALDO_KEY, JSON.stringify({ fecha: new Date().toISOString(), datos: snap }));
+        localStorage.setItem(RESPALDO_KEY, JSON.stringify({ fecha: new Date().toISOString(), datos: snap, motivo: 'reset' }));
       } catch (_) {}
       // 2) borra local. Marca sv=v (NO pendiente): la nube la limpia el RPC
       //    de reset (que archiva primero), no el vigía de subida. Así nunca
@@ -422,6 +497,9 @@
       var m = {}, t = ahora();
       DS_KEYS.forEach(function (k) { m[k] = { v: t, h: hash(null), sv: t }; });
       metaSave(m);
+      /* La base describía un aula que ya no existe: dejarla ahí haría que la
+         próxima fusión leyera «esto se borró» de datos que sí hay que traer. */
+      try { localStorage.removeItem(BASE_KEY); } catch (_) {}
       try { localStorage.setItem(RESET_PEND_KEY, '1'); } catch (_) {}   // falta archivar+vaciar la nube
       _papeleraFecha = new Date().toISOString();   // ya hay algo que recuperar
       repaint();
@@ -462,6 +540,7 @@
       _applying = false;
       var rem = Number(row.version) || ahora();
       m[row.k] = { v: rem, h: hash(raw), sv: rem };    // sv=v → ya está en la nube, no re-subir
+      baseSet(row.k, raw);
       cambio = true;
     });
     metaSave(m);
@@ -508,8 +587,17 @@
           var m = metaLoad(), t = ahora();
           Object.keys(b.datos).forEach(function (k) {
             if (DS_KEYS.indexOf(k) === -1) return;
-            try { localStorage.setItem(k, b.datos[k]); } catch (_) {}
-            m[k] = { v: t, h: hash(b.datos[k]), sv: 0 };   // marca para re-subir
+            /* Se DEVUELVE lo guardado sin tirar lo que haya ahora. La copia
+               vieja pisando a secas era el otro filo del mismo cuchillo:
+               recuperar la asistencia de ayer no puede borrar la nota de hoy.
+               En un empate manda lo actual, que es lo más reciente. */
+            var val = b.datos[k], act = ls(k);
+            if (act != null && typeof MetasFusion !== 'undefined' && MetasFusion && MetasFusion.fusionar) {
+              var f2 = MetasFusion.fusionar(null, act, val, true);
+              if (f2 !== null && peso(k, f2) >= peso(k, val)) val = f2;
+            }
+            try { localStorage.setItem(k, val); } catch (_) {}
+            m[k] = { v: t, h: hash(val), sv: 0 };   // marca para re-subir
           });
           metaSave(m);
           limpiarRespaldos();
@@ -614,7 +702,7 @@
      a entrar con esa cuenta se descargan solos. */
   function dsWipeLocal() {
     DS_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} });
-    [META_KEY, RESPALDO_KEY, RESET_PEND_KEY, OWNER_KEY].forEach(function (k) {
+    [META_KEY, RESPALDO_KEY, RESET_PEND_KEY, OWNER_KEY, BASE_KEY].forEach(function (k) {
       try { localStorage.removeItem(k); } catch (_) {}
     });
     _papeleraFecha = null;
@@ -682,9 +770,23 @@
     return total < 300;
   }
 
+  /* ¿La copia guardada tiene algo que ahora NO está? Es la pregunta que de
+     verdad importa: no «cuánto hay», sino «falta algo». */
+  function respaldoTieneMas(b) {
+    var falta = false;
+    Object.keys((b && b.datos) || {}).forEach(function (k) {
+      if (DS_KEYS.indexOf(k) === -1) return;
+      if (peso(k, b.datos[k]) > peso(k, ls(k))) falta = true;
+    });
+    return falta;
+  }
+
   window.dsTieneRespaldo = function () {
-    if (!aulaVacia()) return false;                 // con datos cargados no aplica
     var b = respaldo();
+    /* Algo se PISÓ y la copia guardada tiene más de lo que hay ahora: el botón
+       sale aunque el aula esté llena. Es el caso que no tenía vuelta. */
+    if (b && b.motivo === 'sync' && respaldoTieneMas(b)) return b.fecha || true;
+    if (!aulaVacia()) return false;                 // con datos cargados no aplica
     return (b && (b.fecha || true)) || _papeleraFecha;
   };
 })();

@@ -29,7 +29,7 @@
      node _dev/verifica-orden-grupos.js
 ═══════════════════════════════════════════════════════════════ */
 'use strict';
-const { abrir } = require('./lib-navegador');
+const { abrir, SIN_SW } = require('./lib-navegador');
 
 const BASE = process.env.METAS_BASE || 'http://localhost:8123';
 let fallos = 0;
@@ -60,7 +60,7 @@ const pintar = page => page.evaluate(() => {
 
 (async () => {
   const browser = await abrir();
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const page = await browser.newPage({ ...SIN_SW, viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   const errores = [];
   page.on('pageerror', e => errores.push(e.message));
   await page.route('**/rest/v1/rpc/**', r => r.abort('failed'));   /* la nube no se toca */

@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<!-- El zoom NO se bloquea: nada de user-scalable=no. Un maestro présbita
+     y un alumno con baja visión se quedan sin salida, y aquí hay rótulos
+     de 11 px. El zoom del doble toque lo apaga touch-action en los
+     controles, que es lo que hay que apagar. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Fábrica Geométrica · Círculos y Polígonos</title>
+<link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
+<!-- Font Awesome LOCAL: este juego sí usa catorce iconos de verdad, así que
+     no se le quita, se le trae de aquí. Venía del CDN, y una hoja de estilo
+     de otro país bloquea el pintado hasta que llega. -->
+<link rel="stylesheet" href="../../css/vendor/fontawesome/css/all.min.css">
+<style>
+:root{
+  --bg:#0b1220;
+  --panel:#131f33;
+  --panel-2:#1b2a42;
+  --line:#2b3d5c;
+  --ink:#e8eefb;
+  --ink-soft:#93a5c4;
+
+  --orange:#f97316;
+  --cyan:#22d3ee;
+  --sky:#60a5fa;
+  --green:#22c55e;
+  --violet:#a855f7;
+  --pink:#ec4899;
+  --yellow:#facc15;
+  --red:#f87171;
+
+  --r-lg:1.1rem;
+  --r-md:.75rem;
+  --r-sm:.5rem;
+
+  --gap:clamp(.35rem,1.2vh,.7rem);
+  --pad:clamp(.45rem,2vw,1rem);
+
+  --fs-h2:clamp(.9rem,2.9vw,1.1rem);
+  --fs-body:clamp(.72rem,2.3vw,.87rem);
+  --fs-mini:clamp(.62rem,2vw,.74rem);
+  --tap:44px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:'Nunito',system-ui,sans-serif;
+  background:var(--bg); color:var(--ink);
+  height:100vh; height:100dvh;
+  overflow:hidden; overscroll-behavior:none;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  grid-template-areas:"hud" "main" "nav";
+  padding-bottom:env(safe-area-inset-bottom);
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+}
+.math{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+/* ---------- HUD ---------- */
+.hud{
+  grid-area:hud;
+  background:linear-gradient(180deg,#111c2e,#0d1626);
+  border-bottom:2px solid var(--orange);
+  padding:.4rem .6rem;
+  padding-top:calc(.4rem + env(safe-area-inset-top));
+  display:flex; align-items:center; gap:.5rem;
+}
+.brand{display:flex; align-items:center; gap:.4rem; font-weight:900; font-size:clamp(.78rem,2.7vw,1rem); white-space:nowrap}
+.brand i{color:var(--orange)}
+.brand span{display:none}
+.lvl{
+  background:var(--orange); color:#1a0a00;
+  font-weight:900; font-size:var(--fs-mini);
+  border-radius:99px; padding:.15rem .5rem; white-space:nowrap;
+}
+.xp-wrap{flex:1; min-width:60px}
+.xp-bar{height:9px; background:#0a1424; border:1px solid var(--line); border-radius:99px; overflow:hidden}
+.xp-fill{height:100%; width:0%; background:linear-gradient(90deg,#f97316,#facc15); transition:width .45s cubic-bezier(.2,.9,.3,1)}
+.xp-text{font-size:.6rem; color:var(--ink-soft); font-weight:800; margin-top:1px; display:block; text-align:right}
+.streak{
+  font-weight:900; font-size:var(--fs-mini);
+  color:var(--yellow); display:flex; align-items:center; gap:.2rem;
+  background:#231a04; border:1px solid #4a3a0b; border-radius:99px; padding:.2rem .5rem;
+  white-space:nowrap;
+}
+.icon-btn{
+  background:var(--panel-2); color:var(--ink-soft);
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  width:var(--tap); height:var(--tap); display:grid; place-items:center;
+  cursor:pointer; font-size:.9rem; flex:none;
+}
+.icon-btn.on{color:var(--orange); border-color:var(--orange)}
+
+/* ---------- NAV ---------- */
+.nav{
+  grid-area:nav;
+  background:#111c2e; border-top:2px solid var(--line);
+  padding:.35rem;
+  display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:.24rem;
+  z-index:40;
+}
+.nav-btn{
+  position:relative;
+  min-height:var(--tap); padding:.3rem .15rem;
+  background:#1b2a42; color:var(--ink-soft);
+  border:2px solid transparent; border-radius:var(--r-md);
+  font-family:inherit; font-weight:800; font-size:clamp(.55rem,2vw,.7rem); line-height:1.05;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.15rem;
+  cursor:pointer; overflow:hidden; transition:background .18s,color .18s,border-color .18s;
+}
+.nav-btn i{font-size:clamp(.85rem,3.2vw,1.1rem)}
+.nav-btn .lbl{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.nav-btn[aria-selected="true"]{background:#3a1a05; color:var(--orange); border-color:var(--orange)}
+.nav-btn .tick{
+  position:absolute; top:2px; right:4px; font-size:.6rem; color:var(--green); opacity:0; transition:opacity .3s;
+}
+.nav-btn.done .tick{opacity:1}
+button:focus-visible,input:focus-visible,.chip:focus-visible,.zone:focus-visible,.hit:focus-visible{
+  outline:3px solid var(--yellow); outline-offset:2px;
+}
+
+/* ---------- ESCENAS ---------- */
+#stage{grid-area:main; position:relative; min-height:0; overflow:hidden}
+.scene{position:absolute; inset:0; display:none; padding:var(--pad)}
+.scene.active{display:flex}
+.scene-inner{flex:1; min-height:0; width:100%; max-width:60rem; margin-inline:auto; display:flex; flex-direction:column; gap:var(--gap)}
+
+.head{
+  background:var(--panel); border-radius:var(--r-md);
+  border-left:5px solid var(--accent,var(--orange));
+  padding:.45rem .75rem;
+  display:flex; align-items:center; justify-content:space-between; gap:.6rem;
+}
+.head h2{margin:0; font-size:var(--fs-h2); font-weight:900; color:var(--accent,var(--orange))}
+.head p{margin:.1rem 0 0; font-size:var(--fs-mini); color:var(--ink-soft)}
+.pill{
+  flex:none; background:#0d1626; border:1px solid var(--line); border-radius:99px;
+  padding:.25rem .6rem; font-size:var(--fs-mini); font-weight:900; color:var(--ink-soft); white-space:nowrap;
+}
+
+.board{
+  flex:1; min-height:0; position:relative; overflow:hidden;
+  display:flex; flex-direction:column; gap:var(--gap);
+  padding:clamp(.4rem,2vw,.85rem);
+  border:2px solid var(--line); border-radius:var(--r-lg);
+  background-color:var(--panel-2);
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:20px 20px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.55);
+}
+
+.mission{
+  flex:none; text-align:center;
+  background:#0d1626; border:2px solid color-mix(in srgb,var(--accent,var(--orange)) 55%,transparent);
+  border-radius:var(--r-md); padding:.4rem .6rem;
+}
+.mission small{display:block; font-size:var(--fs-mini); color:var(--ink-soft); font-weight:800}
+.mission strong{
+  display:block; font-family:'JetBrains Mono',monospace;
+  font-size:clamp(1rem,4.4vw,1.5rem); color:var(--accent,var(--orange)); margin-top:.1rem;
+}
+
+.stage-svg{flex:1; min-height:0; position:relative; display:flex; align-items:center; justify-content:center}
+.stage-svg svg{width:100%; height:100%; display:block}
+
+.readouts{flex:none; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.3rem}
+.ro{background:#0d1626; border:1px solid var(--line); border-radius:var(--r-sm); padding:.3rem .2rem; text-align:center}
+.ro b{display:block; font-size:.58rem; color:var(--ink-soft); font-weight:800; letter-spacing:.03em}
+.ro span{display:block; font-family:'JetBrains Mono',monospace; font-size:clamp(.75rem,3vw,1rem); color:#fff}
+
+.ctrl{flex:none; background:#0d1626; border:1px solid var(--line); border-radius:var(--r-md); padding:.5rem; display:flex; align-items:center; gap:.6rem}
+/* ⚠️ El control mide 44 px de ALTO aunque su ranura se vea de 10, que es
+   la regla de siempre: ningún blanco de toque baja de 44 px, que es lo
+   que un dedo acierta sin mirar. Medido antes: el <input> entero medía
+   10 px de alto y había que clavarle el dedo a la ranura. La ranura se
+   pinta ahora en el track, no en el fondo del control. */
+.slider{
+  -webkit-appearance:none; appearance:none; flex:1; width:100%; height:44px;
+  background:transparent; border:none;
+  outline:none; touch-action:manipulation; cursor:pointer;
+}
+.slider::-webkit-slider-runnable-track{height:10px; border-radius:99px; background:#08111f; border:1px solid var(--line)}
+.slider::-moz-range-track{height:10px; border-radius:99px; background:#08111f; border:1px solid var(--line)}
+.slider::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:28px; height:28px; border-radius:6px; margin-top:-9px;
+  background:var(--thumb,var(--orange)); border:2px solid #fff; box-shadow:0 0 10px var(--thumb,var(--orange)); cursor:grab;
+}
+.slider::-moz-range-thumb{width:26px;height:26px;border-radius:6px;background:var(--thumb,var(--orange));border:2px solid #fff;cursor:grab}
+.slider:disabled{opacity:.45}
+.ctrl .val{font-family:'JetBrains Mono',monospace; font-size:clamp(.85rem,3.4vw,1.15rem); min-width:3.6rem; text-align:right}
+
+.btn{
+  font-family:inherit; font-weight:900; border:none; border-radius:var(--r-md);
+  cursor:pointer; min-height:var(--tap); padding:.55rem 1rem; font-size:var(--fs-body);
+  transition:transform .1s, filter .2s;
+}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4; cursor:default}
+.btn-main{background:var(--accent,var(--orange)); color:#12060a; box-shadow:0 0 16px color-mix(in srgb,var(--accent,var(--orange)) 45%,transparent)}
+.btn-light{background:#fff; color:#0b1220}
+.btn-soft{background:var(--panel-2); color:var(--ink); border:1px solid var(--line)}
+
+/* Opciones de respuesta */
+.opts{flex:none; display:grid; gap:.35rem}
+.opts-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opt{
+  min-height:var(--tap); padding:.5rem .3rem;
+  background:var(--panel); color:var(--ink);
+  border:2px solid var(--line); border-radius:var(--r-md);
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:clamp(.8rem,3.2vw,1rem);
+  cursor:pointer; transition:background .15s,border-color .15s,transform .1s;
+}
+.opt:disabled{cursor:default}
+.opt.good{background:#0d3b22; border-color:var(--green); color:#a7f3d0}
+.opt.bad{background:#3b1111; border-color:var(--red); color:#fecaca}
+
+.quiz-q{
+  flex:none; background:#0d1626; border:1px solid var(--line); border-radius:var(--r-md);
+  padding:.7rem .8rem; font-size:clamp(.8rem,3.1vw,1rem); font-weight:800; line-height:1.35; text-align:center;
+}
+.quiz-opts{flex:none; display:grid; grid-template-columns:1fr; gap:.35rem}
+.quiz-opts .opt{font-family:inherit; text-align:left; padding:.55rem .7rem; font-weight:700}
+@media (min-width:600px){ .quiz-opts{grid-template-columns:1fr 1fr} }
+.timer{flex:none; height:7px; background:#08111f; border:1px solid var(--line); border-radius:99px; overflow:hidden}
+.timer i{display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--green),var(--yellow),var(--red)); transform-origin:left; transition:transform .2s linear}
+
+/* Arrastrar */
+.formula{
+  background:#0d1626; border:1px solid var(--line); border-radius:var(--r-md);
+  padding:.7rem .5rem; text-align:center;
+}
+.formula .fname{display:block; font-size:var(--fs-mini); color:var(--ink-soft); font-weight:900; margin-bottom:.45rem}
+.fbody{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.35rem; font-family:'JetBrains Mono',monospace; font-size:clamp(1rem,4.2vw,1.5rem); font-weight:700}
+.zone{
+  width:clamp(48px,13vw,60px); height:clamp(44px,12vw,56px);
+  border:2px dashed var(--pink); border-radius:var(--r-sm);
+  background:rgba(236,72,153,.08);
+  display:grid; place-items:center; transition:background .15s, box-shadow .15s;
+}
+.zone.hot{background:rgba(236,72,153,.3); box-shadow:inset 0 0 0 3px var(--pink)}
+.zone.filled{border-style:solid; border-color:var(--green); background:rgba(34,197,94,.12)}
+.slot{display:grid; place-items:center}
+.tray{flex:none; display:flex; flex-wrap:wrap; justify-content:center; gap:.45rem; padding-top:.2rem}
+.chip{
+  min-height:var(--tap); min-width:56px; padding:.35rem .8rem;
+  background:var(--panel); color:#fff; border:2px solid var(--ink-soft); border-radius:var(--r-md);
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:clamp(.95rem,3.6vw,1.2rem);
+  display:flex; align-items:center; justify-content:center;
+  cursor:grab; user-select:none; -webkit-user-select:none; touch-action:none;
+  box-shadow:0 3px 8px rgba(0,0,0,.5);
+}
+.chip.selected{border-color:var(--yellow); box-shadow:0 0 0 3px rgba(250,204,21,.35)}
+.chip.dragging{cursor:grabbing; transform:scale(1.1); z-index:200; border-color:var(--orange)}
+.chip.locked{border:none; background:transparent; box-shadow:none; cursor:default; min-width:0; min-height:0; padding:0; color:var(--green)}
+
+/* Figura interactiva */
+.hit{cursor:pointer}
+.hint{
+  flex:none; min-height:2.2em; text-align:center;
+  font-size:var(--fs-mini); font-weight:800; color:var(--ink-soft);
+  background:#0d1626; border:1px solid var(--line); border-radius:var(--r-sm); padding:.35rem .5rem;
+}
+.hint.good{color:#a7f3d0; border-color:#14532d}
+.hint.bad{color:#fecaca; border-color:#7f1d1d}
+
+/* Avisos y efectos */
+.toast{
+  position:absolute; top:5%; left:50%; transform:translateX(-50%);
+  background:var(--green); color:#04240f; font-weight:900;
+  padding:.4rem .9rem; border-radius:var(--r-md); font-size:var(--fs-body);
+  max-width:92%; text-align:center; line-height:1.3; z-index:30;
+  box-shadow:0 0 18px rgba(34,197,94,.5);
+}
+.toast.bad{background:var(--red); color:#450a0a; box-shadow:0 0 18px rgba(248,113,113,.45)}
+.is-hidden{display:none !important}
+
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}25%{opacity:1;transform:translate(-50%,-4px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-46px) scale(1)}}
+.xp-pop{
+  position:fixed; left:50%; top:16%; z-index:300; pointer-events:none;
+  font-family:'JetBrains Mono',monospace; font-weight:700;
+  font-size:clamp(1.1rem,5vw,1.6rem); color:var(--yellow);
+  text-shadow:0 0 12px rgba(250,204,21,.7);
+  animation:floatUp 1.05s ease-out forwards;
+}
+@keyframes sparkFly{to{opacity:0; transform:translate(var(--dx),var(--dy)) scale(.2) rotate(var(--rot))}}
+.spark{
+  position:absolute; left:50%; top:45%; width:9px; height:9px; border-radius:2px;
+  pointer-events:none; z-index:70; animation:sparkFly .75s ease-out forwards;
+}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shake{animation:shake .35s}
+@keyframes popIn{from{opacity:0; transform:scale(.9)}to{opacity:1; transform:scale(1)}}
+
+.overlay{
+  position:absolute; inset:0; z-index:60; border-radius:var(--r-lg);
+  background:rgba(9,15,26,.96);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.5rem; text-align:center; padding:1.1rem;
+  animation:popIn .25s ease-out;
+}
+.overlay h3{margin:0; font-size:clamp(1.1rem,5vw,1.7rem); font-weight:900}
+.overlay p{margin:0; font-size:var(--fs-body); color:var(--ink-soft)}
+.overlay .score{font-family:'JetBrains Mono',monospace; font-size:clamp(1.5rem,7vw,2.2rem); color:var(--green)}
+
+#final{
+  position:fixed; inset:0; z-index:500;
+  background:radial-gradient(circle at 50% 30%, #1b2a42, #070c15 70%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.6rem; text-align:center; padding:1.5rem;
+}
+#final .rank{font-size:clamp(1.3rem,6vw,2.2rem); font-weight:900; color:var(--yellow)}
+#final .big{font-family:'JetBrains Mono',monospace; font-size:clamp(2rem,10vw,3.4rem); color:#fff}
+
+/* ---------- ANCHO: navegación lateral ---------- */
+@media (min-width:900px), (orientation:landscape) and (max-height:560px){
+  body{
+    grid-template-columns:clamp(150px,17vw,225px) minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1fr);
+    grid-template-areas:"hud hud" "nav main";
+  }
+  .brand span{display:inline}
+  .nav{
+    grid-template-columns:1fr; grid-auto-rows:max-content; align-content:start;
+    gap:.35rem; padding:.6rem .45rem; overflow-y:auto;
+    border-top:none; border-right:2px solid var(--line);
+  }
+  .nav-btn{flex-direction:row; justify-content:flex-start; gap:.55rem; padding:.6rem .75rem; font-size:.8rem; text-align:left}
+  .nav-btn i{width:1.3rem; text-align:center; font-size:1rem}
+  .nav-btn .tick{top:50%; transform:translateY(-50%); right:.6rem}
+  .readouts{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media (min-width:1280px){ .scene-inner{max-width:66rem} }
+/* La pantalla corta también es una pantalla: el teléfono acostado y —sobre
+   todo— la letra del sistema agrandada, que es una opción de accesibilidad
+   y la usa quien no ve bien. Medido acostado (740×360), «Vaciar los huecos»
+   de la Forja caía 39 px POR DEBAJO del borde: se veía media pantalla y el
+   botón no existía. Se recorta el aire (el hueco de relleno se va, la
+   franja del pedido se aprieta) y, si aun así no cabe, el tablero se
+   desliza por dentro en vez de cortarse. */
+@media (max-height:560px){
+  .head p{display:none}
+  .hint{display:none}
+  .espacio{display:none}
+  .board{overflow-y:auto}
+  /* Se recorta el AIRE, nunca el tamaño de letra ni el blanco de toque:
+     el juego se lee en un pupitre y los botones los toca un dedo. */
+  :root{--gap:.25rem}
+  .scene{padding:.15rem .3rem}
+  /* El relleno de arriba y abajo se recorta más que el de los lados: acostado
+     lo que falta es ALTO. Se midió el 9 de septiembre de 2026, al alojar las
+     tipografías: hasta ese día venían del CDN y llegaban tarde, así que la
+     pantalla se medía con la letra del sistema —más estrecha— y «Vaciar los
+     huecos» parecía caber. Con la letra de verdad puesta desde el primer
+     momento, el botón caía 4 px por debajo del borde. Se recorta el aire,
+     nunca la letra ni el blanco de toque. Y se recorta con COLCHÓN: dejarlo
+     justo en el borde es dejarlo roto en el primer teléfono que mida un
+     píxel distinto. */
+  .board{padding:.15rem .35rem}
+  .head{padding:.2rem .6rem}
+  .tray{gap:.3rem}
+  .mission{padding:.25rem .5rem}
+  .mission strong{font-size:clamp(.9rem,3.6vw,1.15rem)}
+  .formula{padding:.45rem .4rem}
+}
+@media (prefers-reduced-motion:reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important} }
+
+/* La salida a la misión. Va en la franja de arriba porque es lo único
+   que el alumno busca cuando termina, y en un teléfono la franja de
+   abajo ya lleva las siete estaciones. */
+.volver{
+  flex:none; display:grid; place-items:center;
+  width:var(--tap); height:var(--tap); border-radius:var(--r-sm);
+  background:var(--panel-2); border:1px solid var(--line);
+  color:var(--ink-soft); text-decoration:none; font-size:.9rem;
+}
+</style>
+</head>
+<body>
+
+<header class="hud">
+  <div class="brand"><i class="fa-solid fa-industry"></i><span>Fábrica Geométrica</span></div>
+  <div class="lvl" id="hud-lvl">Nv 1</div>
+  <div class="xp-wrap">
+    <div class="xp-bar"><div class="xp-fill" id="hud-xp"></div></div>
+    <span class="xp-text" id="hud-xptext">0 XP</span>
+  </div>
+  <div class="streak" id="hud-streak"><i class="fa-solid fa-fire"></i><span>0</span></div>
+  <button class="icon-btn on" id="btn-sound" title="Sonido" aria-label="Activar o silenciar el sonido"><i class="fa-solid fa-volume-high"></i></button>
+  <!-- La vuelta cae en la sección de la Fábrica, no al principio de la
+       misión: el que sale de aquí va a seguir con la misión desde donde
+       la dejó, y buscar la pestaña entre catorce en un teléfono es
+       donde se abandona. -->
+  <a class="volver" href="circulos-poligonos.html#s-fabrica" title="Volver a la misión" aria-label="Volver a la misión"><i class="fa-solid fa-arrow-left"></i></a>
+</header>
+
+<main id="stage">
+
+  <!-- 1 · TORNO -->
+  <section id="scene-1" class="scene active" style="--accent:var(--orange)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Torno del círculo</h2><p>Ajusta el radio y funde la pieza pedida.</p></div>
+        <span class="pill" id="s1-pill">1 / 5</span>
+      </div>
+      <div class="board">
+        <div class="mission"><small id="s1-ask">Fabrica un círculo de radio</small><strong id="s1-goal">7</strong></div>
+        <div class="stage-svg">
+          <svg viewBox="-130 -130 260 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Círculo ajustable sobre una guía de radios">
+            <g id="s1-rings"></g>
+            <circle id="s1-circle" cx="0" cy="0" r="0" fill="rgba(249,115,22,.18)" stroke="var(--orange)" stroke-width="2.5"/>
+            <line id="s1-rline" x1="0" y1="0" x2="0" y2="0" stroke="#fff" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <circle cx="0" cy="0" r="3.5" fill="#fff"/>
+            <text id="s1-rtxt" x="0" y="-6" fill="#fff" font-size="12" font-weight="700" text-anchor="middle" font-family="JetBrains Mono, monospace"></text>
+          </svg>
+          <div class="toast is-hidden" id="s1-toast"></div>
+        </div>
+        <div class="readouts">
+          <div class="ro"><b>RADIO</b><span class="math" id="s1-r">0</span></div>
+          <div class="ro"><b>DIÁMETRO</b><span class="math" id="s1-d">0</span></div>
+          <div class="ro"><b>CIRCUNF.</b><span class="math" id="s1-c">0</span></div>
+          <div class="ro"><b>ÁREA</b><span class="math" id="s1-a">0</span></div>
+        </div>
+        <div class="ctrl" style="--thumb:var(--orange)">
+          <input type="range" min="1" max="12" step="1" value="1" class="slider" id="s1-slider" aria-label="Radio del círculo">
+          <span class="val math" id="s1-val">r=1</span>
+        </div>
+        <button class="btn btn-main" id="s1-check">Fundir pieza</button>
+        <button class="btn btn-main is-hidden" id="s1-next" data-next="s1">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="overlay is-hidden" id="s1-win">
+          <i class="fa-solid fa-circle-notch" style="font-size:clamp(2rem,8vw,3rem);color:var(--orange)"></i>
+          <h3>Torno calibrado</h3><p class="score math" id="s1-score">5 / 5</p>
+          <button class="btn btn-light" data-restart="s1">Otra tanda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · PARTES DEL CÍRCULO -->
+  <section id="scene-circulo" class="scene" style="--accent:var(--sky)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Partes del círculo</h2><p>Toca en la figura el elemento que se te pide.</p></div>
+        <span class="pill" id="sc-pill">1 / 6</span>
+      </div>
+      <div class="board">
+        <div class="mission"><small>Toca en la figura</small><strong id="sc-goal">EL DIÁMETRO</strong></div>
+        <div class="stage-svg">
+          <svg viewBox="-125 -125 250 250" xmlns="http://www.w3.org/2000/svg" id="sc-svg" role="img" aria-label="Círculo con sus elementos"></svg>
+          <div class="toast is-hidden" id="sc-toast"></div>
+        </div>
+        <div class="hint" id="sc-hint">Los elementos están sobre la figura: tócalos con el dedo o el ratón.</div>
+        <button class="btn btn-main is-hidden" id="sc-next" data-next="sc">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="overlay is-hidden" id="sc-win">
+          <i class="fa-solid fa-compass-drafting" style="font-size:clamp(2rem,8vw,3rem);color:var(--sky)"></i>
+          <h3>Círculo dominado</h3><p class="score math" id="sc-score">6 / 6</p>
+          <button class="btn btn-light" data-restart="sc">Otra tanda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · FORJA DE FÓRMULAS -->
+  <section id="scene-forja" class="scene" style="--accent:var(--pink)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Forja de fórmulas</h2><p>Arrastra —o toca— cada pieza hasta su hueco.</p></div>
+        <span class="pill" id="sf-pill">1 / 5</span>
+      </div>
+      <div class="board">
+        <div class="mission"><small id="sf-ask">Arma la fórmula de</small><strong id="sf-goal">EL ÁREA DEL CÍRCULO</strong></div>
+        <div class="stage-svg" style="flex:none">
+          <div class="formula" id="sf-formula" style="width:100%"></div>
+        </div>
+        <div class="hint" id="sf-hint">Toca una pieza y después su hueco. También se arrastra.</div>
+        <div class="tray" id="sf-tray"></div>
+        <div class="espacio" style="flex:1;min-height:0"></div>
+        <button class="btn btn-soft" id="sf-clear">Vaciar los huecos</button>
+        <button class="btn btn-main is-hidden" id="sf-next" data-next="sf">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="toast is-hidden" id="sf-toast"></div>
+        <div class="overlay is-hidden" id="sf-win">
+          <i class="fa-solid fa-hammer" style="font-size:clamp(2rem,8vw,3rem);color:var(--pink)"></i>
+          <h3>Fórmulas forjadas</h3><p class="score math" id="sf-score">5 / 5</p>
+          <button class="btn btn-light" data-restart="sf">Otra tanda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · TALLER DE POLÍGONOS -->
+  <section id="scene-poli" class="scene" style="--accent:var(--cyan)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Taller de polígonos</h2><p>Elige los lados y mira cómo cambian la apotema y el área.</p></div>
+        <span class="pill" id="sp-pill">1 / 5</span>
+      </div>
+      <div class="board">
+        <div class="mission"><small id="sp-ask">Fabrica un</small><strong id="sp-goal">HEXÁGONO</strong></div>
+        <div class="stage-svg">
+          <svg viewBox="-125 -125 250 250" xmlns="http://www.w3.org/2000/svg" id="sp-svg" role="img" aria-label="Polígono regular con su apotema"></svg>
+          <div class="toast is-hidden" id="sp-toast"></div>
+        </div>
+        <div class="readouts">
+          <div class="ro"><b>LADOS</b><span class="math" id="sp-n">3</span></div>
+          <div class="ro"><b>PERÍM.</b><span class="math" id="sp-p">0</span></div>
+          <div class="ro"><b>APOTEMA</b><span class="math" id="sp-a">0</span></div>
+          <div class="ro"><b>ÁREA</b><span class="math" id="sp-ar">0</span></div>
+        </div>
+        <div class="ctrl" style="--thumb:var(--cyan)">
+          <input type="range" min="3" max="12" step="1" value="3" class="slider" id="sp-slider" aria-label="Número de lados del polígono">
+          <span class="val math" id="sp-val">n=3</span>
+        </div>
+        <button class="btn btn-main" id="sp-check">Fundir pieza</button>
+        <button class="btn btn-main is-hidden" id="sp-next" data-next="sp">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="overlay is-hidden" id="sp-win">
+          <i class="fa-solid fa-shapes" style="font-size:clamp(2rem,8vw,3rem);color:var(--cyan)"></i>
+          <h3>Taller dominado</h3><p class="score math" id="sp-score">5 / 5</p>
+          <button class="btn btn-light" data-restart="sp">Otra tanda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · CONTROL DE CALIDAD -->
+  <section id="scene-control" class="scene" style="--accent:var(--violet)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Control de calidad</h2><p>Antes de la cuenta: ¿qué hay que medir?</p></div>
+        <span class="pill" id="sq-pill">1 / 6</span>
+      </div>
+      <div class="board">
+        <div class="mission"><small>Pedido del cliente</small><strong id="sq-goal" style="font-size:clamp(.8rem,3.2vw,1.05rem);line-height:1.3"></strong></div>
+        <div class="stage-svg">
+          <svg viewBox="-125 -125 250 250" xmlns="http://www.w3.org/2000/svg" id="sq-svg" role="img" aria-label="Pieza del pedido"></svg>
+          <div class="toast is-hidden" id="sq-toast"></div>
+        </div>
+        <div class="quiz-q" id="sq-q">¿Qué se mide?</div>
+        <div class="opts opts-3" id="sq-opts"></div>
+        <div class="hint" id="sq-hint">&nbsp;</div>
+        <button class="btn btn-main is-hidden" id="sq-next" data-next="sq">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="overlay is-hidden" id="sq-win">
+          <i class="fa-solid fa-clipboard-check" style="font-size:clamp(2rem,8vw,3rem);color:var(--violet)"></i>
+          <h3>Control aprobado</h3><p class="score math" id="sq-score">6 / 6</p>
+          <button class="btn btn-light" data-restart="sq">Otra tanda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · CONTRARRELOJ -->
+  <section id="scene-reloj" class="scene" style="--accent:var(--yellow)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Turno de noche</h2><p>Ocho preguntas contra el reloj.</p></div>
+        <span class="pill" id="sr-pill">1 / 8</span>
+      </div>
+      <div class="board">
+        <div class="timer" id="sr-timer"><i></i></div>
+        <div class="quiz-q" id="sr-q">Toca «Empezar el turno» para arrancar.</div>
+        <div class="quiz-opts" id="sr-opts"></div>
+        <div class="hint" id="sr-hint">&nbsp;</div>
+        <div class="espacio" style="flex:1;min-height:0"></div>
+        <button class="btn btn-main" id="sr-start">Empezar el turno</button>
+        <div class="toast is-hidden" id="sr-toast"></div>
+        <div class="overlay is-hidden" id="sr-win">
+          <i class="fa-solid fa-stopwatch" style="font-size:clamp(2rem,8vw,3rem);color:var(--yellow)"></i>
+          <h3 id="sr-wtitle">Turno terminado</h3><p class="score math" id="sr-score">0 / 8</p>
+          <p id="sr-wmsg">&nbsp;</p>
+          <button class="btn btn-light" data-restart="sr">Otro turno</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · PEDIDOS -->
+  <section id="scene-pedidos" class="scene" style="--accent:var(--green)">
+    <div class="scene-inner">
+      <div class="head">
+        <div><h2>Pedidos del pueblo</h2><p>Problemas de verdad, con la cuenta hecha a mano.</p></div>
+        <span class="pill" id="sd-pill">1 / 6</span>
+      </div>
+      <div class="board">
+        <div class="mission"><small id="sd-cli">Pedido</small><strong id="sd-goal" style="font-size:clamp(.78rem,3vw,1rem);line-height:1.35"></strong></div>
+        <div class="stage-svg">
+          <svg viewBox="-125 -125 250 250" xmlns="http://www.w3.org/2000/svg" id="sd-svg" role="img" aria-label="Dibujo del pedido"></svg>
+          <div class="toast is-hidden" id="sd-toast"></div>
+        </div>
+        <div class="quiz-opts" id="sd-opts"></div>
+        <div class="hint" id="sd-hint">π = 3.14, el mismo de la misión y el de tu evaluación.</div>
+        <button class="btn btn-main is-hidden" id="sd-next" data-next="sd">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="overlay is-hidden" id="sd-win">
+          <i class="fa-solid fa-truck-fast" style="font-size:clamp(2rem,8vw,3rem);color:var(--green)"></i>
+          <h3>Pedidos entregados</h3><p class="score math" id="sd-score">6 / 6</p>
+          <button class="btn btn-light" data-restart="sd">Otra tanda</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="nav" role="tablist" aria-label="Estaciones de la fábrica">
+  <button class="nav-btn" role="tab" aria-selected="true" data-go="scene-1"><i class="fa-solid fa-circle-notch"></i><span class="lbl">Torno</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+  <button class="nav-btn" role="tab" aria-selected="false" data-go="scene-circulo"><i class="fa-solid fa-compass-drafting"></i><span class="lbl">Partes</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+  <button class="nav-btn" role="tab" aria-selected="false" data-go="scene-forja"><i class="fa-solid fa-hammer"></i><span class="lbl">Forja</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+  <button class="nav-btn" role="tab" aria-selected="false" data-go="scene-poli"><i class="fa-solid fa-shapes"></i><span class="lbl">Polígonos</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+  <button class="nav-btn" role="tab" aria-selected="false" data-go="scene-control"><i class="fa-solid fa-clipboard-check"></i><span class="lbl">Control</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+  <button class="nav-btn" role="tab" aria-selected="false" data-go="scene-reloj"><i class="fa-solid fa-stopwatch"></i><span class="lbl">Turno</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+  <button class="nav-btn" role="tab" aria-selected="false" data-go="scene-pedidos"><i class="fa-solid fa-truck-fast"></i><span class="lbl">Pedidos</span><span class="tick"><i class="fa-solid fa-check"></i></span></button>
+</nav>
+
+<div id="final" class="is-hidden">
+  <i class="fa-solid fa-industry" style="font-size:clamp(2.5rem,12vw,4rem);color:var(--orange)"></i>
+  <div class="rank" id="final-rank">Maestro de la Fábrica</div>
+  <div class="big" id="final-xp">0 XP</div>
+  <p style="color:var(--ink-soft);max-width:32rem;margin:0" id="final-msg"></p>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem">
+    <a class="btn btn-main" href="circulos-poligonos.html#s-fabrica" style="text-decoration:none;display:grid;place-items:center">Volver a la misión</a>
+    <button class="btn btn-soft" id="final-close">Seguir jugando</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FÁBRICA GEOMÉTRICA · juego de la misión «Área de Círculos y
+   Polígonos» (misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares)
+
+   Vive APARTE de la misión, como los dieciocho juegos 3D y por las
+   mismas dos razones: sus nombres de clase (.nav, .btn, .chip, .pill)
+   chocan con los de la misión, y su maquetación es de pantalla
+   completa —body en cuadrícula de 100dvh— que dentro de una sección
+   se llevaría por delante la página entera.
+
+   ⚠️ NO escribe en el progreso de la misión. Guarda en SU llave
+   (GUARDA), y la misión solo la LEE para pintar la medalla. Si las dos
+   escribieran en la misma, una partida abierta en otra pestaña le
+   borraría al alumno el XP que acaba de ganar.
+   ============================================================ */
+(function(){
+'use strict';
+
+/* π = 3.14, el de la misión y el de su evaluación impresa. Si la
+   pantalla calculara con el π largo y el alumno con 3.14, los números
+   no coincidirían y él creería que se equivocó. La misión escribe
+   3.1416 cuando DEFINE la constante, y eso se respeta en la pregunta
+   que la define: aquí lo que se declara es el π con el que se CALCULA. */
+var PI = 3.14;
+var GUARDA = 'j2d_fabrica_geo_v1';
+
+var $  = function(s,c){ return (c||document).querySelector(s); };
+var $$ = function(s,c){ return [].slice.call((c||document).querySelectorAll(s)); };
+
+/* ── Estado ─────────────────────────────────────────────────── */
+var est = { xp:0, racha:0, mejorRacha:0, hechas:{}, sonido:false };
+var ESTACIONES = ['scene-1','scene-circulo','scene-forja','scene-poli','scene-control','scene-reloj','scene-pedidos'];
+
+function cargar(){
+  try{
+    var d = JSON.parse(localStorage.getItem(GUARDA));
+    if(d && typeof d === 'object'){
+      est.xp = d.xp|0; est.mejorRacha = d.mejorRacha|0;
+      est.hechas = d.hechas || {};
+      est.sonido = !!d.sonido;
+    }
+  }catch(e){}
+}
+function guardar(){
+  try{
+    localStorage.setItem(GUARDA, JSON.stringify({
+      xp:est.xp, mejorRacha:est.mejorRacha, hechas:est.hechas,
+      estaciones:Object.keys(est.hechas).length, total:ESTACIONES.length,
+      sonido:est.sonido
+    }));
+  }catch(e){}
+}
+
+/* ── Azar ───────────────────────────────────────────────────── */
+function rnd(n){ return Math.floor(Math.random()*n); }
+function barajar(a){
+  a = a.slice();
+  for(var i=a.length-1;i>0;i--){ var j=rnd(i+1); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+/* Barajar puede devolver el mismo orden, y en una lista de opciones eso
+   no molesta; donde SÍ cuesta caro es donde el orden es la respuesta.
+   Aquí se usa para que la correcta no caiga siempre en el mismo sitio. */
+function barajarDistinto(a){
+  if(a.length < 2) return a.slice();
+  var b = barajar(a), i = 0;
+  while(i++ < 20 && b.every(function(x,k){ return x === a[k]; })) b = barajar(a);
+  return b;
+}
+
+/* ── Sonido ─────────────────────────────────────────────────── */
+/* Empieza APAGADO a propósito: cuarenta teléfonos pitando en un aula no
+   ayudan a nadie, que es la misma razón por la que los juegos 3D no
+   tienen sonido. El que juega en su casa lo enciende y se le guarda. */
+var actx = null;
+function pitar(hz, ms, tipo){
+  if(!est.sonido) return;
+  try{
+    if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+    var o = actx.createOscillator(), g = actx.createGain();
+    o.type = tipo || 'sine'; o.frequency.value = hz;
+    g.gain.setValueAtTime(.06, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + ms/1000);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + ms/1000);
+  }catch(e){}
+}
+function vibrar(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
+
+/* ── HUD ────────────────────────────────────────────────────── */
+var NIVELES = [
+  {t:0,n:'Nv 1 · Aprendiz'}, {t:80,n:'Nv 2 · Ayudante'}, {t:180,n:'Nv 3 · Operario'},
+  {t:300,n:'Nv 4 · Técnico'}, {t:440,n:'Nv 5 · Jefe de taller'}, {t:600,n:'Nv 6 · Maestro'}
+];
+function pintarHud(){
+  var lv = 0;
+  for(var i=0;i<NIVELES.length;i++) if(est.xp >= NIVELES[i].t) lv = i;
+  var tope = NIVELES[lv+1] ? NIVELES[lv+1].t : NIVELES[lv].t + 100;
+  var base = NIVELES[lv].t;
+  var pct = Math.max(0, Math.min(100, Math.round((est.xp-base)*100/(tope-base))));
+  $('#hud-lvl').textContent = NIVELES[lv].n;
+  $('#hud-xp').style.width = pct + '%';
+  $('#hud-xptext').textContent = est.xp + ' XP';
+  $('#hud-streak').lastElementChild.textContent = est.racha;
+}
+function sumarXp(n){
+  est.xp = Math.max(0, est.xp + n);
+  pintarHud(); guardar();
+  if(n > 0) volar('+' + n + ' XP');
+}
+function volar(txt){
+  var d = document.createElement('div');
+  d.className = 'xp-pop'; d.textContent = txt;
+  document.body.appendChild(d);
+  setTimeout(function(){ d.remove(); }, 1100);
+}
+function chispas(caja){
+  if(!caja) return;
+  var cols = ['#f97316','#facc15','#22c55e','#22d3ee','#ec4899'];
+  for(var i=0;i<14;i++){
+    var s = document.createElement('i');
+    s.className = 'spark';
+    s.style.background = cols[rnd(cols.length)];
+    s.style.setProperty('--dx', (rnd(260)-130) + 'px');
+    s.style.setProperty('--dy', (rnd(200)-150) + 'px');
+    s.style.setProperty('--rot', rnd(360) + 'deg');
+    caja.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); }, 800); })(s);
+  }
+}
+
+/* ── Aciertos y fallos, en un solo sitio ────────────────────── */
+function acierto(caja, xp){
+  est.racha++;
+  if(est.racha > est.mejorRacha) est.mejorRacha = est.racha;
+  pitar(880, 120); vibrar(25);
+  chispas(caja);
+  sumarXp(xp == null ? 10 : xp);
+}
+function fallo(caja){
+  est.racha = 0; pintarHud();
+  pitar(180, 180, 'square'); vibrar([18,40,18]);
+  if(caja){ caja.classList.remove('shake'); void caja.offsetWidth; caja.classList.add('shake'); }
+}
+function avisar(sel, txt, malo){
+  var t = $(sel); if(!t) return;
+  t.textContent = txt;
+  t.classList.toggle('bad', !!malo);
+  t.classList.remove('is-hidden');
+  clearTimeout(t._reloj);
+  t._reloj = setTimeout(function(){ t.classList.add('is-hidden'); }, 2200);
+}
+function pista(sel, txt, clase){
+  var h = $(sel); if(!h) return;
+  h.textContent = txt;
+  h.classList.remove('good','bad');
+  if(clase) h.classList.add(clase);
+}
+
+/* ── Escenas ────────────────────────────────────────────────── */
+function ir(id){
+  $$('.scene').forEach(function(s){ s.classList.toggle('active', s.id === id); });
+  $$('.nav-btn').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.go === id ? 'true' : 'false'); });
+}
+$$('.nav-btn').forEach(function(b){
+  b.addEventListener('click', function(){ ir(b.dataset.go); });
+});
+function marcarHecha(id){
+  if(est.hechas[id]) return false;
+  est.hechas[id] = 1; guardar();
+  pintarTicks();
+  return true;
+}
+function pintarTicks(){
+  $$('.nav-btn').forEach(function(b){ b.classList.toggle('done', !!est.hechas[b.dataset.go]); });
+}
+/* ⚠️ La estación se da por hecha con un MÍNIMO de aciertos, no por
+   llegar al final. En tres de las siete —el control, el turno y los
+   pedidos— se avanza contestando lo que sea, y una estación que se
+   completa tocando por tocar es exactamente la estrella de regalo que
+   este proyecto ya quitó de las misiones. En las otras cuatro no se
+   puede pasar sin acertar, así que ahí esto no cambia nada.
+   Y se DICE cuántas faltan: un cartel que no explica por qué no contó
+   es un teléfono que el niño da por trabado. */
+function terminarEstacion(id, sel, aciertos, total, minimo){
+  var piso = (minimo == null ? 0.6 : minimo);
+  var basta = total ? (aciertos / total) >= piso : true;
+  if(basta && marcarHecha(id)) sumarXp(25);
+  $(sel + '-score').textContent = aciertos + ' / ' + total;
+  var win = $(sel + '-win');
+  var nota = win.querySelector('.ov-falta');
+  if(basta){
+    if(nota) nota.remove();
+  }else{
+    if(!nota){
+      nota = document.createElement('p');
+      nota.className = 'ov-falta';
+      win.insertBefore(nota, win.querySelector('[data-restart]'));
+    }
+    nota.textContent = 'Para dar la estación por buena hacen falta ' + Math.ceil(piso * total) + ' de ' + total + '. Vuelve a intentarlo.';
+  }
+  win.classList.remove('is-hidden');
+  if(Object.keys(est.hechas).length === ESTACIONES.length) setTimeout(pintarFinal, 900);
+}
+/* El botón «Siguiente» de cada estación y el «Otra tanda» de su cartel */
+document.addEventListener('click', function(e){
+  var n = e.target.closest('[data-next]');
+  if(n){ SIGUIENTE[n.dataset.next] && SIGUIENTE[n.dataset.next](); return; }
+  var r = e.target.closest('[data-restart]');
+  if(r){ $('#' + r.dataset.restart + '-win').classList.add('is-hidden'); ARRANQUE[r.dataset.restart](); }
+});
+var SIGUIENTE = {}, ARRANQUE = {};
+
+/* ── Pantalla final ─────────────────────────────────────────── */
+function pintarFinal(){
+  var rango = est.xp >= 520 ? 'Maestro de la Fábrica'
+            : est.xp >= 380 ? 'Jefe de taller'
+            : est.xp >= 240 ? 'Técnico de piezas' : 'Operario del turno';
+  $('#final-rank').textContent = rango;
+  $('#final-xp').textContent = est.xp + ' XP';
+  $('#final-msg').textContent = 'Las siete estaciones están calibradas. Tu mejor racha fue de ' +
+    est.mejorRacha + ' piezas seguidas sin fallar.';
+  $('#final').classList.remove('is-hidden');
+}
+$('#final-close').addEventListener('click', function(){ $('#final').classList.add('is-hidden'); });
+
+/* ============================================================
+   1 · TORNO DEL CÍRCULO
+   No pide siempre el radio: pide el diámetro, la circunferencia o el
+   área, y el alumno tiene que llegar al radio desde ahí. Pedir el
+   radio cinco veces es mover un control hasta que salga el número;
+   pedir el diámetro es la mitad de la misión.
+   ============================================================ */
+var S1 = { ronda:0, ok:0, pedidos:[] };
+var S1_TOTAL = 5;
+
+function s1Pedidos(){
+  /* Los radios salen enteros a propósito: el control va de 1 en 1, así
+     que un pedido que no se pueda clavar sería una trampa. */
+  var rs = barajar([2,3,4,5,6,7,8,9,10,11,12]).slice(0, S1_TOTAL);
+  var tipos = barajarDistinto(['r','d','c','a','d']);
+  return rs.map(function(r,i){ return { r:r, tipo:tipos[i] }; });
+}
+function s1Texto(p){
+  if(p.tipo === 'r') return ['Fabrica un círculo de radio', p.r + ' cm'];
+  if(p.tipo === 'd') return ['Fabrica un círculo de DIÁMETRO', (p.r*2) + ' cm'];
+  if(p.tipo === 'c') return ['Fabrica un círculo de circunferencia', red(2*PI*p.r) + ' cm'];
+  return ['Fabrica un círculo de área', red(PI*p.r*p.r) + ' cm²'];
+}
+function red(n){ return Math.round(n*100)/100; }
+
+function s1Pintar(){
+  var r = +$('#s1-slider').value;
+  var R = r * 9;                                  /* 9 px de dibujo por cm */
+  $('#s1-circle').setAttribute('r', R);
+  $('#s1-rline').setAttribute('x2', R);
+  $('#s1-rtxt').setAttribute('x', R/2);
+  $('#s1-rtxt').textContent = 'r=' + r;
+  $('#s1-val').textContent = 'r=' + r;
+  $('#s1-r').textContent = r;
+  $('#s1-d').textContent = r*2;
+  $('#s1-c').textContent = red(2*PI*r);
+  $('#s1-a').textContent = red(PI*r*r);
+}
+function s1Ronda(){
+  var p = S1.pedidos[S1.ronda];
+  var t = s1Texto(p);
+  $('#s1-ask').textContent = t[0];
+  $('#s1-goal').textContent = t[1];
+  $('#s1-pill').textContent = (S1.ronda+1) + ' / ' + S1_TOTAL;
+  $('#s1-check').classList.remove('is-hidden');
+  $('#s1-next').classList.add('is-hidden');
+  $('#s1-slider').disabled = false;
+  s1Pintar();
+}
+ARRANQUE.s1 = function(){
+  S1.ronda = 0; S1.ok = 0; S1.pedidos = s1Pedidos();
+  $('#s1-slider').value = 1;
+  s1Ronda();
+};
+SIGUIENTE.s1 = function(){
+  S1.ronda++;
+  if(S1.ronda >= S1_TOTAL){ terminarEstacion('scene-1', '#s1', S1.ok, S1_TOTAL); return; }
+  s1Ronda();
+};
+$('#s1-slider').addEventListener('input', s1Pintar);
+$('#s1-check').addEventListener('click', function(){
+  var p = S1.pedidos[S1.ronda], r = +$('#s1-slider').value;
+  var caja = $('#scene-1 .board');
+  if(r === p.r){
+    S1.ok++;
+    acierto(caja, 10);
+    avisar('#s1-toast', '¡Pieza fundida! ' + (p.tipo === 'd' ? 'El radio es la mitad del diámetro.' : 'Justo la medida.'));
+    $('#s1-check').classList.add('is-hidden');
+    $('#s1-next').classList.remove('is-hidden');
+    $('#s1-slider').disabled = true;
+    return;
+  }
+  fallo(caja);
+  /* El aviso dice el error de VERDAD, no «incorrecto»: el que pone el
+     radio igual al diámetro no se equivocó de número, se equivocó de
+     concepto, y eso es lo que hay que decirle. */
+  var msg = 'Esa no es. Vuelve a mirar la medida que te piden.';
+  if(p.tipo === 'd' && r === p.r*2) msg = 'Pusiste el RADIO en ' + r + ': ese es el diámetro. El radio es la mitad.';
+  else if(p.tipo === 'c' && r === Math.round(2*PI*p.r)) msg = 'Ese número es la circunferencia, no el radio. C = 2 · π · r.';
+  else if(p.tipo === 'a') msg = 'Recuerda: A = π · r · r. Prueba con un radio más ' + (PI*r*r > PI*p.r*p.r ? 'pequeño' : 'grande') + '.';
+  avisar('#s1-toast', msg, true);
+});
+
+/* ============================================================
+   2 · PARTES DEL CÍRCULO
+   Se tocan sobre la figura, no en una lista de palabras: reconocer el
+   arco dibujado es otra cosa que reconocer la palabra «arco».
+   ============================================================ */
+var SC_PARTES = [
+  { k:'centro',   pide:'EL CENTRO',        dice:'El centro está a la misma distancia de todo el borde.' },
+  { k:'radio',    pide:'EL RADIO',         dice:'El radio va del centro al borde.' },
+  { k:'diametro', pide:'EL DIÁMETRO',      dice:'El diámetro pasa por el centro y mide dos radios.' },
+  { k:'cuerda',   pide:'LA CUERDA',        dice:'La cuerda une dos puntos del borde SIN pasar por el centro.' },
+  { k:'arco',     pide:'EL ARCO',          dice:'El arco es un pedazo del borde.' },
+  { k:'sector',   pide:'EL SECTOR CIRCULAR', dice:'El sector es la rebanada: dos radios y el arco entre ellos.' }
+];
+var SC = { orden:[], ronda:0, ok:0, contestada:false };
+
+function scDibujar(){
+  var R = 92, H = 14;   /* H: el hueco del centro, que no lo pisa nadie */
+  var c60 = (R*Math.cos(Math.PI/3)).toFixed(1), s60 = (R*Math.sin(Math.PI/3)).toFixed(1);
+
+  /* ⚠️ Lo que se VE y lo que se TOCA van separados a propósito.
+     Los trazos visibles llevan pointer-events="none" y las zonas de toque
+     son trazos transparentes y anchos —24 px, lo que un dedo acierta sin
+     mirar—. Y ninguna zona pisa a otra: el diámetro y el radio dejan un
+     hueco en el centro, porque si no, tocar el medio del diámetro —que es
+     justo donde se toca— caía en el centro y la pantalla le decía que se
+     había equivocado cuando había acertado. */
+  var svg = ''
+  /* el sector primero: es el relleno grande y lo demás va encima */
+  + '<path class="hit" data-k="sector" d="M 0 0 L ' + R + ' 0 A ' + R + ' ' + R + ' 0 0 1 ' + c60 + ' ' + s60 + ' Z" fill="rgba(96,165,250,.35)" stroke="#60a5fa" stroke-width="1.5"><title>sector circular</title></path>'
+  /* el borde del círculo NO recibe toques: con relleno se quedaba con
+     todos y el sector, que está debajo, no se podía tocar nunca */
+  + '<circle cx="0" cy="0" r="' + R + '" fill="rgba(96,165,250,.07)" stroke="#93a5c4" stroke-width="2" pointer-events="none"/>'
+
+  /* trazos visibles */
+  + '<path d="M ' + (-R) + ' 0 A ' + R + ' ' + R + ' 0 0 1 ' + (-c60) + ' ' + (-s60) + '" fill="none" stroke="#22d3ee" stroke-width="7" pointer-events="none"/>'
+  + '<line x1="' + (-R*0.80).toFixed(1) + '" y1="' + (R*0.60).toFixed(1) + '" x2="' + (R*0.20).toFixed(1) + '" y2="' + (R*0.98).toFixed(1) + '" stroke="#a855f7" stroke-width="5" pointer-events="none"/>'
+  + '<line x1="' + (-R) + '" y1="0" x2="' + R + '" y2="0" stroke="#f97316" stroke-width="5" pointer-events="none"/>'
+  + '<line x1="0" y1="0" x2="0" y2="' + (-R) + '" stroke="#22c55e" stroke-width="5" pointer-events="none"/>'
+
+  /* zonas de toque */
+  + '<path class="hit" data-k="arco" d="M ' + (-R) + ' 0 A ' + R + ' ' + R + ' 0 0 1 ' + (-c60) + ' ' + (-s60) + '" fill="none" stroke="transparent" stroke-width="26"><title>arco</title></path>'
+  /* la cuerda NO pasa por el centro: ahí está toda su diferencia con el
+     diámetro, y por eso se dibuja bien lejos de él */
+  + '<line class="hit" data-k="cuerda" x1="' + (-R*0.80).toFixed(1) + '" y1="' + (R*0.60).toFixed(1) + '" x2="' + (R*0.20).toFixed(1) + '" y2="' + (R*0.98).toFixed(1) + '" stroke="transparent" stroke-width="26"><title>cuerda</title></line>'
+  + '<line class="hit" data-k="diametro" x1="' + (-R) + '" y1="0" x2="' + (-H) + '" y2="0" stroke="transparent" stroke-width="24"><title>diámetro</title></line>'
+  + '<line class="hit" data-k="diametro" x1="' + H + '" y1="0" x2="' + R + '" y2="0" stroke="transparent" stroke-width="24"><title>diámetro</title></line>'
+  + '<line class="hit" data-k="radio" x1="0" y1="' + (-H) + '" x2="0" y2="' + (-R) + '" stroke="transparent" stroke-width="24"><title>radio</title></line>'
+  + '<circle class="hit" data-k="centro" cx="0" cy="0" r="' + H + '" fill="transparent"><title>centro</title></circle>'
+  + '<circle cx="0" cy="0" r="5" fill="#fff" pointer-events="none"/>';
+  $('#sc-svg').innerHTML = svg;
+}
+function scRonda(){
+  SC.contestada = false;
+  var p = SC_PARTES[SC.orden[SC.ronda]];
+  $('#sc-goal').textContent = p.pide;
+  $('#sc-pill').textContent = (SC.ronda+1) + ' / ' + SC_PARTES.length;
+  $('#sc-next').classList.add('is-hidden');
+  pista('#sc-hint', 'Los elementos están sobre la figura: tócalos con el dedo o el ratón.');
+}
+ARRANQUE.sc = function(){
+  SC.orden = barajar(SC_PARTES.map(function(_,i){ return i; }));
+  SC.ronda = 0; SC.ok = 0;
+  scDibujar(); scRonda();
+};
+SIGUIENTE.sc = function(){
+  SC.ronda++;
+  if(SC.ronda >= SC_PARTES.length){ terminarEstacion('scene-circulo', '#sc', SC.ok, SC_PARTES.length); return; }
+  scRonda();
+};
+$('#sc-svg').addEventListener('click', function(e){
+  if(SC.contestada) return;
+  var h = e.target.closest('.hit'); if(!h) return;
+  var p = SC_PARTES[SC.orden[SC.ronda]];
+  var caja = $('#scene-circulo .board');
+  if(h.dataset.k === p.k){
+    SC.contestada = true; SC.ok++;
+    acierto(caja, 10);
+    pista('#sc-hint', '¡Correcto! ' + p.dice, 'good');
+    $('#sc-next').classList.remove('is-hidden');
+  }else{
+    fallo(caja);
+    var tocado = SC_PARTES.filter(function(x){ return x.k === h.dataset.k; })[0];
+    pista('#sc-hint', 'Eso es ' + (tocado ? tocado.pide.toLowerCase() : 'otra parte') + '. ' + p.dice, 'bad');
+  }
+});
+
+/* ============================================================
+   3 · FORJA DE FÓRMULAS
+   Se arrastra con eventos de puntero, NUNCA con draggable: draggable es
+   de ratón y en un teléfono no existe. Y además se puede tocar la pieza
+   y después su hueco, que es lo que hace que esto se pueda hacer sin
+   arrastrar —con el dedo torpe, con el ratón o con el tabulador—.
+   ============================================================ */
+var SF_FORMULAS = [
+  { nombre:'EL ÁREA DEL CÍRCULO',
+    partes:['A', '=', {h:'π'}, '·', {h:'r'}, '·', {h:'r'}],
+    extra:['2','d'],
+    dice:'A = π · r · r. El radio se multiplica DOS veces: por eso se dice «radio al cuadrado».' },
+  { nombre:'LA CIRCUNFERENCIA',
+    partes:['C', '=', {h:'2'}, '·', {h:'π'}, '·', {h:'r'}],
+    extra:['r²','360'],
+    dice:'C = 2 · π · r. Es la orilla del círculo, la que se mide en centímetros.' },
+  { nombre:'EL ÁREA DE UN POLÍGONO REGULAR',
+    partes:['A', '=', '(', {h:'P'}, '·', {h:'a'}, ')', '÷', {h:'2'}],
+    extra:['π','r'],
+    dice:'A = (P · a) ÷ 2. P es el perímetro y a es la apotema. Lo del ÷ 2 no se olvida: sin él sale el doble.' },
+  { nombre:'EL ÁREA DE UN SECTOR',
+    partes:['A', '=', '(', {h:'π'}, '·', {h:'r²'}, '·', {h:'α'}, ')', '÷', {h:'360'}],
+    extra:['2','a'],
+    dice:'A = (π · r² · α) ÷ 360. El sector es una parte del círculo: por eso se reparte entre los 360 grados.' },
+  { nombre:'EL PERÍMETRO DE UN SECTOR',
+    partes:['P', '=', {h:'arco'}, '+', {h:'2'}, '·', {h:'r'}],
+    extra:['π','a'],
+    dice:'P = L(arco) + 2 · r. La rebanada tiene el arco y sus DOS radios rectos.' }
+];
+var SF = { orden:[], ronda:0, ok:0, fallos:0, sel:null };
+
+function sfRonda(){
+  var f = SF_FORMULAS[SF.orden[SF.ronda]];
+  SF.sel = null; SF.fallos = 0;
+  $('#sf-goal').textContent = f.nombre;
+  $('#sf-pill').textContent = (SF.ronda+1) + ' / ' + SF_FORMULAS.length;
+  $('#sf-next').classList.add('is-hidden');
+  pista('#sf-hint', 'Toca una pieza y después su hueco. También se arrastra.');
+
+  var html = '<span class="fname">' + f.nombre + '</span><div class="fbody">';
+  var iz = 0;
+  f.partes.forEach(function(p){
+    if(typeof p === 'string'){ html += '<span class="slot">' + p + '</span>'; }
+    else { html += '<button type="button" class="zone" data-i="' + (iz++) + '" data-ok="' + p.h + '" aria-label="Hueco ' + iz + ' de la fórmula"></button>'; }
+  });
+  html += '</div>';
+  $('#sf-formula').innerHTML = html;
+
+  var piezas = [];
+  f.partes.forEach(function(p){ if(typeof p !== 'string') piezas.push(p.h); });
+  /* Los distractores son los errores de verdad —el 2 que sobra, la d por
+     la r, la π donde va la apotema—, no símbolos al azar: uno absurdo se
+     descarta sin pensar y no enseña nada. */
+  piezas = barajarDistinto(piezas.concat(f.extra));
+  $('#sf-tray').innerHTML = piezas.map(function(t,i){
+    return '<button type="button" class="chip" data-t="' + t + '" data-id="c' + i + '">' + t + '</button>';
+  }).join('');
+}
+ARRANQUE.sf = function(){
+  SF.orden = barajar(SF_FORMULAS.map(function(_,i){ return i; }));
+  SF.ronda = 0; SF.ok = 0;
+  sfRonda();
+};
+SIGUIENTE.sf = function(){
+  SF.ronda++;
+  if(SF.ronda >= SF_FORMULAS.length){ terminarEstacion('scene-forja', '#sf', SF.ok, SF_FORMULAS.length); return; }
+  sfRonda();
+};
+$('#sf-clear').addEventListener('click', function(){ sfRonda(); });
+
+function sfSoltar(chip, zona){
+  if(!chip || !zona) return;
+  if(zona.dataset.puesta){                       /* el hueco ya tenía pieza: vuelve a la bandeja */
+    var vuelve = document.createElement('button');
+    vuelve.type = 'button'; vuelve.className = 'chip';
+    vuelve.dataset.t = zona.dataset.puesta; vuelve.textContent = zona.dataset.puesta;
+    $('#sf-tray').appendChild(vuelve);
+  }
+  zona.dataset.puesta = chip.dataset.t;
+  zona.textContent = chip.dataset.t;
+  zona.classList.add('filled');
+  chip.remove();
+  sfSelec(null);
+  sfComprobar();
+}
+function sfSelec(chip){
+  $$('.chip', $('#sf-tray')).forEach(function(c){ c.classList.remove('selected'); });
+  SF.sel = chip || null;
+  if(chip) chip.classList.add('selected');
+}
+function sfComprobar(){
+  var zonas = $$('.zone', $('#sf-formula'));
+  if(zonas.some(function(z){ return !z.dataset.puesta; })) return;
+  var bien = zonas.every(function(z){ return z.dataset.puesta === z.dataset.ok; });
+  var caja = $('#scene-forja .board');
+  var f = SF_FORMULAS[SF.orden[SF.ronda]];
+  if(bien){
+    SF.ok++;
+    acierto(caja, SF.fallos ? 6 : 10);
+    pista('#sf-hint', '¡Forjada! ' + f.dice, 'good');
+    avisar('#sf-toast', '¡Fórmula correcta!');
+    $$('.chip', $('#sf-tray')).forEach(function(c){ c.disabled = true; });
+    $('#sf-next').classList.remove('is-hidden');
+    return;
+  }
+  SF.fallos++;
+  fallo(caja);
+  /* Solo se devuelven las piezas MAL puestas: quitarlas todas castiga lo
+     que ya estaba bien y obliga a rehacer la fórmula entera. */
+  zonas.forEach(function(z){
+    if(z.dataset.puesta === z.dataset.ok) return;
+    var vuelve = document.createElement('button');
+    vuelve.type = 'button'; vuelve.className = 'chip';
+    vuelve.dataset.t = z.dataset.puesta; vuelve.textContent = z.dataset.puesta;
+    $('#sf-tray').appendChild(vuelve);
+    delete z.dataset.puesta; z.textContent = ''; z.classList.remove('filled');
+  });
+  pista('#sf-hint', 'Las que estaban bien se quedaron puestas. ' + f.dice, 'bad');
+}
+
+/* Tocar la pieza y después el hueco. Vale para el dedo, el ratón y el
+   teclado, porque las dos son <button> de verdad: un <div> con
+   role="button" y tabindex="0" se enfoca y NO responde a Enter. */
+$('#sf-tray').addEventListener('click', function(e){
+  var c = e.target.closest('.chip'); if(!c || c.disabled) return;
+  sfSelec(SF.sel === c ? null : c);
+});
+$('#sf-formula').addEventListener('click', function(e){
+  var z = e.target.closest('.zone'); if(!z) return;
+  if(SF.sel){ sfSoltar(SF.sel, z); return; }
+  if(z.dataset.puesta){                          /* tocar un hueco lleno lo vacía */
+    var vuelve = document.createElement('button');
+    vuelve.type = 'button'; vuelve.className = 'chip';
+    vuelve.dataset.t = z.dataset.puesta; vuelve.textContent = z.dataset.puesta;
+    $('#sf-tray').appendChild(vuelve);
+    delete z.dataset.puesta; z.textContent = ''; z.classList.remove('filled');
+  }
+});
+
+/* Y el arrastre, con eventos de puntero: los mismos para el dedo y para
+   el ratón. Se captura el puntero, que si no un ratón soltado fuera deja
+   la pieza pegada al cursor. */
+(function(){
+  var pieza = null, fantasma = null, dx = 0, dy = 0, movido = false, x0 = 0, y0 = 0;
+  $('#sf-tray').addEventListener('pointerdown', function(e){
+    var c = e.target.closest('.chip'); if(!c || c.disabled) return;
+    pieza = c; movido = false;
+    var r = c.getBoundingClientRect();
+    dx = e.clientX - r.left; dy = e.clientY - r.top;
+    x0 = e.clientX; y0 = e.clientY;
+    try{ c.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  $('#sf-tray').addEventListener('pointermove', function(e){
+    if(!pieza) return;
+    /* ⚠️ Arrastrar y tocar se distinguen MIDIENDO los dos ejes, como el
+       giro del dedo de los juegos 3D. Un dedo que baja a tocar nunca cae
+       quieto del todo: sin este margen, cada toque nacía arrastre y la
+       pieza se despegaba de la bandeja al seleccionarla. */
+    if(!movido){
+      if(Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0) < 8) return;
+      movido = true;
+      fantasma = pieza.cloneNode(true);
+      fantasma.classList.add('dragging');
+      fantasma.style.position = 'fixed';
+      fantasma.style.pointerEvents = 'none';
+      document.body.appendChild(fantasma);
+      pieza.style.opacity = '.35';
+    }
+    fantasma.style.left = (e.clientX - dx) + 'px';
+    fantasma.style.top  = (e.clientY - dy) + 'px';
+    var z = zonaBajo(e.clientX, e.clientY);
+    $$('.zone', $('#sf-formula')).forEach(function(q){ q.classList.toggle('hot', q === z); });
+  });
+  ['pointerup','pointercancel'].forEach(function(ev){
+    $('#sf-tray').addEventListener(ev, function(e){
+      if(!pieza) return;
+      var z = movido ? zonaBajo(e.clientX, e.clientY) : null;
+      $$('.zone', $('#sf-formula')).forEach(function(q){ q.classList.remove('hot'); });
+      if(fantasma){ fantasma.remove(); fantasma = null; }
+      pieza.style.opacity = '';
+      if(z) sfSoltar(pieza, z);
+      pieza = null; movido = false;
+    });
+  });
+  function zonaBajo(x,y){
+    return $$('.zone', $('#sf-formula')).filter(function(z){
+      var r = z.getBoundingClientRect();
+      return x >= r.left-6 && x <= r.right+6 && y >= r.top-6 && y <= r.bottom+6;
+    })[0];
+  }
+})();
+
+/* ============================================================
+   4 · TALLER DE POLÍGONOS
+   La apotema NO se calcula con trigonometría delante del alumno: viene
+   MEDIDA, como en el libro y como en su evaluación. Lo que él tiene que
+   hacer es la cuenta de la misión: A = (P · a) ÷ 2.
+   ============================================================ */
+var SP_TABLA = {
+  3:{n:'TRIÁNGULO',   lado:10, apo:2.9},  4:{n:'CUADRADO',   lado:10, apo:5},
+  5:{n:'PENTÁGONO',   lado:10, apo:6.9},  6:{n:'HEXÁGONO',   lado:10, apo:8.7},
+  7:{n:'HEPTÁGONO',   lado:10, apo:10.4}, 8:{n:'OCTÁGONO',   lado:10, apo:12.1},
+  9:{n:'ENEÁGONO',    lado:10, apo:13.7}, 10:{n:'DECÁGONO',  lado:10, apo:15.4},
+  11:{n:'ENDECÁGONO', lado:10, apo:17},   12:{n:'DODECÁGONO',lado:10, apo:18.7}
+};
+var SP_PEDIDOS = [
+  { n:6,  ask:'Fabrica un',                 goal:'HEXÁGONO' },
+  { n:8,  ask:'La señal de ALTO es un',     goal:'OCTÁGONO' },
+  { n:5,  ask:'Fabrica un polígono de',     goal:'5 LADOS' },
+  { n:4,  ask:'Fabrica un',                 goal:'CUADRADO' },
+  { n:6,  ask:'La celda del panal es un',   goal:'HEXÁGONO' },
+  { n:12, ask:'Fabrica un polígono de',     goal:'12 LADOS' },
+  { n:3,  ask:'Fabrica un',                 goal:'TRIÁNGULO' },
+  { n:10, ask:'Fabrica un',                 goal:'DECÁGONO' }
+];
+var SP = { pedidos:[], ronda:0, ok:0 };
+var SP_TOTAL = 5;
+
+function spPintar(){
+  var n = +$('#sp-slider').value, d = SP_TABLA[n];
+  var R = 92, pts = [];
+  for(var i=0;i<n;i++){
+    var ang = -Math.PI/2 + i*2*Math.PI/n;        /* dibujar la figura, no una cuenta del alumno */
+    pts.push((R*Math.cos(ang)).toFixed(1) + ',' + (R*Math.sin(ang)).toFixed(1));
+  }
+  /* la apotema se pinta al punto medio del primer lado, que es lo que
+     ES: del centro al medio del lado, y en ángulo recto */
+  var a0 = -Math.PI/2, a1 = -Math.PI/2 + 2*Math.PI/n;
+  var mx = (R*Math.cos(a0) + R*Math.cos(a1))/2, my = (R*Math.sin(a0) + R*Math.sin(a1))/2;
+  $('#sp-svg').innerHTML =
+      '<polygon points="' + pts.join(' ') + '" fill="rgba(34,211,238,.18)" stroke="#22d3ee" stroke-width="2.5"/>'
+    + '<line x1="0" y1="0" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="#facc15" stroke-width="3" stroke-dasharray="5,4"/>'
+    + '<circle cx="0" cy="0" r="4" fill="#fff"/>'
+    + '<text x="' + (mx/2 + 8).toFixed(1) + '" y="' + (my/2).toFixed(1) + '" fill="#facc15" font-size="13" font-weight="700" font-family="JetBrains Mono, monospace">a</text>';
+
+  var P = n * d.lado, A = Math.round(P * d.apo / 2 * 10) / 10;
+  $('#sp-val').textContent = 'n=' + n;
+  $('#sp-n').textContent = n;
+  $('#sp-p').textContent = P;
+  $('#sp-a').textContent = d.apo;
+  $('#sp-ar').textContent = A;
+}
+function spRonda(){
+  var p = SP.pedidos[SP.ronda];
+  $('#sp-ask').textContent = p.ask;
+  $('#sp-goal').textContent = p.goal;
+  $('#sp-pill').textContent = (SP.ronda+1) + ' / ' + SP_TOTAL;
+  $('#sp-check').classList.remove('is-hidden');
+  $('#sp-next').classList.add('is-hidden');
+  $('#sp-slider').disabled = false;
+  spPintar();
+}
+ARRANQUE.sp = function(){
+  SP.pedidos = barajar(SP_PEDIDOS).slice(0, SP_TOTAL);
+  SP.ronda = 0; SP.ok = 0;
+  $('#sp-slider').value = 3;
+  spRonda();
+};
+SIGUIENTE.sp = function(){
+  SP.ronda++;
+  if(SP.ronda >= SP_TOTAL){ terminarEstacion('scene-poli', '#sp', SP.ok, SP_TOTAL); return; }
+  spRonda();
+};
+$('#sp-slider').addEventListener('input', spPintar);
+$('#sp-check').addEventListener('click', function(){
+  var p = SP.pedidos[SP.ronda], n = +$('#sp-slider').value, d = SP_TABLA[n];
+  var caja = $('#scene-poli .board');
+  if(n === p.n){
+    SP.ok++;
+    acierto(caja, 10);
+    var P = n * SP_TABLA[n].lado, A = Math.round(P * SP_TABLA[n].apo / 2 * 10)/10;
+    avisar('#sp-toast', '¡' + SP_TABLA[n].n + '! P = ' + n + ' · ' + SP_TABLA[n].lado + ' = ' + P + ' cm · A = (' + P + ' · ' + SP_TABLA[n].apo + ') ÷ 2 = ' + A + ' cm²');
+    $('#sp-check').classList.add('is-hidden');
+    $('#sp-next').classList.remove('is-hidden');
+    $('#sp-slider').disabled = true;
+    return;
+  }
+  fallo(caja);
+  avisar('#sp-toast', 'Ese es un ' + d.n.toLowerCase() + ' (' + n + ' lados). Cuenta los lados que te piden.', true);
+});
+
+/* Dibujos sencillos que comparten las dos últimas estaciones. Van en SVG
+   y NO en fondos de CSS: el navegador imprime «sin gráficos de fondo» de
+   fábrica, y aquí el dibujo ES parte de la pregunta. */
+function poligonoPts(n, R, giro){
+  var pts = [];
+  for(var i=0;i<n;i++){
+    var ang = (giro||-Math.PI/2) + i*2*Math.PI/n;
+    pts.push((R*Math.cos(ang)).toFixed(1) + ',' + (R*Math.sin(ang)).toFixed(1));
+  }
+  return pts.join(' ');
+}
+function dibujo(tipo, color){
+  var c = color || '#22c55e', R = 88;
+  if(tipo === 'circulo')
+    return '<circle cx="0" cy="0" r="' + R + '" fill="' + c + '22" stroke="' + c + '" stroke-width="3"/>'
+         + '<circle cx="0" cy="0" r="4" fill="#fff"/>';
+  if(tipo === 'borde')
+    return '<circle cx="0" cy="0" r="' + R + '" fill="none" stroke="' + c + '" stroke-width="9" stroke-dasharray="12,7"/>';
+  if(tipo === 'hexagono')
+    return '<polygon points="' + poligonoPts(6, R) + '" fill="' + c + '22" stroke="' + c + '" stroke-width="3"/>';
+  if(tipo === 'octagono')
+    return '<polygon points="' + poligonoPts(8, R, -Math.PI/8 - Math.PI/2) + '" fill="' + c + '22" stroke="' + c + '" stroke-width="3"/>';
+  if(tipo === 'sector')
+    return '<circle cx="0" cy="0" r="' + R + '" fill="none" stroke="#2b3d5c" stroke-width="2" stroke-dasharray="4,4"/>'
+         + '<path d="M 0 0 L ' + R + ' 0 A ' + R + ' ' + R + ' 0 0 0 0 ' + (-R) + ' Z" fill="' + c + '33" stroke="' + c + '" stroke-width="3"/>';
+  if(tipo === 'rueda'){
+    var rayos = '';
+    for(var i=0;i<8;i++){
+      var a = i*Math.PI/4;
+      rayos += '<line x1="0" y1="0" x2="' + (R*Math.cos(a)).toFixed(1) + '" y2="' + (R*Math.sin(a)).toFixed(1) + '" stroke="#93a5c4" stroke-width="2"/>';
+    }
+    return '<circle cx="0" cy="0" r="' + R + '" fill="none" stroke="' + c + '" stroke-width="7"/>' + rayos
+         + '<circle cx="0" cy="0" r="8" fill="#fff"/>';
+  }
+  return '';
+}
+
+/* ============================================================
+   5 · CONTROL DE CALIDAD
+   La decisión va ANTES de la cuenta: en el examen el alumno no falla
+   multiplicando, falla eligiendo QUÉ calcular —y después multiplica
+   perfectamente lo que no era—.
+   ============================================================ */
+var SQ_CASOS = [
+  { fig:'borde',   color:'#f97316',
+    pedido:'Le van a poner una cinta al BORDE de una mesa redonda.',
+    op:['El perímetro', 'El área', 'La apotema'], ok:0,
+    dice:'La orilla del círculo es la circunferencia: C = 2 · π · r, y se mide en centímetros.' },
+  { fig:'circulo', color:'#22d3ee',
+    pedido:'Van a pintar el PISO de una plaza circular.',
+    op:['El perímetro', 'El área', 'El diámetro'], ok:1,
+    dice:'El piso es superficie: A = π · r · r, y se mide en metros cuadrados (m²).' },
+  { fig:'hexagono',color:'#a855f7',
+    pedido:'Hay que cercar con malla un jardín hexagonal.',
+    op:['El perímetro', 'El área', 'La apotema'], ok:0,
+    dice:'La malla va por la orilla: P = 6 · lado, en metros.' },
+  { fig:'octagono',color:'#facc15',
+    pedido:'Hay que mandar a hacer el VIDRIO de una ventana octagonal.',
+    op:['El perímetro', 'El área', 'El radio'], ok:1,
+    dice:'El vidrio cubre la superficie: A = (P · a) ÷ 2, en centímetros cuadrados.' },
+  { fig:'sector',  color:'#ec4899',
+    pedido:'Van a ponerle una tira de papel a TODO el contorno de una rebanada de pastel.',
+    op:['El perímetro del sector', 'El área del sector', 'El diámetro'], ok:0,
+    dice:'El contorno de la rebanada es el arco MÁS sus dos radios: P = L(arco) + 2 · r.' },
+  { fig:'circulo', color:'#22c55e',
+    pedido:'Hay que comprar el queso que CUBRE una pizza.',
+    op:['El perímetro', 'El área', 'La circunferencia'], ok:1,
+    dice:'Lo que se cubre es superficie: A = π · r · r, en centímetros cuadrados.' }
+];
+var SQ = { orden:[], ronda:0, ok:0, contestada:false };
+
+function sqRonda(){
+  SQ.contestada = false;
+  var c = SQ_CASOS[SQ.orden[SQ.ronda]];
+  $('#sq-goal').textContent = c.pedido;
+  $('#sq-pill').textContent = (SQ.ronda+1) + ' / ' + SQ_CASOS.length;
+  $('#sq-svg').innerHTML = dibujo(c.fig, c.color);
+  $('#sq-q').textContent = '¿Qué hay que calcular?';
+  $('#sq-opts').innerHTML = c.op.map(function(t,i){
+    return '<button type="button" class="opt" data-i="' + i + '" data-ok="' + (i === c.ok ? '1' : '') + '">' + t + '</button>';
+  }).join('');
+  $('#sq-next').classList.add('is-hidden');
+  pista('#sq-hint', 'Piensa si lo que piden es la ORILLA o la SUPERFICIE.');
+}
+ARRANQUE.sq = function(){
+  SQ.orden = barajar(SQ_CASOS.map(function(_,i){ return i; }));
+  SQ.ronda = 0; SQ.ok = 0;
+  sqRonda();
+};
+SIGUIENTE.sq = function(){
+  SQ.ronda++;
+  if(SQ.ronda >= SQ_CASOS.length){ terminarEstacion('scene-control', '#sq', SQ.ok, SQ_CASOS.length); return; }
+  sqRonda();
+};
+$('#sq-opts').addEventListener('click', function(e){
+  var b = e.target.closest('.opt'); if(!b || SQ.contestada) return;
+  var c = SQ_CASOS[SQ.orden[SQ.ronda]], caja = $('#scene-control .board');
+  SQ.contestada = true;
+  $$('.opt', $('#sq-opts')).forEach(function(o,i){
+    o.disabled = true;
+    if(i === c.ok) o.classList.add('good');
+  });
+  if(+b.dataset.i === c.ok){
+    SQ.ok++;
+    acierto(caja, 10);
+    pista('#sq-hint', '¡Correcto! ' + c.dice, 'good');
+  }else{
+    b.classList.add('bad');
+    fallo(caja);
+    pista('#sq-hint', c.dice, 'bad');
+  }
+  $('#sq-next').classList.remove('is-hidden');
+});
+
+/* ============================================================
+   6 · TURNO DE NOCHE (contrarreloj)
+   ============================================================ */
+var SR_BANCO = [
+  { q:'¿Cuál es la fórmula del área del círculo?', op:['A = π · r · r','C = 2 · π · r','A = (P · a) ÷ 2','A = π · d'], ok:0 },
+  { q:'El segmento que va del centro al punto medio de un lado se llama…', op:['Apotema','Radio','Cuerda','Arco'], ok:0 },
+  { q:'El número π vale aproximadamente…', op:['3.1416','1.41','2.14','9.81'], ok:0 },
+  { q:'El área de un polígono regular se calcula…', op:['(P · a) ÷ 2','P · a','(P + a) ÷ 2','P · a · 2'], ok:0 },
+  { q:'Si el diámetro mide 20 cm, el radio mide…', op:['10 cm','40 cm','20 cm','5 cm'], ok:0 },
+  { q:'La parte del círculo entre dos radios y un arco se llama…', op:['Sector circular','Cuerda','Apotema','Diámetro'], ok:0 },
+  { q:'Un polígono regular tiene…', op:['Lados y ángulos iguales','Solo los lados iguales','Solo los ángulos iguales','Cuatro lados siempre'], ok:0 },
+  { q:'El perímetro de un sector circular es…', op:['El arco + 2 · r','2 · π · r','π · r · r','El arco + r'], ok:0 },
+  { q:'La cuerda que pasa por el centro es…', op:['El diámetro','El radio','El arco','La apotema'], ok:0 },
+  { q:'Para saber cuánta malla se necesita para cercar un terreno se calcula…', op:['El perímetro','El área','El radio','La apotema'], ok:0 },
+  { q:'Área de un círculo de radio 10 cm, con π = 3.14:', op:['314 cm²','62.8 cm²','31.4 cm²','100 cm²'], ok:0 },
+  { q:'La distancia del centro al borde del círculo es…', op:['El radio','El diámetro','La cuerda','El arco'], ok:0 },
+  { q:'Para pintar el piso de una plaza circular se calcula…', op:['El área','El perímetro','El diámetro','La circunferencia'], ok:0 },
+  { q:'La señal de ALTO tiene forma de…', op:['Octágono regular','Hexágono regular','Pentágono regular','Círculo'], ok:0 }
+];
+var SR_TOTAL = 8, SR_SEG = 10;
+var SR = { preguntas:[], ronda:0, ok:0, reloj:null, queda:0, contestada:false, corriendo:false };
+
+function srPintarReloj(){
+  $('#sr-timer').firstElementChild.style.transform = 'scaleX(' + Math.max(0, SR.queda/SR_SEG) + ')';
+}
+function srRonda(){
+  SR.contestada = false;
+  var p = SR.preguntas[SR.ronda];
+  /* Las opciones se barajan: el banco las trae con la correcta primera
+     para poder leerlo y corregirlo, y dejarlas así regalaría la prueba. */
+  var mezcla = barajarDistinto(p.op.map(function(t,i){ return {t:t, ok:i === p.ok}; }));
+  $('#sr-q').textContent = p.q;
+  $('#sr-pill').textContent = (SR.ronda+1) + ' / ' + SR_TOTAL;
+  $('#sr-opts').innerHTML = mezcla.map(function(o,i){
+    return '<button type="button" class="opt" data-ok="' + (o.ok ? '1' : '') + '">' + o.t + '</button>';
+  }).join('');
+  pista('#sr-hint', 'Tienes ' + SR_SEG + ' segundos.');
+  SR.queda = SR_SEG; srPintarReloj();
+  clearInterval(SR.reloj);
+  SR.reloj = setInterval(function(){
+    SR.queda -= 0.2; srPintarReloj();
+    if(SR.queda <= 0){ clearInterval(SR.reloj); srContestar(null); }
+  }, 200);
+}
+function srContestar(btn){
+  if(SR.contestada) return;
+  SR.contestada = true;
+  clearInterval(SR.reloj);
+  var caja = $('#scene-reloj .board');
+  $$('.opt', $('#sr-opts')).forEach(function(o){
+    o.disabled = true;
+    if(o.dataset.ok) o.classList.add('good');
+  });
+  if(btn && btn.dataset.ok){
+    SR.ok++;
+    acierto(caja, 10);
+    pista('#sr-hint', '¡Correcto!', 'good');
+  }else{
+    if(btn) btn.classList.add('bad');
+    fallo(caja);
+    pista('#sr-hint', btn ? 'Esa no era. La correcta está en verde.' : 'Se acabó el tiempo. La correcta está en verde.', 'bad');
+  }
+  setTimeout(function(){
+    SR.ronda++;
+    if(SR.ronda >= SR_TOTAL){ srFin(); return; }
+    srRonda();
+  }, 1200);
+}
+function srFin(){
+  SR.corriendo = false;
+  clearInterval(SR.reloj);
+  $('#sr-q').textContent = 'Turno terminado.';
+  $('#sr-opts').innerHTML = '';
+  $('#sr-start').classList.remove('is-hidden');
+  $('#sr-start').textContent = 'Otro turno';
+  /* El elogio depende del resultado: «¡Bien hecho!» con 2 de 8 enseña
+     que el puntaje no significa nada. */
+  var pct = Math.round(SR.ok*100/SR_TOTAL);
+  $('#sr-wtitle').textContent = pct >= 90 ? '¡Turno perfecto!' : pct >= 70 ? '¡Buen turno!' : pct >= 40 ? 'Turno terminado' : 'Hay que repasar';
+  $('#sr-wmsg').textContent = pct >= 70 ? 'Las fórmulas te salen sin pensarlas.'
+                            : pct >= 40 ? 'Vuelve a la pestaña Aprende y prueba otra vez.'
+                            : 'Repasa las fórmulas en la Forja y vuelve: aquí el tiempo corre.';
+  $('#sr-score').style.color = pct >= 40 ? 'var(--green)' : 'var(--red)';
+  terminarEstacion('scene-reloj', '#sr', SR.ok, SR_TOTAL);
+}
+ARRANQUE.sr = function(){
+  clearInterval(SR.reloj);
+  SR.corriendo = false; SR.ronda = 0; SR.ok = 0;
+  SR.preguntas = barajar(SR_BANCO).slice(0, SR_TOTAL);
+  $('#sr-q').textContent = 'Toca «Empezar el turno» para arrancar.';
+  $('#sr-opts').innerHTML = '';
+  $('#sr-pill').textContent = '1 / ' + SR_TOTAL;
+  $('#sr-start').classList.remove('is-hidden');
+  SR.queda = SR_SEG; srPintarReloj();
+  pista('#sr-hint', 'Ocho preguntas, ' + SR_SEG + ' segundos cada una.');
+};
+SIGUIENTE.sr = function(){};
+$('#sr-start').addEventListener('click', function(){
+  SR.corriendo = true; SR.ronda = 0; SR.ok = 0;
+  SR.preguntas = barajar(SR_BANCO).slice(0, SR_TOTAL);
+  $('#sr-start').classList.add('is-hidden');
+  srRonda();
+});
+$('#sr-opts').addEventListener('click', function(e){
+  var b = e.target.closest('.opt'); if(!b) return;
+  srContestar(b);
+});
+/* Si el alumno se va a otra estación, el reloj se para: un cronómetro
+   corriendo detrás de una pantalla que no se ve le come el turno. */
+$$('.nav-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    if(b.dataset.go !== 'scene-reloj' && SR.corriendo){ clearInterval(SR.reloj); SR.corriendo = false; ARRANQUE.sr(); }
+  });
+});
+
+/* ============================================================
+   7 · PEDIDOS DEL PUEBLO
+   Las respuestas equivocadas son el error DE VERDAD —usar el diámetro
+   como radio, olvidar el ÷ 2 de la apotema, dar el perímetro donde
+   piden el área—, no números al azar: un distractor absurdo se descarta
+   sin pensar y no enseña nada.
+   ============================================================ */
+var SD_PEDIDOS = [
+  { cli:'Doña Marta, la de las pizzas', fig:'circulo', color:'#f97316',
+    txt:'Una pizza mide 30 cm de DIÁMETRO. ¿Cuánta superficie tiene? (π = 3.14)',
+    op:['706.5 cm²','2,826 cm²','94.2 cm','225 cm²'], ok:0,
+    dice:'r = 30 ÷ 2 = 15 cm. A = 3.14 · 15 · 15 = 706.5 cm². El 2,826 sale de usar el diámetro como radio.' },
+  { cli:'La alcaldía', fig:'octagono', color:'#facc15',
+    txt:'Una señal de ALTO es un octágono de 40 cm de lado y 48 cm de apotema. ¿Cuánta lámina lleva?',
+    op:['7,680 cm²','15,360 cm²','1,920 cm²','320 cm'], ok:0,
+    dice:'P = 8 · 40 = 320 cm. A = (320 · 48) ÷ 2 = 7,680 cm². El 15,360 es olvidar el ÷ 2.' },
+  { cli:'Don Chepe, el apicultor', fig:'hexagono', color:'#22d3ee',
+    txt:'Cada celda del panal es un hexágono de 6 mm de lado y 5.2 mm de apotema. ¿Cuánto mide su área?',
+    op:['93.6 mm²','187.2 mm²','31.2 mm²','36 mm'], ok:0,
+    dice:'P = 6 · 6 = 36 mm. A = (36 · 5.2) ÷ 2 = 93.6 mm². El 187.2 es olvidar el ÷ 2.' },
+  { cli:'El taller de bicicletas', fig:'rueda', color:'#a855f7',
+    txt:'Una rueda tiene 35 cm de radio. ¿Cuánto avanza la bicicleta en UNA vuelta completa? (π = 3.14)',
+    op:['219.8 cm','109.9 cm','3,846.5 cm','70 cm'], ok:0,
+    dice:'Una vuelta es la circunferencia: C = 2 · 3.14 · 35 = 219.8 cm. El 3,846.5 es el área, que aquí no se pide.' },
+  { cli:'La escuela', fig:'borde', color:'#22c55e',
+    txt:'Van a cercar con malla un jardín circular de 8 m de radio. ¿Cuánta malla se compra? (π = 3.14)',
+    op:['50.24 m','200.96 m','25.12 m','16 m'], ok:0,
+    dice:'La malla va por la orilla: C = 2 · 3.14 · 8 = 50.24 m. El 200.96 es el área (m²), no la malla.' },
+  { cli:'Doña Marta otra vez', fig:'sector', color:'#ec4899',
+    txt:'Corta una rebanada de 90° de una pizza de 20 cm de radio. ¿Cuánta pizza se lleva? (π = 3.14)',
+    op:['314 cm²','1,256 cm²','628 cm²','125.6 cm'], ok:0,
+    dice:'A = (3.14 · 20 · 20 · 90) ÷ 360 = 314 cm². Los 1,256 son la pizza entera: 90° es la cuarta parte.' }
+];
+var SD = { orden:[], ronda:0, ok:0, contestada:false };
+
+function sdRonda(){
+  SD.contestada = false;
+  var p = SD_PEDIDOS[SD.orden[SD.ronda]];
+  var mezcla = barajarDistinto(p.op.map(function(t,i){ return {t:t, ok:i === p.ok}; }));
+  $('#sd-cli').textContent = p.cli;
+  $('#sd-goal').textContent = p.txt;
+  $('#sd-pill').textContent = (SD.ronda+1) + ' / ' + SD_PEDIDOS.length;
+  $('#sd-svg').innerHTML = dibujo(p.fig, p.color);
+  $('#sd-opts').innerHTML = mezcla.map(function(o){
+    return '<button type="button" class="opt" data-ok="' + (o.ok ? '1' : '') + '">' + o.t + '</button>';
+  }).join('');
+  $('#sd-next').classList.add('is-hidden');
+  pista('#sd-hint', 'π = 3.14, el mismo de la misión y el de tu evaluación.');
+}
+ARRANQUE.sd = function(){
+  SD.orden = barajar(SD_PEDIDOS.map(function(_,i){ return i; }));
+  SD.ronda = 0; SD.ok = 0;
+  sdRonda();
+};
+SIGUIENTE.sd = function(){
+  SD.ronda++;
+  if(SD.ronda >= SD_PEDIDOS.length){ terminarEstacion('scene-pedidos', '#sd', SD.ok, SD_PEDIDOS.length); return; }
+  sdRonda();
+};
+$('#sd-opts').addEventListener('click', function(e){
+  var b = e.target.closest('.opt'); if(!b || SD.contestada) return;
+  SD.contestada = true;
+  var p = SD_PEDIDOS[SD.orden[SD.ronda]], caja = $('#scene-pedidos .board');
+  $$('.opt', $('#sd-opts')).forEach(function(o){
+    o.disabled = true;
+    if(o.dataset.ok) o.classList.add('good');
+  });
+  if(b.dataset.ok){
+    SD.ok++;
+    acierto(caja, 10);
+    pista('#sd-hint', '¡Entregado! ' + p.dice, 'good');
+    avisar('#sd-toast', '¡Pedido entregado!');
+  }else{
+    b.classList.add('bad');
+    fallo(caja);
+    pista('#sd-hint', p.dice, 'bad');
+  }
+  $('#sd-next').classList.remove('is-hidden');
+});
+
+/* ============================================================
+   ARRANQUE
+   ============================================================ */
+$('#btn-sound').addEventListener('click', function(){
+  est.sonido = !est.sonido;
+  $('#btn-sound').classList.toggle('on', est.sonido);
+  $('#btn-sound').firstElementChild.className = est.sonido ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+  guardar();
+  if(est.sonido) pitar(660, 90);
+});
+
+cargar();
+$('#btn-sound').classList.toggle('on', est.sonido);
+$('#btn-sound').firstElementChild.className = est.sonido ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+pintarHud();
+pintarTicks();
+ARRANQUE.s1(); ARRANQUE.sc(); ARRANQUE.sf(); ARRANQUE.sp(); ARRANQUE.sq(); ARRANQUE.sr(); ARRANQUE.sd();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+[
+ {
+  "lente": "U8",
+  "texto": "Calificar la Evaluación EN BLANCO da la estrella: js/estrella-ganada.js:209 llama `fin('s-evaluacion')` tras gradeEval sin mirar la nota; reproducido: genEval + gradeEval sin contestar → «Resultado automático: 0/100», `done`=['s-evaluacion'], chip .done. Es el mismo agujero de U8-01 en la sección que CLAUDE.md da por arreglada."
+ },
+ {
+  "lente": "U8",
+  "texto": "El WhatsApp de la Constancia miente dos veces: `shareWA` (sistema-digestivo.js:696) manda «🔬 ¡Estudiante completó la Misión \"El Sistema Digestivo\"! 🏅 Progreso: 3 %» — dice «completó» con 3 % y «Estudiante» aunque METAS_ALUMNO_V1 tenga el nombre (`diplName` no lo lee; medido)."
+ },
+ {
+  "lente": "U8",
+  "texto": "La pista de la sopa habla de ratón en el teléfono: «🖱️ Arrastra o haz clic en la primera letra, luego en la última» en 65 misiones (`grep -l` sobre misiones/*/*.html), cuando la sonda de teclado y el uso real son con el dedo."
+ },
+ {
+  "lente": "U8",
+  "texto": "El chip de grado «Todos» queda fuera del ancho sin ninguna pista: `.grado-chips` esconde la barra de desplazamiento (app.css:5429) y no lleva las sombras de extremo que CLAUDE.md exige para la barra de secciones («hay que decir que se desliza»); borde derecho medido a 439 px en un viewport de 393."
+ },
+ {
+  "lente": "U5",
+  "texto": "Calificar la evaluación EN BLANCO da la estrella de Evaluación: con un toque real a 360×640, «Resultado: 0/100» deja [data-s=s-evaluacion].done = true, porque js/estrella-ganada.js (bloque gradeEval, ≈línea 207) llama `fin('s-evaluacion')` sin mirar la nota; y el evento evaluacion:0 entra igual al registro y a la nube.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U5",
+  "texto": "El informe de 📈 Estadísticas (el que se imprime y firma la familia) NO aplica la regla de la pauta: js/tools/estadisticas-alumno.js:352-366 toma `mejor` de todas las `evaluacion`/`prueba_operativa` sin cruzar con `pauta_vista`, mientras Rutas (app.js:746-782), la boleta (plan-accion.js:1330-1340) y registro.html sí lo hacen; una nota copiada aún puede acabar firmada.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U5",
+  "texto": "«Reiniciar XP» no guarda: resetXP (multiplos-divisores-primos.js:100 y 72 misiones más) pone xp=0 sin saveProgress; medido: pantalla ⭐0 y localStorage con xp:28, y al siguiente pts() se guarda desde 0. Un botón destructivo cuyo efecto depende de lo que el niño toque después.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U5",
+  "texto": "El catálogo local de videos está vacío en las 20 misiones (js/data/videos-misiones.js:145-164, todas `[]`), así que la capa «funciona sin nube» que promete la normativa de videos hoy no aporta ni un video: en el aula sin señal la pestaña 🎬 está vacía siempre.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U5",
+  "texto": "El letrero decorativo `.hero::before` se pinta DETRÁS del título en 393 px y lo ensucia («LO · DIVISOR · NÚMERO PRIMO…» cruzando «Múltiplos, Divisores y Primos», captura revision/U5/02-carga.png): ya no dice cosas de otra misión, pero sigue compitiendo con lo único que hay que leer en la cabecera.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U6",
+  "texto": "Calificar EN BLANCO da la estrella de Evaluación: js/estrella-ganada.js:209 llama fin('s-evaluacion') sin mirar la nota; medido hoy en Fracciones: «Resultado automático: 0/100» → done=['s-evaluacion'] (salida.json, constancia.doneAhora).",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U6",
+  "texto": "El freno a copiar la pauta no lo ve nadie: el aviso «👁 Esto cuenta como práctica, no como nota» (js/metas-registro.js:206-217) se añade al panel #evalAutoResult, que tras calificar queda 5 003 px (Fracciones) / 5 171 px (Fin de Grado) por debajo de la pantalla; la alumna sigue leyendo solo el toast «100/100».",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U6",
+  "texto": "Reiniciar XP es ahora irreversible: resetXP (fracciones.js:67) pone xp=0 pero no toca xpTracker ni la llave _pagado de estrella-ganada.js (:151,:199-205), así que las tarjetas ya pagadas no vuelven a pagar y gradeEval dice «ya lo ganaste»; el XP de la Constancia no se puede volver a ganar.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U6",
+  "texto": "La barra de secciones pegajosa, que resolvió U6-03, roba 66 px permanentes en apaisado (17 % de 393 px) sin regla de altura corta en css/barra-secciones.css: el arreglo de un hallazgo agrava otro (U6-12) en la orientación que se usa para los juegos 3D y los videos.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U6",
+  "texto": "Las otras 62 misiones siguen perdiendo el examen al recargar o al tocar «Nueva Evaluación»: fracciones.js:43 saveProgress guarda doneSections, unlockedAch, evalFormNum, evalOpFormNum y xp, nunca las respuestas; genEval() sigue enganchado directo al botón (fracciones.html:507) sin preguntar. 5-top-20.md:1000-1005 lo reconoce y lo deja fuera.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U7",
+  "texto": "Al alumno que vuelve, la tarjeta «Tu siguiente paso» empuja los cuatro botones de la portada fuera de la primera pantalla: medido en 360×640 con una misión visitada, primer botón en y=681 (>640); con almacén limpio está en 408. index.html:65-66 (#home-paso) + la tarjeta de valor nueva (#17) suman la diferencia.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U7",
+  "texto": "En las 5 misiones con `draggable` (decimales, division-decimales, valor-posicional, potencias-raices, teoria-numeros) el «Clasifica» no se puede hacer ni con el dedo ni con teclado: js/teclado-actividades.js no marca los .wb-item (conTabindex 0) y Enter no coloca; verifica-teclado.js abre una sola misión y por eso no lo caza.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U7",
+  "texto": "La barra pegajosa nueva se apila bajo la cabecera de la misión en horizontal: en 640×360 el contenido de Ángulos arranca en y=273 (76 % de la pantalla); css/barra-secciones.css no tiene regla para poca altura.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U7",
+  "texto": "El reto sigue restando XP con `pts(-1)` en la primera partida (angulos.js:353) mientras el quiz da +5 por acierto: dos toques impacientes en el reto anulan un acierto del quiz, y la cifra sale en la Constancia (openDiploma) que se puede abrir y mandar por WhatsApp con 0 %.",
+  "origen": "revision-2026-09-09"
+ },
+ {
+  "lente": "U7",
+  "texto": "La preferencia de letra del alumno no se guarda en ningún sitio (metas-presentacion.js:66-75 solo hace toggle en memoria): quien quita la letra grande la vuelve a tener en cada misión, a diferencia del Aa de los juegos 3D (j3d_letra_v1) y del maestro (letra-maestro.js).",
+  "origen": "revision-2026-09-09"
+ }
+]

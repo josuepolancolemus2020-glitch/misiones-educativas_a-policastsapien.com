@@ -44,8 +44,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-let abrir;
-try { ({ abrir } = require('./lib-navegador')); }
+let abrir, SIN_SW;
+try { ({ abrir, SIN_SW } = require('./lib-navegador')); }
 catch (_) {
   console.error('✘ Falta Playwright. Instálalo con:\n' +
     '    npm i -D playwright && npx playwright install chromium');
@@ -104,7 +104,7 @@ function convocatoria(resp) {
 }
 
 async function mide(browser, cuantos) {
-  const page = await browser.newPage();
+  const page = await browser.newPage(SIN_SW);
   const errores = [];
   page.on('pageerror', e => errores.push(e.message));
   await page.route('**/rest/v1/rpc/**', route => route.abort('failed'));   /* la nube no se toca */
@@ -130,7 +130,7 @@ async function mide(browser, cuantos) {
   fs.writeFileSync(archivo, salida.h);
   const pdf = path.join(TMP, 'boletos-' + cuantos + '.pdf');
 
-  const hoja = await browser.newPage({ viewport: { width: ANCHO, height: ALTO } });
+  const hoja = await browser.newPage({ ...SIN_SW, viewport: { width: ANCHO, height: ALTO } });
   await hoja.emulateMedia({ media: 'print' });
   await hoja.goto('file://' + archivo);
   const datos = await hoja.evaluate(() => ({
@@ -183,7 +183,7 @@ async function mide(browser, cuantos) {
    a mano, y un folio corrido que salga en las DOS mitades sin repetirse
    nunca ni chocar con uno de la nube. */
 async function mideBlancos(browser, cuantos, desde) {
-  const page = await browser.newPage();
+  const page = await browser.newPage(SIN_SW);
   const errores = [];
   page.on('pageerror', e => errores.push(e.message));
   await page.route('**/rest/v1/rpc/**', route => route.abort('failed'));   /* la nube no se toca */
@@ -211,7 +211,7 @@ async function mideBlancos(browser, cuantos, desde) {
   fs.writeFileSync(archivo, salida.h);
   const pdf = path.join(TMP, 'blancos-' + cuantos + '.pdf');
 
-  const hoja = await browser.newPage({ viewport: { width: ANCHO, height: ALTO } });
+  const hoja = await browser.newPage({ ...SIN_SW, viewport: { width: ANCHO, height: ALTO } });
   await hoja.emulateMedia({ media: 'print' });
   await hoja.goto('file://' + archivo);
   const datos = await hoja.evaluate(() => ({

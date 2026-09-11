@@ -1,0 +1,51 @@
+[
+ {
+  "id": "U10-11",
+  "titulo": "El estado de la nube miente sin señal: «☁️ al día» con todas las peticiones fallando y «Aviso publicado» cuando nada salió",
+  "descripcion": "El chip solo cuenta pendientes locales, así que con la nube inalcanzable dice «al día»; cambia a «⏳ 43 por subir» solo cuando el maestro edita algo. El maestro del aula sin señal cree que la madre ya puede ver las notas y que el aviso llegó.",
+  "evidencia": "js/tools/registros-admin.js:617-620 (chip: n ? «⏳ n por subir» : «☁️ al día», sin mirar si hubo respuesta). Recorrido p4/p6.js con supabase.co abortado: captura 05b-mi-aula-vacia-entera.png («☁️ al día»), luego «CHIP NUBE: ⏳ 43 por subir» tras editar; toast «Aviso publicado: llega al asistente en unos segundos».",
+  "severidad": "media",
+  "tipo": "error",
+  "impacto_educativo": 1,
+  "impacto_comercial": 3,
+  "esfuerzo": "horas",
+  "recomendacion": "Tres estados honestos: «☁️ al día (hace 5 min)», «⏳ N por subir», «📴 sin señal: se sube solo». Que el toast de publicar dependa de la respuesta real y sin señal diga «guardado; saldrá cuando haya internet».",
+  "archivos": [
+   "js/tools/registros-admin.js"
+  ],
+  "area": "ux-b",
+  "lente": "U10",
+  "verificado": false,
+  "revision": "",
+  "refutado": true,
+  "correccion": "",
+  "motivo_refutacion": "El chip no miente: cuenta lo pendiente (adPendientesTotal, 5758-5770). En la captura 05b-mi-aula-vacia el aula está VACÍA: no hay nada que subir y «al día» es cierto; tras editar pasa a «⏳ 43 por subir», también cierto. Y el estado de red que el hallazgo pide ya existe en la misma pantalla: #ad-sb-status (758) dice «📴 N cambio(s) esperando internet.» sin señal (5791-5792) y «⚠️ No se pudo subir ahora; se reintenta solo.» cuando el fetch falla (5846); en Comunicados, #av-sb-status (6041). La mitad del «Aviso publicado» es el mismo toast de U10-05 (duplicado, y allí está mejor situado). Lo que queda es que el chip no distingue «al día» de «sin señal», sin consecuencia: el dato pendiente se anuncia igual.",
+  "confianza_refutacion": 70,
+  "commit_auditado": "d940fe0"
+ },
+ {
+  "id": "U12-11",
+  "titulo": "Cualquiera se registra como docente de la escuela del director y nadie puede quitarlo ni verificarlo; y el emparejamiento de escuela es distinto según qué RPC conteste",
+  "descripcion": "El alta no verifica nada: nombre, correo y una escuela escrita a mano. Quien escriba «Escuela John Arnold Cook · El Progreso» aparece en la lista de la directora, que no tiene botón de «no es de mi escuela», y el admin no tiene «borrar cuenta». Además, la lista de respaldo `metas_rol_listar` (la que se usa cuando `metas_rol_grupos` da 404) empareja SOLO por nombre de escuela, sin municipio, así que dos escuelas homónimas de pueblos distintos se mezclan justo en el camino que la normativa 1-ter dice haber cerrado.",
+  "evidencia": "Diario S0-4b (alta sin verificación, `metas_docente_alta_v2` en js/app.js:1938); a1-02-admin-registros.png y A1-2d «borrar cuenta=false»; SUPABASE-ROLES-V2.sql:203 (`where metas_norm(d.escuela) = metas_norm(yo.escuela)`, sin municipio) frente a :132-141 (`_metas_misma_escuela` con municipio) y :749-751; js/app.js:2530-2550 (caída a `metas_rol_listar` ante 'no_rpc').",
+  "severidad": "media",
+  "tipo": "riesgo",
+  "impacto_educativo": 1,
+  "impacto_comercial": 4,
+  "esfuerzo": "dias",
+  "recomendacion": "Usar `_metas_misma_escuela` también en `metas_rol_listar`; dar al director «✅ Es de mi escuela / ✖ No lo conozco» (estado en `docente_permisos` o una tabla `escuela_miembros`) y que la lista muestre solo los aceptados; botón de borrar cuenta para el admin.",
+  "archivos": [
+   "SUPABASE-ROLES-V2.sql",
+   "js/app.js"
+  ],
+  "area": "ux-b",
+  "lente": "U12",
+  "verificado": false,
+  "revision": "",
+  "refutado": true,
+  "correccion": "",
+  "motivo_refutacion": "Duplicado sin consecuencia propia. (1) «Cualquiera se registra como docente de la escuela y nadie puede quitarlo» es exactamente lo que resuelven la aceptación de pendientes de U12-03 y el «borrar cuenta» de U12-05; el intruso no gana nada (no ve a nadie: solo el admin promueve, SQL:224-268) y el único daño es ruido en la lista. (2) El emparejamiento sin municipio de `metas_rol_listar` (SQL:203) solo se ejecuta cuando `metas_rol_grupos` da 404 (app.js:2523-2534), es decir, cuando ROLES-V2 NO está instalado, y en ese caso tampoco existe `_metas_misma_escuela` de cuatro argumentos ni `metas_rol_alumnos`: por ese camino salen nombres y escuela de docentes, nunca listas de niños. Las listas de alumnos y las convocatorias siempre pasan por el emparejamiento con municipio (SQL:805, 891, 952), así que «justo en el camino que la normativa 1-ter dice haber cerrado» no es cierto.",
+  "confianza_refutacion": 65,
+  "commit_auditado": "d940fe0"
+ }
+]
