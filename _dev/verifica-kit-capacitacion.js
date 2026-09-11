@@ -77,9 +77,22 @@ function catalogo() {
   const dice = (n, que) => new RegExp('\\b' + n + '\\b[^<]{0,40}' + que, 'i').test(sinTildes(texto))
     || new RegExp(que + '[^<]{0,60}\\b' + n + '\\b', 'i').test(sinTildes(texto));
 
+  /* ⚠️ El mensaje tiene que leerse distinto en rojo que en verde. La primera
+     versión decía «dice que hay 69 misiones, que son las que hay» y ESO ES LO
+     QUE IMPRIMÍA AL FALLAR: se leía como un ✅ con una cruz delante. Ahora la
+     línea roja enseña la cifra que el Kit trae escrita, que es el dato con el
+     que se arregla. */
+  const cifraDe = (que) => {
+    const m = new RegExp('\\b(\\d+)\\b[^<]{0,40}' + que, 'i').exec(sinTildes(texto))
+      || new RegExp(que + '[^<]{0,60}\\b(\\d+)\\b', 'i').exec(sinTildes(texto))
+      || /\bson (\d+) y siguen\b/.exec(sinTildes(texto));
+    return m ? parseInt(m[1], 10) : null;
+  };
   ok(dice(misiones, 'misiones') || sinTildes(texto).includes('son ' + misiones + ' y siguen'),
-    'dice que hay ' + misiones + ' misiones, que son las que hay');
-  ok(dice(rutas, 'rutas'), 'dice que hay ' + rutas + ' rutas, que son las que hay');
+    'la cifra de misiones es la del catálogo (' + misiones + ')',
+    { elKitDice: cifraDe('misiones'), hay: misiones });
+  ok(dice(rutas, 'rutas'), 'la cifra de rutas es la del catálogo (' + rutas + ')',
+    { elKitDice: cifraDe('rutas'), hay: rutas });
 
   /* Que no se le haya quedado dentro la cifra vieja de otra tanda. */
   const otras = (sinTildes(texto).match(/\b(\d+) misiones\b/g) || [])

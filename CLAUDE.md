@@ -157,6 +157,16 @@ por Fira Code —que también es monoespaciada y ya estaba—: la letra la eligi
 quien hizo el juego. La sonda es la que lo caza, y de paso cazó `mision.html`,
 que llevaba desde siempre bajándose Font Awesome entero por su flecha.
 
+⚠️ **Y volvió a pasar el 11 de septiembre de 2026, con las dos misiones
+siguientes de la Ruta de la Patria** —el Himno (68) y los próceres (69)—: las
+dos se calcaron de una plantilla ANTERIOR al arreglo, así que traían otra vez
+los tres `preconnect`, el `<link>` de Google Fonts con Fredoka, Nunito y Fira
+Code, y Font Awesome entero por la flecha de volver. La 68 estuvo así
+publicada. La lección no es «acordarse»: es que **al copiar una misión se copia
+también lo que ya se arregló**, y lo único que lo caza es correr
+`verifica-cdn-fuera` ANTES de publicar —la plantilla de la que se copia no se
+actualiza sola—.
+
 ⚠️ **Y en `sw.js` había una mentira que nadie podía ver:** pre-cacheaba la
 **CSS** de Google Fonts y nunca los `.woff2` de `fonts.gstatic.com`, así que
 sin señal la letra no llegaba igual. Al armazón se le suma solo **Outfit**,
