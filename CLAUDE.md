@@ -683,6 +683,63 @@ de errores **alta**: la ficha se doblará y se fotocopiará. Y el PNG se
 escribe de 1 bit a 300×300 —pesa 1 KB en vez de 10— porque quien lo abre
 lo baja con los datos de su teléfono.
 
+### El QR se comprueba MIRÁNDOLO, y el lector de la sonda miente
+
+El 11 de septiembre de 2026 se pasó la revisión por los 68 QR del proyecto y
+salieron **cuatro averías distintas**, todas invisibles hasta entonces:
+
+| lo que se encontró | cuántos |
+|---|---|
+| fichas que piden un QR que **no existe** (hueco roto en el papel) | **14** |
+| QR **ilegibles** publicados | **3** |
+| QR con un **marco negro** que se comía la zona de silencio | **23** |
+| misiones acusadas de tener el QR de otra, **sin tenerlo** | **1** |
+
+Y ninguna se veía, porque **la revisión vieja deducía el nombre del archivo**
+de la carpeta de la misión. Eso falla en los dos sentidos: `2y3ciclo-adjetivos`
+y `bach-uni-adjetivos` dan **el mismo nombre**, así que acusaba a un archivo
+perfectamente correcto; y tres fichas llevan años con un QR cuyo nombre no se
+parece al de su carpeta, así que **ni los abría**.
+
+**Ahora el hilo va al revés y no adivina:** misión → **su ficha** → el `<img>`
+del QR. Las 68 misiones enlazan a su ficha desde Recursos, así que el hilo no
+se rompe, y de paso el archivo se escribe donde la ficha lo está pidiendo —no
+en un nombre por convenio que luego no mira nadie—.
+
+⚠️ **Y el decodificador de OpenCV NO basta para dar un QR por bueno.** Con la
+corrección de errores **alta** que pide esta misma normativa —la ficha se dobla
+y se fotocopia—, las direcciones de este sitio dan códigos de **versión 9**, y
+ese lector falla en unos cuantos por muy bien escritos que estén. Los QR viejos
+que sí leía estaban hechos con **menos corrección**, que es justo lo que no se
+quiere. Bajar la corrección para que la sonda pasara habría sido **cambiar el
+producto para aprobar el examen**.
+
+Se comprueba por dos caminos y hacen falta los dos: se **lee** con OpenCV —que
+es lo más parecido a lo que hará el teléfono de la familia—, y cuando no puede,
+se compara el dibujo **módulo a módulo** contra el QR que le toca a esa
+dirección. Lo segundo demuestra más que lo primero: que el archivo es
+exactamente ese código.
+
+⚠️ **El margen del PNG va en BLANCO.** Iba en negro, y eso dejaba una raya de
+lado a lado en las dos columnas de los extremos: se comía la **zona de
+silencio**, el blanco que un lector necesita alrededor para encontrar el
+código. Con esa raya, cuatro QR no se dejaban leer y el resto quedaba al filo
+—y el papel se fotocopia y se dobla, así que la tolerancia que sobra es la que
+salva el QR arrugado—. La zona de silencio es ahora de **4 módulos**, la de la
+norma; iba en 2.
+
+⚠️ **Y la dirección se escapa.** Hay una misión cuyo archivo lleva espacios y
+una tilde (`angulos-bisectriz_II y III-Ciclo_Básica.html`): dentro del QR eso
+va con sus `%20` y su `%C3%A1`. Su QR ya estaba bien escrito; era la
+herramienta la que lo comparaba contra la ruta cruda y lo daba por ajeno.
+
+**Lo que esto NO alcanza:** los QR **no van precacheados** en el armazón, así
+que entran en `CACHE_DATOS` la primera vez que alguien abre esa ficha en línea,
+y esa caché no se sella nunca —a propósito—. El maestro que ya tenía una ficha
+guardada en el teléfono **se queda con el QR viejo**. A quien la abra desde hoy
+le llega el bueno. No se sube `CACHE_DATOS` por esto: borrarle al alumno las
+misiones que guardó cuesta más que un QR viejo en un teléfono.
+
 **Antes de publicar una ficha, se cuentan sus hojas:**
 
 ```
