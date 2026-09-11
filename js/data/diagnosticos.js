@@ -89,6 +89,10 @@ const DIAGNOSTICOS = {
     { etapa: 2, q: 'En los actos cívicos de la escuela, ¿qué parte del Himno se canta junto con el coro?', o: ['La primera estrofa', 'La cuarta estrofa', 'La séptima estrofa', 'Todas las estrofas'], a: 2 },
     { etapa: 2, q: '¿Qué hace el coro del Himno Nacional?', o: ['Cuenta la llegada de Cristóbal Colón', 'Describe la Bandera y el Escudo', 'Cuenta la muerte de Lempira', 'Promete defender la patria'], a: 1 },
     { etapa: 2, q: 'En la tercera estrofa, ¿quién cae «envuelto en su sangre»?', o: ['Francisco Morazán', 'Cristóbal Colón', 'José Cecilio del Valle', 'Lempira'], a: 3 },
+    { etapa: 3, q: '¿Cuál es la diferencia entre un héroe y un prócer?', o: ['El héroe defiende a su pueblo; el prócer ayuda a fundar la nación', 'El héroe es militar y el prócer es civil', 'No hay ninguna diferencia', 'El prócer es más antiguo'], a: 0 },
+    { etapa: 3, q: '¿Quién redactó el Acta de Independencia de Centroamérica?', o: ['Francisco Morazán', 'Lempira', 'José Cecilio del Valle', 'Marco Aurelio Soto'], a: 2 },
+    { etapa: 3, q: '¿Quién fue el primer Jefe de Estado de Honduras, en 1824?', o: ['José Trinidad Cabañas', 'Ramón Rosa', 'José Trinidad Reyes', 'Dionisio de Herrera'], a: 3 },
+    { etapa: 3, q: '¿Por qué el Día del Maestro Hondureño es el 17 de septiembre?', o: ['Por la Independencia de Centroamérica', 'Por el natalicio de José Trinidad Reyes, que fundó la primera universidad', 'Por el Código de Instrucción Pública', 'Por el natalicio de Francisco Morazán'], a: 1 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Héroes y Próceres de Honduras</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: EDUCACIÓN CÍVICA = VERDE DEL PINO (#3f6212)
+     · Colores semánticos: azul=héroe, dorado=prócer, gris=las fechas
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #3f6212; --soc-osc: #365314; --soc-claro: #f5f9e8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #dbe7c4;
+    --may: #0d6ea8; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f2f6ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fbf1; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; text-align: center; background: #fcfdf8; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (mayas / aztecas / incas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #dceefa; } .celula .cm b { color: var(--may); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 6px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #dceefa; border: 1px solid #a9d3ee; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--may); } .tri .torg b { color: var(--oro); }
+
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--soc-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f7fbef; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(63,98,18,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ═══ LA FICHA DE CADA PRÓCER ═══
+     Cada uno en su recuadro y con su etiqueta de HÉROE o PRÓCER al lado del
+     nombre: es la distinción que se pregunta en el examen, y verla pegada al
+     nombre la enseña sin gastar un párrafo. */
+  .pficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--soc); border-radius: 8px;
+            padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .pf-tit { font-size: 11.5pt; font-weight: 800; color: var(--soc-osc); display: flex; align-items: baseline;
+            gap: 8px; flex-wrap: wrap; }
+  .pf-et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+           border-radius: 999px; padding: 1px 7px; }
+  .pf-h { background: #dceefa; color: var(--may); }
+  .pf-p { background: #ffedd5; color: var(--oro); }
+  .pf-sub { font-size: 9pt; color: var(--gris); font-style: italic; margin-bottom: 3px; }
+  .pficha ul { margin: 3px 0 4px 22px; font-size: 10pt; }
+  .pficha li { margin-bottom: 1px; }
+  .pf-porque { font-size: 10pt; margin: 3px 0; }
+  .pf-dato { font-size: 9.5pt; color: var(--gris); }
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fcfdf8; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--soc-osc); }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Héroes y Próceres de Honduras</div>
+        <div class="f-meta"><b>Asignatura:</b> Educación Cívica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> Los héroes y próceres que nombra el currículo: quién fue cada uno, qué hizo y por qué se le recuerda</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-proceres-heroes.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Distinguir un <strong>héroe</strong> de un <strong>prócer</strong> y explicar la diferencia.</li>
+      <li>Identificar a los <strong>ocho personajes</strong> que el currículo nombra por su nombre.</li>
+      <li>Decir <strong>qué hizo</strong> cada uno, no solo cómo se llama.</li>
+      <li>Explicar <strong>por qué se le recuerda</strong> y qué cambió para el país.</li>
+      <li>Ubicar a cada uno en su <strong>época</strong>: la conquista, la Independencia o la Reforma Liberal.</li>
+      <li>Reconocer la contribución de <strong>quienes no salen en las listas</strong>.</li>
+    </ol>
+
+    <h2>⚖️ 1. Héroe y prócer no son lo mismo</h2>
+
+    <p>Honduras no la hizo una sola persona, y los que la hicieron no hicieron todos lo mismo. Hay dos palabras
+    para eso, y en el examen se pregunta la diferencia:</p>
+
+    <div class="tri">
+      <div class="tnuc"><b>🏹 Héroe</b>Un HÉROE defiende a su pueblo. Arriesga la vida por la gente que ya está aquí.</div>
+      <div class="torg"><b>📜 Prócer</b>Un PRÓCER ayuda a fundar la nación. Construye lo que todavía no existe: leyes, escuelas, un Estado.</div>
+    </div>
+
+    <div class="caja truco">💡 <b>Y a veces son las dos cosas.</b> A <strong>Francisco Morazán</strong> se le llama
+    héroe y prócer, y las dos están bien: construyó como prócer y peleó hasta morir como héroe. Si te piden elegir
+    una sola, explica por qué las dos caben.</div>
+
+    <h2>🕰️ 2. Cada uno en su época</h2>
+
+    <p>Lo que más se confunde no son los nombres: son los <strong>siglos</strong>. Entre Lempira y Morazán hay
+    <strong>tres siglos</strong>; no se conocieron ni de lejos.</p>
+
+    <div class="linea-t">
+      <div><b>Hacia 1537 · La conquista</b>Lempira resiste desde el Peñol de Cerquín.</div>
+      <div><b>1821-1842 · La Independencia</b>Valle escribe el Acta; Herrera gobierna el primer Estado; Morazán preside la Federación; Cabañas y Reyes trabajan en esos años.</div>
+      <div><b>Desde 1876 · La Reforma Liberal</b>Soto en la presidencia y Rosa de ministro rehacen la educación y las leyes.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>👥 3. Los ocho, uno por uno</h2>
+
+    <p>De cada uno se pregunta lo mismo: <strong>quién fue</strong>, <strong>qué hizo</strong> y <strong>por qué se
+    le recuerda</strong>. Lo tercero es lo que más vale y lo que menos se estudia.</p>
+
+    <div class="pficha">
+      <div class="pf-tit">🏹 Lempira <span class="pf-et pf-h">héroe</span></div>
+      <div class="pf-sub">«Héroe Nacional» · La conquista, hacia 1537</div>
+      <p class="pf-porque"><b>Cacique lenca que dirigió la resistencia contra la conquista española</b></p>
+      <ul><li>Unió a los pueblos lencas para defender su tierra de los conquistadores.</li><li>Resistió desde el Peñol de Cerquín, un cerro que le servía de fortaleza.</li><li>Murió peleando, hacia 1537, y nunca se supo dónde quedó enterrado.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> Es el Héroe Nacional porque defendió a su pueblo cuando nadie más podía hacerlo. No fundó un país ni firmó un papel: peleó por la gente que ya vivía aquí, y por eso su nombre está en la moneda y en un departamento entero.</p>
+      <p class="pf-dato">📅 <b>20 de julio:</b> Día de Lempira</p>
+      <p class="pf-dato">💡 Es el único hondureño que se nombra en el Himno Nacional, en la tercera estrofa.</p>
+    </div>
+
+    <div class="pficha">
+      <div class="pf-tit">📜 José Cecilio del Valle <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«el Sabio Valle» · La Independencia, 1821 · Nació el 22 de noviembre de 1777</div>
+      <p class="pf-porque"><b>Pensador y político que redactó el Acta de Independencia de Centroamérica</b></p>
+      <ul><li>Escribió el Acta de Independencia que se firmó el 15 de septiembre de 1821.</li><li>Fue de los hombres más leídos de su tiempo: por eso le decían «el Sabio».</li><li>Defendió que la Independencia se hiciera con leyes y no con sangre.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> La Independencia de Centroamérica no se ganó en una batalla: se escribió. Y el que la escribió fue él. Sin ese documento, el 15 de septiembre no tendría nada que celebrar.</p>
+      
+      <p class="pf-dato">💡 Su firma está en el papel que separó a cinco países de España, el mismo día y de una sola vez.</p>
+    </div>
+
+    <div class="pficha">
+      <div class="pf-tit">⚔️ Francisco Morazán <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«Paladín de la Unión Centroamericana» · La República Federal, 1824-1842 · Nació en Tegucigalpa el 3 de octubre de 1792</div>
+      <p class="pf-porque"><b>Presidente de la República Federal de Centro América</b></p>
+      <ul><li>Gobernó la Federación que unía a Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica.</li><li>Impulsó la educación pública y quitarle privilegios a unos pocos.</li><li>Peleó hasta el final por mantener unidas a las cinco naciones. No lo consiguió.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> Es el hondureño más conocido fuera de Honduras, y no por ganar: por no rendirse. Su idea —que Centroamérica valía más junta que repartida— sigue discutiéndose hoy.</p>
+      <p class="pf-dato">📅 <b>3 de octubre:</b> Natalicio de Francisco Morazán</p><p class="pf-dato">⚖️ También se le llama héroe, y con razón: peleó por su idea hasta morir. Las dos formas son correctas.</p>
+      <p class="pf-dato">💡 Nació un 3 de octubre y murió un 15 de septiembre, el día de la Independencia, en 1842.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="pficha">
+      <div class="pf-tit">🏛️ Dionisio de Herrera <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«el primer Jefe de Estado» · El nacimiento del Estado, 1824 · Nació en Choluteca el 9 de octubre de 1781</div>
+      <p class="pf-porque"><b>Primer Jefe de Estado de Honduras, en 1824</b></p>
+      <ul><li>Fue el primero en gobernar Honduras como Estado, después de la Independencia.</li><li>Bajo su gobierno se creó el Escudo Nacional, en 1825.</li><li>Organizó lo que no existía: las primeras leyes y las primeras cuentas del país.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> Alguien tuvo que gobernar el primer día, cuando no había nada hecho. Le tocó a él, y de ahí salen el Escudo que hoy va en los documentos y las primeras leyes del país.</p>
+      
+      <p class="pf-dato">💡 El Escudo Nacional, que es el símbolo patrio más antiguo, nació durante su gobierno.</p>
+    </div>
+
+    <div class="pficha">
+      <div class="pf-tit">🎖️ José Trinidad Cabañas <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«el caballero sin tacha y sin miedo» · Mediados del siglo XIX · Nació en Tegucigalpa el 9 de junio de 1805</div>
+      <p class="pf-porque"><b>Militar y presidente de Honduras, famoso por su honradez</b></p>
+      <ul><li>Fue presidente de Honduras y peleó al lado de Morazán por la unión centroamericana.</li><li>Salió del gobierno tan pobre como entró: no se quedó con nada.</li><li>Por eso se le quedó el nombre de «el caballero sin tacha y sin miedo».</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> Se le recuerda por algo que no se ve en un monumento: fue honrado. En un cargo donde era fácil enriquecerse, no lo hizo, y ese es el ejemplo que el país le guardó.</p>
+      
+      <p class="pf-dato">💡 Su apodo tiene dos mitades y las dos importan: «sin tacha» es que no robó; «sin miedo», que no se echó atrás.</p>
+    </div>
+
+    <div class="pficha">
+      <div class="pf-tit">📚 José Trinidad Reyes <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«el Padre Reyes» · Mediados del siglo XIX</div>
+      <p class="pf-porque"><b>Sacerdote que fundó la primera universidad del país</b></p>
+      <ul><li>Fundó la primera universidad de Honduras, de donde salió la UNAH.</li><li>Enseñó, escribió y abrió las puertas del estudio a quien no las tenía.</li><li>Fue sacerdote, músico y poeta además de maestro.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> Casi todos los próceres hicieron país con leyes o con armas. Él lo hizo con una escuela, y esa escuela sigue abierta: es la razón de que el Día del Maestro Hondureño sea el día de su nacimiento.</p>
+      <p class="pf-dato">📅 <b>17 de septiembre:</b> Día del Maestro Hondureño</p>
+      <p class="pf-dato">💡 El 17 de septiembre, Día del Maestro Hondureño, se celebra por él.</p>
+    </div>
+
+    <div class="pficha">
+      <div class="pf-tit">🏗️ Marco Aurelio Soto <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«el presidente de la Reforma» · La Reforma Liberal, desde 1876</div>
+      <p class="pf-porque"><b>Presidente que impulsó la Reforma Liberal</b></p>
+      <ul><li>Encabezó la Reforma Liberal, que cambió cómo se gobernaba el país.</li><li>Puso a Ramón Rosa de ministro, y juntos rehicieron la educación y las leyes.</li><li>Modernizó el Estado: correos, telégrafo y las primeras escuelas públicas de verdad.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> La escuela pública y gratuita a la que va hoy el alumno hondureño empieza a construirse en su gobierno. No es historia lejana: es el edificio donde está sentado.</p>
+      
+      <p class="pf-dato">💡 El DCNB lo nombra por su nombre entre los personajes que el alumno tiene que conocer.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="pficha">
+      <div class="pf-tit">✒️ Ramón Rosa <span class="pf-et pf-p">prócer</span></div>
+      <div class="pf-sub">«el ministro de la Reforma» · La Reforma Liberal, desde 1876</div>
+      <p class="pf-porque"><b>Ministro de Marco Aurelio Soto y pensador de la Reforma</b></p>
+      <ul><li>Impulsó el Código de Instrucción Pública de 1882.</li><li>Fue el que puso por escrito las ideas de la Reforma Liberal.</li><li>Trabajó para que la educación fuera obligación del Estado y no favor de nadie.</li></ul>
+      <p class="pf-porque"><b>Por qué se le recuerda:</b> Fue el que escribió la ley que hizo de la educación un deber del Estado. Que hoy un niño de un pueblo tenga derecho a una escuela viene, en parte, de ese papel.</p>
+      
+      <p class="pf-dato">💡 Soto ponía el gobierno y Rosa las ideas: se les estudia juntos porque trabajaron juntos.</p>
+    </div>
+
+    <h2>🕯️ 4. Los que hicieron el país y casi nunca salen en la lista</h2>
+
+    <p>Las estatuas son de ocho o diez hombres, pero el país no lo levantaron ocho o diez personas. Los pueblos indígenas y lencas defendieron su tierra mucho después de Lempira. Los garífunas llegaron a la costa en 1797 y levantaron pueblos enteros. Y las mujeres sostuvieron las casas, las escuelas y los hospitales de cada época sin que su nombre quedara escrito casi en ningún lado.</p>
+
+    <div class="caja idea">✍️ <b>Para investigar:</b> ¿Quién de tu municipio merecería una estatua y no la tiene? Pregúntale a una persona mayor de tu comunidad y escribe su historia.</div>
+
+    <div class="caja regla">📚 Es una expectativa del DCNB: «Explican la contribución y el costo pagado por las mujeres, los indígenas y los afrocaribeños en la historia del país».</div>
+
+    <h2>📝 Actividades de Evaluación</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Resuelve con lápiz. Cada sección vale 25 puntos; la prueba
+    completa, 100 puntos.</p>
+
+    <h3>I. Completa el espacio <span class="val">(Valor: 2.5 puntos c/u)</span></h3>
+
+    <ol>
+      <li>El Héroe Nacional de Honduras es <span class="linea-resp"></span>.</li>
+      <li>Un <span class="linea-resp"></span> defiende a su pueblo; un prócer ayuda a fundar la nación.</li>
+      <li>El Acta de Independencia la redactó José Cecilio del <span class="linea-resp"></span>.</li>
+      <li>Francisco Morazán nació el 3 de octubre de <span class="linea-resp"></span>.</li>
+      <li>El primer Jefe de Estado de Honduras fue Dionisio de <span class="linea-resp"></span>.</li>
+      <li>A José Trinidad Cabañas le llamaron el caballero sin tacha y sin <span class="linea-resp"></span>.</li>
+      <li>José Trinidad Reyes fundó la primera <span class="linea-resp"></span> del país.</li>
+      <li>El Día del Maestro Hondureño es el 17 de <span class="linea-resp"></span>.</li>
+      <li>Ramón Rosa impulsó el Código de Instrucción Pública de <span class="linea-resp"></span>.</li>
+      <li>Lempira resistió desde el Peñol de <span class="linea-resp"></span>.</li>
+    </ol>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h3>II. Verdadero o Falso <span class="val">(Valor: 2.5 puntos c/u)</span> — Escribe V o F en la raya.</h3>
+
+    <ol>
+      <li><span class="linea-resp" style="min-width:40px"></span> Lempira es el Héroe Nacional de Honduras.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Un prócer es el que defiende a su pueblo con las armas.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> José Cecilio del Valle redactó el Acta de Independencia.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El Escudo Nacional nació durante el gobierno de Marco Aurelio Soto.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> José Trinidad Reyes fundó la primera universidad del país.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> El Día del Maestro se celebra por Francisco Morazán.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Ramón Rosa fue ministro de Marco Aurelio Soto.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Lempira fue presidente de Honduras.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> A Morazán se le llama héroe y también prócer, y las dos formas son correctas.</li>
+      <li><span class="linea-resp" style="min-width:40px"></span> Las mujeres, los indígenas y los garífunas también construyeron el país.</li>
+    </ol>
+
+    <h3>III. Selección múltiple <span class="val">(Valor: 2.5 puntos c/u)</span> — Rellena el círculo de la letra de la respuesta correcta.</h3>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span>¿Quién es el Héroe Nacional de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Francisco Morazán</span>
+        <span class="op"><i></i><b>b)</b> Lempira</span>
+        <span class="op"><i></i><b>c)</b> José Cecilio del Valle</span>
+        <span class="op"><i></i><b>d)</b> Ramón Rosa</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span>¿Qué diferencia a un héroe de un prócer?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> El héroe es más antiguo</span>
+        <span class="op full"><i></i><b>b)</b> El prócer siempre es militar</span>
+        <span class="op full"><i></i><b>c)</b> No hay diferencia</span>
+        <span class="op full"><i></i><b>d)</b> El héroe defiende y el prócer funda</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span>¿Quién redactó el Acta de Independencia?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> José Cecilio del Valle</span>
+        <span class="op"><i></i><b>b)</b> Dionisio de Herrera</span>
+        <span class="op"><i></i><b>c)</b> Lempira</span>
+        <span class="op"><i></i><b>d)</b> Marco Aurelio Soto</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span>¿Dónde y cuándo nació Francisco Morazán?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> En Choluteca, en 1781</span>
+        <span class="op"><i></i><b>b)</b> En Comayagua, en 1805</span>
+        <span class="op"><i></i><b>c)</b> En Tegucigalpa, en 1792</span>
+        <span class="op"><i></i><b>d)</b> En Gracias, en 1777</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span>¿Quién fue el primer Jefe de Estado de Honduras?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> José Trinidad Cabañas</span>
+        <span class="op"><i></i><b>b)</b> Ramón Rosa</span>
+        <span class="op"><i></i><b>c)</b> José Trinidad Reyes</span>
+        <span class="op"><i></i><b>d)</b> Dionisio de Herrera</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span>¿Por qué el Día del Maestro es el 17 de septiembre?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Por la Independencia</span>
+        <span class="op full"><i></i><b>b)</b> Por el natalicio de José Trinidad Reyes</span>
+        <span class="op full"><i></i><b>c)</b> Por la Reforma Liberal</span>
+        <span class="op full"><i></i><b>d)</b> Por el Código de 1882</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span>¿Qué impulsó Ramón Rosa en 1882?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> El Escudo Nacional</span>
+        <span class="op full"><i></i><b>b)</b> La República Federal</span>
+        <span class="op full"><i></i><b>c)</b> El Himno Nacional</span>
+        <span class="op full"><i></i><b>d)</b> El Código de Instrucción Pública</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span>¿Desde dónde resistió Lempira la conquista?</div>
+      <div class="preg-ops">
+        <span class="op"><i></i><b>a)</b> Desde el Peñol de Cerquín</span>
+        <span class="op"><i></i><b>b)</b> Desde Tegucigalpa</span>
+        <span class="op"><i></i><b>c)</b> Desde Copán</span>
+        <span class="op"><i></i><b>d)</b> Desde Trujillo</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span>¿Qué unía la República Federal que presidió Morazán?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> A Honduras y Guatemala</span>
+        <span class="op full"><i></i><b>b)</b> A los cinco países de Centroamérica</span>
+        <span class="op full"><i></i><b>c)</b> A Honduras y México</span>
+        <span class="op full"><i></i><b>d)</b> A toda América</span>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span>Según el currículo, ¿quiénes más contribuyeron a la historia del país?</div>
+      <div class="preg-ops">
+        <span class="op full"><i></i><b>a)</b> Solo los presidentes</span>
+        <span class="op full"><i></i><b>b)</b> Solo los militares</span>
+        <span class="op full"><i></i><b>c)</b> Las mujeres, los indígenas y los afrocaribeños</span>
+        <span class="op full"><i></i><b>d)</b> Nadie más</span>
+      </div>
+    </div>
+
+    <h3>IV. Términos pareados <span class="val">(Valor: 2.5 puntos c/u)</span> — Escribe en la raya la letra de la Columna B que corresponde.</h3>
+
+    <div class="tri">
+      <div class="tnuc" style="flex:1;"><b>Columna A — Quién o cuándo</b>
+        <ol style="margin-left:20px;font-size:10pt;">
+      <li><span class="linea-resp" style="min-width:34px"></span> Lempira</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> José Cecilio del Valle</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> Francisco Morazán</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> Dionisio de Herrera</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> José Trinidad Cabañas</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> José Trinidad Reyes</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> Marco Aurelio Soto</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> Ramón Rosa</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> 20 de julio</li>
+      <li><span class="linea-resp" style="min-width:34px"></span> 17 de septiembre</li>
+        </ol>
+      </div>
+      <div class="torg" style="flex:1.35;"><b>Columna B — Qué hizo o qué se celebra</b>
+        <ol type="A" style="margin-left:20px;font-size:10pt;">
+      <li>Encabezó la Reforma Liberal</li>
+      <li>Presidió la República Federal de Centro América</li>
+      <li>Día del Maestro Hondureño</li>
+      <li>Resistió la conquista desde el Peñol de Cerquín</li>
+      <li>Día de Lempira</li>
+      <li>El caballero sin tacha y sin miedo</li>
+      <li>Redactó el Acta de Independencia</li>
+      <li>Impulsó el Código de Instrucción Pública de 1882</li>
+      <li>Primer Jefe de Estado de Honduras, en 1824</li>
+      <li>Fundó la primera universidad del país</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="felic">🏅 <b>¡Buen trabajo!</b> Si contestaste bien las cuatro secciones, ya sabes quién fue
+    cada uno, qué hizo y por qué lo recordamos. Eso es lo que se pregunta en el examen de septiembre.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autoevaluación guiada.</p>
+
+    <div class="pauta">
+      <div><span class="pt">I. Completar:</span> 1. Lempira &nbsp; 2. héroe &nbsp; 3. Valle &nbsp; 4. 1792 &nbsp; 5. Herrera &nbsp; 6. miedo &nbsp; 7. universidad &nbsp; 8. septiembre &nbsp; 9. 1882 &nbsp; 10. Cerquín</div>
+      <div><span class="pt">II. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10V</div>
+      <div><span class="pt">III. Selección múltiple:</span> 1b, 2d, 3a, 4c, 5d, 6b, 7d, 8a, 9b, 10c</div>
+      <div><span class="pt">IV. Pareados:</span> 1D, 2G, 3B, 4I, 5F, 6J, 7A, 8H, 9E, 10C</div>
+    </div>
+
+    <div class="pauta" style="background:#fff8e6;border-color:#f0dca6;">
+      <div><span class="pt">⚖️ Cuidado al corregir «héroe o prócer» con Francisco Morazán:</span> a Morazán se le
+      llama de las dos formas y las dos son defendibles —construyó como prócer y murió por su idea como héroe—.
+      Si el estudiante lo clasifica de cualquiera de las dos maneras <b>y lo justifica</b>, la respuesta es
+      correcta. Lo que se califica aquí es la explicación, no la casilla.</div>
+    </div>
+
+    <div class="nota-doc">
+      <strong>Nota para el docente:</strong> esta ficha está basada en el contenido interactivo de la plataforma
+      M.E.T.A.S «Misión Héroes y Próceres de Honduras» (Educación Básica). <strong>A quiénes se nombra no es una
+      elección del autor:</strong> son los personajes que el DCNB pide identificar con estas palabras —«Identifican
+      la participación de algunos personajes como: Francisco Morazán, Dionisio de Herrera, José Trinidad Reyes,
+      Marco Aurelio Soto, Ramón Rosa, en la historia de Honduras»—, más José Cecilio del Valle, José Trinidad
+      Cabañas y Lempira, que el mismo documento nombra. La sección 4 recoge la otra expectativa del currículo:
+      «Explican la contribución y el costo pagado por las mujeres, los indígenas y los afrocaribeños en la historia
+      del país»; va sin nombres a propósito, porque la investigación la hace el estudiante en su municipio, que es
+      donde están los nombres que ningún libro trae. Los datos que aquí se imprimen y los que el estudiante ve en
+      la misión salen del mismo archivo del proyecto, así que no pueden decir cosas distintas. Etapa 3 de la Ruta
+      de la Patria; las etapas 1 y 2 son los símbolos patrios y el Himno Nacional.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Héroes y Próceres de Honduras · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

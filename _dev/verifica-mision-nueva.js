@@ -9,6 +9,8 @@
    Uso:  node _dev/verifica-mision-nueva.js misiones/<carpeta>/<archivo>.html   */
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
+const RAIZ = path.resolve(__dirname, '..');
 
 const htmlPath = process.argv[2];
 if (!htmlPath) { console.error('Uso: node _dev/verifica-mision-nueva.js misiones/<carpeta>/<archivo>.html'); process.exit(2); }
@@ -108,12 +110,52 @@ console.log('\n📚 Tamaño de los bancos');
    roto, y una sonda que se equivoca enseña a no mirarla. */
 const tamanos = [['fcData', 12], ['qzData', 9], ['evalTFBank', 15], ['evalMCBank', 15], ['evalCPBank', 15], ['evalPRBank', 15]];
 if (html.includes('id="s-explica"')) tamanos.push(['explicaData', 5]);
+/* ⚠️ Un banco puede estar ESCRITO a mano o GENERADO de un archivo de datos
+   —`const fcData = (function(){ … })();`, como en las misiones de la Ruta de
+   la Patria, que sacan su contenido de js/data/ para que la pantalla y la
+   ficha impresa no se separen—. Lo que esta sonda tiene que medir es cuántos
+   ítems TIENE, no cómo está escrito: pedirle un array literal castigaba la
+   forma buena de hacerlo y pintaba de rojo una misión sana. */
+function cuantosTiene(nombre) {
+  const lit = jsSrc.match(new RegExp('const ' + nombre + '\\s*=\\s*(\\[[\\s\\S]*?\\n\\]);'));
+  if (lit) return eval(lit[1]).length;
+  const gen = sentenciaDe(jsSrc, nombre);
+  if (!gen) return null;
+  /* Se cargan antes los archivos de datos que la propia misión enlaza: el
+     banco generado los necesita para poder armarse. */
+  const caja = {};
+  vm.createContext(caja);
+  (html.match(/src="[^"]*\/(js\/data\/[A-Za-z0-9._-]+\.js)"/g) || []).forEach(s => {
+    const rel = s.match(/(js\/data\/[A-Za-z0-9._-]+\.js)/)[1];
+    const p = path.join(RAIZ, rel);
+    if (fs.existsSync(p)) vm.runInContext(fs.readFileSync(p, 'utf8'), caja);
+  });
+  vm.runInContext(gen + '\nthis.__n = ' + nombre + '.length;', caja);
+  return caja.__n;
+}
+
+/* La sentencia entera de `const NOMBRE = …;`, contando paréntesis: el primer
+   «;» puede ir DENTRO de la función que genera el banco. */
+function sentenciaDe(src, nombre) {
+  const m = src.match(new RegExp('^const ' + nombre + '\\s*=', 'm'));
+  if (!m) return null;
+  let i = m.index + m[0].length, prof = 0, cad = null;
+  for (; i < src.length; i++) {
+    const c = src[i];
+    if (cad) { if (c === '\\') { i++; continue; } if (c === cad) cad = null; continue; }
+    if (c === '"' || c === "'" || c === '`') { cad = c; continue; }
+    if ('[{('.includes(c)) prof++;
+    else if (']})'.includes(c)) prof--;
+    else if (c === ';' && prof === 0) return src.slice(m.index, i + 1);
+  }
+  return null;
+}
+
 tamanos
   .forEach(([nombre, min]) => {
-    const m = jsSrc.match(new RegExp('const ' + nombre + '\\s*=\\s*(\\[[\\s\\S]*?\\n\\]);'));
-    if (!m) { mal('falta ' + nombre); return; }
-    let n = 0;
-    try { n = eval(m[1]).length; } catch (e) { ojo(nombre + ': ' + e.message); return; }
+    let n;
+    try { n = cuantosTiene(nombre); } catch (e) { ojo(nombre + ': ' + e.message); return; }
+    if (n === null || n === undefined) { mal('falta ' + nombre); return; }
     if (n < min) mal(`${nombre} tiene ${n} y hacen falta al menos ${min}`);
     else bien(`${nombre}: ${n}`);
   });

@@ -96,6 +96,10 @@ const MISSIONS = [
      de septiembre de 6º y 9º pide escribir una estrofa y explicarla, y eso
      necesita la letra entera, verso por verso, no un resumen. */
   { id: 68, title: 'El Himno Nacional de Honduras',                       subject: 'cívica',      color: 'civ',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'patria',  etapa: 2, xp: 35, icon: '🎵', pais: 'HN', url: 'misiones/2y3ciclo-himno-nacional/himno-nacional.html' },
+  /* Los ocho que el DCNB nombra por su nombre. Va aparte de la 67 —que los
+     resume en una tarjeta— porque de cada uno se pregunta qué HIZO y por qué
+     se le recuerda, y eso no cabe en una línea. */
+  { id: 69, title: 'Héroes y Próceres de Honduras',                       subject: 'cívica',      color: 'civ',  grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'patria',  etapa: 3, xp: 35, icon: '🏅', pais: 'HN', url: 'misiones/2y3ciclo-proceres-heroes/proceres-heroes.html' },
   /* La Ruta de la Meta va POR GRADO, no por orden de llegada: la etapa 1 es 4º
      aunque la primera que se escribió fuera la de 6º. El maestro de cuarto
      entra por la etapa 1 y no por la mitad de la ruta. */

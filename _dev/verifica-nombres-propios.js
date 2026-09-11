@@ -108,6 +108,17 @@ const NOMBRES = [
   ['josé trinidad cabañas', 'José Trinidad Cabañas'],
   ['josé trinidad reyes', 'José Trinidad Reyes'],
   ['cristóbal colón', 'Cristóbal Colón'],
+  /* Entran con la misión de los héroes y próceres (id 69). El acta y la
+     república son nombres propios de documento y de país, no descripciones. */
+  ['acta de independencia', 'Acta de Independencia'],
+  ['república federal de centro américa', 'República Federal de Centro América'],
+  ['peñol de cerquín', 'Peñol de Cerquín'],
+  ['choluteca', 'Choluteca'],
+  ['comayagua', 'Comayagua'],
+  /* ⚠️ «Gracias» —la ciudad de Lempira— NO se puede pedir en mayúscula, y es
+     la misma trampa que «lempira» con la moneda: en minúscula es la palabra de
+     todos los días, y sale en el «¡gracias!» de media plataforma. Se escribe a
+     mano con cuidado. */
   ['centroamérica', 'Centroamérica'],
   ['guatemala', 'Guatemala'],
   ['el salvador', 'El Salvador'],

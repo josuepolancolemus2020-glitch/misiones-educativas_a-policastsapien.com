@@ -2079,6 +2079,95 @@ Si se toca la letra, la ficha **se vuelve a repartir** (`node
 _dev/reparte-hojas-ficha.js ficha-himno-nacional`): son nueve hojas y un
 párrafo que crece dos renglones parte una en dos.
 
+## Normativa: a quién se nombra prócer lo decide el DCNB, no el gusto de nadie
+
+La tercera misión de la Ruta de la Patria son los **héroes y próceres**
+(`misiones/2y3ciclo-proceres-heroes/`, id 69, etapa 3). Se hace con el mismo
+patrón que el Himno y por la misma razón: lo que aquí se pregunta son **datos
+duros** —el año, el lugar, el apodo, el día del calendario cívico— y esos datos
+acaban en dos sitios que una persona lee, la pantalla y la ficha que se
+fotocopia. Un dígito de diferencia no es un matiz: es la pregunta del examen de
+septiembre contestada mal, y el alumno estudiando lo que su maestro le va a
+corregir en rojo.
+
+Por eso:
+
+- **Los datos viven en `js/data/proceres-honduras.js`**, y solo ahí. De cada
+  uno: `clave`, `nombre`, `apodo`, `emoji`, `clase`, `epoca`, `papel`, `hizo`,
+  `porque`, `dato`, y `nacio`/`fecha`/`nota` cuando los hay.
+- **La misión no los escribe: los pinta.** `pintarProceresMapa()`,
+  `pintarProceresLista()` y `pintarProceresDiferencia()` arman las secciones
+  desde ese archivo, y de ahí salen también el Laboratorio, las tarjetas de
+  repaso, el memorama y los pareados —se **generan**, no se copian—. En el HTML
+  de la misión no hay un solo dato escrito a mano.
+- **La ficha sí es HTML plano**, como las otras 75, así que ahí la copia es
+  inevitable. Lo que no es inevitable es que se separen: eso lo vigila
+  `node _dev/verifica-proceres.js`, dato por dato y dentro del recuadro de cada
+  personaje, para que un dato que se cuele en el del vecino —que es lo que pasa
+  al copiar y pegar un bloque— salga como fallo.
+
+**A QUIÉNES se nombra no es una elección del autor.** La expectativa del DCNB
+los nombra con estas palabras: «Identifican la participación de algunos
+personajes como: Francisco Morazán, Dionisio de Herrera, José Trinidad Reyes,
+Marco Aurelio Soto, Ramón Rosa, en la historia de Honduras»
+(`_dev/dcnb/dcneb-basica-i-ciclo-45-ciencias-sociales-tercer-grado-1de2.md`). El
+mismo documento nombra a José Cecilio del Valle y a José Trinidad Cabañas, y a
+Lempira 51 veces. Y **la sonda no lleva esa lista escrita**: la lee de la cita
+que el propio archivo de datos trae en su cabecera, así que no puede quedarse
+vieja por su cuenta.
+
+⚠️ **«Héroe» y «prócer» NO son una casilla limpia para todos.** Un héroe
+defiende a su pueblo; un prócer ayuda a fundar la nación. Lempira es el Héroe
+Nacional y eso no lo discute nadie; a **Morazán se le llama las dos cosas con
+razón** —construyó como prócer y murió por su idea como héroe—. Preguntárselo
+al alumno como si tuviera una sola respuesta sería calificarle mal una
+respuesta buena, así que: las actividades de clasificar usan **solo lo que no
+se discute** (tres ejes que no son el binario héroe/prócer), quien se llama de
+las dos formas lleva su campo `nota`, y **la hoja del docente avisa de cómo
+corregirlo**. La sonda comprueba que ese aviso esté: sin él la ficha pregunta
+algo con dos respuestas buenas y solo acepta una.
+
+⚠️ **Y la definición de héroe y de prócer tiene que ser la MISMA que la de
+Aspectos Cívicos** (id 67). Son las dos primeras etapas de la misma ruta y el
+alumno las abre seguidas: no puede leer dos definiciones distintas de lo mismo.
+No se comparan letra por letra —son dos redacciones, una larga y otra de una
+línea—: se busca la tirada de palabras más larga que las dos comparten, y si
+alguien cambia «defiende a su pueblo» en un solo sitio, se cae y la sonda se
+pone roja. Es la misma técnica con la que la sonda del Himno juzga una cita.
+
+⚠️ **Lo que NO se escribe, y a propósito.** La fecha de nacimiento de José
+Trinidad Reyes: el DCNB lo nombra pero no la trae, y un dato sacado de un
+extracto de buscador no acredita nada. Es la misma lección de los números de
+decreto de la flor y del árbol nacionales, y la de
+`INVESTIGACION-ESTATUTO-DOCENTE.md`: **buscar no es leer**. El día que entre la
+fuente, se pone.
+
+**Y hay una sección SIN NOMBRES, que tampoco es un olvido.** El DCNB pide una
+segunda cosa: «Explican la contribución y el costo pagado por las mujeres, los
+indígenas y los afrocaribeños en la historia del país». Nombrar a alguien ahí
+obligaría a verificarlo y este repositorio todavía no tiene con qué; inventar
+una biografía para cumplir el currículo sería justo lo que la normativa
+prohíbe. Lo que sí se hace —y es lo que el DCNB pide de verdad, con su
+«investigación explicativa»— es plantearlo y mandar al alumno a averiguarlo en
+**su** municipio, que es donde están los nombres que ningún libro trae. La
+sonda comprueba que esa sección siga en el papel: es lo primero que se cae al
+recortar una ficha para ganar una hoja.
+
+**Antes de publicar un cambio de esta misión o de los datos:**
+
+```
+node _dev/verifica-proceres.js              → la pantalla y el papel, dato por dato
+node _dev/verifica-mision-nueva.js misiones/2y3ciclo-proceres-heroes/proceres-heroes.html
+node _dev/verifica-nombres-propios.js
+node _dev/verifica-ficha-paginas.js ficha-proceres-heroes
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/2y3ciclo-proceres-heroes/proceres-heroes.html
+```
+
+Si se tocan los datos, la ficha **se vuelve a repartir** (`node
+_dev/reparte-hojas-ficha.js ficha-proceres-heroes`): son siete hojas y un
+párrafo que crece dos renglones parte una en dos.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de
