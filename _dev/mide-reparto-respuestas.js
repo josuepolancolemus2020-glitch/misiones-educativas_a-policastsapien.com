@@ -12,7 +12,8 @@
 
    Además informa dos cosas que hay que saber ANTES de arreglar:
    - si la misión tiene traducción de autor (-en.js), porque sus
-     bancos van índice a índice y habría que moverlos a la par;
+     bancos van índice a índice y hay que moverlos a la par —eso lo
+     hace reparte-respuestas.js, pero conviene verlo antes—;
    - si el banco vive en un archivo aparte (banco compartido).
 
    Uso:  node _dev/mide-reparto-respuestas.js
@@ -157,6 +158,7 @@ if (peores.length) {
   console.log('\nLos casos más extremos:');
   peores.forEach(s => console.log(`  ${Math.round(s.pct * 100)}% en «${s.letra}» · ${s.banco} · ${s.mision} (${s.total} preguntas)`));
 }
-console.log('\nNota: esta herramienta no modifica nada. El arreglo automático de F.A.R.O');
-console.log('(_dev/reparte-respuestas.js) NO se puede aplicar tal cual aquí mientras las');
-console.log('misiones traducidas tengan sus bancos índice a índice en el -en.js.');
+console.log('\nNota: esta herramienta no modifica nada. Quien mueve las respuestas es');
+console.log('_dev/reparte-respuestas.js <carpeta>, y sí sabe de las traducciones de autor:');
+console.log('demuestra que los dos bancos van fila a fila, mueve los dos con la MISMA');
+console.log('permutación y compila los dos antes de escribir ninguno.');
