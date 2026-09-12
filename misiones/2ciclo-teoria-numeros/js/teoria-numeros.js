@@ -127,15 +127,15 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 // ===================== QUIZ DATA =====================
 const qzData=[
   {q:'¿Cuál de estos números es divisible entre 9?',o:['a) 4,132','b) 4,518','c) 517','d) 1,234'],c:1,feedback:'4+5+1+8 = 18, que es múltiplo de 9. Los demás no: sus sumas dan 10, 13 y 10.'},
-  {q:'¿Por qué 121 es divisible entre 11?',o:['a) Porque termina en 1','b) Porque 1+2+1 = 4','c) Porque (1+1) − 2 = 0','d) Porque es impar'],c:2,feedback:'La suma alternada da 0: (1+1) − 2 = 0. Y 121 = 11 × 11.'},
-  {q:'¿Cuál es el m.c.m. de 6 y 8?',o:['a) 48','b) 2','c) 24','d) 14'],c:2,feedback:'Múltiplos de 6: 6,12,18,24... · de 8: 8,16,24... El primero común es 24.'},
-  {q:'¿Cuál es el M.C.D. de 12 y 18?',o:['a) 6','b) 36','c) 2','d) 3'],c:0,feedback:'Divisores comunes de 12 y 18: 1, 2, 3 y 6. El mayor es 6.'},
-  {q:'Un número termina en 0. ¿Entre cuáles es SEGURO que es divisible?',o:['a) Solo entre 10','b) Entre 2, 5 y 10','c) Entre 3 y 9','d) Entre 11'],c:1,feedback:'Terminar en 0 garantiza divisibilidad entre 2 (par), entre 5 y entre 10.'},
-  {q:'¿Qué regla usas para saber si un número es divisible entre 3?',o:['a) Mirar la última cifra','b) Sumar todas sus cifras','c) La suma alternada','d) Contar las cifras'],c:1,feedback:'Si la suma de las cifras es múltiplo de 3, el número es divisible entre 3.'},
+  {q:'¿Por qué 121 es divisible entre 11?',o:['a) Porque termina en 1','b) Porque 1+2+1 = 4','c) Porque es impar','d) Porque (1+1) − 2 = 0'],c:3,feedback:'La suma alternada da 0: (1+1) − 2 = 0. Y 121 = 11 × 11.'},
+  {q:'¿Cuál es el m.c.m. de 6 y 8?',o:['a) 48','b) 24','c) 2','d) 14'],c:1,feedback:'Múltiplos de 6: 6,12,18,24... · de 8: 8,16,24... El primero común es 24.'},
+  {q:'¿Cuál es el M.C.D. de 12 y 18?',o:['a) 36','b) 2','c) 6','d) 3'],c:2,feedback:'Divisores comunes de 12 y 18: 1, 2, 3 y 6. El mayor es 6.'},
+  {q:'Un número termina en 0. ¿Entre cuáles es SEGURO que es divisible?',o:['a) Entre 2, 5 y 10','b) Solo entre 10','c) Entre 3 y 9','d) Entre 11'],c:0,feedback:'Terminar en 0 garantiza divisibilidad entre 2 (par), entre 5 y entre 10.'},
+  {q:'¿Qué regla usas para saber si un número es divisible entre 3?',o:['a) Mirar la última cifra','b) La suma alternada','c) Contar las cifras','d) Sumar todas sus cifras'],c:3,feedback:'Si la suma de las cifras es múltiplo de 3, el número es divisible entre 3.'},
   {q:'Dos buses salen de la terminal: uno cada 15 minutos y otro cada 20. ¿Cada cuánto salen juntos?',o:['a) Cada 5 min (M.C.D.)','b) Cada 60 min (m.c.m.)','c) Cada 35 min','d) Cada 300 min'],c:1,feedback:'Es un problema de coincidencia → m.c.m.(15,20) = 60 minutos.'},
-  {q:'Quiero repartir 24 lápices y 36 borradores en paquetes iguales, lo más grandes posible. ¿Cuántos paquetes armo?',o:['a) 72 (m.c.m.)','b) 6','c) 12 (M.C.D.)','d) 4'],c:2,feedback:'Es un problema de reparto → M.C.D.(24,36) = 12 paquetes.'},
-  {q:'¿Cuál es el M.C.D. de 8 y 15?',o:['a) 0','b) No existe','c) 1','d) 120'],c:2,feedback:'8 y 15 no comparten divisores mayores que 1: son primos entre sí, su M.C.D. es 1.'},
-  {q:'¿Cuál de estos números es divisible entre 11?',o:['a) 209','b) 123','c) 456','d) 87'],c:0,feedback:'En 209: (9+2) − 0 = 11 → divisible. Comprobación: 209 ÷ 11 = 19.'}
+  {q:'Quiero repartir 24 lápices y 36 borradores en paquetes iguales, lo más grandes posible. ¿Cuántos paquetes armo?',o:['a) 12 (M.C.D.)','b) 72 (m.c.m.)','c) 6','d) 4'],c:0,feedback:'Es un problema de reparto → M.C.D.(24,36) = 12 paquetes.'},
+  {q:'¿Cuál es el M.C.D. de 8 y 15?',o:['a) 1','b) 0','c) No existe','d) 120'],c:0,feedback:'8 y 15 no comparten divisores mayores que 1: son primos entre sí, su M.C.D. es 1.'},
+  {q:'¿Cuál de estos números es divisible entre 11?',o:['a) 123','b) 456','c) 209','d) 87'],c:2,feedback:'En 209: (9+2) − 0 = 11 → divisible. Comprobación: 209 ÷ 11 = 19.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -284,11 +284,11 @@ const cmpData=[
   {s:'Un número es divisible entre otro cuando el residuo de la división es ___.',opts:['cero','uno','par'],c:0},
   {s:'Un número es divisible entre 2 si su última cifra es ___.',opts:['par','impar','cinco'],c:0},
   {s:'Para saber si un número es divisible entre 9, se ___ todas sus cifras.',opts:['restan','suman','multiplican'],c:1},
-  {s:'La regla del 11 usa la suma ___ de las cifras.',opts:['alternada','total','doble'],c:0},
+  {s:'La regla del 11 usa la suma ___ de las cifras.',opts:['total','doble','alternada'],c:2},
   {s:'El m.c.m. es el múltiplo común más ___.',opts:['grande','pequeño','famoso'],c:1},
-  {s:'El M.C.D. es el divisor común más ___.',opts:['pequeño','raro','grande'],c:2},
+  {s:'El M.C.D. es el divisor común más ___.',opts:['pequeño','grande','raro'],c:1},
   {s:'Para repartir en partes iguales lo más grandes posible se usa el ___.',opts:['M.C.D.','m.c.m.','residuo'],c:0},
-  {s:'Para saber cuándo dos eventos coinciden se usa el ___.',opts:['M.C.D.','m.c.m.','divisor'],c:1}
+  {s:'Para saber cuándo dos eventos coinciden se usa el ___.',opts:['M.C.D.','divisor','m.c.m.'],c:2}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -559,11 +559,11 @@ const evalTFBank=[
   {q:'Un número que termina en 0 es divisible entre 2, 5 y 10.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Cuál de estos números es divisible entre 9?',o:['a) 517','b) 2,835','c) 1,234','d) 88'],a:1},
-  {q:'¿Cuál es el m.c.m. de 4 y 10?',o:['a) 40','b) 2','c) 20','d) 14'],a:2},
-  {q:'¿Cuál es el M.C.D. de 24 y 36?',o:['a) 12','b) 72','c) 6','d) 4'],a:0},
+  {q:'¿Cuál de estos números es divisible entre 9?',o:['a) 2,835','b) 517','c) 1,234','d) 88'],a:0},
+  {q:'¿Cuál es el m.c.m. de 4 y 10?',o:['a) 20','b) 40','c) 2','d) 14'],a:0},
+  {q:'¿Cuál es el M.C.D. de 24 y 36?',o:['a) 72','b) 6','c) 4','d) 12'],a:3},
   {q:'¿Qué regla se usa para saber si un número es divisible entre 11?',o:['a) Mirar la última cifra','b) Sumar todas las cifras','c) La suma alternada de las cifras','d) Contar las cifras'],a:2},
-  {q:'Dos campanas suenan cada 6 y cada 9 minutos. ¿Cada cuánto suenan juntas?',o:['a) Cada 3 min','b) Cada 54 min','c) Cada 18 min','d) Cada 15 min'],a:2}
+  {q:'Dos campanas suenan cada 6 y cada 9 minutos. ¿Cada cuánto suenan juntas?',o:['a) Cada 3 min','b) Cada 18 min','c) Cada 54 min','d) Cada 15 min'],a:1}
 ];
 const evalCPBank=[
   {q:'Un número es divisible entre 10 si termina en ___.',a:'0 (cero)'},

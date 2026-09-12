@@ -188,13 +188,13 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 // ===================== QUIZ DATA =====================
 const qzData=[
   {q:'¿Cuánto mide un ángulo recto?',o:['a) 45°','b) 90°','c) 180°','d) 360°'],c:1,feedback:'El ángulo recto mide exactamente 90°, como la esquina de una hoja.'},
-  {q:'¿Cómo se llama un ángulo que mide 130°?',o:['a) agudo','b) recto','c) obtuso','d) llano'],c:2,feedback:'130° es mayor que 90° y menor que 180°: es un ángulo obtuso.'},
-  {q:'¿Cuánto mide un ángulo llano?',o:['a) 90°','b) 120°','c) 180°','d) 200°'],c:2,feedback:'El ángulo llano mide 180° y sus lados forman una línea recta.'},
-  {q:'¿Cómo se llama un ángulo de 45°?',o:['a) agudo','b) obtuso','c) recto','d) completo'],c:0,feedback:'45° es menor que 90°, así que es un ángulo agudo.'},
-  {q:'¿Qué instrumento se usa para medir ángulos?',o:['a) la regla','b) el compás','c) el transportador','d) la balanza'],c:2,feedback:'El transportador tiene una escala de 0° a 180° para medir ángulos.'},
-  {q:'¿Cuál es el complemento de un ángulo de 60°?',o:['a) 120°','b) 30°','c) 40°','d) 60°'],c:1,feedback:'Los complementarios suman 90°: 90° − 60° = 30°.'},
+  {q:'¿Cómo se llama un ángulo que mide 130°?',o:['a) agudo','b) recto','c) llano','d) obtuso'],c:3,feedback:'130° es mayor que 90° y menor que 180°: es un ángulo obtuso.'},
+  {q:'¿Cuánto mide un ángulo llano?',o:['a) 180°','b) 90°','c) 120°','d) 200°'],c:0,feedback:'El ángulo llano mide 180° y sus lados forman una línea recta.'},
+  {q:'¿Cómo se llama un ángulo de 45°?',o:['a) obtuso','b) agudo','c) recto','d) completo'],c:1,feedback:'45° es menor que 90°, así que es un ángulo agudo.'},
+  {q:'¿Qué instrumento se usa para medir ángulos?',o:['a) la regla','b) el compás','c) la balanza','d) el transportador'],c:3,feedback:'El transportador tiene una escala de 0° a 180° para medir ángulos.'},
+  {q:'¿Cuál es el complemento de un ángulo de 60°?',o:['a) 120°','b) 40°','c) 30°','d) 60°'],c:2,feedback:'Los complementarios suman 90°: 90° − 60° = 30°.'},
   {q:'¿Cuál es el suplemento de un ángulo de 110°?',o:['a) 70°','b) 90°','c) 80°','d) 250°'],c:0,feedback:'Los suplementarios suman 180°: 180° − 110° = 70°.'},
-  {q:'El punto donde se unen los dos lados de un ángulo se llama:',o:['a) grado','b) vértice','c) lado','d) arco'],c:1,feedback:'El vértice es el punto de unión de los dos lados del ángulo.'},
+  {q:'El punto donde se unen los dos lados de un ángulo se llama:',o:['a) vértice','b) grado','c) lado','d) arco'],c:0,feedback:'El vértice es el punto de unión de los dos lados del ángulo.'},
   {q:'Un ángulo que mide más de 180° y menos de 360° se llama:',o:['a) llano','b) completo','c) reflejo','d) obtuso'],c:2,feedback:'El ángulo reflejo mide más de 180° pero no llega a los 360°.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
@@ -346,13 +346,13 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El punto donde se unen los dos lados de un ángulo se llama ___.',opts:['lado','vértice','grado'],c:1},
+  {s:'El punto donde se unen los dos lados de un ángulo se llama ___.',opts:['vértice','lado','grado'],c:0},
   {s:'Un ángulo agudo mide ___ de 90°.',opts:['más','menos','igual'],c:1},
   {s:'Un ángulo recto mide exactamente ___ grados.',opts:['45','90','180'],c:1},
   {s:'Un ángulo obtuso mide más de 90° y menos de ___ grados.',opts:['180','90','360'],c:0},
   {s:'El ángulo llano mide ___ grados y forma una línea recta.',opts:['90','180','360'],c:1},
   {s:'El instrumento para medir ángulos es el ___.',opts:['regla','compás','transportador'],c:2},
-  {s:'Dos ángulos que suman 90° se llaman ___.',opts:['suplementarios','complementarios','opuestos'],c:1},
+  {s:'Dos ángulos que suman 90° se llaman ___.',opts:['suplementarios','opuestos','complementarios'],c:2},
   {s:'La ___ divide un ángulo en dos partes iguales.',opts:['bisectriz','mediatriz','diagonal'],c:0}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -740,13 +740,13 @@ const evalTFBank=[
   {q:'La bisectriz divide un ángulo en dos partes iguales.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto mide un ángulo recto?',o:['a) 45°','b) 90°','c) 180°','d) 360°'],a:1},
-  {q:'Un ángulo de 150° es:',o:['a) agudo','b) recto','c) obtuso','d) llano'],a:2},
-  {q:'¿Qué instrumento mide ángulos?',o:['a) la regla','b) el compás','c) el transportador','d) la balanza'],a:2},
+  {q:'¿Cuánto mide un ángulo recto?',o:['a) 45°','b) 180°','c) 90°','d) 360°'],a:2},
+  {q:'Un ángulo de 150° es:',o:['a) obtuso','b) agudo','c) recto','d) llano'],a:0},
+  {q:'¿Qué instrumento mide ángulos?',o:['a) la regla','b) el compás','c) la balanza','d) el transportador'],a:3},
   {q:'El complemento de 70° es:',o:['a) 110°','b) 20°','c) 30°','d) 90°'],a:1},
-  {q:'El suplemento de 80° es:',o:['a) 100°','b) 20°','c) 10°','d) 120°'],a:0},
+  {q:'El suplemento de 80° es:',o:['a) 20°','b) 10°','c) 120°','d) 100°'],a:3},
   {q:'Un ángulo llano mide:',o:['a) 90°','b) 180°','c) 270°','d) 360°'],a:1},
-  {q:'El punto de unión de los dos lados se llama:',o:['a) grado','b) lado','c) vértice','d) arco'],a:2},
+  {q:'El punto de unión de los dos lados se llama:',o:['a) vértice','b) grado','c) lado','d) arco'],a:0},
   {q:'Un ángulo que mide 250° es:',o:['a) obtuso','b) llano','c) reflejo','d) completo'],a:2}
 ];
 const evalCPBank=[

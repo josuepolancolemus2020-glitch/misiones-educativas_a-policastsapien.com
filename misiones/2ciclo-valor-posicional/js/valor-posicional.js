@@ -124,16 +124,16 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuál es el valor del dígito 7 en el número 573,204?',o:['a) 7','b) 70,000','c) 7,000','d) 700'],c:1,feedback:'El 7 está en la posición de las decenas de millar: vale 70,000.'},
-  {q:'¿Cómo se lee el número 908,050?',o:['a) Novecientos ocho mil cincuenta','b) Noventa mil ochocientos cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],c:0},
-  {q:'¿Cuántas cifras tiene el número 1,000,000?',o:['a) 6','b) 7','c) 8','d) 5'],c:1,feedback:'Un millón se escribe con 7 cifras: 1,000,000.'},
-  {q:'¿Cuál es la forma expandida de 340,502?',o:['a) 300,000+40,000+500+2','b) 300,000+4,000+500+2','c) 34,000+500+2','d) 300,000+40,000+50+2'],c:0},
-  {q:'¿Cómo se escribe "doscientos quince mil setenta" en cifras?',o:['a) 21,570','b) 215,700','c) 215,070','d) 2,157,0'],c:2},
-  {q:'En el número 5,006, ¿qué representan los ceros?',o:['a) Que no hay centenas ni decenas','b) Que el número es negativo','c) Que el número es decimal','d) No representan nada'],c:0,feedback:'Los ceros ocupan las posiciones de centenas y decenas para que el 6 quede en las unidades.'},
-  {q:'¿Cuál número es mayor: 87,340 o 9,500?',o:['a) 9,500','b) 87,340','c) Son iguales','d) No se puede saber'],c:1,feedback:'87,340 tiene 5 cifras y 9,500 tiene 4. Más cifras significa un número mayor.'},
-  {q:'Al sumar 128,500 + 64,700 y una columna da 12, ¿qué haces?',o:['a) Escribo el 2 y llevo 1 a la siguiente columna','b) Escribo el 12 completo','c) Resto 10','d) Ignoro el 1'],c:0},
-  {q:'¿Cuál es el número que sigue después de 999,999?',o:['a) 999,1000','b) 1,000,000','c) 900,000','d) 9,999,999'],c:1},
-  {q:'El dígito 4 en el número 452,318 está en la posición de:',o:['a) Centena de millar','b) Decena de millar','c) Unidad de millar','d) Centena'],c:0}
+  {q:'¿Cuál es el valor del dígito 7 en el número 573,204?',o:['a) 70,000','b) 7','c) 7,000','d) 700'],c:0,feedback:'El 7 está en la posición de las decenas de millar: vale 70,000.'},
+  {q:'¿Cómo se lee el número 908,050?',o:['a) Noventa mil ochocientos cincuenta','b) Novecientos ocho mil cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],c:1},
+  {q:'¿Cuántas cifras tiene el número 1,000,000?',o:['a) 7','b) 6','c) 8','d) 5'],c:0,feedback:'Un millón se escribe con 7 cifras: 1,000,000.'},
+  {q:'¿Cuál es la forma expandida de 340,502?',o:['a) 300,000+4,000+500+2','b) 300,000+40,000+500+2','c) 34,000+500+2','d) 300,000+40,000+50+2'],c:1},
+  {q:'¿Cómo se escribe "doscientos quince mil setenta" en cifras?',o:['a) 21,570','b) 215,700','c) 2,157,0','d) 215,070'],c:3},
+  {q:'En el número 5,006, ¿qué representan los ceros?',o:['a) Que el número es negativo','b) Que el número es decimal','c) Que no hay centenas ni decenas','d) No representan nada'],c:2,feedback:'Los ceros ocupan las posiciones de centenas y decenas para que el 6 quede en las unidades.'},
+  {q:'¿Cuál número es mayor: 87,340 o 9,500?',o:['a) 87,340','b) 9,500','c) Son iguales','d) No se puede saber'],c:0,feedback:'87,340 tiene 5 cifras y 9,500 tiene 4. Más cifras significa un número mayor.'},
+  {q:'Al sumar 128,500 + 64,700 y una columna da 12, ¿qué haces?',o:['a) Escribo el 12 completo','b) Escribo el 2 y llevo 1 a la siguiente columna','c) Resto 10','d) Ignoro el 1'],c:1},
+  {q:'¿Cuál es el número que sigue después de 999,999?',o:['a) 999,1000','b) 900,000','c) 9,999,999','d) 1,000,000'],c:3},
+  {q:'El dígito 4 en el número 452,318 está en la posición de:',o:['a) Decena de millar','b) Unidad de millar','c) Centena de millar','d) Centena'],c:2}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -279,13 +279,13 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El sistema que da valor a cada cifra según su lugar se llama valor ___.',opts:['posicional','absoluto','decimal'],c:0},
+  {s:'El sistema que da valor a cada cifra según su lugar se llama valor ___.',opts:['absoluto','posicional','decimal'],c:1},
   {s:'La posición de valor 10,000 se llama ___ de millar.',opts:['centena','decena','unidad'],c:1},
-  {s:'En el número 5,006, los ceros indican que no hay ___ ni decenas.',opts:['unidades','centenas','millares'],c:1},
+  {s:'En el número 5,006, los ceros indican que no hay ___ ni decenas.',opts:['unidades','millares','centenas'],c:2},
   {s:'Un millón se escribe con ___ cifras.',opts:['6','7','8'],c:1},
   {s:'La forma expandida de 452,318 comienza con ___.',opts:['400,000','40,000','4,000'],c:0},
-  {s:'Para comparar dos números, primero cuenta la cantidad de ___.',opts:['ceros','cifras','comas'],c:1},
-  {s:'Al sumar y una columna da 10 o más, se ___ 1 a la siguiente posición.',opts:['resta','lleva','borra'],c:1},
+  {s:'Para comparar dos números, primero cuenta la cantidad de ___.',opts:['cifras','ceros','comas'],c:0},
+  {s:'Al sumar y una columna da 10 o más, se ___ 1 a la siguiente posición.',opts:['resta','borra','lleva'],c:2},
   {s:'708,040 se lee "setecientos ocho mil ___".',opts:['cuarenta','cuatrocientos','catorce'],c:0}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -558,10 +558,10 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Cuál es el valor del dígito 4 en 573,420?',o:['a) 4','b) 400','c) 4,000','d) 40,000'],a:1},
-  {q:'¿Cómo se lee el número 908,050?',o:['a) Noventa mil ochocientos cincuenta','b) Novecientos ocho mil cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],a:1},
+  {q:'¿Cómo se lee el número 908,050?',o:['a) Novecientos ocho mil cincuenta','b) Noventa mil ochocientos cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],a:0},
   {q:'¿Cuántas cifras tiene un millón (1,000,000)?',o:['a) 5','b) 6','c) 7','d) 8'],a:2},
-  {q:'¿Cuál número es mayor: 87,340 o 9,500?',o:['a) 9,500','b) 87,340','c) Son iguales','d) No se puede saber'],a:1},
-  {q:'¿Qué haces si al sumar una columna da 12?',o:['a) Escribo el 2 y llevo 1','b) Escribo el 12 completo','c) Resto 10','d) Ignoro el resultado'],a:0}
+  {q:'¿Cuál número es mayor: 87,340 o 9,500?',o:['a) 87,340','b) 9,500','c) Son iguales','d) No se puede saber'],a:0},
+  {q:'¿Qué haces si al sumar una columna da 12?',o:['a) Escribo el 12 completo','b) Resto 10','c) Ignoro el resultado','d) Escribo el 2 y llevo 1'],a:3}
 ];
 const evalCPBank=[
   {q:'La posición de valor 1,000 se llama unidad de ___.',a:'millar'},

@@ -134,15 +134,15 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 let qzData=[
-  {q:'Son las 8:00 de la mañana. ¿Cómo saludas?',o:['a) Good night','b) Good morning','c) Good evening','d) Goodbye'],c:1},
-  {q:'¿Qué significa «Good evening»?',o:['a) Buenas noches, al llegar','b) Buenas noches, al irse','c) Buenas tardes','d) Buenos días'],c:0},
-  {q:'Llegas a una fiesta a las 8 de la noche. ¿Qué dices?',o:['a) Good night','b) Good morning','c) Good evening','d) See you'],c:2},
-  {q:'¿Cómo preguntas el nombre de alguien?',o:['a) How are you?','b) What’s your name?','c) Nice to meet you','d) How old are you?'],c:1},
-  {q:'Alguien te dice «Nice to meet you». ¿Qué significa?',o:['a) ¿Cómo estás?','b) Hasta mañana','c) Mucho gusto','d) ¿De dónde eres?'],c:2},
-  {q:'¿Cuál es la respuesta más común a «How are you?»?',o:['a) My name is Ana','b) I’m fine, thank you. And you?','c) Good night','d) You’re welcome'],c:1},
-  {q:'¿Cuál de estos saludos es INFORMAL?',o:['a) Good afternoon','b) Good morning','c) Hi','d) Nice to meet you'],c:2},
+  {q:'Son las 8:00 de la mañana. ¿Cómo saludas?',o:['a) Good morning','b) Good night','c) Good evening','d) Goodbye'],c:0},
+  {q:'¿Qué significa «Good evening»?',o:['a) Buenas noches, al irse','b) Buenas tardes','c) Buenas noches, al llegar','d) Buenos días'],c:2},
+  {q:'Llegas a una fiesta a las 8 de la noche. ¿Qué dices?',o:['a) Good night','b) Good evening','c) Good morning','d) See you'],c:1},
+  {q:'¿Cómo preguntas el nombre de alguien?',o:['a) How are you?','b) Nice to meet you','c) What’s your name?','d) How old are you?'],c:2},
+  {q:'Alguien te dice «Nice to meet you». ¿Qué significa?',o:['a) ¿Cómo estás?','b) Hasta mañana','c) ¿De dónde eres?','d) Mucho gusto'],c:3},
+  {q:'¿Cuál es la respuesta más común a «How are you?»?',o:['a) I’m fine, thank you. And you?','b) My name is Ana','c) Good night','d) You’re welcome'],c:0},
+  {q:'¿Cuál de estos saludos es INFORMAL?',o:['a) Good afternoon','b) Good morning','c) Nice to meet you','d) Hi'],c:3},
   {q:'Te vas de la casa de un amigo y lo verás mañana. ¿Qué dices?',o:['a) Good morning','b) See you tomorrow','c) Nice to meet you','d) What’s your name?'],c:1},
-  {q:'En «Hello» y «How», la letra h…',o:['a) es muda como en español','b) suena como una j suave','c) suena como una s','d) no se escribe'],c:1},
+  {q:'En «Hello» y «How», la letra h…',o:['a) suena como una j suave','b) es muda como en español','c) suena como una s','d) no se escribe'],c:0},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -195,12 +195,12 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 let cmpData=[
   {s:'— Good morning! — Good ___!',opts:['morning','night','bye'],c:0},
-  {s:'— What’s your ___? — My name is Ana.',opts:['age','name','school'],c:1},
-  {s:'— My name is Luis. — ___ to meet you!',opts:['Nice','Good','See'],c:0},
+  {s:'— What’s your ___? — My name is Ana.',opts:['age','school','name'],c:2},
+  {s:'— My name is Luis. — ___ to meet you!',opts:['Good','See','Nice'],c:2},
   {s:'— How ___ you? — I’m fine, thank you.',opts:['is','are','am'],c:1},
-  {s:'— I’m fine, thank you. And ___? — I’m fine too.',opts:['me','you','he'],c:1},
-  {s:'Llegas a las 7 de la noche: Good ___.',opts:['evening','morning','afternoon'],c:0},
-  {s:'Te vas a dormir: Good ___.',opts:['night','evening','morning'],c:0},
+  {s:'— I’m fine, thank you. And ___? — I’m fine too.',opts:['you','me','he'],c:0},
+  {s:'Llegas a las 7 de la noche: Good ___.',opts:['morning','evening','afternoon'],c:1},
+  {s:'Te vas a dormir: Good ___.',opts:['evening','night','morning'],c:1},
   {s:'— Thank you! — You’re ___.',opts:['welcome','fine','name'],c:0},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
@@ -418,21 +418,21 @@ let evalTFBank=[
   {q:'En inglés «please» se usa menos que «por favor» en español.',a:false},
 ];
 let evalMCBank=[
-  {q:'Son las 9:00 a.m. ¿Cómo saludas a tu maestra?',o:['a) Good night','b) Good morning','c) Good evening','d) See you'],a:1},
-  {q:'¿Qué significa «Good evening»?',o:['a) Buenas noches, al despedirse','b) Buenos días','c) Buenas noches, al llegar','d) Buenas tardes'],a:2},
-  {q:'¿Cuál se usa SOLO para despedirse?',o:['a) Hello','b) Good night','c) Good afternoon','d) Hi'],a:1},
-  {q:'¿Cómo preguntas el nombre de una persona?',o:['a) How are you?','b) How old are you?','c) What’s your name?','d) Where are you from?'],a:2},
-  {q:'¿Cuál es la respuesta correcta a «What’s your name?»?',o:['a) I’m fine','b) My name is Ana','c) Nice to meet you','d) Good morning'],a:1},
-  {q:'¿Qué significa «Nice to meet you»?',o:['a) Mucho gusto','b) Hasta luego','c) ¿Cómo estás?','d) De nada'],a:0},
-  {q:'¿Cuál de estos saludos es FORMAL?',o:['a) Hey','b) What’s up?','c) Hi','d) Good afternoon'],a:3},
+  {q:'Son las 9:00 a.m. ¿Cómo saludas a tu maestra?',o:['a) Good night','b) Good evening','c) Good morning','d) See you'],a:2},
+  {q:'¿Qué significa «Good evening»?',o:['a) Buenas noches, al llegar','b) Buenas noches, al despedirse','c) Buenos días','d) Buenas tardes'],a:0},
+  {q:'¿Cuál se usa SOLO para despedirse?',o:['a) Hello','b) Good afternoon','c) Good night','d) Hi'],a:2},
+  {q:'¿Cómo preguntas el nombre de una persona?',o:['a) What’s your name?','b) How are you?','c) How old are you?','d) Where are you from?'],a:0},
+  {q:'¿Cuál es la respuesta correcta a «What’s your name?»?',o:['a) I’m fine','b) Nice to meet you','c) Good morning','d) My name is Ana'],a:3},
+  {q:'¿Qué significa «Nice to meet you»?',o:['a) Hasta luego','b) ¿Cómo estás?','c) De nada','d) Mucho gusto'],a:3},
+  {q:'¿Cuál de estos saludos es FORMAL?',o:['a) Hey','b) What’s up?','c) Good afternoon','d) Hi'],a:2},
   {q:'Son las 3:00 p.m. ¿Qué saludo corresponde?',o:['a) Good morning','b) Good afternoon','c) Good evening','d) Good night'],a:1},
-  {q:'Tu amigo te dice «Thank you». ¿Qué respondes?',o:['a) You’re welcome','b) And you?','c) My name is','d) Good night'],a:0},
+  {q:'Tu amigo te dice «Thank you». ¿Qué respondes?',o:['a) And you?','b) My name is','c) You’re welcome','d) Good night'],a:2},
   {q:'¿Cómo se pronuncia la h de «hello»?',o:['a) Es muda','b) Suena como una j suave','c) Suena como una s','d) Suena como una g'],a:1},
-  {q:'Sales de clase y verás a tu maestra hasta el otro día. ¿Qué dices?',o:['a) Good morning','b) See you tomorrow','c) Nice to meet you','d) What’s your name?'],a:1},
-  {q:'¿Cuál completa el diálogo? — How are you? — ___',o:['a) My name is Luis','b) I’m fine, thank you. And you?','c) Good night','d) You’re welcome'],a:1},
+  {q:'Sales de clase y verás a tu maestra hasta el otro día. ¿Qué dices?',o:['a) Good morning','b) Nice to meet you','c) What’s your name?','d) See you tomorrow'],a:3},
+  {q:'¿Cuál completa el diálogo? — How are you? — ___',o:['a) I’m fine, thank you. And you?','b) My name is Luis','c) Good night','d) You’re welcome'],a:0},
   {q:'Llegas de noche a una reunión. ¿Cómo saludas?',o:['a) Good night','b) Good evening','c) Good morning','d) Goodbye'],a:1},
-  {q:'¿Cuál es informal?',o:['a) Good morning','b) Nice to meet you','c) Bye','d) Goodbye'],a:2},
-  {q:'En «thank you», la th se pronuncia…',o:['a) como t','b) como s','c) con la lengua entre los dientes','d) no se pronuncia'],a:2},
+  {q:'¿Cuál es informal?',o:['a) Good morning','b) Bye','c) Nice to meet you','d) Goodbye'],a:1},
+  {q:'En «thank you», la th se pronuncia…',o:['a) con la lengua entre los dientes','b) como t','c) como s','d) no se pronuncia'],a:0},
 ];
 let evalCPBank=[
   {q:'De 6:00 a 11:59 se saluda con Good ___.',a:'morning'},

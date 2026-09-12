@@ -3795,7 +3795,12 @@ duele: `potencias-raices` tiene seis JS y el primero por orden alfabético es
 `interaccion_cuadrados.js`; `bach-uni-adjetivos` se llama `app.js`, y
 `angulo-bisectriz`, `angulos.js`. Manda el que trae los bancos.
 
-**Lo que queda:** 33 misiones (eran 53 el 12 de septiembre de 2026). Se van
+⚠️ **Y hay misiones que declaran sus bancos con `let`, no con `const`** —las
+que cambian de idioma en caliente reasignan el banco—. Pedir `const` dejaba
+fuera a `ingles-saludos` **en silencio**, que era justo una de las peores. Se
+acepta `const`, `let` y `var`, y lo mismo al buscar el archivo.
+
+**Lo que queda:** 25 misiones (eran 53 el 12 de septiembre de 2026). Se van
 haciendo por tandas, mirando el diff —cada fila movida es una línea que alguien
 tiene que leer— y corriendo después la sonda de la misión.
 

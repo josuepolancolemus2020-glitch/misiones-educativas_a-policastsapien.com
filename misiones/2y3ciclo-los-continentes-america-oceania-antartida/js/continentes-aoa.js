@@ -233,18 +233,18 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuál es el río más caudaloso del mundo?',o:['a) Nilo','b) Congo','c) Amazonas','d) Mississippi'],c:2},
-  {q:'¿En qué región de América se ubica Honduras?',o:['a) América del Norte','b) América del Sur','c) América Central','d) El Caribe'],c:2},
-  {q:'¿Cómo se llama el acuerdo de libre comercio entre Honduras y EE.UU.?',o:['a) AACUE','b) NAFTA','c) CAFTA-DR','d) MERCOSUR'],c:2},
+  {q:'¿Cuál es el río más caudaloso del mundo?',o:['a) Nilo','b) Congo','c) Mississippi','d) Amazonas'],c:3},
+  {q:'¿En qué región de América se ubica Honduras?',o:['a) América Central','b) América del Norte','c) América del Sur','d) El Caribe'],c:0},
+  {q:'¿Cómo se llama el acuerdo de libre comercio entre Honduras y EE.UU.?',o:['a) AACUE','b) NAFTA','c) MERCOSUR','d) CAFTA-DR'],c:3},
   {q:'¿Cuál es el continente más pequeño del mundo?',o:['a) Europa','b) Antártida','c) Oceanía','d) América Central'],c:2},
-  {q:'¿Qué país es a la vez el único país-continente del mundo?',o:['a) Nueva Zelanda','b) Australia','c) Papúa Nueva Guinea','d) Fiyi'],c:1},
-  {q:'¿Cuál es el arrecife de coral más grande del mundo?',o:['a) Barrera de Mesoamérica','b) Barrera del Caribe','c) Gran Barrera de Coral','d) Arrecife de las Maldivas'],c:2},
+  {q:'¿Qué país es a la vez el único país-continente del mundo?',o:['a) Australia','b) Nueva Zelanda','c) Papúa Nueva Guinea','d) Fiyi'],c:0},
+  {q:'¿Cuál es el arrecife de coral más grande del mundo?',o:['a) Gran Barrera de Coral','b) Barrera de Mesoamérica','c) Barrera del Caribe','d) Arrecife de las Maldivas'],c:0},
   {q:'¿Cuál es el continente más frío del mundo?',o:['a) Europa','b) Asia','c) América del Norte','d) Antártida'],c:3},
   {q:'¿En qué año se firmó el Tratado Antártico?',o:['a) 1945','b) 1959','c) 1972','d) 1991'],c:1},
   {q:'¿Cuál es la cordillera más larga del mundo?',o:['a) El Himalaya','b) Los Alpes','c) Los Andes','d) Las Rocosas'],c:2},
   {q:'¿Qué organismo reúne a los 35 países del continente americano?',o:['a) ONU','b) OEA','c) CEPAL','d) ALBA'],c:1},
   {q:'¿Qué porcentaje del agua dulce del planeta está en la Antártida?',o:['a) 30%','b) 50%','c) 70%','d) 90%'],c:2},
-  {q:'¿Qué pueblo originario de Nueva Zelanda es famoso por el haka?',o:['a) Aborígenes','b) Incas','c) Polinesios','d) Maoríes'],c:3},
+  {q:'¿Qué pueblo originario de Nueva Zelanda es famoso por el haka?',o:['a) Aborígenes','b) Maoríes','c) Incas','d) Polinesios'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -393,14 +393,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El continente más pequeño del mundo es ___ .',opts:['América','Antártida','Oceanía'],c:2},
-  {s:'El río más caudaloso del mundo es el ___ .',opts:['Nilo','Amazonas','Mississippi'],c:1},
+  {s:'El continente más pequeño del mundo es ___ .',opts:['Oceanía','América','Antártida'],c:0},
+  {s:'El río más caudaloso del mundo es el ___ .',opts:['Nilo','Mississippi','Amazonas'],c:2},
   {s:'Honduras está en ___ Central.',opts:['Asia','Europa','América'],c:2},
   {s:'La cordillera más larga del mundo es ___ .',opts:['el Himalaya','los Andes','los Alpes'],c:1},
-  {s:'El Tratado Antártico fue firmado en ___ .',opts:['1945','1972','1959'],c:2},
+  {s:'El Tratado Antártico fue firmado en ___ .',opts:['1959','1945','1972'],c:0},
   {s:'El ___ facilita el comercio entre Honduras y EE.UU.',opts:['MERCOSUR','CAFTA-DR','OEA'],c:1},
-  {s:'La Antártida contiene el ___ del agua dulce del planeta.',opts:['30%','50%','70%'],c:2},
-  {s:'Los ___ son los pueblos originarios de Australia.',opts:['Maoríes','Incas','Aborígenes'],c:2},
+  {s:'La Antártida contiene el ___ del agua dulce del planeta.',opts:['70%','30%','50%'],c:0},
+  {s:'Los ___ son los pueblos originarios de Australia.',opts:['Maoríes','Aborígenes','Incas'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -736,20 +736,20 @@ const evalTFBank=[
   {q:'El Tratado Antártico permite la minería controlada en el continente.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el río más caudaloso del mundo?',o:['a) Nilo','b) Congo','c) Amazonas','d) Mississippi'],a:2},
-  {q:'¿En qué región se ubica Honduras?',o:['a) América del Norte','b) América del Sur','c) América Central','d) El Caribe'],a:2},
+  {q:'¿Cuál es el río más caudaloso del mundo?',o:['a) Nilo','b) Congo','c) Mississippi','d) Amazonas'],a:3},
+  {q:'¿En qué región se ubica Honduras?',o:['a) América del Norte','b) América Central','c) América del Sur','d) El Caribe'],a:1},
   {q:'¿Cuál es el continente más pequeño del mundo?',o:['a) Europa','b) Antártida','c) Oceanía','d) América del Sur'],a:2},
-  {q:'¿Cómo se llama el acuerdo comercial entre Honduras y EE.UU.?',o:['a) MERCOSUR','b) NAFTA','c) AACUE','d) CAFTA-DR'],a:3},
-  {q:'¿Qué contiene la Antártida equivalente al 70% del agua dulce del planeta?',o:['a) Lagos subterráneos','b) Ríos congelados','c) Capa de hielo','d) Glaciares flotantes'],a:2},
-  {q:'¿Cuál es la cordillera más larga del mundo?',o:['a) El Himalaya','b) Los Alpes','c) Los Andes','d) Las Rocosas'],a:2},
+  {q:'¿Cómo se llama el acuerdo comercial entre Honduras y EE.UU.?',o:['a) CAFTA-DR','b) MERCOSUR','c) NAFTA','d) AACUE'],a:0},
+  {q:'¿Qué contiene la Antártida equivalente al 70% del agua dulce del planeta?',o:['a) Lagos subterráneos','b) Ríos congelados','c) Glaciares flotantes','d) Capa de hielo'],a:3},
+  {q:'¿Cuál es la cordillera más larga del mundo?',o:['a) El Himalaya','b) Los Andes','c) Los Alpes','d) Las Rocosas'],a:1},
   {q:'¿Cuántos países tiene el continente americano?',o:['a) 25','b) 35','c) 44','d) 54'],a:1},
-  {q:'¿Qué pueblo originario de Nueva Zelanda es famoso por el haka?',o:['a) Aborígenes','b) Incas','c) Maoríes','d) Polinesios'],a:2},
+  {q:'¿Qué pueblo originario de Nueva Zelanda es famoso por el haka?',o:['a) Maoríes','b) Aborígenes','c) Incas','d) Polinesios'],a:0},
   {q:'¿En qué año se firmó el Tratado Antártico?',o:['a) 1945','b) 1959','c) 1972','d) 1991'],a:1},
-  {q:'¿Qué exporta Honduras principalmente a EE.UU.?',o:['a) Petróleo','b) Café y textiles','c) Tecnología','d) Minerales'],a:1},
-  {q:'¿Cuál es el punto más alto de América?',o:['a) Monte Everest','b) Mont Blanc','c) Aconcagua','d) Monte Rosa'],a:2},
+  {q:'¿Qué exporta Honduras principalmente a EE.UU.?',o:['a) Café y textiles','b) Petróleo','c) Tecnología','d) Minerales'],a:0},
+  {q:'¿Cuál es el punto más alto de América?',o:['a) Aconcagua','b) Monte Everest','c) Mont Blanc','d) Monte Rosa'],a:0},
   {q:'¿Cuántos años de presencia tienen los aborígenes en Australia?',o:['a) 10,000','b) 30,000','c) 60,000','d) 100,000'],a:2},
-  {q:'¿Qué organismo reúne los 35 países del continente americano?',o:['a) ONU','b) OEA','c) CELAC','d) ALBA'],a:1},
-  {q:'¿Cuál es el arrecife de coral más grande del mundo?',o:['a) Barrera de Mesoamérica','b) Gran Barrera de Coral','c) Arrecife del Caribe','d) Barrera de Belize'],a:1},
+  {q:'¿Qué organismo reúne los 35 países del continente americano?',o:['a) ONU','b) CELAC','c) OEA','d) ALBA'],a:2},
+  {q:'¿Cuál es el arrecife de coral más grande del mundo?',o:['a) Barrera de Mesoamérica','b) Arrecife del Caribe','c) Barrera de Belize','d) Gran Barrera de Coral'],a:3},
   {q:'¿Cuál es la principal fuente de divisas de Honduras?',o:['a) Exportaciones de café','b) Turismo','c) Remesas','d) Petróleo'],a:2},
 ];
 const evalCPBank=[

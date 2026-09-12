@@ -125,15 +125,15 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 // ===================== QUIZ DATA =====================
 const qzData=[
   {q:'En una recta de 0 a 100 con marcas cada 10, ¿qué número está en la 4.ª marca después del 0?',o:['a) 4','b) 40','c) 44','d) 100'],c:1,feedback:'Cada salto vale 10: cuatro saltos desde 0 llegan a 40.'},
-  {q:'¿Cuál es el punto medio entre 30 y 50?',o:['a) 35','b) 45','c) 40','d) 80'],c:2,feedback:'El punto medio está a la misma distancia de ambos: 40 está a 10 de 30 y a 10 de 50.'},
+  {q:'¿Cuál es el punto medio entre 30 y 50?',o:['a) 40','b) 35','c) 45','d) 80'],c:0,feedback:'El punto medio está a la misma distancia de ambos: 40 está a 10 de 30 y a 10 de 50.'},
   {q:'Una recta muestra 0, 25, 50, 75… ¿qué número sigue?',o:['a) 76','b) 80','c) 95','d) 100'],c:3,feedback:'La escala es de 25 en 25: después de 75 viene 100.'},
   {q:'En 358 + 236 = 594, los números 358 y 236 se llaman:',o:['a) diferencias','b) sumandos','c) totales','d) minuendos'],c:1},
   {q:'En la resta 720 − 245, ¿cuál es el minuendo?',o:['a) 245','b) 475','c) 720','d) 965'],c:2,feedback:'El minuendo es el número al que se le quita: 720.'},
   {q:'Ana tiene 385 lempiras y recibe 150 más. ¿Cuánto tiene ahora?',o:['a) 435','b) 535','c) 235','d) 545'],c:1,feedback:'Es una adición: 385 + 150 = 535 lempiras.'},
-  {q:'¿Cuánto le falta a 65 para llegar a 100?',o:['a) 45','b) 35','c) 165','d) 25'],c:1,feedback:'Se resuelve con resta: 100 − 65 = 35.'},
-  {q:'En la recta numérica, sumar significa moverse hacia:',o:['a) la izquierda','b) la derecha','c) abajo','d) el origen'],c:1},
-  {q:'Un punto está entre 70 y 80, más cerca del 80. ¿Cuál puede ser?',o:['a) 71','b) 78','c) 85','d) 70'],c:1,feedback:'78 está entre 70 y 80 y a solo 2 saltos del 80.'},
-  {q:'¿Cuál es el resultado de 500 − 137?',o:['a) 363','b) 373','c) 463','d) 437'],c:0,feedback:'500 − 137 = 363. Prueba: 137 + 363 = 500 ✔.'}
+  {q:'¿Cuánto le falta a 65 para llegar a 100?',o:['a) 35','b) 45','c) 165','d) 25'],c:0,feedback:'Se resuelve con resta: 100 − 65 = 35.'},
+  {q:'En la recta numérica, sumar significa moverse hacia:',o:['a) la izquierda','b) abajo','c) el origen','d) la derecha'],c:3},
+  {q:'Un punto está entre 70 y 80, más cerca del 80. ¿Cuál puede ser?',o:['a) 78','b) 71','c) 85','d) 70'],c:0,feedback:'78 está entre 70 y 80 y a solo 2 saltos del 80.'},
+  {q:'¿Cuál es el resultado de 500 − 137?',o:['a) 373','b) 463','c) 363','d) 437'],c:2,feedback:'500 − 137 = 363. Prueba: 137 + 363 = 500 ✔.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -703,11 +703,11 @@ const evalTFBank=[
   {q:'La prueba de la resta dice: sustraendo + diferencia = minuendo.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el punto medio entre 200 y 300?',o:['a) 205','b) 250','c) 230','d) 295'],a:1},
+  {q:'¿Cuál es el punto medio entre 200 y 300?',o:['a) 250','b) 205','c) 230','d) 295'],a:0},
   {q:'En una recta de 0 a 80 con marcas cada 10, ¿qué número está en la 5.ª marca después del 0?',o:['a) 5','b) 40','c) 50','d) 55'],a:2},
-  {q:'En 720−245=475, ¿cómo se llama el número 720?',o:['a) sustraendo','b) diferencia','c) minuendo','d) sumando'],a:2},
+  {q:'En 720−245=475, ¿cómo se llama el número 720?',o:['a) minuendo','b) sustraendo','c) diferencia','d) sumando'],a:0},
   {q:'¿Qué operación responde "cuánto le falta a 38 para llegar a 52"?',o:['a) 38+52','b) 52−38','c) 52+38','d) 38−52'],a:1},
-  {q:'Ana tiene 385 lempiras y recibe 150. ¿Cuánto tiene ahora?',o:['a) 235','b) 535','c) 435','d) 545'],a:1}
+  {q:'Ana tiene 385 lempiras y recibe 150. ¿Cuánto tiene ahora?',o:['a) 235','b) 435','c) 545','d) 535'],a:3}
 ];
 const evalCPBank=[
   {q:'El punto de partida de la recta numérica se llama ___.',a:'origen'},

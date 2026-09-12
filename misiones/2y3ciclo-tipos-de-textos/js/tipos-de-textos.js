@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué determina el tipo de un texto?',o:['a) Su longitud','b) Su propósito comunicativo','c) El color del papel','d) El autor'],c:1},
-  {q:'¿Qué tipo de texto CUENTA hechos que les pasan a unos personajes?',o:['a) Descriptivo','b) Instructivo','c) Narrativo','d) Expositivo'],c:2},
-  {q:'Una receta de cocina es un texto...',o:['a) Poético','b) Instructivo','c) Argumentativo','d) Descriptivo'],c:1},
+  {q:'¿Qué determina el tipo de un texto?',o:['a) Su propósito comunicativo','b) Su longitud','c) El color del papel','d) El autor'],c:0},
+  {q:'¿Qué tipo de texto CUENTA hechos que les pasan a unos personajes?',o:['a) Narrativo','b) Descriptivo','c) Instructivo','d) Expositivo'],c:0},
+  {q:'Una receta de cocina es un texto...',o:['a) Poético','b) Argumentativo','c) Descriptivo','d) Instructivo'],c:3},
   {q:'¿Cuál es el propósito de un texto argumentativo?',o:['a) Informar sin opinar','b) Convencer con razones','c) Describir un objeto','d) Contar una historia'],c:1},
   {q:'¿Qué texto usa muchos adjetivos para decir cómo es algo?',o:['a) Narrativo','b) Instructivo','c) Descriptivo','d) Dialogado'],c:2},
-  {q:'¿Cuáles son las partes de la estructura narrativa?',o:['a) Tesis, argumentos y conclusión','b) Inicio, nudo y desenlace','c) Ingredientes y pasos','d) Introducción y despedida'],c:1},
-  {q:'Un artículo de enciclopedia que explica un tema es un texto...',o:['a) Expositivo','b) Poético','c) Instructivo','d) Argumentativo'],c:0},
-  {q:'¿Qué texto se reconoce por los guiones o rayas de diálogo?',o:['a) Expositivo','b) Descriptivo','c) Dialogado','d) Instructivo'],c:2},
-  {q:'¿Cuál de estos es un texto LITERARIO?',o:['a) La noticia','b) La receta','c) El poema','d) El manual'],c:2},
+  {q:'¿Cuáles son las partes de la estructura narrativa?',o:['a) Inicio, nudo y desenlace','b) Tesis, argumentos y conclusión','c) Ingredientes y pasos','d) Introducción y despedida'],c:0},
+  {q:'Un artículo de enciclopedia que explica un tema es un texto...',o:['a) Poético','b) Instructivo','c) Expositivo','d) Argumentativo'],c:2},
+  {q:'¿Qué texto se reconoce por los guiones o rayas de diálogo?',o:['a) Expositivo','b) Dialogado','c) Descriptivo','d) Instructivo'],c:1},
+  {q:'¿Cuál de estos es un texto LITERARIO?',o:['a) La noticia','b) La receta','c) El manual','d) El poema'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,10 +144,10 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El texto que cuenta una historia con personajes es el ___.',opts:['descriptivo','narrativo','instructivo'],c:1},
-  {s:'Una receta de cocina es un texto ___.',opts:['instructivo','poético','argumentativo'],c:0},
-  {s:'El texto que describe cómo es algo usando adjetivos es el ___.',opts:['expositivo','descriptivo','dialogado'],c:1},
-  {s:'El texto que informa sobre un tema sin opinar es el ___.',opts:['argumentativo','expositivo','narrativo'],c:1},
+  {s:'El texto que cuenta una historia con personajes es el ___.',opts:['descriptivo','instructivo','narrativo'],c:2},
+  {s:'Una receta de cocina es un texto ___.',opts:['poético','instructivo','argumentativo'],c:1},
+  {s:'El texto que describe cómo es algo usando adjetivos es el ___.',opts:['descriptivo','expositivo','dialogado'],c:0},
+  {s:'El texto que informa sobre un tema sin opinar es el ___.',opts:['argumentativo','narrativo','expositivo'],c:2},
   {s:'El texto que defiende una opinión para convencer es el ___.',opts:['argumentativo','instructivo','descriptivo'],c:0},
   {s:'La estructura del texto narrativo es inicio, nudo y ___.',opts:['tesis','desenlace','párrafo'],c:1},
   {s:'La voz que cuenta la historia se llama ___.',opts:['personaje','narrador','autor'],c:1},
@@ -369,20 +369,20 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Qué determina el tipo de un texto?',o:['a) Su tamaño','b) Su propósito comunicativo','c) El autor','d) El título'],a:1},
-  {q:'¿Qué texto cuenta hechos con personajes?',o:['a) Descriptivo','b) Narrativo','c) Instructivo','d) Expositivo'],a:1},
-  {q:'Una receta es un texto...',o:['a) Poético','b) Narrativo','c) Instructivo','d) Argumentativo'],a:2},
-  {q:'¿Cuál es el propósito del texto argumentativo?',o:['a) Informar','b) Convencer','c) Describir','d) Contar'],a:1},
-  {q:'¿Qué texto usa muchos adjetivos?',o:['a) Descriptivo','b) Instructivo','c) Expositivo','d) Dialogado'],a:0},
+  {q:'¿Qué texto cuenta hechos con personajes?',o:['a) Descriptivo','b) Instructivo','c) Narrativo','d) Expositivo'],a:2},
+  {q:'Una receta es un texto...',o:['a) Poético','b) Narrativo','c) Argumentativo','d) Instructivo'],a:3},
+  {q:'¿Cuál es el propósito del texto argumentativo?',o:['a) Convencer','b) Informar','c) Describir','d) Contar'],a:0},
+  {q:'¿Qué texto usa muchos adjetivos?',o:['a) Instructivo','b) Expositivo','c) Descriptivo','d) Dialogado'],a:2},
   {q:'¿Cuáles son las partes de la estructura narrativa?',o:['a) Tesis y argumentos','b) Inicio, nudo y desenlace','c) Materiales y pasos','d) Saludo y despedida'],a:1},
-  {q:'Un artículo de enciclopedia es un texto...',o:['a) Expositivo','b) Poético','c) Instructivo','d) Argumentativo'],a:0},
-  {q:'¿Qué texto se reconoce por las rayas de diálogo?',o:['a) Expositivo','b) Dialogado','c) Descriptivo','d) Instructivo'],a:1},
+  {q:'Un artículo de enciclopedia es un texto...',o:['a) Poético','b) Expositivo','c) Instructivo','d) Argumentativo'],a:1},
+  {q:'¿Qué texto se reconoce por las rayas de diálogo?',o:['a) Expositivo','b) Descriptivo','c) Instructivo','d) Dialogado'],a:3},
   {q:'¿Cuál es un texto literario?',o:['a) La noticia','b) La receta','c) El poema','d) El informe'],a:2},
-  {q:'La voz que cuenta la historia se llama...',o:['a) Autor','b) Narrador','c) Lector','d) Personaje'],a:1},
+  {q:'La voz que cuenta la historia se llama...',o:['a) Narrador','b) Autor','c) Lector','d) Personaje'],a:0},
   {q:'¿Qué texto informa sin dar opiniones?',o:['a) Argumentativo','b) Expositivo','c) Poético','d) Narrativo'],a:1},
-  {q:'El ensayo es un ejemplo de texto...',o:['a) Instructivo','b) Descriptivo','c) Argumentativo','d) Dialogado'],a:2},
+  {q:'El ensayo es un ejemplo de texto...',o:['a) Argumentativo','b) Instructivo','c) Descriptivo','d) Dialogado'],a:0},
   {q:'¿Qué texto expresa sentimientos en verso?',o:['a) Poético','b) Expositivo','c) Instructivo','d) Narrativo'],a:0},
-  {q:'La obra de teatro es un texto...',o:['a) Expositivo','b) Dialogado','c) Instructivo','d) Descriptivo'],a:1},
-  {q:'¿Qué palabras unen las ideas de un texto?',o:['a) Los adjetivos','b) Los conectores','c) Los verbos','d) Los sustantivos'],a:1},
+  {q:'La obra de teatro es un texto...',o:['a) Expositivo','b) Instructivo','c) Descriptivo','d) Dialogado'],a:3},
+  {q:'¿Qué palabras unen las ideas de un texto?',o:['a) Los adjetivos','b) Los verbos','c) Los conectores','d) Los sustantivos'],a:2},
 ];
 const evalCPBank=[
   {q:'El texto que cuenta una historia es el ___.',a:'narrativo'},

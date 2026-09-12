@@ -175,13 +175,13 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 const qzData=[
   {q:'¿Cuántos lados tiene un hexágono?',o:['a) 4','b) 5','c) 6','d) 7'],c:2,feedback:'El hexágono tiene 6 lados iguales.'},
   {q:'¿Cuántos lados tiene un pentágono?',o:['a) 5','b) 6','c) 7','d) 4'],c:0,feedback:'El pentágono tiene 5 lados iguales.'},
-  {q:'¿Qué es la apotema?',o:['a) un lado','b) la distancia del centro al lado','c) una diagonal','d) un vértice'],c:1,feedback:'La apotema va del centro al punto medio de un lado.'},
-  {q:'¿Cuál es la fórmula del área de un polígono regular?',o:['a) lado × lado','b) base × altura','c) (P × apotema) ÷ 2','d) 4 × lado'],c:2,feedback:'A = (perímetro × apotema) ÷ 2.'},
-  {q:'¿Cuál es el perímetro de un hexágono de lado 5?',o:['a) 25','b) 30','c) 35','d) 11'],c:1,feedback:'P = 6 × 5 = 30. El hexágono tiene 6 lados.'},
-  {q:'Un pentágono tiene P = 20 y apotema 4. ¿Cuál es su área?',o:['a) 80 cm²','b) 40 cm²','c) 24 cm²','d) 100 cm²'],c:1,feedback:'A = (20 × 4) ÷ 2 = 80 ÷ 2 = 40 cm².'},
+  {q:'¿Qué es la apotema?',o:['a) un lado','b) una diagonal','c) un vértice','d) la distancia del centro al lado'],c:3,feedback:'La apotema va del centro al punto medio de un lado.'},
+  {q:'¿Cuál es la fórmula del área de un polígono regular?',o:['a) lado × lado','b) (P × apotema) ÷ 2','c) base × altura','d) 4 × lado'],c:1,feedback:'A = (perímetro × apotema) ÷ 2.'},
+  {q:'¿Cuál es el perímetro de un hexágono de lado 5?',o:['a) 30','b) 25','c) 35','d) 11'],c:0,feedback:'P = 6 × 5 = 30. El hexágono tiene 6 lados.'},
+  {q:'Un pentágono tiene P = 20 y apotema 4. ¿Cuál es su área?',o:['a) 80 cm²','b) 24 cm²','c) 40 cm²','d) 100 cm²'],c:2,feedback:'A = (20 × 4) ÷ 2 = 80 ÷ 2 = 40 cm².'},
   {q:'En A = (P × apotema) ÷ 2, ¿qué falta después de multiplicar?',o:['a) sumar 2','b) dividir entre 2','c) restar 2','d) nada'],c:1,feedback:'Después de multiplicar P por la apotema, se divide entre 2.'},
-  {q:'Un polígono regular tiene todos sus lados:',o:['a) distintos','b) iguales','c) curvos','d) dobles'],c:1,feedback:'En un polígono regular todos los lados (y ángulos) son iguales.'},
-  {q:'¿Cuál es el perímetro de un pentágono de lado 6?',o:['a) 30','b) 36','c) 11','d) 25'],c:0,feedback:'P = 5 × 6 = 30. El pentágono tiene 5 lados.'}
+  {q:'Un polígono regular tiene todos sus lados:',o:['a) iguales','b) distintos','c) curvos','d) dobles'],c:0,feedback:'En un polígono regular todos los lados (y ángulos) son iguales.'},
+  {q:'¿Cuál es el perímetro de un pentágono de lado 6?',o:['a) 36','b) 11','c) 25','d) 30'],c:3,feedback:'P = 5 × 6 = 30. El pentágono tiene 5 lados.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -331,11 +331,11 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Un polígono con todos sus lados iguales es un polígono ___.',opts:['irregular','regular','abierto'],c:1},
+  {s:'Un polígono con todos sus lados iguales es un polígono ___.',opts:['irregular','abierto','regular'],c:2},
   {s:'La distancia del centro al punto medio de un lado es la ___.',opts:['diagonal','apotema','base'],c:1},
   {s:'El hexágono tiene ___ lados.',opts:['cinco','seis','siete'],c:1},
-  {s:'El pentágono tiene ___ lados.',opts:['cinco','seis','cuatro'],c:0},
-  {s:'El perímetro es número de lados × ___.',opts:['apotema','lado','centro'],c:1},
+  {s:'El pentágono tiene ___ lados.',opts:['seis','cuatro','cinco'],c:2},
+  {s:'El perímetro es número de lados × ___.',opts:['lado','apotema','centro'],c:0},
   {s:'El área de un polígono regular es (P × apotema) ÷ ___.',opts:['2','4','3'],c:0},
   {s:'El área se mide en unidades ___.',opts:['lineales','cuadradas','cúbicas'],c:1},
   {s:'En la fórmula del área se usa la apotema, no el ___.',opts:['lado','centro','perímetro'],c:0}
@@ -706,13 +706,13 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Cuántos lados tiene un hexágono?',o:['a) 4','b) 5','c) 6','d) 7'],a:2},
-  {q:'¿Cuántos lados tiene un pentágono?',o:['a) 5','b) 6','c) 4','d) 7'],a:0},
+  {q:'¿Cuántos lados tiene un pentágono?',o:['a) 6','b) 4','c) 5','d) 7'],a:2},
   {q:'¿Cuál es la fórmula del área de un polígono regular?',o:['a) lado × lado','b) (P × apotema) ÷ 2','c) 4 × lado','d) base × altura'],a:1},
-  {q:'¿Cuál es el perímetro de un hexágono de lado 5?',o:['a) 25','b) 30','c) 35','d) 11'],a:1},
+  {q:'¿Cuál es el perímetro de un hexágono de lado 5?',o:['a) 25','b) 35','c) 11','d) 30'],a:3},
   {q:'Un pentágono con P = 20 y apotema 4 tiene área:',o:['a) 80 cm²','b) 40 cm²','c) 24 cm²','d) 60 cm²'],a:1},
-  {q:'La apotema va del centro al:',o:['a) vértice','b) punto medio del lado','c) otro centro','d) exterior'],a:1},
+  {q:'La apotema va del centro al:',o:['a) punto medio del lado','b) vértice','c) otro centro','d) exterior'],a:0},
   {q:'¿Cuál es el perímetro de un pentágono de lado 6?',o:['a) 30','b) 36','c) 11','d) 25'],a:0},
-  {q:'El área se mide en:',o:['a) cm','b) cm²','c) litros','d) grados'],a:1}
+  {q:'El área se mide en:',o:['a) cm','b) litros','c) grados','d) cm²'],a:3}
 ];
 const evalCPBank=[
   {q:'Un polígono con lados y ángulos iguales es un polígono ___.',a:'regular',acc:['regular']},
