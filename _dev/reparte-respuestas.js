@@ -99,7 +99,9 @@ function literales(txt, ini, fin) {  // los literales de cadena de un array, con
 }
 
 function banco(src, b) {
-  const m = new RegExp('const\\s+' + b.nombre + '\\s*=\\s*\\[').exec(src);
+  // Hay misiones que los declaran con `let` (las que cambian de idioma en
+  //  caliente reasignan el banco), así que no vale pedir `const`.
+  const m = new RegExp('(?:const|let|var)\\s+' + b.nombre + '\\s*=\\s*\\[').exec(src);
   if (!m) return null;
   const ini = src.indexOf('[', m.index), fin = cierre(src, ini);
   if (fin < 0) return null;
@@ -299,7 +301,7 @@ for (const carpeta of carpetas) {
      `interaccion_cuadrados.js`; `bach-uni-adjetivos` se llama `app.js` y
      `angulo-bisectriz`, `angulos.js`. El que manda es el que trae los bancos. */
   const conBanco = js.map(f => path.join(dir, f))
-    .filter(p => /const\s+qzData\s*=\s*\[/.test(fs.readFileSync(p, 'utf8')));
+    .filter(p => /(?:const|let|var)\s+qzData\s*=\s*\[/.test(fs.readFileSync(p, 'utf8')));
   if (conBanco.length !== 1) {
     console.log('  ⚠️  ' + carpeta + ': ' + (conBanco.length ? conBanco.length + ' archivos traen qzData' : 'ningún archivo trae qzData') + '; se deja como está');
     avisos++; continue;
@@ -315,6 +317,20 @@ for (const carpeta of carpetas) {
     /* La marca de la semilla lleva la misión y el banco: así dos bancos de la
        misma misión no salen con la misma baraja, y volver a correr la
        herramienta sobre el mismo archivo da siempre lo mismo. */
+    /* ⚠️ Un banco que YA cumple no se toca. Sin esto, la herramienta rehacía
+       bancos sanos: en Recta Numérica movía cuatro filas de un `cmpData` que ya
+       estaba a 38·38·25 y sin repeticiones, y encima lo dejaba con una racha de
+       2 donde tenía 1. Mover por mover es diff que alguien tiene que leer, y a
+       veces es empeorar. */
+    const yaCuenta = filas.reduce((a, f) => (a[f.idx] = (a[f.idx] || 0) + 1, a), {});
+    const yaTope = Math.min(Math.ceil(filas.length / Math.max(...filas.map(f => f.opts.length))),
+      Math.floor(filas.length * TOPE)) || 1;
+    if (Math.max(...Object.values(yaCuenta)) <= yaTope && racha(filas.map(f => f.idx)) <= 2) {
+      console.log('   ✔  ' + b.nombre.padEnd(12) + filas.length + 'q  ya cumple: '
+        + 'abcd'.split('').map((L, k) => yaCuenta[k] ? L + ' ' + Math.round(100 * yaCuenta[k] / filas.length) + '%' : null).filter(Boolean).join(' · ')
+        + '   ·  seguidas iguales: ' + racha(filas.map(f => f.idx)));
+      continue;
+    }
     const r = reparte(filas, carpeta + '/' + b.nombre);
     if (!r) { console.log('   ⚠️  ' + b.nombre + ': no se pudo repartir sin dejar una fila sin letra; se deja como está'); avisos++; continue; }
     const { destino, cuenta, max } = r;
