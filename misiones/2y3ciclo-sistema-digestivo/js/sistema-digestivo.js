@@ -84,10 +84,10 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué sistema del cuerpo se encarga de transformar los alimentos?',o:['a) El nervioso','b) El digestivo','c) El respiratorio','d) El circulatorio'],c:1},
-  {q:'¿Qué nutriente da energía rápida al cuerpo?',o:['a) Las proteínas','b) Las grasas','c) Los carbohidratos','d) El agua'],c:2},
+  {q:'¿Qué sistema del cuerpo se encarga de transformar los alimentos?',o:['a) El digestivo','b) El nervioso','c) El respiratorio','d) El circulatorio'],c:0},
+  {q:'¿Qué nutriente da energía rápida al cuerpo?',o:['a) Los carbohidratos','b) Las proteínas','c) Las grasas','d) El agua'],c:0},
   {q:'¿En qué órgano se mezcla el alimento con los jugos gástricos?',o:['a) La boca','b) El esófago','c) El estómago','d) El hígado'],c:2},
-  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El estómago','b) El intestino delgado','c) El intestino grueso','d) La boca'],c:1},
+  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El estómago','b) El intestino grueso','c) La boca','d) El intestino delgado'],c:3},
   {q:'¿Cuál es la PRIMERA etapa de la digestión?',o:['a) La absorción','b) La digestión','c) La ingestión','d) La egestión'],c:2},
   {q:'¿Qué glándula fabrica la bilis?',o:['a) El páncreas','b) El hígado','c) El estómago','d) Las salivales'],c:1},
   {q:'¿Qué nutriente sirve para construir y reparar el cuerpo?',o:['a) Los carbohidratos','b) Las proteínas','c) Las grasas','d) Las vitaminas'],c:1},
@@ -144,10 +144,10 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El sistema ___ transforma los alimentos en nutrientes.',opts:['nervioso','digestivo','óseo'],c:1},
+  {s:'El sistema ___ transforma los alimentos en nutrientes.',opts:['nervioso','óseo','digestivo'],c:2},
   {s:'Los ___ dan energía rápida al cuerpo.',opts:['carbohidratos','proteínas','minerales'],c:0},
-  {s:'Las ___ construyen y reparan el cuerpo.',opts:['grasas','proteínas','vitaminas'],c:1},
-  {s:'El ___ mezcla el alimento con jugos gástricos.',opts:['esófago','estómago','hígado'],c:1},
+  {s:'Las ___ construyen y reparan el cuerpo.',opts:['grasas','vitaminas','proteínas'],c:2},
+  {s:'El ___ mezcla el alimento con jugos gástricos.',opts:['estómago','esófago','hígado'],c:0},
   {s:'Los nutrientes pasan a la sangre en el intestino ___.',opts:['grueso','delgado','ciego'],c:1},
   {s:'El ___ fabrica la bilis para digerir las grasas.',opts:['páncreas','hígado','estómago'],c:1},
   {s:'La primera etapa de la digestión es la ___.',opts:['absorción','ingestión','egestión'],c:1},
@@ -365,17 +365,17 @@ const evalTFBank=[
   {q:'La saliva ablanda el alimento y empieza la digestión en la boca.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué sistema del cuerpo transforma los alimentos?',o:['a) El nervioso','b) El digestivo','c) El respiratorio','d) El óseo'],a:1},
+  {q:'¿Qué sistema del cuerpo transforma los alimentos?',o:['a) El digestivo','b) El nervioso','c) El respiratorio','d) El óseo'],a:0},
   {q:'¿Qué nutriente da energía rápida?',o:['a) Las proteínas','b) Las grasas','c) Los carbohidratos','d) El agua'],a:2},
-  {q:'¿Qué nutriente construye y repara el cuerpo?',o:['a) Los carbohidratos','b) Las proteínas','c) Las grasas','d) Las vitaminas'],a:1},
-  {q:'¿En qué órgano empieza la digestión?',o:['a) El estómago','b) La boca','c) El esófago','d) El hígado'],a:1},
+  {q:'¿Qué nutriente construye y repara el cuerpo?',o:['a) Los carbohidratos','b) Las grasas','c) Las vitaminas','d) Las proteínas'],a:3},
+  {q:'¿En qué órgano empieza la digestión?',o:['a) La boca','b) El estómago','c) El esófago','d) El hígado'],a:0},
   {q:'¿En qué órgano se mezcla el alimento con jugos gástricos?',o:['a) La boca','b) El esófago','c) El estómago','d) El hígado'],a:2},
-  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El estómago','b) El intestino delgado','c) El intestino grueso','d) La boca'],a:1},
-  {q:'¿Qué glándula fabrica la bilis?',o:['a) El páncreas','b) El hígado','c) El estómago','d) Las salivales'],a:1},
+  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El estómago','b) El intestino grueso','c) La boca','d) El intestino delgado'],a:3},
+  {q:'¿Qué glándula fabrica la bilis?',o:['a) El hígado','b) El páncreas','c) El estómago','d) Las salivales'],a:0},
   {q:'¿Qué órgano absorbe el agua y forma las heces?',o:['a) El intestino delgado','b) El estómago','c) El intestino grueso','d) El esófago'],a:2},
   {q:'¿Cuál es la primera etapa de la digestión?',o:['a) La absorción','b) La digestión','c) La ingestión','d) La egestión'],a:2},
-  {q:'¿Qué debemos hacer antes de comer?',o:['a) Correr','b) Lavarnos las manos','c) Dormir','d) Ver televisión'],a:1},
-  {q:'¿Cuál de estos alimentos aporta sobre todo proteínas?',o:['a) La tortilla','b) El frijol','c) El azúcar','d) El aguacate'],a:1},
+  {q:'¿Qué debemos hacer antes de comer?',o:['a) Correr','b) Dormir','c) Ver televisión','d) Lavarnos las manos'],a:3},
+  {q:'¿Cuál de estos alimentos aporta sobre todo proteínas?',o:['a) El frijol','b) La tortilla','c) El azúcar','d) El aguacate'],a:0},
   {q:'¿Cómo se llama la masa de alimento masticado y ensalivado?',o:['a) Quimo','b) Bolo alimenticio','c) Bilis','d) Heces'],a:1},
   {q:'Las glándulas salivales, el hígado y el páncreas son…',o:['a) órganos del tubo','b) glándulas anexas','c) nutrientes','d) músculos'],a:1},
   {q:'¿Qué paso hace que los nutrientes lleguen a la sangre?',o:['a) La ingestión','b) La absorción','c) La egestión','d) La masticación'],a:1},

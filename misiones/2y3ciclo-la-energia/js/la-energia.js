@@ -84,10 +84,10 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es la energía?',o:['a) Un tipo de materia','b) La capacidad de producir cambios o realizar un trabajo','c) Un color','d) Un ser vivo'],c:1},
+  {q:'¿Qué es la energía?',o:['a) Un tipo de materia','b) Un color','c) Un ser vivo','d) La capacidad de producir cambios o realizar un trabajo'],c:3},
   {q:'¿Qué forma de energía es la luz?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Eléctrica'],c:2},
   {q:'¿Qué forma de energía es el calor?',o:['a) Calorífica','b) Sonora','c) Luminosa','d) Mecánica'],c:0},
-  {q:'¿Qué forma de energía produce movimiento?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Calorífica'],c:1},
+  {q:'¿Qué forma de energía produce movimiento?',o:['a) Mecánica','b) Sonora','c) Luminosa','d) Calorífica'],c:0},
   {q:'¿Cuál es la principal fuente de energía de la Tierra?',o:['a) El viento','b) El petróleo','c) El Sol','d) El carbón'],c:2},
   {q:'¿Cuál es una fuente de energía renovable?',o:['a) El petróleo','b) El carbón','c) El viento','d) El gas natural'],c:2},
   {q:'¿Cuál es una fuente de energía no renovable?',o:['a) El Sol','b) El petróleo','c) El agua','d) El viento'],c:1},
@@ -144,11 +144,11 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La ___ es la capacidad de producir cambios.',opts:['materia','energía','masa'],c:1},
-  {s:'La energía de la luz es la ___.',opts:['sonora','luminosa','mecánica'],c:1},
+  {s:'La ___ es la capacidad de producir cambios.',opts:['materia','masa','energía'],c:2},
+  {s:'La energía de la luz es la ___.',opts:['luminosa','sonora','mecánica'],c:0},
   {s:'La energía del calor es la ___.',opts:['calorífica','sonora','eléctrica'],c:0},
-  {s:'La principal fuente de energía de la Tierra es el ___.',opts:['viento','Sol','petróleo'],c:1},
-  {s:'El viento es una fuente ___.',opts:['no renovable','renovable','agotada'],c:1},
+  {s:'La principal fuente de energía de la Tierra es el ___.',opts:['viento','petróleo','Sol'],c:2},
+  {s:'El viento es una fuente ___.',opts:['renovable','no renovable','agotada'],c:0},
   {s:'El petróleo es una fuente ___.',opts:['renovable','no renovable','limpia'],c:1},
   {s:'La energía no se crea ni se destruye: solo se ___.',opts:['pierde','transforma','acaba'],c:1},
   {s:'Debemos ___ energía para cuidar el planeta.',opts:['gastar','ahorrar','perder'],c:1},
@@ -365,16 +365,16 @@ const evalTFBank=[
   {q:'Las plantas usan la energía del Sol en la fotosíntesis.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es la energía?',o:['a) Un tipo de materia','b) La capacidad de producir cambios o realizar un trabajo','c) Un color','d) Un ser vivo'],a:1},
+  {q:'¿Qué es la energía?',o:['a) Un tipo de materia','b) Un color','c) Un ser vivo','d) La capacidad de producir cambios o realizar un trabajo'],a:3},
   {q:'¿Qué forma de energía es la luz?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Eléctrica'],a:2},
   {q:'¿Qué forma de energía es el calor?',o:['a) Calorífica','b) Sonora','c) Luminosa','d) Mecánica'],a:0},
-  {q:'¿Qué forma de energía es el sonido?',o:['a) Luminosa','b) Sonora','c) Mecánica','d) Calorífica'],a:1},
-  {q:'¿Qué forma de energía produce movimiento?',o:['a) Sonora','b) Mecánica','c) Luminosa','d) Calorífica'],a:1},
+  {q:'¿Qué forma de energía es el sonido?',o:['a) Luminosa','b) Mecánica','c) Calorífica','d) Sonora'],a:3},
+  {q:'¿Qué forma de energía produce movimiento?',o:['a) Mecánica','b) Sonora','c) Luminosa','d) Calorífica'],a:0},
   {q:'¿Cuál es la principal fuente de energía de la Tierra?',o:['a) El viento','b) El petróleo','c) El Sol','d) El carbón'],a:2},
   {q:'¿Cuál es una fuente de energía renovable?',o:['a) El petróleo','b) El carbón','c) El viento','d) El gas natural'],a:2},
-  {q:'¿Cuál es una fuente de energía no renovable?',o:['a) El Sol','b) El petróleo','c) El agua','d) El viento'],a:1},
-  {q:'La energía eléctrica de una bombilla se transforma en energía…',o:['a) sonora','b) luminosa','c) mecánica','d) química'],a:1},
-  {q:'La energía eléctrica de una plancha se transforma en energía…',o:['a) luminosa','b) calorífica','c) sonora','d) mecánica'],a:1},
+  {q:'¿Cuál es una fuente de energía no renovable?',o:['a) El Sol','b) El agua','c) El viento','d) El petróleo'],a:3},
+  {q:'La energía eléctrica de una bombilla se transforma en energía…',o:['a) luminosa','b) sonora','c) mecánica','d) química'],a:0},
+  {q:'La energía eléctrica de una plancha se transforma en energía…',o:['a) luminosa','b) sonora','c) calorífica','d) mecánica'],a:2},
   {q:'¿Qué le pasa a la energía?',o:['a) Se crea de la nada','b) Solo se transforma','c) Se destruye','d) Desaparece'],a:1},
   {q:'¿Por qué debemos ahorrar energía?',o:['a) Porque nunca se acaba','b) Porque muchas fuentes se agotan y contaminan','c) Porque es gratis','d) Porque no sirve'],a:1},
   {q:'La represa El Cajón produce energía…',o:['a) del petróleo','b) hidroeléctrica (del agua)','c) del carbón','d) del gas'],a:1},

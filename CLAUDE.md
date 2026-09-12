@@ -3751,9 +3751,14 @@ la regla del 40 % no se les pedía, y nadie lo sabía. Es la misma familia que l
 sonda que sale roja sin avería: una que se rinde con un aviso y sigue enseña a
 no mirarla.
 
-**Lo que queda:** 49 misiones. Se van haciendo por tandas, mirando el diff —cada
-fila movida es una línea que alguien tiene que leer— y corriendo después la
-sonda de la misión.
+⚠️ **Y las cinco de Robótica con traducción de autor van APARTE.** Su `-en.js`
+lleva el banco índice a índice; la herramienta las reconoce y se niega, con su
+aviso. `robots-problemas` es de las más sesgadas que quedan (89 % en la «b») y
+sigue esperando a que se haga a mano, con las dos ediciones a la vez.
+
+**Lo que queda:** 42 misiones (eran 53 el 12 de septiembre de 2026). Se van
+haciendo por tandas, mirando el diff —cada fila movida es una línea que alguien
+tiene que leer— y corriendo después la sonda de la misión.
 
 ## Comentarios en el código
 

@@ -84,9 +84,9 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Dar origen a nuevos seres de la misma especie','c) Respirar aire','d) Mover el cuerpo'],c:1},
-  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) El útero','c) Los testículos','d) Los pulmones'],c:2},
-  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) Los ovarios','c) El corazón','d) El estómago'],c:1},
+  {q:'¿Qué es la reproducción?',o:['a) Dar origen a nuevos seres de la misma especie','b) Comer alimentos','c) Respirar aire','d) Mover el cuerpo'],c:0},
+  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los testículos','b) Los ovarios','c) El útero','d) Los pulmones'],c:0},
+  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) El corazón','c) El estómago','d) Los ovarios'],c:3},
   {q:'¿Qué es la fecundación?',o:['a) El nacimiento del bebé','b) La unión del espermatozoide con el óvulo','c) La respiración','d) El crecimiento de los huesos'],c:1},
   {q:'¿En qué órgano crece el bebé durante el embarazo?',o:['a) En el estómago','b) En los pulmones','c) En el útero','d) En el corazón'],c:2},
   {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 6 meses','c) 9 meses','d) 12 meses'],c:2},
@@ -144,10 +144,10 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Los ___ producen los espermatozoides.',opts:['ovarios','testículos','pulmones'],c:1},
-  {s:'Los ___ producen los óvulos.',opts:['testículos','ovarios','riñones'],c:1},
-  {s:'La ___ es la unión del espermatozoide y el óvulo.',opts:['respiración','fecundación','digestión'],c:1},
-  {s:'El bebé crece dentro del ___ de la madre.',opts:['estómago','útero','corazón'],c:1},
+  {s:'Los ___ producen los espermatozoides.',opts:['testículos','ovarios','pulmones'],c:0},
+  {s:'Los ___ producen los óvulos.',opts:['ovarios','testículos','riñones'],c:0},
+  {s:'La ___ es la unión del espermatozoide y el óvulo.',opts:['respiración','digestión','fecundación'],c:2},
+  {s:'El bebé crece dentro del ___ de la madre.',opts:['útero','estómago','corazón'],c:0},
   {s:'El embarazo dura unos ___ meses.',opts:['tres','seis','nueve'],c:2},
   {s:'La ___ es la etapa en que el cuerpo madura para reproducirse.',opts:['vejez','pubertad','infancia'],c:1},
   {s:'La primera célula del nuevo ser es el ___.',opts:['óvulo','cigoto','glóbulo'],c:1},
@@ -365,17 +365,17 @@ const evalTFBank=[
   {q:'La vejez es la última etapa de la vida.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Dar origen a nuevos seres de la misma especie','c) Respirar aire','d) Mover el cuerpo'],a:1},
-  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) Los testículos','c) El útero','d) Los pulmones'],a:1},
-  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) Los ovarios','c) El corazón','d) El estómago'],a:1},
-  {q:'¿Qué es la fecundación?',o:['a) El nacimiento','b) La unión del espermatozoide y el óvulo','c) La respiración','d) El crecimiento de los huesos'],a:1},
+  {q:'¿Qué es la reproducción?',o:['a) Dar origen a nuevos seres de la misma especie','b) Comer alimentos','c) Respirar aire','d) Mover el cuerpo'],a:0},
+  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) El útero','c) Los pulmones','d) Los testículos'],a:3},
+  {q:'¿Qué órganos producen los óvulos?',o:['a) Los ovarios','b) Los testículos','c) El corazón','d) El estómago'],a:0},
+  {q:'¿Qué es la fecundación?',o:['a) El nacimiento','b) La respiración','c) El crecimiento de los huesos','d) La unión del espermatozoide y el óvulo'],a:3},
   {q:'¿En qué órgano crece el bebé?',o:['a) En el estómago','b) En los pulmones','c) En el útero','d) En el corazón'],a:2},
   {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 6 meses','c) 9 meses','d) 12 meses'],a:2},
-  {q:'¿Cómo se llama la célula reproductora masculina?',o:['a) Óvulo','b) Espermatozoide','c) Cigoto','d) Glóbulo'],a:1},
-  {q:'¿Cómo se llama la célula reproductora femenina?',o:['a) Espermatozoide','b) Óvulo','c) Neurona','d) Plaqueta'],a:1},
+  {q:'¿Cómo se llama la célula reproductora masculina?',o:['a) Espermatozoide','b) Óvulo','c) Cigoto','d) Glóbulo'],a:0},
+  {q:'¿Cómo se llama la célula reproductora femenina?',o:['a) Espermatozoide','b) Neurona','c) Plaqueta','d) Óvulo'],a:3},
   {q:'¿Cuál es la primera célula del nuevo ser?',o:['a) El óvulo','b) El espermatozoide','c) El cigoto','d) La neurona'],a:2},
-  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La vejez','b) La pubertad','c) La infancia','d) La adultez'],a:1},
-  {q:'¿Dónde ocurre la fecundación?',o:['a) En el estómago','b) En las trompas de Falopio','c) En los pulmones','d) En el corazón'],a:1},
+  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La pubertad','b) La vejez','c) La infancia','d) La adultez'],a:0},
+  {q:'¿Dónde ocurre la fecundación?',o:['a) En el estómago','b) En los pulmones','c) En las trompas de Falopio','d) En el corazón'],a:2},
   {q:'¿Por dónde recibe alimento el bebé en el embarazo?',o:['a) Por la boca','b) Por el cordón umbilical','c) Por la nariz','d) Por los oídos'],a:1},
   {q:'¿Cuál es el orden correcto de las etapas de la vida?',o:['a) Adultez, infancia, vejez','b) Infancia, adolescencia, adultez, vejez','c) Vejez, adultez, infancia','d) Adolescencia, infancia, vejez'],a:1},
   {q:'El órgano donde crece el bebé pertenece al sistema…',o:['a) masculino','b) femenino','c) digestivo','d) óseo'],a:1},

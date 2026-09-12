@@ -385,11 +385,11 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-    { q: '¿Cuál es la era geológica más larga de la historia de la Tierra?', o: ['a) Paleozoica', 'b) Mesozoica', 'c) Precámbrica', 'd) Cuaternaria'], c: 2 },
-    { q: '¿En qué era vivieron los dinosaurios?', o: ['a) Precámbrica', 'b) Paleozoica', 'c) Mesozoica', 'd) Cenozoica'], c: 2 },
+    { q: '¿Cuál es la era geológica más larga de la historia de la Tierra?', o: ['a) Precámbrica', 'b) Paleozoica', 'c) Mesozoica', 'd) Cuaternaria'], c: 0 },
+    { q: '¿En qué era vivieron los dinosaurios?', o: ['a) Precámbrica', 'b) Paleozoica', 'c) Cenozoica', 'd) Mesozoica'], c: 3 },
     { q: '¿Qué fue Pangea?', o: ['a) Un océano antiguo', 'b) Un supercontinente', 'c) Un fósil gigante', 'd) Una glaciación'], c: 1 },
-    { q: '¿Qué animal es el fósil guía de la era Paleozoica?', o: ['a) Dinosaurio', 'b) Mamut', 'c) Trilobite', 'd) Tigre dientes de sable'], c: 2 },
-    { q: '¿Qué causó la extinción de los dinosaurios?', o: ['a) Una glaciación', 'b) Un terremoto', 'c) Un meteorito', 'd) Una erupción volcánica'], c: 2 },
+    { q: '¿Qué animal es el fósil guía de la era Paleozoica?', o: ['a) Trilobite', 'b) Dinosaurio', 'c) Mamut', 'd) Tigre dientes de sable'], c: 0 },
+    { q: '¿Qué causó la extinción de los dinosaurios?', o: ['a) Una glaciación', 'b) Un terremoto', 'c) Una erupción volcánica', 'd) Un meteorito'], c: 3 },
     { q: '¿En qué era apareció el ser humano (Homo sapiens)?', o: ['a) Mesozoica', 'b) Cenozoica', 'c) Cuaternaria', 'd) Paleozoica'], c: 2 },
     { q: '¿Qué tipo de animales dominaron la era Cenozoica?', o: ['a) Reptiles marinos', 'b) Mamíferos gigantes', 'c) Bacterias', 'd) Dinosaurios'], c: 1 },
     { q: '¿Qué evento climático caracteriza la era Cuaternaria?', o: ['a) Erupciones volcánicas', 'b) Formación de océanos', 'c) Edad de Hielo', 'd) Lluvia ácida'], c: 2 },
@@ -567,9 +567,9 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'Los ___ vivieron en la era Mesozoica.', opts: ['mamuts', 'dinosaurios', 'humanos'], c: 1 },
+    { s: 'Los ___ vivieron en la era Mesozoica.', opts: ['dinosaurios', 'mamuts', 'humanos'], c: 0 },
     { s: 'El fósil guía de la era Paleozoica es el ___.', opts: ['trilobite', 'T-Rex', 'mamut'], c: 0 },
-    { s: 'La Edad de ___ ocurrió en la era Cuaternaria.', opts: ['Fuego', 'Hielo', 'Piedra'], c: 1 },
+    { s: 'La Edad de ___ ocurrió en la era Cuaternaria.', opts: ['Hielo', 'Fuego', 'Piedra'], c: 0 },
     { s: 'Las primeras ___ surgieron en la era Precámbrica.', opts: ['plantas', 'bacterias', 'aves'], c: 1 },
     { s: '___ era el supercontinente del Mesozoico.', opts: ['Laurasia', 'Gondwana', 'Pangea'], c: 2 },
     { s: 'Los mamíferos ___ dominaron la era Cenozoica.', opts: ['pequeños', 'gigantes', 'marinos'], c: 1 },
@@ -996,16 +996,16 @@ const evalTFBank = [
     { q: 'La diversificación de las aves ocurrió en la era Cenozoica.', a: true },
 ];
 const evalMCBank = [
-    { q: '¿Cuál es la era más larga?', o: ['a) Paleozoica', 'b) Mesozoica', 'c) Precámbrica', 'd) Cuaternaria'], a: 2 },
-    { q: '¿En qué era vivieron los dinosaurios?', o: ['a) Precámbrica', 'b) Paleozoica', 'c) Mesozoica', 'd) Cenozoica'], a: 2 },
+    { q: '¿Cuál es la era más larga?', o: ['a) Precámbrica', 'b) Paleozoica', 'c) Mesozoica', 'd) Cuaternaria'], a: 0 },
+    { q: '¿En qué era vivieron los dinosaurios?', o: ['a) Mesozoica', 'b) Precámbrica', 'c) Paleozoica', 'd) Cenozoica'], a: 0 },
     { q: '¿Qué fue Pangea?', o: ['a) Un océano', 'b) Un supercontinente', 'c) Un fósil', 'd) Una glaciación'], a: 1 },
-    { q: 'Los trilobites son fósiles de la era:', o: ['a) Cenozoica', 'b) Mesozoica', 'c) Paleozoica', 'd) Cuaternaria'], a: 2 },
-    { q: '¿Qué causó la extinción de los dinosaurios?', o: ['a) Glaciación', 'b) Terremoto', 'c) Meteorito', 'd) Volcán'], a: 2 },
-    { q: '¿En qué era apareció el Homo sapiens?', o: ['a) Mesozoica', 'b) Cenozoica', 'c) Cuaternaria', 'd) Paleozoica'], a: 2 },
+    { q: 'Los trilobites son fósiles de la era:', o: ['a) Cenozoica', 'b) Mesozoica', 'c) Cuaternaria', 'd) Paleozoica'], a: 3 },
+    { q: '¿Qué causó la extinción de los dinosaurios?', o: ['a) Meteorito', 'b) Glaciación', 'c) Terremoto', 'd) Volcán'], a: 0 },
+    { q: '¿En qué era apareció el Homo sapiens?', o: ['a) Mesozoica', 'b) Cenozoica', 'c) Paleozoica', 'd) Cuaternaria'], a: 3 },
     { q: '¿Qué era se caracteriza por mamíferos gigantes?', o: ['a) Paleozoica', 'b) Cenozoica', 'c) Precámbrica', 'd) Cuaternaria'], a: 1 },
-    { q: '¿Qué evento caracteriza la era Cuaternaria?', o: ['a) Dinosaurios', 'b) Formación Tierra', 'c) Edad de Hielo', 'd) Vida en mares'], a: 2 },
+    { q: '¿Qué evento caracteriza la era Cuaternaria?', o: ['a) Edad de Hielo', 'b) Dinosaurios', 'c) Formación Tierra', 'd) Vida en mares'], a: 0 },
     { q: '¿En qué era aparecieron los primeros vertebrados?', o: ['a) Precámbrica', 'b) Paleozoica', 'c) Mesozoica', 'd) Cuaternaria'], a: 1 },
-    { q: '¿Qué se formó durante la era Precámbrica?', o: ['a) Dinosaurios', 'b) Civilizaciones', 'c) La Tierra y océanos', 'd) Mamíferos'], a: 2 },
+    { q: '¿Qué se formó durante la era Precámbrica?', o: ['a) Dinosaurios', 'b) La Tierra y océanos', 'c) Civilizaciones', 'd) Mamíferos'], a: 1 },
     { q: 'La mayor extinción masiva ocurrió al final de:', o: ['a) Cenozoica', 'b) Mesozoica', 'c) Paleozoica', 'd) Precámbrica'], a: 2 },
     { q: '¿Qué era se conoce como «Vida Antigua»?', o: ['a) Mesozoica', 'b) Cenozoica', 'c) Paleozoica', 'd) Cuaternaria'], a: 2 },
     { q: 'Las primeras aves aparecieron en:', o: ['a) Paleozoica', 'b) Precámbrica', 'c) Cenozoica', 'd) Mesozoica'], a: 3 },

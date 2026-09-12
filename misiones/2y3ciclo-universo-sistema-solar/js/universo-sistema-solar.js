@@ -84,9 +84,9 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es el universo?',o:['a) Solo la Tierra','b) Todo lo que existe: el espacio y los astros','c) Solo el Sol','d) Solo las estrellas'],c:1},
-  {q:'¿Qué astro tiene luz propia?',o:['a) El planeta','b) El satélite','c) La estrella','d) El cometa'],c:2},
-  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Un astro que gira alrededor de una estrella','c) Una galaxia','d) Un cometa'],c:1},
+  {q:'¿Qué es el universo?',o:['a) Todo lo que existe: el espacio y los astros','b) Solo la Tierra','c) Solo el Sol','d) Solo las estrellas'],c:0},
+  {q:'¿Qué astro tiene luz propia?',o:['a) La estrella','b) El planeta','c) El satélite','d) El cometa'],c:0},
+  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Una galaxia','c) Un cometa','d) Un astro que gira alrededor de una estrella'],c:3},
   {q:'¿Cuál es el satélite natural de la Tierra?',o:['a) El Sol','b) Marte','c) La Luna','d) Venus'],c:2},
   {q:'¿Cuál es la estrella del sistema solar?',o:['a) La Luna','b) El Sol','c) Júpiter','d) La Tierra'],c:1},
   {q:'¿Cuántos planetas tiene el sistema solar?',o:['a) Seis','b) Siete','c) Ocho','d) Diez'],c:2},
@@ -144,9 +144,9 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El ___ es la estrella del sistema solar.',opts:['planeta','Sol','satélite'],c:1},
-  {s:'La ___ es el satélite de la Tierra.',opts:['estrella','Luna','galaxia'],c:1},
-  {s:'La ___ produce el día y la noche.',opts:['traslación','rotación','órbita'],c:1},
+  {s:'El ___ es la estrella del sistema solar.',opts:['Sol','planeta','satélite'],c:0},
+  {s:'La ___ es el satélite de la Tierra.',opts:['estrella','galaxia','Luna'],c:2},
+  {s:'La ___ produce el día y la noche.',opts:['rotación','traslación','órbita'],c:0},
   {s:'La ___ produce las estaciones del año.',opts:['rotación','traslación','fase'],c:1},
   {s:'El sistema solar tiene ___ planetas.',opts:['seis','siete','ocho'],c:2},
   {s:'Las ___ tienen luz propia.',opts:['estrellas','planetas','lunas'],c:0},
@@ -365,17 +365,17 @@ const evalTFBank=[
   {q:'El cometa es un astro de hielo y polvo con cola.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es el universo?',o:['a) Solo la Tierra','b) Todo lo que existe: el espacio y los astros','c) Solo el Sol','d) Solo la Luna'],a:1},
+  {q:'¿Qué es el universo?',o:['a) Todo lo que existe: el espacio y los astros','b) Solo la Tierra','c) Solo el Sol','d) Solo la Luna'],a:0},
   {q:'¿Qué astro tiene luz propia?',o:['a) El planeta','b) El satélite','c) La estrella','d) El cometa'],a:2},
-  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Un astro que gira alrededor de una estrella','c) Una galaxia','d) Un cometa'],a:1},
-  {q:'¿Cuál es la estrella del sistema solar?',o:['a) La Luna','b) El Sol','c) Marte','d) La Tierra'],a:1},
+  {q:'¿Qué es un planeta?',o:['a) Un astro con luz propia','b) Una galaxia','c) Un cometa','d) Un astro que gira alrededor de una estrella'],a:3},
+  {q:'¿Cuál es la estrella del sistema solar?',o:['a) El Sol','b) La Luna','c) Marte','d) La Tierra'],a:0},
   {q:'¿Cuál es el satélite de la Tierra?',o:['a) El Sol','b) Venus','c) La Luna','d) Júpiter'],a:2},
   {q:'¿Cuántos planetas tiene el sistema solar?',o:['a) Seis','b) Siete','c) Ocho','d) Diez'],a:2},
-  {q:'¿Qué movimiento produce el día y la noche?',o:['a) La traslación','b) La rotación','c) El eclipse','d) La fase lunar'],a:1},
-  {q:'¿Qué movimiento produce las estaciones?',o:['a) La rotación','b) La traslación','c) La fase lunar','d) El eclipse'],a:1},
+  {q:'¿Qué movimiento produce el día y la noche?',o:['a) La traslación','b) El eclipse','c) La fase lunar','d) La rotación'],a:3},
+  {q:'¿Qué movimiento produce las estaciones?',o:['a) La traslación','b) La rotación','c) La fase lunar','d) El eclipse'],a:0},
   {q:'¿Cómo se llama nuestra galaxia?',o:['a) El Sistema Solar','b) La Osa Mayor','c) La Vía Láctea','d) Andrómeda'],a:2},
-  {q:'¿Qué astro gira alrededor de un planeta?',o:['a) La estrella','b) El satélite','c) La galaxia','d) El Sol'],a:1},
-  {q:'¿Qué planeta es el nuestro?',o:['a) Marte','b) La Tierra','c) Venus','d) Saturno'],a:1},
+  {q:'¿Qué astro gira alrededor de un planeta?',o:['a) La estrella','b) La galaxia','c) El Sol','d) El satélite'],a:3},
+  {q:'¿Qué planeta es el nuestro?',o:['a) La Tierra','b) Marte','c) Venus','d) Saturno'],a:0},
   {q:'¿Cuánto dura la rotación de la Tierra?',o:['a) Un año','b) Un día (24 horas)','c) Un mes','d) Una hora'],a:1},
   {q:'¿Qué astro es de hielo y polvo y forma una cola?',o:['a) La estrella','b) El cometa','c) El planeta','d) El satélite'],a:1},
   {q:'La Luna no tiene luz propia: ella…',o:['a) produce luz','b) refleja la luz del Sol','c) apaga la luz','d) no se ve nunca'],a:1},
