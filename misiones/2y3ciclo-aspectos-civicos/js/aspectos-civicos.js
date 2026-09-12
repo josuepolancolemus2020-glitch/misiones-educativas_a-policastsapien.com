@@ -111,7 +111,7 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
   {label:['Símbolo mayor','Símbolo menor'],headA:'🎖️ Símbolo mayor',headB:'🌿 Símbolo menor',colA:'mayor',colB:'menor',
-   words:[{w:'La Bandera',t:'mayor'},{w:'El Pino',t:'menor'},{w:'El Escudo',t:'menor'},{w:'La orquídea',t:'menor'},{w:'El Himno Nacional',t:'mayor'},{w:'La Guara Roja',t:'menor'},{w:'El Venado Cola Blanca',t:'menor'},{w:'El mapa de Honduras',t:'menor'}]},
+   words:[{w:'La Bandera',t:'mayor'},{w:'El Pino',t:'menor'},{w:'El Escudo',t:'mayor'},{w:'La orquídea',t:'menor'},{w:'El Himno Nacional',t:'mayor'},{w:'La Guara Roja',t:'menor'},{w:'El Venado Cola Blanca',t:'menor'},{w:'El mapa de Honduras',t:'menor'}]},
   {label:['Está en la Bandera','Está en el Escudo'],headA:'🏳️ En la Bandera',headB:'🛡️ En el Escudo',colA:'ban',colB:'esc',
    words:[{w:'Cinco estrellas',t:'ban'},{w:'Un volcán',t:'esc'},{w:'Franja blanca en medio',t:'ban'},{w:'Dos torres',t:'esc'},{w:'Azul turquesa',t:'ban'},{w:'El arco iris',t:'esc'},{w:'Tres franjas',t:'ban'},{w:'Cornucopias',t:'esc'},{w:'Aljabas con flechas',t:'esc'},{w:'Robles y pinos',t:'esc'}]},
   {label:['Prócer o héroe','No es prócer'],headA:'🏅 Prócer o héroe',headB:'🚫 No es prócer',colA:'pro',colB:'no',

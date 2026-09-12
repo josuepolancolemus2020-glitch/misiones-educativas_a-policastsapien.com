@@ -3817,6 +3817,59 @@ línea que alguien tiene que leer— y corriendo después la sonda de cada misi�
 El día que entre una misión nueva, se le pasa la herramienta antes de
 publicarla: es una línea, y el sesgo se cuela solo.
 
+## Normativa: una misión no puede darse dos respuestas contrarias
+
+Descubierto el 12 de septiembre de 2026 **jugando**, que es la única forma que
+había de verlo: en Aspectos Cívicos, el alumno ponía **El Escudo** en «Símbolo
+mayor» y la pantalla se lo marcaba **en rojo**.
+
+Y tenía razón él. La misión enseña en **once sitios** —la teoría, la tarjeta de
+repaso, el quiz, el completa, el V/F, la evaluación, el Laboratorio y su propio
+Reto final— que los símbolos mayores son tres: la Bandera, el Escudo y el
+Himno. Solo `classGroups` decía `menor`. Una letra, en una línea, contra toda
+la misión.
+
+**Eso es lo peor que puede hacer una pantalla que califica.** Enseñar un dato
+malo al menos es coherente y se corrige de una vez; decirle que se equivocó
+**cuando acertó** le enseña a desconfiar de lo que acaba de leer. El que
+estudió lo paga; el que no estudió no nota nada. Y la nota entra en la
+Evidencia del maestro.
+
+**De dónde sale, siempre:** los ejercicios de clasificar viven en DOS bancos
+escritos a mano, uno debajo del otro —`classGroups`, el de la pestaña 🗂️
+Clasifica, y `retoPairs`, el del Reto contrarreloj—, y muchas veces repiten las
+mismas fichas con la misma pregunta. Al escribir el segundo se copia el primero
+y se retoca; ahí se cuela.
+
+Y **no lo cazaba nada**: el archivo compila, la pantalla se pinta, no hay un
+solo error en la consola. Es la misma familia que el `\U0001F1ED` de Python —lo
+que compila y sale mal— y la misma que el reparto de respuestas: la pantalla
+califica, así que un fallo suyo llega al expediente.
+
+```
+node _dev/verifica-clasificar-coherente.js
+```
+
+⚠️ **Se compara por el RÓTULO que lee el alumno, no por el código del grupo.**
+Es la trampa de esto y da falsos positivos a montones: dos ejercicios distintos
+usan `t:'si'` y `t:'no'` para preguntas distintas —«6 × 6, ¿da 24?» y «¿da
+36?»— y las dos respuestas contrarias son las dos correctas. Lo mismo en
+próceres: Ramón Rosa **no** tiene día propio en el calendario y **sí** está en
+la lista del DCNB. La pregunta es el par de `label`; dentro de ella, el lado.
+Con el código interno salían 42 misiones «rotas» y ninguna lo estaba.
+
+De paso vigila una segunda avería que nadie había mirado: una ficha con un `t`
+que **no es ninguna de las dos columnas de su ejercicio**. Esa no se puede
+colocar bien nunca —caiga donde caiga, se marca en rojo—, y tampoco da ningún
+error.
+
+El `-en.js` entra también y no hace falta tratarlo aparte: sus rótulos están en
+inglés, así que forma sus propias preguntas y se comprueba contra sí mismo.
+
+Hoy son **77 misiones y 4 274 fichas**, y ninguna se contradice. Los números no
+se escriben dentro de la sonda: se cuentan, que si no se pondría roja el día
+que entre una misión sin que nada esté roto.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi
