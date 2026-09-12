@@ -96,15 +96,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué indica el numerador de una fracción?',o:['a) En cuántas partes se divide el entero','b) Cuántas partes se toman del entero','c) El resultado de una suma','d) El nombre de la fracción'],c:1},
+  {q:'¿Qué indica el numerador de una fracción?',o:['a) En cuántas partes se divide el entero','b) El resultado de una suma','c) El nombre de la fracción','d) Cuántas partes se toman del entero'],c:3},
   {q:'¿Cuál de estas es una fracción impropia?',o:['a) 3/4','b) 1/2','c) 7/4','d) 2/5'],c:2},
   {q:'1/2 y 2/4 son fracciones...',o:['a) Impropias','b) Equivalentes','c) Mixtas','d) Diferentes en valor'],c:1},
-  {q:'¿Cuánto es 1/4 + 2/4?',o:['a) 3/8','b) 3/4','c) 2/4','d) 1/8'],c:1},
+  {q:'¿Cuánto es 1/4 + 2/4?',o:['a) 3/8','b) 2/4','c) 1/8','d) 3/4'],c:3},
   {q:'¿Cuánto es 3/4 − 1/4?',o:['a) 2/4','b) 2/8','c) 4/4','d) 1/4'],c:0},
   {q:'Un círculo dividido en 4 partes iguales con 3 partes sombreadas representa...',o:['a) 1/4','b) 3/4','c) 4/4','d) 3/3'],c:1},
   {q:'¿Cómo se escribe 7/4 como fracción mixta?',o:['a) 1 3/4','b) 2 1/4','c) 1 1/2','d) 3 1/4'],c:0},
   {q:'Al simplificar 4/8, ¿qué obtienes?',o:['a) 2/4','b) 1/4','c) 1/2','d) 2/2'],c:2},
-  {q:'¿Cuánto es 1/2 + 1/4 (distinto denominador)?',o:['a) 2/6','b) 3/4','c) 1/4','d) 2/4'],c:1},
+  {q:'¿Cuánto es 1/2 + 1/4 (distinto denominador)?',o:['a) 2/6','b) 1/4','c) 2/4','d) 3/4'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -161,10 +161,10 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 const cmpData=[
   {s:'3/4 + 1/4 = ___',opts:['4/4','3/8','2/4'],c:0},
   {s:'1/2 = ___/4',opts:['1','2','4'],c:1},
-  {s:'5/6 − 2/6 = ___',opts:['3/6','3/12','7/6'],c:0},
-  {s:'1/2 + 1/4 = ___',opts:['3/4','2/6','1/4'],c:0},
+  {s:'5/6 − 2/6 = ___',opts:['3/12','7/6','3/6'],c:2},
+  {s:'1/2 + 1/4 = ___',opts:['2/6','1/4','3/4'],c:2},
   {s:'3/5 − 1/5 = ___',opts:['2/5','2/10','4/5'],c:0},
-  {s:'1/3 + 1/6 = ___',opts:['3/6','2/9','1/9'],c:0},
+  {s:'1/3 + 1/6 = ___',opts:['2/9','3/6','1/9'],c:1},
   {s:'3/4 − 1/2 = ___',opts:['1/4','2/4','1/2'],c:0},
   {s:'2/3 = ___/9',opts:['3','6','9'],c:1},
 ];
