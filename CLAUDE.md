@@ -52,8 +52,22 @@ Y en `?status=queued` hay **zombis**: ejecuciones paradas desde el 3 de
 julio y el 6 de agosto de 2026. No estorban a las nuevas, pero despistan
 al que busque la suya por ahí.
 
+⚠️ **Y no fue una vez: vuelve a pasar.** El 12 de septiembre de 2026, con el
+arreglo del Escudo, otra vez: el empujón de las 15:25 encoló `Sondas` —o sea
+que el commit llegó y GitHub lo vio— y **`pages build and deployment` no se
+encoló nunca**. Se miró cada treinta segundos durante catorce minutos. Y
+arriba del todo, otra vez, un `completed / success` del commit ANTERIOR, con
+marca de tiempo de un segundo antes del empujón propio: quien mire la primera
+fila da por publicado exactamente lo que no lo está.
+
+O sea que esto no es una anomalía de un día de agosto: es **el modo normal de
+fallar de Pages en este repositorio**, y por eso la comprobación no se salta
+nunca aunque el push diga que fue bien.
+
 Si no arranca ninguna, la salida es **empujar un commit nuevo**, que
-provoca una construcción limpia.
+provoca una construcción limpia. Que lleve algo de verdad: un commit vacío
+solo para mover Pages deja en el historial una línea que no cuenta nada, y el
+`git log` de este proyecto es de donde se saca el tono y lo que pasó.
 
 Y un aviso para quien lo compruebe desde una sesión de Claude Code: el
 proxy de esas sesiones **bloquea el dominio del sitio**, así que la
