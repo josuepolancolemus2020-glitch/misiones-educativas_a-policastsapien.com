@@ -134,15 +134,15 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 let qzData=[
-  {q:'¿Qué hace exactamente un sensor?',o:['a) Mueve las ruedas del robot','b) Convierte algo del mundo en una señal para el controlador','c) Decide qué hacer','d) Guarda la energía del robot'],c:1},
+  {q:'¿Qué hace exactamente un sensor?',o:['a) Convierte algo del mundo en una señal para el controlador','b) Mueve las ruedas del robot','c) Decide qué hacer','d) Guarda la energía del robot'],c:0},
   {q:'¿A qué parte del cuerpo se parece el sensor de luz?',o:['a) Al ojo','b) Al oído','c) Al músculo','d) Al hueso'],c:0},
-  {q:'¿Qué sensor usa el robot que se detiene antes de chocar?',o:['a) De humedad','b) De temperatura','c) De distancia','d) De sonido'],c:2},
-  {q:'El sensor ultrasónico trabaja como…',o:['a) Una hormiga','b) Un murciélago que lanza sonido y espera el eco','c) Un pez','d) Una planta'],c:1},
-  {q:'¿Cuál de estos NO es un sensor?',o:['a) El micrófono','b) El pulsador de tacto','c) El motor','d) El termómetro'],c:2},
+  {q:'¿Qué sensor usa el robot que se detiene antes de chocar?',o:['a) De humedad','b) De temperatura','c) De sonido','d) De distancia'],c:3},
+  {q:'El sensor ultrasónico trabaja como…',o:['a) Una hormiga','b) Un pez','c) Un murciélago que lanza sonido y espera el eco','d) Una planta'],c:2},
+  {q:'¿Cuál de estos NO es un sensor?',o:['a) El micrófono','b) El pulsador de tacto','c) El termómetro','d) El motor'],c:3},
   {q:'¿Cuál es la cadena correcta dentro del robot?',o:['a) Actuador → sensor → controlador','b) Controlador → sensor → actuador','c) Sensor → controlador → actuador','d) Sensor → actuador → controlador'],c:2},
-  {q:'¿Qué sensor sirve para saber si hay que regar el cafetal?',o:['a) De humedad','b) De luz','c) De sonido','d) De tacto'],c:0},
-  {q:'La pantalla del celular se apaga al acercarlo a la oreja gracias a…',o:['a) Un actuador de calor','b) Un sensor de proximidad','c) La batería','d) La bocina'],c:1},
-  {q:'Si el sensor de luz está sucio de lodo, ¿qué ocurre?',o:['a) Nada: los sensores nunca se equivocan','b) El robot lo limpia solo','c) Da una lectura equivocada y el robot decide mal','d) El robot se apaga para siempre'],c:2},
+  {q:'¿Qué sensor sirve para saber si hay que regar el cafetal?',o:['a) De luz','b) De humedad','c) De sonido','d) De tacto'],c:1},
+  {q:'La pantalla del celular se apaga al acercarlo a la oreja gracias a…',o:['a) Un sensor de proximidad','b) Un actuador de calor','c) La batería','d) La bocina'],c:0},
+  {q:'Si el sensor de luz está sucio de lodo, ¿qué ocurre?',o:['a) Nada: los sensores nunca se equivocan','b) Da una lectura equivocada y el robot decide mal','c) El robot lo limpia solo','d) El robot se apaga para siempre'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -194,14 +194,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 let cmpData=[
-  {s:'El sensor convierte algo del mundo en una ___ para el controlador.',opts:['señal','rueda','batería'],c:0},
-  {s:'El sensor de luz se parece a tu ___.',opts:['oído','ojo','codo'],c:1},
-  {s:'El sensor de distancia trabaja como el ___, con el eco.',opts:['murciélago','caballo','pez'],c:0},
-  {s:'El sensor de tacto avisa cuando algo lo ___.',opts:['mira','toca','escucha'],c:1},
-  {s:'El sensor de ___ mide si la tierra está seca.',opts:['sonido','luz','humedad'],c:2},
+  {s:'El sensor convierte algo del mundo en una ___ para el controlador.',opts:['rueda','señal','batería'],c:1},
+  {s:'El sensor de luz se parece a tu ___.',opts:['ojo','oído','codo'],c:0},
+  {s:'El sensor de distancia trabaja como el ___, con el eco.',opts:['caballo','murciélago','pez'],c:1},
+  {s:'El sensor de tacto avisa cuando algo lo ___.',opts:['mira','escucha','toca'],c:2},
+  {s:'El sensor de ___ mide si la tierra está seca.',opts:['sonido','humedad','luz'],c:1},
   {s:'El micrófono es un sensor de ___.',opts:['sonido','calor','distancia'],c:0},
-  {s:'El motor no es sensor: es un ___.',opts:['controlador','actuador','programa'],c:1},
-  {s:'Si el sensor está sucio da una lectura ___.',opts:['equivocada','perfecta','doble'],c:0},
+  {s:'El motor no es sensor: es un ___.',opts:['actuador','controlador','programa'],c:0},
+  {s:'Si el sensor está sucio da una lectura ___.',opts:['perfecta','doble','equivocada'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -436,21 +436,21 @@ let evalTFBank=[
   {q:'En el cuerpo humano la cadena es receptor → cerebro → efector.',a:true},
 ];
 let evalMCBank=[
-  {q:'¿Qué es un sensor?',o:['a) La parte que mueve al robot','b) La parte que percibe y convierte el mundo en una señal','c) La batería del robot','d) La lista de instrucciones'],a:1},
-  {q:'¿A qué sentido humano se parece el sensor de luz?',o:['a) Al oído','b) Al gusto','c) A la vista','d) Al olfato'],a:2},
+  {q:'¿Qué es un sensor?',o:['a) La parte que percibe y convierte el mundo en una señal','b) La parte que mueve al robot','c) La batería del robot','d) La lista de instrucciones'],a:0},
+  {q:'¿A qué sentido humano se parece el sensor de luz?',o:['a) Al oído','b) Al gusto','c) Al olfato','d) A la vista'],a:3},
   {q:'¿Qué sensor necesita un robot para no chocar con la pared?',o:['a) De humedad','b) De distancia','c) De temperatura','d) De sonido'],a:1},
   {q:'El sensor ultrasónico trabaja como…',o:['a) El murciélago, con el eco','b) La hormiga, con las patas','c) La flor, con el sol','d) El pez, con las aletas'],a:0},
-  {q:'¿Cuál de estos NO es un sensor?',o:['a) El micrófono','b) El termómetro','c) El pulsador','d) El motor'],a:3},
-  {q:'¿Cuál es la cadena correcta dentro del robot?',o:['a) Sensor → controlador → actuador','b) Actuador → controlador → sensor','c) Controlador → sensor → actuador','d) Sensor → actuador → controlador'],a:0},
-  {q:'¿Qué sensor avisa cuándo regar el cafetal?',o:['a) De luz','b) De sonido','c) De humedad','d) De tacto'],a:2},
-  {q:'¿Qué sensor usa el carrito sigue-líneas?',o:['a) De luz','b) De temperatura','c) De humedad','d) De sonido'],a:0},
-  {q:'La pantalla del celular se apaga junto a la oreja gracias a…',o:['a) La bocina','b) Un sensor de proximidad','c) La batería','d) El motor vibrador'],a:1},
-  {q:'¿Qué sensor tiene el termómetro digital del centro de salud?',o:['a) De sonido','b) De humedad','c) De temperatura','d) De luz'],a:2},
-  {q:'¿Qué pasa si el sensor de luz está sucio de lodo?',o:['a) Nada, los sensores nunca fallan','b) El robot se limpia solo','c) Da una lectura equivocada y el robot decide mal','d) El robot gana más velocidad'],a:2},
-  {q:'¿Cuál es la diferencia entre sensor y actuador?',o:['a) El sensor percibe y el actuador ejecuta la acción','b) El sensor actúa y el actuador percibe','c) Los dos hacen lo mismo','d) El actuador decide y el sensor obedece'],a:0},
-  {q:'¿Qué sensor detecta un choque del robot?',o:['a) De tacto','b) De luz','c) De humedad','d) De temperatura'],a:0},
-  {q:'¿Con qué parte del cuerpo se compara el controlador?',o:['a) Con la piel','b) Con el oído','c) Con el músculo','d) Con el cerebro'],a:3},
-  {q:'El componente del sensor de luz se llama…',o:['a) Válvula','b) Fotorresistencia','c) Hélice','d) Engranaje'],a:1},
+  {q:'¿Cuál de estos NO es un sensor?',o:['a) El micrófono','b) El termómetro','c) El motor','d) El pulsador'],a:2},
+  {q:'¿Cuál es la cadena correcta dentro del robot?',o:['a) Actuador → controlador → sensor','b) Controlador → sensor → actuador','c) Sensor → actuador → controlador','d) Sensor → controlador → actuador'],a:3},
+  {q:'¿Qué sensor avisa cuándo regar el cafetal?',o:['a) De humedad','b) De luz','c) De sonido','d) De tacto'],a:0},
+  {q:'¿Qué sensor usa el carrito sigue-líneas?',o:['a) De temperatura','b) De luz','c) De humedad','d) De sonido'],a:1},
+  {q:'La pantalla del celular se apaga junto a la oreja gracias a…',o:['a) La bocina','b) La batería','c) Un sensor de proximidad','d) El motor vibrador'],a:2},
+  {q:'¿Qué sensor tiene el termómetro digital del centro de salud?',o:['a) De temperatura','b) De sonido','c) De humedad','d) De luz'],a:0},
+  {q:'¿Qué pasa si el sensor de luz está sucio de lodo?',o:['a) Nada, los sensores nunca fallan','b) Da una lectura equivocada y el robot decide mal','c) El robot se limpia solo','d) El robot gana más velocidad'],a:1},
+  {q:'¿Cuál es la diferencia entre sensor y actuador?',o:['a) El sensor actúa y el actuador percibe','b) Los dos hacen lo mismo','c) El actuador decide y el sensor obedece','d) El sensor percibe y el actuador ejecuta la acción'],a:3},
+  {q:'¿Qué sensor detecta un choque del robot?',o:['a) De luz','b) De humedad','c) De tacto','d) De temperatura'],a:2},
+  {q:'¿Con qué parte del cuerpo se compara el controlador?',o:['a) Con la piel','b) Con el cerebro','c) Con el oído','d) Con el músculo'],a:1},
+  {q:'El componente del sensor de luz se llama…',o:['a) Válvula','b) Hélice','c) Fotorresistencia','d) Engranaje'],a:2},
 ];
 let evalCPBank=[
   {q:'El sensor convierte algo del mundo en una ___ para el controlador.',a:'señal'},

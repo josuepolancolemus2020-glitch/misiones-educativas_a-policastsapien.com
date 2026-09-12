@@ -298,15 +298,15 @@
       ],
 
       qzData: [
-        { q: 'What does a robot’s motor do?', o: ['a) It stores the information', 'b) It turns electrical energy into rotation', 'c) It senses light', 'd) It cools the battery down'], c: 1 },
+        { q: 'What does a robot’s motor do?', o: ['a) It turns electrical energy into rotation', 'b) It stores the information', 'c) It senses light', 'd) It cools the battery down'], c: 0 },
         { q: 'Two gears with their teeth meshed: how do they turn?', o: ['a) In the same direction', 'b) One turns and the other does not', 'c) In opposite directions', 'd) It depends on the color'], c: 2 },
-        { q: 'A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?', o: ['a) It turns slower and with more force', 'b) It turns faster and with more force', 'c) It turns faster and with less force', 'd) It stays still'], c: 0 },
-        { q: 'In a train of THREE gears, the first and the third one…', o: ['a) Turn in opposite directions', 'b) Turn in the same direction', 'c) Never turn', 'd) Turn twice as fast'], c: 1 },
-        { q: 'Which motor turns to an exact angle and stops there?', o: ['a) The DC motor', 'b) The gearmotor', 'c) The servomotor', 'd) The worm gear'], c: 2 },
+        { q: 'A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?', o: ['a) It turns faster and with more force', 'b) It turns slower and with more force', 'c) It turns faster and with less force', 'd) It stays still'], c: 1 },
+        { q: 'In a train of THREE gears, the first and the third one…', o: ['a) Turn in opposite directions', 'b) Never turn', 'c) Turn twice as fast', 'd) Turn in the same direction'], c: 3 },
+        { q: 'Which motor turns to an exact angle and stops there?', o: ['a) The DC motor', 'b) The gearmotor', 'c) The worm gear', 'd) The servomotor'], c: 3 },
         { q: 'What happens if the belt between two pulleys is crossed?', o: ['a) The belt snaps', 'b) The second shaft turns the other way', 'c) Nothing happens', 'd) The big pulley disappears'], c: 1 },
-        { q: 'What does a lever need in order to work?', o: ['a) An electric motor', 'b) A battery', 'c) A fulcrum', 'd) A belt'], c: 2 },
-        { q: 'Which mechanism turns rotation into back-and-forth motion?', o: ['a) The fixed pulley', 'b) The crank and rod', 'c) The wheel and axle', 'd) The idler gear'], c: 1 },
-        { q: 'What is the trade every mechanism makes?', o: ['a) You gain force and speed at the same time', 'b) You lose everything', 'c) Whatever you gain in force you lose in speed', 'd) The mechanism creates brand-new energy'], c: 2 }
+        { q: 'What does a lever need in order to work?', o: ['a) A fulcrum', 'b) An electric motor', 'c) A battery', 'd) A belt'], c: 0 },
+        { q: 'Which mechanism turns rotation into back-and-forth motion?', o: ['a) The fixed pulley', 'b) The wheel and axle', 'c) The crank and rod', 'd) The idler gear'], c: 2 },
+        { q: 'What is the trade every mechanism makes?', o: ['a) Whatever you gain in force you lose in speed', 'b) You gain force and speed at the same time', 'c) You lose everything', 'd) The mechanism creates brand-new energy'], c: 0 }
       ],
 
       classGroups: [
@@ -341,11 +341,11 @@
 
       cmpData: [
         { s: 'The motor turns electrical energy into ___ movement.', opts: ['turning', 'color', 'sound'], c: 0 },
-        { s: 'Two gears in contact turn in ___ directions.', opts: ['identical', 'opposite', 'slow'], c: 1 },
-        { s: 'A small gear that drives a big one gives more ___.', opts: ['force', 'speed', 'noise'], c: 0 },
-        { s: 'A big gear that drives a small one gives more ___.', opts: ['weight', 'force', 'speed'], c: 2 },
-        { s: 'The lever needs a ___ in order to work.', opts: ['fulcrum', 'coat of paint', 'bucket of water'], c: 0 },
-        { s: 'If the belt is put on crossed, the turning is ___.', opts: ['stopped', 'reversed', 'sped up'], c: 1 },
+        { s: 'Two gears in contact turn in ___ directions.', opts: ['identical', 'slow', 'opposite'], c: 2 },
+        { s: 'A small gear that drives a big one gives more ___.', opts: ['speed', 'force', 'noise'], c: 1 },
+        { s: 'A big gear that drives a small one gives more ___.', opts: ['speed', 'weight', 'force'], c: 0 },
+        { s: 'The lever needs a ___ in order to work.', opts: ['coat of paint', 'fulcrum', 'bucket of water'], c: 1 },
+        { s: 'If the belt is put on crossed, the turning is ___.', opts: ['stopped', 'sped up', 'reversed'], c: 2 },
         { s: 'The ___ gear gives a lot of force and very little speed.', opts: ['motor', 'worm', 'cable'], c: 1 },
         { s: 'The crank and rod turns rotation into ___ motion.', opts: ['back-and-forth', 'light', 'heat'], c: 0 }
       ],
@@ -486,20 +486,20 @@
       ],
 
       evalMCBank: [
-        { q: 'What does a robot’s motor do?', o: ['a) It stores the program’s information', 'b) It turns electrical energy into rotation', 'c) It senses the light around it', 'd) It cools the battery down'], a: 1 },
-        { q: 'Two gears with their teeth meshed: how do they turn?', o: ['a) In the same direction', 'b) One turns and the other stays still', 'c) In opposite directions', 'd) Both of them upward'], a: 2 },
-        { q: 'A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?', o: ['a) It turns slower and with more force', 'b) It turns faster and with more force', 'c) It turns faster and with less force', 'd) It does not turn'], a: 0 },
-        { q: 'A 40-tooth wheel drives a 10-tooth pinion. What happens to the pinion?', o: ['a) It turns slower', 'b) It turns faster and with less force', 'c) It turns with more force', 'd) It turns just like the wheel'], a: 1 },
-        { q: 'In a train of THREE gears, the first and the third one…', o: ['a) Turn in opposite directions', 'b) Turn in the same direction', 'c) Never turn', 'd) Turn twice as fast'], a: 1 },
-        { q: 'Which motor turns to an exact angle and stays there?', o: ['a) The DC motor', 'b) The gearmotor', 'c) The servomotor', 'd) The worm gear'], a: 2 },
-        { q: 'What is the belt between two pulleys for?', o: ['a) To carry the turning over a distance', 'b) To store energy', 'c) To brake the motor', 'd) To paint the wheel'], a: 0 },
-        { q: 'What happens if the belt is put on crossed?', o: ['a) The belt snaps', 'b) The second shaft turns the other way', 'c) Nothing happens', 'd) The pulley gets bigger'], a: 1 },
-        { q: 'What does a lever need in order to work?', o: ['a) An electric motor', 'b) A battery', 'c) A belt', 'd) A fulcrum'], a: 3 },
-        { q: 'The lever multiplies the force, but in exchange…', o: ['a) The load side travels a shorter distance', 'b) It always breaks', 'c) It needs electricity', 'd) It turns nonstop'], a: 0 },
+        { q: 'What does a robot’s motor do?', o: ['a) It stores the program’s information', 'b) It senses the light around it', 'c) It cools the battery down', 'd) It turns electrical energy into rotation'], a: 3 },
+        { q: 'Two gears with their teeth meshed: how do they turn?', o: ['a) In the same direction', 'b) One turns and the other stays still', 'c) Both of them upward', 'd) In opposite directions'], a: 3 },
+        { q: 'A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?', o: ['a) It turns faster and with more force', 'b) It turns faster and with less force', 'c) It turns slower and with more force', 'd) It does not turn'], a: 2 },
+        { q: 'A 40-tooth wheel drives a 10-tooth pinion. What happens to the pinion?', o: ['a) It turns faster and with less force', 'b) It turns slower', 'c) It turns with more force', 'd) It turns just like the wheel'], a: 0 },
+        { q: 'In a train of THREE gears, the first and the third one…', o: ['a) Turn in opposite directions', 'b) Never turn', 'c) Turn in the same direction', 'd) Turn twice as fast'], a: 2 },
+        { q: 'Which motor turns to an exact angle and stays there?', o: ['a) The servomotor', 'b) The DC motor', 'c) The gearmotor', 'd) The worm gear'], a: 0 },
+        { q: 'What is the belt between two pulleys for?', o: ['a) To store energy', 'b) To brake the motor', 'c) To paint the wheel', 'd) To carry the turning over a distance'], a: 3 },
+        { q: 'What happens if the belt is put on crossed?', o: ['a) The second shaft turns the other way', 'b) The belt snaps', 'c) Nothing happens', 'd) The pulley gets bigger'], a: 0 },
+        { q: 'What does a lever need in order to work?', o: ['a) An electric motor', 'b) A fulcrum', 'c) A battery', 'd) A belt'], a: 1 },
+        { q: 'The lever multiplies the force, but in exchange…', o: ['a) It always breaks', 'b) The load side travels a shorter distance', 'c) It needs electricity', 'd) It turns nonstop'], a: 1 },
         { q: 'Which mechanism turns rotation into back-and-forth motion?', o: ['a) The fixed pulley', 'b) The wheel and axle', 'c) The crank and rod', 'd) The idler gear'], a: 2 },
-        { q: 'Which mechanism gives a huge amount of force and very little speed?', o: ['a) The worm gear', 'b) The DC motor on its own', 'c) The fixed pulley', 'd) The idler gear'], a: 0 },
-        { q: 'On a bicycle, what is best for climbing a steep hill?', o: ['a) The smallest sprocket', 'b) The biggest sprocket', 'c) Taking the chain off', 'd) A bigger chainring'], a: 1 },
-        { q: 'What is the trade every mechanism makes?', o: ['a) Whatever you gain in force you lose in speed', 'b) You gain force and speed at the same time', 'c) You lose everything', 'd) The mechanism creates brand-new energy'], a: 0 },
+        { q: 'Which mechanism gives a huge amount of force and very little speed?', o: ['a) The DC motor on its own', 'b) The fixed pulley', 'c) The worm gear', 'd) The idler gear'], a: 2 },
+        { q: 'On a bicycle, what is best for climbing a steep hill?', o: ['a) The biggest sprocket', 'b) The smallest sprocket', 'c) Taking the chain off', 'd) A bigger chainring'], a: 0 },
+        { q: 'What is the trade every mechanism makes?', o: ['a) You gain force and speed at the same time', 'b) Whatever you gain in force you lose in speed', 'c) You lose everything', 'd) The mechanism creates brand-new energy'], a: 1 },
         { q: 'Which Honduran machine uses a crank and gears to take the husk off the coffee?', o: ['a) The corn mill', 'b) The coffee pulper', 'c) The wheelbarrow', 'd) The gate winch'], a: 1 }
       ],
 

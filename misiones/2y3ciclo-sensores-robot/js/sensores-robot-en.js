@@ -308,15 +308,15 @@
       ],
 
       qzData: [
-        { q: 'What exactly does a sensor do?', o: ['a) It turns the robot’s wheels', 'b) It turns something from the world into a signal for the controller', 'c) It decides what to do', 'd) It stores the robot’s power'], c: 1 },
+        { q: 'What exactly does a sensor do?', o: ['a) It turns something from the world into a signal for the controller', 'b) It turns the robot’s wheels', 'c) It decides what to do', 'd) It stores the robot’s power'], c: 0 },
         { q: 'Which body part is the light sensor like?', o: ['a) The eye', 'b) The ear', 'c) The muscle', 'd) The bone'], c: 0 },
-        { q: 'Which sensor does a robot use to stop before crashing?', o: ['a) Moisture', 'b) Temperature', 'c) Distance', 'd) Sound'], c: 2 },
-        { q: 'The ultrasonic sensor works like…', o: ['a) An ant', 'b) A bat that sends out sound and waits for the echo', 'c) A fish', 'd) A plant'], c: 1 },
-        { q: 'Which one of these is NOT a sensor?', o: ['a) The microphone', 'b) The touch pushbutton', 'c) The motor', 'd) The thermometer'], c: 2 },
+        { q: 'Which sensor does a robot use to stop before crashing?', o: ['a) Moisture', 'b) Temperature', 'c) Sound', 'd) Distance'], c: 3 },
+        { q: 'The ultrasonic sensor works like…', o: ['a) An ant', 'b) A fish', 'c) A bat that sends out sound and waits for the echo', 'd) A plant'], c: 2 },
+        { q: 'Which one of these is NOT a sensor?', o: ['a) The microphone', 'b) The touch pushbutton', 'c) The thermometer', 'd) The motor'], c: 3 },
         { q: 'What is the correct chain inside the robot?', o: ['a) Actuator → sensor → controller', 'b) Controller → sensor → actuator', 'c) Sensor → controller → actuator', 'd) Sensor → actuator → controller'], c: 2 },
-        { q: 'Which sensor tells you whether the coffee field needs watering?', o: ['a) Moisture', 'b) Light', 'c) Sound', 'd) Touch'], c: 0 },
-        { q: 'The cell phone screen switches off next to your ear thanks to…', o: ['a) A heat actuator', 'b) A proximity sensor', 'c) The battery', 'd) The speaker'], c: 1 },
-        { q: 'If the light sensor is covered in mud, what happens?', o: ['a) Nothing: sensors are never wrong', 'b) The robot cleans itself', 'c) It gives a wrong reading and the robot decides wrong', 'd) The robot shuts down forever'], c: 2 }
+        { q: 'Which sensor tells you whether the coffee field needs watering?', o: ['a) Light', 'b) Moisture', 'c) Sound', 'd) Touch'], c: 1 },
+        { q: 'The cell phone screen switches off next to your ear thanks to…', o: ['a) A proximity sensor', 'b) A heat actuator', 'c) The battery', 'd) The speaker'], c: 0 },
+        { q: 'If the light sensor is covered in mud, what happens?', o: ['a) Nothing: sensors are never wrong', 'b) It gives a wrong reading and the robot decides wrong', 'c) The robot cleans itself', 'd) The robot shuts down forever'], c: 1 }
       ],
 
       classGroups: [
@@ -350,14 +350,14 @@
       ],
 
       cmpData: [
-        { s: 'The sensor turns something from the world into a ___ for the controller.', opts: ['signal', 'wheel', 'battery'], c: 0 },
-        { s: 'The light sensor is like your ___.', opts: ['ear', 'eye', 'elbow'], c: 1 },
-        { s: 'The distance sensor works like the ___, with the echo.', opts: ['bat', 'horse', 'fish'], c: 0 },
-        { s: 'The touch sensor reports when something ___ it.', opts: ['watches', 'touches', 'hears'], c: 1 },
-        { s: 'The ___ sensor measures whether the soil is dry.', opts: ['sound', 'light', 'moisture'], c: 2 },
+        { s: 'The sensor turns something from the world into a ___ for the controller.', opts: ['wheel', 'signal', 'battery'], c: 1 },
+        { s: 'The light sensor is like your ___.', opts: ['eye', 'ear', 'elbow'], c: 0 },
+        { s: 'The distance sensor works like the ___, with the echo.', opts: ['horse', 'bat', 'fish'], c: 1 },
+        { s: 'The touch sensor reports when something ___ it.', opts: ['watches', 'hears', 'touches'], c: 2 },
+        { s: 'The ___ sensor measures whether the soil is dry.', opts: ['sound', 'moisture', 'light'], c: 1 },
         { s: 'The microphone is a ___ sensor.', opts: ['sound', 'heat', 'distance'], c: 0 },
-        { s: 'The motor is not a sensor: it is an ___.', opts: ['controller', 'actuator', 'program'], c: 1 },
-        { s: 'If the sensor is dirty it gives a ___ reading.', opts: ['wrong', 'perfect', 'double'], c: 0 }
+        { s: 'The motor is not a sensor: it is an ___.', opts: ['actuator', 'controller', 'program'], c: 0 },
+        { s: 'If the sensor is dirty it gives a ___ reading.', opts: ['perfect', 'double', 'wrong'], c: 2 }
       ],
 
       routeSets: [
@@ -503,21 +503,21 @@
       ],
 
       evalMCBank: [
-        { q: 'What is a sensor?', o: ['a) The part that moves the robot', 'b) The part that senses and turns the world into a signal', 'c) The robot’s battery', 'd) The list of instructions'], a: 1 },
-        { q: 'Which human sense is the light sensor like?', o: ['a) Hearing', 'b) Taste', 'c) Sight', 'd) Smell'], a: 2 },
+        { q: 'What is a sensor?', o: ['a) The part that senses and turns the world into a signal', 'b) The part that moves the robot', 'c) The robot’s battery', 'd) The list of instructions'], a: 0 },
+        { q: 'Which human sense is the light sensor like?', o: ['a) Hearing', 'b) Taste', 'c) Smell', 'd) Sight'], a: 3 },
         { q: 'Which sensor does a robot need so it does not crash into the wall?', o: ['a) Moisture', 'b) Distance', 'c) Temperature', 'd) Sound'], a: 1 },
         { q: 'The ultrasonic sensor works like…', o: ['a) The bat, with the echo', 'b) The ant, with its legs', 'c) The flower, with the sun', 'd) The fish, with its fins'], a: 0 },
-        { q: 'Which one of these is NOT a sensor?', o: ['a) The microphone', 'b) The thermometer', 'c) The pushbutton', 'd) The motor'], a: 3 },
-        { q: 'What is the correct chain inside the robot?', o: ['a) Sensor → controller → actuator', 'b) Actuator → controller → sensor', 'c) Controller → sensor → actuator', 'd) Sensor → actuator → controller'], a: 0 },
-        { q: 'Which sensor tells you when to water the coffee field?', o: ['a) Light', 'b) Sound', 'c) Moisture', 'd) Touch'], a: 2 },
-        { q: 'Which sensor does the line-following car use?', o: ['a) Light', 'b) Temperature', 'c) Moisture', 'd) Sound'], a: 0 },
-        { q: 'The cell phone screen switches off next to your ear thanks to…', o: ['a) The speaker', 'b) A proximity sensor', 'c) The battery', 'd) The vibration motor'], a: 1 },
-        { q: 'Which sensor does the digital thermometer at the health center have?', o: ['a) Sound', 'b) Moisture', 'c) Temperature', 'd) Light'], a: 2 },
-        { q: 'What happens if the light sensor is covered in mud?', o: ['a) Nothing, sensors never fail', 'b) The robot cleans itself', 'c) It gives a wrong reading and the robot decides wrong', 'd) The robot gains more speed'], a: 2 },
-        { q: 'What is the difference between a sensor and an actuator?', o: ['a) The sensor senses and the actuator carries out the action', 'b) The sensor acts and the actuator senses', 'c) They both do the same thing', 'd) The actuator decides and the sensor obeys'], a: 0 },
-        { q: 'Which sensor detects that the robot crashed?', o: ['a) Touch', 'b) Light', 'c) Moisture', 'd) Temperature'], a: 0 },
-        { q: 'Which body part is the controller compared to?', o: ['a) The skin', 'b) The ear', 'c) The muscle', 'd) The brain'], a: 3 },
-        { q: 'The component inside the light sensor is called…', o: ['a) Valve', 'b) Photoresistor', 'c) Propeller', 'd) Gear'], a: 1 }
+        { q: 'Which one of these is NOT a sensor?', o: ['a) The microphone', 'b) The thermometer', 'c) The motor', 'd) The pushbutton'], a: 2 },
+        { q: 'What is the correct chain inside the robot?', o: ['a) Actuator → controller → sensor', 'b) Controller → sensor → actuator', 'c) Sensor → actuator → controller', 'd) Sensor → controller → actuator'], a: 3 },
+        { q: 'Which sensor tells you when to water the coffee field?', o: ['a) Moisture', 'b) Light', 'c) Sound', 'd) Touch'], a: 0 },
+        { q: 'Which sensor does the line-following car use?', o: ['a) Temperature', 'b) Light', 'c) Moisture', 'd) Sound'], a: 1 },
+        { q: 'The cell phone screen switches off next to your ear thanks to…', o: ['a) The speaker', 'b) The battery', 'c) A proximity sensor', 'd) The vibration motor'], a: 2 },
+        { q: 'Which sensor does the digital thermometer at the health center have?', o: ['a) Temperature', 'b) Sound', 'c) Moisture', 'd) Light'], a: 0 },
+        { q: 'What happens if the light sensor is covered in mud?', o: ['a) Nothing, sensors never fail', 'b) It gives a wrong reading and the robot decides wrong', 'c) The robot cleans itself', 'd) The robot gains more speed'], a: 1 },
+        { q: 'What is the difference between a sensor and an actuator?', o: ['a) The sensor acts and the actuator senses', 'b) They both do the same thing', 'c) The actuator decides and the sensor obeys', 'd) The sensor senses and the actuator carries out the action'], a: 3 },
+        { q: 'Which sensor detects that the robot crashed?', o: ['a) Light', 'b) Moisture', 'c) Touch', 'd) Temperature'], a: 2 },
+        { q: 'Which body part is the controller compared to?', o: ['a) The skin', 'b) The brain', 'c) The ear', 'd) The muscle'], a: 1 },
+        { q: 'The component inside the light sensor is called…', o: ['a) Valve', 'b) Propeller', 'c) Photoresistor', 'd) Gear'], a: 2 }
       ],
 
       evalCPBank: [

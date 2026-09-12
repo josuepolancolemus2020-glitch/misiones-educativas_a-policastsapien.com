@@ -136,14 +136,14 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 // ===================== QUIZ DATA =====================
 let qzData=[
   {q:'¿Cuál es el PRIMER paso del ciclo de diseño?',o:['a) Construir el prototipo','b) Identificar el problema','c) Comunicar el resultado','d) Comprar materiales'],c:1},
-  {q:'En la etapa de IDEAR, ¿qué conviene hacer?',o:['a) Escoger la primera idea que aparezca','b) Anotar muchas ideas y después escoger','c) Copiar el robot de otro equipo','d) Empezar a pegar cartón'],c:1},
-  {q:'¿Qué se decide en el BOCETO del diseño?',o:['a) El color de la caja','b) Qué sensor, qué mecanismo, qué energía y qué programa','c) Quién habla en la presentación','d) La nota del equipo'],c:1},
+  {q:'En la etapa de IDEAR, ¿qué conviene hacer?',o:['a) Anotar muchas ideas y después escoger','b) Escoger la primera idea que aparezca','c) Copiar el robot de otro equipo','d) Empezar a pegar cartón'],c:0},
+  {q:'¿Qué se decide en el BOCETO del diseño?',o:['a) Qué sensor, qué mecanismo, qué energía y qué programa','b) El color de la caja','c) Quién habla en la presentación','d) La nota del equipo'],c:0},
   {q:'El prototipo del robot regador no cerró el agua a tiempo. ¿Qué sigue?',o:['a) Abandonar el proyecto','b) Mejorar el diseño y volver a probar','c) Decir que sí funcionó','d) Cambiar de tema'],c:1},
-  {q:'«El robot no debe costar más de 200 lempiras» es…',o:['a) Un criterio','b) Una restricción','c) Un boceto','d) Una idea'],c:1},
-  {q:'«Debe avisar antes de que el agua llegue al vado» es…',o:['a) Un criterio de éxito','b) Una restricción de costo','c) Un rol del equipo','d) Un material'],c:0},
-  {q:'¿Qué sensor conviene al robot que alerta de inundaciones?',o:['a) Sensor de sonido','b) Sensor de nivel de agua','c) Sensor de color','d) Sensor de tacto'],c:1},
-  {q:'¿Cuál es una pregunta ÉTICA del diseño?',o:['a) ¿De qué color lo pinto?','b) ¿A quién beneficia y a quién podría afectar?','c) ¿Cuántos tornillos lleva?','d) ¿Quién lo dibuja mejor?'],c:1},
-  {q:'¿Cuál es la ÚLTIMA etapa del ciclo de diseño?',o:['a) Probar','b) Comunicar el resultado','c) Idear','d) Construir'],c:1}
+  {q:'«El robot no debe costar más de 200 lempiras» es…',o:['a) Un criterio','b) Un boceto','c) Una idea','d) Una restricción'],c:3},
+  {q:'«Debe avisar antes de que el agua llegue al vado» es…',o:['a) Una restricción de costo','b) Un rol del equipo','c) Un criterio de éxito','d) Un material'],c:2},
+  {q:'¿Qué sensor conviene al robot que alerta de inundaciones?',o:['a) Sensor de nivel de agua','b) Sensor de sonido','c) Sensor de color','d) Sensor de tacto'],c:0},
+  {q:'¿Cuál es una pregunta ÉTICA del diseño?',o:['a) ¿De qué color lo pinto?','b) ¿Cuántos tornillos lleva?','c) ¿Quién lo dibuja mejor?','d) ¿A quién beneficia y a quién podría afectar?'],c:3},
+  {q:'¿Cuál es la ÚLTIMA etapa del ciclo de diseño?',o:['a) Probar','b) Idear','c) Comunicar el resultado','d) Construir'],c:2}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -196,13 +196,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 let cmpData=[
   {s:'El ciclo de diseño empieza al ___ el problema.',opts:['identificar','pintar','vender'],c:0},
-  {s:'En la etapa de idear anotamos muchas ___.',opts:['notas de conducta','ideas','tareas'],c:1},
-  {s:'El dibujo rotulado del robot se llama ___.',opts:['boceto','recibo','cartel'],c:0},
-  {s:'La primera versión que se puede probar es el ___.',opts:['prototipo','diploma','manual'],c:0},
-  {s:'Al probar hay que ___ lo que falla.',opts:['esconder','anotar','olvidar'],c:1},
-  {s:'Si el prototipo falla, lo correcto es ___ y volver a probar.',opts:['rendirse','mejorar','copiar'],c:1},
-  {s:'El dinero disponible es una ___ del proyecto.',opts:['restricción','idea','prueba'],c:0},
-  {s:'La última etapa del ciclo es ___ el resultado.',opts:['comunicar','esconder','borrar'],c:0}
+  {s:'En la etapa de idear anotamos muchas ___.',opts:['notas de conducta','tareas','ideas'],c:2},
+  {s:'El dibujo rotulado del robot se llama ___.',opts:['recibo','cartel','boceto'],c:2},
+  {s:'La primera versión que se puede probar es el ___.',opts:['diploma','prototipo','manual'],c:1},
+  {s:'Al probar hay que ___ lo que falla.',opts:['anotar','esconder','olvidar'],c:0},
+  {s:'Si el prototipo falla, lo correcto es ___ y volver a probar.',opts:['mejorar','rendirse','copiar'],c:0},
+  {s:'El dinero disponible es una ___ del proyecto.',opts:['idea','restricción','prueba'],c:1},
+  {s:'La última etapa del ciclo es ___ el resultado.',opts:['esconder','comunicar','borrar'],c:1}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -432,20 +432,20 @@ let evalTFBank=[
 ];
 let evalMCBank=[
   {q:'¿Cuál es la primera etapa del ciclo de diseño?',o:['a) Construir','b) Identificar el problema','c) Comunicar','d) Probar'],a:1},
-  {q:'¿Qué se hace en la etapa de idear?',o:['a) Pintar el robot','b) Anotar muchas soluciones posibles','c) Calificar al equipo','d) Guardar los materiales'],a:1},
+  {q:'¿Qué se hace en la etapa de idear?',o:['a) Pintar el robot','b) Calificar al equipo','c) Anotar muchas soluciones posibles','d) Guardar los materiales'],a:2},
   {q:'¿Qué contiene un buen boceto de diseño?',o:['a) Solo el nombre del robot','b) Sensores, mecanismos, energía y programa','c) La lista de asistencia','d) El precio de venta'],a:1},
   {q:'¿Qué es un prototipo?',o:['a) La primera versión que se puede probar','b) Un dibujo sin partes','c) El diploma del equipo','d) Un robot de fábrica'],a:0},
-  {q:'Durante la prueba, ¿qué debe hacer el equipo?',o:['a) Esconder los fallos','b) Anotar qué falla y qué funciona','c) Cambiar de proyecto','d) Repartir premios'],a:1},
-  {q:'El prototipo falló tres veces. ¿Qué corresponde hacer?',o:['a) Rendirse','b) Mejorar el diseño y volver a probar','c) Decir que funcionó','d) Copiar a otro equipo'],a:1},
+  {q:'Durante la prueba, ¿qué debe hacer el equipo?',o:['a) Esconder los fallos','b) Cambiar de proyecto','c) Repartir premios','d) Anotar qué falla y qué funciona'],a:3},
+  {q:'El prototipo falló tres veces. ¿Qué corresponde hacer?',o:['a) Rendirse','b) Decir que funcionó','c) Copiar a otro equipo','d) Mejorar el diseño y volver a probar'],a:3},
   {q:'«No debe costar más de 200 lempiras» es un ejemplo de…',o:['a) Criterio','b) Restricción','c) Boceto','d) Prototipo'],a:1},
-  {q:'«Debe avisar antes de que el agua llegue al vado» es un ejemplo de…',o:['a) Criterio de éxito','b) Restricción de tiempo','c) Rol del equipo','d) Material'],a:0},
-  {q:'¿Qué sensor conviene al robot que alerta de inundaciones?',o:['a) De color','b) De sonido','c) De nivel de agua','d) De tacto'],a:2},
-  {q:'¿Qué actuador necesita el regador del huerto escolar?',o:['a) Una cámara','b) Una bomba o válvula de agua','c) Un sensor de humedad','d) Una batería'],a:1},
-  {q:'¿Qué instrucción es correcta para el robot regador?',o:['a) Riega siempre sin parar','b) Si la tierra está seca, entonces abre el agua','c) Espera a que llueva','d) Apaga la alarma'],a:1},
-  {q:'El proyecto se instala en el vado y no hay tomacorriente. ¿Qué energía conviene?',o:['a) Batería con panel solar','b) Un cable de un kilómetro','c) Una vela','d) Ninguna'],a:0},
-  {q:'¿Cuál es la última etapa del ciclo de diseño?',o:['a) Probar','b) Idear','c) Comunicar el resultado','d) Construir'],a:2},
-  {q:'¿Cuál es una pregunta ética del diseño?',o:['a) ¿A quién beneficia y a quién podría afectar?','b) ¿De qué color lo pinto?','c) ¿Cuántos tornillos lleva?','d) ¿Quién dibuja mejor?'],a:0},
-  {q:'¿Qué rol del equipo se encarga de ensayar el robot y anotar los fallos?',o:['a) El diseñador','b) El programador','c) El constructor','d) El probador'],a:3}
+  {q:'«Debe avisar antes de que el agua llegue al vado» es un ejemplo de…',o:['a) Restricción de tiempo','b) Criterio de éxito','c) Rol del equipo','d) Material'],a:1},
+  {q:'¿Qué sensor conviene al robot que alerta de inundaciones?',o:['a) De nivel de agua','b) De color','c) De sonido','d) De tacto'],a:0},
+  {q:'¿Qué actuador necesita el regador del huerto escolar?',o:['a) Una bomba o válvula de agua','b) Una cámara','c) Un sensor de humedad','d) Una batería'],a:0},
+  {q:'¿Qué instrucción es correcta para el robot regador?',o:['a) Riega siempre sin parar','b) Espera a que llueva','c) Apaga la alarma','d) Si la tierra está seca, entonces abre el agua'],a:3},
+  {q:'El proyecto se instala en el vado y no hay tomacorriente. ¿Qué energía conviene?',o:['a) Un cable de un kilómetro','b) Una vela','c) Batería con panel solar','d) Ninguna'],a:2},
+  {q:'¿Cuál es la última etapa del ciclo de diseño?',o:['a) Comunicar el resultado','b) Probar','c) Idear','d) Construir'],a:0},
+  {q:'¿Cuál es una pregunta ética del diseño?',o:['a) ¿De qué color lo pinto?','b) ¿Cuántos tornillos lleva?','c) ¿A quién beneficia y a quién podría afectar?','d) ¿Quién dibuja mejor?'],a:2},
+  {q:'¿Qué rol del equipo se encarga de ensayar el robot y anotar los fallos?',o:['a) El diseñador','b) El programador','c) El probador','d) El constructor'],a:2}
 ];
 let evalCPBank=[
   {q:'El ciclo de diseño empieza al ___ el problema.',a:'identificar'},

@@ -333,14 +333,14 @@
       ],
 
       qzData: [
-        { q: 'What is a conditional?', o: ['a) A list of steps that are always the same', 'b) An instruction that makes the robot DECIDE according to a condition', 'c) A 90° turn', 'd) A mistake in the program'], c: 1 },
-        { q: 'What is the CONDITION of a conditional?', o: ['a) An order such as FORWARD', 'b) The color of the robot', 'c) A yes-or-no question', 'd) The final square'], c: 2 },
-        { q: 'In IF…THEN…ELSE, when does the ELSE branch run?', o: ['a) When the condition is true', 'b) When the condition is false', 'c) Always', 'd) Never'], c: 1 },
+        { q: 'What is a conditional?', o: ['a) A list of steps that are always the same', 'b) A 90° turn', 'c) A mistake in the program', 'd) An instruction that makes the robot DECIDE according to a condition'], c: 3 },
+        { q: 'What is the CONDITION of a conditional?', o: ['a) A yes-or-no question', 'b) An order such as FORWARD', 'c) The color of the robot', 'd) The final square'], c: 0 },
+        { q: 'In IF…THEN…ELSE, when does the ELSE branch run?', o: ['a) When the condition is true', 'b) Always', 'c) When the condition is false', 'd) Never'], c: 2 },
         { q: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD. The robot has NO wall ahead. What does it do?', o: ['a) It turns right', 'b) It goes forward', 'c) It stops', 'd) It turns left'], c: 1 },
-        { q: 'How many branches run in ONE conditional?', o: ['a) Both at once', 'b) None', 'c) Only one: the other is ignored', 'd) It depends on the color'], c: 2 },
-        { q: 'Which one of these is a CONDITION (a yes/no question)?', o: ['a) FORWARD', 'b) Is the traffic light green?', 'c) TURN LEFT', 'd) DELIVER'], c: 1 },
-        { q: 'With «IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → WAIT», if the light is RED the robot…', o: ['a) Goes forward anyway', 'b) Turns', 'c) Waits', 'd) Delivers'], c: 2 },
-        { q: 'What is a robot SENSOR?', o: ['a) The part that answers the question of the condition', 'b) A square on the map', 'c) The message', 'd) A prize'], c: 0 },
+        { q: 'How many branches run in ONE conditional?', o: ['a) Only one: the other is ignored', 'b) Both at once', 'c) None', 'd) It depends on the color'], c: 0 },
+        { q: 'Which one of these is a CONDITION (a yes/no question)?', o: ['a) FORWARD', 'b) TURN LEFT', 'c) Is the traffic light green?', 'd) DELIVER'], c: 2 },
+        { q: 'With «IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → WAIT», if the light is RED the robot…', o: ['a) Waits', 'b) Goes forward anyway', 'c) Turns', 'd) Delivers'], c: 0 },
+        { q: 'What is a robot SENSOR?', o: ['a) A square on the map', 'b) The message', 'c) A prize', 'd) The part that answers the question of the condition'], c: 3 },
         { q: 'A conditional is «backwards» (branches swapped). What happens?', o: ['a) Nothing, it works the same', 'b) The robot decides badly and may crash', 'c) The robot goes faster', 'd) It switches off'], c: 1 }
       ],
 
@@ -375,14 +375,14 @@
       ],
 
       cmpData: [
-        { s: 'An instruction that makes the robot decide is called a ___.', opts: ['conditional', 'turn', 'square'], c: 0 },
+        { s: 'An instruction that makes the robot decide is called a ___.', opts: ['turn', 'conditional', 'square'], c: 1 },
         { s: 'The ___ is the yes-or-no question of the conditional.', opts: ['action', 'condition', 'square'], c: 1 },
         { s: 'The branch that runs when the answer is YES is called the ___ branch.', opts: ['ELSE', 'WAIT', 'THEN'], c: 2 },
         { s: 'The branch that runs when the answer is NO is called the ___ branch.', opts: ['ELSE', 'THEN', 'FORWARD'], c: 0 },
         { s: 'In a conditional ___ one branch runs at a time.', opts: ['only', 'always', 'never'], c: 0 },
         { s: 'The part of the robot that answers the question is called the ___.', opts: ['motor', 'sensor', 'screen'], c: 1 },
-        { s: 'On a red light and with «ELSE → WAIT», the robot ___.', opts: ['goes forward', 'waits', 'turns'], c: 1 },
-        { s: 'A condition can only be true or ___.', opts: ['maybe', 'false', 'red'], c: 1 }
+        { s: 'On a red light and with «ELSE → WAIT», the robot ___.', opts: ['waits', 'goes forward', 'turns'], c: 0 },
+        { s: 'A condition can only be true or ___.', opts: ['maybe', 'red', 'false'], c: 2 }
       ],
 
       routeSets: [
@@ -494,19 +494,19 @@
 
       evalMCBank: [
         { q: 'IF there is a wall ahead THEN turn right, ELSE go forward. The robot has NO wall ahead. What does it do?', o: ['It turns right', 'It goes forward', 'It stops', 'It turns left'], a: 1 },
-        { q: 'What is a conditional?', o: ['a) A list of steps that are always the same', 'b) An instruction that makes it decide according to a condition', 'c) A 90° turn', 'd) A map'], a: 1 },
-        { q: 'What is the CONDITION of a conditional?', o: ['a) An order such as FORWARD', 'b) A yes-or-no question', 'c) The color of the robot', 'd) The final square'], a: 1 },
-        { q: 'When does the ELSE branch run?', o: ['a) When the condition is true', 'b) When the condition is false', 'c) Always', 'd) Never'], a: 1 },
-        { q: 'How many branches run in ONE conditional?', o: ['a) Both at once', 'b) None', 'c) Only one: the other is ignored', 'd) Three'], a: 2 },
-        { q: 'IF there is a wall ahead THEN turn right, ELSE go forward. The robot DOES have a wall ahead. What does it do?', o: ['a) It goes forward', 'b) It turns right', 'c) It waits', 'd) It delivers'], a: 1 },
-        { q: 'Which one of these is a CONDITION?', o: ['a) FORWARD', 'b) TURN RIGHT', 'c) Is the traffic light green?', 'd) DELIVER'], a: 2 },
-        { q: 'With «IF green → FORWARD, ELSE → WAIT», if the traffic light is RED the robot…', o: ['a) Goes forward', 'b) Turns', 'c) Waits', 'd) Delivers'], a: 2 },
-        { q: 'What is a robot sensor?', o: ['a) The part that answers the question of the condition', 'b) A square on the map', 'c) The message', 'd) A prize'], a: 0 },
-        { q: 'A condition can only be…', o: ['a) True or false', 'b) Red or blue', 'c) Long or short', 'd) Maybe'], a: 0 },
-        { q: 'What is the THEN branch?', o: ['a) The path when the answer is NO', 'b) The path when the answer is YES', 'c) The question', 'd) The sensor'], a: 1 },
+        { q: 'What is a conditional?', o: ['a) A list of steps that are always the same', 'b) A 90° turn', 'c) An instruction that makes it decide according to a condition', 'd) A map'], a: 2 },
+        { q: 'What is the CONDITION of a conditional?', o: ['a) A yes-or-no question', 'b) An order such as FORWARD', 'c) The color of the robot', 'd) The final square'], a: 0 },
+        { q: 'When does the ELSE branch run?', o: ['a) When the condition is true', 'b) Always', 'c) When the condition is false', 'd) Never'], a: 2 },
+        { q: 'How many branches run in ONE conditional?', o: ['a) Only one: the other is ignored', 'b) Both at once', 'c) None', 'd) Three'], a: 0 },
+        { q: 'IF there is a wall ahead THEN turn right, ELSE go forward. The robot DOES have a wall ahead. What does it do?', o: ['a) It goes forward', 'b) It waits', 'c) It turns right', 'd) It delivers'], a: 2 },
+        { q: 'Which one of these is a CONDITION?', o: ['a) FORWARD', 'b) Is the traffic light green?', 'c) TURN RIGHT', 'd) DELIVER'], a: 1 },
+        { q: 'With «IF green → FORWARD, ELSE → WAIT», if the traffic light is RED the robot…', o: ['a) Goes forward', 'b) Waits', 'c) Turns', 'd) Delivers'], a: 1 },
+        { q: 'What is a robot sensor?', o: ['a) A square on the map', 'b) The message', 'c) A prize', 'd) The part that answers the question of the condition'], a: 3 },
+        { q: 'A condition can only be…', o: ['a) Red or blue', 'b) Long or short', 'c) Maybe', 'd) True or false'], a: 3 },
+        { q: 'What is the THEN branch?', o: ['a) The path when the answer is NO', 'b) The question', 'c) The path when the answer is YES', 'd) The sensor'], a: 2 },
         { q: 'A conditional has its branches «backwards». What happens?', o: ['a) Nothing, it works the same', 'b) The robot decides badly and may crash', 'c) It goes faster', 'd) It switches off'], a: 1 },
-        { q: 'Which is a well-written conditional for not crashing into a wall?', o: ['a) IF there is a wall → FORWARD, ELSE → TURN', 'b) IF there is a wall → TURN RIGHT, ELSE → FORWARD', 'c) FORWARD, FORWARD, FORWARD', 'd) TURN, TURN, TURN'], a: 1 },
-        { q: 'In chained conditionals, the ORDER of the questions…', o: ['a) Does not matter', 'b) Can change the robot’s decision', 'c) Only the color matters', 'd) Never changes anything'], a: 1 },
+        { q: 'Which is a well-written conditional for not crashing into a wall?', o: ['a) IF there is a wall → TURN RIGHT, ELSE → FORWARD', 'b) IF there is a wall → FORWARD, ELSE → TURN', 'c) FORWARD, FORWARD, FORWARD', 'd) TURN, TURN, TURN'], a: 0 },
+        { q: 'In chained conditionals, the ORDER of the questions…', o: ['a) Does not matter', 'b) Only the color matters', 'c) Never changes anything', 'd) Can change the robot’s decision'], a: 3 },
         { q: 'The condition «is a question» and the action «is an…»', o: ['a) order the robot carries out', 'b) another question', 'c) square', 'd) certificate'], a: 0 }
       ],
 

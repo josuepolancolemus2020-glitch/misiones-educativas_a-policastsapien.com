@@ -267,14 +267,14 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 let qzData=[
-  {q:'¿Cuál es el ciclo que repite un robot mientras está encendido?',o:['a) Dormir → soñar → despertar','b) Leer sensores → decidir → mover actuadores → repetir','c) Actuar → apagarse → cargarse','d) Decidir → olvidar → repetir'],c:1},
-  {q:'¿Qué es el programa de un robot?',o:['a) Un canal de televisión','b) La batería del robot','c) La lista de instrucciones exactas que ejecuta paso a paso','d) El nombre que le pone el dueño'],c:2},
+  {q:'¿Cuál es el ciclo que repite un robot mientras está encendido?',o:['a) Leer sensores → decidir → mover actuadores → repetir','b) Dormir → soñar → despertar','c) Actuar → apagarse → cargarse','d) Decidir → olvidar → repetir'],c:0},
+  {q:'¿Qué es el programa de un robot?',o:['a) Un canal de televisión','b) La batería del robot','c) El nombre que le pone el dueño','d) La lista de instrucciones exactas que ejecuta paso a paso'],c:3},
   {q:'¿Qué instrucción cambia el rumbo del robot sin moverlo de casilla?',o:['a) AVANZA','b) GIRA DERECHA','c) DETENTE','d) REPITE'],c:1},
   {q:'«SI el sensor de pared detecta obstáculo ENTONCES gira, SINO avanza». ¿Qué bloque es?',o:['a) Un bucle','b) Una variable','c) Un condicional','d) Un actuador'],c:2},
-  {q:'El robot debe avanzar 6 casillas iguales. ¿Qué bloque conviene usar?',o:['a) Un bucle: repite 6 veces AVANZA','b) Una variable','c) Un sensor de línea','d) La instrucción ESPERA'],c:0},
-  {q:'¿Para qué sirve una variable en el programa del robot?',o:['a) Para pintar el robot','b) Para guardar un número, como cuántas veces giró','c) Para cargar la batería','d) Para apagar los sensores'],c:1},
-  {q:'¿Qué es el pseudocódigo?',o:['a) Un robot descompuesto','b) Un idioma secreto de las máquinas','c) El programa escrito en lenguaje claro antes de cargarlo al robot','d) Un tipo de sensor'],c:2},
-  {q:'El robot chocó contra la pared. ¿Qué significa?',o:['a) Que el robot se enojó','b) Que el programa tiene un error y hay que depurarlo','c) Que la pared se movió','d) Que el robot ya no sirve'],c:1},
+  {q:'El robot debe avanzar 6 casillas iguales. ¿Qué bloque conviene usar?',o:['a) Una variable','b) Un sensor de línea','c) Un bucle: repite 6 veces AVANZA','d) La instrucción ESPERA'],c:2},
+  {q:'¿Para qué sirve una variable en el programa del robot?',o:['a) Para guardar un número, como cuántas veces giró','b) Para pintar el robot','c) Para cargar la batería','d) Para apagar los sensores'],c:0},
+  {q:'¿Qué es el pseudocódigo?',o:['a) Un robot descompuesto','b) El programa escrito en lenguaje claro antes de cargarlo al robot','c) Un idioma secreto de las máquinas','d) Un tipo de sensor'],c:1},
+  {q:'El robot chocó contra la pared. ¿Qué significa?',o:['a) Que el robot se enojó','b) Que la pared se movió','c) Que el robot ya no sirve','d) Que el programa tiene un error y hay que depurarlo'],c:3},
   {q:'¿Qué hace realmente un robot?',o:['a) Lo que dice su programa, no lo que uno quiso decir','b) Lo que se imagina','c) Lo que le conviene','d) Lo que hacen los demás robots'],c:0},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
@@ -566,17 +566,17 @@ let evalMCBank=[
   {q:'¿Qué es el programa de un robot?',o:['a) Su batería','b) Su carcasa de metal','c) La lista de instrucciones exactas que ejecuta paso a paso','d) El nombre que le puso el dueño'],a:2},
   {q:'¿Cuál es el ciclo de un robot programado?',o:['a) Dormir → soñar → despertar','b) Leer sensores → decidir → mover actuadores → repetir','c) Actuar → apagar → cargar','d) Girar → girar → girar'],a:1},
   {q:'El robot debe avanzar 8 casillas iguales. ¿Qué bloque conviene usar?',o:['a) Un bucle: repite 8 veces AVANZA','b) Una variable','c) Un sensor de color','d) La instrucción ESPERA'],a:0},
-  {q:'«SI el sensor de pared detecta obstáculo ENTONCES gira, SINO avanza» es…',o:['a) Un bucle','b) Una variable','c) Un actuador','d) Un condicional'],a:3},
+  {q:'«SI el sensor de pared detecta obstáculo ENTONCES gira, SINO avanza» es…',o:['a) Un condicional','b) Un bucle','c) Una variable','d) Un actuador'],a:0},
   {q:'¿Para qué sirve una variable en el programa?',o:['a) Para mover las ruedas','b) Para guardar un número, como cuántas veces giró','c) Para cargar la batería','d) Para pintar el robot'],a:1},
-  {q:'¿Qué es el pseudocódigo?',o:['a) Un robot descompuesto','b) Un idioma secreto de las máquinas','c) El programa escrito en lenguaje claro antes de cargarlo','d) Un sensor especial'],a:2},
-  {q:'El robot chocó con la pared. ¿Qué hay que hacer?',o:['a) Depurar: revisar el programa paso a paso y corregirlo','b) Cambiarle el nombre al robot','c) Mover la pared de lugar','d) Apagar los sensores para siempre'],a:0},
+  {q:'¿Qué es el pseudocódigo?',o:['a) El programa escrito en lenguaje claro antes de cargarlo','b) Un robot descompuesto','c) Un idioma secreto de las máquinas','d) Un sensor especial'],a:0},
+  {q:'El robot chocó con la pared. ¿Qué hay que hacer?',o:['a) Cambiarle el nombre al robot','b) Depurar: revisar el programa paso a paso y corregirlo','c) Mover la pared de lugar','d) Apagar los sensores para siempre'],a:1},
   {q:'¿Qué instrucción cambia el rumbo del robot sin moverlo de casilla?',o:['a) AVANZA','b) ESPERA','c) GIRA IZQUIERDA','d) DETENTE'],a:2},
-  {q:'¿Qué sensor usa un robot que sigue la línea del pasillo de la escuela?',o:['a) El sensor de humedad','b) El sensor de línea (color)','c) El sensor de sonido','d) El sensor de temperatura'],a:1},
-  {q:'Un bucle que nunca termina…',o:['a) hace al robot más rápido','b) ahorra batería','c) es la mejor forma de programar','d) es un error: el robot nunca llega a la meta'],a:3},
-  {q:'¿Qué significa «el robot hace lo que dice el programa, no lo que uno quiso decir»?',o:['a) Que ejecuta literalmente cada instrucción, aunque esté equivocada','b) Que el robot es desobediente','c) Que el robot inventa instrucciones nuevas','d) Que el robot no necesita programa'],a:0},
-  {q:'¿Qué bloque necesita un robot para contar cuántas botellas recogió en el patio?',o:['a) Un sensor de temperatura','b) Una variable contadora','c) La instrucción ESPERA','d) Una bocina'],a:1},
+  {q:'¿Qué sensor usa un robot que sigue la línea del pasillo de la escuela?',o:['a) El sensor de humedad','b) El sensor de sonido','c) El sensor de línea (color)','d) El sensor de temperatura'],a:2},
+  {q:'Un bucle que nunca termina…',o:['a) hace al robot más rápido','b) es un error: el robot nunca llega a la meta','c) ahorra batería','d) es la mejor forma de programar'],a:1},
+  {q:'¿Qué significa «el robot hace lo que dice el programa, no lo que uno quiso decir»?',o:['a) Que el robot es desobediente','b) Que el robot inventa instrucciones nuevas','c) Que el robot no necesita programa','d) Que ejecuta literalmente cada instrucción, aunque esté equivocada'],a:3},
+  {q:'¿Qué bloque necesita un robot para contar cuántas botellas recogió en el patio?',o:['a) Un sensor de temperatura','b) La instrucción ESPERA','c) Una bocina','d) Una variable contadora'],a:3},
   {q:'¿Qué hace la instrucción ESPERA?',o:['a) Mueve al robot una casilla','b) Repite el programa entero','c) Deja pasar el tiempo sin mover al robot','d) Borra el programa'],a:2},
-  {q:'¿Cuál es el primer paso para programar bien un robot?',o:['a) Apretar botones al azar','b) Escribir el pseudocódigo en lenguaje claro','c) Cambiar la batería','d) Quitarle los sensores'],a:1},
+  {q:'¿Cuál es el primer paso para programar bien un robot?',o:['a) Escribir el pseudocódigo en lenguaje claro','b) Apretar botones al azar','c) Cambiar la batería','d) Quitarle los sensores'],a:0},
   {q:'En el huerto escolar, ¿qué condicional usa el robot regador?',o:['a) SI hace sol ENTONCES apaga el robot','b) SI hay ruido ENTONCES gira','c) SI hay línea ENTONCES riega','d) SI la tierra está seca ENTONCES abre el agua, SINO sigue adelante'],a:3},
 ];
 let evalCPBank=[

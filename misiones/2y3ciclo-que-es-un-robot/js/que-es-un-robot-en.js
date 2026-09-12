@@ -249,15 +249,15 @@
       ],
 
       qzData: [
-        { q: 'What does a robot do that a simple machine does NOT?', o: ['a) Weigh a lot', 'b) Sense and decide on its own', 'c) Be made of metal', 'd) Need a person to push it'], c: 1 },
-        { q: 'Which part of the robot works like its senses?', o: ['a) The actuators', 'b) The battery', 'c) The sensors', 'd) The wheels'], c: 2 },
+        { q: 'What does a robot do that a simple machine does NOT?', o: ['a) Weigh a lot', 'b) Be made of metal', 'c) Need a person to push it', 'd) Sense and decide on its own'], c: 3 },
+        { q: 'Which part of the robot works like its senses?', o: ['a) The sensors', 'b) The actuators', 'c) The battery', 'd) The wheels'], c: 0 },
         { q: 'Which part of the robot decides what to do?', o: ['a) The controller', 'b) The motor', 'c) The speaker', 'd) The outer shell'], c: 0 },
-        { q: 'Which part of the robot acts (moves, turns, switches lights on)?', o: ['a) The sensors', 'b) The actuators', 'c) The program', 'd) The antenna'], c: 1 },
-        { q: 'What is the correct order of the robot cycle?', o: ['a) Act → sense → think', 'b) Think → act → sense', 'c) Sense → think → act', 'd) Sense → act → think'], c: 2 },
-        { q: 'Which of these machines is a robot?', o: ['a) The hammer', 'b) The blender', 'c) The bicycle', 'd) The vacuum that detects obstacles and chooses its own route'], c: 3 },
-        { q: 'Why is a blender NOT a robot?', o: ['a) Because it is small', 'b) Because it acts but does not sense or decide on its own', 'c) Because it uses no electricity', 'd) Because it has no wheels'], c: 1 },
-        { q: 'Which robot inspects the coffee fields in Honduras?', o: ['a) The humanoid', 'b) The robot vacuum', 'c) The drone', 'd) The factory arm'], c: 2 },
-        { q: 'Do robots «think» the way people do?', o: ['a) Yes, exactly like us', 'b) No: they follow the instructions in their program', 'c) Yes, but only at night', 'd) No: they guess what to do'], c: 1 }
+        { q: 'Which part of the robot acts (moves, turns, switches lights on)?', o: ['a) The sensors', 'b) The program', 'c) The actuators', 'd) The antenna'], c: 2 },
+        { q: 'What is the correct order of the robot cycle?', o: ['a) Sense → think → act', 'b) Act → sense → think', 'c) Think → act → sense', 'd) Sense → act → think'], c: 0 },
+        { q: 'Which of these machines is a robot?', o: ['a) The hammer', 'b) The vacuum that detects obstacles and chooses its own route', 'c) The blender', 'd) The bicycle'], c: 1 },
+        { q: 'Why is a blender NOT a robot?', o: ['a) Because it is small', 'b) Because it uses no electricity', 'c) Because it acts but does not sense or decide on its own', 'd) Because it has no wheels'], c: 2 },
+        { q: 'Which robot inspects the coffee fields in Honduras?', o: ['a) The humanoid', 'b) The drone', 'c) The robot vacuum', 'd) The factory arm'], c: 1 },
+        { q: 'Do robots «think» the way people do?', o: ['a) Yes, exactly like us', 'b) Yes, but only at night', 'c) No: they guess what to do', 'd) No: they follow the instructions in their program'], c: 3 }
       ],
 
       classGroups: [
@@ -291,14 +291,14 @@
       ],
 
       cmpData: [
-        { s: 'A robot is a machine that senses, ___ and acts.', opts: ['thinks', 'sleeps', 'eats'], c: 0 },
-        { s: 'The robot’s sensors work like the ___ of the body.', opts: ['bones', 'senses', 'teeth'], c: 1 },
-        { s: 'The robot’s controller is like the human ___.', opts: ['foot', 'heart', 'brain'], c: 2 },
-        { s: 'The robot’s actuators are like the ___ of the body.', opts: ['muscles', 'eyes', 'ears'], c: 0 },
-        { s: 'The robot follows the instructions in its ___.', opts: ['notebook', 'program', 'teacher'], c: 1 },
-        { s: 'The ___ is not a robot because it does not decide on its own.', opts: ['blender', 'robot vacuum', 'automatic door'], c: 0 },
+        { s: 'A robot is a machine that senses, ___ and acts.', opts: ['sleeps', 'thinks', 'eats'], c: 1 },
+        { s: 'The robot’s sensors work like the ___ of the body.', opts: ['senses', 'bones', 'teeth'], c: 0 },
+        { s: 'The robot’s controller is like the human ___.', opts: ['brain', 'foot', 'heart'], c: 0 },
+        { s: 'The robot’s actuators are like the ___ of the body.', opts: ['eyes', 'muscles', 'ears'], c: 1 },
+        { s: 'The robot follows the instructions in its ___.', opts: ['program', 'notebook', 'teacher'], c: 0 },
+        { s: 'The ___ is not a robot because it does not decide on its own.', opts: ['robot vacuum', 'blender', 'automatic door'], c: 1 },
         { s: 'The ___ is a flying robot that inspects crops.', opts: ['hammer', 'television', 'drone'], c: 2 },
-        { s: 'The robot gets its power from its ___.', opts: ['battery', 'shadow', 'antenna'], c: 0 }
+        { s: 'The robot gets its power from its ___.', opts: ['shadow', 'antenna', 'battery'], c: 2 }
       ],
 
       routeSets: [
@@ -436,21 +436,21 @@
       ],
 
       evalMCBank: [
-        { q: 'What is a robot?', o: ['a) Any metal machine', 'b) A machine that senses, thinks and acts', 'c) A toy with lights', 'd) A computer with a screen'], a: 1 },
+        { q: 'What is a robot?', o: ['a) Any metal machine', 'b) A toy with lights', 'c) A machine that senses, thinks and acts', 'd) A computer with a screen'], a: 2 },
         { q: 'Which part of the robot works like its «senses»?', o: ['a) The actuators', 'b) The sensors', 'c) The wheels', 'd) The battery'], a: 1 },
         { q: 'Which of these machines is a robot?', o: ['a) The hammer', 'b) The blender', 'c) The vacuum that detects obstacles and chooses its own route', 'd) The bicycle'], a: 2 },
-        { q: 'Which part of the robot decides what to do?', o: ['a) The controller', 'b) The motor', 'c) The speaker', 'd) The wheel'], a: 0 },
-        { q: 'Which part of the robot are its «muscles»?', o: ['a) The sensors', 'b) The program', 'c) The antenna', 'd) The actuators'], a: 3 },
+        { q: 'Which part of the robot decides what to do?', o: ['a) The motor', 'b) The controller', 'c) The speaker', 'd) The wheel'], a: 1 },
+        { q: 'Which part of the robot are its «muscles»?', o: ['a) The actuators', 'b) The sensors', 'c) The program', 'd) The antenna'], a: 0 },
         { q: 'What is the order of the robot cycle?', o: ['a) Act → sense → think', 'b) Sense → think → act', 'c) Think → act → sense', 'd) Sense → act → think'], a: 1 },
-        { q: 'Why is the hammer NOT a robot?', o: ['a) Because it is small', 'b) Because it is made of metal', 'c) Because it neither senses nor decides', 'd) Because it has no lights'], a: 2 },
+        { q: 'Why is the hammer NOT a robot?', o: ['a) Because it neither senses nor decides', 'b) Because it is small', 'c) Because it is made of metal', 'd) Because it has no lights'], a: 0 },
         { q: 'Why is the blender NOT a robot?', o: ['a) Because it acts but does not decide on its own', 'b) Because it does not spin', 'c) Because it belongs in the kitchen', 'd) Because it uses electricity'], a: 0 },
         { q: 'Which sensor does a robot need in order to stop before an obstacle?', o: ['a) Temperature', 'b) Moisture', 'c) Sound', 'd) Distance'], a: 3 },
-        { q: 'Which robot inspects the coffee fields in Honduras?', o: ['a) The drone', 'b) The humanoid', 'c) The robot vacuum', 'd) The surgical robot'], a: 0 },
-        { q: 'What do robotic arms do in the maquila?', o: ['a) They think for the workers', 'b) They sew and cut by following a program', 'c) They sell the clothes', 'd) They design the fashion'], a: 1 },
-        { q: 'What is a robot’s program?', o: ['a) A television channel', 'b) Its internal battery', 'c) The list of instructions it obeys step by step', 'd) Its metal case'], a: 2 },
-        { q: 'How do robots «think»?', o: ['a) Just like people', 'b) They follow the instructions in their program', 'c) They guess what to do', 'd) They dream the answers'], a: 1 },
-        { q: 'Which one is a robot shaped like a person?', o: ['a) The drone', 'b) The industrial arm', 'c) The robot vacuum', 'd) The humanoid'], a: 3 },
-        { q: 'Where does a robot get its power from?', o: ['a) From the battery or the electricity', 'b) From food', 'c) From the water it drinks', 'd) From the air'], a: 0 }
+        { q: 'Which robot inspects the coffee fields in Honduras?', o: ['a) The humanoid', 'b) The robot vacuum', 'c) The surgical robot', 'd) The drone'], a: 3 },
+        { q: 'What do robotic arms do in the maquila?', o: ['a) They sew and cut by following a program', 'b) They think for the workers', 'c) They sell the clothes', 'd) They design the fashion'], a: 0 },
+        { q: 'What is a robot’s program?', o: ['a) A television channel', 'b) The list of instructions it obeys step by step', 'c) Its internal battery', 'd) Its metal case'], a: 1 },
+        { q: 'How do robots «think»?', o: ['a) Just like people', 'b) They guess what to do', 'c) They dream the answers', 'd) They follow the instructions in their program'], a: 3 },
+        { q: 'Which one is a robot shaped like a person?', o: ['a) The drone', 'b) The industrial arm', 'c) The humanoid', 'd) The robot vacuum'], a: 2 },
+        { q: 'Where does a robot get its power from?', o: ['a) From food', 'b) From the water it drinks', 'c) From the battery or the electricity', 'd) From the air'], a: 2 }
       ],
 
       evalCPBank: [

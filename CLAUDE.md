@@ -3725,10 +3725,16 @@ ofrece. Mueve la correcta y deja las demás en su orden relativo.
    ofrece 1 · 2 · 4, en orden, que es como se leen. Se detectan solas: si todas
    las opciones son números o fracciones y van de menor a mayor (o al revés),
    la fila se queda como está.
-3. ⚠️ **Una misión con edición en inglés NO se reparte con la herramienta.** Su
-   `-en.js` lleva el banco **índice a índice** con el español: mover uno solo le
-   cambia la respuesta correcta al alumno que estudia en inglés. Esas van a
-   mano y las dos a la vez.
+3. ⚠️ **Una misión con edición en inglés se mueve EN LAS DOS A LA VEZ, con la
+   misma permutación.** Su `-en.js` lleva el banco **índice a índice** con el
+   español: mover uno solo le cambia la respuesta correcta al alumno que estudia
+   en inglés, y eso no da ningún error —se descubre con el niño delante—. Antes
+   de tocar nada se DEMUESTRA que van fila a fila (mismo número de preguntas,
+   misma respuesta correcta en cada una, mismo número de opciones); si no
+   cuadran, ese banco se deja quieto. Y los dos archivos se compilan antes de
+   escribir NINGUNO: dejar el español movido y el inglés sin mover es justo lo
+   que esto viene a evitar. Después, `verifica-bancos-en.js` con los dos
+   archivos.
 4. **Se reparte a partes iguales, no justo por debajo del 40 %.** Con cuatro
    opciones el azar es el 25 %: una letra al 40 % sigue siendo una pista. El
    objetivo es `ceil(filas / letras)` y el 40 % queda como el techo que no se
@@ -3784,10 +3790,13 @@ la regla del 40 % no se les pedía, y nadie lo sabía. Es la misma familia que l
 sonda que sale roja sin avería: una que se rinde con un aviso y sigue enseña a
 no mirarla.
 
-⚠️ **Y las cinco de Robótica con traducción de autor van APARTE.** Su `-en.js`
-lleva el banco índice a índice; la herramienta las reconoce y se niega, con su
-aviso. `robots-problemas` es de las más sesgadas que quedan (89 % en la «b») y
-sigue esperando a que se haga a mano, con las dos ediciones a la vez.
+⚠️ **Y si renumerar o no se decide MIRANDO LA PRIMERA FILA, se rompe.** Hay
+bancos donde unas preguntas traen la letra dentro de la opción y otras no: en
+`robot-decide` la primera no la lleva («Gira derecha», «Avanza»…) y las catorce
+siguientes sí. Decidiéndolo por la primera, el banco se daba por «sin letras» y
+salían catorce preguntas con dos «b)» y ninguna «d)». **No dio ningún error**;
+se vio comparando el archivo escrito contra el de antes, antes de publicar. Se
+decide fila a fila.
 
 ⚠️ **Y la herramienta busca el JS de la misión por lo que TIENE DENTRO, no por
 su nombre.** Deducirlo de la carpeta acierta en la mayoría y falla justo donde
@@ -3800,13 +3809,13 @@ que cambian de idioma en caliente reasignan el banco—. Pedir `const` dejaba
 fuera a `ingles-saludos` **en silencio**, que era justo una de las peores. Se
 acepta `const`, `let` y `var`, y lo mismo al buscar el archivo.
 
-**Lo que queda: SEIS**, y son **exactamente las seis de Robótica con traducción
-de autor** —`robots-problemas` con el 89 %, `robot-decide`, `sensores-robot`,
-`que-es-un-robot`, `motores-mecanismos` y `programando-robot`—. Eran 53 el 12
-de septiembre de 2026. Todas las demás están repartidas; la herramienta se
-niega a tocar estas seis y hay que mover el español y el inglés a la vez. Se van
-haciendo por tandas, mirando el diff —cada fila movida es una línea que alguien
-tiene que leer— y corriendo después la sonda de la misión.
+**Lo que queda: NADA.** Las **77 misiones** están repartidas; eran **53 las
+sesgadas** el 12 de septiembre de 2026, y `mide-reparto-respuestas.js` ya no
+señala ninguna. Se hizo por tandas, mirando el diff —cada fila movida es una
+línea que alguien tiene que leer— y corriendo después la sonda de cada misión.
+
+El día que entre una misión nueva, se le pasa la herramienta antes de
+publicarla: es una línea, y el sesgo se cuela solo.
 
 ## Comentarios en el código
 

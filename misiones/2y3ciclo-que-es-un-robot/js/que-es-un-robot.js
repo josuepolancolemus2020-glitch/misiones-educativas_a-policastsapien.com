@@ -134,15 +134,15 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 let qzData=[
-  {q:'¿Qué hace un robot que NO hace una máquina simple?',o:['a) Pesar mucho','b) Percibir y decidir solo','c) Ser de metal','d) Necesitar una persona que lo empuje'],c:1},
-  {q:'¿Qué parte del robot funciona como sus sentidos?',o:['a) Los actuadores','b) La batería','c) Los sensores','d) Las ruedas'],c:2},
+  {q:'¿Qué hace un robot que NO hace una máquina simple?',o:['a) Pesar mucho','b) Ser de metal','c) Necesitar una persona que lo empuje','d) Percibir y decidir solo'],c:3},
+  {q:'¿Qué parte del robot funciona como sus sentidos?',o:['a) Los sensores','b) Los actuadores','c) La batería','d) Las ruedas'],c:0},
   {q:'¿Qué parte del robot decide qué hacer?',o:['a) El controlador','b) El motor','c) La bocina','d) La carrocería'],c:0},
-  {q:'¿Qué parte del robot actúa (se mueve, gira, enciende luces)?',o:['a) Los sensores','b) Los actuadores','c) El programa','d) La antena'],c:1},
-  {q:'¿Cuál es el orden correcto del ciclo del robot?',o:['a) Actuar → percibir → decidir','b) Decidir → actuar → percibir','c) Percibir → decidir → actuar','d) Percibir → actuar → decidir'],c:2},
-  {q:'¿Cuál de estas máquinas es un robot?',o:['a) El martillo','b) La licuadora','c) La bicicleta','d) La aspiradora que detecta obstáculos y decide su ruta sola'],c:3},
-  {q:'¿Por qué la licuadora NO es un robot?',o:['a) Porque es pequeña','b) Porque actúa pero no percibe ni decide sola','c) Porque no usa electricidad','d) Porque no tiene ruedas'],c:1},
-  {q:'¿Qué robot revisa los cultivos de café en Honduras?',o:['a) El humanoide','b) La aspiradora robot','c) El dron','d) El brazo de maquila'],c:2},
-  {q:'¿Los robots «piensan» como las personas?',o:['a) Sí, igual que nosotros','b) No: siguen las instrucciones de su programa','c) Sí, pero solo de noche','d) No: adivinan qué hacer'],c:1},
+  {q:'¿Qué parte del robot actúa (se mueve, gira, enciende luces)?',o:['a) Los sensores','b) El programa','c) Los actuadores','d) La antena'],c:2},
+  {q:'¿Cuál es el orden correcto del ciclo del robot?',o:['a) Percibir → decidir → actuar','b) Actuar → percibir → decidir','c) Decidir → actuar → percibir','d) Percibir → actuar → decidir'],c:0},
+  {q:'¿Cuál de estas máquinas es un robot?',o:['a) El martillo','b) La aspiradora que detecta obstáculos y decide su ruta sola','c) La licuadora','d) La bicicleta'],c:1},
+  {q:'¿Por qué la licuadora NO es un robot?',o:['a) Porque es pequeña','b) Porque no usa electricidad','c) Porque actúa pero no percibe ni decide sola','d) Porque no tiene ruedas'],c:2},
+  {q:'¿Qué robot revisa los cultivos de café en Honduras?',o:['a) El humanoide','b) El dron','c) La aspiradora robot','d) El brazo de maquila'],c:1},
+  {q:'¿Los robots «piensan» como las personas?',o:['a) Sí, igual que nosotros','b) Sí, pero solo de noche','c) No: adivinan qué hacer','d) No: siguen las instrucciones de su programa'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -194,14 +194,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 let cmpData=[
-  {s:'Un robot es una máquina que percibe, ___ y actúa.',opts:['decide','duerme','come'],c:0},
-  {s:'Los sensores del robot funcionan como los ___ del cuerpo.',opts:['huesos','sentidos','dientes'],c:1},
-  {s:'El controlador del robot es como el ___ humano.',opts:['pie','corazón','cerebro'],c:2},
-  {s:'Los actuadores del robot son como los ___ del cuerpo.',opts:['músculos','ojos','oídos'],c:0},
-  {s:'El robot sigue las instrucciones de su ___.',opts:['cuaderno','programa','maestro'],c:1},
-  {s:'La ___ no es un robot porque no decide sola.',opts:['licuadora','aspiradora robot','puerta automática'],c:0},
+  {s:'Un robot es una máquina que percibe, ___ y actúa.',opts:['duerme','decide','come'],c:1},
+  {s:'Los sensores del robot funcionan como los ___ del cuerpo.',opts:['sentidos','huesos','dientes'],c:0},
+  {s:'El controlador del robot es como el ___ humano.',opts:['cerebro','pie','corazón'],c:0},
+  {s:'Los actuadores del robot son como los ___ del cuerpo.',opts:['ojos','músculos','oídos'],c:1},
+  {s:'El robot sigue las instrucciones de su ___.',opts:['programa','cuaderno','maestro'],c:0},
+  {s:'La ___ no es un robot porque no decide sola.',opts:['aspiradora robot','licuadora','puerta automática'],c:1},
   {s:'El ___ es un robot volador que revisa cultivos.',opts:['martillo','televisor','dron'],c:2},
-  {s:'La energía del robot viene de su ___.',opts:['batería','sombra','antena'],c:0},
+  {s:'La energía del robot viene de su ___.',opts:['sombra','antena','batería'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -430,21 +430,21 @@ let evalTFBank=[
   {q:'Sin programa, el controlador no sabe qué decidir.',a:true},
 ];
 let evalMCBank=[
-  {q:'¿Qué es un robot?',o:['a) Cualquier máquina de metal','b) Una máquina que percibe, decide y actúa','c) Un juguete con luces','d) Una computadora con pantalla'],a:1},
+  {q:'¿Qué es un robot?',o:['a) Cualquier máquina de metal','b) Un juguete con luces','c) Una máquina que percibe, decide y actúa','d) Una computadora con pantalla'],a:2},
   {q:'¿Qué parte del robot funciona como sus «sentidos»?',o:['a) Los actuadores','b) Los sensores','c) Las ruedas','d) La batería'],a:1},
   {q:'¿Cuál de estas máquinas es un robot?',o:['a) El martillo','b) La licuadora','c) La aspiradora que detecta obstáculos y decide su ruta sola','d) La bicicleta'],a:2},
-  {q:'¿Qué parte del robot decide qué hacer?',o:['a) El controlador','b) El motor','c) La bocina','d) La rueda'],a:0},
-  {q:'¿Qué parte del robot son sus «músculos»?',o:['a) Los sensores','b) El programa','c) La antena','d) Los actuadores'],a:3},
+  {q:'¿Qué parte del robot decide qué hacer?',o:['a) El motor','b) El controlador','c) La bocina','d) La rueda'],a:1},
+  {q:'¿Qué parte del robot son sus «músculos»?',o:['a) Los actuadores','b) Los sensores','c) El programa','d) La antena'],a:0},
   {q:'¿Cuál es el orden del ciclo del robot?',o:['a) Actuar → percibir → decidir','b) Percibir → decidir → actuar','c) Decidir → actuar → percibir','d) Percibir → actuar → decidir'],a:1},
-  {q:'¿Por qué el martillo NO es un robot?',o:['a) Porque es pequeño','b) Porque es de metal','c) Porque no percibe ni decide','d) Porque no tiene luces'],a:2},
+  {q:'¿Por qué el martillo NO es un robot?',o:['a) Porque no percibe ni decide','b) Porque es pequeño','c) Porque es de metal','d) Porque no tiene luces'],a:0},
   {q:'¿Por qué la licuadora NO es un robot?',o:['a) Porque actúa pero no decide sola','b) Porque no gira','c) Porque es de cocina','d) Porque gasta electricidad'],a:0},
   {q:'¿Qué sensor necesita un robot que se detiene ante un obstáculo?',o:['a) De temperatura','b) De humedad','c) De sonido','d) De distancia'],a:3},
-  {q:'¿Qué robot revisa los cultivos de café en Honduras?',o:['a) El dron','b) El humanoide','c) La aspiradora robot','d) El robot de cirugía'],a:0},
-  {q:'¿Qué hacen los brazos robóticos en la maquila?',o:['a) Piensan por los obreros','b) Cosen y cortan siguiendo un programa','c) Venden la ropa','d) Diseñan la moda'],a:1},
-  {q:'¿Qué es el programa de un robot?',o:['a) Un canal de televisión','b) Su batería interna','c) La lista de instrucciones que obedece paso a paso','d) Su caja de metal'],a:2},
-  {q:'¿Cómo «piensan» los robots?',o:['a) Igual que las personas','b) Siguen las instrucciones de su programa','c) Adivinan qué hacer','d) Sueñan las respuestas'],a:1},
-  {q:'¿Cuál es un robot con forma de persona?',o:['a) El dron','b) El brazo industrial','c) La aspiradora robot','d) El humanoide'],a:3},
-  {q:'¿De dónde obtiene su energía un robot?',o:['a) De la batería o la electricidad','b) De la comida','c) Del agua que bebe','d) Del aire'],a:0},
+  {q:'¿Qué robot revisa los cultivos de café en Honduras?',o:['a) El humanoide','b) La aspiradora robot','c) El robot de cirugía','d) El dron'],a:3},
+  {q:'¿Qué hacen los brazos robóticos en la maquila?',o:['a) Cosen y cortan siguiendo un programa','b) Piensan por los obreros','c) Venden la ropa','d) Diseñan la moda'],a:0},
+  {q:'¿Qué es el programa de un robot?',o:['a) Un canal de televisión','b) La lista de instrucciones que obedece paso a paso','c) Su batería interna','d) Su caja de metal'],a:1},
+  {q:'¿Cómo «piensan» los robots?',o:['a) Igual que las personas','b) Adivinan qué hacer','c) Sueñan las respuestas','d) Siguen las instrucciones de su programa'],a:3},
+  {q:'¿Cuál es un robot con forma de persona?',o:['a) El dron','b) El brazo industrial','c) El humanoide','d) La aspiradora robot'],a:2},
+  {q:'¿De dónde obtiene su energía un robot?',o:['a) De la comida','b) Del agua que bebe','c) De la batería o la electricidad','d) Del aire'],a:2},
 ];
 let evalCPBank=[
   {q:'Un robot percibe, ___ y actúa.',a:'decide'},

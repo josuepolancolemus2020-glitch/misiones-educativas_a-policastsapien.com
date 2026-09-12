@@ -135,15 +135,15 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 let qzData=[
-  {q:'¿Qué hace el motor de un robot?',o:['a) Guarda la información','b) Convierte la energía eléctrica en movimiento de giro','c) Percibe la luz','d) Enfría la batería'],c:1},
+  {q:'¿Qué hace el motor de un robot?',o:['a) Convierte la energía eléctrica en movimiento de giro','b) Guarda la información','c) Percibe la luz','d) Enfría la batería'],c:0},
   {q:'Dos engranajes con los dientes encajados, ¿cómo giran?',o:['a) En el mismo sentido','b) Uno gira y el otro no','c) En sentidos contrarios','d) Depende del color'],c:2},
-  {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más lento y con más fuerza','b) Gira más rápido y con más fuerza','c) Gira más rápido y con menos fuerza','d) Se queda quieto'],c:0},
-  {q:'En un tren de TRES engranajes, el primero y el tercero…',o:['a) Giran en sentidos contrarios','b) Giran en el mismo sentido','c) Nunca giran','d) Giran al doble de velocidad'],c:1},
-  {q:'¿Qué motor gira hasta un ángulo exacto y se detiene ahí?',o:['a) El motor DC','b) El motorreductor','c) El servomotor','d) El tornillo sin fin'],c:2},
+  {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más rápido y con más fuerza','b) Gira más lento y con más fuerza','c) Gira más rápido y con menos fuerza','d) Se queda quieto'],c:1},
+  {q:'En un tren de TRES engranajes, el primero y el tercero…',o:['a) Giran en sentidos contrarios','b) Nunca giran','c) Giran al doble de velocidad','d) Giran en el mismo sentido'],c:3},
+  {q:'¿Qué motor gira hasta un ángulo exacto y se detiene ahí?',o:['a) El motor DC','b) El motorreductor','c) El tornillo sin fin','d) El servomotor'],c:3},
   {q:'¿Qué pasa si la correa entre dos poleas se coloca cruzada?',o:['a) La correa se rompe','b) El segundo eje gira al revés','c) No pasa nada','d) La polea grande desaparece'],c:1},
-  {q:'¿Qué necesita una palanca para funcionar?',o:['a) Un motor eléctrico','b) Una batería','c) Un punto de apoyo','d) Una correa'],c:2},
-  {q:'¿Qué mecanismo transforma el giro en movimiento de vaivén?',o:['a) La polea fija','b) La biela-manivela','c) La rueda y el eje','d) El engranaje loco'],c:1},
-  {q:'¿Cuál es el intercambio de todo mecanismo?',o:['a) Se gana fuerza y velocidad a la vez','b) Se pierde todo','c) Lo que se gana en fuerza se pierde en velocidad','d) El mecanismo crea energía nueva'],c:2},
+  {q:'¿Qué necesita una palanca para funcionar?',o:['a) Un punto de apoyo','b) Un motor eléctrico','c) Una batería','d) Una correa'],c:0},
+  {q:'¿Qué mecanismo transforma el giro en movimiento de vaivén?',o:['a) La polea fija','b) La rueda y el eje','c) La biela-manivela','d) El engranaje loco'],c:2},
+  {q:'¿Cuál es el intercambio de todo mecanismo?',o:['a) Lo que se gana en fuerza se pierde en velocidad','b) Se gana fuerza y velocidad a la vez','c) Se pierde todo','d) El mecanismo crea energía nueva'],c:0},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -196,11 +196,11 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 let cmpData=[
   {s:'El motor convierte la energía eléctrica en movimiento de ___.',opts:['giro','color','sonido'],c:0},
-  {s:'Dos engranajes en contacto giran en sentidos ___.',opts:['iguales','contrarios','lentos'],c:1},
-  {s:'Un engranaje pequeño que mueve a uno grande da más ___.',opts:['fuerza','velocidad','ruido'],c:0},
-  {s:'Un engranaje grande que mueve a uno pequeño da más ___.',opts:['peso','fuerza','velocidad'],c:2},
-  {s:'La palanca necesita un punto de ___ para funcionar.',opts:['apoyo','pintura','agua'],c:0},
-  {s:'Si la correa se coloca cruzada, el giro se ___.',opts:['detiene','invierte','acelera'],c:1},
+  {s:'Dos engranajes en contacto giran en sentidos ___.',opts:['iguales','lentos','contrarios'],c:2},
+  {s:'Un engranaje pequeño que mueve a uno grande da más ___.',opts:['velocidad','fuerza','ruido'],c:1},
+  {s:'Un engranaje grande que mueve a uno pequeño da más ___.',opts:['velocidad','peso','fuerza'],c:0},
+  {s:'La palanca necesita un punto de ___ para funcionar.',opts:['pintura','apoyo','agua'],c:1},
+  {s:'Si la correa se coloca cruzada, el giro se ___.',opts:['detiene','acelera','invierte'],c:2},
   {s:'El ___ sin fin da mucha fuerza y muy poca velocidad.',opts:['motor','tornillo','cable'],c:1},
   {s:'La biela-manivela transforma el giro en movimiento de ___.',opts:['vaivén','luz','calor'],c:0},
 ];
@@ -431,20 +431,20 @@ let evalTFBank=[
   {q:'La palanca multiplica la fuerza sin ninguna desventaja.',a:false},
 ];
 let evalMCBank=[
-  {q:'¿Qué hace el motor de un robot?',o:['a) Guarda la información del programa','b) Convierte la energía eléctrica en movimiento de giro','c) Percibe la luz del ambiente','d) Enfría la batería'],a:1},
-  {q:'Dos engranajes con los dientes encajados, ¿cómo giran?',o:['a) En el mismo sentido','b) Uno gira y el otro se queda quieto','c) En sentidos contrarios','d) Los dos hacia arriba'],a:2},
-  {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más lento y con más fuerza','b) Gira más rápido y con más fuerza','c) Gira más rápido y con menos fuerza','d) No gira'],a:0},
-  {q:'Una rueda dentada de 40 dientes mueve un piñón de 10. ¿Qué le pasa al piñón?',o:['a) Gira más lento','b) Gira más rápido y con menos fuerza','c) Gira con más fuerza','d) Gira igual que la rueda'],a:1},
-  {q:'En un tren de TRES engranajes, el primero y el tercero…',o:['a) Giran en sentidos contrarios','b) Giran en el mismo sentido','c) No giran nunca','d) Giran al doble de velocidad'],a:1},
-  {q:'¿Qué motor gira hasta un ángulo exacto y se queda ahí?',o:['a) El motor DC','b) El motorreductor','c) El servomotor','d) El tornillo sin fin'],a:2},
-  {q:'¿Para qué sirve la correa entre dos poleas?',o:['a) Para llevar el giro a distancia','b) Para guardar energía','c) Para frenar el motor','d) Para pintar la rueda'],a:0},
-  {q:'¿Qué ocurre si la correa se coloca cruzada?',o:['a) La correa se rompe','b) El segundo eje gira al revés','c) No pasa nada','d) La polea se hace más grande'],a:1},
-  {q:'¿Qué necesita una palanca para funcionar?',o:['a) Un motor eléctrico','b) Una batería','c) Una correa','d) Un punto de apoyo'],a:3},
-  {q:'La palanca multiplica la fuerza, pero a cambio…',o:['a) Recorre menos distancia el lado de la carga','b) Se rompe siempre','c) Necesita electricidad','d) Gira sin parar'],a:0},
+  {q:'¿Qué hace el motor de un robot?',o:['a) Guarda la información del programa','b) Percibe la luz del ambiente','c) Enfría la batería','d) Convierte la energía eléctrica en movimiento de giro'],a:3},
+  {q:'Dos engranajes con los dientes encajados, ¿cómo giran?',o:['a) En el mismo sentido','b) Uno gira y el otro se queda quieto','c) Los dos hacia arriba','d) En sentidos contrarios'],a:3},
+  {q:'Un engranaje de 10 dientes mueve a uno de 30. ¿Qué le pasa al de 30?',o:['a) Gira más rápido y con más fuerza','b) Gira más rápido y con menos fuerza','c) Gira más lento y con más fuerza','d) No gira'],a:2},
+  {q:'Una rueda dentada de 40 dientes mueve un piñón de 10. ¿Qué le pasa al piñón?',o:['a) Gira más rápido y con menos fuerza','b) Gira más lento','c) Gira con más fuerza','d) Gira igual que la rueda'],a:0},
+  {q:'En un tren de TRES engranajes, el primero y el tercero…',o:['a) Giran en sentidos contrarios','b) No giran nunca','c) Giran en el mismo sentido','d) Giran al doble de velocidad'],a:2},
+  {q:'¿Qué motor gira hasta un ángulo exacto y se queda ahí?',o:['a) El servomotor','b) El motor DC','c) El motorreductor','d) El tornillo sin fin'],a:0},
+  {q:'¿Para qué sirve la correa entre dos poleas?',o:['a) Para guardar energía','b) Para frenar el motor','c) Para pintar la rueda','d) Para llevar el giro a distancia'],a:3},
+  {q:'¿Qué ocurre si la correa se coloca cruzada?',o:['a) El segundo eje gira al revés','b) La correa se rompe','c) No pasa nada','d) La polea se hace más grande'],a:0},
+  {q:'¿Qué necesita una palanca para funcionar?',o:['a) Un motor eléctrico','b) Un punto de apoyo','c) Una batería','d) Una correa'],a:1},
+  {q:'La palanca multiplica la fuerza, pero a cambio…',o:['a) Se rompe siempre','b) Recorre menos distancia el lado de la carga','c) Necesita electricidad','d) Gira sin parar'],a:1},
   {q:'¿Qué mecanismo transforma el giro en movimiento de vaivén?',o:['a) La polea fija','b) La rueda y el eje','c) La biela-manivela','d) El engranaje loco'],a:2},
-  {q:'¿Qué mecanismo da muchísima fuerza y muy poca velocidad?',o:['a) El tornillo sin fin','b) El motor DC solo','c) La polea fija','d) El engranaje loco'],a:0},
-  {q:'En la bicicleta, ¿qué conviene usar para subir una cuesta empinada?',o:['a) El piñón más pequeño','b) El piñón más grande','c) Quitar la cadena','d) Un plato más grande'],a:1},
-  {q:'¿Cuál es el intercambio de todo mecanismo?',o:['a) Lo que se gana en fuerza se pierde en velocidad','b) Se gana fuerza y velocidad a la vez','c) Se pierde todo','d) El mecanismo crea energía nueva'],a:0},
+  {q:'¿Qué mecanismo da muchísima fuerza y muy poca velocidad?',o:['a) El motor DC solo','b) La polea fija','c) El tornillo sin fin','d) El engranaje loco'],a:2},
+  {q:'En la bicicleta, ¿qué conviene usar para subir una cuesta empinada?',o:['a) El piñón más grande','b) El piñón más pequeño','c) Quitar la cadena','d) Un plato más grande'],a:0},
+  {q:'¿Cuál es el intercambio de todo mecanismo?',o:['a) Se gana fuerza y velocidad a la vez','b) Lo que se gana en fuerza se pierde en velocidad','c) Se pierde todo','d) El mecanismo crea energía nueva'],a:1},
   {q:'¿Qué máquina hondureña usa manivela y engranajes para quitarle la cáscara al café?',o:['a) El molino de maíz','b) La despulpadora de café','c) La carretilla','d) El molinete del portón'],a:1},
 ];
 let evalCPBank=[

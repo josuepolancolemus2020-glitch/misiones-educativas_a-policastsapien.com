@@ -259,14 +259,14 @@ function resetMemo(){sfx('click');buildMemo();}
 
 // ===================== QUIZ DATA =====================
 let qzData=[
-  {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Una instrucción que hace al robot DECIDIR según una condición','c) Un giro de 90°','d) Un error del programa'],c:1},
-  {q:'¿Qué es la CONDICIÓN de un condicional?',o:['a) Una orden como AVANZA','b) El color del robot','c) Una pregunta de sí o no','d) La casilla final'],c:2},
-  {q:'En SI…ENTONCES…SINO, ¿cuándo se ejecuta la rama SINO?',o:['a) Cuando la condición es verdadera','b) Cuando la condición es falsa','c) Siempre','d) Nunca'],c:1},
+  {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Un giro de 90°','c) Un error del programa','d) Una instrucción que hace al robot DECIDIR según una condición'],c:3},
+  {q:'¿Qué es la CONDICIÓN de un condicional?',o:['a) Una pregunta de sí o no','b) Una orden como AVANZA','c) El color del robot','d) La casilla final'],c:0},
+  {q:'En SI…ENTONCES…SINO, ¿cuándo se ejecuta la rama SINO?',o:['a) Cuando la condición es verdadera','b) Siempre','c) Cuando la condición es falsa','d) Nunca'],c:2},
   {q:'SI HAY PARED ADELANTE → GIRA DERECHA, SINO → AVANZA. El robot NO tiene pared adelante. ¿Qué hace?',o:['a) Gira derecha','b) Avanza','c) Se detiene','d) Gira izquierda'],c:1},
-  {q:'¿Cuántas ramas se ejecutan en UN condicional?',o:['a) Las dos a la vez','b) Ninguna','c) Solo una: la otra se ignora','d) Depende del color'],c:2},
-  {q:'¿Cuál de estas es una CONDICIÓN (pregunta de sí/no)?',o:['a) AVANZA','b) ¿El semáforo está en verde?','c) GIRA IZQUIERDA','d) ENTREGA'],c:1},
-  {q:'Con «SI SEMÁFORO EN VERDE → AVANZA, SINO → ESPERA», si el semáforo está en ROJO el robot…',o:['a) Avanza igual','b) Gira','c) Espera','d) Entrega'],c:2},
-  {q:'¿Qué es un SENSOR del robot?',o:['a) La parte que responde la pregunta de la condición','b) Una casilla del mapa','c) El mensaje','d) Un premio'],c:0},
+  {q:'¿Cuántas ramas se ejecutan en UN condicional?',o:['a) Solo una: la otra se ignora','b) Las dos a la vez','c) Ninguna','d) Depende del color'],c:0},
+  {q:'¿Cuál de estas es una CONDICIÓN (pregunta de sí/no)?',o:['a) AVANZA','b) GIRA IZQUIERDA','c) ¿El semáforo está en verde?','d) ENTREGA'],c:2},
+  {q:'Con «SI SEMÁFORO EN VERDE → AVANZA, SINO → ESPERA», si el semáforo está en ROJO el robot…',o:['a) Espera','b) Avanza igual','c) Gira','d) Entrega'],c:0},
+  {q:'¿Qué es un SENSOR del robot?',o:['a) Una casilla del mapa','b) El mensaje','c) Un premio','d) La parte que responde la pregunta de la condición'],c:3},
   {q:'Un condicional está «al revés» (ramas cambiadas). ¿Qué pasa?',o:['a) Nada, funciona igual','b) El robot decide mal y puede chocar','c) El robot va más rápido','d) Se apaga'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
@@ -319,14 +319,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 let cmpData=[
-  {s:'Una instrucción que hace al robot decidir se llama ___.',opts:['condicional','giro','casilla'],c:0},
+  {s:'Una instrucción que hace al robot decidir se llama ___.',opts:['giro','condicional','casilla'],c:1},
   {s:'La ___ es la pregunta de sí o no del condicional.',opts:['acción','condición','casilla'],c:1},
   {s:'La rama que se ejecuta cuando la respuesta es SÍ se llama rama ___.',opts:['SINO','ESPERA','ENTONCES'],c:2},
   {s:'La rama que se ejecuta cuando la respuesta es NO se llama rama ___.',opts:['SINO','ENTONCES','AVANZA'],c:0},
   {s:'En un condicional se ejecuta ___ una rama a la vez.',opts:['solo','siempre','nunca'],c:0},
   {s:'La parte del robot que responde la pregunta se llama ___.',opts:['motor','sensor','pantalla'],c:1},
-  {s:'Con luz roja y «SINO → ESPERA», el robot ___.',opts:['avanza','espera','gira'],c:1},
-  {s:'Una condición solo puede ser verdadera o ___.',opts:['tal vez','falsa','roja'],c:1},
+  {s:'Con luz roja y «SINO → ESPERA», el robot ___.',opts:['espera','avanza','gira'],c:0},
+  {s:'Una condición solo puede ser verdadera o ___.',opts:['tal vez','roja','falsa'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -603,19 +603,19 @@ let evalTFBank=[
 ];
 let evalMCBank=[
   {q:'SI hay pared adelante ENTONCES gira derecha, SINO avanza. El robot NO tiene pared adelante. ¿Qué hace?',o:['Gira derecha','Avanza','Se detiene','Gira izquierda'],a:1},
-  {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Una instrucción que hace decidir según una condición','c) Un giro de 90°','d) Un mapa'],a:1},
-  {q:'¿Qué es la CONDICIÓN de un condicional?',o:['a) Una orden como AVANZA','b) Una pregunta de sí o no','c) El color del robot','d) La casilla final'],a:1},
-  {q:'¿Cuándo se ejecuta la rama SINO?',o:['a) Cuando la condición es verdadera','b) Cuando la condición es falsa','c) Siempre','d) Nunca'],a:1},
-  {q:'¿Cuántas ramas se ejecutan en UN condicional?',o:['a) Las dos a la vez','b) Ninguna','c) Solo una: la otra se ignora','d) Tres'],a:2},
-  {q:'SI hay pared adelante ENTONCES gira derecha, SINO avanza. El robot SÍ tiene pared adelante. ¿Qué hace?',o:['a) Avanza','b) Gira derecha','c) Espera','d) Entrega'],a:1},
-  {q:'¿Cuál de estas es una CONDICIÓN?',o:['a) AVANZA','b) GIRA DERECHA','c) ¿El semáforo está en verde?','d) ENTREGA'],a:2},
-  {q:'Con «SI verde → AVANZA, SINO → ESPERA», si el semáforo está en ROJO el robot…',o:['a) Avanza','b) Gira','c) Espera','d) Entrega'],a:2},
-  {q:'¿Qué es un sensor del robot?',o:['a) La parte que responde la pregunta de la condición','b) Una casilla del mapa','c) El mensaje','d) Un premio'],a:0},
-  {q:'Una condición solo puede ser…',o:['a) Verdadera o falsa','b) Roja o azul','c) Larga o corta','d) Tal vez'],a:0},
-  {q:'¿Qué es la rama ENTONCES?',o:['a) El camino cuando la respuesta es NO','b) El camino cuando la respuesta es SÍ','c) La pregunta','d) El sensor'],a:1},
+  {q:'¿Qué es un condicional?',o:['a) Una lista de pasos siempre iguales','b) Un giro de 90°','c) Una instrucción que hace decidir según una condición','d) Un mapa'],a:2},
+  {q:'¿Qué es la CONDICIÓN de un condicional?',o:['a) Una pregunta de sí o no','b) Una orden como AVANZA','c) El color del robot','d) La casilla final'],a:0},
+  {q:'¿Cuándo se ejecuta la rama SINO?',o:['a) Cuando la condición es verdadera','b) Siempre','c) Cuando la condición es falsa','d) Nunca'],a:2},
+  {q:'¿Cuántas ramas se ejecutan en UN condicional?',o:['a) Solo una: la otra se ignora','b) Las dos a la vez','c) Ninguna','d) Tres'],a:0},
+  {q:'SI hay pared adelante ENTONCES gira derecha, SINO avanza. El robot SÍ tiene pared adelante. ¿Qué hace?',o:['a) Avanza','b) Espera','c) Gira derecha','d) Entrega'],a:2},
+  {q:'¿Cuál de estas es una CONDICIÓN?',o:['a) AVANZA','b) ¿El semáforo está en verde?','c) GIRA DERECHA','d) ENTREGA'],a:1},
+  {q:'Con «SI verde → AVANZA, SINO → ESPERA», si el semáforo está en ROJO el robot…',o:['a) Avanza','b) Espera','c) Gira','d) Entrega'],a:1},
+  {q:'¿Qué es un sensor del robot?',o:['a) Una casilla del mapa','b) El mensaje','c) Un premio','d) La parte que responde la pregunta de la condición'],a:3},
+  {q:'Una condición solo puede ser…',o:['a) Roja o azul','b) Larga o corta','c) Tal vez','d) Verdadera o falsa'],a:3},
+  {q:'¿Qué es la rama ENTONCES?',o:['a) El camino cuando la respuesta es NO','b) La pregunta','c) El camino cuando la respuesta es SÍ','d) El sensor'],a:2},
   {q:'Un condicional tiene las ramas «al revés». ¿Qué ocurre?',o:['a) Nada, funciona igual','b) El robot decide mal y puede chocar','c) Va más rápido','d) Se apaga'],a:1},
-  {q:'¿Cuál es un condicional bien escrito para no chocar con una pared?',o:['a) SI hay pared → AVANZA, SINO → GIRA','b) SI hay pared → GIRA DERECHA, SINO → AVANZA','c) AVANZA, AVANZA, AVANZA','d) GIRA, GIRA, GIRA'],a:1},
-  {q:'En condicionales encadenados, el ORDEN de las preguntas…',o:['a) No importa','b) Puede cambiar la decisión del robot','c) Solo importa el color','d) Nunca cambia nada'],a:1},
+  {q:'¿Cuál es un condicional bien escrito para no chocar con una pared?',o:['a) SI hay pared → GIRA DERECHA, SINO → AVANZA','b) SI hay pared → AVANZA, SINO → GIRA','c) AVANZA, AVANZA, AVANZA','d) GIRA, GIRA, GIRA'],a:0},
+  {q:'En condicionales encadenados, el ORDEN de las preguntas…',o:['a) No importa','b) Solo importa el color','c) Nunca cambia nada','d) Puede cambiar la decisión del robot'],a:3},
   {q:'La condición «es una pregunta» y la acción «es una…»',o:['a) orden que el robot ejecuta','b) otra pregunta','c) casilla','d) constancia'],a:0},
 ];
 let evalCPBank=[

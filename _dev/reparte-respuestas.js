@@ -98,10 +98,13 @@ function literales(txt, ini, fin) {  // los literales de cadena de un array, con
   return out;
 }
 
-function banco(src, b) {
-  // Hay misiones que los declaran con `let` (las que cambian de idioma en
-  //  caliente reasignan el banco), así que no vale pedir `const`.
-  const m = new RegExp('(?:const|let|var)\\s+' + b.nombre + '\\s*=\\s*\\[').exec(src);
+/* El banco se declara de dos formas y hay que saber leer las dos: en el
+   archivo de la misión, `let qzData=[…]` (o const, o var); en el `-en.js` de
+   las bilingües va DENTRO de un objeto, `qzData: [ … ]`. Es el mismo banco. */
+function banco(src, b, dentroDeObjeto) {
+  const m = dentroDeObjeto
+    ? new RegExp('\\b' + b.nombre + '\\s*:\\s*\\[').exec(src)
+    : new RegExp('(?:const|let|var)\\s+' + b.nombre + '\\s*=\\s*\\[').exec(src);
   if (!m) return null;
   const ini = src.indexOf('[', m.index), fin = cierre(src, ini);
   if (fin < 0) return null;
@@ -131,6 +134,8 @@ function banco(src, b) {
 
 const sinComillas = (s) => s.slice(1, -1);
 const LETRA = /^\s*[a-d]\)/;
+/* ¿Esta fila lleva la letra escrita dentro del texto de cada opción? Se
+   pregunta por FILA: hay bancos donde unas la llevan y otras no. */
 const conLetra = (fila) => fila.opts.length > 1 && fila.opts.every(o => LETRA.test(sinComillas(o.txt)));
 
 /* Una lista que va en orden dice algo por sí misma y no se toca: «1/2 = ___/4»
@@ -264,7 +269,7 @@ function renumera(literal, k) {
   return q + dentro + q;
 }
 
-function aplica(src, filas, destino, renum) {
+function aplica(src, filas, destino) {
   // De atrás hacia delante: así los índices de los trozos siguen valiendo.
   const parches = [];
   filas.forEach((f, i) => {
@@ -272,6 +277,13 @@ function aplica(src, filas, destino, renum) {
     const buena = f.opts[f.idx];
     const resto = f.opts.filter((_, k) => k !== f.idx);
     const nuevo = resto.slice(0, destino[i]).concat([buena], resto.slice(destino[i]));
+    /* ⚠️ Si renumerar o no se decide FILA A FILA, nunca por el banco entero.
+       Se decidía mirando la primera, y en `robot-decide` la primera pregunta no
+       lleva letras («Gira derecha», «Avanza»…) y las catorce siguientes sí: el
+       banco se daba por «sin letras» y salían catorce preguntas con dos «b)» y
+       ninguna «d)». No dio ningún error; se vio comparando el archivo escrito
+       contra el de antes. */
+    const renum = conLetra(f);
     f.opts.forEach((o, k) => {
       const texto = renum ? renumera(nuevo[k].txt, k) : nuevo[k].txt;
       parches.push({ ini: o.ini, fin: o.fin + 1, texto });
@@ -290,11 +302,16 @@ for (const carpeta of carpetas) {
   const dir = path.join(DIR, carpeta, 'js');
   if (!fs.existsSync(dir)) { console.log('  ⚠️  no existe misiones/' + carpeta + '/js'); avisos++; continue; }
   const js = fs.readdirSync(dir).filter(f => f.endsWith('.js') && !f.includes('html2canvas'));
-  /* ⚠️ Con edición en inglés, aquí no se toca: su banco va índice a índice. */
-  if (js.some(f => f.endsWith('-en.js'))) {
-    console.log('  ⚠️  ' + carpeta + ': tiene edición en inglés; se reparte a mano y las dos a la vez');
+  /* ⚠️ Con edición en inglés se mueven LAS DOS A LA VEZ, con la misma
+     permutación. Su `-en.js` lleva el banco ÍNDICE A ÍNDICE con el español:
+     mover uno solo le cambia la respuesta correcta al alumno que estudia en
+     inglés, y eso no da ningún error — se descubre con el niño delante. */
+  const en = js.filter(f => f.endsWith('-en.js')).map(f => path.join(dir, f));
+  if (en.length > 1) {
+    console.log('  ⚠️  ' + carpeta + ': ' + en.length + ' archivos en inglés; se deja como está');
     avisos++; continue;
   }
+  const rutaEn = en[0] || null;
   /* ⚠️ El JS de la misión se busca por lo que TIENE DENTRO, no por su nombre.
      Deducirlo de la carpeta acierta en la mayoría y falla justo donde duele:
      `potencias-raices` tiene seis JS y el primero por orden alfabético es
@@ -308,12 +325,31 @@ for (const carpeta of carpetas) {
   }
   const ruta = conBanco[0];
   let src = fs.readFileSync(ruta, 'utf8');
-  const antes = src;
+  let srcEn = rutaEn ? fs.readFileSync(rutaEn, 'utf8') : null;
+  const antes = src, antesEn = srcEn;
 
-  console.log('\n📚 ' + carpeta + '  (' + path.basename(ruta) + ')');
+  console.log('\n📚 ' + carpeta + '  (' + path.basename(ruta)
+    + (rutaEn ? ' + ' + path.basename(rutaEn) : '') + ')');
   for (const b of BANCOS) {
     const filas = banco(src, b);
     if (!filas) { console.log('   ·  ' + b.nombre + ': no está'); continue; }
+
+    /* ⚠️ Antes de mover nada, DEMOSTRAR que las dos ediciones van fila a fila.
+       No se fía de que lo pongan: si el inglés tiene otro número de preguntas,
+       otra respuesta correcta en alguna o distinto número de opciones, ya no es
+       la misma prueba y la permutación no vale. Ahí se deja quieto el banco. */
+    let filasEn = null;
+    if (srcEn) {
+      filasEn = banco(srcEn, b, true);
+      const cuadran = filasEn && filasEn.length === filas.length
+        && filas.every((f, i) => f.idx === filasEn[i].idx && f.opts.length === filasEn[i].opts.length);
+      if (!cuadran) {
+        console.log('   ⚠️  ' + b.nombre + ': el inglés no va fila a fila con el español'
+          + (filasEn ? ' (' + filasEn.length + ' vs ' + filas.length + ' filas)' : ' (no está en el -en.js)')
+          + '; se deja como está');
+        avisos++; continue;
+      }
+    }
     /* La marca de la semilla lleva la misión y el banco: así dos bancos de la
        misma misión no salen con la misma baraja, y volver a correr la
        herramienta sobre el mismo archivo da siempre lo mismo. */
@@ -342,24 +378,36 @@ for (const carpeta of carpetas) {
       + pinta(previo) + '   →   ' + pinta(cuenta) + (movidas ? '   (' + movidas + ' movidas)' : '   (sin tocar)'));
     console.log('        ' + letras(filas.map(f => f.idx)) + '  →  ' + letras(destino)
       + '   ·  seguidas iguales: ' + racha(filas.map(f => f.idx)) + ' → ' + racha(destino));
-    if (movidas) src = aplica(src, filas, destino, conLetra(filas[0]));
+    if (movidas) {
+      src = aplica(src, filas, destino);
+      // La MISMA permutación en el inglés: es la misma pregunta en otro idioma.
+      if (filasEn) srcEn = aplica(srcEn, filasEn, destino);
+    }
   }
 
-  if (src === antes) { console.log('   · ya estaba repartida'); continue; }
+  if (src === antes && srcEn === antesEn) { console.log('   · ya estaba repartida'); continue; }
   if (soloRevisa) { console.log('   (--revisa: no se escribe)'); continue; }
   /* Que compile ANTES de guardarlo: un archivo con un error de sintaxis no da
-     la cara —el navegador se calla y la misión se pinta igual—. */
-  // ⚠️ El temporal tiene que acabar en .js: `node --check` no sabe qué hacer
-  //    con otra extensión y falla por eso, no por el contenido — y entonces la
-  //    red de seguridad se dispara siempre y no escribe nunca.
-  const tmp = ruta.replace(/\.js$/, '.probando.js');
-  fs.writeFileSync(tmp, src);
-  const r = cp.spawnSync(process.execPath, ['--check', tmp], { encoding: 'utf8' });
-  if (r.status !== 0) { fs.unlinkSync(tmp); console.log('   ❌ no compila, no se escribe:\n' + r.stderr); avisos++; continue; }
-  fs.unlinkSync(tmp);
-  fs.writeFileSync(ruta, src);
+     la cara —el navegador se calla y la misión se pinta igual—, y en el `-en.js`
+     es peor todavía: el botón 🌐 se queda mudo y la bilingüe sale en español.
+     ⚠️ El temporal tiene que acabar en .js: `node --check` no sabe qué hacer
+     con otra extensión y falla por eso, no por el contenido — y entonces la red
+     de seguridad se dispara siempre y no escribe nunca.
+     Y se comprueban LOS DOS antes de escribir NINGUNO: dejar el español movido
+     y el inglés sin mover es justo lo que esto viene a evitar. */
+  const aEscribir = [[ruta, src]].concat(srcEn !== null ? [[rutaEn, srcEn]] : []);
+  let roto = null;
+  for (const [f, texto] of aEscribir) {
+    const tmp = f.replace(/\.js$/, '.probando.js');
+    fs.writeFileSync(tmp, texto);
+    const r = cp.spawnSync(process.execPath, ['--check', tmp], { encoding: 'utf8' });
+    fs.unlinkSync(tmp);
+    if (r.status !== 0) { roto = path.basename(f) + ':\n' + r.stderr; break; }
+  }
+  if (roto) { console.log('   ❌ no compila, no se escribe nada: ' + roto); avisos++; continue; }
+  aEscribir.forEach(([f, texto]) => fs.writeFileSync(f, texto));
   tocadas++;
-  console.log('   ✎ escrita');
+  console.log('   ✎ escrita' + (srcEn !== null ? 's las dos ediciones' : ''));
 }
 
 console.log('\n' + (soloRevisa ? '(--revisa) ' : '') + tocadas + ' misión(es) repartida(s)'

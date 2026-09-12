@@ -287,14 +287,14 @@
 
       qzData: [
         { q: 'Which is the FIRST step of the design cycle?', o: ['a) Build the prototype', 'b) Identify the problem', 'c) Communicate the result', 'd) Buy materials'], c: 1 },
-        { q: 'In the BRAINSTORM stage, what is the right thing to do?', o: ['a) Take the first idea that turns up', 'b) Write down lots of ideas and choose afterwards', 'c) Copy another team’s robot', 'd) Start gluing cardboard'], c: 1 },
-        { q: 'What is decided in the design SKETCH?', o: ['a) The color of the box', 'b) Which sensor, which mechanism, which energy and which program', 'c) Who speaks during the presentation', 'd) The team’s grade'], c: 1 },
+        { q: 'In the BRAINSTORM stage, what is the right thing to do?', o: ['a) Write down lots of ideas and choose afterwards', 'b) Take the first idea that turns up', 'c) Copy another team’s robot', 'd) Start gluing cardboard'], c: 0 },
+        { q: 'What is decided in the design SKETCH?', o: ['a) Which sensor, which mechanism, which energy and which program', 'b) The color of the box', 'c) Who speaks during the presentation', 'd) The team’s grade'], c: 0 },
         { q: 'The garden waterer prototype did not shut the water off in time. What comes next?', o: ['a) Give the project up', 'b) Improve the design and test again', 'c) Say that it did work', 'd) Change topic'], c: 1 },
-        { q: '«The robot must not cost more than 200 lempiras» is…', o: ['a) A criterion', 'b) A constraint', 'c) A sketch', 'd) An idea'], c: 1 },
-        { q: '«It must warn before the water reaches the crossing» is…', o: ['a) A success criterion', 'b) A cost constraint', 'c) A team role', 'd) A material'], c: 0 },
-        { q: 'Which sensor suits the robot that warns about floods?', o: ['a) Sound sensor', 'b) Water level sensor', 'c) Color sensor', 'd) Touch sensor'], c: 1 },
-        { q: 'Which one is an ETHICAL question about design?', o: ['a) What color should I paint it?', 'b) Who does it benefit and who might it harm?', 'c) How many screws does it take?', 'd) Who draws best?'], c: 1 },
-        { q: 'Which is the LAST stage of the design cycle?', o: ['a) Test', 'b) Communicate the result', 'c) Brainstorm', 'd) Build'], c: 1 }
+        { q: '«The robot must not cost more than 200 lempiras» is…', o: ['a) A criterion', 'b) A sketch', 'c) An idea', 'd) A constraint'], c: 3 },
+        { q: '«It must warn before the water reaches the crossing» is…', o: ['a) A cost constraint', 'b) A team role', 'c) A success criterion', 'd) A material'], c: 2 },
+        { q: 'Which sensor suits the robot that warns about floods?', o: ['a) Water level sensor', 'b) Sound sensor', 'c) Color sensor', 'd) Touch sensor'], c: 0 },
+        { q: 'Which one is an ETHICAL question about design?', o: ['a) What color should I paint it?', 'b) How many screws does it take?', 'c) Who draws best?', 'd) Who does it benefit and who might it harm?'], c: 3 },
+        { q: 'Which is the LAST stage of the design cycle?', o: ['a) Test', 'b) Brainstorm', 'c) Communicate the result', 'd) Build'], c: 2 }
       ],
 
       classGroups: [
@@ -329,13 +329,13 @@
 
       cmpData: [
         { s: 'The design cycle starts by ___ the problem.', opts: ['identifying', 'painting', 'selling'], c: 0 },
-        { s: 'In the brainstorming stage we write down lots of ___.', opts: ['conduct reports', 'ideas', 'chores'], c: 1 },
-        { s: 'The labeled drawing of the robot is called the ___.', opts: ['sketch', 'receipt', 'poster'], c: 0 },
-        { s: 'The first version you can actually test is the ___.', opts: ['prototype', 'diploma', 'manual'], c: 0 },
-        { s: 'When testing you have to ___ what fails.', opts: ['hide', 'write down', 'forget'], c: 1 },
-        { s: 'If the prototype fails, the right thing is to ___ and test again.', opts: ['give up', 'improve it', 'copy'], c: 1 },
-        { s: 'The money available is a ___ of the project.', opts: ['constraint', 'idea', 'test'], c: 0 },
-        { s: 'The last stage of the cycle is to ___ the result.', opts: ['communicate', 'hide', 'erase'], c: 0 }
+        { s: 'In the brainstorming stage we write down lots of ___.', opts: ['conduct reports', 'chores', 'ideas'], c: 2 },
+        { s: 'The labeled drawing of the robot is called the ___.', opts: ['receipt', 'poster', 'sketch'], c: 2 },
+        { s: 'The first version you can actually test is the ___.', opts: ['diploma', 'prototype', 'manual'], c: 1 },
+        { s: 'When testing you have to ___ what fails.', opts: ['write down', 'hide', 'forget'], c: 0 },
+        { s: 'If the prototype fails, the right thing is to ___ and test again.', opts: ['improve it', 'give up', 'copy'], c: 0 },
+        { s: 'The money available is a ___ of the project.', opts: ['idea', 'constraint', 'test'], c: 1 },
+        { s: 'The last stage of the cycle is to ___ the result.', opts: ['hide', 'communicate', 'erase'], c: 1 }
       ],
 
       routeSets: [
@@ -479,20 +479,20 @@
 
       evalMCBank: [
         { q: 'Which is the first stage of the design cycle?', o: ['a) Build', 'b) Identify the problem', 'c) Communicate', 'd) Test'], a: 1 },
-        { q: 'What do you do in the brainstorming stage?', o: ['a) Paint the robot', 'b) Write down lots of possible solutions', 'c) Grade the team', 'd) Put the materials away'], a: 1 },
+        { q: 'What do you do in the brainstorming stage?', o: ['a) Paint the robot', 'b) Grade the team', 'c) Write down lots of possible solutions', 'd) Put the materials away'], a: 2 },
         { q: 'What does a good design sketch contain?', o: ['a) Only the robot’s name', 'b) Sensors, mechanisms, energy and program', 'c) The attendance list', 'd) The selling price'], a: 1 },
         { q: 'What is a prototype?', o: ['a) The first version you can actually test', 'b) A drawing with no parts', 'c) The team’s certificate', 'd) A factory-made robot'], a: 0 },
-        { q: 'During the test, what should the team do?', o: ['a) Hide the failures', 'b) Write down what fails and what works', 'c) Change project', 'd) Hand out prizes'], a: 1 },
-        { q: 'The prototype failed three times. What is the right thing to do?', o: ['a) Give up', 'b) Improve the design and test again', 'c) Say that it worked', 'd) Copy another team'], a: 1 },
+        { q: 'During the test, what should the team do?', o: ['a) Hide the failures', 'b) Change project', 'c) Hand out prizes', 'd) Write down what fails and what works'], a: 3 },
+        { q: 'The prototype failed three times. What is the right thing to do?', o: ['a) Give up', 'b) Say that it worked', 'c) Copy another team', 'd) Improve the design and test again'], a: 3 },
         { q: '«It must not cost more than 200 lempiras» is an example of…', o: ['a) A criterion', 'b) A constraint', 'c) A sketch', 'd) A prototype'], a: 1 },
-        { q: '«It must warn before the water reaches the crossing» is an example of…', o: ['a) A success criterion', 'b) A time constraint', 'c) A team role', 'd) A material'], a: 0 },
-        { q: 'Which sensor suits the robot that warns about floods?', o: ['a) Color', 'b) Sound', 'c) Water level', 'd) Touch'], a: 2 },
-        { q: 'Which actuator does the school garden waterer need?', o: ['a) A camera', 'b) A water pump or valve', 'c) A moisture sensor', 'd) A battery'], a: 1 },
-        { q: 'Which instruction is right for the watering robot?', o: ['a) Water nonstop, always', 'b) If the soil is dry, then turn the water on', 'c) Wait until it rains', 'd) Switch the alarm off'], a: 1 },
-        { q: 'The project goes at the river crossing and there is no power outlet. Which energy suits it?', o: ['a) A battery with a solar panel', 'b) A one-kilometer cable', 'c) A candle', 'd) None'], a: 0 },
-        { q: 'Which is the last stage of the design cycle?', o: ['a) Test', 'b) Brainstorm', 'c) Communicate the result', 'd) Build'], a: 2 },
-        { q: 'Which one is an ethical question about design?', o: ['a) Who does it benefit and who might it harm?', 'b) What color should I paint it?', 'c) How many screws does it take?', 'd) Who draws best?'], a: 0 },
-        { q: 'Which team role is in charge of trying the robot out and writing down the failures?', o: ['a) The designer', 'b) The programmer', 'c) The builder', 'd) The tester'], a: 3 }
+        { q: '«It must warn before the water reaches the crossing» is an example of…', o: ['a) A time constraint', 'b) A success criterion', 'c) A team role', 'd) A material'], a: 1 },
+        { q: 'Which sensor suits the robot that warns about floods?', o: ['a) Water level', 'b) Color', 'c) Sound', 'd) Touch'], a: 0 },
+        { q: 'Which actuator does the school garden waterer need?', o: ['a) A water pump or valve', 'b) A camera', 'c) A moisture sensor', 'd) A battery'], a: 0 },
+        { q: 'Which instruction is right for the watering robot?', o: ['a) Water nonstop, always', 'b) Wait until it rains', 'c) Switch the alarm off', 'd) If the soil is dry, then turn the water on'], a: 3 },
+        { q: 'The project goes at the river crossing and there is no power outlet. Which energy suits it?', o: ['a) A one-kilometer cable', 'b) A candle', 'c) A battery with a solar panel', 'd) None'], a: 2 },
+        { q: 'Which is the last stage of the design cycle?', o: ['a) Communicate the result', 'b) Test', 'c) Brainstorm', 'd) Build'], a: 0 },
+        { q: 'Which one is an ethical question about design?', o: ['a) What color should I paint it?', 'b) How many screws does it take?', 'c) Who does it benefit and who might it harm?', 'd) Who draws best?'], a: 2 },
+        { q: 'Which team role is in charge of trying the robot out and writing down the failures?', o: ['a) The designer', 'b) The programmer', 'c) The tester', 'd) The builder'], a: 2 }
       ],
 
       evalCPBank: [
