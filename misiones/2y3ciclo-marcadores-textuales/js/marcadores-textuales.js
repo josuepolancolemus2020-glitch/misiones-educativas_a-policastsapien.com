@@ -84,14 +84,14 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Para qué sirven los marcadores textuales?',o:['a) Para contar historias','b) Para enlazar y organizar las ideas de un texto','c) Para describir objetos','d) Para dibujar'],c:1},
-  {q:'¿Qué relación expresa el marcador "sin embargo"?',o:['a) Adición','b) Causa','c) Contraste','d) Orden'],c:2},
-  {q:'¿Cuál de estos es un marcador de consecuencia?',o:['a) Además','b) Por lo tanto','c) Porque','d) En primer lugar'],c:1},
-  {q:'El marcador "porque" indica...',o:['a) Consecuencia','b) Causa','c) Adición','d) Cierre'],c:1},
-  {q:'¿Qué marcador usarías para AÑADIR una idea?',o:['a) Sin embargo','b) Por eso','c) Además','d) Porque'],c:2},
-  {q:'"En primer lugar, en segundo lugar, por último" son marcadores de...',o:['a) Orden','b) Contraste','c) Causa','d) Ejemplo'],c:0},
-  {q:'¿Cuál es un marcador de cierre o conclusión?',o:['a) Por ejemplo','b) En conclusión','c) También','d) Mientras'],c:1},
-  {q:'¿Cómo se llama también a los marcadores textuales?',o:['a) Adjetivos','b) Conectores','c) Sustantivos','d) Verbos'],c:1},
+  {q:'¿Para qué sirven los marcadores textuales?',o:['a) Para contar historias','b) Para describir objetos','c) Para dibujar','d) Para enlazar y organizar las ideas de un texto'],c:3},
+  {q:'¿Qué relación expresa el marcador "sin embargo"?',o:['a) Adición','b) Contraste','c) Causa','d) Orden'],c:1},
+  {q:'¿Cuál de estos es un marcador de consecuencia?',o:['a) Por lo tanto','b) Además','c) Porque','d) En primer lugar'],c:0},
+  {q:'El marcador "porque" indica...',o:['a) Consecuencia','b) Adición','c) Causa','d) Cierre'],c:2},
+  {q:'¿Qué marcador usarías para AÑADIR una idea?',o:['a) Sin embargo','b) Por eso','c) Porque','d) Además'],c:3},
+  {q:'"En primer lugar, en segundo lugar, por último" son marcadores de...',o:['a) Contraste','b) Causa','c) Orden','d) Ejemplo'],c:2},
+  {q:'¿Cuál es un marcador de cierre o conclusión?',o:['a) En conclusión','b) Por ejemplo','c) También','d) Mientras'],c:0},
+  {q:'¿Cómo se llama también a los marcadores textuales?',o:['a) Conectores','b) Adjetivos','c) Sustantivos','d) Verbos'],c:0},
   {q:'Los marcadores textuales aportan al texto...',o:['a) Rimas','b) Cohesión','c) Dibujos','d) Personajes'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
@@ -144,14 +144,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Quería salir, ___ estaba lloviendo mucho.',opts:['además','pero','porque'],c:1},
-  {s:'No estudió; ___, reprobó el examen.',opts:['por lo tanto','también','ya que'],c:0},
+  {s:'Quería salir, ___ estaba lloviendo mucho.',opts:['pero','además','porque'],c:0},
+  {s:'No estudió; ___, reprobó el examen.',opts:['también','por lo tanto','ya que'],c:1},
   {s:'Llegó tarde ___ perdió el autobús.',opts:['porque','sin embargo','además'],c:0},
   {s:'Me gusta el fútbol y ___ el baloncesto.',opts:['pero','también','por eso'],c:1},
-  {s:'___, lávate las manos antes de comer.',opts:['En conclusión','En primer lugar','Sin embargo'],c:1},
-  {s:'Hay muchos deportes; ___, la natación.',opts:['por ejemplo','en cambio','por lo tanto'],c:0},
+  {s:'___, lávate las manos antes de comer.',opts:['En conclusión','Sin embargo','En primer lugar'],c:2},
+  {s:'Hay muchos deportes; ___, la natación.',opts:['en cambio','por ejemplo','por lo tanto'],c:1},
   {s:'___, debemos cuidar el medio ambiente entre todos.',opts:['En conclusión','Porque','Además'],c:0},
-  {s:'Estudió mucho; ___, aprobó con excelencia.',opts:['sin embargo','por eso','pero'],c:1},
+  {s:'Estudió mucho; ___, aprobó con excelencia.',opts:['sin embargo','pero','por eso'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -369,20 +369,20 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Para qué sirven los marcadores textuales?',o:['a) Para contar historias','b) Para enlazar y organizar las ideas','c) Para describir','d) Para rimar'],a:1},
-  {q:'"Sin embargo" es un marcador de...',o:['a) Adición','b) Causa','c) Contraste','d) Orden'],a:2},
-  {q:'¿Cuál es un marcador de consecuencia?',o:['a) Además','b) Por lo tanto','c) Porque','d) Primero'],a:1},
-  {q:'"Porque" indica...',o:['a) Consecuencia','b) Causa','c) Adición','d) Cierre'],a:1},
-  {q:'¿Qué marcador AÑADE una idea?',o:['a) Sin embargo','b) Por eso','c) Además','d) Porque'],a:2},
-  {q:'"En primer lugar, por último" son marcadores de...',o:['a) Orden','b) Contraste','c) Causa','d) Ejemplo'],a:0},
-  {q:'¿Cuál es un marcador de cierre?',o:['a) Por ejemplo','b) En conclusión','c) También','d) Mientras'],a:1},
-  {q:'Otro nombre para los marcadores textuales es...',o:['a) Adjetivos','b) Conectores','c) Verbos','d) Rimas'],a:1},
-  {q:'Los marcadores aportan al texto...',o:['a) Rimas','b) Cohesión','c) Dibujos','d) Personajes'],a:1},
-  {q:'"Por ejemplo" es un marcador de...',o:['a) Ejemplificación','b) Contraste','c) Causa','d) Orden'],a:0},
+  {q:'"Sin embargo" es un marcador de...',o:['a) Adición','b) Causa','c) Orden','d) Contraste'],a:3},
+  {q:'¿Cuál es un marcador de consecuencia?',o:['a) Además','b) Porque','c) Primero','d) Por lo tanto'],a:3},
+  {q:'"Porque" indica...',o:['a) Consecuencia','b) Adición','c) Causa','d) Cierre'],a:2},
+  {q:'¿Qué marcador AÑADE una idea?',o:['a) Además','b) Sin embargo','c) Por eso','d) Porque'],a:0},
+  {q:'"En primer lugar, por último" son marcadores de...',o:['a) Contraste','b) Orden','c) Causa','d) Ejemplo'],a:1},
+  {q:'¿Cuál es un marcador de cierre?',o:['a) En conclusión','b) Por ejemplo','c) También','d) Mientras'],a:0},
+  {q:'Otro nombre para los marcadores textuales es...',o:['a) Conectores','b) Adjetivos','c) Verbos','d) Rimas'],a:0},
+  {q:'Los marcadores aportan al texto...',o:['a) Rimas','b) Dibujos','c) Cohesión','d) Personajes'],a:2},
+  {q:'"Por ejemplo" es un marcador de...',o:['a) Contraste','b) Ejemplificación','c) Causa','d) Orden'],a:1},
   {q:'¿Cuál expresa CONTRASTE?',o:['a) Además','b) En cambio','c) Porque','d) Primero'],a:1},
-  {q:'"Ya que" es un marcador de...',o:['a) Causa','b) Consecuencia','c) Adición','d) Cierre'],a:0},
+  {q:'"Ya que" es un marcador de...',o:['a) Consecuencia','b) Adición','c) Causa','d) Cierre'],a:2},
   {q:'¿Cuál NO es un marcador textual?',o:['a) Sin embargo','b) Por lo tanto','c) Mesa','d) Además'],a:2},
   {q:'"Más tarde" y "entonces" son marcadores de...',o:['a) Tiempo','b) Contraste','c) Causa','d) Adición'],a:0},
-  {q:'"Es decir" sirve para...',o:['a) Aclarar o ejemplificar','b) Oponer ideas','c) Dar la causa','d) Cerrar el texto'],a:0},
+  {q:'"Es decir" sirve para...',o:['a) Oponer ideas','b) Dar la causa','c) Cerrar el texto','d) Aclarar o ejemplificar'],a:3},
 ];
 const evalCPBank=[
   {q:'Las palabras que enlazan las ideas de un texto son los marcadores ___.',a:'textuales'},

@@ -3789,7 +3789,13 @@ lleva el banco índice a índice; la herramienta las reconoce y se niega, con su
 aviso. `robots-problemas` es de las más sesgadas que quedan (89 % en la «b») y
 sigue esperando a que se haga a mano, con las dos ediciones a la vez.
 
-**Lo que queda:** 42 misiones (eran 53 el 12 de septiembre de 2026). Se van
+⚠️ **Y la herramienta busca el JS de la misión por lo que TIENE DENTRO, no por
+su nombre.** Deducirlo de la carpeta acierta en la mayoría y falla justo donde
+duele: `potencias-raices` tiene seis JS y el primero por orden alfabético es
+`interaccion_cuadrados.js`; `bach-uni-adjetivos` se llama `app.js`, y
+`angulo-bisectriz`, `angulos.js`. Manda el que trae los bancos.
+
+**Lo que queda:** 33 misiones (eran 53 el 12 de septiembre de 2026). Se van
 haciendo por tandas, mirando el diff —cada fila movida es una línea que alguien
 tiene que leer— y corriendo después la sonda de la misión.
 

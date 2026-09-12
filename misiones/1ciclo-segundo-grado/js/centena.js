@@ -214,15 +214,15 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cómo se lee el número 4,500?',o:['a) Cuarenta y cinco','b) Cuatro mil quinientos','c) Cuatrocientos cincuenta','d) Cuatro millones quinientos'],c:1,feedback:'La coma marca el período de miles: 4 mil + 500 = cuatro mil quinientos.'},
-  {q:'¿Cuántas cifras tiene un millón (1,000,000)?',o:['a) 6 cifras','b) 5 cifras','c) 7 cifras','d) 9 cifras'],c:2,feedback:'Un 1 y seis ceros: 7 cifras en total. ¡Cuéntalas!'},
+  {q:'¿Cómo se lee el número 4,500?',o:['a) Cuatro mil quinientos','b) Cuarenta y cinco','c) Cuatrocientos cincuenta','d) Cuatro millones quinientos'],c:0,feedback:'La coma marca el período de miles: 4 mil + 500 = cuatro mil quinientos.'},
+  {q:'¿Cuántas cifras tiene un millón (1,000,000)?',o:['a) 6 cifras','b) 7 cifras','c) 5 cifras','d) 9 cifras'],c:1,feedback:'Un 1 y seis ceros: 7 cifras en total. ¡Cuéntalas!'},
   {q:'¿Cuál es el valor del 8 en 80,000?',o:['a) 8','b) 800','c) 8,000','d) 80,000'],c:3,feedback:'El 8 está en las decenas de millar: vale 8 × 10,000 = 80,000.'},
   {q:'"Trescientos cinco mil" se escribe:',o:['a) 3,005','b) 305,000','c) 350,000','d) 30,500'],c:1,feedback:'El cero de relleno guarda las decenas de millar: 305,000. Sin él, el 3 cambiaría de valor.'},
-  {q:'¿Qué separa la coma en un número grande?',o:['a) Las decenas','b) Los períodos','c) Los sumandos','d) Las fracciones'],c:1,feedback:'La coma separa bloques de 3 cifras llamados períodos: unidades, miles y millones.'},
-  {q:'¿Cuál de estos números es MAYOR?',o:['a) 99,999','b) 100,001','c) 100,000','d) 89,999'],c:1,feedback:'Primero cuenta cifras: 100,001 y 100,000 tienen 6. Comparando de izquierda a derecha, gana 100,001.'},
-  {q:'¿Cuántas centenas forman una unidad de millar?',o:['a) 100','b) 1,000','c) 10','d) 5'],c:2,feedback:'10 centenas de 100 = 1,000. ¡Cada peldaño de la escalera vale 10 veces más!'},
-  {q:'¿Qué número sigue después de 9,999?',o:['a) 9,100','b) 10,000','c) 99,991','d) 9,000'],c:1,feedback:'9,999 + 1 = 10,000: se estrena una cifra nueva, la decena de millar.'},
-  {q:'¿Cuántos miles hay en un millón?',o:['a) 100','b) 10','c) 1,000','d) 10,000'],c:2,feedback:'1,000,000 ÷ 1,000 = 1,000. Por eso se dice que un millón es "mil miles".'},
+  {q:'¿Qué separa la coma en un número grande?',o:['a) Las decenas','b) Los sumandos','c) Los períodos','d) Las fracciones'],c:2,feedback:'La coma separa bloques de 3 cifras llamados períodos: unidades, miles y millones.'},
+  {q:'¿Cuál de estos números es MAYOR?',o:['a) 99,999','b) 100,000','c) 100,001','d) 89,999'],c:2,feedback:'Primero cuenta cifras: 100,001 y 100,000 tienen 6. Comparando de izquierda a derecha, gana 100,001.'},
+  {q:'¿Cuántas centenas forman una unidad de millar?',o:['a) 100','b) 10','c) 1,000','d) 5'],c:1,feedback:'10 centenas de 100 = 1,000. ¡Cada peldaño de la escalera vale 10 veces más!'},
+  {q:'¿Qué número sigue después de 9,999?',o:['a) 10,000','b) 9,100','c) 99,991','d) 9,000'],c:0,feedback:'9,999 + 1 = 10,000: se estrena una cifra nueva, la decena de millar.'},
+  {q:'¿Cuántos miles hay en un millón?',o:['a) 1,000','b) 100','c) 10','d) 10,000'],c:0,feedback:'1,000,000 ÷ 1,000 = 1,000. Por eso se dice que un millón es "mil miles".'},
   {q:'"Dos millones cuarenta mil" se escribe:',o:['a) 2,400,000','b) 240,000','c) 2,004,000','d) 2,040,000'],c:3,feedback:'2 millones + 040 miles + 000 unidades = 2,040,000. Los ceros de relleno son clave.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
@@ -375,11 +375,11 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'La coma se coloca cada ___ cifras, contando desde la derecha.',opts:['dos','tres','cuatro'],c:1},
-  {s:'Un millón se escribe con un 1 y ___ ceros.',opts:['cinco','seis','siete'],c:1},
-  {s:'Diez centenas forman una unidad de ___.',opts:['decena','millar','millón'],c:1},
-  {s:'El número 105 se lee ___ cinco.',opts:['cien','ciento','uno'],c:1},
-  {s:'El número 1,000 se lee ___.',opts:['un mil','mil','diez cien'],c:1},
-  {s:'En 250,000 el 2 vale ___ mil.',opts:['dos','veinte','doscientos'],c:2},
+  {s:'Un millón se escribe con un 1 y ___ ceros.',opts:['cinco','siete','seis'],c:2},
+  {s:'Diez centenas forman una unidad de ___.',opts:['decena','millón','millar'],c:2},
+  {s:'El número 105 se lee ___ cinco.',opts:['ciento','cien','uno'],c:0},
+  {s:'El número 1,000 se lee ___.',opts:['mil','un mil','diez cien'],c:0},
+  {s:'En 250,000 el 2 vale ___ mil.',opts:['dos','doscientos','veinte'],c:1},
   {s:'Con igual cantidad de cifras, se compara de ___ a derecha.',opts:['izquierda','abajo','atrás'],c:0},
   {s:'"Tres millones cuarenta mil" = 3,___,000.',opts:['400','040','004'],c:1}
 ];
@@ -804,14 +804,14 @@ const evalTFBank=[
   {q:'Al comparar 76,500 y 76,050, el mayor es 76,050.',a:false}
 ];
 const evalMCBank=[
-  {q:'¿Cómo se lee el número 45,000?',o:['a) Cuatro mil quinientos','b) Cuarenta y cinco mil','c) Cuatrocientos cincuenta mil','d) Cuarenta y cinco millones'],a:1},
-  {q:'¿Cuántos ceros tiene un millón escrito en cifras?',o:['a) 5','b) 6','c) 7','d) 4'],a:1},
+  {q:'¿Cómo se lee el número 45,000?',o:['a) Cuatro mil quinientos','b) Cuatrocientos cincuenta mil','c) Cuarenta y cinco mil','d) Cuarenta y cinco millones'],a:2},
+  {q:'¿Cuántos ceros tiene un millón escrito en cifras?',o:['a) 6','b) 5','c) 7','d) 4'],a:0},
   {q:'¿Cuál es el valor del 7 en 78,500?',o:['a) 7','b) 700','c) 7,000','d) 70,000'],a:3},
-  {q:'"Trescientos cinco mil" se escribe:',o:['a) 3,005','b) 350,000','c) 305,000','d) 30,500'],a:2},
-  {q:'¿Cuál número es MAYOR?',o:['a) 99,999','b) 100,001','c) 100,000','d) 89,999'],a:1},
+  {q:'"Trescientos cinco mil" se escribe:',o:['a) 3,005','b) 350,000','c) 30,500','d) 305,000'],a:3},
+  {q:'¿Cuál número es MAYOR?',o:['a) 100,001','b) 99,999','c) 100,000','d) 89,999'],a:0},
   {q:'¿Qué número sigue después de 9,999?',o:['a) 9,100','b) 10,000','c) 99,991','d) 9,000'],a:1},
-  {q:'La coma separa los números en bloques de tres cifras llamados:',o:['a) cifras','b) períodos','c) decenas','d) sumandos'],a:1},
-  {q:'"Dos millones cuarenta mil" se escribe:',o:['a) 2,400,000','b) 240,000','c) 2,004,000','d) 2,040,000'],a:3}
+  {q:'La coma separa los números en bloques de tres cifras llamados:',o:['a) cifras','b) decenas','c) períodos','d) sumandos'],a:2},
+  {q:'"Dos millones cuarenta mil" se escribe:',o:['a) 2,400,000','b) 2,040,000','c) 240,000','d) 2,004,000'],a:1}
 ];
 const evalCPBank=[
   {q:'La coma se coloca cada ___ cifras, contando desde la derecha.',a:'tres (3)',acc:['tres','3','tres 3','tres cifras','3 cifras']},

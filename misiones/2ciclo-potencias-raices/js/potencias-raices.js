@@ -124,16 +124,16 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuánto es 9²?',o:['a) 18','b) 81','c) 72','d) 99'],c:1},
+  {q:'¿Cuánto es 9²?',o:['a) 81','b) 18','c) 72','d) 99'],c:0},
   {q:'¿Cuál es la raíz cuadrada de 100?',o:['a) 50','b) 100','c) 10','d) 20'],c:2},
-  {q:'¿Cuál de estos es un cuadrado perfecto?',o:['a) 150','b) 144','c) 130','d) 190'],c:1,feedback:'144 = 12². Los demás no son el resultado exacto de elevar un entero al cuadrado.'},
-  {q:'¿Cuánto es 6²?',o:['a) 12','b) 62','c) 36','d) 66'],c:2},
+  {q:'¿Cuál de estos es un cuadrado perfecto?',o:['a) 150','b) 130','c) 190','d) 144'],c:3,feedback:'144 = 12². Los demás no son el resultado exacto de elevar un entero al cuadrado.'},
+  {q:'¿Cuánto es 6²?',o:['a) 36','b) 12','c) 62','d) 66'],c:0},
   {q:'¿Cuál es la raíz cuadrada de 196?',o:['a) 13','b) 14','c) 98','d) 196'],c:1},
   {q:'En la potencia 8², ¿cuál es el exponente?',o:['a) 8','b) 2','c) 16','d) 64'],c:1},
-  {q:'¿Cuánto es √25 + 3²?',o:['a) 14','b) 11','c) 28','d) 8'],c:0,feedback:'√25=5 y 3²=9. 5+9=14.'},
-  {q:'¿Cuál es el cuadrado perfecto más grande menor que 200?',o:['a) 169','b) 196','c) 225','d) 144'],c:1,feedback:'14²=196 es menor que 200. 15²=225 ya lo supera.'},
+  {q:'¿Cuánto es √25 + 3²?',o:['a) 11','b) 28','c) 14','d) 8'],c:2,feedback:'√25=5 y 3²=9. 5+9=14.'},
+  {q:'¿Cuál es el cuadrado perfecto más grande menor que 200?',o:['a) 196','b) 169','c) 225','d) 144'],c:0,feedback:'14²=196 es menor que 200. 15²=225 ya lo supera.'},
   {q:'¿Cuánto es 12²?',o:['a) 24','b) 144','c) 122','d) 121'],c:1},
-  {q:'¿Por qué 50 no tiene raíz cuadrada exacta?',o:['a) Porque es un número par','b) Porque está entre 7² y 8²','c) Porque es mayor que 25','d) Porque es un número primo'],c:1}
+  {q:'¿Por qué 50 no tiene raíz cuadrada exacta?',o:['a) Porque es un número par','b) Porque es mayor que 25','c) Porque es un número primo','d) Porque está entre 7² y 8²'],c:3}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -279,11 +279,11 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'En la potencia 9², el 9 es la ___.',opts:['base','exponente','raíz'],c:0},
-  {s:'La raíz cuadrada de 144 es ___.',opts:['12','72','24'],c:0},
-  {s:'Un número que resulta de elevar un entero al cuadrado se llama ___ perfecto.',opts:['cuadrado','triángulo','círculo'],c:0},
+  {s:'En la potencia 9², el 9 es la ___.',opts:['exponente','base','raíz'],c:1},
+  {s:'La raíz cuadrada de 144 es ___.',opts:['72','24','12'],c:2},
+  {s:'Un número que resulta de elevar un entero al cuadrado se llama ___ perfecto.',opts:['triángulo','círculo','cuadrado'],c:2},
   {s:'Según el orden de operaciones, las potencias se resuelven ___ que las sumas.',opts:['antes','después','nunca'],c:0},
-  {s:'El símbolo que representa la raíz cuadrada se llama ___.',opts:['exponente','radical','base'],c:1},
+  {s:'El símbolo que representa la raíz cuadrada se llama ___.',opts:['radical','exponente','base'],c:0},
   {s:'150 ___ un cuadrado perfecto.',opts:['es','no es','casi es'],c:1},
   {s:'El cuadrado perfecto más grande menor que 200 es ___.',opts:['169','196','225'],c:1},
   {s:'La raíz cuadrada de 81 es ___.',opts:['9','40.5','18'],c:0}
@@ -557,9 +557,9 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Cuánto es 8²?',o:['a) 16','b) 64','c) 82','d) 32'],a:1},
-  {q:'¿Cuál es la raíz cuadrada de 169?',o:['a) 12','b) 13','c) 84.5','d) 14'],a:1},
-  {q:'¿Cuál de estos es un cuadrado perfecto?',o:['a) 130','b) 121','c) 110','d) 140'],a:1},
-  {q:'En la potencia 10², ¿cuál es la base?',o:['a) 2','b) 100','c) 10','d) 20'],a:2},
+  {q:'¿Cuál es la raíz cuadrada de 169?',o:['a) 12','b) 84.5','c) 13','d) 14'],a:2},
+  {q:'¿Cuál de estos es un cuadrado perfecto?',o:['a) 121','b) 130','c) 110','d) 140'],a:0},
+  {q:'En la potencia 10², ¿cuál es la base?',o:['a) 2','b) 100','c) 20','d) 10'],a:3},
   {q:'¿Cuánto es 4² + √9?',o:['a) 19','b) 22','c) 13','d) 25'],a:0}
 ];
 const evalCPBank=[

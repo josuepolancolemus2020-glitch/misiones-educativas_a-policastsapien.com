@@ -202,13 +202,13 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'Según la NGLE, ¿qué característica principal define a un adjetivo relacional?',o:['a) Admiten adverbios en -mente','b) Clasifican el nombre y no admiten grados de intensidad','c) Siempre van antepuestos','d) Indican emociones subjetivas'],c:1},
+  {q:'Según la NGLE, ¿qué característica principal define a un adjetivo relacional?',o:['a) Clasifican el nombre y no admiten grados de intensidad','b) Admiten adverbios en -mente','c) Siempre van antepuestos','d) Indican emociones subjetivas'],c:0},
   {q:'En la oración «Los niños llegaron cansados», la función sintáctica de "cansados" es:',o:['a) Atributo','b) Adyacente Nominal','c) Complemento Predicativo','d) Adverbio de modo'],c:2},
-  {q:'¿Cuál de estos adjetivos es un Elativo Léxico?',o:['a) Altísimo','b) Muy grande','c) Enorme','d) El más rápido'],c:2},
-  {q:'¿Qué tipo de adjetivo encontramos en «el actual presidente»?',o:['a) Adjetivo adverbial','b) Adjetivo relacional','c) Adjetivo calificativo de superioridad','d) Epíteto'],c:0},
-  {q:'Identifica el superlativo absoluto formado con sufijo culto de "pobre":',o:['a) Pobrísimo','b) Muy pobre','c) Paupérrimo','d) El más pobre'],c:2},
-  {q:'En «un viejo amigo» vs «un amigo viejo», el cambio de posición provoca:',o:['a) Una restricción sintáctica incorrecta','b) Un cambio semántico (adverbial vs calificativo)','c) La apócope del adjetivo','d) Un superlativo relativo'],c:1},
-  {q:'¿Cuál es el superlativo absoluto léxico (supletivo) de "malo"?',o:['a) Peor','b) Malísimo','c) Pésimo','d) El peor'],c:2},
+  {q:'¿Cuál de estos adjetivos es un Elativo Léxico?',o:['a) Enorme','b) Altísimo','c) Muy grande','d) El más rápido'],c:0},
+  {q:'¿Qué tipo de adjetivo encontramos en «el actual presidente»?',o:['a) Adjetivo relacional','b) Adjetivo adverbial','c) Adjetivo calificativo de superioridad','d) Epíteto'],c:1},
+  {q:'Identifica el superlativo absoluto formado con sufijo culto de "pobre":',o:['a) Paupérrimo','b) Pobrísimo','c) Muy pobre','d) El más pobre'],c:0},
+  {q:'En «un viejo amigo» vs «un amigo viejo», el cambio de posición provoca:',o:['a) Una restricción sintáctica incorrecta','b) La apócope del adjetivo','c) Un cambio semántico (adverbial vs calificativo)','d) Un superlativo relativo'],c:2},
+  {q:'¿Cuál es el superlativo absoluto léxico (supletivo) de "malo"?',o:['a) Peor','b) Malísimo','c) El peor','d) Pésimo'],c:3},
   {q:'La pérdida de fonemas al final de un adjetivo antepuesto (ej. "gran" por "grande") se denomina:',o:['a) Elisión','b) Síncopa','c) Metátesis','d) Apócope'],c:3},
   {q:'¿Qué función tiene el adjetivo en «El examen parece complejo»?',o:['a) Adyacente','b) Atributo','c) Complemento Predicativo','d) Núcleo del sujeto'],c:1},
 ];
@@ -375,12 +375,12 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'El adjetivo "libre" forma su superlativo culto absoluto como ___.',opts:['librísimo','libérrimo','muy libre'],c:1},
-  {s:'Aquel dirigente era considerado un ___ hombre de estado (apócope de grande).',opts:['gran','grande','grandioso'],c:0},
+  {s:'Aquel dirigente era considerado un ___ hombre de estado (apócope de grande).',opts:['grande','gran','grandioso'],c:1},
   {s:'Si algo es más que bueno en su grado sumo morfológico léxico, es ___.',opts:['mejor','buenísimo','óptimo'],c:2},
-  {s:'Los adjetivos ___ no admiten grado, por lo que no decimos "una energía muy solar".',opts:['calificativos','relacionales','adverbiales'],c:1},
+  {s:'Los adjetivos ___ no admiten grado, por lo que no decimos "una energía muy solar".',opts:['calificativos','adverbiales','relacionales'],c:2},
   {s:'La concordancia del atributo en "El agua y la leche están ___" exige plural y masculino por regla de adyacencia heterogénea.',opts:['frías','fríos','frío'],c:0}, // Regla: sust femeninos coord -> adjetivo femenino plural (Agua es fem aunque lleve "El")
   {s:'El uso del adjetivo en "un ___ amigo" (de muchos años) vs "un amigo ___" (de edad avanzada) refleja un cambio semántico.',opts:['viejo','antiguo','mayor'],c:0},
-  {s:'El adjetivo "célebre" tiene el superlativo absoluto ___.',opts:['celebérrimo','celebrísimo','muy célebre'],c:0},
+  {s:'El adjetivo "célebre" tiene el superlativo absoluto ___.',opts:['celebrísimo','celebérrimo','muy célebre'],c:1},
   {s:'En "Trajeron ___ las bebidas", el adjetivo funciona como Complemento Predicativo.',opts:['frías','fríos','fría'],c:0},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -860,16 +860,16 @@ const evalTFBank=[
   {q:'"Un pobre hombre" y "un hombre pobre" comparten idéntico significado referencial.',a:false},
 ];
 const evalMCBank=[
-  {q:'Identifica el adjetivo relacional en las siguientes opciones:',o:['a) Perro enorme','b) Análisis literario','c) Casa hermosísima','d) Llegaron exhaustos'],a:1},
-  {q:'¿Qué función sintáctica ejerce "sucios" en «Trajeron sucios los abrigos»?',o:['a) Adyacente Nominal','b) Atributo','c) Complemento Predicativo','d) Núcleo del SN'],a:2},
-  {q:'Un adjetivo elativo léxico inherente es:',o:['a) Grandísimo','b) Muy pequeño','c) Diminuto','d) El más guapo'],a:2},
+  {q:'Identifica el adjetivo relacional en las siguientes opciones:',o:['a) Perro enorme','b) Casa hermosísima','c) Análisis literario','d) Llegaron exhaustos'],a:2},
+  {q:'¿Qué función sintáctica ejerce "sucios" en «Trajeron sucios los abrigos»?',o:['a) Adyacente Nominal','b) Complemento Predicativo','c) Atributo','d) Núcleo del SN'],a:1},
+  {q:'Un adjetivo elativo léxico inherente es:',o:['a) Diminuto','b) Grandísimo','c) Muy pequeño','d) El más guapo'],a:0},
   {q:'¿Cuál es el superlativo absoluto supletivo de "malo"?',o:['a) Peor','b) Pésimo','c) Malísimo','d) El más malo'],a:1},
-  {q:'La estructura sintáctica de "El rey magno" presenta un adjetivo:',o:['a) Restrictivo pospuesto','b) Apocopado','c) Explicativo antepuesto / Epíteto','d) Predicativo temporal'],a:2},
-  {q:'El adjetivo "presunto" en "el presunto culpable" se clasifica sintácticamente como:',o:['a) Adjetivo relacional','b) Adjetivo calificativo de grado','c) Adjetivo adverbial modal','d) Superlativo relativo'],a:2},
-  {q:'La concordancia del atributo en «El aula y el patio están...» exige:',o:['a) limpios (masc. plural)','b) limpias (fem. plural)','c) limpio (masc. singular)','d) limpia (fem. singular)'],a:0},
-  {q:'El sufijo culto "-érrimo" se aplica correctamente en:',o:['a) Fuertérrimo','b) Celebérrimo','c) Grandérrimo','d) Pobrísimo'],a:1},
-  {q:'Un adjetivo restrictivo se caracteriza por:',o:['a) Limitar la referencia del SN al que modifica','b) Ir siempre antepuesto','c) Ser invariable en género','d) Funcionar siempre como atributo'],a:0},
-  {q:'"Mejor" es una forma morfológica que corresponde al grado:',o:['a) Superlativo sintético','b) Positivo elativo','c) Comparativo léxico supletivo','d) Adverbial modal'],a:2},
+  {q:'La estructura sintáctica de "El rey magno" presenta un adjetivo:',o:['a) Explicativo antepuesto / Epíteto','b) Restrictivo pospuesto','c) Apocopado','d) Predicativo temporal'],a:0},
+  {q:'El adjetivo "presunto" en "el presunto culpable" se clasifica sintácticamente como:',o:['a) Adjetivo adverbial modal','b) Adjetivo relacional','c) Adjetivo calificativo de grado','d) Superlativo relativo'],a:0},
+  {q:'La concordancia del atributo en «El aula y el patio están...» exige:',o:['a) limpias (fem. plural)','b) limpio (masc. singular)','c) limpia (fem. singular)','d) limpios (masc. plural)'],a:3},
+  {q:'El sufijo culto "-érrimo" se aplica correctamente en:',o:['a) Fuertérrimo','b) Grandérrimo','c) Celebérrimo','d) Pobrísimo'],a:2},
+  {q:'Un adjetivo restrictivo se caracteriza por:',o:['a) Ir siempre antepuesto','b) Limitar la referencia del SN al que modifica','c) Ser invariable en género','d) Funcionar siempre como atributo'],a:1},
+  {q:'"Mejor" es una forma morfológica que corresponde al grado:',o:['a) Superlativo sintético','b) Positivo elativo','c) Adverbial modal','d) Comparativo léxico supletivo'],a:3},
 ];
 const evalCPBank=[
   {q:'La pérdida del elemento fónico final del adjetivo en posición prenominal se denomina ___.',a:'apócope'},

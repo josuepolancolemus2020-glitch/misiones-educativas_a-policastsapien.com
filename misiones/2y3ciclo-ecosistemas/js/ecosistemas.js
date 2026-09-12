@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es un ecosistema?',o:['a) Solo los animales de un lugar','b) El conjunto de seres vivos, su medio físico y sus relaciones','c) Solo las plantas de un bosque','d) Solo el suelo y el agua'],c:1},
-  {q:'¿Cómo se llaman los factores SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],c:1},
-  {q:'¿Qué seres vivos son los productores de un ecosistema?',o:['a) Los animales','b) Los hongos','c) Las plantas','d) Las bacterias'],c:2},
-  {q:'Un animal herbívoro es un consumidor…',o:['a) primario','b) productor','c) descomponedor','d) terciario'],c:0},
-  {q:'¿Quiénes reciclan la materia muerta y devuelven nutrientes al suelo?',o:['a) Los productores','b) Los herbívoros','c) Los descomponedores','d) Los depredadores'],c:2},
+  {q:'¿Qué es un ecosistema?',o:['a) El conjunto de seres vivos, su medio físico y sus relaciones','b) Solo los animales de un lugar','c) Solo las plantas de un bosque','d) Solo el suelo y el agua'],c:0},
+  {q:'¿Cómo se llaman los factores SIN vida de un ecosistema?',o:['a) Bióticos','b) Orgánicos','c) Abióticos','d) Vivos'],c:2},
+  {q:'¿Qué seres vivos son los productores de un ecosistema?',o:['a) Las plantas','b) Los animales','c) Los hongos','d) Las bacterias'],c:0},
+  {q:'Un animal herbívoro es un consumidor…',o:['a) productor','b) descomponedor','c) primario','d) terciario'],c:2},
+  {q:'¿Quiénes reciclan la materia muerta y devuelven nutrientes al suelo?',o:['a) Los descomponedores','b) Los productores','c) Los herbívoros','d) Los depredadores'],c:0},
   {q:'En una cadena alimenticia, ¿de dónde viene la energía al inicio?',o:['a) Del suelo','b) Del Sol','c) Del agua','d) Del aire'],c:1},
-  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) población','c) bioma','d) hábitat'],c:1},
-  {q:'La relación en la que AMBAS especies se benefician se llama…',o:['a) depredación','b) competencia','c) mutualismo','d) parasitismo'],c:2},
-  {q:'¿Cuál de estos es un ejemplo de factor abiótico?',o:['a) Una planta','b) El agua','c) Un pez','d) Una bacteria'],c:1},
+  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) bioma','c) hábitat','d) población'],c:3},
+  {q:'La relación en la que AMBAS especies se benefician se llama…',o:['a) depredación','b) mutualismo','c) competencia','d) parasitismo'],c:1},
+  {q:'¿Cuál de estos es un ejemplo de factor abiótico?',o:['a) Una planta','b) Un pez','c) Una bacteria','d) El agua'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -145,12 +145,12 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'El conjunto de seres vivos, su medio y sus relaciones se llama ___.',opts:['ecosistema','población','bioma'],c:0},
-  {s:'Los factores ___ son los componentes sin vida del ecosistema.',opts:['bióticos','abióticos','orgánicos'],c:1},
+  {s:'Los factores ___ son los componentes sin vida del ecosistema.',opts:['bióticos','orgánicos','abióticos'],c:2},
   {s:'Las plantas son los ___ del ecosistema porque fabrican su alimento.',opts:['consumidores','productores','descomponedores'],c:1},
-  {s:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',opts:['herbívoros','descomponedores','depredadores'],c:1},
-  {s:'Un animal herbívoro es un consumidor ___.',opts:['primario','terciario','productor'],c:0},
+  {s:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',opts:['descomponedores','herbívoros','depredadores'],c:0},
+  {s:'Un animal herbívoro es un consumidor ___.',opts:['terciario','productor','primario'],c:2},
   {s:'Un grupo de individuos de la misma especie es una ___.',opts:['comunidad','población','red'],c:1},
-  {s:'En la cadena alimenticia, la energía viene del ___.',opts:['suelo','Sol','agua'],c:1},
+  {s:'En la cadena alimenticia, la energía viene del ___.',opts:['Sol','suelo','agua'],c:0},
   {s:'La relación donde ambas especies se benefician es el ___.',opts:['parasitismo','mutualismo','depredación'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
@@ -365,21 +365,21 @@ const evalTFBank=[
   {q:'La ecología es la ciencia que estudia los ecosistemas.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es un ecosistema?',o:['a) Solo los animales de un lugar','b) El conjunto de seres vivos, su medio y sus relaciones','c) Solo las plantas','d) Solo el agua y el suelo'],a:1},
+  {q:'¿Qué es un ecosistema?',o:['a) El conjunto de seres vivos, su medio y sus relaciones','b) Solo los animales de un lugar','c) Solo las plantas','d) Solo el agua y el suelo'],a:0},
   {q:'¿Cómo se llaman los componentes SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],a:1},
-  {q:'¿Qué seres vivos son los productores?',o:['a) Los animales','b) Los hongos','c) Las plantas','d) Las bacterias'],a:2},
-  {q:'Un animal herbívoro es un consumidor…',o:['a) primario','b) productor','c) descomponedor','d) terciario'],a:0},
-  {q:'¿Quiénes reciclan la materia muerta?',o:['a) Los productores','b) Los herbívoros','c) Los descomponedores','d) Los depredadores'],a:2},
-  {q:'En una cadena alimenticia, ¿de dónde viene la energía?',o:['a) Del suelo','b) Del Sol','c) Del agua','d) Del aire'],a:1},
-  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) comunidad','b) población','c) bioma','d) hábitat'],a:1},
-  {q:'La relación en la que AMBAS especies se benefician es el…',o:['a) parasitismo','b) mutualismo','c) depredación','d) competencia'],a:1},
-  {q:'¿Cuál de estos es un factor abiótico?',o:['a) Una planta','b) El agua','c) Un pez','d) Una bacteria'],a:1},
-  {q:'El arrecife de coral de las Islas de la Bahía es un ecosistema…',o:['a) terrestre','b) acuático','c) de desierto','d) de montaña'],a:1},
-  {q:'¿Cuál de estos animales es un consumidor carnívoro?',o:['a) El venado','b) El conejo','c) El puma','d) La vaca'],a:2},
-  {q:'El lugar donde vive un ser vivo se llama…',o:['a) nicho','b) hábitat','c) bioma','d) población'],a:1},
+  {q:'¿Qué seres vivos son los productores?',o:['a) Los animales','b) Las plantas','c) Los hongos','d) Las bacterias'],a:1},
+  {q:'Un animal herbívoro es un consumidor…',o:['a) productor','b) descomponedor','c) terciario','d) primario'],a:3},
+  {q:'¿Quiénes reciclan la materia muerta?',o:['a) Los productores','b) Los descomponedores','c) Los herbívoros','d) Los depredadores'],a:1},
+  {q:'En una cadena alimenticia, ¿de dónde viene la energía?',o:['a) Del suelo','b) Del agua','c) Del aire','d) Del Sol'],a:3},
+  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) población','b) comunidad','c) bioma','d) hábitat'],a:0},
+  {q:'La relación en la que AMBAS especies se benefician es el…',o:['a) parasitismo','b) depredación','c) mutualismo','d) competencia'],a:2},
+  {q:'¿Cuál de estos es un factor abiótico?',o:['a) Una planta','b) Un pez','c) El agua','d) Una bacteria'],a:2},
+  {q:'El arrecife de coral de las Islas de la Bahía es un ecosistema…',o:['a) acuático','b) terrestre','c) de desierto','d) de montaña'],a:0},
+  {q:'¿Cuál de estos animales es un consumidor carnívoro?',o:['a) El venado','b) El conejo','c) La vaca','d) El puma'],a:3},
+  {q:'El lugar donde vive un ser vivo se llama…',o:['a) hábitat','b) nicho','c) bioma','d) población'],a:0},
   {q:'¿Cuál es un ecosistema terrestre de Honduras?',o:['a) El arrecife','b) El bosque nublado','c) El manglar','d) El río Patuca'],a:1},
-  {q:'La ciencia que estudia los ecosistemas se llama…',o:['a) taxonomía','b) ecología','c) geología','d) astronomía'],a:1},
-  {q:'En una cadena, la energía de un nivel al siguiente…',o:['a) aumenta','b) disminuye','c) desaparece','d) se duplica'],a:1},
+  {q:'La ciencia que estudia los ecosistemas se llama…',o:['a) taxonomía','b) geología','c) ecología','d) astronomía'],a:2},
+  {q:'En una cadena, la energía de un nivel al siguiente…',o:['a) aumenta','b) desaparece','c) disminuye','d) se duplica'],a:2},
 ];
 const evalCPBank=[
   {q:'El conjunto de seres vivos, su medio físico y sus relaciones es un ___.',a:'ecosistema'},

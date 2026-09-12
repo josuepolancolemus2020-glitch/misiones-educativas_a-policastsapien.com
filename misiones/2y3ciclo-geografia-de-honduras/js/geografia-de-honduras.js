@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Centroamérica','c) Norteamérica','d) El Caribe insular'],c:1},
-  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],c:0},
-  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],c:2},
-  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Lago de Yojoa','d) El Golfo de Fonseca'],c:2},
+  {q:'¿En qué región de América está Honduras?',o:['a) Centroamérica','b) Sudamérica','c) Norteamérica','d) El Caribe insular'],c:0},
+  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Pico Bonito','b) El Cerro Azul','c) El Cerro Las Minas','d) La Montaña de la Flor'],c:2},
+  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Aguán','d) El Coco o Segovia'],c:3},
+  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Golfo de Fonseca','d) El Lago de Yojoa'],c:3},
   {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],c:1},
-  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Comayagua','c) Tegucigalpa','d) Choluteca'],c:2},
-  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],c:1},
-  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Patuca','c) El Choluteca','d) El Aguán'],c:2},
-  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Islas de la Bahía','c) Atlántida','d) Valle'],c:1},
+  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Tegucigalpa','c) Comayagua','d) Choluteca'],c:1},
+  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Mar Caribe','b) El Océano Pacífico','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],c:0},
+  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Choluteca','b) El Ulúa','c) El Patuca','d) El Aguán'],c:0},
+  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Atlántida','c) Islas de la Bahía','d) Valle'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,12 +144,12 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Honduras está en ___.',opts:['Sudamérica','Centroamérica','Norteamérica'],c:1},
+  {s:'Honduras está en ___.',opts:['Sudamérica','Norteamérica','Centroamérica'],c:2},
   {s:'El punto más alto es el Cerro ___.',opts:['Las Minas','Bonito','Azul'],c:0},
   {s:'El río más largo es el ___.',opts:['Ulúa','Coco o Segovia','Choluteca'],c:1},
-  {s:'El único lago natural es el Lago de ___.',opts:['Caratasca','Yojoa','Fonseca'],c:1},
+  {s:'El único lago natural es el Lago de ___.',opts:['Caratasca','Fonseca','Yojoa'],c:2},
   {s:'Honduras tiene ___ departamentos.',opts:['16','18','20'],c:1},
-  {s:'La capital de Honduras es ___.',opts:['San Pedro Sula','Tegucigalpa','Comayagua'],c:1},
+  {s:'La capital de Honduras es ___.',opts:['Tegucigalpa','San Pedro Sula','Comayagua'],c:0},
   {s:'Al norte, Honduras limita con el ___.',opts:['Mar Caribe','Océano Pacífico','Golfo de Fonseca'],c:0},
   {s:'El río Choluteca pertenece a la vertiente del ___.',opts:['Caribe','Pacífico','Atlántico'],c:1},
 ];
@@ -365,21 +365,21 @@ const evalTFBank=[
   {q:'Cerca de las tres cuartas partes de Honduras son montañas.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Centroamérica','c) Norteamérica','d) El Caribe insular'],a:1},
+  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Norteamérica','c) Centroamérica','d) El Caribe insular'],a:2},
   {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],a:0},
   {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],a:2},
-  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) La Laguna de Caratasca','b) El Cajón','c) El Lago de Yojoa','d) El Golfo de Fonseca'],a:2},
+  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) El Lago de Yojoa','b) La Laguna de Caratasca','c) El Cajón','d) El Golfo de Fonseca'],a:0},
   {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],a:1},
-  {q:'¿Cuál es la capital de Honduras?',o:['a) San Pedro Sula','b) Comayagua','c) Tegucigalpa','d) Choluteca'],a:2},
+  {q:'¿Cuál es la capital de Honduras?',o:['a) Tegucigalpa','b) San Pedro Sula','c) Comayagua','d) Choluteca'],a:0},
   {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],a:1},
-  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Patuca','c) El Choluteca','d) El Aguán'],a:2},
-  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Islas de la Bahía','c) Atlántida','d) Valle'],a:1},
-  {q:'¿Cuál es la laguna más grande del país?',o:['a) La de Yojoa','b) La de Caratasca','c) La de Fonseca','d) La de Alvarado'],a:1},
+  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Choluteca','c) El Patuca','d) El Aguán'],a:1},
+  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Atlántida','c) Valle','d) Islas de la Bahía'],a:3},
+  {q:'¿Cuál es la laguna más grande del país?',o:['a) La de Yojoa','b) La de Fonseca','c) La de Alvarado','d) La de Caratasca'],a:3},
   {q:'¿En qué departamento está el Cerro Las Minas?',o:['a) Lempira','b) Cortés','c) Olancho','d) Valle'],a:0},
   {q:'¿Cuántos municipios tiene Honduras?',o:['a) 100','b) 200','c) 298','d) 350'],a:2},
-  {q:'¿Qué río riega el fértil Valle de Sula?',o:['a) El Ulúa','b) El Choluteca','c) El Coco','d) El Nacaome'],a:0},
-  {q:'¿Cuál es la extensión aproximada de Honduras?',o:['a) 112,492 km²','b) 50,000 km²','c) 200,000 km²','d) 8,000 km²'],a:0},
-  {q:'¿Cómo se llama la región oriental de grandes bosques?',o:['a) La Mosquitia','b) El Merendón','c) El Valle de Sula','d) El Golfo de Fonseca'],a:0},
+  {q:'¿Qué río riega el fértil Valle de Sula?',o:['a) El Choluteca','b) El Coco','c) El Nacaome','d) El Ulúa'],a:3},
+  {q:'¿Cuál es la extensión aproximada de Honduras?',o:['a) 50,000 km²','b) 200,000 km²','c) 112,492 km²','d) 8,000 km²'],a:2},
+  {q:'¿Cómo se llama la región oriental de grandes bosques?',o:['a) El Merendón','b) La Mosquitia','c) El Valle de Sula','d) El Golfo de Fonseca'],a:1},
 ];
 const evalCPBank=[
   {q:'Honduras está en la región de ___.',a:'Centroamérica'},

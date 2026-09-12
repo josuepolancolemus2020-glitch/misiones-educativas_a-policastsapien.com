@@ -85,14 +85,14 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 // ===================== QUIZ DATA =====================
 const qzData=[
   {q:'¿Qué es la materia?',o:['a) Solo las cosas duras','b) Todo lo que tiene masa y ocupa un lugar','c) Solo el agua','d) Solo el aire'],c:1},
-  {q:'¿Qué es la masa?',o:['a) El espacio que ocupa un cuerpo','b) La cantidad de materia de un cuerpo','c) El color de un cuerpo','d) La temperatura'],c:1},
-  {q:'¿Qué estado tiene forma y volumen fijos?',o:['a) El líquido','b) El gaseoso','c) El sólido','d) Ninguno'],c:2},
+  {q:'¿Qué es la masa?',o:['a) La cantidad de materia de un cuerpo','b) El espacio que ocupa un cuerpo','c) El color de un cuerpo','d) La temperatura'],c:0},
+  {q:'¿Qué estado tiene forma y volumen fijos?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) Ninguno'],c:0},
   {q:'¿Qué estado toma la forma del recipiente?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) El átomo'],c:1},
-  {q:'¿Cómo se llama el paso de sólido a líquido?',o:['a) Evaporación','b) Condensación','c) Fusión','d) Solidificación'],c:2},
-  {q:'¿Cómo se llama el paso de líquido a gas?',o:['a) Fusión','b) Evaporación','c) Solidificación','d) Condensación'],c:1},
+  {q:'¿Cómo se llama el paso de sólido a líquido?',o:['a) Evaporación','b) Condensación','c) Solidificación','d) Fusión'],c:3},
+  {q:'¿Cómo se llama el paso de líquido a gas?',o:['a) Fusión','b) Solidificación','c) Condensación','d) Evaporación'],c:3},
   {q:'¿Cuál es la partícula más pequeña que forma la materia?',o:['a) La molécula','b) La mezcla','c) El átomo','d) El volumen'],c:2},
-  {q:'¿Qué es una mezcla?',o:['a) Un solo tipo de materia','b) La unión de dos o más sustancias','c) Un átomo','d) Un estado de la materia'],c:1},
-  {q:'¿Cuáles son las dos propiedades generales de la materia?',o:['a) El color y el olor','b) La masa y el volumen','c) La dureza y el sabor','d) El calor y el frío'],c:1},
+  {q:'¿Qué es una mezcla?',o:['a) La unión de dos o más sustancias','b) Un solo tipo de materia','c) Un átomo','d) Un estado de la materia'],c:0},
+  {q:'¿Cuáles son las dos propiedades generales de la materia?',o:['a) El color y el olor','b) La dureza y el sabor','c) La masa y el volumen','d) El calor y el frío'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,14 +144,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La ___ es la cantidad de materia de un cuerpo.',opts:['masa','forma','luz'],c:0},
-  {s:'El ___ es el lugar que ocupa un cuerpo.',opts:['color','volumen','peso'],c:1},
-  {s:'El estado ___ tiene forma y volumen fijos.',opts:['líquido','sólido','gaseoso'],c:1},
-  {s:'El estado ___ toma la forma del recipiente.',opts:['sólido','líquido','gaseoso'],c:1},
-  {s:'La ___ es el paso de sólido a líquido.',opts:['fusión','evaporación','condensación'],c:0},
+  {s:'La ___ es la cantidad de materia de un cuerpo.',opts:['forma','masa','luz'],c:1},
+  {s:'El ___ es el lugar que ocupa un cuerpo.',opts:['volumen','color','peso'],c:0},
+  {s:'El estado ___ tiene forma y volumen fijos.',opts:['líquido','gaseoso','sólido'],c:2},
+  {s:'El estado ___ toma la forma del recipiente.',opts:['líquido','sólido','gaseoso'],c:0},
+  {s:'La ___ es el paso de sólido a líquido.',opts:['evaporación','condensación','fusión'],c:2},
   {s:'La ___ es el paso de líquido a gas.',opts:['fusión','evaporación','solidificación'],c:1},
-  {s:'La partícula más pequeña de la materia es el ___.',opts:['átomo','volumen','estado'],c:0},
-  {s:'Una ___ junta dos o más sustancias.',opts:['sustancia pura','mezcla','molécula'],c:1},
+  {s:'La partícula más pequeña de la materia es el ___.',opts:['volumen','átomo','estado'],c:1},
+  {s:'Una ___ junta dos o más sustancias.',opts:['mezcla','sustancia pura','molécula'],c:0},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -365,21 +365,21 @@ const evalTFBank=[
   {q:'Al unirse varios átomos forman una molécula.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es la materia?',o:['a) Solo las cosas duras','b) Todo lo que tiene masa y ocupa un lugar','c) Solo el agua','d) Solo el aire'],a:1},
-  {q:'¿Qué es la masa?',o:['a) El lugar que ocupa un cuerpo','b) La cantidad de materia de un cuerpo','c) El color','d) La temperatura'],a:1},
-  {q:'¿Qué es el volumen?',o:['a) La cantidad de materia','b) El lugar que ocupa un cuerpo','c) El peso','d) La dureza'],a:1},
-  {q:'¿Qué estado tiene forma y volumen fijos?',o:['a) El líquido','b) El gaseoso','c) El sólido','d) Ninguno'],a:2},
-  {q:'¿Qué estado toma la forma del recipiente?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) El átomo'],a:1},
-  {q:'¿Qué estado no tiene forma ni volumen fijos?',o:['a) El sólido','b) El líquido','c) El gaseoso','d) Ninguno'],a:2},
+  {q:'¿Qué es la materia?',o:['a) Todo lo que tiene masa y ocupa un lugar','b) Solo las cosas duras','c) Solo el agua','d) Solo el aire'],a:0},
+  {q:'¿Qué es la masa?',o:['a) El lugar que ocupa un cuerpo','b) El color','c) La cantidad de materia de un cuerpo','d) La temperatura'],a:2},
+  {q:'¿Qué es el volumen?',o:['a) La cantidad de materia','b) El peso','c) El lugar que ocupa un cuerpo','d) La dureza'],a:2},
+  {q:'¿Qué estado tiene forma y volumen fijos?',o:['a) El líquido','b) El sólido','c) El gaseoso','d) Ninguno'],a:1},
+  {q:'¿Qué estado toma la forma del recipiente?',o:['a) El líquido','b) El sólido','c) El gaseoso','d) El átomo'],a:0},
+  {q:'¿Qué estado no tiene forma ni volumen fijos?',o:['a) El sólido','b) El gaseoso','c) El líquido','d) Ninguno'],a:1},
   {q:'¿Cómo se llama el paso de sólido a líquido?',o:['a) Evaporación','b) Condensación','c) Fusión','d) Solidificación'],a:2},
-  {q:'¿Cómo se llama el paso de líquido a gas?',o:['a) Fusión','b) Evaporación','c) Solidificación','d) Condensación'],a:1},
-  {q:'¿Cómo se llama el paso de líquido a sólido?',o:['a) Fusión','b) Evaporación','c) Solidificación','d) Condensación'],a:2},
-  {q:'¿Cuál es la partícula más pequeña de la materia?',o:['a) La molécula','b) La mezcla','c) El átomo','d) El volumen'],a:2},
+  {q:'¿Cómo se llama el paso de líquido a gas?',o:['a) Evaporación','b) Fusión','c) Solidificación','d) Condensación'],a:0},
+  {q:'¿Cómo se llama el paso de líquido a sólido?',o:['a) Fusión','b) Solidificación','c) Evaporación','d) Condensación'],a:1},
+  {q:'¿Cuál es la partícula más pequeña de la materia?',o:['a) La molécula','b) La mezcla','c) El volumen','d) El átomo'],a:3},
   {q:'¿Qué es una mezcla?',o:['a) Un solo tipo de materia','b) La unión de dos o más sustancias','c) Un átomo','d) Un estado'],a:1},
-  {q:'¿Cuál es un ejemplo de sustancia pura?',o:['a) Una ensalada','b) El agua con sal','c) El oro','d) El aire'],a:2},
-  {q:'¿Cuáles son las dos propiedades generales de la materia?',o:['a) El color y el olor','b) La masa y el volumen','c) La dureza y el sabor','d) El calor y el frío'],a:1},
-  {q:'¿Cuál es un ejemplo de estado líquido?',o:['a) El hielo','b) El agua','c) El aire','d) Una piedra'],a:1},
-  {q:'¿Qué se forma al unirse varios átomos?',o:['a) Una mezcla','b) Una molécula','c) Un estado','d) Un volumen'],a:1},
+  {q:'¿Cuál es un ejemplo de sustancia pura?',o:['a) El oro','b) Una ensalada','c) El agua con sal','d) El aire'],a:0},
+  {q:'¿Cuáles son las dos propiedades generales de la materia?',o:['a) El color y el olor','b) La dureza y el sabor','c) El calor y el frío','d) La masa y el volumen'],a:3},
+  {q:'¿Cuál es un ejemplo de estado líquido?',o:['a) El hielo','b) El aire','c) El agua','d) Una piedra'],a:2},
+  {q:'¿Qué se forma al unirse varios átomos?',o:['a) Una mezcla','b) Un estado','c) Un volumen','d) Una molécula'],a:3},
 ];
 const evalCPBank=[
   {q:'La ___ es la cantidad de materia de un cuerpo.',a:'masa'},

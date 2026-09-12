@@ -132,25 +132,25 @@ const LETRA = /^\s*[a-d]\)/;
 const conLetra = (fila) => fila.opts.length > 1 && fila.opts.every(o => LETRA.test(sinComillas(o.txt)));
 
 /* Una lista que va en orden dice algo por sí misma y no se toca: «1/2 = ___/4»
-   ofrece 1 · 2 · 4, que es como se leen.
+   ofrece 1 · 2 · 4, y «400,000 · 40,000 · 4,000» enseña la coma corriéndose.
 
-   ⚠️ Con DOS matices que costaron medirlos:
+   ⚠️ La coma es separador de MILES, no decimal. Leerla como decimal convertía
+   cuatrocientos mil en cuatrocientos, y con eso una lista se declaraba ordenada
+   —o no— por un motivo inventado.
 
-   · La coma es separador de MILES, no decimal («400,000»). Leerla como decimal
-     convertía cuatrocientos mil en cuatrocientos, y con eso una lista se
-     declaraba ordenada —o no— por un motivo inventado.
-   · Una lista que BAJA y tiene la correcta la PRIMERA no es un menú: es «escribí
-     la respuesta y detrás me inventé distractores más pequeños». Medido en el
-     catálogo entero: hay 63 listas que SUBEN —y en 58 la correcta no es la
-     primera, o sea que son menús de verdad— y solo 10 que bajan; de esas, las
-     4 que empiezan por la correcta son las cuatro el mismo caso
-     (347 · 34.7 · 3,470 · 0.0347 y parecidas: el error de correr la coma).
-     Esas sí se pueden mover; las otras seis, no. */
+   ⚠️ Y se probó afinar más: «si baja y empieza por la correcta, es que el autor
+   escribió la respuesta y detrás se inventó distractores más pequeños, así que
+   se puede mover». **Se descartó, medido.** De las diez listas que bajan en el
+   catálogo, una de las que empiezan por la correcta es
+   `400,000 · 40,000 · 4,000` —una escalera de valor posicional de las de
+   verdad—, así que la regla habría desordenado justo lo que venía a proteger. Y
+   peor: al depender de DÓNDE está la correcta, la regla dejaba de ser estable
+   —mover una fila cambiaba si la siguiente era «menú» o no— y la herramienta
+   perdía la idempotencia. Ordenada es ordenada, suba o baje. */
 function valor(s) {
   const txt = sinComillas(s).replace(LETRA, '').trim();
   const f = /^(-?\d+)\s*\/\s*(\d+)$/.exec(txt);
   if (f) return parseInt(f[1], 10) / parseInt(f[2], 10);
-  // 1,250 y 400,000 son enteros con separador de miles; 3.5 es un decimal.
   if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(txt)) return parseFloat(txt.replace(/,/g, ''));
   return /^-?\d+(\.\d+)?$/.test(txt) ? parseFloat(txt) : null;
 }
@@ -158,10 +158,7 @@ function valor(s) {
 function ordenada(fila) {
   const val = fila.opts.map(o => valor(o.txt));
   if (val.some(v => v === null) || val.length < 3) return false;
-  const sube = val.every((v, i) => !i || v > val[i - 1]);
-  const baja = val.every((v, i) => !i || v < val[i - 1]);
-  if (sube) return true;
-  return baja && fila.idx !== 0;      // si baja y empieza por la correcta, no es un menú
+  return val.every((v, i) => !i || v > val[i - 1]) || val.every((v, i) => !i || v < val[i - 1]);
 }
 
 /* ─── A qué letra va cada fila ─────────────────────────────────── */
@@ -296,8 +293,18 @@ for (const carpeta of carpetas) {
     console.log('  ⚠️  ' + carpeta + ': tiene edición en inglés; se reparte a mano y las dos a la vez');
     avisos++; continue;
   }
-  const archivo = path.join(dir, carpeta.replace(/^\d\w*ciclo-|^fin-de-grado-|^docente-/, '') + '.js');
-  const ruta = fs.existsSync(archivo) ? archivo : path.join(dir, js[0]);
+  /* ⚠️ El JS de la misión se busca por lo que TIENE DENTRO, no por su nombre.
+     Deducirlo de la carpeta acierta en la mayoría y falla justo donde duele:
+     `potencias-raices` tiene seis JS y el primero por orden alfabético es
+     `interaccion_cuadrados.js`; `bach-uni-adjetivos` se llama `app.js` y
+     `angulo-bisectriz`, `angulos.js`. El que manda es el que trae los bancos. */
+  const conBanco = js.map(f => path.join(dir, f))
+    .filter(p => /const\s+qzData\s*=\s*\[/.test(fs.readFileSync(p, 'utf8')));
+  if (conBanco.length !== 1) {
+    console.log('  ⚠️  ' + carpeta + ': ' + (conBanco.length ? conBanco.length + ' archivos traen qzData' : 'ningún archivo trae qzData') + '; se deja como está');
+    avisos++; continue;
+  }
+  const ruta = conBanco[0];
   let src = fs.readFileSync(ruta, 'utf8');
   const antes = src;
 
