@@ -228,14 +228,14 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-    { q: '¿Qué expresa un verbo?', o: ['a) Una característica del sujeto', 'b) El nombre de un objeto', 'c) Una acción, estado o proceso', 'd) La unión de dos oraciones'], c: 2 },
-    { q: '¿Cuáles son las terminaciones del infinitivo?', o: ['a) -ando, -iendo', 'b) -ar, -er, -ir', 'c) -ado, -ido', 'd) -o, -as, -a'], c: 1 },
-    { q: 'Si digo «Yo comeré pizza», ¿en qué tiempo está el verbo?', o: ['a) Pasado', 'b) Presente', 'c) Futuro', 'd) Infinitivo'], c: 2 },
-    { q: '¿Cuál es la raíz del verbo «correr»?', o: ['a) cor-', 'b) corr-', 'c) -er', 'd) corre-'], c: 1 },
-    { q: '¿Qué verbo está en plural?', o: ['a) saltó', 'b) dormimos', 'c) ríes', 'd) pinto'], c: 1 },
-    { q: '«Ojalá ganemos el partido». ¿En qué modo está el verbo?', o: ['a) Indicativo', 'b) Imperativo', 'c) Subjuntivo', 'd) Infinitivo'], c: 2 },
+    { q: '¿Qué expresa un verbo?', o: ['a) Una característica del sujeto', 'b) Una acción, estado o proceso', 'c) El nombre de un objeto', 'd) La unión de dos oraciones'], c: 1 },
+    { q: '¿Cuáles son las terminaciones del infinitivo?', o: ['a) -ando, -iendo', 'b) -ado, -ido', 'c) -o, -as, -a', 'd) -ar, -er, -ir'], c: 3 },
+    { q: 'Si digo «Yo comeré pizza», ¿en qué tiempo está el verbo?', o: ['a) Futuro', 'b) Pasado', 'c) Presente', 'd) Infinitivo'], c: 0 },
+    { q: '¿Cuál es la raíz del verbo «correr»?', o: ['a) corr-', 'b) cor-', 'c) -er', 'd) corre-'], c: 0 },
+    { q: '¿Qué verbo está en plural?', o: ['a) saltó', 'b) ríes', 'c) dormimos', 'd) pinto'], c: 2 },
+    { q: '«Ojalá ganemos el partido». ¿En qué modo está el verbo?', o: ['a) Subjuntivo', 'b) Indicativo', 'c) Imperativo', 'd) Infinitivo'], c: 0 },
     { q: '¿Cuál de estos es un verbo copulativo?', o: ['a) saltar', 'b) escribir', 'c) parecer', 'd) pensar'], c: 2 },
-    { q: 'Un verbo es regular cuando...', o: ['a) Siempre termina en -ar', 'b) Mantiene su raíz al conjugarlo', 'c) Cambia su raíz al conjugarlo', 'd) Solo tiene tiempo presente'], c: 1 },
+    { q: 'Un verbo es regular cuando...', o: ['a) Siempre termina en -ar', 'b) Cambia su raíz al conjugarlo', 'c) Solo tiene tiempo presente', 'd) Mantiene su raíz al conjugarlo'], c: 3 },
     { q: '¿En qué persona está el verbo en la oración «Tú estudias mucho»?', o: ['a) Primera persona', 'b) Segunda persona', 'c) Tercera persona', 'd) No tiene persona'], c: 1 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
@@ -415,14 +415,14 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'El año pasado, yo ___ a la montaña con mi familia.', opts: ['viajé', 'viajo', 'viajaré'], c: 0 },
+    { s: 'El año pasado, yo ___ a la montaña con mi familia.', opts: ['viajo', 'viajaré', 'viajé'], c: 2 },
     { s: 'En este momento, mi hermano ___ un libro de aventuras.', opts: ['leyó', 'lee', 'leerá'], c: 1 },
-    { s: 'Mañana nosotros ___ una película muy divertida.', opts: ['vimos', 'vemos', 'veremos'], c: 2 },
-    { s: '¡Por favor, ___ tu habitación ahora mismo!', opts: ['ordenas', 'ordena', 'ordenaste'], c: 1 },
+    { s: 'Mañana nosotros ___ una película muy divertida.', opts: ['veremos', 'vimos', 'vemos'], c: 0 },
+    { s: '¡Por favor, ___ tu habitación ahora mismo!', opts: ['ordenas', 'ordenaste', 'ordena'], c: 2 },
     { s: 'Ojalá que mañana no ___ durante nuestra excursión.', opts: ['llueva', 'llueve', 'llovió'], c: 0 },
     { s: 'Los pájaros ___ alegremente cada mañana en el jardín.', opts: ['canto', 'cantan', 'cantamos'], c: 1 },
-    { s: 'El verbo «ser» es un verbo ___ porque no expresa acción.', opts: ['regular', 'copulativo', 'infinitivo'], c: 1 },
-    { s: 'La terminación de la segunda conjugación en infinitivo es ___.', opts: ['-ar', '-ir', '-er'], c: 2 },
+    { s: 'El verbo «ser» es un verbo ___ porque no expresa acción.', opts: ['copulativo', 'regular', 'infinitivo'], c: 0 },
+    { s: 'La terminación de la segunda conjugación en infinitivo es ___.', opts: ['-ar', '-er', '-ir'], c: 1 },
 ];
 let cmpIdx = 0, cmpSel = -1, cmpDone = false;
 function showCmp() {var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -907,18 +907,18 @@ const evalMCBank = [
     { q: '¿Cuál de las siguientes palabras es un verbo?', o: ['a) Feliz', 'b) Saltar', 'c) Casa', 'd) Rápido'], a: 1 },
     { q: 'El verbo principal de «El gato duerme en el sofá» es:', o: ['a) El', 'b) gato', 'c) duerme', 'd) sofá'], a: 2 },
     { q: '¿A qué conjugación pertenece el verbo «vivir»?', o: ['a) Primera', 'b) Segunda', 'c) Tercera', 'd) Cuarta'], a: 2 },
-    { q: '¿En qué tiempo está «Yo cantaré en el teatro»?', o: ['a) Presente', 'b) Pasado', 'c) Futuro', 'd) Infinitivo'], a: 2 },
-    { q: '¿Qué modo verbal expresa una duda o deseo?', o: ['a) Indicativo', 'b) Imperativo', 'c) Subjuntivo', 'd) Copulativo'], a: 2 },
-    { q: '¿Cuál de estos verbos es copulativo?', o: ['a) Correr', 'b) Parecer', 'c) Escribir', 'd) Comer'], a: 1 },
-    { q: 'Un verbo que cambia su raíz al ser conjugado es:', o: ['a) Regular', 'b) Irregular', 'c) Infinitivo', 'd) Auxiliar'], a: 1 },
+    { q: '¿En qué tiempo está «Yo cantaré en el teatro»?', o: ['a) Presente', 'b) Futuro', 'c) Pasado', 'd) Infinitivo'], a: 1 },
+    { q: '¿Qué modo verbal expresa una duda o deseo?', o: ['a) Indicativo', 'b) Imperativo', 'c) Copulativo', 'd) Subjuntivo'], a: 3 },
+    { q: '¿Cuál de estos verbos es copulativo?', o: ['a) Correr', 'b) Escribir', 'c) Parecer', 'd) Comer'], a: 2 },
+    { q: 'Un verbo que cambia su raíz al ser conjugado es:', o: ['a) Regular', 'b) Infinitivo', 'c) Auxiliar', 'd) Irregular'], a: 3 },
     { q: '¿En qué persona está «Nosotros jugamos»?', o: ['a) Primera', 'b) Segunda', 'c) Tercera', 'd) Ninguna'], a: 0 },
     { q: '¿Cuál es la raíz del verbo «cantar»?', o: ['a) can-', 'b) cant-', 'c) -ar', 'd) canta-'], a: 1 },
-    { q: '¿En qué modo está «¡Estudia para el examen!»?', o: ['a) Indicativo', 'b) Subjuntivo', 'c) Imperativo', 'd) Infinitivo'], a: 2 },
-    { q: '¿Cuál es el infinitivo de «comió»?', o: ['a) Comer', 'b) Comido', 'c) Comiendo', 'd) Comida'], a: 0 },
-    { q: 'El número de un verbo indica si el sujeto es:', o: ['a) Pasado o presente', 'b) Regular o irregular', 'c) Singular o plural', 'd) Acción o estado'], a: 2 },
-    { q: 'El pronombre para la tercera persona del plural es:', o: ['a) Yo', 'b) Tú', 'c) Él', 'd) Ellos'], a: 3 },
-    { q: '¿Cuál de estos verbos es regular?', o: ['a) Ir (fui)', 'b) Ser (soy)', 'c) Amar (amo, amé)', 'd) Tener (tuve)'], a: 2 },
-    { q: 'Si una acción sucede hoy, el verbo está en:', o: ['a) Pasado', 'b) Presente', 'c) Futuro', 'd) Imperativo'], a: 1 },
+    { q: '¿En qué modo está «¡Estudia para el examen!»?', o: ['a) Imperativo', 'b) Indicativo', 'c) Subjuntivo', 'd) Infinitivo'], a: 0 },
+    { q: '¿Cuál es el infinitivo de «comió»?', o: ['a) Comido', 'b) Comiendo', 'c) Comida', 'd) Comer'], a: 3 },
+    { q: 'El número de un verbo indica si el sujeto es:', o: ['a) Pasado o presente', 'b) Singular o plural', 'c) Regular o irregular', 'd) Acción o estado'], a: 1 },
+    { q: 'El pronombre para la tercera persona del plural es:', o: ['a) Ellos', 'b) Yo', 'c) Tú', 'd) Él'], a: 0 },
+    { q: '¿Cuál de estos verbos es regular?', o: ['a) Amar (amo, amé)', 'b) Ir (fui)', 'c) Ser (soy)', 'd) Tener (tuve)'], a: 0 },
+    { q: 'Si una acción sucede hoy, el verbo está en:', o: ['a) Pasado', 'b) Futuro', 'c) Presente', 'd) Imperativo'], a: 2 },
 ];
 const evalCPBank = [
     { q: 'Los verbos terminados en -ar pertenecen a la ___ conjugación.', a: 'primera' },

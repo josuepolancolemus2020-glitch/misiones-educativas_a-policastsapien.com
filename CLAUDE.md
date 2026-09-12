@@ -3800,7 +3800,9 @@ que cambian de idioma en caliente reasignan el banco—. Pedir `const` dejaba
 fuera a `ingles-saludos` **en silencio**, que era justo una de las peores. Se
 acepta `const`, `let` y `var`, y lo mismo al buscar el archivo.
 
-**Lo que queda:** 25 misiones (eran 53 el 12 de septiembre de 2026). Se van
+**Lo que queda:** 15 misiones (eran 53 el 12 de septiembre de 2026), y **cuatro
+de ellas son las de Robótica con traducción de autor** —`robots-problemas` con
+el 89 %, `robot-decide`, `sensores-robot` y `que-es-un-robot`—, que van a mano. Se van
 haciendo por tandas, mirando el diff —cada fila movida es una línea que alguien
 tiene que leer— y corriendo después la sonda de la misión.
 

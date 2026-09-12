@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué mensajero químico usa el sistema endocrino para comunicarse?',o:['a) El impulso eléctrico','b) La hormona','c) El neurotransmisor','d) La enzima'],c:1},
-  {q:'¿Cuál es la "glándula maestra" que dirige a las demás glándulas?',o:['a) La tiroides','b) El páncreas','c) La hipófisis','d) La glándula pineal'],c:2},
+  {q:'¿Qué mensajero químico usa el sistema endocrino para comunicarse?',o:['a) La hormona','b) El impulso eléctrico','c) El neurotransmisor','d) La enzima'],c:0},
+  {q:'¿Cuál es la "glándula maestra" que dirige a las demás glándulas?',o:['a) La tiroides','b) La hipófisis','c) El páncreas','d) La glándula pineal'],c:1},
   {q:'¿Qué hormona baja el nivel de azúcar (glucosa) en la sangre?',o:['a) Glucagón','b) Adrenalina','c) Insulina','d) Cortisol'],c:2},
-  {q:'¿Qué glándula regula el metabolismo mediante la tiroxina?',o:['a) Tiroides','b) Suprarrenal','c) Timo','d) Hipófisis'],c:0},
-  {q:'¿Por dónde viajan las hormonas hasta las células blanco?',o:['a) Por los nervios','b) Por la sangre','c) Por la linfa','d) Por la médula'],c:1},
-  {q:'¿Qué estructura une el sistema nervioso con el sistema endocrino?',o:['a) El cerebelo','b) La médula espinal','c) El hipotálamo','d) El timo'],c:2},
-  {q:'¿Qué hormona prepara el cuerpo ante el peligro ("lucha o huye")?',o:['a) Melatonina','b) Insulina','c) Tiroxina','d) Adrenalina'],c:3},
-  {q:'¿Cómo se llama el equilibrio interno que mantiene el sistema endocrino?',o:['a) Metabolismo','b) Homeostasis','c) Sinapsis','d) Digestión'],c:1},
-  {q:'¿Qué enfermedad se produce por falta o mal uso de la insulina?',o:['a) Bocio','b) Gigantismo','c) Diabetes','d) Cushing'],c:2},
+  {q:'¿Qué glándula regula el metabolismo mediante la tiroxina?',o:['a) Suprarrenal','b) Timo','c) Hipófisis','d) Tiroides'],c:3},
+  {q:'¿Por dónde viajan las hormonas hasta las células blanco?',o:['a) Por los nervios','b) Por la linfa','c) Por la sangre','d) Por la médula'],c:2},
+  {q:'¿Qué estructura une el sistema nervioso con el sistema endocrino?',o:['a) El cerebelo','b) El hipotálamo','c) La médula espinal','d) El timo'],c:1},
+  {q:'¿Qué hormona prepara el cuerpo ante el peligro ("lucha o huye")?',o:['a) Adrenalina','b) Melatonina','c) Insulina','d) Tiroxina'],c:0},
+  {q:'¿Cómo se llama el equilibrio interno que mantiene el sistema endocrino?',o:['a) Homeostasis','b) Metabolismo','c) Sinapsis','d) Digestión'],c:0},
+  {q:'¿Qué enfermedad se produce por falta o mal uso de la insulina?',o:['a) Bocio','b) Gigantismo','c) Cushing','d) Diabetes'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,14 +144,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La ___ es la hormona que baja el azúcar en la sangre.',opts:['insulina','glucagón','tiroxina'],c:0},
-  {s:'La ___ es la glándula maestra del sistema endocrino.',opts:['tiroides','hipófisis','pineal'],c:1},
-  {s:'La glándula ___ regula el metabolismo con la tiroxina.',opts:['suprarrenal','pineal','tiroides'],c:2},
+  {s:'La ___ es la hormona que baja el azúcar en la sangre.',opts:['glucagón','tiroxina','insulina'],c:2},
+  {s:'La ___ es la glándula maestra del sistema endocrino.',opts:['tiroides','pineal','hipófisis'],c:2},
+  {s:'La glándula ___ regula el metabolismo con la tiroxina.',opts:['tiroides','suprarrenal','pineal'],c:0},
   {s:'Las hormonas viajan por el cuerpo a través de la ___.',opts:['linfa','sangre','saliva'],c:1},
-  {s:'La ___ prepara el cuerpo ante el peligro (lucha o huye).',opts:['melatonina','insulina','adrenalina'],c:2},
+  {s:'La ___ prepara el cuerpo ante el peligro (lucha o huye).',opts:['adrenalina','melatonina','insulina'],c:0},
   {s:'La enfermedad por falta o mal uso de la insulina es la ___.',opts:['bocio','diabetes','gigantismo'],c:1},
-  {s:'La hormona ___ regula el ciclo de sueño y vigilia.',opts:['cortisol','melatonina','glucagón'],c:1},
-  {s:'El equilibrio interno del cuerpo se llama ___.',opts:['homeostasis','metabolismo','sinapsis'],c:0},
+  {s:'La hormona ___ regula el ciclo de sueño y vigilia.',opts:['melatonina','cortisol','glucagón'],c:0},
+  {s:'El equilibrio interno del cuerpo se llama ___.',opts:['metabolismo','homeostasis','sinapsis'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -368,21 +368,21 @@ const evalTFBank=[
   {q:'El cortisol es la hormona que regula el ciclo del sueño.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Qué mensajero químico usa el sistema endocrino?',o:['a) Impulso eléctrico','b) Neurotransmisor','c) Hormona','d) Enzima'],a:2},
-  {q:'¿Cuál es la glándula maestra?',o:['a) Tiroides','b) Hipófisis','c) Páncreas','d) Pineal'],a:1},
-  {q:'¿Qué hormona baja el azúcar en la sangre?',o:['a) Glucagón','b) Adrenalina','c) Insulina','d) Cortisol'],a:2},
-  {q:'¿Qué glándula regula el metabolismo con la tiroxina?',o:['a) Suprarrenal','b) Tiroides','c) Timo','d) Hipófisis'],a:1},
+  {q:'¿Qué mensajero químico usa el sistema endocrino?',o:['a) Impulso eléctrico','b) Hormona','c) Neurotransmisor','d) Enzima'],a:1},
+  {q:'¿Cuál es la glándula maestra?',o:['a) Tiroides','b) Páncreas','c) Pineal','d) Hipófisis'],a:3},
+  {q:'¿Qué hormona baja el azúcar en la sangre?',o:['a) Insulina','b) Glucagón','c) Adrenalina','d) Cortisol'],a:0},
+  {q:'¿Qué glándula regula el metabolismo con la tiroxina?',o:['a) Suprarrenal','b) Timo','c) Tiroides','d) Hipófisis'],a:2},
   {q:'¿Por dónde viajan las hormonas?',o:['a) Nervios','b) Linfa','c) Sangre','d) Médula'],a:2},
   {q:'¿Qué estructura une el sistema nervioso y el endocrino?',o:['a) Cerebelo','b) Hipotálamo','c) Timo','d) Médula'],a:1},
-  {q:'¿Qué hormona prepara el cuerpo ante el peligro?',o:['a) Melatonina','b) Insulina','c) Tiroxina','d) Adrenalina'],a:3},
+  {q:'¿Qué hormona prepara el cuerpo ante el peligro?',o:['a) Melatonina','b) Insulina','c) Adrenalina','d) Tiroxina'],a:2},
   {q:'¿Cómo se llama el equilibrio interno del cuerpo?',o:['a) Metabolismo','b) Homeostasis','c) Sinapsis','d) Digestión'],a:1},
   {q:'¿Qué enfermedad causa la falta o mal uso de la insulina?',o:['a) Bocio','b) Gigantismo','c) Diabetes','d) Cushing'],a:2},
   {q:'¿Qué hormona sube el azúcar en la sangre durante el ayuno?',o:['a) Insulina','b) Glucagón','c) Melatonina','d) Tiroxina'],a:1},
-  {q:'¿Qué glándula produce melatonina?',o:['a) Pineal','b) Tiroides','c) Suprarrenal','d) Hipófisis'],a:0},
-  {q:'¿Qué diferencia al sistema endocrino del nervioso?',o:['a) Es más rápido','b) Usa impulsos eléctricos','c) Es lento y duradero','d) No usa la sangre'],a:2},
-  {q:'¿Qué glándulas producen adrenalina y cortisol?',o:['a) Tiroides','b) Suprarrenales','c) Pineal','d) Paratiroides'],a:1},
-  {q:'¿Qué mineral necesita la tiroides para producir tiroxina?',o:['a) Hierro','b) Calcio','c) Yodo','d) Sodio'],a:2},
-  {q:'¿Cómo libera sus hormonas una glándula endocrina?',o:['a) Por conductos','b) Directo a la sangre','c) Por la saliva','d) Por el sudor'],a:1},
+  {q:'¿Qué glándula produce melatonina?',o:['a) Tiroides','b) Suprarrenal','c) Hipófisis','d) Pineal'],a:3},
+  {q:'¿Qué diferencia al sistema endocrino del nervioso?',o:['a) Es lento y duradero','b) Es más rápido','c) Usa impulsos eléctricos','d) No usa la sangre'],a:0},
+  {q:'¿Qué glándulas producen adrenalina y cortisol?',o:['a) Suprarrenales','b) Tiroides','c) Pineal','d) Paratiroides'],a:0},
+  {q:'¿Qué mineral necesita la tiroides para producir tiroxina?',o:['a) Hierro','b) Calcio','c) Sodio','d) Yodo'],a:3},
+  {q:'¿Cómo libera sus hormonas una glándula endocrina?',o:['a) Directo a la sangre','b) Por conductos','c) Por la saliva','d) Por el sudor'],a:0},
 ];
 const evalCPBank=[
   {q:'La ___ es la hormona que baja el azúcar en la sangre.',a:'insulina'},

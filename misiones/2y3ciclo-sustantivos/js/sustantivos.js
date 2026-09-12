@@ -228,14 +228,14 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 // ===================== QUIZ DATA =====================
 const qzData = [
     { q: '¿Qué es un sustantivo?', o: ['a) Una palabra que indica acción', 'b) Una palabra que nombra seres, cosas o ideas', 'c) Una palabra que describe cualidades', 'd) Una palabra que une oraciones'], c: 1 },
-    { q: '¿Cuál de estos es un sustantivo propio?', o: ['a) perro', 'b) ciudad', 'c) Honduras', 'd) alegría'], c: 2 },
-    { q: '¿Qué tipo de sustantivo es «amor»?', o: ['a) Concreto', 'b) Colectivo', 'c) Propio', 'd) Abstracto'], c: 3 },
-    { q: '¿Cuál es un sustantivo colectivo?', o: ['a) soldado', 'b) ejército', 'c) casa', 'd) libertad'], c: 1 },
+    { q: '¿Cuál de estos es un sustantivo propio?', o: ['a) Honduras', 'b) perro', 'c) ciudad', 'd) alegría'], c: 0 },
+    { q: '¿Qué tipo de sustantivo es «amor»?', o: ['a) Abstracto', 'b) Concreto', 'c) Colectivo', 'd) Propio'], c: 0 },
+    { q: '¿Cuál es un sustantivo colectivo?', o: ['a) soldado', 'b) casa', 'c) libertad', 'd) ejército'], c: 3 },
     { q: '¿Qué sustantivo es incontable?', o: ['a) libro', 'b) gato', 'c) agua', 'd) mesa'], c: 2 },
-    { q: 'Si «pan» es un sustantivo primitivo, ¿cuál es su derivado?', o: ['a) pantalón', 'b) panadería', 'c) pandilla', 'd) panorama'], c: 1 },
-    { q: '¿Cómo se forma el plural de «lápiz»?', o: ['a) lápizs', 'b) lápizes', 'c) lápices', 'd) lápizces'], c: 2 },
-    { q: '¿Qué tipo de sustantivo es «bosque»?', o: ['a) Individual', 'b) Abstracto', 'c) Propio', 'd) Colectivo'], c: 3 },
-    { q: '¿Cuál de estos sustantivos es concreto?', o: ['a) valentía', 'b) tristeza', 'c) chocolate', 'd) esperanza'], c: 2 },
+    { q: 'Si «pan» es un sustantivo primitivo, ¿cuál es su derivado?', o: ['a) pantalón', 'b) pandilla', 'c) panadería', 'd) panorama'], c: 2 },
+    { q: '¿Cómo se forma el plural de «lápiz»?', o: ['a) lápices', 'b) lápizs', 'c) lápizes', 'd) lápizces'], c: 0 },
+    { q: '¿Qué tipo de sustantivo es «bosque»?', o: ['a) Individual', 'b) Colectivo', 'c) Abstracto', 'd) Propio'], c: 1 },
+    { q: '¿Cuál de estos sustantivos es concreto?', o: ['a) valentía', 'b) tristeza', 'c) esperanza', 'd) chocolate'], c: 3 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
 function buildQz() { qzIdx = 0; qzSel = -1; qzDone = false; showQz(); }
@@ -414,14 +414,14 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'Un sustantivo ___ nombra a un ser o lugar específico y se escribe con mayúscula.', opts: ['común', 'colectivo', 'propio', 'abstracto'], c: 2, exp: 'Los sustantivos propios siempre se escriben con mayúscula inicial.' },
-    { s: '«Bosque» es un sustantivo ___ porque nombra un conjunto de árboles.', opts: ['individual', 'colectivo', 'propio', 'contable'], c: 1, exp: 'Los sustantivos colectivos nombran un grupo de seres en singular.' },
-    { s: 'La palabra «amor» es un sustantivo ___ porque no se percibe con los sentidos.', opts: ['concreto', 'colectivo', 'propio', 'abstracto'], c: 3, exp: 'Los sustantivos abstractos nombran sentimientos, ideas o cualidades.' },
-    { s: '«Panadería» es un sustantivo ___ porque viene de la palabra «pan».', opts: ['primitivo', 'propio', 'derivado', 'abstracto'], c: 2, exp: 'Los sustantivos derivados se forman a partir de un primitivo con sufijos.' },
-    { s: 'El plural de «lápiz» es ___.', opts: ['lápizs', 'lápizes', 'lápices', 'lápizces'], c: 2, exp: 'Cuando un sustantivo termina en -z, se cambia la z por c y se agrega -es.' },
+    { s: 'Un sustantivo ___ nombra a un ser o lugar específico y se escribe con mayúscula.', opts: ['común', 'propio', 'colectivo', 'abstracto'], c: 1, exp: 'Los sustantivos propios siempre se escriben con mayúscula inicial.' },
+    { s: '«Bosque» es un sustantivo ___ porque nombra un conjunto de árboles.', opts: ['individual', 'propio', 'contable', 'colectivo'], c: 3, exp: 'Los sustantivos colectivos nombran un grupo de seres en singular.' },
+    { s: 'La palabra «amor» es un sustantivo ___ porque no se percibe con los sentidos.', opts: ['abstracto', 'concreto', 'colectivo', 'propio'], c: 0, exp: 'Los sustantivos abstractos nombran sentimientos, ideas o cualidades.' },
+    { s: '«Panadería» es un sustantivo ___ porque viene de la palabra «pan».', opts: ['primitivo', 'derivado', 'propio', 'abstracto'], c: 1, exp: 'Los sustantivos derivados se forman a partir de un primitivo con sufijos.' },
+    { s: 'El plural de «lápiz» es ___.', opts: ['lápizs', 'lápizes', 'lápizces', 'lápices'], c: 3, exp: 'Cuando un sustantivo termina en -z, se cambia la z por c y se agrega -es.' },
     { s: '«Agua» es un sustantivo ___ porque no se puede contar, solo medir.', opts: ['contable', 'individual', 'incontable', 'primitivo'], c: 2, exp: 'Los sustantivos incontables se miden pero no se pueden contar con números.' },
-    { s: 'Los sustantivos ___ se pueden percibir con los cinco sentidos.', opts: ['abstractos', 'colectivos', 'propios', 'concretos'], c: 3, exp: 'Los sustantivos concretos se perciben con los sentidos: ver, oír, tocar, oler, saborear.' },
-    { s: '«Casita» es un sustantivo en forma ___.', opts: ['aumentativa', 'despectiva', 'primitiva', 'diminutiva'], c: 3, exp: 'Los diminutivos achican o dan cariño: casita, perrito, florecita.' },
+    { s: 'Los sustantivos ___ se pueden percibir con los cinco sentidos.', opts: ['concretos', 'abstractos', 'colectivos', 'propios'], c: 0, exp: 'Los sustantivos concretos se perciben con los sentidos: ver, oír, tocar, oler, saborear.' },
+    { s: '«Casita» es un sustantivo en forma ___.', opts: ['aumentativa', 'despectiva', 'diminutiva', 'primitiva'], c: 2, exp: 'Los diminutivos achican o dan cariño: casita, perrito, florecita.' },
 ];
 let cmpIdx = 0, cmpSel = -1, cmpDone = false;
 function showCmp() {var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -904,21 +904,21 @@ const evalTFBank = [
     { q: 'Los sustantivos colectivos siempre se escriben en plural.', a: false },
 ];
 const evalMCBank = [
-    { q: '¿Qué es un sustantivo?', o: ['a) Palabra que indica acción', 'b) Palabra que nombra seres y cosas', 'c) Palabra que describe cualidades', 'd) Palabra que une oraciones'], a: 1 },
-    { q: '¿Cuál es un sustantivo propio?', o: ['a) perro', 'b) ciudad', 'c) Tegucigalpa', 'd) libertad'], a: 2 },
-    { q: '¿Qué tipo de sustantivo es «amor»?', o: ['a) Concreto', 'b) Colectivo', 'c) Propio', 'd) Abstracto'], a: 3 },
-    { q: '¿Cuál es un sustantivo colectivo?', o: ['a) soldado', 'b) enjambre', 'c) mesa', 'd) alegría'], a: 1 },
-    { q: '¿Cómo se forma el plural de «reloj»?', o: ['a) relojs', 'b) relojces', 'c) relojes', 'd) reloje'], a: 2 },
-    { q: '¿Qué sustantivo es incontable?', o: ['a) libro', 'b) gato', 'c) arena', 'd) estrella'], a: 2 },
-    { q: '¿Cuál es un sustantivo derivado de «flor»?', o: ['a) florida', 'b) florero', 'c) florido', 'd) floral'], a: 1 },
+    { q: '¿Qué es un sustantivo?', o: ['a) Palabra que nombra seres y cosas', 'b) Palabra que indica acción', 'c) Palabra que describe cualidades', 'd) Palabra que une oraciones'], a: 0 },
+    { q: '¿Cuál es un sustantivo propio?', o: ['a) Tegucigalpa', 'b) perro', 'c) ciudad', 'd) libertad'], a: 0 },
+    { q: '¿Qué tipo de sustantivo es «amor»?', o: ['a) Concreto', 'b) Abstracto', 'c) Colectivo', 'd) Propio'], a: 1 },
+    { q: '¿Cuál es un sustantivo colectivo?', o: ['a) soldado', 'b) mesa', 'c) enjambre', 'd) alegría'], a: 2 },
+    { q: '¿Cómo se forma el plural de «reloj»?', o: ['a) relojs', 'b) relojes', 'c) relojces', 'd) reloje'], a: 1 },
+    { q: '¿Qué sustantivo es incontable?', o: ['a) arena', 'b) libro', 'c) gato', 'd) estrella'], a: 0 },
+    { q: '¿Cuál es un sustantivo derivado de «flor»?', o: ['a) florida', 'b) florido', 'c) florero', 'd) floral'], a: 2 },
     { q: '¿Qué tipo de sustantivo es «chocolate»?', o: ['a) Abstracto', 'b) Colectivo', 'c) Concreto', 'd) Propio'], a: 2 },
-    { q: '¿Cuál es un sustantivo individual?', o: ['a) bosque', 'b) ejército', 'c) manada', 'd) árbol'], a: 3 },
+    { q: '¿Cuál es un sustantivo individual?', o: ['a) bosque', 'b) árbol', 'c) ejército', 'd) manada'], a: 1 },
     { q: '¿Qué forma tiene «perrazo»?', o: ['a) Diminutiva', 'b) Despectiva', 'c) Aumentativa', 'd) Primitiva'], a: 2 },
-    { q: 'Los sustantivos que terminan en -z forman el plural cambiando -z por:', o: ['a) -zs', 'b) -zes', 'c) -ces', 'd) -zces'], a: 2 },
-    { q: '¿Cuál de estos es un sustantivo abstracto?', o: ['a) mesa', 'b) río', 'c) justicia', 'd) guitarra'], a: 2 },
-    { q: '¿Qué artículo acompaña a los sustantivos femeninos?', o: ['a) el', 'b) los', 'c) un', 'd) la'], a: 3 },
+    { q: 'Los sustantivos que terminan en -z forman el plural cambiando -z por:', o: ['a) -zs', 'b) -zes', 'c) -zces', 'd) -ces'], a: 3 },
+    { q: '¿Cuál de estos es un sustantivo abstracto?', o: ['a) mesa', 'b) río', 'c) guitarra', 'd) justicia'], a: 3 },
+    { q: '¿Qué artículo acompaña a los sustantivos femeninos?', o: ['a) el', 'b) la', 'c) los', 'd) un'], a: 1 },
     { q: '¿Cuál es un sustantivo primitivo?', o: ['a) panadería', 'b) florero', 'c) zapatero', 'd) pan'], a: 3 },
-    { q: '«Rebaño» es un sustantivo colectivo de:', o: ['a) árboles', 'b) soldados', 'c) ovejas', 'd) abejas'], a: 2 },
+    { q: '«Rebaño» es un sustantivo colectivo de:', o: ['a) ovejas', 'b) árboles', 'c) soldados', 'd) abejas'], a: 0 },
 ];
 const evalCPBank = [
     { q: 'Los sustantivos ___ se escriben siempre con mayúscula inicial.', a: 'propios' },

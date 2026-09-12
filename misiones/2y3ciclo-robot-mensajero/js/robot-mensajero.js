@@ -208,15 +208,15 @@ function resetMemo(){sfx('click');buildMemo();}
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es una secuencia en programación?',o:['a) Un dibujo del robot','b) Una lista de instrucciones en orden','c) Una casilla del mapa','d) Un número de la suerte'],c:1},
-  {q:'¿Qué hace la instrucción AVANZA?',o:['a) Gira al robot 90°','b) Deja el mensaje','c) Mueve al robot una casilla hacia donde mira','d) Apaga al robot'],c:2},
-  {q:'¿Qué cambia la instrucción GIRA DERECHA?',o:['a) La posición del robot','b) La orientación del robot','c) El tamaño del mapa','d) El color del robot'],c:1},
-  {q:'El robot mira al Norte y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Sur','b) Oeste','c) Norte','d) Este'],c:3},
-  {q:'¿Cuál de estas es una instrucción EXACTA?',o:['a) «Camina un poquito»','b) «Ve por allá»','c) «AVANZA»','d) «Haz algo útil»'],c:2},
-  {q:'¿Qué es un algoritmo?',o:['a) Pasos ordenados para lograr una tarea','b) Un tipo de robot','c) Un error del programa','d) Una casilla con árbol'],c:0},
-  {q:'¿Qué es un bug?',o:['a) Un premio del programa','b) Un error escondido en el programa','c) Una instrucción de giro','d) El nombre del robot'],c:1},
-  {q:'¿Por qué importa el ORDEN de las instrucciones?',o:['a) No importa, el robot adivina','b) Porque cambiar el orden cambia el resultado','c) Solo importa en los giros','d) Porque el robot lee de abajo hacia arriba'],c:1},
-  {q:'El robot está sobre la casa del destino. ¿Qué instrucción debe ejecutar para dejar el mensaje?',o:['a) AVANZA','b) GIRA DERECHA','c) GIRA IZQUIERDA','d) ENTREGA'],c:3},
+  {q:'¿Qué es una secuencia en programación?',o:['a) Una lista de instrucciones en orden','b) Un dibujo del robot','c) Una casilla del mapa','d) Un número de la suerte'],c:0},
+  {q:'¿Qué hace la instrucción AVANZA?',o:['a) Gira al robot 90°','b) Mueve al robot una casilla hacia donde mira','c) Deja el mensaje','d) Apaga al robot'],c:1},
+  {q:'¿Qué cambia la instrucción GIRA DERECHA?',o:['a) La posición del robot','b) El tamaño del mapa','c) La orientación del robot','d) El color del robot'],c:2},
+  {q:'El robot mira al Norte y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Sur','b) Este','c) Oeste','d) Norte'],c:1},
+  {q:'¿Cuál de estas es una instrucción EXACTA?',o:['a) «Camina un poquito»','b) «Ve por allá»','c) «Haz algo útil»','d) «AVANZA»'],c:3},
+  {q:'¿Qué es un algoritmo?',o:['a) Un tipo de robot','b) Un error del programa','c) Una casilla con árbol','d) Pasos ordenados para lograr una tarea'],c:3},
+  {q:'¿Qué es un bug?',o:['a) Un error escondido en el programa','b) Un premio del programa','c) Una instrucción de giro','d) El nombre del robot'],c:0},
+  {q:'¿Por qué importa el ORDEN de las instrucciones?',o:['a) Porque cambiar el orden cambia el resultado','b) No importa, el robot adivina','c) Solo importa en los giros','d) Porque el robot lee de abajo hacia arriba'],c:0},
+  {q:'El robot está sobre la casa del destino. ¿Qué instrucción debe ejecutar para dejar el mensaje?',o:['a) AVANZA','b) GIRA DERECHA','c) ENTREGA','d) GIRA IZQUIERDA'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -268,14 +268,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Una lista de instrucciones en orden se llama ___.',opts:['secuencia','bug','casilla'],c:0},
-  {s:'La instrucción que mueve al robot una casilla hacia adelante es ___.',opts:['GIRA DERECHA','AVANZA','ENTREGA'],c:1},
-  {s:'GIRA IZQUIERDA cambia la ___ del robot.',opts:['posición','velocidad','orientación'],c:2},
+  {s:'Una lista de instrucciones en orden se llama ___.',opts:['bug','secuencia','casilla'],c:1},
+  {s:'La instrucción que mueve al robot una casilla hacia adelante es ___.',opts:['GIRA DERECHA','ENTREGA','AVANZA'],c:2},
+  {s:'GIRA IZQUIERDA cambia la ___ del robot.',opts:['orientación','posición','velocidad'],c:0},
   {s:'Los pasos ordenados de una tarea, como una receta, forman un ___.',opts:['algoritmo','mapa','dibujo'],c:0},
   {s:'Si el robot mira al Norte y gira a la derecha, queda mirando al ___.',opts:['Oeste','Este','Sur'],c:1},
-  {s:'Un error escondido en el programa se llama ___.',opts:['bug','premio','giro'],c:0},
-  {s:'Encontrar y corregir errores se llama ___.',opts:['entregar','depurar','avanzar'],c:1},
-  {s:'El estado del robot es su posición más su ___.',opts:['orientación','batería','tamaño'],c:0},
+  {s:'Un error escondido en el programa se llama ___.',opts:['premio','bug','giro'],c:1},
+  {s:'Encontrar y corregir errores se llama ___.',opts:['depurar','entregar','avanzar'],c:0},
+  {s:'El estado del robot es su posición más su ___.',opts:['batería','tamaño','orientación'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -518,20 +518,20 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Qué es una secuencia en programación?',o:['a) Un dibujo del robot','b) Una lista de instrucciones en orden','c) Una casilla del mapa','d) Un número de la suerte'],a:1},
-  {q:'Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?',o:['a) Norte','b) Sur','c) Este','d) Oeste'],a:2},
-  {q:'¿Qué es una instrucción?',o:['a) Una orden clara y exacta que se puede ejecutar','b) Un consejo del maestro','c) Un adorno del programa','d) Una pregunta del robot'],a:0},
-  {q:'¿Qué hace la instrucción AVANZA?',o:['a) Gira al robot 90°','b) Mueve al robot una casilla hacia donde mira','c) Deja el mensaje','d) Regresa al robot al inicio'],a:1},
+  {q:'Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?',o:['a) Este','b) Norte','c) Sur','d) Oeste'],a:0},
+  {q:'¿Qué es una instrucción?',o:['a) Un consejo del maestro','b) Una orden clara y exacta que se puede ejecutar','c) Un adorno del programa','d) Una pregunta del robot'],a:1},
+  {q:'¿Qué hace la instrucción AVANZA?',o:['a) Gira al robot 90°','b) Deja el mensaje','c) Mueve al robot una casilla hacia donde mira','d) Regresa al robot al inicio'],a:2},
   {q:'¿Qué hace la instrucción GIRA IZQUIERDA?',o:['a) Mueve al robot una casilla a la izquierda','b) Cambia la orientación del robot 90° hacia su izquierda','c) Entrega el mensaje','d) Borra el programa'],a:1},
   {q:'¿Qué es un algoritmo?',o:['a) Los pasos ordenados para lograr una tarea','b) Un tipo de robot','c) Un mapa de la aldea','d) Una casilla con árbol'],a:0},
-  {q:'¿Cuál de estas es una instrucción EXACTA?',o:['a) «Camina un poquito»','b) «Ve por allá»','c) «Avanza 3 casillas»','d) «Haz algo útil»'],a:2},
-  {q:'El robot mira al Este y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Norte','b) Sur','c) Este','d) Oeste'],a:1},
-  {q:'¿Qué es un bug?',o:['a) Un error escondido en el programa','b) Un premio del programa','c) Una instrucción de giro','d) El motor del robot'],a:0},
-  {q:'¿Qué es depurar un programa?',o:['a) Borrarlo completo','b) Encontrar y corregir sus errores','c) Escribirlo más largo','d) Ejecutarlo más rápido'],a:1},
-  {q:'¿Qué forma el ESTADO del robot?',o:['a) Su color y su tamaño','b) Su posición y su orientación','c) Su nombre y su número','d) Su velocidad y su batería'],a:1},
-  {q:'El robot mira al Oeste y ejecuta GIRA DERECHA, GIRA DERECHA. ¿Hacia dónde mira al final?',o:['a) Este','b) Oeste','c) Norte','d) Sur'],a:0},
-  {q:'El robot llegó a la casa del destino. ¿Qué instrucción falta para dejar el mensaje?',o:['a) AVANZA','b) GIRA DERECHA','c) ENTREGA','d) GIRA IZQUIERDA'],a:2},
-  {q:'¿Por qué importa el orden de las instrucciones?',o:['a) Porque cambiar el orden cambia el resultado','b) No importa: el robot adivina','c) Solo importa en programas largos','d) Porque el robot lee de abajo hacia arriba'],a:0},
-  {q:'¿Qué pasa si una instrucción saca al robot del mapa?',o:['a) El robot vuela','b) El robot choca: el programa tiene un error','c) El robot entrega el mensaje','d) Aparece otro mapa'],a:1},
+  {q:'¿Cuál de estas es una instrucción EXACTA?',o:['a) «Camina un poquito»','b) «Ve por allá»','c) «Haz algo útil»','d) «Avanza 3 casillas»'],a:3},
+  {q:'El robot mira al Este y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Sur','b) Norte','c) Este','d) Oeste'],a:0},
+  {q:'¿Qué es un bug?',o:['a) Un premio del programa','b) Una instrucción de giro','c) Un error escondido en el programa','d) El motor del robot'],a:2},
+  {q:'¿Qué es depurar un programa?',o:['a) Borrarlo completo','b) Escribirlo más largo','c) Ejecutarlo más rápido','d) Encontrar y corregir sus errores'],a:3},
+  {q:'¿Qué forma el ESTADO del robot?',o:['a) Su color y su tamaño','b) Su nombre y su número','c) Su posición y su orientación','d) Su velocidad y su batería'],a:2},
+  {q:'El robot mira al Oeste y ejecuta GIRA DERECHA, GIRA DERECHA. ¿Hacia dónde mira al final?',o:['a) Oeste','b) Norte','c) Sur','d) Este'],a:3},
+  {q:'El robot llegó a la casa del destino. ¿Qué instrucción falta para dejar el mensaje?',o:['a) ENTREGA','b) AVANZA','c) GIRA DERECHA','d) GIRA IZQUIERDA'],a:0},
+  {q:'¿Por qué importa el orden de las instrucciones?',o:['a) No importa: el robot adivina','b) Porque cambiar el orden cambia el resultado','c) Solo importa en programas largos','d) Porque el robot lee de abajo hacia arriba'],a:1},
+  {q:'¿Qué pasa si una instrucción saca al robot del mapa?',o:['a) El robot vuela','b) El robot entrega el mensaje','c) El robot choca: el programa tiene un error','d) Aparece otro mapa'],a:2},
 ];
 const evalCPBank=[
   {q:'Una orden clara y exacta que el robot puede ejecutar se llama ___.',a:'instrucción'},

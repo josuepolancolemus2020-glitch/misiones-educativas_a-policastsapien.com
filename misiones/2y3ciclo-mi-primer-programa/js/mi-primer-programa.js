@@ -292,15 +292,15 @@ function resetMemo(){sfx('click');buildMemo();}
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es un programa completo?',o:['a) Una sola instrucción suelta','b) Un proyecto que junta evento, secuencia, bucle, condicional y variable','c) Un dibujo del robot','d) Un error del código'],c:1},
-  {q:'¿Para qué sirve el EVENTO «cuando empiece el programa»?',o:['a) Para que el programa arranque','b) Para borrar el código','c) Para girar el robot','d) Para contar objetos'],c:0},
+  {q:'¿Qué es un programa completo?',o:['a) Un proyecto que junta evento, secuencia, bucle, condicional y variable','b) Una sola instrucción suelta','c) Un dibujo del robot','d) Un error del código'],c:0},
+  {q:'¿Para qué sirve el EVENTO «cuando empiece el programa»?',o:['a) Para borrar el código','b) Para girar el robot','c) Para contar objetos','d) Para que el programa arranque'],c:3},
   {q:'¿Qué es el pseudocódigo?',o:['a) Un idioma secreto de las computadoras','b) El plan escrito en español sencillo antes de programar','c) Un error del programa','d) El nombre del robot'],c:1},
-  {q:'¿Qué significa DESCOMPONER un proyecto?',o:['a) Romperlo para que no funcione','b) Partirlo en partes pequeñas y armarlo por pasos','c) Borrarlo y empezar de cero','d) Copiarlo de un compañero'],c:1},
+  {q:'¿Qué significa DESCOMPONER un proyecto?',o:['a) Partirlo en partes pequeñas y armarlo por pasos','b) Romperlo para que no funcione','c) Borrarlo y empezar de cero','d) Copiarlo de un compañero'],c:0},
   {q:'¿Qué pieza usas para repetir instrucciones sin escribirlas muchas veces?',o:['a) La variable','b) El evento','c) El bucle','d) El comentario'],c:2},
-  {q:'¿Qué pieza usas para que el robot DECIDA según lo que ve?',o:['a) El condicional','b) El bucle','c) La variable','d) La secuencia'],c:0},
-  {q:'¿Para qué sirve la variable CUENTA en el proyecto?',o:['a) Para girar','b) Para guardar cuántos objetos lleva el robot','c) Para borrar el mapa','d) Para apagar el programa'],c:1},
-  {q:'Tu programa falla. ¿Qué hace un buen programador?',o:['a) Borra todo y se enoja','b) Prueba, encuentra el error, corrige UNA cosa y vuelve a probar','c) Le echa la culpa al robot','d) Deja el proyecto sin terminar'],c:1},
-  {q:'¿En qué momento se escribe el pseudocódigo?',o:['a) Antes de armar el programa','b) Nunca','c) Solo después de terminarlo','d) Cuando ya funciona perfecto'],c:0},
+  {q:'¿Qué pieza usas para que el robot DECIDA según lo que ve?',o:['a) El bucle','b) La variable','c) El condicional','d) La secuencia'],c:2},
+  {q:'¿Para qué sirve la variable CUENTA en el proyecto?',o:['a) Para girar','b) Para borrar el mapa','c) Para apagar el programa','d) Para guardar cuántos objetos lleva el robot'],c:3},
+  {q:'Tu programa falla. ¿Qué hace un buen programador?',o:['a) Prueba, encuentra el error, corrige UNA cosa y vuelve a probar','b) Borra todo y se enoja','c) Le echa la culpa al robot','d) Deja el proyecto sin terminar'],c:0},
+  {q:'¿En qué momento se escribe el pseudocódigo?',o:['a) Nunca','b) Antes de armar el programa','c) Solo después de terminarlo','d) Cuando ya funciona perfecto'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -353,13 +353,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'Lo que hace arrancar un programa se llama ___.',opts:['evento','bucle','variable'],c:0},
-  {s:'El plan escrito en español sencillo antes de programar es el ___.',opts:['bucle','pseudocódigo','contador'],c:1},
-  {s:'Partir un proyecto grande en partes pequeñas es ___.',opts:['descomponer','depurar','repetir'],c:0},
+  {s:'El plan escrito en español sencillo antes de programar es el ___.',opts:['pseudocódigo','bucle','contador'],c:0},
+  {s:'Partir un proyecto grande en partes pequeñas es ___.',opts:['depurar','descomponer','repetir'],c:1},
   {s:'Para repetir instrucciones sin escribirlas muchas veces se usa un ___.',opts:['evento','bucle','sensor'],c:1},
-  {s:'Para que el programa DECIDA entre dos caminos se usa un ___.',opts:['condicional','contador','rastro'],c:0},
+  {s:'Para que el programa DECIDA entre dos caminos se usa un ___.',opts:['contador','rastro','condicional'],c:2},
   {s:'La cajita CUENTA que va sumando es un ___.',opts:['bug','contador','evento'],c:1},
   {s:'Buscar y corregir los errores del programa es ___.',opts:['depurar','descomponer','avanzar'],c:0},
-  {s:'Después de corregir un error hay que volver a ___.',opts:['borrar','probar','girar'],c:1},
+  {s:'Después de corregir un error hay que volver a ___.',opts:['borrar','girar','probar'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -631,21 +631,21 @@ const evalTFBank=[
   {q:'Presentar el proyecto ayuda a explicar cómo funciona y a recibir mejoras.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es un programa completo?',o:['a) Una sola instrucción suelta','b) Un proyecto que junta evento, secuencia, bucle, condicional y variable','c) Un dibujo del robot','d) Un error del código'],a:1},
-  {q:'¿Para qué sirve el EVENTO «cuando empiece el programa»?',o:['a) Para que el programa arranque','b) Para borrar el código','c) Para girar el robot','d) Para contar objetos'],a:0},
-  {q:'¿Qué es el pseudocódigo?',o:['a) Un idioma secreto de las computadoras','b) El plan escrito en español sencillo antes de programar','c) Un error del programa','d) El nombre del robot'],a:1},
-  {q:'¿Qué significa DESCOMPONER un proyecto?',o:['a) Romperlo para que no funcione','b) Partirlo en partes pequeñas y armarlo por pasos','c) Borrarlo y empezar de cero','d) Copiarlo de un compañero'],a:1},
-  {q:'¿Qué pieza usas para repetir instrucciones sin escribirlas muchas veces?',o:['a) La variable','b) El evento','c) El bucle','d) El comentario'],a:2},
-  {q:'¿Qué pieza usas para que el programa DECIDA según lo que ve?',o:['a) El condicional','b) El bucle','c) La variable','d) La secuencia'],a:0},
-  {q:'¿Para qué sirve la variable CUENTA en el proyecto del recolector?',o:['a) Para girar','b) Para guardar cuántos objetos lleva el robot','c) Para borrar el mapa','d) Para apagar el programa'],a:1},
-  {q:'Tu programa falla. ¿Qué hace un buen programador?',o:['a) Borra todo y se enoja','b) Prueba, encuentra el error, corrige UNA cosa y vuelve a probar','c) Le echa la culpa al robot','d) Deja el proyecto sin terminar'],a:1},
-  {q:'¿En qué momento se escribe el pseudocódigo?',o:['a) Antes de armar el programa','b) Nunca','c) Solo cuando ya funciona perfecto','d) Después de presentarlo'],a:0},
-  {q:'¿Qué es DEPURAR un programa?',o:['a) Buscar y corregir sus errores','b) Pintarlo de colores','c) Copiarlo dos veces','d) Apagar la computadora'],a:0},
+  {q:'¿Qué es un programa completo?',o:['a) Una sola instrucción suelta','b) Un dibujo del robot','c) Un error del código','d) Un proyecto que junta evento, secuencia, bucle, condicional y variable'],a:3},
+  {q:'¿Para qué sirve el EVENTO «cuando empiece el programa»?',o:['a) Para borrar el código','b) Para girar el robot','c) Para que el programa arranque','d) Para contar objetos'],a:2},
+  {q:'¿Qué es el pseudocódigo?',o:['a) Un idioma secreto de las computadoras','b) Un error del programa','c) El plan escrito en español sencillo antes de programar','d) El nombre del robot'],a:2},
+  {q:'¿Qué significa DESCOMPONER un proyecto?',o:['a) Romperlo para que no funcione','b) Borrarlo y empezar de cero','c) Copiarlo de un compañero','d) Partirlo en partes pequeñas y armarlo por pasos'],a:3},
+  {q:'¿Qué pieza usas para repetir instrucciones sin escribirlas muchas veces?',o:['a) El bucle','b) La variable','c) El evento','d) El comentario'],a:0},
+  {q:'¿Qué pieza usas para que el programa DECIDA según lo que ve?',o:['a) El bucle','b) El condicional','c) La variable','d) La secuencia'],a:1},
+  {q:'¿Para qué sirve la variable CUENTA en el proyecto del recolector?',o:['a) Para guardar cuántos objetos lleva el robot','b) Para girar','c) Para borrar el mapa','d) Para apagar el programa'],a:0},
+  {q:'Tu programa falla. ¿Qué hace un buen programador?',o:['a) Prueba, encuentra el error, corrige UNA cosa y vuelve a probar','b) Borra todo y se enoja','c) Le echa la culpa al robot','d) Deja el proyecto sin terminar'],a:0},
+  {q:'¿En qué momento se escribe el pseudocódigo?',o:['a) Nunca','b) Antes de armar el programa','c) Solo cuando ya funciona perfecto','d) Después de presentarlo'],a:1},
+  {q:'¿Qué es DEPURAR un programa?',o:['a) Pintarlo de colores','b) Copiarlo dos veces','c) Apagar la computadora','d) Buscar y corregir sus errores'],a:3},
   {q:'En «REPETIR 6 VECES [ SI HAY OBJETO AQUÍ → RECOGE, SINO → AVANZA ]» ¿qué piezas se usan?',o:['a) Solo un bucle','b) Solo un condicional','c) Un bucle y un condicional juntos','d) Ninguna de las dos'],a:2},
-  {q:'¿Qué instrucción cierra el proyecto cuando el robot llega a la meta 🏁?',o:['a) AVANZA','b) TERMINA','c) RECOGE','d) GIRA DERECHA'],a:1},
-  {q:'Un contador que empieza en 0 y suma 1 por cada objeto recogido es…',o:['a) Una variable contadora','b) Un evento','c) Un bucle','d) Una pared'],a:0},
+  {q:'¿Qué instrucción cierra el proyecto cuando el robot llega a la meta 🏁?',o:['a) TERMINA','b) AVANZA','c) RECOGE','d) GIRA DERECHA'],a:0},
+  {q:'Un contador que empieza en 0 y suma 1 por cada objeto recogido es…',o:['a) Un evento','b) Una variable contadora','c) Un bucle','d) Una pared'],a:1},
   {q:'¿Cuál es el orden correcto para hacer un proyecto?',o:['a) Programar, después pensar','b) Entender, descomponer, escribir el pseudocódigo, programar y probar','c) Probar, borrar y rendirse','d) Copiar y no revisar'],a:1},
-  {q:'Al presentar tu proyecto ante la clase conviene explicar…',o:['a) Qué hace, qué piezas usaste y cómo lo mejoraste','b) Solo el color del robot','c) Nada, se explica solo','d) Únicamente los errores de los demás'],a:0},
+  {q:'Al presentar tu proyecto ante la clase conviene explicar…',o:['a) Solo el color del robot','b) Nada, se explica solo','c) Qué hace, qué piezas usaste y cómo lo mejoraste','d) Únicamente los errores de los demás'],a:2},
 ];
 const evalCPBank=[
   {q:'Lo que hace arrancar un programa se llama ___.',a:'evento'},

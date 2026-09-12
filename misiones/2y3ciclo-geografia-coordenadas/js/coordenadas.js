@@ -222,17 +222,17 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué mide la latitud?',o:['a) La distancia de este a oeste','b) La distancia angular desde el Ecuador hacia los polos','c) El tiempo en cada zona horaria','d) La altura sobre el nivel del mar'],c:1},
-  {q:'¿A cuántos grados de latitud se encuentra el Ecuador?',o:['a) 90°','b) 45°','c) 23°','d) 0°'],c:3},
-  {q:'¿Qué línea imaginaria divide la Tierra en Hemisferio Norte y Hemisferio Sur?',o:['a) Meridiano de Greenwich','b) Trópico de Cáncer','c) El Ecuador','d) Círculo Polar Ártico'],c:2},
-  {q:'¿Cuál es la latitud del Trópico de Capricornio?',o:['a) 23° 26\' Norte','b) 66° 34\' Sur','c) 0° Sur','d) 23° 26\' Sur'],c:3},
-  {q:'¿Qué es el Meridiano de Greenwich?',o:['a) El paralelo de 0° latitud','b) El meridiano de 0° longitud que pasa por el Reino Unido','c) La línea que separa el Ártico','d) Un paralelo de 90°'],c:1},
-  {q:'¿Para qué sirven las coordenadas geográficas?',o:['a) Para medir la temperatura','b) Para calcular la altitud','c) Para ubicar cualquier punto exacto en la Tierra','d) Para predecir el clima'],c:2},
-  {q:'¿En cuántas franjas (husos horarios) se divide la Tierra?',o:['a) 12','b) 36','c) 24','d) 48'],c:2},
-  {q:'Honduras se encuentra en la zona climática llamada:',o:['a) Zona Polar','b) Zona Templada Norte','c) Zona Templada Sur','d) Zona Tórrida'],c:3},
-  {q:'¿Cuál de estos es un paralelo importante de la Tierra?',o:['a) Meridiano de Greenwich','b) Trópico de Cáncer','c) Primer Meridiano','d) Meridiano 90°'],c:1},
-  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El Polo Norte','c) El Meridiano de Greenwich','d) El Trópico de Capricornio'],c:2},
-  {q:'¿Qué ocurre en el Círculo Polar Ártico durante el solsticio de verano?',o:['a) El Sol nunca sale','b) Hay 24 horas de noche','c) El Sol no se pone (sol de medianoche)','d) El Sol cae perpendicularmente'],c:2},
+  {q:'¿Qué mide la latitud?',o:['a) La distancia de este a oeste','b) El tiempo en cada zona horaria','c) La distancia angular desde el Ecuador hacia los polos','d) La altura sobre el nivel del mar'],c:2},
+  {q:'¿A cuántos grados de latitud se encuentra el Ecuador?',o:['a) 0°','b) 90°','c) 45°','d) 23°'],c:0},
+  {q:'¿Qué línea imaginaria divide la Tierra en Hemisferio Norte y Hemisferio Sur?',o:['a) El Ecuador','b) Meridiano de Greenwich','c) Trópico de Cáncer','d) Círculo Polar Ártico'],c:0},
+  {q:'¿Cuál es la latitud del Trópico de Capricornio?',o:['a) 23° 26\' Norte','b) 66° 34\' Sur','c) 23° 26\' Sur','d) 0° Sur'],c:2},
+  {q:'¿Qué es el Meridiano de Greenwich?',o:['a) El paralelo de 0° latitud','b) La línea que separa el Ártico','c) Un paralelo de 90°','d) El meridiano de 0° longitud que pasa por el Reino Unido'],c:3},
+  {q:'¿Para qué sirven las coordenadas geográficas?',o:['a) Para medir la temperatura','b) Para ubicar cualquier punto exacto en la Tierra','c) Para calcular la altitud','d) Para predecir el clima'],c:1},
+  {q:'¿En cuántas franjas (husos horarios) se divide la Tierra?',o:['a) 12','b) 24','c) 36','d) 48'],c:1},
+  {q:'Honduras se encuentra en la zona climática llamada:',o:['a) Zona Polar','b) Zona Templada Norte','c) Zona Tórrida','d) Zona Templada Sur'],c:2},
+  {q:'¿Cuál de estos es un paralelo importante de la Tierra?',o:['a) Meridiano de Greenwich','b) Primer Meridiano','c) Meridiano 90°','d) Trópico de Cáncer'],c:3},
+  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El Polo Norte','c) El Trópico de Capricornio','d) El Meridiano de Greenwich'],c:3},
+  {q:'¿Qué ocurre en el Círculo Polar Ártico durante el solsticio de verano?',o:['a) El Sol no se pone (sol de medianoche)','b) El Sol nunca sale','c) Hay 24 horas de noche','d) El Sol cae perpendicularmente'],c:0},
   {q:'Un punto con coordenadas 15°N, 87°W se encuentra al:',o:['a) Sur del Ecuador y al este de Greenwich','b) Norte del Ecuador y al oeste de Greenwich','c) Sur del Ecuador y al oeste de Greenwich','d) Norte del Ecuador y al este de Greenwich'],c:1},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
@@ -426,14 +426,14 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El ___ divide la Tierra en Hemisferio Norte y Hemisferio Sur.',opts:['Ecuador','Greenwich','Ártico'],c:0},
+  {s:'El ___ divide la Tierra en Hemisferio Norte y Hemisferio Sur.',opts:['Greenwich','Ecuador','Ártico'],c:1},
   {s:'La latitud se mide desde el Ecuador hacia los ___ .',opts:['meridianos','polos','trópicos'],c:1},
   {s:'El Meridiano de Greenwich tiene ___ grados de longitud.',opts:['90°','45°','0°'],c:2},
-  {s:'Honduras está ubicada en el Hemisferio ___ .',opts:['Sur','Norte','Oriental'],c:1},
-  {s:'La zona entre los trópicos se llama zona ___ .',opts:['polar','templada','tórrida'],c:2},
-  {s:'Los husos horarios se organizan según la ___ .',opts:['latitud','altitud','longitud'],c:2},
-  {s:'El Trópico de Cáncer está a 23° 26\' al ___ del Ecuador.',opts:['Sur','Norte','Este'],c:1},
-  {s:'Para localizar un punto exacto necesitas la latitud y la ___ .',opts:['altitud','longitud','temperatura'],c:1},
+  {s:'Honduras está ubicada en el Hemisferio ___ .',opts:['Norte','Sur','Oriental'],c:0},
+  {s:'La zona entre los trópicos se llama zona ___ .',opts:['tórrida','polar','templada'],c:0},
+  {s:'Los husos horarios se organizan según la ___ .',opts:['latitud','longitud','altitud'],c:1},
+  {s:'El Trópico de Cáncer está a 23° 26\' al ___ del Ecuador.',opts:['Norte','Sur','Este'],c:0},
+  {s:'Para localizar un punto exacto necesitas la latitud y la ___ .',opts:['altitud','temperatura','longitud'],c:2},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -890,20 +890,20 @@ const evalTFBank=[
   {q:'El Trópico de Capricornio está a 23° 26\' Sur.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Cuál es la latitud del Ecuador?',o:['a) 90°','b) 45°','c) 0°','d) 23°'],a:2},
-  {q:'¿Qué línea divide la Tierra en Hemisferio Oriental y Occidental?',o:['a) El Ecuador','b) El Trópico de Cáncer','c) El Círculo Polar','d) El Meridiano de Greenwich'],a:3},
-  {q:'¿Cómo se llama la zona climática entre los dos Trópicos?',o:['a) Zona polar','b) Zona tórrida','c) Zona templada','d) Zona boreal'],a:1},
-  {q:'¿Cuántos grados de longitud corresponden a cada huso horario?',o:['a) 10°','b) 24°','c) 15°','d) 30°'],a:2},
-  {q:'¿En qué hemisferio se encuentra Honduras?',o:['a) Hemisferio Sur','b) Hemisferio Oriental','c) Hemisferio Norte','d) Hemisferio Polar'],a:2},
+  {q:'¿Cuál es la latitud del Ecuador?',o:['a) 0°','b) 90°','c) 45°','d) 23°'],a:0},
+  {q:'¿Qué línea divide la Tierra en Hemisferio Oriental y Occidental?',o:['a) El Meridiano de Greenwich','b) El Ecuador','c) El Trópico de Cáncer','d) El Círculo Polar'],a:0},
+  {q:'¿Cómo se llama la zona climática entre los dos Trópicos?',o:['a) Zona polar','b) Zona templada','c) Zona boreal','d) Zona tórrida'],a:3},
+  {q:'¿Cuántos grados de longitud corresponden a cada huso horario?',o:['a) 10°','b) 15°','c) 24°','d) 30°'],a:1},
+  {q:'¿En qué hemisferio se encuentra Honduras?',o:['a) Hemisferio Norte','b) Hemisferio Sur','c) Hemisferio Oriental','d) Hemisferio Polar'],a:0},
   {q:'¿Cuál es la latitud del Trópico de Capricornio?',o:['a) 23° 26\' Norte','b) 66° 34\' Norte','c) 0° Sur','d) 23° 26\' Sur'],a:3},
-  {q:'Un punto con coordenadas 0°, 0° se encuentra en:',o:['a) El Polo Norte','b) El cruce del Ecuador y el Meridiano de Greenwich','c) El centro de África del Sur','d) El Trópico de Cáncer'],a:1},
+  {q:'Un punto con coordenadas 0°, 0° se encuentra en:',o:['a) El cruce del Ecuador y el Meridiano de Greenwich','b) El Polo Norte','c) El centro de África del Sur','d) El Trópico de Cáncer'],a:0},
   {q:'¿Cuántos meridianos puede tener la Tierra en total?',o:['a) 90','b) 180','c) 360','d) 24'],a:2},
-  {q:'¿Qué tipo de línea es el Trópico de Capricornio?',o:['a) Meridiano','b) Huso horario','c) Paralelo','d) Coordenada'],a:2},
-  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El Trópico de Cáncer','c) El Polo Norte','d) El Meridiano de Greenwich'],a:3},
+  {q:'¿Qué tipo de línea es el Trópico de Capricornio?',o:['a) Meridiano','b) Huso horario','c) Coordenada','d) Paralelo'],a:3},
+  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El Meridiano de Greenwich','c) El Trópico de Cáncer','d) El Polo Norte'],a:1},
   {q:'¿Cuántos husos horarios tiene la Tierra?',o:['a) 12','b) 36','c) 24','d) 48'],a:2},
   {q:'¿Qué ocurre en el Círculo Polar Ártico durante el solsticio de verano?',o:['a) El Sol no sale','b) El sol de medianoche (no se pone)','c) El Sol cae perpendicularmente','d) Se forman tormentas tropicales'],a:1},
-  {q:'¿Cuál de estos es un paralelo?',o:['a) Meridiano de Greenwich','b) Ecuador','c) Primer Meridiano','d) Longitud 90°'],a:1},
-  {q:'Las coordenadas 14°N, 87°O corresponden aproximadamente a:',o:['a) Madrid, España','b) Buenos Aires, Argentina','c) Tegucigalpa, Honduras','d) Ciudad de México'],a:2},
+  {q:'¿Cuál de estos es un paralelo?',o:['a) Meridiano de Greenwich','b) Primer Meridiano','c) Ecuador','d) Longitud 90°'],a:2},
+  {q:'Las coordenadas 14°N, 87°O corresponden aproximadamente a:',o:['a) Madrid, España','b) Tegucigalpa, Honduras','c) Buenos Aires, Argentina','d) Ciudad de México'],a:1},
   {q:'¿Cuál es la zona climática de la Antártida?',o:['a) Zona tórrida','b) Zona templada','c) Zona polar','d) Zona árida'],a:2},
 ];
 const evalCPBank=[

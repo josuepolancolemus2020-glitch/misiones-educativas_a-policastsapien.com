@@ -84,14 +84,14 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué parte del encéfalo controla el equilibrio y la coordinación de movimientos?',o:['a) Cerebro','b) Cerebelo','c) Tronco encefálico','d) Médula espinal'],c:1},
-  {q:'¿Cómo se llama la vaina que recubre el axón y acelera la transmisión del impulso nervioso?',o:['a) Dendrita','b) Sinapsis','c) Mielina','d) Soma'],c:2},
-  {q:'¿Cuántos pares de nervios craneales forman parte del Sistema Nervioso Periférico?',o:['a) 8 pares','b) 10 pares','c) 12 pares','d) 31 pares'],c:2},
-  {q:'¿Qué neurotransmisor está relacionado con el movimiento y el placer, y su pérdida causa Parkinson?',o:['a) GABA','b) Acetilcolina','c) Serotonina','d) Dopamina'],c:3},
-  {q:'¿Qué tipo de neurona lleva información desde los receptores sensoriales hacia el SNC?',o:['a) Motora','b) Interneurona','c) Sensorial','d) Eferente'],c:2},
-  {q:'¿Cuántos centímetros mide aproximadamente la médula espinal en un adulto?',o:['a) 25 cm','b) 35 cm','c) 45 cm','d) 60 cm'],c:2},
-  {q:'¿Qué enfermedad se caracteriza por pérdida de dopamina y temblores involuntarios?',o:['a) Alzheimer','b) Parkinson','c) Epilepsia','d) Meningitis'],c:1},
-  {q:'¿Qué estructura conecta los dos hemisferios del cerebro?',o:['a) Tronco encefálico','b) Cuerpo calloso','c) Cerebelo','d) Bulbo raquídeo'],c:1},
+  {q:'¿Qué parte del encéfalo controla el equilibrio y la coordinación de movimientos?',o:['a) Cerebro','b) Tronco encefálico','c) Cerebelo','d) Médula espinal'],c:2},
+  {q:'¿Cómo se llama la vaina que recubre el axón y acelera la transmisión del impulso nervioso?',o:['a) Dendrita','b) Mielina','c) Sinapsis','d) Soma'],c:1},
+  {q:'¿Cuántos pares de nervios craneales forman parte del Sistema Nervioso Periférico?',o:['a) 8 pares','b) 10 pares','c) 31 pares','d) 12 pares'],c:3},
+  {q:'¿Qué neurotransmisor está relacionado con el movimiento y el placer, y su pérdida causa Parkinson?',o:['a) GABA','b) Dopamina','c) Acetilcolina','d) Serotonina'],c:1},
+  {q:'¿Qué tipo de neurona lleva información desde los receptores sensoriales hacia el SNC?',o:['a) Sensorial','b) Motora','c) Interneurona','d) Eferente'],c:0},
+  {q:'¿Cuántos centímetros mide aproximadamente la médula espinal en un adulto?',o:['a) 45 cm','b) 25 cm','c) 35 cm','d) 60 cm'],c:0},
+  {q:'¿Qué enfermedad se caracteriza por pérdida de dopamina y temblores involuntarios?',o:['a) Alzheimer','b) Epilepsia','c) Parkinson','d) Meningitis'],c:2},
+  {q:'¿Qué estructura conecta los dos hemisferios del cerebro?',o:['a) Cuerpo calloso','b) Tronco encefálico','c) Cerebelo','d) Bulbo raquídeo'],c:0},
   {q:'¿A qué velocidad máxima puede viajar un impulso nervioso en fibras mielinizadas?',o:['a) 30 m/s','b) 60 m/s','c) 90 m/s','d) 120 m/s'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
@@ -145,13 +145,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'La ___ es la vaina que acelera la conducción del impulso nervioso.',opts:['mielina','dopamina','sinapsis'],c:0},
-  {s:'El ___ coordina el equilibrio y la coordinación de movimientos.',opts:['cerebro','cerebelo','tronco'],c:1},
-  {s:'La información viaja del receptor al SNC por la neurona ___.',opts:['motora','interneurona','sensorial'],c:2},
-  {s:'El espacio entre dos neuronas donde se transmiten impulsos se llama ___.',opts:['axón','sinapsis','dendrita'],c:1},
+  {s:'El ___ coordina el equilibrio y la coordinación de movimientos.',opts:['cerebro','tronco','cerebelo'],c:2},
+  {s:'La información viaja del receptor al SNC por la neurona ___.',opts:['motora','sensorial','interneurona'],c:1},
+  {s:'El espacio entre dos neuronas donde se transmiten impulsos se llama ___.',opts:['sinapsis','axón','dendrita'],c:0},
   {s:'El arco reflejo es procesado principalmente en la ___ espinal.',opts:['corteza','médula','sinapsis'],c:1},
-  {s:'La enfermedad que destruye la mielina afectando la conducción nerviosa es ___.',opts:['Parkinson','Alzheimer','esclerosis múltiple'],c:2},
-  {s:'El ___ rige las funciones vitales de respiración y latido cardíaco.',opts:['cerebelo','cerebro','tronco encefálico'],c:2},
-  {s:'Los impulsos viajan desde el ___ hasta los músculos por neuronas motoras.',opts:['receptor','SNC','ganglio'],c:1},
+  {s:'La enfermedad que destruye la mielina afectando la conducción nerviosa es ___.',opts:['esclerosis múltiple','Parkinson','Alzheimer'],c:0},
+  {s:'El ___ rige las funciones vitales de respiración y latido cardíaco.',opts:['cerebelo','tronco encefálico','cerebro'],c:1},
+  {s:'Los impulsos viajan desde el ___ hasta los músculos por neuronas motoras.',opts:['receptor','ganglio','SNC'],c:2},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -370,18 +370,18 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'¿Qué parte del encéfalo controla el equilibrio y la coordinación?',o:['a) Cerebro','b) Médula espinal','c) Cerebelo','d) Tronco encefálico'],a:2},
   {q:'¿Cómo se llama la vaina que acelera la conducción del impulso nervioso?',o:['a) Sinapsis','b) Dendrita','c) Axón','d) Mielina'],a:3},
-  {q:'¿Cuántos pares de nervios craneales tiene el Sistema Nervioso Periférico?',o:['a) 8 pares','b) 10 pares','c) 12 pares','d) 31 pares'],a:2},
-  {q:'¿Qué neurotransmisor se relaciona con el movimiento y el placer?',o:['a) GABA','b) Serotonina','c) Acetilcolina','d) Dopamina'],a:3},
-  {q:'¿Qué tipo de neurona lleva impulsos del SNC a los músculos?',o:['a) Sensorial','b) Interneurona','c) Motora','d) Aferente'],a:2},
-  {q:'¿Qué enfermedad se caracteriza por pérdida de dopamina y temblores?',o:['a) Alzheimer','b) Parkinson','c) Epilepsia','d) Meningitis'],a:1},
-  {q:'¿Qué estructura conecta los dos hemisferios del cerebro?',o:['a) Cerebelo','b) Tronco encefálico','c) Cuerpo calloso','d) Médula espinal'],a:2},
-  {q:'¿A qué velocidad máxima viajan los impulsos en fibras mielinizadas?',o:['a) 30 m/s','b) 60 m/s','c) 90 m/s','d) 120 m/s'],a:3},
-  {q:'¿Qué parte del encéfalo controla la respiración y el latido cardíaco?',o:['a) Cerebro','b) Cerebelo','c) Hipocampo','d) Tronco encefálico'],a:3},
-  {q:'¿Cuántos pares de nervios espinales tiene el SNP?',o:['a) 12 pares','b) 21 pares','c) 31 pares','d) 42 pares'],a:2},
-  {q:'¿Qué enfermedad daña la vaina de mielina afectando la conducción nerviosa?',o:['a) Alzheimer','b) Parkinson','c) Esclerosis múltiple','d) Epilepsia'],a:2},
+  {q:'¿Cuántos pares de nervios craneales tiene el Sistema Nervioso Periférico?',o:['a) 8 pares','b) 10 pares','c) 31 pares','d) 12 pares'],a:3},
+  {q:'¿Qué neurotransmisor se relaciona con el movimiento y el placer?',o:['a) Dopamina','b) GABA','c) Serotonina','d) Acetilcolina'],a:0},
+  {q:'¿Qué tipo de neurona lleva impulsos del SNC a los músculos?',o:['a) Sensorial','b) Motora','c) Interneurona','d) Aferente'],a:1},
+  {q:'¿Qué enfermedad se caracteriza por pérdida de dopamina y temblores?',o:['a) Parkinson','b) Alzheimer','c) Epilepsia','d) Meningitis'],a:0},
+  {q:'¿Qué estructura conecta los dos hemisferios del cerebro?',o:['a) Cerebelo','b) Tronco encefálico','c) Médula espinal','d) Cuerpo calloso'],a:3},
+  {q:'¿A qué velocidad máxima viajan los impulsos en fibras mielinizadas?',o:['a) 30 m/s','b) 60 m/s','c) 120 m/s','d) 90 m/s'],a:2},
+  {q:'¿Qué parte del encéfalo controla la respiración y el latido cardíaco?',o:['a) Cerebro','b) Cerebelo','c) Tronco encefálico','d) Hipocampo'],a:2},
+  {q:'¿Cuántos pares de nervios espinales tiene el SNP?',o:['a) 12 pares','b) 31 pares','c) 21 pares','d) 42 pares'],a:1},
+  {q:'¿Qué enfermedad daña la vaina de mielina afectando la conducción nerviosa?',o:['a) Esclerosis múltiple','b) Alzheimer','c) Parkinson','d) Epilepsia'],a:0},
   {q:'¿Qué es la sinapsis?',o:['a) Parte del axón','b) Espacio entre neuronas','c) Tipo de neurona','d) Vaina del axón'],a:1},
-  {q:'¿Cuál es la unidad estructural y funcional del sistema nervioso?',o:['a) Sinapsis','b) Mielina','c) Neurona','d) Dendrita'],a:2},
-  {q:'¿Qué parte del encéfalo controla el pensamiento y el lenguaje?',o:['a) Cerebelo','b) Tronco encefálico','c) Médula espinal','d) Cerebro'],a:3},
+  {q:'¿Cuál es la unidad estructural y funcional del sistema nervioso?',o:['a) Neurona','b) Sinapsis','c) Mielina','d) Dendrita'],a:0},
+  {q:'¿Qué parte del encéfalo controla el pensamiento y el lenguaje?',o:['a) Cerebelo','b) Tronco encefálico','c) Cerebro','d) Médula espinal'],a:2},
   {q:'¿Cuál es el tipo de neurona que recibe estímulos y los envía al SNC?',o:['a) Motora','b) Sensorial','c) Interneurona','d) Eferente'],a:1},
 ];
 const evalCPBank=[

@@ -216,18 +216,18 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-  {q:'¿Cuál es el continente más grande y más poblado del mundo?',o:['a) África','b) Europa','c) América','d) Asia'],c:3},
-  {q:'¿Qué río es el más largo del mundo y se encuentra en África?',o:['a) Congo','b) Níger','c) Zambeze','d) Nilo'],c:3},
-  {q:'¿Qué bloque político-económico agrupa 27 países de Europa?',o:['a) OTAN','b) G20','c) Unión Europea','d) ONU'],c:2},
-  {q:'¿En qué continente se encuentra el Monte Everest?',o:['a) Europa','b) África','c) Asia','d) América'],c:2},
-  {q:'¿Cuál es el desierto caluroso más grande del mundo?',o:['a) Gobi','b) Kalahari','c) Atacama','d) Sahara'],c:3},
+  {q:'¿Cuál es el continente más grande y más poblado del mundo?',o:['a) África','b) Asia','c) Europa','d) América'],c:1},
+  {q:'¿Qué río es el más largo del mundo y se encuentra en África?',o:['a) Congo','b) Níger','c) Nilo','d) Zambeze'],c:2},
+  {q:'¿Qué bloque político-económico agrupa 27 países de Europa?',o:['a) Unión Europea','b) OTAN','c) G20','d) ONU'],c:0},
+  {q:'¿En qué continente se encuentra el Monte Everest?',o:['a) Europa','b) África','c) América','d) Asia'],c:3},
+  {q:'¿Cuál es el desierto caluroso más grande del mundo?',o:['a) Gobi','b) Sahara','c) Kalahari','d) Atacama'],c:1},
   {q:'¿Cuántos países tiene el continente africano?',o:['a) 35','b) 44','c) 54','d) 62'],c:2},
-  {q:'¿Qué exporta Honduras principalmente hacia la Unión Europea?',o:['a) Petróleo y minerales','b) Café, banano y textiles','c) Tecnología y autos','d) Medicamentos'],c:1},
-  {q:'¿Qué fenómeno climático de Asia trae lluvias estacionales esenciales para la agricultura?',o:['a) Tifón','b) Huracán','c) Monzón','d) Tsunami'],c:2},
-  {q:'¿Qué mar separa Europa de África?',o:['a) Mar Rojo','b) Mar Negro','c) Mar Mediterráneo','d) Mar Caspio'],c:2},
-  {q:'¿Qué agencia surcoreana apoya la formación técnica en Honduras?',o:['a) JICA','b) USAID','c) KOICA','d) GIZ'],c:2},
+  {q:'¿Qué exporta Honduras principalmente hacia la Unión Europea?',o:['a) Petróleo y minerales','b) Tecnología y autos','c) Medicamentos','d) Café, banano y textiles'],c:3},
+  {q:'¿Qué fenómeno climático de Asia trae lluvias estacionales esenciales para la agricultura?',o:['a) Tifón','b) Monzón','c) Huracán','d) Tsunami'],c:1},
+  {q:'¿Qué mar separa Europa de África?',o:['a) Mar Mediterráneo','b) Mar Rojo','c) Mar Negro','d) Mar Caspio'],c:0},
+  {q:'¿Qué agencia surcoreana apoya la formación técnica en Honduras?',o:['a) KOICA','b) JICA','c) USAID','d) GIZ'],c:0},
   {q:'¿Cuántos idiomas distintos se hablan aproximadamente en África?',o:['a) 500','b) 1,000','c) 2,000','d) 5,000'],c:2},
-  {q:'¿Qué proceso histórico explica la fuerte influencia europea en África y Asia?',o:['a) Renacimiento','b) Colonialismo','c) Industrialización','d) Globalización'],c:1},
+  {q:'¿Qué proceso histórico explica la fuerte influencia europea en África y Asia?',o:['a) Renacimiento','b) Industrialización','c) Globalización','d) Colonialismo'],c:3},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -415,11 +415,11 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData = [
-  {s:'El continente más grande y más poblado del mundo es ___ .',opts:['Europa','África','Asia'],c:2},
-  {s:'El río más largo del mundo es el ___ en África.',opts:['Congo','Nilo','Níger'],c:1},
-  {s:'La Unión Europea está formada por ___ países.',opts:['44','27','54'],c:1},
-  {s:'El desierto del Sahara está en el ___ de África.',opts:['sur','este','norte'],c:2},
-  {s:'Honduras exporta principalmente ___ a la Unión Europea.',opts:['petróleo','tecnología','café y banano'],c:2},
+  {s:'El continente más grande y más poblado del mundo es ___ .',opts:['Asia','Europa','África'],c:0},
+  {s:'El río más largo del mundo es el ___ en África.',opts:['Nilo','Congo','Níger'],c:0},
+  {s:'La Unión Europea está formada por ___ países.',opts:['44','54','27'],c:2},
+  {s:'El desierto del Sahara está en el ___ de África.',opts:['norte','sur','este'],c:0},
+  {s:'Honduras exporta principalmente ___ a la Unión Europea.',opts:['petróleo','café y banano','tecnología'],c:1},
   {s:'El Monte Everest está en la cordillera del ___ .',opts:['Atlas','Himalaya','Alpes'],c:1},
   {s:'El ___ es el fenómeno climático que trae lluvias estacionales a Asia.',opts:['huracán','tifón','monzón'],c:2},
   {s:'El Mar ___ separa Europa de África.',opts:['Rojo','Mediterráneo','Negro'],c:1},
@@ -879,21 +879,21 @@ const evalTFBank = [
   {q:'Honduras importa tecnología y productos manufacturados de Asia.',a:true},
 ];
 const evalMCBank = [
-  {q:'¿Cuál es el continente más grande del mundo?',o:['a) Europa','b) África','c) Asia','d) América'],a:2},
+  {q:'¿Cuál es el continente más grande del mundo?',o:['a) Asia','b) Europa','c) África','d) América'],a:0},
   {q:'¿Qué río es el más largo del mundo?',o:['a) Amazonas','b) Congo','c) Ganges','d) Nilo'],a:3},
-  {q:'¿Cuántos países forman la Unión Europea?',o:['a) 44','b) 27','c) 15','d) 54'],a:1},
-  {q:'¿En qué continente se encuentra el Desierto del Sahara?',o:['a) Asia','b) América','c) Europa','d) África'],a:3},
+  {q:'¿Cuántos países forman la Unión Europea?',o:['a) 44','b) 15','c) 54','d) 27'],a:3},
+  {q:'¿En qué continente se encuentra el Desierto del Sahara?',o:['a) Asia','b) África','c) América','d) Europa'],a:1},
   {q:'¿Cuál es la cumbre más alta del mundo?',o:['a) Mont Blanc','b) Kilimanjaro','c) Monte Everest','d) Aconcagua'],a:2},
   {q:'¿Cuántos países tiene el continente africano?',o:['a) 35','b) 44','c) 54','d) 65'],a:2},
   {q:'¿Qué fenómeno climático caracteriza al sur de Asia?',o:['a) Tifón','b) Huracán','c) Blizzard','d) Monzón'],a:3},
-  {q:'¿Qué exporta principalmente Honduras a la UE?',o:['a) Petróleo','b) Café y banano','c) Tecnología','d) Autos'],a:1},
-  {q:'¿Qué mar separa Europa de África?',o:['a) Mar Caribe','b) Mar Rojo','c) Mar Mediterráneo','d) Mar del Norte'],a:2},
-  {q:'¿Qué agencia surcoreana apoya a Honduras?',o:['a) JICA','b) USAID','c) KOICA','d) GIZ'],a:2},
+  {q:'¿Qué exporta principalmente Honduras a la UE?',o:['a) Petróleo','b) Tecnología','c) Café y banano','d) Autos'],a:2},
+  {q:'¿Qué mar separa Europa de África?',o:['a) Mar Caribe','b) Mar Mediterráneo','c) Mar Rojo','d) Mar del Norte'],a:1},
+  {q:'¿Qué agencia surcoreana apoya a Honduras?',o:['a) KOICA','b) JICA','c) USAID','d) GIZ'],a:0},
   {q:'¿Cuántos idiomas se hablan en África aproximadamente?',o:['a) 500','b) 1,000','c) 2,000','d) 5,000'],a:2},
-  {q:'¿Qué proceso histórico explica la influencia europea en África?',o:['a) Renacimiento','b) Colonialismo','c) Revolución Industrial','d) Globalización'],a:1},
+  {q:'¿Qué proceso histórico explica la influencia europea en África?',o:['a) Colonialismo','b) Renacimiento','c) Revolución Industrial','d) Globalización'],a:0},
   {q:'¿Cuál es la segunda economía más grande del mundo?',o:['a) EE.UU.','b) China','c) Japón','d) Alemania'],a:1},
-  {q:'¿En qué cordillera está el Monte Everest?',o:['a) Alpes','b) Andes','c) Himalaya','d) Ural'],a:2},
-  {q:'¿Qué importa Honduras principalmente de Asia?',o:['a) Café','b) Banano','c) Productos manufacturados y tecnología','d) Petróleo'],a:2},
+  {q:'¿En qué cordillera está el Monte Everest?',o:['a) Himalaya','b) Alpes','c) Andes','d) Ural'],a:0},
+  {q:'¿Qué importa Honduras principalmente de Asia?',o:['a) Café','b) Productos manufacturados y tecnología','c) Banano','d) Petróleo'],a:1},
 ];
 const evalCPBank = [
   {q:'El continente más grande y más poblado del mundo es ___ .',a:'Asia'},

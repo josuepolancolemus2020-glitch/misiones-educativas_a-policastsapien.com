@@ -227,15 +227,15 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-    { q: '¿Cuál es la función principal de un pronombre?', o: ['a) Describir cómo es un objeto', 'b) Sustituir al sustantivo para no repetirlo', 'c) Indicar la acción del sujeto', 'd) Unir dos oraciones'], c: 1 },
-    { q: '"El lápiz es MÍO". ¿Qué clase de pronombre es "mío"?', o: ['a) Personal', 'b) Demostrativo', 'c) Posesivo', 'd) Relativo'], c: 2 },
+    { q: '¿Cuál es la función principal de un pronombre?', o: ['a) Sustituir al sustantivo para no repetirlo', 'b) Describir cómo es un objeto', 'c) Indicar la acción del sujeto', 'd) Unir dos oraciones'], c: 0 },
+    { q: '"El lápiz es MÍO". ¿Qué clase de pronombre es "mío"?', o: ['a) Personal', 'b) Posesivo', 'c) Demostrativo', 'd) Relativo'], c: 1 },
     { q: '"DÁMELO rápido". El pronombre en esta oración es:', o: ['a) Personal Tónico', 'b) Proclítico', 'c) Enclítico', 'd) Demostrativo'], c: 2 },
-    { q: '¿Cuál de los siguientes es un pronombre personal TÓNICO?', o: ['a) Me', 'b) Lo', 'c) Nosotros', 'd) Te'], c: 2 },
-    { q: '"No vino NADIE a la fiesta". La palabra "nadie" es un pronombre:', o: ['a) Relativo', 'b) Personal', 'c) Demostrativo', 'd) Indefinido'], c: 3 },
-    { q: 'En Honduras, el pronombre equivalente al "tú" de España es:', o: ['a) Vosotros', 'b) Vos', 'c) Ustedes', 'd) Os'], c: 1 },
-    { q: '"TE lo advertí". El pronombre "te" está funcionando de forma:', o: ['a) Enclítica', 'b) Proclítica', 'c) Posesiva', 'd) Interrogativa'], c: 1 },
-    { q: '"El coche QUE compré es azul". La palabra "que" es un pronombre:', o: ['a) Relativo', 'b) Interrogativo', 'c) Personal', 'd) Demostrativo'], c: 0 },
-    { q: '¿Cuál de estos es un pronombre demostrativo?', o: ['a) Suyo', 'b) Alguien', 'c) Aquel', 'd) Yo'], c: 2 },
+    { q: '¿Cuál de los siguientes es un pronombre personal TÓNICO?', o: ['a) Nosotros', 'b) Me', 'c) Lo', 'd) Te'], c: 0 },
+    { q: '"No vino NADIE a la fiesta". La palabra "nadie" es un pronombre:', o: ['a) Relativo', 'b) Personal', 'c) Indefinido', 'd) Demostrativo'], c: 2 },
+    { q: 'En Honduras, el pronombre equivalente al "tú" de España es:', o: ['a) Vosotros', 'b) Ustedes', 'c) Os', 'd) Vos'], c: 3 },
+    { q: '"TE lo advertí". El pronombre "te" está funcionando de forma:', o: ['a) Proclítica', 'b) Enclítica', 'c) Posesiva', 'd) Interrogativa'], c: 0 },
+    { q: '"El coche QUE compré es azul". La palabra "que" es un pronombre:', o: ['a) Interrogativo', 'b) Relativo', 'c) Personal', 'd) Demostrativo'], c: 1 },
+    { q: '¿Cuál de estos es un pronombre demostrativo?', o: ['a) Suyo', 'b) Alguien', 'c) Yo', 'd) Aquel'], c: 3 },
     { q: '¿Qué diferencia a "Aquel carro" de "Quiero AQUEL"?', o: ['a) Ninguna, ambos son pronombres', 'b) El 1ero es determinante (acompaña), el 2do es pronombre (sustituye)', 'c) El 1ero es pronombre, el 2do es adjetivo', 'd) Ambos son adjetivos'], c: 1 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
@@ -429,14 +429,14 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'El ___ es la palabra que sustituye al sustantivo.', opts: ['adjetivo', 'pronombre', 'verbo'], c: 1 },
+    { s: 'El ___ es la palabra que sustituye al sustantivo.', opts: ['pronombre', 'adjetivo', 'verbo'], c: 0 },
     { s: 'Los pronombres ___ indican cercanía, distancia media o lejanía.', opts: ['personales', 'demostrativos', 'indefinidos'], c: 1 },
-    { s: 'Un pronombre átono que va antes del verbo conjugado se llama ___.', opts: ['enclítico', 'proclítico', 'tónico'], c: 1 },
-    { s: 'El pronombre "vos" utilizado en Honduras reemplaza al pronombre "___".', opts: ['tú', 'él', 'nosotros'], c: 0 },
-    { s: '"El regalo es TUYO". La palabra "tuyo" es un pronombre ___.', opts: ['personal', 'posesivo', 'demostrativo'], c: 1 },
+    { s: 'Un pronombre átono que va antes del verbo conjugado se llama ___.', opts: ['proclítico', 'enclítico', 'tónico'], c: 0 },
+    { s: 'El pronombre "vos" utilizado en Honduras reemplaza al pronombre "___".', opts: ['él', 'tú', 'nosotros'], c: 1 },
+    { s: '"El regalo es TUYO". La palabra "tuyo" es un pronombre ___.', opts: ['personal', 'demostrativo', 'posesivo'], c: 2 },
     { s: 'Un pronombre pegado al final de un verbo (ej: "dámelo") se llama ___.', opts: ['enclítico', 'proclítico', 'relativo'], c: 0 },
-    { s: '"NADIE lo sabía". La palabra "nadie" es un pronombre ___.', opts: ['relativo', 'interrogativo', 'indefinido'], c: 2 },
-    { s: 'Los pronombres personales ___ pueden funcionar como sujeto por sí solos.', opts: ['tónicos', 'átonos', 'relativos'], c: 0 },
+    { s: '"NADIE lo sabía". La palabra "nadie" es un pronombre ___.', opts: ['relativo', 'indefinido', 'interrogativo'], c: 1 },
+    { s: 'Los pronombres personales ___ pueden funcionar como sujeto por sí solos.', opts: ['átonos', 'relativos', 'tónicos'], c: 2 },
 ];
 let cmpIdx = 0, cmpSel = -1, cmpDone = false;
 function showCmp() {var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -877,21 +877,21 @@ const evalTFBank = [
     { q: 'Los pronombres posesivos acompañan al sustantivo igual que los determinantes.', a: false },
 ];
 const evalMCBank = [
-    { q: '¿Cuál es la función del pronombre en la oración?', o: ['a) Describir', 'b) Sustituir al sustantivo', 'c) Unir párrafos', 'd) Indicar acción'], a: 1 },
+    { q: '¿Cuál es la función del pronombre en la oración?', o: ['a) Sustituir al sustantivo', 'b) Describir', 'c) Unir párrafos', 'd) Indicar acción'], a: 0 },
     { q: '"La niña QUE canta es mi hermana". La palabra en mayúsculas es un pronombre:', o: ['a) Posesivo', 'b) Personal', 'c) Relativo', 'd) Demostrativo'], a: 2 },
-    { q: '¿Cuál de estos es un pronombre enclítico?', o: ['a) Me dijo', 'b) Se fue', 'c) Irse', 'd) Te busco'], a: 2 },
+    { q: '¿Cuál de estos es un pronombre enclítico?', o: ['a) Me dijo', 'b) Irse', 'c) Se fue', 'd) Te busco'], a: 1 },
     { q: '"No quiero este, dame AQUEL". La palabra en mayúsculas es un pronombre:', o: ['a) Personal', 'b) Demostrativo', 'c) Indefinido', 'd) Numeral'], a: 1 },
-    { q: '¿Qué pronombre personal reemplaza a "tú" en el habla hondureña?', o: ['a) Ustedes', 'b) Nosotros', 'c) Vosotros', 'd) Vos'], a: 3 },
-    { q: 'En "LO compré ayer", el pronombre "LO" es:', o: ['a) Proclítico', 'b) Enclítico', 'c) Tónico', 'd) Demostrativo'], a: 0 },
-    { q: '¿Qué tipo de pronombre indica una cantidad o identidad imprecisa?', o: ['a) Relativo', 'b) Posesivo', 'c) Indefinido', 'd) Tónico'], a: 2 },
+    { q: '¿Qué pronombre personal reemplaza a "tú" en el habla hondureña?', o: ['a) Vos', 'b) Ustedes', 'c) Nosotros', 'd) Vosotros'], a: 0 },
+    { q: 'En "LO compré ayer", el pronombre "LO" es:', o: ['a) Enclítico', 'b) Proclítico', 'c) Tónico', 'd) Demostrativo'], a: 1 },
+    { q: '¿Qué tipo de pronombre indica una cantidad o identidad imprecisa?', o: ['a) Relativo', 'b) Posesivo', 'c) Tónico', 'd) Indefinido'], a: 3 },
     { q: '"¿QUIÉN llegó?". Es un pronombre:', o: ['a) Interrogativo', 'b) Relativo', 'c) Personal', 'd) Exclamativo'], a: 0 },
-    { q: '"El lápiz es MÍO". ¿Qué clase de pronombre es "mío"?', o: ['a) Personal', 'b) Demostrativo', 'c) Posesivo', 'd) Relativo'], a: 2 },
-    { q: '¿Cuál de los siguientes es un pronombre personal tónico?', o: ['a) Me', 'b) Lo', 'c) Nosotros', 'd) Te'], a: 2 },
-    { q: '"No vino NADIE a la fiesta". La palabra "nadie" es un pronombre:', o: ['a) Relativo', 'b) Personal', 'c) Demostrativo', 'd) Indefinido'], a: 3 },
-    { q: '"TE lo advertí". El pronombre "te" funciona de forma:', o: ['a) Enclítica', 'b) Proclítica', 'c) Posesiva', 'd) Interrogativa'], a: 1 },
+    { q: '"El lápiz es MÍO". ¿Qué clase de pronombre es "mío"?', o: ['a) Personal', 'b) Demostrativo', 'c) Relativo', 'd) Posesivo'], a: 3 },
+    { q: '¿Cuál de los siguientes es un pronombre personal tónico?', o: ['a) Me', 'b) Nosotros', 'c) Lo', 'd) Te'], a: 1 },
+    { q: '"No vino NADIE a la fiesta". La palabra "nadie" es un pronombre:', o: ['a) Relativo', 'b) Personal', 'c) Indefinido', 'd) Demostrativo'], a: 2 },
+    { q: '"TE lo advertí". El pronombre "te" funciona de forma:', o: ['a) Proclítica', 'b) Enclítica', 'c) Posesiva', 'd) Interrogativa'], a: 0 },
     { q: '¿Cuál de estos es un pronombre demostrativo?', o: ['a) Suyo', 'b) Alguien', 'c) Aquel', 'd) Yo'], a: 2 },
     { q: 'En "DÁMELO rápido", el pronombre es:', o: ['a) Tónico', 'b) Proclítico', 'c) Enclítico', 'd) Demostrativo'], a: 2 },
-    { q: '"El coche QUE compré es azul". La palabra "que" es un pronombre:', o: ['a) Relativo', 'b) Interrogativo', 'c) Personal', 'd) Demostrativo'], a: 0 },
+    { q: '"El coche QUE compré es azul". La palabra "que" es un pronombre:', o: ['a) Interrogativo', 'b) Personal', 'c) Demostrativo', 'd) Relativo'], a: 3 },
 ];
 const evalCPBank = [
     { q: 'La función del ___ es evitar repeticiones sustituyendo al sustantivo.', a: 'pronombre' },
