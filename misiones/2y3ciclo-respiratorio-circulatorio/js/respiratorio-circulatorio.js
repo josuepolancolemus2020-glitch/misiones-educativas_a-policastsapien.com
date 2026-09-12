@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué gas toma el cuerpo del aire al respirar?',o:['a) El oxígeno','b) El nitrógeno','c) El dióxido de carbono','d) El humo'],c:0},
-  {q:'¿Qué órgano bombea la sangre a todo el cuerpo?',o:['a) El corazón','b) Los pulmones','c) El estómago','d) El hígado'],c:0},
-  {q:'¿Dónde ocurre el intercambio de gases en los pulmones?',o:['a) En la tráquea','b) En el corazón','c) En las venas','d) En los alvéolos'],c:3},
-  {q:'¿Qué vasos llevan la sangre DESDE el corazón al cuerpo?',o:['a) Las venas','b) Los capilares','c) Las arterias','d) Los bronquios'],c:2},
-  {q:'¿Qué músculo permite la respiración?',o:['a) El bíceps','b) El diafragma','c) El corazón','d) La lengua'],c:1},
+  {q:'¿Qué gas toma el cuerpo del aire al respirar?',o:['a) El nitrógeno','b) El oxígeno','c) El dióxido de carbono','d) El humo'],c:1},
+  {q:'¿Qué órgano bombea la sangre a todo el cuerpo?',o:['a) Los pulmones','b) El estómago','c) El hígado','d) El corazón'],c:3},
+  {q:'¿Dónde ocurre el intercambio de gases en los pulmones?',o:['a) En los alvéolos','b) En la tráquea','c) En el corazón','d) En las venas'],c:0},
+  {q:'¿Qué vasos llevan la sangre DESDE el corazón al cuerpo?',o:['a) Las arterias','b) Las venas','c) Los capilares','d) Los bronquios'],c:0},
+  {q:'¿Qué músculo permite la respiración?',o:['a) El bíceps','b) El corazón','c) El diafragma','d) La lengua'],c:2},
   {q:'¿Qué células de la sangre transportan el oxígeno?',o:['a) Los glóbulos blancos','b) Las plaquetas','c) Los glóbulos rojos','d) El plasma'],c:2},
-  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El dióxido de carbono','c) El nitrógeno','d) El vapor de agua'],c:1},
-  {q:'¿Qué vasos traen la sangre DE VUELTA al corazón?',o:['a) Las arterias','b) Las venas','c) Los bronquios','d) Los alvéolos'],c:1},
-  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Tres','c) Cuatro','d) Cinco'],c:2},
+  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El nitrógeno','c) El vapor de agua','d) El dióxido de carbono'],c:3},
+  {q:'¿Qué vasos traen la sangre DE VUELTA al corazón?',o:['a) Las venas','b) Las arterias','c) Los bronquios','d) Los alvéolos'],c:0},
+  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Cuatro','c) Tres','d) Cinco'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,13 +144,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El sistema ___ toma oxígeno del aire.',opts:['digestivo','óseo','respiratorio'],c:2},
+  {s:'El sistema ___ toma oxígeno del aire.',opts:['digestivo','respiratorio','óseo'],c:1},
   {s:'El ___ bombea la sangre a todo el cuerpo.',opts:['corazón','pulmón','estómago'],c:0},
-  {s:'Las ___ salen del corazón hacia el cuerpo.',opts:['venas','tráqueas','arterias'],c:2},
-  {s:'El intercambio de gases ocurre en los ___.',opts:['alvéolos','riñones','huesos'],c:0},
+  {s:'Las ___ salen del corazón hacia el cuerpo.',opts:['arterias','venas','tráqueas'],c:0},
+  {s:'El intercambio de gases ocurre en los ___.',opts:['riñones','huesos','alvéolos'],c:2},
   {s:'Al inspirar entra ___ a los pulmones.',opts:['oxígeno','dióxido de carbono','humo'],c:0},
   {s:'El músculo de la respiración es el ___.',opts:['bíceps','diafragma','corazón'],c:1},
-  {s:'Los glóbulos ___ transportan el oxígeno.',opts:['blancos','rojos','azules'],c:1},
+  {s:'Los glóbulos ___ transportan el oxígeno.',opts:['blancos','azules','rojos'],c:2},
   {s:'Las ___ regresan la sangre al corazón.',opts:['arterias','venas','neuronas'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
@@ -366,19 +366,19 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Qué gas toma el cuerpo del aire al respirar?',o:['a) El oxígeno','b) El nitrógeno','c) El dióxido de carbono','d) El humo'],a:0},
-  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El nitrógeno','c) El hidrógeno','d) El dióxido de carbono'],a:3},
-  {q:'¿Qué órgano bombea la sangre?',o:['a) El corazón','b) Los pulmones','c) El estómago','d) El hígado'],a:0},
+  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El dióxido de carbono','c) El nitrógeno','d) El hidrógeno'],a:1},
+  {q:'¿Qué órgano bombea la sangre?',o:['a) Los pulmones','b) El estómago','c) El hígado','d) El corazón'],a:3},
   {q:'¿Dónde ocurre el intercambio de gases?',o:['a) En la tráquea','b) En el corazón','c) En los alvéolos','d) En las venas'],a:2},
-  {q:'¿Qué vasos salen del corazón hacia el cuerpo?',o:['a) Las venas','b) Los bronquios','c) Los alvéolos','d) Las arterias'],a:3},
-  {q:'¿Qué vasos regresan la sangre al corazón?',o:['a) Las venas','b) Las arterias','c) Los capilares','d) La tráquea'],a:0},
+  {q:'¿Qué vasos salen del corazón hacia el cuerpo?',o:['a) Las arterias','b) Las venas','c) Los bronquios','d) Los alvéolos'],a:0},
+  {q:'¿Qué vasos regresan la sangre al corazón?',o:['a) Las arterias','b) Los capilares','c) Las venas','d) La tráquea'],a:2},
   {q:'¿Qué músculo permite la respiración?',o:['a) El bíceps','b) El corazón','c) El diafragma','d) La lengua'],a:2},
-  {q:'¿Qué transportan los glóbulos rojos?',o:['a) Nutrientes','b) Agua','c) Grasa','d) Oxígeno'],a:3},
-  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Tres','c) Cuatro','d) Cinco'],a:2},
-  {q:'¿A qué sistema pertenecen los pulmones?',o:['a) Respiratorio','b) Circulatorio','c) Digestivo','d) Óseo'],a:0},
-  {q:'¿Qué tubo lleva el aire a los bronquios?',o:['a) La aorta','b) La vena','c) La tráquea','d) El esófago'],a:2},
-  {q:'¿Cómo se llaman los vasos más finos, que llegan a las células?',o:['a) Las arterias','b) Los capilares','c) Las venas','d) Los alvéolos'],a:1},
-  {q:'¿Qué hábito cuida el corazón y los pulmones?',o:['a) Fumar','b) Hacer ejercicio','c) Comer mucha grasa','d) No moverse'],a:1},
-  {q:'Los órganos esponjosos de la respiración son…',o:['a) los riñones','b) los pulmones','c) los huesos','d) las venas'],a:1},
+  {q:'¿Qué transportan los glóbulos rojos?',o:['a) Nutrientes','b) Oxígeno','c) Agua','d) Grasa'],a:1},
+  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Tres','c) Cinco','d) Cuatro'],a:3},
+  {q:'¿A qué sistema pertenecen los pulmones?',o:['a) Circulatorio','b) Respiratorio','c) Digestivo','d) Óseo'],a:1},
+  {q:'¿Qué tubo lleva el aire a los bronquios?',o:['a) La tráquea','b) La aorta','c) La vena','d) El esófago'],a:0},
+  {q:'¿Cómo se llaman los vasos más finos, que llegan a las células?',o:['a) Los capilares','b) Las arterias','c) Las venas','d) Los alvéolos'],a:0},
+  {q:'¿Qué hábito cuida el corazón y los pulmones?',o:['a) Fumar','b) Comer mucha grasa','c) Hacer ejercicio','d) No moverse'],a:2},
+  {q:'Los órganos esponjosos de la respiración son…',o:['a) los riñones','b) los huesos','c) las venas','d) los pulmones'],a:3},
   {q:'La parte líquida de la sangre se llama…',o:['a) plaquetas','b) plasma','c) hemoglobina','d) linfa'],a:1},
 ];
 const evalCPBank=[

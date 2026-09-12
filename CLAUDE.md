@@ -3733,6 +3733,39 @@ ofrece. Mueve la correcta y deja las demás en su orden relativo.
    opciones el azar es el 25 %: una letra al 40 % sigue siendo una pista. El
    objetivo es `ceil(filas / letras)` y el 40 % queda como el techo que no se
    pasa nunca.
+5. ⚠️ **Las cuentas NO son la secuencia, y esto costó una segunda pasada.** La
+   primera versión movía filas de arriba abajo, así que las que no hacía falta
+   tocar —todas con la letra del sesgo— se quedaban AMONTONADAS AL FINAL. El
+   banco de Respiratorio quedaba `adacdacdcacbbbb`: 27 % por letra en la cuenta
+   y **las cuatro últimas preguntas seguidas en la «b»**. En un examen de quince
+   eso se ve desde el pupitre, y el que lo note tiene las últimas cuatro
+   regaladas — lo mismo que veníamos a quitar.
+
+   Por eso se reparte en dos pasos: primero CUÁNTAS de cada letra y después EN
+   QUÉ ORDEN.
+6. ⚠️ **Y el orden se BARAJA; no vale «que nunca se repita la anterior».** Es lo
+   primero que sale y deja la racha en 1 siempre, que es otro patrón: quien lo
+   note sabe que la siguiente no es la que acaba de marcar, y pasa de acertar 1
+   de 4 a 1 de 3. Sería cambiar un sesgo grande por uno pequeño, pero cambiarlo
+   por otro. Se baraja con **semilla** —el mismo archivo da siempre el mismo
+   reparto, así volver a correr la herramienta no ensucia el diff— y solo se
+   rechaza lo que de verdad se ve: **tres o más seguidas iguales**. Dos pasan,
+   porque en una lista al azar pasan, y una lista donde nunca pasan ya no
+   parece azar.
+
+   `mide-reparto-respuestas.js` **informa** de la racha más larga, pero no falla
+   por ella: en una lista al azar de quince, una racha de tres sale casi la
+   mitad de las veces, y darla por avería sería pintar de rojo un banco sano.
+
+⚠️ **Dos cosas del detector de «listas ordenadas» que hubo que medir:** la coma
+es separador de MILES, no decimal —leer «400,000» como cuatrocientos declaraba
+ordenada una lista por un motivo inventado—; y una lista que BAJA empezando por
+la correcta no es un menú, es «escribí la respuesta y detrás me inventé
+distractores más pequeños». En el catálogo entero hay **63 listas que suben**
+—en 58 la correcta no va primera, o sea que son menús de verdad— y solo **10
+que bajan**; de esas, las **4** que empiezan por la correcta son las cuatro el
+mismo caso (`347 · 34.7 · 3,470 · 0.0347`: el error de correr la coma). Esas
+se mueven; las otras seis, no.
 
 Y **antes de guardar, el archivo tiene que compilar**: la herramienta le pasa
 `node --check` a un temporal y solo entonces escribe. Es la lección de siempre

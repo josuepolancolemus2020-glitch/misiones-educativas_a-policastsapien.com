@@ -210,17 +210,17 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 // ===================== QUIZ DATA =====================
 const qzData=[
   {q:'¿En qué año fue declarada la Reserva de Biosfera Río Plátano como Patrimonio de la Humanidad?',o:['a) 1975','b) 1982','c) 1990','d) 2001'],c:1},
-  {q:'¿Cuál es el bosque más extenso de Honduras?',o:['a) Bosque de pino-roble','b) Bosque nublado','c) Manglar','d) Bosque seco tropical'],c:0},
+  {q:'¿Cuál es el bosque más extenso de Honduras?',o:['a) Bosque nublado','b) Manglar','c) Bosque seco tropical','d) Bosque de pino-roble'],c:3},
   {q:'¿Qué porcentaje del agua potable de Tegucigalpa proviene del Parque Nacional La Tigra?',o:['a) 40%','b) 20%','c) 30%','d) 60%'],c:0},
   {q:'¿Cuál es el punto más alto de Honduras?',o:['a) Cerro El Picacho','b) Pico Bonito','c) Montaña El Boquerón','d) Cerro Las Minas'],c:3},
   {q:'¿Qué siglas identifican al sistema de áreas protegidas de Honduras?',o:['a) SINAPH','b) SERNA','c) COHDEFOR','d) ICF'],c:0},
-  {q:'¿Cuáles son las principales causas de la deforestación en Honduras?',o:['a) Turismo y minería','b) Ganadería extensiva y tala ilegal','c) Urbanización y pesca','d) Industria textil y tecnología'],c:1},
+  {q:'¿Cuáles son las principales causas de la deforestación en Honduras?',o:['a) Turismo y minería','b) Urbanización y pesca','c) Industria textil y tecnología','d) Ganadería extensiva y tala ilegal'],c:3},
   {q:'¿Dónde se ubica principalmente el Bosque Tropical Latifoliado de Honduras?',o:['a) Sur del país','b) Valle del Aguán','c) La Mosquitia','d) Valle de Comayagua'],c:2},
-  {q:'¿Qué corredor une las áreas protegidas desde México hasta Colombia?',o:['a) Corredor Verde del Caribe','b) Corredor Andino','c) Corredor Biológico Mesoamericano','d) Reserva Maya'],c:2},
-  {q:'¿Cuántas hectáreas protege aproximadamente la Reserva Río Plátano?',o:['a) 100,000 ha','b) 300,000 ha','c) 500,000 ha','d) 832,000 ha'],c:3},
-  {q:'¿Qué ecosistema costero sirve de criadero para peces y protege costas de huracanes?',o:['a) Bosque nublado','b) Manglar','c) Bosque de pino','d) Páramo'],c:1},
+  {q:'¿Qué corredor une las áreas protegidas desde México hasta Colombia?',o:['a) Corredor Biológico Mesoamericano','b) Corredor Verde del Caribe','c) Corredor Andino','d) Reserva Maya'],c:0},
+  {q:'¿Cuántas hectáreas protege aproximadamente la Reserva Río Plátano?',o:['a) 100,000 ha','b) 832,000 ha','c) 300,000 ha','d) 500,000 ha'],c:1},
+  {q:'¿Qué ecosistema costero sirve de criadero para peces y protege costas de huracanes?',o:['a) Bosque nublado','b) Bosque de pino','c) Manglar','d) Páramo'],c:2},
   {q:'¿Cuál fue la primera área protegida declarada en Honduras?',o:['a) Parque Nacional Celaque','b) Reserva Río Plátano','c) Parque Nacional La Tigra','d) Lancetilla'],c:2},
-  {q:'¿Qué especie emblemática de los bosques nublados mesoamericanos habita en Honduras?',o:['a) Jaguar','b) Manatí','c) Tapir','d) Quetzal'],c:3},
+  {q:'¿Qué especie emblemática de los bosques nublados mesoamericanos habita en Honduras?',o:['a) Jaguar','b) Quetzal','c) Manatí','d) Tapir'],c:1},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -406,13 +406,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'La Reserva de Biosfera Río Plátano fue declarada Patrimonio de la Humanidad en ___ .',opts:['1972','1982','2001'],c:1},
-  {s:'El bosque ___ es el más extenso de Honduras.',opts:['de pino-roble','nublado','de manglar'],c:0},
+  {s:'El bosque ___ es el más extenso de Honduras.',opts:['nublado','de pino-roble','de manglar'],c:1},
   {s:'El Corredor Biológico ___ conecta ecosistemas desde México hasta Colombia.',opts:['Andino','Amazónico','Mesoamericano'],c:2},
   {s:'El Parque Nacional ___ fue la primera área protegida de Honduras.',opts:['La Tigra','Celaque','Río Plátano'],c:0},
-  {s:'El ___ es el punto más alto de Honduras con 2,849 metros.',opts:['Pico Bonito','Monte Celaque','Cerro Las Minas'],c:2},
-  {s:'Los manglares protegen las costas principalmente de los ___.',opts:['huracanes','terremotos','tsunamis'],c:0},
-  {s:'La principal causa de deforestación en Honduras es la ___.',opts:['minería','ganadería extensiva','pesca industrial'],c:1},
-  {s:'El bosque nublado tiene importancia hídrica porque ___ el agua.',opts:['contamina','almacena','drena'],c:1},
+  {s:'El ___ es el punto más alto de Honduras con 2,849 metros.',opts:['Pico Bonito','Cerro Las Minas','Monte Celaque'],c:1},
+  {s:'Los manglares protegen las costas principalmente de los ___.',opts:['terremotos','tsunamis','huracanes'],c:2},
+  {s:'La principal causa de deforestación en Honduras es la ___.',opts:['ganadería extensiva','minería','pesca industrial'],c:0},
+  {s:'El bosque nublado tiene importancia hídrica porque ___ el agua.',opts:['almacena','contamina','drena'],c:0},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -841,19 +841,19 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'¿Cuál es el bosque más extenso de Honduras?',o:['a) Bosque de pino-roble','b) Bosque nublado','c) Manglar','d) Bosque seco tropical'],a:0},
   {q:'¿En qué año fue declarada la Reserva Río Plátano como Patrimonio UNESCO?',o:['a) 1972','b) 1982','c) 1990','d) 2001'],a:1},
-  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) Cerro Las Minas','b) Pico Bonito','c) Cerro El Picacho','d) Monte Uyuca'],a:0},
-  {q:'¿Cuántas hectáreas cubre aproximadamente la Reserva Río Plátano?',o:['a) 200,000 ha','b) 500,000 ha','c) 1,200,000 ha','d) 832,000 ha'],a:3},
-  {q:'¿Qué porcentaje del agua de Tegucigalpa proviene del Parque La Tigra?',o:['a) 40%','b) 20%','c) 30%','d) 60%'],a:0},
+  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) Pico Bonito','b) Cerro Las Minas','c) Cerro El Picacho','d) Monte Uyuca'],a:1},
+  {q:'¿Cuántas hectáreas cubre aproximadamente la Reserva Río Plátano?',o:['a) 200,000 ha','b) 500,000 ha','c) 832,000 ha','d) 1,200,000 ha'],a:2},
+  {q:'¿Qué porcentaje del agua de Tegucigalpa proviene del Parque La Tigra?',o:['a) 20%','b) 30%','c) 60%','d) 40%'],a:3},
   {q:'¿Cuál fue la primera área protegida declarada en Honduras?',o:['a) Parque Celaque','b) Río Plátano','c) Lancetilla','d) Parque La Tigra'],a:3},
   {q:'¿Qué es el SINAPH?',o:['a) Sistema Nacional de Parques Históricos','b) Sistema Nacional de Áreas Protegidas de Honduras','c) Secretaría de Investigación Ambiental','d) Servicio Nacional de Bosques'],a:1},
   {q:'¿Dónde se localiza principalmente el bosque latifoliado tropical de Honduras?',o:['a) Valle de Comayagua','b) El Paraíso','c) Choluteca','d) La Mosquitia'],a:3},
-  {q:'¿Qué ecosistema costero sirve de criadero natural para peces y mariscos?',o:['a) Bosque nublado','b) Manglar','c) Bosque de pino','d) Páramo'],a:1},
-  {q:'¿Qué ave emblemática habita en los bosques nublados de Honduras?',o:['a) Quetzal','b) Tucán','c) Garza','d) Guacamaya'],a:0},
-  {q:'¿Cuál es la principal causa de deforestación en Honduras?',o:['a) Minería','b) Turismo','c) Ganadería extensiva','d) Industria textil'],a:2},
-  {q:'¿El Corredor Biológico Mesoamericano conecta desde México hasta…?',o:['a) Brasil','b) Colombia','c) Perú','d) Ecuador'],a:1},
-  {q:'¿Dónde se ubica el Jardín Botánico Lancetilla?',o:['a) Comayagua','b) La Ceiba','c) Tela, Atlántida','d) Copán Ruinas'],a:2},
-  {q:'¿Qué mamífero acuático en peligro habita en Cuero y Salado?',o:['a) Delfín','b) Nutria','c) Manatí','d) Ballena'],a:2},
-  {q:'¿A qué altitud se desarrolla principalmente el bosque nublado en Honduras?',o:['a) 0–500 m','b) 500–1,000 m','c) 2,000–3,000 m','d) 3,500–4,000 m'],a:2},
+  {q:'¿Qué ecosistema costero sirve de criadero natural para peces y mariscos?',o:['a) Bosque nublado','b) Bosque de pino','c) Manglar','d) Páramo'],a:2},
+  {q:'¿Qué ave emblemática habita en los bosques nublados de Honduras?',o:['a) Tucán','b) Garza','c) Quetzal','d) Guacamaya'],a:2},
+  {q:'¿Cuál es la principal causa de deforestación en Honduras?',o:['a) Ganadería extensiva','b) Minería','c) Turismo','d) Industria textil'],a:0},
+  {q:'¿El Corredor Biológico Mesoamericano conecta desde México hasta…?',o:['a) Brasil','b) Perú','c) Colombia','d) Ecuador'],a:2},
+  {q:'¿Dónde se ubica el Jardín Botánico Lancetilla?',o:['a) Tela, Atlántida','b) Comayagua','c) La Ceiba','d) Copán Ruinas'],a:0},
+  {q:'¿Qué mamífero acuático en peligro habita en Cuero y Salado?',o:['a) Manatí','b) Delfín','c) Nutria','d) Ballena'],a:0},
+  {q:'¿A qué altitud se desarrolla principalmente el bosque nublado en Honduras?',o:['a) 0–500 m','b) 2,000–3,000 m','c) 500–1,000 m','d) 3,500–4,000 m'],a:1},
 ];
 const evalCPBank=[
   {q:'El bosque ___ es el más extenso de Honduras.',a:'de pino-roble'},

@@ -231,16 +231,16 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-    { q: '¿Cuál es la sílaba tónica de la palabra "camino"?', o: ['a) mi', 'b) ca', 'c) no', 'd) Ninguna'], c: 0 },
-    { q: '¿Cuáles son las vocales fuertes?', o: ['a) i, u', 'b) a, i, u', 'c) Todas las vocales', 'd) a, e, o'], c: 3 },
+    { q: '¿Cuál es la sílaba tónica de la palabra "camino"?', o: ['a) ca', 'b) no', 'c) Ninguna', 'd) mi'], c: 3 },
+    { q: '¿Cuáles son las vocales fuertes?', o: ['a) i, u', 'b) a, e, o', 'c) a, i, u', 'd) Todas las vocales'], c: 1 },
     { q: '"Piano" tiene un diptongo formado por:', o: ['a) Una débil átona + una fuerte', 'b) Dos vocales fuertes', 'c) Tres vocales', 'd) Una fuerte tónica sola'], c: 0 },
-    { q: '"Buey" es un ejemplo de:', o: ['a) Diptongo', 'b) Hiato', 'c) Triptongo', 'd) Sílaba átona'], c: 2 },
-    { q: '"Día" tiene un hiato acentual porque:', o: ['a) Las dos vocales son fuertes', 'b) No tiene vocales juntas', 'c) Es una palabra esdrújula', 'd) La vocal débil "i" es tónica junto a una fuerte'], c: 3 },
-    { q: '¿Cuándo llevan tilde las palabras agudas?', o: ['a) Siempre', 'b) Cuando terminan en n, s o vocal', 'c) Nunca', 'd) Cuando terminan en consonante'], c: 1 },
+    { q: '"Buey" es un ejemplo de:', o: ['a) Triptongo', 'b) Diptongo', 'c) Hiato', 'd) Sílaba átona'], c: 0 },
+    { q: '"Día" tiene un hiato acentual porque:', o: ['a) Las dos vocales son fuertes', 'b) No tiene vocales juntas', 'c) La vocal débil "i" es tónica junto a una fuerte', 'd) Es una palabra esdrújula'], c: 2 },
+    { q: '¿Cuándo llevan tilde las palabras agudas?', o: ['a) Cuando terminan en n, s o vocal', 'b) Siempre', 'c) Nunca', 'd) Cuando terminan en consonante'], c: 0 },
     { q: '¿Cuándo llevan tilde las palabras llanas?', o: ['a) Cuando terminan en n, s o vocal', 'b) Cuando NO terminan en n, s o vocal', 'c) Siempre', 'd) Nunca'], c: 1 },
     { q: 'Las palabras esdrújulas y sobresdrújulas:', o: ['a) Nunca llevan tilde', 'b) Llevan tilde solo a veces', 'c) Siempre llevan tilde', 'd) Solo llevan tilde si terminan en vocal'], c: 2 },
     { q: 'En la oración "Él no sabe si vendrá", la palabra "Él" lleva tilde porque:', o: ['a) Es aguda terminada en vocal', 'b) Es tilde diacrítica (pronombre)', 'c) Es esdrújula', 'd) Es un error'], c: 1 },
-    { q: '¿Cuál de estas palabras es esdrújula?', o: ['a) Camión', 'b) Árbol', 'c) Música', 'd) Compás'], c: 2 },
+    { q: '¿Cuál de estas palabras es esdrújula?', o: ['a) Camión', 'b) Árbol', 'c) Compás', 'd) Música'], c: 3 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
 function buildQz() { qzIdx = 0; qzSel = -1; qzDone = false; showQz(); }
@@ -420,14 +420,14 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'Compré un ___ para la sala.', opts: ['sofá', 'sofa', 'sofà'], c: 0 },
-    { s: 'El ___ del colegio es muy alto.', opts: ['arbol', 'arból', 'árbol'], c: 2 },
-    { s: 'Mi materia favorita es la ___.', opts: ['musica', 'músika', 'música'], c: 2 },
-    { s: '___ no quiere ir a la fiesta.', opts: ['El', 'Él', 'EL'], c: 1 },
+    { s: 'Compré un ___ para la sala.', opts: ['sofa', 'sofà', 'sofá'], c: 2 },
+    { s: 'El ___ del colegio es muy alto.', opts: ['arbol', 'árbol', 'arból'], c: 1 },
+    { s: 'Mi materia favorita es la ___.', opts: ['música', 'musica', 'músika'], c: 0 },
+    { s: '___ no quiere ir a la fiesta.', opts: ['El', 'EL', 'Él'], c: 2 },
     { s: 'Hoy hace un ___ muy bonito.', opts: ['dia', 'día', 'diá'], c: 1 },
-    { s: '¿___ es tu nombre?', opts: ['Como', 'Cómo', 'Comó'], c: 1 },
+    { s: '¿___ es tu nombre?', opts: ['Cómo', 'Como', 'Comó'], c: 0 },
     { s: 'El examen fue ___ difícil.', opts: ['bastante', 'bastente', 'bastanté'], c: 0 },
-    { s: '___ tu hermano si quiere venir.', opts: ['Pregúntale', 'Preguntale', 'Pregúntalé'], c: 0 },
+    { s: '___ tu hermano si quiere venir.', opts: ['Preguntale', 'Pregúntale', 'Pregúntalé'], c: 1 },
 ];
 let cmpIdx = 0, cmpSel = -1, cmpDone = false;
 function showCmp() {var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -979,21 +979,21 @@ const evalTFBank = [
     { q: 'Los adverbios terminados en -mente nunca conservan la tilde del adjetivo original.', a: false },
 ];
 const evalMCBank = [
-    { q: '¿Qué es la sílaba tónica?', o: ['a) La sílaba con mayor intensidad', 'b) La primera sílaba', 'c) La última sílaba siempre', 'd) Una vocal débil'], a: 0 },
-    { q: '¿Cuáles son las vocales fuertes?', o: ['a) a, e, o', 'b) i, u', 'c) a, i, u', 'd) Todas'], a: 0 },
+    { q: '¿Qué es la sílaba tónica?', o: ['a) La primera sílaba', 'b) La última sílaba siempre', 'c) Una vocal débil', 'd) La sílaba con mayor intensidad'], a: 3 },
+    { q: '¿Cuáles son las vocales fuertes?', o: ['a) i, u', 'b) a, e, o', 'c) a, i, u', 'd) Todas'], a: 1 },
     { q: '"Piano" contiene:', o: ['a) Un hiato', 'b) Un triptongo', 'c) Ninguna vocal junta', 'd) Un diptongo'], a: 3 },
-    { q: '"Buey" es un ejemplo de:', o: ['a) Diptongo', 'b) Hiato', 'c) Triptongo', 'd) Sílaba átona'], a: 2 },
+    { q: '"Buey" es un ejemplo de:', o: ['a) Diptongo', 'b) Hiato', 'c) Sílaba átona', 'd) Triptongo'], a: 3 },
     { q: '"País" tiene hiato acentual porque:', o: ['a) La vocal débil es tónica junto a una fuerte', 'b) Ambas vocales son fuertes', 'c) No tiene vocales juntas', 'd) Es esdrújula'], a: 0 },
-    { q: 'Las palabras agudas llevan tilde cuando:', o: ['a) Terminan en consonante', 'b) Nunca', 'c) Siempre', 'd) Terminan en n, s o vocal'], a: 3 },
+    { q: 'Las palabras agudas llevan tilde cuando:', o: ['a) Terminan en consonante', 'b) Nunca', 'c) Terminan en n, s o vocal', 'd) Siempre'], a: 2 },
     { q: 'Las palabras llanas llevan tilde cuando:', o: ['a) NO terminan en n, s o vocal', 'b) Terminan en n, s o vocal', 'c) Siempre', 'd) Nunca'], a: 0 },
-    { q: 'Las esdrújulas y sobresdrújulas:', o: ['a) Nunca llevan tilde', 'b) Llevan tilde solo en mayúscula', 'c) Siempre llevan tilde', 'd) Solo si terminan en vocal'], a: 2 },
-    { q: 'En "Él no vendrá", "Él" lleva tilde porque:', o: ['a) Es esdrújula', 'b) Es un error', 'c) Es tilde diacrítica', 'd) Termina en consonante'], a: 2 },
-    { q: '¿Cuál de estas es esdrújula?', o: ['a) Camión', 'b) Árbol', 'c) Música', 'd) Compás'], a: 2 },
-    { q: '¿Cuál de estas es sobresdrújula?', o: ['a) Música', 'b) Cuéntaselo', 'c) Compás', 'd) Árbol'], a: 1 },
+    { q: 'Las esdrújulas y sobresdrújulas:', o: ['a) Nunca llevan tilde', 'b) Siempre llevan tilde', 'c) Llevan tilde solo en mayúscula', 'd) Solo si terminan en vocal'], a: 1 },
+    { q: 'En "Él no vendrá", "Él" lleva tilde porque:', o: ['a) Es tilde diacrítica', 'b) Es esdrújula', 'c) Es un error', 'd) Termina en consonante'], a: 0 },
+    { q: '¿Cuál de estas es esdrújula?', o: ['a) Camión', 'b) Música', 'c) Árbol', 'd) Compás'], a: 1 },
+    { q: '¿Cuál de estas es sobresdrújula?', o: ['a) Música', 'b) Compás', 'c) Cuéntaselo', 'd) Árbol'], a: 2 },
     { q: '"Reloj" no lleva tilde porque:', o: ['a) Es esdrújula', 'b) Es aguda terminada en consonante distinta de n/s', 'c) Es llana', 'd) No tiene sílaba tónica'], a: 1 },
-    { q: 'El adverbio formado a partir de "fácil" es:', o: ['a) Facilmente', 'b) Fácilmente', 'c) Facilménte', 'd) Fasilmente'], a: 1 },
-    { q: '¿Cuál palabra usa correctamente la tilde diacrítica como verbo?', o: ['a) Yo se la verdad', 'b) Yo sé la verdad', 'c) Yo se lo dije', 'd) El se fue'], a: 1 },
-    { q: '"Cuéntaselo" lleva tilde porque es:', o: ['a) Aguda', 'b) Llana', 'c) Esdrújula', 'd) Sobresdrújula'], a: 3 },
+    { q: 'El adverbio formado a partir de "fácil" es:', o: ['a) Fácilmente', 'b) Facilmente', 'c) Facilménte', 'd) Fasilmente'], a: 0 },
+    { q: '¿Cuál palabra usa correctamente la tilde diacrítica como verbo?', o: ['a) Yo se la verdad', 'b) Yo se lo dije', 'c) Yo sé la verdad', 'd) El se fue'], a: 2 },
+    { q: '"Cuéntaselo" lleva tilde porque es:', o: ['a) Aguda', 'b) Llana', 'c) Sobresdrújula', 'd) Esdrújula'], a: 2 },
 ];
 const evalCPBank = [
     { q: 'La sílaba que se pronuncia con mayor intensidad se llama sílaba ___.', a: 'tónica' },

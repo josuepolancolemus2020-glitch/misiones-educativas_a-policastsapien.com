@@ -80,8 +80,19 @@ for (const dir of fs.readdirSync(MIS).sort()) {
     });
     if (!total) { fila.bancos[nombre] = { estado: 'sin índice de respuesta' }; continue; }
     const peor = Math.max(...cuenta);
+    /* ⚠️ Las cuentas no lo dicen todo. Un banco con el 27 % en cada letra puede
+       tener las CUATRO ÚLTIMAS preguntas seguidas en la misma, y eso desde el
+       pupitre se ve igual de bien que un 93 %. Aquí solo se informa —una racha
+       de tres en una lista al azar es de lo más normal y darlo por fallo sería
+       pintar de rojo un banco sano—, pero se informa, que es lo que faltaba. */
+    let racha = 0, act = 0, previa = -1;
+    banco.forEach(q => {
+      if (typeof q[clave] !== 'number' || !opcionesDe(q)) return;
+      act = q[clave] === previa ? act + 1 : 1; previa = q[clave];
+      if (act > racha) racha = act;
+    });
     fila.bancos[nombre] = {
-      estado: 'ok', total, cuenta,
+      estado: 'ok', total, cuenta, racha,
       pct: peor / total,
       letra: LETRAS[cuenta.indexOf(peor)],
     };
@@ -101,7 +112,8 @@ for (const fila of filas) {
     if (!b || b.estado !== 'ok') { partes.push(`${nombre}: ${b ? b.estado : 'n/d'}`); continue; }
     const mal = b.pct > LIMITE;
     if (mal) { malEnEsta = true; sesgados.push({ mision: fila.mision, banco: nombre, ...b }); }
-    partes.push(`${nombre} ${b.total}q ${Math.round(b.pct * 100)}%${b.letra}${mal ? ' ✘' : ' ✔'}`);
+    partes.push(`${nombre} ${b.total}q ${Math.round(b.pct * 100)}%${b.letra}${mal ? ' ✘' : ' ✔'}`
+      + (b.racha >= 3 ? ` ${b.racha} seguidas` : ''));
   }
   if (DETALLE || malEnEsta) {
     console.log((malEnEsta ? '✘ ' : '✔ ') + fila.mision + (fila.tieneEn ? '  🌐' : '') + '\n    ' + partes.join(' · '));

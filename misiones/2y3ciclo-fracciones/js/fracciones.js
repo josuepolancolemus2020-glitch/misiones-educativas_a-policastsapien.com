@@ -96,15 +96,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué indica el numerador de una fracción?',o:['a) En cuántas partes se divide el entero','b) El resultado de una suma','c) El nombre de la fracción','d) Cuántas partes se toman del entero'],c:3},
-  {q:'¿Cuál de estas es una fracción impropia?',o:['a) 3/4','b) 1/2','c) 7/4','d) 2/5'],c:2},
-  {q:'1/2 y 2/4 son fracciones...',o:['a) Impropias','b) Equivalentes','c) Mixtas','d) Diferentes en valor'],c:1},
+  {q:'¿Qué indica el numerador de una fracción?',o:['a) En cuántas partes se divide el entero','b) El resultado de una suma','c) Cuántas partes se toman del entero','d) El nombre de la fracción'],c:2},
+  {q:'¿Cuál de estas es una fracción impropia?',o:['a) 3/4','b) 7/4','c) 1/2','d) 2/5'],c:1},
+  {q:'1/2 y 2/4 son fracciones...',o:['a) Impropias','b) Mixtas','c) Diferentes en valor','d) Equivalentes'],c:3},
   {q:'¿Cuánto es 1/4 + 2/4?',o:['a) 3/8','b) 2/4','c) 1/8','d) 3/4'],c:3},
   {q:'¿Cuánto es 3/4 − 1/4?',o:['a) 2/4','b) 2/8','c) 4/4','d) 1/4'],c:0},
-  {q:'Un círculo dividido en 4 partes iguales con 3 partes sombreadas representa...',o:['a) 1/4','b) 3/4','c) 4/4','d) 3/3'],c:1},
-  {q:'¿Cómo se escribe 7/4 como fracción mixta?',o:['a) 1 3/4','b) 2 1/4','c) 1 1/2','d) 3 1/4'],c:0},
-  {q:'Al simplificar 4/8, ¿qué obtienes?',o:['a) 2/4','b) 1/4','c) 1/2','d) 2/2'],c:2},
-  {q:'¿Cuánto es 1/2 + 1/4 (distinto denominador)?',o:['a) 2/6','b) 1/4','c) 2/4','d) 3/4'],c:3},
+  {q:'Un círculo dividido en 4 partes iguales con 3 partes sombreadas representa...',o:['a) 3/4','b) 1/4','c) 4/4','d) 3/3'],c:0},
+  {q:'¿Cómo se escribe 7/4 como fracción mixta?',o:['a) 2 1/4','b) 1 3/4','c) 1 1/2','d) 3 1/4'],c:1},
+  {q:'Al simplificar 4/8, ¿qué obtienes?',o:['a) 1/2','b) 2/4','c) 1/4','d) 2/2'],c:0},
+  {q:'¿Cuánto es 1/2 + 1/4 (distinto denominador)?',o:['a) 2/6','b) 1/4','c) 3/4','d) 2/4'],c:2},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -159,12 +159,12 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'3/4 + 1/4 = ___',opts:['4/4','3/8','2/4'],c:0},
+  {s:'3/4 + 1/4 = ___',opts:['3/8','2/4','4/4'],c:2},
   {s:'1/2 = ___/4',opts:['1','2','4'],c:1},
-  {s:'5/6 − 2/6 = ___',opts:['3/12','7/6','3/6'],c:2},
-  {s:'1/2 + 1/4 = ___',opts:['2/6','1/4','3/4'],c:2},
+  {s:'5/6 − 2/6 = ___',opts:['3/6','3/12','7/6'],c:0},
+  {s:'1/2 + 1/4 = ___',opts:['2/6','3/4','1/4'],c:1},
   {s:'3/5 − 1/5 = ___',opts:['2/5','2/10','4/5'],c:0},
-  {s:'1/3 + 1/6 = ___',opts:['2/9','3/6','1/9'],c:1},
+  {s:'1/3 + 1/6 = ___',opts:['2/9','1/9','3/6'],c:2},
   {s:'3/4 − 1/2 = ___',opts:['1/4','2/4','1/2'],c:0},
   {s:'2/3 = ___/9',opts:['3','6','9'],c:1},
 ];
@@ -392,21 +392,21 @@ const evalTFBank=[
   {q:'La recta numérica solo puede representar números enteros, no fracciones.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Qué indica el numerador de una fracción?',o:['a) En cuántas partes se divide el entero','b) Cuántas partes se toman del entero','c) El resultado de una suma','d) El nombre de la fracción'],a:1},
+  {q:'¿Qué indica el numerador de una fracción?',o:['a) Cuántas partes se toman del entero','b) En cuántas partes se divide el entero','c) El resultado de una suma','d) El nombre de la fracción'],a:0},
   {q:'¿Qué indica el denominador?',o:['a) Cuántas partes se toman','b) El número total de partes iguales del entero','c) La mitad del numerador','d) Un número decimal'],a:1},
   {q:'¿Cuál de estas es una fracción propia?',o:['a) 7/4','b) 5/5','c) 3/8','d) 9/2'],a:2},
   {q:'¿Cuál de estas es una fracción impropia?',o:['a) 3/4','b) 1/2','c) 2/5','d) 9/4'],a:3},
   {q:'¿Cuál es la forma mixta de 7/4?',o:['a) 1 3/4','b) 2 1/4','c) 1 1/2','d) 3 1/4'],a:0},
   {q:'¿Cuál de estas fracciones es equivalente a 1/2?',o:['a) 2/3','b) 3/6','c) 2/5','d) 1/4'],a:1},
-  {q:'Al simplificar 6/9, ¿qué obtienes?',o:['a) 3/4','b) 1/3','c) 2/3','d) 3/3'],a:2},
-  {q:'¿Cuánto es 1/4 + 2/4?',o:['a) 3/4','b) 3/8','c) 2/4','d) 1/8'],a:0},
-  {q:'¿Cuánto es 3/5 − 1/5?',o:['a) 2/5','b) 4/5','c) 2/10','d) 3/5'],a:0},
-  {q:'¿Cuánto es 1/2 + 1/4?',o:['a) 2/6','b) 3/4','c) 1/4','d) 2/4'],a:1},
-  {q:'¿Qué se necesita para sumar fracciones con distinto denominador?',o:['a) Restar los numeradores','b) Multiplicar los denominadores por 2','c) Buscar un denominador común','d) Nada especial'],a:2},
-  {q:'¿Qué representa una fracción unitaria?',o:['a) Numerador igual a 1','b) Denominador igual a 1','c) Una fracción impropia','d) Un número decimal'],a:0},
-  {q:'Un círculo dividido en 4 partes con 3 sombreadas representa...',o:['a) 1/4','b) 3/4','c) 4/4','d) 3/3'],a:1},
+  {q:'Al simplificar 6/9, ¿qué obtienes?',o:['a) 2/3','b) 3/4','c) 1/3','d) 3/3'],a:0},
+  {q:'¿Cuánto es 1/4 + 2/4?',o:['a) 3/8','b) 2/4','c) 1/8','d) 3/4'],a:3},
+  {q:'¿Cuánto es 3/5 − 1/5?',o:['a) 4/5','b) 2/10','c) 2/5','d) 3/5'],a:2},
+  {q:'¿Cuánto es 1/2 + 1/4?',o:['a) 2/6','b) 1/4','c) 3/4','d) 2/4'],a:2},
+  {q:'¿Qué se necesita para sumar fracciones con distinto denominador?',o:['a) Restar los numeradores','b) Buscar un denominador común','c) Multiplicar los denominadores por 2','d) Nada especial'],a:1},
+  {q:'¿Qué representa una fracción unitaria?',o:['a) Denominador igual a 1','b) Numerador igual a 1','c) Una fracción impropia','d) Un número decimal'],a:1},
+  {q:'Un círculo dividido en 4 partes con 3 sombreadas representa...',o:['a) 1/4','b) 4/4','c) 3/3','d) 3/4'],a:3},
   {q:'¿Qué número se usa para simplificar una fracción?',o:['a) El MCD de numerador y denominador','b) El denominador menos 1','c) Cualquier número par','d) El numerador más 1'],a:0},
-  {q:'¿Cuál de estas fracciones es mayor?',o:['a) 1/4','b) 1/2','c) 1/8','d) 1/10'],a:1},
+  {q:'¿Cuál de estas fracciones es mayor?',o:['a) 1/4','b) 1/8','c) 1/2','d) 1/10'],a:2},
 ];
 const evalCPBank=[
   {q:'El número de arriba en una fracción se llama ___.',a:'numerador'},

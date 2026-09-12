@@ -172,15 +172,15 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cómo se llama el resultado de una multiplicación?',o:['a) la suma','b) el factor','c) el producto','d) el cociente'],c:2,feedback:'El resultado de multiplicar dos factores se llama producto.'},
-  {q:'En 24 × 3, al multiplicar 3 × 4 = 12, ¿qué haces?',o:['a) escribo 12','b) escribo 1 y llevo 2','c) escribo 21','d) escribo 2 y llevo 1'],c:3,feedback:'Solo va una cifra por columna: escribo 2 (unidades) y llevo 1 (decena).'},
+  {q:'¿Cómo se llama el resultado de una multiplicación?',o:['a) el producto','b) la suma','c) el factor','d) el cociente'],c:0,feedback:'El resultado de multiplicar dos factores se llama producto.'},
+  {q:'En 24 × 3, al multiplicar 3 × 4 = 12, ¿qué haces?',o:['a) escribo 12','b) escribo 1 y llevo 2','c) escribo 2 y llevo 1','d) escribo 21'],c:2,feedback:'Solo va una cifra por columna: escribo 2 (unidades) y llevo 1 (decena).'},
   {q:'¿Cuánto es 6 × 7?',o:['a) 42','b) 48','c) 36','d) 49'],c:0,feedback:'6 × 7 = 42. ¡Repasa la tabla del 6 y del 7!'},
-  {q:'¿Cuánto es 58 × 0?',o:['a) 58','b) 580','c) 0','d) 1'],c:2,feedback:'Cualquier número multiplicado por 0 da 0.'},
-  {q:'¿Cuánto es 45 × 10?',o:['a) 450','b) 45','c) 405','d) 4,500'],c:0,feedback:'Multiplicar por 10 agrega un cero a la derecha: 450.'},
-  {q:'En una multiplicación por 2 cifras, el segundo producto parcial se corre un lugar hacia:',o:['a) la derecha','b) la izquierda','c) arriba','d) abajo'],c:1,feedback:'El segundo parcial multiplica decenas, así que se corre a la izquierda.'},
-  {q:'¿Cuánto es 23 × 4?',o:['a) 92','b) 82','c) 812','d) 96'],c:0,feedback:'4 × 3 = 12 (escribo 2, llevo 1); 4 × 2 = 8, + 1 = 9. Total: 92.'},
-  {q:'Los números que se multiplican se llaman:',o:['a) sumandos','b) factores','c) términos','d) divisores'],c:1,feedback:'En una multiplicación, los números que se multiplican son los factores.'},
-  {q:'En 7 × 8 = 56 (unidades), ¿qué escribes y qué llevas?',o:['a) 56 y 0','b) 6 y 5','c) 5 y 6','d) 5 y 60'],c:1,feedback:'Escribo 6 (unidades) y llevo 5 (decenas) a la siguiente columna.'}
+  {q:'¿Cuánto es 58 × 0?',o:['a) 58','b) 580','c) 1','d) 0'],c:3,feedback:'Cualquier número multiplicado por 0 da 0.'},
+  {q:'¿Cuánto es 45 × 10?',o:['a) 45','b) 450','c) 405','d) 4,500'],c:1,feedback:'Multiplicar por 10 agrega un cero a la derecha: 450.'},
+  {q:'En una multiplicación por 2 cifras, el segundo producto parcial se corre un lugar hacia:',o:['a) la derecha','b) arriba','c) la izquierda','d) abajo'],c:2,feedback:'El segundo parcial multiplica decenas, así que se corre a la izquierda.'},
+  {q:'¿Cuánto es 23 × 4?',o:['a) 82','b) 92','c) 812','d) 96'],c:1,feedback:'4 × 3 = 12 (escribo 2, llevo 1); 4 × 2 = 8, + 1 = 9. Total: 92.'},
+  {q:'Los números que se multiplican se llaman:',o:['a) sumandos','b) términos','c) divisores','d) factores'],c:3,feedback:'En una multiplicación, los números que se multiplican son los factores.'},
+  {q:'En 7 × 8 = 56 (unidades), ¿qué escribes y qué llevas?',o:['a) 6 y 5','b) 56 y 0','c) 5 y 6','d) 5 y 60'],c:0,feedback:'Escribo 6 (unidades) y llevo 5 (decenas) a la siguiente columna.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -331,13 +331,13 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'El resultado de una multiplicación se llama ___.',opts:['producto','suma','factor'],c:0},
-  {s:'Los números que se multiplican se llaman ___.',opts:['factores','sumandos','restos'],c:0},
+  {s:'Los números que se multiplican se llaman ___.',opts:['sumandos','factores','restos'],c:1},
   {s:'La cifra que se lleva a la siguiente columna es el ___.',opts:['producto','parcial','acarreo'],c:2},
-  {s:'En el cálculo vertical empiezo por las ___.',opts:['unidades','decenas','centenas'],c:0},
-  {s:'Cualquier número multiplicado por 0 da ___.',opts:['1','el mismo','0'],c:2},
-  {s:'Cualquier número multiplicado por 1 da ___.',opts:['0','el mismo número','10'],c:1},
-  {s:'Para multiplicar por 10 agrego un ___ a la derecha.',opts:['uno','cero','punto'],c:1},
-  {s:'El segundo producto parcial se corre un lugar a la ___.',opts:['derecha','izquierda','arriba'],c:1}
+  {s:'En el cálculo vertical empiezo por las ___.',opts:['decenas','unidades','centenas'],c:1},
+  {s:'Cualquier número multiplicado por 0 da ___.',opts:['1','0','el mismo'],c:1},
+  {s:'Cualquier número multiplicado por 1 da ___.',opts:['0','10','el mismo número'],c:2},
+  {s:'Para multiplicar por 10 agrego un ___ a la derecha.',opts:['cero','uno','punto'],c:0},
+  {s:'El segundo producto parcial se corre un lugar a la ___.',opts:['izquierda','derecha','arriba'],c:0}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -703,12 +703,12 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Cuánto es 8 × 7?',o:['a) 54','b) 63','c) 56','d) 49'],a:2},
-  {q:'¿Cuánto es 34 × 5?',o:['a) 150','b) 160','c) 175','d) 170'],a:3},
-  {q:'El resultado de multiplicar se llama:',o:['a) suma','b) factor','c) producto','d) resto'],a:2},
+  {q:'¿Cuánto es 34 × 5?',o:['a) 150','b) 160','c) 170','d) 175'],a:2},
+  {q:'El resultado de multiplicar se llama:',o:['a) suma','b) factor','c) resto','d) producto'],a:3},
   {q:'¿Cuánto es 60 × 10?',o:['a) 600','b) 60','c) 6,000','d) 610'],a:0},
-  {q:'¿Cuánto es 23 × 4?',o:['a) 82','b) 96','c) 84','d) 92'],a:3},
+  {q:'¿Cuánto es 23 × 4?',o:['a) 92','b) 82','c) 96','d) 84'],a:0},
   {q:'¿Cuánto es 45 × 0?',o:['a) 45','b) 0','c) 450','d) 1'],a:1},
-  {q:'En 6 × 9 = 54, en las unidades escribo 4 y llevo:',o:['a) 5','b) 4','c) 54','d) 0'],a:0},
+  {q:'En 6 × 9 = 54, en las unidades escribo 4 y llevo:',o:['a) 4','b) 54','c) 0','d) 5'],a:3},
   {q:'¿Cuánto es 12 × 12?',o:['a) 124','b) 144','c) 122','d) 132'],a:1}
 ];
 const evalCPBank=[

@@ -227,16 +227,16 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-    { q: '¿Cuál es la función principal de un adverbio?', o: ['a) Sustituir al sustantivo', 'b) Indicar género y número', 'c) Unir dos oraciones', 'd) Modificar al verbo, a un adjetivo o a otro adverbio'], c: 3 },
-    { q: '"Juan corre RÁPIDO". ¿Qué clase de adverbio es "rápido"?', o: ['a) Lugar', 'b) Tiempo', 'c) Modo', 'd) Cantidad'], c: 2 },
-    { q: '"Te veré MAÑANA". ¿Qué clase de adverbio es "mañana"?', o: ['a) Lugar', 'b) Modo', 'c) Duda', 'd) Tiempo'], c: 3 },
-    { q: '"El gato está AQUÍ". ¿Qué clase de adverbio es "aquí"?', o: ['a) Lugar', 'b) Tiempo', 'c) Cantidad', 'd) Negación'], c: 0 },
+    { q: '¿Cuál es la función principal de un adverbio?', o: ['a) Modificar al verbo, a un adjetivo o a otro adverbio', 'b) Sustituir al sustantivo', 'c) Indicar género y número', 'd) Unir dos oraciones'], c: 0 },
+    { q: '"Juan corre RÁPIDO". ¿Qué clase de adverbio es "rápido"?', o: ['a) Lugar', 'b) Modo', 'c) Tiempo', 'd) Cantidad'], c: 1 },
+    { q: '"Te veré MAÑANA". ¿Qué clase de adverbio es "mañana"?', o: ['a) Lugar', 'b) Tiempo', 'c) Modo', 'd) Duda'], c: 1 },
+    { q: '"El gato está AQUÍ". ¿Qué clase de adverbio es "aquí"?', o: ['a) Tiempo', 'b) Cantidad', 'c) Negación', 'd) Lugar'], c: 3 },
     { q: '"Como MUCHO los fines de semana". ¿Qué clase de adverbio es "mucho"?', o: ['a) Modo', 'b) Cantidad', 'c) Afirmación', 'd) Lugar'], c: 1 },
     { q: '"SÍ, iré contigo". ¿Qué clase de adverbio es "sí"?', o: ['a) Afirmación', 'b) Negación', 'c) Duda', 'd) Modo'], c: 0 },
-    { q: '"NUNCA lo haré". ¿Qué clase de adverbio es "nunca"?', o: ['a) Afirmación', 'b) Negación', 'c) Tiempo', 'd) Lugar'], c: 1 },
-    { q: '"QUIZÁS llueva mañana". ¿Qué clase de adverbio es "quizás"?', o: ['a) Duda', 'b) Negación', 'c) Cantidad', 'd) Modo'], c: 0 },
-    { q: '¿Cuál es el adverbio formado a partir del adjetivo "feliz"?', o: ['a) Felizamente', 'b) Felizmente', 'c) Felizemente', 'd) Felicidad'], c: 1 },
-    { q: '"Es un corredor RÁPIDO" vs "Corre RÁPIDO". ¿Cuál es la diferencia?', o: ['a) Ninguna, ambos son adverbios', 'b) El 1ero es adverbio, el 2do es adjetivo', 'c) El 1ero es adjetivo (concuerda), el 2do es adverbio (invariable)', 'd) Ambos son sustantivos'], c: 2 },
+    { q: '"NUNCA lo haré". ¿Qué clase de adverbio es "nunca"?', o: ['a) Afirmación', 'b) Tiempo', 'c) Negación', 'd) Lugar'], c: 2 },
+    { q: '"QUIZÁS llueva mañana". ¿Qué clase de adverbio es "quizás"?', o: ['a) Negación', 'b) Cantidad', 'c) Duda', 'd) Modo'], c: 2 },
+    { q: '¿Cuál es el adverbio formado a partir del adjetivo "feliz"?', o: ['a) Felizmente', 'b) Felizamente', 'c) Felizemente', 'd) Felicidad'], c: 0 },
+    { q: '"Es un corredor RÁPIDO" vs "Corre RÁPIDO". ¿Cuál es la diferencia?', o: ['a) Ninguna, ambos son adverbios', 'b) El 1ero es adverbio, el 2do es adjetivo', 'c) Ambos son sustantivos', 'd) El 1ero es adjetivo (concuerda), el 2do es adverbio (invariable)'], c: 3 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
 function buildQz() { qzIdx = 0; qzSel = -1; qzDone = false; showQz(); }
@@ -429,12 +429,12 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'Vivo muy ___ de la escuela.', opts: ['ayer', 'cerca', 'sí'], c: 1 },
-    { s: 'Ella habla ___ con sus amigos.', opts: ['allí', 'hoy', 'amablemente'], c: 2 },
-    { s: '___, lo haré con gusto.', opts: ['Lejos', 'Sí', 'Despacio'], c: 1 },
+    { s: 'Vivo muy ___ de la escuela.', opts: ['ayer', 'sí', 'cerca'], c: 2 },
+    { s: 'Ella habla ___ con sus amigos.', opts: ['allí', 'amablemente', 'hoy'], c: 1 },
+    { s: '___, lo haré con gusto.', opts: ['Sí', 'Lejos', 'Despacio'], c: 0 },
     { s: 'No quiero comer ___ de ese postre.', opts: ['aquí', 'bien', 'nada'], c: 2 },
     { s: '___ lloverá esta tarde.', opts: ['Bien', 'Quizás', 'Aquí'], c: 1 },
-    { s: 'Comimos ___ en la fiesta de cumpleaños.', opts: ['demasiado', 'jamás', 'allí'], c: 0 },
+    { s: 'Comimos ___ en la fiesta de cumpleaños.', opts: ['jamás', 'demasiado', 'allí'], c: 1 },
     { s: 'El examen estuvo ___ difícil.', opts: ['bastante', 'ayer', 'sí'], c: 0 },
     { s: 'Mi hermano ___ llega tarde a clases.', opts: ['nunca', 'aquí', 'mucho'], c: 0 },
 ];
@@ -874,19 +874,19 @@ const evalTFBank = [
 ];
 const evalMCBank = [
     { q: '¿Cuál es la función del adverbio en la oración?', o: ['a) Sustituir al sustantivo', 'b) Indicar género y número', 'c) Unir oraciones', 'd) Modificar al verbo, adjetivo u otro adverbio'], a: 3 },
-    { q: '"Llegó TARDE a la reunión". La palabra en mayúsculas es adverbio de:', o: ['a) Lugar', 'b) Modo', 'c) Cantidad', 'd) Tiempo'], a: 3 },
-    { q: '"Vive CERCA del colegio". La palabra en mayúsculas es adverbio de:', o: ['a) Tiempo', 'b) Lugar', 'c) Cantidad', 'd) Duda'], a: 1 },
-    { q: '"Estudia MUCHO para el examen". La palabra en mayúsculas es adverbio de:', o: ['a) Modo', 'b) Negación', 'c) Afirmación', 'd) Cantidad'], a: 3 },
+    { q: '"Llegó TARDE a la reunión". La palabra en mayúsculas es adverbio de:', o: ['a) Lugar', 'b) Tiempo', 'c) Modo', 'd) Cantidad'], a: 1 },
+    { q: '"Vive CERCA del colegio". La palabra en mayúsculas es adverbio de:', o: ['a) Tiempo', 'b) Cantidad', 'c) Lugar', 'd) Duda'], a: 2 },
+    { q: '"Estudia MUCHO para el examen". La palabra en mayúsculas es adverbio de:', o: ['a) Modo', 'b) Negación', 'c) Cantidad', 'd) Afirmación'], a: 2 },
     { q: '"SÍ, iré a la fiesta". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Negación', 'c) Duda', 'd) Lugar'], a: 0 },
-    { q: '"NUNCA llega temprano". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Negación', 'c) Tiempo', 'd) Modo'], a: 1 },
+    { q: '"NUNCA llega temprano". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Tiempo', 'c) Negación', 'd) Modo'], a: 2 },
     { q: '"QUIZÁS venga mañana". La palabra en mayúsculas es adverbio de:', o: ['a) Duda', 'b) Negación', 'c) Lugar', 'd) Cantidad'], a: 0 },
-    { q: '¿Cuál de estos es un adverbio de modo?', o: ['a) Mucho', 'b) Aquí', 'c) Lentamente', 'd) Hoy'], a: 2 },
-    { q: '¿Cómo se forma el adverbio a partir del adjetivo "feliz"?', o: ['a) Felizmente', 'b) Felizamente', 'c) Felizemente', 'd) Felicidad'], a: 0 },
-    { q: '"Es un niño MUY inteligente". La palabra en mayúsculas es adverbio de:', o: ['a) Modo', 'b) Cantidad', 'c) Tiempo', 'd) Lugar'], a: 1 },
-    { q: '¿Cuál de estos NO es un adverbio de tiempo?', o: ['a) Ayer', 'b) Siempre', 'c) Despacio', 'd) Pronto'], a: 2 },
-    { q: '"Tampoco" es un adverbio de:', o: ['a) Afirmación', 'b) Negación', 'c) Duda', 'd) Modo'], a: 1 },
-    { q: 'El adverbio es una palabra:', o: ['a) Variable en género', 'b) Variable en número', 'c) Invariable', 'd) Solo se usa en plural'], a: 2 },
-    { q: '"Habló clara y precisamente". ¿Por qué "clara" no lleva "-mente"?', o: ['a) Es un error', 'b) Porque modifica a un sustantivo', 'c) Porque en una serie de adverbios en -mente, solo el último lleva el sufijo', 'd) Porque es un adjetivo'], a: 2 },
+    { q: '¿Cuál de estos es un adverbio de modo?', o: ['a) Mucho', 'b) Lentamente', 'c) Aquí', 'd) Hoy'], a: 1 },
+    { q: '¿Cómo se forma el adverbio a partir del adjetivo "feliz"?', o: ['a) Felizamente', 'b) Felizemente', 'c) Felizmente', 'd) Felicidad'], a: 2 },
+    { q: '"Es un niño MUY inteligente". La palabra en mayúsculas es adverbio de:', o: ['a) Cantidad', 'b) Modo', 'c) Tiempo', 'd) Lugar'], a: 0 },
+    { q: '¿Cuál de estos NO es un adverbio de tiempo?', o: ['a) Ayer', 'b) Despacio', 'c) Siempre', 'd) Pronto'], a: 1 },
+    { q: '"Tampoco" es un adverbio de:', o: ['a) Afirmación', 'b) Duda', 'c) Modo', 'd) Negación'], a: 3 },
+    { q: 'El adverbio es una palabra:', o: ['a) Variable en género', 'b) Variable en número', 'c) Solo se usa en plural', 'd) Invariable'], a: 3 },
+    { q: '"Habló clara y precisamente". ¿Por qué "clara" no lleva "-mente"?', o: ['a) Es un error', 'b) Porque en una serie de adverbios en -mente, solo el último lleva el sufijo', 'c) Porque modifica a un sustantivo', 'd) Porque es un adjetivo'], a: 1 },
     { q: '¿Cuál de estos es un adverbio de cantidad?', o: ['a) Bastante', 'b) Jamás', 'c) Aquí', 'd) Bien'], a: 0 },
 ];
 const evalCPBank = [

@@ -131,46 +131,130 @@ const sinComillas = (s) => s.slice(1, -1);
 const LETRA = /^\s*[a-d]\)/;
 const conLetra = (fila) => fila.opts.length > 1 && fila.opts.every(o => LETRA.test(sinComillas(o.txt)));
 
-/* Una lista que va de menor a mayor dice algo por sí misma y no se toca. */
+/* Una lista que va en orden dice algo por sí misma y no se toca: «1/2 = ___/4»
+   ofrece 1 · 2 · 4, que es como se leen.
+
+   ⚠️ Con DOS matices que costaron medirlos:
+
+   · La coma es separador de MILES, no decimal («400,000»). Leerla como decimal
+     convertía cuatrocientos mil en cuatrocientos, y con eso una lista se
+     declaraba ordenada —o no— por un motivo inventado.
+   · Una lista que BAJA y tiene la correcta la PRIMERA no es un menú: es «escribí
+     la respuesta y detrás me inventé distractores más pequeños». Medido en el
+     catálogo entero: hay 63 listas que SUBEN —y en 58 la correcta no es la
+     primera, o sea que son menús de verdad— y solo 10 que bajan; de esas, las
+     4 que empiezan por la correcta son las cuatro el mismo caso
+     (347 · 34.7 · 3,470 · 0.0347 y parecidas: el error de correr la coma).
+     Esas sí se pueden mover; las otras seis, no. */
+function valor(s) {
+  const txt = sinComillas(s).replace(LETRA, '').trim();
+  const f = /^(-?\d+)\s*\/\s*(\d+)$/.exec(txt);
+  if (f) return parseInt(f[1], 10) / parseInt(f[2], 10);
+  // 1,250 y 400,000 son enteros con separador de miles; 3.5 es un decimal.
+  if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(txt)) return parseFloat(txt.replace(/,/g, ''));
+  return /^-?\d+(\.\d+)?$/.test(txt) ? parseFloat(txt) : null;
+}
+
 function ordenada(fila) {
-  const val = fila.opts.map(o => {
-    const s = sinComillas(o.txt).replace(LETRA, '').trim();
-    const f = /^(-?\d+)\s*\/\s*(\d+)$/.exec(s);
-    if (f) return parseInt(f[1], 10) / parseInt(f[2], 10);
-    return /^-?\d+([.,]\d+)?$/.test(s) ? parseFloat(s.replace(',', '.')) : null;
-  });
-  if (val.some(v => v === null)) return false;
+  const val = fila.opts.map(o => valor(o.txt));
+  if (val.some(v => v === null) || val.length < 3) return false;
   const sube = val.every((v, i) => !i || v > val[i - 1]);
   const baja = val.every((v, i) => !i || v < val[i - 1]);
-  return sube || baja;
+  if (sube) return true;
+  return baja && fila.idx !== 0;      // si baja y empieza por la correcta, no es un menú
 }
 
 /* ─── A qué letra va cada fila ─────────────────────────────────── */
 
-function reparte(filas) {
+/* ⚠️ Que las CUENTAS cuadren no basta, y esto se vio midiendo después de darlo
+   por hecho: la primera versión movía filas de arriba abajo, así que las que no
+   hacía falta tocar —todas con la letra del sesgo— se quedaban AMONTONADAS AL
+   FINAL. El banco de Respiratorio quedaba `adacdacdcacbbbb`: 27 % por letra en
+   la cuenta y **las cuatro últimas preguntas seguidas en la «b»**. En un examen
+   de quince, eso se ve; y el alumno que lo note tiene las últimas cuatro
+   regaladas, que es lo mismo que veníamos a quitar.
+
+   Así que se reparte en dos pasos: primero CUÁNTAS de cada letra, y después EN
+   QUÉ ORDEN. El orden se arma con el clásico «la letra que más queda, pero
+   nunca la misma que la anterior», que es el que deja el mínimo de repeticiones
+   seguidas posible. */
+
+/* Un azar con semilla: el mismo archivo da SIEMPRE el mismo reparto —volver a
+   correr la herramienta no ensucia el diff— pero no dibuja un ciclo. Sin él, el
+   desempate por orden alfabético saca a·b·c·d·a·b·c·d…, que es tan adivinable
+   como el 93 % en la «b». */
+function semilla(txt) {
+  let h = 2166136261;
+  for (let i = 0; i < txt.length; i++) { h ^= txt.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return () => { h += 0x6D2B79F5; let x = Math.imul(h ^ (h >>> 15), 1 | h); x ^= x + Math.imul(x ^ (x >>> 7), 61 | x); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
+}
+
+function reparte(filas, marca) {
   const n = filas.length;
-  const libre = filas.map(f => !ordenada(f));
-  const destino = filas.map(f => f.idx);
+  const fija = filas.map(f => ordenada(f));
   const opciones = filas.map(f => f.opts.length);
   const letras = Math.max(...opciones);
-  // Lo justo: repartir a partes iguales, sin pasar nunca del tope del 40 %.
-  const tope = Math.min(Math.ceil(n / letras), Math.floor(n * TOPE)) || 1;
 
-  const cuenta = () => destino.reduce((a, l) => (a[l] = (a[l] || 0) + 1, a), {});
-  for (let vuelta = 0; vuelta < 200; vuelta++) {
-    const c = cuenta();
-    const cargada = Object.keys(c).map(Number).sort((x, y) => c[y] - c[x])[0];
-    if (c[cargada] <= tope) break;
-    // La fila movible de esa letra que más se pueda aliviar
-    const candidata = destino.findIndex((l, i) => l === cargada && libre[i]);
-    if (candidata < 0) break;                      // todas las de esa letra están fijas
-    const validas = [...Array(opciones[candidata]).keys()].filter(l => l !== cargada);
-    if (!validas.length) { libre[candidata] = false; continue; }
-    validas.sort((x, y) => (c[x] || 0) - (c[y] || 0));
-    destino[candidata] = validas[0];
+  /* ── 1. Cuántas de cada letra ──
+     A partes iguales y sin pasar del 40 %. Una letra solo puede tocarle a las
+     filas que tengan esa opción: la «d» no existe en una fila de tres. */
+  const cabe = [...Array(letras).keys()].map(l => opciones.filter(o => o > l).length);
+  const cuenta = new Array(letras).fill(0);
+  filas.forEach((f, i) => { if (fija[i]) cuenta[f.idx]++; });
+  let libres = n - fija.filter(Boolean).length;
+  const tope = Math.min(Math.ceil(n / letras), Math.floor(n * TOPE)) || 1;
+  while (libres > 0) {
+    // la letra menos usada que todavía admita una más
+    let mejor = -1;
+    for (let l = 0; l < letras; l++) {
+      if (cuenta[l] >= cabe[l]) continue;
+      if (mejor < 0 || cuenta[l] < cuenta[mejor]) mejor = l;
+    }
+    if (mejor < 0) break;
+    cuenta[mejor]++; libres--;
   }
-  const c = cuenta();
-  return { destino, cuenta: c, max: Math.max(...Object.values(c)) / n, tope };
+
+  /* ── 2. En qué orden ──
+     ⚠️ Y aquí hay una trampa que costó una segunda pasada: lo primero que sale
+     es «que no se repita nunca la anterior», y eso deja la racha en 1 SIEMPRE.
+     Suena mejor y es otro patrón: el alumno que lo note sabe que la siguiente
+     NO es la que acaba de marcar, y pasa de acertar 1 de 4 a 1 de 3. Se cambió
+     un sesgo grande por uno pequeño, pero se cambió por otro.
+
+     Lo que no se puede adivinar es el azar. Así que se baraja de verdad —con
+     semilla, para que el mismo archivo dé siempre lo mismo— y solo se rechaza
+     lo que de verdad se ve desde el pupitre: **tres o más seguidas iguales**.
+     Dos seguidas pasan, porque en una lista al azar pasan, y una lista donde
+     nunca pasan ya no parece azar.
+
+     Si después de barajar muchas veces no sale ninguna válida —una fila sin
+     letra posible—, se devuelve null y el banco se deja como estaba: es mejor
+     no tocarlo que escribir algo peor. */
+  const az = semilla(marca);
+  const bolsa = [];
+  cuenta.forEach((c, l) => { const yaFijas = filas.filter((f, i) => fija[i] && f.idx === l).length; for (let k = 0; k < c - yaFijas; k++) bolsa.push(l); });
+  const huecos = filas.map((_, i) => i).filter(i => !fija[i]);
+
+  for (let intento = 0; intento < 400; intento++) {
+    const b = bolsa.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(az() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    const destino = new Array(n).fill(-1);
+    filas.forEach((f, i) => { if (fija[i]) destino[i] = f.idx; });
+    huecos.forEach((pos, k) => { destino[pos] = b[k]; });
+    // ¿le cabe a cada fila la letra que le tocó? (la «d» no existe en una de tres)
+    if (destino.some((l, i) => l >= opciones[i])) continue;
+    if (racha(destino) >= 3) continue;
+    const c = destino.reduce((a, l) => (a[l] = (a[l] || 0) + 1, a), {});
+    return { destino, cuenta: c, max: Math.max(...Object.values(c)) / n, tope };
+  }
+  return null;
+}
+
+/* Lo que de verdad hay que mirar de una secuencia: cuántas iguales seguidas. */
+function racha(destino) {
+  let mejor = 1, act = 1;
+  for (let i = 1; i < destino.length; i++) { act = destino[i] === destino[i - 1] ? act + 1 : 1; if (act > mejor) mejor = act; }
+  return destino.length ? mejor : 0;
 }
 
 /* ─── Escribir ─────────────────────────────────────────────────── */
@@ -221,12 +305,20 @@ for (const carpeta of carpetas) {
   for (const b of BANCOS) {
     const filas = banco(src, b);
     if (!filas) { console.log('   ·  ' + b.nombre + ': no está'); continue; }
-    const { destino, cuenta, max, tope } = reparte(filas);
+    /* La marca de la semilla lleva la misión y el banco: así dos bancos de la
+       misma misión no salen con la misma baraja, y volver a correr la
+       herramienta sobre el mismo archivo da siempre lo mismo. */
+    const r = reparte(filas, carpeta + '/' + b.nombre);
+    if (!r) { console.log('   ⚠️  ' + b.nombre + ': no se pudo repartir sin dejar una fila sin letra; se deja como está'); avisos++; continue; }
+    const { destino, cuenta, max } = r;
     const movidas = destino.filter((l, i) => l !== filas[i].idx).length;
     const pinta = (arr) => 'abcd'.split('').map((L, k) => arr[k] ? L + ' ' + Math.round(100 * arr[k] / filas.length) + '%' : null).filter(Boolean).join(' · ');
     const previo = filas.reduce((a, f) => (a[f.idx] = (a[f.idx] || 0) + 1, a), {});
+    const letras = (d) => d.map(l => 'abcd'[l]).join('');
     console.log('   ' + (max <= TOPE ? '✔' : '✘') + '  ' + b.nombre.padEnd(12) + filas.length + 'q  '
       + pinta(previo) + '   →   ' + pinta(cuenta) + (movidas ? '   (' + movidas + ' movidas)' : '   (sin tocar)'));
+    console.log('        ' + letras(filas.map(f => f.idx)) + '  →  ' + letras(destino)
+      + '   ·  seguidas iguales: ' + racha(filas.map(f => f.idx)) + ' → ' + racha(destino));
     if (movidas) src = aplica(src, filas, destino, conLetra(filas[0]));
   }
 
