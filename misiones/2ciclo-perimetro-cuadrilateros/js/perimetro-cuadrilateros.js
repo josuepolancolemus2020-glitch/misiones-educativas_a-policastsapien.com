@@ -175,12 +175,12 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué mide el perímetro de una figura?',o:['a) la superficie','b) el contorno','c) el volumen','d) los ángulos'],c:1,feedback:'El perímetro mide el contorno: la suma de todos los lados.'},
-  {q:'¿Cuál es el perímetro de un cuadrado de lado 6 cm?',o:['a) 36 cm','b) 24 cm','c) 12 cm','d) 18 cm'],c:1,feedback:'P = 4 × 6 = 24 cm. Se suman los 4 lados iguales.'},
+  {q:'¿Qué mide el perímetro de una figura?',o:['a) la superficie','b) el volumen','c) los ángulos','d) el contorno'],c:3,feedback:'El perímetro mide el contorno: la suma de todos los lados.'},
+  {q:'¿Cuál es el perímetro de un cuadrado de lado 6 cm?',o:['a) 24 cm','b) 36 cm','c) 12 cm','d) 18 cm'],c:0,feedback:'P = 4 × 6 = 24 cm. Se suman los 4 lados iguales.'},
   {q:'¿Cuál es el área de un cuadrado de lado 6 cm?',o:['a) 24 cm²','b) 12 cm²','c) 36 cm²','d) 30 cm²'],c:2,feedback:'A = lado × lado = 6 × 6 = 36 cm².'},
   {q:'¿Cuál es el área de un rectángulo de 8 × 3?',o:['a) 24 cm²','b) 22 cm²','c) 11 cm²','d) 16 cm²'],c:0,feedback:'A = base × altura = 8 × 3 = 24 cm².'},
-  {q:'¿Cuál es el perímetro de un rectángulo de 8 × 3?',o:['a) 24 cm','b) 22 cm','c) 11 cm','d) 16 cm'],c:1,feedback:'P = 2 × (8 + 3) = 2 × 11 = 22 cm.'},
-  {q:'¿En qué unidad se mide el área?',o:['a) en cm','b) en cm²','c) en litros','d) en grados'],c:1,feedback:'El área se mide en unidades cuadradas: cm², m²…'},
+  {q:'¿Cuál es el perímetro de un rectángulo de 8 × 3?',o:['a) 24 cm','b) 11 cm','c) 22 cm','d) 16 cm'],c:2,feedback:'P = 2 × (8 + 3) = 2 × 11 = 22 cm.'},
+  {q:'¿En qué unidad se mide el área?',o:['a) en cm','b) en litros','c) en grados','d) en cm²'],c:3,feedback:'El área se mide en unidades cuadradas: cm², m²…'},
   {q:'Para cercar un terreno cuadrado, ¿qué calculo?',o:['a) el área','b) el perímetro','c) el volumen','d) la altura'],c:1,feedback:'La cerca rodea el terreno: es el perímetro.'},
   {q:'Un cuadrilátero tiene:',o:['a) 3 lados','b) 4 lados','c) 5 lados','d) 6 lados'],c:1,feedback:'Todo cuadrilátero tiene 4 lados. El cuadrado y el rectángulo lo son.'},
   {q:'¿Cuál fórmula es la del área del rectángulo?',o:['a) 4 × lado','b) base × altura','c) 2 × (base + altura)','d) lado + lado'],c:1,feedback:'El área del rectángulo es base × altura.'}
@@ -333,11 +333,11 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La medida del contorno de una figura es el ___.',opts:['área','perímetro','volumen'],c:1},
-  {s:'La superficie que cubre una figura es el ___.',opts:['perímetro','área','borde'],c:1},
+  {s:'La medida del contorno de una figura es el ___.',opts:['área','volumen','perímetro'],c:2},
+  {s:'La superficie que cubre una figura es el ___.',opts:['área','perímetro','borde'],c:0},
   {s:'El perímetro de un cuadrado es 4 × ___.',opts:['lado','base','altura'],c:0},
-  {s:'El área de un rectángulo es base × ___.',opts:['lado','altura','perímetro'],c:1},
-  {s:'El área se mide en unidades ___.',opts:['lineales','cuadradas','cúbicas'],c:1},
+  {s:'El área de un rectángulo es base × ___.',opts:['lado','perímetro','altura'],c:2},
+  {s:'El área se mide en unidades ___.',opts:['cuadradas','lineales','cúbicas'],c:0},
   {s:'Un cuadrilátero tiene ___ lados.',opts:['tres','cuatro','cinco'],c:1},
   {s:'El cuadrado tiene sus cuatro lados ___.',opts:['distintos','iguales','curvos'],c:1},
   {s:'Para cercar un terreno se calcula el ___.',opts:['área','perímetro','volumen'],c:1}
@@ -705,12 +705,12 @@ const evalTFBank=[
   {q:'El área de un cuadrado de lado 5 es 20 cm².',a:false}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el perímetro de un cuadrado de lado 7 cm?',o:['a) 49 cm','b) 28 cm','c) 14 cm','d) 21 cm'],a:1},
+  {q:'¿Cuál es el perímetro de un cuadrado de lado 7 cm?',o:['a) 49 cm','b) 14 cm','c) 21 cm','d) 28 cm'],a:3},
   {q:'¿Cuál es el área de un cuadrado de lado 7 cm?',o:['a) 28 cm²','b) 14 cm²','c) 49 cm²','d) 42 cm²'],a:2},
   {q:'¿Cuál es el área de un rectángulo de 9 × 4?',o:['a) 36 cm²','b) 26 cm²','c) 13 cm²','d) 18 cm²'],a:0},
-  {q:'¿Cuál es el perímetro de un rectángulo de 9 × 4?',o:['a) 36 cm','b) 26 cm','c) 13 cm','d) 18 cm'],a:1},
-  {q:'¿En qué unidad se mide el perímetro?',o:['a) cm²','b) cm','c) litros','d) grados'],a:1},
-  {q:'Para pintar el piso de un cuarto se calcula:',o:['a) el perímetro','b) el área','c) el volumen','d) la altura'],a:1},
+  {q:'¿Cuál es el perímetro de un rectángulo de 9 × 4?',o:['a) 26 cm','b) 36 cm','c) 13 cm','d) 18 cm'],a:0},
+  {q:'¿En qué unidad se mide el perímetro?',o:['a) cm²','b) litros','c) cm','d) grados'],a:2},
+  {q:'Para pintar el piso de un cuarto se calcula:',o:['a) el perímetro','b) el volumen','c) la altura','d) el área'],a:3},
   {q:'La fórmula del perímetro del rectángulo es:',o:['a) base × altura','b) 2 × (base + altura)','c) 4 × lado','d) lado × lado'],a:1},
   {q:'Un cuadrilátero tiene:',o:['a) 3 lados','b) 4 lados','c) 5 lados','d) 6 lados'],a:1}
 ];

@@ -3688,6 +3688,73 @@ Al añadir una materia o al crecer el Kit, la sonda dice qué falta por
 actualizar. Y si el Kit gana una hoja, el pie se corrige: cada hoja de más son
 treinta hojas de más en la capacitación.
 
+## Normativa: la respuesta correcta se reparte entre las letras
+
+Medido el 12 de septiembre de 2026 con `_dev/mide-reparto-respuestas.js`: de
+las **77 misiones, 53 tenían sesgo** en algún banco. La peor —los adverbios—
+ponía el **100 %** de las respuestas de «Completa la oración» en la «a». Otras
+tres andaban por el 75-88 %.
+
+Eso no es un detalle de estilo. **El alumno que no estudió y marca todo «a» se
+lleva tres cuartos de la sección**, y esa nota entra en su expediente igual que
+la del que sí la resolvió. Y al que sí estudia le enseña lo contrario de lo que
+la misión quiere enseñarle: que adivinar funciona.
+
+La regla es que **ninguna letra pase del 40 %**, y la comprueba
+`verifica-mision-nueva` en `qzData` (clave `c`), `evalMCBank` (clave `a`) y
+`cmpData` (clave `c`).
+
+El arreglo lo hace una herramienta, porque son 49 misiones todavía:
+
+```
+node _dev/reparte-respuestas.js --revisa <carpeta>   (solo enseña qué haría)
+node _dev/reparte-respuestas.js <carpeta> [otra…]
+node _dev/mide-reparto-respuestas.js                 (después, siempre)
+```
+
+**No toca el contenido ni cuál es la respuesta buena**: solo en qué posición se
+ofrece. Mueve la correcta y deja las demás en su orden relativo.
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. ⚠️ **En varios bancos la letra va escrita DENTRO del texto de la opción**
+   («a) Modificar al verbo»). Al mover hay que volver a numerarlas, o el alumno
+   ve dos «b)» y ninguna «d)». La herramienta lo detecta sola: renumera cuando
+   TODAS las opciones de la fila traen su letra.
+2. ⚠️ **Hay listas cuyo orden SÍ dice algo, y esas no se tocan.** «1/2 = ___/4»
+   ofrece 1 · 2 · 4, en orden, que es como se leen. Se detectan solas: si todas
+   las opciones son números o fracciones y van de menor a mayor (o al revés),
+   la fila se queda como está.
+3. ⚠️ **Una misión con edición en inglés NO se reparte con la herramienta.** Su
+   `-en.js` lleva el banco **índice a índice** con el español: mover uno solo le
+   cambia la respuesta correcta al alumno que estudia en inglés. Esas van a
+   mano y las dos a la vez.
+4. **Se reparte a partes iguales, no justo por debajo del 40 %.** Con cuatro
+   opciones el azar es el 25 %: una letra al 40 % sigue siendo una pista. El
+   objetivo es `ceil(filas / letras)` y el 40 % queda como el techo que no se
+   pasa nunca.
+
+Y **antes de guardar, el archivo tiene que compilar**: la herramienta le pasa
+`node --check` a un temporal y solo entonces escribe. Es la lección de siempre
+—un error de sintaxis no da la cara, el navegador se calla y la misión se pinta
+igual—, y aquí mordió de una forma tonta: el temporal se llamaba `.probando`,
+`node --check` no sabe qué hacer con esa extensión y **fallaba siempre**, así
+que la red de seguridad no dejaba escribir nunca. El temporal acaba en `.js`.
+
+⚠️ **Y de paso salió un punto ciego que llevaba tiempo:**
+`verifica-mision-nueva` buscaba los archivos del HTML **sin quitarles el
+sellado** (`js/adverbios.js?v=1`). En las **16 misiones** que lo llevan no abría
+ni uno de sus JS: daba «falta el archivo», después cuarenta «el HTML llama a X
+y no existe en el JS» —con todo perfectamente puesto— y, lo que de verdad
+costaba, **se saltaba el reparto de respuestas con un aviso**. O sea: a esas 16
+la regla del 40 % no se les pedía, y nadie lo sabía. Es la misma familia que la
+sonda que sale roja sin avería: una que se rinde con un aviso y sigue enseña a
+no mirarla.
+
+**Lo que queda:** 49 misiones. Se van haciendo por tandas, mirando el diff —cada
+fila movida es una línea que alguien tiene que leer— y corriendo después la
+sonda de la misión.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi

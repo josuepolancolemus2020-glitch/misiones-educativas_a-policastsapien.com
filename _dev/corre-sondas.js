@@ -51,6 +51,7 @@ const NO_SON_SONDAS = {
   'wf-priorizar':           'es un flujo de la auditoría',
   'arma-ficha-fin-de-grado':'ESCRIBE la ficha; se corre a mano y pide el grado',
   'reparte-hojas-ficha':    'ESCRIBE las fichas; se corre a mano',
+  'reparte-respuestas':     'ESCRIBE los bancos de una misión; se corre a mano y pide la carpeta',
   'repagina-ficha':         'ESCRIBE una ficha; pide el nombre',
   'genera-qr-mision':       'genera los QR; es de Python y pide ids',
   'genera-iconos-app':      'ESCRIBE los iconos de la app instalada; es de Python',

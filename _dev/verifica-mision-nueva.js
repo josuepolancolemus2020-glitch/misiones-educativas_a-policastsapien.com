@@ -24,7 +24,14 @@ const bien = m => console.log('  ✅ ' + m);
 
 // ── 1. Los scripts que el HTML pide existen ──────────────────────────────
 console.log('\n📄 Scripts y hojas de estilo');
-const refs = [...html.matchAll(/(?:src|href)="((?:js|css)\/[^"]+)"/g)].map(m => m[1]);
+/* ⚠️ Se le quita el sellado (`?v=1`) antes de buscar el archivo. Varias
+   misiones lo llevan en sus <script>, y sin quitarlo esta sonda no abría NI UNO
+   de sus JS: daba «falta el archivo», después cuarenta «el HTML llama a X y no
+   existe en el JS» —con todo perfectamente puesto— y, lo que de verdad costaba,
+   se saltaba el reparto de respuestas con un aviso de «no se encontró qzData».
+   O sea: la regla del 40 % no se le pedía a esas misiones, y nadie lo sabía. */
+const refs = [...html.matchAll(/(?:src|href)="((?:js|css)\/[^"]+)"/g)]
+  .map(m => m[1].replace(/\?.*$/, ''));
 let jsSrc = '';
 refs.forEach(r => {
   const p = path.join(dir, r);

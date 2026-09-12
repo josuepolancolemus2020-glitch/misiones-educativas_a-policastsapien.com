@@ -172,10 +172,10 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cómo se llama el resultado de una multiplicación?',o:['a) la suma','b) el producto','c) el factor','d) el cociente'],c:1,feedback:'El resultado de multiplicar dos factores se llama producto.'},
-  {q:'En 24 × 3, al multiplicar 3 × 4 = 12, ¿qué haces?',o:['a) escribo 12','b) escribo 2 y llevo 1','c) escribo 1 y llevo 2','d) escribo 21'],c:1,feedback:'Solo va una cifra por columna: escribo 2 (unidades) y llevo 1 (decena).'},
+  {q:'¿Cómo se llama el resultado de una multiplicación?',o:['a) la suma','b) el factor','c) el producto','d) el cociente'],c:2,feedback:'El resultado de multiplicar dos factores se llama producto.'},
+  {q:'En 24 × 3, al multiplicar 3 × 4 = 12, ¿qué haces?',o:['a) escribo 12','b) escribo 1 y llevo 2','c) escribo 21','d) escribo 2 y llevo 1'],c:3,feedback:'Solo va una cifra por columna: escribo 2 (unidades) y llevo 1 (decena).'},
   {q:'¿Cuánto es 6 × 7?',o:['a) 42','b) 48','c) 36','d) 49'],c:0,feedback:'6 × 7 = 42. ¡Repasa la tabla del 6 y del 7!'},
-  {q:'¿Cuánto es 58 × 0?',o:['a) 58','b) 0','c) 580','d) 1'],c:1,feedback:'Cualquier número multiplicado por 0 da 0.'},
+  {q:'¿Cuánto es 58 × 0?',o:['a) 58','b) 580','c) 0','d) 1'],c:2,feedback:'Cualquier número multiplicado por 0 da 0.'},
   {q:'¿Cuánto es 45 × 10?',o:['a) 450','b) 45','c) 405','d) 4,500'],c:0,feedback:'Multiplicar por 10 agrega un cero a la derecha: 450.'},
   {q:'En una multiplicación por 2 cifras, el segundo producto parcial se corre un lugar hacia:',o:['a) la derecha','b) la izquierda','c) arriba','d) abajo'],c:1,feedback:'El segundo parcial multiplica decenas, así que se corre a la izquierda.'},
   {q:'¿Cuánto es 23 × 4?',o:['a) 92','b) 82','c) 812','d) 96'],c:0,feedback:'4 × 3 = 12 (escribo 2, llevo 1); 4 × 2 = 8, + 1 = 9. Total: 92.'},
@@ -330,10 +330,10 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El resultado de una multiplicación se llama ___.',opts:['suma','producto','factor'],c:1},
+  {s:'El resultado de una multiplicación se llama ___.',opts:['producto','suma','factor'],c:0},
   {s:'Los números que se multiplican se llaman ___.',opts:['factores','sumandos','restos'],c:0},
-  {s:'La cifra que se lleva a la siguiente columna es el ___.',opts:['producto','acarreo','parcial'],c:1},
-  {s:'En el cálculo vertical empiezo por las ___.',opts:['decenas','unidades','centenas'],c:1},
+  {s:'La cifra que se lleva a la siguiente columna es el ___.',opts:['producto','parcial','acarreo'],c:2},
+  {s:'En el cálculo vertical empiezo por las ___.',opts:['unidades','decenas','centenas'],c:0},
   {s:'Cualquier número multiplicado por 0 da ___.',opts:['1','el mismo','0'],c:2},
   {s:'Cualquier número multiplicado por 1 da ___.',opts:['0','el mismo número','10'],c:1},
   {s:'Para multiplicar por 10 agrego un ___ a la derecha.',opts:['uno','cero','punto'],c:1},
@@ -702,11 +702,11 @@ const evalTFBank=[
   {q:'7 × 9 = 61.',a:false}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto es 8 × 7?',o:['a) 54','b) 56','c) 63','d) 49'],a:1},
-  {q:'¿Cuánto es 34 × 5?',o:['a) 150','b) 170','c) 160','d) 175'],a:1},
-  {q:'El resultado de multiplicar se llama:',o:['a) suma','b) producto','c) factor','d) resto'],a:1},
+  {q:'¿Cuánto es 8 × 7?',o:['a) 54','b) 63','c) 56','d) 49'],a:2},
+  {q:'¿Cuánto es 34 × 5?',o:['a) 150','b) 160','c) 175','d) 170'],a:3},
+  {q:'El resultado de multiplicar se llama:',o:['a) suma','b) factor','c) producto','d) resto'],a:2},
   {q:'¿Cuánto es 60 × 10?',o:['a) 600','b) 60','c) 6,000','d) 610'],a:0},
-  {q:'¿Cuánto es 23 × 4?',o:['a) 82','b) 92','c) 96','d) 84'],a:1},
+  {q:'¿Cuánto es 23 × 4?',o:['a) 82','b) 96','c) 84','d) 92'],a:3},
   {q:'¿Cuánto es 45 × 0?',o:['a) 45','b) 0','c) 450','d) 1'],a:1},
   {q:'En 6 × 9 = 54, en las unidades escribo 4 y llevo:',o:['a) 5','b) 4','c) 54','d) 0'],a:0},
   {q:'¿Cuánto es 12 × 12?',o:['a) 124','b) 144','c) 122','d) 132'],a:1}

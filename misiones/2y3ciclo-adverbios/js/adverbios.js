@@ -227,9 +227,9 @@ function prevFC() { sfx('click'); fcIdx = (fcIdx - 1 + fcData.length) % fcData.l
 
 // ===================== QUIZ DATA =====================
 const qzData = [
-    { q: '¿Cuál es la función principal de un adverbio?', o: ['a) Sustituir al sustantivo', 'b) Modificar al verbo, a un adjetivo o a otro adverbio', 'c) Indicar género y número', 'd) Unir dos oraciones'], c: 1 },
+    { q: '¿Cuál es la función principal de un adverbio?', o: ['a) Sustituir al sustantivo', 'b) Indicar género y número', 'c) Unir dos oraciones', 'd) Modificar al verbo, a un adjetivo o a otro adverbio'], c: 3 },
     { q: '"Juan corre RÁPIDO". ¿Qué clase de adverbio es "rápido"?', o: ['a) Lugar', 'b) Tiempo', 'c) Modo', 'd) Cantidad'], c: 2 },
-    { q: '"Te veré MAÑANA". ¿Qué clase de adverbio es "mañana"?', o: ['a) Lugar', 'b) Tiempo', 'c) Modo', 'd) Duda'], c: 1 },
+    { q: '"Te veré MAÑANA". ¿Qué clase de adverbio es "mañana"?', o: ['a) Lugar', 'b) Modo', 'c) Duda', 'd) Tiempo'], c: 3 },
     { q: '"El gato está AQUÍ". ¿Qué clase de adverbio es "aquí"?', o: ['a) Lugar', 'b) Tiempo', 'c) Cantidad', 'd) Negación'], c: 0 },
     { q: '"Como MUCHO los fines de semana". ¿Qué clase de adverbio es "mucho"?', o: ['a) Modo', 'b) Cantidad', 'c) Afirmación', 'd) Lugar'], c: 1 },
     { q: '"SÍ, iré contigo". ¿Qué clase de adverbio es "sí"?', o: ['a) Afirmación', 'b) Negación', 'c) Duda', 'd) Modo'], c: 0 },
@@ -429,11 +429,11 @@ function resetId() { sfx('click'); idIdx = 0; showId(); document.getElementById(
 
 // ===================== COMPLETA =====================
 const cmpData = [
-    { s: 'Vivo muy ___ de la escuela.', opts: ['cerca', 'ayer', 'sí'], c: 0 },
-    { s: 'Ella habla ___ con sus amigos.', opts: ['amablemente', 'allí', 'hoy'], c: 0 },
-    { s: '___, lo haré con gusto.', opts: ['Sí', 'Lejos', 'Despacio'], c: 0 },
-    { s: 'No quiero comer ___ de ese postre.', opts: ['nada', 'aquí', 'bien'], c: 0 },
-    { s: '___ lloverá esta tarde.', opts: ['Quizás', 'Bien', 'Aquí'], c: 0 },
+    { s: 'Vivo muy ___ de la escuela.', opts: ['ayer', 'cerca', 'sí'], c: 1 },
+    { s: 'Ella habla ___ con sus amigos.', opts: ['allí', 'hoy', 'amablemente'], c: 2 },
+    { s: '___, lo haré con gusto.', opts: ['Lejos', 'Sí', 'Despacio'], c: 1 },
+    { s: 'No quiero comer ___ de ese postre.', opts: ['aquí', 'bien', 'nada'], c: 2 },
+    { s: '___ lloverá esta tarde.', opts: ['Bien', 'Quizás', 'Aquí'], c: 1 },
     { s: 'Comimos ___ en la fiesta de cumpleaños.', opts: ['demasiado', 'jamás', 'allí'], c: 0 },
     { s: 'El examen estuvo ___ difícil.', opts: ['bastante', 'ayer', 'sí'], c: 0 },
     { s: 'Mi hermano ___ llega tarde a clases.', opts: ['nunca', 'aquí', 'mucho'], c: 0 },
@@ -873,10 +873,10 @@ const evalTFBank = [
     { q: '"Bastante" y "demasiado" pueden funcionar como adverbios de cantidad.', a: true },
 ];
 const evalMCBank = [
-    { q: '¿Cuál es la función del adverbio en la oración?', o: ['a) Sustituir al sustantivo', 'b) Modificar al verbo, adjetivo u otro adverbio', 'c) Indicar género y número', 'd) Unir oraciones'], a: 1 },
-    { q: '"Llegó TARDE a la reunión". La palabra en mayúsculas es adverbio de:', o: ['a) Lugar', 'b) Modo', 'c) Tiempo', 'd) Cantidad'], a: 2 },
+    { q: '¿Cuál es la función del adverbio en la oración?', o: ['a) Sustituir al sustantivo', 'b) Indicar género y número', 'c) Unir oraciones', 'd) Modificar al verbo, adjetivo u otro adverbio'], a: 3 },
+    { q: '"Llegó TARDE a la reunión". La palabra en mayúsculas es adverbio de:', o: ['a) Lugar', 'b) Modo', 'c) Cantidad', 'd) Tiempo'], a: 3 },
     { q: '"Vive CERCA del colegio". La palabra en mayúsculas es adverbio de:', o: ['a) Tiempo', 'b) Lugar', 'c) Cantidad', 'd) Duda'], a: 1 },
-    { q: '"Estudia MUCHO para el examen". La palabra en mayúsculas es adverbio de:', o: ['a) Modo', 'b) Negación', 'c) Cantidad', 'd) Afirmación'], a: 2 },
+    { q: '"Estudia MUCHO para el examen". La palabra en mayúsculas es adverbio de:', o: ['a) Modo', 'b) Negación', 'c) Afirmación', 'd) Cantidad'], a: 3 },
     { q: '"SÍ, iré a la fiesta". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Negación', 'c) Duda', 'd) Lugar'], a: 0 },
     { q: '"NUNCA llega temprano". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Negación', 'c) Tiempo', 'd) Modo'], a: 1 },
     { q: '"QUIZÁS venga mañana". La palabra en mayúsculas es adverbio de:', o: ['a) Duda', 'b) Negación', 'c) Lugar', 'd) Cantidad'], a: 0 },
