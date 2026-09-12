@@ -235,15 +235,15 @@ function resetMemo(){sfx('click');buildMemo();}
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es un bug en programación?',o:['a) Un insecto que se come los cables','b) Un error en el programa','c) Un premio por programar bien','d) Un tipo de robot'],c:1},
-  {q:'¿Quién encontró una polilla de verdad dentro de una computadora en 1947?',o:['a) Un robot mensajero','b) El inventor del teléfono','c) La programadora Grace Hopper','d) Un estudiante de Honduras'],c:2},
-  {q:'¿Cuál es el PRIMER paso del método del detective?',o:['a) Borrar todo el programa','b) Observar QUÉ hace mal el programa','c) Cambiar todas las líneas','d) Pedir un robot nuevo'],c:1},
-  {q:'El programa dice REPITE 5: AVANZA, pero debía repetir 3 veces. ¿Qué tipo de bug es?',o:['a) Orden cambiado','b) Instrucción de menos','c) Condición al revés','d) N del bucle errada'],c:3},
+  {q:'¿Qué es un bug en programación?',o:['a) Un error en el programa','b) Un insecto que se come los cables','c) Un premio por programar bien','d) Un tipo de robot'],c:0},
+  {q:'¿Quién encontró una polilla de verdad dentro de una computadora en 1947?',o:['a) Un robot mensajero','b) La programadora Grace Hopper','c) El inventor del teléfono','d) Un estudiante de Honduras'],c:1},
+  {q:'¿Cuál es el PRIMER paso del método del detective?',o:['a) Borrar todo el programa','b) Cambiar todas las líneas','c) Observar QUÉ hace mal el programa','d) Pedir un robot nuevo'],c:2},
+  {q:'El programa dice REPITE 5: AVANZA, pero debía repetir 3 veces. ¿Qué tipo de bug es?',o:['a) Orden cambiado','b) Instrucción de menos','c) N del bucle errada','d) Condición al revés'],c:2},
   {q:'Dos pasos de la receta están intercambiados. ¿Qué tipo de bug es?',o:['a) Orden cambiado','b) Bug de lógica','c) N del bucle errada','d) Instrucción de más'],c:0},
-  {q:'Después de corregir la línea sospechosa, ¿qué debe hacer el detective?',o:['a) Guardar el programa y no tocarlo','b) Volver a probar el programa','c) Cambiar otras cinco líneas','d) Celebrar sin comprobar'],c:1},
-  {q:'El programa corre sin chocar, pero el robot llega por el camino prohibido. ¿Qué tiene?',o:['a) Nada: si corre, está perfecto','b) Un bug de choque','c) Un bug de lógica','d) Una instrucción ambigua'],c:2},
-  {q:'¿Cuántas cosas corrige a la vez un buen detective de bugs?',o:['a) UNA sola, y vuelve a probar','b) Todas al mismo tiempo','c) Ninguna: espera que se arreglen solas','d) Las que diga la suerte'],c:0},
-  {q:'Al programa le falta la instrucción ENTREGA al final. ¿Qué tipo de bug es?',o:['a) Condición al revés','b) Instrucción de menos (falta una)','c) N del bucle errada','d) Bug de giro'],c:1},
+  {q:'Después de corregir la línea sospechosa, ¿qué debe hacer el detective?',o:['a) Volver a probar el programa','b) Guardar el programa y no tocarlo','c) Cambiar otras cinco líneas','d) Celebrar sin comprobar'],c:0},
+  {q:'El programa corre sin chocar, pero el robot llega por el camino prohibido. ¿Qué tiene?',o:['a) Nada: si corre, está perfecto','b) Un bug de choque','c) Una instrucción ambigua','d) Un bug de lógica'],c:3},
+  {q:'¿Cuántas cosas corrige a la vez un buen detective de bugs?',o:['a) Todas al mismo tiempo','b) UNA sola, y vuelve a probar','c) Ninguna: espera que se arreglen solas','d) Las que diga la suerte'],c:1},
+  {q:'Al programa le falta la instrucción ENTREGA al final. ¿Qué tipo de bug es?',o:['a) Condición al revés','b) N del bucle errada','c) Bug de giro','d) Instrucción de menos (falta una)'],c:3},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -295,14 +295,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Un error en el programa se llama ___.',opts:['bug','premio','mapa'],c:0},
+  {s:'Un error en el programa se llama ___.',opts:['premio','bug','mapa'],c:1},
   {s:'Encontrar y corregir los errores se llama ___.',opts:['ejecutar','depurar','dibujar'],c:1},
-  {s:'En 1947, la programadora Grace Hopper encontró una ___ dentro de la computadora.',opts:['polilla','araña','moneda'],c:0},
-  {s:'Después de corregir el bug, siempre hay que volver a ___.',opts:['borrar','dormir','probar'],c:2},
+  {s:'En 1947, la programadora Grace Hopper encontró una ___ dentro de la computadora.',opts:['araña','moneda','polilla'],c:2},
+  {s:'Después de corregir el bug, siempre hay que volver a ___.',opts:['probar','borrar','dormir'],c:0},
   {s:'El buen detective corrige ___ cosa a la vez.',opts:['una','toda','ninguna'],c:0},
-  {s:'Si el bucle repite 4 veces en vez de 3, su ___ está errada.',opts:['casa','N','lupa'],c:1},
-  {s:'El bug de ___ corre sin chocar, pero hace otra cosa.',opts:['choque','giro','lógica'],c:2},
-  {s:'Leer el programa línea por línea es usar la ___ del detective.',opts:['lupa','gorra','mochila'],c:0},
+  {s:'Si el bucle repite 4 veces en vez de 3, su ___ está errada.',opts:['casa','lupa','N'],c:2},
+  {s:'El bug de ___ corre sin chocar, pero hace otra cosa.',opts:['lógica','choque','giro'],c:0},
+  {s:'Leer el programa línea por línea es usar la ___ del detective.',opts:['gorra','lupa','mochila'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -578,21 +578,21 @@ const evalTFBank=[
   {q:'Una instrucción de más o de menos también es un tipo de bug.',a:true},
 ];
 const evalMCBank=[
-  {q:'¿Qué es un “bug” en programación?',o:['Un insecto que daña la computadora','Un error en el programa','Un tipo de robot','Un premio por programar bien'],a:1},
-  {q:'¿Qué encontró la programadora Grace Hopper en 1947 dentro de una computadora?',o:['Una polilla de verdad','Un ratón de campo','Un tornillo suelto','Un mensaje secreto'],a:0},
+  {q:'¿Qué es un “bug” en programación?',o:['Un error en el programa','Un insecto que daña la computadora','Un tipo de robot','Un premio por programar bien'],a:0},
+  {q:'¿Qué encontró la programadora Grace Hopper en 1947 dentro de una computadora?',o:['Un ratón de campo','Un tornillo suelto','Un mensaje secreto','Una polilla de verdad'],a:3},
   {q:'¿Qué es depurar un programa?',o:['Borrarlo completo','Encontrar y corregir sus errores','Escribirlo más largo','Ejecutarlo más rápido'],a:1},
-  {q:'¿Cuál es el PRIMER paso del método del detective?',o:['Observar qué hace mal el programa','Borrar el programa','Cambiar todas las líneas a la vez','Pedir otro robot'],a:0},
-  {q:'Después de corregir la línea sospechosa, ¿qué sigue?',o:['Guardar y no tocar nada','Volver a probar el programa','Cambiar otras cinco líneas','Celebrar sin comprobar'],a:1},
+  {q:'¿Cuál es el PRIMER paso del método del detective?',o:['Borrar el programa','Cambiar todas las líneas a la vez','Observar qué hace mal el programa','Pedir otro robot'],a:2},
+  {q:'Después de corregir la línea sospechosa, ¿qué sigue?',o:['Guardar y no tocar nada','Cambiar otras cinco líneas','Volver a probar el programa','Celebrar sin comprobar'],a:2},
   {q:'El programa dice GIRA IZQUIERDA donde debía decir GIRA DERECHA. ¿Qué tipo de bug es?',o:['Instrucción equivocada','Orden cambiado','N del bucle errada','Bug de lógica'],a:0},
-  {q:'El programa dice REPITE 5 pero debía repetir solo 3 veces. ¿Qué tipo de bug es?',o:['Instrucción de menos','Orden cambiado','N del bucle errada','Condición al revés'],a:2},
-  {q:'Dos pasos de la receta están intercambiados. ¿Qué tipo de bug es?',o:['Instrucción equivocada','Orden cambiado','N del bucle errada','Bug de lógica'],a:1},
+  {q:'El programa dice REPITE 5 pero debía repetir solo 3 veces. ¿Qué tipo de bug es?',o:['Instrucción de menos','N del bucle errada','Orden cambiado','Condición al revés'],a:1},
+  {q:'Dos pasos de la receta están intercambiados. ¿Qué tipo de bug es?',o:['Instrucción equivocada','N del bucle errada','Bug de lógica','Orden cambiado'],a:3},
   {q:'El robot llega a la meta, pero pasando por la casilla prohibida. ¿Qué tipo de bug es?',o:['Instrucción de más','Orden cambiado','Condición al revés','Bug de lógica'],a:3},
   {q:'Al programa le falta la instrucción ENTREGA al final. ¿Qué tipo de bug es?',o:['Instrucción de menos (falta una)','Instrucción de más (sobra una)','Orden cambiado','Condición al revés'],a:0},
-  {q:'¿Qué hace un buen detective de bugs al corregir?',o:['Cambia UNA sola cosa y vuelve a probar','Cambia todo el programa de golpe','Borra el programa completo','Adivina sin leer las líneas'],a:0},
-  {q:'¿Qué significa probar el programa «paso a paso» con el dedo?',o:['Seguirlo línea por línea sobre el mapa','Tocar la pantalla muy fuerte','Leer solo la última línea','Cerrar los ojos y ejecutar'],a:0},
+  {q:'¿Qué hace un buen detective de bugs al corregir?',o:['Cambia todo el programa de golpe','Borra el programa completo','Cambia UNA sola cosa y vuelve a probar','Adivina sin leer las líneas'],a:2},
+  {q:'¿Qué significa probar el programa «paso a paso» con el dedo?',o:['Tocar la pantalla muy fuerte','Seguirlo línea por línea sobre el mapa','Leer solo la última línea','Cerrar los ojos y ejecutar'],a:1},
   {q:'El programa dice «SI HAY PARED: AVANZA» en vez de «SI NO HAY pared: AVANZA». ¿Qué tipo de bug es?',o:['N del bucle errada','Condición al revés','Instrucción de más','Orden cambiado'],a:1},
-  {q:'¿Por qué equivocarse es parte de programar?',o:['Porque todos los programadores encuentran y corrigen errores','Porque los robots se equivocan solos','Porque los programas nunca funcionan','Porque así lo manda la computadora'],a:0},
-  {q:'El programa corre sin chocar, pero el resultado está malo. ¿Qué tiene?',o:['Nada: si corre, está perfecto','Un bug de choque','Un bug de lógica','Una instrucción ambigua'],a:2},
+  {q:'¿Por qué equivocarse es parte de programar?',o:['Porque los robots se equivocan solos','Porque los programas nunca funcionan','Porque todos los programadores encuentran y corrigen errores','Porque así lo manda la computadora'],a:2},
+  {q:'El programa corre sin chocar, pero el resultado está malo. ¿Qué tiene?',o:['Un bug de lógica','Nada: si corre, está perfecto','Un bug de choque','Una instrucción ambigua'],a:0},
 ];
 const evalCPBank=[
   {q:'Un error en el programa se llama ___.',a:'bug'},

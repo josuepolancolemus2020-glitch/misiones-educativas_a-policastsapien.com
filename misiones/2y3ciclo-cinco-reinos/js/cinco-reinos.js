@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Taxonomía','c) Ecología','d) Geología'],c:1},
-  {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Tres','b) Cuatro','c) Cinco','d) Seis'],c:2},
+  {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Ecología','c) Taxonomía','d) Geología'],c:2},
+  {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Cinco','b) Tres','c) Cuatro','d) Seis'],c:0},
   {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Monera','c) Fungi','d) Animalia'],c:1},
-  {q:'¿Qué reino reúne a los hongos, como las setas y los mohos?',o:['a) Plantae','b) Monera','c) Fungi','d) Protista'],c:2},
+  {q:'¿Qué reino reúne a los hongos, como las setas y los mohos?',o:['a) Fungi','b) Plantae','c) Monera','d) Protista'],c:0},
   {q:'¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?',o:['a) El reino','b) La familia','c) El género','d) La especie'],c:3},
-  {q:'¿Qué reino está formado por seres pluricelulares y autótrofos que hacen fotosíntesis?',o:['a) Plantae','b) Animalia','c) Fungi','d) Monera'],c:0},
-  {q:'La ameba y el paramecio pertenecen al reino…',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],c:1},
-  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que fabrica su propio alimento','c) Que come otros seres','d) Que es unicelular'],c:1},
-  {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Protista','c) Animalia','d) Fungi'],c:2},
+  {q:'¿Qué reino está formado por seres pluricelulares y autótrofos que hacen fotosíntesis?',o:['a) Animalia','b) Fungi','c) Plantae','d) Monera'],c:2},
+  {q:'La ameba y el paramecio pertenecen al reino…',o:['a) Protista','b) Monera','c) Plantae','d) Fungi'],c:0},
+  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que come otros seres','c) Que es unicelular','d) Que fabrica su propio alimento'],c:3},
+  {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Animalia','c) Protista','d) Fungi'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -367,19 +367,19 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Taxonomía','c) Ecología','d) Geología'],a:1},
   {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Tres','b) Cuatro','c) Cinco','d) Seis'],a:2},
-  {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Monera','c) Fungi','d) Animalia'],a:1},
-  {q:'¿Qué reino reúne a los hongos, las setas y los mohos?',o:['a) Plantae','b) Monera','c) Fungi','d) Protista'],a:2},
+  {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Fungi','c) Monera','d) Animalia'],a:2},
+  {q:'¿Qué reino reúne a los hongos, las setas y los mohos?',o:['a) Fungi','b) Plantae','c) Monera','d) Protista'],a:0},
   {q:'¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?',o:['a) El reino','b) La familia','c) El género','d) La especie'],a:3},
   {q:'¿Qué reino está formado por seres pluricelulares y autótrofos?',o:['a) Plantae','b) Animalia','c) Fungi','d) Monera'],a:0},
   {q:'La ameba, el paramecio y las algas pertenecen al reino…',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],a:1},
-  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que fabrica su propio alimento','c) Que come otros seres','d) Que es unicelular'],a:1},
+  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que come otros seres','c) Que es unicelular','d) Que fabrica su propio alimento'],a:3},
   {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Protista','c) Animalia','d) Fungi'],a:2},
-  {q:'¿Qué caracteriza a una célula procariota?',o:['a) Tiene muchos organelos','b) No tiene núcleo definido','c) Hace fotosíntesis','d) Es muy grande'],a:1},
-  {q:'¿Cuál de estos seres vivos es un descomponedor típico?',o:['a) El pino','b) El águila','c) El hongo','d) El pez'],a:2},
-  {q:'¿Qué grupo de animales tiene columna vertebral?',o:['a) Invertebrados','b) Vertebrados','c) Insectos','d) Moluscos'],a:1},
-  {q:'¿De qué está hecha la pared celular de los hongos?',o:['a) Celulosa','b) Quitina','c) Proteína','d) Grasa'],a:1},
-  {q:'¿Qué reino fue el primero en aparecer en la Tierra?',o:['a) Animalia','b) Plantae','c) Monera','d) Fungi'],a:2},
-  {q:'¿Cómo se escribe el nombre científico del ser humano?',o:['a) Homo sapiens','b) Ser humano','c) Humano común','d) Persona sapiens'],a:0},
+  {q:'¿Qué caracteriza a una célula procariota?',o:['a) No tiene núcleo definido','b) Tiene muchos organelos','c) Hace fotosíntesis','d) Es muy grande'],a:0},
+  {q:'¿Cuál de estos seres vivos es un descomponedor típico?',o:['a) El pino','b) El hongo','c) El águila','d) El pez'],a:1},
+  {q:'¿Qué grupo de animales tiene columna vertebral?',o:['a) Invertebrados','b) Insectos','c) Moluscos','d) Vertebrados'],a:3},
+  {q:'¿De qué está hecha la pared celular de los hongos?',o:['a) Celulosa','b) Proteína','c) Quitina','d) Grasa'],a:2},
+  {q:'¿Qué reino fue el primero en aparecer en la Tierra?',o:['a) Monera','b) Animalia','c) Plantae','d) Fungi'],a:0},
+  {q:'¿Cómo se escribe el nombre científico del ser humano?',o:['a) Ser humano','b) Homo sapiens','c) Humano común','d) Persona sapiens'],a:1},
 ];
 const evalCPBank=[
   {q:'La ___ es la ciencia que identifica, nombra y clasifica a los seres vivos.',a:'taxonomía'},

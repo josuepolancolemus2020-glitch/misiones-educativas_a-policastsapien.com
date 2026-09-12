@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) Antes de la llegada de Cristóbal Colón','c) De la época colonial','d) Del siglo XX'],c:1},
-  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Tenochtitlan','c) Copán','d) Cusco'],c:2},
-  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Los Andes','b) Mesoamérica','c) La Patagonia','d) El Amazonas'],c:1},
+  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) De la época colonial','c) Del siglo XX','d) Antes de la llegada de Cristóbal Colón'],c:3},
+  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Copán','c) Tenochtitlan','d) Cusco'],c:1},
+  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Los Andes','b) La Patagonia','c) El Amazonas','d) Mesoamérica'],c:3},
   {q:'¿Qué número conocían los mayas y fue un gran avance?',o:['a) El cero','b) El millón','c) Los números romanos','d) Las fracciones decimales'],c:0},
-  {q:'¿Cómo era la escritura de los mayas?',o:['a) Con alfabeto latino','b) Jeroglífica','c) No tenían escritura','d) Con números solamente'],c:1},
+  {q:'¿Cómo era la escritura de los mayas?',o:['a) Jeroglífica','b) Con alfabeto latino','c) No tenían escritura','d) Con números solamente'],c:0},
   {q:'¿Cuál era el alimento base de los pueblos precolombinos?',o:['a) El trigo','b) El arroz','c) El maíz','d) La papa solamente'],c:2},
-  {q:'¿Cómo se llama el libro sagrado de los mayas quichés?',o:['a) El Popol Vuh','b) El Códice Real','c) El Chilam Balam de Copán','d) La Crónica Maya'],c:0},
-  {q:'¿Cuál era el pueblo indígena más numeroso de Honduras?',o:['a) Los aztecas','b) Los lencas','c) Los incas','d) Los garífunas'],c:1},
-  {q:'¿Dónde crearon su imperio los incas?',o:['a) En México','b) En Honduras','c) En los Andes (Perú)','d) En Guatemala'],c:2},
+  {q:'¿Cómo se llama el libro sagrado de los mayas quichés?',o:['a) El Códice Real','b) El Chilam Balam de Copán','c) El Popol Vuh','d) La Crónica Maya'],c:2},
+  {q:'¿Cuál era el pueblo indígena más numeroso de Honduras?',o:['a) Los lencas','b) Los aztecas','c) Los incas','d) Los garífunas'],c:0},
+  {q:'¿Dónde crearon su imperio los incas?',o:['a) En México','b) En los Andes (Perú)','c) En Honduras','d) En Guatemala'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -145,13 +145,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'Precolombino significa antes de la llegada de ___.',opts:['Colón','los mayas','los lencas'],c:0},
-  {s:'La gran ciudad maya de Honduras fue ___.',opts:['Tikal','Copán','Cusco'],c:1},
-  {s:'Los mayas vivieron en la región llamada ___.',opts:['Mesoamérica','los Andes','La Mosquitia'],c:0},
-  {s:'La numeración maya conocía el ___.',opts:['millón','cero','decimal'],c:1},
-  {s:'El alimento sagrado de los mayas era el ___.',opts:['trigo','arroz','maíz'],c:2},
+  {s:'La gran ciudad maya de Honduras fue ___.',opts:['Tikal','Cusco','Copán'],c:2},
+  {s:'Los mayas vivieron en la región llamada ___.',opts:['los Andes','Mesoamérica','La Mosquitia'],c:1},
+  {s:'La numeración maya conocía el ___.',opts:['millón','decimal','cero'],c:2},
+  {s:'El alimento sagrado de los mayas era el ___.',opts:['maíz','trigo','arroz'],c:0},
   {s:'El libro sagrado maya-quiché es el ___.',opts:['Popol Vuh','Altar Q','Códice Real'],c:0},
   {s:'El pueblo indígena más numeroso de Honduras eran los ___.',opts:['aztecas','lencas','incas'],c:1},
-  {s:'Colón llegó a América en el año ___.',opts:['1492','1821','1592'],c:0},
+  {s:'Colón llegó a América en el año ___.',opts:['1821','1492','1592'],c:1},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -365,20 +365,20 @@ const evalTFBank=[
   {q:'El pueblo garífuna es precolombino.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) Antes de la llegada de Cristóbal Colón','c) De la época colonial','d) Del siglo XX'],a:1},
-  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Tenochtitlan','c) Copán','d) Cusco'],a:2},
-  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Los Andes','b) Mesoamérica','c) La Patagonia','d) El Amazonas'],a:1},
+  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) De la época colonial','c) Antes de la llegada de Cristóbal Colón','d) Del siglo XX'],a:2},
+  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Tenochtitlan','c) Cusco','d) Copán'],a:3},
+  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Mesoamérica','b) Los Andes','c) La Patagonia','d) El Amazonas'],a:0},
   {q:'¿Qué gran avance tenía la numeración maya?',o:['a) El cero','b) Las fracciones decimales','c) Los números romanos','d) El signo de porcentaje'],a:0},
-  {q:'¿Cómo era la escritura de los mayas?',o:['a) Con alfabeto latino','b) Jeroglífica','c) No tenían escritura','d) Solo con números'],a:1},
-  {q:'¿Qué monumento de Copán tiene el texto maya más largo?',o:['a) El Altar Q','b) La Escalinata Jeroglífica','c) La Estela A','d) El juego de pelota'],a:1},
-  {q:'¿Qué muestra el Altar Q de Copán?',o:['a) Los 16 gobernantes de la ciudad','b) El calendario solar','c) Un mapa de Mesoamérica','d) La historia del maíz'],a:0},
-  {q:'¿Quién fundó la dinastía de Copán?',o:["a) Yax K'uk' Mo'",'b) 18 Conejo','c) Moctezuma','d) Atahualpa'],a:0},
-  {q:'¿Cuál era el alimento base de los pueblos precolombinos?',o:['a) El trigo','b) El arroz','c) El maíz','d) La cebada'],a:2},
+  {q:'¿Cómo era la escritura de los mayas?',o:['a) Con alfabeto latino','b) No tenían escritura','c) Solo con números','d) Jeroglífica'],a:3},
+  {q:'¿Qué monumento de Copán tiene el texto maya más largo?',o:['a) El Altar Q','b) La Estela A','c) La Escalinata Jeroglífica','d) El juego de pelota'],a:2},
+  {q:'¿Qué muestra el Altar Q de Copán?',o:['a) El calendario solar','b) Un mapa de Mesoamérica','c) Los 16 gobernantes de la ciudad','d) La historia del maíz'],a:2},
+  {q:'¿Quién fundó la dinastía de Copán?',o:['a) 18 Conejo','b) Moctezuma','c) Atahualpa',"d) Yax K'uk' Mo'"],a:3},
+  {q:'¿Cuál era el alimento base de los pueblos precolombinos?',o:['a) El trigo','b) El maíz','c) El arroz','d) La cebada'],a:1},
   {q:'¿Cómo se llama el libro sagrado de los mayas quichés?',o:['a) El Popol Vuh','b) El Códice Real','c) La Crónica Maya','d) El Libro del Consejo Azteca'],a:0},
   {q:'¿Cuál era el pueblo indígena más numeroso de Honduras?',o:['a) Los aztecas','b) Los lencas','c) Los incas','d) Los olmecas'],a:1},
-  {q:'¿Qué pueblo hondureño estaba emparentado con los mayas?',o:['a) Los chortís','b) Los pech','c) Los tawahkas','d) Los tolupanes'],a:0},
-  {q:'¿Dónde florecieron los aztecas?',o:['a) En el centro de México','b) En los Andes','c) En Honduras','d) En el Amazonas'],a:0},
-  {q:'¿Dónde crearon su imperio los incas?',o:['a) En México','b) En Guatemala','c) En los Andes (Perú)','d) En el Caribe'],a:2},
+  {q:'¿Qué pueblo hondureño estaba emparentado con los mayas?',o:['a) Los pech','b) Los chortís','c) Los tawahkas','d) Los tolupanes'],a:1},
+  {q:'¿Dónde florecieron los aztecas?',o:['a) En los Andes','b) En Honduras','c) En el centro de México','d) En el Amazonas'],a:2},
+  {q:'¿Dónde crearon su imperio los incas?',o:['a) En los Andes (Perú)','b) En México','c) En Guatemala','d) En el Caribe'],a:0},
   {q:'¿En qué año llegó Cristóbal Colón a América?',o:['a) 1392','b) 1492','c) 1592','d) 1821'],a:1},
 ];
 const evalCPBank=[

@@ -3800,9 +3800,11 @@ que cambian de idioma en caliente reasignan el banco—. Pedir `const` dejaba
 fuera a `ingles-saludos` **en silencio**, que era justo una de las peores. Se
 acepta `const`, `let` y `var`, y lo mismo al buscar el archivo.
 
-**Lo que queda:** 15 misiones (eran 53 el 12 de septiembre de 2026), y **cuatro
-de ellas son las de Robótica con traducción de autor** —`robots-problemas` con
-el 89 %, `robot-decide`, `sensores-robot` y `que-es-un-robot`—, que van a mano. Se van
+**Lo que queda: SEIS**, y son **exactamente las seis de Robótica con traducción
+de autor** —`robots-problemas` con el 89 %, `robot-decide`, `sensores-robot`,
+`que-es-un-robot`, `motores-mecanismos` y `programando-robot`—. Eran 53 el 12
+de septiembre de 2026. Todas las demás están repartidas; la herramienta se
+niega a tocar estas seis y hay que mover el español y el inglés a la vez. Se van
 haciendo por tandas, mirando el diff —cada fila movida es una línea que alguien
 tiene que leer— y corriendo después la sonda de la misión.
 

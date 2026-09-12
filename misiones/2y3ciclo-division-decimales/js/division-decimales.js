@@ -126,16 +126,16 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué debes hacer primero si el divisor tiene decimales?',o:['a) Dividir normalmente','b) Convertirlo a número entero moviendo el punto','c) Agregar ceros al cociente','d) Borrar el punto'],c:1,feedback:'Debemos convertir el divisor a un entero moviendo el punto hacia la derecha.'},
-  {q:'Para calcular 3.5 ÷ 0.5, ¿cuál es la división equivalente?',o:['a) 350 ÷ 5','b) 35 ÷ 50','c) 35 ÷ 5','d) 3 ÷ 5'],c:2,feedback:'Al mover el punto 1 espacio en ambos números obtenemos 35 ÷ 5.'},
-  {q:'Si mueves el punto 2 veces en el divisor, ¿cuántas veces debes moverlo en el dividendo?',o:['a) 1 vez','b) 2 veces','c) 3 veces','d) Ninguna'],c:1},
-  {q:'¿Qué haces si debes mover el punto en el dividendo pero ya no hay más cifras?',o:['a) Pongo un punto en el cociente','b) Agrego ceros a la derecha','c) Dejo la división así','d) Resto los decimales'],c:1},
-  {q:'Si divides 10 ÷ 0.5, ¿qué pasará con el resultado (cociente)?',o:['a) Será MAYOR que 10','b) Será MENOR que 10','c) Será IGUAL a 10','d) Será negativo'],c:0,feedback:'Al dividir entre un número menor a 1, el cociente siempre será mayor que el dividendo.'},
-  {q:'Si divides 10 ÷ 2.5, ¿qué pasará con el resultado?',o:['a) Será MAYOR que 10','b) Será MENOR que 10','c) Será IGUAL a 10','d) Será cero'],c:1,feedback:'Al dividir entre un número mayor a 1, el cociente siempre será menor que el dividendo.'},
+  {q:'¿Qué debes hacer primero si el divisor tiene decimales?',o:['a) Dividir normalmente','b) Agregar ceros al cociente','c) Borrar el punto','d) Convertirlo a número entero moviendo el punto'],c:3,feedback:'Debemos convertir el divisor a un entero moviendo el punto hacia la derecha.'},
+  {q:'Para calcular 3.5 ÷ 0.5, ¿cuál es la división equivalente?',o:['a) 350 ÷ 5','b) 35 ÷ 5','c) 35 ÷ 50','d) 3 ÷ 5'],c:1,feedback:'Al mover el punto 1 espacio en ambos números obtenemos 35 ÷ 5.'},
+  {q:'Si mueves el punto 2 veces en el divisor, ¿cuántas veces debes moverlo en el dividendo?',o:['a) 2 veces','b) 1 vez','c) 3 veces','d) Ninguna'],c:0},
+  {q:'¿Qué haces si debes mover el punto en el dividendo pero ya no hay más cifras?',o:['a) Pongo un punto en el cociente','b) Dejo la división así','c) Resto los decimales','d) Agrego ceros a la derecha'],c:3},
+  {q:'Si divides 10 ÷ 0.5, ¿qué pasará con el resultado (cociente)?',o:['a) Será MENOR que 10','b) Será MAYOR que 10','c) Será IGUAL a 10','d) Será negativo'],c:1,feedback:'Al dividir entre un número menor a 1, el cociente siempre será mayor que el dividendo.'},
+  {q:'Si divides 10 ÷ 2.5, ¿qué pasará con el resultado?',o:['a) Será MENOR que 10','b) Será MAYOR que 10','c) Será IGUAL a 10','d) Será cero'],c:0,feedback:'Al dividir entre un número mayor a 1, el cociente siempre será menor que el dividendo.'},
   {q:'Calcula: 1.2 ÷ 0.4',o:['a) 0.3','b) 30','c) 3','d) 12'],c:2},
   {q:'¿Cuál es el resultado de 5 ÷ 0.1?',o:['a) 0.5','b) 5','c) 50','d) 500'],c:2,feedback:'Mueves un espacio en 0.1 (queda 1) y agregas un cero a 5 (queda 50). 50 ÷ 1 = 50.'},
   {q:'En una división, si bajas una cifra y el número formado es MENOR que el divisor, ¿qué debes hacer?',o:['a) Poner cero al cociente','b) Sumar uno','c) Subir el punto','d) Terminar la división'],c:0},
-  {q:'La división 0.45 ÷ 0.09 es igual a:',o:['a) 4.5 ÷ 9','b) 45 ÷ 90','c) 450 ÷ 9','d) 45 ÷ 9'],c:3}
+  {q:'La división 0.45 ÷ 0.09 es igual a:',o:['a) 4.5 ÷ 9','b) 45 ÷ 9','c) 45 ÷ 90','d) 450 ÷ 9'],c:1}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -281,14 +281,14 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Para dividir con decimales, el divisor se debe convertir en un número ___.',opts:['entero','fraccionario','negativo'],c:0},
+  {s:'Para dividir con decimales, el divisor se debe convertir en un número ___.',opts:['fraccionario','entero','negativo'],c:1},
   {s:'Al mover el punto a la derecha en el divisor, se debe mover la misma cantidad en el ___.',opts:['cociente','residuo','dividendo'],c:2},
-  {s:'Si debes mover el punto en el dividendo pero faltan cifras, agregas ___.',opts:['puntos','ceros','unos'],c:1},
+  {s:'Si debes mover el punto en el dividendo pero faltan cifras, agregas ___.',opts:['ceros','puntos','unos'],c:0},
   {s:'Si el divisor es menor que 1, el cociente será ___ que el dividendo original.',opts:['menor','igual','mayor'],c:2},
   {s:'La división 1.5 ÷ 0.3 es equivalente a la división entera ___.',opts:['150 ÷ 3','15 ÷ 3','15 ÷ 30'],c:1},
-  {s:'Si al bajar una cifra, la cantidad a dividir es menor que el divisor, ponemos ___ al cociente.',opts:['uno','punto','cero'],c:2},
-  {s:'Si el divisor es mayor que 1, el cociente será ___ que el dividendo original.',opts:['mayor','menor','igual'],c:1},
-  {s:'Dividir un número entre 0.1 equivale a ___ por 10.',opts:['restar','dividir','multiplicar'],c:2}
+  {s:'Si al bajar una cifra, la cantidad a dividir es menor que el divisor, ponemos ___ al cociente.',opts:['cero','uno','punto'],c:0},
+  {s:'Si el divisor es mayor que 1, el cociente será ___ que el dividendo original.',opts:['menor','mayor','igual'],c:0},
+  {s:'Dividir un número entre 0.1 equivale a ___ por 10.',opts:['restar','multiplicar','dividir'],c:1}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');

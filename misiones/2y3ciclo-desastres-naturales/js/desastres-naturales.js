@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuándo un fenómeno natural se convierte en desastre?',o:['a) Siempre que ocurre','b) Cuando afecta a una comunidad vulnerable y causa daños','c) Solo si ocurre de noche','d) Cuando lo predice la ciencia'],c:1},
+  {q:'¿Cuándo un fenómeno natural se convierte en desastre?',o:['a) Cuando afecta a una comunidad vulnerable y causa daños','b) Siempre que ocurre','c) Solo si ocurre de noche','d) Cuando lo predice la ciencia'],c:0},
   {q:'¿En qué año golpeó el huracán Mitch a Centroamérica?',o:['a) 1988','b) 1998','c) 2008','d) 2018'],c:1},
   {q:'¿Qué categoría máxima alcanzó el huracán Mitch?',o:['a) Categoría 1','b) Categoría 3','c) Categoría 5','d) Categoría 7'],c:2},
-  {q:'¿Cómo se llama la fórmula del riesgo de desastre?',o:['a) Riesgo = Amenaza × Vulnerabilidad','b) Riesgo = Lluvia + Viento','c) Riesgo = Amenaza − Prevención','d) Riesgo = Población'],c:0},
-  {q:'¿Cuál de estas es una amenaza GEOLÓGICA?',o:['a) Huracán','b) Inundación','c) Terremoto','d) Sequía'],c:2},
-  {q:'¿Sobre qué se forman los huracanes?',o:['a) Sobre montañas frías','b) Sobre el mar cálido','c) Sobre desiertos','d) Sobre los polos'],c:1},
-  {q:'¿Qué acción REDUCE la vulnerabilidad ante deslizamientos?',o:['a) Deforestar las laderas','b) Construir a la orilla del río','c) Reforestar y no construir en laderas','d) Ignorar las alertas'],c:2},
+  {q:'¿Cómo se llama la fórmula del riesgo de desastre?',o:['a) Riesgo = Lluvia + Viento','b) Riesgo = Amenaza − Prevención','c) Riesgo = Población','d) Riesgo = Amenaza × Vulnerabilidad'],c:3},
+  {q:'¿Cuál de estas es una amenaza GEOLÓGICA?',o:['a) Huracán','b) Inundación','c) Sequía','d) Terremoto'],c:3},
+  {q:'¿Sobre qué se forman los huracanes?',o:['a) Sobre montañas frías','b) Sobre desiertos','c) Sobre el mar cálido','d) Sobre los polos'],c:2},
+  {q:'¿Qué acción REDUCE la vulnerabilidad ante deslizamientos?',o:['a) Reforestar y no construir en laderas','b) Deforestar las laderas','c) Construir a la orilla del río','d) Ignorar las alertas'],c:0},
   {q:'¿Qué institución coordina la respuesta a desastres en Honduras?',o:['a) COPECO','b) La alcaldía únicamente','c) La escuela','d) El hospital'],c:0},
-  {q:'¿Qué significa una ALERTA ROJA?',o:['a) Todo está normal','b) Hay que estar atentos','c) Peligro: hay que evacuar','d) Ya pasó el peligro'],c:2},
+  {q:'¿Qué significa una ALERTA ROJA?',o:['a) Todo está normal','b) Peligro: hay que evacuar','c) Hay que estar atentos','d) Ya pasó el peligro'],c:1},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,13 +144,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El huracán ___ fue uno de los peores desastres de Honduras en 1998.',opts:['Mitch','Félix','Eta'],c:0},
-  {s:'La ___ es el fenómeno que puede causar daño, como un sismo o un huracán.',opts:['prevención','amenaza','constancia'],c:1},
-  {s:'La ___ es la debilidad de una comunidad ante una amenaza.',opts:['vulnerabilidad','mitigación','alerta'],c:0},
-  {s:'Los huracanes se forman sobre el ___ cálido.',opts:['desierto','mar','glaciar'],c:1},
-  {s:'El ___ es un movimiento brusco del suelo y es una amenaza geológica.',opts:['huracán','terremoto','deslizamiento'],c:1},
-  {s:'La alerta ___ indica que hay peligro y hay que evacuar.',opts:['verde','amarilla','roja'],c:2},
-  {s:'Reforestar las laderas ayuda a evitar ___ de tierra.',opts:['deslizamientos','terremotos','tsunamis'],c:0},
+  {s:'El huracán ___ fue uno de los peores desastres de Honduras en 1998.',opts:['Félix','Eta','Mitch'],c:2},
+  {s:'La ___ es el fenómeno que puede causar daño, como un sismo o un huracán.',opts:['amenaza','prevención','constancia'],c:0},
+  {s:'La ___ es la debilidad de una comunidad ante una amenaza.',opts:['mitigación','vulnerabilidad','alerta'],c:1},
+  {s:'Los huracanes se forman sobre el ___ cálido.',opts:['desierto','glaciar','mar'],c:2},
+  {s:'El ___ es un movimiento brusco del suelo y es una amenaza geológica.',opts:['terremoto','huracán','deslizamiento'],c:0},
+  {s:'La alerta ___ indica que hay peligro y hay que evacuar.',opts:['verde','roja','amarilla'],c:1},
+  {s:'Reforestar las laderas ayuda a evitar ___ de tierra.',opts:['terremotos','deslizamientos','tsunamis'],c:1},
   {s:'En Honduras, ___ coordina la respuesta ante los desastres.',opts:['COPECO','la biblioteca','el correo'],c:0},
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
@@ -368,21 +368,21 @@ const evalTFBank=[
   {q:'El Mitch causó pocos daños en Honduras.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Cuándo un fenómeno natural se vuelve desastre?',o:['a) Siempre','b) Cuando afecta a una comunidad vulnerable','c) Solo de noche','d) Nunca'],a:1},
+  {q:'¿Cuándo un fenómeno natural se vuelve desastre?',o:['a) Cuando afecta a una comunidad vulnerable','b) Siempre','c) Solo de noche','d) Nunca'],a:0},
   {q:'¿En qué año ocurrió el huracán Mitch?',o:['a) 1988','b) 1998','c) 2008','d) 2020'],a:1},
-  {q:'¿Qué categoría alcanzó el huracán Mitch?',o:['a) 1','b) 3','c) 5','d) 2'],a:2},
-  {q:'¿Cuál es la fórmula del riesgo?',o:['a) Amenaza × Vulnerabilidad','b) Lluvia + Viento','c) Amenaza − Prevención','d) Solo la amenaza'],a:0},
-  {q:'¿Cuál es una amenaza geológica?',o:['a) Huracán','b) Sequía','c) Terremoto','d) Inundación'],a:2},
-  {q:'¿Sobre qué se forman los huracanes?',o:['a) Montañas','b) Mar cálido','c) Desiertos','d) Polos'],a:1},
-  {q:'¿Qué acción reduce el riesgo de deslizamiento?',o:['a) Deforestar','b) Reforestar','c) Botar basura','d) Construir en la ladera'],a:1},
+  {q:'¿Qué categoría alcanzó el huracán Mitch?',o:['a) 1','b) 3','c) 2','d) 5'],a:3},
+  {q:'¿Cuál es la fórmula del riesgo?',o:['a) Lluvia + Viento','b) Amenaza × Vulnerabilidad','c) Amenaza − Prevención','d) Solo la amenaza'],a:1},
+  {q:'¿Cuál es una amenaza geológica?',o:['a) Huracán','b) Sequía','c) Inundación','d) Terremoto'],a:3},
+  {q:'¿Sobre qué se forman los huracanes?',o:['a) Montañas','b) Desiertos','c) Mar cálido','d) Polos'],a:2},
+  {q:'¿Qué acción reduce el riesgo de deslizamiento?',o:['a) Deforestar','b) Botar basura','c) Reforestar','d) Construir en la ladera'],a:2},
   {q:'¿Qué institución coordina los desastres en Honduras?',o:['a) COPECO','b) La escuela','c) El hospital','d) El correo'],a:0},
-  {q:'¿Qué significa la alerta roja?',o:['a) Normal','b) Atención','c) Peligro, evacuar','d) Ya pasó'],a:2},
-  {q:'¿Qué es la vulnerabilidad?',o:['a) El fenómeno peligroso','b) La debilidad de la comunidad','c) Un tipo de huracán','d) Una institución'],a:1},
-  {q:'¿Cuál es una amenaza hidrometeorológica?',o:['a) Terremoto','b) Erupción volcánica','c) Inundación','d) Tsunami'],a:2},
-  {q:'¿Qué es la mitigación?',o:['a) Provocar el desastre','b) Disminuir el impacto de la amenaza','c) Ignorar el peligro','d) Aumentar el riesgo'],a:1},
-  {q:'¿Qué se debe hacer durante un terremoto?',o:['a) Correr sin mirar','b) Usar el ascensor','c) Agacharse, cubrirse y sujetarse','d) Asomarse a la ventana'],a:2},
-  {q:'¿Qué parte tranquila tiene el huracán en su centro?',o:['a) La cola','b) El ojo','c) La base','d) La raíz'],a:1},
-  {q:'¿Qué se prepara para estar listos ante una emergencia?',o:['a) Una mochila de emergencia','b) Un juego de mesa','c) Nada','d) Más basura'],a:0},
+  {q:'¿Qué significa la alerta roja?',o:['a) Peligro, evacuar','b) Normal','c) Atención','d) Ya pasó'],a:0},
+  {q:'¿Qué es la vulnerabilidad?',o:['a) El fenómeno peligroso','b) Un tipo de huracán','c) La debilidad de la comunidad','d) Una institución'],a:2},
+  {q:'¿Cuál es una amenaza hidrometeorológica?',o:['a) Terremoto','b) Erupción volcánica','c) Tsunami','d) Inundación'],a:3},
+  {q:'¿Qué es la mitigación?',o:['a) Provocar el desastre','b) Ignorar el peligro','c) Disminuir el impacto de la amenaza','d) Aumentar el riesgo'],a:2},
+  {q:'¿Qué se debe hacer durante un terremoto?',o:['a) Correr sin mirar','b) Agacharse, cubrirse y sujetarse','c) Usar el ascensor','d) Asomarse a la ventana'],a:1},
+  {q:'¿Qué parte tranquila tiene el huracán en su centro?',o:['a) El ojo','b) La cola','c) La base','d) La raíz'],a:0},
+  {q:'¿Qué se prepara para estar listos ante una emergencia?',o:['a) Un juego de mesa','b) Una mochila de emergencia','c) Nada','d) Más basura'],a:1},
 ];
 const evalCPBank=[
   {q:'El huracán ___ golpeó Honduras en 1998.',a:'mitch'},

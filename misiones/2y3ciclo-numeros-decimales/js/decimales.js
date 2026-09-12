@@ -126,17 +126,17 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué símbolo se usa en Honduras para separar la parte entera de la decimal?',o:['a) La coma (,)','b) El punto (.)','c) El guion (-)','d) La barra (/)'],c:1,feedback:'En Honduras usamos el punto (.). La coma se reserva para separar los miles: 1,000.'},
-  {q:'¿Cuál es el valor posicional del dígito 5 en 0.05?',o:['a) Décimas','b) Unidades','c) Centésimas','d) Milésimas'],c:2,feedback:'El 1.er lugar después del punto son décimas, el 2.º lugar son centésimas (0.05 → 5 centésimas).'},
+  {q:'¿Qué símbolo se usa en Honduras para separar la parte entera de la decimal?',o:['a) La coma (,)','b) El guion (-)','c) El punto (.)','d) La barra (/)'],c:2,feedback:'En Honduras usamos el punto (.). La coma se reserva para separar los miles: 1,000.'},
+  {q:'¿Cuál es el valor posicional del dígito 5 en 0.05?',o:['a) Décimas','b) Unidades','c) Milésimas','d) Centésimas'],c:3,feedback:'El 1.er lugar después del punto son décimas, el 2.º lugar son centésimas (0.05 → 5 centésimas).'},
   {q:'¿Cómo se lee correctamente el número 3.7?',o:['a) Treinta y siete','b) Tres coma siete','c) Tres enteros siete décimas','d) Tres punto siete centésimas'],c:2},
-  {q:'¿Cuál de estos números es el mayor?',o:['a) 0.75','b) 0.8','c) 0.079','d) 0.7'],c:1},
-  {q:'Al redondear 4.56 a la décima más cercana, ¿cuál es el resultado?',o:['a) 4.5','b) 5.0','c) 4.6','d) 4.55'],c:2},
+  {q:'¿Cuál de estos números es el mayor?',o:['a) 0.8','b) 0.75','c) 0.079','d) 0.7'],c:0},
+  {q:'Al redondear 4.56 a la décima más cercana, ¿cuál es el resultado?',o:['a) 4.5','b) 4.6','c) 5.0','d) 4.55'],c:1},
   {q:'¿Cuánto es 1.5 + 2.35?',o:['a) 3.80','b) 3.85','c) 3.90','d) 4.85'],c:1},
-  {q:'En el número 7.843, ¿qué dígito está en las milésimas?',o:['a) 7','b) 8','c) 4','d) 3'],c:3},
-  {q:'¿Cuál es la fracción equivalente a 0.25?',o:['a) 2/5','b) 1/4','c) 1/2','d) 25/10'],c:1},
+  {q:'En el número 7.843, ¿qué dígito está en las milésimas?',o:['a) 3','b) 7','c) 8','d) 4'],c:0},
+  {q:'¿Cuál es la fracción equivalente a 0.25?',o:['a) 2/5','b) 1/2','c) 25/10','d) 1/4'],c:3},
   {q:'¿Cuánto es 5.0 − 2.35?',o:['a) 3.65','b) 2.75','c) 2.65','d) 3.75'],c:2},
-  {q:'¿Cómo se expresa la fracción 7/10 como número decimal?',o:['a) 7.0','b) 0.07','c) 0.70','d) 70.0'],c:2},
-  {q:'Al multiplicar 0.3 × 0.2, ¿cuál es el resultado?',o:['a) 0.6','b) 0.06','c) 6.0','d) 0.006'],c:1},
+  {q:'¿Cómo se expresa la fracción 7/10 como número decimal?',o:['a) 0.70','b) 7.0','c) 0.07','d) 70.0'],c:0},
+  {q:'Al multiplicar 0.3 × 0.2, ¿cuál es el resultado?',o:['a) 0.6','b) 6.0','c) 0.006','d) 0.06'],c:3},
   {q:'¿Cuánto es 4.5 × 10?',o:['a) 4.50','b) 45.0','c) 0.45','d) 450'],c:1},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
@@ -294,12 +294,12 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'En Honduras, el ___ separa los enteros de los decimales.',opts:['coma','punto','guion'],c:1},
-  {s:'El primer lugar después del punto decimal son las ___.',opts:['centésimas','milésimas','décimas'],c:2},
-  {s:'Para sumar decimales, se alinean los ___ decimales.',opts:['ceros','puntos','enteros'],c:1},
+  {s:'El primer lugar después del punto decimal son las ___.',opts:['centésimas','décimas','milésimas'],c:1},
+  {s:'Para sumar decimales, se alinean los ___ decimales.',opts:['puntos','ceros','enteros'],c:0},
   {s:'Al redondear 2.75 a la décima más cercana, el resultado es ___.',opts:['2.7','2.8','2.9'],c:1},
   {s:'El número 0.06 tiene 6 en las ___.',opts:['décimas','milésimas','centésimas'],c:2},
-  {s:'La fracción 3/4 como decimal es ___.',opts:['0.34','0.75','0.43'],c:1},
-  {s:'Al multiplicar por 10, el punto decimal se mueve a la ___.',opts:['izquierda','arriba','derecha'],c:2},
+  {s:'La fracción 3/4 como decimal es ___.',opts:['0.75','0.34','0.43'],c:0},
+  {s:'Al multiplicar por 10, el punto decimal se mueve a la ___.',opts:['derecha','izquierda','arriba'],c:0},
   {s:'El número 0.5 equivale a la fracción ___.',opts:['1/4','1/5','1/2'],c:2},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -682,20 +682,20 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Cuál es el valor posicional del 4 en 1.435?',o:['a) Centésimas','b) Décimas','c) Milésimas','d) Unidades'],a:1},
-  {q:'¿Cuánto es 2.5 + 1.75?',o:['a) 3.25','b) 4.35','c) 4.25','d) 3.75'],a:2},
-  {q:'¿Cuál fracción es equivalente a 0.75?',o:['a) 7/5','b) 1/4','c) 7/10','d) 3/4'],a:3},
+  {q:'¿Cuánto es 2.5 + 1.75?',o:['a) 4.25','b) 3.25','c) 4.35','d) 3.75'],a:0},
+  {q:'¿Cuál fracción es equivalente a 0.75?',o:['a) 3/4','b) 7/5','c) 1/4','d) 7/10'],a:0},
   {q:'¿Qué dígito está en las milésimas de 8.2347?',o:['a) 2','b) 3','c) 4','d) 7'],a:2},
   {q:'¿Cuál de estos números es el mayor?',o:['a) 0.39','b) 0.4','c) 0.399','d) 0.41'],a:3},
-  {q:'Al redondear 6.48 a la décima más cercana:',o:['a) 6.4','b) 6.5','c) 6.0','d) 7.0'],a:1},
+  {q:'Al redondear 6.48 a la décima más cercana:',o:['a) 6.5','b) 6.4','c) 6.0','d) 7.0'],a:0},
   {q:'¿Cuánto es 5.0 − 2.75?',o:['a) 3.25','b) 2.35','c) 2.25','d) 3.75'],a:2},
-  {q:'¿Qué fracción representa 0.3?',o:['a) 3/1','b) 1/3','c) 30/1','d) 3/10'],a:3},
-  {q:'¿Cuánto es 0.4 × 0.5?',o:['a) 2.0','b) 0.20','c) 20.0','d) 0.009'],a:1},
-  {q:'3.5 × 10 = ?',o:['a) 3.50','b) 0.35','c) 35.0','d) 350'],a:2},
+  {q:'¿Qué fracción representa 0.3?',o:['a) 3/1','b) 1/3','c) 3/10','d) 30/1'],a:2},
+  {q:'¿Cuánto es 0.4 × 0.5?',o:['a) 2.0','b) 20.0','c) 0.009','d) 0.20'],a:3},
+  {q:'3.5 × 10 = ?',o:['a) 3.50','b) 0.35','c) 350','d) 35.0'],a:3},
   {q:'¿Cuántas cifras decimales tiene 12.345?',o:['a) 1','b) 2','c) 3','d) 5'],a:2},
   {q:'¿Cuánto es 1.2 + 0.08?',o:['a) 1.10','b) 1.28','c) 2.0','d) 1.208'],a:1},
-  {q:'¿Cómo se lee "cuatro enteros y dos décimas"?',o:['a) 40.2','b) 4.02','c) 4.20','d) 4.2'],a:3},
-  {q:'0.050 es igual a:',o:['a) 0.5','b) 0.50','c) 0.05','d) 5.0'],a:2},
-  {q:'¿Cuál es el resultado de 0.6 ÷ 10?',o:['a) 6.0','b) 0.6','c) 0.06','d) 60'],a:2},
+  {q:'¿Cómo se lee "cuatro enteros y dos décimas"?',o:['a) 4.2','b) 40.2','c) 4.02','d) 4.20'],a:0},
+  {q:'0.050 es igual a:',o:['a) 0.5','b) 0.05','c) 0.50','d) 5.0'],a:1},
+  {q:'¿Cuál es el resultado de 0.6 ÷ 10?',o:['a) 6.0','b) 0.06','c) 0.6','d) 60'],a:1},
 ];
 const evalCPBank=[
   {q:'El símbolo ___ separa la parte entera de la parte decimal en Honduras.',a:'punto (.)'},

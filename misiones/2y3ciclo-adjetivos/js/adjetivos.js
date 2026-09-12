@@ -245,15 +245,15 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Para qué sirve el adjetivo calificativo?',o:['a) Para nombrar cosas','b) Para expresar una cualidad del sustantivo','c) Para indicar la acción de la oración','d) Para sustituir al nombre'],c:1},
-  {q:'¿En qué grado está el adjetivo en: «Mi perro es muy rápido»?',o:['a) Positivo','b) Comparativo de superioridad','c) Superlativo','d) Demostrativo'],c:2},
-  {q:'¿Qué tipo de adjetivo es «nuestro» en «nuestro colegio»?',o:['a) Calificativo','b) Demostrativo','c) Indefinido','d) Posesivo'],c:3},
-  {q:'En la frase «Este libro es interesante», ¿qué es «Este»?',o:['a) Adjetivo demostrativo','b) Adjetivo numeral','c) Sustantivo propio','d) Verbo regular'],c:0},
-  {q:'¿Cómo se dice «bueno» en grado superlativo absoluto?',o:['a) Más bueno','b) Buenísimo','c) Tan bueno','d) Mejor'],c:1},
-  {q:'¿Qué adjetivo concuerda con «las montañas»?',o:['a) alto','b) altas','c) alta','d) altos'],c:1},
-  {q:'En la frase «Tengo tres gatos», ¿qué tipo de adjetivo es «tres»?',o:['a) Posesivo','b) Indefinido','c) Numeral','d) Calificativo'],c:2},
-  {q:'El grado comparativo de igualdad se forma con las palabras:',o:['a) más ... que','b) menos ... que','c) muy ... ísimo','d) tan ... como'],c:3},
-  {q:'¿Cuál es un adjetivo indefinido?',o:['a) Aquel','b) Muchos','c) Azul','d) Primer'],c:1},
+  {q:'¿Para qué sirve el adjetivo calificativo?',o:['a) Para nombrar cosas','b) Para indicar la acción de la oración','c) Para expresar una cualidad del sustantivo','d) Para sustituir al nombre'],c:2},
+  {q:'¿En qué grado está el adjetivo en: «Mi perro es muy rápido»?',o:['a) Superlativo','b) Positivo','c) Comparativo de superioridad','d) Demostrativo'],c:0},
+  {q:'¿Qué tipo de adjetivo es «nuestro» en «nuestro colegio»?',o:['a) Calificativo','b) Posesivo','c) Demostrativo','d) Indefinido'],c:1},
+  {q:'En la frase «Este libro es interesante», ¿qué es «Este»?',o:['a) Adjetivo numeral','b) Sustantivo propio','c) Verbo regular','d) Adjetivo demostrativo'],c:3},
+  {q:'¿Cómo se dice «bueno» en grado superlativo absoluto?',o:['a) Más bueno','b) Tan bueno','c) Mejor','d) Buenísimo'],c:3},
+  {q:'¿Qué adjetivo concuerda con «las montañas»?',o:['a) altas','b) alto','c) alta','d) altos'],c:0},
+  {q:'En la frase «Tengo tres gatos», ¿qué tipo de adjetivo es «tres»?',o:['a) Posesivo','b) Numeral','c) Indefinido','d) Calificativo'],c:1},
+  {q:'El grado comparativo de igualdad se forma con las palabras:',o:['a) tan ... como','b) más ... que','c) menos ... que','d) muy ... ísimo'],c:0},
+  {q:'¿Cuál es un adjetivo indefinido?',o:['a) Aquel','b) Azul','c) Muchos','d) Primer'],c:2},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -438,13 +438,13 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Las manzanas de mi huerto están muy ___.',opts:['rojo','rojos','rojas'],c:2},
-  {s:'Juan es ___ rápido que su hermano.',opts:['muy','más','tan'],c:1},
-  {s:'Compré un coche ___ porque me gusta la velocidad.',opts:['rápido','rápidas','rápidos'],c:0},
-  {s:'María y Lucía son niñas muy ___.',opts:['inteligente','inteligentes','inteligento'],c:1},
+  {s:'Las manzanas de mi huerto están muy ___.',opts:['rojo','rojas','rojos'],c:1},
+  {s:'Juan es ___ rápido que su hermano.',opts:['más','muy','tan'],c:0},
+  {s:'Compré un coche ___ porque me gusta la velocidad.',opts:['rápidas','rápido','rápidos'],c:1},
+  {s:'María y Lucía son niñas muy ___.',opts:['inteligentes','inteligente','inteligento'],c:0},
   {s:'Me duele ___ pie izquierdo después de correr.',opts:['mi','mis','míos'],c:0},
   {s:'El pastel que preparó mamá estaba ___.',opts:['buena','buenísimo','buenísimos'],c:1},
-  {s:'___ casa de la esquina está a la venta.',opts:['Este','Aquella','Esos'],c:1},
+  {s:'___ casa de la esquina está a la venta.',opts:['Este','Esos','Aquella'],c:2},
   {s:'Hoy hace un clima ___ agradable como ayer.',opts:['más','menos','tan'],c:2},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -897,21 +897,21 @@ const evalTFBank=[
   {q:'Un adjetivo calificativo limita el significado del sustantivo sin describirlo.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Cuál de las siguientes palabras es un adjetivo calificativo?',o:['a) Perro','b) Grande','c) Correr','d) Nosotros'],a:1},
-  {q:'El adjetivo en «Mi casa nueva» es:',o:['a) Mi','b) casa','c) nueva','d) Mi y nueva'],a:3},
+  {q:'¿Cuál de las siguientes palabras es un adjetivo calificativo?',o:['a) Grande','b) Perro','c) Correr','d) Nosotros'],a:0},
+  {q:'El adjetivo en «Mi casa nueva» es:',o:['a) Mi','b) Mi y nueva','c) casa','d) nueva'],a:1},
   {q:'¿A qué tipo de adjetivo pertenece «este»?',o:['a) Calificativo','b) Numeral','c) Demostrativo','d) Indefinido'],a:2},
-  {q:'¿En qué grado está el adjetivo en «Es la más lista»?',o:['a) Positivo','b) Comparativo','c) Superlativo','d) Numeral'],a:2},
-  {q:'«Tus zapatos» contiene un adjetivo:',o:['a) Calificativo','b) Posesivo','c) Demostrativo','d) Numeral'],a:1},
+  {q:'¿En qué grado está el adjetivo en «Es la más lista»?',o:['a) Superlativo','b) Positivo','c) Comparativo','d) Numeral'],a:0},
+  {q:'«Tus zapatos» contiene un adjetivo:',o:['a) Calificativo','b) Demostrativo','c) Numeral','d) Posesivo'],a:3},
   {q:'¿Cuál es el comparativo de superioridad de «bueno»?',o:['a) Muy bueno','b) Buenísimo','c) Mejor','d) Más bueno'],a:2},
-  {q:'La concordancia del adjetivo se da en:',o:['a) Género y número','b) Tiempo y persona','c) Modo y tiempo','d) Sólo en número'],a:0},
-  {q:'«Algunos días» incluye un adjetivo:',o:['a) Numeral','b) Indefinido','c) Demostrativo','d) Posesivo'],a:1},
+  {q:'La concordancia del adjetivo se da en:',o:['a) Tiempo y persona','b) Género y número','c) Modo y tiempo','d) Sólo en número'],a:1},
+  {q:'«Algunos días» incluye un adjetivo:',o:['a) Numeral','b) Demostrativo','c) Posesivo','d) Indefinido'],a:3},
   {q:'¿Cuál es la forma superlativa de «malo»?',o:['a) Peor','b) Malísimo','c) Pésimo','d) b y c son correctas'],a:3},
   {q:'¿Qué adjetivo es numeral?',o:['a) Muchos','b) Aquel','c) Tercer','d) Verde'],a:2},
-  {q:'En «El cielo azul», «azul» es un adjetivo:',o:['a) Demostrativo','b) Posesivo','c) Indefinido','d) Calificativo'],a:3},
-  {q:'«Tan rápido como» es un comparativo de:',o:['a) Superioridad','b) Inferioridad','c) Igualdad','d) Superlativo'],a:2},
-  {q:'El adjetivo que indica a quién pertenece algo es:',o:['a) Demostrativo','b) Posesivo','c) Indefinido','d) Calificativo'],a:1},
+  {q:'En «El cielo azul», «azul» es un adjetivo:',o:['a) Demostrativo','b) Posesivo','c) Calificativo','d) Indefinido'],a:2},
+  {q:'«Tan rápido como» es un comparativo de:',o:['a) Superioridad','b) Igualdad','c) Inferioridad','d) Superlativo'],a:1},
+  {q:'El adjetivo que indica a quién pertenece algo es:',o:['a) Posesivo','b) Demostrativo','c) Indefinido','d) Calificativo'],a:0},
   {q:'¿En qué grado está «veloz»?',o:['a) Positivo','b) Comparativo','c) Superlativo','d) Posesivo'],a:0},
-  {q:'«Ese carro» tiene un adjetivo que indica:',o:['a) Distancia','b) Posesión','c) Cualidad','d) Cantidad'],a:0},
+  {q:'«Ese carro» tiene un adjetivo que indica:',o:['a) Posesión','b) Distancia','c) Cualidad','d) Cantidad'],a:1},
 ];
 const evalCPBank=[
   {q:'El adjetivo que expresa una cualidad en su máxima intensidad está en grado ___.',a:'superlativo'},

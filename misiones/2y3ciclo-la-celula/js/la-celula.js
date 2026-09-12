@@ -84,15 +84,15 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuál es la unidad estructural y funcional de todos los seres vivos?',o:['a) El átomo','b) La célula','c) El órgano','d) El tejido'],c:1},
-  {q:'¿Qué organelo produce la energía (ATP) de la célula mediante la respiración celular?',o:['a) Ribosoma','b) Vacuola','c) Mitocondria','d) Núcleo'],c:2},
+  {q:'¿Cuál es la unidad estructural y funcional de todos los seres vivos?',o:['a) El átomo','b) El órgano','c) El tejido','d) La célula'],c:3},
+  {q:'¿Qué organelo produce la energía (ATP) de la célula mediante la respiración celular?',o:['a) Mitocondria','b) Ribosoma','c) Vacuola','d) Núcleo'],c:0},
   {q:'¿Qué tipo de célula NO tiene núcleo definido?',o:['a) Eucariota','b) Vegetal','c) Animal','d) Procariota'],c:3},
   {q:'¿Qué organelo, exclusivo de la célula vegetal, realiza la fotosíntesis?',o:['a) Mitocondria','b) Cloroplasto','c) Lisosoma','d) Ribosoma'],c:1},
   {q:'¿Qué estructura rígida rodea a la célula vegetal por fuera de la membrana?',o:['a) Citoplasma','b) Membrana nuclear','c) Pared celular','d) Vacuola'],c:2},
-  {q:'¿Dónde se guarda el ADN en una célula eucariota?',o:['a) En la mitocondria','b) En el núcleo','c) En el citoplasma libre','d) En la membrana'],c:1},
-  {q:'¿Qué organelo se encarga de fabricar las proteínas?',o:['a) Ribosoma','b) Cloroplasto','c) Vacuola','d) Lisosoma'],c:0},
+  {q:'¿Dónde se guarda el ADN en una célula eucariota?',o:['a) En el núcleo','b) En la mitocondria','c) En el citoplasma libre','d) En la membrana'],c:0},
+  {q:'¿Qué organelo se encarga de fabricar las proteínas?',o:['a) Cloroplasto','b) Vacuola','c) Ribosoma','d) Lisosoma'],c:2},
   {q:'¿Qué diferencia principal tiene la célula animal respecto a la vegetal?',o:['a) Tiene núcleo','b) No tiene pared celular ni cloroplastos','c) No tiene membrana','d) No tiene mitocondrias'],c:1},
-  {q:'Según la teoría celular, ¿de dónde proviene toda célula?',o:['a) De materia sin vida','b) Del aire','c) De otra célula preexistente','d) Del agua'],c:2},
+  {q:'Según la teoría celular, ¿de dónde proviene toda célula?',o:['a) De otra célula preexistente','b) De materia sin vida','c) Del aire','d) Del agua'],c:0},
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -368,21 +368,21 @@ const evalTFBank=[
   {q:'La mitocondria solo se encuentra en la célula vegetal.',a:false},
 ];
 const evalMCBank=[
-  {q:'¿Cuál es la unidad estructural y funcional de los seres vivos?',o:['a) El átomo','b) El tejido','c) La célula','d) El órgano'],a:2},
-  {q:'¿Qué organelo produce la energía (ATP) de la célula?',o:['a) Ribosoma','b) Mitocondria','c) Vacuola','d) Núcleo'],a:1},
+  {q:'¿Cuál es la unidad estructural y funcional de los seres vivos?',o:['a) El átomo','b) La célula','c) El tejido','d) El órgano'],a:1},
+  {q:'¿Qué organelo produce la energía (ATP) de la célula?',o:['a) Mitocondria','b) Ribosoma','c) Vacuola','d) Núcleo'],a:0},
   {q:'¿Qué organelo realiza la fotosíntesis?',o:['a) Mitocondria','b) Ribosoma','c) Cloroplasto','d) Lisosoma'],a:2},
-  {q:'¿Qué tipo de célula NO tiene núcleo definido?',o:['a) Eucariota','b) Vegetal','c) Animal','d) Procariota'],a:3},
-  {q:'¿Qué estructura rígida rodea a la célula vegetal?',o:['a) Membrana','b) Citoplasma','c) Pared celular','d) Vacuola'],a:2},
-  {q:'¿Dónde se guarda el ADN en una célula eucariota?',o:['a) En la mitocondria','b) En el núcleo','c) En la membrana','d) En el citoplasma libre'],a:1},
-  {q:'¿Qué organelo fabrica las proteínas?',o:['a) Ribosoma','b) Vacuola','c) Cloroplasto','d) Núcleo'],a:0},
-  {q:'¿Qué estructura tiene la célula vegetal pero NO la animal?',o:['a) Núcleo','b) Cloroplasto','c) Membrana','d) Mitocondria'],a:1},
-  {q:'Según la teoría celular, ¿de dónde proviene toda célula?',o:['a) Del aire','b) De materia sin vida','c) De otra célula preexistente','d) Del agua'],a:2},
+  {q:'¿Qué tipo de célula NO tiene núcleo definido?',o:['a) Eucariota','b) Vegetal','c) Procariota','d) Animal'],a:2},
+  {q:'¿Qué estructura rígida rodea a la célula vegetal?',o:['a) Pared celular','b) Membrana','c) Citoplasma','d) Vacuola'],a:0},
+  {q:'¿Dónde se guarda el ADN en una célula eucariota?',o:['a) En la mitocondria','b) En la membrana','c) En el núcleo','d) En el citoplasma libre'],a:2},
+  {q:'¿Qué organelo fabrica las proteínas?',o:['a) Vacuola','b) Cloroplasto','c) Núcleo','d) Ribosoma'],a:3},
+  {q:'¿Qué estructura tiene la célula vegetal pero NO la animal?',o:['a) Cloroplasto','b) Núcleo','c) Membrana','d) Mitocondria'],a:0},
+  {q:'Según la teoría celular, ¿de dónde proviene toda célula?',o:['a) Del aire','b) De otra célula preexistente','c) De materia sin vida','d) Del agua'],a:1},
   {q:'¿Qué controla la membrana celular?',o:['a) La reproducción','b) Lo que entra y sale de la célula','c) La fotosíntesis','d) El color de la célula'],a:1},
   {q:'¿Qué organelo almacena agua, alimentos o desechos?',o:['a) Ribosoma','b) Mitocondria','c) Vacuola','d) Núcleo'],a:2},
-  {q:'¿Qué ejemplo corresponde a una célula procariota?',o:['a) Célula de una hoja','b) Neurona','c) Bacteria','d) Glóbulo rojo'],a:2},
+  {q:'¿Qué ejemplo corresponde a una célula procariota?',o:['a) Célula de una hoja','b) Neurona','c) Glóbulo rojo','d) Bacteria'],a:3},
   {q:'¿De qué material está hecha la pared celular de las plantas?',o:['a) Quitina','b) Celulosa','c) Proteína','d) Grasa'],a:1},
-  {q:'¿Qué produce la fotosíntesis?',o:['a) Solo agua','b) Glucosa y oxígeno','c) Solo dióxido de carbono','d) Proteínas'],a:1},
-  {q:'¿Cómo se llama el medio gelatinoso donde flotan los organelos?',o:['a) Núcleo','b) Membrana','c) Citoplasma','d) Pared'],a:2},
+  {q:'¿Qué produce la fotosíntesis?',o:['a) Solo agua','b) Solo dióxido de carbono','c) Proteínas','d) Glucosa y oxígeno'],a:3},
+  {q:'¿Cómo se llama el medio gelatinoso donde flotan los organelos?',o:['a) Citoplasma','b) Núcleo','c) Membrana','d) Pared'],a:0},
 ];
 const evalCPBank=[
   {q:'La ___ es la unidad estructural y funcional de los seres vivos.',a:'célula'},

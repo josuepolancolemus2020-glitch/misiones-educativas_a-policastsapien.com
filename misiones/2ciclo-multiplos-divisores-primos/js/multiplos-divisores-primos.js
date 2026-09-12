@@ -176,16 +176,16 @@ function resetMemo(){ sfx('click'); buildMemo(); }
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuál de estos números es múltiplo de 6?',o:['a) 32','b) 42','c) 26','d) 40'],c:1,feedback:'42 = 6 × 7. Los múltiplos de 6 son 6, 12, 18, 24, 30, 36, 42…'},
-  {q:'¿Cuál es divisor de 20?',o:['a) 3','b) 6','c) 4','d) 9'],c:2,feedback:'20 ÷ 4 = 5 exacto (residuo 0), así que 4 es divisor de 20.'},
-  {q:'¿Cuál de estos números es impar?',o:['a) 348','b) 570','c) 236','d) 195'],c:3,feedback:'195 termina en 5, que es cifra impar. ¡Solo la última cifra decide!'},
+  {q:'¿Cuál de estos números es múltiplo de 6?',o:['a) 32','b) 26','c) 40','d) 42'],c:3,feedback:'42 = 6 × 7. Los múltiplos de 6 son 6, 12, 18, 24, 30, 36, 42…'},
+  {q:'¿Cuál es divisor de 20?',o:['a) 3','b) 4','c) 6','d) 9'],c:1,feedback:'20 ÷ 4 = 5 exacto (residuo 0), así que 4 es divisor de 20.'},
+  {q:'¿Cuál de estos números es impar?',o:['a) 195','b) 348','c) 570','d) 236'],c:0,feedback:'195 termina en 5, que es cifra impar. ¡Solo la última cifra decide!'},
   {q:'¿Cuál de estos números es primo?',o:['a) 21','b) 23','c) 25','d) 27'],c:1,feedback:'23 solo tiene dos divisores: 1 y 23. En cambio 21=3×7, 25=5×5 y 27=3×9.'},
-  {q:'¿Cuántos divisores tiene el número 12?',o:['a) 4','b) 5','c) 6','d) 2'],c:2,feedback:'Los divisores de 12 son: 1, 2, 3, 4, 6 y 12. ¡Seis en total!'},
-  {q:'La descomposición en factores primos de 18 es:',o:['a) 2 × 9','b) 3 × 6','c) 2 × 3 × 3','d) 18 × 1'],c:2,feedback:'2 × 9 y 3 × 6 dan 18, pero 9 y 6 NO son primos. La correcta es 2 × 3 × 3.'},
-  {q:'¿Por qué el 1 no es un número primo?',o:['a) porque es impar','b) porque tiene un solo divisor','c) porque es muy pequeño','d) porque es par'],c:1,feedback:'Un primo necesita exactamente DOS divisores; el 1 solo tiene uno (él mismo).'},
-  {q:'¿Cuál es el único número primo que es par?',o:['a) el 4','b) el 0','c) el 2','d) no existe'],c:2,feedback:'El 2 solo tiene dos divisores (1 y 2). Los demás pares también se dividen entre 2.'},
-  {q:'¿Cuál número es divisible entre 5?',o:['a) 352','b) 508','c) 731','d) 490'],c:3,feedback:'490 termina en 0. Los divisibles entre 5 terminan en 0 o en 5.'},
-  {q:'¿Cuál es el número cuya factorización es 2 × 2 × 5?',o:['a) 20','b) 25','c) 45','d) 10'],c:0,feedback:'2 × 2 = 4 y 4 × 5 = 20. ¡Multiplicar los factores devuelve el número!'}
+  {q:'¿Cuántos divisores tiene el número 12?',o:['a) 4','b) 6','c) 5','d) 2'],c:1,feedback:'Los divisores de 12 son: 1, 2, 3, 4, 6 y 12. ¡Seis en total!'},
+  {q:'La descomposición en factores primos de 18 es:',o:['a) 2 × 3 × 3','b) 2 × 9','c) 3 × 6','d) 18 × 1'],c:0,feedback:'2 × 9 y 3 × 6 dan 18, pero 9 y 6 NO son primos. La correcta es 2 × 3 × 3.'},
+  {q:'¿Por qué el 1 no es un número primo?',o:['a) porque es impar','b) porque es muy pequeño','c) porque es par','d) porque tiene un solo divisor'],c:3,feedback:'Un primo necesita exactamente DOS divisores; el 1 solo tiene uno (él mismo).'},
+  {q:'¿Cuál es el único número primo que es par?',o:['a) el 2','b) el 4','c) el 0','d) no existe'],c:0,feedback:'El 2 solo tiene dos divisores (1 y 2). Los demás pares también se dividen entre 2.'},
+  {q:'¿Cuál número es divisible entre 5?',o:['a) 352','b) 508','c) 490','d) 731'],c:2,feedback:'490 termina en 0. Los divisibles entre 5 terminan en 0 o en 5.'},
+  {q:'¿Cuál es el número cuya factorización es 2 × 2 × 5?',o:['a) 25','b) 45','c) 20','d) 10'],c:2,feedback:'2 × 2 = 4 y 4 × 5 = 20. ¡Multiplicar los factores devuelve el número!'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -759,14 +759,14 @@ const evalTFBank=[
   {q:'El 51 es un número primo.',a:false}
 ];
 const evalMCBank=[
-  {q:'¿Cuál de estos números es múltiplo de 7?',o:['a) 27','b) 42','c) 47','d) 37'],a:1},
+  {q:'¿Cuál de estos números es múltiplo de 7?',o:['a) 42','b) 27','c) 47','d) 37'],a:0},
   {q:'¿Cuántos divisores tiene el número 16?',o:['a) 3','b) 4','c) 5','d) 2'],a:2},
-  {q:'¿Cuál de estos números es primo?',o:['a) 33','b) 39','c) 31','d) 35'],a:2},
-  {q:'La descomposición en factores primos de 20 es:',o:['a) 4 × 5','b) 2 × 10','c) 2 × 2 × 5','d) 20 × 1'],a:2},
+  {q:'¿Cuál de estos números es primo?',o:['a) 31','b) 33','c) 39','d) 35'],a:0},
+  {q:'La descomposición en factores primos de 20 es:',o:['a) 4 × 5','b) 2 × 10','c) 20 × 1','d) 2 × 2 × 5'],a:3},
   {q:'¿Cuál número es par y múltiplo de 5 a la vez?',o:['a) 25','b) 52','c) 55','d) 70'],a:3},
   {q:'¿Cuál número NO es divisor de 36?',o:['a) 6','b) 8','c) 9','d) 12'],a:1},
   {q:'¿Qué número no es primo ni compuesto?',o:['a) el 0','b) el 1','c) el 2','d) el 3'],a:1},
-  {q:'¿Cuál es el número cuya factorización es 3 × 3 × 5?',o:['a) 30','b) 45','c) 15','d) 90'],a:1}
+  {q:'¿Cuál es el número cuya factorización es 3 × 3 × 5?',o:['a) 30','b) 15','c) 45','d) 90'],a:2}
 ];
 const evalCPBank=[
   {q:'Los múltiplos de 6 son: 6, 12, 18, ___ …',a:'24',acc:['24','veinticuatro']},
