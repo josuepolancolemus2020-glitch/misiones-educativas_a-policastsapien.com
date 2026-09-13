@@ -93,6 +93,10 @@ const DIAGNOSTICOS = {
     { etapa: 3, q: '¿Quién redactó el Acta de Independencia de Centroamérica?', o: ['Francisco Morazán', 'Lempira', 'José Cecilio del Valle', 'Marco Aurelio Soto'], a: 2 },
     { etapa: 3, q: '¿Quién fue el primer Jefe de Estado de Honduras, en 1824?', o: ['José Trinidad Cabañas', 'Ramón Rosa', 'José Trinidad Reyes', 'Dionisio de Herrera'], a: 3 },
     { etapa: 3, q: '¿Por qué el Día del Maestro Hondureño es el 17 de septiembre?', o: ['Por la Independencia de Centroamérica', 'Por el natalicio de José Trinidad Reyes, que fundó la primera universidad', 'Por el Código de Instrucción Pública', 'Por el natalicio de Francisco Morazán'], a: 1 },
+    { etapa: 4, q: '¿Cuáles son los tres poderes del Estado?', o: ['Civil, militar y religioso', 'Ejecutivo, Legislativo y Judicial', 'Nacional, departamental y municipal', 'Presidente, alcalde y juez'], a: 1 },
+    { etapa: 4, q: '¿Qué poder del Estado HACE las leyes?', o: ['El Judicial', 'El Ejecutivo', 'El Legislativo, por medio del Congreso Nacional', 'Los tres a la vez'], a: 2 },
+    { etapa: 4, q: '¿Por qué se dice que la Constitución es la ley fundamental?', o: ['Porque es la más larga', 'Porque está por encima de todas las demás', 'Porque es la más antigua', 'Porque la firma el Presidente'], a: 1 },
+    { etapa: 4, q: 'Dos personas tienen un pleito por lo que dice una ley. ¿A quién le toca resolverlo?', o: ['Al Congreso Nacional', 'Al Presidente de la República', 'A los juzgados y tribunales', 'A la Secretaría de Estado'], a: 2 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [

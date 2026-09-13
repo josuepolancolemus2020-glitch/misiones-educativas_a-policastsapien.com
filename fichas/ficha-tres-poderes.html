@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Tres Poderes del Estado</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: EDUCACIÓN CÍVICA = VERDE DEL PINO (#3f6212)
+     · Colores semánticos: azul=Legislativo, dorado=Ejecutivo, gris=Judicial
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · Pareados con Columna B BARAJADA (la clave nunca es 1A, 2B, 3C…)
+     · Páginas armadas a mano: ningún recuadro queda a medias; numeradas
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página) */
+  :root {
+    --soc: #3f6212; --soc-osc: #365314; --soc-claro: #f5f9e8;
+    --tinta: #1a2733; --gris: #5b6773; --linea: #dbe7c4;
+    --may: #0d6ea8; --oro: #b45309; --pie: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f2f6ea; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--soc-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--soc); background: var(--soc-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--soc-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--soc-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--soc); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--soc-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--soc-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--soc-osc); }
+  .hn { background: #eef7ee; border: 1px solid #cfe6cf; }
+  .hn b { color: #1c7c43; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--soc); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fbf1; }
+  td.k { font-weight: 700; color: var(--soc-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; text-align: center; background: #fcfdf8; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--soc-osc); margin-bottom: 8px; }
+
+  /* Mini-demostración de 3 cajas (mayas / aztecas / incas) */
+  .celula { display: flex; gap: 7px; margin: 9px 0; break-inside: avoid; align-items: stretch; justify-content: center; }
+  .celula > div { flex: 1; max-width: 33%; border: 1.5px solid var(--linea); border-radius: 8px; padding: 8px; font-size: 9pt; text-align: center; background: #fff; }
+  .celula b { display: block; font-size: 9.5pt; margin-bottom: 2px; }
+  .celula .c-emoji { font-size: 15pt; display: block; margin-bottom: 3px; }
+  .celula .cm { background: #dceefa; } .celula .cm b { color: var(--may); }
+  .celula .cc { background: #ffedd5; } .celula .cc b { color: var(--oro); }
+  .celula .cn { background: #eceae8; } .celula .cn b { color: var(--pie); }
+
+  .tri { display: flex; gap: 7px; margin: 6px 0; break-inside: avoid; }
+  .tri > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .tri .tnuc { background: #dceefa; border: 1px solid #a9d3ee; }
+  .tri .torg { background: #ffedd5; border: 1px solid #f3c99a; }
+  .tri b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .tri .tnuc b { color: var(--may); } .tri .torg b { color: var(--oro); }
+
+  .acts h3 { border-bottom: 2px solid var(--soc-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--soc); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--soc); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--soc-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--soc-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--soc-osc); }
+
+  table.rubrica td { padding: 3px 7px; font-size: 9.5pt; }
+  table.rubrica td.lg { white-space: nowrap; }
+
+  .pauta { background: #f7fbef; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--soc-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--soc); box-shadow: 0 6px 16px rgba(63,98,18,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .tri > div, .ilus, .felic, .pauta, .celula > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ═══ LA FICHA DE CADA PRÓCER ═══
+     Cada uno en su recuadro y con su etiqueta de HÉROE o PRÓCER al lado del
+     nombre: es la distinción que se pregunta en el examen, y verla pegada al
+     nombre la enseña sin gastar un párrafo. */
+  .pficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--soc); border-radius: 8px;
+            padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .pf-tit { font-size: 11.5pt; font-weight: 800; color: var(--soc-osc); display: flex; align-items: baseline;
+            gap: 8px; flex-wrap: wrap; }
+  .pf-et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+           border-radius: 999px; padding: 1px 7px; }
+  .pf-h { background: #dceefa; color: var(--may); }
+  .pf-p { background: #ffedd5; color: var(--oro); }
+  .pf-sub { font-size: 9pt; color: var(--gris); font-style: italic; margin-bottom: 3px; }
+  .pficha ul { margin: 3px 0 4px 22px; font-size: 10pt; }
+  .pficha li { margin-bottom: 1px; }
+  .pf-porque { font-size: 10pt; margin: 3px 0; }
+  .pf-dato { font-size: 9.5pt; color: var(--gris); }
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fcfdf8; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--soc-osc); }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Tres Poderes del Estado</div>
+        <div class="f-meta"><b>Asignatura:</b> Educación Cívica &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica</div>
+        <div class="f-meta"><b>Tema:</b> El Poder Legislativo, el Ejecutivo y el Judicial: qué hace cada uno, quién lo ejerce y cómo se ven trabajando sobre una ley de verdad.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-tres-poderes.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Identificar y definir los <strong>tres poderes del Estado</strong>.</li>
+      <li>Decir <strong>qué hace</strong> cada uno y <strong>quién lo ejerce</strong>.</li>
+      <li>Reconocer la <strong>Constitución</strong> como la ley fundamental.</li>
+      <li>Seguir el recorrido de <strong>una ley de verdad</strong> por los tres poderes.</li>
+      <li>Explicar <strong>por qué están separados</strong> y qué pasaría si no lo estuvieran.</li>
+      <li>Entender qué es la <strong>rendición de cuentas</strong> y por qué le toca a cualquier ciudadano.</li>
+    </ol>
+
+    <h2>📖 1. Cinco palabras antes de empezar</h2>
+
+    <p>El currículo pide aclarar estos conceptos antes de seguir. Cópialos en tu cuaderno: son cortos a propósito.</p>
+
+    <table class="cc">
+      <tr><th>Palabra</th><th>Qué significa</th></tr>
+      <tr><td><b>Ley</b></td><td>Una regla escrita que vale para todo el país y que el Estado puede hacer cumplir. No es un consejo: se cumple.</td></tr>
+      <tr><td><b>Constitución</b></td><td>La ley fundamental: la que está por encima de todas las demás y dice cómo se organiza el Estado y qué derechos tiene cada persona.</td></tr>
+      <tr><td><b>Estado de Derecho</b></td><td>Cuando manda la ley y no la voluntad de quien tiene el poder — y la ley vale igual para el que gobierna que para cualquiera.</td></tr>
+      <tr><td><b>Deberes</b></td><td>Lo que a cada persona le toca cumplir para que la convivencia funcione.</td></tr>
+      <tr><td><b>Derechos</b></td><td>Lo que nadie te puede quitar y el Estado tiene que respetarte y hacerte respetar.</td></tr>
+    </table>
+
+    <h2>📕 2. Por qué la Constitución es la ley FUNDAMENTAL</h2>
+
+    <p>Cuando dos normas dicen cosas distintas, no manda la más nueva ni la más larga: manda la que está
+    <strong>más arriba</strong>. Así lo ordena el Código de la Niñez y la Adolescencia para los asuntos de la niñez:</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="linea-t">
+      <div><b>1 · La Constitución de la República</b>Está por encima de todo lo demás.</div>
+      <div><b>2 · Los tratados o convenios de los que Honduras forma parte</b>Los que el país ha firmado con otros.</div>
+      <div><b>3 · El Código de la Niñez y la Adolescencia</b></div>
+      <div><b>4 · El Código de Familia</b></div>
+      <div><b>5 · Las demás leyes generales o especiales</b></div>
+      <div><b>6 · Los reglamentos de esas leyes</b>Los dicta el Poder Ejecutivo.</div>
+      <div><b>7 · La jurisprudencia de la Corte Suprema de Justicia</b>La hace el Poder Judicial.</div>
+      <div><b>8 · Los principios generales del derecho</b></div>
+    </div>
+
+    <div class="caja truco">💡 <b>Fíjate en el escalón 6 y en el 7:</b> ahí están los reglamentos, que los dicta
+    el Ejecutivo, y la jurisprudencia, que la hace el Judicial. <b>Los tres poderes salen en la misma lista</b>,
+    cada uno en su altura. Y la Constitución va de primera: por eso ninguna ley puede decir lo contrario de lo
+    que ella dice.</div>
+
+    <h2>⚖️ 3. Los tres poderes, uno por uno</h2>
+
+    <p>Cada uno hace una cosa distinta con la misma ley. <strong>Apréndete primero los tres verbos</strong>: con
+    eso, quién lo ejerce y cómo se llama cada documento se pegan solos.</p>
+
+    <div class="pficha">
+      <h3 class="pf-tit">📜 Poder Legislativo <span class="pf-et">HACE las leyes</span></h3>
+      <p class="pf-p"><b>Lo ejerce:</b> el Congreso Nacional.</p>
+      <p class="pf-p">Discute y aprueba las leyes que rigen a todo el país. Una ley suya se llama <b>DECRETO</b> y lleva su número y su año.</p>
+      <p class="pf-porque"><b>En una ley de verdad:</b> el Estatuto del Docente es el Decreto 136-97; lo aprobó el Congreso Nacional en su Salón de Sesiones, en Tegucigalpa, el 11 de septiembre de 1997.</p>
+      <p class="pf-dato">🔎 Si una hoja dice «PODER LEGISLATIVO · DECRETO No …», la hizo el Congreso.</p>
+    </div>
+
+    <div class="pficha">
+      <h3 class="pf-tit">🏛️ Poder Ejecutivo <span class="pf-et">CUMPLE y hace cumplir las leyes</span></h3>
+      <p class="pf-p"><b>Lo ejerce:</b> el Presidente de la República, con las Secretarías de Estado.</p>
+      <p class="pf-p">Pone las leyes a funcionar: manda ejecutarlas y dicta los reglamentos que dicen CÓMO se aplican. Una norma suya se llama <b>ACUERDO</b>.</p>
+      <p class="pf-porque"><b>En una ley de verdad:</b> al pie del mismo Estatuto se lee «Al Poder Ejecutivo. Por Tanto: Ejecútese», firmado el 29 de septiembre de 1997 por el Presidente Constitucional de la República. Y como su Artículo 93 mandaba reglamentarlo, la Secretaría de Educación dictó el Acuerdo 0760-SE-99.</p>
+      <p class="pf-dato">🔎 Si una hoja dice «Por Tanto: Ejecútese» o «ACUERDA», es del Ejecutivo.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="pficha">
+      <h3 class="pf-tit">⚖️ Poder Judicial <span class="pf-et">APLICA la ley a los casos</span></h3>
+      <p class="pf-p"><b>Lo ejerce:</b> la Corte Suprema de Justicia, con los juzgados y tribunales.</p>
+      <p class="pf-p">Cuando dos personas no se ponen de acuerdo, o alguien incumple una ley, decide qué dice la ley en ESE caso. Lo que la Corte Suprema resuelve una y otra vez se llama <b>JURISPRUDENCIA</b>, y también es fuente de derecho.</p>
+      <p class="pf-porque"><b>En una ley de verdad:</b> el Código de la Niñez pone entre las fuentes del derecho aplicable a los niños «la jurisprudencia establecida por la Corte Suprema de Justicia relacionada con los niños».</p>
+      <p class="pf-dato">🔎 El Legislativo la escribe, el Ejecutivo la aplica a todos, y el Judicial la aplica a TU caso.</p>
+    </div>
+
+    <h2>🧭 4. El recorrido de una ley, paso por paso</h2>
+
+    <p>No hace falta imaginárselo: se sigue una ley de verdad, <strong>el Estatuto del Docente Hondureño</strong>.
+    Se escogió esa y no otra porque es la ley que rige a tu maestro: dice cómo entra a su plaza, qué le deben
+    pagar y qué derechos tiene.</p>
+
+    <div class="linea-t">
+      <div><b>1 · El Congreso la aprueba</b>El 11 de septiembre de 1997, en el Salón de Sesiones del Congreso Nacional, en Tegucigalpa, se aprueba el Decreto 136-97. La hoja lleva arriba «PODER LEGISLATIVO». <i>(Poder Legislativo)</i></div>
+      <div><b>2 · Y dice desde cuándo vale</b>Su Artículo 101 manda que entre en vigencia al publicarse en el Diario Oficial La Gaceta. Antes de eso, todavía no obliga a nadie. <i>(Poder Legislativo)</i></div>
+      <div><b>3 · El Presidente manda ejecutarla</b>El 29 de septiembre de 1997 se lee al pie: «Al Poder Ejecutivo. Por Tanto: Ejecútese». <i>(Poder Ejecutivo)</i></div>
+      <div><b>4 · Y una Secretaría dice cómo se aplica</b>El Artículo 93 del Estatuto mandaba reglamentarlo. La Secretaría de Educación dicta el Acuerdo 0760-SE-99. <i>(Poder Ejecutivo)</i></div>
+      <div><b>5 · Y si hay pleito, lo resuelven los tribunales</b>Un maestro al que no le respetan lo que el Estatuto le da no va al Congreso ni a la Presidencia: va a los juzgados. <i>(Poder Judicial)</i></div>
+    </div>
+
+    <h2>⚖️ 5. ¿Y por qué no lo hace todo uno solo? Sería más rápido</h2>
+
+    <p>Sería más rápido, y <strong>por eso mismo no se hace</strong>. Si el mismo que escribe la ley es el que
+    decide si la rompiste y el que te castiga, no hay a quién reclamarle: eres tú solo contra alguien que no
+    puede equivocarse. Separarlos es más lento a propósito, porque cada uno puede pararle la mano a los otros dos.</p>
+
+    <table class="cc">
+      <tr><th>Si pasa esto…</th><th>…quién lo para</th></tr>
+      <tr><td>El Congreso aprueba una ley que va contra la Constitución.</td><td>Los tribunales pueden dejarla sin aplicar: la Constitución está por encima.</td></tr>
+      <tr><td>Un funcionario del Ejecutivo aplica una ley a su manera.</td><td>La persona afectada puede llevarlo ante un juez, que decide qué dice la ley de verdad.</td></tr>
+      <tr><td>El Ejecutivo quiere una regla nueva que la ley no le permite.</td><td>Tiene que ir al Congreso: el reglamento no puede decir más de lo que dice la ley.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🧾 6. Rendir cuentas: el poder es prestado</h2>
+
+    <p>Quien trabaja para el Estado no maneja su propio dinero: maneja el de todos. Por eso tiene que poder
+    explicar en qué lo gastó y qué hizo con el cargo, y <strong>cualquier ciudadano puede preguntárselo</strong>.
+    Eso se llama rendición de cuentas, y no es un favor que hace: es parte del trabajo.</p>
+
+    <div class="caja idea">🏫 <b>Pasa igual y en pequeño en tu centro:</b> la merienda escolar, la matrícula
+    gratis y los fondos que llegan al comité de padres se rinden en asamblea. Si alguien no quiere explicar en
+    qué se gastó, ahí hay un problema.</div>
+
+    <h2>🔍 7. Lo que no te vamos a decir: averígualo tú</h2>
+
+    <p>Estas respuestas <strong>cambian</strong> y están en la Constitución de la República. Búscalas en tu libro
+    de Ciencias Sociales, en la biblioteca o pregúntale a tu maestro — y después contesta la segunda pregunta,
+    que es la que de verdad importa.</p>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span>¿Cuántos diputados tiene el Congreso Nacional, y cuántos son de tu departamento?</div>
+      <div class="linea-resp"></div>
+      <div class="preg-q" style="margin-top:0.25rem;"><i>¿Sabes el nombre de uno solo? ¿Cómo le harías llegar un problema de tu comunidad?</i></div>
+      <div class="linea-resp"></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span>¿Cuánto dura en el cargo el Presidente de la República?</div>
+      <div class="linea-resp"></div>
+      <div class="preg-q" style="margin-top:0.25rem;"><i>¿Qué pasa cuando se acaba ese tiempo? ¿Quién lo decide?</i></div>
+      <div class="linea-resp"></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span>¿Cuántos magistrados tiene la Corte Suprema de Justicia y quién los elige?</div>
+      <div class="linea-resp"></div>
+      <div class="preg-q" style="margin-top:0.25rem;"><i>Si los elige otro poder, ¿sigue siendo independiente? Discútelo en clase: no hay una sola respuesta.</i></div>
+      <div class="linea-resp"></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span>¿Cuál es el juzgado más cercano a tu comunidad?</div>
+      <div class="linea-resp"></div>
+      <div class="preg-q" style="margin-top:0.25rem;"><i>¿Cuánto se tarda en llegar? Para alguien sin transporte, ¿el Poder Judicial le queda cerca o lejos?</i></div>
+      <div class="linea-resp"></div></div>
+
+    <div class="caja truco">💡 <b>La última no se contesta con un número, y es la más importante de las cuatro.</b>
+    El currículo pide comparar «las condiciones establecidas en la Constitución y la realidad».</div>
+
+    <h2>✏️ 8. Completa</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Escribe la palabra que falta en cada oración.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span>Los tres poderes del Estado son el Ejecutivo, el Legislativo y el <span class="raya corta"></span>.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span>El Poder Legislativo lo ejerce el <span class="raya corta"></span> Nacional.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span>El Poder Ejecutivo lo encabeza el <span class="raya corta"></span> de la República.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span>El Poder Judicial lo encabeza la <span class="raya corta"></span> Suprema de Justicia.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span>La ley que está por encima de todas las demás es la <span class="raya corta"></span>.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span>Una ley aprobada por el Congreso se llama <span class="raya corta"></span>.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">7</span>La norma con que una Secretaría reglamenta una ley se llama <span class="raya corta"></span>.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">8</span>Cuando manda la ley y no quien gobierna, hay Estado de <span class="raya corta"></span>.</div></div>
+
+    <h2>✅ 9. Verdadero o Falso</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Escribe <b>V</b> o <b>F</b> en la raya.</p>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span><span class="raya corta"></span> Los tres poderes del Estado son el Ejecutivo, el Legislativo y el Judicial.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span><span class="raya corta"></span> El Poder Legislativo lo ejerce la Corte Suprema de Justicia.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span class="raya corta"></span> Una ley aprobada por el Congreso Nacional se llama decreto.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span class="raya corta"></span> Un reglamento puede decir más cosas que la ley que reglamenta.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span class="raya corta"></span> La Constitución está por encima de todas las demás leyes.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span class="raya corta"></span> El Poder Judicial es el que aprueba las leyes.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">7</span><span class="raya corta"></span> Una ley entra en vigencia al publicarse en el Diario Oficial La Gaceta.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">8</span><span class="raya corta"></span> Los tres poderes están separados para que el trabajo salga más rápido.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">9</span><span class="raya corta"></span> La jurisprudencia la establece la Corte Suprema de Justicia.</div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">10</span><span class="raya corta"></span> La rendición de cuentas es un favor del funcionario, no una obligación.</div></div>
+
+    <h2>🔘 10. Selección múltiple</h2>
+
+    <p style="font-size:10pt;color:var(--gris);"><b>Rellena el círculo</b> de la letra de la respuesta correcta.</p>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span>¿Quién ejerce el Poder Legislativo?</div>
+      <div class="preg-ops"><span class="op"><i></i>a) El Congreso Nacional</span><span class="op"><i></i>b) El Presidente</span><span class="op"><i></i>c) La Corte Suprema</span><span class="op"><i></i>d) Las Secretarías</span></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span>¿Qué hace el Poder Judicial?</div>
+      <div class="preg-ops"><span class="op"><i></i>a) Escribe las leyes</span><span class="op"><i></i>b) Cobra impuestos</span><span class="op"><i></i>c) Nombra al Presidente</span><span class="op"><i></i>d) Aplica la ley a cada caso</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span>¿Cómo se llama una ley aprobada por el Congreso Nacional?</div>
+      <div class="preg-ops"><span class="op"><i></i>a) Acuerdo</span><span class="op"><i></i>b) Decreto</span><span class="op"><i></i>c) Sentencia</span><span class="op"><i></i>d) Circular</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span>¿Por qué la Constitución es la ley fundamental?</div>
+      <div class="preg-ops"><span class="op"><i></i>a) Es la más larga</span><span class="op"><i></i>b) Es la más antigua</span><span class="op"><i></i>c) Está por encima de las demás</span><span class="op"><i></i>d) La firma el Presidente</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span>¿Qué significa «Por Tanto: Ejecútese» al pie de una ley?</div>
+      <div class="preg-ops"><span class="op"><i></i>a) El Presidente manda cumplirla</span><span class="op"><i></i>b) Ya se venció</span><span class="op"><i></i>c) Un juez la anuló</span><span class="op"><i></i>d) Falta discutirla</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span>¿Para qué sirve que los tres poderes estén separados?</div>
+      <div class="preg-ops"><span class="op"><i></i>a) Para repartir el trabajo</span><span class="op"><i></i>b) Para gastar menos</span><span class="op"><i></i>c) Para que cada uno pare a los otros</span><span class="op"><i></i>d) Por costumbre</span></div></div>
+
+    <h2>🔗 11. Pareados</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Escribe en la raya la letra de la Columna B que corresponde.</p>
+
+    <table class="cc">
+      <tr><th>Columna A</th><th>Columna B</th></tr>
+      <tr><td><span class="raya corta"></span> 1. Poder Legislativo</td><td><b>A.</b> Donde se reúne el Congreso a aprobar las leyes</td></tr>
+      <tr><td><span class="raya corta"></span> 2. Poder Ejecutivo</td><td><b>B.</b> Aplica la ley a cada caso</td></tr>
+      <tr><td><span class="raya corta"></span> 3. Poder Judicial</td><td><b>C.</b> El Diario Oficial: al publicarse ahí, una ley entra en vigencia</td></tr>
+      <tr><td><span class="raya corta"></span> 4. Decreto</td><td><b>D.</b> Hace las leyes</td></tr>
+      <tr><td><span class="raya corta"></span> 5. Acuerdo</td><td><b>E.</b> Lo que la Corte Suprema resuelve una y otra vez</td></tr>
+      <tr><td><span class="raya corta"></span> 6. Jurisprudencia</td><td><b>F.</b> Cumple y hace cumplir las leyes</td></tr>
+      <tr><td><span class="raya corta"></span> 7. La Gaceta</td><td><b>G.</b> El nombre de una ley del Congreso Nacional</td></tr>
+      <tr><td><span class="raya corta"></span> 8. Salón de Sesiones</td><td><b>H.</b> La norma con que el Ejecutivo reglamenta una ley</td></tr>
+    </table>
+
+    <h2>🧠 12. Para explicar con tus palabras</h2>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span>Explica por qué los tres poderes están separados, si sería más rápido que mandara uno solo.</div>
+      <div class="linea-resp"></div><div class="linea-resp"></div><div class="linea-resp"></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span>Sigue el recorrido de una ley por los tres poderes, con un ejemplo de verdad.</div>
+      <div class="linea-resp"></div><div class="linea-resp"></div><div class="linea-resp"></div></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>✅ Pauta de Respuestas — Hoja del Docente</h2>
+
+    <p style="font-size:10pt;color:var(--gris);">Esta hoja se imprime <strong>suelta</strong>: es solo para el docente o para la autocorrección guiada. No se fotocopia con las demás.</p>
+
+    <div class="pauta">
+      <div><span class="pt">8. Completa:</span> 1. Judicial &nbsp; 2. Congreso &nbsp; 3. Presidente &nbsp; 4. Corte &nbsp; 5. Constitución &nbsp; 6. decreto &nbsp; 7. acuerdo &nbsp; 8. Derecho</div>
+      <div><span class="pt">9. Verdadero o Falso:</span> 1V, 2F, 3V, 4F, 5V, 6F, 7V, 8F, 9V, 10F</div>
+      <div><span class="pt">10. Selección múltiple:</span> 1a, 2d, 3b, 4c, 5a, 6c</div>
+      <div><span class="pt">11. Pareados:</span> 1D, 2F, 3B, 4G, 5H, 6E, 7C, 8A</div>
+    </div>
+
+    <div class="pauta" style="background:#fff8e6;border-color:#f0dca6;">
+      <div><span class="pt">🔍 Cuidado con la sección 7 («Lo que no te vamos a decir»):</span> esas cuatro
+      preguntas <b>no tienen respuesta en esta ficha, y es a propósito</b>. Cuántos diputados, cuántos
+      magistrados y cuánto duran en el cargo los acredita la Constitución de la República, y aquí no se escriben
+      de memoria: un dato así, mal puesto, es la pregunta del examen contestada mal. El currículo tampoco los
+      pide memorizados — pide que el estudiante los <b>investigue</b> y los <b>compare con la realidad</b>.
+      Lo que se califica en esa sección es la segunda pregunta de cada par, no la primera.</div>
+    </div>
+
+    <h2>📝 Nota del Docente</h2>
+
+    <div class="nota-doc">
+      <b>De dónde sale cada dato de esta ficha.</b> La expectativa es del DCNB, Ciencias Sociales de Octavo
+      Grado, Bloque 1: «Reconocen la Constitución de la República como ley fundamental para comprender las
+      características y funcionamiento de un Estado de Derecho», con sus contenidos «Conformación de un Estado
+      de Derecho: Poder Ejecutivo, Legislativo y Judicial» y «Funciones, atribuciones y relación entre los
+      diferentes poderes».
+      <br><br>
+      <b>El recorrido de la ley no es un ejemplo inventado.</b> Todos sus pasos están en documentos oficiales:
+      el Estatuto del Docente Hondureño (Decreto 136-97), su Reglamento General (Acuerdo 0760-SE-99) y el
+      Código de la Niñez y la Adolescencia (Decreto 73-96), de donde sale también la jerarquía normativa de los
+      ocho escalones. Se escogió el Estatuto a propósito: es la ley que rige al maestro que tiene el grupo
+      delante, así que se puede abrir y señalar con el dedo.
+      <br><br>
+      <b>La ficha y la misión salen del mismo archivo del proyecto</b>, así que no pueden decir cosas distintas.
+      Etapa 4 de la Ruta de la Patria; las etapas 1, 2 y 3 son los símbolos patrios, el Himno Nacional y los
+      héroes y próceres.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Tres Poderes del Estado · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

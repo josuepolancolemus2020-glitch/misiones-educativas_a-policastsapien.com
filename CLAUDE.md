@@ -2192,6 +2192,105 @@ Si se tocan los datos, la ficha **se vuelve a repartir** (`node
 _dev/reparte-hojas-ficha.js ficha-proceres-heroes`): son siete hojas y un
 párrafo que crece dos renglones parte una en dos.
 
+## Normativa: los tres poderes se enseñan sobre una ley de verdad
+
+La cuarta misión de la Ruta de la Patria son **los tres poderes del Estado**
+(`misiones/2y3ciclo-tres-poderes/`, id 70, etapa 4). La expectativa es del
+DCNB, **Ciencias Sociales de Octavo Grado, Bloque 1** —confirmada en el PDF,
+`_dev/dcnb-pdf/dcneb-basica-iii-ciclo.pdf`, página 348 del archivo, «Secretaría
+de Educación 355» en el pie impreso—, y dice con estas palabras: «Reconocen la
+Constitución de la República como ley fundamental para comprender las
+características y funcionamiento de un Estado de Derecho».
+
+Mismo patrón que el Himno y los próceres: **los datos viven en
+`js/data/poderes-honduras.js`** y solo ahí; la misión los pinta, la ficha es
+HTML plano, y `node _dev/verifica-poderes.js` compara las dos.
+
+### ⚠️ La Constitución NO está en `_dev/leyes/`, y eso decide la misión entera
+
+Una misión sobre los poderes del Estado y la única fuente que acredita sus
+números —cuántos diputados, cuántos magistrados, cuánto duran, cómo se
+eligen— **no está en el repositorio**. Y el entorno no la alcanza: el
+`README.md` de esa carpeta ya deja escrito que los portales del Estado
+contestan 403 a través del proxy, y que **la vía es pedir el documento, no
+buscar más**.
+
+Así que esos números **no se escriben**. Es la misma decisión que dejó fuera
+los de decreto de la flor y del árbol nacionales y la fecha de nacimiento de
+José Trinidad Reyes, y aquí duele el doble, porque son justo los que pregunta
+el Cuestionario Cívico.
+
+**Lo que sí se puede enseñar, y resulta que es lo que más vale**, sale de los
+PDF que SÍ están en `_dev/leyes/`. El mecanismo entero se ve trabajando sobre
+**una ley de verdad, el Estatuto del Docente** —la que rige al maestro que el
+alumno tiene delante—, y cada paso se puede señalar con el dedo:
+
+| paso | qué se lee, y dónde |
+|---|---|
+| el Congreso la aprueba | `PODER LEGISLATIVO · DECRETO No 136-97 · EL Congreso Nacional, CONSIDERANDO:` |
+| y dice desde cuándo vale | su Artículo 101: entra en vigencia al publicarse en La Gaceta |
+| el Presidente manda ejecutarla | `Al Poder Ejecutivo. Por Tanto: Ejecútese`, 29 de septiembre de 1997 |
+| y una Secretaría dice cómo se aplica | el Artículo 93 lo manda; sale el Acuerdo 0760-SE-99 |
+| y si hay pleito, los tribunales | la jurisprudencia de la Corte Suprema, fuente de derecho |
+
+Y **que la Constitución es la ley fundamental —la expectativa literal— tampoco
+se afirma de memoria**: lo dice una ley hondureña que está aquí. El Código de
+la Niñez y la Adolescencia, en su **Artículo 4**, ordena las normas por rango y
+la pone en el número 1.
+
+⚠️ **La jerarquía se copia ENTERA, sus ocho escalones y en su orden.** Recortarla
+sería enseñar una jerarquía que no es la que dice la ley, y lo primero que se
+cae al recortar son el **6 y el 7** —los reglamentos, que dicta el Ejecutivo, y
+la jurisprudencia, que hace el Judicial—, que son justo los que enseñan que los
+tres poderes salen en la misma lista, cada uno en su altura. La sonda comprueba
+que estén los ocho **y que no se hayan desordenado**.
+
+⚠️ **Y el hueco no se tapa con silencio: se convierte en la actividad que el
+DCNB pide.** El propio currículo no pide esos números memorizados —pide
+«Investigan acerca de quiénes sustentan la autoridad en cada uno de los
+poderes, y comparan entre las condiciones establecidas en la Constitución y la
+realidad»—. Por eso viven en `PODERES_INVESTIGA`, que es una **actividad**, con
+cuatro pares de preguntas donde la segunda no se contesta con un número («¿el
+juzgado más cercano le queda cerca o lejos a alguien sin transporte?»). Y la
+**hoja del docente avisa** de que esas preguntas no traen respuesta a propósito:
+sin ese aviso, un maestro las da por un descuido y se las salta. La sonda
+comprueba las dos cosas.
+
+El día que el PDF de la Constitución entre a `_dev/leyes/`, se escriben los
+números y **la actividad se queda igual**: comparar lo que dice la Constitución
+con lo que pasa no se resuelve leyendo una cifra.
+
+### ⚠️ Y al copiar una misión se copian sus averías: la de la 69
+
+Esta misión se calcó de la de próceres (69) —que es post-arreglo del CDN, la
+trampa que ya mordió dos veces—, y al copiarla salió a la luz una avería de la
+69 que llevaba publicada desde su estreno: su `identifyTaskDB` declaraba las
+respuestas con la clave **`target:`** y el pintado las lee con **`item.type`**,
+así que la hoja de tareas imprimía **«✅ undefined»** en las diez respuestas de
+la clave del maestro. Las demás misiones usan `type:`.
+
+No lo cazaba nada: el archivo compila, la pantalla se pinta, no hay un error en
+la consola — la misma familia que el Escudo marcado en rojo y que el
+`\U0001F1ED` de Python. Se arregló en las dos. **La lección es la de siempre y
+va una vez más:** lo que se multiplica al copiar una misión no son solo los
+aciertos.
+
+**Antes de publicar un cambio de esta misión o de los datos:**
+
+```
+node _dev/verifica-poderes.js               → la pantalla y el papel, dato por dato
+node _dev/verifica-mision-nueva.js misiones/2y3ciclo-tres-poderes/tres-poderes.html
+node _dev/verifica-nombres-propios.js
+node _dev/verifica-ficha-paginas.js ficha-tres-poderes
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/2y3ciclo-tres-poderes/tres-poderes.html
+```
+
+Si se tocan los datos, la ficha **se vuelve a repartir** (`node
+_dev/reparte-hojas-ficha.js ficha-tres-poderes`): son siete hojas, y al
+escribirla a mano dos se pasaban del papel —la 1 medía 265,6 mm donde el papel
+deja 257,4— hasta que la repartió la herramienta.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

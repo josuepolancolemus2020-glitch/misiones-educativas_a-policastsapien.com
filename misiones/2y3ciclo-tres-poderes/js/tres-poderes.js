@@ -10,7 +10,7 @@ const _shuffle=(arr)=>[...arr].sort(()=>Math.random()-0.5);
 function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='fb show '+(isOk?'ok':'err');}}
 
 // ===================== VARIABLES GLOBALES =====================
-const SAVE_KEY='proceres_heroes_v1';
+const SAVE_KEY='tres_poderes_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
 let evalCritFormNum=1,evalCritAnsVisible=false;
@@ -33,14 +33,14 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 
 // ===================== ACHIEVEMENTS =====================
 const ACHIEVEMENTS={
-  primer_quiz:{icon:'🏅',label:'Primera prueba de próceres superada'},
+  primer_quiz:{icon:'🏅',label:'Primera prueba de los poderes superada'},
   flash_master:{icon:'🃏',label:'Conoció a los ocho, uno por uno'},
-  clasif_pro:{icon:'🗂️',label:'Distingue al héroe del prócer'},
+  clasif_pro:{icon:'🗂️',label:'Distingue los tres poderes'},
   id_master:{icon:'🔍',label:'Reconoce a cada uno por lo que hizo'},
-  reto_hero:{icon:'🏆',label:'Héroe del reto de los próceres'},
+  reto_hero:{icon:'🏆',label:'Campeón del reto de los poderes'},
   nivel3:{icon:'🎖️',label:'¡Buena memoria! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Sabe su historia! Nivel 6'},
-  widgets_master:{icon:'🧩',label:'Widgets de los próceres dominados'}
+  widgets_master:{icon:'🧩',label:'Widgets de los poderes dominados'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -62,11 +62,23 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 // ===================== FLASHCARD DATA =====================
 const fcData = (function () {
   const f = [];
-  PROCERES.forEach(p => {
-    f.push({ w: p.emoji + ' ' + p.nombre, a: '<strong>' + p.papel + '</strong><br>' + p.epoca +
-             (p.apodo ? '<br><em>«' + p.apodo + '»</em>' : '') });
-    f.push({ w: '¿Por qué se recuerda a ' + p.nombre + '?', a: p.porque });
+  PODERES.forEach(p => {
+    f.push({ w: p.emoji + ' ' + p.nombre, a: '<strong>' + p.verbo + '</strong><br>' + p.quien });
+    f.push({ w: '¿Qué hace el ' + p.nombre + '?', a: p.queHace });
   });
+  PODERES_CONCEPTOS.forEach(c => {
+    f.push({ w: c.emoji + ' ' + c.palabra, a: c.definicion });
+  });
+  /* Las tres que no son ni un poder ni una palabra suelta, y que son justo lo
+     que el DCNB pide entender: qué manda sobre qué, por qué están separados y
+     a quién le rinden cuentas. Sin ellas la misión enseña un organigrama. */
+  f.push({ w: '📕 ¿Qué norma manda cuando dos se contradicen?',
+           a: 'La que está más ARRIBA, no la más nueva. El orden empieza por la Constitución: ' +
+              PODERES_JERARQUIA.escalones.slice(0, 3).join(' › ') + '…' });
+  f.push({ w: '⚖️ ¿Por qué los tres poderes están separados?',
+           a: PODERES_SEPARACION.texto });
+  f.push({ w: '🧾 ¿Qué es la rendición de cuentas?',
+           a: PODERES_RENDICION.texto });
   return f;
 })();
 let fcIdx=0;
@@ -77,26 +89,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Quién es el Héroe Nacional de Honduras?',o:['Francisco Morazán','Lempira','José Cecilio del Valle','Dionisio de Herrera'],c:1,
-   e:'Lempira, el cacique lenca que dirigió la resistencia contra la conquista hacia 1537.'},
-  {q:'¿Cuál es la diferencia entre un héroe y un prócer?',o:['No hay ninguna: son dos palabras para lo mismo','El héroe es militar y el prócer es civil','El héroe defiende a su pueblo; el prócer ayuda a fundar la nación','El prócer es más antiguo que el héroe'],c:2,
-   e:'El héroe defiende lo que ya existe; el prócer construye lo que todavía no existe.'},
-  {q:'¿Quién redactó el Acta de Independencia de Centroamérica?',o:['José Cecilio del Valle','Francisco Morazán','Lempira','Marco Aurelio Soto'],c:0,
-   e:'Por eso le decían «el Sabio Valle»: la Independencia se escribió antes que pelearse.'},
-  {q:'A Francisco Morazán se le llama héroe y también prócer. ¿Por qué las dos cosas están bien?',o:['Porque nadie se pone de acuerdo en quién fue','Porque defendió su idea hasta morir y además ayudó a fundar la República Federal','Porque nació en Honduras y murió en Costa Rica','Porque el Himno lo nombra dos veces'],c:1,
-   e:'Las dos son correctas: gobernó y construyó como prócer, y peleó y murió por su idea como héroe.'},
-  {q:'¿Quién fue el primer Jefe de Estado de Honduras, en 1824?',o:['José Trinidad Cabañas','Ramón Rosa','Dionisio de Herrera','José Trinidad Reyes'],c:2,
-   e:'Y bajo su gobierno se creó el Escudo Nacional, en 1825.'},
-  {q:'¿Por qué el Día del Maestro Hondureño es el 17 de septiembre?',o:['Porque ese día se fundó la primera escuela','Por el nacimiento de José Trinidad Reyes, que fundó la primera universidad','Porque cae cerca del 15 de septiembre','Por un decreto de la Reforma Liberal'],c:1,
-   e:'El Padre Reyes hizo país con una escuela, y esa escuela sigue abierta.'},
-  {q:'¿Qué hicieron juntos Marco Aurelio Soto y Ramón Rosa?',o:['Firmaron el Acta de Independencia','Pelearon contra la conquista española','Fundaron la República Federal de Centro América','Impulsaron la Reforma Liberal y la educación pública'],c:3,
-   e:'Soto en la presidencia y Rosa de ministro: de ahí sale el Código de Instrucción Pública de 1882.'},
-  {q:'¿Por qué a José Trinidad Cabañas se le llama «el caballero sin tacha y sin miedo»?',o:['Porque nunca perdió una batalla','Porque fue honrado en el gobierno y no se echó atrás','Porque escribió la Constitución','Porque fundó la ciudad de Tegucigalpa'],c:1,
-   e:'«Sin tacha» es que no robó; «sin miedo», que no se echó atrás. Las dos mitades importan.'},
-  {q:'Además de los ocho de la lista, ¿quiénes más construyeron Honduras?',o:['Nadie más: fueron ellos solos','Solo los militares de cada época','Las mujeres, los pueblos indígenas y los garífunas, aunque casi nunca salen en las listas','Solo los que tienen estatua'],c:2,
-   e:'El DCNB lo pide con estas palabras: explicar la contribución y el costo que pagaron.'},
-  {q:'¿En qué se parecen Lempira y Francisco Morazán?',o:['Los dos fueron presidentes','Los dos firmaron la Independencia','Los dos nacieron en Tegucigalpa','Los dos pelearon por defender algo, aunque en épocas muy distintas'],c:3,
-   e:'Lempira defendió su pueblo de la conquista; Morazán, tres siglos después, la unión de cinco países.'}
+  {q:'¿Cuáles son los tres poderes del Estado?',o:['Ejecutivo, Legislativo y Judicial','Presidente, Alcalde y Juez','Nacional, Departamental y Municipal','Civil, Militar y Religioso'],c:0,
+   e:'Así los nombra el DCNB: «Conformación de un Estado de Derecho: Poder Ejecutivo, Legislativo y Judicial».'},
+  {q:'¿Qué poder HACE las leyes?',o:['El Judicial','El Ejecutivo','El Legislativo','Los tres a la vez'],c:2,
+   e:'Lo ejerce el Congreso Nacional, y una ley suya se llama decreto.'},
+  {q:'¿Quién ejerce el Poder Ejecutivo?',o:['La Corte Suprema de Justicia','El Presidente de la República','El Congreso Nacional','Los juzgados'],c:1,
+   e:'Con las Secretarías de Estado: pone las leyes a funcionar.'},
+  {q:'Una ley dice al final «Al Poder Ejecutivo. Por Tanto: Ejecútese». ¿Qué significa?',o:['Que la ley ya se venció','Que el Presidente manda que empiece a cumplirse','Que un juez la revisó','Que el Congreso la va a discutir'],c:1,
+   e:'Es exactamente lo que se lee al pie del Estatuto del Docente, firmado en 1997.'},
+  {q:'¿Por qué se dice que la Constitución es la ley FUNDAMENTAL?',o:['Porque es la más larga','Porque la escribió el primer presidente','Porque está por encima de todas las demás leyes','Porque es la más antigua'],c:2,
+   e:'El Código de la Niñez ordena las normas por rango y la pone en el número 1.'},
+  {q:'Dos maestros tienen un pleito por lo que dice el Estatuto del Docente. ¿A quién le toca resolverlo?',o:['Al Congreso Nacional','Al Presidente de la República','A la Secretaría de Educación','A los juzgados y tribunales'],c:3,
+   e:'El Legislativo escribe la ley, el Ejecutivo la aplica a todos, y el Judicial la aplica a TU caso.'},
+  {q:'¿Por qué los tres poderes están separados, si sería más rápido que mandara uno solo?',o:['Por costumbre, desde la Independencia','Para que cada uno pueda pararle la mano a los otros dos','Porque no caben en el mismo edificio','Para repartir el trabajo entre más gente'],c:1,
+   e:'Si el que escribe la ley es el mismo que te juzga, no hay a quién reclamarle.'},
+  {q:'¿Qué es la rendición de cuentas?',o:['Un impuesto que se paga cada año','El examen que hacen los diputados','Explicar públicamente qué se hizo con el cargo y con el dinero de todos','Contar los votos de una elección'],c:2,
+   e:'Es un contenido del DCNB, y no es un favor: es parte del trabajo de quien sirve al Estado.'},
+  {q:'¿Qué es un Estado de Derecho?',o:['Un país que tiene ejército propio','Un país donde manda la ley y no la voluntad de quien tiene el poder','Un país con tres poderes y un rey','Un país que cobra impuestos'],c:1,
+   e:'Y la ley vale igual para el que gobierna que para cualquiera.'},
+  {q:'El Estatuto del Docente mandó que se hiciera su Reglamento. ¿Quién lo dictó?',o:['La Corte Suprema de Justicia','El Congreso Nacional','Una comisión de maestros','La Secretaría de Educación, que es del Ejecutivo'],c:3,
+   e:'Es el Acuerdo 0760-SE-99. Un reglamento dice CÓMO se aplica una ley, y no puede decir más que ella.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -114,12 +126,12 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Antes de la Independencia','Después de la Independencia'],headA:'⛓️ Antes de 1821',headB:'🕊️ Después de 1821',colA:'antes',colB:'despues',
-   words:[{w:'Lempira',t:'antes'},{w:'Dionisio de Herrera',t:'despues'},{w:'Francisco Morazán',t:'despues'},{w:'La resistencia lenca',t:'antes'},{w:'La República Federal',t:'despues'},{w:'El Peñol de Cerquín',t:'antes'},{w:'La Reforma Liberal',t:'despues'},{w:'El primer Jefe de Estado',t:'despues'}]},
-  {label:['Su obra fue la educación','Su obra fue el gobierno'],headA:'📚 Educación',headB:'🏛️ Gobierno',colA:'edu',colB:'gob',
-   words:[{w:'José Trinidad Reyes',t:'edu'},{w:'Dionisio de Herrera',t:'gob'},{w:'Ramón Rosa',t:'edu'},{w:'José Trinidad Cabañas',t:'gob'},{w:'La primera universidad',t:'edu'},{w:'El primer Estado de Honduras',t:'gob'},{w:'El Código de Instrucción Pública',t:'edu'},{w:'La República Federal',t:'gob'}]},
-  {label:['Tiene su día en el calendario','No tiene día propio'],headA:'📅 Tiene su día',headB:'📖 Sin día propio',colA:'si',colB:'no',
-   words:[{w:'Lempira',t:'si'},{w:'José Cecilio del Valle',t:'no'},{w:'Francisco Morazán',t:'si'},{w:'Dionisio de Herrera',t:'no'},{w:'José Trinidad Reyes',t:'si'},{w:'Ramón Rosa',t:'no'},{w:'Marco Aurelio Soto',t:'no'},{w:'José Trinidad Cabañas',t:'no'}]}
+  {label:['Lo hace el Congreso Nacional','Lo hace el Presidente'],headA:'📜 El Congreso',headB:'🏛️ El Presidente',colA:'leg',colB:'eje',
+   words:[{w:'Aprobar un decreto',t:'leg'},{w:'Mandar «Ejecútese»',t:'eje'},{w:'Discutir una ley nueva',t:'leg'},{w:'Dictar un reglamento',t:'eje'},{w:'Reunirse en el Salón de Sesiones',t:'leg'},{w:'Dirigir las Secretarías de Estado',t:'eje'},{w:'Ponerle número y año a una ley',t:'leg'},{w:'Poner la ley a funcionar',t:'eje'}]},
+  {label:['Es del Poder Judicial','Es de otro poder'],headA:'⚖️ Del Judicial',headB:'🚫 De otro poder',colA:'jud',colB:'otro',
+   words:[{w:'La Corte Suprema de Justicia',t:'jud'},{w:'Los juzgados y tribunales',t:'jud'},{w:'La jurisprudencia',t:'jud'},{w:'Decidir quién tiene razón en un pleito',t:'jud'},{w:'El Congreso Nacional',t:'otro'},{w:'Dictar un acuerdo',t:'otro'},{w:'Aprobar un decreto',t:'otro'},{w:'Las Secretarías de Estado',t:'otro'}]},
+  {label:['Un decreto','Un acuerdo'],headA:'📜 Decreto',headB:'📋 Acuerdo',colA:'dec',colB:'acu',
+   words:[{w:'El Estatuto del Docente, 136-97',t:'dec'},{w:'El Reglamento del Estatuto, 0760-SE-99',t:'acu'},{w:'El Código de la Niñez, 73-96',t:'dec'},{w:'Lo dicta una Secretaría de Estado',t:'acu'},{w:'Lo aprueba el Congreso Nacional',t:'dec'},{w:'Dice CÓMO se aplica una ley',t:'acu'},{w:'Nace en el Salón de Sesiones',t:'dec'},{w:'No puede decir más que la ley',t:'acu'}]}
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -129,14 +141,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['El','Héroe','Nacional','de','Honduras','es','Lempira,','cacique','lenca.'],c:6,art:'El Héroe Nacional'},
-  {s:['José','Cecilio','del','Valle','redactó','el','Acta','de','Independencia.'],c:6,art:'El documento que se firmó en 1821'},
-  {s:['Francisco','Morazán','presidió','la','República','Federal','de','Centro','América.'],c:5,art:'La palabra que nombra a la unión de los cinco países'},
-  {s:['Dionisio','de','Herrera','fue','el','primer','Jefe','de','Estado','en','1824.'],c:10,art:'El año en que Honduras tuvo su primer gobierno propio'},
-  {s:['A','José','Trinidad','Cabañas','le','decían','el','caballero','sin','tacha.'],c:9,art:'La palabra que significa que no robó'},
-  {s:['El','Padre','Reyes','fundó','la','primera','universidad','del','país.'],c:6,art:'Lo que fundó José Trinidad Reyes'},
-  {s:['Ramón','Rosa','impulsó','el','Código','de','Instrucción','Pública','de','1882.'],c:9,art:'El año del Código que hizo de la educación una obligación del Estado'},
-  {s:['Marco','Aurelio','Soto','encabezó','la','Reforma','Liberal.'],c:5,art:'El nombre del cambio que encabezó Marco Aurelio Soto'}
+  {s:['El','Congreso','Nacional','HACE','las','leyes','del','país.'],c:1,art:'El nombre del órgano que ejerce el Poder Legislativo'},
+  {s:['El','Poder','Ejecutivo','CUMPLE','y','hace','cumplir','las','leyes.'],c:3,art:'El verbo que dice qué hace el Poder Ejecutivo'},
+  {s:['La','Corte','Suprema','de','Justicia','encabeza','el','Poder','Judicial.'],c:8,art:'El poder que aplica la ley a cada caso'},
+  {s:['La','Constitución','es','la','ley','fundamental','de','Honduras.'],c:1,art:'La ley que está por encima de todas las demás'},
+  {s:['Una','ley','que','aprueba','el','Congreso','se','llama','decreto.'],c:8,art:'El nombre que recibe una ley del Congreso'},
+  {s:['El','reglamento','de','una','ley','se','dicta','por','acuerdo.'],c:8,art:'El nombre de la norma con que el Ejecutivo reglamenta'},
+  {s:['En','un','Estado','de','Derecho','manda','la','ley.'],c:7,art:'Lo que manda cuando hay Estado de Derecho'},
+  {s:['Los','servidores','públicos','deben','rendir','cuentas','a','la','ciudadanía.'],c:5,art:'Lo que un funcionario le debe a la gente'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -146,14 +158,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El Héroe Nacional de Honduras es ___.',opts:['Lempira','Morazán','Valle'],c:0},
-  {s:'Un ___ defiende a su pueblo; un prócer ayuda a fundar la nación.',opts:['prócer','héroe','soldado'],c:1},
-  {s:'El Acta de Independencia la redactó José Cecilio del ___.',opts:['Río','Valle','Monte'],c:1},
-  {s:'Francisco Morazán nació el 3 de ___ de 1792.',opts:['octubre','septiembre','noviembre'],c:0},
-  {s:'El primer Jefe de Estado de Honduras fue Dionisio de ___.',opts:['Herrera','Cabañas','Rosa'],c:0},
-  {s:'A José Trinidad Cabañas le llamaron el caballero sin tacha y sin ___.',opts:['tierra','miedo','nombre'],c:1},
-  {s:'El Día del Maestro Hondureño es el 17 de ___.',opts:['julio','octubre','septiembre'],c:2},
-  {s:'Ramón Rosa fue ministro de Marco Aurelio ___.',opts:['Rosa','Reyes','Soto'],c:2}
+  {s:'El Poder Legislativo lo ejerce el ___ Nacional.',opts:['Consejo','Congreso','Comité'],c:1},
+  {s:'El Poder Ejecutivo lo encabeza el ___ de la República.',opts:['Presidente','Diputado','Magistrado'],c:0},
+  {s:'El Poder Judicial lo encabeza la ___ Suprema de Justicia.',opts:['Sala','Junta','Corte'],c:2},
+  {s:'La ley que está por encima de todas las demás es la ___.',opts:['Gaceta','Constitución','Ordenanza'],c:1},
+  {s:'Una ley aprobada por el Congreso se llama ___.',opts:['acuerdo','circular','decreto'],c:2},
+  {s:'La norma con que una Secretaría reglamenta una ley se llama ___.',opts:['acuerdo','decreto','sentencia'],c:0},
+  {s:'Cuando manda la ley y no la voluntad de quien gobierna, hay Estado de ___.',opts:['Sitio','Derecho','Cuentas'],c:1},
+  {s:'Explicar en qué se gastó el dinero de todos se llama rendición de ___.',opts:['cuentas','leyes','votos'],c:0}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -167,14 +179,8 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets = [
-  { label: 'Ordena la línea del tiempo', steps: PROCERES.map(p => p.nombre) },
-  { label: 'Ordena: ¿qué pasó primero?', steps: [
-      'Lempira resiste la conquista',
-      'Se firma el Acta de Independencia',
-      'Honduras tiene su primer Jefe de Estado',
-      'Morazán preside la República Federal',
-      'Empieza la Reforma Liberal'
-  ] }
+  { label: 'Ordena el recorrido de una ley', steps: PODERES_RECORRIDO.pasos.map(x => x.titulo) },
+  { label: 'Ordena la jerarquía: de arriba abajo', steps: PODERES_JERARQUIA.escalones.slice(0, 5) }
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -185,12 +191,13 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el concepto
 const neuronPartes = (function () {
-  const nombres = PROCERES.map(p => p.nombre);
-  return PROCERES.map((p, i) => ({
-    desc: p.papel + '. ' + p.epoca + '.',
-    ans: p.nombre,
-    opts: [p.nombre].concat(nombres.filter(n => n !== p.nombre).slice(i % 5, (i % 5) + 3))
-  }));
+  const nombres = PODERES.map(p => p.nombre);
+  const pistas = [];
+  PODERES.forEach(p => {
+    pistas.push({ desc: p.verbo + '. ' + p.quien + '.', ans: p.nombre, opts: nombres.slice() });
+    pistas.push({ desc: p.pista, ans: p.nombre, opts: nombres.slice() });
+  });
+  return pistas;
 })();
 let neuronIdx=0,neuronDone=false;
 function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno por lo que hizo!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
@@ -200,12 +207,8 @@ function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Concepto → Significado
 const neuroPairs = (function () {
-  const nombres = PROCERES.map(p => p.nombre);
-  return PROCERES.filter(p => p.apodo).map((p, i) => ({
-    trans: '«' + p.apodo + '»',
-    func: p.nombre,
-    opts: [p.nombre].concat(nombres.filter(n => n !== p.nombre).slice(i % 4, (i % 4) + 3))
-  }));
+  const nombres = PODERES.map(p => p.nombre);
+  return PODERES.map(p => ({ trans: '«' + p.verbo + '»', func: p.nombre, opts: nombres.slice() }));
 })();
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -214,14 +217,15 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Fuente → ¿Renovable o no renovable?
 const enfermedadData=[
-  {disease:'Defendió a su pueblo de la conquista española',characteristic:'Héroe',opts:['Héroe','Prócer']},
-  {disease:'Redactó el Acta de Independencia',characteristic:'Prócer',opts:['Prócer','Héroe']},
-  {disease:'Fue el primer Jefe de Estado del país',characteristic:'Prócer',opts:['Prócer','Héroe']},
-  {disease:'Murió peleando en el Peñol de Cerquín',characteristic:'Héroe',opts:['Héroe','Prócer']},
-  {disease:'Fundó la primera universidad de Honduras',characteristic:'Prócer',opts:['Prócer','Héroe']},
-  {disease:'Unió a los pueblos lencas para resistir',characteristic:'Héroe',opts:['Héroe','Prócer']},
-  {disease:'Impulsó el Código de Instrucción Pública',characteristic:'Prócer',opts:['Prócer','Héroe']},
-  {disease:'Su nombre está en la moneda del país',characteristic:'Héroe',opts:['Héroe','Prócer']}
+  {disease:'Aprobar una ley nueva',characteristic:'Poder Legislativo',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Mandar que una ley empiece a cumplirse',characteristic:'Poder Ejecutivo',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Resolver un pleito entre dos personas',characteristic:'Poder Judicial',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Dictar el reglamento de una ley',characteristic:'Poder Ejecutivo',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Decidir si alguien incumplió la ley',characteristic:'Poder Judicial',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Discutir el presupuesto en el Salón de Sesiones',characteristic:'Poder Legislativo',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Dirigir la Secretaría de Educación',characteristic:'Poder Ejecutivo',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Establecer jurisprudencia',characteristic:'Poder Judicial',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']},
+  {disease:'Ponerle número y año a un decreto',characteristic:'Poder Legislativo',opts:['Poder Legislativo','Poder Ejecutivo','Poder Judicial']}
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -230,12 +234,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Antes de la Independencia','Después de la Independencia'],btnA:'⛓️ Antes',btnB:'🕊️ Después',colA:'antes',colB:'desp',
-   words:[{w:'Lempira',t:'antes'},{w:'Morazán',t:'desp'},{w:'La resistencia lenca',t:'antes'},{w:'La Reforma Liberal',t:'desp'},{w:'El Peñol de Cerquín',t:'antes'},{w:'El primer Jefe de Estado',t:'desp'},{w:'La conquista',t:'antes'},{w:'La República Federal',t:'desp'},{w:'Los lencas',t:'antes'},{w:'El Código de Instrucción Pública',t:'desp'}]},
-  {label:['Está en la lista del DCNB','No es un prócer'],btnA:'🏅 Prócer o héroe',btnB:'🚫 No lo es',colA:'si',colB:'no',
-   words:[{w:'Ramón Rosa',t:'si'},{w:'Cristóbal Colón',t:'no'},{w:'José Trinidad Reyes',t:'si'},{w:'Carlos Hartling',t:'no'},{w:'Marco Aurelio Soto',t:'si'},{w:'Augusto C. Coello',t:'no'},{w:'Dionisio de Herrera',t:'si'},{w:'Dantón',t:'no'}]},
-  {label:['Educación','Gobierno o guerra'],btnA:'📚 Educación',btnB:'⚔️ Gobierno o guerra',colA:'edu',colB:'gob',
-   words:[{w:'José Trinidad Reyes',t:'edu'},{w:'Lempira',t:'gob'},{w:'Ramón Rosa',t:'edu'},{w:'Morazán',t:'gob'},{w:'La primera universidad',t:'edu'},{w:'El Peñol de Cerquín',t:'gob'},{w:'El Código de 1882',t:'edu'},{w:'La República Federal',t:'gob'}]}
+  {label:['Lo hace el Congreso Nacional','Lo hace el Presidente'],btnA:'📜 El Congreso',btnB:'🏛️ El Presidente',colA:'leg',colB:'eje',
+   words:[{w:'Aprobar un decreto',t:'leg'},{w:'Mandar «Ejecútese»',t:'eje'},{w:'Discutir una ley nueva',t:'leg'},{w:'Dictar un reglamento',t:'eje'},{w:'Reunirse en el Salón de Sesiones',t:'leg'},{w:'Dirigir las Secretarías de Estado',t:'eje'},{w:'Ponerle número y año a una ley',t:'leg'},{w:'Poner la ley a funcionar',t:'eje'},{w:'Los diputados',t:'leg'},{w:'Los ministros',t:'eje'}]},
+  {label:['Es del Poder Judicial','Es de otro poder'],btnA:'⚖️ Del Judicial',btnB:'🚫 De otro poder',colA:'jud',colB:'otro',
+   words:[{w:'La Corte Suprema de Justicia',t:'jud'},{w:'Los juzgados y tribunales',t:'jud'},{w:'La jurisprudencia',t:'jud'},{w:'Decidir quién tiene razón en un pleito',t:'jud'},{w:'El Congreso Nacional',t:'otro'},{w:'Dictar un acuerdo',t:'otro'},{w:'Aprobar un decreto',t:'otro'},{w:'Las Secretarías de Estado',t:'otro'},{w:'Dictar una sentencia',t:'jud'},{w:'Mandar «Ejecútese»',t:'otro'}]},
+  {label:['Un decreto','Un acuerdo'],btnA:'📜 Decreto',btnB:'📋 Acuerdo',colA:'dec',colB:'acu',
+   words:[{w:'El Estatuto del Docente, 136-97',t:'dec'},{w:'El Reglamento del Estatuto, 0760-SE-99',t:'acu'},{w:'El Código de la Niñez, 73-96',t:'dec'},{w:'Lo dicta una Secretaría de Estado',t:'acu'},{w:'Lo aprueba el Congreso Nacional',t:'dec'},{w:'Dice CÓMO se aplica una ley',t:'acu'},{w:'Nace en el Salón de Sesiones',t:'dec'},{w:'No puede decir más que la ley',t:'acu'}]}
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -258,52 +262,52 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'Lempira dirigió la resistencia lenca contra la conquista.',type:'Lempira'},
-  {s:'José Cecilio del Valle redactó el Acta de Independencia.',type:'Acta'},
-  {s:'Francisco Morazán presidió la República Federal.',type:'Federal'},
-  {s:'Dionisio de Herrera gobernó Honduras desde 1824.',type:'1824'},
-  {s:'A Cabañas le decían el caballero sin tacha y sin miedo.',type:'tacha'},
-  {s:'José Trinidad Reyes fundó la primera universidad.',type:'universidad'},
-  {s:'Ramón Rosa impulsó el Código de Instrucción Pública.',type:'Código'},
-  {s:'Marco Aurelio Soto encabezó la Reforma Liberal.',type:'Reforma'},
-  {s:'Lempira resistió desde el Peñol de Cerquín.',type:'Cerquín'},
-  {s:'El Día del Maestro Hondureño es el 17 de septiembre.',type:'Maestro'}
+  {s:'El Congreso Nacional aprueba las leyes del país.',type:'Congreso Nacional'},
+  {s:'El Presidente de la República manda que las leyes se cumplan.',type:'Presidente de la República'},
+  {s:'La Corte Suprema de Justicia encabeza el Poder Judicial.',type:'Corte Suprema de Justicia'},
+  {s:'La Constitución es la ley fundamental de Honduras.',type:'Constitución'},
+  {s:'Una ley aprobada por el Congreso se llama decreto.',type:'decreto'},
+  {s:'Una Secretaría de Estado reglamenta una ley por acuerdo.',type:'acuerdo'},
+  {s:'En un Estado de Derecho manda la ley y no quien gobierna.',type:'Estado de Derecho'},
+  {s:'Los funcionarios rinden cuentas a la ciudadanía.',type:'rinden cuentas'},
+  {s:'Una ley entra en vigencia al publicarse en La Gaceta.',type:'La Gaceta'},
+  {s:'La jurisprudencia la establece la Corte Suprema de Justicia.',type:'jurisprudencia'}
 ];
 const classifyTaskDB=[
-  {w:'Lempira',gen:'Defendió a su pueblo de la conquista',n:'Hacia 1537, antes de la Independencia',g:'El Héroe Nacional',t:'Su nombre está en la moneda y en un departamento'},
-  {w:'José Cecilio del Valle',gen:'Redactó el Acta de Independencia',n:'1821',g:'El Sabio Valle',t:'La Independencia se escribió, no se peleó'},
-  {w:'Francisco Morazán',gen:'Presidió la República Federal',n:'1824-1842',g:'Paladín de la Unión Centroamericana',t:'Nació un 3 de octubre y murió un 15 de septiembre'},
-  {w:'Dionisio de Herrera',gen:'Primer Jefe de Estado de Honduras',n:'1824',g:'El primero en gobernar',t:'Bajo su gobierno nació el Escudo Nacional'},
-  {w:'José Trinidad Cabañas',gen:'Presidente honrado',n:'Mediados del siglo XIX',g:'El caballero sin tacha y sin miedo',t:'Salió del gobierno tan pobre como entró'},
-  {w:'José Trinidad Reyes',gen:'Fundó la primera universidad',n:'Mediados del siglo XIX',g:'El Padre Reyes',t:'Por él, el Día del Maestro es el 17 de septiembre'},
-  {w:'Ramón Rosa',gen:'Impulsó el Código de Instrucción Pública',n:'1882',g:'El ministro de la Reforma',t:'Hizo de la educación una obligación del Estado'}
+  {w:'Poder Legislativo',gen:'Hace las leyes',n:'El Congreso Nacional',g:'Un decreto',t:'Se reúne en su Salón de Sesiones'},
+  {w:'Poder Ejecutivo',gen:'Cumple y hace cumplir las leyes',n:'El Presidente y las Secretarías',g:'Un acuerdo',t:'Firma «Por Tanto: Ejecútese»'},
+  {w:'Poder Judicial',gen:'Aplica la ley a cada caso',n:'La Corte Suprema y los tribunales',g:'Una sentencia',t:'Lo que resuelve una y otra vez es jurisprudencia'},
+  {w:'Constitución',gen:'Es la ley fundamental',n:'Está por encima de todas',g:'Dice cómo se organiza el Estado',t:'Ninguna ley puede contradecirla'},
+  {w:'Decreto',gen:'Una ley del Congreso',n:'Lleva su número y su año',g:'Ejemplo: el 136-97',t:'Nace en el Salón de Sesiones'},
+  {w:'Acuerdo',gen:'La norma con que se reglamenta una ley',n:'La dicta una Secretaría',g:'Ejemplo: el 0760-SE-99',t:'No puede decir más que la ley'},
+  {w:'Estado de Derecho',gen:'Manda la ley, no la voluntad de quien gobierna',n:'La ley vale igual para todos',g:'Incluye al que gobierna',t:'Es lo que hace posible reclamar'}
 ];
 const completeTaskDB=[
-  {s:'El Héroe Nacional de Honduras es ___.',ans:'Lempira'},
-  {s:'Un héroe defiende; un ___ ayuda a fundar la nación.',ans:'prócer'},
-  {s:'El Acta de Independencia la redactó José Cecilio del ___.',ans:'Valle'},
-  {s:'Francisco Morazán nació el 3 de octubre de ___.',ans:'1792'},
-  {s:'El primer Jefe de Estado de Honduras fue Dionisio de ___.',ans:'Herrera'},
-  {s:'José Trinidad Reyes fundó la primera ___ del país.',ans:'universidad'},
-  {s:'El Día del Maestro Hondureño es el 17 de ___.',ans:'septiembre'},
-  {s:'Ramón Rosa impulsó el Código de Instrucción Pública de ___.',ans:'1882'},
-  {s:'Lempira resistió desde el Peñol de ___.',ans:'Cerquín'}
+  {s:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el ___.',ans:'Judicial'},
+  {s:'El Poder Legislativo lo ejerce el ___ Nacional.',ans:'Congreso'},
+  {s:'El Poder Ejecutivo lo encabeza el ___ de la República.',ans:'Presidente'},
+  {s:'El Poder Judicial lo encabeza la ___ Suprema de Justicia.',ans:'Corte'},
+  {s:'La ley que está por encima de todas las demás es la ___.',ans:'Constitución'},
+  {s:'Una ley aprobada por el Congreso se llama ___.',ans:'decreto'},
+  {s:'La norma con que una Secretaría reglamenta una ley se llama ___.',ans:'acuerdo'},
+  {s:'Cuando manda la ley y no quien gobierna, hay Estado de ___.',ans:'Derecho'},
+  {s:'Una ley entra en vigencia al publicarse en el Diario Oficial La ___.',ans:'Gaceta'}
 ];
 const explainQuestions=[
-  {q:'¿Qué diferencia hay entre un héroe y un prócer? Pon un ejemplo de cada uno.',ans:'Un héroe defiende a su pueblo: arriesga la vida por la gente que ya está aquí, como Lempira contra la conquista. Un prócer ayuda a fundar la nación: construye lo que todavía no existe —leyes, escuelas, un Estado—, como José Cecilio del Valle al redactar el Acta de Independencia.'},
-  {q:'¿Por qué Lempira es el Héroe Nacional y no un prócer?',ans:'Porque defendió a su pueblo cuando Honduras todavía no existía como país. No fundó un Estado ni firmó documentos: peleó por la gente que ya vivía aquí, y murió haciéndolo, hacia 1537, en el Peñol de Cerquín.'},
-  {q:'A Francisco Morazán se le llama héroe y prócer. Explica por qué las dos cosas son correctas.',ans:'Como prócer, construyó: presidió la República Federal de Centro América e impulsó la educación pública. Como héroe, defendió su idea hasta el final y murió por ella el 15 de septiembre de 1842. Ninguna de las dos palabras le queda grande.'},
-  {q:'Explica qué hicieron juntos Marco Aurelio Soto y Ramón Rosa, y por qué te toca a ti.',ans:'Encabezaron la Reforma Liberal: Soto en la presidencia y Rosa de ministro. De ahí sale el Código de Instrucción Pública de 1882, que hizo de la educación una obligación del Estado. La escuela pública y gratuita a la que vas hoy empieza a construirse ahí.'},
-  {q:'¿Por qué el Día del Maestro Hondureño se celebra por José Trinidad Reyes?',ans:'Porque fundó la primera universidad del país, de donde salió la UNAH. Casi todos los próceres hicieron país con leyes o con armas; él lo hizo con una escuela, y esa escuela sigue abierta.'},
-  {q:'Escribe qué hizo Dionisio de Herrera y por qué importa.',ans:'Fue el primer Jefe de Estado de Honduras, en 1824. Le tocó gobernar el primer día, cuando no había nada hecho: de su gobierno salen las primeras leyes del país y el Escudo Nacional, que se creó en 1825.'},
-  {q:'¿Por qué a José Trinidad Cabañas le dicen «el caballero sin tacha y sin miedo»?',ans:'«Sin tacha» significa que fue honrado: salió del gobierno tan pobre como entró, en un cargo donde era fácil enriquecerse. «Sin miedo», que no se echó atrás. Se le recuerda por algo que no se ve en un monumento.'},
-  {q:'Según el DCNB, además de los ocho de la lista, ¿quiénes más construyeron Honduras?',ans:'Las mujeres, los pueblos indígenas y los afrocaribeños. Los lencas defendieron su tierra mucho después de Lempira, los garífunas llegaron a la costa en 1797 y levantaron pueblos enteros, y las mujeres sostuvieron casas, escuelas y hospitales sin que su nombre quedara escrito.'},
-  {q:'Busca en tu municipio a alguien que merezca una estatua y no la tenga. Escribe quién es y qué hizo.',ans:'Respuesta abierta. Se valora que el alumno nombre a una persona de su comunidad, cuente qué hizo y de quién obtuvo la información. Es una investigación, no una opinión: la fuente tiene que estar.'}
+  {q:'¿Cuáles son los tres poderes del Estado y qué hace cada uno?',ans:'El Legislativo HACE las leyes y lo ejerce el Congreso Nacional. El Ejecutivo las CUMPLE y hace cumplir, y lo encabeza el Presidente de la República con las Secretarías de Estado. El Judicial las APLICA a cada caso, y lo encabeza la Corte Suprema de Justicia con los juzgados y tribunales.'},
+  {q:'¿Por qué se dice que la Constitución es la ley fundamental?',ans:'Porque está por encima de todas las demás: cuando dos normas dicen cosas distintas, manda la que está más arriba. El Código de la Niñez ordena las normas por rango y pone la Constitución en el número 1, antes que los tratados, que el propio Código y que cualquier otra ley.'},
+  {q:'Explica por qué los tres poderes están separados, si sería más rápido que mandara uno solo.',ans:'Sería más rápido, y por eso mismo no se hace. Si el que escribe la ley es el mismo que decide si la rompiste y el que te castiga, no hay a quién reclamarle. Separarlos es más lento a propósito, porque cada poder puede pararle la mano a los otros dos.'},
+  {q:'Sigue el recorrido de una ley por los tres poderes, con un ejemplo de verdad.',ans:'El Estatuto del Docente: el Congreso Nacional lo aprobó como Decreto 136-97 el 11 de septiembre de 1997; el Presidente firmó «Al Poder Ejecutivo. Por Tanto: Ejecútese» el 29 de septiembre; entró en vigencia al publicarse en La Gaceta; la Secretaría de Educación dictó su Reglamento por Acuerdo 0760-SE-99; y si hay pleito, lo resuelven los tribunales.'},
+  {q:'¿Qué diferencia hay entre un decreto y un acuerdo?',ans:'El decreto es una ley y lo aprueba el Congreso Nacional. El acuerdo lo dicta el Ejecutivo —una Secretaría de Estado— para decir CÓMO se aplica esa ley. Por eso un acuerdo nunca puede decir más de lo que dice su ley: si lo hiciera, el Ejecutivo estaría legislando, que no es lo suyo.'},
+  {q:'¿Qué es la rendición de cuentas y por qué te toca a ti?',ans:'Es que quien trabaja para el Estado explique en qué gastó el dinero de todos y qué hizo con el cargo. Me toca porque ese dinero es de todos, incluida mi familia, y porque cualquier ciudadano puede preguntarlo. Pasa igual y en pequeño en mi centro, con la merienda escolar y los fondos del comité de padres.'},
+  {q:'¿Qué es un Estado de Derecho y cómo se nota que existe?',ans:'Es cuando manda la ley y no la voluntad de quien tiene el poder, y la ley vale igual para el que gobierna que para cualquiera. Se nota en que una persona común puede reclamar ante un juez y ganarle a una autoridad, y en que nadie está por encima de la ley.'},
+  {q:'Un reglamento dice algo que su ley no dice. ¿Qué pasa y por qué?',ans:'No vale. El reglamento sirve para explicar cómo se aplica la ley, no para agregarle cosas. Si el Ejecutivo pudiera añadir por reglamento lo que quisiera, estaría haciendo leyes sin pasar por el Congreso, y la separación de poderes se caería.'},
+  {q:'Averigua quiénes sustentan hoy cada uno de los tres poderes y compáralo con lo que dice la Constitución.',ans:'Respuesta abierta y de investigación, tal como la pide el DCNB. Se valora que el alumno nombre el órgano de cada poder, busque el dato en la Constitución o en su libro de Ciencias Sociales, y diga en qué se parece o se diferencia de lo que ve en la realidad.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué símbolo, prócer o fecha cívica se refiere.','<strong>Ejemplo:</strong> La Bandera Nacional lleva cinco estrellas en la franja blanca. → <span style="color:var(--jade);font-weight:700;">cinco estrellas</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué poder del Estado o a qué concepto se refiere.','<strong>Ejemplo:</strong> El Congreso Nacional aprueba las leyes del país. → <span style="color:var(--jade);font-weight:700;">Congreso Nacional</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
 function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada persona, completa qué hizo, en qué época vivió, cómo se le llama y un dato que la distinga.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Quién','text-align:left;')}${th('Qué hizo')}${th('Cuándo')}${th('Cómo se le llama')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
@@ -312,42 +316,42 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
   {size:10,grid:[
-    ['C','G','B','M','X','R','T','R','P','Y'],
-    ['C','C','S','E','P','Z','R','V','E','H'],
-    ['H','N','A','Z','A','R','O','M','L','R'],
-    ['A','Q','I','L','Q','R','M','Z','L','J'],
-    ['R','H','Y','E','W','L','C','R','A','N'],
-    ['E','E','Y','M','V','H','J','Z','V','C'],
-    ['R','R','C','P','F','Q','B','T','D','X'],
-    ['R','O','U','I','R','E','C','O','R','P'],
-    ['E','E','V','R','Y','Q','O','J','W','O'],
-    ['H','Y','P','A','B','J','W','T','U','R']
+    ['N','A','Y','I','R','T','Q','E','D','X'],
+    ['D','I','Z','I','Y','W','L','C','E','X'],
+    ['F','C','S','D','C','O','Z','L','C','C'],
+    ['B','I','P','B','V','G','I','E','R','O'],
+    ['D','T','O','I','X','V','C','Y','E','N'],
+    ['B','S','D','S','N','W','O','E','T','G'],
+    ['E','U','E','C','O','J','R','S','O','R'],
+    ['X','J','R','C','G','M','T','K','Q','E'],
+    ['E','Q','E','V','I','V','E','U','L','S'],
+    ['B','Q','S','L','S','B','D','R','B','O']
   ],words:[
-    {w:'LEMPIRA',cells:[[3,3],[4,3],[5,3],[6,3],[7,3],[8,3],[9,3]]},
-    {w:'MORAZAN',cells:[[2,7],[2,6],[2,5],[2,4],[2,3],[2,2],[2,1]]},
-    {w:'VALLE',cells:[[5,8],[4,8],[3,8],[2,8],[1,8]]},
-    {w:'HERRERA',cells:[[9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0]]},
-    {w:'PROCER',cells:[[7,9],[7,8],[7,7],[7,6],[7,5],[7,4]]},
-    {w:'HEROE',cells:[[4,1],[5,1],[6,1],[7,1],[8,1]]}
+    {w:'CONGRESO',cells:[[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],[8,9],[9,9]]},
+    {w:'JUSTICIA',cells:[[7,1],[6,1],[5,1],[4,1],[3,1],[2,1],[1,1],[0,1]]},
+    {w:'DECRETO',cells:[[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8]]},
+    {w:'PODERES',cells:[[3,2],[4,2],[5,2],[6,2],[7,2],[8,2],[9,2]]},
+    {w:'CORTE',cells:[[4,6],[5,6],[6,6],[7,6],[8,6]]},
+    {w:'LEYES',cells:[[2,7],[3,7],[4,7],[5,7],[6,7]]}
   ]},
   {size:10,grid:[
-    ['K','D','P','S','E','Y','E','R','X','U'],
-    ['A','N','I','U','Q','R','E','C','D','M'],
-    ['N','B','R','R','A','L','S','C','Z','T'],
-    ['T','U','J','Q','R','A','S','A','G','U'],
-    ['V','O','K','L','N','R','O','S','B','H'],
-    ['O','K','R','A','Y','E','T','O','T','T'],
-    ['P','W','B','V','L','D','O','R','W','O'],
-    ['D','A','D','Y','V','E','H','A','K','L'],
-    ['C','U','Z','J','R','F','Q','L','W','D'],
-    ['B','F','P','E','W','X','X','N','D','I']
+    ['O','D','R','E','U','C','A','L','W','J'],
+    ['J','O','Z','H','Q','J','O','T','K','S'],
+    ['U','V','N','F','K','G','D','J','E','Y'],
+    ['E','I','V','S','D','A','A','T','Q','O'],
+    ['Z','T','Q','J','R','C','T','O','C','H'],
+    ['N','U','E','W','M','E','S','D','P','C'],
+    ['D','C','N','G','R','T','E','Q','R','E'],
+    ['B','E','D','N','Z','A','N','K','D','R'],
+    ['O','J','L','T','L','J','K','A','K','E'],
+    ['Q','E','P','V','W','N','R','I','S','D']
   ],words:[
-    {w:'CABANAS',cells:[[8,0],[7,1],[6,2],[5,3],[4,4],[3,5],[2,6]]},
-    {w:'REYES',cells:[[0,7],[0,6],[0,5],[0,4],[0,3]]},
-    {w:'ROSA',cells:[[6,7],[5,7],[4,7],[3,7]]},
-    {w:'SOTO',cells:[[3,6],[4,6],[5,6],[6,6]]},
-    {w:'CERQUIN',cells:[[1,7],[1,6],[1,5],[1,4],[1,3],[1,2],[1,1]]},
-    {w:'FEDERAL',cells:[[8,5],[7,5],[6,5],[5,5],[4,5],[3,5],[2,5]]}
+    {w:'EJECUTIVO',cells:[[9,1],[8,1],[7,1],[6,1],[5,1],[4,1],[3,1],[2,1],[1,1]]},
+    {w:'ACUERDO',cells:[[0,6],[0,5],[0,4],[0,3],[0,2],[0,1],[0,0]]},
+    {w:'DERECHO',cells:[[9,9],[8,9],[7,9],[6,9],[5,9],[4,9],[3,9]]},
+    {w:'GACETA',cells:[[2,5],[3,5],[4,5],[5,5],[6,5],[7,5]]},
+    {w:'ESTADO',cells:[[6,6],[5,6],[4,6],[3,6],[2,6],[1,6]]},
+    {w:'JUEZ',cells:[[1,0],[2,0],[3,0],[4,0]]}
   ]}
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
@@ -363,77 +367,77 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Lempira es el Héroe Nacional de Honduras.',a:true},
-  {q:'Un prócer es el que defiende a su pueblo con las armas.',a:false},
-  {q:'José Cecilio del Valle redactó el Acta de Independencia de Centroamérica.',a:true},
-  {q:'Francisco Morazán nació el 3 de octubre de 1792.',a:true},
-  {q:'Dionisio de Herrera fue el primer Jefe de Estado de Honduras.',a:true},
-  {q:'El Escudo Nacional se creó durante el gobierno de Marco Aurelio Soto.',a:false},
-  {q:'A José Trinidad Cabañas se le llamó «el caballero sin tacha y sin miedo».',a:true},
-  {q:'José Trinidad Reyes fundó la primera universidad del país.',a:true},
-  {q:'El Día del Maestro Hondureño se celebra por Francisco Morazán.',a:false},
-  {q:'Ramón Rosa fue ministro de Marco Aurelio Soto.',a:true},
-  {q:'El Código de Instrucción Pública es de 1882.',a:true},
-  {q:'Lempira resistió desde el Peñol de Cerquín.',a:true},
-  {q:'Morazán presidió la República Federal de Centro América.',a:true},
-  {q:'Lempira fue presidente de Honduras.',a:false},
-  {q:'A Francisco Morazán se le llama héroe y también prócer, y las dos formas son correctas.',a:true},
-  {q:'Se sabe con exactitud dónde está enterrado Lempira.',a:false},
-  {q:'La Reforma Liberal la encabezó Marco Aurelio Soto.',a:true},
-  {q:'El DCNB solo nombra a Francisco Morazán entre los próceres.',a:false},
-  {q:'Las mujeres, los indígenas y los garífunas también construyeron el país.',a:true},
-  {q:'Morazán murió un 15 de septiembre, el día de la Independencia.',a:true}
+  {q:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el Judicial.',a:true},
+  {q:'El Poder Legislativo lo ejerce la Corte Suprema de Justicia.',a:false},
+  {q:'Una ley aprobada por el Congreso Nacional se llama decreto.',a:true},
+  {q:'La Constitución de la República está por encima de todas las demás leyes.',a:true},
+  {q:'Un reglamento puede decir más cosas que la ley que reglamenta.',a:false},
+  {q:'«Al Poder Ejecutivo. Por Tanto: Ejecútese» lo firma el Presidente de la República.',a:true},
+  {q:'El Poder Judicial es el que aprueba las leyes.',a:false},
+  {q:'La jurisprudencia la establece la Corte Suprema de Justicia.',a:true},
+  {q:'En un Estado de Derecho manda la voluntad de quien tiene el poder.',a:false},
+  {q:'La rendición de cuentas es un favor que hace el funcionario, no una obligación.',a:false},
+  {q:'El Estatuto del Docente es el Decreto 136-97, aprobado por el Congreso Nacional.',a:true},
+  {q:'El Reglamento del Estatuto del Docente lo dictó la Secretaría de Educación.',a:true},
+  {q:'Los tres poderes están separados para que el trabajo salga más rápido.',a:false},
+  {q:'Una ley entra en vigencia cuando se publica en el Diario Oficial La Gaceta.',a:true},
+  {q:'Si dos normas dicen cosas distintas, manda siempre la más nueva.',a:false},
+  {q:'El Presidente de la República encabeza el Poder Ejecutivo.',a:true},
+  {q:'Los juzgados y tribunales forman parte del Poder Judicial.',a:true},
+  {q:'El Congreso Nacional se reúne en su Salón de Sesiones.',a:true},
+  {q:'En un Estado de Derecho la ley no se le aplica a quien gobierna.',a:false},
+  {q:'La Constitución dice cómo se organiza el Estado y qué derechos tiene cada persona.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Quién es el Héroe Nacional de Honduras?',o:['Francisco Morazán','Lempira','José Cecilio del Valle','Ramón Rosa'],a:1},
-  {q:'¿Qué diferencia a un héroe de un prócer?',o:['El héroe es más antiguo','El prócer siempre es militar','No hay diferencia','El héroe defiende y el prócer funda'],a:3},
-  {q:'¿Quién redactó el Acta de Independencia?',o:['José Cecilio del Valle','Dionisio de Herrera','Lempira','Marco Aurelio Soto'],a:0},
-  {q:'¿Dónde y cuándo nació Francisco Morazán?',o:['En Choluteca, en 1781','En Comayagua, en 1805','En Tegucigalpa, en 1792','En Gracias, en 1777'],a:2},
-  {q:'¿Quién fue el primer Jefe de Estado de Honduras?',o:['José Trinidad Cabañas','Ramón Rosa','José Trinidad Reyes','Dionisio de Herrera'],a:3},
-  {q:'¿Por qué el Día del Maestro es el 17 de septiembre?',o:['Por la Independencia','Por el natalicio de José Trinidad Reyes','Por la Reforma Liberal','Por el Código de 1882'],a:1},
-  {q:'¿Qué impulsó Ramón Rosa en 1882?',o:['El Escudo Nacional','La República Federal','El Himno Nacional','El Código de Instrucción Pública'],a:3},
-  {q:'¿Desde dónde resistió Lempira la conquista?',o:['Desde el Peñol de Cerquín','Desde Tegucigalpa','Desde Copán','Desde Trujillo'],a:0},
-  {q:'¿Qué unía la República Federal que presidió Morazán?',o:['A Honduras y Guatemala','A los cinco países de Centroamérica','A Honduras y México','A toda América'],a:1},
-  {q:'¿Qué significa «sin tacha» en el apodo de Cabañas?',o:['Que no perdió batallas','Que no robó','Que no tenía familia','Que no hablaba en público'],a:1},
-  {q:'¿Quién encabezó la Reforma Liberal?',o:['Marco Aurelio Soto','Lempira','José Cecilio del Valle','Francisco Morazán'],a:0},
-  {q:'¿En qué año fue el primer gobierno de Honduras como Estado?',o:['1537','1821','1824','1882'],a:2},
-  {q:'¿Qué símbolo patrio nació durante el gobierno de Dionisio de Herrera?',o:['La Bandera','El Himno','El Escudo','La orquídea'],a:2},
-  {q:'Según el DCNB, ¿quiénes más contribuyeron a la historia del país?',o:['Solo los presidentes','Solo los militares','Las mujeres, los indígenas y los afrocaribeños','Nadie más'],a:2},
-  {q:'¿Qué hizo José Trinidad Reyes?',o:['Redactó la Constitución','Fundó la primera universidad','Ganó la batalla de Cerquín','Diseñó la Bandera'],a:1}
+  {q:'¿Cuáles son los tres poderes del Estado?',o:['Civil, militar y religioso','Nacional, departamental y municipal','Ejecutivo, Legislativo y Judicial','Presidente, alcalde y juez'],a:2},
+  {q:'¿Quién ejerce el Poder Legislativo?',o:['El Congreso Nacional','El Presidente de la República','La Corte Suprema','Las Secretarías de Estado'],a:0},
+  {q:'¿Qué hace el Poder Judicial?',o:['Escribe las leyes','Cobra los impuestos','Nombra al Presidente','Aplica la ley a cada caso'],a:3},
+  {q:'¿Cómo se llama una ley aprobada por el Congreso Nacional?',o:['Acuerdo','Decreto','Sentencia','Circular'],a:1},
+  {q:'¿Por qué la Constitución es la ley fundamental?',o:['Porque es la más larga','Porque es la más antigua','Porque está por encima de las demás','Porque la firma el Presidente'],a:2},
+  {q:'¿Qué significa «Por Tanto: Ejecútese» al pie de una ley?',o:['Que el Presidente manda cumplirla','Que ya se venció','Que un juez la anuló','Que falta discutirla'],a:0},
+  {q:'¿Quién dicta el reglamento de una ley?',o:['La Corte Suprema','El Congreso Nacional','Los diputados','El Ejecutivo, por medio de una Secretaría'],a:3},
+  {q:'¿Qué es un Estado de Derecho?',o:['Un país con ejército propio','Aquel donde manda la ley y no la voluntad del que gobierna','Un país que cobra impuestos','Un país con tres poderes y un rey'],a:1},
+  {q:'¿Para qué sirve que los tres poderes estén separados?',o:['Para repartir el trabajo','Para gastar menos','Para que cada uno pueda pararle la mano a los otros','Por costumbre desde la Independencia'],a:2},
+  {q:'¿Qué es la rendición de cuentas?',o:['Explicar qué se hizo con el cargo y con el dinero de todos','Un impuesto anual','El conteo de votos','Un examen para los diputados'],a:0},
+  {q:'Un maestro cree que no le respetaron lo que dice el Estatuto. ¿A dónde acude?',o:['Al Congreso Nacional','A la Presidencia','A los juzgados y tribunales','Al Diario Oficial'],a:2},
+  {q:'¿Cuándo entra en vigencia una ley?',o:['Cuando la firma el Presidente','Al publicarse en el Diario Oficial La Gaceta','Cuando la aprueba el Congreso','Cuando la Corte la revisa'],a:1},
+  {q:'Si un reglamento dice más de lo que dice su ley, ¿qué pasa?',o:['Manda el reglamento, que es más nuevo','No puede: el reglamento no puede pasarse de la ley','Deciden los diputados','Manda el que firme primero'],a:1},
+  {q:'¿Qué es la jurisprudencia?',o:['El reglamento de una ley','Un decreto del Congreso','Lo que la Corte Suprema resuelve una y otra vez','El texto de la Constitución'],a:2},
+  {q:'¿Qué documento ordena las normas por rango y pone la Constitución de primera?',o:['El Estatuto del Docente','El Código de la Niñez y la Adolescencia','El Reglamento del Estatuto','El Diario Oficial'],a:1}
 ];
 const evalCPBank=[
-  {q:'El Héroe Nacional de Honduras es ___.',a:'Lempira'},
-  {q:'Un ___ defiende a su pueblo; un prócer ayuda a fundar la nación.',a:'héroe'},
-  {q:'El Acta de Independencia la redactó José Cecilio del ___.',a:'Valle'},
-  {q:'Francisco Morazán nació el 3 de octubre de ___.',a:'1792'},
-  {q:'El primer Jefe de Estado de Honduras fue Dionisio de ___.',a:'Herrera'},
-  {q:'A José Trinidad Cabañas le llamaron el caballero sin tacha y sin ___.',a:'miedo'},
-  {q:'José Trinidad Reyes fundó la primera ___ del país.',a:'universidad'},
-  {q:'El Día del Maestro Hondureño es el 17 de ___.',a:'septiembre'},
-  {q:'Ramón Rosa impulsó el Código de Instrucción Pública de ___.',a:'1882'},
-  {q:'Marco Aurelio Soto encabezó la ___ Liberal.',a:'Reforma'},
-  {q:'Lempira resistió desde el Peñol de ___.',a:'Cerquín'},
-  {q:'Morazán presidió la República ___ de Centro América.',a:'Federal'},
-  {q:'El Día de Lempira se celebra el 20 de ___.',a:'julio'},
-  {q:'El Escudo Nacional nació durante el gobierno de Dionisio de Herrera, en ___.',a:'1825'},
-  {q:'Morazán murió el 15 de septiembre de ___.',a:'1842'}
+  {q:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el ___.',a:'Judicial'},
+  {q:'El Poder Legislativo lo ejerce el ___ Nacional.',a:'Congreso'},
+  {q:'El Poder Ejecutivo lo encabeza el ___ de la República.',a:'Presidente'},
+  {q:'El Poder Judicial lo encabeza la ___ Suprema de Justicia.',a:'Corte'},
+  {q:'La ley que está por encima de todas las demás es la ___.',a:'Constitución'},
+  {q:'Una ley aprobada por el Congreso se llama ___.',a:'decreto'},
+  {q:'La norma con que una Secretaría reglamenta una ley se llama ___.',a:'acuerdo'},
+  {q:'Cuando manda la ley y no quien gobierna, hay Estado de ___.',a:'Derecho'},
+  {q:'Explicar en qué se gastó el dinero de todos es la rendición de ___.',a:'cuentas'},
+  {q:'Una ley entra en vigencia al publicarse en el Diario Oficial La ___.',a:'Gaceta'},
+  {q:'Lo que la Corte Suprema resuelve una y otra vez se llama ___.',a:'jurisprudencia'},
+  {q:'El Estatuto del Docente es el Decreto ___.',a:'136-97'},
+  {q:'El Congreso Nacional se reúne en su ___ de Sesiones.',a:'Salón'},
+  {q:'Los ___ y tribunales forman parte del Poder Judicial.',a:'juzgados'},
+  {q:'El reglamento no puede decir ___ que la ley que reglamenta.',a:'más'}
 ];
 const evalPRBank=[
-  {term:'Lempira',def:'Héroe Nacional: resistió la conquista desde el Peñol de Cerquín'},
-  {term:'José Cecilio del Valle',def:'Redactó el Acta de Independencia de Centroamérica'},
-  {term:'Francisco Morazán',def:'Presidió la República Federal de Centro América'},
-  {term:'Dionisio de Herrera',def:'Primer Jefe de Estado de Honduras, en 1824'},
-  {term:'José Trinidad Cabañas',def:'El caballero sin tacha y sin miedo'},
-  {term:'José Trinidad Reyes',def:'Fundó la primera universidad del país'},
-  {term:'Marco Aurelio Soto',def:'Encabezó la Reforma Liberal'},
-  {term:'Ramón Rosa',def:'Impulsó el Código de Instrucción Pública de 1882'},
-  {term:'20 de julio',def:'Día de Lempira'},
-  {term:'3 de octubre',def:'Natalicio de Francisco Morazán'},
-  {term:'17 de septiembre',def:'Día del Maestro Hondureño'},
-  {term:'Peñol de Cerquín',def:'El cerro desde donde resistió Lempira'},
-  {term:'1821',def:'Año de la Independencia de Centroamérica'},
-  {term:'1882',def:'Año del Código de Instrucción Pública'},
-  {term:'Héroe',def:'El que defiende a su pueblo'}
+  {term:'Poder Legislativo',def:'Hace las leyes. Lo ejerce el Congreso Nacional'},
+  {term:'Poder Ejecutivo',def:'Cumple y hace cumplir las leyes. Lo encabeza el Presidente'},
+  {term:'Poder Judicial',def:'Aplica la ley a cada caso. Lo encabeza la Corte Suprema de Justicia'},
+  {term:'Constitución',def:'La ley fundamental: está por encima de todas las demás'},
+  {term:'Decreto',def:'El nombre de una ley aprobada por el Congreso Nacional'},
+  {term:'Acuerdo',def:'La norma con que el Ejecutivo reglamenta una ley'},
+  {term:'Jurisprudencia',def:'Lo que la Corte Suprema resuelve una y otra vez'},
+  {term:'Estado de Derecho',def:'Donde manda la ley y no la voluntad de quien gobierna'},
+  {term:'Rendición de cuentas',def:'Explicar públicamente qué se hizo con el cargo y con el dinero de todos'},
+  {term:'La Gaceta',def:'El Diario Oficial: al publicarse ahí, una ley entra en vigencia'},
+  {term:'Salón de Sesiones',def:'Donde se reúne el Congreso Nacional a aprobar las leyes'},
+  {term:'Ejecútese',def:'La palabra con que el Presidente manda que una ley empiece a cumplirse'},
+  {term:'Reglamento',def:'Dice CÓMO se aplica una ley, y no puede decir más que ella'},
+  {term:'Secretaría de Estado',def:'Parte del Ejecutivo: dicta acuerdos y aplica las leyes de su ramo'},
+  {term:'Deberes',def:'Lo que a cada persona le toca cumplir para que la convivencia funcione'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -466,7 +470,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Héroes y Próceres de Honduras`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Los Tres Poderes del Estado`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -485,7 +489,7 @@ function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una eva
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
     const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
-const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Héroes y Próceres de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #3f6212;background:#f2f7e6;color:#3f6212;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#3f6212;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #3f6212;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#f2f7e6;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#3f6212;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#3f6212;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #3f6212;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Los Tres Poderes del Estado · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #3f6212;background:#f2f7e6;color:#3f6212;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#3f6212;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #3f6212;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#f2f7e6;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#3f6212;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#3f6212;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #3f6212;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
 .zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
@@ -500,7 +504,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Héroes y Próceres de Honduras · Educación Básica · Educación Cívica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Héroes y Próceres de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Los Tres Poderes del Estado · Educación Básica · Educación Cívica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Los Tres Poderes del Estado · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
@@ -520,80 +524,74 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En el acto del 15 de septiembre, un alumno dice que Lempira firmó el Acta de Independencia.'},
-  {txt:'Una maestra pregunta por qué la moneda de Honduras se llama Lempira si Lempira no fue presidente.'},
-  {txt:'Un alumno de noveno dice que Francisco Morazán fracasó, porque la Federación se deshizo igual.'},
-  {txt:'En la clase se comenta que José Trinidad Cabañas salió del gobierno tan pobre como entró, y alguien dice que entonces fue un mal presidente.'},
-  {txt:'Al hacer el mural de los próceres, el grupo se da cuenta de que las nueve figuras que dibujaron son hombres.'},
-  {txt:'Un niño pregunta por qué el Día del Maestro se celebra el 17 de septiembre y no el día en que empezó la escuela.'}
+  {txt:'Un alumno dice que el Presidente puede cambiar una ley cuando quiera, porque es la máxima autoridad del país.'},
+  {txt:'En el acto cívico, alguien afirma que la Corte Suprema de Justicia hace las leyes.'},
+  {txt:'Una maestra dice que su Estatuto lo escribió la Secretaría de Educación.'},
+  {txt:'Un vecino cuenta que fue a la alcaldía a reclamar un pleito con su hermano y le dijeron que ahí eso no se resuelve.'},
+  {txt:'Un compañero dice que si los tres poderes se pusieran siempre de acuerdo, el país funcionaría mejor.'},
+  {txt:'En la reunión de padres nadie pregunta en qué se gastó el dinero de la merienda escolar.'}
 ];
 const critCaseQuestions=[
-  '1. ¿De qué prócer o héroe habla este caso?',
+  '1. ¿De qué poder del Estado habla este caso?',
   '2. ¿Lo que se dice es correcto? ¿Por qué?',
-  '3. ¿Qué hizo de verdad esa persona, y en qué época?',
-  '4. ¿Qué le explicarías tú a ese compañero para que le quede claro?'
+  '3. ¿A quién le toca de verdad hacer eso?',
+  '4. ¿Qué le explicarías tú a esa persona para que le quede claro?'
 ];
 const critCaseGuides=[
-  'Puede ser Lempira —el Héroe Nacional— o alguno de los siete próceres: Valle, Morazán, Herrera, Cabañas, Reyes, Soto o Rosa.',
-  'Se valora que el alumno distinga la ÉPOCA: Lempira es de la conquista, hacia 1537; la Independencia es de 1821; la Reforma Liberal, de 1876 en adelante. Confundirlas es el error más común.',
-  'Cada uno tiene su obra: defender (Lempira), escribir el Acta (Valle), la Federación (Morazán), el primer Estado (Herrera), la honradez (Cabañas), la universidad (Reyes), la Reforma (Soto y Rosa).',
-  'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle del compañero.'
+  'Puede ser el Legislativo (el Congreso Nacional), el Ejecutivo (el Presidente y las Secretarías) o el Judicial (la Corte Suprema y los tribunales).',
+  'Se valora que el alumno distinga QUÉ HACE cada poder: uno hace la ley, otro la cumple y la hace cumplir, y el tercero la aplica a cada caso. Confundirlos es el error más común.',
+  'Cada cosa tiene su poder: aprobar una ley es del Congreso; reglamentarla y ejecutarla, del Ejecutivo; resolver un pleito, del Judicial. Rendir cuentas les toca a los tres.',
+  'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle de la persona.'
 ];
 const critErrorBank=[
-  {txt:'"Lempira firmó el Acta de Independencia y Francisco Morazán fue un cacique lenca."',
-   g1:'El Acta la redactó JOSÉ CECILIO DEL VALLE, en 1821.',
-   g2:'LEMPIRA fue el cacique lenca, tres siglos antes; MORAZÁN presidió la República Federal.'},
-  {txt:'"El Día del Maestro Hondureño se celebra por Francisco Morazán, que fundó la primera universidad."',
-   g1:'La primera universidad la fundó JOSÉ TRINIDAD REYES.',
-   g2:'El 17 de septiembre es por el natalicio del Padre Reyes; el de Morazán es el 3 de OCTUBRE.'},
-  {txt:'"Dionisio de Herrera fue el primer presidente de la República Federal de Centro América."',
-   g1:'Herrera fue el primer Jefe de Estado DE HONDURAS, en 1824, no de la Federación.',
-   g2:'Quien presidió la República Federal fue FRANCISCO MORAZÁN.'},
-  {txt:'"Marco Aurelio Soto y Ramón Rosa pelearon contra la conquista española."',
-   g1:'La conquista fue en el siglo XVI; ellos son de la REFORMA LIBERAL, desde 1876.',
-   g2:'Lo suyo fue la educación y las leyes: el Código de Instrucción Pública de 1882.'},
-  {txt:'"Un prócer es el que defiende a su pueblo con las armas y un héroe el que escribe las leyes."',
-   g1:'Es al revés: el HÉROE defiende a su pueblo.',
-   g2:'El PRÓCER ayuda a fundar la nación: construye lo que todavía no existe.'},
-  {txt:'"Los ocho próceres y héroes son todos los que construyeron Honduras."',
-   g1:'El DCNB pide explicar también la contribución de LAS MUJERES, LOS INDÍGENAS Y LOS AFROCARIBEÑOS.',
-   g2:'Las estatuas son de ocho o diez hombres, pero el país no lo levantaron ocho o diez personas.'}
+  {txt:'"El Presidente hace las leyes y el Congreso las cumple."',
+   g1:'Es al revés: el CONGRESO NACIONAL hace las leyes, y una ley suya se llama decreto.',
+   g2:'El PRESIDENTE las cumple y las hace cumplir: por eso firma «Por Tanto: Ejecútese».'},
+  {txt:'"La Corte Suprema de Justicia aprueba las leyes del país."',
+   g1:'Las leyes las aprueba el CONGRESO NACIONAL, que es el Poder Legislativo.',
+   g2:'La CORTE SUPREMA encabeza el Poder Judicial: aplica la ley a cada caso y establece jurisprudencia.'},
+  {txt:'"Un reglamento puede agregarle cosas a la ley, porque es más nuevo."',
+   g1:'No puede: el reglamento dice CÓMO se aplica la ley y no puede decir más que ella.',
+   g2:'Si pudiera, el Ejecutivo estaría haciendo leyes sin pasar por el Congreso.'},
+  {txt:'"Como la Constitución es muy antigua, las leyes nuevas mandan sobre ella."',
+   g1:'Manda la que está más ARRIBA, no la más nueva: la Constitución es la ley fundamental.',
+   g2:'El Código de la Niñez ordena las normas por rango y la pone en el número 1.'}
 ];
 const critDecisionBank=[
-  'Para el mural del Mes de la Patria, conviene averiguar qué hizo cada prócer y escribirlo al lado de su dibujo, o copiar los nombres y ya.',
-  'Si un compañero confunde a Lempira con Morazán, conviene mostrarle en qué siglo vivió cada uno, o dejarlo pasar porque total es historia vieja.',
-  'Al preparar la exposición, conviene decir de dónde salió cada dato, o inventar lo que falte para que quede más bonito.',
-  'Para saber a quién de tu municipio se le debe algo, conviene preguntarle a una persona mayor de la comunidad, o copiar la lista de un cuaderno viejo.',
-  'Si en el mural salen solo hombres, conviene buscar qué hicieron las mujeres de esa época, o dejarlo así porque en los libros no aparecen.'
+  'Un compañero dice que el Presidente hace las leyes; conviene mostrarle el encabezado de una ley de verdad, o dejarlo así porque casi nadie lo sabe.',
+  'Para la exposición sobre los poderes, conviene decir de dónde salió cada dato, o inventar lo que falte para que quede más completo.',
+  'Te toca averiguar cuántos diputados hay; conviene buscarlo en la Constitución o en tu libro, o poner el primer número que alguien recuerde.',
+  'En la reunión de padres nadie pregunta por el dinero de la merienda; conviene preguntar con respeto, o quedarse callado para no incomodar.',
+  'Un funcionario no quiere explicar en qué gastó un fondo; conviene insistir porque es dinero de todos, o aceptar que él sabrá lo que hace.'
 ];
-const critDecisionGuide='La mejor decisión busca la verdad y la dice completa: un prócer se estudia por lo que HIZO y no por su nombre; las épocas no se confunden —la conquista, la Independencia y la Reforma Liberal están separadas por siglos—; un dato se consulta y no se inventa; a un compañero equivocado se le corrige con respeto y con la fuente en la mano; y cuando en la lista faltan las mujeres, los indígenas o los garífunas, se busca lo que falta en vez de darlo por normal.';
+const critDecisionGuide='La mejor decisión busca la verdad y la comprueba: un poder se estudia por lo que HACE y no por quién manda más; los datos se buscan en la fuente y no en la memoria de alguien; y preguntar en qué se gastó el dinero de todos no es una falta de respeto, es exactamente lo que la rendición de cuentas espera de un ciudadano.';
 const critCompareBank=[
-  {a:'Defendió a su pueblo de la conquista, hacia 1537.',b:'Presidió la República Federal de Centro América.',
-   ga:'Lempira.',
-   gb:'Francisco Morazán.',
-   gr:'Los dos pelearon por defender algo y los dos murieron haciéndolo, pero los separan tres siglos: Lempira defendía su tierra de quien llegaba, y Morazán, la unión de cinco países que ya eran libres.'},
-  {a:'Escribió el Acta de Independencia.',b:'Fue el primer Jefe de Estado de Honduras.',
-   ga:'José Cecilio del Valle.',
-   gb:'Dionisio de Herrera.',
-   gr:'Los dos son de la misma época y los dos construyeron con papeles, pero uno escribió el documento que SEPARÓ a Centroamérica de España y el otro tuvo que gobernar lo que quedó después.'},
-  {a:'Fundó la primera universidad del país.',b:'Impulsó el Código de Instrucción Pública de 1882.',
-   ga:'José Trinidad Reyes.',
-   gb:'Ramón Rosa.',
-   gr:'Los dos hicieron país con educación, pero de formas distintas: Reyes ABRIÓ una escuela con sus manos, y Rosa escribió la ley que obligó al Estado a abrirlas todas.'}
+  {a:'Aprueba las leyes y las llama decretos.',b:'Manda que las leyes se cumplan y dicta acuerdos.',
+   ga:'El Poder Legislativo: el Congreso Nacional.',
+   gb:'El Poder Ejecutivo: el Presidente y las Secretarías de Estado.',
+   gr:'Los dos trabajan sobre la misma ley, pero uno la ESCRIBE y el otro la PONE A FUNCIONAR. Por eso el acuerdo del Ejecutivo nunca puede decir más de lo que dice el decreto del Congreso.'},
+  {a:'Una ley que vale igual para todo el país.',b:'Una decisión que resuelve el caso de dos personas.',
+   ga:'La hace el Poder Legislativo.',
+   gb:'La dicta el Poder Judicial.',
+   gr:'La ley es general y la sentencia es de un caso concreto. El Legislativo escribe la regla, el Judicial dice qué significa esa regla cuando hay pleito — y si lo repite muchas veces, eso es jurisprudencia.'},
+  {a:'La Constitución de la República.',b:'El reglamento de una ley.',
+   ga:'Es la ley fundamental: el escalón más alto.',
+   gb:'Es de los escalones bajos: lo dicta el Ejecutivo.',
+   gr:'Las dos son normas escritas, pero no mandan igual. Si el reglamento dice lo contrario de la Constitución, gana la Constitución: cuando dos normas chocan, manda la que está más arriba, no la más nueva.'}
 ];
 const critCauseBank=[
-  {cause:'Lempira dirigió la resistencia lenca contra la conquista y murió peleando.',guide:'Por eso es el Héroe Nacional, la moneda lleva su nombre y hay un departamento que se llama como él.'},
-  {cause:'La Independencia de Centroamérica se firmó en un documento y no se ganó en una batalla.',guide:'Por eso el prócer más recordado de 1821 es el que lo escribió: José Cecilio del Valle, «el Sabio».'},
-  {cause:'José Trinidad Reyes fundó la primera universidad del país.',guide:'Por eso el Día del Maestro Hondureño se celebra el día de su nacimiento, el 17 de septiembre.'},
-  {cause:'Marco Aurelio Soto y Ramón Rosa hicieron de la educación una obligación del Estado.',guide:'Por eso hoy un niño de cualquier pueblo tiene derecho a una escuela pública y gratuita.'},
-  {cause:'Las mujeres, los indígenas y los garífunas casi nunca aparecen escritos en la historia oficial.',guide:'Por eso el DCNB pide explicar su contribución y el costo que pagaron: si no se busca, no aparece.'}
+  {cause:'El Congreso Nacional aprobó el Estatuto del Docente como Decreto 136-97.',guide:'Por eso ese documento lleva arriba «PODER LEGISLATIVO» y su número con el año en que se aprobó.'},
+  {cause:'El Presidente firmó al pie «Al Poder Ejecutivo. Por Tanto: Ejecútese».',guide:'Por eso la ley dejó de ser un papel aprobado y pasó a cumplirse en todo el país.'},
+  {cause:'El Artículo 93 del Estatuto mandaba que se hiciera su reglamento.',guide:'Por eso la Secretaría de Educación dictó el Acuerdo 0760-SE-99, que dice cómo se aplica.'},
+  {cause:'La Constitución está en el escalón más alto de la jerarquía normativa.',guide:'Por eso ninguna ley, reglamento ni acuerdo puede decir lo contrario de lo que ella dice.'},
+  {cause:'Los tres poderes están separados y cada uno puede pararle la mano a los otros.',guide:'Por eso una persona común puede reclamarle a una autoridad y ganarle: eso es un Estado de Derecho.'}
 ];
 const critEffectBank=[
-  {effect:'La moneda de Honduras se llama lempira.',guide:'Porque el país honra así al cacique lenca que dirigió la resistencia contra la conquista.'},
-  {effect:'Francisco Morazán tiene estatuas en varios países de Centroamérica, no solo en Honduras.',guide:'Porque presidió la República Federal que unía a los cinco, y su idea era de toda la región.'},
-  {effect:'El Escudo Nacional es el símbolo patrio más antiguo del país.',guide:'Porque nació en 1825, durante el gobierno de Dionisio de Herrera, el primer Jefe de Estado.'},
-  {effect:'A José Trinidad Cabañas se le recuerda por algo que no se ve en un monumento.',guide:'Porque lo suyo fue la honradez: salió del gobierno tan pobre como entró.'},
-  {effect:'La escuela pública y gratuita existe hoy en Honduras.',guide:'Porque la Reforma Liberal, con Soto en la presidencia y Rosa de ministro, la puso por ley en 1882.'}
+  {effect:'Una ley aprobada por el Congreso todavía no obliga a nadie.',guide:'Porque entra en vigencia al publicarse en el Diario Oficial La Gaceta, no antes.'},
+  {effect:'Un maestro con un problema laboral va a los juzgados y no al Congreso.',guide:'Porque el Legislativo escribe la ley para todos, y el Judicial la aplica a cada caso.'},
+  {effect:'Un reglamento no puede exigir algo que su ley no exige.',guide:'Porque si pudiera, el Ejecutivo estaría haciendo leyes sin pasar por el Congreso.'},
+  {effect:'Los funcionarios tienen que explicar en qué gastaron el dinero público.',guide:'Porque ese dinero no es suyo: es de todos, y por eso cualquier ciudadano puede preguntarlo.'},
+  {effect:'Separar los poderes hace que las cosas vayan más lentas.',guide:'Porque es a propósito: la lentitud es el precio de que nadie pueda decidir solo y sin control.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -601,7 +599,7 @@ function genEvalCrit(){
   const _sC = document.getElementById('evalCritFormaSel');
   if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
   const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
-  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Héroes y Próceres de Honduras`;
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Los Tres Poderes del Estado`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
@@ -614,7 +612,7 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la memoria y el respeto <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hicieron los próceres y con el respeto a la memoria del país.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
@@ -651,7 +649,7 @@ function printEvalCrit(){
   let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la memoria y el respeto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hicieron los próceres y con el respeto a la memoria del país.</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
   let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
@@ -664,7 +662,7 @@ function printEvalCrit(){
   pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Héroes y Próceres de Honduras · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #3f6212;background:#f2f7e6;color:#3f6212;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#3f6212;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #3f6212;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#f2f7e6;border-left:3px solid #3f6212;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#f2f7e6;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#f2f7e6;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#3f6212;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #3f6212;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Héroes y Próceres de Honduras · Educación Básica · Educación Cívica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Héroes y Próceres de Honduras · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Los Tres Poderes del Estado · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #3f6212;background:#f2f7e6;color:#3f6212;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#3f6212;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #3f6212;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#f2f7e6;border-left:3px solid #3f6212;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#f2f7e6;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#f2f7e6;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#3f6212;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #3f6212;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Los Tres Poderes del Estado · Educación Básica · Educación Cívica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Tres Poderes del Estado · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
@@ -672,28 +670,32 @@ function printEvalCrit(){
 
 // ===================== LABORATORIO DE LOS SÍMBOLOS =====================
 const parteData = (function () {
-  /* Se arma desde js/data/proceres-honduras.js. Escribir aquí a los ocho otra
+  /* Se arma desde js/data/poderes-honduras.js. Escribir aquí a los tres otra
      vez sería abrir la puerta a que la pantalla y el papel dejen de decir lo
      mismo, que es la lección de la misión del Himno. */
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const out = {};
-  PROCERES.forEach(p => {
-    const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-    const hizo = p.hizo.map(h => '• ' + esc(h)).join('<br>');
-    const nace = p.nacio ? esc(p.nacio) + '.<br>' : '';
-    const nota = p.nota ? '<br><br><em>' + esc(p.nota) + '</em>' : '';
-    const fecha = p.fecha ? '<br><br>📅 <strong>' + esc(p.fecha.dia) + ':</strong> ' + esc(p.fecha.que) : '';
+  PODERES.forEach(p => {
+    const pasos = PODERES_RECORRIDO.pasos.filter(x => x.poder === p.clave)
+                    .map(x => '• <strong>' + esc(x.titulo) + '</strong><br>&nbsp;&nbsp;' + esc(x.texto)).join('<br><br>');
     out[p.clave] = {
       nombre: p.nombre, icon: p.emoji,
-      estructura: { title: '¿Quién fue?', info: nace + '<strong>' + esc(p.papel) + '</strong><br>🕰️ ' + esc(p.epoca) +
-                    '<br><br>Se le llama <strong>' + esc(p.apodo) + '</strong>.' + nota },
-      funcion:    { title: '¿Qué hizo?',  info: hizo },
-      ubicacion:  { title: '¿Por qué se le recuerda?', info: esc(p.porque) + fecha },
-      dato:       { title: 'Dato curioso', info: '• ' + esc(p.dato) }
+      estructura: { title: '¿Qué hace?',   info: '<strong>' + esc(p.verbo) + '</strong><br><br>' + esc(p.queHace) },
+      funcion:    { title: '¿Quién lo ejerce?', info: esc(p.quien) + '<br><br><em>' + esc(p.pista) + '</em>' },
+      ubicacion:  { title: 'En una ley de verdad', info: esc(p.ejemplo) + (pasos ? '<br><br>' + pasos : '') },
+      dato:       { title: 'De dónde sale este dato', info: '📚 ' + esc(p.fuente) }
     };
   });
+  out.constitucion = {
+    nombre: 'La Constitución', icon: '📕',
+    estructura: { title: '¿Qué hace?', info: '<strong>Es la ley FUNDAMENTAL</strong><br><br>Dice cómo se organiza el Estado y qué derechos tiene cada persona. Ninguna otra norma puede decir lo contrario de lo que ella dice.' },
+    funcion:    { title: '¿Quién lo ejerce?', info: 'No la ejerce un poder: los tres están debajo de ella.<br><br><em>Cuando dos normas chocan, manda la que está más arriba — no la más nueva.</em>' },
+    ubicacion:  { title: 'En una ley de verdad', info: esc(PODERES_JERARQUIA.intro) + '<br><br>' + PODERES_JERARQUIA.escalones.map((e,i)=>(i+1)+'. '+esc(e)).join('<br>') + '<br><br>' + esc(PODERES_JERARQUIA.fijate) },
+    dato:       { title: 'De dónde sale este dato', info: '📚 ' + esc(PODERES_JERARQUIA.fuente) }
+  };
   return out;
 })();
-let labParte='lempira',labAspecto='estructura';
+let labParte='legislativo',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
@@ -703,72 +705,108 @@ function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
 function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
-function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🇭🇳 ¡${name} completó la Misión "Héroes y Próceres de Honduras"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
+function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🇭🇳 ¡${name} completó la Misión "Los Tres Poderes del Estado"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
 async function captureDiploma(){if(typeof html2canvas==='undefined'){showToast('⚠️ Cargando... intenta de nuevo');return;}sfx('click');const card=document.querySelector('.diploma-card');const btn=document.querySelector('.diploma-actions .btn-pri');const toHide=[card.querySelector('.diploma-input'),card.querySelector('.diploma-actions'),card.querySelector('hr')];if(btn){btn.disabled=true;btn.textContent='⏳ Capturando...';}toHide.forEach(el=>{if(el)el.style.display='none';});let dataUrl='';try{const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:'#ffffff'});toHide.forEach(el=>{if(el)el.style.display='';});dataUrl=canvas.toDataURL('image/png');const name=(document.getElementById('diplName').textContent||'Estudiante').replace(/\s+/g,'-');const fileName='constancia-'+name+'.png';const cap=window.Capacitor;if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&cap.Plugins?.Filesystem&&cap.Plugins?.Share){const base64Data=dataUrl.split(',')[1];const result=await cap.Plugins.Filesystem.writeFile({path:fileName,data:base64Data,directory:'CACHE'});await cap.Plugins.Share.share({url:result.uri,dialogTitle:'Guardar / Compartir Constancia'});}else{const a=document.createElement('a');a.href=dataUrl;a.download=fileName;a.click();}}catch(e){toHide.forEach(el=>{if(el)el.style.display='';});if(e.name!=='AbortError')showToast('⚠️ No se pudo guardar la constancia');}finally{if(btn){btn.disabled=false;btn.textContent='📷 Guardar foto';}}}
 
 // ===================== INIT =====================
 
-// ===================== LOS OCHO, EN LA PANTALLA =====================
-/* El mapa y las fichas de cada prócer se PINTAN desde
-   js/data/proceres-honduras.js, no se escriben en el HTML. Es la lección de
-   la misión del Himno: el mismo texto acaba en la pantalla y en la ficha que
-   se fotocopia, y si cada uno lleva su copia, un día dejan de decir lo mismo
-   y el alumno estudia una fecha que el examen no le va a aceptar.
-   De ahí sale también `_dev/verifica-proceres.js`. */
+// ===================== LOS TRES PODERES, EN LA PANTALLA =====================
+/* El mapa, las fichas, el recorrido de la ley y la jerarquía se PINTAN desde
+   js/data/poderes-honduras.js, no se escriben en el HTML. Es la lección de la
+   misión del Himno: el mismo texto acaba en la pantalla y en la ficha que se
+   fotocopia, y si cada uno lleva su copia, un día dejan de decir lo mismo y el
+   alumno estudia algo que el examen no le va a aceptar.
+   De ahí sale también `_dev/verifica-poderes.js`. */
 function _esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function pintarProceresMapa(){
-  const cont=document.getElementById('pro-mapa');if(!cont)return;
-  const tonos=['tc-teal','tc-gold','tc-amber','tc-jade','tc-purple'];
-  cont.innerHTML=PROCERES.map((p,i)=>
-    `<div class="type-chip ${tonos[i%tonos.length]}"><div class="t-art">${p.emoji} ${_esc(p.nombre)}</div><div class="t-info">${_esc(p.papel)}</div></div>`
+function pintarPoderesMapa(){
+  const cont=document.getElementById('pod-mapa');if(!cont)return;
+  const tonos=['tc-teal','tc-gold','tc-jade'];
+  cont.innerHTML=PODERES.map((p,i)=>
+    `<div class="type-chip ${tonos[i%tonos.length]}"><div class="t-art">${p.emoji} ${_esc(p.nombre)}</div><div class="t-info">${_esc(p.verbo)}</div></div>`
   ).join('');
 }
 
-function pintarProceresLista(){
-  const cont=document.getElementById('pro-lista');if(!cont)return;
-  cont.innerHTML=PROCERES.map(p=>{
-    const hizo=p.hizo.map(h=>`<li>${_esc(h)}</li>`).join('');
-    const nace=p.nacio?`<p class="pr-nace">🗓️ ${_esc(p.nacio)}</p>`:'';
-    /* La nota solo la llevan los que se llaman de las dos formas. Es el aviso
-       que impide que el alumno dé por mala una respuesta buena. */
-    const nota=p.nota?`<div class="tip"><span class="ti">⚖️</span><div>${_esc(p.nota)}</div></div>`:'';
-    const fecha=p.fecha?`<p class="pr-fecha">📅 <strong>${_esc(p.fecha.dia)}:</strong> ${_esc(p.fecha.que)}</p>`:'';
-    return `<div class="pr-ficha">
-      <h3 class="pr-tit">${p.emoji} ${_esc(p.nombre)} <span class="pr-clase pr-${p.clase==='héroe'?'h':'p'}">${_esc(p.clase)}</span></h3>
-      <p class="pr-apodo">«${_esc(p.apodo)}» · ${_esc(p.epoca)}</p>
-      ${nace}
-      <p class="pr-papel"><strong>${_esc(p.papel)}</strong></p>
-      <p class="pr-sub">Qué hizo</p>
-      <ul class="pr-hizo">${hizo}</ul>
-      <p class="pr-porque"><strong>Por qué se le recuerda:</strong> ${_esc(p.porque)}</p>
-      ${fecha}
-      ${nota}
-      <div class="tip"><span class="ti">💡</span><div>${_esc(p.dato)}</div></div>
-    </div>`;
-  }).join('');
+function pintarPoderesLista(){
+  const cont=document.getElementById('pod-lista');if(!cont)return;
+  cont.innerHTML=PODERES.map(p=>`<div class="pr-ficha">
+      <h3 class="pr-tit">${p.emoji} ${_esc(p.nombre)} <span class="pr-clase pr-p">${_esc(p.verbo)}</span></h3>
+      <p class="pr-apodo">Lo ejerce: ${_esc(p.quien)}</p>
+      <p class="pr-papel">${_esc(p.queHace)}</p>
+      <p class="pr-sub">Cómo se ve en una ley de verdad</p>
+      <p class="pr-porque">${_esc(p.ejemplo)}</p>
+      <div class="tip"><span class="ti">🔎</span><div>${_esc(p.pista)}</div></div>
+      <div class="tip"><span class="ti">📚</span><div>${_esc(p.fuente)}</div></div>
+    </div>`).join('');
 }
 
-/* La diferencia entre héroe y prócer y el bloque de los que faltan salen
-   también de los datos: las dos misiones de la Ruta de la Patria tienen que
-   definirlo igual, y el DCNB pide lo segundo con sus propias palabras. */
-function pintarProceresDiferencia(){
-  const h=document.getElementById('pro-dif-heroe'), p=document.getElementById('pro-dif-procer');
-  if(h)h.innerHTML=_esc(PROCERES_DIFERENCIA.heroe);
-  if(p)p.innerHTML=_esc(PROCERES_DIFERENCIA.procer);
-  const f=document.getElementById('pro-faltan');
-  if(f)f.innerHTML=`<h2>🕯️ ${_esc(PROCERES_QUIENES_FALTAN.titulo)}</h2>
-    <p>${_esc(PROCERES_QUIENES_FALTAN.texto)}</p>
-    <div class="ex-box"><span class="ex-tag ex-d">✍️ Para investigar en tu municipio</span><br><span>${_esc(PROCERES_QUIENES_FALTAN.pregunta)}</span></div>
-    <div class="tip"><span class="ti">📚</span><div>${_esc(PROCERES_QUIENES_FALTAN.fuente)}</div></div>`;
+/* La jerarquía se copia ENTERA, en su orden: recortarla sería enseñar una
+   jerarquía que no es la que dice la ley. */
+function pintarPoderesJerarquia(){
+  const c=document.getElementById('pod-jerarquia');if(!c)return;
+  c.innerHTML=`<h2>📕 ${_esc(PODERES_JERARQUIA.titulo)}</h2>
+    <p>${_esc(PODERES_JERARQUIA.intro)}</p>
+    <ol class="pod-escalones">${PODERES_JERARQUIA.escalones.map(e=>`<li>${_esc(e)}</li>`).join('')}</ol>
+    <p class="pr-porque"><strong>${_esc(PODERES_JERARQUIA.remate)}</strong></p>
+    <div class="tip"><span class="ti">🔎</span><div>${_esc(PODERES_JERARQUIA.fijate)}</div></div>
+    <div class="tip"><span class="ti">📚</span><div>${_esc(PODERES_JERARQUIA.fuente)}</div></div>`;
+}
+
+/* El recorrido de UNA ley por los tres poderes: es el corazón de la misión,
+   porque cada paso se puede señalar en un documento que existe. */
+function pintarPoderesRecorrido(){
+  const c=document.getElementById('pod-recorrido');if(!c)return;
+  c.innerHTML=`<h2>🧭 El recorrido de una ley, paso por paso</h2>
+    <p>Se sigue una ley de verdad: <strong>${_esc(PODERES_RECORRIDO.ley)}</strong>. ${_esc(PODERES_RECORRIDO.porque)}</p>
+    <div class="pod-pasos">${PODERES_RECORRIDO.pasos.map(x=>{
+      const poder=poderPorClave(x.poder);
+      return `<div class="pod-paso"><div class="pod-paso-n">${x.n}</div><div>
+        <h4>${poder?poder.emoji:''} ${_esc(x.titulo)}</h4>
+        <p>${_esc(x.texto)}</p>
+        <span class="pod-paso-quien">${poder?_esc(poder.nombre):''}</span></div></div>`;
+    }).join('')}</div>`;
+}
+
+/* Por qué están separados, la rendición de cuentas y lo que NO se escribe.
+   Lo último es una actividad y no un dato, a propósito: los números que
+   faltan los acredita la Constitución, que no está en el repositorio. */
+function pintarPoderesSeparacion(){
+  const c=document.getElementById('pod-separacion');
+  if(c)c.innerHTML=`<h2>⚖️ ${_esc(PODERES_SEPARACION.titulo)}</h2>
+    <p>${_esc(PODERES_SEPARACION.texto)}</p>
+    ${PODERES_SEPARACION.casos.map(k=>{
+      const poder=poderPorClave(k.quien);
+      return `<div class="ex-box"><span class="ex-tag ex-d">${poder?poder.emoji:''} ${_esc(k.situacion)}</span><br><span>${_esc(k.quePasa)}</span></div>`;
+    }).join('')}`;
+  const r=document.getElementById('pod-rendicion');
+  if(r)r.innerHTML=`<h2>🧾 ${_esc(PODERES_RENDICION.titulo)}</h2>
+    <p>${_esc(PODERES_RENDICION.texto)}</p>
+    <div class="ex-box"><span class="ex-tag ex-d">🏫 En tu escuela</span><br><span>${_esc(PODERES_RENDICION.enTuEscuela)}</span></div>
+    <div class="tip"><span class="ti">📚</span><div>${_esc(PODERES_RENDICION.fuente)}</div></div>`;
+  const i=document.getElementById('pod-investiga');
+  if(i)i.innerHTML=`<h2>🔍 ${_esc(PODERES_INVESTIGA.titulo)}</h2>
+    <p>${_esc(PODERES_INVESTIGA.intro)}</p>
+    ${PODERES_INVESTIGA.preguntas.map(q=>
+      `<div class="ex-box"><span class="ex-tag ex-d">✍️ ${_esc(q.q)}</span><br><span>${_esc(q.luego)}</span></div>`).join('')}
+    <div class="tip"><span class="ti">📚</span><div>${_esc(PODERES_INVESTIGA.nota)}</div></div>`;
+}
+
+/* Los conceptos que el DCNB pide aclarar, en su propio recuadro. */
+function pintarPoderesConceptos(){
+  const c=document.getElementById('pod-conceptos');if(!c)return;
+  c.innerHTML=PODERES_CONCEPTOS.map(k=>
+    `<div class="type-chip tc-purple"><div class="t-art">${k.emoji} ${_esc(k.palabra)}</div><div class="t-info">${_esc(k.definicion)}</div></div>`).join('');
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
-  pintarProceresMapa();
-  pintarProceresLista();
-  pintarProceresDiferencia();
+  pintarPoderesMapa();
+  pintarPoderesLista();
+  pintarPoderesConceptos();
+  pintarPoderesJerarquia();
+  pintarPoderesRecorrido();
+  pintarPoderesSeparacion();
   upFC();
   buildQz();
   showQz();
