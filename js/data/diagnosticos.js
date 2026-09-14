@@ -97,6 +97,10 @@ const DIAGNOSTICOS = {
     { etapa: 4, q: '¿Qué poder del Estado HACE las leyes?', o: ['El Judicial', 'El Ejecutivo', 'El Legislativo, por medio del Congreso Nacional', 'Los tres a la vez'], a: 2 },
     { etapa: 4, q: '¿Por qué se dice que la Constitución es la ley fundamental?', o: ['Porque es la más larga', 'Porque está por encima de todas las demás', 'Porque es la más antigua', 'Porque la firma el Presidente'], a: 1 },
     { etapa: 4, q: 'Dos personas tienen un pleito por lo que dice una ley. ¿A quién le toca resolverlo?', o: ['Al Congreso Nacional', 'Al Presidente de la República', 'A los juzgados y tribunales', 'A la Secretaría de Estado'], a: 2 },
+    { etapa: 5, q: 'En «artículo 128 numeral 7 de la Constitución», ¿qué es el numeral 7?', o: ['El año en que se escribió', 'Uno de los puntos numerados dentro del artículo 128', 'La página donde está', 'El número de reformas'], a: 1 },
+    { etapa: 5, q: '¿Por qué no basta con citar «el artículo 128» sin decir de qué norma es?', o: ['Por cortesía', 'Porque hay un artículo con ese número en casi todas las leyes', 'Porque cambia cada año', 'Porque lo exige el formato'], a: 1 },
+    { etapa: 5, q: 'El Estatuto del Docente existe por «un mandato» de la Constitución. ¿Qué significa?', o: ['Que la Constitución ordenó que esa ley se escribiera', 'Que la Constitución la prohíbe', 'Que la escribió un juez', 'Que se puede cambiar cuando se quiera'], a: 0 },
+    { etapa: 5, q: 'Que un artículo esté escrito en la Constitución, ¿garantiza que se cumpla?', o: ['Sí, siempre', 'Solo en las ciudades', 'No: por eso hay que analizar casos en que no se cumple', 'Solo si lo repite otra ley'], a: 2 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [

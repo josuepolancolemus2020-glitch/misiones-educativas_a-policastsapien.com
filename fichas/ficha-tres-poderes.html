@@ -154,10 +154,17 @@
             padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
   .pf-tit { font-size: 11.5pt; font-weight: 800; color: var(--soc-osc); display: flex; align-items: baseline;
             gap: 8px; flex-wrap: wrap; }
+  /* ⚠️ El epígrafe lleva SUS PROPIOS colores. En la ficha de próceres de la
+     que se copió esto, `.pf-et` iba siempre acompañada de `.pf-h` o `.pf-p`
+     —las píldoras de HÉROE y de PRÓCER—, que eran las que ponían el fondo.
+     Aquí no hay esa distinción, así que el epígrafe va solo. */
   .pf-et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
-           border-radius: 999px; padding: 1px 7px; }
-  .pf-h { background: #dceefa; color: var(--may); }
-  .pf-p { background: #ffedd5; color: var(--oro); }
+           border-radius: 999px; padding: 1px 7px; background: var(--soc-claro); color: var(--soc-osc); }
+  /* ⚠️ Y `.pf-p` es un PÁRRAFO, no la píldora de «PRÓCER». Heredado con el
+     nombre puesto, pintaba en naranja y sobre naranja el cuerpo del texto de
+     cada recuadro: se veía como un aviso resaltado, y fotocopiado se queda en
+     una banda gris con la letra sin contraste. */
+  .pf-p { font-size: 10.5pt; margin: 3px 0; }
   .pf-sub { font-size: 9pt; color: var(--gris); font-style: italic; margin-bottom: 3px; }
   .pficha ul { margin: 3px 0 4px 22px; font-size: 10pt; }
   .pficha li { margin-bottom: 1px; }

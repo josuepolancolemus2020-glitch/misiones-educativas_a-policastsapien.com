@@ -2291,6 +2291,129 @@ _dev/reparte-hojas-ficha.js ficha-tres-poderes`): son siete hojas, y al
 escribirla a mano dos se pasaban del papel —la 1 medía 265,6 mm donde el papel
 deja 257,4— hasta que la repartió la herramienta.
 
+## Normativa: la Constitución se enseña con las leyes que SÍ están aquí
+
+La quinta misión de la Ruta de la Patria es **la Constitución como ley
+fundamental** (`misiones/2y3ciclo-constitucion/`, id 71, etapa 5). La
+expectativa es del DCNB, **Ciencias Sociales de Quinto Grado, II Ciclo**
+—confirmada en el PDF, `_dev/dcnb-pdf/dcneb-basica-ii-ciclo.pdf`, página 286 del
+archivo, «Secretaría de Educación 292» en el pie impreso—: «Argumentan sobre la
+democracia participativa, por medio del estudio y análisis de artículos
+específicos de la Constitución de la República de Honduras, acuerdos, convenios
+internacionales y otras leyes», con sus procesos «Seleccionan artículos de la
+Constitución…» y «Ejemplifican un caso de violación de los artículos de la
+Constitución y elaboran un análisis crítico».
+
+Mismo patrón que el Himno, los próceres y los poderes: **los datos viven en
+`js/data/constitucion-honduras.js`** y solo ahí; la misión los pinta, la ficha
+es HTML plano, y `node _dev/verifica-constitucion.js` compara las dos.
+
+⚠️ **Y NO repite la misión de los tres poderes** (id 70). Aquella enseña DÓNDE
+está la Constitución —arriba de todas las normas— y quién hace qué con una ley;
+esta enseña a USARLA: leer una cita, verla trabajando dentro de leyes de verdad
+y reconocer cuándo no se cumple. Es el reparto que hace el propio DCNB, que pone
+lo primero en octavo y lo segundo en quinto.
+
+### El texto de la Constitución sigue sin estar aquí, y eso vuelve a decidirlo todo
+
+Es la misma pared que la de los tres poderes y no se ha movido: **la
+Constitución no está en `_dev/leyes/`** y el entorno no la alcanza. Así que su
+texto no se escribe — ni el de un artículo, ni cuántos tiene, ni en qué año se
+aprobó.
+
+Lo que sí se puede enseñar sale de **las cuatro leyes que SÍ están** y que la
+citan por número. De cada artículo se escribe lo único que esas leyes acreditan:
+**cuál es y para qué lo invocan**.
+
+| artículo | quién lo cita, y para qué |
+|---|---|
+| 162 | el Estatuto del Docente, **palabra por palabra** en sus considerandos |
+| 165 | el Estatuto: existe por «un mandato impostergable» de ese artículo |
+| 34 y 168 | el Estatuto, Artículo 8: el docente extranjero queda sujeto a ellos |
+| 245 num. 11, 157 y 163 | el Reglamento del Estatuto: de ahí saca el Ejecutivo el permiso para reglamentar |
+| 128 numeral 7 | el Código de la Niñez, Artículo 119: el trabajo de un menor |
+| las libertades | el Código de la Niñez, Artículo 27: el niño YA las tiene por la Constitución |
+
+⚠️ **Solo UNO puede traer texto literal, y la sonda lo cuenta.** El 162, porque
+el Estatuto lo cita entero. Si mañana aparece un segundo `citaLiteral`, es que
+alguien escribió de memoria el texto de un artículo que aquí no hay — y eso **no
+da ningún error**: se pinta igual de bien y el alumno se lo aprende para el
+examen de septiembre. Es la misma familia que el Escudo marcado en rojo y que el
+`\U0001F1ED` de Python: lo que compila y sale mal.
+
+⚠️ **Y la regla dejó de ser una frase en un comentario.** La sonda saca del
+`donde` de cada artículo su número de decreto o de acuerdo y **busca el PDF en
+`_dev/leyes/`**. El día que alguien añada un artículo «sacado de la
+Constitución», no habrá PDF que lo respalde y la sonda se pondrá roja. Es
+`INVESTIGACION-ESTATUTO-DOCENTE.md` hecho comprobación: **buscar no es leer**.
+
+### Lo que no se puede escribir es la actividad, y la hoja del docente lo dice
+
+El hueco no se tapa con silencio: el propio currículo pide **seleccionar
+artículos** y analizarlos, o sea ir al texto. Por eso vive en `CONST_INVESTIGA`,
+cuatro preguntas que **no se contestan copiando de la pantalla**. Y la hoja del
+docente avisa —en su recuadro ámbar— de que esa sección no trae respuestas **a
+propósito**; sin ese aviso, un maestro lo da por un descuido y se la salta.
+
+⚠️ **Los cinco casos de violación tampoco tienen UNA respuesta buena**, y eso
+también va avisado. Varios se defienden con más de un artículo, y esa discusión
+es la actividad. Lo que sí se corrige es que el alumno **nombre el artículo
+entero** —número y ley—, no solo el número: «el 128» no lleva a ninguna parte,
+que es justo lo que enseña la primera sección de la misión.
+
+Y los casos van **sin nombres y sin acusar a nadie**. Hablan de un niño que
+vende en el mercado y de un nombramiento sin concurso: en un pueblo eso se
+parece a alguien, y sin el aviso la clase acaba poniéndole nombre a una persona
+de verdad. La sonda comprueba que ese aviso siga en el papel.
+
+⚠️ **Y una lección de la propia sonda, que costó una hoja de más.** La primera
+versión pedía una redacción exacta para el aviso del docente; la ficha ya
+avisaba con otras palabras en su recuadro ámbar, y el «arreglo» fue escribir el
+aviso OTRA VEZ dentro de la nota del docente. Resultado: texto duplicado y la
+hoja 7 pasándose del papel, por una sonda mal escrita. **Una sonda busca lo que
+el aviso DICE, no una frase.** Lo mismo con los epígrafes de la ficha: van
+acortados a propósito —son encabezados—, así que no se exigen idénticos al dato,
+se mide la tirada de palabras que comparten, como hace la sonda del Himno con
+una cita.
+
+### Y al copiar una ficha se copian sus averías: la de la 70
+
+Esta ficha se calcó de la de los tres poderes, que se había calcado de la de
+próceres, y al mirarla con los ojos —una captura de la hoja 2, que es lo único
+que lo enseña— salió lo que llevaba **dos fichas** arrastrándose: `.pf-p` era en
+la de próceres la **píldora naranja de «PRÓCER»**, y aquí y en la 70 se usa como
+clase de los **párrafos**. Resultado: el cuerpo del texto de cada recuadro
+pintado en naranja sobre naranja, que parece un aviso resaltado y, fotocopiado,
+es una banda gris con la letra sin contraste.
+
+No lo cazaba nada, y no podía: el archivo es HTML válido, la sonda de hojas
+cuenta páginas y le salen siete, y `verifica-constitucion` compara TEXTOS, no
+colores. Es la misma familia que el Escudo en rojo y el `\U0001F1ED` de Python
+—lo que se pinta perfectamente y está mal—, y el remedio fue el de siempre:
+**mirarlo**. Arreglado en las dos; en la de próceres no se toca, que ahí la
+píldora es lo que es.
+
+De paso salió el resto de lo que viaja al calcar: treinta líneas de CSS que esta
+ficha no usa, con el comentario de la ficha de la que se copiaron —«mayas /
+aztecas / incas»— y un `.pf-tit` explicado como «la etiqueta de HÉROE o PRÓCER».
+**Un comentario que explica algo que aquí no pasa es peor que ninguno**, porque
+el siguiente lo lee y le cree.
+
+**Antes de publicar un cambio de esta misión o de los datos:**
+
+```
+node _dev/verifica-constitucion.js          → la pantalla y el papel, artículo por artículo
+node _dev/verifica-mision-nueva.js misiones/2y3ciclo-constitucion/constitucion.html
+node _dev/verifica-nombres-propios.js
+node _dev/verifica-ficha-paginas.js ficha-constitucion
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/2y3ciclo-constitucion/constitucion.html
+```
+
+Si se tocan los datos, la ficha **se vuelve a repartir** (`node
+_dev/reparte-hojas-ficha.js ficha-constitucion`): son siete hojas, y escrita a
+mano la 6 medía 329,6 mm donde el papel deja 257,4.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

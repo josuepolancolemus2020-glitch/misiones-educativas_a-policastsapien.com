@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Misión Héroes y Próceres de Honduras | policastsapien.com</title>
-<meta name="description" content="Misión Héroes y Próceres de Honduras: Lempira, Francisco Morazán, José Cecilio del Valle, Dionisio de Herrera, José Trinidad Cabañas, José Trinidad Reyes, Marco Aurelio Soto y Ramón Rosa. Quién fue cada uno, qué hizo y por qué se le recuerda, con los personajes que nombra el DCNB. Misión educativa interactiva. PolicastSapien.">
-<meta property="og:title" content="Misión Héroes y Próceres de Honduras">
-<meta property="og:description" content="Los ocho que hicieron Honduras, uno por uno: qué hizo cada uno y por qué se le recuerda. Juega, aprende y desbloquea todos los logros. PolicastSapien.">
+<title>Misión La Constitución: mi Ley Fundamental | policastsapien.com</title>
+<meta name="description" content="Misión La Constitución: mi Ley Fundamental. Cómo se lee una cita —artículo, numeral, norma—, la Constitución vista trabajando dentro de cuatro leyes hondureñas de verdad, y cómo analizar un caso en que un artículo no se cumple. Misión educativa interactiva. PolicastSapien.">
+<meta property="og:title" content="Misión La Constitución: mi Ley Fundamental">
+<meta property="og:description" content="Aprende a leer un artículo de la Constitución y a verla trabajando dentro de leyes de verdad. Juega, aprende y desbloquea todos los logros. PolicastSapien.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Misiones PolicastSapien">
-<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-proceres-heroes/proceres-heroes.html">
+<meta property="og:url" content="https://metas.policastsapien.com/misiones/2y3ciclo-constitucion/constitucion.html">
 <link rel="stylesheet" href="../../css/vendor/fuentes/fuentes.css">
-<link rel="stylesheet" href="css/proceres-heroes.css">
+<link rel="stylesheet" href="css/constitucion.css">
 <!-- La barra de secciones, arriba y siempre a la vista. Va DESPUÉS del CSS
      de la misión a propósito: de ahí saca su color, y así sobrescribe su
      position:static sin un solo !important. -->
@@ -44,11 +44,11 @@
 
 <header class="hero" role="banner">
   <div class="hero-inner">
-    <div class="hero-mascot" aria-hidden="true">🏅</div>
+    <div class="hero-mascot" aria-hidden="true">📕</div>
     <div class="hero-text">
-      <h1>Misión <span>Héroes y Próceres de Honduras</span></h1>
-      <p class="sub">Los ocho que hicieron el país, uno por uno: quién fue, qué hizo y por qué lo recordamos. 🏅🇭🇳📜</p>
-      <div class="badge">🇭🇳 Ruta de la Patria · Etapa 3 · Educación Cívica</div>
+      <h1>Misión <span>La Constitución: mi Ley Fundamental</span></h1>
+      <p class="sub">Aprende a leer un artículo, a encontrarlo dentro de otras leyes y a notar cuándo no se cumple. 📕🇭🇳📑</p>
+      <div class="badge">🇭🇳 Ruta de la Patria · Etapa 5 · Educación Cívica</div>
     </div>
   </div>
 </header>
@@ -57,84 +57,62 @@
 
 <!-- ===== APRENDE ===== -->
 <div class="sec active" id="s-aprende" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>🏅 ¿Héroe o prócer? No es lo mismo</h2>
-    <p>Honduras no la hizo una persona sola, y los que la hicieron no hicieron todos lo mismo. Hay dos palabras
-    para eso y conviene no confundirlas, porque en el examen se pregunta:</p>
-    <div class="vs-grid">
-      <div class="vs-box vs-a">
-        <h4>🏹 Héroe</h4>
-        <!-- La definición sale de js/data/proceres-honduras.js: la misión de
-             Aspectos Cívicos la enseña igual, y las dos tienen que decir lo
-             mismo o el alumno lee dos definiciones distintas. -->
-        <p id="pro-dif-heroe"></p>
+      <!-- La destreza de la misión: leer una cita. Se pinta desde el archivo
+           de datos, como todo lo demás. -->
+      <div class="card ac-teal" id="con-comolee"></div>
+
+      <div class="card ac-gold">
+        <h2>📕 No puedes leerla aquí, pero puedes verla trabajar</h2>
+        <p>El texto de la Constitución no está en esta aplicación, y no se va a inventar. Pero hay algo casi mejor
+           para aprender a usarla: <strong>cuatro leyes hondureñas de verdad</strong> que la citan por número, y que
+           sí están aquí. En ellas se ve qué artículo invoca cada una y <strong>para qué</strong>.</p>
+        <!-- Lo pinta el JS desde el archivo de datos: aquí lo que se copiaría
+             es un NÚMERO DE ARTÍCULO, y ese no puede decir una cosa en la
+             pantalla y otra en la ficha que se fotocopia. -->
+        <div class="type-grid" id="con-mapa"></div>
+        <div class="tip">
+          <span class="ti">🔎</span>
+          <div><strong>Fíjate en lo que esto te enseña:</strong> una ley no dice «yo mando porque sí». Dice
+               <em>de dónde</em> saca lo que manda, y lo dice con el número del artículo. Saber leer ese número
+               es saber comprobar si es verdad.</div>
+        </div>
       </div>
-      <div class="vs-box vs-b">
-        <h4>📜 Prócer</h4>
-        <p id="pro-dif-procer"></p>
+
+      <!-- Cómo se sostienen entre sí la Constitución, una ley y un convenio.
+           Es la expectativa de sexto grado, con sus propias palabras. -->
+      <div class="card ac-amber" id="con-apoyan"></div>
+
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
+        <span class="nsb-icon">📑</span>
+        <span class="nsb-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- ===== LOS ARTÍCULOS, UNO POR UNO ===== -->
+    <div class="sec" id="s-estructura" role="tabpanel">
+      <div class="card ac-teal">
+        <h2>📑 Los artículos, uno por uno</h2>
+        <p style="font-size:0.9rem;">De cada uno: qué artículo es, para qué lo cita la ley y por qué te importa.
+           Uno solo —el 162— aparece <strong>citado palabra por palabra</strong>, y por eso es el único cuyo texto
+           puedes leer aquí. De los demás se dice en voz alta que su texto hay que buscarlo: callarlo te dejaría
+           creer que el resumen ES el artículo.</p>
+        <!-- Del archivo de datos. Un solo sitio, un solo número. -->
+        <div id="con-lista"></div>
       </div>
-    </div>
-    <div class="tip">
-      <span class="ti">⚖️</span>
-      <div><strong>Y a veces son las dos cosas.</strong> A <b>Francisco Morazán</b> se le llama héroe y prócer, y
-      las dos están bien: construyó como prócer y peleó hasta morir como héroe. Si en un examen te piden elegir
-      una sola, explica por qué las dos caben.</div>
-    </div>
-  </div>
 
-  <div class="card ac-gold">
-    <h2>👥 Los ocho que tienes que conocer</h2>
-    <p>No es una lista de gusto de nadie: son <strong>los que el currículo hondureño nombra por su nombre</strong>.
-    Cada uno hizo algo distinto, y eso es lo que hay que saber de ellos:</p>
-    <!-- Lo pinta el JS desde el archivo de datos: escribir aquí los ocho otra
-         vez sería tenerlos en dos sitios que pueden separarse. -->
-    <div class="type-grid" id="pro-mapa"></div>
-    <div class="tip">
-      <span class="ti">🕰️</span>
-      <div><strong>Lo que más se confunde son las épocas.</strong> Lempira es de la <b>conquista</b>, hace casi
-      cinco siglos; la Independencia es de <b>1821</b>; la Reforma Liberal, de <b>1876</b> en adelante. Entre
-      Lempira y Morazán hay <b>tres siglos</b>: no se conocieron ni de lejos.</div>
-    </div>
-  </div>
+      <!-- ⚠️ «Ejemplifican un caso de violación de los artículos de la
+           Constitución y elaboran un análisis crítico» es un proceso del
+           DCNB, textual. Los casos van SIN nombres a propósito. -->
+      <div class="card ac-jade" id="con-casos"></div>
 
-  <div class="card ac-amber">
-    <h2>✍️ Lo que te van a preguntar</h2>
-    <p>De cada uno se pregunta casi siempre lo mismo, y son <strong>tres cosas</strong>:</p>
-    <div class="type-grid">
-      <div class="type-chip tc-teal"><div class="t-art">1️⃣ Quién fue</div><div class="t-info">Su nombre completo y qué cargo o papel tuvo</div></div>
-      <div class="type-chip tc-gold"><div class="t-art">2️⃣ Qué hizo</div><div class="t-info">La obra concreta: un documento, una escuela, una batalla, una ley</div></div>
-      <div class="type-chip tc-amber"><div class="t-art">3️⃣ Por qué se le recuerda</div><div class="t-info">Qué cambió para el país. Esto es lo que más vale y lo que menos se estudia</div></div>
-    </div>
-    <div class="tip">
-      <span class="ti">🎯</span>
-      <div><strong>El truco:</strong> apréndete primero <b>qué hizo</b> cada uno. Con eso, el nombre y la fecha se
-      pegan solos. Al revés no funciona: una lista de nombres sin obras se olvida en una semana.</div>
-    </div>
-  </div>
+      <div class="card ac-gold" id="con-democracia"></div>
 
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-estructura')">
-    <span class="nsb-icon">👥</span>
-    <span class="nsb-arrow">→</span>
-  </button>
-</div>
+      <!-- ⚠️ ACTIVIDAD, no dato: el texto de la Constitución no está en el
+           repositorio, y el currículo pide SELECCIONAR artículos, o sea ir
+           al texto. Lo que no se puede escribir se le pide buscarlo. -->
+      <div class="card ac-purple" id="con-investiga"></div>
 
-<!-- ===== LOS OCHO, UNO POR UNO ===== -->
-<div class="sec" id="s-estructura" role="tabpanel">
-  <div class="card ac-teal">
-    <h2>👥 Uno por uno</h2>
-    <p style="font-size:0.9rem;">Aquí está lo que necesitas para contestar las tres preguntas del examen: quién
-    fue, qué hizo y por qué se le recuerda. Todo sale del mismo sitio del que sale la ficha que se imprime.</p>
-    <!-- Igual que el mapa: del archivo de datos. Un solo sitio, una sola
-         versión de cada fecha. -->
-    <div id="pro-lista"></div>
-  </div>
-
-  <!-- ⚠️ Este bloque NO es un añadido bonito: es una expectativa del DCNB,
-       con sus propias palabras. Se pinta desde los datos, que es donde está
-       explicado por qué va sin nombres. -->
-  <div class="card ac-jade" id="pro-faltan"></div>
-
-  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
+      <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
     <span class="nsb-icon">🔬</span>
     <span class="nsb-arrow">→</span>
   </button>
@@ -145,7 +123,7 @@
   <div class="card ac-jade">
     <h2>🔬 Laboratorio de los Próceres</h2>
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige a una persona y qué quieres saber de ella. Es la forma más rápida de repasar antes del examen.</p>
-    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Lempira</strong> → <strong>¿Quién fue?</strong></div>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Poder Legislativo</strong> → <strong>¿Qué hace?</strong></div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
         <!-- Rellenado por JS -->
@@ -154,14 +132,12 @@
     <div class="lab-controls">
       <div class="lab-group">
         <span class="lab-group-label">👤 Quién:</span>
-        <button class="lab-btn lab-cont-btn active-pri" data-parte="lempira" onclick="labShowParte('lempira')">🏹 Lempira</button>
-        <button class="lab-btn lab-cont-btn" data-parte="valle" onclick="labShowParte('valle')">📜 Valle</button>
-        <button class="lab-btn lab-cont-btn" data-parte="morazan" onclick="labShowParte('morazan')">⚔️ Morazán</button>
-        <button class="lab-btn lab-cont-btn" data-parte="herrera" onclick="labShowParte('herrera')">🏛️ Herrera</button>
-        <button class="lab-btn lab-cont-btn" data-parte="cabanas" onclick="labShowParte('cabanas')">🎖️ Cabañas</button>
-        <button class="lab-btn lab-cont-btn" data-parte="reyes" onclick="labShowParte('reyes')">📚 Reyes</button>
-        <button class="lab-btn lab-cont-btn" data-parte="soto" onclick="labShowParte('soto')">🏗️ Soto</button>
-        <button class="lab-btn lab-cont-btn" data-parte="rosa" onclick="labShowParte('rosa')">✒️ Rosa</button>
+        <button class="lab-btn lab-cont-btn active-pri" data-parte="a162" onclick="labShowParte('a162')">🍎 Art. 162</button>
+        <button class="lab-btn lab-cont-btn" data-parte="a165" onclick="labShowParte('a165')">📜 Art. 165</button>
+        <button class="lab-btn lab-cont-btn" data-parte="a34" onclick="labShowParte('a34')">🌎 Art. 34 y 168</button>
+        <button class="lab-btn lab-cont-btn" data-parte="a245" onclick="labShowParte('a245')">🏛️ Art. 245</button>
+        <button class="lab-btn lab-cont-btn" data-parte="a128" onclick="labShowParte('a128')">🧒 Art. 128</button>
+        <button class="lab-btn lab-cont-btn" data-parte="libertades" onclick="labShowParte('libertades')">🕊️ Libertades</button>
       </div>
       <div class="lab-group">
         <span class="lab-group-label">📌 Aspecto:</span>
@@ -328,10 +304,10 @@
   </div>
 
   <div class="card ac-purple">
-    <h2>⚖️ ¿Héroe o prócer?</h2>
+    <h2>⚖️ ¿De qué poder es?</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
     <p class="id-prog" id="enferProg" aria-live="polite">1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">El héroe defiende a su pueblo; el prócer ayuda a fundar la nación. ¿Qué es esto?</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Uno hace las leyes, otro las hace cumplir y el tercero las aplica a cada caso. ¿De cuál es esto?</p>
     <div class="neuro-trans-display" id="enferDisease">Defendió a su pueblo de la conquista española</div>
     <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbEnfer" class="fb" role="alert"></div>
@@ -433,12 +409,12 @@
   <div id="evalConceptWrap">
   <div class="card ac-purple">
     <div class="eval-print-header">
-      <h2>Evaluación Final · Héroes y Próceres de Honduras · Educación Básica · Educación Cívica</h2>
+      <h2>Evaluación Final · La Constitución: mi Ley Fundamental · Educación Básica · Educación Cívica</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
       <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
     </div>
-    <h2 id="eval-screen-title">🎓 Evaluación Final — Héroes y Próceres de Honduras</h2>
+    <h2 id="eval-screen-title">🎓 Evaluación Final — La Constitución: mi Ley Fundamental</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
@@ -452,12 +428,12 @@
   <div id="evalCritWrap" style="display:none;">
   <div class="card ac-amber">
     <div class="eval-print-header">
-      <h2>Evaluación Competencial · Pensamiento Crítico · Héroes y Próceres de Honduras · Educación Básica</h2>
+      <h2>Evaluación Competencial · Pensamiento Crítico · La Constitución: mi Ley Fundamental · Educación Básica</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
       <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
     </div>
-    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Héroes y Próceres de Honduras</h2>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — La Constitución: mi Ley Fundamental</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
@@ -481,18 +457,18 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>los ocho, uno por uno</strong> —quién fue, qué hizo y por qué se le recuerda—, su línea del tiempo y las actividades, para imprimir y estudiar sin teléfono.</p>
-      <a href="../../fichas/ficha-proceres-heroes.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>los seis artículos que las leyes de aquí citan por su número</strong> —qué dice cada uno y para qué sirve—, los cinco casos para analizar y las actividades, para imprimir y estudiar sin teléfono.</p>
+      <a href="../../fichas/ficha-constitucion.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
-      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">🇭🇳 Las otras etapas de la Ruta de la Patria</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Los símbolos patrios y las fechas cívicas están en la etapa 1 y el Himno Nacional completo en la etapa 2. Después de esta vienen los tres poderes del Estado y la Constitución, que es de donde salen.</p>
+      <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">🇭🇳 Las otras cuatro etapas de la Ruta de la Patria</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Esta es la etapa 5, y la que cierra por ahora. Antes van los símbolos patrios y las fechas cívicas, el Himno Nacional completo, los héroes y próceres, y los tres poderes del Estado —esa última es la que enseña QUIÉN hace cada cosa con la ley que aquí se lee—.</p>
       <a href="../2y3ciclo-aspectos-civicos/aspectos-civicos.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🇭🇳 Etapa 1 · Símbolos</a>
       <a href="../2y3ciclo-himno-nacional/himno-nacional.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🎵 Etapa 2 · El Himno</a>
-      <a href="../2y3ciclo-tres-poderes/tres-poderes.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">⚖️ Etapa 4 · Los tres poderes</a>
-      <a href="../2y3ciclo-constitucion/constitucion.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-bottom:0.5rem;">📕 Etapa 5 · La Constitución</a>
+      <a href="../2y3ciclo-proceres-heroes/proceres-heroes.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🏅 Etapa 3 · Próceres</a>
+      <a href="../2y3ciclo-tres-poderes/tres-poderes.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-bottom:0.5rem;">⚖️ Etapa 4 · Los tres poderes</a>
     </div>
-    <p style="font-size:0.9rem;margin-bottom:0;">Esta misión todavía no tiene carpeta de materiales en línea. Lo que sí está listo es la <strong>ficha imprimible</strong> de aquí arriba: lleva a los ocho con su obra y sus fechas, y las actividades en papel, para estudiar sin teléfono y sin internet.</p>
+    <p style="font-size:0.9rem;margin-bottom:0;">Esta misión todavía no tiene carpeta de materiales en línea. Lo que sí está listo es la <strong>ficha imprimible</strong> de aquí arriba: lleva los seis artículos con su explicación, cómo se lee una cita y los cinco casos para analizar, y las actividades en papel, para estudiar sin teléfono y sin internet.</p>
   </div>
 </div>
 
@@ -503,7 +479,7 @@
   <div class="diploma-card">
     <div class="diploma-stars" id="diplStars">⭐⭐⭐</div>
     <div class="diploma-title">CONSTANCIA DE LOGRO</div>
-    <div class="diploma-sub">Misión Héroes y Próceres de Honduras</div>
+    <div class="diploma-sub">Misión La Constitución: mi Ley Fundamental</div>
     <div class="diploma-mascot" aria-hidden="true">🏅</div>
     <div class="diploma-name" id="diplName">Estudiante</div>
     <div class="diploma-pct" id="diplPct" style="color:var(--jade)">0%</div>
@@ -565,12 +541,12 @@
 </footer>
 
   <script src="js/html2canvas.min.js"></script>
-  <!-- Los próceres viven en UN solo sitio (js/data/proceres-honduras.js):
+  <!-- Los tres poderes viven en UN solo sitio (js/data/constitucion-honduras.js):
        esta pantalla y la ficha que se fotocopia los sacan de ahí, y por eso
        no pueden decir fechas distintas. Va ANTES del JS de la misión, que lo
        usa para armar el Laboratorio y las actividades. -->
-  <script src="../../js/data/proceres-honduras.js"></script>
-  <script src="js/proceres-heroes.js"></script>
+  <script src="../../js/data/constitucion-honduras.js"></script>
+  <script src="js/constitucion.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
