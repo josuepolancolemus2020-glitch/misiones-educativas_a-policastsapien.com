@@ -3,6 +3,133 @@
 Notas para quien retome este proyecto. No son sugerencias: son las reglas
 que ya se acordaron trabajando, y romperlas cuesta caro en un aula real.
 
+## Normativa: esto se hace para ser lo mejor que hay
+
+Y no es una frase de ánimo: es el listón con el que se aprueba o se rechaza
+cada cambio de este repositorio.
+
+M.E.T.A.S se hace para que un maestro hondureño con **43 alumnos, tres
+teléfonos y a veces sin luz** tenga en la mano la mejor herramienta educativa
+que exista — no la mejor que se pueda hacer con lo que hay, la mejor que
+exista—, y para que el alumno que la abre no la quiera soltar. El objetivo
+declarado es que **no haya con qué compararla**: que un maestro que la usa no
+tenga motivo para buscar otra cosa, y que uno que no la conoce, al verla,
+entienda en dos minutos por qué la necesita.
+
+**Quien trabaje aquí trabaja con esa vara.** «Funciona» no es la meta;
+«cumple» tampoco. Lo que se publica tiene que ser lo mejor que se sabe hacer
+hoy, y cuando mañana se sepa hacer mejor, se rehace — como se rehizo entero el
+juego de «Enséñale a la máquina» el día que se midió que su promesa era falsa,
+o como se sacó el andamio de los juegos 3D de doce archivos cuando doce copias
+dejaron de sostenerse.
+
+Lo que sigue es lo que esa ambición significa **en decisiones**, porque una
+norma que solo diga «sé el mejor» no cambia ninguna.
+
+### 1 · El asombro, no el enganche
+
+Esta plataforma tiene que ser **imprescindible**, y la palabra con la que eso
+se busca es **curiosidad**, nunca *retención*.
+
+La industria sabe enganchar: rachas que castigan al que falta un día,
+recompensas variables, notificaciones, contadores que duele romper. Todo eso
+funciona, y todo eso está **prohibido aquí**, porque secuestra la atención de
+un niño en vez de ganársela y porque este proyecto ya escribió por qué:
+
+- ⚠️ **«Un puntaje que se consigue sin aprender enseña que el puntaje no
+  significa nada»** (normativa de la estrella). Por eso se quitaron 125
+  estrellas de regalo y por eso ver un video no da XP: nadie puede comprobar
+  que el niño lo miró.
+- ⚠️ **«Un juego que promete una cosa y hace otra enseña a no creerle a la
+  pantalla»** (normativa de la IA). Por eso se rehízo el entrenador en vez de
+  falsear su resultado.
+
+**Lo que sí se persigue, y con toda la ambición:** que el alumno vuelva porque
+quiere ver qué pasa. El niño que pone una **piedra** en el clasificador y la
+máquina le contesta «mango» con toda seguridad no vuelve por una racha: vuelve
+porque acaba de descubrir algo. El que ve nacer una alucinación delante de él
+—«el Himno tiene cinco estrofas», y son siete— no lo olvida. El que mira
+levantarse el suelo hasta formar una rampa está viendo aprender a una máquina.
+
+La prueba es esta, y se contesta antes de publicar: **si le quitara el puntaje,
+las estrellas y la medalla, ¿seguiría queriendo abrirlo?** Si la respuesta es
+no, lo que se hizo fue enganche, y hay que volver a hacerlo.
+
+### 2 · Toda misión le pasa a ALGUIEN, y le cuesta algo
+
+Esto es el storytelling de este proyecto, y no es adorno narrativo: es la forma
+en que un contenido se vuelve inolvidable en vez de estudiable.
+
+Un dato se olvida; **una situación con consecuencia, no**. Lo que ya funciona
+aquí tiene todo la misma forma:
+
+| en vez de | se cuenta |
+|---|---|
+| «el sesgo aparece cuando los datos no representan a todos» | dejas fuera el plátano y **el productor de plátano** fumiga un cultivo sano |
+| «el perímetro es el contorno» | si compras malla de menos, **se salen las gallinas** |
+| «un modelo de lenguaje predice la palabra siguiente» | la continuación más probable es «cinco estrofas» y **son siete** |
+| «un bus de más es dinero perdido» | el sábado llegan 20 donde se contrataron 80, **y lo paga el maestro** |
+
+Tres reglas para escribirlo:
+
+1. **Hay una persona y hay un precio.** Si de una sección no se puede decir a
+   quién le pasa y qué le cuesta, todavía no está escrita.
+2. **El alumno lo PRODUCE, no lo lee.** El sesgo no se le explica: lo fabrica
+   él quitando chips. Es la diferencia entre enterarse y entender.
+3. ⚠️ **El relato nunca dobla el contenido.** Un número de decreto que no se
+   puede acreditar no se escribe aunque redondee la historia; un resultado no
+   se falsea aunque la lección quedara más limpia. Cuando el cuento y la verdad
+   se pelean, **se cambia el cuento**. Toda la autoridad de esta plataforma
+   vive de esa línea.
+
+### 3 · La ingeniería se mide contra el usuario más difícil
+
+«Lo mejor de la ingeniería humana» aquí no quiere decir lo más moderno: quiere
+decir **que le sirva al que peor lo tiene**, porque ese es el usuario de
+verdad. Ya está medido en este archivo y se sigue:
+
+sin señal · en un teléfono prestado · con la letra del sistema agrandada · sin
+poder arrastrar con el dedo · sin distinguir el rojo del verde · con la vista
+cansada · con el teléfono acostado · con el CDN del otro lado del mundo
+colgado · y con la fotocopiadora del centro como única salida.
+
+Y lo que no se ve se mide igual: **una medida vale más que una opinión**. 32 px
+de dibujo, 248 mm de hoja, 44 px de blanco de toque, ΔE 40,5 de distancia de
+color, 428 ms de primer pintado. Cuando no hay número, se busca el número antes
+de decidir.
+
+### 4 · Al día, sí; de memoria, jamás
+
+Esta plataforma tiene que ir **por delante** de lo que el currículo alcanza a
+nombrar — la Ruta de la Máquina que Aprende existe porque el alumno ya tiene la
+IA encima y nadie se la ha explicado, y el DCNB no la nombra—. Estar al día es
+parte del encargo.
+
+⚠️ **Y eso NO suspende la regla de la evidencia, la refuerza.** La misma ruta
+que estrena una materia que no está en el currículo es la que **no escribe ni
+una cifra de producto**, ni un nombre de chat, ni una fecha que no se pueda
+acreditar. Ser el más actual y ser el más riguroso es la misma cosa, y el día
+que se separen gana el rigor: **buscar no es leer**
+(`INVESTIGACION-ESTATUTO-DOCENTE.md`), el PDF es el que acredita, y lo que no se
+puede sostener se convierte en la actividad de investigar, no en una afirmación.
+
+Una plataforma que envejece bien vale más que una que deslumbra un mes. Por eso
+las cifras se cuentan y, cuando se escriben en papel, se fechan.
+
+### 5 · Lo que hay que poder contestar antes de publicar
+
+No hay sonda para esta normativa —es de juicio, no de código—, así que la prueba
+son cuatro preguntas, y las cuatro se contestan en una línea:
+
+1. **¿A quién le pasa esto y qué le cuesta?**
+2. **Sin puntaje ni medalla, ¿seguiría queriendo abrirlo?**
+3. **¿Funciona para el que peor lo tiene** —sin señal, sin luz, sin poder
+   arrastrar, con la letra grande y con la fotocopiadora?
+4. **¿Puedo acreditar cada dato que afirma?**
+
+Si alguna se queda sin respuesta, el trabajo no está terminado — por verde que
+esté la sonda.
+
 ## Al terminar un cambio: commit y push, siempre
 
 No hay que preguntar. Cada cambio terminado y probado se **commitea y se
