@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v218';
+const CACHE_NAME = 'meta-app-v219';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -120,6 +120,10 @@ const STATIC_ASSETS = [
   // cambiar de sección, justamente en el aula sin señal.
   './js/barra-secciones.js',
   './css/barra-secciones.css',
+  // El acierto y el error sin depender del color. Sin esta hoja, el niño
+  // que no distingue el rojo del verde vuelve a quedarse sin poder
+  // terminar Clasifica — y sin señal es justo cuando más falta hace.
+  './css/senal-no-color.css',
   // Que las actividades se puedan hacer sin el dedo. Sin estos dos, el
   // alumno que no usa el dedo se queda sin poder clasificar, emparejar ni
   // identificar nada —y sin ver dónde tiene el foco—, justamente en el

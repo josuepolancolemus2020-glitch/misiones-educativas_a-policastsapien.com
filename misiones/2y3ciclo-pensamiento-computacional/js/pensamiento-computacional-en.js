@@ -824,7 +824,7 @@
       /* — widget «¿Exacta o ambigua?»: contador con racha — */
       [/^(\d+) de (\d+) · Racha: (\d+) 🔥$/g, '$1 of $2 · Streak: $3 🔥'],
       [/¡Correcto! Racha de (\d+) 🔥 \+3 XP/g, 'Correct! Streak of $1 🔥 +3 XP'],
-      [/Racha perdida\. Era: /g, 'Streak lost. It was: '],
+      [/^Era: /g, 'It was: '],
       [/🎉 ¡Completado! Mejor racha: (\d+) 🔥/g, '🎉 Completed! Best streak: $1 🔥'],
       /* — widget «Descompón»: contador — */
       [/Problema (\d+) de (\d+)/g, 'Problem $1 of $2'],

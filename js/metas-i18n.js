@@ -163,7 +163,7 @@
     'Columna izquierda': 'Left column', 'Columna derecha': 'Right column',
     '🔄 Variar grupo': '🔄 Change group',
     'Mueve todas las palabras a las columnas primero.': 'Move every word into the columns first.',
-    '¡Perfecto! +5 XP': 'Perfect! +5 XP', 'Hay errores. Marcados en rojo.': 'There are mistakes. They are marked in red.',
+    '¡Perfecto! +5 XP': 'Perfect! +5 XP', 'Hay errores. Los errados llevan ✗.': 'There are mistakes. The wrong ones carry a ✗.',
     '🔍 Identifica el concepto': '🔍 Spot the concept',
     'Toca la palabra o término solicitado:': 'Tap the word or term you are asked for:',
     'Ese no es el término solicitado.': 'That is not the term you were asked for.',

@@ -116,6 +116,67 @@ puede sostener se convierte en la actividad de investigar, no en una afirmación
 Una plataforma que envejece bien vale más que una que deslumbra un mes. Por eso
 las cifras se cuentan y, cuando se escriben en papel, se fechan.
 
+### ⚠️ Lo que salió al pasarle la vara a lo que YA existía
+
+La normativa se escribió con el parque de IA recién hecho, así que lo primero
+fue pasársela a las **83 misiones que ya estaban**. Se midió antes de tocar
+nada, con `node _dev/audita-normativa.js`, y de las cuatro cosas medibles tres
+salieron limpias — el Reto felicita con umbral en las 83, no hay ninguna cifra
+que envejezca escrita a mano, y la única racha que existe es de sesión, no
+castiga por faltar—.
+
+La cuarta no:
+
+| | misiones |
+|---|---|
+| `.cls-ok` / `.cls-no` (Clasifica) decían el acierto y el error **solo con color** | 75 |
+| `.eval-input-ok` / `.eval-input-no` (evaluación), igual | 70 |
+| el mensaje literal «Hay errores. **Marcados en rojo**» | 74 |
+
+⚠️ **Y en Clasifica no era cosmético: era no poder terminar la actividad.** Al
+niño que no distingue el rojo del verde —uno de cada doce— se le nombraba una
+señal que él no percibe **y** se le pedía tocar justamente lo que no podía
+distinguir, porque los errados se devuelven al banco tocándolos. Podía leer la
+teoría entera y quedarse sin hacer el ejercicio: la misma avería que este
+proyecto ya había cerrado para el que no puede arrastrar con el dedo, en su
+versión de color.
+
+Se arregla en **un archivo compartido**, `css/senal-no-color.css`, no en las 83
+—es la lección de siempre, y aquí habría sido copiarla ochenta y tres veces—.
+Va en `STATIC_ASSETS` y su `<link>` **DESPUÉS** del CSS de la misión, como el de
+la barra de secciones, que es lo que le deja pisar sus reglas. Dos caminos,
+porque hay dos clases de elemento:
+
+- lo que es un `<div>` —las fichas de Clasifica— lleva el glifo detrás
+  (`::after` con ✓ o ✗);
+- ⚠️ los **campos de escribir** no pueden llevarlo: `::after` no existe en un
+  `<input>`. Ahí la marca va como **dibujo de fondo** (un SVG), que se ve igual
+  sin distinguir el rojo del verde y también fotocopiado en blanco y negro. Y
+  lleva `!important`, que aquí no es pereza: las misiones declaran
+  `background: … !important` en esas mismas clases y la forma corta apaga el
+  `background-image`.
+
+Y el mensaje dejó de nombrar un color: «Los errados llevan ✗». Al cambiarlo hubo
+que tocar **también** el `-en.js` de la misión bilingüe y la clave del
+diccionario `js/metas-i18n.js`, porque los dos mapean la cadena española
+EXACTA: cambiar solo el español deja la edición en inglés muda, sin dar un solo
+error. Es la trampa que ya está escrita para las fichas bilingües.
+
+**La auditoría se quedó en `npm test`.** Nació como lista de trabajo, pero en
+cuanto las 83 pasaron dejó de tener sentido que fuera opcional: lo que hoy está
+limpio tiene que seguir limpio, y una misión nueva que diga el acierto solo en
+verde se pone roja antes de llegar al teléfono de un niño. Se comprobó al revés
+—vaciando la hoja compartida a propósito— y salió roja con los 147 casos.
+
+⚠️ **Y una lección sobre la herramienta misma.** Su primera versión buscaba
+elogios sueltos («¡Perfecto!», «¡Excelente!») y marcó **28 en una sola misión**:
+todos eran «Cuadrado **Perfecto**», que es contenido de matemáticas. Una
+herramienta que acusa a un archivo sano enseña a no mirarla, así que esa
+comprobación se estrechó a lo único que ahí se puede afirmar sin adivinar —que
+el elogio del Reto pase por un umbral—. Lo mismo con `.shake-error`, que avisa
+MOVIÉNDOSE: un temblor lo ve quien no ve el rojo, y darlo por color era un falso
+positivo.
+
 ### 5 · Lo que hay que poder contestar antes de publicar
 
 No hay sonda para esta normativa —es de juicio, no de código—, así que la prueba
@@ -129,6 +190,13 @@ son cuatro preguntas, y las cuatro se contestan en una línea:
 
 Si alguna se queda sin respuesta, el trabajo no está terminado — por verde que
 esté la sonda.
+
+Y lo que SÍ se puede medir de esta normativa se corre de un golpe con las demás:
+
+```
+node _dev/audita-normativa.js             (está en `npm test`)
+node _dev/audita-normativa.js --detalle   (misión por misión, para arreglar)
+```
 
 ## Al terminar un cambio: commit y push, siempre
 

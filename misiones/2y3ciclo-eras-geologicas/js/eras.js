@@ -510,7 +510,7 @@ function checkClass() {
     });
     if (!xpTracker.cls.has(currentClassGroupIdx)) { xpTracker.cls.add(currentClassGroupIdx); pts(5); }
     if (allOk) { fb('fbCls', '¡Perfecto! +5 XP', true); sfx('fan'); fin('s-clasifica'); unlockAchievement('clasif_pro'); }
-    else { fb('fbCls', 'Hay errores. Marcados en rojo.', false); sfx('no'); }
+    else { fb('fbCls', 'Hay errores. Los errados llevan ✗.', false); sfx('no'); }
 }
 function nextClassGroup() {
     sfx('click');

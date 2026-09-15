@@ -1,0 +1,89 @@
+/* ============================================================
+   M.E.T.A.S · El acierto y el error NO se dicen solo con color
+   ------------------------------------------------------------
+   Uno de cada doce niños no distingue el rojo del verde. Este
+   proyecto ya lo sabía —el quiz de los videos lleva ✓ y ✗ por eso,
+   y el marcado de los juegos 3D usa el blanco y no el rojo— pero la
+   regla no había llegado a las actividades de las misiones, porque
+   cada misión trae SUS clases y esas se copiaron ochenta y tres
+   veces.
+
+   Medido con `node _dev/audita-normativa.js`, antes de esto:
+
+   | clase | misiones | qué decía |
+   |---|---|---|
+   | `.cls-ok` / `.cls-no`   | 75 | borde y fondo verdes / rojos |
+   | `.eval-input-ok` / `-no`| 70 | borde y fondo verdes / rojos |
+   | `.ord-*`, `.ana-*`, `.cruci-no`, `.cmp-no` | 1 | igual |
+
+   ⚠️ **Y en Clasifica no era cosmético: era no poder terminar.** El
+   mensaje decía «Hay errores. Marcados en rojo (tócalos para
+   devolverlos al banco)» — así que al niño que no ve ese rojo se le
+   nombraba una señal que él no percibe Y se le pedía tocar
+   justamente lo que no podía distinguir. Podía leer la teoría
+   entera y quedarse sin hacer la actividad, que es la misma avería
+   que este proyecto ya cerró para el que no puede arrastrar con el
+   dedo.
+
+   Va en UN archivo compartido y no en las 83, por la lección de
+   siempre: el andamio de los juegos 3D estuvo copiado doce veces y
+   una copia se quedó sin el arreglo sin que nadie lo notara.
+
+   El `<link>` va **DESPUÉS** del CSS de la misión —igual que
+   `barra-secciones.css`—, que es lo que le deja pisar sus reglas.
+   ============================================================ */
+
+/* ============================================================
+   1 · Lo que no es un campo de escribir: un glifo detrás
+   ------------------------------------------------------------
+   `::after` no existe en un <input> (es un elemento reemplazado),
+   así que aquí se atiende todo lo demás —las fichas de Clasifica,
+   que son <div>— y los campos van en el bloque 2.
+   ============================================================ */
+.cls-ok:not(input):not(select):not(textarea)::after,
+.ord-ok:not(input):not(select):not(textarea)::after,
+.ana-ok:not(input):not(select):not(textarea)::after,
+.eval-input-ok:not(input):not(select):not(textarea)::after{
+  content:'✓'; font-weight:900; margin-left:.4rem; flex-shrink:0;
+}
+.cls-no:not(input):not(select):not(textarea)::after,
+.ord-no:not(input):not(select):not(textarea)::after,
+.cruci-no:not(input):not(select):not(textarea)::after,
+.cmp-no:not(input):not(select):not(textarea)::after,
+.eval-input-no:not(input):not(select):not(textarea)::after{
+  content:'✗'; font-weight:900; margin-left:.4rem; flex-shrink:0;
+}
+
+/* ============================================================
+   2 · Los campos de escribir: la marca va DENTRO del fondo
+   ------------------------------------------------------------
+   Es un dibujo (SVG), no un color: se ve igual sin distinguir el
+   rojo del verde, y en blanco y negro también, que importa porque
+   estas pantallas se fotocopian.
+
+   ⚠️ Lleva `!important` y no es por gusto. Las misiones declaran
+   `background: … !important` en estas mismas clases, y la forma
+   corta de `background` apaga el `background-image`. Sin el
+   `!important` de aquí, la marca no se pinta nunca. (`barra-secciones.css`
+   puede prescindir de él porque allí la regla de la misión no lo
+   lleva; aquí sí.)
+   ============================================================ */
+input.eval-input-ok, select.eval-input-ok, textarea.eval-input-ok,
+input.cls-ok, input.ord-ok, input.ana-ok{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5l3.5 3.5 7.5-8' fill='none' stroke='%23057a55' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right .45rem center!important;
+  background-size:.95rem .95rem!important;
+  padding-right:1.8rem!important;
+}
+input.eval-input-no, select.eval-input-no, textarea.eval-input-no,
+input.cls-no, input.ord-no, input.cruci-no, input.cmp-no{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 3.5l9 9M12.5 3.5l-9 9' fill='none' stroke='%23b02a37' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right .45rem center!important;
+  background-size:.95rem .95rem!important;
+  padding-right:1.8rem!important;
+}
+
+/* Quien pide poco movimiento no pierde la marca: es un dibujo
+   quieto, no una animación. Nada que apagar aquí. */
