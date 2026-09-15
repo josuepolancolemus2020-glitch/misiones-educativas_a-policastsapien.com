@@ -3260,6 +3260,45 @@ suelo**: a fuerza de intentos aparece una rampa de la salida a la meta y
 entonces el robot ya no busca, sube. En un cuaderno eso es una tabla de números
 que no mira nadie.
 
+**Lo que este parque NO hizo, y por qué:**
+
+- **Un parque por misión.** Habría dado cuatro con el mismo nombre y el avance
+  del alumno repartido entre ellos; el de I Ciclo abriría el suyo y no vería las
+  estrellas que ganó desde la etapa 2. Es UNO, en la etapa 2 —que es la misión de
+  cómo aprende una máquina, o sea el tema de los seis—, y las otras tres llevan a
+  él desde su sección de Recursos.
+- **Un juego de IA generativa.** La etapa 4 ya arma la frase eligiendo
+  continuaciones con su probabilidad, y verlo en tres dimensiones no añade nada:
+  una cadena de palabras no es un espacio. Lo que sí faltaba era el aprendizaje
+  por refuerzo, que no tenía interacción en ninguna de las cuatro etapas, y ese
+  es el sexto juego.
+- **Sonido al acertar.** Es la regla de siempre del andamio, y aquí igual:
+  cuarenta teléfonos pitando en un aula no ayudan a nadie.
+
+⚠️ **Y una avería que solo salió MIRANDO, con el parque ya publicado.** Se
+midió el hueco del dibujo con el juego abierto y acostado (740×360), que es el
+teléfono de lado: al Separador le quedaban **32 px de dibujo** —el peor de los
+dieciocho juegos que ya existían deja 109— porque sus tres deslizadores
+apilados se comían la pantalla. Y en ese juego el dibujo no es el adorno: es la
+lección, porque lo que hay que ver es el plano cortando la nube.
+
+Acostado sobra sitio a lo ANCHO, así que las tres filas se vuelven una y el
+dibujo pasa a **182 px**. Dos cosas más que salieron de mirar la captura, y
+ninguna daba error:
+
+- el número de un mando se pegaba al rótulo del siguiente, ilegible de un
+  vistazo — el hueco va DENTRO del ancho de cada grupo (`border-box`), no entre
+  ellos, para que los tres sigan sumando lo mismo;
+- y a 640 px el rótulo se RECORTABA —«Inclinar» salía «Inclin» y «Girar»
+  quedaba debajo del pulgar—, porque un elemento flexible con `min-width:0` se
+  deja cortar antes que estorbar. No se encoge el rótulo: se encoge la pista.
+  Un mando sin nombre no se sabe qué mueve.
+
+Nada de esto lo podía cazar una sonda: los paneles caben, no se sale nada por
+la derecha y todo se puede tocar —los guardianes lo daban por bueno—. Es la
+misma familia que el `.pf-p` naranja sobre naranja de la ficha de la
+Constitución, y el remedio fue el mismo: **abrirlo y mirarlo**.
+
 ⚠️ **Y el del Sesgo no exagera.** La frontera entre sana y enferma está puesta a
 distinta altura en cada cultivo, y la de uno coincide con la del siguiente,
 porque en el campo es así: una hoja de plátano **sana** tiene más manchas que

@@ -149,4 +149,54 @@
   .mando{margin:.08rem 0;}
   .pregunta{font-size:.76rem;margin-bottom:.25rem;}
   .op{font-size:.8rem;padding:.4rem .5rem;min-height:44px;}
+  /* El aviso vacío guarda su renglón para que la pantalla no salte al
+     escribir en él. Con 360 px de alto ese renglón es dibujo, y el
+     salto se nota menos que quedarse sin ver la nube. */
+  .aviso{min-height:0;}
+  .tanteo{margin:.1rem 0;font-size:.8rem;}
+  .tanteo b{font-size:1rem;}
+  .mandos{padding:.3rem .55rem .35rem;}
+}
+
+/* ============================================================
+   ⚠️ Acostado, los deslizadores van en FILA
+   ------------------------------------------------------------
+   Medido a 740×360 con el juego abierto: al Separador le quedaban
+   **32 px de dibujo** —menos que a cualquiera de los dieciocho
+   juegos 3D que ya existían, donde el peor deja 109— porque sus
+   tres deslizadores apilados se comían la pantalla.
+
+   Y en ESTE juego el dibujo no es el adorno: es la lección. Lo que
+   hay que ver es el plano cortando la nube y los ejemplos que
+   quedan del lado que no es. Un juego donde eso no se ve es un
+   juego que no enseña nada.
+
+   Acostado sobra sitio a lo ANCHO, así que las tres filas se
+   vuelven una. No se toca el tamaño de letra del cuerpo —regla de
+   siempre—: lo que se quita es aire y apilado.
+   ============================================================ */
+@media (max-height:430px) and (min-width:560px){
+  /* El hueco va DENTRO del ancho (border-box), no entre los grupos:
+     así los tres siguen sumando lo mismo y el número de uno deja de
+     pegarse al rótulo del siguiente, que era ilegible de un vistazo. */
+  .mandos .mando{display:inline-flex;width:32.2%;margin:.1rem 0;vertical-align:middle;
+    padding-right:.7rem;}
+  /* El rótulo no se parte en dos renglones: «Inclinar» bajaba una
+     línea y descuadraba la fila entera. Lo que se encoge es la pista,
+     que para eso es flexible. */
+  /* ⚠️ El rótulo NO se encoge; lo que se encoge es la pista. Sin
+     esto, a 640 px el rótulo se recortaba —«Inclinar» salía
+     «Inclin» y «Girar» quedaba debajo del pulgar— porque un
+     elemento flexible con `min-width:0` se deja cortar antes que
+     estorbar. Y un mando sin nombre no se sabe qué mueve. */
+  .mandos .mando label{min-width:0;font-size:.68rem;white-space:nowrap;flex-shrink:0;}
+  .mandos .mando input[type=range]{min-width:2.6rem;}
+  .mandos .mando output{min-width:2.5rem;font-size:.68rem;flex-shrink:0;}
+  /* Las dos notas del «¿Aprendió o se lo memorizó?» ocupaban dos
+     tarjetas altas por el número grande. Acostado se aprietan: el
+     número sigue siendo lo que se lee, pero sin robarle el dibujo. */
+  .nota{padding:.12rem .45rem;min-width:7.2rem;font-size:.68rem;}
+  .nota b{font-size:.95rem;}
+  .notas{margin:.15rem 0;}
+  .vidas-txt{font-size:.68rem;}
 }
