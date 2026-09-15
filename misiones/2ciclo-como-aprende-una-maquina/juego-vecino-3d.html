@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📏 El Vecino Más Cercano 3D | Misión Cómo Aprende una Máquina</title>
+<meta name="description" content="Adivina qué va a contestar la máquina. Decide por el ejemplo que tiene más cerca — y contesta siempre, aunque le pongas una piedra.">
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<link rel="stylesheet" href="../../css/parque-ia.css">
+<style>
+/* ============================================================
+   Juego 3D · El Vecino Más Cercano
+   ------------------------------------------------------------
+   Es la máquina de la misión de I Ciclo, dicha entera: le pone al
+   ejemplo nuevo el nombre del que tiene MÁS CERCA. Y aquí no se
+   pide adivinar la fruta: se pide adivinar lo que va a decir LA
+   MÁQUINA, que no es lo mismo — y el juego se acaba enseñando
+   justo las dos veces en que no lo es.
+
+   Las dos rondas que valen son la cuarta y la quinta. En la cuarta
+   se le pone una PIEDRA: no es ninguna de las tres frutas y la
+   máquina contesta igual, con toda seguridad, porque no sabe decir
+   «no sé». En la quinta se le pone un mango chico y verde que cae
+   entre los limones: la máquina dice limón, y tiene razón según
+   sus ejemplos y está equivocada según el árbol. Entonces el
+   alumno le ENSEÑA ese mango y la respuesta cambia delante de él.
+   ============================================================ */
+.nuevo-rot{border-color:#fff!important;color:#fff!important;font-weight:700;}
+.dist{font-family:'Fira Code',ui-monospace,monospace;font-size:.78rem;color:var(--gris);}
+@media(max-width:380px){.op{font-size:.84rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="como-aprende-una-maquina.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">📏 El Vecino Más Cercano<small id="subt">Ronda 1 de 6</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="cinta" id="cinta"></div>
+</div>
+
+<div class="mandos">
+  <div class="pregunta" id="pregunta">¿Qué va a contestar la máquina?</div>
+  <div class="ops" id="ops"></div>
+  <div class="botones" id="botones-sig" style="display:none;">
+    <button class="bt bt-v" id="bt-sig" onclick="siguiente()">Siguiente →</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar: el alumno impaciente
+     toca antes de que llegue el motor, el juego revienta por dentro y
+     se queda en una pantalla muerta. Con la señal del aula pasa
+     siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">📏</div>
+    <h2>El Vecino Más Cercano</h2>
+    <p>La máquina ya tiene sus <b>ejemplos</b>, cada uno con su etiqueta. Cuando le llega algo nuevo hace una sola cosa: busca el ejemplo que tiene <b>más cerca</b> y le copia el nombre.</p>
+    <p style="font-size:.84rem;color:#c9b4d6;">Tú no tienes que adivinar qué fruta es. Tienes que adivinar <b>qué va a decir la máquina</b>.</p>
+    <div class="chapas"><span>Arrastra el dibujo para girarlo</span><span>Seis rondas</span></div>
+    <div class="mapa" id="mapa-ini"></div>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-res">
+  <div class="panel">
+    <div class="emoji-gr" id="res-emoji">🎯</div>
+    <h2 id="res-tit">La máquina dijo…</h2>
+    <div class="formula" id="res-form"></div>
+    <p id="res-txt"></p>
+    <div class="ojo" id="res-ojo" style="display:none;"></div>
+    <button class="bt bt-v" id="res-bt" onclick="seguirDesdeVelo()">Seguir →</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2>Ya sabes cómo decide</h2>
+    <div class="formula" id="fin-form"></div>
+    <p>La máquina no sabe qué es un mango. Mide, compara y copia el nombre del más parecido. Por eso <b>lo que le enseñas es lo que sabe</b>, y nada más.</p>
+    <div class="ojo">⚠️ Y fíjate en lo de la piedra: contestó igual. Una máquina así <b>nunca dice «no sé»</b>. Cuando veas una respuesta muy segura, acuérdate de esto.</div>
+    <button class="bt bt-v" onclick="reiniciar()">🔁 Otra vez</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script src="../../js/3d/nube-ia.js"></script>
+<script>
+var LLAVE = 'j3d_vecino_v1';
+
+/* Las tres clases y sus doce ejemplos. Estos SÍ van escritos a mano y
+   no sembrados: son doce y cada uno está puesto donde está para que
+   las dos rondas que enseñan algo salgan como salen. Lo que no se
+   escribe a mano es la RESPUESTA: sale de medir, y la sonda la
+   recalcula por su cuenta. */
+var CLASES = [
+  {nombre:'Limón',  emoji:'🍋', color:0xf6b93b},
+  {nombre:'Mango',  emoji:'🥭', color:0xe879f9},
+  {nombre:'Sandía', emoji:'🍉', color:0x38d3c6}
+];
+var EJES = ['Tamaño', 'Peso', 'Color'];
+var EJEMPLOS = [
+  {x:-0.72,y:-0.66,z:-0.62,clase:0},{x:-0.58,y:-0.52,z:-0.70,clase:0},
+  {x:-0.66,y:-0.74,z:-0.48,clase:0},{x:-0.80,y:-0.58,z:-0.56,clase:0},
+  {x: 0.06,y: 0.02,z: 0.58,clase:1},{x:-0.10,y:-0.08,z: 0.50,clase:1},
+  {x: 0.14,y: 0.12,z: 0.44,clase:1},{x: 0.00,y:-0.14,z: 0.66,clase:1},
+  {x: 0.76,y: 0.82,z:-0.52,clase:2},{x: 0.88,y: 0.70,z:-0.44,clase:2},
+  {x: 0.64,y: 0.90,z:-0.60,clase:2},{x: 0.82,y: 0.78,z:-0.36,clase:2}
+];
+
+var RONDAS = [
+  {emoji:'🥭', que:'un mango',
+   p:{x:0.04,y:-0.02,z:0.52},
+   cuento:'Llega una fruta nueva y cae justo en medio de los mangos.',
+   leccion:'Fácil: el ejemplo más cercano era un mango y le copió el nombre. Eso es TODO lo que hace.'},
+  {emoji:'🍉', que:'una sandía',
+   p:{x:0.74,y:0.80,z:-0.50},
+   cuento:'Otra, grande y pesada, en el rincón de las sandías.',
+   leccion:'Otra vez: buscó el más cercano y copió. No «reconoció una sandía»: midió.'},
+  {emoji:'❓', que:'algo que no está claro',
+   p:{x:-0.30,y:-0.28,z:-0.02},
+   cuento:'Esta cae <b>entre dos montones</b>. Gira el dibujo y mira bien cuál le queda más cerca.',
+   leccion:'Estaba cerca de los dos y ganó por poco. Y fíjate en cómo lo dijo: sin dudar, sin un «puede que». Una máquina así no tiene medio camino.'},
+  {emoji:'🪨', que:'UNA PIEDRA',
+   p:{x:0.96,y:-0.94,z:0.92},
+   cuento:'Ahora le vamos a poner <b>una piedra</b>. No es ninguna de las tres frutas. ¿Qué crees que va a decir?',
+   ojo:'⚠️ Contestó. Y no por error: es que esta máquina solo sabe elegir entre las etiquetas que le enseñaste. <b>No sabe decir «no sé»</b>, no sabe decir «esto no es una fruta», y no sabe decir «no estoy segura». Cuando un programa te dé una respuesta muy segura, acuérdate de la piedra.',
+   leccion:'Le quedaba lejísimos —mucho más lejos que cualquier fruta de su ejemplo más cercano— y aun así le puso nombre de fruta.'},
+  {emoji:'🥭', que:'un mango chico y verde',
+   p:{x:-0.46,y:-0.42,z:-0.30},
+   cuento:'Este ES un mango, pero uno chico y todavía verde. Ningún mango así estaba entre sus ejemplos.',
+   ojo:'⚠️ La máquina acertó su cuenta y se equivocó de fruta. No hizo nada mal: <b>le faltaba el ejemplo</b>. Lo que sabe es lo que le enseñaron, y nadie le enseñó un mango verde.',
+   leccion:'Dijo limón porque el limón le quedaba más cerca. Y tenía razón… con los ejemplos que tenía.',
+   enseña:{x:-0.38,y:-0.34,z:-0.16,clase:1},
+   btn:'➕ Enséñale que es un mango'},
+  {emoji:'🥭', que:'el mismo mango chico y verde',
+   p:{x:-0.46,y:-0.42,z:-0.30},
+   cuento:'Le acabas de enseñar un mango chico y verde. Ahí está, con su etiqueta. <b>Le preguntamos otra vez lo mismo.</b>',
+   leccion:'Un solo ejemplo cambió la respuesta. Eso es ENTRENAR: no explicarle nada, solo darle el ejemplo que le faltaba.'}
+];
+
+var esc3, mallas = [], mallaNueva = null, linea = null, ejemplos = [];
+var ronda = 0, aciertos = 0, estrellas = 0, contestada = false, vecinoAhora = -1;
+
+function guardar(){
+  try{ localStorage.setItem(LLAVE, JSON.stringify({estrellas:estrellas, aciertos:aciertos,
+    completado: estrellas > 0})); }catch(e){}
+}
+function leer(){
+  try{ var d = JSON.parse(localStorage.getItem(LLAVE)); if(d) estrellas = d.estrellas|0; }catch(e){}
+}
+function r(){ return RONDAS[ronda]; }
+
+function montar(){
+  esc3 = NubeIA.escena({radio:17});
+  esc3.girar();
+  ejemplos = EJEMPLOS.map(function(e){ return {x:e.x, y:e.y, z:e.z, clase:e.clase}; });
+  pintarEjemplos();
+  var L = NubeIA.LADO;
+  esc3.rotulo(EJES[0]+' →', L*1.22, -L, -L, 'eje');
+  esc3.rotulo('↑ '+EJES[1], -L*1.1, L*1.15, -L, 'eje');
+  esc3.rotulo(EJES[2]+' ↗', -L, -L, L*1.2, 'eje');
+  armarRonda();
+  Parque3D.vigilarHueco(esc3.ajustar);
+  animar();
+}
+
+/* Los ejemplos se repintan enteros cuando el alumno le enseña uno
+   nuevo: son doce, cuesta nada, y así el que acaba de entrar se ve
+   igual que los demás —que es justo lo que hay que entender—. */
+function pintarEjemplos(){
+  mallas.forEach(function(m){ Parque3D.tirar(m); });
+  mallas = [];
+  for(var i=0;i<ejemplos.length;i++){
+    var m = NubeIA.esfera(ejemplos[i], CLASES[ejemplos[i].clase].color, 0.3);
+    esc3.mundo.add(m);
+    mallas.push(m);
+  }
+}
+
+function armarRonda(){
+  var d = r(), L = NubeIA.LADO;
+  contestada = false;
+  if(mallaNueva){ Parque3D.tirar(mallaNueva); mallaNueva = null; }
+  if(linea){ Parque3D.tirar(linea); linea = null; }
+  /* El que llega es BLANCO y más grande: todavía no tiene etiqueta, y
+     eso es precisamente lo que se está preguntando. */
+  mallaNueva = NubeIA.esfera(d.p, 0xffffff, 0.42);
+  esc3.mundo.add(mallaNueva);
+
+  document.getElementById('subt').textContent = 'Ronda '+(ronda+1)+' de '+RONDAS.length;
+  document.getElementById('tarjeta').innerHTML = d.emoji+' Llega '+d.que+'. '+d.cuento;
+  document.getElementById('pregunta').innerHTML = '¿Qué va a contestar la máquina?';
+  document.getElementById('cinta').classList.remove('ver');
+  document.getElementById('aviso').textContent = '';
+  document.getElementById('aviso').className = 'aviso';
+  document.getElementById('botones-sig').style.display = 'none';
+  pintarOpciones();
+  pintarMapa('mapa-ini');
+}
+
+function pintarOpciones(){
+  var caja = document.getElementById('ops');
+  caja.innerHTML = '';
+  CLASES.forEach(function(cl, i){
+    var b = document.createElement('button');
+    b.className = 'op';
+    b.type = 'button';
+    b.setAttribute('data-v', String(i));
+    b.innerHTML = cl.emoji+' '+cl.nombre;
+    /* Se ata al toque Y al clic: una tableta que no sintetice el clic
+       dejaría al alumno con la pregunta en pantalla y sin poder
+       contestarla. El andamio solo re-ata lo que ya estaba escrito en
+       el HTML, y estos botones nacen aquí. */
+    Parque3D.alTocar(b, function(){ contestar(i); });
+    caja.appendChild(b);
+  });
+}
+
+function contestar(elige){
+  if(contestada) return;
+  contestada = true;
+  var d = r(), L = NubeIA.LADO;
+  vecinoAhora = NubeIA.vecino(d.p, ejemplos);
+  var v = ejemplos[vecinoAhora], dice = v.clase;
+  var dist = NubeIA.dist(d.p, v);
+
+  /* La raya hasta su vecino: es la respuesta dibujada. Sin ella, el
+     alumno se cree la palabra de la pantalla; con ella la comprueba
+     con los ojos. */
+  linea = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(d.p.x*L, d.p.y*L, d.p.z*L),
+      new THREE.Vector3(v.x*L, v.y*L, v.z*L)]),
+    new THREE.LineBasicMaterial({color:0xffffff}));
+  esc3.mundo.add(linea);
+  mallaNueva.material.color.setHex(CLASES[dice].color);
+
+  var bs = document.querySelectorAll('#ops .op');
+  for(var i=0;i<bs.length;i++){
+    bs[i].disabled = true;
+    if(i === dice) bs[i].classList.add('buena');
+    else if(i === elige) bs[i].classList.add('mala');
+  }
+
+  var cinta = document.getElementById('cinta');
+  cinta.innerHTML = 'La máquina dice: <b>'+CLASES[dice].emoji+' '+CLASES[dice].nombre+'</b>';
+  cinta.classList.add('ver');
+
+  var bien = (elige === dice);
+  if(bien){ aciertos++; Parque3D.acierto(); } else { Parque3D.fallo(); }
+
+  document.getElementById('res-emoji').textContent = bien ? '🎯' : '🤔';
+  document.getElementById('res-tit').textContent = bien
+    ? 'Le adivinaste el pensamiento' : 'No era eso lo que iba a decir';
+  document.getElementById('res-form').innerHTML =
+    'Dijo <b>'+CLASES[dice].emoji+' '+CLASES[dice].nombre+'</b><br>' +
+    '<span class="dist">porque su ejemplo más cercano estaba a '+dist.toFixed(2)+'</span>';
+  document.getElementById('res-txt').innerHTML = d.leccion;
+  var ojo = document.getElementById('res-ojo');
+  if(d.ojo){ ojo.style.display = ''; ojo.innerHTML = d.ojo; } else { ojo.style.display = 'none'; }
+  document.getElementById('res-bt').textContent = d.btn || 'Seguir →';
+  Parque3D.abrir('velo-res');
+  pintarMarcador();
+}
+
+function seguirDesdeVelo(){
+  Parque3D.cerrar('velo-res');
+  var d = r();
+  /* Enseñarle el ejemplo que le faltaba. Se hace AQUÍ, al salir de la
+     ronda, para que el alumno vea entrar la bolita nueva antes de que
+     le vuelvan a preguntar lo mismo. */
+  if(d.enseña){
+    ejemplos.push({x:d.enseña.x, y:d.enseña.y, z:d.enseña.z, clase:d.enseña.clase});
+    pintarEjemplos();
+    Parque3D.aviso('➕ Ejemplo nuevo: '+CLASES[d.enseña.clase].emoji+' '+CLASES[d.enseña.clase].nombre, 2200);
+  }
+  siguiente();
+}
+
+function siguiente(){
+  if(ronda >= RONDAS.length-1){ terminar(); return; }
+  ronda++;
+  armarRonda();
+}
+
+function terminar(){
+  var est = aciertos >= RONDAS.length-1 ? 3 : (aciertos >= RONDAS.length-2 ? 2 : 1);
+  if(est > estrellas){ estrellas = est; }
+  guardar();
+  document.getElementById('fin-est').textContent = '⭐'.repeat(est)+'☆'.repeat(3-est);
+  document.getElementById('fin-form').innerHTML =
+    'Le adivinaste <b>'+aciertos+' de '+RONDAS.length+'</b> respuestas';
+  Parque3D.festejarFin();
+  Parque3D.abrir('velo-fin');
+  pintarMarcador();
+}
+
+function reiniciar(){
+  Parque3D.cerrar('velo-fin');
+  ronda = 0; aciertos = 0;
+  ejemplos = EJEMPLOS.map(function(e){ return {x:e.x, y:e.y, z:e.z, clase:e.clase}; });
+  pintarEjemplos();
+  armarRonda();
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  esc3.animarCamara();
+  esc3.moverRotulos();
+  esc3.pintar();
+}
+
+function pintarMarcador(){
+  document.getElementById('marcador').textContent = '⭐ '+estrellas+' · '+aciertos+'/'+RONDAS.length;
+}
+function pintarMapa(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = RONDAS.map(function(x, i){
+    return '<span class="'+(i === ronda ? 'aqui' : '')+'">'+x.emoji+'</span>';
+  }).join('');
+}
+
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+});
+
+window.__j3d = {
+  estado: function(){ return {ronda:ronda, aciertos:aciertos, estrellas:estrellas,
+                              contestada:contestada, vecino:vecinoAhora,
+                              ejemplos:ejemplos.length}; },
+  contestar: contestar, siguiente: siguiente,
+  rondas: RONDAS, ejemplos: function(){ return ejemplos; }, base: EJEMPLOS,
+  clases: CLASES, quienDice: function(p, ej){ return ej[NubeIA.vecino(p, ej)].clase; }
+};
+</script>
+</body>
+</html>

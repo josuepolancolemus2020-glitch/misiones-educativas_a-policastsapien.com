@@ -519,6 +519,77 @@
   </button>
 </div>
 
+<div class="sec" id="s-juegos3d" role="tabpanel">
+  <div class="card ac-purple">
+    <h2>🎮 Parque de Juegos 3D</h2>
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;">Seis juegos en tres dimensiones para <strong>toda la ruta</strong>. Aquí no se lee cómo aprende una máquina: se le <strong>ve la frontera</strong>, se le mira el sesgo salir de tus propias manos y se ve el suelo levantarse hasta la meta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">🌐 La primera vez hace falta señal, porque bajan la pieza que dibuja en 3D. Después quedan guardados en el teléfono y funcionan sin internet. Se abren en otra pestaña: tu progreso de la misión no se pierde.</p>
+    <p class="parque-resumen" id="parque-resumen"></p>
+    <div class="juegos-grid">
+
+      <div class="juego-card" data-juego="j3d_separador_v1">
+        <div class="juego-icon">🔪</div>
+        <h3>El Separador 3D</h3>
+        <p>Mueve el plano hasta dejar cada clase de su lado. Y llega el caso en que ningún plano alcanza: ahí la pantalla no finge que hay respuesta.</p>
+        <span class="juego-tema">🔪 La frontera · lo que una máquina traza al aprender</span>
+        <span class="juego-medalla" data-medalla="separador"></span>
+        <a href="juego-separador-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_vecino_v1">
+        <div class="juego-icon">📏</div>
+        <h3>El Vecino Más Cercano</h3>
+        <p>Adivina qué va a contestar la máquina. Ponle una piedra y contesta igual: nunca dice «no sé». Enséñale un ejemplo y la respuesta cambia delante de ti.</p>
+        <span class="juego-tema">📏 Cómo decide · y por qué contesta siempre</span>
+        <span class="juego-medalla" data-medalla="vecino"></span>
+        <a href="juego-vecino-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_grupos_v1">
+        <div class="juego-icon">🗂️</div>
+        <h3>Los Grupos Escondidos</h3>
+        <p>Sin una sola etiqueta, la máquina junta lo que se parece. Pídele tres grupos donde solo hay uno y te los dará: eso hay que verlo una vez.</p>
+        <span class="juego-tema">🗂️ Aprendizaje no supervisado</span>
+        <span class="juego-medalla" data-medalla="grupos"></span>
+        <a href="juego-grupos-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_sesgo_v1">
+        <div class="juego-icon">⚖️</div>
+        <h3>El Sesgo a la Vista</h3>
+        <p>Tú eliges de qué cultivos salen las fotos del detector de plagas. Deja fuera el plátano y mira lo que le dice al productor de plátano.</p>
+        <span class="juego-tema">⚖️ El sesgo · no se cuenta, se produce</span>
+        <span class="juego-medalla" data-medalla="sesgo"></span>
+        <a href="juego-sesgo-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_memorizo_v1">
+        <div class="juego-icon">🧠</div>
+        <h3>¿Aprendió o se lo memorizó?</h3>
+        <p>Saca 100 % en los ejemplos que ya vio y falla con los nuevos. Encuentra el ajuste que de verdad aprende — y sin poder mirar el examen antes.</p>
+        <span class="juego-tema">🧠 La prueba · con ejemplos que nunca vio</span>
+        <span class="juego-medalla" data-medalla="memorizo"></span>
+        <a href="juego-memorizo-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+      <div class="juego-card" data-juego="j3d_refuerzo_v1">
+        <div class="juego-icon">🤖</div>
+        <h3>El Robot que Aprende Probando</h3>
+        <p>Nadie le dice el camino: solo si llegó o se cayó. El suelo se va levantando en una rampa hasta la meta, y un día el robot la sube solo.</p>
+        <span class="juego-tema">🤖 Aprendizaje por refuerzo</span>
+        <span class="juego-medalla" data-medalla="refuerzo"></span>
+        <a href="juego-refuerzo-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
+      </div>
+
+    </div>
+  </div>
+  <button class="next-sec-btn" aria-label="Ir a Recursos del tema" onclick="go('s-recursos')">
+    <span class="nsb-icon">📁</span>
+    <span class="nsb-label"><span class="nsb-hint">Siguiente</span><span class="nsb-name">Recursos del Tema</span></span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
 <div class="sec" id="s-recursos" role="tabpanel">
   <div class="card ac-blue">
     <h2>📁 Recursos del Tema</h2>
@@ -586,6 +657,7 @@
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-tareas" data-s="s-tareas" onclick="go('s-tareas')"><span class="ico">📋</span> Tareas</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-evaluacion" data-s="s-evaluacion" onclick="go('s-evaluacion')"><span class="ico">🎓</span> Evaluación</button>
   <button class="nav-t" role="button" onclick="openDiploma()" style="border-color:var(--purple);" aria-haspopup="dialog"><span class="ico">🏅</span> Constancia</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-juegos3d" data-s="s-juegos3d" onclick="go('s-juegos3d')"><span class="ico">🎮</span> Parque 3D</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-recursos" data-s="s-recursos" onclick="go('s-recursos')"><span class="ico">📁</span> Recursos</button>
 </nav>
 

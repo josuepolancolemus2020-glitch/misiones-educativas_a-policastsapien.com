@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 El Robot que Aprende Probando 3D | Misión Cómo Aprende una Máquina</title>
+<meta name="description" content="Nadie le dice el camino: solo si llegó o se cayó. A fuerza de intentos, el suelo se levanta en una rampa hasta la meta y el robot la sube solo.">
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<link rel="stylesheet" href="../../css/parque-ia.css">
+<style>
+/* ============================================================
+   Juego 3D · El Robot que Aprende Probando
+   ------------------------------------------------------------
+   El aprendizaje por refuerzo es el más fácil de contar y el más
+   difícil de enseñar con un dibujo quieto: nadie le dice al robot
+   por dónde ir; solo se le dice, al final, si llegó o si se cayó.
+   Y de ahí sale un camino.
+
+   Lo que hace que esto se pueda ver es de las pocas cosas que el
+   papel no puede dar: lo que el robot va aprendiendo ES LA ALTURA
+   DEL SUELO. Cada baldosa sube según lo que valga estar ahí, y al
+   cabo de unos intentos aparece una RAMPA desde la salida hasta la
+   meta. Entonces el robot ya no busca: sube. En un cuaderno esto
+   sería una tabla de números que nadie mira.
+
+   Y se dice el precio, porque es parte de la lección: un robot de
+   verdad necesita miles de intentos, y cada intento es una caída.
+   Por eso esto se entrena en la pantalla antes que en el mundo.
+   ============================================================ */
+.robot-rot{border-color:#fff!important;font-size:1.05rem;padding:.02rem .18rem;}
+.meta-rot{border-color:var(--verde)!important;font-size:1.05rem;padding:.02rem .18rem;}
+.hoyo-rot{border-color:var(--rojo)!important;font-size:1rem;padding:.02rem .18rem;}
+.cuenta-int{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;font-size:.78rem;
+  color:var(--gris);margin:.2rem 0;}
+.cuenta-int b{color:var(--acento);font-family:'Fira Code',ui-monospace,monospace;font-size:1.05rem;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="como-aprende-una-maquina.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">🤖 El Robot que Aprende Probando<small id="subt">Patio 1 de 3</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="cinta" id="cinta"></div>
+</div>
+
+<div class="mandos">
+  <div class="cuenta-int" id="cuenta">
+    <span>Intentos: <b id="n-int">0</b></span>
+    <span>Llegó: <b id="n-meta">0</b></span>
+    <span>Se cayó: <b id="n-hoyo">0</b></span>
+  </div>
+  <div class="botones">
+    <button class="bt bt-a" id="bt-uno" onclick="unIntento()">▶️ Un intento</button>
+    <button class="bt bt-a" id="bt-diez" onclick="diezIntentos()">⏩ Diez</button>
+    <button class="bt bt-v" id="bt-solo" onclick="queVayaSolo()">🤖 Que vaya solo</button>
+    <button class="bt bt-s" id="bt-olvida" onclick="olvidar()">↺ Que olvide</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🤖</div>
+    <h2>El Robot que Aprende Probando</h2>
+    <p>Este robot tiene que llegar a la 🎯. <b>Nadie le dice por dónde.</b> Lo único que se le dice, al final de cada intento, es si <b>llegó</b> o si se <b>cayó</b>.</p>
+    <p style="font-size:.84rem;color:#c9b4d6;">Mira el suelo mientras prueba: las baldosas que le convienen se van <b>levantando</b>. Cuando haya una rampa hasta la meta, el robot podrá subirla solo.</p>
+    <div class="chapas"><span>🎯 La meta</span><span>🕳️ Los hoyos</span><span>Tres patios</span></div>
+    <div class="mapa" id="mapa-ini"></div>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-res">
+  <div class="panel">
+    <div class="emoji-gr" id="res-emoji">🤖</div>
+    <h2 id="res-tit">Fue solo hasta la meta</h2>
+    <div class="formula" id="res-form"></div>
+    <p id="res-txt"></p>
+    <div class="ojo" id="res-ojo" style="display:none;"></div>
+    <div class="mapa" id="mapa-fin"></div>
+    <button class="bt bt-v" id="res-bt" onclick="siguiente()">Siguiente patio →</button>
+    <button class="bt bt-s" id="res-otra" onclick="cerrarRes()">🔁 Seguir probando</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script src="../../js/3d/nube-ia.js"></script>
+<script>
+var LLAVE = 'j3d_refuerzo_v1';
+
+/* Las cuatro direcciones, y los números del aprendizaje. No son
+   mágicos: el PREMIO de llegar es +1, la CAÍDA −1 y cada paso cuesta
+   un poquito (−0.02) para que el robot no se conforme con dar
+   vueltas eternamente. `DESCUENTO` es lo que hace que el premio de
+   la meta se vaya corriendo hacia atrás por las baldosas: eso es lo
+   que levanta la rampa. */
+var DIR = [[1,0],[-1,0],[0,1],[0,-1]];
+var APRENDE = 0.4, DESCUENTO = 0.95, PREMIO = 1, CAIDA = -1, PASO_COSTO = -0.02;
+
+var PATIOS = [
+  {n:'El patio vacío', emoji:'🟩', an:5, al:5, inicio:[0,0], meta:[4,4], hoyos:[],
+   tope:60, semilla:2001, oro:20, plata:35,
+   cuento:'Nada en medio. Aun así, el robot no sabe ni que existe la meta: tiene que <b>tropezársela</b>.',
+   leccion:'Los primeros intentos son puro dar vueltas. Cuando por fin tocó la meta, esa baldosa subió — y de ahí la subida se fue corriendo hacia atrás, baldosa por baldosa, hasta la salida.'},
+  {n:'El patio con charcos', emoji:'💧', an:5, al:5, inicio:[0,0], meta:[4,4], hoyos:[[2,1],[1,3],[3,3]],
+   tope:60, semilla:2002, oro:40, plata:60,
+   cuento:'Ahora hay <b>hoyos</b>. Caer en uno acaba el intento, y esa baldosa se hunde.',
+   leccion:'Las baldosas de los hoyos se hundieron y las de al lado también un poco: el robot aprendió a no arrimarse. Nadie le dijo «cuidado con el hoyo» — se cayó y ya.'},
+  {n:'El pasillo', emoji:'🚪', an:6, al:6, inicio:[0,0], meta:[5,5], hoyos:[[0,3],[1,3],[2,3],[4,3],[5,3]],
+   tope:80, semilla:2003, oro:50, plata:80,
+   cuento:'Una pared de hoyos con <b>una sola puerta</b>. Aquí va a tardar: el camino corto no sirve.',
+   leccion:'Este le costó, y por eso está: el robot tuvo que caerse muchas veces en la pared antes de dar con la puerta. Un robot de verdad, en un problema de verdad, necesita <b>miles</b> de intentos — y por eso se entrena en una pantalla antes que en el mundo.'}
+];
+
+var esc3, baldosas = [], rotRobot = null, robotMalla = null;
+var patio = 0, estrellas = 0, Q = {}, azar = null;
+var intentos = 0, llegadas = 0, caidas = 0, animando = false, logrado = false;
+var mejor = PATIOS.map(function(){ return 0; });
+
+function guardar(){
+  try{ localStorage.setItem(LLAVE, JSON.stringify({patio:patio, estrellas:estrellas, mejor:mejor,
+    completado: mejor.every(function(x){ return x > 0; })})); }catch(e){}
+}
+function leer(){
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE));
+    if(d){
+      patio = Math.min(d.patio|0, PATIOS.length-1); estrellas = d.estrellas|0;
+      if(d.mejor && d.mejor.length) for(var i=0;i<PATIOS.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+    }
+  }catch(e){}
+}
+function P(){ return PATIOS[patio]; }
+function esHoyo(x, z){ var h = P().hoyos; for(var i=0;i<h.length;i++) if(h[i][0]===x && h[i][1]===z) return true; return false; }
+function esMeta(x, z){ return P().meta[0]===x && P().meta[1]===z; }
+function valor(x, z){ var q = Q[x+','+z]; return q ? Math.max(q[0], q[1], q[2], q[3]) : 0; }
+
+/* ============================================================
+   Un intento: probar, cobrar y apuntar
+   ------------------------------------------------------------
+   Esto es el aprendizaje entero, y son ocho líneas. El robot elige
+   casi siempre lo que hasta ahora le fue mejor, y de vez en cuando
+   algo al azar —si nunca probara nada nuevo, se quedaría con el
+   primer camino que le salió, por malo que fuera—. Al llegar o
+   caerse, apunta lo que valía estar donde estaba.
+   ============================================================ */
+function unEpisodio(){
+  var d = P(), x = d.inicio[0], z = d.inicio[1], pasos = 0, camino = [[x, z]], fin = 'se cansó';
+  var eps = Math.max(0.06, 0.45 * Math.pow(0.97, intentos));
+  while(pasos < d.tope){
+    var s = x+','+z, a;
+    if(azar() < eps){ a = Math.floor(azar()*4) % 4; }
+    else { a = 0; for(var i=1;i<4;i++) if(Q[s][i] > Q[s][a]) a = i; }
+    var nx = x + DIR[a][0], nz = z + DIR[a][1];
+    if(nx < 0 || nz < 0 || nx >= d.an || nz >= d.al){ nx = x; nz = z; }
+    var r = PASO_COSTO, term = false;
+    if(esMeta(nx, nz)){ r = PREMIO; term = true; fin = 'llegó'; }
+    else if(esHoyo(nx, nz)){ r = CAIDA; term = true; fin = 'se cayó'; }
+    var mejorSig = term ? 0 : Math.max.apply(null, Q[nx+','+nz]);
+    Q[s][a] += APRENDE * (r + DESCUENTO*mejorSig - Q[s][a]);
+    x = nx; z = nz; pasos++; camino.push([x, z]);
+    if(term) break;
+  }
+  intentos++;
+  if(fin === 'llegó') llegadas++;
+  else if(fin === 'se cayó') caidas++;
+  return {camino:camino, fin:fin, pasos:pasos};
+}
+
+/* Y esto es el robot yendo SIN probar nada: en cada baldosa toma la
+   dirección que más vale. Si el suelo ya forma una rampa, llega; si
+   todavía no, se estrella o da vueltas. No gasta azar a propósito:
+   mirar si ya aprendió no puede cambiar lo que aprendió. */
+function caminoSolo(){
+  var d = P(), x = d.inicio[0], z = d.inicio[1], ruta = [[x, z]], visto = {}, pasos = 0;
+  while(pasos < d.tope){
+    var s = x+','+z;
+    if(visto[s]) return {fin:'dio vueltas', ruta:ruta};
+    visto[s] = 1;
+    var a = 0;
+    for(var i=1;i<4;i++) if(Q[s][i] > Q[s][a]) a = i;
+    var nx = x + DIR[a][0], nz = z + DIR[a][1];
+    if(nx < 0 || nz < 0 || nx >= d.an || nz >= d.al) return {fin:'se dio con la pared', ruta:ruta};
+    ruta.push([nx, nz]);
+    if(esMeta(nx, nz)) return {fin:'llegó', ruta:ruta};
+    if(esHoyo(nx, nz)) return {fin:'se cayó', ruta:ruta};
+    x = nx; z = nz; pasos++;
+  }
+  return {fin:'se cansó', ruta:ruta};
+}
+
+/* ============================================================
+   El dibujo
+   ============================================================ */
+function montar(){
+  esc3 = NubeIA.escena({radio:19, giroV:0.62});
+  esc3.girar();
+  armarPatio();
+  Parque3D.vigilarHueco(esc3.ajustar);
+  animar();
+}
+
+function paso(){ return (NubeIA.LADO*2) / Math.max(P().an, P().al); }
+function aX(x){ return (x + 0.5)*paso() - NubeIA.LADO; }
+function aZ(z){ return (z + 0.5)*paso() - NubeIA.LADO; }
+
+function armarPatio(){
+  var d = P(), L = NubeIA.LADO, p = paso();
+  baldosas.forEach(function(b){ Parque3D.tirar(b); });
+  baldosas = [];
+  if(robotMalla){ Parque3D.tirar(robotMalla); robotMalla = null; }
+  esc3.limpiarRotulos();
+  rotRobot = null;
+  olvidarQ();
+
+  for(var x=0; x<d.an; x++){
+    for(var z=0; z<d.al; z++){
+      var b = new THREE.Mesh(new THREE.BoxGeometry(p*0.88, 1, p*0.88),
+        new THREE.MeshLambertMaterial({color:0x3a2b47}));
+      b.position.set(aX(x), -L, aZ(z));
+      b.userData = {x:x, z:z};
+      esc3.mundo.add(b);
+      baldosas.push(b);
+      if(esHoyo(x, z)) esc3.rotulo('🕳️', aX(x), -L + 0.6, aZ(z), 'hoyo-rot');
+    }
+  }
+  esc3.rotulo('🎯', aX(d.meta[0]), -L + 1.4, aZ(d.meta[1]), 'meta-rot');
+  esc3.rotulo('🏁 salida', aX(d.inicio[0]), -L - 0.9, aZ(d.inicio[1]), 'eje');
+  rotRobot = esc3.rotulo('🤖', aX(d.inicio[0]), -L + 1.6, aZ(d.inicio[1]), 'robot-rot');
+  robotMalla = new THREE.Mesh(new THREE.SphereGeometry(p*0.22, 12, 10),
+    new THREE.MeshLambertMaterial({color:0xffffff}));
+  robotMalla.position.set(aX(d.inicio[0]), -L + 0.8, aZ(d.inicio[1]));
+  esc3.mundo.add(robotMalla);
+
+  document.getElementById('subt').textContent = 'Patio '+(patio+1)+' de '+PATIOS.length;
+  document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · '+d.cuento;
+  document.getElementById('cinta').classList.remove('ver');
+  document.getElementById('aviso').className = 'aviso';
+  document.getElementById('aviso').textContent = 'Toca «Un intento» y míralo probar. No sabe nada todavía.';
+  pintarSuelo();
+  pintarCuenta();
+  pintarMapa('mapa-ini'); pintarMapa('mapa-fin');
+}
+
+function olvidarQ(){
+  var d = P();
+  Q = {}; azar = NubeIA.rng(d.semilla);
+  intentos = 0; llegadas = 0; caidas = 0; logrado = false;
+  for(var x=0; x<d.an; x++) for(var z=0; z<d.al; z++) Q[x+','+z] = [0,0,0,0];
+}
+
+/* El suelo es lo que el robot ha aprendido: cada baldosa se levanta
+   según lo que valga estar en ella. La rampa que aparece es el
+   aprendizaje, visto. */
+function pintarSuelo(){
+  var d = P(), L = NubeIA.LADO;
+  for(var i=0;i<baldosas.length;i++){
+    var b = baldosas[i], x = b.userData.x, z = b.userData.z;
+    var v = valor(x, z), alto;
+    if(esHoyo(x, z)){
+      b.material.color.setHex(0x1a0f1f);
+      alto = 0.12;
+    } else if(esMeta(x, z)){
+      b.material.color.setHex(0x27ae60);
+      alto = 1.1 + Math.max(0, v)*2.6;
+    } else {
+      var t = Math.max(0, Math.min(1, v));
+      alto = 0.12 + t*2.6;
+      /* Del morado apagado (no vale nada) al magenta encendido (vale
+         mucho). Y lo que vale MENOS que cero —lo de al lado de un
+         hoyo— se pone azul oscuro: el robot aprendió a no ir ahí. */
+      if(v < -0.02) b.material.color.setHex(0x24324a);
+      else b.material.color.setHex(mezclar(0x3a2b47, 0xe879f9, t));
+    }
+    b.scale.y = alto;
+    b.position.y = -L + alto/2;
+  }
+}
+function mezclar(a, b, t){
+  var ar = (a>>16)&255, ag = (a>>8)&255, ab = a&255;
+  var br = (b>>16)&255, bg = (b>>8)&255, bb = b&255;
+  return ((Math.round(ar+(br-ar)*t)<<16) | (Math.round(ag+(bg-ag)*t)<<8) | Math.round(ab+(bb-ab)*t));
+}
+
+function ponerRobot(x, z){
+  var L = NubeIA.LADO, alto = 0.12 + Math.max(0, Math.min(1, valor(x, z)))*2.6;
+  if(esMeta(x, z)) alto = 1.1 + Math.max(0, valor(x, z))*2.6;
+  if(esHoyo(x, z)) alto = 0.12;
+  robotMalla.position.set(aX(x), -L + alto + 0.45, aZ(z));
+  rotRobot.p.set(aX(x), -L + alto + 1.25, aZ(z));
+}
+
+/* ============================================================
+   Lo que toca el alumno
+   ============================================================ */
+function reproducir(camino, fin, alAcabar){
+  animando = true;
+  botones(false);
+  var i = 0;
+  function andar(){
+    if(i >= camino.length){
+      animando = false;
+      botones(true);
+      pintarSuelo();
+      if(alAcabar) alAcabar();
+      return;
+    }
+    ponerRobot(camino[i][0], camino[i][1]);
+    i++;
+    setTimeout(andar, 150);
+  }
+  andar();
+}
+function botones(on){
+  ['bt-uno','bt-diez','bt-solo','bt-olvida'].forEach(function(id){
+    document.getElementById(id).disabled = !on;
+  });
+}
+
+function unIntento(){
+  if(animando) return;
+  var r = unEpisodio();
+  pintarCuenta();
+  reproducir(r.camino, r.fin, function(){
+    var av = document.getElementById('aviso');
+    av.className = r.fin === 'llegó' ? 'aviso bien' : 'aviso mal';
+    av.textContent = 'Intento ' + intentos + ': ' + r.fin + ' en ' + r.pasos + ' pasos.' +
+      (llegadas === 1 && r.fin === 'llegó' ? ' 👀 Mira cómo se levantó la baldosa de la meta.' : '');
+    if(r.fin === 'llegó') Parque3D.confeti(false);
+  });
+}
+
+function diezIntentos(){
+  if(animando) return;
+  var ultimo = null;
+  for(var i=0;i<10;i++) ultimo = unEpisodio();
+  pintarCuenta();
+  pintarSuelo();
+  reproducir(ultimo.camino, ultimo.fin, function(){
+    var av = document.getElementById('aviso');
+    av.className = 'aviso';
+    av.textContent = 'Diez intentos más (van ' + intentos + '). Mira el suelo: ¿ya hay rampa hasta la 🎯?';
+  });
+}
+
+function queVayaSolo(){
+  if(animando) return;
+  var r = caminoSolo(), d = P();
+  reproducir(r.ruta, r.fin, function(){
+    var cinta = document.getElementById('cinta');
+    cinta.innerHTML = r.fin === 'llegó'
+      ? 'Fue solo hasta la meta en <b>'+(r.ruta.length-1)+'</b> pasos'
+      : 'Yendo solo: <b>'+r.fin+'</b>';
+    cinta.classList.add('ver');
+    if(r.fin === 'llegó'){
+      if(!logrado){
+        logrado = true;
+        var est = intentos <= d.oro ? 3 : (intentos <= d.plata ? 2 : 1);
+        if(est > mejor[patio]){ estrellas += est - mejor[patio]; mejor[patio] = est; }
+        guardar();
+        Parque3D.acierto();
+      }
+      mostrar(r);
+    } else {
+      Parque3D.fallo();
+      var av = document.getElementById('aviso');
+      av.className = 'aviso mal';
+      av.textContent = 'Yendo solo, ' + r.fin + '. Todavía le falta rampa: dale más intentos.';
+    }
+  });
+}
+
+function olvidar(){
+  if(animando) return;
+  olvidarQ();
+  pintarSuelo();
+  pintarCuenta();
+  ponerRobot(P().inicio[0], P().inicio[1]);
+  document.getElementById('cinta').classList.remove('ver');
+  var av = document.getElementById('aviso');
+  av.className = 'aviso ojo';
+  av.textContent = 'Se le borró todo. El suelo volvió a estar plano: eso es lo que sabía, y no era nada.';
+}
+
+function mostrar(r){
+  var d = P(), est = mejor[patio];
+  document.getElementById('res-emoji').textContent = '🤖';
+  document.getElementById('res-tit').textContent = 'Fue solo hasta la meta';
+  document.getElementById('res-form').innerHTML =
+    '⭐'.repeat(est)+'☆'.repeat(3-est)+'<br>' +
+    'Le costó <b>'+intentos+'</b> intentos<br>' +
+    '<span style="font-size:.8rem;">llegó '+llegadas+' veces · se cayó '+caidas+'</span><br>' +
+    'Y ahora va derecho en <b>'+(r.ruta.length-1)+'</b> pasos';
+  document.getElementById('res-txt').innerHTML = d.leccion;
+  var ojo = document.getElementById('res-ojo');
+  ojo.style.display = '';
+  ojo.innerHTML = '🎯 Nadie le enseñó el camino: se le dijo <b>«llegaste»</b> o <b>«te caíste»</b>, y nada más. Eso es el <b>aprendizaje por refuerzo</b>, y es como aprenden las máquinas que juegan. El precio está a la vista: se cayó '+caidas+' veces para aprenderlo.';
+  document.getElementById('res-bt').style.display = patio < PATIOS.length-1 ? '' : 'none';
+  pintarMapa('mapa-fin');
+  pintarMarcador();
+  if(mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  Parque3D.abrir('velo-res');
+}
+
+function cerrarRes(){ Parque3D.cerrar('velo-res'); }
+function siguiente(){
+  Parque3D.cerrar('velo-res');
+  patio = Math.min(patio+1, PATIOS.length-1);
+  guardar();
+  armarPatio();
+  pintarMarcador();
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  esc3.animarCamara();
+  esc3.moverRotulos();
+  esc3.pintar();
+}
+
+function pintarCuenta(){
+  document.getElementById('n-int').textContent = intentos;
+  document.getElementById('n-meta').textContent = llegadas;
+  document.getElementById('n-hoyo').textContent = caidas;
+}
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function pintarMapa(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = PATIOS.map(function(x, i){
+    return '<span class="'+(i === patio ? 'aqui' : '')+'">'+x.emoji+'<br>'+
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '–')+'</span>';
+  }).join('');
+}
+
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+});
+
+window.__j3d = {
+  estado: function(){ return {patio:patio, intentos:intentos, llegadas:llegadas, caidas:caidas,
+                              estrellas:estrellas, mejor:mejor.slice(), logrado:logrado,
+                              solo:caminoSolo().fin}; },
+  entrenar: function(n){ for(var i=0;i<n;i++) unEpisodio(); pintarSuelo(); pintarCuenta(); },
+  caminoSolo: caminoSolo, olvidar: olvidar, valor: valor,
+  patios: PATIOS, irA: function(p){ patio = p; armarPatio(); }
+};
+</script>
+</body>
+</html>

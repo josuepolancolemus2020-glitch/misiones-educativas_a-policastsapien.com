@@ -1,0 +1,152 @@
+/* ============================================================
+   M.E.T.A.S · Lo que comparten los seis juegos de la Ruta de la
+   Máquina que Aprende
+   ------------------------------------------------------------
+   Esto NO sustituye al andamio (css/parque-3d.css): va DESPUÉS de
+   él y encima. Aquí solo está lo que los seis juegos de este
+   parque tienen igual porque enseñan lo mismo: una nube de puntos
+   en un espacio de tres medidas, sus rótulos flotando sobre el
+   dibujo, las chapas de las clases y los mandos de deslizar.
+
+   Se saca aquí por la lección que este proyecto ya pagó dos veces:
+   el andamio de los juegos 3D estuvo copiado en doce archivos y
+   cuando el lienzo se sentó encima de los botones hubo que
+   arreglarlo en doce sitios. Seis copias más de lo mismo, en un
+   parque que nace hoy, sería repetirlo a sabiendas.
+
+   Cada juego carga:
+     <link rel="stylesheet" href="../../css/parque-3d.css">
+     <link rel="stylesheet" href="../../css/parque-ia.css">
+     <style> …lo suyo… </style>
+   ============================================================ */
+
+/* El color de la materia: magenta #86198f, el de Inteligencia
+   Artificial en la aplicación. Los seis juegos lo comparten porque
+   son la misma ruta; lo que los distingue es el dibujo, no el
+   color. */
+:root{
+  --acento:#e879f9; --acento-tinta:#2a0b2e; --franja:rgba(232,121,249,.45);
+  --marca-fondo:rgba(232,121,249,.16); --marca-borde:rgba(232,121,249,.5);
+  --velo-fondo:rgba(16,8,22,.94);
+  --lienzo-fondo:radial-gradient(circle at 50% 30%,#332043 0%,#140c1c 74%);
+  /* Las dos clases que se separan. Nunca rojo contra verde: uno de
+     cada doce niños no los distingue. Ámbar contra turquesa se
+     distinguen por tono Y por claridad, así que también se separan
+     en una fotocopia y en una pantalla al sol.
+
+     ⚠️ Estos dos números están TAMBIÉN en el JS de cada juego, en
+     hexadecimal (0xf6b93b y 0x38d3c6), porque Three.js pinta con
+     números y no sabe de variables de CSS. No hay forma de tenerlos
+     en un solo sitio; lo que sí hay es esta nota: si cambia uno,
+     cambian los dos, o el rótulo dirá un color y la bolita será de
+     otro. */
+  --clase-a:#f6b93b; --clase-b:#38d3c6;
+}
+
+/* ============================================================
+   Los rótulos que flotan sobre el dibujo
+   ------------------------------------------------------------
+   Son HTML, no texturas: se leen nítidos en cualquier pantalla,
+   se agrandan con el Aa del andamio y no cuestan un solo píxel de
+   memoria de vídeo. Y NO se pueden tocar: el dedo que va al punto
+   de abajo no se queda en el rótulo de arriba.
+   ============================================================ */
+.rot{position:absolute;transform:translate(-50%,-50%);background:rgba(16,10,24,.9);
+  border:1.5px solid var(--acento);border-radius:8px;padding:.08rem .32rem;font-size:.7rem;
+  white-space:nowrap;pointer-events:none;line-height:1.3;}
+.rot.eje{border-color:var(--gris);color:var(--gris);background:rgba(16,10,24,.8);}
+.rot.a{border-color:var(--clase-a);color:#ffe0a3;}
+.rot.b{border-color:var(--clase-b);color:#b6f4ee;}
+
+/* La tarjeta de la consigna y la cinta del resultado: flotan
+   encima del dibujo y tampoco reciben el toque. */
+.tarjeta{position:absolute;top:.5rem;left:.5rem;right:.5rem;background:rgba(16,10,24,.92);
+  border:2px solid var(--franja);border-radius:12px;padding:.35rem .6rem;font-size:.82rem;
+  line-height:1.3;text-align:center;pointer-events:none;}
+.tarjeta b{color:var(--acento);}
+.cinta{position:absolute;bottom:.5rem;left:50%;transform:translateX(-50%);
+  background:rgba(16,10,24,.94);border:2px solid var(--acento);border-radius:12px;
+  padding:.25rem .7rem;font-size:.92rem;font-weight:700;pointer-events:none;display:none;}
+.cinta.ver{display:block;}
+.cinta b{color:#f5c7ff;}
+
+/* ============================================================
+   Los mandos
+   ============================================================ */
+.pregunta{font-size:.86rem;margin-bottom:.4rem;line-height:1.35;text-align:center;}
+.pregunta b{color:var(--acento);}
+.aviso{font-size:.82rem;text-align:center;min-height:1.15rem;margin-top:.35rem;line-height:1.35;}
+.aviso.mal{color:#ffb0b0;}
+.aviso.bien{color:#8ae9c9;}
+.aviso.ojo{color:#ffd98a;}
+
+.ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.4rem;}
+.op{font-family:inherit;font-size:.9rem;font-weight:700;padding:.6rem .55rem;min-height:48px;
+  border:2px solid var(--gris);border-radius:13px;background:rgba(255,255,255,.05);
+  color:var(--claro);cursor:pointer;line-height:1.25;}
+.op:active{transform:scale(.97);}
+.op.buena{border-color:var(--verde);background:rgba(39,174,96,.22);}
+.op.mala{border-color:var(--rojo);background:rgba(224,82,82,.2);}
+.op:disabled{cursor:default;}
+
+/* Las chapas: qué clase es cada color, y los grupos que se
+   encienden y se apagan. 44 px de blanco de toque cuando se tocan,
+   que es la regla de siempre. */
+.chapas{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;font-size:.76rem;margin:.4rem 0;}
+.chapas span{background:rgba(232,121,249,.14);border:1.5px solid rgba(232,121,249,.45);
+  border-radius:8px;padding:.2rem .45rem;}
+.chapa-a{border-color:var(--clase-a)!important;color:#ffe0a3;background:rgba(246,185,59,.14)!important;}
+.chapa-b{border-color:var(--clase-b)!important;color:#b6f4ee;background:rgba(56,211,198,.14)!important;}
+.grupos{display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap;margin:.4rem 0;}
+.grupo{font-family:inherit;font-size:.8rem;font-weight:700;min-height:44px;padding:.3rem .55rem;
+  border:2px solid var(--gris);border-radius:12px;background:transparent;color:var(--gris);cursor:pointer;
+  line-height:1.2;}
+.grupo.on{border-color:var(--acento);background:rgba(232,121,249,.2);color:var(--claro);}
+
+/* Los deslizadores. El pulgar va a 26 px y la pista a 44 de alto:
+   lo que se toca es la fila entera, no la rayita. Es la misma regla
+   de los 44 px de todo lo demás. */
+.mando{display:flex;align-items:center;gap:.45rem;margin:.18rem 0;}
+.mando label{font-size:.76rem;color:var(--gris);min-width:5.4rem;line-height:1.2;}
+.mando output{font-size:.76rem;color:var(--acento);min-width:3rem;text-align:right;
+  font-family:'Fira Code',ui-monospace,monospace;}
+.mando input[type=range]{flex:1;height:44px;background:transparent;-webkit-appearance:none;appearance:none;}
+.mando input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:5px;background:rgba(255,255,255,.16);}
+.mando input[type=range]::-moz-range-track{height:8px;border-radius:5px;background:rgba(255,255,255,.16);}
+.mando input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;
+  margin-top:-9px;border-radius:50%;background:var(--acento);border:2px solid #fff3;}
+.mando input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;
+  background:var(--acento);border:2px solid #fff3;}
+
+/* El marcador de aciertos que se lee mientras se mueve el plano. */
+.tanteo{display:flex;gap:.4rem;justify-content:center;align-items:baseline;font-size:.88rem;
+  font-weight:700;margin:.25rem 0;}
+.tanteo b{font-size:1.15rem;color:var(--acento);font-family:'Fira Code',ui-monospace,monospace;}
+.tanteo small{font-size:.74rem;color:var(--gris);font-weight:400;}
+
+/* El mapa de niveles: qué se pasó y dónde se está. Sin él el alumno
+   no sabe cuánto falta ni a cuál volver. */
+.mapa{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin:.5rem 0;}
+.mapa span{background:rgba(232,121,249,.1);border:1.5px solid rgba(232,121,249,.35);border-radius:8px;
+  padding:.18rem .3rem;font-size:.72rem;line-height:1.3;min-width:2.6rem;}
+.mapa span.aqui{border-color:var(--acento);background:rgba(232,121,249,.22);}
+
+.formula{font-family:'Fira Code',ui-monospace,monospace;background:rgba(232,121,249,.12);
+  border-left:4px solid var(--acento);border-radius:8px;padding:.5rem .7rem;font-size:.82rem;
+  margin:.55rem 0;text-align:left;line-height:1.6;word-break:break-word;}
+/* Lo que la pantalla NO promete: el recuadro de la advertencia
+   honesta (la máquina nunca dice «no sé», ningún plano los separa).
+   Va en ámbar, que es el color de «ojo con esto» en toda la
+   plataforma, y nunca en rojo: no es un error del alumno. */
+.ojo{background:rgba(255,193,7,.12);border-left:4px solid #ffc107;border-radius:8px;
+  padding:.5rem .7rem;font-size:.82rem;margin:.55rem 0;text-align:left;line-height:1.5;}
+
+@media(max-width:380px){
+  .pregunta{font-size:.78rem;} .op{font-size:.82rem;} .mando label{min-width:4.4rem;font-size:.72rem;}
+}
+@media (max-height:430px){
+  .mando input[type=range]{height:34px;}
+  .mando{margin:.08rem 0;}
+  .pregunta{font-size:.76rem;margin-bottom:.25rem;}
+  .op{font-size:.8rem;padding:.4rem .5rem;min-height:44px;}
+}

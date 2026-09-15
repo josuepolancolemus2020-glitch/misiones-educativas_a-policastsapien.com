@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗂️ Los Grupos Escondidos 3D | Misión Cómo Aprende una Máquina</title>
+<meta name="description" content="Sin etiquetas: la máquina junta sola lo que se parece. Pídele los grupos que quieras y te los da — aunque no existan.">
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<link rel="stylesheet" href="../../css/parque-ia.css">
+<style>
+/* ============================================================
+   Juego 3D · Los Grupos Escondidos
+   ------------------------------------------------------------
+   Aquí NADIE le dice a la máquina qué es cada cosa: llegan puntos
+   grises y ella los junta por parecido. Eso es el aprendizaje no
+   supervisado, y es lo único de la misión que no se puede enseñar
+   con etiquetas porque justamente no las hay.
+
+   El nivel que de verdad enseña es el tercero: una sola nube. Si
+   el alumno le pide tres grupos, la máquina le da tres — porque
+   eso es lo que le pidió, no porque existan. Una máquina siempre
+   devuelve lo que se le encarga, y creerle sin mirar es de donde
+   salen la mitad de los disparates que se leen por ahí.
+
+   Y al final, en los cuatro niveles, la misma pregunta: ¿cómo se
+   llama cada grupo? No lo sabe. Los nombres los pone una persona.
+   ============================================================ */
+.centro-rot{border-color:#fff!important;color:#fff!important;font-weight:700;font-size:.72rem;}
+.kbotones{display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap;margin:.3rem 0;}
+.kb{font-family:inherit;font-size:1rem;font-weight:700;min-width:44px;min-height:44px;
+  border:2px solid var(--gris);border-radius:12px;background:transparent;color:var(--claro);cursor:pointer;}
+.kb.on{border-color:var(--acento);background:rgba(232,121,249,.22);}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="como-aprende-una-maquina.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">🗂️ Los Grupos Escondidos<small id="subt">Montón 1 de 4</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="cinta" id="cinta"></div>
+</div>
+
+<div class="mandos">
+  <div class="pregunta" id="pregunta">¿En cuántos grupos se juntan? Pruébalo.</div>
+  <div class="kbotones" id="kbotones"></div>
+  <div class="botones">
+    <button class="bt bt-a" id="bt-agrupar" onclick="agrupar()">🔄 Agrupar</button>
+    <button class="bt bt-v" id="bt-listo" onclick="listo()" disabled>✅ Son estos</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🗂️</div>
+    <h2>Los Grupos Escondidos</h2>
+    <p>Estos puntos llegan <b>sin etiqueta</b>: nadie le ha dicho a la máquina qué es cada uno. Lo único que sabe hacer es <b>juntar lo que se parece</b>.</p>
+    <p style="font-size:.84rem;color:#c9b4d6;">Tú le dices <b>cuántos grupos</b> buscar y ella los busca. Mira el dibujo antes de pedir: no siempre hay los que parece.</p>
+    <div class="chapas"><span>Arrastra el dibujo para girarlo</span><span>Cuatro montones</span></div>
+    <div class="mapa" id="mapa-ini"></div>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-res">
+  <div class="panel">
+    <div class="emoji-gr" id="res-emoji">🎯</div>
+    <h2 id="res-tit">Los encontraste</h2>
+    <div class="formula" id="res-form"></div>
+    <p id="res-txt"></p>
+    <div class="ojo" id="res-ojo"></div>
+    <div class="mapa" id="mapa-fin"></div>
+    <button class="bt bt-v" id="res-bt" onclick="siguiente()">Siguiente montón →</button>
+    <button class="bt bt-s" id="res-rep" onclick="repetir()" style="display:none;">🔁 Este mismo</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script src="../../js/3d/nube-ia.js"></script>
+<script>
+var LLAVE = 'j3d_grupos_v1';
+
+/* Los colores de los grupos. NUNCA llevan nombre de cosa: son
+   «Grupo 1», «Grupo 2»… a propósito, porque es exactamente lo que
+   la máquina sabe de ellos. Ponerles «mangos» y «limones» sería la
+   pantalla contando algo que la máquina no sabe. */
+var COLORES = [0xf6b93b, 0x38d3c6, 0xa78bfa, 0xfb7185, 0x7dd3fc];
+
+var MONTONES = [
+  {n:'Dos montones', emoji:'🫧', k:2, semilla:6101,
+   cuento:'Gíralo y mira: ¿cuántos montones ves?',
+   nubes:[{clase:0,grupo:'g0',centro:[-0.62,-0.30, 0.25],radio:0.30,n:11},
+          {clase:1,grupo:'g1',centro:[ 0.58, 0.36,-0.28],radio:0.30,n:11}],
+   leccion:'Dos, y se ven de lejos. La máquina no supo QUÉ son: solo que estos se parecen entre sí y aquellos entre sí.'},
+  {n:'Tres montones', emoji:'🔺', k:3, semilla:6202,
+   cuento:'Aquí hay más de dos. Gíralo bien antes de pedir.',
+   nubes:[{clase:0,grupo:'g0',centro:[-0.66,-0.50,-0.10],radio:0.26,n:9},
+          {clase:1,grupo:'g1',centro:[ 0.62,-0.44, 0.30],radio:0.26,n:9},
+          {clase:2,grupo:'g2',centro:[-0.05, 0.68,-0.34],radio:0.26,n:9}],
+   leccion:'Tres. Y fíjate en que desde algunos lados parecían dos: por eso se gira antes de decidir.'},
+  {n:'El montón único', emoji:'⚠️', k:1, semilla:6303,
+   cuento:'Míralo bien. ¿De verdad hay más de un montón aquí?',
+   nubes:[{clase:0,grupo:'g0',centro:[0,0,0],radio:0.62,n:26}],
+   trampa:true,
+   leccion:'Era UNO solo. Y si le hubieras pedido tres, te habría dado tres — cortando por donde fuera.',
+   ojo:'⚠️ Esta es la trampa que hay que conocer: <b>la máquina siempre devuelve los grupos que le pides</b>. Si pides tres, salen tres, existan o no. Que la pantalla enseñe grupos no quiere decir que los haya: eso lo tiene que mirar una persona.'},
+  {n:'Cuatro esquinas', emoji:'🎲', k:4, semilla:6404,
+   cuento:'El último. Están repartidos por el cubo entero.',
+   nubes:[{clase:0,grupo:'g0',centro:[-0.62,-0.58, 0.40],radio:0.22,n:7},
+          {clase:1,grupo:'g1',centro:[ 0.64,-0.52,-0.36],radio:0.22,n:7},
+          {clase:2,grupo:'g2',centro:[-0.58, 0.60,-0.40],radio:0.22,n:7},
+          {clase:3,grupo:'g3',centro:[ 0.60, 0.62, 0.42],radio:0.22,n:7}],
+   leccion:'Cuatro. Y los encontró sin que nadie le dijera una sola etiqueta: eso es aprendizaje NO supervisado.'}
+];
+
+var esc3, puntos = [], mallas = [], centrosMallas = [], rotCentros = [];
+var nivel = 0, k = 2, estrellas = 0, agrupado = false, intentos = 0;
+var mejor = MONTONES.map(function(){ return 0; });
+var animacion = null;
+
+function guardar(){
+  try{ localStorage.setItem(LLAVE, JSON.stringify({nivel:nivel, estrellas:estrellas, mejor:mejor,
+    completado: mejor.every(function(x){ return x > 0; })})); }catch(e){}
+}
+function leer(){
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE));
+    if(d){
+      nivel = Math.min(d.nivel|0, MONTONES.length-1); estrellas = d.estrellas|0;
+      if(d.mejor && d.mejor.length) for(var i=0;i<MONTONES.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+    }
+  }catch(e){}
+}
+function m(){ return MONTONES[nivel]; }
+
+function montar(){
+  esc3 = NubeIA.escena({radio:17});
+  esc3.girar();
+  armarNivel();
+  Parque3D.vigilarHueco(esc3.ajustar);
+  animar();
+}
+
+function limpiarDibujo(){
+  mallas.forEach(function(x){ Parque3D.tirar(x); });
+  centrosMallas.forEach(function(x){ Parque3D.tirar(x); });
+  mallas = []; centrosMallas = [];
+  esc3.limpiarRotulos();
+  rotCentros = [];
+}
+
+function armarNivel(){
+  var L = NubeIA.LADO, d = m();
+  if(animacion){ clearTimeout(animacion); animacion = null; }
+  limpiarDibujo();
+  agrupado = false; intentos = 0; k = 2;
+  puntos = NubeIA.generar(d.nubes, d.semilla);
+  for(var i=0;i<puntos.length;i++){
+    /* Grises: sin etiqueta. Es el estado de partida de este juego y
+       es media lección — en los otros cinco los puntos nacen con su
+       color, aquí NO los tienen porque nadie se los dio. */
+    var s = NubeIA.esfera(puntos[i], 0x8e9bb3, 0.3);
+    esc3.mundo.add(s);
+    mallas.push(s);
+  }
+  esc3.rotulo('Medida 1 →', L*1.22, -L, -L, 'eje');
+  esc3.rotulo('↑ Medida 2', -L*1.1, L*1.15, -L, 'eje');
+  esc3.rotulo('Medida 3 ↗', -L, -L, L*1.2, 'eje');
+
+  document.getElementById('subt').textContent = 'Montón '+(nivel+1)+' de '+MONTONES.length;
+  document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · '+d.cuento;
+  document.getElementById('cinta').classList.remove('ver');
+  document.getElementById('aviso').textContent = '';
+  document.getElementById('aviso').className = 'aviso';
+  document.getElementById('bt-listo').disabled = true;
+  pintarK();
+  pintarMapa('mapa-ini'); pintarMapa('mapa-fin');
+}
+
+function pintarK(){
+  var caja = document.getElementById('kbotones');
+  caja.innerHTML = '';
+  for(var i=1;i<=5;i++){
+    (function(v){
+      var b = document.createElement('button');
+      b.className = 'kb' + (v === k ? ' on' : '');
+      b.type = 'button';
+      b.textContent = String(v);
+      b.setAttribute('aria-label', v + (v === 1 ? ' grupo' : ' grupos'));
+      Parque3D.alTocar(b, function(){ k = v; agrupado = false;
+        document.getElementById('bt-listo').disabled = true; pintarK(); });
+      caja.appendChild(b);
+    })(i);
+  }
+}
+
+/* Agrupar: se pide la cuenta UNA vez a `NubeIA.kmedias` y se
+   reproducen sus vueltas. La animación no vuelve a calcular nada —
+   si llevara su propia copia del algoritmo, dos copias acabarían
+   contestando cosas distintas y el alumno vería una cosa y la
+   pantalla le diría otra. */
+function agrupar(){
+  if(animacion){ clearTimeout(animacion); animacion = null; }
+  var r = NubeIA.kmedias(puntos, k), L = NubeIA.LADO;
+  intentos++;
+  centrosMallas.forEach(function(x){ Parque3D.tirar(x); });
+  centrosMallas = [];
+  rotCentros.forEach(function(x){ if(x.el.parentNode) x.el.parentNode.removeChild(x.el); });
+  rotCentros = [];
+
+  /* Primero salen los centros donde arrancan, solos y en blanco: es
+     el momento en que la máquina «pone las banderas» y todavía no ha
+     mirado nada. */
+  for(var c=0;c<k;c++){
+    var cm = NubeIA.esfera(r.pasos.length ? r.pasos[0].centros[c] : {x:0,y:0,z:0}, 0xffffff, 0.2);
+    esc3.mundo.add(cm);
+    centrosMallas.push(cm);
+    rotCentros.push(esc3.rotulo('Grupo '+(c+1), 0, 0, 0, 'centro-rot'));
+  }
+  mallas.forEach(function(s){ s.material.color.setHex(0x8e9bb3); });
+
+  var paso = 0;
+  function vuelta(){
+    if(paso >= r.pasos.length){
+      agrupado = true;
+      document.getElementById('bt-listo').disabled = false;
+      var tam = {};
+      r.asign.forEach(function(g){ tam[g] = (tam[g]||0) + 1; });
+      var cinta = document.getElementById('cinta');
+      cinta.innerHTML = 'Te dio <b>'+k+'</b> '+(k===1?'grupo':'grupos')+
+        ' de ['+Object.keys(tam).map(function(g){ return tam[g]; }).join(', ')+']';
+      cinta.classList.add('ver');
+      var av = document.getElementById('aviso');
+      av.className = 'aviso';
+      av.textContent = 'Se acomodó en '+r.pasos.length+' '+(r.pasos.length===1?'vuelta':'vueltas')+
+        '. Si crees que son estos, dilo; si no, prueba otro número.';
+      return;
+    }
+    var p = r.pasos[paso];
+    for(var i=0;i<puntos.length;i++) mallas[i].material.color.setHex(COLORES[p.asign[i] % COLORES.length]);
+    for(var c2=0;c2<k;c2++){
+      centrosMallas[c2].position.set(p.centros[c2].x*L, p.centros[c2].y*L, p.centros[c2].z*L);
+      rotCentros[c2].p.set(p.centros[c2].x*L, p.centros[c2].y*L + 0.9, p.centros[c2].z*L);
+    }
+    paso++;
+    animacion = setTimeout(vuelta, 620);
+  }
+  document.getElementById('aviso').className = 'aviso';
+  document.getElementById('aviso').textContent = 'Juntando lo que se parece…';
+  animacion = setTimeout(vuelta, 420);
+}
+
+function listo(){
+  if(!agrupado) return;
+  var d = m(), bien = (k === d.k);
+  if(bien){
+    var est = intentos <= 1 ? 3 : (intentos <= 3 ? 2 : 1);
+    if(est > mejor[nivel]){ estrellas += est - mejor[nivel]; mejor[nivel] = est; }
+    guardar();
+    Parque3D.acierto();
+    mostrar(true, est);
+  } else {
+    Parque3D.fallo();
+    var av = document.getElementById('aviso');
+    av.className = 'aviso mal';
+    av.textContent = d.trampa
+      ? 'Te dio '+k+' grupos, sí… pero míralos: ¿están separados de verdad o los cortó por en medio?'
+      : 'Esos no son. Gira el dibujo y cuenta los montones antes de volver a pedir.';
+    pintarMarcador();
+  }
+}
+
+function mostrar(bien, est){
+  var d = m();
+  document.getElementById('res-emoji').textContent = d.trampa ? '⚠️' : '🎯';
+  document.getElementById('res-tit').textContent = d.trampa ? 'Era uno solo' : 'Los encontraste';
+  document.getElementById('res-form').innerHTML =
+    '⭐'.repeat(est)+'☆'.repeat(3-est)+'<br>Grupos de verdad: <b>'+d.k+'</b>';
+  document.getElementById('res-txt').innerHTML = d.leccion;
+  /* La pregunta que cierra los cuatro niveles, y que es la lección de
+     todo el juego: los grupos los encontró ella; los NOMBRES no. */
+  document.getElementById('res-ojo').innerHTML = d.ojo ||
+    '🏷️ ¿Y cómo se llama cada grupo? <b>La máquina no lo sabe.</b> Los llamó «Grupo 1» y «Grupo 2» porque nadie le dijo qué eran. Mirar los grupos y ponerles nombre es trabajo de una persona.';
+  document.getElementById('res-bt').style.display = nivel < MONTONES.length-1 ? '' : 'none';
+  document.getElementById('res-rep').style.display = nivel < MONTONES.length-1 ? 'none' : '';
+  pintarMapa('mapa-fin');
+  pintarMarcador();
+  if(mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  Parque3D.abrir('velo-res');
+}
+
+function siguiente(){
+  Parque3D.cerrar('velo-res');
+  nivel = Math.min(nivel+1, MONTONES.length-1);
+  guardar();
+  armarNivel();
+  pintarMarcador();
+}
+function repetir(){ Parque3D.cerrar('velo-res'); armarNivel(); }
+
+function animar(){
+  requestAnimationFrame(animar);
+  esc3.animarCamara();
+  esc3.moverRotulos();
+  esc3.pintar();
+}
+
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function pintarMapa(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = MONTONES.map(function(x, i){
+    return '<span class="'+(i === nivel ? 'aqui' : '')+'">'+x.emoji+'<br>'+
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '–')+'</span>';
+  }).join('');
+}
+
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+});
+
+window.__j3d = {
+  estado: function(){ return {nivel:nivel, k:k, agrupado:agrupado, intentos:intentos,
+                              estrellas:estrellas, mejor:mejor.slice(), puntos:puntos.length}; },
+  pedirK: function(v){ k = v; agrupado = false; pintarK(); },
+  agrupar: agrupar, listo: listo,
+  montones: MONTONES, puntos: function(){ return puntos; }
+};
+</script>
+</body>
+</html>

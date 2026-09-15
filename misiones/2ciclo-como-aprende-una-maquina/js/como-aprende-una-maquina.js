@@ -927,3 +927,88 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+/* ============================================================
+   El Parque de Juegos 3D de la ruta
+   ============================================================ */
+
+/* Los juegos 3D se abren en otra pestaña y su botón ← trae de vuelta
+   con «#s-juegos3d» detrás. Sin esto, el alumno que sale de un juego
+   cae en la primera sección de la misión y tiene que volver a buscar
+   el Parque entre catorce pestañas —que en un teléfono se deslizan—
+   para abrir el siguiente. */
+function abrirSeccionDelEnlace(){
+  const id = (location.hash || '').replace('#','');
+  if(!id) return;
+  const sec = document.getElementById(id);
+  if(sec && sec.classList.contains('sec')) go(id);
+}
+window.addEventListener('hashchange', abrirSeccionDelEnlace);
+
+/* Cada juego 3D guarda su avance en SU llave de localStorage y no
+   toca la de la misión: si escribieran en la misma, una partida
+   abierta en otra pestaña le borraría al alumno el XP de aquí. Aquí
+   solo se LEE, para que la tarjeta diga por dónde va. */
+function pintarMedallas3D(){
+  const paso = (campo, total, palabra, plural) => ({
+    oro: d => !!d.completado,
+    texto: d => d.completado
+      ? '🏆 ' + (plural || ('los ' + total + ' ' + palabra + 's'))
+      : '🏅 ' + palabra + ' ' + Math.min(total, (d[campo]|0) + 1) + ' de ' + total
+  });
+  const marcas = {
+    separador: Object.assign({llave:'j3d_separador_v1'}, paso('caso',  4, 'caso',   'los 4 casos')),
+    grupos:    Object.assign({llave:'j3d_grupos_v1'},    paso('nivel', 4, 'montón', 'los 4 montones')),
+    sesgo:     Object.assign({llave:'j3d_sesgo_v1'},     paso('reto',  4, 'reto',   'los 4 retos')),
+    memorizo:  Object.assign({llave:'j3d_memorizo_v1'},  paso('tanda', 3, 'tanda',  'las 3 tandas')),
+    refuerzo:  Object.assign({llave:'j3d_refuerzo_v1'},  paso('patio', 3, 'patio',  'los 3 patios')),
+    /* El del vecino no lleva niveles: son seis rondas seguidas y se
+       acaba de una sentada, así que lo único que hay que decir es si
+       ya lo terminó. */
+    vecino: {llave:'j3d_vecino_v1', oro: d => !!d.completado,
+             texto: d => d.completado ? '🏆 las 6 rondas' : '🏅 empezado'}
+  };
+  document.querySelectorAll('[data-medalla]').forEach(el => {
+    const m = marcas[el.dataset.medalla];
+    if(!m) return;
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(m.llave)); } catch(e) {}
+    const card = el.closest('.juego-card');
+    const btn = card ? card.querySelector('.btn-juego') : null;
+    el.classList.remove('con','sin','oro');
+    if(!d){ el.textContent = '· sin empezar'; el.classList.add('sin'); if(btn) btn.textContent = '▶️ Jugar'; return; }
+    el.textContent = m.texto(d);
+    /* las estrellas del juego se enseñan aquí: es la cosecha que el
+       alumno quiere ver crecer desde fuera */
+    if(d.estrellas) el.textContent += ' · ⭐' + d.estrellas;
+    const oro = !!(m.oro && m.oro(d));
+    el.classList.add(oro ? 'oro' : 'con');
+    /* el botón dice la verdad: al que ya tiene partida no se le invita
+       a «jugar» como si nada, se le invita a seguir */
+    if(btn) btn.textContent = oro ? '▶️ Otra vez' : '▶️ Seguir';
+  });
+  const res = document.getElementById('parque-resumen');
+  if(res){
+    let emp = 0, oros = 0, total = 0;
+    Object.keys(marcas).forEach(k => {
+      total++;
+      let d = null;
+      try { d = JSON.parse(localStorage.getItem(marcas[k].llave)); } catch(e) {}
+      if(d){ emp++; if(marcas[k].oro && marcas[k].oro(d)) oros++; }
+    });
+    res.textContent = emp === 0 ? '' :
+      ('🎮 ' + emp + ' de ' + total + ' empezados' + (oros ? ' · 🏆 ' + oros + (oros === 1 ? ' completado' : ' completados') : ''));
+  }
+}
+
+/* Los juegos viven en OTRA pestaña: al volver a esta, la medalla de la
+   tarjeta se quedaba vieja y el alumno no veía su avance recién
+   ganado. Se repinta al recuperar el foco. */
+document.addEventListener('visibilitychange', () => { if(!document.hidden) pintarMedallas3D(); });
+window.addEventListener('focus', () => pintarMedallas3D());
+window.addEventListener('pageshow', () => pintarMedallas3D());
+
+document.addEventListener('DOMContentLoaded', () => {
+  pintarMedallas3D();
+  abrirSeccionDelEnlace();
+});

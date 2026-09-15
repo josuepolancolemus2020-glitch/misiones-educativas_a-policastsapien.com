@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚖️ El Sesgo a la Vista 3D | Misión Cómo Aprende una Máquina</title>
+<meta name="description" content="Tú eliges con qué cultivos se entrena el detector de plagas. Y después ves a quién le falla: el sesgo no se cuenta, se produce.">
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<link rel="stylesheet" href="../../css/parque-ia.css">
+<style>
+/* ============================================================
+   Juego 3D · El Sesgo a la Vista
+   ------------------------------------------------------------
+   El sesgo no se explica: se produce. Aquí el alumno elige con qué
+   cultivos se entrena un detector de plagas —quitando y poniendo
+   chips— y después ve a QUIÉN le falla. Si deja fuera el plátano,
+   el detector le dice al productor de plátano que su cultivo está
+   enfermo cuando no lo está.
+
+   Y eso no es una invención para el juego: una hoja de plátano
+   SANA tiene más manchas que una de café ENFERMA. Por eso la
+   frontera entre sana y enferma cae a distinta altura en cada
+   cultivo, y por eso el detector que nunca vio plátano lo juzga
+   con la vara del café.
+
+   El cuarto reto es el que no tiene arreglo: aparece un cultivo
+   que no está en ningún chip. Se elija lo que se elija, le falla.
+   Eso también es verdad y también se enseña — un juego donde
+   siempre hay una salida enseñaría que el sesgo se arregla
+   eligiendo bien, y no siempre.
+   ============================================================ */
+.reto{font-size:.84rem;text-align:center;line-height:1.35;margin-bottom:.35rem;
+  background:rgba(232,121,249,.12);border-radius:10px;padding:.3rem .5rem;}
+.reto b{color:var(--acento);}
+.grupo small{display:block;font-size:.66rem;font-weight:400;opacity:.8;}
+.marcas{font-size:.76rem;line-height:1.5;text-align:left;}
+.marcas i{font-style:normal;font-weight:700;}
+.marcas .mal{color:#ffb0b0;}
+.marcas .bien{color:#8ae9c9;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="como-aprende-una-maquina.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">⚖️ El Sesgo a la Vista<small id="subt">Reto 1 de 4</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="cinta" id="cinta"></div>
+</div>
+
+<div class="mandos">
+  <div class="reto" id="reto"></div>
+  <div class="grupos" id="grupos"></div>
+  <div class="botones">
+    <button class="bt bt-a" id="bt-entrenar" onclick="entrenar()">🏋️ Entrenar</button>
+    <button class="bt bt-v" id="bt-probar" onclick="probar()" disabled>🧪 Probar</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">⚖️</div>
+    <h2>El Sesgo a la Vista</h2>
+    <p>Vas a entrenar un <b>detector de plagas</b> para la escuela. Tú decides <b>de qué cultivos</b> se sacan las fotos de ejemplo.</p>
+    <p style="font-size:.84rem;color:#c9b4d6;">Cada bolita es una hoja fotografiada; los cubitos son las hojas de la <b>prueba</b>, que la máquina nunca vio. Lo que falle se pone blanco.</p>
+    <div class="chapas"><span class="chapa-b">🌿 Sana</span><span class="chapa-a">🍂 Con plaga</span><span>Cuatro retos</span></div>
+    <div class="mapa" id="mapa-ini"></div>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-res">
+  <div class="panel">
+    <div class="emoji-gr" id="res-emoji">🧪</div>
+    <h2 id="res-tit">El detector dice…</h2>
+    <div class="formula" id="res-form"></div>
+    <div class="marcas" id="res-marcas"></div>
+    <p id="res-txt"></p>
+    <div class="ojo" id="res-ojo" style="display:none;"></div>
+    <div class="mapa" id="mapa-fin"></div>
+    <button class="bt bt-v" id="res-bt" onclick="siguienteReto()">Siguiente reto →</button>
+    <button class="bt bt-s" id="res-otra" onclick="cerrarRes()">🔁 Probar otra vez</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script src="../../js/3d/nube-ia.js"></script>
+<script>
+var LLAVE = 'j3d_sesgo_v1';
+
+/* ============================================================
+   Los cultivos, y por qué están donde están
+   ------------------------------------------------------------
+   x = la forma de la hoja (cada cultivo la suya)
+   y = cuántas manchas tiene
+   z = el color
+
+   La frontera entre sana y enferma cae a distinta ALTURA en cada
+   cultivo, y está puesta a propósito de modo que la de uno coincida
+   con la del siguiente: la hoja de plátano SANA tiene tantas
+   manchas como la de café ENFERMA. Eso es lo que hace que un
+   detector entrenado sin plátano diga que el plátano está enfermo,
+   y es lo que pasa de verdad en el campo. La sonda comprueba que
+   siga pasando: si alguien mueve estos números, el juego deja de
+   enseñar lo que dice que enseña.
+   ============================================================ */
+var PASO = 0.35, RZ = 0.15;
+var CULTIVOS = [
+  {clave:'maiz',    emoji:'🌽', nombre:'Maíz',    x:-0.86, s:-0.88},
+  {clave:'frijol',  emoji:'🫘', nombre:'Frijol',  x:-0.43, s:-0.53},
+  {clave:'cafe',    emoji:'☕', nombre:'Café',    x: 0.00, s:-0.18},
+  {clave:'platano', emoji:'🍌', nombre:'Plátano', x: 0.43, s: 0.17},
+  {clave:'yuca',    emoji:'🍠', nombre:'Yuca',    x: 0.86, s: 0.52}
+];
+/* El que no está en ningún chip. No se puede elegir: es el cultivo
+   que llegó después, y es el reto que no tiene arreglo. */
+var FORASTERO = {clave:'mango', emoji:'🥭', nombre:'Mango', x:0.21, s:0.05};
+var COLOR = {sana:0x38d3c6, enferma:0xf6b93b};
+
+function nubesDe(lista, cuantos){
+  var l = [];
+  lista.forEach(function(c){
+    l.push({clase:0, grupo:c.clave, centro:[c.x, c.s, 0],       radio:[0.07,0.08,RZ], n:cuantos});
+    l.push({clase:1, grupo:c.clave, centro:[c.x, c.s+PASO, 0],  radio:[0.07,0.08,RZ], n:cuantos});
+  });
+  return l;
+}
+
+var RETOS = [
+  {n:'Con uno solo', emoji:'1️⃣',
+   texto:'Entrena el detector con <b>UN solo cultivo</b> y pruébalo. Mira a quién le falla.',
+   forastero:false,
+   cumple:function(el){ return el.length === 1; },
+   pide:'Deja encendido un solo cultivo.',
+   leccion:'Un detector entrenado con un cultivo solo sirve para ese cultivo. Con los demás no es que se equivoque a veces: <b>se equivoca sistemáticamente</b>, y siempre con los mismos.'},
+  {n:'Que no falle ninguna', emoji:'✅',
+   texto:'Ahora consigue que el detector <b>no falle ni una sola hoja</b> de la prueba.',
+   forastero:false, metaBien:30,
+   cumple:function(el){ return true; },
+   leccion:'Con los cinco dentro, ni una falla. El detector no se hizo más listo: le diste ejemplos de todos a los que va a tener que servir.'},
+  {n:'Sin el plátano', emoji:'🍌',
+   texto:'Deja fuera <b>solo el plátano</b> y prueba. Fíjate bien en a quién le falla y en QUÉ le dice.',
+   forastero:false,
+   cumple:function(el){ return el.length === 4 && el.indexOf('platano') < 0; },
+   pide:'Enciende los otros cuatro y apaga el plátano.',
+   leccion:'Le falló al plátano, a las seis hojas, y siempre para el mismo lado: le dijo <b>enfermo</b> al que estaba sano. Una hoja de plátano sana tiene más manchas que una de café enferma, así que el detector la juzgó con la vara del café.',
+   ojo:'⚠️ El productor de plátano recibe un aviso de plaga que no existe, fumiga, gasta y desconfía. Nadie programó eso: <b>salió de qué fotos se tomaron</b>. Por eso el sesgo no es una falla del programa, es una decisión de quien junta los ejemplos — y aquí esa persona eras tú.'},
+  {n:'El que nunca viste', emoji:'🥭',
+   texto:'Llegó el <b>mango</b> a la escuela, y no está en ningún chip. Enciende lo que quieras y prueba.',
+   forastero:true,
+   cumple:function(el){ return el.length === CULTIVOS.length; },
+   pide:'Para este reto enciéndelos todos: es lo más que puedes hacer.',
+   leccion:'Con los cinco encendidos le sigue fallando al mango. No te faltó maña: <b>el mango no estaba en tus ejemplos y no hay chip que lo meta</b>.',
+   ojo:'⚠️ Esto es lo que de verdad cuesta caro. Por bien que elijas, lo que tu máquina nunca vio lo va a fallar — y ni siquiera te va a avisar de que es algo nuevo: le va a poner el nombre de lo más parecido que tenga. Antes de creerle a una máquina hay que preguntar <b>con qué la entrenaron</b>.'}
+];
+
+var esc3, ejemplosTodos = [], pruebaTodos = [], mallasEj = [], mallasPr = [];
+var encendidos = CULTIVOS.map(function(c){ return c.clave; });
+var reto = 0, estrellas = 0, entrenado = false, corridas = 0, ultimo = null;
+var mejor = RETOS.map(function(){ return 0; });
+
+function guardar(){
+  try{ localStorage.setItem(LLAVE, JSON.stringify({reto:reto, estrellas:estrellas, mejor:mejor,
+    completado: mejor.every(function(x){ return x > 0; })})); }catch(e){}
+}
+function leer(){
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE));
+    if(d){
+      reto = Math.min(d.reto|0, RETOS.length-1); estrellas = d.estrellas|0;
+      if(d.mejor && d.mejor.length) for(var i=0;i<RETOS.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+    }
+  }catch(e){}
+}
+function R(){ return RETOS[reto]; }
+function nombreDe(clave){
+  for(var i=0;i<CULTIVOS.length;i++) if(CULTIVOS[i].clave === clave) return CULTIVOS[i];
+  return FORASTERO;
+}
+
+function montar(){
+  esc3 = NubeIA.escena({radio:18});
+  esc3.girar();
+  ejemplosTodos = NubeIA.generar(nubesDe(CULTIVOS, 4), 5501);
+  armarReto();
+  Parque3D.vigilarHueco(esc3.ajustar);
+  animar();
+}
+
+function armarReto(){
+  var L = NubeIA.LADO, d = R();
+  mallasEj.forEach(function(x){ Parque3D.tirar(x); });
+  mallasPr.forEach(function(x){ Parque3D.tirar(x); });
+  mallasEj = []; mallasPr = [];
+  esc3.limpiarRotulos();
+  entrenado = false; corridas = 0; ultimo = null;
+  encendidos = CULTIVOS.map(function(c){ return c.clave; });
+
+  /* La prueba del reto del forastero trae además las hojas de mango.
+     Se siembran aparte, con su propia semilla, para que las cinco de
+     siempre salgan idénticas en los cuatro retos: si cambiaran, el
+     alumno no podría comparar un reto con el anterior. */
+  pruebaTodos = NubeIA.generar(nubesDe(CULTIVOS, 3), 9902);
+  if(d.forastero) pruebaTodos = pruebaTodos.concat(NubeIA.generar(nubesDe([FORASTERO], 3), 7703));
+
+  for(var i=0;i<ejemplosTodos.length;i++){
+    var e = ejemplosTodos[i];
+    var m = NubeIA.esfera(e, e.clase === 0 ? COLOR.sana : COLOR.enferma, 0.26);
+    esc3.mundo.add(m);
+    mallasEj.push(m);
+  }
+  /* Las hojas de la prueba son CUBOS, no bolitas: hay que poder
+     distinguir de un vistazo lo que la máquina ya vio de lo que nunca
+     vio, que es la distinción entera de este juego. */
+  for(var j=0;j<pruebaTodos.length;j++){
+    var p = pruebaTodos[j];
+    var c = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42),
+      new THREE.MeshLambertMaterial({color:0x8e9bb3}));
+    c.position.set(p.x*L, p.y*L, p.z*L);
+    c.visible = false;
+    esc3.mundo.add(c);
+    mallasPr.push(c);
+  }
+  var lista = CULTIVOS.concat(d.forastero ? [FORASTERO] : []);
+  lista.forEach(function(c){ esc3.rotulo(c.emoji+' '+c.nombre, c.x*L, -L*1.08, 0, 'eje'); });
+  esc3.rotulo('↑ Manchas', -L*1.12, L*1.15, -L, 'eje');
+
+  document.getElementById('subt').textContent = 'Reto '+(reto+1)+' de '+RETOS.length;
+  document.getElementById('reto').innerHTML = d.emoji+' <b>'+d.n+'</b> · '+d.texto;
+  document.getElementById('tarjeta').innerHTML =
+    '🌿 Bolitas = las fotos de ejemplo · 🧪 Cubitos = las hojas de la prueba';
+  document.getElementById('cinta').classList.remove('ver');
+  document.getElementById('aviso').textContent = '';
+  document.getElementById('aviso').className = 'aviso';
+  document.getElementById('bt-probar').disabled = true;
+  pintarChips();
+  pintarMapa('mapa-ini'); pintarMapa('mapa-fin');
+}
+
+function pintarChips(){
+  var caja = document.getElementById('grupos');
+  caja.innerHTML = '';
+  CULTIVOS.forEach(function(c){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'grupo' + (encendidos.indexOf(c.clave) >= 0 ? ' on' : '');
+    b.innerHTML = c.emoji + '<small>' + c.nombre + '</small>';
+    b.setAttribute('data-c', c.clave);
+    b.setAttribute('aria-pressed', encendidos.indexOf(c.clave) >= 0 ? 'true' : 'false');
+    Parque3D.alTocar(b, function(){ conmutar(c.clave); });
+    caja.appendChild(b);
+  });
+}
+
+function conmutar(clave){
+  var i = encendidos.indexOf(clave);
+  if(i >= 0) encendidos.splice(i, 1); else encendidos.push(clave);
+  entrenado = false;
+  document.getElementById('bt-probar').disabled = true;
+  mallasPr.forEach(function(c){ c.visible = false; });
+  mallasEj.forEach(function(m){ m.visible = true; m.scale.set(1,1,1); });
+  document.getElementById('cinta').classList.remove('ver');
+  pintarChips();
+}
+
+function entrenar(){
+  var av = document.getElementById('aviso');
+  if(!encendidos.length){
+    av.className = 'aviso mal';
+    av.textContent = 'Sin un solo ejemplo no hay nada que aprender: enciende al menos un cultivo.';
+    return;
+  }
+  entrenado = true;
+  /* Entrenar es, aquí, literalmente esto: los ejemplos que elegiste
+     se quedan y los demás desaparecen. La máquina no va a volver a
+     verlos nunca. */
+  for(var i=0;i<ejemplosTodos.length;i++){
+    mallasEj[i].visible = encendidos.indexOf(ejemplosTodos[i].grupo) >= 0;
+  }
+  mallasPr.forEach(function(c){ c.visible = false; });
+  document.getElementById('bt-probar').disabled = false;
+  av.className = 'aviso bien';
+  av.textContent = 'Entrenado con ' + encendidos.length + ' ' +
+    (encendidos.length === 1 ? 'cultivo' : 'cultivos') + '. Ahora pruébalo con hojas que nunca vio.';
+  document.getElementById('cinta').classList.remove('ver');
+}
+
+function probar(){
+  if(!entrenado) return;
+  var d = R(), L = NubeIA.LADO;
+  corridas++;
+  var ent = ejemplosTodos.filter(function(e){ return encendidos.indexOf(e.grupo) >= 0; });
+  var bien = 0, falla = {}, total = {};
+  for(var j=0;j<pruebaTodos.length;j++){
+    var p = pruebaTodos[j];
+    var v = ent[NubeIA.vecino(p, ent)];
+    var acerto = (v.clase === p.clase);
+    total[p.grupo] = (total[p.grupo]||0) + 1;
+    if(acerto) bien++; else falla[p.grupo] = (falla[p.grupo]||0) + 1;
+    mallasPr[j].visible = true;
+    /* Lo que falla se pone BLANCO y crece, igual que en El Separador:
+       los seis juegos de esta ruta marcan el error del mismo modo.
+       Y nunca en rojo contra ámbar, que es el par que no distingue
+       uno de cada doce niños. */
+    mallasPr[j].material.color.setHex(acerto ? (v.clase === 0 ? COLOR.sana : COLOR.enferma) : 0xffffff);
+    var s = acerto ? 1 : 1.55;
+    mallasPr[j].scale.set(s, s, s);
+  }
+  ultimo = {bien:bien, total:pruebaTodos.length, falla:falla, porCultivo:total,
+            elegidos:encendidos.slice()};
+
+  var cinta = document.getElementById('cinta');
+  cinta.innerHTML = 'Acertó <b>'+bien+' de '+pruebaTodos.length+'</b>';
+  cinta.classList.add('ver');
+  if(bien === pruebaTodos.length) Parque3D.acierto(); else Parque3D.fallo();
+  mostrar();
+}
+
+function mostrar(){
+  var d = R(), u = ultimo;
+  var cumpleCond = d.cumple(encendidos);
+  var cumpleMeta = (d.metaBien === undefined) || (u.bien >= d.metaBien);
+  var logrado = cumpleCond && cumpleMeta;
+
+  var lineas = [];
+  var orden = CULTIVOS.map(function(c){ return c.clave; }).concat(d.forastero ? [FORASTERO.clave] : []);
+  orden.forEach(function(cl){
+    if(!u.porCultivo[cl]) return;
+    var mal = u.falla[cl] || 0, n = u.porCultivo[cl], c = nombreDe(cl);
+    var dentro = u.elegidos.indexOf(cl) >= 0;
+    lineas.push('<i>'+c.emoji+' '+c.nombre+'</i> ' +
+      '<span class="'+(mal ? 'mal' : 'bien')+'">'+(n-mal)+' de '+n+'</span>' +
+      (dentro ? '' : ' <span style="opacity:.75;">· no estaba en los ejemplos</span>'));
+  });
+  document.getElementById('res-marcas').innerHTML = lineas.join('<br>');
+  document.getElementById('res-emoji').textContent = logrado ? (d.ojo ? '⚠️' : '🎯') : '🧪';
+  document.getElementById('res-tit').textContent = logrado ? d.n : 'Todavía no es el reto';
+  document.getElementById('res-form').innerHTML =
+    'Acertó <b>'+u.bien+' de '+u.total+'</b> hojas que nunca había visto' +
+    '<br>Entrenado con: ' + (u.elegidos.length ? u.elegidos.map(function(c){ return nombreDe(c).emoji; }).join(' ') : '—');
+
+  if(logrado){
+    var est = corridas <= 1 ? 3 : (corridas <= 3 ? 2 : 1);
+    if(est > mejor[reto]){ estrellas += est - mejor[reto]; mejor[reto] = est; }
+    guardar();
+    document.getElementById('res-txt').innerHTML = '⭐'.repeat(est)+'☆'.repeat(3-est)+'<br>'+d.leccion;
+    var ojo = document.getElementById('res-ojo');
+    if(d.ojo){ ojo.style.display = ''; ojo.innerHTML = d.ojo; } else { ojo.style.display = 'none'; }
+    document.getElementById('res-bt').style.display = reto < RETOS.length-1 ? '' : 'none';
+  } else {
+    document.getElementById('res-txt').innerHTML = d.pide ||
+      ('El reto pide acertar las '+d.metaBien+'. Mira arriba a quién le falló y prueba otra vez.');
+    document.getElementById('res-ojo').style.display = 'none';
+    document.getElementById('res-bt').style.display = 'none';
+  }
+  pintarMapa('mapa-fin');
+  pintarMarcador();
+  if(logrado && mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  Parque3D.abrir('velo-res');
+}
+
+function cerrarRes(){ Parque3D.cerrar('velo-res'); }
+function siguienteReto(){
+  Parque3D.cerrar('velo-res');
+  reto = Math.min(reto+1, RETOS.length-1);
+  guardar();
+  armarReto();
+  pintarMarcador();
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  esc3.animarCamara();
+  esc3.moverRotulos();
+  esc3.pintar();
+}
+
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function pintarMapa(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = RETOS.map(function(x, i){
+    return '<span class="'+(i === reto ? 'aqui' : '')+'">'+x.emoji+'<br>'+
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '–')+'</span>';
+  }).join('');
+}
+
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+});
+
+window.__j3d = {
+  estado: function(){ return {reto:reto, entrenado:entrenado, corridas:corridas,
+                              encendidos:encendidos.slice(), estrellas:estrellas,
+                              mejor:mejor.slice(), ultimo:ultimo}; },
+  elegir: function(lista){ encendidos = lista.slice(); entrenado = false; pintarChips(); },
+  entrenar: entrenar, probar: probar,
+  retos: RETOS, cultivos: CULTIVOS, forastero: FORASTERO,
+  ejemplos: function(){ return ejemplosTodos; }, prueba: function(){ return pruebaTodos; }
+};
+</script>
+</body>
+</html>

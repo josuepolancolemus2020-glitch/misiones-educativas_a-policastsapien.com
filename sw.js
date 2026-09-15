@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v216';
+const CACHE_NAME = 'meta-app-v217';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -93,6 +93,13 @@ const STATIC_ASSETS = [
   // cargador, sin telón y sin CSS, o sea en blanco.
   './js/3d/parque-3d.js',
   './css/parque-3d.css',
+  // Y lo que comparten los SEIS juegos de la Ruta de la Máquina que
+  // Aprende: la nube de puntos en el espacio de tres medidas, con el
+  // vecino más cercano, los k vecinos y las k-medias. Es el aparato de
+  // ESE parque, no el de todos: sin él sus seis juegos se quedan sin
+  // dibujo y sin las tres cuentas que deciden lo que el alumno ve.
+  './js/3d/nube-ia.js',
+  './css/parque-ia.css',
   // La sección 🎬 Videos de las misiones. Sin estos cuatro, la sección
   // no se pinta sin internet y el alumno ve un hueco en vez de la lista
   // de lo que hay —que sí se puede enseñar sin señal, porque viene

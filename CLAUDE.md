@@ -189,13 +189,13 @@ vez—; las de las misiones **no**, y no es un olvido: una misión que no se
 visitó en línea no está en la caché, así que guardarle la letra sería guardar
 la letra de una página que todavía no existe.
 
-**Lo que sí puede venir de fuera, y por qué.** Three.js en los 18 juegos 3D y
+**Lo que sí puede venir de fuera, y por qué.** Three.js en los 24 juegos 3D y
 MathJax en la misión de áreas del círculo: los dos son `<script>`, no hojas de
 estilo. Three.js lo carga el propio juego detrás de su telón, con su aviso de
 «hace falta internet la primera vez» y su normativa propia; MathJax va con
 `async`, que por definición no está en el camino crítico.
 
-**Y queda dicho lo que NO se tocó:** los 18 juegos 3D declaran `Fredoka` en su
+**Y queda dicho lo que NO se tocó:** los 24 juegos 3D declaran `Fredoka` en su
 CSS y **nunca la han cargado** —llevan la letra del sistema desde siempre—. Se
 dejan como están: darles ahora la letra buena les mueve la maquetación, y esos
 paneles están medidos al píxel y tienen sonda propia.
@@ -2596,9 +2596,6 @@ distintas.
 
 ### Lo que NO se hizo, y por qué
 
-- **Un juego 3D de la ruta.** El andamio ya está (`js/3d/parque-3d.js`) y un
-  clasificador en tres dimensiones enseñaría la frontera de decisión mejor que
-  cualquier párrafo. No entra hoy porque primero tenía que estar el texto.
 - **La traducción al inglés.** La ruta se presta y el vocabulario técnico de IA se
   usa en inglés en todo el mundo. Cuando se haga, va con su `-en.js` y su
   verificador de bancos, como las ocho que ya están.
@@ -2890,7 +2887,7 @@ exactamente lo de siempre.
 3. **No se baja de lo de siempre.** El problema es que la letra es pequeña;
    un paso «más pequeña» solo serviría para que alguien se quede sin poder
    leer la pantalla y sin saber por qué. El botón **cicla y vuelve a
-   normal**, que es el mismo gesto del **Aa** de los dieciocho juegos 3D.
+   normal**, que es el mismo gesto del **Aa** de los veinticuatro juegos 3D.
 4. ⚠️ **Se guarda en SU PROPIA llave** (`METAS_LETRA_V1`), nunca dentro de
    `METAS_ADMIN_V1`: esa llave viaja a la nube y se fusiona dato por dato con
    el otro equipo del maestro. Es la misma razón por la que el chip de grado
@@ -3081,9 +3078,9 @@ encima?), y que vaya ANTES de las secciones en el documento.
 
 ## Normativa: los juegos 3D viven aparte, y no tocan la misión
 
-Hay **dieciocho** juegos en tres dimensiones —hoy: seis por misión y tres
-misiones con parque, y siguen entrando—, cada uno en su propio archivo
-HTML al lado de su misión.
+Hay **veinticuatro** juegos en tres dimensiones —hoy: seis por parque y
+cuatro parques, y siguen entrando—, cada uno en su propio archivo HTML al
+lado de su misión.
 
 **Ya NO son autocontenidos, y eso fue a propósito.** Lo eran, y salió
 caro: el andamio —el cargador de Three.js, el telón, los velos,
@@ -3112,10 +3109,28 @@ Los dos archivos van en **`STATIC_ASSETS` de `sw.js`**: sin ellos los
 juegos dejan de funcionar sin internet, y esa promesa está escrita en su
 propia pantalla.
 
+**Y un parque puede tener además SU propio aparato.** No es lo mismo que el
+andamio: el andamio es de los veinticuatro, y esto es de los seis de un
+parque. Pasó con la Ruta de la Máquina que Aprende, cuyos seis juegos miran
+todos lo mismo —unos ejemplos colocados en un espacio de tres medidas— y
+llevarían las mismas doscientas líneas seis veces:
+
+| dónde | qué hay |
+|---|---|
+| `js/3d/nube-ia.js` | `NubeIA.rng`, `.generar`, `.dist`, `.vecino`, `.knn`, `.kmedias`, `.escena`, `.esfera` |
+| `css/parque-ia.css` | los rótulos que flotan sobre el dibujo, las chapas de las clases, los deslizadores y el marcador |
+
+Va **después** del andamio en el `<link>`, de donde saca el color, y en
+`STATIC_ASSETS` por la misma razón que él. Y hay una decisión suya que vale
+para cualquier aparato que se saque así: **`nube-ia.js` corre también en
+Node** —sus cuatro cuentas no tocan el DOM a propósito—, y eso es lo que
+permite que la sonda recalcule el vecino más cercano y las k-medias con el
+mismo código en vez de preguntarle al juego si acertó.
+
 **El andamio hace SOLO, sin que el juego lo pida**, y un juego nuevo no
 lo tiene que copiar ni llamar:
 
-- Monta **Aa** (la letra crece; se guarda UNA vez para los dieciocho en
+- Monta **Aa** (la letra crece; se guarda UNA vez para los veinticuatro en
   `j3d_letra_v1`, como el retoque del proyector de las lecturas: es un
   AJUSTE compartido, no el avance de un juego, que sigue siendo de cada
   llave) y **⛶ pantalla completa** (si el navegador no sabe, el botón ni
@@ -3195,6 +3210,65 @@ cuadrado, rectángulo, rombo, romboide y trapecio, «exploran figuras
 equivalentes en cuanto a su área (composición y descomposición de
 figuras)» y —con esas palabras— «construyen diversos cuadrados y
 rectángulos, conociendo el perímetro».
+
+En **Cómo Aprende una Máquina** (`misiones/2ciclo-como-aprende-una-maquina/`),
+que es el parque de **toda la Ruta de la Máquina que Aprende**: las otras tres
+misiones enlazan a este, no llevan uno propio. Un parque por misión habría dado
+cuatro con el mismo nombre y el avance del alumno repartido entre ellos.
+
+| archivo | qué enseña |
+|---|---|
+| `juego-separador-3d.html` | la frontera: con tres medidas es un PLANO |
+| `juego-vecino-3d.html` | cómo decide · y por qué contesta siempre |
+| `juego-grupos-3d.html` | aprendizaje no supervisado · sin una sola etiqueta |
+| `juego-sesgo-3d.html` | el sesgo, producido por el propio alumno |
+| `juego-memorizo-3d.html` | la prueba · con ejemplos que nunca vio |
+| `juego-refuerzo-3d.html` | aprendizaje por refuerzo · el suelo que se levanta |
+
+**Aquí lo que el papel no puede dar no es un dibujo: es una CUENTA que
+contesta.** En los otros tres parques el 3D enseña una figura; en este enseña
+cómo piensa una máquina, y el alumno no tiene con qué comprobarlo —si la
+pantalla le miente, se lo cree—. De ahí salen las tres reglas de este parque:
+
+1. ⚠️ **Ningún nivel promete lo que no se puede.** El Separador tiene un caso
+   donde **ningún plano separa** las dos clases, y la pantalla lo dice: no hay
+   truco, con esas tres medidas no alcanza, y lo que haría una máquina de verdad
+   es pedir otra medida o usar una frontera curva. Un juego que inventara una
+   salida enseñaría a no creerle a la pantalla, que es lo contrario de esta ruta.
+   Por eso la META de cada caso **se calcula** —probando todos los planos que los
+   mandos pueden formar— y no se escribe: escrita a mano se pediría un imposible
+   o se regalaría el caso.
+2. ⚠️ **Y ningún nivel sale resuelto de fábrica.** El Separador arrancaba con el
+   plano de pie en el centro, y así el primer caso YA ESTABA HECHO al abrir: se
+   tocaba «Ya está» sin mover nada y caían tres estrellas del caso que enseña que
+   el tamaño basta —sin haberlo visto—. Ahora arranca acostado y por debajo de
+   todo: todos los ejemplos caen del mismo lado y la máquina dice lo mismo de
+   todos, que es el estado de una que no ha aprendido nada. La sonda lo cuenta en
+   los cuatro casos.
+3. ⚠️ **Lo que el juego afirma, la sonda lo recalcula aparte.** «Con el tamaño
+   solo basta», «sin el plátano le falla al plátano», «con un vecino saca 100 %
+   en los que ya vio»: las tres son afirmaciones comprobables y las tres se
+   comprueban, con el vecino más cercano y las k-medias calculados en la sonda.
+   Las nubes se **siembran con semilla** justamente para eso; con doscientas
+   coordenadas escritas a mano no habría forma de saber si la frase es verdad.
+
+**Los tres que no se pueden hacer en papel** son el Separador —mover un plano
+en el aire y ver quién queda de cada lado—, el del Sesgo —donde el alumno
+ELIGE los ejemplos y después ve a quién le falla el detector, y falla siempre
+al mismo— y el del Refuerzo, donde **lo que el robot aprende es la altura del
+suelo**: a fuerza de intentos aparece una rampa de la salida a la meta y
+entonces el robot ya no busca, sube. En un cuaderno eso es una tabla de números
+que no mira nadie.
+
+⚠️ **Y el del Sesgo no exagera.** La frontera entre sana y enferma está puesta a
+distinta altura en cada cultivo, y la de uno coincide con la del siguiente,
+porque en el campo es así: una hoja de plátano **sana** tiene más manchas que
+una de café **enferma**. Por eso el detector entrenado sin plátano juzga al
+plátano con la vara del café y le dice «enfermo» al sano — y la sonda comprueba
+que le falle **para ese lado**, no de cualquier manera. Su cuarto reto es el que
+no tiene arreglo: llega un cultivo que no está en ningún chip, y se elija lo que
+se elija, le falla.
+
 
 **Los dos que más valen son el tercero y el cuarto.** El tercero es la
 confusión clásica —perímetro o área— y por eso la decisión va ANTES de
@@ -3346,6 +3420,7 @@ node _dev/servidor-estatico.js             (en otra terminal)
 node _dev/verifica-juegos-3d.js            → los seis del volumen
 node _dev/verifica-juegos-3d-solidos.js    → los seis de los sólidos
 node _dev/verifica-juegos-3d-perimetro.js  → los seis de perímetro y área
+node _dev/verifica-juegos-3d-ia.js         → los seis de la Ruta de la Máquina que Aprende
 ```
 
 Las sondas comparten el Three.js de mentira

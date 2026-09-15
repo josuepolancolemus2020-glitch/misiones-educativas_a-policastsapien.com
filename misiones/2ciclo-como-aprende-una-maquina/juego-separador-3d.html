@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔪 El Separador 3D | Misión Cómo Aprende una Máquina</title>
+<meta name="description" content="Mueve el plano hasta dejar cada clase de un lado. Así es como una máquina decide: trazando una frontera. Y hay un caso donde ningún plano alcanza.">
+<!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos. -->
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<!-- Y lo que comparten los seis juegos de esta ruta: la nube, los
+     rótulos que flotan y los deslizadores. -->
+<link rel="stylesheet" href="../../css/parque-ia.css">
+<style>
+/* ============================================================
+   Juego 3D · El Separador
+   ------------------------------------------------------------
+   «La máquina aprende un patrón» se copia en el cuaderno y no
+   quiere decir nada. Aquí quiere decir algo que se ve: la máquina
+   traza una FRONTERA, y con tres medidas esa frontera es un
+   PLANO. El alumno lo mueve con sus manos hasta dejar cada clase
+   de un lado.
+
+   Y trae el nivel que ningún papel puede dar: uno donde NINGÚN
+   plano los separa. Ahí la pantalla no finge —no hay un truco ni
+   una respuesta escondida—: dice que con esas tres medidas no
+   alcanza, y nombra lo que haría una máquina de verdad (pedir
+   otra medida, o usar una frontera curva). Un juego que prometa
+   una solución que no existe enseña a no creerle a la pantalla,
+   que es lo contrario de esta ruta.
+   ============================================================ */
+.mal-blanco{font-weight:700;color:#fff;}
+/* El lado del plano se rotula con la clase que le toca: sin eso, el
+   alumno mueve el plano sin saber qué está diciendo cada mitad. */
+.rot.lado{font-size:.76rem;font-weight:700;padding:.14rem .4rem;}
+@media(max-width:380px){.tanteo b{font-size:1rem;}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="como-aprende-una-maquina.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">🔪 El Separador<small id="subt">Caso 1 de 4</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="cinta" id="cinta"></div>
+</div>
+
+<div class="mandos">
+  <div class="tanteo" id="tanteo">
+    <span>Del lado que les toca:</span><b id="cuenta">0</b><span>de 24</span>
+    <small id="meta-txt"></small>
+  </div>
+  <div class="mando">
+    <label for="m-giro">↔️ Girar</label>
+    <input type="range" id="m-giro" min="0" max="355" step="5" value="0" aria-label="Girar el plano">
+    <output id="o-giro">0°</output>
+  </div>
+  <div class="mando">
+    <label for="m-inc">↕️ Inclinar</label>
+    <input type="range" id="m-inc" min="-90" max="90" step="5" value="0" aria-label="Inclinar el plano">
+    <output id="o-inc">0°</output>
+  </div>
+  <div class="mando">
+    <label for="m-des">⇅ Correr</label>
+    <input type="range" id="m-des" min="-30" max="30" step="1" value="0" aria-label="Correr el plano de sitio">
+    <output id="o-des">0.00</output>
+  </div>
+  <div class="botones">
+    <button class="bt bt-v" id="bt-listo" onclick="listo()">✅ Ya está</button>
+    <button class="bt bt-s" id="bt-como" onclick="pista()">💡 ¿Cómo?</button>
+  </div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<!-- Mientras baja Three.js, NADA se puede tocar. Sin esto, el alumno
+     impaciente toca «Empezar» antes de que llegue el motor de dibujo,
+     el juego revienta por dentro y se queda en una pantalla muerta:
+     ni pregunta, ni botones, ni aviso. Con buena señal no se nota
+     nunca; con la señal de un pueblo, que es donde está el aula,
+     pasa siempre. -->
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🔪</div>
+    <h2>El Separador</h2>
+    <p>Cada bolita es un <b>ejemplo</b> con sus tres medidas. Mueve el <b>plano</b> hasta que cada clase quede de su lado: eso es lo que hace una máquina cuando aprende a clasificar.</p>
+    <p style="font-size:.84rem;color:#c9b4d6;">Al empezar, el plano está acostado por debajo de todo: todos caen del mismo lado y la máquina <b>dice lo mismo de todos</b>. Así arranca una que no ha aprendido nada.</p>
+    <div class="chapas"><span>Arrastra el dibujo para girarlo</span><span>Los que quedan mal se ponen BLANCOS</span><span>Cuatro casos</span></div>
+    <div class="mapa" id="mapa-ini"></div>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-fin">
+  <div class="panel">
+    <div class="estrellas" id="fin-est">⭐⭐⭐</div>
+    <h2 id="fin-tit">¡Separados!</h2>
+    <div class="formula" id="fin-form"></div>
+    <p id="fin-txt"></p>
+    <div class="ojo" id="fin-ojo" style="display:none;"></div>
+    <div class="mapa" id="mapa-fin"></div>
+    <button class="bt bt-v" id="fin-bt" onclick="siguiente()">Siguiente caso →</button>
+    <button class="bt bt-s" id="fin-rep" onclick="repetir()" style="display:none;">🔁 Este mismo caso</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script src="../../js/3d/nube-ia.js"></script>
+<script>
+var LLAVE = 'j3d_separador_v1';
+
+/* ============================================================
+   Los cuatro casos
+   ------------------------------------------------------------
+   Las nubes se SIEMBRAN con semilla, no se teclean: así la sonda
+   las reproduce exactamente y comprueba lo que cada caso AFIRMA
+   —«con el tamaño solo basta», «ningún plano los separa»— en vez
+   de creérselo. Un caso cuya promesa sea falsa le enseña al alumno
+   a desconfiar de la pantalla, y aquí eso es lo peor que puede
+   pasar.
+
+   Las tres medidas son siempre las mismas y en el mismo orden:
+   tamaño (↔), manchas o peso (↕) y color (↗). Cambiarlas de caso
+   en caso obligaría a reaprender el dibujo cada vez.
+   ============================================================ */
+var CASOS = [
+  {
+    n:'Limones y sandías', emoji:'🍋', meta3:'el tamaño',
+    clases:[{nombre:'Limón', emoji:'🍋', color:0xf6b93b, cls:'a'},
+            {nombre:'Sandía', emoji:'🍉', color:0x38d3c6, cls:'b'}],
+    ejes:['Tamaño','Peso','Color'],
+    cuento:'Los limones son chicos y las sandías grandes. Con <b>una sola medida</b> ya se separan: pon el plano de pie y córrelo.',
+    nubes:[{clase:0,grupo:'a',centro:[-0.58,0,0],radio:[0.26,0.78,0.78],n:12},
+           {clase:1,grupo:'b',centro:[ 0.58,0,0],radio:[0.26,0.78,0.78],n:12}],
+    semilla:1101,
+    leccion:'Con el TAMAÑO solo ya bastaba. A veces una máquina no necesita mirar todo lo que tiene: le sobra con una medida.'
+  },
+  {
+    n:'Mangos y aguacates', emoji:'🥭', meta3:'el tamaño junto con el peso',
+    clases:[{nombre:'Mango', emoji:'🥭', color:0xf6b93b, cls:'a'},
+            {nombre:'Aguacate', emoji:'🥑', color:0x38d3c6, cls:'b'}],
+    ejes:['Tamaño','Peso','Color'],
+    cuento:'Hay mangos y aguacates grandes, y chicos de los dos. Ni el tamaño solo ni el peso solo alcanzan: hay que <b>inclinar</b> el plano y mirar las dos medidas a la vez.',
+    nubes:[{clase:0,grupo:'a',centro:[-0.30,-0.90,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:0,grupo:'a',centro:[ 0.10,-0.50,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:0,grupo:'a',centro:[ 0.50,-0.10,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:0,grupo:'a',centro:[ 0.90, 0.30,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:1,grupo:'b',centro:[-0.90,-0.30,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:1,grupo:'b',centro:[-0.50, 0.10,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:1,grupo:'b',centro:[-0.10, 0.50,0],radio:[0.15,0.15,0.85],n:3},
+           {clase:1,grupo:'b',centro:[ 0.30, 0.90,0],radio:[0.15,0.15,0.85],n:3}],
+    semilla:2202,
+    leccion:'A igual tamaño, el aguacate pesa más. Ninguna medida sola lo dice: lo dicen las DOS juntas, y por eso el plano va inclinado.'
+  },
+  {
+    n:'Hojas sanas y con plaga', emoji:'🌿', meta3:'las manchas',
+    clases:[{nombre:'Sana', emoji:'🌿', color:0x38d3c6, cls:'b'},
+            {nombre:'Con plaga', emoji:'🍂', color:0xf6b93b, cls:'a'}],
+    ejes:['Tamaño','Manchas','Color'],
+    cuento:'Mira el dibujo <b>desde arriba</b>: están revueltas. Gira y míralo de lado — se separan por <b>cuántas manchas</b> tienen, que es la medida de en medio.',
+    nubes:[{clase:0,grupo:'a',centro:[0,-0.55,0],radio:[0.85,0.24,0.85],n:12},
+           {clase:1,grupo:'b',centro:[0, 0.55,0],radio:[0.85,0.24,0.85],n:12}],
+    semilla:3303,
+    leccion:'Desde arriba parecían iguales. La medida que las separaba era la tercera, y por eso una máquina mira TODAS las que tiene antes de decidir cuál importa.'
+  },
+  {
+    n:'Las dos clases de frijol', emoji:'🫘', meta3:'nada: ningún plano alcanza',
+    clases:[{nombre:'Criollo', emoji:'🫘', color:0xf6b93b, cls:'a'},
+            {nombre:'Mejorado', emoji:'🌾', color:0x38d3c6, cls:'b'}],
+    ejes:['Tamaño','Color','Brillo'],
+    cuento:'El criollo es <b>grande y claro</b> o <b>chico y oscuro</b>; el mejorado, <b>grande y oscuro</b> o <b>chico y claro</b>. Prueba lo que quieras: siempre te van a quedar algunos mal.',
+    nubes:[{clase:0,grupo:'a',centro:[-0.52,-0.52,0],radio:[0.30,0.30,0.9],n:6},
+           {clase:0,grupo:'a',centro:[ 0.52, 0.52,0],radio:[0.30,0.30,0.9],n:6},
+           {clase:1,grupo:'b',centro:[-0.52, 0.52,0],radio:[0.30,0.30,0.9],n:6},
+           {clase:1,grupo:'b',centro:[ 0.52,-0.52,0],radio:[0.30,0.30,0.9],n:6}],
+    semilla:4404, imposible:true,
+    leccion:'No te faltó maña: NINGÚN plano los separa. Una máquina de verdad haría una de dos cosas — pedir otra medida, o usar una frontera curva en vez de un plano.'
+  }
+];
+
+/* Los tres mandos y su paso. El paso NO es un detalle: la meta de
+   cada caso se calcula probando TODOS los planos que estos mandos
+   pueden formar, así que lo que la pantalla pide siempre se puede
+   conseguir con lo que la pantalla da. Si mañana se afina un paso,
+   la meta se recalcula sola. */
+var GIRO_PASO = 5, INC_PASO = 5, DES_PASO = 0.06, DES_TOPE = 30;
+
+/* ⚠️ Dónde arranca el plano, y no es un detalle de arranque: es la
+   mitad de la lección.
+
+   Arrancaba en el centro y de pie (0°, 0°, 0), y así el primer caso
+   YA ESTABA RESUELTO al abrir: el alumno tocaba «Ya está» sin mover
+   nada y se llevaba las tres estrellas del caso que enseña que el
+   tamaño basta —sin haber visto que basta—.
+
+   Ahora arranca ACOSTADO y por debajo de todo: todos los ejemplos
+   caen del mismo lado, así que la máquina dice lo mismo de todos y
+   acierta justo los de una clase. Es el estado de una máquina que
+   todavía no ha aprendido nada, que es exactamente donde tiene que
+   empezar. La sonda comprueba que ningún caso salga resuelto de
+   fábrica. */
+var INI_GIRO = 0, INI_INC = 90, INI_DES = -18;
+
+var esc3, puntos = [], mallas = [], plano = null, rotLados = [];
+var caso = 0, estrellas = 0, intentos = 0, pistaCobrada = false;
+var giro = 0, inc = 0, des = 0, metaCaso = 0, aciertosAhora = 0;
+var mejor = CASOS.map(function(){ return 0; });
+
+function guardar(){
+  try{ localStorage.setItem(LLAVE, JSON.stringify({caso:caso, estrellas:estrellas, mejor:mejor,
+    completado: mejor.every(function(x){ return x > 0; })})); }catch(e){}
+}
+function leer(){
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE));
+    if(d){
+      caso = Math.min(d.caso|0, CASOS.length-1); estrellas = d.estrellas|0;
+      if(d.mejor && d.mejor.length) for(var i=0;i<CASOS.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+    }
+  }catch(e){}
+}
+function c(){ return CASOS[caso]; }
+
+/* ============================================================
+   El plano, en cuentas
+   ------------------------------------------------------------
+   Un plano se dice con dos ángulos y un corrimiento: la NORMAL
+   (hacia dónde mira) y a qué distancia del centro está. De ahí
+   sale de qué lado cae cada ejemplo, que es lo único que el juego
+   necesita saber.
+   ============================================================ */
+function normalDe(g, i){
+  /* De grados a radianes. El alumno mueve GRADOS —que es lo que dicen
+     los mandos y lo que le enseña la pantalla al terminar—; el seno y
+     el coseno los piden en radianes. Ese π no entra en ninguna cuenta
+     suya, que es la regla de los juegos 3D de este proyecto. */
+  var rg = g*Math.PI/180, ri = i*Math.PI/180;
+  return {x:Math.cos(ri)*Math.cos(rg), y:Math.sin(ri), z:Math.cos(ri)*Math.sin(rg)};
+}
+function ladoDe(n, p, d){ return (n.x*p.x + n.y*p.y + n.z*p.z) > d ? 0 : 1; }
+
+/* Cuántos quedan del lado que les toca. Las dos mitades del plano se
+   reparten solas entre las dos clases —se queda con el reparto que
+   acierte más—: pedirle además al alumno que adivine «de qué lado va
+   cada una» sería un segundo acertijo encima del que se enseña. */
+function aciertosCon(pts, n, d){
+  var a = 0;
+  for(var i=0;i<pts.length;i++) if(ladoDe(n, pts[i], d) === pts[i].clase) a++;
+  return Math.max(a, pts.length - a);
+}
+function ladoPara(pts, n, d){
+  var a = 0;
+  for(var i=0;i<pts.length;i++) if(ladoDe(n, pts[i], d) === pts[i].clase) a++;
+  return a >= pts.length - a ? 0 : 1;   // 0: el lado positivo es la clase 0
+}
+
+/* Lo MÁS que se puede conseguir con estos mandos. Se prueba plano por
+   plano, que son ciento sesenta mil y tarda un suspiro. No se escribe
+   a mano por la razón de siempre: un número tecleado se equivoca, y
+   aquí equivocarse es pedirle al alumno algo imposible —o regalarle
+   el caso—. `ejes` deja apagar medidas, que es como la sonda
+   comprueba «con el tamaño solo basta». */
+function mejorPosible(pts, ejes){
+  var top = 0, g, i, d;
+  for(g=0; g<360; g+=GIRO_PASO){
+    for(i=-90; i<=90; i+=INC_PASO){
+      var n = normalDe(g, i);
+      if(ejes){
+        n = {x: ejes.indexOf(0)>=0 ? n.x : 0, y: ejes.indexOf(1)>=0 ? n.y : 0, z: ejes.indexOf(2)>=0 ? n.z : 0};
+        if(Math.sqrt(n.x*n.x + n.y*n.y + n.z*n.z) < 1e-6) continue;
+      }
+      for(d=-DES_TOPE; d<=DES_TOPE; d++){
+        var a = aciertosCon(pts, n, d*DES_PASO);
+        if(a > top){ top = a; if(top === pts.length) return top; }
+      }
+    }
+  }
+  return top;
+}
+
+/* ============================================================
+   El escenario
+   ============================================================ */
+function montar(){
+  esc3 = NubeIA.escena({radio:17.5});
+  esc3.girar();
+  armarCaso();
+  Parque3D.vigilarHueco(esc3.ajustar);
+  animar();
+}
+
+function armarCaso(){
+  var L = NubeIA.LADO;
+  while(esc3.mundo.children.length > 2) Parque3D.tirar(esc3.mundo.children[2]);
+  esc3.limpiarRotulos();
+  mallas = []; rotLados = [];
+  intentos = 0; pistaCobrada = false;
+
+  var d = c();
+  puntos = NubeIA.generar(d.nubes, d.semilla);
+  metaCaso = mejorPosible(puntos, null);
+
+  for(var i=0;i<puntos.length;i++){
+    var m = NubeIA.esfera(puntos[i], d.clases[puntos[i].clase].color, 0.3);
+    esc3.mundo.add(m);
+    mallas.push(m);
+  }
+
+  /* El plano se dibuja más grande que el cubo a propósito: uno que
+     acabara justo en la pared parecería una tapa, y lo que hay que
+     entender es que PARTE el espacio entero en dos. */
+  plano = new THREE.Mesh(
+    new THREE.PlaneGeometry(L*3.1, L*3.1),
+    new THREE.MeshBasicMaterial({color:0xe879f9, transparent:true, opacity:0.24,
+                                 side:THREE.DoubleSide, depthWrite:false}));
+  esc3.mundo.add(plano);
+
+  esc3.rotulo(d.ejes[0]+' →', L*1.22, -L, -L, 'eje');
+  esc3.rotulo('↑ '+d.ejes[1], -L*1.1, L*1.15, -L, 'eje');
+  esc3.rotulo(d.ejes[2]+' ↗', -L, -L, L*1.2, 'eje');
+  rotLados.push(esc3.rotulo('', 0, 0, 0, 'lado ' + d.clases[0].cls));
+  rotLados.push(esc3.rotulo('', 0, 0, 0, 'lado ' + d.clases[1].cls));
+
+  giro = INI_GIRO; inc = INI_INC; des = INI_DES;
+  document.getElementById('m-giro').value = INI_GIRO;
+  document.getElementById('m-inc').value = INI_INC;
+  document.getElementById('m-des').value = INI_DES;
+
+  document.getElementById('subt').textContent = 'Caso '+(caso+1)+' de '+CASOS.length;
+  document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · '+d.cuento;
+  document.getElementById('meta-txt').textContent = d.imposible
+    ? '(lo más que se puede: '+metaCaso+')' : '(hay que dejar bien las '+metaCaso+')';
+  document.getElementById('aviso').textContent = '';
+  document.getElementById('aviso').className = 'aviso';
+  moverPlano();
+  pintarMapa('mapa-ini'); pintarMapa('mapa-fin');
+}
+
+function moverPlano(){
+  var L = NubeIA.LADO, d = c();
+  var n = normalDe(giro, inc), dd = des*DES_PASO;
+  plano.position.set(n.x*dd*L, n.y*dd*L, n.z*dd*L);
+  plano.lookAt(new THREE.Vector3((n.x*dd + n.x)*L, (n.y*dd + n.y)*L, (n.z*dd + n.z)*L));
+
+  var lado0 = ladoPara(puntos, n, dd);
+  aciertosAhora = 0;
+  for(var i=0;i<puntos.length;i++){
+    var suyo = ladoDe(n, puntos[i], dd);
+    var bien = (suyo === lado0) ? (puntos[i].clase === 0) : (puntos[i].clase === 1);
+    if(bien) aciertosAhora++;
+    /* Los que quedan del lado que no es se ponen BLANCOS y crecen.
+       No se marcan en rojo a propósito: rojo contra ámbar es el par
+       que no distingue uno de cada doce niños, y aquí lo que hay que
+       ver de un vistazo es CUÁNTOS están mal. */
+    mallas[i].material.color.setHex(bien ? d.clases[puntos[i].clase].color : 0xffffff);
+    var s = bien ? 1 : 1.5;
+    mallas[i].scale.set(s, s, s);
+  }
+  document.getElementById('cuenta').textContent = aciertosAhora;
+  document.getElementById('o-giro').textContent = giro+'°';
+  document.getElementById('o-inc').textContent = inc+'°';
+  document.getElementById('o-des').textContent = (dd>=0?'+':'')+dd.toFixed(2);
+
+  var claseP = lado0 === 0 ? 0 : 1, claseN = lado0 === 0 ? 1 : 0;
+  rotLados[0].el.innerHTML = d.clases[claseP].emoji+' '+d.clases[claseP].nombre;
+  rotLados[0].el.className = 'rot lado '+d.clases[claseP].cls;
+  rotLados[0].p.set(n.x*(dd*L + L*0.62), n.y*(dd*L + L*0.62), n.z*(dd*L + L*0.62));
+  rotLados[1].el.innerHTML = d.clases[claseN].emoji+' '+d.clases[claseN].nombre;
+  rotLados[1].el.className = 'rot lado '+d.clases[claseN].cls;
+  rotLados[1].p.set(n.x*(dd*L - L*0.62), n.y*(dd*L - L*0.62), n.z*(dd*L - L*0.62));
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  esc3.animarCamara();
+  esc3.moverRotulos();
+  esc3.pintar();
+}
+
+/* ============================================================
+   Lo que toca el alumno
+   ============================================================ */
+function atarMando(id, fn){
+  var el = document.getElementById(id);
+  el.addEventListener('input', function(){ fn(parseInt(el.value, 10)); moverPlano(); });
+}
+
+function listo(){
+  var d = c(), av = document.getElementById('aviso');
+  intentos++;
+  if(aciertosAhora >= metaCaso){
+    var est = 3;
+    if(pistaCobrada) est--;
+    if(intentos > 3) est--;
+    est = Math.max(1, est);
+    if(est > mejor[caso]){
+      /* Solo paga la MEJORA: un caso que ya dio estrellas no vuelve a
+         darlas enteras, o el alumno las repetiría en bucle en vez de
+         seguir. Mejorar la marca sí suma la diferencia. */
+      estrellas += est - mejor[caso];
+      mejor[caso] = est;
+    }
+    guardar();
+    Parque3D.acierto();
+    terminar(true, est);
+  } else {
+    var faltan = metaCaso - aciertosAhora;
+    Parque3D.fallo();
+    av.className = 'aviso mal';
+    av.textContent = 'Todavía hay ' + (puntos.length - aciertosAhora) +
+      ' del lado que no es' + (d.imposible ? '. Prueba a girar e inclinar.' :
+      '. Te faltan ' + faltan + ' para lograrlo.');
+    pintarMarcador();
+  }
+}
+
+function pista(){
+  var d = c(), av = document.getElementById('aviso');
+  pistaCobrada = true;
+  av.className = 'aviso ojo';
+  av.textContent = d.imposible
+    ? 'Aquí no hay truco: lo más que se puede es ' + metaCaso + ' de ' + puntos.length +
+      '. Consíguelo y te cuento por qué.'
+    : 'Lo que los separa es ' + d.meta3 + '. Gira el dibujo hasta verlos en dos montones y pon el plano en medio.';
+}
+
+function terminar(bien, est){
+  var d = c();
+  document.getElementById('fin-est').textContent = '⭐'.repeat(est) + '☆'.repeat(3-est);
+  document.getElementById('fin-tit').textContent = d.imposible ? 'Lo máximo que se podía' : '¡Separados!';
+  document.getElementById('fin-form').innerHTML =
+    'Del lado que les toca: <b>' + aciertosAhora + ' de ' + puntos.length + '</b><br>' +
+    'Girado ' + giro + '° · inclinado ' + inc + '° · corrido ' + (des*DES_PASO).toFixed(2);
+  document.getElementById('fin-txt').innerHTML = d.leccion;
+  var ojo = document.getElementById('fin-ojo');
+  if(d.imposible){
+    ojo.style.display = '';
+    ojo.innerHTML = '⚠️ Esto le pasa a las máquinas de verdad todos los días. Cuando los ejemplos no se pueden separar con las medidas que hay, <b>no se fuerza la respuesta</b>: se consigue otra medida. Lo que NO se puede hacer es fingir que salió.';
+  } else { ojo.style.display = 'none'; }
+  document.getElementById('fin-bt').style.display = caso < CASOS.length-1 ? '' : 'none';
+  document.getElementById('fin-rep').style.display = caso < CASOS.length-1 ? 'none' : '';
+  pintarMapa('mapa-fin');
+  pintarMarcador();
+  if(mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  Parque3D.abrir('velo-fin');
+}
+
+function siguiente(){
+  Parque3D.cerrar('velo-fin');
+  caso = Math.min(caso+1, CASOS.length-1);
+  guardar();
+  armarCaso();
+  pintarMarcador();
+}
+function repetir(){
+  Parque3D.cerrar('velo-fin');
+  armarCaso();
+}
+
+function pintarMarcador(){
+  document.getElementById('marcador').textContent = '⭐ ' + estrellas;
+}
+function pintarMapa(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = CASOS.map(function(x, i){
+    return '<span class="' + (i === caso ? 'aqui' : '') + '">' + x.emoji + '<br>' +
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '–') + '</span>';
+  }).join('');
+}
+
+/* Baja el motor de dibujo, levanta el telón y arranca. Si no llega,
+   el andamio enseña la pantalla de «hace falta internet la primera
+   vez»: un juego que se queda negro parece roto y no se vuelve a
+   abrir. */
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+  atarMando('m-giro', function(v){ giro = v; });
+  atarMando('m-inc',  function(v){ inc  = v; });
+  atarMando('m-des',  function(v){ des  = v; });
+});
+
+window.__j3d = {
+  estado: function(){ return {caso:caso, aciertos:aciertosAhora, total:puntos.length,
+                              meta:metaCaso, giro:giro, inc:inc, des:des,
+                              estrellas:estrellas, mejor:mejor.slice()}; },
+  poner: function(g, i, d){ giro = g; inc = i; des = d;
+    document.getElementById('m-giro').value = g;
+    document.getElementById('m-inc').value = i;
+    document.getElementById('m-des').value = d;
+    moverPlano(); },
+  listo: listo, casos: CASOS, puntos: function(){ return puntos; },
+  mejorPosible: mejorPosible, normalDe: normalDe, aciertosCon: aciertosCon,
+  pasos: {giro:GIRO_PASO, inc:INC_PASO, des:DES_PASO, tope:DES_TOPE},
+  inicio: {giro:INI_GIRO, inc:INI_INC, des:INI_DES}
+};
+</script>
+</body>
+</html>

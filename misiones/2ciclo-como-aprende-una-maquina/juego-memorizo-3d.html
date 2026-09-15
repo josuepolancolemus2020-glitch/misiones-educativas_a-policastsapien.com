@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 ¿Aprendió o se lo memorizó? 3D | Misión Cómo Aprende una Máquina</title>
+<meta name="description" content="Saca 100 % en los ejemplos que ya vio y falla con los nuevos. Eso no es aprender: es memorizar. Encuentra el ajuste que sí aprende.">
+<link rel="stylesheet" href="../../css/parque-3d.css">
+<link rel="stylesheet" href="../../css/parque-ia.css">
+<style>
+/* ============================================================
+   Juego 3D · ¿Aprendió o se lo memorizó?
+   ------------------------------------------------------------
+   Este es el juego que explica por qué en la misión hay una
+   palabra que se llama PRUEBA. Una máquina que se aprende de
+   memoria los ejemplos saca 100 % en los ejemplos — y falla con
+   lo nuevo, que es lo único para lo que la querías.
+
+   Y aquí hay una decisión que parece un detalle y es la clave:
+   MIENTRAS el alumno ajusta, la pantalla solo le enseña la nota
+   «en los que ya vio». La nota de verdad sale al examinarla, y
+   entonces ya no se puede cambiar el ajuste para esa vuelta.
+   Enseñar las dos notas a la vez convertiría el juego en «mueve
+   hasta que el número suba», que es exactamente el vicio que se
+   está enseñando a evitar: elegir el modelo mirando el examen es
+   hacer trampa con uno mismo.
+
+   Los tres niveles traen ejemplos MAL ETIQUETADOS a propósito —lo
+   que pasa de verdad cuando alguien etiqueta cuatro mil fotos un
+   viernes por la tarde—. Con k=1 la máquina se los cree uno por
+   uno; con k más grande, los vecinos buenos los desmienten.
+   ============================================================ */
+.notas{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:.3rem 0;}
+.nota{border:2px solid var(--gris);border-radius:12px;padding:.25rem .6rem;min-width:8.4rem;
+  font-size:.74rem;color:var(--gris);line-height:1.35;text-align:center;}
+.nota b{display:block;font-size:1.25rem;font-family:'Fira Code',ui-monospace,monospace;color:var(--claro);}
+.nota.ya{border-color:var(--acento);}
+.nota.ya b{color:var(--acento);}
+.nota.nuevo{border-color:var(--verde);}
+.nota.nuevo b{color:#8ae9c9;}
+.nota.tapada b{color:var(--gris);}
+.vidas-txt{font-size:.74rem;color:var(--gris);text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="volver" href="como-aprende-una-maquina.html#s-juegos3d" title="Volver a la misión">←</a>
+  <div class="titulo">🧠 ¿Aprendió o se lo memorizó?<small id="subt">Tanda 1 de 3</small></div>
+  <div class="marcador" id="marcador">⭐ 0</div>
+</div>
+
+<div id="lienzo">
+  <div class="tarjeta" id="tarjeta"></div>
+  <div class="cinta" id="cinta"></div>
+</div>
+
+<div class="mandos">
+  <div class="mando">
+    <label for="m-k">👥 Cuántos vecinos</label>
+    <input type="range" id="m-k" min="0" max="10" step="1" value="0" aria-label="Cuántos vecinos mira la máquina">
+    <output id="o-k">1</output>
+  </div>
+  <div class="notas">
+    <div class="nota ya">En los que YA vio<b id="n-ya">–</b></div>
+    <div class="nota nuevo tapada">En los que NUNCA vio<b id="n-nuevo">?</b></div>
+  </div>
+  <div class="botones">
+    <button class="bt bt-v" id="bt-examinar" onclick="examinar()">🧪 Examinarla</button>
+    <button class="bt bt-s" id="bt-como" onclick="pista()">💡 ¿Cómo?</button>
+  </div>
+  <div class="vidas-txt" id="vidas-txt"></div>
+  <div class="aviso" id="aviso"></div>
+</div>
+
+<div class="velo ver" id="velo-carga" style="z-index:30;">
+  <div class="panel" style="border-color:var(--gris);">
+    <div class="emoji-gr">⏳</div>
+    <h2>Preparando el 3D…</h2>
+    <p>Se está bajando la pieza que dibuja en tres dimensiones. Con buena señal tarda un momento; con señal mala, un poco más. La próxima vez ya no hace falta.</p>
+  </div>
+</div>
+
+<div class="velo ver" id="velo-ini">
+  <div class="panel">
+    <div class="emoji-gr">🧠</div>
+    <h2>¿Aprendió o se lo memorizó?</h2>
+    <p>La máquina decide mirando a sus <b>vecinos más cercanos</b>. Tú eliges <b>a cuántos</b> les pregunta: a uno solo, a tres, a cinco…</p>
+    <p style="font-size:.84rem;color:#c9b4d6;">Mientras ajustas solo ves la nota de <b>los ejemplos que ya vio</b>. La otra sale al examinarla, y tienes <b>tres exámenes</b> por tanda.</p>
+    <div class="chapas"><span>Los que se equivoca se ponen BLANCOS</span><span>Tres tandas</span></div>
+    <div class="mapa" id="mapa-ini"></div>
+    <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-res">
+  <div class="panel">
+    <div class="emoji-gr" id="res-emoji">🧪</div>
+    <h2 id="res-tit">El examen de verdad</h2>
+    <div class="formula" id="res-form"></div>
+    <p id="res-txt"></p>
+    <div class="ojo" id="res-ojo" style="display:none;"></div>
+    <div class="mapa" id="mapa-fin"></div>
+    <button class="bt bt-v" id="res-bt" onclick="siguiente()">Siguiente tanda →</button>
+    <button class="bt bt-s" id="res-otra" onclick="cerrarRes()">🔁 Ajustar y volver a examinar</button>
+  </div>
+</div>
+
+<div class="velo" id="velo-red">
+  <div class="panel">
+    <h2>🌐 Hace falta internet la primera vez</h2>
+    <p>Este juego dibuja en tres dimensiones y para eso baja una pieza de la red. Ábrelo <b>una vez con señal</b>: después queda guardado en el teléfono y funciona sin internet.</p>
+    <button class="bt bt-p" onclick="location.reload()">Reintentar</button>
+    <a class="bt bt-s" style="text-decoration:none;display:inline-block;" href="como-aprende-una-maquina.html#s-juegos3d">Volver a la misión</a>
+  </div>
+</div>
+
+<script src="../../js/3d/parque-3d.js"></script>
+<script src="../../js/3d/nube-ia.js"></script>
+<script>
+var LLAVE = 'j3d_memorizo_v1';
+
+/* Los vecinos que se pueden pedir, siempre IMPAR: con un número par
+   puede haber empate y el desempate lo tendría que decidir otra
+   regla, que aquí sería una regla más que explicar y no enseña
+   nada. */
+var KS = [1,3,5,7,9,11,13,15,17,19,21];
+var CLASES = [{nombre:'Criollo', emoji:'🫘', color:0xf6b93b},
+              {nombre:'Mejorado', emoji:'🌾', color:0x38d3c6}];
+var A = {clase:0, grupo:'a'}, B = {clase:1, grupo:'b'};
+function tr(c, x, y, z){ return {x:x, y:y, z:z, clase:c, grupo:'traidor', traidor:true}; }
+
+/* Las tres tandas. Los TRAIDORES —ejemplos de una clase metidos en
+   el territorio de la otra— van escritos a mano porque cada uno está
+   puesto donde está para que la lección salga; lo que no se escribe
+   a mano es ninguna nota: todas salen de contar. */
+var TANDAS = [
+  {n:'La tanda del viernes', emoji:'🫘', meta:18,
+   cuento:'Cuatro de estos ejemplos están <b>mal etiquetados</b>: alguien se equivocó al anotarlos. Míralos, están metidos en el montón del otro.',
+   nubesEj:[Object.assign({centro:[-0.5,0,0], radio:[0.34,0.5,0.5], n:14}, A),
+            Object.assign({centro:[ 0.5,0,0], radio:[0.34,0.5,0.5], n:14}, B)], semEj:7711,
+   traidores:[tr(0, 0.45,-0.35,0.2), tr(0, 0.55, 0.30,-0.3), tr(1,-0.50, 0.10,0.35), tr(1,-0.44,-0.42,-0.15)],
+   nubesPr:[Object.assign({centro:[-0.5,0,0], radio:[0.34,0.5,0.5], n:10}, A),
+            Object.assign({centro:[ 0.5,0,0], radio:[0.34,0.5,0.5], n:10}, B)], semPr:8822,
+   leccion:'Con <b>un</b> vecino, la máquina se cree a cada traidor y le hace un huequito a su alrededor: por eso acierta TODOS los que ya vio. Preguntándole a más vecinos, los buenos desmienten al traidor.'},
+  {n:'Pocos de uno, muchos del otro', emoji:'⚖️', meta:19,
+   cuento:'Aquí hay <b>muchos más</b> de una clase que de la otra. Cuidado con pasarte de vecinos: si les preguntas a demasiados, siempre gana el montón grande.',
+   nubesEj:[Object.assign({centro:[-0.45,0,0], radio:[0.30,0.55,0.55], n:9}, A),
+            Object.assign({centro:[ 0.45,0,0], radio:[0.30,0.55,0.55], n:20}, B)], semEj:3311,
+   traidores:[tr(0, 0.40, 0.30,0.1), tr(0, 0.48,-0.25,-0.3), tr(1,-0.42, 0.22,0.2),
+              tr(1,-0.38,-0.30,-0.2), tr(1,-0.46,0.45,0.35)],
+   nubesPr:[Object.assign({centro:[-0.45,0,0], radio:[0.30,0.55,0.55], n:10}, A),
+            Object.assign({centro:[ 0.45,0,0], radio:[0.30,0.55,0.55], n:10}, B)], semPr:4422,
+   leccion:'Ni tan poco ni tanto. Con un vecino se memoriza; con veintiuno ya no mira a los de al lado, mira a media nube — y como de una clase hay más, empieza a contestar siempre lo mismo.'},
+  {n:'Los montones pegados', emoji:'🤏', meta:19,
+   cuento:'Los dos montones están <b>casi tocándose</b>. Aquí la frontera es fina y los traidores hacen más daño que nunca.',
+   nubesEj:[Object.assign({centro:[-0.34,0,0], radio:[0.26,0.6,0.6], n:11}, A),
+            Object.assign({centro:[ 0.34,0,0], radio:[0.26,0.6,0.6], n:17}, B)], semEj:1234,
+   traidores:[tr(0, 0.30, 0.40,0.2), tr(0, 0.36,-0.30,-0.25), tr(0, 0.26, 0.05,0.45),
+              tr(1,-0.30, 0.35,-0.2), tr(1,-0.36,-0.28,0.3)],
+   nubesPr:[Object.assign({centro:[-0.34,0,0], radio:[0.26,0.6,0.6], n:10}, A),
+            Object.assign({centro:[ 0.34,0,0], radio:[0.26,0.6,0.6], n:10}, B)], semPr:5678,
+   leccion:'Esta es la que se parece a los problemas de verdad: nunca hay una raya limpia. Lo que se busca no es acertar todos los ejemplos — es acertar los que vengan mañana.'}
+];
+
+var esc3, ejemplos = [], pruebaPts = [], mallasEj = [], mallasPr = [];
+var tanda = 0, ki = 0, estrellas = 0, examenes = 0, pistaCobrada = false;
+var mejorNota = 0, proboK1 = false, ultimaNota = null;
+var mejor = TANDAS.map(function(){ return 0; });
+var EXAMENES_MAX = 3;
+
+function guardar(){
+  try{ localStorage.setItem(LLAVE, JSON.stringify({tanda:tanda, estrellas:estrellas, mejor:mejor,
+    completado: mejor.every(function(x){ return x > 0; })})); }catch(e){}
+}
+function leer(){
+  try{
+    var d = JSON.parse(localStorage.getItem(LLAVE));
+    if(d){
+      tanda = Math.min(d.tanda|0, TANDAS.length-1); estrellas = d.estrellas|0;
+      if(d.mejor && d.mejor.length) for(var i=0;i<TANDAS.length;i++) mejor[i] = Math.max(0, Math.min(3, d.mejor[i]|0));
+    }
+  }catch(e){}
+}
+function T(){ return TANDAS[tanda]; }
+function k(){ return KS[ki]; }
+
+function montar(){
+  esc3 = NubeIA.escena({radio:17});
+  esc3.girar();
+  armarTanda();
+  Parque3D.vigilarHueco(esc3.ajustar);
+  animar();
+}
+
+function armarTanda(){
+  var L = NubeIA.LADO, d = T();
+  mallasEj.forEach(function(x){ Parque3D.tirar(x); });
+  mallasPr.forEach(function(x){ Parque3D.tirar(x); });
+  mallasEj = []; mallasPr = [];
+  esc3.limpiarRotulos();
+  ki = 0; examenes = 0; pistaCobrada = false; mejorNota = 0; proboK1 = false; ultimaNota = null;
+
+  /* Los ejemplos se siembran y DESPUÉS se pegan los traidores, en ese
+     orden y siempre el mismo: `knn` rompe los empates por el más
+     cercano y, si dos quedan a la misma distancia, por el orden de la
+     lista. Cambiar el orden cambiaría alguna respuesta, y la sonda
+     mira las mismas notas que el alumno. */
+  ejemplos = NubeIA.generar(d.nubesEj, d.semEj).concat(d.traidores.map(function(t){
+    return {x:t.x, y:t.y, z:t.z, clase:t.clase, grupo:t.grupo, traidor:true};
+  }));
+  ejemplos.forEach(function(p, i){ p.i = i; });
+  pruebaPts = NubeIA.generar(d.nubesPr, d.semPr);
+
+  for(var i=0;i<ejemplos.length;i++){
+    var m = NubeIA.esfera(ejemplos[i], CLASES[ejemplos[i].clase].color, ejemplos[i].traidor ? 0.34 : 0.27);
+    esc3.mundo.add(m);
+    mallasEj.push(m);
+  }
+  for(var j=0;j<pruebaPts.length;j++){
+    var c = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4),
+      new THREE.MeshLambertMaterial({color:0x8e9bb3}));
+    c.position.set(pruebaPts[j].x*L, pruebaPts[j].y*L, pruebaPts[j].z*L);
+    c.visible = false;
+    esc3.mundo.add(c);
+    mallasPr.push(c);
+  }
+  esc3.rotulo(CLASES[0].emoji+' '+CLASES[0].nombre, -L*0.72, L*1.1, 0, 'eje a');
+  esc3.rotulo(CLASES[1].emoji+' '+CLASES[1].nombre,  L*0.72, L*1.1, 0, 'eje b');
+
+  document.getElementById('m-k').value = 0;
+  document.getElementById('subt').textContent = 'Tanda '+(tanda+1)+' de '+TANDAS.length;
+  document.getElementById('tarjeta').innerHTML = d.emoji+' <b>'+d.n+'</b> · '+d.cuento;
+  document.getElementById('cinta').classList.remove('ver');
+  document.getElementById('n-nuevo').textContent = '?';
+  document.querySelector('.nota.nuevo').classList.add('tapada');
+  document.getElementById('aviso').textContent = '';
+  document.getElementById('aviso').className = 'aviso';
+  document.getElementById('bt-examinar').disabled = false;
+  actualizar();
+  pintarMapa('mapa-ini'); pintarMapa('mapa-fin');
+}
+
+/* La nota de «los que ya vio»: se le pregunta a la máquina por cada
+   uno de sus PROPIOS ejemplos. Con un vecino, el más cercano a cada
+   ejemplo es él mismo — y por eso da siempre el 100 %. Eso no es un
+   truco del juego: es lo que de verdad pasa, y es exactamente la
+   trampa que hay que ver. */
+function notaYaVio(kk){
+  var a = 0;
+  for(var i=0;i<ejemplos.length;i++) if(NubeIA.knn(ejemplos[i], ejemplos, kk) === ejemplos[i].clase) a++;
+  return a;
+}
+function notaNueva(kk){
+  var a = 0;
+  for(var i=0;i<pruebaPts.length;i++) if(NubeIA.knn(pruebaPts[i], ejemplos, kk) === pruebaPts[i].clase) a++;
+  return a;
+}
+
+function actualizar(){
+  var kk = k(), ya = notaYaVio(kk);
+  document.getElementById('o-k').textContent = kk === 1 ? '1 vecino' : kk+' vecinos';
+  document.getElementById('n-ya').textContent = ya+'/'+ejemplos.length;
+  /* Y se VE: cada ejemplo que la máquina contestaría mal se pone
+     blanco. Con un vecino no hay ninguno —porque se los sabe de
+     memoria—; al subir, los traidores empiezan a ponerse blancos, que
+     es la máquina dejando de creérselos. */
+  for(var i=0;i<ejemplos.length;i++){
+    var bien = NubeIA.knn(ejemplos[i], ejemplos, kk) === ejemplos[i].clase;
+    mallasEj[i].material.color.setHex(bien ? CLASES[ejemplos[i].clase].color : 0xffffff);
+    var s = bien ? 1 : 1.35;
+    mallasEj[i].scale.set(s, s, s);
+  }
+  document.getElementById('vidas-txt').textContent =
+    'Exámenes: ' + '🧪'.repeat(Math.max(0, EXAMENES_MAX - examenes)) +
+    (examenes ? ' · mejor nota hasta ahora: '+mejorNota+'/'+pruebaPts.length : '');
+}
+
+function examinar(){
+  var d = T(), kk = k();
+  if(examenes >= EXAMENES_MAX) return;
+  examenes++;
+  if(kk === 1) proboK1 = true;
+  var ya = notaYaVio(kk), nuevo = notaNueva(kk), L = NubeIA.LADO;
+  ultimaNota = {k:kk, ya:ya, nuevo:nuevo};
+  if(nuevo > mejorNota) mejorNota = nuevo;
+
+  for(var j=0;j<pruebaPts.length;j++){
+    var dice = NubeIA.knn(pruebaPts[j], ejemplos, kk);
+    var bien = dice === pruebaPts[j].clase;
+    mallasPr[j].visible = true;
+    mallasPr[j].material.color.setHex(bien ? CLASES[dice].color : 0xffffff);
+    var s = bien ? 1 : 1.5;
+    mallasPr[j].scale.set(s, s, s);
+  }
+  document.querySelector('.nota.nuevo').classList.remove('tapada');
+  document.getElementById('n-nuevo').textContent = nuevo+'/'+pruebaPts.length;
+  var cinta = document.getElementById('cinta');
+  cinta.innerHTML = 'Con <b>'+kk+'</b> '+(kk===1?'vecino':'vecinos')+': '+ya+' de los que vio · <b>'+nuevo+'</b> de los nuevos';
+  cinta.classList.add('ver');
+
+  var logrado = nuevo >= d.meta;
+  if(logrado){
+    var est = examenes <= 1 ? 3 : (examenes <= 2 ? 2 : 1);
+    if(pistaCobrada) est = Math.max(1, est-1);
+    if(est > mejor[tanda]){ estrellas += est - mejor[tanda]; mejor[tanda] = est; }
+    guardar();
+    Parque3D.acierto();
+  } else {
+    Parque3D.fallo();
+  }
+  mostrar(logrado, kk, ya, nuevo);
+  actualizar();
+}
+
+function mostrar(logrado, kk, ya, nuevo){
+  var d = T();
+  document.getElementById('res-emoji').textContent = logrado ? '🎯' : (kk === 1 ? '🙈' : '🧪');
+  document.getElementById('res-tit').textContent = logrado ? '¡Esa sí aprendió!' :
+    (kk === 1 ? 'Se lo memorizó' : 'Todavía no llega');
+  document.getElementById('res-form').innerHTML =
+    'Con <b>'+kk+'</b> '+(kk===1?'vecino':'vecinos')+':<br>' +
+    'en los que YA vio &nbsp;<b>'+ya+' de '+ejemplos.length+'</b><br>' +
+    'en los que NUNCA vio &nbsp;<b>'+nuevo+' de '+pruebaPts.length+'</b>';
+  var ojo = document.getElementById('res-ojo');
+  if(kk === 1){
+    ojo.style.display = '';
+    ojo.innerHTML = '⚠️ Fíjate bien: sacó <b>todos</b> los que ya había visto. Y no es porque sea lista — es porque a cada ejemplo el vecino más cercano es ÉL MISMO. Eso no es aprender, es <b>memorizar</b>, y por eso a una máquina se la examina siempre con ejemplos que nunca vio.';
+  } else if(logrado){
+    ojo.style.display = '';
+    ojo.innerHTML = '✅ Y mira lo que pasó por el camino: sacó <b>menos</b> nota en los ejemplos que ya conocía y <b>más</b> en los nuevos. Cuando esas dos notas se separan mucho, la máquina está memorizando.';
+  } else { ojo.style.display = 'none'; }
+  document.getElementById('res-txt').innerHTML = logrado ? ('⭐'.repeat(mejor[tanda])+'☆'.repeat(3-mejor[tanda])+'<br>'+d.leccion)
+    : (examenes >= EXAMENES_MAX
+        ? 'Se acabaron los exámenes de esta tanda. Tu mejor nota fue <b>'+mejorNota+' de '+pruebaPts.length+'</b>. Puedes repetirla.'
+        : 'Hacen falta <b>'+d.meta+' de '+pruebaPts.length+'</b>. Mueve los vecinos y vuelve a examinarla.');
+  document.getElementById('res-bt').style.display = (logrado && tanda < TANDAS.length-1) ? '' : 'none';
+  document.getElementById('res-otra').textContent = examenes >= EXAMENES_MAX && !logrado
+    ? '🔁 Repetir la tanda' : '🔁 Ajustar y volver a examinar';
+  pintarMapa('mapa-fin');
+  pintarMarcador();
+  if(logrado && mejor.every(function(x){ return x > 0; })) Parque3D.festejarFin();
+  Parque3D.abrir('velo-res');
+}
+
+function cerrarRes(){
+  Parque3D.cerrar('velo-res');
+  if(examenes >= EXAMENES_MAX && (!ultimaNota || ultimaNota.nuevo < T().meta)) armarTanda();
+}
+function siguiente(){
+  Parque3D.cerrar('velo-res');
+  tanda = Math.min(tanda+1, TANDAS.length-1);
+  guardar();
+  armarTanda();
+  pintarMarcador();
+}
+
+function pista(){
+  pistaCobrada = true;
+  var av = document.getElementById('aviso');
+  av.className = 'aviso ojo';
+  av.textContent = 'Prueba primero con 1 vecino y mira las dos notas. Después súbelo poco a poco: verás que la nota de los que YA vio baja y la de los nuevos sube.';
+}
+
+function animar(){
+  requestAnimationFrame(animar);
+  esc3.animarCamara();
+  esc3.moverRotulos();
+  esc3.pintar();
+}
+
+function pintarMarcador(){ document.getElementById('marcador').textContent = '⭐ '+estrellas; }
+function pintarMapa(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = TANDAS.map(function(x, i){
+    return '<span class="'+(i === tanda ? 'aqui' : '')+'">'+x.emoji+'<br>'+
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '–')+'</span>';
+  }).join('');
+}
+
+Parque3D.arrancar(function(){
+  leer();
+  montar();
+  pintarMarcador();
+  document.getElementById('m-k').addEventListener('input', function(e){
+    ki = Math.max(0, Math.min(KS.length-1, parseInt(e.target.value, 10)));
+    actualizar();
+  });
+});
+
+window.__j3d = {
+  estado: function(){ return {tanda:tanda, k:k(), examenes:examenes, mejorNota:mejorNota,
+                              estrellas:estrellas, mejor:mejor.slice(), ultima:ultimaNota,
+                              ejemplos:ejemplos.length, prueba:pruebaPts.length}; },
+  ponerK: function(v){ ki = Math.max(0, KS.indexOf(v)); document.getElementById('m-k').value = ki; actualizar(); },
+  examinar: examinar, notaYaVio: notaYaVio, notaNueva: notaNueva,
+  tandas: TANDAS, KS: KS, ejemplos: function(){ return ejemplos; }, pruebaPts: function(){ return pruebaPts; }
+};
+</script>
+</body>
+</html>
