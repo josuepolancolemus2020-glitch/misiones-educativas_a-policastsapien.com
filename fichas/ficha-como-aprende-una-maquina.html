@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Cómo Aprende una Máquina</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INTELIGENCIA ARTIFICIAL = MAGENTA (#86198f).
+       No se eligió a ojo: se midió la distancia de color contra las nueve
+       materias que ya existían y la familia magenta es el hueco más ancho que
+       quedaba. El maestro tiene que saber de qué materia es la hoja SIN leerla.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · El corte de las hojas lo reparte `node _dev/reparte-hojas-ficha.js`, que
+       mide en el navegador con el ancho del papel. A ojo se acierta hasta que
+       se corrige una errata y el párrafo crece dos renglones.
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Esta ficha la ARMA `node _dev/arma-fichas-ia.js` desde los mismos
+       archivos de datos que pinta la misión, para que las dos no se separen. */
+  :root {
+    --ia: #86198f; --ia-osc: #701a75; --ia-claro: #fdf4ff; --linea: #eccef2;
+    --tinta: #1a2733; --gris: #5b6773;
+    --may: #4338ca; --oro: #b45309; --verde: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7eefa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ia-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ia); background: var(--ia-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ia-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ia-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ia); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ia-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ia-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ia-osc); }
+  .aviso { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .aviso b { color: #b91c1c; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: var(--may); }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ia); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf7fe; }
+  td.k { font-weight: 700; color: var(--ia-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; background: #fefcff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ia-osc); margin-bottom: 6px; }
+
+  /* Dos columnas enfrentadas. Se usa donde la ficha compara DOS cosas que el
+     alumno confunde (ser vivo y máquina, instrucción y ejemplo, predecir y
+     saber). Puestas una al lado de la otra, la diferencia se ve sin párrafo. */
+  .dos { display: flex; gap: 8px; margin: 7px 0; break-inside: avoid; }
+  .dos > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .dos .dA { background: #eafaf1; border: 1px solid #b7e4cb; }
+  .dos .dB { background: #fdf4ff; border: 1px solid var(--linea); }
+  .dos b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .dos .dA b { color: var(--verde); }
+  .dos .dB b { color: var(--ia-osc); }
+  .dos ul { margin: 2px 0 0 18px; font-size: 9.5pt; }
+
+  /* La ficha de un concepto: el término, su definición y su ejemplo. Es el
+     recuadro que más se repite en estas cuatro, porque aquí el vocabulario ES
+     la materia: el alumno lo copia al cuaderno tal cual. */
+  .cficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--ia); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .cf-tit { font-size: 11.5pt; font-weight: 800; color: var(--ia-osc); }
+  .cf-def { font-size: 10.5pt; margin: 2px 0; text-align: justify; }
+  .cf-ej { font-size: 9.5pt; color: var(--gris); font-style: italic; }
+
+  /* La línea del tiempo de la etapa 3, en tarjetas. Cada una con su año en
+     grande: es el dato que el alumno busca al recorrer la hoja, y si baila de
+     sitio hay que leer el renglón entero para encontrarlo. */
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fefcff; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ia); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ia); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la marca
+     de lo que está mal, y pedirla para señalar lo correcto confunde a quien ya
+     sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--ia-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ia-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ia-osc); }
+
+  .pauta { background: #fdf7fe; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ia-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ia); box-shadow: 0 6px 18px rgba(134,25,143,.35); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .dos > div, .ilus, .felic, .pauta, .cficha, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Cómo Aprende una Máquina</div>
+        <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
+        <div class="f-meta"><b>Tema:</b> Datos, etiquetas, entrenamiento, prueba y error. Los tres tipos de aprendizaje, y el sesgo: por qué se equivoca justo con lo que nadie le enseñó.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-como-aprende-una-maquina.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Distinguir un programa que <strong>sigue reglas</strong> de uno que <strong>aprende de ejemplos</strong>.</li>
+      <li>Explicar el ciclo <strong>datos → patrón → prueba → error</strong> con sus palabras.</li>
+      <li>Usar bien las palabras <strong>dato, etiqueta, entrenar, probar y patrón</strong>.</li>
+      <li>Nombrar los <strong>tres tipos de aprendizaje</strong> y dar un ejemplo de cada uno.</li>
+      <li>Detectar un <strong>sesgo</strong> en un conjunto de ejemplos mal repartido.</li>
+      <li>Preguntar, ante cualquier sistema que decida algo: <strong>con qué ejemplos, quién los eligió y a quién le cae el error</strong>.</li>
+    </ol>
+
+    <h2>⚙️ 1. Dos maneras de hacer que una computadora haga algo</h2>
+
+    <p>Esta es <strong>la diferencia más importante de toda la ruta</strong>, y es la que se pregunta en el
+       examen:</p>
+
+    <div class="dos">
+      <div class="dB"><b>📋 Programa de siempre</b>
+        Una persona escribe las <strong>reglas</strong>, paso por paso. La computadora las obedece.
+        <ul><li><em>«Si la nota es menor que 60, escribe reprobado.»</em></li>
+            <li>Nunca mejora solo. Si aparece un caso que la regla no contempló, falla.</li></ul>
+      </div>
+      <div class="dA"><b>🍎 Programa que aprende</b>
+        Nadie le escribe la regla: recibe <strong>ejemplos</strong> y la saca él mismo de ellos.
+        <ul><li><em>Diez mil fotos de hojas, marcadas «sana» o «con plaga».</em></li>
+            <li>Reconoce cosas que nadie le describió. Y falla con lo que no estaba en sus ejemplos.</li></ul>
+      </div>
+    </div>
+
+    <div class="caja idea"><b>Las dos fallan, pero por razones contrarias:</b> una porque le faltó una regla
+      que alguien tenía que escribir; la otra porque le faltó un ejemplo que alguien tenía que juntar.
+      <b>En las dos hay una persona detrás del fallo.</b></div>
+
+    <h2>🔁 2. El ciclo del aprendizaje, paso por paso</h2>
+
+    <p>Así se entrena cualquier máquina que aprende, sea para reconocer plagas, leer recibos o traducir.
+       Son siempre los mismos seis pasos:</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:30%">Paso</th><th>Qué pasa</th></tr>
+      <tr><td class="k">📦 1. Datos</td><td>Se juntan muchísimos ejemplos: fotos, textos, sonidos, medidas.</td></tr>
+      <tr><td class="k">🏷️ 2. Etiquetas</td><td>Una persona escribe la respuesta correcta de cada uno.</td></tr>
+      <tr><td class="k">🏋️ 3. Entrenamiento</td><td>La máquina los mira una y otra vez y busca el patrón que los separa.</td></tr>
+      <tr><td class="k">🧪 4. Prueba</td><td>Se la examina con ejemplos que NUNCA vio.</td></tr>
+      <tr><td class="k">❌ 5. Error</td><td>Se cuenta cuántas falló. Ninguna acierta el cien por ciento.</td></tr>
+      <tr><td class="k">🔁 6. Se corrige</td><td>Se juntan los ejemplos que faltaban y se vuelve a entrenar.</td></tr>
+    </table>
+
+    <div class="caja truco"><b>El paso 4 es el que la gente se salta,</b> y es el que de verdad mide:
+      probarla con ejemplos que <b>NUNCA vio</b>. Probarla con los mismos con que se entrenó no prueba nada,
+      porque pudo habérselos memorizado.</div>
+
+    <h2>📖 3. El vocabulario del examen</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">📦 Dato</div>
+      <div class="cf-def">Cada pedazo de información que se guarda y se puede contar, medir o comparar: un número, una palabra, una foto, un sonido. Los datos son la comida de la Inteligencia Artificial.</div>
+      <div class="cf-ej">Ejemplo: El peso de una naranja, el color de un nance, la temperatura del día.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🏷️ Etiqueta</div>
+      <div class="cf-def">La respuesta correcta que una persona le pone a un ejemplo antes de enseñárselo a la máquina. Sin etiqueta, la máquina ve la foto pero no sabe de qué es.</div>
+      <div class="cf-ej">Ejemplo: A esta foto le ponemos la etiqueta «nance»; a esta otra, «anona».</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🏋️ Entrenar</div>
+      <div class="cf-def">Mostrarle a la máquina muchos ejemplos con sus etiquetas, una y otra vez, hasta que encuentre el patrón que los separa. Entrenar cuesta tiempo y se hace una vez; usar lo aprendido es rápido y se hace siempre.</div>
+      <div class="cf-ej">Ejemplo: Enseñarle diez mil fotos de frutas hasta que separe nances de anonas.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🔁 Patrón</div>
+      <div class="cf-def">Lo que se repite en muchos ejemplos y sirve para reconocerlos. La máquina no entiende lo que ve: encuentra lo que se repite y lo usa para decidir.</div>
+      <div class="cf-ej">Ejemplo: Los nances casi siempre son pequeños y amarillos; ese es el patrón.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🧪 Prueba</div>
+      <div class="cf-def">Examinar a la máquina con ejemplos que NO le enseñamos, para saber si de verdad aprendió el patrón o solo se acordó de lo que vio. Si acierta con lo nuevo, aprendió.</div>
+      <div class="cf-ej">Ejemplo: Le enseñamos 100 fotos y la probamos con 20 que nunca vio.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="cficha">
+      <div class="cf-tit">❌ Error</div>
+      <div class="cf-def">Las veces que la máquina contesta mal. Ninguna acierta el 100 %: siempre queda un pedacito de error, y en ese pedacito puede haber una persona.</div>
+      <div class="cf-ej">Ejemplo: Si acierta 9 de cada 10, se equivoca 1 de cada 10.</div>
+    </div>
+
+    <h2>🗂️ 4. Las tres maneras de aprender</h2>
+
+    <p>No todas las máquinas aprenden igual. Estas tres son las que hay que saber distinguir:</p>
+
+    <div class="cficha">
+      <div class="cf-tit">🏷️ Aprendizaje supervisado</div>
+      <div class="cf-def">La máquina aprende con ejemplos que ya traen puesta la etiqueta correcta. Es como estudiar con el solucionario al lado: ve el ejercicio y ve la respuesta.</div>
+      <div class="cf-ej">Ejemplo: Fotos de hojas con su etiqueta «sana» o «con plaga».</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🗂️ Aprendizaje no supervisado</div>
+      <div class="cf-def">La máquina recibe ejemplos SIN etiqueta y los junta por parecido. No sabe cómo se llama cada grupo: sabe que estos se parecen entre sí y aquellos no.</div>
+      <div class="cf-ej">Ejemplo: Separa sola las fotos de la fiesta de las fotos del campo.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🎯 Aprendizaje por refuerzo</div>
+      <div class="cf-def">La máquina prueba, recibe un premio cuando le sale bien y nada cuando le sale mal, y va cambiando lo que hace para ganar más premios. Aprende jugando miles de partidas contra sí misma.</div>
+      <div class="cf-ej">Ejemplo: Un programa que aprende a jugar ajedrez perdiendo millones de veces primero.</div>
+    </div>
+
+    <div class="caja truco"><b>El truco para no confundirlas:</b> pregúntate <b>quién le dio la
+      respuesta</b>. Si se la dio una persona, es supervisado. Si no se la dio nadie y ella agrupó por
+      parecido, es no supervisado. Si la fue descubriendo a base de premios, es por refuerzo.</div>
+
+    <h2>⚖️ 5. El sesgo</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">⚖️ Sesgo</div>
+      <div class="cf-def">Cuando los ejemplos con que se entrenó están mal repartidos, la máquina falla justo con lo que faltaba. No es que la máquina sea mala: es que alguien eligió mal los ejemplos. La pregunta que hay que hacerse siempre es quién los eligió.</div>
+      <div class="cf-ej">Ejemplo: Entrenada solo con manzanas y peras, para ella un nance no existe.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja aviso"><b>No es que la máquina sea mala.</b> Es que alguien eligió los ejemplos, y en
+      esa elección se quedó gente afuera. Por eso la pregunta que hay que hacerle a cualquier sistema que
+      decide algo importante no es «¿cuánto acierta?», sino estas tres:
+      <ol style="margin-top:4px"><li><b>¿Con qué ejemplos lo entrenaron?</b></li>
+      <li><b>¿Quién los eligió?</b></li>
+      <li><b>¿A quién le cae el error?</b></li></ol></div>
+
+    <div class="acts">
+      <h3>🧪 Actividad 1 · Entrena el detector de plagas, en papel <span class="val">(24 pts)</span></h3>
+
+      <p>Una aplicación tiene que decir si una hoja está <strong>sana</strong> o <strong>con plaga</strong>.
+         La entrenaron con hojas de <strong>maíz, frijol y café</strong>, y aprendió esto:</p>
+
+      <div class="ilus">
+        <div class="ilus-t">Lo que la máquina aprendió de cada cultivo</div>
+        <table>
+          <tr><th>Cultivo</th><th>Una hoja sana suya tiene…</th></tr>
+          <tr><td class="k">🌽 Maíz</td><td>hasta <b>1</b> mancha</td></tr>
+          <tr><td class="k">🫘 Frijol</td><td>hasta <b>1</b> mancha</td></tr>
+          <tr><td class="k">☕ Café</td><td>hasta <b>1</b> mancha</td></tr>
+          <tr><td class="k">❓ Un cultivo que nunca vio</td><td>usa el <b>promedio</b> de los que conoce: <b>1</b> mancha</td></tr>
+        </table>
+      </div>
+
+      <p>Ahora le llegan estas hojas. Escribe qué va a contestar la máquina y si <strong>acierta</strong>:</p>
+
+      <table>
+        <tr><th>La hoja</th><th>Manchas</th><th>De verdad está…</th><th>La máquina dice</th><th>¿Acierta?</th></tr>
+        <tr><td class="k">🌽 Maíz</td><td>1</td><td>sana</td><td><span class="linea-resp" style="min-width:70px"></span></td><td><span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td class="k">🌽 Maíz</td><td>3</td><td>con plaga</td><td><span class="linea-resp" style="min-width:70px"></span></td><td><span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td class="k">☕ Café</td><td>1</td><td>sana</td><td><span class="linea-resp" style="min-width:70px"></span></td><td><span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td class="k">🍌 Plátano</td><td>3</td><td><b>sana</b> (las hojas de plátano se rasgan con el viento)</td><td><span class="linea-resp" style="min-width:70px"></span></td><td><span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td class="k">🍌 Plátano</td><td>6</td><td>con plaga</td><td><span class="linea-resp" style="min-width:70px"></span></td><td><span class="linea-resp" style="min-width:40px"></span></td></tr>
+      </table>
+
+      <p><strong>Las dos preguntas que de verdad se califican:</strong></p>
+      <ol>
+        <li>¿Con cuál se equivocó, y por qué?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿Qué le cuesta ese error al productor de plátano?
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>🗂️ Actividad 2 · ¿Qué tipo de aprendizaje es? <span class="val">(12 pts)</span></h3>
+
+      <p>Escribe <strong>S</strong> (supervisado), <strong>N</strong> (no supervisado) o <strong>R</strong>
+         (por refuerzo):</p>
+
+      <ol>
+        <li>Le damos fotos de hojas con la etiqueta «sana» o «con plaga». <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Le damos miles de fotos sin decirle nada y ella las junta por parecido. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Juega millones de partidas y se premia cada vez que gana. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Le damos recibos ya clasificados en «pagado» y «pendiente». <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Agrupa sola a los clientes que compran parecido, sin nombres de grupo. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Un robot prueba caminar y gana puntos cuando avanza sin caerse. <span class="linea-resp" style="min-width:50px"></span></li>
+      </ol>
+
+      <h3>📦 Actividad 3 · ¿Dato o etiqueta? <span class="val">(12 pts)</span></h3>
+
+      <p>Escribe <strong>D</strong> si es un dato y <strong>E</strong> si es una etiqueta:</p>
+
+      <table>
+        <tr><td style="width:50%">La foto de una hoja <span class="linea-resp" style="min-width:40px"></span></td><td>La palabra «sana» escrita por una persona <span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td>El peso de una naranja <span class="linea-resp" style="min-width:40px"></span></td><td>«Esto es un nance» <span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td>La grabación de una voz <span class="linea-resp" style="min-width:40px"></span></td><td>«Esta hoja tiene plaga» <span class="linea-resp" style="min-width:40px"></span></td></tr>
+      </table>
+
+      <h3>💡 Actividad 4 · Explica con tus palabras <span class="val">(12 pts)</span></h3>
+
+      <ol>
+        <li>¿Por qué hay que probar con ejemplos que la máquina NUNCA vio?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>Una máquina acierta 9 de cada 10. ¿Por qué ese 1 que falla puede importar mucho?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+    </div>
+
+    <h2>🔒 6. Las tres reglas de oro</h2>
+
+    <p>Son las mismas de la etapa 1, y son las mismas que vas a usar en noveno. Lo que cambia con los años
+       no son las reglas: es que ahora ya sabes <strong>por qué</strong>.</p>
+
+    <table>
+      <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
+      <tr><td class="k">🔒 No le doy mis datos ni los de mi familia.</td><td>Nombre completo, dirección, teléfono, la escuela, fotos de otros niños. Lo que se manda a internet puede quedarse guardado.</td></tr>
+      <tr><td class="k">🔎 No le creo sin comprobar.</td><td>La máquina contesta con la misma seguridad cuando sabe y cuando se lo inventa. El dato se busca en el libro o se le pregunta a quien lo sabe.</td></tr>
+      <tr><td class="k">🧑‍🏫 Si algo me asusta o me confunde, le aviso a una persona grande.</td><td>Un mensaje raro, una foto que no debería estar, alguien que te pide algo. Eso no se resuelve solo.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span><span>¿Qué diferencia a un programa que APRENDE de uno de siempre?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Que es más caro</div>
+        <div class="op full"><i></i><b>b)</b> Que saca la regla de los ejemplos en vez de seguir una escrita</div>
+        <div class="op"><i></i><b>c)</b> Que no necesita computadora</div>
+        <div class="op"><i></i><b>d)</b> Que nunca se equivoca</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span><span>¿Qué es una etiqueta?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> El precio del programa</div>
+        <div class="op"><i></i><b>b)</b> Un adorno de la pantalla</div>
+        <div class="op full"><i></i><b>c)</b> La respuesta correcta que una persona le pone a un ejemplo</div>
+        <div class="op"><i></i><b>d)</b> El nombre de la máquina</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span><span>¿Para qué sirve PROBAR con ejemplos nuevos?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Para saber si aprendió el patrón o solo se lo memorizó</div>
+        <div class="op"><i></i><b>b)</b> Para gastar menos batería</div>
+        <div class="op"><i></i><b>c)</b> Para que se entretenga</div>
+        <div class="op"><i></i><b>d)</b> Para hacerla más rápida</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span><span>Una máquina entrenada solo con maíz, frijol y café ve una hoja de plátano. ¿Qué pasa?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> La reconoce igual</div>
+        <div class="op"><i></i><b>b)</b> Se apaga</div>
+        <div class="op"><i></i><b>c)</b> La ignora</div>
+        <div class="op"><i></i><b>d)</b> Se puede equivocar: nunca vio una</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span><span>¿Cómo se llama ese fallo?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Patrón</div>
+        <div class="op"><i></i><b>b)</b> Sesgo</div>
+        <div class="op"><i></i><b>c)</b> Etiqueta</div>
+        <div class="op"><i></i><b>d)</b> Refuerzo</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span><span>¿De quién es la responsabilidad de un sesgo?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> De la máquina</div>
+        <div class="op"><i></i><b>b)</b> De nadie</div>
+        <div class="op"><i></i><b>c)</b> De quien eligió los ejemplos</div>
+        <div class="op"><i></i><b>d)</b> Del que la usa</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span><span>Aprender con ejemplos que ya traen su respuesta se llama…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Aprendizaje supervisado</div>
+        <div class="op"><i></i><b>b)</b> Aprendizaje por refuerzo</div>
+        <div class="op"><i></i><b>c)</b> Aprendizaje no supervisado</div>
+        <div class="op"><i></i><b>d)</b> Memorización</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span><span>Un programa junta fotos parecidas sin que nadie le diga cómo se llaman. Eso es…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Supervisado</div>
+        <div class="op"><i></i><b>b)</b> Por refuerzo</div>
+        <div class="op"><i></i><b>c)</b> Memorización</div>
+        <div class="op"><i></i><b>d)</b> No supervisado</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span><span>Un robot gana puntos cuando avanza sin caerse. Eso es…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Supervisado</div>
+        <div class="op"><i></i><b>b)</b> Aprendizaje por refuerzo</div>
+        <div class="op"><i></i><b>c)</b> No supervisado</div>
+        <div class="op"><i></i><b>d)</b> Un patrón</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span><span>La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Nada, está muy bien</div>
+        <div class="op"><i></i><b>b)</b> Si se puede apagar</div>
+        <div class="op"><i></i><b>c)</b> Cuánto cuesta</div>
+        <div class="op"><i></i><b>d)</b> A quién le toca ese error</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔑 Pauta de corrección y nota para el docente</h2>
+
+    <div class="pauta">
+      <div><span class="pt">Evaluación (40 pts):</span> 1-b · 2-c · 3-a · 4-d · 5-b · 6-c · 7-a · 8-d · 9-b · 10-d</div>
+      <div><span class="pt">Actividad 1 · El detector de plagas (24 pts):</span>
+        maíz 1 → «sana» ✔ · maíz 3 → «con plaga» ✔ · café 1 → «sana» ✔ ·
+        <b>plátano 3 → «con plaga» ✘ (se equivoca)</b> · plátano 6 → «con plaga» ✔.
+        En la pregunta 1 se valora que el alumno diga que <b>nunca vio una hoja de plátano</b> y que por eso
+        le aplicó el promedio de los otros, no que la máquina «esté mala». En la pregunta 2, que nombre el
+        costo real: ese productor fumiga de balde, o deja de vender creyendo que su cosecha está enferma.</div>
+      <div><span class="pt">Actividad 2 · Tipos de aprendizaje (12 pts):</span> S · N · R · S · N · R.</div>
+      <div><span class="pt">Actividad 3 · ¿Dato o etiqueta? (12 pts):</span> D · E · D · E · D · E.</div>
+      <div><span class="pt">Actividad 4 · Con tus palabras (12 pts):</span> respuesta abierta.
+        1) Porque si se la prueba con los mismos con que se entrenó, no se sabe si aprendió el patrón o se
+        los memorizó. 2) Porque en ese 1 hay una persona concreta, y porque el error puede caer siempre
+        sobre el mismo grupo: el porcentaje solo no lo enseña.</div>
+    </div>
+
+    <div class="nota-doc">
+      <b>Qué se está enseñando de verdad en esta hoja.</b> El vocabulario (dato, etiqueta, entrenar, probar,
+      patrón, error) es el andamio; lo que se evalúa es otra cosa: que el alumno, ante una máquina que
+      decide algo, sepa preguntar <b>con qué ejemplos la entrenaron, quién los eligió y a quién le cae el
+      error</b>. Esas tres preguntas le van a servir el resto de su vida, aunque la tecnología cambie entera.
+      <br><br>
+      <b>La Actividad 1 es el corazón de la ficha.</b> Conviene dejar que se equivoquen y que discutan de
+      quién es la culpa antes de dar la respuesta: casi todos dicen «la máquina está mala», y el trabajo
+      del maestro es una sola pregunta, <b>¿le enseñaron alguna hoja de plátano?</b> El ejemplo es
+      hondureño a propósito: el alumno puede señalar la mata.
+      <br><br>
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El propio
+      currículo dice dónde va lo tecnológico en II Ciclo: dentro del bloque «Materia, energía y tecnología»
+      de Ciencias Naturales. El porqué entero y lo que a propósito NO se enseña están en
+      <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>.
+      <br><br>
+      <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-conceptos.js), así que no
+      pueden decir cosas distintas. Etapa 2 de cuatro.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

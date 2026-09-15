@@ -1186,6 +1186,16 @@ La materia y la ruta ya están puestas (`js/app.js`, `css/app.css`,
 `index.html`, `js/tools/campeonismo.js`): un grado nuevo **no las vuelve a
 tocar**.
 
+⚠️ **Y se hizo una segunda vez, el 15 de septiembre de 2026, con Inteligencia
+Artificial** (`ia`, magenta `#86198f`, Ruta de la Máquina que Aprende ✨). Los
+nueve archivos siguen siendo los mismos nueve y no falló ninguno, pero salió una
+décima cosa que la lista no decía: **el `short` de `CAMP_SUBJECTS` va de tres
+letras**, y la sonda `test-campeonismo-tec` lo exige. Hoy no lo pinta ninguna
+pantalla; la uniformidad de un código de materia se respeta igual, porque romperla
+es la clase de detalle que después nadie sabe si fue a propósito. Lo propio de esa
+materia —que es la única que NO está en el DCNB— está en su normativa, más
+abajo.
+
 ⚠️ **El `SAVE_KEY` lleva el grado dentro** (`repaso_fin_grado_6to_v1`). Si
 dos grados comparten la llave, el alumno que juega la de 5º le borra el
 avance al de 6º en el mismo teléfono, que en un aula con tres teléfonos
@@ -2413,6 +2423,189 @@ METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones
 Si se tocan los datos, la ficha **se vuelve a repartir** (`node
 _dev/reparte-hojas-ficha.js ficha-constitucion`): son siete hojas, y escrita a
 mano la 6 medía 329,6 mm donde el papel deja 257,4.
+
+## Normativa: la materia que NO está en el DCNB
+
+**Inteligencia Artificial** (`ia`, clase `ia`, magenta `#86198f`) se estrenó el 15
+de septiembre de 2026 con la **Ruta de la Máquina que Aprende** ✨ y sus cuatro
+etapas: **¿Qué es la Inteligencia Artificial?** (72, I Ciclo), **Cómo Aprende una
+Máquina** (73, II Ciclo), **La Historia de la Inteligencia Artificial** (74, II y
+III Ciclo) y **IA Generativa: úsala bien y no le creas todo** (75, III Ciclo).
+
+Es la **primera materia de la plataforma que no está en el currículo hondureño**,
+y por eso la primera decisión fue documentar de dónde sale cada cosa antes de
+escribir una línea de código: el marco, las expectativas por ciclo, lo que se
+enseña y —sobre todo— **lo que a propósito NO se afirma** están en
+`CURRICULA-INTELIGENCIA-ARTIFICIAL.md`.
+
+**Por qué no se podía esperar a que el DCNB la incorporara.** El alumno de sexto
+ya la está usando: le dicta al teléfono, la cámara le reconoce la cara, le
+pregunta a un chat y le sale un párrafo redondo, seguro y a veces falso. Un niño
+que cree que la máquina «sabe» se cree el dato inventado con el que va a contestar
+el examen; uno que sabe que **predice**, lo verifica. Esperar al currículo tiene
+un costo con nombre: la promoción que está en sexto ahora sale de Básica sin
+haberlo visto.
+
+### Dónde entra, dicho por el propio DCNB
+
+No se inventó un hueco. Las citas están **confirmadas en el PDF**, no en un
+buscador:
+
+| ciclo | qué dice el DCNB | dónde |
+|---|---|---|
+| I y II | «se incluyen contenidos de tecnología en el Primer y el Segundo Ciclo, dentro del bloque "Materia, energía y tecnología" del área de Ciencias Naturales» | `dcneb-basica-iii-ciclo.pdf`, pág. **477** del archivo («487» impreso) |
+| I | ese bloque se trabaja «a través de ejemplos sencillos de sus aplicaciones en la vida cotidiana» | `dcneb-basica-i-ciclo.pdf`, pág. **387** («395» impreso) |
+| III | área de **Tecnología**, que aparece «de forma explícita» solo en este ciclo | `dcneb-basica-iii-ciclo.pdf`, pág. **482** («492» impreso) |
+
+⚠️ **La expectativa que lo cambia todo es «evaluar la información»**, del área de
+Tecnología de III Ciclo. Se escribió para la época del buscador, cuando evaluar
+información era mirar quién firmaba la página. Hoy la información **la escribe una
+máquina que no firma nada**, así que esa misma expectativa pide algo que el
+currículo no podía nombrar: saber cuándo un texto generado se está inventando el
+dato. La etapa 4 la cumple de frente.
+
+### El color se midió, otra vez
+
+Magenta `#86198f`. No se eligió a ojo: se barrió el círculo de tonos midiendo la
+distancia de color (Lab) contra las **nueve** materias que ya existían —las de la
+app Y las del Campeonísimo, que no usan los mismos códigos— exigiendo además
+contraste ≥ 4,5:1 sobre blanco, porque ese color se usa como **texto** del chip.
+La familia magenta es el hueco más ancho que queda: **ΔE 40,5** contra lo más
+cercano (el índigo de Robótica en el Campeonísimo), 46 contra el rosa de Inglés y
+41 contra el morado de Repaso General. Contrasta 8,2:1.
+
+Y la materia entró por los **nueve archivos** de la normativa de estrenar materia,
+sin saltarse ninguno. El `short` de `CAMP_SUBJECTS` va de **tres letras** como los
+otros nueve (`IAR`): hoy no lo pinta ninguna pantalla, pero romper la uniformidad
+de un código de materia es la clase de detalle que después nadie sabe si fue a
+propósito.
+
+### Los datos viven en dos archivos, y la pantalla los PINTA
+
+Mismo patrón que el Himno, los próceres, los poderes y la Constitución, y por la
+misma razón: **el vocabulario en `js/data/ia-conceptos.js` y las fechas en
+`js/data/ia-historia.js`**, las cuatro misiones los pintan de ahí, las cuatro
+fichas son HTML plano, y `node _dev/verifica-ia.js` compara las dos.
+
+Aquí hay **una razón de más que en las otras rutas**: son cuatro misiones
+seguidas que el alumno abre una detrás de otra, de I a III Ciclo. Si «sesgo» se
+define de una manera en la etapa 2 y de otra en la 4, el que estudió las dos no
+aprende dos matices: **aprende a desconfiar de las dos**. Por eso las **tres
+reglas de oro** son literalmente las mismas en las tres etapas que enseñan a
+usarla, y la sonda lo comprueba. (La etapa 3 queda fuera a propósito: es una
+lección de fechas, no de uso.)
+
+⚠️ **Y en la historia, el dato que se copia es una FECHA.** Una fecha equivocada
+no se nota: se pinta igual de bien, se estudia igual y se escribe en el examen.
+Por eso cada hito trae en `acredita` **el documento o el hecho público que lo
+sostiene** (un artículo con su revista, una propuesta con su nombre, una partida
+jugada en público), y por eso **los dos inviernos van como períodos y no como
+años**: nadie se pone de acuerdo en el día. Es la misma regla que dejó fuera los
+números de decreto de la flor y del árbol nacionales.
+
+### Lo que NO se escribe, y es la parte más importante
+
+- **Nada que envejezca.** Ni qué empresa tiene el modelo más grande, ni cuántos
+  parámetros, ni cuántos usuarios. Eso cambia cada mes y la ficha se guarda un año
+  en una gaveta. `verifica-ia` lo comprueba: si aparece el nombre de un producto
+  de IA o una cifra de usuarios o parámetros en una ficha, se pone roja.
+- **No se dice que la IA piensa, entiende, quiere o siente.** No es un matiz
+  filosófico: es el error del que salen todos los demás, incluido creerle el dato
+  inventado.
+- ⚠️ **No se manda a ningún alumno a una IA en línea desde la misión.** Las
+  misiones funcionan sin señal y en teléfonos prestados, y mandar a un niño desde
+  la escuela a un chat de IA es mandarlo a una pantalla donde lo que pasa después
+  no lo eligió nadie. **Las cuatro interacciones corren dentro del teléfono**, sin
+  una sola petición hacia afuera. Lo que se hace en su lugar es enseñarle a usarla
+  **cuando la use**, que va a ser con o sin nuestro permiso.
+
+### ⚠️ Una interacción que promete algo tiene que cumplirlo
+
+Esto costó rehacer un juego entero y es la lección que más vale de esta ruta.
+
+El «🍎 Enséñale a la máquina» de la etapa 1 decía, con esas palabras, que **con
+pocos ejemplos la máquina se equivoca más**. Se midió en el navegador: **con dos
+ejemplos acertaba las cuatro pruebas**. Y tenía que ser así: nances y anonas son
+tan distintos que con uno de cada clase ya se separan perfectamente. La promesa
+era falsa, y un juego que promete una cosa y hace otra **enseña a no creerle a la
+pantalla**, que es justo lo contrario de esta misión.
+
+Las dos salidas malas estaban a la vista: falsear el resultado, o quitar la frase
+y dejar el juego sin lección. Se hizo la tercera: **cambiar el juego para que la
+lección verdadera sea la que se ve**.
+
+- El modelo pasó a ser el **vecino más cercano** («le pone el nombre del que más
+  se le parece»), que además se le explica a alguien de siete años en una frase.
+- Los ocho primeros ejemplos son nances chiquitos y anonas grandotas; **los dos
+  últimos son los raros** (un nance grande, una anona mediana), y son justo los
+  que la prueba pregunta. Quien para en el octavo falla dos, por muchos que le
+  haya enseñado.
+- Y la lección que sale es mejor que la que se prometía: **no importa CUÁNTOS
+  ejemplos, importa CUÁLES.** Que es el sesgo de la etapa 2 visto desde I Ciclo.
+- De paso, el juego guarda **la etiqueta que puso el niño, no la correcta**: si le
+  enseña mal, la máquina aprende mal y la pantalla se lo dice con esas palabras.
+
+Medido después del arreglo: 8 ejemplos típicos → 2 de 4; los 10 → 4 de 4;
+etiquetando mal a propósito → 0 de 4 con «aprendió exactamente lo que le
+enseñaste».
+
+**El «🧪 Entrenador» de la etapa 2 se escribió con la misma vara**, y por eso
+funciona: la máquina aprende de cada cultivo que vio **cuántas manchas tiene una
+hoja sana suya**, y a un cultivo que nunca vio le aplica el promedio de los que
+conoce. Como las hojas de plátano se rasgan con el viento y tienen manchas de por
+sí, una máquina entrenada sin plátano **le dice al productor de plátano que su
+cultivo está enfermo cuando no lo está**. El alumno lo produce él, quitando y
+poniendo cultivos. Y entrenándola **solo con plátano** pasa lo contrario y peor:
+le dice «sana» a una hoja enferma, o sea que la plaga se queda suelta en la milpa.
+La pantalla nombra la dirección del error, porque los dos no cuestan lo mismo.
+
+**Y el «💬 predictor» de la etapa 4 enseña la alucinación naciendo,** en vez de
+contarla: el alumno arma una frase eligiendo entre continuaciones con su
+probabilidad, y la segunda cadena lleva la trampa puesta. «El Himno Nacional de
+Honduras tiene…» → la más probable es **«cinco estrofas»**, y son **siete**. La
+máquina no hizo nada distinto: eligió lo más probable, como siempre. Los
+porcentajes van declarados como inventados para el ejemplo, en la propia pantalla.
+
+### Antes de publicar un cambio de esta materia
+
+```
+node _dev/verifica-ia.js                    → la pantalla y el papel, dato por dato
+node _dev/verifica-nombres-propios.js
+node _dev/servidor-estatico.js       (en otra terminal)
+node _dev/verifica-mision-nueva.js misiones/<carpeta>/<misión>.html
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/<carpeta>/<misión>.html
+node _dev/verifica-ficha-paginas.js ficha-<slug>
+```
+
+Si se tocan los datos, **las fichas se vuelven a armar y a repartir**:
+
+```
+node _dev/arma-fichas-ia.js                 → las cuatro, desde los archivos de datos
+node _dev/reparte-hojas-ficha.js ficha-<slug>
+node _dev/verifica-ficha-paginas.js
+```
+
+⚠️ **Las fichas de esta ruta NO se editan a mano.** Salen de
+`_dev/arma-fichas-ia.js` + `_dev/fichas-ia/ficha-7N.js`, igual que las de Fin de
+Grado salen de su armador, y por dos motivos: el CSS son 170 líneas iguales en las
+cuatro (copiarlas a mano es como la ficha de la Constitución heredó el `.pf-p`
+naranja de la de próceres), y **el contenido sale de los mismos archivos de datos
+que pinta la pantalla**. Una corrección hecha solo en el HTML de la ficha se
+pierde en el siguiente armado, y hasta entonces la pantalla y el papel dicen cosas
+distintas.
+
+### Lo que NO se hizo, y por qué
+
+- **Un juego 3D de la ruta.** El andamio ya está (`js/3d/parque-3d.js`) y un
+  clasificador en tres dimensiones enseñaría la frontera de decisión mejor que
+  cualquier párrafo. No entra hoy porque primero tenía que estar el texto.
+- **La traducción al inglés.** La ruta se presta y el vocabulario técnico de IA se
+  usa en inglés en todo el mundo. Cuando se haga, va con su `-en.js` y su
+  verificador de bancos, como las ocho que ya están.
+- **Educación Media.** Mientras el PDF del currículo de Media no esté completo en
+  `_dev/dcnb-pdf/` para todas las modalidades, esta materia no afirma nada de
+  Media. Lo que sí se ve es que el BTP en Sistematización e Informática y el BCH
+  con Programación y TIC son el destino natural de quien salga de esta ruta.
 
 ## Normativa: la estrella se gana
 
@@ -4102,7 +4295,7 @@ error.
 El `-en.js` entra también y no hace falta tratarlo aparte: sus rótulos están en
 inglés, así que forma sus propias preguntas y se comprueba contra sí mismo.
 
-Hoy son **77 misiones y 4 274 fichas**, y ninguna se contradice. Los números no
+Hoy son **83 misiones y 4 592 fichas**, y ninguna se contradice. Los números no
 se escriben dentro de la sonda: se cuentan, que si no se pondría roja el día
 que entre una misión sin que nada esté roto.
 

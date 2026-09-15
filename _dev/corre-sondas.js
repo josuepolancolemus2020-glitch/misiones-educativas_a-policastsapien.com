@@ -60,7 +60,8 @@ const NO_SON_SONDAS = {
   'verifica-mision-nueva':  'pide la carpeta de la misión nueva',
   'verifica-bancos-en':     'pide la misión cuyos bancos se comparan',
   'verifica-ficha-paginas': 'cuenta las hojas de UNA ficha o de las 74: va aparte, tarda minutos',
-  'verifica-mision-navegador': 'abre Chromium sin executablePath y no arranca en este entorno'
+  'verifica-mision-navegador': 'abre Chromium sin executablePath y no arranca en este entorno',
+  'arma-fichas-ia':         'ESCRIBE las cuatro fichas de la Ruta de la Máquina que Aprende; se corre a mano'
 };
 
 /* ── qué sondas hay ──────────────────────────────────────────── */

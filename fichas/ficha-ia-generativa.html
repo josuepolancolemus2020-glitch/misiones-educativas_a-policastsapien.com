@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión IA Generativa</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INTELIGENCIA ARTIFICIAL = MAGENTA (#86198f).
+       No se eligió a ojo: se midió la distancia de color contra las nueve
+       materias que ya existían y la familia magenta es el hueco más ancho que
+       quedaba. El maestro tiene que saber de qué materia es la hoja SIN leerla.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · El corte de las hojas lo reparte `node _dev/reparte-hojas-ficha.js`, que
+       mide en el navegador con el ancho del papel. A ojo se acierta hasta que
+       se corrige una errata y el párrafo crece dos renglones.
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Esta ficha la ARMA `node _dev/arma-fichas-ia.js` desde los mismos
+       archivos de datos que pinta la misión, para que las dos no se separen. */
+  :root {
+    --ia: #86198f; --ia-osc: #701a75; --ia-claro: #fdf4ff; --linea: #eccef2;
+    --tinta: #1a2733; --gris: #5b6773;
+    --may: #4338ca; --oro: #b45309; --verde: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7eefa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ia-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ia); background: var(--ia-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ia-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ia-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ia); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ia-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ia-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ia-osc); }
+  .aviso { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .aviso b { color: #b91c1c; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: var(--may); }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ia); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf7fe; }
+  td.k { font-weight: 700; color: var(--ia-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; background: #fefcff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ia-osc); margin-bottom: 6px; }
+
+  /* Dos columnas enfrentadas. Se usa donde la ficha compara DOS cosas que el
+     alumno confunde (ser vivo y máquina, instrucción y ejemplo, predecir y
+     saber). Puestas una al lado de la otra, la diferencia se ve sin párrafo. */
+  .dos { display: flex; gap: 8px; margin: 7px 0; break-inside: avoid; }
+  .dos > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .dos .dA { background: #eafaf1; border: 1px solid #b7e4cb; }
+  .dos .dB { background: #fdf4ff; border: 1px solid var(--linea); }
+  .dos b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .dos .dA b { color: var(--verde); }
+  .dos .dB b { color: var(--ia-osc); }
+  .dos ul { margin: 2px 0 0 18px; font-size: 9.5pt; }
+
+  /* La ficha de un concepto: el término, su definición y su ejemplo. Es el
+     recuadro que más se repite en estas cuatro, porque aquí el vocabulario ES
+     la materia: el alumno lo copia al cuaderno tal cual. */
+  .cficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--ia); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .cf-tit { font-size: 11.5pt; font-weight: 800; color: var(--ia-osc); }
+  .cf-def { font-size: 10.5pt; margin: 2px 0; text-align: justify; }
+  .cf-ej { font-size: 9.5pt; color: var(--gris); font-style: italic; }
+
+  /* La línea del tiempo de la etapa 3, en tarjetas. Cada una con su año en
+     grande: es el dato que el alumno busca al recorrer la hoja, y si baila de
+     sitio hay que leer el renglón entero para encontrarlo. */
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fefcff; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ia); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ia); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la marca
+     de lo que está mal, y pedirla para señalar lo correcto confunde a quien ya
+     sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--ia-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ia-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ia-osc); }
+
+  .pauta { background: #fdf7fe; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ia-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ia); box-shadow: 0 6px 18px rgba(134,25,143,.35); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .dos > div, .ilus, .felic, .pauta, .cficha, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión IA Generativa: úsala bien y no le creas todo</div>
+        <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
+        <div class="f-meta"><b>Tema:</b> Por qué un modelo de lenguaje PREDICE y no sabe; qué es una alucinación y cómo verificar; falsificaciones profundas, privacidad y honestidad académica.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-ia-generativa.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Explicar que un modelo de lenguaje <strong>predice la palabra siguiente</strong> y no consulta nada.</li>
+      <li>Reconocer una <strong>alucinación</strong> y decir por qué ocurre.</li>
+      <li>Aplicar los <strong>cinco pasos</strong> para verificar un dato.</li>
+      <li>Escribir una petición con sus <strong>cuatro piezas</strong>: contexto, tarea, formato y ejemplo.</li>
+      <li>Reconocer una <strong>falsificación profunda</strong> y saber qué hacer ante un audio o un video sospechoso.</li>
+      <li>Distinguir usar la IA para <strong>aprender</strong> de usarla para <strong>entregar</strong>, y <strong>declarar</strong> su uso.</li>
+    </ol>
+
+    <h2>💬 1. Lo que de verdad hace un chat de IA</h2>
+
+    <p>Le escribimos una pregunta y devuelve un párrafo redondo, ordenado y seguro. Parece que lo
+       <em>sabe</em>. <strong>No lo sabe.</strong> Lo que hace es otra cosa, y entenderla cambia todo lo
+       demás: <strong>predice cuál es la palabra siguiente más probable</strong> a partir de todo el texto
+       que leyó mientras lo entrenaban. Después la siguiente. Después la siguiente. Hasta armar el párrafo.
+       <strong>No busca en una enciclopedia y no comprueba nada.</strong></p>
+
+    <div class="ilus">
+      <div class="ilus-t">Así arma una frase, paso por paso</div>
+      <table>
+        <tr><th style="width:46%">Lo que lleva escrito</th><th>Lo que puede venir detrás</th></tr>
+        <tr><td>En el recreo los niños juegan…</td><td><b>al fútbol</b> · al trompo · a la rayuela</td></tr>
+        <tr><td>…al fútbol…</td><td><b>en el patio</b> · en la cancha · bajo el palo de mango</td></tr>
+        <tr><td>…en el patio…</td><td><b>hasta que suena el timbre</b> · toda la media hora</td></tr>
+      </table>
+      <p style="font-size:9pt;margin:4px 0 0;text-align:left;">En negrita, la que la máquina elegiría sola:
+        la más probable. Nada raro: la frase sale bien porque cada pedazo es el que más veces vio venir
+        detrás del anterior.</p>
+    </div>
+
+    <div class="caja aviso"><b>Y ahora la misma máquina, con un DATO.</b> «El Himno Nacional de Honduras
+      tiene…» → la continuación más probable puede ser <b>«cinco estrofas»</b>, y el Himno tiene
+      <b>siete</b>. La máquina <b>no hizo nada distinto</b>: eligió lo más probable, como siempre. Pero lo
+      más PROBABLE no era lo VERDADERO. <b>Eso es una alucinación.</b></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🌀 2. La alucinación</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">✨ IA generativa</div>
+      <div class="cf-def">La Inteligencia Artificial que no solo clasifica sino que PRODUCE: escribe un texto, dibuja una imagen, imita una voz o arma un video que antes no existían. Los arma prediciendo qué pedacito va después, uno por uno.</div>
+      <div class="cf-ej">Ejemplo: Un chat que te escribe un párrafo sobre lo que le pidas.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">💬 Modelo de lenguaje</div>
+      <div class="cf-def">Un programa entrenado con muchísimo texto que predice cuál es la palabra siguiente más probable, y luego la siguiente, y la siguiente. No busca en una enciclopedia ni comprueba nada: completa. Por eso escribe igual de seguro cuando acierta que cuando inventa.</div>
+      <div class="cf-ej">Ejemplo: Es el teclado que adivina tu palabra siguiente, pero muchísimo más grande.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🌀 Alucinación</div>
+      <div class="cf-def">Cuando un modelo de lenguaje se inventa un dato, un nombre, una fecha o una fuente, y lo escribe con la misma seguridad que lo verdadero. No está mintiendo: está haciendo lo suyo, que es completar texto. El que tiene que verificar eres tú.</div>
+      <div class="cf-ej">Ejemplo: Te da el nombre de un libro que suena perfecto y que no existe.</div>
+    </div>
+
+    <div class="caja aviso"><b>No está mintiendo.</b> Mentir es decir algo falso sabiendo que lo es, y él no
+      sabe nada: está completando texto, que es para lo que fue hecho. El que tiene que comprobar eres tú.
+      <br><br><b>Y lo que más inventa es lo que mejor suena:</b> títulos de libros, nombres de autores,
+      artículos de leyes, porcentajes. Los arma para que encajen con tu tema, y por eso encajan perfecto.
+      <b>Que suene perfecto es la razón para desconfiar, no para creer.</b></div>
+
+    <div class="caja idea"><b>Lo que esto te cuesta a ti:</b> ese dato entra en tu tarea, de ahí pasa a tu
+      guía de estudio y de ahí al examen. Y cuando el maestro te lo marque en rojo, la IA no va a estar ahí
+      para explicarle de dónde salió.</div>
+
+    <h2>🔎 3. Los cinco pasos para verificar</h2>
+
+    <p>Van en este orden a propósito: el paso 1 descarta la mitad de los casos <strong>sin gastar un solo
+       dato de internet</strong>, que en muchos lugares es lo que hay.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:36%">El paso</th><th>Cómo se hace</th></tr>
+      <tr><td class="k">1. Separa el dato de la explicación.</td><td>Lo que hay que verificar son los nombres, las fechas, los números y las fuentes. La explicación se juzga con la cabeza.</td></tr>
+      <tr><td class="k">2. ¿Te suena posible?</td><td>Compara con lo que ya sabes y con lo que dice tu libro. Un dato que contradice todo lo que viste necesita una fuente muy buena.</td></tr>
+      <tr><td class="k">3. Busca la fuente original.</td><td>El libro, la ley, la página de la institución. No sirve otra página que repita lo mismo sin decir de dónde lo sacó.</td></tr>
+      <tr><td class="k">4. Si cita algo, comprueba que exista.</td><td>Un libro, un artículo o una ley inventados es el error más común. Que el título suene bien no prueba nada.</td></tr>
+      <tr><td class="k">5. Si no puedes verificarlo, no lo uses.</td><td>Ni en la tarea, ni en el examen, ni compartiéndolo. Un dato sin comprobar que se comparte ya es desinformación.</td></tr>
+    </table>
+
+    <div class="caja truco"><b>Y lo que NO es verificar:</b> preguntarle otra vez a la misma IA, ni
+      encontrar cinco páginas que repiten lo mismo sin decir de dónde lo sacaron. Verificar es llegar a la
+      <b>fuente que responde por el dato</b>: el libro, la ley, la institución, la persona que lo sabe.</div>
+
+    <h2>🎭 4. Lo que se fabrica: imagen, voz y video</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">🎭 Falsificación profunda</div>
+      <div class="cf-def">Una foto, un audio o un video hechos con Inteligencia Artificial para que parezcan de una persona de verdad. En inglés se le dice deepfake. Se usan para estafar, para humillar y para desinformar, y cada vez cuesta más notarlos a simple vista.</div>
+      <div class="cf-ej">Ejemplo: Un audio con la voz de alguien de tu familia pidiendo dinero.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🔎 Verificar</div>
+      <div class="cf-def">Comprobar un dato en una fuente que responde por él: el libro, la ley, la página de la institución, la persona que lo sabe. Verificar no es preguntarle otra vez a la misma máquina, ni buscar si suena parecido: es ir al documento.</div>
+      <div class="cf-ej">Ejemplo: Si te da un artículo de una ley, buscas la ley y lees ese artículo.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🔒 Privacidad</div>
+      <div class="cf-def">El derecho a que lo tuyo sea tuyo: tu nombre, tu cara, tu casa, tu familia, lo que escribes. Lo que se le escribe a un servicio en internet puede quedar guardado en otra computadora, y lo que queda guardado ya no lo controlas tú.</div>
+      <div class="cf-ej">Ejemplo: Nunca subas fotos de otros niños ni datos de tu familia.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="dos">
+      <div class="dB"><b>🚨 Cómo se usa para dañar</b>
+        <ul><li>Estafas por audio: «soy tu tío, mandame dinero».</li>
+            <li>Humillar a alguien con una imagen fabricada.</li>
+            <li>Noticias falsas, con foto incluida.</li>
+            <li>Y cada vez cuesta más notarlo a simple vista.</li></ul>
+      </div>
+      <div class="dA"><b>🛡️ Cómo te defiendes</b>
+        <ul><li>Comprueba <strong>por otro camino</strong>: llama tú.</li>
+            <li>Pregunta a alguien más de la familia.</li>
+            <li>Busca de dónde salió la foto, y de cuándo es.</li>
+            <li>No reenvíes lo que no comprobaste.</li></ul>
+      </div>
+    </div>
+
+    <h2>⚙️ 5. Cuatro palabras de cómo funciona por dentro</h2>
+
+    <p>No hace falta saber construir una, pero sí saber de qué se habla cuando alguien lo explica:</p>
+
+    <div class="cficha">
+      <div class="cf-tit">🧩 Algoritmo</div>
+      <div class="cf-def">La receta de pasos que la máquina sigue para resolver algo. En la Inteligencia Artificial, el algoritmo no dice la respuesta: dice cómo buscar el patrón en los ejemplos.</div>
+      <div class="cf-ej">Ejemplo: La receta para separar dos grupos trazando una raya entre ellos.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🕸️ Red neuronal</div>
+      <div class="cf-def">Un montón de operaciones pequeñas conectadas en capas, inspiradas de lejos en cómo se conectan las neuronas. Cada conexión tiene un número que se va ajustando al entrenar. No es un cerebro: es aritmética, mucha y muy rápida.</div>
+      <div class="cf-ej">Ejemplo: Con redes se reconocen caras, voces y letras manuscritas.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">📐 Modelo</div>
+      <div class="cf-def">Lo que queda guardado cuando el entrenamiento termina: los números que la máquina ajustó. Usar el modelo no es entrenarlo. El modelo no guarda los ejemplos: guarda lo que sacó de ellos.</div>
+      <div class="cf-ej">Ejemplo: El traductor de tu teléfono lleva un modelo dentro, ya entrenado.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🧱 Petición</div>
+      <div class="cf-def">El encargo que se le escribe a una IA generativa. Sale mejor cuando lleva sus cuatro piezas: el contexto (quién eres y para qué), la tarea (qué quieres), el formato (cómo lo quieres) y un ejemplo de lo que esperas.</div>
+      <div class="cf-ej">Ejemplo: «Soy alumno de séptimo. Explicame la fotosíntesis en cinco viñetas cortas.»</div>
+    </div>
+
+    <h2>🧱 6. Las cuatro piezas de una petición</h2>
+
+    <p>La misma pregunta escrita de dos maneras da dos respuestas muy distintas. Una buena petición lleva
+       estas cuatro:</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:16%">Pieza</th><th style="width:34%">Qué contesta</th><th>Ejemplo</th></tr>
+      <tr><td class="k">👤 Contexto</td><td>¿Quién eres y para qué lo quieres?</td><td><em>Soy alumno de séptimo grado en Honduras.</em></td></tr>
+      <tr><td class="k">🎯 Tarea</td><td>¿Qué quieres exactamente?</td><td><em>Explicame qué es la fotosíntesis.</em></td></tr>
+      <tr><td class="k">📐 Formato</td><td>¿Cómo lo quieres?</td><td><em>En cinco viñetas cortas y con palabras sencillas.</em></td></tr>
+      <tr><td class="k">🧩 Ejemplo</td><td>¿A qué se tiene que parecer?</td><td><em>Como se lo explicarías a alguien de quinto grado.</em></td></tr>
+    </table>
+
+    <div class="caja truco"><b>Y lo que NO es una pieza,</b> aunque mucha gente lo escriba: saludar, dar las
+      gracias, escribir en mayúsculas, repetir la pregunta tres veces o decirle que es muy inteligente. Nada
+      de eso le dice al modelo qué quieres.</div>
+
+    <div class="acts">
+      <h3>🔎 Actividad 1 · Cazador de inventos <span class="val">(20 pts)</span></h3>
+
+      <p>El párrafo de abajo <strong>lo escribió una IA</strong>, y es inventado a propósito. No se pregunta
+         si es verdad: se pregunta <strong>qué hay que comprobar antes de usarlo</strong>.
+         <strong>Subraya</strong> los pedazos que hay que verificar y deja sin subrayar los que solo son
+         opinión o explicación.</p>
+
+      <div class="ilus" style="text-align:left">
+        <div class="ilus-t">Texto generado por una IA</div>
+        <p style="font-size:11pt;line-height:1.9;margin:0">El parque municipal de la ciudad fue inaugurado
+          en 1968 y tiene una extensión de 42 manzanas. Es un lugar agradable para caminar por la tarde.
+          Según el libro «Parques de Centroamérica», de la doctora Elena Ramírez, alberga 37 especies de
+          aves. Conviene visitarlo temprano, cuando hay menos gente. La alcaldía lo declaró patrimonio
+          municipal el 3 de marzo de 2011.</p>
+      </div>
+
+      <p><strong>Y ahora lo que de verdad se califica:</strong> elige <strong>dos</strong> de los pedazos que
+         subrayaste y escribe <strong>cómo</strong> los comprobarías, paso por paso.</p>
+      <ol>
+        <li><span class="linea-resp" style="min-width:100%"></span>
+            <span class="linea-resp" style="min-width:100%"></span></li>
+        <li><span class="linea-resp" style="min-width:100%"></span>
+            <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+
+      <h3>🧱 Actividad 2 · Arma una petición completa <span class="val">(16 pts)</span></h3>
+
+      <p>Piensa en algo que necesites de verdad para una de tus clases y escribe la petición con sus cuatro
+         piezas:</p>
+
+      <table>
+        <tr><td class="k" style="width:20%">👤 Contexto</td><td><span class="linea-resp" style="min-width:100%"></span></td></tr>
+        <tr><td class="k">🎯 Tarea</td><td><span class="linea-resp" style="min-width:100%"></span></td></tr>
+        <tr><td class="k">📐 Formato</td><td><span class="linea-resp" style="min-width:100%"></span></td></tr>
+        <tr><td class="k">🧩 Ejemplo</td><td><span class="linea-resp" style="min-width:100%"></span></td></tr>
+      </table>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>🚨 Actividad 3 · ¿Qué es cada caso? <span class="val">(12 pts)</span></h3>
+
+      <p>Escribe <strong>A</strong> (alucinación), <strong>F</strong> (falsificación profunda) o
+         <strong>P</strong> (problema de privacidad):</p>
+
+      <ol>
+        <li>Un chat inventa el nombre de un libro que no existe. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Un audio imita la voz de tu tío para pedirte dinero. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Escribiste la dirección de tu casa en un chat. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>El modelo te da una fecha con toda seguridad y está equivocada. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Circula un video de alguien diciendo algo que nunca dijo. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Subiste una foto de tus compañeros sin preguntarles. <span class="linea-resp" style="min-width:50px"></span></li>
+      </ol>
+
+      <h3>💡 Actividad 4 · Explica con tus palabras <span class="val">(12 pts)</span></h3>
+
+      <ol>
+        <li>¿Por qué el tono seguro de un modelo no prueba que el dato sea bueno?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿Qué diferencia hay entre usar la IA para aprender y usarla para entregar la tarea?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+
+      <h3>🗣️ Actividad 5 · Investiga en tu comunidad <span class="val">(sin respuesta, a propósito)</span></h3>
+
+      <p>Habla con alguien que trabaje (en una pulpería, en la alcaldía, en una finca, en una radio) y
+         pregúntale si usa alguna herramienta de Inteligencia Artificial. Después escribe:</p>
+      <ol>
+        <li>Qué tareas suyas podría hacer una máquina.</li>
+        <li>Qué tareas suyas necesitan una persona delante, y por qué.</li>
+        <li>Qué opina esa persona de todo esto.</li>
+      </ol>
+    </div>
+
+    <h2>🔒 7. Las tres reglas de oro</h2>
+
+    <p>Son las mismas tres de la etapa 1, sin cambiarles una palabra. Lo que cambió en estos años no son las
+       reglas: es que ahora ya sabes <strong>por qué</strong> son esas y no otras.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
+      <tr><td class="k">🔒 No le doy mis datos ni los de mi familia.</td><td>Nombre completo, dirección, teléfono, la escuela, fotos de otros niños. Lo que se manda a internet puede quedarse guardado.</td></tr>
+      <tr><td class="k">🔎 No le creo sin comprobar.</td><td>La máquina contesta con la misma seguridad cuando sabe y cuando se lo inventa. El dato se busca en el libro o se le pregunta a quien lo sabe.</td></tr>
+      <tr><td class="k">🧑‍🏫 Si algo me asusta o me confunde, le aviso a una persona grande.</td><td>Un mensaje raro, una foto que no debería estar, alguien que te pide algo. Eso no se resuelve solo.</td></tr>
+    </table>
+
+    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span><span>¿Qué hace un modelo de lenguaje cuando te contesta?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Consulta una enciclopedia</div>
+        <div class="op"><i></i><b>b)</b> Le pregunta a una persona</div>
+        <div class="op"><i></i><b>c)</b> Copia una página</div>
+        <div class="op full"><i></i><b>d)</b> Predice la palabra siguiente más probable</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span><span>¿Qué es una alucinación?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Un virus</div>
+        <div class="op full"><i></i><b>b)</b> Un dato inventado dicho con toda seguridad</div>
+        <div class="op"><i></i><b>c)</b> Un error de la pantalla</div>
+        <div class="op"><i></i><b>d)</b> Una falla de la conexión</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span><span>La IA te cita un libro perfecto para tu tema. ¿Qué haces?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Compruebo que el libro exista</div>
+        <div class="op"><i></i><b>b)</b> Lo cito, suena confiable</div>
+        <div class="op"><i></i><b>c)</b> Le pregunto a la IA si existe</div>
+        <div class="op"><i></i><b>d)</b> Le cambio el título</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span><span>¿Cuáles son las cuatro piezas de una petición?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Quién, cómo, cuándo y dónde</div>
+        <div class="op"><i></i><b>b)</b> Título, cuerpo, firma y fecha</div>
+        <div class="op"><i></i><b>c)</b> Contexto, tarea, formato y ejemplo</div>
+        <div class="op"><i></i><b>d)</b> Saludo, pregunta, gracias y adiós</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span><span>¿Qué es una falsificación profunda?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Una foto movida</div>
+        <div class="op"><i></i><b>b)</b> Un filtro de colores</div>
+        <div class="op"><i></i><b>c)</b> Un error de la cámara</div>
+        <div class="op full"><i></i><b>d)</b> Una foto, voz o video fabricados para parecer reales</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span><span>Te llega un audio con la voz de un familiar pidiendo dinero urgente. ¿Qué haces?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Lo llamo yo por otro medio antes de hacer nada</div>
+        <div class="op"><i></i><b>b)</b> Le mando el dinero</div>
+        <div class="op"><i></i><b>c)</b> Lo reenvío al grupo</div>
+        <div class="op"><i></i><b>d)</b> Le contesto por audio</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span><span>¿Qué NO se le escribe nunca a un chat de IA?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Una duda de matemática</div>
+        <div class="op full"><i></i><b>b)</b> La clave de una cuenta o la dirección de tu casa</div>
+        <div class="op"><i></i><b>c)</b> Un texto tuyo para corregir</div>
+        <div class="op"><i></i><b>d)</b> Una lista de ideas</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span><span>¿Por qué el tono seguro de un modelo no prueba nada?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Porque escribe despacio</div>
+        <div class="op"><i></i><b>b)</b> Porque siempre duda</div>
+        <div class="op full"><i></i><b>c)</b> Porque fue hecho para completar texto, no para comprobarlo</div>
+        <div class="op"><i></i><b>d)</b> Porque no sabe escribir</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span><span>Compartes sin comprobar algo que resultó falso. ¿Qué pasó?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Nada, no lo escribiste tú</div>
+        <div class="op"><i></i><b>b)</b> Es culpa de la IA</div>
+        <div class="op"><i></i><b>c)</b> No tiene importancia</div>
+        <div class="op full"><i></i><b>d)</b> Ayudaste a que la desinformación llegue más lejos</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span><span>¿Cuándo se declara que se usó IA en un trabajo?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Nunca, no hace falta</div>
+        <div class="op"><i></i><b>b)</b> Siempre que se haya usado</div>
+        <div class="op"><i></i><b>c)</b> Solo si sale mal</div>
+        <div class="op"><i></i><b>d)</b> Solo si lo pregunta el maestro</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔑 Pauta de corrección y nota para el docente</h2>
+
+    <div class="pauta">
+      <div><span class="pt">Evaluación (40 pts):</span> 1-d · 2-b · 3-a · 4-c · 5-d · 6-a · 7-b · 8-c · 9-d · 10-b</div>
+      <div><span class="pt">Actividad 1 · Cazador de inventos (20 pts):</span> hay que subrayar cinco
+        pedazos: <b>«fue inaugurado en 1968»</b> (una fecha), <b>«tiene una extensión de 42 manzanas»</b>
+        (un número con unidad), <b>«Según el libro "Parques de Centroamérica", de la doctora Elena
+        Ramírez»</b> (una cita con autor y título: es lo que estos programas inventan más), <b>«alberga 37
+        especies de aves»</b> (otro número, y atribuido a esa cita: si la cita no existe, el número tampoco)
+        y <b>«el 3 de marzo de 2011»</b> con el acto de la alcaldía. NO se subrayan «es un lugar agradable»
+        ni «conviene visitarlo temprano»: eso no se verifica, se juzga con la cabeza. Los 20 puntos se
+        reparten sobre todo en las dos explicaciones de CÓMO comprobar, no en el subrayado.</div>
+      <div><span class="pt">Actividad 2 · Arma una petición (16 pts):</span> 4 puntos por pieza. Se valora
+        que el contexto diga grado y materia, que la tarea sea concreta, que el formato diga extensión o
+        forma, y que el ejemplo diga a qué se tiene que parecer. Una pieza con un saludo o un halago vale 0.</div>
+      <div><span class="pt">Actividad 3 · ¿Qué es cada caso? (12 pts):</span> A · F · P · A · F · P.</div>
+      <div><span class="pt">Actividad 4 · Con tus palabras (12 pts):</span> respuesta abierta.
+        1) Porque fue hecho para completar texto, no para comprobarlo: escribe igual de seguro cuando
+        acierta que cuando inventa. 2) Que en un caso aprende él y puede defender lo que escribió, y en el
+        otro entrega algo que no hizo; y que cuando se usa, se declara.</div>
+      <div><span class="pt">Actividad 5 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
+        que haya hablado con una persona real, que distinga tareas mecánicas de las que piden criterio, y
+        que recoja la opinión sin corregirla.</div>
+    </div>
+
+    <div class="nota-doc">
+      <b>Esta es la hoja que más le va a servir al alumno esta semana,</b> y conviene decirlo así en clase.
+      No es una advertencia contra la Inteligencia Artificial: es el manual para usarla sin salir
+      perjudicado. La va a usar con o sin nuestro permiso; lo que está en nuestra mano es que sepa que
+      <b>predice</b> y no sabe, y que un dato se comprueba antes de usarlo.
+      <br><br>
+      ⚠️ <b>El párrafo de la Actividad 1 es inventado, y está dicho en la hoja con esas palabras.</b> No hay
+      que corregirlo como si fuera un texto sobre un parque real: lo que se practica son los TIPOS de dato
+      que hay que verificar (nombres, fechas, números y citas), no si ese párrafo acierta. Publicar aquí
+      datos sin acreditar sería exactamente lo que esta ficha enseña a no hacer.
+      <br><br>
+      <b>Y la misión NO manda al alumno a ninguna IA en línea.</b> El predictor, el cazador de inventos y el
+      armador de peticiones corren dentro del teléfono, sin una sola petición hacia afuera: las misiones de
+      M.E.T.A.S funcionan sin señal, y mandar a un niño desde la escuela a un chat de IA es mandarlo a una
+      pantalla donde lo que pasa después no lo eligió nadie.
+      <br><br>
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>, pero esta
+      etapa cumple de frente una expectativa de logro del área de Tecnología de III Ciclo, que sí está:
+      «Seleccionar, obtener, almacenar y <b>evaluar la información</b>, optando por los recursos
+      informáticos». Esa expectativa se escribió para la época del buscador; hoy la información la escribe
+      una máquina que no firma nada, y evaluarla es exactamente esto. El porqué entero está en
+      <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>.
+      <br><br>
+      <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-conceptos.js), así que no
+      pueden decir cosas distintas. Etapa 4 y última de la Ruta de la Máquina que Aprende.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa · Hoja del Docente</span><span>Página 9</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

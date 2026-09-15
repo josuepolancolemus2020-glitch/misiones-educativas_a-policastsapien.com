@@ -3571,7 +3571,8 @@ function adSugMateriaNom(a) {
   }
   const nom = { 'español': 'Español', 'matemáticas': 'Matemáticas', 'naturales': 'Ciencias Naturales',
     'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'programación': 'Programación', 'robótica': 'Robótica',
-    'cívica': 'Educación Cívica' }[k];
+    'cívica': 'Educación Cívica',
+    'ia': 'Inteligencia Artificial' }[k];
   return nom || (k.charAt(0).toUpperCase() + k.slice(1));
 }
 

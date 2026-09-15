@@ -102,6 +102,27 @@ const DIAGNOSTICOS = {
     { etapa: 5, q: 'El Estatuto del Docente existe por «un mandato» de la Constitución. ¿Qué significa?', o: ['Que la Constitución ordenó que esa ley se escribiera', 'Que la Constitución la prohíbe', 'Que la escribió un juez', 'Que se puede cambiar cuando se quiera'], a: 0 },
     { etapa: 5, q: 'Que un artículo esté escrito en la Constitución, ¿garantiza que se cumpla?', o: ['Sí, siempre', 'Solo en las ciudades', 'No: por eso hay que analizar casos en que no se cumple', 'Solo si lo repite otra ley'], a: 2 },
   ],
+  /* Ruta de la Máquina que Aprende (Inteligencia Artificial). Las preguntas
+     salen del evalMCBank de cada etapa, de lo más básico a lo que cuesta más.
+     La etapa 1 es de I Ciclo y la 4 de III, así que aquí la escalera de
+     dificultad es también una escalera de edad: el que falla en la primera no
+     necesita la cuarta, necesita empezar por el principio. */
+  maquina: [
+    { etapa: 1, q: '¿Qué es la Inteligencia Artificial?', o: ['Programas que hacen cosas que antes solo hacían las personas', 'Un robot que vive en el teléfono', 'Una persona dentro de la computadora', 'Un juego de video'], a: 0 },
+    { etapa: 1, q: '¿Cómo aprende una máquina a reconocer una cara?', o: ['Nació sabiendo', 'Alguien se la dibujó una vez', 'Viendo muchísimas fotos de caras', 'Porque tiene ojos'], a: 2 },
+    { etapa: 1, q: '¿La máquina siente alegría o tristeza?', o: ['No: es un aparato y no siente nada', 'Sí, cuando gana', 'Solo sin batería', 'Sí, como un perro'], a: 0 },
+    { etapa: 2, q: '¿Qué diferencia a un programa que APRENDE de uno de siempre?', o: ['Que es más caro', 'Que saca la regla de los ejemplos en vez de seguir una escrita', 'Que no necesita computadora', 'Que nunca se equivoca'], a: 1 },
+    { etapa: 2, q: 'Una máquina entrenada solo con maíz, frijol y café ve una hoja de plátano. ¿Cómo se llama ese fallo?', o: ['Patrón', 'Sesgo', 'Etiqueta', 'Refuerzo'], a: 1 },
+    { etapa: 2, q: '¿Para qué sirve PROBAR con ejemplos nuevos?', o: ['Para saber si aprendió el patrón o solo se lo memorizó', 'Para gastar menos batería', 'Para que se entretenga', 'Para hacerla más rápida'], a: 0 },
+    { etapa: 2, q: '¿De quién es la responsabilidad de un sesgo?', o: ['De la máquina', 'De nadie', 'De quien eligió los ejemplos', 'Del que la usa'], a: 2 },
+    { etapa: 3, q: '¿Dónde y cuándo nació el nombre «Inteligencia Artificial»?', o: ['En el taller de Dartmouth, en 1956', 'En Londres, en 1950', 'En Nueva York, en 1997', 'En internet, en 2022'], a: 0 },
+    { etapa: 3, q: '¿Por qué hubo dos inviernos de la IA?', o: ['Se prohibió investigar', 'Se prometió más de lo que se podía y se cortó el dinero', 'Se perdieron los programas', 'Se acabó la electricidad'], a: 1 },
+    { etapa: 3, q: '¿Cuáles son las tres patas que tuvieron que juntarse?', o: ['Robots, sensores y motores', 'Dinero, publicidad y suerte', 'Datos, cómputo y algoritmos', 'Internet, teléfonos y satélites'], a: 2 },
+    { etapa: 4, q: '¿Qué hace un modelo de lenguaje cuando te contesta?', o: ['Consulta una enciclopedia', 'Le pregunta a una persona', 'Copia una página', 'Predice la palabra siguiente más probable'], a: 3 },
+    { etapa: 4, q: '¿Qué es una alucinación?', o: ['Un virus', 'Un dato inventado dicho con toda seguridad', 'Un error de la pantalla', 'Una falla de la conexión'], a: 1 },
+    { etapa: 4, q: 'La IA te cita un libro perfecto para tu tema. ¿Qué hacés?', o: ['Compruebo que el libro exista', 'Lo cito, suena confiable', 'Le pregunto a la IA si existe', 'Le cambio el título'], a: 0 },
+    { etapa: 4, q: 'Te llega un audio con la voz de un familiar pidiendo dinero urgente. ¿Qué hacés?', o: ['Lo llamo yo por otro medio antes de hacer nada', 'Le mando el dinero', 'Lo reenvío al grupo', 'Le contesto por audio'], a: 0 },
+  ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [
     { etapa: 1, q: 'Una caja trae 7 lápices. ¿Cuántos lápices hay en 36 cajas?', o: ['43', '252', '245', '2,52'], a: 1 },

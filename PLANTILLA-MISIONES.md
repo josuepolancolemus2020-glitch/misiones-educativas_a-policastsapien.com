@@ -50,6 +50,7 @@ Reglas de ahorro y calidad:
    | **Robótica y Programación** | `#0e7490` (cian) | `#ecfeff` |
    | **Inglés** | `#be185d` (rosa) | `#fff1f5` |
    | **E. Cívica** | `#3f6212` (verde del pino) | `#f5f9e8` |
+   | **Inteligencia Artificial** | `#86198f` (magenta) | `#fdf4ff` |
 
    Reglas duras:
    - Aplica a TODOS los documentos imprimibles: `printEval` (evaluación
@@ -65,7 +66,12 @@ Reglas de ahorro y calidad:
    - Al crear una misión nueva, copiar la paleta EXACTA de la tabla según la
      materia declarada en el encabezado de la evaluación.
    - **Una materia nueva no elige su color a ojo**: se mide la distancia de
-     color contra las que ya existen y se toma una familia libre. E. Cívica
+     color contra las que ya existen y se toma una familia libre. Inteligencia
+     Artificial salió magenta (`#86198f`) barriendo el círculo de tonos: es el
+     hueco más ancho que quedaba, con ΔE 40,5 contra lo más cercano (el índigo
+     de Robótica en el Campeonísimo), 46 contra el rosa de Inglés y 41 contra el
+     morado de Repaso General, y contrasta 8,2:1 sobre blanco, que hace falta
+     porque ese color se usa como TEXTO del chip. E. Cívica
      salió verde oliva (el del pino, árbol nacional) porque el amarillo-verdoso
      era el único hueco: el verde de C. Naturales es un teal (`#0d9488`) y a la
      vista no se confunden. Dos azules o dos rojos rompen la regla de arriba

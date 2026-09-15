@@ -125,6 +125,31 @@ const NOMBRES = [
   ['nicaragua', 'Nicaragua'],
   ['costa rica', 'Costa Rica'],
   ['la mosquitia', 'La Mosquitia'],
+  /* Entran con la Ruta de la Máquina que Aprende (Inteligencia Artificial).
+     Aquí la mayúscula pesa lo mismo que en los próceres: son los nombres que el
+     alumno va a escribir en el examen y los que el maestro va a buscar para
+     comprobar un dato. Y hay un motivo de más: de estos nombres cuelga la
+     FUENTE de cada hito de la historia, así que escribirlos mal es dejar sin
+     rastro el documento que acredita la fecha.
+
+     ⚠️ Lo que NO se puede pedir aquí: «go» (el juego), porque en minúscula es
+     media palabra de cualquier cosa; y «mind» (la revista donde publicó
+     Turing), por lo mismo. Los dos se escriben a mano con cuidado. */
+  ['alan turing', 'Alan Turing'],
+  ['john mccarthy', 'John McCarthy'],
+  ['joseph weizenbaum', 'Joseph Weizenbaum'],
+  ['arthur samuel', 'Arthur Samuel'],
+  ['frank rosenblatt', 'Frank Rosenblatt'],
+  ['warren mcculloch', 'Warren McCulloch'],
+  ['walter pitts', 'Walter Pitts'],
+  ['garri kaspárov', 'Garri Kaspárov'],
+  ['dartmouth college', 'Dartmouth College'],
+  ['deep blue', 'Deep Blue'],
+  ['alphago', 'AlphaGo'],
+  ['alexnet', 'AlexNet'],
+  ['imagenet', 'ImageNet'],
+  ['eliza', 'ELIZA'],
+  ['inteligencia artificial', 'Inteligencia Artificial'],
 ];
 
 /* «Decreto 79» y «Acuerdo 1358-SE-2014» nombran una norma concreta y van con

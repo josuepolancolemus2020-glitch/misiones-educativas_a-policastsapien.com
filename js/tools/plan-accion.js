@@ -734,6 +734,7 @@ const PA_HIST_MATERIAS = [
   { key: 'robótica',     emoji: '🤖', corto: 'Robótica',     nom: 'Robótica' },
   { key: 'inglés',       emoji: '🔤', corto: 'Inglés',       nom: 'Inglés' },
   { key: 'cívica',       emoji: '🇭🇳', corto: 'E. Cívica',    nom: 'Educación Cívica' },
+  { key: 'ia',           emoji: '🧠', corto: 'I. Artificial', nom: 'Inteligencia Artificial' },
 ];
 /* «sin» es el valor de los chips «Sin parcial» / «Sin materia»: '' ya
    significa «no filtrar», así que los análisis sueltos necesitan su propia

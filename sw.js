@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v215';
+const CACHE_NAME = 'meta-app-v216';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -101,6 +101,11 @@ const STATIC_ASSETS = [
   './js/videos-mision.js',
   './css/videos-mision.css',
   './js/data/videos-misiones.js',
+  // El vocabulario y las fechas de la Ruta de la Máquina que Aprende. Las
+  // cuatro misiones los PINTAN de aquí en vez de escribirlos, así que sin
+  // ellos esas pantallas salen vacías.
+  './js/data/ia-conceptos.js',
+  './js/data/ia-historia.js',
   './js/metas-videos.js',
   // La barra de secciones de las misiones, arriba y pegajosa. Sin estos
   // dos el <nav> vuelve al final del documento y sin position:sticky: en
@@ -118,6 +123,11 @@ const STATIC_ASSETS = [
   // regalo al abrir y el XP que se repite recargando — y el aula sin
   // señal es justo donde la aplicación tiene que valerse sola.
   './js/estrella-ganada.js',
+  // Las piezas propias de la Ruta de la Máquina que Aprende, compartidas por
+  // sus cuatro misiones (el entrenador, la línea del tiempo, el predictor, el
+  // cazador de inventos). Sin él esas cuatro pantallas se ven sin formato, y
+  // el aula sin señal es justo donde tienen que valerse solas.
+  './css/ruta-ia.css',
   './padres.html',
   './salida.html',
   './buzon.html',

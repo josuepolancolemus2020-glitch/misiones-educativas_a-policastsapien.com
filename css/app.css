@@ -59,6 +59,16 @@
      confunden, que es de lo que se trata: el maestro tiene que saber de qué
      materia es el examen SIN leerlo. */
   --civ:  #3f6212; --civ-bg:  #f5f9e8; --civ-border:  rgba(63,98,18,.2);
+  /* Inteligencia Artificial: magenta. Tampoco se eligió a ojo. Se barrió el
+     círculo de tonos midiendo la distancia de color (Lab) contra las nueve
+     materias que ya existen —las de la app Y las del Campeonísimo, que no usan
+     los mismos códigos— y la familia magenta es el hueco más ancho que queda:
+     ΔE 40,5 contra lo más cercano (el índigo de Robótica en el Campeonísimo),
+     46 contra el rosa de Inglés y 41 contra el morado de Repaso General. Y
+     contrasta 8,2:1 sobre blanco, que hace falta porque este color se usa como
+     TEXTO del chip. El maestro tiene que saber de qué materia es el examen sin
+     leerlo, y con esta distancia no se confunde con ninguno. */
+  --ia:   #86198f; --ia-bg:   #fdf4ff; --ia-border:   rgba(134,25,143,.2);
 
   --bg:      #f0f4f9;
   --surface: #ffffff;
@@ -960,6 +970,7 @@ a { text-decoration: none; color: inherit; }
 .subj-chip.ing  { background: var(--ing-bg);  color: var(--ing);  border-color: var(--ing-border); }
 .subj-chip.rep  { background: var(--rep-bg);  color: var(--rep);  border-color: var(--rep-border); }
 .subj-chip.civ  { background: var(--civ-bg);  color: var(--civ);  border-color: var(--civ-border); }
+.subj-chip.ia   { background: var(--ia-bg);   color: var(--ia);   border-color: var(--ia-border); }
 
 /* ====== FEATURED CARD ====== */
 .featured-card {
@@ -1098,6 +1109,7 @@ a { text-decoration: none; color: inherit; }
 .pill.ing  { --pill: var(--ing);  --pill-rgb: 190, 24, 93;  --pill-bg: var(--ing-bg);  }
 .pill.rep  { --pill: var(--rep);  --pill-rgb: 124, 58, 237; --pill-bg: var(--rep-bg);  }
 .pill.civ  { --pill: var(--civ);  --pill-rgb: 63, 98, 18;   --pill-bg: var(--civ-bg);  }
+.pill.ia   { --pill: var(--ia);   --pill-rgb: 134, 25, 143; --pill-bg: var(--ia-bg);   }
 
 /* «Todas»: aro con los colores de las seis materias girando alrededor */
 .pill-all {
@@ -1167,6 +1179,7 @@ a { text-decoration: none; color: inherit; }
 .mc-icon.ing  { background: var(--ing-bg);  color: var(--ing); }
 .mc-icon.rep  { background: var(--rep-bg);  color: var(--rep); }
 .mc-icon.civ  { background: var(--civ-bg);  color: var(--civ); }
+.mc-icon.ia   { background: var(--ia-bg);   color: var(--ia); }
 
 .mc-subj.esp  { background: var(--esp-bg);  color: var(--esp); }
 .mc-subj.mat  { background: var(--mat-bg);  color: var(--mat); }
@@ -1177,6 +1190,7 @@ a { text-decoration: none; color: inherit; }
 .mc-subj.ing  { background: var(--ing-bg);  color: var(--ing); }
 .mc-subj.rep  { background: var(--rep-bg);  color: var(--rep); }
 .mc-subj.civ  { background: var(--civ-bg);  color: var(--civ); }
+.mc-subj.ia   { background: var(--ia-bg);   color: var(--ia); }
 
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -2806,6 +2820,7 @@ a { text-decoration: none; color: inherit; }
 .camp-sa-ing { background: #fce7f3; color: #9d174d; border: 2px solid #f9a8d4; }
 .camp-sa-rep { background: #ede9fe; color: #5b21b6; border: 2px solid #c4b5fd; }
 .camp-sa-civ { background: #eaf3d4; color: #3f6212; border: 2px solid #bbdc7a; }
+.camp-sa-ia  { background: #fae8ff; color: #86198f; border: 2px solid #e9a5f0; }
 
 @keyframes campPop {
   0%   { transform: scale(.7); opacity: 0; }
@@ -2874,6 +2889,7 @@ a { text-decoration: none; color: inherit; }
 .camp-q-header-ing { background: #fce7f3; }
 .camp-q-header-rep { background: #ede9fe; }
 .camp-q-header-civ { background: #eaf3d4; }
+.camp-q-header-ia  { background: #fae8ff; }
 .camp-q-subj-icon { font-size: calc(20px * var(--metas-fz, 1)); }
 .camp-q-subj-label {
   font-weight: 800;
@@ -3174,6 +3190,7 @@ a { text-decoration: none; color: inherit; }
 .camp-ms-bh-ing { background: #fce7f3; color: #9d174d; }
 .camp-ms-bh-rep { background: #ede9fe; color: #5b21b6; }
 .camp-ms-bh-civ { background: #eaf3d4; color: #3f6212; }
+.camp-ms-bh-ia  { background: #fae8ff; color: #86198f; }
 .camp-ms-tog {
   padding: 3px 9px;
   border-radius: 6px;
@@ -3277,6 +3294,7 @@ a { text-decoration: none; color: inherit; }
 .ruta-pct.ing  { color: var(--ing);  background: var(--ing-bg);  }
 .ruta-pct.rep  { color: var(--rep);  background: var(--rep-bg);  }
 .ruta-pct.civ  { color: var(--civ);  background: var(--civ-bg);  }
+.ruta-pct.ia   { color: var(--ia);   background: var(--ia-bg);   }
 
 .ruta-bar {
   height: 6px;
@@ -3293,6 +3311,7 @@ a { text-decoration: none; color: inherit; }
 .ruta-bar-fill.tec  { background: var(--tec);  }
 .ruta-bar-fill.rep  { background: var(--rep);  }
 .ruta-bar-fill.civ  { background: var(--civ);  }
+.ruta-bar-fill.ia   { background: var(--ia);   }
 
 .ruta-mapa { padding: 4px 14px 12px; }
 
@@ -3786,6 +3805,7 @@ a { text-decoration: none; color: inherit; }
 .camp-sp-ing { background: linear-gradient(150deg, #ec4899, #9d174d); }
 .camp-sp-rep { background: linear-gradient(150deg, #8b5cf6, #5b21b6); }
 .camp-sp-civ { background: linear-gradient(150deg, #84cc16, #3f6212); }
+.camp-sp-ia  { background: linear-gradient(150deg, #d946ef, #86198f); }
 .camp-elegir-btn {
   display: block; margin: 10px auto 0;
   border: 2px dashed #8b5cf6;

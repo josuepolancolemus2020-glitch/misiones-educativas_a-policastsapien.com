@@ -12,6 +12,7 @@ const SUBJECT_LABELS = {
   'inglés':      'Inglés',
   'repaso':      'Repaso General',
   'cívica':      'E. Cívica',
+  'ia':          'Inteligencia Artificial',
 };
 
 const LEVELS = [
@@ -704,7 +705,7 @@ function renderMissions(filter, query) {
 ───────────────────────────────────────────── */
 
 const REGISTRO_KEY = 'METAS_REGISTRO_V1';
-const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida', 'materia', 'tiempo', 'codigo', 'robots', 'patria', 'meta'];
+const RUTAS_ORDEN  = ['numero', 'forma', 'palabra', 'planeta', 'cuerpo', 'vida', 'materia', 'tiempo', 'codigo', 'robots', 'maquina', 'patria', 'meta'];
 
 function _rNorm(s) {
   s = String(s || '').toLowerCase();
@@ -1155,6 +1156,7 @@ function renderProgress() {
     { key: 'inglés',      label: 'Inglés',       color: 'var(--ing)'  },
     { key: 'repaso',      label: 'Repaso General', color: 'var(--rep)' },
     { key: 'cívica',      label: 'E. Cívica',     color: 'var(--civ)' },
+    { key: 'ia',          label: 'Inteligencia Artificial', color: 'var(--ia)' },
   // Una materia sin misiones aún no se muestra: evita barras al 0 % que
   // parecen un error en vez de contenido por venir.
   ].filter(sub => MISSIONS.some(m => m.subject === sub.key));

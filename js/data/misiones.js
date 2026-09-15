@@ -23,6 +23,13 @@ const RUTAS = {
      (hoy arranca con 6º); la ruta junta TODAS las materias del año, por eso
      no cuelga de ninguna materia clásica sino de la materia 'repaso'. */
   meta: { nombre: 'Ruta de la Meta', emoji: '🎯', color: 'rep' },
+  /* Ruta de la Máquina que Aprende: Inteligencia Artificial. Va aparte de la
+     Ruta del Código y de la de los Robots, y no es reparto de contenido: un
+     programa de siempre SIGUE reglas que alguien escribió, y esto SACA la regla
+     de los ejemplos. Meterla en la Ruta del Código enseñaría que es lo mismo,
+     que es justo el error del que salen todos los demás. El nombre dice lo que
+     es, a propósito: la máquina no piensa, aprende de ejemplos. */
+  maquina: { nombre: 'Ruta de la Máquina que Aprende', emoji: '✨', color: 'ia' },
 };
 
 const MISSIONS = [
@@ -108,6 +115,16 @@ const MISSIONS = [
   { id: 59, title: 'Prueba de Fin de Grado: 4º Grado',                    subject: 'repaso',      color: 'rep',  grade: '4º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 1, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-4to/fin-de-grado-4to.html' },
   { id: 60, title: 'Prueba de Fin de Grado: 5º Grado',                    subject: 'repaso',      color: 'rep',  grade: '5º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 2, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-5to/fin-de-grado-5to.html' },
   { id: 58, title: 'Prueba de Fin de Grado: 6º Grado',                    subject: 'repaso',      color: 'rep',  grade: '6º grado',       cycle: '2ciclo',   ruta: 'meta',    etapa: 3, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-6to/fin-de-grado-6to.html' },
+  /* Inteligencia Artificial. Es la única materia de la plataforma que NO está en
+     el DCNB de Honduras, y entra igual: el alumno ya la usa todos los días sin
+     que nadie se la haya explicado. Dónde la ancla el propio currículo, el marco
+     internacional del que sale y lo que a propósito NO se enseña están en
+     CURRICULA-INTELIGENCIA-ARTIFICIAL.md. Las etapas van de I a III Ciclo, con
+     la historia en medio. */
+  { id: 72, title: '¿Qué es la Inteligencia Artificial?',                subject: 'ia',          color: 'ia',   grade: 'I Ciclo',        cycle: '1ciclo',   ruta: 'maquina', etapa: 1, xp: 30, icon: '🧠', pais: 'HN', url: 'misiones/1ciclo-que-es-la-ia/que-es-la-ia.html' },
+  { id: 73, title: 'Cómo Aprende una Máquina',                           subject: 'ia',          color: 'ia',   grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'maquina', etapa: 2, xp: 35, icon: '🧪', pais: 'HN', url: 'misiones/2ciclo-como-aprende-una-maquina/como-aprende-una-maquina.html' },
+  { id: 74, title: 'La Historia de la Inteligencia Artificial',          subject: 'ia',          color: 'ia',   grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'maquina', etapa: 3, xp: 35, icon: '📜', pais: 'HN', url: 'misiones/2y3ciclo-historia-ia/historia-ia.html' },
+  { id: 75, title: 'IA Generativa: úsala bien y no le creas todo',       subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 4, xp: 40, icon: '🔎', pais: 'HN', url: 'misiones/3ciclo-ia-generativa/ia-generativa.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 

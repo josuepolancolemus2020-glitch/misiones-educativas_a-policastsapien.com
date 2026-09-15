@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión ¿Qué es la Inteligencia Artificial?</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INTELIGENCIA ARTIFICIAL = MAGENTA (#86198f).
+       No se eligió a ojo: se midió la distancia de color contra las nueve
+       materias que ya existían y la familia magenta es el hueco más ancho que
+       quedaba. El maestro tiene que saber de qué materia es la hoja SIN leerla.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · El corte de las hojas lo reparte `node _dev/reparte-hojas-ficha.js`, que
+       mide en el navegador con el ancho del papel. A ojo se acierta hasta que
+       se corrige una errata y el párrafo crece dos renglones.
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Esta ficha la ARMA `node _dev/arma-fichas-ia.js` desde los mismos
+       archivos de datos que pinta la misión, para que las dos no se separen. */
+  :root {
+    --ia: #86198f; --ia-osc: #701a75; --ia-claro: #fdf4ff; --linea: #eccef2;
+    --tinta: #1a2733; --gris: #5b6773;
+    --may: #4338ca; --oro: #b45309; --verde: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7eefa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ia-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ia); background: var(--ia-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ia-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ia-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ia); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ia-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ia-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ia-osc); }
+  .aviso { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .aviso b { color: #b91c1c; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: var(--may); }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ia); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf7fe; }
+  td.k { font-weight: 700; color: var(--ia-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; background: #fefcff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ia-osc); margin-bottom: 6px; }
+
+  /* Dos columnas enfrentadas. Se usa donde la ficha compara DOS cosas que el
+     alumno confunde (ser vivo y máquina, instrucción y ejemplo, predecir y
+     saber). Puestas una al lado de la otra, la diferencia se ve sin párrafo. */
+  .dos { display: flex; gap: 8px; margin: 7px 0; break-inside: avoid; }
+  .dos > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .dos .dA { background: #eafaf1; border: 1px solid #b7e4cb; }
+  .dos .dB { background: #fdf4ff; border: 1px solid var(--linea); }
+  .dos b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .dos .dA b { color: var(--verde); }
+  .dos .dB b { color: var(--ia-osc); }
+  .dos ul { margin: 2px 0 0 18px; font-size: 9.5pt; }
+
+  /* La ficha de un concepto: el término, su definición y su ejemplo. Es el
+     recuadro que más se repite en estas cuatro, porque aquí el vocabulario ES
+     la materia: el alumno lo copia al cuaderno tal cual. */
+  .cficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--ia); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .cf-tit { font-size: 11.5pt; font-weight: 800; color: var(--ia-osc); }
+  .cf-def { font-size: 10.5pt; margin: 2px 0; text-align: justify; }
+  .cf-ej { font-size: 9.5pt; color: var(--gris); font-style: italic; }
+
+  /* La línea del tiempo de la etapa 3, en tarjetas. Cada una con su año en
+     grande: es el dato que el alumno busca al recorrer la hoja, y si baila de
+     sitio hay que leer el renglón entero para encontrarlo. */
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fefcff; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ia); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ia); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la marca
+     de lo que está mal, y pedirla para señalar lo correcto confunde a quien ya
+     sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--ia-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ia-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ia-osc); }
+
+  .pauta { background: #fdf7fe; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ia-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ia); box-shadow: 0 6px 18px rgba(134,25,143,.35); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .dos > div, .ilus, .felic, .pauta, .cficha, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión ¿Qué es la Inteligencia Artificial?</div>
+        <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
+        <div class="f-meta"><b>Tema:</b> Máquinas que aprenden con ejemplos: qué son, en qué se diferencian de un ser vivo y cómo usarlas sin salir perjudicado.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-que-es-la-ia.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Explicar con sus palabras qué es la <strong>Inteligencia Artificial</strong>.</li>
+      <li>Distinguir un <strong>ser vivo</strong> de una <strong>máquina</strong>.</li>
+      <li>Reconocer que una máquina aprende <strong>con ejemplos</strong>, y que con pocos se equivoca.</li>
+      <li>Nombrar tres cosas de su casa donde ya hay Inteligencia Artificial.</li>
+      <li>Decir por qué <strong>no es magia</strong> y por qué <strong>no siente</strong>.</li>
+      <li>Aplicar las <strong>tres reglas de oro</strong> para usarla sin salir perjudicado.</li>
+    </ol>
+
+    <h2>🧠 1. ¿Qué es la Inteligencia Artificial?</h2>
+
+    <p>Hay máquinas que hacen cosas que antes <strong>solo hacían las personas</strong>: reconocer una cara,
+       entender lo que decimos en voz alta, traducir un letrero. A eso se le llama
+       <strong>Inteligencia Artificial</strong>.</p>
+
+    <p>No está viva, no piensa y no siente. Hace <strong>cuentas muy rápido</strong> con lo que le enseñaron.
+       Y ya está en tu casa, aunque no lo sepas:</p>
+
+    <table>
+      <tr><th style="width:38%">Lo que hace</th><th>Cómo lo aprendió</th></tr>
+      <tr><td class="k">🎙️ Dictar un mensaje</td><td>La máquina convierte tu voz en letras porque oyó millones de voces antes.</td></tr>
+      <tr><td class="k">📷 La cámara que encuentra caras</td><td>Aprendió qué forma tiene una cara con muchísimas fotos.</td></tr>
+      <tr><td class="k">🌐 Traducir un letrero</td><td>Vio el mismo texto escrito en dos idiomas, millones de veces.</td></tr>
+      <tr><td class="k">🔤 El teclado que adivina la palabra</td><td>Predice la palabra siguiente: es un modelo de lenguaje chiquito.</td></tr>
+      <tr><td class="k">🎵 La música que te recomienda</td><td>Te agrupa con gente que oye parecido y te ofrece lo que a ellos les gustó.</td></tr>
+      <tr><td class="k">🗺️ La ruta más rápida</td><td>Aprende de cuánto tardaron otros por ese mismo camino.</td></tr>
+      <tr><td class="k">🌽 Reconocer la plaga de un cultivo</td><td>Con fotos de hojas sanas y de hojas enfermas, etiquetadas por personas.</td></tr>
+      <tr><td class="k">💬 Un chat que escribe textos</td><td>Predice la palabra siguiente, una por una, hasta armar el párrafo.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja idea"><b>La idea grande, y con esto ya no te confundes:</b> la máquina no entiende.
+      Mira muchísimos ejemplos, busca lo que se repite y con eso decide. Todo lo demás cuelga de ahí.</div>
+
+    <h2>🐕 2. ¿Está vivo o es una máquina?</h2>
+
+    <p>Un perro y un robot se mueven los dos. Pero <strong>moverse no es estar vivo</strong>: un ventilador
+       también se mueve.</p>
+
+    <div class="dos">
+      <div class="dA"><b>🌱 Un ser vivo</b>
+        <ul><li>Nace</li><li>Crece</li><li>Se alimenta</li><li>Siente: hambre, sueño, miedo, cariño</li><li>Muere</li><li>Aprende solo desde que nace</li></ul>
+      </div>
+      <div class="dB"><b>⚙️ Una máquina</b>
+        <ul><li>La fabricaron personas</li><li>Se enciende y se apaga</li><li>No come</li><li>No siente nada</li><li>Se compone o se bota</li><li>Hay que enseñarle todo</li></ul>
+      </div>
+    </div>
+
+    <div class="caja truco"><b>El truco para no equivocarse:</b> pregúntate si <b>nace, crece, come y muere</b>.
+      Si le falta una, no está vivo. Un teléfono no nació: alguien lo armó en una fábrica.</div>
+
+    <h2>🚫 3. Seis cosas que la gente cree, y no son</h2>
+
+    <table>
+      <tr><th style="width:44%">Lo que mucha gente cree</th><th>Lo que de verdad pasa</th></tr>
+      <tr><td>❌ «La máquina piensa como tú.»</td><td>✅ Hace cuentas muy rápido con lo que le enseñaron. No entiende lo que dice.</td></tr>
+      <tr><td>❌ «La máquina siente, se cansa o se enoja.»</td><td>✅ No siente nada. Ni alegría, ni sueño, ni cariño. Es un aparato.</td></tr>
+      <tr><td>❌ «La máquina sabe todo lo que le preguntes.»</td><td>✅ Solo sabe de lo que le enseñaron, y a veces se inventa el resto.</td></tr>
+      <tr><td>❌ «La máquina nunca se equivoca.»</td><td>✅ Se equivoca, y más con lo que no estaba en sus ejemplos.</td></tr>
+      <tr><td>❌ «La máquina es mágica.»</td><td>✅ Son datos y matemática. Alguien la hizo y alguien eligió sus ejemplos.</td></tr>
+      <tr><td>❌ «La máquina es tu amiga y puedes contarle todo.»</td><td>✅ Lo que le cuentas puede quedar guardado. Las cosas de tu familia no se cuentan.</td></tr>
+    </table>
+
+    <div class="caja idea"><b>Y una que sorprende:</b> hace sesenta años ya existía un programa que
+      conversaba, y la gente le contaba cosas de su vida creyendo que la entendía. <b>No entendía nada.</b>
+      Que algo conteste como una persona no significa que sea una persona.</div>
+
+    <h2>📖 4. Las cuatro palabras nuevas</h2>
+
+    <p>Estas cuatro son las de esta misión. Cópialas en tu cuaderno con un dibujo de cada una:</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="cficha">
+      <div class="cf-tit">🧠 Inteligencia Artificial</div>
+      <div class="cf-def">Programas de computadora que hacen tareas que antes solo hacían las personas: reconocer una cara, entender lo que dictas, traducir un letrero o escribir un texto. No piensan ni sienten: calculan.</div>
+      <div class="cf-ej">Ejemplo: Cuando le dictas un mensaje al teléfono y el teléfono lo escribe.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">⚙️ Máquina</div>
+      <div class="cf-def">Un objeto que las personas fabricaron para que haga un trabajo. No nace, no crece, no come y no muere. Se enciende, se apaga y se compone.</div>
+      <div class="cf-ej">Ejemplo: Un molino, un ventilador y un teléfono son máquinas.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">📋 Instrucción</div>
+      <div class="cf-def">Una orden clara y en orden, de las que una máquina puede obedecer sin preguntar. Un programa es un montón de instrucciones, una detrás de otra.</div>
+      <div class="cf-ej">Ejemplo: «Enciende la luz», «espera 5 segundos», «apágala».</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🍎 Ejemplo</div>
+      <div class="cf-def">Cada cosa que le enseñamos a la máquina para que aprenda. Con pocos ejemplos se equivoca; con muchos acierta más. Le llamamos ejemplo a la foto, al sonido o a la frase que le mostramos.</div>
+      <div class="cf-ej">Ejemplo: Mil fotos de nances para que aprenda a reconocer un nance.</div>
+    </div>
+
+    <h2>📋 5. Dos maneras de enseñarle a una máquina</h2>
+
+    <p>Y no son lo mismo. Esta es la diferencia más importante de toda la ruta:</p>
+
+    <div class="dos">
+      <div class="dB"><b>📋 Con instrucciones</b>
+        Le decimos <strong>paso por paso</strong> lo que tiene que hacer. Ella obedece y no aprende nada.
+        <ul><li><em>«Enciende la luz. Espera cinco segundos. Apágala.»</em></li></ul>
+      </div>
+      <div class="dA"><b>🍎 Con ejemplos</b>
+        No le decimos qué hacer: le <strong>mostramos muchas cosas</strong> y ella busca sola lo que se repite.
+        <ul><li><em>Mil fotos de nances hasta que reconozca uno que nunca vio.</em></li></ul>
+      </div>
+    </div>
+
+    <div class="caja regla"><b>La Inteligencia Artificial es la segunda.</b> Por eso puede reconocer cosas
+      que nadie le describió nunca, y por eso también <b>se equivoca con lo que no estaba en sus
+      ejemplos</b>.</div>
+
+    <h2>🔒 6. Las tres reglas de oro</h2>
+
+    <p>Estas tres son para siempre. Valen para cualquier máquina que te conteste, hoy y cuando estés en
+       noveno grado:</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
+      <tr><td class="k">🔒 No le doy mis datos ni los de mi familia.</td><td>Nombre completo, dirección, teléfono, la escuela, fotos de otros niños. Lo que se manda a internet puede quedarse guardado.</td></tr>
+      <tr><td class="k">🔎 No le creo sin comprobar.</td><td>La máquina contesta con la misma seguridad cuando sabe y cuando se lo inventa. El dato se busca en el libro o se le pregunta a quien lo sabe.</td></tr>
+      <tr><td class="k">🧑‍🏫 Si algo me asusta o me confunde, le aviso a una persona grande.</td><td>Un mensaje raro, una foto que no debería estar, alguien que te pide algo. Eso no se resuelve solo.</td></tr>
+    </table>
+
+    <div class="acts">
+      <h3>✏️ Actividad 1 · Enséñale a la máquina, en papel <span class="val">(20 pts)</span></h3>
+
+      <p>En la misión hay una máquina que aprende a separar <strong>nances</strong> de <strong>anonas</strong>.
+         Aquí lo vas a hacer con lápiz. Mira estos ejemplos que alguien ya le enseñó:</p>
+
+      <div class="ilus">
+        <div class="ilus-t">Lo que la máquina ya vio</div>
+        <table>
+          <tr><th>La fruta</th><th>¿Cómo es?</th><th>¿Qué es?</th></tr>
+          <tr><td>🟡</td><td>chiquita y bien amarilla</td><td class="k">nance</td></tr>
+          <tr><td>🟢</td><td>grandota y verde</td><td class="k">anona</td></tr>
+          <tr><td>🟡</td><td>amarilla y medianita</td><td class="k">nance</td></tr>
+          <tr><td>🟢</td><td>verde y grande</td><td class="k">anona</td></tr>
+        </table>
+      </div>
+
+      <p>Ahora le llegan cuatro frutas que <strong>nunca vio</strong>. Escribe qué va a contestar la máquina,
+         acordándote de que le pone el nombre de <strong>la que más se le parece</strong>:</p>
+
+      <ol>
+        <li>🟡 amarilla y chiquita &nbsp;→&nbsp; <span class="linea-resp"></span></li>
+        <li>🟢 verde y grandota &nbsp;→&nbsp; <span class="linea-resp"></span></li>
+        <li>🟠 anaranjada y <strong>bien grande</strong> &nbsp;→&nbsp; <span class="linea-resp"></span></li>
+        <li>🟢 verde y <strong>pequeñita</strong> &nbsp;→&nbsp; <span class="linea-resp"></span></li>
+      </ol>
+
+      <p><strong>Y ahora la pregunta que importa:</strong> ¿en cuáles se equivocó y por qué?
+         <span class="linea-resp" style="min-width:100%"></span>
+         <span class="linea-resp" style="min-width:100%"></span></p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>🗂️ Actividad 2 · ¿Vivo o máquina? <span class="val">(16 pts)</span></h3>
+
+      <p>Escribe <strong>V</strong> si está vivo y <strong>M</strong> si es una máquina:</p>
+
+      <table>
+        <tr><td style="width:42%">Un perro <span class="linea-resp" style="min-width:40px"></span></td><td>Un teléfono <span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td>Una mata de maíz <span class="linea-resp" style="min-width:40px"></span></td><td>Un robot <span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td>Tu maestra <span class="linea-resp" style="min-width:40px"></span></td><td>Una calculadora <span class="linea-resp" style="min-width:40px"></span></td></tr>
+        <tr><td>Un zanate <span class="linea-resp" style="min-width:40px"></span></td><td>Una computadora <span class="linea-resp" style="min-width:40px"></span></td></tr>
+      </table>
+
+      <h3>✅ Actividad 3 · ¿Se lo cuento o no? <span class="val">(12 pts)</span></h3>
+
+      <p>Escribe <strong>SÍ</strong> si se lo puedo contar a una máquina y <strong>NO</strong> si no:</p>
+
+      <ol>
+        <li>Mi color favorito <span class="linea-resp" style="min-width:60px"></span></li>
+        <li>La dirección de mi casa <span class="linea-resp" style="min-width:60px"></span></li>
+        <li>Una pregunta de la tarea <span class="linea-resp" style="min-width:60px"></span></li>
+        <li>El teléfono de mi mamá <span class="linea-resp" style="min-width:60px"></span></li>
+        <li>Cómo se escribe una palabra <span class="linea-resp" style="min-width:60px"></span></li>
+        <li>Una foto de mis compañeros <span class="linea-resp" style="min-width:60px"></span></li>
+      </ol>
+
+      <h3>💡 Actividad 4 · Escribe con tus palabras <span class="val">(12 pts)</span></h3>
+
+      <ol>
+        <li>¿En qué se diferencia un perro de un robot? Escribe tres diferencias.
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>Nombra dos cosas de tu casa donde ya hay Inteligencia Artificial y decí qué hace cada una.
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+    </div>
+
+    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span><span>¿Qué es la Inteligencia Artificial?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Programas que hacen cosas que antes solo hacían las personas</div>
+        <div class="op"><i></i><b>b)</b> Un robot que vive en el teléfono</div>
+        <div class="op full"><i></i><b>c)</b> Una persona dentro de la computadora</div>
+        <div class="op"><i></i><b>d)</b> Un juego de video</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span><span>¿Cuál de estos está VIVO?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Un teléfono</div>
+        <div class="op"><i></i><b>b)</b> Un pino</div>
+        <div class="op"><i></i><b>c)</b> Una calculadora</div>
+        <div class="op"><i></i><b>d)</b> Un robot</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span><span>¿Cómo aprende una máquina a reconocer una cara?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Nació sabiendo</div>
+        <div class="op"><i></i><b>b)</b> Alguien se la dibujó una vez</div>
+        <div class="op"><i></i><b>c)</b> Viendo muchísimas fotos de caras</div>
+        <div class="op"><i></i><b>d)</b> Porque tiene ojos</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span><span>Si a una máquina le enseñamos POCOS ejemplos…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Aprende más rápido</div>
+        <div class="op"><i></i><b>b)</b> Aprende igual de bien</div>
+        <div class="op"><i></i><b>c)</b> No pasa nada</div>
+        <div class="op"><i></i><b>d)</b> Se equivoca más</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span><span>¿La máquina siente alegría o tristeza?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> No: es un aparato y no siente nada</div>
+        <div class="op"><i></i><b>b)</b> Sí, cuando gana</div>
+        <div class="op"><i></i><b>c)</b> Solo sin batería</div>
+        <div class="op"><i></i><b>d)</b> Sí, como un perro</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span><span>Una instrucción es…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Un dibujo</div>
+        <div class="op full"><i></i><b>b)</b> Una orden clara que la máquina obedece</div>
+        <div class="op"><i></i><b>c)</b> Un premio</div>
+        <div class="op"><i></i><b>d)</b> Una foto</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span><span>¿Qué NO se le cuenta a una máquina?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Mi color favorito</div>
+        <div class="op"><i></i><b>b)</b> Qué es un triángulo</div>
+        <div class="op"><i></i><b>c)</b> La dirección de mi casa</div>
+        <div class="op"><i></i><b>d)</b> Una pregunta de la tarea</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span><span>La máquina te dio un dato y no estás seguro. ¿Qué haces?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Le creo, porque es computadora</div>
+        <div class="op"><i></i><b>b)</b> Se lo cuento a todos</div>
+        <div class="op"><i></i><b>c)</b> Le pregunto lo mismo otra vez</div>
+        <div class="op full"><i></i><b>d)</b> Lo busco en el libro o le pregunto a mi maestra</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span><span>¿Por qué se dice que la Inteligencia Artificial NO es magia?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Porque son datos y matemática, y alguien la hizo</div>
+        <div class="op"><i></i><b>b)</b> Porque no funciona</div>
+        <div class="op"><i></i><b>c)</b> Porque solo sirve de noche</div>
+        <div class="op"><i></i><b>d)</b> Porque es muy cara</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span><span>¿Qué hace que algo sea un ser vivo?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Que tenga colores</div>
+        <div class="op full"><i></i><b>b)</b> Que nazca, crezca, se alimente y muera</div>
+        <div class="op"><i></i><b>c)</b> Que se encienda</div>
+        <div class="op"><i></i><b>d)</b> Que haga ruido</div>
+      </div>
+    </div>
+
+    <div class="felic"><b>¡Bien hecho!</b> Si contestaste estas diez, ya sabes lo más importante: que la
+      máquina <b>no está viva</b>, que <b>aprende con ejemplos</b> y que hay cosas que <b>no se le
+      cuentan</b>. Eso te va a servir toda la vida, aunque las máquinas cambien.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔑 Pauta de corrección y nota para el docente</h2>
+
+    <div class="pauta">
+      <div><span class="pt">Evaluación (40 pts):</span> 1-a · 2-b · 3-c · 4-d · 5-a · 6-b · 7-c · 8-d · 9-a · 10-b</div>
+      <div><span class="pt">Actividad 1 · Enséñale a la máquina (20 pts):</span> 1 → nance · 2 → anona ·
+        <b>3 → la máquina dice «anona» y se EQUIVOCA</b> (es un nance grande) ·
+        <b>4 → la máquina dice «nance» y se EQUIVOCA</b> (es una anona pequeña).
+        Lo que se califica de verdad es la última pregunta: se valora que el alumno diga que la máquina
+        <b>no vio ningún ejemplo parecido</b> a esas dos, no que «está mala».</div>
+      <div><span class="pt">Actividad 2 · ¿Vivo o máquina? (16 pts):</span> V · M · V · M · V · M · V · M.</div>
+      <div><span class="pt">Actividad 3 · ¿Se lo cuento? (12 pts):</span> SÍ · NO · SÍ · NO · SÍ · NO.</div>
+      <div><span class="pt">Actividad 4 · Con tus palabras (12 pts):</span> respuesta abierta. En la primera
+        se valoran tres diferencias reales (nace/lo fabricaron, come/no come, siente/no siente, muere/se
+        apaga). En la segunda, que nombre cosas de SU vida: dictar un mensaje, la cámara que encuentra
+        caras, traducir un letrero, el teclado que adivina la palabra.</div>
+    </div>
+
+    <div class="nota-doc">
+      <b>Para qué sirve esta ficha, y qué NO hay que enseñar de más.</b> Es la etapa 1 de la Ruta de la
+      Máquina que Aprende, escrita para I Ciclo. A esta edad no se explica cómo funciona una red neuronal ni
+      se usan las palabras «dato», «etiqueta» o «entrenamiento»: eso entra en la etapa 2, con II Ciclo. Aquí
+      lo que se busca es que el niño pueda decir tres cosas y sostenerlas: que la máquina <b>no está
+      viva</b>, que <b>aprende de ejemplos</b> y que hay cosas que <b>no se le cuentan</b>.
+      <br><br>
+      <b>La Actividad 1 es el corazón de la ficha</b> y conviene no adelantar la respuesta. Casi todos los
+      alumnos contestan bien las dos primeras y se equivocan al explicar las dos últimas: dicen que la
+      máquina «está mala». Ahí es donde el maestro interviene con una sola pregunta: <b>¿le enseñaron
+      alguna fruta parecida a esas dos?</b> Esa conversación es el aprendizaje; el resto de la ficha es el
+      andamio.
+      <br><br>
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>, y entra igual
+      porque el alumno ya la usa. El propio currículo dice dónde va lo tecnológico en I y II Ciclo: dentro
+      del bloque «Materia, energía y tecnología» de Ciencias Naturales, «a través de ejemplos sencillos de
+      sus aplicaciones en la vida cotidiana». El porqué entero, el marco internacional del que sale y lo que
+      a propósito NO se enseña están en <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>.
+      <br><br>
+      <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-conceptos.js), así que no
+      pueden decir cosas distintas. Etapa 1 de cuatro: después vienen cómo aprende una máquina, la historia
+      completa y la IA generativa.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial? · Hoja del Docente</span><span>Página 7</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión La Historia de la Inteligencia Artificial</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INTELIGENCIA ARTIFICIAL = MAGENTA (#86198f).
+       No se eligió a ojo: se midió la distancia de color contra las nueve
+       materias que ya existían y la familia magenta es el hueco más ancho que
+       quedaba. El maestro tiene que saber de qué materia es la hoja SIN leerla.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · El corte de las hojas lo reparte `node _dev/reparte-hojas-ficha.js`, que
+       mide en el navegador con el ancho del papel. A ojo se acierta hasta que
+       se corrige una errata y el párrafo crece dos renglones.
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Esta ficha la ARMA `node _dev/arma-fichas-ia.js` desde los mismos
+       archivos de datos que pinta la misión, para que las dos no se separen. */
+  :root {
+    --ia: #86198f; --ia-osc: #701a75; --ia-claro: #fdf4ff; --linea: #eccef2;
+    --tinta: #1a2733; --gris: #5b6773;
+    --may: #4338ca; --oro: #b45309; --verde: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7eefa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ia-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ia); background: var(--ia-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ia-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ia-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ia); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ia-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ia-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ia-osc); }
+  .aviso { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .aviso b { color: #b91c1c; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: var(--may); }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ia); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf7fe; }
+  td.k { font-weight: 700; color: var(--ia-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; background: #fefcff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ia-osc); margin-bottom: 6px; }
+
+  /* Dos columnas enfrentadas. Se usa donde la ficha compara DOS cosas que el
+     alumno confunde (ser vivo y máquina, instrucción y ejemplo, predecir y
+     saber). Puestas una al lado de la otra, la diferencia se ve sin párrafo. */
+  .dos { display: flex; gap: 8px; margin: 7px 0; break-inside: avoid; }
+  .dos > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .dos .dA { background: #eafaf1; border: 1px solid #b7e4cb; }
+  .dos .dB { background: #fdf4ff; border: 1px solid var(--linea); }
+  .dos b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .dos .dA b { color: var(--verde); }
+  .dos .dB b { color: var(--ia-osc); }
+  .dos ul { margin: 2px 0 0 18px; font-size: 9.5pt; }
+
+  /* La ficha de un concepto: el término, su definición y su ejemplo. Es el
+     recuadro que más se repite en estas cuatro, porque aquí el vocabulario ES
+     la materia: el alumno lo copia al cuaderno tal cual. */
+  .cficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--ia); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .cf-tit { font-size: 11.5pt; font-weight: 800; color: var(--ia-osc); }
+  .cf-def { font-size: 10.5pt; margin: 2px 0; text-align: justify; }
+  .cf-ej { font-size: 9.5pt; color: var(--gris); font-style: italic; }
+
+  /* La línea del tiempo de la etapa 3, en tarjetas. Cada una con su año en
+     grande: es el dato que el alumno busca al recorrer la hoja, y si baila de
+     sitio hay que leer el renglón entero para encontrarlo. */
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fefcff; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ia); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ia); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la marca
+     de lo que está mal, y pedirla para señalar lo correcto confunde a quien ya
+     sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--ia-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ia-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ia-osc); }
+
+  .pauta { background: #fdf7fe; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ia-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ia); box-shadow: 0 6px 18px rgba(134,25,143,.35); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .dos > div, .ilus, .felic, .pauta, .cficha, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión La Historia de la Inteligencia Artificial</div>
+        <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
+        <div class="f-meta"><b>Tema:</b> De la pregunta de Alan Turing en 1950 al chat de hoy, con los dos inviernos en medio. Quince hitos, cada uno con el documento que lo acredita.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-historia-ia.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Ubicar en una <strong>línea del tiempo</strong> los hitos de la Inteligencia Artificial.</li>
+      <li>Distinguir <strong>cuándo se tuvo la idea</strong> de <strong>cuándo llegó al público</strong>.</li>
+      <li>Explicar qué fueron los <strong>dos inviernos</strong> y por qué ocurrieron.</li>
+      <li>Nombrar las <strong>tres patas</strong> (datos, cómputo y algoritmos) y decir por qué hacían falta las tres.</li>
+      <li>Citar, de cada hito, <strong>qué documento o hecho lo acredita</strong>.</li>
+      <li>Escuchar una promesa de hoy sobre la IA y <strong>preguntar</strong>, en vez de creerla o burlarse.</li>
+    </ol>
+
+    <h2>📜 1. Esto no empezó en 2022</h2>
+
+    <p>Mucha gente cree que la Inteligencia Artificial se inventó el día que apareció el chat que usa.
+       <strong>No.</strong> La pregunta que la puso en marcha es de <strong>1950</strong>, el nombre es de
+       <strong>1956</strong>, y en medio hay <strong>setenta años</strong> con dos fracasos grandes.</p>
+
+    <div class="caja truco"><b>Y esto sirve para dos cosas muy concretas.</b> Una: distinguir cuándo se tuvo
+      la IDEA de cuándo llegó al PÚBLICO. La pieza técnica de los chats de hoy es de 2017; el chat, de 2022.
+      Confundirlas es el error más común de esta misión. Y dos: esto ya prometió de más dos veces y las dos
+      se cayó. Quien conoce esos dos inviernos escucha una promesa de hoy y <b>pregunta</b>.</div>
+
+    <h2>🕰️ 2. Las cuatro edades</h2>
+
+    <p>La historia de la IA no es una línea recta que sube. Son cuatro tramos, y dos de ellos son caídas:</p>
+
+    <table>
+      <tr><th style="width:30%">La edad</th><th style="width:22%">Cuándo</th><th>Qué pasó</th></tr>
+      <tr><td class="k">🌱 Antes de que tuviera nombre</td><td>1936 a 1955</td><td>Se inventa la idea de máquina que calcula cualquier cosa, y alguien se atreve a preguntar si podría pensar.</td></tr>
+      <tr><td class="k">🎉 Nace la Inteligencia Artificial</td><td>1956 a 1969</td><td>El campo estrena nombre y llega el entusiasmo: se cree que en pocos años habrá máquinas que piensen.</td></tr>
+      <tr><td class="k">❄️ Los dos inviernos</td><td>años setenta y finales de los ochenta</td><td>Se había prometido más de lo que se podía cumplir. Se acabó el dinero y el campo casi se para. Dos veces.</td></tr>
+      <tr><td class="k">🚀 El deshielo y la explosión</td><td>1997 hasta hoy</td><td>Se juntan por fin las tres cosas que hacían falta: datos, cómputo y algoritmos. Y todo se acelera.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🏗️ 3. Las tres patas: por qué se aceleró de golpe</h2>
+
+    <p>Después de setenta años de intentos, esto despegó cuando por fin se juntaron <strong>tres cosas a la
+       vez</strong>. Y son a la vez: <strong>faltando una, no pasa</strong>.</p>
+
+    <table>
+      <tr><th style="width:18%">La pata</th><th>Qué aporta</th><th style="width:34%">Qué pasaba antes</th></tr>
+      <tr><td class="k">📚 Datos</td><td>Millones de fotos, textos y grabaciones, y muchos de ellos con su etiqueta puesta por personas.</td><td>Antes de internet, juntar un millón de fotos etiquetadas era imposible.</td></tr>
+      <tr><td class="k">⚡ Cómputo</td><td>Las tarjetas gráficas, hechas para los videojuegos, resultaron ser justo lo que servía para entrenar redes.</td><td>Con las computadoras de los años ochenta, un entrenamiento de hoy tardaría siglos.</td></tr>
+      <tr><td class="k">🧩 Algoritmos</td><td>Maneras nuevas de armar y entrenar las redes, que aprovechan los datos y el cómputo que ya había.</td><td>Las ideas de los años ochenta se estancaban al crecer: no aprendían más por darles más.</td></tr>
+    </table>
+
+    <div class="caja idea"><b>Fíjate en lo que esto significa:</b> las ideas de los años ochenta no estaban
+      mal. Lo que no había eran los millones de fotos etiquetadas ni las máquinas para entrenarlas. La misma
+      idea, veinte años después, funcionó.</div>
+
+    <h2>🗓️ 4. La línea del tiempo, hito por hito</h2>
+
+    <p>De cada hito: qué pasó, por qué importa y <strong>qué documento lo acredita</strong>. Esto último no
+       es papeleo: aquí lo que se copia son fechas, y una fecha equivocada no se nota. Se lee igual de bien,
+       se estudia igual y se escribe en el examen.</p>
+
+    <div class="cficha">
+      <div class="cf-tit">📐 1936 · La máquina que puede calcular cualquier cosa</div>
+      <div class="cf-ej">👤 Alan Turing</div>
+      <div class="cf-def"><b>Qué pasó:</b> Describe en un artículo una máquina imaginaria que, siguiendo instrucciones, puede hacer cualquier cálculo que se pueda hacer. Es la idea de la que sale la computadora.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Antes de preguntarse si una máquina puede pensar, alguien tuvo que demostrar que una sola máquina puede hacer cualquier cuenta. Todo lo demás cuelga de ahí.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «On Computable Numbers, with an Application to the Entscheidungsproblem», publicado en los Proceedings of the London Mathematical Society.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🕸️ 1943 · La primera neurona de papel</div>
+      <div class="cf-ej">👤 Warren McCulloch y Walter Pitts</div>
+      <div class="cf-def"><b>Qué pasó:</b> Publican un modelo matemático de cómo podría funcionar una neurona: recibe entradas, las suma y se activa o no.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es el abuelo de las redes neuronales de hoy. Una red neuronal no copia el cerebro: copia esta idea de 1943, que ya era una simplificación enorme.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «A Logical Calculus of the Ideas Immanent in Nervous Activity», en el Bulletin of Mathematical Biophysics.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="cficha">
+      <div class="cf-tit">❓ 1950 · La pregunta: «¿pueden pensar las máquinas?»</div>
+      <div class="cf-ej">👤 Alan Turing</div>
+      <div class="cf-def"><b>Qué pasó:</b> Publica un artículo que empieza con esa pregunta y propone cambiarla por otra que sí se puede probar: si una persona conversa a ciegas con una máquina y no logra distinguirla de otra persona, ¿qué más da? Se le conoce como el juego de imitación.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es el acta de nacimiento de la idea. Y es más fino de lo que parece: Turing no dijo que la máquina piense. Dijo que discutir eso no lleva a ningún lado y propuso mirar lo que HACE.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «Computing Machinery and Intelligence», publicado en la revista Mind.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🏷️ 1956 · El nombre: «Inteligencia Artificial»</div>
+      <div class="cf-ej">👤 John McCarthy y el taller de Dartmouth</div>
+      <div class="cf-def"><b>Qué pasó:</b> Un grupo de investigadores se junta un verano en el Dartmouth College para trabajar sobre la idea de que una máquina puede simular el aprendizaje. En la propuesta de ese taller aparece escrito por primera vez el término.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Un campo sin nombre no existe. Desde ese verano hay algo que se llama así, y ese es el año que se pregunta en todos los exámenes.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> La propuesta escrita del «Dartmouth Summer Research Project on Artificial Intelligence».</div>
+    </div>
+
+    <h2>🗓️ 4. La línea del tiempo (continuación)</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">👁️ 1958 · El perceptrón: la primera máquina que aprendió sola</div>
+      <div class="cf-ej">👤 Frank Rosenblatt</div>
+      <div class="cf-def"><b>Qué pasó:</b> Construye un aparato que aprende a separar dos clases de figuras ajustando números por su cuenta, a base de ver ejemplos y corregirse.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es el primer antepasado directo de lo que hoy hace tu teléfono al reconocer una cara. Y también el primer aviso: se dijo que pronto caminaría y hablaría, y no.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain», en Psychological Review.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">🎲 1959 · Un programa que le gana a quien lo escribió</div>
+      <div class="cf-ej">👤 Arthur Samuel</div>
+      <div class="cf-def"><b>Qué pasó:</b> Escribe un programa que juega damas y que va mejorando jugando partidas, hasta jugar mejor que él. Le pone nombre a lo que hace: aprendizaje de máquina.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es la demostración de que una máquina puede llegar más lejos que su autor en una tarea. No porque sea más lista: porque practica millones de veces.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «Some Studies in Machine Learning Using the Game of Checkers», en el IBM Journal of Research and Development.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="cficha">
+      <div class="cf-tit">💬 1966 · ELIZA, la que parecía escuchar</div>
+      <div class="cf-ej">👤 Joseph Weizenbaum</div>
+      <div class="cf-def"><b>Qué pasó:</b> Escribe un programa que conversa devolviendo lo que le dicen en forma de pregunta. Es muy simple y no entiende nada. Pero la gente le contaba cosas íntimas y algunos se negaban a creer que no era una persona.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es la lección más útil de esta misión, y tiene sesenta años: que algo conteste como una persona NO significa que entienda. Su propio autor se asustó de lo que pasó.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «ELIZA: A Computer Program For the Study of Natural Language Communication Between Man And Machine», en Communications of the ACM.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">❄️ años setenta · El primer invierno</div>
+      <div class="cf-ej">👤 Todo el campo</div>
+      <div class="cf-def"><b>Qué pasó:</b> Se había prometido traducción automática y máquinas que razonan en pocos años, y no llegaron. Los informes oficiales fueron duros, el dinero se cortó y muchos laboratorios cerraron.</div>
+      <div class="cf-def"><b>Por qué importa:</b> No fue un problema técnico: fue una promesa que no se cumplió. Cuando alguien promete de más, lo que se pierde no es el producto, es la confianza, y con ella el financiamiento de los que sí iban bien.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> Es un período, no una fecha: por eso va como década y no como año. Lo que sí está documentado son los informes críticos del período y el recorte de fondos que siguió.</div>
+    </div>
+
+    <h2>🗓️ 4. La línea del tiempo (continuación)</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">🧾 años ochenta · Los sistemas expertos, y el segundo invierno</div>
+      <div class="cf-ej">👤 La industria</div>
+      <div class="cf-def"><b>Qué pasó:</b> Se venden programas que guardan las reglas de un experto («si la fiebre es alta y hay manchas, entonces…») y aconsejan como él. Funcionan en lo suyo, pero mantener miles de reglas a mano resulta carísimo y no aprenden nada solos. A finales de la década el negocio se cae.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Aquí se ve clarísima la diferencia que enseña toda esta ruta: un sistema experto SIGUE reglas que una persona escribió; el aprendizaje de máquina SACA la regla de los ejemplos. Lo primero no escala; lo segundo sí.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> Es un período. Los sistemas expertos y su mercado están documentados; el final del auge se cuenta por años, no por un día.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">♟️ 1997 · Una máquina le gana al campeón mundial de ajedrez</div>
+      <div class="cf-ej">👤 Deep Blue, de IBM, contra Garri Kaspárov</div>
+      <div class="cf-def"><b>Qué pasó:</b> En una revancha a seis partidas, la computadora gana el enfrentamiento al campeón mundial. No aprendía como las de hoy: calculaba muchísimas jugadas por segundo.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es el día en que el público entendió que esto iba en serio. Y enseña algo que sigue valiendo: se puede ganar sin entender nada, a puro cálculo.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El enfrentamiento se jugó en público, en Nueva York, y está documentado partida por partida.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="cficha">
+      <div class="cf-tit">🖼️ 2012 · El año en que las máquinas aprendieron a ver</div>
+      <div class="cf-ej">👤 El equipo de AlexNet, en el concurso ImageNet</div>
+      <div class="cf-def"><b>Qué pasó:</b> Una red neuronal profunda, entrenada con tarjetas gráficas sobre un millón de fotos etiquetadas, gana el concurso de reconocimiento de imágenes bajando el error muchísimo de golpe.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es el arranque del aprendizaje profundo, y es donde se ve la receta completa: MUCHOS datos etiquetados, MUCHO cómputo barato y un algoritmo bueno. Faltando una de las tres, no pasa.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «ImageNet Classification with Deep Convolutional Neural Networks» y los resultados publicados del concurso ILSVRC de ese año.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">⚫ 2016 · AlphaGo gana al Go, que se creía imposible</div>
+      <div class="cf-ej">👤 AlphaGo contra Lee Sedol</div>
+      <div class="cf-def"><b>Qué pasó:</b> Un programa gana un enfrentamiento al mejor jugador de Go de su tiempo. El Go tiene tantas jugadas posibles que no se puede ganar calculándolas todas: el programa aprendió jugando contra sí mismo, millones de partidas.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es el aprendizaje por refuerzo enseñado en una foto: aprender probando y premiándose. Y una de sus jugadas sorprendió a los expertos humanos, que es otra cosa distinta a calcular rápido.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El enfrentamiento se jugó en público, en Seúl, y está documentado partida por partida.</div>
+    </div>
+
+    <h2>🗓️ 4. La línea del tiempo (continuación)</h2>
+
+    <div class="cficha">
+      <div class="cf-tit">🔧 2017 · El motor de lo que usamos hoy</div>
+      <div class="cf-ej">👤 Un equipo de investigadores en un artículo</div>
+      <div class="cf-def"><b>Qué pasó:</b> Se presenta una manera nueva de construir redes para trabajar con texto, que permite entrenarlas mucho más rápido y con muchísimo más texto. Se llama transformador.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Todos los chats de IA generativa que se usan hoy descienden de este artículo. Es la pieza técnica que separa el «antes» del «después», aunque el público no se enteró hasta cinco años más tarde.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> El artículo «Attention Is All You Need», presentado en la conferencia NeurIPS de ese año.</div>
+    </div>
+
+    <div class="cficha">
+      <div class="cf-tit">💥 2022 · La IA generativa llega al teléfono de todos</div>
+      <div class="cf-ej">👤 El público, por primera vez</div>
+      <div class="cf-def"><b>Qué pasó:</b> En noviembre se abre al público un chat de IA generativa gratuito y fácil de usar, y en pocas semanas lo está probando muchísima gente en todo el mundo. Detrás no había una idea nueva: había la de 2017, entrenada en grande.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es cuando esto dejó de ser cosa de laboratorios y entró en las tareas escolares. Desde ese mes, un maestro que no sabe qué es esto está corrigiendo textos que no sabe de dónde salen.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> La apertura al público está documentada con fecha. A propósito NO se escribe cuánta gente lo usó: esa cifra cambia y no se puede acreditar desde aquí.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="cficha">
+      <div class="cf-tit">🎥 de 2023 a hoy · Deja de ser solo texto</div>
+      <div class="cf-ej">👤 La industria entera</div>
+      <div class="cf-def"><b>Qué pasó:</b> Los modelos pasan a trabajar también con imagen, voz y video: se les enseña una foto y la describen, se les pide un video y lo arman, imitan una voz con pocos segundos de grabación.</div>
+      <div class="cf-def"><b>Por qué importa:</b> Es lo que hace que las falsificaciones profundas dejen de ser cosa de cine y pasen a ser cosa de un teléfono. Por eso la etapa 4 de esta ruta existe.</div>
+      <div class="cf-ej">📚 <b>Qué lo acredita:</b> Es un período abierto y por eso va fechado y sin nombres de producto: cualquier lista concreta que se escriba aquí envejece antes de que se fotocopie la ficha.</div>
+    </div>
+
+    <h2>❄️ 5. Lo que enseñan los dos inviernos</h2>
+
+    <p>Las dos veces pasó lo mismo, y no fue que la tecnología fallara: fue que se prometió más de lo que se podía cumplir y en menos tiempo del que hacía falta. Cuando la promesa no llegó, se cortó el dinero para todos, también para los que iban bien. La lección no es de computadoras: quien promete de más no pierde el producto, pierde la confianza, y recuperarla cuesta una generación.</p>
+
+    <div class="caja aviso"><b>Y esto vale para hoy:</b> Hoy se vuelve a prometer mucho. Saber que esto ya pasó dos veces es lo que te deja escuchar una promesa y preguntar, en vez de creer o de burlarte.</div>
+
+    <div class="acts">
+      <h3>🗓️ Actividad 1 · Ordena la línea del tiempo <span class="val">(20 pts)</span></h3>
+
+      <p>Numera del <strong>1</strong> (el más antiguo) al <strong>8</strong> (el más reciente):</p>
+
+      <table>
+        <tr><td style="width:50%"><span class="linea-resp" style="min-width:30px"></span> AlphaGo gana al Go</td><td><span class="linea-resp" style="min-width:30px"></span> Nace el nombre en Dartmouth</td></tr>
+        <tr><td><span class="linea-resp" style="min-width:30px"></span> Deep Blue gana al ajedrez</td><td><span class="linea-resp" style="min-width:30px"></span> La pregunta de Turing</td></tr>
+        <tr><td><span class="linea-resp" style="min-width:30px"></span> Un chat de IA llega al público</td><td><span class="linea-resp" style="min-width:30px"></span> ELIZA conversa con la gente</td></tr>
+        <tr><td><span class="linea-resp" style="min-width:30px"></span> El artículo del transformador</td><td><span class="linea-resp" style="min-width:30px"></span> Las máquinas aprenden a ver</td></tr>
+      </table>
+
+      <h3>🔗 Actividad 2 · Uní cada año con lo que pasó <span class="val">(16 pts)</span></h3>
+
+      <table>
+        <tr><th style="width:18%">Año</th><th>Escribe la letra</th><th>Lo que pasó</th></tr>
+        <tr><td class="k">1950</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>A.</b> Una máquina gana al campeón mundial de ajedrez</td></tr>
+        <tr><td class="k">1956</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>B.</b> Un chat de IA generativa se abre al público</td></tr>
+        <tr><td class="k">1966</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>C.</b> «¿Pueden pensar las máquinas?»</td></tr>
+        <tr><td class="k">1997</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>D.</b> Se presenta el transformador</td></tr>
+        <tr><td class="k">2012</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>E.</b> ELIZA conversa sin entender nada</td></tr>
+        <tr><td class="k">2016</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>F.</b> El campo estrena nombre</td></tr>
+        <tr><td class="k">2017</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>G.</b> Las máquinas aprenden a ver</td></tr>
+        <tr><td class="k">2022</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>H.</b> AlphaGo gana al Go</td></tr>
+      </table>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>💡 Actividad 3 · Explica con tus palabras <span class="val">(24 pts)</span></h3>
+
+      <ol>
+        <li>¿Por qué se dice que la Inteligencia Artificial no nació en 2022?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿Qué fueron los dos inviernos y qué enseñan?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿En qué se diferencia lo que hizo Deep Blue en 1997 de lo que hizo AlphaGo en 2016?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+
+      <h3>🔭 Actividad 4 · Investiga <span class="val">(sin respuesta en esta hoja, a propósito)</span></h3>
+
+      <p>La línea del tiempo de arriba llega hasta hoy y <strong>se queda abierta</strong>. Lo que venga
+         después lo van a escribir personas, y algunas están en esta aula.</p>
+
+      <ol>
+        <li>Busca una promesa que se esté haciendo HOY sobre la Inteligencia Artificial, en una noticia o en
+            un video. Escribila tal cual.</li>
+        <li>¿Quién la hace, y qué gana esa persona o esa empresa si la gente se la cree?</li>
+        <li>¿Para cuándo la promete? ¿Es una fecha concreta o algo así como «pronto»?</li>
+        <li>Sabiendo lo de los dos inviernos, ¿qué le preguntarías a quien la hizo?</li>
+      </ol>
+
+      <div class="caja idea"><b>Esta actividad no trae respuesta y no es un descuido:</b> no la hay. Lo que
+        se evalúa es que el alumno pregunte con criterio, no que acierte lo que va a pasar. Nadie lo sabe.</div>
+    </div>
+
+    <h2>🔓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span><span>¿Quién publicó en 1950 el artículo que pregunta si las máquinas pueden pensar?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> John McCarthy</div>
+        <div class="op"><i></i><b>b)</b> Arthur Samuel</div>
+        <div class="op"><i></i><b>c)</b> Alan Turing</div>
+        <div class="op"><i></i><b>d)</b> Joseph Weizenbaum</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span><span>¿Dónde y cuándo nació el nombre «Inteligencia Artificial»?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> En el taller de Dartmouth, en 1956</div>
+        <div class="op"><i></i><b>b)</b> En Londres, en 1950</div>
+        <div class="op"><i></i><b>c)</b> En Nueva York, en 1997</div>
+        <div class="op"><i></i><b>d)</b> En internet, en 2022</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span><span>¿Qué enseñó ELIZA en 1966?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Que las máquinas ya entendían</div>
+        <div class="op"><i></i><b>b)</b> Que los chats son recientes</div>
+        <div class="op"><i></i><b>c)</b> Que las máquinas sienten</div>
+        <div class="op full"><i></i><b>d)</b> Que algo puede contestar como persona sin entender nada</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span><span>¿Por qué hubo dos inviernos de la IA?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Se prohibió investigar</div>
+        <div class="op full"><i></i><b>b)</b> Se prometió más de lo que se podía y se cortó el dinero</div>
+        <div class="op"><i></i><b>c)</b> Se perdieron los programas</div>
+        <div class="op"><i></i><b>d)</b> Se acabó la electricidad</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span><span>¿Qué pasó en 1997?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Nació el nombre del campo</div>
+        <div class="op"><i></i><b>b)</b> Se abrió el primer chat</div>
+        <div class="op full"><i></i><b>c)</b> Una máquina ganó al campeón mundial de ajedrez</div>
+        <div class="op"><i></i><b>d)</b> Se inventó la red neuronal</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span><span>¿Qué pasó en 2012?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Una red neuronal profunda ganó el concurso de reconocer imágenes</div>
+        <div class="op"><i></i><b>b)</b> Se inventó la cámara digital</div>
+        <div class="op"><i></i><b>c)</b> Nació el primer robot</div>
+        <div class="op"><i></i><b>d)</b> Se cerró un laboratorio</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span><span>¿Cómo aprendió AlphaGo?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Con un libro de aperturas</div>
+        <div class="op full"><i></i><b>b)</b> Jugando millones de partidas contra sí mismo</div>
+        <div class="op"><i></i><b>c)</b> Con fotos etiquetadas</div>
+        <div class="op"><i></i><b>d)</b> Calculando todas las jugadas</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span><span>¿De qué año es el artículo del transformador?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> De 1956</div>
+        <div class="op"><i></i><b>b)</b> De 1997</div>
+        <div class="op"><i></i><b>c)</b> De 2022</div>
+        <div class="op"><i></i><b>d)</b> De 2017</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span><span>¿Cuáles son las tres patas que tuvieron que juntarse?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Robots, sensores y motores</div>
+        <div class="op"><i></i><b>b)</b> Dinero, publicidad y suerte</div>
+        <div class="op"><i></i><b>c)</b> Datos, cómputo y algoritmos</div>
+        <div class="op"><i></i><b>d)</b> Internet, teléfonos y satélites</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span><span>¿Qué cambió en noviembre de 2022?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Un chat de IA generativa se abrió al público</div>
+        <div class="op full"><i></i><b>b)</b> Se inventó la Inteligencia Artificial</div>
+        <div class="op full"><i></i><b>c)</b> Se construyó la primera computadora</div>
+        <div class="op full"><i></i><b>d)</b> Se publicó el artículo del transformador</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial</span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔑 Pauta de corrección y nota para el docente</h2>
+
+    <div class="pauta">
+      <div><span class="pt">Evaluación (40 pts):</span> 1-c · 2-a · 3-d · 4-b · 5-c · 6-a · 7-b · 8-d · 9-c · 10-a</div>
+      <div><span class="pt">Actividad 1 · Ordena la línea del tiempo (20 pts):</span>
+        AlphaGo <b>6</b> · Dartmouth <b>2</b> · Deep Blue <b>4</b> · La pregunta de Turing <b>1</b> ·
+        El chat al público <b>8</b> · ELIZA <b>3</b> · El transformador <b>7</b> · Las máquinas ven <b>5</b>.</div>
+      <div><span class="pt">Actividad 2 · Uní cada año (16 pts):</span>
+        1950-C · 1956-F · 1966-E · 1997-A · 2012-G · 2016-H · 2017-D · 2022-B.</div>
+      <div><span class="pt">Actividad 3 · Con tus palabras (24 pts):</span> respuesta abierta.
+        1) Se valora que nombre 1950, 1956 y 1966, y que distinga la idea de su llegada al público.
+        2) Que diga que fueron dos períodos en que el campo casi se para porque se prometió más de lo que se
+        podía, y que la lección es sobre la CONFIANZA, no sobre la tecnología.
+        3) Que Deep Blue calculaba y AlphaGo aprendió jugando contra sí mismo, y que en el Go no se puede
+        calcular todo porque hay demasiadas jugadas.</div>
+      <div><span class="pt">Actividad 4 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
+        que la promesa esté copiada tal cual, que identifique quién la hace y qué gana, que note si hay
+        fecha concreta o no, y que su pregunta final sea comprobable.</div>
+    </div>
+
+    <div class="nota-doc">
+      <b>De dónde sale cada fecha de esta ficha, y la regla que no se salta.</b> Este repositorio no tiene
+      una biblioteca de historia de la computación como tiene el currículo o las leyes. Así que cada hito
+      trae escrito <b>el documento o el hecho público que lo sostiene</b>: un artículo con su revista, una
+      propuesta con su nombre, una partida jugada en público. Donde la fecha se discute, se escribe la
+      DÉCADA: los dos inviernos van como períodos porque nadie se pone de acuerdo en el día. Y no se escribe
+      ninguna cifra de producto (cuántos usuarios, cuántos parámetros, cuánto costó): eso cambia cada mes y
+      esta hoja se guarda un año en una gaveta.
+      <br><br>
+      <b>Lo que más cuesta enseñar de esta misión</b> no es memorizar años: es que el alumno distinga
+      <b>cuándo se tuvo la idea</b> de <b>cuándo llegó al público</b>. El transformador es de 2017 y el chat
+      de 2022, y esos cinco años son el error más común. Si un alumno se lleva solo eso, la hoja cumplió.
+      <br><br>
+      <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-historia.js), así que no
+      pueden decir fechas distintas: la pantalla no tiene ni un año escrito a mano, los pinta de ahí, y
+      <b>node _dev/verifica-ia.js</b> compara las dos hito por hito. Etapa 3 de cuatro.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · La Historia de la Inteligencia Artificial · Hoja del Docente</span><span>Página 9</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

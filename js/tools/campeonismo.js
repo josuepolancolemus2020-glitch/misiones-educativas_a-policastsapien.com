@@ -30,6 +30,11 @@ const CAMP_SUBJECTS = [
   { key: 'inglés',       label: 'Inglés',       short: 'ING', icon: '🗣️', color: '#be185d', bg: '#fce7f3', cls: 'ing'     },
   { key: 'repaso',       label: 'Repaso General', short: 'REP', icon: '🎓', color: '#7c3aed', bg: '#ede9fe', cls: 'rep'   },
   { key: 'cívica',       label: 'E. Cívica',    short: 'CIV', icon: '🇭🇳', color: '#3f6212', bg: '#eaf3d4', cls: 'civ'     },
+  /* `short` va de tres letras como los otros nueve, que es la única regla que
+     tiene ese campo: «IAR» es Inteligencia ARtificial. Hoy no lo pinta ninguna
+     pantalla, pero romper la uniformidad de un código de materia es la clase de
+     detalle que después nadie sabe si fue a propósito. */
+  { key: 'ia',           label: 'Inteligencia Artificial', short: 'IAR', icon: '🧠', color: '#86198f', bg: '#fae8ff', cls: 'ia' },
 ];
 
 /* ── Ruleta: 2 gajos por materia, generada desde CAMP_SUBJECTS ──
