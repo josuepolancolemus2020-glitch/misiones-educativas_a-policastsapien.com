@@ -42,6 +42,9 @@ const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS, IA_MENSAJES } =
 const { IA_HOY_FECHA, IA_HOY_MES, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_TERMOMETRO_TRAMOS,
         IA_FRASES, iaFraseCuenta, iaFraseTramo, IA_INFLEXION } =
   require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
+const { IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS,
+        iaFutAl, iaFutFinal, iaFutJuzga, iaFutCuenta, iaFutEsEscenario, iaFutLeFalta } =
+  require(path.join(RAIZ, 'js/data/ia-futuros.js'));
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const con = c => IA_CONCEPTOS.find(x => x.clave === c);
@@ -302,16 +305,19 @@ module.exports = { RAIZ, esc, con, arma, portada, preguntas, clave, fichaConcept
                    IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS,
                    IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS, IA_MENSAJES,
                    IA_HOY_FECHA, IA_HOY_MES, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_TERMOMETRO_TRAMOS,
-                   IA_FRASES, iaFraseCuenta, iaFraseTramo, IA_INFLEXION };
+                   IA_FRASES, iaFraseCuenta, iaFraseTramo, IA_INFLEXION,
+                   IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS,
+                   iaFutAl, iaFutFinal, iaFutJuzga, iaFutCuenta, iaFutEsEscenario, iaFutLeFalta };
 
 if (require.main === module) {
-  console.log('\n📄 Armando las cuatro fichas de la Ruta de la Máquina que Aprende\n');
+  console.log('\n📄 Armando las fichas de la Ruta de la Máquina que Aprende\n');
   require('./fichas-ia/ficha-72.js');
   require('./fichas-ia/ficha-73.js');
   require('./fichas-ia/ficha-74.js');
   require('./fichas-ia/ficha-75.js');
   require('./fichas-ia/ficha-76.js');
   require('./fichas-ia/ficha-77.js');
+  require('./fichas-ia/ficha-78.js');
   console.log('\n⚠️  Ahora, SIEMPRE, en este orden:');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-que-es-la-ia');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-como-aprende-una-maquina');
@@ -319,5 +325,6 @@ if (require.main === module) {
   console.log('    node _dev/reparte-hojas-ficha.js ficha-ia-generativa');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-peligros-ia');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-albores-singularidad');
+  console.log('    node _dev/reparte-hojas-ficha.js ficha-escenarios-porvenir');
   console.log('    node _dev/verifica-ficha-paginas.js\n');
 }

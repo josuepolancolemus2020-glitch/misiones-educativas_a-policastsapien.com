@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Las piezas propias de la Ruta de la Máquina que Aprende.
 
-   POR QUÉ ESTÁ AQUÍ Y NO DENTRO DE CADA MISIÓN: son cuatro misiones y estas
-   piezas las usan las cuatro. Copiadas en los cuatro CSS, el día que haya que
-   arreglar una se arregla en la que se está tocando y se queda rota en las
-   otras tres, que es exactamente lo que le pasó al andamio de los juegos 3D
-   antes de sacarlo a `css/parque-3d.css`. Este es el mismo permiso y la misma
-   razón. Va en STATIC_ASSETS de sw.js, como aquel.
+   POR QUÉ ESTÁ AQUÍ Y NO DENTRO DE CADA MISIÓN: son varias misiones y estas
+   piezas las usan todas. Copiadas en cada CSS, el día que haya que arreglar
+   una se arregla en la que se está tocando y se queda rota en las demás, que
+   es exactamente lo que le pasó al andamio de los juegos 3D antes de sacarlo
+   a `css/parque-3d.css`. Este es el mismo permiso y la misma razón. Va en
+   STATIC_ASSETS de sw.js, como aquel. (Cuántas son no se escribe: se cuenta.)
 
    NO TRAE UN SOLO COLOR PROPIO: todo sale de las variables que declara el CSS
    de cada misión (--pri, --sec, --jade, --red…), por eso el <link> va DESPUÉS
@@ -594,3 +594,85 @@ body.letra-grande .desc-input{font-size:1.2rem;}
 .cap-tit{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--sec);margin:0 0 0.45rem;font-size:1rem;}
 .cap-caja p{font-size:0.95rem;line-height:1.55;margin:0 0 0.4rem;}
 .cap-vuelve{background:var(--card);border-radius:10px;padding:0.55rem 0.7rem;margin-bottom:0 !important;}
+
+/* ── Etapa 7 · 🔧 Las cuatro piezas y las capacidades de hoy ─────────────── */
+.fut-piezas{display:grid;gap:0.6rem;margin:0.7rem 0;}
+.fut-pieza{background:var(--card);border-radius:12px;padding:0.7rem 0.8rem;border-left:5px solid var(--pri);}
+.fut-pieza-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;}
+.fut-pieza-n{background:var(--pri);color:#fff;width:1.5rem;height:1.5rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
+.fut-si,.fut-no{font-size:0.95rem;line-height:1.5;margin-bottom:0.2rem;}
+.fut-porque{font-size:0.92rem;line-height:1.5;opacity:0.85;border-top:1px dashed var(--bd);padding-top:0.35rem;margin-top:0.35rem;}
+.fut-caps{display:grid;gap:0.55rem;margin:0.7rem 0;}
+.fut-cap{background:var(--card);border-radius:12px;padding:0.65rem 0.8rem;border-left:5px solid var(--sec);}
+.fut-cap-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--sec);margin-bottom:0.3rem;}
+.fut-cap-donde,.fut-cap-falla{font-size:0.93rem;line-height:1.5;margin-bottom:0.15rem;}
+
+/* ── Etapa 7 · 🔮 Los nueve escenarios ──────────────────────────────────── */
+.fut-lista{display:grid;gap:0.8rem;margin:0.8rem 0;}
+.fut-esc{background:var(--card);border-radius:14px;padding:0.8rem 0.85rem;border:2px solid var(--bd);}
+.fut-esc-h{display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.45rem;}
+.fut-esc-e{font-size:1.7rem;line-height:1;flex-shrink:0;}
+.fut-esc-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);font-size:1.05rem;line-height:1.25;}
+.fut-esc-m{font-size:0.86rem;opacity:0.82;margin-top:0.1rem;}
+.fut-esc-caps{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.45rem;}
+.fut-chip{background:var(--sec);color:#fff;border-radius:999px;padding:0.18rem 0.6rem;font-size:0.78rem;font-weight:600;}
+.fut-esc-s{font-size:0.97rem;line-height:1.55;margin:0 0 0.4rem;}
+.fut-esc-c{font-size:0.93rem;line-height:1.5;margin:0 0 0.5rem;}
+.fut-ops{display:grid;gap:0.4rem;}
+.fut-op{border-radius:10px;overflow:hidden;}
+.fut-op-b{width:100%;text-align:left;background:var(--bg);border:1.5px solid var(--bd);border-radius:10px;padding:0.6rem 0.7rem;font:inherit;font-size:0.95rem;line-height:1.45;color:inherit;cursor:pointer;min-height:44px;}
+.fut-op.abierta .fut-op-b{border-color:var(--pri);border-bottom-left-radius:0;border-bottom-right-radius:0;font-weight:600;}
+.fut-op-p{background:var(--bg);border:1.5px solid var(--pri);border-top:0;border-radius:0 0 10px 10px;padding:0.55rem 0.7rem;font-size:0.94rem;line-height:1.55;}
+.fut-regla{margin-top:0.5rem;font-size:0.95rem;line-height:1.55;}
+.fut-regla:not(:empty){background:var(--bg);border-left:4px solid var(--jade);border-radius:0 10px 10px 0;padding:0.55rem 0.7rem;}
+
+/* ── Etapa 7 · 🔮 El taller: armá el tuyo ───────────────────────────────── */
+.tal-caps{display:flex;flex-wrap:wrap;gap:0.35rem;margin:0.5rem 0 0.7rem;}
+.tal-cap{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;padding:0.5rem 0.8rem;font:inherit;font-size:0.88rem;color:inherit;cursor:pointer;min-height:44px;}
+.tal-cap.sel{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700;}
+.tal-campo{margin-bottom:0.6rem;}
+.tal-campo label{display:block;font-weight:700;font-size:0.94rem;margin-bottom:0.25rem;}
+.tal-campo input{width:100%;background:var(--bg);border:1.5px solid var(--bd);border-radius:10px;padding:0.6rem 0.7rem;font:inherit;font-size:1rem;color:inherit;min-height:44px;}
+.tal-fila{display:grid;grid-template-columns:auto auto 1fr;gap:0.4rem;align-items:start;padding:0.45rem 0.55rem;border-radius:9px;margin-bottom:0.3rem;font-size:0.93rem;line-height:1.45;background:var(--bg);}
+.tal-fila.ok{border-left:4px solid var(--jade);}
+.tal-fila.no{border-left:4px solid var(--red);}
+.tal-marca{font-weight:800;}
+.tal-fila.ok .tal-marca{color:var(--jade);}
+.tal-fila.no .tal-marca{color:var(--red);}
+.tal-p{font-weight:700;}
+.tal-si,.tal-no{border-radius:12px;padding:0.65rem 0.8rem;margin-bottom:0.6rem;font-size:0.97rem;line-height:1.55;}
+.tal-si{background:var(--bg);border-left:5px solid var(--jade);}
+.tal-no{background:var(--bg);border-left:5px solid var(--red);}
+.tal-nota{font-size:0.9rem;line-height:1.5;opacity:0.85;margin:0.5rem 0;}
+.tal-guardar{margin-top:0.3rem;}
+.tal-card{background:var(--card);border-radius:14px;padding:0.8rem;border:2px dashed var(--pri);margin-top:0.7rem;}
+/* La cabecera de la tarjeta guardada va en DOS renglones y no en uno, y no es
+   un capricho: con la letra grande el título, la fecha y la papelera no caben
+   juntos en 360 px, y lo que pasaba era que el título se partía en una columna
+   de tres palabras con la papelera encima. Se vio abriéndola, que es como se
+   ven estas cosas. */
+.tal-card-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);display:flex;align-items:center;gap:0.4rem;margin-bottom:0.15rem;}
+.tal-card-n{flex:1;min-width:0;}
+.tal-card-f{font-size:0.86rem;opacity:0.8;margin-bottom:0.5rem;}
+.tal-x{flex:0 0 auto;background:none;border:0;font-size:1.1rem;cursor:pointer;min-width:44px;min-height:44px;}
+.tal-card p{font-size:0.95rem;line-height:1.55;margin:0 0 0.35rem;}
+.tal-card-p{border-top:1px dashed var(--bd);padding-top:0.45rem;opacity:0.9;}
+
+/* ── Etapa 7 · ⚖️ El mismo invento, en otras manos ──────────────────────── */
+.man-chips{display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.5rem;}
+.man-chip{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;padding:0.5rem 0.8rem;font:inherit;font-size:0.86rem;color:inherit;cursor:pointer;min-height:44px;}
+.man-chip.sel{background:var(--sec);border-color:var(--sec);color:#fff;font-weight:700;}
+.man-usa{font-size:0.98rem;line-height:1.55;font-weight:600;margin:0.6rem 0 0.5rem;}
+.man-dos{display:grid;gap:0.6rem;}
+.man-col{background:var(--card);border-radius:12px;padding:0.7rem 0.8rem;}
+.man-col.mala{border-left:5px solid var(--red);}
+.man-col.buena{border-left:5px solid var(--jade);}
+.man-col-t{font-family:'Fredoka',sans-serif;font-weight:700;margin-bottom:0.35rem;}
+.man-col.mala .man-col-t{color:var(--red);}
+.man-col.buena .man-col-t{color:var(--jade);}
+.man-col p{font-size:0.94rem;line-height:1.55;margin:0 0 0.3rem;}
+.man-cuesta{opacity:0.88;font-style:italic;}
+.man-aviso{background:var(--bg);border-radius:9px;padding:0.5rem 0.6rem;margin-top:0.3rem !important;}
+.man-cuenta{font-size:0.9rem;margin:0.6rem 0 0;opacity:0.9;}
+.man-leccion:not(:empty){background:var(--card);border-left:5px solid var(--pri);border-radius:0 12px 12px 0;padding:0.7rem 0.8rem;margin-top:0.7rem;font-size:0.96rem;line-height:1.6;}
+@media(min-width:720px){.man-dos{grid-template-columns:1fr 1fr;}}

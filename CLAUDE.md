@@ -3069,6 +3069,90 @@ con su propio mínimo. Es la lección de «Cuadrado **Perfecto**» por tercera v
 esta ruta, y por eso se escribe: una sonda que se pone roja sin avería enseña a
 no mirarla.
 
+### La etapa 7, los escenarios: se imagina con método, y no se predice nada
+
+Es la otra mitad de la etapa anterior (`misiones/3ciclo-escenarios-porvenir/`,
+id 78, III Ciclo): la 6 enseña a leer lo que se dice HOY y esta a pensar lo que
+todavía no pasó. Los datos viven en `js/data/ia-futuros.js` —seis capacidades
+que ya existen, nueve escenarios y las cuatro piezas—, la misión los pinta, la
+ficha sale del armador y `verifica-ia` compara las dos.
+
+**Lo que la separa de una profecía, y es toda la misión:** una profecía dice lo
+que va a pasar, no se puede incumplir y no le pide nada a quien la oye; un
+escenario dice qué harías vos si pasara, y se desarma en cuanto le falla una de
+sus cuatro piezas.
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. ⚠️ **NI UNA FECHA de lo que pasaría.** Los nueve escenarios van sin año y sin
+   plazo, y la sonda lo cuenta en la situación, en las consecuencias y en la
+   regla. Ponerle fecha a lo inventado es exactamente la profecía que la misión
+   enseña a reconocer. Lo único fechado es cuándo se escribió el archivo.
+2. ⚠️ **Ningún escenario se apoya en algo que no exista.** Cada uno declara en
+   `apoya` con qué capacidades está hecho, y esas capacidades son las que el
+   alumno **produjo con sus manos** en las etapas anteriores —con su número de
+   etapa escrito al lado—. Lo apoyado en algo que todavía no se puede hacer no
+   es un escenario: es ciencia ficción, y enseña a esperar en vez de a decidir.
+3. **Persona con nombre, precio contable y tres decisiones con su consecuencia**,
+   como la normativa del relato. Ninguna de las tres es la correcta: hay
+   consecuencias, y la regla sale solo cuando el alumno vio las tres.
+4. ⚠️ **Y la revisión NO se vende como gratis.** La segunda actividad calcula el
+   final de las veinticuatro combinaciones y en todas dice dos cosas: que con
+   revisión el fallo se ve antes de que la decisión valga, y que **revisar
+   cuesta tiempo**. En las manos grandes añade que revisarlo todo no se puede, y
+   que lo que hay que escribir antes de comprar el programa es qué decisiones no
+   valen sin que una persona las mire. La sonda exige las tres cosas en las 24;
+   prometer una revisión total sería la promesa falsa que esta ruta ya tuvo que
+   rehacer una vez.
+
+**Y la lección que más vale no es ninguno de los nueve escenarios: es que la
+máquina es la misma en las cuatro manos.** Lo que cambia el final es a cuánta
+gente alcanza la decisión y si alguien puede mirarla antes de que valga. Eso es
+lo único de todo esto que un patronato o una alcaldía **sí** pueden decidir, y
+casi siempre lo deciden sin saber que lo están decidiendo.
+
+⚠️ **El escenario del examen que se califica solo NO se repite aquí:** ya está
+en la etapa 4, y esta misión manda a leerlo allá. Repetir un contenido entre dos
+etapas seguidas no se lee como un error; se lee como que la ruta no sabe lo que
+ya enseñó.
+
+```
+node _dev/verifica-ia.js              → la pantalla y el papel, escenario por escenario
+node _dev/verifica-descubre-ia.js     → el taller y las 24 combinaciones, recalculadas
+node _dev/verifica-mision-nueva.js misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html
+```
+
+### ⚠️ Y lo que salió al calcar una misión de esta ruta: cuatro veces lo mismo
+
+La 78 se calcó de la 77, que ya era post-arreglo del CDN y traía la sección
+Descubre puesta. Salieron cuatro cosas y **ninguna daba un error**:
+
+1. ⚠️ **Diez bancos escritos con la clave que uno recuerda, no con la que el
+   motor LEE.** `cmpData` con `o` donde el motor hace `d.opts.forEach`, `idData`
+   con una cadena donde espera un arreglo de palabras y un índice, `routeSets`
+   con `items` en vez de `steps`, y los seis bancos de pensamiento crítico con
+   `t` en vez de `txt`. El archivo compila, la misión se pinta y la sección se
+   queda muda o revienta al tocarla. **Antes de escribir un banco se mira la
+   función que lo pinta**, que está copiada en las 83 y no se deduce del nombre.
+2. ⚠️ **El arranque no llama a lo que se pega después.** El bloque Descubre va
+   detrás del `_formaSelInit`, así que el `DOMContentLoaded` de la plantilla no
+   lo toca: sin añadirle `iaDescInit()` las dos actividades se quedan pintadas a
+   medias, sin un error en la consola. Lo cazó `verifica-descubre-ia`, que ya lo
+   exigía desde la etapa anterior.
+3. ⚠️ **Al reescribir una sección entera se van las flechas de «siguiente»**, que
+   son el único camino hacia adelante del alumno que no usa las pestañas. Lo
+   cazó la misma sonda, que cuenta su orden.
+4. ⚠️ **Y salió una avería que llevaba PUBLICADA en las etapas 5 y 6.** El frente
+   de las tarjetas de estudio se pintaba con `textContent` mientras el dato trae
+   `<br>` y `<small>`: el alumno leía **las etiquetas escritas**. Es la misma
+   avería que este archivo ya tenía anotada como arreglada —lo estaba en las
+   cuatro primeras etapas— y que volvió al calcar de una plantilla anterior al
+   arreglo. Arreglada en las tres.
+
+Es la lección de siempre y van ya unas cuantas: **lo que se multiplica al copiar
+una misión no son solo los aciertos**. Y la que la caza no es leer el archivo:
+es abrir la misión y tocarla.
+
 ### 🔭 Descubre: lo que la pantalla afirma, la sonda lo recalcula
 
 Las cuatro misiones de la ruta estrenaron una sección de descubrimiento con dos

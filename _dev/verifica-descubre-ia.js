@@ -49,6 +49,7 @@ const path = require('path');
 const RAIZ = path.resolve(__dirname, '..');
 const D = require(path.join(RAIZ, 'js/data/ia-descubre.js'));
 const T = require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
+const F = require(path.join(RAIZ, 'js/data/ia-futuros.js'));
 const { IA_HITOS } = require(path.join(RAIZ, 'js/data/ia-historia.js'));
 
 let fallos = 0;
@@ -296,7 +297,73 @@ console.log('\n📰 El dossier de la actualidad');
   else mal('la misión no declara que no pudo abrir esas páginas, y sin eso está afirmando hechos que nadie verificó');
 }
 
-/* ── Lo que se multiplica al copiar: las cuatro misiones ─────────────────── */
+console.log('\n🔮 El taller de escenarios');
+{
+  /* Lo que la pantalla AFIRMA: que juzga las cuatro piezas por la forma, no
+     por el tema. Se le tiran los dos extremos, que es como se comprueba que
+     una prueba de verdad discrimina: una profecía de manual y un escenario
+     completo. */
+  const profecia = F.iaFutJuzga({ cap: 'teletransporte', quien: 'la gente', precio: 'es grave', decide: 'va a cambiar todo' });
+  if (F.iaFutCuenta(profecia) === 0) bien('una profecía de manual no pasa ninguna de las cuatro piezas');
+  else mal('la prueba le da ' + F.iaFutCuenta(profecia) + ' pieza(s) a una frase que no tiene ninguna');
+  const bueno = F.iaFutJuzga({ cap: 'voz', quien: 'Kenia', precio: 'L 1 500 de la matrícula', decide: '¿le contesta o la llama al número de siempre?' });
+  if (F.iaFutEsEscenario(bueno)) bien('un escenario con sus cuatro piezas las pasa todas');
+  else mal('un escenario completo no pasa la prueba: le falta ' + F.iaFutLeFalta(bueno).map(x => x.k).join(', '));
+  /* Y cada pieza se cae SOLA cuando falta: si se cayeran juntas, la pantalla
+     no le estaría diciendo al alumno cuál arreglar. */
+  const base = { cap: 'voz', quien: 'Kenia', precio: 'tres días de trabajo', decide: '¿qué hace?' };
+  const rompe = { hoy: { cap: 'nada' }, quien: { quien: 'la gente' }, precio: { precio: 'es importante' }, decide: { decide: 'va a pasar' } };
+  let solas = 0;
+  Object.keys(rompe).forEach(k => {
+    const v = F.iaFutJuzga(Object.assign({}, base, rompe[k]));
+    const faltan = F.iaFutLeFalta(v).map(x => x.k);
+    if (faltan.length === 1 && faltan[0] === k) solas++;
+    else mal('al romper «' + k + '» la prueba señala ' + (faltan.join(', ') || 'nada') + ': cada pieza tiene que caerse sola');
+  });
+  if (solas === 4) bien('las cuatro piezas se caen una a una, así que la pantalla dice cuál arreglar');
+  /* ⚠️ Y la lista de lo contable no puede estar vacía de números: un precio
+     con cifra tiene que pasar aunque no use ninguna de las palabras. */
+  if (F.iaFutJuzga(Object.assign({}, base, { precio: '43 de ellos' })).precio) bien('un precio con número pasa aunque no use ninguna palabra de la lista');
+  else mal('un precio con número no pasa: la lista de palabras se volvió obligatoria');
+}
+
+console.log('\n⚖️ El mismo invento, en otras manos');
+{
+  /* Lo que la actividad AFIRMA con esas palabras: la máquina es la misma y lo
+     que cambia el final es a cuánta gente alcanza y si alguien revisa. Se
+     recalculan las combinaciones enteras, no una. */
+  let mal1 = 0, mal2 = 0, mal3 = 0;
+  F.IA_CAPACIDADES.forEach(c => F.IA_FUT_MANOS.forEach(m => {
+    const sin = F.iaFutFinal(c.k, m.k, false), con = F.iaFutFinal(c.k, m.k, true);
+    if (!sin || !con) { mal1++; return; }
+    if (sin.alcance !== m.alcanceN || con.alcance !== m.alcanceN) mal1++;
+    if (!/no vale todav[ií]a/i.test(con.pasa)) mal2++;
+    if (!/no sale gratis/i.test(con.cuesta)) mal3++;
+  }));
+  const total = F.IA_CAPACIDADES.length * F.IA_FUT_MANOS.length;
+  if (!mal1) bien('en las ' + total + ' combinaciones el alcance lo pone la mano, no la capacidad');
+  else mal(mal1 + ' combinación(es) no sacan el alcance de quien tiene la máquina');
+  if (!mal2) bien('con revisión, la decisión no vale todavía: el fallo se ve antes de ejecutarse');
+  else mal(mal2 + ' combinación(es) no dicen que la decisión se detiene');
+  if (!mal3) bien('y NINGUNA promete que revisar salga gratis, que es lo honesto');
+  else mal(mal3 + ' combinación(es) dejan creer que revisar es gratis');
+  /* Las manos de alcance grande tienen que avisar de que no se puede revisar
+     todo. Es lo que separa esta actividad de una moraleja. */
+  const grandes = F.IA_FUT_MANOS.filter(m => !m.todo);
+  if (grandes.length >= 2 && grandes.every(m => F.iaFutFinal('voz', m.k, true).aviso)) bien('las manos grandes avisan de que revisarlo todo no se puede');
+  else mal('alguna mano de alcance grande no avisa de que revisarlo todo no se puede');
+  /* Y que las manos vayan de menos a más alcance, que es lo que el alumno ve
+     moverse al cambiar de chip. */
+  const orden = F.IA_FUT_MANOS.map(m => m.alcanceN);
+  if (orden.every((v, i) => i === 0 || v > orden[i - 1])) bien('las manos van de la casa a la empresa, de menos alcance a más');
+  else mal('las manos no están ordenadas por alcance: el chip de al lado tiene que ser el siguiente escalón');
+  /* La declaración que sostiene la misión entera. */
+  const html = leer('misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html');
+  if (/inventad/.test(html) && /no se dice.{0,30}fecha|ponerle fecha a lo inventado/.test(html)) bien('la misión declara en pantalla que los escenarios están inventados y por qué no llevan fecha');
+  else mal('la misión no declara que los escenarios están inventados, o no explica por qué no llevan fecha');
+}
+
+/* ── Lo que se multiplica al copiar: las misiones de la ruta ────────────── */
 const MISIONES = [
   { dir: 'misiones/1ciclo-que-es-la-ia', html: 'que-es-la-ia.html', js: 'js/que-es-la-ia.js', logro: 'descubridor' },
   { dir: 'misiones/2ciclo-como-aprende-una-maquina', html: 'como-aprende-una-maquina.html', js: 'js/como-aprende-una-maquina.js', logro: 'maquina_humana' },
@@ -307,6 +374,7 @@ const MISIONES = [
      ia-actualidad.js, que es donde vive su dossier. Por eso cada misión dice
      cuál es SU archivo de datos en vez de darlo por sabido. */
   { dir: 'misiones/3ciclo-albores-singularidad', html: 'albores-singularidad.html', js: 'js/albores-singularidad.js', logro: 'cronometro', datos: 'js/data/ia-actualidad.js' },
+  { dir: 'misiones/3ciclo-escenarios-porvenir', html: 'escenarios-porvenir.html', js: 'js/escenarios-porvenir.js', logro: 'cronometro', datos: 'js/data/ia-futuros.js' },
 ];
 console.log(`\n🔌 Las ${MISIONES.length} misiones de la ruta`);
 MISIONES.forEach(m => {

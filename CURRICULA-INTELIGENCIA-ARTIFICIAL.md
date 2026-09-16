@@ -409,6 +409,52 @@ y afirmarlo sería justo lo que la misión enseña a no hacer. Lo que le da es l
 vara —las cuatro preguntas y los dos inviernos— para medir a quien lo afirme,
 hoy y dentro de diez años.
 
+### Etapa 7 · «Escenarios por venir» · III Ciclo
+
+**Expectativa propia:** distinguen un **escenario** de una **profecía**,
+comprueban que lo que se imagina está hecho con **algo que ya se puede hacer**,
+y explican que el final no lo decide la máquina sino **en manos de quién está**
+y **si alguien puede revisar la decisión antes de que valga**.
+
+Es la otra mitad del hilo E: la etapa 6 enseña a leer lo que se dice HOY, y
+esta a pensar lo que todavía no pasó. La currícula prohíbe afirmar lo que la
+Inteligencia Artificial «va a hacer», y esta etapa no lo afirma: **imagina con
+método**, que es una cosa distinta y se puede enseñar.
+
+1. ⚠️ **Aquí no se predice nada.** Los nueve escenarios están **inventados**, se
+   dice que lo están en la pantalla y en el papel, y **ninguno trae la fecha en
+   que pasaría**: ponerle fecha a lo inventado ya es hacer la profecía que la
+   misión enseña a reconocer. Lo único fechado es cuándo se escribió.
+2. ⚠️ **Ningún escenario se apoya en algo que no exista.** Cada uno declara con
+   qué capacidades está hecho, y esas capacidades son las que **el alumno
+   produjo con sus manos** en las etapas anteriores: el parecido de la etapa 1,
+   la predicción con datos medidos de la 2, el texto que suena seguro de la 4,
+   la voz fabricada de la 5. Lo apoyado en algo que todavía no se puede hacer
+   no es un escenario: es ciencia ficción, y enseña a esperar en vez de a
+   decidir. La sonda lo comprueba.
+3. **Persona con nombre, precio que se cuente, y tres decisiones con su
+   consecuencia.** Es la normativa del relato aplicada al futuro, y ninguna de
+   las tres decisiones es la correcta: hay consecuencias, y el alumno escribe
+   su regla.
+
+**Las dos actividades de descubrimiento:**
+
+- 🔮 **El taller de escenarios.** El alumno arma el suyo con las cuatro piezas
+  —con qué está hecho, a quién le pasa, qué le cuesta, qué hay que decidir— y
+  la pantalla lo juzga **pieza por pieza**, por la forma y nunca por el tema.
+  Y le dice lo que no puede juzgar: si vale la pena lo decide él.
+- ⚖️ **El mismo invento, en otras manos.** La capacidad no cambia; cambia quién
+  la tiene —una familia, la escuela, la alcaldía, una empresa que lo vende— y
+  si alguien revisa antes de que la decisión valga. Los finales se **calculan**,
+  no están escritos, y la sonda recalcula las veinticuatro combinaciones.
+
+⚠️ **Y lo que esta etapa NO hace:** no promete que revisar arregle nada gratis.
+Revisar cuesta tiempo, y cuando la decisión alcanza a un pueblo entero no se
+puede revisar todo. Lo que la pantalla dice —y lo que la sonda exige que diga—
+es lo honesto: hay que decidir **de antemano** qué decisiones no valen sin que
+una persona las mire, y escribirlo antes de comprar el programa. Prometer una
+revisión total sería la promesa falsa que esta ruta ya tuvo que rehacer una vez.
+
 ---
 
 ## 5 bis. Lo que se descubre, no se lee: las reglas de una actividad de descubrimiento
@@ -516,5 +562,5 @@ eligió los ejemplos**.
 ---
 
 *Escrita en septiembre de 2026 y ampliada el 16 de septiembre. Las cifras de
-esta currícula son las de hoy: seis misiones en la ruta, doce actividades de
-descubrimiento, veintiuna misiones planeadas, y siguen entrando.*
+esta currícula son las de hoy: siete misiones en la ruta, catorce actividades
+de descubrimiento, veinte misiones planeadas, y siguen entrando.*

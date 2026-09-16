@@ -127,6 +127,7 @@ const MISSIONS = [
   { id: 75, title: 'IA Generativa: úsala bien y no le creas todo',       subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 4, xp: 40, icon: '🔎', pais: 'HN', url: 'misiones/3ciclo-ia-generativa/ia-generativa.html' },
   { id: 76, title: 'Los Peligros de la Inteligencia Artificial',         subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 5, xp: 40, icon: '🛡️', pais: 'HN', url: 'misiones/3ciclo-peligros-ia/peligros-ia.html' },
   { id: 77, title: 'En los Albores de la Singularidad',                  subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 6, xp: 40, icon: '🧭', pais: 'HN', url: 'misiones/3ciclo-albores-singularidad/albores-singularidad.html' },
+  { id: 78, title: 'Escenarios por venir',                                subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 7, xp: 40, icon: '🔮', pais: 'HN', url: 'misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 

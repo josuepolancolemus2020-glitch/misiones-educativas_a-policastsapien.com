@@ -292,6 +292,41 @@ quien escriba la siguiente:
    comprobarse.** Una lista donde todo es humo fabrica un alumno que desconfía
    de todo, y eso cuesta lo mismo que creerlo todo.
 
+### 3.4 ter · Lo que se aprendió calcando una misión de esta ruta
+
+La etapa 7 se calcó de la 6, que ya era post-arreglo del CDN y traía la sección
+Descubre puesta. Aun así salieron cuatro cosas, y las cuatro son la misma
+lección con caras distintas: **lo que se multiplica al copiar no son solo los
+aciertos**.
+
+1. ⚠️ **Los bancos de datos tienen la forma que el MOTOR lee, no la que uno
+   recuerda.** Se escribieron diez con la clave equivocada —`cmpData` con `o` en
+   vez de `opts`, `idData` con una cadena donde el motor espera un arreglo de
+   palabras, `routeSets` con `items` en vez de `steps`, los seis bancos de
+   pensamiento crítico con `t` en vez de `txt`—. **Ninguna daba un error de
+   sintaxis**: la misión compila, se pinta y la sección se queda muda o revienta
+   al tocarla. Antes de escribir un banco se mira la función que lo pinta.
+2. ⚠️ **El arranque no llama solo a lo que se añade al final.** El bloque
+   Descubre va DESPUÉS del `_formaSelInit`, así que el `DOMContentLoaded` que
+   trae la plantilla no lo toca: sin añadirle `iaDescInit()` la sección entera
+   se queda pintada a medias y sin un error en la consola. `verifica-descubre-ia`
+   ya lo exige, y por eso lo cazó.
+3. ⚠️ **Al reescribir una sección se llevan por delante las flechas.** Las tres
+   secciones nuevas se pegaron enteras y con ellas se fueron los botones de
+   «siguiente», que son el único camino hacia adelante del alumno que no usa las
+   pestañas. También lo cazó la sonda, que cuenta el orden de las flechas.
+4. ⚠️ **Y salió una avería que llevaba PUBLICADA en dos misiones.** El frente de
+   las tarjetas de estudio se pintaba con `textContent` mientras el dato trae
+   `<br>` y `<small>`: el alumno leía las etiquetas escritas. Es exactamente la
+   avería que este compendio ya tenía anotada como arreglada —lo estaba en las
+   cuatro primeras etapas— y que volvió al calcar de una plantilla anterior al
+   arreglo. Arreglada en las tres.
+
+Y una decisión de contenido que vale para las siguientes: **el escenario del
+examen que se califica solo NO se repitió**. Ya estaba en la etapa 4, y la
+misión manda a leerlo allá. Repetir un contenido entre dos etapas seguidas no
+se nota como un error: se nota como que la ruta no sabe lo que ya enseñó.
+
 ### 3.4 · Lo que se aprendió escribiendo la primera del compendio
 
 La etapa 5 salió de este documento el mismo día, y dejó tres cosas escritas
@@ -323,8 +358,8 @@ de la Ruta de la Máquina que Aprende:
 |---|---|---|---|---|
 | ~~5~~ | ✅ 🛡️ **Los Peligros de la Inteligencia Artificial** · *publicada, etapa 5* | III | los trece peligros del catálogo (3.1) en cuatro familias, las tres señales y el botiquín | 🎙️ arma el mensaje de la estafa y ve que **casi nada se roba** · ⚖️ reparte los ejemplos y ve **a quién le cae el error** |
 | ~~6~~ | ✅ 🧭 **En los Albores de la Singularidad** · *publicada, etapa 6* | III | el protocolo de actualidad (2) hecho misión: el dossier fechado de septiembre de 2026, con ocho afirmaciones y ninguna afirmada | 🌡️ el termómetro de cuatro preguntas · 📅 la cápsula del tiempo, que le da el día para volver |
-| 7 | 🎬 **Lo que el cine preguntó antes** | II · III | seis indagaciones del compendio de cine (3.2), una por peligro | contrastar lo que la película dice de la máquina con lo que la ruta enseña |
-| 8 | 🔮 **Escenarios por venir** | III | los diez escenarios (3.3) | el alumno arma SU escenario con las cuatro piezas y lo somete a la prueba |
+| ~~7~~ | ✅ 🔮 **Escenarios por venir** · *publicada, etapa 7* | III | nueve de los diez escenarios (3.3): el del examen que se califica solo ya estaba en la etapa 4 y no se repite | 🔮 el taller, donde arma el suyo y lo somete a la prueba de las cuatro piezas · ⚖️ el mismo invento en otras manos, con los finales calculados |
+| 8 | 🎬 **Lo que el cine preguntó antes** | II · III | seis indagaciones del compendio de cine (3.2), una por peligro | contrastar lo que la película dice de la máquina con lo que la ruta enseña |
 | 9 | 🤝 **Mi amigo es una máquina** | II · III | la compañía artificial, el juguete que habla, el chat que siempre contesta | una máquina que solo predice «lo que quieres oír», y se ve cómo lo hace |
 | 10 | ⚖️ **¿Quién decide? La máquina que juzga personas** | III | sesgo aplicado: la nota, el crédito, la puerta que se abre o no. ⚠️ La etapa 5 ya enseña **el promedio que esconde**: esta tiene que ir más allá —la apelación, quién revisa, qué se le puede exigir a quien lo compró— o no vale la pena | el alumno pide la revisión y ve qué se puede y qué no |
 | 11 | 🔒 **Tu cara, tu voz, tus datos** | II · III | privacidad y vigilancia; qué queda y dónde | «cuánto se sabe de ti con tres datos»: el alumno lo reconstruye |
@@ -354,8 +389,9 @@ Y dos cosas que valen para las veintitrés:
 
 ---
 
-*Las cifras de este documento son las de hoy: seis misiones publicadas, doce
-actividades de descubrimiento, diecisiete peligros catalogados —trece de ellos
-ya escritos como datos en `js/data/ia-peligros.js`—, ocho afirmaciones fechadas
-en el primer dossier de actualidad, treinta y tres indagaciones de cine, diez
-escenarios y veintiuna misiones por venir. Siguen entrando.*
+*Las cifras de este documento son las de hoy: siete misiones publicadas,
+catorce actividades de descubrimiento, diecisiete peligros catalogados —trece
+de ellos ya escritos como datos en `js/data/ia-peligros.js`—, ocho afirmaciones
+fechadas en el primer dossier de actualidad, treinta y tres indagaciones de
+cine, nueve escenarios ya escritos en `js/data/ia-futuros.js` y veinte misiones
+por venir. Siguen entrando.*

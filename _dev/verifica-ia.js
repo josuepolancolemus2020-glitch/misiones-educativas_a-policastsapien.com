@@ -48,6 +48,8 @@ const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS } =
   require(path.join(RAIZ, 'js/data/ia-peligros.js'));
 const { IA_HOY_FECHA, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_FRASES, IA_INFLEXION } =
   require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
+const { IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS, iaFutFinal } =
+  require(path.join(RAIZ, 'js/data/ia-futuros.js'));
 
 let fallos = 0;
 const mal = m => { console.log('  ❌ ' + m); fallos++; };
@@ -85,6 +87,10 @@ const MISIONES = [
      dossier fechado y el termómetro— se comprueba en la sección 6-ter. */
   { id: 77, ciclo: 0, dir: 'misiones/3ciclo-albores-singularidad', html: 'albores-singularidad.html', js: 'js/albores-singularidad.js',
     ficha: 'fichas/ficha-albores-singularidad.html', qr: 'img/qr-mision-albores-singularidad.png' },
+  /* La 78, igual: lo suyo —los escenarios y sus cuatro piezas— se comprueba en
+     la sección 6-quater, contra js/data/ia-futuros.js. */
+  { id: 78, ciclo: 0, dir: 'misiones/3ciclo-escenarios-porvenir', html: 'escenarios-porvenir.html', js: 'js/escenarios-porvenir.js',
+    ficha: 'fichas/ficha-escenarios-porvenir.html', qr: 'img/qr-mision-escenarios-porvenir.png' },
 ];
 
 console.log('\n✨ Ruta de la Máquina que Aprende · la pantalla y el papel\n');
@@ -255,6 +261,69 @@ IA_HOY.forEach(h => {
 });
 if (fallos === f0) bien(`${IA_HOY.length} afirmaciones fechadas, ${IA_TERMOMETRO.length} preguntas y ${IA_FRASES.length} frases, del archivo al papel y sin una cifra afirmada`);
 
+// ── 6-quater. Los escenarios: inventados, hechos de hoy y sin una fecha ───
+console.log('\n🔮 Los escenarios por venir');
+f0 = fallos;
+const M78 = MISIONES[6];
+const f78 = plano(leer(M78.ficha));
+const h78crudo = leer(path.join(M78.dir, M78.html));
+IA_FUT_PIEZAS.forEach(p => {
+  if (!f78.includes(plano(p.nombre))) mal('ficha-escenarios-porvenir: falta la pieza «' + p.nombre + '»');
+  else if (!f78.includes(plano(p.si))) mal(`ficha-escenarios-porvenir: la pieza «${p.nombre}» no trae su «la trae cuando» tal como lo escribe el archivo`);
+});
+IA_CAPACIDADES.forEach(c => {
+  if (!f78.includes(plano(c.que))) mal('ficha-escenarios-porvenir: falta la capacidad «' + c.que + '»');
+  else if (!f78.includes(plano(c.donde))) mal(`ficha-escenarios-porvenir: la capacidad «${c.que}» no dice dónde la produjo el alumno`);
+});
+IA_FUTUROS.forEach(e => {
+  if (!f78.includes(plano(e.titulo))) mal('ficha-escenarios-porvenir: falta el escenario «' + e.titulo + '»');
+  else if (!f78.includes(plano(e.cuesta))) mal(`ficha-escenarios-porvenir: el escenario «${e.titulo}» no dice lo que cuesta`);
+});
+/* ⚠️ Lo que de verdad sostiene esta misión, y va en el PAPEL porque el papel se
+   guarda un año en una gaveta: que los escenarios están INVENTADOS. Sin esa
+   línea, dentro de doce meses alguien los lee como si hubieran pasado. */
+if (!/estan? inventad/.test(f78)) mal('ficha-escenarios-porvenir: no dice que los escenarios están inventados');
+if (!f78.includes(plano(IA_FUT_FECHA))) mal('ficha-escenarios-porvenir: no lleva la fecha en que se escribió');
+if (!/ponerle fecha a lo inventado/.test(f78)) mal('ficha-escenarios-porvenir: no explica por qué no trae la fecha en que pasaría');
+/* Y que la misión los PINTE en vez de escribirlos. */
+IA_FUTUROS.forEach(e => {
+  if (plano(h78crudo).includes(plano(e.situacion))) mal(`la misión 78 lleva escrita a mano la situación de «${e.titulo}»: tiene que pintarla del archivo`);
+});
+if (!h78crudo.includes('js/data/ia-futuros.js')) mal('la misión 78 no carga js/data/ia-futuros.js');
+/* ⚠️ Y NI UNA FECHA de cuándo pasaría: ponerle fecha a lo inventado es la
+   profecía que esta misión enseña a reconocer. Se miran la situación, las
+   consecuencias y la regla; el año dentro de un nombre de etapa no cuenta. */
+IA_FUTUROS.forEach(e => {
+  const texto = [e.situacion, e.regla].concat(e.ops.map(o => o.pasa)).join(' ');
+  if (/\b(19|20)\d{2}\b/.test(texto)) mal(`el escenario «${e.titulo}» trae un año: un escenario no se fecha, se decide`);
+});
+/* ⚠️ Y ninguno se apoya en algo que no exista: esa es la diferencia entre un
+   escenario y la ciencia ficción, y es lo único de las cuatro piezas que la
+   sonda puede comprobar sola. */
+IA_FUTUROS.forEach(e => {
+  e.apoya.forEach(k => {
+    if (!IA_CAPACIDADES.some(c => c.k === k)) mal(`el escenario «${e.titulo}» se apoya en «${k}», que no es una capacidad de hoy`);
+  });
+  if (!e.apoya.length) mal(`el escenario «${e.titulo}» no dice con qué está hecho`);
+  const nombre = e.quien.replace(/^(don|doña|la profesora|el profesor|la enfermera)\s+/i, '').split(/[ ,]/)[0];
+  if (!e.situacion.includes(nombre)) mal(`el escenario «${e.titulo}»: la situación no nombra a ${nombre}`);
+  if (e.ops.length !== 3 || e.ops.some(o => !o.t || !o.pasa || o.pasa.length < 40)) mal(`el escenario «${e.titulo}» no trae tres decisiones con su consecuencia`);
+  if (!e.regla) mal(`el escenario «${e.titulo}» no deja una regla`);
+});
+/* ⚠️ Y lo que la actividad AFIRMA, recalculado: que la revisión acota lo que
+   cuesta un fallo en TODAS las combinaciones, y que NUNCA lo vuelve gratis.
+   Prometer que revisar sale gratis sería la promesa falsa que esta ruta ya
+   tuvo que rehacer una vez. */
+IA_CAPACIDADES.forEach(c => IA_FUT_MANOS.forEach(m => {
+  const sin = iaFutFinal(c.k, m.k, false), con = iaFutFinal(c.k, m.k, true);
+  if (!sin || !con) { mal(`no hay final para ${c.k} en manos de ${m.k}`); return; }
+  if (!/la decision se toma igual/.test(plano(sin.pasa))) mal(`sin revisión, ${c.k} en manos de ${m.k} no dice que la decisión se ejecuta igual`);
+  if (!/no vale todavia/.test(plano(con.pasa))) mal(`con revisión, ${c.k} en manos de ${m.k} no dice que la decisión todavía no vale`);
+  if (!/no sale gratis/.test(plano(con.cuesta))) mal(`con revisión, ${c.k} en manos de ${m.k} deja creer que revisar es gratis`);
+  if (!m.todo && !con.aviso) mal(`${m.quien} no puede revisarlo todo y la pantalla no lo avisa`);
+}));
+if (fallos === f0) bien(`${IA_FUTUROS.length} escenarios inventados, ${IA_FUT_PIEZAS.length} piezas y ${IA_CAPACIDADES.length} capacidades de hoy, del archivo al papel, sin una fecha de lo que pasaría y con los ${IA_CAPACIDADES.length * IA_FUT_MANOS.length} finales recalculados`);
+
 // ── 7. ⚠️ Las misiones no llevan los datos escritos a mano ─────────────────
 console.log('\n🖐️  Que la misión PINTE los datos y no los escriba');
 f0 = fallos;
@@ -291,12 +360,12 @@ f0 = fallos;
    literal es lo que hizo escribir el aviso dos veces en la ficha de la
    Constitución y pasarse de hoja. Basta con que la hoja del docente diga que
    esa actividad no lleva respuesta y que es a propósito. */
-[[MISIONES[2].ficha, 'Investigá'], [MISIONES[3].ficha, 'Investigá en tu comunidad'], [MISIONES[4].ficha, 'Tu plan'], [MISIONES[5].ficha, 'Tu cápsula del tiempo']].forEach(([ficha, act]) => {
+[[MISIONES[2].ficha, 'Investigá'], [MISIONES[3].ficha, 'Investigá en tu comunidad'], [MISIONES[4].ficha, 'Tu plan'], [MISIONES[5].ficha, 'Tu cápsula del tiempo'], [MISIONES[6].ficha, 'Armá el tuyo']].forEach(([ficha, act]) => {
   const f = plano(leer(ficha));
   const diceQueNoHay = /no lleva respuesta a proposito|sin respuesta.{0,40}a proposito|no trae respuesta a proposito/.test(f);
   if (!diceQueNoHay) mal(`${path.basename(ficha)}: la actividad «${act}» no trae pauta y la hoja del docente NO avisa de que es a propósito`);
 });
-if (fallos === f0) bien('las cuatro actividades sin pauta avisan de que es a propósito');
+if (fallos === f0) bien('las actividades sin pauta avisan de que es a propósito');
 
 // ── 9. Lo que la currícula promete que NO se escribe ───────────────────────
 console.log('\n🚧 Lo que a propósito no se escribe');

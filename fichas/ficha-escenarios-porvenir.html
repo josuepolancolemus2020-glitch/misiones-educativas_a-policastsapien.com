@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Escenarios por venir</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INTELIGENCIA ARTIFICIAL = MAGENTA (#86198f).
+       No se eligió a ojo: se midió la distancia de color contra las nueve
+       materias que ya existían y la familia magenta es el hueco más ancho que
+       quedaba. El maestro tiene que saber de qué materia es la hoja SIN leerla.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · El corte de las hojas lo reparte `node _dev/reparte-hojas-ficha.js`, que
+       mide en el navegador con el ancho del papel. A ojo se acierta hasta que
+       se corrige una errata y el párrafo crece dos renglones.
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Esta ficha la ARMA `node _dev/arma-fichas-ia.js` desde los mismos
+       archivos de datos que pinta la misión, para que las dos no se separen. */
+  :root {
+    --ia: #86198f; --ia-osc: #701a75; --ia-claro: #fdf4ff; --linea: #eccef2;
+    --tinta: #1a2733; --gris: #5b6773;
+    --may: #4338ca; --oro: #b45309; --verde: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7eefa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ia-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ia); background: var(--ia-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ia-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ia-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ia); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ia-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ia-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ia-osc); }
+  .aviso { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .aviso b { color: #b91c1c; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: var(--may); }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ia); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf7fe; }
+  td.k { font-weight: 700; color: var(--ia-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; background: #fefcff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ia-osc); margin-bottom: 6px; }
+
+  /* Dos columnas enfrentadas. Se usa donde la ficha compara DOS cosas que el
+     alumno confunde (ser vivo y máquina, instrucción y ejemplo, predecir y
+     saber). Puestas una al lado de la otra, la diferencia se ve sin párrafo. */
+  .dos { display: flex; gap: 8px; margin: 7px 0; break-inside: avoid; }
+  .dos > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .dos .dA { background: #eafaf1; border: 1px solid #b7e4cb; }
+  .dos .dB { background: #fdf4ff; border: 1px solid var(--linea); }
+  .dos b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .dos .dA b { color: var(--verde); }
+  .dos .dB b { color: var(--ia-osc); }
+  .dos ul { margin: 2px 0 0 18px; font-size: 9.5pt; }
+
+  /* La ficha de un concepto: el término, su definición y su ejemplo. Es el
+     recuadro que más se repite en estas cuatro, porque aquí el vocabulario ES
+     la materia: el alumno lo copia al cuaderno tal cual. */
+  .cficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--ia); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .cf-tit { font-size: 11.5pt; font-weight: 800; color: var(--ia-osc); }
+  .cf-def { font-size: 10.5pt; margin: 2px 0; text-align: justify; }
+  .cf-ej { font-size: 9.5pt; color: var(--gris); font-style: italic; }
+
+  /* La línea del tiempo de la etapa 3, en tarjetas. Cada una con su año en
+     grande: es el dato que el alumno busca al recorrer la hoja, y si baila de
+     sitio hay que leer el renglón entero para encontrarlo. */
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fefcff; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  /* Las cuadrículas de «La máquina ve puntitos» (etapa 1): casillas cuadradas
+     y el relleno con ■, que se imprime aunque el navegador quite los fondos. */
+  .rejs { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0; }
+  .rejs > div { flex: 1 1 120px; font-size: 9.5pt; }
+  .rejs b { display: block; margin-bottom: 3px; color: var(--ia-osc); }
+  table.rej { border-collapse: collapse; width: auto; margin: 0; }
+  table.rej td { width: 14px; height: 14px; padding: 0; border: 1px solid #9aa7b5; text-align: center; font-size: 10pt; line-height: 14px; background: #fff; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ia); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ia); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la marca
+     de lo que está mal, y pedirla para señalar lo correcto confunde a quien ya
+     sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--ia-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ia-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ia-osc); }
+
+  .pauta { background: #fdf7fe; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ia-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ia); box-shadow: 0 6px 18px rgba(134,25,143,.35); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .dos > div, .ilus, .felic, .pauta, .cficha, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Escenarios por venir</div>
+        <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
+        <div class="f-meta"><b>Tema:</b> Lo que podría pasar, pensado con método: nueve situaciones inventadas, las cuatro piezas que separan un escenario de una profecía, y de qué depende de verdad el final.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-escenarios-porvenir.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Distinguir un <strong>escenario</strong> de una <strong>profecía</strong> en una frase cualquiera.</li>
+      <li>Comprobar que un escenario está hecho con <strong>algo que ya se puede hacer</strong>.</li>
+      <li>Exigir una <strong>persona con nombre</strong> y un <strong>precio que se cuente</strong>.</li>
+      <li>Terminar un escenario en una <strong>decisión</strong>, no en un anuncio.</li>
+      <li>Explicar por qué el final depende de <strong>en manos de quién</strong> y de <strong>quién revisa</strong>.</li>
+      <li>Armar un escenario propio y someterlo a la prueba de las cuatro piezas.</li>
+    </ol>
+
+    <h2>🛒 1. La frase con la que le vendieron un programa a la escuela</h2>
+
+    <p>El patronato de una escuela va a comprar un programa que califica los exámenes de redacción.
+       El vendedor lo presentó con una frase que a todos les pareció suficiente:
+       <i>«en dos años ningún maestro va a calificar a mano»</i>. Aplaudieron y pasaron a votar.</p>
+
+    <p>Nadie hizo la única pregunta que servía para algo: <b>¿qué hacemos el día que le ponga mal la nota
+       a un alumno, y quién la revisa?</b> Son <b>L 12 000</b> de la caja de la escuela y la nota de
+       <b>43 alumnos</b>. Esa pregunta no se hizo porque el vendedor no vendió un escenario:
+       <b>vendió una profecía</b>.</p>
+
+    <div class="dos">
+      <div class="dB"><b>📣 Una profecía</b>
+        <ul><li>Dice lo que <b>va a pasar</b>.</li>
+            <li>No se puede incumplir nunca.</li>
+            <li>Le pasa a «todo el mundo».</li>
+            <li>Termina en un anuncio.</li>
+            <li>No te pide nada.</li></ul>
+      </div>
+      <div class="dA"><b>🔮 Un escenario</b>
+        <ul><li>Dice <b>qué harías vos</b> si pasara.</li>
+            <li>Se desarma si le falla una pieza.</li>
+            <li>Le pasa a alguien con nombre.</li>
+            <li>Termina en una decisión.</li>
+            <li>Te deja algo que hacer el día que llegue.</li></ul>
+      </div>
+    </div>
+
+    <div class="caja aviso"><b>⚠️ Todo lo que sigue está INVENTADO, y hay que decirlo en voz alta en clase.</b>
+      Ninguno de los nueve escenarios de esta ficha ha pasado. Tampoco traen la fecha en que pasarían:
+      <b>ponerle fecha a lo inventado ya es hacer una profecía</b>, que es justamente lo que esta ficha
+      enseña a reconocer. Escrita el <b>16 de septiembre de 2026</b>.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔧 2. Las cuatro piezas de un escenario</h2>
+
+    <p>Son las que se pueden comprobar. Si le falta una, no sirve para decidir, y esa es toda la prueba:</p>
+
+    <table>
+      <tr><th style="width:26%">La pieza</th><th>La trae cuando…</th><th>Le falta cuando…</th></tr>
+      <tr><td class="k">🔧 Está hecho con algo que YA se puede hacer</td><td>Se apoya en una capacidad que existe, y que vos produjiste en una etapa anterior.</td><td>Se apoya en algo que todavía no se puede hacer.</td></tr>
+      <tr><td class="k">🧑 Le pasa a alguien con nombre</td><td>Hay una persona concreta, con su nombre.</td><td>Le pasa a «la gente», «todos» o «la sociedad».</td></tr>
+      <tr><td class="k">💸 Lo que cuesta se puede contar</td><td>Se puede decir en días, en lempiras, en clases, en cosechas o en nombres.</td><td>Dice «es grave», «es peligroso» o «es importante».</td></tr>
+      <tr><td class="k">🔀 Termina en una decisión, no en un anuncio</td><td>Acaba en una pregunta: ¿qué hago yo si esto pasa?</td><td>Acaba contando lo que va a pasar.</td></tr>
+    </table>
+
+    <h2>🍎 3. Con qué está hecho: lo que YA se puede hacer</h2>
+
+    <p>Un escenario se apoya en cosas que existen. Y estas no se las contó nadie al alumno:
+       <b>las produjo él</b> en las etapas anteriores de esta ruta.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:30%">La capacidad</th><th style="width:34%">Dónde la produjiste</th><th>Cómo falla</th></tr>
+      <tr><td class="k">🍎 Ponerle nombre a algo por el parecido con los ejemplos que vio</td><td>Etapa 1. Lo hiciste en «Enséñale a la máquina»: le enseñaste frutas y le puso nombre a la siguiente.</td><td>se equivoca con lo raro, con lo que no estaba en los ejemplos</td></tr>
+      <tr><td class="k">👤 Reconocer una cara comparándola con las que tiene guardadas</td><td>Etapa 1. Es el mismo parecido de la etapa 1, con caras en vez de frutas.</td><td>confunde a dos personas parecidas</td></tr>
+      <tr><td class="k">📈 Predecir lo que va a pasar con los datos que alguien midió</td><td>Etapa 2. Lo mediste en «¿Cuántos ejemplos hacen falta?»: con un ejemplo acierta la mitad; con veinte, casi siempre.</td><td>no tiene con qué acertar donde nadie midió</td></tr>
+      <tr><td class="k">💬 Escribir un texto que suena seguro y a veces inventa el dato</td><td>Etapa 4. Lo viste nacer en el predictor: la continuación más probable era «cinco estrofas», y son siete.</td><td>inventa con la misma seguridad con que acierta</td></tr>
+      <tr><td class="k">🎙️ Fabricar una voz con unos segundos de audio</td><td>Etapa 5. Lo armaste en «¿Cuánto hace falta para una estafa?»: las piezas salieron de lo que la propia familia publicó.</td><td>no falla, funciona — y por eso una voz dejó de ser una prueba</td></tr>
+      <tr><td class="k">🎮 Mejorar a fuerza de intentos, sin que nadie le diga cómo</td><td>Etapa 2. Lo viste en el juego del Refuerzo: el suelo se fue levantando hasta quedar una rampa.</td><td>aprende a ganar el juego que le pusiste, no el que vos querías</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja idea"><b>Lo que todavía NO se puede hacer</b> —que una máquina sepa lo que sentís, que
+      entienda lo que lee, que se dé cuenta de que se está equivocando o que responda ante un juez por lo
+      que decidió— <b>no entra en un escenario</b>. Con eso se hace ciencia ficción, que está muy bien
+      para otra cosa.</div>
+
+    <h2>🔮 4. Nueve escenarios para pensar</h2>
+
+    <p>Todos inventados. Cada uno está armado con capacidades de la página anterior, le pasa a una
+       persona con nombre y cuesta algo que se puede contar.</p>
+
+    <table>
+      <tr><th style="width:24%">El escenario</th><th style="width:16%">Le pasa a</th><th>Lo que cuesta</th><th style="width:20%">¿Con qué está hecho?</th></tr>
+      <tr><td class="k">🏫 El maestro que no está</td><td>la profesora Delmy</td><td>las tres horas diarias que ella daba de clase, y lo que aprendan sus 43 alumnos ese año</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">🌽 La cosecha que la máquina predijo</td><td>don Chele</td><td>media milpa y la semilla de la siembra siguiente</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">📼 La voz del abuelo</td><td>Wendy</td><td>L 400 al mes, y algo que no se cuenta en lempiras</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">📹 El pueblo con cámaras</td><td>Elvin</td><td>tres días detenido y el trabajo que perdió por no llegar</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">🧾 El trabajo de Ana</td><td>Ana</td><td>tres años de estudio y la decisión de a qué dedicarse</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">📓 La tarea sin tarea</td><td>Óscar</td><td>lo que iba a aprender escribiendo, y no se nota hasta el examen</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">📴 El día sin señal</td><td>doña Tere</td><td>tres días de pulpería sin saber qué cobrar ni qué pedir</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">🩺 La máquina en el centro de salud</td><td>la enfermera Xiomara</td><td>un traslado de dos horas que no hacía falta, o uno que sí hacía falta y no se hizo</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+      <tr><td class="k">⏳ La promesa que se cumplió (o no)</td><td>Brayan</td><td>la matrícula que no hizo, y tres años de estudio</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>
+    </table>
+
+    <p><b>Actividad 1 · ¿Con qué está hecho cada uno?</b> <span class="val">(18 pts · 2 cada uno)</span>
+       Escribí en la última columna la capacidad —o las dos— de la página anterior en que se apoya cada
+       escenario. Si no te sale ninguna, ese escenario no sería un escenario.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>⚖️ Actividad 2 · El mismo invento, en otras manos <span class="val">(20 pts)</span></h3>
+
+      <p>Acá no cambia la máquina: cambia <b>quién la tiene</b> y <b>si alguien revisa antes de que la
+         decisión valga</b>. Para cada fila, escribí a cuánta gente alcanza el fallo y quién revisaría.</p>
+
+      <table>
+        <tr><th style="width:22%">La capacidad</th><th style="width:20%">En manos de</th><th>Sin revisión, ¿a cuánta gente alcanza el fallo?</th><th style="width:26%">Con revisión, ¿quién la mira?</th></tr>
+        <tr><td class="k">🎙️ Fabricar una voz con unos segundos de audio</td><td>🏠 una familia</td><td><span class="linea-resp" style="min-width:90%"></span></td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">👤 Reconocer una cara comparándola con las que tiene guardadas</td><td>🏛️ la alcaldía</td><td><span class="linea-resp" style="min-width:90%"></span></td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">💬 Escribir un texto que suena seguro y a veces inventa el dato</td><td>🏫 la escuela</td><td><span class="linea-resp" style="min-width:90%"></span></td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">📈 Predecir lo que va a pasar con los datos que alguien midió</td><td>🏢 una empresa que lo vende</td><td><span class="linea-resp" style="min-width:90%"></span></td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+      </table>
+
+      <p>Y la pregunta que de verdad importa: <b>¿qué cambió más el final, la máquina o quién la tiene?</b>
+        <span class="linea-resp" style="min-width:100%"></span></p>
+
+      <div class="caja regla"><b>Ojo con una trampa:</b> revisar <b>no sale gratis</b> y no se puede revisar
+        todo. Cuando la decisión alcanza a un pueblo entero, lo honesto es decidir de antemano
+        <b>qué decisiones no valen sin que una persona las mire</b>, y escribirlo antes de comprar el
+        programa, no cuando ya falló.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>🔮 Actividad 3 · Armá el tuyo <span class="val">(sin respuesta, a propósito)</span></h3>
+
+      <p>Hasta aquí leíste escenarios de otros. Ahora al revés. Llená las cuatro piezas y después marcá
+         vos mismo si las cumple.</p>
+
+      <div class="ilus">
+        <div class="ilus-t">🔮 Mi escenario · escrito el <span class="linea-resp" style="min-width:130px"></span></div>
+        <p><b>1. ¿Con qué está hecho?</b> (una capacidad de la página 2)
+          <span class="linea-resp" style="min-width:75%"></span></p>
+        <p><b>2. ¿A quién le pasa?</b> (un nombre, no «la gente»)
+          <span class="linea-resp" style="min-width:75%"></span></p>
+        <p><b>3. ¿Qué le cuesta?</b> (algo que se pueda contar: días, lempiras, clases, cosechas)
+          <span class="linea-resp" style="min-width:100%"></span></p>
+        <p><b>4. La situación</b>
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></p>
+        <p><b>5. ¿Qué hay que decidir?</b> (escribilo como pregunta)
+          <span class="linea-resp" style="min-width:100%"></span></p>
+      </div>
+
+      <table>
+        <tr><th>La prueba de las cuatro piezas</th><th style="width:12%">Sí</th><th style="width:12%">No</th></tr>
+        <tr><td>🔧 Está hecho con algo que YA se puede hacer</td><td></td><td></td></tr>
+        <tr><td>🧑 Le pasa a alguien con nombre</td><td></td><td></td></tr>
+        <tr><td>💸 Lo que cuesta se puede contar</td><td></td><td></td></tr>
+        <tr><td>🔀 Termina en una decisión, no en un anuncio</td><td></td><td></td></tr>
+      </table>
+
+      <p><b>Ahora llevalo a clase</b> y pedile a alguien que conteste tu pregunta. Si puede contestarla,
+         es un escenario; si se queda mirando, todavía es un anuncio.</p>
+
+      <div class="caja idea"><b>Esta actividad no trae respuesta y no es un descuido:</b> lo que se evalúa
+        es que las cuatro piezas estén, no de qué trate. Y lo que la pauta no puede juzgar —si vale la
+        pena— lo decide quien lo escribió.</div>
+    </div>
+
+    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span><span>¿Qué diferencia a un escenario de una profecía?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Que el escenario termina en una decisión y la profecía en un anuncio</div>
+        <div class="op"><i></i><b>b)</b> Que el escenario es más largo</div>
+        <div class="op full"><i></i><b>c)</b> Que la profecía la dicen los expertos</div>
+        <div class="op"><i></i><b>d)</b> Que el escenario habla del pasado</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span><span>Un escenario tiene que estar hecho con…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Algo que ya se puede hacer hoy</div>
+        <div class="op"><i></i><b>b)</b> Algo que se inventará pronto</div>
+        <div class="op"><i></i><b>c)</b> Cifras exactas</div>
+        <div class="op"><i></i><b>d)</b> Lo que diga la televisión</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span><span>«Esto es gravísimo para la sociedad» falla porque…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> El precio no se puede contar</div>
+        <div class="op"><i></i><b>b)</b> Es una frase corta</div>
+        <div class="op"><i></i><b>c)</b> No trae emoji</div>
+        <div class="op"><i></i><b>d)</b> Habla del futuro</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span><span>¿Qué pieza le falta a «la Inteligencia Artificial lo va a cambiar todo»?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> La persona con nombre</div>
+        <div class="op"><i></i><b>b)</b> El año</div>
+        <div class="op"><i></i><b>c)</b> La firma</div>
+        <div class="op"><i></i><b>d)</b> El título</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span><span>El mismo programa en manos de una alcaldía y de una familia…</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Alcanza a mucha más gente en la alcaldía</div>
+        <div class="op"><i></i><b>b)</b> Cuesta lo mismo</div>
+        <div class="op"><i></i><b>c)</b> Se arregla solo</div>
+        <div class="op"><i></i><b>d)</b> No decide nada</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span><span>¿Qué hace la revisión?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Ver el fallo antes de que la decisión valga</div>
+        <div class="op"><i></i><b>b)</b> Evitar que la máquina falle</div>
+        <div class="op"><i></i><b>c)</b> Acelerar el programa</div>
+        <div class="op"><i></i><b>d)</b> Bajar el precio</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span><span>Cuando no se puede revisar todo, lo honesto es…</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Decidir de antemano qué decisiones no valen sin una persona</div>
+        <div class="op"><i></i><b>b)</b> Revisar al azar</div>
+        <div class="op"><i></i><b>c)</b> Confiar en el programa</div>
+        <div class="op"><i></i><b>d)</b> No comprar nada</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span><span>Una predicción falla en una ladera donde no hay estación porque…</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Donde nadie midió no hay con qué predecir</div>
+        <div class="op"><i></i><b>b)</b> El programa es viejo</div>
+        <div class="op"><i></i><b>c)</b> Llueve poco</div>
+        <div class="op"><i></i><b>d)</b> Nadie sabe usarlo</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span><span>Un programa que acierta casi siempre con lo común…</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Es el que peor se porta con lo raro</div>
+        <div class="op"><i></i><b>b)</b> Acierta también con lo raro</div>
+        <div class="op"><i></i><b>c)</b> No sirve para nada</div>
+        <div class="op"><i></i><b>d)</b> Nunca se equivoca</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span><span>¿Por qué los escenarios de esta ficha no traen la fecha en que pasarían?</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> Porque ponerle fecha a lo inventado ya es hacer una profecía</div>
+        <div class="op"><i></i><b>b)</b> Porque no se sabe el año</div>
+        <div class="op"><i></i><b>c)</b> Porque la pone el maestro</div>
+        <div class="op"><i></i><b>d)</b> Porque las fechas envejecen</div>
+      </div>
+    </div>
+
+    <div class="felic"><b>¡Bien hecho!</b> Lo que te llevás de aquí no es una opinión sobre el futuro: son
+      cuatro preguntas que sirven hoy y dentro de veinte años. Con qué está hecho, a quién le pasa, qué le
+      cuesta y qué hay que decidir.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔑 Pauta de corrección y nota para el docente</h2>
+
+    <div class="pauta">
+      <div><span class="pt">Evaluación (40 pts):</span> 1-a · 2-a · 3-a · 4-a · 5-a · 6-a · 7-a · 8-a · 9-a · 10-a</div>
+      <div><span class="pt">Actividad 1 · Con qué está hecho (18 pts):</span>
+        El maestro que no está: <b>escribir un texto que suena seguro y a veces inventa el dato + ponerle nombre a algo por el parecido con los ejemplos que vio</b> · La cosecha que la máquina predijo: <b>predecir lo que va a pasar con los datos que alguien midió</b> · La voz del abuelo: <b>fabricar una voz con unos segundos de audio + escribir un texto que suena seguro y a veces inventa el dato</b> · El pueblo con cámaras: <b>reconocer una cara comparándola con las que tiene guardadas</b> · El trabajo de Ana: <b>escribir un texto que suena seguro y a veces inventa el dato + predecir lo que va a pasar con los datos que alguien midió</b> · La tarea sin tarea: <b>escribir un texto que suena seguro y a veces inventa el dato</b> · El día sin señal: <b>escribir un texto que suena seguro y a veces inventa el dato + predecir lo que va a pasar con los datos que alguien midió</b> · La máquina en el centro de salud: <b>ponerle nombre a algo por el parecido con los ejemplos que vio + predecir lo que va a pasar con los datos que alguien midió</b> · La promesa que se cumplió (o no): <b>escribir un texto que suena seguro y a veces inventa el dato</b>.
+        Se acepta cualquiera de las dos cuando el escenario se apoya en dos. Lo que no se acepta es una
+        capacidad que todavía no exista: ahí el alumno confundió escenario con ciencia ficción.</div>
+      <div><span class="pt">Actividad 2 · En otras manos (20 pts):</span>
+        una familia: alcanza <b>una casa</b>; revisa <b>la propia familia, llamando de vuelta al número de siempre</b> · la alcaldía: alcanza <b>el pueblo entero</b>; revisa <b>una persona de la alcaldía, cuando alguien reclama</b> · la escuela: alcanza <b>un aula de 43</b>; revisa <b>el maestro, antes de que la nota valga</b> · una empresa que lo vende: alcanza <b>todas las escuelas y alcaldías que lo compren</b>; revisa <b>nadie por dentro: lo tiene que exigir quien lo compra, por escrito y antes de comprarlo</b>.
+        <b>Y la respuesta de la pregunta final es «quién la tiene»</b>, no la máquina: es lo que hay que
+        subrayar en clase, porque es lo único de todo esto que se puede cambiar antes de comprar nada.</div>
+      <div><span class="pt">Actividad 3 · Armá el tuyo:</span> <b>no lleva respuesta a propósito.</b> Se
+        valora que las cuatro piezas estén: una capacidad que ya exista, un nombre propio, un precio que se
+        cuente y una pregunta. Un escenario con «la gente» o con «es grave» no está terminado, aunque el
+        tema sea bueno.</div>
+    </div>
+
+    <div class="nota-doc">
+      <b>Para qué sirve esta ficha, y qué NO hay que enseñar de más.</b> Es la etapa 7 de la Ruta de la
+      Máquina que Aprende y la que enseña a pensar lo que todavía no pasó. Su regla es la que sostiene
+      todo lo demás: <b>aquí no se predice nada</b>. Los nueve escenarios están inventados, se dice que lo
+      están, y ninguno trae la fecha en que pasaría. Un maestro que sienta la tentación de decir cuándo va
+      a pasar algo conviene que recuerde qué le costó a la escuela del patronato creerle a una frase sin
+      fecha.
+      <br><br>
+      <b>Y la lección que más vale no es ninguno de los nueve: es la actividad 2.</b> La máquina es la
+      misma en las cuatro manos. Lo que cambia el final es a cuánta gente alcanza la decisión y si alguien
+      puede mirarla antes de que valga. Eso es lo que un patronato, una alcaldía o una Dirección Distrital
+      SÍ pueden decidir, y casi siempre deciden sin saber que lo están decidiendo.
+      <br><br>
+      <b>Falta un escenario a propósito:</b> el del examen que se califica solo —el del español de
+      Honduras— está en la etapa 4 de esta ruta y no se repite aquí. Si la clase lo pide, se lee allá.
+      <br><br>
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El marco,
+      las expectativas de logro que cumple y lo que a propósito NO se enseña están en
+      <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>; cómo se hace la siguiente misión de esta ruta, en
+      <b>COMPENDIO-MISIONES-IA.md</b>.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Escenarios por venir · Hoja del Docente</span><span>Página 8</span></div>
+</section>
+
+</div>
+
+</body>
+</html>
