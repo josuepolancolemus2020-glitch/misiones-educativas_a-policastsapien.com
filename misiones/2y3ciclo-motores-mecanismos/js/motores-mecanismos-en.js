@@ -87,6 +87,16 @@
         '<p class="sub">Find out how a robot moves: motors, gears, pulleys and levers. Do you need force or speed? ⚙️💪⚡</p>' +
         '<div class="badge">🤖 Robot Path · Stage 3 of 6 · Robotics</div>',
 
+      a0:
+        '<h2>🚗 Blazing fast in the air, dead still on the ground</h2>' +
+        '<p>Marvin hooked the motor straight onto the wheels of his little car. Up in the air they spun ' +
+        '<strong>blazing fast</strong> and it looked great. He set it on the ground with a small book on top for the ' +
+        'science fair and it did not move <strong>a single inch</strong>. The motor was fine and the battery was full.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>What comes out of a motor is <strong>fast, weak</strong> spin, and it is almost never useful as it is. ' +
+        'Between the motor and the wheel goes something that trades speed for <strong>force</strong> — and without it, ' +
+        'the fastest car in the world will not pull a book.</div></div>',
+
       a1:
         '<h2>⚙️ The motor: the actuator that provides movement</h2>' +
         '<p>The <strong>motor</strong> is the most important <strong>actuator</strong> in a robot: it turns the ' +

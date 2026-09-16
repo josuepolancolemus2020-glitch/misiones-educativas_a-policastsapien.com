@@ -84,6 +84,16 @@
         '<p class="sub">Build the circuit, close the switch and find out why the LED lights up. With batteries, wires and plenty of safety! 🔋🔌💡</p>' +
         '<div class="badge">🤖 Robot Path · Stage 4 of 6 · Robotics</div>',
 
+      a0:
+        '<h2>🔦 They changed the battery three times</h2>' +
+        '<p>The group’s robot stopped switching on the night before the fair. They changed the battery. Nothing. They ' +
+        'changed the motor. Nothing. They changed the battery again and bought another one. Nothing. It was <strong>one ' +
+        'loose wire</strong> the size of a fingernail, at a spot nobody looked at — and it cost them the evening and the ' +
+        'price of two perfectly good batteries.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>A circuit is a <strong>closed path</strong>: one single break anywhere and nothing works, and from the ' +
+        'outside it looks exactly like a dead battery. Knowing how the path runs is what tells you where to look.</div></div>',
+
       a1:
         '<h2>🔌 The basic circuit</h2>' +
         '<p>An <strong>electric circuit</strong> is a <strong>closed path</strong> that current travels along. ' +

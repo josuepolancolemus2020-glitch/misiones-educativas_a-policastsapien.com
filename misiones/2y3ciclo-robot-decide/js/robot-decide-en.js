@@ -91,6 +91,16 @@
         '<p class="sub">Make the robot DECIDE with IF… THEN… ELSE according to what it sees! 🤖🔀🚦</p>' +
         '<div class="badge">💻 Code Path · Stage 3 of 7 · Programming</div>',
 
+      a0:
+        '<h2>🌦️ Half the class outside and half inside</h2>' +
+        '<p>The teacher left word: <strong>«if it rains, P.E. is held indoors»</strong>. On Monday it was cloudy and ' +
+        'windy, but it did not rain. Half the class stayed in the room waiting and the other half went out to the yard. ' +
+        'The whole period was lost arguing over who had understood it right.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>«Cloudy» is not «it rains». A <strong>condition</strong> only works if what it says is <strong>true or ' +
+        'false</strong>, with no middle ground — and that is the difference between a robot that obeys and forty-three ' +
+        'people who interpret.</div></div>',
+
       a1:
         '<h2>🔀 Deciding according to the situation</h2>' +
         '<p>Every day we <strong>make decisions</strong> according to what is happening: <strong>IF</strong> it rains ' +

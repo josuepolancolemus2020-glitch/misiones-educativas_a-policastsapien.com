@@ -84,6 +84,15 @@
         '<p class="sub">The final mission of the Robot Path: learn the engineering design cycle and build a robot that solves a real problem in your community. 🔍💡✏️🔧🧪🔁📢</p>' +
         '<div class="badge">🤖 Robot Path · Stage 6 of 6 (the last one!) · Robotics</div>',
 
+      a0:
+        '<h2>🏆 «And what problem does this solve?»</h2>' +
+        '<p>At the fair, Kenia’s group showed a robot that <strong>danced</strong>, and it danced very well: it took ' +
+        'them three weeks. Next to them, another group showed a box that warns you when the water tank is full, built with ' +
+        'half the parts and in one week. The judges asked both groups the same question, and only one could answer it.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>A robot is not judged by how hard it was to build: it is judged by <strong>who it is useful to</strong>. ' +
+        'This last stage is exactly that — find the problem first, then build.</div></div>',
+
       a1:
         '<h2>🏆 A robot is there to solve problems</h2>' +
         '<p>You already know what a robot is, what its <strong>sensors</strong> measure, how it moves with <strong>motors and mechanisms</strong>, ' +

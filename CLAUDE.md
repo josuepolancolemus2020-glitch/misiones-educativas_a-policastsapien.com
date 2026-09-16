@@ -193,36 +193,73 @@ septiembre de 2026, antes de tocar nada:
 | sin una persona NI un precio en el arranque | **52 de 83** |
 | abrían con una definición («El adverbio es la palabra que…») | **20** |
 
-Las **14 peores** —las que juntaban las dos cosas— llevan ya su situación
-delante de la definición, que no se borró: se le puso lo que le faltaba
-adelante. Hoy quedan **38 sin persona ni precio** y **6 que abren definiendo**.
+Hoy **las 83 abren con una situación**, y la definición no se borró de ninguna:
+se le puso delante lo que le faltaba. Marvin se queda viendo salir el bus por el
+verbo que faltaba en su papel; doña Nely camina cuarenta minutos por una tilde;
+doña Chepa pierde en cada saco por confundir lo que pesa con lo que ocupa; el
+tanque de la escuela se derrama toda la tarde porque a la bomba nadie le avisa;
+a Kenia le marcan mal el coro del Himno que lleva seis años cantando bien.
 
-Cuatro reglas de cómo se escribe una de esas situaciones, y ninguna es de
-adorno:
+Seis reglas de cómo se escribe una de esas situaciones, y ninguna es de adorno:
 
-1. **Hay una persona con nombre y hay un precio que se puede contar.** Marvin se
-   queda viendo salir el bus por una palabra que faltaba; doña Nely camina
-   cuarenta minutos por una tilde; doña Chepa pierde en cada saco por confundir
-   lo que pesa con lo que ocupa. «El agricultor» no es nadie y «es importante»
-   no es un precio.
-2. ⚠️ **La situación apunta a lo que la misión SÍ enseña.** El arranque del
-   Universo habla de por qué el año se repite porque esa misión tiene su bloque
-   de traslación; si no lo tuviera, sería una promesa que la misión no cumple —y
-   eso ya está escrito aquí: un juego que promete una cosa y hace otra enseña a
-   no creerle a la pantalla.
+1. **Hay una persona con nombre y hay un precio que se puede contar.** «El
+   agricultor» no es nadie y «es importante» no es un precio. Lo que sí lo es:
+   una malla que no alcanza, media milpa, tres tardes, cuarenta minutos a pie,
+   el almuerzo de una casa.
+2. ⚠️ **La situación apunta a lo que la misión SÍ enseña**, y eso se comprueba
+   ANTES de escribirla. El arranque del Universo habla de por qué el año se
+   repite porque esa misión tiene su bloque de traslación; el del Sistema
+   Endocrino habla de un efecto que tarda porque esa misión contrapone el cable
+   con la sangre. Se buscó en el archivo cada vez; donde el dato no estaba —la
+   pubertad en una, el acto reflejo en otra— se cambió la historia, no el
+   contenido. Prometer lo que la misión no da es lo que ya está escrito aquí:
+   un juego que promete una cosa y hace otra enseña a no creerle a la pantalla.
 3. ⚠️ **Y termina en algo que el alumno PRODUCE**, no en una moraleja: cambiarle
    el tiempo al verbo y ver salir tres noticias del mismo papel, contar las
-   respiraciones antes y después de subir unas gradas, cambiarle el orden a dos
-   pasos de algo que hace todos los días.
-4. **No lleva CSS nuevo.** Usa la tarjeta y el `.tip` que esa misión ya tiene
-   (`class="card ac-amber" data-situacion`), así se ve nativa en las catorce sin
-   una hoja compartida más. El `data-situacion` no pinta nada: está para poder
-   contarlas.
+   respiraciones antes y después de subir unas gradas, sacar la cuenta de don
+   Chele y decidir si se cambia de comprador.
+4. **No lleva CSS nuevo.** Usa la tarjeta y el destacado que esa misión ya
+   tiene (`card ac-amber` + `.tip`). El `data-situacion` no pinta nada: está
+   para poder contarlas.
+5. ⚠️ **Y antes de escribir una, se mira si YA la tiene.** Las **8 del maestro**
+   no llevan tarjeta y no es un olvido: su `<header>` ya es la situación, con su
+   precio dentro —«contestarla mal **cuesta caro**», «se consulta cuando ya pasó
+   algo y hay que decidir en caliente»— y es lo primero que el maestro lee. Son
+   los **8 heroes más largos del repositorio** (401-486 caracteres, contra una
+   mediana de 195). Se les escribió tarjeta igual, porque la herramienta medía
+   solo desde el primer `<h2>` y no veía el hero; **se descubrió abriéndolas**:
+   la tarjeta caía a **764 px**, debajo del pliegue, repitiendo lo que el hero
+   ya decía y empujando hacia abajo el contenido. Se quitaron las ocho y se
+   marcó el párrafo que ya estaba. La herramienta mira el hero desde entonces.
+   Es la lección de siempre: **lo que no se ve, se abre y se mira**.
+6. ⚠️ **Va en la sección por la que el alumno ENTRA, no en «Aprende» por
+   costumbre.** Contadas: **55 abren en `s-aprende` y 20 en `s-predice`** —«🔮
+   Predice antes de resolver», que ya es un buen arranque porque el alumno
+   produce algo antes de leer—, y **las 8 del maestro abren cada una en la
+   suya** (`sec-recorrido`, `sec-peldanos`, `sec-linea`, `sec-articulos`,
+   `sec-situaciones`, `sec-tramites`). Una situación puesta en Aprende cuando la
+   misión abre en otra sección se la encuentra el alumno en la segunda pantalla,
+   que es como no ponerla. Por eso la herramienta que las puso busca **la
+   sección marcada `active`**, no un nombre escrito a mano.
 
 ⚠️ **Y en las bilingües la situación va TAMBIÉN en el `-en.js`.** Es la trampa de
-siempre: el bloque lleva su `data-i18n="a0"` y, sin su entrada en el
-diccionario, la edición en inglés enseña el párrafo en español **sin dar un solo
-error**. Pasa en las dos de esta tanda (Pensamiento Computacional y Sensores).
+siempre: el bloque lleva su `data-i18n="a0"` y, sin su entrada en el diccionario,
+la edición en inglés enseña el párrafo en español **sin dar un solo error**. Son
+las **ocho** de robótica y programación, y se comprobó abriéndolas y tocando el
+botón 🌐, no solo leyendo el archivo.
+
+⚠️ **Y una regla de una misión concreta que hay que respetar al escribir para
+ella:** las Pruebas de Fin de Grado **no pueden enseñar un guion largo** al
+alumno, y su sonda lo comprueba en el `innerText` de la pantalla. Las cuatro
+situaciones se escribieron con guiones y pusieron roja a `verifica-fin-de-grado`
+en la tanda de navegador. Se reescribieron con dos puntos.
+
+⚠️ **De paso salieron dos cosas que llevaban publicadas.** En la misión de la
+historia de la IA, «y las dos te tocan a **tú**» —que es lo que pasa cuando se
+escribe como se habla y nadie relee—. Y la sonda de nombres propios cazó dos
+«inteligencia artificial» en minúscula **en el texto que se acababa de escribir
+para ella**: en este repositorio va con mayúscula, y el que lo olvidó esta vez
+fue quien escribió esta normativa.
 
 ```
 node _dev/mide-relato.js             → la tabla, de peor a mejor

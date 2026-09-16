@@ -91,6 +91,16 @@
         '<p class="sub">Bring the Code Path and the Robot Path together: write the program, read the sensors, repeat with loops and debug the mistakes. 📋📡🔄</p>' +
         '<div class="badge">🤖 Robot Path · Stage 5 of 6 · Robotics</div>',
 
+      a0:
+        '<h2>🧱 It looked at the wall once</h2>' +
+        '<p>They wrote the robot this: <strong>«if there is a wall, stop; move forward ten steps»</strong>. And they wrote ' +
+        'it once, at the start. The robot looked: no wall. So it took all ten steps in a row — and crashed on the third ' +
+        'one, sensor first. That left it useless for the next day’s fair.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>The instruction was not wrong: what was wrong was <strong>how many times</strong> it is given. A robot that ' +
+        'is switched on has to look, decide and move <strong>again and again</strong>, without stopping. That is a loop, ' +
+        'and it is the heart of its program.</div></div>',
+
       a1:
         '<h2>🔁 The robot cycle: a loop that never stops</h2>' +
         '<p>A robot that is switched on does <strong>the same thing over and over</strong>: it <strong>reads its sensors</strong>, ' +

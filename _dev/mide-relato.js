@@ -14,6 +14,14 @@
 
    Qué mira, y por qué solo eso:
 
+   · lo PRIMERO que mira es exacto y no adivina: si esa misión ya tiene su
+     situación escrita (la tarjeta `data-situacion`). Lo demás son pistas.
+     Hizo falta: con las listas de palabras solas, Las Fracciones y la de
+     numeración maya salían «sin nadie» teniendo a Kenia repartiendo una
+     sandía y a un visitante delante de una estela — «hermano», «pleito» y
+     «visitante» no estaban en ninguna lista, y nunca lo van a estar todas.
+     Una medida que se queda corta empuja a escribir para la lista en vez de
+     para el niño, que es justo lo contrario de lo que se busca.
    · el ARRANQUE, no la misión entera. Una misión de catorce pantallas puede
      tener su mejor historia en la pestaña doce y no servir de nada: el
      alumno decide si sigue en los primeros dos párrafos.
@@ -102,12 +110,24 @@ const limpio = s => s.normalize('NFC')
   .replace(/&[a-z]+;/g, ' ')
   .replace(/\s+/g, ' ').trim();
 
-/* El arranque: desde el primer <h2> del cuerpo. Antes de él van la marca,
-   la barra de XP y los mandos, que son iguales en las 83 y no cuentan. */
+/* El arranque: el HERO más lo que va desde el primer <h2>. Entre los dos
+   queda fuera lo que es igual en las 83 —la marca, la barra de XP, los
+   mandos—, que no cuenta.
+
+   ⚠️ El hero se miró tarde y costó ocho tarjetas escritas de balde. En las 8
+   misiones del maestro el hero NO es un lema: es un párrafo de 400-486
+   caracteres que ya cuenta la situación con su precio («contestarla mal
+   cuesta caro», «se consulta cuando ya pasó algo»), y es lo primero que el
+   maestro lee. Son los 8 heroes más largos del repositorio, muy por encima
+   de la mediana de 195. Al medir solo desde el primer <h2> salían «sin
+   nadie», se les puso una tarjeta… y al abrirlas se vio que caía a 764 px,
+   debajo del pliegue, repitiendo lo que el hero ya decía y empujando el
+   contenido. Se quitaron las ocho. */
 function arranque(html) {
   const cuerpo = html.slice(html.search(/<body/i));
+  const hero = (cuerpo.match(/<header[\s\S]*?<\/header>/i) || [''])[0];
   const i = cuerpo.search(/<h2\b/i);
-  const t = limpio(i < 0 ? cuerpo : cuerpo.slice(i));
+  const t = limpio(hero + ' ' + (i < 0 ? cuerpo : cuerpo.slice(i)));
   return t.slice(0, 1100);
 }
 
@@ -134,13 +154,16 @@ for (const m of MISSIONS) {
   const f = path.join(RAIZ, m.url);
   if (!fs.existsSync(f)) { console.log(`  ⚠ sin archivo: ${m.url}`); continue; }
   if (filtro && !m.title.toLowerCase().includes(filtro)) continue;
-  const txt = arranque(fs.readFileSync(f, 'utf8'));
+  const bruto = fs.readFileSync(f, 'utf8');
+  const tieneSit = /data-situacion/.test(bruto);
+  const txt = arranque(bruto);
   const r = mide(txt);
   /* Cuánto le falta: sin persona y sin precio es lo más lejos del relato.
      Abrir con una definición suma, porque es justo el arranque que la
      normativa pone en la columna «en vez de». */
-  const falta = (r.personas.length ? 0 : 2) + (r.precios.length ? 0 : 2) + (r.definicion ? 1 : 0);
-  filas.push({ m, r, falta, txt });
+  const falta = tieneSit ? 0
+    : (r.personas.length ? 0 : 2) + (r.precios.length ? 0 : 2) + (r.definicion ? 1 : 0);
+  filas.push({ m, r, falta, txt, tieneSit });
 }
 
 filas.sort((a, b) => b.falta - a.falta || a.m.id - b.m.id);
@@ -149,6 +172,7 @@ if (detalle) {
   for (const f of filas) {
     console.log(`\n${'─'.repeat(72)}`);
     console.log(`#${f.m.id} · ${f.m.title}  [${f.m.subject} · ${f.m.grade}]  falta:${f.falta}`);
+    console.log(`  situación escrita: ${f.tieneSit ? 'sí' : 'no'}`);
     console.log(`  persona: ${f.r.personas.join(', ') || '—'}`);
     console.log(`  precio:  ${f.r.precios.join(', ') || '—'}`);
     console.log(`  ${f.m.url}`);
@@ -158,17 +182,20 @@ if (detalle) {
   console.log('\n════════ CUÁNTO LE FALTA AL ARRANQUE ════════');
   console.log('  (no falla nunca: ordena por dónde leer primero)\n');
   for (const f of filas) {
+    const s = f.tieneSit ? '✍️' : '· ';
     const p = f.r.personas.length ? '👤' : '· ';
     const c = f.r.precios.length ? '💸' : '· ';
     const d = f.r.definicion ? '📕' : '  ';
-    console.log(`  ${String(f.falta).padStart(2)} ${p}${c}${d}  #${String(f.m.id).padStart(2)} ${f.m.title.slice(0, 44).padEnd(45)} ${f.m.subject}`);
+    console.log(`  ${String(f.falta).padStart(2)} ${s}${p}${c}${d}  #${String(f.m.id).padStart(2)} ${f.m.title.slice(0, 44).padEnd(45)} ${f.m.subject}`);
   }
-  const sin = filas.filter(f => !f.r.personas.length && !f.r.precios.length).length;
-  const def = filas.filter(f => f.r.definicion).length;
+  const con = filas.filter(f => f.tieneSit).length;
+  const sin = filas.filter(f => !f.tieneSit && !f.r.personas.length && !f.r.precios.length).length;
+  const def = filas.filter(f => !f.tieneSit && f.r.definicion).length;
   console.log(`\n  misiones medidas: ${filas.length}`);
-  console.log(`  sin persona NI precio en el arranque: ${sin}`);
-  console.log(`  arrancan con una definición: ${def}`);
-  console.log('\n  👤 hay alguien   💸 hay un precio   📕 abre definiendo');
+  console.log(`  con su situación ya escrita: ${con}`);
+  console.log(`  sin ella y sin rastro de persona ni precio en el arranque: ${sin}`);
+  console.log(`  y de esas, abren con una definición: ${def}`);
+  console.log('\n  ✍️ tiene situación escrita   👤 se le ve una persona   💸 un precio   📕 abre definiendo');
   console.log('\n  Lo que esto NO puede juzgar, y hay que leer: que el relato sea');
   console.log('  VERDAD, que el alumno lo PRODUZCA en vez de leerlo, y que valga');
   console.log('  la pena. Son 83 lecturas y no hay atajo.\n');

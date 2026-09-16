@@ -82,6 +82,16 @@
         '<p class="sub">Discover the sense → think → act cycle and the 3 parts every robot has. No cables and no computer needed! 📡🧠💪</p>' +
         '<div class="badge">🤖 Robot Path · Stage 1 of 6 · Robotics</div>',
 
+      a0:
+        '<h2>👋 The doll that waves</h2>' +
+        '<p>At the fair they set up a doll that moves its arm to wave. It moves the same with people in front of it and ' +
+        'with nobody there, day and night, until someone switches it off. The kids were saying «it is a robot». Marvin ' +
+        'said it is not — and went quiet when they asked him <strong>why not</strong>.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>That doll <strong>acts</strong>, and that is as far as it goes. It finds out nothing and it decides ' +
+        'nothing: whatever the world does, it waves all the same. With the three parts of the cycle in his head, Marvin ' +
+        'could have explained it in one sentence.</div></div>',
+
       a1:
         '<h2>🤖 What is a robot?</h2>' +
         '<p>A <strong>robot</strong> is a machine that <strong>SENSES</strong> its surroundings with <strong>sensors</strong>, ' +
