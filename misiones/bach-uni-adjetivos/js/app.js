@@ -624,103 +624,63 @@ function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-ans
 
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
-  {
-    size:10,
-    grid:[
-      ['P','R','E','D','I','C','A','T','I','V'],
-      ['O','N','P','M','O','D','O','W','Z','A'],
-      ['A','D','V','E','R','B','I','A','L','S'],
-      ['P','Z','R','E','A','L','T','M','Q','I'],
-      ['O','K','E','P','I','T','E','T','O','N'],
-      ['C','H','L','U','J','C','A','F','U','T'],
-      ['O','N','A','T','R','I','B','U','T','O'],
-      ['P','X','C','Y','Q','M','N','D','G','W'],
-      ['E','L','I','M','I','N','E','R','T','Y'],
-      ['S','I','O','N','R','E','L','A','C','I'],
-    ],
-    words:[
-      {w:'PREDICATIVO', cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]}, // PREDICATIV (9) + O (1,0) - wait, fixing manually
-      {w:'ADVERBIAL', cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8]]},
-      {w:'EPITETO', cells:[[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8]]},
-      {w:'ATRIBUTO', cells:[[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8],[6,9]]},
-      {w:'APOCOPE', cells:[[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]]}, // Vertical APOCOPE
-      {w:'RELACIONAL', cells:[[9,4],[9,5],[9,6],[9,7],[9,8],[9,9]]}, // Part of relacional
-    ]
-  },
-  {
-    size:10,
-    grid:[
-      ['C','A','L','I','F','I','C','A','R','S'],
-      ['E','L','A','T','I','V','O','X','Z','U'],
-      ['L','A','S','Y','M','B','O','C','H','P'],
-      ['E','T','I','N','H','E','R','E','N','E'],
-      ['B','O','S','G','R','A','D','O','U','R'],
-      ['E','X','P','L','I','C','A','T','I','L'],
-      ['R','A','T','E','X','T','R','E','M','A'],
-      ['R','E','S','T','R','I','C','T','I','T'],
-      ['I','O','R','N','P','Q','M','A','X','I'],
-      ['M','I','N','I','M','O','K','P','U','V'],
-    ],
-    words:[
-      {w:'ELATIVO', cells:[[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6]]},
-      {w:'GRADO', cells:[[4,3],[4,4],[4,5],[4,6],[4,7]]},
-      {w:'CELEBERRIMO', cells:[[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],[9,0]]}, // Vertical C-E-L-E-B-R-R-I-M (9) wait
-      {w:'RESTRICTIVO', cells:[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]}, // RESTRICITV
-      {w:'EXPLICATIV', cells:[[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7],[5,8]]},
-      {w:'MINIMO', cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5]]},
-    ]
-  }
+    {
+        size: 11,
+        grid: [
+            ['P', 'R', 'E', 'D', 'I', 'C', 'A', 'T', 'I', 'V', 'O'],
+            ['O', 'N', 'P', 'M', 'O', 'D', 'O', 'W', 'Z', 'A', 'E'],
+            ['A', 'D', 'V', 'E', 'R', 'B', 'I', 'A', 'L', 'S', 'K'],
+            ['P', 'Z', 'R', 'E', 'A', 'L', 'T', 'M', 'Q', 'I', 'D'],
+            ['O', 'K', 'E', 'P', 'I', 'T', 'E', 'T', 'O', 'N', 'I'],
+            ['C', 'H', 'L', 'U', 'J', 'C', 'A', 'F', 'U', 'T', 'U'],
+            ['O', 'N', 'A', 'T', 'R', 'I', 'B', 'U', 'T', 'O', 'U'],
+            ['P', 'X', 'C', 'Y', 'Q', 'M', 'N', 'D', 'G', 'W', 'H'],
+            ['E', 'L', 'I', 'M', 'I', 'N', 'E', 'R', 'T', 'Y', 'D'],
+            ['S', 'L', 'A', 'N', 'O', 'I', 'C', 'A', 'L', 'E', 'R'],
+            ['N', 'M', 'I', 'T', 'X', 'F', 'F', 'B', 'C', 'K', 'R'],
+        ],
+        words: [
+            { w: 'PREDICATIVO', cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8], [0, 9], [0, 10]] },
+            { w: 'ADVERBIAL', cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7], [2, 8]] },
+            { w: 'EPITETO', cells: [[4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7], [4, 8]] },
+            { w: 'ATRIBUTO', cells: [[6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7], [6, 8], [6, 9]] },
+            { w: 'APOCOPE', cells: [[2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0]] },
+            { w: 'RELACIONAL', cells: [[9, 10], [9, 9], [9, 8], [9, 7], [9, 6], [9, 5], [9, 4], [9, 3], [9, 2], [9, 1]] },
+        ]
+    },
+    {
+        size: 11,
+        grid: [
+            ['C', 'A', 'L', 'I', 'F', 'I', 'C', 'A', 'R', 'S', 'V'],
+            ['E', 'L', 'A', 'T', 'I', 'V', 'O', 'X', 'Z', 'U', 'Z'],
+            ['L', 'A', 'S', 'Y', 'M', 'B', 'O', 'C', 'H', 'P', 'G'],
+            ['E', 'T', 'I', 'N', 'H', 'E', 'R', 'E', 'N', 'E', 'V'],
+            ['B', 'O', 'S', 'G', 'R', 'A', 'D', 'O', 'U', 'R', 'Q'],
+            ['E', 'X', 'P', 'L', 'I', 'C', 'A', 'T', 'I', 'V', 'O'],
+            ['R', 'A', 'T', 'E', 'X', 'T', 'R', 'E', 'M', 'A', 'P'],
+            ['R', 'E', 'S', 'T', 'R', 'I', 'C', 'T', 'I', 'V', 'O'],
+            ['I', 'O', 'R', 'N', 'P', 'Q', 'M', 'A', 'X', 'I', 'X'],
+            ['M', 'I', 'N', 'I', 'M', 'O', 'K', 'P', 'U', 'V', 'X'],
+            ['O', 'M', 'H', 'T', 'Q', 'M', 'S', 'Z', 'V', 'T', 'V'],
+        ],
+        words: [
+            { w: 'ELATIVO', cells: [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6]] },
+            { w: 'GRADO', cells: [[4, 3], [4, 4], [4, 5], [4, 6], [4, 7]] },
+            { w: 'CELEBERRIMO', cells: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0]] },
+            { w: 'RESTRICTIVO', cells: [[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9], [7, 10]] },
+            { w: 'EXPLICATIVO', cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7], [5, 8], [5, 9], [5, 10]] },
+            { w: 'MINIMO', cells: [[9, 0], [9, 1], [9, 2], [9, 3], [9, 4], [9, 5]] },
+        ]
+    }
 ];
 
-// Re-generating valid grids programmatically to avoid map errors.
-const validSopaSets=[
-  {
-    size:10,
-    grid:[
-      ['P','R','E','D','I','C','A','T','I','V'],
-      ['O','X','Z','A','B','C','D','A','R','O'],
-      ['A','D','V','E','R','B','I','A','L','S'],
-      ['P','Z','Q','W','E','R','T','M','Q','A'],
-      ['O','A','E','P','I','T','E','T','O','T'],
-      ['C','S','D','F','G','H','J','K','L','R'],
-      ['O','A','T','R','I','B','U','T','O','I'],
-      ['P','Z','X','C','V','B','N','M','Q','B'],
-      ['E','Q','W','E','R','T','Y','U','I','U'],
-      ['S','R','E','L','A','C','I','O','N','T'], // Changed RELACION -> ATRIBUTO / PREDICATIVO
-    ],
-    words:[
-      {w:'ADVERBIAL', cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8]]},
-      {w:'EPITETO', cells:[[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8]]},
-      {w:'ATRIBUTO', cells:[[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7],[6,8]]},
-      {w:'APOCOPE', cells:[[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]]}, 
-      {w:'ATRIBUTO', cells:[[1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7]]} // Wait, words must match cells perfectly. Let's use simpler arrays for demo.
-    ]
-  }
-];
-// Overwriting the complex manual grid with a foolproof vertical/horizontal setup
-sopaSets[0] = {
-  size: 10,
-  grid: [
-    ['R','E','L','A','C','I','O','N','A','L'],
-    ['P','X','Y','A','T','R','I','B','U','T'],
-    ['R','P','A','C','O','P','E','Z','W','R'], // Apocope backward? P-O-C-A... wait
-    ['E','P','I','T','E','T','O','K','M','E'],
-    ['D','X','Y','C','A','P','O','C','O','P'], // APOCOP + E?
-    ['I','E','L','A','T','I','V','O','X','S'],
-    ['C','Z','W','Q','S','U','F','I','J','O'],
-    ['A','D','V','E','R','B','I','A','L','N'],
-    ['T','Z','X','Y','W','V','U','R','Q','M'],
-    ['O','B','J','E','T','I','V','O','S','A']
-  ],
-  words: [
-    {w:'RELACIONAL', cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]]},
-    {w:'EPITETO', cells:[[3,0],[3,1],[3,2],[3,3],[3,4],[3,5],[3,6]]},
-    {w:'ELATIVO', cells:[[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7]]},
-    {w:'ADVERBIAL', cells:[[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]},
-    {w:'PREDICAT', cells:[[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]]} // Close enough for visual. Let's assume PREDICA
-  ]
-};
-sopaSets[1] = sopaSets[0]; // Copy for safety.
+/* ⚠️ Aquí vivían DOS sopas más, y la de arriba no llegaba a la pantalla.
+   Había un `validSopaSets` muerto que no usaba nadie y, debajo, un
+   `sopaSets[0] = {…}` que PISABA la buena, con `sopaSets[1] = sopaSets[0]`
+   detrás: o sea que «🔄 Nueva sopa» devolvía siempre la misma, y en la
+   lista el alumno leía «PREDICAT», que no es una palabra. Se quitaron las
+   dos el 16 de septiembre de 2026. La sopa se escribe UNA vez; si hace
+   falta cuadrarla, la cuadra `node _dev/verifica-sopas.js --repara`. */
 
 let currentSopaSetIdx=0, sopaFoundWords=new Set();
 let sopaFirstClickCell=null, sopaPointerStartCell=null, sopaPointerMoved=false, sopaSelectedCells=[];

@@ -4608,6 +4608,130 @@ Hoy son **83 misiones y 4 592 fichas**, y ninguna se contradice. Los números no
 se escriben dentro de la sonda: se cuentan, que si no se pondría roja el día
 que entre una misión sin que nada esté roto.
 
+## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
+
+Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
+las 83 —que pide la carpeta de una misión, así que estaba fuera de `npm test` y
+**nadie la había corrido por las misiones viejas**—. Salieron:
+
+| | |
+|---|---|
+| palabras que el alumno **no puede encontrar nunca**, porque no están en su rejilla | **9** |
+| palabras que sí están, pero al acertarlas se pintaban **otras celdas** | **3** |
+| misiones afectadas | **4** (Pronombres, Sistema Nervioso, El Adjetivo Avanzado, Coordenadas y Adjetivos) |
+
+Las dos averías no cuestan lo mismo, y la diferencia manda:
+
+- El juego **lee las letras de la rejilla** y acepta la palabra en los dos
+  sentidos, así que unas celdas mal declaradas solo pintan mal el hallazgo. Feo,
+  no bloqueante.
+- ⚠️ Pero si la palabra **no está**, el alumno la busca hasta cansarse y no
+  aparece nunca — y la sección solo se da por hecha cuando están **todas**, así
+  que esa estrella queda **imposible de ganar para siempre**. Es exactamente la
+  misma avería que el Clasifica que marcaba en rojo al que acertó: la pantalla
+  pidiendo algo que ella misma no permite hacer.
+
+Y no daba ningún error: el archivo compila, la sopa se pinta, no hay nada en la
+consola. La misma familia que el `\U0001F1ED` de Python y el `.pf-p` naranja de
+la ficha de la Constitución — lo que se pinta perfectamente y está mal.
+
+⚠️ **Cuatro palabras no cabían de ningún modo**: DEMOSTRATIVO son 12 letras y
+PREDICATIVO, CELEBERRIMO y RESTRICTIVO son 11, en rejillas de 10×10 donde la
+diagonal más larga tiene 10 casillas. Y alguien ya se topó con eso y lo resolvió
+al revés: **recortó la palabra** y dejó **«EXPLICATIV»** delante del alumno, que
+no es una palabra de nada. Eso es cambiar el producto para aprobar el examen,
+que es lo que esta normativa prohíbe en todas partes. Lo que crece es la
+**rejilla** —a 12×12 en Pronombres y a 11×11 en El Adjetivo Avanzado—: el
+renderizado saca filas, columnas y tamaño de celda de `set.size`, y con la celda
+mínima de 20 px, doce columnas siguen cabiendo de sobra en un teléfono de 360.
+
+**Cuatro reglas de la herramienta, y ninguna es de adorno:**
+
+1. **Primero BUSCA, y lo que ya funciona no se toca.** Si la palabra está en la
+   rejilla no se mueve ni una letra: solo se corrigen sus celdas. Rehacer una
+   rejilla que funciona mueve las demás palabras.
+2. ⚠️ **Y solo se corrigen las celdas que de verdad están mal.** La primera
+   versión reescribía las de toda palabra que encontrara en otro sitio, y en
+   Potencias y Raíces «RAIZ» sale **dos veces**: la acusaba de estar mal
+   pintada estando perfecta. Una herramienta que acusa a un archivo sano enseña
+   a no mirarla — la misma lección que «Cuadrado **Perfecto**» en la auditoría.
+3. **Al colocar se prefiere el cruce** con letras que ya estaban, que es lo que
+   hace que una sopa parezca una sopa, y **nunca se pisa** una letra de otra
+   palabra ya colocada. El relleno va con **semilla**: el mismo archivo da
+   siempre las mismas letras, así volver a correrla no ensucia el diff.
+4. **Antes de escribir, el archivo compila.** Un error de sintaxis aquí deja la
+   misión entera sin su JS y no da la cara.
+
+### ⚠️ Y una peor, que solo salió al ABRIRLA: la sopa que no llegaba a la pantalla
+
+Con las nueve palabras ya colocadas y la sonda en verde, se abrió El Adjetivo
+Avanzado en un teléfono para mirarla — y la pantalla enseñaba **otra sopa**. Su
+`app.js` tenía **tres** tablas: la escrita, un `validSopaSets` muerto que no
+usaba nadie, y más abajo un `sopaSets[0] = {…}` **que pisaba la buena**, con
+`sopaSets[1] = sopaSets[0]` detrás. O sea:
+
+- en la lista de palabras el alumno leía **«PREDICAT»**, que no es una palabra;
+- del vocabulario de la misión se caían ATRIBUTO, APOCOPE y **la segunda sopa
+  entera** (ELATIVO, GRADO, CELEBERRIMO, RESTRICTIVO, EXPLICATIVO, MINIMO);
+- y **«🔄 Nueva sopa» devolvía siempre la misma**, porque la segunda era una
+  copia literal de la primera;
+- dentro quedaban las notas de quien lo hizo: «*Apocope backward? P-O-C-A…
+  wait*», «*Close enough for visual*», «*Let's use simpler arrays for demo*».
+
+Nada de eso daba un error: compila, se pinta, la consola callada. La misma
+familia que el `.pf-p` naranja sobre naranja y el Escudo marcado en rojo — y el
+remedio, otra vez, fue **abrirlo y mirarlo**.
+
+⚠️ **La lección para la sonda es más importante que el arreglo: hay que leer lo
+que CORRE, no el primer literal que aparezca.** La herramienta había «reparado»
+la tabla de arriba y el alumno seguía viendo la de abajo; una sonda que arregla
+lo que no se ve es peor que no tenerla. Ahora avisa cuando encuentra una segunda
+tabla y **no repara** esa misión: un archivo con dos fuentes de verdad no se
+cuadra, se deja en una.
+
+Y para saber cuál es cuál hicieron falta dos afinados, cada uno pagado con un
+falso positivo:
+
+- **se quitan los comentarios antes de buscar** —el bloque que explica esta
+  avería escribe `sopaSets[0] = {…}`, así que la sonda se acusaba a sí misma; es
+  la **quinta** vez que este repositorio muerde esa trampa—;
+- y **se mira QUÉ se le asigna**: las nueve misiones bilingües hacen
+  `sopaSets = usa('sopaSets')` al cambiar de idioma, y eso no es una segunda
+  tabla, es la traducción. Se intentó primero contando llaves para saber qué
+  corría al cargar y se descartó: un contador a mano se despista con las
+  expresiones regulares del propio archivo y señalaba esos dos cambios de idioma
+  como averías.
+
+⚠️ **Hay una sopa que se GENERA sola** —la de saludos en inglés, con
+`_sopaBuild(...)`—, y esa por construcción no puede descuadrar: las celdas salen
+de donde se puso la palabra. Es la mejor forma de tenerla y no se le toca nada.
+Pero tiene un descuido propio que tampoco se ve: si tras 800 intentos no logra
+colocar una palabra, **la deja fuera en silencio** y la misión enseña menos
+vocabulario del que su autor escribió. Así que la sonda evalúa el generador y
+compara lo que entró con lo que salió.
+
+⚠️ **La sonda COMPRUEBA por defecto; reparar es la excepción.** Es al revés que
+las otras herramientas que reescriben archivos, y por dos motivos: así entra en
+`npm test` —`corre-sondas.js` las llama sin argumentos— y así ninguna
+equivocación reescribe 68 misiones de un tecleo.
+
+```
+node _dev/verifica-sopas.js            (está en `npm test`)
+node _dev/verifica-sopas.js --repara   → coloca lo que falte y corrige las celdas
+```
+
+Se comprobó al revés, cambiándole una letra a una rejilla a propósito: salió
+roja con la palabra por su nombre y volvió a verde al restaurarla.
+
+**Lo que NO se hizo, y por qué:** arreglar `verifica-mision-nueva.js` para las
+83. Esa sonda está escrita para una misión **nueva sacada de la plantilla**, y
+le pide a las viejas bancos que legítimamente no tienen —una misión de Fin de
+Grado no tiene `evalTFBank`, una de formación docente no manda evidencia a
+ningún maestro porque el alumno ES el maestro, y la misión que SIRVIÓ de
+plantilla se acusa a sí misma de «quedó una referencia a la plantilla»—. Sale
+roja en **35 de 83** sin que nada esté roto, que es justo por lo que nadie la
+corre. Lo que de ella valía para todas —la sopa— ya vive en su propia sonda.
+
 ## Comentarios en el código
 
 En español, y explicando **por qué** está así, no qué hace la línea. Casi

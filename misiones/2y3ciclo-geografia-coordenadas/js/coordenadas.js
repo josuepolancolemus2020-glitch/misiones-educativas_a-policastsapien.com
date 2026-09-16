@@ -689,68 +689,54 @@ function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-ans
 // SOPA 1 — Palabras: LATITUD(H), ECUADOR(V), NORTE(H), SUR(H-rev), POLO(D↘), MAPA(V-rev)
 // Verificación letra a letra incluida en comentarios
 const sopaSets=[
-  {
-    // LATITUD  → fila 0, cols 1-7: L-A-T-I-T-U-D  ✓
-    // ECUADOR  → col 0, filas 2-8: E-C-U-A-D-O-R  ✓
-    // NORTE    → fila 4, cols 5-9: N-O-R-T-E       ✓
-    // SUR      → fila 7, cols 4-2 (reverso): R-U-S → leer de izq a der: S-U-R  ✓
-    // POLO     → diagonal ↘ inicio [5,6]: P[5,6]-O[6,7]-L[7,8]-O[8,9] ✓
-    // MAPA     → col 9, filas 3-0 (reverso bottom-top): A[3,9]-P[2,9]-A[1,9]-M[0,9] → leer top-down: M-A-P-A ✓
-    // GREENWICH → fila 9, cols 0-8: G-R-E-E-N-W-I-C-H ✓
-    size:10,
-    grid:[
-      ['X','L','A','T','I','T','U','D','Z','M'],
-      ['F','B','C','D','E','F','G','H','I','A'],
-      ['E','J','K','L','M','N','O','P','Q','P'],
-      ['C','R','S','T','U','V','W','X','Y','A'],
-      ['U','Z','A','B','C','N','O','R','T','E'],
-      ['A','Q','P','E','R','T','P','Y','U','I'],
-      ['D','O','O','A','S','D','O','F','G','H'],
-      ['O','J','L','L','S','U','R','L','O','J'],
-      ['R','M','O','O','P','Q','R','S','L','O'],
-      ['G','R','E','E','N','W','I','C','H','X']
-    ],
-    words:[
-      {w:'LATITUD',  cells:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7]]},
-      {w:'ECUADOR',  cells:[[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]]},
-      {w:'NORTE',    cells:[[4,5],[4,6],[4,7],[4,8],[4,9]]},
-      {w:'SUR',      cells:[[7,6],[7,5],[7,4]]},
-      {w:'POLO',     cells:[[5,2],[6,2],[7,2],[8,2]]},
-      {w:'MAPA',     cells:[[0,9],[1,9],[2,9],[3,9]]},
-      {w:'GREENWICH',cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8]]}
-    ]
-  },
-  {
-    // MERIDIANO → fila 0, cols 0-8: M-E-R-I-D-I-A-N-O ✓
-    // LONGITUD  → col 9, filas 0-7: L-O-N-G-I-T-U-D ✓
-    // TROPICO   → fila 5, cols 1-7: T-R-O-P-I-C-O ✓
-    // HEMISFERIO→ demasiado largo, usar HEMISFER fila 8 cols 0-7: H-E-M-I-S-F-E-R ✓
-    // ZONA      → fila 2, cols 3-6: Z-O-N-A ✓
-    // CANCER    → col 3, filas 3-8: C-A-N-C-E-R ✓
-    // HUSO      → fila 7, cols 0-3: H-U-S-O ✓
-    size:10,
-    grid:[
-      ['M','E','R','I','D','I','A','N','O','L'],
-      ['X','Y','Z','A','B','C','D','E','F','O'],
-      ['P','Q','R','Z','O','N','A','S','T','N'],
-      ['U','V','W','C','X','Y','Z','A','B','G'],
-      ['K','L','M','A','N','O','P','Q','R','I'],
-      ['J','T','R','O','P','I','C','O','S','T'],
-      ['I','H','G','N','F','E','D','C','B','U'],
-      ['H','U','S','O','Z','Y','X','W','V','D'],
-      ['H','E','M','I','S','F','E','R','A','B'],
-      ['C','A','N','C','E','R','J','K','L','M']
-    ],
-    words:[
-      {w:'MERIDIANO', cells:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]]},
-      {w:'LONGITUD',  cells:[[0,9],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9]]},
-      {w:'TROPICO',   cells:[[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[5,7]]},
-      {w:'ZONA',      cells:[[2,3],[2,4],[2,5],[2,6]]},
-      {w:'CANCER',    cells:[[9,0],[9,1],[9,2],[9,3],[9,4],[9,5]]},
-      {w:'HUSO',      cells:[[7,0],[7,1],[7,2],[7,3]]},
-      {w:'HEMISFER',  cells:[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7]]}
-    ]
-  }
+    {
+        size: 10,
+        grid: [
+            ['X', 'L', 'A', 'T', 'I', 'T', 'U', 'D', 'Z', 'M'],
+            ['F', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'A'],
+            ['E', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'P'],
+            ['C', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'A'],
+            ['U', 'Z', 'A', 'B', 'C', 'N', 'O', 'R', 'T', 'E'],
+            ['A', 'Q', 'P', 'E', 'R', 'T', 'P', 'Y', 'U', 'I'],
+            ['D', 'O', 'O', 'A', 'S', 'D', 'O', 'F', 'G', 'H'],
+            ['O', 'J', 'L', 'L', 'S', 'U', 'R', 'L', 'O', 'J'],
+            ['R', 'M', 'O', 'O', 'P', 'Q', 'R', 'S', 'L', 'O'],
+            ['G', 'R', 'E', 'E', 'N', 'W', 'I', 'C', 'H', 'X'],
+        ],
+        words: [
+            { w: 'LATITUD', cells: [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7]] },
+            { w: 'ECUADOR', cells: [[2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0]] },
+            { w: 'NORTE', cells: [[4, 5], [4, 6], [4, 7], [4, 8], [4, 9]] },
+            { w: 'SUR', cells: [[6, 4], [7, 5], [8, 6]] },
+            { w: 'POLO', cells: [[5, 2], [6, 2], [7, 2], [8, 2]] },
+            { w: 'MAPA', cells: [[0, 9], [1, 9], [2, 9], [3, 9]] },
+            { w: 'GREENWICH', cells: [[9, 0], [9, 1], [9, 2], [9, 3], [9, 4], [9, 5], [9, 6], [9, 7], [9, 8]] },
+        ]
+    },
+    {
+        size: 10,
+        grid: [
+            ['M', 'E', 'R', 'I', 'D', 'I', 'A', 'N', 'O', 'L'],
+            ['X', 'Y', 'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'O'],
+            ['P', 'Q', 'R', 'Z', 'O', 'N', 'A', 'S', 'T', 'N'],
+            ['U', 'V', 'W', 'C', 'X', 'Y', 'Z', 'A', 'B', 'G'],
+            ['K', 'L', 'M', 'A', 'N', 'O', 'P', 'Q', 'R', 'I'],
+            ['J', 'T', 'R', 'O', 'P', 'I', 'C', 'O', 'S', 'T'],
+            ['I', 'H', 'G', 'N', 'F', 'E', 'D', 'C', 'B', 'U'],
+            ['H', 'U', 'S', 'O', 'Z', 'Y', 'X', 'W', 'V', 'D'],
+            ['H', 'E', 'M', 'I', 'S', 'F', 'E', 'R', 'A', 'B'],
+            ['C', 'A', 'N', 'C', 'E', 'R', 'J', 'K', 'L', 'M'],
+        ],
+        words: [
+            { w: 'MERIDIANO', cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8]] },
+            { w: 'LONGITUD', cells: [[0, 9], [1, 9], [2, 9], [3, 9], [4, 9], [5, 9], [6, 9], [7, 9]] },
+            { w: 'TROPICO', cells: [[5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]] },
+            { w: 'ZONA', cells: [[2, 3], [2, 4], [2, 5], [2, 6]] },
+            { w: 'CANCER', cells: [[9, 0], [9, 1], [9, 2], [9, 3], [9, 4], [9, 5]] },
+            { w: 'HUSO', cells: [[7, 0], [7, 1], [7, 2], [7, 3]] },
+            { w: 'HEMISFER', cells: [[8, 0], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7]] },
+        ]
+    }
 ];
 let currentSopaSetIdx=0, sopaFoundWords=new Set();
 let sopaFirstClickCell=null, sopaPointerStartCell=null, sopaPointerMoved=false, sopaSelectedCells=[];
