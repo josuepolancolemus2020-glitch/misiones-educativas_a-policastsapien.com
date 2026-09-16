@@ -2894,6 +2894,97 @@ distintas.
   Media. Lo que sí se ve es que el BTP en Sistematización e Informática y el BCH
   con Programación y TIC son el destino natural de quien salga de esta ruta.
 
+## Normativa: la materia de IA se mueve cada semana, y se mueve con fecha y con fuente
+
+La Inteligencia Artificial cambia al ritmo al que cambia lo que enseña: semanal,
+a veces diario. Una plataforma que quiera ir **por delante** tiene que poder
+hablar de lo que pasó el lunes, y una que se respeta no puede escribir el lunes
+lo que el viernes ya no es verdad. El 16 de septiembre de 2026 se dejó listo el
+camino para las dos cosas a la vez, y son tres documentos con reparto claro:
+
+| documento | qué dice |
+|---|---|
+| `CURRICULA-INTELIGENCIA-ARTIFICIAL.md` | QUÉ se enseña y por qué; ahora con cinco hilos (el quinto: lo que pasa hoy y lo que puede pasar) |
+| `COMPENDIO-MISIONES-IA.md` | CÓMO se hace la siguiente misión: la plantilla de la ruta, el protocolo de actualidad, el catálogo de peligros, las indagaciones del cine, los escenarios por venir y las veintitrés misiones planeadas |
+| `_dev/actualidad/` | por DÓNDE entra un hecho: un archivo por hecho, con su plantilla |
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. ⚠️ **El hecho es el material; la destreza es la misión.** Una misión de
+   actualidad no cambia con el hecho: el alumno le aplica siempre lo mismo (las
+   tres reglas de oro, los cinco pasos de verificar, las tres preguntas del
+   sesgo). Por eso puede cambiar de hecho cada semana sin tocar una actividad.
+2. **Todo hecho entra fechado, acreditado y con caducidad**, en
+   `_dev/actualidad/AAAA-MM-DD-que-paso.md`, con la cita tal cual y el documento
+   al lado. Lo que solo se leyó en un buscador no entra: buscar no es leer. Y
+   cuando caduca no se borra: se vuelve historia (hito o invierno pequeño).
+3. **Un peligro se enseña con la pregunta que lo desarma**, con una persona y
+   un precio, nunca como catástrofe ni como publicidad; y tres —la salud, la
+   política y lo militar— solo por el mecanismo, sin un caso con nombres.
+4. **Lo que puede pasar se imagina con método, no se afirma.** Un escenario
+   lleva persona, precio, tres decisiones con consecuencia y una regla, va
+   declarado como inventado en la pantalla y se arma con lo que ya se puede
+   hacer hoy. `verifica-descubre-ia` ya se lo exige a `IA_ESCENARIOS`.
+
+### 🔭 Descubre: lo que la pantalla afirma, la sonda lo recalcula
+
+Las cuatro misiones de la ruta estrenaron una sección de descubrimiento con dos
+actividades cada una, y la regla que las gobierna es la que costó rehacer el
+«Enséñale a la máquina»: **una actividad que promete algo tiene que cumplirlo**.
+Por eso las cuentas viven en `js/data/ia-descubre.js`, que corre también en
+Node —como `nube-ia.js`—, y `node _dev/verifica-descubre-ia.js` (en `npm test`)
+rehace cada promesa: la cruz movida un puntito da «raya» con 30 de 36; la
+cuadrícula vacía también da «raya»; el árbol de animales falla exactamente con
+el pato, el delfín y el murciélago; en la ronda trampa «los pares» y «menor que
+8» coinciden hasta el quinto ejemplo y el 10 las separa; la curva de ejemplos
+da 10 → 13 → 14 → 15 → 17 → 17 de 20 (la semilla se afinó para que suba y se
+aplane de verdad: con menos ruido dos ejemplos ya daban 16 y no enseñaba nada);
+los años de cada par existen en `ia-historia.js` y ninguna explicación lleva
+un número; «El remedio» no trae ni una afirmación comprobable.
+
+Seis reglas para la siguiente: el alumno lo produce; la pantalla contesta con
+la verdad; lo que afirma se recalcula aparte; termina en algo que se guarda
+(en `SAVE_KEY + '_descubre'`, nunca en el estado de la misión ni en la nube);
+corre sin señal y sin una petición hacia afuera; y tiene su versión en papel en
+la ficha, con la pauta calculada del mismo archivo. La lista de comprobación
+con sus archivos está en el compendio.
+
+⚠️ **Y la sección se gana haciendo las dos actividades, nunca al abrir**:
+`fin('s-descubre')` se llama en un solo sitio, `iaDescubreListo()`, y la sonda
+cuenta que sea uno. El arranque la pinta dentro de un `try`: si el archivo de
+datos no llegó, la misión sigue funcionando sin ella.
+
+⚠️ **Se probó con clics de verdad a 360 px, y se miró.** Lo que ninguna sonda
+cazaba lo cazó una captura: el hito escrito por el alumno salía con el título
+en una columna de tres palabras, porque la cabecera del hito está hecha para un
+`<button>` de una fila y con la letra grande el año y el título no caben juntos.
+
+### Y tres averías que llevaban publicadas en las cuatro
+
+- **Las tarjetas de estudio enseñaban `<br>` y `<small>` escritos.** El frente
+  de la tarjeta pintaba con `textContent` —como las otras 74 misiones, cuyo
+  frente es una palabra— y en estas cuatro el frente trae HTML del archivo de
+  datos: 52 de 87 tarjetas salían con las etiquetas a la vista. Ahora el frente
+  pinta HTML, como el dorso. **Al calcar una misión hay que mirar qué trae el
+  dato, no solo qué hace la función.**
+- **El diploma felicitaba con «¡Guardián de la Patria!».** Copiado de la misión
+  de próceres, y no dio ningún error: es la familia del `.pf-p` naranja.
+  Todavía lo dicen las tres misiones de la Ruta de la Patria de las que se
+  calcó, donde sí es suyo.
+- **El Laboratorio se leía a 14 px con el párrafo de al lado a 20.** Toda misión
+  abre con `body.letra-grande`, que agranda párrafos, listas y títulos… y no los
+  `<div>` ni los `<button>` de los que está hecho el Laboratorio. Medido: la
+  regla `.lab-asp-info{font-size:0.88rem}` estaba copiada en 35 misiones y el
+  `.lab-btn` de 33 px en 42, porque viene con la plantilla. Se arregló en UNA
+  hoja, `css/lab-legible.css`, enlazada en las 43 misiones que tienen
+  Laboratorio —DESPUÉS del CSS de la misión, como las otras compartidas— y en
+  `STATIC_ASSETS`: las medidas siguen a la letra de la misión (1 rem, y un
+  cuarto más con la letra grande, lo mismo que le pasa al párrafo) y los botones
+  van a 44 px. `node _dev/verifica-lab-legible.js` lee las 43 del archivo y abre
+  tres a propósito distintas. ⚠️ Al medir hay que esperar a que pase la
+  animación de entrada de la sección: en el instante de abrirla un botón de 44
+  mide 43,1.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

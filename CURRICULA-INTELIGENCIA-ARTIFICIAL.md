@@ -1,9 +1,13 @@
 # Currícula de Inteligencia Artificial · I, II y III Ciclo
 
-**Escrita para M.E.T.A.S en septiembre de 2026.** Es la primera materia de la
-plataforma que **no está en el DCNB de Honduras**, y por eso empieza explicando
-de dónde sale cada cosa: quién manda aquí, qué se enseña en cada ciclo, y sobre
-todo **qué NO se afirma**.
+**Escrita para M.E.T.A.S en septiembre de 2026, y ampliada el 16 de septiembre
+con las actividades de descubrimiento y el camino de las misiones que vienen.**
+Es la primera materia de la plataforma que **no está en el DCNB de Honduras**, y
+por eso empieza explicando de dónde sale cada cosa: quién manda aquí, qué se
+enseña en cada ciclo, y sobre todo **qué NO se afirma**. Lo que está por venir
+—peligros, actualidad, cine, escenarios— tiene su propio documento,
+`COMPENDIO-MISIONES-IA.md`; esta currícula dice qué se enseña y por qué, y aquel
+dice cómo se hace la siguiente misión.
 
 ---
 
@@ -98,18 +102,23 @@ defenderse después de que ya lo usaron.
 
 ---
 
-## 4. Los cuatro hilos, y qué se ve de cada uno en cada ciclo
+## 4. Los cinco hilos, y qué se ve de cada uno en cada ciclo
 
-Toda la materia se teje con cuatro hilos. Ninguno empieza y termina en un ciclo:
-los cuatro vuelven, cada vez con más adentro. Es la misma lógica de espiral que
-el DCNB usa con la gramática y la ortografía.
+Toda la materia se teje con cinco hilos. Ninguno empieza y termina en un ciclo:
+los cinco vuelven, cada vez con más adentro. Es la misma lógica de espiral que
+el DCNB usa con la gramática y la ortografía. El quinto entró el 16 de
+septiembre de 2026 y es el que obliga a la materia a moverse cada semana: la
+ciencia de la que habla cambia a ese ritmo, y una currícula que no lo prevea
+envejece en un mes. Cómo se hace sin romper la regla de la evidencia está en
+`COMPENDIO-MISIONES-IA.md` (el protocolo de actualidad).
 
 | hilo | I Ciclo (1º a 3º) | II Ciclo (4º a 6º) | III Ciclo (7º a 9º) |
 |---|---|---|---|
 | **A. Qué es** | Una máquina que hace cosas que parecen de persona. **No está viva y no siente.** | Un programa que aprende **de ejemplos** en vez de seguir solo reglas escritas. | Sistemas que **predicen**: la siguiente palabra, la siguiente etiqueta, el siguiente píxel. |
-| **B. Cómo aprende** | Le enseñas mostrándole **muchos ejemplos**. Si le enseñas poco, se equivoca. | **Datos → patrón → prueba → error.** Etiquetas, entrenamiento y sesgo. | Qué cambió para que funcionara: **datos + cómputo + algoritmos**. Qué es entrenar y qué es usar. |
+| **B. Cómo aprende** | Le enseñas mostrándole **ejemplos**. Si todos se parecen, se equivoca con el raro: **no es cuántos, es cuáles**. | **Datos → patrón → prueba → error.** Etiquetas, entrenamiento y sesgo. | Qué cambió para que funcionara: **datos + cómputo + algoritmos**. Qué es entrenar y qué es usar. |
 | **C. De dónde viene** | Hace mucho, alguien se preguntó si una máquina podía pensar. | La pregunta de Turing, el nombre que nació en 1956 y los dos «inviernos». | La línea del tiempo completa, de 1950 a hoy, y por qué se aceleró. |
 | **D. Cómo se usa sin salir perjudicado** | No le cuentes tus cosas a una máquina. Si te dice algo raro, **pregúntale a una persona grande**. | Lo que dice **se verifica**. Lo que subes **queda**. Lo que no está en los ejemplos, no lo reconoce. | **Alucinación, deepfake, privacidad, honestidad académica y trabajo.** Verificar como oficio. |
+| **E. Lo que pasa hoy, y lo que puede pasar** | El juguete que habla y pregunta cosas de la familia. | Un hecho de esta semana, fechado, con quién lo dice y hasta cuándo vale. La promesa que se anota para volver a mirar. | Los peligros con persona y precio, los escenarios por venir declarados como escenarios, y la pregunta que desarma cada promesa grande: ¿quién, para cuándo, qué gana? |
 
 ---
 
@@ -141,9 +150,24 @@ antes que lo concreto:
    preguntar, y avisarle a una persona grande si algo lo asusta o lo confunde.
 
 **La interacción que sostiene la misión:** 🍎 **Enséñale a la máquina**. El niño
-le muestra frutas a una máquina de mentira y la máquina va aprendiendo a
-separarlas por color y tamaño. Con tres ejemplos falla; con doce acierta. **Lo
-descubre él, no se lo dicen.**
+le muestra frutas a una máquina de mentira, que le pone a cada fruta nueva el
+nombre de la que más se le parece. Con los ocho ejemplos típicos falla las dos
+raras; con los dos raros acierta. **No es cuántos ejemplos: es cuáles.** Lo
+descubre él, no se lo dicen. (La primera versión prometía «con pocos se equivoca
+más», se midió que era falso y se rehízo entera: una interacción que promete lo
+que no cumple enseña a no creerle a la pantalla.)
+
+**Y lo que descubre (🔭 Descubre, desde el 16 de septiembre de 2026):**
+
+- 👀 **La máquina ve puntitos.** Dibuja en una cuadrícula de 6 × 6 y la máquina
+  le dice a cuál de sus tres recuerdos se parece, contando casillas iguales. La
+  cruz igualita da 36 de 36; **movida una casilla, dice «raya»** con 30 de 36;
+  la cuadrícula vacía también dice «raya». Y le enseña los 36 números que ella
+  ve de verdad. Es el vecino más cercano sobre píxeles, y sus dos límites.
+- 🐾 **El adivinador de animales.** Un árbol de preguntas escrito por una
+  persona: acierta con los cinco animales en que esa persona pensó y falla con
+  el pato, el delfín y el murciélago. El niño lo rompe, y después **escribe la
+  pregunta que faltaba**. Es «instrucciones contra ejemplos» visto desde I Ciclo.
 
 ### Etapa 2 · «Cómo Aprende una Máquina» · II Ciclo
 
@@ -166,10 +190,27 @@ sesgo** en un conjunto de ejemplos mal repartido.
 6. **Dónde sirve aquí:** reconocer la plaga de un cultivo, leer un recibo,
    traducir, avisar de una creciente.
 
-**La interacción que sostiene la misión:** 🧪 **Entrenador**. El alumno coloca
-ejemplos en una cuadrícula de dos rasgos y ve cómo la máquina traza la frontera.
-Y un botón que **desequilibra los ejemplos a propósito**, para que vea con sus
-ojos que el error no lo puso la máquina: lo puso quien eligió los ejemplos.
+**La interacción que sostiene la misión:** 🧪 **Entrenador del detector de
+plagas**. El alumno elige con qué cultivos se entrena la máquina y la prueba
+con ocho hojas que nunca vio. Entrenada sin plátano le dice «enferma» a la hoja
+sana de plátano —que de por sí tiene manchas—; entrenada solo con plátano le
+dice «sana» a una hoja enferma. **El sesgo lo produce él**, quitando y poniendo
+cultivos, y la pantalla nombra hacia qué lado falla, porque los dos errores no
+cuestan lo mismo.
+
+**Y lo que descubre (🔭 Descubre):**
+
+- 🎯 **Tú eres la máquina.** Ve ejemplos de uno en uno, dice si entran o no, y
+  solo después ve la etiqueta: saca la regla sin que nadie se la diga, que es
+  lo que hace una máquina al aprender. A mitad de ronda la escribe. Y la cuarta
+  ronda es la trampa: **hasta el quinto ejemplo caben dos reglas** («los pares»
+  y «menor que 8»), y la que eligió falla con el sexto. Con pocos ejemplos caben
+  varias reglas; por eso hacen falta ejemplos variados, no solo muchos.
+- 📈 **¿Cuántos ejemplos hacen falta?** Un detector de frijol rojo y negro por
+  largo y ancho, probado con 20 semillas que nunca vio, entrenado con 1, 2, 5,
+  10, 20 o 50. Con uno acierta 10 de 20 —conoce una sola clase—; con dos, 13;
+  con veinte, 17; con cincuenta, 17. **Sube, y deja de subir.** Las medidas se
+  sortean con semilla y van declaradas como inventadas en la pantalla.
 
 ### Etapa 3 · «La Historia de la Inteligencia Artificial» · II y III Ciclo
 
@@ -191,6 +232,18 @@ hecho que lo acredita**. Lo que se enseña encima de las fechas:
   **una promesa que no se cumple cuesta la confianza, no el producto.**
 - **Los nombres que hay que saber,** y ninguno más de los que se pueden
   acreditar.
+
+**Y lo que descubre (🔭 Descubre):**
+
+- 🗓️ **¿Cuánto tardó?** Cinco pares de hitos y un deslizador: el alumno adivina
+  cuántos años separan la neurona de papel (1943) de la red que aprendió a ver
+  (2012), y después ve la cuenta: 69. Las ideas de hoy son viejas; lo que faltó
+  fueron las tres patas. Los años salen de `ia-historia.js`, no se escriben.
+- ✍️ **El hito de este año.** Escribe el suyo con las mismas piezas que los de
+  arriba: qué pasó o qué se promete, quién lo dice y qué gana, para cuándo, y
+  **de dónde lo sacó**. Sin fuente no entra: es un rumor. Queda en su línea del
+  tiempo marcado «escrito por ti · sin verificar», y si es una promesa la misión
+  le pide volver en un año. Es el primer paso del protocolo de actualidad.
 
 ### Etapa 4 · «IA Generativa: úsala bien y no le creas todo» · III Ciclo
 
@@ -218,10 +271,52 @@ Tecnología de «evaluar la información».
    proyecto en sus materiales.
 7. **Trabajo.** Qué cambia y qué no. Sin catástrofe y sin publicidad.
 
-**Las interacciones que sostienen la misión:** 🔎 **Cazador de inventos** (marcar
-en un texto generado lo que hay que verificar antes de creerlo) y 🧱 **Arma la
-petición** (construir un buen encargo pieza por pieza y ver cómo cambia el
-resultado).
+**Las interacciones que sostienen la misión:** 💬 **el predictor** (arma una
+frase eligiendo continuaciones con su probabilidad, y ve nacer la alucinación:
+«cinco estrofas», y son siete), 🔎 **Cazador de inventos** (marcar en un texto
+generado lo que hay que verificar antes de creerlo) y 🧱 **Arma la petición**
+(construir un buen encargo pieza por pieza y ver cómo cambia el resultado).
+
+**Y lo que descubre (🔭 Descubre):**
+
+- 🕵️ **¿Se puede comprobar?** Cuatro textos escritos para el ejercicio,
+  declarados como tales. No se le pide adivinar si los hizo una máquina —**eso no
+  lo aciertan ni los expertos**, y prometer un detector sería mentirle—: se le
+  pide, afirmación por afirmación, decir si trae con qué comprobarse (quién,
+  cuándo, dónde, qué documento). «El remedio» es el mejor escrito y **no trae
+  ni una**. Lo bien escrito no es lo verdadero.
+- 🔮 **Escenarios por venir: tú decides.** Cuatro situaciones inventadas para
+  pensar, armadas con cosas que ya se pueden hacer: la voz de su mamá pidiendo
+  dinero, el ensayo que escribió la máquina, la noticia que cierra la escuela y
+  la máquina que califica y reprueba a Sofía por escribir «cipote». Cada una con
+  una persona, un precio, tres decisiones con su consecuencia y una regla; y al
+  final el alumno **escribe la suya**. No hay una respuesta buena: hay
+  consecuencias.
+
+---
+
+## 5 bis. Lo que se descubre, no se lee: las reglas de una actividad de descubrimiento
+
+Desde el 16 de septiembre de 2026 cada etapa tiene una sección 🔭 Descubre con
+dos actividades, y las ocho cumplen seis reglas que salen de la normativa del
+asombro y de una avería que costó rehacer un juego entero:
+
+1. **El alumno lo produce**: dibuja, adivina, elige, escribe, decide.
+2. **La pantalla contesta con la verdad**, aunque sea menos limpia que la
+   lección. Si el cuento y la verdad se pelean, se cambia el cuento.
+3. **Lo que afirma se recalcula aparte.** Las cuentas viven en
+   `js/data/ia-descubre.js`, que corre también en Node, y
+   `_dev/verifica-descubre-ia.js` (en `npm test`) rehace cada promesa: la cruz
+   movida, el 10 de 20, la ronda de las dos reglas, los años de cada par.
+4. **Termina en algo que se guarda**: una pregunta, una regla, un hito con su
+   fuente. Nunca en una moraleja.
+5. **Corre sin señal y dentro del teléfono**, sin una petición hacia afuera.
+6. **Tiene su versión en papel** en la ficha, con la pauta calculada del mismo
+   archivo de datos: en un aula de 43 con tres teléfonos, lo que solo vive en
+   la pantalla es para tres.
+
+La lista de comprobación completa, con los archivos que toca, está en
+`COMPENDIO-MISIONES-IA.md`.
 
 ---
 
@@ -238,7 +333,15 @@ Es la parte más importante de esta currícula, y va escrita para que nadie la
   cuando hacen falta para que el alumno reconozca lo que ya usa, y se nombran
   como ejemplos, no como contenido a memorizar.
 - **No se afirma nada sobre lo que la IA «va a hacer».** Ni que va a quitar todos
-  los trabajos ni que no va a quitar ninguno. Se enseña a preguntarlo.
+  los trabajos ni que no va a quitar ninguno. Se enseña a preguntarlo. Lo que sí
+  se hace, desde la etapa 4, es **imaginarlo con método**: un escenario con una
+  persona, un precio y una decisión, declarado como inventado en la pantalla y
+  armado con lo que ya se puede hacer hoy. Un escenario no promete: prepara.
+- **No se escribe un hecho de actualidad sin su fecha, su fuente y su
+  caducidad.** La materia tiene que poder hablar de lo que pasó el lunes, y para
+  eso está el protocolo de `_dev/actualidad/`: el hecho entra fechado y
+  acreditado, la misión no cambia con el hecho, y cuando caduca se vuelve
+  historia en vez de mentira.
 - **No se dice que la IA piensa, entiende, quiere o siente.** Y no es un matiz
   filosófico: es el error del que salen todos los demás.
 - ⚠️ **No se pone a ningún alumno a usar una IA en línea dentro de la misión.**
@@ -280,15 +383,22 @@ eligió los ejemplos**.
   afirma nada de Media. Lo que sí se ve es que el BTP en Sistematización e
   Informática y el BCH con Programación y TIC son el destino natural de un
   alumno que salga de esta ruta.
-- **Un juego 3D de la ruta.** El andamio ya está en el proyecto
-  (`js/3d/parque-3d.js`) y un clasificador en tres dimensiones enseñaría el
-  concepto de frontera de decisión mejor que cualquier párrafo. No entra hoy
-  porque primero tiene que estar el texto.
+- **Las misiones que vienen.** Están planeadas una por una —peligros,
+  actualidad, cine, escenarios por venir, compañía artificial, la máquina que
+  juzga personas, privacidad, el campo, el algoritmo que recomienda, la red
+  neuronal, la salud, lo que cuesta una respuesta, la autoría, la opinión
+  fabricada, la singularidad, los juguetes que hablan, el trabajo, los robots—
+  en `COMPENDIO-MISIONES-IA.md`, con su ciclo, de qué se hacen y qué descubre
+  el alumno en cada una. Ninguna existe todavía; cada una entra cuando tenga su
+  material acreditado, sus dos actividades de descubrimiento y su ficha.
+- **El Parque de Juegos 3D** ya existe (seis juegos, en la etapa 2, para toda la
+  ruta) y está contado en `CLAUDE.md`.
 - **Traducción al inglés.** La ruta se presta, y el vocabulario técnico de IA se
   usa en inglés en todo el mundo. Cuando se haga, se hace con `-en.js` y su
   verificador de bancos, como las ocho que ya están.
 
 ---
 
-*Escrita en septiembre de 2026. Las cifras de esta currícula son las de hoy:
-cuatro misiones en la ruta, y siguen entrando.*
+*Escrita en septiembre de 2026 y ampliada el 16 de septiembre. Las cifras de
+esta currícula son las de hoy: cuatro misiones en la ruta, ocho actividades de
+descubrimiento, veintitrés misiones planeadas, y siguen entrando.*
