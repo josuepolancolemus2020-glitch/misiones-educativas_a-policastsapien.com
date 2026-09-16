@@ -50,6 +50,16 @@
         '<div class="badge">💻 Code Path · Stage 1 of 7 · Programming</div>',
 
       /* ---------- APRENDE ---------- */
+      a0:
+        '<h2>🫓 Kenia’s baleadas</h2>' +
+        '<p>Kenia was left making the <em>baleadas</em> —the Honduran folded flour tortilla— while her mother ' +
+        'walked to the corner store. She did every step she had seen done, without skipping a single one — but she ' +
+        'spread the beans first and put the tortilla on the griddle afterward. The beans burned on the griddle and the ' +
+        'dough stayed raw. There was no lunch in her house that day.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>No step was missing: <strong>one step was in the wrong place</strong>. Write down in your notebook the steps ' +
+        'of something you do every day, swap two of them around, and you will watch the same mess happen.</div></div>',
+
       a1:
         '<h2>🫓 What is an algorithm?</h2>' +
         '<p>An <strong>algorithm</strong> is the <strong>ordered steps</strong> for getting something done. The ' +

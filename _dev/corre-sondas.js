@@ -61,7 +61,12 @@ const NO_SON_SONDAS = {
   'verifica-bancos-en':     'pide la misión cuyos bancos se comparan',
   'verifica-ficha-paginas': 'cuenta las hojas de UNA ficha o de las 74: va aparte, tarda minutos',
   'verifica-mision-navegador': 'abre Chromium sin executablePath y no arranca en este entorno',
-  'arma-fichas-ia':         'ESCRIBE las cuatro fichas de la Ruta de la Máquina que Aprende; se corre a mano'
+  'arma-fichas-ia':         'ESCRIBE las cuatro fichas de la Ruta de la Máquina que Aprende; se corre a mano',
+  /* Mide, no comprueba: ordena las misiones por cuánto le falta a su relato
+     y SIEMPRE sale en cero, porque si un relato está bien escrito lo decide
+     una persona leyéndolo. Una línea verde que no puede ponerse roja no es
+     una sonda: es ruido dentro de la tanda, y enseña a no mirarla. */
+  'mide-relato':            'MIDE el relato para saber por dónde leer; no falla nunca, es de juicio'
 };
 
 /* ── qué sondas hay ──────────────────────────────────────────── */

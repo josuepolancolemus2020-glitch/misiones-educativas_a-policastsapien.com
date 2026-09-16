@@ -177,6 +177,64 @@ el elogio del Reto pase por un umbral—. Lo mismo con `.shake-error`, que avisa
 MOVIÉNDOSE: un temblor lo ve quien no ve el rojo, y darlo por color era un falso
 positivo.
 
+### ⚠️ Y la primera pregunta de juicio, medida: ¿a quién le pasa?
+
+La regla 2 —«toda misión le pasa a ALGUIEN, y le cuesta algo»— es de juicio y
+por eso no hay sonda que la apruebe. Lo que sí se puede medir es **por dónde
+empezar a leer**, y eso lo hace `_dev/mide-relato.js`.
+
+Mide el **arranque**, no la misión entera, y a propósito: una misión de catorce
+pantallas puede tener su mejor historia en la pestaña doce y no servir de nada,
+porque el alumno decide si sigue en los dos primeros párrafos. Medido el 16 de
+septiembre de 2026, antes de tocar nada:
+
+| | misiones |
+|---|---|
+| sin una persona NI un precio en el arranque | **52 de 83** |
+| abrían con una definición («El adverbio es la palabra que…») | **20** |
+
+Las **14 peores** —las que juntaban las dos cosas— llevan ya su situación
+delante de la definición, que no se borró: se le puso lo que le faltaba
+adelante. Hoy quedan **38 sin persona ni precio** y **6 que abren definiendo**.
+
+Cuatro reglas de cómo se escribe una de esas situaciones, y ninguna es de
+adorno:
+
+1. **Hay una persona con nombre y hay un precio que se puede contar.** Marvin se
+   queda viendo salir el bus por una palabra que faltaba; doña Nely camina
+   cuarenta minutos por una tilde; doña Chepa pierde en cada saco por confundir
+   lo que pesa con lo que ocupa. «El agricultor» no es nadie y «es importante»
+   no es un precio.
+2. ⚠️ **La situación apunta a lo que la misión SÍ enseña.** El arranque del
+   Universo habla de por qué el año se repite porque esa misión tiene su bloque
+   de traslación; si no lo tuviera, sería una promesa que la misión no cumple —y
+   eso ya está escrito aquí: un juego que promete una cosa y hace otra enseña a
+   no creerle a la pantalla.
+3. ⚠️ **Y termina en algo que el alumno PRODUCE**, no en una moraleja: cambiarle
+   el tiempo al verbo y ver salir tres noticias del mismo papel, contar las
+   respiraciones antes y después de subir unas gradas, cambiarle el orden a dos
+   pasos de algo que hace todos los días.
+4. **No lleva CSS nuevo.** Usa la tarjeta y el `.tip` que esa misión ya tiene
+   (`class="card ac-amber" data-situacion`), así se ve nativa en las catorce sin
+   una hoja compartida más. El `data-situacion` no pinta nada: está para poder
+   contarlas.
+
+⚠️ **Y en las bilingües la situación va TAMBIÉN en el `-en.js`.** Es la trampa de
+siempre: el bloque lleva su `data-i18n="a0"` y, sin su entrada en el
+diccionario, la edición en inglés enseña el párrafo en español **sin dar un solo
+error**. Pasa en las dos de esta tanda (Pensamiento Computacional y Sensores).
+
+```
+node _dev/mide-relato.js             → la tabla, de peor a mejor
+node _dev/mide-relato.js --detalle   → el arranque de cada una, para leer
+```
+
+⚠️ **Esa herramienta NO es una sonda y está fuera de `npm test`, con su motivo
+escrito en `corre-sondas.js`.** Nunca puede ponerse roja —si un relato está bien
+escrito lo decide una persona leyéndolo—, y una línea verde que no puede fallar
+es ruido dentro de la tanda. Lo que NO mide, y hay que leer: que el relato sea
+verdad, que el alumno lo produzca y que valga la pena.
+
 ### 5 · Lo que hay que poder contestar antes de publicar
 
 No hay sonda para esta normativa —es de juicio, no de código—, así que la prueba
@@ -4750,9 +4808,14 @@ propósito.
 Ahora se corren de un golpe, y en dos tandas porque cuestan cosas distintas:
 
 ```
-npm test                       → las 32 rápidas: solo leen archivos, 12 s
-npm run test:navegador         → las 24 de Playwright, con su servidor
+npm test                       → las rápidas: solo leen archivos, medio minuto
+npm run test:navegador         → las de Playwright, con su servidor
 ```
+
+⚠️ **Y aquí no se escribe cuántas son.** Decía «las 32 rápidas» y «las 24 de
+Playwright» cuando ya eran 43 y 41: las sondas se descubren solas, así que ese
+número envejece con la siguiente que entre. Es la misma regla que el catálogo de
+misiones —lo que se cuenta no se escribe— y la herramienta lo dice al arrancar.
 
 El **servidor estático lo levanta y lo baja la propia herramienta**
 (`_dev/corre-sondas.js`): era el paso que más se olvidaba, y una sonda sin

@@ -84,6 +84,15 @@
         '<p class="sub">Find out how a robot sees, hears, touches and measures the world… and what happens when a sensor gets it wrong! 👁️📏🌡️</p>' +
         '<div class="badge">🤖 Robot Path · Stage 2 of 6 · Robotics</div>',
 
+      a0:
+        '<h2>💧 The tank that overflowed all afternoon</h2>' +
+        '<p>At school, the pump fills the water tank. Mr. Chico switches it on, and he is also the one who switches it ' +
+        'off… when he remembers. On Tuesday he forgot: the pump kept pouring water all afternoon, the tank overflowed, ' +
+        'and on Wednesday there was no water in the school restrooms.</p>' +
+        '<div class="tip"><span class="ti">❓</span>' +
+        '<div>That pump is not short on power: it is short on <strong>finding out</strong>. Nobody is telling it when the ' +
+        'tank is already full. That is exactly what a sensor does — and that is what this mission is about.</div></div>',
+
       a1:
         '<h2>📡 What is a sensor?</h2>' +
         '<p>A <strong>sensor</strong> is the part of the robot that <strong>SENSES</strong>: it turns something from the real world ' +
