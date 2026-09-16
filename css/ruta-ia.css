@@ -513,3 +513,84 @@ body.letra-grande .desc-input{font-size:1.2rem;}
 .pro-mal{background:var(--red-gl);}
 .pro-bien{background:var(--jade-gl);}
 .pro-fin{background:var(--amber-gl);font-weight:600;}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   🧭 ETAPA 6 · En los albores de la singularidad (la actualidad)
+   ───────────────────────────────────────────────────────────────────────────
+   Entró el 16 de septiembre de 2026. Ni un color propio, como todo lo demás
+   de esta hoja. Y una regla de contenido que se nota en el CSS: lo que SE
+   SABE y lo que SE AFIRMA se pintan distinto, porque confundirlos es el error
+   que esta misión viene a arreglar.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* La afirmación de la singularidad, en su caja: se lee como lo que es, una
+   frase que alguien dice, y no como un dato de la misión. */
+.sing-afirma{background:var(--card-alt,rgba(0,0,0,0.03));border-left:4px solid var(--sec);
+  border-radius:0 12px 12px 0;padding:0.7rem 0.85rem;margin:0 0 0.5rem;font-size:1rem;line-height:1.6;font-style:italic;}
+.sing-albores{font-size:0.95rem;line-height:1.55;margin:0;}
+.sing-fila{display:flex;gap:0.7rem;align-items:flex-start;background:var(--jade-gl);
+  border-radius:12px;padding:0.65rem 0.8rem;margin-bottom:0.5rem;}
+.sing-e{font-size:1.5rem;line-height:1;flex-shrink:0;}
+.sing-fila h4{margin:0 0 0.2rem;font-size:0.98rem;color:var(--jade);line-height:1.35;}
+.sing-fila p{margin:0;font-size:0.9rem;line-height:1.5;}
+/* Lo que NO se sabe va en gris y con el borde de rayas: se ve que es otra
+   cosa sin tener que leer el título. */
+.sing-no{margin:0;padding-left:1.3rem;border-left:3px dashed var(--border);}
+.sing-no li{font-size:0.95rem;line-height:1.55;margin-bottom:0.35rem;color:var(--gray);}
+.sing-porque{margin-top:0.9rem;}
+.sing-porque p{font-size:0.95rem;line-height:1.55;margin:0 0 0.5rem;}
+.sing-vara{background:var(--amber-gl);border-radius:10px;padding:0.55rem 0.7rem;font-weight:600;}
+
+/* Los puntos de inflexión reusan `.ciclo-paso` de la etapa 2. */
+.infl-que{font-size:1rem;line-height:1.55;margin:0 0 0.4rem;font-weight:600;}
+.infl-cuando{font-size:0.95rem;line-height:1.55;margin:0 0 0.8rem;color:var(--gray);}
+
+/* El termómetro: la pregunta, cómo suena el sí y cómo suena el no. Lo de
+   «cómo suena» es lo que de verdad se usa, porque en un mensaje real nadie
+   escribe «no tengo fuente». */
+.term-caja{border:2px solid var(--border);border-radius:12px;padding:0.65rem 0.8rem;margin-bottom:0.55rem;}
+.term-caja h4{margin:0 0 0.35rem;font-size:1rem;color:var(--pri);line-height:1.3;}
+.term-caja p{margin:0 0 0.3rem;font-size:0.9rem;line-height:1.5;}
+.term-si{background:var(--jade-gl);border-radius:8px;padding:0.35rem 0.55rem;}
+.term-no{background:var(--red-gl);border-radius:8px;padding:0.35rem 0.55rem;}
+.term-por{color:var(--gray);margin-bottom:0 !important;}
+
+/* ── 📰 El dossier ───────────────────────────────────────────────────────── */
+.dos-fecha{font-size:0.92rem;margin:0 0 0.4rem;color:var(--sec);}
+.dos-afirma{background:var(--card);border:2px dashed var(--border);border-radius:12px;
+  padding:0.7rem 0.85rem;margin:0 0 0.7rem;font-size:1rem;line-height:1.6;}
+.dos-preg{font-size:0.98rem;font-weight:700;margin:0 0 0.5rem;}
+.dos-res{font-size:1rem;line-height:1.5;border-radius:10px;padding:0.55rem 0.7rem;margin:0 0 0.6rem;}
+.dos-ok{background:var(--jade-gl);}
+.dos-no{background:var(--amber-gl);}
+.dos-ficha p{font-size:0.92rem;line-height:1.55;margin:0 0 0.45rem;background:var(--card-alt,rgba(0,0,0,0.03));
+  border-radius:8px;padding:0.45rem 0.6rem;}
+.dos-comp{background:var(--pri-gl) !important;}
+.dos-imp{background:var(--sec-gl) !important;margin-bottom:0 !important;}
+
+/* ── 🌡️ El termómetro, la actividad ─────────────────────────────────────── */
+.term-de{font-size:0.9rem;color:var(--gray);margin:0 0 0.35rem;}
+.term-frase{background:var(--card);border:2px dashed var(--sec);border-radius:12px;
+  padding:0.7rem 0.85rem;margin:0 0 0.7rem;font-size:1.05rem;line-height:1.6;font-style:italic;}
+.term-preg{font-size:1.05rem;text-align:center;margin:0 0 0.4rem;}
+.term-ayuda{font-size:0.88rem;line-height:1.5;color:var(--gray);text-align:center;margin:0 0 0.5rem;}
+.term-cuenta{font-size:0.85rem;color:var(--gray);text-align:center;margin:0.5rem 0 0;}
+.term-tabla{margin-bottom:0.6rem;}
+/* La fila va en dos renglones: con la letra grande, la pregunta y los dos
+   veredictos en la misma línea no caben en un teléfono de 360. */
+.term-fila{border-radius:10px;padding:0.45rem 0.6rem;margin-bottom:0.35rem;font-size:0.9rem;line-height:1.45;}
+.term-fila .term-q{display:block;font-weight:600;}
+.term-fila .term-v{display:block;color:var(--gray);}
+.term-igual{background:var(--jade-gl);}
+.term-dist{background:var(--amber-gl);}
+.term-tramo{font-size:1.05rem;margin:0 0 0.4rem;}
+.term-dice,.term-porque,.term-ojo{font-size:0.95rem;line-height:1.55;margin:0 0 0.5rem;border-radius:10px;padding:0.55rem 0.7rem;}
+.term-dice{background:var(--pri-gl);}
+.term-porque{background:var(--card-alt,rgba(0,0,0,0.03));}
+.term-ojo{background:var(--amber-gl);}
+
+/* ── 📅 La cápsula del tiempo ────────────────────────────────────────────── */
+.cap-caja{margin-top:0.8rem;border:2px solid var(--sec);border-radius:14px;padding:0.8rem 0.9rem;background:var(--sec-gl);}
+.cap-tit{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--sec);margin:0 0 0.45rem;font-size:1rem;}
+.cap-caja p{font-size:0.95rem;line-height:1.55;margin:0 0 0.4rem;}
+.cap-vuelve{background:var(--card);border-radius:10px;padding:0.55rem 0.7rem;margin-bottom:0 !important;}

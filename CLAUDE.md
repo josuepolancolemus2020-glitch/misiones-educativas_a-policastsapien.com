@@ -2990,6 +2990,85 @@ estrechó a lo que sí se puede afirmar sin adivinar —el nombre con su número
 versión, o dicho «modelo …»— y se comprobó al revés, metiendo un producto a
 propósito. Es la lección de «Cuadrado **Perfecto**», por si hacía falta otra vez.
 
+### La etapa 6, la actualidad: no se pudo LEER, y eso se volvió la misión
+
+Es la primera misión de actualidad de la plataforma
+(`misiones/3ciclo-albores-singularidad/`, id 77, III Ciclo, etapa 6), escrita el
+16 de septiembre de 2026 sobre lo que estaba pasando **ese mes**. Los datos
+viven en `js/data/ia-actualidad.js`, la misión los pinta, la ficha sale del
+armador y `verifica-ia` compara las dos, como en el Himno y los próceres.
+
+⚠️ **Y lo que la define es una pared del entorno, no una idea de diseño.** Desde
+aquí se puede **buscar** y no se puede **leer**: el proxy de estas sesiones
+contesta `EGRESS_BLOCKED` a todos los medios y sitios de referencia que se
+intentaron. O sea que había ocho afirmaciones encontradas y **ninguna página
+abierta**. Las dos salidas malas estaban a la vista —escribir los hechos como si
+se hubieran leído, o no hacer la misión—, y se hizo la tercera: **la misión dice
+en la pantalla y en el papel que no se pudo abrir ninguna**, no afirma ni una, y
+el trabajo del alumno es justamente ir a comprobarlas. Es
+`INVESTIGACION-ESTATUTO-DOCENTE.md` convertido en actividad: **buscar no es
+leer**.
+
+**Cinco reglas, y ninguna es de adorno:**
+
+1. ⚠️ **NI UNA CIFRA.** Ninguna de las ocho entradas del dossier trae un número
+   —ni porcentajes, ni cuántas becas, ni cuántas instituciones—, y no es
+   prudencia: **el número es lo que el alumno va a buscar al documento**. Una
+   cifra escrita sin haber leído la fuente sería exactamente lo que esta misión
+   enseña a no hacer, y encima envejecería sola. La sonda lo cuenta: quita los
+   años y, si queda una cantidad, se pone roja.
+2. ⚠️ **Se nombra el MEDIO, nunca la empresa ni la persona.** El medio es lo que
+   el alumno necesita para llegar; el nombre propio lo encuentra él en el
+   artículo. Así la misión no se convierte en una noticia sobre una empresa
+   —que es la regla de la currícula de esta materia— y la plataforma no repite
+   un nombre que no pudo verificar.
+3. ⚠️ **`comprobable` mide lo que la afirmación TRAE, no si es verdad.** Alta:
+   nombra a quien responde, con fecha y con documento que se puede abrir. Media:
+   varios medios que no se copian entre sí, con fecha, pero sin el original.
+   Baja: no dice quién, ni cuándo, ni de dónde. Clasificar por «me suena
+   razonable» es justo lo que la misión viene a quitar.
+4. ⚠️ **De las cinco frases del termómetro, DOS pasan la prueba.** Es la misma
+   regla que el mensaje sin señales de la etapa 5: una lista donde todo es humo
+   fabrica un alumno que desconfía de todo, y eso cuesta lo mismo que creerlo
+   todo. Las cinco caen en los cuatro tramos y la sonda lo comprueba.
+5. **Lo que se promete se FECHA, que es lo único honesto que se puede hacer hoy.**
+   De ahí sale la cápsula del tiempo: el alumno escribe una promesa que oyó, con
+   la fecha de hoy y la de dentro de un año. Se guarda en
+   `SAVE_KEY + '_descubre'`, como las demás actividades de la ruta, y en la
+   ficha va la versión de papel para pegarla en el cuaderno.
+
+**Y la singularidad se enseña sin afirmarla.** La misión separa lo que se sabe
+—cuatro cosas, y las cuatro las produjo el alumno en las etapas anteriores— de
+lo que no se sabe: si va a pasar, cuándo, y **qué se sentiría el día antes**.
+Esa tercera es la que sostiene la misión entera: si nadie sabe cómo se ve por
+dentro el principio, tampoco se puede afirmar que estemos en él. La vara para
+medirlo ya la tenía: son los dos inviernos de la etapa 3.
+
+⚠️ **Los puntos de inflexión de la historia NO se escriben aquí**: viven en
+`js/data/ia-historia.js`, que sigue siendo el único sitio del proyecto donde
+vive una fecha de la IA. En `IA_INFLEXION` está solo la regla con la que se
+reconoce uno, que es lo que no se puede sacar de una lista de años.
+
+**Cuando el dossier caduque —está fechado a un año— no se borra**: lo que se
+prometió y se cumplió pasa a ser un hito de `ia-historia.js`; lo que no, un
+invierno pequeño. El protocolo, con un archivo por hecho, está en
+`_dev/actualidad/`; los ocho de este mes llevan dentro, escrito, que no se
+pudieron abrir.
+
+```
+node _dev/verifica-ia.js              → la pantalla y el papel, afirmación por afirmación
+node _dev/verifica-descubre-ia.js     → el termómetro y el dossier, recalculados
+node _dev/verifica-mision-nueva.js misiones/3ciclo-albores-singularidad/albores-singularidad.html
+```
+
+⚠️ **Y la sonda nueva acusó dos veces a un archivo sano, las dos por medir de
+más.** El «2026» de un titular entrecomillado contaba como cifra prohibida —se
+quitan los años antes de buscar cantidades—, y `fecha: 'todo el mes'` no pasaba
+un `length < 15` pensado para las afirmaciones: la fecha se comprueba aparte y
+con su propio mínimo. Es la lección de «Cuadrado **Perfecto**» por tercera vez en
+esta ruta, y por eso se escribe: una sonda que se pone roja sin avería enseña a
+no mirarla.
+
 ### 🔭 Descubre: lo que la pantalla afirma, la sonda lo recalcula
 
 Las cuatro misiones de la ruta estrenaron una sección de descubrimiento con dos

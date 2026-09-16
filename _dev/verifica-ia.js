@@ -46,6 +46,8 @@ const { IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS } =
   require(path.join(RAIZ, 'js/data/ia-historia.js'));
 const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS } =
   require(path.join(RAIZ, 'js/data/ia-peligros.js'));
+const { IA_HOY_FECHA, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_FRASES, IA_INFLEXION } =
+  require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
 
 let fallos = 0;
 const mal = m => { console.log('  ❌ ' + m); fallos++; };
@@ -79,6 +81,10 @@ const MISIONES = [
      la sección 6-bis, contra js/data/ia-peligros.js. */
   { id: 76, ciclo: 0, dir: 'misiones/3ciclo-peligros-ia', html: 'peligros-ia.html', js: 'js/peligros-ia.js',
     ficha: 'fichas/ficha-peligros-ia.html', qr: 'img/qr-mision-peligros-ia.png' },
+  /* La 77 también va con `ciclo: 0`: no estrena vocabulario, y lo suyo —el
+     dossier fechado y el termómetro— se comprueba en la sección 6-ter. */
+  { id: 77, ciclo: 0, dir: 'misiones/3ciclo-albores-singularidad', html: 'albores-singularidad.html', js: 'js/albores-singularidad.js',
+    ficha: 'fichas/ficha-albores-singularidad.html', qr: 'img/qr-mision-albores-singularidad.png' },
 ];
 
 console.log('\n✨ Ruta de la Máquina que Aprende · la pantalla y el papel\n');
@@ -207,6 +213,48 @@ IA_PELIGROS.forEach(p => {
 if (!leer(path.join(MISIONES[4].dir, MISIONES[4].html)).includes('js/data/ia-peligros.js')) mal('la misión 76 no carga js/data/ia-peligros.js');
 if (fallos === f0) bien(`${IA_SENALES.length} señales, ${IA_FAMILIAS.length} familias, ${IA_PELIGROS.length} peligros y ${IA_DEFENSAS.length} defensas, del archivo al papel`);
 
+// ── 6-ter. La actualidad: fechada, atribuida y SIN afirmar nada ───────────
+console.log('\n🧭 El dossier de la actualidad y el termómetro');
+f0 = fallos;
+const M77 = MISIONES[5];
+const f77 = plano(leer(M77.ficha));
+const h77crudo = leer(path.join(M77.dir, M77.html));
+IA_TERMOMETRO.forEach(t => {
+  if (!f77.includes(plano(t.pregunta))) mal('ficha-albores-singularidad: falta la pregunta «' + t.pregunta + '»');
+  else if (!f77.includes(plano(t.si))) mal(`ficha-albores-singularidad: la pregunta «${t.pregunta}» no trae su «suena a sí» tal como lo escribe el archivo`);
+});
+IA_HOY.forEach(h => {
+  if (!f77.includes(plano(h.afirma))) mal('ficha-albores-singularidad: falta la afirmación del ' + h.fecha);
+});
+IA_INFLEXION.reglas.forEach(r => {
+  if (!f77.includes(plano(r.t))) mal('ficha-albores-singularidad: falta la regla del punto de inflexión «' + r.t + '»');
+});
+IA_SINGULARIDAD.seSabe.forEach(x => {
+  if (!f77.includes(plano(x.t))) mal('ficha-albores-singularidad: falta «' + x.t + '» de lo que SÍ se sabe');
+});
+IA_FRASES.forEach(x => { if (!f77.includes(plano(x.texto))) mal('ficha-albores-singularidad: falta la frase «' + x.texto.slice(0, 40) + '…» del termómetro'); });
+/* ⚠️ Lo que de verdad sostiene esta misión: el dossier va FECHADO y la ficha
+   dice que no afirma ningún hecho. Sin esas dos cosas, una lista de «lo que
+   está pasando» se convierte en una mentira dentro de tres meses. */
+if (!f77.includes(plano(IA_HOY_FECHA))) mal('ficha-albores-singularidad: el dossier no lleva la fecha en que se armó');
+if (!/buscar no es leer/.test(f77)) mal('ficha-albores-singularidad: no dice que no se pudo abrir ninguna de esas páginas (buscar no es leer)');
+if (!/no se afirma ni un solo hecho|no se afirma ningun hecho/.test(f77)) mal('ficha-albores-singularidad: no avisa de que no afirma ningún hecho de actualidad');
+/* Y que la misión pinte el dossier en vez de escribirlo. */
+IA_HOY.forEach(h => { if (plano(h77crudo).includes(plano(h.afirma))) mal(`la misión 77 lleva escrita a mano la afirmación del ${h.fecha}: tiene que pintarla del archivo`); });
+if (!h77crudo.includes('js/data/ia-actualidad.js')) mal('la misión 77 no carga js/data/ia-actualidad.js');
+/* ⚠️ Y ni una cifra afirmada en el dossier: el número es justo lo que el
+   alumno va a ir a buscar al documento. */
+IA_HOY.forEach(h => {
+  /* ⚠️ El AÑO no es una cifra de estas: «avances de septiembre de 2026» es el
+     título citado, y prohibirlo ponía roja una entrada perfectamente escrita.
+     Es la trampa de «Cuadrado Perfecto» otra vez. Lo que no puede haber es una
+     CANTIDAD: un porcentaje, un número de personas, de becas o de dinero. */
+  const sinAnios = h.afirma.replace(/\b(19|20)\d{2}\b/g, '');
+  if (/\d+\s*(%|por ciento)|\b\d[\d.,]*\s*(millones|mil|becas|personas|instituciones|países)\b|\b\d{2,}\b/.test(sinAnios))
+    mal(`la afirmación del ${h.fecha} lleva una cantidad: en este dossier el número lo trae el alumno del documento`);
+});
+if (fallos === f0) bien(`${IA_HOY.length} afirmaciones fechadas, ${IA_TERMOMETRO.length} preguntas y ${IA_FRASES.length} frases, del archivo al papel y sin una cifra afirmada`);
+
 // ── 7. ⚠️ Las misiones no llevan los datos escritos a mano ─────────────────
 console.log('\n🖐️  Que la misión PINTE los datos y no los escriba');
 f0 = fallos;
@@ -243,12 +291,12 @@ f0 = fallos;
    literal es lo que hizo escribir el aviso dos veces en la ficha de la
    Constitución y pasarse de hoja. Basta con que la hoja del docente diga que
    esa actividad no lleva respuesta y que es a propósito. */
-[[MISIONES[2].ficha, 'Investigá'], [MISIONES[3].ficha, 'Investigá en tu comunidad'], [MISIONES[4].ficha, 'Tu plan']].forEach(([ficha, act]) => {
+[[MISIONES[2].ficha, 'Investigá'], [MISIONES[3].ficha, 'Investigá en tu comunidad'], [MISIONES[4].ficha, 'Tu plan'], [MISIONES[5].ficha, 'Tu cápsula del tiempo']].forEach(([ficha, act]) => {
   const f = plano(leer(ficha));
   const diceQueNoHay = /no lleva respuesta a proposito|sin respuesta.{0,40}a proposito|no trae respuesta a proposito/.test(f);
   if (!diceQueNoHay) mal(`${path.basename(ficha)}: la actividad «${act}» no trae pauta y la hoja del docente NO avisa de que es a propósito`);
 });
-if (fallos === f0) bien('las tres actividades sin pauta avisan de que es a propósito');
+if (fallos === f0) bien('las cuatro actividades sin pauta avisan de que es a propósito');
 
 // ── 9. Lo que la currícula promete que NO se escribe ───────────────────────
 console.log('\n🚧 Lo que a propósito no se escribe');

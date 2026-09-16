@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v223';
+const CACHE_NAME = 'meta-app-v224';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -118,6 +118,8 @@ const STATIC_ASSETS = [
   './js/data/ia-descubre.js',
   // Los trece peligros de la etapa 5, con su mecanismo y su defensa.
   './js/data/ia-peligros.js',
+  // El dossier fechado de la actualidad y el termómetro de la etapa 6.
+  './js/data/ia-actualidad.js',
   './js/metas-videos.js',
   // La barra de secciones de las misiones, arriba y pegajosa. Sin estos
   // dos el <nav> vuelve al final del documento y sin position:sticky: en

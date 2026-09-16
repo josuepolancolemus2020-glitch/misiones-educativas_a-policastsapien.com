@@ -1,8 +1,8 @@
 # Compendio para las misiones de Inteligencia Artificial que vienen
 
-**Escrito el 16 de septiembre de 2026**, con cinco misiones publicadas en la
-Ruta de la Máquina que Aprende —la quinta, 🛡️ Los Peligros de la Inteligencia
-Artificial, salió de este mismo compendio el día que se escribió— y una decisión tomada: esta materia va a crecer
+**Escrito el 16 de septiembre de 2026**, con seis misiones publicadas en la
+Ruta de la Máquina que Aprende —la quinta y la sexta salieron de este mismo
+compendio el día que se escribió— y una decisión tomada: esta materia va a crecer
 al ritmo al que crece lo que enseña, que hoy es **semanal**. Este documento es
 el camino para que crezca sin romper lo que la sostiene. Se lee antes de
 escribir la quinta misión, y se corrige cada vez que una misión nueva enseñe
@@ -267,6 +267,31 @@ decisiones con su consecuencia, una regla, y la declaración de inventado en
 la pantalla. `verifica-descubre-ia` ya lo comprueba para `IA_ESCENARIOS`; los
 nuevos entran en la misma lista.
 
+### 3.4 bis · Lo que se aprendió escribiendo la primera de actualidad
+
+La etapa 6 estrenó el protocolo del punto 2, y lo primero que hizo fue chocar
+con la realidad del entorno. Queda escrito, porque le va a volver a pasar a
+quien escriba la siguiente:
+
+1. ⚠️ **Se pudo BUSCAR y no se pudo LEER.** El buscador contestó; abrir
+   cualquiera de esas páginas dio `EGRESS_BLOCKED`. Así que ninguna entrada del
+   dossier se acreditó, y el protocolo funcionó como tenía que funcionar: los
+   archivos de `_dev/actualidad/` están marcados **⏳ no acreditado desde aquí**,
+   con el medio, la fecha y **qué documento haría falta**. El día que alguien
+   los abra desde un teléfono normal, completa la acreditación y ya está.
+2. ⚠️ **Y eso, en vez de tapar la misión, se volvió la misión.** La pantalla se
+   lo dice al alumno con esas palabras: «esta plataforma no pudo abrir ninguna
+   de esas páginas; por eso ninguna se da por cierta aquí, y tu tarea es
+   comprobarla». Una plataforma que enseña a verificar y esconde que ella no
+   pudo verificar, enseña lo contrario de lo que dice.
+3. **El dossier no lleva ni una cifra**, y esa regla salió de aquí: el número
+   es lo que el alumno va a buscar al documento. Sin ella, la tentación de
+   escribir «el 87 %» sacado de un extracto de buscador es enorme, y sería la
+   misma avería de los números de decreto de la flor y del árbol nacionales.
+4. **Y el dossier trae, a propósito, dos afirmaciones que SÍ traen con qué
+   comprobarse.** Una lista donde todo es humo fabrica un alumno que desconfía
+   de todo, y eso cuesta lo mismo que creerlo todo.
+
 ### 3.4 · Lo que se aprendió escribiendo la primera del compendio
 
 La etapa 5 salió de este documento el mismo día, y dejó tres cosas escritas
@@ -297,7 +322,7 @@ de la Ruta de la Máquina que Aprende:
 | # | misión (título de trabajo) | ciclo | de qué se hace | lo que descubre |
 |---|---|---|---|---|
 | ~~5~~ | ✅ 🛡️ **Los Peligros de la Inteligencia Artificial** · *publicada, etapa 5* | III | los trece peligros del catálogo (3.1) en cuatro familias, las tres señales y el botiquín | 🎙️ arma el mensaje de la estafa y ve que **casi nada se roba** · ⚖️ reparte los ejemplos y ve **a quién le cae el error** |
-| 6 | 📰 **Lo que pasó esta semana con la IA** | II · III | la misión-plantilla del protocolo de actualidad (2), con el hecho de `_dev/actualidad/` | el calendario de promesas: vuelve en un año y mira |
+| ~~6~~ | ✅ 🧭 **En los Albores de la Singularidad** · *publicada, etapa 6* | III | el protocolo de actualidad (2) hecho misión: el dossier fechado de septiembre de 2026, con ocho afirmaciones y ninguna afirmada | 🌡️ el termómetro de cuatro preguntas · 📅 la cápsula del tiempo, que le da el día para volver |
 | 7 | 🎬 **Lo que el cine preguntó antes** | II · III | seis indagaciones del compendio de cine (3.2), una por peligro | contrastar lo que la película dice de la máquina con lo que la ruta enseña |
 | 8 | 🔮 **Escenarios por venir** | III | los diez escenarios (3.3) | el alumno arma SU escenario con las cuatro piezas y lo somete a la prueba |
 | 9 | 🤝 **Mi amigo es una máquina** | II · III | la compañía artificial, el juguete que habla, el chat que siempre contesta | una máquina que solo predice «lo que quieres oír», y se ve cómo lo hace |
@@ -310,7 +335,7 @@ de la Ruta de la Máquina que Aprende:
 | 16 | 🌱 **Lo que cuesta una respuesta** | III | energía, agua y quién lo paga, con cifras fechadas o con la investigación | contar lo que gasta el aula en un día contra una respuesta generada |
 | 17 | 🎨 **¿Quién hizo este dibujo?** | III | IA generativa de imágenes, autoría, «al estilo de» | rehacer un estilo a partir de ejemplos y preguntar de quién eran |
 | 18 | 🗳️ **Elecciones, bots y opinión fabricada** | III · Media | el mecanismo, nunca el caso con nombres | contar cuántas voces distintas hay detrás de cien mensajes iguales |
-| 19 | 🧭 **La singularidad: lo que se afirma y lo que se sabe** | III · Media | promesas grandes, los dos inviernos, cómo se lee un anuncio | fechar una promesa y guardarla para el que venga detrás |
+| ~~19~~ | ✅ *absorbida por la etapa 6*: la singularidad se enseña ahí, con lo que se afirma, lo que se sabe y la vara de los dos inviernos. Lo que queda por hacer de este tema es **Media**, con el empleo y las decisiones públicas | Media | — | — |
 | 20 | 👶 **Los juguetes que hablan** | I | la regla 1 con una muñeca que pregunta | el niño descubre qué preguntas hace el juguete y cuáles no debería contestar |
 | 21 | 🌐 **Traducir, dictar, buscar: la IA que ya usas** | I · II | las aplicaciones de todos los días, con sus errores | dictarle una frase con la boca tapada y ver qué inventa |
 | 22 | 💼 **La IA y el trabajo: qué cambia y qué no** | III · Media | sin catástrofe y sin publicidad | partir un oficio del pueblo en cuentas y decisiones |
@@ -329,7 +354,8 @@ Y dos cosas que valen para las veintitrés:
 
 ---
 
-*Las cifras de este documento son las de hoy: cinco misiones publicadas, diez
+*Las cifras de este documento son las de hoy: seis misiones publicadas, doce
 actividades de descubrimiento, diecisiete peligros catalogados —trece de ellos
-ya escritos como datos en `js/data/ia-peligros.js`—, treinta y tres indagaciones
-de cine, diez escenarios y veintidós misiones por venir. Siguen entrando.*
+ya escritos como datos en `js/data/ia-peligros.js`—, ocho afirmaciones fechadas
+en el primer dossier de actualidad, treinta y tres indagaciones de cine, diez
+escenarios y veintiuna misiones por venir. Siguen entrando.*

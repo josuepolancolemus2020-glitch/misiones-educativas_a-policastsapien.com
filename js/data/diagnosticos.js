@@ -125,6 +125,9 @@ const DIAGNOSTICOS = {
     { etapa: 5, q: '¿Cuáles son las tres señales que trae casi toda estafa?', o: ['Faltas de ortografía, mayúsculas y emojis', 'Urgencia, secreto y canal nuevo', 'Un número largo, una foto y un enlace', 'Que llegue de noche y por audio'], a: 1 },
     { etapa: 5, q: 'Un programa acierta el 95 %. ¿Qué NO te dice ese número?', o: ['Cuántas veces acertó', 'A quién le cae el error', 'Que se equivoca a veces', 'Cuántos casos revisó'], a: 1 },
     { etapa: 5, q: '¿De qué está hecha casi toda estafa creíble?', o: ['De tecnología muy cara', 'De información que la propia familia publicó', 'De suerte', 'De un día festivo'], a: 1 },
+    { etapa: 6, q: 'Una promesa sin fecha…', o: ['Es más seria', 'No se puede incumplir nunca', 'Se cumple sola', 'Vale más que una con fecha'], a: 1 },
+    { etapa: 6, q: 'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?', o: ['Cinco fuentes', 'Un eco', 'Una prueba', 'Un estudio'], a: 1 },
+    { etapa: 6, q: '¿Cuándo se reconoce un punto de inflexión?', o: ['El mismo día, por el ruido', 'Casi siempre mirando para atrás', 'Cuando lo dice un experto', 'Cuando sale en televisión'], a: 1 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [

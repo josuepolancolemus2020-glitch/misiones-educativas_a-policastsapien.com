@@ -349,6 +349,66 @@ diferencia entre contestar ahí o volver por el canal de siempre.
   más —y la pantalla dice que no es una ley, que es lo que pasa cuando el grupo
   pequeño estaba sin aprender—.
 
+### Etapa 6 · «En los Albores de la Singularidad» · III Ciclo
+
+**Expectativa propia:** clasifican una afirmación de actualidad por **lo que
+trae** —quién lo dice, qué gana, para cuándo y con qué se comprueba—, explican
+qué afirma la palabra «singularidad» y qué se sabe de verdad, y **le ponen
+fecha** a una promesa para volver a juzgarla.
+
+Es la etapa que estrena el hilo E, y la que obliga a la materia a moverse cada
+semana. Su regla es la que la sostiene entera:
+
+1. ⚠️ **Aquí no se afirma ni un solo hecho de actualidad.** Se da la
+   afirmación, quién la publicó, cuándo, y **cómo se comprueba**. Y el motivo
+   se dice en la propia pantalla: quien la escribió **no pudo abrir ninguna de
+   esas páginas** —el entorno desde donde se construye esta plataforma las
+   bloquea—, y **buscar no es leer**. Es la misma lección de
+   `INVESTIGACION-ESTATUTO-DOCENTE.md`, puesta delante del alumno en vez de
+   escondida en un archivo de desarrollo.
+2. ⚠️ **Ni una cifra en el dossier**, y no es un olvido: el número es
+   justamente lo que el alumno va a ir a buscar al documento. Una cifra
+   escrita sin haber leído la fuente sería exactamente lo que esta misión
+   enseña a no hacer, y encima envejecería sola.
+3. **Se nombra el MEDIO, no la empresa ni la persona.** El alumno necesita el
+   medio para llegar; el nombre propio lo va a encontrar en el artículo, y así
+   la misión no se convierte en una noticia sobre una empresa.
+4. **Y el dossier lleva su fecha en pantalla**, porque dentro de un año va a
+   servir para otra cosa —para ver qué se cumplió—, que es la mejor clase que
+   da esta misión.
+
+**Lo que enseña de contenido**, y que no envejece: qué **afirma** la palabra
+singularidad y qué se **sabe** hoy (las cuatro cosas que el alumno mismo
+produjo en las etapas 1, 2, 4 y 5); qué es un **punto de inflexión** y por qué
+casi siempre se reconoce mirando para atrás; y las **cuatro preguntas** del
+termómetro, que sirven igual para una noticia de IA, para una oferta de trabajo
+y para un remedio milagroso.
+
+**La interacción que sostiene la misión:** 📰 **El dossier del mes**. Ocho
+afirmaciones fechadas, y el alumno hace de archivista: las clasifica por lo que
+traen —no por si le gustan— y después ve la ficha entera de cada una, con quién
+lo dice, qué gana y cómo se comprueba.
+
+**Y lo que descubre (🔭 Descubre):**
+
+- 🌡️ **El termómetro de la promesa.** Cinco frases reales, una por una. El
+  alumno **juzga primero** y compara después, pregunta por pregunta: el orden
+  importa, porque si la pantalla le enseñara antes lo que trae la frase estaría
+  adivinando lo que queremos oír. Dos de las cinco traen con qué comprobarse, a
+  propósito: salir de aquí desconfiando de todo cuesta lo mismo que creerlo
+  todo.
+- 📅 **La cápsula del tiempo.** Lo único que separa un hito de un invierno es el
+  tiempo, y el tiempo no se apura: se apunta. El alumno escribe hoy una promesa
+  que esté oyendo, quién la hace y qué cree él, y la pantalla le da **el día**
+  en que tiene que volver a leerla. Se guarda en su teléfono y no viaja a
+  ninguna parte.
+
+⚠️ **Y lo que esta etapa NO hace, que es lo más importante de todo:** no le dice
+al alumno si estamos o no en los albores de la singularidad. **Nadie lo sabe**,
+y afirmarlo sería justo lo que la misión enseña a no hacer. Lo que le da es la
+vara —las cuatro preguntas y los dos inviernos— para medir a quien lo afirme,
+hoy y dentro de diez años.
+
 ---
 
 ## 5 bis. Lo que se descubre, no se lee: las reglas de una actividad de descubrimiento
@@ -456,5 +516,5 @@ eligió los ejemplos**.
 ---
 
 *Escrita en septiembre de 2026 y ampliada el 16 de septiembre. Las cifras de
-esta currícula son las de hoy: cinco misiones en la ruta, diez actividades de
-descubrimiento, veintidós misiones planeadas, y siguen entrando.*
+esta currícula son las de hoy: seis misiones en la ruta, doce actividades de
+descubrimiento, veintiuna misiones planeadas, y siguen entrando.*

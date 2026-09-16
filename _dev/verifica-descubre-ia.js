@@ -48,6 +48,7 @@ const fs = require('fs');
 const path = require('path');
 const RAIZ = path.resolve(__dirname, '..');
 const D = require(path.join(RAIZ, 'js/data/ia-descubre.js'));
+const T = require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
 const { IA_HITOS } = require(path.join(RAIZ, 'js/data/ia-historia.js'));
 
 let fallos = 0;
@@ -246,6 +247,55 @@ console.log('\n⚖️ El promedio que esconde');
   else mal('la curva de acierto baja en algún tramo: ' + sube.join(' → '));
 }
 
+/* ── 🌡️ El termómetro de la promesa ──────────────────────────────────────── */
+console.log('\n🌡️ El termómetro de la promesa');
+{
+  const tramos = new Set(T.IA_FRASES.map(f => T.iaFraseTramo(T.iaFraseCuenta(f)).k));
+  if (tramos.size === T.IA_TERMOMETRO_TRAMOS.length) bien(`las ${T.IA_FRASES.length} frases caen en los ${tramos.size} tramos distintos: ` + T.IA_FRASES.map(f => T.iaFraseCuenta(f) + '/4').join(' · '));
+  else mal('las frases solo tocan ' + tramos.size + ' de los ' + T.IA_TERMOMETRO_TRAMOS.length + ' tramos: con una lista así el alumno no aprende a separar, aprende a desconfiar de todo');
+  /* ⚠️ Lo que la pantalla AFIRMA con esas palabras: «de las cinco, dos traen
+     con qué comprobarse». Salir de la misión desconfiando de todo cuesta lo
+     mismo que creerlo todo, y por eso la lista no puede ser toda humo. */
+  const buenas = T.IA_FRASES.filter(f => T.iaFraseCuenta(f) >= 3).length;
+  if (buenas >= 2) bien(buenas + ' de las ' + T.IA_FRASES.length + ' frases traen con qué comprobarse, que es lo que la pantalla promete');
+  else mal('solo ' + buenas + ' frase(s) traen con qué comprobarse, y la misión dice que son dos');
+  T.IA_FRASES.forEach(f => {
+    ['quien', 'gana', 'cuando', 'comprueba'].forEach(k => { if (typeof f.tiene[k] !== 'boolean') mal('la frase «' + f.k + '» no contesta la pregunta ' + k); });
+    if (!f.porque || f.porque.length < 40) mal('la frase «' + f.k + '» no explica por qué cae donde cae');
+  });
+  const tope = T.IA_TERMOMETRO_TRAMOS[0];
+  if (tope.min === T.IA_TERMOMETRO.length) bien('el tramo más alto pide las ' + T.IA_TERMOMETRO.length + ' preguntas: no se regala');
+  else mal('el tramo más alto se alcanza sin contestar las cuatro preguntas');
+}
+
+/* ── 📰 El dossier fechado ────────────────────────────────────────────────── */
+console.log('\n📰 El dossier de la actualidad');
+{
+  if (/\d{1,2} de [a-zé]+ de \d{4}/.test(T.IA_HOY_FECHA)) bien('el dossier lleva su fecha completa: ' + T.IA_HOY_FECHA);
+  else mal('IA_HOY_FECHA no es una fecha completa, y un dossier sin fecha es una mentira en tres meses');
+  const niveles = new Set(T.IA_HOY.map(h => h.comprobable));
+  if (niveles.size === 3) bien('el dossier trae afirmaciones de los tres niveles: ' + [...niveles].join(', '));
+  else mal('el dossier solo trae ' + niveles.size + ' nivel(es): sin las tres clases no se puede aprender a separarlas');
+  T.IA_HOY.forEach(h => {
+    ['afirma', 'quien', 'gana', 'trae', 'comprueba', 'importa'].forEach(k => {
+      if (!h[k] || String(h[k]).length < 15) mal('la entrada «' + h.k + '» no trae ' + k);
+    });
+    /* La fecha se mide aparte: «todo el mes» es una fecha legítima para un
+       patrón que dura semanas, y pedirle quince caracteres la daba por
+       ausente. Lo que hace falta es que ESTÉ. */
+    if (!h.fecha || h.fecha.length < 5) mal('la entrada «' + h.k + '» no trae fecha');
+    /* ⚠️ Ninguna afirmación puede nombrar un producto ni una empresa: se nombra
+       al MEDIO que lo publicó, que es lo que el alumno necesita para llegar. */
+    if (/\bgpt-?\d|chatgpt|\bgemini\b|\bcopilot\b|\bclaude\b/i.test(h.afirma + h.quien)) mal('la entrada «' + h.k + '» nombra un producto');
+  });
+  if (T.IA_HOY.every(h => /comprob|busc|abr|le[eé]|mir/i.test(h.comprueba))) bien('las ' + T.IA_HOY.length + ' entradas dicen CÓMO se comprueban, que es lo único que esta misión afirma');
+  else mal('alguna entrada no dice cómo comprobarla');
+  /* Y la declaración que sostiene la misión entera. */
+  const html = leer('misiones/3ciclo-albores-singularidad/albores-singularidad.html');
+  if (/no pudo abrir/.test(html) && /buscar no es leer/i.test(html)) bien('la misión declara en pantalla que no pudo abrir esas páginas: buscar no es leer');
+  else mal('la misión no declara que no pudo abrir esas páginas, y sin eso está afirmando hechos que nadie verificó');
+}
+
 /* ── Lo que se multiplica al copiar: las cuatro misiones ─────────────────── */
 const MISIONES = [
   { dir: 'misiones/1ciclo-que-es-la-ia', html: 'que-es-la-ia.html', js: 'js/que-es-la-ia.js', logro: 'descubridor' },
@@ -253,6 +303,10 @@ const MISIONES = [
   { dir: 'misiones/2y3ciclo-historia-ia', html: 'historia-ia.html', js: 'js/historia-ia.js', logro: 'cronista_hoy' },
   { dir: 'misiones/3ciclo-ia-generativa', html: 'ia-generativa.html', js: 'js/ia-generativa.js', logro: 'decide' },
   { dir: 'misiones/3ciclo-peligros-ia', html: 'peligros-ia.html', js: 'js/peligros-ia.js', logro: 'blindado' },
+  /* ⚠️ La 77 NO carga ia-descubre.js: sus dos actividades salen de
+     ia-actualidad.js, que es donde vive su dossier. Por eso cada misión dice
+     cuál es SU archivo de datos en vez de darlo por sabido. */
+  { dir: 'misiones/3ciclo-albores-singularidad', html: 'albores-singularidad.html', js: 'js/albores-singularidad.js', logro: 'cronometro', datos: 'js/data/ia-actualidad.js' },
 ];
 console.log(`\n🔌 Las ${MISIONES.length} misiones de la ruta`);
 MISIONES.forEach(m => {
@@ -266,7 +320,7 @@ MISIONES.forEach(m => {
   if (iDesc < 0 || iLab !== iDesc + 1) errores.push('las flechas no van estructura → descubre → lab (' + flechas.slice(0, 4).join(' → ') + ')');
   const tabs = [...html.matchAll(/data-s="(s-[a-z0-9]+)"/g)].map(x => x[1]);
   if (tabs.indexOf('s-descubre') !== tabs.indexOf('s-estructura') + 1) errores.push('la pestaña Descubre no va detrás de la de la actividad');
-  const iDatos = html.indexOf('js/data/ia-descubre.js'), iJs = html.indexOf('<script src="' + m.js + '"');
+  const iDatos = html.indexOf(m.datos || 'js/data/ia-descubre.js'), iJs = html.indexOf('<script src="' + m.js + '"');
   if (iDatos < 0 || iJs < 0 || iDatos > iJs) errores.push('el archivo de datos no va antes del JS de la misión');
   if (!/const TOTAL_SECTIONS=14;/.test(js)) errores.push('TOTAL_SECTIONS no es 14');
   if (!new RegExp('\\n  ' + m.logro + ':\\{icon:').test(js)) errores.push('sin el logro «' + m.logro + '»');
