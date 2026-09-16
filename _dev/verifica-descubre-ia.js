@@ -184,14 +184,77 @@ console.log('\n🔮 Escenarios por venir');
   if (/inventadas para pensar/.test(html75)) bien('la misión los declara inventados en la propia pantalla'); else mal('la misión ya no declara que los escenarios son inventados');
 }
 
+/* ── 🎙️ ¿Cuánto hace falta para una estafa? ───────────────────────────────── */
+console.log('\n🎙️ ¿Cuánto hace falta para una estafa?');
+{
+  const vacio = D.iaEstafaMensaje([]);
+  const todo = D.iaEstafaMensaje(D.IA_ESTAFA_PIEZAS.map(p => p.k));
+  const tiene = m => D.IA_ESTAFA_SENALES.filter(s => !m.includes(s.busca));
+  /* Lo que la pantalla AFIRMA con esas palabras: las tres señales están con
+     piezas y sin piezas, porque sin ellas la estafa no funciona. Si alguien
+     mueve el texto base y se lleva una por delante, la afirmación se vuelve
+     falsa sin dar ningún error: el mensaje se pinta igual de bien. */
+  const faltan = [vacio, todo].concat(D.IA_ESTAFA_PIEZAS.map(p => D.iaEstafaMensaje([p.k]))).map(tiene).flat();
+  if (!faltan.length) bien('las tres señales están en el mensaje con piezas y sin piezas, que es lo que la actividad promete');
+  else mal('el mensaje armado se queda sin la señal «' + faltan[0].k + '» en algún caso: la pantalla dice que están siempre');
+  if (todo.length > vacio.length + 60) bien('con las seis piezas el mensaje crece de ' + vacio.length + ' a ' + todo.length + ' caracteres: se ve la diferencia');
+  else mal('con las seis piezas el mensaje casi no cambia (' + vacio.length + ' → ' + todo.length + '): la actividad no enseña nada');
+  const sinPublico = D.IA_ESTAFA_PIEZAS.filter(p => !p.publico || p.publico.length < 15);
+  if (!sinPublico.length) bien('las ' + D.IA_ESTAFA_PIEZAS.length + ' piezas dicen de dónde salieron: es la lección, y sin eso la actividad solo asusta');
+  else mal('la pieza «' + sinPublico[0].k + '» no dice de dónde salió');
+  /* La pieza del canal es la única que NO se publicó: la pone quien engaña, y
+     eso es justo lo que la pantalla remata al final. */
+  if (/no se public|la pone quien engaña/i.test(D.IA_ESTAFA_PIEZAS.find(p => p.k === 'canal').publico)) bien('la pieza del número nuevo dice que esa no la publicó la familia');
+  else mal('la pieza del número nuevo tendría que decir que esa NO se publicó: es la única que pone quien engaña');
+  const vale = k => D.IA_ESTAFA_DEFENSAS.filter(d => d.vale === k).length;
+  if (vale('si') >= 2 && vale('no') >= 1 && vale('medias') >= 1) bien('de las ' + D.IA_ESTAFA_DEFENSAS.length + ' defensas, ' + vale('si') + ' paran esto, ' + vale('no') + ' no y ' + vale('medias') + ' a medias: no todas valen igual, y eso se dice');
+  else mal('las defensas no traen los tres veredictos (sí / no / a medias): una lista donde todas sirven no enseña a elegir');
+  const voz = D.IA_ESTAFA_DEFENSAS.find(d => d.k === 'voz');
+  if (voz && voz.vale === 'no') bien('«reconocer la voz» está marcada como que NO lo para: es justo lo que se fabrica');
+  else mal('«reconocer la voz» tiene que estar marcada como que no lo para');
+}
+
+/* ── ⚖️ El promedio que esconde ───────────────────────────────────────────── */
+console.log('\n⚖️ El promedio que esconde');
+{
+  D.IA_SISTEMAS.forEach(s => {
+    const pob = s.grupos.reduce((a, g) => a + g.cuantos, 0);
+    const chico = s.grupos.reduce((a, g) => (g.cuantos < a.cuantos ? g : a), s.grupos[0]);
+    if (s.grupos.length !== 2) { mal('«' + s.nombre + '» no tiene dos grupos'); return; }
+    if (chico.cuantos / pob > 0.25) mal('«' + s.nombre + '»: el grupo pequeño es el ' + Math.round(chico.cuantos / pob * 100) + ' % de la población, y así el promedio no llega a esconder nada');
+    const solo = D.iaExactitud(s, 'solo_grande'), mitad = D.iaExactitud(s, 'mitad'), pobl = D.iaExactitud(s, 'poblacion');
+    const chicoSolo = solo.porGrupo[1];
+    /* Lo que la pantalla AFIRMA cuando el grupo pequeño se queda sin ejemplos:
+       «esto es echar una moneda al aire». Tiene que ser verdad de la cuenta. */
+    if (chicoSolo.ejemplos === 0 && chicoSolo.pct === 50) bien('«' + s.nombre + '»: sin un solo ejemplo suyo, el grupo pequeño es una moneda (50 %) y el promedio sigue diciendo ' + solo.media + ' %');
+    else mal('«' + s.nombre + '»: entrenando solo con el grupo grande, el pequeño no queda en 50 %: la pantalla dice que es una moneda');
+    if (solo.media >= 85) bien('«' + s.nombre + '»: y ese promedio de ' + solo.media + ' % es el que se presume al comprarlo');
+    else mal('«' + s.nombre + '»: el promedio con el reparto malo es ' + solo.media + ' %, demasiado bajo para que se vea que el promedio esconde');
+    /* Y la sorpresa que la pantalla remata: repartir parejo da el promedio más
+       alto de los cuatro. Es verdad en ESTE caso y la pantalla lo dice así. */
+    const medias = D.IA_REPARTOS.map(r => D.iaExactitud(s, r.k).media);
+    if (mitad.media >= Math.max.apply(null, medias)) bien('«' + s.nombre + '»: mitad y mitad da el promedio más alto (' + mitad.media + ' %), que es la sorpresa de la actividad');
+    else mal('«' + s.nombre + '»: mitad y mitad ya no da el promedio más alto, y la pantalla lo afirma');
+    if (Math.abs(mitad.porGrupo[0].pct - mitad.porGrupo[1].pct) <= 2) bien('«' + s.nombre + '»: con mitad y mitad los dos grupos van casi igual');
+    else mal('«' + s.nombre + '»: con mitad y mitad los grupos no quedan parejos');
+    if (pobl.porGrupo[1].pct > 55 && pobl.porGrupo[1].pct < solo.porGrupo[0].pct) bien('«' + s.nombre + '»: el reparto proporcional deja al grupo pequeño en ' + pobl.porGrupo[1].pct + ' %, mejor que nada y peor que el grande');
+  });
+  if (D.iaAciertoGrupo(0) === 50) bien('sin ejemplos de un grupo, sobre ese grupo la máquina es una moneda: 50 %');
+  else mal('iaAciertoGrupo(0) no da 50: la actividad entera cuelga de eso');
+  const sube = [0, 5, 10, 20, 40, 80].map(D.iaAciertoGrupo);
+  if (sube.every((v, i) => i === 0 || v >= sube[i - 1])) bien('la curva de acierto sube y se aplana: ' + sube.join(' → '));
+  else mal('la curva de acierto baja en algún tramo: ' + sube.join(' → '));
+}
+
 /* ── Lo que se multiplica al copiar: las cuatro misiones ─────────────────── */
-console.log('\n🔌 Las cuatro misiones');
 const MISIONES = [
   { dir: 'misiones/1ciclo-que-es-la-ia', html: 'que-es-la-ia.html', js: 'js/que-es-la-ia.js', logro: 'descubridor' },
   { dir: 'misiones/2ciclo-como-aprende-una-maquina', html: 'como-aprende-una-maquina.html', js: 'js/como-aprende-una-maquina.js', logro: 'maquina_humana' },
   { dir: 'misiones/2y3ciclo-historia-ia', html: 'historia-ia.html', js: 'js/historia-ia.js', logro: 'cronista_hoy' },
   { dir: 'misiones/3ciclo-ia-generativa', html: 'ia-generativa.html', js: 'js/ia-generativa.js', logro: 'decide' },
+  { dir: 'misiones/3ciclo-peligros-ia', html: 'peligros-ia.html', js: 'js/peligros-ia.js', logro: 'blindado' },
 ];
+console.log(`\n🔌 Las ${MISIONES.length} misiones de la ruta`);
 MISIONES.forEach(m => {
   const html = leer(path.join(m.dir, m.html)), js = leer(path.join(m.dir, m.js));
   const n = m.html;
@@ -223,7 +286,13 @@ MISIONES.forEach(m => {
 console.log('\n🚧 Lo que a propósito no se escribe');
 {
   const src = sinComentarios(leer('js/data/ia-descubre.js'));
-  const PROHIBIDO = [/\bgpt-?\d/i, /chatgpt/i, /\bgemini\b/i, /\bcopilot\b/i, /\bclaude\b/i, /\bllama\b/i, /\bmistral\b/i,
+  const PROHIBIDO = [/\bgpt-?\d/i, /chatgpt/i, /\bgemini\b/i, /\bcopilot\b/i, /\bclaude\b/i, /\bllama\s*[0-9]/i, /modelo llama/i, /* ⚠️ «llama» a secas NO se puede prohibir: es un verbo corriente en español
+       («te llama por tu nombre») y pedirlo así pone roja una actividad
+       perfectamente escrita. Una sonda que acusa a un archivo sano enseña a
+       no mirarla, que es la lección de «Cuadrado Perfecto» de la auditoría.
+       Lo que sí se puede afirmar sin adivinar es la forma en que se nombra un
+       producto: con su número de versión, o dicho «modelo …». */
+    /\bmistral\b/i,
     /\d+\s*(millones|mil millones|billones)\s+de\s+(usuarios|parámetros)/i, /\\U[0-9A-F]{8}/];
   const malas = PROHIBIDO.filter(r => r.test(src));
   if (!malas.length) bien('ni un nombre de producto, ni una cifra que envejece, ni un escape de Python');
@@ -231,5 +300,9 @@ console.log('\n🚧 Lo que a propósito no se escribe');
   if (!/https?:\/\//.test(src)) bien('ninguna actividad manda a ninguna parte: todo corre dentro del teléfono'); else mal('hay una dirección web en las actividades');
 }
 
-console.log(fallos ? `\n❌ ${fallos} fallo(s)\n` : '\n✅ Las ocho actividades cumplen lo que prometen.\n');
+/* El número de actividades se CUENTA, no se escribe: decía «las ocho» y ya
+   son diez. Una sonda con el número dentro se pone roja —o miente— el día
+   que entre una actividad nueva sin que nada esté roto. */
+const ACTIVIDADES = 2 * MISIONES.length;
+console.log(fallos ? `\n❌ ${fallos} fallo(s)\n` : `\n✅ Las ${ACTIVIDADES} actividades cumplen lo que prometen.\n`);
 process.exit(fallos ? 1 : 0);

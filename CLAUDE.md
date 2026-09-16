@@ -2926,6 +2926,70 @@ camino para las dos cosas a la vez, y son tres documentos con reparto claro:
    declarado como inventado en la pantalla y se arma con lo que ya se puede
    hacer hoy. `verifica-descubre-ia` ya se lo exige a `IA_ESCENARIOS`.
 
+### La etapa 5, los peligros: se enseña el mecanismo, nunca el miedo
+
+Salió del compendio el 16 de septiembre de 2026 y es la primera misión de la
+ruta que habla de daños (`misiones/3ciclo-peligros-ia/`, id 76, III Ciclo).
+Los datos viven en `js/data/ia-peligros.js` —trece peligros, cuatro familias,
+tres señales y seis defensas—, la misión los pinta, la ficha es HTML plano y
+`verifica-ia` compara los dos, como en el Himno y los próceres.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. **Un peligro es un MECANISMO con nombre y una PREGUNTA que lo desarma.** Si
+   de una entrada no se puede decir las dos cosas, todavía no está escrita: es
+   miedo, y el miedo no defiende a nadie.
+2. **Las familias se reparten por lo que te quitan**, no por la tecnología con
+   que se hacen: esa cambia cada año y la lista quedaría vieja.
+3. ⚠️ **Las tres señales —urgencia, secreto y canal nuevo— son lo único que el
+   que engaña NO puede quitar**, porque necesita que no pienses, que no
+   consultes y que no contestes por donde siempre. Por eso son lo que se
+   aprende de memoria, y por eso la sonda comprueba que estén en el mensaje
+   armado **con piezas y sin piezas**.
+4. ⚠️ **Uno de los cuatro mensajes no trae ninguna señal, y es el que más
+   enseña.** Una misión de peligros que solo enseñe mensajes malos fabrica un
+   alumno que desconfía de todo, y eso cuesta lo mismo que creerlo todo: el día
+   que el aviso del maestro sea de verdad, no lo lee nadie.
+5. ⚠️ **Ponerse del lado del que engaña solo vale si termina en la defensa.** La
+   actividad de la estafa **no enseña a fabricar nada**: enseña de qué está
+   hecho el engaño —información que la propia familia publicó— y acaba siempre
+   en qué lo hubiera parado. Y **no le pide al alumno la palabra de su
+   familia**: le pide cuándo y con quién va a acordarla, y le avisa de que esa
+   palabra no se escribe en la pantalla. Una actividad que la guardara en el
+   teléfono enseñaría justo lo contrario de lo que dice.
+6. **Tres peligros van sin caso con nombres, a propósito**: el remedio
+   milagroso, la opinión fabricada y —fuera de esta misión, que es de Media— el
+   uso militar. En un pueblo, un caso con nombres es alguien: la misma decisión
+   que los casos de la misión de la Constitución.
+
+**Y el promedio que esconde** es la segunda actividad, con su cuenta en
+`ia-descubre.js`: entrenado solo con el grupo grande, el sistema presume 90,5 %
+y para el grupo pequeño es echar una moneda. Repartido mitad y mitad los dos
+van al 94 % **y el promedio sube**; la pantalla dice que eso pasa en ESE caso y
+que no es una ley, porque afirmarlo como ley sería falso.
+
+```
+node _dev/verifica-ia.js              → la pantalla y el papel, peligro por peligro
+node _dev/verifica-descubre-ia.js     → lo que las diez actividades afirman, recalculado
+node _dev/verifica-mision-nueva.js misiones/3ciclo-peligros-ia/peligros-ia.html
+```
+
+⚠️ **Y lo que se multiplica al copiar una misión mordió otra vez, en dos
+sitios.** El `.hero::before` del CSS lleva un **desfile de palabras** en la
+cabecera, y la 76 desfiló las de la 75 hasta que `verifica-encabezados` la cazó
+—una sonda que ya existía para eso—. Y sus bancos salieron con la respuesta
+correcta en la **b el 100 % de las veces**, que es el sesgo que ya tiene su
+normativa y su herramienta: `node _dev/reparte-respuestas.js 3ciclo-peligros-ia`
+lo repartió y `mide-reparto-respuestas` lo confirmó. Las dos cosas se pintan
+perfectamente y ninguna da un error.
+
+⚠️ **De paso, una sonda acusaba a un archivo sano.** `verifica-descubre-ia`
+prohibía `\bllama\b` para cazar un nombre de producto, y «te **llama** por tu
+nombre» es español corriente: se puso roja con la actividad bien escrita. Se
+estrechó a lo que sí se puede afirmar sin adivinar —el nombre con su número de
+versión, o dicho «modelo …»— y se comprobó al revés, metiendo un producto a
+propósito. Es la lección de «Cuadrado **Perfecto**», por si hacía falta otra vez.
+
 ### 🔭 Descubre: lo que la pantalla afirma, la sonda lo recalcula
 
 Las cuatro misiones de la ruta estrenaron una sección de descubrimiento con dos

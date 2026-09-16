@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Los Peligros de la Inteligencia Artificial</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: INTELIGENCIA ARTIFICIAL = MAGENTA (#86198f).
+       No se eligió a ojo: se midió la distancia de color contra las nueve
+       materias que ya existían y la familia magenta es el hueco más ancho que
+       quedaba. El maestro tiene que saber de qué materia es la hoja SIN leerla.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · El corte de las hojas lo reparte `node _dev/reparte-hojas-ficha.js`, que
+       mide en el navegador con el ancho del papel. A ojo se acierta hasta que
+       se corrige una errata y el párrafo crece dos renglones.
+     · La pauta + nota del docente SIEMPRE en hoja suelta (última página)
+     · Esta ficha la ARMA `node _dev/arma-fichas-ia.js` desde los mismos
+       archivos de datos que pinta la misión, para que las dos no se separen. */
+  :root {
+    --ia: #86198f; --ia-osc: #701a75; --ia-claro: #fdf4ff; --linea: #eccef2;
+    --tinta: #1a2733; --gris: #5b6773;
+    --may: #4338ca; --oro: #b45309; --verde: #15803d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f7eefa; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--ia-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--ia); background: var(--ia-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--ia-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--ia-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--ia); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--ia-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--ia-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--ia-osc); }
+  .aviso { background: #fdeaea; border: 1px solid #f3bcbc; }
+  .aviso b { color: #b91c1c; }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: var(--may); }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--ia); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf7fe; }
+  td.k { font-weight: 700; color: var(--ia-osc); white-space: nowrap; }
+
+  .ilus { border: 1.5px dashed var(--linea); border-radius: 9px; padding: 8px; margin: 7px 0; background: #fefcff; break-inside: avoid; }
+  .ilus-t { font-size: 9.5pt; font-weight: 700; color: var(--ia-osc); margin-bottom: 6px; }
+
+  /* Dos columnas enfrentadas. Se usa donde la ficha compara DOS cosas que el
+     alumno confunde (ser vivo y máquina, instrucción y ejemplo, predecir y
+     saber). Puestas una al lado de la otra, la diferencia se ve sin párrafo. */
+  .dos { display: flex; gap: 8px; margin: 7px 0; break-inside: avoid; }
+  .dos > div { flex: 1; border-radius: 8px; padding: 7px 10px; font-size: 9.5pt; }
+  .dos .dA { background: #eafaf1; border: 1px solid #b7e4cb; }
+  .dos .dB { background: #fdf4ff; border: 1px solid var(--linea); }
+  .dos b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .dos .dA b { color: var(--verde); }
+  .dos .dB b { color: var(--ia-osc); }
+  .dos ul { margin: 2px 0 0 18px; font-size: 9.5pt; }
+
+  /* La ficha de un concepto: el término, su definición y su ejemplo. Es el
+     recuadro que más se repite en estas cuatro, porque aquí el vocabulario ES
+     la materia: el alumno lo copia al cuaderno tal cual. */
+  .cficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--ia); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .cf-tit { font-size: 11.5pt; font-weight: 800; color: var(--ia-osc); }
+  .cf-def { font-size: 10.5pt; margin: 2px 0; text-align: justify; }
+  .cf-ej { font-size: 9.5pt; color: var(--gris); font-style: italic; }
+
+  /* La línea del tiempo de la etapa 3, en tarjetas. Cada una con su año en
+     grande: es el dato que el alumno busca al recorrer la hoja, y si baila de
+     sitio hay que leer el renglón entero para encontrarlo. */
+  .linea-t { display: flex; gap: 5px; margin: 7px 0; break-inside: avoid; flex-wrap: wrap; }
+  .linea-t > div { flex: 1 1 30%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 8px;
+                   font-size: 9pt; background: #fefcff; }
+  .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
+
+  .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  /* Las cuadrículas de «La máquina ve puntitos» (etapa 1): casillas cuadradas
+     y el relleno con ■, que se imprime aunque el navegador quite los fondos. */
+  .rejs { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0; }
+  .rejs > div { flex: 1 1 120px; font-size: 9.5pt; }
+  .rejs b { display: block; margin-bottom: 3px; color: var(--ia-osc); }
+  table.rej { border-collapse: collapse; width: auto; margin: 0; }
+  table.rej td { width: 14px; height: 14px; padding: 0; border: 1px solid #9aa7b5; text-align: center; font-size: 10pt; line-height: 14px; background: #fff; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--ia); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #9aa7b5; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--ia); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la marca
+     de lo que está mal, y pedirla para señalar lo correcto confunde a quien ya
+     sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--ia-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .felic { background: linear-gradient(180deg, var(--ia-claro), #fff); border: 1px solid var(--linea); border-radius: 9px; padding: 9px 14px; margin: 8px 0; break-inside: avoid; font-size: 10.5pt; }
+  .felic b { color: var(--ia-osc); }
+
+  .pauta { background: #fdf7fe; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--ia-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--ia); box-shadow: 0 6px 18px rgba(134,25,143,.35); }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .dos > div, .ilus, .felic, .pauta, .cficha, .linea-t > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Los Peligros de la Inteligencia Artificial</div>
+        <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
+        <div class="f-meta"><b>Tema:</b> Lo que ya pasa, cómo se llama cada peligro y qué pregunta lo desarma: las tres señales, las cuatro familias y el botiquín de defensas.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-peligros-ia.png" alt="QR de la misión">
+        <span>📷 Juega la misión en tu teléfono</span>
+      </div>
+    </div>
+
+    <h2>🎯 Objetivos de Aprendizaje</h2>
+
+    <ol class="objetivos">
+      <li>Nombrar las <strong>tres señales</strong> que trae casi toda estafa y usarlas en diez segundos.</li>
+      <li>Clasificar un peligro en su <strong>familia</strong> y decir la pregunta que lo desarma.</li>
+      <li>Explicar por qué <strong>una voz ya no es una prueba</strong> y qué sí lo es.</li>
+      <li>Descubrir qué esconde un <strong>promedio de aciertos</strong> alto.</li>
+      <li>Distinguir un mensaje con señales de uno <strong>normal</strong>, sin desconfiar de todo.</li>
+      <li>Armar su propio <strong>plan de defensa</strong> con la familia.</li>
+    </ol>
+
+    <h2>🚨 1. Las tres señales</h2>
+
+    <p>La tecnología con la que se hace un engaño cambia todos los años. <strong>Estas tres no cambian</strong>,
+       porque sin ellas el engaño no funciona: quien engaña necesita que <strong>no pienses</strong>, que
+       <strong>no consultes</strong> y que <strong>no contestes por donde siempre</strong>.</p>
+
+    <table>
+      <tr><th style="width:22%">La señal</th><th>Cómo suena</th><th style="width:34%">Qué se hace</th></tr>
+      <tr><td class="k">⏰ Urgencia</td><td>«Es urgente» · «ya» · «antes de que cierren» · «no hay tiempo»<br><i>Pensar despacio es lo que desarma cualquier engaño, así que lo primero que te quitan es el tiempo.</i></td><td>Esperá diez minutos. Lo que es de verdad urgente aguanta diez minutos; lo que no aguanta, no era de verdad.</td></tr>
+      <tr><td class="k">🤫 Secreto</td><td>«No le digás a nadie todavía» · «después te explico» · «es entre vos y yo»<br><i>La primera persona a la que le contás lo raro es la que te salva. Por eso te piden que no se lo cuentes a nadie.</i></td><td>Contáselo a alguien antes de hacer nada. En voz alta, lo raro se oye raro.</td></tr>
+      <tr><td class="k">📵 Canal nuevo</td><td>«Este es mi número nuevo» · «mandalo a esta cuenta» · «escribime por aquí»<br><i>Si contestaras por donde siempre, hablarías con la persona de verdad. Todo el engaño depende de que no lo hagas.</i></td><td>Volvé por el canal de siempre: el número que ya tenías guardado, la cuenta oficial, la persona en su casa.</td></tr>
+    </table>
+
+    <div class="caja idea"><b>Y al revés también:</b> un mensaje que no trae ninguna de las tres es, casi
+      siempre, un mensaje normal. <b>Desconfiar de todo cuesta lo mismo que creerlo todo</b>: el día que el
+      aviso sea de verdad, no lo lee nadie.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🧯 2. Un peligro no es «la máquina es mala»</h2>
+
+    <p>Eso no defiende a nadie. Un peligro es un <strong>mecanismo</strong> que se puede nombrar, y cada
+       mecanismo tiene <strong>una pregunta que lo desarma</strong>. Se reparten en cuatro familias, y no por
+       la tecnología con que se hacen —esa cambia y la lista quedaría vieja— sino por <strong>lo que te
+       quitan</strong>:</p>
+
+    <div class="cficha"><div class="cf-tit">🎭 Te engañan</div><div class="cf-def">Se fabrica algo que parece verdadero —una voz, un video, una cuenta, un dato— para que hagas algo que no harías.</div><div class="cf-ej">❓ La pregunta que lo desarma: <b>¿Lo comprobé POR OTRO CAMINO?</b></div></div>
+
+    <div class="cficha"><div class="cf-tit">⚖️ Deciden por vos</div><div class="cf-def">Un programa decide algo sobre una persona: si pasa, si entra, si se le atiende primero.</div><div class="cf-ej">❓ La pregunta que lo desarma: <b>¿Con qué ejemplos se entrenó, quién los eligió y a quién le cae el error?</b></div></div>
+
+    <div class="cficha"><div class="cf-tit">🔒 Se quedan con lo tuyo</div><div class="cf-def">Lo que escribís, lo que subís, tu voz y tu cara quedan guardados en una computadora que no es tuya.</div><div class="cf-ej">❓ La pregunta que lo desarma: <b>¿Esto se lo daría a un desconocido en la calle?</b></div></div>
+
+    <div class="cficha"><div class="cf-tit">🧠 Te quitan el criterio</div><div class="cf-def">No te quitan dinero ni datos: te quitan la costumbre de decidir y de entender por vos mismo.</div><div class="cf-ej">❓ La pregunta que lo desarma: <b>¿Esto lo decidí yo, y lo puedo explicar?</b></div></div>
+
+    <div class="caja aviso"><b>Los casos de esta ficha están escritos para ella</b>, con mecanismos que ya se
+      pueden hacer hoy. Ninguno cuenta un hecho con nombres de nadie: en un pueblo, un caso con nombres es
+      alguien. Y dos peligros van <b>sin caso a propósito</b> —el del remedio y el de la opinión fabricada—,
+      por la misma razón.</div>
+
+    <h2>📋 3. El catálogo: los trece, con su pregunta</h2>
+
+    <p>Una tabla por familia. <strong>Marcá con una ✗ los cuatro que creas que te pueden pasar a vos este
+       año</strong>, y copialos en tu cuaderno con su pregunta.</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="ilus"><div class="ilus-t">🎭 Te engañan — ❓ ¿Lo comprobé POR OTRO CAMINO?</div>
+    <table>
+      <tr><th style="width:4%"></th><th style="width:26%">El peligro</th><th>Qué hace la máquina</th></tr>
+      <tr><td></td><td class="k">🎙️ La voz fabricada</td><td>Con una grabación corta de alguien —un video de un cumpleaños, un audio del grupo— se fabrica su voz diciendo lo que sea.</td></tr>
+      <tr><td></td><td class="k">📺 El video de algo que no pasó</td><td>Se fabrica un video de una persona diciendo lo que nunca dijo, con su cara y su voz.</td></tr>
+      <tr><td></td><td class="k">🪪 La cuenta que se hace pasar por otro</td><td>Con las fotos y la forma de escribir de alguien se arma una cuenta que parece la suya, y le escribe a sus contactos.</td></tr>
+      <tr><td></td><td class="k">🍵 El remedio que cura todo</td><td>Un texto generado suena a estudio científico, sin decir cuál, quién lo hizo ni dónde está publicado. Con la salud, eso no es un dato: es un riesgo.</td></tr>
+      <tr><td></td><td class="k">📣 La opinión fabricada</td><td>Una sola persona puede hacer que cien cuentas distintas digan lo mismo el mismo día. Parecen cien voces; es una.</td></tr>
+    </table></div>
+
+    <div class="ilus"><div class="ilus-t">⚖️ Deciden por vos — ❓ ¿Con qué ejemplos se entrenó, quién los eligió y a quién le cae el error?</div>
+    <table>
+      <tr><th style="width:4%"></th><th style="width:26%">El peligro</th><th>Qué hace la máquina</th></tr>
+      <tr><td></td><td class="k">📄 El programa que descarta solicitudes</td><td>Un programa lee miles de solicitudes y descarta las que no se parecen a los ejemplos con que lo entrenaron.</td></tr>
+      <tr><td></td><td class="k">🏫 La máquina que califica</td><td>Un programa entrenado con textos de otro país marca como error las palabras de aquí.</td></tr>
+      <tr><td></td><td class="k">👁️ La cara como llave</td><td>Un programa reconoce caras para abrir una puerta o marcar la entrada, y acierta menos con las caras que casi no vio al entrenarse.</td></tr>
+    </table></div>
+
+    <div class="ilus"><div class="ilus-t">🔒 Se quedan con lo tuyo — ❓ ¿Esto se lo daría a un desconocido en la calle?</div>
+    <table>
+      <tr><th style="width:4%"></th><th style="width:26%">El peligro</th><th>Qué hace la máquina</th></tr>
+      <tr><td></td><td class="k">📤 Lo que subís queda, y no todo es tuyo</td><td>Lo que se escribe o se sube a un servicio queda guardado en una computadora que no es tuya, y puede usarse para entrenar.</td></tr>
+      <tr><td></td><td class="k">🧸 El juguete que hace preguntas</td><td>Un juguete o un asistente que contesta necesita oír para funcionar, y lo que oye sale del cuarto.</td></tr>
+    </table></div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="ilus"><div class="ilus-t">🧠 Te quitan el criterio — ❓ ¿Esto lo decidí yo, y lo puedo explicar?</div>
+    <table>
+      <tr><th style="width:4%"></th><th style="width:26%">El peligro</th><th>Qué hace la máquina</th></tr>
+      <tr><td></td><td class="k">🪝 El que decide qué ves</td><td>Un programa aprende qué te hace quedarte mirando y te da más de eso, no lo que más te sirve.</td></tr>
+      <tr><td></td><td class="k">🤝 El que siempre te da la razón</td><td>Un chat está hecho para seguir la conversación, así que tiende a contestar lo que encaja con lo que escribiste. No te acompaña: predice.</td></tr>
+      <tr><td></td><td class="k">📚 El trabajo que no podés explicar</td><td>Un texto generado se entrega perfecto y vacío: no lo escribiste vos y a veces trae datos inventados.</td></tr>
+    </table></div>
+
+    <h2>🧰 4. El botiquín: seis defensas</h2>
+
+    <p>Cada una dice también <strong>para qué NO sirve</strong>. Una defensa que se vende como buena para todo
+       es peor que ninguna: el día que falla, el que confió en ella se queda sin plan.</p>
+
+    <table>
+      <tr><th style="width:26%">La defensa</th><th>Sirve para</th><th style="width:32%">NO sirve</th></tr>
+      <tr><td class="k">📞 Volver por el canal de siempre</td><td>Cualquier mensaje que pida dinero, datos o una acción urgente: la voz, el video, la cuenta nueva.</td><td>No sirve si llamás al número que te mandaron ELLOS. Tiene que ser el que ya tenías.</td></tr>
+      <tr><td class="k">🔑 Una palabra acordada en persona</td><td>Comprobar que del otro lado está quien dice ser, aunque la voz suene igual.</td><td>No sirve si se escribió alguna vez en un grupo o en un mensaje: ahí ya la puede leer cualquiera.</td></tr>
+      <tr><td class="k">🧾 Buscar la fuente que firma</td><td>Noticias, datos, leyes, remedios: llegar a quien responde por el dato con su nombre.</td><td>No sirve encontrar cinco páginas que repiten lo mismo sin decir de dónde lo sacaron.</td></tr>
+      <tr><td class="k">⚖️ Las tres preguntas del sesgo</td><td>Todo lo que decide algo sobre personas: con qué ejemplos, quién los eligió, a quién le cae el error.</td><td>No sirve el porcentaje de aciertos solo: un 95 % puede fallar siempre con los mismos.</td></tr>
+      <tr><td class="k">🙈 No subir lo de otros</td><td>Fotos, audios y conversaciones de otras personas, que no son tuyas para publicarlas.</td><td>No arregla lo que ya se subió: lo que salió, salió. Por eso esta se aplica antes.</td></tr>
+      <tr><td class="k">⏳ Esperar diez minutos y contarlo</td><td>Todo lo que venga con urgencia y con secreto, que son dos de las tres señales.</td><td>No sirve si el que engaña logra que no se lo cuentes a nadie: por eso la espera va con el contárselo.</td></tr>
+    </table>
+
+    <h2>🔒 5. Las tres reglas de oro</h2>
+
+    <p>Son las mismas de la etapa 1 de la ruta, sin cambiarles una palabra. Lo que cambió en estos años no son
+       las reglas: es que ahora ya sabés <strong>de qué te defienden</strong>:</p>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table>
+      <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
+      <tr><td class="k">🔒 No le doy mis datos ni los de mi familia.</td><td>Nombre completo, dirección, teléfono, la escuela, fotos de otros niños. Lo que se manda a internet puede quedarse guardado.</td></tr>
+      <tr><td class="k">🔎 No le creo sin comprobar.</td><td>La máquina contesta con la misma seguridad cuando sabe y cuando se lo inventa. El dato se busca en el libro o se le pregunta a quien lo sabe.</td></tr>
+      <tr><td class="k">🧑‍🏫 Si algo me asusta o me confunde, le aviso a una persona grande.</td><td>Un mensaje raro, una foto que no debería estar, alguien que te pide algo. Eso no se resuelve solo.</td></tr>
+    </table>
+
+    <div class="acts">
+      <h3>🚨 Actividad 1 · Los mensajes que llegan <span class="val">(20 pts)</span></h3>
+
+      <p>Subrayá en cada mensaje los pedazos que sean <strong>señal</strong> y escribí al lado cuál es
+         (urgencia, secreto o canal nuevo). <strong>Uno de los cuatro no trae ninguna.</strong></p>
+
+      <div class="ilus"><div class="ilus-t">1. 🎙️ Un audio con la voz de tu mamá</div><p>«Mija, soy yo. Necesito que me mandés los dos mil de la matrícula HOY MISMO, antes de las cinco. Mandámelos a este número, que el mío se dañó. No le digás nada a tu papá todavía, después le explico yo.»</p><p>Señales que encontré: <span class="linea-resp" style="min-width:60%"></span></p></div>
+      <div class="ilus"><div class="ilus-t">2. 🎁 Un mensaje de un número desconocido</div><p>«¡Felicidades! Ganaste un teléfono en el sorteo de la feria. Tenés 2 horas para reclamarlo o pasa al siguiente. Escribí a este otro número para los datos de entrega. Es un premio personal: no lo compartás con nadie.»</p><p>Señales que encontré: <span class="linea-resp" style="min-width:60%"></span></p></div>
+      <div class="ilus"><div class="ilus-t">3. 📱 Un mensaje de la cuenta de un amigo</div><p>«Hermano, ¿me hacés un favor? Necesito una recarga ya, es una emergencia. Perdí mi número, este es el nuevo. Te la pago el viernes sin falta.»</p><p>Señales que encontré: <span class="linea-resp" style="min-width:60%"></span></p></div>
+      <div class="ilus"><div class="ilus-t">4. 🏫 Un mensaje del maestro en el grupo del grado</div><p>«Buenas tardes. Recuerden que el jueves es la reunión de padres a las 2:00 p. m. en el aula. Si alguien no puede venir, me avisa por aquí mismo y buscamos otro día. No hay que llevar nada.»</p><p>Señales que encontré: <span class="linea-resp" style="min-width:60%"></span></p></div>
+
+      <p>¿Cuál no traía ninguna? <span class="linea-resp" style="min-width:45%"></span> ¿Y por qué eso también
+         importa? <span class="linea-resp" style="min-width:100%"></span></p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>🎙️ Actividad 2 · ¿Cuánto hace falta para una estafa? <span class="val">(20 pts)</span></h3>
+
+      <p>Este es el mensaje que le llegó a una alumna. Todo lo que lo hace creíble salió de <strong>algo que
+         se publicó</strong>. Para cada pieza, escribí <strong>de dónde pudo salir</strong>:</p>
+
+      <div class="ilus"><div class="ilus-t">📨 El mensaje</div><p><i>«Hola Yoselin, soy tu mamá. Es urgente, estoy en San Pedro y no puedo hablar ahora, la matrícula de tu hermano vence hoy y no alcancé a pagarla, mandame los dos mil, dejáselo a la señora de la tienda del portón, mandalo a este número que el mío se dañó. No le digás a nadie todavía, después te explico.»</i></p></div>
+
+      <table>
+        <tr><th style="width:44%">La pieza del mensaje</th><th>¿De dónde pudo salir?</th></tr>
+        <tr><td class="k">🎂 Un video del cumpleaños, subido al grupo de la familia</td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">📛 El nombre de la hija, en un comentario</td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">🏙️ Que la mamá está trabajando fuera</td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">💸 Que la matrícula vence esta semana</td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">🏫 El nombre de la escuela y de la señora de la tienda</td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+        <tr><td class="k">📵 Un número nuevo, que no es el de la mamá</td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>
+      </table>
+
+      <p>Y ahora lo que importa: <strong>¿qué lo hubiera parado?</strong> Escribí <b>SÍ</b>, <b>NO</b> o
+         <b>A MEDIAS</b> en cada una, y por qué:</p>
+
+      <ol>
+        <li>📞 Colgar y llamar yo al número de siempre <span class="linea-resp" style="min-width:90px"></span><br><span class="linea-resp" style="min-width:100%"></span></li>
+        <li>🔑 Una palabra que acordamos en persona <span class="linea-resp" style="min-width:90px"></span><br><span class="linea-resp" style="min-width:100%"></span></li>
+        <li>🎧 Reconocer la voz de mi mamá <span class="linea-resp" style="min-width:90px"></span><br><span class="linea-resp" style="min-width:100%"></span></li>
+        <li>❓ Preguntarle por audio algo que solo ella sabe <span class="linea-resp" style="min-width:90px"></span><br><span class="linea-resp" style="min-width:100%"></span></li>
+        <li>⏳ Esperar diez minutos y contárselo a alguien <span class="linea-resp" style="min-width:90px"></span><br><span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>⚖️ Actividad 3 · El promedio que esconde <span class="val">(20 pts)</span></h3>
+
+      <p>Un programa decide <strong>si tu solicitud pasa a que la lea una persona</strong>. Cuando falla, cuesta
+         el año de estudio de alguien que cumplía los requisitos. Se entrena con 80 ejemplos, y de las
+         200 personas que lo van a usar,
+         180 son solicitudes de escuelas grandes y 20 son solicitudes de escuelas de aldea.</p>
+
+      <p>Con cada reparto, la máquina acierta esto. <strong>Completá la última columna</strong>: cuántas
+         personas de cada grupo se quedan mal clasificadas.</p>
+
+      <table>
+        <tr><th>Con qué ejemplos se entrenó</th><th>Acierto en cada grupo</th><th style="width:24%">¿Cuántas personas fallan?</th></tr>
+        <tr><td class="k">Solo del grupo grande</td><td>95 % · 50 % <i>(promedio: 90.5 %)</i></td><td><span class="linea-resp" style="min-width:80%"></span></td></tr>
+        <tr><td class="k">Como son en la población</td><td>95 % · 75 % <i>(promedio: 93 %)</i></td><td><span class="linea-resp" style="min-width:80%"></span></td></tr>
+        <tr><td class="k">Mitad y mitad</td><td>94 % · 94 % <i>(promedio: 94 %)</i></td><td><span class="linea-resp" style="min-width:80%"></span></td></tr>
+        <tr><td class="k">Solo del grupo pequeño</td><td>50 % · 95 % <i>(promedio: 54.5 %)</i></td><td><span class="linea-resp" style="min-width:80%"></span></td></tr>
+      </table>
+
+      <ol>
+        <li>¿Qué reparto tiene el promedio más alto? <span class="linea-resp" style="min-width:45%"></span></li>
+        <li>Con «solo del grupo grande», ¿qué le pasa al grupo pequeño?
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>Si vos fueras del grupo pequeño, ¿qué le pedirías a quien hizo el programa?
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+
+      <h3>✍️ Actividad 4 · Tu plan <span class="val">(sin respuesta, a propósito)</span></h3>
+      <ol>
+        <li>¿Con quién y cuándo vas a acordar la palabra de tu familia?
+          <span class="linea-resp" style="min-width:100%"></span>
+          <br><b>La palabra NO se escribe aquí</b>, ni en esta hoja ni en ningún grupo: se dice en voz alta y
+          se queda en la cabeza. Una defensa que se escribe deja de ser una defensa.</li>
+        <li>¿Qué vas a dejar de publicar? <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>Nombrá los cuatro peligros del catálogo que creas que te pueden pasar a vos este año.
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+      <div class="caja idea"><b>Esta actividad no trae respuesta y no es un descuido:</b> no la hay. Lo que se
+        evalúa es que el plan sea concreto y que lo pueda hacer de verdad esta semana.</div>
+    </div>
+
+    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">1</span><span>¿Cuáles son las tres señales que trae casi toda estafa?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Urgencia, secreto y canal nuevo</div>
+        <div class="op full"><i></i><b>b)</b> Faltas de ortografía, mayúsculas y emojis</div>
+        <div class="op full"><i></i><b>c)</b> Un número largo, una foto y un enlace</div>
+        <div class="op"><i></i><b>d)</b> Que llegue de noche y por audio</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">2</span><span>Te llega un audio con la voz de tu mamá pidiendo dinero a un número nuevo. ¿Qué hacés primero?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Le contesto por audio</div>
+        <div class="op full"><i></i><b>b)</b> Colgar y llamarla yo al número de siempre</div>
+        <div class="op"><i></i><b>c)</b> Reconozco su voz y lo mando</div>
+        <div class="op full"><i></i><b>d)</b> Le pregunto algo que solo ella sabe</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">3</span><span>Un programa acierta el 95 %. ¿Qué NO dice ese número?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Cuántas veces acertó</div>
+        <div class="op"><i></i><b>b)</b> A quién le cae el error</div>
+        <div class="op"><i></i><b>c)</b> Cuántos casos revisó</div>
+        <div class="op"><i></i><b>d)</b> Que a veces se equivoca</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">4</span><span>¿Por qué una palabra clave escrita en un grupo deja de servir?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Porque se olvida</div>
+        <div class="op full"><i></i><b>b)</b> Porque ya la puede leer cualquiera que vea el grupo</div>
+        <div class="op"><i></i><b>c)</b> Porque caduca al mes</div>
+        <div class="op"><i></i><b>d)</b> Porque cambia sola</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">5</span><span>¿De qué está hecha casi toda estafa creíble?</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> De tecnología muy cara</div>
+        <div class="op full"><i></i><b>b)</b> De información que la propia familia publicó</div>
+        <div class="op"><i></i><b>c)</b> De suerte</div>
+        <div class="op"><i></i><b>d)</b> De un día festivo</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">6</span><span>Subir al grupo la foto del salón con los nombres de todos es…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Una foto normal</div>
+        <div class="op full"><i></i><b>b)</b> Publicar datos de treinta personas que no te los dieron</div>
+        <div class="op"><i></i><b>c)</b> Solo un problema de espacio</div>
+        <div class="op"><i></i><b>d)</b> Cosa de la aplicación</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">7</span><span>Un chat que siempre te da la razón está…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Cuidándote</div>
+        <div class="op full"><i></i><b>b)</b> Prediciendo lo que encaja con lo que escribiste</div>
+        <div class="op"><i></i><b>c)</b> Comprobando datos</div>
+        <div class="op"><i></i><b>d)</b> Aprendiendo a quererte</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">8</span><span>La pregunta que desarma la familia «Deciden por vos» es…</span></div>
+      <div class="preg-ops">
+        <div class="op full"><i></i><b>a)</b> ¿Con qué ejemplos se entrenó y a quién le cae el error?</div>
+        <div class="op"><i></i><b>b)</b> ¿Cuánto cuesta?</div>
+        <div class="op"><i></i><b>c)</b> ¿Es rápido?</div>
+        <div class="op"><i></i><b>d)</b> ¿Lo usan mis amigos?</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">9</span><span>Un mensaje del maestro sin prisa ni secreto, por el grupo de siempre, es…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Sospechoso</div>
+        <div class="op"><i></i><b>b)</b> Un mensaje normal</div>
+        <div class="op"><i></i><b>c)</b> Una estafa disimulada</div>
+        <div class="op"><i></i><b>d)</b> Una prueba</div>
+      </div>
+    </div>
+
+    <div class="preg">
+      <div class="preg-q"><span class="preg-n">10</span><span>Reenviar un video sin comprobarlo es…</span></div>
+      <div class="preg-ops">
+        <div class="op"><i></i><b>a)</b> Ayudar a avisar</div>
+        <div class="op"><i></i><b>b)</b> Parte del daño</div>
+        <div class="op"><i></i><b>c)</b> Algo neutral</div>
+        <div class="op"><i></i><b>d)</b> Obligatorio en un grupo</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="felic"><b>¡Bien hecho!</b> Si contestaste estas diez ya tenés lo que de verdad defiende: las
+      tres señales, el canal de siempre y la pregunta de a quién le cae el error. No hace falta saber de
+      computadoras para usarlas: hace falta acordarse.</div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial</span><span>Página 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔑 Pauta de corrección y nota para el docente</h2>
+
+    <div class="pauta">
+      <div><span class="pt">Evaluación (40 pts):</span> 1-a · 2-b · 3-b · 4-b · 5-b · 6-b · 7-b · 8-a · 9-b · 10-b</div>
+      <div><span class="pt">Actividad 1 · Los mensajes (20 pts):</span>
+        1. urgencia + canal + secreto · 2. urgencia + canal + secreto · 3. urgencia + canal · 4. <b>ninguna señal</b>.
+        El cuarto es el que más enseña: es un mensaje normal, y reconocerlo es parte de la destreza.</div>
+      <div><span class="pt">Actividad 2 · La estafa por dentro (20 pts):</span> las seis piezas salen de algo
+        publicado —lo subió una tía al grupo, con el audio de todos cantando; «¡feliz cumple, yoselin!», en una foto pública; una publicación de la mamá: «primer día en san pedro»; el aviso de la escuela, reenviado en el grupo de la comunidad; sale en las fotos del uniforme y en los comentarios del grupo; esta no se publicó: la pone quien engaña, y es la que lo delata—, salvo el número
+        nuevo, que lo pone quien engaña. Las defensas:
+        Colgar y llamar yo al número de siempre <b>✅ Sí lo para</b> · Una palabra que acordamos en persona <b>✅ Sí lo para</b> · Reconocer la voz de mi mamá <b>❌ No lo para</b> · Preguntarle por audio algo que solo ella sabe <b>⚠️ A medias</b> · Esperar diez minutos y contárselo a alguien <b>✅ Sí lo para</b>.</div>
+      <div><span class="pt">Actividad 3 · El promedio que esconde (20 pts):</span>
+        Solo del grupo grande: fallan <b>9 y 10</b> · Como son en la población: fallan <b>9 y 5</b> · Mitad y mitad: fallan <b>11 y 1</b> · Solo del grupo pequeño: fallan <b>90 y 1</b>.
+        El promedio más alto es el de «mitad y mitad», y esa es la sorpresa del ejercicio: en este caso
+        repartir parejo no solo es más justo, además acierta más. <b>No es una ley general</b> y conviene
+        decirlo: es lo que pasa cuando el grupo pequeño estaba sin aprender.</div>
+      <div><span class="pt">Actividad 4 · Tu plan:</span> <b>no lleva respuesta a propósito.</b> Se valora que
+        sea concreto y que se pueda hacer esta semana. <b>Y una advertencia:</b> si algún alumno escribe la
+        palabra de su familia en la hoja, hay que decírselo delante de todos y cambiarla — es exactamente el
+        error que la actividad enseña a no cometer.</div>
+    </div>
+
+    <div class="nota-doc">
+      <b>Para qué sirve esta ficha, y qué NO hay que enseñar de más.</b> Es la etapa 5 de la Ruta de la Máquina
+      que Aprende, y la única que habla de daños. Se enseña <b>el mecanismo y la pregunta que lo desarma</b>,
+      nunca el miedo: un alumno asustado desconfía de todo, deja de leer los avisos de verdad y queda igual de
+      indefenso. Por eso el cuarto mensaje de la Actividad 1 no trae ninguna señal, y por eso conviene no
+      saltárselo.
+      <br><br>
+      <b>Lo que esta ficha no hace, a propósito:</b> no explica cómo se fabrica una voz ni cómo se arma un
+      video falso. La Actividad 2 le pide al alumno mirar <b>de qué está hecho</b> el engaño —información que
+      la propia familia publicó—, que es lo que le permite defenderse, y termina siempre en la otra mitad: qué
+      lo hubiera parado. Es la misma forma en que se enseña a reconocer un correo falso en cualquier oficina.
+      <br><br>
+      <b>Tres peligros van sin caso con nombres</b> —el remedio milagroso, la opinión fabricada y, fuera de
+      esta ficha, el uso militar, que es de Educación Media—. En un pueblo, un caso con nombres se parece a
+      alguien, y la clase acaba señalando a una persona de verdad. Es la misma decisión que los casos de la
+      misión de la Constitución.
+      <br><br>
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b> y entra igual
+      porque el alumno ya la tiene encima. El marco, las expectativas de logro que cumple y lo que a propósito
+      NO se enseña están en <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>, y cómo se hace la siguiente misión de
+      esta ruta, en <b>COMPENDIO-MISIONES-IA.md</b>.
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Los Peligros de la Inteligencia Artificial · Hoja del Docente</span><span>Página 10</span></div>
+</section>
+
+</div>
+
+</body>
+</html>

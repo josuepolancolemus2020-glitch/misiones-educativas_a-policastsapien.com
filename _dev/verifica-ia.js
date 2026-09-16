@@ -44,6 +44,8 @@ const { IA_CONCEPTOS, IA_MITOS, IA_REGLAS_ORO, IA_VERIFICA, IA_PIEZAS_PETICION }
   require(path.join(RAIZ, 'js/data/ia-conceptos.js'));
 const { IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS } =
   require(path.join(RAIZ, 'js/data/ia-historia.js'));
+const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS } =
+  require(path.join(RAIZ, 'js/data/ia-peligros.js'));
 
 let fallos = 0;
 const mal = m => { console.log('  ❌ ' + m); fallos++; };
@@ -70,6 +72,13 @@ const MISIONES = [
     ficha: 'fichas/ficha-historia-ia.html', qr: 'img/qr-mision-historia-ia.png' },
   { id: 75, ciclo: 3, dir: 'misiones/3ciclo-ia-generativa', html: 'ia-generativa.html', js: 'js/ia-generativa.js',
     ficha: 'fichas/ficha-ia-generativa.html', qr: 'img/qr-mision-ia-generativa.png' },
+  /* La 76 va con `ciclo: 0` como la de historia, y por la misma razón: no
+     estrena vocabulario propio de III Ciclo —lo trae de la 75, que es su
+     etapa anterior—, así que pedirle que repita las nueve definiciones sería
+     inflarle la ficha por cumplir una comprobación. Lo suyo se comprueba en
+     la sección 6-bis, contra js/data/ia-peligros.js. */
+  { id: 76, ciclo: 0, dir: 'misiones/3ciclo-peligros-ia', html: 'peligros-ia.html', js: 'js/peligros-ia.js',
+    ficha: 'fichas/ficha-peligros-ia.html', qr: 'img/qr-mision-peligros-ia.png' },
 ];
 
 console.log('\n✨ Ruta de la Máquina que Aprende · la pantalla y el papel\n');
@@ -84,7 +93,7 @@ MISIONES.forEach(m => {
   if (!fs.existsSync(path.join(RAIZ, m.ficha))) mal('falta ' + m.ficha);
   if (!fs.existsSync(path.join(RAIZ, m.qr))) mal('falta el QR ' + m.qr);
 });
-if (!fallos) bien('las cuatro misiones, con su JS, su ficha y su QR');
+if (!fallos) bien(`las ${MISIONES.length} misiones, con su JS, su ficha y su QR`);
 
 // ── 2. El QR que la ficha PIDE es el que existe ────────────────────────────
 /* El hilo va misión → su ficha → el <img> del QR, y no se deduce del nombre de
@@ -99,7 +108,7 @@ MISIONES.forEach(m => {
   if (!fs.existsSync(path.join(RAIZ, 'img', img[1]))) mal(`${m.ficha} pide img/${img[1]} y ese archivo no está`);
   if (!leer(path.join(m.dir, m.html)).includes(path.basename(m.ficha))) mal(`la misión ${m.id} no enlaza a su ficha ${path.basename(m.ficha)}`);
 });
-if (!fallos) bien('las cuatro fichas piden un QR que existe, y las cuatro misiones enlazan a su ficha');
+if (!fallos) bien(`las ${MISIONES.length} fichas piden un QR que existe, y las ${MISIONES.length} misiones enlazan a su ficha`);
 
 // ── 3. El vocabulario: lo que dice el archivo es lo que dice el papel ──────
 console.log('\n📖 El vocabulario, del archivo de datos al papel');
@@ -127,13 +136,17 @@ IA_MITOS.forEach(x => {
    redacción entre etapas no enseñan tres matices, enseñan a desconfiar.
    La etapa 3 queda fuera a propósito: es una lección de fechas, no de uso, y
    meterle las tres reglas sería relleno. */
-MISIONES.filter(m => m.ciclo).forEach(m => {
+/* ⚠️ Y la lista de las que las llevan NO es «las que tienen ciclo»: la etapa 5
+   habla de cómo NO salir perjudicado y las lleva, aunque no estrene
+   vocabulario propio. La 3 sigue fuera a propósito: es una lección de fechas. */
+const CON_REGLAS = [72, 73, 75, 76];
+MISIONES.filter(m => CON_REGLAS.indexOf(m.id) >= 0).forEach(m => {
   const f = plano(leer(m.ficha));
   IA_REGLAS_ORO.forEach(r => {
     if (!f.includes(plano(r.regla))) mal(`${path.basename(m.ficha)}: falta la regla de oro «${r.regla}»`);
   });
 });
-if (fallos === f0) bien(`${IA_MITOS.length} mitos y las 3 reglas de oro, iguales en las cuatro etapas`);
+if (fallos === f0) bien(`${IA_MITOS.length} mitos y las 3 reglas de oro, iguales en las ${CON_REGLAS.length} etapas que enseñan a usarla`);
 
 // ── 5. La historia: los quince hitos, con lo que los acredita ──────────────
 console.log('\n📜 Los quince hitos y sus fuentes');
@@ -163,6 +176,36 @@ IA_PIEZAS_PETICION.forEach(p => {
   else if (!f75.includes(plano(p.ejemplo))) mal(`ficha-ia-generativa: el ejemplo de «${p.pieza}» no es el del archivo`);
 });
 if (fallos === f0) bien(`${IA_VERIFICA.length} pasos de verificar y ${IA_PIEZAS_PETICION.length} piezas de la petición, del archivo al papel`);
+
+// ── 6-bis. Los peligros: lo que dice el archivo es lo que dice el papel ────
+console.log('\n🛡️ Los peligros, las señales y el botiquín');
+f0 = fallos;
+const f76 = plano(leer(MISIONES[4].ficha));
+IA_SENALES.forEach(x => {
+  if (!f76.includes(plano(x.nombre))) mal('ficha-peligros-ia: falta la señal «' + x.nombre + '»');
+  else if (!f76.includes(plano(x.porque))) mal(`ficha-peligros-ia: la señal «${x.nombre}» no dice lo que dice js/data/ia-peligros.js`);
+});
+IA_FAMILIAS.forEach(x => {
+  if (!f76.includes(plano(x.nombre))) mal('ficha-peligros-ia: falta la familia «' + x.nombre + '»');
+  else if (!f76.includes(plano(x.pregunta))) mal(`ficha-peligros-ia: la familia «${x.nombre}» no trae su pregunta tal como la escribe el archivo`);
+});
+IA_PELIGROS.forEach(p => {
+  if (!f76.includes(plano(p.nombre))) mal('ficha-peligros-ia: falta el peligro «' + p.nombre + '»');
+  else if (!f76.includes(plano(p.mecanismo))) mal(`ficha-peligros-ia: el mecanismo de «${p.nombre}» no dice lo que dice el archivo`);
+});
+IA_DEFENSAS.forEach(d => {
+  if (!f76.includes(plano(d.nombre))) mal('ficha-peligros-ia: falta la defensa «' + d.nombre + '»');
+  /* ⚠️ El «para qué NO sirve» es lo que más se cae al recortar una ficha, y es
+     justo la mitad que evita que una defensa se venda como buena para todo. */
+  else if (!f76.includes(plano(d.noPara))) mal(`ficha-peligros-ia: la defensa «${d.nombre}» está SIN su «no sirve para»`);
+});
+/* Y que la misión no los lleve escritos a mano: los pinta del archivo. */
+const h76 = plano(leer(path.join(MISIONES[4].dir, MISIONES[4].html)));
+IA_PELIGROS.forEach(p => {
+  if (h76.includes(plano(p.mecanismo))) mal(`la misión 76 lleva escrito a mano el mecanismo de «${p.nombre}»: tiene que pintarlo del archivo`);
+});
+if (!leer(path.join(MISIONES[4].dir, MISIONES[4].html)).includes('js/data/ia-peligros.js')) mal('la misión 76 no carga js/data/ia-peligros.js');
+if (fallos === f0) bien(`${IA_SENALES.length} señales, ${IA_FAMILIAS.length} familias, ${IA_PELIGROS.length} peligros y ${IA_DEFENSAS.length} defensas, del archivo al papel`);
 
 // ── 7. ⚠️ Las misiones no llevan los datos escritos a mano ─────────────────
 console.log('\n🖐️  Que la misión PINTE los datos y no los escriba');
@@ -200,12 +243,12 @@ f0 = fallos;
    literal es lo que hizo escribir el aviso dos veces en la ficha de la
    Constitución y pasarse de hoja. Basta con que la hoja del docente diga que
    esa actividad no lleva respuesta y que es a propósito. */
-[[MISIONES[2].ficha, 'Investigá'], [MISIONES[3].ficha, 'Investigá en tu comunidad']].forEach(([ficha, act]) => {
+[[MISIONES[2].ficha, 'Investigá'], [MISIONES[3].ficha, 'Investigá en tu comunidad'], [MISIONES[4].ficha, 'Tu plan']].forEach(([ficha, act]) => {
   const f = plano(leer(ficha));
   const diceQueNoHay = /no lleva respuesta a proposito|sin respuesta.{0,40}a proposito|no trae respuesta a proposito/.test(f);
   if (!diceQueNoHay) mal(`${path.basename(ficha)}: la actividad «${act}» no trae pauta y la hoja del docente NO avisa de que es a propósito`);
 });
-if (fallos === f0) bien('las dos actividades de investigación avisan de que no traen pauta a propósito');
+if (fallos === f0) bien('las tres actividades sin pauta avisan de que es a propósito');
 
 // ── 9. Lo que la currícula promete que NO se escribe ───────────────────────
 console.log('\n🚧 Lo que a propósito no se escribe');

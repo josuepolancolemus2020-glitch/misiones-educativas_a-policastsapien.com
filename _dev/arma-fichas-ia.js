@@ -37,6 +37,8 @@ const { IA_CONCEPTOS, IA_MITOS, IA_REGLAS_ORO, IA_APLICACIONES, IA_VERIFICA, IA_
   require(path.join(RAIZ, 'js/data/ia-conceptos.js'));
 const { IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS } =
   require(path.join(RAIZ, 'js/data/ia-historia.js'));
+const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS, IA_MENSAJES } =
+  require(path.join(RAIZ, 'js/data/ia-peligros.js'));
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const con = c => IA_CONCEPTOS.find(x => x.clave === c);
@@ -294,7 +296,8 @@ ${IA_MITOS.map(m => `      <tr><td>❌ «${esc(m.mito)}»</td><td>✅ ${esc(m.ve
 
 module.exports = { RAIZ, esc, con, arma, portada, preguntas, clave, fichaConcepto, tablaReglas, tablaMitos,
                    IA_CONCEPTOS, IA_MITOS, IA_REGLAS_ORO, IA_APLICACIONES, IA_VERIFICA, IA_PIEZAS_PETICION,
-                   IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS };
+                   IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS,
+                   IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS, IA_MENSAJES };
 
 if (require.main === module) {
   console.log('\n📄 Armando las cuatro fichas de la Ruta de la Máquina que Aprende\n');
@@ -302,10 +305,12 @@ if (require.main === module) {
   require('./fichas-ia/ficha-73.js');
   require('./fichas-ia/ficha-74.js');
   require('./fichas-ia/ficha-75.js');
+  require('./fichas-ia/ficha-76.js');
   console.log('\n⚠️  Ahora, SIEMPRE, en este orden:');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-que-es-la-ia');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-como-aprende-una-maquina');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-historia-ia');
   console.log('    node _dev/reparte-hojas-ficha.js ficha-ia-generativa');
+  console.log('    node _dev/reparte-hojas-ficha.js ficha-peligros-ia');
   console.log('    node _dev/verifica-ficha-paginas.js\n');
 }

@@ -125,6 +125,7 @@ const MISSIONS = [
   { id: 73, title: 'Cómo Aprende una Máquina',                           subject: 'ia',          color: 'ia',   grade: 'II Ciclo',       cycle: '2ciclo',   ruta: 'maquina', etapa: 2, xp: 35, icon: '🧪', pais: 'HN', url: 'misiones/2ciclo-como-aprende-una-maquina/como-aprende-una-maquina.html' },
   { id: 74, title: 'La Historia de la Inteligencia Artificial',          subject: 'ia',          color: 'ia',   grade: 'II y III Ciclo', cycle: '2y3ciclo', ruta: 'maquina', etapa: 3, xp: 35, icon: '📜', pais: 'HN', url: 'misiones/2y3ciclo-historia-ia/historia-ia.html' },
   { id: 75, title: 'IA Generativa: úsala bien y no le creas todo',       subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 4, xp: 40, icon: '🔎', pais: 'HN', url: 'misiones/3ciclo-ia-generativa/ia-generativa.html' },
+  { id: 76, title: 'Los Peligros de la Inteligencia Artificial',         subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 5, xp: 40, icon: '🛡️', pais: 'HN', url: 'misiones/3ciclo-peligros-ia/peligros-ia.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 

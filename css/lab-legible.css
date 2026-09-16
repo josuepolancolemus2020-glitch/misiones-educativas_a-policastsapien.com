@@ -70,4 +70,10 @@ body.letra-grande .lab-sentence{font-size:1.25rem;}
 body.letra-grande .lab-cont-header{font-size:1.55rem;}
 body.letra-grande .lab-asp-title{font-size:1.35rem;}
 body.letra-grande .lab-asp-info{font-size:1.25rem;}
-body.letra-grande .lab-btn{font-size:1.2rem;}
+body.letra-grande .lab-btn{font-size:1.2rem;padding-left:0.55rem;padding-right:0.55rem;}
+/* ⚠️ Con la letra grande, un rótulo de dos palabras largas —«❓ La pregunta»—
+   se pasaba 4 px de su botón y salía CORTADO, sin que ninguna sonda lo viera:
+   el botón cabe en la fila, no se sale del teléfono y se puede tocar. Se vio
+   abriéndolo. Se le quita relleno de los lados, que es lo que sobra, y se deja
+   que el rótulo parta de línea antes que salirse. */
+.lab-btn{overflow-wrap:anywhere;}

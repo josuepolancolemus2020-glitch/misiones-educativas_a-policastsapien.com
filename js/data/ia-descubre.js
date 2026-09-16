@@ -300,6 +300,142 @@ const IA_ESCENARIOS = [
     ], regla: 'Una máquina puede proponer; la decisión sobre una persona la toma una persona.' },
 ];
 
+/* ── Etapa 5 · 🎙️ ¿Cuánto hace falta para una estafa? ─────────────────────
+   El alumno se pone del otro lado: arma el mensaje con el que se estafa a una
+   familia. No se le enseña a fabricar una voz —ni se puede, ni haría falta—:
+   se le enseña **de qué está hecho el engaño**, que es información que la
+   propia familia publicó. Es educación de defensa, la misma que se hace con
+   el correo falso en cualquier oficina, y por eso termina siempre en la otra
+   mitad: qué lo hubiera parado.
+
+   ⚠️ Lo que la actividad AFIRMA, y la sonda recalcula: que las tres señales
+   (urgencia, secreto y canal nuevo) están en el mensaje **con piezas y sin
+   piezas**, porque sin ellas la estafa no funciona; y que ninguna de las seis
+   piezas se robó: las seis salen de algo que se publicó. */
+const IA_ESTAFA_PIEZAS = [
+  { k: 'voz', emoji: '🎂', que: 'Un video del cumpleaños, subido al grupo de la familia',
+    publico: 'Lo subió una tía al grupo, con el audio de todos cantando',
+    aporta: 'La voz. Con unos segundos grabados basta para fabricarla.',
+    texto: '' },
+  { k: 'nombre', emoji: '📛', que: 'El nombre de la hija, en un comentario',
+    publico: '«¡Feliz cumple, Yoselin!», en una foto pública',
+    aporta: 'Te llama por tu nombre, y eso ya suena a alguien que te conoce.',
+    texto: 'Yoselin, ' },
+  { k: 'donde', emoji: '🏙️', que: 'Que la mamá está trabajando fuera',
+    publico: 'Una publicación de la mamá: «primer día en San Pedro»',
+    aporta: 'Explica por qué no puede hablar ahora. Quita la defensa antes de que se te ocurra.',
+    texto: 'estoy en San Pedro y no puedo hablar ahora, ' },
+  { k: 'motivo', emoji: '💸', que: 'Que la matrícula vence esta semana',
+    publico: 'El aviso de la escuela, reenviado en el grupo de la comunidad',
+    aporta: 'Un motivo que es verdad. Lo que más convence de un engaño es la parte que no es mentira.',
+    texto: 'la matrícula de tu hermano vence hoy y no alcancé a pagarla, ' },
+  { k: 'detalle', emoji: '🏫', que: 'El nombre de la escuela y de la señora de la tienda',
+    publico: 'Sale en las fotos del uniforme y en los comentarios del grupo',
+    aporta: 'El detalle que nadie de fuera sabría… salvo que esté publicado.',
+    texto: 'dejáselo a la señora de la tienda del portón, ' },
+  { k: 'canal', emoji: '📵', que: 'Un número nuevo, que no es el de la mamá',
+    publico: 'Esta no se publicó: la pone quien engaña, y es la que lo delata',
+    aporta: 'Es la pieza que hace falta para que el dinero llegue a otro lado.',
+    texto: 'mandalo a este número que el mío se dañó, ' },
+];
+/* El mensaje se ARMA con las piezas elegidas. Las tres señales van siempre,
+   con piezas o sin ellas: son el esqueleto del engaño, no un adorno. */
+const IA_ESTAFA_BASE = {
+  saludo: 'Hola, soy tu mamá. ',
+  urgencia: 'Es urgente, ',            /* señal 1 */
+  canal: 'mandámelo al número que te paso, ', /* señal 3, en genérico */
+  secreto: 'No le digás a nadie todavía, después te explico.', /* señal 2 */
+};
+function iaEstafaMensaje(elegidas) {
+  const hay = k => elegidas.indexOf(k) >= 0;
+  const pieza = k => IA_ESTAFA_PIEZAS.find(p => p.k === k).texto;
+  let m = hay('nombre') ? 'Hola ' + pieza('nombre').trim() + ' soy tu mamá. ' : IA_ESTAFA_BASE.saludo;
+  m += IA_ESTAFA_BASE.urgencia;
+  ['donde', 'motivo'].forEach(k => { if (hay(k)) m += pieza(k); });
+  m += hay('motivo') ? 'mandame los dos mil, ' : 'mandame dinero, ';
+  if (hay('detalle')) m += pieza('detalle');
+  /* El canal nuevo va SIEMPRE: sin él el dinero llegaría a la persona de
+     verdad y no habría estafa. La pieza solo lo vuelve concreto y creíble. */
+  m += hay('canal') ? pieza('canal') : IA_ESTAFA_BASE.canal;
+  m = m.replace(/,\s*$/, '. ').replace(/\s+/g, ' ');
+  if (!/[.!?]\s*$/.test(m)) m += '. ';
+  return m + IA_ESTAFA_BASE.secreto;
+}
+/* Las tres señales, con sus palabras dentro del mensaje armado: es lo que la
+   pantalla resalta y lo que la sonda comprueba que esté SIEMPRE. */
+const IA_ESTAFA_SENALES = [
+  { k: 'urgencia', emoji: '⏰', busca: 'Es urgente' },
+  { k: 'canal', emoji: '📵', busca: 'número' },
+  { k: 'secreto', emoji: '🤫', busca: 'No le digás a nadie' },
+];
+/* Qué lo hubiera parado, y qué no. Las verdades a medias van marcadas: una
+   defensa que se vende como buena para todo es peor que ninguna. */
+const IA_ESTAFA_DEFENSAS = [
+  { k: 'llamar', emoji: '📞', que: 'Colgar y llamar yo al número de siempre', vale: 'si',
+    porque: 'Siempre. Es la única que no depende de lo que la familia haya publicado: del otro lado del número de siempre está su mamá de verdad.' },
+  { k: 'palabra', emoji: '🔑', que: 'Una palabra que acordamos en persona', vale: 'si',
+    porque: 'Sí, con una condición: que no se haya escrito nunca en un grupo. Si se escribió, ya la puede leer quien engaña.' },
+  { k: 'voz', emoji: '🎧', que: 'Reconocer la voz de mi mamá', vale: 'no',
+    porque: 'No. La voz es justamente lo que se fabrica, y con el video del cumpleaños ya la tienen. Una voz dejó de ser una prueba.' },
+  { k: 'dato', emoji: '❓', que: 'Preguntarle por audio algo que solo ella sabe', vale: 'medias',
+    porque: 'A medias. Si lo que le preguntás está publicado —el nombre de la escuela, dónde trabaja, el cumpleaños—, lo sabe cualquiera que haya mirado.' },
+  { k: 'esperar', emoji: '⏳', que: 'Esperar diez minutos y contárselo a alguien', vale: 'si',
+    porque: 'Sí, y por eso el mensaje trae urgencia y secreto: están puestos justamente para que no hagas ninguna de las dos cosas.' },
+];
+
+/* ── Etapa 5 · ⚖️ El promedio que esconde ─────────────────────────────────
+   La idea más importante del catálogo de peligros, y la que no se ve en un
+   párrafo: **el porcentaje de aciertos no dice a quién le cae el error**. El
+   alumno reparte los ejemplos del entrenamiento y mira la exactitud por
+   grupo; descubre que un sistema con nueve aciertos de cada diez puede ser
+   una moneda al aire para el grupo pequeño.
+
+   La cuenta es determinista y sin azar a propósito: así la sonda la rehace
+   exactamente, y dos alumnos con el mismo reparto ven lo mismo. La curva es
+   la misma forma que midió la etapa 2: sube rápido con los primeros ejemplos
+   y se aplana; sin ejemplos de un grupo, sobre ese grupo es como una moneda. */
+const IA_EJEMPLOS_TOTAL = 80;
+function iaAciertoGrupo(n) {
+  if (n <= 0) return 50;
+  return Math.round(50 + 45 * (1 - Math.exp(-n / 10)));
+}
+const IA_REPARTOS = [
+  { k: 'solo_grande', nombre: 'Solo del grupo grande', reparto: g => (g === 0 ? IA_EJEMPLOS_TOTAL : 0) },
+  { k: 'poblacion', nombre: 'Como son en la población', reparto: null },
+  { k: 'mitad', nombre: 'Mitad y mitad', reparto: g => IA_EJEMPLOS_TOTAL / 2 },
+  { k: 'solo_chico', nombre: 'Solo del grupo pequeño', reparto: g => (g === 1 ? IA_EJEMPLOS_TOTAL : 0) },
+];
+const IA_SISTEMAS = [
+  { k: 'beca', emoji: '📄', nombre: 'El que descarta solicitudes de beca',
+    decide: 'si tu solicitud pasa a que la lea una persona',
+    cuesta: 'el año de estudio de alguien que cumplía los requisitos',
+    grupos: [{ nombre: 'Solicitudes de escuelas grandes', cuantos: 180 }, { nombre: 'Solicitudes de escuelas de aldea', cuantos: 20 }] },
+  { k: 'voz', emoji: '🗣️', nombre: 'El que entiende lo que decís por teléfono',
+    decide: 'si el trámite te atiende o te cuelga',
+    cuesta: 'tener que viajar a la ciudad por algo que se resolvía hablando',
+    grupos: [{ nombre: 'Los que hablan como en la capital', cuantos: 170 }, { nombre: 'Los que hablan como en su pueblo', cuantos: 30 }] },
+  { k: 'cara', emoji: '👁️', nombre: 'El que abre la puerta con la cara',
+    decide: 'si entrás a tu trabajo o esperás a que alguien te abra',
+    cuesta: 'llegar tarde todos los días, y que parezca culpa tuya',
+    grupos: [{ nombre: 'Caras parecidas a las del entrenamiento', cuantos: 185 }, { nombre: 'Las demás caras', cuantos: 15 }] },
+];
+/* Cuántos ejemplos de cada grupo, según el reparto elegido. */
+function iaRepartoEjemplos(sistema, repartoK) {
+  const r = IA_REPARTOS.find(x => x.k === repartoK) || IA_REPARTOS[0];
+  const total = sistema.grupos.reduce((a, g) => a + g.cuantos, 0);
+  return sistema.grupos.map((g, i) =>
+    r.reparto ? Math.round(r.reparto(i)) : Math.round(IA_EJEMPLOS_TOTAL * g.cuantos / total));
+}
+/* La exactitud por grupo y la del conjunto, que es la que se presume. */
+function iaExactitud(sistema, repartoK) {
+  const ej = iaRepartoEjemplos(sistema, repartoK);
+  const porGrupo = sistema.grupos.map((g, i) => ({ nombre: g.nombre, cuantos: g.cuantos, ejemplos: ej[i], pct: iaAciertoGrupo(ej[i]) }));
+  const total = sistema.grupos.reduce((a, g) => a + g.cuantos, 0);
+  const media = porGrupo.reduce((a, g) => a + g.pct * g.cuantos, 0) / total;
+  const fallan = porGrupo.map(g => Math.round(g.cuantos * (100 - g.pct) / 100));
+  return { porGrupo: porGrupo, media: Math.round(media * 10) / 10, fallan: fallan, total: total };
+}
+
 /* Se exporta para las sondas, que corren en Node. En el navegador no estorba. */
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -308,5 +444,7 @@ if (typeof module !== 'undefined' && module.exports) {
     IA_REGLAS_OCULTAS, IA_REGLAS_MEDIO,
     IA_CURVA_SEMILLA, IA_CURVA_CLASES, IA_CURVA_N, iaCurvaRng, iaCurvaDatos, iaCurvaVecino, iaCurvaExactitud,
     IA_TIEMPO_PARES, IA_COMPROBAR, IA_ESCENARIOS,
+    IA_ESTAFA_PIEZAS, IA_ESTAFA_BASE, IA_ESTAFA_SENALES, iaEstafaMensaje, IA_ESTAFA_DEFENSAS,
+    IA_EJEMPLOS_TOTAL, iaAciertoGrupo, IA_REPARTOS, IA_SISTEMAS, iaRepartoEjemplos, iaExactitud,
   };
 }

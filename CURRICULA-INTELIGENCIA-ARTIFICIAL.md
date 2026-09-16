@@ -114,7 +114,7 @@ envejece en un mes. Cómo se hace sin romper la regla de la evidencia está en
 
 | hilo | I Ciclo (1º a 3º) | II Ciclo (4º a 6º) | III Ciclo (7º a 9º) |
 |---|---|---|---|
-| **A. Qué es** | Una máquina que hace cosas que parecen de persona. **No está viva y no siente.** | Un programa que aprende **de ejemplos** en vez de seguir solo reglas escritas. | Sistemas que **predicen**: la siguiente palabra, la siguiente etiqueta, el siguiente píxel. |
+| **A. Qué es** | Una máquina que hace cosas que parecen de persona. **No está viva y no siente.** | Un programa que aprende **de ejemplos** en vez de seguir solo reglas escritas. | Sistemas que **predicen**: la siguiente palabra, la siguiente etiqueta, el siguiente píxel. Y que **deciden sobre personas**. |
 | **B. Cómo aprende** | Le enseñas mostrándole **ejemplos**. Si todos se parecen, se equivoca con el raro: **no es cuántos, es cuáles**. | **Datos → patrón → prueba → error.** Etiquetas, entrenamiento y sesgo. | Qué cambió para que funcionara: **datos + cómputo + algoritmos**. Qué es entrenar y qué es usar. |
 | **C. De dónde viene** | Hace mucho, alguien se preguntó si una máquina podía pensar. | La pregunta de Turing, el nombre que nació en 1956 y los dos «inviernos». | La línea del tiempo completa, de 1950 a hoy, y por qué se aceleró. |
 | **D. Cómo se usa sin salir perjudicado** | No le cuentes tus cosas a una máquina. Si te dice algo raro, **pregúntale a una persona grande**. | Lo que dice **se verifica**. Lo que subes **queda**. Lo que no está en los ejemplos, no lo reconoce. | **Alucinación, deepfake, privacidad, honestidad académica y trabajo.** Verificar como oficio. |
@@ -126,7 +126,7 @@ envejece en un mes. Cómo se hace sin romper la regla de la evidencia está en
 
 La materia estrena la **Ruta de la Máquina que Aprende**. Las etapas van de lo
 concreto a lo abstracto, que es también de I a III Ciclo, con una parada de
-historia en medio.
+historia en medio y, al final, la que enseña a defenderse.
 
 ### Etapa 1 · «¿Qué es la Inteligencia Artificial?» · I Ciclo
 
@@ -293,6 +293,62 @@ generado lo que hay que verificar antes de creerlo) y 🧱 **Arma la petición**
   final el alumno **escribe la suya**. No hay una respuesta buena: hay
   consecuencias.
 
+### Etapa 5 · «Los Peligros de la Inteligencia Artificial» · III Ciclo
+
+**Expectativa propia:** nombran el mecanismo de un peligro y la **pregunta que
+lo desarma**; reconocen en un mensaje las **tres señales** —urgencia, secreto y
+canal nuevo— y también reconocen un mensaje normal; y explican qué esconde un
+porcentaje de aciertos alto.
+
+Es la etapa que cierra el hilo D y estrena el E. Y la que más fácil se
+estropea: una misión de peligros mal escrita fabrica un alumno asustado, y un
+alumno asustado desconfía de todo, deja de leer los avisos de verdad y queda
+igual de indefenso. Por eso:
+
+1. **Un peligro es un mecanismo con nombre, no «la máquina es mala».** Trece
+   peligros, cada uno con qué hace la máquina, a quién le pasa, qué le cuesta,
+   la pregunta que lo desarma y con qué se defiende.
+2. **Cuatro familias, repartidas por lo que te quitan** —te engañan, deciden
+   por vos, se quedan con lo tuyo, te quitan el criterio—, y no por la
+   tecnología con que se hacen: esa cambia cada año y la lista quedaría vieja.
+3. ⚠️ **Las tres señales son lo único que hay que saberse de memoria**, porque
+   son lo único que el que engaña **no puede quitar**: necesita que no pienses
+   (urgencia), que no consultes (secreto) y que no contestes por donde siempre
+   (canal nuevo). La tecnología del engaño cambia; las tres, no.
+4. **El botiquín dice para qué NO sirve cada defensa.** Una defensa que se
+   vende como buena para todo es peor que ninguna: el día que falla, el que
+   confió en ella se queda sin plan.
+5. ⚠️ **Y uno de los cuatro mensajes de la actividad no trae ninguna señal.**
+   Es el que más enseña: **desconfiar de todo cuesta lo mismo que creerlo
+   todo**.
+6. **Tres peligros van sin caso, a propósito:** el remedio milagroso (salud),
+   la opinión fabricada (decisiones de todos) y —fuera de esta etapa, porque es
+   de Media— el uso militar. En un pueblo, un caso con nombres es alguien.
+
+**La interacción que sostiene la misión:** 🚨 **Los mensajes que llegan**. Cuatro
+mensajes como los de verdad; el alumno marca los pedazos que son señal y la
+pantalla le dice cuál se le pasó. Diez segundos de comprobación, que es la
+diferencia entre contestar ahí o volver por el canal de siempre.
+
+**Y lo que descubre (🔭 Descubre):**
+
+- 🎙️ **¿Cuánto hace falta para una estafa?** El alumno se pone del otro lado y
+  arma el mensaje pieza por pieza. No se le enseña a fabricar nada —ni haría
+  falta—: se le enseña **de qué está hecho el engaño**, y la respuesta es que
+  **casi nada se roba**: el video del cumpleaños, el nombre, la escuela, dónde
+  trabaja su mamá y hasta el aviso de la matrícula estaban publicados. Lo único
+  que pone quien engaña es el número nuevo. Después mira cuál de cinco defensas
+  lo hubiera parado: dos se caen justo con las piezas que él armó —reconocer la
+  voz, y preguntar «algo que solo ella sabe»—. Termina en un plan suyo, y la
+  pantalla le avisa de que **la palabra de la familia no se escribe ahí**.
+- ⚖️ **El promedio que esconde.** Un programa que decide sobre personas, y el
+  alumno elige con qué ejemplos se entrenó. Entrenado solo con el grupo grande
+  presume **90,5 % de aciertos** y para el grupo pequeño es **echar una moneda
+  al aire**; repartido mitad y mitad, los dos grupos van al 94 % y además el
+  promedio sube. **En ese caso**, repartir parejo no solo es más justo: acierta
+  más —y la pantalla dice que no es una ley, que es lo que pasa cuando el grupo
+  pequeño estaba sin aprender—.
+
 ---
 
 ## 5 bis. Lo que se descubre, no se lee: las reglas de una actividad de descubrimiento
@@ -400,5 +456,5 @@ eligió los ejemplos**.
 ---
 
 *Escrita en septiembre de 2026 y ampliada el 16 de septiembre. Las cifras de
-esta currícula son las de hoy: cuatro misiones en la ruta, ocho actividades de
-descubrimiento, veintitrés misiones planeadas, y siguen entrando.*
+esta currícula son las de hoy: cinco misiones en la ruta, diez actividades de
+descubrimiento, veintidós misiones planeadas, y siguen entrando.*

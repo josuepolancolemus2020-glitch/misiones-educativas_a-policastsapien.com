@@ -1,7 +1,8 @@
 # Compendio para las misiones de Inteligencia Artificial que vienen
 
-**Escrito el 16 de septiembre de 2026**, con cuatro misiones publicadas en la
-Ruta de la Máquina que Aprende y una decisión tomada: esta materia va a crecer
+**Escrito el 16 de septiembre de 2026**, con cinco misiones publicadas en la
+Ruta de la Máquina que Aprende —la quinta, 🛡️ Los Peligros de la Inteligencia
+Artificial, salió de este mismo compendio el día que se escribió— y una decisión tomada: esta materia va a crecer
 al ritmo al que crece lo que enseña, que hoy es **semanal**. Este documento es
 el camino para que crezca sin romper lo que la sostiene. Se lee antes de
 escribir la quinta misión, y se corrige cada vez que una misión nueva enseñe
@@ -266,6 +267,24 @@ decisiones con su consecuencia, una regla, y la declaración de inventado en
 la pantalla. `verifica-descubre-ia` ya lo comprueba para `IA_ESCENARIOS`; los
 nuevos entran en la misma lista.
 
+### 3.4 · Lo que se aprendió escribiendo la primera del compendio
+
+La etapa 5 salió de este documento el mismo día, y dejó tres cosas escritas
+para la siguiente:
+
+1. ⚠️ **Una misión de peligros necesita un caso que NO sea un peligro.** El
+   cuarto mensaje de su actividad principal es un aviso normal del maestro, sin
+   ninguna de las tres señales, y es el que más enseña: un alumno que desconfía
+   de todo deja de leer los avisos de verdad y queda igual de indefenso.
+2. ⚠️ **Ponerse del lado del que engaña solo vale si termina en la defensa.** La
+   actividad de la estafa no enseña a fabricar nada: enseña **de qué está hecho**
+   el engaño —información publicada— y acaba en qué lo hubiera parado. Es como
+   se enseña a reconocer un correo falso en cualquier oficina.
+3. ⚠️ **Y no se le pide al alumno que escriba su defensa en la pantalla.** La
+   actividad le pide **cuándo y con quién** va a acordar la palabra de su
+   familia, y le avisa de que la palabra no se escribe ahí. Una actividad que
+   guardara esa palabra en el teléfono enseñaría lo contrario de lo que dice.
+
 ---
 
 ## 4 · Las misiones que están por venir
@@ -277,12 +296,12 @@ de la Ruta de la Máquina que Aprende:
 
 | # | misión (título de trabajo) | ciclo | de qué se hace | lo que descubre |
 |---|---|---|---|---|
-| 5 | 🛡️ **Los peligros de la IA: lo que ya pasa** | III | el catálogo de peligros (3.1), con cuatro casos con persona y precio | un «simulador de estafa» donde el alumno es quien fabrica la voz y ve lo poco que hace falta |
+| ~~5~~ | ✅ 🛡️ **Los Peligros de la Inteligencia Artificial** · *publicada, etapa 5* | III | los trece peligros del catálogo (3.1) en cuatro familias, las tres señales y el botiquín | 🎙️ arma el mensaje de la estafa y ve que **casi nada se roba** · ⚖️ reparte los ejemplos y ve **a quién le cae el error** |
 | 6 | 📰 **Lo que pasó esta semana con la IA** | II · III | la misión-plantilla del protocolo de actualidad (2), con el hecho de `_dev/actualidad/` | el calendario de promesas: vuelve en un año y mira |
 | 7 | 🎬 **Lo que el cine preguntó antes** | II · III | seis indagaciones del compendio de cine (3.2), una por peligro | contrastar lo que la película dice de la máquina con lo que la ruta enseña |
 | 8 | 🔮 **Escenarios por venir** | III | los diez escenarios (3.3) | el alumno arma SU escenario con las cuatro piezas y lo somete a la prueba |
 | 9 | 🤝 **Mi amigo es una máquina** | II · III | la compañía artificial, el juguete que habla, el chat que siempre contesta | una máquina que solo predice «lo que quieres oír», y se ve cómo lo hace |
-| 10 | ⚖️ **¿Quién decide? La máquina que juzga personas** | III | sesgo aplicado: la nota, el crédito, la puerta que se abre o no | el alumno entrena al juez con ejemplos mal repartidos y ve a quién le cae el error |
+| 10 | ⚖️ **¿Quién decide? La máquina que juzga personas** | III | sesgo aplicado: la nota, el crédito, la puerta que se abre o no. ⚠️ La etapa 5 ya enseña **el promedio que esconde**: esta tiene que ir más allá —la apelación, quién revisa, qué se le puede exigir a quien lo compró— o no vale la pena | el alumno pide la revisión y ve qué se puede y qué no |
 | 11 | 🔒 **Tu cara, tu voz, tus datos** | II · III | privacidad y vigilancia; qué queda y dónde | «cuánto se sabe de ti con tres datos»: el alumno lo reconstruye |
 | 12 | 🌾 **La IA en el campo hondureño** | II | plagas, clima, precios; lo que sirve y lo que falla en un valle sin datos | el pronóstico que falla donde nadie midió |
 | 13 | 🎮 **El algoritmo que te recomienda** | II · III | el enganche; la normativa del asombro contada desde el otro lado | el alumno construye un recomendador y ve cómo se estrecha lo que le enseña |
@@ -310,7 +329,7 @@ Y dos cosas que valen para las veintitrés:
 
 ---
 
-*Las cifras de este documento son las de hoy: cuatro misiones publicadas, ocho
-actividades de descubrimiento, diecisiete peligros catalogados, treinta y tres
-indagaciones de cine, diez escenarios y veintitrés misiones por venir. Siguen
-entrando.*
+*Las cifras de este documento son las de hoy: cinco misiones publicadas, diez
+actividades de descubrimiento, diecisiete peligros catalogados —trece de ellos
+ya escritos como datos en `js/data/ia-peligros.js`—, treinta y tres indagaciones
+de cine, diez escenarios y veintidós misiones por venir. Siguen entrando.*

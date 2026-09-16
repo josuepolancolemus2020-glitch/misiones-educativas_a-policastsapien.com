@@ -122,6 +122,9 @@ const DIAGNOSTICOS = {
     { etapa: 4, q: '¿Qué es una alucinación?', o: ['Un virus', 'Un dato inventado dicho con toda seguridad', 'Un error de la pantalla', 'Una falla de la conexión'], a: 1 },
     { etapa: 4, q: 'La IA te cita un libro perfecto para tu tema. ¿Qué hacés?', o: ['Compruebo que el libro exista', 'Lo cito, suena confiable', 'Le pregunto a la IA si existe', 'Le cambio el título'], a: 0 },
     { etapa: 4, q: 'Te llega un audio con la voz de un familiar pidiendo dinero urgente. ¿Qué hacés?', o: ['Lo llamo yo por otro medio antes de hacer nada', 'Le mando el dinero', 'Lo reenvío al grupo', 'Le contesto por audio'], a: 0 },
+    { etapa: 5, q: '¿Cuáles son las tres señales que trae casi toda estafa?', o: ['Faltas de ortografía, mayúsculas y emojis', 'Urgencia, secreto y canal nuevo', 'Un número largo, una foto y un enlace', 'Que llegue de noche y por audio'], a: 1 },
+    { etapa: 5, q: 'Un programa acierta el 95 %. ¿Qué NO te dice ese número?', o: ['Cuántas veces acertó', 'A quién le cae el error', 'Que se equivoca a veces', 'Cuántos casos revisó'], a: 1 },
+    { etapa: 5, q: '¿De qué está hecha casi toda estafa creíble?', o: ['De tecnología muy cara', 'De información que la propia familia publicó', 'De suerte', 'De un día festivo'], a: 1 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [
