@@ -110,6 +110,13 @@
   .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
 
   .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  /* Las cuadrículas de «La máquina ve puntitos» (etapa 1): casillas cuadradas
+     y el relleno con ■, que se imprime aunque el navegador quite los fondos. */
+  .rejs { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0; }
+  .rejs > div { flex: 1 1 120px; font-size: 9.5pt; }
+  .rejs b { display: block; margin-bottom: 3px; color: var(--ia-osc); }
+  table.rej { border-collapse: collapse; width: auto; margin: 0; }
+  table.rej td { width: 14px; height: 14px; padding: 0; border: 1px solid #9aa7b5; text-align: center; font-size: 10pt; line-height: 14px; background: #fff; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
   .acts ol li { margin-bottom: 5px; padding-left: 3px; }
@@ -466,11 +473,6 @@
       </ol>
     </div>
 
-    <h2>🔒 7. Las tres reglas de oro</h2>
-
-    <p>Son las mismas tres de la etapa 1, sin cambiarles una palabra. Lo que cambió en estos años no son las
-       reglas: es que ahora ya sabes <strong>por qué</strong> son esas y no otras.</p>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 6</span></div>
 </section>
@@ -478,6 +480,46 @@
 <!-- ═══════════ PÁGINA 7 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <div class="acts">
+      <h3>🕵️ Actividad 6 · ¿Se puede comprobar? <span class="val">(14 pts)</span></h3>
+
+      <p>Estos dos textos se escribieron para este ejercicio. No te preguntamos si los escribió una máquina
+         —eso no lo aciertan ni los expertos—. Te preguntamos, afirmación por afirmación, si <strong>trae con qué
+         comprobarse</strong> (quién, cuándo, dónde, qué documento). Escribe <strong>SÍ</strong> o <strong>NO</strong>:</p>
+
+      <div class="ilus"><div class="ilus-t">🏫 La escuela de la aldea</div><ol><li>La escuela de la aldea El Carrizal abrió en 1952 con una sola maestra. <span class="linea-resp" style="min-width:45px"></span></li><li>Hoy es una de las mejores de todo el país. <span class="linea-resp" style="min-width:45px"></span></li><li>Tiene 212 alumnos matriculados este año, según la dirección. <span class="linea-resp" style="min-width:45px"></span></li><li>Todos los que estudiaron ahí salieron adelante. <span class="linea-resp" style="min-width:45px"></span></li></ol></div>
+      <div class="ilus"><div class="ilus-t">🍵 El remedio</div><ol><li>Un estudio científico demostró que el té de hoja de guanábana cura la diabetes en treinta días. <span class="linea-resp" style="min-width:45px"></span></li><li>Miles de personas ya lo han confirmado. <span class="linea-resp" style="min-width:45px"></span></li><li>Los médicos no quieren que esto se sepa. <span class="linea-resp" style="min-width:45px"></span></li></ol></div>
+
+      <p>¿Cuál de los dos está mejor escrito? <span class="linea-resp" style="min-width:120px"></span> ¿Y cuál se puede
+         comprobar? <span class="linea-resp" style="min-width:120px"></span></p>
+
+      <h3>🔮 Actividad 7 · Un escenario por venir: tú decides <span class="val">(sin respuesta única, a propósito)</span></h3>
+
+      <p><strong>Kenia</strong> se juega los L 1 500 que la familia guarda para la matrícula. Kenia recibe un audio con la voz de su mamá, que está trabajando en San Pedro Sula: «Mándame ya los L 1 500 al número que te paso, es urgente, después te explico». La voz es igualita.</p>
+      <p>Rellena el círculo de lo que harías tú, y escribe abajo tu regla:</p>
+      <div class="preg-ops">
+        <div class="op full"><i></i>Mandar el dinero ya: es la voz de su mamá.</div>
+        <div class="op full"><i></i>Colgar y llamarla ella misma al número de siempre.</div>
+        <div class="op full"><i></i>Preguntarle por audio algo que solo su mamá sabe.</div>
+      </div>
+      <p>Mi regla, en una línea:<br><span class="linea-resp" style="min-width:100%"></span></p>
+      <div class="caja idea"><b>El escenario es inventado para pensar</b>, armado con algo que ya se puede hacer: una voz
+        se fabrica con unos segundos de audio. En la misión están las consecuencias de cada decisión.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔒 7. Las tres reglas de oro</h2>
+
+    <p>Son las mismas tres de la etapa 1, sin cambiarles una palabra. Lo que cambió en estos años no son las
+       reglas: es que ahora ya sabes <strong>por qué</strong> son esas y no otras.</p>
 
     <table>
       <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
@@ -528,6 +570,14 @@
       </div>
     </div>
 
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
     <div class="preg">
       <div class="preg-q"><span class="preg-n">5</span><span>¿Qué es una falsificación profunda?</span></div>
       <div class="preg-ops">
@@ -537,14 +587,6 @@
         <div class="op full"><i></i><b>d)</b> Una foto, voz o video fabricados para parecer reales</div>
       </div>
     </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 7</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 8 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
 
     <div class="preg">
       <div class="preg-q"><span class="preg-n">6</span><span>Te llega un audio con la voz de un familiar pidiendo dinero urgente. ¿Qué haces?</span></div>
@@ -597,10 +639,10 @@
     </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 8</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa</span><span>Página 9</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -627,6 +669,11 @@
       <div><span class="pt">Actividad 5 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
         que haya hablado con una persona real, que distinga tareas mecánicas de las que piden criterio, y
         que recoja la opinión sin corregirla.</div>
+      <div><span class="pt">Actividad 6 · ¿Se puede comprobar? (14 pts):</span>
+        La escuela de la aldea: <b>SÍ</b> · <b>NO</b> · <b>SÍ</b> · <b>NO</b> &nbsp;|&nbsp; El remedio: <b>NO</b> · <b>NO</b> · <b>NO</b>.
+        El mejor escrito («El remedio») no trae nada comprobable: lo bien escrito no es lo verdadero.</div>
+      <div><span class="pt">Actividad 7 · Un escenario por venir:</span> <b>no lleva respuesta única a propósito.</b> Se califica la
+        regla escrita: que sirva para no mandar dinero por una voz. La primera decisión pierde el dinero; la misión lo cuenta.</div>
     </div>
 
     <div class="nota-doc">
@@ -657,7 +704,7 @@
     </div>
 
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa · Hoja del Docente</span><span>Página 9</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · IA Generativa · Hoja del Docente</span><span>Página 10</span></div>
 </section>
 
 </div>

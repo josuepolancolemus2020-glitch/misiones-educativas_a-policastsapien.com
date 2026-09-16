@@ -14,7 +14,7 @@ const SAVE_KEY='historia_ia_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
 let evalCritFormNum=1,evalCritAnsVisible=false;
-const TOTAL_SECTIONS=13;
+const TOTAL_SECTIONS=14;
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
 // ===================== SONIDO =====================
@@ -41,7 +41,8 @@ const ACHIEVEMENTS={
   nivel3:{icon:'🎖️',label:'¡Buena memoria! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Sabe la historia! Nivel 6'},
   widgets_master:{icon:'🧩',label:'Widgets de la historia dominados'},
-  cronista:{icon:'📜',label:'Ordenó la línea del tiempo completa, de 1936 a hoy'}
+  cronista:{icon:'📜',label:'Ordenó la línea del tiempo completa, de 1936 a hoy'},
+  cronista_hoy:{icon:'✍️',label:'Escribió el hito de su propio año, con su fuente'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -80,7 +81,7 @@ const fcData = (function () {
   return f;
 })();
 let fcIdx=0;
-function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
+function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').innerHTML=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
 function flipCard(){sfx('flip');document.getElementById('fcInner').classList.toggle('flipped');if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1);}if(xpTracker.fc.size===fcData.length){fin('s-flash');unlockAchievement('flash_master');}}
 function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
@@ -713,7 +714,7 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces la historia de la Inteligencia Artificial!','¡Cronista de la máquina que aprende!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧠 ¡${name} completó la Misión "La Historia de la Inteligencia Artificial"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -824,6 +825,7 @@ function iaHitoAbrir(orden){
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
+  try{iaDescInit();}catch(e){} // 🔭 Descubre: pinta las actividades; no marca ninguna sección. Si el archivo de datos no llegó, la misión sigue.
   initTheme();
   loadProgress();
   pintarIaEpocas();
@@ -849,3 +851,92 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== 🔭 DESCUBRE · HISTORIA =====================
+/* Dos actividades de descubrimiento. Los AÑOS no están aquí ni en
+   js/data/ia-descubre.js: salen de IA_HITOS (ia-historia.js), que es el
+   único sitio donde vive una fecha; el archivo de descubre solo dice qué dos
+   hitos se emparejan. La sonda `verifica-descubre-ia` recalcula las cuentas. */
+const DESC_KEY = SAVE_KEY + '_descubre';
+function iaDescGuardar(k, v) { try { const s = JSON.parse(localStorage.getItem(DESC_KEY) || '{}'); s[k] = v; localStorage.setItem(DESC_KEY, JSON.stringify(s)); } catch (e) {} }
+function iaDescLeer(k) { try { return (JSON.parse(localStorage.getItem(DESC_KEY) || '{}'))[k]; } catch (e) { return undefined; } }
+/* La sección se gana HACIENDO las dos: tres pares y un hito con su fuente. */
+function iaDescubreListo() { if (iaTiempoHechos >= 3 && iaDescLeer('hito')) { fin('s-descubre'); unlockAchievement('cronista_hoy'); } }
+
+/* ── 🗓️ ¿Cuánto tardó? ───────────────────────────────────────────────── */
+let iaTiempoIdx = 0, iaTiempoEst = 40, iaTiempoHechos = 0, iaTiempoVisto = false;
+function iaTiempoHito(anio) { return IA_HITOS.find(h => String(h.anio) === String(anio)); }
+function iaTiempoPintar() {
+  const caja = document.getElementById('tiempo-caja'); if (!caja) return;
+  if (iaTiempoIdx >= IA_TIEMPO_PARES.length) {
+    caja.innerHTML = '<p class="tiempo-fin">🗓️ Los cinco pares. Lo que tardó cada idea en funcionar no fue por falta de ingenio: fue por las tres patas.</p>' +
+      '<div class="ens-btns"><button class="btn btn-g" onclick="iaTiempoReiniciar()">🔄 Otra vez</button></div>';
+    return;
+  }
+  const p = IA_TIEMPO_PARES[iaTiempoIdx], A = iaTiempoHito(p.a), B = iaTiempoHito(p.b);
+  if (!A || !B) { caja.innerHTML = ''; return; }
+  const real = parseInt(p.b, 10) - parseInt(p.a, 10);
+  const hito = h => '<div class="tiempo-hito"><span class="tiempo-e" aria-hidden="true">' + h.emoji + '</span><strong>' + _esc(h.titulo) + '</strong><small>' + _esc(h.quien) + '</small></div>';
+  let html = '<p class="tiempo-tit">Par ' + (iaTiempoIdx + 1) + ' de ' + IA_TIEMPO_PARES.length + '</p>' +
+    '<div class="tiempo-hitos">' + hito(A) + '<div class="tiempo-flecha">→ ¿cuántos años pasaron? →</div>' + hito(B) + '</div>';
+  if (!iaTiempoVisto) {
+    html += '<div class="tiempo-mando">' +
+      '<button class="btn btn-d" onclick="iaTiempoAjustar(-5)" aria-label="Cinco años menos">−5</button>' +
+      '<button class="btn btn-d" onclick="iaTiempoAjustar(-1)" aria-label="Un año menos">−1</button>' +
+      '<span class="tiempo-val" id="tiempo-val" aria-live="polite">' + iaTiempoEst + ' años</span>' +
+      '<button class="btn btn-d" onclick="iaTiempoAjustar(1)" aria-label="Un año más">+1</button>' +
+      '<button class="btn btn-d" onclick="iaTiempoAjustar(5)" aria-label="Cinco años más">+5</button></div>' +
+      '<input type="range" id="tiempo-rango" class="tiempo-rango" min="0" max="80" step="1" value="' + iaTiempoEst + '" oninput="iaTiempoRango(this.value)" aria-label="Tu estimación, en años">' +
+      '<div class="ens-btns"><button class="btn btn-pri" onclick="iaTiempoVer()">👀 Ver la cuenta</button></div>';
+  } else {
+    const err = Math.abs(iaTiempoEst - real);
+    html += '<p class="tiempo-real">' + _esc(p.a) + ' → ' + _esc(p.b) + ': <strong>' + real + ' años</strong>. Tú dijiste ' + iaTiempoEst + ': ' +
+      (err <= 5 ? '¡a ' + err + ' de la cuenta! ✅' : 'te fuiste por ' + err + '.') + '</p>' +
+      '<p class="tiempo-por">' + _esc(p.por) + '</p>' +
+      '<div class="ens-btns"><button class="btn btn-pri" onclick="iaTiempoSiguiente()">Siguiente par ▶</button></div>';
+  }
+  caja.innerHTML = html;
+}
+function iaTiempoAjustar(d) {
+  iaTiempoEst = Math.max(0, Math.min(80, iaTiempoEst + d));
+  const v = document.getElementById('tiempo-val'); if (v) v.textContent = iaTiempoEst + ' años';
+  const r = document.getElementById('tiempo-rango'); if (r) r.value = iaTiempoEst;
+}
+function iaTiempoRango(v) { iaTiempoEst = parseInt(v, 10) || 0; const e = document.getElementById('tiempo-val'); if (e) e.textContent = iaTiempoEst + ' años'; }
+function iaTiempoVer() {
+  const p = IA_TIEMPO_PARES[iaTiempoIdx]; if (!p) return;
+  const real = parseInt(p.b, 10) - parseInt(p.a, 10); const err = Math.abs(iaTiempoEst - real);
+  iaTiempoVisto = true; iaTiempoHechos++; sfx(err <= 5 ? 'ok' : 'no');
+  if (!xpTracker.wgt.has('tiempo_' + iaTiempoIdx)) { xpTracker.wgt.add('tiempo_' + iaTiempoIdx); pts(err <= 5 ? 3 : 1); }
+  iaTiempoPintar(); iaDescubreListo();
+}
+function iaTiempoSiguiente() { iaTiempoIdx++; iaTiempoVisto = false; iaTiempoEst = 40; iaTiempoPintar(); }
+function iaTiempoReiniciar() { iaTiempoIdx = 0; iaTiempoVisto = false; iaTiempoEst = 40; iaTiempoPintar(); }
+
+/* ── ✍️ El hito de este año ───────────────────────────────────────────── */
+function iaHitoGuardar() {
+  const v = id => ((document.getElementById(id) || {}).value || '').trim();
+  const que = v('mh-que'), quien = v('mh-quien'), cuando = v('mh-cuando'), fuente = v('mh-fuente');
+  if (que.length < 10) { fb('fbHito', 'Cuenta qué pasó con una oración entera.', false); return; }
+  if (quien.length < 2) { fb('fbHito', 'Falta quién lo dice. Sin eso no se puede preguntar qué gana diciéndolo.', false); return; }
+  if (fuente.length < 3) { fb('fbHito', 'Falta la fuente. Un hito sin fuente es un rumor, y en esta línea del tiempo no entra ninguno.', false); return; }
+  const h = { anio: new Date().getFullYear(), que: que, quien: quien, cuando: cuando, fuente: fuente, fecha: new Date().toISOString().slice(0, 10) };
+  iaDescGuardar('hito', h); iaHitoPintar(h); sfx('up');
+  if (!xpTracker.wgt.has('hito_mio')) { xpTracker.wgt.add('hito_mio'); pts(4); }
+  fb('fbHito', '+4 XP: tu hito ya está en la línea del tiempo, con su fuente. Dentro de un año, vuelve y mira si se cumplió.', true);
+  iaDescubreListo();
+}
+/* Se pinta con las mismas clases que los hitos de arriba, y marcado como
+   escrito por el alumno y SIN VERIFICAR: es la única fecha de esta misión que
+   no sale del archivo de datos, y tiene que verse que es distinta. */
+function iaHitoPintar(h) {
+  const c = document.getElementById('mi-hito'); if (!c || !h) return;
+  c.innerHTML = '<div class="hito hito-mio"><div class="hito-cab"><span class="hito-e">🧑‍🎓</span><span class="hito-anio">' + _esc(h.anio) + '</span><span class="hito-tit">' + _esc(h.que) + '</span></div>' +
+    '<div class="hito-cuerpo"><p><span class="hito-quien">' + _esc(h.quien) + '</span>' + (h.cuando ? ' · para: ' + _esc(h.cuando) : '') + '</p>' +
+    '<p class="hito-fuente">📎 Fuente: ' + _esc(h.fuente) + ' · escrito por ti el ' + _esc(h.fecha) + ' · <b>sin verificar</b>: comprobarlo es tu tarea</p></div></div>';
+}
+function iaDescInit() {
+  iaTiempoPintar();
+  const h = iaDescLeer('hito');
+  if (h) { iaHitoPintar(h); ['que', 'quien', 'cuando', 'fuente'].forEach(k => { const i = document.getElementById('mh-' + k); if (i) i.value = h[k] || ''; }); }
+}

@@ -110,6 +110,13 @@
   .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
 
   .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  /* Las cuadrículas de «La máquina ve puntitos» (etapa 1): casillas cuadradas
+     y el relleno con ■, que se imprime aunque el navegador quite los fondos. */
+  .rejs { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0; }
+  .rejs > div { flex: 1 1 120px; font-size: 9.5pt; }
+  .rejs b { display: block; margin-bottom: 3px; color: var(--ia-osc); }
+  table.rej { border-collapse: collapse; width: auto; margin: 0; }
+  table.rej td { width: 14px; height: 14px; padding: 0; border: 1px solid #9aa7b5; text-align: center; font-size: 10pt; line-height: 14px; background: #fff; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
   .acts ol li { margin-bottom: 5px; padding-left: 3px; }
@@ -217,12 +224,6 @@
     <div class="caja idea"><b>Las dos fallan, pero por razones contrarias:</b> una porque le faltó una regla
       que alguien tenía que escribir; la otra porque le faltó un ejemplo que alguien tenía que juntar.
       <b>En las dos hay una persona detrás del fallo.</b></div>
-
-    <h2>🔁 2. El ciclo del aprendizaje, paso por paso</h2>
-
-    <p>Así se entrena cualquier máquina que aprende, sea para reconocer plagas, leer recibos o traducir.
-       Son siempre los mismos seis pasos:</p>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 1</span></div>
 </section>
@@ -230,6 +231,11 @@
 <!-- ═══════════ PÁGINA 2 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <h2>🔁 2. El ciclo del aprendizaje, paso por paso</h2>
+
+    <p>Así se entrena cualquier máquina que aprende, sea para reconocer plagas, leer recibos o traducir.
+       Son siempre los mismos seis pasos:</p>
 
     <table>
       <tr><th style="width:30%">Paso</th><th>Qué pasa</th></tr>
@@ -252,31 +258,31 @@
       <div class="cf-def">Cada pedazo de información que se guarda y se puede contar, medir o comparar: un número, una palabra, una foto, un sonido. Los datos son la comida de la Inteligencia Artificial.</div>
       <div class="cf-ej">Ejemplo: El peso de una naranja, el color de un nance, la temperatura del día.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🏷️ Etiqueta</div>
       <div class="cf-def">La respuesta correcta que una persona le pone a un ejemplo antes de enseñárselo a la máquina. Sin etiqueta, la máquina ve la foto pero no sabe de qué es.</div>
       <div class="cf-ej">Ejemplo: A esta foto le ponemos la etiqueta «nance»; a esta otra, «anona».</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🏋️ Entrenar</div>
       <div class="cf-def">Mostrarle a la máquina muchos ejemplos con sus etiquetas, una y otra vez, hasta que encuentre el patrón que los separa. Entrenar cuesta tiempo y se hace una vez; usar lo aprendido es rápido y se hace siempre.</div>
       <div class="cf-ej">Ejemplo: Enseñarle diez mil fotos de frutas hasta que separe nances de anonas.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🔁 Patrón</div>
       <div class="cf-def">Lo que se repite en muchos ejemplos y sirve para reconocerlos. La máquina no entiende lo que ve: encuentra lo que se repite y lo usa para decidir.</div>
       <div class="cf-ej">Ejemplo: Los nances casi siempre son pequeños y amarillos; ese es el patrón.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🧪 Prueba</div>
       <div class="cf-def">Examinar a la máquina con ejemplos que NO le enseñamos, para saber si de verdad aprendió el patrón o solo se acordó de lo que vio. Si acierta con lo nuevo, aprendió.</div>
       <div class="cf-ej">Ejemplo: Le enseñamos 100 fotos y la probamos con 20 que nunca vio.</div>
     </div>
-
+    <div class="cficha">
+      <div class="cf-tit">❌ Error</div>
+      <div class="cf-def">Las veces que la máquina contesta mal. Ninguna acierta el 100 %: siempre queda un pedacito de error, y en ese pedacito puede haber una persona.</div>
+      <div class="cf-ej">Ejemplo: Si acierta 9 de cada 10, se equivoca 1 de cada 10.</div>
+    </div>
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 2</span></div>
 </section>
@@ -284,12 +290,6 @@
 <!-- ═══════════ PÁGINA 3 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
-
-    <div class="cficha">
-      <div class="cf-tit">❌ Error</div>
-      <div class="cf-def">Las veces que la máquina contesta mal. Ninguna acierta el 100 %: siempre queda un pedacito de error, y en ese pedacito puede haber una persona.</div>
-      <div class="cf-ej">Ejemplo: Si acierta 9 de cada 10, se equivoca 1 de cada 10.</div>
-    </div>
 
     <h2>🗂️ 4. Las tres maneras de aprender</h2>
 
@@ -300,13 +300,11 @@
       <div class="cf-def">La máquina aprende con ejemplos que ya traen puesta la etiqueta correcta. Es como estudiar con el solucionario al lado: ve el ejercicio y ve la respuesta.</div>
       <div class="cf-ej">Ejemplo: Fotos de hojas con su etiqueta «sana» o «con plaga».</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🗂️ Aprendizaje no supervisado</div>
       <div class="cf-def">La máquina recibe ejemplos SIN etiqueta y los junta por parecido. No sabe cómo se llama cada grupo: sabe que estos se parecen entre sí y aquellos no.</div>
       <div class="cf-ej">Ejemplo: Separa sola las fotos de la fiesta de las fotos del campo.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🎯 Aprendizaje por refuerzo</div>
       <div class="cf-def">La máquina prueba, recibe un premio cuando le sale bien y nada cuando le sale mal, y va cambiando lo que hace para ganar más premios. Aprende jugando miles de partidas contra sí misma.</div>
@@ -325,6 +323,12 @@
       <div class="cf-ej">Ejemplo: Entrenada solo con manzanas y peras, para ella un nance no existe.</div>
     </div>
 
+    <div class="caja aviso"><b>No es que la máquina sea mala.</b> Es que alguien eligió los ejemplos, y en
+      esa elección se quedó gente afuera. Por eso la pregunta que hay que hacerle a cualquier sistema que
+      decide algo importante no es «¿cuánto acierta?», sino estas tres:
+      <ol style="margin-top:4px"><li><b>¿Con qué ejemplos lo entrenaron?</b></li>
+      <li><b>¿Quién los eligió?</b></li>
+      <li><b>¿A quién le cae el error?</b></li></ol></div>
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 3</span></div>
 </section>
@@ -332,13 +336,6 @@
 <!-- ═══════════ PÁGINA 4 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
-
-    <div class="caja aviso"><b>No es que la máquina sea mala.</b> Es que alguien eligió los ejemplos, y en
-      esa elección se quedó gente afuera. Por eso la pregunta que hay que hacerle a cualquier sistema que
-      decide algo importante no es «¿cuánto acierta?», sino estas tres:
-      <ol style="margin-top:4px"><li><b>¿Con qué ejemplos lo entrenaron?</b></li>
-      <li><b>¿Quién los eligió?</b></li>
-      <li><b>¿A quién le cae el error?</b></li></ol></div>
 
     <div class="acts">
       <h3>🧪 Actividad 1 · Entrena el detector de plagas, en papel <span class="val">(24 pts)</span></h3>
@@ -377,7 +374,6 @@
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
     </div>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 4</span></div>
 </section>
@@ -422,6 +418,57 @@
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
     </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>🎯 Actividad 5 · Tú eres la máquina <span class="val">(16 pts)</span></h3>
+
+      <p>Nadie te dice la regla. Mira los ejemplos que YA vienen con su respuesta, saca la regla, y
+         contesta los que faltan como lo haría una máquina que aprendió de esos ejemplos.</p>
+
+      <table>
+        <tr><th style="width:50%">Ejemplo</th><th>¿Entra en el grupo?</th></tr>
+        <tr><td class="k">4</td><td>✅ entra</td></tr>
+        <tr><td class="k">7</td><td>❌ no entra</td></tr>
+        <tr><td class="k">10</td><td>✅ entra</td></tr>
+        <tr><td class="k">3</td><td>❌ no entra</td></tr>
+        <tr><td class="k">8</td><td>✅ entra</td></tr>
+        <tr><td class="k">15</td><td><span class="linea-resp" style="min-width:110px"></span></td></tr>
+        <tr><td class="k">22</td><td><span class="linea-resp" style="min-width:110px"></span></td></tr>
+        <tr><td class="k">9</td><td><span class="linea-resp" style="min-width:110px"></span></td></tr>
+        <tr><td class="k">16</td><td><span class="linea-resp" style="min-width:110px"></span></td></tr>
+        <tr><td class="k">5</td><td><span class="linea-resp" style="min-width:110px"></span></td></tr>
+      </table>
+      <p>La regla es: <span class="linea-resp" style="min-width:60%"></span></p>
+
+      <p><strong>Ahora la trampa.</strong> Estos cinco ejemplos también vienen con su respuesta:</p>
+      <p style="text-align:center;font-size:11.5pt"><b>2</b> ✅ entra &nbsp;·&nbsp; <b>4</b> ✅ entra &nbsp;·&nbsp; <b>6</b> ✅ entra &nbsp;·&nbsp; <b>9</b> ❌ no entra &nbsp;·&nbsp; <b>11</b> ❌ no entra</p>
+      <ol>
+        <li>Escribe <strong>dos reglas distintas</strong> que encajen con los cinco:
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿Qué número le pedirías a la máquina para saber cuál de las dos reglas aprendió?
+          <span class="linea-resp" style="min-width:60px"></span> ¿Por qué ese?
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+
+      <div class="caja idea"><b>Lo que acaba de pasarte es lo que le pasa a la máquina:</b> con pocos ejemplos
+        caben varias reglas, y elige una sin saber si es la buena. Por eso hacen falta ejemplos
+        <b>variados</b>, no solo muchos.</div>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
 
     <h2>🔒 6. Las tres reglas de oro</h2>
 
@@ -435,14 +482,6 @@
       <tr><td class="k">🧑‍🏫 Si algo me asusta o me confunde, le aviso a una persona grande.</td><td>Un mensaje raro, una foto que no debería estar, alguien que te pide algo. Eso no se resuelve solo.</td></tr>
     </table>
 
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 5</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 6 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
-
     <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
     <div class="preg">
@@ -454,7 +493,6 @@
         <div class="op"><i></i><b>d)</b> Que nunca se equivoca</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">2</span><span>¿Qué es una etiqueta?</span></div>
       <div class="preg-ops">
@@ -464,7 +502,6 @@
         <div class="op"><i></i><b>d)</b> El nombre de la máquina</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">3</span><span>¿Para qué sirve PROBAR con ejemplos nuevos?</span></div>
       <div class="preg-ops">
@@ -474,7 +511,6 @@
         <div class="op"><i></i><b>d)</b> Para hacerla más rápida</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">4</span><span>Una máquina entrenada solo con maíz, frijol y café ve una hoja de plátano. ¿Qué pasa?</span></div>
       <div class="preg-ops">
@@ -484,7 +520,6 @@
         <div class="op"><i></i><b>d)</b> Se puede equivocar: nunca vio una</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">5</span><span>¿Cómo se llama ese fallo?</span></div>
       <div class="preg-ops">
@@ -494,7 +529,6 @@
         <div class="op"><i></i><b>d)</b> Refuerzo</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">6</span><span>¿De quién es la responsabilidad de un sesgo?</span></div>
       <div class="preg-ops">
@@ -504,7 +538,6 @@
         <div class="op"><i></i><b>d)</b> Del que la usa</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">7</span><span>Aprender con ejemplos que ya traen su respuesta se llama…</span></div>
       <div class="preg-ops">
@@ -514,7 +547,6 @@
         <div class="op"><i></i><b>d)</b> Memorización</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">8</span><span>Un programa junta fotos parecidas sin que nadie le diga cómo se llaman. Eso es…</span></div>
       <div class="preg-ops">
@@ -524,7 +556,6 @@
         <div class="op"><i></i><b>d)</b> No supervisado</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">9</span><span>Un robot gana puntos cuando avanza sin caerse. Eso es…</span></div>
       <div class="preg-ops">
@@ -534,7 +565,6 @@
         <div class="op"><i></i><b>d)</b> Un patrón</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">10</span><span>La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?</span></div>
       <div class="preg-ops">
@@ -544,12 +574,11 @@
         <div class="op"><i></i><b>d)</b> A quién le toca ese error</div>
       </div>
     </div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 6</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 7</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -569,6 +598,11 @@
         1) Porque si se la prueba con los mismos con que se entrenó, no se sabe si aprendió el patrón o se
         los memorizó. 2) Porque en ese 1 hay una persona concreta, y porque el error puede caer siempre
         sobre el mismo grupo: el porcentaje solo no lo enseña.</div>
+      <div><span class="pt">Actividad 5 · Tú eres la máquina (16 pts):</span> los que faltan:
+        15 ❌ no entra · 22 ✅ entra · 9 ❌ no entra · 16 ✅ entra · 5 ❌ no entra; la regla:
+        <b>los números pares</b>. La trampa: <b>los números pares</b> y <b>los menores que 8</b> encajan las dos con los
+        cinco; las separa cualquier número que cumpla una y no la otra (el <b>10</b>, por
+        ejemplo). Se valora que el alumno explique POR QUÉ ese número separa las dos, no solo que acierte uno.</div>
     </div>
 
     <div class="nota-doc">
@@ -590,9 +624,8 @@
       <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-conceptos.js), así que no
       pueden decir cosas distintas. Etapa 2 de cuatro.
     </div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina · Hoja del Docente</span><span>Página 7</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina · Hoja del Docente</span><span>Página 8</span></div>
 </section>
 
 </div>

@@ -1,6 +1,8 @@
 /* Ficha de la misión 73 · Cómo Aprende una Máquina · II Ciclo */
 'use strict';
 const A = require('../arma-fichas-ia.js');
+/* Las cuentas de las actividades de Descubre: la pauta se CALCULA de aquí, no se escribe. */
+const D = require('../../js/data/ia-descubre.js');
 const { esc, arma, portada, preguntas, clave, fichaConcepto, tablaReglas, IA_CONCEPTOS } = A;
 
 const EVAL = [
@@ -181,6 +183,42 @@ P.push(`
     </div>
 `);
 
+// ── Descubre, en papel · 🎯 Tú eres la máquina ─────────────────────────────
+/* Las etiquetas y la trampa salen de IA_REGLAS_OCULTAS, con la misma regla
+   que corre en la misión: si mañana cambia un ejemplo, cambia aquí y en la
+   pauta a la vez. */
+const _r1 = D.IA_REGLAS_OCULTAS[0], _rt = D.IA_REGLAS_OCULTAS.find(r => r.trampa);
+const _et = (r, x) => (r.regla(x) ? '✅ entra' : '❌ no entra');
+P.push(`
+    <div class="acts">
+      <h3>🎯 Actividad 5 · Tú eres la máquina <span class="val">(16 pts)</span></h3>
+
+      <p>Nadie te dice la regla. Mira los ejemplos que YA vienen con su respuesta, saca la regla, y
+         contesta los que faltan como lo haría una máquina que aprendió de esos ejemplos.</p>
+
+      <table>
+        <tr><th style="width:50%">Ejemplo</th><th>¿Entra en el grupo?</th></tr>
+${_r1.ejemplos.map((x, i) => '        <tr><td class="k">' + esc(String(x)) + '</td><td>' + (i < D.IA_REGLAS_MEDIO ? _et(_r1, x) : '<span class="linea-resp" style="min-width:110px"></span>') + '</td></tr>').join('\n')}
+      </table>
+      <p>La regla es: <span class="linea-resp" style="min-width:60%"></span></p>
+
+      <p><strong>Ahora la trampa.</strong> Estos cinco ejemplos también vienen con su respuesta:</p>
+      <p style="text-align:center;font-size:11.5pt">${_rt.ejemplos.slice(0, _rt.trampa.hasta).map(x => '<b>' + esc(String(x)) + '</b> ' + _et(_rt, x)).join(' &nbsp;·&nbsp; ')}</p>
+      <ol>
+        <li>Escribe <strong>dos reglas distintas</strong> que encajen con los cinco:
+          <span class="linea-resp" style="min-width:100%"></span>
+          <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿Qué número le pedirías a la máquina para saber cuál de las dos reglas aprendió?
+          <span class="linea-resp" style="min-width:60px"></span> ¿Por qué ese?
+          <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+
+      <div class="caja idea"><b>Lo que acaba de pasarte es lo que le pasa a la máquina:</b> con pocos ejemplos
+        caben varias reglas, y elige una sin saber si es la buena. Por eso hacen falta ejemplos
+        <b>variados</b>, no solo muchos.</div>
+    </div>
+`);
+
 P.push(`
     <h2>🔒 6. Las tres reglas de oro</h2>
 
@@ -211,6 +249,11 @@ P.push(`
         1) Porque si se la prueba con los mismos con que se entrenó, no se sabe si aprendió el patrón o se
         los memorizó. 2) Porque en ese 1 hay una persona concreta, y porque el error puede caer siempre
         sobre el mismo grupo: el porcentaje solo no lo enseña.</div>
+      <div><span class="pt">Actividad 5 · Tú eres la máquina (16 pts):</span> los que faltan:
+        ${_r1.ejemplos.slice(D.IA_REGLAS_MEDIO).map(x => esc(String(x)) + ' ' + _et(_r1, x)).join(' · ')}; la regla:
+        <b>${esc(_r1.nombre)}</b>. La trampa: <b>${esc(_rt.trampa.otraNombre)}</b> y <b>${esc(_rt.nombre)}</b> encajan las dos con los
+        cinco; las separa cualquier número que cumpla una y no la otra (el <b>${esc(String(_rt.ejemplos[_rt.trampa.hasta]))}</b>, por
+        ejemplo). Se valora que el alumno explique POR QUÉ ese número separa las dos, no solo que acierte uno.</div>
     </div>
 
     <div class="nota-doc">

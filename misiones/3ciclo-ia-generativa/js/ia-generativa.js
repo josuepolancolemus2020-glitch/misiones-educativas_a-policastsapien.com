@@ -14,7 +14,7 @@ const SAVE_KEY='ia_generativa_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
 let evalCritFormNum=1,evalCritAnsVisible=false;
-const TOTAL_SECTIONS=13;
+const TOTAL_SECTIONS=14;
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
 // ===================== SONIDO =====================
@@ -42,7 +42,8 @@ const ACHIEVEMENTS={
   nivel5:{icon:'🥇',label:'¡No se deja engañar! Nivel 6'},
   widgets_master:{icon:'🧩',label:'Widgets de la IA generativa dominados'},
   cazador:{icon:'🔎',label:'Cazó todo lo que había que verificar en un texto generado'},
-  peticion:{icon:'🧱',label:'Armó una petición con sus cuatro piezas'}
+  peticion:{icon:'🧱',label:'Armó una petición con sus cuatro piezas'},
+  decide:{icon:'🔮',label:'Decidió en escenarios que todavía no llegan'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -82,7 +83,7 @@ const fcData = (function () {
   return f;
 })();
 let fcIdx=0;
-function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
+function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').innerHTML=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
 function flipCard(){sfx('flip');document.getElementById('fcInner').classList.toggle('flipped');if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1);}if(xpTracker.fc.size===fcData.length){fin('s-flash');unlockAchievement('flash_master');}}
 function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
@@ -726,7 +727,7 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya verificas antes de creer!','¡Criterio propio ante la máquina!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧠 ¡${name} completó la Misión "IA Generativa"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -1000,6 +1001,7 @@ function iaPetArmar(){
 function iaPetReiniciar(){ sfx('click'); iaPetSel={}; pintarIaPeticion(); }
 
 window.addEventListener('DOMContentLoaded',()=>{
+  try{iaDescInit();}catch(e){} // 🔭 Descubre: pinta las actividades; no marca ninguna sección. Si el archivo de datos no llegó, la misión sigue.
   initTheme();
   loadProgress();
   pintarIaVerifica();
@@ -1026,3 +1028,110 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== 🔭 DESCUBRE · III CICLO =====================
+/* Dos actividades de descubrimiento. Los textos y los escenarios viven en
+   js/data/ia-descubre.js (IA_COMPROBAR, IA_ESCENARIOS), declarados como
+   escritos para el ejercicio; la sonda `verifica-descubre-ia` comprueba que
+   cada texto traiga afirmaciones de las dos clases y cada escenario su
+   persona, su precio y sus consecuencias. */
+const DESC_KEY = SAVE_KEY + '_descubre';
+function iaDescGuardar(k, v) { try { const s = JSON.parse(localStorage.getItem(DESC_KEY) || '{}'); s[k] = v; localStorage.setItem(DESC_KEY, JSON.stringify(s)); } catch (e) {} }
+function iaDescLeer(k) { try { return (JSON.parse(localStorage.getItem(DESC_KEY) || '{}'))[k]; } catch (e) { return undefined; } }
+/* La sección se gana HACIENDO las dos: tres textos revisados y tres
+   escenarios decididos. Nunca se marca al abrir. */
+function iaDescubreListo() { if (iaCompRevisados.size >= 3 && iaEscDecididos.size >= 3) { fin('s-descubre'); unlockAchievement('decide'); } }
+
+/* ── 🕵️ ¿Se puede comprobar? ─────────────────────────────────────────── */
+let iaCompIdx = 0, iaCompMarcas = {}, iaCompRevisados = new Set(), iaCompVisto = {};
+function iaCompPintarTextos() {
+  const c = document.getElementById('comp-textos'); if (!c) return;
+  c.innerHTML = IA_COMPROBAR.map((t, i) => '<button type="button" class="desc-chip' + (i === iaCompIdx ? ' desc-on' : '') + (iaCompRevisados.has(t.k) ? ' desc-hecho' : '') +
+    '" onclick="iaCompElegir(' + i + ')">' + t.e + ' ' + _esc(t.titulo) + '</button>').join('');
+}
+function iaCompElegir(i) { iaCompIdx = i; iaCompPintarTextos(); iaCompPintar(!!iaCompVisto[IA_COMPROBAR[i].k]); }
+function iaCompTocar(i) {
+  const t = IA_COMPROBAR[iaCompIdx]; const m = iaCompMarcas[t.k] || (iaCompMarcas[t.k] = new Set());
+  if (m.has(i)) m.delete(i); else m.add(i);
+  iaCompPintar(false);
+}
+/* Mientras se marca, cada afirmación es un <button>; al revisar pasan a
+   <span> con su símbolo: ✅ la que juzgaste bien, ⬅️ la que no se puede
+   comprobar y no marcaste, ❌ la que marcaste y sí se podía. Igual que en el
+   cazador de inventos. */
+function iaCompPintar(revisado) {
+  const caja = document.getElementById('comp-caja'); if (!caja) return;
+  const t = IA_COMPROBAR[iaCompIdx]; const m = iaCompMarcas[t.k] || new Set();
+  let html = '<p class="comp-tit">' + t.e + ' ' + _esc(t.titulo) + '</p><div class="caz-texto">';
+  t.trozos.forEach((z, i) => {
+    if (revisado) {
+      const marcado = m.has(i);
+      const cls = z.c ? (marcado ? 'caz-sobra' : 'caz-ok') : (marcado ? 'caz-ok' : 'caz-falta');
+      const sim = z.c ? (marcado ? '❌ ' : '✅ ') : (marcado ? '✅ ' : '⬅️ ');
+      html += '<span class="caz-trozo ' + cls + '">' + sim + _esc(z.t) + '</span>';
+    } else {
+      html += '<button type="button" class="caz-trozo' + (m.has(i) ? ' caz-marcado' : '') + '" aria-pressed="' + (m.has(i) ? 'true' : 'false') + '" onclick="iaCompTocar(' + i + ')">' + _esc(z.t) + '</button>';
+    }
+  });
+  html += '</div>';
+  if (revisado) html += '<div class="caz-detalle">' + t.trozos.map(z => '<p><strong>' + (z.c ? '✅ Se puede comprobar' : '🚫 No se puede comprobar') + ':</strong> «' + _esc(z.t) + '» — ' + _esc(z.por) + '</p>').join('') + '</div>';
+  html += '<div class="ens-btns">' + (revisado ? '' : '<button class="btn btn-g" onclick="iaCompRevisar()">✔ Revisar</button>') +
+    '<button class="btn btn-d" onclick="iaCompReiniciar()">🔄 Empezar de nuevo</button></div>';
+  caja.innerHTML = html;
+}
+function iaCompRevisar() {
+  const t = IA_COMPROBAR[iaCompIdx]; const m = iaCompMarcas[t.k] || new Set();
+  let bien = 0; t.trozos.forEach((z, i) => { if ((!z.c) === m.has(i)) bien++; });
+  const todo = bien === t.trozos.length; sfx(todo ? 'ok' : 'no');
+  fb('fbComp', todo ? '✅ Las ' + t.trozos.length + ' bien. Sin adivinar quién lo escribió: mirando qué trae cada una.' : 'Acertaste ' + bien + ' de ' + t.trozos.length + '. Mira abajo cuál te faltó y por qué.', todo);
+  if (!iaCompRevisados.has(t.k)) { iaCompRevisados.add(t.k); if (!xpTracker.wgt.has('comp_' + t.k)) { xpTracker.wgt.add('comp_' + t.k); pts(2); } }
+  if (todo && !xpTracker.wgt.has('comp_ok_' + t.k)) { xpTracker.wgt.add('comp_ok_' + t.k); pts(3); }
+  iaCompVisto[t.k] = true; iaCompPintarTextos(); iaCompPintar(true); iaDescubreListo();
+}
+function iaCompReiniciar() {
+  const t = IA_COMPROBAR[iaCompIdx]; iaCompMarcas[t.k] = new Set(); iaCompVisto[t.k] = false;
+  const f = document.getElementById('fbComp'); if (f) { f.textContent = ''; f.className = 'fb'; }
+  iaCompPintar(false);
+}
+
+/* ── 🔮 Escenarios por venir ──────────────────────────────────────────── */
+let iaEscIdx = 0, iaEscElegido = {}, iaEscDecididos = new Set();
+function iaEscPintarLista() {
+  const c = document.getElementById('esc-lista'); if (!c) return;
+  c.innerHTML = IA_ESCENARIOS.map((e, i) => '<button type="button" class="desc-chip' + (i === iaEscIdx ? ' desc-on' : '') + (iaEscDecididos.has(e.k) ? ' desc-hecho' : '') +
+    '" onclick="iaEscElegir(' + i + ')">' + e.e + ' ' + _esc(e.titulo) + '</button>').join('');
+}
+function iaEscElegir(i) { iaEscIdx = i; iaEscPintarLista(); iaEscPintar(); }
+function iaEscPintar() {
+  const caja = document.getElementById('esc-caja'); if (!caja) return;
+  const e = IA_ESCENARIOS[iaEscIdx]; const el = iaEscElegido[e.k];
+  let html = '<p class="esc-tit">' + e.e + ' ' + _esc(e.titulo) + '</p>' +
+    '<p class="esc-quien">👤 <strong>' + _esc(e.quien) + '</strong> · lo que se juega: <strong>' + _esc(e.cuesta) + '</strong></p>' +
+    '<p class="esc-sit">' + _esc(e.situacion) + '</p><div class="esc-ops">';
+  e.ops.forEach((o, i) => { html += '<button type="button" class="pet-op' + (el === i ? ' pet-on' : '') + '" onclick="iaEscDecidir(' + i + ')"' + (el !== undefined ? ' disabled' : '') + '>' + _esc(o.t) + '</button>'; });
+  html += '</div>';
+  if (el !== undefined) {
+    html += '<div class="esc-pasa"><strong>Lo que pasa:</strong> ' + _esc(e.ops[el].pasa) + '</div><div class="esc-regla">🔑 ' + _esc(e.regla) + '</div>' +
+      '<div class="ens-btns"><button class="btn btn-d" onclick="iaEscOtra()">🔄 Decidir otra vez</button>' +
+      (iaEscIdx < IA_ESCENARIOS.length - 1 ? '<button class="btn btn-pri" onclick="iaEscElegir(' + (iaEscIdx + 1) + ')">Siguiente ▶</button>' : '') + '</div>';
+  }
+  caja.innerHTML = html;
+}
+function iaEscDecidir(i) {
+  const e = IA_ESCENARIOS[iaEscIdx]; iaEscElegido[e.k] = i; iaEscDecididos.add(e.k); sfx('ok');
+  if (!xpTracker.wgt.has('esc_' + e.k)) { xpTracker.wgt.add('esc_' + e.k); pts(1); }
+  iaEscPintarLista(); iaEscPintar(); iaDescubreListo();
+}
+function iaEscOtra() { const e = IA_ESCENARIOS[iaEscIdx]; delete iaEscElegido[e.k]; iaEscPintar(); }
+function iaEscGuardar() {
+  const i = document.getElementById('esc-regla'); const t = (i && i.value || '').trim();
+  if (t.length < 8) { fb('fbEsc', 'Escribe la regla entera, como se la dirías a alguien de sexto.', false); return; }
+  iaDescGuardar('regla', t); iaEscMostrarGuardada(t); sfx('up');
+  if (!xpTracker.wgt.has('esc_regla')) { xpTracker.wgt.add('esc_regla'); pts(3); }
+  fb('fbEsc', '+3 XP: una regla propia vale más que las cuatro nuestras.', true);
+}
+function iaEscMostrarGuardada(t) { const g = document.getElementById('esc-guardado'); if (g) g.innerHTML = '💾 Tu regla: «' + _esc(t) + '». Cópiala en la primera página de tu cuaderno.'; }
+function iaDescInit() {
+  iaCompPintarTextos(); iaCompPintar(false); iaEscPintarLista(); iaEscPintar();
+  const r = iaDescLeer('regla'); if (r) { const i = document.getElementById('esc-regla'); if (i) i.value = r; iaEscMostrarGuardada(r); }
+}

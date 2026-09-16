@@ -24,6 +24,7 @@
      niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
      que es lo que le deja pisar sus reglas. -->
 <link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
 <!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
@@ -150,6 +151,54 @@
        todavía no tiene respuesta: <strong>de todo lo que hoy se promete, ¿qué va a cumplirse y qué va a ser
        el tercer invierno?</strong> Nadie lo sabe. Lo que sí se sabe es cómo mirarlo: preguntando qué se
        promete exactamente, para cuándo, quién lo dice y qué gana diciéndolo.</p>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-descubre')">
+    <span class="nsb-icon">🔭</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== DESCUBRE ===== -->
+<div class="sec" id="s-descubre" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🗓️ ¿Cuánto tardó?</h2>
+    <p style="font-size:0.92rem;">Entre una idea y el día en que funcionó de verdad a veces pasa <strong>media
+       vida</strong>. Adivina cuántos años separan estos dos hitos, y después mira la cuenta.</p>
+    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada par · +3 XP si te acercas a menos de cinco años</p>
+    <div class="tiempo-caja" id="tiempo-caja"></div>
+    <div id="fbTiempo" class="fb" role="alert"></div>
+    <div class="tip" style="margin-top:0.9rem;">
+      <span class="ti">🏗️</span>
+      <div><strong>Lo que enseñan estas cuentas:</strong> las ideas de hoy son viejas. Lo que las hizo funcionar de
+           golpe no fue una idea nueva: fueron <b>las tres patas</b> de la sección anterior, que llegaron tarde.</div>
+    </div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>✍️ El hito de este año</h2>
+    <p style="font-size:0.92rem;">La línea del tiempo se queda abierta a propósito. <strong>Escribe tú el hito de este
+       año</strong> —algo que pasó o algo que se promete— con las mismas piezas que llevan los de arriba. La que más
+       cuesta es la última: <strong>de dónde lo sacaste</strong>.</p>
+    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por un hito con su fuente</p>
+    <div class="hito-form">
+      <label for="mh-que"><strong>¿Qué pasó, o qué se promete?</strong></label>
+      <textarea id="mh-que" class="desc-input" rows="2" maxlength="240" placeholder="Por ejemplo: en mi centro empezaron a usar…"></textarea>
+      <label for="mh-quien"><strong>¿Quién lo dice?</strong> <small>(y piensa qué gana diciéndolo)</small></label>
+      <input type="text" id="mh-quien" class="desc-input" maxlength="120" placeholder="La empresa que lo vende · un maestro · un periódico…">
+      <label for="mh-cuando"><strong>Si es una promesa, ¿para cuándo?</strong></label>
+      <input type="text" id="mh-cuando" class="desc-input" maxlength="60" placeholder="Un año · «pronto» · no dice">
+      <label for="mh-fuente"><strong>¿Dónde lo leíste o lo oíste?</strong> <small>(la fuente: sin esto no es un hito, es un rumor)</small></label>
+      <input type="text" id="mh-fuente" class="desc-input" maxlength="160" placeholder="El nombre del periódico, del programa, de la página, de la persona…">
+      <button class="btn btn-pri" onclick="iaHitoGuardar()">📜 Ponerlo en la línea del tiempo</button>
+    </div>
+    <div id="fbHito" class="fb" role="alert"></div>
+    <div id="mi-hito"></div>
+    <div class="tip">
+      <span class="ti">❄️</span>
+      <div><strong>Y si es una promesa, apunta la fecha.</strong> Dentro de un año vuelve a esta misión y mira si se
+           cumplió. Así se distingue un hito de un invierno: <b>esperando a ver</b>, no creyendo el anuncio.</div>
+    </div>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
@@ -495,7 +544,7 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 9 páginas con <strong>los quince hitos</strong>, cada uno con lo que lo acredita, las cuatro edades, las tres patas y las actividades <strong>en papel</strong>, para estudiar sin teléfono.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 10 páginas con <strong>los quince hitos</strong>, cada uno con lo que lo acredita, las cuatro edades, las tres patas y las actividades <strong>en papel</strong>, para estudiar sin teléfono.</p>
       <a href="../../fichas/ficha-historia-ia.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <!-- El Parque de Juegos 3D vive en la etapa 2 de la ruta, no aquí: es
@@ -553,6 +602,7 @@
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
   <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">📜</span> Línea del tiempo</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-descubre" data-s="s-descubre" onclick="go('s-descubre')"><span class="ico">🔭</span> Descubre</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
@@ -596,6 +646,7 @@
        un solo sitio y de ahí salen la pantalla y la ficha que se fotocopia. En
        esta misión no hay ni un año escrito a mano. -->
   <script src="../../js/data/ia-historia.js"></script>
+  <script src="../../js/data/ia-descubre.js"></script>
   <script src="js/historia-ia.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>

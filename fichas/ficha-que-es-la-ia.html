@@ -110,6 +110,13 @@
   .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
 
   .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  /* Las cuadrículas de «La máquina ve puntitos» (etapa 1): casillas cuadradas
+     y el relleno con ■, que se imprime aunque el navegador quite los fondos. */
+  .rejs { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0; }
+  .rejs > div { flex: 1 1 120px; font-size: 9.5pt; }
+  .rejs b { display: block; margin-bottom: 3px; color: var(--ia-osc); }
+  table.rej { border-collapse: collapse; width: auto; margin: 0; }
+  table.rej td { width: 14px; height: 14px; padding: 0; border: 1px solid #9aa7b5; text-align: center; font-size: 10pt; line-height: 14px; background: #fff; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
   .acts ol li { margin-bottom: 5px; padding-left: 3px; }
@@ -217,6 +224,8 @@
       <tr><td class="k">💬 Un chat que escribe textos</td><td>Predice la palabra siguiente, una por una, hasta armar el párrafo.</td></tr>
     </table>
 
+    <div class="caja idea"><b>La idea grande, y con esto ya no te confundes:</b> la máquina no entiende.
+      Mira muchísimos ejemplos, busca lo que se repite y con eso decide. Todo lo demás cuelga de ahí.</div>
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 1</span></div>
 </section>
@@ -224,9 +233,6 @@
 <!-- ═══════════ PÁGINA 2 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
-
-    <div class="caja idea"><b>La idea grande, y con esto ya no te confundes:</b> la máquina no entiende.
-      Mira muchísimos ejemplos, busca lo que se repite y con eso decide. Todo lo demás cuelga de ahí.</div>
 
     <h2>🐕 2. ¿Está vivo o es una máquina?</h2>
 
@@ -260,11 +266,6 @@
     <div class="caja idea"><b>Y una que sorprende:</b> hace sesenta años ya existía un programa que
       conversaba, y la gente le contaba cosas de su vida creyendo que la entendía. <b>No entendía nada.</b>
       Que algo conteste como una persona no significa que sea una persona.</div>
-
-    <h2>📖 4. Las cuatro palabras nuevas</h2>
-
-    <p>Estas cuatro son las de esta misión. Cópialas en tu cuaderno con un dibujo de cada una:</p>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 2</span></div>
 </section>
@@ -273,24 +274,25 @@
 <section class="pagina">
   <div class="contenido">
 
+    <h2>📖 4. Las cuatro palabras nuevas</h2>
+
+    <p>Estas cuatro son las de esta misión. Cópialas en tu cuaderno con un dibujo de cada una:</p>
+
     <div class="cficha">
       <div class="cf-tit">🧠 Inteligencia Artificial</div>
       <div class="cf-def">Programas de computadora que hacen tareas que antes solo hacían las personas: reconocer una cara, entender lo que dictas, traducir un letrero o escribir un texto. No piensan ni sienten: calculan.</div>
       <div class="cf-ej">Ejemplo: Cuando le dictas un mensaje al teléfono y el teléfono lo escribe.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">⚙️ Máquina</div>
       <div class="cf-def">Un objeto que las personas fabricaron para que haga un trabajo. No nace, no crece, no come y no muere. Se enciende, se apaga y se compone.</div>
       <div class="cf-ej">Ejemplo: Un molino, un ventilador y un teléfono son máquinas.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">📋 Instrucción</div>
       <div class="cf-def">Una orden clara y en orden, de las que una máquina puede obedecer sin preguntar. Un programa es un montón de instrucciones, una detrás de otra.</div>
       <div class="cf-ej">Ejemplo: «Enciende la luz», «espera 5 segundos», «apágala».</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🍎 Ejemplo</div>
       <div class="cf-def">Cada cosa que le enseñamos a la máquina para que aprenda. Con pocos ejemplos se equivoca; con muchos acierta más. Le llamamos ejemplo a la foto, al sonido o a la frase que le mostramos.</div>
@@ -315,12 +317,6 @@
     <div class="caja regla"><b>La Inteligencia Artificial es la segunda.</b> Por eso puede reconocer cosas
       que nadie le describió nunca, y por eso también <b>se equivoca con lo que no estaba en sus
       ejemplos</b>.</div>
-
-    <h2>🔒 6. Las tres reglas de oro</h2>
-
-    <p>Estas tres son para siempre. Valen para cualquier máquina que te conteste, hoy y cuando estés en
-       noveno grado:</p>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 3</span></div>
 </section>
@@ -328,6 +324,11 @@
 <!-- ═══════════ PÁGINA 4 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <h2>🔒 6. Las tres reglas de oro</h2>
+
+    <p>Estas tres son para siempre. Valen para cualquier máquina que te conteste, hoy y cuando estés en
+       noveno grado:</p>
 
     <table>
       <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
@@ -367,7 +368,6 @@
          <span class="linea-resp" style="min-width:100%"></span>
          <span class="linea-resp" style="min-width:100%"></span></p>
     </div>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 4</span></div>
 </section>
@@ -412,6 +412,58 @@
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
     </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+      <h3>👀 Actividad 5 · La máquina ve puntitos, en papel <span class="val">(16 pts)</span></h3>
+
+      <p>En la misión hay una máquina que <strong>no ve dibujos: ve casillas llenas y vacías, y las
+         cuenta</strong>. Tiene tres recuerdos. A cada dibujo nuevo le pone el nombre del recuerdo con el que
+         <strong>más casillas coinciden</strong> (las dos llenas, o las dos vacías).</p>
+
+      <div class="ilus">
+        <div class="ilus-t">Los tres recuerdos de la máquina</div>
+        <div class="rejs">
+          <div><b>✚ una cruz</b><table class="rej"><tr><td></td><td></td><td>■</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td>■</td><td></td><td></td><td></td></tr><tr><td>■</td><td>■</td><td>■</td><td>■</td><td>■</td><td>■</td></tr><tr><td></td><td></td><td>■</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td>■</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td>■</td><td></td><td></td><td></td></tr></table></div>
+          <div><b>◯ un aro</b><table class="rej"><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>■</td><td>■</td><td>■</td><td>■</td><td></td></tr><tr><td></td><td>■</td><td></td><td></td><td>■</td><td></td></tr><tr><td></td><td>■</td><td></td><td></td><td>■</td><td></td></tr><tr><td></td><td>■</td><td>■</td><td>■</td><td>■</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></table></div>
+          <div><b>▬ una raya</b><table class="rej"><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>■</td><td>■</td><td>■</td><td>■</td><td>■</td><td>■</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></table></div>
+        </div>
+      </div>
+
+      <p>Alguien dibujó la cruz <strong>movida una casilla a la derecha</strong>. Cuenta, para cada recuerdo,
+         cuántas de las 36 casillas coinciden con este dibujo, y escribe el número:</p>
+
+      <div class="rejs">
+        <div><b>El dibujo nuevo</b><table class="rej"><tr><td></td><td></td><td></td><td>■</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td>■</td><td></td><td></td></tr><tr><td></td><td>■</td><td>■</td><td>■</td><td>■</td><td>■</td></tr><tr><td></td><td></td><td></td><td>■</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td>■</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td>■</td><td></td><td></td></tr></table></div>
+        <div style="flex:2">
+          <ol>
+            <li>Con una cruz coinciden <span class="linea-resp" style="min-width:50px"></span> casillas</li>
+            <li>Con un aro coinciden <span class="linea-resp" style="min-width:50px"></span> casillas</li>
+            <li>Con una raya coinciden <span class="linea-resp" style="min-width:50px"></span> casillas</li>
+            <li>Entonces la máquina dirá: «se parece más a <span class="linea-resp" style="min-width:90px"></span>»</li>
+            <li>¿Y tú qué ves? <span class="linea-resp" style="min-width:90px"></span> ¿Por qué no coinciden la máquina y tú?
+              <span class="linea-resp" style="min-width:100%"></span></li>
+          </ol>
+        </div>
+      </div>
+
+      <p><strong>Para jugar en pareja:</strong> dibuja algo en la cuadrícula vacía. Tu compañero hace de máquina:
+         solo puede contar casillas, y tiene que decir a cuál de los tres recuerdos se parece más.</p>
+      <div class="rejs"><div><table class="rej"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table></div></div>
+    </div>
+  </div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
 
     <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
@@ -424,7 +476,6 @@
         <div class="op"><i></i><b>d)</b> Un juego de video</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">2</span><span>¿Cuál de estos está VIVO?</span></div>
       <div class="preg-ops">
@@ -434,15 +485,6 @@
         <div class="op"><i></i><b>d)</b> Un robot</div>
       </div>
     </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 5</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 6 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">3</span><span>¿Cómo aprende una máquina a reconocer una cara?</span></div>
       <div class="preg-ops">
@@ -452,7 +494,6 @@
         <div class="op"><i></i><b>d)</b> Porque tiene ojos</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">4</span><span>Si a una máquina le enseñamos POCOS ejemplos…</span></div>
       <div class="preg-ops">
@@ -462,7 +503,6 @@
         <div class="op"><i></i><b>d)</b> Se equivoca más</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">5</span><span>¿La máquina siente alegría o tristeza?</span></div>
       <div class="preg-ops">
@@ -472,7 +512,6 @@
         <div class="op"><i></i><b>d)</b> Sí, como un perro</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">6</span><span>Una instrucción es…</span></div>
       <div class="preg-ops">
@@ -482,7 +521,6 @@
         <div class="op"><i></i><b>d)</b> Una foto</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">7</span><span>¿Qué NO se le cuenta a una máquina?</span></div>
       <div class="preg-ops">
@@ -492,7 +530,6 @@
         <div class="op"><i></i><b>d)</b> Una pregunta de la tarea</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">8</span><span>La máquina te dio un dato y no estás seguro. ¿Qué haces?</span></div>
       <div class="preg-ops">
@@ -502,7 +539,6 @@
         <div class="op full"><i></i><b>d)</b> Lo busco en el libro o le pregunto a mi maestra</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">9</span><span>¿Por qué se dice que la Inteligencia Artificial NO es magia?</span></div>
       <div class="preg-ops">
@@ -512,7 +548,6 @@
         <div class="op"><i></i><b>d)</b> Porque es muy cara</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">10</span><span>¿Qué hace que algo sea un ser vivo?</span></div>
       <div class="preg-ops">
@@ -526,12 +561,11 @@
     <div class="felic"><b>¡Bien hecho!</b> Si contestaste estas diez, ya sabes lo más importante: que la
       máquina <b>no está viva</b>, que <b>aprende con ejemplos</b> y que hay cosas que <b>no se le
       cuentan</b>. Eso te va a servir toda la vida, aunque las máquinas cambien.</div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 6</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial?</span><span>Página 7</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -550,6 +584,10 @@
         se valoran tres diferencias reales (nace/lo fabricaron, come/no come, siente/no siente, muere/se
         apaga). En la segunda, que nombre cosas de SU vida: dictar un mensaje, la cámara que encuentra
         caras, traducir un letrero, el teclado que adivina la palabra.</div>
+      <div><span class="pt">Actividad 5 · La máquina ve puntitos (16 pts):</span> una raya <b>30</b> · una cruz <b>25</b> · un aro <b>22</b> de 36
+        → la máquina dice «<b>una raya</b>» (30 de 36); el alumno ve una cruz. Lo que se
+        califica es la última pregunta: que diga que la máquina compara <b>casilla por casilla en el mismo sitio</b> y por eso una
+        cruz movida ya no le coincide con su cruz. El juego en pareja no lleva respuesta.</div>
     </div>
 
     <div class="nota-doc">
@@ -575,9 +613,8 @@
       pueden decir cosas distintas. Etapa 1 de cuatro: después vienen cómo aprende una máquina, la historia
       completa y la IA generativa.
     </div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial? · Hoja del Docente</span><span>Página 7</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · ¿Qué es la Inteligencia Artificial? · Hoja del Docente</span><span>Página 8</span></div>
 </section>
 
 </div>

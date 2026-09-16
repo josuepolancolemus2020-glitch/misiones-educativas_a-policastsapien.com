@@ -14,7 +14,7 @@ const SAVE_KEY='como_aprende_maquina_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
 let evalCritFormNum=1,evalCritAnsVisible=false;
-const TOTAL_SECTIONS=13;
+const TOTAL_SECTIONS=14;
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
 // ===================== SONIDO =====================
@@ -41,7 +41,8 @@ const ACHIEVEMENTS={
   nivel3:{icon:'🎖️',label:'¡Buen ritmo! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Entrenador experto! Nivel 6'},
   widgets_master:{icon:'🧩',label:'Widgets del aprendizaje dominados'},
-  cazasesgo:{icon:'⚖️',label:'Descubrió el sesgo entrenando con ejemplos incompletos'}
+  cazasesgo:{icon:'⚖️',label:'Descubrió el sesgo entrenando con ejemplos incompletos'},
+  maquina_humana:{icon:'🎯',label:'Sacó la regla de los ejemplos, como una máquina'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -75,7 +76,7 @@ const fcData = (function () {
   return f;
 })();
 let fcIdx=0;
-function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
+function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').innerHTML=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
 function flipCard(){sfx('flip');document.getElementById('fcInner').classList.toggle('flipped');if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1);}if(xpTracker.fc.size===fcData.length){fin('s-flash');unlockAchievement('flash_master');}}
 function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
@@ -727,7 +728,7 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya sabes cómo se entrena una máquina!','¡Cazador de sesgos!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧠 ¡${name} completó la Misión "Cómo Aprende una Máquina"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -901,6 +902,7 @@ function iaEntReiniciar(){
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
+  try{iaDescInit();}catch(e){} // 🔭 Descubre: pinta las actividades; no marca ninguna sección. Si el archivo de datos no llegó, la misión sigue.
   initTheme();
   loadProgress();
   pintarIaCiclo();
@@ -1012,3 +1014,111 @@ document.addEventListener('DOMContentLoaded', () => {
   pintarMedallas3D();
   abrirSeccionDelEnlace();
 });
+
+// ===================== 🔭 DESCUBRE · II CICLO =====================
+/* Dos actividades de descubrimiento. Las CUENTAS viven en
+   js/data/ia-descubre.js (IA_REGLAS_OCULTAS, iaCurvaExactitud): es lo que la
+   sonda `verifica-descubre-ia` recalcula, y por eso aquí solo se pinta y se
+   lleva el XP. */
+const DESC_KEY = SAVE_KEY + '_descubre';
+/* La sección se gana HACIENDO las dos: una ronda terminada y tres tamaños
+   probados. Nunca se marca al abrir. */
+function iaDescubreListo() { if (iaReglaTerminadas.size >= 1 && Object.keys(iaCurvaProbados).length >= 3) { fin('s-descubre'); unlockAchievement('maquina_humana'); } }
+
+/* ── 🎯 Tú eres la máquina ────────────────────────────────────────────── */
+let iaReglaRonda = 0, iaReglaIdx = 0, iaReglaAciertos = 0, iaReglaMarcas = [], iaReglaPedida = false, iaReglaEscrita = '', iaReglaTerminadas = new Set();
+function iaReglaPintarRondas() {
+  const c = document.getElementById('regla-rondas'); if (!c) return;
+  c.innerHTML = IA_REGLAS_OCULTAS.map((r, i) =>
+    '<button type="button" class="desc-chip' + (i === iaReglaRonda ? ' desc-on' : '') + (iaReglaTerminadas.has(i) ? ' desc-hecho' : '') +
+    '" onclick="iaReglaEmpezar(' + i + ')">Ronda ' + (i + 1) + ' · ' + _esc(r.tipo) + 's</button>').join('');
+}
+function iaReglaEmpezar(i) { iaReglaRonda = i; iaReglaIdx = 0; iaReglaAciertos = 0; iaReglaMarcas = []; iaReglaPedida = false; iaReglaEscrita = ''; iaReglaPintarRondas(); iaReglaPintar(); }
+function iaReglaMarcasHtml() {
+  return '<div class="regla-marcas" aria-label="Tus aciertos, en orden">' + iaReglaMarcas.map(m => '<span>' + (m.ok ? '✅' : '❌') + '</span>').join('') + '</div>';
+}
+function iaReglaPintar() {
+  const caja = document.getElementById('regla-caja'); if (!caja) return;
+  const r = IA_REGLAS_OCULTAS[iaReglaRonda];
+  /* A mitad de ronda se le pide la regla ANTES de seguir: es el momento en
+     que la sacó, o en que cree que la sacó. */
+  if (iaReglaIdx === IA_REGLAS_MEDIO && !iaReglaPedida) {
+    caja.innerHTML = '<p class="regla-tit">Ronda ' + (iaReglaRonda + 1) + ' · vas ' + iaReglaAciertos + ' de ' + iaReglaIdx + '</p>' + iaReglaMarcasHtml() +
+      '<p class="regla-mitad">✋ A mitad. Sin verla: <strong>¿cuál crees que es la regla?</strong></p>' +
+      '<input type="text" id="regla-input" class="desc-input" maxlength="100" placeholder="Los que…" aria-label="Tu regla">' +
+      '<div class="ens-btns"><button class="btn btn-pri" onclick="iaReglaAnotar(false)">✍️ Esa es mi regla</button>' +
+      '<button class="btn btn-d" onclick="iaReglaAnotar(true)">Todavía no sé</button></div>';
+    return;
+  }
+  if (iaReglaIdx >= r.ejemplos.length) {
+    iaReglaTerminadas.add(iaReglaRonda);
+    let html = '<p class="regla-tit">Ronda ' + (iaReglaRonda + 1) + ' terminada: <strong>' + iaReglaAciertos + ' de ' + r.ejemplos.length + '</strong></p>' + iaReglaMarcasHtml() +
+      '<p class="regla-rev">🔓 La regla era: <strong>' + _esc(r.nombre) + '</strong>.</p>' +
+      (iaReglaEscrita ? '<p class="regla-rev">Tú escribiste: «' + _esc(iaReglaEscrita) + '».</p>'
+                      : '<p class="regla-rev">No la escribiste a mitad. La próxima, atrévete: adivinar y fallar también enseña, y es lo que hace la máquina.</p>') +
+      '<p class="regla-pista">💡 ' + _esc(r.pista) + '</p>';
+    if (r.trampa) {
+      html += '<div class="regla-trampa">⚠️ <strong>Aquí estaba la trampa.</strong> Hasta el ejemplo ' + r.trampa.hasta + ', «' + _esc(r.trampa.otraNombre) + '» y «' + _esc(r.nombre) +
+        '» daban <b>exactamente las mismas respuestas</b>: con esos ejemplos no había forma de saber cuál era. Eso mismo le pasa a la máquina: con pocos ejemplos caben varias reglas, elige una, y la que eligió puede fallar con el siguiente. El <b>' +
+        _esc(String(r.ejemplos[r.trampa.hasta])) + '</b> fue el que separó las dos. Por eso hacen falta ejemplos <b>variados</b>, no solo muchos.</div>';
+    }
+    html += '<div class="ens-btns"><button class="btn btn-g" onclick="iaReglaEmpezar(' + iaReglaRonda + ')">🔄 Otra vez</button>' +
+      (iaReglaRonda < IA_REGLAS_OCULTAS.length - 1 ? '<button class="btn btn-pri" onclick="iaReglaEmpezar(' + (iaReglaRonda + 1) + ')">Siguiente ronda ▶</button>' : '') + '</div>';
+    caja.innerHTML = html;
+    if (!xpTracker.wgt.has('regla_' + iaReglaRonda)) { xpTracker.wgt.add('regla_' + iaReglaRonda); pts(1); }
+    iaReglaPintarRondas(); iaDescubreListo(); return;
+  }
+  const x = r.ejemplos[iaReglaIdx];
+  caja.innerHTML = '<p class="regla-tit">Ronda ' + (iaReglaRonda + 1) + ' · ejemplo ' + (iaReglaIdx + 1) + ' de ' + r.ejemplos.length + ' · llevas ' + iaReglaAciertos + ' bien</p>' + iaReglaMarcasHtml() +
+    '<div class="regla-ej">' + _esc(String(x)) + '</div><p class="regla-preg">¿Entra en el grupo?</p>' +
+    '<div class="ens-btns"><button class="btn btn-pri" onclick="iaReglaDecir(true)">✅ Entra</button><button class="btn btn-sec" onclick="iaReglaDecir(false)">❌ No entra</button></div>';
+}
+function iaReglaDecir(v) {
+  const r = IA_REGLAS_OCULTAS[iaReglaRonda]; const x = r.ejemplos[iaReglaIdx]; if (x === undefined) return;
+  const verdad = !!r.regla(x); const ok = v === verdad;
+  if (ok) iaReglaAciertos++;
+  iaReglaMarcas.push({ ok: ok }); sfx(ok ? 'ok' : 'no');
+  fb('fbRegla', (ok ? '✅ ' : '❌ ') + _esc(String(x)) + (verdad ? ' SÍ entra.' : ' NO entra.'), ok);
+  iaReglaIdx++; iaReglaPintar();
+}
+function iaReglaAnotar(noSe) {
+  iaReglaPedida = true;
+  const i = document.getElementById('regla-input'); const t = noSe ? '' : (i && i.value || '').trim();
+  iaReglaEscrita = t;
+  if (t.length >= 3 && !xpTracker.wgt.has('regla_esc_' + iaReglaRonda)) { xpTracker.wgt.add('regla_esc_' + iaReglaRonda); pts(2); }
+  iaReglaPintar();
+}
+
+/* ── 📈 ¿Cuántos ejemplos hacen falta? ────────────────────────────────── */
+let iaCurvaProbados = {}, iaCurvaD = null;
+function iaCurvaPintarN() {
+  const c = document.getElementById('curva-n'); if (!c) return;
+  c.innerHTML = IA_CURVA_N.map(n => '<button type="button" class="desc-chip' + (iaCurvaProbados[n] !== undefined ? ' desc-hecho' : '') +
+    '" onclick="iaCurvaProbar(' + n + ')">' + n + ' ejemplo' + (n > 1 ? 's' : '') + '</button>').join('');
+}
+function iaCurvaProbar(n) {
+  iaCurvaD = iaCurvaD || iaCurvaDatos();
+  iaCurvaProbados[n] = iaCurvaExactitud(n, iaCurvaD);
+  if (!xpTracker.wgt.has('curva_' + n)) { xpTracker.wgt.add('curva_' + n); pts(1); }
+  if (Object.keys(iaCurvaProbados).length === IA_CURVA_N.length && !xpTracker.wgt.has('curva_todo')) { xpTracker.wgt.add('curva_todo'); pts(3); }
+  sfx('ok'); iaCurvaPintarN(); iaCurvaPintar(n); iaDescubreListo();
+}
+function iaCurvaPintar(ultimo) {
+  const caja = document.getElementById('curva-caja'); if (!caja) return;
+  const filas = IA_CURVA_N.filter(n => iaCurvaProbados[n] !== undefined).map(n => {
+    const a = iaCurvaProbados[n];
+    return '<div class="curva-fila' + (n === ultimo ? ' curva-ult' : '') + '"><span class="curva-n">' + n + '</span><span class="curva-barra"><i style="width:' + (a / 20 * 100) + '%"></i></span><span class="curva-pct">' + a + ' de 20</span></div>';
+  }).join('');
+  const a = iaCurvaProbados[ultimo]; const ej = iaCurvaD.entrena.slice(0, ultimo);
+  const rojos = ej.filter(e => e.c === 'rojo').length, negros = ej.length - rojos;
+  let nota;
+  if (ultimo === 1) nota = 'Con un solo ejemplo conoce UNA clase (' + (rojos ? 'el rojo' : 'el negro') + ') y le dice eso a las 20. Acierta las ' + a + ' que son de esa clase: la mitad, como una moneda.';
+  else if (ultimo === 2) nota = 'Con dos, uno de cada, ya tiene con qué comparar: ' + a + ' de 20.';
+  else if (iaCurvaProbados[20] !== undefined && iaCurvaProbados[50] !== undefined)
+    nota = 'Con ' + ultimo + ' ejemplos (' + rojos + ' rojos y ' + negros + ' negros): ' + a + ' de 20. De 20 a 50 ejemplos cambió ' + Math.abs(iaCurvaProbados[50] - iaCurvaProbados[20]) + ' acierto(s): a partir de cierto punto, más ejemplos parecidos no enseñan más.';
+  else nota = 'Con ' + ultimo + ' ejemplos (' + rojos + ' rojos y ' + negros + ' negros): ' + a + ' de 20. Prueba con más y con menos, y mira dónde deja de subir.';
+  caja.innerHTML = '<div class="curva-barras" aria-label="Aciertos según cuántos ejemplos">' + filas + '</div><p class="curva-nota">' + _esc(nota) + '</p>' +
+    (Object.keys(iaCurvaProbados).length === IA_CURVA_N.length
+      ? '<p class="curva-fin">📈 Los seis probados. Lo que sube la exactitud al principio son los ejemplos; lo que la deja de subir es que los nuevos <b>se parecen a los que ya tenía</b>. Un ejemplo distinto de los que ya tiene enseña más que veinte parecidos: es el mismo aviso de la etapa 1, no es cuántos, es cuáles.</p>' : '');
+}
+function iaDescInit() { iaReglaPintarRondas(); iaReglaPintar(); iaCurvaPintarN(); }

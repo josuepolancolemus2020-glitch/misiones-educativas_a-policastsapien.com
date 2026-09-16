@@ -24,6 +24,7 @@
      niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
      que es lo que le deja pisar sus reglas. -->
 <link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
 <!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
@@ -188,6 +189,50 @@
        no son las reglas: es que ahora ya sabes <strong>por qué</strong>.</p>
     <!-- Del archivo de datos: las mismas tres salen en las cuatro misiones. -->
     <div id="ia-reglas"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-descubre')">
+    <span class="nsb-icon">🔭</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== DESCUBRE ===== -->
+<div class="sec" id="s-descubre" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🎯 Tú eres la máquina</h2>
+    <p style="font-size:0.92rem;">Nadie te va a decir la regla. Vas a ver ejemplos de uno en uno, dices si
+       <strong>entra</strong> o <strong>no entra</strong>, y solo después ves la respuesta. Eso que te va a pasar
+       —sacar la regla de los ejemplos sin que nadie te la diga— es <strong>exactamente</strong> lo que hace una
+       máquina cuando aprende.</p>
+    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada ronda terminada · +2 XP si escribes la regla antes de verla</p>
+    <div class="desc-chips" id="regla-rondas" role="group" aria-label="Las cuatro rondas"></div>
+    <div class="regla-caja" id="regla-caja"></div>
+    <div id="fbRegla" class="fb" role="alert"></div>
+    <div class="tip" style="margin-top:0.9rem;">
+      <span class="ti">🔬</span>
+      <div><strong>La cuarta ronda es la que más enseña.</strong> Hasta el quinto ejemplo van a caber <b>dos reglas
+           distintas</b>, y vas a tener que elegir una sin saber cuál es. La máquina hace lo mismo. Por eso hacen
+           falta ejemplos <b>variados</b>, no solo muchos.</div>
+    </div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>📈 ¿Cuántos ejemplos hacen falta?</h2>
+    <p style="font-size:0.92rem;">Una máquina tiene que separar <strong>frijol rojo</strong> de <strong>frijol
+       negro</strong> midiendo cada semilla (largo y ancho). Tú eliges <strong>con cuántos ejemplos</strong> se
+       entrena; después la probamos con <strong>20 semillas que nunca vio</strong>. Las medidas son inventadas para
+       el ejercicio y se sortean siempre igual.</p>
+    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tamaño que pruebes · +3 XP al probar los seis</p>
+    <div class="desc-chips" id="curva-n" role="group" aria-label="Con cuántos ejemplos"></div>
+    <div class="curva-caja" id="curva-caja"></div>
+    <div id="fbCurva" class="fb" role="alert"></div>
+    <div class="tip">
+      <span class="ti">📉</span>
+      <div><strong>Lo que vas a ver:</strong> con <b>un</b> ejemplo la máquina solo conoce una clase y le dice lo mismo
+           a todas: acierta la mitad, como una moneda. Después sube… y <b>deja de subir</b>. A partir de ahí más
+           ejemplos parecidos no enseñan más; lo que enseña es un ejemplo <b>distinto</b>.</div>
+    </div>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
@@ -609,7 +654,7 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>el ciclo del aprendizaje</strong> paso por paso, los tres tipos, el sesgo con el caso del detector de plagas y sus actividades <strong>en papel</strong>, para estudiar sin teléfono.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 9 páginas con <strong>el ciclo del aprendizaje</strong> paso por paso, los tres tipos, el sesgo con el caso del detector de plagas y sus actividades <strong>en papel</strong>, para estudiar sin teléfono.</p>
       <a href="../../fichas/ficha-como-aprende-una-maquina.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
@@ -659,6 +704,7 @@
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
   <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🧪</span> Entrenador</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-descubre" data-s="s-descubre" onclick="go('s-descubre')"><span class="ico">🔭</span> Descubre</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
@@ -699,6 +745,7 @@
        Va ANTES del JS de la misión, que lo usa para armar las flashcards, el
        Laboratorio y las actividades. -->
   <script src="../../js/data/ia-conceptos.js"></script>
+  <script src="../../js/data/ia-descubre.js"></script>
   <script src="js/como-aprende-una-maquina.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>

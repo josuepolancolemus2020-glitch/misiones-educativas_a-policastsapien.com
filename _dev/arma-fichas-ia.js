@@ -154,6 +154,13 @@ const CABEZA = titulo => `<!DOCTYPE html>
   .linea-t b { display: block; font-size: 9.5pt; color: var(--ia-osc); }
 
   .acts h3 { border-bottom: 2px solid var(--ia-claro); padding-bottom: 3px; }
+  /* Las cuadrículas de «La máquina ve puntitos» (etapa 1): casillas cuadradas
+     y el relleno con ■, que se imprime aunque el navegador quite los fondos. */
+  .rejs { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0; }
+  .rejs > div { flex: 1 1 120px; font-size: 9.5pt; }
+  .rejs b { display: block; margin-bottom: 3px; color: var(--ia-osc); }
+  table.rej { border-collapse: collapse; width: auto; margin: 0; }
+  table.rej td { width: 14px; height: 14px; padding: 0; border: 1px solid #9aa7b5; text-align: center; font-size: 10pt; line-height: 14px; background: #fff; }
   .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
   .acts ol { margin-left: 24px; }
   .acts ol li { margin-bottom: 5px; padding-left: 3px; }

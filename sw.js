@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v221';
+const CACHE_NAME = 'meta-app-v222';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -113,6 +113,9 @@ const STATIC_ASSETS = [
   // ellos esas pantallas salen vacías.
   './js/data/ia-conceptos.js',
   './js/data/ia-historia.js',
+  // Las actividades de Descubre de las cuatro misiones de IA: sin este archivo
+  // el arranque de la misión no pinta las actividades, y sin señal es cuando se repasa.
+  './js/data/ia-descubre.js',
   './js/metas-videos.js',
   // La barra de secciones de las misiones, arriba y pegajosa. Sin estos
   // dos el <nav> vuelve al final del documento y sin position:sticky: en
@@ -124,6 +127,10 @@ const STATIC_ASSETS = [
   // que no distingue el rojo del verde vuelve a quedarse sin poder
   // terminar Clasifica — y sin señal es justo cuando más falta hace.
   './css/senal-no-color.css',
+  // El Laboratorio con la letra del resto de la misión y botones de 44 px.
+  // Sin esta hoja, la explicación del Laboratorio se lee a dos tercios del
+  // párrafo de al lado, y justo sin señal es cuando la misión se repasa.
+  './css/lab-legible.css',
   // Que las actividades se puedan hacer sin el dedo. Sin estos dos, el
   // alumno que no usa el dedo se queda sin poder clasificar, emparejar ni
   // identificar nada —y sin ver dónde tiene el foco—, justamente en el

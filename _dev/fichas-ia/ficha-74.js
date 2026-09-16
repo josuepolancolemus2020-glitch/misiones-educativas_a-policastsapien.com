@@ -1,6 +1,8 @@
 /* Ficha de la misión 74 · La Historia de la Inteligencia Artificial · II y III Ciclo */
 'use strict';
 const A = require('../arma-fichas-ia.js');
+/* Las cuentas de las actividades de Descubre: la pauta se CALCULA de aquí, no se escribe. */
+const D = require('../../js/data/ia-descubre.js');
 const { esc, arma, portada, preguntas, clave, IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS } = A;
 
 const EVAL = [
@@ -156,6 +158,39 @@ P.push(`
     </div>
 `);
 
+// ── Descubre, en papel · 🗓️ ¿Cuánto tardó? y ✍️ el hito de este año ───────
+/* Los años NO se escriben: salen de IA_HITOS, que es el único sitio donde
+   vive una fecha, y la pauta se calcula. */
+const _par = p => ({ A: IA_HITOS.find(h => String(h.anio) === p.a), B: IA_HITOS.find(h => String(h.anio) === p.b), anos: parseInt(p.b, 10) - parseInt(p.a, 10) });
+P.push(`
+    <div class="acts">
+      <h3>🗓️ Actividad 5 · ¿Cuánto tardó? <span class="val">(10 pts)</span></h3>
+
+      <p>Entre una idea y el día en que funcionó de verdad a veces pasa media vida. <strong>Primero adivina</strong>
+         cuántos años separan cada par y escríbelo sin mirar la línea del tiempo; <strong>después</strong> búscalos
+         arriba y saca la cuenta de verdad:</p>
+
+      <table>
+        <tr><th>De…</th><th>…a</th><th style="width:16%">Mi cálculo</th><th style="width:16%">De verdad</th></tr>
+${D.IA_TIEMPO_PARES.map(p => { const q = _par(p); return '        <tr><td>' + q.A.emoji + ' ' + esc(q.A.titulo) + '</td><td>' + q.B.emoji + ' ' + esc(q.B.titulo) + '</td><td><span class="linea-resp" style="min-width:40px"></span> años</td><td><span class="linea-resp" style="min-width:40px"></span> años</td></tr>'; }).join('\n')}
+      </table>
+      <p>¿Qué faltó todo ese tiempo, si la idea ya estaba? <span class="linea-resp" style="min-width:60%"></span></p>
+
+      <h3>✍️ Actividad 6 · El hito de este año <span class="val">(sin respuesta, a propósito)</span></h3>
+
+      <p>La línea del tiempo se queda abierta. Escribe tú el hito de este año, con las mismas piezas que
+         llevan los de arriba. La que más cuesta es la última.</p>
+      <ol>
+        <li>¿Qué pasó, o qué se promete? <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>¿Quién lo dice, y qué gana diciéndolo? <span class="linea-resp" style="min-width:100%"></span></li>
+        <li>Si es una promesa, ¿para cuándo? <span class="linea-resp" style="min-width:60%"></span></li>
+        <li>¿Dónde lo leíste o lo oíste? (sin fuente no es un hito: es un rumor) <span class="linea-resp" style="min-width:100%"></span></li>
+      </ol>
+      <div class="caja idea"><b>Y si es una promesa, apunta la fecha:</b> dentro de un año vuelve a esta hoja y mira si
+        se cumplió. Así se distingue un hito de un invierno: esperando a ver, no creyendo el anuncio.</div>
+    </div>
+`);
+
 P.push(`
     <h2>🔓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
@@ -181,6 +216,12 @@ P.push(`
       <div><span class="pt">Actividad 4 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
         que la promesa esté copiada tal cual, que identifique quién la hace y qué gana, que note si hay
         fecha concreta o no, y que su pregunta final sea comprobable.</div>
+      <div><span class="pt">Actividad 5 · ¿Cuánto tardó? (10 pts):</span>
+        ${D.IA_TIEMPO_PARES.map(p => { const q = _par(p); return esc(p.a) + '→' + esc(p.b) + ' <b>' + q.anos + '</b>'; }).join(' · ')} años.
+        Se califica la cuenta, no el cálculo a ojo: adivinar mal es parte del ejercicio. En la última pregunta se
+        valora que nombre las tres patas (datos, cómputo, algoritmos), no «que no sabían».</div>
+      <div><span class="pt">Actividad 6 · El hito de este año:</span> <b>no lleva respuesta a propósito.</b> Se valora
+        que traiga fuente, que distinga lo que pasó de lo que se promete, y que si es promesa lleve fecha.</div>
     </div>
 
     <div class="nota-doc">

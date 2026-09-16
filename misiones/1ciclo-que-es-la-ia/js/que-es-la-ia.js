@@ -14,7 +14,7 @@ const SAVE_KEY='que_es_la_ia_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
 let evalCritFormNum=1,evalCritAnsVisible=false;
-const TOTAL_SECTIONS=13;
+const TOTAL_SECTIONS=14;
 const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
 
 // ===================== SONIDO =====================
@@ -41,7 +41,8 @@ const ACHIEVEMENTS={
   nivel3:{icon:'🎖️',label:'¡Vas muy bien! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Ya sabes un montón! Nivel 6'},
   widgets_master:{icon:'🧩',label:'Juegos de la máquina dominados'},
-  entrenador:{icon:'🍎',label:'Le enseñó a la máquina con sus propios ejemplos'}
+  entrenador:{icon:'🍎',label:'Le enseñó a la máquina con sus propios ejemplos'},
+  descubridor:{icon:'🔭',label:'Descubrió cómo ve y cómo decide una máquina'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -81,7 +82,7 @@ const fcData = (function () {
   return f;
 })();
 let fcIdx=0;
-function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
+function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').innerHTML=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
 function flipCard(){sfx('flip');document.getElementById('fcInner').classList.toggle('flipped');if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1);}if(xpTracker.fc.size===fcData.length){fin('s-flash');unlockAchievement('flash_master');}}
 function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
 function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
@@ -713,7 +714,7 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya sabes que la máquina aprende con ejemplos!','¡Explorador de máquinas!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧠 ¡${name} completó la Misión "¿Qué es la Inteligencia Artificial?"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -921,6 +922,7 @@ function iaEnsReiniciar(){
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
+  try{iaDescInit();}catch(e){} // 🔭 Descubre: pinta las actividades; no marca ninguna sección. Si el archivo de datos no llegó, la misión sigue.
   initTheme();
   loadProgress();
   pintarIaAplicaciones();
@@ -946,3 +948,127 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+
+// ===================== 🔭 DESCUBRE · I CICLO =====================
+/* Dos actividades de descubrimiento. Las CUENTAS viven en
+   js/data/ia-descubre.js (iaPixAdivina, iaPixMover, iaAdivRecorrer): es lo
+   que la sonda `verifica-descubre-ia` recalcula, y por eso aquí solo se
+   pinta, se lleva el XP y se guarda lo que el niño escribe. */
+const DESC_KEY = SAVE_KEY + '_descubre';
+function iaDescGuardar(k, v) { try { const s = JSON.parse(localStorage.getItem(DESC_KEY) || '{}'); s[k] = v; localStorage.setItem(DESC_KEY, JSON.stringify(s)); } catch (e) {} }
+function iaDescLeer(k) { try { return (JSON.parse(localStorage.getItem(DESC_KEY) || '{}'))[k]; } catch (e) { return undefined; } }
+/* La sección se gana HACIENDO las dos: preguntarle dos veces a la de los
+   puntitos y probar tres animales. Nunca se marca al abrir. */
+function iaDescubreListo() { if (iaPixVeces >= 2 && iaAdivHechos.size >= 3) { fin('s-descubre'); unlockAchievement('descubridor'); } }
+
+/* ── 👀 La máquina ve puntitos ─────────────────────────────────────────── */
+let iaPixDibujo = [], iaPixVeces = 0, iaPixUltimo = null;
+function iaPixPintar() {
+  const g = document.getElementById('pix-grid'); if (!g) return;
+  if (!iaPixDibujo.length) iaPixDibujo = new Array(IA_PIX_LADO * IA_PIX_LADO).fill(0);
+  g.innerHTML = iaPixDibujo.map((v, i) =>
+    '<button type="button" class="pix-cel' + (v ? ' pix-on' : '') + '" aria-pressed="' + (v ? 'true' : 'false') +
+    '" aria-label="Fila ' + (Math.floor(i / IA_PIX_LADO) + 1) + ', casilla ' + (i % IA_PIX_LADO + 1) + '" onclick="iaPixToca(' + i + ')"></button>').join('');
+  const r = document.getElementById('pix-recuerdos');
+  if (r && !r.children.length) {
+    r.innerHTML = IA_PIX_RECUERDOS.map(m =>
+      '<div class="pix-rec"><div class="pix-mini" aria-hidden="true">' +
+      iaPixDeFilas(m.filas).map(v => '<i class="' + (v ? 'on' : '') + '"></i>').join('') +
+      '</div><div class="pix-rec-n">' + m.e + ' ' + _esc(m.n) + '</div><div class="pix-rec-c" id="pix-c-' + m.k + '"></div></div>').join('');
+  }
+}
+/* Se cambia UNA casilla sin repintar la cuadrícula: repintarla le quitaría el
+   foco al que dibuja con el teclado. */
+function iaPixToca(i) {
+  iaPixDibujo[i] = iaPixDibujo[i] ? 0 : 1;
+  const b = document.querySelectorAll('#pix-grid .pix-cel')[i];
+  if (b) { b.classList.toggle('pix-on', !!iaPixDibujo[i]); b.setAttribute('aria-pressed', iaPixDibujo[i] ? 'true' : 'false'); }
+}
+function iaPixLimpiarResp() {
+  const r = document.getElementById('pix-resp'); if (r) r.innerHTML = '';
+  IA_PIX_RECUERDOS.forEach(m => { const c = document.getElementById('pix-c-' + m.k); if (c) c.textContent = ''; });
+}
+function iaPixCopiar(k) { const m = IA_PIX_RECUERDOS.find(x => x.k === k); if (!m) return; iaPixDibujo = iaPixDeFilas(m.filas); iaPixPintar(); iaPixLimpiarResp(); }
+function iaPixMoverDibujo() { iaPixDibujo = iaPixMover(iaPixDibujo); iaPixPintar(); iaPixLimpiarResp(); }
+function iaPixBorrar() { iaPixDibujo = iaPixDibujo.map(() => 0); iaPixPintar(); iaPixLimpiarResp(); }
+function iaPixPreguntar() {
+  if (!iaPixDibujo.length) iaPixPintar();
+  const res = iaPixAdivina(iaPixDibujo);
+  const encendidos = iaPixDibujo.filter(Boolean).length;
+  res.todos.forEach(t => {
+    const c = document.getElementById('pix-c-' + t.k);
+    if (c) c.innerHTML = '<span class="pix-barra"><i style="width:' + Math.round(t.coincide / res.total * 100) + '%"></i></span> ' + t.coincide + ' de ' + res.total;
+  });
+  /* ¿Venía de un dibujo igualito a un recuerdo y ahora contesta otra cosa?
+     Eso es lo que pasa al moverlo un puntito, y es lo que paga los +3. */
+  const movido = !!(iaPixUltimo && iaPixUltimo.coincide === res.total && iaPixUltimo.k !== res.mejor.k && encendidos > 0);
+  const numeros = iaPixDibujo.map((v, i) => (i % IA_PIX_LADO === 0 && i ? ' ' : '') + v).join('');
+  let msg = '<p class="pix-dice">🤖 «Se parece más a <strong>' + res.mejor.e + ' ' + _esc(res.mejor.n) + '</strong>: coincide en <strong>' +
+    res.mejor.coincide + ' de ' + res.total + '</strong> puntitos.»</p>';
+  if (encendidos === 0) msg += '<p class="pix-nota">No dibujaste nada… y contestó igual de segura. Cuenta también los puntitos <b>apagados</b> que coinciden, y con la raya coinciden casi todos. La máquina <b>siempre contesta</b>, aunque no haya nada que ver.</p>';
+  else if (res.mejor.coincide === res.total) msg += '<p class="pix-nota">Igualito a su recuerdo, puntito por puntito. Ahora toca «Moverlo un puntito» y vuelve a preguntar.</p>';
+  else if (movido) msg += '<p class="pix-nota">¡Lo moviste <b>un solo puntito</b> y ya no lo reconoce! Para ti sigue siendo ' + _esc(iaPixUltimo.n) + '; para ella cada casilla se compara con la misma casilla del recuerdo, y movidas ya no coinciden. <b>No sabe que es lo mismo, movido.</b> Tú sí.</p>';
+  else msg += '<p class="pix-nota">Le puso el nombre del recuerdo que más se le parece, <b>aunque no se parezca casi nada</b>. Una máquina así no dice «no sé»: elige el menos lejano.</p>';
+  msg += '<p class="pix-num"><span>Lo que ella ve de verdad:</span> <code>' + numeros + '</code></p>';
+  document.getElementById('pix-resp').innerHTML = msg;
+  sfx('ok');
+  iaPixUltimo = { k: res.mejor.k, n: res.mejor.n, coincide: res.mejor.coincide };
+  iaPixVeces++;
+  if (iaPixVeces <= 5 && !xpTracker.wgt.has('pix_' + iaPixVeces)) { xpTracker.wgt.add('pix_' + iaPixVeces); pts(1); }
+  if (movido && !xpTracker.wgt.has('pix_movido')) {
+    xpTracker.wgt.add('pix_movido'); pts(3);
+    fb('fbPix', '+3 XP: la hiciste equivocarse moviendo el dibujo un puntito. A las máquinas de verdad les pasa igual, y por eso se les enseña el mismo dibujo en muchas posiciones.', true);
+  }
+  iaDescubreListo();
+}
+
+/* ── 🐾 El adivinador de animales ──────────────────────────────────────── */
+let iaAdivAnimal = null, iaAdivResp = {}, iaAdivHechos = new Set();
+function iaAdivPintarAnimales() {
+  const c = document.getElementById('adiv-animales'); if (!c) return;
+  c.innerHTML = IA_ADIV_ANIMALES.map(a =>
+    '<button type="button" class="desc-chip' + (iaAdivAnimal === a.k ? ' desc-on' : '') + (iaAdivHechos.has(a.k) ? ' desc-hecho' : '') +
+    '" onclick="iaAdivElegir(\'' + a.k + '\')">' + a.e + ' ' + _esc(a.n) + '</button>').join('');
+}
+function iaAdivElegir(k) { iaAdivAnimal = k; iaAdivResp = {}; iaAdivPintarAnimales(); iaAdivPaso(); }
+function iaAdivContestar(p, v) { iaAdivResp[p] = v; iaAdivPaso(); }
+function iaAdivPaso() {
+  const caja = document.getElementById('adiv-caja'); const a = IA_ADIV_ANIMALES.find(x => x.k === iaAdivAnimal); if (!caja || !a) return;
+  const r = iaAdivRecorrer(iaAdivResp);
+  const camino = r.camino.map(c => '<li>' + _esc(IA_ADIV_PREGUNTAS[c.p]) + ' → <strong>' + (c.r ? 'Sí' : 'No') + '</strong></li>').join('');
+  const cab = '<p class="adiv-animal">' + a.e + ' Pensaste en <strong>' + _esc(a.n) + '</strong>.</p>' + (camino ? '<ul class="adiv-camino">' + camino + '</ul>' : '');
+  if (r.pendiente) {
+    caja.innerHTML = cab + '<p class="adiv-preg">🤖 «' + _esc(IA_ADIV_PREGUNTAS[r.pendiente]) + '»</p>' +
+      '<div class="ens-btns"><button class="btn btn-pri" onclick="iaAdivContestar(\'' + r.pendiente + '\',true)">✅ Sí</button>' +
+      '<button class="btn btn-sec" onclick="iaAdivContestar(\'' + r.pendiente + '\',false)">❌ No</button></div>';
+    return;
+  }
+  const acierto = r.hoja === a.k;
+  let html = cab + '<p class="adiv-preg">🤖 «¡Ya sé! Es <strong>' + _esc(IA_ADIV_NOMBRES[r.hoja]) + '</strong>.»</p>';
+  if (acierto) html += '<p class="adiv-res adiv-ok">✅ Acertó. Con este animal la lista de preguntas alcanza.</p>';
+  else html += '<p class="adiv-res adiv-no">❌ Se equivocó: ' + _esc(a.n) + ' es ' + _esc(a.es || 'otra cosa') + '. La persona que escribió las preguntas <b>no pensó en este animal</b>, y la máquina no puede pensar en él por su cuenta: solo sigue la lista.</p>';
+  html += '<p class="adiv-verdad">Cómo es de verdad: ' + ['agua', 'concha', 'plumas', 'patas4'].map(p => (a[p] ? '✔ ' : '✘ ') + _esc(IA_ADIV_PREGUNTAS[p].replace('¿', '').replace('?', '').toLowerCase())).join(' · ') + '</p>';
+  caja.innerHTML = html;
+  sfx(acierto ? 'ok' : 'no');
+  if (!iaAdivHechos.has(a.k)) { iaAdivHechos.add(a.k); if (!xpTracker.wgt.has('adiv_' + a.k)) { xpTracker.wgt.add('adiv_' + a.k); pts(1); } }
+  if (!acierto && !xpTracker.wgt.has('adiv_trampa')) {
+    xpTracker.wgt.add('adiv_trampa'); pts(3);
+    fb('fbAdiv', '+3 XP: encontraste un animal en el que nadie pensó. Eso le pasa a una máquina de instrucciones con todo lo que no estaba en su lista.', true);
+  }
+  iaAdivPintarAnimales(); iaDescubreListo();
+}
+function iaAdivGuardar() {
+  const i = document.getElementById('adiv-preg'); const t = (i && i.value || '').trim();
+  if (t.length < 5) { fb('fbAdiv', 'Escribe la pregunta entera, como se la harías al animal.', false); return; }
+  iaDescGuardar('adivPregunta', t); iaAdivMostrarGuardada(t); sfx('up');
+  if (!xpTracker.wgt.has('adiv_preg')) { xpTracker.wgt.add('adiv_preg'); pts(2); }
+  fb('fbAdiv', '+2 XP: arreglaste la lista. Así se mejora una máquina de instrucciones: una persona agrega la pregunta que faltaba.', true);
+}
+function iaAdivMostrarGuardada(t) {
+  const g = document.getElementById('adiv-guardado'); if (!g) return;
+  g.innerHTML = '💾 Tu pregunta quedó guardada: «' + _esc(t) + '». Si la pusieras ANTES de «¿tiene concha?», ¿a cuál de los tres salvaría?';
+}
+function iaDescInit() {
+  iaPixPintar(); iaAdivPintarAnimales();
+  const p = iaDescLeer('adivPregunta'); if (p) { const i = document.getElementById('adiv-preg'); if (i) i.value = p; iaAdivMostrarGuardada(p); }
+}

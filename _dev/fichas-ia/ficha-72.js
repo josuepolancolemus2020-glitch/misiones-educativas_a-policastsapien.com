@@ -1,6 +1,8 @@
 /* Ficha de la misión 72 · ¿Qué es la Inteligencia Artificial? · I Ciclo */
 'use strict';
 const A = require('../arma-fichas-ia.js');
+/* Las cuentas de las actividades de Descubre: la pauta se CALCULA de aquí, no se escribe. */
+const D = require('../../js/data/ia-descubre.js');
 const { esc, con, arma, portada, preguntas, clave, fichaConcepto, tablaReglas, tablaMitos,
         IA_APLICACIONES, IA_MITOS, IA_REGLAS_ORO, IA_CONCEPTOS } = A;
 
@@ -185,6 +187,51 @@ P.push(`
     </div>
 `);
 
+// ── Descubre, en papel · 👀 La máquina ve puntitos ─────────────────────────
+/* Las cuadrículas se pintan con ■ y no con un fondo de color: el navegador
+   imprime «sin gráficos de fondo» de fábrica y una casilla pintada saldría en
+   blanco, que aquí ES el ejercicio. Los números de la pauta se calculan con
+   el mismo código que corre en la misión (iaPixAdivina). */
+const _rej = (celdas, vacio) => '<table class="rej"><tr>' + celdas.map((v, i) => (i && i % D.IA_PIX_LADO === 0 ? '</tr><tr>' : '') + '<td>' + (v ? '■' : (vacio || '')) + '</td>').join('') + '</tr></table>';
+const _cruz = D.iaPixDeFilas(D.IA_PIX_RECUERDOS.find(r => r.k === 'cruz').filas);
+const _movida = D.iaPixMover(_cruz);
+const _res = D.iaPixAdivina(_movida);
+P.push(`
+    <div class="acts">
+      <h3>👀 Actividad 5 · La máquina ve puntitos, en papel <span class="val">(16 pts)</span></h3>
+
+      <p>En la misión hay una máquina que <strong>no ve dibujos: ve casillas llenas y vacías, y las
+         cuenta</strong>. Tiene tres recuerdos. A cada dibujo nuevo le pone el nombre del recuerdo con el que
+         <strong>más casillas coinciden</strong> (las dos llenas, o las dos vacías).</p>
+
+      <div class="ilus">
+        <div class="ilus-t">Los tres recuerdos de la máquina</div>
+        <div class="rejs">
+${D.IA_PIX_RECUERDOS.map(r => '          <div><b>' + r.e + ' ' + esc(r.n) + '</b>' + _rej(D.iaPixDeFilas(r.filas)) + '</div>').join('\n')}
+        </div>
+      </div>
+
+      <p>Alguien dibujó la cruz <strong>movida una casilla a la derecha</strong>. Cuenta, para cada recuerdo,
+         cuántas de las ${D.IA_PIX_LADO * D.IA_PIX_LADO} casillas coinciden con este dibujo, y escribe el número:</p>
+
+      <div class="rejs">
+        <div><b>El dibujo nuevo</b>${_rej(_movida)}</div>
+        <div style="flex:2">
+          <ol>
+${D.IA_PIX_RECUERDOS.map(r => '            <li>Con ' + esc(r.n) + ' coinciden <span class="linea-resp" style="min-width:50px"></span> casillas</li>').join('\n')}
+            <li>Entonces la máquina dirá: «se parece más a <span class="linea-resp" style="min-width:90px"></span>»</li>
+            <li>¿Y tú qué ves? <span class="linea-resp" style="min-width:90px"></span> ¿Por qué no coinciden la máquina y tú?
+              <span class="linea-resp" style="min-width:100%"></span></li>
+          </ol>
+        </div>
+      </div>
+
+      <p><strong>Para jugar en pareja:</strong> dibuja algo en la cuadrícula vacía. Tu compañero hace de máquina:
+         solo puede contar casillas, y tiene que decir a cuál de los tres recuerdos se parece más.</p>
+      <div class="rejs"><div>${_rej(_cruz.map(() => 0), '&nbsp;')}</div></div>
+    </div>
+`);
+
 // ── Página 6 ───────────────────────────────────────────────────────────────
 P.push(`
     <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
@@ -213,6 +260,10 @@ P.push(`
         se valoran tres diferencias reales (nace/lo fabricaron, come/no come, siente/no siente, muere/se
         apaga). En la segunda, que nombre cosas de SU vida: dictar un mensaje, la cámara que encuentra
         caras, traducir un letrero, el teclado que adivina la palabra.</div>
+      <div><span class="pt">Actividad 5 · La máquina ve puntitos (16 pts):</span> ${_res.todos.map(t => esc(t.n) + ' <b>' + t.coincide + '</b>').join(' · ')} de ${_res.total}
+        → la máquina dice «<b>${esc(_res.mejor.n)}</b>» (${_res.mejor.coincide} de ${_res.total}); el alumno ve una cruz. Lo que se
+        califica es la última pregunta: que diga que la máquina compara <b>casilla por casilla en el mismo sitio</b> y por eso una
+        cruz movida ya no le coincide con su cruz. El juego en pareja no lleva respuesta.</div>
     </div>
 
     <div class="nota-doc">

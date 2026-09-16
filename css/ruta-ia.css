@@ -283,3 +283,143 @@
 .salto3d .s3-txt strong{display:block;font-family:'Fredoka',sans-serif;font-size:0.9rem;color:var(--pri);}
 [data-theme="dark"] .juego-card{background:var(--card-bg);}
 [data-theme="dark"] .juego-card p{color:var(--dark);}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   🔭 DESCUBRE · las actividades de descubrimiento de las cuatro etapas
+   ───────────────────────────────────────────────────────────────────────────
+   Entraron el 16 de septiembre de 2026. Cada una afirma algo que la sonda
+   `_dev/verifica-descubre-ia.js` recalcula con el mismo código
+   (`js/data/ia-descubre.js`). Aquí solo está cómo se ven, y las reglas de
+   siempre valen para todas: 44 px de blanco de toque, <button> de verdad
+   (un <div> con tabindex no responde a Enter), el resultado con SÍMBOLO
+   además de color, y ni un color propio: todo sale de las variables de la
+   misión.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Piezas comunes: los chips para elegir (animal, ronda, tamaño, texto,
+   escenario), la casilla de escribir y el recuadro de «lo que tú produces». */
+.desc-chips{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;}
+.desc-chip{min-height:44px;padding:0.5rem 0.9rem;border-radius:999px;border:2px solid var(--border);
+  background:var(--card);color:var(--dark);font-family:'Fredoka',sans-serif;font-size:0.95rem;
+  cursor:pointer;touch-action:manipulation;transition:background .2s,border-color .2s,color .2s;}
+.desc-on{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700;}
+.desc-hecho:not(.desc-on){border-color:var(--jade);}
+.desc-hecho::after{content:' ✓';font-weight:700;}
+/* La casilla de escribir NO es un <p> ni un <span>, así que la letra grande
+   de la misión no la toca: se le da aquí el mismo cuarto más. */
+.desc-input{display:block;width:100%;box-sizing:border-box;min-height:44px;margin:0.35rem 0 0.6rem;
+  padding:0.55rem 0.7rem;border:2px solid var(--border);border-radius:10px;background:var(--card);
+  color:var(--dark);font-family:'Nunito',sans-serif;font-size:1rem;line-height:1.4;}
+.desc-input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-gl);}
+body.letra-grande .desc-input{font-size:1.2rem;}
+.desc-produce{margin-top:0.9rem;background:var(--pri-gl);border-radius:12px;padding:0.75rem 0.9rem;}
+.desc-produce label{display:block;font-size:0.95rem;line-height:1.45;}
+.desc-guardado{font-size:0.92rem;line-height:1.5;margin:0.5rem 0 0;}
+.desc-guardado:empty{display:none;}
+/* El cajón donde pasa cada actividad; vacío no ocupa sitio. */
+.adiv-caja,.regla-caja,.curva-caja,.tiempo-caja,.comp-caja,.esc-caja,.pix-resp{
+  background:var(--card-alt,rgba(0,0,0,0.02));border:2px dashed var(--border);border-radius:14px;padding:0.9rem;}
+.adiv-caja:empty,.regla-caja:empty,.curva-caja:empty,.comp-caja:empty,.esc-caja:empty,.pix-resp:empty{display:none;}
+
+/* ── Etapa 1 · 👀 La máquina ve puntitos ─────────────────────────────────
+   Las casillas son <button> de 44 px: seis por fila caben en un teléfono de
+   360 (287 px con los huecos). Los tres recuerdos van en miniatura y con su
+   cuenta debajo, que es lo que el niño compara. */
+.pix-recuerdos{display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:0.8rem;}
+.pix-rec{display:flex;flex-direction:column;align-items:center;gap:0.25rem;font-size:0.85rem;min-width:84px;}
+.pix-mini{display:grid;grid-template-columns:repeat(6,9px);gap:1px;padding:3px;background:var(--border);border-radius:4px;}
+.pix-mini i{display:block;width:9px;height:9px;background:var(--card);}
+.pix-mini i.on{background:var(--dark);}
+.pix-rec-n{font-weight:700;}
+.pix-rec-c{font-size:0.8rem;color:var(--pri);min-height:1.1em;display:flex;align-items:center;gap:0.3rem;}
+.pix-barra{display:inline-block;width:44px;height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+.pix-barra i{display:block;height:100%;background:var(--pri);}
+.pix-grid{display:grid;grid-template-columns:repeat(6,44px);gap:3px;justify-content:center;
+  margin:0 auto 0.7rem;padding:4px;background:var(--border);border-radius:8px;width:max-content;}
+.pix-cel{width:44px;height:44px;border:0;border-radius:4px;background:var(--card);cursor:pointer;touch-action:manipulation;padding:0;}
+.pix-cel.pix-on{background:var(--pri);}
+.pix-cel:focus-visible{outline:3px solid var(--sec);outline-offset:-3px;}
+.pix-btns{display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:0.6rem;}
+.pix-btns .btn{min-height:44px;}
+.pix-dice{font-size:1.05rem;line-height:1.5;margin:0 0 0.45rem;}
+.pix-nota{font-size:0.95rem;line-height:1.5;margin:0 0 0.45rem;}
+.pix-num{font-size:0.85rem;margin:0;color:var(--gray);word-break:break-all;}
+.pix-num code{font-family:'Fira Code',monospace;background:var(--card);border-radius:6px;padding:0.15rem 0.35rem;}
+
+/* ── Etapa 1 · 🐾 El adivinador de animales ──────────────────────────────── */
+.adiv-animal,.adiv-preg,.adiv-res,.adiv-verdad{font-size:0.98rem;line-height:1.5;margin:0 0 0.5rem;}
+.adiv-preg{font-size:1.1rem;font-weight:700;}
+.adiv-camino{margin:0 0 0.6rem;padding-left:1.2rem;}
+.adiv-camino li{font-size:0.9rem;line-height:1.5;}
+/* El acierto y el error con símbolo ADEMÁS del color: uno de cada doce. */
+.adiv-ok{background:var(--jade-gl);border-radius:8px;padding:0.45rem 0.6rem;}
+.adiv-no{background:var(--red-gl);border-radius:8px;padding:0.45rem 0.6rem;}
+.adiv-verdad{font-size:0.86rem;color:var(--gray);margin-bottom:0;}
+
+/* ── Etapa 2 · 🎯 Tú eres la máquina ─────────────────────────────────────
+   El ejemplo va grande y solo, porque es lo único que hay que mirar; las
+   marcas de arriba son la memoria de la ronda, que el alumno usa para
+   notar cuándo empezó a acertar. */
+.regla-tit{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);font-size:1rem;margin:0 0 0.4rem;}
+.regla-marcas{display:flex;gap:0.2rem;flex-wrap:wrap;font-size:1.1rem;min-height:1.4em;margin-bottom:0.5rem;}
+.regla-ej{font-family:'Fredoka',sans-serif;font-size:2.4rem;font-weight:700;text-align:center;background:var(--card);
+  border:2px solid var(--pri);border-radius:14px;padding:0.5rem;margin:0.3rem 0 0.5rem;color:var(--dark);}
+.regla-preg,.regla-mitad,.regla-rev,.regla-pista{font-size:0.98rem;line-height:1.5;margin:0 0 0.5rem;}
+.regla-preg{text-align:center;font-weight:700;}
+.regla-trampa{background:var(--amber-gl);border-radius:10px;padding:0.6rem 0.75rem;font-size:0.95rem;line-height:1.5;margin:0.4rem 0 0.6rem;}
+
+/* ── Etapa 2 · 📈 ¿Cuántos ejemplos hacen falta? ─────────────────────────
+   Una barra por tamaño probado; la última va con el color secundario para
+   que se vea cuál acaba de entrar. La barra va ADEMÁS del número. */
+.curva-fila{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.35rem;font-size:0.95rem;}
+.curva-n{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);flex:0 0 2.2em;text-align:right;}
+.curva-barra{flex:1 1 auto;height:14px;background:var(--border);border-radius:8px;overflow:hidden;}
+.curva-barra i{display:block;height:100%;background:var(--pri);border-radius:8px;transition:width .4s;}
+.curva-ult .curva-barra i{background:var(--sec);}
+.curva-pct{flex:0 0 5.2em;font-family:'Fredoka',sans-serif;font-size:0.9rem;}
+.curva-nota,.curva-fin{font-size:0.95rem;line-height:1.5;margin:0.6rem 0 0;}
+.curva-fin{background:var(--amber-gl);border-radius:10px;padding:0.6rem 0.75rem;}
+
+/* ── Etapa 3 · 🗓️ ¿Cuánto tardó? ─────────────────────────────────────────
+   El deslizador es nativo (teclado y dedo), y los botones de ±1 y ±5 están
+   para afinar: con el dedo un deslizador de 80 posiciones no se clava. */
+.tiempo-tit{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);margin:0 0 0.5rem;}
+.tiempo-hitos{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.7rem;}
+.tiempo-hito{display:flex;flex-direction:column;background:var(--card);border-left:4px solid var(--pri);
+  border-radius:0 10px 10px 0;padding:0.5rem 0.7rem;font-size:0.95rem;line-height:1.35;}
+.tiempo-hito small{color:var(--gray);font-size:0.85rem;}
+.tiempo-e{font-size:1.3rem;line-height:1;}
+.tiempo-flecha{text-align:center;color:var(--sec);font-weight:700;font-size:0.9rem;}
+.tiempo-mando{display:flex;align-items:center;justify-content:center;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem;}
+.tiempo-mando .btn{min-height:44px;min-width:44px;padding:0.4rem 0.6rem;}
+.tiempo-val{font-family:'Fredoka',sans-serif;font-size:1.6rem;font-weight:700;color:var(--pri);min-width:5.5em;text-align:center;}
+.tiempo-rango{width:100%;height:44px;margin:0 0 0.6rem;accent-color:var(--pri);}
+.tiempo-real,.tiempo-por,.tiempo-fin{font-size:0.98rem;line-height:1.5;margin:0 0 0.5rem;}
+.tiempo-por{background:var(--amber-gl);border-radius:10px;padding:0.55rem 0.7rem;}
+/* ── Etapa 3 · ✍️ El hito de este año ─────────────────────────────────── */
+.hito-form label{display:block;font-size:0.95rem;line-height:1.4;margin-top:0.3rem;}
+.hito-form label small{color:var(--gray);font-weight:400;}
+.hito-mio{border-left-color:var(--sec);margin-top:0.7rem;}
+/* La cabecera del hito propio es un <div>, no un botón (no se abre ni se
+   cierra), y el título va en su propio renglón: con la letra grande, año y
+   título en la misma fila dejaban el título en una columna de tres palabras. */
+.hito-mio .hito-cab{cursor:default;flex-wrap:wrap;}
+.hito-mio .hito-tit{flex:1 1 100%;}
+
+/* ── Etapa 4 · 🕵️ ¿Se puede comprobar? ───────────────────────────────────
+   Reusa las clases del cazador de inventos (.caz-trozo y sus estados) para
+   que el resultado se lea igual que allí: ✅ ⬅️ ❌, símbolo además de color.
+   Aquí cada trozo es una oración entera, así que va en bloque. */
+.comp-tit,.esc-tit{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);font-size:1.05rem;margin:0 0 0.5rem;}
+.comp-caja .caz-texto{line-height:1.6;}
+.comp-caja .caz-trozo{display:block;width:100%;box-sizing:border-box;margin:0 0 0.4rem;padding:0.45rem 0.6rem;
+  min-height:44px;text-align:left;line-height:1.45;}
+/* ── Etapa 4 · 🔮 Escenarios por venir ───────────────────────────────────── */
+.esc-quien{font-size:0.92rem;line-height:1.45;margin:0 0 0.4rem;color:var(--sec);}
+.esc-sit{font-size:0.98rem;line-height:1.55;margin:0 0 0.7rem;}
+.esc-ops{display:flex;flex-direction:column;gap:0.35rem;}
+.esc-ops .pet-op[disabled]{opacity:0.75;cursor:default;}
+.esc-ops .pet-op.pet-on[disabled]{opacity:1;}
+.esc-pasa{margin-top:0.7rem;background:var(--card);border-left:4px solid var(--sec);border-radius:0 10px 10px 0;
+  padding:0.6rem 0.75rem;font-size:0.95rem;line-height:1.55;}
+.esc-regla{margin-top:0.5rem;background:var(--amber-gl);border-radius:10px;padding:0.55rem 0.7rem;font-weight:700;font-size:0.95rem;line-height:1.45;}

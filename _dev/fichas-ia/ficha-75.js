@@ -1,6 +1,8 @@
 /* Ficha de la misión 75 · IA Generativa · III Ciclo */
 'use strict';
 const A = require('../arma-fichas-ia.js');
+/* Las cuentas de las actividades de Descubre: la pauta se CALCULA de aquí, no se escribe. */
+const D = require('../../js/data/ia-descubre.js');
 const { esc, arma, portada, preguntas, clave, fichaConcepto, tablaReglas,
         IA_CONCEPTOS, IA_VERIFICA, IA_PIEZAS_PETICION } = A;
 
@@ -206,6 +208,37 @@ P.push(`
     </div>
 `);
 
+// ── Descubre, en papel · 🕵️ ¿Se puede comprobar? y 🔮 un escenario ────────
+/* Los textos y el escenario salen de IA_COMPROBAR e IA_ESCENARIOS, los
+   mismos de la pantalla; la pauta se calcula de ahí. */
+const _tx = D.IA_COMPROBAR.filter(t => t.k === 'escuela' || t.k === 'remedio');
+const _esc1 = D.IA_ESCENARIOS[0];
+P.push(`
+    <div class="acts">
+      <h3>🕵️ Actividad 6 · ¿Se puede comprobar? <span class="val">(14 pts)</span></h3>
+
+      <p>Estos dos textos se escribieron para este ejercicio. No te preguntamos si los escribió una máquina
+         —eso no lo aciertan ni los expertos—. Te preguntamos, afirmación por afirmación, si <strong>trae con qué
+         comprobarse</strong> (quién, cuándo, dónde, qué documento). Escribe <strong>SÍ</strong> o <strong>NO</strong>:</p>
+
+${_tx.map(t => '      <div class="ilus"><div class="ilus-t">' + t.e + ' ' + esc(t.titulo) + '</div><ol>' + t.trozos.map(z => '<li>' + esc(z.t) + ' <span class="linea-resp" style="min-width:45px"></span></li>').join('') + '</ol></div>').join('\n')}
+
+      <p>¿Cuál de los dos está mejor escrito? <span class="linea-resp" style="min-width:120px"></span> ¿Y cuál se puede
+         comprobar? <span class="linea-resp" style="min-width:120px"></span></p>
+
+      <h3>🔮 Actividad 7 · Un escenario por venir: tú decides <span class="val">(sin respuesta única, a propósito)</span></h3>
+
+      <p><strong>${esc(_esc1.quien)}</strong> se juega ${esc(_esc1.cuesta)}. ${esc(_esc1.situacion)}</p>
+      <p>Rellena el círculo de lo que harías tú, y escribe abajo tu regla:</p>
+      <div class="preg-ops">
+${_esc1.ops.map(o => '        <div class="op full"><i></i>' + esc(o.t) + '</div>').join('\n')}
+      </div>
+      <p>Mi regla, en una línea:<br><span class="linea-resp" style="min-width:100%"></span></p>
+      <div class="caja idea"><b>El escenario es inventado para pensar</b>, armado con algo que ya se puede hacer: una voz
+        se fabrica con unos segundos de audio. En la misión están las consecuencias de cada decisión.</div>
+    </div>
+`);
+
 P.push(`
     <h2>🔒 7. Las tres reglas de oro</h2>
 
@@ -243,6 +276,11 @@ P.push(`
       <div><span class="pt">Actividad 5 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
         que haya hablado con una persona real, que distinga tareas mecánicas de las que piden criterio, y
         que recoja la opinión sin corregirla.</div>
+      <div><span class="pt">Actividad 6 · ¿Se puede comprobar? (14 pts):</span>
+        ${_tx.map(t => esc(t.titulo) + ': ' + t.trozos.map(z => '<b>' + (z.c ? 'SÍ' : 'NO') + '</b>').join(' · ')).join(' &nbsp;|&nbsp; ')}.
+        El mejor escrito («${esc(_tx[1].titulo)}») no trae nada comprobable: lo bien escrito no es lo verdadero.</div>
+      <div><span class="pt">Actividad 7 · Un escenario por venir:</span> <b>no lleva respuesta única a propósito.</b> Se califica la
+        regla escrita: que sirva para no mandar dinero por una voz. La primera decisión pierde el dinero; la misión lo cuenta.</div>
     </div>
 
     <div class="nota-doc">

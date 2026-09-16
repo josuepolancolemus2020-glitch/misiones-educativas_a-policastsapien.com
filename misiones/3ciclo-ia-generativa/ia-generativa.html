@@ -24,6 +24,7 @@
      niños no distingue el rojo del verde. Va DESPUÉS del CSS de la misión,
      que es lo que le deja pisar sus reglas. -->
 <link rel="stylesheet" href="../../css/senal-no-color.css">
+<link rel="stylesheet" href="../../css/lab-legible.css">
 <!-- Que las actividades se puedan hacer sin el dedo: el foco visible.
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
@@ -211,6 +212,52 @@
     <p>Son las mismas tres de la etapa 1, sin cambiarles una palabra. Lo que cambió en estos años no son las
        reglas: es que ahora ya sabes <strong>por qué</strong> son esas y no otras.</p>
     <div id="ia-reglas"></div>
+  </div>
+
+  <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-descubre')">
+    <span class="nsb-icon">🔭</span>
+    <span class="nsb-arrow">→</span>
+  </button>
+</div>
+
+<!-- ===== DESCUBRE ===== -->
+<div class="sec" id="s-descubre" role="tabpanel">
+  <div class="card ac-jade">
+    <h2>🕵️ ¿Se puede comprobar?</h2>
+    <p style="font-size:0.92rem;">Estos cuatro textos los escribimos <strong>para este ejercicio</strong>, imitando las
+       dos formas de escribir. No te pedimos adivinar si los hizo una máquina: <strong>eso no lo aciertan ni los
+       expertos</strong>. Te pedimos lo que sí se puede: mirar cada afirmación y decir si <strong>trae con qué
+       comprobarse</strong> —quién, cuándo, dónde, qué documento— o no.</p>
+    <p style="font-size:0.88rem;margin-bottom:0.6rem;">Toca las afirmaciones que <strong>NO se pueden comprobar</strong>
+       con lo que el texto dice.</p>
+    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.7rem;">⭐ +2 XP por cada texto revisado · +3 XP si aciertas uno entero</p>
+    <div class="desc-chips" id="comp-textos" role="group" aria-label="Los cuatro textos"></div>
+    <div class="comp-caja" id="comp-caja"></div>
+    <div id="fbComp" class="fb" role="alert"></div>
+    <div class="tip" style="margin-top:0.9rem;">
+      <span class="ti">🎯</span>
+      <div><strong>Fíjate en «El remedio».</strong> Es el mejor escrito de los cuatro, el más seguro… y <b>no trae ni
+           una sola cosa que se pueda comprobar</b>. Lo bien escrito no es lo verdadero. Y al revés: un texto torpe
+           con lugar, fecha y quién lo dice se comprueba en cinco minutos.</div>
+    </div>
+  </div>
+
+  <div class="card ac-teal">
+    <h2>🔮 Escenarios por venir: tú decides</h2>
+    <p style="font-size:0.92rem;">Cuatro situaciones <strong>inventadas para pensar</strong>, armadas con cosas que ya
+       se pueden hacer: una voz se puede fabricar, un texto se puede generar, un video se puede falsear, y hay
+       programas que califican solos. En cada una hay una persona y algo que le cuesta. <strong>Decide y mira qué
+       pasa.</strong> No hay una sola respuesta buena: hay consecuencias.</p>
+    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada escenario decidido · +3 XP por escribir tu regla</p>
+    <div class="desc-chips" id="esc-lista" role="group" aria-label="Los cuatro escenarios"></div>
+    <div class="esc-caja" id="esc-caja"></div>
+    <div id="fbEsc" class="fb" role="alert"></div>
+    <div class="desc-produce" id="esc-produce">
+      <label for="esc-regla"><strong>✍️ Mi regla</strong> para cuando me toque a mí, en una línea:</label>
+      <input type="text" id="esc-regla" class="desc-input" maxlength="160" placeholder="Antes de creerle a una voz, un video o un texto, yo…" aria-label="Mi regla">
+      <button class="btn btn-g" onclick="iaEscGuardar()">💾 Guardar mi regla</button>
+      <p class="desc-guardado" id="esc-guardado"></p>
+    </div>
   </div>
 
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-lab')">
@@ -561,7 +608,7 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 9 páginas con <strong>cómo predice un modelo de lenguaje</strong>, la alucinación, los cinco pasos para verificar, las cuatro piezas de una petición y el cazador de inventos <strong>en papel</strong>, para trabajarlo sin teléfono.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 10 páginas con <strong>cómo predice un modelo de lenguaje</strong>, la alucinación, los cinco pasos para verificar, las cuatro piezas de una petición y el cazador de inventos <strong>en papel</strong>, para trabajarlo sin teléfono.</p>
       <a href="../../fichas/ficha-ia-generativa.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <!-- El Parque de Juegos 3D vive en la etapa 2 de la ruta, no aquí: es
@@ -619,6 +666,7 @@
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
   <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">🔎</span> Verifica</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-descubre" data-s="s-descubre" onclick="go('s-descubre')"><span class="ico">🔭</span> Descubre</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>
@@ -658,6 +706,7 @@
        Va ANTES del JS de la misión, que lo usa para armar las flashcards, el
        Laboratorio y las actividades. -->
   <script src="../../js/data/ia-conceptos.js"></script>
+  <script src="../../js/data/ia-descubre.js"></script>
   <script src="js/ia-generativa.js"></script>
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
