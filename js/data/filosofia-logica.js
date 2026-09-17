@@ -215,26 +215,6 @@ const LOG_ARBOL = [
     hoy: 'Las hojas del patio están mordidas. ¿Qué se sigue de eso, y qué no?' }
 ];
 
-/* ── La ruta por ciclo. Mismo contenido para los tres; cambia la profundidad,
-      la actividad y el producto. ── */
-const LOG_CICLOS = [
-  { ciclo: 'I Ciclo', grados: '1.º a 3.º grado', edades: '6 a 9 años', lema: 'Asombrarse',
-    pregunta: '¿Por qué pienso lo que pienso?',
-    habilidad: 'Dar un «porque».',
-    actividad: 'Juego «¿Cuál no pertenece?» con objetos y dibujos, justificando la respuesta. Después, el semáforo de razones: verde si la razón sirve, amarillo si ayuda poco, rojo si no es razón.',
-    producto: 'Fichas «Yo digo… porque…».' },
-  { ciclo: 'II Ciclo', grados: '4.º a 6.º grado', edades: '9 a 12 años', lema: 'Razonar',
-    pregunta: '¿Cuándo una razón es buena y cuándo solo lo parece?',
-    habilidad: 'Identificar la razón y la conclusión, y usar «si… entonces».',
-    actividad: 'Detectives de argumentos en anuncios y noticias. Armar silogismos con situaciones de la escuela.',
-    producto: 'Álbum con cinco argumentos analizados.' },
-  { ciclo: 'III Ciclo', grados: '7.º a 9.º grado', edades: '12 a 15 años', lema: 'Argumentar',
-    pregunta: '¿Puede un razonamiento estar bien hecho y aun así llegar a algo falso?',
-    habilidad: 'Distinguir la validez de la verdad y reconocer falacias.',
-    actividad: 'Cacería de falacias en mensajes, anuncios y discursos: contra la persona, generalización apresurada, falso dilema y apelación a la mayoría.',
-    producto: 'Catálogo ilustrado de falacias con ejemplos de la vida de aquí.' }
-];
-
 /* Helpers: nadie reparte a mano las razones por color. Si mañana entra una
    razón nueva, el Clasifica y el Reto la reparten solos. */
 function logDeColor(c)  { return LOG_RAZONES.filter(x => x.color === c).map(x => x.r); }

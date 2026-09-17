@@ -821,7 +821,7 @@ function pintarLogSiEntonces(){
     <div class="tip"><span class="ti">⚠️</span><div>${_esc(S.ojo)}</div></div>`;
 }
 
-/* Bien hecho no es verdad: la pregunta de III Ciclo y la idea más difícil de
+/* Bien hecho no es verdad: la idea más difícil de
    la unidad. Los cuatro casos van con sus dos etiquetas a la vista, porque lo
    que hay que ver es que las dos cosas se pueden combinar de cuatro maneras. */
 function pintarLogValidez(){
@@ -873,27 +873,6 @@ function pintarLogPensadores(){
      </div>`).join('');
 }
 
-function pintarLogCiclos(){
-  const c=document.getElementById('lg-ciclos');if(!c)return;
-  c.innerHTML=`<h2>👩‍🏫 Para el maestro: la misma unidad en los tres ciclos</h2>
-    <p>El contenido es el mismo para toda la escuela. Lo que cambia de un ciclo
-       a otro es la pregunta con que se entra, la actividad y lo que el alumno entrega.</p>
-    <div class="lg-ciclos">${LOG_CICLOS.map(k=>
-      `<div class="lg-ciclo">
-         <div class="lg-ciclo-h">${_esc(k.ciclo)} · ${_esc(k.lema)} <small>${_esc(k.grados)} · ${_esc(k.edades)}</small></div>
-         <dl>
-           <dt>Pregunta con que se entra</dt><dd><em>${_esc(k.pregunta)}</em></dd>
-           <dt>Habilidad</dt><dd>${_esc(k.habilidad)}</dd>
-           <dt>Actividad</dt><dd>${_esc(k.actividad)}</dd>
-           <dt>Producto</dt><dd>${_esc(k.producto)}</dd>
-         </dl>
-       </div>`).join('')}</div>
-    <div class="tip"><span class="ti">📚</span><div>Esta unidad cumple el RA2 y el CE2.1
-      del currículo de Filosofía del CNB de Educación Media. Las tablas de verdad y la
-      lógica simbólica que ese documento también pide quedan fuera a propósito: son de
-      undécimo grado, y esta misión la abre un niño de primero. Las citas están en
-      CURRICULA-FILOSOFIA.md.</div></div>`;
-}
 
 window.addEventListener('DOMContentLoaded',()=>{
   initTheme();
@@ -906,7 +885,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   pintarLogConectores();
   pintarLogArbol();
   pintarLogPensadores();
-  pintarLogCiclos();
   upFC();
   buildQz();
   showQz();

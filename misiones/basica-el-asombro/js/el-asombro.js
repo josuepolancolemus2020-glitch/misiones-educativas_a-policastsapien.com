@@ -172,9 +172,11 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
+/* ⚠️ Una sola secuencia, y es la del ALUMNO. Aquí había otra con los cinco
+   momentos de una clase de filosofía —los minutos incluidos—, o sea el plan del
+   maestro puesto a ordenar al niño. «Otra línea» vuelve a barajar esta, que es
+   lo que el ejercicio pide de verdad. */
 const routeSets = [
-  { label: 'Los cinco momentos de una clase de filosofía',
-    steps: FILO_RUTINA.map(x => x.n + '. ' + x.titulo + ': ' + x.que) },
   { label: 'Cómo una pregunta se convierte en una ciencia',
     steps: FILO_ORIGEN.slice() }
 ];
@@ -277,8 +279,8 @@ const classifyTaskDB=[
   {w:'Pregunta de hechos',gen:'Se responde buscando',n:'Tiene una sola respuesta',g:'Se puede comprobar',t:'Ejemplo: ¿cuántos días tiene febrero?'},
   {w:'Pregunta de significado',gen:'Se responde pensando qué es algo',n:'Pide una definición',g:'Se contesta con ejemplos',t:'Ejemplo: ¿qué es un amigo?'},
   {w:'Pregunta de valor',gen:'Se responde dando razones',n:'Pregunta si algo está bien',g:'Tiene varias respuestas buenas',t:'Ejemplo: ¿está bien copiar en un examen?'},
-  {w:'Asombro',gen:'El primer momento de la clase',n:'Algo de siempre te parece raro',g:'Dura de 5 a 10 minutos',t:'Sin él no hay pregunta que valga'},
-  {w:'Diálogo',gen:'Pensar entre varios',n:'Se hace en círculo',g:'Se pregunta: ¿por qué?, ¿un ejemplo?',t:'No es discutir para ganar'},
+  {w:'Asombro',gen:'Con esto empieza la filosofía',n:'Algo de siempre te parece raro',g:'Todavía no es una pregunta',t:'Sin él no hay pregunta que valga'},
+  {w:'Diálogo',gen:'Pensar entre varios',n:'Cada uno tiene que dar razones',g:'Se pregunta: ¿por qué?, ¿un ejemplo?',t:'No es discutir para ganar'},
   {w:'Lógica',gen:'Raíz de la filosofía',n:'Pregunta qué hace buena a una razón',g:'Sostiene a las Matemáticas',t:'Es la unidad que sigue a esta'},
   {w:'Ética',gen:'Raíz de la filosofía',n:'Pregunta qué debo hacer',g:'Sostiene la convivencia del aula',t:'De ahí salen las preguntas de valor'},
   {w:'Tales de Mileto',gen:'Explicó el mundo sin un mito',n:'Buscó una causa natural',g:'Ahí arranca el camino a las ciencias',t:'Dijo que todo salía del agua, y se equivocó'},
@@ -304,8 +306,8 @@ const explainQuestions=[
   {q:'¿Por qué en esta materia la duda no es un defecto?',ans:'Porque es la herramienta de trabajo. Quien ya está seguro de todo no pregunta, y sin pregunta no hay nada que pensar. Dudar no es no saber nada: es saber que todavía falta comprobar algo, que es justo lo que hace el que estudia.'},
   {q:'Sócrates no daba las respuestas. Explica por qué eso puede enseñar más que darlas.',ans:'Porque preguntaba hasta que la persona veía sola su contradicción, y eso no se olvida. Una respuesta que a uno le dan se puede repetir sin entenderla. Una contradicción que uno descubre obliga a pensar de nuevo.'},
   {q:'Escribe una pregunta tuya que nadie te haya contestado y di de qué clase es.',ans:'Respuesta abierta. Se valora que la pregunta sea suya y que diga POR QUÉ es de esa clase. Si se responde buscando, dónde buscaría. Si se responde pensando, qué razón daría.'},
-  {q:'¿Para qué sirve la filosofía si no fabrica nada?',ans:'Respuesta abierta, y es la pregunta de III Ciclo. Se valora que dé una razón y responda a una objeción. Una línea posible: no fabrica cosas, fabrica las preguntas de las que salieron las cosas.'},
-  {q:'Explica los cinco momentos de una clase de filosofía y para qué sirve cada uno.',ans:'Asombro: algo de siempre te parece raro. Preguntas: cada uno escribe la suya y el grupo vota. Diálogo: en círculo, dando razones. Conexión: se une con la clase del día. Metacognición: en el diario, qué pensé. El último convierte la plática en aprendizaje.'}
+  {q:'¿Para qué sirve la filosofía si no fabrica nada?',ans:'Respuesta abierta. Se valora que dé una razón y responda a una objeción. Una línea posible: no fabrica cosas, fabrica las preguntas de las que salieron las cosas.'},
+  {q:'Cuenta cómo una pregunta llegó a convertirse en una ciencia.',ans:'Alguien se asombra con algo de todos los días. Lo convierte en una pregunta. La discute con otros y le piden razones. Busca una forma de comprobar la respuesta. Cuando esa forma de comprobar funciona, ahí nace una ciencia.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
@@ -403,7 +405,7 @@ const evalMCBank=[
   {q:'La rama que pregunta «¿cómo sé que sé?» es la…',o:['estética','epistemología','política','lógica'],a:1},
   {q:'La rama que pregunta «¿qué debo hacer?» es la…',o:['metafísica','estética','ética','lógica'],a:2},
   {q:'¿Con qué pregunta nació el Español como asignatura?',o:['¿Qué es una palabra?','¿Quién debe mandar?','¿Qué es lo bello?','¿Qué es un número?'],a:0},
-  {q:'¿Cuál es el primer momento de una clase de filosofía?',o:['El diálogo','La conexión','El asombro','La metacognición'],a:2},
+  {q:'¿Qué convierte una pregunta en una ciencia?',o:['Que lo diga un sabio','Que sea nueva','Hallar cómo comprobar la respuesta','Que se discuta mucho'],a:2},
   {q:'¿Por qué esta materia se llama la raíz y no otra rama?',o:['Porque es la más difícil','Porque cada asignatura nació de una pregunta filosófica','Porque va al final del año','Porque no tiene examen'],a:1}
 ];
 const evalCPBank=[
@@ -594,8 +596,8 @@ const critEffectBank=[
   {effect:'Alguien pasa tres tardes buscando en los libros la respuesta a «¿está bien copiar?» y no la encuentra.',guide:'Porque es una pregunta de valor y no está escrita en ninguna parte: se responde dando razones.'},
   {effect:'Un niño al que le contestan «porque yo lo digo» deja de preguntar.',guide:'Porque eso no es una razón, y una pregunta a la que nunca se le da una razón enseña que preguntar no sirve.'},
   {effect:'La misma pregunta se puede discutir un año entero y seguir valiendo la pena.',guide:'Porque las de significado y las de valor no se cierran con un dato: se van entendiendo mejor.'},
-  {effect:'En una clase de filosofía se pone el aula en círculo.',guide:'Porque el diálogo es pensar entre varios, y de espaldas al que habla no se escucha ni se le responde a su idea.'},
-  {effect:'El diario filosófico se escribe al final de cada sesión.',guide:'Porque sin ese momento la conversación se olvida como una plática; con él queda lo que uno pensó y si cambió de idea.'}
+  {effect:'Dos personas discuten una hora la misma pregunta y las dos salen pensando distinto de como entraron.',guide:'Porque en una pregunta de valor lo que se examina son las razones, y oír la del otro obliga a mirar la propia.'},
+  {effect:'Alguien escribe su pregunta y al mes la vuelve a leer y ya no piensa igual.',guide:'Porque una pregunta de significado no se cierra con un dato: se va entendiendo mejor, y escrita se nota que uno cambió de idea.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -807,44 +809,6 @@ function pintarFiloPensadores(){
      </div>`).join('');
 }
 
-/* Los cinco momentos de una clase de filosofía. Van con sus minutos porque el
-   maestro los necesita para cabir la sesión de 45 minutos. */
-function pintarFiloRutina(){
-  const c=document.getElementById('fi-rutina');if(!c)return;
-  c.innerHTML=`<div class="fi-pasos">${FILO_RUTINA.map(x=>
-    `<div class="fi-paso">
-       <div class="fi-paso-n" aria-hidden="true">${x.n}</div>
-       <div><h4>${_esc(x.titulo)}</h4><p>${_esc(x.que)}</p>
-       <span class="fi-paso-min">⏱ ${_esc(x.min)}</span></div>
-     </div>`).join('')}</div>`;
-}
-
-/* La ruta por ciclo. Es para el MAESTRO y la tarjeta lo dice: el contenido de
-   esta misión es el MISMO para I, II y III Ciclo, y lo que cambia es la
-   pregunta con que se entra, la actividad y el producto. Una escuela entera
-   puede trabajar la unidad el mismo mes y compartir el mural. */
-function pintarFiloCiclos(){
-  const c=document.getElementById('fi-ciclos');if(!c)return;
-  c.innerHTML=`<h2>👩‍🏫 Para el maestro: la misma unidad en los tres ciclos</h2>
-    <p>El contenido de esta misión es el mismo para toda la escuela. Lo que cambia
-       de un ciclo a otro es la pregunta con que se entra, la actividad y lo que
-       el alumno entrega.</p>
-    <div class="fi-ciclos">${FILO_CICLOS.map(k=>
-      `<div class="fi-ciclo">
-         <div class="fi-ciclo-h">${_esc(k.ciclo)} · ${_esc(k.lema)} <small>${_esc(k.grados)} · ${_esc(k.edades)}</small></div>
-         <dl>
-           <dt>Pregunta con que se entra</dt><dd><em>${_esc(k.pregunta)}</em></dd>
-           <dt>Habilidad</dt><dd>${_esc(k.habilidad)}</dd>
-           <dt>Actividad</dt><dd>${_esc(k.actividad)}</dd>
-           <dt>Producto</dt><dd>${_esc(k.producto)}</dd>
-         </dl>
-       </div>`).join('')}</div>
-    <div class="tip"><span class="ti">📚</span><div>El temario sale del currículo holístico de
-      Filosofía para Educación Básica. Filosofía no es una materia inventada aquí: el DCNB la
-      nombra dentro del Área de Ciencias Sociales, y en Educación Media es un espacio curricular
-      propio de 120 horas. Las citas están en CURRICULA-FILOSOFIA.md.</div></div>`;
-}
-
 window.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
@@ -853,8 +817,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   pintarFiloArbol();
   pintarFiloRaices();
   pintarFiloPensadores();
-  pintarFiloRutina();
-  pintarFiloCiclos();
   upFC();
   buildQz();
   showQz();

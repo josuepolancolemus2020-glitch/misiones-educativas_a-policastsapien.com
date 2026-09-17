@@ -35,9 +35,14 @@
      ficha para ganar una hoja, y sin el aviso el maestro lo da por un
      descuido y se la salta.
 
-   · Que la hoja del docente lleve la ruta de los TRES ciclos. El currículo es
-     holístico: si se cae una, la escuela que trabaja la unidad el mismo mes se
-     queda sin saber qué le toca a ese ciclo.
+   · ⚠️ Que NO se cuele nada para el maestro, ni en la pantalla ni en el papel.
+     Estas misiones llevaban la rutina de la clase —los cinco momentos, con sus
+     minutos—, la ruta por ciclo con su actividad y su producto, y dos hojas de
+     notas de clase. El autor lo pidió quitar: quien abre una misión es el
+     ALUMNO, y un plan de clase en su pantalla es texto que no le habla a él
+     y que encima le salía a examen («¿cuál es el primer momento de una clase
+     de filosofía?»). Lo único del maestro que se queda es la PAUTA de la
+     ficha, que es la clave de corrección de esos mismos ejercicios.
 
    · Que el círculo se RELLENE y no se pida la ✗ para señalar lo correcto.
 
@@ -79,9 +84,9 @@ const UNIDADES = [
     ficha: 'fichas/ficha-el-asombro.html',
     dir: 'misiones/basica-el-asombro', html: 'el-asombro.html', js: 'js/el-asombro.js',
     exporta: 'FILO_PALABRA,FILO_CLASES,FILO_PREGUNTAS,FILO_RAMAS,FILO_ARBOL,' +
-             'FILO_PENSADORES,FILO_RUTINA,FILO_ORIGEN,FILO_VOCABULARIO,FILO_CICLOS',
-    contenedores: ['fi-palabra', 'fi-clases', 'fi-arbol', 'fi-raices', 'fi-pensadores', 'fi-rutina', 'fi-ciclos'],
-    ciclos: 'FILO_CICLOS', pensadores: 'FILO_PENSADORES', vocabulario: 'FILO_VOCABULARIO',
+             'FILO_PENSADORES,FILO_ORIGEN,FILO_VOCABULARIO',
+    contenedores: ['fi-palabra', 'fi-clases', 'fi-arbol', 'fi-raices', 'fi-pensadores'],
+    pensadores: 'FILO_PENSADORES', vocabulario: 'FILO_VOCABULARIO',
   },
   {
     n: 2, nombre: 'Pensar con Orden',
@@ -89,10 +94,10 @@ const UNIDADES = [
     ficha: 'fichas/ficha-pensar-con-orden.html',
     dir: 'misiones/basica-pensar-con-orden', html: 'pensar-con-orden.html', js: 'js/pensar-con-orden.js',
     exporta: 'LOG_PIEZAS,LOG_SEMAFORO,LOG_RAZONES,LOG_FALACIAS,LOG_SI_ENTONCES,' +
-             'LOG_VALIDEZ,LOG_CONECTORES,LOG_VOCABULARIO,LOG_PENSADORES,LOG_ARBOL,LOG_CICLOS',
+             'LOG_VALIDEZ,LOG_CONECTORES,LOG_VOCABULARIO,LOG_PENSADORES,LOG_ARBOL',
     contenedores: ['lg-piezas', 'lg-semaforo', 'lg-si', 'lg-falacias', 'lg-validez',
-                   'lg-conectores', 'lg-arbol', 'lg-pensadores', 'lg-ciclos'],
-    ciclos: 'LOG_CICLOS', pensadores: 'LOG_PENSADORES', vocabulario: 'LOG_VOCABULARIO',
+                   'lg-conectores', 'lg-arbol', 'lg-pensadores'],
+    pensadores: 'LOG_PENSADORES', vocabulario: 'LOG_VOCABULARIO',
   },
 ];
 
@@ -191,15 +196,9 @@ function investigaYCirculo(u, ficha, fichaPlana) {
   else ok(`u${u.n}: la selección múltiple lleva su círculo para rellenar (${mc.length} preguntas)`);
 }
 
-function ciclosYPensadores(u, D, fichaPlana) {
-  const cic = D[u.ciclos];
-  let malos = faltanEnPapel(fichaPlana, cic,
-    [['pregunta', c => c.pregunta], ['habilidad', c => c.habilidad],
-     ['actividad', c => c.actividad], ['producto', c => c.producto]], 'ciclo');
-  if (!malos) ok(`u${u.n}: la hoja del docente trae los ${cic.length} ciclos con su pregunta, su habilidad, su actividad y su producto`);
-
+function pensadoresYVocabulario(u, D, fichaPlana) {
   const pens = D[u.pensadores];
-  malos = faltanEnPapel(fichaPlana, pens,
+  const malos = faltanEnPapel(fichaPlana, pens,
     [['nombre', p => p.nombre], ['quién fue', p => p.quien], ['qué hizo', p => p.hizo],
      ['por qué se le recuerda', p => p.porque], ['dato', p => p.dato]], 'pensador');
   if (!malos) ok(`u${u.n}: los ${pens.length} pensadores están en el papel, cada uno con sus cuatro campos`);
@@ -208,6 +207,61 @@ function ciclosYPensadores(u, D, fichaPlana) {
   const faltan = voc.filter(v => !fichaPlana.includes(limpia(v.a)));
   if (faltan.length) mal(`u${u.n}: la ficha se dejó la definición de: ${faltan.map(v => v.w).join(' · ')}`);
   else ok(`u${u.n}: las ${voc.length} palabras del vocabulario están en el papel con su definición`);
+}
+
+/* ⚠️ NADA DEL MAESTRO, ni en la pantalla ni en el papel.
+   Lo pidió el autor y aquí se comprueba, porque volver a meterlo es lo más
+   fácil del mundo: la plantilla de la que se calca una misión de esta ruta
+   llevaba la rutina de la clase y la ruta por ciclo, y las dos se pintaban
+   perfectamente. La pantalla la abre el ALUMNO.
+
+   ⚠️ Se quitan los COMENTARIOS antes de buscar, y las hojas de estilo. Es la
+   trampa de siempre —van ya unas cuantas en este repositorio—: el sitio donde
+   se explica que algo se quitó es justo donde ese algo sigue escrito. Sin
+   esto, el comentario de `el-asombro.js` que cuenta por qué se fue el widget
+   de los cinco momentos pone roja a la sonda, y el de la cabecera de las dos
+   fichas también.
+
+   Y NO se busca «docente» ni «maestro» a secas: la ficha dice «NO se
+   fotocopia» en su pauta y el alumno tiene un botón que le manda el resultado
+   a su maestro. Se buscan las frases que solo pueden venir de un plan de
+   clase. */
+const DEL_MAESTRO = [
+  ['para el maestro',        'una tarjeta o un bloque dirigido al maestro'],
+  ['hoja del docente',       'una hoja del docente'],
+  ['notas de clase',         'notas de clase'],
+  ['antes de dar la clase',  'instrucciones de cómo dar la clase'],
+  ['momentos de una clase',  'la rutina de la clase'],
+  ['metacognici',            'un momento de la rutina de la clase'],
+  ['45 minutos',             'la duración de la sesión'],
+  ['dos veces por semana',   'la frecuencia de la clase'],
+  ['habilidad:',             'la ruta por ciclo (su habilidad)'],
+  ['producto:',              'la ruta por ciclo (su producto)'],
+  ['pregunta con que se entra', 'la ruta por ciclo (su pregunta de entrada)'],
+];
+const sinComentarios = t => t
+  .replace(/<!--[\s\S]*?-->/g, ' ')
+  .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+  .replace(/\/\*[\s\S]*?\*\//g, ' ')
+  .replace(/^\s*\/\/.*$/gm, ' ');
+
+function nadaDelMaestro(u) {
+  const donde = [
+    [u.ficha, 'la ficha'],
+    [path.join(u.dir, u.html), 'la pantalla'],
+    [path.join(u.dir, u.js), 'el JS de la misión'],
+    [u.datos, 'el archivo de datos'],
+  ];
+  let malos = 0;
+  donde.forEach(([rel, nombre]) => {
+    const txt = limpia(sinHtml(sinComentarios(fs.readFileSync(path.join(RAIZ, rel), 'utf8'))));
+    DEL_MAESTRO.forEach(([aguja, que]) => {
+      if (txt.includes(limpia(aguja))) {
+        mal(`u${u.n}: ${nombre} trae ${que} («${aguja}»): esto es para el alumno`); malos++;
+      }
+    });
+  });
+  if (!malos) ok(`u${u.n}: ni la pantalla ni el papel traen plan de clase, rutina ni ruta por ciclo`);
 }
 
 /* ── UNIDAD 1: lo suyo ───────────────────────────────────────────── */
@@ -249,23 +303,6 @@ function revisaAsombro(D, ficha, fichaPlana) {
   const faltanR = D.FILO_RAMAS.filter(r => !fichaPlana.includes(limpia(r.nombre)) || !fichaPlana.includes(limpia(r.pregunta)));
   if (faltanR.length) mal(`u1: la ficha se dejó ${faltanR.length} raíz(ces): ${faltanR.map(r => r.nombre).join(' · ')}`);
   else ok(`u1: las ${D.FILO_RAMAS.length} raíces están en el papel, cada una con su pregunta`);
-
-  /* Los cinco momentos, enteros y EN ORDEN, medido DENTRO de su bloque:
-     «diálogo» y «asombro» salen antes en los objetivos, así que buscarlos en la
-     ficha entera daría «desordenados» con el papel bien. */
-  const faltanM = D.FILO_RUTINA.filter(x => !fichaPlana.includes(limpia(x.titulo)) || !fichaPlana.includes(limpia(x.que)));
-  if (faltanM.length) mal(`u1: la ficha se dejó ${faltanM.length} momento(s) de la clase`);
-  else {
-    const m = ficha.match(/<div class="pasos">[\s\S]*?<\/div>\s*<\/div>/);
-    if (!m) mal('u1: no se encontró el bloque de los cinco momentos');
-    else {
-      const dentro = limpia(sinHtml(m[0]));
-      const pos = D.FILO_RUTINA.map(x => dentro.indexOf(limpia(x.titulo)));
-      if (!pos.every((p, i) => p >= 0 && (i === 0 || p > pos[i - 1])))
-        mal('u1: los cinco momentos están en el papel pero DESORDENADOS: el orden es la lección');
-      else ok('u1: los cinco momentos de la clase están enteros y en su orden');
-    }
-  }
 
   const et = D.FILO_PALABRA.partes.every(z => fichaPlana.includes(limpia(z.trozo)) && fichaPlana.includes(limpia(z.quiere)));
   if (!et) mal('u1: la ficha no trae los dos trozos de la palabra «filosofía»');
@@ -356,7 +393,8 @@ UNIDADES.forEach(u => {
   const mision = fs.readFileSync(path.join(RAIZ, u.dir, u.html), 'utf8');
   if (u.n === 1) revisaAsombro(D, ficha, fichaPlana);
   else revisaLogica(D, ficha, fichaPlana);
-  ciclosYPensadores(u, D, fichaPlana);
+  pensadoresYVocabulario(u, D, fichaPlana);
+  nadaDelMaestro(u);
   contenedoresVacios(u, mision);
   niUnaFecha(u);
   investigaYCirculo(u, ficha, fichaPlana);

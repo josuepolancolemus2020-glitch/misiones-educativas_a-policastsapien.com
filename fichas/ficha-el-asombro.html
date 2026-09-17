@@ -15,7 +15,10 @@
      · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
        significa MALO, y pedirla para señalar lo correcto enseña dos cosas
        contrarias con el mismo signo)
-     · La pauta + la hoja del docente SIEMPRE en hoja suelta al final
+     · ⚠️ Esta ficha NO lleva NADA para el maestro: ni la rutina de la clase, ni
+       la ruta por ciclo, ni notas de cómo darla. Lo pidió el autor y la sonda
+       lo comprueba. Lo único que se queda en hoja suelta al final es la PAUTA,
+       que es la clave de corrección de los ejercicios de estas mismas hojas.
      · ⚠️ Aquí NO hay ni una fecha, y no es un olvido: está contado en la
        cabecera de js/data/filosofia-asombro.js. Ponerlas es la investigación
        de la página 7. */
@@ -146,13 +149,6 @@
   .rejilla .q { font-weight: 700; margin: 1px 0; }
   .rejilla .h { color: var(--gris); }
 
-  /* Los cinco momentos, con su número y sus minutos. */
-  .pasos { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; break-inside: avoid; }
-  .pasos > div { flex: 1 1 18%; border: 1px solid var(--linea); border-top: 4px solid var(--fil);
-                 border-radius: 0 0 7px 7px; padding: 5px 7px; font-size: 8.8pt; background: #fdfafc; }
-  .pasos b { display: block; font-size: 9.6pt; color: var(--fil-osc); }
-  .pasos .min { display: block; color: var(--gris); font-size: 8pt; margin-top: 2px; }
-
   .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--fil); box-shadow: 0 6px 16px rgba(120,74,109,.4); font-family: Arial, sans-serif; }
   .imprimir-btn:active { transform: scale(.97); }
 
@@ -165,7 +161,7 @@
     .pagina .contenido { padding: 0 2px; }
     .pag-pie { left: 2px; right: 2px; bottom: 0; }
     .imprimir-btn { display: none; }
-    h2, th, .fh, .caja, .pauta, .kf-et, .pal-t, .pal-r, .rejilla > div, .pasos > div
+    h2, th, .fh, .caja, .pauta, .kf-et, .pal-t, .pal-r, .rejilla > div
       { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
@@ -233,8 +229,6 @@
       <span class="pal-r">Ganas de saber.</span>
     </div>
 
-    <div class="caja truco"><b>Fíjate:</b> Fíjate en lo que NO dice: no dice «el que sabe». Dice el que QUIERE saber. Por eso un filósofo no es alguien que ya tiene las respuestas.</div>
-
   </div>
   <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 1</span></div>
 </section>
@@ -242,6 +236,8 @@
 <!-- ═══════════ PÁGINA 2 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <div class="caja truco"><b>Fíjate:</b> Fíjate en lo que NO dice: no dice «el que sabe». Dice el que QUIERE saber. Por eso un filósofo no es alguien que ya tiene las respuestas.</div>
 
     <h2>Las tres clases de pregunta</h2>
 
@@ -283,11 +279,6 @@
       Si sí, es de hechos y se busca. Si no, hay que pensar: si pide decir <i>qué es</i> algo, es de
       significado; si pregunta si algo <i>está bien</i>, es de valor.</div>
 
-    <h2>El árbol del saber</h2>
-
-    <p>Mira las materias de tu horario. Todas nacieron de una pregunta que alguien hizo antes de que
-       la materia existiera. Por eso la filosofía no es otra rama al lado de las demás: es la raíz.</p>
-
   </div>
   <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 2</span></div>
 </section>
@@ -295,6 +286,11 @@
 <!-- ═══════════ PÁGINA 3 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <h2>El árbol del saber</h2>
+
+    <p>Mira las materias de tu horario. Todas nacieron de una pregunta que alguien hizo antes de que
+       la materia existiera. Por eso la filosofía no es otra rama al lado de las demás: es la raíz.</p>
 
     <div class="kficha">
       <div class="kf-tit">🔢 Matemáticas <span class="kf-et">Nació preguntando</span></div>
@@ -336,14 +332,6 @@
       <p class="kf-dato">💡 Pregúntate hoy: ¿Vale más un dibujo hecho a mano que uno hecho por una máquina?</p>
     </div>
 
-    <div class="kficha">
-      <div class="kf-tit">🤸 Educación Física <span class="kf-et">Nació preguntando</span></div>
-      <p class="kf-p"><b>¿El cuerpo soy yo o es algo que tengo?</b></p>
-      <p class="kf-p">Cuidar el cuerpo tiene sentido si el cuerpo es parte de la persona. Eso hubo que pensarlo.</p>
-      <p class="kf-sub">La sostiene: 🧍 Antropología filosófica · ¿Qué me hace ser yo?</p>
-      <p class="kf-dato">💡 Pregúntate hoy: ¿Por qué duele perder, si es solo un juego?</p>
-    </div>
-
   </div>
   <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 3</span></div>
 </section>
@@ -351,6 +339,14 @@
 <!-- ═══════════ PÁGINA 4 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
+
+    <div class="kficha">
+      <div class="kf-tit">🤸 Educación Física <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿El cuerpo soy yo o es algo que tengo?</b></p>
+      <p class="kf-p">Cuidar el cuerpo tiene sentido si el cuerpo es parte de la persona. Eso hubo que pensarlo.</p>
+      <p class="kf-sub">La sostiene: 🧍 Antropología filosófica · ¿Qué me hace ser yo?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Por qué duele perder, si es solo un juego?</p>
+    </div>
 
     <div class="caja hn"><b>Cómo una pregunta se vuelve una ciencia:</b> <b>1.</b> Alguien se asombra con algo de todos los días. <b>2.</b> Lo convierte en una pregunta. <b>3.</b> La discute con otros y le piden razones. <b>4.</b> Busca una forma de comprobar la respuesta. <b>5.</b> Cuando la forma de comprobar funciona, nace una ciencia.</div>
 
@@ -370,29 +366,6 @@
       <div><b>🎨 Estética</b><div class="q">¿Qué es la belleza?</div><div class="h">Pregunta qué hace que algo sea arte.</div></div>
     </div>
 
-    <h2>Cómo se da una clase de filosofía</h2>
-
-    <p>Cinco momentos, siempre los mismos, en 45 minutos. Dos veces por semana.</p>
-
-    <div class="pasos">
-      <div><b>1. Asombro</b>Algo te sorprende: un cuento, una foto, una noticia, un objeto.<span class="min">⏱ 5 a 10 min</span></div>
-      <div><b>2. Preguntas</b>Cada uno escribe su pregunta y el grupo vota cuál va a discutir.<span class="min">⏱ 5 min</span></div>
-      <div><b>3. Diálogo</b>En círculo. Se pregunta: ¿por qué?, ¿un ejemplo?, ¿alguien piensa distinto?<span class="min">⏱ 15 a 20 min</span></div>
-      <div><b>4. Conexión</b>Se une lo discutido con la clase del día.<span class="min">⏱ 5 min</span></div>
-      <div><b>5. Metacognición</b>En el diario: ¿qué pensé hoy?, ¿cambié de idea?, ¿qué pregunta me llevo?<span class="min">⏱ 5 min</span></div>
-    </div>
-
-    <div class="caja regla"><b>El último es el que decide.</b> Sin el diario, la conversación se
-      olvida como una plática. Con él queda lo que pensaste y si cambiaste de idea.</div>
-
-  </div>
-  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 4</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 5 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
-
     <h2>El vocabulario</h2>
 
     <table>
@@ -404,6 +377,14 @@
       <tr><td class="k">duda</td><td>No estar seguro todavía. Aquí no es un defecto: es la herramienta de trabajo.</td></tr>
       <tr><td class="k">filosofía</td><td>Ganas de saber. «Filo» es amor y «sofía» es sabiduría: el que quiere saber, no el que ya sabe.</td></tr>
     </table>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
 
     <h2>Tres que empezaron a preguntar</h2>
 
@@ -505,7 +486,7 @@
     <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span>«¿Qué es una familia?» es una pregunta…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> de hechos</span><span class="op"><i></i><b>b)</b> de valor</span><span class="op"><i></i><b>c)</b> sin clase</span><span class="op"><i></i><b>d)</b> de significado</span></div></div>
     <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span>En una pregunta de valor, ¿qué se califica?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> La razón que se da</span><span class="op"><i></i><b>b)</b> La letra</span><span class="op"><i></i><b>c)</b> Si contestó sí</span><span class="op"><i></i><b>d)</b> La rapidez</span></div></div>
     <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span>¿Qué hizo Tales de Mileto que fue nuevo?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Escribió el primer libro</span><span class="op"><i></i><b>b)</b> Inventó los números</span><span class="op"><i></i><b>c)</b> Buscó una causa natural</span><span class="op"><i></i><b>d)</b> Fundó una escuela</span></div></div>
-    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>¿Cuál es el primer momento de una clase de filosofía?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> El diálogo</span><span class="op"><i></i><b>b)</b> El asombro</span><span class="op"><i></i><b>c)</b> La conexión</span><span class="op"><i></i><b>d)</b> El diario</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>¿Qué convierte una pregunta en una ciencia?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Que lo diga un sabio</span><span class="op"><i></i><b>b)</b> Hallar cómo comprobar la respuesta</span><span class="op"><i></i><b>c)</b> Que sea nueva</span><span class="op"><i></i><b>d)</b> Que se discuta mucho</span></div></div>
     </div>
 
     <h2>Investiga (no se contesta copiando de aquí)</h2>
@@ -538,31 +519,7 @@
 <section class="pagina">
   <div class="contenido">
 
-    <h2>Hoja del docente · NO se fotocopia</h2>
-
-    <div class="caja idea"><b>Esta hoja se imprime suelta y se queda con usted.</b> Lleva la pauta y la
-      ruta de cada ciclo. Las páginas 1 a 7 son las que se fotocopian por alumno.</div>
-
-    <h3>La misma unidad en los tres ciclos</h3>
-
-    <p>El contenido de las páginas 1 a 5 es el <b>mismo</b> para toda la escuela: así una escuela
-       entera puede trabajar la unidad el mismo mes y compartir el mural. Lo que cambia de un ciclo a
-       otro es la pregunta con que se entra, la actividad y lo que el alumno entrega.</p>
-
-    <table>
-      <tr><th>Ciclo</th><th>Pregunta con que se entra</th><th>Habilidad</th><th>Producto</th></tr>
-      <tr><td class="k">I Ciclo<br><span style="font-weight:400;font-size:8.5pt">1.º a 3.º grado</span></td><td><i>¿Qué cosas me gustaría saber que nadie me ha explicado?</i></td><td>Formular preguntas.</td><td>Mural «Nuestro árbol de preguntas».</td></tr>
-      <tr><td class="k">II Ciclo<br><span style="font-weight:400;font-size:8.5pt">4.º a 6.º grado</span></td><td><i>¿En qué se diferencia una pregunta que se responde buscando de una que se responde pensando?</i></td><td>Clasificar preguntas: de hechos, de significado y de valor.</td><td>Diario con cinco preguntas propias, ya clasificadas.</td></tr>
-      <tr><td class="k">III Ciclo<br><span style="font-weight:400;font-size:8.5pt">7.º a 9.º grado</span></td><td><i>¿Para qué sirve la filosofía si no fabrica nada?</i></td><td>Convertir una pregunta en un problema.</td><td>Línea de tiempo «De la filosofía a las ciencias» y un párrafo con una razón y una objeción.</td></tr>
-    </table>
-
-    <div class="caja hn"><b>I Ciclo · la actividad:</b> Caja de preguntas: se lee un cuento, cada niño dibuja o dicta su pregunta y el grupo las separa en preguntas para buscar y preguntas para pensar.</div>
-
-    <div class="caja hn"><b>II Ciclo · la actividad:</b> Dramatizar un diálogo corto al modo de Sócrates. Se abre el diario filosófico.</div>
-
-    <div class="caja hn"><b>III Ciclo · la actividad:</b> Investigar qué ciencias se separaron de la filosofía y cuándo. Ojo: las fechas se buscan en una fuente que se pueda citar, no de memoria.</div>
-
-    <h3>Pauta</h3>
+    <h2>Pauta de corrección · NO se fotocopia</h2>
 
     <div class="pauta">
       <div><span class="pt">1. ¿De qué clase es? (12 pts, 1 por pregunta)</span> 1. H · 2. S · 3. V · 4. H · 5. S · 6. V · 7. H · 8. S · 9. V · 10. H · 11. S · 12. V</div>
@@ -582,30 +539,6 @@
   <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 8</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 9 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
-
-    <h2>Hoja del docente · notas de clase</h2>
-
-    <div class="nota-doc"><b>Tres cosas que conviene saber antes de dar la clase.</b>
-      <b>Una:</b> en las preguntas de valor hay varias respuestas buenas. Lo que se califica es la
-      razón, no el sí o el no; exigir una sola respuesta ahí es ponerle mala nota al que pensó.
-      <b>Dos:</b> la actividad 2 no tiene tope de rareza. Una pregunta que a usted le parezca
-      imposible («¿por qué existe algo?») es de las buenas: lo que hay que pedirle es que la
-      clasifique y diga por qué. <b>Tres:</b> el diálogo se hace en círculo y usted modera sin dar
-      la respuesta, que es lo que hacía Sócrates. Si nadie habla, sirven tres preguntas: ¿por qué?,
-      ¿un ejemplo?, ¿alguien piensa distinto?</div>
-
-    <div class="nota-doc"><b>De dónde sale esta ficha.</b> Filosofía no es una materia inventada para
-      esta plataforma. El DCNB de Educación Básica la nombra dentro del Área de Ciencias Sociales
-      (capítulo 11), y en Educación Media es un espacio curricular propio de 120 horas anuales. Las
-      citas, con la página del PDF en que se confirmó cada una, están en CURRICULA-FILOSOFIA.md.
-      El temario y la ruta por ciclo son del currículo holístico de Filosofía para Básica.</div>
-
-  </div>
-  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página 9</span></div>
-</section>
 
 </div>
 </body>

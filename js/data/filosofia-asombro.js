@@ -194,15 +194,6 @@ const FILO_PENSADORES = [
     dato: 'Enseñaba en Alejandría, la ciudad de la gran biblioteca del mundo antiguo.' }
 ];
 
-/* ── La rutina de una clase de filosofía: los cinco momentos. ── */
-const FILO_RUTINA = [
-  { n: 1, titulo: 'Asombro',        min: '5 a 10 min', que: 'Algo te sorprende: un cuento, una foto, una noticia, un objeto.' },
-  { n: 2, titulo: 'Preguntas',      min: '5 min',      que: 'Cada uno escribe su pregunta y el grupo vota cuál va a discutir.' },
-  { n: 3, titulo: 'Diálogo',        min: '15 a 20 min', que: 'En círculo. Se pregunta: ¿por qué?, ¿un ejemplo?, ¿alguien piensa distinto?' },
-  { n: 4, titulo: 'Conexión',       min: '5 min',      que: 'Se une lo discutido con la clase del día.' },
-  { n: 5, titulo: 'Metacognición',  min: '5 min',      que: 'En el diario: ¿qué pensé hoy?, ¿cambié de idea?, ¿qué pregunta me llevo?' }
-];
-
 /* ── Cómo una pregunta se vuelve una ciencia. Es el CE1.4 en cinco pasos. ── */
 const FILO_ORIGEN = [
   'Alguien se asombra con algo de todos los días.',
@@ -220,27 +211,6 @@ const FILO_VOCABULARIO = [
   { w: 'diálogo',   a: 'Pensar entre varios. No es discutir para ganar: es discutir para entender.' },
   { w: 'duda',      a: 'No estar seguro todavía. Aquí no es un defecto: es la herramienta de trabajo.' },
   { w: 'filosofía', a: 'Ganas de saber. «Filo» es amor y «sofía» es sabiduría: el que quiere saber, no el que ya sabe.' }
-];
-
-/* ── La ruta por ciclo. El contenido de arriba es el MISMO para los tres; lo
-      que cambia es la profundidad, la actividad y el producto. Va en la hoja
-      del docente de la ficha, que es quien la usa. ── */
-const FILO_CICLOS = [
-  { ciclo: 'I Ciclo', grados: '1.º a 3.º grado', edades: '6 a 9 años', lema: 'Asombrarse',
-    pregunta: '¿Qué cosas me gustaría saber que nadie me ha explicado?',
-    habilidad: 'Formular preguntas.',
-    actividad: 'Caja de preguntas: se lee un cuento, cada niño dibuja o dicta su pregunta y el grupo las separa en preguntas para buscar y preguntas para pensar.',
-    producto: 'Mural «Nuestro árbol de preguntas».' },
-  { ciclo: 'II Ciclo', grados: '4.º a 6.º grado', edades: '9 a 12 años', lema: 'Razonar',
-    pregunta: '¿En qué se diferencia una pregunta que se responde buscando de una que se responde pensando?',
-    habilidad: 'Clasificar preguntas: de hechos, de significado y de valor.',
-    actividad: 'Dramatizar un diálogo corto al modo de Sócrates. Se abre el diario filosófico.',
-    producto: 'Diario con cinco preguntas propias, ya clasificadas.' },
-  { ciclo: 'III Ciclo', grados: '7.º a 9.º grado', edades: '12 a 15 años', lema: 'Argumentar',
-    pregunta: '¿Para qué sirve la filosofía si no fabrica nada?',
-    habilidad: 'Convertir una pregunta en un problema.',
-    actividad: 'Investigar qué ciencias se separaron de la filosofía y cuándo. Ojo: las fechas se buscan en una fuente que se pueda citar, no de memoria.',
-    producto: 'Línea de tiempo «De la filosofía a las ciencias» y un párrafo con una razón y una objeción.' }
 ];
 
 /* Helpers: nadie cuenta a mano, y nadie reparte a mano las preguntas por

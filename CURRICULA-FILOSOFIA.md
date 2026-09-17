@@ -121,10 +121,20 @@ juego y dibujo), **II Ciclo razonar** (4.º a 6.º, dilemas y pequeñas
 investigaciones), **III Ciclo argumentar** (7.º a 9.º, fragmentos de texto,
 debates y ensayos breves).
 
-La clase son **cinco momentos en 45 minutos**, dos veces por semana: asombro,
-preguntas, diálogo, conexión y metacognición. Los cinco están en
-`js/data/filosofia-asombro.js` y se pintan en la misión: el maestro los tiene
-delante sin tener que abrir otro documento.
+El currículo del autor trae además una **rutina de clase** —cinco momentos en 45
+minutos: asombro, preguntas, diálogo, conexión y metacognición— y, por unidad,
+la **ruta de cada ciclo** con su pregunta de entrada, su actividad y su
+producto. Queda dicho aquí porque es parte del currículo.
+
+⚠️ **Y NADA de eso va en la plataforma, ni en la pantalla ni en la ficha.** Lo
+pidió el autor el 17 de septiembre de 2026, y tenía razón: **quien abre una
+misión es el ALUMNO**. La rutina y la ruta por ciclo estuvieron pintadas en las
+dos misiones y en las dos fichas, y el daño no se quedó en «texto que no le
+habla a él»: el niño acabó **examinado sobre el plan de clase** —«¿cuál es el
+primer momento de una clase de filosofía?», en el quiz, en la evaluación de
+pantalla y en la hoja impresa—. Hoy `verifica-filosofia` lo impide, y está
+contado en `CLAUDE.md`. Lo único del maestro que se queda es la **pauta** de la
+ficha, que es la clave de corrección de esos mismos ejercicios.
 
 ## Lo que NO se escribe, y a propósito
 
@@ -185,11 +195,11 @@ la pantalla, los bancos, los datos y las hojas de la ficha:
 
 | | El Asombro | Pensar con Orden | la vara: 5 misiones de primaria |
 |---|---|---|---|
-| INFLESZ (más alto, más fácil) | **82,0** | **86,7** | 67,6 a 78,3 · mediana 74,1 |
-| palabras por frase | **8,2** | **8,4** | 6,4 a 9,6 |
+| INFLESZ (más alto, más fácil) | **82,1** | **86,7** | 67,6 a 78,3 · mediana 74,1 |
+| palabras por frase | **8,3** | **8,3** | 6,4 a 9,6 |
 | frase más larga | **24** | **25** | 23 a 47 |
 | tramo más largo sin corte | **45** | **44** | 38 a 180 |
-| palabras en pantalla | 4 279 | 4 603 | 3 279 a 3 794 |
+| palabras en pantalla | 4 140 | 4 508 | 3 279 a 3 794 |
 
 Se midió al escribirlas y se corrigió: la primera versión de la unidad 1 tenía
 una frase de 53 palabras y un tramo de 84, los dos en texto que había escrito
@@ -223,4 +233,5 @@ Si se tocan los datos, la ficha **se vuelve a repartir**
 (`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden`):
 un párrafo que crece dos renglones parte una hoja en dos, y cada hoja de más
 son 43 fotocopias por grado. ⚠️ El repartidor **protege solo la última
-página**, así que la hoja del docente es una y va al final.
+página**, y la última es la **pauta**: es lo único del maestro que la ficha
+lleva, y va sola al final.

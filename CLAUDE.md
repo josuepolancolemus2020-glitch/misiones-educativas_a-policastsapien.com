@@ -3558,9 +3558,12 @@ nueve y no falló ninguno. Salieron **cuatro cosas más** que la lista no decía
 4. ⚠️ **La hoja del docente de la ficha no la reparte el repartidor**, a
    propósito, así que su corte lo pone quien la escribe. Entera medía
    **291,9 mm** donde el papel deja 257,4, y la impresora la partía por donde
-   le tocara: la pauta salía cortada. Se parte a mano en dos, por donde la lee
-   el maestro: la ruta de cada ciclo con la pauta, y las notas de clase con las
-   fuentes.
+   le tocara: la pauta salía cortada. Se partió a mano en dos —la ruta de cada
+   ciclo con la pauta, y las notas de clase—, y **al día siguiente las dos
+   sobraban**: el autor pidió quitar todo lo del maestro y la ficha se quedó
+   con una sola hoja al final, la pauta, que cabe de sobra. Está más abajo, y
+   la lección que vale es esa: **el problema no era cómo partir esa hoja, era
+   que estuviera**.
 
 ### Y lo que se multiplica al copiar una misión mordió otra vez
 
@@ -3728,10 +3731,74 @@ Lo comprueba `verifica-lab-legible`, que ya estaba y ahora mira las dos cosas
 —la hoja del archivo y los rótulos en el navegador, con la letra grande y con la
 normal—. Se comprobó al revés, devolviendo el `anywhere`: **8 fallos**.
 
+### ⚠️ La pantalla es del ALUMNO: nada de planificación del maestro
+
+Lo pidió el autor el 17 de septiembre de 2026, con estas palabras: «**No debes
+poner para nada de información o planificación para el maestro, quítalas.**» Y
+tenía razón, porque el daño no se quedaba en «texto que no le habla a él».
+
+Lo que había, medido:
+
+| dónde | qué |
+|---|---|
+| la misión 79, en pantalla | una tarjeta **«⏱ Cómo se da una clase de filosofía»** con los cinco momentos y sus minutos |
+| las dos misiones, en pantalla | una tarjeta **«👩‍🏫 Para el maestro: la misma unidad en los tres ciclos»**, con la pregunta de entrada, la habilidad, la actividad y el producto de cada ciclo |
+| la ficha 79, en la hoja del **alumno** | el mismo bloque de los cinco momentos, «45 minutos, dos veces por semana» |
+| las dos fichas | **dos hojas de docente** con la ruta por ciclo y las notas de clase |
+| el widget «Ordena los pasos» | la secuencia a ordenar **era el plan de clase**, minutos incluidos |
+| el quiz, la evaluación y la hoja impresa | **«¿cuál es el primer momento de una clase de filosofía?»** — al niño se le examinaba del plan de clase |
+
+Esa última fila es la que lo convierte en avería y no en desorden: **una
+pregunta de examen sobre la planificación del maestro no mide nada de lo que la
+unidad enseña**, y el alumno que se la estudia está memorizando un horario. Es
+de la familia de siempre —se pintaba perfectamente, ninguna sonda decía nada—,
+y por eso ahora hay una que lo dice.
+
+**Tres reglas, y ninguna es de adorno:**
+
+1. **Lo que se quita es la planificación, no el contenido.** Los cinco momentos
+   y la ruta por ciclo salieron de los archivos de datos (`FILO_RUTINA`,
+   `FILO_CICLOS`, `LOG_CICLOS`) y con ellos sus pintores, su CSS y sus
+   tarjetas. Lo que el alumno aprende —las tres clases de pregunta, el árbol
+   del saber, las ocho raíces, el semáforo de razones, las falacias— no se
+   tocó.
+2. ⚠️ **Lo que ocupaba su sitio en una actividad se sustituye por contenido del
+   alumno, no se deja vacío.** El widget de ordenar pasó a la secuencia que la
+   misión sí enseña —cómo una pregunta llega a ser una ciencia, que es el
+   `CE1.4`—, y la pregunta de examen a **«¿qué convierte una pregunta en una
+   ciencia?»**, con la correcta en la misma posición para no deshacer el
+   reparto de respuestas ya medido. Quitar sin sustituir habría dejado una
+   sección con un hueco y un banco con una fila menos.
+3. ⚠️ **La PAUTA se queda, y es la única cosa del maestro que queda.** No es
+   planificación: es la clave de corrección de los ejercicios de esas mismas
+   hojas, y sin ella el maestro no puede calificar lo que fotocopió. Va sola en
+   la última hoja, con su «NO se fotocopia», que es lo que piden las otras 75
+   fichas del repositorio.
+
+Y de paso la ficha de la unidad 1 **bajó de nueve hojas a ocho** —43 fotocopias
+menos por grado—, porque al quitar el bloque del plan de clase el repartidor
+pudo volver a cuadrar las hojas del alumno. La de la unidad 2 se queda en diez:
+sus nueve hojas de alumno van llenas.
+
+⚠️ **La sonda no busca «maestro» ni «docente» a secas**, y eso es lo que la hace
+servir: la pauta dice «NO se fotocopia» y el alumno tiene un botón que le manda
+el resultado a su maestro. Busca **las frases que solo pueden venir de un plan
+de clase** —«para el maestro», «hoja del docente», «notas de clase», «antes de
+dar la clase», «momentos de una clase», «metacognición», «45 minutos», «dos
+veces por semana», «Habilidad:», «Producto:», «pregunta con que se entra»— y
+las busca en los cuatro sitios: la ficha, la pantalla, el JS y los datos.
+
+⚠️ **Y quita los COMENTARIOS antes de buscar**, que es la trampa de este
+repositorio y van ya **seis** veces: el sitio donde se explica que algo se quitó
+es justo donde ese algo sigue escrito. Sin eso se ponían rojos el comentario de
+`el-asombro.js` que cuenta por qué se fue el widget y la cabecera de las dos
+fichas. Se comprobó al revés, devolviendo a la pantalla una tarjeta «Para el
+maestro»: **tres fallos**, uno por frase.
+
 **Antes de publicar un cambio de esta materia:**
 
 ```
-node _dev/verifica-filosofia.js             → las dos unidades, del archivo al papel
+node _dev/verifica-filosofia.js             → las dos unidades, y que no se cuele nada del maestro
 node _dev/verifica-nombres-propios.js
 node _dev/verifica-lab-legible.js           → los rótulos del Laboratorio, sin partirse
 node _dev/mide-legibilidad.js misiones/basica-pensar-con-orden --detalle
@@ -3746,10 +3813,13 @@ METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones
 
 Si se tocan los datos, la ficha **se vuelve a repartir**
 (`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden`):
-son nueve hojas y diez, y un párrafo que crece dos renglones parte una en dos.
+son ocho hojas y diez, y un párrafo que crece dos renglones parte una en dos.
+⚠️ Y si se QUITA contenido, va con **`--todas`**: sin esa bandera el repartidor
+solo mira las fichas que hoy se pasan del papel, así que la de la unidad 1 se
+habría quedado en nueve hojas gastando una de balde.
 El repartidor corrige solo el «Guía de estudio de N páginas» de la misión y el
-«· N páginas» del índice — y ⚠️ **protege solo la ÚLTIMA página**, así que la
-hoja del docente es una y va al final.
+«· N páginas» del índice — y ⚠️ **protege solo la ÚLTIMA página**, que es la
+**pauta**: lo único del maestro que la ficha lleva.
 
 ## Normativa: la estrella se gana
 
