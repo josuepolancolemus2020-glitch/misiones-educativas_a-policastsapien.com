@@ -283,6 +283,11 @@ en un aula de Básica. Cuando entre Media, entran.
 
 ### 3.3 · Los escenarios por venir
 
+⚠️ **Lo que sigue es un catálogo de ideas para misiones por venir, no lo que
+hace la etapa 7.** La etapa 7 se escribió primero así y se rehizo entera: ver
+«3.3 bis». Estas ideas siguen sirviendo como ACTIVIDADES dentro de una misión
+que ya enseñe algo, nunca como la misión entera.
+
 La normativa prohíbe afirmar lo que la IA «va a hacer», y no prohíbe
 **imaginarlo con método**. Un escenario es una historia con una persona, un
 precio y una decisión —como los cuatro de la etapa 4— declarada como
@@ -310,6 +315,33 @@ publicados: persona nombrada en la situación, precio contable, tres
 decisiones con su consecuencia, una regla, y la declaración de inventado en
 la pantalla. `verifica-descubre-ia` ya lo comprueba para `IA_ESCENARIOS`; los
 nuevos entran en la misma lista.
+
+### 3.3 bis · La lección que costó rehacer la etapa 7 entera
+
+⚠️ **Una misión sobre CÓMO se piensa una cosa no es una misión sobre esa cosa.**
+La etapa 7 se escribió como «distinguí un escenario de una profecía»: nueve
+situaciones inventadas y una prueba de cuatro piezas. Todo en verde —las
+sondas, el lenguaje llano, el relato— y el alumno salía sin saber **nada de lo
+que la Inteligencia Artificial le va a cambiar**. El autor lo dijo así: «me
+refería a los escenarios de lo que está pasando con la IA, que indagaras de
+manera simple y sencilla lo del futuro».
+
+Se rehizo entera sobre **el trabajo y el estudio**: ocho oficios hondureños
+desarmados en tareas, con qué se lleva cada una la máquina, y qué cambia al
+estudiar. El método no se tiró: quedó como herramienta corta del final.
+
+**Tres reglas para la siguiente misión que hable del futuro:**
+
+1. **El contenido manda; el método va detrás.** Si al terminar de escribirla no
+   se puede decir QUÉ aprendió el alumno del mundo —no de cómo pensarlo—,
+   todavía no está escrita.
+2. **Hablar del futuro sin predecir se hace de una sola forma:** partiendo de
+   lo que la máquina YA hace, y mirando qué toca eso en algo de verdad. Eso no
+   es profecía, es mirar lo que hay; y por eso no lleva ni un año ni un plazo.
+3. ⚠️ **Y lo que se afirma se cuenta, no se escribe.** Los porcentajes de la
+   etapa 7 salen de contar las tareas, y la sonda rehace la cuenta sin usar la
+   misma función. Una afirmación escrita a mano se vuelve falsa el día que
+   alguien añade un dato, **y se pinta igual de bien**.
 
 ### 3.4 bis · Lo que se aprendió escribiendo la primera de actualidad
 

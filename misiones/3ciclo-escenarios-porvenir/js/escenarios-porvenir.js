@@ -42,7 +42,7 @@ const ACHIEVEMENTS={
   ruta_experta:{icon:'🧭',label:'Ordena las cuatro piezas'},
   widgets_master:{icon:'🧩',label:'Resolvió los cuatro widgets'},
   neurona_pro:{icon:'⚙️',label:'Sabe de qué está hecho cada uno'},
-  sistema_master:{icon:'⚖️',label:'Sabe que depende de en manos de quién'},
+  sistema_master:{icon:'🛡️',label:'Sabe qué tarea no se puede copiar'},
   enfermedades:{icon:'🔍',label:'Sabe qué preguntarle al que vende'},
   sopa_master:{icon:'🔤',label:'Sopa de los escenarios'},
   cronometro:{icon:'🔮',label:'Armó su propio escenario'},
@@ -50,7 +50,7 @@ const ACHIEVEMENTS={
   nivel3:{icon:'🌟',label:'Nivel 3 alcanzado'},
   nivel5:{icon:'✨',label:'¡Exige quién revisa! Nivel 6'},
   perfecto:{icon:'💯',label:'Evaluación perfecta'},
-  explorador:{icon:'🗺️',label:'Exploró las seis capacidades'}
+  explorador:{icon:'🗺️',label:'Miró los ocho oficios'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -71,30 +71,45 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 
 // ===================== FLASHCARD DATA =====================
 const fcData = (function () {
-  /* Las tarjetas salen de js/data/ia-futuros.js: las cuatro piezas de un
-     escenario, las seis capacidades que ya existen y las cuatro manos. Ni una
-     se escribe a mano aquí, que es la regla de esta ruta desde el Himno.
+  /* Las tarjetas salen de js/data/ia-futuros.js: los cuatro tipos de tarea,
+     las seis capacidades que ya existen, la cuenta de siempre, los tres
+     escudos y lo que cambia al estudiar. Ni una se escribe a mano aquí, que
+     es la regla de esta ruta desde el Himno.
+     ⚠️ Los porcentajes se CUENTAN con iaOfiPorTipo(), nunca se escriben aquí:
+     a mano envejecerían el día que entre un oficio nuevo, y nadie lo notaría.
      ⚠️ El frente lleva HTML (un <br> y un <small>), así que upFC lo pinta con
      innerHTML: con textContent el alumno lee las etiquetas escritas, que es lo
      que estaba pasando en las etapas 5 y 6 hasta que lo cazó la sonda. */
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const t = [];
-  t.push({ w:'🔮 ¿Qué es un <strong>escenario</strong>?', a:'Una situación inventada, dicha como inventada. Está hecha con cosas de hoy y termina en una decisión.' });
-  t.push({ w:'📣 ¿Qué es una <strong>profecía</strong>?', a:'Una frase que dice lo que va a pasar. No se puede incumplir ni le pasa a nadie con nombre.' });
-  IA_FUT_PIEZAS.forEach(p => t.push({
-    w: p.e + ' Pieza: <strong>' + esc(p.nombre) + '</strong>',
-    a: '<strong>Sí:</strong> ' + esc(p.si) + '<br><strong>No:</strong> ' + esc(p.no) + '<br><br>' + esc(p.porque)
+  const pct = {};
+  iaOfiPorTipo().forEach(x => { pct[x.k] = x.pct; });
+  t.push({ w:'🧰 ¿Se lleva <strong>oficios</strong> o <strong>tareas</strong>?',
+           a:'Tareas. Un oficio es un montón de tareas distintas. Se lleva unas y otras no.' });
+  t.push({ w:'🔑 La pregunta que sirve',
+           a:'No es «¿mi oficio se salva?». Es <strong>«¿de qué tareas está hecho?»</strong>.' });
+  IA_OFI_TIPOS.forEach(ti => t.push({
+    w: ti.e + ' Tarea <strong>' + esc(ti.nombre) + '</strong><br><small>¿cuánto se lleva?</small>',
+    a: '<strong>' + pct[ti.k] + ' %</strong> de estas tareas.<br><br>' + esc(ti.que)
   }));
+  t.push({ w:'⚠️ ¿Tareas u <strong>horas</strong>?',
+           a:'Se cuentan tareas, no horas. A don Chele le quedan cinco de siete, y esas cinco se llevan el día.' });
   IA_CAPACIDADES.forEach(c => t.push({
     w: c.e + ' <strong>' + esc(c.que) + '</strong><br><small>¿dónde lo produjiste?</small>',
     a: '<strong>Etapa ' + c.etapa + '.</strong> ' + esc(c.donde) + '<br><br>Falla así: ' + esc(c.falla)
   }));
-  IA_FUT_MANOS.forEach(m => t.push({
-    w: m.e + ' En manos de <strong>' + esc(m.quien) + '</strong>',
-    a: 'Decide ' + esc(m.decide) + '. El fallo alcanza ' + esc(iaFutAl(m.alcance)) + '.<br><br>Revisa: ' + esc(m.revisor)
+  t.push({ w: IA_CUENTA.e + ' <strong>' + esc(IA_CUENTA.que) + '</strong>',
+           a: esc(IA_CUENTA.donde) + '<br><br>Quien te lo venda como nuevo te vende humo viejo.' });
+  IA_ESCUDOS.forEach(e => t.push({
+    w: e.e + ' Escudo: <strong>' + esc(e.nombre) + '</strong>',
+    a: esc(e.que) + '<br><br>' + esc(e.porque)
   }));
-  t.push({ w:'🔍 ¿Qué cambia más el final de un escenario?', a:'No la máquina: <strong>en manos de quién está</strong> y <strong>si alguien la revisa antes de que valga</strong>.' });
-  t.push({ w:'💸 ¿Por qué el precio se tiene que poder contar?', a:'Porque un precio contado se compara con lo que cuesta evitarlo. «Es grave» no se compara con nada.' });
+  IA_ESTUDIO.forEach(s => t.push({
+    w: s.e + ' <strong>' + esc(s.titulo) + '</strong>',
+    a: esc(s.que) + '<br><br>' + esc(s.hoy)
+  }));
+  t.push({ w:'🔮 ¿Y si te dicen «en dos años…»?',
+           a:'Pasalo por las cuatro piezas. ¿Con qué está hecho? ¿A quién le pasa? ¿Qué cuesta? ¿Qué hay que decidir?' });
   return t;
 })();
 let fcIdx=0;
@@ -105,21 +120,21 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué diferencia a un escenario de una profecía?',o:['Termina en una decisión, no en un anuncio','Es más largo','La dicen los expertos','Habla del pasado'],c:0,exp:'Una profecía te deja mirando. Un escenario te deja algo que hacer.'},
-  {q:'¿Con qué tiene que estar hecho un escenario?',o:['Con algo que se inventará pronto','Con lo que diga la televisión','Con algo que ya se puede hacer','Con cifras exactas'],c:2,exp:'Si se apoya en algo que no existe, es ciencia ficción.'},
-  {q:'«La Inteligencia Artificial va a cambiarlo todo en dos años.» ¿Qué es?',o:['Un escenario bien armado','Una profecía: no le pasa a nadie','Un dato comprobado','Una regla'],c:1,exp:'No dice a quién le pasa, ni qué cuesta, ni qué decidir. Esa frase dejó a Marvin sin matrícula.'},
-  {q:'¿Por qué un escenario necesita una persona con nombre?',o:['Porque queda más bonito','Porque a «la gente» no le pasa nada','Porque parece un cuento','Porque lo pide el maestro'],c:1,exp:'Sin una persona no hay quién decida. Queda un titular.'},
-  {q:'¿Cuesta lo mismo en manos de una familia que de una alcaldía?',o:['Sí, es la misma máquina','No, la alcaldía tiene mejores máquinas','No: el fallo alcanza a más gente','Depende del precio'],c:2,exp:'El alcance no lo pone la máquina: lo pone quien la tiene.'},
-  {q:'¿Qué hace la revisión?',o:['Ver el fallo antes de que valga','Que la máquina no falle nunca','Que el programa sea más rápido','Que no haya que comprobar nada'],c:0,exp:'No impide el fallo: impide que se ejecute. Y cuesta tiempo.'},
-  {q:'¿Se puede revisar todo lo que decide un pueblo entero?',o:['Sí, con más empleados','Sí, la máquina se revisa sola','No hace falta revisar','No: se revisa lo que decide algo grave'],c:3,exp:'Prometer que se revisa todo sería mentir. Se decide antes qué se mira.'},
-  {q:'Una predicción del valle, ¿qué le sirve a don Chele en su ladera?',o:['Le sirve igual','Le sirve más','Nada, no sirven las predicciones','Poco: ahí nadie midió'],c:3,exp:'Una predicción vale para donde midieron. Preguntá dónde midieron.'},
-  {q:'¿Por qué los escenarios de esta misión no traen fecha?',o:['Porque no se sabe el año','Porque fechar lo inventado es una profecía','Porque la pone el maestro','Porque las fechas envejecen'],c:1,exp:'Lo único fechado es cuándo se escribió esto.'},
-  {q:'Un programa que acierta con lo común, ¿con qué falla?',o:['Con lo común','Con nada','Con lo raro, que es lo que urge','Con lo que ya vio'],c:2,exp:'Propone lo más parecido a lo que vio. Con lo raro, eso falla.'},
-  {q:'Si un escenario dice «es peligroso», ¿qué pieza le falta?',o:['La persona','La decisión','La capacidad de hoy','El precio que se puede contar'],c:3,exp:'Un precio contado se compara. «Es peligroso» no se compara.'},
-  {q:'¿Qué hay que preguntarle a quien vende un programa así?',o:['Cuánto cuesta y cuándo llega','De qué color es la pantalla','Qué hace cuando no sabe, y quién revisa','Cuántas escuelas lo compraron'],c:2,exp:'Si contesta igual de seguro siempre, no sirve para lo raro.'},
-  {q:'Una voz fabricada con audios de alguien que murió, ¿qué hace?',o:['Recuerda lo que vivió','Predice lo que habría dicho','Repite audios guardados','Inventa al azar'],c:1,exp:'Es el predictor de la etapa 4 con una voz encima.'},
-  {q:'¿Por qué se parte un oficio en cuentas y decisiones?',o:['Porque se automatiza la cuenta, no la decisión','Porque así se estudia mejor','Porque las cuentas son difíciles','Porque lo pide el DCNB'],c:0,exp:'Ana vio que las cuentas eran hora y media de su día.'},
-  {q:'¿Qué se hace con una promesa sin plazo?',o:['Apuntarla con la fecha de hoy','Discutirla en el grupo','Creerla a medias','Borrarla'],c:0,exp:'Es la cápsula de la etapa anterior. El tiempo no se equivoca.'}
+  {q:'¿Qué se lleva la máquina?',o:['Tareas sueltas','Oficios enteros','Ni lo uno ni lo otro','Solo los oficios nuevos'],c:0,exp:'Un oficio es un montón de tareas. Se lleva unas y otras no.'},
+  {q:'¿Qué clase de tarea se lleva casi entera?',o:['La de manos','La de estar con alguien','La de papel','La de esperar'],c:2,exp:'Escribir, copiar, sumar y ordenar. Es lo primero que se va.'},
+  {q:'¿Qué clase de tarea casi no se lleva?',o:['La de papel','La de mirar','La de contar','La de manos'],c:3,exp:'Levantar una pared se hace en el terreno, con las manos.'},
+  {q:'Mirar la hoja y decir qué plaga es, ¿qué clase de tarea es?',o:['De papel','De mirar','De manos','De estar con alguien'],c:1,exp:'Y se la lleva: es el parecido que entrenaste en la etapa 2.'},
+  {q:'De los ocho oficios, ¿cuántos desaparecen enteros?',o:['Dos','Casi todos','Ninguno','Todos'],c:2,exp:'Ninguno llega a cero y ninguno llega a cien. Todos cambian de forma.'},
+  {q:'¿Cuál es la pregunta que sirve?',o:['¿Cuándo va a pasar?','¿Mi oficio se salva?','¿Quién lo inventó?','¿De qué tareas está hecho?'],c:3,exp:'Lo otro no se puede mirar. Las tareas sí se pueden escribir.'},
+  {q:'Calificar exámenes de marcar, ¿con qué se lo lleva?',o:['Con una cuenta de siempre','Con una capacidad nueva','Con la voz','Con el refuerzo'],c:0,exp:'Comparar una marca con la clave ya lo hacía una computadora normal.'},
+  {q:'Sumar y ordenar una lista, ¿es Inteligencia Artificial?',o:['Sí, es lo más nuevo','No: eso ya se hacía antes','Solo con internet','Solo en el mercado'],c:1,exp:'Quien te lo vende como nuevo te vende humo de hace sesenta años.'},
+  {q:'A la profesora Delmy la máquina NO le puede…',o:['Sacar promedios','Calificar marcas','Ver que un niño no desayunó','Escribir preguntas'],c:2,exp:'Eso no está en ningún dato. Se ve en la cara y se pregunta.'},
+  {q:'¿Por qué se cuentan tareas y no horas?',o:['Porque es más fácil','Porque las horas no importan','Porque no hay reloj','Porque las que quedan llevan el día'],c:3,exp:'A don Chele le quedan cinco tareas de siete, y son las más largas.'},
+  {q:'Copiar la tarea que te hace una máquina…',o:['Te deja sin saber en el examen','Sube la nota final','Sirve igual que antes','Lo prohíbe la ley'],c:0,exp:'La nota de la tarea se la lleva ella. El examen lo hacés vos.'},
+  {q:'¿Qué tarea NO puede entregar hecha una máquina?',o:['Un resumen de la Independencia','Medir tu patio y sacar su área','Un ensayo sobre la contaminación','Veinte ejercicios de fracciones'],c:1,exp:'Nadie midió tu patio. Los números los ponés vos, con la cinta.'},
+  {q:'¿Cuáles son los tres escudos de una tarea?',o:['Delante, de aquí y de manos','Corta, larga y difícil','Papel, mirar y manos','Nota, examen y firma'],c:0,exp:'Son las tres cosas que a la máquina le faltan. No son castigos.'},
+  {q:'¿Para qué sirve hoy saberse las cosas?',o:['Para copiar más rápido','Para comprobar lo que te dicen','Para no estudiar','Para escribir bonito'],c:1,exp:'Si no sabés que el Himno tiene siete estrofas, te cuela cinco.'},
+  {q:'«En dos años nadie va a calificar.» ¿Qué le falta?',o:['Un emoji','Un color','Una persona con nombre','Un titular'],c:2,exp:'A «nadie» no le pasa nada. Sin una persona no hay quién decida.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -137,33 +152,35 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['🔮 Escenario','📣 Profecía'],headA:'🔮 Escenario',headB:'📣 Profecía',colA:'🔮 Escenario',colB:'📣 Profecía',words:[
-    {w:'«¿Qué hace Delmy el día que el programa invente un dato?»',t:'🔮 Escenario'},
-    {w:'«En dos años ningún maestro va a calificar a mano.»',t:'📣 Profecía'},
-    {w:'«A don Chele le dice que siembre y en su ladera no hay estación. ¿Siembra?»',t:'🔮 Escenario'},
-    {w:'«La Inteligencia Artificial lo va a hacer todo.»',t:'📣 Profecía'},
-    {w:'«A Elvin lo paran por un parecido. ¿Qué pide?»',t:'🔮 Escenario'},
-    {w:'«Los robots van a dominar el mundo.»',t:'📣 Profecía'},
-    {w:'«Sin señal tres días. ¿Qué apunta doña Tere en papel?»',t:'🔮 Escenario'},
-    {w:'«Pronto no habrá que estudiar nada.»',t:'📣 Profecía'}
+  {label:['🤖 Se la lleva la máquina','🧑 Se queda con la persona'],headA:'🤖 Se la lleva la máquina',headB:'🧑 Se queda con la persona',colA:'🤖 Se la lleva la máquina',colB:'🧑 Se queda con la persona',words:[
+    {w:'Llenar planillas y sacar promedios',t:'🤖 Se la lleva la máquina'},
+    {w:'Mirar una radiografía y marcar lo raro',t:'🤖 Se la lleva la máquina'},
+    {w:'Buscar un expediente en el archivo',t:'🤖 Se la lleva la máquina'},
+    {w:'Decir cuál es la ruta más rápida hoy',t:'🤖 Se la lleva la máquina'},
+    {w:'Ponerle la vía a un niño de tres años',t:'🧑 Se queda con la persona'},
+    {w:'Levantar la pared, bloque por bloque',t:'🧑 Se queda con la persona'},
+    {w:'Convencer al que está dudando',t:'🧑 Se queda con la persona'},
+    {w:'Firmar el informe y dar la cara',t:'🧑 Se queda con la persona'}
   ]},
-  {label:['✅ Se puede hoy','🚫 Todavía no'],headA:'✅ Se puede hacer hoy',headB:'🚫 Todavía no',colA:'✅ Se puede hacer hoy',colB:'🚫 Todavía no',words:[
-    {w:'Fabricar una voz con unos segundos de audio',t:'✅ Se puede hacer hoy'},
-    {w:'Escribir un texto que suena seguro e inventa el dato',t:'✅ Se puede hacer hoy'},
-    {w:'Reconocer una cara comparándola con las guardadas',t:'✅ Se puede hacer hoy'},
-    {w:'Que una máquina sepa lo que siente una persona',t:'🚫 Todavía no'},
-    {w:'Predecir con los datos que alguien midió',t:'✅ Se puede hacer hoy'},
-    {w:'Que una máquina responda ante un juez por lo decidido',t:'🚫 Todavía no'},
-    {w:'Mejorar a fuerza de intentos, sin que le digan cómo',t:'✅ Se puede hacer hoy'},
-    {w:'Que un programa sepa que se está equivocando',t:'🚫 Todavía no'}
+  {label:['📄 De papel o de mirar','✋ De manos o de gente'],headA:'📄 De papel o de mirar',headB:'✋ De manos o de gente',colA:'📄 De papel o de mirar',colB:'✋ De manos o de gente',words:[
+    {w:'Sumar las facturas del mes',t:'📄 De papel o de mirar'},
+    {w:'Ver que la pared está fuera de plomo',t:'📄 De papel o de mirar'},
+    {w:'Pasar en limpio lo que se dictó',t:'📄 De papel o de mirar'},
+    {w:'Mirar el tomate y ver cuál no aguanta',t:'📄 De papel o de mirar'},
+    {w:'Doblar el hierro a la medida',t:'✋ De manos o de gente'},
+    {w:'Cargar y acarrear los sacos',t:'✋ De manos o de gente'},
+    {w:'Atender al padre que llega enojado',t:'✋ De manos o de gente'},
+    {w:'Esperar a la señora que viene corriendo',t:'✋ De manos o de gente'}
   ]},
-  {label:['🏠 Alcanza a una casa','🏛️ Alcanza a un pueblo'],headA:'🏠 Alcanza a una casa',headB:'🏛️ Alcanza a un pueblo',colA:'🏠 Alcanza a una casa',colB:'🏛️ Alcanza a un pueblo',words:[
-    {w:'La familia decide a quién le manda dinero',t:'🏠 Alcanza a una casa'},
-    {w:'La alcaldía decide a quién se para en la calle',t:'🏛️ Alcanza a un pueblo'},
-    {w:'La familia decide a quién le abre la puerta',t:'🏠 Alcanza a una casa'},
-    {w:'La alcaldía decide a quién le da un permiso',t:'🏛️ Alcanza a un pueblo'},
-    {w:'Llamar de vuelta al número de siempre',t:'🏠 Alcanza a una casa'},
-    {w:'Poner una multa sin que nadie la mire antes',t:'🏛️ Alcanza a un pueblo'}
+  {label:['📋 La entrega una máquina','🔒 Lleva escudo'],headA:'📋 La entrega una máquina',headB:'🔒 Lleva escudo',colA:'📋 La entrega una máquina',colB:'🔒 Lleva escudo',words:[
+    {w:'Escribí un resumen de la Independencia',t:'📋 La entrega una máquina'},
+    {w:'Copiá la definición de adjetivo',t:'📋 La entrega una máquina'},
+    {w:'Resolvé veinte ejercicios de fracciones',t:'📋 La entrega una máquina'},
+    {w:'Leé este texto y contestá cinco preguntas',t:'📋 La entrega una máquina'},
+    {w:'Medí tu patio y sacá su área',t:'🔒 Lleva escudo'},
+    {w:'Explicá en voz alta cómo lo resolviste',t:'🔒 Lleva escudo'},
+    {w:'Contá los buses que pasan en media hora',t:'🔒 Lleva escudo'},
+    {w:'Preguntale a tu vecina qué se sembraba antes',t:'🔒 Lleva escudo'}
   ]}
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
@@ -174,16 +191,16 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Un','escenario','se','hace','con','algo','de','hoy.'],c:7,art:'Cuándo se puede hacer lo que el escenario necesita'},
-  {s:['Sin','una','persona','con','nombre','no','hay','quien','decida.'],c:2,art:'Lo que le falta a una frase sin nadie con nombre'},
-  {s:['Un','precio','que','se','cuenta','se','puede','comparar.'],c:1,art:'Lo que se cuenta en días, lempiras o clases'},
-  {s:['Un','escenario','termina','en','una','decisión.'],c:5,art:'En qué termina un escenario y no una profecía'},
-  {s:['El','alcance','lo','pone','quien','tiene','la','máquina.'],c:1,art:'A cuánta gente llega la decisión del programa'},
-  {s:['La','revisión','impide','que','el','fallo','se','ejecute.'],c:1,art:'Lo que mira una persona antes de que valga'},
-  {s:['Una','predicción','vale','donde','midieron','los','datos.'],c:4,art:'Lo que hace falta para poder predecir en un lugar'},
-  {s:['Lo','raro','es','lo','que','peor','contesta','un','programa.'],c:1,art:'La clase de caso con la que falla lo que acierta'},
-  {s:['De','un','oficio','se','automatiza','la','cuenta.'],c:6,art:'La parte de un oficio que una máquina hace mejor'},
-  {s:['A','una','promesa','sin','plazo','ponele','vos','la','fecha.'],c:8,art:'Lo que hay que ponerle a una promesa sin plazo'}
+  {s:['Un','oficio','es','un','montón','de','tareas','distintas.'],c:6,art:'Lo que de verdad se lleva la máquina'},
+  {s:['La','máquina','no','se','lleva','oficios','enteros.'],c:5,art:'Lo que NO se lleva entero'},
+  {s:['Las','tareas','de','papel','son','las','primeras','en','irse.'],c:3,art:'La clase de tarea que más se va'},
+  {s:['Las','tareas','de','manos','casi','no','se','van.'],c:3,art:'La clase de tarea que se hace en un sitio'},
+  {s:['Ningún','oficio','desaparece','entero.'],c:2,art:'Lo que NO le pasa a ningún oficio'},
+  {s:['Sumar','y','ordenar','no','es','Inteligencia','Artificial.'],c:0,art:'La cuenta que una computadora ya hacía antes'},
+  {s:['Una','tarea','con','escudo','no','se','puede','copiar.'],c:3,art:'Lo que hace que una tarea no se copie'},
+  {s:['Se','cuentan','tareas,','no','horas','de','trabajo.'],c:4,art:'Lo que este conteo NO mide'},
+  {s:['Saberse','las','cosas','sirve','para','comprobar','lo','que','leés.'],c:5,art:'Para lo que sirve hoy saberse las cosas'},
+  {s:['Preguntá','de','qué','tareas','está','hecho','tu','oficio.'],c:3,art:'Aquello de lo que está hecho un oficio'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -193,16 +210,18 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Un escenario se hace con algo que ___ se puede hacer.',opts:['ya','pronto','nunca'],c:0},
-  {s:'Una profecía no se puede ___ nunca.',opts:['escribir','incumplir','oír'],c:1},
-  {s:'Sin una ___ con nombre no hay quién decida.',opts:['fecha','empresa','persona'],c:2},
-  {s:'Un precio que se puede ___ se compara.',opts:['contar','gritar','esconder'],c:0},
-  {s:'Un escenario termina en una ___, no en un anuncio.',opts:['promesa','decisión','cifra'],c:1},
-  {s:'El alcance del fallo lo pone ___ tiene la máquina.',opts:['cuándo','cuánto','quién'],c:2},
-  {s:'La ___ no impide el fallo: impide que se ejecute.',opts:['revisión','velocidad','compra'],c:0},
-  {s:'Una predicción vale para ___ midieron.',opts:['cuando','donde','quien'],c:1},
-  {s:'Lo que más acierta con lo común falla con lo ___.',opts:['fácil','viejo','raro'],c:2},
-  {s:'Un oficio se parte en cuentas y ___.',opts:['decisiones','horas','sueldos'],c:0}
+  {s:'Un oficio es un montón de ___ distintas.',opts:['tareas','oficios','horas'],c:0},
+  {s:'La máquina no se lleva oficios: se lleva ___.',opts:['gente','tareas','años'],c:1},
+  {s:'Las tareas de ___ son las primeras en irse.',opts:['manos','gente','papel'],c:2},
+  {s:'Las tareas de ___ casi no se las lleva.',opts:['manos','papel','mirar'],c:0},
+  {s:'Ver qué plaga tiene la hoja es tarea de ___.',opts:['papel','manos','mirar'],c:2},
+  {s:'Ningún oficio se va ___.',opts:['tarde','entero','solo'],c:1},
+  {s:'Sumar y ordenar ya lo hacía una computadora ___.',opts:['normal','nueva','moderna'],c:0},
+  {s:'Se cuentan tareas, no ___.',opts:['días','horas','sueldos'],c:1},
+  {s:'Una tarea con ___ no se puede copiar.',opts:['nota','fecha','escudo'],c:2},
+  {s:'Saberse las cosas sirve para ___ lo que te dicen.',opts:['creer','copiar','comprobar'],c:2},
+  {s:'La pregunta buena es de qué ___ está hecho.',opts:['tareas','años','manos'],c:0},
+  {s:'Lo que entregás lo ___ vos.',opts:['borrás','firmás','leés'],c:1}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -216,9 +235,12 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets = [
-  { label: 'Ordena las cuatro piezas de un escenario', steps: IA_FUT_PIEZAS.map((p, i) => (i + 1) + '. ' + p.e + ' ' + p.nombre) },
-  { label: 'Ordena lo que hacés cuando alguien anuncia el futuro', steps: ['1. ¿Con qué está hecho? ¿Eso ya se puede hacer?', '2. ¿A quién le pasa? Con nombre.', '3. ¿Qué le cuesta? Algo que se cuente.', '4. ¿Qué haría yo si pasa?', '5. Si es promesa, apuntá la fecha de hoy.'] },
-  { label: 'Ordena lo que se pregunta antes de comprar', steps: ['1. ¿Con qué ejemplos se entrenó?', '2. ¿Qué hace cuando no está seguro?', '3. ¿A cuánta gente alcanza lo que decide?', '4. ¿Quién revisa antes de que valga?', '5. ¿Qué pasa el día que no haya señal?'] }
+  { label: 'Ordena los tipos de tarea: del que más se lleva al que menos',
+    steps: iaOfiPorTipo().slice().sort((a, b) => b.pct - a.pct).map((t, i) => (i + 1) + '. ' + t.e + ' ' + t.nombre) },
+  { label: 'Ordena lo que hacés para mirar un oficio',
+    steps: ['1. Escribí todas sus tareas, una por una.', '2. Ponele a cada una su tipo.', '3. Marcá cuáles se lleva la máquina.', '4. Mirá con qué se las lleva.', '5. Decidí qué vas a aprender a hacer vos.'] },
+  { label: 'Ordena lo que hacés con un «en dos años…»',
+    steps: IA_FUT_PIEZAS.map((p, i) => (i + 1) + '. ' + p.e + ' ' + p.nombre) }
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -281,12 +303,12 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Es un ESCENARIO','Es una PROFECÍA'],btnA:'🔮 Escenario',btnB:'📣 Profecía',colA:'esc',colB:'pro',
-   words:[{w:'«¿Qué hace Delmy si el programa inventa un dato?»',t:'esc'},{w:'«En dos años nadie va a calificar a mano»',t:'pro'},{w:'«A Elvin lo paran por un parecido. ¿Qué pide?»',t:'esc'},{w:'«Las máquinas se van a mejorar solas»',t:'pro'},{w:'«Sin señal tres días. ¿Qué apunta doña Tere?»',t:'esc'},{w:'«Pronto no habrá que estudiar»',t:'pro'},{w:'«A don Chele le falla el pronóstico. ¿Siembra?»',t:'esc'},{w:'«Todo va a ser automático»',t:'pro'},{w:'«¿Qué pide Wendy antes de pagar la cuota?»',t:'esc'},{w:'«La IA lo va a cambiar todo»',t:'pro'}]},
-  {label:['Se puede hacer HOY','Todavía NO se puede'],btnA:'✅ Hoy',btnB:'🚫 Todavía no',colA:'hoy',colB:'no',
-   words:[{w:'Fabricar una voz con unos segundos de audio',t:'hoy'},{w:'Saber lo que siente una persona',t:'no'},{w:'Escribir un texto que suena seguro',t:'hoy'},{w:'Responder ante un juez por lo decidido',t:'no'},{w:'Reconocer una cara por parecido',t:'hoy'},{w:'Saber que se está equivocando',t:'no'},{w:'Predecir con datos que alguien midió',t:'hoy'},{w:'Entender lo que lee',t:'no'},{w:'Mejorar a fuerza de intentos',t:'hoy'},{w:'Querer algo',t:'no'}]},
-  {label:['Cambia el final','No cambia el final'],btnA:'⚖️ Cambia',btnB:'➖ No cambia',colA:'si',colB:'no',
-   words:[{w:'Que alguien revise antes de que valga',t:'si'},{w:'Que la pantalla sea más grande',t:'no'},{w:'A cuánta gente alcanza la decisión',t:'si'},{w:'El color del programa',t:'no'},{w:'Con qué ejemplos se entrenó',t:'si'},{w:'Cuántas escuelas lo compraron',t:'no'},{w:'Qué hace cuando no está seguro',t:'si'},{w:'Lo rápido que contesta',t:'no'},{w:'Quién responde cuando se equivoca',t:'si'},{w:'Que tenga voz bonita',t:'no'}]}
+  {label:['La hace la máquina','La hace la persona'],btnA:'🤖 La máquina',btnB:'🧑 La persona',colA:'maq',colB:'per',
+   words:[{w:'Sacar la cuenta del día',t:'maq'},{w:'Calificar exámenes de marcar',t:'maq'},{w:'Cuadrar una cita entre tres agendas',t:'maq'},{w:'Contestar el correo de siempre',t:'maq'},{w:'Arreglar el bus parado en el camino',t:'per'},{w:'Decirle a una madre que hay que viajar',t:'per'},{w:'Fiarle a la señora de siempre',t:'per'},{w:'Aguantar el año en que se pierde la milpa',t:'per'}]},
+  {label:['Tarea de papel o de mirar','Tarea de manos o de gente'],btnA:'📄 Papel o mirar',btnB:'✋ Manos o gente',colA:'pm',colB:'mg',
+   words:[{w:'Llevar el control de las vacunas',t:'pm'},{w:'Mirar el camino y ver el hueco',t:'pm'},{w:'Avisar quién lleva tres meses sin pagar',t:'pm'},{w:'Calcular los bloques y la arena',t:'pm'},{w:'Sembrar, limpiar y cosechar',t:'mg'},{w:'Ponerse de acuerdo con el dueño',t:'mg'},{w:'Responder por la nota que puso',t:'mg'},{w:'Decidir a quién atiende primero',t:'mg'}]},
+  {label:['Se puede copiar','No se puede copiar'],btnA:'📋 Se copia',btnB:'🔒 No se copia',colA:'cop',colB:'no',
+   words:[{w:'Hacé la línea del tiempo de los próceres',t:'cop'},{w:'Escribí un ensayo sobre la contaminación',t:'cop'},{w:'Escribí un resumen de la Independencia',t:'cop'},{w:'Copiá la definición de adjetivo',t:'cop'},{w:'Tomale la lectura un minuto a tu hermano',t:'no'},{w:'Escribí qué haría tu familia sin agua',t:'no'},{w:'Medí tu patio y sacá su perímetro',t:'no'},{w:'Preguntale a alguien mayor qué se sembraba',t:'no'}]}
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -309,46 +331,46 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'Un escenario se hace con algo que ya existe.',type:'hoy'},
-  {s:'A «la gente» no le pasa nada.',type:'persona'},
-  {s:'Un precio que se cuenta se compara.',type:'precio'},
-  {s:'Un escenario termina en una pregunta, no en un anuncio.',type:'decisión'},
-  {s:'El alcance lo pone quien tiene la máquina.',type:'alcance'},
-  {s:'La revisión impide que el fallo se ejecute.',type:'revisión'},
-  {s:'Una predicción vale para donde midieron.',type:'datos'},
-  {s:'Lo que más acierta con lo común falla con lo raro.',type:'raro'},
-  {s:'A una promesa sin fecha, ponele vos la fecha.',type:'fecha'},
-  {s:'De un oficio se automatiza la cuenta.',type:'oficio'}
+  {s:'Llenar planillas y sacar promedios.',type:'📄 de papel · se la lleva'},
+  {s:'Ponerle la vía a un niño de tres años.',type:'✋ de manos · no se la lleva'},
+  {s:'Mirar el tomate y ver cuál ya no aguanta.',type:'👁️ de mirar · se la lleva'},
+  {s:'Convencer al que está dudando.',type:'🧑 de estar con alguien · no se la lleva'},
+  {s:'Buscar un expediente en el archivo.',type:'📄 de papel · se la lleva'},
+  {s:'Arreglar el bus parado en el camino.',type:'✋ de manos · no se la lleva'},
+  {s:'Decir qué se va a vender más el sábado.',type:'📄 de papel · se la lleva'},
+  {s:'Responder por la nota que puso.',type:'🧑 de estar con alguien · no se la lleva'},
+  {s:'Ver que la pared está fuera de plomo.',type:'👁️ de mirar · se la lleva'},
+  {s:'Doblar el hierro a la medida.',type:'✋ de manos · no se la lleva'}
 ];
 const classifyTaskDB=[
-  {w:'Escenario',gen:'Situación inventada para decidir',n:'«¿Qué hago yo si esto pasa?»',g:'Se puede discutir entero',t:''},
-  {w:'Profecía',gen:'Frase que dice lo que va a pasar',n:'«En dos años lo hará todo»',g:'No se puede incumplir nunca',t:''},
-  {w:'Capacidad de hoy',gen:'Algo que ya se puede hacer',n:'Fabricar una voz, generar un texto',g:'El alumno la produjo en una etapa',t:''},
-  {w:'Alcance',gen:'A cuánta gente llega la decisión',n:'Una casa, un aula, un pueblo',g:'Lo pone quien tiene la máquina',t:''},
-  {w:'Revisión',gen:'Que una persona mire antes de que valga',n:'La maestra antes de que la nota cuente',g:'Cuesta tiempo y no sale gratis',t:''},
-  {w:'Precio contable',gen:'Lo que cuesta, en cosas que se cuentan',n:'Tres días, media milpa, L 1 500',g:'Se compara con lo que cuesta evitarlo',t:''}
+  {w:'El programa le contesta a la señorita Lesly el correo de siempre',gen:'💬 Con el texto que ya se escribe solo',n:'la señorita Lesly',g:'las horas que se le iban en el correo',t:'¿en qué va a usar esas horas?'},
+  {w:'El programa le suma a don Beto las facturas del mes',gen:'⚙️ Con una cuenta de siempre',n:'don Beto',g:'las tardes de sumar facturas',t:'¿quién firma el informe si sale mal?'},
+  {w:'El programa marca lo raro en las radiografías del centro',gen:'🍎 Con el parecido de la etapa 1',n:'la enfermera Sandra',g:'el rato de mirarlas una por una',t:'¿quién mira antes de mandar a alguien a viajar?'},
+  {w:'Le dicen a don Chele cuándo sembrar, con el clima medido',gen:'📈 Con la predicción de la etapa 2',n:'don Chele',g:'media milpa si se equivoca',t:'¿siembra, si en su ladera no midió nadie?'},
+  {w:'El colegio deja de mandar tareas escritas para la casa',gen:'💬 Con el texto que la máquina entrega hecho',n:'los alumnos de noveno',g:'la práctica de escribir, y la nota del examen',t:'¿qué tarea con escudo se manda en su lugar?'},
+  {w:'A Katy le dicen que la máquina hará todo ese oficio',gen:'🧰 Se lleva tareas, nunca un oficio entero',n:'Katy',g:'tres años de estudio y la matrícula',t:'¿de qué tareas está hecho ese oficio?'}
 ];
 const completeTaskDB=[
-  {s:'Un escenario se hace con algo que ___ se puede hacer.',opts:['ya','pronto','nunca'],ans:'ya'},
-  {s:'Una profecía no se puede ___ nunca.',opts:['escribir','incumplir','oír'],ans:'incumplir'},
-  {s:'Sin una ___ con nombre no hay quién decida.',opts:['fecha','empresa','persona'],ans:'persona'},
-  {s:'Un escenario termina en una ___, no en un anuncio.',opts:['promesa','decisión','cifra'],ans:'decisión'},
-  {s:'El alcance del fallo lo pone ___ tiene la máquina.',opts:['cuándo','cuánto','quién'],ans:'quién'},
-  {s:'La ___ impide que el fallo se ejecute.',opts:['revisión','velocidad','compra'],ans:'revisión'},
-  {s:'Una predicción vale para ___ midieron.',opts:['cuando','donde','quien'],ans:'donde'},
-  {s:'Lo que más acierta con lo común falla con lo ___.',opts:['fácil','viejo','raro'],ans:'raro'},
-  {s:'De un oficio se automatiza la ___.',opts:['cuenta','hora','firma'],ans:'cuenta'},
-  {s:'A una promesa sin plazo hay que ponerle una ___.',opts:['fecha','cifra','excusa'],ans:'fecha'}
+  {s:'Un oficio es un montón de ___ distintas.',opts:['tareas','horas','oficios'],ans:'tareas'},
+  {s:'Las tareas de ___ son las primeras en irse.',opts:['manos','papel','gente'],ans:'papel'},
+  {s:'Las tareas de ___ casi no se las lleva.',opts:['papel','mirar','manos'],ans:'manos'},
+  {s:'Ningún oficio desaparece ___.',opts:['entero','solo','tarde'],ans:'entero'},
+  {s:'Se cuentan tareas, no ___.',opts:['horas','días','sueldos'],ans:'horas'},
+  {s:'Sumar y ordenar ya lo hacía una computadora ___.',opts:['nueva','normal','rara'],ans:'normal'},
+  {s:'Una tarea con ___ no se puede copiar.',opts:['nota','escudo','fecha'],ans:'escudo'},
+  {s:'Saberse las cosas sirve para ___ lo que te dicen.',opts:['copiar','creer','comprobar'],ans:'comprobar'},
+  {s:'Ver qué plaga tiene la hoja es tarea de ___.',opts:['papel','mirar','manos'],ans:'mirar'},
+  {s:'La pregunta buena es de qué ___ está hecho.',opts:['años','tareas','manos'],ans:'tareas'}
 ];
 const explainQuestions=[
-  {q:'¿Por qué una profecía convence más que un escenario?',ans:'Porque no se puede incumplir y no le pide nada a nadie.'},
-  {q:'¿Qué se pierde con «le pasa a todo el mundo»?',ans:'Se pierde la persona: sin ella nadie decide y nadie reclama.'},
-  {q:'¿Por qué «es grave» no ayuda a decidir?',ans:'Porque no se compara con lo que cuesta evitarlo.'},
-  {q:'¿Por qué la misma máquina cuesta más en una alcaldía?',ans:'Porque el mismo fallo alcanza a mucha más gente.'},
-  {q:'¿Qué hay que escribir antes de comprar un programa que decide?',ans:'Qué decisiones no valen sin que una persona las mire.'},
-  {q:'¿Por qué no se puede revisar todo?',ans:'Porque son demasiadas. Se revisa lo que decide algo grave.'},
-  {q:'Partí un oficio de tu pueblo en cuentas y decisiones.',ans:'La cuenta se automatiza; decidir y responder por ello, no.'},
-  {q:'Escribí un escenario tuyo con las cuatro piezas.',ans:'Tiene que traer capacidad de hoy, persona, precio y pregunta.'}
+  {q:'¿Por qué la máquina no se lleva un oficio entero?',ans:'Porque un oficio es un montón de tareas y no se lleva todas.'},
+  {q:'¿Qué clases de tarea se lleva casi enteras?',ans:'Las de papel y las de mirar: escribir, sumar, ordenar y reconocer.'},
+  {q:'¿Por qué se cuentan tareas y no horas?',ans:'Porque las tareas que quedan pueden llevarse el día entero.'},
+  {q:'Escribí las tareas de un oficio de tu pueblo, una por una.',ans:'Se valora que estén todas y que cada una lleve su tipo.'},
+  {q:'¿Qué es un escudo y para qué sirve?',ans:'Lo que hace que una máquina no pueda entregar esa tarea hecha.'},
+  {q:'Escribí una tarea de clase con escudo y decí cuál lleva.',ans:'Vale si pide hacerlo delante, un dato de aquí o medir algo.'},
+  {q:'¿Por qué sumar una lista no es Inteligencia Artificial?',ans:'Porque una computadora normal ya lo hacía desde mucho antes.'},
+  {q:'¿Qué le contestarías a Katy, que no sabe qué estudiar?',ans:'Que mire de qué tareas está hecho el oficio que le gusta.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
@@ -361,48 +383,56 @@ function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answe
 
 // ===================== SOPA DE LETRAS =====================
 const sopaSets=[
-  {size:12,grid:[
-    ['Y','Q','F','Y','B','D','I','L','Z','D','V','M'],
-    ['I','R','G','R','Ñ','E','C','N','A','C','L','A'],
-    ['D','O','A','W','E','K','H','J','Ñ','L','P','R'],
-    ['D','I','M','S','E','T','K','P','T','R','P','Ñ'],
-    ['E','R','P','Ñ','I','C','O','C','O','O','E','K'],
-    ['C','A','X','G','R','V','E','F','D','I','B','E'],
-    ['I','N','D','E','J','R','E','Ñ','J','C','I','O'],
-    ['S','E','Y','S','F','C','L','R','H','E','J','V'],
-    ['I','C','V','C','I','V','Y','P','D','R','J','H'],
-    ['O','S','A','A','I','W','Ñ','Y','P','P','O','U'],
-    ['N','E','L','Q','F','K','Q','Y','Q','A','U','T'],
-    ['Y','I','F','Q','W','S','R','S','H','Z','I','R']
-  ],words:[
-    {w:'ESCENARIO',cells:[[10,1],[9,1],[8,1],[7,1],[6,1],[5,1],[4,1],[3,1],[2,1]]},
-    {w:'PROFECIA',cells:[[2,10],[3,9],[4,8],[5,7],[6,6],[7,5],[8,4],[9,3]]},
-    {w:'DECISION',cells:[[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],[9,0],[10,0]]},
-    {w:'PRECIO',cells:[[9,9],[8,9],[7,9],[6,9],[5,9],[4,9]]},
-    {w:'REVISAR',cells:[[7,7],[6,6],[5,5],[4,4],[3,3],[2,2],[1,1]]},
-    {w:'ALCANCE',cells:[[1,11],[1,10],[1,9],[1,8],[1,7],[1,6],[1,5]]}
-  ]},
-  {size:12,grid:[
-    ['Ñ','A','K','P','M','Q','R','E','G','L','A','O'],
-    ['X','Z','Y','N','B','W','K','J','T','T','G','K'],
-    ['S','C','Ñ','N','G','H','Ñ','Q','Z','R','G','H'],
-    ['D','O','O','P','R','E','G','U','N','T','A','T'],
-    ['A','H','N','L','Ñ','K','P','Q','N','Ñ','A','W'],
-    ['D','U','E','A','L','N','O','Q','U','K','A','K'],
-    ['I','V','J','J','M','A','L','Ñ','Z','K','M','N'],
-    ['C','A','Q','B','V','L','F','Ñ','U','A','G','K'],
-    ['A','L','D','X','J','T','S','G','Q','F','G','M'],
-    ['P','A','N','O','S','R','E','P','Y','K','R','S'],
-    ['A','X','H','P','R','G','X','Z','S','U','T','E'],
-    ['C','F','U','L','G','Z','Ñ','L','J','E','F','Q']
-  ],words:[
-    {w:'CAPACIDAD',cells:[[11,0],[10,0],[9,0],[8,0],[7,0],[6,0],[5,0],[4,0],[3,0]]},
-    {w:'PERSONA',cells:[[9,7],[9,6],[9,5],[9,4],[9,3],[9,2],[9,1]]},
-    {w:'PREGUNTA',cells:[[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],[3,9],[3,10]]},
-    {w:'MANOS',cells:[[6,4],[5,3],[4,2],[3,1],[2,0]]},
-    {w:'FALLO',cells:[[7,6],[6,5],[5,4],[4,3],[3,2]]},
-    {w:'REGLA',cells:[[0,6],[0,7],[0,8],[0,9],[0,10]]}
-  ]}
+    {
+        size: 12,
+        grid: [
+            ['C', 'C', 'Q', 'V', 'T', 'O', 'M', 'T', 'Q', 'R', 'B', 'P'],
+            ['A', 'Ñ', 'M', 'Q', 'A', 'I', 'J', 'W', 'O', 'C', 'N', 'X'],
+            ['Z', 'P', 'T', 'Z', 'R', 'Q', 'T', 'B', 'F', 'U', 'L', 'U'],
+            ['B', 'A', 'P', 'A', 'E', 'K', 'J', 'T', 'I', 'I', 'Ñ', 'S'],
+            ['W', 'P', 'R', 'D', 'A', 'X', 'V', 'H', 'C', 'O', 'Ñ', 'P'],
+            ['Q', 'E', 'O', 'M', 'Z', 'E', 'B', 'M', 'I', 'X', 'C', 'Ñ'],
+            ['E', 'L', 'P', 'R', 'H', 'Ñ', 'X', 'M', 'O', 'J', 'T', 'T'],
+            ['U', 'C', 'R', 'S', 'Ñ', 'Z', 'T', 'T', 'M', 'K', 'W', 'M'],
+            ['Y', 'B', 'U', 'O', 'D', 'U', 'C', 'S', 'E', 'A', 'S', 'M'],
+            ['B', 'I', 'O', 'N', 'H', 'S', 'R', 'F', 'M', 'Z', 'I', 'U'],
+            ['N', 'A', 'W', 'A', 'Ñ', 'N', 'A', 'B', 'X', 'K', 'B', 'X'],
+            ['C', 'M', 'M', 'M', 'W', 'L', 'W', 'A', 'D', 'F', 'A', 'W'],
+        ],
+        words: [
+            { w: 'TAREA', cells: [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4]] },
+            { w: 'OFICIO', cells: [[1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8]] },
+            { w: 'PAPEL', cells: [[2, 1], [3, 1], [4, 1], [5, 1], [6, 1]] },
+            { w: 'MANOS', cells: [[11, 3], [10, 3], [9, 3], [8, 3], [7, 3]] },
+            { w: 'MIRAR', cells: [[0, 6], [1, 5], [2, 4], [3, 3], [4, 2]] },
+            { w: 'ESCUDO', cells: [[8, 8], [8, 7], [8, 6], [8, 5], [8, 4], [8, 3]] },
+        ]
+    },
+    {
+        size: 12,
+        grid: [
+            ['B', 'P', 'Z', 'G', 'C', 'J', 'P', 'S', 'U', 'Ñ', 'E', 'L'],
+            ['S', 'L', 'F', 'J', 'U', 'Y', 'Q', 'M', 'Ñ', 'M', 'F', 'O'],
+            ['Q', 'C', 'Y', 'D', 'E', 'P', 'I', 'Ñ', 'H', 'X', 'N', 'J'],
+            ['C', 'Ñ', 'A', 'K', 'N', 'A', 'N', 'P', 'J', 'M', 'P', 'M'],
+            ['P', 'U', 'S', 'P', 'T', 'R', 'R', 'Y', 'C', 'I', 'Y', 'I'],
+            ['Ñ', 'V', 'Ñ', 'A', 'A', 'E', 'N', 'A', 'O', 'P', 'N', 'P'],
+            ['W', 'B', 'S', 'L', 'D', 'C', 'M', 'O', 'I', 'C', 'B', 'Z'],
+            ['L', 'Ñ', 'X', 'E', 'Ñ', 'I', 'I', 'K', 'Q', 'P', 'B', 'Ñ'],
+            ['Y', 'B', 'C', 'U', 'Y', 'D', 'Y', 'D', 'Ñ', 'Q', 'O', 'D'],
+            ['R', 'I', 'W', 'C', 'M', 'O', 'J', 'E', 'A', 'X', 'Z', 'C'],
+            ['R', 'J', 'N', 'S', 'W', 'T', 'E', 'E', 'Y', 'D', 'Ñ', 'M'],
+            ['Z', 'J', 'A', 'E', 'R', 'F', 'G', 'N', 'C', 'P', 'L', 'D'],
+        ],
+        words: [
+            { w: 'CAPACIDAD', cells: [[2, 1], [3, 2], [4, 3], [5, 4], [6, 5], [7, 6], [8, 7], [9, 8], [10, 9]] },
+            { w: 'PARECIDO', cells: [[2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [7, 5], [8, 5], [9, 5]] },
+            { w: 'PREDECIR', cells: [[3, 7], [4, 6], [5, 5], [6, 4], [7, 3], [8, 2], [9, 1], [10, 0]] },
+            { w: 'COPIAR', cells: [[9, 11], [8, 10], [7, 9], [6, 8], [5, 7], [4, 6]] },
+            { w: 'CUENTA', cells: [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4]] },
+            { w: 'ESCUELA', cells: [[11, 3], [10, 3], [9, 3], [8, 3], [7, 3], [6, 3], [5, 3]] },
+        ]
+    }
 ];
 let currentSopaSetIdx=0,sopaFoundWords=new Set();
 let sopaFirstClickCell=null,sopaPointerStartCell=null,sopaPointerMoved=false,sopaSelectedCells=[];
@@ -417,84 +447,84 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Un escenario se hace con algo que ya existe.',a:true},
-  {q:'Una profecía se puede incumplir fácilmente.',a:false},
-  {q:'«Le pasa a la gente» sirve igual que un nombre.',a:false},
-  {q:'Un precio contado se compara con lo que cuesta evitarlo.',a:true},
-  {q:'Un escenario termina en un anuncio.',a:false},
-  {q:'El alcance del fallo lo pone quien tiene la máquina.',a:true},
-  {q:'La revisión impide que la máquina se equivoque.',a:false},
-  {q:'La revisión impide que el fallo se ejecute.',a:true},
-  {q:'Revisar no cuesta nada.',a:false},
-  {q:'Cuando alcanza a un pueblo entero, se puede revisar todo.',a:false},
-  {q:'Una predicción vale para donde midieron los datos.',a:true},
-  {q:'El que acierta con lo común acierta con lo raro.',a:false},
-  {q:'Una voz fabricada recuerda lo que esa persona vivió.',a:false},
-  {q:'De un oficio se automatiza primero la cuenta.',a:true},
-  {q:'Los escenarios de esta misión traen su fecha.',a:false},
-  {q:'A una promesa sin plazo le ponés vos la fecha.',a:true},
-  {q:'Antes de comprar conviene preguntar qué hace cuando no sabe.',a:true},
-  {q:'Un parecido de caras es una identificación segura.',a:false},
-  {q:'Una cara se cambia como una contraseña.',a:false},
-  {q:'Escribiendo se aprende igual que leyendo lo que escribió otro.',a:false}
+  {q:'Un oficio es un montón de tareas distintas.',a:true},
+  {q:'La máquina se lleva oficios enteros.',a:false},
+  {q:'Las tareas de papel son las primeras en irse.',a:true},
+  {q:'Las tareas de manos se las lleva casi todas.',a:false},
+  {q:'Mirar algo y decir qué es también se lo lleva.',a:true},
+  {q:'Ninguno de los ocho oficios desaparece entero.',a:true},
+  {q:'La pregunta buena es «¿mi oficio se salva?».',a:false},
+  {q:'Sumar y ordenar una lista es Inteligencia Artificial.',a:false},
+  {q:'Este conteo mide horas de trabajo.',a:false},
+  {q:'Se cuentan tareas, no horas.',a:true},
+  {q:'A don Chele le quedan las tareas más largas del día.',a:true},
+  {q:'Copiar la tarea hoy sirve igual que antes.',a:false},
+  {q:'Una tarea que se hace delante de alguien no se copia.',a:true},
+  {q:'Una tarea con un dato de tu barrio la entrega la máquina.',a:false},
+  {q:'Saberse las cosas sirve para comprobar lo que te dicen.',a:true},
+  {q:'Explicar en voz alta lo que hiciste lleva escudo.',a:true},
+  {q:'La máquina puede ver que un niño no desayunó.',a:false},
+  {q:'Una máquina responde ante la madre por la nota.',a:false},
+  {q:'Ningún oficio de los ocho se salva entero.',a:true},
+  {q:'Lo que entregás con tu nombre lo respondés vos.',a:true}
 ];
 const evalMCBank=[
-  {q:'La diferencia entre un escenario y una profecía es que el escenario…',o:['Es más largo','Lo dicen expertos','Habla del pasado','Termina en una decisión'],a:3},
-  {q:'La primera pieza de un escenario es…',o:['Que sea triste','Que tenga cifras','Que lo firme alguien','Que esté hecho con algo de hoy'],a:3},
-  {q:'«Esto es gravísimo para la sociedad» falla porque…',o:['Es muy corto','El precio no se puede contar','No tiene emoji','Es del futuro'],a:1},
-  {q:'¿Qué pieza le falta a «la Inteligencia Artificial lo cambiará todo»?',o:['El año','La fuente','El emoji','La persona con nombre'],a:3},
-  {q:'El fallo de un reconocimiento de caras cae sobre…',o:['El que se parece a otro','El que tiene el programa','El que lo vendió','Nadie'],a:0},
-  {q:'En manos de una alcaldía, el mismo fallo…',o:['Cuesta lo mismo','Desaparece','Se arregla solo','Alcanza a mucha más gente'],a:3},
-  {q:'¿Qué hace la revisión?',o:['Evitar que la máquina falle','Acelerar el programa','Ver el fallo antes de que valga','Bajar el precio'],a:2},
-  {q:'Cuando no se puede revisar todo, lo honesto es…',o:['Revisar al azar','Decidir antes qué no vale sin una persona','Confiar en el programa','No comprar nada'],a:1},
-  {q:'A don Chele el pronóstico le falla porque…',o:['El programa es viejo','No sabe usarlo','No midieron en su ladera','Llueve poco'],a:2},
-  {q:'Xiomara usa el programa del centro de salud…',o:['Como segunda opinión','Siempre como primera','Solo los domingos','Para lo raro'],a:0},
-  {q:'La voz del abuelo fabricada con sus audios…',o:['Recuerda lo que vivió','Repite audios guardados','Predice lo que habría dicho','Habla al azar'],a:2},
-  {q:'Ana descubre que en el día de una contadora…',o:['Las cuentas son una parte pequeña','Todo son cuentas','No hay decisiones','No se usa computadora'],a:0},
-  {q:'A Óscar le quitan la tarea escrita y pierde…',o:['Tiempo libre','El cuaderno','La nota de conducta','La práctica de escribir'],a:3},
-  {q:'Doña Tere, sin señal tres días, se salva porque…',o:['Compró otro teléfono','Esperó','Tenía apuntado en papel','Cerró la pulpería'],a:2},
-  {q:'¿Por qué los escenarios no llevan fecha?',o:['Porque no se sabe','Porque fechar lo inventado es profecía','Porque envejecen','Porque lo dice el DCNB'],a:1},
-  {q:'Un programa que contesta igual de seguro cuando no sabe…',o:['No sirve para lo raro','Es el mejor','Se puede usar solo','Cuesta menos'],a:0},
-  {q:'En el taller de esta misión el alumno arma…',o:['Una predicción','Su propio escenario','Un resumen','Un examen'],a:1},
-  {q:'«¿Qué hago yo si esto pasa?» es…',o:['Una profecía','La pregunta que cierra un escenario','Un dato','Un titular'],a:1},
-  {q:'La misma capacidad en manos de una empresa…',o:['Alcanza a una casa','No alcanza a nadie','Alcanza a todas las que la compren','Se revisa sola'],a:2},
-  {q:'Antes de comprar un programa que decide hay que exigir…',o:['Por escrito quién revisa','Un descuento','Más colores','Que nunca falle'],a:0}
+  {q:'La máquina no se lleva oficios: se lleva…',o:['tareas','años','pueblos','sueldos'],a:0},
+  {q:'Una tarea de papel es…',o:['levantar una pared','sumar y ordenar','convencer a alguien','cargar sacos'],a:1},
+  {q:'Una tarea de mirar es…',o:['fiarle a una señora','doblar el hierro','ver qué plaga tiene la hoja','sacar la cuenta'],a:2},
+  {q:'Una tarea de manos es…',o:['buscar un expediente','contestar el correo','sacar promedios','ponerle la vía a un niño'],a:3},
+  {q:'La clase de tarea que MÁS se lleva la máquina es…',o:['la de papel','la de manos','la de gente','ninguna'],a:0},
+  {q:'La clase de tarea que MENOS se lleva es…',o:['la de papel','la de manos','la de mirar','la de escribir'],a:1},
+  {q:'De los ocho oficios mirados, desaparecen enteros…',o:['todos','la mitad','ninguno','tres'],a:2},
+  {q:'Calificar exámenes de marcar se lo lleva…',o:['la voz fabricada','el refuerzo','el parecido','una cuenta de siempre'],a:3},
+  {q:'A la profesora Delmy NO se le puede quitar…',o:['responder por la nota que puso','llenar planillas','sacar promedios','calificar marcas'],a:0},
+  {q:'Don Toño, el albañil, pierde sobre todo…',o:['levantar la pared','calcular los bloques y la arena','doblar el hierro','hablar con el dueño'],a:1},
+  {q:'Doña Tere sigue haciendo ella…',o:['sacar la cuenta del día','ver qué tomate no aguanta','convencer al que duda','saber qué se vende el sábado'],a:2},
+  {q:'Sumar, ordenar y buscar en una lista…',o:['es lo más nuevo que hay','solo funciona con internet','no lo hace ninguna máquina','ya lo hacía una computadora normal'],a:3},
+  {q:'Este conteo de la misión cuenta…',o:['horas','sueldos','años','tareas'],a:3},
+  {q:'A don Chele le quedan cinco tareas de siete, y esas cinco…',o:['se llevan todo el día','no cuestan nada','las hace la máquina','duran un minuto'],a:0},
+  {q:'Copiar la tarea que te hace una máquina te deja…',o:['con mejor nota final','llegando al examen sin saber','sin tarea','con más tiempo libre'],a:1},
+  {q:'Una tarea con escudo es…',o:['un resumen de la Independencia','un ensayo sobre la contaminación','medir tu patio y sacar su área','veinte ejercicios de fracciones'],a:2},
+  {q:'Los tres escudos son…',o:['largo, corto y difícil','papel, mirar y manos','nota, firma y examen','delante, de aquí y de manos'],a:3},
+  {q:'Lo que hay que saberse hoy sirve para…',o:['comprobar lo que te dicen','copiar más rápido','no estudiar','escribir bonito'],a:0},
+  {q:'Lo que entregás con tu nombre…',o:['lo revisa la máquina','lo respondés vos','no lo firma nadie','no tiene dueño'],a:1},
+  {q:'Antes de elegir qué estudiar, Katy tiene que preguntar…',o:['cuánto paga','quién lo dijo','de qué tareas está hecho','cuándo va a pasar'],a:2}
 ];
 const evalCPBank=[
-  {q:'Un escenario se hace con algo que ___ se puede hacer.',a:'ya'},
-  {q:'Una profecía no se puede ___ nunca.',a:'incumplir'},
-  {q:'Sin una ___ con nombre no hay quién decida.',a:'persona'},
-  {q:'Un escenario termina en una ___.',a:'decisión'},
-  {q:'El ___ del fallo lo pone quien tiene la máquina.',a:'alcance'},
-  {q:'La ___ impide que el fallo se ejecute.',a:'revisión'},
-  {q:'Una predicción vale para ___ midieron.',a:'donde'},
-  {q:'Lo que acierta con lo común falla con lo ___.',a:'raro'},
-  {q:'De un oficio se automatiza la ___.',a:'cuenta'},
-  {q:'A una promesa sin plazo hay que ponerle una ___.',a:'fecha'},
-  {q:'Un precio sirve si se puede ___.',a:'contar'},
-  {q:'Una cara filtrada no se puede ___.',a:'cambiar'},
-  {q:'Un escenario se declara ___ en la pantalla.',a:'inventado'},
-  {q:'Ponerle ___ a lo inventado ya es una profecía.',a:'fecha'},
-  {q:'Hay que preguntar qué hace el programa cuando no está ___.',a:'seguro'},
-  {q:'Xiomara lo usa como ___ opinión, nunca como la primera.',a:'segunda'}
+  {q:'Un oficio es un montón de ___.',a:'tareas'},
+  {q:'Las tareas de ___ son las primeras en irse.',a:'papel'},
+  {q:'Mirar algo y decir qué es es una tarea de ___.',a:'mirar'},
+  {q:'Levantar una pared es una tarea de ___.',a:'manos'},
+  {q:'Convencer y responder son tareas de estar con ___.',a:'alguien'},
+  {q:'Ningún oficio desaparece ___.',a:'entero'},
+  {q:'Se cuentan tareas, no ___.',a:'horas'},
+  {q:'Sumar y ordenar ya lo hacía una computadora ___.',a:'normal'},
+  {q:'Ponerle nombre a algo por su ___ con los ejemplos.',a:'parecido'},
+  {q:'Con datos medidos, la máquina puede ___ lo que pasará.',a:'predecir'},
+  {q:'Una tarea con ___ no se puede copiar.',a:'escudo'},
+  {q:'Un escudo es hacerlo ___ de alguien.',a:'delante'},
+  {q:'Otro escudo es usar un dato de ___.',a:'aquí'},
+  {q:'Saberse las cosas sirve para ___.',a:'comprobar'},
+  {q:'Lo que entregás lo ___ vos.',a:'firmás'},
+  {q:'La pregunta buena es de qué tareas está ___.',a:'hecho'}
 ];
 const evalPRBank=[
-  {term:'Escenario',def:'Situación inventada que termina en una decisión'},
-  {term:'Profecía',def:'Frase que dice lo que va a pasar'},
-  {term:'Capacidad de hoy',def:'Algo que ya se puede hacer'},
-  {term:'Alcance',def:'A cuánta gente llega la decisión'},
-  {term:'Revisión',def:'Que una persona mire antes de que valga'},
-  {term:'Precio contable',def:'Lo que cuesta, en días o en lempiras'},
-  {term:'Sesgo',def:'Que el error caiga siempre sobre los mismos'},
-  {term:'Segunda opinión',def:'Usar el programa después de decidir'},
-  {term:'Punto de partida',def:'Qué hacer el día que el programa falle'},
-  {term:'Oficio partido',def:'La lista de cuentas y la de decisiones'},
-  {term:'Ciencia ficción',def:'Lo que se apoya en algo que no existe'},
-  {term:'Eco',def:'Muchas páginas repitiendo lo mismo sin fuente'},
-  {term:'Capacidad producida',def:'La que hiciste vos en una etapa anterior'},
-  {term:'Decisión grave',def:'La que no vale sin que alguien la mire'},
-  {term:'Cuota mensual',def:'Lo que se paga por algo que no se tiene'},
-  {term:'Segunda comprobación',def:'Lo que convierte un parecido en identificación'}
+  {term:'Tarea de papel',def:'Escribir, copiar, sumar, ordenar y buscar'},
+  {term:'Tarea de mirar',def:'Mirar algo y decir qué es o qué tiene'},
+  {term:'Tarea de manos',def:'Hacerlo con el cuerpo, en un sitio'},
+  {term:'Tarea de estar con alguien',def:'Convencer, darse cuenta y responder por lo hecho'},
+  {term:'Oficio',def:'Un montón de tareas distintas'},
+  {term:'Parecido',def:'Ponerle nombre a algo por lo que se parece'},
+  {term:'Predecir',def:'Decir lo que pasará con datos que alguien midió'},
+  {term:'Texto generado',def:'Un escrito que suena seguro y a veces inventa'},
+  {term:'Voz fabricada',def:'Una voz hecha con unos segundos de audio'},
+  {term:'Refuerzo',def:'Mejorar a fuerza de intentos, sin que le digan cómo'},
+  {term:'La cuenta de siempre',def:'Lo que una computadora normal ya hacía antes'},
+  {term:'Escudo',def:'Lo que hace que una tarea no se pueda copiar'},
+  {term:'Delante de alguien',def:'Explicarlo en voz alta y contestar una pregunta'},
+  {term:'Dato de aquí',def:'Algo de tu casa o de tu barrio que nadie escribió'},
+  {term:'Conteo de tareas',def:'Cuenta tareas, nunca horas de trabajo'},
+  {term:'La pregunta buena',def:'¿De qué tareas está hecho ese oficio?'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -581,91 +611,91 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un patronato va a comprar un programa que califica redacciones. El vendedor prometió que en dos años nadie calificará a mano. Nadie preguntó quién revisa.'},
-  {txt:'A un agricultor le llega un programa que dice cuándo sembrar. Aprendió con datos del valle. En su ladera no hay estación.'},
-  {txt:'Una alcaldía pone cámaras que reconocen caras. A un vecino lo detienen tres días: el sistema dice que se parece a alguien buscado.'},
-  {txt:'A un centro de salud sin médico le dan un programa que sugiere qué puede ser. Acierta con lo común.'},
-  {txt:'Un colegio deja de mandar tareas escritas para la casa porque «las hace la máquina».'},
-  {txt:'A una familia le ofrecen hablar con la voz de un abuelo que murió. La hicieron con audios de la familia.'}
+  {txt:'Katy termina noveno. Le dicen que estudie computación y también que no estudie eso. Nadie le contó de qué tareas está hecho ese trabajo.'},
+  {txt:'A la señorita Lesly el programa le contesta el correo de siempre. En la dirección dicen que sobra medio puesto. Nadie miró sus otras tareas.'},
+  {txt:'A don Beto le compraron un programa que suma las facturas. Ahora quieren que también decida a quién se le fía.'},
+  {txt:'Un colegio deja de mandar tareas escritas porque la máquina las hace. No puso otras tareas en su lugar.'},
+  {txt:'A la enfermera Sandra le ponen un programa que marca lo raro en las radiografías. Le dicen que ya no hace falta que mire.'},
+  {txt:'Don Gerardo oye que los buses se van a manejar solos. Su ruta es de tierra y con lluvia. Nadie midió esa calle.'}
 ];
 const critCaseQuestions=[
-  '1. ¿Qué piezas trae el caso y cuáles le faltan?',
-  '2. ¿Con qué capacidad de hoy está hecho? ¿En qué etapa la produjiste?',
-  '3. ¿A cuánta gente alcanza esa decisión?',
-  '4. ¿Quién revisa, y antes o después de que valga?',
-  '5. Escribí la pregunta con la que termina, y contestala.'
+  '1. ¿De qué tareas está hecho ese oficio? Escribí tres.',
+  '2. ¿De qué tipo es cada una: papel, mirar, manos o gente?',
+  '3. ¿Cuáles se lleva la máquina, y con qué capacidad?',
+  '4. ¿Qué le queda a la persona, y por qué no se lo pueden quitar?',
+  '5. ¿Qué habría que decidir hoy? Escribí la pregunta y contestala.'
 ];
 const critCaseGuides=[
-  'Se valora que separe lo que el caso trae de lo que le falta. Al del patronato le faltan el precio y la decisión.',
-  'Se valora que nombre la capacidad y su etapa: predecir (etapa 2), caras (etapa 1), texto (etapa 4), voz (etapa 5).',
-  'Se valora que el alcance salga del caso: una casa, un aula de 43, un pueblo, todas las escuelas que lo compren.',
-  'Se valora que distinga revisar ANTES de que valga de reclamar después. Y que diga que revisar cuesta tiempo.',
-  'Se valora que la pregunta la pueda contestar otra persona. «¿Qué va a pasar?» no vale. «¿Firmo sin saber quién revisa?» sí.'
+  'Se valora que escriba tareas que se puedan mirar, no el oficio entero.',
+  'Se valora que use los cuatro tipos: papel, mirar, manos y estar con alguien.',
+  'Se valora que nombre la capacidad: parecido, predecir, texto, voz, refuerzo o la cuenta.',
+  'Se valora que lo que queda sea de manos o de estar con alguien, y diga por qué.',
+  'Se valora que la pregunta la pueda contestar otra persona. «¿Qué va a pasar?» no vale.'
 ];
 const critErrorBank=[
-  {txt:'"Un programa va a leer lo que siente cada alumno."',
-   g1:'Eso todavía no se puede hacer. No es un escenario: es ciencia ficción.',
-   g2:'Lo que sí se puede: clasificar alumnos por parecido con ejemplos anteriores.'},
-  {txt:'"Esto le va a cambiar la vida a todo el mundo."',
-   g1:'A «todo el mundo» no le pasa nada: falta la persona.',
-   g2:'Preguntá a quién, en concreto. La frase se cae sola.'},
-  {txt:'"Las consecuencias van a ser gravísimas."',
-   g1:'«Gravísimas» no se compara con nada. Un precio se cuenta en días o en lempiras.',
-   g2:'Con el precio contado ya se compara con lo que cuesta evitarlo.'},
-  {txt:'"Si acierta el 95 %, no hace falta que nadie revise."',
-   g1:'El resto no falla al azar: cae sobre quien menos se parece a los ejemplos.',
-   g2:'Por eso se revisa lo que le cambia algo grave a una persona.'},
-  {txt:'"Como la alcaldía lo revisa todo, no hay problema."',
-   g1:'Nadie mira una por una las decisiones de un pueblo entero.',
-   g2:'Lo honesto es escribir antes qué decisiones no valen sin una persona.'},
-  {txt:'"El pronóstico falló porque el programa es malo."',
-   g1:'El programa acertó donde tenía datos. En esa aldea no midió nadie.',
-   g2:'La pregunta que lo arregla es dónde midieron.'}
+  {txt:'"La máquina va a acabar con el oficio de maestra."',
+   g1:'Se lleva tareas, no oficios. A Delmy le quita planillas y promedios.',
+   g2:'No le quita darse cuenta de que un niño no desayunó.'},
+  {txt:'"Lo de manos también se lo lleva, es cuestión de tiempo."',
+   g1:'De las tareas de manos se lleva muy poca cosa.',
+   g2:'Levantar la pared y doblar el hierro se hacen en el terreno.'},
+  {txt:'"Ordenar una lista ya es Inteligencia Artificial."',
+   g1:'Eso lo hacía una computadora normal desde mucho antes.',
+   g2:'Quien lo vende como nuevo te vende humo de hace sesenta años.'},
+  {txt:'"Al albañil le queda la mitad del día libre."',
+   g1:'Se cuentan tareas, no horas. Perdió dos tareas cortas.',
+   g2:'Las que le quedan son las que se llevan el día entero.'},
+  {txt:'"Con la máquina ya no hace falta estudiar nada."',
+   g1:'Si no sabés nada, no cazás el dato que te inventa.',
+   g2:'Lo que hay que saberse es lo que sirve para comprobar.'},
+  {txt:'"Cualquier tarea de la escuela la entrega una máquina."',
+   g1:'Las que llevan escudo, no. Tu patio no lo puede medir.',
+   g2:'A tu vecina tampoco la puede ir a entrevistar.'}
 ];
 const critDecisionBank=[
-  'El patronato vota el viernes. ¿Votar que sí, o pedir por escrito quién revisa?',
-  'Te llega «en dos años nadie va a estudiar». ¿Reenviarlo, o preguntar a quién le pasa?',
-  'Tu tío va a pagar por la voz de tu abuelo. ¿Decirle que no, o preguntar quién se queda con esa voz?',
-  'Un compañero dice que su oficio desaparece. ¿Darle la razón, o partirlo en cuentas y decisiones?'
+  'Katy elige carrera el lunes. ¿Mirar cuál suena mejor, o partir el oficio en tareas?',
+  'A tu tío le ofrecen un programa para sus cuentas. ¿Firmar, o mirar qué tareas le quita?',
+  'El maestro manda un resumen para la casa. ¿Copiarlo, o pedirle una tarea con escudo?',
+  'Un vecino dice que su oficio se acaba. ¿Darle la razón, o escribir sus tareas una por una?'
 ];
-const critDecisionGuide='Las cuatro cambian un anuncio por una pregunta. Quién revisa se pide por escrito antes de firmar. A quién le pasa desarma un reenvío. Quién se queda con la voz decide si se puede tener. Cualquier oficio se parte en cuentas y decisiones.';
+const critDecisionGuide='Las cuatro cambian una frase suelta por tareas que se pueden mirar. Un oficio se parte en tareas antes de elegirlo. Un programa se mira por lo que quita. Una tarea con escudo se pide, no se espera.';
 const critCompareBank=[
-  {a:'Un escenario.',b:'Una profecía.',
-   ga:'Nombra a alguien y termina en una decisión.',
-   gb:'Anuncia lo que va a pasar y no se puede incumplir.',
-   gr:'Uno se puede discutir entero; la otra, no.'},
-  {a:'El programa.',b:'Quien lo tiene.',
-   ga:'Decide igual en cualquier mano: no cambia.',
-   gb:'Decide a cuánta gente alcanza el fallo.',
-   gr:'Lo que cambia el final es la mano, no la máquina.'},
-  {a:'Revisar.',b:'Confiar.',
-   ga:'Cuesta tiempo y evita que el fallo se ejecute.',
-   gb:'No cuesta nada hasta el día que falla.',
-   gr:'Ese día el costo lo pagan los que no eligieron.'},
-  {a:'Lo común.',b:'Lo raro.',
-   ga:'Se parece a los ejemplos, y ahí el programa acierta.',
-   gb:'No se parece a nada que el programa haya visto.',
-   gr:'Y lo raro es lo que urge en salud o en justicia.'},
-  {a:'La cuenta de un oficio.',b:'La decisión de un oficio.',
-   ga:'Se automatiza bien y ahorra horas.',
-   gb:'Hay que discutirla y responder por ella.',
-   gr:'Eso sigue siendo de una persona.'}
+  {a:'Un oficio.',b:'Una tarea.',
+   ga:'Es un montón de tareas distintas.',
+   gb:'Es una sola cosa que se hace.',
+   gr:'La máquina se lleva tareas, nunca el oficio entero.'},
+  {a:'Una tarea de papel.',b:'Una tarea de manos.',
+   ga:'Escribir, copiar, sumar y ordenar. Casi toda se va.',
+   gb:'Se hace con el cuerpo, en un sitio. Casi no se va.',
+   gr:'Por eso hay que mirar de qué tareas está hecho el oficio.'},
+  {a:'Sumar una lista.',b:'Decidir a quién se le fía.',
+   ga:'Es una cuenta de siempre: la máquina no falla.',
+   gb:'Hay que conocer a esa persona y responder después.',
+   gr:'Una se va; la otra sigue siendo de don Beto.'},
+  {a:'Un resumen para la casa.',b:'Medir tu patio.',
+   ga:'La máquina lo entrega hecho y bien.',
+   gb:'Nadie midió tu patio: los números los ponés vos.',
+   gr:'La segunda lleva escudo; la primera, ninguno.'},
+  {a:'Mirar una radiografía.',b:'Decirle a una madre que hay que viajar.',
+   ga:'Marcar lo raro se lo lleva el parecido.',
+   gb:'Hay que decirlo de una forma que ella pueda oír.',
+   gr:'A Sandra le quitan una tarea y le queda la otra.'}
 ];
 const critCauseBank=[
-  {cause:'No midieron la lluvia en su ladera.',guide:'Por eso el pronóstico vale para el valle y no para él.'},
-  {cause:'Nadie preguntó qué hace el programa cuando no sabe.',guide:'Por eso afirmó un dato inventado con la seguridad de siempre.'},
-  {cause:'El sistema se entrenó con pocas fotos de gente como él.',guide:'Por eso falla más con ellos, y el promedio no lo enseña.'},
-  {cause:'Se dejó de mandar tarea escrita.',guide:'Por eso llegó al examen sin práctica: escribir se agarra escribiendo.'},
-  {cause:'Se apostó todo el negocio a que hubiera señal.',guide:'Por eso tres días sin señal dejaron la pulpería a ciegas.'},
-  {cause:'El vendedor prometió sin poner fecha.',guide:'Por eso su promesa no se puede incumplir nunca.'}
+  {cause:'Casi todas sus tareas eran de papel.',guide:'Por eso su oficio es de los que más cambian de forma.'},
+  {cause:'Nadie midió la lluvia en su ladera.',guide:'Por eso la predicción del valle no le sirve a don Chele.'},
+  {cause:'El colegio quitó la tarea escrita y no puso otra.',guide:'Por eso llegaron al examen sin haber escrito un párrafo.'},
+  {cause:'La tarea pedía un dato de su propio barrio.',guide:'Por eso la máquina no pudo entregarla hecha.'},
+  {cause:'Le contaron las tareas que perdió, no las horas.',guide:'Por eso parecía que le quedaba medio día libre.'},
+  {cause:'Le vendieron como nuevo lo que hace una cuenta de siempre.',guide:'Por eso pagó de más por sumar y ordenar una lista.'}
 ];
 const critEffectBank=[
-  {effect:'Media milpa perdida y la semilla de la siguiente siembra.',guide:'Porque sembró con un pronóstico que no medía su ladera.'},
-  {effect:'Cuarenta y tres cuadernos con el mismo dato inventado.',guide:'Porque se revisó al final lo que el programa afirmó en clase.'},
-  {effect:'Tres días detenido y el trabajo perdido.',guide:'Porque un parecido se tomó como prueba, sin comprobar nada más.'},
-  {effect:'Una nota que bajó en un examen escrito.',guide:'Porque llevaba meses sin escribir un párrafo por su cuenta.'},
-  {effect:'Tres días de pulpería sin saber qué cobrar.',guide:'Porque lo que no se podía perder no estaba en papel.'},
-  {effect:'Una cuota mensual por algo que no se puede tener.',guide:'Porque la voz la fabricaron con audios de la familia y se quedó del vendedor.'}
+  {effect:'Tres años de estudio en un oficio que nadie miró por dentro.',guide:'Porque eligió por lo que decía el grupo, sin partirlo en tareas.'},
+  {effect:'Media milpa perdida y la semilla de la siguiente siembra.',guide:'Porque sembró con una predicción que no medía su ladera.'},
+  {effect:'Cuarenta y tres tareas iguales, escritas por la misma máquina.',guide:'Porque la tarea que mandaron no llevaba ningún escudo.'},
+  {effect:'Un dato inventado entregado con el nombre del alumno.',guide:'Porque lo que la máquina escribe lo firma quien lo entrega.'},
+  {effect:'La señorita Lesly con la mitad del correo hecho a las nueve.',guide:'Porque contestar lo de siempre es una tarea de papel.'},
+  {effect:'Un padre enojado atendido por una persona, no por un programa.',guide:'Porque bajarle el enojo a alguien no es una tarea que se delegue.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -803,44 +833,85 @@ function pintarFutCapacidades() {
     '<div class="fut-cap-falla">⚠️ Falla así: ' + _fEsc(x.falla) + '</div></div>').join('');
 }
 
-/* Los nueve escenarios. Las tres decisiones se destapan tocándolas: hasta que
-   el alumno no elige una no sabe qué pasa, que es la única forma de que la
-   consecuencia signifique algo. La regla sale al final, cuando ya vio las
-   tres — antes sería darle la respuesta de un examen que no hizo. */
-const futVistas = {};
-function pintarFutLista() {
-  const c = document.getElementById('fut-lista'); if (!c) return;
-  c.innerHTML = IA_FUTUROS.map((e, i) => {
-    const caps = e.apoya.map(k => { const x = IA_CAPACIDADES.find(y => y.k === k); return x ? '<span class="fut-chip">' + x.e + ' ' + _fEsc(x.que) + '</span>' : ''; }).join('');
-    return '<div class="fut-esc" id="fut-esc-' + i + '">' +
-      '<div class="fut-esc-h"><span class="fut-esc-e">' + e.e + '</span><div><div class="fut-esc-t">' + _fEsc(e.titulo) + '</div>' +
-      '<div class="fut-esc-m"><strong>' + _fEsc(e.quien) + '</strong> · ' + _fEsc(e.ciclo) + '</div></div></div>' +
-      '<div class="fut-esc-caps">' + caps + '</div>' +
-      '<p class="fut-esc-s">' + _fEsc(e.situacion) + '</p>' +
-      '<p class="fut-esc-c">💸 Lo que cuesta: <strong>' + _fEsc(e.cuesta) + '</strong></p>' +
-      '<div class="fut-ops" id="fut-ops-' + i + '"></div>' +
-      '<div class="fut-regla" id="fut-regla-' + i + '"></div></div>';
-  }).join('');
-  IA_FUTUROS.forEach((e, i) => { futVistas[i] = new Set(); pintarFutOps(i); });
+/* ── Los cuatro tipos de tarea ───────────────────────────────────────────── */
+function pintarTipos() {
+  const c = document.getElementById('tt-lista'); if (!c) return;
+  c.innerHTML = IA_OFI_TIPOS.map(t => '<div class="tt-fila">' +
+    '<span class="tt-e">' + t.e + '</span>' +
+    '<div><div class="tt-n">' + _fEsc(t.nombre) + '</div>' +
+    '<div class="tt-q">' + _fEsc(t.que) + '</div></div></div>').join('');
 }
-function pintarFutOps(i) {
-  const e = IA_FUTUROS[i], c = document.getElementById('fut-ops-' + i); if (!c) return;
-  c.innerHTML = e.ops.map((o, j) => {
-    const abierta = futVistas[i].has(j);
-    return '<div class="fut-op' + (abierta ? ' abierta' : '') + '">' +
-      '<button class="fut-op-b" onclick="futVer(' + i + ',' + j + ')">' + (abierta ? '▾' : '▸') + ' ' + _fEsc(o.t) + '</button>' +
-      (abierta ? '<div class="fut-op-p">→ ' + _fEsc(o.pasa) + '</div>' : '') + '</div>';
-  }).join('');
+
+/* ── Los ocho oficios, tarea por tarea ───────────────────────────────────── */
+const _ETIQ = { si: '🤖 Se la lleva', medias: '🤝 A medias', no: '🧑 No puede' };
+/* ⚠️ Toda tarea que la máquina se lleva dice CON QUÉ, y solo hay dos
+   respuestas honestas: una capacidad que el alumno produjo, o «esto ya lo
+   hacía una computadora normal». Sin esa chapa, la misión sería publicidad. */
+function _comoChip(t) {
+  if (t.maquina === 'no') return '';
+  if (t.como === 'cuenta') return '<span class="ofi-como cuenta">' + IA_CUENTA.e + ' ' + _fEsc(IA_CUENTA.corto) + '</span>';
+  const x = IA_CAPACIDADES.find(y => y.k === t.como);
+  return x ? '<span class="ofi-como">' + x.e + ' ' + _fEsc(x.corto) + ' · etapa ' + x.etapa + '</span>' : '';
 }
-function futVer(i, j) {
-  futVistas[i].add(j); pintarFutOps(i); sfx('click');
-  if (!xpTracker.wgt.has('fut_' + i + '_' + j)) { xpTracker.wgt.add('fut_' + i + '_' + j); pts(1); }
-  if (futVistas[i].size === IA_FUTUROS[i].ops.length) {
-    const r = document.getElementById('fut-regla-' + i);
-    if (r) r.innerHTML = '<strong>📏 La regla que deja:</strong> ' + _fEsc(IA_FUTUROS[i].regla);
-    if (!xpTracker.wgt.has('futr_' + i)) { xpTracker.wgt.add('futr_' + i); pts(2); sfx('ok'); }
-    if (Object.keys(futVistas).filter(k => futVistas[k].size === IA_FUTUROS[k].ops.length).length >= 3) unlockAchievement('explorador');
-  }
+let ofiSel = IA_OFICIOS[0].k;
+const ofiVistos = new Set([ofiSel]);
+function pintarOfiChips() {
+  const c = document.getElementById('ofi-chips'); if (!c) return;
+  c.innerHTML = IA_OFICIOS.map(o => '<button class="ofi-chip' + (ofiSel === o.k ? ' sel' : '') +
+    '" onclick="ofiElegir(\'' + o.k + '\')">' + o.e + ' ' + _fEsc(o.nombre) + '</button>').join('');
+}
+function ofiElegir(k) {
+  ofiSel = k; ofiVistos.add(k); pintarOfiChips(); pintarOfiDetalle(); sfx('click');
+  if (ofiVistos.size === IA_OFICIOS.length) unlockAchievement('explorador');
+}
+function pintarOfiDetalle() {
+  const c = document.getElementById('ofi-detalle'); if (!c) return;
+  const o = IA_OFICIOS.find(x => x.k === ofiSel), n = iaOfiCuenta(ofiSel);
+  c.innerHTML = '<p class="ofi-quien">' + o.e + ' <strong>' + _fEsc(o.nombre) + '</strong> · ' + _fEsc(o.quien) + '</p>' +
+    o.tareas.map(t => {
+      const ti = IA_OFI_TIPOS.find(x => x.k === t.tipo);
+      return '<div class="ofi-tarea ' + t.maquina + '">' +
+        '<div class="ofi-tarea-t"><span class="ofi-tipo">' + ti.e + '</span>' + _fEsc(t.t) + '</div>' +
+        '<div class="ofi-veredicto">' + _ETIQ[t.maquina] + '</div>' +
+        _comoChip(t) +
+        '<div class="ofi-porque">' + _fEsc(t.porque) + '</div></div>';
+    }).join('') +
+    '<p class="ofi-cuenta">De sus <strong>' + n.total + '</strong> tareas, la máquina se lleva <strong>' + n.si +
+    '</strong> enteras y <strong>' + n.medias + '</strong> a medias. Le quedan <strong>' + n.no + '</strong>.</p>';
+}
+
+/* ⚠️ La cuenta que sostiene la misión entera. Los porcentajes NO se escriben
+   a mano en ninguna parte: salen de iaOfiPorTipo(), que es la misma función
+   que la sonda vuelve a correr para comprobar que la pantalla dice verdad. */
+function pintarTtBarras() {
+  const c = document.getElementById('tt-barras'); if (!c) return;
+  c.innerHTML = iaOfiPorTipo().map(t => '<div class="tt-barra">' +
+    '<div class="tt-barra-r">' + t.e + ' ' + _fEsc(t.nombre) + ' <small>(' + t.total + ' tareas)</small></div>' +
+    '<div class="tt-barra-f"><div class="tt-barra-v' + (t.pct >= 50 ? ' alta' : '') + '" style="width:' + t.pct + '%"></div></div>' +
+    '<div class="tt-barra-p">' + t.pct + ' %</div></div>').join('');
+}
+function pintarOfiTabla() {
+  const c = document.getElementById('ofi-tabla'); if (!c) return;
+  c.innerHTML = IA_OFICIOS.map(o => { const n = iaOfiCuenta(o.k);
+    return '<div class="ofi-fila"><span class="ofi-fila-n">' + o.e + ' ' + _fEsc(o.nombre) + '</span>' +
+      '<span class="ofi-fila-b"><span style="width:' + n.pct + '%"></span></span>' +
+      '<span class="ofi-fila-p">' + n.pct + ' %</span></div>'; }).join('');
+}
+
+/* ── La escuela ──────────────────────────────────────────────────────────── */
+function pintarEstudio() {
+  const c = document.getElementById('esu-estudio'); if (!c) return;
+  c.innerHTML = IA_ESTUDIO.map(x => '<div class="esu-item">' +
+    '<div class="esu-t">' + x.e + ' ' + _fEsc(x.titulo) + '</div>' +
+    '<div class="esu-q">' + _fEsc(x.que) + '</div>' +
+    '<div class="esu-h">→ ' + _fEsc(x.hoy) + '</div></div>').join('');
+}
+function pintarEscudos() {
+  const c = document.getElementById('esu-escudos'); if (!c) return;
+  c.innerHTML = IA_ESCUDOS.map(e => '<div class="esu-escudo">' +
+    '<div class="esu-t">' + e.e + ' ' + _fEsc(e.nombre) + '</div>' +
+    '<div class="esu-q">' + _fEsc(e.que) + '</div>' +
+    '<div class="esu-h">' + _fEsc(e.porque) + '</div></div>').join('');
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
@@ -849,7 +920,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   pintarFutFecha();
   pintarFutPiezas();
   pintarFutCapacidades();
-  pintarFutLista();
+  pintarTipos();
+  pintarOfiChips();
+  pintarOfiDetalle();
+  pintarTtBarras();
+  pintarOfiTabla();
+  pintarEstudio();
+  pintarEscudos();
   upFC();
   buildQz();
   showQz();
@@ -870,20 +947,145 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 (function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
 
-// ===================== 🔮 DESCUBRE · LOS ESCENARIOS =====================
-/* Dos actividades. Las CUENTAS viven en js/data/ia-futuros.js —iaFutJuzga,
-   iaFutFinal—: es lo que la sonda `verifica-descubre-ia` recalcula, y por eso
-   aquí solo se pinta, se lleva el XP y se guarda lo que el alumno escribe. */
+// ===================== 🔭 DESCUBRE · EL OFICIO Y LA TAREA =====================
+/* Dos actividades. Las CUENTAS viven en js/data/ia-futuros.js —iaOfiCuenta,
+   iaOfiPorTipo, iaClaseCuenta, iaFutJuzga—: es lo que la sonda
+   `verifica-descubre-ia` recalcula, y por eso aquí solo se pinta, se lleva el
+   XP y se guarda lo que el alumno decide. */
 const DESC_KEY = SAVE_KEY + '_descubre';
 function iaDescGuardar(k, v) { try { const s = JSON.parse(localStorage.getItem(DESC_KEY) || '{}'); s[k] = v; localStorage.setItem(DESC_KEY, JSON.stringify(s)); } catch (e) {} }
 function iaDescLeer(k) { try { return (JSON.parse(localStorage.getItem(DESC_KEY) || '{}'))[k]; } catch (e) { return undefined; } }
-/* La sección se gana HACIENDO las dos: un escenario propio que pase las
-   cuatro piezas, y las dos manos del mismo invento comparadas. Nunca se marca
-   al abrir: esa es la normativa de la estrella. */
-let manVistas = new Set();
-function iaDescubreListo() { if (iaDescLeer('escenario') && manVistas.size >= 4) { fin('s-descubre'); unlockAchievement('cronometro'); } }
 
-/* ── 🔮 El taller: armá el tuyo y pasalo por la prueba ─────────────────── */
+/* ⚠️ La sección se gana HACIENDO las dos: un oficio entero contestado y las
+   doce tareas de clase con la tarea propia escrita. Nunca se marca al abrir:
+   esa es la normativa de la estrella. Y se llama desde UN solo sitio. */
+function iaDescubreListo() {
+  if (iaDescLeer('oficio') && iaDescLeer('tarea')) { fin('s-descubre'); unlockAchievement('cronometro'); }
+}
+
+/* ── 🧰 El oficio que te gusta ───────────────────────────────────────────── */
+let jueSel = '', jueResp = {};
+function juePintarChips() {
+  const c = document.getElementById('jue-chips'); if (!c) return;
+  c.innerHTML = IA_OFICIOS.map(o => '<button class="ofi-chip' + (jueSel === o.k ? ' sel' : '') +
+    '" onclick="jueElegir(\'' + o.k + '\')">' + o.e + ' ' + _fEsc(o.nombre) + '</button>').join('');
+}
+function jueElegir(k) { jueSel = (jueSel === k ? '' : k); juePintarChips(); juePintarTareas(); juePintarCuenta(); sfx('click'); }
+function juePintarTareas() {
+  const c = document.getElementById('jue-tareas'); if (!c) return;
+  if (!jueSel) { c.innerHTML = '<p class="esu-vacio">Tocá un oficio para empezar.</p>'; return; }
+  const o = IA_OFICIOS.find(x => x.k === jueSel);
+  c.innerHTML = o.tareas.map((t, i) => {
+    const dada = jueResp[jueSel + '|' + i];
+    const ti = IA_OFI_TIPOS.find(x => x.k === t.tipo);
+    const bts = ['si', 'medias', 'no'].map(v => '<button class="jue-b' +
+      (dada ? (v === t.maquina ? ' buena' : (v === dada ? ' mala' : '')) : '') + '"' +
+      (dada ? ' disabled' : '') + ' onclick="jueResponder(' + i + ',\'' + v + '\')">' + _ETIQ[v] + '</button>').join('');
+    return '<div class="jue-tarea">' +
+      '<div class="ofi-tarea-t"><span class="ofi-tipo">' + ti.e + '</span>' + _fEsc(t.t) + '</div>' +
+      '<div class="jue-bts">' + bts + '</div>' +
+      (dada ? '<div class="jue-resp ' + (dada === t.maquina ? 'ok' : 'no') + '">' +
+        (dada === t.maquina ? '✓ Sí' : '✗ No') + ': ' + _ETIQ[t.maquina] + '. ' + _fEsc(t.porque) + '</div>' +
+        _comoChip(t) : '') + '</div>';
+  }).join('');
+}
+function jueResponder(i, v) {
+  const clave = jueSel + '|' + i; if (jueResp[clave]) return;
+  const t = IA_OFICIOS.find(x => x.k === jueSel).tareas[i];
+  jueResp[clave] = v;
+  if (!xpTracker.wgt.has('jue_' + clave)) { xpTracker.wgt.add('jue_' + clave); pts(1); }
+  sfx(v === t.maquina ? 'ok' : 'no');
+  juePintarTareas(); juePintarCuenta();
+}
+function juePintarCuenta() {
+  const c = document.getElementById('jue-cuenta'); if (!c) return;
+  if (!jueSel) { c.innerHTML = ''; return; }
+  const o = IA_OFICIOS.find(x => x.k === jueSel);
+  const dadas = o.tareas.filter((t, i) => jueResp[jueSel + '|' + i]).length;
+  if (dadas < o.tareas.length) { c.innerHTML = '<p class="esu-vacio">Llevás ' + dadas + ' de ' + o.tareas.length + '.</p>'; return; }
+  const n = iaOfiCuenta(jueSel);
+  const bien = o.tareas.filter((t, i) => jueResp[jueSel + '|' + i] === t.maquina).length;
+  c.innerHTML = '<p class="esu-fin"><strong>' + o.e + ' ' + _fEsc(o.nombre) + ':</strong> acertaste ' + bien + ' de ' + o.tareas.length + '.</p>' +
+    '<p class="esu-fin">La máquina se lleva <strong>' + n.si + '</strong> tareas enteras y <strong>' + n.medias +
+    '</strong> a medias. Le quedan <strong>' + n.no + '</strong>. Es el <strong>' + n.pct + ' %</strong> del oficio.</p>' +
+    '<p class="esu-fin">Y lo que le queda no es lo que sobra: es lo que nadie más puede hacer.</p>';
+  if (!iaDescLeer('oficio')) {
+    iaDescGuardar('oficio', { k: jueSel, bien: bien, de: o.tareas.length, pct: n.pct });
+    pts(3); sfx('up'); iaDescubreListo();
+  }
+}
+
+/* ── 📚 ¿Se puede copiar esta tarea? ─────────────────────────────────────── */
+let tarResp = {}, tarEscudo = '';
+function tarPintar() {
+  const c = document.getElementById('tar-lista'); if (!c) return;
+  c.innerHTML = IA_TAREAS_CLASE.map((t, i) => {
+    const dada = tarResp[i], buena = t.copia ? 'si' : 'no';
+    const bts = [['si', '🤖 La copia'], ['no', '🧑 No puede']].map(function (par) {
+      const v = par[0];
+      return '<button class="jue-b' + (dada ? (v === buena ? ' buena' : (v === dada ? ' mala' : '')) : '') + '"' +
+        (dada ? ' disabled' : '') + ' onclick="tarResponder(' + i + ',\'' + v + '\')">' + par[1] + '</button>';
+    }).join('');
+    const esc = t.escudos.map(k => { const e = IA_ESCUDOS.find(x => x.k === k); return '<span class="esu-chip">' + e.e + ' ' + _fEsc(e.nombre) + '</span>'; }).join('');
+    return '<div class="jue-tarea">' +
+      '<div class="ofi-tarea-t">' + _fEsc(t.t) + '</div>' +
+      '<div class="jue-bts">' + bts + '</div>' +
+      (dada ? '<div class="jue-resp ' + (dada === buena ? 'ok' : 'no') + '">' +
+        (dada === buena ? '✓ Sí' : '✗ No') + ': ' + _fEsc(t.porque) + '</div>' + esc : '') + '</div>';
+  }).join('');
+}
+function tarResponder(i, v) {
+  if (tarResp[i]) return;
+  const t = IA_TAREAS_CLASE[i], buena = t.copia ? 'si' : 'no';
+  tarResp[i] = v;
+  if (!xpTracker.wgt.has('tar_' + i)) { xpTracker.wgt.add('tar_' + i); pts(1); }
+  sfx(v === buena ? 'ok' : 'no');
+  tarPintar(); tarPintarCuenta();
+}
+function tarPintarCuenta() {
+  const c = document.getElementById('tar-cuenta'); if (!c) return;
+  const dadas = Object.keys(tarResp).length;
+  if (dadas < IA_TAREAS_CLASE.length) { c.innerHTML = dadas ? '<p class="esu-vacio">Llevás ' + dadas + ' de ' + IA_TAREAS_CLASE.length + '.</p>' : ''; return; }
+  const n = iaClaseCuenta();
+  const bien = IA_TAREAS_CLASE.filter((t, i) => tarResp[i] === (t.copia ? 'si' : 'no')).length;
+  c.innerHTML = '<p class="esu-fin">Acertaste <strong>' + bien + '</strong> de ' + n.total + '.</p>' +
+    '<p class="esu-fin">La máquina entrega <strong>' + n.copiables + '</strong> hechas. Las otras <strong>' +
+    n.protegidas + '</strong> no puede.</p>' +
+    '<p class="esu-fin"><strong>Y esas ' + n.protegidas + ' tienen algo en común:</strong> todas llevan por lo menos un escudo. Ninguna de las que copia lleva ninguno.</p>';
+  unlockAchievement('sistema_master');
+  tarPintarProduce();
+}
+function tarPintarProduce() {
+  const c = document.getElementById('tar-produce'); if (!c || c.dataset.puesto) return;
+  c.dataset.puesto = '1';
+  c.innerHTML = '<label for="tar-mia">✍️ <strong>Escribí una tarea que la máquina NO te pueda hacer.</strong> Tiene que llevar un escudo.</label>' +
+    '<input id="tar-mia" class="desc-input" type="text" maxlength="140" placeholder="Medí el aula y sacá cuántas baldosas caben">' +
+    '<div class="esu-chips" id="tar-escudos"></div>' +
+    '<button class="btn btn-pri" onclick="tarGuardar()">💾 Guardarla</button>';
+  tarPintarEscudos();
+}
+function tarPintarEscudos() {
+  const c = document.getElementById('tar-escudos'); if (!c) return;
+  c.innerHTML = IA_ESCUDOS.map(e => '<button class="esu-chip-b' + (tarEscudo === e.k ? ' sel' : '') +
+    '" onclick="tarElegirEscudo(\'' + e.k + '\')">' + e.e + ' ' + _fEsc(e.nombre) + '</button>').join('');
+}
+function tarElegirEscudo(k) { tarEscudo = (tarEscudo === k ? '' : k); tarPintarEscudos(); sfx('click'); }
+function tarGuardar() {
+  const e = document.getElementById('tar-mia'), txt = e ? e.value.trim() : '';
+  if (txt.length < 10) { showToast('⚠️ Escribí la tarea primero'); return; }
+  if (!tarEscudo) { showToast('⚠️ Elegí con qué escudo la protegés'); return; }
+  iaDescGuardar('tarea', { txt: txt, escudo: tarEscudo });
+  tarPintarGuardado({ txt: txt, escudo: tarEscudo });
+  if (!xpTracker.wgt.has('tar_guardar')) { xpTracker.wgt.add('tar_guardar'); pts(6); }
+  sfx('up'); iaDescubreListo();
+}
+function tarPintarGuardado(g) {
+  const c = document.getElementById('tar-guardado'); if (!c || !g) return;
+  const esc = IA_ESCUDOS.find(x => x.k === g.escudo); if (!esc) return;
+  c.innerHTML = '💾 <strong>Guardada:</strong> «' + _fEsc(g.txt) + '» — ' + esc.e + ' ' + _fEsc(esc.nombre) + '.';
+}
+
+/* ── 🔮 Las cuatro piezas: la herramienta corta del final ────────────────── */
 let talCap = '';
 function talPintarCaps() {
   const c = document.getElementById('tal-caps'); if (!c) return;
@@ -895,7 +1097,7 @@ function talLeer() {
   return { cap: talCap, quien: v('tal-quien'), precio: v('tal-precio'), decide: v('tal-decide') };
 }
 function talProbar() {
-  const esc = talLeer(), j = iaFutJuzga(esc), n = iaFutCuenta(j);
+  const esc = talLeer(), j = iaFutJuzga(esc);
   const salida = document.getElementById('tal-veredicto'); if (!salida) return;
   const filas = IA_FUT_PIEZAS.map(p => '<div class="tal-fila ' + (j[p.k] ? 'ok' : 'no') + '">' +
     '<span class="tal-marca">' + (j[p.k] ? '✓' : '✗') + '</span>' +
@@ -903,91 +1105,22 @@ function talProbar() {
     '<span class="tal-d">' + _fEsc(j[p.k] ? p.si : p.no) + '</span></div>').join('');
   let cabeza;
   if (iaFutEsEscenario(j)) {
-    cabeza = '<div class="tal-si">🔮 <strong>Esto es un escenario.</strong> Está hecho con algo de hoy —' +
-      _fEsc(j.cap.que).toLowerCase() + ', que produjiste en la etapa ' + j.cap.etapa + '—, le pasa a alguien, cuesta algo que se cuenta y termina en una decisión.</div>';
+    cabeza = '<div class="tal-si">🔮 <strong>Esto es un escenario.</strong> Está hecho con algo de hoy, le pasa a alguien, cuesta algo que se cuenta y termina en una decisión.</div>';
   } else {
     const falta = iaFutLeFalta(j);
     cabeza = '<div class="tal-no">📣 <strong>Todavía no: le falta ' + (falta.length === 1 ? 'una pieza' : falta.length + ' piezas') + '.</strong> ' +
-      _fEsc(falta.map(p => p.nombre.toLowerCase()).join('; ')) + '. Sin ' + (falta.length === 1 ? 'esa pieza' : 'esas piezas') + ' no se puede decidir nada. Lo que queda se parece a una profecía.</div>';
+      _fEsc(falta.map(p => p.nombre.toLowerCase()).join('; ')) + '. Sin eso no se decide nada. Se parece a una profecía.</div>';
   }
   salida.innerHTML = cabeza + '<div class="tal-piezas">' + filas + '</div>' +
-    '<p class="tal-nota">Lo que la pantalla NO puede juzgar es si vale la pena. Eso lo decidís vos.</p>' +
-    (iaFutEsEscenario(j) ? '<button class="btn-pri tal-guardar" onclick="talGuardar()">💾 Guardarlo</button>' : '');
+    '<p class="tal-nota">Lo que la pantalla NO juzga es si vale la pena. Eso lo decidís vos.</p>';
   sfx(iaFutEsEscenario(j) ? 'ok' : 'no');
   if (!xpTracker.wgt.has('tal_probar')) { xpTracker.wgt.add('tal_probar'); pts(3); }
-}
-function talGuardar() {
-  const esc = talLeer(), j = iaFutJuzga(esc);
-  if (!iaFutEsEscenario(j)) { showToast('⚠️ Todavía le falta una pieza'); return; }
-  esc.fecha = new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-  iaDescGuardar('escenario', esc); talPintarGuardado(esc); sfx('up');
-  if (!xpTracker.wgt.has('tal_guardar')) { xpTracker.wgt.add('tal_guardar'); pts(6); }
-  iaDescubreListo();
-}
-function talPintarGuardado(e) {
-  const c = document.getElementById('tal-guardado'); if (!c) return;
-  if (!e) { c.innerHTML = ''; return; }
-  const cap = IA_CAPACIDADES.find(x => x.k === e.cap);
-  c.innerHTML = '<div class="tal-card"><div class="tal-card-t"><span class="tal-card-n">🔮 Tu escenario</span>' +
-    '<button class="tal-x" onclick="talBorrar()" title="Borrarlo" aria-label="Borrar tu escenario">🗑️</button></div>' +
-    '<div class="tal-card-f">escrito el ' + _fEsc(e.fecha || '') + '</div>' +
-    '<p><strong>Está hecho con:</strong> ' + (cap ? cap.e + ' ' + _fEsc(cap.que) : '') + '</p>' +
-    '<p><strong>Le pasa a:</strong> ' + _fEsc(e.quien) + '</p>' +
-    '<p><strong>Le cuesta:</strong> ' + _fEsc(e.precio) + '</p>' +
-    '<p><strong>Hay que decidir:</strong> ' + _fEsc(e.decide) + '</p>' +
-    '<p class="tal-card-p">Llevalo a clase y pedile a alguien que conteste tu pregunta. Si puede, es un escenario. Si se queda mirando, es un anuncio.</p></div>';
-}
-function talBorrar() {
-  if (!confirm('¿Borrar tu escenario? Lo que escribiste se pierde.')) return;
-  iaDescGuardar('escenario', null);
-  const c = document.getElementById('tal-guardado'); if (c) c.innerHTML = '';
-  ['tal-quien', 'tal-precio', 'tal-decide'].forEach(i => { const e = document.getElementById(i); if (e) e.value = ''; });
-  const v = document.getElementById('tal-veredicto'); if (v) v.innerHTML = '';
-  sfx('click');
-}
-
-/* ── ⚖️ El mismo invento, en otras manos ──────────────────────────────── */
-let manCap = IA_CAPACIDADES[0].k, manMano = IA_FUT_MANOS[0].k;
-function manPintarChips() {
-  const a = document.getElementById('man-caps');
-  if (a) a.innerHTML = IA_CAPACIDADES.map(x => '<button class="man-chip' + (manCap === x.k ? ' sel' : '') + '" onclick="manCapEl(\'' + x.k + '\')">' + x.e + ' ' + _fEsc(x.que.split(' ').slice(0, 3).join(' ')) + '…</button>').join('');
-  const b = document.getElementById('man-manos');
-  if (b) b.innerHTML = IA_FUT_MANOS.map(m => '<button class="man-chip' + (manMano === m.k ? ' sel' : '') + '" onclick="manManoEl(\'' + m.k + '\')">' + m.e + ' ' + _fEsc(m.quien) + '</button>').join('');
-}
-function manCapEl(k) { manCap = k; manPintarChips(); manPintar(); sfx('click'); }
-function manManoEl(k) { manMano = k; manPintarChips(); manPintar(); sfx('click'); }
-function manPintar() {
-  const c = document.getElementById('man-salida'); if (!c) return;
-  const sin = iaFutFinal(manCap, manMano, false), con = iaFutFinal(manCap, manMano, true);
-  if (!sin || !con) return;
-  manVistas.add(manCap + '|' + manMano);
-  c.innerHTML = '<p class="man-usa">' + _fEsc(sin.usa) + '</p>' +
-    '<div class="man-dos">' +
-    '<div class="man-col mala"><div class="man-col-t">🚫 ' + _fEsc(sin.titulo) + '</div>' +
-      '<p>' + _fEsc(sin.pasa) + '</p><p class="man-cuesta">' + _fEsc(sin.cuesta) + '</p></div>' +
-    '<div class="man-col buena"><div class="man-col-t">🔍 ' + _fEsc(con.titulo) + '</div>' +
-      '<p>' + _fEsc(con.pasa) + '</p><p class="man-cuesta">' + _fEsc(con.cuesta) + '</p>' +
-      (con.aviso ? '<p class="man-aviso">⚠️ ' + _fEsc(con.aviso) + '</p>' : '') + '</div></div>' +
-    '<p class="man-cuenta">Probadas: <strong>' + manVistas.size + '</strong> de ' + (IA_CAPACIDADES.length * IA_FUT_MANOS.length) + ' combinaciones. Con cuatro ya se ve.</p>';
-  if (!xpTracker.wgt.has('man_' + manCap + '_' + manMano)) { xpTracker.wgt.add('man_' + manCap + '_' + manMano); pts(2); }
-  if (manVistas.size >= 4) {
-    unlockAchievement('sistema_master');
-    const l = document.getElementById('man-leccion');
-    if (l && !l.innerHTML) l.innerHTML = '<strong>📏 Lo que acabás de medir:</strong> la máquina es la misma en las cuatro manos. Lo que cambia el final es <strong>a cuánta gente alcanza</strong> y <strong>si alguien la mira antes de que valga</strong>. Y revisar no sale gratis.';
-  }
-  iaDescubreListo();
 }
 
 function iaDescInit() {
   talPintarCaps();
-  manPintarChips();
-  manPintar();
-  const g = iaDescLeer('escenario');
-  if (g) {
-    talCap = g.cap || ''; talPintarCaps();
-    const q = document.getElementById('tal-quien'); if (q) q.value = g.quien || '';
-    const p = document.getElementById('tal-precio'); if (p) p.value = g.precio || '';
-    const d = document.getElementById('tal-decide'); if (d) d.value = g.decide || '';
-    talPintarGuardado(g);
-  }
+  juePintarChips(); juePintarTareas(); juePintarCuenta();
+  tarPintar(); tarPintarCuenta();
+  const g = iaDescLeer('tarea');
+  if (g) { tarPintarProduce(); tarPintarGuardado(g); }
 }

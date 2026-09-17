@@ -71,7 +71,12 @@ function frases(texto) {
      y cada bloque del HTML llega como un renglón aparte; la primera versión
      colapsaba los saltos antes de cortar y pegaba tres cadenas seguidas en
      una «frase de 219 palabras» que no leía nadie. */
-  return texto.split(/\n+/).flatMap(r => r.replace(/\s+/g, ' ').split(/(?<=[.!?…])\s+(?=[^a-záéíóúñ]|$)/))
+  /* ⚠️ Y « · » corta ítem. Es el separador de listas de todo el repositorio
+     —«A 🍎 Le pone nombre · B 👤 Reconoce caras · C …»— y sin esta línea una
+     leyenda de siete renglones se contaba como UNA frase de treinta y una
+     palabras. El lector ve siete cosas cortas; la sonda veía un muro. Una
+     medida que acusa a un archivo sano enseña a no mirarla. */
+  return texto.split(/\n+/).flatMap(r => r.replace(/\s+/g, ' ').split(/(?<=[.!?…])\s+(?=[^a-záéíóúñ]|$)|\s+·\s+/))
     .map(s => s.trim()).filter(s => s.split(/\s+/).filter(Boolean).length >= 3);
 }
 /* El tramo más largo sin un corte de bloque: un párrafo en pantalla, una

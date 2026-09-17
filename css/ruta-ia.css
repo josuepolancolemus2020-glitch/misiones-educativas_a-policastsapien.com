@@ -607,24 +607,82 @@ body.letra-grande .desc-input{font-size:1.2rem;}
 .fut-cap-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--sec);margin-bottom:0.3rem;}
 .fut-cap-donde,.fut-cap-falla{font-size:0.93rem;line-height:1.5;margin-bottom:0.15rem;}
 
-/* ── Etapa 7 · 🔮 Los nueve escenarios ──────────────────────────────────── */
-.fut-lista{display:grid;gap:0.8rem;margin:0.8rem 0;}
-.fut-esc{background:var(--card);border-radius:14px;padding:0.8rem 0.85rem;border:2px solid var(--bd);}
-.fut-esc-h{display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.45rem;}
-.fut-esc-e{font-size:1.7rem;line-height:1;flex-shrink:0;}
-.fut-esc-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);font-size:1.05rem;line-height:1.25;}
-.fut-esc-m{font-size:0.86rem;opacity:0.82;margin-top:0.1rem;}
-.fut-esc-caps{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.45rem;}
-.fut-chip{background:var(--sec);color:#fff;border-radius:999px;padding:0.18rem 0.6rem;font-size:0.78rem;font-weight:600;}
-.fut-esc-s{font-size:0.97rem;line-height:1.55;margin:0 0 0.4rem;}
-.fut-esc-c{font-size:0.93rem;line-height:1.5;margin:0 0 0.5rem;}
-.fut-ops{display:grid;gap:0.4rem;}
-.fut-op{border-radius:10px;overflow:hidden;}
-.fut-op-b{width:100%;text-align:left;background:var(--bg);border:1.5px solid var(--bd);border-radius:10px;padding:0.6rem 0.7rem;font:inherit;font-size:0.95rem;line-height:1.45;color:inherit;cursor:pointer;min-height:44px;}
-.fut-op.abierta .fut-op-b{border-color:var(--pri);border-bottom-left-radius:0;border-bottom-right-radius:0;font-weight:600;}
-.fut-op-p{background:var(--bg);border:1.5px solid var(--pri);border-top:0;border-radius:0 0 10px 10px;padding:0.55rem 0.7rem;font-size:0.94rem;line-height:1.55;}
-.fut-regla{margin-top:0.5rem;font-size:0.95rem;line-height:1.55;}
-.fut-regla:not(:empty){background:var(--bg);border-left:4px solid var(--jade);border-radius:0 10px 10px 0;padding:0.55rem 0.7rem;}
+/* ── Etapa 7 · 🧰 Los oficios, tarea por tarea ─────────────────────────────
+   Lo que la misión enseña es un CONTEO, así que lo que más trabaja aquí es la
+   barra: se lee de un vistazo desde el pupitre y no pide leer el número. El
+   número va igual al lado, porque quien no distingue el largo de dos barras
+   —o imprime la pantalla en blanco y negro— tiene que poder leerlo. */
+.tt-lista{display:grid;gap:0.5rem;margin:0.7rem 0;}
+.tt-fila{display:flex;gap:0.6rem;align-items:flex-start;background:var(--card);border-radius:12px;padding:0.6rem 0.75rem;}
+.tt-e{font-size:1.5rem;line-height:1.2;flex-shrink:0;}
+.tt-n{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);}
+.tt-q{font-size:0.93rem;line-height:1.5;opacity:0.9;}
+
+.tt-barras{display:grid;gap:0.55rem;margin:0.7rem 0;}
+.tt-barra{display:grid;grid-template-columns:1fr auto;gap:0.2rem 0.6rem;align-items:center;}
+.tt-barra-r{grid-column:1/-1;font-size:0.95rem;font-weight:600;}
+.tt-barra-f{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;height:1.1rem;overflow:hidden;}
+.tt-barra-v{height:100%;background:var(--sec);border-radius:999px;}
+.tt-barra-v.alta{background:var(--pri);}
+.tt-barra-p{font-weight:800;font-size:0.95rem;min-width:3.2rem;text-align:right;}
+
+.ofi-chips{display:flex;flex-wrap:wrap;gap:0.35rem;margin:0.6rem 0;}
+.ofi-chip{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;padding:0.5rem 0.85rem;
+  min-height:44px;font-size:0.92rem;cursor:pointer;color:var(--dark);}
+.ofi-chip.sel{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700;}
+.ofi-quien{font-size:0.95rem;margin:0.5rem 0 0.6rem;color:var(--sec);}
+.ofi-tarea{background:var(--card);border-radius:12px;padding:0.6rem 0.75rem;margin-bottom:0.5rem;border-left:5px solid var(--bd);}
+.ofi-tarea.si{border-left-color:var(--pri);}
+.ofi-tarea.medias{border-left-color:var(--amber,#d97706);}
+.ofi-tarea.no{border-left-color:var(--jade);}
+.ofi-tarea-t{font-weight:700;font-size:0.98rem;line-height:1.45;display:flex;gap:0.4rem;align-items:flex-start;}
+.ofi-tipo{flex-shrink:0;}
+.ofi-veredicto{font-size:0.93rem;font-weight:700;margin-top:0.25rem;}
+.ofi-como{display:inline-block;background:var(--sec);color:#fff;border-radius:8px;padding:0.2rem 0.55rem;
+  font-size:0.8rem;line-height:1.4;margin-top:0.3rem;}
+.ofi-como.cuenta{background:var(--gray,#6b7280);}
+.ofi-porque{font-size:0.92rem;line-height:1.5;opacity:0.9;margin-top:0.3rem;}
+.ofi-cuenta{font-size:0.95rem;line-height:1.55;background:var(--bg);border-radius:10px;padding:0.55rem 0.7rem;margin:0.6rem 0 0;}
+
+.ofi-tabla{display:grid;gap:0.35rem;margin:0.6rem 0;}
+.ofi-fila{display:grid;grid-template-columns:1fr 5rem auto;gap:0.5rem;align-items:center;font-size:0.9rem;}
+.ofi-fila-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ofi-fila-b{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;height:0.8rem;overflow:hidden;}
+.ofi-fila-b>span{display:block;height:100%;background:var(--pri);}
+.ofi-fila-p{font-weight:700;min-width:3rem;text-align:right;}
+@media(max-width:400px){.ofi-fila{grid-template-columns:1fr auto;}.ofi-fila-b{display:none;}
+  .ofi-fila-n{white-space:normal;text-overflow:clip;}}
+
+/* ── Etapa 7 · 📚 La escuela y los escudos ──────────────────────────────── */
+.esu-lista,.esu-escudos{display:grid;gap:0.55rem;margin:0.7rem 0;}
+.esu-item,.esu-escudo{background:var(--card);border-radius:12px;padding:0.65rem 0.8rem;border-left:5px solid var(--sec);}
+.esu-escudo{border-left-color:var(--jade);}
+.esu-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);margin-bottom:0.25rem;line-height:1.35;}
+.esu-q{font-size:0.95rem;line-height:1.5;}
+.esu-h{font-size:0.92rem;line-height:1.5;opacity:0.88;margin-top:0.25rem;}
+.esu-chips{display:flex;flex-wrap:wrap;gap:0.3rem;margin:0.4rem 0;}
+.esu-chip{background:var(--jade);color:#fff;border-radius:999px;padding:0.15rem 0.6rem;font-size:0.8rem;}
+.esu-chip-b{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;padding:0.5rem 0.8rem;
+  min-height:44px;font-size:0.9rem;cursor:pointer;color:var(--dark);}
+.esu-chip-b.sel{background:var(--jade);border-color:var(--jade);color:#fff;font-weight:700;}
+.esu-caja:empty{display:none;}
+.esu-vacio{font-size:0.92rem;opacity:0.85;margin:0.5rem 0 0;}
+.esu-fin{font-size:0.96rem;line-height:1.55;background:var(--bg);border-radius:10px;padding:0.55rem 0.7rem;margin:0.5rem 0 0;}
+
+/* Las dos actividades de Descubre. Los botones van a 44 px: equivocarse aquí
+   gasta la respuesta, que no se puede volver a dar. */
+.jue-tarea{background:var(--card);border-radius:12px;padding:0.6rem 0.75rem;margin-bottom:0.55rem;}
+.jue-bts{display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:0.45rem;}
+.jue-b{flex:1 1 auto;min-height:44px;min-width:7rem;background:var(--bg);border:1.5px solid var(--bd);
+  border-radius:10px;padding:0.5rem 0.6rem;font-size:0.9rem;cursor:pointer;color:var(--dark);}
+.jue-b[disabled]{cursor:default;opacity:0.75;}
+.jue-b.buena{background:var(--jade-gl);border-color:var(--jade);font-weight:700;opacity:1;}
+.jue-b.buena::after{content:' ✓';font-weight:800;}
+.jue-b.mala{background:var(--red-gl);border-color:var(--red);opacity:1;}
+.jue-b.mala::after{content:' ✗';font-weight:800;}
+.jue-resp{font-size:0.93rem;line-height:1.5;margin-top:0.45rem;border-radius:10px;padding:0.5rem 0.65rem;}
+.jue-resp.ok{background:var(--jade-gl);}
+.jue-resp.no{background:var(--red-gl);}
 
 /* ── Etapa 7 · 🔮 El taller: armá el tuyo ───────────────────────────────── */
 .tal-caps{display:flex;flex-wrap:wrap;gap:0.35rem;margin:0.5rem 0 0.7rem;}
@@ -644,35 +702,3 @@ body.letra-grande .desc-input{font-size:1.2rem;}
 .tal-si{background:var(--bg);border-left:5px solid var(--jade);}
 .tal-no{background:var(--bg);border-left:5px solid var(--red);}
 .tal-nota{font-size:0.9rem;line-height:1.5;opacity:0.85;margin:0.5rem 0;}
-.tal-guardar{margin-top:0.3rem;}
-.tal-card{background:var(--card);border-radius:14px;padding:0.8rem;border:2px dashed var(--pri);margin-top:0.7rem;}
-/* La cabecera de la tarjeta guardada va en DOS renglones y no en uno, y no es
-   un capricho: con la letra grande el título, la fecha y la papelera no caben
-   juntos en 360 px, y lo que pasaba era que el título se partía en una columna
-   de tres palabras con la papelera encima. Se vio abriéndola, que es como se
-   ven estas cosas. */
-.tal-card-t{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pri);display:flex;align-items:center;gap:0.4rem;margin-bottom:0.15rem;}
-.tal-card-n{flex:1;min-width:0;}
-.tal-card-f{font-size:0.86rem;opacity:0.8;margin-bottom:0.5rem;}
-.tal-x{flex:0 0 auto;background:none;border:0;font-size:1.1rem;cursor:pointer;min-width:44px;min-height:44px;}
-.tal-card p{font-size:0.95rem;line-height:1.55;margin:0 0 0.35rem;}
-.tal-card-p{border-top:1px dashed var(--bd);padding-top:0.45rem;opacity:0.9;}
-
-/* ── Etapa 7 · ⚖️ El mismo invento, en otras manos ──────────────────────── */
-.man-chips{display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.5rem;}
-.man-chip{background:var(--bg);border:1.5px solid var(--bd);border-radius:999px;padding:0.5rem 0.8rem;font:inherit;font-size:0.86rem;color:inherit;cursor:pointer;min-height:44px;}
-.man-chip.sel{background:var(--sec);border-color:var(--sec);color:#fff;font-weight:700;}
-.man-usa{font-size:0.98rem;line-height:1.55;font-weight:600;margin:0.6rem 0 0.5rem;}
-.man-dos{display:grid;gap:0.6rem;}
-.man-col{background:var(--card);border-radius:12px;padding:0.7rem 0.8rem;}
-.man-col.mala{border-left:5px solid var(--red);}
-.man-col.buena{border-left:5px solid var(--jade);}
-.man-col-t{font-family:'Fredoka',sans-serif;font-weight:700;margin-bottom:0.35rem;}
-.man-col.mala .man-col-t{color:var(--red);}
-.man-col.buena .man-col-t{color:var(--jade);}
-.man-col p{font-size:0.94rem;line-height:1.55;margin:0 0 0.3rem;}
-.man-cuesta{opacity:0.88;font-style:italic;}
-.man-aviso{background:var(--bg);border-radius:9px;padding:0.5rem 0.6rem;margin-top:0.3rem !important;}
-.man-cuenta{font-size:0.9rem;margin:0.6rem 0 0;opacity:0.9;}
-.man-leccion:not(:empty){background:var(--card);border-left:5px solid var(--pri);border-radius:0 12px 12px 0;padding:0.7rem 0.8rem;margin-top:0.7rem;font-size:0.96rem;line-height:1.6;}
-@media(min-width:720px){.man-dos{grid-template-columns:1fr 1fr;}}

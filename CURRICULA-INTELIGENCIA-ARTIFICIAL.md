@@ -411,49 +411,60 @@ hoy y dentro de diez años.
 
 ### Etapa 7 · «Escenarios por venir» · III Ciclo
 
-**Expectativa propia:** distinguen un **escenario** de una **profecía**,
-comprueban que lo que se imagina está hecho con **algo que ya se puede hacer**,
-y explican que el final no lo decide la máquina sino **en manos de quién está**
-y **si alguien puede revisar la decisión antes de que valga**.
+**Expectativa propia:** explican **qué tareas de un oficio se lleva hoy una
+máquina y cuáles no**, y por qué; reconocen que un oficio es un conjunto de
+tareas y no una cosa sola; y aplican lo mismo a **su propio estudio**,
+distinguiendo una tarea que una máquina puede entregar hecha de una que no.
 
-Es la otra mitad del hilo E: la etapa 6 enseña a leer lo que se dice HOY, y
-esta a pensar lo que todavía no pasó. La currícula prohíbe afirmar lo que la
-Inteligencia Artificial «va a hacer», y esta etapa no lo afirma: **imagina con
-método**, que es una cosa distinta y se puede enseñar.
+⚠️ **Esta etapa se reescribió entera el 17 de septiembre de 2026, y el motivo
+es una lección de currícula, no de código.** La primera versión enseñaba a
+distinguir un **escenario** de una **profecía**, con nueve situaciones
+inventadas y una prueba de cuatro piezas. El método era bueno y el alumno salía
+sin saber **nada de lo que la Inteligencia Artificial le va a cambiar**. El
+autor lo dijo con estas palabras: «me refería a los escenarios de lo que está
+pasando con la IA, que indagaras de manera simple y sencilla lo del futuro».
+Una etapa sobre CÓMO se piensa el futuro no es una etapa sobre el futuro. El
+método se queda, pero como herramienta corta del final; el contenido manda.
 
-1. ⚠️ **Aquí no se predice nada.** Los nueve escenarios están **inventados**, se
-   dice que lo están en la pantalla y en el papel, y **ninguno trae la fecha en
-   que pasaría**: ponerle fecha a lo inventado ya es hacer la profecía que la
-   misión enseña a reconocer. Lo único fechado es cuándo se escribió.
-2. ⚠️ **Ningún escenario se apoya en algo que no exista.** Cada uno declara con
-   qué capacidades está hecho, y esas capacidades son las que **el alumno
-   produjo con sus manos** en las etapas anteriores: el parecido de la etapa 1,
-   la predicción con datos medidos de la 2, el texto que suena seguro de la 4,
-   la voz fabricada de la 5. Lo apoyado en algo que todavía no se puede hacer
-   no es un escenario: es ciencia ficción, y enseña a esperar en vez de a
-   decidir. La sonda lo comprueba.
-3. **Persona con nombre, precio que se cuente, y tres decisiones con su
-   consecuencia.** Es la normativa del relato aplicada al futuro, y ninguna de
-   las tres decisiones es la correcta: hay consecuencias, y el alumno escribe
-   su regla.
+**Y hablar del futuro sin predecir sí se puede, de una sola forma:** partiendo
+de lo que la máquina YA hace —las seis capacidades que el alumno produjo con
+sus manos en las etapas anteriores— y mirando qué tareas de un oficio de verdad
+tocan esas capacidades. Eso no es profecía: es mirar lo que hay.
 
-**Las dos actividades de descubrimiento:**
+1. ⚠️ **Un oficio no es una cosa: es un montón de tareas.** Es la idea de la
+   que cuelga todo. La máquina no se lleva oficios: se lleva tareas. Por eso la
+   pregunta que la etapa le enseña a hacer a un alumno de noveno no es «¿mi
+   oficio se salva?» sino **«¿de qué tareas está hecho?»**.
+2. ⚠️ **Toda tarea que la máquina se lleva dice CON QUÉ**, y solo hay dos
+   respuestas honestas: una capacidad que el alumno produjo, o «esto ya lo
+   hacía una computadora normal desde antes de la Inteligencia Artificial»
+   —sumar, ordenar, buscar en una lista—. Sin esa columna la etapa sería
+   publicidad, y distinguir lo viejo de lo nuevo es la mitad de no creerle a un
+   vendedor.
+3. ⚠️ **Los porcentajes no se escriben: se cuentan.** Lo que la pantalla y el
+   papel afirman sale de contar las tareas de los ocho oficios por tipo, y la
+   sonda rehace la cuenta. Hoy: la máquina se lleva casi todo lo de **papel** y
+   casi todo lo de **mirar**, y casi nada de lo de **manos** ni de lo de
+   **estar con alguien**.
+4. ⚠️ **Ningún oficio se va entero y ninguno se salva entero**, y la sonda lo
+   exige. Un oficio al 0 % o al 100 % convertiría la etapa en la profecía que
+   viene a desarmar.
+5. ⚠️ **Se cuentan tareas, no horas**, y se dice con esas palabras. Al
+   agricultor le quedan cinco tareas de siete y esas cinco se llevan todo el
+   día. Un porcentaje que se lee mal enseña peor que ninguno; es la misma
+   lección que «el promedio que esconde» de la etapa 5.
+6. **Y la mitad del estudio.** Copiar dejó de servir, y no por castigo: si la
+   máquina hace la tarea, el examen llega igual. Lo que hay que saberse de
+   memoria es **lo que sirve para comprobar** —quien no sabe que el Himno tiene
+   siete estrofas no caza la mentira cuando le digan cinco—. Y una tarea que la
+   máquina no puede entregar lleva uno de tres **escudos**: se hace delante de
+   alguien, usa un dato de aquí que no está escrito en ninguna parte, o pide
+   medir o hacer algo. No son castigos del maestro: son las tres cosas que a la
+   máquina le faltan.
 
-- 🔮 **El taller de escenarios.** El alumno arma el suyo con las cuatro piezas
-  —con qué está hecho, a quién le pasa, qué le cuesta, qué hay que decidir— y
-  la pantalla lo juzga **pieza por pieza**, por la forma y nunca por el tema.
-  Y le dice lo que no puede juzgar: si vale la pena lo decide él.
-- ⚖️ **El mismo invento, en otras manos.** La capacidad no cambia; cambia quién
-  la tiene —una familia, la escuela, la alcaldía, una empresa que lo vende— y
-  si alguien revisa antes de que la decisión valga. Los finales se **calculan**,
-  no están escritos, y la sonda recalcula las veinticuatro combinaciones.
-
-⚠️ **Y lo que esta etapa NO hace:** no promete que revisar arregle nada gratis.
-Revisar cuesta tiempo, y cuando la decisión alcanza a un pueblo entero no se
-puede revisar todo. Lo que la pantalla dice —y lo que la sonda exige que diga—
-es lo honesto: hay que decidir **de antemano** qué decisiones no valen sin que
-una persona las mire, y escribirlo antes de comprar el programa. Prometer una
-revisión total sería la promesa falsa que esta ruta ya tuvo que rehacer una vez.
+⚠️ **Y lo que esta etapa NO hace:** no dice qué carrera estudiar. Le da al
+alumno con qué mirar cualquiera, incluida una que todavía no existe. Decirle
+qué estudiar sería la profecía otra vez, con mejores intenciones.
 
 ---
 

@@ -1,99 +1,343 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   M.E.T.A.S · Los escenarios por venir
+   M.E.T.A.S · Escenarios por venir: el trabajo y el estudio
    ───────────────────────────────────────────────────────────────────────────
    La etapa 7 de la Ruta de la Máquina que Aprende (misión 78) lo PINTA de
    aquí, y su ficha impresa dice lo mismo porque `_dev/verifica-ia.js` compara
    las dos.
 
-   ⚠️ LA REGLA QUE GOBIERNA ESTE ARCHIVO ENTERO, Y NO SE NEGOCIA:
-   **aquí no se predice nada.** La currícula de esta materia prohíbe afirmar
-   lo que la Inteligencia Artificial «va a hacer», y este archivo no lo hace:
-   lo que hay son situaciones INVENTADAS, declaradas como inventadas en la
-   pantalla y en el papel, armadas con cosas que **ya se pueden hacer hoy** y
-   terminadas en una decisión que el alumno tiene que tomar.
+   ⚠️ POR QUÉ ESTE ARCHIVO SE REHIZO ENTERO, y es la lección más cara de la
+   ruta. La primera versión enseñaba a DISTINGUIR un escenario de una
+   profecía: nueve situaciones inventadas y una prueba de cuatro piezas. El
+   método estaba bien y el alumno salía sin saber nada de lo que la
+   Inteligencia Artificial le va a cambiar. El autor lo dijo con estas
+   palabras: «me refería a los escenarios de lo que está pasando con la IA,
+   que indagaras de manera simple y sencilla lo del futuro». Tenía razón:
+   una misión sobre CÓMO se piensa el futuro no es una misión sobre el futuro.
 
-   La diferencia que enseña esta etapa, y de la que sale todo lo demás:
+   ⚠️ Y HABLAR DEL FUTURO SIN PREDECIR SÍ SE PUEDE, pero de una sola forma:
+   partiendo de lo que la máquina YA hace —las seis capacidades de abajo, que
+   el alumno produjo con sus manos en las etapas anteriores— y mirando qué
+   tareas de un oficio de verdad tocan esas capacidades. Eso no es profecía:
+   es mirar lo que hay. Por eso aquí no hay ni un año, ni un plazo, ni un
+   «para entonces», y por eso cada tarea dice CON QUÉ se la lleva la máquina.
 
-     · una PROFECÍA dice lo que va a pasar, no se puede incumplir y no pide
-       nada de quien la oye;
-     · un ESCENARIO dice qué harías vos si pasara, se puede discutir entero
-       y se desarma en cuanto una de sus cuatro piezas falla.
+   LO QUE SALE DE LOS DATOS, y no está escrito a mano en ninguna pantalla:
+   se cuenta de las 51 tareas de los ocho oficios, por tipo de tarea. La
+   máquina se lleva casi todo lo de PAPEL y casi todo lo de MIRAR, y casi
+   nada de lo de MANOS y de ESTAR CON ALGUIEN. Ningún oficio se va entero y
+   ninguno se salva entero. De ahí la respuesta que esta misión le da al
+   alumno de noveno que no sabe qué estudiar: **no preguntés si tu oficio se
+   salva; preguntá de qué tareas está hecho.**
 
-   De ahí salen cuatro decisiones que hay que respetar al añadir algo:
+   ⚠️ CUATRO REGLAS PARA AÑADIR UN OFICIO O UNA TAREA:
 
-   1. ⚠️ **NINGÚN ESCENARIO SE APOYA EN ALGO QUE NO EXISTA HOY.** Cada uno
-      declara en `apoya` de qué capacidades está hecho, y esas capacidades
-      son las que el alumno PRODUJO en las etapas anteriores — no las que
-      alguien le contó—. Un escenario apoyado en algo que no se puede hacer
-      no es un escenario: es ciencia ficción, y enseña a esperar en vez de a
-      decidir. La sonda comprueba que toda clave de `apoya` exista.
-   2. ⚠️ **NI UNA FECHA DE LO QUE VA A PASAR.** No hay años, no hay plazos y
-      no hay «para 2035»: ponerle fecha a lo inventado es exactamente la
-      profecía que esta misión enseña a reconocer. Lo único fechado es
-      `IA_FUT_FECHA`, que dice cuándo se escribió esto.
-   3. **Persona con nombre y precio que se pueda contar**, como la normativa
-      del relato. «La gente» no es nadie y «es importante» no es un precio.
-   4. **Tres decisiones con su consecuencia, y ninguna es la buena.** Hay
-      consecuencias, no respuestas correctas: el alumno escribe su regla.
+   1. **Una tarea marcada `si` tiene que decir CON QUÉ** (`como`), y solo hay
+      dos respuestas honestas: `cuenta` —eso ya lo hacía una computadora
+      normal desde antes de la Inteligencia Artificial, como sumar, ordenar o
+      buscar en una lista— o la clave de una de las seis capacidades. Si no se
+      puede nombrar ninguna, la tarea NO va marcada `si`. Es lo que separa
+      esta misión de la publicidad.
+   2. **Ni una fecha de lo que va a pasar.** No hay años, no hay plazos.
+      Lo único fechado es `IA_FUT_FECHA`, que dice cuándo se escribió esto.
+   3. **Oficios de aquí, con una persona con nombre**, como la normativa del
+      relato. Y tareas que se puedan mirar: «levantar la pared», no «ejecutar
+      labores constructivas».
+   4. **Se escribe en lenguaje llano.** Una idea por frase, frases de menos de
+      veinticinco palabras y ningún campo de más de cuarenta y cinco. Lo lee
+      un alumno de cuarto y un joven de bachillerato. Se mide con
+      `node _dev/mide-legibilidad.js`.
 
-   ⚠️ Y una quinta, de septiembre de 2026: **se escribe en lenguaje llano.**
-   Una idea por frase, frases de menos de veinticinco palabras y ningún campo
-   de más de cuarenta y cinco. Esto lo lee un alumno de cuarto grado y un
-   joven de bachillerato, y los dos abandonan por el mismo motivo: el párrafo
-   largo. Se mide con `node _dev/mide-legibilidad.js`.
+   ⚠️ Y UNA HONESTIDAD QUE NO SE PUEDE SALTAR: se cuentan TAREAS, no HORAS.
+   Don Chele pierde dos tareas de siete y las cinco que le quedan son las que
+   se llevan todo el día. La pantalla lo dice con esas palabras, porque un
+   porcentaje que se lee mal enseña peor que ninguno. Es la misma lección que
+   «el promedio que esconde» de la etapa 5.
 
-   Y la etapa 4 ya trae cuatro escenarios (`IA_ESCENARIOS`, en
-   `ia-descubre.js`). Aquellos son para ELEGIR; estos son para tomarlos en
-   pedazos y ARMAR el propio, que es lo que esta etapa añade. El del examen
-   que se califica solo NO se repite aquí: está allá, y esta misión lo manda
-   a leer.
+   Las cuatro piezas (`IA_FUT_PIEZAS`) se quedan, pero ya no son la misión:
+   son la herramienta corta del final, para el día que alguien le diga «en dos
+   años…». Ahí siguen sirviendo, y `iaFutJuzga` las recalcula.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Cuándo se escribió esto. Se enseña siempre: un escenario de hace tres años
-   se lee distinto —y ese es justamente el ejercicio de la última tarjeta—. */
-const IA_FUT_FECHA = '16 de septiembre de 2026';
+/* Cuándo se escribió esto. Se enseña siempre: lo que aquí se cuenta se mira
+   distinto dentro de un año, y esa es la última tarjeta de la misión. */
+const IA_FUT_FECHA = '17 de septiembre de 2026';
 
-/* ── Con qué está hecho: lo que YA se puede hacer ──────────────────────────
+/* ── Con qué se la lleva: lo que YA se puede hacer ─────────────────────────
    Seis capacidades, y ninguna se afirma de oídas: de cada una se dice EN QUÉ
    ETAPA el alumno la produjo con sus manos. Esa columna es la que convierte
    «dicen que la IA puede…» en «esto lo hiciste vos». */
 const IA_CAPACIDADES = [
-  { k: 'parecido', e: '🍎', etapa: 1, que: 'Ponerle nombre a algo por su parecido con los ejemplos',
+  { k: 'parecido', e: '🍎', etapa: 1, corto: 'Le pone nombre por parecido',
+    que: 'Ponerle nombre a algo por su parecido con los ejemplos',
     donde: 'Lo hiciste en «Enséñale a la máquina»: le enseñaste frutas y nombró la siguiente.',
     uso: 'para clasificar sin preguntarle a nadie',
     falla: 'se equivoca con lo raro, con lo que no vio',
     contra: 'quien menos se parece a los ejemplos' },
-  { k: 'cara', e: '👤', etapa: 1, que: 'Reconocer una cara comparándola con las que tiene guardadas',
+  { k: 'cara', e: '👤', etapa: 1, corto: 'Reconoce caras',
+    que: 'Reconocer una cara comparándola con las que tiene guardadas',
     donde: 'El mismo parecido de la etapa 1, con caras y no frutas.',
     uso: 'para saber quién es quién sin preguntar',
     falla: 'confunde a dos personas parecidas',
     contra: 'el que se parece a otro sin saberlo' },
-  { k: 'predice', e: '📈', etapa: 2, que: 'Predecir lo que va a pasar con datos que alguien midió',
+  { k: 'predice', e: '📈', etapa: 2, corto: 'Predice con datos medidos',
+    que: 'Predecir lo que va a pasar con datos que alguien midió',
     donde: 'Lo mediste en «¿Cuántos ejemplos hacen falta?». Con veinte ya casi siempre acierta.',
     uso: 'para decidir antes de que pase',
     falla: 'no tiene con qué acertar donde nadie midió',
     contra: 'el que vive donde no se tomaron datos' },
-  { k: 'texto', e: '💬', etapa: 4, que: 'Escribir un texto que suena seguro y a veces inventa el dato',
+  { k: 'texto', e: '💬', etapa: 4, corto: 'Escribe texto, y a veces inventa',
+    que: 'Escribir un texto que suena seguro y a veces inventa el dato',
     donde: 'Lo viste en el predictor: lo más probable era «cinco estrofas», y son siete.',
     uso: 'para escribir lo que otro va a leer',
     falla: 'inventa con la misma seguridad con que acierta',
     contra: 'el que lo leyó sin comprobarlo' },
-  { k: 'voz', e: '🎙️', etapa: 5, que: 'Fabricar una voz con unos segundos de audio',
+  { k: 'voz', e: '🎙️', etapa: 5, corto: 'Fabrica una voz',
+    que: 'Fabricar una voz con unos segundos de audio',
     donde: 'Lo armaste en «¿Cuánto hace falta para una estafa?»: las piezas las publicó la familia.',
     uso: 'para hablar con la voz de otra persona',
     falla: 'una voz fabricada pasa por verdadera',
     contra: 'el que decide por lo que oye' },
-  { k: 'refuerzo', e: '🎮', etapa: 2, que: 'Mejorar a fuerza de intentos, sin que nadie le diga cómo',
+  { k: 'refuerzo', e: '🎮', etapa: 2, corto: 'Aprende a fuerza de intentos',
+    que: 'Mejorar a fuerza de intentos, sin que nadie le diga cómo',
     donde: 'Lo viste en el juego del Refuerzo: el suelo se levantó hasta ser una rampa.',
     uso: 'para encontrar sola la forma de ganar',
     falla: 'aprende a ganar el juego que le pusiste, no el tuyo',
     contra: 'el que escribió el premio sin pensarlo' },
 ];
 
-/* ── Las cuatro piezas de un escenario ─────────────────────────────────────
-   Es la prueba que separa un escenario de una profecía, y la que el alumno
-   le aplica a lo suyo en el taller. Las cuatro se pueden comprobar; por eso
-   son estas cuatro y no una lista de buenas intenciones. */
+/* ⚠️ Y la séptima respuesta, que NO es una capacidad de Inteligencia
+   Artificial y por eso vive aparte: hay tareas que una computadora normal ya
+   hacía desde mucho antes. Sumar, ordenar, buscar en una lista. Meterlas en el
+   mismo saco sería vender como nuevo lo que tiene sesenta años, y el alumno
+   tiene que poder distinguirlo: es la mitad de no creerle a un vendedor. */
+const IA_CUENTA = { k: 'cuenta', e: '⚙️', corto: 'Sumar, ordenar, buscar',
+  que: 'Sumar, ordenar y buscar en una lista',
+  donde: 'Esto NO es Inteligencia Artificial. Una computadora normal ya lo hacía antes.' };
+
+/* ── Los cuatro tipos de tarea ─────────────────────────────────────────────
+   Son cuatro y no tres porque «mirar y decir qué es» tenía que ir aparte: es
+   justo la capacidad que el alumno produjo en la etapa 1, y es la que
+   sorprende. Casi todo el mundo da por hecho que mirar es cosa de personas. */
+const IA_OFI_TIPOS = [
+  { k: 'papel', e: '📄', nombre: 'De papel', que: 'Escribir, copiar, sumar, ordenar, buscar.' },
+  { k: 'ojo', e: '👁️', nombre: 'De mirar', que: 'Mirar algo y decir qué es o qué tiene.' },
+  { k: 'manos', e: '✋', nombre: 'De manos', que: 'Hacerlo con el cuerpo, en un sitio.' },
+  { k: 'gente', e: '🧑', nombre: 'De estar con alguien', que: 'Convencer, darse cuenta, responder por lo hecho.' },
+];
+
+/* ── Ocho oficios, desarmados en tareas ────────────────────────────────────
+   `clase` dice de qué está hecho el oficio sobre todo. No decide nada: el
+   conteo sale de las tareas, una por una. */
+const IA_OFICIOS = [
+  { k: 'maestra', e: '🏫', nombre: 'Maestra de escuela', clase: 'gente', quien: 'la profesora Delmy',
+    tareas: [
+      { t: 'Escribir el examen del bloque', tipo: 'papel', maquina: 'medias', como: 'texto',
+        porque: 'Escribe las preguntas en segundos. Hay que revisarlas una por una: inventa.' },
+      { t: 'Calificar exámenes de marcar', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Comparar una marca con la clave es lo más viejo que hace una computadora.' },
+      { t: 'Llenar planillas y sacar promedios', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Son cuentas. Es lo que más horas le quita hoy y lo primero que se va.' },
+      { t: 'Mirar un cuaderno y marcar el error', tipo: 'ojo', maquina: 'medias', como: 'parecido',
+        porque: 'Marca dónde está el error. No sabe por qué ESE niño lo comete siempre.' },
+      { t: 'Explicarle otra vez al que no entendió', tipo: 'gente', maquina: 'medias', como: 'texto',
+        porque: 'Repite mil veces sin cansarse. No sabe qué le pasa hoy a ese niño.' },
+      { t: 'Darse cuenta de que un niño no desayunó', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Eso no está escrito en ningún dato. Se ve en la cara y se pregunta.' },
+      { t: 'Responder por la nota que puso', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Una máquina no responde ante una madre ni ante el director.' },
+    ] },
+
+  { k: 'enfermera', e: '💉', nombre: 'Enfermera del centro de salud', clase: 'gente', quien: 'la enfermera Sandra',
+    tareas: [
+      { t: 'Buscar qué medicina choca con cuál', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Es buscar en una lista. Lo hace sin equivocarse y en un segundo.' },
+      { t: 'Llevar el control de las vacunas', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Contar y avisar quién va atrasado son cuentas.' },
+      { t: 'Mirar una radiografía y marcar lo raro', tipo: 'ojo', maquina: 'si', como: 'parecido',
+        porque: 'Es el parecido de la etapa 1, con radiografías. Marca lo raro para que alguien mire.' },
+      { t: 'Ponerle la vía a un niño de tres años', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Se hace con las manos, con el niño llorando y moviéndose.' },
+      { t: 'Decirle a una madre que hay que viajar a Tegucigalpa', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Hay que decirlo de una forma que la señora pueda oír.' },
+      { t: 'Decidir a quién atiende primero', tipo: 'gente', maquina: 'medias', como: 'predice',
+        porque: 'Ordena por lo que dice el papel. No ve al que se está poniendo mal en la banca.' },
+    ] },
+
+  { k: 'mercado', e: '🍅', nombre: 'Vendedora del mercado', clase: 'gente', quien: 'doña Tere',
+    tareas: [
+      { t: 'Sacar la cuenta del día', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Sumar y restar. Una computadora normal ya lo hacía.' },
+      { t: 'Saber qué se va a vender más el sábado', tipo: 'papel', maquina: 'si', como: 'predice',
+        porque: 'Con lo que se vendió otros sábados, lo predice mejor que de memoria.' },
+      { t: 'Mirar el tomate y ver cuál ya no aguanta', tipo: 'ojo', maquina: 'si', como: 'parecido',
+        porque: 'Es el parecido otra vez: mil fotos de tomate bueno y de tomate pasado.' },
+      { t: 'Cargar, acomodar y limpiar el puesto', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Son las manos y la espalda, en el mercado, a las cuatro de la mañana.' },
+      { t: 'Convencer al que está dudando', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Es mirar a alguien a la cara y encontrarle el precio.' },
+      { t: 'Fiarle a la señora de siempre', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Eso no es una cuenta: es saber quién es esa señora.' },
+    ] },
+
+  { k: 'cuentas', e: '🧾', nombre: 'El que lleva las cuentas de la cooperativa', clase: 'papel', quien: 'don Beto',
+    tareas: [
+      { t: 'Sumar las facturas del mes', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Sumar es lo que mejor hace una computadora, y desde hace sesenta años.' },
+      { t: 'Pasar los números a la planilla', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Copiar de un lado a otro sin equivocarse.' },
+      { t: 'Escribir el informe para la asamblea', tipo: 'papel', maquina: 'medias', como: 'texto',
+        porque: 'Lo escribe bonito y rápido. Los números se los das vos, y hay que revisarlo.' },
+      { t: 'Avisar quién lleva tres meses sin pagar', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Es mirar fechas en una lista.' },
+      { t: 'Sacar cuánto toca de impuesto', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Es una cuenta con reglas escritas. No falla y no se cansa.' },
+      { t: 'Decidir si se le fía al que tuvo un mal año', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Los números dicen que no. Don Beto sabe que ese hombre paga siempre.' },
+      { t: 'Firmar el informe y responder si está mal', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'La firma es de una persona. Una máquina no va a la asamblea a dar la cara.' },
+    ] },
+
+  { k: 'secretaria', e: '🗂️', nombre: 'Secretaria de la dirección', clase: 'papel', quien: 'la señorita Lesly',
+    tareas: [
+      { t: 'Pasar en limpio lo que se dictó', tipo: 'papel', maquina: 'si', como: 'texto',
+        porque: 'Oye y escribe. Es de lo primero que aprendió a hacer bien.' },
+      { t: 'Contestar el correo de siempre', tipo: 'papel', maquina: 'si', como: 'texto',
+        porque: 'Las respuestas que se repiten las escribe igual de bien que ella.' },
+      { t: 'Buscar un expediente en el archivo', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Buscar en una lista. Tarda un segundo donde ella tardaba media hora.' },
+      { t: 'Cuadrar una cita entre tres agendas', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Es probar combinaciones hasta que una calce.' },
+      { t: 'Atender al padre que llega enojado', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Hay que bajarle el enojo a alguien que tiene a su hijo de por medio.' },
+      { t: 'Saber a quién hay que avisarle primero', tipo: 'gente', maquina: 'medias', como: 'cuenta',
+        porque: 'Ordena por lo que está escrito. No sabe quién se ofende si no le avisan.' },
+    ] },
+
+  { k: 'albanil', e: '🧱', nombre: 'Albañil', clase: 'manos', quien: 'don Toño',
+    tareas: [
+      { t: 'Calcular los bloques y la arena', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Es una cuenta de área y de volumen. La misma de las misiones de sexto.' },
+      { t: 'Mirar la pared y ver que está fuera de plomo', tipo: 'ojo', maquina: 'si', como: 'parecido',
+        porque: 'Con una foto y una línea lo marca. Es mirar y comparar.' },
+      { t: 'Levantar la pared', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Bloque por bloque, con la mezcla en la mano y el sol encima.' },
+      { t: 'Arreglar lo que se mojó cuando llovió a media obra', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Nadie midió eso antes. Hay que estar ahí y resolver con lo que hay.' },
+      { t: 'Doblar el hierro a la medida', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Se hace con las manos y con fuerza, en el terreno.' },
+      { t: 'Ponerse de acuerdo con el dueño que cambió de idea', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Es una conversación sobre plata con alguien que no quiere pagar más.' },
+    ] },
+
+  { k: 'agricultor', e: '🌽', nombre: 'Agricultor', clase: 'manos', quien: 'don Chele',
+    tareas: [
+      { t: 'Llevar la cuenta de lo que se gastó', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Sumar gastos. Una computadora normal ya lo hacía.' },
+      { t: 'Decir cuándo sembrar, con el clima medido', tipo: 'papel', maquina: 'si', como: 'predice',
+        porque: 'Con datos de estaciones cercanas acierta. Donde nadie midió, no tiene con qué.' },
+      { t: 'Mirar la hoja y decir qué plaga es', tipo: 'ojo', maquina: 'si', como: 'parecido',
+        porque: 'Es el detector de plagas que vos entrenaste en la etapa 2.' },
+      { t: 'Sembrar, limpiar y cosechar', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Es la ladera, el machete y el sol. Ahí no entra ninguna máquina.' },
+      { t: 'Cargar y acarrear los sacos', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Cien libras al hombro por un camino que no es camino.' },
+      { t: 'Decidir si vende ahora o espera el precio', tipo: 'gente', maquina: 'medias', como: 'predice',
+        porque: 'Puede decir cómo va el precio. No sabe si su familia aguanta un mes más.' },
+      { t: 'Aguantar el año en que se pierde la milpa', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Eso no es una tarea que se delega. Es la vida de una familia.' },
+    ] },
+
+  { k: 'motorista', e: '🚌', nombre: 'Motorista de bus', clase: 'manos', quien: 'don Gerardo',
+    tareas: [
+      { t: 'Llevar la cuenta de los pasajes', tipo: 'papel', maquina: 'si', como: 'cuenta',
+        porque: 'Sumar pasajes y sacar lo del día.' },
+      { t: 'Decir cuál es la ruta más rápida hoy', tipo: 'papel', maquina: 'si', como: 'predice',
+        porque: 'Con lo medido de otros días predice bien dónde se traba.' },
+      { t: 'Mirar el camino y ver el hueco', tipo: 'ojo', maquina: 'si', como: 'parecido',
+        porque: 'Mirar y reconocer es lo suyo. Por eso hay carros que se manejan solos.' },
+      { t: 'Manejar por la calle de tierra con lluvia', tipo: 'manos', maquina: 'medias', como: 'refuerzo',
+        porque: 'Se manejan solos donde las calles están medidas. Aquí no las midió nadie.' },
+      { t: 'Arreglar el bus cuando se para en el camino', tipo: 'manos', maquina: 'no', como: '',
+        porque: 'Con las manos, debajo del bus y con lo que lleve en la caja.' },
+      { t: 'Esperar a la señora que viene corriendo', tipo: 'gente', maquina: 'no', como: '',
+        porque: 'Esperar treinta segundos no está en ninguna regla. Se decide mirando.' },
+    ] },
+];
+
+/* ── La escuela: los tres escudos ──────────────────────────────────────────
+   Lo que hace que una tarea NO se pueda entregar hecha por una máquina. No
+   son castigos ni trucos del maestro: son las tres cosas que a la máquina le
+   faltan, y las tres salen de las etapas anteriores. */
+const IA_ESCUDOS = [
+  { k: 'delante', e: '👀', nombre: 'Se hace delante de alguien',
+    que: 'Hay que explicarlo en voz alta y contestar una pregunta que no estaba.',
+    porque: 'La máquina te escribe el texto. No se sienta a sostenerlo por vos.' },
+  { k: 'aqui', e: '📍', nombre: 'Usa un dato de aquí',
+    que: 'Algo de tu casa, tu barrio o tu municipio que no está escrito en ninguna parte.',
+    porque: 'Solo sabe lo que alguien escribió antes. De tu aldea casi no hay nada escrito.' },
+  { k: 'manos', e: '✋', nombre: 'Pide que midás o hagás algo',
+    que: 'Contar, medir, preguntarle a alguien, construir.',
+    porque: 'No puede ir a tu patio con la cinta métrica.' },
+];
+
+/* ── Doce tareas de clase ──────────────────────────────────────────────────
+   ⚠️ `copia: true` quiere decir que una máquina puede entregarla COMPLETA y
+   bien. Y la regla que la sonda recalcula: toda tarea con `copia: false`
+   tiene al menos un escudo, y ninguna con `copia: true` tiene ninguno. Si un
+   día alguien mete una tarea sin escudo que igual no se copia, la afirmación
+   de la pantalla se vuelve falsa sin dar ningún error. */
+const IA_TAREAS_CLASE = [
+  { k: 'resumen', t: 'Escribí un resumen de la Independencia de Honduras', copia: true, escudos: [],
+    porque: 'Eso está escrito mil veces. Lo entrega en segundos y bien.' },
+  { k: 'ensayo', t: 'Escribí un ensayo sobre la contaminación', copia: true, escudos: [],
+    porque: 'Es el trabajo más fácil de todos para una máquina que escribe.' },
+  { k: 'ejercicios', t: 'Resolvé estos veinte ejercicios de fracciones', copia: true, escudos: [],
+    porque: 'Los resuelve y hasta te explica el paso. Vos no aprendiste nada.' },
+  { k: 'definicion', t: 'Copiá la definición de adjetivo', copia: true, escudos: [],
+    porque: 'Copiar por copiar ya no vale para nada. Nunca valió mucho.' },
+  { k: 'linea', t: 'Hacé la línea del tiempo de los próceres', copia: true, escudos: [],
+    porque: 'Son fechas escritas. Ojo: a veces inventa una, y va firmada por vos.' },
+  { k: 'preguntas', t: 'Leé este texto y contestá cinco preguntas', copia: true, escudos: [],
+    porque: 'Lee y contesta mejor que rápido. No hay forma de saber si vos leíste.' },
+  { k: 'explicar', t: 'Explicá en voz alta cómo resolviste el problema 5', copia: false, escudos: ['delante'],
+    porque: 'Aquí se ve en diez segundos quién lo hizo. No hay dónde esconderse.' },
+  { k: 'patio', t: 'Medí tu patio y sacá su perímetro y su área', copia: false, escudos: ['manos'],
+    porque: 'Nadie midió tu patio. Los números los ponés vos, con la cinta.' },
+  { k: 'abuela', t: 'Preguntale a alguien mayor qué se sembraba antes aquí', copia: false, escudos: ['aqui', 'manos'],
+    porque: 'Eso no está escrito en ninguna parte. Está en la cabeza de tu vecina.' },
+  { k: 'buses', t: 'Contá los buses que pasan en media hora y hacé la gráfica', copia: false, escudos: ['manos'],
+    porque: 'La gráfica te la hace. Los números de TU calle los tenés que contar.' },
+  { k: 'lectura', t: 'Tomale la lectura un minuto a tu hermano menor', copia: false, escudos: ['manos', 'delante'],
+    porque: 'Hay que sentarse con él, con el reloj en la mano.' },
+  { k: 'tanque', t: 'Escribí qué haría tu familia si se acaba el agua del tanque', copia: false, escudos: ['aqui'],
+    porque: 'Te escribe algo general y se nota. Tu casa no está en internet.' },
+];
+
+/* ── Qué cambia al estudiar ────────────────────────────────────────────────
+   Cinco cosas, y ninguna es un regaño. Tres son malas noticias para el que
+   copia y dos son buenas noticias para el que estudia en un aula de 43. */
+const IA_ESTUDIO = [
+  { k: 'copiar', e: '📝', titulo: 'Copiar dejó de servir, y no por castigo',
+    que: 'Si la máquina te la hace, llegás al examen igual que si no la hubieras hecho.',
+    hoy: 'La nota de la tarea se la lleva ella. El examen lo hacés vos solo.' },
+  { k: 'memoria', e: '🧠', titulo: 'Lo que hay que saberse es lo que sirve para comprobar',
+    que: 'Si no sabés que el Himno tiene siete estrofas, no cazás la mentira cuando te diga cinco.',
+    hoy: 'Ya te pasó en la etapa 4. Saber poco te deja creyendo todo.' },
+  { k: 'explica', e: '🔁', titulo: 'Te explica mil veces sin cansarse',
+    que: 'Es lo mejor que trae. En un aula de 43 nadie puede explicarte cuarenta y tres veces.',
+    hoy: 'Pedile que te lo explique otra vez, más fácil. Eso sí te sirve.' },
+  { k: 'sostener', e: '🗣️', titulo: 'Lo que va a valer más es sostener lo que decís',
+    que: 'Delante de alguien, con una pregunta que no estaba en el papel.',
+    hoy: 'Por eso los maestros van a pedir más cosas en voz alta y menos en hoja.' },
+  { k: 'responde', e: '✍️', titulo: 'Lo que entregás lo firmás vos',
+    que: 'Si te copia un dato falso, el que lo entregó fuiste vos.',
+    hoy: 'La máquina no repite el año. Es la misma regla que en el trabajo de don Beto.' },
+];
+
+/* ── Las cuatro piezas ─────────────────────────────────────────────────────
+   Ya no son la misión: son la herramienta del final, para el día que alguien
+   le diga «en dos años ningún maestro va a calificar a mano». Sirven para
+   desarmar esa frase en veinte segundos. */
 const IA_FUT_PIEZAS = [
   { k: 'hoy', e: '🔧', nombre: 'Está hecho con algo que YA se puede hacer',
     si: 'Se apoya en una capacidad que existe y que vos produjiste antes.',
@@ -113,233 +357,74 @@ const IA_FUT_PIEZAS = [
     porque: 'Una profecía te deja mirando. Un escenario te deja algo que hacer.' },
 ];
 
-/* ── Los nueve escenarios ──────────────────────────────────────────────────
-   Todos inventados, todos apoyados en capacidades de arriba, todos con su
-   persona, su precio contable, sus tres decisiones y su regla. Y ninguno
-   trae una fecha de cuándo pasaría: eso sería la profecía. */
-const IA_FUTUROS = [
-  { k: 'maestro', e: '🏫', titulo: 'El maestro que no está', quien: 'la profesora Delmy', ciclo: 'III Ciclo',
-    apoya: ['texto', 'parecido'],
-    cuesta: 'tres horas de clase al día y lo que aprendan 43 alumnos',
-    situacion: 'Imagina esto. A la escuela de la profesora Delmy le mandan un programa que «da la clase». Explica, pone ejercicios y califica. Le dicen que ella ahora revise.',
-    ops: [
-      { t: 'Dejar que dé la clase y revisar al final.',
-        pasa: 'Explicó bien casi todo. En Sociales inventó un dato. Nadie lo vio hasta el examen, y 43 cuadernos lo llevaban copiado.' },
-      { t: 'Usarlo para los ejercicios y explicar ella lo nuevo.',
-        pasa: 'El programa repite el ejercicio sin cansarse. Eso se lo queda él. Lo nuevo lo explica Delmy, que contesta preguntas.' },
-      { t: 'Pedir por escrito qué hace cuando no sabe.',
-        pasa: 'Casi nadie pregunta eso antes de comprar. Si contesta igual de seguro, Delmy ya sabe que tiene que revisar siempre.' },
-    ],
-    regla: 'Un programa repite un ejercicio mil veces. Por lo que afirma responde una persona.' },
+/* ═════════════════════ LAS CUENTAS ═══════════════════════════════════════
+   Corren igual en el navegador y en Node, que es lo que deja a la sonda
+   rehacer cada número en vez de creerle a la pantalla. */
 
-  { k: 'cosecha', e: '🌽', titulo: 'La cosecha que la máquina predijo', quien: 'don Chele', ciclo: 'II y III Ciclo',
-    apoya: ['predice'],
-    cuesta: 'media milpa y la semilla de la siembra siguiente',
-    situacion: 'Imagina que a don Chele le llega un programa que dice cuándo sembrar. Aprendió con datos del valle. En su ladera no hay estación. Dice: sembrá esta semana.',
-    ops: [
-      { t: 'Sembrar esa semana: el programa sabe más que él.',
-        pasa: 'En el valle llovió. En su ladera, dos semanas después. La mitad de la semilla no nació. El programa acertó donde midieron.' },
-      { t: 'Preguntarle de dónde saca los datos.',
-        pasa: 'La estación más cercana está a cuarenta kilómetros, del otro lado del cerro. Para el valle, mucho crédito. Para su ladera, poco.' },
-      { t: 'Apuntar él la lluvia de su ladera.',
-        pasa: 'Es el trabajo aburrido que nadie quiere. Un año de apuntes suyos vale más que el programa.' },
-    ],
-    regla: 'Una predicción vale para donde midieron. Preguntá siempre dónde midieron.' },
-
-  { k: 'abuelo', e: '📼', titulo: 'La voz del abuelo', quien: 'Wendy', ciclo: 'III Ciclo y Media',
-    apoya: ['voz', 'texto'],
-    cuesta: 'L 400 al mes, y algo que no se cuenta en lempiras',
-    situacion: 'Imagina que a Wendy le ofrecen hablar con la voz de su abuelo, que murió. La hicieron con los audios de la familia. Cuesta una cuota al mes.',
-    ops: [
-      { t: 'Pagarlo y hablar con él todas las noches.',
-        pasa: 'Los primeros días consuela. Después Wendy nota algo: eso no recuerda, predice. El día que contesta lo que él nunca habría dicho, duele.' },
-      { t: 'Usar los audios que ya tiene, sin pagar nada.',
-        pasa: 'Los audios de verdad son pocos y se acaban. Pero son suyos y no cambian. Es menos, y es cierto.' },
-      { t: 'Preguntar quién se queda con esa voz.',
-        pasa: 'La voz la fabricaron con audios de la familia. Si el servicio cierra, ya no depende de Wendy. Pagó por algo que no tiene.' },
-    ],
-    regla: 'Una voz fabricada no recuerda: predice. Preguntá quién se queda con ella.' },
-
-  { k: 'camaras', e: '📹', titulo: 'El pueblo con cámaras', quien: 'Elvin', ciclo: 'III Ciclo',
-    apoya: ['cara'],
-    cuesta: 'tres días detenido y el trabajo que perdió',
-    situacion: 'Imagina que la alcaldía pone cámaras que reconocen caras en el mercado, por seguridad. A Elvin lo paran: el sistema dice que se parece a alguien buscado.',
-    ops: [
-      { t: 'Esperar: si no hizo nada, no pasa nada.',
-        pasa: 'Se aclaró, y tardó tres días. El sistema dijo que se parecía, no que fuera él. Alguien lo tomó como prueba.' },
-      { t: 'Preguntar cuántas veces se equivoca y con quién.',
-        pasa: 'Es la pregunta de la etapa 2, aplicada a caras. Entrenado con pocas fotos de gente como él, falla más con ellos.' },
-      { t: 'Pedir en el cabildo quién guarda las caras.',
-        pasa: 'Es lo único que se puede pedir antes. Una cara no se cambia como una contraseña. Si se filtra, es para siempre.' },
-    ],
-    regla: 'Un parecido no es una identificación. Y una cara no se cambia.' },
-
-  { k: 'ana', e: '🧾', titulo: 'El trabajo de Ana', quien: 'Ana', ciclo: 'III Ciclo y Media',
-    apoya: ['texto', 'predice'],
-    cuesta: 'tres años de estudio y la decisión de a qué dedicarse',
-    situacion: 'Imagina que Ana quiere ser contadora. Le dicen que ya no hace falta: el programa hace las cuentas. Ella mira el día de la contadora del pueblo.',
-    ops: [
-      { t: 'Cambiar de carrera: el programa ya cuenta.',
-        pasa: 'Cambió de idea por una frase que nadie comprobó. Las cuentas eran hora y media del día. El resto era decidir y responder.' },
-      { t: 'Estudiarlo, y usar el programa mejor que nadie.',
-        pasa: 'Le queda el trabajo menos la parte aburrida. Y puede revisar lo que el programa propone: para eso la contratan.' },
-      { t: 'Partir el oficio en cuentas y decisiones.',
-        pasa: 'Sirve para cualquier oficio. La cuenta la hace mejor una máquina. Decidir y responder, no. Casi ningún oficio es solo cuenta.' },
-    ],
-    regla: 'Antes de descartar un oficio, partilo en cuentas y decisiones. Se automatiza la cuenta.' },
-
-  { k: 'tarea', e: '📓', titulo: 'La tarea sin tarea', quien: 'Óscar', ciclo: 'III Ciclo',
-    apoya: ['texto'],
-    cuesta: 'lo que iba a aprender escribiendo; no se nota hasta el examen',
-    situacion: 'Imagina que el colegio de Óscar deja de mandar tareas escritas para la casa. Dicen que las hace la máquina. En su lugar mandan a leer.',
-    ops: [
-      { t: 'Alegrarse: menos tarea.',
-        pasa: 'El examen es escrito y se hace en el aula. Óscar llevaba meses sin escribir un párrafo. Se notó en la nota.' },
-      { t: 'Pedir que la tarea se defienda en clase.',
-        pasa: 'No quita la tarea: la cambia. Da igual quién la escribió si hay que explicarla de pie. El que copió, no puede.' },
-      { t: 'Escribir primero él y después pedir los fallos.',
-        pasa: 'Lo que cambia es el orden. Escribir y después preguntar deja el trabajo suyo. Al revés, queda un texto ajeno.' },
-    ],
-    regla: 'Lo que se aprende escribiendo no se aprende leyendo lo que escribió otro. Primero vos.' },
-
-  { k: 'senal', e: '📴', titulo: 'El día sin señal', quien: 'doña Tere', ciclo: 'II y III Ciclo',
-    apoya: ['texto', 'predice'],
-    cuesta: 'tres días de pulpería sin saber qué cobrar ni qué pedir',
-    situacion: 'Imagina que doña Tere lleva la pulpería con un asistente del teléfono. Le saca las cuentas y le escribe al proveedor. Se cae la señal tres días.',
-    ops: [
-      { t: 'Esperar a que vuelva la señal.',
-        pasa: 'Tres días sin saber cuánto le deben ni cuánto pedir. Se le olvidó tener el cuaderno al día.' },
-      { t: 'Sacar el cuaderno y hacer las cuentas a mano.',
-        pasa: 'Le costó una tarde y salió adelante. Sumar y restar no se olvida, se oxida. Lo perdido era lo fiado.' },
-      { t: 'Apuntar en papel lo que no puede perder.',
-        pasa: 'Es lo aburrido y lo que salva. El teléfono para lo rápido. El papel para lo que no se puede perder.' },
-    ],
-    regla: 'Preguntate qué pasa el día que no esté. Y aprendé a hacerlo sin ella.' },
-
-  { k: 'salud', e: '🩺', titulo: 'La máquina en el centro de salud', quien: 'la enfermera Xiomara', ciclo: 'III Ciclo y Media',
-    apoya: ['parecido', 'predice'],
-    cuesta: 'un traslado de dos horas de más, o uno que hacía falta y no se hizo',
-    situacion: 'Imagina el centro de salud de Xiomara, con médico dos días a la semana. Le dan un programa que sugiere qué puede ser. Acierta con lo común, falla con lo raro.',
-    ops: [
-      { t: 'Seguir siempre lo que dice el programa.',
-        pasa: 'Con lo común va bien. Con lo raro propone lo más parecido a lo que vio. Y ese día el traslado salva.' },
-      { t: 'Usarlo como segunda opinión, nunca como la primera.',
-        pasa: 'Xiomara decide y después mira qué propone. Cuando coinciden, sigue. Cuando no, mira dos veces. Y decide ella.' },
-      { t: 'Preguntar qué hace cuando no está seguro.',
-        pasa: 'Si siempre contesta igual de seguro, no sirve para lo raro. Si dice «no sé, traslade», vale más aunque acierte menos.' },
-    ],
-    regla: 'Lo que más acierta con lo común falla con lo raro. Y lo raro urge.' },
-
-  { k: 'promesa', e: '⏳', titulo: 'La promesa que se cumplió (o no)', quien: 'Brayan', ciclo: 'III Ciclo y Media',
-    apoya: ['texto'],
-    cuesta: 'la matrícula que no hizo, y tres años de estudio',
-    situacion: 'Imagina que Brayan está en el último año. En un cuaderno de séptimo encuentra una promesa apuntada, con su fecha. Es la que le hizo dejar computación.',
-    ops: [
-      { t: 'Reírse y pasar la página.',
-        pasa: 'Casi todo el mundo hace eso. Una promesa sin fecha funciona porque nadie vuelve a mirarla. La de Brayan sigue circulando.' },
-      { t: 'Marcar qué se cumplió y qué no.',
-        pasa: 'Algunas se cumplieron y otras no se acercaron. Ya sabe quién acertó y cuánto creerle la próxima vez.' },
-      { t: 'Apuntar la promesa de hoy, con su fecha.',
-        pasa: 'Es la cápsula de la etapa anterior. A una promesa sin plazo le ponés vos la fecha del examen.' },
-    ],
-    regla: 'A una promesa sin fecha, ponele vos la fecha. Y volvé a mirarla.' },
-];
-
-/* ── ⚖️ En manos de quién ──────────────────────────────────────────────────
-   La segunda actividad, y la lección que de verdad trae esta etapa: lo que
-   decide si un escenario acaba bien o mal NO es la máquina. Es a cuánta
-   gente alcanza la decisión y si alguien puede revisarla antes de que valga.
-
-   Por eso el final se CALCULA con estos tres datos y no se escribe uno por
-   uno: con la lista escrita a mano, cambiar una capacidad obligaría a
-   reescribir veinticuatro finales y alguno se quedaría diciendo lo de antes
-   —que es la avería que este repositorio ya conoce—. */
-const IA_FUT_MANOS = [
-  { k: 'familia', e: '🏠', quien: 'una familia', alcanceN: 1,
-    alcance: 'una casa',
-    decide: 'a quién le abre la puerta y a quién le manda dinero',
-    revisor: 'la propia familia, llamando al número de siempre',
-    cuesta: 'dos minutos',
-    todo: true },
-  { k: 'escuela', e: '🏫', quien: 'la escuela', alcanceN: 43,
-    alcance: 'un aula de 43',
-    decide: 'una nota, una matrícula y quién entra al aula',
-    revisor: 'el maestro, antes de que la nota valga',
-    cuesta: 'una tarde por bimestre',
-    todo: true },
-  { k: 'alcaldia', e: '🏛️', quien: 'la alcaldía', alcanceN: 4000,
-    alcance: 'el pueblo entero',
-    decide: 'una multa, un permiso y a quién se para en la calle',
-    revisor: 'una persona de la alcaldía, cuando alguien reclama',
-    cuesta: 'lo que tarde el reclamo, y reclama quien puede',
-    todo: false, revisarTodo: 'nadie mira una por una las multas de un pueblo entero' },
-  { k: 'empresa', e: '🏢', quien: 'una empresa que lo vende', alcanceN: 100000,
-    alcance: 'todas las escuelas y alcaldías que lo compren',
-    decide: 'lo mismo que los de arriba, en todas a la vez',
-    revisor: 'solo quien lo compra, si lo exige por escrito antes de firmar',
-    cuesta: 'una cláusula del contrato, barata a tiempo y carísima después',
-    todo: false, revisarTodo: 'nadie mira una por una las decisiones de todas esas escuelas' },
-];
-
-/* Qué pasa con esa capacidad, en esas manos, con revisión o sin ella.
-   No hay tabla: se compone de los datos de arriba, así que una capacidad
-   nueva trae sus ocho finales sin escribir ninguno. */
-/* «a el» no existe en castellano y la frase se compone sola: sin esto la
-   pantalla escribe «le cae a el que se parece a otro», que es lo que pasa
-   cuando un texto se arma juntando trozos y nadie lo lee en voz alta. */
-function iaFutAl(t) { return /^el\s/.test(t) ? 'al ' + t.slice(3) : 'a ' + t; }
-
-function iaFutFinal(capK, manoK, revisa) {
-  const c = IA_CAPACIDADES.find(x => x.k === capK);
-  const m = IA_FUT_MANOS.find(x => x.k === manoK);
-  if (!c || !m) return null;
-  const usa = m.quien.charAt(0).toUpperCase() + m.quien.slice(1) + ' lo usa ' + c.uso + '. Decide ' + m.decide + '.';
-  if (!revisa) {
-    return {
-      cap: c, mano: m, revisa: false, alcance: m.alcanceN,
-      titulo: 'Sin revisión',
-      usa,
-      pasa: 'Cuando ' + c.falla + ', la decisión se toma igual y ya vale. Alcanza ' + iaFutAl(m.alcance) + '. Le cae ' + iaFutAl(c.contra) + '.',
-      cuesta: 'Lo que cuesta se multiplica por a cuánta gente alcanza. Aquí, ' + m.alcance + '.',
-      aviso: '',
-    };
-  }
-  return {
-    cap: c, mano: m, revisa: true, alcance: m.alcanceN,
-    titulo: 'Con revisión',
-    usa,
-    pasa: 'Cuando ' + c.falla + ', la decisión no vale todavía: la mira ' + m.revisor + '. El fallo se ve antes.',
-    cuesta: 'Revisar cuesta ' + m.cuesta + '. No sale gratis: hay que decidir antes qué se revisa.',
-    aviso: m.todo ? ''
-      : 'Y acá no se puede revisar todo: ' + m.revisarTodo + '. Se revisa lo que decide algo grave. Y eso se escribe ANTES de comprar el programa.',
-  };
+/* «a el» no se dice: se dice «al». Lo usa el Laboratorio de la misión al
+   componer «Le cae a el que vive donde no se tomaron datos». Un detalle de
+   español que, mal puesto, es lo primero que ve un maestro. */
+function iaFutAl(t) {
+  const x = (t || '').toString().trim();
+  return /^el\s/i.test(x) ? 'al ' + x.slice(3) : 'a ' + x;
 }
 
-/* ── 🔮 El taller: la prueba de las cuatro piezas ──────────────────────────
-   El alumno arma SU escenario y la pantalla lo juzga por la forma, nunca por
-   el tema: elegir de qué está hecho, nombrar a alguien, contar el precio y
-   terminar en una pregunta. Todo lo que juzga se puede comprobar; lo que no
-   se puede comprobar —si vale la pena— lo decide él, y la pantalla lo dice. */
-const IA_FUT_GENERICOS = ['la gente', 'gente', 'alguien', 'todos', 'todas', 'nadie', 'uno', 'la sociedad',
-  'las personas', 'la humanidad', 'el mundo', 'el pueblo', 'la familia', 'un niño', 'una niña',
-  'los niños', 'un maestro', 'una maestra', 'los maestros', 'el agricultor', 'un alumno', 'los alumnos'];
-const IA_FUT_CONTABLES = ['lempira', 'lempiras', ' l ', 'día', 'días', 'hora', 'horas', 'semana', 'semanas',
-  'mes', 'meses', 'año', 'años', 'minuto', 'minutos', 'clase', 'clases', 'alumno', 'alumnos', 'hoja', 'hojas',
-  'cosecha', 'cosechas', 'matrícula', 'sueldo', 'almuerzo', 'almuerzos', 'viaje', 'viajes', 'cuaderno',
-  'cuadernos', 'beca', 'becas', 'tarea', 'tareas', 'manzana', 'manzanas', 'quintal', 'quintales',
+/* Cuánto pesa una tarea en el conteo: la que se lleva entera vale 1, la que
+   se lleva a medias vale medio. */
+function iaOfiPeso(m) { return m === 'si' ? 1 : (m === 'medias' ? 0.5 : 0); }
+
+/* Un oficio: cuántas tareas de cada clase y qué parte se lleva la máquina. */
+function iaOfiCuenta(k) {
+  const o = IA_OFICIOS.find(x => x.k === k);
+  if (!o) return null;
+  const si = o.tareas.filter(t => t.maquina === 'si').length;
+  const medias = o.tareas.filter(t => t.maquina === 'medias').length;
+  const no = o.tareas.filter(t => t.maquina === 'no').length;
+  const peso = o.tareas.reduce((a, t) => a + iaOfiPeso(t.maquina), 0);
+  return { k, si, medias, no, total: o.tareas.length, pct: Math.round(100 * peso / o.tareas.length) };
+}
+
+/* ⚠️ La cuenta que sostiene la misión entera: por TIPO de tarea, juntando los
+   ocho oficios. Es de aquí de donde sale lo que la pantalla afirma, y por eso
+   la pantalla no escribe ni un número a mano. */
+function iaOfiPorTipo() {
+  return IA_OFI_TIPOS.map(ti => {
+    const tareas = IA_OFICIOS.reduce((a, o) => a.concat(o.tareas.filter(t => t.tipo === ti.k)), []);
+    const peso = tareas.reduce((a, t) => a + iaOfiPeso(t.maquina), 0);
+    return { k: ti.k, e: ti.e, nombre: ti.nombre, total: tareas.length,
+             pct: tareas.length ? Math.round(100 * peso / tareas.length) : 0 };
+  });
+}
+
+/* Cuántas tareas hay en total, para no escribir el número en ninguna parte. */
+function iaOfiTotalTareas() { return IA_OFICIOS.reduce((a, o) => a + o.tareas.length, 0); }
+
+/* La escuela: cuántas se pueden copiar y qué escudo lleva cada una que no. */
+function iaClaseCuenta() {
+  const copiables = IA_TAREAS_CLASE.filter(t => t.copia);
+  const protegidas = IA_TAREAS_CLASE.filter(t => !t.copia);
+  const porEscudo = IA_ESCUDOS.map(e => ({
+    k: e.k, e: e.e, nombre: e.nombre,
+    cuantas: protegidas.filter(t => t.escudos.indexOf(e.k) >= 0).length,
+  }));
+  return { total: IA_TAREAS_CLASE.length, copiables: copiables.length,
+           protegidas: protegidas.length, porEscudo };
+}
+
+/* ── Las cuatro piezas, juzgadas ──────────────────────────────────────────── */
+const IA_FUT_GENERICOS = ['la gente', 'gente', 'todos', 'todo el mundo', 'la sociedad', 'las personas',
+  'los niños', 'la humanidad', 'nosotros', 'uno', 'alguien', 'la juventud', 'los jóvenes', 'el pueblo'];
+const IA_FUT_CONTABLES = ['día', 'días', 'semana', 'semanas', 'mes', 'meses', 'año', 'años', 'hora', 'horas',
+  'lempira', 'lempiras', 'l ', 'clase', 'clases', 'cosecha', 'cosechas', 'quintal', 'quintales',
   'saco', 'sacos', 'milpa', 'libra', 'libras', 'kilómetro', 'kilómetros', 'asiento', 'asientos', 'nota', 'notas'];
 
 function iaFutNorm(t) { return (t || '').toString().trim().toLowerCase().replace(/\s+/g, ' '); }
 
-/* Juzga las cuatro piezas de lo que el alumno escribió. Corre igual en el
-   navegador y en Node, que es lo que deja a la sonda rehacer la cuenta en
-   vez de creerle a la pantalla. */
 function iaFutJuzga(esc) {
   esc = esc || {};
   const quien = iaFutNorm(esc.quien), precio = iaFutNorm(esc.precio), decide = iaFutNorm(esc.decide);
   const hay = IA_CAPACIDADES.some(c => c.k === esc.cap);
-  const generico = IA_FUT_GENERICOS.indexOf(quien.replace(/^(el|la|los|las|un|una) /, m => m)) >= 0
-    || IA_FUT_GENERICOS.indexOf(quien) >= 0;
+  const generico = IA_FUT_GENERICOS.indexOf(quien) >= 0;
   /* Un nombre propio: empieza en mayúscula en lo que el alumno escribió y no
      está en la lista de los que no son nadie. «don Chele» y «doña Tere» pasan
      por el nombre que llevan detrás. */
@@ -358,7 +443,9 @@ function iaFutLeFalta(v) { return IA_FUT_PIEZAS.filter(p => !v[p.k]); }
 
 /* Se exporta para las sondas, que corren en Node. En el navegador no estorba. */
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS,
-                     iaFutAl, iaFutFinal, IA_FUT_GENERICOS, IA_FUT_CONTABLES, iaFutJuzga, iaFutCuenta,
+  module.exports = { IA_FUT_FECHA, IA_CAPACIDADES, IA_CUENTA, IA_OFI_TIPOS, IA_OFICIOS,
+                     IA_ESCUDOS, IA_TAREAS_CLASE, IA_ESTUDIO, IA_FUT_PIEZAS,
+                     iaFutAl, iaOfiPeso, iaOfiCuenta, iaOfiPorTipo, iaOfiTotalTareas, iaClaseCuenta,
+                     IA_FUT_GENERICOS, IA_FUT_CONTABLES, iaFutJuzga, iaFutCuenta,
                      iaFutEsEscenario, iaFutLeFalta };
 }

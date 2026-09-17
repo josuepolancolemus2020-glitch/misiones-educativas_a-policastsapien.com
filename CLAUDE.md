@@ -3069,58 +3069,95 @@ con su propio mínimo. Es la lección de «Cuadrado **Perfecto**» por tercera v
 esta ruta, y por eso se escribe: una sonda que se pone roja sin avería enseña a
 no mirarla.
 
-### La etapa 7, los escenarios: se imagina con método, y no se predice nada
+### La etapa 7: qué se lleva la máquina de un oficio, y qué cambia al estudiar
 
-Es la otra mitad de la etapa anterior (`misiones/3ciclo-escenarios-porvenir/`,
-id 78, III Ciclo): la 6 enseña a leer lo que se dice HOY y esta a pensar lo que
-todavía no pasó. Los datos viven en `js/data/ia-futuros.js` —seis capacidades
-que ya existen, nueve escenarios y las cuatro piezas—, la misión los pinta, la
+⚠️ **Esta misión se rehizo entera el 17 de septiembre de 2026, y el motivo es
+la lección más cara de la ruta.** La primera versión enseñaba a distinguir un
+**escenario** de una **profecía**: nueve situaciones inventadas y una prueba de
+cuatro piezas. El método estaba bien, las sondas en verde, el lenguaje llano
+medido… y el alumno salía **sin saber nada de lo que la Inteligencia Artificial
+le va a cambiar**. El autor lo dijo así: «me refería a los escenarios de lo que
+está pasando con la IA, que indagaras de manera simple y sencilla lo del
+futuro». Tenía razón, y la lección es de las que valen para todo el
+repositorio: **una misión sobre CÓMO se piensa una cosa no es una misión sobre
+esa cosa**. Enseñar el método y no el contenido se siente riguroso y deja al
+alumno con las manos vacías.
+
+**Y hablar del futuro sin predecir sí se puede, pero de una sola forma:**
+partiendo de lo que la máquina YA hace —las seis capacidades que el alumno
+produjo con sus manos en las etapas anteriores— y mirando qué tareas de un
+oficio de verdad tocan esas capacidades. Eso no es profecía: es mirar lo que
+hay. Por eso aquí no hay ni un año, ni un plazo, ni un «para entonces».
+
+Los datos viven en `js/data/ia-futuros.js` —ocho oficios hondureños desarmados
+en tareas, las doce tareas de clase y los tres escudos—, la misión los pinta, la
 ficha sale del armador y `verifica-ia` compara las dos.
 
-**Lo que la separa de una profecía, y es toda la misión:** una profecía dice lo
-que va a pasar, no se puede incumplir y no le pide nada a quien la oye; un
-escenario dice qué harías vos si pasara, y se desarma en cuanto le falla una de
-sus cuatro piezas.
+**La idea de la que cuelga todo: un oficio no es UNA cosa.** Es un montón de
+tareas, y la máquina no se lleva oficios: se lleva tareas. De ahí sale la
+respuesta que la misión le da a Katy, que termina noveno y no sabe qué
+estudiar: **no preguntés si tu oficio se salva; preguntá de qué tareas está
+hecho.**
 
-**Cuatro reglas, y ninguna es de adorno:**
+**Seis reglas, y ninguna es de adorno:**
 
-1. ⚠️ **NI UNA FECHA de lo que pasaría.** Los nueve escenarios van sin año y sin
-   plazo, y la sonda lo cuenta en la situación, en las consecuencias y en la
-   regla. Ponerle fecha a lo inventado es exactamente la profecía que la misión
-   enseña a reconocer. Lo único fechado es cuándo se escribió el archivo.
-2. ⚠️ **Ningún escenario se apoya en algo que no exista.** Cada uno declara en
-   `apoya` con qué capacidades está hecho, y esas capacidades son las que el
-   alumno **produjo con sus manos** en las etapas anteriores —con su número de
-   etapa escrito al lado—. Lo apoyado en algo que todavía no se puede hacer no
-   es un escenario: es ciencia ficción, y enseña a esperar en vez de a decidir.
-3. **Persona con nombre, precio contable y tres decisiones con su consecuencia**,
-   como la normativa del relato. Ninguna de las tres es la correcta: hay
-   consecuencias, y la regla sale solo cuando el alumno vio las tres.
-4. ⚠️ **Y la revisión NO se vende como gratis.** La segunda actividad calcula el
-   final de las veinticuatro combinaciones y en todas dice dos cosas: que con
-   revisión el fallo se ve antes de que la decisión valga, y que **revisar
-   cuesta tiempo**. En las manos grandes añade que revisarlo todo no se puede, y
-   que lo que hay que escribir antes de comprar el programa es qué decisiones no
-   valen sin que una persona las mire. La sonda exige las tres cosas en las 24;
-   prometer una revisión total sería la promesa falsa que esta ruta ya tuvo que
-   rehacer una vez.
+1. ⚠️ **Toda tarea que la máquina se lleva dice CON QUÉ**, y solo hay dos
+   respuestas honestas: la clave de una de las seis capacidades, o `cuenta`
+   —«esto ya lo hacía una computadora normal desde antes de la Inteligencia
+   Artificial»: sumar, ordenar, buscar en una lista—. Sin esa columna la misión
+   sería publicidad, y **distinguir lo viejo de lo nuevo es la mitad de no
+   creerle a un vendedor**. La sonda no deja pasar una tarea que se lleva sin
+   decir con qué, ni una que no se lleva y trae un «con qué».
+2. ⚠️ **Los porcentajes NO se escriben: se cuentan.** Salen de `iaOfiPorTipo()`,
+   que la sonda vuelve a correr sumando tarea por tarea, sin usar la misma
+   función. Hoy da: **de papel 95 %, de mirar 92 %, de manos 6 %, de estar con
+   alguien 13 %**. Si alguien mete tareas hasta que eso deje de ser verdad, la
+   frase de la pantalla se vuelve mentira **sin dar un solo error**: se pinta
+   igual de bien.
+3. ⚠️ **Ningún oficio se va entero y ninguno se salva entero**, y la sonda lo
+   exige (nada al 0 % ni al 100 %). Es lo que sostiene la pregunta de arriba:
+   un oficio al 100 % convertiría la misión en la profecía que viene a
+   desarmar.
+4. ⚠️ **Se cuentan TAREAS, no HORAS, y se dice con esas palabras** en la
+   pantalla y en el papel. A don Chele le quedan cinco tareas de siete, y esas
+   cinco se llevan todo el día. Un porcentaje que se lee mal enseña peor que
+   ninguno: es la misma lección que «el promedio que esconde» de la etapa 5, y
+   la sonda comprueba que el aviso siga ahí.
+5. ⚠️ **Y «mirar» es un tipo de tarea aparte**, no una de papel ni de manos.
+   Es justo la capacidad que el alumno produjo en la etapa 1, y es la que
+   sorprende: casi todo el mundo da por hecho que mirar y reconocer es cosa de
+   personas. Mirar la hoja y decir qué plaga es, la radiografía, el tomate
+   pasado, la pared fuera de plomo: las cuatro se las lleva.
+6. **La mitad del estudio, que es la otra pregunta de Katy.** Copiar dejó de
+   servir y no por castigo —si la máquina hace la tarea, al examen se llega
+   igual—; lo que hay que saberse de memoria es **lo que sirve para comprobar**,
+   y una tarea que la máquina no puede entregar lleva uno de tres **escudos**:
+   se hace delante de alguien, usa un dato de aquí, o pide medir o hacer algo.
+   La sonda exige que **toda** tarea que no se copia lleve por lo menos un
+   escudo y que **ninguna** de las que sí se copia lleve alguno: es lo que la
+   pantalla afirma con esas palabras al terminar la actividad.
 
-**Y la lección que más vale no es ninguno de los nueve escenarios: es que la
-máquina es la misma en las cuatro manos.** Lo que cambia el final es a cuánta
-gente alcanza la decisión y si alguien puede mirarla antes de que valga. Eso es
-lo único de todo esto que un patronato o una alcaldía **sí** pueden decidir, y
-casi siempre lo deciden sin saber que lo están decidiendo.
-
-⚠️ **El escenario del examen que se califica solo NO se repite aquí:** ya está
-en la etapa 4, y esta misión manda a leerlo allá. Repetir un contenido entre dos
-etapas seguidas no se lee como un error; se lee como que la ruta no sabe lo que
-ya enseñó.
+**Y las cuatro piezas no se tiraron:** quedan como la herramienta corta del
+final, para el día que a alguien le digan «en dos años ningún maestro va a
+calificar a mano» —que es la frase que le costó la matrícula a Marvin en la
+etapa 6—. Ahí siguen sirviendo, y `iaFutJuzga` las recalcula.
 
 ```
-node _dev/verifica-ia.js              → la pantalla y el papel, escenario por escenario
-node _dev/verifica-descubre-ia.js     → el taller y las 24 combinaciones, recalculadas
+node _dev/verifica-ia.js              → los oficios y la escuela, del archivo al papel
+node _dev/verifica-descubre-ia.js     → las dos actividades, recalculadas
+node _dev/verifica-legibilidad-ia.js  → que se lea en cuarto grado
 node _dev/verifica-mision-nueva.js misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html
 ```
+
+⚠️ **Y una avería de esta reescritura que vale para cualquier misión que se
+rehaga.** Al quitar del archivo de datos las constantes viejas quedó un banco
+—`fcData`, las tarjetas de estudio— pintando una que ya no existía. La misión
+**no daba un error visible**: el `<script>` reventaba en esa línea y con él se
+caían, en silencio, todas las declaraciones de más abajo del archivo. La
+pantalla se pintaba a medias y la consola había que abrirla para verlo. Lo cazó
+abrir la misión con el navegador y mirar los errores de página, que es lo que
+ninguna sonda de las que leen archivos puede hacer. **Al quitar un dato hay que
+buscar quién lo usaba**, y `grep` del nombre viejo es la comprobación entera.
 
 ### ⚠️ Y lo que salió al calcar una misión de esta ruta: cuatro veces lo mismo
 

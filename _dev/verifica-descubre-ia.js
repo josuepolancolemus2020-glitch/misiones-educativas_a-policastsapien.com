@@ -297,21 +297,95 @@ console.log('\n📰 El dossier de la actualidad');
   else mal('la misión no declara que no pudo abrir esas páginas, y sin eso está afirmando hechos que nadie verificó');
 }
 
-console.log('\n🔮 El taller de escenarios');
+console.log('\n🧰 El oficio que te gusta');
 {
-  /* Lo que la pantalla AFIRMA: que juzga las cuatro piezas por la forma, no
-     por el tema. Se le tiran los dos extremos, que es como se comprueba que
-     una prueba de verdad discrimina: una profecía de manual y un escenario
-     completo. */
+  /* Lo que la actividad AFIRMA al terminar un oficio: cuántas tareas se lleva
+     la máquina enteras, cuántas a medias y qué porcentaje es eso. Se rehace la
+     cuenta aquí, a mano y sin llamar a iaOfiPeso, porque una cuenta que se
+     comprueba con su propia función no se comprueba. */
+  let malCuenta = 0, malFacil = 0;
+  F.IA_OFICIOS.forEach(o => {
+    const n = F.iaOfiCuenta(o.k);
+    const si = o.tareas.filter(t => t.maquina === 'si').length;
+    const medias = o.tareas.filter(t => t.maquina === 'medias').length;
+    const no = o.tareas.filter(t => t.maquina === 'no').length;
+    const pct = Math.round(100 * (si + medias / 2) / o.tareas.length);
+    if (n.si !== si || n.medias !== medias || n.no !== no || n.total !== o.tareas.length || n.pct !== pct) {
+      mal('«' + o.nombre + '»: la cuenta que enseña la pantalla no es la de sus tareas');
+      malCuenta++;
+    }
+    /* ⚠️ Y un oficio donde todas las tareas se contestan igual se gana
+       tocando tres veces lo mismo, sin leer ninguna: sería un puntaje
+       regalado, que es justo lo que la normativa de la estrella prohíbe. */
+    const clases = new Set(o.tareas.map(t => t.maquina));
+    if (clases.size < 2) { mal('«' + o.nombre + '»: todas sus tareas se contestan igual; se acierta sin leer'); malFacil++; }
+    const mayor = Math.max(si, medias, no);
+    if (mayor / o.tareas.length > 0.75) { mal('«' + o.nombre + '»: el ' + Math.round(100 * mayor / o.tareas.length) + ' % de sus tareas lleva la misma respuesta'); malFacil++; }
+  });
+  if (!malCuenta) bien('los ' + F.IA_OFICIOS.length + ' oficios enseñan la cuenta de sus propias tareas (' + F.iaOfiTotalTareas() + ' en total)');
+  if (!malFacil) bien('en ninguno se acierta contestando siempre lo mismo');
+  /* Y el reparto por tipo, que es la frase grande de la misión, recalculado
+     aparte: sumando las tareas de los ocho oficios, no las del archivo. */
+  const tipos = {};
+  F.IA_OFI_TIPOS.forEach(ti => { tipos[ti.k] = { si: 0, medias: 0, total: 0, nombre: ti.nombre }; });
+  F.IA_OFICIOS.forEach(o => o.tareas.forEach(t => {
+    const x = tipos[t.tipo];
+    if (!x) { mal('la tarea «' + t.t + '» dice ser de un tipo que no existe («' + t.tipo + '»)'); return; }
+    x.total++; if (t.maquina === 'si') x.si++; if (t.maquina === 'medias') x.medias++;
+  }));
+  let malTipo = 0;
+  F.iaOfiPorTipo().forEach(t => {
+    const x = tipos[t.k], pct = Math.round(100 * (x.si + x.medias / 2) / x.total);
+    if (t.total !== x.total || t.pct !== pct) { mal('el tipo «' + t.nombre + '» dice ' + t.pct + ' % y las tareas dan ' + pct + ' %'); malTipo++; }
+  });
+  if (!malTipo) bien('los cuatro tipos, recalculados tarea por tarea: ' + F.iaOfiPorTipo().map(t => t.nombre + ' ' + t.pct + ' %').join(' · '));
+}
+
+console.log('\n📚 ¿Se puede copiar esta tarea?');
+{
+  const n = F.iaClaseCuenta();
+  const copiables = F.IA_TAREAS_CLASE.filter(t => t.copia).length;
+  const protegidas = F.IA_TAREAS_CLASE.length - copiables;
+  if (n.total === F.IA_TAREAS_CLASE.length && n.copiables === copiables && n.protegidas === protegidas)
+    bien('de las ' + n.total + ' tareas de clase, ' + n.copiables + ' las entrega una máquina y ' + n.protegidas + ' no');
+  else mal('la cuenta de las tareas de clase no cuadra con la lista');
+  /* ⚠️ Lo que la pantalla AFIRMA con esas palabras al terminar: «todas las que
+     no se copian llevan por lo menos un escudo, y ninguna de las que copia
+     lleva ninguno». Es la lección entera de la actividad. */
+  const sinEscudo = F.IA_TAREAS_CLASE.filter(t => !t.copia && !t.escudos.length);
+  const conEscudoDeMas = F.IA_TAREAS_CLASE.filter(t => t.copia && t.escudos.length);
+  if (!sinEscudo.length && !conEscudoDeMas.length) bien('la regla de los escudos se cumple en las ' + n.total + ': es lo que la pantalla afirma al final');
+  else mal(sinEscudo.length + ' tarea(s) sin escudo que no se copian y ' + conEscudoDeMas.length + ' con escudo que sí');
+  /* Y contestar siempre lo mismo no puede ganar: si nueve de doce se copiaran,
+     el alumno que marca «la copia» doce veces se lleva la actividad. */
+  const may = Math.max(copiables, protegidas);
+  if (may / n.total <= 0.6) bien('están repartidas (' + copiables + ' y ' + protegidas + '): no se gana marcando siempre lo mismo');
+  else mal('el ' + Math.round(100 * may / n.total) + ' % de las tareas cae del mismo lado: se acierta sin leer');
+  /* Los tres escudos se usan. Uno que no use ninguna tarea es un escudo que se
+     enseña y no se practica. */
+  const flojos = n.porEscudo.filter(e => !e.cuantas);
+  if (!flojos.length) bien('los ' + n.porEscudo.length + ' escudos se practican: ' + n.porEscudo.map(e => e.nombre + ' ×' + e.cuantas).join(' · '));
+  else mal('el escudo «' + flojos[0].nombre + '» no lo usa ninguna tarea');
+  /* Cada tarea explica por qué. Sin el porqué la pantalla corrige y no enseña. */
+  const mudas = F.IA_TAREAS_CLASE.filter(t => !t.porque || t.porque.length < 20);
+  if (!mudas.length) bien('las ' + n.total + ' explican por qué se copian o por qué no');
+  else mal('la tarea «' + mudas[0].t + '» no explica por qué');
+}
+
+console.log('\n🔮 Las cuatro piezas (la herramienta del final)');
+{
+  /* Ya no son la misión: son lo que el alumno le aplica a «en dos años ningún
+     maestro va a calificar a mano». Se le tiran los dos extremos, que es como
+     se comprueba que una prueba discrimina de verdad. */
   const profecia = F.iaFutJuzga({ cap: 'teletransporte', quien: 'la gente', precio: 'es grave', decide: 'va a cambiar todo' });
   if (F.iaFutCuenta(profecia) === 0) bien('una profecía de manual no pasa ninguna de las cuatro piezas');
   else mal('la prueba le da ' + F.iaFutCuenta(profecia) + ' pieza(s) a una frase que no tiene ninguna');
-  const bueno = F.iaFutJuzga({ cap: 'voz', quien: 'Kenia', precio: 'L 1 500 de la matrícula', decide: '¿le contesta o la llama al número de siempre?' });
+  const bueno = F.iaFutJuzga({ cap: 'texto', quien: 'Katy', precio: 'tres años de estudio', decide: '¿qué carrera elige entonces?' });
   if (F.iaFutEsEscenario(bueno)) bien('un escenario con sus cuatro piezas las pasa todas');
   else mal('un escenario completo no pasa la prueba: le falta ' + F.iaFutLeFalta(bueno).map(x => x.k).join(', '));
   /* Y cada pieza se cae SOLA cuando falta: si se cayeran juntas, la pantalla
      no le estaría diciendo al alumno cuál arreglar. */
-  const base = { cap: 'voz', quien: 'Kenia', precio: 'tres días de trabajo', decide: '¿qué hace?' };
+  const base = { cap: 'texto', quien: 'Katy', precio: 'tres días de trabajo', decide: '¿qué hace?' };
   const rompe = { hoy: { cap: 'nada' }, quien: { quien: 'la gente' }, precio: { precio: 'es importante' }, decide: { decide: 'va a pasar' } };
   let solas = 0;
   Object.keys(rompe).forEach(k => {
@@ -321,47 +395,16 @@ console.log('\n🔮 El taller de escenarios');
     else mal('al romper «' + k + '» la prueba señala ' + (faltan.join(', ') || 'nada') + ': cada pieza tiene que caerse sola');
   });
   if (solas === 4) bien('las cuatro piezas se caen una a una, así que la pantalla dice cuál arreglar');
-  /* ⚠️ Y la lista de lo contable no puede estar vacía de números: un precio
-     con cifra tiene que pasar aunque no use ninguna de las palabras. */
   if (F.iaFutJuzga(Object.assign({}, base, { precio: '43 de ellos' })).precio) bien('un precio con número pasa aunque no use ninguna palabra de la lista');
   else mal('un precio con número no pasa: la lista de palabras se volvió obligatoria');
+  /* La declaración que sostiene la misión: cuenta tareas, no horas. */
+  const html = leer('misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html');
+  if (/tareas,? no horas/i.test(html)) bien('la misión avisa en pantalla de que cuenta tareas y no horas');
+  else mal('la misión no avisa de que cuenta tareas y no horas: un porcentaje que se lee mal enseña peor que ninguno');
+  if (/de qu[eé] tareas est[aá] hecho/i.test(html)) bien('la misión deja escrita la pregunta que le contesta a Katy');
+  else mal('la misión ya no dice «¿de qué tareas está hecho?», que es su respuesta entera');
 }
 
-console.log('\n⚖️ El mismo invento, en otras manos');
-{
-  /* Lo que la actividad AFIRMA con esas palabras: la máquina es la misma y lo
-     que cambia el final es a cuánta gente alcanza y si alguien revisa. Se
-     recalculan las combinaciones enteras, no una. */
-  let mal1 = 0, mal2 = 0, mal3 = 0;
-  F.IA_CAPACIDADES.forEach(c => F.IA_FUT_MANOS.forEach(m => {
-    const sin = F.iaFutFinal(c.k, m.k, false), con = F.iaFutFinal(c.k, m.k, true);
-    if (!sin || !con) { mal1++; return; }
-    if (sin.alcance !== m.alcanceN || con.alcance !== m.alcanceN) mal1++;
-    if (!/no vale todav[ií]a/i.test(con.pasa)) mal2++;
-    if (!/no sale gratis/i.test(con.cuesta)) mal3++;
-  }));
-  const total = F.IA_CAPACIDADES.length * F.IA_FUT_MANOS.length;
-  if (!mal1) bien('en las ' + total + ' combinaciones el alcance lo pone la mano, no la capacidad');
-  else mal(mal1 + ' combinación(es) no sacan el alcance de quien tiene la máquina');
-  if (!mal2) bien('con revisión, la decisión no vale todavía: el fallo se ve antes de ejecutarse');
-  else mal(mal2 + ' combinación(es) no dicen que la decisión se detiene');
-  if (!mal3) bien('y NINGUNA promete que revisar salga gratis, que es lo honesto');
-  else mal(mal3 + ' combinación(es) dejan creer que revisar es gratis');
-  /* Las manos de alcance grande tienen que avisar de que no se puede revisar
-     todo. Es lo que separa esta actividad de una moraleja. */
-  const grandes = F.IA_FUT_MANOS.filter(m => !m.todo);
-  if (grandes.length >= 2 && grandes.every(m => F.iaFutFinal('voz', m.k, true).aviso)) bien('las manos grandes avisan de que revisarlo todo no se puede');
-  else mal('alguna mano de alcance grande no avisa de que revisarlo todo no se puede');
-  /* Y que las manos vayan de menos a más alcance, que es lo que el alumno ve
-     moverse al cambiar de chip. */
-  const orden = F.IA_FUT_MANOS.map(m => m.alcanceN);
-  if (orden.every((v, i) => i === 0 || v > orden[i - 1])) bien('las manos van de la casa a la empresa, de menos alcance a más');
-  else mal('las manos no están ordenadas por alcance: el chip de al lado tiene que ser el siguiente escalón');
-  /* La declaración que sostiene la misión entera. */
-  const html = leer('misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html');
-  if (/inventad/.test(html) && /no se dice.{0,30}fecha|ponerle fecha a lo inventado/.test(html)) bien('la misión declara en pantalla que los escenarios están inventados y por qué no llevan fecha');
-  else mal('la misión no declara que los escenarios están inventados, o no explica por qué no llevan fecha');
-}
 
 /* ── Lo que se multiplica al copiar: las misiones de la ruta ────────────── */
 const MISIONES = [

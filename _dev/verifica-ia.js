@@ -48,7 +48,9 @@ const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS } =
   require(path.join(RAIZ, 'js/data/ia-peligros.js'));
 const { IA_HOY_FECHA, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_FRASES, IA_INFLEXION } =
   require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
-const { IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS, iaFutFinal } =
+const { IA_FUT_FECHA, IA_CAPACIDADES, IA_CUENTA, IA_OFI_TIPOS, IA_OFICIOS,
+        IA_ESCUDOS, IA_TAREAS_CLASE, IA_ESTUDIO, IA_FUT_PIEZAS,
+        iaOfiCuenta, iaOfiPorTipo, iaOfiTotalTareas, iaClaseCuenta } =
   require(path.join(RAIZ, 'js/data/ia-futuros.js'));
 
 let fallos = 0;
@@ -261,68 +263,132 @@ IA_HOY.forEach(h => {
 });
 if (fallos === f0) bien(`${IA_HOY.length} afirmaciones fechadas, ${IA_TERMOMETRO.length} preguntas y ${IA_FRASES.length} frases, del archivo al papel y sin una cifra afirmada`);
 
-// ── 6-quater. Los escenarios: inventados, hechos de hoy y sin una fecha ───
-console.log('\n🔮 Los escenarios por venir');
+// ── 6-quater. Los oficios, la escuela y lo que la misión AFIRMA ───────────
+console.log('\n🧰 Los oficios y la escuela');
 f0 = fallos;
 const M78 = MISIONES[6];
 const f78 = plano(leer(M78.ficha));
 const h78crudo = leer(path.join(M78.dir, M78.html));
-IA_FUT_PIEZAS.forEach(p => {
-  if (!f78.includes(plano(p.nombre))) mal('ficha-escenarios-porvenir: falta la pieza «' + p.nombre + '»');
-  else if (!f78.includes(plano(p.si))) mal(`ficha-escenarios-porvenir: la pieza «${p.nombre}» no trae su «la trae cuando» tal como lo escribe el archivo`);
+
+/* Los cuatro tipos de tarea, las seis capacidades y las cuatro piezas, del
+   archivo al papel. */
+IA_OFI_TIPOS.forEach(t => {
+  if (!f78.includes(plano(t.nombre))) mal('ficha-escenarios-porvenir: falta el tipo de tarea «' + t.nombre + '»');
 });
 IA_CAPACIDADES.forEach(c => {
   if (!f78.includes(plano(c.que))) mal('ficha-escenarios-porvenir: falta la capacidad «' + c.que + '»');
-  else if (!f78.includes(plano(c.donde))) mal(`ficha-escenarios-porvenir: la capacidad «${c.que}» no dice dónde la produjo el alumno`);
 });
-IA_FUTUROS.forEach(e => {
-  if (!f78.includes(plano(e.titulo))) mal('ficha-escenarios-porvenir: falta el escenario «' + e.titulo + '»');
-  else if (!f78.includes(plano(e.cuesta))) mal(`ficha-escenarios-porvenir: el escenario «${e.titulo}» no dice lo que cuesta`);
+IA_FUT_PIEZAS.forEach(p => {
+  if (!f78.includes(plano(p.nombre))) mal('ficha-escenarios-porvenir: falta la pieza «' + p.nombre + '»');
 });
-/* ⚠️ Lo que de verdad sostiene esta misión, y va en el PAPEL porque el papel se
-   guarda un año en una gaveta: que los escenarios están INVENTADOS. Sin esa
-   línea, dentro de doce meses alguien los lee como si hubieran pasado. */
-if (!/estan? inventad/.test(f78)) mal('ficha-escenarios-porvenir: no dice que los escenarios están inventados');
+/* Los ocho oficios con su persona, y sus tareas. Una tarea que se cae del
+   papel es una tarea que el alumno sin teléfono no puede clasificar. */
+IA_OFICIOS.forEach(o => {
+  if (!f78.includes(plano(o.nombre))) { mal('ficha-escenarios-porvenir: falta el oficio «' + o.nombre + '»'); return; }
+  if (!f78.includes(plano(o.quien))) mal(`ficha-escenarios-porvenir: el oficio «${o.nombre}» va sin su persona (${o.quien})`);
+});
+/* Y la escuela: las cinco cosas que cambian, los tres escudos y las doce
+   tareas de clase. */
+IA_ESTUDIO.forEach(x => {
+  if (!f78.includes(plano(x.titulo))) mal('ficha-escenarios-porvenir: falta «' + x.titulo + '» de lo que cambia al estudiar');
+});
+IA_ESCUDOS.forEach(e => {
+  if (!f78.includes(plano(e.nombre))) mal('ficha-escenarios-porvenir: falta el escudo «' + e.nombre + '»');
+});
+IA_TAREAS_CLASE.forEach(t => {
+  if (!f78.includes(plano(t.t))) mal('ficha-escenarios-porvenir: falta la tarea de clase «' + t.t.slice(0, 40) + '…»');
+});
 if (!f78.includes(plano(IA_FUT_FECHA))) mal('ficha-escenarios-porvenir: no lleva la fecha en que se escribió');
-if (!/ponerle fecha a lo inventado/.test(f78)) mal('ficha-escenarios-porvenir: no explica por qué no trae la fecha en que pasaría');
-/* Y que la misión los PINTE en vez de escribirlos. */
-IA_FUTUROS.forEach(e => {
-  if (plano(h78crudo).includes(plano(e.situacion))) mal(`la misión 78 lleva escrita a mano la situación de «${e.titulo}»: tiene que pintarla del archivo`);
-});
-if (!h78crudo.includes('js/data/ia-futuros.js')) mal('la misión 78 no carga js/data/ia-futuros.js');
-/* ⚠️ Y NI UNA FECHA de cuándo pasaría: ponerle fecha a lo inventado es la
-   profecía que esta misión enseña a reconocer. Se miran la situación, las
-   consecuencias y la regla; el año dentro de un nombre de etapa no cuenta. */
-IA_FUTUROS.forEach(e => {
-  const texto = [e.situacion, e.regla].concat(e.ops.map(o => o.pasa)).join(' ');
-  if (/\b(19|20)\d{2}\b/.test(texto)) mal(`el escenario «${e.titulo}» trae un año: un escenario no se fecha, se decide`);
-});
-/* ⚠️ Y ninguno se apoya en algo que no exista: esa es la diferencia entre un
-   escenario y la ciencia ficción, y es lo único de las cuatro piezas que la
-   sonda puede comprobar sola. */
-IA_FUTUROS.forEach(e => {
-  e.apoya.forEach(k => {
-    if (!IA_CAPACIDADES.some(c => c.k === k)) mal(`el escenario «${e.titulo}» se apoya en «${k}», que no es una capacidad de hoy`);
-  });
-  if (!e.apoya.length) mal(`el escenario «${e.titulo}» no dice con qué está hecho`);
-  const nombre = e.quien.replace(/^(don|doña|la profesora|el profesor|la enfermera)\s+/i, '').split(/[ ,]/)[0];
-  if (!e.situacion.includes(nombre)) mal(`el escenario «${e.titulo}»: la situación no nombra a ${nombre}`);
-  if (e.ops.length !== 3 || e.ops.some(o => !o.t || !o.pasa || o.pasa.length < 40)) mal(`el escenario «${e.titulo}» no trae tres decisiones con su consecuencia`);
-  if (!e.regla) mal(`el escenario «${e.titulo}» no deja una regla`);
-});
-/* ⚠️ Y lo que la actividad AFIRMA, recalculado: que la revisión acota lo que
-   cuesta un fallo en TODAS las combinaciones, y que NUNCA lo vuelve gratis.
-   Prometer que revisar sale gratis sería la promesa falsa que esta ruta ya
-   tuvo que rehacer una vez. */
-IA_CAPACIDADES.forEach(c => IA_FUT_MANOS.forEach(m => {
-  const sin = iaFutFinal(c.k, m.k, false), con = iaFutFinal(c.k, m.k, true);
-  if (!sin || !con) { mal(`no hay final para ${c.k} en manos de ${m.k}`); return; }
-  if (!/la decision se toma igual/.test(plano(sin.pasa))) mal(`sin revisión, ${c.k} en manos de ${m.k} no dice que la decisión se ejecuta igual`);
-  if (!/no vale todavia/.test(plano(con.pasa))) mal(`con revisión, ${c.k} en manos de ${m.k} no dice que la decisión todavía no vale`);
-  if (!/no sale gratis/.test(plano(con.cuesta))) mal(`con revisión, ${c.k} en manos de ${m.k} deja creer que revisar es gratis`);
-  if (!m.todo && !con.aviso) mal(`${m.quien} no puede revisarlo todo y la pantalla no lo avisa`);
+
+/* ⚠️ Y la honestidad que sostiene el conteo entero, en el PAPEL, que es el que
+   se guarda un año en una gaveta: esto cuenta TAREAS, no HORAS. Un porcentaje
+   que se lee mal enseña peor que ninguno. */
+if (!/tareas,? no horas|no cuenta horas|tareas y no horas/.test(f78))
+  mal('ficha-escenarios-porvenir: no avisa de que cuenta TAREAS y no horas');
+
+/* Que la misión PINTE y no escriba. Si un porqué de una tarea aparece escrito
+   a mano en el HTML, el día que cambie el archivo el papel y la pantalla
+   dirán cosas distintas —y no dará ningún error—. */
+IA_OFICIOS.forEach(o => o.tareas.forEach(t => {
+  if (plano(h78crudo).includes(plano(t.porque))) mal(`la misión 78 lleva escrito a mano el porqué de «${t.t}»: tiene que pintarlo del archivo`);
 }));
-if (fallos === f0) bien(`${IA_FUTUROS.length} escenarios inventados, ${IA_FUT_PIEZAS.length} piezas y ${IA_CAPACIDADES.length} capacidades de hoy, del archivo al papel, sin una fecha de lo que pasaría y con los ${IA_CAPACIDADES.length * IA_FUT_MANOS.length} finales recalculados`);
+if (!h78crudo.includes('js/data/ia-futuros.js')) mal('la misión 78 no carga js/data/ia-futuros.js');
+
+/* ⚠️ NI UN AÑO de lo que va a pasar. Esta misión habla del futuro partiendo de
+   lo que YA se puede hacer; en el momento en que le ponga una fecha deja de
+   mirar lo que hay y se pone a profetizar. */
+IA_OFICIOS.forEach(o => o.tareas.forEach(t => {
+  if (/\b(19|20)\d{2}\b/.test(t.porque + ' ' + t.t)) mal(`la tarea «${t.t}» trae un año: aquí no se fecha nada`);
+}));
+IA_ESTUDIO.concat(IA_ESCUDOS).forEach(x => {
+  const txt = [x.que, x.hoy, x.porque].filter(Boolean).join(' ');
+  if (/\b(19|20)\d{2}\b/.test(txt)) mal(`«${x.titulo || x.nombre}» trae un año: aquí no se fecha nada`);
+});
+
+/* ⚠️ Y LO QUE DE VERDAD SEPARA ESTA MISIÓN DE LA PUBLICIDAD: toda tarea que la
+   máquina se lleva dice CON QUÉ, y solo hay dos respuestas honestas — una
+   capacidad que el alumno produjo, o «esto ya lo hacía una computadora normal
+   desde antes de la Inteligencia Artificial». Sin esa columna, la misión
+   estaría afirmando de oídas justo lo que enseña a no creer. */
+IA_OFICIOS.forEach(o => o.tareas.forEach(t => {
+  if (t.maquina === 'no') return;
+  if (t.como === IA_CUENTA.k) return;
+  if (!IA_CAPACIDADES.some(c => c.k === t.como))
+    mal(`la tarea «${t.t}» dice que la máquina se la lleva y no dice con qué («${t.como}» no es ninguna capacidad)`);
+}));
+/* Y una tarea que NO se lleva no puede venir con capacidad: sería decir que
+   sí y que no a la vez. */
+IA_OFICIOS.forEach(o => o.tareas.forEach(t => {
+  if (t.maquina === 'no' && t.como) mal(`la tarea «${t.t}» dice que la máquina no puede y trae un «con qué»`);
+}));
+
+/* ⚠️ LO QUE LA PANTALLA AFIRMA, RECALCULADO. La misión dice que la máquina se
+   lleva casi todo lo de papel y lo de mirar, y casi nada de lo de manos y lo
+   de estar con alguien. Si alguien mete tareas hasta que eso deje de ser
+   verdad, la frase se vuelve mentira sin dar un solo error: se pinta igual. */
+const porTipo = {};
+iaOfiPorTipo().forEach(t => { porTipo[t.k] = t; });
+['papel', 'ojo'].forEach(k => {
+  if (porTipo[k].pct < 80) mal(`la pantalla dice que se lleva casi todo lo «${porTipo[k].nombre}» y la cuenta da ${porTipo[k].pct} %`);
+});
+['manos', 'gente'].forEach(k => {
+  if (porTipo[k].pct > 25) mal(`la pantalla dice que casi no toca lo «${porTipo[k].nombre}» y la cuenta da ${porTipo[k].pct} %`);
+});
+/* Cada tipo tiene que tener tareas de sobra para que su porcentaje signifique
+   algo: con dos tareas, una decide el 50 %. */
+IA_OFI_TIPOS.forEach(t => {
+  if (porTipo[t.k].total < 5) mal(`el tipo «${t.nombre}» tiene solo ${porTipo[t.k].total} tareas: con tan pocas el porcentaje no dice nada`);
+});
+/* ⚠️ Y la otra afirmación, la que le contesta a Katy: NINGÚN oficio se va
+   entero y ninguno se salva entero. Es lo que sostiene «no preguntés si tu
+   oficio se salva: preguntá de qué tareas está hecho». */
+IA_OFICIOS.forEach(o => {
+  const n = iaOfiCuenta(o.k);
+  if (n.pct === 0 || n.pct === 100) mal(`el oficio «${o.nombre}» da ${n.pct} %: la misión afirma que ninguno se va entero ni se salva entero`);
+  if (n.total < 5) mal(`el oficio «${o.nombre}» tiene solo ${n.total} tareas`);
+  if (!o.tareas.some(t => t.maquina === 'no')) mal(`al oficio «${o.nombre}» no le queda ni una tarea`);
+});
+
+/* ⚠️ Y la regla de los escudos, que es lo que la segunda actividad afirma con
+   esas palabras: toda tarea que la máquina NO puede entregar lleva por lo
+   menos un escudo, y ninguna de las que sí entrega lleva ninguno. */
+IA_TAREAS_CLASE.forEach(t => {
+  if (!t.copia && !t.escudos.length) mal(`la tarea de clase «${t.t}» no se copia y no dice con qué escudo se defiende`);
+  if (t.copia && t.escudos.length) mal(`la tarea de clase «${t.t}» se copia y trae un escudo`);
+  t.escudos.forEach(k => { if (!IA_ESCUDOS.some(e => e.k === k)) mal(`la tarea «${t.t}» se apoya en un escudo que no existe («${k}»)`); });
+});
+const cl = iaClaseCuenta();
+/* Y las dos clases tienen que estar repartidas. Una lista donde casi todo se
+   copia enseña a rendirse; una donde casi nada se copia, a no creerlo. */
+if (cl.copiables < 3 || cl.protegidas < 3)
+  mal(`las tareas de clase están desbalanceadas: ${cl.copiables} se copian y ${cl.protegidas} no`);
+IA_ESCUDOS.forEach(e => {
+  const n = cl.porEscudo.find(x => x.k === e.k);
+  if (!n || !n.cuantas) mal(`el escudo «${e.nombre}» no lo usa ninguna tarea: o se usa o no se enseña`);
+});
+
+if (fallos === f0) bien(`${IA_OFICIOS.length} oficios y ${iaOfiTotalTareas()} tareas, del archivo al papel, con su «con qué» y sin un año; los ${IA_OFI_TIPOS.length} tipos recalculados (` +
+  iaOfiPorTipo().map(t => t.nombre + ' ' + t.pct + ' %').join(' · ') + `) y las ${cl.total} tareas de clase con sus ${IA_ESCUDOS.length} escudos`);
 
 // ── 7. ⚠️ Las misiones no llevan los datos escritos a mano ─────────────────
 console.log('\n🖐️  Que la misión PINTE los datos y no los escriba');

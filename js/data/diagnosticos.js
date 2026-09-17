@@ -128,9 +128,9 @@ const DIAGNOSTICOS = {
     { etapa: 6, q: 'Una promesa sin fecha…', o: ['Es más seria', 'No se puede incumplir nunca', 'Se cumple sola', 'Vale más que una con fecha'], a: 1 },
     { etapa: 6, q: 'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?', o: ['Cinco fuentes', 'Un eco', 'Una prueba', 'Un estudio'], a: 1 },
     { etapa: 6, q: '¿Cuándo se reconoce un punto de inflexión?', o: ['El mismo día, por el ruido', 'Casi siempre mirando para atrás', 'Cuando lo dice un experto', 'Cuando sale en televisión'], a: 1 },
-    { etapa: 7, q: '¿Qué diferencia a un escenario de una profecía?', o: ['Que es más largo', 'Que termina en una decisión y no en un anuncio', 'Que lo dicen los expertos', 'Que habla del pasado'], a: 1 },
-    { etapa: 7, q: 'Un escenario tiene que estar hecho con…', o: ['Algo que ya se puede hacer hoy', 'Algo que se inventará pronto', 'Cifras exactas', 'Lo que diga la televisión'], a: 0 },
-    { etapa: 7, q: 'El mismo programa en manos de una alcaldía y de una familia…', o: ['Cuesta lo mismo cuando falla', 'Se arregla solo', 'El fallo alcanza a mucha más gente en la alcaldía', 'No decide nada'], a: 2 },
+    { etapa: 7, q: '¿Qué se lleva la máquina de un oficio?', o: ['El oficio entero', 'Algunas tareas, no el oficio', 'Nada', 'Solo los oficios nuevos'], a: 1 },
+    { etapa: 7, q: '¿Qué clase de tarea casi no toca?', o: ['Las de escribir', 'Las de sumar', 'Las de manos y las de estar con alguien', 'Las de mirar'], a: 2 },
+    { etapa: 7, q: 'Una tarea de clase que la máquina NO puede entregar…', o: ['Es más larga', 'La pide el maestro enojado', 'Lleva un escudo: se hace delante de alguien, usa un dato de aquí o pide medir', 'No existe'], a: 2 },
   ],
   // Ruta de la Meta (Repaso General): una pregunta de cada materia de la prueba
   meta: [

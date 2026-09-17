@@ -1,236 +1,374 @@
 /* Ficha de la misión 78 · Escenarios por venir · III Ciclo
-   ⚠️ Esta ficha NO predice nada. Los nueve escenarios están inventados y lo
-   dice el papel, porque el papel se fotocopia y se guarda un año en una
-   gaveta: sin esa línea, dentro de doce meses alguien lo lee como si hubiera
-   pasado. El motivo largo está en js/data/ia-futuros.js. */
+   ──────────────────────────────────────────────────────────────────────────
+   ⚠️ ESTA FICHA SE REHIZO ENTERA cuando se rehizo la misión. La primera
+   enseñaba a distinguir un escenario de una profecía con nueve situaciones
+   inventadas. El autor pidió otra cosa: lo que viene con la Inteligencia
+   Artificial EN EL TRABAJO Y EN EL ESTUDIO. El motivo largo está en
+   js/data/ia-futuros.js.
+
+   ⚠️ NI UN NÚMERO ESCRITO A MANO. Los porcentajes por clase de tarea, los de
+   cada oficio y los de las tareas de clase salen de `iaOfiPorTipo()`,
+   `iaOfiCuenta()` y `iaClaseCuenta()`, que son las MISMAS funciones que pinta
+   la pantalla. Escribirlos aquí sería garantizar que un día el papel y el
+   teléfono digan cosas distintas, y el maestro corregiría por el viejo.
+
+   ⚠️ LAS 51 TAREAS SE IMPRIMEN UNA SOLA VEZ, y en la actividad. La pantalla
+   puede permitirse enseñarlas ya clasificadas Y volver a pedirlas en Descubre;
+   el papel no: serían dos hojas más por alumno, o sea 86 hojas más en un grado
+   de 43. Así que la ficha enseña el método con UN oficio resuelto —don Chele,
+   que es el de la advertencia de las horas— y las otras siete las clasifica el
+   alumno. Es la regla de siempre: el alumno lo PRODUCE, no lo lee. El veredicto
+   y el «con qué» de esas 44 van en la hoja del docente, CALCULADOS del archivo.
+
+   ⚠️ CADA BLOQUE DE PRIMER NIVEL TIENE QUE PODER MOVERSE SOLO.
+   `reparte-hojas-ficha.js` reparte los hijos directos de `.contenido`, así que
+   un `<div class="acts">` que envuelva cuatro oficios es UN bloque de 287 mm
+   que no cabe en ninguna hoja. Aquí cada rótulo va con su tabla en su propio
+   `.acts`: el reparto encuentra el mínimo y la hoja no se parte.
+
+   ⚠️ Y se escribe en lenguaje llano: frases de 25 palabras como mucho,
+   párrafos de 45, una idea por frase. Esta hoja la fotocopia un maestro para
+   alumnos de cuarto y para jóvenes de bachillerato. Lo mide
+   `node _dev/verifica-legibilidad-ia.js`, que está en `npm test`. */
 'use strict';
+const path = require('path');
 const A = require('../arma-fichas-ia.js');
-const { esc, arma, portada, preguntas, clave,
-        IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS,
-        iaFutAl, iaFutFinal } = A;
+const { esc, arma, portada, preguntas, clave, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUT_FECHA } = A;
+
+/* Lo nuevo del archivo de datos se pide aquí y no al armador: el armador
+   exporta lo que exportaba, y una ficha no tiene por qué obligar a las otras
+   seis a recargarse por lo suyo. */
+const F = require(path.join(A.RAIZ, 'js/data/ia-futuros.js'));
+const { IA_CUENTA, IA_OFI_TIPOS, IA_OFICIOS, IA_ESCUDOS, IA_TAREAS_CLASE, IA_ESTUDIO,
+        iaOfiPorTipo, iaOfiCuenta, iaOfiTotalTareas, iaClaseCuenta } = F;
+
+/* ── Piezas de dibujo ──────────────────────────────────────────────────────
+   El círculo que el alumno RELLENA. Nunca la ✗: en el aula la ✗ es la marca de
+   lo que está MAL, y pedirla para señalar lo correcto enseña dos cosas
+   contrarias con el mismo signo. Va en línea porque el CSS común solo lo trae
+   dentro de `.preg-ops`, y esta ficha lo necesita dentro de sus tablas. */
+const CIR = '<span style="display:inline-block;width:11px;height:11px;border:1.3px solid #333;border-radius:50%;"></span>';
+const raya = ancho => `<span class="linea-resp" style="min-width:${ancho}"></span>`;
+/* ⚠️ La celda destacada del CSS común (`td.k`) lleva `white-space: nowrap`, y
+   con anchos automáticos eso MANDA: una celda con «El que lleva las cuentas de
+   la cooperativa» estira su columna y aplasta a las demás. La fila sale en tres
+   renglones donde cabía en dos, y la tabla de lo que cambia en la escuela medía
+   183 mm en vez de 88. El nowrap está pensado para celdas de una palabra; aquí
+   casi todas son frases, así que se las deja envolver. */
+const tdk = html => `<td class="k" style="white-space:normal">${html}</td>`;
+
+/* El veredicto, con los mismos tres dibujos que la pantalla. */
+const SIG = { si: '🤖', medias: '🤝', no: '🧑' };
+const ETIQ = { si: 'Se la lleva', medias: 'A medias', no: 'No puede' };
+
+/* ⚠️ La clave de cada capacidad SALE DE SU POSICIÓN en el archivo, no se
+   escribe. Si mañana entra una capacidad nueva, las letras se corren solas y
+   la pauta del docente se corre con ellas. Escribirlas a mano sería dejar la
+   hoja del docente apuntando a la capacidad de al lado. La G se salta a
+   propósito: es la de «esto ya lo hacía una computadora normal», que no es una
+   capacidad de Inteligencia Artificial y por eso vive aparte en el archivo. */
+const LETRAS = 'ABCDEFHIJK';
+const LETRA_CUENTA = 'G';
+const capLetra = k => {
+  const i = IA_CAPACIDADES.findIndex(c => c.k === k);
+  return i >= 0 ? LETRAS[i] : (k === IA_CUENTA.k ? LETRA_CUENTA : '—');
+};
+/* La tarea que la máquina NO se lleva no trae «con qué», y eso no es un hueco:
+   es la respuesta. */
+const conQue = t => (t.maquina === 'no' ? '' : capLetra(t.como));
+
+/* El oficio que va resuelto como ejemplo. Es el de la advertencia de las
+   horas, así que la advertencia cae donde se entiende. */
+const EJEMPLO = 'agricultor';
+const ofiEjemplo = IA_OFICIOS.find(o => o.k === EJEMPLO);
+const ofiRestantes = IA_OFICIOS.filter(o => o.k !== EJEMPLO);
+const tipoDe = k => IA_OFI_TIPOS.find(t => t.k === k);
+const nEjemplo = iaOfiCuenta(EJEMPLO);
+const porTipo = iaOfiPorTipo();
+const cl = iaClaseCuenta();
+
+/* Una tabla de la actividad 1: el rótulo del oficio y sus tareas, en su propio
+   bloque para que el reparto pueda moverla sola. */
+const tablaOficio = o => `    <div class="acts">
+      <h3>${o.e} ${esc(o.nombre)} · ${esc(o.quien)}</h3>
+      <table>
+        <tr><th style="width:39%">La tarea</th><th style="width:23%">Clase</th><th style="width:7%">${SIG.si}</th><th style="width:7%">${SIG.medias}</th><th style="width:7%">${SIG.no}</th><th>Con qué</th></tr>
+${o.tareas.map(t => `        <tr><td>${esc(t.t)}</td><td>${tipoDe(t.tipo).e} ${esc(tipoDe(t.tipo).nombre)}</td><td>${CIR}</td><td>${CIR}</td><td>${CIR}</td><td>${raya('80%')}</td></tr>`).join('\n')}
+      </table>
+    </div>`;
 
 const EVAL = [
-  { q: '¿Qué diferencia a un escenario de una profecía?', o: ['Que el escenario termina en una decisión', 'Que el escenario es más largo', 'Que la profecía la dicen los expertos', 'Que el escenario habla del pasado'], a: 0 },
-  { q: 'Un escenario tiene que estar hecho con…', o: ['Algo que ya se puede hacer hoy', 'Algo que se inventará pronto', 'Cifras exactas', 'Lo que diga la televisión'], a: 0 },
-  { q: '«Esto es gravísimo para la sociedad» falla porque…', o: ['El precio no se puede contar', 'Es una frase corta', 'No trae emoji', 'Habla del futuro'], a: 0 },
-  { q: '¿Qué pieza le falta a «la Inteligencia Artificial lo cambiará todo»?', o: ['La persona con nombre', 'El año', 'La firma', 'El título'], a: 0 },
-  { q: 'El mismo programa, en una alcaldía y no en una familia…', o: ['Alcanza a mucha más gente', 'Cuesta lo mismo', 'Se arregla solo', 'No decide nada'], a: 0 },
-  { q: '¿Qué hace la revisión?', o: ['Ver el fallo antes de que la decisión valga', 'Evitar que la máquina falle', 'Acelerar el programa', 'Bajar el precio'], a: 0 },
-  { q: 'Cuando no se puede revisar todo, lo honesto es…', o: ['Decidir antes qué no vale sin una persona', 'Revisar al azar', 'Confiar en el programa', 'No comprar nada'], a: 0 },
-  { q: 'Una predicción falla en una ladera sin estación porque…', o: ['Donde nadie midió no hay con qué predecir', 'El programa es viejo', 'Llueve poco', 'Nadie sabe usarlo'], a: 0 },
-  { q: 'Un programa que acierta con lo común…', o: ['Es el que peor va con lo raro', 'Acierta también con lo raro', 'No sirve para nada', 'Nunca se equivoca'], a: 0 },
-  { q: '¿Por qué los escenarios de esta ficha no traen fecha?', o: ['Porque ponerle fecha a lo inventado ya es una profecía', 'Porque no se sabe el año', 'Porque la pone el maestro', 'Porque las fechas envejecen'], a: 0 },
-];
-
-/* Las cuatro combinaciones de la actividad 3. Se eligen aquí y la pauta se
-   CALCULA con iaFutFinal, así que el día que cambie una capacidad la hoja del
-   docente cambia sola en vez de quedarse diciendo lo de antes. */
-const COMBOS = [
-  { cap: 'voz', mano: 'familia' },
-  { cap: 'cara', mano: 'alcaldia' },
-  { cap: 'texto', mano: 'escuela' },
-  { cap: 'predice', mano: 'empresa' },
+  { q: '¿Qué se lleva la máquina?', o: ['Oficios enteros', 'Tareas sueltas de un oficio', 'Solo el trabajo de oficina', 'Nada todavía'], a: 1 },
+  { q: 'La pregunta que sirve para elegir qué estudiar es…', o: ['¿De qué tareas está hecho ese oficio?', '¿Ese oficio se salva?', '¿Qué dicen en el grupo?', '¿Cuánto paga?'], a: 0 },
+  { q: '¿Qué clase de tarea se lleva casi entera?', o: ['Las de manos', 'Las de estar con alguien', 'Las de papel', 'Ninguna'], a: 2 },
+  { q: '¿Cuál casi no toca?', o: ['Las de mirar', 'Las de manos', 'Las de papel', 'Las de sumar'], a: 1 },
+  { q: 'Contar tareas no es lo mismo que contar…', o: ['Personas', 'Oficios', 'Dinero', 'Horas'], a: 3 },
+  { q: 'Sumar, ordenar y buscar en una lista es…', o: ['Algo que una computadora normal ya hacía', 'Inteligencia Artificial recién salida', 'Imposible para una máquina', 'Cosa de robots'], a: 0 },
+  { q: 'Una tarea de clase que la máquina no puede entregar…', o: ['Es más larga', 'Es más difícil', 'Lleva por lo menos un escudo', 'La pone el director'], a: 2 },
+  { q: '¿Cuál de estas cuatro lleva escudo?', o: ['Copiá la definición de adjetivo', 'Escribí un resumen', 'Resolvé veinte ejercicios', 'Medí tu patio y sacá su área'], a: 3 },
+  { q: 'Copiar la tarea dejó de servir porque…', o: ['Está prohibido', 'Al examen llegás igual que si no la hubieras hecho', 'La máquina se equivoca siempre', 'El maestro se da cuenta'], a: 1 },
+  { q: '«En dos años la máquina lo hará todo» no sirve porque…', o: ['Es muy corta', 'Nadie la dijo', 'No le pasa a nadie con nombre ni termina en una decisión', 'Habla de computadoras'], a: 2 },
 ];
 
 const P = [];
 
-// ── Página 1 ───────────────────────────────────────────────────────────────
+// ── Página 1 · la portada y Katy ───────────────────────────────────────────
 P.push(portada('Escenarios por venir',
-  'Nueve situaciones inventadas, las cuatro piezas que separan un escenario de una profecía, y de qué depende el final.',
+  'Qué tareas de un oficio se lleva la máquina y cuáles no. Y qué cambia en la escuela.',
   'qr-mision-escenarios-porvenir.png',
-  ['Separar un <strong>escenario</strong> de una <strong>profecía</strong>.',
-   'Comprobar que está hecho con <strong>algo que ya se puede hacer</strong>.',
-   'Exigir una <strong>persona con nombre</strong> y un <strong>precio que se cuente</strong>.',
-   'Terminar en una <strong>decisión</strong>, no en un anuncio.',
-   'Explicar por qué el final depende de <strong>en manos de quién</strong>.',
-   'Armar un escenario propio y pasarlo por las cuatro piezas.']) + `
-    <h2>🛒 1. La frase con la que le vendieron un programa a la escuela</h2>
+  ['Explicar que un oficio es un <strong>montón de tareas</strong>, no una cosa.',
+   'Nombrar las <strong>cuatro clases de tarea</strong> y poner una tarea en la suya.',
+   'Decir <strong>con qué</strong> se lleva la máquina cada tarea.',
+   'Separar la Inteligencia Artificial de lo que <strong>ya hacía una computadora</strong>.',
+   'Reconocer los <strong>tres escudos</strong> de una tarea de clase.',
+   'Desarmar la frase «en dos años…» con <strong>cuatro piezas</strong>.']) + `
+    <h2>🎓 1. «¿Y para qué estudio?»</h2>
 
-    <p>El patronato de una escuela va a comprar un programa que califica exámenes de redacción.
-       El vendedor lo presentó así: <i>«en dos años ningún maestro va a calificar a mano»</i>.
-       Aplaudieron y votaron.</p>
+    <p><b>Katy</b> termina noveno en noviembre. En el grupo del colegio le dicen dos cosas al mismo
+       tiempo. Una: <i>«estudiá computación, que es el futuro»</i>. La otra: <i>«no estudiés eso, la
+       máquina lo va a hacer todo»</i>.</p>
 
-    <p>Nadie preguntó lo único que servía: <b>¿quién revisa el día que le ponga mal la nota a un
-       alumno?</b> Son <b>L 12 000</b> de la caja y la nota de <b>43 alumnos</b>. El vendedor no
-       vendió un escenario: <b>vendió una profecía</b>.</p>
+    <p>Las dos suenan seguras. Ninguna le dice qué hacer. Y lo que decide son <b>tres años</b> de su vida
+       y la <b>matrícula</b> que su familia junta vendiendo pan.</p>
 
-    <div class="dos">
-      <div class="dB"><b>📣 Una profecía</b>
-        <ul><li>Dice lo que <b>va a pasar</b>.</li>
-            <li>No se puede incumplir nunca.</li>
-            <li>Le pasa a «todo el mundo».</li>
-            <li>Termina en un anuncio.</li>
-            <li>No te pide nada.</li></ul>
-      </div>
-      <div class="dA"><b>🔮 Un escenario</b>
-        <ul><li>Dice <b>qué harías vos</b> si pasara.</li>
-            <li>Se desarma si le falla una pieza.</li>
-            <li>Le pasa a alguien con nombre.</li>
-            <li>Termina en una decisión.</li>
-            <li>Te deja algo que hacer el día que llegue.</li></ul>
-      </div>
-    </div>
-
-    <div class="caja aviso"><b>⚠️ Todo lo que sigue está INVENTADO. Hay que decirlo en voz alta en clase.</b>
-      Los nueve escenarios de esta ficha están inventados: ninguno ha pasado. Tampoco traen la fecha
-      en que pasarían. <b>Ponerle fecha a lo inventado ya es una profecía</b>, que es lo que esta
-      ficha enseña a reconocer. Escrita el <b>${esc(IA_FUT_FECHA)}</b>.</div>
+    <div class="caja idea"><b>Nadie le hizo la pregunta que sirve:</b> ¿de qué tareas está hecho ese
+      oficio? Eso sí se puede mirar, y es lo que vas a hacer acá. Aquí no hay ninguna fecha de lo que va a
+      pasar: esta ficha mira lo que la máquina YA hace. Escrita el <b>${esc(IA_FUT_FECHA)}</b>.</div>
 `);
 
-// ── Página 2 ───────────────────────────────────────────────────────────────
+// ── Página 2 · las cuatro clases y las siete claves ────────────────────────
 P.push(`
-    <h2>🔧 2. Las cuatro piezas de un escenario</h2>
+    <h2>🧰 2. Un oficio no es UNA cosa</h2>
 
-    <p>Se pueden comprobar. Si le falta una, no sirve para decidir:</p>
+    <p>Un oficio es un montón de tareas distintas. Un albañil calcula, mira, levanta y discute con el
+       dueño. <b>La máquina no se lleva oficios: se lleva tareas.</b> Y no se lleva cualquiera.</p>
+
+    <table>
+      <tr><th style="width:32%">La clase de tarea</th><th>Qué quiere decir</th></tr>
+${IA_OFI_TIPOS.map(t => `      <tr>${tdk(`${t.e} ${esc(t.nombre)}`)}<td>${esc(t.que)}</td></tr>`).join('\n')}
+    </table>
+
+    <h2>🍎 3. Con qué se las lleva</h2>
+
+    <p>No es magia. Son seis cosas, y <b>las produjiste vos</b> en las etapas anteriores. La letra de la
+       izquierda la vas a usar en la actividad.</p>
+
+    <table>
+      <tr><th style="width:5%"></th><th style="width:38%">Qué puede hacer</th><th>Dónde la produjiste vos, y cómo falla</th></tr>
+${IA_CAPACIDADES.map((c, i) => `      <tr><td class="k">${LETRAS[i]}</td>${tdk(`${c.e} ${esc(c.que)}`)}<td>Etapa ${c.etapa}. ${esc(c.donde)} Falla así: ${esc(c.falla)}.</td></tr>`).join('\n')}
+    </table>
+
+    <div class="caja truco"><b>${LETRA_CUENTA} · ${IA_CUENTA.e} ${esc(IA_CUENTA.que)}.</b> ${esc(IA_CUENTA.donde)}
+      Quien te venda eso como nuevo te está vendiendo humo de hace sesenta años.</div>
+`);
+
+// ── Página 3 · un oficio resuelto, y la advertencia de las horas ───────────
+P.push(`
+    <h2>${ofiEjemplo.e} 4. Un oficio por dentro: ${esc(ofiEjemplo.quien)}</h2>
+
+    <p>Así se desarma un oficio: ${esc(ofiEjemplo.nombre)}, tarea por tarea. Mirá la última columna. Cada
+       tarea que la máquina se lleva dice <b>con qué</b>.</p>
+
+    <table>
+      <tr><th style="width:24%">La tarea</th><th style="width:15%">Clase</th><th style="width:13%">¿Se la lleva?</th><th>Por qué</th><th style="width:6%">Con qué</th></tr>
+${ofiEjemplo.tareas.map(t => `      <tr>${tdk(esc(t.t))}<td>${tipoDe(t.tipo).e} ${esc(tipoDe(t.tipo).nombre)}</td><td>${SIG[t.maquina]} ${esc(ETIQ[t.maquina])}</td><td>${esc(t.porque)}</td><td class="k">${conQue(t)}</td></tr>`).join('\n')}
+    </table>
+
+    <div class="caja regla"><b>Si no se puede decir con qué, no se la lleva.</b> Esa columna es la que
+      separa esto de la publicidad. Una máquina que «lo hace todo» no existe en ninguna parte.</div>
+
+    <div class="caja aviso"><b>⚠️ Esto cuenta tareas, no horas.</b> A ${esc(ofiEjemplo.quien)} la máquina
+      se le lleva ${nEjemplo.si} tareas enteras de ${nEjemplo.total}. Le quedan ${nEjemplo.no} enteras y
+      ${nEjemplo.medias} a medias, y esas son las que se llevan todo el día. Un porcentaje que se lee mal
+      enseña peor que ninguno.</div>
+`);
+
+// ── Página 4 · lo que sale de contarlas todas ──────────────────────────────
+P.push(`
+    <h2>📊 5. Lo que sale de contar las ${iaOfiTotalTareas()}</h2>
+
+    <p>Los ${IA_OFICIOS.length} oficios de esta ficha tienen ${iaOfiTotalTareas()} tareas entre todos.
+       Contadas una por una y repartidas por clase, sale esto:</p>
+
+    <table>
+      <tr><th style="width:32%">La clase de tarea</th><th style="width:22%">Cuántas hay</th><th>Cuánto se lleva la máquina</th></tr>
+${porTipo.map(t => `      <tr>${tdk(`${t.e} ${esc(t.nombre)}`)}<td>${t.total} tareas</td><td><b>${t.pct} %</b></td></tr>`).join('\n')}
+    </table>
+
+    <div class="caja idea"><b>Se lleva casi todo lo de papel y casi todo lo de mirar.</b> Casi nada de lo
+      de manos ni de lo de estar con alguien. Eso no lo dice nadie: sale de contar.</div>
+
+    <h2>🧰 6. Ningún oficio se va entero</h2>
+
+    <p>Y ninguno se salva entero. Mirá cuánto pierde cada uno. Con esta tabla vas a comparar tu
+       actividad:</p>
+
+    <table>
+      <tr><th style="width:32%">El oficio</th><th style="width:22%">Quién lo hace</th><th style="width:26%">Sobre todo es…</th><th>Se lleva</th></tr>
+${IA_OFICIOS.map(o => { const n = iaOfiCuenta(o.k); const ti = tipoDe(o.clase); return `      <tr>${tdk(`${o.e} ${esc(o.nombre)}`)}<td>${esc(o.quien)}</td><td>${ti.e} ${esc(ti.nombre)}</td><td><b>${n.pct} %</b> de ${n.total}</td></tr>`; }).join('\n')}
+    </table>
+
+    <div class="caja regla"><b>Y esta es la respuesta para Katy.</b> Ninguno llega a cero y ninguno llega a
+      cien. Todos cambian de forma; ninguno desaparece. Así que no preguntés si tu oficio se salva.
+      Preguntá de qué tareas está hecho.</div>
+`);
+
+// ── Página 5 · la escuela ──────────────────────────────────────────────────
+P.push(`
+    <h2>📚 7. Y en la escuela, ¿qué cambia?</h2>
+
+    <p>Cinco cosas. Tres son malas noticias para el que copia. Dos son buenas para el que estudia.</p>
+
+    <table>
+      <tr><th style="width:30%">Qué cambia</th><th>Qué quiere decir, y qué hacés con eso</th></tr>
+${IA_ESTUDIO.map(x => `      <tr>${tdk(`${x.e} ${esc(x.titulo)}`)}<td>${esc(x.que)} ${esc(x.hoy)}</td></tr>`).join('\n')}
+    </table>
+
+    <h2>🛡️ 8. Los tres escudos de una tarea</h2>
+
+    <p>Hay tareas de clase que la máquina no puede entregar hechas. Llevan una de estas tres cosas:</p>
+
+    <table>
+      <tr><th style="width:30%">El escudo</th><th style="width:36%">Qué le pide a la tarea</th><th>Por qué para a la máquina</th></tr>
+${IA_ESCUDOS.map(e => `      <tr>${tdk(`${e.e} ${esc(e.nombre)}`)}<td>${esc(e.que)}</td><td>${esc(e.porque)}</td></tr>`).join('\n')}
+    </table>
+
+    <div class="caja idea"><b>No son castigos del maestro.</b> Son las tres cosas que a la máquina le
+      faltan, y por eso sirven.</div>
+
+    <h2>🔮 9. Y cuando te digan «en dos años…»</h2>
+
+    <p>Esa frase le costó la matrícula a Marvin en la etapa anterior. Se desarma con cuatro piezas. Un
+       <b>escenario</b> sirve para decidir; una <b>profecía</b> te deja mirando.</p>
 
     <table>
       <tr><th style="width:26%">La pieza</th><th>La trae cuando…</th><th>Le falta cuando…</th></tr>
-${IA_FUT_PIEZAS.map(p => `      <tr><td class="k">${p.e} ${esc(p.nombre)}</td><td>${esc(p.si)}</td><td>${esc(p.no)}</td></tr>`).join('\n')}
+${IA_FUT_PIEZAS.map(p => `      <tr>${tdk(`${p.e} ${esc(p.nombre)}`)}<td>${esc(p.si)}</td><td>${esc(p.no)}</td></tr>`).join('\n')}
     </table>
 
-    <h2>🍎 3. Con qué está hecho: lo que YA se puede hacer</h2>
-
-    <p>Un escenario se apoya en cosas que existen. Estas no se las contó nadie:
-       <b>las produjo el alumno</b> en las etapas anteriores.</p>
-
-    <table>
-      <tr><th style="width:30%">La capacidad</th><th style="width:34%">Dónde la produjiste</th><th>Cómo falla</th></tr>
-${IA_CAPACIDADES.map(c => `      <tr><td class="k">${c.e} ${esc(c.que)}</td><td>Etapa ${c.etapa}. ${esc(c.donde)}</td><td>${esc(c.falla)}</td></tr>`).join('\n')}
-    </table>
-
-    <div class="caja idea"><b>Hay cosas que todavía NO se pueden hacer.</b> Una máquina no sabe lo que
-      sentís, no entiende lo que lee, no sabe que se equivoca y no responde ante un juez. Nada de eso
-      entra en un escenario: eso es ciencia ficción.</div>
+    <div class="caja truco"><b>Escribí una frase así que hayas oído vos:</b> ${raya('88%')}
+      Y rellená el círculo de las piezas que trae: ${IA_FUT_PIEZAS.map(p => `${CIR} ${p.e} ${esc(p.nombre)}`).join(' &nbsp;·&nbsp; ')}</div>
 `);
 
-// ── Página 3 ───────────────────────────────────────────────────────────────
-P.push(`
-    <h2>🔮 4. Nueve escenarios para pensar</h2>
-
-    <p>Todos están inventados. Cada uno usa capacidades de la página anterior. Le pasa a alguien con
-       nombre y cuesta algo que se cuenta.</p>
-
-    <table>
-      <tr><th style="width:24%">El escenario</th><th style="width:16%">Le pasa a</th><th>Lo que cuesta</th><th style="width:20%">¿Con qué está hecho?</th></tr>
-${IA_FUTUROS.map(e => `      <tr><td class="k">${e.e} ${esc(e.titulo)}</td><td>${esc(e.quien)}</td><td>${esc(e.cuesta)}</td><td><span class="linea-resp" style="min-width:85%"></span></td></tr>`).join('\n')}
-    </table>
-
-    <p><b>Actividad 1 · ¿Con qué está hecho cada uno?</b> <span class="val">(18 pts · 2 cada uno)</span>
-       Escribí en la última columna la capacidad —o las dos— en que se apoya cada escenario. Si no te
-       sale ninguna, eso no es un escenario.</p>
-`);
-
-// ── Página 4 ───────────────────────────────────────────────────────────────
+// ── Página 6 · Actividad 1 · los cuatro primeros oficios ───────────────────
 P.push(`
     <div class="acts">
-      <h3>⚖️ Actividad 2 · El mismo invento, en otras manos <span class="val">(20 pts)</span></h3>
+      <h3>🧰 Actividad 1 · Un oficio, tarea por tarea <span class="val">(30 pts)</span></h3>
+      <p><b>Elegí UN oficio</b>, el que te gustaría tener, y hacelo entero. En el aula no lo hacen todos
+         con el mismo, y después se comparan.</p>
+      <p>En cada tarea, <b>rellená el círculo</b> que te parezca: ${SIG.si} se la lleva, ${SIG.medias} a
+         medias, ${SIG.no} no puede. Si marcaste una de las dos primeras, escribí <b>con qué</b>. Es la
+         letra de la tabla 3, o una <b>${LETRA_CUENTA}</b> si eso ya lo hacía una computadora normal.</p>
+      <p><b>Las claves, para no volver atrás:</b>
+         ${IA_CAPACIDADES.map((c, i) => `<b>${LETRAS[i]}</b> ${c.e} ${esc(c.corto)}`).join(' &nbsp;·&nbsp; ')}
+         &nbsp;·&nbsp; <b>${LETRA_CUENTA}</b> ${IA_CUENTA.e} ${esc(IA_CUENTA.corto)}</p>
+    </div>
 
-      <p>Acá no cambia la máquina. Cambia <b>quién la tiene</b> y <b>si alguien revisa antes de que
-         valga</b>. En cada fila, escribí a cuánta gente alcanza el fallo y quién revisaría.</p>
+    <div class="caja regla"><b>Cuando termines, contá las tuyas</b> y comparalas con la tabla «Ningún
+      oficio se va entero». Si te da muy distinto, volvé a mirar las tareas de papel.</div>
 
-      <table>
-        <tr><th style="width:22%">La capacidad</th><th style="width:20%">En manos de</th><th>Sin revisión, ¿a cuánta gente alcanza el fallo?</th><th style="width:26%">Con revisión, ¿quién la mira?</th></tr>
-${COMBOS.map(c => {
-  const cap = IA_CAPACIDADES.find(x => x.k === c.cap), m = IA_FUT_MANOS.find(x => x.k === c.mano);
-  return `        <tr><td class="k">${cap.e} ${esc(cap.que)}</td><td>${m.e} ${esc(m.quien)}</td><td><span class="linea-resp" style="min-width:90%"></span></td><td><span class="linea-resp" style="min-width:90%"></span></td></tr>`;
-}).join('\n')}
-      </table>
+${ofiRestantes.slice(0, 4).map(tablaOficio).join('\n\n')}
+`);
 
-      <p>Y la pregunta que de verdad importa: <b>¿qué cambió más el final, la máquina o quién la tiene?</b>
-        <span class="linea-resp" style="min-width:100%"></span></p>
+// ── Página 7 · Actividad 1 · los tres últimos ──────────────────────────────
+P.push(`
+${ofiRestantes.slice(4).map(tablaOficio).join('\n\n')}
 
-      <div class="caja regla"><b>Ojo con una trampa:</b> revisar <b>no sale gratis</b> y no se puede
-        revisar todo. Cuando la decisión alcanza a un pueblo, lo honesto es decidir antes
-        <b>qué decisiones no valen sin que una persona las mire</b>. Y escribirlo antes de comprar.</div>
+    <div class="acts">
+      <p>Del oficio que elegiste: ¿cuántas tareas se lleva enteras? ${raya('70px')} ¿Cuántas le quedan?
+         ${raya('70px')}</p>
+      <p>Y la pregunta que de verdad importa. ¿Qué tienen en común las que le quedan?
+         ${raya('100%')}</p>
     </div>
 `);
 
-// ── Página 5 ───────────────────────────────────────────────────────────────
+// ── Página 8 · Actividad 2 ─────────────────────────────────────────────────
 P.push(`
     <div class="acts">
-      <h3>🔮 Actividad 3 · Armá el tuyo <span class="val">(sin respuesta, a propósito)</span></h3>
+      <h3>📚 Actividad 2 · ¿Se puede copiar esta tarea? <span class="val">(30 pts)</span></h3>
+      <p>${cl.total} tareas de clase. <b>Rellená un círculo en cada una</b>: ¿la puede entregar una
+         máquina, hecha y bien? Si no puede, escribí qué escudo la para.</p>
+      <table>
+        <tr><th style="width:50%">La tarea de clase</th><th style="width:11%">🤖 La copia</th><th style="width:11%">🧑 No puede</th><th>¿Qué escudo la para?</th></tr>
+${IA_TAREAS_CLASE.map(t => `        <tr><td>${esc(t.t)}</td><td>${CIR}</td><td>${CIR}</td><td>${raya('85%')}</td></tr>`).join('\n')}
+      </table>
+      <p>¿Cuántas copia la máquina? ${raya('60px')} ¿Cuántas no? ${raya('60px')}</p>
+    </div>
 
-      <p>Leíste escenarios de otros. Ahora al revés. Llená las cuatro piezas y marcá si las cumple.</p>
-
+    <div class="acts">
+      <h3>✍️ Y ahora escribí vos una <span class="val">(sin respuesta, a propósito)</span></h3>
+      <p>Escribí una tarea de clase que la máquina <b>no te pueda hacer</b>. Tiene que llevar un escudo.
+         Después rellená el círculo del escudo que la para.</p>
       <div class="ilus">
-        <div class="ilus-t">🔮 Mi escenario · escrito el <span class="linea-resp" style="min-width:130px"></span></div>
-        <p><b>1. ¿Con qué está hecho?</b> (una capacidad de la página 2)
-          <span class="linea-resp" style="min-width:75%"></span></p>
-        <p><b>2. ¿A quién le pasa?</b> (un nombre, no «la gente»)
-          <span class="linea-resp" style="min-width:75%"></span></p>
-        <p><b>3. ¿Qué le cuesta?</b> (algo que se pueda contar: días, lempiras, clases, cosechas)
-          <span class="linea-resp" style="min-width:100%"></span></p>
-        <p><b>4. La situación</b>
-          <span class="linea-resp" style="min-width:100%"></span>
-          <span class="linea-resp" style="min-width:100%"></span></p>
-        <p><b>5. ¿Qué hay que decidir?</b> (escribilo como pregunta)
-          <span class="linea-resp" style="min-width:100%"></span></p>
+        <div class="ilus-t">✍️ Mi tarea</div>
+        <p>${raya('100%')}</p>
+        <p>${raya('100%')}</p>
+        <p><b>El escudo que la para:</b> ${IA_ESCUDOS.map(e => `${CIR} ${e.e} ${esc(e.nombre)}`).join(' &nbsp;·&nbsp; ')}</p>
+        <p><b>Por qué no la puede hacer:</b> ${raya('100%')}</p>
       </div>
-
-      <table>
-        <tr><th>La prueba de las cuatro piezas</th><th style="width:12%">Sí</th><th style="width:12%">No</th></tr>
-${IA_FUT_PIEZAS.map(p => `        <tr><td>${p.e} ${esc(p.nombre)}</td><td></td><td></td></tr>`).join('\n')}
-      </table>
-
-      <p><b>Ahora llevalo a clase</b> y pedile a alguien que conteste tu pregunta. Si puede, es un
-         escenario. Si se queda mirando, es un anuncio.</p>
-
-      <div class="caja idea"><b>Esta actividad no lleva respuesta a propósito.</b> Lo que se evalúa es
-        que las cuatro piezas estén, no de qué trate. Si vale la pena lo decide quien lo escribió.</div>
     </div>
+
+    <div class="caja idea"><b>Esta última no lleva respuesta a propósito.</b> No la hay. Se evalúa que la
+      tarea sea de verdad y que el escudo le calce. Llevala a clase y probala con alguien.</div>
 `);
 
-// ── Página 6 ───────────────────────────────────────────────────────────────
+// ── Página 9 · evaluación ──────────────────────────────────────────────────
 P.push(`
     <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
 ${preguntas(EVAL)}
 
-    <div class="felic"><b>¡Bien hecho!</b> De aquí te llevás cuatro preguntas que sirven siempre. Con qué
-      está hecho, a quién le pasa, qué le cuesta y qué hay que decidir.</div>
+    <div class="felic"><b>¡Bien hecho!</b> De aquí te llevás una pregunta que sirve toda la vida. No es
+      «¿mi oficio se salva?». Es <b>«¿de qué tareas está hecho?»</b>.</div>
 `);
 
-// ── Página 7 · hoja del docente ────────────────────────────────────────────
+// ── Página 10 · hoja del docente ───────────────────────────────────────────
+/* ⚠️ ES UNA SOLA HOJA, Y TIENE QUE CABER ELLA SOLA. `reparte-hojas-ficha.js`
+   deja fuera del reparto la ÚLTIMA hoja y solo esa (`doc.paginas.slice(0, -1)`),
+   porque la del docente se imprime suelta y no se fotocopia. Partir la pauta en
+   dos hojas dejaría la de arriba DENTRO del reparto, y la clave de respuestas
+   acabaría impresa al pie de la hoja de examen del alumno. Así que cuando esta
+   hoja se pasa del papel no se parte: se le quita aire. Midió 281,9 mm y de ahí
+   salieron estos recortes. */
 P.push(`
     <h2>🔑 Pauta de corrección y nota para el docente</h2>
 
     <div class="pauta">
       <div><span class="pt">Evaluación (40 pts):</span> ${clave(EVAL)}</div>
-      <div><span class="pt">Actividad 1 · Con qué está hecho (18 pts):</span>
-        ${IA_FUTUROS.map(e => esc(e.titulo) + ': <b>' + e.apoya.map(k => esc(IA_CAPACIDADES.find(c => c.k === k).que.toLowerCase())).join(' + ') + '</b>').join(' · ')}.
-        Cuando se apoya en dos, se acepta cualquiera. No se acepta una capacidad que todavía no exista:
-        ahí el alumno confundió escenario con ciencia ficción.</div>
-      <div><span class="pt">Actividad 2 · En otras manos (20 pts):</span>
-        ${COMBOS.map(c => {
-          const sin = iaFutFinal(c.cap, c.mano, false), con = iaFutFinal(c.cap, c.mano, true);
-          return esc(sin.mano.quien) + ': alcanza <b>' + esc(sin.mano.alcance) + '</b>; revisa <b>' + esc(con.mano.revisor) + '</b>';
-        }).join(' · ')}.
-        <b>La respuesta de la pregunta final es «quién la tiene»</b>, no la máquina. Es lo que hay que
-        subrayar en clase: es lo único que se puede cambiar antes de comprar nada.</div>
-      <div><span class="pt">Actividad 3 · Armá el tuyo:</span> <b>no lleva respuesta a propósito.</b> Se
-        valora que estén las cuatro piezas: una capacidad que ya exista, un nombre propio, un precio que
-        se cuente y una pregunta. Con «la gente» o con «es grave» no está terminado.</div>
+      <div><span class="pt">Actividad 1 · Un oficio, tarea por tarea (30 pts):</span> el veredicto de cada
+        tarea, en el orden impreso (${SIG.si} se la lleva · ${SIG.medias} a medias · ${SIG.no} no puede) y
+        la letra del <b>con qué</b>. Cada alumno hace un oficio: son seis o siete tareas.
+${ofiRestantes.map(o => `        <br><b>${o.e} ${esc(o.nombre)}</b> — ` +
+  o.tareas.map((t, i) => `${i + 1} ${SIG[t.maquina]}${conQue(t) ? ' ' + conQue(t) : ''}`).join(' · ')).join('\n')}
+        <br><i>Y lo que hay que decir en voz alta: lo que le queda a cada oficio es de manos o de estar
+        con alguien, y no es lo que sobra. Es lo que nadie más puede hacer.</i></div>
+      <div><span class="pt">Actividad 2 · ¿Se puede copiar esta tarea? (30 pts):</span> la máquina entrega
+        <b>${cl.copiables}</b> de ${cl.total}; las otras <b>${cl.protegidas}</b> no puede. Todas las que no
+        se copian llevan por lo menos un escudo, y ninguna de las que se copian lleva ninguno
+        (${cl.porEscudo.map(e => `${e.e} ${esc(e.nombre)}, en ${e.cuantas}`).join(' · ')}).
+        <br>🤖 <b>Las copia:</b> ${IA_TAREAS_CLASE.filter(t => t.copia).map(t => esc(t.t)).join(' · ')}.
+        <br>🧑 <b>No puede, y con qué escudo:</b> ${IA_TAREAS_CLASE.filter(t => !t.copia).map(t => esc(t.t) + ' <i>(' + t.escudos.map(k => esc(IA_ESCUDOS.find(e => e.k === k).nombre.toLowerCase())).join(' + ') + ')</i>').join(' · ')}.</div>
+      <div><span class="pt">✍️ La tarea que escribe el alumno:</span> <b>no lleva respuesta a
+        propósito.</b> No la hay: es de producir, no de acertar. Sin este aviso se lee como un descuido y
+        se salta, que es la mitad que más vale. Se valora que la tarea sea real y que el escudo le calce.</div>
     </div>
 
     <div class="nota-doc">
       <b>Para qué sirve esta ficha, y qué NO hay que enseñar de más.</b> Es la etapa 7 de la Ruta de la
-      Máquina que Aprende y enseña a pensar lo que todavía no pasó. Su regla sostiene todo lo demás:
-      <b>aquí no se predice nada</b>. Los nueve escenarios están inventados y ninguno trae fecha. Al
-      maestro que sienta la tentación de decir cuándo va a pasar algo, le conviene recordar qué le costó
-      a esa escuela creerle a una frase sin fecha.
+      Máquina que Aprende, y la que contesta la pregunta de Katy. <b>Aquí no se predice nada</b>: no hay
+      ni un año de lo que va a pasar, y no se le dice a nadie qué estudiar. Se le da la pregunta.
       <br><br>
-      <b>Y la lección que más vale es la actividad 2.</b> La máquina es la misma en las cuatro manos.
-      Lo que cambia el final es a cuánta gente alcanza la decisión y si alguien la mira antes de que
-      valga. Eso SÍ lo puede decidir un patronato, una alcaldía o una Dirección Distrital. Y casi
-      siempre lo deciden sin saber que lo están decidiendo.
+      <b>Los números no están escritos: se calculan.</b> Los porcentajes por clase de tarea, los de cada
+      oficio y los de las tareas de clase salen de las mismas funciones que pinta la pantalla
+      (<b>js/data/ia-futuros.js</b>). Por eso el papel y el teléfono no pueden decir cosas distintas.
       <br><br>
-      <b>Falta un escenario a propósito:</b> el del examen que se califica solo, el de Sofía, está en la etapa 4 de
-      esta ruta y no se repite aquí. Si la clase lo pide, se lee allá.
+      <b>Y la honestidad que no se puede saltar: esto cuenta tareas, no horas.</b> A
+      ${esc(ofiEjemplo.quien)} le quedan pocas tareas y le ocupan la jornada entera. Conviene decirlo
+      antes de que alguien lea el porcentaje como si fuera un sueldo.
       <br><br>
-      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El marco,
-      las expectativas de logro que cumple y lo que a propósito NO se enseña están en
-      <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>; cómo se hace la siguiente misión de esta ruta, en
-      <b>COMPENDIO-MISIONES-IA.md</b>.
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El marco y
+      lo que a propósito NO se enseña están en <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>; cómo se hace
+      la siguiente misión de esta ruta, en <b>COMPENDIO-MISIONES-IA.md</b>.
     </div>
 `);
 
