@@ -3572,7 +3572,8 @@ function adSugMateriaNom(a) {
   const nom = { 'español': 'Español', 'matemáticas': 'Matemáticas', 'naturales': 'Ciencias Naturales',
     'sociales': 'Ciencias Sociales', 'inglés': 'Inglés', 'programación': 'Programación', 'robótica': 'Robótica',
     'cívica': 'Educación Cívica',
-    'ia': 'Inteligencia Artificial' }[k];
+    'ia': 'Inteligencia Artificial',
+    'filosofía': 'Filosofía' }[k];
   return nom || (k.charAt(0).toUpperCase() + k.slice(1));
 }
 

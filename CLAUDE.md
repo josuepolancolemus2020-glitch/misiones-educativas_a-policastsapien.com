@@ -3412,6 +3412,187 @@ grado» es de esta ruta, que es la que el alumno de cuarto y el de bachillerato
 abren igual. El día que se mida otra materia, la herramienta ya está, y se
 corre con la carpeta.
 
+## Normativa: la materia que SÍ está en el currículo, y nadie la había mirado
+
+**Filosofía** (`filosofía`, clase `filo`, ciruela `#784a6d`) se estrenó el 17 de
+septiembre de 2026 con la **Ruta de la Raíz** 🌳 y su primera unidad:
+**El Asombro: por qué preguntamos** (id 79, etapa 1).
+
+Y arrancó con una sorpresa que conviene dejar escrita, porque cambia cómo se
+busca la próxima materia: **se dio por hecho que Filosofía no estaba en el
+DCNB, y sí está**. Está nombrada por su nombre, dos veces, y las dos citas se
+confirmaron en el PDF:
+
+| dónde | qué dice, tal cual | página del archivo |
+|---|---|---|
+| DCNB de Básica, Área de Ciencias Sociales, capítulo 11 | «La Filosofía y dentro de ella, la Formación Ética y Ciudadana son fundamentales para preparar al hondureño…», y entre las partes del área: «La Persona: (Filosofía). Se le concibe a la misma como el único ser capaz de pensar, comunicarse y elegir» | **318** (III Ciclo) y **261** (II Ciclo) |
+| CNB de Media, BTP en Informática, undécimo | «Nombre del Espacio Curricular FILOSOFÍA · Duración 120 HORAS ANUALES» | **107** |
+
+⚠️ **Ese documento de Media se declara «Versión Preliminar 2025»** en su
+encabezado, y así se cita siempre. Y el currículo de Media **no está completo
+en `_dev/dcnb-pdf/` para todas las modalidades**, así que de Media no se afirma
+nada más allá de esa modalidad: es la misma regla que se puso para
+Inteligencia Artificial.
+
+**La lección es de método:** antes de declarar una materia «fuera del
+currículo» se busca en `_dev/dcnb/` con `grep`, que cuesta segundos. Con IA la
+respuesta fue que no estaba, y era verdad; con Filosofía habría sido mentira, y
+una plataforma que le dice a un maestro hondureño que su currículo no nombra la
+filosofía pierde autoridad justo delante de quien puede comprobarlo.
+
+Las dos primeras unidades cumplen criterios del currículo **textualmente**:
+la 1, el **CE1.1** («el alcance que tiene la filosofía como saber en sentido
+etimológico y conceptual» — de ahí el bloque de «filo» + «sofía») y el
+**CE1.4** («la influencia de la filosofía … en el surgimiento de las
+ciencias» — que es el árbol entero); la 2, el **RA2** y el **CE2.1** de la
+lógica clásica. Todo está en `CURRICULA-FILOSOFIA.md`.
+
+### Por qué es materia propia y no un tema de Ciencias Sociales
+
+Se pensó meterla ahí, que es donde el DCNB de Básica la pone, y se descartó por
+lo que dice el propio currículo del autor: el contenido **alimenta a todas las
+asignaturas**, no a una. Las **ramas** del árbol son Matemáticas, Español,
+Ciencias Naturales, Ciencias Sociales, Arte y Educación Física; las **raíces**
+son las ocho partes de la filosofía. Meterla dentro de Ciencias Sociales sería
+decir que es una rama al lado de las otras, que es lo que este currículo niega.
+Es la decisión de **Repaso General**, y por el mismo motivo: junta a todas, así
+que no puede colgar de ninguna. Un nivel más arriba lo hace la propia
+Secretaría, que en Media la saca de Ciencias Sociales.
+
+### ⚠️ El currículo es HOLÍSTICO, y eso decide el resto
+
+Las diez unidades tienen **el mismo contenido para I, II y III Ciclo**. Lo que
+cambia es la profundidad, la actividad y el producto. De ahí salen tres cosas
+que no se pueden improvisar:
+
+1. **La carpeta lleva el prefijo `basica-`**, no un ciclo: `basica-el-asombro`.
+   Hubo que añadirlo al convenio del QR (`_dev/genera-qr-mision.py`), que si no
+   el nombre salía `qr-mision-basica-el-asombro.png`.
+2. **`grade` dice «I, II y III Ciclo»**, que no nombra ningún grado. El
+   ordenador de la vista del alumno lee ese campo quitando los no dígitos, así
+   que no le pone rótulo, **y es lo correcto**: esta misión es de todos.
+3. ⚠️ **Se lee en cuarto grado, y aquí aprieta más que en la ruta de IA**: la
+   misma misión la abre un niño de 1.º y un joven de 9.º. Se midió al
+   escribirla y se corrigió: la primera versión tenía una frase de **53**
+   palabras y un tramo de **84**, los dos en texto escrito ese mismo día, y los
+   peores bloques eran Recursos y las pautas del pensamiento crítico, que es lo
+   que el maestro lee en voz alta. Hoy: INFLESZ **80,1** (la vara de primaria
+   es 74,1), **8,2** palabras por frase, frase máxima **24**, tramo **45**.
+   La ruta entró en `mide-legibilidad.js` como `FILO` y su sonda pide la misma
+   vara que la de IA, **reutilizando el medidor en vez de copiarlo**.
+
+### El color se midió, y el barrido hubo que corregirlo antes de servir
+
+Ciruela `#784a6d`. Medir el círculo de tonos entero premiaba los **casi-negros**
+—un `#391713` saca ΔE 56— y un casi-negro no es un color de materia: se lee
+como texto negro, que es justo lo que el color existe para evitar. Así que
+primero se midió la **banda** en la que viven las diez materias que ya había
+(L\* de 33,4 a 55,1 y croma de 28 a 102) y el barrido se hizo dentro de ella.
+
+El ciruela es el hueco más ancho que queda: **ΔE 43,1** contra lo más cercano
+(el magenta de IA), 43,2 contra el rosa de Inglés y 43,5 contra el cian de
+Programación. Más que los 40,5 con los que entró la IA. Contrasta **7,0:1**
+sobre blanco, que hace falta porque va como TEXTO del chip. Y lo que lo separa
+del magenta a la vista no es el tono: es el **croma**, 28 contra 70, o sea que
+uno es vivo y el otro apagado. Los verdes, teales y cianes están todos
+ocupados: el cian libre solo daba ΔE 15 contra Programación.
+
+### ⚠️ Una sola fuente para la clasificación, y por eso no se puede contradecir
+
+`FILO_PREGUNTAS` (`js/data/filosofia-asombro.js`) lleva las 30 preguntas de
+ejemplo con su clase, y de ahí se arman **el Clasifica Y el Reto**. No es
+comodidad: este repositorio ya se encontró una misión donde los dos bancos se
+contradecían —el Escudo marcado en rojo en Aspectos Cívicos— porque los dos se
+escriben a mano, uno debajo del otro. Con una sola fuente esa avería **no se
+puede escribir**, que vale más que una sonda que la caza.
+
+### ⚠️ Ni una fecha, y la sonda tuvo que aprender a buscarlas
+
+De Tales de Mileto, Sócrates e Hipatia de Alejandría se dice qué hicieron y por
+qué se les recuerda. **Ni un año**, ni un siglo: es la decisión de los números
+de decreto de la flor y del árbol nacionales. Y el hueco no se tapa con
+silencio, se convierte en la **investigación** de la página 7 de la ficha,
+que es lo que el currículo pide para III Ciclo.
+
+Eso lo comprueba `verifica-filosofia`, y aquí hay una lección de la propia
+sonda: su primera versión buscaba años de **cuatro dígitos** y daba verde con
+la fecha puesta. Una fecha de esta unidad no se escribe «1956»: se escribe
+**«624 a. C.»** o **«siglo VI»**, porque los tres son de la Grecia antigua.
+Se descubrió probando la sonda al revés, que es la única forma. Ahora caza las
+cuatro formas, y se comprobó una por una.
+
+### ⚠️ Y dos sondas mías acusaron a un archivo sano antes de servir
+
+Las dos por medir de más, que es la lección de «Cuadrado **Perfecto**» otra vez:
+
+- **La pauta se buscaba por su TÍTULO**, y ese mismo título encabeza la
+  actividad en la página 6. El match caía en el encabezado, que no lleva
+  claves, y decía «la pauta no trae ninguna clave» con el papel perfecto. Se
+  busca dentro del bloque `.pauta`.
+- **«El temario está escrito a mano»** marcaba cuatro preguntas del banco
+  dentro del HTML, y las cuatro eran legítimas: la situación del arranque
+  **cita** dos a propósito (son la historia de Yensi y de Denis, que va también
+  en la ficha) y los widgets llevan una de muestra para que la tarjeta no
+  parpadee vacía, igual que el «1 misión» de los chips de la portada. Lo que se
+  comprueba ahora es que los **siete contenedores de los pintores estén
+  VACÍOS**, que es el invariante de verdad.
+
+### Lo que salió al estrenar la materia, y no estaba en la lista de nueve
+
+Los nueve archivos de la normativa de estrenar materia siguen siendo los mismos
+nueve y no falló ninguno. Salieron **cuatro cosas más** que la lista no decía:
+
+1. ⚠️ **`fichas/index.html` tiene sus PROPIOS tokens de color**, no hereda los
+   de `css/app.css`. Sin añadir `--filo` ahí, la franja de la materia sale sin
+   color y **no da ningún error**. Es la familia del `.pf-p` naranja.
+2. ⚠️ **El Kit de Capacitación estaba EXACTO en sus 4 hojas**, y nombrar una
+   materia más lo pasaba a 5. Se comprobó que main estaba en 4/4, así que no
+   era un problema heredado: lo causaba el añadido. Se resolvió apretando la
+   enumeración de IA —que listaba sus siete misiones una por una, cosa que
+   ninguna otra materia hace— en vez de gastar la hoja: **cada hoja de más son
+   treinta fotocopias en la capacitación**.
+3. **El `short` de `CAMP_SUBJECTS` va de tres letras** (`FIL`), como los otros
+   diez. Ya estaba anotado a cuenta de la IA y se respetó.
+4. ⚠️ **La hoja del docente de la ficha no la reparte el repartidor**, a
+   propósito, así que su corte lo pone quien la escribe. Entera medía
+   **291,9 mm** donde el papel deja 257,4, y la impresora la partía por donde
+   le tocara: la pauta salía cortada. Se parte a mano en dos, por donde la lee
+   el maestro: la ruta de cada ciclo con la pauta, y las notas de clase con las
+   fuentes.
+
+### Y lo que se multiplica al copiar una misión mordió otra vez
+
+Se calcó de la Constitución (id 71), que es post-arreglo del CDN. Salió:
+
+- **Tres bloques de CSS que aquí no pasan nada**: las tarjetas de próceres
+  (`.pr-*`), la jerarquía de normas (`.pod-*`) y las piezas de una cita legal
+  (`.con-*`), cada uno **con su comentario explicando algo que esta misión no
+  hace**. Un comentario que explica algo que aquí no pasa es peor que ninguno,
+  porque el siguiente lo lee y le cree. Se quitaron los tres.
+- **El diploma felicitaba «¡Guardián de la Patria!»**, que es de la Ruta de la
+  Patria. Ya estaba anotado a cuenta de la ruta de IA y volvió a pasar.
+- ⚠️ **Y una línea muerta que la plantilla lleva publicada**: su arranque hace
+  `document.querySelector('[data-parte="lempira"]')`, y `lempira` no existe en
+  su propio Laboratorio. Es un resto de la misión de próceres, no hace nada y
+  no da ningún error.
+
+**Antes de publicar un cambio de esta materia:**
+
+```
+node _dev/verifica-filosofia.js             → la pantalla y el papel, dato por dato
+node _dev/verifica-nombres-propios.js
+node _dev/mide-legibilidad.js misiones/basica-el-asombro --detalle
+node _dev/verifica-mision-nueva.js misiones/basica-el-asombro/el-asombro.html
+node _dev/verifica-ficha-paginas.js ficha-el-asombro
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-el-asombro/el-asombro.html
+```
+
+Si se tocan los datos, la ficha **se vuelve a repartir**
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro`): son nueve hojas y un
+párrafo que crece dos renglones parte una en dos. El repartidor corrige solo el
+«Guía de estudio de N páginas» de la misión y el «· N páginas» del índice.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

@@ -41,6 +41,14 @@ const IA = [
   { dir: 'misiones/3ciclo-albores-singularidad', html: 'albores-singularidad.html', ficha: 'fichas/ficha-albores-singularidad.html', datos: ['js/data/ia-actualidad.js'] },
   { dir: 'misiones/3ciclo-escenarios-porvenir', html: 'escenarios-porvenir.html', ficha: 'fichas/ficha-escenarios-porvenir.html', datos: ['js/data/ia-futuros.js'] },
 ];
+/* La Ruta de la Raíz (Filosofía). Se mide con la misma vara que la de IA, y
+   aquí aprieta más: su currículo es HOLÍSTICO, así que la misma misión la abre
+   un niño de 1.º y un joven de 9.º. Quien la escriba para adultos deja fuera a
+   la mitad de sus lectores. */
+const FILO = [
+  { dir: 'misiones/basica-el-asombro', html: 'el-asombro.html', ficha: 'fichas/ficha-el-asombro.html', datos: ['js/data/filosofia-asombro.js'] },
+];
+
 /* Misiones escritas para primaria, que son la vara. */
 const REF = [
   { dir: 'misiones/1ciclo-segundo-grado' },
@@ -215,4 +223,4 @@ if (filas.length > 1) {
   const med = filas.map(f => f.r.inflesz).sort((a, b) => a - b);
   console.log(`\n   mediana INFLESZ de estas ${filas.length}: ${med[Math.floor(med.length / 2)].toFixed(1)}\n`);
 }
-module.exports = { silabas, frases, tramos, mide, bloquesDe, resumen, IA, REF, limpiaHtml, MIN_BLOQUE };
+module.exports = { silabas, frases, tramos, mide, bloquesDe, resumen, IA, FILO, REF, limpiaHtml, MIN_BLOQUE };

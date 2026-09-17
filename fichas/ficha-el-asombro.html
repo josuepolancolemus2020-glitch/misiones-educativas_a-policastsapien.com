@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión El Asombro: por qué preguntamos</title>
+<meta name="robots" content="noindex">
+<style>
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: FILOSOFÍA = CIRUELA (#784a6d). No se
+       eligió a ojo: se midió la distancia de color contra las diez materias
+       que ya existían (ΔE 43,1 contra la más cercana). El porqué está en
+       CURRICULA-FILOSOFIA.md.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · La pauta + la hoja del docente SIEMPRE en hoja suelta al final
+     · ⚠️ Aquí NO hay ni una fecha, y no es un olvido: está contado en la
+       cabecera de js/data/filosofia-asombro.js. Ponerlas es la investigación
+       de la página 7. */
+  :root {
+    --fil: #784a6d; --fil-osc: #5f3a57; --fil-claro: #f7eff5;
+    --verde: #1d4538; --verde-claro: #eef5f1;
+    --tinta: #241b22; --gris: #6b5f67; --linea: #e3d2dd;
+    --oro: #b45309;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f6f1f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--fil-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--fil); background: var(--fil-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--fil-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--fil-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--fil); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--fil-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--fil-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--fil-osc); }
+  .hn { background: var(--verde-claro); border: 1px solid #cfe2d8; }
+  .hn b { color: var(--verde); }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--fil); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf6f9; }
+  td.k { font-weight: 700; color: var(--fil-osc); white-space: nowrap; }
+
+  .acts h3 { border-bottom: 2px solid var(--fil-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--fil); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #a99aa4; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--fil); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--fil-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .pauta { background: #fbf4f8; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--fil-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  /* ═══ LA PALABRA PARTIDA EN DOS ═══
+     Los dos trozos separados y con el signo de sumar en medio. En pantalla y
+     en papel se ve lo mismo: que la palabra ESTÁ partida, que es la lección. */
+  .pal { display: flex; align-items: center; justify-content: center; gap: 9px; margin: 8px 0; flex-wrap: wrap; break-inside: avoid; }
+  .pal-t { border: 1.6px solid var(--fil); border-radius: 9px; padding: 5px 12px; text-align: center; background: var(--fil-claro); }
+  .pal-t b { display: block; font-size: 13pt; color: var(--fil-osc); }
+  .pal-t span { font-size: 8.5pt; color: var(--gris); }
+  .pal-op { font-size: 15pt; font-weight: 900; color: var(--verde); }
+  .pal-r { font-size: 12pt; font-weight: 800; color: var(--verde); background: var(--verde-claro); border-radius: 9px; padding: 6px 13px; }
+
+  /* ═══ EL RECUADRO DE CADA CLASE DE PREGUNTA ═══
+     Cada una en el suyo, con SU SEÑAL primero y en negrita: la señal es lo
+     que el alumno va a usar para decidir, así que va antes de la definición.
+     Y lleva su emoji además del color, porque esta hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde. */
+  .kficha { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+            padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .kf-tit { font-size: 11.5pt; font-weight: 800; color: var(--fil-osc); display: flex; align-items: baseline;
+            gap: 8px; flex-wrap: wrap; }
+  .kf-et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+           border-radius: 999px; padding: 1px 7px; background: var(--fil-claro); color: var(--fil-osc); }
+  /* ⚠️ `.kf-p` es un PÁRRAFO y nada más. Se le puso nombre propio a propósito:
+     en la ficha de la Constitución se heredó un `.pf-p` que en la de próceres
+     era la píldora naranja de «PRÓCER», y el cuerpo del texto salió naranja
+     sobre naranja en dos fichas publicadas. Aquí no hay píldoras de clase. */
+  .kf-p { font-size: 10.5pt; margin: 3px 0; }
+  .kf-sub { font-size: 9pt; color: var(--gris); font-style: italic; margin-bottom: 3px; }
+  .kf-ej { font-size: 10.5pt; font-style: italic; background: #faf7f9; border-radius: 6px; padding: 3px 8px; margin: 3px 0; }
+  .kf-dato { font-size: 9.5pt; color: var(--gris); }
+
+  /* Las tarjetas del árbol y de las raíces, en dos columnas. */
+  .rejilla { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .rejilla > div { flex: 1 1 47%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 9px;
+                   font-size: 9.5pt; background: #fdfafc; break-inside: avoid; }
+  .rejilla b { display: block; font-size: 10pt; color: var(--fil-osc); }
+  .rejilla .q { font-weight: 700; margin: 1px 0; }
+  .rejilla .h { color: var(--gris); }
+
+  /* Los cinco momentos, con su número y sus minutos. */
+  .pasos { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; break-inside: avoid; }
+  .pasos > div { flex: 1 1 18%; border: 1px solid var(--linea); border-top: 4px solid var(--fil);
+                 border-radius: 0 0 7px 7px; padding: 5px 7px; font-size: 8.8pt; background: #fdfafc; }
+  .pasos b { display: block; font-size: 9.6pt; color: var(--fil-osc); }
+  .pasos .min { display: block; color: var(--gris); font-size: 8pt; margin-top: 2px; }
+
+  .imprimir-btn { position: fixed; right: 18px; bottom: 18px; z-index: 5; border: none; cursor: pointer; padding: 13px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: 800; color: #fff; background: var(--fil); box-shadow: 0 6px 16px rgba(120,74,109,.4); font-family: Arial, sans-serif; }
+  .imprimir-btn:active { transform: scale(.97); }
+
+  @page { size: letter; margin: 11mm 11mm; }
+  @media print {
+    body { background: #fff; }
+    .doc { max-width: none; }
+    .pagina { margin: 0; page-break-after: always; min-height: 253mm; padding-bottom: 22px; }
+    .pagina:last-child { page-break-after: auto; }
+    .pagina .contenido { padding: 0 2px; }
+    .pag-pie { left: 2px; right: 2px; bottom: 0; }
+    .imprimir-btn { display: none; }
+    h2, th, .fh, .caja, .pauta, .kf-et, .pal-t, .pal-r, .rejilla > div, .pasos > div
+      { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión El Asombro: por qué preguntamos</div>
+        <div class="f-meta"><b>Asignatura:</b> Filosofía &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, I, II y III Ciclo</div>
+        <div class="f-meta"><b>Tema:</b> Qué quiere decir la palabra «filosofía», las tres clases de pregunta y con qué pregunta nació cada asignatura de la escuela.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-el-asombro.png" alt="Código QR de la misión El Asombro">
+        <span>Apunta con el teléfono para abrir la misión</span>
+      </div>
+    </div>
+
+    <h2>¿Por qué esta ficha?</h2>
+
+    <p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva
+       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>
+
+    <div class="caja idea"><b>Lo que hay que sacar de aquí:</b> hay tres clases de pregunta y no se
+      contestan igual. Saber de qué clase es la que tienes delante es la destreza de esta unidad, y
+      la que ahorra tardes perdidas.</div>
+
+    <h3>Objetivos</h3>
+
+    <ol class="objetivos">
+      <li>Decir qué quiere decir la palabra «filosofía» y por qué no quiere decir «el que ya sabe».</li>
+      <li>Distinguir una pregunta de hechos, una de significado y una de valor, y decir por qué.</li>
+      <li>Nombrar la pregunta de la que nació cada asignatura de la escuela.</li>
+      <li>Reconocer las ocho raíces de la filosofía por la pregunta que hace cada una.</li>
+      <li>Escribir preguntas propias y clasificarlas.</li>
+    </ol>
+
+    <h2>Le pasó a alguien</h2>
+
+    <p>El viernes la maestra dejó una pregunta para el lunes: <b>«¿está bien copiar en un examen?»</b>.
+       Yensi se lo tomó en serio. Buscó la respuesta <b>tres tardes</b>: en el libro de Español, en el
+       diccionario de su hermano, en el teléfono prestado de su tía. No la encontró. El lunes entregó
+       la hoja en blanco. A su compañero Denis le tocó <b>«¿cuántos departamentos tiene Honduras?»</b>.
+       Tardó <b>dos minutos</b>.</p>
+
+    <div class="caja regla"><b>Ninguno de los dos se portó mal.</b> Las dos eran preguntas, pero no de
+      la misma clase. Una se responde buscando; la otra se responde pensando y dando razones.</div>
+
+    <h2>¿Qué quiere decir «filosofía»?</h2>
+
+    <p>Es una palabra pegada de dos trozos. Cuando se despega, dice algo que sorprende.</p>
+
+    <div class="pal">
+      <span class="pal-t"><b>filo</b><span>amor, cariño, ganas de</span></span><span class="pal-op">+</span><span class="pal-t"><b>sofía</b><span>sabiduría, saber</span></span>
+      <span class="pal-op">=</span>
+      <span class="pal-r">Ganas de saber.</span>
+    </div>
+
+    <div class="caja truco"><b>Fíjate:</b> Fíjate en lo que NO dice: no dice «el que sabe». Dice el que QUIERE saber. Por eso un filósofo no es alguien que ya tiene las respuestas.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>1</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Las tres clases de pregunta</h2>
+
+    <p>Todas son preguntas. Lo que cambia es <b>cómo se contestan</b>, y por eso hay que saber cuál
+       tienes delante antes de ponerte a buscar.</p>
+
+    <table>
+      <tr><th>Clase</th><th>Se responde…</th><th>La señal</th><th>Ejemplo</th></tr>
+      <tr><td class="k">🔎 De hechos</td><td>BUSCANDO</td><td>Tiene una sola respuesta y se puede comprobar.</td><td><i>¿Cuántos departamentos tiene Honduras?</i></td></tr>
+      <tr><td class="k">❓ De significado</td><td>PENSANDO qué es algo</td><td>Pide una definición. Se contesta con ejemplos y con casos que no valen.</td><td><i>¿Qué es un amigo?</i></td></tr>
+      <tr><td class="k">⚖️ De valor</td><td>PENSANDO y dando razones</td><td>Pregunta si algo está bien, si es justo o si vale la pena.</td><td><i>¿Está bien copiar en un examen?</i></td></tr>
+    </table>
+
+    <div class="kficha">
+      <div class="kf-tit">🔎 De hechos <span class="kf-et">Se responde BUSCANDO</span></div>
+      <p class="kf-p"><b>Tiene una sola respuesta y se puede comprobar.</b></p>
+      <p class="kf-ej">¿Cuántos departamentos tiene Honduras?</p>
+      <p class="kf-sub">Dónde se contesta: En un libro, en un mapa, midiendo, o preguntando a quien lo sabe.</p>
+      <p class="kf-dato">⚠️ Si la buscas mucho y no aparece en ninguna parte, a lo mejor no era de hechos.</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">❓ De significado <span class="kf-et">Se responde PENSANDO qué es algo</span></div>
+      <p class="kf-p"><b>Pide una definición. Se contesta con ejemplos y con casos que no valen.</b></p>
+      <p class="kf-ej">¿Qué es un amigo?</p>
+      <p class="kf-sub">Dónde se contesta: Pensando con otros y poniendo ejemplos.</p>
+      <p class="kf-dato">⚠️ El diccionario ayuda, pero no cierra la pregunta: por eso se discute.</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">⚖️ De valor <span class="kf-et">Se responde PENSANDO y dando razones</span></div>
+      <p class="kf-p"><b>Pregunta si algo está bien, si es justo o si vale la pena.</b></p>
+      <p class="kf-ej">¿Está bien copiar en un examen?</p>
+      <p class="kf-sub">Dónde se contesta: Discutiendo, dando razones y escuchando las del otro.</p>
+      <p class="kf-dato">⚠️ Tiene varias respuestas buenas. Lo que se califica es la razón, no el sí o el no.</p>
+    </div>
+
+    <div class="caja idea"><b>El truco de un solo paso:</b> pregúntate «¿esto lo puedo comprobar?».
+      Si sí, es de hechos y se busca. Si no, hay que pensar: si pide decir <i>qué es</i> algo, es de
+      significado; si pregunta si algo <i>está bien</i>, es de valor.</div>
+
+    <h2>El árbol del saber</h2>
+
+    <p>Mira las materias de tu horario. Todas nacieron de una pregunta que alguien hizo antes de que
+       la materia existiera. Por eso la filosofía no es otra rama al lado de las demás: es la raíz.</p>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>2</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="kficha">
+      <div class="kf-tit">🔢 Matemáticas <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿Qué es un número?</b></p>
+      <p class="kf-p">Nadie ha visto un 7 caminando por ahí. Alguien tuvo que preguntar qué clase de cosa es un número.</p>
+      <p class="kf-sub">La sostiene: 🧩 Lógica · ¿Qué hace que una razón sea buena?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Por qué 2 + 2 da 4 siempre, aunque nadie esté mirando?</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">✍️ Español <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿Qué es una palabra?</b></p>
+      <p class="kf-p">La gramática empezó cuando alguien se preguntó por qué unos sonidos significan algo y otros no.</p>
+      <p class="kf-sub">La sostiene: 💬 Filosofía del lenguaje · ¿Cómo cambian las palabras lo que pienso?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Puede una palabra querer decir dos cosas a la vez?</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">🌱 Ciencias Naturales <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿De qué está hecho el mundo?</b></p>
+      <p class="kf-p">Antes se contestaba con un mito. El día que alguien buscó una causa natural, empezó la ciencia.</p>
+      <p class="kf-sub">La sostiene: 🌌 Metafísica · ¿Qué es real? ¿Qué cambia y qué se queda?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Cómo compruebo que algo es verdad y no solo que me lo dijeron?</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">🌎 Ciencias Sociales <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿Quién debe mandar?</b></p>
+      <p class="kf-p">La educación cívica nació de esa pregunta. No de una lista de fechas: de una pregunta incómoda.</p>
+      <p class="kf-sub">La sostiene: 🏛️ Filosofía política · ¿Quién debe hacer las reglas?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Por qué obedecemos una regla que no nos gusta?</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">🎨 Arte y Música <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿Qué es lo bello?</b></p>
+      <p class="kf-p">Para enseñar a hacer algo bonito, primero hubo que preguntarse qué hace que algo lo sea.</p>
+      <p class="kf-sub">La sostiene: 🎨 Estética · ¿Qué es la belleza?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Vale más un dibujo hecho a mano que uno hecho por una máquina?</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">🤸 Educación Física <span class="kf-et">Nació preguntando</span></div>
+      <p class="kf-p"><b>¿El cuerpo soy yo o es algo que tengo?</b></p>
+      <p class="kf-p">Cuidar el cuerpo tiene sentido si el cuerpo es parte de la persona. Eso hubo que pensarlo.</p>
+      <p class="kf-sub">La sostiene: 🧍 Antropología filosófica · ¿Qué me hace ser yo?</p>
+      <p class="kf-dato">💡 Pregúntate hoy: ¿Por qué duele perder, si es solo un juego?</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>3</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja hn"><b>Cómo una pregunta se vuelve una ciencia:</b> <b>1.</b> Alguien se asombra con algo de todos los días. <b>2.</b> Lo convierte en una pregunta. <b>3.</b> La discute con otros y le piden razones. <b>4.</b> Busca una forma de comprobar la respuesta. <b>5.</b> Cuando la forma de comprobar funciona, nace una ciencia.</div>
+
+    <h2>Las ocho raíces</h2>
+
+    <p>La filosofía no hace una sola pregunta: hace ocho, y cada una tiene su nombre. Esta unidad es
+       la primera de la ruta, y las que vienen detrás son justamente estas.</p>
+
+    <div class="rejilla">
+      <div><b>🧩 Lógica</b><div class="q">¿Qué hace que una razón sea buena?</div><div class="h">Revisa si lo que decimos se sostiene.</div></div>
+      <div><b>🌌 Metafísica</b><div class="q">¿Qué es real? ¿Qué cambia y qué se queda?</div><div class="h">Pregunta de qué está hecho el mundo.</div></div>
+      <div><b>🔬 Epistemología</b><div class="q">¿Cómo sé que sé?</div><div class="h">Separa creer, opinar y saber.</div></div>
+      <div><b>💬 Filosofía del lenguaje</b><div class="q">¿Cómo cambian las palabras lo que pienso?</div><div class="h">Mira qué hacen las palabras con las ideas.</div></div>
+      <div><b>🧍 Antropología filosófica</b><div class="q">¿Qué me hace ser yo?</div><div class="h">Pregunta qué es un ser humano.</div></div>
+      <div><b>⚖️ Ética</b><div class="q">¿Qué debo hacer?</div><div class="h">Busca cómo saber si una acción es buena.</div></div>
+      <div><b>🏛️ Filosofía política</b><div class="q">¿Quién debe hacer las reglas?</div><div class="h">Pregunta para qué sirve vivir juntos.</div></div>
+      <div><b>🎨 Estética</b><div class="q">¿Qué es la belleza?</div><div class="h">Pregunta qué hace que algo sea arte.</div></div>
+    </div>
+
+    <h2>Cómo se da una clase de filosofía</h2>
+
+    <p>Cinco momentos, siempre los mismos, en 45 minutos. Dos veces por semana.</p>
+
+    <div class="pasos">
+      <div><b>1. Asombro</b>Algo te sorprende: un cuento, una foto, una noticia, un objeto.<span class="min">⏱ 5 a 10 min</span></div>
+      <div><b>2. Preguntas</b>Cada uno escribe su pregunta y el grupo vota cuál va a discutir.<span class="min">⏱ 5 min</span></div>
+      <div><b>3. Diálogo</b>En círculo. Se pregunta: ¿por qué?, ¿un ejemplo?, ¿alguien piensa distinto?<span class="min">⏱ 15 a 20 min</span></div>
+      <div><b>4. Conexión</b>Se une lo discutido con la clase del día.<span class="min">⏱ 5 min</span></div>
+      <div><b>5. Metacognición</b>En el diario: ¿qué pensé hoy?, ¿cambié de idea?, ¿qué pregunta me llevo?<span class="min">⏱ 5 min</span></div>
+    </div>
+
+    <div class="caja regla"><b>El último es el que decide.</b> Sin el diario, la conversación se
+      olvida como una plática. Con él queda lo que pensaste y si cambiaste de idea.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>4</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>El vocabulario</h2>
+
+    <table>
+      <tr><th>Palabra</th><th>Qué quiere decir</th></tr>
+      <tr><td class="k">asombro</td><td>Lo que sientes cuando algo de todos los días de pronto te parece raro. Es por donde empieza todo.</td></tr>
+      <tr><td class="k">pregunta</td><td>Una frase que abre. La buena no se contesta con sí o no y deja al otro con ganas de pensar.</td></tr>
+      <tr><td class="k">sabiduría</td><td>Saber usar lo que uno sabe. No es lo mismo que tener muchos datos.</td></tr>
+      <tr><td class="k">diálogo</td><td>Pensar entre varios. No es discutir para ganar: es discutir para entender.</td></tr>
+      <tr><td class="k">duda</td><td>No estar seguro todavía. Aquí no es un defecto: es la herramienta de trabajo.</td></tr>
+      <tr><td class="k">filosofía</td><td>Ganas de saber. «Filo» es amor y «sofía» es sabiduría: el que quiere saber, no el que ya sabe.</td></tr>
+    </table>
+
+    <h2>Tres que empezaron a preguntar</h2>
+
+    <p>De cada uno: qué hizo y por qué se le recuerda. <b>No hay ni una fecha, y no es un olvido</b>:
+       en esta plataforma no se escribe un dato que no se pueda acreditar con un documento. Ponerlas
+       es una de las investigaciones de la página 7.</p>
+
+    <div class="kficha">
+      <div class="kf-tit">🌊 Tales de Mileto <span class="kf-et">Enseñaba en Mileto</span></div>
+      <p class="kf-p"><b>El primero que conocemos que explicó el mundo sin contar un mito.</b></p>
+      <p class="kf-sub">Qué hizo</p>
+      <p class="kf-p">En vez de decir «lo hizo un dios», buscó una causa natural.</p>
+      <p class="kf-sub">Por qué se le recuerda</p>
+      <p class="kf-p">Ahí arranca el camino que termina en las Ciencias Naturales.</p>
+      <p class="kf-dato">💡 Dijo que todo salía del agua. Se equivocó, y aun así lo cambió todo: lo que importó fue la CLASE de respuesta que buscó, no la respuesta.</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">💬 Sócrates <span class="kf-et">Enseñaba en Atenas</span></div>
+      <p class="kf-p"><b>Preguntaba en la plaza a cualquiera, y no daba las respuestas.</b></p>
+      <p class="kf-sub">Qué hizo</p>
+      <p class="kf-p">Preguntaba hasta que la persona veía sola que se contradecía.</p>
+      <p class="kf-sub">Por qué se le recuerda</p>
+      <p class="kf-p">De ahí sale el diálogo, que es la herramienta de esta materia.</p>
+      <p class="kf-dato">💡 Decía que lo único que sabía era que no sabía nada. No escribió libros: lo que sabemos de él lo escribieron otros.</p>
+    </div>
+
+    <div class="kficha">
+      <div class="kf-tit">🔭 Hipatia de Alejandría <span class="kf-et">Enseñaba en Alejandría</span></div>
+      <p class="kf-p"><b>Filósofa y matemática, y maestra de quien quisiera aprender.</b></p>
+      <p class="kf-sub">Qué hizo</p>
+      <p class="kf-p">Juntaba las dos cosas: pensar y medir.</p>
+      <p class="kf-sub">Por qué se le recuerda</p>
+      <p class="kf-p">Recuerda que la filosofía y las matemáticas nacieron juntas.</p>
+      <p class="kf-dato">💡 Enseñaba en Alejandría, la ciudad de la gran biblioteca del mundo antiguo.</p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>5</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Actividades</h2>
+
+    <div class="acts">
+
+    <h3>1. ¿De qué clase es? <span class="val">12 pts</span></h3>
+    <p>Escribe en la casilla <b>H</b> si la pregunta es de hechos, <b>S</b> si es de significado y
+       <b>V</b> si es de valor.</p>
+    <table>
+      <tr><th style="width:8%">Clase</th><th>Pregunta</th><th style="width:8%">Clase</th><th>Pregunta</th></tr>
+      <tr><td></td><td>¿Cuántos departamentos tiene Honduras?</td><td></td><td>¿Qué es un amigo?</td></tr>
+      <tr><td></td><td>¿Está bien copiar en un examen?</td><td></td><td>¿Cuántos días tiene febrero?</td></tr>
+      <tr><td></td><td>¿Qué es ser valiente?</td><td></td><td>¿Está bien mentir para no hacer sufrir a alguien?</td></tr>
+      <tr><td></td><td>¿A qué hora sale el bus?</td><td></td><td>¿Qué es un número?</td></tr>
+      <tr><td></td><td>¿Es justo que gane siempre el más rápido?</td><td></td><td>¿Cuánto cuesta un cuaderno?</td></tr>
+      <tr><td></td><td>¿Qué es una palabra?</td><td></td><td>¿Vale la pena estudiar algo que no me gusta?</td></tr>
+    </table>
+
+    <h3>2. Tus propias preguntas <span class="val">10 pts</span></h3>
+    <p>Escribe <b>cinco preguntas tuyas</b>, de esas que nadie te ha contestado. Al lado, de qué
+       clase es cada una y <b>por qué lo sabes</b>.</p>
+    <ol>
+      <li>Pregunta: <span class="linea-resp" style="min-width:230px"></span> Clase: <span class="linea-resp" style="min-width:36px"></span> Porque: <span class="linea-resp" style="min-width:120px"></span></li>
+      <li>Pregunta: <span class="linea-resp" style="min-width:230px"></span> Clase: <span class="linea-resp" style="min-width:36px"></span> Porque: <span class="linea-resp" style="min-width:120px"></span></li>
+      <li>Pregunta: <span class="linea-resp" style="min-width:230px"></span> Clase: <span class="linea-resp" style="min-width:36px"></span> Porque: <span class="linea-resp" style="min-width:120px"></span></li>
+      <li>Pregunta: <span class="linea-resp" style="min-width:230px"></span> Clase: <span class="linea-resp" style="min-width:36px"></span> Porque: <span class="linea-resp" style="min-width:120px"></span></li>
+      <li>Pregunta: <span class="linea-resp" style="min-width:230px"></span> Clase: <span class="linea-resp" style="min-width:36px"></span> Porque: <span class="linea-resp" style="min-width:120px"></span></li>
+    </ol>
+
+    <h3>3. Une la materia con la pregunta de la que nació <span class="val">6 pts</span></h3>
+    <p>Escribe en la Columna A el número de la pregunta que le toca.</p>
+    <table>
+      <tr><th style="width:50%">Columna A: la materia</th><th>Columna B: la pregunta</th></tr>
+      <tr><td><span class="linea-resp" style="min-width:26px"></span> 🔢 Matemáticas</td><td><b>1.</b> ¿Quién debe mandar?</td></tr>
+      <tr><td><span class="linea-resp" style="min-width:26px"></span> ✍️ Español</td><td><b>2.</b> ¿Qué es un número?</td></tr>
+      <tr><td><span class="linea-resp" style="min-width:26px"></span> 🌱 Ciencias Naturales</td><td><b>3.</b> ¿El cuerpo soy yo o es algo que tengo?</td></tr>
+      <tr><td><span class="linea-resp" style="min-width:26px"></span> 🌎 Ciencias Sociales</td><td><b>4.</b> ¿Qué es una palabra?</td></tr>
+      <tr><td><span class="linea-resp" style="min-width:26px"></span> 🎨 Arte y Música</td><td><b>5.</b> ¿Qué es lo bello?</td></tr>
+      <tr><td><span class="linea-resp" style="min-width:26px"></span> 🤸 Educación Física</td><td><b>6.</b> ¿De qué está hecho el mundo?</td></tr>
+    </table>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>6</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+    <h3>4. Rellena el círculo de la letra correcta <span class="val">6 pts</span></h3>
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span><span>¿Qué quiere decir la palabra «filosofía»?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> El que ya sabe todo</span><span class="op"><i></i><b>b)</b> Ganas de saber</span><span class="op"><i></i><b>c)</b> Un libro difícil</span><span class="op"><i></i><b>d)</b> Una escuela</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span><span>¿Cuál es la señal de una pregunta de hechos?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Que es larga</span><span class="op"><i></i><b>b)</b> Que nadie la contestó</span><span class="op"><i></i><b>c)</b> Que se puede comprobar</span><span class="op"><i></i><b>d)</b> Que la hizo un filósofo</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span>«¿Qué es una familia?» es una pregunta…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> de hechos</span><span class="op"><i></i><b>b)</b> de valor</span><span class="op"><i></i><b>c)</b> sin clase</span><span class="op"><i></i><b>d)</b> de significado</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span>En una pregunta de valor, ¿qué se califica?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> La razón que se da</span><span class="op"><i></i><b>b)</b> La letra</span><span class="op"><i></i><b>c)</b> Si contestó sí</span><span class="op"><i></i><b>d)</b> La rapidez</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span>¿Qué hizo Tales de Mileto que fue nuevo?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Escribió el primer libro</span><span class="op"><i></i><b>b)</b> Inventó los números</span><span class="op"><i></i><b>c)</b> Buscó una causa natural</span><span class="op"><i></i><b>d)</b> Fundó una escuela</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>¿Cuál es el primer momento de una clase de filosofía?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> El diálogo</span><span class="op"><i></i><b>b)</b> El asombro</span><span class="op"><i></i><b>c)</b> La conexión</span><span class="op"><i></i><b>d)</b> El diario</span></div></div>
+    </div>
+
+    <h2>Investiga (no se contesta copiando de aquí)</h2>
+
+    <p>Estas cuatro no traen respuesta en la ficha, y es <b>a propósito</b>. Lo que se califica es
+       que digas <b>de dónde</b> sacaste cada dato: el nombre del libro o de la página.</p>
+
+    <div class="caja idea">
+      <b>1.</b> ¿Cuándo vivió Tales de Mileto? Aquí no está escrito porque no había un documento que
+      lo acredite. Búscalo y anota la fuente. <span class="linea-resp" style="min-width:170px"></span><br>
+      <b>2.</b> ¿Qué otras ciencias se separaron de la filosofía, y cuándo? Arma una línea de tiempo.<br>
+      <b>3.</b> Pregúntale a alguien mayor de tu casa una pregunta que se haya hecho de niño y que
+      nadie le contestó. Escríbela y clasifícala.<br>
+      <b>4.</b> ¿Para qué sirve la filosofía si no fabrica nada? Escribe tu razón y <b>una objeción</b>
+      que alguien te podría poner.
+    </div>
+
+    <h2>Para hacer en el aula</h2>
+
+    <div class="caja regla"><b>El árbol de preguntas del grupo.</b> Cada uno escribe su pregunta en un
+      papelito. Se pegan en la pared: las que se responden buscando en las <b>ramas</b>, las que se
+      responden pensando en las <b>raíces</b>. Se vota una de las raíces y se dialoga en círculo
+      quince minutos. Al final, cada uno escribe en su cuaderno qué pensó y si cambió de idea.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>7</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Hoja del docente · NO se fotocopia</h2>
+
+    <div class="caja idea"><b>Esta hoja se imprime suelta y se queda con usted.</b> Lleva la pauta y la
+      ruta de cada ciclo. Las páginas 1 a 7 son las que se fotocopian por alumno.</div>
+
+    <h3>La misma unidad en los tres ciclos</h3>
+
+    <p>El contenido de las páginas 1 a 5 es el <b>mismo</b> para toda la escuela: así una escuela
+       entera puede trabajar la unidad el mismo mes y compartir el mural. Lo que cambia de un ciclo a
+       otro es la pregunta con que se entra, la actividad y lo que el alumno entrega.</p>
+
+    <table>
+      <tr><th>Ciclo</th><th>Pregunta con que se entra</th><th>Habilidad</th><th>Producto</th></tr>
+      <tr><td class="k">I Ciclo<br><span style="font-weight:400;font-size:8.5pt">1.º a 3.º grado</span></td><td><i>¿Qué cosas me gustaría saber que nadie me ha explicado?</i></td><td>Formular preguntas.</td><td>Mural «Nuestro árbol de preguntas».</td></tr>
+      <tr><td class="k">II Ciclo<br><span style="font-weight:400;font-size:8.5pt">4.º a 6.º grado</span></td><td><i>¿En qué se diferencia una pregunta que se responde buscando de una que se responde pensando?</i></td><td>Clasificar preguntas: de hechos, de significado y de valor.</td><td>Diario con cinco preguntas propias, ya clasificadas.</td></tr>
+      <tr><td class="k">III Ciclo<br><span style="font-weight:400;font-size:8.5pt">7.º a 9.º grado</span></td><td><i>¿Para qué sirve la filosofía si no fabrica nada?</i></td><td>Convertir una pregunta en un problema.</td><td>Línea de tiempo «De la filosofía a las ciencias» y un párrafo con una razón y una objeción.</td></tr>
+    </table>
+
+    <div class="caja hn"><b>I Ciclo · la actividad:</b> Caja de preguntas: se lee un cuento, cada niño dibuja o dicta su pregunta y el grupo las separa en preguntas para buscar y preguntas para pensar.</div>
+
+    <div class="caja hn"><b>II Ciclo · la actividad:</b> Dramatizar un diálogo corto al modo de Sócrates. Se abre el diario filosófico.</div>
+
+    <div class="caja hn"><b>III Ciclo · la actividad:</b> Investigar qué ciencias se separaron de la filosofía y cuándo. Ojo: las fechas se buscan en una fuente que se pueda citar, no de memoria.</div>
+
+    <h3>Pauta</h3>
+
+    <div class="pauta">
+      <div><span class="pt">1. ¿De qué clase es? (12 pts, 1 por pregunta)</span> 1. H · 2. S · 3. V · 4. H · 5. S · 6. V · 7. H · 8. S · 9. V · 10. H · 11. S · 12. V</div>
+      <div><span class="pt">2. Tus propias preguntas (10 pts)</span> Respuesta abierta. Se valora que
+        la pregunta sea suya y que el «porque» diga la SEÑAL: si se comprueba, es de hechos; si pide
+        una definición, de significado; si pregunta si algo está bien, de valor. No se corrige la
+        pregunta por ser rara: se corrige el porqué.</div>
+      <div><span class="pt">3. Une la materia con su pregunta (6 pts)</span> Matemáticas → 2 · Español → 4 · Ciencias Naturales → 6 · Ciencias Sociales → 1 · Arte y Música → 5 · Educación Física → 3</div>
+      <div><span class="pt">4. Selección múltiple (6 pts)</span> 1. b · 2. c · 3. d · 4. a · 5. c · 6. b</div>
+      <div><span class="pt">Investiga</span> ⚠️ <b>No trae respuestas, y es a propósito.</b> Lo que se
+        califica es que el alumno diga DE DÓNDE sacó el dato. Si no encuentra la fecha de Tales, la
+        respuesta correcta es «no encontré una fuente que lo acredite»: eso es lo que esta unidad
+        enseña, y vale el punto completo.</div>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>8</b> de 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Hoja del docente · notas de clase</h2>
+
+    <div class="nota-doc"><b>Tres cosas que conviene saber antes de dar la clase.</b>
+      <b>Una:</b> en las preguntas de valor hay varias respuestas buenas. Lo que se califica es la
+      razón, no el sí o el no; exigir una sola respuesta ahí es ponerle mala nota al que pensó.
+      <b>Dos:</b> la actividad 2 no tiene tope de rareza. Una pregunta que a usted le parezca
+      imposible («¿por qué existe algo?») es de las buenas: lo que hay que pedirle es que la
+      clasifique y diga por qué. <b>Tres:</b> el diálogo se hace en círculo y usted modera sin dar
+      la respuesta, que es lo que hacía Sócrates. Si nadie habla, sirven tres preguntas: ¿por qué?,
+      ¿un ejemplo?, ¿alguien piensa distinto?</div>
+
+    <div class="nota-doc"><b>De dónde sale esta ficha.</b> Filosofía no es una materia inventada para
+      esta plataforma. El DCNB de Educación Básica la nombra dentro del Área de Ciencias Sociales
+      (capítulo 11), y en Educación Media es un espacio curricular propio de 120 horas anuales. Las
+      citas, con la página del PDF en que se confirmó cada una, están en CURRICULA-FILOSOFIA.md.
+      El temario y la ruta por ciclo son del currículo holístico de Filosofía para Básica.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 1 · <b>El Asombro: por qué preguntamos</b></span><span>Página <b>9</b> de 9</span></div>
+</section>
+
+</div>
+</body>
+</html>

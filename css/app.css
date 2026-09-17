@@ -69,6 +69,22 @@
      TEXTO del chip. El maestro tiene que saber de qué materia es el examen sin
      leerlo, y con esta distancia no se confunde con ninguno. */
   --ia:   #86198f; --ia-bg:   #fdf4ff; --ia-border:   rgba(134,25,143,.2);
+  /* Filosofía: ciruela apagado. Tampoco se eligió a ojo, y esta vez el barrido
+     tuvo que corregirse antes de servir: medir el círculo de tonos entero
+     premiaba los casi-negros —un #391713 saca ΔE 56, pero no se lee como un
+     color de materia, se lee como texto negro, que es justo lo que el color
+     existe para evitar—. Así que primero se midió la BANDA en la que viven las
+     diez materias que ya hay (L* de 33,4 a 55,1 y croma de 28 a 102) y el
+     barrido se hizo dentro de ella. El ciruela es el hueco más ancho que
+     queda: ΔE 43,1 contra lo más cercano (el magenta de Inteligencia
+     Artificial), 43,2 contra el rosa de Inglés y 43,5 contra el cian de
+     Programación —más hueco que los 40,5 con los que entró la IA—, y los
+     verdes, teales y cianes están todos ocupados (el cian libre solo daba
+     ΔE 15 contra Programación). Contrasta 7,0:1 sobre blanco, que hace falta
+     porque este color se usa como TEXTO del chip. Lo que lo separa del magenta
+     de la IA a la vista no es el tono: es el croma —28 contra 70—, o sea que
+     uno es vivo y el otro apagado. */
+  --filo: #784a6d; --filo-bg: #faf4f8; --filo-border: rgba(120,74,109,.2);
 
   --bg:      #f0f4f9;
   --surface: #ffffff;
@@ -971,6 +987,7 @@ a { text-decoration: none; color: inherit; }
 .subj-chip.rep  { background: var(--rep-bg);  color: var(--rep);  border-color: var(--rep-border); }
 .subj-chip.civ  { background: var(--civ-bg);  color: var(--civ);  border-color: var(--civ-border); }
 .subj-chip.ia   { background: var(--ia-bg);   color: var(--ia);   border-color: var(--ia-border); }
+.subj-chip.filo { background: var(--filo-bg); color: var(--filo); border-color: var(--filo-border); }
 
 /* ====== FEATURED CARD ====== */
 .featured-card {
@@ -1110,6 +1127,7 @@ a { text-decoration: none; color: inherit; }
 .pill.rep  { --pill: var(--rep);  --pill-rgb: 124, 58, 237; --pill-bg: var(--rep-bg);  }
 .pill.civ  { --pill: var(--civ);  --pill-rgb: 63, 98, 18;   --pill-bg: var(--civ-bg);  }
 .pill.ia   { --pill: var(--ia);   --pill-rgb: 134, 25, 143; --pill-bg: var(--ia-bg);   }
+.pill.filo { --pill: var(--filo); --pill-rgb: 120, 74, 109; --pill-bg: var(--filo-bg); }
 
 /* «Todas»: aro con los colores de las seis materias girando alrededor */
 .pill-all {
@@ -1180,6 +1198,7 @@ a { text-decoration: none; color: inherit; }
 .mc-icon.rep  { background: var(--rep-bg);  color: var(--rep); }
 .mc-icon.civ  { background: var(--civ-bg);  color: var(--civ); }
 .mc-icon.ia   { background: var(--ia-bg);   color: var(--ia); }
+.mc-icon.filo { background: var(--filo-bg); color: var(--filo); }
 
 .mc-subj.esp  { background: var(--esp-bg);  color: var(--esp); }
 .mc-subj.mat  { background: var(--mat-bg);  color: var(--mat); }
@@ -1191,6 +1210,7 @@ a { text-decoration: none; color: inherit; }
 .mc-subj.rep  { background: var(--rep-bg);  color: var(--rep); }
 .mc-subj.civ  { background: var(--civ-bg);  color: var(--civ); }
 .mc-subj.ia   { background: var(--ia-bg);   color: var(--ia); }
+.mc-subj.filo { background: var(--filo-bg); color: var(--filo); }
 
 /* ====== EMPTY STATE ====== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
@@ -2821,6 +2841,7 @@ a { text-decoration: none; color: inherit; }
 .camp-sa-rep { background: #ede9fe; color: #5b21b6; border: 2px solid #c4b5fd; }
 .camp-sa-civ { background: #eaf3d4; color: #3f6212; border: 2px solid #bbdc7a; }
 .camp-sa-ia  { background: #fae8ff; color: #86198f; border: 2px solid #e9a5f0; }
+.camp-sa-filo { background: #f3e6ef; color: #784a6d; border: 2px solid #d3a8c6; }
 
 @keyframes campPop {
   0%   { transform: scale(.7); opacity: 0; }
@@ -2890,6 +2911,7 @@ a { text-decoration: none; color: inherit; }
 .camp-q-header-rep { background: #ede9fe; }
 .camp-q-header-civ { background: #eaf3d4; }
 .camp-q-header-ia  { background: #fae8ff; }
+.camp-q-header-filo { background: #f3e6ef; }
 .camp-q-subj-icon { font-size: calc(20px * var(--metas-fz, 1)); }
 .camp-q-subj-label {
   font-weight: 800;
@@ -3191,6 +3213,7 @@ a { text-decoration: none; color: inherit; }
 .camp-ms-bh-rep { background: #ede9fe; color: #5b21b6; }
 .camp-ms-bh-civ { background: #eaf3d4; color: #3f6212; }
 .camp-ms-bh-ia  { background: #fae8ff; color: #86198f; }
+.camp-ms-bh-filo { background: #f3e6ef; color: #784a6d; }
 .camp-ms-tog {
   padding: 3px 9px;
   border-radius: 6px;
@@ -3295,6 +3318,7 @@ a { text-decoration: none; color: inherit; }
 .ruta-pct.rep  { color: var(--rep);  background: var(--rep-bg);  }
 .ruta-pct.civ  { color: var(--civ);  background: var(--civ-bg);  }
 .ruta-pct.ia   { color: var(--ia);   background: var(--ia-bg);   }
+.ruta-pct.filo { color: var(--filo); background: var(--filo-bg); }
 
 .ruta-bar {
   height: 6px;
@@ -3312,6 +3336,7 @@ a { text-decoration: none; color: inherit; }
 .ruta-bar-fill.rep  { background: var(--rep);  }
 .ruta-bar-fill.civ  { background: var(--civ);  }
 .ruta-bar-fill.ia   { background: var(--ia);   }
+.ruta-bar-fill.filo { background: var(--filo); }
 
 .ruta-mapa { padding: 4px 14px 12px; }
 
@@ -3806,6 +3831,7 @@ a { text-decoration: none; color: inherit; }
 .camp-sp-rep { background: linear-gradient(150deg, #8b5cf6, #5b21b6); }
 .camp-sp-civ { background: linear-gradient(150deg, #84cc16, #3f6212); }
 .camp-sp-ia  { background: linear-gradient(150deg, #d946ef, #86198f); }
+.camp-sp-filo { background: linear-gradient(150deg, #b9789f, #784a6d); }
 .camp-elegir-btn {
   display: block; margin: 10px auto 0;
   border: 2px dashed #8b5cf6;

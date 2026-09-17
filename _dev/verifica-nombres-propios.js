@@ -68,6 +68,18 @@ const NOMBRES = [
      ficha y en el mosaico de su Zona Docente, y una minúscula ahí lo deja
      dudando de si es la misma cosa. */
   ['josé cecilio del valle', 'José Cecilio del Valle'],
+  /* Los trajo la Ruta de la Raíz (Filosofía), con su primera unidad. Son
+     nombres propios de verdad y van en material que un maestro fotocopia para
+     preparar el examen de septiembre: una minúscula en «Sócrates» le quita
+     autoridad a la ficha entera, por bien verificado que esté el dato.
+     ⚠️ «Grecia» y «Atenas» van aquí y «grecia» en minúscula no aparece en
+     ninguna parte del repositorio: se comprobó antes de añadirlos, porque una
+     entrada que acuse a un archivo sano enseña a no mirar la lista. */
+  ['tales de mileto', 'Tales de Mileto'],
+  ['sócrates', 'Sócrates'],
+  ['hipatia de alejandría', 'Hipatia de Alejandría'],
+  ['grecia', 'Grecia'],
+  ['atenas', 'Atenas'],
   ['dcnb', 'DCNB'],
   ['whatsapp', 'WhatsApp'],
   ['zona docente', 'Zona Docente'],

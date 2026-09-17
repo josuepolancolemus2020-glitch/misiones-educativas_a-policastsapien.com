@@ -143,4 +143,13 @@ const DIAGNOSTICOS = {
     { etapa: 4, q: 'Cuatro obreros levantan un muro en 50 días. ¿Cuántos obreros hacen falta para levantarlo en 10 días?', o: ['20', '8', '40', '200'], a: 0 },
     { etapa: 3, q: '¿Cómo se encuentra la idea principal de un texto?', o: ['Copiando la primera oración', 'Preguntándose de qué trata TODO el texto', 'Buscando la palabra más repetida', 'Leyendo solo el título'], a: 1 },
   ],
+  /* Ruta de la Raíz (Filosofía). Ruta corta: una sola etapa por ahora, así que
+     van tres preguntas, sacadas del evalMCBank de la misión. Las tres miden lo
+     que la unidad enseña de verdad: qué quiere decir la palabra y cómo se
+     distingue una clase de pregunta de otra. */
+  raiz: [
+    { etapa: 1, q: '¿Qué quiere decir la palabra «filosofía»?', o: ['Ganas de saber', 'El que ya sabe', 'Escuela de pensar', 'Libro antiguo'], a: 0 },
+    { etapa: 1, q: '¿Cuál es la señal de una pregunta de hechos?', o: ['Que es muy larga', 'Que nadie la ha contestado', 'Que tiene una sola respuesta y se puede comprobar', 'Que la hizo un filósofo'], a: 2 },
+    { etapa: 1, q: '«¿Está bien callarse cuando molestan a otro?» es una pregunta…', o: ['de valor', 'de hechos', 'de significado', 'sin clase'], a: 0 },
+  ],
 };

@@ -1,0 +1,205 @@
+# Filosofía en M.E.T.A.S · de dónde sale y qué se enseña
+
+La **Ruta de la Raíz** 🌳 estrenó la materia de **Filosofía** el 17 de
+septiembre de 2026, con su primera unidad: **El Asombro: por qué preguntamos**
+(id 79, etapa 1).
+
+Este documento existe por la misma razón que
+`CURRICULA-INTELIGENCIA-ARTIFICIAL.md`: antes de escribir una línea de código
+hay que poder decir **de dónde sale cada cosa**. Y hay una diferencia con
+aquella que conviene dejar clara de entrada.
+
+## ⚠️ Filosofía NO es una materia inventada para esta plataforma
+
+Inteligencia Artificial es la única materia del catálogo que no está en el
+currículo hondureño. **Filosofía sí está**, y en dos sitios. Las cuatro citas
+que siguen **se confirmaron en el PDF**, no en un buscador, que es la regla de
+`INVESTIGACION-ESTATUTO-DOCENTE.md`: buscar no es leer.
+
+### 1 · En Educación Básica: dentro del Área de Ciencias Sociales
+
+El DCNB la nombra por su nombre, en el **capítulo 11** del área, y con estas
+palabras:
+
+> «La Filosofía y dentro de ella, la Formación Ética y Ciudadana son
+> fundamentales para preparar al hondureño de tal modo que se pueda desenvolver
+> con éxito en un mundo globalizado que exige de cada persona una serie de
+> conocimientos, habilidades, actitudes y valores para ser ciudadanos
+> productivos, creativos y críticos, capaces de transformar la realidad.»
+
+Y al enumerar las partes del área, la primera es:
+
+> «La Persona: (Filosofía). Se le concibe a la misma como el único ser capaz de
+> pensar, comunicarse y elegir.»
+
+| dónde | página del archivo |
+|---|---|
+| `_dev/dcnb-pdf/dcneb-basica-iii-ciclo.pdf` | **318** (capítulo 11, Área de Ciencias Sociales) |
+| `_dev/dcnb-pdf/dcneb-basica-ii-ciclo.pdf` | **261** (el mismo texto, con una coma de diferencia) |
+
+En Markdown: `_dev/dcnb/dcneb-basica-iii-ciclo-50-ciencias-sociales-1de2.md` y
+`_dev/dcnb/dcneb-basica-ii-ciclo-47-ciencias-sociales-1de2.md`.
+
+### 2 · En Educación Media: espacio curricular propio, de 120 horas
+
+En el **BTP en Informática, UNDÉCIMO GRADO**:
+
+> «Nombre del Espacio Curricular FILOSOFÍA · Duración 120 HORAS ANUALES ·
+> 3 HORAS SEMANALES»
+>
+> Competencia: «Explicar el origen del saber filosófico y su evolución
+> histórica a través del método comparativo.»
+
+`_dev/dcnb-pdf/cnb-media-btp-sistematizacion-informatica-12-2025.pdf`, página
+**107** del archivo.
+
+⚠️ **Ese documento se declara a sí mismo «Versión Preliminar 2025»** en su
+encabezado, y así hay que citarlo siempre. Y ⚠️ **el currículo de Media no
+está completo en `_dev/dcnb-pdf/` para todas las modalidades** (hay tres), así
+que de Media no se afirma nada más allá de lo que dice este documento sobre
+esta modalidad: es la misma regla que se puso para Inteligencia Artificial.
+
+### 3 · Y de ahí salen las dos primeras unidades, textualmente
+
+| unidad | criterio de evaluación que cumple, tal cual |
+|---|---|
+| **1 · El Asombro** | **CE1.1** «Identifica el alcance que tiene la filosofía como saber en sentido etimológico y conceptual» |
+| **1 · El Asombro** | **CE1.4** «Describe la influencia de la filosofía en el desarrollo de las sociedades a través del tiempo en el surgimiento de las ciencias» |
+| **2 · Pensar con orden** | **RA2** «Construir razonamientos sobre el entorno, aplicando elementos de la lógica clásica y simbólica» · **CE2.1** «Identifica los elementos que conforman el pensamiento lógico clásico desde el contexto de la antigua Grecia» |
+
+El CE1.1 es el que obliga a enseñar **qué quiere decir la palabra** y no solo
+qué es la cosa: de ahí sale el bloque de «filo» + «sofía» de la unidad 1. Y el
+CE1.4 es el **árbol del saber** entero: cada asignatura de la escuela nació de
+una pregunta filosófica.
+
+## ⚠️ Por qué es materia propia y no un tema de Ciencias Sociales
+
+Se pensó meterla ahí, porque es donde el DCNB de Básica la pone, y se
+descartó. La razón es la del propio currículo del autor: el contenido es
+**holístico** y alimenta a TODAS las asignaturas, no a una.
+
+El árbol lo dice: las **ramas** son Matemáticas, Español, Ciencias Naturales,
+Ciencias Sociales, Arte y Educación Física; las **raíces** son la lógica, la
+metafísica, la epistemología, el lenguaje, la persona, la ética, la política y
+la estética. Meter la filosofía dentro de Ciencias Sociales sería decir que es
+una rama al lado de las otras, que es exactamente lo que este currículo niega.
+
+Es la misma decisión, y por el mismo motivo, que tomó **Repaso General**: junta
+a todas las materias, así que no puede colgar de ninguna. Y un nivel más
+arriba lo hace la propia Secretaría, que en Media la saca de Ciencias Sociales
+y la pone como espacio curricular propio.
+
+## El currículo: diez unidades, una por mes, las mismas para los tres ciclos
+
+Lo escribió el autor, y su decisión de diseño es la que manda en todo lo demás:
+**las diez unidades tienen el mismo contenido para I, II y III Ciclo.** Lo que
+cambia de un ciclo a otro es la profundidad, el tipo de actividad y la
+evidencia de aprendizaje. Así una escuela entera puede trabajar el mismo tema
+el mismo mes y compartir murales, debates y ferias.
+
+| # | mes | unidad | raíz |
+|---|---|---|---|
+| 1 | Febrero | **El asombro** | ¿Qué es filosofar? |
+| 2 | Marzo | **Pensar con orden** | Lógica |
+| 3 | Abril | ¿De qué está hecho el mundo? | Metafísica y cosmovisiones |
+| 4 | Mayo | ¿Cómo sé que sé? | Epistemología |
+| 5 | Junio | Palabras que piensan | Lenguaje y retórica |
+| 6 | Julio | ¿Quién soy yo? | Antropología filosófica |
+| 7 | Agosto | ¿Qué debo hacer? | Ética |
+| 8 | Septiembre | Vivir juntos | Filosofía política |
+| 9 | Octubre | Lo bello | Estética |
+| 10 | Noviembre | Naturaleza, técnica y futuro | Ética aplicada |
+
+Y los tres ciclos, con su lema: **I Ciclo asombrarse** (1.º a 3.º, cuentos,
+juego y dibujo), **II Ciclo razonar** (4.º a 6.º, dilemas y pequeñas
+investigaciones), **III Ciclo argumentar** (7.º a 9.º, fragmentos de texto,
+debates y ensayos breves).
+
+La clase son **cinco momentos en 45 minutos**, dos veces por semana: asombro,
+preguntas, diálogo, conexión y metacognición. Los cinco están en
+`js/data/filosofia-asombro.js` y se pintan en la misión: el maestro los tiene
+delante sin tener que abrir otro documento.
+
+## Lo que NO se escribe, y a propósito
+
+- ⚠️ **NI UNA FECHA.** Ni un año de nacimiento, ni un siglo, ni «hace 2 500
+  años». De Tales de Mileto, Sócrates e Hipatia de Alejandría se dice qué
+  hicieron y por qué se les recuerda, que es lo que la unidad necesita y lo que
+  nadie discute. Una fecha sacada de un extracto de buscador no acredita nada.
+  Es la misma decisión que dejó fuera los números de decreto de la flor y del
+  árbol nacionales y la fecha de nacimiento de José Trinidad Reyes.
+
+  Y el hueco **no se tapa con silencio: se convierte en la actividad**. La
+  línea de tiempo «De la filosofía a las ciencias» es justo lo que el currículo
+  pide para III Ciclo, así que vive en la ficha como una investigación, con el
+  aviso de que las fechas se buscan en una fuente que se pueda citar.
+
+- **Ninguna corriente contemporánea afirmada de memoria.** El currículo de
+  Media nombra pragmatismo, materialismo, existencialismo, filosofía analítica
+  y hermenéutica. Eso es undécimo grado y está fuera de esta ruta, que es de
+  Básica: cuando se llegue, cada una tendrá que traer de dónde sale.
+
+- **Nada que envejezca.** Ni nombres de productos, ni cifras, ni «el filósofo
+  más importante de hoy». La ficha se guarda un año en una gaveta.
+
+- ⚠️ **No se le da al alumno una definición de filosofía y se acaba.** El
+  CE1.1 pide el sentido «etimológico Y conceptual», y el segundo se construye:
+  el currículo de Media lo dice con sus palabras, «Construcción de definiciones
+  del término filosofía». Por eso la misión enseña la etimología como dato y
+  deja el concepto como algo que el alumno produce.
+
+## El color se midió
+
+Ciruela **#784a6d**. No se eligió a ojo, y el barrido tuvo que corregirse antes
+de servir: medir el círculo de tonos entero premiaba los casi-negros (un
+`#391713` saca ΔE 56 y no se lee como un color de materia, se lee como texto
+negro). Así que primero se midió la **banda** en la que viven las diez materias
+que ya había (L\* de 33,4 a 55,1 y croma de 28 a 102) y el barrido se hizo
+dentro de ella.
+
+El ciruela es el hueco más ancho que queda: **ΔE 43,1** contra lo más cercano
+(el magenta de Inteligencia Artificial), 43,2 contra el rosa de Inglés y 43,5
+contra el cian de Programación. Más hueco que los 40,5 con los que entró la IA.
+Contrasta **7,0:1** sobre blanco, que hace falta porque el color se usa como
+TEXTO del chip. Y lo que lo separa a la vista del magenta de la IA no es el
+tono: es el croma, 28 contra 70, o sea que uno es vivo y el otro apagado.
+
+Los verdes, los teales y los cianes están todos ocupados: el cian libre solo
+daba ΔE 15 contra Programación, y el verde de pizarra del árbol del saber
+(`#1d4538`) daba 32,5 contra Programación y se sale de la banda. Ese verde se
+usa igual, pero como **color secundario de la misión**, que no identifica
+materia ninguna.
+
+## Se lee en cuarto grado, y está medido
+
+Es la normativa de la ruta de IA, y aquí aprieta más: esta misión la abre un
+niño de **1.º** y un joven de **9.º**, porque el contenido es el mismo para los
+tres ciclos. Medido con `node _dev/mide-legibilidad.js misiones/basica-el-asombro`:
+
+| | El Asombro | la vara: 5 misiones de primaria |
+|---|---|---|
+| INFLESZ (más alto, más fácil) | **80,1** | 67,6 a 78,3 · mediana 74,1 |
+| palabras por frase | **8,8** | 6,4 a 9,6 |
+| frase más larga | **26** | 23 a 47 |
+| tramo más largo sin corte | **45** | 38 a 180 |
+
+Se midió al escribirla y se corrigió: la primera versión tenía una frase de 53
+palabras y un tramo de 84, los dos en texto que había escrito yo. Los peores
+eran la sección de Recursos y las pautas del pensamiento crítico, que son
+justo lo que el maestro lee en voz alta.
+
+## Antes de publicar un cambio de esta materia
+
+```
+node _dev/verifica-filosofia.js             → la pantalla y el papel, dato por dato
+node _dev/verifica-nombres-propios.js
+node _dev/mide-legibilidad.js misiones/basica-el-asombro --detalle
+node _dev/verifica-mision-nueva.js misiones/basica-el-asombro/el-asombro.html
+node _dev/verifica-ficha-paginas.js ficha-el-asombro
+node _dev/servidor-estatico.js       (en otra terminal)
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-el-asombro/el-asombro.html
+```
+
+Si se tocan los datos, la ficha **se vuelve a repartir**
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro`): un párrafo que crece dos
+renglones parte una hoja en dos, y cada hoja de más son 43 fotocopias por grado.

@@ -30,6 +30,17 @@ const RUTAS = {
      que es justo el error del que salen todos los demás. El nombre dice lo que
      es, a propósito: la máquina no piensa, aprende de ejemplos. */
   maquina: { nombre: 'Ruta de la Máquina que Aprende', emoji: '✨', color: 'ia' },
+  /* Ruta de la Raíz: Filosofía. El nombre dice dónde va, y no es adorno: cada
+     asignatura de la escuela nació como una pregunta filosófica. La física
+     empezó cuando alguien preguntó de qué está hecho el mundo; la gramática,
+     cuando alguien preguntó qué es una palabra; la educación cívica, cuando
+     alguien preguntó quién debe mandar. Así que esta ruta no va AL LADO de las
+     demás materias: va DEBAJO, y por eso es la raíz y no otro árbol.
+     Va aparte de la Ruta de la Patria, que es la otra candidata: aquella
+     enseña qué DICE la norma —los símbolos, el Himno, los poderes, la
+     Constitución— y esta enseña a preguntar POR QUÉ, que es lo que hace falta
+     para leer una norma sin creérsela ni descartarla. */
+  raiz: { nombre: 'Ruta de la Raíz', emoji: '🌳', color: 'filo' },
 };
 
 const MISSIONS = [
@@ -128,6 +139,14 @@ const MISSIONS = [
   { id: 76, title: 'Los Peligros de la Inteligencia Artificial',         subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 5, xp: 40, icon: '🛡️', pais: 'HN', url: 'misiones/3ciclo-peligros-ia/peligros-ia.html' },
   { id: 77, title: 'En los Albores de la Singularidad',                  subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 6, xp: 40, icon: '🧭', pais: 'HN', url: 'misiones/3ciclo-albores-singularidad/albores-singularidad.html' },
   { id: 78, title: 'Escenarios por venir',                                subject: 'ia',          color: 'ia',   grade: 'III Ciclo',      cycle: '3ciclo',   ruta: 'maquina', etapa: 7, xp: 40, icon: '🔮', pais: 'HN', url: 'misiones/3ciclo-escenarios-porvenir/escenarios-porvenir.html' },
+  /* Filosofía, la Ruta de la Raíz. El currículo es HOLÍSTICO y eso se ve en el
+     campo `grade`: las diez unidades son las mismas para I, II y III Ciclo y lo
+     que cambia de un ciclo a otro es la profundidad, la actividad y el producto,
+     no el contenido. Por eso «I, II y III Ciclo» no nombra un grado, y el
+     ordenador de la vista del alumno —que lee `grade` quitando los no dígitos—
+     no le pone rótulo: es lo correcto, porque esta misión es de todos.
+     Es la segunda materia de la plataforma que no está en el DCNB. */
+  { id: 79, title: 'El Asombro: por qué preguntamos',                     subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 1, xp: 30, icon: '❓', pais: 'HN', url: 'misiones/basica-el-asombro/el-asombro.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 

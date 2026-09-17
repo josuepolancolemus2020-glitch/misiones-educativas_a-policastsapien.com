@@ -35,6 +35,7 @@ const CAMP_SUBJECTS = [
      pantalla, pero romper la uniformidad de un código de materia es la clase de
      detalle que después nadie sabe si fue a propósito. */
   { key: 'ia',           label: 'Inteligencia Artificial', short: 'IAR', icon: '🧠', color: '#86198f', bg: '#fae8ff', cls: 'ia' },
+  { key: 'filosofía',    label: 'Filosofía',    short: 'FIL', icon: '🌳', color: '#784a6d', bg: '#f3e6ef', cls: 'filo' },
 ];
 
 /* ── Ruleta: 2 gajos por materia, generada desde CAMP_SUBJECTS ──

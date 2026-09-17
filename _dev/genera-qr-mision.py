@@ -73,7 +73,11 @@ def nombre_qr(url):
     `qr_de_cada_mision`, que lee los QR y no adivina.
     """
     carpeta = url.split('/')[1]
-    carpeta = re.sub(r'^(1ciclo|2ciclo|3ciclo|2y3ciclo|mat-2y3ciclo|bach-uni)-', '', carpeta)
+    # `basica` es el prefijo de una misión HOLÍSTICA: la Ruta de la Raíz sirve
+    # el mismo contenido a I, II y III Ciclo, así que su carpeta no puede
+    # llevar el prefijo de un ciclo. Sin esta entrada, el nombre por convenio
+    # saldría `qr-mision-basica-el-asombro.png` y no `qr-mision-el-asombro.png`.
+    carpeta = re.sub(r'^(1ciclo|2ciclo|3ciclo|2y3ciclo|mat-2y3ciclo|bach-uni|basica)-', '', carpeta)
     return IMG / ('qr-mision-' + carpeta + '.png')
 
 
