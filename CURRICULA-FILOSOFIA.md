@@ -1,8 +1,9 @@
 # Filosofía en M.E.T.A.S · de dónde sale y qué se enseña
 
 La **Ruta de la Raíz** 🌳 estrenó la materia de **Filosofía** el 17 de
-septiembre de 2026, con su primera unidad: **El Asombro: por qué preguntamos**
-(id 79, etapa 1).
+septiembre de 2026, con sus dos primeras unidades: **El Asombro: por qué
+preguntamos** (id 79, etapa 1) y **Pensar con Orden: cuándo una razón es
+buena** (id 80, etapa 2).
 
 Este documento existe por la misma razón que
 `CURRICULA-INTELIGENCIA-ARTIFICIAL.md`: antes de escribir una línea de código
@@ -110,6 +111,11 @@ el mismo mes y compartir murales, debates y ferias.
 | 9 | Octubre | Lo bello | Estética |
 | 10 | Noviembre | Naturaleza, técnica y futuro | Ética aplicada |
 
+**En negrita, las que ya están escritas** —hoy, en septiembre de 2026, las dos
+primeras—. Las ocho siguientes se calcan de estas dos: el patrón es el de
+siempre, los datos en `js/data/filosofia-<unidad>.js` y la pantalla
+pintándolos.
+
 Y los tres ciclos, con su lema: **I Ciclo asombrarse** (1.º a 3.º, cuentos,
 juego y dibujo), **II Ciclo razonar** (4.º a 6.º, dilemas y pequeñas
 investigaciones), **III Ciclo argumentar** (7.º a 9.º, fragmentos de texto,
@@ -172,34 +178,49 @@ materia ninguna.
 
 ## Se lee en cuarto grado, y está medido
 
-Es la normativa de la ruta de IA, y aquí aprieta más: esta misión la abre un
-niño de **1.º** y un joven de **9.º**, porque el contenido es el mismo para los
-tres ciclos. Medido con `node _dev/mide-legibilidad.js misiones/basica-el-asombro`:
+Es la normativa de la ruta de IA, y aquí aprieta más: estas misiones las abre
+un niño de **1.º** y un joven de **9.º**, porque el contenido es el mismo para
+los tres ciclos. Medido con `node _dev/mide-legibilidad.js <carpeta>`, contando
+la pantalla, los bancos, los datos y las hojas de la ficha:
 
-| | El Asombro | la vara: 5 misiones de primaria |
-|---|---|---|
-| INFLESZ (más alto, más fácil) | **80,1** | 67,6 a 78,3 · mediana 74,1 |
-| palabras por frase | **8,8** | 6,4 a 9,6 |
-| frase más larga | **26** | 23 a 47 |
-| tramo más largo sin corte | **45** | 38 a 180 |
+| | El Asombro | Pensar con Orden | la vara: 5 misiones de primaria |
+|---|---|---|---|
+| INFLESZ (más alto, más fácil) | **82,0** | **86,7** | 67,6 a 78,3 · mediana 74,1 |
+| palabras por frase | **8,2** | **8,4** | 6,4 a 9,6 |
+| frase más larga | **24** | **25** | 23 a 47 |
+| tramo más largo sin corte | **45** | **44** | 38 a 180 |
+| palabras en pantalla | 4 279 | 4 603 | 3 279 a 3 794 |
 
-Se midió al escribirla y se corrigió: la primera versión tenía una frase de 53
-palabras y un tramo de 84, los dos en texto que había escrito yo. Los peores
-eran la sección de Recursos y las pautas del pensamiento crítico, que son
-justo lo que el maestro lee en voz alta.
+Se midió al escribirlas y se corrigió: la primera versión de la unidad 1 tenía
+una frase de 53 palabras y un tramo de 84, los dos en texto que había escrito
+yo. Los peores eran la sección de Recursos y las pautas del pensamiento
+crítico, que son justo lo que el maestro lee en voz alta.
+
+⚠️ **Y el medidor mismo mentía según por dónde se lo llamara.** Con una carpeta
+en la línea de órdenes buscaba la misión solo en la lista de la ruta de IA, así
+que a una de Filosofía la medía **sin su archivo de datos y sin su ficha** y
+daba 8,7 palabras por frase donde `verifica-filosofia` decía 8,4. Los números
+de esta tabla son los de después del arreglo; los de antes estaban medidos a
+medias. Está anotado en `CLAUDE.md`.
 
 ## Antes de publicar un cambio de esta materia
 
 ```
-node _dev/verifica-filosofia.js             → la pantalla y el papel, dato por dato
+node _dev/verifica-filosofia.js             → las dos unidades, del archivo al papel
 node _dev/verifica-nombres-propios.js
-node _dev/mide-legibilidad.js misiones/basica-el-asombro --detalle
-node _dev/verifica-mision-nueva.js misiones/basica-el-asombro/el-asombro.html
-node _dev/verifica-ficha-paginas.js ficha-el-asombro
+node _dev/verifica-lab-legible.js           → los rótulos del Laboratorio, sin partirse
+node _dev/mide-legibilidad.js misiones/basica-pensar-con-orden --detalle
+node _dev/verifica-mision-nueva.js misiones/basica-pensar-con-orden/pensar-con-orden.html
+node _dev/verifica-ficha-paginas.js ficha-pensar-con-orden
 node _dev/servidor-estatico.js       (en otra terminal)
-METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-el-asombro/el-asombro.html
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-pensar-con-orden/pensar-con-orden.html
 ```
 
+(Y lo mismo con `basica-el-asombro` / `el-asombro.html` / `ficha-el-asombro`
+para la otra unidad.)
+
 Si se tocan los datos, la ficha **se vuelve a repartir**
-(`node _dev/reparte-hojas-ficha.js ficha-el-asombro`): un párrafo que crece dos
-renglones parte una hoja en dos, y cada hoja de más son 43 fotocopias por grado.
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden`):
+un párrafo que crece dos renglones parte una hoja en dos, y cada hoja de más
+son 43 fotocopias por grado. ⚠️ El repartidor **protege solo la última
+página**, así que la hoja del docente es una y va al final.

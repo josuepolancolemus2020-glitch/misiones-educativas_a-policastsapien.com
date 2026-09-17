@@ -76,6 +76,10 @@ const NOMBRES = [
      ninguna parte del repositorio: se comprobó antes de añadirlos, porque una
      entrada que acuse a un archivo sano enseña a no mirar la lista. */
   ['tales de mileto', 'Tales de Mileto'],
+  ['aristóteles', 'Aristóteles'],
+  ['platón', 'Platón'],
+  ['lewis carroll', 'Lewis Carroll'],
+  ['inglaterra', 'Inglaterra'],
   ['sócrates', 'Sócrates'],
   ['hipatia de alejandría', 'Hipatia de Alejandría'],
   ['grecia', 'Grecia'],

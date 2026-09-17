@@ -74,6 +74,19 @@ for (const m of misiones) {
 if (!sinHoja) bien(`las ${misiones.length} enlazan la hoja compartida`);
 if (!malOrden) bien('en todas el <link> va después del CSS propio de la misión');
 
+/* La regla que promete que ningún rótulo se parte a mitad de palabra. Se
+   comprueba del archivo además de en el navegador, porque `anywhere` y
+   `min-content` juntos se anulan y eso no se ve: el botón sigue cabiendo.
+   ⚠️ Se quitan los COMENTARIOS antes de buscar: el de esa hoja explica el
+   problema escribiendo `overflow-wrap:anywhere`, así que sin esto la sonda
+   acusaría al archivo que trae el arreglo. Es la trampa de siempre. */
+const hoja = fs.readFileSync(path.join(RAIZ, 'css/lab-legible.css'), 'utf8')
+  .replace(/\/\*[\s\S]*?\*\//g, '');
+if (/min-width\s*:\s*min-content/.test(hoja)) bien('la hoja promete que el botón no es más angosto que su palabra más larga');
+else mal('css/lab-legible.css sin min-width:min-content en .lab-btn: los rótulos vuelven a partirse a mitad de palabra');
+if (/overflow-wrap\s*:\s*anywhere/.test(hoja)) mal('css/lab-legible.css usa overflow-wrap:anywhere: eso deja min-content en UNA letra y anula el min-width');
+else bien('no usa overflow-wrap:anywhere, que anularía el min-content');
+
 const sw = fs.readFileSync(path.join(RAIZ, 'sw.js'), 'utf8');
 if (/'\.\/css\/lab-legible\.css'/.test(sw)) bien('sw.js la precachea en STATIC_ASSETS');
 else mal('sw.js no lleva ./css/lab-legible.css en STATIC_ASSETS: sin señal el Laboratorio vuelve a salir chiquito');
@@ -110,6 +123,26 @@ const ABRIR = [
           altoMin: btns.length ? Math.min(...btns.map(b => b.getBoundingClientRect().height)) : null,
           fzBoton: fz(btns[0]),
           seSalen: [...sec.querySelectorAll('*')].filter(e => e.getBoundingClientRect().right > 361).length,
+          /* ¿Se parte alguna PALABRA en dos renglones? Se lo pregunta al
+             navegador con un Range por palabra: si devuelve dos renglones,
+             esa palabra se cortó a mitad de letra. Medirlo con el
+             `measureText` de un canvas mentía por tres píxeles y acusaba a
+             botones sanos. El guion NO cuenta: «Pino-Roble» partido por su
+             guion se lee bien, y es donde el español parte. */
+          partidas: btns.flatMap(b => {
+            const out = [];
+            for (const n of b.childNodes) {
+              if (n.nodeType !== 3) continue;
+              const re = /[^\s\u2010-\u2015-]{2,}/g; let m;
+              while ((m = re.exec(n.textContent))) {
+                const r = document.createRange();
+                r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+                const filas = new Set([...r.getClientRects()].filter(x => x.width > 0.5).map(x => Math.round(x.top)));
+                if (filas.size > 1) out.push(m[0]);
+              }
+            }
+            return out;
+          }),
         };
       }, grande);
       const modo = grande ? 'letra grande' : 'letra normal';
@@ -121,6 +154,8 @@ const ABRIR = [
       else mal(`${nombre} · ${modo}: hay un botón de ${r.altoMin} px de alto (la regla son 44)`);
       if (r.seSalen === 0) bien(`${nombre} · ${modo}: nada se sale del teléfono`);
       else mal(`${nombre} · ${modo}: ${r.seSalen} elementos se salen del teléfono de 360 px`);
+      if (!r.partidas.length) bien(`${nombre} · ${modo}: ningún rótulo se parte a mitad de palabra`);
+      else mal(`${nombre} · ${modo}: ${r.partidas.length} rótulo(s) partidos a mitad de palabra: ${r.partidas.slice(0, 4).map(x => '«' + x + '»').join(' ')}`);
     }
     if (errores.length) mal(`${nombre}: errores de JS al abrir: ${errores.join(' | ')}`);
     await ctx.close();

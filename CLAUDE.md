@@ -3415,8 +3415,10 @@ corre con la carpeta.
 ## Normativa: la materia que SÍ está en el currículo, y nadie la había mirado
 
 **Filosofía** (`filosofía`, clase `filo`, ciruela `#784a6d`) se estrenó el 17 de
-septiembre de 2026 con la **Ruta de la Raíz** 🌳 y su primera unidad:
-**El Asombro: por qué preguntamos** (id 79, etapa 1).
+septiembre de 2026 con la **Ruta de la Raíz** 🌳 y sus dos primeras unidades:
+**El Asombro: por qué preguntamos** (id 79, etapa 1) y **Pensar con Orden:
+cuándo una razón es buena** (id 80, etapa 2). Van las dos para los tres ciclos,
+que es lo propio de esta materia y está explicado más abajo.
 
 Y arrancó con una sorpresa que conviene dejar escrita, porque cambia cómo se
 busca la próxima materia: **se dio por hecho que Filosofía no estaba en el
@@ -3576,22 +3578,178 @@ Se calcó de la Constitución (id 71), que es post-arreglo del CDN. Salió:
   su propio Laboratorio. Es un resto de la misión de próceres, no hace nada y
   no da ningún error.
 
+### La etapa 2: pensar con orden, o cuándo una razón es buena
+
+La segunda unidad de la Ruta de la Raíz es **Pensar con Orden: cuándo una razón
+es buena** (`misiones/basica-pensar-con-orden/`, id 80, etapa 2), y va para los
+tres ciclos como la primera. El currículo la pide con estas palabras —del **CNB
+de Educación Media**, confirmado en el PDF y citado con su página en
+`CURRICULA-FILOSOFIA.md`—: construir razonamientos con la lógica clásica y
+reconocer sus elementos.
+
+Mismo patrón que el Himno, los próceres y la etapa 1: **los datos viven en
+`js/data/filosofia-logica.js`** y solo ahí; la misión los pinta, la ficha es
+HTML plano, y `node _dev/verifica-filosofia.js` compara las dos, dato por dato.
+
+⚠️ **Y NO repite la etapa 1.** Aquella enseña a hacer preguntas y a distinguir
+las tres clases; esta examina **las respuestas que otros dan**. El orden
+importa y está escrito en Recursos: para saber si una razón sostiene hay que
+saber primero de qué clase era la pregunta.
+
+**Lo que de verdad manda aquí es que el alumno JUZGUE, y para eso el semáforo.**
+Un argumento no es «bueno» o «malo»: su razón **sostiene**, **no alcanza** o
+**no se puede examinar**, que son los tres colores de `LOG_SEMAFORO`. Y cada
+color trae su **prueba**, no su definición: lo que hay que preguntarle a la
+razón para saber de qué color es. Las 30 de `LOG_RAZONES` van diez por color,
+así que el alumno no puede acertar por reparto.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. ⚠️ **Bien armado y verdadero son DOS cosas, y las cuatro combinaciones
+   están.** `LOG_VALIDEZ` trae los cuatro casos —bien armado y verdad, bien
+   armado y falso, mal armado y falso, y **mal armado que acierta de casualidad**—
+   y la sonda exige que estén los cuatro. Con tres, el alumno saca la regla
+   falsa de que lo bien armado sale verdadero, y esa regla le funciona hasta el
+   examen. El caso que lo rompe es «todos los peces vuelan, la tilapia es un
+   pez, así que la tilapia vuela»: el armado es perfecto y la conclusión es un
+   disparate, porque la razón de arriba era mentira.
+2. ⚠️ **Uno de los cuatro mensajes del semáforo y una de las razones NO tienen
+   trampa**, por lo mismo que en los peligros de la IA: una misión donde todo
+   es falacia fabrica un alumno que no le cree a nadie, y eso cuesta lo mismo
+   que creerlo todo. Diez de las treinta razones son **verdes**, y se dice que
+   lo son.
+3. ⚠️ **La regla del «si… entonces» va en UN SENTIDO, y ahí está el error del
+   examen.** «Si llovió, el suelo está mojado» no dice que el suelo mojado
+   pruebe que llovió —lo pudo mojar la pila—. `LOG_SI_ENTONCES` trae el `bien`,
+   el `mal` y el `ojo`, y el `ojo` es el que hace falta: sin él la misión
+   enseña la regla y calla justo la vuelta que el alumno va a dar mal.
+4. **Las cuatro falacias se enseñan por su MECANISMO y con la pregunta que las
+   desarma**, no como lista de nombres latinos. Es la misma forma de los trece
+   peligros de la IA: si de una no se puede decir qué hace y qué la desarma,
+   todavía no está escrita. Y cada una dice **cómo suena** —la frase tal cual se
+   oye en el aula o en la pulpería— y **qué cuesta**, que es lo que la vuelve
+   memorable.
+5. **El arranque le pasa a alguien y le cuesta algo:** a Wilmer le dijeron que
+   el abono caro es el bueno «porque todo el mundo lo compra», compró ocho
+   sacos, y ahí se fue la mitad del dinero de la siembra para una milpa que
+   salió igual que la del vecino. Nadie le mintió: le dieron una razón que no
+   era una razón.
+6. **Se cuentan RAZONES, no personas.** La misión no juzga a nadie por dar una
+   razón mala —Wilmer no es tonto y el de la pulpería no es un estafador—:
+   juzga la razón. Es lo que separa examinar de desconfiar, y es también lo que
+   deja usar la primera falacia («contra la persona») sin practicarla.
+
+**Dos pensadores, y ni una fecha**: Aristóteles, que fue el primero en escribir
+las reglas, y **Lewis Carroll** —el del cuento de Alicia—, que era profesor de
+lógica y escribió silogismos de disparate a propósito, que es exactamente la
+actividad de la tilapia. La regla de la etapa 1 sigue en pie: **de un pensador
+se escribe lo que hizo, nunca cuándo**, porque una fecha mal copiada se pinta
+igual de bien y se estudia igual.
+
+### ⚠️ Y la ficha enseñó tres cosas que valen para cualquier ficha del proyecto
+
+1. ⚠️ **`reparte-hojas-ficha.js` protege SOLO la última página.** Le puse dos
+   hojas de docente al final y el repartidor movió el corte de la penúltima:
+   una actividad del alumno y la **pauta del maestro** acabaron compartiendo
+   hoja, con dos hojas numeradas «9 de 10». En un aula eso es la clave de
+   respuestas fotocopiada para los 43. La ficha del docente **es una sola hoja
+   y es la última**; si hace falta más material del maestro, se aprieta hasta
+   que quepa —aquí fueron dos pasadas, de 310,9 mm a 290,9 y de ahí a caber— o
+   se reparte a mano, pero no se le añade una segunda al final.
+2. ⚠️ **El pie se escribe como lo escriben las otras 75, o el repartidor no
+   sabe renumerar.** Puse `Página <b>1</b> de 9` y el repartidor busca
+   `/Página \d+/`: no encontraba nada y dejaba los números viejos donde
+   cayeran. Y el «de 9» envejece solo en cuanto la ficha gana una hoja, que es
+   justo lo que pasó. Va `<span>Página N</span>`, como en todas. Se corrigió en
+   las dos fichas de la materia, que la primera ya estaba publicada así.
+3. **Y los párrafos de la ficha van en `<p>`, no en `<span>`.** No es estilo:
+   `mide-legibilidad` corta los tramos por elemento de bloque, así que una
+   tarjeta entera hecha de `<span>` le salía como **un tramo de 74 palabras** y
+   la medida de la ficha no decía nada de lo que el niño lee.
+
+⚠️ **Y una del medidor, que contestaba distinto según por dónde se lo llamara.**
+`mide-legibilidad.js` con una carpeta en la línea de órdenes buscaba la misión
+solo en la lista de la ruta de IA, así que a una de Filosofía la medía **sin su
+archivo de datos y sin su ficha** —sin la mitad de lo que el alumno lee— y daba
+8,7 palabras por frase donde su propia sonda decía 8,4. Ahora busca las dos
+listas. Una herramienta que contesta otra cosa según cómo se la llame enseña a
+no mirarla, que es la lección de «Cuadrado **Perfecto**» por otro lado.
+
+### ⚠️ Y una avería que llevaba publicada en las 48 misiones con Laboratorio
+
+Se encontró como se encuentran estas: **abriendo el Laboratorio de la etapa 2 en
+un teléfono de 360 px y mirándolo**, con las sondas en verde. Los botones
+decían **«Contra la person a»**, **«General ización apresur ada»**, **«¿Cómo se
+desarm a?»** — partidos a mitad de letra.
+
+Y no era de esta misión. Medido el 17 de septiembre de 2026 en las 48 que
+tienen Laboratorio, con la letra grande que trae toda misión:
+
+| | |
+|---|---|
+| botones que parten una palabra a mitad de letra | **142 de 391** |
+| misiones con al menos uno | **46 de 48** |
+| lo que se leía | «Matemática s» · «Mitocondri a» · «Característica s» · «person a» |
+
+La causa es una cadena de dos arreglos. `.lab-btn` trae de la plantilla
+`flex:1` y `min-width:80px`, así que en un teléfono caben tres o cuatro por
+fila: **87 px de botón y 65 px de hueco**, cuando una palabra normal del
+español con la letra grande mide de 70 a 130. Y `css/lab-legible.css` había
+añadido `overflow-wrap:anywhere` para que un rótulo 4 px más largo que su
+botón no saliera CORTADO —lo cual arregló el corte y estrenó el partido—.
+
+**Se arregla en la hoja compartida y con una promesa, no con un número:**
+`min-width:min-content` dice «el botón nunca es más angosto que su palabra más
+larga». Con eso el rótulo parte **entre palabras**, que es donde parte el
+español, y caben menos botones por fila — que es lo que tenía que pasar. Es la
+lección de los mandos de los juegos 3D: **no se encoge el rótulo, se encoge la
+pista**.
+
+⚠️ **Y `anywhere` tiene que pasar a `break-word` o el arreglo no hace nada, sin
+que se vea por qué:** `anywhere` cuenta los cortes entre letras al calcular el
+tamaño mínimo del contenido, así que con él `min-content` vale **una letra** y
+`min-width:min-content` no promete nada. `break-word` sigue partiendo cuando no
+queda otra —el corte que se arregló en su día no vuelve— y no toca ese cálculo.
+
+Medido después: **0 de 391**, ninguno cortado, ninguno fuera del teléfono,
+ninguno por debajo de 44 px. Y las secciones no crecieron: el grupo de botones
+de la etapa 2 pasó de 228 a 202 px, porque una palabra entera ocupa menos que la
+misma palabra apilada de tres en tres letras.
+
+⚠️ **Y la primera medición de esto acusó a botones sanos.** Medir la palabra con
+el `measureText` de un canvas y compararla con el hueco del botón fallaba por
+tres píxeles y daba por partido lo que el navegador no parte. La sonda se lo
+**pregunta al navegador**: un `Range` por palabra, y si devuelve dos renglones,
+esa palabra se partió. El guion no cuenta —«Pino-Roble» partido por su guion se
+lee bien—. Es la lección de «Cuadrado **Perfecto**» una vez más: una sonda que
+se pone roja sin avería enseña a no mirarla.
+
+Lo comprueba `verifica-lab-legible`, que ya estaba y ahora mira las dos cosas
+—la hoja del archivo y los rótulos en el navegador, con la letra grande y con la
+normal—. Se comprobó al revés, devolviendo el `anywhere`: **8 fallos**.
+
 **Antes de publicar un cambio de esta materia:**
 
 ```
-node _dev/verifica-filosofia.js             → la pantalla y el papel, dato por dato
+node _dev/verifica-filosofia.js             → las dos unidades, del archivo al papel
 node _dev/verifica-nombres-propios.js
-node _dev/mide-legibilidad.js misiones/basica-el-asombro --detalle
-node _dev/verifica-mision-nueva.js misiones/basica-el-asombro/el-asombro.html
-node _dev/verifica-ficha-paginas.js ficha-el-asombro
+node _dev/verifica-lab-legible.js           → los rótulos del Laboratorio, sin partirse
+node _dev/mide-legibilidad.js misiones/basica-pensar-con-orden --detalle
+node _dev/verifica-mision-nueva.js misiones/basica-pensar-con-orden/pensar-con-orden.html
+node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden
 node _dev/servidor-estatico.js       (en otra terminal)
-METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-el-asombro/el-asombro.html
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-pensar-con-orden/pensar-con-orden.html
 ```
 
+(Con la carpeta y el archivo de la otra unidad, para la otra:
+`misiones/basica-el-asombro/el-asombro.html`.)
+
 Si se tocan los datos, la ficha **se vuelve a repartir**
-(`node _dev/reparte-hojas-ficha.js ficha-el-asombro`): son nueve hojas y un
-párrafo que crece dos renglones parte una en dos. El repartidor corrige solo el
-«Guía de estudio de N páginas» de la misión y el «· N páginas» del índice.
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden`):
+son nueve hojas y diez, y un párrafo que crece dos renglones parte una en dos.
+El repartidor corrige solo el «Guía de estudio de N páginas» de la misión y el
+«· N páginas» del índice — y ⚠️ **protege solo la ÚLTIMA página**, así que la
+hoja del docente es una y va al final.
 
 ## Normativa: la estrella se gana
 

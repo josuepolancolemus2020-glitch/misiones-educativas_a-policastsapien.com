@@ -75,5 +75,34 @@ body.letra-grande .lab-btn{font-size:1.2rem;padding-left:0.55rem;padding-right:0
    se pasaba 4 px de su botón y salía CORTADO, sin que ninguna sonda lo viera:
    el botón cabe en la fila, no se sale del teléfono y se puede tocar. Se vio
    abriéndolo. Se le quita relleno de los lados, que es lo que sobra, y se deja
-   que el rótulo parta de línea antes que salirse. */
-.lab-btn{overflow-wrap:anywhere;}
+   que el rótulo parta de línea antes que salirse.
+
+   ⚠️ Y aquel arreglo trajo el siguiente, que tampoco daba ningún error: el
+   botón nunca más se cortó… pero empezó a PARTIR LAS PALABRAS A MITAD DE
+   LETRA. `overflow-wrap:anywhere` deja partir donde sea, y con `flex:1` y
+   `min-width:80px` caben tres o cuatro botones en una fila de un teléfono de
+   360 px: 87 px de botón, 65 px de hueco de contenido… y una palabra normal
+   del español con la letra grande mide de 70 a 130 px. Resultado medido el 17
+   de septiembre de 2026, con el Laboratorio abierto a 360 px y la letra grande
+   que trae toda misión: **142 de los 391 botones, en 46 de las 48 misiones**,
+   enseñaban «Matemática s», «Mitocondri a», «Característica s», «person a».
+
+   La regla que lo cierra es `min-width:min-content`, que es exactamente la
+   promesa que hacía falta: **el botón nunca es más angosto que su palabra más
+   larga**. Con eso se parte entre palabras —que es donde se parte el
+   español— y caben menos botones por fila, que es lo que tenía que pasar. Es
+   la lección de los mandos de los juegos 3D: no se encoge el rótulo, se
+   encoge la pista.
+
+   ⚠️ Y `anywhere` tiene que pasar a `break-word`, o el arreglo no funciona y
+   no se ve por qué: `anywhere` cuenta los cortes entre letras al calcular el
+   tamaño mínimo del contenido, así que con él `min-content` vale **una letra**
+   y `min-width:min-content` no promete nada. `break-word` parte igual cuando
+   no queda otra —o sea que sigue sin cortarse nada— pero no toca ese cálculo.
+
+   Medido después: **0 de 391**, ninguno cortado, ninguno fuera del teléfono y
+   ninguno por debajo de 44 px. Lo comprueba `verifica-lab-legible`, y lo
+   comprueba PREGUNTÁNDOLE AL NAVEGADOR —un `Range` por palabra: si devuelve
+   dos renglones, esa palabra se partió—. Medirlo con `measureText` de un
+   canvas mentía por tres píxeles y acusaba a botones sanos. */
+.lab-btn{overflow-wrap:break-word;min-width:min-content;}

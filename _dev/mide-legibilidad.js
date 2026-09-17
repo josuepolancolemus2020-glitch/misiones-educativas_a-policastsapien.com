@@ -47,6 +47,7 @@ const IA = [
    la mitad de sus lectores. */
 const FILO = [
   { dir: 'misiones/basica-el-asombro', html: 'el-asombro.html', ficha: 'fichas/ficha-el-asombro.html', datos: ['js/data/filosofia-asombro.js'] },
+  { dir: 'misiones/basica-pensar-con-orden', html: 'pensar-con-orden.html', ficha: 'fichas/ficha-pensar-con-orden.html', datos: ['js/data/filosofia-logica.js'] },
 ];
 
 /* Misiones escritas para primaria, que son la vara. */
@@ -189,8 +190,14 @@ function resumen(bloques) {
   return { palabras: tot.p, pantalla: tot.pantalla, inflesz, porFrase: tot.p / tot.f, maxFrase: tot.max, maxTramo: tot.tramo, largas: 100 * tot.l / tot.p, peor };
 }
 function descubre(dir) {
-  const ia = IA.find(m => m.dir === dir);
-  if (ia) return ia;
+  /* ⚠️ Se buscan las DOS listas. Miraba solo la de IA, así que una misión de
+     Filosofía pasada por la línea de órdenes se medía sin su archivo de datos
+     y sin su ficha —o sea, sin la mitad de lo que el alumno lee— y daba un
+     número distinto del de su sonda: 8,7 palabras por frase donde
+     `verifica-filosofia` decía 8,4. Una herramienta que contesta otra cosa
+     según por dónde se la llame enseña a no mirarla. */
+  const m = IA.find(x => x.dir === dir) || FILO.find(x => x.dir === dir);
+  if (m) return m;
   const d = path.join(RAIZ, dir);
   const html = fs.readdirSync(d).find(f => /\.html$/.test(f) && !/^juego-/.test(f));
   return { dir, html };

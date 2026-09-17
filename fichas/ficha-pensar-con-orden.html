@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Pensar con Orden</title>
+<meta name="robots" content="noindex">
+<style>
+
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: FILOSOFÍA = CIRUELA (#784a6d). No se
+       eligió a ojo: se midió la distancia de color contra las diez materias
+       que ya existían (ΔE 43,1 contra la más cercana). El porqué está en
+       CURRICULA-FILOSOFIA.md.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · La pauta + la hoja del docente SIEMPRE en hoja suelta al final
+     · ⚠️ Aquí NO hay ni una fecha, y no es un olvido: está contado en la
+       cabecera de js/data/filosofia-asombro.js. Ponerlas es la investigación
+       de la página 7. */
+  :root {
+    --fil: #784a6d; --fil-osc: #5f3a57; --fil-claro: #f7eff5;
+    --verde: #1d4538; --verde-claro: #eef5f1;
+    --tinta: #241b22; --gris: #6b5f67; --linea: #e3d2dd;
+    --oro: #b45309;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f6f1f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--fil-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--fil); background: var(--fil-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--fil-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--fil-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--fil); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--fil-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--fil-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--fil-osc); }
+  .hn { background: var(--verde-claro); border: 1px solid #cfe2d8; }
+  .hn b { color: var(--verde); }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--fil); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf6f9; }
+  td.k { font-weight: 700; color: var(--fil-osc); white-space: nowrap; }
+
+  .acts h3 { border-bottom: 2px solid var(--fil-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--fil); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #a99aa4; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--fil); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--fil-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .pauta { background: #fbf4f8; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--fil-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  /* ═══ LAS TRES PIEZAS DE UN ARGUMENTO ═══ */
+  .pieza { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+           padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .pieza b { font-size: 11.5pt; color: var(--fil-osc); }
+  .pieza p.q { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .pieza p.d { font-size: 9.5pt; color: var(--gris); margin: 0; }
+  .pieza p.ej { font-size: 10.5pt; font-style: italic; background: #faf7f9;
+                border-radius: 6px; padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ EL SEMÁFORO ═══
+     ⚠️ Cada color lleva SU EMOJI además del color. Esta hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde:
+     sin el emoji, el semáforo sería justo la actividad que él no puede hacer. */
+  .sem { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+         padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .sem.c-verde { border-left-color: #1d7a4c; }
+  .sem.c-amarillo { border-left-color: #b45309; }
+  .sem.c-rojo { border-left-color: #9b1c1c; }
+  .sem b { font-size: 11.5pt; color: var(--fil-osc); }
+  .sem .et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+             border-radius: 999px; padding: 1px 7px; background: var(--fil-claro); color: var(--fil-osc); }
+  .sem p.s { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .sem p.p { font-size: 10pt; background: var(--verde-claro); border-radius: 6px;
+             padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ LAS FALACIAS ═══ */
+  .fal { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+         padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .fal b { font-size: 11.5pt; color: var(--fil-osc); }
+  .fal p.m { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .fal p.su { font-size: 10.5pt; font-style: italic; background: #faf7f9;
+              border-radius: 6px; padding: 3px 8px; margin: 3px 0; }
+  .fal p.de { font-size: 10.5pt; background: var(--verde-claro); border-radius: 6px;
+              padding: 3px 8px; margin: 0; }
+  .fal p.cu { font-size: 9.5pt; color: var(--gris); margin: 3px 0 0; }
+
+  /* ═══ BIEN HECHO NO ES VERDAD ═══
+     La raya encima de la conclusión es la que hace ver que SALE de las
+     razones y no es otra frase más. */
+  .val { border: 1.5px solid var(--linea); border-radius: 8px; padding: 6px 12px; margin: 6px 0;
+         break-inside: avoid; }
+  .val .t { font-size: 11pt; font-weight: 800; color: var(--fil-osc); }
+  .val .ets { margin: 3px 0; }
+  .val .ets span { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;
+                   border-radius: 999px; padding: 1px 7px; border: 1px solid var(--linea); margin-right: 4px; }
+  .val .ets .si { background: var(--verde-claro); color: var(--verde); }
+  .val .ets .no { background: #fdeaea; color: #9b1c1c; }
+  .val ul { margin: 2px 0 2px 22px; font-size: 10.5pt; }
+  .val p.c { font-size: 10.5pt; font-weight: 700; border-top: 1.5px solid var(--fil);
+             padding-top: 3px; margin: 3px 0 0; }
+  .val p.q { font-size: 9.5pt; color: var(--gris); margin: 2px 0 0; }
+
+  /* ═══ EL SI… ENTONCES ═══ */
+  .regla-caja { font-size: 12pt; font-weight: 800; color: var(--fil-osc); background: var(--fil-claro);
+                border: 1.5px solid var(--fil); border-radius: 8px; padding: 6px 12px; text-align: center;
+                margin: 7px 0; break-inside: avoid; }
+  .si2 { display: flex; gap: 6px; margin: 6px 0; break-inside: avoid; flex-wrap: wrap; }
+  .si2 > div { flex: 1 1 45%; border: 1px solid var(--linea); border-top: 4px solid var(--fil);
+               border-radius: 0 0 7px 7px; padding: 5px 9px; font-size: 10pt; background: #fdfafc; }
+  .si2 > div.ok { border-top-color: var(--verde); }
+  .si2 > div.no { border-top-color: #9b1c1c; }
+  .si2 b { display: block; font-size: 10.5pt; color: var(--fil-osc); }
+  .si2 p { margin: 0; }
+  .si2 p.l { font-weight: 700; margin: 2px 0; }
+  .si2 p.por { font-size: 9.5pt; color: var(--gris); }
+
+  .rejilla { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .rejilla > div { flex: 1 1 47%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 9px;
+                   font-size: 9.5pt; background: #fdfafc; break-inside: avoid; }
+  .rejilla b { display: block; font-size: 10pt; color: var(--fil-osc); }
+  .rejilla .q { font-weight: 700; margin: 1px 0; }
+  .rejilla .h { color: var(--gris); }
+
+  .pens { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+          padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .pens b { font-size: 11.5pt; color: var(--fil-osc); }
+  .pens p.w { font-size: 9pt; color: var(--gris); font-style: italic; margin: 0; }
+  .pens p.p { font-size: 10.5pt; margin: 3px 0; }
+  .pens p.dato { font-size: 9.5pt; color: var(--gris); margin: 0; }
+
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Pensar con Orden</div>
+        <div class="f-meta"><b>Asignatura:</b> Filosofía &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, I, II y III Ciclo</div>
+        <div class="f-meta"><b>Tema:</b> Las piezas de un argumento y el semáforo de razones. El «si… entonces» y su trampa. Bien hecho contra verdad. Las cuatro falacias.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-pensar-con-orden.png" alt="Código QR de la misión Pensar con Orden">
+        <span>Apunta con el teléfono para abrir la misión</span>
+      </div>
+    </div>
+
+    <h2>¿Por qué esta ficha?</h2>
+
+    <p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva
+       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>
+
+    <div class="caja idea"><b>Lo que hay que sacar de aquí:</b> cuando alguien te quiere convencer
+      de algo, dice una razón y una conclusión. Saber si esa razón sostiene de verdad es la
+      destreza de esta unidad, y la que ahorra dinero.</div>
+
+    <h3>Objetivos</h3>
+
+    <ol class="objetivos">
+      <li>Encontrar la razón y la conclusión en lo que alguien dice.</li>
+      <li>Poner cada razón en su color: sirve, ayuda poco o no es razón.</li>
+      <li>Usar el «si… entonces» en su sentido, y no al revés.</li>
+      <li>Explicar por qué un argumento puede estar bien hecho y llegar a algo falso.</li>
+      <li>Reconocer las cuatro falacias y decir la pregunta que desarma cada una.</li>
+    </ol>
+
+    <h2>Le pasó a alguien</h2>
+
+    <p>En la pulpería le dijeron a Wilmer que el abono caro es el bueno, <b>«porque todo el mundo lo
+       compra»</b>. Compró <b>ocho sacos</b> y ahí se fue <b>la mitad del dinero de la siembra</b>. La
+       milpa salió igual que la del vecino, que compró el barato.</p>
+
+    <div class="caja regla"><b>Nadie le mintió.</b> Le dieron una razón que no era una razón: cuánta
+      gente lo compra no dice nada del abono. Y él no supo pedir otra.</div>
+
+    <h2>Un argumento tiene tres piezas</h2>
+
+    <div class="pieza"><b>🧱 La razón</b><p class="q">Lo que se da para sostener lo otro.</p><p class="d">Casi siempre va después de «porque».</p><p class="ej">…porque el suelo está mojado.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="pieza"><b>🎯 La conclusión</b><p class="q">Lo que se quiere que creas.</p><p class="d">Casi siempre va después de «así que» o «por lo tanto».</p><p class="ej">Así que llovió anoche.</p></div>
+
+    <div class="pieza"><b>🔗 El nexo</b><p class="q">La palabra que amarra las dos.</p><p class="d">Es la que te dice cuál es cuál.</p><p class="ej">porque · así que · por lo tanto · si… entonces</p></div>
+
+    <h2>🚦 El semáforo de razones</h2>
+
+    <p>No todas las razones valen igual. Hay tres colores, y cada uno tiene su señal y su prueba.</p>
+
+    <div class="sem c-verde"><b>🟢 Sirve</b> <span class="et">Sostiene</span><p class="s">Se puede comprobar o discutir, y de verdad sostiene lo que dice.</p><p class="p"><b>La prueba:</b> Pregúntate: si esto fuera verdad, ¿tendría que ser verdad lo otro?</p></div>
+
+    <div class="sem c-amarillo"><b>🟡 Ayuda poco</b> <span class="et">No alcanza</span><p class="s">Puede ser verdad, pero no sostiene lo que se quiere probar.</p><p class="p"><b>La prueba:</b> Pregúntate: ¿esto de qué me convence, de lo que dice o de otra cosa?</p></div>
+
+    <div class="sem c-rojo"><b>🔴 No es una razón</b> <span class="et">No se puede examinar</span><p class="s">No dice nada que se pueda examinar: es quien manda, o cuánta gente lo dice.</p><p class="p"><b>La prueba:</b> Pregúntate: ¿esto se puede comprobar, o solo se puede obedecer?</p></div>
+
+    <div class="caja idea"><b>El truco de un solo paso:</b> pregúntate si la razón <i>se puede
+      examinar</i>. Si no se puede ni comprobar ni discutir, no es una razón: es alguien mandando.</div>
+
+    <table>
+      <tr><th>Color</th><th>La señal</th><th>Un ejemplo</th></tr>
+      <tr><td class="k">🟢 Sirve</td><td>Sostiene</td><td><i>Porque el suelo está mojado y no ha pasado la pila</i></td></tr>
+      <tr><td class="k">🟡 Ayuda poco</td><td>No alcanza</td><td><i>Porque a mí me pasó una vez</i></td></tr>
+      <tr><td class="k">🔴 No es una razón</td><td>No se puede examinar</td><td><i>Porque yo lo digo</i></td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>🔗 La regla va en un solo sentido</h2>
+
+    <div class="regla-caja">Si llueve, la cancha se moja.</div>
+
+    <div class="si2">
+      <div class="ok"><b>✅ Así sí</b><p>Llovió.</p><p class="l">Así que la cancha está mojada.</p><p class="por">La regla dice que si pasa lo primero, pasa lo segundo. Y pasó lo primero.</p></div>
+      <div class="no"><b>❌ Así no</b><p>La cancha está mojada.</p><p class="l">Así que llovió.</p><p class="por">La regla NO dice que solo la lluvia la moje. Alguien pudo regarla, o se reventó un tubo.</p></div>
+    </div>
+
+    <div class="caja regla"><b>Ojo:</b> La regla va en UN solo sentido. Leerla al revés es el error más común, y es el que usa quien te quiere convencer de algo.</div>
+
+    <h2>🔗 Las palabras que amarran</h2>
+
+    <p>Son las mismas de Español. Aquí sirven para encontrar de un vistazo la razón y la conclusión
+       en lo que alguien te está diciendo.</p>
+
+    <table>
+      <tr><th style="width:22%">Palabra</th><th style="width:33%">Qué hace</th><th>Ejemplo</th></tr>
+      <tr><td class="k">porque</td><td>Presenta la razón.</td><td><i>No salgas, porque el río viene crecido.</i></td></tr>
+      <tr><td class="k">así que</td><td>Presenta la conclusión.</td><td><i>El río viene crecido, así que no salgas.</i></td></tr>
+      <tr><td class="k">por lo tanto</td><td>Presenta la conclusión, en texto escrito.</td><td><i>El río viene crecido; por lo tanto, no conviene cruzar.</i></td></tr>
+      <tr><td class="k">si… entonces</td><td>Pone una condición.</td><td><i>Si el río baja, entonces se puede cruzar.</i></td></tr>
+      <tr><td class="k">sin embargo</td><td>Presenta la objeción.</td><td><i>El río bajó; sin embargo, el puente sigue roto.</i></td></tr>
+    </table>
+
+    <h2>⚖️ Bien hecho no es lo mismo que verdad</h2>
+
+    <p>Esta es la idea más difícil de la unidad, y la que de verdad sirve. Un argumento puede estar
+       <b>perfectamente armado</b> y aun así llegar a una mentira. Y puede estar mal armado y
+       acertar de casualidad. Son cuatro casos, y hay que verlos juntos.</p>
+
+    <div class="val"><span class="t">Bien hecho, y con razones verdaderas</span><div class="ets"><span class="si">✅ Bien hecho</span><span class="si">✅ Conclusión verdadera</span></div><ul><li>Todos los pinos son árboles.</li><li>El de la entrada de la escuela es un pino.</li></ul><p class="c">Así que el de la entrada es un árbol.</p><p class="q">Aquí sí se puede confiar: el armado es bueno y las dos razones son verdad.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="val"><span class="t">Bien hecho, y aun así sale una mentira</span><div class="ets"><span class="si">✅ Bien hecho</span><span class="no">❌ Conclusión falsa</span></div><ul><li>Todos los peces vuelan.</li><li>La tilapia es un pez.</li></ul><p class="c">Así que la tilapia vuela.</p><p class="q">El armado es perfecto, y la conclusión es falsa. La culpa no es del armado: la primera razón es mentira. Esta es la respuesta a la pregunta de la unidad.</p></div>
+
+    <div class="val"><span class="t">Mal hecho, aunque las razones sean verdad</span><div class="ets"><span class="no">❌ Mal hecho</span><span class="no">❌ Conclusión falsa</span></div><ul><li>Todos los pinos son árboles.</li><li>El mango es un árbol.</li></ul><p class="c">Así que el mango es un pino.</p><p class="q">Las dos razones son verdad y la conclusión es falsa. Aquí el problema sí es el armado: de «todos los pinos son árboles» no se saca nada sobre los demás árboles.</p></div>
+
+    <div class="val"><span class="t">Mal hecho, y le salió bien de casualidad</span><div class="ets"><span class="no">❌ Mal hecho</span><span class="si">✅ Conclusión verdadera</span></div><ul><li>Si llueve, la cancha se moja.</li><li>La cancha está mojada.</li></ul><p class="c">Así que llovió.</p><p class="q">Puede que sí haya llovido, pero eso no lo demuestra este argumento: lo acertó de suerte. Un argumento así funciona hasta el día que falla.</p></div>
+
+    <h2>🕵️ Cuatro trampas con nombre</h2>
+
+    <p>Se llaman <b>falacias</b>: argumentos que parecen buenos y no sostienen nada. De cada una va
+       lo que hace, cómo suena aquí, y sobre todo <b>la pregunta que la desarma</b>. Esa pregunta es
+       lo que vas a usar el día que te pase.</p>
+
+    <div class="fal"><b>👤 Contra la persona</b><p class="m">Se ataca a quien habla en vez de a lo que dice.</p><p class="su">Suena así: «No le creas: si ni terminó la escuela.»</p><p class="de"><b>La desarma:</b> ¿Qué tiene que ver quién lo dice con si es verdad? Pedile la razón, no el título.</p><p class="cu"><b>Qué cuesta:</b> Se pierde la razón buena de quien no tiene con qué defenderse.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="fal"><b>🔢 Generalización apresurada</b><p class="m">Se saca una regla de dos o tres casos.</p><p class="su">Suena así: «En ese pueblo son bien tramposos: me tocaron dos.»</p><p class="de"><b>La desarma:</b> ¿Cuántos casos viste, y de cuántos? Dos de doscientos no es una regla.</p><p class="cu"><b>Qué cuesta:</b> Así se arman las famas de un barrio entero, y no se quitan.</p></div>
+
+    <div class="fal"><b>🚪 Falso dilema</b><p class="m">Se ofrecen dos salidas como si no hubiera más.</p><p class="su">Suena así: «O te vas a la ciudad o te quedás sin futuro.»</p><p class="de"><b>La desarma:</b> ¿Solo hay dos? Nombrá una tercera y el dilema se cae.</p><p class="cu"><b>Qué cuesta:</b> Se decide con miedo una cosa que tenía otras salidas.</p></div>
+
+    <div class="fal"><b>👥 Apelación a la mayoría</b><p class="m">Se ofrece como razón cuánta gente lo hace.</p><p class="su">Suena así: «Compralo: si todo el mundo lo compra.»</p><p class="de"><b>La desarma:</b> Si todo el mundo se equivoca, ¿deja de ser un error? Pedí una razón de la cosa, no del gentío.</p><p class="cu"><b>Qué cuesta:</b> Es la que le costó a Wilmer la mitad del dinero de la siembra.</p></div>
+
+    <h2>💬 Dos que ordenaron el pensamiento</h2>
+
+    <p>Uno puso las formas en orden; el otro las enseñó jugando. <b>No hay ni una fecha, y no es un
+       olvido</b>: en esta plataforma no se escribe un dato que no se pueda acreditar con un
+       documento. Ponerlas es una de las investigaciones de la página 8.</p>
+
+    <div class="pens"><b>📐 Aristóteles</b><p class="w">Grecia</p><p class="p">El primero que puso en orden las formas del razonamiento.</p><p class="p"><b>Qué hizo:</b> Se dio cuenta de que hay armados que funcionan siempre, sin importar de qué se hable.</p><p class="p"><b>Por qué se le recuerda:</b> Por eso la lógica se puede enseñar: no es una opinión sobre cada tema, es una forma.</p><p class="dato">💡 Fue alumno de Platón, y Platón fue alumno de Sócrates, el de la unidad anterior.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="pens"><b>🎩 Lewis Carroll</b><p class="w">Inglaterra</p><p class="p">Enseñaba lógica con juegos y acertijos, y escribía cuentos.</p><p class="p"><b>Qué hizo:</b> Armó silogismos absurdos a propósito para que se viera el ARMADO y no el tema.</p><p class="p"><b>Por qué se le recuerda:</b> Es la prueba de que esto se aprende jugando: si el armado es bueno, funciona hasta con tilapias que vuelan.</p><p class="dato">💡 El mismo que escribió el cuento de la niña que cae por la madriguera del conejo era profesor de matemáticas.</p></div>
+
+    <h2>🌳 Qué le da la lógica a cada materia</h2>
+
+    <div class="caja hn"><b>🔢 Matemáticas:</b> Le da la demostración. Un resultado no vale porque salga: vale porque se sigue de lo anterior. <i>En tu cuaderno: ¿por qué 7 × 8 da 56? No vale «porque me lo aprendí».</i></div>
+
+    <div class="caja hn"><b>✍️ Español:</b> Le da el texto argumentativo, con sus conectores: porque, así que, sin embargo. <i>Busca en una noticia la conclusión y la razón. A veces falta una.</i></div>
+
+    <div class="caja hn"><b>🌱 Ciencias Naturales:</b> Le da la inferencia: sacar una conclusión de lo que se observó. <i>Las hojas del patio están mordidas. ¿Qué se sigue de eso, y qué no?</i></div>
+
+    <h2>El vocabulario</h2>
+
+    <table>
+      <tr><th style="width:26%">Palabra</th><th>Qué quiere decir</th></tr>
+      <tr><td class="k">razón</td><td>Lo que se da para sostener lo que se dice. Si no se puede examinar, no es una razón.</td></tr>
+      <tr><td class="k">conclusión</td><td>Lo que se quiere que creas. Es a donde apunta el argumento.</td></tr>
+      <tr><td class="k">argumento</td><td>Una razón y una conclusión amarradas. No es una pelea: es una construcción.</td></tr>
+      <tr><td class="k">contradicción</td><td>Decir dos cosas que no pueden ser verdad a la vez. Encontrar la propia es avanzar.</td></tr>
+      <tr><td class="k">falacia</td><td>Un argumento que parece bueno y no lo es. Convence sin sostener nada.</td></tr>
+      <tr><td class="k">validez</td><td>Que el armado esté bien. Se puede tener validez y estar diciendo una mentira.</td></tr>
+    </table>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Actividades</h2>
+
+    <div class="acts">
+
+    <h3>1. El semáforo <span class="val">12 pts</span></h3>
+    <p>Escribe en la casilla <b>V</b> si la razón sirve (verde), <b>A</b> si ayuda poco (amarillo) y
+       <b>R</b> si no es una razón (rojo).</p>
+    <table>
+      <tr><th style="width:8%">Color</th><th>Razón</th><th style="width:8%">Color</th><th>Razón</th></tr>
+      <tr><td></td><td>Porque el suelo está mojado y no ha pasado la pila</td><td></td><td>Porque yo lo digo</td></tr>
+      <tr><td></td><td>Porque a mí me pasó una vez</td><td></td><td>Porque la malla mide 20 metros y el cerco pide 24</td></tr>
+      <tr><td></td><td>Porque el otro día también amaneció nublado</td><td></td><td>Porque todo el mundo lo compra</td></tr>
+      <tr><td></td><td>Porque siempre se ha hecho así</td><td></td><td>Porque conté los sacos y faltan tres</td></tr>
+      <tr><td></td><td>Porque se ve más bonito</td><td></td><td>Porque el pan está duro y lo compramos el lunes</td></tr>
+      <tr><td></td><td>Porque el que dice lo otro ni terminó la escuela</td><td></td><td>Porque el saco es más caro</td></tr>
+    </table>
+
+    <h3>2. ¿Razón o conclusión? <span class="val">8 pts</span></h3>
+    <p>En cada par, escribe <b>1</b> en la razón y <b>2</b> en la conclusión.</p>
+    <table>
+      <tr><th style="width:6%"> </th><th>Frase A</th><th style="width:6%"> </th><th>Frase B</th></tr>
+      <tr><td></td><td>El río viene crecido</td><td></td><td>No salgas</td></tr>
+      <tr><td></td><td>Faltan tres sacos</td><td></td><td>Alguien se los llevó</td></tr>
+      <tr><td></td><td>La cancha está mojada</td><td></td><td>No se puede jugar hoy</td></tr>
+      <tr><td></td><td>El bus ya pasó</td><td></td><td>Hay que irse caminando</td></tr>
+    </table>
+
+    <h3>3. La regla en un solo sentido <span class="val">6 pts</span></h3>
+    <p>La regla es: <b>si llueve, la cancha se moja</b>. Marca con una ✓ lo que SÍ se puede concluir
+       y con una ✗ lo que no. (Aquí la ✗ sí va: se está señalando lo que está mal.)</p>
+    <ol>
+      <li><span class="linea-resp" style="min-width:32px"></span> Llovió, así que la cancha está mojada.</li>
+      <li><span class="linea-resp" style="min-width:32px"></span> La cancha está mojada, así que llovió.</li>
+      <li><span class="linea-resp" style="min-width:32px"></span> No llovió, así que la cancha está seca.</li>
+    </ol>
+    <p>Y explica en un renglón por qué: <span class="linea-resp" style="min-width:340px"></span></p>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts">
+    <h3>4. Ponle nombre a la trampa <span class="val">6 pts</span></h3>
+    <p>Rellena el círculo de la letra correcta.</p>
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span><span>«No le creas: si ni terminó la escuela» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> contra la persona</span><span class="op"><i></i><b>b)</b> un falso dilema</span><span class="op"><i></i><b>c)</b> apelación a la mayoría</span><span class="op"><i></i><b>d)</b> una razón verde</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span><span>«En ese pueblo son tramposos: me tocaron dos» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> un falso dilema</span><span class="op"><i></i><b>b)</b> una generalización apresurada</span><span class="op"><i></i><b>c)</b> contra la persona</span><span class="op"><i></i><b>d)</b> una razón verde</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span>«O te vas a la ciudad o te quedás sin futuro» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> apelación a la mayoría</span><span class="op"><i></i><b>b)</b> contra la persona</span><span class="op"><i></i><b>c)</b> un falso dilema</span><span class="op"><i></i><b>d)</b> una razón amarilla</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span>«Compralo: si todo el mundo lo compra» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> contra la persona</span><span class="op"><i></i><b>b)</b> un falso dilema</span><span class="op"><i></i><b>c)</b> una generalización apresurada</span><span class="op"><i></i><b>d)</b> apelación a la mayoría</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span>¿Qué se pregunta para desarmar un falso dilema?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> ¿Solo hay dos salidas?</span><span class="op"><i></i><b>b)</b> ¿Y quién lo dice?</span><span class="op"><i></i><b>c)</b> ¿Cuántos casos viste?</span><span class="op"><i></i><b>d)</b> ¿Cuándo pasó?</span></div></div>
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>Si el armado está bien y una razón es falsa, la conclusión…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> es siempre verdad</span><span class="op"><i></i><b>b)</b> puede salir falsa</span><span class="op"><i></i><b>c)</b> no existe</span><span class="op"><i></i><b>d)</b> no importa</span></div></div>
+
+    <h3>5. ¿Está bien hecho? <span class="val">8 pts</span></h3>
+    <p>Aquí no se pregunta si es VERDAD: se pregunta si está bien ARMADO. Escribe <b>B</b> si está
+       bien hecho y <b>M</b> si está mal hecho.</p>
+    <table>
+      <tr><th style="width:8%">B o M</th><th>El argumento</th></tr>
+      <tr><td></td><td>Todos los pinos son árboles. El de la entrada de la escuela es un pino. <b>Así que el de la entrada es un árbol.</b></td></tr>
+      <tr><td></td><td>Todos los peces vuelan. La tilapia es un pez. <b>Así que la tilapia vuela.</b></td></tr>
+      <tr><td></td><td>Todos los pinos son árboles. El mango es un árbol. <b>Así que el mango es un pino.</b></td></tr>
+      <tr><td></td><td>Si llueve, la cancha se moja. La cancha está mojada. <b>Así que llovió.</b></td></tr>
+      <tr><td></td><td>Si llueve, la cancha se moja. Llovió. Así que la cancha está mojada.</td></tr>
+      <tr><td></td><td>Si llueve, la cancha se moja. La cancha está mojada. Así que llovió.</td></tr>
+      <tr><td></td><td>Todos los pinos son árboles. El de la entrada es un pino. Así que es un árbol.</td></tr>
+      <tr><td></td><td>Todos los pinos son árboles. El mango es un árbol. Así que el mango es un pino.</td></tr>
+    </table>
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Investiga (no se contesta copiando de aquí)</h2>
+
+    <p>Estas cuatro no traen respuesta en la ficha, y es <b>a propósito</b>. Lo que se califica es
+       que digas <b>de dónde</b> sacaste cada cosa.</p>
+
+    <div class="caja idea">
+      <b>1.</b> ¿Cuándo vivió Aristóteles? Aquí no está escrito porque no había un documento que lo
+      acredite. Búscalo y anota la fuente. <span class="linea-resp" style="min-width:150px"></span><br>
+      <b>2.</b> Lewis Carroll escribió un cuento muy conocido. ¿Cuál es, y cómo se llamaba él de
+      verdad?<br>
+      <b>3.</b> Trae <b>tres razones</b> de anuncios, mensajes o conversaciones de esta semana y
+      ponle color a cada una. Copia la razón tal como te la dieron.<br>
+      <b>4.</b> Busca una falacia en algo que se diga de tu comunidad. Nómbrala y escribe la
+      pregunta que la desarma. <b>Sin nombres de personas.</b>
+    </div>
+
+    <h2>Para hacer en el aula</h2>
+
+    <div class="caja regla"><b>El semáforo de la pared.</b> Cada uno trae una razón en un papelito.
+      Se pegan en tres columnas: verde, amarillo y rojo. Las que no se pongan de acuerdo se discuten
+      en círculo quince minutos, con la prueba de cada color en la mano. Al final, cada uno escribe
+      en su cuaderno una razón que cambió de columna y por qué.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Hoja del docente · NO se fotocopia</h2>
+
+    <div class="caja idea"><b>Se imprime suelta y se queda con usted.</b> Las páginas 1 a 8 son las
+      que se fotocopian por alumno.</div>
+
+    <h3>La misma unidad en los tres ciclos</h3>
+
+    <p>El contenido es el <b>mismo</b> para toda la escuela: así la escuela entera puede trabajar la
+       unidad el mismo mes. Cambian la pregunta de entrada, la actividad y lo que el alumno entrega.</p>
+
+    <div class="caja hn"><b>I Ciclo</b> (1.º a 3.º grado) · <i>¿Por qué pienso lo que pienso?</i> <b>Habilidad:</b> Dar un «porque». <b>Actividad:</b> Juego «¿Cuál no pertenece?» con objetos y dibujos, justificando la respuesta. Después, el semáforo de razones: verde si la razón sirve, amarillo si ayuda poco, rojo si no es razón. <b>Producto:</b> Fichas «Yo digo… porque…».</div>
+
+    <div class="caja hn"><b>II Ciclo</b> (4.º a 6.º grado) · <i>¿Cuándo una razón es buena y cuándo solo lo parece?</i> <b>Habilidad:</b> Identificar la razón y la conclusión, y usar «si… entonces». <b>Actividad:</b> Detectives de argumentos en anuncios y noticias. Armar silogismos con situaciones de la escuela. <b>Producto:</b> Álbum con cinco argumentos analizados.</div>
+
+    <div class="caja hn"><b>III Ciclo</b> (7.º a 9.º grado) · <i>¿Puede un razonamiento estar bien hecho y aun así llegar a algo falso?</i> <b>Habilidad:</b> Distinguir la validez de la verdad y reconocer falacias. <b>Actividad:</b> Cacería de falacias en mensajes, anuncios y discursos: contra la persona, generalización apresurada, falso dilema y apelación a la mayoría. <b>Producto:</b> Catálogo ilustrado de falacias con ejemplos de la vida de aquí.</div>
+
+    <h3>Pauta</h3>
+
+    <div class="pauta">
+      <div><span class="pt">1. El semáforo (12 pts)</span> 1. V · 2. R · 3. A · 4. V · 5. A · 6. R · 7. R · 8. V · 9. A · 10. V · 11. R · 12. A</div>
+      <div><span class="pt">2. ¿Razón o conclusión? (8 pts)</span> En los cuatro pares, la Frase A es
+        la razón (1) y la Frase B la conclusión (2).</div>
+      <div><span class="pt">3. La regla en un solo sentido (6 pts)</span> 1. ✓ &nbsp; 2. ✗ &nbsp; 3. ✗.
+        La 2 es el error clásico: la regla no dice que SOLO la lluvia la moje. La 3 falla igual: no
+        dice qué pasa cuando NO llueve.</div>
+      <div><span class="pt">4. Ponle nombre a la trampa (6 pts)</span> 1. a · 2. b · 3. c · 4. d · 5. a · 6. b</div>
+      <div><span class="pt">5. ¿Está bien hecho? (8 pts)</span> 1. B · 2. B · 3. M · 4. M · 5. B · 6. M · 7. B · 8. M</div>
+      <div><span class="pt">Investiga</span> ⚠️ <b>No trae respuestas, a propósito.</b> Se califica que
+        diga DE DÓNDE sacó el dato. «No encontré una fuente que lo acredite» vale el punto completo.</div>
+    </div>
+
+    <div class="nota-doc"><b>Tres cosas antes de dar la clase.</b>
+      <b>Una:</b> el amarillo se discute, y está bien. Una razón amarilla puede ser verdad; le falta
+      sostener lo que se quiere probar.
+      <b>Dos:</b> la actividad 5 pregunta si está bien ARMADO, no si es verdad. La tilapia que vuela
+      es el caso para el pizarrón: nadie lo cree y está perfectamente armado.
+      <b>Tres:</b> esta unidad enseña a pedir razones, y eso incluye las suyas. «Porque así es la
+      regla» es una razón roja. Y en la investigación 4, <b>sin nombres de personas</b>.
+      · <b>De dónde sale:</b> currículo de Filosofía del CNB de Media, BTP en Informática, undécimo:
+      RA2 y CE2.1. Las tablas de verdad quedan fuera a propósito. Citas en CURRICULA-FILOSOFIA.md.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 2 · <b>Pensar con Orden</b></span><span>Página 10</span></div>
+</section>
+
+</div>
+</body>
+</html>

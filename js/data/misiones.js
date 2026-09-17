@@ -147,6 +147,7 @@ const MISSIONS = [
      no le pone rótulo: es lo correcto, porque esta misión es de todos.
      Es la segunda materia de la plataforma que no está en el DCNB. */
   { id: 79, title: 'El Asombro: por qué preguntamos',                     subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 1, xp: 30, icon: '❓', pais: 'HN', url: 'misiones/basica-el-asombro/el-asombro.html' },
+  { id: 80, title: 'Pensar con Orden: cuándo una razón es buena',          subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 2, xp: 35, icon: '🧩', pais: 'HN', url: 'misiones/basica-pensar-con-orden/pensar-con-orden.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 
