@@ -21,6 +21,11 @@
    Lo que se publica es el HTML resultante: plano, editable a mano y sin una
    sola línea de JavaScript, como las otras 75 fichas del proyecto.
 
+   ⚠️ Y CORRERLO DEVUELVE LAS SIETE FICHAS A SU REPARTO DE PARTIDA, no solo la
+   que se estaba tocando. Después de correrlo hay que repartir otra vez TODA
+   ficha que salga modificada en `git status fichas/`, o se publica una con las
+   hojas partidas — y eso son 43 fotocopias torcidas por grado.
+
    ⚠️ EL CORTE DE LAS HOJAS NO LO DECIDE ESTE GUION. Aquí las páginas salen con
    un reparto de partida cualquiera; quien las reparte de verdad es
    `node _dev/reparte-hojas-ficha.js`, que mide en el navegador con el ancho
@@ -42,8 +47,10 @@ const { IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS, IA_MENSAJES } =
 const { IA_HOY_FECHA, IA_HOY_MES, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_TERMOMETRO_TRAMOS,
         IA_FRASES, iaFraseCuenta, iaFraseTramo, IA_INFLEXION } =
   require(path.join(RAIZ, 'js/data/ia-actualidad.js'));
-const { IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS,
-        iaFutAl, iaFutFinal, iaFutJuzga, iaFutCuenta, iaFutEsEscenario, iaFutLeFalta } =
+const { IA_FUT_FECHA, IA_CAPACIDADES, IA_CUENTA, IA_OFI_TIPOS, IA_OFICIOS,
+        IA_ESCUDOS, IA_TAREAS_CLASE, IA_ESTUDIO, IA_FUT_PIEZAS, iaFutAl,
+        iaOfiCuenta, iaOfiPorTipo, iaOfiTotalTareas, iaClaseCuenta,
+        iaFutJuzga, iaFutCuenta, iaFutEsEscenario, iaFutLeFalta } =
   require(path.join(RAIZ, 'js/data/ia-futuros.js'));
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -306,8 +313,10 @@ module.exports = { RAIZ, esc, con, arma, portada, preguntas, clave, fichaConcept
                    IA_SENALES, IA_FAMILIAS, IA_PELIGROS, IA_DEFENSAS, IA_MENSAJES,
                    IA_HOY_FECHA, IA_HOY_MES, IA_HOY, IA_SINGULARIDAD, IA_TERMOMETRO, IA_TERMOMETRO_TRAMOS,
                    IA_FRASES, iaFraseCuenta, iaFraseTramo, IA_INFLEXION,
-                   IA_FUT_FECHA, IA_CAPACIDADES, IA_FUT_PIEZAS, IA_FUTUROS, IA_FUT_MANOS,
-                   iaFutAl, iaFutFinal, iaFutJuzga, iaFutCuenta, iaFutEsEscenario, iaFutLeFalta };
+                   IA_FUT_FECHA, IA_CAPACIDADES, IA_CUENTA, IA_OFI_TIPOS, IA_OFICIOS,
+                   IA_ESCUDOS, IA_TAREAS_CLASE, IA_ESTUDIO, IA_FUT_PIEZAS, iaFutAl,
+                   iaOfiCuenta, iaOfiPorTipo, iaOfiTotalTareas, iaClaseCuenta,
+                   iaFutJuzga, iaFutCuenta, iaFutEsEscenario, iaFutLeFalta };
 
 if (require.main === module) {
   console.log('\n📄 Armando las fichas de la Ruta de la Máquina que Aprende\n');

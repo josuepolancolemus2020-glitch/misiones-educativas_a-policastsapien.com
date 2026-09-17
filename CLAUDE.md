@@ -3119,8 +3119,9 @@ hecho.**
    un oficio al 100 % convertiría la misión en la profecía que viene a
    desarmar.
 4. ⚠️ **Se cuentan TAREAS, no HORAS, y se dice con esas palabras** en la
-   pantalla y en el papel. A don Chele le quedan cinco tareas de siete, y esas
-   cinco se llevan todo el día. Un porcentaje que se lee mal enseña peor que
+   pantalla y en el papel. A don Chele la máquina le quita dos tareas de
+   papel y el aviso de la plaga; lo que le queda —sembrar, limpiar, cosechar y
+   acarrear— se lleva el día entero. Un porcentaje que se lee mal enseña peor que
    ninguno: es la misma lección que «el promedio que esconde» de la etapa 5, y
    la sonda comprueba que el aviso siga ahí.
 5. ⚠️ **Y «mirar» es un tipo de tarea aparte**, no una de papel ni de manos.

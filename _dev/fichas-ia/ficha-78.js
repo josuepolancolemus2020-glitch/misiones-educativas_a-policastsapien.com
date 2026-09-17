@@ -242,12 +242,11 @@ ${IA_ESCUDOS.map(e => `      <tr>${tdk(`${e.e} ${esc(e.nombre)}`)}<td>${esc(e.qu
        <b>escenario</b> sirve para decidir; una <b>profecía</b> te deja mirando.</p>
 
     <table>
-      <tr><th style="width:26%">La pieza</th><th>La trae cuando…</th><th>Le falta cuando…</th></tr>
-${IA_FUT_PIEZAS.map(p => `      <tr>${tdk(`${p.e} ${esc(p.nombre)}`)}<td>${esc(p.si)}</td><td>${esc(p.no)}</td></tr>`).join('\n')}
+      <tr><th style="width:25%">La pieza</th><th style="width:33%">La trae cuando…</th><th>Le falta cuando…</th><th style="width:7%">¿La trae?</th></tr>
+${IA_FUT_PIEZAS.map(p => `      <tr>${tdk(`${p.e} ${esc(p.nombre)}`)}<td>${esc(p.si)}</td><td>${esc(p.no)}</td><td>${CIR}</td></tr>`).join('\n')}
+      <tr><td colspan="4">✍️ <b>Probala con una frase que hayas oído vos.</b> Escribila acá y rellená
+        el círculo de cada pieza que traiga: ${raya('62%')}</td></tr>
     </table>
-
-    <div class="caja truco"><b>Escribí una frase así que hayas oído vos:</b> ${raya('88%')}
-      Y rellená el círculo de las piezas que trae: ${IA_FUT_PIEZAS.map(p => `${CIR} ${p.e} ${esc(p.nombre)}`).join(' &nbsp;·&nbsp; ')}</div>
 `);
 
 // ── Página 6 · Actividad 1 · los cuatro primeros oficios ───────────────────

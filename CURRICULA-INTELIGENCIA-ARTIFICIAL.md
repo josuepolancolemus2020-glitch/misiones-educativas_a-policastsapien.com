@@ -450,8 +450,8 @@ tocan esas capacidades. Eso no es profecía: es mirar lo que hay.
    exige. Un oficio al 0 % o al 100 % convertiría la etapa en la profecía que
    viene a desarmar.
 5. ⚠️ **Se cuentan tareas, no horas**, y se dice con esas palabras. Al
-   agricultor le quedan cinco tareas de siete y esas cinco se llevan todo el
-   día. Un porcentaje que se lee mal enseña peor que ninguno; es la misma
+   agricultor la máquina le quita las cuentas y el aviso de la plaga, y lo que
+   le queda —sembrar, limpiar, cosechar y acarrear— se lleva el día entero. Un porcentaje que se lee mal enseña peor que ninguno; es la misma
    lección que «el promedio que esconde» de la etapa 5.
 6. **Y la mitad del estudio.** Copiar dejó de servir, y no por castigo: si la
    máquina hace la tarea, el examen llega igual. Lo que hay que saberse de
