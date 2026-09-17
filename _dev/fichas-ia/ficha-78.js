@@ -277,7 +277,7 @@ ${ofiRestantes.slice(4).map(tablaOficio).join('\n\n')}
     <div class="acts">
       <p>Del oficio que elegiste: ¿cuántas tareas se lleva enteras? ${raya('70px')} ¿Cuántas le quedan?
          ${raya('70px')}</p>
-      <p>Y la pregunta que de verdad importa. ¿Qué tienen en común las que le quedan?
+      <p>Y la pregunta que de verdad importa: ¿qué tienen en común las que le quedan?<br>
          ${raya('100%')}</p>
     </div>
 `);
@@ -304,7 +304,7 @@ ${IA_TAREAS_CLASE.map(t => `        <tr><td>${esc(t.t)}</td><td>${CIR}</td><td>$
         <p>${raya('100%')}</p>
         <p>${raya('100%')}</p>
         <p><b>El escudo que la para:</b> ${IA_ESCUDOS.map(e => `${CIR} ${e.e} ${esc(e.nombre)}`).join(' &nbsp;·&nbsp; ')}</p>
-        <p><b>Por qué no la puede hacer:</b> ${raya('100%')}</p>
+        <p><b>Por qué no la puede hacer:</b><br>${raya('100%')}</p>
       </div>
     </div>
 

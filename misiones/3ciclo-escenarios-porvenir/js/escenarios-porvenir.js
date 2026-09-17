@@ -35,7 +35,7 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 const ACHIEVEMENTS={
   primer_quiz:{icon:'🏅',label:'Primer quiz de los escenarios'},
   flash_master:{icon:'🃏',label:'Se sabe las piezas y las capacidades'},
-  clasif_pro:{icon:'🗂️',label:'Separa escenario de profecía'},
+  clasif_pro:{icon:'🗂️',label:'Separa la tarea que se lleva de la que no'},
   identificador:{icon:'🔎',label:'Encuentra la pieza que falta'},
   id_master:{icon:'🔠',label:'Encuentra la palabra en la oración'},
   completador:{icon:'✏️',label:'Completa las reglas'},
@@ -59,7 +59,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#86198f','#c026d3','#4338ca','#0ea5e9','#e879f9'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Distingue el anuncio de la decisión 🔀'},{t:55,n:'Pregunta con qué está hecho 🔧'},{t:90,n:'Le pone nombre y precio 💸'},{t:130,n:'Pregunta en manos de quién 🏛️'},{t:165,n:'Exige quién revisa 🔍'},{t:190,n:'Arma sus propios escenarios 🏆'}];
+const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Sabe que un oficio son tareas 🧰'},{t:55,n:'Distingue las cuatro clases 📄'},{t:90,n:'Pregunta con qué se la lleva ⚙️'},{t:130,n:'Sabe qué le queda a la persona 🧑'},{t:165,n:'Reconoce una tarea con escudo 🛡️'},{t:190,n:'Mira un oficio y lo desarma 🏆'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -251,14 +251,24 @@ function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.
 
 // Widget 2: Identifica el concepto
 const neuronPartes = (function () {
-  /* Las cuatro piezas de un escenario, sacadas de js/data/ia-futuros.js. Dos
-     pistas por pieza: por qué hace falta, y cómo suena la frase a la que le
-     falta. Es lo que el alumno va a tener que ver en un mensaje reenviado. */
-  const nombres = IA_FUT_PIEZAS.map(p => p.nombre);
+  /* ⚠️ Antes preguntaba por las cuatro piezas de un escenario, que en esta
+     misión ya no son el tema: son la herramienta corta del final. Ahora
+     pregunta por LA CLASE DE UNA TAREA, que es lo que el alumno tiene que
+     saber mirar en cualquier oficio, incluido uno que todavía no existe.
+     Sale de los ocho oficios: ni una tarea escrita a mano. */
+  const nombres = IA_OFI_TIPOS.map(t => t.e + ' ' + t.nombre);
+  const nombre = k => { const t = IA_OFI_TIPOS.find(x => x.k === k); return t.e + ' ' + t.nombre; };
   const p = [];
-  IA_FUT_PIEZAS.forEach(t => {
-    p.push({ desc: t.porque, ans: t.nombre, opts: nombres.slice() });
-    p.push({ desc: 'Le falta cuando la frase dice: ' + t.no, ans: t.nombre, opts: nombres.slice() });
+  IA_OFI_TIPOS.forEach(ti => {
+    /* Dos por clase, de oficios distintos, para que no se acierte por el
+       oficio en vez de por la tarea. */
+    const tareas = [];
+    IA_OFICIOS.forEach(o => o.tareas.forEach(t => { if (t.tipo === ti.k) tareas.push({ o: o, t: t }); }));
+    const paso = Math.max(1, Math.floor(tareas.length / 2));
+    [0, paso].forEach(i => {
+      const x = tareas[i % tareas.length];
+      if (x) p.push({ desc: x.t.t + ' (' + x.o.nombre.toLowerCase() + ')', ans: nombre(ti.k), opts: nombres.slice() });
+    });
   });
   return p;
 })();
@@ -270,18 +280,24 @@ function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Concepto → Significado
 const neuroPairs = (function () {
-  /* Una frase de las que circulan, y la pieza que le FALTA para poder
-     decidir algo con ella. */
-  const ops = IA_FUT_PIEZAS.map(p => p.nombre);
-  const q = k => IA_FUT_PIEZAS.find(p => p.k === k).nombre;
-  return [
-    {trans:'«Esto le va a cambiar la vida a todo el mundo.»',func:q('quien'),opts:ops.slice()},
-    {trans:'«Las consecuencias van a ser gravísimas.»',func:q('precio'),opts:ops.slice()},
-    {trans:'«Un programa que adivine lo que pensás en clase.»',func:q('hoy'),opts:ops.slice()},
-    {trans:'«Y entonces ya no va a haber nada que hacer.»',func:q('decide'),opts:ops.slice()},
-    {trans:'«A Yensi la califica un programa, y eso es importante.»',func:q('precio'),opts:ops.slice()},
-    {trans:'«Una máquina que sepa lo que siente cada alumno.»',func:q('hoy'),opts:ops.slice()}
-  ];
+  /* ⚠️ Antes preguntaba qué PIEZA le falta a una frase. Ahora pregunta CON QUÉ
+     se lleva la máquina una tarea, que es la columna que separa esta misión de
+     la publicidad: o es una capacidad que el alumno produjo, o es una cuenta
+     que una computadora normal ya hacía. Solo entran tareas que se lleva. */
+  const ops = IA_CAPACIDADES.map(c => c.e + ' ' + c.corto).concat([IA_CUENTA.e + ' ' + IA_CUENTA.corto]);
+  const comoDe = t => t.como === IA_CUENTA.k ? IA_CUENTA.e + ' ' + IA_CUENTA.corto
+    : (function () { const c = IA_CAPACIDADES.find(x => x.k === t.como); return c.e + ' ' + c.corto; })();
+  const vistas = {}, out = [];
+  IA_OFICIOS.forEach(o => o.tareas.forEach(t => {
+    if (t.maquina === 'no') return;
+    /* Hasta dos por «con qué»: salen todas las formas y ninguna se repite
+       cinco veces, que es lo que pasaba tomándolas todas —«sumar, ordenar y
+       buscar» aparece en casi todos los oficios—. */
+    if (vistas[t.como] >= 2) return;
+    vistas[t.como] = (vistas[t.como] || 0) + 1;
+    out.push({ trans: t.t + ' (' + o.nombre.toLowerCase() + ')', func: comoDe(t), opts: ops.slice() });
+  }));
+  return out;
 })();
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
@@ -375,8 +391,8 @@ const explainQuestions=[
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia cada oración en tu cuaderno. Subraya lo que se pide y escribe al lado qué pieza le falta.','<strong>Ejemplo:</strong> La Inteligencia Artificial va a cambiarlo todo. → <span style="color:var(--jade);font-weight:700;">le falta la persona</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla en tu cuaderno. Completa las cuatro piezas de cada escenario.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('El escenario','text-align:left;')}${th('¿Con qué está hecho?')}${th('¿A quién le pasa?')}${th('¿Qué le cuesta?')}${th('¿Qué hay que decidir?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia cada tarea en tu cuaderno. Escribe al lado de qué clase es y si la máquina se la lleva.','<strong>Ejemplo:</strong> Sumar las facturas del mes. → <span style="color:var(--jade);font-weight:700;">📄 de papel · se la lleva</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla en tu cuaderno. Completa las cuatro piezas de cada caso.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('El caso','text-align:left;')}${th('¿Con qué está hecho?')}${th('¿A quién le pasa?')}${th('¿Qué le cuesta?')}${th('¿Qué hay que decidir?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Con qué: ${it.gen} | A quién: ${it.n} | Qué cuesta: ${it.g} | Qué decidir: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Escribe la opción correcta en cada espacio.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y responde cada una.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
