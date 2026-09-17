@@ -66,7 +66,12 @@ const NO_SON_SONDAS = {
      y SIEMPRE sale en cero, porque si un relato está bien escrito lo decide
      una persona leyéndolo. Una línea verde que no puede ponerse roja no es
      una sonda: es ruido dentro de la tanda, y enseña a no mirarla. */
-  'mide-relato':            'MIDE el relato para saber por dónde leer; no falla nunca, es de juicio'
+  'mide-relato':            'MIDE el relato para saber por dónde leer; no falla nunca, es de juicio',
+  /* Mide cuánto cuesta leer (INFLESZ, palabras por frase, tramo más largo) y
+     compara contra misiones de primaria. Tampoco falla: es la regla con la
+     que se decide, no la sonda. La sonda que sí se pone roja es
+     verifica-legibilidad-ia, que le pide a la ruta de IA las metas medidas. */
+  'mide-legibilidad':       'MIDE cuánto cuesta leer una misión; no falla nunca, es la vara'
 };
 
 /* ── qué sondas hay ──────────────────────────────────────────── */

@@ -208,11 +208,11 @@ function iaCurvaExactitud(n, datos) {
    Aquí solo se dice qué dos se emparejan y por qué vale la pena mirar la
    distancia entre ellos. La sonda comprueba que los dos años existan allí. */
 const IA_TIEMPO_PARES = [
-  { a: '1943', b: '2012', por: 'La neurona de papel y la red que aprendió a ver son la MISMA idea. Lo que faltó todo ese tiempo no fue la idea: fueron los datos y el cómputo, las patas de arriba.' },
-  { a: '1958', b: '2012', por: 'El perceptrón es el abuelo directo de la red que ganó ImageNet. Una idea puede estar bien y esperar medio siglo a que llegue con qué hacerla.' },
-  { a: '1950', b: '1956', por: 'De la pregunta de Turing al nombre «Inteligencia Artificial» pasó muy poco: cuando la idea está madura, el nombre llega rápido.' },
-  { a: '1966', b: '2022', por: 'ELIZA parecía escuchar con unas cuantas reglas; el chat que llegó al teléfono de todos es su tataranieto. Lo que pareció nuevo tenía décadas.' },
-  { a: '1997', b: '2016', por: 'Del ajedrez al Go. La primera victoria se hizo probando jugadas a fuerza de cálculo; la segunda, aprendiendo de ejemplos: el mismo tipo de victoria, con otra pata debajo.' },
+  { a: '1943', b: '2012', por: 'La neurona de papel y la red que aprendió a ver son la MISMA idea. Faltaban datos y cómputo.' },
+  { a: '1958', b: '2012', por: 'El perceptrón es el abuelo de la red que ganó ImageNet. Una idea buena puede esperar medio siglo.' },
+  { a: '1950', b: '1956', por: 'De la pregunta de Turing al nombre «Inteligencia Artificial» pasó poco. La idea ya estaba madura.' },
+  { a: '1966', b: '2022', por: 'ELIZA parecía escuchar con unas pocas reglas. El chat de hoy es su tataranieto.' },
+  { a: '1997', b: '2016', por: 'Del ajedrez al Go. La primera ganó a fuerza de cálculo. La segunda ganó aprendiendo de ejemplos.' },
 ];
 
 /* ── Etapa 4 · 🕵️ ¿Se puede comprobar? ────────────────────────────────────
@@ -225,27 +225,27 @@ const IA_TIEMPO_PARES = [
    segundo: el mejor escrito de los cuatro no trae ni una. */
 const IA_COMPROBAR = [
   { k: 'escuela', e: '🏫', titulo: 'La escuela de la aldea', trozos: [
-    { t: 'La escuela de la aldea El Carrizal abrió en 1952 con una sola maestra.', c: true,  por: 'Trae lugar y año: se pregunta en la escuela o en la alcaldía y se sabe.' },
-    { t: 'Hoy es una de las mejores de todo el país.',                               c: false, por: '«Una de las mejores» no dice quién lo midió, con qué ni cuándo.' },
-    { t: 'Tiene 212 alumnos matriculados este año, según la dirección.',              c: true,  por: 'Trae el número, el año y quién lo dice: se puede pedir la lista.' },
-    { t: 'Todos los que estudiaron ahí salieron adelante.',                           c: false, por: '«Todos» y «salieron adelante» no se pueden contar ni medir.' },
+    { t: 'La escuela de El Carrizal abrió en 1952.', c: true,  por: 'Trae lugar y año. Se pregunta en la escuela.' },
+    { t: 'Hoy es una de las mejores del país.',                         c: false, por: '«Una de las mejores» no dice quién lo midió.' },
+    { t: 'Tiene 212 alumnos este año, según la dirección.',             c: true,  por: 'Dice el número y quién lo dice. Se pide la lista.' },
+    { t: 'Todos los que estudiaron ahí salieron adelante.',             c: false, por: '«Todos» y «salieron adelante» no se pueden contar.' },
   ] },
   { k: 'remedio', e: '🍵', titulo: 'El remedio', trozos: [
-    { t: 'Un estudio científico demostró que el té de hoja de guanábana cura la diabetes en treinta días.', c: false, por: '¿Qué estudio? ¿Quién lo hizo, dónde se publicó? Sin eso, «un estudio» es una frase, no una fuente. Y con la salud, lo que no se puede comprobar no se prueba en casa: se pregunta en el centro de salud.' },
-    { t: 'Miles de personas ya lo han confirmado.',                                                        c: false, por: '¿Cuáles miles? ¿Dónde están sus nombres? Nadie los puede buscar.' },
-    { t: 'Los médicos no quieren que esto se sepa.',                                                       c: false, por: '«Los médicos» no es nadie en concreto. Una afirmación que no nombra a nadie no se puede comprobar ni desmentir: por eso convence tanto.' },
+    { t: 'Un estudio científico demostró que el té de guanábana cura la diabetes.', c: false, por: '¿Qué estudio? ¿Quién lo hizo? Sin eso no hay fuente. Con la salud no se prueba en casa: se pregunta en el centro de salud.' },
+    { t: 'Miles de personas ya lo han confirmado.',                      c: false, por: '¿Cuáles miles? ¿Dónde están sus nombres?' },
+    { t: 'Los médicos no quieren que esto se sepa.',                     c: false, por: '«Los médicos» no es nadie. Nadie lo puede desmentir.' },
   ] },
   { k: 'puente', e: '📻', titulo: 'La noticia del puente', trozos: [
-    { t: 'La alcaldía anunció en su cuenta oficial, el 12 de marzo, que el puente de la entrada cierra el lunes por reparaciones.', c: true, por: 'Quién, cuándo y dónde: se abre la cuenta oficial de la alcaldía y se mira si está.' },
-    { t: 'Dicen que está a punto de caerse.',                                                                                      c: false, por: '«Dicen» no es nadie. Sin quién lo dijo no hay a quién preguntarle.' },
-    { t: 'La reparación durará dos semanas, según el mismo anuncio.',                                                              c: true, por: 'Remite al anuncio: se lee el anuncio y se comprueba.' },
-    { t: 'Todo el pueblo lo sabe.',                                                                                                c: false, por: 'Que muchos lo repitan no lo hace comprobable: hay que llegar a la fuente, no a la cantidad.' },
+    { t: 'El 12 de marzo la alcaldía anunció en su cuenta oficial: el puente cierra el lunes.', c: true,  por: 'Quién, cuándo y dónde. Se abre esa cuenta y se mira.' },
+    { t: 'Dicen que está a punto de caerse.',                         c: false, por: '«Dicen» no es nadie. No hay a quién preguntarle.' },
+    { t: 'La reparación durará dos semanas, según el mismo anuncio.',  c: true,  por: 'Sale del mismo anuncio. Se lee y se comprueba.' },
+    { t: 'Todo el pueblo lo sabe.',                                    c: false, por: 'Que muchos lo repitan no lo hace comprobable.' },
   ] },
   { k: 'tarea', e: '📚', titulo: 'El dato de la tarea', trozos: [
-    { t: 'Honduras tiene 18 departamentos.',                                          c: true,  por: 'Se comprueba en el libro de Ciencias Sociales o en el mapa del aula.' },
-    { t: 'El de mayor extensión es Olancho.',                                          c: true,  por: 'Es un dato con fuente: cualquier atlas trae la extensión de cada departamento.' },
-    { t: 'Y es el país con más ríos de toda Centroamérica.',                           c: false, por: '¿Quién los contó y cómo? Sin la fuente que cuente los ríos, es una frase redonda que no se puede comprobar.' },
-    { t: 'Lo dijo un maestro muy respetado.',                                          c: false, por: 'No dice cuál maestro ni dónde lo dijo. Respetado no es lo mismo que comprobable.' },
+    { t: 'Honduras tiene 18 departamentos.',                   c: true,  por: 'Se comprueba en el mapa del aula.' },
+    { t: 'El de mayor extensión es Olancho.',                  c: true,  por: 'Cualquier atlas trae la extensión de cada departamento.' },
+    { t: 'Y es el país con más ríos de toda Centroamérica.',   c: false, por: '¿Quién los contó? Nadie dice de dónde sale ese dato.' },
+    { t: 'Lo dijo un maestro muy respetado.',                  c: false, por: 'No dice cuál maestro ni dónde lo dijo.' },
   ] },
 ];
 
@@ -258,46 +258,46 @@ const IA_COMPROBAR = [
    pantalla lo dice. No hay UNA respuesta buena: hay consecuencias, y el
    alumno escribe su propia regla al final. */
 const IA_ESCENARIOS = [
-  { k: 'voz', e: '📞', titulo: 'La voz de su mamá', quien: 'Kenia', cuesta: 'los L 1 500 que la familia guarda para la matrícula',
-    situacion: 'Kenia recibe un audio con la voz de su mamá, que está trabajando en San Pedro Sula: «Mándame ya los L 1 500 al número que te paso, es urgente, después te explico». La voz es igualita.',
+  { k: 'voz', e: '📞', titulo: 'La voz de su mamá', quien: 'Kenia', cuesta: 'los L 1 500 de la matrícula',
+    situacion: 'A Kenia le llega un audio con la voz de su mamá, que trabaja lejos: «Mándame ya los L 1 500 a este número, es urgente». La voz es igualita.',
     ops: [
-      { t: 'Mandar el dinero ya: es la voz de su mamá.',
-        pasa: 'El número era de un desconocido. Una voz se puede fabricar con unos segundos de audio sacados de cualquier video. El dinero de la matrícula se fue, y no vuelve.' },
-      { t: 'Colgar y llamarla ella misma al número de siempre.',
-        pasa: 'Su mamá contesta desde el trabajo: no mandó nada. Kenia perdió dos minutos y no perdió nada más. Esa llamada es la única prueba que una voz fabricada no puede falsear.' },
-      { t: 'Preguntarle por audio algo que solo su mamá sabe.',
-        pasa: 'Sirve, y muchas familias acuerdan una palabra clave. Pero si quien fabricó la voz también leyó los mensajes de la familia, puede saberla. Llamar de vuelta sigue siendo lo más seguro.' },
-    ], regla: 'Una voz ya no es una prueba. La prueba es llamar de vuelta al número de siempre.' },
-  { k: 'ensayo', e: '📝', titulo: 'El ensayo que escribió la máquina', quien: 'Marvin', cuesta: 'la nota del bimestre y lo que iba a aprender',
-    situacion: 'Marvin le pide a un chat de IA el ensayo de Ciencias Sociales sobre la Reforma Liberal, lo copia y lo entrega. Le queda perfecto. Al leerlo, la maestra le pide que explique el segundo párrafo delante de la clase.',
+      { t: 'Mandar el dinero: es su mamá.',
+        pasa: 'El número era de un desconocido. Una voz se fabrica con unos segundos de video. El dinero no vuelve.' },
+      { t: 'Colgar y llamarla al número de siempre.',
+        pasa: 'Su mamá contesta desde el trabajo: no mandó nada. Kenia perdió dos minutos y nada más.' },
+      { t: 'Preguntarle algo que solo su mamá sabe.',
+        pasa: 'Sirve. Pero si quien fabricó la voz leyó los mensajes de la familia, también sabe la respuesta.' },
+    ], regla: 'Una voz ya no es una prueba. La prueba es llamar al número de siempre.' },
+  { k: 'ensayo', e: '📝', titulo: 'El ensayo que escribió la máquina', quien: 'Marvin', cuesta: 'la nota del bimestre',
+    situacion: 'Marvin le pide a un chat de IA su ensayo sobre la Reforma Liberal. Lo entrega tal cual. La maestra le pide explicarlo delante de la clase.',
     ops: [
       { t: 'Inventar una explicación en el momento.',
-        pasa: 'El párrafo citaba un decreto con un número que no existe: la máquina lo inventó, y Marvin no lo sabía porque no lo leyó. La nota se fue, y con ella la confianza de la maestra, que cuesta más recuperar.' },
-      { t: 'Decir la verdad: lo escribió una máquina y no lo revisó.',
-        pasa: 'La maestra le da otra oportunidad con una condición: escribirlo él, y usar la máquina solo para preguntar lo que no entienda. Le cuesta una tarde. Le queda algo que sí sabe explicar.' },
-      { t: 'Usarla para entender, escribirlo él y comprobar cada dato.',
-        pasa: 'Es la forma en que sirve: le pide que le explique la Reforma Liberal como a alguien de séptimo, comprueba las fechas en el libro y escribe con sus palabras. El ensayo es suyo y lo puede defender.' },
+        pasa: 'Citaba un decreto que no existe. La máquina lo inventó y Marvin no lo leyó. Perdió la nota.' },
+      { t: 'Decir la verdad: lo escribió una máquina.',
+        pasa: 'La maestra le da otra oportunidad: escribirlo él. Le cuesta una tarde. Le queda algo que sí sabe explicar.' },
+      { t: 'Usarla para entender y escribirlo él.',
+        pasa: 'Le pide que le explique la Reforma Liberal. Comprueba las fechas en el libro. El ensayo es suyo.' },
     ], regla: 'Lo que entregas tiene que poder explicarlo. Si no puedes, no es tuyo.' },
-  { k: 'noticia', e: '📺', titulo: 'La noticia que cierra la escuela', quien: 'don Chele, el maestro', cuesta: 'una semana de clases y la tranquilidad de cuarenta familias',
-    situacion: 'Un domingo por la noche, a don Chele le llega por el grupo de la comunidad un video: un presentador de noticias, con el logo de un canal, dice que la escuela de la aldea cierra el lunes por orden de la Secretaría. El video se ve real. La mitad del pueblo ya lo compartió, y a él le preguntan qué hacer.',
+  { k: 'noticia', e: '📺', titulo: 'La noticia que cierra la escuela', quien: 'don Chele, el maestro', cuesta: 'una semana de clases y cuarenta familias asustadas',
+    situacion: 'Un domingo a don Chele le llega un video por el grupo de la comunidad. Un presentador con el logo de un canal dice que la escuela cierra el lunes. Medio pueblo ya lo compartió.',
     ops: [
-      { t: 'Compartirlo al grupo de padres para que se preparen.',
-        pasa: 'El lunes llegan doce alumnos de cuarenta. El video estaba fabricado: ese presentador nunca dijo eso. Recuperar la asistencia costó una semana, y la próxima noticia de verdad ya no la creyó nadie.' },
-      { t: 'Llamar a la dirección distrital antes de compartir nada.',
-        pasa: 'La distrital no sabe de ningún cierre. Don Chele manda un audio propio al grupo: «la escuela abre el lunes, lo confirmé». La noticia falsa muere ahí.' },
-      { t: 'Buscar la noticia en la cuenta oficial del canal.',
-        pasa: 'No está. Un video que solo existe en un grupo de mensajes y no en la fuente que lo firma no es una noticia: es un archivo que alguien fabricó.' },
+      { t: 'Compartirlo al grupo de padres.',
+        pasa: 'El lunes llegan doce alumnos de cuarenta. El video estaba fabricado. Recuperar la asistencia costó una semana. Y la siguiente noticia de verdad ya no la creyó nadie.' },
+      { t: 'Llamar a la dirección distrital.',
+        pasa: 'La distrital no sabe de ningún cierre. Don Chele avisa al grupo y la noticia falsa muere ahí.' },
+      { t: 'Buscarla en la cuenta del canal.',
+        pasa: 'No está. Un video que solo vive en un grupo de mensajes no es una noticia.' },
     ], regla: 'Cuanto más urgente y más increíble, más se verifica antes de compartir.' },
-  { k: 'califica', e: '🏫', titulo: 'La máquina que califica', quien: 'Sofía', cuesta: 'reprobar Español con una respuesta que estaba bien',
-    situacion: 'Imagina que el colegio usa un programa que califica solo los exámenes de redacción. A Sofía le marca mal un párrafo por «errores de vocabulario»: escribió «chucho», «cipote» y «pisto». El programa se entrenó con textos de otros países.',
+  { k: 'califica', e: '🏫', titulo: 'La máquina que califica', quien: 'Sofía', cuesta: 'reprobar Español con una respuesta buena',
+    situacion: 'Imagina un programa que califica solo los exámenes de redacción. A Sofía le marca mal un párrafo: escribió «chucho», «cipote» y «pisto». Ese programa aprendió con textos de otros países.',
     ops: [
-      { t: 'Aceptar la nota: la máquina no se equivoca.',
-        pasa: 'Sofía reprueba por escribir como se habla en su país. El error de la máquina cayó sobre ella y sobre todos los que escriben así: eso es un sesgo, el mismo de la etapa 2.' },
-      { t: 'Pedir que una persona revise la calificación.',
-        pasa: 'La maestra lee el párrafo, reconoce el español de Honduras y corrige la nota. Una decisión que afecta a una persona la revisa una persona.' },
-      { t: 'Preguntar con qué ejemplos se entrenó el programa.',
-        pasa: 'Son las tres preguntas de la etapa 2: con qué ejemplos, quién los eligió y a quién le cae el error. La respuesta explica el fallo y obliga a cambiar el programa o a no dejarlo decidir solo.' },
-    ], regla: 'Una máquina puede proponer; la decisión sobre una persona la toma una persona.' },
+      { t: 'Aceptar la nota. La máquina no falla.',
+        pasa: 'Sofía reprueba por escribir como se habla en su país. Le cae a todos los que escriben así. Es un sesgo.' },
+      { t: 'Pedir que una persona revise la nota.',
+        pasa: 'La maestra lee el párrafo, reconoce el español de Honduras y corrige la nota.' },
+      { t: 'Preguntar con qué ejemplos se entrenó.',
+        pasa: 'Son las tres preguntas de la etapa 2: con qué ejemplos, quién los eligió, a quién le cae el error. La respuesta explica el fallo y obliga a cambiar el programa.' },
+    ], regla: 'Una máquina puede proponer. La decisión sobre una persona la toma una persona.' },
 ];
 
 /* ── Etapa 5 · 🎙️ ¿Cuánto hace falta para una estafa? ─────────────────────
@@ -313,51 +313,55 @@ const IA_ESCENARIOS = [
    piezas**, porque sin ellas la estafa no funciona; y que ninguna de las seis
    piezas se robó: las seis salen de algo que se publicó. */
 const IA_ESTAFA_PIEZAS = [
-  { k: 'voz', emoji: '🎂', que: 'Un video del cumpleaños, subido al grupo de la familia',
-    publico: 'Lo subió una tía al grupo, con el audio de todos cantando',
-    aporta: 'La voz. Con unos segundos grabados basta para fabricarla.',
+  { k: 'voz', emoji: '🎂', que: 'El video del cumpleaños',
+    publico: 'Una tía lo subió al grupo',
+    aporta: 'La voz. Con unos segundos basta para fabricarla.',
     texto: '' },
-  { k: 'nombre', emoji: '📛', que: 'El nombre de la hija, en un comentario',
+  { k: 'nombre', emoji: '📛', que: 'El nombre de la hija',
     publico: '«¡Feliz cumple, Yoselin!», en una foto pública',
-    aporta: 'Te llama por tu nombre, y eso ya suena a alguien que te conoce.',
+    aporta: 'Te llama por tu nombre. Suena a alguien conocido.',
     texto: 'Yoselin, ' },
-  { k: 'donde', emoji: '🏙️', que: 'Que la mamá está trabajando fuera',
-    publico: 'Una publicación de la mamá: «primer día en San Pedro»',
-    aporta: 'Explica por qué no puede hablar ahora. Quita la defensa antes de que se te ocurra.',
-    texto: 'estoy en San Pedro y no puedo hablar ahora, ' },
+  { k: 'donde', emoji: '🏙️', que: 'Que la mamá trabaja fuera',
+    publico: 'La mamá publicó: «primer día en San Pedro»',
+    aporta: 'Explica por qué no puede hablar.',
+    texto: 'Estoy en San Pedro, no puedo hablar. ' },
   { k: 'motivo', emoji: '💸', que: 'Que la matrícula vence esta semana',
-    publico: 'El aviso de la escuela, reenviado en el grupo de la comunidad',
-    aporta: 'Un motivo que es verdad. Lo que más convence de un engaño es la parte que no es mentira.',
-    texto: 'la matrícula de tu hermano vence hoy y no alcancé a pagarla, ' },
-  { k: 'detalle', emoji: '🏫', que: 'El nombre de la escuela y de la señora de la tienda',
-    publico: 'Sale en las fotos del uniforme y en los comentarios del grupo',
-    aporta: 'El detalle que nadie de fuera sabría… salvo que esté publicado.',
-    texto: 'dejáselo a la señora de la tienda del portón, ' },
-  { k: 'canal', emoji: '📵', que: 'Un número nuevo, que no es el de la mamá',
-    publico: 'Esta no se publicó: la pone quien engaña, y es la que lo delata',
-    aporta: 'Es la pieza que hace falta para que el dinero llegue a otro lado.',
-    texto: 'mandalo a este número que el mío se dañó, ' },
+    publico: 'El aviso de la escuela, reenviado al grupo',
+    aporta: 'Es verdad. Eso es lo que más convence.',
+    texto: 'La matrícula de tu hermano vence hoy. ' },
+  { k: 'detalle', emoji: '🏫', que: 'El nombre de la escuela y de la tienda',
+    publico: 'En las fotos del uniforme y en los comentarios',
+    aporta: 'Parece un detalle que solo la familia sabe.',
+    texto: 'Dejáselo en la tienda del portón. ' },
+  { k: 'canal', emoji: '📵', que: 'Un número nuevo, no el de la mamá',
+    publico: 'Esta no se publicó: la pone quien engaña',
+    aporta: 'El dinero llega a otro lado.',
+    texto: 'A este número, el mío se dañó. ' },
 ];
 /* El mensaje se ARMA con las piezas elegidas. Las tres señales van siempre,
    con piezas o sin ellas: son el esqueleto del engaño, no un adorno. */
 const IA_ESTAFA_BASE = {
   saludo: 'Hola, soy tu mamá. ',
-  urgencia: 'Es urgente, ',            /* señal 1 */
-  canal: 'mandámelo al número que te paso, ', /* señal 3, en genérico */
-  secreto: 'No le digás a nadie todavía, después te explico.', /* señal 2 */
+  urgencia: 'Es urgente. ',            /* señal 1 */
+  canal: 'Al número que te paso. ', /* señal 3, en genérico */
+  secreto: 'No le digás a nadie todavía.', /* señal 2 */
 };
 function iaEstafaMensaje(elegidas) {
   const hay = k => elegidas.indexOf(k) >= 0;
   const pieza = k => IA_ESTAFA_PIEZAS.find(p => p.k === k).texto;
-  let m = hay('nombre') ? 'Hola ' + pieza('nombre').trim() + ' soy tu mamá. ' : IA_ESTAFA_BASE.saludo;
+  let m = hay('nombre') ? pieza('nombre') + 'soy tu mamá. ' : IA_ESTAFA_BASE.saludo;
   m += IA_ESTAFA_BASE.urgencia;
   ['donde', 'motivo'].forEach(k => { if (hay(k)) m += pieza(k); });
-  m += hay('motivo') ? 'mandame los dos mil, ' : 'mandame dinero, ';
+  m += hay('motivo') ? 'Mandame los dos mil. ' : 'Mandame dinero. ';
   if (hay('detalle')) m += pieza('detalle');
   /* El canal nuevo va SIEMPRE: sin él el dinero llegaría a la persona de
      verdad y no habría estafa. La pieza solo lo vuelve concreto y creíble. */
   m += hay('canal') ? pieza('canal') : IA_ESTAFA_BASE.canal;
-  m = m.replace(/,\s*$/, '. ').replace(/\s+/g, ' ');
+  /* ⚠️ Frases cortas a propósito, como escribe alguien apurado en un chat:
+     el mensaje entero, con las seis piezas, cabe en 45 palabras y ninguna
+     frase pasa de 12. Iba en una sola frase de 59 palabras con comas, y era
+     el único tramo de la ruta que un niño de cuarto no terminaba de leer. */
+  m = m.replace(/\s+/g, ' ');
   if (!/[.!?]\s*$/.test(m)) m += '. ';
   return m + IA_ESTAFA_BASE.secreto;
 }
@@ -372,15 +376,15 @@ const IA_ESTAFA_SENALES = [
    defensa que se vende como buena para todo es peor que ninguna. */
 const IA_ESTAFA_DEFENSAS = [
   { k: 'llamar', emoji: '📞', que: 'Colgar y llamar yo al número de siempre', vale: 'si',
-    porque: 'Siempre. Es la única que no depende de lo que la familia haya publicado: del otro lado del número de siempre está su mamá de verdad.' },
+    porque: 'No depende de nada publicado: del otro lado está su mamá de verdad.' },
   { k: 'palabra', emoji: '🔑', que: 'Una palabra que acordamos en persona', vale: 'si',
-    porque: 'Sí, con una condición: que no se haya escrito nunca en un grupo. Si se escribió, ya la puede leer quien engaña.' },
+    porque: 'Solo si no se escribió nunca en un grupo. Escrita, la lee quien engaña.' },
   { k: 'voz', emoji: '🎧', que: 'Reconocer la voz de mi mamá', vale: 'no',
-    porque: 'No. La voz es justamente lo que se fabrica, y con el video del cumpleaños ya la tienen. Una voz dejó de ser una prueba.' },
-  { k: 'dato', emoji: '❓', que: 'Preguntarle por audio algo que solo ella sabe', vale: 'medias',
-    porque: 'A medias. Si lo que le preguntás está publicado —el nombre de la escuela, dónde trabaja, el cumpleaños—, lo sabe cualquiera que haya mirado.' },
+    porque: 'La voz es lo que se fabrica. Con el video del cumpleaños ya la tienen.' },
+  { k: 'dato', emoji: '❓', que: 'Preguntarle algo que solo ella sabe', vale: 'medias',
+    porque: 'Si está publicado, lo sabe cualquiera: la escuela, dónde trabaja, el cumpleaños.' },
   { k: 'esperar', emoji: '⏳', que: 'Esperar diez minutos y contárselo a alguien', vale: 'si',
-    porque: 'Sí, y por eso el mensaje trae urgencia y secreto: están puestos justamente para que no hagas ninguna de las dos cosas.' },
+    porque: 'El mensaje trae urgencia y secreto para que no hagas ninguna de las dos.' },
 ];
 
 /* ── Etapa 5 · ⚖️ El promedio que esconde ─────────────────────────────────
@@ -407,17 +411,17 @@ const IA_REPARTOS = [
 ];
 const IA_SISTEMAS = [
   { k: 'beca', emoji: '📄', nombre: 'El que descarta solicitudes de beca',
-    decide: 'si tu solicitud pasa a que la lea una persona',
+    decide: 'si una persona llega a leer tu solicitud',
     cuesta: 'el año de estudio de alguien que cumplía los requisitos',
-    grupos: [{ nombre: 'Solicitudes de escuelas grandes', cuantos: 180 }, { nombre: 'Solicitudes de escuelas de aldea', cuantos: 20 }] },
+    grupos: [{ nombre: 'Alumnos de escuelas grandes', cuantos: 180 }, { nombre: 'Alumnos de escuelas de aldea', cuantos: 20 }] },
   { k: 'voz', emoji: '🗣️', nombre: 'El que entiende lo que decís por teléfono',
     decide: 'si el trámite te atiende o te cuelga',
-    cuesta: 'tener que viajar a la ciudad por algo que se resolvía hablando',
+    cuesta: 'viajar a la ciudad por algo que se arreglaba hablando',
     grupos: [{ nombre: 'Los que hablan como en la capital', cuantos: 170 }, { nombre: 'Los que hablan como en su pueblo', cuantos: 30 }] },
   { k: 'cara', emoji: '👁️', nombre: 'El que abre la puerta con la cara',
-    decide: 'si entrás a tu trabajo o esperás a que alguien te abra',
-    cuesta: 'llegar tarde todos los días, y que parezca culpa tuya',
-    grupos: [{ nombre: 'Caras parecidas a las del entrenamiento', cuantos: 185 }, { nombre: 'Las demás caras', cuantos: 15 }] },
+    decide: 'si entrás a tu trabajo o esperás afuera',
+    cuesta: 'llegar tarde cada día, y que parezca culpa tuya',
+    grupos: [{ nombre: 'Caras como las del entrenamiento', cuantos: 185 }, { nombre: 'Las demás caras', cuantos: 15 }] },
 ];
 /* Cuántos ejemplos de cada grupo, según el reparto elegido. */
 function iaRepartoEjemplos(sistema, repartoK) {

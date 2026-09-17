@@ -83,26 +83,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué diferencia hay entre un programa de siempre y uno que aprende?',o:['Ninguna, son lo mismo','El que aprende es más caro','El de siempre SIGUE reglas escritas; el que aprende SACA la regla de los ejemplos','El que aprende no necesita computadora'],c:2,
-   e:'Es la diferencia que sostiene toda la ruta. Un sistema de reglas no mejora solo; uno que aprende, sí.'},
-  {q:'¿Qué es una etiqueta?',o:['La respuesta correcta que una persona le pone a un ejemplo','El precio de la computadora','El nombre del programa','Un adorno de la pantalla'],c:0,
-   e:'Sin etiqueta la máquina ve la foto pero no sabe de qué es.'},
-  {q:'¿Para qué sirve probar a la máquina con ejemplos que NUNCA vio?',o:['Para gastar menos batería','Para que se entretenga','Para hacerla más rápida','Para saber si aprendió el patrón o solo se acordó'],c:3,
-   e:'Si acierta con lo nuevo, aprendió. Si solo acierta con lo que ya vio, se lo memorizó.'},
-  {q:'Una máquina entrenada solo con fotos de maíz, frijol y café, ¿qué hace con una hoja de plátano?',o:['La reconoce igual de bien','La ignora','Se puede equivocar, porque nunca vio una','Se apaga'],c:2,
-   e:'Es el sesgo: falla justo con lo que faltaba en sus ejemplos.'},
-  {q:'La máquina se equivocó con el plátano. ¿De quién es el problema?',o:['De quien eligió los ejemplos con que la entrenaron','De la máquina, que está mala','Del plátano','De nadie, es normal'],c:0,
-   e:'La pregunta que hay que hacerse siempre es quién eligió los ejemplos.'},
-  {q:'¿Cómo se llama aprender con ejemplos que ya traen su respuesta puesta?',o:['Por refuerzo','No supervisado','Aprendizaje supervisado','Por memoria'],c:2,
-   e:'Es como estudiar con el solucionario al lado: ve el ejercicio y ve la respuesta.'},
-  {q:'Un programa junta solo las fotos que se parecen, sin que nadie le diga cómo se llaman. ¿Qué tipo de aprendizaje es?',o:['Supervisado','No supervisado','Por refuerzo','Ninguno'],c:1,
-   e:'Sabe que estos se parecen entre sí, pero no sabe cómo se llama cada grupo.'},
-  {q:'Un programa aprende a jugar recibiendo un premio cuando le sale bien. ¿Qué tipo es?',o:['Supervisado','No supervisado','Por memoria','Por refuerzo'],c:3,
-   e:'Prueba, se premia, cambia lo que hace y vuelve a probar. Millones de veces.'},
-  {q:'Una máquina acierta 9 de cada 10. ¿Qué significa ese 1 que falla?',o:['Que no sirve para nada','Que hay que apagarla','Que en ese error puede haber una persona','Que aprendió mal a propósito'],c:2,
-   e:'Ninguna acierta el 100 %. Lo importante es saber a quién le toca el error.'},
-  {q:'¿Qué es un patrón?',o:['Un error de la computadora','Lo que se repite en muchos ejemplos y sirve para reconocerlos','El nombre de una etiqueta','El precio de los datos'],c:1,
-   e:'La máquina no entiende lo que ve: encuentra lo que se repite y lo usa para decidir.'}
+  {q:'¿En qué se diferencian un programa de siempre y uno que aprende?',o:['Ninguna, son lo mismo','El que aprende es más caro','Uno SIGUE reglas; el otro las SACA','El que aprende no usa computadora'],c:2,
+   e:'El de reglas no mejora solo. El que aprende saca la regla de los ejemplos.'},
+  {q:'¿Qué es una etiqueta?',o:['La respuesta correcta que le pone una persona','El precio de la computadora','El nombre del programa','Un adorno de la pantalla'],c:0,
+   e:'Sin etiqueta ve la foto y no sabe qué es.'},
+  {q:'¿Para qué se prueba con ejemplos que NUNCA vio?',o:['Para gastar menos batería','Para que se entretenga','Para hacerla más rápida','Para saber si aprendió o solo se acordó'],c:3,
+   e:'Si acierta con lo nuevo, aprendió. Si no, memorizó.'},
+  {q:'Se entrenó con maíz, frijol y café. Llega una hoja de plátano.',o:['La reconoce igual de bien','La ignora','Se puede equivocar: nunca vio una','Se apaga'],c:2,
+   e:'Eso es el sesgo: falla con lo que faltó.'},
+  {q:'La máquina se equivocó con el plátano. ¿De quién es el problema?',o:['De quien eligió los ejemplos','De la máquina, que está mala','Del plátano','De nadie, es normal'],c:0,
+   e:'La pregunta de siempre: ¿quién eligió los ejemplos?'},
+  {q:'¿Cómo se llama aprender con ejemplos que traen su respuesta?',o:['Por refuerzo','No supervisado','Aprendizaje supervisado','Por memoria'],c:2,
+   e:'Es estudiar con el solucionario al lado.'},
+  {q:'Junta fotos parecidas y nadie le dice cómo se llaman.',o:['Supervisado','No supervisado','Por refuerzo','Ninguno'],c:1,
+   e:'Sabe que se parecen. No sabe cómo se llaman.'},
+  {q:'Aprende a jugar con premios cuando le sale bien. ¿Qué tipo es?',o:['Supervisado','No supervisado','Por memoria','Por refuerzo'],c:3,
+   e:'Prueba, cobra premio y vuelve a probar. Millones de veces.'},
+  {q:'Una máquina acierta 9 de cada 10. ¿Qué es ese 1 que falla?',o:['Que no sirve para nada','Que hay que apagarla','En ese error hay una persona','Que aprendió mal a propósito'],c:2,
+   e:'Ninguna acierta el 100 %. Importa a quién le toca.'},
+  {q:'¿Qué es un patrón?',o:['Un error de la computadora','Lo que se repite en muchos ejemplos','El nombre de una etiqueta','El precio de los datos'],c:1,
+   e:'No entiende lo que ve. Encuentra lo que se repite.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -121,11 +121,11 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
   {label:['Es un DATO','Es una ETIQUETA'],headA:'📦 Dato',headB:'🏷️ Etiqueta',colA:'dato',colB:'etiq',
-   words:[{w:'La foto de una hoja',t:'dato'},{w:'La palabra «sana» escrita por una persona',t:'etiq'},{w:'El peso de una naranja',t:'dato'},{w:'«Esto es un nance»',t:'etiq'},{w:'La grabación de una voz',t:'dato'},{w:'«Este audio dice hola»',t:'etiq'},{w:'La temperatura del día',t:'dato'},{w:'«Esta hoja tiene plaga»',t:'etiq'}]},
+   words:[{w:'La foto de una hoja',t:'dato'},{w:'La palabra «sana» que puso una persona',t:'etiq'},{w:'El peso de una naranja',t:'dato'},{w:'«Esto es un nance»',t:'etiq'},{w:'La grabación de una voz',t:'dato'},{w:'«Este audio dice hola»',t:'etiq'},{w:'La temperatura del día',t:'dato'},{w:'«Esta hoja tiene plaga»',t:'etiq'}]},
   {label:['Pasa al ENTRENAR','Pasa al PROBAR'],headA:'🏋️ Entrenar',headB:'🧪 Probar',colA:'entr',colB:'prob',
-   words:[{w:'Se le muestran ejemplos con su etiqueta',t:'entr'},{w:'Se usan ejemplos que nunca vio',t:'prob'},{w:'Se repite muchas veces hasta hallar el patrón',t:'entr'},{w:'Se cuenta cuántas acertó',t:'prob'},{w:'Se ajustan los números por dentro',t:'entr'},{w:'Se descubre si de verdad aprendió',t:'prob'},{w:'Cuesta tiempo y se hace una sola vez',t:'entr'},{w:'Sirve para medir el error',t:'prob'}]},
+   words:[{w:'Se le muestran ejemplos con su etiqueta',t:'entr'},{w:'Se usan ejemplos que nunca vio',t:'prob'},{w:'Se repite hasta hallar el patrón',t:'entr'},{w:'Se cuenta cuántas acertó',t:'prob'},{w:'Se ajustan los números por dentro',t:'entr'},{w:'Se descubre si de verdad aprendió',t:'prob'},{w:'Cuesta tiempo y se hace una sola vez',t:'entr'},{w:'Sirve para medir el error',t:'prob'}]},
   {label:['Aprendizaje supervisado','Aprendizaje no supervisado'],headA:'🏷️ Supervisado',headB:'🗂️ No supervisado',colA:'sup',colB:'nosup',
-   words:[{w:'Los ejemplos traen su etiqueta',t:'sup'},{w:'Los ejemplos van sin etiqueta',t:'nosup'},{w:'Una persona escribió la respuesta correcta',t:'sup'},{w:'La máquina agrupa sola lo que se parece',t:'nosup'},{w:'Separar hojas sanas de hojas con plaga',t:'sup'},{w:'Separar las fotos de la fiesta de las del campo',t:'nosup'},{w:'Es como estudiar con el solucionario al lado',t:'sup'},{w:'No sabe cómo se llama cada grupo',t:'nosup'}]}
+   words:[{w:'Los ejemplos traen su etiqueta',t:'sup'},{w:'Los ejemplos van sin etiqueta',t:'nosup'},{w:'Una persona escribió la respuesta correcta',t:'sup'},{w:'La máquina agrupa sola lo que se parece',t:'nosup'},{w:'Separar hojas sanas de hojas con plaga',t:'sup'},{w:'Separar fotos de la fiesta y fotos del campo',t:'nosup'},{w:'Como estudiar con el solucionario al lado',t:'sup'},{w:'No sabe cómo se llama cada grupo',t:'nosup'}]}
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
@@ -137,9 +137,9 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 const idData=[
   {s:['Una','persona','le','puso','la','etiqueta','a','cada','foto.'],c:5,art:'La respuesta correcta que pone una persona'},
   {s:['La','máquina','busca','el','patrón','en','los','ejemplos.'],c:4,art:'Lo que se repite y sirve para reconocer'},
-  {s:['Entrenar','cuesta','tiempo;','usar','lo','aprendido','es','rápido.'],c:0,art:'Lo que se hace una sola vez y cuesta tiempo'},
-  {s:['La','probamos','con','ejemplos','que','nunca','vio.'],c:1,art:'Lo que sirve para saber si de verdad aprendió'},
-  {s:['Nunca','vio','plátano:','ese','es','el','sesgo.'],c:6,art:'El nombre del fallo cuando faltan ejemplos'},
+  {s:['Entrenar','cuesta','tiempo;','usar','lo','aprendido','es','rápido.'],c:0,art:'Lo que se hace una sola vez'},
+  {s:['La','probamos','con','ejemplos','que','nunca','vio.'],c:1,art:'Sirve para saber si de verdad aprendió'},
+  {s:['Nunca','vio','plátano:','ese','es','el','sesgo.'],c:6,art:'El fallo cuando faltan ejemplos'},
   {s:['Cada','dato','es','un','pedacito','de','información.'],c:1,art:'Un pedacito de información que se guarda'},
   {s:['Aprende','a','jugar','con','premios:','es','refuerzo.'],c:6,art:'El aprendizaje que usa premios'},
   {s:['Acierta','nueve','y','falla','una:','ese','es','el','error.'],c:8,art:'Las veces que la máquina contesta mal'}
@@ -152,13 +152,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La respuesta correcta que una persona le pone a un ejemplo se llama ___.',opts:['dato','patrón','etiqueta'],c:2},
-  {s:'Mostrarle muchos ejemplos hasta que halle el patrón se llama ___.',opts:['entrenar','probar','borrar'],c:0},
+  {s:'La respuesta correcta que pone una persona se llama ___.',opts:['dato','patrón','etiqueta'],c:2},
+  {s:'Mostrarle ejemplos hasta hallar el patrón se llama ___.',opts:['entrenar','probar','borrar'],c:0},
   {s:'Examinarla con ejemplos que nunca vio se llama ___.',opts:['entrenar','probar','copiar'],c:1},
-  {s:'Cuando los ejemplos están mal repartidos, la máquina tiene un ___.',opts:['premio','patrón','sesgo'],c:2},
+  {s:'Si los ejemplos están mal repartidos hay un ___.',opts:['premio','patrón','sesgo'],c:2},
   {s:'Aprender con ejemplos etiquetados es aprendizaje ___.',opts:['supervisado','no supervisado','por refuerzo'],c:0},
-  {s:'Agrupar solo lo que se parece, sin etiquetas, es aprendizaje ___.',opts:['supervisado','no supervisado','por refuerzo'],c:1},
-  {s:'Aprender probando y recibiendo premios es aprendizaje ___.',opts:['por refuerzo','supervisado','no supervisado'],c:0},
+  {s:'Agrupar lo que se parece, sin etiquetas, es aprendizaje ___.',opts:['supervisado','no supervisado','por refuerzo'],c:1},
+  {s:'Aprender con premios es aprendizaje ___.',opts:['por refuerzo','supervisado','no supervisado'],c:0},
   {s:'Lo que se repite en muchos ejemplos se llama ___.',opts:['error','etiqueta','patrón'],c:2}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
@@ -218,12 +218,12 @@ const neuroPairs = (function () {
      del caso al tipo, y en Clasifica del tipo al caso. */
   const tipos = ['Aprendizaje supervisado','Aprendizaje no supervisado','Aprendizaje por refuerzo'];
   return [
-    {trans:'Le damos fotos de hojas con la etiqueta «sana» o «con plaga».',func:'Aprendizaje supervisado',opts:tipos.slice()},
-    {trans:'Le damos miles de fotos sin decirle nada y ella las junta por parecido.',func:'Aprendizaje no supervisado',opts:tipos.slice()},
-    {trans:'Juega millones de partidas y se premia cada vez que gana.',func:'Aprendizaje por refuerzo',opts:tipos.slice()},
-    {trans:'Le damos recibos ya clasificados en «pagado» y «pendiente».',func:'Aprendizaje supervisado',opts:tipos.slice()},
-    {trans:'Agrupa sola a los clientes que compran parecido, sin nombres de grupo.',func:'Aprendizaje no supervisado',opts:tipos.slice()},
-    {trans:'Un robot prueba caminar y gana puntos cuando avanza sin caerse.',func:'Aprendizaje por refuerzo',opts:tipos.slice()}
+    {trans:'Le damos hojas etiquetadas «sana» o «con plaga».',func:'Aprendizaje supervisado',opts:tipos.slice()},
+    {trans:'Le damos fotos sin decirle nada y las junta por parecido.',func:'Aprendizaje no supervisado',opts:tipos.slice()},
+    {trans:'Juega millones de partidas y gana premio cada vez.',func:'Aprendizaje por refuerzo',opts:tipos.slice()},
+    {trans:'Le damos recibos ya marcados «pagado» o «pendiente».',func:'Aprendizaje supervisado',opts:tipos.slice()},
+    {trans:'Agrupa sola a los clientes que compran parecido.',func:'Aprendizaje no supervisado',opts:tipos.slice()},
+    {trans:'Un robot gana puntos si camina sin caerse.',func:'Aprendizaje por refuerzo',opts:tipos.slice()}
   ];
 })();
 let neuroIdx=0,neuroDone=false;
@@ -236,12 +236,12 @@ const enfermedadData=[
   {disease:'Le faltaron ejemplos de un tipo de hoja',characteristic:'Sesgo',opts:['Sesgo','Patrón','Etiqueta']},
   {disease:'Lo que se repite en muchos ejemplos',characteristic:'Patrón',opts:['Sesgo','Patrón','Etiqueta']},
   {disease:'La respuesta correcta que puso una persona',characteristic:'Etiqueta',opts:['Sesgo','Patrón','Etiqueta']},
-  {disease:'La máquina falla solo con los cultivos que nunca vio',characteristic:'Sesgo',opts:['Sesgo','Patrón','Etiqueta']},
-  {disease:'Los nances casi siempre son pequeños y amarillos',characteristic:'Patrón',opts:['Sesgo','Patrón','Etiqueta']},
+  {disease:'Falla solo con los cultivos que nunca vio',characteristic:'Sesgo',opts:['Sesgo','Patrón','Etiqueta']},
+  {disease:'Los nances casi siempre son pequeños',characteristic:'Patrón',opts:['Sesgo','Patrón','Etiqueta']},
   {disease:'«Esta hoja tiene plaga», escrito por el técnico',characteristic:'Etiqueta',opts:['Sesgo','Patrón','Etiqueta']},
-  {disease:'Todos los ejemplos vinieron de una sola aldea',characteristic:'Sesgo',opts:['Sesgo','Patrón','Etiqueta']},
+  {disease:'Los ejemplos vinieron de una sola aldea',characteristic:'Sesgo',opts:['Sesgo','Patrón','Etiqueta']},
   {disease:'Las hojas enfermas tienen manchas oscuras',characteristic:'Patrón',opts:['Sesgo','Patrón','Etiqueta']},
-  {disease:'Sin ella, la máquina ve la foto y no sabe de qué es',characteristic:'Etiqueta',opts:['Sesgo','Patrón','Etiqueta']}
+  {disease:'Sin ella ve la foto y no sabe qué es',characteristic:'Etiqueta',opts:['Sesgo','Patrón','Etiqueta']}
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -251,11 +251,11 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 // ===================== RETO FINAL =====================
 const retoPairs=[
   {label:['Es un DATO','Es una ETIQUETA'],btnA:'📦 Dato',btnB:'🏷️ Etiqueta',colA:'dato',colB:'etiq',
-   words:[{w:'La foto de una hoja',t:'dato'},{w:'La palabra «sana» escrita por una persona',t:'etiq'},{w:'El peso de una naranja',t:'dato'},{w:'«Esto es un nance»',t:'etiq'},{w:'La grabación de una voz',t:'dato'},{w:'«Este audio dice hola»',t:'etiq'},{w:'La temperatura del día',t:'dato'},{w:'«Esta hoja tiene plaga»',t:'etiq'},{w:'El color de una fruta',t:'dato'},{w:'«Esta foto es de un perro»',t:'etiq'}]},
+   words:[{w:'La foto de una hoja',t:'dato'},{w:'La palabra «sana» que puso una persona',t:'etiq'},{w:'El peso de una naranja',t:'dato'},{w:'«Esto es un nance»',t:'etiq'},{w:'La grabación de una voz',t:'dato'},{w:'«Este audio dice hola»',t:'etiq'},{w:'La temperatura del día',t:'dato'},{w:'«Esta hoja tiene plaga»',t:'etiq'},{w:'El color de una fruta',t:'dato'},{w:'«Esta foto es de un perro»',t:'etiq'}]},
   {label:['Pasa al ENTRENAR','Pasa al PROBAR'],btnA:'🏋️ Entrenar',btnB:'🧪 Probar',colA:'entr',colB:'prob',
-   words:[{w:'Se le muestran ejemplos con su etiqueta',t:'entr'},{w:'Se usan ejemplos que nunca vio',t:'prob'},{w:'Se repite muchas veces hasta hallar el patrón',t:'entr'},{w:'Se cuenta cuántas acertó',t:'prob'},{w:'Se ajustan los números por dentro',t:'entr'},{w:'Se descubre si de verdad aprendió',t:'prob'},{w:'Cuesta tiempo y se hace una sola vez',t:'entr'},{w:'Sirve para medir el error',t:'prob'},{w:'Es lo lento del proceso',t:'entr'},{w:'Da el porcentaje de aciertos',t:'prob'}]},
+   words:[{w:'Se le muestran ejemplos con su etiqueta',t:'entr'},{w:'Se usan ejemplos que nunca vio',t:'prob'},{w:'Se repite hasta hallar el patrón',t:'entr'},{w:'Se cuenta cuántas acertó',t:'prob'},{w:'Se ajustan los números por dentro',t:'entr'},{w:'Se descubre si de verdad aprendió',t:'prob'},{w:'Cuesta tiempo y se hace una sola vez',t:'entr'},{w:'Sirve para medir el error',t:'prob'},{w:'Es lo lento del proceso',t:'entr'},{w:'Da el porcentaje de aciertos',t:'prob'}]},
   {label:['Aprendizaje supervisado','Aprendizaje no supervisado'],btnA:'🏷️ Supervisado',btnB:'🗂️ No supervisado',colA:'sup',colB:'nosup',
-   words:[{w:'Los ejemplos traen su etiqueta',t:'sup'},{w:'Los ejemplos van sin etiqueta',t:'nosup'},{w:'Una persona escribió la respuesta correcta',t:'sup'},{w:'La máquina agrupa sola lo que se parece',t:'nosup'},{w:'Separar hojas sanas de hojas con plaga',t:'sup'},{w:'Separar las fotos de la fiesta de las del campo',t:'nosup'},{w:'Es como estudiar con el solucionario al lado',t:'sup'},{w:'No sabe cómo se llama cada grupo',t:'nosup'},{w:'Reconocer si un recibo está pagado',t:'sup'},{w:'Juntar clientes que compran parecido',t:'nosup'}]}
+   words:[{w:'Los ejemplos traen su etiqueta',t:'sup'},{w:'Los ejemplos van sin etiqueta',t:'nosup'},{w:'Una persona escribió la respuesta correcta',t:'sup'},{w:'La máquina agrupa sola lo que se parece',t:'nosup'},{w:'Separar hojas sanas de hojas con plaga',t:'sup'},{w:'Separar fotos de la fiesta y fotos del campo',t:'nosup'},{w:'Como estudiar con el solucionario al lado',t:'sup'},{w:'No sabe cómo se llama cada grupo',t:'nosup'},{w:'Reconocer si un recibo está pagado',t:'sup'},{w:'Juntar clientes que compran parecido',t:'nosup'}]}
 ];
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
 function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
@@ -278,29 +278,29 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'Una persona le puso la etiqueta a cada foto antes de entrenar.',type:'etiqueta'},
-  {s:'La máquina busca el patrón que se repite en los ejemplos.',type:'patrón'},
+  {s:'Una persona le puso la etiqueta a cada foto.',type:'etiqueta'},
+  {s:'La máquina busca el patrón en los ejemplos.',type:'patrón'},
   {s:'Entrenar cuesta tiempo y se hace una sola vez.',type:'entrenar'},
-  {s:'La probamos con ejemplos que nunca había visto.',type:'probar'},
-  {s:'Nunca vio una hoja de plátano: ahí está el sesgo.',type:'sesgo'},
-  {s:'Cada dato es un pedacito de información que se guarda.',type:'dato'},
+  {s:'La probamos con ejemplos que nunca vio.',type:'probar'},
+  {s:'Nunca vio un plátano: ahí está el sesgo.',type:'sesgo'},
+  {s:'Cada dato es un pedacito de información.',type:'dato'},
   {s:'Aprende jugando y recibiendo premios: eso es refuerzo.',type:'refuerzo'},
-  {s:'Acierta nueve de cada diez y falla una: ese es el error.',type:'error'},
-  {s:'En el aprendizaje supervisado los ejemplos traen su respuesta.',type:'supervisado'},
-  {s:'Agrupa sola lo que se parece, sin etiquetas: es no supervisado.',type:'no supervisado'}
+  {s:'Acierta nueve y falla una: ese es el error.',type:'error'},
+  {s:'En el supervisado los ejemplos traen su respuesta.',type:'supervisado'},
+  {s:'Agrupa lo que se parece, sin etiquetas: es no supervisado.',type:'no supervisado'}
 ];
 const classifyTaskDB=[
-  {w:'Dato',gen:'Un pedacito de información',n:'El color de un nance',g:'En la lista de tu maestra',t:''},
-  {w:'Etiqueta',gen:'La respuesta correcta puesta por una persona',n:'«Esta hoja tiene plaga»',g:'Antes de entrenar',t:''},
-  {w:'Entrenar',gen:'Mostrarle ejemplos hasta hallar el patrón',n:'Diez mil fotos de hojas',g:'Una sola vez, y cuesta tiempo',t:''},
-  {w:'Probar',gen:'Examinarla con ejemplos nuevos',n:'Veinte fotos que nunca vio',g:'Después de entrenar',t:''},
-  {w:'Patrón',gen:'Lo que se repite en muchos ejemplos',n:'Las hojas enfermas tienen manchas',g:'Dentro del modelo',t:''},
-  {w:'Sesgo',gen:'Fallar con lo que faltó en los ejemplos',n:'No reconoce el plátano',g:'Donde alguien eligió mal',t:''},
-  {w:'Error',gen:'Las veces que contesta mal',n:'Falla 1 de cada 10',g:'Al probarla',t:''}
+  {w:'Dato',gen:'Un pedacito de información',n:'El color de un nance',g:'En la lista de tu maestra',t:'No hay nada que aprender'},
+  {w:'Etiqueta',gen:'La respuesta correcta puesta por una persona',n:'«Esta hoja tiene plaga»',g:'Antes de entrenar',t:'Ve la foto y no sabe de qué es'},
+  {w:'Entrenar',gen:'Mostrarle ejemplos hasta hallar el patrón',n:'Diez mil fotos de hojas',g:'Una sola vez, y cuesta tiempo',t:'No saca ninguna regla'},
+  {w:'Probar',gen:'Examinarla con ejemplos nuevos',n:'Veinte fotos que nunca vio',g:'Después de entrenar',t:'No se sabe si aprendió'},
+  {w:'Patrón',gen:'Lo que se repite en muchos ejemplos',n:'Las hojas enfermas tienen manchas',g:'Dentro del modelo',t:'No hay con qué decidir'},
+  {w:'Sesgo',gen:'Fallar con lo que faltó en los ejemplos',n:'No reconoce el plátano',g:'Donde alguien eligió mal',t:'Si nadie revisa el reparto, aparece'},
+  {w:'Error',gen:'Las veces que contesta mal',n:'Falla 1 de cada 10',g:'Al probarla',t:'No se sabe cuánto se equivoca'}
 ];
 const completeTaskDB=[
   {s:'La respuesta correcta que pone una persona se llama ___.',ans:'etiqueta'},
-  {s:'Mostrarle ejemplos hasta que halle el patrón se llama ___.',ans:'entrenar'},
+  {s:'Mostrarle ejemplos hasta hallar el patrón se llama ___.',ans:'entrenar'},
   {s:'Examinarla con ejemplos que nunca vio se llama ___.',ans:'probar'},
   {s:'Cuando los ejemplos están mal repartidos hay un ___.',ans:'sesgo'},
   {s:'Lo que se repite en muchos ejemplos es el ___.',ans:'patrón'},
@@ -310,23 +310,23 @@ const completeTaskDB=[
   {s:'Un pedacito de información que se guarda es un ___.',ans:'dato'}
 ];
 const explainQuestions=[
-  {q:'Explica con tus palabras el ciclo completo: datos, patrón, prueba y error.',ans:'Primero se juntan muchos datos y una persona les pone su etiqueta. Después se entrena: la máquina los mira una y otra vez y busca el patrón que los separa. Luego se prueba con ejemplos que nunca vio, y se cuenta cuántas falló: ese es el error. Con eso se corrige y se vuelve a entrenar.'},
-  {q:'¿Qué diferencia hay entre un programa que sigue reglas y uno que aprende?',ans:'El que sigue reglas hace lo que una persona escribió, paso por paso, y nunca mejora solo. El que aprende no recibe la regla: recibe ejemplos, y saca la regla de ellos. Por eso puede reconocer cosas que nadie le describió, y por eso también falla con lo que no estaba en sus ejemplos.'},
-  {q:'Explica qué es el sesgo con un ejemplo del campo hondureño.',ans:'Si a una máquina se le enseñan solo hojas de maíz, frijol y café, y le llega una hoja de plátano, se puede equivocar: nunca vio una. Al productor de plátano le va a decir que su cultivo está enfermo cuando no lo está. No es que la máquina sea mala: es que quien eligió los ejemplos dejó fuera el plátano.'},
-  {q:'¿Por qué hay que probar con ejemplos que la máquina NUNCA vio?',ans:'Porque si se la prueba con los mismos con que se entrenó, no se sabe si aprendió el patrón o si solo se los memorizó. Acertar con lo conocido no prueba nada; acertar con lo nuevo sí.'},
-  {q:'Nombra los tres tipos de aprendizaje y dá un ejemplo de cada uno.',ans:'Supervisado: los ejemplos traen su etiqueta, como fotos de hojas marcadas «sana» o «con plaga». No supervisado: van sin etiqueta y la máquina agrupa sola lo que se parece. Por refuerzo: prueba, recibe un premio cuando le sale bien y va cambiando lo que hace, como un programa que aprende a jugar.'},
-  {q:'Una máquina acierta 9 de cada 10. ¿Por qué ese 1 que falla puede importar mucho?',ans:'Porque en ese 1 puede haber una persona: un enfermo a quien no se le detecta algo, un productor a quien se le dice que su cosecha está mala, alguien a quien se le rechaza un trámite. El porcentaje suena bien, pero el error le toca a alguien concreto.'},
-  {q:'¿Qué preguntas harías antes de confiar en una máquina que clasifica algo importante?',ans:'Respuesta abierta. Se valora que pregunte con qué ejemplos la entrenaron, quién los eligió, si estaban bien repartidos, con qué la probaron y cuánto se equivoca. Y que diga qué pasa con el que cae en el error.'},
-  {q:'¿Por qué una etiqueta la tiene que poner una persona?',ans:'Porque la etiqueta es la respuesta correcta, y la máquina todavía no la sabe: justo eso es lo que va a aprender. Si la pusiera ella misma, estaría aprendiendo de sus propias suposiciones. Y por eso, si la persona se equivoca al etiquetar, la máquina aprende ese error.'},
-  {q:'Averigua en tu comunidad algo que se podría clasificar con ejemplos, y decí qué datos harían falta.',ans:'Respuesta abierta y de investigación. Se valora que nombre algo real de su entorno (plagas, calidad del grano, basura reciclable, nivel de un río), que diga qué ejemplos habría que juntar y quién les pondría la etiqueta, y que se pregunte a quién podría dejar fuera esa lista.'}
+  {q:'Explica el ciclo completo: datos, patrón, prueba y error.',ans:'Se juntan datos etiquetados. Se entrena y sale el patrón. Se prueba con ejemplos nuevos y se mide el error.'},
+  {q:'¿Qué diferencia hay entre un programa que sigue reglas y uno que aprende?',ans:'El de reglas obedece lo escrito. El que aprende saca su regla de ejemplos. Falla con lo que no vio.'},
+  {q:'Explica qué es el sesgo con un ejemplo del campo hondureño.',ans:'Le enseñaron maíz, frijol y café. Llega plátano y falla: nunca vio uno. Lo dejó fuera quien eligió los ejemplos.'},
+  {q:'¿Por qué hay que probar con ejemplos que la máquina NUNCA vio?',ans:'Con los del entrenamiento no se sabe si aprendió o memorizó. Acertar con lo nuevo sí lo prueba.'},
+  {q:'Nombra los tres tipos de aprendizaje y da un ejemplo de cada uno.',ans:'Supervisado: hojas marcadas «sana» o «con plaga». No supervisado: sin etiqueta, agrupa lo parecido. Por refuerzo: prueba y cobra premio.'},
+  {q:'Una máquina acierta 9 de cada 10. ¿Por qué importa ese 1 que falla?',ans:'Porque en ese 1 hay una persona: un enfermo sin detectar, un productor con la cosecha sana dada por mala.'},
+  {q:'¿Qué preguntarías antes de confiar en una máquina que clasifica algo importante?',ans:'Respuesta abierta. Que pregunte con qué ejemplos la entrenaron, quién los eligió y a quién le cae el error.'},
+  {q:'¿Por qué la etiqueta la tiene que poner una persona?',ans:'La etiqueta es la respuesta correcta: eso va a aprender. Si la persona se equivoca, aprende ese error.'},
+  {q:'Busca en tu comunidad algo que se podría clasificar. ¿Qué datos harían falta?',ans:'Respuesta abierta. Que nombre algo real: plagas, grano, basura, el río. Y quién etiquetaría los ejemplos.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto que se pide en cada oración. Escribe al lado qué significa.','<strong>Ejemplo:</strong> Una persona le puso su etiqueta a cada foto antes de entrenar. → <span style="color:var(--jade);font-weight:700;">etiqueta</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada concepto, completa qué es, un ejemplo, dónde se usa y qué pasa si falta.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Concepto','text-align:left;')}${th('¿Qué es?')}${th('Un ejemplo')}${th('¿Dónde se usa?')}${th('Si falta…')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
-function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
-function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno. Encierra el concepto que se pide y di qué significa.','<strong>Ejemplo:</strong> Una persona le puso su etiqueta a cada foto. → <span style="color:var(--jade);font-weight:700;">etiqueta</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla y escribe de cada concepto: qué es, un ejemplo, dónde se usa y si falta.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Concepto','text-align:left;')}${th('¿Qué es?')}${th('Un ejemplo')}${th('¿Dónde se usa?')}${th('Si falta…')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Ejemplo: ${it.n} | Dónde se usa: ${it.g} | Si falta: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve. Escribe la opción correcta en cada espacio ___.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y contéstalas.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
@@ -384,76 +384,76 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
   {q:'Un programa que aprende saca la regla de los ejemplos.',a:true},
-  {q:'La etiqueta la pone la máquina sola antes de entrenar.',a:false},
-  {q:'Entrenar cuesta tiempo y se hace una sola vez; usar lo aprendido es rápido.',a:true},
-  {q:'Probar con los mismos ejemplos del entrenamiento sirve para saber si aprendió.',a:false},
+  {q:'La etiqueta la pone la máquina sola.',a:false},
+  {q:'Entrenar cuesta tiempo; usar lo aprendido es rápido.',a:true},
+  {q:'Probar con los ejemplos del entrenamiento dice si aprendió.',a:false},
   {q:'El sesgo aparece cuando los ejemplos están mal repartidos.',a:true},
-  {q:'Si la máquina se equivoca con un caso que nunca vio, la culpa es de la máquina.',a:false},
-  {q:'En el aprendizaje supervisado los ejemplos traen su etiqueta.',a:true},
-  {q:'En el aprendizaje no supervisado la máquina sabe cómo se llama cada grupo.',a:false},
-  {q:'El aprendizaje por refuerzo usa premios cuando le sale bien.',a:true},
+  {q:'Si la máquina falla con un caso que nunca vio, la culpa es de ella.',a:false},
+  {q:'En el supervisado los ejemplos traen su etiqueta.',a:true},
+  {q:'En el no supervisado sabe el nombre de cada grupo.',a:false},
+  {q:'El aprendizaje por refuerzo usa premios.',a:true},
   {q:'Ninguna máquina acierta el cien por ciento.',a:true},
-  {q:'Un dato es un pedacito de información que se puede guardar.',a:true},
+  {q:'Un dato es un pedacito de información que se guarda.',a:true},
   {q:'El patrón es lo que se repite en muchos ejemplos.',a:true},
-  {q:'Si una persona etiqueta mal los ejemplos, la máquina aprende ese error.',a:true},
-  {q:'Mientras más ejemplos buenos y variados, mejor reconoce lo nuevo.',a:true},
-  {q:'La máquina entiende lo que ve, igual que una persona.',a:false},
+  {q:'Si una persona etiqueta mal, la máquina aprende ese error.',a:true},
+  {q:'Con ejemplos buenos y variados reconoce mejor lo nuevo.',a:true},
+  {q:'La máquina entiende lo que ve, como una persona.',a:false},
   {q:'Un error del 10 % significa que a nadie le pasa nada.',a:false},
-  {q:'Para cazar un sesgo hay que mirar con qué ejemplos se entrenó.',a:true},
-  {q:'Se puede entrenar bien con ejemplos de una sola aldea y servirá para todo el país.',a:false},
+  {q:'Para cazar un sesgo se mira con qué se entrenó.',a:true},
+  {q:'Entrenada en una sola aldea, la máquina sirve en todo el país.',a:false},
   {q:'La prueba se hace con ejemplos que la máquina nunca vio.',a:true},
-  {q:'Agrupar fotos por parecido, sin etiquetas, es aprendizaje no supervisado.',a:true}
+  {q:'Agrupar por parecido, sin etiquetas, es no supervisado.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Qué diferencia a un programa que APRENDE de uno de siempre?',o:['Que es más caro','Que saca la regla de los ejemplos en vez de seguir una escrita','Que no necesita computadora','Que nunca se equivoca'],a:1},
-  {q:'¿Qué es una etiqueta?',o:['El precio del programa','Un adorno de la pantalla','La respuesta correcta que una persona le pone a un ejemplo','El nombre de la máquina'],a:2},
-  {q:'¿Para qué sirve PROBAR con ejemplos nuevos?',o:['Para saber si aprendió el patrón o solo se lo memorizó','Para gastar menos batería','Para que se entretenga','Para hacerla más rápida'],a:0},
-  {q:'Una máquina entrenada solo con maíz, frijol y café ve una hoja de plátano. ¿Qué pasa?',o:['La reconoce igual','Se apaga','La ignora','Se puede equivocar: nunca vio una'],a:3},
+  {q:'¿Qué diferencia a un programa que APRENDE de uno de siempre?',o:['Que es más caro','Que saca la regla de los ejemplos','Que no usa computadora','Que nunca se equivoca'],a:1},
+  {q:'¿Qué es una etiqueta?',o:['El precio del programa','Un adorno de la pantalla','La respuesta correcta que le pone una persona','El nombre de la máquina'],a:2},
+  {q:'¿Para qué sirve PROBAR con ejemplos nuevos?',o:['Para saber si aprendió o memorizó','Para gastar menos batería','Para que se entretenga','Para hacerla más rápida'],a:0},
+  {q:'Se entrenó con maíz, frijol y café. Ve una hoja de plátano.',o:['La reconoce igual','Se apaga','La ignora','Se puede equivocar: nunca vio una'],a:3},
   {q:'¿Cómo se llama ese fallo?',o:['Patrón','Sesgo','Etiqueta','Refuerzo'],a:1},
-  {q:'¿De quién es la responsabilidad de un sesgo?',o:['De la máquina','De nadie','De quien eligió los ejemplos','Del que la usa'],a:2},
-  {q:'Aprender con ejemplos que ya traen su respuesta se llama…',o:['Aprendizaje supervisado','Aprendizaje por refuerzo','Aprendizaje no supervisado','Memorización'],a:0},
-  {q:'Un programa junta fotos parecidas sin que nadie le diga cómo se llaman. Eso es…',o:['Supervisado','Por refuerzo','Memorización','No supervisado'],a:3},
+  {q:'¿De quién es la culpa de un sesgo?',o:['De la máquina','De nadie','De quien eligió los ejemplos','Del que la usa'],a:2},
+  {q:'Aprender con ejemplos que traen su respuesta se llama…',o:['Aprendizaje supervisado','Aprendizaje por refuerzo','Aprendizaje no supervisado','Memorización'],a:0},
+  {q:'Junta fotos parecidas sin que nadie las nombre. Eso es…',o:['Supervisado','Por refuerzo','Memorización','No supervisado'],a:3},
   {q:'Un robot gana puntos cuando avanza sin caerse. Eso es…',o:['Supervisado','Aprendizaje por refuerzo','No supervisado','Un patrón'],a:1},
   {q:'¿Qué es un patrón?',o:['Un error de la máquina','El precio de los datos','Lo que se repite en muchos ejemplos','Una etiqueta mal puesta'],a:2},
-  {q:'La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?',o:['Nada, está muy bien','Si se puede apagar','Cuánto cuesta','A quién le toca ese error'],a:3},
-  {q:'¿Qué hay que mirar primero cuando una máquina falla siempre con lo mismo?',o:['Con qué ejemplos la entrenaron','La marca del teléfono','Cuánta batería tiene','El color de la pantalla'],a:0},
-  {q:'¿Por qué la etiqueta la pone una persona y no la máquina?',o:['Porque es más rápido','Porque la máquina todavía no sabe la respuesta: eso es lo que va a aprender','Porque las máquinas no escriben','Por costumbre'],a:1},
-  {q:'¿Qué pasa si los ejemplos vienen todos de una sola aldea?',o:['Nada, sirve igual','Entrena más rápido','La máquina puede fallar en el resto del país','Aprende dos patrones'],a:2},
-  {q:'¿Qué es entrenar?',o:['Apagar y encender la máquina','Copiar los datos a otra computadora','Borrar los ejemplos viejos','Mostrarle ejemplos hasta que halle el patrón'],a:3}
+  {q:'Acierta 9 de cada 10. ¿Qué hay que preguntarse?',o:['Nada, está muy bien','Si se puede apagar','Cuánto cuesta','A quién le toca ese error'],a:3},
+  {q:'Falla siempre con lo mismo. ¿Qué se mira primero?',o:['Con qué ejemplos la entrenaron','La marca del teléfono','Cuánta batería tiene','El color de la pantalla'],a:0},
+  {q:'¿Por qué la etiqueta la pone una persona?',o:['Porque es más rápido','Porque la máquina no sabe la respuesta','Porque las máquinas no escriben','Por costumbre'],a:1},
+  {q:'¿Qué pasa si los ejemplos vienen de una sola aldea?',o:['Nada, sirve igual','Entrena más rápido','Puede fallar en el resto del país','Aprende dos patrones'],a:2},
+  {q:'¿Qué es entrenar?',o:['Apagar y encender la máquina','Copiar los datos a otra parte','Borrar los ejemplos viejos','Mostrarle ejemplos hasta hallar el patrón'],a:3}
 ];
 const evalCPBank=[
-  {q:'La respuesta correcta que una persona le pone a un ejemplo se llama ___.',a:'etiqueta'},
-  {q:'Mostrarle ejemplos hasta que halle el patrón se llama ___.',a:'entrenar'},
+  {q:'La respuesta correcta que pone una persona se llama ___.',a:'etiqueta'},
+  {q:'Mostrarle ejemplos hasta hallar el patrón se llama ___.',a:'entrenar'},
   {q:'Examinarla con ejemplos que nunca vio se llama ___.',a:'probar'},
-  {q:'Cuando los ejemplos están mal repartidos, aparece el ___.',a:'sesgo'},
+  {q:'Con los ejemplos mal repartidos aparece el ___.',a:'sesgo'},
   {q:'Lo que se repite en muchos ejemplos es el ___.',a:'patrón'},
   {q:'Las veces que la máquina contesta mal son el ___.',a:'error'},
-  {q:'Un pedacito de información que se puede guardar es un ___.',a:'dato'},
+  {q:'Un pedacito de información que se guarda es un ___.',a:'dato'},
   {q:'Aprender con ejemplos etiquetados es aprendizaje ___.',a:'supervisado'},
-  {q:'Aprender con premios cuando sale bien es aprendizaje por ___.',a:'refuerzo'},
-  {q:'Agrupar solo lo que se parece, sin etiquetas, es aprendizaje no ___.',a:'supervisado'},
-  {q:'Antes de confiar en una máquina hay que preguntar quién eligió los ___.',a:'ejemplos'},
-  {q:'La máquina no entiende lo que ve: encuentra lo que se ___.',a:'repite'},
+  {q:'Aprender con premios es aprendizaje por ___.',a:'refuerzo'},
+  {q:'Agrupar lo que se parece es aprendizaje no ___.',a:'supervisado'},
+  {q:'Antes de confiar hay que preguntar quién eligió los ___.',a:'ejemplos'},
+  {q:'No entiende lo que ve: encuentra lo que se ___.',a:'repite'},
   {q:'Si la persona etiqueta mal, la máquina aprende ese ___.',a:'error'},
-  {q:'Lo que queda guardado cuando el entrenamiento termina se llama ___.',a:'modelo'},
+  {q:'Lo que queda guardado después de entrenar es el ___.',a:'modelo'},
   {q:'Entrenar cuesta ___ y se hace una sola vez.',a:'tiempo'}
 ];
 const evalPRBank=[
-  {term:'Dato',def:'Un pedacito de información que se puede guardar'},
-  {term:'Etiqueta',def:'La respuesta correcta que una persona le pone a un ejemplo'},
-  {term:'Entrenar',def:'Mostrarle ejemplos hasta que encuentre el patrón'},
+  {term:'Dato',def:'Un pedacito de información que se guarda'},
+  {term:'Etiqueta',def:'La respuesta correcta que pone una persona'},
+  {term:'Entrenar',def:'Mostrarle ejemplos hasta hallar el patrón'},
   {term:'Patrón',def:'Lo que se repite en muchos ejemplos'},
   {term:'Probar',def:'Examinarla con ejemplos que nunca vio'},
   {term:'Error',def:'Las veces que la máquina contesta mal'},
-  {term:'Sesgo',def:'Fallar con lo que faltaba en los ejemplos'},
+  {term:'Sesgo',def:'Fallar con lo que faltó en los ejemplos'},
   {term:'Supervisado',def:'Los ejemplos traen su etiqueta puesta'},
-  {term:'No supervisado',def:'Agrupa solo lo que se parece, sin etiquetas'},
-  {term:'Por refuerzo',def:'Aprende probando, con premio cuando le sale bien'},
+  {term:'No supervisado',def:'Agrupa lo que se parece, sin etiquetas'},
+  {term:'Por refuerzo',def:'Aprende probando: premio si le sale bien'},
   {term:'Modelo',def:'Lo que queda guardado después de entrenar'},
   {term:'Ejemplo',def:'Cada cosa que le mostramos para que aprenda'},
-  {term:'Instrucción',def:'Una orden que la máquina obedece sin aprender nada'},
-  {term:'Reparto de los ejemplos',def:'Lo primero que hay que mirar cuando falla siempre con lo mismo'},
-  {term:'Quien elige los ejemplos',def:'De quien es la responsabilidad cuando aparece un sesgo'}
+  {term:'Instrucción',def:'Una orden que obedece sin aprender nada'},
+  {term:'Reparto de los ejemplos',def:'Lo primero que se mira si falla siempre igual'},
+  {term:'Quien elige los ejemplos',def:'De quién es la culpa de un sesgo'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -486,7 +486,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Cómo Aprende una Máquina`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Cómo Aprende una Máquina`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Contesta en pantalla</strong> y toca <em>Calificar prueba</em>. Al imprimir sale sin tus respuestas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -540,80 +540,80 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una aplicación que reconoce plagas se entrenó con fotos tomadas solo en el occidente del país. Un productor del litoral dice que con él nunca acierta.'},
-  {txt:'Un programa que corrige exámenes se entrenó con letra de computadora. En el aula, los alumnos escriben a mano.'},
-  {txt:'Una máquina clasifica recibos y acierta 95 de cada 100. El dueño dice que ya no hace falta revisar ninguno.'},
-  {txt:'Para entrenar rápido, alguien etiqueta doscientas fotos sin mirarlas bien y marca muchas al azar.'},
-  {txt:'Un programa agrupó solo a los clientes en tres grupos. El gerente quiere saber cómo se llama cada grupo.'},
-  {txt:'Una escuela prueba su clasificador con las mismas cien fotos con que lo entrenó y celebra que acertó las cien.'}
+  {txt:'Una aplicación de plagas se entrenó con fotos del occidente. Un productor del litoral dice que nunca le acierta.'},
+  {txt:'Un programa corrige exámenes. Se entrenó con letra de computadora y los alumnos escriben a mano.'},
+  {txt:'Una máquina clasifica recibos y acierta 95 de cada 100. El dueño ya no revisa.'},
+  {txt:'Para ir rápido, alguien etiqueta doscientas fotos sin mirarlas.'},
+  {txt:'Un programa agrupó solo a los clientes. El gerente pregunta el nombre de cada grupo.'},
+  {txt:'Una escuela prueba su clasificador con las cien fotos del entrenamiento. Acertó las cien.'}
 ];
 const critCaseQuestions=[
   '1. ¿Qué falló aquí: los datos, el entrenamiento, la prueba o el uso?',
   '2. ¿Por qué la máquina se comporta así?',
   '3. ¿Qué habría que hacer para arreglarlo?',
-  '4. ¿A quién le cae el perjuicio y por qué?'
+  '4. ¿A quién le cae el daño y por qué?'
 ];
 const critCaseGuides=[
-  'Se valora que nombre la etapa: juntar datos, etiquetar, entrenar, probar o usar. Casi todos estos casos fallan ANTES del entrenamiento.',
-  'Se valora que explique el mecanismo con sus palabras: la máquina saca el patrón de lo que vio, así que lo que no vio no lo reconoce, y lo que vio mal etiquetado lo aprende mal.',
-  'Cada caso tiene su arreglo: juntar ejemplos de lo que falta, etiquetar con cuidado, probar con ejemplos NUEVOS, y no dejar de revisar el porcentaje que falla.',
-  'Se valora que el alumno diga a quién le toca el error: el productor del litoral, el alumno que escribe a mano, el cliente del recibo mal clasificado. El porcentaje es de la máquina; el perjuicio es de una persona.'
+  'Que nombre la etapa: juntar datos, etiquetar, entrenar, probar o usar. Casi todos fallan ANTES.',
+  'Que lo explique: saca el patrón de lo que vio. No reconoce lo que no vio, y lo mal etiquetado lo aprende mal.',
+  'Cada caso tiene su arreglo: juntar lo que falta, etiquetar bien, probar con ejemplos NUEVOS.',
+  'Que diga a quién le toca: el productor, el alumno, el del recibo.'
 ];
 const critErrorBank=[
   {txt:'"La máquina se equivocó con el plátano porque está mal hecha."',
-   g1:'No: se equivocó porque nunca vio una hoja de plátano. Eso es sesgo, y lo puso quien eligió los ejemplos.',
-   g2:'El arreglo no es cambiar de máquina: es juntar ejemplos de lo que faltaba y volver a entrenar.'},
-  {txt:'"La probamos con los mismos ejemplos del entrenamiento y acertó todo, así que ya está lista."',
-   g1:'Acertar con lo que ya vio no prueba nada: pudo habérselo memorizado.',
-   g2:'La prueba se hace con ejemplos que NUNCA vio; si acierta con esos, aprendió el patrón.'},
+   g1:'No. Nunca vio una hoja de plátano: es sesgo.',
+   g2:'No se cambia de máquina: se juntan los ejemplos que faltaban.'},
+  {txt:'"La probamos con los mismos ejemplos del entrenamiento y acertó todo."',
+   g1:'Acertar con lo que ya vio no prueba nada: pudo memorizarlo.',
+   g2:'La prueba se hace con ejemplos que NUNCA vio.'},
   {txt:'"Acierta el 95 %, así que ya no hay que revisar nada."',
-   g1:'Ese 5 % son casos reales, y a cada uno le toca una persona.',
-   g2:'Un porcentaje alto no dice a QUIÉN le cae el error: puede caer siempre sobre el mismo grupo.'},
+   g1:'Ese 5 % son casos reales. A cada uno le toca una persona.',
+   g2:'Un porcentaje alto no dice a QUIÉN le cae el error.'},
   {txt:'"Las etiquetas se pueden poner rápido, al azar, para no perder tiempo."',
-   g1:'La etiqueta es la respuesta correcta: si está mal, la máquina aprende el error.',
-   g2:'Entrenar con etiquetas malas sale más caro que tardarse en ponerlas bien.'},
-  {txt:'"El aprendizaje no supervisado también te dice cómo se llama cada grupo."',
-   g1:'No: agrupa por parecido, pero no sabe el nombre de ningún grupo.',
-   g2:'Ponerle nombre a cada grupo le toca a una persona, mirando qué tienen en común.'},
+   g1:'La etiqueta es la respuesta correcta. Si está mal, aprende mal.',
+   g2:'Entrenar con etiquetas malas sale más caro que ponerlas bien.'},
+  {txt:'"El no supervisado también dice cómo se llama cada grupo."',
+   g1:'No. Agrupa por parecido, pero no sabe ningún nombre.',
+   g2:'Ponerle nombre a cada grupo le toca a una persona.'},
   {txt:'"Si la máquina aprende sola, ya no hacen falta personas."',
-   g1:'Hacen falta más que antes: juntan los datos, ponen las etiquetas, eligen con qué probarla y revisan a quién le cae el error.',
-   g2:'Lo que la máquina hace sola es buscar el patrón. Todo lo que rodea a eso lo deciden personas.'}
+   g1:'Hacen falta más que antes: juntan datos, etiquetan, eligen la prueba y revisan.',
+   g2:'Sola busca el patrón. Todo lo demás lo deciden personas.'}
 ];
 const critDecisionBank=[
-  'Tu clasificador falla con un cultivo; conviene juntar ejemplos de ese cultivo y volver a entrenar, o avisar que ese cultivo no se puede clasificar.',
-  'Te falta tiempo para etiquetar; conviene etiquetar menos ejemplos pero bien, o muchos y al azar.',
-  'Vas a probar tu modelo; conviene usar ejemplos que ya vio porque salen mejores números, o usar ejemplos nuevos aunque saque menos.',
-  'El modelo acierta 9 de cada 10 en tu aldea; conviene decir que sirve para todo el país, o decir dónde se probó y dónde no.',
-  'Alguien te ofrece más datos, pero todos del mismo lugar; conviene aceptarlos igual, o buscar además datos de otros lugares.'
+  'Tu clasificador falla con un cultivo. ¿Juntas ejemplos de él, o avisas que no sirve?',
+  'Te falta tiempo. ¿Etiquetas menos ejemplos pero bien, o muchos y al azar?',
+  'Vas a probarlo. ¿Usas ejemplos que ya vio, o nuevos aunque saque menos?',
+  'Acierta 9 de cada 10 en tu aldea. ¿Dices que sirve en todo el país, o dónde se probó?',
+  'Te ofrecen más datos, todos del mismo lugar. ¿Los aceptas, o buscas de otros?'
 ];
-const critDecisionGuide='La mejor decisión cuida el DATO y dice la verdad sobre el alcance: los ejemplos que faltan se juntan, las etiquetas se ponen bien aunque sean menos, la prueba se hace con ejemplos nuevos aunque el número baje, y nunca se promete que un modelo probado en un lugar sirve en todos. Prometer de más es lo que hizo caer dos veces a esta tecnología, y eso se estudia en la etapa 3 de esta ruta.';
+const critDecisionGuide='La mejor decisión cuida el DATO y dice la verdad sobre el alcance. Se juntan los ejemplos que faltan. Se etiqueta bien aunque sean menos. Se prueba con ejemplos nuevos aunque el número baje. No se promete lo que no se probó.';
 const critCompareBank=[
   {a:'Entrenar.',b:'Probar.',
-   ga:'Mostrarle ejemplos con su etiqueta hasta que encuentre el patrón.',
-   gb:'Examinarla con ejemplos que nunca vio para saber si aprendió.',
-   gr:'Los dos usan ejemplos, pero no los mismos y no para lo mismo. Entrenar cuesta tiempo y se hace una vez; probar es lo que dice si ese tiempo sirvió de algo. Probar con los ejemplos del entrenamiento no mide nada.'},
+   ga:'Mostrarle ejemplos con su etiqueta hasta hallar el patrón.',
+   gb:'Examinarla con ejemplos que nunca vio, para ver si aprendió.',
+   gr:'Los dos usan ejemplos, pero no los mismos. Probar dice si entrenar sirvió.'},
   {a:'Un programa que sigue reglas escritas.',b:'Un programa que aprende de ejemplos.',
-   ga:'Hace exactamente lo que una persona escribió, paso por paso.',
-   gb:'Saca la regla él mismo, mirando lo que se repite en los ejemplos.',
-   gr:'El primero nunca mejora solo y falla cuando aparece algo que la regla no contempló. El segundo reconoce cosas que nadie le describió, y falla con lo que no estaba en sus ejemplos. Los dos fallan, pero por razones contrarias.'},
+   ga:'Hace lo que una persona escribió, paso por paso.',
+   gb:'Saca la regla de lo que se repite en los ejemplos.',
+   gr:'El primero nunca mejora solo. El segundo reconoce lo nuevo, pero falla con lo que no vio.'},
   {a:'El error de la máquina.',b:'El sesgo de los ejemplos.',
-   ga:'Las veces que contesta mal, repartidas entre todos los casos.',
-   gb:'Fallar siempre con el mismo grupo, porque faltaba en los ejemplos.',
-   gr:'Un error del 5 % repartido es una cosa; un error del 5 % que cae SIEMPRE sobre el mismo cultivo, la misma aldea o las mismas personas es otra muy distinta, y el porcentaje solo no lo enseña.'}
+   ga:'Las veces que contesta mal, repartidas entre todos.',
+   gb:'Fallar siempre con el mismo grupo, que faltaba en los ejemplos.',
+   gr:'Un 5 % repartido es una cosa. Un 5 % que cae SIEMPRE en la misma aldea es otra.'}
 ];
 const critCauseBank=[
-  {cause:'Los ejemplos de entrenamiento venían todos de una sola zona.',guide:'Por eso el modelo falla en el resto del país, aunque en su zona acierte casi todo.'},
-  {cause:'Se probó el modelo con los mismos ejemplos con que se entrenó.',guide:'Por eso los números salieron perfectos y no significan nada: pudo habérselos memorizado.'},
-  {cause:'Una persona etiquetó las fotos con prisa y sin mirarlas bien.',guide:'Por eso la máquina aprendió los errores de esa persona y los repite.'},
-  {cause:'Se juntaron ejemplos de los cuatro cultivos de la zona.',guide:'Por eso el modelo reconoce hojas de los cuatro, aunque sean de fincas que nunca vio.'},
-  {cause:'La máquina busca lo que se repite y no entiende lo que ve.',guide:'Por eso acierta con lo parecido a sus ejemplos y se pierde con lo distinto.'}
+  {cause:'Los ejemplos de entrenar venían de una sola zona.',guide:'Por eso falla en el resto del país, aunque en su zona acierte.'},
+  {cause:'Se probó con los mismos ejemplos del entrenamiento.',guide:'Por eso los números salieron perfectos y no dicen nada.'},
+  {cause:'Una persona etiquetó las fotos con prisa, sin mirarlas.',guide:'Por eso aprendió los errores de esa persona y los repite.'},
+  {cause:'Se juntaron ejemplos de los cuatro cultivos de la zona.',guide:'Por eso reconoce hojas de los cuatro, hasta de fincas nuevas.'},
+  {cause:'Busca lo que se repite y no entiende lo que ve.',guide:'Por eso acierta con lo parecido y se pierde con lo distinto.'}
 ];
 const critEffectBank=[
-  {effect:'El modelo le dice a un productor que su cultivo está enfermo, y no lo está.',guide:'Porque nunca vio hojas de ese cultivo: es un sesgo, no una enfermedad.'},
-  {effect:'Un modelo con 95 % de aciertos sigue necesitando que una persona revise.',guide:'Porque ese 5 % son casos reales, y cada uno le toca a alguien.'},
-  {effect:'Un modelo entrenado con letra de computadora falla con la letra a mano.',guide:'Porque la letra a mano no estaba en sus ejemplos, y él solo reconoce lo que se parece a lo que vio.'},
-  {effect:'Hay que ponerle nombre a mano a los grupos del aprendizaje no supervisado.',guide:'Porque la máquina los juntó por parecido, pero no sabe cómo se llaman.'},
-  {effect:'Juntar y etiquetar datos es la parte más lenta de todo el proceso.',guide:'Porque es la única que no se puede automatizar sin arriesgar que la máquina aprenda errores.'}
+  {effect:'Le dice a un productor que su cultivo está enfermo, y está sano.',guide:'Porque nunca vio hojas de ese cultivo. Es sesgo, no enfermedad.'},
+  {effect:'Un modelo con 95 % de aciertos sigue necesitando revisión.',guide:'Porque ese 5 % son casos reales y le tocan a alguien.'},
+  {effect:'Entrenado con letra de computadora, falla con la letra a mano.',guide:'Porque la letra a mano no estaba en sus ejemplos.'},
+  {effect:'Hay que ponerle nombre a mano a los grupos.',guide:'Porque los juntó por parecido, pero no sabe cómo se llaman.'},
+  {effect:'Juntar y etiquetar datos es lo más lento.',guide:'Porque esa parte no se puede dejar sola sin errores.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -626,19 +626,19 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: una máquina que se equivoca <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Busca <strong>dos errores</strong> y corrígelos con tus palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: qué harías tú <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, con lo que sabes de los datos, la prueba y el sesgo.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -648,7 +648,7 @@ function genEvalCrit(){
   s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> contesta, compara con la <em>Pauta</em>, anota tu puntaje (0–20) y toca <em>Calcular Total</em>.';out.appendChild(totalPanel);
   fin('s-evaluacion');
 }
 function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
@@ -658,7 +658,7 @@ function calcCritTotal(){
   let total=0;
   document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
   const panel=document.getElementById('evalCritTotalResult');
-  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara con la Pauta antes de anotar.</em>`;}
   const formKey='crit_'+(window._currentEvalCritForm||1);
   if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
   else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
@@ -668,11 +668,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: una máquina que se equivoca</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
-  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Busca dos errores y corrígelos con tus palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: qué harías tú</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, con lo que sabes de los datos, la prueba y el sesgo.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -697,16 +697,16 @@ const parteData = (function () {
      enseña no es la palabra, es qué se rompe cuando esa pieza no está. */
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const falta = {
-    dato:    'Sin datos no hay nada que aprender. Es la comida de la máquina, y lo primero que se junta.',
-    etiqueta:'Sin etiquetas la máquina ve la foto pero no sabe de qué es. Solo puede agrupar por parecido, no nombrar.',
-    entrenar:'Sin entrenar, el programa no saca ninguna regla: se queda con las instrucciones que alguien le escribió.',
-    sesgo:   'El sesgo no falta: aparece solo cuando nadie revisa cómo están repartidos los ejemplos.'
+    dato:    'Sin datos no hay nada que aprender: son su comida.',
+    etiqueta:'Sin etiquetas ve la foto y no sabe qué es.',
+    entrenar:'Sin entrenar no saca ninguna regla. Solo obedece lo escrito.',
+    sesgo:   'El sesgo no falta: aparece si nadie revisa el reparto.'
   };
   const donde = {
-    dato:    '🌽 En la finca: cada foto de una hoja, con su fecha y su cultivo.',
-    etiqueta:'👩‍🌾 Se la pone el técnico que sabe distinguir una hoja sana de una enferma.',
-    entrenar:'💻 En una computadora grande, una sola vez, y puede tardar días.',
-    sesgo:   '🍌 Se ve en el momento en que llega una hoja de un cultivo que nadie fotografió.'
+    dato:    '🌽 En la finca: cada foto de una hoja, con su cultivo.',
+    etiqueta:'👩‍🌾 La pone el técnico que distingue sana de enferma.',
+    entrenar:'💻 En una computadora grande, una sola vez. Tarda días.',
+    sesgo:   '🍌 Se ve cuando llega un cultivo que nadie fotografió.'
   };
   const out = {};
   ['dato','etiqueta','entrenar','sesgo'].forEach(k => {
@@ -748,7 +748,7 @@ function pintarIaCiclo(){
   const pasos=[
     {e:'📦',t:'1. Datos',d:'Se juntan muchísimos ejemplos: fotos, textos, sonidos, medidas.'},
     {e:'🏷️',t:'2. Etiquetas',d:'Una persona escribe la respuesta correcta de cada uno.'},
-    {e:'🏋️',t:'3. Entrenamiento',d:'La máquina los mira una y otra vez y busca el patrón que los separa.'},
+    {e:'🏋️',t:'3. Entrenamiento',d:'Los mira una y otra vez, y busca el patrón que los separa.'},
     {e:'🧪',t:'4. Prueba',d:'Se la examina con ejemplos que NUNCA vio.'},
     {e:'❌',t:'5. Error',d:'Se cuenta cuántas falló. Ninguna acierta el cien por ciento.'},
     {e:'🔁',t:'6. Se corrige',d:'Se juntan los ejemplos que faltaban y se vuelve a entrenar.'}
@@ -829,8 +829,8 @@ function iaEntrenar(){
   const elegidos=IA_CULTIVOS.filter(c=>iaEntSel[c.k]);
   const caja=document.getElementById('ent-caja'); if(!caja) return;
   if(!elegidos.length){
-    caja.innerHTML='<p class="ent-vacio">🤖 Sin un solo ejemplo no hay nada que aprender. Elige al menos un cultivo.</p>';
-    fb('fbEnt','Una máquina sin datos no aprende nada: los datos son lo primero.',false);
+    caja.innerHTML='<p class="ent-vacio">🤖 Sin ejemplos no aprende nada. Elige al menos un cultivo.</p>';
+    fb('fbEnt','Sin datos no aprende nada: son lo primero.',false);
     return;
   }
   const promedio=elegidos.reduce((s,c)=>s+c.sano,0)/elegidos.length;
@@ -838,8 +838,8 @@ function iaEntrenar(){
   elegidos.forEach(c=>{iaEntrenado.reglas[c.k]=c.sano;});
   caja.innerHTML='<p class="ent-desc">🤖 <strong>Ya entrena.</strong> Esto es lo que aprendí:</p>'+
     elegidos.map(c=>`<div class="ent-regla">${c.e} <strong>${c.n}:</strong> una hoja sana tiene hasta <strong>${c.sano}</strong> mancha${c.sano===1?'':'s'}.</div>`).join('')+
-    `<div class="ent-regla ent-regla-otro">❓ <strong>Un cultivo que nunca vi:</strong> uso el promedio de los que sí conozco, <strong>${promedio.toFixed(1)}</strong> manchas.</div>`+
-    '<p class="ent-desc">Ahora toca <strong>🧪 Probar</strong> con ocho hojas que nunca vio.</p>';
+    `<div class="ent-regla ent-regla-otro">❓ <strong>Un cultivo que nunca vi:</strong> uso el promedio de los otros, <strong>${promedio.toFixed(1)}</strong> manchas.</div>`+
+    '<p class="ent-desc">Ahora toca <strong>🧪 Probar</strong> con ocho hojas nuevas.</p>';
   fb('fbEnt','Entrenada con '+elegidos.length+' cultivo'+(elegidos.length===1?'':'s')+'. Pruébala.',true);
   if(!xpTracker.wgt.has('ent_entrenar')){xpTracker.wgt.add('ent_entrenar');pts(2);}
 }
@@ -873,22 +873,22 @@ function iaEntProbar(){
   if(ok===total){
     const vistos=IA_CULTIVOS.filter(c=>iaEntSel[c.k]).length;
     msj='🎉 <strong>Acertó las ocho.</strong> '+(vistos===4
-      ? 'Le enseñaste ejemplos de los cuatro cultivos, así que a cada hoja le pudo aplicar la regla de SU cultivo.'
-      : 'Con estos ejemplos le alcanzó, pero ojo: a los cultivos que no vio les está aplicando un promedio. Prueba quitando y poniendo cultivos y mira cuándo se rompe.');
+      ? 'Le enseñaste los cuatro, y a cada hoja le aplicó SU regla.'
+      : 'Con estos le alcanzó. A los que no vio les aplica un promedio. Quita y pon cultivos.');
   } else {
     msj='⚖️ <strong>Falló '+(total-ok)+' de '+total+(nombres.length===1?', y es de '+lista:', y todas de '+lista)+'.</strong> '+
-        'No es que la máquina esté mala: de '+lista+' <strong>no vio ni un ejemplo</strong>, así que le aplicó el promedio de los otros. '+
-        (falsasSanas?'Y fíjate en lo peor: le dijo <strong>«sana»</strong> a una hoja enferma, o sea que la plaga se queda suelta en la milpa. ':'Le dijo <strong>«con plaga»</strong> a una hoja sana, o sea que ese productor fumiga de balde. ')+
-        'Eso es el <strong>sesgo</strong>, y lo puso quien eligió los ejemplos. Cambia los cultivos de arriba y vuelve a entrenar.';
+        'La máquina no está mala: de '+lista+' <strong>no vio ni un ejemplo</strong>, y le aplicó el promedio de los otros. '+
+        (falsasSanas?'Y lo peor: le dijo <strong>«sana»</strong> a una hoja enferma. La plaga se queda en la milpa. ':'Le dijo <strong>«con plaga»</strong> a una hoja sana. Ese productor fumiga de balde. ')+
+        'Eso es el <strong>sesgo</strong>: lo puso quien eligió los ejemplos. Cambia los cultivos.';
   }
-  caja.innerHTML='<p class="ent-desc">🧪 Probada con <strong>ocho hojas que nunca vio</strong>:</p>'+filas+
+  caja.innerHTML='<p class="ent-desc">🧪 Probada con <strong>ocho hojas nuevas</strong>:</p>'+filas+
     '<p class="ent-listo">'+msj+'</p>';
   if(ok===total){
     fb('fbEnt','¡Ocho de ocho! +4 XP',true); sfx('fan');
     if(!xpTracker.wgt.has('ent_todo')){xpTracker.wgt.add('ent_todo');pts(4);}
     fin('s-estructura');
   } else {
-    fb('fbEnt','Acertó '+ok+' de '+total+'. Mira con qué ejemplos la entrenaste.',false); sfx('no');
+    fb('fbEnt','Acertó '+ok+' de '+total+'. Mira con qué la entrenaste.',false); sfx('no');
     if(!xpTracker.wgt.has('ent_sesgo')){xpTracker.wgt.add('ent_sesgo');pts(3);unlockAchievement('cazasesgo');}
   }
 }
@@ -1055,12 +1055,12 @@ function iaReglaPintar() {
     let html = '<p class="regla-tit">Ronda ' + (iaReglaRonda + 1) + ' terminada: <strong>' + iaReglaAciertos + ' de ' + r.ejemplos.length + '</strong></p>' + iaReglaMarcasHtml() +
       '<p class="regla-rev">🔓 La regla era: <strong>' + _esc(r.nombre) + '</strong>.</p>' +
       (iaReglaEscrita ? '<p class="regla-rev">Tú escribiste: «' + _esc(iaReglaEscrita) + '».</p>'
-                      : '<p class="regla-rev">No la escribiste a mitad. La próxima, atrévete: adivinar y fallar también enseña, y es lo que hace la máquina.</p>') +
+                      : '<p class="regla-rev">No la escribiste a mitad. La próxima, atrévete.</p>') +
       '<p class="regla-pista">💡 ' + _esc(r.pista) + '</p>';
     if (r.trampa) {
       html += '<div class="regla-trampa">⚠️ <strong>Aquí estaba la trampa.</strong> Hasta el ejemplo ' + r.trampa.hasta + ', «' + _esc(r.trampa.otraNombre) + '» y «' + _esc(r.nombre) +
-        '» daban <b>exactamente las mismas respuestas</b>: con esos ejemplos no había forma de saber cuál era. Eso mismo le pasa a la máquina: con pocos ejemplos caben varias reglas, elige una, y la que eligió puede fallar con el siguiente. El <b>' +
-        _esc(String(r.ejemplos[r.trampa.hasta])) + '</b> fue el que separó las dos. Por eso hacen falta ejemplos <b>variados</b>, no solo muchos.</div>';
+        '» daban <b>las mismas respuestas</b>. A la máquina le pasa igual: elige una y puede fallar con el siguiente. El <b>' +
+        _esc(String(r.ejemplos[r.trampa.hasta])) + '</b> separó las dos. Hacen falta ejemplos <b>variados</b>, no solo muchos.</div>';
     }
     html += '<div class="ens-btns"><button class="btn btn-g" onclick="iaReglaEmpezar(' + iaReglaRonda + ')">🔄 Otra vez</button>' +
       (iaReglaRonda < IA_REGLAS_OCULTAS.length - 1 ? '<button class="btn btn-pri" onclick="iaReglaEmpezar(' + (iaReglaRonda + 1) + ')">Siguiente ronda ▶</button>' : '') + '</div>';
@@ -1112,13 +1112,13 @@ function iaCurvaPintar(ultimo) {
   const a = iaCurvaProbados[ultimo]; const ej = iaCurvaD.entrena.slice(0, ultimo);
   const rojos = ej.filter(e => e.c === 'rojo').length, negros = ej.length - rojos;
   let nota;
-  if (ultimo === 1) nota = 'Con un solo ejemplo conoce UNA clase (' + (rojos ? 'el rojo' : 'el negro') + ') y le dice eso a las 20. Acierta las ' + a + ' que son de esa clase: la mitad, como una moneda.';
+  if (ultimo === 1) nota = 'Con un ejemplo conoce UNA clase (' + (rojos ? 'el rojo' : 'el negro') + ') y le dice eso a las 20. Acierta ' + a + ': la mitad, como una moneda.';
   else if (ultimo === 2) nota = 'Con dos, uno de cada, ya tiene con qué comparar: ' + a + ' de 20.';
   else if (iaCurvaProbados[20] !== undefined && iaCurvaProbados[50] !== undefined)
-    nota = 'Con ' + ultimo + ' ejemplos (' + rojos + ' rojos y ' + negros + ' negros): ' + a + ' de 20. De 20 a 50 ejemplos cambió ' + Math.abs(iaCurvaProbados[50] - iaCurvaProbados[20]) + ' acierto(s): a partir de cierto punto, más ejemplos parecidos no enseñan más.';
-  else nota = 'Con ' + ultimo + ' ejemplos (' + rojos + ' rojos y ' + negros + ' negros): ' + a + ' de 20. Prueba con más y con menos, y mira dónde deja de subir.';
+    nota = 'Con ' + ultimo + ' ejemplos (' + rojos + ' rojos y ' + negros + ' negros): ' + a + ' de 20. De 20 a 50 solo cambió ' + Math.abs(iaCurvaProbados[50] - iaCurvaProbados[20]) + ' acierto(s). Más ejemplos parecidos ya no enseñan más.';
+  else nota = 'Con ' + ultimo + ' ejemplos (' + rojos + ' rojos y ' + negros + ' negros): ' + a + ' de 20. Prueba con más y con menos: mira dónde deja de subir.';
   caja.innerHTML = '<div class="curva-barras" aria-label="Aciertos según cuántos ejemplos">' + filas + '</div><p class="curva-nota">' + _esc(nota) + '</p>' +
     (Object.keys(iaCurvaProbados).length === IA_CURVA_N.length
-      ? '<p class="curva-fin">📈 Los seis probados. Lo que sube la exactitud al principio son los ejemplos; lo que la deja de subir es que los nuevos <b>se parecen a los que ya tenía</b>. Un ejemplo distinto de los que ya tiene enseña más que veinte parecidos: es el mismo aviso de la etapa 1, no es cuántos, es cuáles.</p>' : '');
+      ? '<p class="curva-fin">📈 Los seis probados. Al principio sube con cada ejemplo. Después deja de subir: los nuevos <b>se parecen a los de antes</b>. No es cuántos: es cuáles.</p>' : '');
 }
 function iaDescInit() { iaReglaPintarRondas(); iaReglaPintar(); iaCurvaPintarN(); }

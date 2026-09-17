@@ -184,7 +184,7 @@
       <div class="fh-txt">
         <div class="f-badge">📄 Ficha Didáctica: Misión Cómo Aprende una Máquina</div>
         <div class="f-meta"><b>Asignatura:</b> Inteligencia Artificial &nbsp;·&nbsp; <b>Ruta:</b> La Máquina que Aprende</div>
-        <div class="f-meta"><b>Tema:</b> Datos, etiquetas, entrenamiento, prueba y error. Los tres tipos de aprendizaje, y el sesgo: por qué se equivoca justo con lo que nadie le enseñó.</div>
+        <div class="f-meta"><b>Tema:</b> Datos, etiquetas, entrenamiento, prueba y error. Los tres tipos de aprendizaje. Y el sesgo: por qué se equivoca con lo que nadie le enseñó.</div>
       </div>
       <div class="fh-qr">
         <img src="../img/qr-mision-como-aprende-una-maquina.png" alt="QR de la misión">
@@ -196,40 +196,32 @@
 
     <ol class="objetivos">
       <li>Distinguir un programa que <strong>sigue reglas</strong> de uno que <strong>aprende de ejemplos</strong>.</li>
-      <li>Explicar el ciclo <strong>datos → patrón → prueba → error</strong> con sus palabras.</li>
-      <li>Usar bien las palabras <strong>dato, etiqueta, entrenar, probar y patrón</strong>.</li>
-      <li>Nombrar los <strong>tres tipos de aprendizaje</strong> y dar un ejemplo de cada uno.</li>
-      <li>Detectar un <strong>sesgo</strong> en un conjunto de ejemplos mal repartido.</li>
-      <li>Preguntar, ante cualquier sistema que decida algo: <strong>con qué ejemplos, quién los eligió y a quién le cae el error</strong>.</li>
+      <li>Explicar el ciclo <strong>datos → patrón → prueba → error</strong>.</li>
+      <li>Usar bien <strong>dato, etiqueta, entrenar, probar y patrón</strong>.</li>
+      <li>Nombrar los <strong>tres tipos de aprendizaje</strong>, con un ejemplo de cada uno.</li>
+      <li>Encontrar un <strong>sesgo</strong> en unos ejemplos mal repartidos.</li>
+      <li>Preguntar ante un sistema que decide: <strong>con qué ejemplos, quién los eligió y a quién le cae el error</strong>.</li>
     </ol>
 
     <h2>⚙️ 1. Dos maneras de hacer que una computadora haga algo</h2>
 
-    <p>Esta es <strong>la diferencia más importante de toda la ruta</strong>, y es la que se pregunta en el
-       examen:</p>
+    <p>Esto se pregunta en el examen:</p>
 
     <div class="dos">
       <div class="dB"><b>📋 Programa de siempre</b>
-        Una persona escribe las <strong>reglas</strong>, paso por paso. La computadora las obedece.
+        Una persona escribe las <strong>reglas</strong>. La computadora obedece.
         <ul><li><em>«Si la nota es menor que 60, escribe reprobado.»</em></li>
-            <li>Nunca mejora solo. Si aparece un caso que la regla no contempló, falla.</li></ul>
+            <li>Nunca mejora solo. Falla con lo que la regla no dice.</li></ul>
       </div>
       <div class="dA"><b>🍎 Programa que aprende</b>
-        Nadie le escribe la regla: recibe <strong>ejemplos</strong> y la saca él mismo de ellos.
+        Nadie le escribe la regla. La saca de los <strong>ejemplos</strong>.
         <ul><li><em>Diez mil fotos de hojas, marcadas «sana» o «con plaga».</em></li>
-            <li>Reconoce cosas que nadie le describió. Y falla con lo que no estaba en sus ejemplos.</li></ul>
+            <li>Reconoce lo que nadie le describió. Falla con lo que no vio.</li></ul>
       </div>
     </div>
 
-    <div class="caja idea"><b>Las dos fallan, pero por razones contrarias:</b> una porque le faltó una regla
-      que alguien tenía que escribir; la otra porque le faltó un ejemplo que alguien tenía que juntar.
-      <b>En las dos hay una persona detrás del fallo.</b></div>
-
-    <h2>🔁 2. El ciclo del aprendizaje, paso por paso</h2>
-
-    <p>Así se entrena cualquier máquina que aprende, sea para reconocer plagas, leer recibos o traducir.
-       Son siempre los mismos seis pasos:</p>
-
+    <div class="caja idea"><b>Las dos fallan, y por razones contrarias.</b>
+      <b>Detrás de las dos hay una persona.</b></div>
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 1</span></div>
 </section>
@@ -238,52 +230,55 @@
 <section class="pagina">
   <div class="contenido">
 
+    <h2>🔁 2. El ciclo del aprendizaje, paso por paso</h2>
+
+    <p>Toda máquina que aprende pasa por los mismos seis pasos:</p>
+
     <table>
       <tr><th style="width:30%">Paso</th><th>Qué pasa</th></tr>
       <tr><td class="k">📦 1. Datos</td><td>Se juntan muchísimos ejemplos: fotos, textos, sonidos, medidas.</td></tr>
       <tr><td class="k">🏷️ 2. Etiquetas</td><td>Una persona escribe la respuesta correcta de cada uno.</td></tr>
-      <tr><td class="k">🏋️ 3. Entrenamiento</td><td>La máquina los mira una y otra vez y busca el patrón que los separa.</td></tr>
+      <tr><td class="k">🏋️ 3. Entrenamiento</td><td>Los mira una y otra vez, y busca el patrón que los separa.</td></tr>
       <tr><td class="k">🧪 4. Prueba</td><td>Se la examina con ejemplos que NUNCA vio.</td></tr>
       <tr><td class="k">❌ 5. Error</td><td>Se cuenta cuántas falló. Ninguna acierta el cien por ciento.</td></tr>
       <tr><td class="k">🔁 6. Se corrige</td><td>Se juntan los ejemplos que faltaban y se vuelve a entrenar.</td></tr>
     </table>
 
-    <div class="caja truco"><b>El paso 4 es el que la gente se salta,</b> y es el que de verdad mide:
-      probarla con ejemplos que <b>NUNCA vio</b>. Probarla con los mismos con que se entrenó no prueba nada,
-      porque pudo habérselos memorizado.</div>
+    <div class="caja truco"><b>El paso 4 es el que la gente se salta,</b> y es el que mide. Se prueba con
+      ejemplos que <b>NUNCA vio</b>. Con los del entrenamiento no prueba nada: pudo memorizarlos.</div>
 
     <h2>📖 3. El vocabulario del examen</h2>
 
     <div class="cficha">
       <div class="cf-tit">📦 Dato</div>
-      <div class="cf-def">Cada pedazo de información que se guarda y se puede contar, medir o comparar: un número, una palabra, una foto, un sonido. Los datos son la comida de la Inteligencia Artificial.</div>
-      <div class="cf-ej">Ejemplo: El peso de una naranja, el color de un nance, la temperatura del día.</div>
+      <div class="cf-def">Un número, una palabra, una foto o un sonido, guardado. Los datos son la comida de la Inteligencia Artificial.</div>
+      <div class="cf-ej">Ejemplo: El peso de una naranja. El color de un nance.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🏷️ Etiqueta</div>
-      <div class="cf-def">La respuesta correcta que una persona le pone a un ejemplo antes de enseñárselo a la máquina. Sin etiqueta, la máquina ve la foto pero no sabe de qué es.</div>
-      <div class="cf-ej">Ejemplo: A esta foto le ponemos la etiqueta «nance»; a esta otra, «anona».</div>
+      <div class="cf-def">La pone una persona antes de enseñarle el ejemplo. Sin ella, la máquina no sabe de qué es la foto.</div>
+      <div class="cf-ej">Ejemplo: A esta foto, «nance»; a esta otra, «anona».</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🏋️ Entrenar</div>
-      <div class="cf-def">Mostrarle a la máquina muchos ejemplos con sus etiquetas, una y otra vez, hasta que encuentre el patrón que los separa. Entrenar cuesta tiempo y se hace una vez; usar lo aprendido es rápido y se hace siempre.</div>
-      <div class="cf-ej">Ejemplo: Enseñarle diez mil fotos de frutas hasta que separe nances de anonas.</div>
+      <div class="cf-def">Se le muestran ejemplos con su etiqueta hasta que encuentra el patrón. Se hace una vez y cuesta tiempo.</div>
+      <div class="cf-ej">Ejemplo: Diez mil fotos hasta que separe nances de anonas.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🔁 Patrón</div>
-      <div class="cf-def">Lo que se repite en muchos ejemplos y sirve para reconocerlos. La máquina no entiende lo que ve: encuentra lo que se repite y lo usa para decidir.</div>
-      <div class="cf-ej">Ejemplo: Los nances casi siempre son pequeños y amarillos; ese es el patrón.</div>
+      <div class="cf-def">Sirve para reconocer cosas nuevas. La máquina no entiende lo que ve: usa lo que se repite.</div>
+      <div class="cf-ej">Ejemplo: Los nances casi siempre son pequeños y amarillos.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🧪 Prueba</div>
-      <div class="cf-def">Examinar a la máquina con ejemplos que NO le enseñamos, para saber si de verdad aprendió el patrón o solo se acordó de lo que vio. Si acierta con lo nuevo, aprendió.</div>
-      <div class="cf-ej">Ejemplo: Le enseñamos 100 fotos y la probamos con 20 que nunca vio.</div>
+      <div class="cf-def">Si acierta con lo nuevo, aprendió el patrón. Si falla, solo se acordó de lo que vio.</div>
+      <div class="cf-ej">Ejemplo: Le enseñamos 100 fotos y la probamos con 20.</div>
     </div>
-
+    <div class="cficha">
+      <div class="cf-tit">❌ Error</div>
+      <div class="cf-def">Ninguna acierta el 100 %. En ese pedacito de error puede haber una persona.</div>
+      <div class="cf-ej">Ejemplo: Si acierta 9 de cada 10, falla 1.</div>
+    </div>
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 2</span></div>
 </section>
@@ -292,46 +287,42 @@
 <section class="pagina">
   <div class="contenido">
 
-    <div class="cficha">
-      <div class="cf-tit">❌ Error</div>
-      <div class="cf-def">Las veces que la máquina contesta mal. Ninguna acierta el 100 %: siempre queda un pedacito de error, y en ese pedacito puede haber una persona.</div>
-      <div class="cf-ej">Ejemplo: Si acierta 9 de cada 10, se equivoca 1 de cada 10.</div>
-    </div>
-
     <h2>🗂️ 4. Las tres maneras de aprender</h2>
 
-    <p>No todas las máquinas aprenden igual. Estas tres son las que hay que saber distinguir:</p>
+    <p>No todas aprenden igual. Estas tres hay que distinguirlas:</p>
 
     <div class="cficha">
       <div class="cf-tit">🏷️ Aprendizaje supervisado</div>
-      <div class="cf-def">La máquina aprende con ejemplos que ya traen puesta la etiqueta correcta. Es como estudiar con el solucionario al lado: ve el ejercicio y ve la respuesta.</div>
-      <div class="cf-ej">Ejemplo: Fotos de hojas con su etiqueta «sana» o «con plaga».</div>
+      <div class="cf-def">Los ejemplos ya traen puesta su etiqueta. Es como estudiar con el solucionario al lado.</div>
+      <div class="cf-ej">Ejemplo: Hojas con su etiqueta «sana» o «con plaga».</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🗂️ Aprendizaje no supervisado</div>
-      <div class="cf-def">La máquina recibe ejemplos SIN etiqueta y los junta por parecido. No sabe cómo se llama cada grupo: sabe que estos se parecen entre sí y aquellos no.</div>
-      <div class="cf-ej">Ejemplo: Separa sola las fotos de la fiesta de las fotos del campo.</div>
+      <div class="cf-def">Recibe ejemplos SIN etiqueta y los junta por parecido. No sabe cómo se llama cada grupo.</div>
+      <div class="cf-ej">Ejemplo: Separa sola las fotos de la fiesta y del campo.</div>
     </div>
-
     <div class="cficha">
       <div class="cf-tit">🎯 Aprendizaje por refuerzo</div>
-      <div class="cf-def">La máquina prueba, recibe un premio cuando le sale bien y nada cuando le sale mal, y va cambiando lo que hace para ganar más premios. Aprende jugando miles de partidas contra sí misma.</div>
-      <div class="cf-ej">Ejemplo: Un programa que aprende a jugar ajedrez perdiendo millones de veces primero.</div>
+      <div class="cf-def">Gana un premio cuando le sale bien y nada cuando le sale mal. Va cambiando para ganar más.</div>
+      <div class="cf-ej">Ejemplo: Aprende ajedrez perdiendo millones de partidas primero.</div>
     </div>
 
-    <div class="caja truco"><b>El truco para no confundirlas:</b> pregúntate <b>quién le dio la
-      respuesta</b>. Si se la dio una persona, es supervisado. Si no se la dio nadie y ella agrupó por
-      parecido, es no supervisado. Si la fue descubriendo a base de premios, es por refuerzo.</div>
+    <div class="caja truco"><b>El truco:</b> pregúntate <b>quién le dio la respuesta</b>. Una persona:
+      supervisado. Nadie, y agrupó por parecido: no supervisado. La descubrió con premios: por refuerzo.</div>
 
     <h2>⚖️ 5. El sesgo</h2>
 
     <div class="cficha">
       <div class="cf-tit">⚖️ Sesgo</div>
-      <div class="cf-def">Cuando los ejemplos con que se entrenó están mal repartidos, la máquina falla justo con lo que faltaba. No es que la máquina sea mala: es que alguien eligió mal los ejemplos. La pregunta que hay que hacerse siempre es quién los eligió.</div>
-      <div class="cf-ej">Ejemplo: Entrenada solo con manzanas y peras, para ella un nance no existe.</div>
+      <div class="cf-def">Sus ejemplos estaban mal repartidos y falla con lo que faltaba. Alguien eligió mal: pregúntate quién.</div>
+      <div class="cf-ej">Ejemplo: Entrenada solo con manzanas y peras, un nance no existe.</div>
     </div>
 
+    <div class="caja aviso"><b>La máquina no es mala.</b> Alguien eligió los ejemplos, y en esa elección
+      quedó gente afuera. A un sistema que decide algo importante se le preguntan estas tres cosas:
+      <ol style="margin-top:4px"><li><b>¿Con qué ejemplos lo entrenaron?</b></li>
+      <li><b>¿Quién los eligió?</b></li>
+      <li><b>¿A quién le cae el error?</b></li></ol></div>
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 3</span></div>
 </section>
@@ -340,18 +331,11 @@
 <section class="pagina">
   <div class="contenido">
 
-    <div class="caja aviso"><b>No es que la máquina sea mala.</b> Es que alguien eligió los ejemplos, y en
-      esa elección se quedó gente afuera. Por eso la pregunta que hay que hacerle a cualquier sistema que
-      decide algo importante no es «¿cuánto acierta?», sino estas tres:
-      <ol style="margin-top:4px"><li><b>¿Con qué ejemplos lo entrenaron?</b></li>
-      <li><b>¿Quién los eligió?</b></li>
-      <li><b>¿A quién le cae el error?</b></li></ol></div>
-
     <div class="acts">
       <h3>🧪 Actividad 1 · Entrena el detector de plagas, en papel <span class="val">(24 pts)</span></h3>
 
-      <p>Una aplicación tiene que decir si una hoja está <strong>sana</strong> o <strong>con plaga</strong>.
-         La entrenaron con hojas de <strong>maíz, frijol y café</strong>, y aprendió esto:</p>
+      <p>Una aplicación dice si una hoja está <strong>sana</strong> o <strong>con plaga</strong>. La
+         entrenaron con <strong>maíz, frijol y café</strong>, y aprendió esto:</p>
 
       <div class="ilus">
         <div class="ilus-t">Lo que la máquina aprendió de cada cultivo</div>
@@ -364,7 +348,7 @@
         </table>
       </div>
 
-      <p>Ahora le llegan estas hojas. Escribe qué va a contestar la máquina y si <strong>acierta</strong>:</p>
+      <p>Le llegan estas hojas. Escribe qué contesta la máquina y si <strong>acierta</strong>:</p>
 
       <table>
         <tr><th>La hoja</th><th>Manchas</th><th>De verdad está…</th><th>La máquina dice</th><th>¿Acierta?</th></tr>
@@ -375,7 +359,7 @@
         <tr><td class="k">🍌 Plátano</td><td>6</td><td>con plaga</td><td><span class="linea-resp" style="min-width:70px"></span></td><td><span class="linea-resp" style="min-width:40px"></span></td></tr>
       </table>
 
-      <p><strong>Las dos preguntas que de verdad se califican:</strong></p>
+      <p><strong>Las dos que se califican:</strong></p>
       <ol>
         <li>¿Con cuál se equivocó, y por qué?
           <span class="linea-resp" style="min-width:100%"></span>
@@ -384,7 +368,6 @@
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
     </div>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 4</span></div>
 </section>
@@ -396,16 +379,15 @@
     <div class="acts">
       <h3>🗂️ Actividad 2 · ¿Qué tipo de aprendizaje es? <span class="val">(12 pts)</span></h3>
 
-      <p>Escribe <strong>S</strong> (supervisado), <strong>N</strong> (no supervisado) o <strong>R</strong>
-         (por refuerzo):</p>
+      <p>Escribe <strong>S</strong> (supervisado), <strong>N</strong> (no supervisado) o <strong>R</strong> (por refuerzo):</p>
 
       <ol>
-        <li>Le damos fotos de hojas con la etiqueta «sana» o «con plaga». <span class="linea-resp" style="min-width:50px"></span></li>
-        <li>Le damos miles de fotos sin decirle nada y ella las junta por parecido. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Le damos hojas con la etiqueta «sana» o «con plaga». <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Le damos miles de fotos sin decirle nada y las junta por parecido. <span class="linea-resp" style="min-width:50px"></span></li>
         <li>Juega millones de partidas y se premia cada vez que gana. <span class="linea-resp" style="min-width:50px"></span></li>
         <li>Le damos recibos ya clasificados en «pagado» y «pendiente». <span class="linea-resp" style="min-width:50px"></span></li>
-        <li>Agrupa sola a los clientes que compran parecido, sin nombres de grupo. <span class="linea-resp" style="min-width:50px"></span></li>
-        <li>Un robot prueba caminar y gana puntos cuando avanza sin caerse. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Agrupa sola a los clientes que compran parecido, sin nombres. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Un robot prueba caminar y gana puntos si avanza sin caerse. <span class="linea-resp" style="min-width:50px"></span></li>
       </ol>
 
       <h3>📦 Actividad 3 · ¿Dato o etiqueta? <span class="val">(12 pts)</span></h3>
@@ -424,12 +406,11 @@
         <li>¿Por qué hay que probar con ejemplos que la máquina NUNCA vio?
           <span class="linea-resp" style="min-width:100%"></span>
           <span class="linea-resp" style="min-width:100%"></span></li>
-        <li>Una máquina acierta 9 de cada 10. ¿Por qué ese 1 que falla puede importar mucho?
+        <li>Una máquina acierta 9 de cada 10. ¿Por qué importa ese 1 que falla?
           <span class="linea-resp" style="min-width:100%"></span>
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
     </div>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 5</span></div>
 </section>
@@ -441,8 +422,8 @@
     <div class="acts">
       <h3>🎯 Actividad 5 · Tú eres la máquina <span class="val">(16 pts)</span></h3>
 
-      <p>Nadie te dice la regla. Mira los ejemplos que YA vienen con su respuesta, saca la regla, y
-         contesta los que faltan como lo haría una máquina que aprendió de esos ejemplos.</p>
+      <p>Nadie te dice la regla. Mira los ejemplos que ya traen su respuesta y saca la regla.
+         Después contesta los que faltan, como haría una máquina.</p>
 
       <table>
         <tr><th style="width:50%">Ejemplo</th><th>¿Entra en el grupo?</th></tr>
@@ -465,21 +446,15 @@
         <li>Escribe <strong>dos reglas distintas</strong> que encajen con los cinco:
           <span class="linea-resp" style="min-width:100%"></span>
           <span class="linea-resp" style="min-width:100%"></span></li>
-        <li>¿Qué número le pedirías a la máquina para saber cuál de las dos reglas aprendió?
+        <li>¿Qué número le pedirías para saber cuál de las dos aprendió?
           <span class="linea-resp" style="min-width:60px"></span> ¿Por qué ese?
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
 
-      <div class="caja idea"><b>Lo que acaba de pasarte es lo que le pasa a la máquina:</b> con pocos ejemplos
-        caben varias reglas, y elige una sin saber si es la buena. Por eso hacen falta ejemplos
-        <b>variados</b>, no solo muchos.</div>
+      <div class="caja idea"><b>Eso mismo le pasa a la máquina:</b> con pocos ejemplos caben varias
+        reglas, y elige una sin saber si es la buena. Hacen falta ejemplos <b>variados</b>, no solo
+        muchos.</div>
     </div>
-
-    <h2>🔒 6. Las tres reglas de oro</h2>
-
-    <p>Son las mismas de la etapa 1, y son las mismas que vas a usar en noveno. Lo que cambia con los años
-       no son las reglas: es que ahora ya sabes <strong>por qué</strong>.</p>
-
   </div>
   <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 6</span></div>
 </section>
@@ -488,10 +463,15 @@
 <section class="pagina">
   <div class="contenido">
 
+    <h2>🔒 6. Las tres reglas de oro</h2>
+
+    <p>Son las mismas de la etapa 1, y las que vas a usar en noveno. Ahora ya sabes
+       <strong>por qué</strong>.</p>
+
     <table>
       <tr><th style="width:52%">La regla</th><th>Por qué</th></tr>
-      <tr><td class="k">🔒 No le doy mis datos ni los de mi familia.</td><td>Nombre completo, dirección, teléfono, la escuela, fotos de otros niños. Lo que se manda a internet puede quedarse guardado.</td></tr>
-      <tr><td class="k">🔎 No le creo sin comprobar.</td><td>La máquina contesta con la misma seguridad cuando sabe y cuando se lo inventa. El dato se busca en el libro o se le pregunta a quien lo sabe.</td></tr>
+      <tr><td class="k">🔒 No le doy mis datos ni los de mi familia.</td><td>Ni nombre completo, ni dirección, ni teléfono, ni la escuela, ni fotos de otros niños. Lo que se manda a internet puede quedarse.</td></tr>
+      <tr><td class="k">🔎 No le creo sin comprobar.</td><td>Contesta igual de segura cuando sabe y cuando se lo inventa. El dato se busca en el libro o con quien lo sabe.</td></tr>
       <tr><td class="k">🧑‍🏫 Si algo me asusta o me confunde, le aviso a una persona grande.</td><td>Un mensaje raro, una foto que no debería estar, alguien que te pide algo. Eso no se resuelve solo.</td></tr>
     </table>
 
@@ -501,34 +481,31 @@
       <div class="preg-q"><span class="preg-n">1</span><span>¿Qué diferencia a un programa que APRENDE de uno de siempre?</span></div>
       <div class="preg-ops">
         <div class="op"><i></i><b>a)</b> Que es más caro</div>
-        <div class="op full"><i></i><b>b)</b> Que saca la regla de los ejemplos en vez de seguir una escrita</div>
-        <div class="op"><i></i><b>c)</b> Que no necesita computadora</div>
+        <div class="op"><i></i><b>b)</b> Que saca la regla de los ejemplos</div>
+        <div class="op"><i></i><b>c)</b> Que no usa computadora</div>
         <div class="op"><i></i><b>d)</b> Que nunca se equivoca</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">2</span><span>¿Qué es una etiqueta?</span></div>
       <div class="preg-ops">
         <div class="op"><i></i><b>a)</b> El precio del programa</div>
         <div class="op"><i></i><b>b)</b> Un adorno de la pantalla</div>
-        <div class="op full"><i></i><b>c)</b> La respuesta correcta que una persona le pone a un ejemplo</div>
+        <div class="op full"><i></i><b>c)</b> La respuesta correcta que le pone una persona</div>
         <div class="op"><i></i><b>d)</b> El nombre de la máquina</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">3</span><span>¿Para qué sirve PROBAR con ejemplos nuevos?</span></div>
       <div class="preg-ops">
-        <div class="op full"><i></i><b>a)</b> Para saber si aprendió el patrón o solo se lo memorizó</div>
+        <div class="op full"><i></i><b>a)</b> Para saber si aprendió o solo se lo memorizó</div>
         <div class="op"><i></i><b>b)</b> Para gastar menos batería</div>
         <div class="op"><i></i><b>c)</b> Para que se entretenga</div>
         <div class="op"><i></i><b>d)</b> Para hacerla más rápida</div>
       </div>
     </div>
-
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">4</span><span>Una máquina entrenada solo con maíz, frijol y café ve una hoja de plátano. ¿Qué pasa?</span></div>
+      <div class="preg-q"><span class="preg-n">4</span><span>Se entrenó con maíz, frijol y café. Ve una hoja de plátano.</span></div>
       <div class="preg-ops">
         <div class="op"><i></i><b>a)</b> La reconoce igual</div>
         <div class="op"><i></i><b>b)</b> Se apaga</div>
@@ -536,7 +513,6 @@
         <div class="op"><i></i><b>d)</b> Se puede equivocar: nunca vio una</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">5</span><span>¿Cómo se llama ese fallo?</span></div>
       <div class="preg-ops">
@@ -546,15 +522,6 @@
         <div class="op"><i></i><b>d)</b> Refuerzo</div>
       </div>
     </div>
-
-  </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 7</span></div>
-</section>
-
-<!-- ═══════════ PÁGINA 8 ═══════════ -->
-<section class="pagina">
-  <div class="contenido">
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">6</span><span>¿De quién es la responsabilidad de un sesgo?</span></div>
       <div class="preg-ops">
@@ -564,7 +531,6 @@
         <div class="op"><i></i><b>d)</b> Del que la usa</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">7</span><span>Aprender con ejemplos que ya traen su respuesta se llama…</span></div>
       <div class="preg-ops">
@@ -574,9 +540,8 @@
         <div class="op"><i></i><b>d)</b> Memorización</div>
       </div>
     </div>
-
     <div class="preg">
-      <div class="preg-q"><span class="preg-n">8</span><span>Un programa junta fotos parecidas sin que nadie le diga cómo se llaman. Eso es…</span></div>
+      <div class="preg-q"><span class="preg-n">8</span><span>Junta fotos parecidas y nadie le dice cómo se llaman. Eso es…</span></div>
       <div class="preg-ops">
         <div class="op"><i></i><b>a)</b> Supervisado</div>
         <div class="op"><i></i><b>b)</b> Por refuerzo</div>
@@ -584,7 +549,6 @@
         <div class="op"><i></i><b>d)</b> No supervisado</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">9</span><span>Un robot gana puntos cuando avanza sin caerse. Eso es…</span></div>
       <div class="preg-ops">
@@ -594,7 +558,6 @@
         <div class="op"><i></i><b>d)</b> Un patrón</div>
       </div>
     </div>
-
     <div class="preg">
       <div class="preg-q"><span class="preg-n">10</span><span>La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?</span></div>
       <div class="preg-ops">
@@ -604,12 +567,11 @@
         <div class="op"><i></i><b>d)</b> A quién le toca ese error</div>
       </div>
     </div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 8</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina</span><span>Página 7</span></div>
 </section>
 
-<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
 <section class="pagina">
   <div class="contenido">
 
@@ -620,44 +582,42 @@
       <div><span class="pt">Actividad 1 · El detector de plagas (24 pts):</span>
         maíz 1 → «sana» ✔ · maíz 3 → «con plaga» ✔ · café 1 → «sana» ✔ ·
         <b>plátano 3 → «con plaga» ✘ (se equivoca)</b> · plátano 6 → «con plaga» ✔.
-        En la pregunta 1 se valora que el alumno diga que <b>nunca vio una hoja de plátano</b> y que por eso
-        le aplicó el promedio de los otros, no que la máquina «esté mala». En la pregunta 2, que nombre el
-        costo real: ese productor fumiga de balde, o deja de vender creyendo que su cosecha está enferma.</div>
+        En la pregunta 1, que diga que <b>nunca vio una hoja de plátano</b> y que le aplicó el promedio de
+        los otros. No que la máquina «esté mala». En la pregunta 2, que nombre el costo: ese productor
+        fumiga de balde, o deja de vender creyendo que su cosecha está enferma.</div>
       <div><span class="pt">Actividad 2 · Tipos de aprendizaje (12 pts):</span> S · N · R · S · N · R.</div>
       <div><span class="pt">Actividad 3 · ¿Dato o etiqueta? (12 pts):</span> D · E · D · E · D · E.</div>
       <div><span class="pt">Actividad 4 · Con tus palabras (12 pts):</span> respuesta abierta.
-        1) Porque si se la prueba con los mismos con que se entrenó, no se sabe si aprendió el patrón o se
-        los memorizó. 2) Porque en ese 1 hay una persona concreta, y porque el error puede caer siempre
-        sobre el mismo grupo: el porcentaje solo no lo enseña.</div>
+        1) Con los mismos del entrenamiento no se sabe si aprendió o si los memorizó. 2) En ese 1 hay una
+        persona, y el error puede caer siempre sobre el mismo grupo.</div>
       <div><span class="pt">Actividad 5 · Tú eres la máquina (16 pts):</span> los que faltan:
         15 ❌ no entra · 22 ✅ entra · 9 ❌ no entra · 16 ✅ entra · 5 ❌ no entra; la regla:
-        <b>los números pares</b>. La trampa: <b>los números pares</b> y <b>los menores que 8</b> encajan las dos con los
-        cinco; las separa cualquier número que cumpla una y no la otra (el <b>10</b>, por
-        ejemplo). Se valora que el alumno explique POR QUÉ ese número separa las dos, no solo que acierte uno.</div>
+        <b>los números pares</b>. La trampa: <b>los números pares</b> y <b>los menores que 8</b> encajan las dos con
+        los cinco. Las separa cualquier número que cumpla una y no la otra: el <b>10</b>, por
+        ejemplo. Que explique POR QUÉ ese número las separa, no solo que acierte uno.</div>
     </div>
 
     <div class="nota-doc">
-      <b>Qué se está enseñando de verdad en esta hoja.</b> El vocabulario (dato, etiqueta, entrenar, probar,
-      patrón, error) es el andamio; lo que se evalúa es otra cosa: que el alumno, ante una máquina que
-      decide algo, sepa preguntar <b>con qué ejemplos la entrenaron, quién los eligió y a quién le cae el
-      error</b>. Esas tres preguntas le van a servir el resto de su vida, aunque la tecnología cambie entera.
+      <b>Qué se enseña de verdad en esta hoja.</b> Dato, etiqueta, entrenar, probar,
+      patrón, error: eso es el andamio. Lo que se evalúa es otra cosa: que ante una máquina que decide algo,
+      el alumno sepa preguntar <b>con qué ejemplos la entrenaron, quién los eligió y a quién le cae el
+      error</b>. Esas tres preguntas le sirven el resto de su vida, aunque la tecnología cambie entera.
       <br><br>
       <b>La Actividad 1 es el corazón de la ficha.</b> Conviene dejar que se equivoquen y que discutan de
-      quién es la culpa antes de dar la respuesta: casi todos dicen «la máquina está mala», y el trabajo
-      del maestro es una sola pregunta, <b>¿le enseñaron alguna hoja de plátano?</b> El ejemplo es
-      hondureño a propósito: el alumno puede señalar la mata.
+      quién es la culpa. Casi todos dicen «la máquina está mala». El trabajo del maestro es una sola
+      pregunta: <b>¿le enseñaron alguna hoja de plátano?</b> El ejemplo es hondureño a propósito: el
+      alumno puede señalar la mata.
       <br><br>
-      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El propio
-      currículo dice dónde va lo tecnológico en II Ciclo: dentro del bloque «Materia, energía y tecnología»
-      de Ciencias Naturales. El porqué entero y lo que a propósito NO se enseña están en
+      <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El currículo
+      sí dice dónde va lo tecnológico en II Ciclo: en el bloque «Materia, energía y tecnología» de Ciencias
+      Naturales. El porqué entero, y lo que a propósito NO se enseña, está en
       <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>.
       <br><br>
-      <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-conceptos.js), así que no
-      pueden decir cosas distintas. Etapa 2 de cuatro.
+      <b>La ficha y la misión salen del mismo archivo</b> (js/data/ia-conceptos.js), así que no pueden
+      decir cosas distintas. Etapa 2 de cuatro.
     </div>
-
   </div>
-  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina · Hoja del Docente</span><span>Página 9</span></div>
+  <div class="pag-pie"><span><b>M.E.T.A.S</b> · Ficha Didáctica · Cómo Aprende una Máquina · Hoja del Docente</span><span>Página 8</span></div>
 </section>
 
 </div>

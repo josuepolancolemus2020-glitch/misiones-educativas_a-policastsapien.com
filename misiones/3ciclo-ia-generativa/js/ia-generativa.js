@@ -1,6 +1,6 @@
 // En escritorio (Windows) la app de WhatsApp corrompe los emojis recibidos vía wa.me; WhatsApp Web los conserva
 function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
-function compartirMision(){const url=window.location.href;const texto=`🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Inteligencia Artificial._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;_waShare(texto);}
+function compartirMision(){const url=window.location.href;const texto=`🚀 *Misión Asignada* 🚀\n\nPractica este tema y desbloquea *todos los logros*. 🏆\n\nPon *tus datos* para que tu maestro vea lo que ganaste. 📋\n\n_Después hay prueba escrita._ ✍️\n\n👇 *TOCA EL ENLACE* 👇\n${url}`;_waShare(texto);}
 function toggleLetra(){document.body.classList.toggle('letra-grande');if(typeof sfx==='function')sfx('click');localStorage.setItem('preferenciaLetra',document.body.classList.contains('letra-grande'));}
 window.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('preferenciaLetra')==='true')document.body.classList.add('letra-grande');});
 
@@ -90,26 +90,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué hace de verdad un modelo de lenguaje cuando te contesta?',o:['Busca la respuesta en una enciclopedia','Predice cuál es la palabra siguiente más probable, una por una','Le pregunta a una persona','Copia una página de internet'],c:1,
-   e:'Por eso escribe con la misma seguridad cuando acierta que cuando inventa.'},
-  {q:'¿Qué es una alucinación?',o:['Un error de la pantalla','Un virus','Cuando el modelo se inventa un dato y lo dice con toda seguridad','Cuando se queda sin internet'],c:2,
-   e:'No está mintiendo: está haciendo lo suyo, que es completar texto.'},
-  {q:'La IA te da el título de un libro que respalda tu tarea. ¿Qué haces?',o:['Lo cito, suena confiable','Le pregunto a la IA si existe','Compruebo que el libro exista de verdad','Le cambio el título por si acaso'],c:2,
-   e:'Libros, artículos y leyes inventados son el error más común. Que el título suene bien no prueba nada.'},
+  {q:'¿Qué hace de verdad un modelo de lenguaje cuando te contesta?',o:['Busca la respuesta en una enciclopedia','Predice la palabra siguiente más probable','Le pregunta a una persona','Copia una página de internet'],c:1,
+   e:'Por eso escribe igual de seguro cuando acierta que cuando inventa.'},
+  {q:'¿Qué es una alucinación?',o:['Un error de la pantalla','Un virus','Inventa un dato y lo dice con seguridad','Cuando se queda sin internet'],c:2,
+   e:'No está mintiendo: hace lo suyo, que es completar texto.'},
+  {q:'La IA te da el título de un libro para tu tarea. ¿Qué haces?',o:['Lo cito, suena confiable','Le pregunto a la IA si existe','Compruebo que el libro exista','Le cambio el título por si acaso'],c:2,
+   e:'Libros y leyes inventados son el error más común. Que suene bien no prueba nada.'},
   {q:'¿Cuáles son las cuatro piezas de una buena petición?',o:['Contexto, tarea, formato y ejemplo','Saludo, pregunta, gracias y despedida','Título, cuerpo, firma y fecha','Quién, cómo, cuándo y dónde'],c:0,
    e:'Con las cuatro puestas, el resultado cambia muchísimo.'},
-  {q:'¿Qué es una falsificación profunda (deepfake)?',o:['Una foto movida','Una foto, voz o video fabricados para que parezcan de una persona real','Un error de la cámara','Un filtro de colores'],c:1,
+  {q:'¿Qué es una falsificación profunda (deepfake)?',o:['Una foto movida','Foto, voz o video fabricados para parecer reales','Un error de la cámara','Un filtro de colores'],c:1,
    e:'Se usan para estafar, para humillar y para desinformar.'},
-  {q:'Te llega un audio con la voz de un familiar pidiendo dinero urgente. ¿Qué haces?',o:['Se lo mando','Lo reenvío al grupo para avisar','Le contesto por audio','Lo llamo yo por otro medio antes de hacer nada'],c:3,
-   e:'Imitar una voz hoy cuesta pocos segundos de grabación. Compruébalo por otro camino.'},
-  {q:'¿Qué NO se le escribe nunca a un chat de IA?',o:['Una pregunta de la tarea','Datos de tu familia, claves o fotos de otras personas','Una duda de matemática','Un texto para que te lo corrija'],c:1,
-   e:'Lo que se escribe puede quedar guardado en otra computadora, y ya no lo controlas tú.'},
-  {q:'Usar IA para entender un tema y usarla para entregar la tarea hecha…',o:['Son lo mismo','Las dos están prohibidas','Son distintas: una te enseña y la otra te deja sin aprender','Las dos están bien'],c:2,
-   e:'Y cuando se usa, se declara. Este mismo proyecto declara cuándo hay IA en su proceso.'},
-  {q:'¿Por qué un modelo puede equivocarse y sonar igual de seguro?',o:['Porque no le importa la verdad: fue hecho para completar texto, no para comprobarlo','Porque tiene poca batería','Porque está enojado','Porque le falta internet'],c:0,
-   e:'La seguridad del tono no es una señal de que el dato sea bueno.'},
-  {q:'Compartes sin comprobar una noticia que resultó falsa. ¿Qué pasó?',o:['Nada, no la escribe yo','No es culpa mía','Ayudaste a que la desinformación llegue más lejos','La IA es la responsable'],c:2,
-   e:'Compartir sin verificar es parte del daño, aunque no lo hayas escrito tú.'}
+  {q:'Te llega un audio de un familiar pidiendo dinero urgente. ¿Qué haces?',o:['Se lo mando','Lo reenvío al grupo para avisar','Le contesto por audio','Lo llamo yo por otro medio'],c:3,
+   e:'Imitar una voz cuesta pocos segundos de grabación. Compruébalo por otro camino.'},
+  {q:'¿Qué NO se le escribe nunca a un chat de IA?',o:['Una pregunta de la tarea','Datos de tu familia, claves o fotos ajenas','Una duda de matemática','Un texto para que te lo corrija'],c:1,
+   e:'Lo escrito puede quedar guardado en otra computadora. Ya no lo controlas tú.'},
+  {q:'Usar IA para entender un tema y usarla para entregar la tarea hecha…',o:['Son lo mismo','Las dos están prohibidas','Una enseña, la otra te deja sin aprender','Las dos están bien'],c:2,
+   e:'Y cuando se usa, se declara.'},
+  {q:'¿Por qué un modelo puede equivocarse y sonar igual de seguro?',o:['Fue hecho para completar texto, no para comprobarlo','Porque tiene poca batería','Porque está enojado','Porque le falta internet'],c:0,
+   e:'El tono seguro no dice nada del dato.'},
+  {q:'Compartes sin comprobar una noticia que resultó falsa. ¿Qué pasó?',o:['Nada, no la escribí yo','No es culpa mía','Ayudaste a que la desinformación llegue más lejos','La IA es la responsable'],c:2,
+   e:'Compartir sin verificar ya es parte del daño.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -136,7 +136,7 @@ const classGroups=[
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
-function checkClass(){const remaining=document.querySelectorAll('#clsBank .wb-item').length;if(remaining>0){fb('fbCls','Mueve todas las palabras a las columnas primero.',false);return;}const group=classGroups[currentClassGroupIdx];let allOk=true;document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{const inLeft=el.parentElement.id==='items-left';const expectedType=inLeft?group.colA:group.colB;if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;}});if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);}if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');}}
+function checkClass(){const remaining=document.querySelectorAll('#clsBank .wb-item').length;if(remaining>0){fb('fbCls','Mueve todas las palabras a las columnas.',false);return;}const group=classGroups[currentClassGroupIdx];let allOk=true;document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{const inLeft=el.parentElement.id==='items-left';const expectedType=inLeft?group.colA:group.colB;if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;}});if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);}if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');}}
 function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;buildClass();document.getElementById('fbCls').classList.remove('show');showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);}
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
@@ -144,27 +144,27 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 const idData=[
   {s:['Un','modelo','de','lenguaje','predice','la','palabra','siguiente.'],c:4,art:'El verbo que dice lo que de verdad hace'},
   {s:['Cuando','se','inventa','un','dato','hay','una','alucinación.'],c:7,art:'El nombre del dato inventado con seguridad'},
-  {s:['Antes','de','usar','ese','dato','hay','que','verificarlo.'],c:7,art:'Lo que hay que hacer antes de usar un dato'},
+  {s:['Antes','de','usar','ese','dato','hay','que','verificarlo.'],c:7,art:'Lo que hay que hacer antes de usarlo'},
   {s:['Una','buena','petición','lleva','contexto,','tarea,','formato','y','ejemplo.'],c:2,art:'El nombre del encargo que se le escribe'},
   {s:['Un','video','fabricado','que','parece','real','engaña.'],c:2,art:'Lo que le pasó a ese video'},
-  {s:['Lo','que','escribes','puede','quedar','guardado','para','siempre.'],c:5,art:'Lo que le pasa a lo que se escribe en internet'},
+  {s:['Lo','que','escribes','puede','quedar','guardado','para','siempre.'],c:5,art:'Lo que le pasa a lo que se escribe'},
   {s:['Compartir','sin','comprobar','ya','es','desinformación.'],c:5,art:'El nombre de lo que se propaga sin comprobar'},
   {s:['La','fuente','original','es','la','que','responde','por','el','dato.'],c:1,art:'Lo que hay que buscar para comprobar algo'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
-function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5);}sfx('ok');}else{span.classList.add('id-no');fb('fbId','Ese no es el término solicitado.',false);sfx('no');}}
+function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5);}sfx('ok');}else{span.classList.add('id-no');fb('fbId','Ese no es. Vuelve a mirar.',false);sfx('no');}}
 function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').classList.remove('show');}
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'Un modelo de lenguaje ___ la palabra siguiente más probable.',opts:['predice','consulta','recuerda'],c:0},
-  {s:'Cuando se inventa un dato y lo dice con seguridad, es una ___.',opts:['broma','mentira','alucinación'],c:2},
+  {s:'Un dato inventado y dicho con seguridad es una ___.',opts:['broma','mentira','alucinación'],c:2},
   {s:'Antes de usar un dato de una IA hay que ___.',opts:['compartirlo','verificarlo','copiarlo'],c:1},
   {s:'Las cuatro piezas de una petición son contexto, tarea, formato y ___.',opts:['ejemplo','saludo','firma'],c:0},
-  {s:'Una foto o una voz fabricadas para engañar son una falsificación ___.',opts:['barata','sencilla','profunda'],c:2},
-  {s:'Lo que le escribes a un servicio en internet puede quedar ___.',opts:['borrado','guardado','perdido'],c:1},
+  {s:'Una foto o una voz fabricadas son una falsificación ___.',opts:['barata','sencilla','profunda'],c:2},
+  {s:'Lo que le escribes a internet puede quedar ___.',opts:['borrado','guardado','perdido'],c:1},
   {s:'Compartir algo sin comprobarlo ya es ___.',opts:['ayudar','informar','desinformación'],c:2},
   {s:'Verificar es ir a la ___ que responde por el dato.',opts:['fuente','pantalla','memoria'],c:0}
 ];
@@ -187,7 +187,7 @@ let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
 function renderRoute(){const list=document.getElementById('routeList');if(!list)return;list.innerHTML='';routeItems.forEach((step,i)=>{const div=document.createElement('div');div.className='sort-item';div.innerHTML=`<div class="sort-arrows"><button class="sort-arrow" onclick="routeMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="routeMove(${i},1)"${i===routeItems.length-1?' disabled':''}>▼</button></div><div class="sort-step-num">${i+1}.</div><div class="sort-item-txt">${step}</div>`;list.appendChild(div);});}
 function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItems.length)return;[routeItems[idx],routeItems[ni]]=[routeItems[ni],routeItems[idx]];renderRoute();}
-function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
+function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden.',false);sfx('no');}}
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: Identifica el concepto
@@ -202,7 +202,7 @@ const neuronPartes = (function () {
   return p;
 })();
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno por lo que hizo!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
@@ -213,12 +213,12 @@ const neuroPairs = (function () {
      más se parece a lo que va a hacer el alumno con el teléfono en la mano. */
   const pasos = IA_VERIFICA.map(v => v.paso);
   return [
-    {trans:'La IA te dio un párrafo con tres fechas y una opinión.',func:IA_VERIFICA[0].paso,opts:pasos.slice()},
-    {trans:'Dice que un río de tu departamento mide 900 kilómetros, y tú sabes que no.',func:IA_VERIFICA[1].paso,opts:pasos.slice()},
-    {trans:'Te da un dato sobre una ley y tú tienes la ley a mano.',func:IA_VERIFICA[2].paso,opts:pasos.slice()},
-    {trans:'Cita un libro con un título perfecto para tu tema.',func:IA_VERIFICA[3].paso,opts:pasos.slice()},
-    {trans:'Buscaste el dato por todos lados y no aparece en ninguna fuente.',func:IA_VERIFICA[4].paso,opts:pasos.slice()},
-    {trans:'Encontraste cinco páginas que repiten lo mismo sin decir de dónde lo sacaron.',func:IA_VERIFICA[2].paso,opts:pasos.slice()}
+    {trans:'Un párrafo con tres fechas y una opinión.',func:IA_VERIFICA[0].paso,opts:pasos.slice()},
+    {trans:'Dice que un río de tu pueblo mide 900 kilómetros, y tú sabes que no.',func:IA_VERIFICA[1].paso,opts:pasos.slice()},
+    {trans:'Te da un dato de una ley, y tienes la ley a mano.',func:IA_VERIFICA[2].paso,opts:pasos.slice()},
+    {trans:'Cita un libro con el título perfecto para tu tema.',func:IA_VERIFICA[3].paso,opts:pasos.slice()},
+    {trans:'Buscaste el dato y no aparece en ninguna fuente.',func:IA_VERIFICA[4].paso,opts:pasos.slice()},
+    {trans:'Cinco páginas repiten lo mismo y ninguna dice de dónde salió.',func:IA_VERIFICA[2].paso,opts:pasos.slice()}
   ];
 })();
 let neuroIdx=0,neuroDone=false;
@@ -228,15 +228,15 @@ function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
 // Widget 4: Fuente → ¿Renovable o no renovable?
 const enfermedadData=[
-  {disease:'Un chat inventa el nombre de un libro que no existe',characteristic:'Alucinación',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
-  {disease:'Un audio imita la voz de tu tío para pedirte dinero',characteristic:'Falsificación profunda',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
+  {disease:'Un chat inventa un libro que no existe',characteristic:'Alucinación',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
+  {disease:'Un audio imita la voz de tu tío y te pide dinero',characteristic:'Falsificación profunda',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
   {disease:'Escribiste la dirección de tu casa en un chat',characteristic:'Problema de privacidad',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
-  {disease:'El modelo te da una fecha con toda seguridad y está equivocada',characteristic:'Alucinación',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
-  {disease:'Circula un video de alguien diciendo algo que nunca dijo',characteristic:'Falsificación profunda',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
+  {disease:'Te da una fecha con seguridad, y está mala',characteristic:'Alucinación',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
+  {disease:'Un video de alguien diciendo lo que nunca dijo',characteristic:'Falsificación profunda',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
   {disease:'Subiste una foto de tus compañeros sin preguntarles',characteristic:'Problema de privacidad',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
-  {disease:'Te cita un artículo de una ley que no dice eso',characteristic:'Alucinación',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
-  {disease:'Una imagen fabricada muestra un hecho que no ocurrió',characteristic:'Falsificación profunda',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
-  {disease:'Pegaste en un chat la conversación privada de otra persona',characteristic:'Problema de privacidad',opts:['Alucinación','Falsificación profunda','Problema de privacidad']}
+  {disease:'Cita un artículo de ley que no dice eso',characteristic:'Alucinación',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
+  {disease:'Una imagen fabricada de algo que no pasó',characteristic:'Falsificación profunda',opts:['Alucinación','Falsificación profunda','Problema de privacidad']},
+  {disease:'Pegaste en un chat una conversación de otro',characteristic:'Problema de privacidad',opts:['Alucinación','Falsificación profunda','Problema de privacidad']}
 ];
 let enferIdx=0,enferDone=false;
 function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
@@ -275,14 +275,14 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 const identifyTaskDB=[
   {s:'Un modelo de lenguaje predice la palabra siguiente más probable.',type:'predice'},
   {s:'Cuando se inventa un dato con seguridad, eso es una alucinación.',type:'alucinación'},
-  {s:'Antes de usar un dato de una IA hay que verificarlo en su fuente.',type:'verificarlo'},
+  {s:'Antes de usar un dato de una IA hay que verificarlo.',type:'verificarlo'},
   {s:'Una buena petición lleva contexto, tarea, formato y ejemplo.',type:'petición'},
   {s:'Un video fabricado que parece real es una falsificación profunda.',type:'falsificación profunda'},
-  {s:'Lo que escribes en internet puede quedar guardado en otra computadora.',type:'guardado'},
+  {s:'Lo que escribes en internet puede quedar guardado.',type:'guardado'},
   {s:'Compartir algo sin comprobarlo ya es desinformación.',type:'desinformación'},
   {s:'La fuente original es la que responde por el dato.',type:'fuente original'},
-  {s:'Usar IA para aprender no es lo mismo que usarla para entregar.',type:'aprender'},
-  {s:'El tono seguro de un modelo no prueba que el dato sea bueno.',type:'tono seguro'}
+  {s:'Usar IA para aprender no es usarla para entregar.',type:'aprender'},
+  {s:'El tono seguro no prueba que el dato sea bueno.',type:'tono seguro'}
 ];
 const classifyTaskDB=[
   {w:'IA generativa',gen:'Produce texto, imagen, voz o video nuevos',n:'Un chat que escribe un párrafo',g:'Puede inventar con seguridad',t:''},
@@ -299,29 +299,29 @@ const completeTaskDB=[
   {s:'Antes de usar un dato de una IA hay que ___.',ans:'verificarlo'},
   {s:'Las cuatro piezas de una petición son contexto, tarea, formato y ___.',ans:'ejemplo'},
   {s:'Una foto o voz fabricadas para engañar son una falsificación ___.',ans:'profunda'},
-  {s:'Lo que escribes en internet puede quedar ___.',ans:'guardado'},
+  {s:'Lo que escribes puede quedar ___.',ans:'guardado'},
   {s:'Compartir sin comprobar ya es ___.',ans:'desinformación'},
   {s:'Verificar es ir a la ___ original.',ans:'fuente'},
-  {s:'El tono seguro de un modelo no ___ que el dato sea bueno.',ans:'prueba'}
+  {s:'El tono seguro no ___ que el dato sea bueno.',ans:'prueba'}
 ];
 const explainQuestions=[
-  {q:'Explica con tus palabras qué hace un modelo de lenguaje cuando te contesta.',ans:'Predice cuál es la palabra siguiente más probable a partir de todo el texto que leyó mientras lo entrenaban, y después la siguiente, y la siguiente, hasta armar el párrafo. No busca en una enciclopedia ni comprueba nada. Por eso escribe con la misma seguridad cuando acierta que cuando se lo inventa.'},
-  {q:'¿Qué es una alucinación y por qué ocurre?',ans:'Es cuando el modelo se inventa un dato, un nombre, una fecha o una fuente y lo escribe como si fuera cierto. Ocurre porque fue hecho para completar texto, no para comprobarlo: si la continuación más probable es falsa, la escribe igual. No está mintiendo, porque no sabe lo que es mentir.'},
-  {q:'Describe los cinco pasos para verificar un dato que te dio una IA.',ans:'Primero separo el dato de la explicación: lo que se verifica son nombres, fechas, números y fuentes. Segundo, me pregunto si suena posible comparándolo con lo que ya sé. Tercero, busco la fuente original: el libro, la ley, la página de la institución. Cuarto, si cita algo, compruebo que exista. Y quinto: si no lo puedo verificar, no lo uso.'},
-  {q:'¿Qué es una falsificación profunda y qué harías si te llega un audio sospechoso de un familiar?',ans:'Es una foto, un audio o un video hechos con IA para que parezcan de una persona real. Si me llega un audio de un familiar pidiendo dinero urgente, no hago nada de lo que pide: lo llamo yo por otro medio, o llamo a alguien más de la familia. Imitar una voz hoy cuesta pocos segundos de grabación.'},
-  {q:'Escribe una petición completa, con sus cuatro piezas, para algo que necesites de verdad.',ans:'Respuesta abierta. Se valora que estén las cuatro: contexto (quién es y para qué), tarea (qué quiere exactamente), formato (cómo lo quiere) y ejemplo (a qué se tiene que parecer). Y que lo que pida sea algo real de su clase.'},
-  {q:'¿Qué diferencia hay entre usar la IA para aprender y usarla para entregar la tarea?',ans:'Usarla para aprender es pedirle que me explique algo que no entendí, que me ponga ejemplos o que me corrija lo que yo escribe: al final yo sé más. Usarla para entregar es copiar lo que escribió y ponerle mi nombre: al final yo no aprendí nada y además estoy diciendo que hice algo que no hice. Cuando la uso, lo declaro.'},
-  {q:'¿Por qué compartir algo sin verificar ya es parte del daño?',ans:'Porque la desinformación no vive de quien la escribe, sino de quien la reenvía. Un texto falso que nadie comparte se queda en una pantalla; compartido por cien personas llega a mil. Aunque yo no lo haya escrito, mi reenvío es el que lo puso delante de alguien más.'},
-  {q:'¿Qué NO le escribirías nunca a un chat de IA, y por qué?',ans:'Datos de mi familia (dirección, teléfonos, números de identidad), claves de cualquier cuenta, fotos de otras personas y conversaciones privadas de alguien más. Porque lo que se escribe puede quedar guardado en otra computadora, ya no lo controlo yo, y esos datos no son solo míos: son de otras personas que no dieron permiso.'},
-  {q:'Averigua cómo se usa la IA en algún trabajo de tu comunidad y decí qué cambia y qué no.',ans:'Respuesta abierta y de investigación. Se valora que hable con alguien que trabaje (en una pulpería, en la alcaldía, en una finca, en una radio), que distinga las tareas que una máquina puede hacer de las que necesitan una persona delante, y que no caiga ni en el catastrofismo ni en la publicidad.'}
+  {q:'Explica con tus palabras qué hace un modelo de lenguaje cuando te contesta.',ans:'Predice la palabra siguiente más probable, una por una, hasta armar el párrafo. No comprueba nada.'},
+  {q:'¿Qué es una alucinación y por qué ocurre?',ans:'Un dato inventado y dicho con seguridad. Fue hecho para completar texto, no para comprobarlo.'},
+  {q:'Describe los cinco pasos para verificar un dato que te dio una IA.',ans:'1) Separo el dato de la explicación. 2) ¿Suena posible? 3) Busco la fuente original. 4) Compruebo que lo que cita exista. 5) Si no puedo, no lo uso.'},
+  {q:'¿Qué es una falsificación profunda? ¿Qué harías con un audio raro de un familiar?',ans:'Foto, audio o video hechos con IA para parecer reales. No hago lo que pide. Lo llamo por otro medio.'},
+  {q:'Escribe una petición completa, con sus cuatro piezas, para algo que necesites.',ans:'Respuesta abierta. Se valora que estén las cuatro piezas y que pida algo real.'},
+  {q:'¿Qué diferencia hay entre usar la IA para aprender y usarla para entregar?',ans:'Aprender: le pido que explique, y yo sé más. Entregar: copio lo suyo y no aprendí nada. Cuando la uso, lo declaro.'},
+  {q:'¿Por qué compartir algo sin verificar ya es parte del daño?',ans:'La desinformación vive de quien la reenvía. Lo que nadie comparte se queda quieto.'},
+  {q:'¿Qué NO le escribirías nunca a un chat de IA, y por qué?',ans:'Datos de mi familia, claves, fotos de otros y chats privados. Lo escrito puede quedar guardado.'},
+  {q:'Averigua cómo se usa la IA en algún trabajo de tu comunidad y decí qué cambia.',ans:'Respuesta abierta. Se valora que hable con alguien que trabaje. Y que separe lo mecánico de lo que pide criterio.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto que se pide en cada oración. Escribe al lado qué significa y por qué importa.','<strong>Ejemplo:</strong> Un modelo de lenguaje predice la palabra siguiente. → <span style="color:var(--jade);font-weight:700;">predice</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada concepto, completa qué es, un ejemplo, qué riesgo trae y cómo te defiendes.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Concepto','text-align:left;')}${th('¿Qué es?')}${th('Un ejemplo')}${th('¿Qué riesgo trae?')}${th('¿Cómo te defiendes?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
-function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
-function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno. Subraya el concepto que se pide. Escribe al lado qué significa.','<strong>Ejemplo:</strong> Un modelo de lenguaje predice la palabra siguiente. → <span style="color:var(--jade);font-weight:700;">predice</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla. De cada concepto: qué es, un ejemplo, qué riesgo y cómo te defiendes.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Concepto','text-align:left;')}${th('¿Qué es?')}${th('Un ejemplo')}${th('¿Qué riesgo trae?')}${th('¿Cómo te defiendes?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Escribe la palabra que falta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y contéstalas.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
@@ -383,76 +383,76 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
   {q:'Un modelo de lenguaje predice la palabra siguiente más probable.',a:true},
-  {q:'Un modelo de lenguaje busca la respuesta en una enciclopedia antes de contestar.',a:false},
-  {q:'Una alucinación es cuando el modelo se inventa un dato y lo dice con seguridad.',a:true},
-  {q:'Si el modelo contesta con mucha seguridad, es señal de que el dato es correcto.',a:false},
+  {q:'Un modelo de lenguaje busca la respuesta en una enciclopedia.',a:false},
+  {q:'Una alucinación es un dato inventado y dicho con seguridad.',a:true},
+  {q:'Si el modelo contesta muy seguro, el dato es correcto.',a:false},
   {q:'Verificar es buscar la fuente original que responde por el dato.',a:true},
-  {q:'Preguntarle otra vez a la misma IA sirve para verificar un dato.',a:false},
+  {q:'Preguntarle otra vez a la misma IA es verificar.',a:false},
   {q:'Las cuatro piezas de una petición son contexto, tarea, formato y ejemplo.',a:true},
-  {q:'Una falsificación profunda puede imitar la voz de una persona real.',a:true},
-  {q:'Está bien escribirle a un chat la dirección de tu casa si te lo pide.',a:false},
-  {q:'Lo que se escribe en un servicio de internet puede quedar guardado.',a:true},
+  {q:'Una falsificación profunda puede imitar la voz de alguien real.',a:true},
+  {q:'Está bien darle a un chat la dirección de tu casa.',a:false},
+  {q:'Lo que se escribe en internet puede quedar guardado.',a:true},
   {q:'Compartir sin comprobar ayuda a que la desinformación llegue más lejos.',a:true},
-  {q:'Usar IA para entender un tema es lo mismo que entregar lo que ella escribió.',a:false},
+  {q:'Usar IA para entender es lo mismo que entregar lo suyo.',a:false},
   {q:'Cuando se usa IA en un trabajo, se declara.',a:true},
-  {q:'Si un libro que cita la IA suena muy adecuado, seguro existe.',a:false},
-  {q:'La IA generativa también produce imágenes, voz y video, no solo texto.',a:true},
-  {q:'Los modelos de lenguaje descienden de una idea técnica presentada en 2017.',a:true},
-  {q:'Si no puedes verificar un dato, lo mejor es usarlo igual y avisar después.',a:false},
-  {q:'Una foto de tus compañeros se sube solo con permiso de ellos.',a:true},
+  {q:'Si un libro que cita la IA suena perfecto, existe.',a:false},
+  {q:'La IA generativa también produce imágenes, voz y video.',a:true},
+  {q:'Los modelos de lenguaje vienen de una idea técnica de 2017.',a:true},
+  {q:'Si no puedes verificar un dato, úsalo igual y avisa después.',a:false},
+  {q:'Una foto de tus compañeros se sube solo con su permiso.',a:true},
   {q:'Un audio urgente pidiendo dinero se comprueba llamando por otro medio.',a:true},
-  {q:'La IA generativa quita del medio la necesidad de pensar por uno mismo.',a:false}
+  {q:'La IA generativa quita la necesidad de pensar por uno mismo.',a:false}
 ];
 const evalMCBank=[
   {q:'¿Qué hace un modelo de lenguaje cuando te contesta?',o:['Consulta una enciclopedia','Le pregunta a una persona','Copia una página','Predice la palabra siguiente más probable'],a:3},
   {q:'¿Qué es una alucinación?',o:['Un virus','Un dato inventado dicho con toda seguridad','Un error de la pantalla','Una falla de la conexión'],a:1},
-  {q:'La IA te cita un libro perfecto para tu tema. ¿Qué haces?',o:['Compruebo que el libro exista','Lo cito, suena confiable','Le pregunto a la IA si existe','Le cambio el título'],a:0},
+  {q:'La IA te cita un libro perfecto para tu tema. ¿Qué haces?',o:['Compruebo que exista','Lo cito, suena confiable','Le pregunto a la IA si existe','Le cambio el título'],a:0},
   {q:'¿Cuáles son las cuatro piezas de una petición?',o:['Quién, cómo, cuándo y dónde','Título, cuerpo, firma y fecha','Contexto, tarea, formato y ejemplo','Saludo, pregunta, gracias y adiós'],a:2},
-  {q:'¿Qué es una falsificación profunda?',o:['Una foto movida','Un filtro de colores','Un error de la cámara','Una foto, voz o video fabricados para parecer reales'],a:3},
-  {q:'Te llega un audio con la voz de un familiar pidiendo dinero urgente. ¿Qué haces?',o:['Lo llamo yo por otro medio antes de hacer nada','Le mando el dinero','Lo reenvío al grupo','Le contesto por audio'],a:0},
-  {q:'¿Qué NO se le escribe nunca a un chat de IA?',o:['Una duda de matemática','La clave de una cuenta o la dirección de tu casa','Un texto tuyo para corregir','Una lista de ideas'],a:1},
+  {q:'¿Qué es una falsificación profunda?',o:['Una foto movida','Un filtro de colores','Un error de la cámara','Foto, voz o video hechos para parecer reales'],a:3},
+  {q:'Te llega un audio de un familiar pidiendo dinero urgente. ¿Qué haces?',o:['Lo llamo yo por otro medio','Le mando el dinero','Lo reenvío al grupo','Le contesto por audio'],a:0},
+  {q:'¿Qué NO se le escribe nunca a un chat de IA?',o:['Una duda de matemática','Una clave o tu dirección','Un texto tuyo para corregir','Una lista de ideas'],a:1},
   {q:'¿Por qué el tono seguro de un modelo no prueba nada?',o:['Porque escribe despacio','Porque siempre duda','Porque fue hecho para completar texto, no para comprobarlo','Porque no sabe escribir'],a:2},
   {q:'¿Cuál es el primer paso para verificar un dato?',o:['Separar el dato de la explicación','Compartirlo','Buscar en otra IA','Copiarlo al cuaderno'],a:0},
   {q:'Compartes sin comprobar algo que resultó falso. ¿Qué pasó?',o:['Nada, no lo escribiste tú','Es culpa de la IA','No tiene importancia','Ayudaste a que la desinformación llegue más lejos'],a:3},
-  {q:'¿Qué diferencia hay entre usar IA para aprender y usarla para entregar?',o:['Ninguna','Las dos están prohibidas','Una te enseña y la otra te deja sin aprender','La segunda es más rápida y por eso mejor'],a:2},
+  {q:'¿Qué diferencia hay entre usar IA para aprender y para entregar?',o:['Ninguna','Las dos están prohibidas','Una enseña, la otra te deja sin aprender','La segunda es más rápida'],a:2},
   {q:'¿Qué hay que hacer cuando no se puede verificar un dato?',o:['Usarlo y avisar después','No usarlo','Usarlo solo en el examen','Cambiarle las palabras'],a:1},
-  {q:'¿De dónde salen los chats de IA generativa que se usan hoy?',o:['De un invento de 2022','De los sistemas expertos de los ochenta','De ELIZA, de 1966','De una idea técnica presentada en 2017 y entrenada en grande'],a:3},
-  {q:'¿Qué significa que la IA generativa sea «generativa»?',o:['Que produce texto, imagen, voz o video nuevos','Que es gratis','Que funciona sin internet','Que aprende sola de cada usuario'],a:0},
+  {q:'¿De dónde salen los chats de IA generativa de hoy?',o:['De un invento de 2022','De los sistemas expertos','De ELIZA, de 1966','De una idea técnica de 2017, entrenada en grande'],a:3},
+  {q:'¿Qué significa que la IA generativa sea «generativa»?',o:['Que produce texto, imagen, voz o video nuevos','Que es gratis','Que funciona sin internet','Que aprende de cada usuario'],a:0},
   {q:'¿Cuándo se declara que se usó IA en un trabajo?',o:['Nunca, no hace falta','Siempre que se haya usado','Solo si sale mal','Solo si lo pregunta el maestro'],a:1}
 ];
 const evalCPBank=[
   {q:'Un modelo de lenguaje ___ la palabra siguiente más probable.',a:'predice'},
   {q:'Un dato inventado y dicho con seguridad es una ___.',a:'alucinación'},
   {q:'Antes de usar un dato de una IA hay que ___.',a:'verificarlo'},
-  {q:'La primera pieza de una petición, quién eres y para qué, es el ___.',a:'contexto'},
+  {q:'La pieza que dice quién eres y para qué es el ___.',a:'contexto'},
   {q:'La pieza que dice cómo lo quieres es el ___.',a:'formato'},
   {q:'Una foto o voz fabricadas para engañar son una falsificación ___.',a:'profunda'},
-  {q:'Lo que escribes en un servicio de internet puede quedar ___.',a:'guardado'},
+  {q:'Lo que escribes en internet puede quedar ___.',a:'guardado'},
   {q:'Compartir algo sin comprobarlo ya es ___.',a:'desinformación'},
-  {q:'Verificar es ir a la ___ original que responde por el dato.',a:'fuente'},
+  {q:'Verificar es ir a la ___ que responde por el dato.',a:'fuente'},
   {q:'Si un dato no se puede verificar, lo mejor es no ___.',a:'usarlo'},
   {q:'La IA generativa produce texto, imagen, voz y ___.',a:'video'},
   {q:'Cuando se usa IA en un trabajo, se ___.',a:'declara'},
   {q:'El tono seguro de un modelo no ___ que el dato sea bueno.',a:'prueba'},
-  {q:'Un audio urgente pidiendo dinero se comprueba llamando por otro ___.',a:'medio'},
-  {q:'Los chats de hoy descienden de una idea técnica de ___.',a:'2017'}
+  {q:'Un audio que pide dinero se comprueba llamando por otro ___.',a:'medio'},
+  {q:'Los chats de hoy vienen de una idea técnica de ___.',a:'2017'}
 ];
 const evalPRBank=[
-  {term:'IA generativa',def:'Produce texto, imagen, voz o video que antes no existían'},
-  {term:'Modelo de lenguaje',def:'Predice la palabra siguiente más probable, una por una'},
+  {term:'IA generativa',def:'Produce texto, imagen, voz o video nuevos'},
+  {term:'Modelo de lenguaje',def:'Predice la palabra siguiente más probable'},
   {term:'Alucinación',def:'Un dato inventado y dicho con toda seguridad'},
-  {term:'Petición',def:'El encargo que se le escribe, con sus cuatro piezas'},
-  {term:'Contexto',def:'La pieza que dice quién eres y para qué lo quieres'},
+  {term:'Petición',def:'El encargo, con sus cuatro piezas'},
+  {term:'Contexto',def:'La pieza que dice quién eres y para qué'},
   {term:'Tarea',def:'La pieza que dice qué quieres exactamente'},
   {term:'Formato',def:'La pieza que dice cómo lo quieres'},
   {term:'Ejemplo',def:'La pieza que dice a qué se tiene que parecer'},
-  {term:'Falsificación profunda',def:'Foto, voz o video fabricados para parecer de alguien real'},
+  {term:'Falsificación profunda',def:'Foto, voz o video hechos para parecer reales'},
   {term:'Verificar',def:'Comprobar el dato en la fuente que responde por él'},
-  {term:'Fuente original',def:'El libro, la ley o la institución de donde sale el dato'},
+  {term:'Fuente original',def:'El libro, la ley o la institución del dato'},
   {term:'Desinformación',def:'Lo que se propaga al compartir sin comprobar'},
-  {term:'Privacidad',def:'Lo tuyo es tuyo, y lo que subes ya no lo controlas'},
-  {term:'Declarar el uso',def:'Decir en el trabajo dónde se usó la IA y para qué'},
-  {term:'2017',def:'El año de la idea técnica de la que salen los chats de hoy'}
+  {term:'Privacidad',def:'Lo que subes ya no lo controlas'},
+  {term:'Declarar el uso',def:'Decir en el trabajo dónde se usó la IA'},
+  {term:'2017',def:'El año de la idea técnica de los chats de hoy'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -485,12 +485,12 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · IA Generativa`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · IA Generativa`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Responde en pantalla</strong> y toca <em>Calificar prueba</em>.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
 function setEvalFeedback(id,ok,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');}
-function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
+function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo de la pantalla. El papel sale limpio.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
 function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const forma=window._currentEvalForm||1;const d=window._evalPrintData;let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`;});let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.tf.forEach((it,i)=>{s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;d.mc.forEach((it,i)=>{const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});s3+=`</div>`;let colL='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`;});colL+='</div>';let colR='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`;});colR+='</div>';let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`;});pR+=`</table></div>`;
     const zgKey = [];
     d.cp.forEach((it, i) => zgKey.push({ n: i + 1, fill: 0, labels: ['✓', '✗', '', '', ''] }));
@@ -539,80 +539,80 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una alumna entrega un informe con tres citas de libros que la IA le dio. Ninguno de los tres existe.'},
-  {txt:'En un grupo de WhatsApp circula un audio con la voz del director anunciando que no hay clases.'},
-  {txt:'Un compañero le escribe a un chat el nombre completo, la escuela y la dirección de su casa para que le arme un horario.'},
+  {txt:'Una alumna entrega un informe con tres citas que la IA le dio. Ninguna existe.'},
+  {txt:'Circula un audio con la voz del director. Dice que mañana no hay clases.'},
+  {txt:'Un compañero le da a un chat su nombre, su escuela y su dirección.'},
   {txt:'Un estudiante entrega una tarea escrita entera por una IA y no lo dice.'},
-  {txt:'Una foto de un desastre en su municipio se comparte cientos de veces. Resulta que la foto es de otro país y de hace años.'},
-  {txt:'Un maestro le pide a una IA que le explique un tema y después lo comprueba en su libro antes de enseñarlo.'}
+  {txt:'Una foto de un desastre se comparte cien veces. Es de otro país.'},
+  {txt:'Un maestro le pide a una IA que le explique un tema. Después lo comprueba.'}
 ];
 const critCaseQuestions=[
   '1. ¿Qué está pasando aquí y cómo se llama?',
-  '2. ¿Qué daño concreto puede causar, y a quién?',
-  '3. ¿Qué tendría que haber hecho esa persona, paso por paso?',
+  '2. ¿Qué daño puede causar, y a quién?',
+  '3. ¿Qué tendría que haber hecho esa persona?',
   '4. ¿Qué harías tú si te pasa mañana?'
 ];
 const critCaseGuides=[
-  'Se valora que le ponga nombre: alucinación, falsificación profunda, problema de privacidad, deshonestidad académica o desinformación. El último caso NO es ninguna de las cinco: es el uso correcto, y también hay que saber reconocerlo.',
-  'Se valora que nombre a la persona perjudicada, no solo el concepto: la alumna que reprueba, la familia que no manda al niño a clases, el compañero cuyos datos quedaron guardados, el municipio del que se cree algo falso.',
-  'Cada caso tiene sus pasos: verificar que la cita exista, llamar por otro medio antes de creer un audio, no dar datos de la familia, declarar el uso de la IA, y comprobar el origen de una foto antes de reenviarla.',
-  'Respuesta abierta. Se valora que sea concreta y que la pueda hacer de verdad con el teléfono que tiene, no una intención general.'
+  'Se valora que le ponga nombre: alucinación, falsificación, privacidad, deshonestidad académica o desinformación. El último caso es el uso CORRECTO.',
+  'Se valora que nombre a la persona perjudicada. La alumna que reprueba. La familia que no manda al niño a clases.',
+  'Cada caso tiene su paso. Comprobar que la cita exista. Llamar por otro medio. No dar datos de la familia. Declarar el uso.',
+  'Respuesta abierta. Se valora que sea concreta y que la pueda hacer de verdad.'
 ];
 const critErrorBank=[
   {txt:'"Si la IA lo dijo con tanta seguridad, será cierto."',
-   g1:'El tono seguro no es una señal: el modelo escribe igual de seguro cuando acierta que cuando inventa.',
+   g1:'El tono seguro no es señal de nada. Escribe igual cuando inventa.',
    g2:'Fue hecho para completar texto, no para comprobarlo.'},
   {txt:'"Para verificar un dato, le pregunto otra vez a la misma IA."',
    g1:'Eso no verifica nada: es el mismo sistema contestando otra vez.',
-   g2:'Verificar es ir a la fuente que responde por el dato: el libro, la ley, la institución.'},
-  {txt:'"Yo no escribe la noticia falsa, solo la comparte."',
+   g2:'Verificar es ir a la fuente: el libro, la ley, la institución.'},
+  {txt:'"Yo no escribí la noticia falsa, solo la compartí."',
    g1:'La desinformación vive de quien la reenvía, no de quien la escribe.',
    g2:'Compartir sin comprobar ya es parte del daño.'},
   {txt:'"Le doy mis datos porque así me contesta mejor."',
-   g1:'Lo que se escribe puede quedar guardado en otra computadora, y ya no lo controlas.',
-   g2:'Se le puede pedir lo mismo sin dar un solo dato de tu familia.'},
+   g1:'Lo escrito puede quedar guardado, y ya no lo controlas.',
+   g2:'Se le pide lo mismo sin dar un dato de tu familia.'},
   {txt:'"Si el libro que citó suena perfecto para mi tema, existe."',
-   g1:'Los títulos inventados suenan perfectos justamente porque el modelo los arma para encajar.',
-   g2:'Que suene bien es la razón para desconfiar, no para creer.'},
-  {txt:'"Usar IA para hacer la tarea es lo mismo que usarla para entender el tema."',
+   g1:'Los títulos inventados suenan perfectos: el modelo los arma para encajar.',
+   g2:'Que suene bien es razón para desconfiar, no para creer.'},
+  {txt:'"Usar IA para hacer la tarea es lo mismo que usarla para entender."',
    g1:'No: en un caso aprendo yo, en el otro entrego algo que no hice.',
-   g2:'Y cuando se usa, se declara: decir dónde se usó no quita mérito, lo da.'}
+   g2:'Y cuando se usa, se declara. Decirlo no quita mérito.'}
 ];
 const critDecisionBank=[
-  'La IA te dio un dato perfecto para tu exposición y no tienes tiempo de comprobarlo; conviene usarlo igual, o quitarlo y decir lo que sí puedes sostener.',
-  'Te llega un video que te indigna y tienes el grupo abierto; conviene compartirlo ya, o comprobar antes de dónde salió.',
-  'Un chat te pide tu nombre completo y tu escuela para «personalizar»; conviene dárselos, o pedirle lo mismo sin dar datos.',
-  'Usaste IA para ordenar las ideas de tu ensayo; conviene decirlo en el trabajo, o callarlo porque escribiste tú el texto.',
-  'Un compañero va a mandar dinero por un audio que le llegó; conviene decirle que llame primero a su familia, o no meterse.'
+  'Un dato perfecto para tu exposición, y no hay tiempo de comprobarlo. ¿Usarlo, o quitarlo?',
+  'Te llega un video que te indigna. ¿Compartirlo ya, o mirar antes de dónde salió?',
+  'Un chat te pide tu nombre y tu escuela. ¿Dárselos, o pedirle lo mismo sin datos?',
+  'Usaste IA para ordenar tu ensayo. ¿Decirlo, o callarlo porque lo escribiste tú?',
+  'Un compañero va a mandar dinero por un audio. ¿Decirle que llame, o no meterse?'
 ];
-const critDecisionGuide='La mejor decisión comprueba antes de usar y antes de compartir, no entrega datos que no son suyos, y declara el uso de la IA aunque el texto lo haya escrito uno. Cuesta más tiempo y ese es justo el punto: la desinformación y las estafas funcionan porque la gente va con prisa. Y avisarle a un compañero que va a mandar dinero no es meterse: es lo que hace un amigo.';
+const critDecisionGuide='La mejor decisión comprueba antes de usar y de compartir. No entrega datos de otros. Declara el uso de la IA. Cuesta tiempo.';
 const critCompareBank=[
   {a:'Un buscador de internet.',b:'Un modelo de lenguaje.',
    ga:'Te devuelve páginas que existen, con su dirección.',
-   gb:'Te devuelve un texto que arma prediciendo palabra por palabra.',
-   gr:'El buscador te enseña DÓNDE está el dato, y tú vas a mirarlo. El modelo te da el dato ya masticado y sin decir de dónde salió, y puede haberlo armado. Por eso con el modelo hace falta un paso más: buscar la fuente.'},
+   gb:'Te arma un texto prediciendo palabra por palabra.',
+   gr:'El buscador te enseña DÓNDE está el dato. El modelo te lo da masticado. Falta un paso: buscar la fuente.'},
   {a:'Una alucinación.',b:'Una falsificación profunda.',
    ga:'El modelo inventa un dato sin que nadie se lo pida.',
    gb:'Alguien fabrica a propósito una foto, voz o video para engañar.',
-   gr:'La primera es un accidente del funcionamiento; la segunda es una decisión de una persona. Las dos engañan, pero solo en una hay intención, y eso cambia quién es responsable.'},
+   gr:'La primera es un accidente. La segunda, una decisión con intención. Eso cambia quién responde.'},
   {a:'Usar IA para entender un tema.',b:'Usar IA para entregar la tarea.',
-   ga:'Le pido que me explique, que me ponga ejemplos o que corrija lo mío.',
+   ga:'Le pido que me explique o que corrija lo mío.',
    gb:'Copio lo que escribió y le pongo mi nombre.',
-   gr:'En la primera, al final yo sé más y puedo defender lo que escribe delante del maestro. En la segunda no aprendí nada y además afirmo que hice algo que no hice. La diferencia no es la herramienta: es qué queda en mi cabeza.'}
+   gr:'En la primera yo sé más y puedo defenderlo. En la segunda afirmo que hice algo que no hice.'}
 ];
 const critCauseBank=[
-  {cause:'El modelo fue entrenado para predecir la palabra siguiente, no para comprobar datos.',guide:'Por eso inventa con la misma seguridad con que acierta: alucina.'},
-  {cause:'Imitar una voz hoy necesita muy pocos segundos de grabación.',guide:'Por eso un audio de un familiar pidiendo dinero se comprueba llamando por otro medio.'},
-  {cause:'Lo que se escribe en un servicio de internet puede quedar guardado.',guide:'Por eso no se le dan datos de la familia ni fotos de otras personas.'},
-  {cause:'La desinformación se propaga por los reenvíos, no por quien la escribe.',guide:'Por eso comprobar antes de compartir es parte de la defensa, y no un detalle.'},
-  {cause:'Una petición sin contexto ni formato deja al modelo adivinando qué quieres.',guide:'Por eso el resultado sale genérico, y por eso las cuatro piezas cambian tanto la respuesta.'}
+  {cause:'El modelo fue entrenado para predecir la palabra siguiente, no para comprobar.',guide:'Por eso inventa con la misma seguridad con que acierta: alucina.'},
+  {cause:'Imitar una voz necesita muy pocos segundos de grabación.',guide:'Por eso un audio que pide dinero se comprueba llamando por otro medio.'},
+  {cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no se dan datos de la familia ni fotos de otras personas.'},
+  {cause:'La desinformación se propaga por los reenvíos.',guide:'Por eso comprobar antes de compartir es parte de la defensa.'},
+  {cause:'Una petición sin contexto ni formato deja al modelo adivinando.',guide:'Por eso el resultado sale genérico, y las cuatro piezas cambian tanto.'}
 ];
 const critEffectBank=[
-  {effect:'Una alumna reprueba por citar tres libros que no existen.',guide:'Porque el modelo arma títulos que encajan con el tema, y ella no comprobó que existieran.'},
-  {effect:'Una familia no manda al niño a clases por un audio falso.',guide:'Porque una voz se imita con pocos segundos de grabación y nadie llamó a comprobarlo.'},
-  {effect:'Un dato inventado acaba en el examen de todo un grado.',guide:'Porque alguien lo copió sin verificar y de ahí pasó a la guía de estudio.'},
-  {effect:'Declarar que usaste IA en un trabajo no te quita mérito.',guide:'Porque lo que se valora es lo que entendiste y puedes defender, y decirlo demuestra que sabes dónde está tu aporte.'},
-  {effect:'Una petición con sus cuatro piezas da un resultado mucho mejor.',guide:'Porque el modelo deja de adivinar para quién es, qué se quiere y en qué forma.'}
+  {effect:'Una alumna reprueba por citar tres libros que no existen.',guide:'Porque el modelo arma títulos que encajan, y ella no comprobó.'},
+  {effect:'Una familia no manda al niño a clases por un audio falso.',guide:'Porque una voz se imita con pocos segundos y nadie llamó a comprobar.'},
+  {effect:'Un dato inventado acaba en el examen de todo un grado.',guide:'Porque alguien lo copió sin verificar y pasó a la guía de estudio.'},
+  {effect:'Declarar que usaste IA no te quita mérito.',guide:'Porque lo que se valora es lo que entendiste y puedes defender.'},
+  {effect:'Una petición con sus cuatro piezas da un resultado mucho mejor.',guide:'Porque el modelo deja de adivinar para quién es y qué se quiere.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -625,19 +625,19 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Busca <strong>dos errores</strong> y corrígelos con tus palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué recomendarías? Explica por qué.</div><textarea class="crit-textarea" rows="4" aria-label="Tu recomendación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿Qué hace cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -647,7 +647,7 @@ function genEvalCrit(){
   s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> contesta, compara con la <em>Pauta</em> y anota tu puntaje (0–20). Luego toca <em>Calcular Total</em>.';out.appendChild(totalPanel);
   fin('s-evaluacion');
 }
 function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
@@ -657,7 +657,7 @@ function calcCritTotal(){
   let total=0;
   document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
   const panel=document.getElementById('evalCritTotalResult');
-  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara con la Pauta antes de anotar cada puntaje.</em>`;}
   const formKey='crit_'+(window._currentEvalCritForm||1);
   if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
   else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
@@ -667,11 +667,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
-  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Busca dos errores y corrígelos con tus palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué recomendarías? Explica por qué.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿Qué hace cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -696,16 +696,16 @@ const parteData = (function () {
      ya no es la palabra, es qué hacer con ella el día que le pase. */
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const riesgo = {
-    generativa:    'Que lo que produce parezca hecho por una persona y nadie sepa de dónde salió: textos sin autor, fotos de cosas que no pasaron.',
-    modelolenguaje:'Que confundas predecir con saber. Escribe igual de seguro cuando acierta que cuando se lo inventa.',
-    alucinacion:   'Que un dato inventado acabe en tu tarea, en el examen y en la guía de estudio de todo un grado.',
-    privacidad:    'Que lo que escribiste quede guardado en otra computadora, y con ello datos que ni siquiera son tuyos.'
+    generativa:    'Que parezca hecho por una persona y nadie sepa de dónde salió. Fotos de lo que no pasó.',
+    modelolenguaje:'Que confundas predecir con saber. Escribe igual de seguro cuando acierta que cuando inventa.',
+    alucinacion:   'Que un dato inventado acabe en tu tarea y en el examen.',
+    privacidad:    'Que lo escrito quede guardado. Y con ello, datos que ni son tuyos.'
   };
   const defensa = {
-    generativa:    '🔎 Pregunta siempre quién lo hizo y de dónde salió. Un texto sin autor no es una fuente.',
-    modelolenguaje:'🔎 Trata cada dato como una propuesta, no como una respuesta: los cinco pasos de verificar.',
-    alucinacion:   '🔎 Comprueba que lo que cita EXISTA. Un título que suena perfecto es razón para desconfiar.',
-    privacidad:    '🔒 Nunca datos de tu familia, claves ni fotos de otras personas. Se le puede pedir lo mismo sin dárselos.'
+    generativa:    '🔎 Pregunta quién lo hizo y de dónde salió. Un texto sin autor no es una fuente.',
+    modelolenguaje:'🔎 Trata cada dato como una propuesta, no como una respuesta. Los cinco pasos.',
+    alucinacion:   '🔎 Comprueba que lo que cita EXISTA. Un título perfecto es razón para desconfiar.',
+    privacidad:    '🔒 Nunca datos de tu familia, claves ni fotos de otros.'
   };
   const out = {};
   ['generativa','modelolenguaje','alucinacion','privacidad'].forEach(k => {
@@ -782,13 +782,13 @@ const IA_CADENAS=[
      {ops:[{w:'en el patio',f:47},{w:'en la cancha',f:25},{w:'bajo el palo de mango',f:11}]},
      {ops:[{w:'hasta que suena el timbre',f:38},{w:'toda la media hora',f:20},{w:'y después entran corriendo',f:14}]}
    ],
-   moraleja:'Nada raro: armó una frase que suena bien porque cada pedazo es el que más veces vio venir detrás del anterior. <strong>No consultó nada.</strong> Y para esto, predecir alcanza.'},
+   moraleja:'Nada raro. Cada pedazo es el que más veces vio venir detrás. <strong>No consultó nada.</strong>'},
   {clave:'trampa',titulo:'⚠️ La misma máquina, con un DATO',inicio:'El Himno Nacional de Honduras tiene',
    pasos:[
      {ops:[{w:'cinco estrofas',f:44,falso:true},{w:'siete estrofas',f:23,correcto:true},{w:'tres estrofas',f:8}]},
      {ops:[{w:'y un coro',f:51,correcto:true},{w:'y dos coros',f:12},{w:'sin coro',f:5}]}
    ],
-   moraleja:'Aquí está la avería, y fíjate que la máquina <strong>no hizo nada distinto</strong>: eligió lo más probable, como siempre. Pero la continuación más PROBABLE no era la VERDADERA. El Himno tiene <strong>siete</strong> estrofas, y eso lo puedes comprobar tú mismo en la misión del Himno Nacional de esta plataforma. <strong>Eso es una alucinación: no es que mienta, es que no está comprobando nada.</strong>'}
+   moraleja:'La máquina <strong>no hizo nada distinto</strong>: eligió lo más probable. Pero lo más PROBABLE no era lo VERDADERO. El Himno tiene <strong>siete</strong>. <strong>Eso es una alucinación.</strong>'}
 ];
 let iaCadIdx=0, iaCadPaso=0, iaCadTexto=[], iaCadElegido=[];
 
@@ -804,7 +804,7 @@ function iaCadPintar(){
   const ops=c.pasos[iaCadPaso].ops;
   const total=ops.reduce((s,o)=>s+o.f,0);
   caja.innerHTML=frase+
-    '<p class="pred-ayuda">La máquina vio venir esto detrás. Elige una, o deja que se quede con la más probable:</p>'+
+    '<p class="pred-ayuda">La máquina vio venir esto detrás. Elige una:</p>'+
     '<div class="pred-ops">'+ops.map((o,i)=>{
       const pct=Math.round(100*o.f/total);
       return `<button class="pred-op${i===0?' pred-top':''}" onclick="iaCadElegir(${i})">
@@ -824,7 +824,7 @@ function iaCadElegir(i){
   if(o.falso){
     fb('fbPred','⚠️ Esa era la MÁS PROBABLE y es FALSA. Así nace una alucinación.',false); sfx('no');
   } else if(iaCadPaso>=c.pasos.length){
-    fb('fbPred','Frase terminada. Lee abajo lo que acaba de pasar.',true);
+    fb('fbPred','Frase terminada. Lee lo que pasó.',true);
     if(!xpTracker.wgt.has('pred_'+c.clave)){xpTracker.wgt.add('pred_'+c.clave);pts(3);}
     if(IA_CADENAS.every(x=>xpTracker.wgt.has('pred_'+x.clave))) fin('s-aprende');
   }
@@ -841,8 +841,8 @@ function iaCadAuto(){
   }
   iaCadPintar();
   const falso=iaCadElegido.some(o=>o.falso);
-  fb('fbPred',falso?'⚠️ Eligiendo siempre la más probable, la máquina escribió un dato FALSO. Eso es una alucinación.'
-                   :'Así escribe: quedándose con la más probable en cada paso.',!falso);
+  fb('fbPred',falso?'⚠️ Quedándose con la más probable, escribió un dato FALSO. Eso es una alucinación.'
+                   :'Así escribe: la más probable en cada paso.',!falso);
   if(!xpTracker.wgt.has('pred_'+c.clave)){xpTracker.wgt.add('pred_'+c.clave);pts(3);}
   if(IA_CADENAS.every(x=>xpTracker.wgt.has('pred_'+x.clave))) fin('s-aprende');
 }
@@ -876,10 +876,10 @@ const IA_TROZOS=[
   {t:'fue inaugurado en 1968',v:true,por:'Una FECHA. Siempre se comprueba.'},
   {t:'y tiene una extensión de 42 manzanas.',v:true,por:'Un NÚMERO con unidad. Se comprueba en la fuente oficial.'},
   {t:'Es un lugar agradable para caminar por la tarde.',v:false},
-  {t:'Según el libro «Parques de Centroamérica», de la doctora Elena Ramírez,',v:true,por:'Una CITA con autor y título. Es lo que estos programas inventan más: suena perfecto y puede no existir.'},
-  {t:'alberga 37 especies de aves.',v:true,por:'Otro NÚMERO, y encima atribuido a esa cita. Si la cita no existe, el número tampoco.'},
+  {t:'Según el libro «Parques de Centroamérica», de la doctora Elena Ramírez,',v:true,por:'Una CITA con autor y título. Es lo que más inventan.'},
+  {t:'alberga 37 especies de aves.',v:true,por:'Otro NÚMERO. Si la cita no existe, el número tampoco.'},
   {t:'Conviene visitarlo temprano, cuando hay menos gente.',v:false},
-  {t:'La alcaldía lo declaró patrimonio municipal el 3 de marzo de 2011.',v:true,por:'Una FECHA y un acto oficial. Se comprueba en la alcaldía o en el diario oficial.'}
+  {t:'La alcaldía lo declaró patrimonio municipal el 3 de marzo de 2011.',v:true,por:'Una FECHA y un acto oficial. Se comprueba en la alcaldía.'}
 ];
 let iaCazMarcados=new Set(), iaCazRevisado=false;
 
@@ -918,7 +918,7 @@ function iaCazRevisar(){
     sfx('fan'); if(!xpTracker.wgt.has('caz')){xpTracker.wgt.add('caz');pts(5);}
     fin('s-estructura'); unlockAchievement('cazador');
   } else {
-    fb('fbCaz','Marcaste '+bien+' de '+total+' bien'+(sobran?', y '+sobran+' que no hacía falta comprobar (eso se juzga con la cabeza, no se verifica)':'')+'. Lee abajo.',false);
+    fb('fbCaz','Marcaste '+bien+' de '+total+' bien'+(sobran?', y '+sobran+' que no hacía falta comprobar':'')+'. Lee abajo.',false);
     sfx('no');
   }
 }
@@ -983,15 +983,15 @@ function iaPetArmar(){
     return i===undefined?null:IA_OPCIONES_PETICION[p.pieza][i];
   });
   if(partes.some(x=>x===null)){
-    salida.innerHTML='<p class="pet-vacio">Elige una opción de cada pieza y la petición se arma aquí.</p>';
+    salida.innerHTML='<p class="pet-vacio">Elige una opción de cada pieza.</p>';
     return;
   }
   const puntos=partes.reduce((s,o)=>s+o.p,0);
   const texto=partes.map(o=>o.t).join(' ');
   let juicio;
-  if(puntos>=8) juicio='<strong>🟢 Muy buena.</strong> Tiene las cuatro piezas bien puestas: el modelo ya no tiene que adivinar nada.';
-  else if(puntos>=5) juicio='<strong>🟡 A medias.</strong> Algo va vago: donde no le dices, el modelo elige por ti y sale genérico.';
-  else juicio='<strong>🔴 No sirve.</strong> Casi todo lo que escribiste no le dice nada: saludar, halagarlo o gritar en mayúsculas no son piezas de una petición.';
+  if(puntos>=8) juicio='<strong>🟢 Muy buena.</strong> Las cuatro piezas están puestas. El modelo ya no adivina nada.';
+  else if(puntos>=5) juicio='<strong>🟡 A medias.</strong> Donde no le dices, el modelo elige por ti.';
+  else juicio='<strong>🔴 No sirve.</strong> Saludar, halagarlo o gritar en mayúsculas no son piezas de una petición.';
   salida.innerHTML='<p class="pet-rot">Tu petición quedó así:</p><blockquote class="pet-texto">'+_esc(texto)+'</blockquote><p class="ens-listo">'+juicio+'</p>';
   if(puntos>=8){
     if(!xpTracker.wgt.has('pet')){xpTracker.wgt.add('pet');pts(4);sfx('fan');unlockAchievement('peticion');}
@@ -1083,7 +1083,7 @@ function iaCompRevisar() {
   const t = IA_COMPROBAR[iaCompIdx]; const m = iaCompMarcas[t.k] || new Set();
   let bien = 0; t.trozos.forEach((z, i) => { if ((!z.c) === m.has(i)) bien++; });
   const todo = bien === t.trozos.length; sfx(todo ? 'ok' : 'no');
-  fb('fbComp', todo ? '✅ Las ' + t.trozos.length + ' bien. Sin adivinar quién lo escribió: mirando qué trae cada una.' : 'Acertaste ' + bien + ' de ' + t.trozos.length + '. Mira abajo cuál te faltó y por qué.', todo);
+  fb('fbComp', todo ? '✅ Las ' + t.trozos.length + ' bien. Sin adivinar quién lo escribió.' : 'Acertaste ' + bien + ' de ' + t.trozos.length + '. Mira abajo cuál te faltó y por qué.', todo);
   if (!iaCompRevisados.has(t.k)) { iaCompRevisados.add(t.k); if (!xpTracker.wgt.has('comp_' + t.k)) { xpTracker.wgt.add('comp_' + t.k); pts(2); } }
   if (todo && !xpTracker.wgt.has('comp_ok_' + t.k)) { xpTracker.wgt.add('comp_ok_' + t.k); pts(3); }
   iaCompVisto[t.k] = true; iaCompPintarTextos(); iaCompPintar(true); iaDescubreListo();
@@ -1125,12 +1125,12 @@ function iaEscDecidir(i) {
 function iaEscOtra() { const e = IA_ESCENARIOS[iaEscIdx]; delete iaEscElegido[e.k]; iaEscPintar(); }
 function iaEscGuardar() {
   const i = document.getElementById('esc-regla'); const t = (i && i.value || '').trim();
-  if (t.length < 8) { fb('fbEsc', 'Escribe la regla entera, como se la dirías a alguien de sexto.', false); return; }
+  if (t.length < 8) { fb('fbEsc', 'Escribe la regla entera, no una palabra.', false); return; }
   iaDescGuardar('regla', t); iaEscMostrarGuardada(t); sfx('up');
   if (!xpTracker.wgt.has('esc_regla')) { xpTracker.wgt.add('esc_regla'); pts(3); }
   fb('fbEsc', '+3 XP: una regla propia vale más que las cuatro nuestras.', true);
 }
-function iaEscMostrarGuardada(t) { const g = document.getElementById('esc-guardado'); if (g) g.innerHTML = '💾 Tu regla: «' + _esc(t) + '». Cópiala en la primera página de tu cuaderno.'; }
+function iaEscMostrarGuardada(t) { const g = document.getElementById('esc-guardado'); if (g) g.innerHTML = '💾 Tu regla: «' + _esc(t) + '». Cópiala en tu cuaderno.'; }
 function iaDescInit() {
   iaCompPintarTextos(); iaCompPintar(false); iaEscPintarLista(); iaEscPintar();
   const r = iaDescLeer('regla'); if (r) { const i = document.getElementById('esc-regla'); if (i) i.value = r; iaEscMostrarGuardada(r); }

@@ -2,7 +2,12 @@
    ⚠️ Esta ficha NO afirma un solo hecho de actualidad: da la afirmación, quién
    la publicó, y cómo se comprueba. La razón está en js/data/ia-actualidad.js y
    se dice también en el papel, porque el papel se fotocopia y se guarda: quien
-   la escribió no pudo abrir ninguna de esas páginas. Buscar no es leer. */
+   la escribió no pudo abrir ninguna de esas páginas. Buscar no es leer.
+
+   ⚠️ Y se escribe en lenguaje llano: esto lo lee un alumno de cuarto grado y
+   un joven de bachillerato, y los dos tienen que llegar al final. Frases
+   cortas, una idea por frase, nada de incisos con rayas ni moralejas. Lo mide
+   `node _dev/mide-legibilidad.js misiones/3ciclo-albores-singularidad --detalle`. */
 'use strict';
 const A = require('../arma-fichas-ia.js');
 const { esc, arma, portada, preguntas, clave,
@@ -10,33 +15,33 @@ const { esc, arma, portada, preguntas, clave,
         IA_FRASES, iaFraseCuenta, iaFraseTramo, IA_INFLEXION } = A;
 
 const EVAL = [
-  { q: '¿Qué afirma exactamente la palabra «singularidad»?', o: ['Que una máquina mejore máquinas más rápido de lo que podemos seguir, y el cambio se acelere solo', 'Que la IA ya piensa como una persona', 'Que las computadoras se apagarán', 'Que la IA es peligrosa'], a: 0 },
+  { q: '¿Qué afirma la palabra «singularidad»?', o: ['Que una máquina mejore máquinas más rápido de lo que podemos seguir', 'Que la IA ya piensa como una persona', 'Que las computadoras se apagarán', 'Que la IA es peligrosa'], a: 0 },
   { q: 'Una promesa sin fecha…', o: ['Es más seria', 'No se puede incumplir nunca', 'Se cumple sola', 'Vale más'], a: 1 },
   { q: 'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?', o: ['Cinco fuentes', 'Un eco', 'Una prueba', 'Un estudio'], a: 1 },
   { q: '¿Cuándo se reconoce un punto de inflexión?', o: ['El mismo día, por el ruido', 'Casi siempre mirando para atrás', 'Cuando lo dice un experto', 'Cuando sale en televisión'], a: 1 },
-  { q: '¿Qué se rompió en los dos inviernos de la Inteligencia Artificial?', o: ['La confianza', 'Las computadoras', 'Los cables', 'Las leyes'], a: 0 },
-  { q: 'De lo siguiente, lo que SÍ se sabe hoy es que la máquina…', o: ['Quiere cosas', 'Aprende de ejemplos que alguien eligió', 'Se mejora sola', 'Entiende lo que lee'], a: 1 },
-  { q: 'Saber qué gana alguien diciendo algo…', o: ['Lo vuelve falso', 'Pone lo que dice en su sitio, sin cerrarlo', 'Lo vuelve verdadero', 'No sirve'], a: 1 },
+  { q: '¿Qué se rompió en los dos inviernos?', o: ['La confianza', 'Las computadoras', 'Los cables', 'Las leyes'], a: 0 },
+  { q: 'Lo que SÍ se sabe hoy es que la máquina…', o: ['Quiere cosas', 'Aprende de ejemplos que alguien eligió', 'Se mejora sola', 'Entiende lo que lee'], a: 1 },
+  { q: 'Saber qué gana alguien diciendo algo…', o: ['Lo vuelve falso', 'Pone lo que dice en su sitio', 'Lo vuelve verdadero', 'No sirve'], a: 1 },
   { q: '«Contenido patrocinado» quiere decir que…', o: ['Es falso', 'Alguien pagó por publicarlo y el medio lo dice', 'Es del gobierno', 'Es gratis'], a: 1 },
-  { q: 'Dos noticias del mismo mes se contradicen. Lo más probable es que…', o: ['Una mienta', 'Midan cosas distintas', 'Las dos mientan', 'La nueva tenga razón'], a: 1 },
-  { q: '¿Cuál es la fecha que más importa de una noticia?', o: ['La del artículo', 'La del hecho', 'La de la foto', 'La del comentario'], a: 1 },
+  { q: 'Dos noticias del mes se contradicen. Lo más probable es que…', o: ['Una mienta', 'Midan cosas distintas', 'Las dos mientan', 'La nueva tenga razón'], a: 1 },
+  { q: '¿Cuál es la fecha que más importa?', o: ['La del artículo', 'La del hecho', 'La de la foto', 'La del comentario'], a: 1 },
 ];
 
 const P = [];
 
 // ── Página 1 ───────────────────────────────────────────────────────────────
 P.push(portada('En los Albores de la Singularidad',
-  'Puntos de inflexión: cómo se lee lo que se dice hoy sobre Inteligencia Artificial, cuando todavía no hay historia que lo ordene.',
+  'Puntos de inflexión: cómo se lee lo que se dice hoy sobre Inteligencia Artificial.',
   'qr-mision-albores-singularidad.png',
   ['Explicar qué <strong>afirma</strong> la palabra «singularidad» y qué se <strong>sabe</strong> hoy.',
-   'Usar las <strong>cuatro preguntas</strong> del termómetro con cualquier afirmación.',
+   'Usar las <strong>cuatro preguntas</strong> con cualquier afirmación.',
    'Distinguir un <strong>punto de inflexión</strong> de un <strong>invierno</strong> y de un <strong>eco</strong>.',
-   'Clasificar afirmaciones de actualidad por <strong>lo que traen</strong>, no por si gustan.',
+   'Clasificar noticias por <strong>lo que traen</strong>, no por si gustan.',
    'Ponerle <strong>fecha</strong> a una promesa y volver a juzgarla ese día.',
-   'Decidir su propio futuro con información que pueda comprobar.']) + `
+   'Decidir su futuro con datos que pueda comprobar.']) + `
     <h2>🌅 1. «Estamos en los albores de la singularidad»</h2>
 
-    <p>Es la frase del año. Antes de estar de acuerdo o en contra, conviene entender qué afirma:</p>
+    <p>Es la frase del año. Antes de opinar, mirá qué afirma:</p>
 
     <div class="caja idea"><b>La afirmación:</b> ${esc(IA_SINGULARIDAD.afirmacion)}<br><br>
       ${esc(IA_SINGULARIDAD.albores)}</div>
@@ -67,8 +72,8 @@ ${IA_INFLEXION.reglas.map(r => `      <tr><td class="k">${r.e} ${esc(r.t)}</td><
 
     <h2>🌡️ 3. El termómetro de la promesa</h2>
 
-    <p>Las cuatro preguntas que se le hacen a cualquier afirmación. Sirven igual para una noticia de
-       Inteligencia Artificial, para una oferta de trabajo y para un remedio milagroso:</p>
+    <p>Cuatro preguntas para cualquier afirmación. Sirven para una noticia, para una oferta de
+       trabajo y para un remedio milagroso:</p>
 
     <table>
       <tr><th style="width:26%">La pregunta</th><th>Suena a SÍ</th><th>Suena a NO</th></tr>
@@ -83,10 +88,10 @@ ${IA_TERMOMETRO_TRAMOS.map(t => `      ${t.emoji} <b>${esc(t.nombre)}</b> (${t.m
 P.push(`
     <h2>📰 4. El dossier de ${esc(IA_HOY_MES)}</h2>
 
-    <div class="caja aviso"><b>⚠️ Aquí no se afirma ni un solo hecho, y hay que decirlo en voz alta en clase.</b>
-      Quien armó esta ficha <b>no pudo abrir ninguna de estas páginas</b>: se escribió desde un lugar que las
-      tiene bloqueadas, y <b>buscar no es leer</b>. Lo que hay es la afirmación, quién la publicó y cómo se
-      comprueba. Dossier armado el <b>${esc(IA_HOY_FECHA)}</b>.</div>
+    <div class="caja aviso"><b>⚠️ Aquí no se afirma ni un solo hecho. Decilo en voz alta en clase.</b>
+      Quien armó esta ficha <b>no pudo abrir ninguna de estas páginas</b>: desde ahí están bloqueadas, y
+      <b>buscar no es leer</b>. Lo que hay es la afirmación, quién la publicó y cómo se comprueba. Dossier
+      armado el <b>${esc(IA_HOY_FECHA)}</b>.</div>
 
     <table>
       <tr><th style="width:15%">Fecha</th><th>Lo que se afirma</th><th style="width:22%">¿Cuánto trae?</th></tr>
@@ -94,8 +99,8 @@ ${IA_HOY.map(h => `      <tr><td class="k">${h.emoji} ${esc(h.fecha)}</td><td>${
     </table>
 
     <p><b>Actividad 1 · Clasificá cada una</b> <span class="val">(16 pts)</span>: escribí en la última columna
-       <b>MUCHO</b> (nombra a quien responde, con fecha y documento), <b>ALGO</b> (varios medios con fecha, sin
-       el documento) o <b>POCO</b> (no dice quién, ni cuándo, ni de dónde).</p>
+       <b>MUCHO</b> (quien responde, con fecha y documento), <b>ALGO</b> (varios medios con fecha, sin el
+       documento) o <b>POCO</b> (no dice quién, ni cuándo, ni de dónde).</p>
 `);
 
 // ── Página 4 ───────────────────────────────────────────────────────────────
@@ -103,7 +108,7 @@ P.push(`
     <div class="acts">
       <h3>🌡️ Actividad 2 · El termómetro, frase por frase <span class="val">(20 pts)</span></h3>
 
-      <p>Para cada frase, marcá <b>SÍ</b> o <b>NO</b> en las cuatro preguntas y escribí en qué tramo cae.</p>
+      <p>Marcá <b>SÍ</b> o <b>NO</b> en las cuatro preguntas. Después escribí en qué tramo cae.</p>
 
       <table>
         <tr><th>La frase</th><th style="width:8%">🧑</th><th style="width:8%">💰</th><th style="width:8%">📅</th><th style="width:8%">📎</th><th style="width:22%">¿En qué tramo cae?</th></tr>
@@ -120,15 +125,15 @@ P.push(`
     <div class="acts">
       <h3>📅 Actividad 3 · Tu cápsula del tiempo <span class="val">(sin respuesta, a propósito)</span></h3>
 
-      <p>Lo único que separa de verdad un <b>hito</b> de un <b>invierno</b> es el tiempo, y el tiempo no se
-         apura: se apunta. Llená esto hoy, dobla la hoja y guardala.</p>
+      <p>Lo único que separa un <b>hito</b> de un <b>invierno</b> es el tiempo. Y el tiempo no se apura:
+         se apunta. Llená esto hoy, doblá la hoja y guardala.</p>
 
       <div class="ilus">
         <div class="ilus-t">📅 Escrita el <span class="linea-resp" style="min-width:140px"></span></div>
-        <p><b>1. ¿Qué se promete?</b> (copiala tal cual la leíste)
+        <p><b>1. ¿Qué se promete?</b> (copiala tal cual)
           <span class="linea-resp" style="min-width:100%"></span>
           <span class="linea-resp" style="min-width:100%"></span></p>
-        <p><b>2. ¿Quién lo dice, y qué gana diciéndolo?</b>
+        <p><b>2. ¿Quién lo dice, y qué gana?</b>
           <span class="linea-resp" style="min-width:100%"></span></p>
         <p><b>3. ¿Para cuándo lo promete?</b> <span class="linea-resp" style="min-width:60%"></span></p>
         <p><b>4. ¿Qué creés vos que va a pasar?</b>
@@ -139,7 +144,7 @@ P.push(`
       </div>
 
       <h3>🔎 Actividad 4 · Comprobá UNA <span class="val">(14 pts)</span></h3>
-      <p>Elegí una afirmación del dossier de la página anterior y hacé el trabajo completo:</p>
+      <p>Elegí una afirmación del dossier y hacé el trabajo completo:</p>
       <ol>
         <li>¿Quién responde por ella, con nombre? <span class="linea-resp" style="min-width:70%"></span></li>
         <li>¿Qué documento habría que abrir? <span class="linea-resp" style="min-width:70%"></span></li>
@@ -147,8 +152,8 @@ P.push(`
           <span class="linea-resp" style="min-width:100%"></span>
           <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
-      <div class="caja idea"><b>Esta actividad no trae respuesta y no es un descuido:</b> la respuesta depende
-        del día en que se haga. Lo que se evalúa es el camino, no el resultado.</div>
+      <div class="caja idea"><b>Esta actividad no trae respuesta, y no es un descuido:</b> depende del día en
+        que se haga. Se evalúa el camino, no el resultado.</div>
     </div>
 `);
 
@@ -158,9 +163,8 @@ P.push(`
 
 ${preguntas(EVAL)}
 
-    <div class="felic"><b>¡Bien hecho!</b> Lo que te llevás de aquí no es una opinión sobre el futuro: son
-      cuatro preguntas que sirven hoy, dentro de un año y cuando tengas cuarenta. Quién lo dice, qué gana,
-      para cuándo y con qué se comprueba.</div>
+    <div class="felic"><b>¡Bien hecho!</b> Te llevás cuatro preguntas que sirven hoy y dentro de veinte
+      años: quién lo dice, qué gana, para cuándo y con qué se comprueba.</div>
 `);
 
 // ── Página 7 · hoja del docente ────────────────────────────────────────────
@@ -171,37 +175,35 @@ P.push(`
       <div><span class="pt">Evaluación (40 pts):</span> ${clave(EVAL)}</div>
       <div><span class="pt">Actividad 1 · El dossier (16 pts):</span>
         ${IA_HOY.map(h => esc(h.fecha) + ': <b>' + (h.comprobable === 'alta' ? 'MUCHO' : (h.comprobable === 'media' ? 'ALGO' : 'POCO')) + '</b>').join(' · ')}.
-        Lo que se califica no es el acierto: es el motivo. Un alumno que diga «POCO porque no estoy de acuerdo»
-        falló el ejercicio aunque coincida la letra.</div>
+        No se califica el acierto: se califica el motivo. «POCO porque no estoy de acuerdo» falló el
+        ejercicio, aunque coincida la letra.</div>
       <div><span class="pt">Actividad 2 · El termómetro (20 pts):</span>
         ${IA_FRASES.map(f => esc(f.de.replace(/\.$/, '')) + ': <b>' + iaFraseCuenta(f) + '/4, ' + esc(iaFraseTramo(iaFraseCuenta(f)).nombre) + '</b>').join(' · ')}.
-        <b>Dos de las cinco traen con qué comprobarse</b>, y eso es lo que hay que subrayar en clase: salir de
-        aquí desconfiando de todo cuesta lo mismo que creerlo todo.</div>
+        <b>Dos de las cinco traen con qué comprobarse.</b> Subrayalo en clase: salir de aquí desconfiando de
+        todo cuesta lo mismo que creerlo todo.</div>
       <div><span class="pt">Actividades 3 y 4:</span> <b>no llevan respuesta a propósito.</b> En la cápsula se
-        valora que traiga una fecha concreta; en la comprobación, el camino: a quién se iba a preguntar y qué
-        documento se iba a abrir, lo haya encontrado o no.</div>
+        valora que traiga una fecha concreta. En la comprobación, el camino: a quién iba a preguntarle y qué
+        documento iba a abrir, lo haya encontrado o no.</div>
     </div>
 
     <div class="nota-doc">
-      <b>Para qué sirve esta ficha, y qué NO hay que enseñar de más.</b> Es la etapa 6 de la Ruta de la Máquina
-      que Aprende y la única que habla de lo que está pasando ahora mismo. Su regla es la que sostiene todo lo
-      demás: <b>aquí no se afirma ningún hecho de actualidad</b>. Se da la afirmación, quién la publicó y cómo
-      se comprueba, y el trabajo lo hace el alumno. El motivo no es prudencia: quien armó la ficha no pudo
-      abrir ninguna de esas páginas, y <b>buscar no es leer</b>.
+      <b>Para qué sirve esta ficha, y qué NO hay que enseñar de más.</b> Es la etapa 6 de la Ruta de la
+      Máquina que Aprende, y la única que habla de lo que está pasando ahora. Su regla sostiene todo lo
+      demás: <b>aquí no se afirma ningún hecho de actualidad</b>. Se da la afirmación, quién la publicó y
+      cómo se comprueba. El trabajo lo hace el alumno. El motivo no es prudencia: quien armó la ficha no
+      pudo abrir ninguna de esas páginas, y <b>buscar no es leer</b>.
       <br><br>
-      <b>Y por eso mismo no se le dice al alumno si estamos o no en los albores de la singularidad.</b> Nadie
-      lo sabe, y afirmarlo sería justo lo que esta misión enseña a no hacer. Lo que se le da es la vara: las
-      cuatro preguntas y los dos inviernos. Un maestro que sienta la tentación de zanjar la discusión conviene
-      que la use con su propia respuesta primero.
+      <b>Por eso tampoco se le dice al alumno si estamos en los albores de la singularidad.</b> Nadie lo
+      sabe. Afirmarlo sería justo lo que esta misión enseña a no hacer. Lo que se le da es la vara: las
+      cuatro preguntas y los dos inviernos.
       <br><br>
-      <b>El dossier caduca.</b> Está fechado el ${esc(IA_HOY_FECHA)}, y dentro de un año seguirá sirviendo
-      —para otra cosa—: para mirar qué se cumplió de aquello. Ahí es donde una promesa se vuelve hito o
-      invierno, y es la mejor clase que da esta ficha. El protocolo de cómo entra un hecho nuevo está en
-      <b>_dev/actualidad/</b> del repositorio.
+      <b>El dossier caduca.</b> Está fechado el ${esc(IA_HOY_FECHA)}. Dentro de un año va a servir para otra
+      cosa: para mirar qué se cumplió. Ahí una promesa se vuelve hito o invierno, y es la mejor clase que da
+      esta ficha. Cómo entra un hecho nuevo está en <b>_dev/actualidad/</b> del repositorio.
       <br><br>
       <b>De dónde sale esta materia.</b> La Inteligencia Artificial <b>no está en el DCNB</b>. El marco, las
       expectativas de logro que cumple y lo que a propósito NO se enseña están en
-      <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>; cómo se hace la siguiente misión de esta ruta, en
+      <b>CURRICULA-INTELIGENCIA-ARTIFICIAL.md</b>. Cómo se hace la siguiente misión de esta ruta, en
       <b>COMPENDIO-MISIONES-IA.md</b>.
     </div>
 `);

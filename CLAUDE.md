@@ -3212,6 +3212,168 @@ en una columna de tres palabras, porque la cabecera del hito está hecha para un
   animación de entrada de la sección: en el instante de abrirla un botón de 44
   mide 43,1.
 
+## Normativa: la ruta de IA se lee en cuarto grado
+
+El autor lo pidió el 16 de septiembre de 2026 con estas palabras: «Hay mucha
+carga cognitiva de contenido en estas últimas misiones de Inteligencia
+Artificial, es un contenido que debe aplicarlo y entenderlo tanto un alumno de
+4º como un adolescente adulto de bachillerato, aquí las barreras de edad deben
+ser para todos similares». Y tenía razón medida, no de oído.
+
+**Primero se midió, con `node _dev/mide-legibilidad.js`.** Saca todo el texto
+que el alumno lee —las secciones del HTML, lo que se pinta de los archivos de
+datos, las cadenas de los bancos del JS y las hojas de la ficha menos la del
+docente— y le calcula INFLESZ (la adaptación española de Flesch), palabras por
+frase, la frase más larga y el **tramo más largo sin corte** (un párrafo en
+pantalla, una cadena en un banco). Y con `--ref` mide la vara, que **no es la
+escala de un libro sino las misiones de primaria del propio catálogo**:
+«Inteligencia Artificial» son nueve sílabas en dos palabras y a la fórmula le
+parece difícil, y un niño de cuarto la dice todos los días.
+
+⚠️ **El vocabulario NO era el problema.** INFLESZ 77-85 en las siete, más fácil
+que las de primaria (67-78). El problema era de CANTIDAD y de FORMA:
+
+| | la ruta de IA, antes | las de primaria (la vara) |
+|---|---|---|
+| palabras **en pantalla** por misión | 6 000 – 8 400 | 3 300 – 3 800 |
+| palabras por frase | 9,3 – 10,7 | 6,7 – 7,7 |
+| frase más larga | 45 – 84 | 23 – 33 |
+| tramo más largo sin corte | 64 – 103 | 38 – 61 |
+
+El doble de texto, con párrafos del doble de largo y frases de hasta 84
+palabras. Un niño de cuarto se pierde a la mitad del párrafo y un joven de
+bachillerato se aburre antes de llegar a la actividad: los dos abandonan, y la
+misión no la termina ninguno. El texto estaba bien escrito **para un adulto** —
+incisos con rayas, «no por X sino por Y», la moraleja al final de cada párrafo,
+y en cada sección un párrafo hablando de la misión misma—.
+
+⚠️ **Y la herramienta mintió dos veces antes de decir la verdad**, y las dos
+valen para cualquier medidor que se escriba aquí. La primera versión colapsaba
+los saltos de línea antes de cortar frases, así que pegaba tres cadenas seguidas
+de un banco en «una frase de 219 palabras» que no leía nadie; se corta primero
+por renglón —cada cadena, cada bloque del HTML— y después por puntuación. Y
+daba como «peor bloque» de las siete misiones el mismo: `s-tareas`, con INFLESZ
+−7, que son **14 palabras** («Genera ejercicios personalizados…»): con menos de
+30 palabras un bloque no dice nada de sí, y se deja fuera. Es la lección de
+«Cuadrado Perfecto» otra vez: una medida que acusa a un archivo sano enseña a no
+mirarla.
+
+### Cómo se reescribió: quitando relleno, nunca contenido
+
+Se escribió un contrato con **cuatro metas medidas** —frase ≤ 25 palabras,
+tramo ≤ 45, media ≤ 8,5 por misión y ≤ 11 por bloque, y un 30 % menos de
+palabras en cada bloque que se reescribe— y con una línea que separa lo que se
+QUITA de lo que se CONSERVA:
+
+- **Se quita el relleno:** lo que habla de la misión misma o del autor, los
+  incisos, las segundas explicaciones de lo mismo, las construcciones de adulto,
+  las moralejas, y los `exp` de quiz de cuarenta palabras que se quedan en
+  quince.
+- **Se conserva el contenido, sin excepción:** todos los conceptos, ejemplos y
+  actividades; toda persona con nombre y todo precio que se pueda contar (la
+  normativa del relato); el número de filas de cada banco; **el orden de las
+  opciones y los índices de respuesta**, que moverlos deshace el reparto de
+  respuestas ya medido; `sopaSets` sin tocar una letra; las claves de los
+  datos; el voseo o el tuteo de cada misión; «Inteligencia Artificial» con
+  mayúsculas; ni una fecha en un escenario ni un producto ni una cifra que
+  envejezca; y **cada frase que una sonda exige literalmente** («Hasta el
+  quinto ejemplo», «no lo aciertan ni los expertos», «no pudo abrir», «buscar no
+  es leer», «ponerle fecha a lo inventado»…), listadas misión por misión.
+
+Y cómo se escribe: una idea por frase; primero el ejemplo y después el nombre;
+palabra corta cuando dice lo mismo, y el término que la ruta enseña con su
+significado al lado la primera vez; listas en vez de párrafos cuando son tres
+cosas; párrafos de dos o tres frases; lo que se le pide al alumno, en imperativo
+y al principio. El niño listo de cuarto lo lee; el joven de bachillerato lo lee
+igual de bien, porque el lenguaje llano no es lenguaje infantil.
+
+Lo hicieron **ocho reescritores en paralelo** —uno por misión, con su archivo de
+datos y su plantilla de ficha, y uno más para `ia-descubre.js`, que comparten
+cinco— y a cada uno lo revisó un **verificador adversario** que contaba filas,
+comparaba contra `git show HEAD:`, corría las sondas y leía tres bloques al azar
+con ojos de lector; lo que encontraba volvía al reescritor, hasta dos rondas.
+Cuarenta y seis agentes en total, y aun así quedaron **dieciocho retoques** que
+se hicieron a mano después: un «Compara puntito por puntito» que tras tres
+imperativos se leía como orden al niño cuando la que compara es la máquina, un
+«Esa segunda no la sabe nadie» sin sustantivo cerca, una pauta del docente que
+perdió una de las cuatro diferencias que aceptaba, un «Le llega un audio» sin
+sujeto con una pregunta debajo que decía «¿a quién?». **Acortar sin releer
+quita lo que sostenía la frase de al lado**, y eso no lo caza ninguna medida.
+
+⚠️ **El mensaje de la estafa era la última frase larga de la ruta**, y es un
+caso aparte: el mensaje que se arma con las seis piezas iba en una sola frase de
+59 palabras con comas, como escribe alguien apurado en un chat. Se dejó igual
+de apurado y en frases de doce: «Es urgente. Estoy en San Pedro, no puedo
+hablar. La matrícula de tu hermano vence hoy.» Las tres señales siguen dentro
+con piezas y sin piezas —la sonda lo comprueba— y el mensaje entero cabe en 45.
+
+Medido después, con las fichas rearmadas y repartidas:
+
+| misión | palabras en pantalla | pal/frase | frase máx | tramo máx |
+|---|---|---|---|---|
+| 72 · ¿Qué es la IA? | 8 398 → **5 958** | 9,3 → **7,0** | 64 → 24 | 64 → 35 |
+| 73 · Cómo aprende | 6 036 → **4 244** | 9,5 → **7,0** | 52 → 19 | 75 → 42 |
+| 74 · La historia | 6 508 → **4 620** | 10,7 → **7,9** | 56 → 24 | 73 → 41 |
+| 75 · IA generativa | 6 157 → **4 368** | 9,7 → **7,2** | 48 → 24 | 79 → 42 |
+| 76 · Los peligros | 7 128 → **5 062** | 10,0 → **7,7** | 45 → 24 | 84 → 43 |
+| 77 · Los albores | 7 102 → **4 931** | 10,3 → **7,6** | 49 → 24 | 87 → 45 |
+| 78 · Escenarios | 8 356 → **5 769** | 10,3 → **7,7** | 84 → 24 | 103 → 43 |
+
+Un 30 % menos de texto en las siete, con la media de palabras por frase **dentro
+de la vara de primaria** y sin una frase de más de 24. Y de paso cinco fichas
+perdieron hojas —la 73 de 9 a 7, la 74 y la 75 de 10 a 9, la 76 de 10 a 8, la
+77 de 8 a 7—, que son 43 fotocopias menos por hoja y por grado.
+
+⚠️ **De paso salió una avería de copia que llevaba publicada:** la sección
+Recursos de la 78 decía «Esta es la quinta» y describía «el armador del mensaje
+y el repartidor de ejemplos», que son las actividades de la 76. Se calcó y no se
+cambió, y no daba ningún error. Es la lección de siempre, y va otra vez: lo que
+se multiplica al copiar una misión no son solo los aciertos.
+
+⚠️ **Y otra que solo salió MIRANDO la captura a 360 px, con todo en verde.** La
+caja de aviso de las misiones (`.tip`) es `display:flex` —el icono a la
+izquierda y el texto en un `<div>`—, y la 78 llevaba desde su estreno cinco
+avisos escritos como `<p class="tip">texto <strong>…</strong> texto</p>`: el
+navegador hace de cada pedazo un ítem de la fila y el aviso salía en **dos
+columnas estrechas**, con «vas a armar el tuyo» colgando a la derecha en su
+propia columna. HTML válido, CSS válido, consola callada: es el `.pf-p` naranja
+sobre naranja otra vez. Se arregló en la 78 y entró
+`node _dev/verifica-avisos-flex.js` en `npm test`: lee el CSS de cada misión
+para saber si su `.tip` es flex —en las que no lo es, el texto suelto se pinta
+bien y no se acusa a nadie— y en esas exige que el contenido vaya en un solo
+hijo de bloque. Hoy son 370 cajas en 78 misiones y todas en una columna; se
+comprobó al revés sobre la 78 de antes y salió roja.
+
+### La sonda, y por qué los umbrales son esos
+
+`node _dev/verifica-legibilidad-ia.js` está en `npm test` y le pide a cada
+bloque de las siete misiones —pantalla, bancos, datos y hojas de la ficha— lo
+que se midió que cumple una misión de primaria: frase ≤ 25, tramo ≤ 45, bloque
+≤ 11 palabras por frase y misión ≤ 8,5. Los números salen de la vara con algo
+de aire, no de un libro: bajarlos más aprieta el texto hasta que suena a
+telegrama; subirlos vuelve a dejar pasar el párrafo de cien palabras. Se
+comprobó al revés —con el texto de antes daba **100 fallos**— y hoy sale en
+cero. Una misión nueva de la ruta escrita para adultos se pone roja antes de
+llegar al teléfono de un niño.
+
+`mide-legibilidad.js` queda **fuera de `npm test`**, con su motivo escrito en
+`corre-sondas.js`, por la misma razón que `mide-relato`: mide, no comprueba, y
+una línea verde que no puede fallar es ruido dentro de la tanda.
+
+```
+node _dev/mide-legibilidad.js              → la ruta de IA, misión por misión
+node _dev/mide-legibilidad.js --ref        → la vara: misiones de primaria
+node _dev/mide-legibilidad.js <carpeta> --detalle   → bloque por bloque, para arreglar
+node _dev/verifica-legibilidad-ia.js       → la sonda (está en npm test)
+```
+
+**Lo que esto NO toca, y por qué:** las otras 76 misiones. Se midieron cinco de
+primaria como vara y están donde tienen que estar; las de III Ciclo y
+Bachillerato de las demás materias no se han medido, y la regla de «cuarto
+grado» es de esta ruta, que es la que el alumno de cuarto y el de bachillerato
+abren igual. El día que se mida otra materia, la herramienta ya está, y se
+corre con la carpeta.
+
 ## Normativa: la estrella se gana
 
 Medido abriendo las 74 misiones y **sin tocar nada**: 34 daban estrellas de

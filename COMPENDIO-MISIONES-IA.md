@@ -84,7 +84,51 @@ node _dev/verifica-ficha-paginas.js ficha-<slug>
 node _dev/servidor-estatico.js               (en otra terminal)
 METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/<carpeta>/<misión>.html
 node _dev/verifica-lab-legible.js
+node _dev/mide-legibilidad.js misiones/<carpeta> --detalle   → cuánto cuesta leerla, bloque por bloque
+node _dev/verifica-legibilidad-ia.js         → que se lea en cuarto grado (está en npm test)
+node _dev/verifica-avisos-flex.js            → que ninguna caja de aviso se parta en columnas (está en npm test)
 ```
+
+### Cómo se escribe: en lenguaje llano, para cuarto grado
+
+La ruta la abren igual un alumno de cuarto y uno de bachillerato, y el 16 de
+septiembre de 2026 se midió que las siete misiones estaban escritas para
+adultos: el doble de texto que una misión de primaria, párrafos del doble de
+largo y frases de hasta 84 palabras. Se reescribieron las siete y desde entonces
+la regla es medida, no de gusto (la historia entera está en `CLAUDE.md`,
+«Normativa: la ruta de IA se lee en cuarto grado»).
+
+**Cuatro metas, y las cuatro las mide `verifica-legibilidad-ia`:**
+
+| | tope |
+|---|---|
+| una frase | 25 palabras |
+| un tramo sin corte (un párrafo en pantalla, una cadena de un banco, un campo de datos) | 45 palabras |
+| un bloque (una sección, un banco, un archivo de datos, una hoja de la ficha) | 11 palabras por frase de media |
+| la misión entera | 8,5 palabras por frase |
+
+**Lo que se quita es relleno:** lo que habla de la misión misma («esta misión
+no te va a decir…»), los incisos con rayas, las segundas explicaciones de lo
+mismo, las construcciones de adulto («no por X sino por Y»), las moralejas al
+final del párrafo, y los `exp` de quiz de cuarenta palabras. **Lo que se
+conserva es contenido:** cada concepto, ejemplo y actividad; la persona con
+nombre y el precio contable; las filas de los bancos; el orden de las opciones
+y los índices de respuesta; `sopaSets`; las claves de los datos; el voseo o el
+tuteo de la misión; y cada frase que una sonda exige literalmente.
+
+**Cómo se escribe:** una idea por frase; primero el ejemplo y después el
+nombre; palabra corta cuando dice lo mismo, y el término que la ruta enseña con
+su significado al lado la primera vez; listas cuando son tres cosas; párrafos
+de dos o tres frases; lo que se le pide al alumno, en imperativo y al
+principio. Lenguaje llano no es lenguaje infantil: el de bachillerato lo lee
+igual de bien.
+
+⚠️ **Acortar sin releer quita lo que sostenía la frase de al lado.** Después
+de reescribir las siete quedaron dieciocho retoques que ninguna medida caza:
+un imperativo que se leía como orden al niño cuando el sujeto era la máquina,
+un «Esa segunda no la sabe nadie» sin sustantivo cerca, un caso de pensamiento
+crítico que perdió el sujeto con la pregunta «¿a quién?» debajo. Cada bloque
+se relee entero después de acortarlo.
 
 ---
 

@@ -68,65 +68,59 @@
 <div class="sec active" id="s-aprende" role="tabpanel">
   <div class="card ac-amber" data-situacion>
     <h2>📝 El alumno que el sistema no aceptaba</h2>
-    <p>A mitad de año llegó un alumno nuevo y el sistema de notas no lo dejó registrar: «no está en la
-    lista». No estaba malo — es que <strong>quien escribió esa regla no pensó en él</strong>. El maestro
-    lo llevó en un cuaderno aparte todo el año, y su nota nunca entró al sistema.</p>
-    <div class="tip"><span class="ti">❓</span><div>Un programa de los de siempre hace exactamente lo que
-    alguien escribió, y falla con el caso que nadie escribió. Uno que <strong>aprende de ejemplos</strong>
-    falla por lo contrario: por los ejemplos que no vio. Aquí vas a ver las dos cosas
-    trabajando.</div></div>
+    <p>A Wilmer lo cambiaron de escuela a mitad de año. El sistema de notas no lo aceptó:
+    «no está en la lista».</p>
+    <p>El sistema no estaba malo. <strong>Quien escribió esa regla no pensó en él.</strong> Su maestro
+    lo llevó en un cuaderno aparte, y su nota nunca entró al sistema.</p>
+    <div class="tip"><span class="ti">❓</span><div>Un programa de siempre falla con el caso que nadie
+    escribió. Uno que <strong>aprende de ejemplos</strong> falla con los que no vio.</div></div>
   </div>
   <div class="card ac-teal">
     <h2>⚙️ Dos maneras de hacer que una computadora haga algo</h2>
-    <p>Esta es <strong>la diferencia más importante de toda la ruta</strong>, y es la que se pregunta en el
-       examen. Miralas juntas:</p>
+    <p>Esto se pregunta en el examen:</p>
     <div class="dos-modos">
       <div class="modo modo-ins">
         <h4>📋 Programa de siempre</h4>
-        <p>Una persona escribe las <strong>reglas</strong>, paso por paso. La computadora las obedece.</p>
+        <p>Una persona escribe las <strong>reglas</strong>. La computadora obedece.</p>
         <p class="modo-ej">«Si la nota es menor que 60, escribe reprobado.»</p>
-        <p class="modo-nota">Nunca mejora sola. Si aparece un caso que la regla no contempló, falla.</p>
+        <p class="modo-nota">Nunca mejora sola. Falla con lo que la regla no dice.</p>
       </div>
       <div class="modo modo-ej">
         <h4>🍎 Programa que aprende</h4>
-        <p>Nadie le escribe la regla: recibe <strong>ejemplos</strong> y la saca él mismo de ellos.</p>
+        <p>Nadie le escribe la regla. La saca de los <strong>ejemplos</strong>.</p>
         <p class="modo-ej">Diez mil fotos de hojas, marcadas «sana» o «con plaga».</p>
-        <p class="modo-nota">Reconoce cosas que nadie le describió. Y falla con lo que no estaba en sus ejemplos.</p>
+        <p class="modo-nota">Reconoce lo que nadie le describió. Falla con lo que no vio.</p>
       </div>
     </div>
     <div class="tip">
       <span class="ti">🔑</span>
-      <div><strong>Las dos fallan, pero por razones contrarias:</strong> una porque le faltó una regla que
-           alguien tenía que escribir; la otra porque le faltó un ejemplo que alguien tenía que juntar.
-           <b>En las dos hay una persona detrás del fallo.</b></div>
+      <div><strong>Las dos fallan, y por razones contrarias.</strong>
+           <b>Detrás de las dos hay una persona.</b></div>
     </div>
   </div>
 
   <div class="card ac-gold">
     <h2>🔁 El ciclo del aprendizaje, paso por paso</h2>
-    <p>Así se entrena cualquier máquina que aprende, sea para reconocer plagas, leer recibos o traducir.
-       Son siempre los mismos seis pasos:</p>
+    <p>Toda máquina que aprende pasa por los mismos seis pasos:</p>
     <!-- Lo pinta el JS. El vocabulario sale de js/data/ia-conceptos.js, que es
          de donde lo saca también la ficha que se fotocopia. -->
     <div id="ia-ciclo"></div>
     <div class="tip">
       <span class="ti">🧪</span>
-      <div><strong>El paso 4 es el que la gente se salta,</strong> y es el que de verdad mide: probarla con
-           ejemplos que <b>NUNCA vio</b>. Probarla con los mismos con que se entrenó no prueba nada, porque
-           pudo habérselos memorizado.</div>
+      <div><strong>El paso 4 es el que la gente se salta,</strong> y es el que mide. Se prueba con
+           ejemplos que <b>NUNCA vio</b>. Con los del entrenamiento no prueba nada: pudo memorizarlos.</div>
     </div>
   </div>
 
   <div class="card ac-amber">
     <h2>🗂️ Las tres maneras de aprender</h2>
-    <p>No todas las máquinas aprenden igual. Estas tres son las que hay que saber distinguir:</p>
+    <p>No todas aprenden igual. Estas tres hay que distinguirlas:</p>
     <!-- Del archivo de datos: las mismas tres salen en la ficha impresa. -->
     <div class="type-grid" id="ia-tipos"></div>
     <div class="tip">
       <span class="ti">🎯</span>
-      <div><strong>El truco para no confundirlas:</strong> pregúntate <b>quién le dio la respuesta</b>. Si se
-           la dio una persona, es supervisado. Si no se la dio nadie y ella agrupó por parecido, es no
-           supervisado. Si la fue descubriendo a base de premios, es por refuerzo.</div>
+      <div><strong>El truco:</strong> pregúntate <b>quién le dio la respuesta</b>. Una persona: supervisado.
+           Nadie, y agrupó por parecido: no supervisado. La descubrió con premios: por refuerzo.</div>
     </div>
   </div>
 
@@ -140,11 +134,11 @@
 <div class="sec" id="s-estructura" role="tabpanel">
   <div class="card ac-jade">
     <h2>🧪 Entrena el detector de plagas</h2>
-    <p style="font-size:0.92rem;">Una aplicación tiene que decir si una hoja está <strong>sana</strong> o
-       <strong>con plaga</strong>. Tú eliges <strong>con qué cultivos se entrena</strong>. Después la
-       probamos con ocho hojas que nunca vio, dos de cada cultivo.</p>
+    <p style="font-size:0.92rem;">Una aplicación dice si una hoja está <strong>sana</strong> o
+       <strong>con plaga</strong>. Tú eliges <strong>los cultivos del entrenamiento</strong>. Después la
+       probamos con ocho hojas nuevas: dos de cada cultivo.</p>
     <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +2 XP al entrenarla · +3 XP si descubres el sesgo · +4 XP si acierta las ocho</p>
-    <p class="ent-pregunta">📦 ¿Con qué ejemplos la vas a entrenar?</p>
+    <p class="ent-pregunta">📦 ¿Con qué ejemplos la entrenas?</p>
     <div class="ent-cultivos" id="ent-cultivos" role="group" aria-label="Cultivos para entrenar"></div>
     <div style="margin:0.8rem 0;display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-pri" onclick="iaEntrenar()">🏋️ Entrenar</button>
@@ -155,20 +149,18 @@
     <div id="fbEnt" class="fb" role="alert"></div>
     <div class="tip" style="margin-top:0.9rem;">
       <span class="ti">🔬</span>
-      <div><strong>Prueba esto, en este orden:</strong> primero entrénala como viene (sin plátano) y pruébala.
-           Después añade el plátano y vuelve a entrenar. Y al final, deja <b>solo el plátano</b> y prueba otra
-           vez: fíjate en qué se equivoca y en qué dirección. <b>La máquina es la misma las tres veces.</b></div>
+      <div><strong>Prueba en este orden:</strong> sin plátano, con plátano, <b>solo plátano</b>.
+           Mira en qué falla y hacia qué lado. <b>La máquina es la misma las tres veces.</b></div>
     </div>
   </div>
 
   <div class="card ac-purple">
-    <h2>⚖️ Eso que acaba de pasar se llama sesgo</h2>
-    <p>Cuando los ejemplos con que se entrenó están <strong>mal repartidos</strong>, la máquina falla justo
-       con lo que faltaba. Y no falla al azar: <strong>falla siempre con los mismos</strong>.</p>
+    <h2>⚖️ Eso que acabas de ver se llama sesgo</h2>
+    <p>Los ejemplos estaban <strong>mal repartidos</strong>. Por eso falla justo con lo que faltaba.
+       Y no falla al azar: <strong>falla siempre con los mismos</strong>.</p>
     <div class="sesgo-caja">
-      <p><strong>No es que la máquina sea mala.</strong> Es que alguien eligió los ejemplos, y en esa
-         elección se quedó gente afuera. Por eso la pregunta que hay que hacerle a cualquier sistema que
-         decide algo importante no es «¿cuánto acierta?», sino estas tres:</p>
+      <p><strong>La máquina no es mala.</strong> Alguien eligió los ejemplos, y en esa elección quedó
+         gente afuera. A un sistema que decide algo importante se le preguntan estas tres cosas:</p>
       <ol class="sesgo-lista">
         <li><strong>¿Con qué ejemplos lo entrenaron?</strong></li>
         <li><strong>¿Quién los eligió?</strong></li>
@@ -177,16 +169,14 @@
     </div>
     <div class="tip">
       <span class="ti">⚠️</span>
-      <div><strong>Y ojo con el porcentaje:</strong> un modelo que acierta el 95 % suena bien, pero ese 5 %
-           puede caer <b>siempre sobre el mismo cultivo, la misma aldea o las mismas personas</b>. El número
-           solo no lo enseña; hay que mirar a quién le toca.</div>
+      <div><strong>Ojo con el porcentaje:</strong> acertar el 95 % suena bien. Pero ese 5 % puede caer
+           <b>siempre sobre la misma aldea</b>. El número no dice a quién le toca.</div>
     </div>
   </div>
 
   <div class="card ac-teal">
     <h2>🔒 Las tres reglas de oro</h2>
-    <p>Son las mismas de la etapa 1, y son las mismas que vas a usar en noveno. Lo que cambia con los años
-       no son las reglas: es que ahora ya sabes <strong>por qué</strong>.</p>
+    <p>Son las mismas de la etapa 1, y las de noveno. Ahora ya sabes <strong>por qué</strong>.</p>
     <!-- Del archivo de datos: las mismas tres salen en las cuatro misiones. -->
     <div id="ia-reglas"></div>
   </div>
@@ -201,37 +191,35 @@
 <div class="sec" id="s-descubre" role="tabpanel">
   <div class="card ac-jade">
     <h2>🎯 Tú eres la máquina</h2>
-    <p style="font-size:0.92rem;">Nadie te va a decir la regla. Vas a ver ejemplos de uno en uno, dices si
-       <strong>entra</strong> o <strong>no entra</strong>, y solo después ves la respuesta. Eso que te va a pasar
-       —sacar la regla de los ejemplos sin que nadie te la diga— es <strong>exactamente</strong> lo que hace una
-       máquina cuando aprende.</p>
+    <p style="font-size:0.92rem;">Nadie te dice la regla. Ves un ejemplo y dices si <strong>entra</strong>
+       o <strong>no entra</strong>. Después ves la respuesta. Eso es lo que hace una máquina al
+       aprender.</p>
     <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada ronda terminada · +2 XP si escribes la regla antes de verla</p>
     <div class="desc-chips" id="regla-rondas" role="group" aria-label="Las cuatro rondas"></div>
     <div class="regla-caja" id="regla-caja"></div>
     <div id="fbRegla" class="fb" role="alert"></div>
     <div class="tip" style="margin-top:0.9rem;">
       <span class="ti">🔬</span>
-      <div><strong>La cuarta ronda es la que más enseña.</strong> Hasta el quinto ejemplo van a caber <b>dos reglas
-           distintas</b>, y vas a tener que elegir una sin saber cuál es. La máquina hace lo mismo. Por eso hacen
-           falta ejemplos <b>variados</b>, no solo muchos.</div>
+      <div><strong>La cuarta ronda es la que más enseña.</strong> Hasta el quinto ejemplo caben <b>dos reglas
+           distintas</b>. Eliges una sin saber cuál. La máquina hace igual. Hacen falta ejemplos
+           <b>variados</b>, no solo muchos.</div>
     </div>
   </div>
 
   <div class="card ac-teal">
     <h2>📈 ¿Cuántos ejemplos hacen falta?</h2>
-    <p style="font-size:0.92rem;">Una máquina tiene que separar <strong>frijol rojo</strong> de <strong>frijol
-       negro</strong> midiendo cada semilla (largo y ancho). Tú eliges <strong>con cuántos ejemplos</strong> se
-       entrena; después la probamos con <strong>20 semillas que nunca vio</strong>. Las medidas son inventadas para
-       el ejercicio y se sortean siempre igual.</p>
+    <p style="font-size:0.92rem;">Una máquina separa <strong>frijol rojo</strong> de <strong>frijol
+       negro</strong> midiendo cada semilla. Tú eliges <strong>con cuántos ejemplos</strong> se entrena.
+       Después la probamos con <strong>20 semillas nuevas</strong>. Las medidas son inventadas.</p>
     <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tamaño que pruebes · +3 XP al probar los seis</p>
     <div class="desc-chips" id="curva-n" role="group" aria-label="Con cuántos ejemplos"></div>
     <div class="curva-caja" id="curva-caja"></div>
     <div id="fbCurva" class="fb" role="alert"></div>
     <div class="tip">
       <span class="ti">📉</span>
-      <div><strong>Lo que vas a ver:</strong> con <b>un</b> ejemplo la máquina solo conoce una clase y le dice lo mismo
-           a todas: acierta la mitad, como una moneda. Después sube… y <b>deja de subir</b>. A partir de ahí más
-           ejemplos parecidos no enseñan más; lo que enseña es un ejemplo <b>distinto</b>.</div>
+      <div><strong>Lo que vas a ver:</strong> con <b>un</b> ejemplo conoce una sola clase. Acierta la mitad,
+           como una moneda. Después sube y <b>deja de subir</b>. Más ejemplos parecidos no enseñan más.
+           Enseña uno <b>distinto</b>.</div>
     </div>
   </div>
 
@@ -245,7 +233,7 @@
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
     <h2>🔬 Laboratorio del Aprendizaje</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige una pieza del proceso y qué quieres saber de ella. Es la forma más rápida de repasar antes del examen.</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige una pieza y qué quieres saber de ella.</p>
     <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Dato</strong> → <strong>¿Qué es?</strong></div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
@@ -271,7 +259,7 @@
   </div>
   <div class="card ac-gold">
     <h2>📖 El vocabulario de esta misión</h2>
-    <p style="font-size:0.85rem;margin-bottom:0.7rem;">Estas diez son las del examen. Copialas en tu cuaderno con un ejemplo tuyo de cada una:</p>
+    <p style="font-size:0.85rem;margin-bottom:0.7rem;">Las diez del examen. Cópialas con un ejemplo tuyo:</p>
     <div class="type-grid" id="ia-vocabulario"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
@@ -330,7 +318,7 @@
     <h2>🗂️ Clasifica</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca una palabra del banco y después toca la columna donde va.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
-    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Hay tres juegos distintos y los tres entran en el examen.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Toca "Variar grupo" varias veces. Son tres juegos y los tres entran en el examen.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
@@ -355,7 +343,7 @@
     <h2>🔍 Encuentra el concepto</h2>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca en la oración la palabra que se te pide:</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra que se te pide:</p>
     <div class="id-sent" id="idSent" role="group"></div>
     <div class="id-info" id="idInfo" role="status" aria-live="polite" style="font-size:0.82rem;color:var(--gray);font-style:italic;margin-top:0.4rem;"></div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
@@ -392,8 +380,8 @@
 
   <div class="card ac-teal">
     <h2>🔗 Ordena los pasos</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por secuencia)</p>
-    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ponerlos en orden, del primer paso al último:</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP, la primera vez</p>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Ordénalos con <strong>▲ ▼</strong>:</p>
     <div class="sort-list" id="routeList"></div>
     <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
@@ -404,9 +392,9 @@
 
   <div class="card ac-gold">
     <h2>🕵️ ¿De qué concepto hablamos?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez por pista)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP, la primera vez</p>
     <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la pista y decí de qué concepto se trata:</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la pista:</p>
     <div class="neuron-desc" id="neuronDesc">Cargando…</div>
     <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbNeuron" class="fb" role="alert"></div>
@@ -418,10 +406,10 @@
 
   <div class="card ac-jade">
     <h2>🔗 El caso → ¿qué tipo de aprendizaje es?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP, la primera vez</p>
     <p class="id-prog" id="neuroProg" aria-live="polite">1 de 6</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee el caso y decí de qué tipo de aprendizaje se trata:</p>
-    <div class="neuro-trans-display" id="neuroTrans">Le damos fotos de hojas con su etiqueta.</div>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee el caso y di qué tipo es:</p>
+    <div class="neuro-trans-display" id="neuroTrans">Le damos hojas etiquetadas «sana» o «con plaga».</div>
     <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbNeuro" class="fb" role="alert"></div>
     <div style="margin-top:0.8rem;">
@@ -431,9 +419,9 @@
 
   <div class="card ac-purple">
     <h2>⚖️ ¿Sesgo, patrón o etiqueta?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP, la primera vez</p>
     <p class="id-prog" id="enferProg" aria-live="polite">1 de 9</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Acuérdate: el patrón se repite, la etiqueta la pone una persona, y el sesgo es lo que faltó.</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Patrón: se repite. Etiqueta: la pone una persona. Sesgo: lo que faltó.</p>
     <div class="neuro-trans-display" id="enferDisease">Le faltaron ejemplos de un tipo de hoja</div>
     <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbEnfer" class="fb" role="alert"></div>
@@ -454,7 +442,7 @@
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada uno lo más rápido que puedas.</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
-    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con los otros dos grupos.</p>
+    <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Al terminar, toca "Variar pareja" y juega los otros dos grupos.</p>
     <div class="game" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
       <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
@@ -541,7 +529,7 @@
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
     </div>
     <h2 id="eval-screen-title">🎓 Evaluación Final — Cómo Aprende una Máquina</h2>
-    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y contéstalo. Después toca <strong>Ver Pauta</strong> y califícate. <strong>Genera preguntas nuevas cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
       <button class="btn btn-d" onclick="toggleEvalAns()">👁 Ver Pauta</button>
@@ -560,7 +548,7 @@
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
     </div>
     <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Cómo Aprende una Máquina</h2>
-    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
+    <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Contesta cada caso con tus palabras, en pantalla o en el cuaderno. Compara con la <strong>Pauta</strong> y anota tu puntaje de cada sección. <strong>Genera una prueba nueva cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
       <button class="btn btn-d" onclick="toggleEvalCritAns()">👁 Ver Pauta</button>
@@ -581,15 +569,15 @@
 <div class="sec" id="s-juegos3d" role="tabpanel">
   <div class="card ac-purple">
     <h2>🎮 Parque de Juegos 3D</h2>
-    <p style="font-size:0.9rem;margin-bottom:0.5rem;">Seis juegos en tres dimensiones para <strong>toda la ruta</strong>. Aquí no se lee cómo aprende una máquina: se le <strong>ve la frontera</strong>, se le mira el sesgo salir de tus propias manos y se ve el suelo levantarse hasta la meta.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">🌐 La primera vez hace falta señal, porque bajan la pieza que dibuja en 3D. Después quedan guardados en el teléfono y funcionan sin internet. Se abren en otra pestaña: tu progreso de la misión no se pierde.</p>
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;">Seis juegos en tres dimensiones para <strong>toda la ruta</strong>. Aquí no se lee cómo aprende una máquina. Se le <strong>ve la frontera</strong>. Se mira el sesgo salir de tus manos. Se ve el suelo levantarse hasta la meta.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">🌐 La primera vez hace falta señal: bajan la pieza que dibuja en 3D. Después quedan en el teléfono y funcionan sin internet. Se abren en otra pestaña y tu progreso no se pierde.</p>
     <p class="parque-resumen" id="parque-resumen"></p>
     <div class="juegos-grid">
 
       <div class="juego-card" data-juego="j3d_separador_v1">
         <div class="juego-icon">🔪</div>
         <h3>El Separador 3D</h3>
-        <p>Mueve el plano hasta dejar cada clase de su lado. Y llega el caso en que ningún plano alcanza: ahí la pantalla no finge que hay respuesta.</p>
+        <p>Mueve el plano hasta dejar cada clase de su lado. Llega un caso donde ningún plano alcanza. Ahí la pantalla no finge.</p>
         <span class="juego-tema">🔪 La frontera · lo que una máquina traza al aprender</span>
         <span class="juego-medalla" data-medalla="separador"></span>
         <a href="juego-separador-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
@@ -598,7 +586,7 @@
       <div class="juego-card" data-juego="j3d_vecino_v1">
         <div class="juego-icon">📏</div>
         <h3>El Vecino Más Cercano</h3>
-        <p>Adivina qué va a contestar la máquina. Ponle una piedra y contesta igual: nunca dice «no sé». Enséñale un ejemplo y la respuesta cambia delante de ti.</p>
+        <p>Adivina qué va a contestar la máquina. Ponle una piedra y contesta igual: nunca dice «no sé». Enséñale un ejemplo y la respuesta cambia.</p>
         <span class="juego-tema">📏 Cómo decide · y por qué contesta siempre</span>
         <span class="juego-medalla" data-medalla="vecino"></span>
         <a href="juego-vecino-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
@@ -607,7 +595,7 @@
       <div class="juego-card" data-juego="j3d_grupos_v1">
         <div class="juego-icon">🗂️</div>
         <h3>Los Grupos Escondidos</h3>
-        <p>Sin una sola etiqueta, la máquina junta lo que se parece. Pídele tres grupos donde solo hay uno y te los dará: eso hay que verlo una vez.</p>
+        <p>Sin una sola etiqueta, la máquina junta lo que se parece. Pídele tres grupos donde solo hay uno y te los da.</p>
         <span class="juego-tema">🗂️ Aprendizaje no supervisado</span>
         <span class="juego-medalla" data-medalla="grupos"></span>
         <a href="juego-grupos-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
@@ -616,7 +604,7 @@
       <div class="juego-card" data-juego="j3d_sesgo_v1">
         <div class="juego-icon">⚖️</div>
         <h3>El Sesgo a la Vista</h3>
-        <p>Tú eliges de qué cultivos salen las fotos del detector de plagas. Deja fuera el plátano y mira lo que le dice al productor de plátano.</p>
+        <p>Tú eliges de qué cultivos salen las fotos. Deja fuera el plátano y mira qué le dice al productor de plátano.</p>
         <span class="juego-tema">⚖️ El sesgo · no se cuenta, se produce</span>
         <span class="juego-medalla" data-medalla="sesgo"></span>
         <a href="juego-sesgo-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
@@ -625,7 +613,7 @@
       <div class="juego-card" data-juego="j3d_memorizo_v1">
         <div class="juego-icon">🧠</div>
         <h3>¿Aprendió o se lo memorizó?</h3>
-        <p>Saca 100 % en los ejemplos que ya vio y falla con los nuevos. Encuentra el ajuste que de verdad aprende — y sin poder mirar el examen antes.</p>
+        <p>Saca 100 % en los ejemplos que ya vio y falla con los nuevos. Encuentra el ajuste que de verdad aprende, sin mirar el examen antes.</p>
         <span class="juego-tema">🧠 La prueba · con ejemplos que nunca vio</span>
         <span class="juego-medalla" data-medalla="memorizo"></span>
         <a href="juego-memorizo-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
@@ -634,7 +622,7 @@
       <div class="juego-card" data-juego="j3d_refuerzo_v1">
         <div class="juego-icon">🤖</div>
         <h3>El Robot que Aprende Probando</h3>
-        <p>Nadie le dice el camino: solo si llegó o se cayó. El suelo se va levantando en una rampa hasta la meta, y un día el robot la sube solo.</p>
+        <p>Nadie le dice el camino: solo si llegó o se cayó. El suelo se levanta en una rampa hasta la meta, y un día el robot la sube solo.</p>
         <span class="juego-tema">🤖 Aprendizaje por refuerzo</span>
         <span class="juego-medalla" data-medalla="refuerzo"></span>
         <a href="juego-refuerzo-3d.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri btn-juego">▶️ Jugar</a>
@@ -654,17 +642,17 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 9 páginas con <strong>el ciclo del aprendizaje</strong> paso por paso, los tres tipos, el sesgo con el caso del detector de plagas y sus actividades <strong>en papel</strong>, para estudiar sin teléfono.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de 9 páginas: <strong>el ciclo del aprendizaje</strong>, los tres tipos y el sesgo, con sus actividades <strong>en papel</strong>.</p>
       <a href="../../fichas/ficha-como-aprende-una-maquina.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">✨ Las otras etapas de la Ruta de la Máquina que Aprende</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Antes de esta va qué es la Inteligencia Artificial, para los más pequeños. Después vienen la historia completa, de 1950 hasta hoy, y la IA que escribe textos, con lo que hay que saber para no creerle todo.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Esta es la etapa 2. Antes va qué es la Inteligencia Artificial. Después, la historia de 1950 hasta hoy. Y luego, la IA que escribe textos.</p>
       <a href="../1ciclo-que-es-la-ia/que-es-la-ia.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🧠 Etapa 1 · Qué es la IA</a>
       <a href="../2y3ciclo-historia-ia/historia-ia.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">📜 Etapa 3 · La historia</a>
       <a href="../3ciclo-ia-generativa/ia-generativa.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-bottom:0.5rem;">🔎 Etapa 4 · IA generativa</a>
     </div>
-    <p style="font-size:0.9rem;margin-bottom:0;">Esta misión funciona <strong>sin internet</strong>, y el entrenador también: todo el entrenamiento pasa dentro de este teléfono y no sale ni una sola petición hacia afuera. Lo que sí está listo para el aula sin teléfonos es la <strong>ficha imprimible</strong> de aquí arriba.</p>
+    <p style="font-size:0.9rem;margin-bottom:0;">Esta misión funciona <strong>sin internet</strong>. El entrenador también: todo pasa dentro del teléfono. Para el aula sin teléfonos está la <strong>ficha</strong> de arriba.</p>
   </div>
 </div>
 

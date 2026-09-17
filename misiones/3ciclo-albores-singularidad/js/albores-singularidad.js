@@ -92,26 +92,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué afirma exactamente la palabra «singularidad»?',o:['Que una máquina va a mejorar máquinas más rápido de lo que podemos seguir, y el cambio se acelere solo','Que la IA ya piensa como una persona','Que las computadoras se van a apagar','Que la IA es peligrosa'],c:0,
-   e:'Es una afirmación sobre el futuro, y por eso no se puede comprobar hoy. Lo que sí se puede es preguntarle a quien la hace.'},
-  {q:'¿Cuál de estas cosas SÍ se sabe hoy de las máquinas que aprenden?',o:['Que quieren cosas','Que aprenden de ejemplos que alguien eligió','Que se mejoran solas sin nadie','Que entienden lo que leen'],c:1,
-   e:'Lo produjiste vos en la etapa 1. Todo lo demás de esta misión se apoya en eso.'},
+  {q:'¿Qué afirma la palabra «singularidad»?',o:['Que una máquina mejore máquinas más rápido de lo que podemos seguir','Que la IA ya piensa como una persona','Que las computadoras se van a apagar','Que la IA es peligrosa'],c:0,
+   e:'Habla del futuro: hoy no se puede comprobar. Preguntale a quien la hace.'},
+  {q:'¿Qué SÍ se sabe hoy de las máquinas que aprenden?',o:['Que quieren cosas','Que aprenden de ejemplos que alguien eligió','Que se mejoran solas sin nadie','Que entienden lo que leen'],c:1,
+   e:'Lo produjiste vos en la etapa 1.'},
   {q:'Una promesa sin fecha…',o:['Es más seria','No se puede incumplir nunca','Se cumple sola','Vale más que una con fecha'],c:1,
-   e:'Y por eso se hacen así. Ponele vos la fecha y volvé a leerla ese día.'},
-  {q:'Cinco páginas dicen lo mismo y ninguna dice de dónde lo sacó. ¿Qué tenés?',o:['Un eco','Cinco fuentes','Una fuente muy buena','Una prueba'],c:0,
-   e:'Se descarta en diez segundos. Lo caro es leerlo todo.'},
+   e:'Ponele vos la fecha y volvé a leerla ese día.'},
+  {q:'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?',o:['Un eco','Cinco fuentes','Una fuente muy buena','Una prueba'],c:0,
+   e:'Se descarta en segundos. Lo caro es leerlo todo.'},
   {q:'¿Cuándo se reconoce un punto de inflexión?',o:['El mismo día, por el ruido que hace','Cuando lo dice un experto','Cuando sale en la televisión','Casi siempre mirando para atrás'],c:3,
-   e:'El artículo del que salen los chats de hoy pasó casi desapercibido.'},
-  {q:'Saber qué gana alguien diciendo algo…',o:['Lo vuelve falso','Lo vuelve verdadero','No sirve de nada','Pone lo que dice en su sitio, sin cerrarlo'],c:3,
-   e:'Quien vende exagera y quien teme también. Saberlo abre bien la discusión, no la cierra.'},
-  {q:'¿Qué fue un «invierno» de la Inteligencia Artificial?',o:['Un fallo de las computadoras','Una guerra','Un período en que se prometió más de lo que se podía y el campo casi se para','Un virus'],c:2,
-   e:'Lo que se rompió no fue la tecnología: fue la confianza. Esa es la vara para leer lo de hoy.'},
-  {q:'Un anuncio sale marcado como «contenido patrocinado». ¿Qué significa?',o:['Que alguien pagó por publicarlo, y el medio lo dice','Que es mentira','Que es del gobierno','Que es gratis'],c:0,
-   e:'Y que lo diga es honesto del medio. No lo vuelve falso: te dice qué preguntas hacerle.'},
-  {q:'Dos noticias del mismo mes se contradicen. ¿Qué es lo más probable?',o:['Una miente','Las dos mienten','Miden cosas distintas','Hay que creerle a la más nueva'],c:2,
-   e:'Que haya becas y que falte infraestructura pueden ser verdad a la vez.'},
-  {q:'¿Por qué esta misión NO te dice si estamos en los albores de la singularidad?',o:['Porque es secreto','Porque nadie lo sabe, y afirmarlo sería lo que esta misión enseña a no hacer','Porque es muy difícil','Porque no importa'],c:1,
-   e:'Lo que sí te da es la vara para medir a quien lo afirme, hoy y en diez años.'}
+   e:'El artículo del que salen los chats de hoy pasó desapercibido.'},
+  {q:'Saber qué gana alguien diciendo algo…',o:['Lo vuelve falso','Lo vuelve verdadero','No sirve de nada','Pone lo que dice en su sitio'],c:3,
+   e:'Quien vende exagera. Quien teme, también.'},
+  {q:'¿Qué fue un «invierno» de la Inteligencia Artificial?',o:['Un fallo de las computadoras','Una guerra','Un tiempo en que se prometió de más y el campo casi se para','Un virus'],c:2,
+   e:'Lo que se rompió fue la confianza.'},
+  {q:'Un anuncio dice «contenido patrocinado». ¿Qué significa?',o:['Que alguien pagó por publicarlo, y el medio lo dice','Que es mentira','Que es del gobierno','Que es gratis'],c:0,
+   e:'Que lo diga es honesto. No lo vuelve falso.'},
+  {q:'Dos noticias del mes se contradicen. ¿Qué es lo más probable?',o:['Una miente','Las dos mienten','Miden cosas distintas','Hay que creerle a la más nueva'],c:2,
+   e:'Puede haber becas y faltar infraestructura a la vez.'},
+  {q:'¿Por qué esta misión NO dice si estamos en los albores?',o:['Porque es secreto','Porque nadie lo sabe','Porque es muy difícil','Porque no importa'],c:1,
+   e:'Te da la vara para medir a quien lo afirme.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -144,14 +144,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Una','promesa','sin','fecha','no','se','puede','incumplir.'],c:3,art:'Lo que le falta a una promesa que nunca se puede juzgar'},
-  {s:['Cinco','páginas','que','repiten','lo','mismo','son','un','eco.'],c:8,art:'El nombre de lo que parece muchas fuentes y es una'},
-  {s:['Un','punto','de','inflexión','se','reconoce','mirando','para','atrás.'],c:3,art:'El nombre del día en que todo cambió de rumbo'},
-  {s:['En','un','invierno','se','rompió','la','confianza.'],c:2,art:'El nombre del período en que el campo casi se para'},
+  {s:['Una','promesa','sin','fecha','no','se','puede','incumplir.'],c:3,art:'Lo que le falta a una promesa que nunca se juzga'},
+  {s:['Cinco','páginas','que','repiten','lo','mismo','son','un','eco.'],c:8,art:'Lo que parece muchas fuentes y es una'},
+  {s:['Un','punto','de','inflexión','se','reconoce','mirando','para','atrás.'],c:3,art:'El día en que todo cambió de rumbo'},
+  {s:['En','un','invierno','se','rompió','la','confianza.'],c:2,art:'El tiempo en que el campo casi se para'},
   {s:['Lo','primero','es','preguntar','quién','lo','dice.'],c:4,art:'La primera pregunta del termómetro'},
-  {s:['Saber','qué','gana','no','lo','vuelve','falso.'],c:2,art:'Lo que hay que preguntarle a quien afirma algo'},
+  {s:['Saber','qué','gana','no','lo','vuelve','falso.'],c:2,art:'Lo que se le pregunta a quien afirma algo'},
   {s:['La','fuente','original','es','la','que','responde.'],c:1,art:'Lo que hay que abrir para comprobar'},
-  {s:['Nadie','sabe','si','habrá','una','singularidad.'],c:5,art:'La palabra que afirma un futuro que se acelera solo'}
+  {s:['Nadie','sabe','si','habrá','una','singularidad.'],c:5,art:'La palabra de un futuro que se acelera solo'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -161,13 +161,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Una promesa sin ___ no se puede incumplir nunca.',opts:['dueño','precio','fecha'],c:2},
-  {s:'Cinco páginas que repiten lo mismo sin decir de dónde son un ___.',opts:['eco','estudio','archivo'],c:0},
-  {s:'Un punto de inflexión se reconoce casi siempre mirando para ___.',opts:['adelante','atrás','arriba'],c:1},
-  {s:'En los dos inviernos lo que se rompió fue la ___.',opts:['confianza','máquina','ley'],c:0},
+  {s:'Una promesa sin ___ no se puede incumplir.',opts:['dueño','precio','fecha'],c:2},
+  {s:'Cinco páginas que copian lo mismo son un ___.',opts:['eco','estudio','archivo'],c:0},
+  {s:'Un punto de inflexión se reconoce mirando para ___.',opts:['adelante','atrás','arriba'],c:1},
+  {s:'En los dos inviernos se rompió la ___.',opts:['confianza','máquina','ley'],c:0},
   {s:'La primera pregunta es quién lo ___.',opts:['compra','lee','dice'],c:2},
-  {s:'Saber qué gana alguien no vuelve su afirmación ___.',opts:['urgente','falsa','larga'],c:1},
-  {s:'Lo que se sabe hoy es que la máquina aprende de ___ que alguien eligió.',opts:['reglas','ejemplos','órdenes'],c:1},
+  {s:'Saber qué gana no vuelve la afirmación ___.',opts:['urgente','falsa','larga'],c:1},
+  {s:'La máquina aprende de ___ que alguien eligió.',opts:['reglas','ejemplos','órdenes'],c:1},
   {s:'Esta misión no afirma si estamos en los albores: da la ___ para medirlo.',opts:['vara','fecha','respuesta'],c:0}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
@@ -183,7 +183,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // Widget 1: Ordenar secuencias
 const routeSets = [
   { label: 'Ordena el termómetro de la promesa', steps: IA_TERMOMETRO.map((t, i) => (i + 1) + '. ' + t.pregunta) },
-  { label: 'Ordena lo que hacés con una noticia de Inteligencia Artificial', steps: ['1. Mirar la fecha: ¿de cuándo es el hecho, no el artículo?', '2. Buscar quién lo dice con su nombre', '3. Preguntarse qué gana diciéndolo', '4. Buscar el documento original, no el resumen', '5. Si es promesa, apuntar la fecha y volver ese día'] }
+  { label: 'Ordena qué hacés con una noticia', steps: ['1. Mirar la fecha del hecho, no la del artículo', '2. Buscar quién lo dice, con su nombre', '3. Preguntarse qué gana diciéndolo', '4. Buscar el documento, no el resumen', '5. Si es promesa, apuntar la fecha'] }
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -203,7 +203,7 @@ const neuronPartes = (function () {
   return p;
 })();
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno por lo que hizo!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconocés cada pregunta por su pista!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
@@ -271,53 +271,53 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'Una promesa sin fecha no se puede incumplir nunca.',type:'fecha'},
-  {s:'Cinco páginas que repiten lo mismo sin fuente son un eco.',type:'eco'},
-  {s:'Un punto de inflexión se reconoce mirando para atrás.',type:'inflexión'},
-  {s:'En un invierno lo que se rompió fue la confianza.',type:'confianza'},
-  {s:'La primera pregunta es quién lo dice con su nombre.',type:'quién'},
-  {s:'Saber qué gana alguien pone lo que dice en su sitio.',type:'gana'},
-  {s:'La singularidad es una afirmación sobre el futuro.',type:'singularidad'},
-  {s:'El contenido patrocinado es el que alguien pagó por publicar.',type:'patrocinado'},
-  {s:'Dos noticias que se contradicen suelen medir cosas distintas.',type:'distintas'},
-  {s:'Lo que se sabe es que aprende de ejemplos que alguien eligió.',type:'ejemplos'}
+  {s:'Una promesa sin fecha no se puede incumplir.',type:'fecha'},
+  {s:'Cinco páginas que copian lo mismo son un eco.',type:'eco'},
+  {s:'Un punto de inflexión se reconoce mirando atrás.',type:'inflexión'},
+  {s:'En un invierno se rompió la confianza.',type:'confianza'},
+  {s:'La primera pregunta es quién lo dice.',type:'quién'},
+  {s:'Saber qué gana pone lo dicho en su sitio.',type:'gana'},
+  {s:'La singularidad afirma algo del futuro.',type:'singularidad'},
+  {s:'Contenido patrocinado es lo que alguien pagó por publicar.',type:'patrocinado'},
+  {s:'Dos noticias contrarias miden cosas distintas.',type:'distintas'},
+  {s:'La máquina aprende de ejemplos que alguien eligió.',type:'ejemplos'}
 ];
 const classifyTaskDB=[
-  {w:'Singularidad',gen:'La afirmación de un futuro que se acelera solo',n:'«En dos años lo hará todo»',g:'No se puede comprobar hoy',t:''},
-  {w:'Punto de inflexión',gen:'El día en que algo que no se podía hacer se pudo',n:'Cuando se juntaron las tres patas',g:'Se reconoce mirando para atrás',t:''},
-  {w:'Invierno',gen:'Se prometió de más y el campo casi se para',n:'Dos veces en esta historia',g:'Se rompe la confianza, no la tecnología',t:''},
-  {w:'Eco',gen:'Muchas páginas repitiendo lo mismo sin fuente',n:'Las listas de «avances del mes»',g:'Parecen muchas fuentes y son ninguna',t:''},
-  {w:'Termómetro',gen:'Las cuatro preguntas que se le hacen a una afirmación',n:'Quién, qué gana, para cuándo, con qué',g:'Sirve igual para un remedio milagroso',t:''},
-  {w:'Contenido patrocinado',gen:'Lo que alguien pagó por publicar, y el medio lo marca',n:'Un anuncio de becas',g:'No lo vuelve falso: dice qué preguntar',t:''},
-  {w:'Fuente original',gen:'El documento que responde por el dato',n:'La ley, el estudio, la publicación firmada',g:'Es lo que hay que abrir, no el resumen',t:''}
+  {w:'Singularidad',gen:'Un futuro que se acelera solo',n:'«En dos años lo hará todo»',g:'Hoy no se puede comprobar',t:''},
+  {w:'Punto de inflexión',gen:'El día en que algo se pudo hacer',n:'Cuando se juntaron las tres patas',g:'Se reconoce mirando atrás',t:''},
+  {w:'Invierno',gen:'Se prometió de más y el campo se paró',n:'Dos veces en esta historia',g:'Se rompe la confianza',t:''},
+  {w:'Eco',gen:'Muchas páginas copiando sin fuente',n:'Las listas de «avances del mes»',g:'Parecen muchas fuentes y son ninguna',t:''},
+  {w:'Termómetro',gen:'Las cuatro preguntas de una afirmación',n:'Quién, qué gana, cuándo, con qué',g:'Sirve hasta para un remedio milagroso',t:''},
+  {w:'Contenido patrocinado',gen:'Lo que alguien pagó por publicar',n:'Un anuncio de becas',g:'Dice qué preguntar, no que sea falso',t:''},
+  {w:'Fuente original',gen:'El documento que responde por el dato',n:'La ley, el estudio, la firma',g:'Se abre eso, no el resumen',t:''}
 ];
 const completeTaskDB=[
-  {s:'Una promesa sin ___ no se puede incumplir nunca.',a:'fecha'},
-  {s:'Muchas páginas repitiendo lo mismo sin fuente son un ___.',a:'eco'},
+  {s:'Una promesa sin ___ no se puede incumplir.',a:'fecha'},
+  {s:'Muchas páginas copiando lo mismo son un ___.',a:'eco'},
   {s:'Un punto de inflexión se reconoce mirando para ___.',a:'atrás'},
-  {s:'En los inviernos lo que se rompió fue la ___.',a:'confianza'},
-  {s:'La primera pregunta del termómetro es quién lo ___.',a:'dice'},
-  {s:'Lo que se sabe es que aprende de ___ que alguien eligió.',a:'ejemplos'},
-  {s:'Lo que alguien pagó por publicar se llama contenido ___.',a:'patrocinado'},
-  {s:'Dos noticias que parecen contradecirse casi siempre miden cosas ___.',a:'distintas'},
-  {s:'Para comprobar hay que abrir la fuente ___.',a:'original'},
-  {s:'La singularidad es una afirmación sobre el ___.',a:'futuro'}
+  {s:'En los inviernos se rompió la ___.',a:'confianza'},
+  {s:'La primera pregunta es quién lo ___.',a:'dice'},
+  {s:'La máquina aprende de ___ que alguien eligió.',a:'ejemplos'},
+  {s:'Lo que alguien pagó por publicar es contenido ___.',a:'patrocinado'},
+  {s:'Dos noticias contrarias miden cosas ___.',a:'distintas'},
+  {s:'Para comprobar se abre la fuente ___.',a:'original'},
+  {s:'La singularidad afirma algo del ___.',a:'futuro'}
 ];
 const explainQuestions=[
-  '¿Por qué una promesa sin fecha es más cómoda para quien la hace?',
-  '¿Qué diferencia hay entre cinco fuentes y cinco páginas que se copian?',
-  '¿Por qué un punto de inflexión casi nunca se reconoce el mismo día?',
-  '¿Qué se rompió de verdad en los dos inviernos de la Inteligencia Artificial?',
-  '¿Por qué saber qué gana alguien NO vuelve falso lo que dice?',
-  '¿Por qué esta misión no te dice si estamos en los albores de la singularidad?'
+  '¿Por qué conviene prometer sin fecha?',
+  '¿Qué diferencia hay entre cinco fuentes y un eco?',
+  '¿Por qué un punto de inflexión se reconoce después?',
+  '¿Qué se rompió en los dos inviernos?',
+  '¿Por qué saber qué gana alguien no lo vuelve falso?',
+  '¿Por qué esta misión no dice si estamos en los albores?'
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto que se pide en cada oración. Escribe al lado qué pregunta del termómetro le falta a esa afirmación.','<strong>Ejemplo:</strong> Una promesa sin fecha no se puede incumplir nunca. → <span style="color:var(--jade);font-weight:700;">fecha</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada afirmación de este mes, completa quién la dice, qué gana, para cuándo la promete y con qué se comprueba.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('La afirmación','text-align:left;')}${th('¿Quién lo dice?')}${th('¿Qué gana?')}${th('¿Para cuándo?')}${th('¿Con qué se comprueba?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
-function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
-function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia cada oración en tu cuaderno y subraya el concepto que se pide.','Escribe al lado qué pregunta del termómetro le falta.','<strong>Ejemplo:</strong> Una promesa sin fecha no se puede incumplir. → <span style="color:var(--jade);font-weight:700;">fecha</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla en tu cuaderno.','Para cada afirmación, completa quién la dice, qué gana, para cuándo y con qué se comprueba.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('La afirmación','text-align:left;')}${th('¿Quién lo dice?')}${th('¿Qué gana?')}${th('¿Para cuándo?')}${th('¿Con qué se comprueba?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno.','Cada oración tiene un espacio ___. Escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y responde cada una.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
@@ -378,72 +378,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Una promesa sin fecha no se puede incumplir nunca.',a:true},
+  {q:'Una promesa sin fecha no se puede incumplir.',a:true},
   {q:'Si cinco páginas dicen lo mismo, el dato está comprobado.',a:false},
-  {q:'Los puntos de inflexión casi siempre se reconocen mirando para atrás.',a:true},
-  {q:'En los inviernos de la IA lo que falló fue la electricidad.',a:false},
-  {q:'Saber qué gana alguien diciendo algo ayuda a leerlo, sin volverlo falso.',a:true},
-  {q:'Que un texto salga marcado como contenido patrocinado significa que es mentira.',a:false},
-  {q:'Hoy se sabe que las máquinas que aprenden lo hacen de ejemplos que alguien eligió.',a:true},
-  {q:'Hoy se sabe que existen máquinas que se mejoran solas sin ninguna persona.',a:false},
-  {q:'Dos noticias del mismo mes que parecen contradecirse suelen medir cosas distintas.',a:true},
-  {q:'La palabra «singularidad» describe algo que ya se puede comprobar.',a:false},
-  {q:'La fecha del hecho y la fecha del artículo pueden ser muy distintas.',a:true},
-  {q:'Un titular que asusta mucho suele traer más pruebas que uno aburrido.',a:false},
-  {q:'Lo que se rompió en los inviernos fue la confianza en las promesas.',a:true},
+  {q:'Un punto de inflexión se reconoce mirando atrás.',a:true},
+  {q:'En los inviernos de la IA falló la electricidad.',a:false},
+  {q:'Saber qué gana ayuda a leerlo, sin volverlo falso.',a:true},
+  {q:'Que un texto diga «contenido patrocinado» significa que es mentira.',a:false},
+  {q:'Las máquinas aprenden de ejemplos que alguien eligió.',a:true},
+  {q:'Ya existen máquinas que se mejoran solas, sin nadie.',a:false},
+  {q:'Dos noticias que se contradicen suelen medir cosas distintas.',a:true},
+  {q:'La singularidad ya se puede comprobar.',a:false},
+  {q:'La fecha del hecho y la del artículo pueden ser distintas.',a:true},
+  {q:'Un titular que asusta trae más pruebas que uno aburrido.',a:false},
+  {q:'En los inviernos se rompió la confianza.',a:true},
   {q:'Si una afirmación no dice quién la hace, se le puede preguntar igual.',a:false},
-  {q:'Ponerle vos una fecha a una promesa te deja juzgarla cuando llegue el día.',a:true}
+  {q:'Ponerle vos una fecha a una promesa te deja juzgarla ese día.',a:true}
 ];
 const evalMCBank=[
   {q:'¿Qué afirma la palabra «singularidad»?',o:['Que una máquina mejore máquinas más rápido de lo que podemos seguir','Que la IA ya siente','Que las computadoras fallarán','Que la IA se apagará sola'],a:0},
   {q:'La primera pregunta del termómetro es…',o:['¿Cuánto cuesta?','¿Es nuevo?','¿Lo comparten muchos?','¿Quién lo dice, con su nombre?'],a:3},
   {q:'Una promesa sin fecha…',o:['Es más seria','No se puede incumplir nunca','Se cumple sola','Vale más'],a:1},
-  {q:'Cinco páginas repitiendo lo mismo sin fuente son…',o:['Cinco fuentes','Un eco','Una prueba','Un estudio'],a:1},
+  {q:'Cinco páginas copiando lo mismo son…',o:['Cinco fuentes','Un eco','Una prueba','Un estudio'],a:1},
   {q:'Un punto de inflexión se reconoce…',o:['Por el ruido del día','En la televisión','Mirando para atrás','Cuando lo dice una empresa'],a:2},
   {q:'¿Qué se rompió en los dos inviernos?',o:['Las computadoras','Los cables','Las leyes','La confianza'],a:3},
-  {q:'De lo siguiente, lo que SÍ se sabe hoy es que la máquina…',o:['Quiere cosas','Aprende de ejemplos que alguien eligió','Se mejora sola','Entiende lo que lee'],a:1},
+  {q:'Lo que SÍ se sabe hoy es que la máquina…',o:['Quiere cosas','Aprende de ejemplos que alguien eligió','Se mejora sola','Entiende lo que lee'],a:1},
   {q:'«Contenido patrocinado» quiere decir…',o:['Que es falso','Que alguien pagó por publicarlo y el medio lo dice','Que es del gobierno','Que es viejo'],a:1},
   {q:'Dos noticias del mes se contradicen. Lo más probable es que…',o:['Midan cosas distintas','Una mienta','Las dos mientan','La nueva tenga razón'],a:0},
-  {q:'¿Qué hace que una afirmación sea comprobable?',o:['Que la compartan mucho','Que suene segura','Que traiga quién, cuándo y un documento','Que esté bien escrita'],a:2},
-  {q:'Lo que hay que abrir para comprobar es…',o:['La fuente original','El resumen','Otro artículo','Un foro'],a:0},
-  {q:'Si una promesa no trae plazo, lo que te toca es…',o:['Ponerle vos una fecha y volver ese día','Creerla','Descartarla siempre','Compartirla'],a:0},
-  {q:'Un titular con la palabra más fuerte posible suele buscar…',o:['Precisión','Ayudar','Explicar','Que se comparta'],a:3},
-  {q:'Esta misión no afirma si estamos en los albores de la singularidad porque…',o:['Es secreto','Es difícil','Nadie lo sabe, y afirmarlo sería lo que enseña a no hacer','No importa'],a:2},
-  {q:'La fecha que más importa de una noticia es la…',o:['Del artículo','De la foto','Del hecho','Del comentario'],a:2}
+  {q:'¿Qué hace comprobable a una afirmación?',o:['Que la compartan mucho','Que suene segura','Que traiga quién, cuándo y un documento','Que esté bien escrita'],a:2},
+  {q:'Para comprobar hay que abrir…',o:['La fuente original','El resumen','Otro artículo','Un foro'],a:0},
+  {q:'Si una promesa no trae plazo, te toca…',o:['Ponerle vos una fecha y volver ese día','Creerla','Descartarla siempre','Compartirla'],a:0},
+  {q:'Un titular con la palabra más fuerte busca…',o:['Precisión','Ayudar','Explicar','Que se comparta'],a:3},
+  {q:'Esta misión no dice si estamos en los albores porque…',o:['Es secreto','Es difícil','Nadie lo sabe','No importa'],a:2},
+  {q:'La fecha que más importa es la…',o:['Del artículo','De la foto','Del hecho','Del comentario'],a:2}
 ];
 const evalCPBank=[
   {q:'Una promesa sin ___ no se puede incumplir.',a:'fecha'},
-  {q:'Muchas páginas repitiendo lo mismo sin fuente son un ___.',a:'eco'},
-  {q:'Un punto de inflexión se reconoce mirando para ___.',a:'atrás'},
+  {q:'Muchas páginas copiando lo mismo son un ___.',a:'eco'},
+  {q:'Un punto de inflexión se reconoce mirando ___.',a:'atrás'},
   {q:'En los inviernos se rompió la ___.',a:'confianza'},
   {q:'La primera pregunta es quién lo ___.',a:'dice'},
   {q:'La segunda es qué ___ diciéndolo.',a:'gana'},
   {q:'La cuarta es con qué se ___.',a:'comprueba'},
-  {q:'Hoy se sabe que la máquina aprende de ___.',a:'ejemplos'},
+  {q:'La máquina aprende de ___.',a:'ejemplos'},
   {q:'Lo que alguien pagó por publicar es contenido ___.',a:'patrocinado'},
   {q:'Para comprobar se abre la fuente ___.',a:'original'},
-  {q:'La singularidad es una afirmación sobre el ___.',a:'futuro'},
-  {q:'Dos noticias contrarias suelen medir cosas ___.',a:'distintas'},
+  {q:'La singularidad afirma algo del ___.',a:'futuro'},
+  {q:'Dos noticias contrarias miden cosas ___.',a:'distintas'},
   {q:'De una noticia importa la fecha del ___, no la del artículo.',a:'hecho'},
-  {q:'Una afirmación sin dueño no se le puede ___ nada.',a:'preguntar'},
+  {q:'A una afirmación sin dueño no se le puede ___.',a:'preguntar'},
   {q:'La vara para leer lo de hoy son los dos ___.',a:'inviernos'}
 ];
 const evalPRBank=[
-  {term:'Singularidad',def:'La afirmación de que el cambio se acelerará solo y no se podrá seguir'},
-  {term:'Punto de inflexión',def:'El día en que algo que no se podía hacer empezó a poder hacerse'},
-  {term:'Invierno',def:'Período en que se prometió de más y el campo casi se para'},
-  {term:'Eco',def:'Muchas páginas repitiendo lo mismo sin decir de dónde'},
+  {term:'Singularidad',def:'La afirmación de que el cambio se acelerará solo'},
+  {term:'Punto de inflexión',def:'El día en que algo que no se podía hacer se pudo'},
+  {term:'Invierno',def:'Cuando se prometió de más y el campo casi se para'},
+  {term:'Eco',def:'Muchas páginas copiando lo mismo sin fuente'},
   {term:'Fuente original',def:'El documento que responde por el dato'},
-  {term:'Contenido patrocinado',def:'Lo que alguien pagó por publicar, y el medio lo marca'},
-  {term:'¿Quién lo dice?',def:'La pregunta que busca a alguien que responda con su nombre'},
+  {term:'Contenido patrocinado',def:'Lo que alguien pagó por publicar'},
+  {term:'¿Quién lo dice?',def:'La pregunta que busca a alguien que responda'},
   {term:'¿Qué gana?',def:'La pregunta que pone la afirmación en su sitio'},
-  {term:'¿Para cuándo?',def:'La pregunta que convierte una promesa en algo que se puede juzgar'},
-  {term:'¿Con qué se comprueba?',def:'La pregunta que pide un documento que se pueda abrir'},
-  {term:'Fecha del hecho',def:'Cuándo pasó, que no es cuándo se publicó el artículo'},
-  {term:'Caducidad',def:'El día en que hay que volver a mirar si aquello se cumplió'},
-  {term:'Cápsula del tiempo',def:'Tu predicción escrita hoy, con su fecha para leerla'},
-  {term:'Las tres patas',def:'Datos, cómputo y algoritmos: lo que faltaba y llegó junto'},
-  {term:'Dossier',def:'El conjunto de afirmaciones de un mes, cada una con su fecha'}
+  {term:'¿Para cuándo?',def:'La pregunta que deja juzgar una promesa'},
+  {term:'¿Con qué se comprueba?',def:'La pregunta que pide un documento'},
+  {term:'Fecha del hecho',def:'Cuándo pasó, no cuándo se publicó'},
+  {term:'Caducidad',def:'El día de volver a mirar si se cumplió'},
+  {term:'Cápsula del tiempo',def:'Tu predicción escrita hoy, con su fecha'},
+  {term:'Las tres patas',def:'Datos, cómputo y algoritmos'},
+  {term:'Dossier',def:'Las afirmaciones de un mes, con su fecha'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -530,80 +530,80 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En el grupo del colegio circula que «en dos años la IA lo hará todo y no vale la pena estudiar computación». Un compañero deja de inscribirse.'},
-  {txt:'Un diario publica, marcado como contenido patrocinado, que habrá miles de becas de Inteligencia Artificial para el país.'},
-  {txt:'El mismo mes, otro diario publica que al país le falta infraestructura y gente formada para aprovecharla.'},
-  {txt:'Un titular dice que los modelos de IA «mienten, roban y matan». Debajo hay una simulación con un juego inventado.'},
-  {txt:'Un organismo internacional publica un estudio, con su fecha y su metodología, sobre cuánta IA se usa en las universidades de la región.'},
-  {txt:'Un investigador de seguridad renuncia y explica por escrito, con su nombre, por qué cree que la industria va demasiado rápido.'}
+  {txt:'En el grupo del colegio circula que «en dos años la IA lo hará todo». Un compañero deja de inscribirse.'},
+  {txt:'Un diario publica, marcado como contenido patrocinado, que habrá becas de Inteligencia Artificial.'},
+  {txt:'El mismo mes, otro diario publica que al país le falta infraestructura y gente formada.'},
+  {txt:'Un titular dice que los modelos de IA «mienten, roban y matan». Debajo hay un juego inventado.'},
+  {txt:'Un organismo internacional publica un estudio, con fecha y método, sobre cuánta IA usan las universidades.'},
+  {txt:'Un investigador de seguridad renuncia y explica por escrito por qué cree que la industria va muy rápido.'}
 ];
 const critCaseQuestions=[
-  '1. Pasá la afirmación por las cuatro preguntas del termómetro. ¿Cuántas contesta?',
-  '2. ¿En qué tramo cae, y qué te toca hacer con ella?',
+  '1. Pasá la afirmación por las cuatro preguntas. ¿Cuántas contesta?',
+  '2. ¿En qué tramo cae? ¿Qué te toca hacer?',
   '3. ¿Qué gana quien la publica? ¿Eso la vuelve falsa?',
-  '4. Si es una promesa, ¿qué fecha le ponés para volver a mirarla?'
+  '4. Si es promesa, ¿qué fecha le ponés para volver?'
 ];
 const critCaseGuides=[
-  'Se valora que aplique las cuatro y no una: quién, qué gana, para cuándo y con qué se comprueba. El caso del grupo del colegio contesta una sola —trae un plazo— y por eso es un eco; el del organismo internacional las contesta todas.',
-  'Se valora que el tramo lleve a una acción: abrir el documento, buscar la pieza que falta, ponerle fecha o dejarla. Un alumno que solo diga «es falso» no hizo el ejercicio: casi nada de esto se puede declarar falso, se puede comprobar o no.',
-  'Se valora que nombre el interés sin usarlo como sentencia: la empresa gana gente formada en su tecnología, el medio gana lectores, el investigador dice que perdió dinero. Ninguna de las tres cosas prueba ni desmiente lo afirmado.',
-  'Respuesta abierta, pero tiene que traer una FECHA concreta. Sin fecha no hay examen posible, y esa es la lección entera de los dos inviernos.'
+  'Se valora que aplique las cuatro preguntas, no una. El del grupo del colegio contesta una sola; el del organismo, todas.',
+  'El tramo tiene que llevar a una acción: abrir el documento, buscar lo que falta o ponerle fecha. Decir «es falso» no es el ejercicio.',
+  'Que nombre el interés sin usarlo como sentencia: la empresa gana gente formada, el medio gana lectores, el investigador dice que perdió dinero. Eso no prueba nada.',
+  'Respuesta abierta, pero tiene que traer una FECHA concreta. Sin fecha no hay examen posible.'
 ];
 const critErrorBank=[
   {txt:'"Lo leí en cinco páginas distintas, así que es verdad."',
-   g1:'Cinco páginas que no dicen de dónde lo sacaron no son cinco fuentes: son un eco.',
-   g2:'Una sola fuente que se pueda abrir vale más que cincuenta que se copian.'},
+   g1:'Sin decir de dónde, son un eco: no cinco fuentes.',
+   g2:'Una fuente que se pueda abrir vale más que cincuenta copias.'},
   {txt:'"Lo dice una empresa que vende cursos de IA, así que es mentira."',
-   g1:'Saber qué gana alguien no vuelve falso lo que dice: lo pone en su sitio.',
-   g2:'Se comprueba igual, y si trae documento, se abre.'},
+   g1:'Saber qué gana lo pone en su sitio, no lo vuelve falso.',
+   g2:'Se comprueba igual.'},
   {txt:'"Como puede haber una singularidad, no vale la pena estudiar nada."',
-   g1:'Eso es tomar una decisión de tu vida con una afirmación que nadie puede comprobar.',
-   g2:'Y si mañana no pasa, el que perdió el año fuiste vos, no el que lo escribió.'},
+   g1:'Es decidir tu vida con algo que nadie puede comprobar.',
+   g2:'Si mañana no pasa, el año perdido es el tuyo.'},
   {txt:'"Esta noticia es de septiembre, así que el hecho es de septiembre."',
-   g1:'La fecha del artículo y la fecha del hecho son cosas distintas.',
-   g2:'Muchas listas de «novedades» cuentan como nuevo algo de hace años.'},
+   g1:'La fecha del artículo no es la del hecho.',
+   g2:'Muchas listas traen como nuevo algo de hace años.'},
   {txt:'"Si el titular es tan fuerte, algo habrá."',
-   g1:'La palabra más fuerte posible es la que más se comparte, y por eso se elige.',
-   g2:'Debajo suele haber algo mucho más pequeño: en este caso, una simulación.'},
+   g1:'La palabra más fuerte es la que más se comparte.',
+   g2:'Debajo suele haber algo más pequeño: una simulación.'},
   {txt:'"Dos noticias se contradicen: una de las dos miente."',
    g1:'Casi siempre miden cosas distintas.',
-   g2:'Que haya becas y que falte infraestructura puede ser verdad a la vez.'}
+   g2:'Puede haber becas y faltar infraestructura a la vez.'}
 ];
 const critDecisionBank=[
-  'Un compañero va a dejar de inscribirse por un mensaje del grupo; conviene no meterse, o pasar esa frase con él por las cuatro preguntas.',
-  'Encontraste una afirmación con institución, fecha y documento; conviene creerle porque suena seria, o abrir el documento y mirar el método.',
-  'Un anuncio de becas te interesa y está marcado como patrocinado; conviene descartarlo por eso, o buscar los requisitos en el sitio oficial.',
-  'Una promesa de la industria no trae plazo; conviene discutirla ahora, o apuntarla con fecha y volver a leerla ese día.',
-  'Un titular te indigna y el grupo está abierto; conviene compartirlo, o buscar primero el estudio que hay debajo.'
+  'Un compañero deja de inscribirse por un mensaje del grupo. ¿No meterse, o pasar esa frase con él por las cuatro preguntas?',
+  'Encontraste una afirmación con institución, fecha y documento. ¿Creerle porque suena seria, o abrir el documento?',
+  'Un anuncio de becas te interesa y está marcado como patrocinado. ¿Descartarlo, o buscar los requisitos?',
+  'Una promesa de la industria no trae plazo. ¿Discutirla ahora, o apuntarla con fecha y volver ese día?',
+  'Un titular te indigna y el grupo está abierto. ¿Compartirlo, o buscar primero el estudio que hay debajo?'
 ];
-const critDecisionGuide='La mejor decisión va siempre al documento y le pone fecha a lo que no se puede juzgar todavía. Abrir el estudio en vez de creerle al titular, buscar los requisitos en vez de descartar el anuncio por patrocinado, y apuntar la promesa en vez de discutirla: las tres cuestan unos minutos y las tres se pueden hacer con el teléfono que ya tenés. Y ayudar a un compañero a pasar una frase por las cuatro preguntas no es meterse: esa frase le estaba costando el año.';
+const critDecisionGuide='La mejor decisión va al documento y le pone fecha a lo que no se puede juzgar. Abrir el estudio, buscar los requisitos, apuntar la promesa: se hacen en minutos. Y ayudar a un compañero con esa frase no es meterse.';
 const critCompareBank=[
   {a:'Una afirmación comprobable.',b:'Una afirmación verdadera.',
    ga:'Trae quién, cuándo y un documento que se puede abrir.',
    gb:'Coincide con lo que pasó.',
-   gr:'No son lo mismo, y confundirlas es el error más común: algo comprobable puede resultar falso al comprobarlo, y algo verdadero puede llegarte sin nada con qué comprobarlo. Lo único que podés exigirle a una noticia hoy es lo primero.'},
+   gr:'No son lo mismo. Algo comprobable puede resultar falso al comprobarlo. Y algo verdadero puede llegar sin nada que abrir. A una noticia de hoy solo podés exigirle lo primero.'},
   {a:'Un punto de inflexión.',b:'Una noticia grande.',
    ga:'Cambia lo que se puede hacer, y se nota años después.',
    gb:'Ocupa portadas el día que pasa.',
-   gr:'Casi nunca coinciden. El artículo del que salen los chats de hoy pasó desapercibido; hubo victorias sonadas que cambiaron poco. Por eso lo honesto es fechar y volver.'},
+   gr:'Casi nunca coinciden. El artículo del que salen los chats de hoy pasó desapercibido. Por eso lo honesto es fechar y volver.'},
   {a:'«En dos años lo hará todo.»',b:'«Desde agosto, esta ley obliga a etiquetar lo generado por IA.»',
-   ga:'No dice quién, ni qué gana, ni con qué se comprueba. Solo un plazo.',
+   ga:'No dice quién, ni qué gana, ni con qué. Solo un plazo.',
    gb:'Dice quién, desde cuándo, y el texto está publicado.',
-   gr:'Las dos hablan del futuro cercano y no se parecen en nada: una se puede abrir hoy mismo y la otra no tiene por dónde agarrarse. La diferencia no es el tema: es lo que cada una trae.'}
+   gr:'Las dos hablan del futuro y no se parecen. Una se puede abrir hoy mismo; la otra no tiene por dónde agarrarse.'}
 ];
 const critCauseBank=[
-  {cause:'Una promesa sin fecha no se puede incumplir.',guide:'Por eso quien promete evita los plazos, y por eso ponerle vos una fecha es la defensa.'},
-  {cause:'Publicar «lo último» cada mes da visitas, y copiar sale más barato que comprobar.',guide:'Por eso la mayoría de lo que aparece al buscar noticias de IA son ecos sin fuente.'},
-  {cause:'Un titular con la palabra más fuerte se comparte más.',guide:'Por eso «eliminó a un jugador de una simulación» se publica como «mata».'},
-  {cause:'En los dos inviernos se prometió más de lo que se podía.',guide:'Por eso hoy la vara no es si algo suena impresionante, sino qué se prometió y para cuándo.'},
-  {cause:'Las decisiones sobre tu vida se toman con la información que tenés ese día.',guide:'Por eso una frase sin dueño puede costar una matrícula, y por eso se pasa por el termómetro antes.'}
+  {cause:'Una promesa sin fecha no se puede incumplir.',guide:'Por eso quien promete evita los plazos. Ponerle vos la fecha es la defensa.'},
+  {cause:'Publicar «lo último» cada mes da visitas, y copiar sale barato.',guide:'Por eso casi todo lo que sale al buscar noticias de IA son ecos.'},
+  {cause:'Un titular con la palabra más fuerte se comparte más.',guide:'Por eso «sacó a un jugador de un juego» se publica como «mata».'},
+  {cause:'En los dos inviernos se prometió de más.',guide:'Por eso la vara no es si algo impresiona, sino qué se prometió y para cuándo.'},
+  {cause:'Tu vida se decide con lo que sabés ese día.',guide:'Por eso una frase sin dueño puede costar una matrícula.'}
 ];
 const critEffectBank=[
-  {effect:'Un alumno deja de inscribirse en una carrera por un mensaje reenviado.',guide:'Porque la frase traía un plazo y sonaba segura, y nadie le preguntó quién la decía.'},
-  {effect:'Una familia se entera tarde de unas becas que sí existían.',guide:'Porque el anuncio venía marcado como patrocinado y se descartó entero, en vez de buscar los requisitos.'},
-  {effect:'Un titular sobre IA deja de leerse aunque sea de verdad.',guide:'Porque antes se gastaron demasiadas alarmas con titulares que no traían nada debajo.'},
-  {effect:'Una promesa de la industria se puede juzgar dentro de un año.',guide:'Porque alguien la apuntó con su fecha el día que se hizo.'},
-  {effect:'Dos noticias contrarias del mismo mes resultan ser las dos ciertas.',guide:'Porque una medía anuncios y la otra medía infraestructura: no hablaban de lo mismo.'}
+  {effect:'Un alumno deja de inscribirse por un mensaje reenviado.',guide:'Porque la frase traía un plazo y sonaba segura, y nadie preguntó quién la decía.'},
+  {effect:'Una familia se entera tarde de unas becas que sí existían.',guide:'Porque el anuncio venía marcado como patrocinado y se descartó entero.'},
+  {effect:'Un titular de verdad sobre IA deja de leerse.',guide:'Porque antes se gastaron las alarmas con titulares sin nada debajo.'},
+  {effect:'Una promesa se puede juzgar dentro de un año.',guide:'Porque alguien la apuntó con su fecha el día que se hizo.'},
+  {effect:'Dos noticias contrarias resultan ser las dos ciertas.',guide:'Porque una medía anuncios y la otra infraestructura.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -690,10 +690,10 @@ const parteData = (function () {
   IA_TERMOMETRO.forEach(t => {
     out[t.k] = {
       nombre: t.pregunta, icon: t.emoji,
-      estructura: { title: '¿Por qué esta pregunta?', info: '<strong>' + esc(t.porque) + '</strong>' },
+      estructura: { title: '¿Por qué sirve?', info: '<strong>' + esc(t.porque) + '</strong>' },
       funcion:    { title: 'Cuando la respuesta es SÍ',  info: '✅ ' + esc(t.si) },
       ubicacion:  { title: 'Cuando la respuesta es NO',  info: '🚫 ' + esc(t.no) },
-      dato:       { title: 'En el dossier de este mes',  info: esc(IA_HOY.filter(h => h.comprobable === 'alta').length + ' de las ' + IA_HOY.length + ' afirmaciones de ' + IA_HOY_MES + ' traen institución, fecha y documento. Las demás, no. Ninguna se da por cierta en esta misión: se comprueban.') }
+      dato:       { title: 'En el dossier de este mes',  info: esc(IA_HOY.filter(h => h.comprobable === 'alta').length + ' de las ' + IA_HOY.length + ' afirmaciones traen institución, fecha y documento. Las demás, no. Aquí ninguna se da por cierta: se comprueban.') }
     };
   });
   return out;
@@ -705,7 +705,7 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya sabés a quién preguntarle!','¡Con el termómetro en la mano!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧭 ¡${name} completó la Misión "En los Albores de la Singularidad"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -762,8 +762,8 @@ function pintarIaTermometro(){
    Después de decidir ve la ficha entera: quién lo dice, qué gana, qué trae,
    cómo se comprueba y por qué le importa a él. */
 const IA_NIVELES=[
-  {k:'alta',emoji:'📎',n:'Trae mucho',d:'Nombra a quien responde, con fecha y con un documento que se puede abrir.'},
-  {k:'media',emoji:'🧭',n:'Trae algo',d:'Varios medios lo cuentan con fecha, pero el documento original no está.'},
+  {k:'alta',emoji:'📎',n:'Trae mucho',d:'Nombra a quien responde, con fecha y documento.'},
+  {k:'media',emoji:'🧭',n:'Trae algo',d:'Varios medios con fecha, pero sin el documento.'},
   {k:'baja',emoji:'💨',n:'No trae casi nada',d:'No dice quién, ni cuándo, ni de dónde.'}
 ];
 let iaDosIdx=0, iaDosElegido={}, iaDosHechos=new Set();
@@ -801,7 +801,7 @@ function iaDosDecidir(k){
   const ok=k===h.comprobable;sfx(ok?'ok':'no');
   if(!iaDosHechos.has(h.k)){iaDosHechos.add(h.k);if(!xpTracker.wgt.has('dos_'+h.k)){xpTracker.wgt.add('dos_'+h.k);pts(2);}}
   if(ok&&!xpTracker.wgt.has('dos_ok_'+h.k)){xpTracker.wgt.add('dos_ok_'+h.k);pts(1);}
-  fb('fbDos',ok?'✅ Clasificada por lo que trae, no por si suena bien.':'Mirá abajo qué trae de verdad: eso es lo que decide, no si estás de acuerdo.',ok);
+  fb('fbDos',ok?'✅ Clasificada por lo que trae.':'Mirá abajo qué trae. Eso decide, no si estás de acuerdo.',ok);
   if(iaDosHechos.size>=IA_HOY.length){fin('s-estructura');unlockAchievement('archivista');}
   iaDosPintarLista();iaDosPintar();
 }
@@ -891,7 +891,7 @@ function iaTermPintar() {
     html += '<p class="term-tramo"><strong>' + tramoReal.emoji + ' ' + _esc(tramoReal.nombre) + '</strong> — trae ' + reales + ' de ' + IA_TERMOMETRO.length + '.</p>' +
       '<p class="term-dice">' + tramoReal.dice.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') + '</p>' +
       '<p class="term-porque">' + _esc(f.porque) + '</p>';
-    if (tramoMio.k !== tramoReal.k) html += '<p class="term-ojo">👀 Vos la pusiste en «' + _esc(tramoMio.nombre) + '». Mirá arriba en qué pregunta se separan: ahí está lo que conviene volver a leer.</p>';
+    if (tramoMio.k !== tramoReal.k) html += '<p class="term-ojo">👀 Vos la pusiste en «' + _esc(tramoMio.nombre) + '». Mirá arriba en qué pregunta se separan.</p>';
     html += '<div class="ens-btns">' + (iaTermIdx < IA_FRASES.length - 1 ? '<button class="btn btn-pri" onclick="iaTermElegir(' + (iaTermIdx + 1) + ')">Siguiente frase ▶</button>' : '') +
       '<button class="btn btn-d" onclick="iaTermOtra()">🔄 Juzgarla otra vez</button></div>';
     if (!iaTermHechas.has(f.k)) {
@@ -901,7 +901,7 @@ function iaTermPintar() {
       if (iguales === IA_TERMOMETRO.length && !xpTracker.wgt.has('term_ok_' + f.k)) { xpTracker.wgt.add('term_ok_' + f.k); pts(2); }
       if (iaTermHechas.size === IA_FRASES.length && !xpTracker.wgt.has('term_todas')) {
         xpTracker.wgt.add('term_todas'); pts(3);
-        fb('fbTerm', '+3 XP: las cinco. Y fijate que no todas son humo: dos traen con qué comprobarse. Desconfiar de todo cuesta lo mismo que creerlo todo.', true);
+        fb('fbTerm', '+3 XP: las cinco. De ellas, dos traen con qué comprobarse. Desconfiar de todo cuesta lo mismo que creerlo todo.', true);
       }
       iaDescubreListo();
     }
@@ -923,13 +923,13 @@ function iaCapFecha() {
 function iaCapGuardar() {
   const v = id => ((document.getElementById(id) || {}).value || '').trim();
   const promesa = v('cap-promesa'), quien = v('cap-quien'), creo = v('cap-creo');
-  if (promesa.length < 10) { fb('fbCap', 'Copiá la promesa tal cual la leíste, con una oración entera.', false); return; }
-  if (quien.length < 2) { fb('fbCap', 'Falta quién la hace. Sin eso no hay a quién volver a preguntarle dentro de un año.', false); return; }
-  if (creo.length < 4) { fb('fbCap', 'Escribí qué creés vos. Equivocarse también enseña: por eso se apunta.', false); return; }
+  if (promesa.length < 10) { fb('fbCap', 'Copiá la promesa tal cual, con una oración entera.', false); return; }
+  if (quien.length < 2) { fb('fbCap', 'Falta quién la hace. Sin eso no hay a quién preguntarle en un año.', false); return; }
+  if (creo.length < 4) { fb('fbCap', 'Escribí qué creés vos. Equivocarse también enseña.', false); return; }
   const c = { promesa: promesa, quien: quien, creo: creo, hoy: IA_HOY_FECHA, vuelve: iaCapFecha() };
   iaDescGuardar('capsula', c); iaCapPintar(c); sfx('up');
   if (!xpTracker.wgt.has('cap')) { xpTracker.wgt.add('cap'); pts(5); }
-  fb('fbCap', '+5 XP: tu cápsula está guardada en este teléfono. Volvé el ' + c.vuelve + ' y leela.', true);
+  fb('fbCap', '+5 XP: tu cápsula quedó guardada. Volvé el ' + c.vuelve + ' y leela.', true);
   iaDescubreListo();
 }
 function iaCapPintar(c) {
@@ -938,7 +938,7 @@ function iaCapPintar(c) {
     '<p><strong>Se promete:</strong> «' + _esc(c.promesa) + '»</p>' +
     '<p><strong>Lo dice:</strong> ' + _esc(c.quien) + '</p>' +
     '<p><strong>Yo creo que:</strong> ' + _esc(c.creo) + '</p>' +
-    '<p class="cap-vuelve">⏰ Volvé a leer esto el <strong>' + _esc(c.vuelve) + '</strong>. Ese día vas a saber si era un hito o un invierno, y nadie te lo va a tener que decir.</p></div>';
+    '<p class="cap-vuelve">⏰ Volvé a leer esto el <strong>' + _esc(c.vuelve) + '</strong>. Ese día vas a saber si era un hito o un invierno.</p></div>';
 }
 function iaCapBorrar() {
   if (!confirm('¿Borrar tu cápsula del tiempo? Lo que escribiste se pierde.')) return;

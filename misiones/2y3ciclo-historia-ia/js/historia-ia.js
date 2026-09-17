@@ -88,26 +88,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Quién se preguntó en 1950 si las máquinas podían pensar?',o:['John McCarthy','Joseph Weizenbaum','Arthur Samuel','Alan Turing'],c:3,
-   e:'En el artículo «Computing Machinery and Intelligence», publicado en la revista Mind.'},
-  {q:'¿En qué año y dónde nació el nombre «Inteligencia Artificial»?',o:['En 1950, en Londres','En 1956, en el taller de verano del Dartmouth College','En 1997, en Nueva York','En 2022, en internet'],c:1,
-   e:'El término aparece escrito por primera vez en la propuesta de ese taller.'},
+  {q:'¿Quién preguntó en 1950 si las máquinas podían pensar?',o:['John McCarthy','Joseph Weizenbaum','Arthur Samuel','Alan Turing'],c:3,
+   e:'En el artículo «Computing Machinery and Intelligence», revista Mind.'},
+  {q:'¿En qué año y dónde nació el nombre «Inteligencia Artificial»?',o:['En 1950, en Londres','En 1956, en el taller de Dartmouth','En 1997, en Nueva York','En 2022, en internet'],c:1,
+   e:'Aparece escrito por primera vez en la propuesta de ese taller.'},
   {q:'ELIZA, de 1966, conversaba con la gente. ¿Qué enseñó?',o:['Que las máquinas ya entendían en 1966','Que algo puede contestar como una persona sin entender nada','Que los chats son un invento reciente','Que las máquinas sienten'],c:1,
-   e:'Su propio autor se asustó: la gente le contaba cosas íntimas a un programa muy simple.'},
-  {q:'¿Por qué hubo dos «inviernos» de la IA?',o:['Se prometió más de lo que se podía cumplir y se cortó el dinero','Se acabó la electricidad','Se prohibió investigar','Se perdieron los programas'],c:0,
-   e:'No fue un problema técnico: fue una promesa que no llegó, y con ella se fue la confianza.'},
-  {q:'¿Qué pasó en 1997 con Deep Blue y Garri Kaspárov?',o:['Kaspárov le ganó a la máquina','Empataron todas las partidas','Una máquina le ganó el enfrentamiento al campeón mundial de ajedrez','La partida se suspendió'],c:2,
-   e:'No aprendía como las de hoy: calculaba muchísimas jugadas por segundo.'},
-  {q:'2012 es el año en que las máquinas «aprendieron a ver». ¿Qué pasó?',o:['Se inventó la cámara digital','Se abrió el primer chat','Se conectó el primer teléfono','Una red neuronal profunda ganó el concurso de reconocer imágenes'],c:3,
-   e:'Entrenada con tarjetas gráficas sobre un millón de fotos etiquetadas.'},
+   e:'Su autor se asustó: la gente le contaba cosas íntimas.'},
+  {q:'¿Por qué hubo dos «inviernos» de la IA?',o:['Se prometió de más y se cortó el dinero','Se acabó la electricidad','Se prohibió investigar','Se perdieron los programas'],c:0,
+   e:'No falló la técnica: falló la promesa, y con ella la confianza.'},
+  {q:'¿Qué pasó en 1997 con Deep Blue y Garri Kaspárov?',o:['Kaspárov le ganó a la máquina','Empataron todas las partidas','Una máquina ganó al campeón mundial de ajedrez','La partida se suspendió'],c:2,
+   e:'No aprendía: calculaba muchísimas jugadas por segundo.'},
+  {q:'2012: las máquinas «aprendieron a ver». ¿Qué pasó?',o:['Se inventó la cámara digital','Se abrió el primer chat','Se conectó el primer teléfono','Una red profunda ganó el concurso de imágenes'],c:3,
+   e:'Con tarjetas gráficas y un millón de fotos etiquetadas.'},
   {q:'¿Qué hace distinto a AlphaGo, de 2016?',o:['Calculaba todas las jugadas posibles','Aprendió jugando millones de partidas contra sí mismo','Copiaba las partidas de los campeones','Le preguntaba a un experto'],c:1,
-   e:'El Go tiene tantas jugadas que no se puede ganar calculándolas todas: es aprendizaje por refuerzo.'},
-  {q:'¿De qué año es el artículo con la pieza técnica de la que salen los chats de hoy?',o:['De 1956','De 1997','De 2017','De 2022'],c:2,
-   e:'Se llama transformador, y el público no se enteró hasta cinco años más tarde.'},
-  {q:'¿Qué tres cosas tuvieron que juntarse para que la IA se acelerara?',o:['Datos, cómputo y algoritmos','Dinero, publicidad y suerte','Robots, sensores y motores','Internet, teléfonos y satélites'],c:0,
-   e:'Faltando una de las tres, no pasa: por eso tardó setenta años.'},
-  {q:'¿Qué cambió en noviembre de 2022?',o:['Se inventó la Inteligencia Artificial','Se construyó la primera computadora','Se ganó el primer campeonato de ajedrez','Un chat de IA generativa se abrió al público y lo probó muchísima gente'],c:3,
-   e:'La idea era de 2017. Lo que cambió fue que llegó al teléfono de cualquiera.'}
+   e:'El Go tiene demasiadas jugadas para calcularlas: es aprendizaje por refuerzo.'},
+  {q:'¿De qué año es la pieza técnica de los chats de hoy?',o:['De 1956','De 1997','De 2017','De 2022'],c:2,
+   e:'Se llama transformador. El público lo vio cinco años después.'},
+  {q:'¿Qué tres cosas tuvieron que juntarse?',o:['Datos, cómputo y algoritmos','Dinero, publicidad y suerte','Robots, sensores y motores','Internet, teléfonos y satélites'],c:0,
+   e:'Faltando una, no pasa: por eso tardó setenta años.'},
+  {q:'¿Qué cambió en noviembre de 2022?',o:['Se inventó la Inteligencia Artificial','Se construyó la primera computadora','Se ganó el primer campeonato de ajedrez','Un chat de IA generativa se abrió al público'],c:3,
+   e:'La idea era de 2017. Lo nuevo fue que llegó a cualquiera.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -125,10 +125,10 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
-  {label:['Pasó ANTES de que el campo tuviera nombre','Pasó DESPUÉS de 1956'],headA:'🌱 Antes de 1956',headB:'🎉 De 1956 en adelante',colA:'antes',colB:'desp',
+  {label:['Pasó ANTES del nombre','Pasó DESPUÉS de 1956'],headA:'🌱 Antes de 1956',headB:'🎉 De 1956 en adelante',colA:'antes',colB:'desp',
    words:[{w:'Turing describe la máquina universal',t:'antes'},{w:'Nace el nombre en Dartmouth',t:'desp'},{w:'La primera neurona de papel',t:'antes'},{w:'ELIZA conversa con la gente',t:'desp'},{w:'«¿Pueden pensar las máquinas?»',t:'antes'},{w:'El perceptrón de Rosenblatt',t:'desp'},{w:'Un programa de damas gana a su autor',t:'desp'},{w:'Deep Blue gana al campeón de ajedrez',t:'desp'}]},
   {label:['Fue un ÉXITO','Fue un FRACASO'],headA:'🚀 Éxito',headB:'❄️ Fracaso',colA:'exito',colB:'fracaso',
-   words:[{w:'Deep Blue gana al ajedrez en 1997',t:'exito'},{w:'El primer invierno de los años setenta',t:'fracaso'},{w:'Una red gana el concurso de imágenes en 2012',t:'exito'},{w:'La caída de los sistemas expertos',t:'fracaso'},{w:'AlphaGo gana al Go en 2016',t:'exito'},{w:'Se prometió traducción automática y no llegó',t:'fracaso'},{w:'El artículo del transformador en 2017',t:'exito'},{w:'Se cortó el dinero y cerraron laboratorios',t:'fracaso'}]},
+   words:[{w:'Deep Blue gana al ajedrez en 1997',t:'exito'},{w:'El primer invierno de los años setenta',t:'fracaso'},{w:'Una red gana el concurso de imágenes',t:'exito'},{w:'La caída de los sistemas expertos',t:'fracaso'},{w:'AlphaGo gana al Go en 2016',t:'exito'},{w:'Se prometió traducción automática y no llegó',t:'fracaso'},{w:'El artículo del transformador en 2017',t:'exito'},{w:'Se cortó el dinero y cerraron laboratorios',t:'fracaso'}]},
   {label:['Es una de las tres patas','No es una de las tres patas'],headA:'🏗️ Una de las tres',headB:'🚫 No es una',colA:'pata',colB:'no',
    words:[{w:'Datos',t:'pata'},{w:'Cómputo',t:'pata'},{w:'Algoritmos',t:'pata'},{w:'Publicidad',t:'no'},{w:'Millones de fotos etiquetadas',t:'pata'},{w:'Las tarjetas gráficas',t:'pata'},{w:'La suerte',t:'no'},{w:'El precio de los teléfonos',t:'no'}]}
 ];
@@ -140,14 +140,14 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['En','1956','el','campo','estrenó','su','nombre.'],c:1,art:'El año en que nació el nombre «Inteligencia Artificial»'},
-  {s:['Alan','Turing','preguntó','si','las','máquinas','podían','pensar.'],c:1,art:'El apellido de quien hizo esa pregunta en 1950'},
-  {s:['ELIZA','contestaba','sin','entender','absolutamente','nada.'],c:0,art:'El nombre del programa que conversaba en 1966'},
-  {s:['Los','dos','inviernos','llegaron','por','prometer','de','más.'],c:2,art:'El nombre de los dos períodos en que el campo casi se para'},
-  {s:['Deep','Blue','ganó','al','campeón','mundial','de','ajedrez.'],c:7,art:'El juego en que una máquina ganó en 1997'},
-  {s:['En','2012','una','red','aprendió','a','ver','imágenes.'],c:7,art:'Lo que las máquinas aprendieron a reconocer ese año'},
-  {s:['AlphaGo','aprendió','jugando','contra','sí','mismo.'],c:0,art:'El nombre del programa que ganó al Go'},
-  {s:['Hicieron','falta','datos,','cómputo','y','algoritmos.'],c:3,art:'La pata que aportaron las tarjetas gráficas'}
+  {s:['En','1956','el','campo','estrenó','su','nombre.'],c:1,art:'El año en que nació el nombre del campo'},
+  {s:['Alan','Turing','preguntó','si','las','máquinas','podían','pensar.'],c:1,art:'El apellido de quien preguntó en 1950'},
+  {s:['ELIZA','contestaba','sin','entender','absolutamente','nada.'],c:0,art:'El programa que conversaba en 1966'},
+  {s:['Los','dos','inviernos','llegaron','por','prometer','de','más.'],c:2,art:'Los dos períodos en que el campo casi se para'},
+  {s:['Deep','Blue','ganó','al','campeón','mundial','de','ajedrez.'],c:7,art:'El juego que ganó una máquina en 1997'},
+  {s:['En','2012','una','red','aprendió','a','ver','imágenes.'],c:7,art:'Lo que aprendieron a reconocer ese año'},
+  {s:['AlphaGo','aprendió','jugando','contra','sí','mismo.'],c:0,art:'El programa que ganó al Go'},
+  {s:['Hicieron','falta','datos,','cómputo','y','algoritmos.'],c:3,art:'La pata de las tarjetas gráficas'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -158,13 +158,13 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'En 1950 Alan Turing preguntó si las máquinas podían ___.',opts:['correr','contar','pensar'],c:2},
-  {s:'El nombre «Inteligencia Artificial» nació en el taller de ___.',opts:['Londres','Dartmouth','Praga'],c:1},
+  {s:'El nombre del campo nació en el taller de ___.',opts:['Londres','Dartmouth','Praga'],c:1},
   {s:'El programa de 1966 que conversaba se llamaba ___.',opts:['ELIZA','ALICIA','SOFÍA'],c:0},
   {s:'Los dos períodos en que el campo casi se para se llaman los dos ___.',opts:['veranos','otoños','inviernos'],c:2},
   {s:'En 1997 Deep Blue ganó al campeón mundial de ___.',opts:['damas','ajedrez','Go'],c:1},
   {s:'En 2012 las máquinas aprendieron a reconocer ___.',opts:['imágenes','olores','sabores'],c:0},
   {s:'Las tres patas son datos, algoritmos y ___.',opts:['dinero','suerte','cómputo'],c:2},
-  {s:'La pieza técnica de 2017 de la que salen los chats se llama ___.',opts:['perceptrón','transformador','buscador'],c:1}
+  {s:'La pieza técnica de 2017 se llama ___.',opts:['perceptrón','transformador','buscador'],c:1}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -178,7 +178,7 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets = [
-  { label: 'Ordena la línea del tiempo: lo más antiguo arriba',
+  { label: 'Ordena: lo más antiguo arriba',
     steps: IA_HITOS.slice(0, 6).map(h => h.anio + ' · ' + h.titulo) },
   { label: 'Ordena la explosión: de 1997 hasta hoy',
     steps: IA_HITOS.slice(9).map(h => h.anio + ' · ' + h.titulo) }
@@ -240,10 +240,10 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 
 // ===================== RETO FINAL =====================
 const retoPairs=[
-  {label:['Pasó ANTES de que el campo tuviera nombre','Pasó DESPUÉS de 1956'],btnA:'🌱 Antes de 1956',btnB:'🎉 De 1956 en adelante',colA:'antes',colB:'desp',
+  {label:['Pasó ANTES del nombre','Pasó DESPUÉS de 1956'],btnA:'🌱 Antes de 1956',btnB:'🎉 De 1956 en adelante',colA:'antes',colB:'desp',
    words:[{w:'Turing describe la máquina universal',t:'antes'},{w:'Nace el nombre en Dartmouth',t:'desp'},{w:'La primera neurona de papel',t:'antes'},{w:'ELIZA conversa con la gente',t:'desp'},{w:'«¿Pueden pensar las máquinas?»',t:'antes'},{w:'El perceptrón de Rosenblatt',t:'desp'},{w:'Un programa de damas gana a su autor',t:'desp'},{w:'Deep Blue gana al campeón de ajedrez',t:'desp'},{w:'AlphaGo gana al Go',t:'desp'},{w:'El artículo del transformador',t:'desp'}]},
   {label:['Fue un ÉXITO','Fue un FRACASO'],btnA:'🚀 Éxito',btnB:'❄️ Fracaso',colA:'exito',colB:'fracaso',
-   words:[{w:'Deep Blue gana al ajedrez en 1997',t:'exito'},{w:'El primer invierno de los años setenta',t:'fracaso'},{w:'Una red gana el concurso de imágenes en 2012',t:'exito'},{w:'La caída de los sistemas expertos',t:'fracaso'},{w:'AlphaGo gana al Go en 2016',t:'exito'},{w:'Se prometió traducción automática y no llegó',t:'fracaso'},{w:'El artículo del transformador en 2017',t:'exito'},{w:'Se cortó el dinero y cerraron laboratorios',t:'fracaso'},{w:'Los chats llegan al público en 2022',t:'exito'},{w:'Mantener miles de reglas a mano resultó carísimo',t:'fracaso'}]},
+   words:[{w:'Deep Blue gana al ajedrez en 1997',t:'exito'},{w:'El primer invierno de los años setenta',t:'fracaso'},{w:'Una red gana el concurso de imágenes',t:'exito'},{w:'La caída de los sistemas expertos',t:'fracaso'},{w:'AlphaGo gana al Go en 2016',t:'exito'},{w:'Se prometió traducción automática y no llegó',t:'fracaso'},{w:'El artículo del transformador en 2017',t:'exito'},{w:'Se cortó el dinero y cerraron laboratorios',t:'fracaso'},{w:'Los chats llegan al público en 2022',t:'exito'},{w:'Mantener miles de reglas salía carísimo',t:'fracaso'}]},
   {label:['Es una de las tres patas','No es una de las tres patas'],btnA:'🏗️ Una de las tres',btnB:'🚫 No es una',colA:'pata',colB:'no',
    words:[{w:'Datos',t:'pata'},{w:'Cómputo',t:'pata'},{w:'Algoritmos',t:'pata'},{w:'Publicidad',t:'no'},{w:'Millones de fotos etiquetadas',t:'pata'},{w:'Las tarjetas gráficas',t:'pata'},{w:'La suerte',t:'no'},{w:'El precio de los teléfonos',t:'no'},{w:'Maneras nuevas de entrenar redes',t:'pata'},{w:'El nombre de la empresa',t:'no'}]}
 ];
@@ -270,19 +270,19 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 const identifyTaskDB=[
   {s:'En 1956 el campo estrenó el nombre que lleva hoy.',type:'1956'},
   {s:'Alan Turing preguntó en 1950 si las máquinas podían pensar.',type:'Alan Turing'},
-  {s:'ELIZA conversaba en 1966 sin entender absolutamente nada.',type:'ELIZA'},
-  {s:'Los dos inviernos llegaron por prometer más de lo que se podía.',type:'inviernos'},
+  {s:'ELIZA conversaba en 1966 sin entender nada.',type:'ELIZA'},
+  {s:'Los dos inviernos llegaron por prometer de más.',type:'inviernos'},
   {s:'Deep Blue ganó el enfrentamiento de ajedrez en 1997.',type:'Deep Blue'},
-  {s:'En 2012 una red neuronal profunda aprendió a reconocer imágenes.',type:'2012'},
+  {s:'En 2012 una red profunda aprendió a reconocer imágenes.',type:'2012'},
   {s:'AlphaGo aprendió jugando millones de partidas contra sí mismo.',type:'AlphaGo'},
   {s:'Hicieron falta datos, cómputo y algoritmos, las tres a la vez.',type:'tres a la vez'},
-  {s:'El transformador es la pieza de 2017 de la que salen los chats de hoy.',type:'transformador'},
+  {s:'El transformador es la pieza de 2017 de los chats de hoy.',type:'transformador'},
   {s:'El perceptrón de 1958 fue la primera máquina que aprendió sola.',type:'perceptrón'}
 ];
 const classifyTaskDB=[
   {w:'1950 · La pregunta de Turing',gen:'¿Pueden pensar las máquinas?',n:'Propone el juego de imitación',g:'Es el acta de nacimiento de la idea',t:''},
   {w:'1956 · Dartmouth',gen:'Nace el nombre del campo',n:'Un taller de verano',g:'Un campo sin nombre no existe',t:''},
-  {w:'1966 · ELIZA',gen:'Un programa que conversaba',n:'Devolvía lo que le decían en forma de pregunta',g:'Contestar no es entender',t:''},
+  {w:'1966 · ELIZA',gen:'Un programa que conversaba',n:'Devuelve en pregunta lo que le dicen',g:'Contestar no es entender',t:''},
   {w:'Los inviernos',gen:'Dos períodos en que el campo casi se para',n:'Años setenta y finales de los ochenta',g:'Prometer de más cuesta la confianza',t:''},
   {w:'1997 · Deep Blue',gen:'Una máquina gana al campeón de ajedrez',n:'Calculaba, no aprendía',g:'Se puede ganar sin entender nada',t:''},
   {w:'2012 · Las imágenes',gen:'Las máquinas aprenden a ver',n:'Un millón de fotos y tarjetas gráficas',g:'Arranca el aprendizaje profundo',t:''},
@@ -300,23 +300,23 @@ const completeTaskDB=[
   {s:'Las tres patas son datos, cómputo y ___.',ans:'algoritmos'}
 ];
 const explainQuestions=[
-  {q:'¿Por qué se dice que la Inteligencia Artificial no nació en 2022?',ans:'Porque el trabajo empezó mucho antes: en 1950 Turing ya se preguntaba si una máquina podía pensar, en 1956 el campo estrenó nombre en Dartmouth, y en 1966 ELIZA ya conversaba. Lo que pasó en 2022 fue que llegó al teléfono de cualquiera, con una idea técnica que era de 2017.'},
-  {q:'Explica qué fueron los dos inviernos de la IA y qué enseñan.',ans:'Fueron dos períodos, en los años setenta y a finales de los ochenta, en que el campo casi se para. Las dos veces se había prometido más de lo que se podía cumplir; cuando la promesa no llegó, se cortó el dinero para todos, también para los que iban bien. La lección no es de computadoras: quien promete de más pierde la confianza, y recuperarla cuesta una generación.'},
-  {q:'¿Qué tres cosas tuvieron que juntarse para que la IA se acelerara, y por qué no bastaba con una?',ans:'Datos (millones de fotos y textos, muchos etiquetados por personas), cómputo (las tarjetas gráficas, hechas para videojuegos, resultaron servir para entrenar redes) y algoritmos (maneras nuevas de armar y entrenar). Faltando una, no pasa: con las ideas de los ochenta y sin datos ni tarjetas, los entrenamientos de hoy tardarían siglos.'},
-  {q:'¿Qué enseñó ELIZA en 1966 que sigue valiendo hoy?',ans:'Que algo puede contestar como una persona sin entender absolutamente nada. ELIZA era muy simple: devolvía lo que le decían en forma de pregunta. Y aun así la gente le contaba cosas íntimas y algunos se negaban a creer que no era una persona. Su propio autor se asustó de lo que pasó.'},
-  {q:'¿En qué se diferencia lo que hizo Deep Blue en 1997 de lo que hizo AlphaGo en 2016?',ans:'Deep Blue calculaba: probaba muchísimas jugadas por segundo y elegía la mejor, pero no aprendía. AlphaGo no podía hacer eso, porque el Go tiene demasiadas jugadas posibles: aprendió jugando millones de partidas contra sí mismo, premiándose cuando ganaba. Es la diferencia entre calcular y aprender por refuerzo.'},
-  {q:'¿Por qué 2012 se llama «el año en que las máquinas aprendieron a ver»?',ans:'Porque ese año una red neuronal profunda ganó el concurso de reconocimiento de imágenes bajando el error muchísimo de golpe. Y ahí se vio la receta completa funcionando junta: un millón de fotos etiquetadas, tarjetas gráficas para entrenar, y un algoritmo bueno.'},
-  {q:'¿Qué relación hay entre el artículo de 2017 y el chat que usa hoy tu primo?',ans:'Todos los chats de IA generativa de hoy descienden de esa pieza técnica, el transformador, que permitió entrenar con muchísimo más texto y mucho más rápido. El público no se enteró hasta cinco años más tarde, cuando se abrió al público un chat construido con esa idea.'},
-  {q:'La historia de la IA se cuenta con nombres. ¿Por qué también hay que mirar quién NO aparece?',ans:'Respuesta abierta. Se valora que note que la lista está hecha de laboratorios y universidades de unos pocos países, que los datos con que se entrena salen del trabajo de muchísima gente que no aparece, y que quien no está en los datos tampoco está en los resultados: es el mismo sesgo de la etapa 2, visto en grande.'},
-  {q:'Hoy se vuelve a prometer mucho sobre la IA. Sabiendo lo de los inviernos, ¿cómo escuchas esas promesas?',ans:'Respuesta abierta. Se valora que no caiga ni en creer todo ni en burlarse de todo: que pregunte qué promete exactamente, para cuándo, quién lo dice y qué gana diciéndolo, y que compare con lo que ya funciona hoy.'}
+  {q:'¿Por qué se dice que la Inteligencia Artificial no nació en 2022?',ans:'Empezó mucho antes. En 1950 Turing preguntó si una máquina podía pensar. En 1956 el campo estrenó nombre. En 2022 solo llegó a todos.'},
+  {q:'Explica qué fueron los dos inviernos de la IA y qué enseñan.',ans:'Dos períodos en que el campo casi se para: los setenta y el final de los ochenta. Se prometió de más y se cortó el dinero.'},
+  {q:'¿Qué tres cosas tuvieron que juntarse para que la IA se acelerara?',ans:'Datos: millones de fotos etiquetadas por personas. Cómputo: las tarjetas gráficas de los videojuegos. Algoritmos: maneras nuevas de entrenar. Faltando una, no pasa.'},
+  {q:'¿Qué enseñó ELIZA en 1966 que sigue valiendo hoy?',ans:'Que algo puede contestar como una persona sin entender nada. Y la gente le contaba cosas íntimas.'},
+  {q:'¿En qué se diferencian Deep Blue (1997) y AlphaGo (2016)?',ans:'Deep Blue calculaba, pero no aprendía. En el Go hay demasiadas jugadas: AlphaGo aprendió jugando contra sí mismo, premiándose al ganar.'},
+  {q:'¿Por qué 2012 se llama «el año en que las máquinas aprendieron a ver»?',ans:'Ese año una red profunda ganó el concurso de imágenes. Ahí se vio la receta: fotos etiquetadas, tarjetas gráficas y buen algoritmo.'},
+  {q:'¿Qué relación hay entre el artículo de 2017 y el chat de hoy?',ans:'Todos los chats de hoy salen de esa pieza: el transformador. El público lo vio cinco años después.'},
+  {q:'La historia se cuenta con nombres. ¿Por qué mirar quién NO aparece?',ans:'Respuesta abierta. La lista es de unos pocos países. Quien no está en los datos no está en los resultados.'},
+  {q:'Hoy se promete mucho otra vez. Sabiendo lo de los inviernos, ¿cómo lo escuchas?',ans:'Respuesta abierta. Que no crea todo ni se burle de todo. Que pregunte qué se promete, para cuándo, quién lo dice y qué gana.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el dato que se pide en cada oración. Escribe al lado a qué hito de la historia pertenece.','<strong>Ejemplo:</strong> En 1956 el campo estrenó el nombre que lleva hoy. → <span style="color:var(--jade);font-weight:700;">1956</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada hito, completa el año, qué pasó, por qué importa y qué documento lo acredita.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Hito','text-align:left;')}${th('Año')}${th('¿Qué pasó?')}${th('¿Por qué importa?')}${th('¿Qué lo acredita?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
-function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
-function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno. Subraya el dato que se pide. Anota a qué hito pertenece.','<strong>Ejemplo:</strong> En 1956 el campo estrenó el nombre que lleva hoy. → <span style="color:var(--jade);font-weight:700;">1956</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla. De cada hito: el año, qué pasó, por qué importa y qué lo acredita.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Hito','text-align:left;')}${th('Año')}${th('¿Qué pasó?')}${th('¿Por qué importa?')}${th('¿Qué lo acredita?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Elige la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y responde cada una.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
@@ -375,68 +375,68 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Alan Turing preguntó en 1950 si las máquinas podían pensar.',a:true},
+  {q:'Turing preguntó en 1950 si las máquinas podían pensar.',a:true},
   {q:'El nombre «Inteligencia Artificial» nació en 2022.',a:false},
-  {q:'El taller donde nació el nombre se hizo en el Dartmouth College, en 1956.',a:true},
-  {q:'ELIZA, de 1966, entendía de verdad lo que le decían.',a:false},
-  {q:'Hubo dos períodos llamados inviernos en que el campo casi se para.',a:true},
-  {q:'Los inviernos llegaron porque se acabó la electricidad.',a:false},
-  {q:'En 1997 Deep Blue ganó el enfrentamiento de ajedrez a Garri Kaspárov.',a:true},
-  {q:'Deep Blue aprendía de sus partidas como los programas de hoy.',a:false},
-  {q:'En 2012 una red neuronal profunda ganó el concurso de reconocer imágenes.',a:true},
-  {q:'AlphaGo ganó al Go calculando todas las jugadas posibles.',a:false},
-  {q:'AlphaGo aprendió jugando millones de partidas contra sí mismo.',a:true},
-  {q:'El artículo con la pieza técnica de los chats de hoy es de 2017.',a:true},
-  {q:'Las tres cosas que tuvieron que juntarse son datos, cómputo y algoritmos.',a:true},
+  {q:'El nombre nació en el Dartmouth College, en 1956.',a:true},
+  {q:'ELIZA entendía de verdad lo que le decían.',a:false},
+  {q:'Hubo dos inviernos en que el campo casi se para.',a:true},
+  {q:'Los inviernos llegaron porque se acabó la luz.',a:false},
+  {q:'En 1997 Deep Blue ganó al ajedrez a Garri Kaspárov.',a:true},
+  {q:'Deep Blue aprendía de sus partidas.',a:false},
+  {q:'En 2012 una red profunda ganó el concurso de imágenes.',a:true},
+  {q:'AlphaGo ganó al Go calculando todas las jugadas.',a:false},
+  {q:'AlphaGo aprendió jugando contra sí mismo.',a:true},
+  {q:'La pieza técnica de los chats de hoy es de 2017.',a:true},
+  {q:'Las tres patas son datos, cómputo y algoritmos.',a:true},
   {q:'Con una sola de las tres patas habría bastado.',a:false},
   {q:'La primera neurona de papel se publicó en 1943.',a:true},
-  {q:'El perceptrón de 1958 fue una máquina que aprendía sola, ajustando números.',a:true},
-  {q:'Arthur Samuel escribió un programa de damas que llegó a jugar mejor que él.',a:true},
-  {q:'Los sistemas expertos de los años ochenta aprendían solos de los ejemplos.',a:false},
-  {q:'Las tarjetas gráficas se habían hecho para los videojuegos.',a:true},
-  {q:'La historia de la IA empezó en el año 2022.',a:false}
+  {q:'El perceptrón de 1958 aprendía solo, ajustando números.',a:true},
+  {q:'El programa de damas de Arthur Samuel le ganó a él.',a:true},
+  {q:'Los sistemas expertos aprendían solos de los ejemplos.',a:false},
+  {q:'Las tarjetas gráficas se hicieron para los videojuegos.',a:true},
+  {q:'La historia de la IA empezó en 2022.',a:false}
 ];
 const evalMCBank=[
-  {q:'¿Quién publicó en 1950 el artículo que pregunta si las máquinas pueden pensar?',o:['John McCarthy','Arthur Samuel','Alan Turing','Joseph Weizenbaum'],a:2},
+  {q:'¿Quién preguntó en 1950 si las máquinas pueden pensar?',o:['John McCarthy','Arthur Samuel','Alan Turing','Joseph Weizenbaum'],a:2},
   {q:'¿Dónde y cuándo nació el nombre «Inteligencia Artificial»?',o:['En el taller de Dartmouth, en 1956','En Londres, en 1950','En Nueva York, en 1997','En internet, en 2022'],a:0},
   {q:'¿Qué enseñó ELIZA en 1966?',o:['Que las máquinas ya entendían','Que los chats son recientes','Que las máquinas sienten','Que algo puede contestar como persona sin entender nada'],a:3},
-  {q:'¿Por qué hubo dos inviernos de la IA?',o:['Se prohibió investigar','Se prometió más de lo que se podía y se cortó el dinero','Se perdieron los programas','Se acabó la electricidad'],a:1},
-  {q:'¿Qué pasó en 1997?',o:['Nació el nombre del campo','Se abrió el primer chat','Una máquina ganó al campeón mundial de ajedrez','Se inventó la red neuronal'],a:2},
+  {q:'¿Por qué hubo dos inviernos de la IA?',o:['Se prohibió investigar','Se prometió de más y se cortó el dinero','Se perdieron los programas','Se acabó la luz'],a:1},
+  {q:'¿Qué pasó en 1997?',o:['Nació el nombre del campo','Se abrió el primer chat','Una máquina ganó al campeón de ajedrez','Se inventó la red neuronal'],a:2},
   {q:'¿Cómo ganaba Deep Blue?',o:['Aprendiendo de sus partidas','Preguntándole a un experto','Copiando a los campeones','Calculando muchísimas jugadas por segundo'],a:3},
-  {q:'¿Qué pasó en 2012?',o:['Una red neuronal profunda ganó el concurso de reconocer imágenes','Se inventó la cámara digital','Nació el primer robot','Se cerró un laboratorio'],a:0},
+  {q:'¿Qué pasó en 2012?',o:['Una red profunda ganó el concurso de imágenes','Se inventó la cámara digital','Nació el primer robot','Se cerró un laboratorio'],a:0},
   {q:'¿Cómo aprendió AlphaGo?',o:['Con un libro de aperturas','Jugando millones de partidas contra sí mismo','Con fotos etiquetadas','Calculando todas las jugadas'],a:1},
   {q:'¿De qué año es el artículo del transformador?',o:['De 1956','De 1997','De 2022','De 2017'],a:3},
-  {q:'¿Cuáles son las tres patas que tuvieron que juntarse?',o:['Robots, sensores y motores','Dinero, publicidad y suerte','Datos, cómputo y algoritmos','Internet, teléfonos y satélites'],a:2},
+  {q:'¿Cuáles son las tres patas?',o:['Robots, sensores y motores','Dinero, publicidad y suerte','Datos, cómputo y algoritmos','Internet, teléfonos y satélites'],a:2},
   {q:'¿Qué aportaron las tarjetas gráficas?',o:['Los datos','El cómputo','Los algoritmos','Las etiquetas'],a:1},
-  {q:'¿Qué fue el perceptrón, de 1958?',o:['La primera máquina que aprendió sola, ajustando números','El primer robot que caminó','El primer chat','Un tipo de computadora personal'],a:0},
+  {q:'¿Qué fue el perceptrón, de 1958?',o:['La máquina que aprendió sola, ajustando números','El primer robot que caminó','El primer chat','Un tipo de computadora personal'],a:0},
   {q:'¿Qué hicieron McCulloch y Pitts en 1943?',o:['Ganaron un campeonato de ajedrez','Fundaron un laboratorio','Publicaron un modelo matemático de una neurona','Escribieron el primer chat'],a:2},
-  {q:'¿Por qué cayeron los sistemas expertos de los años ochenta?',o:['Porque nadie los usaba','Porque eran ilegales','Porque no había computadoras','Porque mantener miles de reglas a mano resultó carísimo y no aprendían solos'],a:3},
+  {q:'¿Por qué cayeron los sistemas expertos?',o:['Porque nadie los usaba','Porque eran ilegales','Porque no había computadoras','Porque mantener miles de reglas a mano salía carísimo'],a:3},
   {q:'¿Qué cambió en noviembre de 2022?',o:['Un chat de IA generativa se abrió al público','Se inventó la Inteligencia Artificial','Se construyó la primera computadora','Se publicó el artículo del transformador'],a:0}
 ];
 const evalCPBank=[
   {q:'En 1950 Alan Turing preguntó si las máquinas podían ___.',a:'pensar'},
-  {q:'El nombre del campo nació en 1956, en el taller de ___.',a:'Dartmouth'},
+  {q:'El nombre nació en 1956, en el taller de ___.',a:'Dartmouth'},
   {q:'El programa que conversaba en 1966 se llamaba ___.',a:'ELIZA'},
   {q:'Los dos períodos en que el campo casi se para se llaman los dos ___.',a:'inviernos'},
   {q:'En 1997 Deep Blue ganó al campeón mundial de ___.',a:'ajedrez'},
   {q:'En 2012 las máquinas aprendieron a reconocer ___.',a:'imágenes'},
   {q:'En 2016 AlphaGo ganó al juego del ___.',a:'Go'},
-  {q:'La pieza técnica de 2017 de la que salen los chats se llama ___.',a:'transformador'},
+  {q:'La pieza técnica de 2017 se llama ___.',a:'transformador'},
   {q:'Las tres patas son datos, algoritmos y ___.',a:'cómputo'},
   {q:'Las tarjetas gráficas se habían hecho para los ___.',a:'videojuegos'},
-  {q:'La primera máquina que aprendió sola, en 1958, fue el ___.',a:'perceptrón'},
+  {q:'La máquina que aprendió sola en 1958 fue el ___.',a:'perceptrón'},
   {q:'El programa de damas de 1959 lo escribió Arthur ___.',a:'Samuel'},
-  {q:'Los programas de los años ochenta que guardaban reglas de un experto se llamaban sistemas ___.',a:'expertos'},
+  {q:'Los programas con las reglas de un experto eran sistemas ___.',a:'expertos'},
   {q:'AlphaGo aprendió jugando contra sí ___.',a:'mismo'},
   {q:'En 2022 un chat de IA generativa se abrió al ___.',a:'público'}
 ];
 const evalPRBank=[
-  {term:'1936',def:'Turing describe la máquina que puede calcular cualquier cosa'},
+  {term:'1936',def:'Turing describe la máquina que calcula todo'},
   {term:'1943',def:'El primer modelo matemático de una neurona'},
   {term:'1950',def:'«¿Pueden pensar las máquinas?», en la revista Mind'},
-  {term:'1956',def:'Nace el nombre, en el taller del Dartmouth College'},
-  {term:'1958',def:'El perceptrón: la primera máquina que aprendió sola'},
-  {term:'1959',def:'Un programa de damas que llegó a jugar mejor que su autor'},
+  {term:'1956',def:'Nace el nombre, en Dartmouth'},
+  {term:'1958',def:'El perceptrón: la máquina que aprendió sola'},
+  {term:'1959',def:'Un programa de damas que le gana a su autor'},
   {term:'1966',def:'ELIZA conversaba sin entender nada'},
   {term:'Los años setenta',def:'El primer invierno: se cortó el dinero'},
   {term:'Los años ochenta',def:'Los sistemas expertos y el segundo invierno'},
@@ -478,7 +478,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · La Historia de la Inteligencia Artificial`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · La Historia de la Inteligencia Artificial`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión sale sin tus respuestas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -532,12 +532,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un compañero dice que la Inteligencia Artificial se inventó en 2022, cuando salió el chat que él usa.'},
-  {txt:'Una noticia promete que en dos años las máquinas harán todo el trabajo de las personas.'},
-  {txt:'Alguien afirma que ELIZA, en 1966, ya entendía a la gente porque le contestaba bien.'},
+  {txt:'Un compañero dice que la Inteligencia Artificial se inventó en 2022, con el chat.'},
+  {txt:'Una noticia promete que en dos años las máquinas harán todo el trabajo.'},
+  {txt:'Alguien dice que ELIZA, en 1966, entendía porque contestaba bien.'},
   {txt:'Un texto dice que en 1997 Deep Blue «pensó» mejor que Kaspárov.'},
-  {txt:'Un estudiante escribe en su tarea que el transformador se inventó en 2022.'},
-  {txt:'Un adulto dice que no hay que estudiar esto porque «ya pasó otras veces y se murió solo».'}
+  {txt:'Un estudiante escribe que el transformador se inventó en 2022.'},
+  {txt:'Un adulto dice que no hay que estudiar esto porque «ya se murió otras veces».'}
 ];
 const critCaseQuestions=[
   '1. ¿Qué afirma este caso y en qué año lo sitúa?',
@@ -546,66 +546,66 @@ const critCaseQuestions=[
   '4. ¿Qué le explicarías a esa persona, y con qué ejemplo?'
 ];
 const critCaseGuides=[
-  'Se valora que el alumno ubique la afirmación en la línea del tiempo: 1936, 1950, 1956, 1966, los inviernos, 1997, 2012, 2016, 2017, 2022.',
-  'Se corrige con la fecha correcta y con lo que de verdad pasó ese año, no solo diciendo «está mal».',
-  'Casi todas las confusiones vienen de lo mismo: confundir CUÁNDO se tuvo la idea con CUÁNDO llegó al público. El transformador es de 2017 y el chat de 2022.',
-  'Respuesta abierta. Se valora que explique con respeto y con un hito concreto, y que no caiga en el otro extremo: ni la IA nació ayer, ni los inviernos prueban que esto no sirve.'
+  'Se valora que ubique la afirmación en la línea del tiempo: 1936, 1950, 1956, 1966, los inviernos, 1997, 2012, 2016, 2017, 2022.',
+  'Se corrige con la fecha correcta y con lo que pasó ese año.',
+  'Casi toda confusión es la misma: se confunde CUÁNDO fue la idea con CUÁNDO llegó al público.',
+  'Respuesta abierta. Se valora que explique con respeto y con un hito concreto. Ni la IA nació ayer, ni los inviernos prueban que no sirve.'
 ];
 const critErrorBank=[
   {txt:'"La Inteligencia Artificial se inventó en 2022."',
-   g1:'La pregunta es de 1950 y el nombre, de 1956. En 2022 lo que pasó fue que llegó al público.',
-   g2:'Confundir cuándo se tuvo la idea con cuándo se hizo famosa es el error más común de esta misión.'},
+   g1:'La pregunta es de 1950 y el nombre, de 1956. En 2022 llegó al público.',
+   g2:'Confundir la idea con la fama es el error más común.'},
   {txt:'"ELIZA entendía a la gente porque le contestaba bien."',
-   g1:'ELIZA devolvía lo que le decían en forma de pregunta. No entendía nada.',
-   g2:'Contestar como una persona no es entender, y eso vale igual para los chats de hoy.'},
+   g1:'ELIZA devolvía en pregunta lo que le decían. No entendía nada.',
+   g2:'Contestar como una persona no es entender. Vale igual hoy.'},
   {txt:'"Deep Blue pensó mejor que el campeón mundial."',
    g1:'Deep Blue no pensaba: calculaba muchísimas jugadas por segundo.',
-   g2:'Se puede ganar sin entender nada, y eso es justo lo que ese partido enseñó.'},
+   g2:'Se puede ganar sin entender nada. Eso enseñó ese partido.'},
   {txt:'"Los inviernos pasaron porque la tecnología no servía."',
-   g1:'La tecnología avanzaba; lo que falló fueron las promesas, que iban muy por delante.',
-   g2:'Cuando la promesa no llegó, se cortó el dinero también para los que iban bien.'},
+   g1:'La tecnología avanzaba. Lo que falló fueron las promesas.',
+   g2:'Al cortarse el dinero, lo perdieron también los que iban bien.'},
   {txt:'"AlphaGo ganó al Go calculando todas las jugadas posibles."',
    g1:'En el Go no se pueden calcular todas: son demasiadas.',
-   g2:'Aprendió jugando millones de partidas contra sí mismo, con premio al ganar.'},
+   g2:'Aprendió jugando millones de partidas contra sí mismo.'},
   {txt:'"Bastaba con tener mejores algoritmos para que la IA despegara."',
-   g1:'Hicieron falta las tres patas a la vez: datos, cómputo y algoritmos.',
-   g2:'Con las ideas de los ochenta y sin datos ni tarjetas gráficas, no habría pasado nada.'}
+   g1:'Hicieron falta las tres patas: datos, cómputo y algoritmos.',
+   g2:'Sin datos ni tarjetas gráficas no habría pasado nada.'}
 ];
 const critDecisionBank=[
-  'Vas a citar una fecha de la historia de la IA en tu exposición; conviene decir de dónde la sacaste, o darla por sabida.',
-  'Lees una noticia que promete que la IA curará todo en dos años; conviene compartirla de inmediato, o preguntar quién lo dice y qué gana diciéndolo.',
-  'Tu libro no trae nada sobre esto; conviene copiar lo primero que aparezca en internet, o buscar la fuente original del dato.',
-  'Un compañero se burla de la IA porque «ya fracasó dos veces»; conviene darle la razón, o explicarle qué pasó de verdad en los inviernos.',
-  'Tienes que poner una fecha y no estás seguro entre dos años; conviene poner la que suene mejor, o escribir la década y decir que no lo pudiste confirmar.'
+  'Vas a citar una fecha; conviene decir de dónde la sacaste, o darla por sabida.',
+  'Una noticia promete que la IA curará todo; conviene compartirla ya, o preguntar quién lo dice.',
+  'Tu libro no trae nada; conviene copiar lo primero de internet, o buscar la fuente.',
+  'Un compañero se burla porque «ya fracasó»; conviene darle la razón, o contarle qué pasó.',
+  'No estás seguro entre dos años; conviene poner el que suene mejor, o escribir la década.'
 ];
-const critDecisionGuide='La mejor decisión dice de dónde sale el dato y no inventa lo que no puede comprobar: una fecha se cita con su fuente, una promesa se pregunta antes de compartirse, y cuando no se puede confirmar el año se escribe la década y se dice por qué. Es la misma regla que sigue esta misión: los inviernos van como períodos, no como fechas, porque nadie se pone de acuerdo en el día.';
+const critDecisionGuide='La mejor decisión dice de dónde sale el dato. La promesa se pregunta antes. El año que no se confirma va como década.';
 const critCompareBank=[
   {a:'Deep Blue, en 1997.',b:'AlphaGo, en 2016.',
    ga:'Ganaba calculando muchísimas jugadas por segundo.',
    gb:'Ganaba con lo que aprendió jugando contra sí mismo.',
-   gr:'Los dos ganaron a campeones humanos, pero por caminos contrarios. En el ajedrez se puede calcular a lo bruto; en el Go hay demasiadas jugadas, así que hubo que aprender. Diecinueve años separan las dos ideas.'},
+   gr:'Los dos ganaron a campeones humanos, por caminos contrarios. En el ajedrez se calcula a lo bruto. En el Go hubo que aprender.'},
   {a:'Un sistema experto de los años ochenta.',b:'Una red entrenada con ejemplos.',
    ga:'Guarda las reglas que una persona escribió.',
    gb:'Saca la regla ella misma, de los ejemplos.',
-   gr:'El sistema experto funcionaba en lo suyo, pero mantener miles de reglas a mano era carísimo y no mejoraba solo. Por eso cayó. La red aprende de los datos, y por eso necesitó que llegaran los datos y las tarjetas gráficas.'},
+   gr:'El sistema experto no mejoraba solo, y mantener miles de reglas a mano era carísimo. La red saca la regla de los datos: por eso esperó a ellos.'},
   {a:'El artículo de 2017.',b:'El chat que se abrió en 2022.',
-   ga:'Es la pieza técnica: una manera nueva de armar redes de texto.',
-   gb:'Es el producto: esa idea entrenada en grande y puesta al alcance de cualquiera.',
-   gr:'Cinco años separan la idea de su llegada al público, y ahí está el error más común de esta misión. La IA generativa no se inventó en 2022: en 2022 se hizo famosa.'}
+   ga:'La pieza técnica: una manera nueva de armar redes de texto.',
+   gb:'Es el producto: esa idea entrenada en grande, al alcance de cualquiera.',
+   gr:'Cinco años separan la idea de su llegada al público. La IA generativa no se inventó en 2022: en 2022 se hizo famosa.'}
 ];
 const critCauseBank=[
-  {cause:'En 1956 un grupo se reunió en Dartmouth y le puso nombre al campo.',guide:'Por eso desde ese verano existe algo que se llama Inteligencia Artificial, y ese es el año que se pregunta en los exámenes.'},
-  {cause:'Se prometió traducción automática y máquinas que razonan en pocos años.',guide:'Por eso, cuando no llegaron, los informes fueron duros y el dinero se cortó: el primer invierno.'},
-  {cause:'Las tarjetas gráficas de los videojuegos resultaron servir para entrenar redes.',guide:'Por eso en 2012 se pudo entrenar sobre un millón de fotos y ganar el concurso de imágenes.'},
-  {cause:'El Go tiene demasiadas jugadas para calcularlas todas.',guide:'Por eso AlphaGo tuvo que aprender jugando contra sí mismo en vez de calcular a lo bruto.'},
-  {cause:'En 2017 se presentó una manera de entrenar redes de texto mucho más rápido.',guide:'Por eso cinco años después se pudo poner un chat de IA generativa al alcance de cualquiera.'}
+  {cause:'En 1956 un grupo se reunió en Dartmouth y le puso nombre.',guide:'Por eso ese año se pregunta en los exámenes.'},
+  {cause:'Se prometió traducción automática y máquinas que razonan en pocos años.',guide:'Por eso, al no llegar, se cortó el dinero: el primer invierno.'},
+  {cause:'Las tarjetas gráficas de los videojuegos servían para entrenar redes.',guide:'Por eso en 2012 se entrenó con un millón de fotos.'},
+  {cause:'El Go tiene demasiadas jugadas para calcularlas todas.',guide:'Por eso AlphaGo aprendió jugando contra sí mismo.'},
+  {cause:'En 2017 se presentó una manera de entrenar redes de texto más rápido.',guide:'Por eso, cinco años después, el chat llegó a cualquiera.'}
 ];
 const critEffectBank=[
-  {effect:'Mucha gente cree que la IA se inventó en 2022.',guide:'Porque ese fue el año en que llegó a su teléfono, aunque la idea sea de 1950 y la pieza técnica de 2017.'},
-  {effect:'Hoy hay que desconfiar de las promesas muy grandes sobre la IA.',guide:'Porque eso ya pasó dos veces y las dos acabó en invierno, con el dinero cortado para todos.'},
-  {effect:'ELIZA asustó a su propio autor.',guide:'Porque la gente le contaba cosas íntimas a un programa que no entendía absolutamente nada.'},
-  {effect:'Los sistemas expertos de los ochenta no escalaron.',guide:'Porque las reglas las tenía que escribir y mantener una persona, y eran miles.'},
-  {effect:'Hicieron falta setenta años para que esto despegara.',guide:'Porque las tres patas (datos, cómputo y algoritmos) no estuvieron listas a la vez hasta hace poco.'}
+  {effect:'Mucha gente cree que la IA se inventó en 2022.',guide:'Porque ese año llegó a su teléfono. La idea es de 1950.'},
+  {effect:'Hoy hay que desconfiar de las promesas muy grandes.',guide:'Porque ya pasó dos veces y las dos acabó en invierno.'},
+  {effect:'ELIZA asustó a su propio autor.',guide:'Porque la gente le contaba cosas íntimas a un programa que no entendía nada.'},
+  {effect:'Los sistemas expertos de los ochenta no escalaron.',guide:'Porque las reglas las escribía y mantenía una persona, y eran miles.'},
+  {effect:'Hicieron falta setenta años para que esto despegara.',guide:'Porque las tres patas no estuvieron listas a la vez hasta hace poco.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -618,7 +618,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: un dato que alguien afirma <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -626,11 +626,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: qué harías <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, con un hito de la línea del tiempo.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿Cómo funciona cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -640,7 +640,7 @@ function genEvalCrit(){
   s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección y compara con la <em>Pauta</em>. Anota tu puntaje (0–20) y presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
   fin('s-evaluacion');
 }
 function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
@@ -650,7 +650,7 @@ function calcCritTotal(){
   let total=0;
   document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
   const panel=document.getElementById('evalCritTotalResult');
-  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara con la Pauta antes de anotar cada puntaje.</em>`;}
   const formKey='crit_'+(window._currentEvalCritForm||1);
   if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
   else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
@@ -660,11 +660,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: un dato que alguien afirma</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: qué harías</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, con un hito de la línea del tiempo.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿Cómo funciona cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -869,7 +869,7 @@ function iaTiempoHito(anio) { return IA_HITOS.find(h => String(h.anio) === Strin
 function iaTiempoPintar() {
   const caja = document.getElementById('tiempo-caja'); if (!caja) return;
   if (iaTiempoIdx >= IA_TIEMPO_PARES.length) {
-    caja.innerHTML = '<p class="tiempo-fin">🗓️ Los cinco pares. Lo que tardó cada idea en funcionar no fue por falta de ingenio: fue por las tres patas.</p>' +
+    caja.innerHTML = '<p class="tiempo-fin">🗓️ Los cinco pares. Lo que faltó no fue ingenio: fueron las tres patas.</p>' +
       '<div class="ens-btns"><button class="btn btn-g" onclick="iaTiempoReiniciar()">🔄 Otra vez</button></div>';
     return;
   }
@@ -918,12 +918,12 @@ function iaHitoGuardar() {
   const v = id => ((document.getElementById(id) || {}).value || '').trim();
   const que = v('mh-que'), quien = v('mh-quien'), cuando = v('mh-cuando'), fuente = v('mh-fuente');
   if (que.length < 10) { fb('fbHito', 'Cuenta qué pasó con una oración entera.', false); return; }
-  if (quien.length < 2) { fb('fbHito', 'Falta quién lo dice. Sin eso no se puede preguntar qué gana diciéndolo.', false); return; }
-  if (fuente.length < 3) { fb('fbHito', 'Falta la fuente. Un hito sin fuente es un rumor, y en esta línea del tiempo no entra ninguno.', false); return; }
+  if (quien.length < 2) { fb('fbHito', 'Falta quién lo dice. Sin eso no se puede preguntar qué gana.', false); return; }
+  if (fuente.length < 3) { fb('fbHito', 'Falta la fuente. Un hito sin fuente es un rumor.', false); return; }
   const h = { anio: new Date().getFullYear(), que: que, quien: quien, cuando: cuando, fuente: fuente, fecha: new Date().toISOString().slice(0, 10) };
   iaDescGuardar('hito', h); iaHitoPintar(h); sfx('up');
   if (!xpTracker.wgt.has('hito_mio')) { xpTracker.wgt.add('hito_mio'); pts(4); }
-  fb('fbHito', '+4 XP: tu hito ya está en la línea del tiempo, con su fuente. Dentro de un año, vuelve y mira si se cumplió.', true);
+  fb('fbHito', '+4 XP: tu hito ya está en la línea, con su fuente. En un año, mira si se cumplió.', true);
   iaDescubreListo();
 }
 /* Se pinta con las mismas clases que los hitos de arriba, y marcado como

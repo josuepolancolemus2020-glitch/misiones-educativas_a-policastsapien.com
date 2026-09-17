@@ -6,15 +6,15 @@ const D = require('../../js/data/ia-descubre.js');
 const { esc, arma, portada, preguntas, clave, IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS } = A;
 
 const EVAL = [
-  { q: '¿Quién publicó en 1950 el artículo que pregunta si las máquinas pueden pensar?', o: ['John McCarthy', 'Arthur Samuel', 'Alan Turing', 'Joseph Weizenbaum'], a: 2 },
+  { q: '¿Quién preguntó en 1950 si las máquinas pueden pensar?', o: ['John McCarthy', 'Arthur Samuel', 'Alan Turing', 'Joseph Weizenbaum'], a: 2 },
   { q: '¿Dónde y cuándo nació el nombre «Inteligencia Artificial»?', o: ['En el taller de Dartmouth, en 1956', 'En Londres, en 1950', 'En Nueva York, en 1997', 'En internet, en 2022'], a: 0 },
   { q: '¿Qué enseñó ELIZA en 1966?', o: ['Que las máquinas ya entendían', 'Que los chats son recientes', 'Que las máquinas sienten', 'Que algo puede contestar como persona sin entender nada'], a: 3 },
-  { q: '¿Por qué hubo dos inviernos de la IA?', o: ['Se prohibió investigar', 'Se prometió más de lo que se podía y se cortó el dinero', 'Se perdieron los programas', 'Se acabó la electricidad'], a: 1 },
-  { q: '¿Qué pasó en 1997?', o: ['Nació el nombre del campo', 'Se abrió el primer chat', 'Una máquina ganó al campeón mundial de ajedrez', 'Se inventó la red neuronal'], a: 2 },
-  { q: '¿Qué pasó en 2012?', o: ['Una red neuronal profunda ganó el concurso de reconocer imágenes', 'Se inventó la cámara digital', 'Nació el primer robot', 'Se cerró un laboratorio'], a: 0 },
+  { q: '¿Por qué hubo dos inviernos de la IA?', o: ['Se prohibió investigar', 'Se prometió de más y se cortó el dinero', 'Se perdieron los programas', 'Se acabó la luz'], a: 1 },
+  { q: '¿Qué pasó en 1997?', o: ['Nació el nombre del campo', 'Se abrió el primer chat', 'Una máquina ganó al campeón de ajedrez', 'Se inventó la red neuronal'], a: 2 },
+  { q: '¿Qué pasó en 2012?', o: ['Una red profunda ganó el concurso de imágenes', 'Se inventó la cámara digital', 'Nació el primer robot', 'Se cerró un laboratorio'], a: 0 },
   { q: '¿Cómo aprendió AlphaGo?', o: ['Con un libro de aperturas', 'Jugando millones de partidas contra sí mismo', 'Con fotos etiquetadas', 'Calculando todas las jugadas'], a: 1 },
   { q: '¿De qué año es el artículo del transformador?', o: ['De 1956', 'De 1997', 'De 2022', 'De 2017'], a: 3 },
-  { q: '¿Cuáles son las tres patas que tuvieron que juntarse?', o: ['Robots, sensores y motores', 'Dinero, publicidad y suerte', 'Datos, cómputo y algoritmos', 'Internet, teléfonos y satélites'], a: 2 },
+  { q: '¿Cuáles son las tres patas?', o: ['Robots, sensores y motores', 'Dinero, publicidad y suerte', 'Datos, cómputo y algoritmos', 'Internet, teléfonos y satélites'], a: 2 },
   { q: '¿Qué cambió en noviembre de 2022?', o: ['Un chat de IA generativa se abrió al público', 'Se inventó la Inteligencia Artificial', 'Se construyó la primera computadora', 'Se publicó el artículo del transformador'], a: 0 },
 ];
 
@@ -32,47 +32,46 @@ const hito = h => `    <div class="cficha">
 const P = [];
 
 P.push(portada('La Historia de la Inteligencia Artificial',
-  'De la pregunta de Alan Turing en 1950 al chat de hoy, con los dos inviernos en medio. Quince hitos, cada uno con el documento que lo acredita.',
+  'De la pregunta de Alan Turing en 1950 al chat de hoy. Quince hitos, cada uno con el documento que lo acredita.',
   'qr-mision-historia-ia.png',
-  ['Ubicar en una <strong>línea del tiempo</strong> los hitos de la Inteligencia Artificial.',
+  ['Ubicar los hitos de la Inteligencia Artificial en una <strong>línea del tiempo</strong>.',
    'Distinguir <strong>cuándo se tuvo la idea</strong> de <strong>cuándo llegó al público</strong>.',
-   'Explicar qué fueron los <strong>dos inviernos</strong> y por qué ocurrieron.',
-   'Nombrar las <strong>tres patas</strong> (datos, cómputo y algoritmos) y decir por qué hacían falta las tres.',
+   'Explicar qué fueron los <strong>dos inviernos</strong> y por qué pasaron.',
+   'Nombrar las <strong>tres patas</strong>: datos, cómputo y algoritmos.',
    'Citar, de cada hito, <strong>qué documento o hecho lo acredita</strong>.',
-   'Escuchar una promesa de hoy sobre la IA y <strong>preguntar</strong>, en vez de creerla o burlarse.']) + `
+   'Oír una promesa de hoy y <strong>preguntar</strong>, en vez de creerla o burlarse.']) + `
     <h2>📜 1. Esto no empezó en 2022</h2>
 
-    <p>Mucha gente cree que la Inteligencia Artificial se inventó el día que apareció el chat que usa.
-       <strong>No.</strong> La pregunta que la puso en marcha es de <strong>1950</strong>, el nombre es de
-       <strong>1956</strong>, y en medio hay <strong>setenta años</strong> con dos fracasos grandes.</p>
+    <p>Mucha gente cree que la Inteligencia Artificial nació con el chat. <strong>No.</strong>
+       La pregunta es de <strong>1950</strong> y el nombre, de <strong>1956</strong>.
+       En medio hay <strong>setenta años</strong> y dos fracasos grandes.</p>
 
-    <div class="caja truco"><b>Y esto sirve para dos cosas muy concretas.</b> Una: distinguir cuándo se tuvo
-      la IDEA de cuándo llegó al PÚBLICO. La pieza técnica de los chats de hoy es de 2017; el chat, de 2022.
-      Confundirlas es el error más común de esta misión. Y dos: esto ya prometió de más dos veces y las dos
-      se cayó. Quien conoce esos dos inviernos escucha una promesa de hoy y <b>pregunta</b>.</div>
+    <div class="caja truco"><b>Esto sirve para dos cosas.</b> Una: la IDEA y el PÚBLICO no llegan el mismo
+      día. La pieza de los chats es de 2017; el chat, de 2022.<br><br>
+      Y dos: esto ya prometió de más dos veces. Quien conoce esos inviernos oye una promesa y
+      <b>pregunta</b>.</div>
 
     <h2>🕰️ 2. Las cuatro edades</h2>
 
-    <p>La historia de la IA no es una línea recta que sube. Son cuatro tramos, y dos de ellos son caídas:</p>
+    <p>La historia de la IA no es una línea recta. Son cuatro tramos, y dos son caídas:</p>
 
     <table>
       <tr><th style="width:30%">La edad</th><th style="width:22%">Cuándo</th><th>Qué pasó</th></tr>
 ${IA_EPOCAS.map(e => `      <tr><td class="k">${e.emoji} ${esc(e.nombre)}</td><td>${esc(e.rango)}</td><td>${esc(e.resumen)}</td></tr>`).join('\n')}
     </table>
 
-    <h2>🏗️ 3. Las tres patas: por qué se aceleró de golpe</h2>
+    <h2>🏗️ 3. Las tres patas</h2>
 
-    <p>Después de setenta años de intentos, esto despegó cuando por fin se juntaron <strong>tres cosas a la
-       vez</strong>. Y son a la vez: <strong>faltando una, no pasa</strong>.</p>
+    <p>Esto despegó cuando se juntaron <strong>tres cosas a la vez</strong>. Y son a la vez:
+       <strong>faltando una, no pasa</strong>.</p>
 
     <table>
       <tr><th style="width:18%">La pata</th><th>Qué aporta</th><th style="width:34%">Qué pasaba antes</th></tr>
 ${IA_TRES_PATAS.map(p => `      <tr><td class="k">${p.emoji} ${esc(p.pata)}</td><td>${esc(p.que)}</td><td>${esc(p.antes)}</td></tr>`).join('\n')}
     </table>
 
-    <div class="caja idea"><b>Fíjate en lo que esto significa:</b> las ideas de los años ochenta no estaban
-      mal. Lo que no había eran los millones de fotos etiquetadas ni las máquinas para entrenarlas. La misma
-      idea, veinte años después, funcionó.</div>
+    <div class="caja idea">Las ideas de los años ochenta no estaban mal. Faltaban los millones de fotos
+      etiquetadas y las máquinas para entrenarlas. La misma idea, veinte años después, funcionó.</div>
 `);
 
 // Los quince hitos, repartidos de tres en tres. El repartidor los recoloca.
@@ -81,9 +80,9 @@ for (let i = 0; i < IA_HITOS.length; i += 4) {
   P.push(`
     <h2>🗓️ ${i === 0 ? '4. La línea del tiempo, hito por hito' : '4. La línea del tiempo (continuación)'}</h2>
 ${i === 0 ? `
-    <p>De cada hito: qué pasó, por qué importa y <strong>qué documento lo acredita</strong>. Esto último no
-       es papeleo: aquí lo que se copia son fechas, y una fecha equivocada no se nota. Se lee igual de bien,
-       se estudia igual y se escribe en el examen.</p>
+    <p>De cada hito: qué pasó, por qué importa y <strong>qué documento lo acredita</strong>. Lo último no es
+       papeleo. Aquí se copian fechas, y una fecha equivocada no se nota: se estudia y se escribe en el
+       examen.</p>
 ` : ''}
 ${tramo.map(hito).join('\n')}
 `);
@@ -142,19 +141,19 @@ P.push(`
 
       <h3>🔭 Actividad 4 · Investiga <span class="val">(sin respuesta en esta hoja, a propósito)</span></h3>
 
-      <p>La línea del tiempo de arriba llega hasta hoy y <strong>se queda abierta</strong>. Lo que venga
-         después lo van a escribir personas, y algunas están en esta aula.</p>
+      <p>La línea del tiempo llega hasta hoy y <strong>se queda abierta</strong>. Lo que venga lo escriben
+         personas, y algunas están en esta aula.</p>
 
       <ol>
-        <li>Busca una promesa que se esté haciendo HOY sobre la Inteligencia Artificial, en una noticia o en
-            un video. Escribila tal cual.</li>
-        <li>¿Quién la hace, y qué gana esa persona o esa empresa si la gente se la cree?</li>
-        <li>¿Para cuándo la promete? ¿Es una fecha concreta o algo así como «pronto»?</li>
+        <li>Busca en una noticia o en un video una promesa de HOY sobre la Inteligencia Artificial.
+            Escribila tal cual.</li>
+        <li>¿Quién la hace, y qué gana si la gente se la cree?</li>
+        <li>¿Para cuándo la promete? ¿Una fecha, o un «pronto»?</li>
         <li>Sabiendo lo de los dos inviernos, ¿qué le preguntarías a quien la hizo?</li>
       </ol>
 
-      <div class="caja idea"><b>Esta actividad no trae respuesta y no es un descuido:</b> no la hay. Lo que
-        se evalúa es que el alumno pregunte con criterio, no que acierte lo que va a pasar. Nadie lo sabe.</div>
+      <div class="caja idea"><b>Esta actividad no trae respuesta, y no es un descuido: no la hay.</b>
+        Se evalúa que el alumno pregunte con criterio, no que acierte lo que va a pasar.</div>
     </div>
 `);
 
@@ -166,9 +165,8 @@ P.push(`
     <div class="acts">
       <h3>🗓️ Actividad 5 · ¿Cuánto tardó? <span class="val">(10 pts)</span></h3>
 
-      <p>Entre una idea y el día en que funcionó de verdad a veces pasa media vida. <strong>Primero adivina</strong>
-         cuántos años separan cada par y escríbelo sin mirar la línea del tiempo; <strong>después</strong> búscalos
-         arriba y saca la cuenta de verdad:</p>
+      <p>Entre la idea y el día en que funciona pasa media vida. <strong>Primero adivina</strong> cuántos
+         años separan cada par, sin mirar arriba. <strong>Después</strong> búscalos y saca la cuenta:</p>
 
       <table>
         <tr><th>De…</th><th>…a</th><th style="width:16%">Mi cálculo</th><th style="width:16%">De verdad</th></tr>
@@ -178,16 +176,16 @@ ${D.IA_TIEMPO_PARES.map(p => { const q = _par(p); return '        <tr><td>' + q.
 
       <h3>✍️ Actividad 6 · El hito de este año <span class="val">(sin respuesta, a propósito)</span></h3>
 
-      <p>La línea del tiempo se queda abierta. Escribe tú el hito de este año, con las mismas piezas que
-         llevan los de arriba. La que más cuesta es la última.</p>
+      <p>Escribe tú el hito de este año, con las mismas piezas que llevan los de arriba. La última es la
+         que más cuesta.</p>
       <ol>
         <li>¿Qué pasó, o qué se promete? <span class="linea-resp" style="min-width:100%"></span></li>
         <li>¿Quién lo dice, y qué gana diciéndolo? <span class="linea-resp" style="min-width:100%"></span></li>
         <li>Si es una promesa, ¿para cuándo? <span class="linea-resp" style="min-width:60%"></span></li>
         <li>¿Dónde lo leíste o lo oíste? (sin fuente no es un hito: es un rumor) <span class="linea-resp" style="min-width:100%"></span></li>
       </ol>
-      <div class="caja idea"><b>Y si es una promesa, apunta la fecha:</b> dentro de un año vuelve a esta hoja y mira si
-        se cumplió. Así se distingue un hito de un invierno: esperando a ver, no creyendo el anuncio.</div>
+      <div class="caja idea"><b>Si es una promesa, apunta la fecha.</b> Dentro de un año vuelve a esta hoja
+        y mira si se cumplió. Así se distingue un hito de un invierno.</div>
     </div>
 `);
 
@@ -208,37 +206,37 @@ P.push(`
       <div><span class="pt">Actividad 2 · Uní cada año (16 pts):</span>
         1950-C · 1956-F · 1966-E · 1997-A · 2012-G · 2016-H · 2017-D · 2022-B.</div>
       <div><span class="pt">Actividad 3 · Con tus palabras (24 pts):</span> respuesta abierta.
-        1) Se valora que nombre 1950, 1956 y 1966, y que distinga la idea de su llegada al público.
-        2) Que diga que fueron dos períodos en que el campo casi se para porque se prometió más de lo que se
-        podía, y que la lección es sobre la CONFIANZA, no sobre la tecnología.
-        3) Que Deep Blue calculaba y AlphaGo aprendió jugando contra sí mismo, y que en el Go no se puede
-        calcular todo porque hay demasiadas jugadas.</div>
+        1) Que nombre 1950, 1956 y 1966, y que distinga la idea de su llegada al público.
+        2) Que sean dos períodos en que el campo casi se para porque se prometió de más, y que la
+        lección es sobre la CONFIANZA, no sobre la tecnología.
+        3) Que Deep Blue calculaba y AlphaGo aprendió jugando contra sí mismo, porque en el Go hay
+        demasiadas jugadas.</div>
       <div><span class="pt">Actividad 4 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
-        que la promesa esté copiada tal cual, que identifique quién la hace y qué gana, que note si hay
-        fecha concreta o no, y que su pregunta final sea comprobable.</div>
+        que copie la promesa tal cual, que diga quién la hace y qué gana, que note si hay fecha, y que su
+        pregunta final sea comprobable.</div>
       <div><span class="pt">Actividad 5 · ¿Cuánto tardó? (10 pts):</span>
         ${D.IA_TIEMPO_PARES.map(p => { const q = _par(p); return esc(p.a) + '→' + esc(p.b) + ' <b>' + q.anos + '</b>'; }).join(' · ')} años.
-        Se califica la cuenta, no el cálculo a ojo: adivinar mal es parte del ejercicio. En la última pregunta se
-        valora que nombre las tres patas (datos, cómputo, algoritmos), no «que no sabían».</div>
-      <div><span class="pt">Actividad 6 · El hito de este año:</span> <b>no lleva respuesta a propósito.</b> Se valora
-        que traiga fuente, que distinga lo que pasó de lo que se promete, y que si es promesa lleve fecha.</div>
+        Se califica la cuenta, no el cálculo a ojo: adivinar mal es parte del ejercicio. En la última
+        pregunta se valora que nombre las tres patas, no «que no sabían».</div>
+      <div><span class="pt">Actividad 6 · El hito de este año:</span> <b>no lleva respuesta a propósito.</b>
+        Se valora que traiga fuente, que distinga lo que pasó de lo que se promete, y que si es promesa
+        lleve fecha.</div>
     </div>
 
     <div class="nota-doc">
-      <b>De dónde sale cada fecha de esta ficha, y la regla que no se salta.</b> Este repositorio no tiene
-      una biblioteca de historia de la computación como tiene el currículo o las leyes. Así que cada hito
-      trae escrito <b>el documento o el hecho público que lo sostiene</b>: un artículo con su revista, una
-      propuesta con su nombre, una partida jugada en público. Donde la fecha se discute, se escribe la
-      DÉCADA: los dos inviernos van como períodos porque nadie se pone de acuerdo en el día. Y no se escribe
-      ninguna cifra de producto (cuántos usuarios, cuántos parámetros, cuánto costó): eso cambia cada mes y
+      <b>De dónde sale cada fecha, y la regla que no se salta.</b> Este repositorio no tiene una biblioteca
+      de historia de la computación. Así que cada hito trae escrito <b>el documento o el hecho público que
+      lo sostiene</b>: un artículo con su revista, una propuesta con su nombre, una partida jugada en
+      público. Donde la fecha se discute, se escribe la DÉCADA: los dos inviernos van como períodos porque
+      nadie se pone de acuerdo en el día. Y no se escribe ninguna cifra de producto: eso cambia cada mes, y
       esta hoja se guarda un año en una gaveta.
       <br><br>
-      <b>Lo que más cuesta enseñar de esta misión</b> no es memorizar años: es que el alumno distinga
-      <b>cuándo se tuvo la idea</b> de <b>cuándo llegó al público</b>. El transformador es de 2017 y el chat
-      de 2022, y esos cinco años son el error más común. Si un alumno se lleva solo eso, la hoja cumplió.
+      <b>Lo que más cuesta enseñar aquí</b> no es memorizar años. Es que el alumno distinga <b>cuándo se
+      tuvo la idea</b> de <b>cuándo llegó al público</b>. El transformador es de 2017 y el chat de 2022, y
+      esos cinco años son el error más común. Si un alumno se lleva solo eso, la hoja cumplió.
       <br><br>
-      <b>La ficha y la misión salen del mismo archivo del proyecto</b> (js/data/ia-historia.js), así que no
-      pueden decir fechas distintas: la pantalla no tiene ni un año escrito a mano, los pinta de ahí, y
+      <b>La ficha y la misión salen del mismo archivo</b> (js/data/ia-historia.js), así que no pueden decir
+      fechas distintas. La pantalla no tiene ni un año escrito a mano: los pinta de ahí, y
       <b>node _dev/verifica-ia.js</b> compara las dos hito por hito. Etapa 3 de cuatro.
     </div>
 `);

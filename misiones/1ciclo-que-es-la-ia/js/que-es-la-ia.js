@@ -41,8 +41,8 @@ const ACHIEVEMENTS={
   nivel3:{icon:'🎖️',label:'¡Vas muy bien! Nivel 3'},
   nivel5:{icon:'🥇',label:'¡Ya sabes un montón! Nivel 6'},
   widgets_master:{icon:'🧩',label:'Juegos de la máquina dominados'},
-  entrenador:{icon:'🍎',label:'Le enseñó a la máquina con sus propios ejemplos'},
-  descubridor:{icon:'🔭',label:'Descubrió cómo ve y cómo decide una máquina'}
+  entrenador:{icon:'🍎',label:'Le enseñó a la máquina con sus ejemplos'},
+  descubridor:{icon:'🔭',label:'Descubrió cómo ve y decide una máquina'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -89,26 +89,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué es la Inteligencia Artificial?',o:['Un robot que vive dentro del teléfono','Programas que hacen cosas que antes solo hacían las personas','Una persona que trabaja dentro de la computadora','Un juego de video'],c:1,
-   e:'Son programas. No están vivos y no son personas: hacen cuentas muy rápido.'},
+  {q:'¿Qué es la Inteligencia Artificial?',o:['Un robot dentro del teléfono','Programas que hacen cosas de personas','Una persona dentro de la computadora','Un juego de video'],c:1,
+   e:'Son programas. No están vivos ni son personas: calculan.'},
   {q:'¿Cuál de estos SÍ está vivo?',o:['Un teléfono','Una calculadora','Un robot','Una mata de maíz'],c:3,
-   e:'Lo vivo nace, crece, se alimenta y muere. Una máquina se enciende y se apaga.'},
-  {q:'¿Cómo aprende una máquina a reconocer una cara?',o:['Viendo muchísimas fotos de caras','Porque nació sabiendo','Porque alguien se la dibujó una vez','Porque tiene ojos de verdad'],c:0,
-   e:'Con ejemplos, y muchos. Con pocos ejemplos se equivoca mucho.'},
-  {q:'Si a la máquina le enseñas poquitos ejemplos, ¿qué pasa?',o:['Aprende igual de bien','Aprende más rápido','Se equivoca más','No pasa nada'],c:2,
-   e:'Mientras más ejemplos buenos, mejor aprende. Es lo que probaste en Enséñale.'},
+   e:'Lo vivo nace, crece, come y muere.'},
+  {q:'¿Cómo aprende una máquina a reconocer una cara?',o:['Viendo muchísimas fotos de caras','Porque nació sabiendo','Porque alguien se la dibujó','Porque tiene ojos de verdad'],c:0,
+   e:'Con ejemplos, y muchos.'},
+  {q:'Con poquitos ejemplos, ¿qué le pasa a la máquina?',o:['Aprende igual de bien','Aprende más rápido','Se equivoca más','No pasa nada'],c:2,
+   e:'Más ejemplos buenos, mejor aprende.'},
   {q:'¿La máquina siente alegría o tristeza?',o:['Sí, cuando gana','No: es un aparato y no siente nada','Solo cuando se le acaba la batería','Sí, igual que un perro'],c:1,
    e:'No siente. Ni alegría, ni sueño, ni cariño.'},
-  {q:'Cuando le dictas un mensaje al teléfono y él lo escribe, ¿qué está pasando?',o:['Una máquina convirtió tu voz en letras','Hay una persona escuchándote','El teléfono te leyó la mente','Es magia'],c:0,
+  {q:'Le dictas un mensaje y el teléfono lo escribe. ¿Qué pasó?',o:['Una máquina convirtió tu voz en letras','Hay una persona escuchándote','El teléfono te leyó la mente','Es magia'],c:0,
    e:'Oyó millones de voces antes de oír la tuya.'},
-  {q:'La máquina te dice un dato y tú no estás seguro. ¿Qué haces?',o:['Le creo, porque es una computadora','Se lo cuento a todos','Le pregunto lo mismo otra vez','Lo busco en el libro o le pregunto a mi maestra'],c:3,
-   e:'Verificar es buscar en algo que responde por el dato: el libro, o una persona que lo sabe.'},
-  {q:'¿Cuál de estas cosas NO se le cuenta a una máquina?',o:['Mi color favorito','Una pregunta de la tarea','La dirección de mi casa','Cómo se escribe una palabra'],c:2,
-   e:'Los datos de tu casa y de tu familia no se escriben en internet.'},
+  {q:'La máquina te dice un dato y no estás seguro. ¿Qué haces?',o:['Le creo, porque es una computadora','Se lo cuento a todos','Le pregunto lo mismo otra vez','Lo busco en el libro o le pregunto a mi maestra'],c:3,
+   e:'Verificar es ir al libro o a quien lo sabe.'},
+  {q:'¿Qué NO se le cuenta a una máquina?',o:['Mi color favorito','Una pregunta de la tarea','La dirección de mi casa','Cómo se escribe una palabra'],c:2,
+   e:'Los datos de tu casa no van a internet.'},
   {q:'Una instrucción es…',o:['Un dibujo bonito','Una orden clara que la máquina obedece','Un premio','Una foto'],c:1,
-   e:'«Enciende la luz», «espera 5 segundos». Un programa es muchas instrucciones en orden.'},
+   e:'«Enciende la luz», «espera 5 segundos». Un programa son muchas.'},
   {q:'¿Es verdad que la Inteligencia Artificial es magia?',o:['Sí, por eso nadie sabe cómo funciona','No: son datos y matemática, y alguien la hizo','Sí, pero solo en los teléfonos caros','Solo los domingos'],c:1,
-   e:'Alguien la programó y alguien eligió sus ejemplos. Siempre hay personas detrás.'}
+   e:'Alguien la programó y alguien eligió sus ejemplos.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -143,7 +143,7 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 const idData=[
   {s:['El','teléfono','aprendió','con','muchos','ejemplos.'],c:4,art:'La palabra que dice que fueron MUCHOS'},
   {s:['Una','máquina','no','está','viva.'],c:1,art:'La cosa que no está viva'},
-  {s:['Una','instrucción','es','una','orden','clara.'],c:1,art:'La palabra que significa «orden que la máquina obedece»'},
+  {s:['Una','instrucción','es','una','orden','clara.'],c:1,art:'La palabra que significa «orden que se obedece»'},
   {s:['La','computadora','no','siente','nada.'],c:3,art:'Lo que la máquina NO hace'},
   {s:['Le','enseñamos','a','la','máquina','con','ejemplos.'],c:6,art:'Lo que le mostramos para que aprenda'},
   {s:['La','cámara','encontró','una','cara','en','la','foto.'],c:4,art:'Lo que la cámara encontró'},
@@ -152,7 +152,7 @@ const idData=[
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
-function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5);}sfx('ok');}else{span.classList.add('id-no');fb('fbId','Ese no es el término solicitado.',false);sfx('no');}}
+function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5);}sfx('ok');}else{span.classList.add('id-no');fb('fbId','Esa no es la palabra.',false);sfx('no');}}
 function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').classList.remove('show');}
 function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
 
@@ -160,12 +160,12 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 const cmpData=[
   {s:'Una máquina no está ___.',opts:['rota','viva','llena'],c:1},
   {s:'Para que aprenda, hay que mostrarle muchos ___.',opts:['ejemplos','colores','gritos'],c:0},
-  {s:'Una orden clara que la máquina obedece se llama ___.',opts:['adorno','canción','instrucción'],c:2},
+  {s:'Una orden que la máquina obedece se llama ___.',opts:['adorno','canción','instrucción'],c:2},
   {s:'La máquina no siente: es un ___.',opts:['animal','aparato','amigo'],c:1},
-  {s:'Si le enseñamos pocos ejemplos, la máquina se ___ más.',opts:['alegra','cansa','equivoca'],c:2},
+  {s:'Con pocos ejemplos, la máquina se ___ más.',opts:['alegra','cansa','equivoca'],c:2},
   {s:'La dirección de mi casa ___ se le cuenta a la máquina.',opts:['no','sí','a veces'],c:0},
   {s:'La Inteligencia Artificial no es magia: son datos y ___.',opts:['suerte','matemática','misterio'],c:1},
-  {s:'Si la máquina me dice algo raro, le aviso a una ___.',opts:['máquina','pantalla','persona grande'],c:2}
+  {s:'Si la máquina dice algo raro, le aviso a una ___.',opts:['máquina','pantalla','persona grande'],c:2}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -181,14 +181,14 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 const routeSets = [
   { label: 'Ordena cómo se le enseña a una máquina', steps: [
     '1. Juntamos muchos ejemplos',
-    '2. Una persona le pone su nombre a cada uno',
+    '2. Una persona le pone nombre a cada uno',
     '3. La máquina los mira una y otra vez',
     '4. La probamos con ejemplos nuevos',
     '5. Ya la podemos usar'] },
   { label: 'Ordena qué pasa cuando dictas un mensaje', steps: [
     '1. Hablas cerca del teléfono',
     '2. El teléfono guarda el sonido de tu voz',
-    '3. La máquina busca a qué se parece ese sonido',
+    '3. Busca a qué se parece ese sonido',
     '4. Escribe las letras en la pantalla',
     '5. Tú lees y corriges si salió mal'] }
 ];
@@ -196,7 +196,7 @@ let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
 function renderRoute(){const list=document.getElementById('routeList');if(!list)return;list.innerHTML='';routeItems.forEach((step,i)=>{const div=document.createElement('div');div.className='sort-item';div.innerHTML=`<div class="sort-arrows"><button class="sort-arrow" onclick="routeMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="routeMove(${i},1)"${i===routeItems.length-1?' disabled':''}>▼</button></div><div class="sort-step-num">${i+1}.</div><div class="sort-item-txt">${step}</div>`;list.appendChild(div);});}
 function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItems.length)return;[routeItems[idx],routeItems[ni]]=[routeItems[ni],routeItems[idx]];renderRoute();}
-function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
+function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden.',false);sfx('no');}}
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: Identifica el concepto
@@ -276,7 +276,7 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 const identifyTaskDB=[
   {s:'El teléfono aprendió a reconocer caras con muchos ejemplos.',type:'ejemplos'},
   {s:'Una máquina no está viva.',type:'máquina'},
-  {s:'Una instrucción es una orden clara que la máquina obedece.',type:'instrucción'},
+  {s:'Una instrucción es una orden que la máquina obedece.',type:'instrucción'},
   {s:'La computadora no siente alegría ni tristeza.',type:'no siente'},
   {s:'La Inteligencia Artificial no es magia.',type:'no es magia'},
   {s:'La cámara encontró una cara en la foto.',type:'cara'},
@@ -297,7 +297,7 @@ const classifyTaskDB=[
 const completeTaskDB=[
   {s:'Una máquina no está ___.',ans:'viva'},
   {s:'Para aprender, la máquina necesita muchos ___.',ans:'ejemplos'},
-  {s:'Una orden clara que la máquina obedece se llama ___.',ans:'instrucción'},
+  {s:'Una orden que la máquina obedece se llama ___.',ans:'instrucción'},
   {s:'La computadora no ___ nada: es un aparato.',ans:'siente'},
   {s:'Con pocos ejemplos, la máquina se ___ más.',ans:'equivoca'},
   {s:'La dirección de mi casa ___ se le cuenta a la máquina.',ans:'no'},
@@ -306,23 +306,23 @@ const completeTaskDB=[
   {s:'Un perro está vivo; un robot es una ___.',ans:'máquina'}
 ];
 const explainQuestions=[
-  {q:'Explica con tus palabras qué es la Inteligencia Artificial.',ans:'Son programas de computadora que hacen cosas que antes solo hacían las personas, como reconocer una cara, entender lo que dictamos o traducir. No piensan ni sienten: hacen cuentas muy rápido con lo que les enseñaron.'},
-  {q:'¿En qué se diferencia un perro de un robot? Escribe tres diferencias.',ans:'El perro está vivo: nace, crece, come, siente y muere. El robot es una máquina: lo hicieron personas, se enciende y se apaga, no come y no siente. Y el perro aprende solo desde que nace; al robot hay que enseñarle.'},
-  {q:'Cuenta cómo hace una máquina para aprender a reconocer un nance.',ans:'Se le muestran muchísimas fotos de nances, y alguien le dice en cada una que eso es un nance. La máquina busca qué se repite (pequeño, amarillo) y con eso reconoce los que nunca vio. Con pocas fotos se equivoca; con muchas acierta más.'},
-  {q:'Nombra tres cosas de tu casa donde ya hay Inteligencia Artificial y decí qué hace cada una.',ans:'Respuesta abierta. Se valora que nombre cosas de su vida: dictar un mensaje, la cámara que encuentra caras, traducir un letrero, el teclado que adivina la palabra, la música que le recomiendan.'},
-  {q:'¿Por qué NO hay que darle a una máquina la dirección de tu casa?',ans:'Porque lo que se escribe en internet puede quedar guardado en otra computadora, y ya no lo controlamos nosotros. Los datos de la casa y de la familia son privados, y no se saben quién los va a leer después.'},
-  {q:'Un compañero dice que la computadora es su amiga y que le cuenta todo. ¿Qué le dirías?',ans:'Respuesta abierta. Se valora que explique con respeto que la máquina no siente ni es amiga de nadie, que no entiende lo que le cuentan, y que lo que se le escribe puede quedar guardado.'},
-  {q:'La máquina te dijo un dato y no estás seguro. ¿Qué haces, paso por paso?',ans:'Primero lo comparo con lo que ya sé y con mi libro. Después lo busco en el libro o le pregunto a mi maestra o a alguien que lo sepa. Si no lo puedo comprobar, no lo uso en la tarea.'},
-  {q:'¿Por qué se dice que la Inteligencia Artificial no es magia?',ans:'Porque no aparece sola: la hicieron personas, con datos y con matemática. Alguien la programó y alguien eligió los ejemplos con que aprendió. Por eso también se puede equivocar.'},
-  {q:'Escribe las tres reglas de oro para usar una máquina que aprende.',ans:'No le doy mis datos ni los de mi familia. No le creo sin comprobar. Y si algo me asusta o me confunde, le aviso a una persona grande.'}
+  {q:'Explica con tus palabras qué es la Inteligencia Artificial.',ans:'Son programas que hacen tareas de personas. No piensan ni sienten: calculan.'},
+  {q:'¿En qué se diferencia un perro de un robot? Escribe tres diferencias.',ans:'El perro nace, come y siente. El robot lo hicieron personas y se apaga. Hay que enseñarle todo.'},
+  {q:'Cuenta cómo hace una máquina para aprender a reconocer un nance.',ans:'Se le muestran muchísimas fotos de nances, con su nombre. Ella busca qué se repite.'},
+  {q:'Nombra tres cosas de tu casa donde ya hay Inteligencia Artificial. ¿Qué hace cada una?',ans:'Respuesta abierta. Vale si nombra cosas de su vida: dictar, la cámara de caras, traducir.'},
+  {q:'¿Por qué NO hay que darle a una máquina la dirección de tu casa?',ans:'Porque lo que se escribe en internet queda guardado. Ya no lo controlamos.'},
+  {q:'Un compañero dice que la computadora es su amiga. ¿Qué le dirías?',ans:'Respuesta abierta. Vale si explica con respeto que la máquina no siente ni entiende.'},
+  {q:'La máquina te dijo un dato y no estás seguro. ¿Qué haces?',ans:'Lo comparo con lo que ya sé. Lo busco en el libro o con mi maestra. Si no puedo, no lo uso.'},
+  {q:'¿Por qué se dice que la Inteligencia Artificial no es magia?',ans:'Porque la hicieron personas, con datos y matemática. Alguien eligió sus ejemplos.'},
+  {q:'Escribe las tres reglas de oro para usar una máquina que aprende.',ans:'No le doy mis datos ni los de mi familia. No le creo sin comprobar. Si algo me asusta, le aviso a una persona grande.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra la palabra que se pide en cada oración. Escribe al lado qué significa esa palabra.','<strong>Ejemplo:</strong> El teléfono aprendió a reconocer tu cara con muchos ejemplos. → <span style="color:var(--jade);font-weight:700;">ejemplos</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada palabra, escribe qué es, un ejemplo, dónde la ves en tu casa, y haz un dibujo.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Palabra','text-align:left;')}${th('¿Qué es?')}${th('Un ejemplo')}${th('¿Dónde la ves?')}${th('Mi dibujo')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
-function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
-function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno y subraya la palabra que se pide. Escribe al lado qué significa.','<strong>Ejemplo:</strong> El teléfono aprendió a reconocer tu cara con muchos ejemplos. → <span style="color:var(--jade);font-weight:700;">ejemplos</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la tabla en tu cuaderno y llénala. Haz un dibujo de cada palabra.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Palabra','text-align:left;')}${th('¿Qué es?')}${th('Un ejemplo')}${th('¿Dónde la ves?')}${th('Mi dibujo')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> ¿Qué es? ${it.gen} | Un ejemplo: ${it.n} | ¿Dónde la ves? ${it.g}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Escribe la opción correcta en el espacio.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las preguntas en tu cuaderno y contesta.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
@@ -383,42 +383,42 @@ const evalTFBank=[
   {q:'Una máquina está viva igual que un perro.',a:false},
   {q:'Para aprender, una máquina necesita muchos ejemplos.',a:true},
   {q:'La computadora siente alegría cuando gana.',a:false},
-  {q:'Una instrucción es una orden clara que la máquina obedece.',a:true},
-  {q:'Si le enseñamos pocos ejemplos, la máquina se equivoca más.',a:true},
-  {q:'La Inteligencia Artificial es magia y nadie sabe cómo funciona.',a:false},
-  {q:'Cuando dictamos un mensaje, una máquina convierte la voz en letras.',a:true},
-  {q:'Está bien darle a la máquina la dirección de nuestra casa.',a:false},
+  {q:'Una instrucción es una orden que la máquina obedece.',a:true},
+  {q:'Con pocos ejemplos, la máquina se equivoca más.',a:true},
+  {q:'La Inteligencia Artificial es magia.',a:false},
+  {q:'Al dictar un mensaje, una máquina convierte la voz en letras.',a:true},
+  {q:'Está bien darle a la máquina la dirección de mi casa.',a:false},
   {q:'Un robot se enciende y se apaga; un ser vivo no.',a:true},
   {q:'Las máquinas que aprenden las hicieron personas.',a:true},
-  {q:'Si la máquina dice algo raro, hay que avisarle a una persona grande.',a:true},
+  {q:'Si la máquina dice algo raro, le aviso a una persona grande.',a:true},
   {q:'Una máquina nunca se equivoca.',a:false},
-  {q:'La cámara encuentra caras porque vio muchísimas fotos de caras.',a:true},
+  {q:'La cámara encuentra caras porque vio muchísimas fotos.',a:true},
   {q:'Todo lo que dice una máquina es cierto.',a:false},
-  {q:'Un ejemplo es cada cosa que le mostramos a la máquina para que aprenda.',a:true},
+  {q:'Un ejemplo es cada cosa que le mostramos para que aprenda.',a:true},
   {q:'Un pino y un zanate son máquinas.',a:false},
   {q:'La máquina puede quedarse con lo que le escribimos.',a:true},
   {q:'Una calculadora come y duerme.',a:false},
-  {q:'Un dato es un pedacito de información que se puede guardar.',a:true}
+  {q:'Un dato es un pedacito de información que se guarda.',a:true}
 ];
 const evalMCBank=[
-  {q:'¿Qué es la Inteligencia Artificial?',o:['Programas que hacen cosas que antes solo hacían las personas','Un robot que vive en el teléfono','Una persona dentro de la computadora','Un juego de video'],a:0},
+  {q:'¿Qué es la Inteligencia Artificial?',o:['Programas que hacen cosas de personas','Un robot dentro del teléfono','Una persona dentro de la computadora','Un juego de video'],a:0},
   {q:'¿Cuál de estos está VIVO?',o:['Un teléfono','Un pino','Una calculadora','Un robot'],a:1},
-  {q:'¿Cómo aprende una máquina a reconocer una cara?',o:['Nació sabiendo','Alguien se la dibujó una vez','Viendo muchísimas fotos de caras','Porque tiene ojos'],a:2},
+  {q:'¿Cómo aprende una máquina a reconocer una cara?',o:['Nació sabiendo','Alguien se la dibujó','Viendo muchísimas fotos de caras','Porque tiene ojos'],a:2},
   {q:'Si a una máquina le enseñamos POCOS ejemplos…',o:['Aprende más rápido','Aprende igual de bien','No pasa nada','Se equivoca más'],a:3},
   {q:'¿La máquina siente alegría o tristeza?',o:['No: es un aparato y no siente nada','Sí, cuando gana','Solo sin batería','Sí, como un perro'],a:0},
-  {q:'Una instrucción es…',o:['Un dibujo','Una orden clara que la máquina obedece','Un premio','Una foto'],a:1},
-  {q:'Cuando dictas un mensaje y el teléfono lo escribe, ¿qué pasó?',o:['Te leyó la mente','Hay alguien escuchando','Una máquina convirtió tu voz en letras','Fue magia'],a:2},
+  {q:'Una instrucción es…',o:['Un dibujo','Una orden que la máquina obedece','Un premio','Una foto'],a:1},
+  {q:'Le dictas un mensaje y el teléfono lo escribe. ¿Qué pasó?',o:['Te leyó la mente','Hay alguien escuchando','Una máquina convirtió tu voz en letras','Fue magia'],a:2},
   {q:'¿Qué NO se le cuenta a una máquina?',o:['Mi color favorito','Qué es un triángulo','Una pregunta de la tarea','La dirección de mi casa'],a:3},
   {q:'La máquina te dio un dato y no estás seguro. ¿Qué haces?',o:['Lo busco en el libro o le pregunto a mi maestra','Le creo, porque es computadora','Se lo cuento a todos','Le pregunto lo mismo otra vez'],a:0},
-  {q:'¿Qué es un ejemplo, en Inteligencia Artificial?',o:['Un premio para la máquina','Cada cosa que le mostramos para que aprenda','Un error de la computadora','Un tipo de teléfono'],a:1},
+  {q:'¿Qué es un ejemplo, en Inteligencia Artificial?',o:['Un premio para la máquina','Lo que le mostramos para que aprenda','Un error de la computadora','Un tipo de teléfono'],a:1},
   {q:'¿Por qué se dice que la Inteligencia Artificial NO es magia?',o:['Porque no funciona','Porque solo sirve de noche','Porque son datos y matemática, y alguien la hizo','Porque es muy cara'],a:2},
   {q:'¿Qué hace que algo sea un ser vivo?',o:['Que tenga colores','Que se encienda','Que haga ruido','Que nazca, crezca, se alimente y muera'],a:3},
   {q:'¿Quién elige los ejemplos con que aprende una máquina?',o:['Nadie, los busca sola','Personas','El sol','La batería'],a:1},
-  {q:'Si algo en la pantalla te asusta o te confunde, ¿qué haces?',o:['Le aviso a una persona grande','Lo comparto con mis amigos','Apago todo y no digo nada','Le contesto a la máquina'],a:0},
-  {q:'¿Cuál de estas cosas SÍ hace una máquina con Inteligencia Artificial?',o:['Sentir cariño','Tener hambre','Traducir un letrero','Crecer'],a:2}
+  {q:'Si algo en la pantalla te asusta, ¿qué haces?',o:['Le aviso a una persona grande','Lo comparto con mis amigos','Apago todo y no digo nada','Le contesto a la máquina'],a:0},
+  {q:'¿Qué SÍ hace una máquina con Inteligencia Artificial?',o:['Sentir cariño','Tener hambre','Traducir un letrero','Crecer'],a:2}
 ];
 const evalCPBank=[
-  {q:'Los programas que hacen cosas que antes solo hacían las personas se llaman Inteligencia ___.',a:'Artificial'},
+  {q:'Los programas que hacen cosas de personas se llaman Inteligencia ___.',a:'Artificial'},
   {q:'Una máquina no está ___.',a:'viva'},
   {q:'Para aprender, la máquina necesita muchos ___.',a:'ejemplos'},
   {q:'Una orden clara que la máquina obedece se llama ___.',a:'instrucción'},
@@ -426,30 +426,30 @@ const evalCPBank=[
   {q:'Con pocos ejemplos, la máquina se ___ más.',a:'equivoca'},
   {q:'La Inteligencia Artificial no es ___.',a:'magia'},
   {q:'Si algo me asusta, le aviso a una ___ grande.',a:'persona'},
-  {q:'Un pedacito de información que se puede guardar es un ___.',a:'dato'},
+  {q:'Un pedacito de información que se guarda es un ___.',a:'dato'},
   {q:'Un perro está vivo; un robot es una ___.',a:'máquina'},
-  {q:'La cámara encuentra ___ porque vio muchísimas fotos de ellas.',a:'caras'},
+  {q:'La cámara encuentra ___ porque vio muchísimas fotos.',a:'caras'},
   {q:'La dirección de mi casa ___ se le cuenta a la máquina.',a:'no'},
   {q:'Antes de creerle un dato a la máquina, hay que ___.',a:'comprobar'},
   {q:'Las máquinas que aprenden las hicieron ___.',a:'personas'},
   {q:'Un ser vivo nace, crece, se alimenta y ___.',a:'muere'}
 ];
 const evalPRBank=[
-  {term:'Inteligencia Artificial',def:'Programas que hacen cosas que antes solo hacían las personas'},
+  {term:'Inteligencia Artificial',def:'Programas que hacen cosas de personas'},
   {term:'Máquina',def:'Una cosa hecha por personas para hacer un trabajo'},
   {term:'Instrucción',def:'Una orden clara que la máquina obedece'},
-  {term:'Ejemplo',def:'Cada cosa que le mostramos a la máquina para que aprenda'},
+  {term:'Ejemplo',def:'Lo que le mostramos para que aprenda'},
   {term:'Dato',def:'Un pedacito de información que se puede guardar'},
   {term:'Ser vivo',def:'Nace, crece, se alimenta y muere'},
   {term:'Robot',def:'Una máquina que se mueve y hace un trabajo'},
   {term:'Cámara',def:'La parte del teléfono que toma las fotos'},
   {term:'Voz',def:'Lo que la máquina convierte en letras cuando dictas'},
   {term:'Traducir',def:'Pasar un texto de un idioma a otro'},
-  {term:'Equivocarse',def:'Lo que le pasa a la máquina cuando tuvo pocos ejemplos'},
-  {term:'Comprobar',def:'Buscar el dato en el libro o preguntarle a quien lo sabe'},
-  {term:'Privado',def:'Lo que es solo tuyo y de tu familia, y no se comparte'},
+  {term:'Equivocarse',def:'Lo que le pasa con pocos ejemplos'},
+  {term:'Comprobar',def:'Buscar el dato en el libro o con quien lo sabe'},
+  {term:'Privado',def:'Lo que es tuyo y de tu familia, y no se comparte'},
   {term:'Magia',def:'Lo que la Inteligencia Artificial NO es'},
-  {term:'Persona grande',def:'A quien le avisas si algo te asusta o te confunde'}
+  {term:'Persona grande',def:'A quien le avisas si algo te asusta'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -482,7 +482,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · ¿Qué es la Inteligencia Artificial?`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · ¿Qué es la Inteligencia Artificial?`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección: 25 puntos, 5 preguntas</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Contesta en pantalla</strong> y toca <em>Calificar prueba</em>. Lo impreso sale sin tus respuestas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -536,80 +536,82 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un compañero dice que su teléfono lo quiere, porque le contesta cuando le habla.'},
-  {txt:'Una niña le escribe a un chat la dirección de su casa para que le diga cuánto falta para la escuela.'},
-  {txt:'Un niño copia en su tarea un dato que le dio una máquina, sin buscarlo en el libro.'},
-  {txt:'Alguien dice que la Inteligencia Artificial es magia y que por eso nadie la puede entender.'},
-  {txt:'Un compañero le enseñó a un programa solo tres fotos de nances y se enoja porque se equivoca.'},
-  {txt:'Un niño sube al internet una foto de todos sus compañeros sin preguntarles.'}
+  {txt:'Un compañero dice que su teléfono lo quiere porque le contesta.'},
+  {txt:'Una niña le escribe a un chat la dirección de su casa.'},
+  {txt:'Un niño copia en su tarea un dato de la máquina, sin buscarlo.'},
+  {txt:'Alguien dice que la Inteligencia Artificial es magia y nadie la entiende.'},
+  {txt:'Un compañero le enseñó solo tres fotos de nances y se enoja porque falla.'},
+  {txt:'Un niño sube una foto de todos sus compañeros sin preguntarles.'}
 ];
 const critCaseQuestions=[
-  '1. ¿Qué está pasando en este caso?',
+  '1. ¿Qué está pasando aquí?',
   '2. ¿Está bien o está mal? ¿Por qué?',
-  '3. ¿Qué tendría que haber hecho esa persona?',
-  '4. ¿Qué le explicarías tú para que le quede claro?'
+  '3. ¿Qué tenía que haber hecho esa persona?',
+  '4. ¿Cómo se lo explicarías?'
 ];
 const critCaseGuides=[
-  'Se valora que el alumno reconozca de qué trata: una máquina que parece persona, un dato privado, un dato sin comprobar, o pocos ejemplos.',
-  'Se valora que distinga lo que la máquina HACE de lo que la gente CREE que hace: no siente, no sabe todo, y se equivoca con lo que no le enseñaron.',
-  'Cada caso tiene su salida concreta: no darle datos de la casa, comprobar el dato en el libro, darle más ejemplos, o pedir permiso antes de subir una foto de alguien.',
-  'Respuesta abierta. Se valora que lo explique con respeto y con un ejemplo de su vida, no que se burle del compañero.'
+  'Vale si reconoce de qué trata: máquina que parece persona, dato privado, dato sin comprobar o pocos ejemplos.',
+  'Vale si separa lo que la máquina HACE de lo que la gente CREE que hace.',
+  'Cada caso tiene salida: no dar datos de la casa, comprobar en el libro, dar más ejemplos, pedir permiso.',
+  'Respuesta abierta. Vale si lo explica con respeto y con un ejemplo suyo.'
 ];
 const critErrorBank=[
   {txt:'"Mi teléfono me quiere porque me contesta."',
-   g1:'Una máquina no siente nada. Contesta porque alguien la programó y porque vio muchísimos ejemplos de conversaciones.',
-   g2:'Que algo conteste como una persona no significa que entienda ni que sienta.'},
+   g1:'Una máquina no siente nada. Contesta porque alguien la programó.',
+   g2:'Contestar como una persona no es entender ni sentir.'},
   {txt:'"Si la computadora lo dijo, es verdad."',
-   g1:'Las máquinas se equivocan, sobre todo con lo que no estaba en sus ejemplos.',
-   g2:'Un dato se comprueba en el libro o con alguien que lo sabe.'},
+   g1:'Las máquinas se equivocan con lo que no estaba en sus ejemplos.',
+   g2:'Un dato se comprueba en el libro o con quien lo sabe.'},
   {txt:'"La Inteligencia Artificial apareció sola, por magia."',
-   g1:'La hicieron personas, con datos y con matemática.',
-   g2:'Alguien la programó y alguien eligió los ejemplos con que aprendió.'},
+   g1:'La hicieron personas, con datos y matemática.',
+   g2:'Alguien la programó y alguien eligió sus ejemplos.'},
   {txt:'"Con dos o tres ejemplos la máquina ya aprende bien."',
-   g1:'Con pocos ejemplos se equivoca mucho: le falta ver de todo.',
-   g2:'Mientras más ejemplos buenos y variados, mejor reconoce lo que nunca vio.'},
+   g1:'Con pocos ejemplos se equivoca: le falta ver de todo.',
+   g2:'Mientras más ejemplos buenos, mejor reconoce lo que nunca vio.'},
   {txt:'"Puedo subir la foto de mis compañeros, total no dice sus nombres."',
-   g1:'Una foto de otra persona no es tuya para subirla: hay que pedir permiso.',
-   g2:'Lo que se sube puede quedar guardado y ya no se controla quién lo ve.'},
+   g1:'Esa foto también es de ellos: hay que pedir permiso.',
+   g2:'Lo que se sube puede quedar guardado y ya no se controla.'},
   {txt:'"Un robot está vivo porque se mueve."',
-   g1:'Moverse no es estar vivo: un ventilador se mueve y no está vivo.',
-   g2:'Lo vivo nace, crece, se alimenta y muere. El robot se enciende y se apaga.'}
+   g1:'Moverse no es estar vivo: un ventilador se mueve.',
+   g2:'Lo vivo nace, crece, come y muere. El robot se enciende.'}
 ];
 const critDecisionBank=[
-  'Un chat te pide tu nombre completo y tu escuela para «conocerte mejor»; conviene escribirlos, o no darlos y seguir sin eso.',
-  'La máquina te dio un dato para la tarea; conviene copiarlo tal cual, o buscarlo primero en tu libro.',
-  'Un compañero está asustado por un mensaje raro que le llegó; conviene decirle que no haga caso, o acompañarlo a avisarle a la maestra.',
-  'Le enseñaste cinco ejemplos a un programa y se equivoca; conviene enojarse y dejarlo, o darle más ejemplos y volver a probar.',
-  'Quieres subir una foto donde salen tus compañeros; conviene subirla porque están contentos, o preguntarles antes a ellos.'
+  'Un chat te pide tu nombre completo y tu escuela. ¿Se los das o no?',
+  '¿Copias el dato que te dio la máquina o lo buscas en tu libro?',
+  'Un compañero está asustado por un mensaje raro. ¿No haces caso o lo acompañas donde la maestra?',
+  'Le enseñaste cinco ejemplos a un programa y falla. ¿Lo dejas o le das más?',
+  'Quieres subir una foto donde salen tus compañeros. ¿La subes o les preguntas antes?'
 ];
-const critDecisionGuide='La mejor decisión cuida a las personas y comprueba lo que se dice: los datos de la casa y de la familia no se dan, un dato se busca en el libro antes de copiarlo, un susto se cuenta a una persona grande, una máquina que se equivoca necesita más ejemplos, y una foto donde sale otra persona se sube solo con su permiso.';
+/* Va con <br> a propósito: en un teléfono, cinco salidas seguidas en un solo
+   párrafo son un muro de texto que el alumno se salta entero. */
+const critDecisionGuide='Vale si cuida a las personas y comprueba el dato.<br>Los datos de la casa no se dan. Un dato se busca en el libro. Un susto se cuenta a una persona grande.<br>Una máquina que falla necesita más ejemplos. Una foto de otro se sube con permiso.';
 const critCompareBank=[
   {a:'Un perro.',b:'Un robot.',
    ga:'Es un ser vivo: nace, crece, come, siente y muere.',
    gb:'Es una máquina: la hicieron personas, se enciende y se apaga.',
-   gr:'Los dos se mueven y los dos pueden aprender cosas, pero moverse no es estar vivo. Al perro no hay que enseñarle a tener hambre; al robot hay que enseñarle todo.'},
+   gr:'Los dos se mueven, pero moverse no es estar vivo. Al robot hay que enseñarle todo.'},
   {a:'Una instrucción.',b:'Un ejemplo.',
    ga:'Es una orden clara que la máquina obedece.',
    gb:'Es una cosa que le mostramos para que aprenda sola.',
-   gr:'Con instrucciones le decimos QUÉ hacer paso por paso. Con ejemplos no se lo decimos: ella busca lo que se repite y lo aprende. Las dos maneras sirven, pero no son lo mismo.'},
+   gr:'Con instrucciones le decimos QUÉ hacer, paso por paso. Con ejemplos busca sola lo que se repite.'},
   {a:'Mi color favorito.',b:'La dirección de mi casa.',
    ga:'Se lo puedo contar a una máquina sin problema.',
    gb:'No se lo cuento nunca a una máquina.',
-   gr:'Los dos son datos míos, pero uno no le sirve a nadie para hacerme daño y el otro sí. Lo que dice dónde vivo, quién es mi familia o dónde estudio se queda en casa.'}
+   gr:'Los dos son datos míos. Uno no le sirve a nadie para hacerme daño; el otro sí.'}
 ];
 const critCauseBank=[
-  {cause:'Le enseñamos a la máquina miles de fotos de caras.',guide:'Por eso ahora encuentra caras en fotos que nunca vio.'},
-  {cause:'Solo le enseñamos tres ejemplos.',guide:'Por eso se equivoca tanto: le faltó ver de todo.'},
-  {cause:'La máquina es un aparato y no tiene sentimientos.',guide:'Por eso no se pone triste ni te quiere, aunque te conteste bonito.'},
-  {cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no le damos a la máquina los datos de nuestra casa ni de nuestra familia.'},
-  {cause:'Las máquinas las hicieron personas, con datos y matemática.',guide:'Por eso no es magia, y por eso también se puede equivocar.'}
+  {cause:'Le enseñamos miles de fotos de caras.',guide:'Por eso encuentra caras en fotos que nunca vio.'},
+  {cause:'Solo le enseñamos tres ejemplos.',guide:'Por eso falla tanto: le faltó ver de todo.'},
+  {cause:'La máquina es un aparato y no tiene sentimientos.',guide:'Por eso no te quiere, aunque te conteste bonito.'},
+  {cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no le damos los datos de nuestra casa.'},
+  {cause:'Las máquinas las hicieron personas, con datos y matemática.',guide:'Por eso no es magia, y por eso se equivoca.'}
 ];
 const critEffectBank=[
-  {effect:'El teléfono escribe lo que le dictas.',guide:'Porque una máquina oyó millones de voces antes de oír la tuya.'},
-  {effect:'La máquina no reconoce un nance.',guide:'Porque nadie le enseñó fotos de nances: no estaba en sus ejemplos.'},
-  {effect:'No hay que creerle todo a una máquina.',guide:'Porque contesta con la misma seguridad cuando sabe y cuando se equivoca.'},
+  {effect:'El teléfono escribe lo que le dictas.',guide:'Porque oyó millones de voces antes de oír la tuya.'},
+  {effect:'La máquina no reconoce un nance.',guide:'Porque nadie le enseñó fotos de nances.'},
+  {effect:'No hay que creerle todo a una máquina.',guide:'Porque contesta igual de segura cuando sabe y cuando falla.'},
   {effect:'Un robot no se cansa nunca.',guide:'Porque no está vivo: no siente sueño, ni hambre, ni dolor.'},
-  {effect:'Una foto de tus compañeros no se sube sin preguntarles.',guide:'Porque esa foto también es de ellos, y ellos deciden si se comparte.'}
+  {effect:'Una foto de tus compañeros no se sube sin preguntarles.',guide:'Porque esa foto también es de ellos.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -622,19 +624,19 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Busca <strong>dos errores</strong> y corrígelos con tus palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomiendas? Explica por qué.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -644,7 +646,7 @@ function genEvalCrit(){
   s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> contesta, compara con la <em>Pauta</em> y anótate el puntaje de cada sección.';out.appendChild(totalPanel);
   fin('s-evaluacion');
 }
 function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
@@ -654,7 +656,7 @@ function calcCritTotal(){
   let total=0;
   document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
   const panel=document.getElementById('evalCritTotalResult');
-  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total: ${total}/100</strong><br><em>Compara con la Pauta antes de anotarte el puntaje.</em>`;}
   const formKey='crit_'+(window._currentEvalCritForm||1);
   if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
   else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
@@ -664,11 +666,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
-  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Busca dos errores y corrígelos con tus palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomiendas? Explica por qué.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -800,8 +802,8 @@ const IA_FRUTAS_ENSENAR=[
      Se describen con la pista puesta para que el niño pueda etiquetarlas bien;
      si aun así le pone el nombre cambiado, la pantalla se lo avisa y la máquina
      aprende ese error, que también hay que poder verlo. */
-  {e:'🟠',n:'anaranjada y GRANDE, de las de la costa: aunque sea grande, es un nance',color:2,tam:5,clase:'nance'},
-  {e:'🟢',n:'verde y MEDIANA, de las que no acabaron de crecer: es una anona',color:5,tam:3,clase:'anona'}
+  {e:'🟠',n:'anaranjada y GRANDE, de la costa: aunque sea grande, es un nance',color:2,tam:5,clase:'nance'},
+  {e:'🟢',n:'verde y MEDIANA, sin acabar de crecer: es una anona',color:5,tam:3,clase:'anona'}
 ];
 /* Cuatro frutas que nunca vio. Las dos primeras son de las comunes; las dos
    últimas son del tipo de las raras, que es lo que la máquina solo acierta si
@@ -840,7 +842,7 @@ function iaEnsenar(clase){
   const f=IA_FRUTAS_ENSENAR[iaEnsIdx]; if(!f) return;
   sfx(clase===f.clase?'ok':'no');
   if(clase!==f.clase){
-    fb('fbEns','Ojo: esa era '+(f.clase==='nance'?'un nance':'una anona')+'. La máquina va a aprender lo que tú le dijiste, aunque esté mal.',false);
+    fb('fbEns','Ojo, esa era '+(f.clase==='nance'?'un nance':'una anona')+'. La máquina aprende lo que tú le dijiste.',false);
   } else {
     fb('fbEns','¡Bien! La máquina ya se lo guardó.',true);
   }
@@ -874,7 +876,7 @@ function iaEnsProbar(){
        vería parpadear un texto que no llega a leer. */
     iaEnsFase='ensenar';
     fb('fbEns','🤖 «No puedo. '+
-      (clases.length?'Solo me enseñaste '+(clases[0]==='nance'?'nances':'anonas')+': de lo otro no vi ni un ejemplo, así que para mí no existe.':'No me enseñaste ni un ejemplo.')+
+      (clases.length?'Solo me enseñaste '+(clases[0]==='nance'?'nances':'anonas')+'. De lo otro no vi ni un ejemplo.':'No me enseñaste ni un ejemplo.')+
       '» Sigue enseñándole y prueba otra vez.',false);
     iaEnsPintar();
     return;
@@ -894,25 +896,25 @@ function iaEnsProbar(){
   const equivocados=iaEnsenados.filter(x=>x.clase!==x.real).length;
   let mensaje;
   if(ok===total){
-    mensaje='🎉 <strong>¡Las acertó todas!</strong> A cada una le puso el nombre del ejemplo que más se le parecía, y le acertó. Eso pasa porque entre tus ejemplos había uno parecido a cada una.';
+    mensaje='🎉 <strong>¡Las acertó todas!</strong> Entre tus ejemplos había uno parecido a cada una.';
   } else if(equivocados){
-    mensaje='😕 <strong>Falló '+(total-ok)+' de '+total+'.</strong> Y mira por qué: a <strong>'+equivocados+
-      '</strong> de tus ejemplos les pusiste el nombre cambiado, así que la máquina aprendió eso. '+
-      '<strong>Ella no se equivocó: aprendió exactamente lo que tú le enseñaste.</strong> Toca «Empezar de nuevo» y prueba con cuidado.';
+    mensaje='😕 <strong>Falló '+(total-ok)+' de '+total+'.</strong> A <strong>'+equivocados+
+      '</strong> de tus ejemplos les pusiste el nombre cambiado. '+
+      '<strong>Ella no se equivocó: aprendió lo que le enseñaste.</strong> Toca «Empezar de nuevo».';
   } else if(iaEnsIdx<IA_FRUTAS_ENSENAR.length){
-    mensaje='🤔 <strong>Falló '+(total-ok)+' de '+total+'.</strong> Y fíjate CUÁLES: la '+
+    mensaje='🤔 <strong>Falló '+(total-ok)+' de '+total+'.</strong> Fíjate CUÁLES: la '+
       fallaron.map(f=>'<em>'+_esc(f.n)+'</em>').join(' y la ')+'. '+
-      'Todos tus ejemplos eran nances chiquitos y anonas grandotas, así que a estas dos las midió contra los que no se les parecen. '+
-      '<strong>No es cuántos ejemplos le enseñes: es CUÁLES.</strong> Sigue hasta el final, que faltan los raros, y vuelve a probar.';
+      'Tus ejemplos eran nances chiquitos y anonas grandotas. '+
+      '<strong>No es cuántos: es CUÁLES.</strong> Sigue hasta el final, que faltan los raros.';
   } else {
-    mensaje='🤔 <strong>Falló '+(total-ok)+' de '+total+'.</strong> Revisa los nombres que les pusiste: la máquina contesta lo más parecido a lo que tú le enseñaste.';
+    mensaje='🤔 <strong>Falló '+(total-ok)+' de '+total+'.</strong> Revisa los nombres que les pusiste.';
   }
-  caja.innerHTML='<p class="ens-desc">🤖 La máquina probó con <strong>cuatro frutas que nunca vio</strong>. A cada una le puso el nombre de la que más se le parecía:</p>'+filas+
+  caja.innerHTML='<p class="ens-desc">🤖 Probó con <strong>cuatro frutas que nunca vio</strong>. Le puso el nombre de la más parecida:</p>'+filas+
     '<p class="ens-listo">'+mensaje+'</p>';
   if(ok===total){ fb('fbEns','¡Aprendió! +4 XP',true); sfx('fan');
     if(!xpTracker.wgt.has('ens_fin')){xpTracker.wgt.add('ens_fin');pts(4);}
     fin('s-estructura'); unlockAchievement('entrenador');
-  } else { fb('fbEns','Acertó '+ok+' de '+total+'. Lee abajo por qué.',false); sfx('no'); }
+  } else { fb('fbEns','Acertó '+ok+' de '+total+'. Lee por qué.',false); sfx('no'); }
 }
 
 function iaEnsReiniciar(){
@@ -1005,10 +1007,10 @@ function iaPixPreguntar() {
   const numeros = iaPixDibujo.map((v, i) => (i % IA_PIX_LADO === 0 && i ? ' ' : '') + v).join('');
   let msg = '<p class="pix-dice">🤖 «Se parece más a <strong>' + res.mejor.e + ' ' + _esc(res.mejor.n) + '</strong>: coincide en <strong>' +
     res.mejor.coincide + ' de ' + res.total + '</strong> puntitos.»</p>';
-  if (encendidos === 0) msg += '<p class="pix-nota">No dibujaste nada… y contestó igual de segura. Cuenta también los puntitos <b>apagados</b> que coinciden, y con la raya coinciden casi todos. La máquina <b>siempre contesta</b>, aunque no haya nada que ver.</p>';
-  else if (res.mejor.coincide === res.total) msg += '<p class="pix-nota">Igualito a su recuerdo, puntito por puntito. Ahora toca «Moverlo un puntito» y vuelve a preguntar.</p>';
-  else if (movido) msg += '<p class="pix-nota">¡Lo moviste <b>un solo puntito</b> y ya no lo reconoce! Para ti sigue siendo ' + _esc(iaPixUltimo.n) + '; para ella cada casilla se compara con la misma casilla del recuerdo, y movidas ya no coinciden. <b>No sabe que es lo mismo, movido.</b> Tú sí.</p>';
-  else msg += '<p class="pix-nota">Le puso el nombre del recuerdo que más se le parece, <b>aunque no se parezca casi nada</b>. Una máquina así no dice «no sé»: elige el menos lejano.</p>';
+  if (encendidos === 0) msg += '<p class="pix-nota">No dibujaste nada y contestó igual de segura. También cuenta los puntitos <b>apagados</b>. <b>Siempre contesta algo.</b></p>';
+  else if (res.mejor.coincide === res.total) msg += '<p class="pix-nota">Igualito a su recuerdo. Ahora toca «Moverlo un puntito» y pregunta otra vez.</p>';
+  else if (movido) msg += '<p class="pix-nota">¡Lo moviste <b>un solo puntito</b> y ya no lo reconoce! Para ti sigue siendo ' + _esc(iaPixUltimo.n) + '. Ella compara cada puntito con el mismo puntito del recuerdo. <b>No sabe que es lo mismo, movido.</b> Tú sí.</p>';
+  else msg += '<p class="pix-nota">Le puso el nombre del más parecido, <b>aunque no se parezca casi nada</b>. No dice «no sé».</p>';
   msg += '<p class="pix-num"><span>Lo que ella ve de verdad:</span> <code>' + numeros + '</code></p>';
   document.getElementById('pix-resp').innerHTML = msg;
   sfx('ok');
@@ -1017,7 +1019,7 @@ function iaPixPreguntar() {
   if (iaPixVeces <= 5 && !xpTracker.wgt.has('pix_' + iaPixVeces)) { xpTracker.wgt.add('pix_' + iaPixVeces); pts(1); }
   if (movido && !xpTracker.wgt.has('pix_movido')) {
     xpTracker.wgt.add('pix_movido'); pts(3);
-    fb('fbPix', '+3 XP: la hiciste equivocarse moviendo el dibujo un puntito. A las máquinas de verdad les pasa igual, y por eso se les enseña el mismo dibujo en muchas posiciones.', true);
+    fb('fbPix', '+3 XP: la hiciste fallar moviendo el dibujo un puntito.', true);
   }
   iaDescubreListo();
 }
@@ -1046,14 +1048,14 @@ function iaAdivPaso() {
   const acierto = r.hoja === a.k;
   let html = cab + '<p class="adiv-preg">🤖 «¡Ya sé! Es <strong>' + _esc(IA_ADIV_NOMBRES[r.hoja]) + '</strong>.»</p>';
   if (acierto) html += '<p class="adiv-res adiv-ok">✅ Acertó. Con este animal la lista de preguntas alcanza.</p>';
-  else html += '<p class="adiv-res adiv-no">❌ Se equivocó: ' + _esc(a.n) + ' es ' + _esc(a.es || 'otra cosa') + '. La persona que escribió las preguntas <b>no pensó en este animal</b>, y la máquina no puede pensar en él por su cuenta: solo sigue la lista.</p>';
+  else html += '<p class="adiv-res adiv-no">❌ Se equivocó: ' + _esc(a.n) + ' es ' + _esc(a.es || 'otra cosa') + '. Quien escribió las preguntas <b>no pensó en este animal</b>. La máquina solo sigue la lista.</p>';
   html += '<p class="adiv-verdad">Cómo es de verdad: ' + ['agua', 'concha', 'plumas', 'patas4'].map(p => (a[p] ? '✔ ' : '✘ ') + _esc(IA_ADIV_PREGUNTAS[p].replace('¿', '').replace('?', '').toLowerCase())).join(' · ') + '</p>';
   caja.innerHTML = html;
   sfx(acierto ? 'ok' : 'no');
   if (!iaAdivHechos.has(a.k)) { iaAdivHechos.add(a.k); if (!xpTracker.wgt.has('adiv_' + a.k)) { xpTracker.wgt.add('adiv_' + a.k); pts(1); } }
   if (!acierto && !xpTracker.wgt.has('adiv_trampa')) {
     xpTracker.wgt.add('adiv_trampa'); pts(3);
-    fb('fbAdiv', '+3 XP: encontraste un animal en el que nadie pensó. Eso le pasa a una máquina de instrucciones con todo lo que no estaba en su lista.', true);
+    fb('fbAdiv', '+3 XP: encontraste un animal en el que nadie pensó.', true);
   }
   iaAdivPintarAnimales(); iaDescubreListo();
 }
@@ -1062,11 +1064,11 @@ function iaAdivGuardar() {
   if (t.length < 5) { fb('fbAdiv', 'Escribe la pregunta entera, como se la harías al animal.', false); return; }
   iaDescGuardar('adivPregunta', t); iaAdivMostrarGuardada(t); sfx('up');
   if (!xpTracker.wgt.has('adiv_preg')) { xpTracker.wgt.add('adiv_preg'); pts(2); }
-  fb('fbAdiv', '+2 XP: arreglaste la lista. Así se mejora una máquina de instrucciones: una persona agrega la pregunta que faltaba.', true);
+  fb('fbAdiv', '+2 XP: arreglaste la lista. Así se mejora una máquina de instrucciones.', true);
 }
 function iaAdivMostrarGuardada(t) {
   const g = document.getElementById('adiv-guardado'); if (!g) return;
-  g.innerHTML = '💾 Tu pregunta quedó guardada: «' + _esc(t) + '». Si la pusieras ANTES de «¿tiene concha?», ¿a cuál de los tres salvaría?';
+  g.innerHTML = '💾 Guardada: «' + _esc(t) + '». Si la pusieras ANTES de «¿tiene concha?», ¿a cuál de los tres salvaría?';
 }
 function iaDescInit() {
   iaPixPintar(); iaAdivPintarAnimales();

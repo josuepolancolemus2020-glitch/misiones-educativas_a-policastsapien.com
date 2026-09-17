@@ -93,26 +93,26 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Cuáles son las tres señales que trae casi toda estafa?',o:['Urgencia, secreto y canal nuevo','Faltas de ortografía, mayúsculas y emojis','Un número largo, una foto y un enlace','Que sea de noche, en fin de semana y por audio'],c:0,
-   e:'Y no se pueden quitar: sin ellas el engaño no funciona. Por eso son lo que hay que saberse de memoria.'},
-  {q:'Te llega un audio con la voz de tu mamá pidiendo dinero urgente a un número nuevo. ¿Qué hacés primero?',o:['Colgar y llamarla yo al número de siempre','Le contesto por audio para comprobar','Reconozco su voz, así que lo mando','Le pregunto algo que solo ella sabe'],c:0,
-   e:'La voz es lo que se fabrica, y lo que «solo ella sabe» puede estar publicado. El número de siempre, no.'},
-  {q:'Un programa acierta el 95 % de las veces. ¿Qué NO te dice ese número?',o:['Cuántos aciertos tuvo','Cuántos casos revisó','Que se equivoca a veces','A quién le cae el 5 % que falla'],c:3,
-   e:'Ese 5 % puede caer siempre sobre el mismo grupo. El promedio esconde justo eso.'},
-  {q:'¿Por qué una palabra clave de la familia deja de servir si se escribió en un grupo?',o:['Porque se olvida','Porque cambia cada mes','Porque ya la puede leer cualquiera que vea el grupo','Porque los grupos no son seguros para nada'],c:2,
-   e:'Una defensa que se publicó ya no es una defensa. Por eso se acuerda en persona.'},
-  {q:'¿Qué tienen en común el video falso y la cuenta que se hace pasar por otro?',o:['Que se arreglan borrando la aplicación','Que los dos se desarman comprobando por OTRO camino','Que solo pasan de noche','Que se notan a simple vista'],c:1,
-   e:'Es la pregunta madre de esa familia: ¿lo comprobé por otro camino?'},
-  {q:'Subís al grupo la foto de todo el salón con los nombres escritos. ¿Qué pasó?',o:['Publicaste datos de treinta personas que no te los dieron','Nada, es una foto normal','Solo importa si sale alguien feo','Es problema de la aplicación'],c:0,
-   e:'Lo de otros no es tuyo para subirlo, y lo que salió ya no vuelve.'},
-  {q:'Un chat siempre te contesta que tenés razón. ¿Qué está haciendo?',o:['Te entiende mejor que nadie','Predice lo que encaja con lo que escribiste','Se preocupa por vos','Aprendió a quererte'],c:1,
-   e:'No te acompaña: sigue la conversación. Lo que duele se habla con una persona.'},
+  {q:'¿Cuáles son las tres señales de casi toda estafa?',o:['Urgencia, secreto y canal nuevo','Faltas de ortografía y emojis','Un número largo y un enlace','Que llegue de noche y por audio'],c:0,
+   e:'Sin ellas el engaño no funciona.'},
+  {q:'Un audio con la voz de tu mamá pide dinero a un número nuevo. ¿Qué hacés?',o:['Colgar y llamarla yo al número de siempre','Le contesto por audio','Reconozco su voz, así que lo mando','Le pregunto algo que solo ella sabe'],c:0,
+   e:'La voz se fabrica. Y lo que «solo ella sabe» puede estar publicado.'},
+  {q:'Un programa acierta el 95 %. ¿Qué NO te dice ese número?',o:['Cuántos aciertos tuvo','Cuántos casos revisó','Que se equivoca a veces','A quién le cae el 5 % que falla'],c:3,
+   e:'Ese 5 % puede caer siempre sobre el mismo grupo.'},
+  {q:'¿Por qué una palabra escrita en un grupo deja de servir?',o:['Porque se olvida','Porque cambia cada mes','Porque la lee cualquiera del grupo','Porque los grupos no son seguros'],c:2,
+   e:'Una defensa que se publicó ya no es una defensa.'},
+  {q:'¿Qué tienen en común el video falso y la cuenta que finge ser otra?',o:['Que se arreglan borrando la aplicación','Que se desarman por otro camino','Que solo pasan de noche','Que se notan a simple vista'],c:1,
+   e:'Es la pregunta de esa familia: ¿lo comprobé por otro camino?'},
+  {q:'Subís al grupo la foto del salón con los nombres. ¿Qué pasó?',o:['Publicaste datos de treinta personas','Nada, es una foto normal','Solo importa si sale alguien feo','Es problema de la aplicación'],c:0,
+   e:'Lo de otros no es tuyo para subirlo, y lo que salió no vuelve.'},
+  {q:'Un chat siempre te contesta que tenés razón. ¿Qué hace?',o:['Te entiende mejor que nadie','Predice lo que encaja con lo tuyo','Se preocupa por vos','Aprendió a quererte'],c:1,
+   e:'No te acompaña: sigue la conversación.'},
   {q:'¿Cuál de estas defensas sirve SIEMPRE?',o:['Reconocer la voz','Volver por el canal de siempre','Mirar si el mensaje tiene faltas','Pedir una foto'],c:1,
-   e:'Del otro lado del número que ya tenías guardado está la persona de verdad.'},
-  {q:'Un mensaje del maestro avisa de la reunión del jueves, sin prisa y sin secreto. ¿Qué es?',o:['Una estafa disimulada','Un mensaje sospechoso por ser de un grupo','Un mensaje normal: no trae ninguna de las tres señales','Una prueba'],c:2,
-   e:'Desconfiar de todo cuesta lo mismo que creerlo todo: el aviso de verdad deja de leerse.'},
-  {q:'¿Qué hace que un caso de estafa sea creíble?',o:['Que el que engaña sea muy listo','Que llame de madrugada','Que escriba muy bien','Que use información que la propia familia publicó'],c:3,
-   e:'Casi nada se roba: el nombre, la escuela, dónde trabaja tu mamá y hasta su voz suelen estar publicados.'}
+   e:'Del otro lado del número que ya tenías está la persona de verdad.'},
+  {q:'El maestro avisa de la reunión del jueves, sin prisa ni secreto. ¿Qué es?',o:['Una estafa disimulada','Sospechoso por ser de un grupo','Un mensaje normal, sin señales','Una prueba'],c:2,
+   e:'Desconfiar de todo cuesta lo mismo que creerlo todo.'},
+  {q:'¿Qué hace que una estafa sea creíble?',o:['Que el que engaña sea muy listo','Que llame de madrugada','Que escriba muy bien','Que use lo que la familia publicó'],c:3,
+   e:'Casi nada se roba: el nombre, la escuela y la voz suelen estar publicados.'}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -125,34 +125,34 @@ function nextQz(){
   if(!qzDone)return fb('fbQz','Primero toca «Verificar».',false);
   qzIdx++; qzSel=-1; qzDone=false; showQz();
 }
-function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false);qzDone=true;const opts=document.querySelectorAll('.qz-opt');if(qzSel===qzData[qzIdx].c){opts[qzSel].classList.add('correct');fb('fbQz','¡Correcto! +5 XP',true);if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5);}sfx('ok');}else{opts[qzSel].classList.add('wrong');opts[qzData[qzIdx].c].classList.add('correct');fb('fbQz','Incorrecto. Revisa la respuesta correcta.',false);sfx('no');}}
+function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false);qzDone=true;const opts=document.querySelectorAll('.qz-opt');if(qzSel===qzData[qzIdx].c){opts[qzSel].classList.add('correct');fb('fbQz','¡Correcto! +5 XP',true);if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5);}sfx('ok');}else{opts[qzSel].classList.add('wrong');opts[qzData[qzIdx].c].classList.add('correct');fb('fbQz','Revisá la respuesta correcta.',false);sfx('no');}}
 function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
 
 // ===================== CLASIFICACIÓN =====================
 const classGroups=[
   {label:['Es una SEÑAL de estafa','Es un mensaje normal'],headA:'🚨 Señal',headB:'✅ Normal',colA:'senal',colB:'norm',
    words:[{w:'«Mandámelo a este otro número»',t:'senal'},{w:'«La reunión es el jueves a las 2»',t:'norm'},{w:'«No le digás a nadie todavía»',t:'senal'},{w:'«Si no podés venir, avisame por aquí»',t:'norm'},{w:'«Tenés dos horas o lo pierde»',t:'senal'},{w:'«No hay que llevar nada»',t:'norm'},{w:'«Es urgente, ya»',t:'senal'},{w:'«Cualquier duda me escriben»',t:'norm'}]},
-  {label:['Lo desarma comprobar por otro camino','Lo desarma preguntar con qué ejemplos se entrenó'],headA:'📞 Otro camino',headB:'⚖️ Los ejemplos',colA:'camino',colB:'ejemplos',
+  {label:['Lo desarma comprobar por otro camino','Lo desarma preguntar por sus ejemplos'],headA:'📞 Otro camino',headB:'⚖️ Los ejemplos',colA:'camino',colB:'ejemplos',
    words:[{w:'Un audio con la voz de un familiar',t:'camino'},{w:'Un programa que descarta solicitudes',t:'ejemplos'},{w:'Un video del director en un grupo',t:'camino'},{w:'Una máquina que califica redacciones',t:'ejemplos'},{w:'Una cuenta nueva que dice ser tu primo',t:'camino'},{w:'El aparato que abre la puerta con la cara',t:'ejemplos'},{w:'Una noticia que solo existe en WhatsApp',t:'camino'},{w:'El que decide a quién se atiende primero',t:'ejemplos'}]},
   {label:['Se quedan con lo tuyo','Te quitan el criterio'],headA:'🔒 Lo tuyo',headB:'🧠 El criterio',colA:'tuyo',colB:'criterio',
    words:[{w:'Subir la foto del salón con los nombres',t:'tuyo'},{w:'Entregar un ensayo que no podés explicar',t:'criterio'},{w:'Escribirle la dirección de tu casa a un chat',t:'tuyo'},{w:'Ver una hora y media de videos que no elegiste',t:'criterio'},{w:'El juguete que pregunta cómo se llama tu mamá',t:'tuyo'},{w:'Creerle a un chat que siempre te da la razón',t:'criterio'},{w:'Guardar tu cara para abrir una puerta',t:'tuyo'},{w:'Copiar un dato sin comprobarlo',t:'criterio'}]}
 ];
 let currentClassGroupIdx=0,clsSelectedWord=null;
 function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
-function checkClass(){const remaining=document.querySelectorAll('#clsBank .wb-item').length;if(remaining>0){fb('fbCls','Mueve todas las palabras a las columnas primero.',false);return;}const group=classGroups[currentClassGroupIdx];let allOk=true;document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{const inLeft=el.parentElement.id==='items-left';const expectedType=inLeft?group.colA:group.colB;if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;}});if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);}if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');}}
+function checkClass(){const remaining=document.querySelectorAll('#clsBank .wb-item').length;if(remaining>0){fb('fbCls','Poné todas las palabras en las columnas.',false);return;}const group=classGroups[currentClassGroupIdx];let allOk=true;document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{const inLeft=el.parentElement.id==='items-left';const expectedType=inLeft?group.colA:group.colB;if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;}});if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);}if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');}}
 function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;buildClass();document.getElementById('fbCls').classList.remove('show');showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);}
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['Un','mensaje','que','pide','algo','urgente','trae','una','señal.'],c:5,art:'La señal que te quita el tiempo de pensar'},
-  {s:['Pedir','que','no','se','lo','contés','a','nadie','es','secreto.'],c:9,art:'La señal que te deja sin quien te aconseje'},
-  {s:['Cambiar','a','un','número','nuevo','es','la','tercera','señal.'],c:3,art:'Lo que cambian para que no contestes por donde siempre'},
+  {s:['Un','mensaje','que','pide','algo','urgente','trae','una','señal.'],c:5,art:'La señal que te quita el tiempo'},
+  {s:['Pedir','que','no','se','lo','contés','a','nadie','es','secreto.'],c:9,art:'La señal que te deja sin consejo'},
+  {s:['Cambiar','a','un','número','nuevo','es','la','tercera','señal.'],c:3,art:'Lo que cambian para sacarte del canal'},
   {s:['Con','una','grabación','corta','se','fabrica','una','voz.'],c:5,art:'Lo que se le hace hoy a una voz'},
-  {s:['Un','promedio','alto','puede','esconder','a','quién','le','falla.'],c:1,art:'El número que esconde a quién le cae el error'},
-  {s:['Lo','que','subís','de','otras','personas','no','es','tuyo.'],c:2,art:'Lo que hacés con una foto cuando la publicás'},
+  {s:['Un','promedio','alto','puede','esconder','a','quién','le','falla.'],c:1,art:'El número que esconde a quién le falla'},
+  {s:['Lo','que','subís','de','otras','personas','no','es','tuyo.'],c:2,art:'Lo que hacés al publicar una foto'},
   {s:['La','mejor','defensa','es','volver','por','el','canal','de','siempre.'],c:7,art:'Por dónde se comprueba un mensaje raro'},
-  {s:['Un','trabajo','que','no','podés','explicar','no','es','tuyo.'],c:5,art:'Lo que tenés que poder hacer con lo que entregás'}
+  {s:['Un','trabajo','que','no','podés','explicar','no','es','tuyo.'],c:5,art:'Lo que tenés que poder hacer con tu tarea'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -162,14 +162,14 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'Las tres señales de una estafa son urgencia, secreto y canal ___.',opts:['viejo','nuevo','seguro'],c:1},
-  {s:'La defensa que sirve siempre es volver por el canal de ___.',opts:['siempre','moda','emergencia'],c:0},
+  {s:'Las tres señales son urgencia, secreto y canal ___.',opts:['viejo','nuevo','seguro'],c:1},
+  {s:'La defensa que sirve siempre es volver al canal de ___.',opts:['siempre','moda','emergencia'],c:0},
   {s:'La voz de alguien ya no es una ___.',opts:['ayuda','señal','prueba'],c:2},
-  {s:'Un promedio alto puede esconder a quién le cae el ___.',opts:['error','premio','turno'],c:0},
-  {s:'La palabra clave de la familia se acuerda en ___.',opts:['persona','un grupo','un mensaje'],c:0},
-  {s:'Lo que subís de otras personas no es ___ para publicarlo.',opts:['bonito','tuyo','urgente'],c:1},
+  {s:'Un promedio alto esconde a quién le cae el ___.',opts:['error','premio','turno'],c:0},
+  {s:'La palabra de la familia se acuerda en ___.',opts:['persona','un grupo','un mensaje'],c:0},
+  {s:'Lo que subís de otras personas no es ___.',opts:['bonito','tuyo','urgente'],c:1},
   {s:'Un trabajo que no podés ___ no es tuyo.',opts:['imprimir','copiar','explicar'],c:2},
-  {s:'Lo que más convence de un engaño es la parte que no es ___.',opts:['importante','mentira','larga'],c:1}
+  {s:'Lo que más convence de un engaño es lo que no es ___.',opts:['importante','mentira','larga'],c:1}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -183,14 +183,14 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
 const routeSets = [
-  { label: 'Ordena lo que hacés cuando llega un mensaje raro', steps: ['1. Parar: no contestar todavía', '2. Buscar las tres señales: urgencia, secreto, canal nuevo', '3. Volver por el canal de siempre', '4. Contárselo a alguien antes de hacer nada', '5. Si era falso, avisar para que no caiga otro'] },
-  { label: 'Ordena las tres preguntas ante algo que decide sobre personas', steps: ['1. ¿Con qué ejemplos se entrenó?', '2. ¿Quién eligió esos ejemplos?', '3. ¿A quién le cae el error?'] }
+  { label: 'Cuando llega un mensaje raro', steps: ['1. Parar: no contestar todavía', '2. Buscar urgencia, secreto y canal nuevo', '3. Volver por el canal de siempre', '4. Contárselo a alguien antes de hacer nada', '5. Si era falso, avisar a los demás'] },
+  { label: 'Las tres preguntas del sesgo', steps: ['1. ¿Con qué ejemplos se entrenó?', '2. ¿Quién eligió esos ejemplos?', '3. ¿A quién le cae el error?'] }
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
 function renderRoute(){const list=document.getElementById('routeList');if(!list)return;list.innerHTML='';routeItems.forEach((step,i)=>{const div=document.createElement('div');div.className='sort-item';div.innerHTML=`<div class="sort-arrows"><button class="sort-arrow" onclick="routeMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="routeMove(${i},1)"${i===routeItems.length-1?' disabled':''}>▼</button></div><div class="sort-step-num">${i+1}.</div><div class="sort-item-txt">${step}</div>`;list.appendChild(div);});}
 function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItems.length)return;[routeItems[idx],routeItems[ni]]=[routeItems[ni],routeItems[idx]];renderRoute();}
-function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
+function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden.',false);sfx('no');}}
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: Identifica el concepto
@@ -206,7 +206,7 @@ const neuronPartes = (function () {
   return p;
 })();
 let neuronIdx=0,neuronDone=false;
-function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno por lo que hizo!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya los reconocés a todos!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
 function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
@@ -218,12 +218,12 @@ const neuroPairs = (function () {
   const ds = IA_DEFENSAS.map(d => d.nombre);
   const de = k => IA_DEFENSAS.find(d => d.k === k).nombre;
   return [
-    {trans:'Un audio con la voz de tu mamá pide dinero a un número nuevo.',func:de('llamar'),opts:ds.slice()},
-    {trans:'Del otro lado juran ser tu tía, y la voz suena igual.',func:de('palabra'),opts:ds.slice()},
-    {trans:'Un texto dice que un té cura una enfermedad, según «un estudio».',func:de('fuente'),opts:ds.slice()},
-    {trans:'Un programa decidió quién pasa a la entrevista y quién no.',func:de('tres'),opts:ds.slice()},
-    {trans:'Querés subir la foto del salón con los nombres de todos.',func:de('ajeno'),opts:ds.slice()},
-    {trans:'El mensaje dice que tenés dos horas y que no se lo cuentes a nadie.',func:de('diez'),opts:ds.slice()}
+    {trans:'Un audio con la voz de tu mamá pide dinero a otro número.',func:de('llamar'),opts:ds.slice()},
+    {trans:'Juran ser tu tía, y la voz suena igual.',func:de('palabra'),opts:ds.slice()},
+    {trans:'Un texto dice que un té cura, según «un estudio».',func:de('fuente'),opts:ds.slice()},
+    {trans:'Un programa decidió quién pasa a la entrevista.',func:de('tres'),opts:ds.slice()},
+    {trans:'Querés subir la foto del salón con los nombres.',func:de('ajeno'),opts:ds.slice()},
+    {trans:'Dice que tenés dos horas y que no lo contés.',func:de('diez'),opts:ds.slice()}
   ];
 })();
 let neuroIdx=0,neuroDone=false;
@@ -248,7 +248,7 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 const retoPairs=[
   {label:['Es una SEÑAL de estafa','Es un mensaje normal'],btnA:'🚨 Señal',btnB:'✅ Normal',colA:'senal',colB:'norm',
    words:[{w:'«Mandámelo a este otro número»',t:'senal'},{w:'«La reunión es el jueves a las 2»',t:'norm'},{w:'«No le digás a nadie todavía»',t:'senal'},{w:'«Si no podés venir, avisame»',t:'norm'},{w:'«Tenés dos horas o lo pierde»',t:'senal'},{w:'«No hay que llevar nada»',t:'norm'},{w:'«Es urgente, ya»',t:'senal'},{w:'«Cualquier duda me escriben»',t:'norm'},{w:'«Perdí mi número, este es el nuevo»',t:'senal'},{w:'«Los espero en el aula»',t:'norm'}]},
-  {label:['Lo desarma comprobar por otro camino','Lo desarma preguntar con qué ejemplos se entrenó'],btnA:'📞 Otro camino',btnB:'⚖️ Los ejemplos',colA:'camino',colB:'ejemplos',
+  {label:['Lo desarma comprobar por otro camino','Lo desarma preguntar por sus ejemplos'],btnA:'📞 Otro camino',btnB:'⚖️ Los ejemplos',colA:'camino',colB:'ejemplos',
    words:[{w:'Un audio con la voz de un familiar',t:'camino'},{w:'Un programa que descarta solicitudes',t:'ejemplos'},{w:'Un video del director en un grupo',t:'camino'},{w:'Una máquina que califica redacciones',t:'ejemplos'},{w:'Una cuenta nueva que dice ser tu primo',t:'camino'},{w:'El aparato que abre la puerta con la cara',t:'ejemplos'},{w:'Una noticia que solo existe en un grupo',t:'camino'},{w:'El que decide a quién se atiende primero',t:'ejemplos'},{w:'Una foto de un desastre que se reenvía',t:'camino'},{w:'El que ordena las solicitudes de beca',t:'ejemplos'}]},
   {label:['Se quedan con lo tuyo','Te quitan el criterio'],btnA:'🔒 Lo tuyo',btnB:'🧠 El criterio',colA:'tuyo',colB:'criterio',
    words:[{w:'Subir la foto del salón con los nombres',t:'tuyo'},{w:'Entregar un ensayo que no podés explicar',t:'criterio'},{w:'Escribirle la dirección de tu casa a un chat',t:'tuyo'},{w:'Ver hora y media de videos que no elegiste',t:'criterio'},{w:'El juguete que pregunta por tu mamá',t:'tuyo'},{w:'Creerle a un chat que siempre te da la razón',t:'criterio'},{w:'Guardar tu cara para abrir una puerta',t:'tuyo'},{w:'Copiar un dato sin comprobarlo',t:'criterio'},{w:'Dar tu número para «personalizar»',t:'tuyo'},{w:'Dejar que el orden de la pantalla elija por vos',t:'criterio'}]}
@@ -275,52 +275,52 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
   {s:'Un mensaje que pide algo urgente trae la primera señal.',type:'urgente'},
-  {s:'Pedir que no se lo contés a nadie es la señal del secreto.',type:'secreto'},
+  {s:'Pedir que no lo contés es la señal del secreto.',type:'secreto'},
   {s:'Cambiar a un número nuevo es la tercera señal.',type:'número nuevo'},
-  {s:'Con una grabación corta se fabrica la voz de cualquiera.',type:'fabrica'},
-  {s:'Un promedio alto puede esconder a quién le cae el error.',type:'promedio'},
-  {s:'Volver por el canal de siempre es la defensa que sirve siempre.',type:'canal de siempre'},
-  {s:'La palabra clave de la familia se acuerda en persona.',type:'en persona'},
+  {s:'Con una grabación corta se fabrica una voz.',type:'fabrica'},
+  {s:'Un promedio alto esconde a quién le cae el error.',type:'promedio'},
+  {s:'Volver al canal de siempre es la mejor defensa.',type:'canal de siempre'},
+  {s:'La palabra de la familia se acuerda en persona.',type:'en persona'},
   {s:'Lo que subís de otras personas no es tuyo.',type:'no es tuyo'},
   {s:'Un trabajo que no podés explicar no lo hiciste vos.',type:'explicar'},
-  {s:'Lo que más convence de un engaño es la parte que es verdad.',type:'verdad'}
+  {s:'Lo que más convence de un engaño es lo verdadero.',type:'verdad'}
 ];
 const classifyTaskDB=[
-  {w:'Urgencia',gen:'La señal que te quita el tiempo de pensar',n:'«Antes de las cinco»',g:'Esperá diez minutos',t:''},
-  {w:'Secreto',gen:'La señal que te deja sin quien te aconseje',n:'«No le digás a nadie»',g:'Contáselo a alguien',t:''},
-  {w:'Canal nuevo',gen:'La señal que impide que contestes por donde siempre',n:'«Este es mi número nuevo»',g:'Volvé al número de siempre',t:''},
+  {w:'Urgencia',gen:'La señal que te quita el tiempo',n:'«Antes de las cinco»',g:'Esperá diez minutos',t:''},
+  {w:'Secreto',gen:'La señal que te deja sin consejo',n:'«No le digás a nadie»',g:'Contáselo a alguien',t:''},
+  {w:'Canal nuevo',gen:'Te saca del canal de siempre',n:'«Este es mi número nuevo»',g:'Volvé al número de siempre',t:''},
   {w:'Voz fabricada',gen:'Se hace con una grabación corta',n:'Un audio pidiendo dinero',g:'Llamá vos, no contestes ahí',t:''},
   {w:'Sesgo que decide',gen:'El error cae siempre sobre los mismos',n:'La beca rechazada en cuatro segundos',g:'Las tres preguntas',t:''},
-  {w:'Privacidad',gen:'Lo que subís queda, y no todo es tuyo',n:'La foto del salón con los nombres',g:'No subir lo de otros',t:''},
-  {w:'Criterio',gen:'Lo que se pierde cuando decide la pantalla',n:'Un ensayo que no podés explicar',g:'Hacerlo vos y poder defenderlo',t:''}
+  {w:'Privacidad',gen:'Lo que subís queda, y no es todo tuyo',n:'La foto del salón con los nombres',g:'No subir lo de otros',t:''},
+  {w:'Criterio',gen:'Lo que se pierde si decide la pantalla',n:'Un ensayo que no podés explicar',g:'Hacerlo vos y poder defenderlo',t:''}
 ];
 const completeTaskDB=[
-  {s:'Las tres señales son urgencia, secreto y canal ___.',a:'nuevo'},
-  {s:'La defensa que sirve siempre es volver por el canal de ___.',a:'siempre'},
-  {s:'Una voz ya no es una ___.',a:'prueba'},
-  {s:'Un promedio alto puede esconder a quién le cae el ___.',a:'error'},
-  {s:'La palabra clave se acuerda en ___, nunca en un grupo.',a:'persona'},
-  {s:'Lo que subís de otras personas no es ___.',a:'tuyo'},
-  {s:'Un trabajo que no podés ___ no es tuyo.',a:'explicar'},
-  {s:'Ante algo que decide sobre personas se pregunta con qué ___ se entrenó.',a:'ejemplos'},
-  {s:'Lo que más convence de un engaño es la parte que no es ___.',a:'mentira'},
-  {s:'Un mensaje sin ninguna de las tres señales es un mensaje ___.',a:'normal'}
+  {s:'Las tres señales son urgencia, secreto y canal ___.',opts:['viejo','nuevo','seguro'],ans:'nuevo'},
+  {s:'La defensa que siempre sirve es volver al canal de ___.',opts:['siempre','moda','emergencia'],ans:'siempre'},
+  {s:'Una voz ya no es una ___.',opts:['ayuda','señal','prueba'],ans:'prueba'},
+  {s:'Un promedio alto esconde a quién le cae el ___.',opts:['premio','error','turno'],ans:'error'},
+  {s:'La palabra se acuerda en ___, nunca en un grupo.',opts:['persona','audio','papel'],ans:'persona'},
+  {s:'Lo que subís de otras personas no es ___.',opts:['bonito','urgente','tuyo'],ans:'tuyo'},
+  {s:'Un trabajo que no podés ___ no es tuyo.',opts:['explicar','imprimir','copiar'],ans:'explicar'},
+  {s:'Preguntá con qué ___ se entrenó el programa.',opts:['precio','ejemplos','colores'],ans:'ejemplos'},
+  {s:'Lo que más convence de un engaño no es ___.',opts:['largo','mentira','caro'],ans:'mentira'},
+  {s:'Un mensaje sin ninguna señal es un mensaje ___.',opts:['falso','raro','normal'],ans:'normal'}
 ];
 const explainQuestions=[
-  '¿Por qué las tres señales no se pueden quitar de una estafa?',
-  '¿Por qué reconocer la voz de alguien ya no sirve como prueba?',
-  '¿Qué esconde un porcentaje de aciertos, y cómo se averigua?',
-  '¿Por qué una palabra clave escrita en un grupo deja de servir?',
-  '¿Qué diferencia hay entre que te engañen y que te quiten el criterio?',
-  '¿Por qué desconfiar de TODO es tan malo como creerlo todo?'
+  {q:'¿Por qué las tres señales no se pueden quitar de una estafa?',ans:'Porque sin ellas el engaño no funciona. Las necesita para que no pienses ni consultes.'},
+  {q:'¿Por qué reconocer una voz ya no sirve como prueba?',ans:'Porque con una grabación corta se fabrica la voz de cualquiera.'},
+  {q:'¿Qué esconde un porcentaje de aciertos?',ans:'A quién le cae el error. Un promedio alto lo tapa.'},
+  {q:'¿Por qué una palabra escrita en un grupo deja de servir?',ans:'Porque la lee cualquiera del grupo. Una defensa publicada ya no defiende.'},
+  {q:'¿Qué diferencia hay entre que te engañen y que te quiten el criterio?',ans:'Engañarte es que hagas algo que no harías. Quitarte el criterio es que dejes de decidir.'},
+  {q:'¿Por qué desconfiar de TODO es tan malo como creerlo todo?',ans:'Porque el día que el aviso sea de verdad, no lo lee nadie.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto que se pide en cada oración. Escribe al lado qué peligro nombra y con qué pregunta se desarma.','<strong>Ejemplo:</strong> Un mensaje que pide algo urgente y en secreto trae dos señales. → <span style="color:var(--jade);font-weight:700;">señales</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
-function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada peligro, completa de qué familia es, a quién le pasa, qué le cuesta y la pregunta que lo desarma.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Peligro','text-align:left;')}${th('¿De qué familia?')}${th('¿A quién le pasa?')}${th('¿Qué le cuesta?')}${th('La pregunta que lo desarma')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
-function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
-function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copiá cada oración y subrayá el concepto. Al lado escribí qué peligro nombra.','<strong>Ejemplo:</strong> pide algo urgente y en secreto → <span style="color:var(--jade);font-weight:700;">dos señales</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copiá la tabla. Para cada peligro escribí qué hace, un caso y cómo te defendés.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Peligro','text-align:left;')}${th('¿Qué hace?')}${th('Un caso')}${th('¿Cómo te defendés?')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(3).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué hace: ${it.gen} | Un caso: ${it.n} | Defensa: ${it.g}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copiá y resolvé en tu cuaderno. Escribí la palabra que falta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copiá las preguntas y contestá cada una.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
 
 // ===================== SOPA DE LETRAS =====================
@@ -381,72 +381,72 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'Las tres señales de una estafa son urgencia, secreto y canal nuevo.',a:true},
-  {q:'Si la voz suena igual a la de tu mamá, el mensaje es de tu mamá.',a:false},
+  {q:'Las tres señales son urgencia, secreto y canal nuevo.',a:true},
+  {q:'Si la voz suena igual a la de tu mamá, el mensaje es suyo.',a:false},
   {q:'Volver por el canal de siempre sirve aunque el mensaje parezca real.',a:true},
-  {q:'Un programa que acierta el 95 % reparte sus errores por igual entre todos.',a:false},
-  {q:'La palabra clave de la familia se acuerda en persona.',a:true},
-  {q:'Subir una foto de tus compañeros con sus nombres no afecta a nadie más que a vos.',a:false},
-  {q:'Un mensaje sin urgencia, sin secreto y por el canal de siempre puede ser perfectamente normal.',a:true},
-  {q:'Preguntarle por audio algo que «solo ella sabe» es una defensa segura.',a:false},
-  {q:'Lo que más convence de un engaño suele ser la parte que es verdad.',a:true},
-  {q:'Un ensayo generado que no podés explicar sigue siendo tuyo si le ponés tu nombre.',a:false},
-  {q:'Una decisión de un programa sobre una persona la tiene que poder revisar una persona.',a:true},
-  {q:'Los peligros de la IA se arreglan borrando las aplicaciones del teléfono.',a:false},
-  {q:'Esperar diez minutos y contárselo a alguien desarma la urgencia y el secreto.',a:true},
-  {q:'La opinión fabricada se nota porque las cuentas repiten el mensaje muchas veces.',a:false},
-  {q:'Un sistema que no tiene otra forma de entrar deja gente afuera cuando falla.',a:true}
+  {q:'Un programa que acierta el 95 % reparte sus errores por igual.',a:false},
+  {q:'La palabra de la familia se acuerda en persona.',a:true},
+  {q:'Subir la foto de tus compañeros solo te afecta a vos.',a:false},
+  {q:'Un mensaje sin las tres señales puede ser normal.',a:true},
+  {q:'Preguntarle por audio algo que «solo ella sabe» es seguro.',a:false},
+  {q:'Lo que más convence de un engaño es lo verdadero.',a:true},
+  {q:'Un ensayo generado es tuyo si le ponés tu nombre.',a:false},
+  {q:'Una decisión sobre una persona la revisa una persona.',a:true},
+  {q:'Los peligros de la IA se arreglan borrando las aplicaciones.',a:false},
+  {q:'Esperar diez minutos y contarlo desarma la urgencia y el secreto.',a:true},
+  {q:'La opinión fabricada se nota porque el mensaje se repite mucho.',a:false},
+  {q:'Un sistema sin otra forma de entrar deja gente afuera.',a:true}
 ];
 const evalMCBank=[
   {q:'¿Cuál NO es una de las tres señales?',o:['Urgencia','Faltas de ortografía','Secreto','Canal nuevo'],a:1},
-  {q:'La defensa que sirve siempre ante un mensaje que pide dinero es…',o:['Reconocer la voz','Pedir una foto','Volver por el canal de siempre','Contestar por audio'],a:2},
-  {q:'Un promedio de aciertos alto NO dice…',o:['Cuántas veces acertó','A quién le cae el error','Que se equivoca a veces','Cuántos casos revisó'],a:1},
+  {q:'Ante un mensaje que pide dinero, la defensa que sirve siempre es…',o:['Reconocer la voz','Pedir una foto','Volver por el canal de siempre','Contestar por audio'],a:2},
+  {q:'Un promedio de aciertos alto NO dice…',o:['Cuántas veces acertó','A quién le cae el error','Que a veces se equivoca','Cuántos casos revisó'],a:1},
   {q:'La familia «Deciden por vos» se desarma con…',o:['Apagar el teléfono','Reconocer la voz','Borrar la cuenta','Las tres preguntas del sesgo'],a:3},
-  {q:'¿Por qué una palabra clave escrita en un grupo ya no sirve?',o:['Porque la puede leer cualquiera que vea el grupo','Porque se olvida','Porque caduca','Porque cambia sola'],a:0},
+  {q:'¿Por qué una palabra clave escrita en un grupo ya no sirve?',o:['Porque la lee cualquiera del grupo','Porque se olvida','Porque caduca','Porque cambia sola'],a:0},
   {q:'La foto del salón con los nombres, subida al grupo, es un problema de…',o:['Ortografía','Espacio','Privacidad de treinta personas','Batería'],a:2},
-  {q:'Un chat que siempre te da la razón está…',o:['Cuidándote','Aprendiendo a quererte','Prediciendo lo que encaja con lo que escribiste','Comprobando datos'],a:2},
-  {q:'De qué está hecha una estafa creíble:',o:['De tecnología muy cara','De información que la propia familia publicó','De suerte','De un día festivo'],a:1},
-  {q:'Un mensaje del maestro sin prisa ni secreto por el grupo de siempre es…',o:['Un mensaje normal','Sospechoso','Una estafa disimulada','Una prueba'],a:0},
-  {q:'La pregunta que desarma la familia «Te engañan» es…',o:['¿Cuánto cuesta?','¿Quién lo hizo?','¿Lo comprobé por otro camino?','¿Está de moda?'],a:2},
-  {q:'La pregunta que desarma la familia «Se quedan con lo tuyo» es…',o:['¿Cuánta batería gasta?','¿Es gratis?','¿Lo usan mis amigos?','¿Se lo daría a un desconocido en la calle?'],a:3},
-  {q:'La pregunta que desarma la familia «Te quitan el criterio» es…',o:['¿Es rápido?','¿Me gusta?','¿Es popular?','¿Esto lo decidí yo, y lo puedo explicar?'],a:3},
-  {q:'Ante un remedio que «cura todo» según un estudio, lo primero es…',o:['Preguntar qué estudio, quién lo hizo y dónde está','Probarlo un día','Compartirlo por si sirve','Comprarlo barato'],a:0},
-  {q:'Cuando un sistema con cámara no reconoce una cara, lo que hace falta es…',o:['Cambiar de cara','Que siempre haya otra forma de entrar','Esperar','Reclamar al aparato'],a:1},
+  {q:'Un chat que siempre te da la razón está…',o:['Cuidándote','Aprendiendo a quererte','Prediciendo lo que encaja con lo tuyo','Comprobando datos'],a:2},
+  {q:'¿De qué está hecha una estafa creíble?',o:['De tecnología muy cara','De lo que la familia publicó','De suerte','De un día festivo'],a:1},
+  {q:'Un aviso del maestro sin prisa ni secreto, por el grupo de siempre, es…',o:['Un mensaje normal','Sospechoso','Una estafa disimulada','Una prueba'],a:0},
+  {q:'La pregunta que desarma «Te engañan» es…',o:['¿Cuánto cuesta?','¿Quién lo hizo?','¿Lo comprobé por otro camino?','¿Está de moda?'],a:2},
+  {q:'La pregunta que desarma «Se quedan con lo tuyo» es…',o:['¿Cuánta batería gasta?','¿Es gratis?','¿Lo usan mis amigos?','¿Se lo daría a un desconocido?'],a:3},
+  {q:'La pregunta que desarma «Te quitan el criterio» es…',o:['¿Es rápido?','¿Me gusta?','¿Es popular?','¿Lo decidí yo, y lo puedo explicar?'],a:3},
+  {q:'Ante un remedio que «cura todo» según un estudio, lo primero es…',o:['Preguntar qué estudio y quién lo hizo','Probarlo un día','Compartirlo por si sirve','Comprarlo barato'],a:0},
+  {q:'Si un sistema con cámara no reconoce una cara, hace falta…',o:['Cambiar de cara','Otra forma de entrar','Esperar','Reclamar al aparato'],a:1},
   {q:'Reenviar un video sin comprobarlo es…',o:['Parte del daño','Ayudar a avisar','Neutral','Obligatorio'],a:0}
 ];
 const evalCPBank=[
-  {q:'La señal que te quita el tiempo de pensar es la ___.',a:'urgencia'},
-  {q:'La señal que te deja sin contárselo a nadie es el ___.',a:'secreto'},
+  {q:'La señal que te quita el tiempo es la ___.',a:'urgencia'},
+  {q:'La señal que te deja sin contarlo es el ___.',a:'secreto'},
   {q:'La tercera señal es el canal ___.',a:'nuevo'},
-  {q:'La defensa que sirve siempre es volver por el canal de ___.',a:'siempre'},
-  {q:'Una voz fabricada demuestra que la voz ya no es una ___.',a:'prueba'},
-  {q:'Un promedio alto puede esconder a quién le cae el ___.',a:'error'},
+  {q:'La defensa que sirve siempre es volver al canal de ___.',a:'siempre'},
+  {q:'Una voz fabricada demuestra que la voz no es una ___.',a:'prueba'},
+  {q:'Un promedio alto esconde a quién le cae el ___.',a:'error'},
   {q:'La palabra de la familia se acuerda en ___.',a:'persona'},
   {q:'Lo que subís de otras personas no es ___.',a:'tuyo'},
   {q:'Un trabajo que no podés ___ no es tuyo.',a:'explicar'},
-  {q:'Ante algo que decide sobre personas se pregunta con qué ___ se entrenó.',a:'ejemplos'},
-  {q:'La familia que te engaña se desarma comprobando por otro ___.',a:'camino'},
-  {q:'Lo que más convence de un engaño es la parte que no es ___.',a:'mentira'},
-  {q:'Un mensaje sin ninguna de las tres señales es un mensaje ___.',a:'normal'},
+  {q:'Ante algo que decide sobre personas, preguntá con qué ___ se entrenó.',a:'ejemplos'},
+  {q:'La familia que te engaña se desarma por otro ___.',a:'camino'},
+  {q:'Lo que más convence de un engaño es lo que no es ___.',a:'mentira'},
+  {q:'Un mensaje sin ninguna señal es un mensaje ___.',a:'normal'},
   {q:'Una decisión sobre una persona la revisa una ___.',a:'persona'},
-  {q:'Un sistema sin otra forma de entrar deja gente ___.',a:'afuera'}
+  {q:'Un sistema sin otra puerta deja gente ___.',a:'afuera'}
 ];
 const evalPRBank=[
-  {term:'Urgencia',def:'La señal que te quita el tiempo de pensar'},
-  {term:'Secreto',def:'La señal que te deja sin quien te aconseje'},
-  {term:'Canal nuevo',def:'La señal que impide que contestes por donde siempre'},
-  {term:'Voz fabricada',def:'Se hace con una grabación corta de la persona'},
-  {term:'Video de algo que no pasó',def:'Alguien diciendo lo que nunca dijo, con su cara'},
+  {term:'Urgencia',def:'Te quita el tiempo de pensar'},
+  {term:'Secreto',def:'Te deja sin quien te aconseje'},
+  {term:'Canal nuevo',def:'Te saca de donde contestás siempre'},
+  {term:'Voz fabricada',def:'Se hace con una grabación corta'},
+  {term:'Video de algo que no pasó',def:'Alguien diciendo lo que nunca dijo'},
   {term:'Suplantación',def:'Una cuenta nueva que parece la de un conocido'},
-  {term:'Sesgo que decide',def:'El error del programa cae siempre sobre los mismos'},
-  {term:'Promedio que esconde',def:'Un porcentaje alto que no dice a quién le falla'},
-  {term:'Privacidad',def:'Lo que subís queda, y lo de otros no es tuyo'},
-  {term:'Juguete que oye',def:'Un aparato que necesita escuchar para funcionar'},
-  {term:'El que decide qué ves',def:'Te da más de lo que te hace quedarte, no lo que te sirve'},
-  {term:'El que siempre te da la razón',def:'Un chat que predice lo que encaja con lo que escribiste'},
-  {term:'Volver por el canal de siempre',def:'La defensa que sirve ante cualquier mensaje raro'},
-  {term:'Palabra acordada en persona',def:'Sirve mientras no se escriba en ningún grupo'},
-  {term:'Las tres preguntas',def:'Con qué ejemplos, quién los eligió, a quién le cae el error'}
+  {term:'Sesgo que decide',def:'El error cae siempre sobre los mismos'},
+  {term:'Promedio que esconde',def:'No dice a quién le falla'},
+  {term:'Privacidad',def:'Lo de otros no es tuyo para subirlo'},
+  {term:'Juguete que oye',def:'Necesita escuchar para funcionar'},
+  {term:'El que decide qué ves',def:'Te da lo que te hace quedarte'},
+  {term:'El que siempre te da la razón',def:'Predice lo que encaja con lo tuyo'},
+  {term:'Volver por el canal de siempre',def:'La defensa ante cualquier mensaje raro'},
+  {term:'Palabra acordada en persona',def:'Sirve mientras no se escriba'},
+  {term:'Las tres preguntas',def:'Qué ejemplos, quién los eligió, a quién le cae el error'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -479,12 +479,12 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Los Peligros de la Inteligencia Artificial`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Los Peligros de la Inteligencia Artificial`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> contestá en pantalla y tocá <em>Calificar prueba</em>.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
 function setEvalFeedback(id,ok,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');}
-function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
+function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para la pantalla. La impresión sale limpia.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
 function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const forma=window._currentEvalForm||1;const d=window._evalPrintData;let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`;});let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.tf.forEach((it,i)=>{s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;d.mc.forEach((it,i)=>{const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});s3+=`</div>`;let colL='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`;});colL+='</div>';let colR='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`;});colR+='</div>';let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`;});pR+=`</table></div>`;
     const zgKey = [];
     d.cp.forEach((it, i) => zgKey.push({ n: i + 1, fill: 0, labels: ['✓', '✗', '', '', ''] }));
@@ -496,7 +496,7 @@ function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una eva
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) es correcta · 6–10: V=A, F=B · Para escanear, usá la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Los Peligros de la Inteligencia Artificial · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #86198f;background:#fdf4ff;color:#86198f;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#86198f;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #86198f;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#fdf4ff;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#86198f;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#86198f;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #86198f;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
@@ -533,80 +533,80 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'A un alumno le llega un audio con la voz de su papá pidiéndole que retire dinero y no le diga a nadie hasta la noche.'},
-  {txt:'En el grupo de la comunidad circula un video del director anunciando que se suspenden las clases. Nadie lo encuentra en ninguna cuenta oficial.'},
-  {txt:'Un programa descarta las solicitudes de beca de las escuelas pequeñas porque casi no vio ninguna al entrenarse. Acierta el 92 % del total.'},
-  {txt:'Una alumna sube al grupo la foto del salón con el nombre y la sección de cada compañero.'},
-  {txt:'Un estudiante pasa dos horas viendo videos que no buscó, después de entrar a estudiar.'},
-  {txt:'El maestro avisa por el grupo de siempre, sin prisa y sin secreto, de la reunión del jueves.'}
+  {txt:'A un alumno le llega un audio con la voz de su papá. Le pide retirar dinero y no contarlo hasta la noche.'},
+  {txt:'En el grupo circula un video del director: se suspenden las clases. Nadie lo encuentra en una cuenta oficial.'},
+  {txt:'Un programa descarta las becas de las escuelas pequeñas: casi no vio ninguna. Acierta el 92 %.'},
+  {txt:'Una alumna sube al grupo la foto del salón con el nombre de cada compañero.'},
+  {txt:'Un estudiante entra a estudiar y pasa dos horas viendo videos que no buscó.'},
+  {txt:'El maestro avisa de la reunión del jueves por el grupo de siempre, sin prisa ni secreto.'}
 ];
 const critCaseQuestions=[
-  '1. ¿De qué familia de peligro es, y cómo se llama?',
-  '2. ¿A quién le cae el daño, y qué le cuesta exactamente?',
-  '3. ¿Qué pregunta lo desarma, y qué haría falta hacer?',
+  '1. ¿De qué familia es, y cómo se llama el peligro?',
+  '2. ¿A quién le cae el daño, y qué le cuesta?',
+  '3. ¿Qué pregunta lo desarma, y qué harías?',
   '4. ¿Qué harías vos si te pasa mañana?'
 ];
 const critCaseGuides=[
-  'Se valora que nombre la familia: te engañan, deciden por vos, se quedan con lo tuyo o te quitan el criterio. El último caso NO es ninguna: es un mensaje normal, y reconocerlo es parte de la destreza — desconfiar de todo cuesta lo mismo que creerlo todo.',
-  'Se valora que nombre a la persona y el precio: el dinero de la familia, una semana de clases, el año de estudio de quien cumplía los requisitos, la privacidad de treinta compañeros que no la dieron, la tarde de estudio.',
-  'Cada caso tiene su pregunta: ¿lo comprobé por otro camino? ¿con qué ejemplos se entrenó y a quién le cae el error? ¿se lo daría a un desconocido en la calle? ¿esto lo decidí yo?',
-  'Respuesta abierta. Se valora que sea concreta y que la pueda hacer con el teléfono que tiene: llamar al número de siempre, pedir que una persona revise, borrar la foto y pedir permiso, poner la hora de salir.'
+  'Tiene que nombrar la familia: te engañan, deciden por vos, se quedan con lo tuyo o te quitan el criterio. El último caso no es ninguna: es un mensaje normal.',
+  'Tiene que nombrar a la persona y el precio. Los precios: el dinero de la casa, una semana de clases, el año de estudio, la privacidad de treinta compañeros, la tarde de estudio.',
+  'Cada caso tiene su pregunta: ¿lo comprobé por otro camino? ¿a quién le cae el error? ¿se lo daría a un desconocido? ¿esto lo decidí yo?',
+  'Respuesta abierta. Se valora que sea concreta y que pueda hacerla con su teléfono. Por ejemplo: llamar al número de siempre, pedir que revise una persona, borrar la foto y pedir permiso, poner la hora de salir.'
 ];
 const critErrorBank=[
   {txt:'"Yo me doy cuenta de una estafa por la voz."',
-   g1:'La voz es lo que se fabrica, y hace falta poca grabación.',
-   g2:'Lo que no se puede fabricar es el número de siempre: por ahí se comprueba.'},
+   g1:'La voz se fabrica con poca grabación.',
+   g2:'Lo que no se fabrica es el número de siempre.'},
   {txt:'"Ese programa acierta el 95 %, así que es justo."',
-   g1:'Acertar mucho y repartir bien los errores no son lo mismo.',
-   g2:'Ese 5 % puede caer siempre sobre el mismo grupo; el promedio no lo enseña.'},
+   g1:'Acertar mucho y repartir bien los errores no es lo mismo.',
+   g2:'Ese 5 % puede caer siempre sobre el mismo grupo.'},
   {txt:'"Es una foto del salón, no es información privada."',
-   g1:'Sí lo es: son treinta caras con nombre y sección que no te las dieron a vos para publicarlas.',
+   g1:'Sí lo es: son treinta caras con nombre.',
    g2:'Y lo que salió no vuelve.'},
   {txt:'"Como puede haber estafas, mejor no le creo a ningún mensaje."',
-   g1:'Desconfiar de todo cuesta lo mismo que creerlo todo: el aviso de verdad deja de leerse.',
-   g2:'Por eso se miran las tres señales, que separan un mensaje raro de uno normal.'},
+   g1:'Desconfiar de todo cuesta lo mismo que creerlo todo.',
+   g2:'Por eso se miran las tres señales: separan lo raro de lo normal.'},
   {txt:'"Si el chat me da la razón es porque tengo razón."',
-   g1:'Está hecho para seguir la conversación, así que tiende a encajar con lo que escribiste.',
-   g2:'Lo que duele o lo que importa se habla con una persona, que sí te va a contradecir.'},
+   g1:'Está hecho para seguir la conversación, y encaja con lo tuyo.',
+   g2:'Lo que importa se habla con una persona.'},
   {txt:'"Yo no mandé el video falso, solo lo reenvié."',
-   g1:'La desinformación vive de los reenvíos, no de quien la fabrica.',
-   g2:'Comprobar antes de compartir es la parte que te toca a vos.'}
+   g1:'La desinformación vive de los reenvíos.',
+   g2:'Comprobar antes de compartir es la parte que te toca.'}
 ];
 const critDecisionBank=[
-  'Te llega un audio urgente con la voz de un familiar pidiendo dinero; conviene mandarlo para no perder tiempo, o colgar y llamar vos al número de siempre.',
-  'Un video que te indigna circula en el grupo; conviene reenviarlo para avisar, o buscar primero si está en la cuenta que lo firma.',
-  'Un programa rechazó la solicitud de tu prima en segundos; conviene aceptarlo porque acierta mucho, o pedir que una persona la revise.',
-  'Querés subir la foto del salón; conviene subirla porque salen todos bien, o preguntarles antes a los que salen.',
-  'Un compañero está por mandar dinero por un mensaje raro; conviene no meterse, o decirle que llame primero.'
+  'Un audio urgente con la voz de un familiar pide dinero. ¿Lo mandás, o llamás vos al número de siempre?',
+  'Un video que te indigna circula en el grupo. ¿Lo reenviás, o buscás quién lo firma?',
+  'Un programa rechazó la beca de tu prima en segundos. ¿Lo aceptás, o pedís que una persona la revise?',
+  'Querés subir la foto del salón. ¿La subís porque salen todos bien, o les preguntás antes?',
+  'Un compañero está por mandar dinero por un mensaje raro. ¿No te metés, o le decís que llame primero?'
 ];
-const critDecisionGuide='La mejor decisión comprueba por otro camino antes de actuar, pide que una persona revise lo que decidió un programa, pregunta antes de publicar lo que es de otros, y avisa a quien está a punto de caer. Todas cuestan unos minutos, y ese es justo el punto: las tres señales —urgencia, secreto y canal nuevo— están puestas para que no tengas esos minutos. Y avisarle a un compañero no es meterse: es lo que hace un amigo.';
+const critDecisionGuide='Comprobar por otro camino antes de actuar. Pedir que revise una persona. Preguntar antes de publicar lo de otros. Avisarle a un compañero.';
 const critCompareBank=[
   {a:'Una alucinación.',b:'Una estafa con voz fabricada.',
    ga:'El modelo se inventa un dato sin que nadie se lo pida.',
-   gb:'Una persona fabrica la voz a propósito para quitarte dinero.',
-   gr:'La primera es cómo funciona la máquina; la segunda es una decisión de alguien. Las dos engañan, pero solo en una hay intención, y eso cambia quién responde.'},
+   gb:'Alguien fabrica la voz a propósito para quitarte dinero.',
+   gr:'La primera es cómo funciona la máquina. La segunda es una decisión de alguien: hay intención, y eso cambia quién responde.'},
   {a:'Un programa que acierta el 95 % repartido parejo.',b:'Un programa que acierta el 95 % fallando siempre con el mismo grupo.',
    ga:'El error le toca de vez en cuando a cualquiera.',
    gb:'El error le toca siempre a los mismos.',
-   gr:'El promedio es idéntico y las dos cosas no se parecen en nada. Por eso la pregunta no es «¿cuánto acierta?», sino «¿a quién le cae el error?».'},
+   gr:'El promedio es idéntico y no se parecen en nada. La pregunta es «¿a quién le cae el error?».'},
   {a:'Desconfiar de todo mensaje.',b:'Mirar las tres señales.',
-   ga:'Te deja sin poder creerle a nadie, ni al aviso de verdad del maestro.',
-   gb:'Te deja separar un mensaje raro de uno normal en diez segundos.',
-   gr:'Defenderse no es vivir asustado: es tener una comprobación corta y usarla siempre. Un alumno que desconfía de todo acaba sin leer el aviso que sí importaba.'}
+   ga:'Te deja sin creerle a nadie, ni al aviso del maestro.',
+   gb:'Te deja separar lo raro de lo normal en diez segundos.',
+   gr:'Defenderse no es vivir asustado. Es tener una comprobación corta y usarla siempre.'}
 ];
 const critCauseBank=[
-  {cause:'Quien engaña necesita que no pienses, que no consultes y que no contestes por donde siempre.',guide:'Por eso las tres señales —urgencia, secreto y canal nuevo— están en casi toda estafa: sin ellas no funciona.'},
-  {cause:'Una voz se fabrica con muy poca grabación.',guide:'Por eso reconocer la voz dejó de ser una prueba, y la comprobación tiene que ir por otro camino.'},
-  {cause:'Un modelo acierta más sobre los grupos de los que vio más ejemplos.',guide:'Por eso un promedio alto puede esconder que a un grupo pequeño le falla casi siempre.'},
-  {cause:'Lo que se publica queda y lo puede leer cualquiera.',guide:'Por eso una estafa creíble se arma casi toda con información que la propia familia subió.'},
-  {cause:'Un chat está hecho para seguir la conversación.',guide:'Por eso tiende a darte la razón, y por eso no sustituye a una persona que te contradiga.'}
+  {cause:'Quien engaña necesita que no pienses, que no consultes y que no contestes por donde siempre.',guide:'Por eso las tres señales están en casi toda estafa: sin ellas no funciona.'},
+  {cause:'Una voz se fabrica con muy poca grabación.',guide:'Por eso la voz ya no es una prueba.'},
+  {cause:'Un modelo acierta más con los grupos de los que vio más ejemplos.',guide:'Por eso un promedio alto puede esconder que a un grupo pequeño le falla.'},
+  {cause:'Lo que se publica queda y lo puede leer cualquiera.',guide:'Por eso una estafa creíble se arma con lo que la propia familia subió.'},
+  {cause:'Un chat está hecho para seguir la conversación.',guide:'Por eso tiende a darte la razón, y no sustituye a una persona.'}
 ];
 const critEffectBank=[
-  {effect:'Una familia pierde el dinero de una matrícula por un audio.',guide:'Porque la voz se fabricó con un video público y nadie llamó al número de siempre.'},
-  {effect:'Una alumna de una escuela de aldea se queda sin beca aunque cumplía.',guide:'Porque el programa casi no vio solicitudes como la suya, y su error cae siempre sobre las mismas.'},
-  {effect:'Treinta compañeros quedan publicados con su nombre y su sección.',guide:'Porque alguien subió una foto que no era suya para subirla, y lo que salió no vuelve.'},
-  {effect:'Un aviso de verdad del maestro no lo lee casi nadie.',guide:'Porque en ese grupo ya circularon tantos mensajes falsos que la gente dejó de creer todo, que es el otro daño de la desinformación.'},
-  {effect:'Un alumno se defiende de un mensaje raro en diez segundos.',guide:'Porque buscó las tres señales y volvió por el canal de siempre, en vez de contestar ahí.'}
+  {effect:'Una familia pierde el dinero de una matrícula por un audio.',guide:'Porque la voz se fabricó con un video público y nadie llamó.'},
+  {effect:'Una alumna de aldea se queda sin beca aunque cumplía.',guide:'Porque el programa casi no vio solicitudes como la suya.'},
+  {effect:'Treinta compañeros quedan publicados con su nombre.',guide:'Porque alguien subió una foto que no era suya.'},
+  {effect:'Un aviso de verdad del maestro no lo lee casi nadie.',guide:'Porque en ese grupo circularon tantos mensajes falsos que nadie cree nada.'},
+  {effect:'Un alumno se defiende de un mensaje raro en diez segundos.',guide:'Porque buscó las tres señales y volvió por el canal de siempre.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -619,19 +619,19 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Encontrá <strong>dos errores</strong> y corregilos con tus palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explicá por qué.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -641,7 +641,7 @@ function genEvalCrit(){
   s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s5);
   window._evalCritData={kase,err,dec,cmp,causes,effects};
-  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> contestá, compará con la <em>Pauta</em> y anotá tu puntaje (0–20) en cada casilla.';out.appendChild(totalPanel);
   fin('s-evaluacion');
 }
 function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
@@ -651,7 +651,7 @@ function calcCritTotal(){
   let total=0;
   document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
   const panel=document.getElementById('evalCritTotalResult');
-  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compará con la Pauta antes de anotar cada puntaje.</em>`;}
   const formKey='crit_'+(window._currentEvalCritForm||1);
   if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
   else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
@@ -661,11 +661,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explicá por qué.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
@@ -710,7 +710,7 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Conoces a los que hicieron Honduras!','¡Guardián de la Patria!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Sigue aprendiendo!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya sabés qué pregunta desarma cada peligro!','¡Criterio blindado!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Completá secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
 function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🛡️ ¡${name} completó la Misión "Los Peligros de la Inteligencia Artificial"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
@@ -816,7 +816,7 @@ function iaMsgPintar(revisado){
     const sen=m.trozos.filter(z=>z.t);
     html+=sen.length
       ?'<div class="caz-detalle">'+sen.map(z=>{const s=IA_SENALES.find(x=>x.k===z.t);return `<p><strong>${s.emoji} ${_esc(s.nombre)}:</strong> «${_esc(z.txt.trim())}» — ${_esc(s.porque)}</p>`;}).join('')+'</div>'
-      :'<div class="caz-detalle"><p><strong>✅ Ninguna señal.</strong> Este mensaje no pide nada urgente, no pide secreto y llega por donde siempre. <strong>No todo mensaje es una estafa</strong>, y desconfiar de todo cuesta lo mismo que creerlo todo: el día que el aviso sea de verdad, nadie lo lee.</p></div>';
+      :'<div class="caz-detalle"><p><strong>✅ Ninguna señal.</strong> No pide nada urgente, no pide secreto y llega por donde siempre.</p><p><strong>No todo mensaje es una estafa.</strong> Desconfiar de todo cuesta lo mismo que creerlo todo.</p></div>';
   }
   html+='<div class="ens-btns">'+(revisado?'':'<button class="btn btn-g" onclick="iaMsgRevisar()">✔ Revisar</button>')+
     '<button class="btn btn-d" onclick="iaMsgReiniciar()">🔄 Empezar de nuevo</button></div>';
@@ -826,7 +826,7 @@ function iaMsgRevisar(){
   const m=IA_MENSAJES[iaMsgIdx];const marcas=iaMsgMarcas[m.k]||new Set();
   let bien=0;m.trozos.forEach((z,i)=>{if((!!z.t)===marcas.has(i))bien++;});
   const todo=bien===m.trozos.length;sfx(todo?'ok':'no');
-  fb('fbMsg',todo?'✅ Las '+m.trozos.length+' bien. Eso son diez segundos de comprobación.':'Acertaste '+bien+' de '+m.trozos.length+'. Mirá abajo cuál se te pasó.',todo);
+  fb('fbMsg',todo?'✅ Las '+m.trozos.length+' bien. Son diez segundos de comprobación.':'Acertaste '+bien+' de '+m.trozos.length+'. Mirá abajo cuál se te pasó.',todo);
   if(!iaMsgHechos.has(m.k)){iaMsgHechos.add(m.k);if(!xpTracker.wgt.has('msg_'+m.k)){xpTracker.wgt.add('msg_'+m.k);pts(2);}}
   if(todo&&!xpTracker.wgt.has('msg_ok_'+m.k)){xpTracker.wgt.add('msg_ok_'+m.k);pts(2);}
   if(iaMsgHechos.size>=IA_MENSAJES.length){fin('s-estructura');unlockAchievement('senalero');}
@@ -907,9 +907,10 @@ function iaEstPintar() {
     '<p class="est-msg">' + pintado + '</p>';
   html += usadas.length
     ? '<div class="est-aporta">' + usadas.map(p => '<p><strong>' + p.emoji + ' ' + _esc(p.que) + ':</strong> ' + _esc(p.aporta) + '<br><em>De dónde salió: ' + _esc(p.publico) + '</em></p>').join('') + '</div>'
-    : '<p class="est-vacio">Sin ninguna pieza el mensaje es genérico: ni siquiera sabe tu nombre. Así lo dudaría cualquiera. Andá añadiendo piezas y mirá en qué se convierte.</p>';
+    : '<p class="est-vacio">Sin piezas el mensaje es genérico: ni sabe tu nombre. Así lo dudaría cualquiera. Andá añadiendo piezas.</p>';
   if (iaEstPiezas.length >= IA_ESTAFA_PIEZAS.length) {
-    html += '<p class="est-fin">🎯 <strong>Ninguna de estas piezas se robó.</strong> El video del cumpleaños, el nombre, la escuela, dónde trabaja tu mamá y hasta el aviso de la matrícula estaban publicados. Lo único que puso quien engaña es el número nuevo. <strong>Y fijate en lo resaltado:</strong> las tres señales están ahí con piezas y sin piezas, porque sin ellas la estafa no funciona. Son lo único que no pueden quitar, y por eso son lo que hay que mirar.</p>';
+    html += '<p class="est-fin">🎯 <strong>Ninguna de estas piezas se robó.</strong> El video, el nombre, la escuela y el aviso de la matrícula estaban publicados.</p>' +
+      '<p class="est-fin">Quien engaña solo puso el número nuevo. <strong>Mirá lo resaltado:</strong> las tres señales están con piezas y sin piezas.</p>';
   }
   caja.innerHTML = html;
 }
@@ -920,7 +921,7 @@ function iaEstToggle(k) {
   if (i < 0 && !xpTracker.wgt.has('est_' + k)) { xpTracker.wgt.add('est_' + k); pts(1); }
   if (iaEstPiezas.length === IA_ESTAFA_PIEZAS.length && !xpTracker.wgt.has('est_todas')) {
     xpTracker.wgt.add('est_todas'); pts(3);
-    fb('fbEst', '+3 XP: con las seis piezas el mensaje es indistinguible… y las seis salieron de algo publicado.', true);
+    fb('fbEst', '+3 XP: con las seis el mensaje es indistinguible, y las seis salieron de algo publicado.', true);
   }
   iaEstPintar(); iaDescubreListo();
 }
@@ -941,7 +942,7 @@ function iaEstDefensa(k) {
   if (!xpTracker.wgt.has('estdef_' + k)) { xpTracker.wgt.add('estdef_' + k); pts(1); }
   if (iaEstDefVistas.size === IA_ESTAFA_DEFENSAS.length && !xpTracker.wgt.has('estdef_todas')) {
     xpTracker.wgt.add('estdef_todas'); pts(3);
-    fb('fbEst', '+3 XP: de las cinco, solo tres paran esto. Las otras dos se caen justo con las piezas que armaste.', true);
+    fb('fbEst', '+3 XP: de las cinco, solo tres paran esto. Las otras dos se caen con tus piezas.', true);
   }
   iaEstPintarDefensas(); iaDescubreListo();
 }
@@ -949,11 +950,11 @@ function iaEstReiniciar() { iaEstPiezas = []; iaEstDefVistas = new Set(); iaEstP
 function iaEstGuardar() {
   const v = id => ((document.getElementById(id) || {}).value || '').trim();
   const acuerdo = v('est-acuerdo'), publico = v('est-publico');
-  if (acuerdo.length < 4 && publico.length < 4) { fb('fbEst', 'Contestá al menos una de las dos, con lo que vas a hacer de verdad.', false); return; }
+  if (acuerdo.length < 4 && publico.length < 4) { fb('fbEst', 'Contestá al menos una, con lo que vas a hacer de verdad.', false); return; }
   iaDescGuardar('estafa', { acuerdo: acuerdo, publico: publico });
   iaEstMostrarGuardado({ acuerdo: acuerdo, publico: publico }); sfx('up');
   if (!xpTracker.wgt.has('est_plan')) { xpTracker.wgt.add('est_plan'); pts(3); }
-  fb('fbEst', '+3 XP: eso es lo único de esta pantalla que de verdad te defiende.', true);
+  fb('fbEst', '+3 XP: es lo único de esta pantalla que te defiende.', true);
 }
 function iaEstMostrarGuardado(g) {
   const c = document.getElementById('est-guardado'); if (!c || !g) return;
@@ -1002,18 +1003,18 @@ function iaProPintar() {
   if (chico.pct <= 55) {
     html += '<p class="pro-nota pro-mal">⚠️ Fijate: el promedio dice <strong>' + e.media + ' %</strong> y suena bien. Pero para <strong>' + _esc(chico.nombre.toLowerCase()) + '</strong> esto es <strong>echar una moneda al aire</strong>: nunca vio un ejemplo suyo. El promedio lo salva el grupo grande.</p>';
   } else if (Math.abs(grande.pct - chico.pct) >= 10) {
-    html += '<p class="pro-nota">El promedio se ve bien y la diferencia entre los dos grupos es de <strong>' + Math.abs(grande.pct - chico.pct) + ' puntos</strong>. El número de arriba no lo enseña: hay que preguntarlo.</p>';
+    html += '<p class="pro-nota">El promedio se ve bien. La diferencia entre los dos grupos es de <strong>' + Math.abs(grande.pct - chico.pct) + ' puntos</strong>. El número de arriba no lo dice.</p>';
   } else {
-    html += '<p class="pro-nota pro-bien">✅ Con este reparto los dos grupos van casi igual… y además el promedio es el más alto de los cuatro. <strong>En este caso</strong>, repartir parejo no solo es más justo: acierta más. No es una ley: es lo que pasa cuando el grupo pequeño estaba sin aprender.</p>';
+    html += '<p class="pro-nota pro-bien">✅ Los dos grupos van casi igual, y el promedio es el más alto. <strong>En este caso</strong> repartir parejo acierta más. No es una ley: pasa porque el grupo pequeño estaba sin aprender.</p>';
   }
   if (iaProProbados.size >= 3) {
-    html += '<p class="pro-fin">🎯 Por eso la pregunta ante cualquier sistema que decide sobre personas no es <em>«¿cuánto acierta?»</em> sino las tres de siempre: <strong>¿con qué ejemplos se entrenó, quién los eligió y a quién le cae el error?</strong></p>';
+    html += '<p class="pro-fin">🎯 Ante un sistema que decide sobre personas la pregunta no es <em>«¿cuánto acierta?»</em>. Son las tres de siempre: <strong>¿con qué ejemplos, quién los eligió, a quién le cae el error?</strong></p>';
   }
   caja.innerHTML = html;
 }
 function iaProGuardar() {
   const i = document.getElementById('pro-pido'); const t = (i && i.value || '').trim();
-  if (t.length < 8) { fb('fbPro', 'Escribí la petición entera, como se la dirías a quien hizo el programa.', false); return; }
+  if (t.length < 8) { fb('fbPro', 'Escribí la petición entera.', false); return; }
   iaDescGuardar('pido', t); iaProMostrarGuardado(t); sfx('up');
   if (!xpTracker.wgt.has('pro_pido')) { xpTracker.wgt.add('pro_pido'); pts(3); }
   fb('fbPro', '+3 XP: eso es lo que se le pide a un sistema que decide sobre personas.', true);
