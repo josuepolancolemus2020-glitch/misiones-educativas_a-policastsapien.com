@@ -317,17 +317,23 @@ const classifyTaskDB=[
   {w:'Apelación a la mayoría',gen:'Falacia',n:'Ofrece como razón cuánta gente lo hace',g:'Le costó a Wilmer la mitad de la siembra',t:'Se desarma pidiendo una razón de la cosa'},
   {w:'Validez',gen:'Que el armado esté bien',n:'No es lo mismo que verdad',g:'Se puede tener y estar mintiendo',t:'Si una razón es falsa, la conclusión sale falsa'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'La palabra que anuncia la razón es ___.',ans:'porque'},
-  {s:'Las palabras que anuncian la conclusión son ___.',ans:'así que'},
-  {s:'Una razón y una conclusión amarradas forman un ___.',ans:'argumento'},
-  {s:'Un argumento que parece bueno y no sostiene nada es una ___.',ans:'falacia'},
-  {s:'Que el armado esté bien se llama ___.',ans:'validez'},
-  {s:'Atacar a quien habla es la falacia contra la ___.',ans:'persona'},
-  {s:'Sacar una regla de dos casos es una generalización ___.',ans:'apresurada'},
-  {s:'Ofrecer dos salidas como si no hubiera más es un falso ___.',ans:'dilema'},
-  {s:'Decir dos cosas que se pelean es una ___.',ans:'contradicción'},
-  {s:'El que puso en orden las formas del razonamiento fue ___.',ans:'Aristóteles'}
+  {s:'La palabra que anuncia la razón es ___.',opts:['además','porque','así que'],ans:'porque'},
+  {s:'Las palabras que anuncian la conclusión son ___.',opts:['aunque','porque','así que'],ans:'así que'},
+  {s:'Una razón y una conclusión amarradas forman un ___.',opts:['argumento','ejemplo','resumen'],ans:'argumento'},
+  {s:'Un argumento que parece bueno y no sostiene nada es una ___.',opts:['conclusión','falacia','premisa'],ans:'falacia'},
+  {s:'Que el armado esté bien se llama ___.',opts:['opinión','verdad','validez'],ans:'validez'},
+  {s:'Atacar a quien habla es la falacia contra la ___.',opts:['persona','costumbre','mayoría'],ans:'persona'},
+  {s:'Sacar una regla de dos casos es una generalización ___.',opts:['completa','apresurada','ordenada'],ans:'apresurada'},
+  {s:'Ofrecer dos salidas como si no hubiera más es un falso ___.',opts:['ejemplo','acuerdo','dilema'],ans:'dilema'},
+  {s:'Decir dos cosas que se pelean es una ___.',opts:['contradicción','conclusión','comparación'],ans:'contradicción'},
+  {s:'El que puso en orden las formas del razonamiento fue ___.',opts:['Sócrates','Aristóteles','Lewis Carroll'],ans:'Aristóteles'}
 ];
 const explainQuestions=[
   {q:'¿Cuáles son las tres piezas de un argumento y cómo se reconoce cada una?',ans:'La razón, la conclusión y el nexo. La razón sostiene, y suele ir después de «porque». La conclusión es lo que quieren que creas, y va tras «así que». El nexo las amarra, y dice cuál es cuál.'},

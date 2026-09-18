@@ -10,7 +10,7 @@ const _shuffle=(arr)=>[...arr].sort(()=>Math.random()-0.5);
 function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='fb show '+(isOk?'ok':'err');}}
 
 // ===================== VARIABLES GLOBALES =====================
-const SAVE_KEY='filosofia_saber_v1';
+const SAVE_KEY='filosofia_lenguaje_v1';
 let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
 let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
 let evalCritFormNum=1,evalCritAnsVisible=false;
@@ -35,13 +35,13 @@ function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));i
 const ACHIEVEMENTS={
   primer_quiz:{icon:'🧠',label:'Primer Quiz completado'},
   flash_master:{icon:'🃏',label:'Todas las tarjetas volteadas'},
-  clasif_pro:{icon:'🗂️',label:'Separaste creer, opinar y saber'},
+  clasif_pro:{icon:'🗂️',label:'Separaste lo que hace cada frase'},
   id_master:{icon:'🔍',label:'Identificaste todos los términos'},
   reto_hero:{icon:'🏆',label:'Héroe del Reto'},
   sopa_master:{icon:'🤍',label:'Sopa completada'},
   widgets_master:{icon:'🧩',label:'Widgets dominados'},
-  nivel3:{icon:'🔬',label:'Ya preguntás cómo lo sabés'},
-  nivel5:{icon:'✅',label:'Comprobás antes de afirmar'}
+  nivel3:{icon:'🔍',label:'Ya preguntás qué hace la frase'},
+  nivel5:{icon:'✅',label:'La forma ya no te engaña'}
 };
 function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
 function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
@@ -50,7 +50,7 @@ function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document
 function launchConfetti(){const colors=['#784a6d','#b9789f','#1d4538','#3f8a6d','#f59e0b'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
 
 // ===================== XP =====================
-const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Preguntás cómo lo sabés 🤔'},{t:55,n:'Separás creer de saber ✅'},{t:90,n:'Respetás una opinión 💬'},{t:130,n:'Cruzás dos fuentes 🔀'},{t:165,n:'Decís qué te haría cambiar 🔄'},{t:190,n:'Comprobás antes de afirmar 🔬'}];
+const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Preguntás qué hace la frase 🤔'},{t:55,n:'Separás las cuatro clases ✅'},{t:90,n:'Encontrás el doble sentido 🔀'},{t:130,n:'Probás una definición 🎯'},{t:165,n:'Pedís el número 📏'},{t:190,n:'La forma ya no te engaña 💬'}];
 function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
 function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
 function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
@@ -63,20 +63,23 @@ function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.clas
 // ===================== FLASHCARD DATA =====================
 const fcData = (function () {
   const out = [];
-  SAB_VOCABULARIO.forEach(v => out.push({ w: v.w, a: v.a }));
-  SAB_ESTADOS.forEach(e => out.push({
+  LEN_VOCABULARIO.forEach(v => out.push({ w: v.w, a: v.a }));
+  LEN_ACTOS.forEach(e => out.push({
     w: e.emoji + ' ' + e.nombre,
     a: e.senal + ' <strong>' + e.prueba + '</strong>' }));
-  SAB_FUENTES.forEach(f => out.push({
-    w: f.emoji + ' ' + f.nombre,
-    a: 'Sirve: ' + f.sirve + ' Falla: <em>' + f.falla + '</em> <strong>' + f.arregla + '</strong>' }));
-  SAB_PASOS.forEach(p => out.push({
-    w: '🪜 Paso ' + p.n,
-    a: '<strong>' + p.paso + '</strong> ' + p.porque }));
-  SAB_ESCUELAS.forEach(e => out.push({
-    w: e.emoji + ' ' + e.nombre,
-    a: e.dice + ' Acierta en esto: ' + e.acierta + ' <strong>Se queda corto:</strong> ' + e.corto }));
-  SAB_PENSADORES.forEach(p => out.push({
+  LEN_AMBIG.forEach(a => out.push({
+    w: a.emoji + ' «' + a.frase + '»',
+    a: 'Puede ser: ' + a.una + ' O: <em>' + a.otra + '</em> <strong>' + a.arregla + '</strong>' }));
+  LEN_DEFINIR.forEach(d => out.push({
+    w: d.emoji + ' Definición ' + d.nombre.toLowerCase(),
+    a: d.que + ' ' + d.ej + ' <strong>' + d.prueba + '</strong>' }));
+  LEN_CARGA.forEach(x => out.push({
+    w: '⚖️ ' + x.suave + ' / ' + x.fuerte,
+    a: 'Las dos nombran ' + x.cosa + '. <strong>' + x.igual + '</strong>' }));
+  LEN_TRUCOS.forEach(t => out.push({
+    w: t.emoji + ' ' + t.nombre,
+    a: t.hace + ' Suena: <em>' + t.suena + '</em> <strong>' + t.desarma + '</strong>' }));
+  LEN_PENSADORES.forEach(p => out.push({
     w: p.emoji + ' ' + p.nombre,
     a: p.quien + ' <strong>' + p.porque + '</strong>' }));
   return out;
@@ -89,18 +92,18 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿De qué se ocupa la epistemología?',o:['De separar creer, opinar y saber','De medir la temperatura','De escribir sin faltas','De contar dinero'],c:0},
-  {q:'«Lo sé» quiere decir que es así y que además…',o:['me lo contaron','me gusta','puedo decir con qué se comprueba','lo dice la mayoría'],c:2},
-  {q:'«Las baleadas son mejores que los tamales» es…',o:['un saber','una opinión','una creencia','una medida'],c:1},
-  {q:'«Dicen que el puente está cerrado» es…',o:['una opinión','un saber comprobado','algo que creo','una hipótesis comprobada'],c:2},
-  {q:'¿Qué se le pregunta a una afirmación para saber si la SABÉS?',o:['¿Me gusta?','¿Quién la dijo?','¿Cuántos lo creen?','¿Puedo decir con qué se comprueba?'],c:3},
-  {q:'El lápiz dentro del vaso de agua se ve quebrado. ¿Qué pasa?',o:['El lápiz se quebró','El lápiz está entero: la luz se dobla al salir del agua','El vaso lo corta','El agua lo derrite'],c:1},
-  {q:'La misma agua tibia se siente caliente en una mano y fría en la otra. ¿Por qué?',o:['El agua tiene dos temperaturas','Una mano está enferma','El agua se mueve','La piel compara con lo que tenía antes'],c:3},
-  {q:'¿Qué NO quiere decir que los sentidos a veces se equivoquen?',o:['Que a veces hay que cruzarlos con una medida','Que no sirven para nada','Que hay que mirar dos veces','Que conviene tocar además de mirar'],c:1},
-  {q:'¿Cuál es el paso que de verdad cuesta al comprobar algo?',o:['Decir quién lo dijo','Escribirlo bonito','Repetirlo más fuerte','Decir qué te haría cambiar de idea'],c:3},
-  {q:'¿Qué dice el empirismo?',o:['Que todo lo que sabemos entró por los sentidos','Que la razón sola alcanza','Que no se puede saber nada','Que manda la mayoría'],c:0},
-  {q:'¿Qué dice el racionalismo?',o:['Que hay que medir todo','Que la memoria no falla','Que lo más seguro lo saca la razón, pensando con orden','Que la opinión es un saber'],c:2},
-  {q:'De las dos escuelas, ¿cuál se usa hoy en la ciencia?',o:['Las dos: se mide y se saca cuentas','Solo el empirismo','Solo el racionalismo','Ninguna'],c:0}
+  {q:'¿De qué se ocupa la filosofía del lenguaje?',o:['De qué hacen las palabras con las ideas','De medir el tiempo','De contar dinero','De escribir sin faltas'],c:0},
+  {q:'«¿Me pasás la sal?» tiene forma de pregunta. ¿Qué HACE?',o:['Afirma algo','Pide algo','Exclama','Nada'],c:1},
+  {q:'«Te espero en el banco» puede querer decir dos cosas. ¿Qué la arregla?',o:['Una pregunta: ¿en cuál de los dos?','Decirlo más fuerte','Escribirlo bonito','Repetirla'],c:0},
+  {q:'«Un ave es un animal que vuela» deja fuera a la gallina. Esa definición es…',o:['muy angosta','muy ancha','justa','correcta'],c:0},
+  {q:'«Una silla es algo donde uno se sienta» deja entrar una piedra. Es…',o:['muy angosta','muy ancha','justa','imposible'],c:1},
+  {q:'«De segunda mano» y «usada» nombran lo mismo. ¿Qué cambia?',o:['La cosa','Hacia dónde apunta la palabra','El precio','Nada'],c:1},
+  {q:'«¿Por qué el abono caro rinde más?» es una pregunta…',o:['imposible de contestar','sin verbo','con la respuesta ya metida dentro','de opinión'],c:2},
+  {q:'¿Cómo se desarma esa pregunta?',o:['Contestando rápido','Cambiando de tema','Preguntando el precio','Contestando la de atrás: ¿rinde más?'],c:3},
+  {q:'«Es de mejor calidad» es una palabra que…',o:['se puede medir','está mal escrita','no se puede comprobar así','es una orden'],c:2},
+  {q:'¿Toda palabra fuerte es una trampa?',o:['Sí, siempre','Solo en la radio','Solo por escrito','No: si la cosa es fuerte, decirlo flojo sería el error'],c:3},
+  {q:'«¡Qué frío!» ¿qué hace la frase?',o:['Afirma un dato','Pide algo','Pregunta','Suelta lo que siente'],c:3},
+  {q:'¿Qué enseña Bertrand Russell, según esta misión?',o:['A medir la luz','A contar votos','A pedir que la frase se aclare antes de discutirla','A escribir versos'],c:2}
 ];
 let qzIdx=0,qzSel=-1,qzDone=false;
 function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
@@ -119,14 +122,15 @@ function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.
 // ===================== CLASIFICACIÓN =====================
 const classGroups = (function () {
   const fi = (arr, t) => arr.map(a => ({ w: a, t: t }));
-  const se = sabDeEstado('se'), creo = sabDeEstado('creo'), opino = sabDeEstado('opino');
+  const af = lenDeClase('afirma'), pr = lenDeClase('pregunta'),
+        pi = lenDeClase('pide'),   ex = lenDeClase('exclama');
   return [
-    { label:['Se puede comprobar','Es una opinión: no se comprueba'], headA:'🔎 Se comprueba', headB:'💬 Es opinión', colA:'comp', colB:'op',
-      words: fi(se.slice(0,2),'comp').concat(fi(creo.slice(0,2),'comp'), fi(opino.slice(0,4),'op')) },
-    { label:['Lo sé: ya lo comprobé','Lo creo: todavía no'], headA:'✅ Lo sé', headB:'🤔 Lo creo', colA:'se', colB:'creo',
-      words: fi(se.slice(2,6),'se').concat(fi(creo.slice(2,6),'creo')) },
-    { label:['Lo sé: ya lo comprobé','Es mi opinión'], headA:'✅ Lo sé', headB:'💬 Es mi opinión', colA:'se', colB:'opino',
-      words: fi(se.slice(6,10),'se').concat(fi(opino.slice(4,8),'opino')) }
+    { label:['Pide algo del otro','Solo cuenta o suelta'], headA:'🙋 Pide algo del otro', headB:'📌 Solo cuenta', colA:'pide', colB:'no',
+      words: fi(pr.slice(0,2),'pide').concat(fi(pi.slice(0,2),'pide'), fi(af.slice(0,2),'no'), fi(ex.slice(0,2),'no')) },
+    { label:['Afirma: dice que algo es así','Pregunta: pide un dato'], headA:'📌 Afirma', headB:'❓ Pregunta', colA:'afirma', colB:'pregunta',
+      words: fi(af.slice(2,6),'afirma').concat(fi(pr.slice(2,6),'pregunta')) },
+    { label:['Pide o manda: quiere que hagas algo','Exclama: suelta lo que siente'], headA:'✋ Pide o manda', headB:'❗ Exclama', colA:'pide', colB:'exclama',
+      words: fi(pi.slice(2,6),'pide').concat(fi(ex.slice(2,6),'exclama')) }
   ];
 })();
 let currentClassGroupIdx=0,clsSelectedWord=null;
@@ -137,14 +141,18 @@ function resetClass(){sfx('click');buildClass();document.getElementById('fbCls')
 
 // ===================== IDENTIFICAR =====================
 const idData=[
-  {s:['La','epistemología','pregunta','cómo','sé','que','sé.'],c:1,art:'la rama que separa creer, opinar y saber'},
-  {s:['Lo','doy','por','cierto','y','no','lo','comprobé:','lo','creo.'],c:9,art:'lo que hago cuando todavía no comprobé'},
-  {s:['Otro','puede','pensar','lo','contrario','sin','equivocarse:','es','una','opinión.'],c:9,art:'lo que no se comprueba porque no es verdad ni mentira'},
-  {s:['De','dónde','salió','el','dato','es','su','fuente.'],c:7,art:'de dónde salió lo que decís'},
-  {s:['Una','respuesta','que','se','propone','antes','de','comprobarla','es','una','hipótesis.'],c:10,art:'lo que se propone para poder comprobarlo'},
-  {s:['Hacer','algo','que','daría','otro','resultado','si','fuera','falso','es','comprobar.'],c:10,art:'lo que separa el saber de la creencia'},
-  {s:['René','Descartes','dudó','de','todo','para','buscar','lo','seguro.'],c:1,art:'la cara del racionalismo'},
-  {s:['John','Locke','dijo','que','todo','entra','por','los','sentidos.'],c:1,art:'la cara del empirismo'}
+  {s:['Una','frase','que','pide','un','dato','es','una','pregunta.'],c:8,art:'la clase de frase que pide un dato'},
+  {s:['«¡Qué','frío!»','suelta','lo','que','siente:','exclama.'],c:6,art:'lo que hace esa frase'},
+  {s:['«Pasame','el','lápiz»','no','pide','un','dato:','pide','una','acción.'],c:9,art:'lo que esa frase pide'},
+  {s:['Cuando','una','frase','dice','dos','cosas','a','la','vez','es','ambigua.'],c:10,art:'la palabra para una frase de doble sentido'},
+  {s:['Definir','es','decir','qué','entra','y','qué','no','entra.'],c:0,art:'el verbo de decir qué entra y qué no'},
+  {s:['Una','definición','muy','ancha','deja','entrar','lo','que','no','es.'],c:3,art:'cómo se llama esa falla'},
+  {s:['Una','definición','muy','angosta','deja','fuera','lo','que','sí','es.'],c:3,art:'cómo se llama la falla contraria'},
+  {s:['«De','segunda','mano»','y','«usada»','nombran','la','misma','bolsa.'],c:8,art:'la cosa que las dos palabras nombran'},
+  {s:['Lo','que','el','que','habla','quiere','lograr','es','su','intención.'],c:9,art:'el nombre de lo que el hablante busca'},
+  {s:['«Es','de','mejor','calidad»','no','se','puede','comprobar.'],c:7,art:'lo que le falta a esa frase'},
+  {s:['El','arte','de','decir','para','convencer','es','la','retórica.'],c:8,art:'el nombre de ese arte'},
+  {s:['Lo','que','la','frase','dice','sin','lo','que','insinúa','es','lo','literal.'],c:11,art:'cómo se llama ese sentido'}
 ];
 let idIdx=0,idDone=false;
 function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
@@ -154,16 +162,16 @@ function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId')
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'La rama que pregunta cómo sé que sé es la ___.',opts:['epistemología','metafísica','lógica'],c:0},
-  {s:'Dar algo por cierto sin comprobarlo es ___.',opts:['saber','creer','medir'],c:1},
-  {s:'Un juicio donde otro puede pensar lo contrario es una ___.',opts:['medida','prueba','opinión'],c:2},
-  {s:'De dónde salió el dato se llama su ___.',opts:['fuente','forma','fecha'],c:0},
-  {s:'Lo que se propone antes de comprobarlo es una ___.',opts:['opinión','hipótesis','orden'],c:1},
-  {s:'Para decir «lo sé» hay que poder decir con qué se ___.',opts:['adorna','cuenta','comprueba'],c:2},
-  {s:'El lápiz en el vaso se ve quebrado porque la luz se ___.',opts:['dobla','apaga','pierde'],c:0},
-  {s:'La escuela que dice que todo entra por los sentidos es el ___.',opts:['racionalismo','empirismo','realismo'],c:1},
-  {s:'La escuela que confía primero en la razón es el ___.',opts:['empirismo','idealismo','racionalismo'],c:2},
-  {s:'Decir «no sé» no es perder: es poder ir a ___.',opts:['averiguarlo','discutirlo','olvidarlo'],c:0}
+  {s:'La rama que mira qué hacen las palabras es la filosofía del ___.',opts:['dinero','lenguaje','tiempo'],c:1},
+  {s:'Una frase que pide un dato es una ___.',opts:['orden','exclamación','pregunta'],c:2},
+  {s:'Una frase que quiere que hagas algo ___ o manda.',opts:['pide','canta','mide'],c:0},
+  {s:'Una frase que dice dos cosas a la vez es ___.',opts:['larga','ambigua','falsa'],c:1},
+  {s:'Una definición que deja entrar lo que no es, es muy ___.',opts:['corta','bonita','ancha'],c:2},
+  {s:'Una definición que deja fuera lo que sí es, es muy ___.',opts:['angosta','ancha','vieja'],c:0},
+  {s:'Lo que el que habla quiere lograr al decirlo es su ___.',opts:['error','intención','tono'],c:1},
+  {s:'El arte de decir las cosas para que convenzan es la ___.',opts:['gramática','ortografía','retórica'],c:2},
+  {s:'A una palabra que no se puede comprobar se le pide un ___ o un ejemplo.',opts:['número','favor','aplauso'],c:0},
+  {s:'Lo que la frase dice, sin lo que insinúa, es su sentido ___.',opts:['doble','literal','oculto'],c:1}
 ];
 let cmpIdx=0,cmpSel=-1,cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
@@ -176,15 +184,22 @@ function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',fals
 
 // ===================== WIDGETS =====================
 // Widget 1: Ordenar secuencias
+/* Las dos secuencias que esta unidad enseña de verdad: cómo se aclara una
+   frase que dice dos cosas, y cómo se prueba una definición. Las dos acaban
+   en algo que el alumno HACE, no en una moraleja. */
 const routeSets = [
-  { label: 'Ordena: cómo se comprueba una afirmación',
-    steps: SAB_PASOS.map(p => p.n + '. ' + p.paso) },
-  { label: 'Ordena: de un rumor a un dato que se sostiene',
-    steps: ['1. Alguien te dice que el examen se pasó para el jueves.',
-            '2. Preguntás cómo lo sabe: se lo contaron en el recreo.',
-            '3. Buscás la fuente: el maestro, que es quien lo decide.',
-            '4. El maestro dice que el examen sigue el martes.',
-            '5. Ya no lo creés: lo sabés, y podés decir con qué.'] }
+  { label: 'Ordena: cómo se aclara una frase de doble sentido',
+    steps: ['1. Te llega la frase: «Te espero en el banco».',
+            '2. Te das cuenta de que dice dos cosas.',
+            '3. Preguntás cuál de las dos es.',
+            '4. Te contestan: en la banca del parque.',
+            '5. Ya sabés a dónde ir.'] },
+  { label: 'Ordena: cómo se prueba una definición',
+    steps: ['1. Escribís tu definición.',
+            '2. Buscás algo que entre y no debería.',
+            '3. Buscás algo que quede fuera y sí debería entrar.',
+            '4. La arreglás con lo que encontraste.',
+            '5. La probás otra vez con las dos preguntas.'] }
 ];
 let currentRouteIdx=0,routeItems=[];
 function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
@@ -194,14 +209,17 @@ function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=
 function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
 
 // Widget 2: Identifica el concepto
+/* ¿Qué hace esta frase? Las cuatro clases del DCNB, con dos frases de cada
+   una sacadas de las mismas treinta y dos del Clasifica: si mañana entra una
+   frase nueva, este widget la reparte solo. */
 const neuronPartes = (function () {
-  const opts = SAB_ESTADOS.map(e => e.emoji + ' ' + e.nombre);
-  const nom = q => sabEstado(q).emoji + ' ' + sabEstado(q).nombre;
+  const opts = LEN_ACTOS.map(e => e.emoji + ' ' + e.nombre);
+  const nom = q => lenActo(q).emoji + ' ' + lenActo(q).nombre;
   const elegidas = [];
-  ['se', 'creo', 'opino'].forEach(q => {
-    sabDeEstado(q).slice(6, 9).forEach(a => elegidas.push({ a: a, q: q }));
+  LEN_ACTOS.forEach(a => {
+    lenDeClase(a.clave).slice(6, 8).forEach(f => elegidas.push({ f: f, q: a.clave }));
   });
-  return elegidas.map(x => ({ desc: x.a, opts: opts.slice(), ans: nom(x.q) }));
+  return elegidas.map(x => ({ desc: x.f, opts: opts.slice(), ans: nom(x.q) }));
 })();
 let neuronIdx=0,neuronDone=false;
 function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno por lo que hizo!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
@@ -210,25 +228,31 @@ function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
 function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
 
 // Widget 3: Concepto → Significado
-const neuroPairs = SAB_FUENTES.map(f => ({
-  trans: f.falla,
-  func: f.emoji + ' ' + f.nombre,
-  opts: SAB_FUENTES.map(x => x.emoji + ' ' + x.nombre)
+/* Cómo suena → qué es. Son los cuatro de `LEN_TRUCOS`, y el cuarto NO es
+   trampa: quien los empareje bien se lleva de aquí que una palabra fuerte
+   puede estar diciendo la verdad. */
+const neuroPairs = LEN_TRUCOS.map(t => ({
+  trans: t.suena,
+  func: t.emoji + ' ' + t.nombre,
+  opts: LEN_TRUCOS.map(x => x.emoji + ' ' + x.nombre)
 }));
 let neuroIdx=0,neuroDone=false;
 function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
 function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
 function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
 
-// Widget 4: Fuente → ¿Renovable o no renovable?
+/* ⚠️ Widget 4: el corazón de la unidad. Se mezclan las ocho disfrazadas con
+   cuatro que hacen justo lo que parecen, una por clase. Sin esas cuatro el
+   alumno saca la regla falsa de que toda frase esconde algo, y eso cuesta lo
+   mismo que creerlas todas: es la regla del cuarto truco que no es truco. */
 const enfermedadData = (function () {
-  const opts = ['✅ Sí, se puede comprobar', '💬 No: es una opinión'];
-  const si = sabSeComprueba(), no = sabDeEstado('opino');
+  const opts = ['📌 Hace lo que parece', '🎭 Hace otra cosa'];
+  const der = lenDerechas(4);
   const out = [];
-  for (let i = 0; i < 5; i++) {
-    out.push({ disease: si[i * 4], characteristic: opts[0], opts: opts.slice() });
-    if (no[i]) out.push({ disease: no[i], characteristic: opts[1], opts: opts.slice() });
-  }
+  LEN_DISFRAZ.forEach((d, k) => {
+    out.push({ disease: '«' + d.f + '» — ' + d.donde, characteristic: opts[1], opts: opts.slice() });
+    if (der[k]) out.push({ disease: '«' + der[k].f + '»', characteristic: opts[0], opts: opts.slice() });
+  });
   return out;
 })();
 let enferIdx=0,enferDone=false;
@@ -239,14 +263,15 @@ function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
 // ===================== RETO FINAL =====================
 const retoPairs = (function () {
   const fi = (arr, t) => arr.map(a => ({ w: a, t: t }));
-  const se = sabDeEstado('se'), creo = sabDeEstado('creo'), opino = sabDeEstado('opino');
+  const af = lenDeClase('afirma'), pr = lenDeClase('pregunta'),
+        pi = lenDeClase('pide'),   ex = lenDeClase('exclama');
   return [
-    { label:['Se puede comprobar','Es una opinión'], btnA:'🔎 Se comprueba', btnB:'💬 Es opinión', colA:'comp', colB:'op',
-      words: fi(se,'comp').concat(fi(creo,'comp'), fi(opino,'op')) },
-    { label:['Lo sé: ya lo comprobé','Lo creo: todavía no'], btnA:'✅ Lo sé', btnB:'🤔 Lo creo', colA:'se', colB:'creo',
-      words: fi(se,'se').concat(fi(creo,'creo')) },
-    { label:['Lo sé: ya lo comprobé','Es mi opinión'], btnA:'✅ Lo sé', btnB:'💬 Mi opinión', colA:'se', colB:'opino',
-      words: fi(se,'se').concat(fi(opino,'opino')) }
+    { label:['Pide algo del otro','Solo cuenta o suelta'], btnA:'🙋 Pide algo', btnB:'📌 Solo cuenta', colA:'pide', colB:'no',
+      words: fi(pr,'pide').concat(fi(pi,'pide'), fi(af,'no'), fi(ex,'no')) },
+    { label:['Afirma','Pregunta'], btnA:'📌 Afirma', btnB:'❓ Pregunta', colA:'afirma', colB:'pregunta',
+      words: fi(af,'afirma').concat(fi(pr,'pregunta')) },
+    { label:['Pide o manda','Exclama'], btnA:'✋ Pide o manda', btnB:'❗ Exclama', colA:'pide', colB:'exclama',
+      words: fi(pi,'pide').concat(fi(ex,'exclama')) }
   ];
 })();
 let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
@@ -270,65 +295,72 @@ function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'La rama que separa creer, opinar y saber es la epistemología.',type:'epistemología'},
-  {s:'Dar algo por cierto sin haberlo comprobado es creer.',type:'creer'},
-  {s:'Un juicio donde otro puede pensar lo contrario es una opinión.',type:'opinión'},
-  {s:'Que algo sea así y poder decir con qué se comprueba es saber.',type:'saber'},
-  {s:'De dónde salió el dato es su fuente.',type:'fuente'},
-  {s:'Una respuesta propuesta antes de comprobarla es una hipótesis.',type:'hipótesis'},
-  {s:'Hacer algo que daría otro resultado si fuera falso es comprobar.',type:'comprobar'},
-  {s:'La escuela que dice que todo entra por los sentidos es el empirismo.',type:'empirismo'},
-  {s:'La escuela que confía primero en la razón es el racionalismo.',type:'racionalismo'},
-  {s:'René Descartes dudó de todo para buscar lo seguro.',type:'René Descartes'},
-  {s:'John Locke dijo que la mente empieza vacía.',type:'John Locke'},
-  {s:'Decir «no sé» deja la puerta abierta para averiguarlo.',type:'no sé'}
+  {s:'La rama que mira qué hacen las palabras es la filosofía del lenguaje.',type:'lenguaje'},
+  {s:'Una frase que pide un dato es una pregunta.',type:'pregunta'},
+  {s:'Una frase que quiere que hagas algo pide o manda.',type:'pide'},
+  {s:'Una frase que suelta lo que siente exclama.',type:'exclama'},
+  {s:'Una frase que dice dos cosas a la vez es ambigua.',type:'ambigua'},
+  {s:'Decir qué entra y qué no entra en una palabra es definir.',type:'definir'},
+  {s:'Una definición que deja entrar lo que no es, es muy ancha.',type:'ancha'},
+  {s:'Una definición que deja fuera lo que sí es, es muy angosta.',type:'angosta'},
+  {s:'Lo que el que habla quiere lograr es su intención.',type:'intención'},
+  {s:'El arte de decir las cosas para que convenzan es la retórica.',type:'retórica'}
 ];
+/* La tabla que el alumno copia en el cuaderno. ⚠️ Estaba escrita con las
+   fuentes y las escuelas de la unidad 4: se calcó y no se cambió, así que al
+   alumno se le mandaba de tarea el temario del mes pasado. No daba ningún
+   error. Es la lección de siempre. */
 const classifyTaskDB=[
-  {w:'Lo sé',gen:'Un estado de una afirmación',n:'Es así y lo puedo comprobar',g:'Puedo decir con qué se comprueba',t:'Ejemplo: en mi grado somos cuarenta y tres'},
-  {w:'Lo creo',gen:'Un estado de una afirmación',n:'Lo doy por cierto',g:'Todavía no puedo decir cómo lo sé',t:'Ejemplo: dicen que el puente está cerrado'},
-  {w:'Es mi opinión',gen:'Un estado de una afirmación',n:'Es un gusto o un juicio mío',g:'Otro puede pensar lo contrario sin equivocarse',t:'Ejemplo: esta canción es fea'},
-  {w:'Los sentidos',gen:'Una fuente',n:'Mirar, tocar, oír, probar',g:'A veces ven lo que no es',t:'El lápiz en el agua se ve quebrado'},
-  {w:'La memoria',gen:'Una fuente',n:'Guarda lo que ya viste',g:'Se acomoda sola con el tiempo',t:'Dos personas lo cuentan distinto'},
-  {w:'Lo que otro cuenta',gen:'Una fuente',n:'Nadie puede ver todo solo',g:'Cambia por el camino',t:'Se arregla preguntando cómo lo sabe'},
-  {w:'El razonamiento',gen:'Una fuente',n:'Saca cosas nuevas de las que ya sabés',g:'Si parte de algo falso, sale falso',t:'Es la unidad 2 de esta ruta'},
-  {w:'La medida',gen:'Una fuente',n:'Deja que dos personas miren lo mismo',g:'Si el instrumento está malo, todos miden mal',t:'Se arregla midiendo con otra cinta'},
-  {w:'Hipótesis',gen:'Un concepto',n:'Una respuesta propuesta',g:'Se propone ANTES de comprobarla',t:'Sin eso no hay nada que comprobar'},
-  {w:'Racionalismo',gen:'Una escuela',n:'Confía primero en la razón',g:'Pensando con orden',t:'2 + 2 no se comprueba en el patio'},
-  {w:'Empirismo',gen:'Una escuela',n:'Confía en la experiencia',g:'Todo entró por los sentidos',t:'El color del techo hay que mirarlo'}
+  {w:'Afirma',gen:'Lo que hace una frase',n:'Cuenta algo',g:'Se le puede contestar «es verdad» o «es mentira»',t:'Ejemplo: el bus pasa cada media hora'},
+  {w:'Pregunta',gen:'Lo que hace una frase',n:'Deja un hueco y espera',g:'Espera una respuesta con un dato',t:'Ejemplo: ¿a qué hora empieza el partido?'},
+  {w:'Pide o manda',gen:'Lo que hace una frase',n:'Quiere que hagas algo',g:'No pide un dato: pide una acción',t:'Ejemplo: cerrá el portón, por favor'},
+  {w:'Exclama',gen:'Lo que hace una frase',n:'Suelta lo que siente',g:'Dice más de quien habla que de la cosa',t:'Ejemplo: ¡qué frío!'},
+  {w:'Ambigua',gen:'Una frase',n:'Dice dos cosas a la vez',g:'Está bien escrita y aun así no se sabe cuál',t:'Ejemplo: te espero en el banco'},
+  {w:'Definición muy ancha',gen:'Una falla al definir',n:'Deja entrar lo que no es',g:'Se caza buscando algo que entre y no debería',t:'Una silla es algo donde uno se sienta'},
+  {w:'Definición muy angosta',gen:'Una falla al definir',n:'Deja fuera lo que sí es',g:'Se caza buscando algo que quede fuera y sí debería',t:'Un ave es un animal que vuela'},
+  {w:'Pregunta cargada',gen:'Un truco de la palabra',n:'Trae la respuesta metida dentro',g:'Contestarla ya es aceptar lo que dice',t:'¿Por qué el abono caro rinde más?'},
+  {w:'Nombre que juzga',gen:'Un truco de la palabra',n:'Decide antes de mirar la cosa',g:'Se desarma cambiándole el nombre',t:'Llamarle regalo a un préstamo'},
+  {w:'Palabra vaga',gen:'Un truco de la palabra',n:'Suena a dato y no se puede medir',g:'Se desarma pidiendo el número',t:'Es de mejor calidad'},
+  {w:'Palabra fuerte que sí vale',gen:'Un caso que NO es truco',n:'Nombra con fuerza algo que sí es fuerte',g:'Decirlo flojo sería el error',t:'Se cayó el puente, cuando se cayó'}
 ];
 /* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
    «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
    **revienta la sección entera** del Generador de Tareas —el maestro toca
    «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
-   Estaba así en doce misiones publicadas; lo vigila
+   Estaba así en las cuatro unidades anteriores de esta ruta y en nueve
+   misiones más; se arregló en todas y ahora lo vigila
    `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'La rama que pregunta cómo sé que sé es la ___.',opts:['ética','epistemología','metafísica'],ans:'epistemología'},
-  {s:'Dar algo por cierto sin comprobarlo es ___.',opts:['opinar','saber','creer'],ans:'creer'},
-  {s:'Un juicio donde otro puede pensar lo contrario es una ___.',opts:['opinión','creencia','medida'],ans:'opinión'},
-  {s:'De dónde salió el dato es su ___.',opts:['prueba','fuente','hipótesis'],ans:'fuente'},
-  {s:'Lo que se propone antes de comprobarlo es una ___.',opts:['conclusión','fuente','hipótesis'],ans:'hipótesis'},
-  {s:'Para decir «lo sé» hay que poder decir con qué se ___.',opts:['comprueba','cuenta','recuerda'],ans:'comprueba'},
-  {s:'La escuela de los sentidos es el ___.',opts:['escepticismo','empirismo','racionalismo'],ans:'empirismo'},
-  {s:'La escuela de la razón es el ___.',opts:['escepticismo','empirismo','racionalismo'],ans:'racionalismo'},
-  {s:'El que dudó de todo para buscar lo seguro fue ___.',opts:['Descartes','Locke','Aristóteles'],ans:'Descartes'},
-  {s:'El que dijo que la mente empieza vacía fue ___.',opts:['Heráclito','Locke','Descartes'],ans:'Locke'}
+  {s:'La rama que mira qué hacen las palabras es la filosofía del ___.',opts:['cuerpo','lenguaje','número'],ans:'lenguaje'},
+  {s:'Una frase que cuenta algo y se puede contestar «es verdad» ___.',opts:['pide','exclama','afirma'],ans:'afirma'},
+  {s:'Una frase que espera un dato ___.',opts:['pregunta','manda','afirma'],ans:'pregunta'},
+  {s:'Una frase que quiere que hagas algo ___.',opts:['exclama','pide','pregunta'],ans:'pide'},
+  {s:'Una frase que dice dos cosas a la vez es ___.',opts:['literal','vaga','ambigua'],ans:'ambigua'},
+  {s:'Decir qué entra y qué no entra en una palabra es ___.',opts:['definir','opinar','adornar'],ans:'definir'},
+  {s:'Una definición que deja entrar lo que no es, es muy ___.',opts:['justa','ancha','angosta'],ans:'ancha'},
+  {s:'Una definición que deja fuera lo que sí es, es muy ___.',opts:['ancha','justa','angosta'],ans:'angosta'},
+  {s:'Lo que el que habla quiere lograr al decirlo es su ___.',opts:['intención','acento','apellido'],ans:'intención'},
+  {s:'El arte de decir las cosas para que convenzan es la ___.',opts:['ortografía','retórica','gramática'],ans:'retórica'}
 ];
+/* ⚠️ Las nueve preguntas de desarrollo. Estaban las de la unidad 4 —creer,
+   opinar, saber, las cinco fuentes, el racionalismo—: el alumno que abría la
+   tarea se examinaba del mes pasado. Es la misma avería que la prueba de
+   Pensamiento Crítico de la unidad 2, que examinaba de la 1. */
 const explainQuestions=[
-  {q:'¿Cuál es la diferencia entre creer, opinar y saber?',ans:'Creer es dar algo por cierto sin haberlo comprobado. Opinar es dar un juicio propio, donde otro puede pensar lo contrario sin equivocarse. Saber es que algo sea así y además poder decir con qué se comprueba.'},
-  {q:'Escribe tres afirmaciones tuyas: una que sabés, una que creés y una opinión.',ans:'Respuesta abierta. Las tres tienen que ser suyas. Se valora que en la que sabe diga CON QUÉ la comprueba. Y que la opinión sea una opinión de verdad, no una creencia disfrazada.'},
-  {q:'¿Por qué «me gusta el azul» no se comprueba?',ans:'Porque no es verdad ni mentira para todos. Es un juicio de quien lo dice. Pedirle pruebas a un gusto es el error contrario. Cuesta lo mismo que creer sin comprobar.'},
-  {q:'Nombra las cinco fuentes de lo que sabemos y di cuándo falla cada una.',ans:'Los sentidos: a veces ven lo que no es. La memoria: se acomoda sola. Lo que otro cuenta: cambia por el camino. El razonamiento: si parte de algo falso, sale falso. La medida: si el instrumento está malo, todos miden mal.'},
-  {q:'Haz uno de los cuatro engaños en tu casa y explica qué pasó.',ans:'Respuesta abierta. Se valora que lo HAYA hecho. Y que describa tres cosas: qué esperaba ver, qué vio y con qué lo desarmó. Decir «no me salió» también vale. Pide el detalle de lo que intentó.'},
-  {q:'¿Por qué que el ojo se equivoque NO quiere decir que los sentidos no sirvan?',ans:'Porque en los cuatro engaños otro sentido o una medida lo arregla en un minuto. Los sentidos son la fuente principal y funcionan. Lo que hay que aprender es cuándo cruzarlos con otra cosa.'},
-  {q:'¿Cuál es el quinto paso de comprobar y por qué cuesta tanto?',ans:'Decir qué te haría cambiar de idea. Cuesta porque obliga a aceptar que podrías estar equivocado. Si no hay nada que te haga cambiar, no estabas sabiendo: estabas defendiendo.'},
-  {q:'Compara el racionalismo y el empirismo, y di cuál se usa hoy.',ans:'El racionalismo dice que lo más seguro lo saca la razón, pensando con orden. El empirismo dice que todo entró por los sentidos. Hoy se usan las dos. La ciencia mide con los sentidos y saca cuentas con la razón.'},
-  {q:'¿Por qué decir «no sé» puede ser mejor que decir «lo sé»?',ans:'Porque el que dice «no sé» puede ir a averiguarlo. El que dice «lo sé» sin comprobarlo se queda con lo que le contaron. Y encima lo repite.'}
+  {q:'¿Qué quiere decir que una frase no solo dice, sino que HACE?',ans:'Que además de contar algo, la frase logra algo: cuenta, pide un dato, pide una acción o suelta lo que siente. Eso es su intención, y es lo que se le pregunta antes de contestarla.'},
+  {q:'Escribe una frase de cada clase: que afirme, que pregunte, que pida y que exclame.',ans:'Respuesta abierta. Las cuatro tienen que ser suyas. Se valora que al lado diga la prueba con que lo supo, no solo la clase.'},
+  {q:'¿Por qué «¿me pasás la sal?» no es una pregunta de verdad?',ans:'Porque tiene forma de pregunta y hace un pedido. Nadie contesta «sí» y se queda sentado. Lo que lo decide no es la frase: es dónde se dice.'},
+  {q:'Escribe una frase que diga dos cosas y la pregunta que la arregla.',ans:'Respuesta abierta. Se valora que las dos lecturas se puedan defender de verdad. Y que la pregunta pida el dato que falta, no que repita la frase.'},
+  {q:'¿Cuáles son las dos pruebas de una definición?',ans:'Buscar algo que entre y no debería, que caza la muy ancha. Y buscar algo que quede fuera y sí debería entrar, que caza la muy angosta. Si aguanta las dos, sirve.'},
+  {q:'¿Por qué elegir una palabra suave en vez de una fuerte NO es mentir?',ans:'Porque las dos nombran la misma cosa. «De segunda mano» y «usada» son la misma bolsa. Lo que hace la palabra es apuntar. El trabajo es darse cuenta hacia dónde apunta y decidir uno mismo.'},
+  {q:'¿Cómo se desarma una pregunta que ya trae la respuesta dentro?',ans:'Contestando la de atrás primero. A «¿por qué el abono caro rinde más?» se le pregunta antes si rinde más. Si no, contestarla ya es aceptar lo que no se discutió.'},
+  {q:'¿Por qué no toda palabra fuerte es una trampa?',ans:'Porque hay cosas que de verdad son fuertes, y decirlas flojo sería el error. «Se cayó el puente», cuando el puente se cayó. Desconfiar de todas las palabras cuesta lo mismo que creerlas todas.'},
+  {q:'Copia un anuncio de la radio o de la pulpería y marca una palabra que no se pueda comprobar.',ans:'Respuesta abierta. Se valora que la palabra marcada suene a dato y no se pueda medir. Y que escriba QUÉ le pediría a quien lo dijo: un número o un ejemplo.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado de qué concepto de la unidad se trata.','<strong>Ejemplo:</strong> De dónde salió el dato es su fuente. → <span style="color:var(--jade);font-weight:700;">fuente</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado de qué concepto de la unidad se trata.','<strong>Ejemplo:</strong> Lo que el que habla quiere lograr es su intención. → <span style="color:var(--jade);font-weight:700;">intención</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
 function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada uno, completa qué es y en qué se reconoce. Después, qué lo distingue y un ejemplo.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Qué','text-align:left;')}${th('Qué es')}${th('En qué se reconoce')}${th('Qué lo distingue')}${th('Ejemplo')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Se reconoce: ${it.n} | Lo distingue: ${it.g} | Ejemplo: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
@@ -433,74 +465,73 @@ window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResize
 
 // ===================== EVALUACIÓN FINAL =====================
 const evalTFBank=[
-  {q:'La epistemología separa creer, opinar y saber.',a:true},
-  {q:'«Lo creo» y «lo sé» quieren decir lo mismo.',a:false},
-  {q:'Una opinión se comprueba midiéndola.',a:false},
-  {q:'Para decir «lo sé» hay que poder decir con qué se comprueba.',a:true},
-  {q:'Los sentidos no sirven, porque a veces se equivocan.',a:false},
-  {q:'El lápiz dentro del vaso de agua se quiebra de verdad.',a:false},
-  {q:'La misma agua tibia puede sentirse caliente en una mano y fría en la otra.',a:true},
-  {q:'La memoria guarda los hechos exactamente igual con los años.',a:false},
-  {q:'Lo que otro cuenta cambia cuanto más lejos está de quien lo vio.',a:true},
-  {q:'Si un razonamiento parte de algo falso, la conclusión puede salir falsa.',a:true},
-  {q:'Si el instrumento está mal, la medida sigue siendo buena.',a:false},
-  {q:'Decir «no sé» deja la puerta abierta para ir a averiguarlo.',a:true},
-  {q:'El empirismo dice que todo lo que sabemos entró por los sentidos.',a:true},
-  {q:'La ciencia de hoy usó que ganara una sola de las dos escuelas.',a:false},
-  {q:'Si nada puede hacerte cambiar de idea, no estabas sabiendo: estabas defendiendo.',a:true}
+  {q:'Una frase se juzga solo por su forma, no por lo que hace.',a:false},
+  {q:'«¿Me pasás la sal?» es un pedido aunque tenga forma de pregunta.',a:true},
+  {q:'«Te espero en el banco» puede querer decir dos cosas.',a:true},
+  {q:'Una frase ambigua está mal escrita.',a:false},
+  {q:'Preguntar es lo que arregla una frase ambigua.',a:true},
+  {q:'«Un ave es un animal que vuela» es una definición muy angosta.',a:true},
+  {q:'«Una silla es algo donde uno se sienta» es una definición muy ancha.',a:true},
+  {q:'Una definición justa aguanta las dos pruebas.',a:true},
+  {q:'«De segunda mano» y «usada» nombran cosas distintas.',a:false},
+  {q:'Elegir una palabra en vez de otra es siempre mentir.',a:false},
+  {q:'«¿Por qué el abono caro rinde más?» ya da por hecho que rinde más.',a:true},
+  {q:'A una palabra que no se puede comprobar se le pide un número o un ejemplo.',a:true},
+  {q:'Toda palabra fuerte es una trampa.',a:false},
+  {q:'La retórica es el arte de decir las cosas para que convenzan.',a:true},
+  {q:'De un pensador, esta misión escribe la fecha en que nació.',a:false}
 ];
 const evalMCBank=[
-  {q:'¿De qué se ocupa la epistemología?',o:['De medir el tiempo','De escribir bien','De separar creer, opinar y saber','De contar dinero'],a:2},
-  {q:'«Dicen que el puente está cerrado» es…',o:['algo que creo','una opinión','un saber comprobado','una medida'],a:0},
-  {q:'«Esta canción es fea» es…',o:['un saber','una opinión','una creencia','una hipótesis'],a:1},
-  {q:'«En mi grado somos cuarenta y tres» es…',o:['una opinión','una creencia','un rumor','un saber: se cuenta'],a:3},
-  {q:'¿Qué se le pregunta a una creencia para pasarla a saber?',o:['¿A quién le gusta?','¿Cuántos lo dicen?','¿Cómo lo sé y con qué lo compruebo?','¿Suena bien?'],a:2},
-  {q:'¿Cuál de estas NO se puede comprobar?',o:['La puerta mide más que yo','El agua está fría','El azul es el color más bonito','Somos cuarenta y tres'],a:2},
-  {q:'La moneda que aparece al echar agua en la taza enseña que…',o:['la luz se dobla al salir del agua','la moneda se mueve','el agua la empuja','la taza cambia'],a:0},
-  {q:'¿Qué arregla que la piel no mida grados?',o:['Esperar','Frotar las manos','Preguntar','Un termómetro'],a:3},
-  {q:'La fuente que cambia cuanto más lejos está de quien lo vio es…',o:['la medida','lo que otro cuenta','el razonamiento','los sentidos'],a:1},
-  {q:'¿Para qué sirve la medida, sobre todo?',o:['Para adornar el cuaderno','Para ganar la discusión','Para no preguntar','Para que dos que no se ponen de acuerdo miren lo mismo'],a:3},
-  {q:'¿Qué hace el paso 1 de comprobar?',o:['Buscar quién lo dijo','Decir exactamente qué se afirma','Escribirlo bonito','Votar'],a:1},
-  {q:'¿Por qué hay que buscar a quien diga lo contrario?',o:['Porque si solo buscás lo que te da la razón, siempre lo encontrás','Para discutir','Para ganar tiempo','Porque lo pide el maestro'],a:0},
-  {q:'«2 + 2 son 4» no hace falta comprobarlo en el patio. Eso lo dice el…',o:['empirismo','rumor','racionalismo','método'],a:2},
-  {q:'De qué color es el techo de tu escuela hay que mirarlo. Eso lo dice el…',o:['empirismo','racionalismo','azar','reglamento'],a:0},
-  {q:'¿Qué hizo René Descartes?',o:['Midió la luz','Dudó de todo para buscar algo seguro','Contó los alumnos','Escribió cuentos'],a:1}
+  {q:'¿De qué se ocupa la filosofía del lenguaje?',o:['De medir el tiempo','De contar dinero','De qué hacen las palabras con las ideas','De la letra bonita'],a:2},
+  {q:'«Cerrá el portón, por favor». ¿Qué hace la frase?',o:['Afirma','Pide','Pregunta','Exclama'],a:1},
+  {q:'«¡Ay, me quemé!». ¿Qué hace la frase?',o:['Pide un dato','Afirma un número','Manda','Suelta lo que siente'],a:3},
+  {q:'¿Cuál es la prueba de una frase que afirma?',o:['Que sea larga','Que se pueda contestar «es verdad» o «es mentira»','Que lleve signos','Que la diga un adulto'],a:1},
+  {q:'«Vendí la vaca de mi tío» es ambigua porque…',o:['tiene una falta','es muy corta','no se sabe de quién era ni a quién','no lleva tilde'],a:2},
+  {q:'¿Qué arregla una frase ambigua?',o:['Gritarla','Preguntar cuál de las dos','Escribirla de nuevo igual','Cambiar de tema'],a:1},
+  {q:'Una definición que deja entrar lo que no es, es…',o:['muy angosta','muy ancha','justa','imposible'],a:1},
+  {q:'Una definición que deja fuera lo que sí es, es…',o:['muy ancha','justa','muy angosta','bonita'],a:2},
+  {q:'«Lo invirtió» y «lo gastó» hablan del mismo dinero. La diferencia es…',o:['hacia dónde apunta la palabra','la cantidad','el dueño','la fecha'],a:0},
+  {q:'¿Qué hace la pregunta «¿por qué el abono caro rinde más?»',o:['Da por hecho lo que no se discutió','Pide un dato limpio','Manda comprar','Exclama'],a:0},
+  {q:'¿Cómo se desarma el nombre que ya juzga?',o:['Repitiéndolo','Aceptándolo','Cambiándole el nombre y volviendo a mirar','Escribiéndolo grande'],a:2},
+  {q:'«Es más natural» es una palabra que…',o:['se mide con balanza','está prohibida','es un número','no se puede comprobar así'],a:3},
+  {q:'De los cuatro casos de la unidad, ¿cuántos NO son trampa?',o:['ninguno','tres','todos','uno'],a:3},
+  {q:'¿Qué enseña Bertrand Russell, según esta misión?',o:['A pedir que la frase se aclare antes de discutirla','A medir la luz','A contar votos','A cantar'],a:0},
+  {q:'¿Qué enseña Ortega y Gasset, según esta misión?',o:['A preguntar qué quiere decir el otro','A hablar más rápido','A escribir sin tildes','A no preguntar'],a:0}
 ];
 const evalCPBank=[
-  {q:'La rama que pregunta cómo sé que sé es la ___.',a:'epistemología'},
-  {q:'Dar algo por cierto sin comprobarlo es ___.',a:'creer'},
-  {q:'Un juicio donde otro puede pensar lo contrario es una ___.',a:'opinión'},
-  {q:'De dónde salió el dato es su ___.',a:'fuente'},
-  {q:'Una respuesta propuesta antes de comprobarla es una ___.',a:'hipótesis'},
-  {q:'Para decir «lo sé» hay que poder decir con qué se ___.',a:'comprueba'},
-  {q:'La escuela que dice que todo entra por los sentidos es el ___.',a:'empirismo'},
-  {q:'La escuela que confía primero en la razón es el ___.',a:'racionalismo'},
-  {q:'El que dudó de todo para buscar lo seguro fue ___.',a:'Descartes'},
-  {q:'El que dijo que la mente empieza vacía fue ___.',a:'Locke'},
-  {q:'El lápiz dentro del vaso se ve quebrado porque la luz se ___.',a:'dobla'},
-  {q:'La fuente que se acomoda sola con el tiempo es la ___.',a:'memoria'},
-  {q:'Para que dos personas que discuten miren lo mismo se usa la ___.',a:'medida'},
-  {q:'El quinto paso es decir qué te haría cambiar de ___.',a:'idea'},
-  {q:'Cuando no lo comprobaste y no lo sabés, se vale decir «no ___».',a:'sé'}
+  {q:'La rama que mira qué hacen las palabras es la filosofía del ___.',a:'lenguaje'},
+  {q:'Una frase que pide un dato es una ___.',a:'pregunta'},
+  {q:'Una frase que quiere que hagas algo ___ o manda.',a:'pide'},
+  {q:'Una frase que suelta lo que siente ___.',a:'exclama'},
+  {q:'Una frase que dice dos cosas a la vez es ___.',a:'ambigua'},
+  {q:'Decir qué entra y qué no entra en una palabra es ___.',a:'definir'},
+  {q:'Una definición que deja entrar lo que no es, es muy ___.',a:'ancha'},
+  {q:'Una definición que deja fuera lo que sí es, es muy ___.',a:'angosta'},
+  {q:'Lo que el que habla quiere lograr al decirlo es su ___.',a:'intención'},
+  {q:'El arte de decir las cosas para que convenzan es la ___.',a:'retórica'},
+  {q:'Lo que la frase dice, sin lo que insinúa, es su sentido ___.',a:'literal'},
+  {q:'A la palabra que no se puede comprobar se le pide un ___.',a:'número'},
+  {q:'Lo que una palabra le hace entender al que la oye es su ___.',a:'significado'},
+  {q:'De la filosofía analítica viene el trabajo de ___ las frases.',a:'aclarar'},
+  {q:'El arte de interpretar lo que el otro quiso decir es la ___.',a:'hermenéutica'}
 ];
 const evalPRBank=[
-  {term:'Epistemología',def:'La rama que separa creer, opinar y saber'},
-  {term:'Creer',def:'Dar algo por cierto sin haberlo comprobado'},
-  {term:'Opinar',def:'Dar un juicio donde otro puede pensar lo contrario'},
-  {term:'Saber',def:'Que sea así y poder decir con qué se comprueba'},
-  {term:'Fuente',def:'De dónde salió lo que decís'},
-  {term:'Hipótesis',def:'Una respuesta que se propone antes de comprobarla'},
-  {term:'Comprobar',def:'Hacer algo que daría otro resultado si fuera falso'},
-  {term:'Los sentidos',def:'La fuente por la que entró casi todo lo que sabés'},
-  {term:'La memoria',def:'La fuente que se acomoda sola con el tiempo'},
-  {term:'Lo que otro cuenta',def:'La fuente que cambia por el camino'},
-  {term:'La medida',def:'Lo que deja que dos que discuten miren lo mismo'},
-  {term:'Racionalismo',def:'La escuela que confía primero en la razón'},
-  {term:'Empirismo',def:'La escuela que dice que todo entró por los sentidos'},
-  {term:'«No sé»',def:'La respuesta que deja la puerta abierta a averiguarlo'},
-  {term:'El quinto paso',def:'Decir qué te haría cambiar de idea'}
+  {term:'Afirma',def:'Dice que algo es así; se contesta «es verdad» o «es mentira».'},
+  {term:'Pregunta',def:'Deja un hueco y espera que alguien lo llene con un dato.'},
+  {term:'Pide o manda',def:'No quiere un dato: quiere que el otro haga algo.'},
+  {term:'Exclama',def:'Sale de golpe y dice cómo se siente el que habla.'},
+  {term:'Ambiguo',def:'Que quiere decir dos cosas, y no se sabe cuál.'},
+  {term:'Definición muy ancha',def:'Deja entrar cosas que no son.'},
+  {term:'Definición muy angosta',def:'Deja fuera cosas que sí son.'},
+  {term:'Intención',def:'Lo que el que habla quiere lograr al decirlo.'},
+  {term:'Retórica',def:'El arte de decir las cosas para que convenzan.'},
+  {term:'Literal',def:'Lo que la frase dice, sin lo que insinúa.'},
+  {term:'Pregunta cargada',def:'Da por hecho lo que todavía no se discutió.'},
+  {term:'Palabra vaga',def:'Suena a dato y no dice nada que se pueda medir.'},
+  {term:'Bertrand Russell',def:'Mostró que una frase puede estar bien escrita y no decir nada claro.'},
+  {term:'Ortega y Gasset',def:'Dijo que cada palabra arrastra la vida de quien la usa.'},
+  {term:'Hermenéutica',def:'El arte de interpretar lo que el otro quiso decir.'}
 ];
-
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 const EVAL_FORMAS = 30;
 function _evalRng(forma) {
@@ -531,7 +562,7 @@ function _injectFormaSel(fnName, selId, actual, onPick) {
 }
 function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
 
-function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · ¿Cómo sé que sé?`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · Palabras que piensan`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
 function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
 function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
 function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
@@ -550,7 +581,7 @@ function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una eva
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
     const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
-const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación ¿Cómo sé que sé? · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #784a6d;background:#f6eef4;color:#784a6d;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#784a6d;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #784a6d;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#f6eef4;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#784a6d;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#784a6d;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #784a6d;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Palabras que piensan · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #784a6d;background:#f6eef4;color:#784a6d;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#784a6d;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #784a6d;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#f6eef4;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#784a6d;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#784a6d;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #784a6d;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
 .zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
@@ -565,7 +596,7 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · ¿Cómo sé que sé? · Educación Básica · Filosofía</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · ¿Cómo sé que sé? · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Palabras que piensan · Educación Básica · Filosofía</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · Palabras que piensan · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
   ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
@@ -585,77 +616,83 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En el recreo alguien le dijo a Yeimy que el examen de Matemáticas se había pasado para el jueves. Ella no estudió esa noche. El martes el examen estaba ahí. Sacó 40. Con esa nota se quedó fuera del cuadro de honor.'},
-  {txt:'En el grupo de la aldea circula que la semilla nueva rinde el doble. Nadie dice quién la sembró ni cuántas mazorcas contó. Tres vecinos compran, y en la cosecha rinde igual que la de siempre.'},
-  {txt:'Dos hermanos discuten una hora si la puerta del cuarto es más ancha que la de la cocina. Cada uno está seguro. La cinta métrica está en el mismo cuarto, colgada de un clavo.'},
-  {txt:'Un muchacho dice que no le cree a nadie. Ni a los libros, ni a los maestros, ni a lo que ve. Deja de preguntar y deja de comprobar. Y cuando el aviso del maestro es de verdad, tampoco lo lee.'},
-  {txt:'Una niña dice que el agua de la pila está caliente y su hermano que está fría. Los dos acaban de venir: ella del sol, él de lavar con agua helada. Se pelean media tarde por eso.'}
+  {txt:'A Marlon le mandaron un mensaje: «Te espero en el banco a las tres». Él fue al banco de la plaza. El otro lo esperó en la banca del parque.<br>\nLos dos se fueron a las cuatro sin verse. El trámite se pasó para otro día.'},
+  {txt:'En la pulpería le dijeron a doña Chepa que ese jabón «es de mejor calidad». Pagó el doble. Lava igual que el otro. Nadie le mintió: nadie le dijo mejor en qué.'},
+  {txt:'A Wilmer le preguntaron: «¿Por qué el abono caro rinde más?». Él contestó que por los minerales. Compró ocho sacos. La milpa salió igual que la del vecino, que usó el de siempre.'},
+  {txt:'En el papel decía «regalo de la cooperativa». La mamá de Selvin firmó tranquila. A los seis meses le pidieron el dinero: era un préstamo, y el nombre no lo decía.'},
+  {txt:'El maestro puso en el pizarrón: «Un ave es un animal que vuela». Kenia levantó la mano y preguntó por la gallina. La clase se detuvo diez minutos, y la definición se arregló.'}
 ];
 const critCaseQuestions=[
-  '1. En el caso, ¿lo que se afirma se sabe, se cree o es una opinión? Di por qué.',
-  '2. ¿De qué fuente venía, y en qué falló esa fuente?',
+  '1. En el caso, ¿qué HACE la frase: afirma, pregunta, pide o exclama?',
+  '2. ¿Dónde estuvo el problema: en la palabra, en el doble sentido o en la definición?',
   '3. ¿A quién le cuesta, y qué pierde esa persona?',
-  '4. ¿Qué habría bastado para comprobarlo? Escríbelo en un paso.'
+  '4. Escribí la pregunta que lo habría parado, en una línea.'
 ];
 const critCaseGuides=[
-  'Se valora que NOMBRE el estado y dé la señal. Si no puede decir cómo lo sabe, lo cree. Si otro puede pensar lo contrario sin equivocarse, es opinión. Si puede decir con qué se comprueba, lo sabe.',
-  'Las cinco fuentes son los sentidos, la memoria, lo que otro cuenta, el razonamiento y la medida. Se califica que nombre una y diga en qué falló ESA. No que diga «se equivocaron».',
-  'Se califica que le ponga nombre al daño concreto. Una nota de 40, tres compras, una hora perdida, media tarde de pelea. No la indignación.',
-  'Tiene que ser algo que se pueda hacer. Preguntarle al maestro, contar las mazorcas, descolgar la cinta. O meter la mano los dos a la misma agua. «Investigar más» no vale: no dice qué hacer.'
+  'Se valora que NOMBRE lo que hace la frase y dé la señal. Si espera un dato, pregunta. Si quiere una acción, pide. Si se contesta «es verdad» o «es mentira», afirma.',
+  'Las tres averías de esta unidad son el doble sentido, la palabra que no se puede comprobar y la definición mal hecha. Se califica que nombre UNA y diga por qué esa.',
+  'Se califica que le ponga nombre al daño concreto. Una tarde perdida, el doble del precio, ocho sacos, un préstamo firmado como regalo. No la indignación.',
+  'Tiene que ser una pregunta que se pueda hacer en voz alta. «¿En cuál de los dos bancos?», «¿mejor en qué, y cuánto?», «¿rinde más?», «¿esto se devuelve?». «Investigar más» no vale: no dice qué hacer.'
 ];
 const critErrorBank=[
-  {txt:'"Si mucha gente lo dice, entonces se sabe."',
-   g1:'Cuánta gente lo dice no es una fuente: es lo que otro cuenta, repetido. Sigue faltando quien lo vio o lo midió.',
-   g2:'Y eso ya se vio en la unidad 2. «Porque todo el mundo lo compra» es una razón que no sostiene. A Wilmer le costó media siembra.'},
-  {txt:'"Los sentidos engañan, así que no hay que creerle a lo que se ve."',
-   g1:'Los sentidos son la fuente principal y funcionan. Casi todo lo que sabés entró por ahí.',
-   g2:'Lo que enseñan los cuatro engaños es cuándo cruzarlos. En los cuatro, otro sentido o una medida lo arregla en un minuto. Desconfiar de todo cuesta lo mismo que creerlo todo.'},
-  {txt:'"«Esta canción es fea» está mal dicho, porque no se puede comprobar."',
-   g1:'Es una opinión. Y una opinión no se comprueba. No es verdad ni mentira para todos.',
-   g2:'Pedirle pruebas a un gusto es el error contrario, y cuesta igual. Lo que sí se le puede pedir es una razón. Qué de la canción no le gusta.'},
-  {txt:'"Si estoy seguro, entonces lo sé."',
-   g1:'Estar seguro es un sentimiento; saber es poder decir con qué se comprueba. Los dos hermanos de la puerta estaban seguros los dos.',
-   g2:'La prueba del quinto paso lo separa. Si nada puede hacerte cambiar de idea, no estabas sabiendo. Estabas defendiendo.'}
+  {txt:'"Si la frase está bien escrita, quiere decir una sola cosa."',
+   g1:'Las cuatro frases de la unidad están bien escritas y dicen dos cosas cada una.',
+   g2:'Lo que arregla el doble sentido no es la ortografía: es preguntar cuál de las dos.'},
+  {txt:'"Elegir una palabra suave en vez de una fuerte es mentir."',
+   g1:'No: las dos nombran la misma cosa. «De segunda mano» y «usada» son la misma bolsa.',
+   g2:'Lo que hace es apuntar. El trabajo es darse cuenta hacia dónde, y decidir uno mismo.'},
+  {txt:'"Toda palabra fuerte es una trampa, así que hay que desconfiar de todas."',
+   g1:'De las cuatro de la unidad, una NO es trampa: «se cayó el puente» cuando el puente se cayó.',
+   g2:'Desconfiar de todas las palabras cuesta lo mismo que creerlas todas. Es la misma lección que el mensaje sin señales.'},
+  {txt:'"Una definición larga es mejor que una corta."',
+   g1:'El largo no dice nada. Lo que se mide es qué entra y qué queda fuera.',
+   g2:'Se le pasan las dos pruebas: buscar lo que entra y no debería, y lo que queda fuera y sí debería.'},
+  {txt:'"Contestar una pregunta siempre es lo correcto."',
+   g1:'No si la pregunta ya trae la respuesta metida dentro.',
+   g2:'«¿Por qué el abono caro rinde más?» se contesta al revés: primero, ¿rinde más?'},
+  {txt:'"La intención del que habla no se puede saber, así que no vale preguntarla."',
+   g1:'No se adivina: se pregunta. Y muchas veces la frase misma la muestra.',
+   g2:'Una frase que pide una acción tiene una intención distinta de una que pide un dato, y eso sí se ve.'}
 ];
 const critDecisionBank=[
-  'Te llega un mensaje de que mañana no hay clases. ¿Lo reenviás, o preguntás primero a quien lo decide?',
-  'Dos compañeros discuten quién es más alto y los dos están seguros. ¿Opinás vos también, o traés la cinta?',
-  'Tu tío dice que ese árbol tiene cien años. ¿Lo repetís como dato, o preguntás cómo lo sabe?',
-  'Creías que de tu casa a la escuela hay diez minutos. ¿Lo dejás así, o lo medís con el reloj una vez?',
-  'Alguien te dice algo que te da la razón en una discusión. ¿Lo usás de una, o buscás también quién dice lo contrario?'
+  {txt:'Te llega «Te espero en el banco a las tres». ¿Vas y ves, o preguntás en cuál de los dos?'},
+  {txt:'En la pulpería te dicen que un producto «es de mejor calidad». ¿Lo pagás, o preguntás mejor en qué y cuánto?'},
+  {txt:'Alguien te pregunta por qué algo es mejor, y vos no sabés si lo es. ¿Contestás, o contestás la de atrás primero?'},
+  {txt:'Un papel dice «regalo» y hay que firmarlo. ¿Firmás, o preguntás si eso se devuelve?'},
+  {txt:'En clase te dan una definición y se te ocurre un caso que no encaja. ¿Te lo callás, o levantás la mano?'}
 ];
-const critDecisionGuide='Primero se pregunta de dónde salió el dato. Lo que se puede contar o medir, se mide. Lo que solo se oyó, se lleva a quien lo vio. Y lo que te da la razón se revisa igual, o no se estaba comprobando.';
+const critDecisionGuide='Primero se pregunta qué HACE la frase. Si dice dos cosas, se pide la que es. Si trae una palabra que no se puede comprobar, se pide el número. Y si la pregunta ya trae la respuesta dentro, se contesta la de atrás primero.';
 const critCompareBank=[
-  {a:'«En mi grado somos cuarenta y tres».',b:'«En mi grado somos como cuarenta».',
-   ga:'Se sabe: se cuenta, y cualquiera puede volver a contar.',
-   gb:'Se cree: es un número de memoria, sin comprobar.',
-   gr:'Las dos suenan parecidas y una se puede revisar en dos minutos. Lo que las separa no es el número: es si alguien los contó.'},
-  {a:'«Esa semilla rinde más».',b:'«Esa semilla me gusta más».',
-   ga:'Es una creencia: se puede comprobar contando mazorcas.',
-   gb:'Es una opinión: otro puede preferir la otra sin equivocarse.',
-   gr:'Es la frontera de la unidad. A la primera hay que pedirle pruebas; a la segunda, una razón. Confundirlas lleva a pedirle pruebas a un gusto o a creerle a un dato sin comprobar.'},
-  {a:'El lápiz que se ve quebrado en el vaso.',b:'El lápiz que se toca con la mano dentro del vaso.',
-   ga:'El ojo ve lo que la luz le entrega, y la luz se dobla.',
-   gb:'El tacto no se dobla: ahí el lápiz está entero.',
-   gr:'No es que un sentido mienta y el otro no. Es que cada uno falla en cosas distintas, y por eso se cruzan.'},
-  {a:'«2 + 2 son 4».',b:'«El techo de mi escuela es de lámina».',
-   ga:'Se saca pensando con orden: es el racionalismo.',
-   gb:'Hay que ir a mirarlo: es el empirismo.',
-   gr:'Las dos son cosas que se saben, y por caminos distintos. Por eso la ciencia de hoy usa las dos y no elige una.'}
+  {a:'«¿Me pasás la sal?»',b:'«¿Cuánto cuesta la sal?»',
+   ga:'Pide una acción: quiere que le pasen la sal.',
+   gb:'Pide un dato: quiere un número.',
+   gr:'Las dos tienen forma de pregunta y no hacen lo mismo. La forma no dice lo que la frase hace.'},
+  {a:'«La bolsa es de segunda mano».',b:'«La bolsa es usada».',
+   ga:'Nombra la bolsa y suaviza.',
+   gb:'Nombra la misma bolsa y no suaviza.',
+   gr:'La bolsa es la misma. Lo que cambia es hacia dónde apunta la palabra, y eso no es mentir: es elegir.'},
+  {a:'«Un ave es un animal que vuela».',b:'«Una silla es algo donde uno se sienta».',
+   ga:'Es muy angosta: deja fuera a la gallina.',
+   gb:'Es muy ancha: deja entrar una piedra.',
+   gr:'Las dos están mal y por razones contrarias. Por eso se le pasan las dos pruebas a toda definición.'},
+  {a:'«¿Por qué el abono caro rinde más?»',b:'«¿El abono caro rinde más?»',
+   ga:'Da por hecho que rinde más y solo deja discutir el porqué.',
+   gb:'Deja la pregunta abierta: se puede contestar que no.',
+   gr:'Una sola palabra de diferencia. La primera ya ganó la discusión antes de empezarla.'}
 ];
 const critCauseBank=[
-  {cause:'Un dato que se oyó en el recreo no dice quién lo vio.',guide:'Por eso es una creencia y no un saber. Y por eso a Yeimy le costó una nota. No preguntó cómo lo sabía quien se lo dijo.'},
-  {cause:'La piel no mide grados: compara con lo que tenía antes.',guide:'Por eso la misma agua tibia se siente caliente en una mano y fría en la otra. Ahí hace falta un termómetro.'},
-  {cause:'Una opinión no es verdad ni mentira para todos.',guide:'Por eso no se comprueba. Pedirle pruebas a un gusto es el error contrario a creer sin comprobar.'},
-  {cause:'Si solo buscás lo que te da la razón, siempre vas a encontrarlo.',guide:'Por eso el cuarto paso manda buscar a quien diga lo contrario. Sin eso, comprobar se vuelve juntar aplausos.'},
-  {cause:'La razón sola no averigua cuántos alumnos hay hoy en tu aula.',guide:'Por eso ninguna de las dos escuelas ganó. La ciencia mide con los sentidos y saca cuentas con la razón.'}
+  {cause:'La forma de la frase no dice lo que la frase hace.',guide:'Por eso «¿me pasás la sal?» es un pedido. Nadie contesta «sí» y se queda sentado.'},
+  {cause:'La palabra «banco» nombra dos cosas distintas.',guide:'Por eso Marlon y el otro se esperaron en dos sitios. Lo arreglaba una pregunta de cuatro palabras.'},
+  {cause:'«De mejor calidad» no dice mejor en qué ni cuánto.',guide:'Por eso doña Chepa pagó el doble por un jabón que lava igual. A una palabra vaga se le pide el número.'},
+  {cause:'Una pregunta puede traer la respuesta metida dentro.',guide:'Por eso a Wilmer le quedó aceptado que el abono caro rinde más, y compró ocho sacos.'},
+  {cause:'Quien pone el nombre decide antes de que se mire la cosa.',guide:'Por eso «regalo» se firmó tranquilo y a los seis meses había que devolverlo.'}
 ];
 const critEffectBank=[
-  {effect:'Tres vecinos compran una semilla que rinde igual que la de siempre.',guide:'Porque nadie preguntó quién la había sembrado ni cuántas mazorcas contó. Era una creencia que circulaba como si fuera un saber.'},
-  {effect:'Dos hermanos discuten una hora con la cinta métrica colgada al lado.',guide:'Porque los dos estaban seguros, y estar seguro no es saber. La medida habría cerrado la discusión en un minuto.'},
-  {effect:'Alguien deja de creerle a todo, hasta al aviso que era de verdad.',guide:'Porque de que una fuente falle a veces no se sigue que no sirva nunca. Desconfiar de todo cuesta lo mismo que creerlo todo.'},
-  {effect:'Una misma tarde la cuentan distinto dos personas que estuvieron ahí.',guide:'Porque la memoria se acomoda sola. Se arregla escribiéndolo el mismo día y preguntándole al otro que estuvo.'},
-  {effect:'Alguien cambia de idea cuando le muestran una medida, y no queda mal.',guide:'Porque eso es lo que hace el quinto paso: decir antes qué te haría cambiar. Cambiar por una razón mejor no es perder.'}
+  {effect:'Dos personas se esperan una hora en dos sitios distintos.',guide:'Porque la frase decía dos cosas y cada uno eligió una sin darse cuenta.'},
+  {effect:'Alguien paga el doble por algo que funciona igual.',guide:'Porque la palabra que lo convenció no se podía comprobar, y nadie pidió el número.'},
+  {effect:'Una mamá firma un préstamo creyendo que no debe nada.',guide:'Porque el papel le puso el nombre «regalo», y el nombre decidió antes de leer.'},
+  {effect:'La clase se detiene diez minutos y la definición mejora.',guide:'Porque alguien buscó lo que quedaba fuera y sí debería entrar: la gallina.'},
+  {effect:'Un muchacho deja de creerle a toda palabra fuerte.',guide:'Porque dio por trampa las cuatro, y una no lo era. Desconfiar de todo cuesta lo mismo que creerlo todo.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -663,7 +700,7 @@ function genEvalCrit(){
   const _sC = document.getElementById('evalCritFormaSel');
   if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
   const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
-  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · ¿Cómo sé que sé?`;
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · Palabras que piensan`;
   evalCritAnsVisible=false;
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
@@ -726,31 +763,36 @@ function printEvalCrit(){
   pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
-  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico ¿Cómo sé que sé? · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #784a6d;background:#f6eef4;color:#784a6d;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#784a6d;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #784a6d;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#f6eef4;border-left:3px solid #784a6d;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#f6eef4;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#f6eef4;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#784a6d;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #784a6d;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · ¿Cómo sé que sé? · Educación Básica · Filosofía</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · ¿Cómo sé que sé? · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico Palabras que piensan · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #784a6d;background:#f6eef4;color:#784a6d;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#784a6d;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #784a6d;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#f6eef4;border-left:3px solid #784a6d;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#f6eef4;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#f6eef4;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#784a6d;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #784a6d;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · Palabras que piensan · Educación Básica · Filosofía</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · Palabras que piensan · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
 }
 
-// ===================== LABORATORIO DE LOS SÍMBOLOS =====================
+// ===================== LABORATORIO DE FRASES =====================
 const parteData = (function () {
-  /* Se arma desde js/data/filosofia-saber.js. Las cinco fuentes de lo que
-     sabemos, cada una con para qué sirve, cuándo falla y con qué se arregla.
-     ⚠️ El orden importa y es contenido: primero SIRVE. */
+  /* Se arma desde js/data/filosofia-lenguaje.js: las cuatro cosas que HACE
+     una frase, con los nombres del DCNB de II Ciclo. Cada una lleva su PRUEBA
+     —la pregunta que se le hace a la frase— en vez de su definición, que es
+     lo que el alumno puede usar fuera de la escuela.
+     ⚠️ Y el ejemplo NO se escribe aquí: sale de `lenDeClase`, o sea de las
+     mismas treinta y dos frases del Clasifica. Escrito a mano podría acabar
+     contradiciendo al ejercicio, que es la avería del Escudo en rojo. */
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const out = {};
-  SAB_FUENTES.forEach(f => {
-    out[f.clave] = {
-      nombre: f.nombre, icon: f.emoji,
-      estructura: { title: '¿Para qué sirve?',  info: '<strong>' + esc(f.sirve) + '</strong>' },
-      funcion:    { title: '¿Cuándo falla?',    info: '⚠️ ' + esc(f.falla) },
-      ubicacion:  { title: '¿Con qué se arregla?', info: '🛠️ <strong>' + esc(f.arregla) + '</strong>' },
-      dato:       { title: '¿Basta sola?',      info: '🔀 No. ' + esc(SAB_FUENTES_OJO) }
+  LEN_ACTOS.forEach(a => {
+    const ej = lenDeClase(a.clave)[0] || '';
+    out[a.clave] = {
+      nombre: a.nombre, icon: a.emoji,
+      estructura: { title: '¿Qué hace?',       info: '<strong>' + esc(a.corto) + '</strong>' },
+      funcion:    { title: '¿Cómo se nota?',   info: '👂 ' + esc(a.senal) },
+      ubicacion:  { title: '¿Qué le pregunto?', info: '🔍 <strong>' + esc(a.prueba) + '</strong>' },
+      dato:       { title: 'Una frase así',    info: '📝 «' + esc(ej) + '»' }
     };
   });
   return out;
 })();
-let labParte='sentidos',labAspecto='estructura';
+let labParte='afirma',labAspecto='estructura';
 function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
 function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
 /* ⚠️ El texto de «Explorando» va en UN SOLO hijo de bloque, y no es estética.
@@ -766,145 +808,165 @@ function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAsp
 
 // ===================== DIPLOMA =====================
 function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
-function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Seguí preguntando!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya separás creer de saber!','¡Comprobás antes de afirmar!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Seguí escuchando!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya sabés qué hace una frase!','¡La forma ya no te engaña!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
 function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
 function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
-function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧩 ¡${name} completó la Misión "¿Cómo sé que sé?"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
+function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧩 ¡${name} completó la Misión "Palabras que piensan"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
 async function captureDiploma(){if(typeof html2canvas==='undefined'){showToast('⚠️ Cargando... intenta de nuevo');return;}sfx('click');const card=document.querySelector('.diploma-card');const btn=document.querySelector('.diploma-actions .btn-pri');const toHide=[card.querySelector('.diploma-input'),card.querySelector('.diploma-actions'),card.querySelector('hr')];if(btn){btn.disabled=true;btn.textContent='⏳ Capturando...';}toHide.forEach(el=>{if(el)el.style.display='none';});let dataUrl='';try{const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:'#ffffff'});toHide.forEach(el=>{if(el)el.style.display='';});dataUrl=canvas.toDataURL('image/png');const name=(document.getElementById('diplName').textContent||'Estudiante').replace(/\s+/g,'-');const fileName='constancia-'+name+'.png';const cap=window.Capacitor;if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&cap.Plugins?.Filesystem&&cap.Plugins?.Share){const base64Data=dataUrl.split(',')[1];const result=await cap.Plugins.Filesystem.writeFile({path:fileName,data:base64Data,directory:'CACHE'});await cap.Plugins.Share.share({url:result.uri,dialogTitle:'Guardar / Compartir Constancia'});}else{const a=document.createElement('a');a.href=dataUrl;a.download=fileName;a.click();}}catch(e){toHide.forEach(el=>{if(el)el.style.display='';});if(e.name!=='AbortError')showToast('⚠️ No se pudo guardar la constancia');}finally{if(btn){btn.disabled=false;btn.textContent='📷 Guardar foto';}}}
 
 // ===================== INIT =====================
 
-// ================ ¿CÓMO SÉ QUE SÉ?, EN LA PANTALLA ================
-/* Todo se PINTA desde js/data/filosofia-saber.js. Lo que aquí se copiaría es
-   el estado de cada afirmación y lo que falla de cada fuente, y eso no puede
-   decir una cosa en la pantalla y otra en la ficha que se fotocopia.
+// ================ PALABRAS QUE PIENSAN, EN LA PANTALLA ================
+/* Todo se PINTA desde js/data/filosofia-lenguaje.js. Lo que aquí se copiaría
+   es la clase de cada frase y las dos lecturas de cada ambigüedad, y eso no
+   puede decir una cosa en la pantalla y otra en la ficha que se fotocopia.
    De ahí sale `_dev/verifica-filosofia.js`. */
 function _esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-/* Los tres estados de una afirmación: el contenido 1.2 del currículo,
-   «Diferencias entre los tipos de saberes». */
-function pintarSabEstados(){
-  const c=document.getElementById('sb-estados');if(!c)return;
-  c.innerHTML=`<h2>🔬 Creer, opinar y saber no son lo mismo</h2>
-    <p>${_esc(SAB_EPISTEMOLOGIA.hace)} Se llama <strong>${_esc(SAB_EPISTEMOLOGIA.nombre)}</strong>,
-       y pregunta: ${_esc(SAB_EPISTEMOLOGIA.pregunta)}</p>
-    <p>Son tres estados, y cada uno tiene su prueba. La prueba es una pregunta:
-       se la hacés a la afirmación y ella te contesta cuál es.</p>
-    <div class="sb-estados">${SAB_ESTADOS.map(e=>
-      `<div class="sb-estado e-${e.clave}">
-         <h4>${e.emoji} ${_esc(e.nombre)} <span class="sb-estado-et">${_esc(e.corto)}</span></h4>
-         <p class="sb-estado-s">${_esc(e.senal)}</p>
-         <p class="sb-estado-p"><strong>La prueba:</strong> ${_esc(e.prueba)}</p>
+/* Las cuatro cosas que HACE una frase. Los nombres son los del DCNB de II
+   Ciclo: «oraciones definidas por la intención con que se dicen o escriben». */
+function pintarLenActos(){
+  const c=document.getElementById('ln-actos');if(!c)return;
+  c.innerHTML=`<h2>💬 Una frase no solo dice: HACE</h2>
+    <p>${_esc(LEN_LENGUAJE.hace)} Se llama <strong>${_esc(LEN_LENGUAJE.nombre)}</strong>,
+       y pregunta: ${_esc(LEN_LENGUAJE.pregunta)}</p>
+    <p>Son cuatro cosas. Cada una tiene su prueba. La prueba es una pregunta:
+       se la hacés a la frase y ella te contesta cuál es.</p>
+    <div class="ln-actos">${LEN_ACTOS.map(e=>
+      `<div class="ln-acto e-${e.clave}">
+         <h4>${e.emoji} ${_esc(e.nombre)} <span class="ln-acto-et">${_esc(e.corto)}</span></h4>
+         <p class="ln-acto-s">${_esc(e.senal)}</p>
+         <p class="ln-acto-p"><strong>La prueba:</strong> ${_esc(e.prueba)}</p>
        </div>`).join('')}</div>
-    <div class="tip"><span class="ti">🙌</span><div>${_esc(SAB_NOSE)}</div></div>
-    <div class="tip"><span class="ti">⚠️</span><div>${_esc(SAB_EPISTEMOLOGIA.ojo)}</div></div>`;
+    <div class="tip"><span class="ti">🧂</span><div>${_esc(LEN_ACTOS_OJO)}</div></div>`;
 }
 
-/* Las cinco fuentes. ⚠️ Va PRIMERO para qué sirve y después cuándo falla, y
-   ese orden es contenido, no maquetación: los sentidos son la fuente principal
-   y funcionan. Una unidad donde todo engaña fabrica un alumno que no le cree a
-   nada, y eso cuesta lo mismo que creerlo todo. */
-function pintarSabFuentes(){
-  const c=document.getElementById('sb-fuentes');if(!c)return;
-  c.innerHTML=SAB_FUENTES.map(f=>
-    `<div class="sb-fuente">
-       <h3 class="sb-fuente-tit">${f.emoji} ${_esc(f.nombre)}</h3>
-       <div class="sb-fuente-l sirve">✅ <strong>Sirve para esto:</strong> ${_esc(f.sirve)}</div>
-       <div class="sb-fuente-l falla">⚠️ <strong>Falla aquí:</strong> ${_esc(f.falla)}</div>
-       <p class="sb-fuente-a">🛠️ ${_esc(f.arregla)}</p>
-     </div>`).join('')
-    +`<div class="tip"><span class="ti">🔀</span><div>${_esc(SAB_FUENTES_OJO)}</div></div>`;
+/* Las cuatro frases que dicen dos cosas. Es la ironía y el doble sentido que
+   pide el DCNB de III Ciclo, con lo único que las arregla: preguntar. */
+function pintarLenAmbig(){
+  const c=document.getElementById('ln-ambig');if(!c)return;
+  c.innerHTML=`<h2>🔀 La misma frase, dos cosas</h2>
+    <p>Estas cuatro frases están bien escritas. Y dicen dos cosas cada una.
+       Buscá las dos antes de leer la respuesta.</p>
+    ${LEN_AMBIG.map(a=>
+      `<div class="ln-amb">
+         <div class="ln-amb-f">${a.emoji} «${_esc(a.frase)}»</div>
+         <ul class="ln-amb-dos">
+           <li><strong>Puede ser:</strong> ${_esc(a.una)}</li>
+           <li><strong>O puede ser:</strong> ${_esc(a.otra)}</li>
+         </ul>
+         <p class="ln-amb-a">🔧 ${_esc(a.arregla)}</p>
+       </div>`).join('')}
+    <div class="tip"><span class="ti">👂</span><div>${_esc(LEN_AMBIG_OJO)}</div></div>`;
 }
 
-/* ⚠️ Los cuatro engaños se HACEN, no se leen: por eso lo primero de cada
-   tarjeta es lo que el alumno tiene que hacer con lo que hay en su casa. Y
-   cada uno dice qué lo desarma, porque un engaño sin salida solo asusta. */
-function pintarSabEnganos(){
-  const c=document.getElementById('sb-enganos');if(!c)return;
-  c.innerHTML=SAB_ENGANOS.map(e=>
-    `<div class="sb-eng">
-       <h3 class="sb-eng-tit">${e.emoji} ${_esc(e.titulo)}</h3>
-       <p class="sb-eng-h"><strong>Hacelo:</strong> ${_esc(e.hace)}</p>
-       <p class="sb-eng-v"><strong>Vas a ver:</strong> ${_esc(e.ves)}</p>
-       <p class="sb-eng-q"><strong>Qué pasa de verdad:</strong> ${_esc(e.pasa)}</p>
-       <p class="sb-eng-d">🛠️ ${_esc(e.desarma)}</p>
-     </div>`).join('')
-    +`<div class="tip"><span class="ti">👀</span><div>${_esc(SAB_ENGANOS_OJO)}</div></div>`;
+/* Definir: la destreza de la filosofía analítica que el currículo nombra.
+   Una definición falla de dos maneras OPUESTAS, y por eso van las dos
+   pruebas: buscar lo que entra y no debería, y lo que queda fuera y sí. */
+function pintarLenDefinir(){
+  const c=document.getElementById('ln-definir');if(!c)return;
+  c.innerHTML=`<h2>🎯 Cuándo una definición sirve</h2>
+    <p>Definir es decir qué entra y qué no. Se falla de dos maneras
+       contrarias, y las dos se comprueban.</p>
+    ${LEN_DEFINIR.map(d=>
+      `<div class="ln-def d-${d.clave}">
+         <div class="ln-def-tit">${d.emoji} ${_esc(d.nombre)}</div>
+         <p class="ln-def-h">${_esc(d.que)}</p>
+         <p class="ln-def-v">${_esc(d.ej)}</p>
+         <p class="ln-def-d"><strong>La prueba:</strong> ${_esc(d.prueba)}</p>
+       </div>`).join('')}
+    <div class="tip"><span class="ti">📏</span><div>${_esc(LEN_DEFINIR_OJO)}</div></div>`;
 }
 
-function pintarSabPasos(){
-  const c=document.getElementById('sb-pasos');if(!c)return;
-  c.innerHTML=`<h2>🪜 Cinco pasos para comprobar algo</h2>
-    <p>Sirven para cualquier cosa que alguien afirme: en la casa, en el grupo
-       o en un anuncio. El quinto es el que cuesta.</p>
-    <div class="sb-pasos">${SAB_PASOS.map(p=>
-      `<div class="sb-paso"><div class="sb-paso-n">${p.n}</div>
-         <div class="sb-paso-t"><b>${_esc(p.paso)}</b><span>${_esc(p.porque)}</span></div>
-       </div>`).join('')}</div>`;
-}
-
-/* Las dos escuelas que el currículo manda COMPARAR, una al lado de la otra.
-   Y con el final honesto: no hay que elegir, hoy se usan las dos. */
-function pintarSabEscuelas(){
-  const c=document.getElementById('sb-escuelas');if(!c)return;
-  c.innerHTML=`<h2>⚖️ Dos respuestas, y las dos se usan</h2>
-    <p>¿De dónde sale lo que sabemos: de la razón o de los sentidos? Hubo dos
-       respuestas, y cada una acierta en algo.</p>
-    <div class="sb-esc">${SAB_ESCUELAS.map(e=>
-      `<div class="${e.clave}">
-         <h4>${e.emoji} ${_esc(e.nombre)}</h4>
-         <span class="dice">${_esc(e.dice)}</span>
-         <span class="ok">✅ Acierta: ${_esc(e.acierta)}</span>
-         <span class="no">⚠️ Se queda corto: ${_esc(e.corto)}</span>
+/* Lo que la palabra ARRASTRA. El DCNB de III Ciclo nombra el lenguaje
+   denotativo; aquí se ve al lado del otro, que es como se nota. */
+function pintarLenCarga(){
+  const c=document.getElementById('ln-carga');if(!c)return;
+  c.innerHTML=`<h2>⚖️ La misma cosa, otra palabra</h2>
+    <p>Las dos palabras de cada fila nombran lo mismo. Y no llegan igual.
+       Leelas en voz alta y fijate cuál te cae mejor.</p>
+    <div class="ln-cars">${LEN_CARGA.map(x=>
+      `<div class="ln-car">
+         <p class="ln-car-c">${_esc(x.cosa)}</p>
+         <div class="ln-car-par">
+           <span class="ln-car-s">${_esc(x.suave)}</span>
+           <span class="ln-car-vs">↔</span>
+           <span class="ln-car-f">${_esc(x.fuerte)}</span>
+         </div>
+         <p class="ln-car-i">${_esc(x.igual)}</p>
        </div>`).join('')}</div>
-    <div class="tip"><span class="ti">🤝</span><div>${_esc(SAB_ESCUELAS_OJO)}</div></div>`;
+    <div class="tip"><span class="ti">🎯</span><div>${_esc(LEN_CARGA_OJO)}</div></div>`;
 }
 
-/* ⚠️ La investigación NO trae respuestas, y el aviso va en la pantalla y en el
-   papel: sin él se lee como un descuido y alguien se la salta. */
-function pintarSabInvestiga(){
-  const c=document.getElementById('sb-investiga');if(!c)return;
-  c.innerHTML=`<h2>🔎 Esto se averigua donde vivís</h2>
-    <div class="tip"><span class="ti">⚠️</span><div>${_esc(SAB_INVESTIGA.aviso)}</div></div>
-    <ol class="sb-inv">${SAB_INVESTIGA.preguntas.map(p=>`<li>${_esc(p)}</li>`).join('')}</ol>
-    <div class="tip"><span class="ti">🤲</span><div>${_esc(SAB_INVESTIGA.cuidado)}</div></div>`;
+/* Cómo persuade la PALABRA, no la razón: la razón es la unidad 2.
+   ⚠️ El cuarto NO es truco, y va marcado con su clase: una unidad donde toda
+   palabra fuerte es trampa fabrica un alumno que no le cree a nadie. */
+function pintarLenTrucos(){
+  const c=document.getElementById('ln-trucos');if(!c)return;
+  c.innerHTML=`<h2>🪤 Cuando la palabra convence sola</h2>
+    <p>Aquí no se examina la razón: eso fue la unidad anterior. Se examina la
+       frase. Tres de estas cuatro traen trampa.</p>
+    ${LEN_TRUCOS.map(t=>
+      `<div class="ln-tru ${t.truco?'t-si':'t-no'}">
+         <div class="ln-tru-tit">${t.emoji} ${_esc(t.nombre)}</div>
+         <p class="ln-tru-h">${_esc(t.hace)}</p>
+         <p class="ln-tru-s"><strong>Suena así:</strong> ${_esc(t.suena)}</p>
+         <p class="ln-tru-c"><strong>Cuesta:</strong> ${_esc(t.cuesta)}</p>
+         <p class="ln-tru-d"><strong>Se desarma:</strong> ${_esc(t.desarma)}</p>
+       </div>`).join('')}
+    <div class="tip"><span class="ti">✅</span><div>${_esc(LEN_TRUCOS_OJO)}</div></div>`;
 }
 
-function pintarSabArbol(){
-  const c=document.getElementById('sb-arbol');if(!c)return;
-  c.innerHTML=`<div class="sb-arbol">${SAB_ARBOL.map(a=>
-    `<div><b>${a.emoji} ${_esc(a.materia)}</b>
-     <span class="le">${_esc(a.le)}</span>
-     <span class="hoy"><strong>Pruébalo hoy:</strong> ${_esc(a.hoy)}</span></div>`).join('')}</div>`;
+/* Lo que no se contesta copiando de aquí: se averigua hablando con la gente
+   de la casa y de la comunidad, que es lo que el currículo pide de verdad. */
+function pintarLenInvestiga(){
+  const c=document.getElementById('ln-investiga');if(!c)return;
+  c.innerHTML=`<h2>🔎 Esto se averigua hablando</h2>
+    <div class="tip"><span class="ti">⚠️</span><div>${_esc(LEN_INVESTIGA.aviso)}</div></div>
+    <ol class="ln-inv">${LEN_INVESTIGA.preguntas.map(p=>`<li>${_esc(p)}</li>`).join('')}</ol>
+    <div class="tip"><span class="ti">🤲</span><div>${_esc(LEN_INVESTIGA.cuidado)}</div></div>`;
 }
 
-function pintarSabPensadores(){
-  const c=document.getElementById('sb-pensadores');if(!c)return;
-  c.innerHTML=SAB_PENSADORES.map(p=>
-    `<div class="sb-pens">
-       <h3 class="sb-pens-tit">${p.emoji} ${_esc(p.nombre)}</h3>
-       <p class="sb-pens-donde">${_esc(p.donde)}</p>
-       <p class="sb-pens-quien">${_esc(p.quien)}</p>
-       <p class="sb-pens-sub">Qué hizo</p>
-       <p class="sb-pens-l">${_esc(p.hizo)}</p>
-       <p class="sb-pens-sub">Por qué se le recuerda</p>
-       <p class="sb-pens-l">${_esc(p.porque)}</p>
-       <p class="sb-pens-dato"><strong>Dato:</strong> ${_esc(p.dato)}</p>
-     </div>`).join('');
+/* Qué le deja esta pregunta a cada materia: el CE1.4 de la unidad 1 visto
+   desde aquí. */
+function pintarLenArbol(){
+  const c=document.getElementById('ln-arbol');if(!c)return;
+  c.innerHTML='<h2>🌳 Qué le deja esto a cada materia</h2>'+
+    LEN_ARBOL.map(a=>
+      `<div class="ln-arb">
+         <div class="ln-arb-m">${a.emoji} ${_esc(a.materia)}</div>
+         <p class="ln-arb-l">${_esc(a.le)}</p>
+         <p class="ln-arb-h"><strong>Pruébalo hoy:</strong> ${_esc(a.hoy)}</p>
+       </div>`).join('');
 }
 
+/* Los dos pensadores, sin una sola fecha: el propio CNB los nombra. */
+function pintarLenPensadores(){
+  const c=document.getElementById('ln-pensadores');if(!c)return;
+  c.innerHTML='<h2>🧠 Dos que miraron las palabras con lupa</h2>'+
+    '<p>De cada uno se dice qué hizo y por qué se le recuerda. <strong>No hay ni una fecha</strong>: una fecha que no se puede acreditar no se escribe.</p>'+
+    LEN_PENSADORES.map(p=>
+      `<div class="ln-pens">
+         <div class="ln-pens-n">${p.emoji} ${_esc(p.nombre)}</div>
+         <p class="ln-pens-w">${_esc(p.donde)}</p>
+         <p class="ln-pens-q">${_esc(p.quien)}</p>
+         <p class="ln-pens-l"><strong>Qué hizo:</strong> ${_esc(p.hizo)}</p>
+         <p class="ln-pens-l"><strong>Por qué se le recuerda:</strong> ${_esc(p.porque)}</p>
+         <p class="ln-pens-dato"><strong>Dato:</strong> ${_esc(p.dato)}</p>
+       </div>`).join('');
+}
 
 window.addEventListener('DOMContentLoaded',()=>{
   initTheme();
   loadProgress();
-  pintarSabEstados();
-  pintarSabFuentes();
-  pintarSabEnganos();
-  pintarSabPasos();
-  pintarSabEscuelas();
-  pintarSabInvestiga();
-  pintarSabArbol();
-  pintarSabPensadores();
+  pintarLenActos();
+  pintarLenAmbig();
+  pintarLenDefinir();
+  pintarLenCarga();
+  pintarLenTrucos();
+  pintarLenInvestiga();
+  pintarLenArbol();
+  pintarLenPensadores();
   upFC();
   buildQz();
   showQz();

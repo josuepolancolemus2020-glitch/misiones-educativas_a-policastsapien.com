@@ -278,16 +278,22 @@ const classifyTaskDB=[
   {w:'José Trinidad Reyes',gen:'Fundó la primera universidad',n:'Mediados del siglo XIX',g:'El Padre Reyes',t:'Por él, el Día del Maestro es el 17 de septiembre'},
   {w:'Ramón Rosa',gen:'Impulsó el Código de Instrucción Pública',n:'1882',g:'El ministro de la Reforma',t:'Hizo de la educación una obligación del Estado'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'El Héroe Nacional de Honduras es ___.',ans:'Lempira'},
-  {s:'Un héroe defiende; un ___ ayuda a fundar la nación.',ans:'prócer'},
-  {s:'El Acta de Independencia la redactó José Cecilio del ___.',ans:'Valle'},
-  {s:'Francisco Morazán nació el 3 de octubre de ___.',ans:'1792'},
-  {s:'El primer Jefe de Estado de Honduras fue Dionisio de ___.',ans:'Herrera'},
-  {s:'José Trinidad Reyes fundó la primera ___ del país.',ans:'universidad'},
-  {s:'El Día del Maestro Hondureño es el 17 de ___.',ans:'septiembre'},
-  {s:'Ramón Rosa impulsó el Código de Instrucción Pública de ___.',ans:'1882'},
-  {s:'Lempira resistió desde el Peñol de ___.',ans:'Cerquín'}
+  {s:'El Héroe Nacional de Honduras es ___.',opts:['Cabañas','Lempira','Morazán'],ans:'Lempira'},
+  {s:'Un héroe defiende; un ___ ayuda a fundar la nación.',opts:['cacique','héroe','prócer'],ans:'prócer'},
+  {s:'El Acta de Independencia la redactó José Cecilio del ___.',opts:['Valle','Herrera','Rosa'],ans:'Valle'},
+  {s:'Francisco Morazán nació el 3 de octubre de ___.',opts:['1821','1792','1882'],ans:'1792'},
+  {s:'El primer Jefe de Estado de Honduras fue Dionisio de ___.',opts:['Soto','Valle','Herrera'],ans:'Herrera'},
+  {s:'José Trinidad Reyes fundó la primera ___ del país.',opts:['universidad','escuela normal','imprenta'],ans:'universidad'},
+  {s:'El Día del Maestro Hondureño es el 17 de ___.',opts:['abril','septiembre','octubre'],ans:'septiembre'},
+  {s:'Ramón Rosa impulsó el Código de Instrucción Pública de ___.',opts:['1821','1792','1882'],ans:'1882'},
+  {s:'Lempira resistió desde el Peñol de ___.',opts:['Cerquín','Comayagua','Gracias'],ans:'Cerquín'}
 ];
 const explainQuestions=[
   {q:'¿Qué diferencia hay entre un héroe y un prócer? Pon un ejemplo de cada uno.',ans:'Un héroe defiende a su pueblo: arriesga la vida por la gente que ya está aquí, como Lempira contra la conquista. Un prócer ayuda a fundar la nación: construye lo que todavía no existe —leyes, escuelas, un Estado—, como José Cecilio del Valle al redactar el Acta de Independencia.'},

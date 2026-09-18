@@ -282,16 +282,22 @@ const classifyTaskDB=[
   {w:'Acuerdo',gen:'La norma con que se reglamenta una ley',n:'La dicta una Secretaría',g:'Ejemplo: el 0760-SE-99',t:'No puede decir más que la ley'},
   {w:'Estado de Derecho',gen:'Manda la ley, no la voluntad de quien gobierna',n:'La ley vale igual para todos',g:'Incluye al que gobierna',t:'Es lo que hace posible reclamar'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el ___.',ans:'Judicial'},
-  {s:'El Poder Legislativo lo ejerce el ___ Nacional.',ans:'Congreso'},
-  {s:'El Poder Ejecutivo lo encabeza el ___ de la República.',ans:'Presidente'},
-  {s:'El Poder Judicial lo encabeza la ___ Suprema de Justicia.',ans:'Corte'},
-  {s:'La ley que está por encima de todas las demás es la ___.',ans:'Constitución'},
-  {s:'Una ley aprobada por el Congreso se llama ___.',ans:'decreto'},
-  {s:'La norma con que una Secretaría reglamenta una ley se llama ___.',ans:'acuerdo'},
-  {s:'Cuando manda la ley y no quien gobierna, hay Estado de ___.',ans:'Derecho'},
-  {s:'Una ley entra en vigencia al publicarse en el Diario Oficial La ___.',ans:'Gaceta'}
+  {s:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el ___.',opts:['Electoral','Judicial','Municipal'],ans:'Judicial'},
+  {s:'El Poder Legislativo lo ejerce el ___ Nacional.',opts:['Tribunal','Gabinete','Congreso'],ans:'Congreso'},
+  {s:'El Poder Ejecutivo lo encabeza el ___ de la República.',opts:['Presidente','Alcalde','Ministro'],ans:'Presidente'},
+  {s:'El Poder Judicial lo encabeza la ___ Suprema de Justicia.',opts:['Junta','Corte','Sala'],ans:'Corte'},
+  {s:'La ley que está por encima de todas las demás es la ___.',opts:['Ley Fundamental de Educación','Gaceta','Constitución'],ans:'Constitución'},
+  {s:'Una ley aprobada por el Congreso se llama ___.',opts:['decreto','acuerdo','reglamento'],ans:'decreto'},
+  {s:'La norma con que una Secretaría reglamenta una ley se llama ___.',opts:['sentencia','acuerdo','decreto'],ans:'acuerdo'},
+  {s:'Cuando manda la ley y no quien gobierna, hay Estado de ___.',opts:['Excepción','Emergencia','Derecho'],ans:'Derecho'},
+  {s:'Una ley entra en vigencia al publicarse en el Diario Oficial La ___.',opts:['Gaceta','Tribuna','Prensa'],ans:'Gaceta'}
 ];
 const explainQuestions=[
   {q:'¿Cuáles son los tres poderes del Estado y qué hace cada uno?',ans:'El Legislativo HACE las leyes y lo ejerce el Congreso Nacional. El Ejecutivo las CUMPLE y hace cumplir, y lo encabeza el Presidente de la República con las Secretarías de Estado. El Judicial las APLICA a cada caso, y lo encabeza la Corte Suprema de Justicia con los juzgados y tribunales.'},

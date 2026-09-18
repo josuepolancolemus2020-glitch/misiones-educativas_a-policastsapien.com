@@ -4060,32 +4060,189 @@ estaba en 8,51 palabras por frase** con el listón en 8,5. Se partieron siete
 frases de su archivo de datos y volvió a 8,4. Es la lección de siempre: una
 herramienta que se rinde en silencio es peor que no tenerla.
 
+### La etapa 5: qué HACE una frase, y por qué la forma engaña
+
+La quinta unidad de la Ruta de la Raíz es **Palabras que piensan**
+(`misiones/basica-palabras-que-piensan/`, id 83, etapa 5), y va para los tres
+ciclos como las cuatro primeras. El currículo la pide con dos cosas del **CNB de
+Educación Media**, textuales: el **RA1**, que entre las tendencias de hoy nombra
+por su número la **1.7 Filosofía analítica** y la **1.8 Hermenéutica**, y el
+**CE1.3** de las escuelas del pensamiento. Y el **DCNB de Básica**, Área de
+Comunicación, pone lo demás en los tres ciclos: las «oraciones definidas por la
+**intención con que se dicen o escriben**» —declarativas, exclamativas,
+interrogativas e imperativas, y van **con esos nombres**—, «**infieren las
+intenciones del emisor e identifican la ironía y doble sentido**» de III Ciclo, y
+las fórmulas de «**saludo, pregunta, y despedida**» de I Ciclo. Las páginas del
+PDF están en `CURRICULA-FILOSOFIA.md`.
+
+Mismo patrón que el Himno, los próceres y las cuatro unidades anteriores: **los
+datos viven en `js/data/filosofia-lenguaje.js`** y solo ahí; la misión los pinta,
+la ficha sale de un guion, y `node _dev/verifica-filosofia.js` compara las dos.
+
+⚠️ **Y NO repite a la unidad 2.** Aquella examina las RAZONES que otros dan;
+esta examina las PALABRAS con que se las dan. Por eso aquí no hay ni una
+falacia: hay la pregunta que ya trae la respuesta dentro, el nombre que juzga
+antes de que se mire la cosa y la palabra que no se puede comprobar.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. ⚠️ **Lo que de verdad manda: la FORMA de la frase no dice lo que la frase
+   HACE.** «¿Me pasás la sal?» tiene forma de pregunta y es un pedido; nadie
+   contesta «sí» y se queda sentado. Sin eso, la unidad enseña a clasificar por
+   los signos de puntuación —que es lo que el alumno ya hace mal— y la sonda lo
+   comprueba en la pantalla y en el papel.
+2. ⚠️ **Y por eso las disfrazadas tienen sus PROPIAS frases** (`LEN_DISFRAZ`,
+   ocho), cada una con su `donde`. Lo que decide no es la frase: es **dónde se
+   dice**. Sin ese campo el ejercicio no tiene respuesta, y la sonda exige
+   además que en las ocho lo que parece y lo que hace sean distintos.
+3. ⚠️ **Las 32 frases salen de UN solo sitio** (`LEN_FRASES`, ocho por clase),
+   y de ahí se arman el Clasifica Y el Reto. Es la avería del Escudo marcado en
+   rojo: con una sola fuente **no se puede escribir**, que vale más que una
+   sonda que la caza. Y van ocho por clase para que no se acierte por reparto.
+4. ⚠️ **Una definición falla de dos maneras CONTRARIAS y las dos están**: muy
+   ancha —«una silla es algo donde uno se sienta», y entonces una piedra es una
+   silla— y muy angosta —«un ave es un animal que vuela», y entonces la gallina
+   no es ave—. Con una sola, el alumno aprende a fallar en el sentido que no
+   vio, y la sonda exige las dos.
+5. ⚠️ **Uno de los cuatro trucos NO es truco**, y es el que más enseña: «se
+   cayó el puente» cuando el puente se cayó. Una unidad donde toda palabra
+   fuerte es trampa fabrica un alumno que no le cree a nadie, y eso cuesta lo
+   mismo que creerlo todo. Es la regla del mensaje sin señales de los peligros
+   de la IA, y la sonda cuenta que haya **exactamente uno**.
+6. ⚠️ **Y elegir la palabra NO es mentir: es apuntar.** Por eso cada par de
+   `LEN_CARGA` trae lo que las dos nombran IGUAL —«de segunda mano» y «usada»
+   son la misma bolsa—. Sin eso, la unidad enseña que quien elige una palabra
+   suave está engañando, y el alumno sale desconfiando del idioma entero.
+
+**El arranque le pasa a alguien y le cuesta algo:** a Marlon le llegó «Te espero
+en el banco a las tres». Él fue al banco de la plaza; el otro lo esperaba en la
+banca del parque. Los dos se fueron a las cuatro sin verse y **el trámite se
+pasó para otro día**. Nadie escribió mal: faltaba una pregunta de cuatro
+palabras, «¿en cuál de los dos?». Y termina en algo que el alumno PRODUCE:
+anotar una frase que oiga hoy en su casa y decir qué hace.
+
+**Dos pensadores, y ni una fecha**: Bertrand Russell, que miró las frases con la
+lupa con que se miran las cuentas, y Ortega y Gasset, que dijo que cada palabra
+arrastra la vida de quien la usa. Los nombra el propio CNB de Media. La regla de
+las cuatro unidades anteriores sigue en pie: **de un pensador se escribe qué
+hizo, nunca cuándo.** ⚠️ Y ese documento escribe «Russel» con una sola l; aquí
+va **Bertrand Russell**, con la diferencia anotada en el archivo de datos.
+
+### ⚠️ Y al calcar la unidad 4 salió una avería que llevaba PUBLICADA en doce misiones
+
+La 83 se calcó de la 82, y salieron **cuatro bancos escritos con la clave que
+uno recuerda, no con la que el motor LEE**. Tres eran de la unidad 4 —el
+`classifyTaskDB` con las cinco fuentes, el `completeTaskDB` con el racionalismo
+y el `explainQuestions` con «creer, opinar y saber»—: al alumno se le mandaba de
+tarea el temario del mes pasado. Y el cuarto era peor, porque no era de esta
+misión:
+
+⚠️ **`genCompleteTask` pinta «📝 Opciones: ${item.opts.join(' | ')}», y en DOCE
+misiones publicadas ninguna fila de `completeTaskDB` traía `opts`.** Eso no
+imprime «undefined»: **revienta**. El maestro toca «Completa la oración» en el
+📋 Generador de Tareas y **no sale nada**, sin un solo aviso en la pantalla. Se
+comprobó abriendo la misión en el navegador: `TypeError: Cannot read properties
+of undefined (reading 'join')`. Y en `albores-singularidad` había dos más del
+mismo tipo: su `completeTaskDB` decía `a:` donde el pintado lee `item.ans`, y su
+`explainQuestions` eran nueve **cadenas** donde la función lee `item.q`, así que
+la tarea salía con «undefined» donde iba la pregunta.
+
+Eran las cuatro unidades de Filosofía, cinco de la ruta de IA, y próceres, tres
+poderes y la Constitución. Ninguna daba un error visible: el archivo compila, la
+misión se pinta, la consola callada. Es la familia del `target:` de la misión 69
+—que imprimía «✅ undefined» en la clave del maestro— y del `\U0001F1ED` de
+Python.
+
+Arreglado en las doce, y **con sonda**:
+
+```
+node _dev/verifica-bancos-tareas.js     (está en `npm test`)
+```
+
+⚠️ **Lee qué campos PINTA cada función y se los pide al banco**, en vez de
+llevar una lista escrita: así vale para el campo que se invente mañana. Y de
+paso el nombre del banco tampoco se escribe —se lee del cuerpo de la función—,
+porque dos misiones lo llaman `completeTasks` y una lista las habría acusado de
+no tener banco teniéndolo. Se comprobó al revés, quitándole el `opts` a una
+fila: salió roja con la misión y el campo por su nombre.
+
+⚠️ **Y la sonda acusó a dos archivos sanos antes de servir**, las dos veces por
+medir de más: pedía el campo `posici` porque el de la misión de los pronombres
+se llama **`posición`** y `\w` no lleva acentos —JavaScript sí los acepta—, y en
+`albores` decía «no tiene ni una fila» donde lo que pasaba era que el banco trae
+cadenas. Es la lección de «Cuadrado **Perfecto**» otra vez.
+
+### ⚠️ Y un título que se lee más chico que su propio cuerpo
+
+Se encontró como se encuentran estas: **abriendo la misión a 360 px y
+mirándola**, con las sondas en verde. Los títulos de las tarjetas —«La pregunta
+con la respuesta dentro», «El nombre que ya juzga»— se leían **más chicos que el
+párrafo que encabezan**.
+
+Medido: `body.letra-grande`, con el que abre toda misión, agranda los `<p>`, los
+`<li>` y los títulos… y **no los `<div>`**, que es de lo que está hecho el título
+de cada tarjeta. Los títulos en **17 px** y su cuerpo en **20**. Un título que se
+lee más chico deja de hacer de título, y el alumno con la vista cansada lee mejor
+el cuerpo que la cabecera. Es la misma avería que `css/lab-legible.css` vino a
+arreglar en los 43 Laboratorios, en otro sitio. Arreglado en el CSS de la unidad,
+con las medidas siguiendo a la letra del párrafo.
+
+⚠️ **Y al medirlo salió algo más grande que esta unidad, que a propósito NO se
+tocó.** La misma cuenta, pasada por las cinco unidades, señala **clases de la
+plantilla**: la pregunta del Quiz (`.qz-q`) se lee a 16 px con el párrafo de al
+lado a 20, y con ella `.cmp-sent`, `.neuron-desc`, `.id-info`, `.sopa-words` y
+`.fb`. Eso no lo estrenó esta unidad: viene con la plantilla y está igual en las
+**83 misiones**, con sus maquetaciones medidas y sus sondas propias. Moverlo es
+un cambio de la plataforma entera y se hace midiéndolo aparte, no de paso. Queda
+apuntado aquí para el día que se haga.
+
+⚠️ **Y otra que tampoco la caza ninguna sonda: una flecha colgando.** Las dos
+palabras de «La misma cosa, otra palabra» iban en una fila que se envuelve, y a
+360 px el corte caía **entre la flecha y la segunda palabra**: el «↔» se quedaba
+al final del renglón y la palabra bajaba sola. La flecha dice «estas dos nombran
+lo mismo»; colgada detrás de una sola parece una errata, y lo que la tarjeta
+enseña es justo que van UNA AL LADO DE LA OTRA. Ahora es una rejilla de tres
+columnas: la flecha se queda en medio y lo que se parte es el texto DENTRO de su
+píldora. Es la lección de los mandos de los juegos 3D —**no se encoge el rótulo,
+se encoge la pista**—.
+
+⚠️ **Y una lección sobre `verifica-filosofia` misma.** Su lista de frases del
+maestro lleva `'producto:'`, y la comparación pasa por `limpia()`, que **se come
+la puntuación**: la aguja quedaba en «producto» y cazaba español corriente —«en
+la pulpería te dicen que un producto es de mejor calidad», que es una frase
+perfecta—. Las tres agujas cuya señal ES el dos puntos se buscan ahora en el
+texto **con su puntuación**. Es la misma avería que el `\bllama\b` de
+`verifica-descubre-ia`.
+
 **Antes de publicar un cambio de esta materia:**
 
 ```
-node _dev/verifica-filosofia.js             → las cuatro unidades, y que no se cuele nada del maestro
+node _dev/verifica-filosofia.js             → las cinco unidades, y que no se cuele nada del maestro
 node _dev/verifica-nombres-propios.js
 node _dev/verifica-lab-legible.js           → los rótulos del Laboratorio, sin partirse
 node _dev/reparte-respuestas.js --revisa <carpeta>   → que ninguna letra pase del 40 %
 node _dev/mide-legibilidad.js <carpeta> --detalle
 node _dev/verifica-mision-nueva.js <carpeta>/<misión>.html
-node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo ficha-como-se-que-se
+node _dev/verifica-bancos-tareas.js         → que el Generador de Tareas pueda pintar sus bancos
+node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo ficha-como-se-que-se ficha-palabras-que-piensan
 node _dev/servidor-estatico.js       (en otra terminal)
 METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js <carpeta>/<misión>.html
 ```
 
-(Las cuatro carpetas son `misiones/basica-el-asombro`,
+(Las cinco carpetas son `misiones/basica-el-asombro`,
 `misiones/basica-pensar-con-orden`,
-`misiones/basica-de-que-esta-hecho-el-mundo` y
-`misiones/basica-como-se-que-se`.)
+`misiones/basica-de-que-esta-hecho-el-mundo`,
+`misiones/basica-como-se-que-se` y
+`misiones/basica-palabras-que-piensan`.)
 
 Si se tocan los datos, la ficha **se vuelve a repartir**
-(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo ficha-como-se-que-se`):
-son ocho, diez, diez y diez hojas, y un párrafo que crece dos renglones parte una en
-dos. ⚠️ **Las de las unidades 3 y 4 NO se editan a mano**: salen de
-`_dev/arma-ficha-mundo.js` y `_dev/arma-ficha-saber.js`, desde sus archivos de
-datos, como las cuatro de la ruta de IA, y una corrección hecha solo en el HTML
-se pierde en el siguiente armado.
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo ficha-como-se-que-se ficha-palabras-que-piensan`):
+son ocho, diez, diez, diez y diez hojas, y un párrafo que crece dos renglones parte una en
+dos. ⚠️ **Las de las unidades 3, 4 y 5 NO se editan a mano**: salen de
+`_dev/arma-ficha-mundo.js`, `_dev/arma-ficha-saber.js` y
+`_dev/arma-ficha-lenguaje.js`, desde sus archivos de datos, como las cuatro de la
+ruta de IA, y una corrección hecha solo en el HTML se pierde en el siguiente
+armado.
 ⚠️ Y si se QUITA contenido, va con **`--todas`**: sin esa bandera el repartidor
 solo mira las fichas que hoy se pasan del papel, así que la de la unidad 1 se
 habría quedado en nueve hojas gastando una de balde.

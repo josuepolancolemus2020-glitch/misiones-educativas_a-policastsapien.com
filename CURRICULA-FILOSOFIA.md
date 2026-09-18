@@ -60,7 +60,7 @@ está completo en `_dev/dcnb-pdf/` para todas las modalidades** (hay tres), así
 que de Media no se afirma nada más allá de lo que dice este documento sobre
 esta modalidad: es la misma regla que se puso para Inteligencia Artificial.
 
-### 3 · Y de ahí salen las cuatro primeras unidades, textualmente
+### 3 · Y de ahí salen las cinco primeras unidades, textualmente
 
 | unidad | criterio de evaluación que cumple, tal cual |
 |---|---|
@@ -69,6 +69,7 @@ esta modalidad: es la misma regla que se puso para Inteligencia Artificial.
 | **2 · Pensar con orden** | **RA2** «Construir razonamientos sobre el entorno, aplicando elementos de la lógica clásica y simbólica» · **CE2.1** «Identifica los elementos que conforman el pensamiento lógico clásico desde el contexto de la antigua Grecia» |
 | **3 · ¿De qué está hecho el mundo?** | **CE1.2** «Diferencia las etapas del saber filosófico a través del método comparativo» · **CE1.3** «Expone la importancia de las escuelas del pensamiento filosófico promoviendo procesos de reflexión» |
 | **4 · ¿Cómo sé que sé?** | **CE4.2** «Explica los diferentes conceptos del renacimiento, racionalismo, empirismo e ilustración a través del método comparativo» · **contenido procedimental 1.2** «Diferencias entre los tipos de saberes» |
+| **5 · Palabras que piensan** | **RA1**, en «Las grandes tendencias actuales de la razón filosófica», que nombra la **1.7 Filosofía analítica** y la **1.8 Hermenéutica** · **CE1.3** «Expone la importancia de las escuelas del pensamiento filosófico promoviendo procesos de reflexión en la toma de decisiones» |
 
 El CE1.1 es el que obliga a enseñar **qué quiere decir la palabra** y no solo
 qué es la cosa: de ahí sale el bloque de «filo» + «sofía» de la unidad 1. Y el
@@ -94,6 +95,38 @@ decisión de héroe y prócer de la Ruta de la Patria.
 Y el **contenido procedimental 1.2**, «Diferencias entre los tipos de saberes»
 —mismo PDF, **página 109**—, es exactamente el núcleo de esa unidad: separar
 **creer**, **opinar** y **saber**, cada uno con su prueba.
+
+El **RA1** de ese mismo documento, entre las tendencias de hoy, nombra por su
+número la **1.7 Filosofía analítica** y la **1.8 Hermenéutica** —mismo PDF,
+**página 108**—: las dos son el estudio del lenguaje y de la interpretación, y
+de ahí sale la unidad 5. Los dos pensadores que enseña los nombra el propio
+documento en las actividades de su espacio curricular de Filosofía —**página
+110**—: «varios filósofos como Platón, Aristóteles, Sócrates Hegel, Bertrand
+Russel, Ortega y Gasset u otros filósofos». ⚠️ Ahí escribe «Russel» con una
+sola l; aquí va **Bertrand Russell**, que es como se escribe su nombre, y la
+diferencia queda anotada en la cabecera de `js/data/filosofia-lenguaje.js`.
+
+**Y lo que hace una frase** lo pide el **DCNB de Básica**, Área de Comunicación,
+con estas palabras: «Identifican en sus propios textos, las diferentes clases de
+oraciones definidas por la **intención con que se dicen o escriben**:
+declarativas (afirman o niegan algo), exclamativas (indican energía, tristeza,
+susto o sorpresa), interrogativas (expresan preguntas y se escriben entre signos
+de interrogación), imperativas (expresan orden, ruegos, prohibiciones o
+súplicas)» —`dcneb-basica-ii-ciclo.pdf`, **página 97** del archivo—. Esas cuatro
+son las de la unidad, y van **con los nombres del DCNB**.
+
+Y las tres cosas que la completan, cada una con su cita:
+
+- II Ciclo, **página 82**: «Analizan e interpretan ideas en textos orales:
+  elementos esenciales, **datos objetivos, opiniones, intención del hablante**».
+  De ahí sale que una frase se juzgue por lo que HACE y no por su forma.
+- III Ciclo, **página 240**: «**Infieren las intenciones del emisor e
+  identifican la ironía y doble sentido** en un texto humorístico». De ahí salen
+  las frases que dicen dos cosas.
+- I Ciclo, **página 46**, Segundo Grado: «Desarrollan fórmulas sociales de
+  **saludo, pregunta, y despedida**, y de tratamiento en intercambios
+  cotidianos». Saludar, preguntar y despedirse son cosas que se HACEN con
+  palabras: es esta unidad en I Ciclo.
 
 **Las fuentes y las hipótesis** no salen de la nada: las pide el **DCNB de
 Básica** en **los tres ciclos**, que es lo que permite que esta unidad sea de
@@ -162,17 +195,28 @@ el mismo mes y compartir murales, debates y ferias.
 | 2 | Marzo | **Pensar con orden** | Lógica |
 | 3 | Abril | **¿De qué está hecho el mundo?** | Metafísica y cosmovisiones |
 | 4 | Mayo | **¿Cómo sé que sé?** | Epistemología |
-| 5 | Junio | Palabras que piensan | Lenguaje y retórica |
+| 5 | Junio | **Palabras que piensan** | Lenguaje y retórica |
 | 6 | Julio | ¿Quién soy yo? | Antropología filosófica |
 | 7 | Agosto | ¿Qué debo hacer? | Ética |
 | 8 | Septiembre | Vivir juntos | Filosofía política |
 | 9 | Octubre | Lo bello | Estética |
 | 10 | Noviembre | Naturaleza, técnica y futuro | Ética aplicada |
 
-**En negrita, las que ya están escritas** —hoy, en septiembre de 2026, las dos
-primeras—. Las ocho siguientes se calcan de estas dos: el patrón es el de
+**En negrita, las que ya están escritas** —hoy, 18 de septiembre de 2026, las
+cinco primeras—. Las cinco siguientes se calcan de estas: el patrón es el de
 siempre, los datos en `js/data/filosofia-<unidad>.js` y la pantalla
 pintándolos.
+
+⚠️ **Y calcar no es copiar sin leer.** Cada unidad de esta ruta ha traído a la
+luz algo de la anterior que llevaba publicado: la prueba de Pensamiento Crítico
+de la 2 examinaba de la 1; la 3 y la 4 imprimían la selección múltiple de su
+ficha en `a·b·c·d`; las cuatro repetían el rótulo dentro del dato («Ojo: Ojo:
+no todas…»); y al escribir la 5 salió que **`completeTaskDB` no traía `opts` en
+las cuatro**, así que `genCompleteTask` REVENTABA y el 📋 Generador de Tareas se
+quedaba mudo al pedir «Completa la oración» —sin un solo aviso en la pantalla—.
+Eran doce misiones del repositorio, no solo estas cuatro. Lo vigila
+`_dev/verifica-bancos-tareas.js`, que lee **qué campos pinta cada función** en
+vez de llevar una lista escrita.
 
 Y los tres ciclos, con su lema: **I Ciclo asombrarse** (1.º a 3.º, cuentos,
 juego y dibujo), **II Ciclo razonar** (4.º a 6.º, dilemas y pequeñas

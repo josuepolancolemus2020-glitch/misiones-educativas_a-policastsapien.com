@@ -291,25 +291,36 @@ const classifyTaskDB=[
   {w:'Contenido patrocinado',gen:'Lo que alguien pagó por publicar',n:'Un anuncio de becas',g:'Dice qué preguntar, no que sea falso',t:''},
   {w:'Fuente original',gen:'El documento que responde por el dato',n:'La ley, el estudio, la firma',g:'Se abre eso, no el resumen',t:''}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'Una promesa sin ___ no se puede incumplir.',a:'fecha'},
-  {s:'Muchas páginas copiando lo mismo son un ___.',a:'eco'},
-  {s:'Un punto de inflexión se reconoce mirando para ___.',a:'atrás'},
-  {s:'En los inviernos se rompió la ___.',a:'confianza'},
-  {s:'La primera pregunta es quién lo ___.',a:'dice'},
-  {s:'La máquina aprende de ___ que alguien eligió.',a:'ejemplos'},
-  {s:'Lo que alguien pagó por publicar es contenido ___.',a:'patrocinado'},
-  {s:'Dos noticias contrarias miden cosas ___.',a:'distintas'},
-  {s:'Para comprobar se abre la fuente ___.',a:'original'},
-  {s:'La singularidad afirma algo del ___.',a:'futuro'}
+  {s:'Una promesa sin ___ no se puede incumplir.',opts:['título','fecha','nombre'],ans:'fecha'},
+  {s:'Muchas páginas copiando lo mismo son un ___.',opts:['documento','dossier','eco'],ans:'eco'},
+  {s:'Un punto de inflexión se reconoce mirando para ___.',opts:['atrás','adelante','arriba'],ans:'atrás'},
+  {s:'En los inviernos se rompió la ___.',opts:['fecha','confianza','máquina'],ans:'confianza'},
+  {s:'La primera pregunta es quién lo ___.',opts:['comparte','repite','dice'],ans:'dice'},
+  {s:'La máquina aprende de ___ que alguien eligió.',opts:['ejemplos','reglas','órdenes'],ans:'ejemplos'},
+  {s:'Lo que alguien pagó por publicar es contenido ___.',opts:['comprobado','patrocinado','original'],ans:'patrocinado'},
+  {s:'Dos noticias contrarias miden cosas ___.',opts:['falsas','iguales','distintas'],ans:'distintas'},
+  {s:'Para comprobar se abre la fuente ___.',opts:['original','copiada','traducida'],ans:'original'},
+  {s:'La singularidad afirma algo del ___.',opts:['presente','futuro','pasado'],ans:'futuro'}
 ];
+/* ⚠️ Eran nueve CADENAS sueltas y `genExplainTask` lee `item.q` e `item.ans`:
+   el alumno recibía la tarea con «undefined» donde iba la pregunta y el
+   maestro sin la pauta. No daba ningún error —el archivo compila, la sección
+   se pinta— y se descubrió con `_dev/verifica-bancos-tareas.js`, que lee qué
+   campos PINTA cada función en vez de fiarse de una lista escrita. */
 const explainQuestions=[
-  '¿Por qué conviene prometer sin fecha?',
-  '¿Qué diferencia hay entre cinco fuentes y un eco?',
-  '¿Por qué un punto de inflexión se reconoce después?',
-  '¿Qué se rompió en los dos inviernos?',
-  '¿Por qué saber qué gana alguien no lo vuelve falso?',
-  '¿Por qué esta misión no dice si estamos en los albores?'
+  {q:'¿Por qué conviene prometer sin fecha?',ans:'Porque una promesa sin fecha no se puede incumplir: nunca llega el día en que se le pueda pedir cuentas. Lo honesto es ponerle fecha a lo que se promete.'},
+  {q:'¿Qué diferencia hay entre cinco fuentes y un eco?',ans:'Cinco fuentes de verdad averiguaron cada una por su lado. Un eco son cinco páginas copiando a la misma. Se distingue mirando si alguna abre el documento original.'},
+  {q:'¿Por qué un punto de inflexión se reconoce después?',ans:'Porque mientras está pasando no se sabe en qué va a terminar. Se reconoce mirando para atrás, cuando ya se ve qué cambió y qué no.'},
+  {q:'¿Qué se rompió en los dos inviernos?',ans:'La confianza. Se había prometido más de lo que se podía hacer, y cuando no llegó, el dinero y el interés se fueron. Por eso las promesas de hoy se fechan.'},
+  {q:'¿Por qué saber qué gana alguien no lo vuelve falso?',ans:'Porque quien gana algo con una noticia también puede estar diciendo la verdad. Saber qué gana sirve para mirar con más cuidado, no para dar por falso lo que dice.'},
+  {q:'¿Por qué esta misión no dice si estamos en los albores?',ans:'Porque no se pudo abrir ninguna de las fuentes desde aquí. Afirmar algo sin haberlo leído es lo que esta misión enseña a no hacer. Comprobarlo es tu trabajo.'}
 ];
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}

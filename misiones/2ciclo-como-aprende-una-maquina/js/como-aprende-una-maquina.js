@@ -298,16 +298,22 @@ const classifyTaskDB=[
   {w:'Sesgo',gen:'Fallar con lo que faltó en los ejemplos',n:'No reconoce el plátano',g:'Donde alguien eligió mal',t:'Si nadie revisa el reparto, aparece'},
   {w:'Error',gen:'Las veces que contesta mal',n:'Falla 1 de cada 10',g:'Al probarla',t:'No se sabe cuánto se equivoca'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'La respuesta correcta que pone una persona se llama ___.',ans:'etiqueta'},
-  {s:'Mostrarle ejemplos hasta hallar el patrón se llama ___.',ans:'entrenar'},
-  {s:'Examinarla con ejemplos que nunca vio se llama ___.',ans:'probar'},
-  {s:'Cuando los ejemplos están mal repartidos hay un ___.',ans:'sesgo'},
-  {s:'Lo que se repite en muchos ejemplos es el ___.',ans:'patrón'},
-  {s:'Aprender con ejemplos etiquetados es aprendizaje ___.',ans:'supervisado'},
-  {s:'Aprender con premios es aprendizaje por ___.',ans:'refuerzo'},
-  {s:'Las veces que la máquina contesta mal son el ___.',ans:'error'},
-  {s:'Un pedacito de información que se guarda es un ___.',ans:'dato'}
+  {s:'La respuesta correcta que pone una persona se llama ___.',opts:['sesgo','etiqueta','patrón'],ans:'etiqueta'},
+  {s:'Mostrarle ejemplos hasta hallar el patrón se llama ___.',opts:['borrar','probar','entrenar'],ans:'entrenar'},
+  {s:'Examinarla con ejemplos que nunca vio se llama ___.',opts:['probar','entrenar','etiquetar'],ans:'probar'},
+  {s:'Cuando los ejemplos están mal repartidos hay un ___.',opts:['error','sesgo','patrón'],ans:'sesgo'},
+  {s:'Lo que se repite en muchos ejemplos es el ___.',opts:['refuerzo','dato','patrón'],ans:'patrón'},
+  {s:'Aprender con ejemplos etiquetados es aprendizaje ___.',opts:['supervisado','por refuerzo','sin etiquetas'],ans:'supervisado'},
+  {s:'Aprender con premios es aprendizaje por ___.',opts:['patrones','refuerzo','supervisión'],ans:'refuerzo'},
+  {s:'Las veces que la máquina contesta mal son el ___.',opts:['dato','patrón','error'],ans:'error'},
+  {s:'Un pedacito de información que se guarda es un ___.',opts:['dato','sesgo','premio'],ans:'dato'}
 ];
 const explainQuestions=[
   {q:'Explica el ciclo completo: datos, patrón, prueba y error.',ans:'Se juntan datos etiquetados. Se entrena y sale el patrón. Se prueba con ejemplos nuevos y se mide el error.'},

@@ -294,16 +294,22 @@ const classifyTaskDB=[
   {w:'Dato',gen:'Un pedacito de información',n:'El color de un nance',g:'En la lista de tu maestra',t:''},
   {w:'Regla de oro',gen:'Lo que siempre hay que hacer',n:'No dar mis datos',g:'Cada vez que usas un teléfono',t:''}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'Una máquina no está ___.',ans:'viva'},
-  {s:'Para aprender, la máquina necesita muchos ___.',ans:'ejemplos'},
-  {s:'Una orden que la máquina obedece se llama ___.',ans:'instrucción'},
-  {s:'La computadora no ___ nada: es un aparato.',ans:'siente'},
-  {s:'Con pocos ejemplos, la máquina se ___ más.',ans:'equivoca'},
-  {s:'La dirección de mi casa ___ se le cuenta a la máquina.',ans:'no'},
-  {s:'La Inteligencia Artificial no es ___.',ans:'magia'},
-  {s:'Si algo me asusta, le aviso a una ___ grande.',ans:'persona'},
-  {s:'Un perro está vivo; un robot es una ___.',ans:'máquina'}
+  {s:'Una máquina no está ___.',opts:['rota','viva','apagada'],ans:'viva'},
+  {s:'Para aprender, la máquina necesita muchos ___.',opts:['cables','colores','ejemplos'],ans:'ejemplos'},
+  {s:'Una orden que la máquina obedece se llama ___.',opts:['instrucción','canción','sorpresa'],ans:'instrucción'},
+  {s:'La computadora no ___ nada: es un aparato.',opts:['brilla','siente','pesa'],ans:'siente'},
+  {s:'Con pocos ejemplos, la máquina se ___ más.',opts:['apura','acerca','equivoca'],ans:'equivoca'},
+  {s:'La dirección de mi casa ___ se le cuenta a la máquina.',opts:['no','siempre','también'],ans:'no'},
+  {s:'La Inteligencia Artificial no es ___.',opts:['un aparato','magia','una máquina'],ans:'magia'},
+  {s:'Si algo me asusta, le aviso a una ___ grande.',opts:['máquina','pantalla','persona'],ans:'persona'},
+  {s:'Un perro está vivo; un robot es una ___.',opts:['máquina','planta','persona'],ans:'máquina'}
 ];
 const explainQuestions=[
   {q:'Explica con tus palabras qué es la Inteligencia Artificial.',ans:'Son programas que hacen tareas de personas. No piensan ni sienten: calculan.'},

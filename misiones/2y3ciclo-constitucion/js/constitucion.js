@@ -272,16 +272,22 @@ const classifyTaskDB=[
   {w:'Artículo',gen:'La unidad numerada de una ley',n:'Tiene un tema propio',g:'Se cita primero',t:'Hay uno con el mismo número en casi toda ley'},
   {w:'Numeral',gen:'Un punto numerado dentro de un artículo',n:'Precisa dentro del anterior',g:'El 7 de «128 numeral 7»',t:'Sin él, la cita queda a medias'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'La unidad numerada de una ley se llama ___.',ans:'artículo'},
-  {s:'Un punto numerado dentro de un artículo se llama ___.',ans:'numeral'},
-  {s:'La ley que está por encima de todas las demás es la ___.',ans:'Constitución'},
-  {s:'El artículo ___ ordenó que se escribiera el Estatuto del Docente.',ans:'165'},
-  {s:'El artículo ___ habla de las responsabilidades del educador.',ans:'162'},
-  {s:'El artículo 128 numeral ___ trata del trabajo de los menores.',ans:'7'},
-  {s:'Los niños gozan de las ___ consignadas en la Constitución.',ans:'libertades'},
-  {s:'Antes de firmar un reglamento hay que decir de dónde salen las ___.',ans:'facultades'},
-  {s:'La democracia en que la gente decide entre elecciones es la ___.',ans:'participativa'}
+  {s:'La unidad numerada de una ley se llama ___.',opts:['acuerdo','artículo','numeral'],ans:'artículo'},
+  {s:'Un punto numerado dentro de un artículo se llama ___.',opts:['decreto','artículo','numeral'],ans:'numeral'},
+  {s:'La ley que está por encima de todas las demás es la ___.',opts:['Constitución','Gaceta','Ley Fundamental de Educación'],ans:'Constitución'},
+  {s:'El artículo ___ ordenó que se escribiera el Estatuto del Docente.',opts:['128','165','162'],ans:'165'},
+  {s:'El artículo ___ habla de las responsabilidades del educador.',opts:['245','165','162'],ans:'162'},
+  {s:'El artículo 128 numeral ___ trata del trabajo de los menores.',opts:['7','11','4'],ans:'7'},
+  {s:'Los niños gozan de las ___ consignadas en la Constitución.',opts:['obligaciones','libertades','facultades'],ans:'libertades'},
+  {s:'Antes de firmar un reglamento hay que decir de dónde salen las ___.',opts:['vigencias','libertades','facultades'],ans:'facultades'},
+  {s:'La democracia en que la gente decide entre elecciones es la ___.',opts:['participativa','representativa','municipal'],ans:'participativa'}
 ];
 const explainQuestions=[
   {q:'Explica cómo se lee la cita «artículo 128 numeral 7 de la Constitución de la República».',ans:'Son tres piezas. El ARTÍCULO 128 es la unidad de la norma, con su tema propio. El NUMERAL 7 es uno de los puntos numerados dentro de ese artículo. Y «de la Constitución de la República» dice de qué norma se habla, que es imprescindible: hay un artículo 128 en casi todas las leyes del país.'},

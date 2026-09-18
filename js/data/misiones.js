@@ -150,6 +150,7 @@ const MISSIONS = [
   { id: 80, title: 'Pensar con Orden: cuándo una razón es buena',          subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 2, xp: 35, icon: '🧩', pais: 'HN', url: 'misiones/basica-pensar-con-orden/pensar-con-orden.html' },
   { id: 81, title: '¿De qué está hecho el mundo?',                        subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 3, xp: 35, icon: '🌌', pais: 'HN', url: 'misiones/basica-de-que-esta-hecho-el-mundo/de-que-esta-hecho-el-mundo.html' },
   { id: 82, title: '¿Cómo sé que sé?',                                     subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 4, xp: 35, icon: '🔬', pais: 'HN', url: 'misiones/basica-como-se-que-se/como-se-que-se.html' },
+  { id: 83, title: 'Palabras que piensan: qué hace una frase',            subject: 'filosofía',   color: 'filo', grade: 'I, II y III Ciclo', cycle: 'basica', ruta: 'raiz',    etapa: 5, xp: 35, icon: '💬', pais: 'HN', url: 'misiones/basica-palabras-que-piensan/palabras-que-piensan.html' },
   { id: 61, title: 'Prueba de Fin de Grado: 7º Grado',                    subject: 'repaso',      color: 'rep',  grade: '7º grado',       cycle: '3ciclo',   ruta: 'meta',    etapa: 4, xp: 40, icon: '🎓', pais: 'HN', url: 'misiones/fin-de-grado-7mo/fin-de-grado-7mo.html' },
 ];
 

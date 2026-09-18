@@ -93,6 +93,13 @@ const NOMBRES = [
   ['rené descartes', 'René Descartes'],
   ['john locke', 'John Locke'],
   ['francia', 'Francia'],
+  /* ⚠️ Los dos de la unidad 5 van con el nombre COMPLETO por lo mismo:
+     «russell» se parece a nada del repositorio, pero «ortega» sí podría ser un
+     apellido de un alumno de ejemplo, y «gasset» a secas no dice quién es. Se
+     comprobó que en minúsculas no aparecen antes de añadirlos. */
+  ['bertrand russell', 'Bertrand Russell'],
+  ['ortega y gasset', 'Ortega y Gasset'],
+  ['españa', 'España'],
   ['grecia', 'Grecia'],
   ['atenas', 'Atenas'],
   ['dcnb', 'DCNB'],

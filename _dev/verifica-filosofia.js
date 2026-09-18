@@ -125,6 +125,20 @@ const UNIDADES = [
                    'sb-investiga', 'sb-arbol', 'sb-pensadores'],
     pensadores: 'SAB_PENSADORES', vocabulario: 'SAB_VOCABULARIO',
   },
+  {
+    n: 5, nombre: 'Palabras que piensan',
+    datos: 'js/data/filosofia-lenguaje.js',
+    ficha: 'fichas/ficha-palabras-que-piensan.html',
+    dir: 'misiones/basica-palabras-que-piensan', html: 'palabras-que-piensan.html',
+    js: 'js/palabras-que-piensan.js',
+    exporta: 'LEN_LENGUAJE,LEN_ACTOS,LEN_ACTOS_OJO,LEN_DISFRAZ,LEN_DISFRAZ_OJO,' +
+             'LEN_FRASES,LEN_AMBIG,LEN_AMBIG_OJO,LEN_DEFINIR,LEN_DEFINIR_OJO,' +
+             'LEN_CARGA,LEN_CARGA_OJO,LEN_TRUCOS,LEN_TRUCOS_OJO,LEN_INVESTIGA,' +
+             'LEN_VOCABULARIO,LEN_PENSADORES,LEN_ARBOL',
+    contenedores: ['ln-actos', 'ln-carga', 'ln-ambig', 'ln-definir', 'ln-trucos',
+                   'ln-investiga', 'ln-arbol', 'ln-pensadores'],
+    pensadores: 'LEN_PENSADORES', vocabulario: 'LEN_VOCABULARIO',
+  },
 ];
 
 /* Carga el archivo de datos DE VERDAD, no con expresiones regulares: lo que se
@@ -261,10 +275,22 @@ const DEL_MAESTRO = [
   ['metacognici',            'un momento de la rutina de la clase'],
   ['45 minutos',             'la duración de la sesión'],
   ['dos veces por semana',   'la frecuencia de la clase'],
-  ['habilidad:',             'la ruta por ciclo (su habilidad)'],
-  ['producto:',              'la ruta por ciclo (su producto)'],
+  /* ⚠️ Estos tres llevan `dosPuntos`, y no es un detalle: su señal ES el dos
+     puntos del rótulo de una ruta por ciclo —«Habilidad: …», «Producto: …»—.
+     `limpia` se come la puntuación, así que la aguja «producto:» quedaba en
+     «producto» y cazaba español corriente: la unidad 5 salió roja por decir
+     «en la pulpería te dicen que un producto es de mejor calidad», que es una
+     frase perfecta. Es la lección de «Cuadrado Perfecto» y la del `\bllama\b`
+     de `verifica-descubre-ia`: una sonda que se pone roja sin avería enseña a
+     no mirarla. Con `dosPuntos` se busca en el texto CON su puntuación. */
+  ['habilidad:',             'la ruta por ciclo (su habilidad)', true],
+  ['producto:',              'la ruta por ciclo (su producto)', true],
   ['pregunta con que se entra', 'la ruta por ciclo (su pregunta de entrada)'],
 ];
+/* Normalización suave: baja acentos y mayúsculas pero DEJA la puntuación, que
+   es lo único que distingue un rótulo de una palabra. */
+const suave = t => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase().replace(/\s+/g, ' ');
 const sinComentarios = t => t
   .replace(/<!--[\s\S]*?-->/g, ' ')
   .replace(/<style[\s\S]*?<\/style>/gi, ' ')
@@ -280,9 +306,10 @@ function nadaDelMaestro(u) {
   ];
   let malos = 0;
   donde.forEach(([rel, nombre]) => {
-    const txt = limpia(sinHtml(sinComentarios(fs.readFileSync(path.join(RAIZ, rel), 'utf8'))));
-    DEL_MAESTRO.forEach(([aguja, que]) => {
-      if (txt.includes(limpia(aguja))) {
+    const crudo = sinHtml(sinComentarios(fs.readFileSync(path.join(RAIZ, rel), 'utf8')));
+    const txt = limpia(crudo), conPuntos = suave(crudo);
+    DEL_MAESTRO.forEach(([aguja, que, dosPuntos]) => {
+      if (dosPuntos ? conPuntos.includes(suave(aguja)) : txt.includes(limpia(aguja))) {
         mal(`u${u.n}: ${nombre} trae ${que} («${aguja}»): esto es para el alumno`); malos++;
       }
     });
@@ -671,6 +698,163 @@ function revisaSaber(D, ficha, fichaPlana, misionJs) {
   else ok('u4: el Clasifica y el Reto salen los dos del archivo de datos');
 }
 
+function revisaLenguaje(D, ficha, fichaPlana, misionJs) {
+  let malos = faltanEnPapel(fichaPlana, D.LEN_ACTOS,
+    [['nombre', a => a.nombre], ['qué hace', a => a.corto], ['señal', a => a.senal],
+     ['prueba', a => a.prueba]], 'clase');
+  if (!malos) ok(`u5: las ${D.LEN_ACTOS.length} cosas que hace una frase están en el papel con su señal y su prueba`);
+
+  /* ⚠️ Cada clase lleva SU EMOJI además del color. La hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde:
+     sin el emoji, clasificar frases es justo la actividad que él no puede
+     hacer. Es la misma comprobación que el semáforo de la unidad 2, las clases
+     de cambio de la 3 y las maneras de la 4. */
+  const sinEmoji = D.LEN_ACTOS.filter(a => !ficha.includes(a.emoji));
+  if (sinEmoji.length) mal(`u5: el papel dice ${sinEmoji.length} clase(s) SIN su emoji: ${sinEmoji.map(a => a.nombre).join(' · ')}. Fotocopiado en blanco y negro, eso es una actividad que no se puede hacer`);
+  else ok('u5: las cuatro clases llevan su emoji además del color');
+
+  /* ⚠️ EL CORAZÓN DE LA UNIDAD: la FORMA de la frase no dice lo que la frase
+     HACE. Sin eso escrito, la unidad enseña a clasificar por los signos de
+     puntuación —que es lo que el alumno ya hace mal— y «¿me pasás la sal?»
+     queda como pregunta. */
+  if (!fichaPlana.includes(limpia(D.LEN_ACTOS_OJO)))
+    mal('u5: el papel no avisa de que la forma de la frase NO dice lo que la frase hace');
+  else ok('u5: el papel dice que la forma engaña, que es lo que la unidad viene a enseñar');
+
+  /* Y las ocho disfrazadas con su DÓNDE: lo que decide no es la frase, es el
+     sitio donde se dice. Sin el `donde` el ejercicio no tiene respuesta. */
+  malos = faltanEnPapel(fichaPlana, D.LEN_DISFRAZ,
+    [['frase', d => d.f], ['dónde se dice', d => d.donde], ['cómo se nota', d => d.como]], 'disfrazada');
+  if (!malos) ok(`u5: las ${D.LEN_DISFRAZ.length} frases disfrazadas están en el papel con dónde se dicen y cómo se notan`);
+
+  const sinForma = D.LEN_DISFRAZ.filter(d => d.forma === d.hace);
+  if (sinForma.length) mal(`u5: ${sinForma.length} frase(s) de LEN_DISFRAZ hacen lo que parecen, así que no están disfrazadas: ${sinForma.map(d => d.f).join(' · ')}`);
+  else ok('u5: en las ocho disfrazadas, lo que parece y lo que hace son distintos');
+
+  if (!fichaPlana.includes(limpia(D.LEN_DISFRAZ_OJO)))
+    mal('u5: el papel no dice que lo que decide es DÓNDE se dice la frase');
+  else ok('u5: el papel dice que lo decide el sitio, no la frase');
+
+  /* Las cuatro ambiguas: las DOS lecturas y la pregunta que las arregla. Con
+     una sola lectura el ejercicio no se puede hacer. */
+  malos = faltanEnPapel(fichaPlana, D.LEN_AMBIG,
+    [['frase', a => a.frase], ['una lectura', a => a.una], ['la otra lectura', a => a.otra],
+     ['cómo se arregla', a => a.arregla]], 'ambigua');
+  if (!malos) ok(`u5: las ${D.LEN_AMBIG.length} frases de doble sentido están en el papel con sus DOS lecturas y su arreglo`);
+
+  if (!fichaPlana.includes(limpia(D.LEN_AMBIG_OJO)))
+    mal('u5: el papel no dice que la frase ambigua NO está mal escrita');
+  else ok('u5: el papel dice que la ambigua está bien escrita, así que no se arregla escribiéndola mejor');
+
+  /* Definir. ⚠️ Las dos fallas son CONTRARIAS y las dos tienen que estar: con
+     una sola, el alumno aprende a estirar toda definición o a apretarla, y la
+     mitad de las veces se equivoca en el sentido que no vio. */
+  malos = faltanEnPapel(fichaPlana, D.LEN_DEFINIR,
+    [['nombre', d => d.nombre], ['qué le pasa', d => d.que], ['el ejemplo', d => d.ej],
+     ['la prueba', d => d.prueba]], 'definición');
+  if (!malos) ok(`u5: las ${D.LEN_DEFINIR.length} clases de definición están en el papel con su ejemplo y su prueba`);
+
+  const contrarias = ['ancha', 'angosta'].filter(k => D.LEN_DEFINIR.some(d => d.clave === k));
+  if (contrarias.length !== 2)
+    mal('u5: falta una de las dos fallas CONTRARIAS de una definición (muy ancha y muy angosta): con una sola se aprende a fallar en el otro sentido');
+  else ok('u5: están las dos fallas contrarias de una definición, no solo una');
+
+  if (!fichaPlana.includes(limpia(D.LEN_DEFINIR_OJO)))
+    mal('u5: el papel no dice que definir no es adornar, sino decir qué entra y qué no');
+  else ok('u5: el papel dice para qué sirve una definición que aguanta las dos pruebas');
+
+  /* Lo que la palabra arrastra. ⚠️ Cada par tiene que decir lo que las dos
+     nombran IGUAL: sin eso, elegir la palabra parece mentir, y no lo es. */
+  malos = faltanEnPapel(fichaPlana, D.LEN_CARGA,
+    [['la cosa', c => c.cosa], ['dicho suave', c => c.suave], ['dicho fuerte', c => c.fuerte],
+     ['lo que las dos nombran igual', c => c.igual]], 'par');
+  if (!malos) ok(`u5: los ${D.LEN_CARGA.length} pares están en el papel con lo que las dos palabras nombran igual`);
+
+  if (!fichaPlana.includes(limpia(D.LEN_CARGA_OJO)))
+    mal('u5: el papel no dice que elegir la palabra NO es mentir, es apuntar');
+  else ok('u5: el papel dice que elegir la palabra es apuntar, no mentir');
+
+  /* Los trucos de la palabra. ⚠️ Y EXACTAMENTE UNO no es truco: una unidad
+     donde toda palabra fuerte es trampa fabrica un alumno que no le cree a
+     nadie, y eso cuesta lo mismo que creerlo todo. Es la regla del mensaje sin
+     señales de los peligros de la IA y del semáforo verde de la unidad 2. */
+  malos = faltanEnPapel(fichaPlana, D.LEN_TRUCOS,
+    [['nombre', t => t.nombre], ['qué hace', t => t.hace], ['cómo suena', t => t.suena],
+     ['qué cuesta', t => t.cuesta], ['cómo se desarma', t => t.desarma]], 'truco');
+  if (!malos) ok(`u5: los ${D.LEN_TRUCOS.length} casos están en el papel con cómo suenan y cómo se desarman`);
+
+  const noTruco = D.LEN_TRUCOS.filter(t => !t.truco);
+  if (noTruco.length !== 1)
+    mal(`u5: hay ${noTruco.length} casos marcados como NO truco y tiene que haber exactamente 1: sin ninguno la unidad deja un alumno que desconfía de toda palabra fuerte, y con varios deja de enseñar los trucos`);
+  else ok(`u5: uno de los ${D.LEN_TRUCOS.length} casos NO es truco («${noTruco[0].nombre}»), así que la unidad no fabrica desconfianza de todo`);
+
+  if (!fichaPlana.includes(limpia(D.LEN_TRUCOS_OJO)))
+    mal('u5: el papel no avisa de que NO toda palabra fuerte es trampa');
+  else ok('u5: el papel avisa de que desconfiar de todas las palabras cuesta lo mismo que creerlas todas');
+
+  /* La pauta de «¿Qué hace esta frase?», RECALCULADA de los datos. Es la
+     avería del Escudo marcado en rojo: el ejercicio y la clave salen del mismo
+     sitio, y aquí se comprueba que el papel no se haya separado de él. */
+  const letra = { afirma: 'A', pregunta: 'P', pide: 'M', exclama: 'E' };
+  const clase = {};
+  D.LEN_FRASES.forEach(x => { clase[limpia(x.f)] = letra[x.q]; });
+  const bloque = ficha.match(/<div class="pauta">[\s\S]*?\n    <\/div>/);
+  const pauta = bloque && bloque[0].match(/¿Qué hace esta frase\?[\s\S]*?<\/div>/);
+  const tabla = ficha.match(/<tr><th style="width:12%">A, P, M o E<\/th>[\s\S]*?<\/table>/);
+  if (!pauta || !tabla) mal('u5: no se encontró la actividad de «¿Qué hace esta frase?» o su pauta');
+  else {
+    const claves = [...pauta[0].matchAll(/(\d+)\.\s*([APME])\b/g)].map(m => m[2]);
+    const celdas = [...tabla[0].matchAll(/<tr><td><\/td><td>([^<]*)<\/td><\/tr>/g)].map(m => limpia(m[1]));
+    if (celdas.length !== claves.length) mal(`u5: la tabla trae ${celdas.length} frases y la pauta ${claves.length} claves`);
+    else {
+      let m2 = 0;
+      celdas.forEach((c, i) => {
+        if (!clase[c]) { mal(`u5: la tabla usa una frase que no está en el archivo de datos: «${c}»`); m2++; return; }
+        if (claves[i] !== clase[c]) { mal(`u5: la frase ${i + 1} («${c}») es ${clase[c]} en los datos y la pauta dice ${claves[i]}`); m2++; }
+      });
+      if (!m2) ok(`u5: las ${celdas.length} frases de la actividad llevan en la pauta la clase que dicen los datos`);
+    }
+  }
+
+  /* ⚠️ Las 32 frases van OCHO POR CLASE. Con un montón más grande que otro, el
+     alumno que reparta al azar saca más de lo que sabe, y esa nota entra en su
+     expediente igual que la del que la resolvió. */
+  const cuenta = {};
+  D.LEN_FRASES.forEach(x => { cuenta[x.q] = (cuenta[x.q] || 0) + 1; });
+  const desiguales = Object.values(cuenta);
+  if (new Set(desiguales).size !== 1)
+    mal(`u5: las frases NO están repartidas por igual entre las clases: ${JSON.stringify(cuenta)}`);
+  else ok(`u5: las ${D.LEN_FRASES.length} frases van ${desiguales[0]} por clase, así que no se acierta por reparto`);
+
+  const faltanA = D.LEN_ARBOL.filter(a => !fichaPlana.includes(limpia(a.le)) || !fichaPlana.includes(limpia(a.hoy)));
+  if (faltanA.length) mal(`u5: la ficha se dejó lo que esta pregunta le da a: ${faltanA.map(a => a.materia).join(' · ')}`);
+  else ok(`u5: las ${D.LEN_ARBOL.length} materias están en el papel con lo que esta pregunta les deja`);
+
+  /* ⚠️ La filosofía del lenguaje se define IGUAL que en la unidad 1. El alumno
+     abre las dos y no puede leer dos definiciones distintas de lo mismo. No se
+     comparan letra por letra —son dos redacciones—: se busca la tirada de
+     palabras más larga que comparten, como hace la sonda del Himno con una
+     cita. */
+  const c1 = {}; vm.createContext(c1);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js/data/filosofia-asombro.js'), 'utf8') + ';this.__R=FILO_RAMAS;', c1);
+  const raiz = c1.__R.find(r => r.clave === 'lenguaje');
+  const a = limpia(raiz.pregunta + ' ' + raiz.hace).split(/\s+/);
+  const b = limpia(D.LEN_LENGUAJE.pregunta + ' ' + D.LEN_LENGUAJE.hace).split(/\s+/);
+  let mejor = 0;
+  for (let i = 0; i < a.length; i++) for (let j = 0; j < b.length; j++) {
+    let k = 0; while (i + k < a.length && j + k < b.length && a[i + k] === b[j + k]) k++;
+    if (k > mejor) mejor = k;
+  }
+  if (mejor < 6) mal(`u5: la filosofía del lenguaje se define distinto que en la unidad 1 (solo comparten ${mejor} palabras seguidas): el alumno abre las dos y leería dos cosas`);
+  else ok(`u5: la filosofía del lenguaje dice lo mismo que en la unidad 1 (${mejor} palabras seguidas iguales)`);
+
+  /* Que el Clasifica y el Reto salgan del MISMO sitio: es lo que hace
+     imposible la avería del Escudo marcado en rojo. */
+  if (!/lenDeClase\(/.test(misionJs))
+    mal('u5: el JS de la misión no saca las frases de lenDeClase(): el Clasifica y el Reto podrían contradecirse');
+  else ok('u5: el Clasifica y el Reto salen los dos del archivo de datos');
+}
+
 /* ══════════════════ la pasada ══════════════════ */
 console.log('\n🌳 La Ruta de la Raíz: la pantalla y el papel\n');
 UNIDADES.forEach(u => {
@@ -682,7 +866,8 @@ UNIDADES.forEach(u => {
   if (u.n === 1) revisaAsombro(D, ficha, fichaPlana);
   else if (u.n === 2) revisaLogica(D, ficha, fichaPlana);
   else if (u.n === 3) revisaMundo(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
-  else revisaSaber(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
+  else if (u.n === 4) revisaSaber(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
+  else revisaLenguaje(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
   pensadoresYVocabulario(u, D, fichaPlana);
   nadaDelMaestro(u);
   contenedoresVacios(u, mision);

@@ -286,17 +286,23 @@ const classifyTaskDB=[
   {w:'Tales de Mileto',gen:'Explicó el mundo sin un mito',n:'Buscó una causa natural',g:'Ahí arranca el camino a las ciencias',t:'Dijo que todo salía del agua, y se equivocó'},
   {w:'Sócrates',gen:'Preguntaba y no respondía',n:'Trabajaba en la plaza, con cualquiera',g:'De él viene el diálogo',t:'No escribió libros'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'«Filo» quiere decir amor y «sofía» quiere decir ___.',ans:'sabiduría'},
-  {s:'Una pregunta de hechos se responde ___.',ans:'buscando'},
-  {s:'Una pregunta de valor se responde dando ___.',ans:'razones'},
-  {s:'Una pregunta de significado pide una ___.',ans:'definición'},
-  {s:'Pensar entre varios para entender se llama ___.',ans:'diálogo'},
-  {s:'Lo que sientes cuando algo de siempre te parece raro es el ___.',ans:'asombro'},
-  {s:'La rama que pregunta qué debo hacer es la ___.',ans:'ética'},
-  {s:'La rama que pregunta cómo sé que sé es la ___.',ans:'epistemología'},
-  {s:'Las Ciencias Naturales nacieron preguntando de qué está hecho el ___.',ans:'mundo'},
-  {s:'La primera cosa que hace falta para filosofar es una ___.',ans:'pregunta'}
+  {s:'«Filo» quiere decir amor y «sofía» quiere decir ___.',opts:['escuela','sabiduría','amistad'],ans:'sabiduría'},
+  {s:'Una pregunta de hechos se responde ___.',opts:['definiendo','discutiendo','buscando'],ans:'buscando'},
+  {s:'Una pregunta de valor se responde dando ___.',opts:['razones','datos','nombres'],ans:'razones'},
+  {s:'Una pregunta de significado pide una ___.',opts:['votación','definición','medida'],ans:'definición'},
+  {s:'Pensar entre varios para entender se llama ___.',opts:['silencio','examen','diálogo'],ans:'diálogo'},
+  {s:'Lo que sientes cuando algo de siempre te parece raro es el ___.',opts:['asombro','enojo','cansancio'],ans:'asombro'},
+  {s:'La rama que pregunta qué debo hacer es la ___.',opts:['estética','ética','lógica'],ans:'ética'},
+  {s:'La rama que pregunta cómo sé que sé es la ___.',opts:['ética','metafísica','epistemología'],ans:'epistemología'},
+  {s:'Las Ciencias Naturales nacieron preguntando de qué está hecho el ___.',opts:['mundo','idioma','número'],ans:'mundo'},
+  {s:'La primera cosa que hace falta para filosofar es una ___.',opts:['nota','pregunta','respuesta'],ans:'pregunta'}
 ];
 const explainQuestions=[
   {q:'¿En qué se diferencia una pregunta que se responde buscando de una que se responde pensando?',ans:'La de hechos tiene una sola respuesta y se comprueba: está en un libro, en un mapa, o se mide. La de pensar no está escrita en ninguna parte: se contesta dando razones. Confundirlas cuesta caro, y Yensi perdió tres tardes por eso.'},

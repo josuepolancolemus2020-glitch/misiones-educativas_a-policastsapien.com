@@ -293,16 +293,22 @@ const classifyTaskDB=[
   {w:'Verificar',gen:'Comprobar en la fuente que responde',n:'Buscar el artículo en la ley',g:'Sin esto, todo lo demás no sirve',t:''},
   {w:'Privacidad',gen:'Lo tuyo es tuyo',n:'No dar datos de tu familia',g:'Lo que subes ya no lo controlas',t:''}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'Un modelo de lenguaje ___ la palabra siguiente más probable.',ans:'predice'},
-  {s:'Un dato inventado y dicho con seguridad es una ___.',ans:'alucinación'},
-  {s:'Antes de usar un dato de una IA hay que ___.',ans:'verificarlo'},
-  {s:'Las cuatro piezas de una petición son contexto, tarea, formato y ___.',ans:'ejemplo'},
-  {s:'Una foto o voz fabricadas para engañar son una falsificación ___.',ans:'profunda'},
-  {s:'Lo que escribes puede quedar ___.',ans:'guardado'},
-  {s:'Compartir sin comprobar ya es ___.',ans:'desinformación'},
-  {s:'Verificar es ir a la ___ original.',ans:'fuente'},
-  {s:'El tono seguro no ___ que el dato sea bueno.',ans:'prueba'}
+  {s:'Un modelo de lenguaje ___ la palabra siguiente más probable.',opts:['comprueba','predice','recuerda'],ans:'predice'},
+  {s:'Un dato inventado y dicho con seguridad es una ___.',opts:['referencia','cita','alucinación'],ans:'alucinación'},
+  {s:'Antes de usar un dato de una IA hay que ___.',opts:['verificarlo','compartirlo','copiarlo'],ans:'verificarlo'},
+  {s:'Las cuatro piezas de una petición son contexto, tarea, formato y ___.',opts:['adorno','ejemplo','apuro'],ans:'ejemplo'},
+  {s:'Una foto o voz fabricadas para engañar son una falsificación ___.',opts:['antigua','ligera','profunda'],ans:'profunda'},
+  {s:'Lo que escribes puede quedar ___.',opts:['guardado','borrado','traducido'],ans:'guardado'},
+  {s:'Compartir sin comprobar ya es ___.',opts:['información','desinformación','investigación'],ans:'desinformación'},
+  {s:'Verificar es ir a la ___ original.',opts:['captura','copia','fuente'],ans:'fuente'},
+  {s:'El tono seguro no ___ que el dato sea bueno.',opts:['prueba','cambia','mejora'],ans:'prueba'}
 ];
 const explainQuestions=[
   {q:'Explica con tus palabras qué hace un modelo de lenguaje cuando te contesta.',ans:'Predice la palabra siguiente más probable, una por una, hasta armar el párrafo. No comprueba nada.'},

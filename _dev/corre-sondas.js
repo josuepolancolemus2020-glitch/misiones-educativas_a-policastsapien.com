@@ -64,6 +64,7 @@ const NO_SON_SONDAS = {
   'arma-fichas-ia':         'ESCRIBE las cuatro fichas de la Ruta de la Máquina que Aprende; se corre a mano',
   'arma-ficha-mundo':       'ESCRIBE la ficha de la unidad 3 de Filosofía desde js/data/filosofia-mundo.js; se corre a mano',
   'arma-ficha-saber':       'ESCRIBE la ficha de la unidad 4 de Filosofía desde js/data/filosofia-saber.js; se corre a mano',
+  'arma-ficha-lenguaje':    'ESCRIBE la ficha de la unidad 5 de Filosofía desde js/data/filosofia-lenguaje.js; se corre a mano',
   /* Mide, no comprueba: ordena las misiones por cuánto le falta a su relato
      y SIEMPRE sale en cero, porque si un relato está bien escrito lo decide
      una persona leyéndolo. Una línea verde que no puede ponerse roja no es

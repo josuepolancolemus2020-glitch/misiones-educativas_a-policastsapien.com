@@ -153,7 +153,10 @@ const DIAGNOSTICOS = {
      a la cosa— y qué es una cosmovisión; en la 4, la frontera entre lo que se
      comprueba y lo que es opinión —en los dos sentidos, porque pedirle pruebas
      a un gusto cuesta igual que no pedírselas a un rumor— y la fuente que se
-     desgasta al pasar de boca en boca.
+     desgasta al pasar de boca en boca; y en la 5, lo que de verdad manda ahí:
+     que la FORMA de la frase no dice lo que la frase HACE, las dos maneras
+     contrarias en que falla una definición, y que una frase de doble sentido
+     se arregla preguntando, no escribiéndola más bonita.
      ⚠️ La posición de la correcta se reparte a propósito —es la normativa del
      reparto de respuestas—, así que el orden de las opciones no es el del
      banco de la misión aunque la respuesta buena sea la misma. */
@@ -170,5 +173,8 @@ const DIAGNOSTICOS = {
     { etapa: 4, q: '«En mi grado somos cuarenta y tres» es…', o: ['una opinión', 'una creencia', 'un rumor', 'un saber: se cuenta'], a: 3 },
     { etapa: 4, q: '¿Cuál de estas NO se puede comprobar?', o: ['La puerta mide más que yo', 'El azul es el color más bonito', 'El agua está fría', 'Somos cuarenta y tres'], a: 1 },
     { etapa: 4, q: 'La fuente que cambia cuanto más lejos está de quien lo vio es…', o: ['lo que otro cuenta', 'la medida', 'el razonamiento', 'los sentidos'], a: 0 },
+    { etapa: 5, q: 'En la mesa, «¿me pasás la sal?» ¿qué hace esa frase?', o: ['Pregunta un dato', 'Exclama', 'Afirma algo', 'Pide una acción'], a: 3 },
+    { etapa: 5, q: '«Una silla es algo donde uno se sienta.» Esa definición…', o: ['está justa', 'es muy ancha: entra una piedra', 'es muy angosta', 'no define nada'], a: 1 },
+    { etapa: 5, q: '«Te espero en el banco» dice dos cosas. ¿Con qué se arregla?', o: ['Escribiéndola más bonita', 'Cambiando de tema', 'Preguntando en cuál de los dos', 'Hablando más fuerte'], a: 2 },
   ],
 };

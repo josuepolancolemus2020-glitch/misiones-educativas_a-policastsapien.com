@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión Palabras que piensan</title>
+<meta name="robots" content="noindex">
+<style>
+
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: FILOSOFÍA = CIRUELA (#784a6d). No se
+       eligió a ojo: se midió la distancia de color contra las diez materias
+       que ya existían (ΔE 43,1 contra la más cercana). El porqué está en
+       CURRICULA-FILOSOFIA.md.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · ⚠️ Esta ficha NO lleva NADA para el maestro: ni la rutina de la clase, ni
+       la ruta por ciclo, ni notas de cómo darla. Lo pidió el autor y la sonda
+       lo comprueba. Lo único que se queda en hoja suelta al final es la PAUTA,
+       que es la clave de corrección de los ejercicios de estas mismas hojas.
+     · ⚠️ Aquí NO hay ni una fecha, y no es un olvido: está contado en la
+       cabecera de js/data/filosofia-lenguaje.js.
+     · ⚠️ ESTA FICHA NO SE EDITA A MANO: sale de _dev/arma-ficha-lenguaje.js. */
+  :root {
+    --fil: #784a6d; --fil-osc: #5f3a57; --fil-claro: #f7eff5;
+    --verde: #1d4538; --verde-claro: #eef5f1;
+    --tinta: #241b22; --gris: #6b5f67; --linea: #e3d2dd;
+    --oro: #b45309;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f6f1f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--fil-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--fil); background: var(--fil-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--fil-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--fil-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--fil); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--fil-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--fil-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--fil-osc); }
+  .hn { background: var(--verde-claro); border: 1px solid #cfe2d8; }
+  .hn b { color: var(--verde); }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--fil); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf6f9; }
+  td.k { font-weight: 700; color: var(--fil-osc); white-space: nowrap; }
+
+  .acts h3 { border-bottom: 2px solid var(--fil-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--fil); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #a99aa4; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--fil); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--fil-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .pauta { background: #fbf4f8; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--fil-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  /* ═══ LAS CUATRO COSAS QUE HACE UNA FRASE ═══
+     ⚠️ Cada clase lleva SU EMOJI además del color. Esta hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde:
+     sin el emoji, clasificar frases sería justo la actividad que él no puede
+     hacer. */
+  .lg-acto { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+             padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .lg-acto.c-afirma { border-left-color: var(--verde); }
+  .lg-acto.c-pregunta { border-left-color: #1565c0; }
+  .lg-acto.c-pide { border-left-color: #b45309; }
+  .lg-acto.c-exclama { border-left-color: #6b21a8; }
+  .lg-acto b { font-size: 11.5pt; color: var(--fil-osc); }
+  .lg-acto .et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+                 border-radius: 999px; padding: 1px 7px; background: var(--fil-claro); color: var(--fil-osc); }
+  .lg-acto p.s { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .lg-acto p.p { font-size: 10pt; background: var(--verde-claro); border-radius: 6px;
+                 padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ LA MISMA FRASE, DOS COSAS ═══
+     Las dos lecturas van en una lista de verdad y no en dos <span>:
+     `mide-legibilidad` corta los tramos por elemento de bloque, y una tarjeta
+     hecha de <span> le sale como un tramo de setenta palabras. */
+  .lg-amb { border: 1.5px solid var(--linea); border-radius: 8px; padding: 6px 12px; margin: 6px 0;
+            break-inside: avoid; }
+  .lg-amb .t { font-size: 11pt; font-weight: 800; color: var(--fil-osc); }
+  .lg-amb ul { margin: 2px 0 2px 22px; font-size: 10.5pt; }
+  .lg-amb p.c { font-size: 10.5pt; font-weight: 700; border-top: 1.5px solid var(--fil);
+                padding-top: 3px; margin: 3px 0 0; }
+
+  /* ═══ CUÁNDO UNA DEFINICIÓN SIRVE ═══
+     Las dos fallas son CONTRARIAS, así que llevan color contrario a propósito:
+     lo que hay que ver es que se falla en los dos sentidos. */
+  .lg-def { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .lg-def.d-ancha { border-left-color: #b45309; }
+  .lg-def.d-angosta { border-left-color: #1565c0; }
+  .lg-def.d-justa { border-left-color: var(--verde); }
+  .lg-def b { font-size: 11pt; color: var(--fil-osc); }
+  .lg-def p { font-size: 10pt; margin: 2px 0; }
+  .lg-def p.h { font-weight: 700; }
+  .lg-def p.v { background: var(--fil-claro); border-radius: 6px; padding: 3px 8px; font-style: italic; }
+  .lg-def p.d { background: var(--verde-claro); border-radius: 6px; padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ CUANDO LA PALABRA CONVENCE SOLA ═══
+     ⚠️ Los tres primeros traen trampa y el cuarto NO, y esa diferencia no puede
+     ir solo en el color: el emoji de cada uno lo dice —🪤 🏷️ 🌫️ frente a ✅— y
+     el aviso del final también. Fotocopiado en blanco y negro, sin eso los
+     cuatro son la misma tarjeta. */
+  .lg-tru { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .lg-tru.t-si { border-left-color: #b45309; }
+  .lg-tru.t-no { border-left-color: var(--verde); }
+  .lg-tru b { font-size: 11pt; color: var(--fil-osc); }
+  .lg-tru p { font-size: 10pt; margin: 2px 0; }
+  .lg-tru p.h { font-weight: 700; }
+  .lg-tru p.v { background: var(--fil-claro); border-radius: 6px; padding: 3px 8px; font-style: italic; }
+  .lg-tru p.d { background: var(--verde-claro); border-radius: 6px; padding: 3px 8px; margin: 3px 0 0; }
+
+  .lg-pens { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+             padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .lg-pens b { font-size: 11.5pt; color: var(--fil-osc); }
+  .lg-pens p.w { font-size: 9pt; color: var(--gris); font-style: italic; margin: 0; }
+  .lg-pens p.p { font-size: 10.5pt; margin: 3px 0; }
+  .lg-pens p.dato { font-size: 9.5pt; color: var(--gris); margin: 0; }
+
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión Palabras que piensan</div>
+        <div class="f-meta"><b>Asignatura:</b> Filosofía &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, I, II y III Ciclo</div>
+        <div class="f-meta"><b>Tema:</b> Qué hace una frase: afirma, pregunta, pide o exclama. Y la forma no dice lo que hace.</div>
+        <div class="f-meta"><b>Además:</b> las frases que dicen dos cosas y las dos pruebas de una definición. Y lo que arrastra la palabra elegida.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-palabras-que-piensan.png" alt="Código QR de la misión Palabras que piensan">
+        <span>Apunta con el teléfono para abrir la misión</span>
+      </div>
+    </div>
+
+    <h2>¿Por qué esta ficha?</h2>
+
+    <p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva
+       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>
+
+    <div class="caja idea"><b>Lo que hay que sacar de aquí:</b> una frase no solo dice cosas.
+      <b>Hace</b> cosas. Saber qué hace —y darse cuenta cuando la forma engaña— es la destreza de
+      esta unidad. No pregunta si una frase es bonita. Pregunta qué hace.</div>
+
+    <h3>Objetivos</h3>
+
+    <ol class="objetivos">
+      <li>Decir qué hace una frase: si afirma, si pregunta, si pide o si exclama, con su prueba.</li>
+      <li>Darse cuenta cuando la forma de la frase no dice lo que la frase hace.</li>
+      <li>Encontrar las dos lecturas de una frase ambigua y la pregunta que la arregla.</li>
+      <li>Probar una definición: buscar lo que entra y no debería, y lo que queda fuera y sí.</li>
+      <li>Reconocer los tres trucos de la palabra, y el caso en que una palabra fuerte sí vale.</li>
+    </ol>
+
+    <h2>Le pasó a alguien</h2>
+
+    <p>A Marlon le llegó un mensaje: «Te espero en el banco a las tres». Él fue al <b>banco de la
+       plaza</b>, a hacer el trámite. El otro lo esperaba en la <b>banca del parque</b>.</p>
+
+    <p>Los dos se fueron a las cuatro sin verse. <b>El trámite se pasó para otro día.</b></p>
+
+    <div class="caja regla"><b>Nadie escribió mal.</b> La frase estaba perfecta, y decía dos cosas.
+      Faltaba una pregunta de cuatro palabras: <b>¿en cuál de los dos?</b></div>
+
+    <h2>Una frase no solo dice: hace</h2>
+
+    <p>Mira qué hacen las palabras con las ideas. Se llama <b>Filosofía del lenguaje</b>, y pregunta: ¿Cómo cambian las palabras lo que pienso?</p>
+
+    <p>Son cuatro cosas. Cada una tiene su prueba. La prueba es una pregunta: se la haces a la
+       frase y ella te contesta cuál es.</p>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="lg-acto c-afirma"><b>📌 Afirma</b> <span class="et">Dice que algo es así</span><p class="s">Cuenta algo. Se puede estar de acuerdo o no.</p><p class="p"><b>La prueba:</b> Preguntate: ¿se puede contestar «es verdad» o «es mentira»?</p></div>
+
+    <div class="lg-acto c-pregunta"><b>❓ Pregunta</b> <span class="et">Pide un dato</span><p class="s">Deja un hueco. Espera que alguien lo llene.</p><p class="p"><b>La prueba:</b> Preguntate: ¿espera una respuesta?</p></div>
+
+    <div class="lg-acto c-pide"><b>✋ Pide o manda</b> <span class="et">Quiere que hagas algo</span><p class="s">No pide un dato: pide una acción. Un favor, una orden, un ruego.</p><p class="p"><b>La prueba:</b> Preguntate: ¿me está pidiendo que yo haga algo?</p></div>
+
+    <div class="lg-acto c-exclama"><b>❗ Exclama</b> <span class="et">Suelta lo que siente</span><p class="s">Sale de golpe. Dice más de quien habla que de la cosa.</p><p class="p"><b>La prueba:</b> Preguntate: ¿esto dice cómo se siente el que habla?</p></div>
+
+    <div class="caja truco"><b>Ojo:</b> la forma no dice lo que la frase hace. «¿Me pasás la sal?» parece una pregunta. Es un pedido. Nadie contesta «sí» y se queda sentado.</div>
+
+    <h2>La forma no dice lo que la frase hace</h2>
+
+    <p>Estas ocho parecen una cosa y hacen otra. Lo que lo decide no es la frase: es <b>dónde se
+       dice</b>. Leé la frase, mirá dónde, y después lo que hace.</p>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <table><tr><th style="width:30%">La frase</th><th style="width:28%">Dónde se dice</th><th style="width:14%">Parece</th><th>Y hace</th></tr><tr><td class="k">«¿Me pasás la sal?»</td><td>En la mesa, comiendo.</td><td>pregunta</td><td><b>pide</b> — Nadie contesta «sí» y se queda sentado. Se pasa la sal.</td></tr><tr><td class="k">«¿Podés cerrar el portón?»</td><td>Tu mamá, desde la cocina.</td><td>pregunta</td><td><b>pide</b> — No pregunta si podés. Te está pidiendo que lo cerrés.</td></tr><tr><td class="k">«¿Quién dejó esto aquí?»</td><td>El maestro, viendo un morral en la puerta.</td><td>pregunta</td><td><b>pide</b> — No busca un nombre. Busca que alguien lo quite.</td></tr><tr><td class="k">«Ya son las seis»</td><td>En una visita que se alargó.</td><td>afirma</td><td><b>pide</b> — Dice la hora y está pidiendo que se vayan.</td></tr><tr><td class="k">«La puerta está abierta»</td><td>Tu papá, con el frío entrando.</td><td>afirma</td><td><b>pide</b> — Nadie le está contando un dato. Le están diciendo: cerrala.</td></tr><tr><td class="k">«Qué calor hace aquí»</td><td>Alguien sentado junto a la ventana cerrada.</td><td>exclama</td><td><b>pide</b> — Suelta lo que siente y pide que abran la ventana.</td></tr><tr><td class="k">«¿Y vos qué hora creés que es?»</td><td>A alguien que llegó tarde.</td><td>pregunta</td><td><b>afirma</b> — No espera la hora. Está diciendo que llegó tarde.</td></tr><tr><td class="k">«¡Qué buena idea!»</td><td>Con la cara de que no lo es.</td><td>exclama</td><td><b>afirma</b> — Suena a elogio y afirma lo contrario. Es ironía.</td></tr></table>
+
+    <div class="caja idea"><b>Ojo:</b> lo que decide no es la frase. Es dónde se dice y quién la dice. La misma frase pide en la mesa y pregunta en un examen.</div>
+
+    <h2>La misma frase, dos cosas</h2>
+
+    <p>Estas cuatro frases están bien escritas. Y dicen dos cosas cada una. Buscá las dos antes
+       de leer la respuesta.</p>
+
+    <div class="lg-amb"><div class="t">🪑 «Te espero en el banco»</div><ul><li><b>Puede ser:</b> En la banca del parque, a sentarse.</li><li><b>O puede ser:</b> En el banco donde se guarda la plata.</li></ul><p class="c">🔧 Se arregla con una pregunta: ¿en cuál de los dos?</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="lg-amb"><div class="t">🐄 «Vendí la vaca de mi tío»</div><ul><li><b>Puede ser:</b> La vaca era de mi tío y yo la vendí.</li><li><b>O puede ser:</b> Le vendí mi vaca a mi tío.</li></ul><p class="c">🔧 Se arregla diciendo de quién era y a quién se le vendió.</p></div>
+
+    <div class="lg-amb"><div class="t">👜 «Compré una bolsa vieja»</div><ul><li><b>Puede ser:</b> La bolsa está usada.</li><li><b>O puede ser:</b> La bolsa es de un modelo de antes.</li></ul><p class="c">🔧 Se arregla con un dato: ¿usada, o de las de antes?</p></div>
+
+    <div class="lg-amb"><div class="t">🍞 «Dejé medio pan»</div><ul><li><b>Puede ser:</b> La mitad de un pan.</li><li><b>O puede ser:</b> Un pan de los que se parten a la mitad.</li></ul><p class="c">🔧 Se arregla midiendo: ¿la mitad, o uno entero?</p></div>
+
+    <div class="caja truco"><b>Ojo:</b> la frase no está mal escrita. Lo que pasa es que dice dos cosas a la vez. Y el que escucha elige una sin darse cuenta.</div>
+
+    <h2>Cuándo una definición sirve</h2>
+
+    <p>Definir es decir qué entra y qué no. Se falla de dos maneras contrarias, y las dos se
+       comprueban.</p>
+
+    <div class="lg-def d-ancha"><b>🫙 Muy ancha</b><p class="h">Deja entrar cosas que no son.</p><p class="v">«Una silla es algo donde uno se sienta.» Entonces una piedra es una silla.</p><p class="d"><b>La prueba:</b> Buscá algo que entre y no debería.</p></div>
+
+    <div class="lg-def d-angosta"><b>🥃 Muy angosta</b><p class="h">Deja fuera cosas que sí son.</p><p class="v">«Un ave es un animal que vuela.» Entonces la gallina no es ave.</p><p class="d"><b>La prueba:</b> Buscá algo que quede fuera y sí debería entrar.</p></div>
+
+    <div class="lg-def d-justa"><b>🎯 Justa</b><p class="h">Entra todo lo que es y nada de lo que no.</p><p class="v">«Una silla es un mueble con asiento y respaldo, para una persona.»</p><p class="d"><b>La prueba:</b> Probá las dos de arriba. Si aguanta las dos, sirve.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja idea"><b>Ojo:</b> definir no es adornar. Es decir qué entra y qué no. Una definición que aguanta las dos pruebas se puede usar para discutir.</div>
+
+    <h2>La misma cosa, otra palabra</h2>
+
+    <p>Las dos palabras de cada fila nombran lo mismo. Y no llegan igual. Leelas en voz alta y
+       fijate cuál te cae mejor.</p>
+
+    <table><tr><th style="width:34%">La cosa</th><th style="width:22%">Dicho suave</th><th style="width:22%">Dicho fuerte</th><th>Las dos</th></tr><tr><td>una bolsa que ya usó otro</td><td class="k">de segunda mano</td><td class="k">usada</td><td>Las dos nombran la misma bolsa.</td></tr><tr><td>el dinero que se fue en algo</td><td class="k">lo invirtió</td><td class="k">lo gastó</td><td>En las dos, la plata ya no está.</td></tr><tr><td>alguien que come poco</td><td class="k">come sanito</td><td class="k">no come</td><td>Las dos hablan de la misma comida.</td></tr><tr><td>una casa chiquita</td><td class="k">acogedora</td><td class="k">apretada</td><td>Las dos miden los mismos metros.</td></tr></table>
+
+    <div class="caja regla"><b>Ojo:</b> elegir la palabra no es mentir. Es apuntar. Lo que se hace es darse cuenta de hacia dónde apunta, y decidir uno mismo.</div>
+
+    <h2>Cuando la palabra convence sola</h2>
+
+    <p>Aquí no se examina la razón: eso fue la unidad anterior. Se examina la frase. <b>Tres de
+       estas cuatro traen trampa.</b> La cuarta no, y por eso está.</p>
+
+    <div class="lg-tru t-si"><b>🪤 La pregunta con la respuesta dentro</b><p class="h">Da por hecho lo que todavía no se discutió.</p><p class="v"><b>Suena así:</b> «¿Por qué el abono caro rinde más?»</p><p class="h"><b>Cuesta:</b> Contestarla ya es aceptar que rinde más.</p><p class="d"><b>Se desarma:</b> Contestá la de atrás primero: ¿rinde más?</p></div>
+
+    <div class="lg-tru t-si"><b>🏷️ El nombre que ya juzga</b><p class="h">Le pone a la cosa un nombre que decide antes de mirarla.</p><p class="v"><b>Suena así:</b> Llamarle «regalo» a un préstamo que hay que devolver.</p><p class="h"><b>Cuesta:</b> Se firma pensando que no se debe nada.</p><p class="d"><b>Se desarma:</b> Cambiale el nombre y volvé a mirar: ¿sigue pareciendo lo mismo?</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="lg-tru t-si"><b>🌫️ La palabra que no se puede comprobar</b><p class="h">Suena a dato y no dice nada que se pueda medir.</p><p class="v"><b>Suena así:</b> «Es de mejor calidad» · «es más natural»</p><p class="h"><b>Cuesta:</b> Se paga más por algo que nadie puede contar.</p><p class="d"><b>Se desarma:</b> Pedí el número o el ejemplo: ¿mejor en qué, y cuánto?</p></div>
+
+    <div class="lg-tru t-no"><b>✅ La palabra fuerte que SÍ vale</b><p class="h">Nombra con fuerza algo que de verdad es fuerte.</p><p class="v"><b>Suena así:</b> «Se cayó el puente» cuando el puente se cayó.</p><p class="h"><b>Cuesta:</b> Nada: decirlo flojo sería el error.</p><p class="d"><b>Se desarma:</b> No hay que desarmarla. Se comprueba, como todo.</p></div>
+
+    <div class="caja truco"><b>Ojo:</b> no toda palabra fuerte es trampa. La cuarta no lo es. Desconfiar de todas las palabras cuesta lo mismo que creerlas todas.</div>
+
+    <h2>Palabras de la unidad</h2>
+
+    <table><tr><th style="width:22%">Palabra</th><th>Qué quiere decir</th></tr><tr><td class="k">significado</td><td>Lo que una palabra le hace entender al que la oye.</td></tr><tr><td class="k">intención</td><td>Lo que el que habla quiere lograr al decirlo.</td></tr><tr><td class="k">ambiguo</td><td>Que quiere decir dos cosas, y no se sabe cuál.</td></tr><tr><td class="k">definir</td><td>Decir qué entra y qué no entra en una palabra.</td></tr><tr><td class="k">retórica</td><td>El arte de decir las cosas para que convenzan.</td></tr><tr><td class="k">literal</td><td>Lo que la frase dice, sin lo que insinúa.</td></tr></table>
+
+    <h2>Dos que miraron las palabras con lupa</h2>
+
+    <p>Uno las miró como se miran las cuentas; el otro dijo que cada palabra arrastra la vida de
+       quien la usa. Aquí <b>no hay ni una fecha</b>, y no es un olvido: una fecha que no se puede
+       acreditar no se escribe.</p>
+
+    <div class="lg-pens"><b>🧮 Bertrand Russell</b><p class="w">Inglaterra</p><p class="p">Se puso a mirar las frases con la lupa con que se miran las cuentas.</p><p class="p"><b>Qué hizo:</b> Mostró que una frase puede estar bien escrita y no decir nada claro.</p><p class="p"><b>Por qué se le recuerda:</b> Enseña a pedir que la frase se aclare antes de discutirla.</p><p class="dato"><b>Dato:</b> De ahí viene la filosofía analítica, que el currículo nombra.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="lg-pens"><b>💬 José Ortega y Gasset</b><p class="w">España</p><p class="p">Dijo que cada palabra arrastra la vida de quien la usa.</p><p class="p"><b>Qué hizo:</b> Mostró que dos personas usan la misma palabra y no dicen lo mismo.</p><p class="p"><b>Por qué se le recuerda:</b> Enseña a preguntar qué quiere decir el otro, no qué quiero decir yo.</p><p class="dato"><b>Dato:</b> De ahí viene la hermenéutica, que es el arte de interpretar.</p></div>
+
+    <h2>Qué le deja esto a cada materia</h2>
+
+    <table><tr><th style="width:25%">Materia</th><th>Qué le deja</th></tr><tr><td class="k">✍️ Español</td><td>Le dio la pregunta por la intención. Qué hace la frase, no solo qué dice.<br><b>Pruébalo hoy:</b> En tu cuaderno: al leer, escribí qué quería lograr el que escribió.</td></tr><tr><td class="k">🌎 Ciencias Sociales</td><td>Le dio el cuidado con el nombre. Quien pone el nombre ya contó la historia.<br><b>Pruébalo hoy:</b> Buscá un hecho con dos nombres distintos y mirá qué cambia.</td></tr><tr><td class="k">🔢 Matemáticas</td><td>Le dio la definición exacta. Un número par entra o no entra, sin discusión.<br><b>Pruébalo hoy:</b> Definí «número par» y probá si tu definición aguanta las dos pruebas.</td></tr></table>
+
+    <h2>Actividades</h2>
+
+    <div class="acts"><h3>1. ¿Qué hace esta frase? <span class="val">12 pts</span></h3>
+
+    <p>Escribe <b>A</b> si afirma, <b>P</b> si pregunta, <b>M</b> si pide o manda, y <b>E</b> si
+       exclama.</p>
+
+    <table><tr><th style="width:12%">A, P, M o E</th><th>La frase</th></tr><tr><td></td><td>¡Qué bueno que viniste!</td></tr><tr><td></td><td>¿Cuántos años tiene tu abuela?</td></tr><tr><td></td><td>¡Ay, me quemé!</td></tr><tr><td></td><td>Cerrá el portón, por favor</td></tr><tr><td></td><td>¿De quién es este cuaderno?</td></tr><tr><td></td><td>Mi tía vive en Comayagua</td></tr><tr><td></td><td>¿A qué hora empieza el partido?</td></tr><tr><td></td><td>En mi grado somos cuarenta y tres</td></tr><tr><td></td><td>Pasame el lápiz</td></tr><tr><td></td><td>El agua de la pila está a veinte grados</td></tr><tr><td></td><td>No dejes la puerta abierta</td></tr><tr><td></td><td>¡Qué frío!</td></tr></table>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts"><h3>2. La prueba de cada clase <span class="val">8 pts</span></h3>
+
+    <p>Une cada prueba con su clase. Escribe la letra en el paréntesis.</p>
+
+    <table><tr><th style="width:8%">( )</th><th>La pregunta que se le hace a la frase</th><th style="width:30%">La clase</th></tr><tr><td></td><td>Preguntate: ¿me está pidiendo que yo haga algo?</td><td><b>a)</b> 📌 Afirma</td></tr><tr><td></td><td>Preguntate: ¿se puede contestar «es verdad» o «es mentira»?</td><td><b>b)</b> ❓ Pregunta</td></tr><tr><td></td><td>Preguntate: ¿esto dice cómo se siente el que habla?</td><td><b>c)</b> ✋ Pide o manda</td></tr><tr><td></td><td>Preguntate: ¿espera una respuesta?</td><td><b>d)</b> ❗ Exclama</td></tr></table>
+
+    </div>
+
+    <div class="acts"><h3>3. Escribí unas tuyas <span class="val">10 pts</span></h3>
+
+    <p>Escuchá en tu casa. Anotá tres frases y qué hace cada una. Después escribí una que diga
+       dos cosas, y la pregunta que la arregla.</p>
+
+    <table><tr><th style="width:58%">La frase que oí</th><th>Qué hace, y por qué</th></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr></table>
+
+    <div class="caja regla"><b>Una frase que dice dos cosas:</b>
+      <span class="linea-resp" style="min-width:290px"></span><br><b>La pregunta que la arregla:</b>
+      <span class="linea-resp" style="min-width:270px"></span></div>
+
+    </div>
+
+    <div class="acts"><h3>4. Rellena el círculo de la letra correcta <span class="val">6 pts</span></h3>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span><span>En la mesa, «¿me pasás la sal?» ¿qué hace?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Pide una acción</span><span class="op"><i></i><b>b)</b> Pregunta un dato</span><span class="op"><i></i><b>c)</b> Afirma algo</span><span class="op"><i></i><b>d)</b> Exclama</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span><span>«Una silla es algo donde uno se sienta.» Esa definición…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> está justa</span><span class="op"><i></i><b>b)</b> es muy angosta</span><span class="op"><i></i><b>c)</b> es muy ancha: entra una piedra</span><span class="op"><i></i><b>d)</b> no dice nada</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span>«Un ave es un animal que vuela.» Esa definición…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> está justa</span><span class="op"><i></i><b>b)</b> es muy angosta: deja fuera la gallina</span><span class="op"><i></i><b>c)</b> es muy ancha</span><span class="op"><i></i><b>d)</b> no dice nada</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span>«Te espero en el banco» dice dos cosas. ¿Con qué se arregla?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Escribiéndola más bonita</span><span class="op"><i></i><b>b)</b> Hablando más fuerte</span><span class="op"><i></i><b>c)</b> Cambiando de tema</span><span class="op"><i></i><b>d)</b> Preguntando en cuál de los dos</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span>«¿Por qué el abono caro rinde más?» ¿Qué tiene de raro?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> Da por hecho que rinde más</span><span class="op"><i></i><b>b)</b> Es muy larga</span><span class="op"><i></i><b>c)</b> No lleva signos</span><span class="op"><i></i><b>d)</b> Nada: es una pregunta normal</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>«Es de mejor calidad» no se puede comprobar porque…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> es mentira</span><span class="op"><i></i><b>b)</b> no dice mejor en qué ni cuánto</span><span class="op"><i></i><b>c)</b> está mal escrita</span><span class="op"><i></i><b>d)</b> nadie la dice</span></div></div>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts"><h3>5. ¿Cuál trae trampa? <span class="val">8 pts</span></h3>
+
+    <p>Escribe <b>SÍ</b> o <b>NO</b> según traiga trampa, y con qué se desarma.
+       <b>Una de las cuatro no trae ninguna.</b></p>
+
+    <table><tr><th style="width:12%">¿Trampa?</th><th style="width:38%">Cómo suena</th><th>Se desarma con…</th></tr><tr><td></td><td>«¿Por qué el abono caro rinde más?»</td><td></td></tr><tr><td></td><td>Llamarle «regalo» a un préstamo que hay que devolver.</td><td></td></tr><tr><td></td><td>«Es de mejor calidad» · «es más natural»</td><td></td></tr><tr><td></td><td>«Se cayó el puente» cuando el puente se cayó.</td><td></td></tr></table>
+
+    </div>
+
+    <h2>Investiga (no se contesta copiando de aquí)</h2>
+
+    <p>Aquí no hay respuestas escritas, y no es un descuido. Estas se averiguan hablando con la gente de tu casa y de tu comunidad.</p>
+
+    <div class="caja idea"><b>1.</b> Buscá una palabra que usan tus abuelos y en la escuela no. Preguntá qué quiere decir. Anotá quién te lo dijo.<br><b>2.</b> Guardá un mensaje que te llegó esta semana. Escribí qué HACE: afirma, pregunta, pide o exclama.<br><b>3.</b> Preguntale a dos personas qué es «ser buen alumno». Escribí las dos respuestas. Marcá en qué no coinciden.<br><b>4.</b> Buscá un anuncio de la pulpería o de la radio. Copiá una palabra que no se pueda comprobar.</div>
+
+    <div class="caja hn"><b>🤲</b> Al preguntar, se pregunta con respeto. Y se anota quién lo dijo y qué día.</div>
+
+    <h2>Para hacer entre varios</h2>
+
+    <div class="caja regla"><b>El pedido disfrazado.</b> Cada uno trae escrita una frase que oyó
+      en su casa y que <b>pedía algo sin pedirlo</b>: «ya son las seis», «qué calor hace aquí». Se
+      leen en voz alta, y los demás dicen qué estaba pidiendo y cómo se dieron cuenta. Al final se
+      eligen las tres que más cuesta notar y se escriben en la pizarra con su versión directa al
+      lado.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Pauta de corrección · NO se fotocopia</h2>
+
+    <div class="pauta">
+
+    <div><span class="pt">1. ¿Qué hace esta frase? (12 pts)</span> 1. E · 2. P · 3. E · 4. M · 5. P · 6. A · 7. P · 8. A · 9. M · 10. A · 11. M · 12. E. A = afirma · P = pregunta · M = pide o manda · E = exclama.</div>
+
+    <div><span class="pt">2. La prueba de cada clase (8 pts)</span> 1 → c (Pide o manda) · 2 → a (Afirma) · 3 → d (Exclama) · 4 → b (Pregunta). Las pruebas NO salen en el orden de las clases: hay que leerlas.</div>
+
+    <div><span class="pt">3. Escribí unas tuyas (10 pts)</span> ⚠️ <b>No tiene una sola respuesta buena, a propósito.</b> Se califica que diga POR QUÉ —la prueba, no la forma—, y que la frase de doble sentido se pueda leer de verdad de dos maneras. Si la frase que trajo parece una cosa y hace otra, eso vale doble: es lo que más cuesta de la unidad. Y la pregunta que la arregla tiene que pedir el dato que falta, no repetir la frase.</div>
+
+    <div><span class="pt">4. Selección múltiple (6 pts)</span> 1. a · 2. c · 3. b · 4. d · 5. a · 6. b</div>
+
+    <div><span class="pt">5. ¿Cuál trae trampa? (8 pts)</span> 1. SÍ — Contestá la de atrás primero: ¿rinde más? · 2. SÍ — Cambiale el nombre y volvé a mirar: ¿sigue pareciendo lo mismo? · 3. SÍ — Pedí el número o el ejemplo: ¿mejor en qué, y cuánto? · 4. NO — No hay que desarmarla. Se comprueba, como todo.. ⚠️ La cuarta <b>no trae trampa</b>, y marcarla es el error que hay que corregir hablando: una unidad donde toda palabra fuerte es trampa deja a un alumno que no le cree a nadie.</div>
+
+    <div><span class="pt">Investiga</span> ⚠️ <b>No trae respuestas, a propósito.</b> Las cuatro se contestan donde vive el alumno y no en esta hoja. Se califica que diga DE DÓNDE sacó cada cosa, a quién se lo preguntó y qué día; en la tercera, que estén las DOS respuestas y marcado en qué no coinciden.</div>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 5 · <b>Palabras que piensan</b></span><span>Página 10</span></div>
+</section>
+
+</div>
+</body>
+</html>

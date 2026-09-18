@@ -51,6 +51,7 @@ const FILO = [
   { dir: 'misiones/basica-pensar-con-orden', html: 'pensar-con-orden.html', ficha: 'fichas/ficha-pensar-con-orden.html', datos: ['js/data/filosofia-logica.js'] },
   { dir: 'misiones/basica-de-que-esta-hecho-el-mundo', html: 'de-que-esta-hecho-el-mundo.html', ficha: 'fichas/ficha-de-que-esta-hecho-el-mundo.html', datos: ['js/data/filosofia-mundo.js'] },
   { dir: 'misiones/basica-como-se-que-se', html: 'como-se-que-se.html', ficha: 'fichas/ficha-como-se-que-se.html', datos: ['js/data/filosofia-saber.js'] },
+  { dir: 'misiones/basica-palabras-que-piensan', html: 'palabras-que-piensan.html', ficha: 'fichas/ficha-palabras-que-piensan.html', datos: ['js/data/filosofia-lenguaje.js'] },
 ];
 
 /* Misiones escritas para primaria, que son la vara. */

@@ -288,16 +288,22 @@ const classifyTaskDB=[
   {w:'2012 · Las imágenes',gen:'Las máquinas aprenden a ver',n:'Un millón de fotos y tarjetas gráficas',g:'Arranca el aprendizaje profundo',t:''},
   {w:'2017 · El transformador',gen:'La pieza técnica de los chats de hoy',n:'Un artículo de investigación',g:'Separa el antes del después',t:''}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'En 1950 Alan Turing preguntó si las máquinas podían ___.',ans:'pensar'},
-  {s:'El nombre del campo nació en el taller de ___ en 1956.',ans:'Dartmouth'},
-  {s:'El programa que conversaba en 1966 se llamaba ___.',ans:'ELIZA'},
-  {s:'Los dos períodos en que el campo casi se para son los dos ___.',ans:'inviernos'},
-  {s:'En 1997 una máquina ganó al campeón mundial de ___.',ans:'ajedrez'},
-  {s:'En 2012 las máquinas aprendieron a reconocer ___.',ans:'imágenes'},
-  {s:'En 2016 AlphaGo ganó al juego del ___.',ans:'Go'},
-  {s:'La pieza técnica de 2017 se llama ___.',ans:'transformador'},
-  {s:'Las tres patas son datos, cómputo y ___.',ans:'algoritmos'}
+  {s:'En 1950 Alan Turing preguntó si las máquinas podían ___.',opts:['hablar','pensar','sumar'],ans:'pensar'},
+  {s:'El nombre del campo nació en el taller de ___ en 1956.',opts:['ELIZA','Turing','Dartmouth'],ans:'Dartmouth'},
+  {s:'El programa que conversaba en 1966 se llamaba ___.',opts:['ELIZA','AlphaGo','Dartmouth'],ans:'ELIZA'},
+  {s:'Los dos períodos en que el campo casi se para son los dos ___.',opts:['talleres','inviernos','veranos'],ans:'inviernos'},
+  {s:'En 1997 una máquina ganó al campeón mundial de ___.',opts:['damas','Go','ajedrez'],ans:'ajedrez'},
+  {s:'En 2012 las máquinas aprendieron a reconocer ___.',opts:['imágenes','sonidos','olores'],ans:'imágenes'},
+  {s:'En 2016 AlphaGo ganó al juego del ___.',opts:['póker','Go','ajedrez'],ans:'Go'},
+  {s:'La pieza técnica de 2017 se llama ___.',opts:['algoritmo','perceptrón','transformador'],ans:'transformador'},
+  {s:'Las tres patas son datos, cómputo y ___.',opts:['algoritmos','cables','etiquetas'],ans:'algoritmos'}
 ];
 const explainQuestions=[
   {q:'¿Por qué se dice que la Inteligencia Artificial no nació en 2022?',ans:'Empezó mucho antes. En 1950 Turing preguntó si una máquina podía pensar. En 1956 el campo estrenó nombre. En 2022 solo llegó a todos.'},

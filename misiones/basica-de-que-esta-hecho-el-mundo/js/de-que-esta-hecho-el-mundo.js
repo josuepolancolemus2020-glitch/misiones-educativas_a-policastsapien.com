@@ -297,17 +297,23 @@ const classifyTaskDB=[
   {w:'Heráclito',gen:'Un pensador',n:'Dijo que todo cambia siempre',g:'Puso el ejemplo del río',t:'Para él lo raro es que algo parezca quedarse'},
   {w:'Parménides',gen:'Un pensador',n:'Dijo que lo que es, es',g:'Sostuvo que el cambio nos engaña',t:'Él y Heráclito no se pusieron de acuerdo'}
 ];
+/* ⚠️ Cada fila lleva sus `opts`, y no es adorno: `genCompleteTask` pinta
+   «📝 Opciones: ${item.opts.join(' | ')}», así que una fila sin ese campo
+   **revienta la sección entera** del Generador de Tareas —el maestro toca
+   «Completa la oración» y no sale nada, sin un solo aviso en la pantalla—.
+   Estaba así en doce misiones publicadas; lo vigila
+   `_dev/verifica-bancos-tareas.js`. */
 const completeTaskDB=[
-  {s:'Aquello de lo que está hecha una cosa es la ___.',ans:'materia'},
-  {s:'El modo en que está acomodada la materia es la ___.',ans:'forma'},
-  {s:'La rama que pregunta qué es real es la ___.',ans:'metafísica'},
-  {s:'La palabra átomo quiere decir «que no se ___».',ans:'parte'},
-  {s:'La forma entera en que un pueblo explica el mundo es su ___.',ans:'cosmovisión'},
-  {s:'Si la leña se vuelve ceniza, cambió la ___.',ans:'materia'},
-  {s:'Si el alambre se dobla, cambió la ___.',ans:'forma'},
-  {s:'El que puso el ejemplo del río fue ___.',ans:'Heráclito'},
-  {s:'El que dijo que el cambio nos engaña fue ___.',ans:'Parménides'},
-  {s:'El que pensó las piezas sin verlas fue ___.',ans:'Demócrito'}
+  {s:'Aquello de lo que está hecha una cosa es la ___.',opts:['medida','materia','forma'],ans:'materia'},
+  {s:'El modo en que está acomodada la materia es la ___.',opts:['cantidad','materia','forma'],ans:'forma'},
+  {s:'La rama que pregunta qué es real es la ___.',opts:['metafísica','ética','lógica'],ans:'metafísica'},
+  {s:'La palabra átomo quiere decir «que no se ___».',opts:['ve','parte','mueve'],ans:'parte'},
+  {s:'La forma entera en que un pueblo explica el mundo es su ___.',opts:['cosmonave','definición','cosmovisión'],ans:'cosmovisión'},
+  {s:'Si la leña se vuelve ceniza, cambió la ___.',opts:['materia','forma','medida'],ans:'materia'},
+  {s:'Si el alambre se dobla, cambió la ___.',opts:['cantidad','forma','materia'],ans:'forma'},
+  {s:'El que puso el ejemplo del río fue ___.',opts:['Demócrito','Parménides','Heráclito'],ans:'Heráclito'},
+  {s:'El que dijo que el cambio nos engaña fue ___.',opts:['Parménides','Heráclito','Demócrito'],ans:'Parménides'},
+  {s:'El que pensó las piezas sin verlas fue ___.',opts:['Parménides','Demócrito','Heráclito'],ans:'Demócrito'}
 ];
 const explainQuestions=[
   {q:'¿Cuáles son las tres clases de cambio y cómo se reconoce cada una?',ans:'Cambió la forma: la materia es la misma, solo acomodada de otro modo. Cambió la materia: quedó otra sustancia, con otro color u otro sabor. Cambió lo que decimos: a la cosa no le pasó nada. Cambió su nombre o su dueño.'},
