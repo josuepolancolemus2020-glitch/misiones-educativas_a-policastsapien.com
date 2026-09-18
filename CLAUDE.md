@@ -3930,30 +3930,162 @@ una misión no son solo los aciertos.**
    mano. Lo mismo con los doce cambios de la actividad 1, que salían
    `F·M·D·F·M·D…`: quien lo note contesta los doce sin mirar ninguno.
 
+### La etapa 4: cómo sé que sé, y con qué lo sostengo
+
+La cuarta unidad de la Ruta de la Raíz es **¿Cómo sé que sé?**
+(`misiones/basica-como-se-que-se/`, id 82, etapa 4), y va para los tres ciclos
+como las tres primeras. El currículo la pide con dos cosas del **CNB de
+Educación Media**, textuales: el **CE4.2** «Explica los diferentes conceptos del
+renacimiento, racionalismo, empirismo e ilustración a través del método
+comparativo» y el **contenido procedimental 1.2** «Diferencias entre los tipos
+de saberes». Y el **DCNB de Básica** pone lo demás, en los tres ciclos:
+«Interpretan distintas fuentes de información para formular hipótesis y
+argumentar con fundamento». ⚠️ Esa es la redacción de I Ciclo; II y III dicen
+«argumentar los fundamentos» y «los fundamento», y se citan así, cada una como
+está. Las páginas del PDF y las tres redacciones están en
+`CURRICULA-FILOSOFIA.md`.
+
+Mismo patrón que el Himno, los próceres y las tres unidades anteriores: **los
+datos viven en `js/data/filosofia-saber.js`** y solo ahí; la misión los pinta,
+la ficha sale de un guion, y `node _dev/verifica-filosofia.js` compara las dos.
+
+⚠️ **Y NO repite a las anteriores.** La 1 enseña a hacer preguntas, la 2 a
+examinar las razones que otros dan, la 3 a usar las dos sobre una pregunta de
+verdad. Esta pregunta otra cosa: **con qué sostenés lo que decís.** No si algo
+es verdad —eso es la 3—, sino de dónde salió y cómo se comprueba.
+
+**Siete reglas, y ninguna es de adorno:**
+
+1. ⚠️ **Las treinta afirmaciones salen de UN solo sitio** (`SAB_AFIRMACIONES`,
+   diez por manera), y de ahí se arman el Clasifica Y el Reto. Es la avería del
+   Escudo marcado en rojo: con una sola fuente **no se puede escribir**, que
+   vale más que una sonda que la caza. Y van **diez por manera** para que no se
+   acierte por reparto; la sonda lo cuenta.
+2. ⚠️ **Cada manera se enseña con su PRUEBA, no con su definición**: la pregunta
+   que se le hace a la idea para saber cuál de las tres es. «¿Puedo decir CÓMO
+   lo sé?», «¿puede otro pensar lo contrario sin estar equivocado?», «¿es así Y
+   puedo decir con qué se comprueba?».
+3. ⚠️ **Hay una CUARTA respuesta y vale igual: «no sé».** Sin ella el alumno
+   tiene que elegir una de las tres aunque no le toque ninguna, y así se aprende
+   a decir «sé» sin haberlo comprobado. La sonda comprueba que esté en el papel.
+4. ⚠️ **De cada fuente va primero PARA QUÉ SIRVE y después dónde falla**, en la
+   pantalla y en el papel, y la sonda comprueba el orden en los dos. Una unidad
+   que presente las cinco fuentes por sus fallos fabrica un alumno que
+   desconfía de todo, y eso cuesta lo mismo que creerlo todo: es la misma regla
+   que el mensaje sin señales de los peligros de la IA. Lo mismo con los cuatro
+   engaños: cada uno trae **cómo se desarma**, y el aviso de que un ojo
+   engañado no quiere decir que el ojo no sirva.
+5. ⚠️ **Los cuatro engaños se HACEN, no se leen.** Se hacen con lo que hay en
+   una cocina —un vaso con agua, dos palanganas, una taza, un lápiz de color—,
+   así que cada uno trae su `hace` además de su `ves` y su `pasa`. Es la regla
+   del relato: el alumno lo produce, no se entera.
+6. ⚠️ **NINGUNA de las dos escuelas gana.** El CE4.2 pide compararlas con el
+   método comparativo, y comparar no es elegir: declarar ganadora una sería
+   calificar mal al alumno que argumente la otra. Cada una lleva en qué
+   **acierta** y dónde **se queda corta**, y el aviso de que la ciencia de hoy
+   usa las dos. Es la decisión de héroe y prócer de la Ruta de la Patria.
+7. **Ni una fecha**, como en las tres unidades anteriores. De René Descartes y
+   de John Locke se dice qué hicieron y por qué se les recuerda.
+
+⚠️ **Y una afirmación no puede contradecir a la propia misión.** «El agua de la
+pila está fría» estaba clasificada como «se sabe», y el caso de pensamiento
+crítico de esta misma unidad enseña que **la piel no mide grados**: el alumno
+que contestara otra cosa tenía razón y el Clasifica se lo marcaba en rojo. Es
+el Escudo marcado en rojo otra vez, y ninguna sonda lo caza —las dos cosas
+salen del mismo archivo y no se contradicen *formalmente*—: se ve **leyendo las
+treinta de una en una** contra lo que la misión enseña. Lo mismo con «la tienda
+de la esquina abre los domingos», que lo SABE quien va todos los domingos.
+
+**El arranque le pasa a alguien y le cuesta algo:** en el recreo le dijeron a
+Yeimy que el examen se había pasado para el jueves. Esa noche no estudió; el
+martes el examen estaba ahí. **Sacó 40 y quedó fuera del cuadro de honor.**
+Nadie le mintió a propósito: se lo dijeron de oídas, y bastaba una pregunta
+—«¿y vos cómo lo sabés?»— con el maestro a diez pasos. Y termina en algo que
+el alumno PRODUCE: escribir en su cuaderno algo que «sabe» porque se lo
+contaron, y al lado cómo lo comprobaría.
+
+⚠️ **Y la ficha cuenta la MISMA historia, no una variante.** Llevaba la del
+examen mal corregido —con la misma Yeimy y el mismo 40— y el alumno que lee las
+dos se pregunta cuál de las dos fue. La ficha lleva lo mismo en papel.
+
+⚠️ **La epistemología se define IGUAL que en la unidad 1** (`FILO_RAMAS`, la
+raíz «epistemologia»). El alumno abre las dos y no puede leer dos definiciones
+distintas de lo mismo. No se comparan letra por letra: se busca la tirada de
+palabras más larga que comparten, como hace la sonda del Himno con una cita.
+
+### ⚠️ Y lo que salió al armar esta ficha, que vale para las diez que se arman con un guion
+
+1. ⚠️ **La selección múltiple salía a·b·c·d en las cuatro primeras**, porque se
+   escribió con la correcta donde la puso quien la redactó. Quien lo note
+   contesta cuatro sin leer ninguna. Ahora la reparte `repartirMC()` con la
+   semilla de siempre: las cuatro letras repartidas, sin tres seguidas iguales
+   y **rechazando el orden ascendente**. ⚠️ **Estaba igual en la ficha de la
+   unidad 3, publicada**: se arregló en las dos. Es el mismo sesgo que la
+   normativa del reparto de respuestas y la misma cara que la actividad 2 que
+   salía resuelta.
+2. ⚠️ **El rótulo duplicaba el dato**: el campo `arregla` ya empieza por «Se
+   arregla», así que la ficha decía «Se arregla: Se arregla escribiéndolo el
+   mismo día» en las cinco fuentes. No lo caza ninguna sonda —el texto está, y
+   es el del archivo de datos—: **se vio mirando la hoja**. En la hoja de
+   contenido el rótulo es el 🛠 y en la pauta se le quita el prefijo.
+3. ⚠️ **Las clases propias van con prefijo `sb-`.** La ficha de la unidad 2
+   declara un `.val` de bloque, y esa misma clase es el
+   `<span class="val">12 pts</span>` de los títulos de actividad: el rótulo de
+   puntos sale metido en un recuadro. Al calcar hay que **no heredar el choque**,
+   que es la familia del `.pf-p` naranja sobre naranja.
+4. ⚠️ **El rótulo repetía el dato, en las cuatro fichas de la ruta.** Varios
+   campos ya empiezan por lo mismo que el rótulo que se les pone delante, así
+   que el papel decía **«Ojo: Ojo: no todas las preguntas…»**, «Se arregla: Se
+   arregla escribiéndolo…», «Se desarma: Se desarma con un termómetro…», «Al
+   preguntar: Al preguntar, se pregunta con respeto», «En Honduras: En Honduras
+   hay varias» y «Fíjate: Fíjate en lo que NO dice». No lo caza ninguna sonda
+   —el texto está, y es el del archivo de datos—: **se vio mirando la hoja**.
+   Ahora el rótulo lo pega `rot()`, que le quita al dato ese arranque repetido;
+   en la unidad 1, que es HTML a mano, se corrigió la línea. Y donde el dato ya
+   dice el rótulo entero, el rótulo pasa a ser el GLIFO —🛠 para el arreglo,
+   🤲 para el cuidado—, que es lo que la pantalla ya hacía.
+
+### ⚠️ Y una avería del medidor que dejaba media misión sin medir
+
+`mide-legibilidad.js` declara en su lista el archivo de datos de cada misión de
+la ruta, y **no lo estaba leyendo**: lo cargaba con `require`, y los cuatro
+archivos de Filosofía son de navegador —`const` pelados, sin `module.exports`,
+porque a diferencia de los de IA no corren en Node—, así que `require` devolvía
+`{}` y la herramienta medía la misión **sin el archivo que la pinta**. Callada,
+y diciendo en su lista que sí lo leía. Ahora, si no exporta, lo carga con `vm` y
+recoge sus constantes, que es lo que hacen las demás sondas del repositorio.
+
+Y al medirlo de verdad salió lo que estaba tapado: **la unidad 3, publicada,
+estaba en 8,51 palabras por frase** con el listón en 8,5. Se partieron siete
+frases de su archivo de datos y volvió a 8,4. Es la lección de siempre: una
+herramienta que se rinde en silencio es peor que no tenerla.
+
 **Antes de publicar un cambio de esta materia:**
 
 ```
-node _dev/verifica-filosofia.js             → las tres unidades, y que no se cuele nada del maestro
+node _dev/verifica-filosofia.js             → las cuatro unidades, y que no se cuele nada del maestro
 node _dev/verifica-nombres-propios.js
 node _dev/verifica-lab-legible.js           → los rótulos del Laboratorio, sin partirse
 node _dev/reparte-respuestas.js --revisa <carpeta>   → que ninguna letra pase del 40 %
 node _dev/mide-legibilidad.js <carpeta> --detalle
 node _dev/verifica-mision-nueva.js <carpeta>/<misión>.html
-node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo
+node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo ficha-como-se-que-se
 node _dev/servidor-estatico.js       (en otra terminal)
 METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js <carpeta>/<misión>.html
 ```
 
-(Las tres carpetas son `misiones/basica-el-asombro`,
-`misiones/basica-pensar-con-orden` y
-`misiones/basica-de-que-esta-hecho-el-mundo`.)
+(Las cuatro carpetas son `misiones/basica-el-asombro`,
+`misiones/basica-pensar-con-orden`,
+`misiones/basica-de-que-esta-hecho-el-mundo` y
+`misiones/basica-como-se-que-se`.)
 
 Si se tocan los datos, la ficha **se vuelve a repartir**
-(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo`):
-son ocho, diez y diez hojas, y un párrafo que crece dos renglones parte una en
-dos. ⚠️ **La de la unidad 3 NO se edita a mano**: sale de un guion que la arma
-desde `js/data/filosofia-mundo.js`, como las cuatro de la ruta de IA, y una
-corrección hecha solo en el HTML se pierde en el siguiente armado.
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo ficha-como-se-que-se`):
+son ocho, diez, diez y diez hojas, y un párrafo que crece dos renglones parte una en
+dos. ⚠️ **Las de las unidades 3 y 4 NO se editan a mano**: salen de
+`_dev/arma-ficha-mundo.js` y `_dev/arma-ficha-saber.js`, desde sus archivos de
+datos, como las cuatro de la ruta de IA, y una corrección hecha solo en el HTML
+se pierde en el siguiente armado.
 ⚠️ Y si se QUITA contenido, va con **`--todas`**: sin esa bandera el repartidor
 solo mira las fichas que hoy se pasan del papel, así que la de la unidad 1 se
 habría quedado en nueve hojas gastando una de balde.

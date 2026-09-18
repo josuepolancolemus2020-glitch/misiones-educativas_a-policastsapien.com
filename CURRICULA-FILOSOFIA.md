@@ -60,7 +60,7 @@ está completo en `_dev/dcnb-pdf/` para todas las modalidades** (hay tres), así
 que de Media no se afirma nada más allá de lo que dice este documento sobre
 esta modalidad: es la misma regla que se puso para Inteligencia Artificial.
 
-### 3 · Y de ahí salen las tres primeras unidades, textualmente
+### 3 · Y de ahí salen las cuatro primeras unidades, textualmente
 
 | unidad | criterio de evaluación que cumple, tal cual |
 |---|---|
@@ -68,6 +68,7 @@ esta modalidad: es la misma regla que se puso para Inteligencia Artificial.
 | **1 · El Asombro** | **CE1.4** «Describe la influencia de la filosofía en el desarrollo de las sociedades a través del tiempo en el surgimiento de las ciencias» |
 | **2 · Pensar con orden** | **RA2** «Construir razonamientos sobre el entorno, aplicando elementos de la lógica clásica y simbólica» · **CE2.1** «Identifica los elementos que conforman el pensamiento lógico clásico desde el contexto de la antigua Grecia» |
 | **3 · ¿De qué está hecho el mundo?** | **CE1.2** «Diferencia las etapas del saber filosófico a través del método comparativo» · **CE1.3** «Expone la importancia de las escuelas del pensamiento filosófico promoviendo procesos de reflexión» |
+| **4 · ¿Cómo sé que sé?** | **CE4.2** «Explica los diferentes conceptos del renacimiento, racionalismo, empirismo e ilustración a través del método comparativo» · **contenido procedimental 1.2** «Diferencias entre los tipos de saberes» |
 
 El CE1.1 es el que obliga a enseñar **qué quiere decir la palabra** y no solo
 qué es la cosa: de ahí sale el bloque de «filo» + «sofía» de la unidad 1. Y el
@@ -81,6 +82,39 @@ escuelas del pensamiento, y ahí entran los tres pensadores de esa unidad —de
 los que se dice qué pensaron y **nunca cuándo**, que es la regla de toda la
 ruta—. Y el CE1.4 sigue trabajando en ella: la unidad 3 enseña el puente entre
 lo que se contestó pensando y lo que hoy se mide.
+
+El **CE4.2** nombra el **racionalismo** y el **empirismo** por su nombre y pide
+compararlos con el método comparativo —confirmado en el PDF,
+`cnb-media-btp-sistematizacion-informatica-12-2025.pdf` **página 108** del
+archivo—. De ahí sale el bloque de las dos escuelas de la unidad 4, y de ahí
+sale también que **ninguna de las dos gane**: comparar no es elegir, y declarar
+una ganadora sería calificar mal al alumno que argumente la otra. Es la misma
+decisión de héroe y prócer de la Ruta de la Patria.
+
+Y el **contenido procedimental 1.2**, «Diferencias entre los tipos de saberes»
+—mismo PDF, **página 109**—, es exactamente el núcleo de esa unidad: separar
+**creer**, **opinar** y **saber**, cada uno con su prueba.
+
+**Las fuentes y las hipótesis** no salen de la nada: las pide el **DCNB de
+Básica** en **los tres ciclos**, que es lo que permite que esta unidad sea de
+los tres. ⚠️ Y la redacción **no es la misma en los tres**, así que se cita cada
+una como está y no se unifica:
+
+- I Ciclo: «Interpretan distintas fuentes de información para formular
+  hipótesis y argumentar **con fundamento**» —`dcneb-basica-i-ciclo.pdf`,
+  **página 218** del archivo—.
+- II Ciclo: «… y argumentar **los fundamentos**» —`dcneb-basica-ii-ciclo.pdf`,
+  **página 265**—.
+- III Ciclo: «… y argumentar **los fundamento**», así, sin la -s
+  —`dcneb-basica-iii-ciclo.pdf`, **página 322**—. Se copia tal cual: corregirle
+  la errata a la fuente es dejar de citarla.
+
+Y el mismo DCNB deja escrito por qué comprobar es parte de la ciencia y no un
+añadido: «la ciencia es un espacio abierto de conocimiento, y el método
+científico un instrumento sujeto a la crítica y la comprobación de
+resultados» —`dcneb-basica-ii-ciclo.pdf`, **página 405**—. De ahí salen los
+cinco pasos de comprobar, y de ahí sale que el quinto sea «decí qué te haría
+cambiar de idea».
 
 **Lo que hoy se mide** no sale de la nada: lo pide el **DCNB de Básica**,
 Ciencias Naturales, bloque «Materia, energía y tecnología», textual —«en este
@@ -127,7 +161,7 @@ el mismo mes y compartir murales, debates y ferias.
 | 1 | Febrero | **El asombro** | ¿Qué es filosofar? |
 | 2 | Marzo | **Pensar con orden** | Lógica |
 | 3 | Abril | **¿De qué está hecho el mundo?** | Metafísica y cosmovisiones |
-| 4 | Mayo | ¿Cómo sé que sé? | Epistemología |
+| 4 | Mayo | **¿Cómo sé que sé?** | Epistemología |
 | 5 | Junio | Palabras que piensan | Lenguaje y retórica |
 | 6 | Julio | ¿Quién soy yo? | Antropología filosófica |
 | 7 | Agosto | ¿Qué debo hacer? | Ética |

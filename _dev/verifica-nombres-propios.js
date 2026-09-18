@@ -85,6 +85,14 @@ const NOMBRES = [
   ['demócrito', 'Demócrito'],
   ['heráclito', 'Heráclito'],
   ['parménides', 'Parménides'],
+  /* ⚠️ Estos dos van con el NOMBRE COMPLETO a propósito. «descartes» es también
+     el plural de un descarte —sale así en la auditoría— y «locke» vive dentro de
+     `unlockedAch`, que está en las 82 misiones. Pedirlos a secas daría decenas de
+     fallos con el texto perfectamente escrito, que es la lección de «Cuadrado
+     Perfecto» y la de «cacique Lempira». */
+  ['rené descartes', 'René Descartes'],
+  ['john locke', 'John Locke'],
+  ['francia', 'Francia'],
   ['grecia', 'Grecia'],
   ['atenas', 'Atenas'],
   ['dcnb', 'DCNB'],

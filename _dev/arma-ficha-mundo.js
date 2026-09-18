@@ -43,6 +43,17 @@ const CAMBIOS = D.MUN_CAMBIOS, TIPOS = D.MUN_TIPOS;
 const de = q => CAMBIOS.filter(x => x.q === q).map(x => x.c);
 const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
+/* ⚠️ El rótulo no puede repetir el dato. Varios campos ya empiezan por lo
+   mismo que el rótulo —«Ojo: no todas las preguntas…» detrás de un
+   «<b>Ojo:</b>»—, y la hoja salía diciendo «Ojo: Ojo: no todas…». No lo caza
+   ninguna sonda: el texto está, y es el del archivo de datos. Se vio mirando
+   la hoja. `rot()` pega el rótulo y le quita al dato ese arranque repetido. */
+function rot(rotulo, txt) {
+  const r = rotulo.replace(/:$/, '');
+  const re = new RegExp('^' + r.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[:,]?\\s+', 'i');
+  return `<b>${rotulo}</b> ${esc(String(txt).replace(re, ''))}`;
+}
+
 const PIE = '<span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span>';
 
 /* ⚠️ Un azar con SEMILLA: el mismo archivo de datos da siempre la misma ficha,
@@ -89,14 +100,43 @@ const ACT2 = [1, 2, 0];
 /* ── Actividad 4: la selección múltiple. Es lo único de esta ficha que no sale
       del archivo de datos, y por eso vive aquí. La correcta se reparte entre
       las cuatro letras: es la normativa del reparto de respuestas. ── */
-const MC = [
+
+/* ⚠️ La correcta NO se deja donde la escribió quien la redactó. Escritas en
+   fila, las seis salían a·b·c·d·a·b: quien lo note contesta las cuatro primeras
+   sin leer ninguna. Es el mismo sesgo que la normativa del reparto de
+   respuestas y la misma cara que la actividad 2 que salía resuelta.
+   Se reparte con la SEMILLA de siempre —así volver a armar no ensucia el
+   diff—, con las cuatro letras repartidas, sin tres seguidas iguales y sin
+   que las primeras vayan en orden. */
+function repartirMC(mc, semilla) {
+  const n = mc.length, letras = mc[0][1].length;
+  const cupo = [];
+  for (let i = 0; i < n; i++) cupo.push(i % letras);
+  const rng = dado(semilla);
+  let dest = cupo;
+  for (let intento = 0; intento < 800; intento++) {
+    const t = cupo.slice();
+    for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const x = t[i]; t[i] = t[j]; t[j] = x; }
+    const tresIguales = t.some((_, i) => i + 2 < t.length && t[i] === t[i + 1] && t[i] === t[i + 2]);
+    const enOrden = t.every((v, i) => i === 0 || v === (t[i - 1] + 1) % letras);
+    if (!tresIguales && !enOrden) { dest = t; break; }
+  }
+  return mc.map(([q, ops, k], i) => {
+    const t = dest[i] % ops.length;
+    const resto = ops.filter((_, j) => j !== k);
+    const nuevas = resto.slice(0, t).concat([ops[k]], resto.slice(t));
+    return [q, nuevas, t];
+  });
+}
+
+const MC = repartirMC([
   ['La masa se vuelve tortilla. ¿Qué cambió?', ['la forma', 'la materia', 'el nombre', 'nada'], 0],
   ['El clavo se llena de herrumbre. ¿Qué cambió?', ['el dueño', 'la materia', 'solo la forma', 'nada'], 1],
   ['A la aldea la vuelven municipio. ¿Qué le pasó al suelo?', ['cambió de materia', 'cambió de forma', 'nada: cambió lo que decimos', 'se hizo más grande'], 2],
   ['La palabra «átomo» quiere decir…', ['muy pequeño', 'lo que brilla', 'lo que pesa', 'lo que no se parte'], 3],
   ['Se quema un tronco y queda un puño de ceniza. ¿Se perdió materia?', ['no: lo que se fue en humo también pesa', 'sí, casi toda', 'sí, la mitad', 'no se puede saber'], 0],
   ['Una cosmovisión es…', ['un mapa del cielo', 'la forma entera en que un pueblo explica el mundo', 'una lista de fechas', 'un aparato'], 1],
-];
+], 20260917);
 
 /* ══════════════════ las hojas ══════════════════ */
 const pags = [];
@@ -138,12 +178,12 @@ p.push('<h2>Cuatro preguntas que no se cierran solas</h2>');
 p.push(`<p>${esc(D.MUN_METAFISICA.hace)} Se llama <b>${esc(D.MUN_METAFISICA.nombre)}</b>, y pregunta: ${esc(D.MUN_METAFISICA.pregunta)}</p>`);
 p.push('<div class="rejilla">' + D.MUN_PREGUNTAS.map(x =>
   `<div><b>${x.emoji} ${esc(x.nombre)}</b><p class="q">${esc(x.que)}</p><p class="h"><i>${esc(x.aqui)}</i></p><p class="h">${esc(x.hoy)}</p></div>`).join('') + '</div>');
-p.push(`<div class="caja truco"><b>Ojo:</b> ${esc(D.MUN_METAFISICA.ojo)}</div>`);
+p.push(`<div class="caja truco">${rot('Ojo:', D.MUN_METAFISICA.ojo)}</div>`);
 p.push('<h2>No todo cambio es el mismo cambio</h2>');
 p.push('<p>Hay tres clases, y cada una tiene su prueba. La prueba es una pregunta: se la haces al\n       cambio y él te contesta cuál es.</p>');
 TIPOS.forEach(t => p.push(
   `<div class="sem c-${t.clave}"><b>${t.emoji} ${esc(t.nombre)}</b> <span class="et">${esc(t.corto)}</span><p class="s">${esc(t.senal)}</p><p class="p"><b>La prueba:</b> ${esc(t.prueba)}</p></div>`));
-p.push(`<div class="caja truco"><b>Un atajo que falla:</b> ${esc(D.MUN_TIPOS_OJO)}</div>`);
+p.push(`<div class="caja truco">${rot('Un atajo que falla:', D.MUN_TIPOS_OJO)}</div>`);
 pags.push(p);
 
 // ── 3 ──
@@ -154,7 +194,7 @@ D.MUN_IDENTIDAD.forEach(k => p.push(
   `<div class="val"><div class="t">${k.emoji} ${esc(k.titulo)}</div><p class="q">${esc(k.cambio)}</p>` +
   `<ul><li>✅ ${esc(k.unos)}</li><li>❌ ${esc(k.otros)}</li></ul>` +
   `<p class="c">Lo que lo decide: ${esc(k.decide)}</p></div>`));
-p.push(`<div class="caja regla"><b>Ojo:</b> ${esc(D.MUN_IDENTIDAD_OJO)}</div>`);
+p.push(`<div class="caja regla">${rot('Ojo:', D.MUN_IDENTIDAD_OJO)}</div>`);
 pags.push(p);
 
 // ── 4 ──
@@ -166,7 +206,7 @@ D.MUN_PUENTE.forEach(x => p.push(
   `<div class="ok"><b>🌌 Se contestó pensando</b><p>${esc(x.antes)}</p></div>` +
   `<div class="no"><b>🔬 Hoy se mide</b><p>${esc(x.hoy)}</p></div></div>` +
   `<p class="puente-q">${esc(x.quien)}</p></div>`));
-p.push(`<div class="caja idea"><b>Ojo:</b> ${esc(D.MUN_PUENTE_OJO)}</div>`);
+p.push(`<div class="caja idea">${rot('Ojo:', D.MUN_PUENTE_OJO)}</div>`);
 pags.push(p);
 
 // ── 5 ──
@@ -177,7 +217,7 @@ p.push(`<p>${esc(C.que)}</p>`);
 p.push(`<p>${esc(C.toda)}</p>`);
 p.push('<p>Toda cosmovisión contesta estas tres:</p>');
 p.push('<ul>' + C.preguntas.map(q => `<li>${q.emoji} ${esc(q.p)}</li>`).join('') + '</ul>');
-p.push(`<div class="caja hn"><b>En Honduras:</b> ${esc(C.aqui)}</div>`);
+p.push(`<div class="caja hn">${rot('En Honduras:', C.aqui)}</div>`);
 p.push('<h2>Palabras de la unidad</h2>');
 p.push('<table><tr><th style="width:22%">Palabra</th><th>Qué quiere decir</th></tr>' +
   D.MUN_VOCABULARIO.map(v => `<tr><td class="k">${esc(v.w)}</td><td>${esc(v.a)}</td></tr>`).join('') + '</table>');
@@ -233,7 +273,10 @@ p.push('</div>');
 p.push('<h2>Investiga (no se contesta copiando de aquí)</h2>');
 p.push(`<p>${esc(INV.aviso)}</p>`);
 p.push('<div class="caja idea">' + INV.preguntas.map((q, i) => `<b>${i + 1}.</b> ${esc(q)}`).join('<br>') + '</div>');
-p.push(`<div class="caja hn"><b>Al preguntar:</b> ${esc(INV.cuidado)}</div>`);
+/* ⚠️ El rótulo es el GLIFO, no una palabra: el campo `cuidado` ya empieza por
+   «Al preguntar», y con el rótulo escrito la hoja decía «Al preguntar: Al
+   preguntar, se pregunta con respeto». La pantalla ya lo hacía así. */
+p.push(`<div class="caja hn"><b>🤲</b> ${esc(INV.cuidado)}</div>`);
 p.push('<h2>Para hacer entre varios</h2>');
 p.push('<div class="caja regla"><b>La mesa de los cambios.</b> Cada uno trae en un papelito un cambio\n      que vio esta semana en su casa. Se ponen en tres montones: 🔵 la forma, 🟠 la materia y ⚪ solo\n      lo que decimos. Los que no cuadren en ninguno se apartan y se les hace la prueba en voz alta.\n      Al final, cada uno escribe en su cuaderno un cambio que se pasó de montón y por qué.</div>');
 pags.push(p);

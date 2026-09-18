@@ -153,12 +153,12 @@ const MUN_IDENTIDAD = [
     cambio: 'Le cambiaron el mango. Años después, la hoja.',
     unos: 'Sigue siendo el de él: nunca dejó de usarse y nunca hubo otro.',
     otros: 'Ya no es el de él: no le queda ni un pedazo del que era.',
-    decide: 'Si lo que hace a una cosa es de qué está hecha, o para qué sirve.' },
+    decide: 'Si lo que hace a una cosa es de qué está hecha. O para qué sirve.' },
   { clave: 'rio', titulo: 'La quebrada del pueblo', emoji: '🏞️',
     cambio: 'El agua de hoy no es la de ayer. Ya bajó toda.',
     unos: 'Es la misma quebrada: nace en el mismo cerro y va al mismo lado.',
     otros: 'No es la misma: de lo que había ayer no queda una gota.',
-    decide: 'Si lo que hace a una cosa es su material, o su forma y su camino.' },
+    decide: 'Si lo que hace a una cosa es su material. O su forma y su camino.' },
   { clave: 'vos', titulo: 'Vos, desde el kínder', emoji: '🧒',
     cambio: 'Casi todo tu cuerpo se ha ido cambiando por dentro.',
     unos: 'Sos el mismo: te acordás de aquello y tenés el mismo nombre.',
@@ -168,7 +168,7 @@ const MUN_IDENTIDAD = [
     cambio: 'Cambiaron las aulas, los maestros y todos los alumnos.',
     unos: 'Es la misma escuela: está en el mismo sitio y hace lo mismo.',
     otros: 'Es otra: no queda nadie de los que estaban.',
-    decide: 'Si lo que hace a una escuela son las personas, o lo que se hace ahí.' }
+    decide: 'Si lo que hace a una escuela son las personas. O lo que se hace ahí.' }
 ];
 
 /* ⚠️ Y esto se dice con estas palabras, porque es la lección de la sección:
@@ -199,12 +199,12 @@ const MUN_PUENTE = [
 
 /* ⚠️ Y el aviso que mantiene honesta la sección: no todas se le pasaron a la
    ciencia. La cuarta pregunta de `MUN_PREGUNTAS` sigue sin forma de medirse. */
-const MUN_PUENTE_OJO = 'Ojo: no todas las preguntas se le pasaron a la ciencia. «¿Por qué hay algo y no más bien nada?» sigue sin aparato que la mida, y sigue siendo una buena pregunta.';
+const MUN_PUENTE_OJO = 'Ojo: no todas las preguntas se le pasaron a la ciencia. «¿Por qué hay algo y no más bien nada?» sigue sin aparato que la mida. Y sigue siendo una buena pregunta.';
 
 /* ── Qué es una cosmovisión, y las tres preguntas que TODA cosmovisión
       contesta. Sin la de ningún pueblo escrita: eso es MUN_INVESTIGA. ── */
 const MUN_COSMOS = {
-  que: 'Una cosmovisión es la forma entera en que un pueblo explica el mundo y su lugar en él.',
+  que: 'Una cosmovisión es la forma entera en que un pueblo explica el mundo. Y explica también su lugar en él.',
   toda: 'Todos tenemos una, aunque nunca la hayamos escrito. Se aprende oyendo en la casa.',
   preguntas: [
     { emoji: '🌄', p: '¿De dónde salió todo esto?' },
@@ -244,7 +244,7 @@ const MUN_PENSADORES = [
     quien: 'Pensó que todo está hecho de piezas chiquitísimas que se repiten.',
     hizo: 'Les puso nombre sin verlas nunca: átomos, «lo que ya no se parte».',
     porque: 'Llegó pensando a una idea que la ciencia después fue a medir.',
-    dato: 'El nombre falló —el átomo sí se parte— y la idea de las piezas acertó.' },
+    dato: 'El nombre falló: el átomo sí se parte. Pero la idea de las piezas acertó.' },
   { clave: 'heraclito', nombre: 'Heráclito', emoji: '🌊', donde: 'Grecia',
     quien: 'Dijo que todo cambia siempre, sin parar, aunque no se note.',
     hizo: 'Puso el ejemplo del río: no te bañás dos veces en el mismo.',
@@ -261,7 +261,7 @@ const MUN_PENSADORES = [
       unidad 1 visto desde aquí. ── */
 const MUN_ARBOL = [
   { clave: 'cnat', materia: 'Ciencias Naturales', emoji: '🌱',
-    le: 'Le dio la pregunta de arranque: de qué está hecho todo y cómo cambia.',
+    le: 'Le dio la pregunta de arranque. De qué está hecho todo y cómo cambia.',
     hoy: 'En tu cuaderno: el bloque de la materia contesta lo que aquí se pregunta.' },
   { clave: 'mat',  materia: 'Matemáticas', emoji: '🔢',
     le: 'Le deja una pregunta incómoda: ¿dónde está el número 7 cuando nadie lo escribe?',

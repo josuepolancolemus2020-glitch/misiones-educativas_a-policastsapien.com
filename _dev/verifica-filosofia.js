@@ -112,6 +112,19 @@ const UNIDADES = [
                    'mu-cosmos', 'mu-investiga', 'mu-arbol', 'mu-pensadores'],
     pensadores: 'MUN_PENSADORES', vocabulario: 'MUN_VOCABULARIO',
   },
+  {
+    n: 4, nombre: '¿Cómo sé que sé?',
+    datos: 'js/data/filosofia-saber.js',
+    ficha: 'fichas/ficha-como-se-que-se.html',
+    dir: 'misiones/basica-como-se-que-se', html: 'como-se-que-se.html',
+    js: 'js/como-se-que-se.js',
+    exporta: 'SAB_EPISTEMOLOGIA,SAB_ESTADOS,SAB_NOSE,SAB_AFIRMACIONES,SAB_FUENTES,' +
+             'SAB_FUENTES_OJO,SAB_ENGANOS,SAB_ENGANOS_OJO,SAB_PASOS,SAB_ESCUELAS,' +
+             'SAB_ESCUELAS_OJO,SAB_INVESTIGA,SAB_VOCABULARIO,SAB_PENSADORES,SAB_ARBOL',
+    contenedores: ['sb-estados', 'sb-fuentes', 'sb-enganos', 'sb-pasos', 'sb-escuelas',
+                   'sb-investiga', 'sb-arbol', 'sb-pensadores'],
+    pensadores: 'SAB_PENSADORES', vocabulario: 'SAB_VOCABULARIO',
+  },
 ];
 
 /* Carga el archivo de datos DE VERDAD, no con expresiones regulares: lo que se
@@ -521,6 +534,143 @@ function revisaMundo(D, ficha, fichaPlana, misionJs) {
   else ok('u3: el Clasifica y el Reto salen los dos del archivo de datos');
 }
 
+/* ══════════════════ unidad 4 · ¿Cómo sé que sé? ══════════════════ */
+function revisaSaber(D, ficha, fichaPlana, misionJs) {
+  let malos = faltanEnPapel(fichaPlana, D.SAB_ESTADOS,
+    [['nombre', e => e.nombre], ['señal', e => e.senal], ['prueba', e => e.prueba]], 'manera');
+  if (!malos) ok(`u4: las ${D.SAB_ESTADOS.length} maneras de estar con una idea están en el papel con su señal y su prueba`);
+
+  /* ⚠️ Cada manera lleva SU EMOJI además del color. La hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde:
+     sin el emoji, clasificar afirmaciones es justo la actividad que él no
+     puede hacer. Es la misma comprobación que el semáforo de la unidad 2 y
+     las clases de cambio de la 3. */
+  const sinEmoji = D.SAB_ESTADOS.filter(e => !ficha.includes(e.emoji));
+  if (sinEmoji.length) mal(`u4: el papel dice ${sinEmoji.length} manera(s) SIN su emoji: ${sinEmoji.map(e => e.nombre).join(' · ')}. Fotocopiado en blanco y negro, eso es una actividad que no se puede hacer`);
+  else ok('u4: las tres maneras llevan su emoji además del color');
+
+  /* ⚠️ «No sé» es una CUARTA que vale igual, y va escrita. Una unidad que solo
+     enseñara las tres primeras fabrica un alumno que tiene que elegir una
+     aunque no le toque ninguna, que es exactamente cómo se aprende a decir
+     «sé» sin haberlo comprobado. */
+  if (!fichaPlana.includes(limpia(D.SAB_NOSE)))
+    mal('u4: el papel no dice que «no sé» vale igual y no es perder');
+  else ok('u4: el papel dice que «no sé» es una respuesta que vale, no una derrota');
+
+  malos = faltanEnPapel(fichaPlana, D.SAB_FUENTES,
+    [['nombre', f => f.nombre], ['para qué sirve', f => f.sirve],
+     ['cuándo falla', f => f.falla], ['cómo se arregla', f => f.arregla]], 'fuente');
+  if (!malos) ok(`u4: las ${D.SAB_FUENTES.length} fuentes están en el papel con lo que hacen bien, lo que les falla y su arreglo`);
+
+  /* ⚠️ Lo que SIRVE va ANTES de lo que FALLA, en el papel y en la pantalla. Una
+     unidad que presente las fuentes por sus fallos fabrica un alumno que
+     desconfía de todo, y eso cuesta lo mismo que creerlo todo: es la misma
+     regla que el mensaje sin señales de los peligros de la IA. */
+  [[fichaPlana, 'el papel'],
+   [limpia(sinHtml(fs.readFileSync(path.join(RAIZ, 'misiones/basica-como-se-que-se/como-se-que-se.html'), 'utf8'))), 'la pantalla']]
+    .forEach(([t, donde]) => {
+      const alReves = D.SAB_FUENTES.filter(f => {
+        const s = t.indexOf(limpia(f.sirve)), x = t.indexOf(limpia(f.falla));
+        return s >= 0 && x >= 0 && x < s;
+      });
+      if (alReves.length) mal(`u4: en ${donde}, ${alReves.length} fuente(s) enseñan su fallo ANTES de para qué sirven: ${alReves.map(f => f.nombre).join(' · ')}`);
+      else ok(`u4: en ${donde}, cada fuente dice primero para qué sirve y después dónde falla`);
+    });
+
+  if (!fichaPlana.includes(limpia(D.SAB_FUENTES_OJO)))
+    mal('u4: la ficha no avisa de que ninguna fuente sobra y ninguna basta sola');
+  else ok('u4: el papel dice que las fuentes se cruzan, en vez de elegir una');
+
+  /* Los cuatro engaños. ⚠️ Cada uno tiene que traer CÓMO SE HACE y CÓMO SE
+     DESARMA: sin lo primero el alumno lo lee en vez de producirlo, y sin lo
+     segundo la unidad le enseña que sus ojos no sirven. */
+  malos = faltanEnPapel(fichaPlana, D.SAB_ENGANOS,
+    [['título', g => g.titulo], ['cómo se hace', g => g.hace], ['qué se ve', g => g.ves],
+     ['qué pasa de verdad', g => g.pasa], ['cómo se desarma', g => g.desarma]], 'engaño');
+  if (!malos) ok(`u4: los ${D.SAB_ENGANOS.length} engaños están en el papel con cómo se hacen y cómo se desarman`);
+
+  if (!fichaPlana.includes(limpia(D.SAB_ENGANOS_OJO)))
+    mal('u4: la ficha no avisa de que un sentido engañado NO quiere decir que no sirva');
+  else ok('u4: el papel dice que los engaños se arreglan, en vez de dejar al alumno desconfiando de sus ojos');
+
+  malos = faltanEnPapel(fichaPlana, D.SAB_PASOS,
+    [['el paso', s => s.paso], ['por qué', s => s.porque]], 'paso');
+  if (!malos) ok(`u4: los ${D.SAB_PASOS.length} pasos de comprobar están en el papel con su por qué`);
+
+  malos = faltanEnPapel(fichaPlana, D.SAB_ESCUELAS,
+    [['nombre', x => x.nombre], ['qué dice', x => x.dice], ['en qué acierta', x => x.acierta],
+     ['dónde se queda corta', x => x.corto]], 'escuela');
+  if (!malos) ok(`u4: las ${D.SAB_ESCUELAS.length} escuelas están en el papel con su acierto Y su límite`);
+
+  /* ⚠️ Y que NO gane ninguna. El CE4.2 pide compararlas con el método
+     comparativo, no elegir: declarar una ganadora sería calificar mal al
+     alumno que argumente la otra. Es la decisión de héroe y prócer. */
+  if (!fichaPlana.includes(limpia(D.SAB_ESCUELAS_OJO)))
+    mal('u4: el papel no dice que no hay que elegir una escuela: la ciencia usa las dos');
+  else ok('u4: el papel deja la discusión de las dos escuelas abierta, sin ganadora');
+
+  /* La pauta de «¿Lo sé, lo creo o es mi opinión?», RECALCULADA de los datos.
+     Es la avería del Escudo marcado en rojo: el ejercicio y la clave salen del
+     mismo sitio, y aquí se comprueba que el papel no se haya separado de él. */
+  const letra = { se: 'S', creo: 'C', opino: 'O' };
+  const clase = {};
+  D.SAB_AFIRMACIONES.forEach(x => { clase[limpia(x.a)] = letra[x.q]; });
+  const bloque = ficha.match(/<div class="pauta">[\s\S]*?\n    <\/div>/);
+  const pauta = bloque && bloque[0].match(/¿Lo sé, lo creo o es mi opinión\?[\s\S]*?<\/div>/);
+  const tabla = ficha.match(/<tr><th style="width:10%">S, C u O<\/th>[\s\S]*?<\/table>/);
+  if (!pauta || !tabla) mal('u4: no se encontró la actividad de «¿Lo sé, lo creo o es mi opinión?» o su pauta');
+  else {
+    const claves = [...pauta[0].matchAll(/(\d+)\.\s*([SCO])\b/g)].map(m => m[2]);
+    const celdas = [...tabla[0].matchAll(/<tr><td><\/td><td>([^<]*)<\/td><\/tr>/g)].map(m => limpia(m[1]));
+    if (celdas.length !== claves.length) mal(`u4: la tabla trae ${celdas.length} afirmaciones y la pauta ${claves.length} claves`);
+    else {
+      let m2 = 0;
+      celdas.forEach((c, i) => {
+        if (!clase[c]) { mal(`u4: la tabla usa una afirmación que no está en el archivo de datos: «${c}»`); m2++; return; }
+        if (claves[i] !== clase[c]) { mal(`u4: la afirmación ${i + 1} («${c}») es ${clase[c]} en los datos y la pauta dice ${claves[i]}`); m2++; }
+      });
+      if (!m2) ok(`u4: las ${celdas.length} afirmaciones de la actividad llevan en la pauta la manera que dicen los datos`);
+    }
+  }
+
+  /* ⚠️ Las 30 afirmaciones van DIEZ POR MANERA. Con un montón más grande que
+     otro, el alumno que reparta al azar saca más de lo que sabe, y esa nota
+     entra en su expediente igual que la del que la resolvió. */
+  const cuenta = {};
+  D.SAB_AFIRMACIONES.forEach(x => { cuenta[x.q] = (cuenta[x.q] || 0) + 1; });
+  const desiguales = Object.values(cuenta);
+  if (new Set(desiguales).size !== 1)
+    mal(`u4: las afirmaciones NO están repartidas por igual entre las maneras: ${JSON.stringify(cuenta)}`);
+  else ok(`u4: las ${D.SAB_AFIRMACIONES.length} afirmaciones van ${desiguales[0]} por manera, así que no se acierta por reparto`);
+
+  const faltanA = D.SAB_ARBOL.filter(a => !fichaPlana.includes(limpia(a.le)) || !fichaPlana.includes(limpia(a.hoy)));
+  if (faltanA.length) mal(`u4: la ficha se dejó lo que esta pregunta le da a: ${faltanA.map(a => a.materia).join(' · ')}`);
+  else ok(`u4: las ${D.SAB_ARBOL.length} materias están en el papel con lo que esta pregunta les deja`);
+
+  /* ⚠️ La epistemología se define IGUAL que en la unidad 1. El alumno abre las
+     dos y no puede leer dos definiciones distintas de lo mismo. No se comparan
+     letra por letra —son dos redacciones—: se busca la tirada de palabras más
+     larga que comparten, como hace la sonda del Himno con una cita. */
+  const c1 = {}; vm.createContext(c1);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js/data/filosofia-asombro.js'), 'utf8') + ';this.__R=FILO_RAMAS;', c1);
+  const raiz = c1.__R.find(r => r.clave === 'epistemologia');
+  const a = limpia(raiz.pregunta + ' ' + raiz.hace).split(/\s+/);
+  const b = limpia(D.SAB_EPISTEMOLOGIA.pregunta + ' ' + D.SAB_EPISTEMOLOGIA.hace).split(/\s+/);
+  let mejor = 0;
+  for (let i = 0; i < a.length; i++) for (let j = 0; j < b.length; j++) {
+    let k = 0; while (i + k < a.length && j + k < b.length && a[i + k] === b[j + k]) k++;
+    if (k > mejor) mejor = k;
+  }
+  if (mejor < 6) mal(`u4: la epistemología se define distinto que en la unidad 1 (solo comparten ${mejor} palabras seguidas): el alumno abre las dos y leería dos cosas`);
+  else ok(`u4: la epistemología dice lo mismo que en la unidad 1 (${mejor} palabras seguidas iguales)`);
+
+  /* Que el Clasifica y el Reto salgan del MISMO sitio: es lo que hace
+     imposible la avería del Escudo marcado en rojo. */
+  if (!/sabDeEstado\(/.test(misionJs))
+    mal('u4: el JS de la misión no saca las afirmaciones de sabDeEstado(): el Clasifica y el Reto podrían contradecirse');
+  else ok('u4: el Clasifica y el Reto salen los dos del archivo de datos');
+}
+
 /* ══════════════════ la pasada ══════════════════ */
 console.log('\n🌳 La Ruta de la Raíz: la pantalla y el papel\n');
 UNIDADES.forEach(u => {
@@ -531,7 +681,8 @@ UNIDADES.forEach(u => {
   const mision = fs.readFileSync(path.join(RAIZ, u.dir, u.html), 'utf8');
   if (u.n === 1) revisaAsombro(D, ficha, fichaPlana);
   else if (u.n === 2) revisaLogica(D, ficha, fichaPlana);
-  else revisaMundo(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
+  else if (u.n === 3) revisaMundo(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
+  else revisaSaber(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
   pensadoresYVocabulario(u, D, fichaPlana);
   nadaDelMaestro(u);
   contenedoresVacios(u, mision);

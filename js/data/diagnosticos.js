@@ -150,7 +150,10 @@ const DIAGNOSTICOS = {
      sostiene, que la regla del «si… entonces» va en un solo sentido, y que
      bien armado NO quiere decir verdadero; en la 3, las tres clases de cambio
      —y sobre todo la frontera de la unidad: que un cambio de nombre no le pasa
-     a la cosa— y qué es una cosmovisión.
+     a la cosa— y qué es una cosmovisión; en la 4, la frontera entre lo que se
+     comprueba y lo que es opinión —en los dos sentidos, porque pedirle pruebas
+     a un gusto cuesta igual que no pedírselas a un rumor— y la fuente que se
+     desgasta al pasar de boca en boca.
      ⚠️ La posición de la correcta se reparte a propósito —es la normativa del
      reparto de respuestas—, así que el orden de las opciones no es el del
      banco de la misión aunque la respuesta buena sea la misma. */
@@ -164,5 +167,8 @@ const DIAGNOSTICOS = {
     { etapa: 3, q: 'La leña se vuelve ceniza. ¿Qué cambió?', o: ['El nombre', 'La materia', 'Solo la forma', 'Nada'], a: 1 },
     { etapa: 3, q: 'A la escuela le cambian el nombre. ¿Qué le pasó al edificio?', o: ['Nada: cambió lo que decimos', 'Cambió de materia', 'Cambió de forma', 'Se hizo otro'], a: 0 },
     { etapa: 3, q: '¿Qué es una cosmovisión?', o: ['Un mapa del cielo', 'Una lista de fechas', 'La forma entera en que un pueblo explica el mundo', 'Un aparato para ver lejos'], a: 2 },
+    { etapa: 4, q: '«En mi grado somos cuarenta y tres» es…', o: ['una opinión', 'una creencia', 'un rumor', 'un saber: se cuenta'], a: 3 },
+    { etapa: 4, q: '¿Cuál de estas NO se puede comprobar?', o: ['La puerta mide más que yo', 'El azul es el color más bonito', 'El agua está fría', 'Somos cuarenta y tres'], a: 1 },
+    { etapa: 4, q: 'La fuente que cambia cuanto más lejos está de quien lo vio es…', o: ['lo que otro cuenta', 'la medida', 'el razonamiento', 'los sentidos'], a: 0 },
   ],
 };

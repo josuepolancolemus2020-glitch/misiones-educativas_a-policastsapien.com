@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión ¿Cómo sé que sé?</title>
+<meta name="robots" content="noindex">
+<style>
+
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: FILOSOFÍA = CIRUELA (#784a6d). No se
+       eligió a ojo: se midió la distancia de color contra las diez materias
+       que ya existían (ΔE 43,1 contra la más cercana). El porqué está en
+       CURRICULA-FILOSOFIA.md.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · ⚠️ Esta ficha NO lleva NADA para el maestro: ni la rutina de la clase, ni
+       la ruta por ciclo, ni notas de cómo darla. Lo pidió el autor y la sonda
+       lo comprueba. Lo único que se queda en hoja suelta al final es la PAUTA,
+       que es la clave de corrección de los ejercicios de estas mismas hojas.
+     · ⚠️ Aquí NO hay ni una fecha, y no es un olvido: está contado en la
+       cabecera de js/data/filosofia-saber.js.
+     · ⚠️ ESTA FICHA NO SE EDITA A MANO: sale de _dev/arma-ficha-saber.js. */
+  :root {
+    --fil: #784a6d; --fil-osc: #5f3a57; --fil-claro: #f7eff5;
+    --verde: #1d4538; --verde-claro: #eef5f1;
+    --tinta: #241b22; --gris: #6b5f67; --linea: #e3d2dd;
+    --oro: #b45309;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f6f1f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--fil-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--fil); background: var(--fil-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--fil-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--fil-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--fil); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--fil-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--fil-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--fil-osc); }
+  .hn { background: var(--verde-claro); border: 1px solid #cfe2d8; }
+  .hn b { color: var(--verde); }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--fil); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf6f9; }
+  td.k { font-weight: 700; color: var(--fil-osc); white-space: nowrap; }
+
+  .acts h3 { border-bottom: 2px solid var(--fil-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--fil); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #a99aa4; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--fil); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--fil-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .pauta { background: #fbf4f8; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--fil-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  /* ═══ LAS TRES MANERAS DE ESTAR CON UNA IDEA ═══
+     ⚠️ Cada manera lleva SU EMOJI además del color. Esta hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde:
+     sin el emoji, clasificar afirmaciones sería justo la actividad que él no
+     puede hacer. */
+  .sb-est { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .sb-est.c-creo { border-left-color: #b45309; }
+  .sb-est.c-opino { border-left-color: #6b6b6b; }
+  .sb-est.c-se { border-left-color: var(--verde); }
+  .sb-est b { font-size: 11.5pt; color: var(--fil-osc); }
+  .sb-est .et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+                border-radius: 999px; padding: 1px 7px; background: var(--fil-claro); color: var(--fil-osc); }
+  .sb-est p.s { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .sb-est p.p { font-size: 10pt; background: var(--verde-claro); border-radius: 6px;
+                padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ LAS CINCO FUENTES ═══
+     Lo que SIRVE va antes de lo que FALLA, y en la misma tarjeta: lo que
+     enseña la fuente es que sirve Y falla, no que sea de fiar o no. */
+  .sb-fte { border: 1.5px solid var(--linea); border-radius: 8px; padding: 6px 12px; margin: 6px 0;
+            break-inside: avoid; }
+  .sb-fte .t { font-size: 11pt; font-weight: 800; color: var(--fil-osc); }
+  .sb-fte ul { margin: 2px 0 2px 22px; font-size: 10.5pt; }
+  .sb-fte p.c { font-size: 10.5pt; font-weight: 700; border-top: 1.5px solid var(--fil);
+                padding-top: 3px; margin: 3px 0 0; }
+
+  /* ═══ LOS CUATRO ENGAÑOS ═══
+     «Se ve» va destacado porque es lo que el alumno va a comprobar con sus
+     manos antes de leer la explicación. */
+  .sb-eng { border: 1.5px solid var(--linea); border-left: 5px solid var(--verde); border-radius: 8px;
+            padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .sb-eng b { font-size: 11pt; color: var(--fil-osc); }
+  .sb-eng p { font-size: 10pt; margin: 2px 0; }
+  .sb-eng p.v { background: var(--fil-claro); border-radius: 6px; padding: 3px 8px; font-weight: 700; }
+  .sb-eng p.d { background: var(--verde-claro); border-radius: 6px; padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ LOS CINCO PASOS ═══ */
+  .sb-paso { border: 1px solid var(--linea); border-radius: 7px; padding: 5px 10px; margin: 5px 0;
+             break-inside: avoid; }
+  .sb-paso b { font-size: 10.5pt; color: var(--fil-osc); }
+  .sb-paso .n { display: inline-block; min-width: 17px; text-align: center; border-radius: 999px;
+                background: var(--fil); color: #fff; font-size: 9pt; margin-right: 4px; }
+  .sb-paso p { font-size: 10pt; color: var(--gris); margin: 1px 0 0; }
+
+  /* ═══ LAS DOS ESCUELAS ═══
+     Van una al lado de la otra a propósito: lo que se compara es que las dos
+     aciertan en algo y a las dos les falta algo. */
+  .sb-esc { display: flex; gap: 6px; margin: 6px 0; break-inside: avoid; flex-wrap: wrap; }
+  .sb-esc > div { flex: 1 1 45%; border: 1px solid var(--linea); border-top: 4px solid var(--fil);
+                  border-radius: 0 0 7px 7px; padding: 5px 9px; font-size: 10pt; background: #fdfafc; }
+  .sb-esc b { display: block; font-size: 10.5pt; color: var(--fil-osc); }
+  .sb-esc p { margin: 2px 0; }
+  .sb-esc p.a { background: var(--verde-claro); border-radius: 6px; padding: 2px 7px; }
+  /* ⚠️ «Se queda corta» NO va en gris claro, y no es estética: es la mitad
+     honesta de la lección —que a las dos escuelas les falta algo— y esta hoja se
+     fotocopia. En gris era lo más tenue de la página y en la fotocopia se pierde.
+     Lleva el mismo trato que el «Falla aquí» de las fuentes. */
+  .sb-esc p.k { background: #fdeaea; border-radius: 6px; padding: 2px 7px; }
+
+  .sb-pens { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+             padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .sb-pens b { font-size: 11.5pt; color: var(--fil-osc); }
+  .sb-pens p.w { font-size: 9pt; color: var(--gris); font-style: italic; margin: 0; }
+  .sb-pens p.p { font-size: 10.5pt; margin: 3px 0; }
+  .sb-pens p.dato { font-size: 9.5pt; color: var(--gris); margin: 0; }
+
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión ¿Cómo sé que sé?</div>
+        <div class="f-meta"><b>Asignatura:</b> Filosofía &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, I, II y III Ciclo</div>
+        <div class="f-meta"><b>Tema:</b> Las tres maneras de estar con una idea: creer, opinar y saber. Las cinco fuentes de lo que sabemos, con su fallo y su arreglo.</div>
+        <div class="f-meta"><b>Además:</b> cuatro engaños para repetir en casa, los cinco pasos para comprobar algo y las dos escuelas que discutieron de dónde sale el saber.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-como-se-que-se.png" alt="Código QR de la misión ¿Cómo sé que sé?">
+        <span>Apunta con el teléfono para abrir la misión</span>
+      </div>
+    </div>
+
+    <h2>¿Por qué esta ficha?</h2>
+
+    <p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva
+       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>
+
+    <div class="caja idea"><b>Lo que hay que sacar de aquí:</b> «lo sé», «lo creo» y «es mi
+      opinión» no son lo mismo, aunque se digan con el mismo tono. Decir cuál de las tres es, y con
+      qué se sostiene, es la destreza de esta unidad. No pregunta si algo es verdad. Pregunta con qué lo sostenés.</div>
+
+    <h3>Objetivos</h3>
+
+    <ol class="objetivos">
+      <li>Decir si una afirmación se sabe, se cree o es una opinión, y con qué prueba se distingue.</li>
+      <li>Nombrar las cinco fuentes de lo que sabemos, con lo que cada una hace bien y lo que le falla.</li>
+      <li>Repetir un engaño de los sentidos y explicar qué pasó de verdad.</li>
+      <li>Aplicar los cinco pasos para comprobar una afirmación propia.</li>
+      <li>Comparar el racionalismo y el empirismo, y decir en qué acierta cada uno.</li>
+    </ol>
+
+    <h2>Le pasó a alguien</h2>
+
+    <p>En el recreo alguien le dijo a Yeimy que el examen de Matemáticas se había pasado
+       <b>para el jueves</b>. Esa noche no estudió. El martes el examen estaba ahí. <b>Sacó 40</b>.
+       Con esa nota se quedó fuera del cuadro de honor.</p>
+
+    <div class="caja regla"><b>Nadie le mintió a propósito.</b> Se lo dijeron de oídas, y bastaba
+      una pregunta: <b>¿y vos cómo lo sabés?</b> El maestro estaba a diez pasos.</div>
+
+    <h2>Tres maneras de estar con una idea</h2>
+
+    <p>Separa creer, opinar y saber. Se llama <b>Epistemología</b>, y pregunta: ¿Cómo sé que sé?</p>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <p>Cada manera tiene su prueba. La prueba es una pregunta: se la haces a la idea y ella te
+       contesta cuál de las tres es.</p>
+
+    <div class="sb-est c-creo"><b>🤔 Lo creo</b> <span class="et">Todavía no lo comprobé</span><p class="s">Lo doy por cierto, pero no puedo decir cómo lo sé.</p><p class="p"><b>La prueba:</b> Preguntate: ¿puedo decir CÓMO lo sé?</p></div>
+
+    <div class="sb-est c-opino"><b>💬 Es mi opinión</b> <span class="et">Otro puede pensar distinto</span><p class="s">Es un gusto o un juicio mío. Otro puede pensar lo contrario sin equivocarse.</p><p class="p"><b>La prueba:</b> Preguntate: ¿puede otro pensar lo contrario sin estar equivocado?</p></div>
+
+    <div class="sb-est c-se"><b>✅ Lo sé</b> <span class="et">Es así y lo puedo comprobar</span><p class="s">Es así, y además puedo decir con qué se comprueba.</p><p class="p"><b>La prueba:</b> Preguntate: ¿es así Y puedo decir con qué se comprueba?</p></div>
+
+    <div class="caja truco"><b>Y una cuarta:</b> Y hay una cuarta, que vale igual: «no sé». No es perder. El que dice «no sé» puede ir a averiguarlo. El que dice «sé» sin comprobarlo se queda con lo que le contaron.</div>
+
+    <h2>De dónde sale lo que sabemos</h2>
+
+    <p>Todo lo que sabés entró por algún lado. Son cinco puertas. Ninguna es mala, y ninguna
+       basta sola: cada una hace algo bien y cada una falla en algo.</p>
+
+    <div class="sb-fte"><div class="t">👀 Los sentidos</div><ul><li><b>Sirve para:</b> Casi todo lo que sabés entró por aquí: mirando, tocando, oyendo, probando.</li><li><b>Falla cuando:</b> A veces ven lo que no es. El lápiz dentro del vaso de agua se ve quebrado.</li></ul><p class="c">🛠 Se arregla con otro sentido o con una medida. Meté la mano y tocá el lápiz.</p></div>
+
+    <div class="sb-fte"><div class="t">🧠 La memoria</div><ul><li><b>Sirve para:</b> Guarda lo que ya viste. Así no hay que comprobar todo otra vez cada día.</li><li><b>Falla cuando:</b> Se acomoda sola. Dos personas que estuvieron en lo mismo lo cuentan distinto.</li></ul><p class="c">🛠 Se arregla escribiéndolo el mismo día, y preguntándole a otro que estuvo.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="sb-fte"><div class="t">🗣️ Lo que otro cuenta</div><ul><li><b>Sirve para:</b> Es la fuente más grande que hay. Nadie puede ver todo por su cuenta.</li><li><b>Falla cuando:</b> Cuanto más lejos está de quien lo vio, más cambia por el camino.</li></ul><p class="c">🛠 Se arregla preguntando cómo lo sabe, y buscando a quien lo vio.</p></div>
+
+    <div class="sb-fte"><div class="t">🧮 El razonamiento</div><ul><li><b>Sirve para:</b> Saca cosas nuevas de las que ya sabés, sin salir a mirar.</li><li><b>Falla cuando:</b> Si lo de arriba era falso, lo que sale también sale falso.</li></ul><p class="c">🛠 Se arregla mirando de dónde parte, que es la unidad 2 de esta ruta.</p></div>
+
+    <div class="sb-fte"><div class="t">📏 La medida</div><ul><li><b>Sirve para:</b> Deja que dos personas que no se ponen de acuerdo miren lo mismo.</li><li><b>Falla cuando:</b> Si el instrumento está malo, todos miden mal y nadie lo nota.</li></ul><p class="c">🛠 Se arregla midiendo otra vez, con otra cinta y con otra persona.</p></div>
+
+    <div class="caja idea"><b>Ojo:</b> Ninguna de las cinco sobra. Y ninguna basta sola. Lo que se hace es cruzarlas. Lo que se ve, con lo que se mide. Lo que a uno le contaron, con quien lo vio.</div>
+
+    <h2>Cuatro engaños que podés repetir en tu casa</h2>
+
+    <p>No son trucos de magia: se hacen con lo que hay en una cocina. Hacelo, mirá lo que se ve
+       y después leé lo que pasó de verdad.</p>
+
+    <div class="sb-eng"><b>✏️ El lápiz quebrado</b><p class="h"><b>Hacelo:</b> Meté medio lápiz en un vaso con agua y miralo de lado.</p><p class="v"><b>Se ve:</b> quebrado justo donde empieza el agua.</p><p class="h"><b>Lo que pasa:</b> El lápiz está entero. Lo que cambia es cómo viaja la luz al salir del agua.</p><p class="d"><b>Se desarma:</b> Meté la mano y tocalo: el tacto no se equivoca ahí.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="sb-eng"><b>🤲 Las dos manos y el agua</b><p class="h"><b>Hacelo:</b> Una mano en agua fría y otra en agua caliente, un rato. Después las dos al agua tibia.</p><p class="v"><b>Se ve:</b> La misma agua tibia se siente caliente en una mano. Y fría en la otra.</p><p class="h"><b>Lo que pasa:</b> La piel no mide grados: compara con lo que tenía antes.</p><p class="d"><b>Se desarma:</b> con un termómetro, que da el mismo número para las dos.</p></div>
+
+    <div class="sb-eng"><b>🪙 La moneda que aparece</b><p class="h"><b>Hacelo:</b> Poné una moneda en el fondo de una taza. Alejate hasta que el borde te la tape.</p><p class="v"><b>Se ve:</b> Sin moverte, alguien echa agua despacio y la moneda aparece.</p><p class="h"><b>Lo que pasa:</b> La moneda no se movió. La luz se dobla al salir del agua y te llega.</p><p class="d"><b>Se desarma:</b> mirando desde arriba: desde ahí siempre estuvo.</p></div>
+
+    <div class="sb-eng"><b>🎨 El mismo color</b><p class="h"><b>Hacelo:</b> Pintá dos cuadritos iguales: uno rodeado de blanco y otro de negro.</p><p class="v"><b>Se ve:</b> El de fondo negro se ve más claro. Y los dos salieron del mismo lápiz.</p><p class="h"><b>Lo que pasa:</b> El ojo compara con lo que tiene al lado, no mide.</p><p class="d"><b>Se desarma:</b> tapando los fondos con un papel: quedan iguales.</p></div>
+
+    <div class="caja truco">Ojo: que el ojo se equivoque aquí no quiere decir que no sirva. En los cuatro casos hay arreglo. Otro sentido o una medida lo resuelve en un minuto.</div>
+
+    <h2>Cinco pasos para comprobar algo</h2>
+
+    <p>Sirven para cualquier cosa que alguien te diga. El quinto es el que más cuesta.</p>
+
+    <div class="sb-paso"><b><span class="n">1</span> Decí exactamente qué se afirma.</b><p>«Ese abono es mejor» no se comprueba. «Ese abono da más mazorcas por planta» sí.</p></div>
+
+    <div class="sb-paso"><b><span class="n">2</span> Preguntá cómo lo sabe quien lo dice.</b><p>Si lo vio, si lo midió, o si se lo contaron. Las tres valen distinto.</p></div>
+
+    <div class="sb-paso"><b><span class="n">3</span> Mirá si se puede ver, contar o medir.</b><p>Lo que se cuenta o se mide lo puede revisar cualquiera. Ahí se acaba la discusión.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="sb-paso"><b><span class="n">4</span> Buscá a quien diga lo contrario.</b><p>Si solo buscás lo que te da la razón, siempre vas a encontrarlo.</p></div>
+
+    <div class="sb-paso"><b><span class="n">5</span> Decí qué te haría cambiar de idea.</b><p>Si no hay nada que te haga cambiar, no estabas sabiendo. Estabas defendiendo.</p></div>
+
+    <h2>Dos escuelas que discutieron de dónde sale el saber</h2>
+
+    <p>Las dos tienen razón en algo y a las dos les falta algo. Mira en qué acierta cada una y
+       en qué se queda corta.</p>
+
+    <div class="sb-esc"><div><b>🧮 Racionalismo</b><p class="d">Lo más seguro que sabemos lo saca la razón, pensando con orden.</p><p class="a"><b>Acierta:</b> Que 2 + 2 son 4 no hace falta salir a comprobarlo en el patio.</p><p class="k"><b>Se queda corta:</b> Pensando solo no averiguás cuántos alumnos hay hoy en tu aula.</p></div><div><b>👀 Empirismo</b><p class="d">Todo lo que sabemos entró alguna vez por los sentidos.</p><p class="a"><b>Acierta:</b> De qué color es el techo de tu escuela no se deduce. Hay que mirarlo.</p><p class="k"><b>Se queda corta:</b> Mirando solo no sacás que dos rectas paralelas no se juntan nunca.</p></div></div>
+
+    <div class="caja idea"><b>Ojo:</b> No hay que elegir una. La ciencia que ves en tu cuaderno usa las dos. Mide con los sentidos. Y saca cuentas con la razón. La discusión sigue abierta, como la de la unidad anterior.</div>
+
+    <h2>Palabras de la unidad</h2>
+
+    <table><tr><th style="width:22%">Palabra</th><th>Qué quiere decir</th></tr><tr><td class="k">saber</td><td>Que algo sea así y que además puedas decir con qué se comprueba.</td></tr><tr><td class="k">creer</td><td>Dar algo por cierto sin haberlo comprobado todavía.</td></tr><tr><td class="k">opinión</td><td>Un juicio tuyo, donde otro puede pensar lo contrario sin equivocarse.</td></tr><tr><td class="k">fuente</td><td>De dónde salió lo que decís. Quien lo vio, quien lo midió o quien lo contó.</td></tr><tr><td class="k">hipótesis</td><td>Una respuesta que se propone ANTES de comprobarla, para poder comprobarla.</td></tr><tr><td class="k">comprobar</td><td>Hacer algo que daría un resultado distinto si la afirmación fuera falsa.</td></tr></table>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Dos que discutieron esto primero</h2>
+
+    <p>Uno empezó dudando de todo; el otro dijo que la mente arranca vacía. Aquí <b>no hay ni una
+       fecha</b>, y no es un olvido: una fecha que no se puede acreditar no se escribe.</p>
+
+    <div class="sb-pens"><b>🧮 René Descartes</b><p class="w">Francia</p><p class="p">Decidió dudar de todo lo que pudiera dudarse. Quería ver qué quedaba en pie.</p><p class="p"><b>Qué hizo:</b> Encontró una cosa de la que no podía dudar. Mientras dudaba, estaba pensando.</p><p class="p"><b>Por qué se le recuerda:</b> Enseñó a empezar por lo seguro. Desde ahí se construye, en vez de dar cosas por dadas.</p><p class="dato"><b>Dato:</b> De él viene el racionalismo: primero la razón, y con orden.</p></div>
+
+    <div class="sb-pens"><b>👀 John Locke</b><p class="w">Inglaterra</p><p class="p">Dijo que la mente empieza vacía. Todo lo que hay dentro entró por los sentidos.</p><p class="p"><b>Qué hizo:</b> Puso la experiencia en el centro. Sin mirar, oír y tocar no habría nada que pensar.</p><p class="p"><b>Por qué se le recuerda:</b> Enseña que una idea que nunca tocó el mundo no se puede comprobar.</p><p class="dato"><b>Dato:</b> De él viene el empirismo, la otra escuela que esta unidad compara.</p></div>
+
+    <h2>Qué le da esta pregunta a cada materia</h2>
+
+    <table><tr><th style="width:25%">Materia</th><th>Qué le deja</th></tr><tr><td class="k">🌱 Ciencias Naturales</td><td>Le dio el método: una hipótesis solo vale si hay forma de comprobarla.<br><b>Pruébalo hoy:</b> En tu cuaderno: escribí qué esperabas ANTES del experimento, no después.</td></tr><tr><td class="k">🌎 Ciencias Sociales</td><td>Le dio la pregunta por la fuente. Quién lo contó, cuándo y desde dónde.<br><b>Pruébalo hoy:</b> Buscá dos versiones de un mismo hecho y mirá en qué se separan.</td></tr><tr><td class="k">✍️ Español</td><td>Le dio una costumbre. Decir de dónde salió cada dato que se escribe.<br><b>Pruébalo hoy:</b> Anotá de dónde sacaste cada dato. Hacelo en tu próximo trabajo.</td></tr></table>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Actividades</h2>
+
+    <div class="acts"><h3>1. ¿Lo sé, lo creo o es mi opinión? <span class="val">12 pts</span></h3>
+
+    <p>Escribe <b>S</b> si se sabe y se puede comprobar, <b>C</b> si solo se cree, y <b>O</b> si
+       es una opinión.</p>
+
+    <table><tr><th style="width:10%">S, C u O</th><th>La afirmación</th></tr><tr><td></td><td>Es más divertido jugar que leer</td></tr><tr><td></td><td>Esta canción es fea</td></tr><tr><td></td><td>El examen se pasó para el jueves</td></tr><tr><td></td><td>Las baleadas son mejores que los tamales</td></tr><tr><td></td><td>La puerta del aula mide más que yo</td></tr><tr><td></td><td>El azul es el color más bonito</td></tr><tr><td></td><td>Mañana va a llover</td></tr><tr><td></td><td>La pila tiene agua hasta la mitad</td></tr><tr><td></td><td>Esta piedra pesa más que aquella</td></tr><tr><td></td><td>Esa semilla rinde más que la otra</td></tr><tr><td></td><td>A ese río nunca se le seca el agua</td></tr><tr><td></td><td>En mi cuaderno caben treinta renglones</td></tr></table>
+
+    </div>
+
+    <div class="acts"><h3>2. La prueba de cada manera <span class="val">6 pts</span></h3>
+
+    <p>Une cada prueba con su manera. Escribe la letra en el paréntesis.</p>
+
+    <table><tr><th style="width:8%">( )</th><th>La pregunta que se le hace a la idea</th><th style="width:30%">La manera</th></tr><tr><td></td><td>Preguntate: ¿es así Y puedo decir con qué se comprueba?</td><td><b>a)</b> 🤔 Lo creo</td></tr><tr><td></td><td>Preguntate: ¿puedo decir CÓMO lo sé?</td><td><b>b)</b> 💬 Es mi opinión</td></tr><tr><td></td><td>Preguntate: ¿puede otro pensar lo contrario sin estar equivocado?</td><td><b>c)</b> ✅ Lo sé</td></tr></table>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts"><h3>3. Comprueba una tuya <span class="val">10 pts</span></h3>
+
+    <p>Escribe algo que «sabés» porque alguien te lo contó. Después pásale los cinco pasos.</p>
+
+    <div class="caja regla"><b>Lo que alguien me contó:</b>
+      <span class="linea-resp" style="min-width:300px"></span></div>
+
+    <table><tr><th style="width:42%">El paso</th><th>Qué me sale a mí</th></tr><tr><td class="k">1. Decí exactamente qué se afirma.</td><td></td></tr><tr><td class="k">2. Preguntá cómo lo sabe quien lo dice.</td><td></td></tr><tr><td class="k">3. Mirá si se puede ver, contar o medir.</td><td></td></tr><tr><td class="k">4. Buscá a quien diga lo contrario.</td><td></td></tr><tr><td class="k">5. Decí qué te haría cambiar de idea.</td><td></td></tr></table>
+
+    </div>
+
+    <div class="acts"><h3>4. Rellena el círculo de la letra correcta <span class="val">6 pts</span></h3>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span><span>«Dicen que mañana no hay clases» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> algo que creo</span><span class="op"><i></i><b>b)</b> un saber</span><span class="op"><i></i><b>c)</b> una opinión</span><span class="op"><i></i><b>d)</b> una medida</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span><span>«Los tamales de doña Nely son los mejores» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> un saber</span><span class="op"><i></i><b>b)</b> una creencia</span><span class="op"><i></i><b>c)</b> una opinión</span><span class="op"><i></i><b>d)</b> un rumor</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span>¿Qué se le pregunta a una creencia para pasarla a saber?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> ¿A quién le gusta?</span><span class="op"><i></i><b>b)</b> ¿Cómo lo sé y con qué lo compruebo?</span><span class="op"><i></i><b>c)</b> ¿Cuántos lo dicen?</span><span class="op"><i></i><b>d)</b> ¿Suena bien?</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span>La misma agua tibia se siente distinta en cada mano porque…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> el agua cambia</span><span class="op"><i></i><b>b)</b> una mano está sucia</span><span class="op"><i></i><b>c)</b> el agua se mueve</span><span class="op"><i></i><b>d)</b> la piel compara, no mide grados</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span>La fuente que más cambia al pasar de boca en boca es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> lo que otro cuenta</span><span class="op"><i></i><b>b)</b> la medida</span><span class="op"><i></i><b>c)</b> el razonamiento</span><span class="op"><i></i><b>d)</b> la vista</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>Decir «no sé» es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> perder la discusión</span><span class="op"><i></i><b>b)</b> el punto de partida para averiguarlo</span><span class="op"><i></i><b>c)</b> lo mismo que opinar</span><span class="op"><i></i><b>d)</b> una falta</span></div></div>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts"><h3>5. Cada fuente y su arreglo <span class="val">10 pts</span></h3>
+
+    <p>Completa cuándo falla cada fuente y cómo se arregla. La primera columna ya está.</p>
+
+    <table><tr><th style="width:26%">La fuente</th><th>Falla cuando…</th><th>Se arregla…</th></tr><tr><td class="k">👀 Los sentidos</td><td></td><td></td></tr><tr><td class="k">🧠 La memoria</td><td></td><td></td></tr><tr><td class="k">🗣️ Lo que otro cuenta</td><td></td><td></td></tr><tr><td class="k">🧮 El razonamiento</td><td></td><td></td></tr><tr><td class="k">📏 La medida</td><td></td><td></td></tr></table>
+
+    </div>
+
+    <h2>Investiga (no se contesta copiando de aquí)</h2>
+
+    <p>Aquí no hay respuestas escritas, y no es un descuido. Estas se averiguan donde vivís, porque es ahí donde están.</p>
+
+    <div class="caja idea"><b>1.</b> Preguntale a dos personas que estuvieron en lo mismo qué pasó. Puede ser una fiesta o un partido. Escribí las dos versiones. Marcá en qué NO coinciden.<br><b>2.</b> ¿Cuántos alumnos hay hoy en tu escuela? Averiguá quién lleva ese dato y cómo lo cuenta.<br><b>3.</b> Buscá una cosa que «todo el mundo sabe» en tu comunidad. Preguntá a tres personas cómo lo saben. Anotá las tres respuestas.<br><b>4.</b> Medí con una cinta algo que creías conocer de memoria. Tu estatura, o la puerta de tu casa. Escribí lo que creías. Y escribí lo que salió.</div>
+
+    <div class="caja hn"><b>🤲</b> Al preguntar, se pregunta con respeto. Y se anota quién lo contó y qué día.</div>
+
+    <h2>Para hacer entre varios</h2>
+
+    <div class="caja regla"><b>La gaveta del maestro.</b> Cada uno trae en un papelito algo que
+      «todo el mundo sabe» en la escuela. Se leen en voz alta y a cada uno se le hace una sola
+      pregunta: <b>¿quién lo vio o lo midió?</b> Los que tengan respuesta se ponen en un montón; los
+      que no, en otro. Al final se elige uno del segundo montón y se decide entre todos cómo
+      comprobarlo esta semana.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Pauta de corrección · NO se fotocopia</h2>
+
+    <div class="pauta">
+
+    <div><span class="pt">1. ¿Lo sé, lo creo o es mi opinión? (12 pts)</span> 1. O · 2. O · 3. C · 4. O · 5. S · 6. O · 7. C · 8. S · 9. S · 10. C · 11. C · 12. S</div>
+
+    <div><span class="pt">2. La prueba de cada manera (6 pts)</span> 1 → c (Lo sé) · 2 → a (Lo creo) · 3 → b (Es mi opinión). Las pruebas NO salen en el orden de las maneras: hay que leerlas.</div>
+
+    <div><span class="pt">3. Comprueba una tuya (10 pts)</span> ⚠️ <b>No tiene una sola respuesta buena, a propósito.</b> Se califica que lo escrito en el paso 1 se pueda comprobar —«ese abono es mejor» no vale, «da más mazorcas por planta» sí—, que el paso 2 diga quién lo cuenta, y que el paso 5 nombre algo concreto que le haría cambiar de idea. Un «nada» en el 5 no se califica mal: se le pregunta entonces si estaba sabiendo o defendiendo.</div>
+
+    <div><span class="pt">4. Selección múltiple (6 pts)</span> 1. a · 2. c · 3. b · 4. d · 5. a · 6. b</div>
+
+    <div><span class="pt">5. Cada fuente y su arreglo (10 pts)</span> <b>Los sentidos</b> Falla: A veces ven lo que no es. El lápiz dentro del vaso de agua se ve quebrado. Se arregla: con otro sentido o con una medida. Meté la mano y tocá el lápiz. · <b>La memoria</b> Falla: Se acomoda sola. Dos personas que estuvieron en lo mismo lo cuentan distinto. Se arregla: escribiéndolo el mismo día, y preguntándole a otro que estuvo. · <b>Lo que otro cuenta</b> Falla: Cuanto más lejos está de quien lo vio, más cambia por el camino. Se arregla: preguntando cómo lo sabe, y buscando a quien lo vio. · <b>El razonamiento</b> Falla: Si lo de arriba era falso, lo que sale también sale falso. Se arregla: mirando de dónde parte, que es la unidad 2 de esta ruta. · <b>La medida</b> Falla: Si el instrumento está malo, todos miden mal y nadie lo nota. Se arregla: midiendo otra vez, con otra cinta y con otra persona.</div>
+
+    <div><span class="pt">Investiga</span> ⚠️ <b>No trae respuestas, a propósito.</b> Las cuatro se contestan donde vive el alumno y no en esta hoja. Se califica que diga DE DÓNDE sacó cada cosa, a quién se lo preguntó y qué día; en la primera, que estén las DOS versiones y marcado en qué no coinciden.</div>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 4 · <b>¿Cómo sé que sé?</b></span><span>Página 10</span></div>
+</section>
+
+</div>
+</body>
+</html>

@@ -30,6 +30,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const RAIZ = path.join(__dirname, '..');
 
 const IA = [
@@ -49,6 +50,7 @@ const FILO = [
   { dir: 'misiones/basica-el-asombro', html: 'el-asombro.html', ficha: 'fichas/ficha-el-asombro.html', datos: ['js/data/filosofia-asombro.js'] },
   { dir: 'misiones/basica-pensar-con-orden', html: 'pensar-con-orden.html', ficha: 'fichas/ficha-pensar-con-orden.html', datos: ['js/data/filosofia-logica.js'] },
   { dir: 'misiones/basica-de-que-esta-hecho-el-mundo', html: 'de-que-esta-hecho-el-mundo.html', ficha: 'fichas/ficha-de-que-esta-hecho-el-mundo.html', datos: ['js/data/filosofia-mundo.js'] },
+  { dir: 'misiones/basica-como-se-que-se', html: 'como-se-que-se.html', ficha: 'fichas/ficha-como-se-que-se.html', datos: ['js/data/filosofia-saber.js'] },
 ];
 
 /* Misiones escritas para primaria, que son la vara. */
@@ -151,7 +153,22 @@ function cadenasJs(src) {
   return out;
 }
 function cadenasDatos(rel) {
-  const mod = require(path.join(RAIZ, rel));
+  /* ⚠️ Un `require` NO alcanza, y el aviso era que no había aviso: los cuatro
+     archivos de la Ruta de la Raíz son de navegador, con `const` pelados y sin
+     `module.exports`, así que `require` devolvía `{}` y esta herramienta medía
+     la misión SIN el archivo que la pinta —callada, y diciendo en su lista que
+     sí lo leía—. Los de la ruta de IA sí exportan porque corren en Node. Si no
+     exporta, se carga con `vm` y se recogen sus constantes, que es lo que hacen
+     las demás sondas de este repositorio. */
+  const abs = path.join(RAIZ, rel);
+  let mod = require(abs);
+  if (!Object.keys(mod).length) {
+    const src = fs.readFileSync(abs, 'utf8');
+    const nom = [...src.matchAll(/^const\s+([A-Za-z_$][\w$]*)\s*=/gm)].map(m => m[1]);
+    const ctx = {}; vm.createContext(ctx);
+    vm.runInContext(src + ';this.__D={' + nom.join(',') + '};', ctx);
+    mod = ctx.__D;
+  }
   const out = [];
   const anda = v => {
     if (typeof v === 'string') { if (v.length >= 20) out.push(limpiaHtml(v)); }
