@@ -232,7 +232,7 @@
 
       labh2: '🔬 Simulator: program your robot',
 
-      labintro: 'Choose a level, build the program by tapping the buttons (include the <strong>sensor blocks</strong> 🧱⬛ so the robot DECIDES on its own!) and press <strong>▶ Run</strong>. You will see how it reads each sensor (✔ yes / ✘ no) step by step. ⭐ +5 XP for each level you solve (first time).',
+      labintro: 'Choose a level, build the program by tapping the buttons (include the <strong>sensor blocks</strong> 🧱⬛ so the robot DECIDES on its own!) and press <strong>▶ Run</strong>. You will see how it reads each sensor (✔ yes / ✘ no) step by step.',
 
       labniv:
         '<span class="lab-group-label">🗺️ Level:</span>' +

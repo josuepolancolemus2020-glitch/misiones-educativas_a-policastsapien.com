@@ -122,7 +122,6 @@
     <h2>📜 La línea del tiempo, hito por hito</h2>
     <p style="font-size:0.92rem;">Toca cualquiera para abrirlo: <strong>qué pasó</strong>,
        <strong>por qué importa</strong> y <strong>qué documento lo acredita</strong>.</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada hito y cada edad que abras</p>
     <div class="ent-cultivos" id="ia-filtros" role="group" aria-label="Filtrar por edad"></div>
     <div id="fbLinea" class="fb" role="alert" style="margin:0.6rem 0;"></div>
     <div id="ia-linea"></div>
@@ -159,7 +158,6 @@
     <h2>🗓️ ¿Cuánto tardó?</h2>
     <p style="font-size:0.92rem;">Entre la idea y el día en que funciona pasa <strong>media vida</strong>.
        Adivina cuántos años separan los dos hitos.</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por par · +3 XP si fallas por cinco años o menos</p>
     <div class="tiempo-caja" id="tiempo-caja"></div>
     <div id="fbTiempo" class="fb" role="alert"></div>
     <div class="tip" style="margin-top:0.9rem;">
@@ -173,7 +171,6 @@
     <h2>✍️ El hito de este año</h2>
     <p style="font-size:0.92rem;"><strong>Escribe tú el hito de este año</strong>, con las mismas piezas
        que llevan los de arriba. La última es la que más cuesta.</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por un hito con su fuente</p>
     <div class="hito-form">
       <label for="mh-que"><strong>¿Qué pasó, o qué se promete?</strong></label>
       <textarea id="mh-que" class="desc-input" rows="2" maxlength="240" placeholder="Por ejemplo: en mi centro empezaron a usar…"></textarea>
@@ -238,7 +235,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
@@ -262,7 +258,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -283,7 +278,6 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasifica</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca una palabra del banco y después toca la columna donde va.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Hay tres juegos distintos y los tres entran en el examen.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
@@ -307,7 +301,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Encuentra el dato</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca en la oración la palabra que se te pide:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -328,7 +321,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Completa la oración</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -346,7 +338,6 @@
 
   <div class="card ac-teal">
     <h2>🔗 Ordena la línea del tiempo</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez)</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Con las flechas <strong>▲ ▼</strong>, del más antiguo al más reciente:</p>
     <div class="sort-list" id="routeList"></div>
     <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
@@ -358,7 +349,6 @@
 
   <div class="card ac-gold">
     <h2>🕵️ ¿En qué año fue?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por acierto (primera vez)</p>
     <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee el hito y di el año:</p>
     <div class="neuron-desc" id="neuronDesc">Cargando…</div>
@@ -372,7 +362,6 @@
 
   <div class="card ac-jade">
     <h2>🔗 El hito → ¿a qué edad pertenece?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por acierto (primera vez)</p>
     <p class="id-prog" id="neuroProg" aria-live="polite">1 de 6</p>
     <div class="neuro-trans-display" id="neuroTrans">Cargando…</div>
     <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
@@ -384,7 +373,6 @@
 
   <div class="card ac-purple">
     <h2>👤 ¿Quién lo hizo?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por acierto (primera vez)</p>
     <p class="id-prog" id="enferProg" aria-live="polite">1 de 9</p>
     <div class="neuro-trans-display" id="enferDisease">Cargando…</div>
     <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
@@ -405,7 +393,6 @@
   <div class="card ac-teal">
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada uno lo más rápido que puedas.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con los otros dos grupos.</p>
     <div class="game" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -433,7 +420,6 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🤍 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">

@@ -215,7 +215,7 @@
       labintro:
         'Play at giving instructions to a «human robot». Pick a <strong>scenario</strong> and beat its ' +
         '<strong>4 challenges</strong>: put the algorithm in order, hunt down the ambiguous instruction, find the missing step ' +
-        'and decompose the problem. ⭐ +1 XP per challenge and +2 XP for a complete scenario (first time).',
+        'and decompose the problem.',
 
       labesc:
         '<span class="lab-group-label">🎯 Scenario:</span>' +
@@ -692,8 +692,6 @@
         'Those were not the 3 parts: the correct ones are in green. Tap «🧩 Decompose» to try again.',
       /* — flashcards y memorama — */
       '🧠 Juego: Memoria del Pensamiento': '🧠 Game: Thinking Memory',
-      '⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo':
-        '⭐ +1 XP per pair you find (first time) · +2 XP for finishing them all',
       'Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!':
         'Find the pairs: each concept with its clue or example. Train your memory while you review!',
       /* — clasifica — */
@@ -709,13 +707,11 @@
       '🔄 Nueva secuencia': '🔄 New sequence',
       'Hay pasos fuera de orden. Revisa el arreglo.': 'Some steps are out of order. Check the arrangement.',
       '🌫️ ¿Exacta o ambigua?': '🌫️ Exact or ambiguous?',
-      '⭐ +3 XP por respuesta correcta (primera vez) · ¡Cuida tu racha 🔥!':
-        '⭐ +3 XP per correct answer (first time) · Watch your streak 🔥!',
+      '¡Cuida tu racha 🔥!': 'Watch your streak 🔥!',
       '¿Una persona-robot podría ejecutar esta orden tal como está escrita?':
         'Could a human robot carry out this instruction exactly as it is written?',
       '«Da 3 pasos hacia adelante»': '«Take 3 steps forward»',
       '🧩 Descompón el problema': '🧩 Decompose the problem',
-      '⭐ +3 XP por problema bien descompuesto (primera vez)': '⭐ +3 XP per problem nicely decomposed (first time)',
       'Cada problema grande tiene 3 partes verdaderas escondidas entre partes que no le pertenecen. ¡Elígelas!':
         'Every big problem has 3 real parts hidden among parts that do not belong to it. Pick them!',
       'Solo puedes elegir 3 partes. Quita una para cambiar.': 'You can only pick 3 parts. Remove one to change your choice.',

@@ -79,7 +79,6 @@
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
     <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
     <div id="prediceWidget"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
@@ -340,13 +339,13 @@
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-amber">
     <h2>🧪 Laboratorio: El Llenador de Cubitos</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige las medidas de la caja y llénala capa por capa con cubitos de 1 cm³. Ahí se ve de dónde sale la fórmula. ⭐ +2 XP por caja llena (primeras 5)</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige las medidas de la caja y llénala capa por capa con cubitos de 1 cm³. Ahí se ve de dónde sale la fórmula.</p>
     <div id="widget-llenador-interactive"></div>
     <a href="juego-constructor-cubitos-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🧊</span><span class="s3-txt"><strong>Jugarlo en 3D: el Constructor de Cubitos</strong><small>Aquí llenas capas; allá pones los cubitos uno por uno y le das la vuelta a la caja.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <div class="card ac-teal">
     <h2>🧮 Laboratorio 2: Calculadora de Volumen</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige el cuerpo, mete las medidas y mira la fórmula aplicada paso a paso, con el resultado también en litros. ⭐ +2 XP por cálculo (primeros 5)</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige el cuerpo, mete las medidas y mira la fórmula aplicada paso a paso, con el resultado también en litros.</p>
     <div id="widget-calcvol-interactive"></div>
     <a href="juego-fabrica-latas-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🏭</span><span class="s3-txt"><strong>Jugarlo en 3D: la Fábrica de Latas</strong><small>Mueve el radio y la altura y mira cómo cambia el cilindro mientras la cuenta corre.</small></span><span class="s3-fl">▶️</span></a>
   </div>
@@ -358,7 +357,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
@@ -375,7 +373,6 @@
   <div class="card ac-purple">
     <h2>🧠 Juego: Memoria del Volumen</h2>
     <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
     <div class="memo-stats" id="memoStats" aria-live="polite"></div>
     <div class="memo-grid" id="memoGrid"></div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
@@ -392,7 +389,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -413,7 +409,7 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasifica</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
@@ -435,7 +431,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Identifica el concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -455,7 +450,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Completa la oración</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -471,19 +465,19 @@
 <div class="sec" id="s-widgets" role="tabpanel">
   <div class="card ac-teal">
     <h2>🪜 La Escalera de Unidades</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Sube y baja escalones entre m³, dm³ y cm³. Cada uno vale 1,000, y eso es lo que hay que dejar clavado. ⭐ +2 XP por acierto (primeros 6)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Sube y baja escalones entre m³, dm³ y cm³. Cada uno vale 1,000, y eso es lo que hay que dejar clavado.</p>
     <div id="widget-escalera-interactive"></div>
     <a href="juego-laberinto-unidades-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🌀</span><span class="s3-txt"><strong>Jugarlo en 3D: el Laberinto de las Unidades</strong><small>Las mismas conversiones, pero con las puertas cerradas y el reloj corriendo.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <div class="card ac-blue">
     <h2>📐 ¿Área o Volumen?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Llega un encargo de la vida real: decide si hay que cubrir por fuera o llenar por dentro, y con qué unidad se contesta. ⭐ +2 XP por acierto (primeros 6)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Llega un encargo de la vida real: decide si hay que cubrir por fuera o llenar por dentro, y con qué unidad se contesta.</p>
     <div id="widget-areavol-interactive"></div>
     <a href="juego-duelo-dimensiones-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">⚔️</span><span class="s3-txt"><strong>Jugarlo en 3D: el Duelo de las Dimensiones</strong><small>Si eliges el ataque equivocado, el golpe rebota y te lo llevas tú.</small></span><span class="s3-fl">▶️</span></a>
   </div>
   <div class="card ac-gold">
     <h2>📦 ¿Cabe o No Cabe?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Un recipiente y una cantidad: decide si cabe. Hay que convertir unidades antes de contestar, como en la bodega. ⭐ +2 XP por acierto (primeros 6)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Un recipiente y una cantidad: decide si cabe. Hay que convertir unidades antes de contestar, como en la bodega.</p>
     <div id="widget-cabe-interactive"></div>
     <a href="juego-tetris-volumen-3d.html" target="_blank" rel="noopener noreferrer" class="salto3d"><span class="s3-ico">🧩</span><span class="s3-txt"><strong>Jugarlo en 3D: el Tetris del Volumen</strong><small>Aquí decides si cabe; allá tienes que meterlo de verdad, sin pasarte del objetivo.</small></span><span class="s3-fl">▶️</span></a>
   </div>
@@ -497,7 +491,6 @@
   <div class="card ac-jade">
     <h2>💬 Explica con tus palabras</h2>
     <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
     <div id="explicaContainer"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
@@ -511,7 +504,6 @@
   <div class="card ac-purple">
     <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
     <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Volumen vs número 📦</p>
     <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -540,7 +532,7 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🔤 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">

@@ -226,7 +226,7 @@
 
       labh2: '⚙️ Gear Train Laboratory',
 
-      labintro: 'Choose a case, watch how the gears turn and answer the two questions. ⭐ +4 XP per case solved (first time).',
+      labintro: 'Choose a case, watch how the gears turn and answer the two questions.',
 
       labq1: '1️⃣ Which way does the <strong>last</strong> gear turn (the green one)?',
 

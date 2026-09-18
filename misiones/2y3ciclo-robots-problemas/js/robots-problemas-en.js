@@ -213,7 +213,7 @@
 
       labh2: '🛠️ Design Workshop',
 
-      labintro: 'Choose one of the five Honduran projects and walk through its <strong>7 stages</strong>. At every decision pick the best option: the workshop explains why. ⭐ +2 XP per right decision.',
+      labintro: 'Choose one of the five Honduran projects and walk through its <strong>7 stages</strong>. At every decision pick the best option: the workshop explains why.',
 
       labctl:
         '<div class="lab-group">' +
@@ -806,7 +806,6 @@
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
       /* widgets */
       '🔁 Ordena las 7 etapas del ciclo de diseño': '🔁 Put the 7 stages of the design cycle in order',
-      '⭐ +5 XP por dejar el ciclo en orden (primera vez por proyecto)': '⭐ +5 XP for getting the cycle in order (first time per project)',
       'hasta dejar las etapas en el orden correcto del ciclo de diseño:': 'arrows to put the stages into the right order of the design cycle:',
       '¡Perfecto! Ese es el ciclo de diseño completo. +5 XP': 'Perfect! That is the complete design cycle. +5 XP',
       'Hay pasos fuera de orden. Recuerda: identificar → idear → diseñar → construir → probar → mejorar → comunicar.':

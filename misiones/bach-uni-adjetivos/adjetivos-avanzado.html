@@ -229,7 +229,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Repaso Avanzado</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
@@ -253,7 +252,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz Analítico y Sintáctico</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -274,7 +272,6 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasificación Morfosintáctica</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde pertenece según la gramática moderna.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
@@ -297,7 +294,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Identificación Sintáctica</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra solicitada con precisión estructural:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -318,7 +314,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Morfología Supletiva y Apócope</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -336,7 +331,6 @@
   <div class="card ac-teal">
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Análisis rápido de categorización adjetival.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
     <div class="game" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
       <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
@@ -363,7 +357,6 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🔤 Sopa de Letras Avanzada</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">

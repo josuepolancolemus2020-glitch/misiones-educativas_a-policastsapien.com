@@ -139,14 +139,11 @@
     /* rótulo viejo, con raya: lo siguen usando las misiones de la Ruta del
        Código. Se borra cuando esa ruta pase el barrido de guiones largos. */
     '🃏 Flashcards — Toca para voltear': '🃏 Flashcards: tap to flip',
-    '⭐ +1 XP por cada tarjeta volteada (primera vez)': '⭐ +1 XP for each card you flip (first time)',
     '🃏 Toca · Enter para voltear': '🃏 Tap · press Enter to flip',
     '◀ Anterior': '◀ Previous', 'Siguiente ▶': 'Next ▶',
-    '⭐ +1 XP por pareja (primera vez) · +2 XP al completar': '⭐ +1 XP per pair (first time) · +2 XP for finishing',
     '🔄 Mezclar de nuevo': '🔄 Shuffle again',
     /* quiz, clasifica, identifica, completa */
     '🧠 Quiz de Comprensión': '🧠 Comprehension Quiz',
-    '⭐ +5 XP por respuesta correcta (primera vez por pregunta)': '⭐ +5 XP per correct answer (first time per question)',
     '✔ Verificar': '✔ Check', '🔄 Reiniciar Quiz': '🔄 Restart quiz', '🔄 Reiniciar': '🔄 Restart',
     '🎉 ¡Quiz completado!': '🎉 Quiz completed!', '🎉 ¡Completado!': '🎉 Completed!',
     'Selecciona una respuesta.': 'Choose an answer.', 'Selecciona una opción.': 'Choose an option.',
@@ -158,7 +155,6 @@
     'Incorrecto. Revisa bien la respuesta.': 'Not quite. Look at the answer again.',
     '🗂️ Clasifica los Conceptos': '🗂️ Sort the Concepts',
     'Selecciona un término del banco y toca la columna donde pertenece.': 'Pick a term from the bank and tap the column it belongs to.',
-    '⭐ +5 XP al completar el grupo (primera vez)': '⭐ +5 XP for finishing the group (first time)',
     'Columna A': 'Column A', 'Columna B': 'Column B',
     'Columna izquierda': 'Left column', 'Columna derecha': 'Right column',
     '🔄 Variar grupo': '🔄 Change group',
@@ -169,28 +165,22 @@
     'Ese no es el término solicitado.': 'That is not the term you were asked for.',
     '▶ Siguiente': '▶ Next',
     '✏️ Completa la oración': '✏️ Complete the sentence',
-    '⭐ +5 XP por respuesta correcta (primera vez)': '⭐ +5 XP per correct answer (first time)',
     /* widgets */
-    '⭐ +4 XP por orden correcto (primera vez por secuencia)': '⭐ +4 XP per correct order (first time per sequence)',
     'Usa las flechas ▲ ▼ para poner los pasos en el orden correcto:': 'Use the ▲ ▼ arrows to put the steps in the right order:',
     '✅ Verificar orden': '✅ Check the order', '🔄 Nuevo caso': '🔄 New case',
     '¡Perfecto! Orden correcto. +4 XP': 'Perfect! Correct order. +4 XP',
-    '⭐ +3 XP por respuesta correcta (primera vez por pista)': '⭐ +3 XP per correct answer (first time per clue)',
     'Cargando...': 'Loading…',
-    '⭐ +3 XP por respuesta correcta (primera vez)': '⭐ +3 XP per correct answer (first time)',
     /* reto */
     '🏆 Reto Final: ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
     /* rótulo viejo, con raya: ver la nota de las flashcards */
     '🏆 Reto Final — ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
     'Clasifica cada término lo más rápido que puedas.': 'Sort each term as fast as you can.',
-    '⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)': '⭐ +1 XP correct | ❌ -1 XP wrong (first round only)',
     '💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.':
       '💡 Tip: when you finish, use "Change pair" to play with other categories and get even quicker.',
     '¡Prepárate!': 'Get ready!', '🏁 ¡Tiempo!': '🏁 Time!',
     '🚀 ¡Iniciar!': '🚀 Start!', '🔀 Variar pareja': '🔀 Change pair',
     /* sopa de letras */
     '🤍 Sopa de Letras': '🤍 Word Search',
-    '⭐ +1 XP por palabra encontrada (primera vez)': '⭐ +1 XP per word you find (first time)',
     '🖱️ Arrastra o haz clic en la primera letra, luego en la última': '🖱️ Drag, or click the first letter and then the last one',
     '🔄 Variar sopa': '🔄 New word search', '🔦 Linterna (-2 XP)': '🔦 Flashlight (-2 XP)',
     '🔄 Nueva sopa cargada': '🔄 New word search loaded',

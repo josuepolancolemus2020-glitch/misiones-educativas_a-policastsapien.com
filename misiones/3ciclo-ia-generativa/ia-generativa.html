@@ -92,7 +92,7 @@
       <button class="btn btn-g" onclick="iaCadOtra()">🔄 Otra frase</button>
       <button class="btn btn-d" onclick="iaCadReiniciar()">↩️ Empezar de nuevo</button>
     </div>
-    <p style="font-size:0.78rem;color:var(--gray);margin-top:0.7rem;">⭐ +3 XP por cada frase que termines · Los porcentajes son <strong>inventados para el ejemplo</strong>.</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-top:0.7rem;">Los porcentajes son <strong>inventados para el ejemplo</strong>.</p>
     <div class="tip">
       <span class="ti">🔑</span>
       <div><strong>Y ahí está todo:</strong> si la más probable es verdadera, acierta. Si es falsa,
@@ -160,7 +160,6 @@
        <strong>¿qué hay que comprobar antes de usarlo?</strong></p>
     <p style="font-size:0.88rem;margin-bottom:0.6rem;">Toca los pedazos que <strong>hay que verificar</strong>.
        Deja los que solo son opinión.</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.7rem;">⭐ +5 XP si los cazas todos sin marcar de más</p>
     <div class="caz-texto" id="caz-texto"></div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="iaCazRevisar()">✔ Revisar</button>
@@ -193,7 +192,6 @@
     <h2>🧱 Arma la petición</h2>
     <p style="font-size:0.92rem;">La misma pregunta, escrita de dos maneras, da dos respuestas distintas.
        Elige una opción de cada pieza:</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.7rem;">⭐ +4 XP si armas una petición con las cuatro piezas bien puestas</p>
     <div id="pet-piezas"></div>
     <div class="pet-salida" id="pet-salida"></div>
     <div style="margin-top:0.8rem;">
@@ -224,7 +222,6 @@
        documento.</p>
     <p style="font-size:0.88rem;margin-bottom:0.6rem;">Toca las afirmaciones que <strong>NO se pueden
        comprobar</strong>.</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.7rem;">⭐ +2 XP por cada texto revisado · +3 XP si aciertas uno entero</p>
     <div class="desc-chips" id="comp-textos" role="group" aria-label="Los cuatro textos"></div>
     <div class="comp-caja" id="comp-caja"></div>
     <div id="fbComp" class="fb" role="alert"></div>
@@ -241,7 +238,6 @@
        cosas que ya se pueden hacer: fabricar una voz, generar un texto, falsear un video, calificar con un
        programa. <strong>Decide y mira qué pasa.</strong> No hay una respuesta buena: hay
        consecuencias.</p>
-    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada escenario decidido · +3 XP por escribir tu regla</p>
     <div class="desc-chips" id="esc-lista" role="group" aria-label="Los cuatro escenarios"></div>
     <div class="esc-caja" id="esc-caja"></div>
     <div id="fbEsc" class="fb" role="alert"></div>
@@ -302,7 +298,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
@@ -326,7 +321,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -347,7 +341,6 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasifica</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca una palabra del banco y después toca la columna donde va.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Hay tres juegos distintos y los tres entran en el examen.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
@@ -371,7 +364,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Encuentra el concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca en la oración la palabra que se te pide:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -392,7 +384,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Completa la oración</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -410,7 +401,6 @@
 
   <div class="card ac-teal">
     <h2>🔗 Ordena los pasos</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez)</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa <strong>▲ ▼</strong> para ordenarlos:</p>
     <div class="sort-list" id="routeList"></div>
     <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
@@ -422,7 +412,6 @@
 
   <div class="card ac-gold">
     <h2>🕵️ ¿De qué concepto hablamos?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
     <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la pista:</p>
     <div class="neuron-desc" id="neuronDesc">Cargando…</div>
@@ -436,7 +425,6 @@
 
   <div class="card ac-jade">
     <h2>🔗 ¿Qué paso de verificar te toca?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
     <p class="id-prog" id="neuroProg" aria-live="polite">1 de 6</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">¿Cuál de los cinco pasos toca?</p>
     <div class="neuro-trans-display" id="neuroTrans">Un párrafo con tres fechas y una opinión.</div>
@@ -449,7 +437,6 @@
 
   <div class="card ac-purple">
     <h2>🚨 ¿Alucinación, falsificación o privacidad?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por respuesta correcta (primera vez)</p>
     <p class="id-prog" id="enferProg" aria-live="polite">1 de 9</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">Alucinación: un accidente. Falsificación: a propósito. Privacidad: lo que tú entregas.</p>
     <div class="neuro-trans-display" id="enferDisease">Un chat inventa un libro que no existe</div>
@@ -471,7 +458,6 @@
   <div class="card ac-teal">
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada uno lo más rápido que puedas.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con los otros dos grupos.</p>
     <div class="game" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -499,7 +485,6 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🤍 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">

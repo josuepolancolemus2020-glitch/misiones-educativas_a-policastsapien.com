@@ -81,7 +81,7 @@ window.WidgetLectorJSON = {
         const total = bloques.reduce((acc, x) => acc * 1000 + x.v, 0);
         document.getElementById('wlc-lectura').innerHTML = `✔ <strong>${total.toLocaleString('en-US')}</strong> se lee: «<strong>${words(total)}</strong>»`;
         if (typeof sfx === 'function') sfx('ok');
-        if (awarded.size < 5 && typeof pts === 'function') { awarded.add('a' + awarded.size); pts(2); document.getElementById('wlc-msg').textContent = '⭐ +2 XP · ¡Pide un nuevo número!'; }
+        if (awarded.size < 5 && typeof pts === 'function') { awarded.add('a' + awarded.size); pts(2); document.getElementById('wlc-msg').textContent = '✔ ¡Bien leído! Pide un nuevo número.'; }
       }
     }
 

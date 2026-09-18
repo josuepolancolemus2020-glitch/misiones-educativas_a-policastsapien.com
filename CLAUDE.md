@@ -261,6 +261,31 @@ escribe como se habla y nadie relee—. Y la sonda de nombres propios cazó dos
 para ella**: en este repositorio va con mayúscula, y el que lo olvidó esta vez
 fue quien escribió esta normativa.
 
+⚠️ **Y una que la herramienta daba por buena y estaba mal: la de la misión 72.**
+La escribió el autor el 18 de septiembre de 2026 —«cambia esa historia que no
+tiene sentido»— y tenía razón por tres motivos a la vez, los tres invisibles
+para una medida. Kenia le preguntaba al teléfono si su abuela enferma se iba a
+poner buena y el teléfono le contestaba «con la misma voz segura». Eso:
+
+1. **afirmaba algo que no se puede acreditar** de ninguna máquina concreta, y
+   esta normativa prohíbe escribir lo que no se puede sostener;
+2. **prometía lo que esa misión no enseña.** La 72 enseña qué es la
+   Inteligencia Artificial, que no está viva y que **le pone el nombre de lo que
+   más se le parece**; lo de creerle un dato inventado es la etapa 4, y el
+   alumno se iba a quedar esperándolo;
+3. **no tenía precio y terminaba en moraleja**: «su mamá se sentó a
+   explicárselo», que es exactamente lo que la regla 3 de arriba prohíbe —una
+   situación acaba en algo que el alumno PRODUCE—.
+
+La nueva sí cumple las tres: a Selvin le pidieron de tarea la foto de un animal,
+le tomó la foto al chivo de su abuelo, el teléfono contestó «perro» y él lo
+copió tal cual; **la tarea le salió mala y la repitió de noche**. El precio se
+cuenta, es suyo, y lo que le pasó a la máquina es literalmente lo que hace la
+primera actividad de la misión —ponerle el nombre del que más se le parece, y
+contestar segura porque no sabe decir «no sé»—, que es donde el párrafo lo
+manda. Y de regalo cae sobre el paso 5 de la propia misión: «si no puedes
+verificarlo, no lo uses **ni en la tarea**».
+
 ```
 node _dev/mide-relato.js             → la tabla, de peor a mejor
 node _dev/mide-relato.js --detalle   → el arranque de cada una, para leer
@@ -4038,6 +4063,83 @@ otra vez **no vuelva a pagar**, que la sección de leer se gane **llegando al
 final y no asomándose**, que la prueba **no** esté entre las de leer, y que
 recargar **no vuelva a pagar las mismas tarjetas** pero **sí conserve** lo
 ganado.
+
+## Normativa: la actividad no anuncia su precio
+
+La estrella se gana (arriba), y de ahí salía una costumbre que costaba al otro
+lado: **decirle al alumno cuánto vale cada cosa antes de que la haga**. Debajo
+del título de casi toda sección había un renglón gris —«⭐ +5 XP por respuesta ·
+solo la primera vez»— y el autor lo señaló el 18 de septiembre de 2026 mirando
+el Quiz de la primera misión de Inteligencia Artificial: «hay mucha carga
+cognitiva en eso, el usuario no debe perder en leer eso».
+
+Medido antes de tocar nada: **921 renglones de anuncio en 78 misiones**, 152 de
+ellos repitiendo la misma frase. En una misión de diecinueve pestañas eso son
+diecinueve carteles que hay que leer y descartar para llegar a lo que se va a
+hacer.
+
+⚠️ **Y no era solo ruido: contradecía la normativa del asombro.** Lo que esta
+plataforma persigue es que el alumno vuelva porque quiere ver qué pasa, y la
+prueba escrita arriba es «si le quitara el puntaje, las estrellas y la medalla,
+¿seguiría queriendo abrirlo?». Un cartel con el puntaje en la puerta contesta
+esa pregunta al revés: pone el precio delante de la curiosidad y convierte la
+actividad en un trámite. El puntaje sigue existiendo y se sigue ganando —eso no
+cambió—; lo que se quitó fue **ofrecerlo por adelantado**.
+
+**Lo que se quita y lo que se queda, que es donde está el trabajo:**
+
+| | |
+|---|---|
+| ❌ el ANUNCIO | «⭐ +5 XP por respuesta correcta (primera vez)» |
+| ✅ la barra de XP, «🔄 Reiniciar XP» y el resumen del diploma | son el registro de lo que YA pasó |
+| ✅ el COSTO de un comodín | «🔦 Linterna (-2 XP)»: el alumno decide si lo gasta, y para eso necesita el número |
+| ✅ el aviso de después de acertar | «¡Correcto! +5 XP» informa de lo ganado, no lo ofrece |
+
+⚠️ **Y 143 de esos renglones traían algo más que el precio.** Borrarlos enteros
+habría costado cosas que no se pueden perder: dónde están las palabras de la
+sopa («pueden estar en horizontal, vertical, diagonal ¡y al revés!»), que hay
+más desafíos («Usa 🔄 Variar grupo: ¡hay 4 desafíos!»), que existe una pista,
+que los porcentajes de la 75 son **inventados para el ejemplo** —que es una
+exigencia de su propia normativa— y las instrucciones largas de veintitantos
+laboratorios, que llevaban el precio pegado al final. Se cortó el precio y se
+dejó el resto; donde lo que sobrevivía empezaba en minúscula, se le puso la
+mayúscula que ahora le toca.
+
+⚠️ **Diez renglones se quedaban diciendo «solo la primera vez» y nada más.**
+Sin el precio delante eso no quiere decir nada: se borraron enteros. Un resto
+huérfano es peor que el cartel, porque el alumno lo lee dos veces buscándole
+sentido.
+
+⚠️ **Y en las bilingües hay que tocar los DOS lados.** Es la trampa de siempre:
+nueve pares del diccionario se quedaron muertos —su cadena española ya no
+existe— y **cuatro traducciones de bloque** (`labintro`) seguían anunciando el
+precio en inglés con el español ya limpio, sin dar un solo error. También se
+cayeron diez pares del diccionario compartido `js/metas-i18n.js`. El par que sí
+sobrevive cambió de clave: donde decía «⭐ +3 XP por respuesta correcta (primera
+vez) · ¡Cuida tu racha 🔥!» ahora la clave es «¡Cuida tu racha 🔥!», porque si
+no, la edición en inglés enseña el español.
+
+```
+node _dev/verifica-sin-precio.js        (está en `npm test`)
+```
+
+Lee del archivo las misiones y los archivos de JS —el anuncio se multiplica al
+copiar una misión, que es la lección de siempre—, y distingue el anuncio del
+costo y de la felicitación: en el HTML basta con `+N XP`, porque ahí el alumno
+solo lee; en el JS se le pide además la estrella o la preposición («+N XP
+**por** …», «+N XP **al** …»), para no acusar a un «¡Correcto! +5 XP». Se
+comprobó al revés, devolviendo dos archivos a como estaban, y salió roja con
+los 21 anuncios de esos dos. Y quita los comentarios antes de buscar, que es la
+**sexta** vez que este repositorio muerde esa trampa: el sitio donde se explica
+por qué algo no puede estar es justo donde ese algo sigue escrito.
+
+⚠️ **Y se ganó el sueldo el mismo día que se escribió.** Mientras se limpiaban
+las 78, por `main` entraron las **tres misiones de Filosofía** —el asombro,
+pensar con orden y de qué está hecho el mundo—, calcadas de una plantilla
+anterior al arreglo: traían **33 anuncios** más, ya publicados. No los cazó
+nadie leyendo; los cazó la sonda al rebasar, en un segundo. Es la lección de
+siempre y van muchas: **lo que se multiplica al copiar una misión no son solo
+los aciertos**, y la única defensa que no se olvida es la que corre sola.
 
 ## Normativa: se puede usar sin el dedo y con la vista cansada
 

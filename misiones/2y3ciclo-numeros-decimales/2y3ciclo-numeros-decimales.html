@@ -361,7 +361,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
@@ -385,7 +384,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 12</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -407,7 +405,6 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasifica los Conceptos</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Arrastra cada término del banco a la columna donde pertenece. También puedes arrastrar entre columnas o devolver al banco.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
@@ -431,7 +428,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Identifica el concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 10</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -452,7 +448,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Completa la oración</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -471,7 +466,6 @@
   <!-- Widget 1: Recta Numérica -->
   <div class="card ac-teal">
     <h2>📏 Ubica en la Recta Numérica</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP al ubicar correctamente (primera vez por número)</p>
     <div class="nl-challenge">Ubica el número: <strong id="nlTarget" class="nl-num">0.3</strong></div>
     <div class="nl-container">
       <svg id="nlSvg" viewBox="0 0 400 80" width="100%" xmlns="http://www.w3.org/2000/svg" style="cursor:crosshair;display:block;" onclick="nlClick(event)"></svg>
@@ -487,7 +481,6 @@
   <!-- Widget 2: Ordenar Decimales -->
   <div class="card ac-gold">
     <h2>↕️ Ordena de Menor a Mayor</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por orden correcto (primera vez por grupo)</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ordenar los números de <strong>menor a mayor</strong>:</p>
     <div class="sort-list" id="sortList"></div>
     <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
@@ -500,7 +493,6 @@
   <!-- Widget 3: Constructor de Decimales -->
   <div class="card ac-jade">
     <h2>🔧 Constructor de Decimales</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +4 XP por número construido correctamente</p>
     <div class="bldr-challenge">Forma el número: <strong id="bldrTarget" class="bldr-num">0.35</strong></div>
     <div class="bldr-display" id="bldrDisplay">0.000</div>
     <div class="bldr-slots">
@@ -543,7 +535,6 @@
   <!-- Widget 4: Comparador Visual -->
   <div class="card ac-purple">
     <h2>⚖️ Comparador Visual de Decimales</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por comparación correcta</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">El número <strong>A</strong> (izquierda) es… ¿qué relación tiene con <strong>B</strong> (derecha)?</p>
     <div class="cmp-vis-wrap">
       <div class="cmp-vis-side">
@@ -581,7 +572,6 @@
   <div class="card ac-teal">
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el término decimal rápidamente.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
     <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -610,7 +600,6 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🔤 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">

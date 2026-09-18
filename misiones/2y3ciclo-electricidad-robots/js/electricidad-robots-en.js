@@ -740,7 +740,6 @@
       '🔘 Cerrar el interruptor': '🔘 Close the switch',
       '🔘 Abrir el interruptor': '🔘 Open the switch',
       '🤔 Antes de cerrar el interruptor: ¿qué crees que pasará?': '🤔 Before you close the switch: what do you think will happen?',
-      '(+3 XP por acierto)': '(+3 XP for each correct prediction)',
       'Predice el resultado del circuito': 'Predict the result of the circuit',
       'Resultado:': 'Result:',
       /* rótulos del SVG del circuito */
@@ -785,7 +784,6 @@
       'Serie/Paralelo': 'Series/Parallel',
       'Usa las flechas ▲ ▼ para ordenar el recorrido de la corriente:': 'Use the ▲ ▼ arrows to put the path of the current in order:',
       'para ordenar el recorrido de la corriente:': 'arrows to put the path of the current in order:',
-      '⭐ +3 XP por respuesta correcta (primera vez por caso)': '⭐ +3 XP per correct answer (first time per case)',
       'Lee lo que necesitas y elige la pieza adecuada:': 'Read what you need and choose the right part:',
       'Hay pasos fuera de orden. Recuerda: la corriente sale de la fuente, pasa por el interruptor y la carga, y regresa.':
         'Some steps are out of order. Remember: the current leaves the source, goes through the switch and the load, and comes back.',

@@ -284,8 +284,6 @@
     <div class="sec" id="s-flash" role="tabpanel">
       <div class="card ac-teal">
         <h2>🃏 Flashcards — Toca para voltear</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera
-          vez)</p>
         <div class="fc-wrap">
           <div class="fc-inner" id="fcInner" onclick="flipCard()"
             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0"
@@ -316,8 +314,6 @@
     <div class="sec" id="s-quiz" role="tabpanel">
       <div class="card ac-gold">
         <h2>🧠 Quiz de Comprensión</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez
-          por pregunta)</p>
         <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
         <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
         <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -340,8 +336,6 @@
         <h2>🗂️ Clasifica los Sustantivos</h2>
         <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona una palabra del banco y toca la columna donde
           pertenece.</p>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)
-        </p>
         <div class="word-bank" id="clsBank" role="list"></div>
         <div class="drop-cols">
           <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda">
@@ -371,8 +365,6 @@
     <div class="sec" id="s-identifica" role="tabpanel">
       <div class="card ac-purple">
         <h2>🔍 Identifica el sustantivo</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez
-          por pregunta)</p>
         <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 9</p>
         <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra que funciona como el sustantivo indicado:</p>
         <div class="id-sent" id="idSent" role="group"></div>
@@ -395,8 +387,6 @@
     <div class="sec" id="s-completa" role="tabpanel">
       <div class="card ac-amber">
         <h2>✏️ Completa la oración</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera
-          vez)</p>
         <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;"
           id="cmpProg" aria-live="polite">Oración 1 de 8</p>
         <div class="cmp-sent" id="cmpSent"></div>
@@ -416,8 +406,6 @@
       <div class="card ac-teal">
         <h2>🏆 Reto Final — ¡30 segundos!</h2>
         <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica el sustantivo rápidamente.</p>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo
-          primera partida)</p>
         <div class="game" aria-live="polite">
           <div class="reto-timer" id="retoTimer">⏱ 30</div>
           <div class="reto-word" id="retoWord" aria-live="assertive">¡Prepárate!</div>
@@ -445,8 +433,6 @@
     <div class="sec" id="s-sopa" role="tabpanel">
       <div class="card ac-teal">
         <h2>🔤 Sopa de Letras</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera
-          vez)</p>
         <div class="sopa-words" id="sopaWords"></div>
         <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
         <div class="sopa-container">
@@ -469,7 +455,7 @@
     <div class="sec" id="s-maquina" role="tabpanel">
       <div class="card ac-jade">
         <h2>⚙️ La Máquina Clasificadora</h2>
-        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +2 XP por clasificación correcta · Clasifica cada palabra antes de que escape por la trituradora</p>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Clasifica cada palabra antes de que escape por la trituradora</p>
         <div id="widget-clasificador"></div>
       </div>
       <button class="next-sec-btn" onclick="go('s-tareas')">

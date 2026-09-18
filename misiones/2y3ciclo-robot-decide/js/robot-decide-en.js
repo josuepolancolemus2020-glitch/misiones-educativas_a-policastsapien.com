@@ -249,7 +249,7 @@
 
       labh2: '🔬 Simulator: the Robot that Decides',
 
-      labintro: 'Choose a map, build your program by tapping the buttons — include the <strong>conditionals</strong> 🌳🚦 so the robot DECIDES! — and press <strong>▶ Run</strong>. You will see how it evaluates each condition (✔ yes / ✘ no) step by step. ⭐ +6 XP for each map you solve (first time).',
+      labintro: 'Choose a map, build your program by tapping the buttons — include the <strong>conditionals</strong> 🌳🚦 so the robot DECIDES! — and press <strong>▶ Run</strong>. You will see how it evaluates each condition (✔ yes / ✘ no) step by step.',
 
       labmapa:
         '<span class="lab-group-label">🗺️ Map:</span>' +
@@ -642,8 +642,6 @@
       '🧠 Juego: Memoria del Código': '🧠 Game: Code Memory',
       'Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!':
         'Find the pairs: each concept with its clue or example. Train your memory while you review!',
-      '⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo':
-        '⭐ +1 XP per pair you find (first time) · +2 XP for finishing them all',
       /* — clasifica — */
       '💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.':
         '💡 Tip: use the "Change group" button several times! Practicing with different categories helps you master the topic.',
@@ -651,11 +649,8 @@
       '🔀 Arma el condicional en orden': '🔀 Build the conditional in order',
       'para ordenar las partes del condicional (SI → condición → ENTONCES → SINO):':
         'arrows to put the parts of the conditional in order (IF → condition → THEN → ELSE):',
-      '⭐ +4 XP por orden correcto (primera vez por condicional)': '⭐ +4 XP per correct order (first time per conditional)',
       '🔄 Nuevo condicional': '🔄 New conditional',
       'Hay pasos fuera de orden. Revisa el arreglo.': 'Some steps are out of order. Check the arrangement.',
-      '⭐ +3 XP por respuesta correcta (primera vez por caso)': '⭐ +3 XP per correct answer (first time per case)',
-      '⭐ +3 XP por bug atrapado (primera vez)': '⭐ +3 XP per bug caught (first time)',
       '🤖 ¿Qué hace el robot?': '🤖 What does the robot do?',
       'Evalúa el condicional (¡mira si hay pared 🌳!) y elige la casilla donde termina el robot:':
         'Evaluate the conditional (check whether there is a wall 🌳!) and choose the square the robot ends up on:',

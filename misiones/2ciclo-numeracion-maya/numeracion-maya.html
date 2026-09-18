@@ -79,7 +79,6 @@
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
     <p style="margin-bottom:0.5rem;">Antes de aprender la regla, usa tu intuición matemática. Elige tu predicción para cada situación.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.9rem;">⭐ +3 XP por predicción correcta (primera vez)</p>
     <div id="prediceWidget"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la sección Aprende" onclick="go('s-aprende')">
@@ -341,12 +340,12 @@
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-amber">
     <h2>🧪 Laboratorio: El Escriba de Copán</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Te dan un número y tú lo tallas: pon puntos, barras y conchas en cada nivel hasta que cuadre. ⭐ +2 XP por número bien escrito (primeros 6)</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Te dan un número y tú lo tallas: pon puntos, barras y conchas en cada nivel hasta que cuadre.</p>
     <div id="widget-escriba-interactive"></div>
   </div>
   <div class="card ac-teal">
     <h2>👀 Laboratorio 2: Lee la Estela</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Ahora al revés: aparece un número tallado y tú dices cuánto vale. Empieza siempre por el nivel de abajo. ⭐ +2 XP por acierto (primeros 6)</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Ahora al revés: aparece un número tallado y tú dices cuánto vale. Empieza siempre por el nivel de abajo.</p>
     <div id="widget-estela-interactive"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a la siguiente sección" onclick="go('s-flash')">
@@ -357,7 +356,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">👆 Toca · Enter para voltear</div></div>
@@ -374,7 +372,6 @@
   <div class="card ac-purple">
     <h2>🧠 Juego: Memoria de los Símbolos Mayas</h2>
     <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
     <div class="memo-stats" id="memoStats" aria-live="polite"></div>
     <div class="memo-grid" id="memoGrid"></div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
@@ -391,7 +388,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 10</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -412,7 +408,7 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasifica</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Toca un elemento para <strong>seleccionarlo</strong> y luego toca la caja donde quieras colocarlo. Toca un elemento ya colocado para devolverlo al banco.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez) · Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Usa 🔄 Variar grupo: ¡hay 4 desafíos!</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
       <div class="drop-col" id="col-left" role="list" aria-label="Columna izquierda"><h4 id="col-left-head">Columna A</h4><div id="items-left"></div></div>
@@ -434,7 +430,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Identifica el concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o término solicitado:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -454,7 +449,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Completa la oración</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -470,17 +464,17 @@
 <div class="sec" id="s-widgets" role="tabpanel">
   <div class="card ac-teal">
     <h2>➕ Suma Maya</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Junta los símbolos de dos números y haz los cambios: cinco puntos por una barra. La pantalla te enseña el cambio en el momento. ⭐ +2 XP por suma correcta (primeras 6)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Junta los símbolos de dos números y haz los cambios: cinco puntos por una barra. La pantalla te enseña el cambio en el momento.</p>
     <div id="widget-sumamaya-interactive"></div>
   </div>
   <div class="card ac-blue">
     <h2>📅 Calculadora del Calendario</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Convierte kines, uinales, tunes y katunes en días, y al revés. Con la excepción del tun bien puesta. ⭐ +2 XP por acierto (primeros 6)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Convierte kines, uinales, tunes y katunes en días, y al revés. Con la excepción del tun bien puesta.</p>
     <div id="widget-calmaya-interactive"></div>
   </div>
   <div class="card ac-gold">
     <h2>🔮 La Rueda Calendárica</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Haz girar el tzolkín y el haab y mira cuándo vuelven a coincidir. Son las dos ruedas que llevaban la cuenta del tiempo. ⭐ +2 XP por vuelta completa (primeras 5)</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">Haz girar el tzolkín y el haab y mira cuándo vuelven a coincidir. Son las dos ruedas que llevaban la cuenta del tiempo.</p>
     <div id="widget-rueda-interactive"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir a Explica con tus palabras" onclick="go('s-explica')">
@@ -493,7 +487,6 @@
   <div class="card ac-jade">
     <h2>💬 Explica con tus palabras</h2>
     <p style="margin-bottom:0.5rem;">Aquí no hay respuestas de opción múltiple. Debes <strong>razonar y explicar</strong> con tus propias palabras. Cuando estés listo, revisa la pauta.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +2 XP al ver la pauta de cada pregunta (primera vez)</p>
     <div id="explicaContainer"></div>
   </div>
   <button class="next-sec-btn" aria-label="Ir al Reto Final" onclick="go('s-reto')">
@@ -507,7 +500,6 @@
   <div class="card ac-purple">
     <h2>🏆 Reto Final — ¿A es Mayor, Igual o Menor que B? (30 seg)</h2>
     <p style="font-size:0.88rem;margin-bottom:0.4rem;">Compara rápidamente A con B. Usa 🔀 para cambiar el tipo de ejercicios.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto</p>
     <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;" id="retoPairLbl">🎯 Pareja actual: Números mayas 🔵</p>
     <div class="game" id="gameBox" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -536,7 +528,7 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🔤 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada · Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
+    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">Las palabras pueden estar en horizontal, vertical, diagonal ¡y al revés!</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">

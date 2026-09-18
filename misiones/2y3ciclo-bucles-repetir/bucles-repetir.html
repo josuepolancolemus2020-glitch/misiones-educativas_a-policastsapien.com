@@ -242,7 +242,7 @@
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
     <h2>🔬 Simulador: dibuja figuras con bucles</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un nivel, arma un programa con 🔁 <strong>REPETIR</strong> y presiona <strong>▶ Ejecutar</strong>. El robot 🤖 deja su rastro ✏️ e intenta que coincida con la <strong>figura objetivo</strong>. ¡Gana el que dibuja escribiendo MENOS gracias al bucle! ⭐ +6 XP por figura lograda (primera vez).</p>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un nivel, arma un programa con 🔁 <strong>REPETIR</strong> y presiona <strong>▶ Ejecutar</strong>. El robot 🤖 deja su rastro ✏️ e intenta que coincida con la <strong>figura objetivo</strong>. ¡Gana el que dibuja escribiendo MENOS gracias al bucle!</p>
     <div id="lab-sentence" class="lab-sentence">🔁 Cargando el nivel…</div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
@@ -290,7 +290,6 @@
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
     <h2>🃏 Flashcards — Toca para voltear</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por cada tarjeta volteada (primera vez)</p>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
@@ -307,7 +306,6 @@
   <div class="card ac-purple">
     <h2>🧠 Juego: Memoria del Código</h2>
     <p style="font-size:0.88rem;margin-bottom:0.3rem;">Encuentra las parejas: cada concepto de bucles con su pista o ejemplo. ¡Ejercita la memoria mientras repasas!</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +1 XP por pareja encontrada (primera vez) · +2 XP al completar todo</p>
     <div class="memo-stats" id="memoStats" aria-live="polite"></div>
     <div class="memo-grid" id="memoGrid"></div>
     <div style="margin-top:0.8rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
@@ -325,7 +323,6 @@
 <div class="sec" id="s-quiz" role="tabpanel">
   <div class="card ac-gold">
     <h2>🧠 Quiz de Comprensión</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="qz-prog" id="qzProg" aria-live="polite">Pregunta 1 de 9</p>
     <div class="qz-q" id="qzQ" role="heading" aria-level="3"></div>
     <div class="qz-opts" id="qzOpts" role="group" aria-label="Opciones"></div>
@@ -346,7 +343,6 @@
   <div class="card ac-jade">
     <h2>🗂️ Clasifica los Conceptos</h2>
     <p style="font-size:0.88rem;margin-bottom:0.5rem;">Selecciona un término del banco y toca la columna donde pertenece.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +5 XP al completar el grupo (primera vez)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: ¡Usa el botón "Variar grupo" varias veces! Practicar con diferentes categorías te ayudará a dominar el tema.</p>
     <div class="word-bank" id="clsBank" role="list"></div>
     <div class="drop-cols">
@@ -370,7 +366,6 @@
 <div class="sec" id="s-identifica" role="tabpanel">
   <div class="card ac-purple">
     <h2>🔍 Identifica el concepto</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez por pregunta)</p>
     <p class="id-prog" id="idProg" aria-live="polite">Oración 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.8rem;">Toca la palabra o el número solicitado:</p>
     <div class="id-sent" id="idSent" role="group"></div>
@@ -391,7 +386,6 @@
 <div class="sec" id="s-completa" role="tabpanel">
   <div class="card ac-amber">
     <h2>✏️ Completa la oración</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +5 XP por respuesta correcta (primera vez)</p>
     <p style="font-family:'Fredoka',sans-serif;font-size:0.82rem;color:var(--gray);margin-bottom:0.6rem;" id="cmpProg" aria-live="polite">Oración 1 de 8</p>
     <div class="cmp-sent" id="cmpSent"></div>
     <div class="cmp-opts" id="cmpOpts" role="group"></div>
@@ -409,7 +403,6 @@
 
   <div class="card ac-gold">
     <h2>🗜️ Compacta el programa</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por programa compactado (primera vez)</p>
     <p class="id-prog" id="neuronProg" aria-live="polite">Programa 1 de 8</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">Cada programa largo se puede escribir corto con un bucle. Elige el bucle que hace exactamente lo mismo:</p>
     <div class="neuron-desc" id="neuronDesc">Cargando...</div>
@@ -423,7 +416,6 @@
 
   <div class="card ac-jade">
     <h2>🎨 ¿Qué dibuja el bucle?</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por figura acertada (primera vez)</p>
     <p class="id-prog" id="neuroProg" aria-live="polite">1 de 5</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">Traza el rastro con la mente sobre la mini-cuadrícula y elige la figura que dibuja el bucle:</p>
     <div class="neuro-trans-display" id="neuroTrans">Cargando...</div>
@@ -436,7 +428,6 @@
 
   <div class="card ac-purple">
     <h2>🐛 Detective del bug</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.6rem;">⭐ +3 XP por bug atrapado (primera vez)</p>
     <p class="id-prog" id="enferProg" aria-live="polite">1 de 6</p>
     <p style="font-size:0.85rem;margin-bottom:0.6rem;">Cada bucle intenta lograr una meta, pero puede tener un error en la N o en el cuerpo. ¿Qué está mal?</p>
     <div class="neuro-trans-display" id="enferDisease">«REPETIR 3 VECES [AVANZA]»</div>
@@ -458,7 +449,6 @@
   <div class="card ac-teal">
     <h2>🏆 Reto Final — ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada término lo más rápido que puedas.</p>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.8rem;">⭐ +1 XP correcto | ❌ -1 XP incorrecto (solo primera partida)</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
     <div class="game" aria-live="polite">
       <div class="reto-timer" id="retoTimer">⏱ 30</div>
@@ -486,7 +476,6 @@
 <div class="sec" id="s-sopa" role="tabpanel">
   <div class="card ac-teal">
     <h2>🤍 Sopa de Letras</h2>
-    <p style="font-size:0.78rem;color:var(--gray);margin-bottom:0.4rem;">⭐ +1 XP por palabra encontrada (primera vez)</p>
     <div class="sopa-words" id="sopaWords"></div>
     <p class="sopa-hint" id="sopaHint">🖱️ Arrastra o haz clic en la primera letra, luego en la última</p>
     <div class="sopa-container">
