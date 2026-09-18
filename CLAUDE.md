@@ -3795,25 +3795,140 @@ es justo donde ese algo sigue escrito. Sin eso se ponían rojos el comentario de
 fichas. Se comprobó al revés, devolviendo a la pantalla una tarjeta «Para el
 maestro»: **tres fallos**, uno por frase.
 
+### La etapa 3: de qué está hecho el mundo, y qué cambia de verdad
+
+La tercera unidad de la Ruta de la Raíz es **¿De qué está hecho el mundo?**
+(`misiones/basica-de-que-esta-hecho-el-mundo/`, id 81, etapa 3), y va para los
+tres ciclos como las dos primeras. El currículo la pide con dos criterios del
+**CNB de Educación Media**, textuales: el **CE1.2** «Diferencia las etapas del
+saber filosófico a través del método comparativo» y el **CE1.3** «Expone la
+importancia de las escuelas del pensamiento filosófico». La primera etapa del
+saber filosófico es justamente esta: la que preguntó de qué está hecho todo.
+Confirmado en el PDF, con su página, en `CURRICULA-FILOSOFIA.md`.
+
+Mismo patrón que el Himno, los próceres y las dos unidades anteriores: **los
+datos viven en `js/data/filosofia-mundo.js`** y solo ahí; la misión los pinta,
+la ficha es HTML plano, y `node _dev/verifica-filosofia.js` compara las dos.
+
+⚠️ **Y NO repite a las anteriores.** La 1 enseña a hacer preguntas, la 2 a
+examinar las razones que otros dan, y esta a **usar las dos sobre una pregunta
+de verdad**: qué es real, qué cambia y qué se queda. Es la primera de la ruta
+donde el alumno tiene que escribir **una regla propia** y sostenerla en cuatro
+casos seguidos.
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. ⚠️ **Las tres clases de cambio salen de UN solo sitio** (`MUN_CAMBIOS`, 30
+   cambios, diez por clase), y de ahí se arman el Clasifica Y el Reto. Es la
+   avería del Escudo marcado en rojo: con una sola fuente **no se puede
+   escribir**, que vale más que una sonda que la caza.
+2. ⚠️ **Cada clase se enseña con su PRUEBA, no con su definición**: la pregunta
+   que se le hace al cambio para saber cuál es. Y la frontera que de verdad
+   importa —la que separa lo que le pasa A LA COSA de lo que solo cambia en lo
+   que decimos— tiene su propio widget, porque es la que el alumno usa fuera de
+   la escuela.
+3. ⚠️ **El atajo que falla va escrito, no callado.** «Si se puede deshacer,
+   cambió la forma» se enseña en la escuela y no siempre acierta: la sal
+   disuelta vuelve a salir. Callarlo sería enseñar una regla falsa, y la sonda
+   comprueba que el aviso esté en la pantalla y en el papel.
+4. ⚠️ **Los cuatro casos de identidad NO tienen una sola respuesta buena, y se
+   dice.** El machete al que le cambiaron el mango y la hoja, la quebrada, vos
+   desde el kínder, la escuela. Los dos lados van juntos y con lo que de verdad
+   decide cada uno. Es la decisión de héroe y prócer en la Ruta de la Patria:
+   calificar con una sola clave sería ponerle mala nota al que pensó.
+5. ⚠️ **NO se escribe qué dice la cosmovisión de NINGÚN pueblo de Honduras.**
+   Este repositorio no tiene con qué acreditarlo, y ponerle a un pueblo una
+   creencia que no se sostiene es peor que callarla. Se convierte en
+   `MUN_INVESTIGA`, que manda al alumno a preguntarlo en SU municipio —que es
+   donde están esas respuestas y lo que el DCNB pide de verdad—, con respeto y
+   anotando quién se lo contó. **La sonda lo vigila por su nombre**: si mañana
+   aparece «lenca», «miskito», «garífuna», «tolupán», «pech», «tawahka» o
+   «nahua» en la pantalla, en el papel o en los datos, se pone roja.
+6. **Ni una fecha**, como en las dos unidades anteriores. De Demócrito,
+   Heráclito y Parménides se dice qué pensaron y por qué se les recuerda. Y su
+   desacuerdo **no se esconde**: es la discusión de la unidad.
+
+**Y el puente con la ciencia es el CE1.4 visto trabajando.** Cuatro preguntas
+que la filosofía hizo sin poder medirlas y que hoy se contestan midiendo: los
+cuatro elementos contra la tabla, el átomo «que no se parte» contra el átomo
+que sí se parte, la ceniza contra la balanza, el aire que no se ve contra el
+aire que pesa. Con su aviso: **no todas se le pasaron a la ciencia**, y «¿por
+qué hay algo y no más bien nada?» sigue sin aparato que la mida.
+
+⚠️ **La definición de metafísica tiene que ser la MISMA que la de la unidad 1**
+(`FILO_RAMAS`, la raíz «metafisica»). El alumno abre las dos seguidas y no puede
+leer dos definiciones distintas de lo mismo. No se comparan letra por letra: se
+busca la tirada de palabras más larga que las dos comparten, como hace la sonda
+del Himno con una cita. Si alguien cambia una sola, se cae.
+
+### ⚠️ Y al calcar la unidad 2 salió lo que llevaba PUBLICADO en las dos
+
+La 81 se calcó de la 80, que se había calcado de la 79, que venía de la misión
+de la Constitución. Salieron cuatro cosas y **ninguna daba un error**:
+
+1. ⚠️ **La prueba de Pensamiento Crítico de la unidad 2 examinaba de la unidad
+   1.** Sus cinco casos, sus cuatro correcciones, sus cinco decisiones y tres de
+   sus cuatro comparaciones eran las tres clases de pregunta, Tales de Mileto y
+   «filo + sofía». Se calcó y no se cambió. El alumno que la abría se examinaba
+   de lo que estudió el mes pasado, y la nota entra igual en su expediente. Se
+   reescribieron los siete bancos con el contenido de la lógica.
+2. ⚠️ **Y dentro de esos bancos viajaba METODOLOGÍA DE CLASE**, que es justo lo
+   que el autor había mandado quitar: «una clase de filosofía se hace en
+   círculo», «en una clase de filosofía se pone el aula en círculo», «el diario
+   filosófico se escribe al final de cada sesión». Al alumno se le examinaba de
+   cómo se da su propia clase. La sonda `nadaDelMaestro` no las cazaba porque
+   busca frases de un plan de clase, y estas venían disfrazadas de pregunta de
+   examen. Fuera de las dos unidades.
+3. **Tres títulos de otras misiones**: «I. Caso de análisis: el civismo de todos
+   los días» (de Aspectos Cívicos), «lo que hace cada poder del Estado y la
+   rendición de cuentas» (de los tres poderes) y «¿Qué cultura, lugar o concepto
+   corresponde a cada caso?». Los tres estaban en las dos unidades, y ninguna de
+   las tres cosas pasa en ninguna de ellas. La instrucción del generador de
+   tareas pedía además decir «a qué poder del Estado» se refiere cada oración.
+4. **El desfile de palabras del `.hero::before`**, que ya tiene su sonda
+   (`verifica-encabezados`) y la cazó al primer intento.
+
+Es la lección de siempre y van ya unas cuantas: **lo que se multiplica al copiar
+una misión no son solo los aciertos.**
+
+### ⚠️ Y dos cosas de la ficha que solo salieron MIRÁNDOLA
+
+1. ⚠️ **Las tres actividades iban dentro de UN solo `<div class="acts">`**, y el
+   repartidor no puede partir un bloque: dejó el «Actividades» **solo en una
+   hoja de 28,8 mm** y la ficha se fue a **once**. Cada actividad tiene que ser
+   su propio bloque; con eso cabe en diez. Vale para cualquier ficha que se
+   arme con un guion.
+2. ⚠️ **La actividad 2 salía RESUELTA.** Las tres pruebas iban en el mismo orden
+   que las tres clases, así que la respuesta era `a · b · c` sin leer una sola.
+   Es el mismo sesgo que la normativa del reparto de respuestas, con otra cara.
+   Se desordenan con semilla fija y la pauta sale de ese orden, no escrita a
+   mano. Lo mismo con los doce cambios de la actividad 1, que salían
+   `F·M·D·F·M·D…`: quien lo note contesta los doce sin mirar ninguno.
+
 **Antes de publicar un cambio de esta materia:**
 
 ```
-node _dev/verifica-filosofia.js             → las dos unidades, y que no se cuele nada del maestro
+node _dev/verifica-filosofia.js             → las tres unidades, y que no se cuele nada del maestro
 node _dev/verifica-nombres-propios.js
 node _dev/verifica-lab-legible.js           → los rótulos del Laboratorio, sin partirse
-node _dev/mide-legibilidad.js misiones/basica-pensar-con-orden --detalle
-node _dev/verifica-mision-nueva.js misiones/basica-pensar-con-orden/pensar-con-orden.html
-node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden
+node _dev/reparte-respuestas.js --revisa <carpeta>   → que ninguna letra pase del 40 %
+node _dev/mide-legibilidad.js <carpeta> --detalle
+node _dev/verifica-mision-nueva.js <carpeta>/<misión>.html
+node _dev/verifica-ficha-paginas.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo
 node _dev/servidor-estatico.js       (en otra terminal)
-METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js misiones/basica-pensar-con-orden/pensar-con-orden.html
+METAS_BASE=http://localhost:8123 node _dev/verifica-mision-navegador.js <carpeta>/<misión>.html
 ```
 
-(Con la carpeta y el archivo de la otra unidad, para la otra:
-`misiones/basica-el-asombro/el-asombro.html`.)
+(Las tres carpetas son `misiones/basica-el-asombro`,
+`misiones/basica-pensar-con-orden` y
+`misiones/basica-de-que-esta-hecho-el-mundo`.)
 
 Si se tocan los datos, la ficha **se vuelve a repartir**
-(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden`):
-son ocho hojas y diez, y un párrafo que crece dos renglones parte una en dos.
+(`node _dev/reparte-hojas-ficha.js ficha-el-asombro ficha-pensar-con-orden ficha-de-que-esta-hecho-el-mundo`):
+son ocho, diez y diez hojas, y un párrafo que crece dos renglones parte una en
+dos. ⚠️ **La de la unidad 3 NO se edita a mano**: sale de un guion que la arma
+desde `js/data/filosofia-mundo.js`, como las cuatro de la ruta de IA, y una
+corrección hecha solo en el HTML se pierde en el siguiente armado.
 ⚠️ Y si se QUITA contenido, va con **`--todas`**: sin esa bandera el repartidor
 solo mira las fichas que hoy se pasan del papel, así que la de la unidad 1 se
 habría quedado en nueve hojas gastando una de balde.

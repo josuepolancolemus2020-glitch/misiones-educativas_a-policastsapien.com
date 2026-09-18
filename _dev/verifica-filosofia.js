@@ -99,6 +99,19 @@ const UNIDADES = [
                    'lg-conectores', 'lg-arbol', 'lg-pensadores'],
     pensadores: 'LOG_PENSADORES', vocabulario: 'LOG_VOCABULARIO',
   },
+  {
+    n: 3, nombre: '¿De qué está hecho el mundo?',
+    datos: 'js/data/filosofia-mundo.js',
+    ficha: 'fichas/ficha-de-que-esta-hecho-el-mundo.html',
+    dir: 'misiones/basica-de-que-esta-hecho-el-mundo', html: 'de-que-esta-hecho-el-mundo.html',
+    js: 'js/de-que-esta-hecho-el-mundo.js',
+    exporta: 'MUN_METAFISICA,MUN_PREGUNTAS,MUN_TIPOS,MUN_TIPOS_OJO,MUN_CAMBIOS,' +
+             'MUN_IDENTIDAD,MUN_IDENTIDAD_OJO,MUN_PUENTE,MUN_PUENTE_OJO,MUN_COSMOS,' +
+             'MUN_INVESTIGA,MUN_VOCABULARIO,MUN_PENSADORES,MUN_ARBOL',
+    contenedores: ['mu-preguntas', 'mu-tipos', 'mu-identidad', 'mu-puente',
+                   'mu-cosmos', 'mu-investiga', 'mu-arbol', 'mu-pensadores'],
+    pensadores: 'MUN_PENSADORES', vocabulario: 'MUN_VOCABULARIO',
+  },
 ];
 
 /* Carga el archivo de datos DE VERDAD, no con expresiones regulares: lo que se
@@ -383,6 +396,131 @@ function revisaLogica(D, ficha, fichaPlana) {
   else ok(`u2: las ${D.LOG_ARBOL.length} materias están en el papel con lo que la lógica les da`);
 }
 
+/* ── UNIDAD 3: lo suyo ───────────────────────────────────────────── */
+function revisaMundo(D, ficha, fichaPlana, misionJs) {
+  let malos = faltanEnPapel(fichaPlana, D.MUN_PREGUNTAS,
+    [['nombre', p => p.nombre], ['qué busca', p => p.que], ['el ejemplo de aquí', p => p.aqui],
+     ['qué pasa hoy con ella', p => p.hoy]], 'pregunta');
+  if (!malos) ok(`u3: las ${D.MUN_PREGUNTAS.length} preguntas grandes están en el papel con sus cuatro campos`);
+
+  malos = faltanEnPapel(fichaPlana, D.MUN_TIPOS,
+    [['nombre', t => t.nombre], ['señal', t => t.senal], ['prueba', t => t.prueba]], 'clase de cambio');
+  if (!malos) ok(`u3: las ${D.MUN_TIPOS.length} clases de cambio están en el papel con su señal y su prueba`);
+
+  /* ⚠️ Cada clase lleva SU EMOJI además del color: la hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde.
+     Sin el emoji, clasificar cambios es justo la actividad que él no puede
+     hacer. Es la misma comprobación que el semáforo de la unidad 2. */
+  const sinEmoji = D.MUN_TIPOS.filter(t => !ficha.includes(t.emoji));
+  if (sinEmoji.length) mal(`u3: el papel dice ${sinEmoji.length} clase(s) de cambio SIN su emoji: ${sinEmoji.map(t => t.nombre).join(' · ')}. Fotocopiado en blanco y negro, eso es una actividad que no se puede hacer`);
+  else ok('u3: las tres clases de cambio llevan su emoji además del color');
+
+  /* ⚠️ El ATAJO QUE FALLA va escrito, no callado. «Si se puede deshacer,
+     cambió la forma» se enseña en la escuela y no siempre acierta: la sal
+     disuelta vuelve a salir. Callarlo sería enseñar una regla falsa. */
+  if (!fichaPlana.includes(limpia(D.MUN_TIPOS_OJO)))
+    mal('u3: la ficha no avisa de que el atajo de «si se puede deshacer» no siempre acierta');
+  else ok('u3: el papel dice que el atajo de la escuela falla, en vez de callarlo');
+
+  /* La pauta de «¿Qué cambió?», RECALCULADA de los datos. Es la avería del
+     Escudo marcado en rojo: el ejercicio y la clave salen del mismo sitio, y
+     aquí se comprueba que el papel no se haya separado de él. */
+  const letra = { forma: 'F', materia: 'M', nombre: 'D' };
+  const clase = {};
+  D.MUN_CAMBIOS.forEach(x => { clase[limpia(x.c)] = letra[x.q]; });
+  const bloque = ficha.match(/<div class="pauta">[\s\S]*?\n    <\/div>/);
+  const pauta = bloque && bloque[0].match(/¿Qué cambió\?[\s\S]*?<\/div>/);
+  const tabla = ficha.match(/<tr><th style="width:10%">F, M o D<\/th>[\s\S]*?<\/table>/);
+  if (!pauta || !tabla) mal('u3: no se encontró la actividad de «¿Qué cambió?» o su pauta');
+  else {
+    const claves = [...pauta[0].matchAll(/(\d+)\.\s*([FMD])\b/g)].map(m => m[2]);
+    const celdas = [...tabla[0].matchAll(/<tr><td><\/td><td>([^<]*)<\/td><\/tr>/g)].map(m => limpia(m[1]));
+    if (celdas.length !== claves.length) mal(`u3: la tabla trae ${celdas.length} cambios y la pauta ${claves.length} claves`);
+    else {
+      let m2 = 0;
+      celdas.forEach((c, i) => {
+        if (!clase[c]) { mal(`u3: la tabla usa un cambio que no está en el archivo de datos: «${c}»`); m2++; return; }
+        if (claves[i] !== clase[c]) { mal(`u3: el cambio ${i + 1} («${c}») es ${clase[c]} en los datos y la pauta dice ${claves[i]}`); m2++; }
+      });
+      if (!m2) ok(`u3: los ${celdas.length} cambios de la actividad llevan en la pauta la clase que dicen los datos`);
+    }
+  }
+
+  malos = faltanEnPapel(fichaPlana, D.MUN_IDENTIDAD,
+    [['título', k => k.titulo], ['qué cambió', k => k.cambio], ['el lado del sí', k => k.unos],
+     ['el lado del no', k => k.otros], ['qué lo decide', k => k.decide]], 'caso');
+  if (!malos) ok(`u3: los ${D.MUN_IDENTIDAD.length} casos de identidad están en el papel con sus DOS lados`);
+
+  /* ⚠️ Y que se diga que NO tienen una sola respuesta buena. Sin ese aviso, la
+     ficha pregunta algo con dos respuestas buenas y solo acepta una: es la
+     misma decisión que héroe y prócer en la Ruta de la Patria. */
+  if (!fichaPlana.includes(limpia(D.MUN_IDENTIDAD_OJO)) &&
+      !/no tiene(n)? una sola respuesta buena/i.test(sinHtml(ficha)))
+    mal('u3: el papel no dice que los casos de identidad NO tienen una sola respuesta buena');
+  else ok('u3: el papel avisa de que los casos de identidad no se califican como si tuvieran una respuesta');
+
+  malos = faltanEnPapel(fichaPlana, D.MUN_PUENTE,
+    [['la pregunta', x => x.p], ['lo que se contestó pensando', x => x.antes],
+     ['lo que hoy se mide', x => x.hoy], ['quién hizo qué', x => x.quien]], 'puente');
+  if (!malos) ok(`u3: los ${D.MUN_PUENTE.length} puentes están en el papel, con lo de antes y lo de hoy`);
+
+  if (!fichaPlana.includes(limpia(D.MUN_PUENTE_OJO)))
+    mal('u3: la ficha no avisa de que NO todas las preguntas se le pasaron a la ciencia');
+  else ok('u3: el papel dice que queda una pregunta sin aparato que la mida');
+
+  const C = D.MUN_COSMOS;
+  const faltaC = [['qué es', C.que], ['que todos tenemos una', C.toda], ['lo de Honduras', C.aqui]]
+    .filter(([, v]) => !fichaPlana.includes(limpia(v)));
+  const faltaP = C.preguntas.filter(q => !fichaPlana.includes(limpia(q.p)));
+  if (faltaC.length || faltaP.length)
+    mal(`u3: la ficha se dejó de la cosmovisión: ${faltaC.map(x => x[0]).concat(faltaP.map(q => q.p)).join(' · ')}`);
+  else ok('u3: la cosmovisión está en el papel con las tres preguntas que toda cosmovisión contesta');
+
+  /* ⚠️ Y NINGÚN pueblo de Honduras lleva escrita aquí una creencia sobre el
+     origen del mundo: este repositorio no tiene con qué acreditarlo, y ponerle
+     a un pueblo una que no se sostiene es peor que callarla. Si mañana alguien
+     escribe una, la sonda se pone roja. Es la misma regla que dejó fuera los
+     números de decreto de la flor y del árbol nacionales. */
+  const PUEBLOS = ['lenca', 'maya chortí', 'chortí', 'miskito', 'misquito', 'garífuna',
+                   'tolupán', 'pech', 'tawahka', 'nahua'];
+  const textos = [[fichaPlana, 'la ficha'],
+                  [limpia(sinHtml(fs.readFileSync(path.join(RAIZ, 'misiones/basica-de-que-esta-hecho-el-mundo/de-que-esta-hecho-el-mundo.html'), 'utf8'))), 'la pantalla'],
+                  [limpia(fs.readFileSync(path.join(RAIZ, 'js/data/filosofia-mundo.js'), 'utf8')), 'el archivo de datos']];
+  let conPueblo = 0;
+  textos.forEach(([t, donde]) => PUEBLOS.forEach(p => {
+    if (t.includes(limpia(p))) { mal(`u3: ${donde} nombra al pueblo ${p}: aquí no se le atribuye a NINGÚN pueblo una creencia que no se puede acreditar`); conPueblo++; }
+  }));
+  if (!conPueblo) ok('u3: no se le atribuye a ningún pueblo una cosmovisión que no se puede acreditar');
+
+  const faltanA = D.MUN_ARBOL.filter(a => !fichaPlana.includes(limpia(a.le)) || !fichaPlana.includes(limpia(a.hoy)));
+  if (faltanA.length) mal(`u3: la ficha se dejó lo que esta pregunta le da a: ${faltanA.map(a => a.materia).join(' · ')}`);
+  else ok(`u3: las ${D.MUN_ARBOL.length} materias están en el papel con lo que esta pregunta les deja`);
+
+  /* ⚠️ La metafísica se define IGUAL que en la unidad 1. El alumno abre las
+     dos seguidas y no puede leer dos definiciones distintas de lo mismo. No se
+     comparan letra por letra —son dos redacciones—: se busca la tirada de
+     palabras más larga que comparten, como hace la sonda del Himno con una
+     cita. Si alguien cambia una sola, se cae. */
+  const c1 = {}; vm.createContext(c1);
+  vm.runInContext(fs.readFileSync(path.join(RAIZ, 'js/data/filosofia-asombro.js'), 'utf8') + ';this.__R=FILO_RAMAS;', c1);
+  const raiz = c1.__R.find(r => r.clave === 'metafisica');
+  const a = limpia(raiz.pregunta + ' ' + raiz.hace).split(/\s+/);
+  const b = limpia(D.MUN_METAFISICA.pregunta + ' ' + D.MUN_METAFISICA.hace).split(/\s+/);
+  let mejor = 0;
+  for (let i = 0; i < a.length; i++) for (let j = 0; j < b.length; j++) {
+    let k = 0; while (i + k < a.length && j + k < b.length && a[i + k] === b[j + k]) k++;
+    if (k > mejor) mejor = k;
+  }
+  if (mejor < 6) mal(`u3: la metafísica se define distinto que en la unidad 1 (solo comparten ${mejor} palabras seguidas): el alumno abre las dos y leería dos cosas`);
+  else ok(`u3: la metafísica dice lo mismo que en la unidad 1 (${mejor} palabras seguidas iguales)`);
+
+  /* Que el Clasifica y el Reto salgan del MISMO sitio: es lo que hace
+     imposible la avería del Escudo marcado en rojo. */
+  if (!/munDeClase\(/.test(misionJs))
+    mal('u3: el JS de la misión no saca los cambios de munDeClase(): el Clasifica y el Reto podrían contradecirse');
+  else ok('u3: el Clasifica y el Reto salen los dos del archivo de datos');
+}
+
 /* ══════════════════ la pasada ══════════════════ */
 console.log('\n🌳 La Ruta de la Raíz: la pantalla y el papel\n');
 UNIDADES.forEach(u => {
@@ -392,7 +530,8 @@ UNIDADES.forEach(u => {
   const fichaPlana = limpia(sinHtml(ficha));
   const mision = fs.readFileSync(path.join(RAIZ, u.dir, u.html), 'utf8');
   if (u.n === 1) revisaAsombro(D, ficha, fichaPlana);
-  else revisaLogica(D, ficha, fichaPlana);
+  else if (u.n === 2) revisaLogica(D, ficha, fichaPlana);
+  else revisaMundo(D, ficha, fichaPlana, fs.readFileSync(path.join(RAIZ, u.dir, u.js), 'utf8'));
   pensadoresYVocabulario(u, D, fichaPlana);
   nadaDelMaestro(u);
   contenedoresVacios(u, mision);

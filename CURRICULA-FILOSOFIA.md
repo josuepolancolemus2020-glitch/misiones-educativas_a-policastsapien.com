@@ -60,18 +60,42 @@ está completo en `_dev/dcnb-pdf/` para todas las modalidades** (hay tres), así
 que de Media no se afirma nada más allá de lo que dice este documento sobre
 esta modalidad: es la misma regla que se puso para Inteligencia Artificial.
 
-### 3 · Y de ahí salen las dos primeras unidades, textualmente
+### 3 · Y de ahí salen las tres primeras unidades, textualmente
 
 | unidad | criterio de evaluación que cumple, tal cual |
 |---|---|
 | **1 · El Asombro** | **CE1.1** «Identifica el alcance que tiene la filosofía como saber en sentido etimológico y conceptual» |
 | **1 · El Asombro** | **CE1.4** «Describe la influencia de la filosofía en el desarrollo de las sociedades a través del tiempo en el surgimiento de las ciencias» |
 | **2 · Pensar con orden** | **RA2** «Construir razonamientos sobre el entorno, aplicando elementos de la lógica clásica y simbólica» · **CE2.1** «Identifica los elementos que conforman el pensamiento lógico clásico desde el contexto de la antigua Grecia» |
+| **3 · ¿De qué está hecho el mundo?** | **CE1.2** «Diferencia las etapas del saber filosófico a través del método comparativo» · **CE1.3** «Expone la importancia de las escuelas del pensamiento filosófico promoviendo procesos de reflexión» |
 
 El CE1.1 es el que obliga a enseñar **qué quiere decir la palabra** y no solo
 qué es la cosa: de ahí sale el bloque de «filo» + «sofía» de la unidad 1. Y el
 CE1.4 es el **árbol del saber** entero: cada asignatura de la escuela nació de
 una pregunta filosófica.
+
+El **CE1.2** pide diferenciar las **etapas del saber filosófico**, y la primera
+de todas es justamente la de la unidad 3: la que preguntó de qué está hecho el
+mundo antes de que hubiera con qué medirlo. El **CE1.3** pide exponer las
+escuelas del pensamiento, y ahí entran los tres pensadores de esa unidad —de
+los que se dice qué pensaron y **nunca cuándo**, que es la regla de toda la
+ruta—. Y el CE1.4 sigue trabajando en ella: la unidad 3 enseña el puente entre
+lo que se contestó pensando y lo que hoy se mide.
+
+**Lo que hoy se mide** no sale de la nada: lo pide el **DCNB de Básica**,
+Ciencias Naturales, bloque «Materia, energía y tecnología», textual —«en este
+bloque se abordará la **constitución de la materia en partículas fundamentales
+como el átomo y los electrones**»—, confirmado en el PDF en
+`dcneb-basica-ii-ciclo.pdf` **página 415** del archivo y
+`dcneb-basica-iii-ciclo.pdf` **página 531**.
+
+Y **la cosmovisión** la nombra el propio DCNB en el perfil de egreso: «para el
+desarrollo de su cultura, **en el marco de su cosmovisión**». ⚠️ Pero aquí NO se
+escribe qué dice la cosmovisión de **ningún** pueblo de Honduras: este
+repositorio no tiene con qué acreditarlo, y ponerle a un pueblo una creencia
+que no se sostiene es peor que callarla. Se convierte en la investigación del
+alumno en SU municipio, que es lo que el DCNB pide de verdad. La sonda lo
+vigila por su nombre.
 
 ## ⚠️ Por qué es materia propia y no un tema de Ciencias Sociales
 
@@ -102,7 +126,7 @@ el mismo mes y compartir murales, debates y ferias.
 |---|---|---|---|
 | 1 | Febrero | **El asombro** | ¿Qué es filosofar? |
 | 2 | Marzo | **Pensar con orden** | Lógica |
-| 3 | Abril | ¿De qué está hecho el mundo? | Metafísica y cosmovisiones |
+| 3 | Abril | **¿De qué está hecho el mundo?** | Metafísica y cosmovisiones |
 | 4 | Mayo | ¿Cómo sé que sé? | Epistemología |
 | 5 | Junio | Palabras que piensan | Lenguaje y retórica |
 | 6 | Julio | ¿Quién soy yo? | Antropología filosófica |

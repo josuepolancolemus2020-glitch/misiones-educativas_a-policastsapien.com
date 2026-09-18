@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha Didáctica · Misión ¿De qué está hecho el mundo?</title>
+<meta name="robots" content="noindex">
+<style>
+
+  /* ═══ NORMATIVA DE FICHAS M.E.T.A.S ═══
+     · Fuente comercial estándar de texto escolar: Arial 11pt
+     · Código de color por materia: FILOSOFÍA = CIRUELA (#784a6d). No se
+       eligió a ojo: se midió la distancia de color contra las diez materias
+       que ya existían (ΔE 43,1 contra la más cercana). El porqué está en
+       CURRICULA-FILOSOFIA.md.
+     · Selección múltiple: círculo para RELLENAR, nunca la ✗ (en el aula la ✗
+       significa MALO, y pedirla para señalar lo correcto enseña dos cosas
+       contrarias con el mismo signo)
+     · ⚠️ Esta ficha NO lleva NADA para el maestro: ni la rutina de la clase, ni
+       la ruta por ciclo, ni notas de cómo darla. Lo pidió el autor y la sonda
+       lo comprueba. Lo único que se queda en hoja suelta al final es la PAUTA,
+       que es la clave de corrección de los ejercicios de estas mismas hojas.
+     · ⚠️ Aquí NO hay ni una fecha, y no es un olvido: está contado en la
+       cabecera de js/data/filosofia-mundo.js. Ponerlas es la investigación.
+     · ⚠️ Y NO se escribe qué dice la cosmovisión de ningún pueblo de Honduras:
+       no hay con qué acreditarlo, y ponerle a un pueblo una creencia que no se
+       sostiene es peor que callarla. Por eso esa parte es una investigación.
+     · ⚠️ ESTA FICHA NO SE EDITA A MANO: sale de _dev/arma-ficha-mundo.js. */
+  :root {
+    --fil: #784a6d; --fil-osc: #5f3a57; --fil-claro: #f7eff5;
+    --verde: #1d4538; --verde-claro: #eef5f1;
+    --tinta: #241b22; --gris: #6b5f67; --linea: #e3d2dd;
+    --oro: #b45309;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; color: var(--tinta); background: #f6f1f4; line-height: 1.42; }
+  .doc { max-width: 8.5in; margin: 0 auto; }
+
+  .pagina { background: #fff; padding: 0 0 34px; margin: 0 auto 14px; position: relative; min-height: 253mm; }
+  .pagina .contenido { padding: 26px 40px 0; }
+  .pag-pie {
+    position: absolute; bottom: 10px; left: 40px; right: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; color: var(--gris); border-top: 1px solid var(--linea); padding-top: 5px;
+  }
+  .pag-pie b { color: var(--fil-osc); }
+
+  .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
+  .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
+  .idline .raya.corta { flex: 0 0 70px; }
+
+  .fh { display: flex; gap: 14px; border-left: 6px solid var(--fil); background: var(--fil-claro); border-radius: 8px; padding: 9px 14px; margin-bottom: 9px; align-items: center; }
+  .fh-txt { flex: 1; }
+  .fh .f-badge { font-size: 14pt; font-weight: 900; color: var(--fil-osc); }
+  .fh .f-meta { font-size: 9.5pt; margin-top: 3px; }
+  .fh .f-meta b { color: var(--fil-osc); }
+  .fh-qr { flex: 0 0 86px; text-align: center; }
+  .fh-qr img { width: 82px; height: 82px; background: #fff; border-radius: 8px; padding: 3px; border: 1px solid var(--linea); }
+  .fh-qr span { display: block; font-size: 6.8pt; color: var(--gris); line-height: 1.25; margin-top: 2px; }
+
+  h2 { font-size: 12pt; color: #fff; background: var(--fil); padding: 6px 12px; border-radius: 7px; margin: 8px 0 6px; }
+  h3 { font-size: 11pt; color: var(--fil-osc); margin: 9px 0 5px; }
+  p { font-size: 11pt; margin-bottom: 5px; text-align: justify; }
+  ul, ol { margin: 4px 0 6px 26px; font-size: 11pt; }
+  li { margin-bottom: 2px; }
+  ol.objetivos { list-style: decimal outside; margin-left: 26px; }
+  ol.objetivos li { margin-bottom: 3px; padding-left: 2px; }
+
+  .caja { border-radius: 8px; padding: 7px 12px; margin: 6px 0; font-size: 10.5pt; break-inside: avoid; }
+  .idea { background: #fff8e6; border: 1px solid #f0dca6; }
+  .idea b { color: #b07d00; }
+  .regla { background: var(--fil-claro); border: 1px solid var(--linea); }
+  .regla b { color: var(--fil-osc); }
+  .hn { background: var(--verde-claro); border: 1px solid #cfe2d8; }
+  .hn b { color: var(--verde); }
+  .truco { background: #e8f0fe; border: 1px solid #c6d8f5; }
+  .truco b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 10pt; break-inside: avoid; }
+  th { background: var(--fil); color: #fff; text-align: left; padding: 3px 8px; font-size: 9.5pt; }
+  td { border: 1px solid var(--linea); padding: 2px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fbf6f9; }
+  td.k { font-weight: 700; color: var(--fil-osc); white-space: nowrap; }
+
+  .acts h3 { border-bottom: 2px solid var(--fil-claro); padding-bottom: 3px; }
+  .acts .val { font-size: 8.5pt; font-weight: 400; color: var(--gris); }
+  .acts ol { margin-left: 24px; }
+  .acts ol li { margin-bottom: 5px; padding-left: 3px; }
+  .acts ol li::marker { font-weight: 800; color: var(--fil); }
+  .linea-resp { display: inline-block; min-width: 95px; border-bottom: 1px solid #a99aa4; }
+
+  .preg { padding: 4px 0; border-bottom: 1px dashed var(--linea); break-inside: avoid; }
+  .preg:last-child { border-bottom: none; }
+  .preg-q { font-weight: 700; color: var(--tinta); margin-bottom: 3px; display: flex; gap: 8px; align-items: baseline; }
+  .preg-n {
+    display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+    background: var(--fil); color: #fff; border-radius: 6px;
+    text-align: center; line-height: 22px; font-size: 10.5pt; font-weight: 900;
+  }
+  .preg-ops { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; padding-left: 30px; }
+  .preg-ops .op { font-size: 10pt; font-weight: 400; color: var(--tinta); display: flex; align-items: baseline; gap: 7px; }
+  /* El círculo que el alumno RELLENA. Nunca una ✗: en el aula la ✗ es la
+     marca de lo que está mal, y pedirla para señalar lo correcto confunde a
+     quien ya sabe leer una hoja corregida. */
+  .preg-ops .op i {
+    font-style: normal; flex: 0 0 auto; display: inline-block;
+    width: 11px; height: 11px; border: 1.3px solid #333; border-radius: 50%;
+    position: relative; top: 1px;
+  }
+  .preg-ops .op b { font-weight: 800; color: var(--fil-osc); font-size: 10.5pt; }
+  .preg-ops .op.full { grid-column: 1 / -1; }
+
+  .pauta { background: #fbf4f8; border: 1px solid var(--linea); border-radius: 9px; padding: 10px 15px; margin-top: 8px; font-size: 10.5pt; break-inside: avoid; }
+  .pauta .pt { font-weight: 800; color: var(--fil-osc); }
+  .pauta > div { margin-bottom: 4px; }
+  .nota-doc { font-size: 10pt; color: var(--gris); border-top: 1.5px solid var(--linea); margin-top: 11px; padding-top: 7px; text-align: justify; }
+
+  /* ═══ LAS CUATRO PREGUNTAS GRANDES ═══ */
+  .rejilla { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .rejilla > div { flex: 1 1 47%; border: 1px solid var(--linea); border-radius: 7px; padding: 5px 9px;
+                   font-size: 9.5pt; background: #fdfafc; break-inside: avoid; }
+  .rejilla b { display: block; font-size: 10pt; color: var(--fil-osc); }
+  .rejilla .q { font-weight: 700; margin: 1px 0; }
+  .rejilla .h { color: var(--gris); margin: 0; }
+
+  /* ═══ LAS TRES CLASES DE CAMBIO ═══
+     ⚠️ Cada clase lleva SU EMOJI además del color. Esta hoja se fotocopia en
+     blanco y negro y uno de cada doce niños no distingue el rojo del verde:
+     sin el emoji, clasificar cambios sería justo la actividad que él no
+     puede hacer. */
+  .sem { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+         padding: 6px 12px; margin: 6px 0; break-inside: avoid; }
+  .sem.c-forma { border-left-color: #1d4f91; }
+  .sem.c-materia { border-left-color: #b45309; }
+  .sem.c-nombre { border-left-color: #6b6b6b; }
+  .sem b { font-size: 11.5pt; color: var(--fil-osc); }
+  .sem .et { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+             border-radius: 999px; padding: 1px 7px; background: var(--fil-claro); color: var(--fil-osc); }
+  .sem p.s { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .sem p.p { font-size: 10pt; background: var(--verde-claro); border-radius: 6px;
+             padding: 3px 8px; margin: 3px 0 0; }
+
+  /* ═══ ¿SIGUE SIENDO EL MISMO? ═══
+     Las dos respuestas van juntas y con la raya encima de lo que decide: lo
+     que enseña la tarjeta es que las dos se sostienen. */
+  .val { border: 1.5px solid var(--linea); border-radius: 8px; padding: 6px 12px; margin: 6px 0;
+         break-inside: avoid; }
+  .val .t { font-size: 11pt; font-weight: 800; color: var(--fil-osc); }
+  .val p.q { font-size: 10.5pt; font-weight: 700; margin: 2px 0; }
+  .val ul { margin: 2px 0 2px 22px; font-size: 10.5pt; }
+  .val p.c { font-size: 10.5pt; font-weight: 700; border-top: 1.5px solid var(--fil);
+             padding-top: 3px; margin: 3px 0 0; }
+
+  /* ═══ EL PUENTE: lo que se pensó y lo que hoy se mide ═══ */
+  .si2-wrap { margin: 6px 0; break-inside: avoid; }
+  .puente-p { font-size: 11pt; color: var(--fil-osc); margin: 0 0 2px; }
+  .puente-q { font-size: 9.5pt; color: var(--gris); margin: 2px 0 0; }
+  .si2 { display: flex; gap: 6px; margin: 0; break-inside: avoid; flex-wrap: wrap; }
+  .si2 > div { flex: 1 1 45%; border: 1px solid var(--linea); border-top: 4px solid var(--fil);
+               border-radius: 0 0 7px 7px; padding: 5px 9px; font-size: 10pt; background: #fdfafc; }
+  .si2 > div.ok { border-top-color: var(--fil); }
+  .si2 > div.no { border-top-color: var(--verde); }
+  .si2 b { display: block; font-size: 10.5pt; color: var(--fil-osc); }
+  .si2 p { margin: 0; }
+
+  .pens { border: 1.5px solid var(--linea); border-left: 5px solid var(--fil); border-radius: 8px;
+          padding: 7px 12px; margin: 7px 0; break-inside: avoid; }
+  .pens b { font-size: 11.5pt; color: var(--fil-osc); }
+  .pens p.w { font-size: 9pt; color: var(--gris); font-style: italic; margin: 0; }
+  .pens p.p { font-size: 10.5pt; margin: 3px 0; }
+  .pens p.dato { font-size: 9.5pt; color: var(--gris); margin: 0; }
+
+</style>
+</head>
+<body>
+<button class="imprimir-btn" onclick="window.print()">🖨️ Imprimir la ficha</button>
+
+<div class="doc">
+
+<!-- ═══════════ PÁGINA 1 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+
+    <div class="fh">
+      <div class="fh-txt">
+        <div class="f-badge">📄 Ficha Didáctica: Misión ¿De qué está hecho el mundo?</div>
+        <div class="f-meta"><b>Asignatura:</b> Filosofía &nbsp;·&nbsp; <b>Nivel:</b> Educación Básica, I, II y III Ciclo</div>
+        <div class="f-meta"><b>Tema:</b> Las cuatro preguntas de la metafísica. Las tres clases de cambio y su prueba. Cuándo algo sigue siendo lo mismo. De lo que se pensó a lo que hoy se mide. Qué es una cosmovisión.</div>
+      </div>
+      <div class="fh-qr">
+        <img src="../img/qr-mision-de-que-esta-hecho-el-mundo.png" alt="Código QR de la misión ¿De qué está hecho el mundo?">
+        <span>Apunta con el teléfono para abrir la misión</span>
+      </div>
+    </div>
+
+    <h2>¿Por qué esta ficha?</h2>
+
+    <p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva
+       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>
+
+    <div class="caja idea"><b>Lo que hay que sacar de aquí:</b> no todo cambio es el mismo cambio.
+      A veces cambia la forma, a veces la materia, y a veces no le pasa nada a la cosa: solo cambia
+      lo que decimos de ella. Saber cuál es cuál es la destreza de esta unidad.</div>
+
+    <h3>Objetivos</h3>
+
+    <ol class="objetivos">
+      <li>Decir de qué clase es un cambio y con qué prueba se sabe.</li>
+      <li>Separar lo que le pasa a la cosa de lo que solo cambia en lo que decimos.</li>
+      <li>Escribir una regla propia de cuándo algo sigue siendo lo mismo, y aplicarla igual a varios casos.</li>
+      <li>Contar una pregunta que la filosofía hizo y hoy la ciencia mide.</li>
+      <li>Explicar qué es una cosmovisión y averiguar la de su propio municipio.</li>
+    </ol>
+
+    <h2>Le pasó a alguien</h2>
+
+    <p>El abuelo le dejó el machete a Elvin. Hace años le cambiaron el <b>mango</b>. El verano
+       pasado, la <b>hoja</b>. Ahora su hermana dice que ese ya no es el machete del abuelo, que del
+       de él no queda nada, y que entonces le toca la mitad de lo que valga.</p>
+
+    <div class="caja regla"><b>Llevan tres semanas sin hablarse</b> por una pregunta que ninguno
+      de los dos sabe contestar: ¿sigue siendo el mismo machete? Los dos tienen media razón, y por eso
+      no se acaba. Lo que les falta es una <b>regla</b> dicha antes de discutir.</div>
+
+    <h2>Cuatro preguntas que no se cierran solas</h2>
+
+    <p>Pregunta de qué está hecho el mundo. Se llama <b>Metafísica</b>, y pregunta: ¿Qué es real? ¿Qué cambia y qué se queda?</p>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 1</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 2 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="rejilla"><div><b>🧱 ¿De qué está hecho todo?</b><p class="q">Buscar las piezas con las que está armado el mundo.</p><p class="h"><i>La piedra, el agua y vos, ¿tienen algo igual por dentro?</i></p><p class="h">Esta se la pasó a la ciencia, y la ciencia la está midiendo.</p></div><div><b>🔄 ¿Qué cambia y qué se queda?</b><p class="q">Ver qué le puede pasar a algo sin que deje de ser eso.</p><p class="h"><i>Al machete le cambiaron el mango. ¿Sigue siendo el mismo?</i></p><p class="h">Esta se discute todavía, y se discute en los juzgados.</p></div><div><b>🪞 ¿Qué es real y qué solo lo parece?</b><p class="q">Separar lo que está ahí de lo que uno cree que está ahí.</p><p class="h"><i>El reflejo del cerro en la laguna, ¿es un cerro?</i></p><p class="h">Esta se usa todos los días, y casi nadie la nota.</p></div><div><b>❔ ¿Por qué hay algo y no más bien nada?</b><p class="q">Preguntar por qué existe el mundo, en vez de no existir nada.</p><p class="h"><i>No hay forma de medirla. Ni un aparato la contesta.</i></p><p class="h">Esta sigue abierta. Nadie la ha cerrado, y se vale decirlo.</p></div></div>
+
+    <div class="caja truco"><b>Ojo:</b> No es magia ni adivinanza. Es la pregunta que se hace ANTES de medir.</div>
+
+    <h2>No todo cambio es el mismo cambio</h2>
+
+    <p>Hay tres clases, y cada una tiene su prueba. La prueba es una pregunta: se la haces al
+       cambio y él te contesta cuál es.</p>
+
+    <div class="sem c-forma"><b>🔵 Cambió la forma</b> <span class="et">Misma cosa, otra figura</span><p class="s">La materia es la misma. Solo se acomodó de otro modo.</p><p class="p"><b>La prueba:</b> Preguntate: ¿sigue siendo la misma sustancia?</p></div>
+
+    <div class="sem c-materia"><b>🟠 Cambió la materia</b> <span class="et">Ya es otra cosa</span><p class="s">Lo que quedó es otra sustancia: otro color, otro olor, otro sabor.</p><p class="p"><b>La prueba:</b> Preguntate: ¿quedó algo distinto de lo que había?</p></div>
+
+    <div class="sem c-nombre"><b>⚪ Cambió lo que decimos</b> <span class="et">La cosa está igual</span><p class="s">A la cosa no le pasó nada. Cambió su nombre, su dueño o su lugar.</p><p class="p"><b>La prueba:</b> Preguntate: ¿le pasó algo A LA COSA, o solo a lo que decimos de ella?</p></div>
+
+    <div class="caja truco"><b>Un atajo que falla:</b> Hay un atajo que se usa mucho: «si se puede deshacer, cambió la forma». Sirve casi siempre y no siempre. La sal disuelta en agua vuelve a salir, y ahí no cambió la materia.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 2</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 3 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>¿Sigue siendo el mismo?</h2>
+
+    <p>El caso de Elvin y tres más. <b>Ninguno tiene una sola respuesta buena</b>, y eso no es un
+       fallo: es lo que hace dura la pregunta. Lo que sí se puede hacer es decir tu regla antes y
+       aplicarla igual a los cuatro.</p>
+
+    <div class="val"><div class="t">🔪 El machete del abuelo</div><p class="q">Le cambiaron el mango. Años después, la hoja.</p><ul><li>✅ Sigue siendo el de él: nunca dejó de usarse y nunca hubo otro.</li><li>❌ Ya no es el de él: no le queda ni un pedazo del que era.</li></ul><p class="c">Lo que lo decide: Si lo que hace a una cosa es de qué está hecha, o para qué sirve.</p></div>
+
+    <div class="val"><div class="t">🏞️ La quebrada del pueblo</div><p class="q">El agua de hoy no es la de ayer. Ya bajó toda.</p><ul><li>✅ Es la misma quebrada: nace en el mismo cerro y va al mismo lado.</li><li>❌ No es la misma: de lo que había ayer no queda una gota.</li></ul><p class="c">Lo que lo decide: Si lo que hace a una cosa es su material, o su forma y su camino.</p></div>
+
+    <div class="val"><div class="t">🧒 Vos, desde el kínder</div><p class="q">Casi todo tu cuerpo se ha ido cambiando por dentro.</p><ul><li>✅ Sos el mismo: te acordás de aquello y tenés el mismo nombre.</li><li>❌ No sos el mismo: ni el cuerpo ni las ideas son las de entonces.</li></ul><p class="c">Lo que lo decide: Si lo que te hace vos es tu cuerpo, o lo que recordás.</p></div>
+
+    <div class="val"><div class="t">🏫 La escuela</div><p class="q">Cambiaron las aulas, los maestros y todos los alumnos.</p><ul><li>✅ Es la misma escuela: está en el mismo sitio y hace lo mismo.</li><li>❌ Es otra: no queda nadie de los que estaban.</li></ul><p class="c">Lo que lo decide: Si lo que hace a una escuela son las personas, o lo que se hace ahí.</p></div>
+
+    <div class="caja regla"><b>Ojo:</b> Estas cuatro no tienen UNA respuesta buena. Por eso no se califican como si la tuvieran. Lo que se examina es tu regla: decila antes y aplicala igual a las cuatro.</div>
+
+    <h2>De lo que se pensó a lo que hoy se mide</h2>
+
+    <p>Estas cuatro preguntas las hizo la filosofía cuando no había con qué medirlas. Hoy la
+       ciencia las contesta con una balanza y una tabla. Mira qué cambió y qué no.</p>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 3</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 4 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="si2-wrap"><p class="puente-p"><b>¿De qué está hecho todo?</b></p><div class="si2"><div class="ok"><b>🌌 Se contestó pensando</b><p>Se contestó con cuatro cosas: agua, aire, fuego y tierra.</p></div><div class="no"><b>🔬 Hoy se mide</b><p>Hoy se cuentan y se ordenan en una tabla: son los elementos.</p></div></div><p class="puente-q">La filosofía hizo la pregunta. La química la fue midiendo.</p></div>
+
+    <div class="si2-wrap"><p class="puente-p"><b>¿Hay una pieza que ya no se pueda partir?</b></p><div class="si2"><div class="ok"><b>🌌 Se contestó pensando</b><p>Se dijo que sí, y se le puso un nombre: átomo, «que no se parte».</p></div><div class="no"><b>🔬 Hoy se mide</b><p>Hoy se sabe que el átomo SÍ se parte. El nombre le quedó grande.</p></div></div><p class="puente-q">La idea sirvió aunque el nombre falle: todo está hecho de piezas.</p></div>
+
+    <div class="si2-wrap"><p class="puente-p"><b>¿Se pierde la materia cuando algo se quema?</b></p><div class="si2"><div class="ok"><b>🌌 Se contestó pensando</b><p>Parecía que sí: de un tronco grande queda un puño de ceniza.</p></div><div class="no"><b>🔬 Hoy se mide</b><p>Hoy se pesa lo que entra y lo que sale, y da lo mismo. Nada se pierde.</p></div></div><p class="puente-q">Lo que faltaba no era pensar más: era una balanza.</p></div>
+
+    <div class="si2-wrap"><p class="puente-p"><b>¿El aire es algo, si no se ve?</b></p><div class="si2"><div class="ok"><b>🌌 Se contestó pensando</b><p>Se dudó de que fuera algo, justamente porque no se ve.</p></div><div class="no"><b>🔬 Hoy se mide</b><p>Hoy se pesa y ocupa lugar. Es materia, como la piedra.</p></div></div><p class="puente-q">Lo que no se ve puede ser real. Eso lo decide la medida.</p></div>
+
+    <div class="caja idea"><b>Ojo:</b> Ojo: no todas las preguntas se le pasaron a la ciencia. «¿Por qué hay algo y no más bien nada?» sigue sin aparato que la mida, y sigue siendo una buena pregunta.</div>
+
+    <h2>Cada pueblo explica el mundo entero</h2>
+
+    <p>Una cosmovisión es la forma entera en que un pueblo explica el mundo y su lugar en él.</p>
+
+    <p>Todos tenemos una, aunque nunca la hayamos escrito. Se aprende oyendo en la casa.</p>
+
+    <p>Toda cosmovisión contesta estas tres:</p>
+
+    <ul><li>🌄 ¿De dónde salió todo esto?</li><li>👥 ¿Qué somos nosotros dentro de eso?</li><li>🤲 ¿Qué se debe respetar, y por qué?</li></ul>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 4</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 5 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="caja hn"><b>En Honduras:</b> En Honduras hay varias, y no todas contestan igual. Ninguna se resume bien en un renglón.</div>
+
+    <h2>Palabras de la unidad</h2>
+
+    <table><tr><th style="width:22%">Palabra</th><th>Qué quiere decir</th></tr><tr><td class="k">materia</td><td>Aquello de lo que está hecha una cosa. Pesa y ocupa lugar, aunque no se vea.</td></tr><tr><td class="k">forma</td><td>El modo en que está acomodada esa materia. La misma masa da tortilla o bola.</td></tr><tr><td class="k">cambio</td><td>Que algo deje de ser como era. No todo cambio le pasa a la cosa.</td></tr><tr><td class="k">real</td><td>Lo que está ahí aunque nadie lo esté mirando ni lo crea.</td></tr><tr><td class="k">cosmovisión</td><td>La forma entera en que un pueblo explica el mundo y su lugar en él.</td></tr><tr><td class="k">átomo</td><td>La palabra quiere decir «que no se puede partir». Se puso pensando, no midiendo.</td></tr></table>
+
+    <h2>Tres que discutieron esto primero</h2>
+
+    <p>Uno pensó las piezas sin verlas; los otros dos no se pusieron de acuerdo, y su discusión
+       sigue abierta. Aquí <b>no hay ni una fecha</b>, y no es un olvido: una fecha que no se puede
+       acreditar no se escribe. Ponerlas es la investigación de más adelante.</p>
+
+    <div class="pens"><b>⚛️ Demócrito</b><p class="w">Grecia</p><p class="p">Pensó que todo está hecho de piezas chiquitísimas que se repiten.</p><p class="p"><b>Qué hizo:</b> Les puso nombre sin verlas nunca: átomos, «lo que ya no se parte».</p><p class="p"><b>Por qué se le recuerda:</b> Llegó pensando a una idea que la ciencia después fue a medir.</p><p class="dato"><b>Dato:</b> El nombre falló —el átomo sí se parte— y la idea de las piezas acertó.</p></div>
+
+    <div class="pens"><b>🌊 Heráclito</b><p class="w">Grecia</p><p class="p">Dijo que todo cambia siempre, sin parar, aunque no se note.</p><p class="p"><b>Qué hizo:</b> Puso el ejemplo del río: no te bañás dos veces en el mismo.</p><p class="p"><b>Por qué se le recuerda:</b> Obliga a explicar por qué decimos «el mismo río» si el agua ya se fue.</p><p class="dato"><b>Dato:</b> Para él lo raro no es que algo cambie: es que algo parezca quedarse.</p></div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 5</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 6 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="pens"><b>🗿 Parménides</b><p class="w">Grecia</p><p class="p">Dijo lo contrario: que lo que es, es, y no puede dejar de ser.</p><p class="p"><b>Qué hizo:</b> Sostuvo que el cambio que vemos nos engaña y hay que desconfiar.</p><p class="p"><b>Por qué se le recuerda:</b> Enseña a no ganar una discusión solo con lo que uno ve.</p><p class="dato"><b>Dato:</b> Él y Heráclito nunca se pusieron de acuerdo. La discusión sigue abierta.</p></div>
+
+    <h2>Qué le da esta pregunta a cada materia</h2>
+
+    <table><tr><th style="width:25%">Materia</th><th>Qué le deja</th></tr><tr><td class="k">🌱 Ciencias Naturales</td><td>Le dio la pregunta de arranque: de qué está hecho todo y cómo cambia.<br><b>Pruébalo hoy:</b> En tu cuaderno: el bloque de la materia contesta lo que aquí se pregunta.</td></tr><tr><td class="k">🔢 Matemáticas</td><td>Le deja una pregunta incómoda: ¿dónde está el número 7 cuando nadie lo escribe?<br><b>Pruébalo hoy:</b> Un número no se puede tocar ni pesar, y sirve igual. Pensá por qué.</td></tr><tr><td class="k">🌎 Ciencias Sociales</td><td>Le da las cosmovisiones: cada pueblo explica el mundo entero a su modo.<br><b>Pruébalo hoy:</b> Averiguá qué pueblos originarios hay en tu departamento, y desde cuándo.</td></tr></table>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 6</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 7 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Actividades</h2>
+
+    <div class="acts"><h3>1. ¿Qué cambió? <span class="val">12 pts</span></h3>
+
+    <p>Escribe <b>F</b> si cambió la forma, <b>M</b> si cambió la materia y <b>D</b> si solo
+       cambió lo que decimos.</p>
+
+    <table><tr><th style="width:10%">F, M o D</th><th>El cambio</th></tr><tr><td></td><td>La hoja de papel se vuelve avión</td></tr><tr><td></td><td>La leche se corta</td></tr><tr><td></td><td>A la escuela le cambian el nombre</td></tr><tr><td></td><td>Tu amigo se va a vivir lejos y ahora le decís así</td></tr><tr><td></td><td>El alambre se dobla para hacer un gancho</td></tr><tr><td></td><td>El hielo del vaso se derrite</td></tr><tr><td></td><td>El terreno pasa a nombre de otro dueño</td></tr><tr><td></td><td>La leña se vuelve ceniza</td></tr><tr><td></td><td>El guineo se pone negro</td></tr><tr><td></td><td>La masa se vuelve tortilla</td></tr><tr><td></td><td>El clavo se llena de herrumbre</td></tr><tr><td></td><td>La aldea se vuelve municipio</td></tr></table>
+
+    </div>
+
+    <div class="acts"><h3>2. La prueba de cada clase <span class="val">6 pts</span></h3>
+
+    <p>Une cada prueba con su clase de cambio. Escribe la letra en el paréntesis.</p>
+
+    <table><tr><th style="width:8%">( )</th><th>La pregunta que se le hace al cambio</th><th style="width:30%">La clase</th></tr><tr><td></td><td>Preguntate: ¿quedó algo distinto de lo que había?</td><td><b>a)</b> 🔵 Cambió la forma</td></tr><tr><td></td><td>Preguntate: ¿le pasó algo A LA COSA, o solo a lo que decimos de ella?</td><td><b>b)</b> 🟠 Cambió la materia</td></tr><tr><td></td><td>Preguntate: ¿sigue siendo la misma sustancia?</td><td><b>c)</b> ⚪ Cambió lo que decimos</td></tr></table>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 7</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 8 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts"><h3>3. Tu regla <span class="val">8 pts</span></h3>
+
+    <p>Primero escribe tu regla. Después contesta los cuatro casos <b>con la misma regla</b>.</p>
+
+    <div class="caja regla"><b>Mi regla:</b> algo sigue siendo lo mismo mientras
+      <span class="linea-resp" style="min-width:330px"></span></div>
+
+    <table><tr><th style="width:10%">Sí o no</th><th>El caso</th><th style="width:40%">Por qué, con mi regla</th></tr><tr><td></td><td>🔪 El machete del abuelo: Le cambiaron el mango. Años después, la hoja.</td><td></td></tr><tr><td></td><td>🏞️ La quebrada del pueblo: El agua de hoy no es la de ayer. Ya bajó toda.</td><td></td></tr><tr><td></td><td>🧒 Vos, desde el kínder: Casi todo tu cuerpo se ha ido cambiando por dentro.</td><td></td></tr><tr><td></td><td>🏫 La escuela: Cambiaron las aulas, los maestros y todos los alumnos.</td><td></td></tr></table>
+
+    </div>
+
+    <div class="acts"><h3>4. Rellena el círculo de la letra correcta <span class="val">6 pts</span></h3>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">1</span><span>La masa se vuelve tortilla. ¿Qué cambió?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> la forma</span><span class="op"><i></i><b>b)</b> la materia</span><span class="op"><i></i><b>c)</b> el nombre</span><span class="op"><i></i><b>d)</b> nada</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">2</span><span>El clavo se llena de herrumbre. ¿Qué cambió?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> el dueño</span><span class="op"><i></i><b>b)</b> la materia</span><span class="op"><i></i><b>c)</b> solo la forma</span><span class="op"><i></i><b>d)</b> nada</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">3</span><span>A la aldea la vuelven municipio. ¿Qué le pasó al suelo?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> cambió de materia</span><span class="op"><i></i><b>b)</b> cambió de forma</span><span class="op"><i></i><b>c)</b> nada: cambió lo que decimos</span><span class="op"><i></i><b>d)</b> se hizo más grande</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">4</span><span>La palabra «átomo» quiere decir…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> muy pequeño</span><span class="op"><i></i><b>b)</b> lo que brilla</span><span class="op"><i></i><b>c)</b> lo que pesa</span><span class="op"><i></i><b>d)</b> lo que no se parte</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">5</span><span>Se quema un tronco y queda un puño de ceniza. ¿Se perdió materia?</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> no: lo que se fue en humo también pesa</span><span class="op"><i></i><b>b)</b> sí, casi toda</span><span class="op"><i></i><b>c)</b> sí, la mitad</span><span class="op"><i></i><b>d)</b> no se puede saber</span></div></div>
+
+    <div class="preg"><div class="preg-q"><span class="preg-n">6</span><span>Una cosmovisión es…</span></div><div class="preg-ops"><span class="op"><i></i><b>a)</b> un mapa del cielo</span><span class="op"><i></i><b>b)</b> la forma entera en que un pueblo explica el mundo</span><span class="op"><i></i><b>c)</b> una lista de fechas</span><span class="op"><i></i><b>d)</b> un aparato</span></div></div>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 8</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 9 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <div class="acts"><h3>5. Antes y hoy <span class="val">8 pts</span></h3>
+
+    <p>Completa qué se contestaba antes, pensando, y qué se mide hoy.</p>
+
+    <table><tr><th style="width:34%">La pregunta</th><th>Antes se contestó…</th><th>Hoy se mide…</th></tr><tr><td class="k">¿De qué está hecho todo?</td><td></td><td></td></tr><tr><td class="k">¿Hay una pieza que ya no se pueda partir?</td><td></td><td></td></tr><tr><td class="k">¿Se pierde la materia cuando algo se quema?</td><td></td><td></td></tr><tr><td class="k">¿El aire es algo, si no se ve?</td><td></td><td></td></tr></table>
+
+    </div>
+
+    <h2>Investiga (no se contesta copiando de aquí)</h2>
+
+    <p>Aquí no hay respuestas escritas, y no es un descuido. Estas se averiguan donde vivís, porque es ahí donde están.</p>
+
+    <div class="caja idea"><b>1.</b> ¿Qué pueblos originarios hay en tu departamento? Preguntá en la escuela o en la alcaldía.<br><b>2.</b> ¿Qué se cuenta en tu pueblo sobre de dónde salió el mundo? Pedile que te lo cuente a la persona más mayor que conozcás.<br><b>3.</b> ¿Hay algo que en tu comunidad se respeta porque «tiene vida»? Un cerro, un río, un árbol.<br><b>4.</b> ¿En qué se parece eso a lo que enseña la escuela, y en qué no? Escribí las dos y compará.</div>
+
+    <div class="caja hn"><b>Al preguntar:</b> Al preguntar, se pregunta con respeto y sin señalar a nadie. Se anota quién lo contó.</div>
+
+    <h2>Para hacer entre varios</h2>
+
+    <div class="caja regla"><b>La mesa de los cambios.</b> Cada uno trae en un papelito un cambio
+      que vio esta semana en su casa. Se ponen en tres montones: 🔵 la forma, 🟠 la materia y ⚪ solo
+      lo que decimos. Los que no cuadren en ninguno se apartan y se les hace la prueba en voz alta.
+      Al final, cada uno escribe en su cuaderno un cambio que se pasó de montón y por qué.</div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 9</span></div>
+</section>
+
+<!-- ═══════════ PÁGINA 10 ═══════════ -->
+<section class="pagina">
+  <div class="contenido">
+
+    <h2>Pauta de corrección · NO se fotocopia</h2>
+
+    <div class="pauta">
+
+    <div><span class="pt">1. ¿Qué cambió? (12 pts)</span> 1. F · 2. M · 3. D · 4. D · 5. F · 6. F · 7. D · 8. M · 9. M · 10. F · 11. M · 12. D</div>
+
+    <div><span class="pt">2. La prueba de cada clase (6 pts)</span> 1 → b (Cambió la materia) · 2 → c (Cambió lo que decimos) · 3 → a (Cambió la forma). Las pruebas NO salen en el orden de las clases: hay que leerlas.</div>
+
+    <div><span class="pt">3. Tu regla (8 pts)</span> ⚠️ <b>No tiene una sola respuesta buena, a propósito.</b> Se califica que la regla esté escrita ANTES, que sea una sola y que se aplique IGUAL a los cuatro casos. Un «sí» y un «no» pueden valer los dos: lo que no vale es cambiar de regla a mitad de camino.</div>
+
+    <div><span class="pt">4. Selección múltiple (6 pts)</span> 1. a · 2. b · 3. c · 4. d · 5. a · 6. b</div>
+
+    <div><span class="pt">5. Antes y hoy (8 pts)</span> <b>¿De qué está hecho todo?</b> Antes: Se contestó con cuatro cosas: agua, aire, fuego y tierra. Hoy: Hoy se cuentan y se ordenan en una tabla: son los elementos. · <b>¿Hay una pieza que ya no se pueda partir?</b> Antes: Se dijo que sí, y se le puso un nombre: átomo, «que no se parte». Hoy: Hoy se sabe que el átomo SÍ se parte. El nombre le quedó grande. · <b>¿Se pierde la materia cuando algo se quema?</b> Antes: Parecía que sí: de un tronco grande queda un puño de ceniza. Hoy: Hoy se pesa lo que entra y lo que sale, y da lo mismo. Nada se pierde. · <b>¿El aire es algo, si no se ve?</b> Antes: Se dudó de que fuera algo, justamente porque no se ve. Hoy: Hoy se pesa y ocupa lugar. Es materia, como la piedra.</div>
+
+    <div><span class="pt">Investiga</span> ⚠️ <b>No trae respuestas, a propósito.</b> Aquí no está escrita la cosmovisión de ningún pueblo porque no hay con qué acreditarla, y ponerle a un pueblo una creencia que no se sostiene es peor que callarla. Se califica que diga DE DÓNDE sacó cada cosa y a quién se lo preguntó.</div>
+
+    </div>
+
+  </div>
+  <div class="pag-pie"><span>🌳 Ruta de la Raíz · Etapa 3 · <b>¿De qué está hecho el mundo?</b></span><span>Página 10</span></div>
+</section>
+
+</div>
+</body>
+</html>

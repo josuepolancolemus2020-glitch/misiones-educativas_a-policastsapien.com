@@ -148,7 +148,9 @@ const DIAGNOSTICOS = {
      enseña de verdad: en la 1, qué quiere decir la palabra y cómo se distingue
      una clase de pregunta de otra; en la 2, la prueba de una razón que
      sostiene, que la regla del «si… entonces» va en un solo sentido, y que
-     bien armado NO quiere decir verdadero.
+     bien armado NO quiere decir verdadero; en la 3, las tres clases de cambio
+     —y sobre todo la frontera de la unidad: que un cambio de nombre no le pasa
+     a la cosa— y qué es una cosmovisión.
      ⚠️ La posición de la correcta se reparte a propósito —es la normativa del
      reparto de respuestas—, así que el orden de las opciones no es el del
      banco de la misión aunque la respuesta buena sea la misma. */
@@ -159,5 +161,8 @@ const DIAGNOSTICOS = {
     { etapa: 2, q: '¿Cuál es la prueba de una razón que sostiene?', o: ['Que la diga alguien importante', 'Que si fuera verdad, tendría que serlo la conclusión', 'Que la digan muchos', 'Que suene bonita'], a: 1 },
     { etapa: 2, q: 'La regla es «si llueve, la cancha se moja». ¿Qué SÍ se puede concluir?', o: ['Está mojada, así que llovió', 'No está mojada, así que no hay regla', 'Nada se puede concluir', 'Llovió, así que está mojada'], a: 3 },
     { etapa: 2, q: '«Todos los peces vuelan. La tilapia es un pez. Así que la tilapia vuela.» Este argumento…', o: ['está mal hecho', 'no es un argumento', 'está bien hecho, pero parte de una mentira', 'es verdad'], a: 2 },
+    { etapa: 3, q: 'La leña se vuelve ceniza. ¿Qué cambió?', o: ['El nombre', 'La materia', 'Solo la forma', 'Nada'], a: 1 },
+    { etapa: 3, q: 'A la escuela le cambian el nombre. ¿Qué le pasó al edificio?', o: ['Nada: cambió lo que decimos', 'Cambió de materia', 'Cambió de forma', 'Se hizo otro'], a: 0 },
+    { etapa: 3, q: '¿Qué es una cosmovisión?', o: ['Un mapa del cielo', 'Una lista de fechas', 'La forma entera en que un pueblo explica el mundo', 'Un aparato para ver lejos'], a: 2 },
   ],
 };

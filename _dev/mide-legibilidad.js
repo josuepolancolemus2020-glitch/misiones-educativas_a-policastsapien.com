@@ -48,6 +48,7 @@ const IA = [
 const FILO = [
   { dir: 'misiones/basica-el-asombro', html: 'el-asombro.html', ficha: 'fichas/ficha-el-asombro.html', datos: ['js/data/filosofia-asombro.js'] },
   { dir: 'misiones/basica-pensar-con-orden', html: 'pensar-con-orden.html', ficha: 'fichas/ficha-pensar-con-orden.html', datos: ['js/data/filosofia-logica.js'] },
+  { dir: 'misiones/basica-de-que-esta-hecho-el-mundo', html: 'de-que-esta-hecho-el-mundo.html', ficha: 'fichas/ficha-de-que-esta-hecho-el-mundo.html', datos: ['js/data/filosofia-mundo.js'] },
 ];
 
 /* Misiones escritas para primaria, que son la vara. */

@@ -1,0 +1,916 @@
+// En escritorio (Windows) la app de WhatsApp corrompe los emojis recibidos vía wa.me; WhatsApp Web los conserva
+function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);window.open(esMovil?'https://wa.me/?text='+enc:'https://web.whatsapp.com/send?text='+enc,'_blank');}
+function compartirMision(){const url=window.location.href;const texto=`🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Filosofía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;_waShare(texto);}
+function toggleLetra(){document.body.classList.toggle('letra-grande');if(typeof sfx==='function')sfx('click');localStorage.setItem('preferenciaLetra',document.body.classList.contains('letra-grande'));}
+window.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('preferenciaLetra')==='true')document.body.classList.add('letra-grande');});
+
+// ===================== UTILIDADES =====================
+const _pick=(arr,n)=>[...arr].sort(()=>Math.random()-0.5).slice(0,n);
+const _shuffle=(arr)=>[...arr].sort(()=>Math.random()-0.5);
+function fb(id,msg,isOk){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='fb show '+(isOk?'ok':'err');}}
+
+// ===================== VARIABLES GLOBALES =====================
+const SAVE_KEY='filosofia_mundo_v1';
+let xp=0,MXP=200,done=new Set(),evalAnsVisible=false;
+let evalFormNum=1,unlockedAch=[],darkMode=false,prevLevel=0;
+let evalCritFormNum=1,evalCritAnsVisible=false;
+const TOTAL_SECTIONS=13;
+const xpTracker={fc:new Set(),qz:new Set(),cls:new Set(),id:new Set(),cmp:new Set(),reto:new Set(),sopa:new Set(),wgt:new Set()};
+
+// ===================== SONIDO =====================
+let sndOn=true;let AC=null;
+function getAC(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
+function sfx(t){if(!sndOn)return;try{const ac=getAC();if(!ac)return;const g=ac.createGain();g.connect(ac.destination);const o=ac.createOscillator();o.connect(g);if(t==='click'){o.type='sine';o.frequency.setValueAtTime(800,ac.currentTime);o.frequency.linearRampToValueAtTime(1200,ac.currentTime+0.1);g.gain.setValueAtTime(0.2,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+0.12);o.start();o.stop(ac.currentTime+0.12);}else if(t==='ok'){[523,659,784].forEach((f,i)=>{const o2=ac.createOscillator();const g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(0.15,ac.currentTime+i*0.1);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*0.1+0.15);o2.start(ac.currentTime+i*0.1);o2.stop(ac.currentTime+i*0.1+0.15);});}else if(t==='no'){o.type='square';o.frequency.setValueAtTime(200,ac.currentTime);o.frequency.linearRampToValueAtTime(100,ac.currentTime+0.2);g.gain.setValueAtTime(0.15,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+0.2);o.start();o.stop(ac.currentTime+0.2);}else if(t==='up'){[523,659,784,1047].forEach((f,i)=>{const o2=ac.createOscillator();const g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(0.18,ac.currentTime+i*0.12);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*0.12+0.18);o2.start(ac.currentTime+i*0.12);o2.stop(ac.currentTime+i*0.12+0.18);});}else if(t==='fan'){[523,587,659,698,784,1047].forEach((f,i)=>{const o2=ac.createOscillator();const g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(0.15,ac.currentTime+i*0.1);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*0.1+0.2);o2.start(ac.currentTime+i*0.1);o2.stop(ac.currentTime+i*0.1+0.2);});}else if(t==='flip'){o.type='sine';o.frequency.setValueAtTime(400,ac.currentTime);o.frequency.linearRampToValueAtTime(900,ac.currentTime+0.15);g.gain.setValueAtTime(0.12,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+0.18);o.start();o.stop(ac.currentTime+0.18);}else if(t==='tick'){o.type='sine';o.frequency.value=1000;g.gain.setValueAtTime(0.1,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+0.05);o.start();o.stop(ac.currentTime+0.05);}else if(t==='ach'){[880,1047,1319].forEach((f,i)=>{const o2=ac.createOscillator();const g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);o2.type='triangle';o2.frequency.value=f;g2.gain.setValueAtTime(0.2,ac.currentTime+i*0.12);g2.gain.linearRampToValueAtTime(0,ac.currentTime+i*0.12+0.22);o2.start(ac.currentTime+i*0.12);o2.stop(ac.currentTime+i*0.12+0.22);});}}catch(e){}}
+function toggleSnd(){sndOn=!sndOn;document.getElementById('sndBtn').textContent=sndOn?'🔊 Sonido':'🔇 Sonido';}
+
+// ===================== DARK MODE =====================
+function toggleTheme(){darkMode=!darkMode;document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');document.getElementById('themeBtn').textContent=darkMode?'☀️ Tema':'🌙 Tema';localStorage.setItem(SAVE_KEY+'_theme',darkMode?'dark':'light');sfx('click');}
+function initTheme(){const s=localStorage.getItem(SAVE_KEY+'_theme');const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;darkMode=(s==='dark')||(s===null&&sys);if(darkMode){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').textContent='☀️ Tema';}}
+
+// ===================== LOCALSTORAGE =====================
+function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({doneSections:Array.from(done),unlockedAch,evalFormNum,evalCritFormNum,xp}));}catch(e){}}
+function loadProgress(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s)return;if(s.doneSections&&Array.isArray(s.doneSections))s.doneSections.forEach(id=>{done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');});if(s.unlockedAch&&Array.isArray(s.unlockedAch))unlockedAch=s.unlockedAch.filter(id=>ACHIEVEMENTS[id]!==undefined);if(s.evalFormNum)evalFormNum=s.evalFormNum;if(s.evalCritFormNum)evalCritFormNum=s.evalCritFormNum;if(s.xp!==undefined){xp=s.xp;updateXPBar();}}catch(e){}}
+
+// ===================== ACHIEVEMENTS =====================
+const ACHIEVEMENTS={
+  primer_quiz:{icon:'🧠',label:'Primer Quiz completado'},
+  flash_master:{icon:'🃏',label:'Todas las tarjetas volteadas'},
+  clasif_pro:{icon:'🗂️',label:'Clasificaste los cambios'},
+  id_master:{icon:'🔍',label:'Identificaste todos los términos'},
+  reto_hero:{icon:'🏆',label:'Héroe del Reto'},
+  sopa_master:{icon:'🤍',label:'Sopa completada'},
+  widgets_master:{icon:'🧩',label:'Widgets dominados'},
+  nivel3:{icon:'🔄',label:'Ya sabés qué cambió'},
+  nivel5:{icon:'🌌',label:'Preguntás de qué está hecho'}
+};
+function unlockAchievement(id){if(unlockedAch.includes(id))return;unlockedAch.push(id);sfx('ach');showToast(ACHIEVEMENTS[id].icon+' ¡Logro desbloqueado! '+ACHIEVEMENTS[id].label);launchConfetti();renderAchPanel();saveProgress();}
+function renderAchPanel(){const list=document.getElementById('achList');list.innerHTML='';Object.entries(ACHIEVEMENTS).forEach(([id,a])=>{const div=document.createElement('div');div.className='ach-item'+(unlockedAch.includes(id)?'':' locked');div.innerHTML=`<span class="ach-icon">${a.icon}</span><span>${a.label}</span>`;list.appendChild(div);});}
+function toggleAchPanel(){sfx('click');document.getElementById('achPanel').classList.toggle('open');}
+function showToast(msg){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}t.textContent=msg;t.style.display='block';clearTimeout(t._tid);t._tid=setTimeout(()=>t.style.display='none',3200);}
+function launchConfetti(){const colors=['#784a6d','#b9789f','#1d4538','#3f8a6d','#f59e0b'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${0.8+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());}}
+
+// ===================== XP =====================
+const lvls=[{t:0,n:'Aprendiz 🌱'},{t:25,n:'Mirás de qué está hecho 🧱'},{t:55,n:'Separás forma y materia 🔵🟠'},{t:90,n:'Ves lo que no le pasa a la cosa ⚪'},{t:130,n:'Tenés tu propia regla 📏'},{t:165,n:'Discutís con Heráclito 🌊'},{t:190,n:'Preguntás como un filósofo 🌌'}];
+function pts(n){xp=Math.max(0,Math.min(MXP,xp+n));updateXPBar();saveProgress();}
+function updateXPBar(){const pct=Math.round((xp/MXP)*100);document.getElementById('xpFill').style.width=pct+'%';const el=document.getElementById('xpPts');el.textContent='⭐ '+xp;el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',300);let lv=0;for(let i=0;i<lvls.length;i++)if(xp>=lvls[i].t)lv=i;document.getElementById('xpLvl').textContent=lvls[lv].n;if(lv!==prevLevel){if(lv>=2)unlockAchievement('nivel3');if(lv>=5)unlockAchievement('nivel5');prevLevel=lv;}}
+function resetXP(){sfx('click');xp=0;updateXPBar();showToast('🔄 XP reiniciado a 0');}
+function fin(id,showFX=true){if(!done.has(id)){done.add(id);const b=document.querySelector(`[data-s="${id}"]`);if(b)b.classList.add('done');if(showFX){sfx('up');launchConfetti();}saveProgress();}}
+function getProgress(){return Math.round((done.size/TOTAL_SECTIONS)*100);}
+
+// ===================== NAV =====================
+function go(id){sfx('click');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-t[role="tab"]').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById(id).classList.add('active');const btn=document.querySelector(`[data-s="${id}"]`);if(btn){btn.classList.add('active');btn.setAttribute('aria-selected','true');}window.scrollTo({top:0,behavior:'smooth'});if(id==='s-sopa'){setTimeout(buildSopa,50);}if(id==='s-widgets'){setTimeout(buildRoute,50);}}
+
+// ===================== FLASHCARD DATA =====================
+const fcData = (function () {
+  const out = [];
+  MUN_VOCABULARIO.forEach(v => out.push({ w: v.w, a: v.a }));
+  MUN_PREGUNTAS.forEach(p => out.push({
+    w: p.emoji + ' ' + p.nombre,
+    a: p.que + ' <em>' + p.aqui + '</em> <strong>' + p.hoy + '</strong>' }));
+  MUN_TIPOS.forEach(t => out.push({
+    w: t.emoji + ' ' + t.nombre,
+    a: t.senal + ' <strong>' + t.prueba + '</strong>' }));
+  MUN_PUENTE.forEach(x => out.push({
+    w: '🌉 ' + x.p,
+    a: 'Antes: ' + x.antes + ' Hoy: <strong>' + x.hoy + '</strong> ' + x.quien }));
+  MUN_PENSADORES.forEach(p => out.push({
+    w: p.emoji + ' ' + p.nombre,
+    a: p.quien + ' <strong>' + p.porque + '</strong>' }));
+  return out;
+})();
+let fcIdx=0;
+function upFC(){document.getElementById('fcInner').classList.remove('flipped');document.getElementById('fcW').textContent=fcData[fcIdx].w;document.getElementById('fcA').innerHTML=fcData[fcIdx].a;document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length;}
+function flipCard(){sfx('flip');document.getElementById('fcInner').classList.toggle('flipped');if(!xpTracker.fc.has(fcIdx)){xpTracker.fc.add(fcIdx);pts(1);}if(xpTracker.fc.size===fcData.length){fin('s-flash');unlockAchievement('flash_master');}}
+function nextFC(){sfx('click');fcIdx=(fcIdx+1)%fcData.length;upFC();}
+function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC();}
+
+// ===================== QUIZ DATA =====================
+const qzData=[
+  {q:'¿De qué pregunta se ocupa la metafísica?',o:['De qué es real y qué cambia','De cómo se escribe bien','De cuánto cuestan las cosas','De cómo se reza'],c:0},
+  {q:'A la masa la hacés tortilla. ¿Qué cambió?',o:['La forma','La materia','El nombre','Nada'],c:0},
+  {q:'El clavo se llena de herrumbre. ¿Qué cambió?',o:['Solo el nombre','Solo la forma','La materia','El dueño'],c:2},
+  {q:'A la escuela le cambian el nombre. ¿Qué le pasó al edificio?',o:['Se hizo otro','Nada: cambió lo que decimos','Cambió de materia','Cambió de forma'],c:1},
+  {q:'¿Qué pregunta te dice si un cambio fue de materia?',o:['¿Se ve bonito?','¿Cuánto pesa?','¿A quién le gusta?','¿Quedó algo distinto de lo que había?'],c:3},
+  {q:'La palabra «átomo» quiere decir…',o:['muy pequeño','lo que no se parte','lo que brilla','lo que pesa'],c:1},
+  {q:'¿Qué pasó con esa palabra cuando la ciencia pudo medir?',o:['Se comprobó que el átomo no se parte','Se dejó de usar','Nunca se usó','Se vio que el átomo SÍ se parte'],c:3},
+  {q:'De un tronco grande queda un puño de ceniza. ¿Se perdió materia?',o:['No: pesando lo que entra y lo que sale, da lo mismo','Sí, casi toda','Sí, la mitad','No se puede saber'],c:0},
+  {q:'¿Qué es una cosmovisión?',o:['Un mapa del cielo','Un aparato para ver lejos','La forma entera en que un pueblo explica el mundo','Una lista de fechas'],c:2},
+  {q:'¿Quién dijo que todo cambia siempre, y puso el ejemplo del río?',o:['Parménides','Demócrito','Heráclito','Ninguno'],c:2},
+  {q:'¿En qué NO se pusieron de acuerdo Heráclito y Parménides?',o:['En cómo se llama el río','En si el cambio es real o nos engaña','En cuántos elementos hay','En quién era mayor'],c:1},
+  {q:'¿Cuál de estas preguntas sigue sin tener respuesta medida?',o:['¿De qué está hecha el agua?','¿Cuánto pesa el aire?','¿Se pierde materia al quemar?','¿Por qué hay algo y no más bien nada?'],c:3}
+];
+let qzIdx=0,qzSel=-1,qzDone=false;
+function buildQz(){qzIdx=0;qzSel=-1;qzDone=false;showQz();}
+function showQz(){var _fbQ=document.getElementById('fbQz');if(_fbQ)_fbQ.classList.remove('show');if(qzIdx>=qzData.length){document.getElementById('qzQ').textContent='🎉 ¡Quiz completado!';document.getElementById('qzOpts').innerHTML='';fin('s-quiz');unlockAchievement('primer_quiz');return;}const q=qzData[qzIdx];document.getElementById('qzProg').textContent=`Pregunta ${qzIdx+1} de ${qzData.length}`;document.getElementById('qzQ').textContent=q.q;const opts=document.getElementById('qzOpts');opts.innerHTML='';q.o.forEach((o,i)=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=o;b.onclick=()=>{if(qzDone)return;document.querySelectorAll('.qz-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');qzSel=i;sfx('click');};opts.appendChild(b);});qzDone=false;}
+// El quiz ya NO avanza solo a los 1,6 s. Con el avance automático, el alumno que
+// fallaba veía la respuesta correcta medio segundo y desaparecía antes de poder
+// leerla; y el «Incorrecto» se quedaba colgado debajo de la pregunta SIGUIENTE,
+// que todavía no había contestado. Ahora avanza él, cuando ya la leyó.
+function nextQz(){
+  if(!qzDone)return fb('fbQz','Primero toca «Verificar».',false);
+  qzIdx++; qzSel=-1; qzDone=false; showQz();
+}
+function checkQz(){if(qzSel<0)return fb('fbQz','Selecciona una respuesta.',false);qzDone=true;const opts=document.querySelectorAll('.qz-opt');if(qzSel===qzData[qzIdx].c){opts[qzSel].classList.add('correct');fb('fbQz','¡Correcto! +5 XP',true);if(!xpTracker.qz.has(qzIdx)){xpTracker.qz.add(qzIdx);pts(5);}sfx('ok');}else{opts[qzSel].classList.add('wrong');opts[qzData[qzIdx].c].classList.add('correct');fb('fbQz','Incorrecto. Revisa la respuesta correcta.',false);sfx('no');}}
+function resetQz(){sfx('click');qzIdx=0;qzSel=-1;qzDone=false;showQz();document.getElementById('fbQz').classList.remove('show');}
+
+// ===================== CLASIFICACIÓN =====================
+const classGroups = (function () {
+  const fi = (arr, t) => arr.map(c => ({ w: c, t: t }));
+  const forma = munDeClase('forma'), materia = munDeClase('materia'), nombre = munDeClase('nombre');
+  return [
+    { label:['Le pasó algo a la cosa','Solo cambió lo que decimos'], headA:'🔵🟠 Le pasó algo', headB:'⚪ Solo lo que decimos', colA:'algo', colB:'decir',
+      words: fi(forma.slice(0,2),'algo').concat(fi(materia.slice(0,2),'algo'), fi(nombre.slice(0,4),'decir')) },
+    { label:['Cambió la forma','Cambió la materia'], headA:'🔵 Cambió la forma', headB:'🟠 Cambió la materia', colA:'forma', colB:'materia',
+      words: fi(forma.slice(2,6),'forma').concat(fi(materia.slice(2,6),'materia')) },
+    { label:['Cambió la forma','Solo cambió lo que decimos'], headA:'🔵 Cambió la forma', headB:'⚪ Solo lo que decimos', colA:'forma', colB:'nombre',
+      words: fi(forma.slice(6,10),'forma').concat(fi(nombre.slice(4,8),'nombre')) }
+  ];
+})();
+let currentClassGroupIdx=0,clsSelectedWord=null;
+function buildClass(){const group=classGroups[currentClassGroupIdx];document.getElementById('col-left-head').textContent=group.headA;document.getElementById('col-right-head').textContent=group.headB;const bank=document.getElementById('clsBank');bank.innerHTML='';clsSelectedWord=null;document.getElementById('items-left').innerHTML='';document.getElementById('items-right').innerHTML='';_shuffle([...group.words]).forEach(w=>{const el=document.createElement('div');el.className='wb-item';el.textContent=w.w;el.dataset.t=w.t;el.onclick=()=>{document.querySelectorAll('.wb-item').forEach(i=>i.classList.remove('sel-word'));el.classList.add('sel-word');clsSelectedWord=el;sfx('click');};bank.appendChild(el);});['col-left','col-right'].forEach(colId=>{const col=document.getElementById(colId);col.onclick=(e)=>{if(!clsSelectedWord||e.target.classList.contains('drop-item'))return;const targetId=colId==='col-left'?'items-left':'items-right';const wordsCol=document.getElementById(targetId);const item=document.createElement('div');item.className='drop-item';item.textContent=clsSelectedWord.textContent;item.dataset.t=clsSelectedWord.dataset.t;const original=clsSelectedWord;item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();if(typeof sfx==='function')sfx('click');}};wordsCol.appendChild(item);clsSelectedWord.remove();clsSelectedWord=null;sfx('click');};});}
+function checkClass(){const remaining=document.querySelectorAll('#clsBank .wb-item').length;if(remaining>0){fb('fbCls','Mueve todas las palabras a las columnas primero.',false);return;}const group=classGroups[currentClassGroupIdx];let allOk=true;document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{const inLeft=el.parentElement.id==='items-left';const expectedType=inLeft?group.colA:group.colB;if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;}});if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);}if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');}}
+function nextClassGroup(){sfx('click');currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;buildClass();document.getElementById('fbCls').classList.remove('show');showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);}
+function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
+
+// ===================== IDENTIFICAR =====================
+const idData=[
+  {s:['La','metafísica','pregunta','de','qué','está','hecho','el','mundo.'],c:1,art:'la rama que pregunta qué es real'},
+  {s:['A','la','masa','le','cambió','la','forma,','no','la','materia.'],c:6,art:'lo que cambia cuando la cosa sigue siendo la misma'},
+  {s:['El','clavo','con','herrumbre','ya','es','otra','materia.'],c:7,art:'lo que cambia cuando ya es otra cosa'},
+  {s:['La','palabra','átomo','quiere','decir','«que','no','se','parte».'],c:2,art:'la pieza que se nombró sin haberla visto'},
+  {s:['Cada','pueblo','explica','el','mundo','con','su','cosmovisión.'],c:7,art:'la forma entera de explicar el mundo'},
+  {s:['Heráclito','decía','que','todo','cambia','siempre.'],c:0,art:'el que puso el ejemplo del río'},
+  {s:['Parménides','decía','que','lo','que','es','no','deja','de','ser.'],c:0,art:'el que desconfiaba del cambio'},
+  {s:['Demócrito','pensó','las','piezas','sin','verlas','nunca.'],c:0,art:'el que les puso nombre a los átomos'}
+];
+let idIdx=0,idDone=false;
+function showId(){idDone=false;if(idIdx>=idData.length){document.getElementById('idSent').innerHTML='🎉 ¡Completado!';fin('s-identifica');unlockAchievement('id_master');return;}const d=idData[idIdx];document.getElementById('idProg').textContent=`Oración ${idIdx+1} de ${idData.length}`;document.getElementById('idInfo').textContent=`Busca: ${d.art}`;const sent=document.getElementById('idSent');sent.innerHTML='';d.s.forEach((w,i)=>{const span=document.createElement('span');span.className='id-word';span.textContent=w+' ';span.onclick=()=>checkId(i,span);sent.appendChild(span);});}
+function checkId(i,span){if(idDone)return;document.querySelectorAll('.id-word').forEach(s=>s.classList.remove('selected'));span.classList.add('selected');if(i===idData[idIdx].c){idDone=true;span.classList.add('id-ok');fb('fbId','¡Correcto! +5 XP',true);if(!xpTracker.id.has(idIdx)){xpTracker.id.add(idIdx);pts(5);}sfx('ok');}else{span.classList.add('id-no');fb('fbId','Ese no es el término solicitado.',false);sfx('no');}}
+function nextId(){sfx('click');idIdx++;showId();document.getElementById('fbId').classList.remove('show');}
+function resetId(){sfx('click');idIdx=0;showId();document.getElementById('fbId').classList.remove('show');}
+
+// ===================== COMPLETA =====================
+const cmpData=[
+  {s:'Aquello de lo que está hecha una cosa es la ___.',opts:['materia','forma','sombra'],c:0},
+  {s:'El modo en que está acomodada esa materia es la ___.',opts:['materia','medida','forma'],c:2},
+  {s:'La palabra «átomo» quiere decir «que no se ___».',opts:['parte','ve','mueve'],c:0},
+  {s:'La forma entera en que un pueblo explica el mundo es su ___.',opts:['cosmovisión','costumbre','calendario'],c:0},
+  {s:'Real es lo que está ahí aunque nadie lo esté ___.',opts:['tocando','mirando','contando'],c:1},
+  {s:'Si la leña se vuelve ceniza, cambió la ___.',opts:['materia','forma','medida'],c:0},
+  {s:'Si a la calle le cambian el nombre, no le pasó nada a la ___.',opts:['gente','cosa','ciudad'],c:1},
+  {s:'El que puso el ejemplo del río fue ___.',opts:['Demócrito','Parménides','Heráclito'],c:2},
+  {s:'El que dijo que el cambio nos engaña fue ___.',opts:['Heráclito','Demócrito','Parménides'],c:2},
+  {s:'De un tronco quemado no se pierde materia: se pesa lo que entra y lo que ___.',opts:['queda','sale','sobra'],c:1}
+];
+let cmpIdx=0,cmpSel=-1,cmpDone=false;
+function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');if(cmpIdx>=cmpData.length){document.getElementById('cmpSent').innerHTML='🎉 ¡Completado!';document.getElementById('cmpOpts').innerHTML='';fin('s-completa');return;}const d=cmpData[cmpIdx];document.getElementById('cmpProg').textContent=`Oración ${cmpIdx+1} de ${cmpData.length}`;document.getElementById('cmpSent').innerHTML=d.s.replace('___','<span class="blank">___</span>');const opts=document.getElementById('cmpOpts');opts.innerHTML='';cmpSel=-1;cmpDone=false;d.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=o;b.onclick=()=>{if(cmpDone)return;document.querySelectorAll('.cmp-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');cmpSel=i;sfx('click');};opts.appendChild(b);});}
+// Misma razón que en el quiz: la corrección se lee, no se persigue.
+function nextCmp(){
+  if(!cmpDone)return fb('fbCmp','Primero toca «Verificar».',false);
+  cmpIdx++; cmpSel=-1; cmpDone=false; showCmp();
+}
+function checkCmp(){if(cmpSel<0)return fb('fbCmp','Selecciona una opción.',false);cmpDone=true;const opts=document.querySelectorAll('.cmp-opt');if(cmpSel===cmpData[cmpIdx].c){opts[cmpSel].classList.add('correct');document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);fb('fbCmp','¡Correcto! +5 XP',true);if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}sfx('ok');}else{opts[cmpSel].classList.add('wrong');opts[cmpData[cmpIdx].c].classList.add('correct');fb('fbCmp','Incorrecto. Revisa bien la respuesta.',false);sfx('no');}}
+
+// ===================== WIDGETS =====================
+// Widget 1: Ordenar secuencias
+const routeSets = [
+  { label: 'Ordena: cómo se examina un cambio',
+    steps: ['1. Mirá qué había antes y qué hay ahora.',
+            '2. Preguntate: ¿le pasó algo A LA COSA? ¿O solo a lo que decimos de ella?',
+            '3. Si le pasó algo: ¿sigue siendo la misma sustancia?',
+            '4. Si sigue siendo la misma, cambió la forma; si quedó otra, cambió la materia.',
+            '5. Decí tu regla y aplicala igual al caso siguiente.'] },
+  { label: 'Ordena: de una pregunta pensada a una medida',
+    steps: ['1. Alguien hace la pregunta: ¿se pierde materia cuando algo se quema?',
+            '2. Se contesta pensando: parece que sí, de un tronco queda un puño de ceniza.',
+            '3. Aparece la forma de medirlo: una balanza.',
+            '4. Se pesa lo que entra y lo que sale.',
+            '5. La respuesta cambia: no se pierde nada.'] }
+];
+let currentRouteIdx=0,routeItems=[];
+function buildRoute(){routeItems=_shuffle([...routeSets[currentRouteIdx].steps]);renderRoute();const fbEl=document.getElementById('fbRoute');if(fbEl)fbEl.classList.remove('show');}
+function renderRoute(){const list=document.getElementById('routeList');if(!list)return;list.innerHTML='';routeItems.forEach((step,i)=>{const div=document.createElement('div');div.className='sort-item';div.innerHTML=`<div class="sort-arrows"><button class="sort-arrow" onclick="routeMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="sort-arrow" onclick="routeMove(${i},1)"${i===routeItems.length-1?' disabled':''}>▼</button></div><div class="sort-step-num">${i+1}.</div><div class="sort-item-txt">${step}</div>`;list.appendChild(div);});}
+function routeMove(idx,dir){sfx('click');const ni=idx+dir;if(ni<0||ni>=routeItems.length)return;[routeItems[idx],routeItems[ni]]=[routeItems[ni],routeItems[idx]];renderRoute();}
+function checkRoute(){const correct=routeSets[currentRouteIdx].steps;const isOk=routeItems.every((s,i)=>s===correct[i]);if(isOk){fb('fbRoute','¡Perfecto! Orden correcto. +4 XP',true);if(!xpTracker.wgt.has('route_'+currentRouteIdx)){xpTracker.wgt.add('route_'+currentRouteIdx);pts(4);}sfx('fan');fin('s-widgets');unlockAchievement('widgets_master');}else{fb('fbRoute','Hay pasos fuera de orden. Revisa el arreglo.',false);sfx('no');}}
+function nextRoute(){sfx('click');currentRouteIdx=(currentRouteIdx+1)%routeSets.length;buildRoute();showToast('🔄 Secuencia: '+routeSets[currentRouteIdx].label);}
+
+// Widget 2: Identifica el concepto
+const neuronPartes = (function () {
+  const opts = MUN_TIPOS.map(t => t.emoji + ' ' + t.nombre);
+  const nom = q => munTipo(q).emoji + ' ' + munTipo(q).nombre;
+  const elegidas = [];
+  ['forma', 'materia', 'nombre'].forEach(q => {
+    munDeClase(q).slice(6, 9).forEach(c => elegidas.push({ c: c, q: q }));
+  });
+  return elegidas.map(x => ({ desc: x.c, opts: opts.slice(), ans: nom(x.q) }));
+})();
+let neuronIdx=0,neuronDone=false;
+function showNeuron(){neuronDone=false;if(neuronIdx>=neuronPartes.length){const el=document.getElementById('neuronDesc');if(el)el.textContent='🎉 ¡Ya reconoces a cada uno por lo que hizo!';const opts=document.getElementById('neuronOpts');if(opts)opts.innerHTML='';fin('s-widgets');return;}const d=neuronPartes[neuronIdx];const prog=document.getElementById('neuronProg');if(prog)prog.textContent=`Pista ${neuronIdx+1} de ${neuronPartes.length}`;const desc=document.getElementById('neuronDesc');if(desc)desc.textContent=d.desc;const opts=document.getElementById('neuronOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='cmp-opt';b.textContent=opt;b.onclick=()=>checkNeuron(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuron');if(fbEl)fbEl.classList.remove('show');}
+function checkNeuron(opt,btn,d){if(neuronDone)return;neuronDone=true;document.querySelectorAll('#neuronOpts .cmp-opt').forEach(b=>{if(b.textContent===d.ans)b.classList.add('correct');else if(b===btn&&b.textContent!==d.ans)b.classList.add('wrong');});const isOk=opt===d.ans;if(isOk){fb('fbNeuron','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuron_'+neuronIdx)){xpTracker.wgt.add('neuron_'+neuronIdx);pts(3);}sfx('ok');}else{fb('fbNeuron','La respuesta correcta es: '+d.ans,false);sfx('no');}}
+function nextNeuron(){sfx('click');neuronIdx++;showNeuron();}
+function resetNeuron(){sfx('click');neuronIdx=0;showNeuron();}
+
+// Widget 3: Concepto → Significado
+const neuroPairs = MUN_PENSADORES.map(p => ({
+  trans: p.hizo,
+  func: p.emoji + ' ' + p.nombre,
+  opts: MUN_PENSADORES.map(x => x.emoji + ' ' + x.nombre)
+}));
+let neuroIdx=0,neuroDone=false;
+function showNeuro(){neuroDone=false;if(neuroIdx>=neuroPairs.length){const el=document.getElementById('neuroTrans');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('neuroOpts');if(opts)opts.innerHTML='';return;}const d=neuroPairs[neuroIdx];const prog=document.getElementById('neuroProg');if(prog)prog.textContent=`${neuroIdx+1} de ${neuroPairs.length}`;const trans=document.getElementById('neuroTrans');if(trans)trans.textContent=d.trans;const opts=document.getElementById('neuroOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkNeuro(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbNeuro');if(fbEl)fbEl.classList.remove('show');}
+function checkNeuro(opt,btn,d){if(neuroDone)return;neuroDone=true;document.querySelectorAll('#neuroOpts .qz-opt').forEach(b=>{if(b.textContent===d.func)b.classList.add('correct');else if(b===btn&&b.textContent!==d.func)b.classList.add('wrong');});const isOk=opt===d.func;if(isOk){fb('fbNeuro','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('neuro_'+neuroIdx)){xpTracker.wgt.add('neuro_'+neuroIdx);pts(3);}sfx('ok');}else{fb('fbNeuro','Correcto: '+d.func,false);sfx('no');}setTimeout(()=>{neuroIdx++;showNeuro();},1800);}
+function resetNeuro(){sfx('click');neuroIdx=0;showNeuro();}
+
+// Widget 4: Fuente → ¿Renovable o no renovable?
+const enfermedadData = (function () {
+  const opts = ['✅ Sí, le pasó algo a la cosa', '❌ No: cambió lo que decimos'];
+  const si = munLeCambioAlgo(), no = munDeClase('nombre');
+  const out = [];
+  for (let i = 0; i < 5; i++) {
+    out.push({ disease: si[i * 3], characteristic: opts[0], opts: opts.slice() });
+    if (no[i]) out.push({ disease: no[i], characteristic: opts[1], opts: opts.slice() });
+  }
+  return out;
+})();
+let enferIdx=0,enferDone=false;
+function showEnfer(){enferDone=false;if(enferIdx>=enfermedadData.length){const el=document.getElementById('enferDisease');if(el)el.textContent='🎉 ¡Completado!';const opts=document.getElementById('enferOpts');if(opts)opts.innerHTML='';return;}const d=enfermedadData[enferIdx];const prog=document.getElementById('enferProg');if(prog)prog.textContent=`${enferIdx+1} de ${enfermedadData.length}`;const dis=document.getElementById('enferDisease');if(dis)dis.textContent=d.disease;const opts=document.getElementById('enferOpts');if(!opts)return;opts.innerHTML='';_shuffle([...d.opts]).forEach(opt=>{const b=document.createElement('button');b.className='qz-opt';b.textContent=opt;b.onclick=()=>checkEnfer(opt,b,d);opts.appendChild(b);});const fbEl=document.getElementById('fbEnfer');if(fbEl)fbEl.classList.remove('show');}
+function checkEnfer(opt,btn,d){if(enferDone)return;enferDone=true;document.querySelectorAll('#enferOpts .qz-opt').forEach(b=>{if(b.textContent===d.characteristic)b.classList.add('correct');else if(b===btn&&b.textContent!==d.characteristic)b.classList.add('wrong');});const isOk=opt===d.characteristic;if(isOk){fb('fbEnfer','¡Correcto! +3 XP',true);if(!xpTracker.wgt.has('enfer_'+enferIdx)){xpTracker.wgt.add('enfer_'+enferIdx);pts(3);}sfx('ok');}else{fb('fbEnfer','Correcto: '+d.characteristic,false);sfx('no');}setTimeout(()=>{enferIdx++;showEnfer();},1800);}
+function resetEnfer(){sfx('click');enferIdx=0;showEnfer();}
+
+// ===================== RETO FINAL =====================
+const retoPairs = (function () {
+  const fi = (arr, t) => arr.map(c => ({ w: c, t: t }));
+  const forma = munDeClase('forma'), materia = munDeClase('materia'), nombre = munDeClase('nombre');
+  return [
+    { label:['Le pasó algo a la cosa','Solo cambió lo que decimos'], btnA:'🔵🟠 Le pasó algo', btnB:'⚪ Solo lo que decimos', colA:'algo', colB:'decir',
+      words: fi(forma,'algo').concat(fi(materia,'algo'), fi(nombre,'decir')) },
+    { label:['Cambió la forma','Cambió la materia'], btnA:'🔵 La forma', btnB:'🟠 La materia', colA:'forma', colB:'materia',
+      words: fi(forma,'forma').concat(fi(materia,'materia')) },
+    { label:['Cambió la forma','Solo cambió lo que decimos'], btnA:'🔵 La forma', btnB:'⚪ Lo que decimos', colA:'forma', colB:'nombre',
+      words: fi(forma,'forma').concat(fi(nombre,'nombre')) }
+  ];
+})();
+let currentRetoPairIdx=0,retoPool=[],retoOk=0,retoErr=0,retoTimerInt=null,retoSec=30,retoRunning=false,retoCurrent=null;
+function updateRetoButtons(){const pair=retoPairs[currentRetoPairIdx];document.querySelectorAll('.reto-btns .btn')[0].textContent=pair.btnA;document.querySelectorAll('.reto-btns .btn')[1].textContent=pair.btnB;document.querySelectorAll('.reto-btns .btn')[0].onclick=()=>ansReto(pair.colA);document.querySelectorAll('.reto-btns .btn')[1].onclick=()=>ansReto(pair.colB);}
+function startReto(){if(retoRunning)return;sfx('click');retoRunning=true;retoOk=0;retoErr=0;retoSec=30;retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]);showRetoWord();retoTimerInt=setInterval(()=>{retoSec--;sfx('tick');document.getElementById('retoTimer').textContent='⏱ '+retoSec;if(retoSec<=10)document.getElementById('retoTimer').style.color='var(--red)';if(retoSec<=0){clearInterval(retoTimerInt);endReto();}},1000);}
+function showRetoWord(){if(retoPool.length===0)retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]);retoCurrent=retoPool.pop();document.getElementById('retoWord').textContent=retoCurrent.w;}
+function ansReto(t){if(!retoRunning||!retoCurrent)return;const firstPlay=!xpTracker.reto.has(currentRetoPairIdx);if(t===retoCurrent.t){sfx('ok');retoOk++;if(firstPlay)pts(1);}else{sfx('no');retoErr++;if(firstPlay)pts(-1);}document.getElementById('retoScore').textContent=`✅ ${retoOk} correctas | ❌ ${retoErr} errores`;showRetoWord();}
+/* El elogio del Reto depende del resultado. Antes decía «¡Bien hecho!»
+   con 0 de 8, en verde y con su logro: un elogio que no distingue
+   acertar de no acertar le enseña al alumno que el elogio no significa
+   nada. La escala es la misma que ya usa la Constancia. */
+function _retoElogio(pct){
+  if(pct>=90) return '¡Excelente!';
+  if(pct>=70) return '¡Bien hecho!';
+  if(pct>=40) return 'Vas bien, sigue practicando.';
+  return 'Todavía no. Repasa y vuelve a intentarlo.';
+}
+function endReto(){retoRunning=false;document.getElementById('retoWord').textContent='🏁 ¡Tiempo!';document.getElementById('retoTimer').style.color='var(--pri)';xpTracker.reto.add(currentRetoPairIdx);const total=retoOk+retoErr;const pct=total>0?Math.round((retoOk/total)*100):0;fb('fbReto',`Resultado: ${retoOk}/${total} (${pct}%) ${_retoElogio(pct)}`,pct>=40);fin('s-reto');sfx('fan');if(pct>=70) unlockAchievement('reto_hero');}
+function nextRetoPair(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length;updateRetoButtons();document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);}
+function resetReto(){sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';document.getElementById('fbReto').classList.remove('show');}
+
+// ===================== TASK GENERATOR =====================
+const identifyTaskDB=[
+  {s:'La rama que pregunta de qué está hecho el mundo es la metafísica.',type:'metafísica'},
+  {s:'Aquello de lo que está hecha una cosa es la materia.',type:'materia'},
+  {s:'El modo en que está acomodada esa materia es la forma.',type:'forma'},
+  {s:'A la masa hecha tortilla le cambió la forma.',type:'cambió la forma'},
+  {s:'A la leña vuelta ceniza le cambió la materia.',type:'cambió la materia'},
+  {s:'A la escuela con nombre nuevo no le pasó nada: cambió lo que decimos.',type:'cambió lo que decimos'},
+  {s:'La palabra átomo quiere decir «que no se parte».',type:'átomo'},
+  {s:'La forma entera en que un pueblo explica el mundo es su cosmovisión.',type:'cosmovisión'},
+  {s:'Real es lo que está ahí aunque nadie lo esté mirando.',type:'real'},
+  {s:'Demócrito les puso nombre a las piezas sin verlas nunca.',type:'Demócrito'},
+  {s:'Heráclito puso el ejemplo del río que nunca es el mismo.',type:'Heráclito'},
+  {s:'Parménides dijo que el cambio que vemos nos engaña.',type:'Parménides'}
+];
+const classifyTaskDB=[
+  {w:'Cambió la forma',gen:'Una clase de cambio',n:'La materia es la misma',g:'Solo se acomodó de otro modo',t:'Ejemplo: la masa se vuelve tortilla'},
+  {w:'Cambió la materia',gen:'Una clase de cambio',n:'Quedó otra sustancia',g:'Otro color, otro olor, otro sabor',t:'Ejemplo: la leña se vuelve ceniza'},
+  {w:'Cambió lo que decimos',gen:'Una clase de cambio',n:'A la cosa no le pasó nada',g:'Cambió su nombre, su dueño o su lugar',t:'Ejemplo: a la escuela le cambian el nombre'},
+  {w:'Materia',gen:'Un concepto',n:'De lo que está hecha una cosa',g:'Pesa y ocupa lugar',t:'El aire también es materia'},
+  {w:'Forma',gen:'Un concepto',n:'Cómo está acomodada la materia',g:'Se puede cambiar sin cambiar la cosa',t:'La misma masa da tortilla o bola'},
+  {w:'Real',gen:'Un concepto',n:'Lo que está ahí de verdad',g:'Aunque nadie lo mire ni lo crea',t:'El reflejo del cerro no es un cerro'},
+  {w:'Cosmovisión',gen:'Un concepto',n:'Cómo un pueblo explica el mundo entero',g:'Se aprende oyendo en la casa',t:'En Honduras hay varias'},
+  {w:'Átomo',gen:'Una palabra',n:'Quiere decir «que no se parte»',g:'Se puso pensando, no midiendo',t:'Después se vio que sí se parte'},
+  {w:'Demócrito',gen:'Un pensador',n:'Pensó que todo está hecho de piezas',g:'Les puso nombre sin verlas',t:'La idea acertó y el nombre falló'},
+  {w:'Heráclito',gen:'Un pensador',n:'Dijo que todo cambia siempre',g:'Puso el ejemplo del río',t:'Para él lo raro es que algo parezca quedarse'},
+  {w:'Parménides',gen:'Un pensador',n:'Dijo que lo que es, es',g:'Sostuvo que el cambio nos engaña',t:'Él y Heráclito no se pusieron de acuerdo'}
+];
+const completeTaskDB=[
+  {s:'Aquello de lo que está hecha una cosa es la ___.',ans:'materia'},
+  {s:'El modo en que está acomodada la materia es la ___.',ans:'forma'},
+  {s:'La rama que pregunta qué es real es la ___.',ans:'metafísica'},
+  {s:'La palabra átomo quiere decir «que no se ___».',ans:'parte'},
+  {s:'La forma entera en que un pueblo explica el mundo es su ___.',ans:'cosmovisión'},
+  {s:'Si la leña se vuelve ceniza, cambió la ___.',ans:'materia'},
+  {s:'Si el alambre se dobla, cambió la ___.',ans:'forma'},
+  {s:'El que puso el ejemplo del río fue ___.',ans:'Heráclito'},
+  {s:'El que dijo que el cambio nos engaña fue ___.',ans:'Parménides'},
+  {s:'El que pensó las piezas sin verlas fue ___.',ans:'Demócrito'}
+];
+const explainQuestions=[
+  {q:'¿Cuáles son las tres clases de cambio y cómo se reconoce cada una?',ans:'Cambió la forma: la materia es la misma, solo acomodada de otro modo. Cambió la materia: quedó otra sustancia, con otro color u otro sabor. Cambió lo que decimos: a la cosa no le pasó nada. Cambió su nombre o su dueño.'},
+  {q:'Explica con un ejemplo de tu casa cada clase de cambio.',ans:'Respuesta abierta. Los tres ejemplos tienen que ser suyos. Se valora la prueba de cada uno. ¿Sigue siendo la misma sustancia? ¿Quedó algo distinto? ¿O solo cambió lo que decimos?'},
+  {q:'Al machete del abuelo le cambiaron el mango y después la hoja. ¿Sigue siendo el mismo? Explica.',ans:'Respuesta abierta: no tiene una sola respuesta buena. Se valora que diga su REGLA antes. ¿Qué hace a una cosa? ¿De qué está hecha, o para qué sirve? Y que la aplique igual a los otros casos.'},
+  {q:'La palabra «átomo» dice algo que hoy se sabe que no es así. ¿Por qué?',ans:'Porque quiere decir «lo que no se parte», y se puso pensando, sin medir. Después se vio que el átomo sí se parte. El nombre falló y la idea de las piezas acertó. Por eso la idea sirvió igual.'},
+  {q:'¿Qué es una cosmovisión y por qué todos tenemos una?',ans:'Es la forma entera en que un pueblo explica el mundo y su lugar en él. Todos tenemos una aunque nunca la hayamos escrito: se aprende oyendo en la casa. Contesta tres cosas: de dónde salió todo, qué somos y qué se respeta.'},
+  {q:'Un tronco grande se quema y queda un puño de ceniza. ¿Se perdió materia? Explica.',ans:'No. Parecía que sí, y por eso la pregunta duró mucho. Hoy se pesa lo que entra y lo que sale. Da lo mismo. Lo que se fue en humo también pesa. Lo que faltaba no era pensar más: era una balanza.'},
+  {q:'Da un ejemplo de pregunta que la ciencia ya mide. Y otra que siga sin medirse.',ans:'Se mide de qué está hecho todo. Se mide cuánto pesa el aire. Se mide si se pierde materia al quemar. No se mide: por qué hay algo y no más bien nada. Esa sigue abierta, y se vale decirlo.'},
+  {q:'¿En qué no se pusieron de acuerdo Heráclito y Parménides?',ans:'En si el cambio es real. Heráclito decía que todo cambia siempre. Para él lo raro es que algo parezca quedarse. Parménides decía que lo que es, es, y que el cambio nos engaña. La discusión sigue abierta.'},
+  {q:'Escribe tu propia regla de «cuándo algo sigue siendo lo mismo». Aplícala a dos casos.',ans:'Respuesta abierta. La regla tiene que estar escrita ANTES. Tiene que ser una sola. Y aplicarse igual a los dos casos. Si en el segundo no le sirve, vale que lo diga y la corrija.'}
+];
+let ansVisible=false;
+function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
+function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado de qué concepto de la unidad se trata.','<strong>Ejemplo:</strong> A la masa hecha tortilla le cambió la forma. → <span style="color:var(--jade);font-weight:700;">cambió la forma</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada uno, completa qué es y en qué se reconoce. Después, qué lo distingue y un ejemplo.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Qué','text-align:left;')}${th('Qué es')}${th('En qué se reconoce')}${th('Qué lo distingue')}${th('Ejemplo')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Se reconoce: ${it.n} | Lo distingue: ${it.g} | Ejemplo: ${it.t}`).join('<br>');out.appendChild(ans);}
+function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
+function toggleAns(){ansVisible=!ansVisible;document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none');sfx('click');}
+
+// ===================== SOPA DE LETRAS =====================
+/* ⚠️ Las celdas las coloca `node _dev/verifica-sopas.js --repara`, no se
+   escriben a mano: una palabra que no esté de verdad en la rejilla deja la
+   sección IMPOSIBLE de completar, y eso no da ningún error. */
+const sopaSets=[
+    {
+        size: 12,
+        grid: [
+            ['T', 'E', 'U', 'Y', 'J', 'I', 'R', 'E', 'A', 'L', 'L', 'M'],
+            ['K', 'Y', 'R', 'Q', 'G', 'U', 'G', 'Z', 'P', 'V', 'M', 'A'],
+            ['L', 'X', 'M', 'A', 'E', 'S', 'Y', 'D', 'J', 'Z', 'A', 'T'],
+            ['X', 'A', 'U', 'T', 'Q', 'F', 'Z', 'Z', 'Y', 'T', 'L', 'E'],
+            ['H', 'G', 'N', 'O', 'I', 'B', 'M', 'A', 'C', 'G', 'K', 'R'],
+            ['J', 'X', 'D', 'M', 'P', 'B', 'D', 'B', 'I', 'A', 'R', 'I'],
+            ['D', 'R', 'O', 'O', 'P', 'E', 'W', 'I', 'A', 'J', 'P', 'A'],
+            ['C', 'F', 'M', 'B', 'D', 'Q', 'W', 'C', 'F', 'G', 'V', 'D'],
+            ['A', 'M', 'R', 'O', 'F', 'S', 'Q', 'B', 'R', 'S', 'B', 'P'],
+            ['Y', 'M', 'O', 'E', 'M', 'I', 'Z', 'E', 'O', 'Z', 'O', 'E'],
+            ['U', 'M', 'W', 'J', 'E', 'R', 'L', 'K', 'A', 'A', 'J', 'W'],
+            ['S', 'H', 'Z', 'U', 'I', 'I', 'J', 'C', 'D', 'S', 'N', 'B'],
+        ],
+        words: [
+            { w: 'MATERIA', cells: [[0, 11], [1, 11], [2, 11], [3, 11], [4, 11], [5, 11], [6, 11]] },
+            { w: 'FORMA', cells: [[8, 4], [8, 3], [8, 2], [8, 1], [8, 0]] },
+            { w: 'CAMBIO', cells: [[4, 8], [4, 7], [4, 6], [4, 5], [4, 4], [4, 3]] },
+            { w: 'ATOMO', cells: [[2, 3], [3, 3], [4, 3], [5, 3], [6, 3]] },
+            { w: 'REAL', cells: [[0, 6], [0, 7], [0, 8], [0, 9]] },
+            { w: 'MUNDO', cells: [[2, 2], [3, 2], [4, 2], [5, 2], [6, 2]] },
+        ]
+    },
+    {
+        size: 12,
+        grid: [
+            ['W', 'I', 'S', 'Q', 'X', 'U', 'Y', 'T', 'F', 'V', 'I', 'U'],
+            ['P', 'U', 'K', 'R', 'O', 'C', 'E', 'M', 'Z', 'P', 'W', 'A'],
+            ['S', 'I', 'Z', 'T', 'Q', 'O', 'V', 'C', 'C', 'G', 'N', 'I'],
+            ['H', 'C', 'E', 'X', 'J', 'S', 'H', 'D', 'N', 'S', 'W', 'C'],
+            ['H', 'O', 'M', 'Z', 'I', 'M', 'A', 'L', 'O', 'D', 'Z', 'N'],
+            ['R', 'P', 'A', 'E', 'A', 'O', 'N', 'Y', 'M', 'R', 'U', 'A'],
+            ['W', 'D', 'Z', 'R', 'D', 'V', 'W', 'Y', 'B', 'J', 'A', 'T'],
+            ['I', 'P', 'D', 'Y', 'Y', 'I', 'O', 'G', 'R', 'H', 'L', 'S'],
+            ['Q', 'N', 'J', 'X', 'W', 'S', 'D', 'T', 'E', 'Q', 'A', 'U'],
+            ['W', 'C', 'M', 'R', 'S', 'I', 'B', 'A', 'Y', 'L', 'A', 'S'],
+            ['G', 'H', 'C', 'S', 'X', 'O', 'F', 'U', 'B', 'D', 'W', 'H'],
+            ['R', 'D', 'F', 'M', 'K', 'N', 'Y', 'C', 'H', 'Q', 'T', 'I'],
+        ],
+        words: [
+            { w: 'COSMOVISION', cells: [[1, 5], [2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [7, 5], [8, 5], [9, 5], [10, 5], [11, 5]] },
+            { w: 'SUSTANCIA', cells: [[9, 11], [8, 11], [7, 11], [6, 11], [5, 11], [4, 11], [3, 11], [2, 11], [1, 11]] },
+            { w: 'PIEZA', cells: [[1, 0], [2, 1], [3, 2], [4, 3], [5, 4]] },
+            { w: 'MEDIDA', cells: [[4, 2], [5, 3], [6, 4], [7, 5], [8, 6], [9, 7]] },
+            { w: 'NOMBRE', cells: [[3, 8], [4, 8], [5, 8], [6, 8], [7, 8], [8, 8]] },
+        ]
+    },
+    {
+        size: 12,
+        grid: [
+            ['Y', 'W', 'P', 'M', 'T', 'J', 'N', 'Q', 'R', 'G', 'N', 'R'],
+            ['F', 'N', 'A', 'Y', 'X', 'P', 'L', 'B', 'C', 'D', 'N', 'L'],
+            ['J', 'M', 'R', 'I', 'O', 'K', 'L', 'G', 'Z', 'I', 'W', 'G'],
+            ['C', 'G', 'M', 'E', 'X', 'V', 'T', 'X', 'B', 'R', 'H', 'Y'],
+            ['E', 'H', 'E', 'R', 'A', 'C', 'L', 'I', 'T', 'O', 'Q', 'C'],
+            ['N', 'C', 'N', 'F', 'R', 'Q', 'N', 'R', 'E', 'P', 'J', 'Q'],
+            ['I', 'D', 'I', 'O', 'L', 'H', 'M', 'G', 'T', 'Q', 'S', 'P'],
+            ['Z', 'P', 'D', 'B', 'X', 'Q', 'H', 'X', 'C', 'Y', 'T', 'N'],
+            ['A', 'N', 'E', 'M', 'A', 'H', 'S', 'F', 'Y', 'C', 'N', 'E'],
+            ['X', 'S', 'S', 'V', 'P', 'M', 'K', 'I', 'P', 'T', 'E', 'Y'],
+            ['J', 'C', 'X', 'U', 'H', 'C', 'H', 'L', 'F', 'A', 'D', 'L'],
+            ['G', 'K', 'D', 'E', 'M', 'O', 'C', 'R', 'I', 'T', 'O', 'D'],
+        ],
+        words: [
+            { w: 'DEMOCRITO', cells: [[11, 2], [11, 3], [11, 4], [11, 5], [11, 6], [11, 7], [11, 8], [11, 9], [11, 10]] },
+            { w: 'HERACLITO', cells: [[4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7], [4, 8], [4, 9]] },
+            { w: 'PARMENIDES', cells: [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2]] },
+            { w: 'CENIZA', cells: [[3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0]] },
+            { w: 'RIO', cells: [[2, 2], [2, 3], [2, 4]] },
+        ]
+    }
+];
+let currentSopaSetIdx=0,sopaFoundWords=new Set();
+let sopaFirstClickCell=null,sopaPointerStartCell=null,sopaPointerMoved=false,sopaSelectedCells=[];
+function getSopaCellSize(){const container=document.getElementById('sopaGrid');if(!container||!container.parentElement)return 28;const avail=container.parentElement.clientWidth-16;const set=sopaSets[currentSopaSetIdx];return Math.max(20,Math.min(32,Math.floor(avail/set.size)));}
+function buildSopa(){const set=sopaSets[currentSopaSetIdx];const grid=document.getElementById('sopaGrid');grid.innerHTML='';const sz=getSopaCellSize();grid.style.gridTemplateColumns=`repeat(${set.size},${sz}px)`;grid.style.gridTemplateRows=`repeat(${set.size},${sz}px)`;sopaFirstClickCell=null;sopaSelectedCells=[];for(let r=0;r<set.size;r++)for(let c=0;c<set.size;c++){const cell=document.createElement('div');cell.className='sopa-cell';cell.style.width=sz+'px';cell.style.height=sz+'px';cell.style.fontSize=Math.max(11,sz-10)+'px';cell.textContent=set.grid[r][c];cell.dataset.row=r;cell.dataset.col=c;const alreadyFound=set.words.find(w=>sopaFoundWords.has(w.w)&&w.cells.some(([wr,wc])=>wr===r&&wc===c));if(alreadyFound)cell.classList.add('sopa-found');grid.appendChild(cell);}setupSopaEvents();const wl=document.getElementById('sopaWords');wl.innerHTML='';set.words.forEach(wObj=>{const sp=document.createElement('span');sp.className='sopa-w'+(sopaFoundWords.has(wObj.w)?' found':'');sp.id='sw-'+wObj.w;sp.textContent=wObj.w;wl.appendChild(sp);});}
+function setupSopaEvents(){const grid=document.getElementById('sopaGrid');grid.onpointerdown=e=>{const cell=e.target.closest('.sopa-cell');if(!cell)return;e.preventDefault();grid.setPointerCapture(e.pointerId);sopaPointerStartCell=cell;sopaPointerMoved=false;cell.classList.add('sopa-sel');sopaSelectedCells=[cell];};grid.onpointermove=e=>{if(!sopaPointerStartCell)return;e.preventDefault();const el=document.elementFromPoint(e.clientX,e.clientY);const cell=el?el.closest('.sopa-cell'):null;if(!cell)return;const sr=parseInt(sopaPointerStartCell.dataset.row),sc=parseInt(sopaPointerStartCell.dataset.col);const er=parseInt(cell.dataset.row),ec=parseInt(cell.dataset.col);if(sr!==er||sc!==ec)sopaPointerMoved=true;document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[];getSopaPath(sr,sc,er,ec).forEach(([r,c])=>{const pc=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(pc){pc.classList.add('sopa-sel');sopaSelectedCells.push(pc);}});};grid.onpointerup=e=>{if(!sopaPointerStartCell)return;e.preventDefault();grid.releasePointerCapture(e.pointerId);if(sopaPointerMoved&&sopaSelectedCells.length>1){checkSopaSelection();}else{const cell=sopaPointerStartCell;document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[];if(!sopaFirstClickCell){sopaFirstClickCell=cell;cell.classList.add('sopa-start');}else if(sopaFirstClickCell===cell){cell.classList.remove('sopa-start');sopaFirstClickCell=null;}else{const sr=parseInt(sopaFirstClickCell.dataset.row),sc=parseInt(sopaFirstClickCell.dataset.col);const er=parseInt(cell.dataset.row),ec=parseInt(cell.dataset.col);sopaFirstClickCell.classList.remove('sopa-start');sopaFirstClickCell=null;getSopaPath(sr,sc,er,ec).forEach(([r,c])=>{const pc=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(pc){pc.classList.add('sopa-sel');sopaSelectedCells.push(pc);}});checkSopaSelection();}}sopaPointerStartCell=null;sopaPointerMoved=false;};}
+function getSopaPath(r1,c1,r2,c2){const dr=Math.sign(r2-r1),dc=Math.sign(c2-c1);const lr=Math.abs(r2-r1),lc=Math.abs(c2-c1);if(lr!==0&&lc!==0&&lr!==lc)return[[r1,c1]];const len=Math.max(lr,lc);const path=[];for(let i=0;i<=len;i++)path.push([r1+dr*i,c1+dc*i]);return path;}
+function checkSopaSelection(){const set=sopaSets[currentSopaSetIdx];const word=sopaSelectedCells.map(c=>c.textContent).join('');const wordRev=word.split('').reverse().join('');const found=set.words.find(wObj=>!sopaFoundWords.has(wObj.w)&&(wObj.w===word||wObj.w===wordRev));if(found){sopaFoundWords.add(found.w);found.cells.forEach(([r,c])=>{const cell=document.querySelector(`#sopaGrid [data-row="${r}"][data-col="${c}"]`);if(cell){cell.classList.remove('sopa-sel','sopa-start');cell.classList.add('sopa-found');}});const sp=document.getElementById('sw-'+found.w);if(sp)sp.classList.add('found');if(!xpTracker.sopa.has(found.w)){xpTracker.sopa.add(found.w);pts(1);}sfx('ok');if(sopaFoundWords.size===set.words.length){fin('s-sopa');sfx('fan');showToast('🎉 ¡Todas las palabras encontradas!');}else showToast('✅ ¡Encontraste: '+found.w+'!');}else sfx('no');document.querySelectorAll('.sopa-cell.sopa-sel').forEach(c=>c.classList.remove('sopa-sel'));sopaSelectedCells=[];}
+function nextSopaSet(){sfx('click');sopaFoundWords=new Set();currentSopaSetIdx=(currentSopaSetIdx+1)%sopaSets.length;buildSopa();showToast('🔄 Nueva sopa cargada');}
+let _sopaResizeTimer=null;
+window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
+
+// ===================== EVALUACIÓN FINAL =====================
+const evalTFBank=[
+  {q:'La metafísica pregunta de qué está hecho el mundo y qué es real.',a:true},
+  {q:'Cuando la masa se vuelve tortilla, cambia la materia.',a:false},
+  {q:'Cuando la leña se vuelve ceniza, cambia la materia.',a:true},
+  {q:'Si a una escuela le cambian el nombre, al edificio le pasó algo.',a:false},
+  {q:'El aire es materia: pesa y ocupa lugar.',a:true},
+  {q:'La palabra «átomo» quiere decir «lo que no se parte».',a:true},
+  {q:'Hoy se sabe que el átomo no se puede partir.',a:false},
+  {q:'Al quemar un tronco se pierde materia, porque queda poca ceniza.',a:false},
+  {q:'Todos tenemos una cosmovisión, aunque nunca la hayamos escrito.',a:true},
+  {q:'Una cosmovisión se resume bien en un solo renglón.',a:false},
+  {q:'Heráclito decía que todo cambia siempre.',a:true},
+  {q:'Parménides estaba de acuerdo con Heráclito.',a:false},
+  {q:'«¿Sigue siendo el mismo machete?» tiene una sola respuesta correcta.',a:false},
+  {q:'El atajo de «si se puede deshacer, cambió la forma» sirve casi siempre. Pero no siempre.',a:true},
+  {q:'Todas las preguntas de la metafísica se le pasaron a la ciencia.',a:false}
+];
+const evalMCBank=[
+  {q:'¿De qué se ocupa la metafísica?',o:['De qué es real y qué cambia','De medir la temperatura','De escribir sin faltas','De contar dinero'],a:0},
+  {q:'La hoja de papel se vuelve avión. ¿Qué cambió?',o:['La forma','La materia','El dueño','Nada'],a:0},
+  {q:'El guineo se pone negro. ¿Qué cambió?',o:['La forma','El nombre','El lugar','La materia'],a:3},
+  {q:'La aldea se vuelve municipio. ¿Qué cambió?',o:['La materia del suelo','La forma del terreno','Todo','Lo que decimos de ella'],a:3},
+  {q:'¿Qué pregunta hay que hacerse para saber si cambió la materia?',o:['¿Se ve distinto de lejos?','¿Quedó algo distinto de lo que había?','¿Cuánto costó?','¿A quién le gusta?'],a:1},
+  {q:'¿Con qué se contestaba antes «de qué está hecho todo»?',o:['Con una tabla de elementos','Con cuatro cosas: agua, aire, fuego y tierra','Con un microscopio','Con una balanza'],a:1},
+  {q:'¿Qué le faltaba a quien pensaba que al quemar se perdía materia?',o:['Pensar más','Un libro','Una balanza','Más tiempo'],a:2},
+  {q:'¿Qué hizo Demócrito?',o:['Midió el aire','Dibujó el río','Pesó la ceniza','Pensó que todo está hecho de piezas chiquitísimas'],a:3},
+  {q:'¿Qué enseña que Heráclito y Parménides no se pusieran de acuerdo?',o:['Que uno de los dos mentía','Que la filosofía no sirve','Que hay discusiones que siguen abiertas','Que nadie pensaba bien'],a:2},
+  {q:'Tres preguntas contesta toda cosmovisión. ¿Cuál de estas es una?',o:['¿Qué se debe respetar, y por qué?','¿Cuánto cuesta el maíz?','¿Qué día es hoy?','¿Cuántos somos?'],a:0},
+  {q:'El agua de la quebrada ya bajó toda. ¿Es la misma quebrada?',o:['Depende de tu regla: si lo que la hace es el agua o su camino','Sí, siempre','No, nunca','No se puede opinar'],a:0},
+  {q:'¿Por qué aquí no se escribe la cosmovisión de ningún pueblo?',o:['Porque no importa','Porque no se puede acreditar y se manda a averiguarla donde vivís','Porque es secreta','Porque no hay ninguna'],a:1},
+  {q:'¿Cuál de estas NO tiene forma de medirse todavía?',o:['Cuánto pesa el aire','Por qué hay algo y no más bien nada','De qué está hecha el agua','Si el hierro se oxida'],a:1},
+  {q:'La sal disuelta en agua vuelve a salir. ¿Qué enseña eso?',o:['Que la sal desaparece','Que el agua es materia','Que el atajo de «si se deshace, cambió la forma» no siempre acierta','Que la sal es un átomo'],a:2},
+  {q:'El reflejo del cerro en la laguna, ¿es un cerro?',o:['Sí, uno más','Sí, si se ve claro','No: es lo que parece, no lo que está ahí','Solo de día'],a:2}
+];
+const evalCPBank=[
+  {q:'La rama que pregunta qué es real y qué cambia es la ___.',a:'metafísica'},
+  {q:'Aquello de lo que está hecha una cosa es la ___.',a:'materia'},
+  {q:'El modo en que está acomodada esa materia es la ___.',a:'forma'},
+  {q:'La palabra átomo quiere decir «que no se ___».',a:'parte'},
+  {q:'La forma entera en que un pueblo explica el mundo es su ___.',a:'cosmovisión'},
+  {q:'Si la leña se vuelve ceniza, cambió la ___.',a:'materia'},
+  {q:'Si el alambre se dobla, cambió la ___.',a:'forma'},
+  {q:'Si a la calle le cambian el nombre, no le pasó nada a la ___.',a:'cosa'},
+  {q:'Lo que está ahí aunque nadie lo mire es lo ___.',a:'real'},
+  {q:'El que puso el ejemplo del río fue ___.',a:'Heráclito'},
+  {q:'El que dijo que el cambio nos engaña fue ___.',a:'Parménides'},
+  {q:'El que pensó las piezas sin verlas nunca fue ___.',a:'Demócrito'},
+  {q:'Antes se contestaba que todo estaba hecho de agua, aire, fuego y ___.',a:'tierra'},
+  {q:'Para saber si se pierde materia al quemar hizo falta una ___.',a:'balanza'},
+  {q:'La pregunta «¿por qué hay algo y no más bien nada?» sigue ___.',a:'abierta'}
+];
+const evalPRBank=[
+  {term:'Metafísica',def:'La rama que pregunta qué es real y qué cambia'},
+  {term:'Materia',def:'Aquello de lo que está hecha una cosa'},
+  {term:'Forma',def:'El modo en que está acomodada esa materia'},
+  {term:'Cambio',def:'Que algo deje de ser como era'},
+  {term:'Real',def:'Lo que está ahí aunque nadie lo esté mirando'},
+  {term:'Cosmovisión',def:'La forma entera en que un pueblo explica el mundo'},
+  {term:'Átomo',def:'Una palabra que quiere decir «que no se puede partir»'},
+  {term:'Cambió la forma',def:'La materia es la misma: solo se acomodó de otro modo'},
+  {term:'Cambió la materia',def:'Lo que quedó es otra sustancia'},
+  {term:'Cambió lo que decimos',def:'A la cosa no le pasó nada: cambió su nombre o su dueño'},
+  {term:'Demócrito',def:'Pensó que todo está hecho de piezas que se repiten'},
+  {term:'Heráclito',def:'Dijo que todo cambia siempre, y puso el ejemplo del río'},
+  {term:'Parménides',def:'Dijo que lo que es, es, y que el cambio nos engaña'},
+  {term:'La balanza',def:'Lo que faltaba para saber que al quemar no se pierde nada'},
+  {term:'«¿Por qué hay algo?»',def:'La pregunta que sigue sin aparato que la mida'}
+];
+
+// ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
+const EVAL_FORMAS = 30;
+function _evalRng(forma) {
+    let s = (forma * 2654435761 + 909090909) >>> 0;
+    return function () {
+        s = (s + 0x6D2B79F5) >>> 0;
+        let t = s;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+const _shuffleF = (arr, rng) => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; };
+const _pickF = (arr, n, rng) => _shuffleF(arr, rng).slice(0, n);
+function _injectFormaSel(fnName, selId, actual, onPick) {
+    const ya = document.getElementById(selId);
+    if (ya) { ya.value = String(actual); return; }
+    const btn = document.querySelector('[onclick*="' + fnName + '()"]');
+    if (!btn || !btn.parentNode) return;
+    const wrap = document.createElement('label');
+    wrap.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin:0 8px 6px 0;font-weight:700;font-size:0.95rem;';
+    let ops = '';
+    for (let i = 1; i <= EVAL_FORMAS; i++) ops += '<option value="' + i + '"' + (i === actual ? ' selected' : '') + '>Forma ' + i + '</option>';
+    wrap.innerHTML = '📋 <select id="' + selId + '" style="padding:6px 10px;border-radius:8px;border:2px solid #888;font-weight:700;font-size:0.95rem;background:#fff;color:#222;" aria-label="Elegir número de forma exacta (1 a ' + EVAL_FORMAS + ')">' + ops + '</select>';
+    btn.parentNode.insertBefore(wrap, btn);
+    const sel = wrap.querySelector('select');
+    if (sel) sel.addEventListener('change', function () { onPick(parseInt(this.value, 10) || 1); try { saveProgress(); } catch (e) { } });
+}
+function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalFormNum, function (v) { evalFormNum = v; }); }
+
+function genEval(){sfx('click');_evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf;evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();saveProgress();document.getElementById('eval-screen-title').textContent=`🎓 Evaluación Final · Forma ${cf} · ¿De qué está hecho el mundo?`;evalAnsVisible=false;const out=document.getElementById('evalOut');out.innerHTML='';const bar=document.createElement('div');bar.className='eval-score-bar';bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;out.appendChild(bar);const cpItems=_pickF(evalCPBank,5, rng);const s1=document.createElement('div');s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';cpItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='cp';d.dataset.evalIndex=i;const qHtml=item.q.replace('___',`<input class="eval-cp-input" type="text" data-cp="${i}" autocomplete="off">`);d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+1}</span><span class="eval-q-text">${qHtml}</span></div><div class="eval-answer">${item.a}</div><div class="eval-item-feedback" id="evalFbCp${i}" aria-live="polite"></div>`;s1.appendChild(d);});out.appendChild(s1);const tfItems=_pickF(evalTFBank,5, rng);const s2=document.createElement('div');s2.innerHTML='<div class="eval-section-title">II. Verdadero o Falso <span class="eval-pts">25 pts · 5 pts c/u</span></div>';tfItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='tf';d.dataset.evalIndex=i;d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+6}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-tf-opts"><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="true"> Verdadero</label><label class="eval-tf-opt"><input type="radio" name="tf${i}" value="false"> Falso</label></div><div class="eval-answer">${item.a?'Verdadero':'Falso'}</div><div class="eval-item-feedback" id="evalFbTf${i}" aria-live="polite"></div>`;s2.appendChild(d);});out.appendChild(s2);const mcItems=_pickF(evalMCBank,5, rng);const s3=document.createElement('div');s3.innerHTML='<div class="eval-section-title">III. Selección Múltiple <span class="eval-pts">25 pts · 5 pts c/u</span></div>';mcItems.forEach((item,i)=>{const d=document.createElement('div');d.className='eval-item eval-auto-item';d.dataset.evalType='mc';d.dataset.evalIndex=i;const optsHtml=item.o.map((op,oi)=>`<label class="eval-mc-opt"><input type="radio" name="mc${i}" value="${oi}"> ${op}</label>`).join('');d.innerHTML=`<div class="eval-q"><span class="eval-num">${i+11}</span><span class="eval-q-text">${item.q}</span></div><div class="eval-mc-opts">${optsHtml}</div><div class="eval-answer">${item.o[item.a]}</div><div class="eval-item-feedback" id="evalFbMc${i}" aria-live="polite"></div>`;s3.appendChild(d);});out.appendChild(s3);const prItems=_pickF(evalPRBank,5, rng);const shuffledDefs=_shuffleF(prItems, rng);const letters=['A','B','C','D','E'];const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';const matchCard=document.createElement('div');matchCard.className='eval-item';let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});colLeft+='</div>';let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return`${i+16}→${letter}`;}).join(' · ');matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;s4.appendChild(matchCard);out.appendChild(s4);window._evalPrintData={tf:tfItems,mc:mcItems,cp:cpItems,pr:{terms:prItems,shuffledDefs,letters}};const autoPanel=document.createElement('div');autoPanel.id='evalAutoResult';autoPanel.className='eval-auto-result';autoPanel.innerHTML='<strong>🧮 Evaluación interactiva:</strong> responde en pantalla y presiona <em>Calificar prueba</em>. La impresión conserva el formato original sin respuestas digitadas.';out.appendChild(autoPanel);fin('s-evaluacion');}
+function toggleEvalAns(){evalAnsVisible=!evalAnsVisible;document.querySelectorAll('#evalOut .eval-answer').forEach(el=>el.style.display=evalAnsVisible?'block':'none');sfx('click');}
+function normalizeEvalAnswer(v){return(v||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').replace(/[()]/g,'').trim();}
+function isCpCorrect(student,expected){const s=normalizeEvalAnswer(student);const e=normalizeEvalAnswer(expected);if(!s)return false;const variants=new Set([e]);if(e.includes(' '))e.split(' ').forEach(x=>x&&variants.add(x));return variants.has(s)||e.replace(/[^a-z0-9]/g,'')===s.replace(/[^a-z0-9]/g,'');}
+function setEvalFeedback(id,ok,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='eval-item-feedback '+(ok?'eval-ok':'eval-no');}
+function gradeEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const d=window._evalPrintData;let total=0;const detail={cp:0,tf:0,mc:0,pr:0};d.cp.forEach((it,i)=>{const input=document.querySelector(`[data-cp="${i}"]`);const ok=isCpCorrect(input?input.value:'',it.a);if(input){input.classList.toggle('eval-input-ok',ok);input.classList.toggle('eval-input-no',!ok);}if(ok){detail.cp++;total+=5;}setEvalFeedback('evalFbCp'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.a);});d.tf.forEach((it,i)=>{const selected=document.querySelector(`input[name="tf${i}"]:checked`);const ok=!!selected&&(selected.value==='true')===it.a;if(ok){detail.tf++;total+=5;}setEvalFeedback('evalFbTf'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+(it.a?'Verdadero':'Falso'));});d.mc.forEach((it,i)=>{const selected=document.querySelector(`input[name="mc${i}"]:checked`);const ok=!!selected&&Number(selected.value)===it.a;if(ok){detail.mc++;total+=5;}setEvalFeedback('evalFbMc'+i,ok,ok?'Correcto. +5 pts':'Revisar. Respuesta esperada: '+it.o[it.a]);});const expectedLetters=d.pr.terms.map(it=>d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]);expectedLetters.forEach((letter,i)=>{const sel=document.querySelector(`[data-pr="${i}"]`);const ok=!!sel&&sel.value===letter;if(sel){sel.classList.toggle('eval-input-ok',ok);sel.classList.toggle('eval-input-no',!ok);}if(ok){detail.pr++;total+=5;}});const prMsg=`Pareados: ${detail.pr}/5 correctos. ${detail.pr===5?'Excelente. +25 pts':'Clave: '+expectedLetters.map((l,i)=>(i+16)+'→'+l).join(' · ')}`;setEvalFeedback('evalFbPr',detail.pr===5,prMsg);const result=document.getElementById('evalAutoResult');if(result){result.className='eval-auto-result '+(total>=70?'eval-auto-pass':'eval-auto-risk');result.innerHTML=`<strong>Resultado automático: ${total}/100 puntos</strong><br><span>Completar: ${detail.cp*5}/25 · V/F: ${detail.tf*5}/25 · Selección: ${detail.mc*5}/25 · Pareados: ${detail.pr*5}/25</span><br><em>Este resultado es solo para revisión en pantalla; la impresión conserva el formato limpio para papel.</em>`;}if(total>=70){pts(8);showToast('🎯 Evaluación calificada: '+total+'/100');}else showToast('🧮 Evaluación calificada: '+total+'/100. Revisa las respuestas marcadas.');}
+function printEval(){if(!window._evalPrintData){showToast('⚠️ Genera una evaluación primero');return;}sfx('click');const forma=window._currentEvalForm||1;const d=window._evalPrintData;let s1=`<div class="sec-title"><span>I. Completar el espacio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.cp.forEach((it,i)=>{const q=it.q.replace('___','<span class="cp-blank"></span>');s1+=`<div class="cp-row"><span class="qn">${i+1}.</span><span class="cp-text">${q}</span></div>`;});let s2=`<div class="sec-title"><span>II. Verdadero o Falso</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div>`;d.tf.forEach((it,i)=>{s2+=`<div class="tf-row"><span class="qn">${i+6}.</span><span class="tf-blank"></span><span class="tf-text">${it.q}</span></div>`;});let s3=`<div class="sec-title"><span>III. Selección Múltiple</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="mc-grid">`;d.mc.forEach((it,i)=>{const opts=it.o.map((op,oi)=>`<label class="mc-opt"><input type="radio" name="mcp${i}"> ${op}</label>`).join('');s3+=`<div class="mc-item"><div class="mc-q"><span class="qn">${i+11}.</span><span>${it.q}</span></div><div class="mc-opts">${opts}</div></div>`;});s3+=`</div>`;let colL='<div class="pr-col"><div class="pr-head">📌 Términos</div>';d.pr.terms.forEach((it,i)=>{colL+=`<div class="pr-item"><span class="pr-num">${i+16}.</span><span class="pr-line"></span>${it.term}</div>`;});colL+='</div>';let colR='<div class="pr-col"><div class="pr-head">🔑 Definiciones</div>';d.pr.shuffledDefs.forEach((it,i)=>{colR+=`<div class="pr-item"><span class="pr-num">${d.pr.letters[i]}.</span>${it.def}</div>`;});colR+='</div>';let s4=`<div class="pr-section"><div class="sec-title"><span>IV. Términos Pareados</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 25%</span></div></div><div class="pr-grid">${colL}${colR}</div></div>`;let pR='';pR+=`<div class="p-sec"><div class="p-ttl">I. Completar</div><table class="p-tbl">`;d.cp.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+1}.</td><td class="pa">${it.a}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">II. V o F</div><table class="p-tbl">`;d.tf.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+6}.</td><td class="pa">${it.a?'V':'F'}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">III. Selección</div><table class="p-tbl">`;d.mc.forEach((it,i)=>{pR+=`<tr><td class="pn">${i+11}.</td><td class="pa">${it.o[it.a]}</td></tr>`;});pR+=`</table></div><div class="p-sec"><div class="p-ttl">IV. Pareados</div><table class="p-tbl">`;d.pr.terms.forEach((it,i)=>{const l=d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)];pR+=`<tr><td class="pn">${i+16}.</td><td class="pa">${i+16}→${l}</td></tr>`;});pR+=`</table></div>`;
+    const zgKey = [];
+    d.cp.forEach((it, i) => zgKey.push({ n: i + 1, fill: 0, labels: ['✓', '✗', '', '', ''] }));
+    d.tf.forEach((it, i) => zgKey.push({ n: i + 6, fill: it.a ? 0 : 1, labels: ['V', 'F', '', '', ''] }));
+    d.mc.forEach((it, i) => zgKey.push({ n: i + 11, fill: it.a, labels: ['', '', '', '', ''] }));
+    d.pr.terms.forEach((it, i) => { const l = d.pr.letters[d.pr.shuffledDefs.findIndex(df=>df.def===it.def)]; zgKey.push({ n: i + 16, fill: 'ABCDE'.indexOf(l), labels: ['', '', '', '', ''] }); });
+    const zgRow = r => `<div class="zg-row"><span class="zg-n">${r.n}</span>${r.labels.map((lb, ci) => ci === r.fill ? `<span class="zg-c zg-fill">${lb || '●'}</span>` : `<span class="zg-c">${lb}</span>`).join('')}</div>`;
+    const zgHead = '<div class="zg-head"><span class="zg-n"></span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span></div>';
+    const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
+    const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
+    const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+
+const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación ¿De qué está hecho el mundo? · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.12rem 0.4rem;margin:0.22rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #784a6d;background:#f6eef4;color:#784a6d;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#784a6d;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:58px;border-bottom:1.5px solid #784a6d;height:12px;}.obt-pct{white-space:nowrap;}.qn{font-weight:700;min-width:22px;flex-shrink:0;}.tf-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:40px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.18rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.14rem 0.35rem;margin-bottom:0.1rem;break-inside:avoid;page-break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.3;display:flex;gap:0.28rem;margin-bottom:0.07rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.1rem 0.5rem;}.mc-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:0.04rem 0.15rem;margin-left:0.8rem;}.mc-opt{font-size:9pt;display:flex;align-items:center;gap:0.15rem;}.mc-opt input{width:10px;height:10px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.3;padding:0.13rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:150px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{margin-top:0.1rem;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.08rem 0.4rem;margin-top:0.08rem;}.pr-head{font-size:9pt;font-weight:700;color:#555;margin-bottom:0.1rem;}.pr-item{font-size:10.5pt;padding:0.1rem 0.28rem;background:#f6eef4;border-radius:3px;margin-bottom:0.07rem;display:flex;align-items:center;gap:0.2rem;line-height:1.2;break-inside:avoid;page-break-inside:avoid;}.pr-num{font-weight:700;color:#784a6d;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.22rem;padding:0.15rem 0;page-break-before:avoid;break-before:avoid;color:#784a6d;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #784a6d;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#555;}.pa{color:#007a00;font-weight:600;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
+.zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
+.zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
+.zg-head{display:flex;gap:5px;align-items:center;font-weight:700;font-size:10pt;letter-spacing:1px;}
+.zg-head span:not(.zg-n){width:17px;text-align:center;}
+.zg-row{display:flex;gap:5px;align-items:center;margin-top:3px;}
+.zg-n{width:22px;text-align:right;font-weight:700;font-size:10.5pt;margin-right:5px;flex-shrink:0;}
+.zg-c{width:17px;height:17px;border:1.4px solid #555;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8pt;color:#666;background:#fff;flex-shrink:0;}
+.zg-fill{background:#111;color:#fff;border-color:#111;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.zg-ver{margin-top:0.3rem;display:flex;gap:5px;align-items:center;font-size:8.5pt;font-weight:700;}
+.zg-note{font-size:7pt;color:#555;margin-top:0.22rem;}
+.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}
+.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
+.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · ¿De qué está hecho el mundo? · Educación Básica · Filosofía</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Evaluación Final · ¿De qué está hecho el mundo? · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div></div><div class="p-grid">${pR}</div>
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;const win=window.open('','_blank','');if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);}
+
+// ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
+function evalSwitchMode(mode){
+  sfx('click');
+  const cWrap=document.getElementById('evalConceptWrap'),critWrap=document.getElementById('evalCritWrap');
+  const cBtn=document.getElementById('evalModeBtnConcept'),critBtn=document.getElementById('evalModeBtnCrit');
+  if(mode==='crit'){
+    cWrap.style.display='none';critWrap.style.display='block';
+    cBtn.classList.remove('active');cBtn.setAttribute('aria-selected','false');
+    critBtn.classList.add('active');critBtn.setAttribute('aria-selected','true');
+    if(!window._evalCritData)genEvalCrit();
+  }else{
+    critWrap.style.display='none';cWrap.style.display='block';
+    critBtn.classList.remove('active');critBtn.setAttribute('aria-selected','false');
+    cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
+  }
+}
+const critCaseBank=[
+  {txt:'A Elvin le dejaron el machete del abuelo. Le cambiaron el mango hace años y la hoja el verano pasado. Su hermana dice que ese ya no es el del abuelo. Y que le toca la mitad. Llevan tres semanas sin hablarse.'},
+  {txt:'En la pulpería le venden a doña Nely un saco de sal mojada. Ella reclama que ya no es sal. El pulpero dice que sí, que la seca y queda igual. Se pasan la mañana discutiendo.'},
+  {txt:'Un muchacho quema el rastrojo. Dice que la tierra «se comió» la milpa vieja: de un montón grande quedó un puño de ceniza. Al año siguiente vuelve a quemar y la cosecha baja otra vez.'},
+  {txt:'En la escuela le cambian el nombre y le ponen el de otra persona. Un alumno dice que ya no es la misma escuela. Otro dice que es la misma, que solo le cambiaron el rótulo.'},
+  {txt:'Una niña ve el cerro en la laguna. Dice que entonces hay dos cerros. Su hermano se ríe de ella y no le explica nada. Ella se queda sin entender por qué no son dos.'}
+];
+const critCaseQuestions=[
+  '1. ¿Qué cambió en el caso: la forma, la materia, o solo lo que decimos? Di por qué.',
+  '2. ¿Qué pregunta hay que hacerle al cambio para saberlo?',
+  '3. ¿A quién le cuesta, y qué pierde esa persona?',
+  '4. ¿El caso tiene UNA respuesta buena o más de una? Explica.'
+];
+const critCaseGuides=[
+  'Se valora que NOMBRE la clase y dé la señal. Si la materia es la misma, cambió la forma. Si quedó otra sustancia, la materia. Si a la cosa no le pasó nada, solo lo que decimos.',
+  'La prueba es siempre la misma. ¿Le pasó algo A LA COSA? ¿O solo a lo que decimos de ella? Y después: ¿sigue siendo la misma sustancia?',
+  'Se califica que le ponga nombre al daño concreto. Tres semanas sin hablarse. Una mañana perdida. Una cosecha que baja. No la indignación.',
+  'Los casos de identidad son el machete y la escuela. NO tienen una sola respuesta buena. Decirlo vale puntos. Los de forma y materia —la sal, la ceniza— sí se deciden con la prueba.'
+];
+const critErrorBank=[
+  {txt:'"Si algo se ve distinto, es que cambió de materia."',
+   g1:'No: la masa hecha tortilla se ve distinta y es la misma materia. Lo que cambió fue la forma.',
+   g2:'La prueba no es cómo se ve: es si quedó otra sustancia. Otro color, otro olor, otro sabor. Y que ya no se pueda volver atrás sin más.'},
+  {txt:'"Al quemar un tronco se pierde materia, porque queda muy poca ceniza."',
+   g1:'Lo que se fue no desapareció. Salió en humo y en gases, y eso también pesa.',
+   g2:'Pesando lo que entra y lo que sale, da lo mismo. Y lo que faltaba para saberlo no era pensar más: era una balanza.'},
+  {txt:'"La palabra átomo quiere decir que ya se comprobó que esa pieza no se parte."',
+   g1:'La palabra se puso PENSANDO, sin medir nada. Quiere decir «lo que no se parte» porque así se imaginó.',
+   g2:'Después se midió y el átomo sí se parte. El nombre falló y la idea de las piezas acertó. Una idea puede servir aunque su nombre quede mal.'},
+  {txt:'"Cada pueblo cuenta el origen del mundo a su modo. Así que da igual lo que diga cualquiera."',
+   g1:'Que haya varias no quiere decir que se puedan inventar. Una cosmovisión es de un pueblo. Se averigua preguntándole a ese pueblo.',
+   g2:'Por eso aquí no hay ninguna escrita. Se manda a averiguarla donde vivís, con respeto y anotando quién lo contó.'}
+];
+const critDecisionBank=[
+  'El guineo de la refrigeradora se puso negro. ¿Decís que cambió la materia, o probás primero si por dentro sigue igual?',
+  'Alguien te dice que el aire no es nada porque no se ve. ¿Le das la razón, o buscás cómo comprobar si pesa?',
+  'Tu hermano dice que la bicicleta con llantas nuevas y pintura nueva ya es otra. ¿Discutís, o decís primero cuál es tu regla?',
+  'Te cuentan en la casa por qué se respeta un cerro del pueblo. ¿Lo anotás con el nombre de quien te lo contó, o lo das por sabido?',
+  'En la escuela dicen que el agua está hecha de piezas que nadie ha visto. ¿Lo creés porque lo dijeron, o preguntás cómo se supo?'
+];
+const critDecisionGuide='Primero se dice la REGLA y después se decide. Lo que se puede comprobar, se comprueba: el aire se pesa. Lo que no tiene respuesta única se discute con la regla en la mano. Y lo aprendido de alguien se anota con su nombre.';
+const critCompareBank=[
+  {a:'La masa que se vuelve tortilla.',b:'La leña que se vuelve ceniza.',
+   ga:'Cambió la forma: es la misma materia acomodada de otro modo.',
+   gb:'Cambió la materia: lo que quedó es otra sustancia.',
+   gr:'Las dos se ven distintas después, y por eso se confunden. Lo que las separa no es cómo se ven. Es si quedó algo distinto de lo que había.'},
+  {a:'A la escuela le cambian el nombre.',b:'A la escuela le tumban una pared.',
+   ga:'Cambió lo que decimos: al edificio no le pasó nada.',
+   gb:'Le pasó algo a la cosa: cambió su forma.',
+   gr:'Es la frontera de la unidad. Un cambio de nombre, de dueño o de lugar no le pasa a la cosa. Y aun así se habla de él como si sí.'},
+  {a:'«El átomo no se parte», dicho pensando.',b:'«El átomo sí se parte», dicho midiendo.',
+   ga:'Es una idea buena que llegó sin instrumento.',
+   gb:'Es una medida que corrigió la idea.',
+   gr:'La filosofía hizo la pregunta y la ciencia la fue midiendo. Que la medida corrija no quita nada: sin la pregunta no habría qué medir.'},
+  {a:'«¿De qué está hecha el agua?»',b:'«¿Por qué hay algo y no más bien nada?»',
+   ga:'Se le pasó a la ciencia, y hoy se contesta midiendo.',
+   gb:'Sigue sin aparato que la mida.',
+   gr:'Las dos son preguntas de la misma rama. Decir que la segunda no sirve porque no se mide es un error. Es pedirle a una pregunta que sea otra.'}
+];
+const critCauseBank=[
+  {cause:'La palabra «átomo» se puso pensando, sin haber medido nada.',guide:'Por eso quiere decir «lo que no se parte»: así se lo imaginaron. Después se midió y resultó que sí se parte.'},
+  {cause:'De un tronco grande queda un puño de ceniza.',guide:'Por eso durante siglos pareció que al quemar se perdía materia. Con una balanza se vio que no: lo que se va en humo también pesa.'},
+  {cause:'Al machete del abuelo le cambiaron el mango y después la hoja.',guide:'Por eso la pregunta de si sigue siendo el mismo no tiene una sola respuesta. Depende de qué hace a una cosa: de qué está hecha, o para qué sirve.'},
+  {cause:'Una cosmovisión se aprende oyendo en la casa, no leyéndola.',guide:'Por eso todos tenemos una aunque nunca la hayamos escrito. Y por eso se averigua preguntando donde uno vive.'},
+  {cause:'Heráclito y Parménides dijeron lo contrario el uno del otro.',guide:'Por eso la discusión sigue abierta, y eso no es un fallo. Enseña a no ganar una discusión solo con lo que uno ve.'}
+];
+const critEffectBank=[
+  {effect:'Dos hermanos se pasan tres semanas sin hablarse por un machete.',guide:'Porque los dos tienen media razón, y ninguno dijo antes con qué regla contestaba. Esa pregunta no se gana gritando.'},
+  {effect:'Alguien vuelve a quemar el rastrojo cada año y la cosecha le baja.',guide:'Porque creyó que la materia se perdía en el fuego. Lo que se fue estaba en el humo. Lo que quedó en el suelo no alcanza.'},
+  {effect:'La idea de las piezas chiquitísimas sirvió aunque su nombre estuviera mal.',guide:'Porque lo que acertó fue la idea: que todo está hecho de piezas. No la palabra. Una cosa se puede corregir sin tirar la otra.'},
+  {effect:'La misma pregunta que hizo la filosofía hoy la contesta la química.',guide:'Porque la pregunta no cambió: apareció con qué medirla. La filosofía la hizo y la ciencia la fue midiendo.'},
+  {effect:'Aquí no está escrita la cosmovisión de ningún pueblo de Honduras.',guide:'Porque no se puede acreditar. Ponerle a un pueblo una creencia que no se sostiene es peor que callarla. Por eso se manda a averiguarla donde uno vive.'}
+];
+function genEvalCrit(){
+  sfx('click');
+  _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
+  const _sC = document.getElementById('evalCritFormaSel');
+  if (_sC && parseInt(_sC.value, 10)) evalCritFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sC.value, 10)));
+  const cf=evalCritFormNum;window._currentEvalCritForm=cf;const rngC = _evalRng(200000 + cf);evalCritFormNum=(evalCritFormNum%EVAL_FORMAS)+1;_injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });saveProgress();
+  document.getElementById('evalcrit-screen-title').textContent=`🧠 Pensamiento Crítico · Forma ${cf} · ¿De qué está hecho el mundo?`;
+  evalCritAnsVisible=false;
+  const out=document.getElementById('evalCritOut');out.innerHTML='';
+  const kase=_pickF(critCaseBank,1,rngC)[0];
+  const s1=document.createElement('div');
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: un cambio de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s1);
+  const err=_pickF(critErrorBank,1,rngC)[0];
+  const s2=document.createElement('div');
+  s2.innerHTML=`<div class="eval-section-title">II. Corrige el error <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${err.txt}</div><p style="font-size:0.85rem;margin-bottom:0.5rem;">Identifica <strong>dos errores</strong> y corrígelos con tus propias palabras:</p><div class="crit-q-block"><div class="crit-q-label">Error 1 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1 y su corrección"></textarea><div class="crit-pauta">${err.g1}</div></div><div class="crit-q-block"><div class="crit-q-label">Error 2 y su corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2 y su corrección"></textarea><div class="crit-pauta">${err.g2}</div></div><div class="crit-selfscore"><label for="critScore1">Obtenido:</label><input type="number" id="critScore1" class="crit-score-input" data-score="1" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s2);
+  const dec=_pickF(critDecisionBank,1,rngC)[0];
+  const s3=document.createElement('div');
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: decir la regla antes de decidir <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué harías? Explica por qué, diciendo con qué regla lo decidís y qué comprobarías antes de afirmarlo.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s3);
+  const cmp=_pickF(critCompareBank,1,rngC)[0];
+  const s4=document.createElement('div');
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué clase de cambio o de pregunta es cada caso? 2. ¿En qué se reconoce cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s4);
+  const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
+  let ceRows='';
+  causes.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Causa</span>${it.cause}</div><div class="crit-ce-cell"><span class="crit-ce-tag">Efecto</span><textarea class="crit-textarea" rows="2" aria-label="Efecto de: ${it.cause}" placeholder="Escribe el efecto..."></textarea></div></div><div class="crit-pauta">${it.guide}</div></div>`;});
+  effects.forEach((it,i)=>{ceRows+=`<div class="crit-ce-item"><div class="crit-ce-row"><div class="crit-ce-cell"><span class="crit-ce-tag">Causa</span><textarea class="crit-textarea" rows="2" aria-label="Causa de: ${it.effect}" placeholder="Escribe la causa..."></textarea></div><div class="crit-ce-cell crit-ce-given"><span class="crit-ce-tag">Efecto</span>${it.effect}</div></div><div class="crit-pauta">${it.guide}</div></div>`;});
+  const s5=document.createElement('div');
+  s5.innerHTML=`<div class="eval-section-title">V. Análisis de causas y efectos <span class="eval-pts">20 pts</span></div><div class="eval-item">${ceRows}<div class="crit-selfscore"><label for="critScore4">Obtenido:</label><input type="number" id="critScore4" class="crit-score-input" data-score="4" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  out.appendChild(s5);
+  window._evalCritData={kase,err,dec,cmp,causes,effects};
+  const totalPanel=document.createElement('div');totalPanel.id='evalCritTotalResult';totalPanel.className='crit-total-panel';totalPanel.innerHTML='<strong>🧮 Autoevaluación:</strong> responde cada sección, compara con la <em>Pauta</em> y anota tu puntaje (0–20) en cada casilla. Luego presiona <em>Calcular Total</em>.';out.appendChild(totalPanel);
+  fin('s-evaluacion');
+}
+function toggleEvalCritAns(){evalCritAnsVisible=!evalCritAnsVisible;document.querySelectorAll('#evalCritOut .crit-pauta').forEach(el=>el.style.display=evalCritAnsVisible?'block':'none');sfx('click');}
+function calcCritTotal(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  let total=0;
+  document.querySelectorAll('#evalCritOut .crit-score-input').forEach(inp=>{let v=parseInt(inp.value)||0;v=Math.max(0,Math.min(20,v));inp.value=v;total+=v;});
+  const panel=document.getElementById('evalCritTotalResult');
+  if(panel){panel.className='crit-total-panel '+(total>=70?'eval-auto-pass':'eval-auto-risk');panel.innerHTML=`<strong>Puntaje total autoevaluado: ${total}/100</strong><br><em>Compara siempre tus respuestas con la Pauta antes de anotar el puntaje de cada sección.</em>`;}
+  const formKey='crit_'+(window._currentEvalCritForm||1);
+  if(total>=70){if(!xpTracker.wgt.has(formKey)){xpTracker.wgt.add(formKey);pts(8);}showToast('🎯 Pensamiento crítico: '+total+'/100');}
+  else showToast('🧮 Puntaje registrado: '+total+'/100. ¡Sigue practicando!');
+}
+function printEvalCrit(){
+  if(!window._evalCritData){showToast('⚠️ Genera una prueba primero');return;}
+  sfx('click');
+  const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
+  const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: un cambio de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
+  let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: decir la regla antes de decidir</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué harías? Explica por qué, diciendo con qué regla lo decidís y qué comprobarías antes de afirmarlo.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué clase de cambio o de pregunta es cada caso? 2. ¿En qué se reconoce cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
+  d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
+  d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
+  ceTbl+='</table>';
+  let s5=`<div class="sec-title"><span>V. Análisis de causas y efectos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div>${ceTbl}`;
+  let pR='';
+  pR+=`<div class="p-sec"><div class="p-ttl">I. Caso</div>${critCaseQuestions.map((q,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${critCaseGuides[i]}</div>`).join('')}</div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Corrige el error</div><div class="p-crit-line"><strong>Error 1:</strong> ${d.err.g1}</div><div class="p-crit-line"><strong>Error 2:</strong> ${d.err.g2}</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${critDecisionGuide}</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
+  pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it=>`<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it=>`<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
+  const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico ¿De qué está hecho el mundo? · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #784a6d;background:#f6eef4;color:#784a6d;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#784a6d;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #784a6d;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#f6eef4;border-left:3px solid #784a6d;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#f6eef4;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#f6eef4;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#007a00;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#784a6d;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #784a6d;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="critEvalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · ¿De qué está hecho el mundo? · Educación Básica · Filosofía</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="critPautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · ¿De qué está hecho el mundo? · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",250,0.55,1.2);fit("critPautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const win=window.open('','_blank','');
+  if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
+  win.document.write(doc);win.document.close();setTimeout(()=>win.print(),400);
+}
+
+// ===================== LABORATORIO DE LOS SÍMBOLOS =====================
+const parteData = (function () {
+  /* Se arma desde js/data/filosofia-mundo.js. Los cuatro casos de «¿sigue
+     siendo el mismo?», cada uno con lo que cambió, las dos respuestas que se
+     sostienen y lo que de verdad decide. */
+  const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const out = {};
+  MUN_IDENTIDAD.forEach(k => {
+    out[k.clave] = {
+      nombre: k.titulo, icon: k.emoji,
+      estructura: { title: '¿Qué cambió?',      info: '<strong>' + esc(k.cambio) + '</strong>' },
+      funcion:    { title: 'Dicen que sí',      info: '✅ ' + esc(k.unos) },
+      ubicacion:  { title: 'Dicen que no',      info: '❌ ' + esc(k.otros) },
+      dato:       { title: '¿Qué lo decide?',   info: '⚖️ <strong>' + esc(k.decide) + '</strong>' }
+    };
+  });
+  return out;
+})();
+let labParte='machete',labAspecto='estructura';
+function labShowParte(parteKey){labParte=parteKey;updateLabDisplay();document.querySelectorAll('.lab-cont-btn').forEach(b=>b.classList.remove('active-pri'));const btn=document.querySelector(`[data-parte="${parteKey}"]`);if(btn)btn.classList.add('active-pri');if(typeof sfx==='function')sfx('click');}
+function labShowAspecto(aspectoKey){labAspecto=aspectoKey;updateLabDisplay();document.querySelectorAll('.lab-asp-btn').forEach(b=>b.classList.remove('active-sec'));const btn=document.querySelector(`[data-aspecto="${aspectoKey}"]`);if(btn)btn.classList.add('active-sec');if(typeof sfx==='function')sfx('click');}
+/* ⚠️ El texto de «Explorando» va en UN SOLO hijo de bloque, y no es estética.
+   `.lab-sentence` es `display:flex`, así que el navegador hace un ítem de la
+   fila de CADA pedazo: el texto suelto, cada <strong> y la flecha. Con los
+   títulos cortos de la misión de la que se copió esto —«¿Qué hace?»— cabía
+   todo en una fila y no se notaba; con los de aquí —«¿Con qué pregunta
+   nació?»— «Explorando:» se salía del recuadro por la izquierda y el resto
+   quedaba apilado a la derecha. HTML válido, CSS válido, consola callada: es
+   la misma avería que las cinco cajas `.tip` de la misión 78, y se encontró
+   igual, MIRANDO la captura a 360 px con todas las sondas en verde. */
+function updateLabDisplay(){const data=parteData[labParte];const asp=data[labAspecto];document.getElementById('lab-sentence').innerHTML=`<div>🔬 Explorando: <strong>${data.nombre}</strong> → <strong>${asp.title}</strong></div>`;document.getElementById('lab-display').innerHTML=`<div class="lab-cont-header">${data.icon} ${data.nombre}</div><div class="lab-asp-title">${asp.title}</div><div class="lab-asp-info">${asp.info}</div>`;}
+
+// ===================== DIPLOMA =====================
+function _diplPct(){return xp>=MXP?100:Math.round((xp/MXP)*100);}
+function openDiploma(){sfx('fan');const pct=_diplPct();document.getElementById('diplPct').textContent=pct+'%';document.getElementById('diplBar').style.width=pct+'%';document.getElementById('diplDate').textContent='Fecha: '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});const msgs=['¡Seguí preguntando!','¡Muy buen trabajo!','¡Vas muy bien!','¡Ya sabés qué clase de cambio es!','¡Preguntás como un filósofo!'];document.getElementById('diplMsg').textContent=msgs[Math.min(Math.floor(pct/25),4)];const stars=['⭐','⭐⭐','⭐⭐⭐'];document.getElementById('diplStars').textContent=stars[Math.min(Math.floor(pct/40),2)];const achTxt=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(' · ');document.getElementById('diplAch').textContent=achTxt||'Sigue completando secciones para desbloquear logros';document.getElementById('diplomaOverlay').classList.add('open');launchConfetti();}
+function closeDiploma(){document.getElementById('diplomaOverlay').classList.remove('open');}
+function updateDiplomaName(v){document.getElementById('diplName').textContent=v||'Estudiante';}
+function shareWA(){const name=document.getElementById('diplName').textContent||'Estudiante';const pct=_diplPct();const msg=`🧩 ¡${name} completó la Misión "¿De qué está hecho el mundo?"! 🏅 Progreso: ${pct}% · 🌱 policastsapien.com`;_waShare(msg);}
+async function captureDiploma(){if(typeof html2canvas==='undefined'){showToast('⚠️ Cargando... intenta de nuevo');return;}sfx('click');const card=document.querySelector('.diploma-card');const btn=document.querySelector('.diploma-actions .btn-pri');const toHide=[card.querySelector('.diploma-input'),card.querySelector('.diploma-actions'),card.querySelector('hr')];if(btn){btn.disabled=true;btn.textContent='⏳ Capturando...';}toHide.forEach(el=>{if(el)el.style.display='none';});let dataUrl='';try{const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:'#ffffff'});toHide.forEach(el=>{if(el)el.style.display='';});dataUrl=canvas.toDataURL('image/png');const name=(document.getElementById('diplName').textContent||'Estudiante').replace(/\s+/g,'-');const fileName='constancia-'+name+'.png';const cap=window.Capacitor;if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&cap.Plugins?.Filesystem&&cap.Plugins?.Share){const base64Data=dataUrl.split(',')[1];const result=await cap.Plugins.Filesystem.writeFile({path:fileName,data:base64Data,directory:'CACHE'});await cap.Plugins.Share.share({url:result.uri,dialogTitle:'Guardar / Compartir Constancia'});}else{const a=document.createElement('a');a.href=dataUrl;a.download=fileName;a.click();}}catch(e){toHide.forEach(el=>{if(el)el.style.display='';});if(e.name!=='AbortError')showToast('⚠️ No se pudo guardar la constancia');}finally{if(btn){btn.disabled=false;btn.textContent='📷 Guardar foto';}}}
+
+// ===================== INIT =====================
+
+// ============ ¿DE QUÉ ESTÁ HECHO EL MUNDO?, EN LA PANTALLA ============
+/* Todo se PINTA desde js/data/filosofia-mundo.js. Lo que aquí se copiaría es
+   la clase de cada cambio y lo que decide cada caso de identidad, y eso no
+   puede decir una cosa en la pantalla y otra en la ficha que se fotocopia.
+   De ahí sale `_dev/verifica-filosofia.js`. */
+function _esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* Las cuatro preguntas grandes de la metafísica: el CE1.2 del currículo. */
+function pintarMunPreguntas(){
+  const c=document.getElementById('mu-preguntas');if(!c)return;
+  c.innerHTML=`<h2>🌌 Cuatro preguntas que no se cierran solas</h2>
+    <p>${_esc(MUN_METAFISICA.hace)} Se llama <strong>${_esc(MUN_METAFISICA.nombre)}</strong>.
+       ${_esc(MUN_METAFISICA.pregunta)}</p>
+    <div class="mu-pregs">${MUN_PREGUNTAS.map(p=>
+      `<div class="mu-preg">
+         <h4>${p.emoji} ${_esc(p.nombre)}</h4>
+         <p class="mu-preg-q">${_esc(p.que)}</p>
+         <p class="mu-preg-a">${_esc(p.aqui)}</p>
+         <p class="mu-preg-h">${_esc(p.hoy)}</p>
+       </div>`).join('')}</div>
+    <div class="tip"><span class="ti">⚠️</span><div>${_esc(MUN_METAFISICA.ojo)}</div></div>`;
+}
+
+/* Las tres clases de cambio. ⚠️ Cada una lleva SU EMOJI además del color:
+   esta tarjeta se fotocopia en blanco y negro, y uno de cada doce niños no
+   distingue el rojo del verde. Sin el emoji, clasificar cambios sería justo
+   la actividad que él no puede hacer, que es la avería que este proyecto ya
+   cerró una vez. Y el ATAJO que falla va escrito, no callado. */
+function pintarMunTipos(){
+  const c=document.getElementById('mu-tipos');if(!c)return;
+  c.innerHTML=`<h2>🔄 No todo cambio es el mismo cambio</h2>
+    <p>Hay tres clases, y cada una tiene su prueba. La prueba es una pregunta:
+       se la hacés al cambio y él te contesta cuál es.</p>
+    <div class="mu-tipos">${MUN_TIPOS.map(t=>
+      `<div class="mu-tipo t-${t.clave}">
+         <h4>${t.emoji} ${_esc(t.nombre)} <span class="mu-tipo-et">${_esc(t.corto)}</span></h4>
+         <p class="mu-tipo-s">${_esc(t.senal)}</p>
+         <p class="mu-tipo-p"><strong>La prueba:</strong> ${_esc(t.prueba)}</p>
+       </div>`).join('')}</div>
+    <div class="tip"><span class="ti">⚠️</span><div>${_esc(MUN_TIPOS_OJO)}</div></div>`;
+}
+
+/* Los cuatro casos de identidad. Los dos lados van UNO AL LADO DEL OTRO a
+   propósito: lo que enseña la tarjeta es que las dos respuestas se sostienen.
+   Y el aviso de que no se califican como si tuvieran una sola respuesta va
+   con ellas, no en otra pantalla. */
+function pintarMunIdentidad(){
+  const c=document.getElementById('mu-identidad');if(!c)return;
+  c.innerHTML=MUN_IDENTIDAD.map(k=>
+    `<div class="mu-caso">
+       <h3 class="mu-caso-tit">${k.emoji} ${_esc(k.titulo)}</h3>
+       <p class="mu-caso-c">${_esc(k.cambio)}</p>
+       <div class="mu-caso-dos">
+         <div class="mu-caso-l si">✅ ${_esc(k.unos)}</div>
+         <div class="mu-caso-l no">❌ ${_esc(k.otros)}</div>
+       </div>
+       <p class="mu-caso-d"><strong>Lo que lo decide:</strong> ${_esc(k.decide)}</p>
+     </div>`).join('')
+    +`<div class="tip"><span class="ti">⚖️</span><div>${_esc(MUN_IDENTIDAD_OJO)}</div></div>`;
+}
+
+/* El puente: la misma pregunta, lo que se contestó pensando y lo que hoy se
+   mide. Con su aviso: no todas se le pasaron a la ciencia. */
+function pintarMunPuente(){
+  const c=document.getElementById('mu-puente');if(!c)return;
+  c.innerHTML=MUN_PUENTE.map(x=>
+    `<div class="mu-puente">
+       <p class="mu-puente-p">${_esc(x.p)}</p>
+       <div class="mu-puente-dos">
+         <div class="mu-puente-c antes"><h5>🌌 Se contestó pensando</h5>${_esc(x.antes)}</div>
+         <div class="mu-puente-c hoy"><h5>🔬 Hoy se mide</h5>${_esc(x.hoy)}</div>
+       </div>
+       <p class="mu-puente-q">${_esc(x.quien)}</p>
+     </div>`).join('')
+    +`<div class="tip"><span class="ti">❔</span><div>${_esc(MUN_PUENTE_OJO)}</div></div>`;
+}
+
+function pintarMunCosmos(){
+  const c=document.getElementById('mu-cosmos');if(!c)return;
+  c.innerHTML=`<h2>🌄 Cada pueblo explica el mundo entero</h2>
+    <p>${_esc(MUN_COSMOS.que)}</p>
+    <p>${_esc(MUN_COSMOS.toda)}</p>
+    <div class="mu-cosmos">${MUN_COSMOS.preguntas.map(p=>
+      `<div>${p.emoji} ${_esc(p.p)}</div>`).join('')}</div>
+    <div class="tip"><span class="ti">🇭🇳</span><div>${_esc(MUN_COSMOS.aqui)}</div></div>`;
+}
+
+/* ⚠️ La investigación NO trae respuestas, y el aviso va en la pantalla y en
+   el papel: sin él se lee como un descuido y alguien se la salta. Aquí no se
+   escribe qué dice la cosmovisión de ningún pueblo, porque este repositorio
+   no tiene con qué acreditarlo. */
+function pintarMunInvestiga(){
+  const c=document.getElementById('mu-investiga');if(!c)return;
+  c.innerHTML=`<h2>🔎 Esto se averigua donde vivís</h2>
+    <div class="tip"><span class="ti">⚠️</span><div>${_esc(MUN_INVESTIGA.aviso)}</div></div>
+    <ol class="mu-inv">${MUN_INVESTIGA.preguntas.map(p=>`<li>${_esc(p)}</li>`).join('')}</ol>
+    <div class="tip"><span class="ti">🤲</span><div>${_esc(MUN_INVESTIGA.cuidado)}</div></div>`;
+}
+
+function pintarMunArbol(){
+  const c=document.getElementById('mu-arbol');if(!c)return;
+  c.innerHTML=`<div class="mu-arbol">${MUN_ARBOL.map(a=>
+    `<div><b>${a.emoji} ${_esc(a.materia)}</b>
+     <span class="le">${_esc(a.le)}</span>
+     <span class="hoy"><strong>Pruébalo hoy:</strong> ${_esc(a.hoy)}</span></div>`).join('')}</div>`;
+}
+
+function pintarMunPensadores(){
+  const c=document.getElementById('mu-pensadores');if(!c)return;
+  c.innerHTML=MUN_PENSADORES.map(p=>
+    `<div class="mu-pens">
+       <h3 class="mu-pens-tit">${p.emoji} ${_esc(p.nombre)}</h3>
+       <p class="mu-pens-donde">${_esc(p.donde)}</p>
+       <p class="mu-pens-quien">${_esc(p.quien)}</p>
+       <p class="mu-pens-sub">Qué hizo</p>
+       <p class="mu-pens-l">${_esc(p.hizo)}</p>
+       <p class="mu-pens-sub">Por qué se le recuerda</p>
+       <p class="mu-pens-l">${_esc(p.porque)}</p>
+       <p class="mu-pens-dato"><strong>Dato:</strong> ${_esc(p.dato)}</p>
+     </div>`).join('');
+}
+
+
+window.addEventListener('DOMContentLoaded',()=>{
+  initTheme();
+  loadProgress();
+  pintarMunPreguntas();
+  pintarMunTipos();
+  pintarMunIdentidad();
+  pintarMunPuente();
+  pintarMunCosmos();
+  pintarMunInvestiga();
+  pintarMunArbol();
+  pintarMunPensadores();
+  upFC();
+  buildQz();
+  showQz();
+  buildClass();
+  showId();
+  showCmp();
+  updateRetoButtons();
+  buildRoute();
+  showNeuron();
+  showNeuro();
+  showEnfer();
+  updateLabDisplay();
+  document.querySelector('[data-parte="machete"]')?.classList.add('active-pri');
+  document.querySelector('[data-aspecto="estructura"]')?.classList.add('active-sec');
+  renderAchPanel();
+});
+
+(function _formaSelInit(){ const go=function(){ try{_evalFormaSelector();}catch(e){} try{ if(typeof genEvalCrit==='function') _injectFormaSel('genEvalCrit','evalCritFormaSel',evalCritFormNum,function(v){evalCritFormNum=v;}); }catch(e){} }; if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();

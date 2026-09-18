@@ -343,7 +343,7 @@ const explainQuestions=[
 let ansVisible=false;
 function genTask(){sfx('click');const type=document.getElementById('tgType').value;const count=parseInt(document.getElementById('tgCount').value);ansVisible=false;const out=document.getElementById('tgOut');out.innerHTML='';if(type==='identify')genIdentifyTask(out,count);else if(type==='classify')genClassifyTask(out,count);else if(type==='complete')genCompleteTask(out,count);else if(type==='explain')genExplainTask(out,count);fin('s-tareas');}
 function _instrBlock(out,title,lines){const ib=document.createElement('div');ib.className='tg-instruction-block';ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join('');out.appendChild(ib);}
-function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado a qué poder del Estado o a qué concepto se refiere.','<strong>Ejemplo:</strong> El Congreso Nacional aprueba las leyes del país. → <span style="color:var(--jade);font-weight:700;">Congreso Nacional</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
+function genIdentifyTask(out,count){_instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto indicado en cada oración. Escribe al lado de qué concepto de la unidad se trata.','<strong>Ejemplo:</strong> «No salgas, porque el río viene crecido»: la razón es que el río viene crecido. → <span style="color:var(--jade);font-weight:700;">la razón</span>']);_pick(identifyTaskDB,Math.min(count,identifyTaskDB.length)).forEach((item,i)=>{const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;out.appendChild(div);});}
 function genClassifyTask(out,count){_instrBlock(out,'Instrucción',['Copia la siguiente tabla en tu cuaderno. Para cada persona, completa qué hizo, en qué época vivió, cómo se le llama y un dato que la distinga.']);const items=_pick(classifyTaskDB,Math.min(count,classifyTaskDB.length));const wrap=document.createElement('div');wrap.style.overflowX='auto';const th=(t,extra='')=>`<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;let html=`<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:520px;"><thead><tr style="background:var(--pri-gl);">${th('Quién','text-align:left;')}${th('Qué hizo')}${th('Cuándo')}${th('Cómo se le llama')}${th('Dato')}</tr></thead><tbody>`;items.forEach(it=>{html+=`<tr><td style="padding:0.4rem 0.5rem;border:1px solid var(--border);font-weight:600;">${it.w}</td>`+Array(4).fill(`<td style="padding:0.4rem;border:1px solid var(--border);min-width:50px;"></td>`).join('')+'</tr>';});html+='</tbody></table>';wrap.innerHTML=html;out.appendChild(wrap);const ans=document.createElement('div');ans.className='tg-answer';ans.style.marginTop='0.8rem';ans.innerHTML='<strong>✅ Respuestas:</strong><br>'+items.map(it=>`<strong>${it.w}:</strong> Qué es: ${it.gen} | Clase: ${it.n} | Desde cuándo: ${it.g} | Dato: ${it.t}`).join('<br>');out.appendChild(ans);}
 function genCompleteTask(out,count){_instrBlock(out,'Instrucción',['Copia y resuelve en tu cuaderno. Cada oración tiene un espacio ___. Elige y escribe la opción correcta.']);const pool=_shuffle([...completeTaskDB]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';const sent=item.s.replace('___','<span class="tg-blank" style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${sent}</strong><div style="margin-top:0.4rem;font-size:0.82rem;color:var(--gray);">📝 Opciones: <strong>${item.opts.join(' | ')}</strong></div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
 function genExplainTask(out,count){_instrBlock(out,'Instrucción',['Copia las siguientes preguntas en tu cuaderno y responde cada una de forma clara y completa.']);const pool=_shuffle([...explainQuestions]);for(let i=0;i<count;i++){const item=pool[i%pool.length];const div=document.createElement('div');div.className='tg-task';div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.q}</strong><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.3rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.ans}</div></div>`;out.appendChild(div);}}
@@ -558,77 +558,77 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En la casa, una niña pregunta por qué hay que levantarse tan temprano. Le contestan «porque yo lo digo». A la semana ya no pregunta nada.'},
-  {txt:'Un maestro deja de tarea «¿está bien mentir?». Un alumno copia del diccionario la definición de «mentira» y la entrega. Le ponen mala nota y él no entiende por qué.'},
-  {txt:'En el grupo del barrio dicen que la quebrada se secó porque «así es la vida». Nadie pregunta cuándo empezó a bajar ni quién saca el agua arriba. Tres meses después el pozo de la escuela tampoco da.'},
-  {txt:'Un muchacho pasa dos tardes buscando en internet «¿qué es la amistad?». Copia cinco respuestas distintas, las entrega todas y dice que no sabe cuál es la buena.'},
-  {txt:'Una alumna pregunta en clase de Matemáticas qué es un número. La clase se ríe y le dicen que eso no viene en el examen.'}
+  {txt:'En la pulpería le dicen a Wilmer que el abono caro es el bueno «porque todo el mundo lo compra». Compra ocho sacos y ahí se va la mitad del dinero de la siembra. La milpa sale igual que la del vecino.'},
+  {txt:'En el grupo del barrio dicen que no hay que hacerle caso a don Chele sobre el agua «porque ni terminó la escuela». Don Chele había contado los tubos y sabía dónde estaba la fuga. Tres meses después el pozo de la escuela tampoco da.'},
+  {txt:'A una muchacha le dicen que o se va a la ciudad o se queda sin futuro. Se va sin plan, no le sale trabajo y vuelve a los cuatro meses debiendo el pasaje. Nadie le nombró una tercera salida.'},
+  {txt:'Un muchacho dice que en la aldea de al lado son tramposos porque le tocaron dos que lo fueron. Deja de venderles y pierde la mitad de sus clientes en una temporada.'},
+  {txt:'En clase alguien dice: «Todos los peces vuelan. La tilapia es un pez. Así que la tilapia vuela». Media clase se ríe y nadie sabe explicar dónde está el error.'}
 ];
 const critCaseQuestions=[
-  '1. ¿De qué clase es la pregunta del caso: de hechos, de significado o de valor? Di por qué.',
-  '2. ¿Qué le faltó a la respuesta que le dieron?',
+  '1. ¿Cuál es la conclusión del caso y con qué razón la sostienen?',
+  '2. ¿De qué color es esa razón: verde, amarilla o roja? Di por qué.',
   '3. ¿A quién le cuesta, y qué pierde esa persona?',
-  '4. ¿Qué pregunta harías tú para seguir, y por qué esa?'
+  '4. ¿Qué pregunta la desarma? Escríbela tal como la dirías.'
 ];
 const critCaseGuides=[
-  'Se valora que NOMBRE la clase y dé la señal. Si se comprueba, es de hechos. Si pide una definición, de significado. Si pregunta si algo está bien, de valor.',
-  'Lo que suele faltar es una RAZÓN. «Porque yo lo digo» no es una razón: no se puede discutir ni comprobar. Y una definición copiada no contesta una pregunta de valor.',
-  'Se califica que le ponga nombre al daño concreto: dejar de preguntar, dos tardes perdidas, un pozo seco, una mala nota. No la indignación.',
-  'La pregunta buena abre y se puede trabajar. Vale «¿quién saca el agua arriba?» y no vale «¿por qué el mundo es injusto?»: esa segunda no se puede empezar por ningún lado.'
+  'Se valora que SEPARE las dos. La conclusión es lo que quieren que crea. La razón es con qué se lo sostienen. Buscar primero la conclusión es lo que enseña la unidad.',
+  'Verde: se puede comprobar y de verdad sostiene. Amarilla: puede ser verdad, pero no sostiene lo que se quiere probar. Roja: no hay nada que examinar. Se califica la señal, no la palabra.',
+  'Se califica que le ponga nombre al daño concreto: media siembra, un pozo seco, cuatro meses y el pasaje, la mitad de los clientes. No la indignación.',
+  'La pregunta buena va a la COSA, no a la persona ni al gentío. ¿En qué es mejor? ¿Cuántos casos, de cuántos? ¿Solo hay dos salidas? ¿Y qué tiene que ver quién lo dice?'
 ];
 const critErrorBank=[
-  {txt:'"La filosofía sirve para aprenderse de memoria los nombres de los filósofos."',
-   g1:'La palabra dice lo contrario: «filo» es ganas de y «sofía» es sabiduría. Junto, ganas de SABER, no de recordar nombres.',
-   g2:'Y lo que esta unidad evalúa no son nombres: es distinguir las tres clases de pregunta y dar una razón. Los nombres se olvidan; la destreza queda.'},
-  {txt:'"Tales de Mileto no importa, porque su respuesta estaba equivocada: dijo que todo salía del agua."',
-   g1:'Lo que cambió no fue su respuesta: fue la CLASE de respuesta que buscó, una causa natural en vez de un mito.',
-   g2:'Y equivocarse con una respuesta que se puede comprobar es justo lo que permite corregirla. Un mito no se puede comprobar, así que tampoco se puede corregir.'},
-  {txt:'"«¿Está bien copiar en un examen?» tiene una sola respuesta correcta, igual que «¿cuántos días tiene febrero?»."',
-   g1:'Son de clases distintas. La de febrero es de hechos y se comprueba en un calendario; la de copiar es de valor y se responde dando razones.',
-   g2:'En las de valor hay varias respuestas buenas, porque lo que se califica es la razón. Exigir una sola ahí es ponerle mala nota al que pensó.'},
-  {txt:'"Una pregunta que no tiene respuesta no sirve para nada."',
-   g1:'Muchas no se cierran con un dato: se entienden cada vez mejor. «¿Qué es un amigo?» se puede discutir un año y seguir valiendo la pena.',
-   g2:'Y de esas preguntas salieron las asignaturas de la escuela. Si no sirvieran para nada, no habría de dónde hubieran salido.'}
+  {txt:'"Si un argumento está bien armado, su conclusión es verdad."',
+   g1:'No: «todos los peces vuelan, la tilapia es un pez, así que la tilapia vuela» está perfectamente armado y la conclusión es un disparate.',
+   g2:'Lo que falla ahí no es el armado: es que una de las razones era mentira. Bien hecho y verdadero son dos cosas, y se combinan de cuatro maneras.'},
+  {txt:'"La cancha está mojada, así que llovió."',
+   g1:'La regla es «si llueve, la cancha se moja», y va en un solo sentido. No dice que SOLO la lluvia la moje.',
+   g2:'La pudo mojar la pila o un tubo reventado. Leer la regla al revés es el error más común del examen, y el que hay que saberse.'},
+  {txt:'"Si alguien no estudió, sus razones no valen."',
+   g1:'Eso es atacar a quien habla en vez de a lo que dice: la falacia contra la persona.',
+   g2:'Y deja fuera la razón buena del que no tiene títulos, que es justo lo que le pasó a don Chele con los tubos. Se desarma pidiendo la razón, no el título.'},
+  {txt:'"Una razón amarilla es mentira."',
+   g1:'No: una razón amarilla puede ser perfectamente verdad. El saco caro puede ser caro de verdad.',
+   g2:'Lo que le pasa es que NO sostiene lo que se quiere probar. Ser verdad y sostener son dos cosas distintas, y el semáforo separa eso.'}
 ];
 const critDecisionBank=[
-  'Te sale en clase una pregunta que no viene en el libro. ¿La anotas para el diálogo del grupo, o la dejas pasar porque no sale en el examen?',
-  'Te dejan de tarea «¿qué es ser valiente?». ¿Escribes una definición con dos ejemplos, o copias la primera línea del diccionario?',
-  'Un compañero afirma algo y no da ninguna razón. ¿Le preguntas por qué y le pides un ejemplo, o le das la razón para no quedar mal?',
-  'Te piden cuántos habitantes tiene tu municipio. ¿Lo buscas en una fuente que se pueda citar, o lo discuten en el grupo hasta ponerse de acuerdo?',
-  'En el diálogo alguien te convence con una razón mejor que la tuya. ¿Lo dices y cambias de idea, o sostienes lo tuyo para no perder?'
+  'Te dicen que compres lo caro «porque todo el mundo lo compra». ¿Lo comprás, o pedís una razón de la cosa?',
+  'Alguien te asegura algo y no da ninguna razón. ¿Le das la razón para no quedar mal, o le preguntás por qué?',
+  'Te ofrecen dos salidas y ninguna te sirve. ¿Elegís la menos mala, o nombrás una tercera?',
+  'Un compañero te da una razón mejor que la tuya. ¿Lo decís y cambiás de idea, o sostenés lo tuyo para no perder?',
+  'Alguien saca una regla de dos casos que le pasaron. ¿La repetís, o preguntás de cuántos casos, de cuántos?'
 ];
-const critDecisionGuide='De qué CLASE es la pregunta: eso se ve primero. Una de hechos se busca en una fuente que se pueda citar, y no se vota. Una de significado pide ejemplos. Una de valor se sostiene con razones.';
+const critDecisionGuide='Primero se separa la conclusión de la razón. Después se mira el semáforo. Verde: se puede comprobar. Amarilla: se pide otra que sí sostenga. Roja: se pide una razón de la cosa. Y cambiar de idea con una razón mejor no es perder.';
 const critCompareBank=[
-  {a:'«¿Cuántos días tiene febrero?»',b:'«¿Está bien copiar en un examen?»',
-   ga:'De hechos: una sola respuesta, y se comprueba.',
-   gb:'De valor: varias respuestas buenas, y se califica la razón.',
-   gr:'Las dos son preguntas y parecen lo mismo. Buscar la segunda en un libro cuesta tardes perdidas. Discutir la primera en grupo gasta una clase en algo que se comprobaba en dos minutos.'},
-  {a:'Un mito que explica de dónde viene la lluvia.',b:'Una causa natural que explica de dónde viene la lluvia.',
-   ga:'No se puede comprobar, así que no se puede corregir.',
-   gb:'Se puede comprobar, así que se puede corregir.',
-   gr:'Ese es el cambio que hizo Tales de Mileto, y por eso importa aunque su respuesta estuviera equivocada.'},
-  {a:'«Porque yo lo digo».',b:'«Porque si no, el bus se va sin vos».',
-   ga:'No es una razón: es quien manda.',
-   gb:'Es una razón: se puede discutir y hasta comprobar.',
-   gr:'La diferencia no está en la educación con que se dice: está en que la segunda se puede examinar y la primera no. Ahí empieza la unidad que sigue, la de la lógica.'},
-  {a:'Sabiduría.',b:'Muchos datos.',
-   ga:'Saber usar lo que uno sabe.',
-   gb:'Tener información guardada.',
-   gr:'Un teléfono guarda más datos que cualquier persona y no es sabio. Por eso la palabra dice ganas de saber, y no cantidad de saber.'}
+  {a:'«Porque conté los sacos y faltan tres».',b:'«Porque yo lo digo».',
+   ga:'Razón verde: se puede comprobar y sostiene lo que dice.',
+   gb:'Razón roja: no hay nada que examinar.',
+   gr:'La diferencia no está en la educación con que se dice: está en que la primera se puede examinar y la segunda no. La segunda es quien manda, no una razón.'},
+  {a:'«Si llueve, la cancha se moja. Llovió. Así que está mojada».',b:'«Si llueve, la cancha se moja. Está mojada. Así que llovió».',
+   ga:'Usa la regla en su sentido: la conclusión se sostiene.',
+   gb:'Lee la regla al revés: la conclusión no se sigue.',
+   gr:'Son casi la misma frase y por eso se confunden. La regla no dice que SOLO la lluvia moje la cancha: la pudo mojar la pila.'},
+  {a:'«Todos los pinos son árboles. Este es un pino. Así que es un árbol».',b:'«Todos los peces vuelan. La tilapia es un pez. Así que vuela».',
+   ga:'Bien armado y con razones verdaderas: la conclusión es verdad.',
+   gb:'Bien armado y con una razón falsa: la conclusión sale falsa.',
+   gr:'El armado de los dos es el mismo. Lo que cambia es de dónde parten, y eso demuestra que estar bien hecho no garantiza llegar a la verdad.'},
+  {a:'«No le creas: si ni terminó la escuela».',b:'«No le creas: contó mal los tubos, y aquí está la cuenta».',
+   ga:'Ataca a quien habla: la falacia contra la persona.',
+   gb:'Ataca lo que dice, y se puede comprobar.',
+   gr:'Las dos rechazan lo mismo, y solo una da una razón. La primera deja fuera al que sabe y no tiene títulos, que es como se pierde un pozo.'}
 ];
 const critCauseBank=[
-  {cause:'La palabra «filosofía» está hecha de «filo», ganas de, y «sofía», sabiduría.',guide:'Por eso un filósofo no es el que ya sabe: es el que quiere saber. Por eso esta materia se hace preguntando y no memorizando.'},
-  {cause:'Una pregunta de valor tiene varias respuestas buenas.',guide:'Por eso lo que se califica es la razón que se da, y no el sí o el no.'},
-  {cause:'Tales de Mileto buscó una causa natural en vez de contar un mito.',guide:'Por eso ahí arranca el camino que termina en las Ciencias Naturales, aunque su respuesta estuviera equivocada.'},
-  {cause:'Cada asignatura de la escuela nació de una pregunta filosófica.',guide:'Por eso esta materia va debajo de las demás y no al lado: es la raíz del árbol y no otra rama.'},
-  {cause:'Sócrates no daba las respuestas: preguntaba.',guide:'Por eso de él viene el diálogo. Y por eso una clase de filosofía se hace en círculo, no de espaldas al que habla.'}
+  {cause:'«Porque todo el mundo lo compra» no dice nada del abono.',guide:'Por eso es una razón roja: no hay nada que examinar. A Wilmer le costó la mitad del dinero de la siembra.'},
+  {cause:'La regla «si llueve, la cancha se moja» va en un solo sentido.',guide:'Por eso del suelo mojado no se sigue que llovió: lo pudo mojar la pila. Leerla al revés es el error más común.'},
+  {cause:'Un argumento puede estar bien armado y partir de una razón falsa.',guide:'Por eso la conclusión puede salir falsa con el armado perfecto. Estar bien hecho y ser verdad son dos cosas.'},
+  {cause:'Una falacia se parece mucho a un argumento bueno.',guide:'Por eso hay que aprenderse la pregunta que la desarma y no solo su nombre: en la pulpería nadie anuncia que está usando una.'},
+  {cause:'Sacar una regla de dos casos es una generalización apresurada.',guide:'Por eso así se arman las famas de un barrio entero, y por eso se desarma preguntando de cuántos casos, de cuántos.'}
 ];
 const critEffectBank=[
-  {effect:'Alguien pasa tres tardes buscando en los libros la respuesta a «¿está bien copiar?» y no la encuentra.',guide:'Porque es una pregunta de valor y no está escrita en ninguna parte: se responde dando razones.'},
-  {effect:'Un niño al que le contestan «porque yo lo digo» deja de preguntar.',guide:'Porque eso no es una razón, y una pregunta a la que nunca se le da una razón enseña que preguntar no sirve.'},
-  {effect:'La misma pregunta se puede discutir un año entero y seguir valiendo la pena.',guide:'Porque las de significado y las de valor no se cierran con un dato: se van entendiendo mejor.'},
-  {effect:'En una clase de filosofía se pone el aula en círculo.',guide:'Porque el diálogo es pensar entre varios, y de espaldas al que habla no se escucha ni se le responde a su idea.'},
-  {effect:'El diario filosófico se escribe al final de cada sesión.',guide:'Porque sin ese momento la conversación se olvida como una plática; con él queda lo que uno pensó y si cambió de idea.'}
+  {effect:'Alguien compra ocho sacos de abono caro y la milpa sale igual que la del vecino.',guide:'Porque la razón que le dieron era roja: cuánta gente lo compra no dice nada del abono. Y él no supo pedir otra.'},
+  {effect:'Nadie le hace caso al que sabe dónde está la fuga y el pozo se seca.',guide:'Porque lo rechazaron por quién es y no por lo que decía. Es la falacia contra la persona. Deja fuera la razón buena del que no tiene títulos.'},
+  {effect:'Alguien elige entre dos salidas malas sin buscar una tercera.',guide:'Porque le pusieron un falso dilema: dos opciones ofrecidas como si no hubiera más. Se desarma nombrando la tercera.'},
+  {effect:'Media clase se ríe de «la tilapia vuela» y nadie sabe decir dónde está el error.',guide:'Porque el armado está perfecto y lo falso es una de las razones de arriba. Lo que falta no es reírse: es saber separar armado de verdad.'},
+  {effect:'Dos personas discuten una hora y las dos salen pensando distinto de como entraron.',guide:'Porque se examinaron las razones y no las personas. Cambiar de idea con una razón mejor es lo que la unidad enseña, no una derrota.'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -641,7 +641,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
   const kase=_pickF(critCaseBank,1,rngC)[0];
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: el civismo de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Caso de análisis: una pregunta de todos los días <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${kase.txt}</div>${critCaseQuestions.map((q,i)=>`<div class="crit-q-block"><div class="crit-q-label">${q}</div><textarea class="crit-textarea" rows="2" aria-label="${q}"></textarea><div class="crit-pauta">${critCaseGuides[i]}</div></div>`).join('')}<div class="crit-selfscore"><label for="critScore0">Obtenido:</label><input type="number" id="critScore0" class="crit-score-input" data-score="0" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s1);
   const err=_pickF(critErrorBank,1,rngC)[0];
   const s2=document.createElement('div');
@@ -649,11 +649,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: comprobar antes de afirmar <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: comprobar antes de afirmar <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, diciendo de qué CLASE es la pregunta y con qué se contesta.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿En qué se reconoce cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -683,11 +683,11 @@ function printEvalCrit(){
   sfx('click');
   const forma=window._currentEvalCritForm||1;const d=window._evalCritData;
   const lines=(n)=>Array(n).fill('<div class="ln"></div>').join('');
-  let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
+  let s1=`<div class="sec-title"><span>I. Caso de análisis: una pregunta de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: comprobar antes de afirmar</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: comprobar antes de afirmar</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, diciendo de qué CLASE es la pregunta y con qué se contesta.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿En qué se reconoce cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
