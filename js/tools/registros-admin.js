@@ -2675,7 +2675,7 @@ h1{font-size:16px;color:#1e3a7c;margin-bottom:2mm;}
 table{width:100%;border-collapse:collapse;margin-bottom:5mm;}
 th,td{border:1px solid #999;padding:3px 6px;text-align:left;}
 th{background:#e8eef9;font-size:11px;}
-.tot{display:flex;gap:8mm;margin:4mm 0;font-size:13px;font-weight:bold;}
+.tot{display:flex;flex-wrap:wrap;gap:2mm 8mm;margin:4mm 0;font-size:13px;font-weight:bold;}
 .firmas{display:flex;gap:14mm;margin-top:14mm;}
 .firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:11px;}
 .noprint{margin-bottom:5mm;}
@@ -2701,6 +2701,8 @@ ${(c.gastos || []).length ? `
 ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td>${adLps(g.m)}</td></tr>`).join('')}
 </tbody></table>` : ''}
 <div class="tot">
+  <span>✅ Dieron: ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)}</span>
+  <span>⏳ Faltan: ${Math.max(0, adColectaEsperados(c, d) - adColectaDieron(c, d))}</span>
   <span>💵 Recaudado: ${adLps(t.rec)}</span>
   <span>🧾 Gastado: ${adLps(t.gas)}</span>
   <span>💼 Saldo: ${adLps(t.saldo)}</span>
