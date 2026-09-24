@@ -2730,6 +2730,7 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
   <span>✅ Dieron: ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)}</span>
   <span>📊 Participación: ${adColectaPct(c, d)} %</span>
   <span>⏳ Faltan: ${Math.max(0, adColectaEsperados(c, d) - adColectaDieron(c, d))}</span>
+  <span>🎯 Total esperado: ${adLps(adColectaEsperados(c, d) * (Number(c.montoAlumno) || 0))} (${adColectaEsperados(c, d)} × ${adLps(c.montoAlumno)})</span>
   <span>💵 Recaudado: ${adLps(t.rec)}</span>
   <span>📥 Falta por recaudar: ${adLps(adColectaPorRecaudar(c, d))}</span>
   <span>🧾 Gastado: ${adLps(t.gas)}</span>
