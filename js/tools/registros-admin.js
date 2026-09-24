@@ -1656,6 +1656,19 @@ function adColectaDieron(c, d) {
   const fuera = adColectaFuera(c, d);
   return Object.keys(c.pagos || {}).filter(n => !fuera.has(String(n))).length;
 }
+/* Dinero que falta por recaudar: a cada alumno que cuenta se le pide el aporte
+   SUGERIDO, y se suma lo que le falta para llegar a él. Así el abono entra
+   —quien dio L 10 de L 25 debe L 15, no L 25— y quien dio de más no tapa lo
+   que debe otro: ese dinero de más no se sabe a quién cubre (puede ser un
+   hermano, puede ser una propina), y restarlo daría una deuda que no existe. */
+function adColectaPorRecaudar(c, d) {
+  const fuera = adColectaFuera(c, d);
+  const sug = Number(c.montoAlumno) || 0;
+  return d.lista.filter(a => !fuera.has(String(a.num))).reduce((s, a) => {
+    const dio = Number(c.pagos && c.pagos[a.num]) || 0;
+    return s + Math.max(0, sug - dio);
+  }, 0);
+}
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
@@ -2684,7 +2697,7 @@ th{background:#e8eef9;font-size:11px;}
 <div class="noprint"><button onclick="window.print()" style="padding:8px 16px;font-weight:bold;cursor:pointer;">🖨️ Imprimir</button></div>
 <h1>💰 Informe económico — ${adEsc(c.concepto)}</h1>
 <div class="sub">${grupo ? 'Grupo ' + adEsc(grupo) + ' · ' : ''}Acordado el ${adFechaBonita(c.fecha)} ·
-Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo) · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
+Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo; lo que falta por recaudar se cuenta con el sugerido) · Generado con M.E.T.A.S el ${adFechaBonita(adHoy())}</div>
 <table>
 <thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Fecha</th><th>Monto</th><th>Recibo</th></tr></thead>
 <tbody>
@@ -2704,6 +2717,7 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
   <span>✅ Dieron: ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)}</span>
   <span>⏳ Faltan: ${Math.max(0, adColectaEsperados(c, d) - adColectaDieron(c, d))}</span>
   <span>💵 Recaudado: ${adLps(t.rec)}</span>
+  <span>📥 Falta por recaudar: ${adLps(adColectaPorRecaudar(c, d))}</span>
   <span>🧾 Gastado: ${adLps(t.gas)}</span>
   <span>💼 Saldo: ${adLps(t.saldo)}</span>
 </div>
