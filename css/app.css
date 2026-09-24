@@ -4728,6 +4728,9 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
   padding: 10px 12px; margin-bottom: 8px; color: var(--text); font-size: calc(14px * var(--metas-fz, 1));
 }
 .ad-cr-txt small { color: var(--muted); }
+/* la barra de participación de cada colecta: la misma de adentro, en chico */
+.ad-cr-txt { flex: 1; min-width: 0; }
+.ad-cr-barra { display: block; margin-top: 6px; }
 .ad-cr-arrow { font-size: calc(20px * var(--metas-fz, 1)); color: var(--muted); }
 .ad-gasto-row {
   display: flex; justify-content: space-between; gap: 8px;

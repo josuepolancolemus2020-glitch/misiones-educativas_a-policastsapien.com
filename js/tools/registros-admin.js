@@ -1775,7 +1775,8 @@ function adRenderEco(body, d) {
         return `
         <button class="ad-colecta-row" data-cid="${c.id}">
           <span class="ad-cr-txt"><strong>${adEsc(c.concepto)}</strong><br>
-            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${adColectaEsperados(c, d)} dieron (${adColectaPct(c, d)} %) · saldo ${adLps(t.saldo)}</small></span>
+            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${adColectaEsperados(c, d)} dieron (${adColectaPct(c, d)} %) · saldo ${adLps(t.saldo)}</small>
+            <span class="ad-cr-barra">${adColectaBarraSvg(c, d, 10)}</span></span>
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
