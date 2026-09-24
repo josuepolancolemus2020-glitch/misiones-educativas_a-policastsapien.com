@@ -2710,6 +2710,10 @@ table{width:100%;border-collapse:collapse;margin-bottom:5mm;}
 th,td{border:1px solid #999;padding:3px 6px;text-align:left;}
 th{background:#e8eef9;font-size:11px;}
 .tot{display:flex;flex-wrap:wrap;gap:2mm 8mm;margin:4mm 0;font-size:13px;font-weight:bold;}
+.barra{margin:2mm 0 4mm;break-inside:avoid;}
+.barra svg{display:block;}
+.barra-rot{font-size:12px;margin-bottom:1.5mm;}
+.barra-esc{display:flex;justify-content:space-between;font-size:9.5px;color:#555;margin-top:1mm;}
 .firmas{display:flex;gap:14mm;margin-top:14mm;}
 .firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:11px;}
 .noprint{margin-bottom:5mm;}
@@ -2744,6 +2748,22 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
   <span>🧾 Gastado: ${adLps(t.gas)}</span>
   <span>💼 Saldo: ${adLps(t.saldo)}</span>
 </div>
+${(() => {
+  /* La barra va en SVG y no con fondos de CSS: el navegador imprime «sin
+     gráficos de fondo» de fábrica, y una barra hecha con background saldría
+     en blanco en el papel. El relleno de un SVG se imprime siempre, y en la
+     fotocopiadora en blanco y negro se sigue viendo la parte llena. */
+  const pct = Math.min(100, adColectaPct(c, d));
+  return `<div class="barra">
+  <div class="barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)} alumnos</div>
+  <svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="22" role="img" aria-label="Participación ${pct} %">
+    <rect x="0" y="0" width="100" height="8" fill="#fff" stroke="#1e3a7c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <rect x="0" y="0" width="${pct}" height="8" fill="#1e3a7c"/>
+    ${[25, 50, 75].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="8" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`).join('')}
+  </svg>
+  <div class="barra-esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
+</div>`;
+})()}
 <div class="firmas">
   <div class="firma">Docente</div>
   <div class="firma">Padre/Madre de familia (testigo)</div>
