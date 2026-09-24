@@ -2507,6 +2507,19 @@ function adRenderColecta(body, d) {
         <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 Enviar resumen por WhatsApp</button>
       </div>
       <p class="pa-optional-hint">El resumen lleva solo cifras: ningún nombre ni número de lista.</p>
+      ${(() => {
+        /* Quiénes faltan: SOLO en esta pantalla. No tiene botón de enviar ni
+           de copiar a propósito: es para que el maestro le recuerde a cada
+           familia en privado, no para señalar a un niño en el grupo. */
+        const faltan = d.lista.filter(a => !(c.pagos && c.pagos[a.num] != null) && !fuera.has(String(a.num)));
+        if (!faltan.length) return esp ? '<p class="ad-faltan-ok">🎉 Ya dieron todos.</p>' : '';
+        return `<details class="ad-faltan">
+          <summary>⏳ Faltan por dar: <strong>${faltan.length}</strong> · ver quiénes</summary>
+          <p class="ad-faltan-priv">🔒 Solo lo ves tú: esta lista no sale en el mensaje de WhatsApp.</p>
+          <ol class="ad-faltan-lista">${faltan.map(a =>
+            `<li><strong>#${a.num}</strong> ${adEsc(a.nombre) || '—'}</li>`).join('')}</ol>
+        </details>`;
+      })()}
       <div class="ad-chips">
         ${d.lista.map(a => {
           const pagado = c.pagos && c.pagos[a.num] != null;
