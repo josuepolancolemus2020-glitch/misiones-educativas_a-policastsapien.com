@@ -1696,6 +1696,14 @@ function adColectaBarraSvg(c, d, alto) {
     ${[25, 50, 75].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="8" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`).join('')}
   </svg>`;
 }
+/* La misma barra en el WhatsApp, que solo lleva texto: diez cuadros de 10 %
+   cada uno. Lleno y vacío se distinguen por la FORMA (🟦 contra ⬜), no solo por
+   el color, así la lee también quien no distingue colores. Se redondea al
+   cuadro más cercano; el número exacto va en la línea de arriba. */
+function adColectaBarraTxt(c, d) {
+  const llenos = Math.max(0, Math.min(10, Math.round(adColectaPct(c, d) / 10)));
+  return '🟦'.repeat(llenos) + '⬜'.repeat(10 - llenos);
+}
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
@@ -1710,6 +1718,7 @@ function adColectaTxtResumen(c, d) {
     'Acordado el ' + adFechaBonita(c.fecha) + ' · aporte sugerido: ' + adLps(c.montoAlumno) + '\n\n' +
     '✅ Han dado: *' + pagaron + ' de ' + esp + '*\n' +
     '📊 Participación del grupo: *' + adColectaPct(c, d) + ' %*\n' +
+    adColectaBarraTxt(c, d) + '\n' +
     (esp > pagaron ? '⏳ Faltan: *' + (esp - pagaron) + '*\n' : '') +
     '🎯 Total esperado: *' + adLps(adColectaMeta(c, d)) + '* (' + esp + ' × ' + adLps(c.montoAlumno) + ')\n' +
     '💵 Recaudado: *' + adLps(t.rec) + '*\n' +
