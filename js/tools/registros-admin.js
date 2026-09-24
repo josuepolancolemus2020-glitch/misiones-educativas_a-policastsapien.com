@@ -1628,6 +1628,36 @@ function adColectaTotales(c) {
   const gas = (c.gastos || []).reduce((s, g) => s + (Number(g.m) || 0), 0);
   return { rec, gas, saldo: rec - gas };
 }
+/* Cuántos alumnos se ESPERA que den. Casi siempre es la lista entera, pero no
+   siempre: hay alumnos de prueba, un retirado que sigue en la lista, un becado
+   al que no se le pide. Con «22/44» el maestro dice en la reunión que faltan
+   22 cuando faltan 20, y la madre que cuenta le lleva la contraria. El total se
+   corrige a mano y se guarda EN LA COLECTA (c.esperados), no en la lista: quitar
+   a alguien de la lista le borraría su número y con él la clave de familia. */
+function adColectaEsperados(c, d) {
+  const n = Number(c && c.esperados);
+  return n >= 1 ? Math.floor(n) : d.lista.length;
+}
+/* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
+   porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
+   delante de todos. Quién pagó se sabe por el recibo de cada familia. */
+function adColectaTxtResumen(c, d) {
+  const t = adColectaTotales(c);
+  const pagaron = Object.keys(c.pagos || {}).length;
+  const esp = adColectaEsperados(c, d);
+  const grupo = adGrupoTxt(d);
+  const gastos = c.gastos || [];
+  return '💰 *' + c.concepto + '*\n' +
+    (grupo ? 'Grupo ' + grupo + '\n' : '') +
+    'Acordado el ' + adFechaBonita(c.fecha) + ' · aporte sugerido: ' + adLps(c.montoAlumno) + '\n\n' +
+    '✅ Han dado: *' + pagaron + ' de ' + esp + '*\n' +
+    (esp > pagaron ? '⏳ Faltan: *' + (esp - pagaron) + '*\n' : '') +
+    '💵 Recaudado: *' + adLps(t.rec) + '*\n' +
+    '🧾 Gastado: *' + adLps(t.gas) + '*\n' +
+    (gastos.length ? gastos.map(g => '   • ' + g.d + ': ' + adLps(g.m)).join('\n') + '\n' : '') +
+    '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
+    'Cortado al ' + adFechaBonita(adHoy()) + '.\n_Anotado con M.E.T.A.S_';
+}
 
 function adRenderEco(body, d) {
   if (_adGastosOn) { adRenderGastos(body, d); return; }
@@ -1675,7 +1705,7 @@ function adRenderEco(body, d) {
         return `
         <button class="ad-colecta-row" data-cid="${c.id}">
           <span class="ad-cr-txt"><strong>${adEsc(c.concepto)}</strong><br>
-            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${d.lista.length} dieron · saldo ${adLps(t.saldo)}</small></span>
+            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${adColectaEsperados(c, d)} dieron · saldo ${adLps(t.saldo)}</small></span>
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
@@ -1693,12 +1723,16 @@ function adRenderEco(body, d) {
     });
     if (monto === null) return;
     const dd = adLoad();
+    /* el total corregido se hereda de la colecta anterior: los alumnos de
+       prueba siguen en la lista, y corregirlo en cada colecta se olvida */
+    const prev = dd.colectas.slice().reverse().find(x => Number(x.esperados) >= 1);
     dd.colectas.push({
       id: 'C' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       concepto: String(concepto).trim(),
       montoAlumno: Number(String(monto).replace(',', '.')),
       fecha: adHoy(), pagos: {}, pagosF: {}, gastos: [],
     });
+    if (prev && Number(prev.esperados) <= dd.lista.length) dd.colectas[dd.colectas.length - 1].esperados = prev.esperados;
     adSave(dd);
     _adColectaId = dd.colectas[dd.colectas.length - 1].id;
     renderAdmin();
@@ -2419,6 +2453,7 @@ function adRenderColecta(body, d) {
   if (!c) { _adColectaId = null; renderAdmin(); return; }
   const t = adColectaTotales(c);
   const pagaron = Object.keys(c.pagos || {}).length;
+  const esp = adColectaEsperados(c, d);
 
   body.innerHTML = `
     <div class="pa-card">
@@ -2440,11 +2475,15 @@ function adRenderColecta(body, d) {
         sirve para que usted y él hablen de la misma entrega. Tú lo ves aquí manteniendo pulsado al alumno,
         y sale en el informe imprimible.</div>
       <div class="ad-resumen">
-        <span>✅ Dieron: <strong>${pagaron}/${d.lista.length}</strong></span>
+        <button class="ad-resumen-edit" id="ad-col-total" title="Corregir cuántos alumnos deben dar">✅ Dieron: <strong>${pagaron}/${esp}</strong> <span aria-hidden="true">✏️</span></button>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
         <span>🧾 Gastado: <strong>${adLps(t.gas)}</strong></span>
         <span class="${t.saldo >= 0 ? 'ad-ok' : 'ad-mal'}">💼 Saldo: <strong>${adLps(t.saldo)}</strong></span>
       </div>
+      <div class="ad-btn-row">
+        <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 Enviar resumen por WhatsApp</button>
+      </div>
+      <p class="pa-optional-hint">El resumen lleva solo cifras: ningún nombre ni número de lista.</p>
       <div class="ad-chips">
         ${d.lista.map(a => {
           const pagado = c.pagos && c.pagos[a.num] != null;
@@ -2515,6 +2554,31 @@ function adRenderColecta(body, d) {
       }
       adSave(dd); renderAdmin();
     }));
+
+  document.getElementById('ad-col-wa').addEventListener('click', () => {
+    const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+    adGastoEnviar(adColectaTxtResumen(cc, dd));
+  });
+
+  document.getElementById('ad-col-total').addEventListener('click', async () => {
+    const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+    const max = dd.lista.length;
+    const r = await metasPrompt('¿Cuántos alumnos **deben dar** en esta colecta?\nEn la lista hay **' + max + '**. Si hay alumnos de prueba o alguno que no aporta, pon el número real (ej. **' + Math.max(1, max - 2) + '**). Vacío vuelve a contar la lista entera.', {
+      icono: '✅', titulo: 'Total de alumnos', inputmode: 'numeric',
+      value: String(adColectaEsperados(cc, dd)), okTxt: 'Guardar',
+      valida: v => {
+        const s = String(v).trim();
+        if (s === '') return '';
+        const n = Number(s);
+        if (!Number.isInteger(n) || n < 1) return 'Escribe un número entero mayor que cero.';
+        return n > max ? 'No puede pasar de los ' + max + ' de la lista.' : '';
+      },
+    });
+    if (r === null) return;
+    const s = String(r).trim();
+    if (s === '' || Number(s) === max) delete cc.esperados; else cc.esperados = Number(s);
+    adSave(dd); renderAdmin();
+  });
 
   document.getElementById('ad-add-gasto').addEventListener('click', async () => {
     const desc = await metasPrompt('¿En qué se gastó?', {

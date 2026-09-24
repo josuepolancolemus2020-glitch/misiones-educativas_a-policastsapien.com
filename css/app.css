@@ -4697,6 +4697,13 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
   padding: 10px 12px; margin-top: 8px; font-size: calc(13px * var(--metas-fz, 1));
 }
 .ad-ok  strong { color: #15803d; }
+/* «Dieron» se toca para corregir el total: se ve como botón y mide 44 px */
+.ad-resumen-edit {
+  font: inherit; color: inherit; cursor: pointer; min-height: 44px;
+  background: var(--surface); border: 1.5px dashed var(--border);
+  border-radius: var(--r-sm); padding: 4px 10px; margin: -6px 0;
+}
+.ad-resumen { align-items: center; }
 .ad-mal strong { color: #b91c1c; }
 .ad-colecta-row {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
