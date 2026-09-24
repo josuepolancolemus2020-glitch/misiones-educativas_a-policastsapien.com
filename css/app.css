@@ -4706,6 +4706,10 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
   border-radius: var(--r-sm); padding: 4px 10px; margin: -6px 0;
 }
 .ad-resumen { align-items: center; }
+/* barra de participación: la misma del informe impreso */
+.ad-barra { margin-top: 10px; }
+.ad-barra-rot { font-size: calc(13px * var(--metas-fz, 1)); margin-bottom: 4px; }
+.ad-barra-esc { display: flex; justify-content: space-between; font-size: calc(11px * var(--metas-fz, 1)); color: var(--muted); margin-top: 2px; }
 /* quiénes faltan: plegado, para que la pantalla no crezca 20 renglones */
 .ad-faltan {
   margin-top: 10px; background: #fff7ed; border: 1.5px solid #fed7aa;

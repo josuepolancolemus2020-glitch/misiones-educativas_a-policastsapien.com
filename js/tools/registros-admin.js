@@ -1684,6 +1684,18 @@ function adColectaPct(c, d) {
   const esp = adColectaEsperados(c, d);
   return esp ? Math.round(adColectaDieron(c, d) * 100 / esp) : 0;
 }
+/* Barra de participación: la MISMA en la pantalla y en el papel, para que el
+   maestro vea lo que va a imprimir. Es SVG porque el navegador imprime «sin
+   gráficos de fondo» de fábrica: una barra con background saldría en blanco en
+   el papel, y el relleno de un SVG se imprime siempre. */
+function adColectaBarraSvg(c, d, alto) {
+  const pct = Math.min(100, adColectaPct(c, d));
+  return `<svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="${alto}" role="img" aria-label="Participación ${pct} %" style="display:block">
+    <rect x="0" y="0" width="100" height="8" fill="#fff" stroke="#1e3a7c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <rect x="0" y="0" width="${pct}" height="8" fill="#1e3a7c"/>
+    ${[25, 50, 75].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="8" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`).join('')}
+  </svg>`;
+}
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
@@ -2537,6 +2549,11 @@ function adRenderColecta(body, d) {
         <span>🧾 Gastado: <strong>${adLps(t.gas)}</strong></span>
         <span class="${t.saldo >= 0 ? 'ad-ok' : 'ad-mal'}">💼 Saldo: <strong>${adLps(t.saldo)}</strong></span>
       </div>
+      <div class="ad-barra">
+        <div class="ad-barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${pagaron} de ${esp}</div>
+        ${adColectaBarraSvg(c, d, 18)}
+        <div class="ad-barra-esc" aria-hidden="true"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
+      </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 Enviar resumen por WhatsApp</button>
       </div>
@@ -2753,14 +2770,9 @@ ${(() => {
      gráficos de fondo» de fábrica, y una barra hecha con background saldría
      en blanco en el papel. El relleno de un SVG se imprime siempre, y en la
      fotocopiadora en blanco y negro se sigue viendo la parte llena. */
-  const pct = Math.min(100, adColectaPct(c, d));
   return `<div class="barra">
   <div class="barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)} alumnos</div>
-  <svg viewBox="0 0 100 8" preserveAspectRatio="none" width="100%" height="22" role="img" aria-label="Participación ${pct} %">
-    <rect x="0" y="0" width="100" height="8" fill="#fff" stroke="#1e3a7c" stroke-width="1" vector-effect="non-scaling-stroke"/>
-    <rect x="0" y="0" width="${pct}" height="8" fill="#1e3a7c"/>
-    ${[25, 50, 75].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="8" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`).join('')}
-  </svg>
+  ${adColectaBarraSvg(c, d, 22)}
   <div class="barra-esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
 </div>`;
 })()}
