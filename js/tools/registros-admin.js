@@ -1669,6 +1669,15 @@ function adColectaPorRecaudar(c, d) {
     return s + Math.max(0, sug - dio);
   }, 0);
 }
+/* Participación del grupo: los que dieron sobre el total que CUENTA (sin los
+   de prueba ni los retirados). Por eso se corrige el total: con la lista cruda,
+   22 de 44 es un 50 % y el grupo real va en 52 %, y esa es la cifra que el
+   padre lee. Se redondea al entero: «52,4 %» en un grupo de WhatsApp no le
+   dice más a nadie. */
+function adColectaPct(c, d) {
+  const esp = adColectaEsperados(c, d);
+  return esp ? Math.round(adColectaDieron(c, d) * 100 / esp) : 0;
+}
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
@@ -1682,8 +1691,10 @@ function adColectaTxtResumen(c, d) {
     (grupo ? 'Grupo ' + grupo + '\n' : '') +
     'Acordado el ' + adFechaBonita(c.fecha) + ' · aporte sugerido: ' + adLps(c.montoAlumno) + '\n\n' +
     '✅ Han dado: *' + pagaron + ' de ' + esp + '*\n' +
+    '📊 Participación del grupo: *' + adColectaPct(c, d) + ' %*\n' +
     (esp > pagaron ? '⏳ Faltan: *' + (esp - pagaron) + '*\n' : '') +
     '💵 Recaudado: *' + adLps(t.rec) + '*\n' +
+    (adColectaPorRecaudar(c, d) > 0 ? '📥 Falta por recaudar: *' + adLps(adColectaPorRecaudar(c, d)) + '*\n' : '') +
     '🧾 Gastado: *' + adLps(t.gas) + '*\n' +
     (gastos.length ? gastos.map(g => '   • ' + g.d + ': ' + adLps(g.m)).join('\n') + '\n' : '') +
     '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
@@ -1736,7 +1747,7 @@ function adRenderEco(body, d) {
         return `
         <button class="ad-colecta-row" data-cid="${c.id}">
           <span class="ad-cr-txt"><strong>${adEsc(c.concepto)}</strong><br>
-            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${adColectaEsperados(c, d)} dieron · saldo ${adLps(t.saldo)}</small></span>
+            <small>${adFechaBonita(c.fecha)} · ${pagaron}/${adColectaEsperados(c, d)} dieron (${adColectaPct(c, d)} %) · saldo ${adLps(t.saldo)}</small></span>
           <span class="ad-cr-arrow">›</span>
         </button>`;
       }).join('')}
@@ -2512,7 +2523,9 @@ function adRenderColecta(body, d) {
         y sale en el informe imprimible.</div>
       <div class="ad-resumen">
         <button class="ad-resumen-edit" id="ad-col-total" title="Decir qué alumnos no cuentan (de prueba, retirados)">✅ Dieron: <strong>${pagaron}/${esp}</strong> <span aria-hidden="true">✏️</span></button>
+        <span>📊 Participación: <strong>${adColectaPct(c, d)} %</strong></span>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
+        <span>📥 Falta por recaudar: <strong>${adLps(adColectaPorRecaudar(c, d))}</strong></span>
         <span>🧾 Gastado: <strong>${adLps(t.gas)}</strong></span>
         <span class="${t.saldo >= 0 ? 'ad-ok' : 'ad-mal'}">💼 Saldo: <strong>${adLps(t.saldo)}</strong></span>
       </div>
@@ -2715,6 +2728,7 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
 </tbody></table>` : ''}
 <div class="tot">
   <span>✅ Dieron: ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)}</span>
+  <span>📊 Participación: ${adColectaPct(c, d)} %</span>
   <span>⏳ Faltan: ${Math.max(0, adColectaEsperados(c, d) - adColectaDieron(c, d))}</span>
   <span>💵 Recaudado: ${adLps(t.rec)}</span>
   <span>📥 Falta por recaudar: ${adLps(adColectaPorRecaudar(c, d))}</span>
