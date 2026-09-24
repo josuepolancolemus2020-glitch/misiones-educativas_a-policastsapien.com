@@ -1631,19 +1631,37 @@ function adColectaTotales(c) {
 /* Cuántos alumnos se ESPERA que den. Casi siempre es la lista entera, pero no
    siempre: hay alumnos de prueba, un retirado que sigue en la lista, un becado
    al que no se le pide. Con «22/44» el maestro dice en la reunión que faltan
-   22 cuando faltan 20, y la madre que cuenta le lleva la contraria. El total se
-   corrige a mano y se guarda EN LA COLECTA (c.esperados), no en la lista: quitar
-   a alguien de la lista le borraría su número y con él la clave de familia. */
+   22 cuando faltan 20, y la madre que cuenta le lleva la contraria.
+   Se dice QUIÉNES no cuentan (c.noCuentan, sus números de lista), no solo
+   cuántos: con el número suelto el total salía bien pero el informe impreso
+   seguía listando a los de prueba, porque no había forma de saber cuáles eran.
+   Se guarda EN LA COLECTA, no en la lista: quitar a alguien de la lista le
+   borraría su número y con él la clave de familia.
+   c.esperados es la versión anterior (solo la cifra) y se respeta mientras el
+   maestro no escriba los números. */
+function adColectaFuera(c, d) {
+  const hay = new Set(d.lista.map(a => String(a.num)));
+  return new Set((Array.isArray(c && c.noCuentan) ? c.noCuentan : [])
+    .map(String).filter(n => hay.has(n)));
+}
 function adColectaEsperados(c, d) {
+  if (Array.isArray(c && c.noCuentan)) return d.lista.length - adColectaFuera(c, d).size;
   const n = Number(c && c.esperados);
   return n >= 1 ? Math.floor(n) : d.lista.length;
+}
+/* Los que dieron, SIN los que no cuentan: si un alumno de prueba quedó marcado
+   por error, «23 de 42» no puede pasar del total. Su dinero sí sigue en lo
+   recaudado, porque el dinero está en la mano y se rinde. */
+function adColectaDieron(c, d) {
+  const fuera = adColectaFuera(c, d);
+  return Object.keys(c.pagos || {}).filter(n => !fuera.has(String(n))).length;
 }
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
 function adColectaTxtResumen(c, d) {
   const t = adColectaTotales(c);
-  const pagaron = Object.keys(c.pagos || {}).length;
+  const pagaron = adColectaDieron(c, d);
   const esp = adColectaEsperados(c, d);
   const grupo = adGrupoTxt(d);
   const gastos = c.gastos || [];
@@ -1701,7 +1719,7 @@ function adRenderEco(body, d) {
       <div class="pa-card-title">🗂️ Mis colectas</div>
       ${d.colectas.slice().reverse().map(c => {
         const t = adColectaTotales(c);
-        const pagaron = Object.keys(c.pagos || {}).length;
+        const pagaron = adColectaDieron(c, d);
         return `
         <button class="ad-colecta-row" data-cid="${c.id}">
           <span class="ad-cr-txt"><strong>${adEsc(c.concepto)}</strong><br>
@@ -1725,14 +1743,18 @@ function adRenderEco(body, d) {
     const dd = adLoad();
     /* el total corregido se hereda de la colecta anterior: los alumnos de
        prueba siguen en la lista, y corregirlo en cada colecta se olvida */
-    const prev = dd.colectas.slice().reverse().find(x => Number(x.esperados) >= 1);
+    const prev = dd.colectas.slice().reverse().find(x => Array.isArray(x.noCuentan) || Number(x.esperados) >= 1);
     dd.colectas.push({
       id: 'C' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       concepto: String(concepto).trim(),
       montoAlumno: Number(String(monto).replace(',', '.')),
       fecha: adHoy(), pagos: {}, pagosF: {}, gastos: [],
     });
-    if (prev && Number(prev.esperados) <= dd.lista.length) dd.colectas[dd.colectas.length - 1].esperados = prev.esperados;
+    if (prev) {
+      const nueva = dd.colectas[dd.colectas.length - 1];
+      if (Array.isArray(prev.noCuentan)) nueva.noCuentan = [...adColectaFuera(prev, dd)].map(Number);
+      else if (Number(prev.esperados) <= dd.lista.length) nueva.esperados = prev.esperados;
+    }
     adSave(dd);
     _adColectaId = dd.colectas[dd.colectas.length - 1].id;
     renderAdmin();
@@ -2452,8 +2474,9 @@ function adRenderColecta(body, d) {
   const c = adColecta(d, _adColectaId);
   if (!c) { _adColectaId = null; renderAdmin(); return; }
   const t = adColectaTotales(c);
-  const pagaron = Object.keys(c.pagos || {}).length;
+  const pagaron = adColectaDieron(c, d);
   const esp = adColectaEsperados(c, d);
+  const fuera = adColectaFuera(c, d);
 
   body.innerHTML = `
     <div class="pa-card">
@@ -2475,7 +2498,7 @@ function adRenderColecta(body, d) {
         sirve para que usted y él hablen de la misma entrega. Tú lo ves aquí manteniendo pulsado al alumno,
         y sale en el informe imprimible.</div>
       <div class="ad-resumen">
-        <button class="ad-resumen-edit" id="ad-col-total" title="Corregir cuántos alumnos deben dar">✅ Dieron: <strong>${pagaron}/${esp}</strong> <span aria-hidden="true">✏️</span></button>
+        <button class="ad-resumen-edit" id="ad-col-total" title="Decir qué alumnos no cuentan (de prueba, retirados)">✅ Dieron: <strong>${pagaron}/${esp}</strong> <span aria-hidden="true">✏️</span></button>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
         <span>🧾 Gastado: <strong>${adLps(t.gas)}</strong></span>
         <span class="${t.saldo >= 0 ? 'ad-ok' : 'ad-mal'}">💼 Saldo: <strong>${adLps(t.saldo)}</strong></span>
@@ -2489,16 +2512,18 @@ function adRenderColecta(body, d) {
           const pagado = c.pagos && c.pagos[a.num] != null;
           const nom = adPrimerNombre(a.nombre);
           const especial = pagado && Number(c.pagos[a.num]) !== Number(c.montoAlumno);
+          const noCuenta = fuera.has(String(a.num));
           /* el title lleva el folio: si un padre reclama, el maestro lo lee aquí */
           const rot = pagado
             ? adEsc(a.nombre) + ' · recibo ' + adReciboFolio(c, a.num) +
               ' del ' + adFechaBonita((c.pagosF && c.pagosF[a.num]) || c.fecha)
             : adEsc(a.nombre);
-          return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}" data-num="${a.num}"
-            title="${rot}">
+          return `<button class="ad-chip ${pagado ? 'ad-chip-on' : ''}${noCuenta ? ' ad-chip-fuera' : ''}" data-num="${a.num}"
+            title="${rot}${noCuenta ? ' · no cuenta en esta colecta' : ''}">
             <span class="ad-chip-num">#${a.num}${pagado ? ' ✓' : ''}</span>
             ${nom ? `<span class="ad-chip-nom">${adEsc(nom)}</span>` : ''}
-            ${pagado ? `<span class="ad-chip-monto${especial ? ' ad-chip-monto-esp' : ''}">${adLps(c.pagos[a.num])}</span>` : ''}</button>`;
+            ${pagado ? `<span class="ad-chip-monto${especial ? ' ad-chip-monto-esp' : ''}">${adLps(c.pagos[a.num])}</span>` : ''}
+            ${noCuenta && !pagado ? '<span class="ad-chip-monto">no cuenta</span>' : ''}</button>`;
         }).join('')}
       </div>
     </div>
@@ -2562,21 +2587,23 @@ function adRenderColecta(body, d) {
 
   document.getElementById('ad-col-total').addEventListener('click', async () => {
     const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
-    const max = dd.lista.length;
-    const r = await metasPrompt('¿Cuántos alumnos **deben dar** en esta colecta?\nEn la lista hay **' + max + '**. Si hay alumnos de prueba o alguno que no aporta, pon el número real (ej. **' + Math.max(1, max - 2) + '**). Vacío vuelve a contar la lista entera.', {
-      icono: '✅', titulo: 'Total de alumnos', inputmode: 'numeric',
-      value: String(adColectaEsperados(cc, dd)), okTxt: 'Guardar',
+    const nums = dd.lista.map(a => String(a.num));
+    const ahora = [...adColectaFuera(cc, dd)].join(', ');
+    const r = await metasPrompt('¿Qué alumnos **NO cuentan** en esta colecta?\nEscribe sus **números de lista**, separados por coma (ej. **' +
+      nums.slice(-2).join(', ') + '** para dos alumnos de prueba). No entran en el total ni en el informe impreso.\nVacío: cuentan los ' + nums.length + '.', {
+      icono: '✅', titulo: 'Alumnos que no cuentan', inputmode: 'text',
+      value: ahora, okTxt: 'Guardar',
       valida: v => {
-        const s = String(v).trim();
-        if (s === '') return '';
-        const n = Number(s);
-        if (!Number.isInteger(n) || n < 1) return 'Escribe un número entero mayor que cero.';
-        return n > max ? 'No puede pasar de los ' + max + ' de la lista.' : '';
+        const partes = String(v).split(/[\s,;y]+/).filter(Boolean);
+        const malos = partes.filter(p => !nums.includes(String(Number(p))));
+        if (malos.length) return 'No hay nadie con el número ' + malos[0] + ' en la lista.';
+        return new Set(partes.map(Number)).size >= nums.length ? 'Tiene que contar al menos un alumno.' : '';
       },
     });
     if (r === null) return;
-    const s = String(r).trim();
-    if (s === '' || Number(s) === max) delete cc.esperados; else cc.esperados = Number(s);
+    const lista = [...new Set(String(r).split(/[\s,;y]+/).filter(Boolean).map(Number))].sort((x, y) => x - y);
+    delete cc.esperados;
+    if (lista.length) cc.noCuentan = lista; else delete cc.noCuentan;
     adSave(dd); renderAdmin();
   });
 
@@ -2621,6 +2648,9 @@ function adRenderColecta(body, d) {
 /* Informe imprimible: transparencia con los padres (acta de cuentas) */
 function adInformeColecta(d, c) {
   const t = adColectaTotales(c);
+  /* los que no cuentan (de prueba, retirados) no salen en el papel que se
+     reparte; salvo que tengan dinero marcado: ese se rinde, esté donde esté */
+  const fuera = adColectaFuera(c, d);
   const grupo = adGrupoTxt(d);
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <title>Informe económico — ${adEsc(c.concepto)}</title>
@@ -2645,7 +2675,7 @@ Aporte sugerido: ${adLps(c.montoAlumno)} (cada aporte real se detalla abajo) · 
 <table>
 <thead><tr><th>#</th><th>Alumno/a</th><th>Aportó</th><th>Fecha</th><th>Monto</th><th>Recibo</th></tr></thead>
 <tbody>
-${d.lista.map(a => {
+${d.lista.filter(a => !fuera.has(String(a.num)) || (c.pagos && c.pagos[a.num] != null)).map(a => {
   const m = c.pagos && c.pagos[a.num];
   /* el mismo folio que ya tiene la familia en el asistente: el papel y la nube
      hablan del mismo movimiento */

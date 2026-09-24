@@ -4667,6 +4667,8 @@ body.ad-gr-moviendo { cursor: grabbing; user-select: none; -webkit-user-select: 
 .ad-chip-monto { font-size: calc(10.5px * var(--metas-fz, 1)); font-weight: 900; line-height: 1; color: #15803d; }
 .ad-chip-monto-esp { color: #b45309; }   /* monto distinto al sugerido (hermanos, becados) */
 /* Estado marcado = recompensa visual: relleno de color, aro y "pop" */
+.ad-chip-fuera:not(.ad-chip-on) { opacity: .5; border-style: dashed; }
+.ad-chip-fuera:not(.ad-chip-on) .ad-chip-monto { color: var(--muted); }
 .ad-chip-on  { background: rgba(22,163,74,.15); border-color: #16a34a; color: #15803d; box-shadow: 0 3px 10px rgba(22,163,74,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
 .ad-chip-aus { background: rgba(220,38,38,.15); border-color: #dc2626; color: #b91c1c; box-shadow: 0 3px 10px rgba(220,38,38,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
 .ad-chip-exc { background: rgba(217,119,6,.16); border-color: #d97706; color: #b45309; box-shadow: 0 3px 10px rgba(217,119,6,.25); animation: adPop .28s cubic-bezier(.34,1.56,.64,1); }
