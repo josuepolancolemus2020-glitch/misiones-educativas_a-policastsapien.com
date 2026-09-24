@@ -1669,6 +1669,12 @@ function adColectaPorRecaudar(c, d) {
     return s + Math.max(0, sug - dio);
   }, 0);
 }
+/* Total esperado: el aporte sugerido por cada alumno que cuenta. Un solo
+   cálculo para la pantalla, el WhatsApp y el papel, que tienen que decir lo
+   mismo: la madre compara el mensaje con el informe. */
+function adColectaMeta(c, d) {
+  return adColectaEsperados(c, d) * (Number(c.montoAlumno) || 0);
+}
 /* Participación del grupo: los que dieron sobre el total que CUENTA (sin los
    de prueba ni los retirados). Por eso se corrige el total: con la lista cruda,
    22 de 44 es un 50 % y el grupo real va en 52 %, y esa es la cifra que el
@@ -1693,6 +1699,7 @@ function adColectaTxtResumen(c, d) {
     '✅ Han dado: *' + pagaron + ' de ' + esp + '*\n' +
     '📊 Participación del grupo: *' + adColectaPct(c, d) + ' %*\n' +
     (esp > pagaron ? '⏳ Faltan: *' + (esp - pagaron) + '*\n' : '') +
+    '🎯 Total esperado: *' + adLps(adColectaMeta(c, d)) + '* (' + esp + ' × ' + adLps(c.montoAlumno) + ')\n' +
     '💵 Recaudado: *' + adLps(t.rec) + '*\n' +
     (adColectaPorRecaudar(c, d) > 0 ? '📥 Falta por recaudar: *' + adLps(adColectaPorRecaudar(c, d)) + '*\n' : '') +
     '🧾 Gastado: *' + adLps(t.gas) + '*\n' +
@@ -2524,6 +2531,7 @@ function adRenderColecta(body, d) {
       <div class="ad-resumen">
         <button class="ad-resumen-edit" id="ad-col-total" title="Decir qué alumnos no cuentan (de prueba, retirados)">✅ Dieron: <strong>${pagaron}/${esp}</strong> <span aria-hidden="true">✏️</span></button>
         <span>📊 Participación: <strong>${adColectaPct(c, d)} %</strong></span>
+        <span>🎯 Total esperado: <strong>${adLps(adColectaMeta(c, d))}</strong></span>
         <span>💵 Recaudado: <strong>${adLps(t.rec)}</strong></span>
         <span>📥 Falta por recaudar: <strong>${adLps(adColectaPorRecaudar(c, d))}</strong></span>
         <span>🧾 Gastado: <strong>${adLps(t.gas)}</strong></span>
@@ -2730,7 +2738,7 @@ ${c.gastos.map(g => `<tr><td>${adFechaBonita(g.f)}</td><td>${adEsc(g.d)}</td><td
   <span>✅ Dieron: ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)}</span>
   <span>📊 Participación: ${adColectaPct(c, d)} %</span>
   <span>⏳ Faltan: ${Math.max(0, adColectaEsperados(c, d) - adColectaDieron(c, d))}</span>
-  <span>🎯 Total esperado: ${adLps(adColectaEsperados(c, d) * (Number(c.montoAlumno) || 0))} (${adColectaEsperados(c, d)} × ${adLps(c.montoAlumno)})</span>
+  <span>🎯 Total esperado: ${adLps(adColectaMeta(c, d))} (${adColectaEsperados(c, d)} × ${adLps(c.montoAlumno)})</span>
   <span>💵 Recaudado: ${adLps(t.rec)}</span>
   <span>📥 Falta por recaudar: ${adLps(adColectaPorRecaudar(c, d))}</span>
   <span>🧾 Gastado: ${adLps(t.gas)}</span>
