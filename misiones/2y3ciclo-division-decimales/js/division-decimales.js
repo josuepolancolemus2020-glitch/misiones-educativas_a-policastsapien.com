@@ -546,38 +546,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Para dividir con decimales, el divisor se debe convertir a un número entero.',a:true},
-  {q:'Al mover el punto 1 espacio en el divisor, se debe mover 2 espacios en el dividendo.',a:false},
-  {q:'Si te faltan cifras en el dividendo al mover el punto, agregas ceros.',a:true},
-  {q:'La división 2.5 ÷ 0.5 es equivalente a 25 ÷ 5.',a:true},
-  {q:'Si el divisor es 0.2 (menor que 1), el resultado será menor que el dividendo.',a:false},
-  {q:'Se coloca un cero en el cociente si la cifra bajada forma un número menor al divisor.',a:true},
-  {q:'Al multiplicar dividendo y divisor por 10, el resultado de la división cambia.',a:false},
-  {q:'10 ÷ 2.5 es lo mismo que 100 ÷ 25.',a:true},
-  {q:'Si el divisor es mayor que 1, el cociente es menor que el dividendo.',a:true},
-  {q:'Al dividir entre 0.1, el número se hace 10 veces mayor.',a:true},
+  {q:'2.5 ÷ 0.5 da lo mismo que 25 ÷ 5.',a:true,k:'tf-25-05'},
+  {q:'4.8 ÷ 0.6 = 0.8.',a:false,k:'tf-48-06'},
+  {q:'10 ÷ 2.5 = 4.',a:true,k:'tf-10-25'},
+  {q:'3 ÷ 0.1 = 0.3.',a:false,k:'tf-3-01'},
+  {q:'7.2 ÷ 8 = 0.9.',a:true,k:'tf-72-8'},
+  {q:'6 ÷ 0.2 es menos que 6.',a:false,k:'tf-6-02'},
+  {q:'1.5 ÷ 0.3 da lo mismo que 150 ÷ 3.',a:false,k:'tf-15-03'},
+  {q:'9.6 ÷ 3 = 3.2.',a:true,k:'tf-96-3'},
+  {q:'0.45 ÷ 0.05 = 9.',a:true,k:'tf-045-005'},
+  {q:'5 ÷ 0.25 = 1.25.',a:false,k:'tf-5-025'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el primer paso al dividir 4.2 ÷ 0.2?',o:['a) Dividir directo','b) Mover el punto 1 vez a la derecha en ambos','c) Quitar el punto solo en el divisor'],a:1},
-  {q:'¿A qué división entera equivale 1.5 ÷ 0.3?',o:['a) 150 ÷ 3','b) 15 ÷ 30','c) 15 ÷ 3'],a:2},
-  {q:'Si divido 8 ÷ 0.5, el resultado será:',o:['a) 16','b) 4','c) 0.4'],a:0},
-  {q:'¿Por qué agregas ceros en el dividendo?',o:['a) Para hacerlo más grande','b) Cuando ya no hay cifras para mover el punto','c) Para terminar la división'],a:1},
-  {q:'Al bajar un número y ver que no alcanza para dividir, ¿qué haces?',o:['a) Pongo un cero en el cociente y bajo el siguiente','b) Sumo el divisor','c) Subo el punto'],a:0},
+  {q:'¿Cuánto es 4.2 ÷ 0.2?',o:['a) 2.1','b) 21','c) 0.21'],a:1,k:'mc-42-02'},
+  {q:'¿A qué división sin punto equivale 1.8 ÷ 0.6?',o:['a) 18 ÷ 6','b) 180 ÷ 6','c) 18 ÷ 60'],a:0,k:'mc-18-06'},
+  {q:'¿Cuánto es 8 ÷ 0.5?',o:['a) 4','b) 0.4','c) 16'],a:2,k:'mc-8-05'},
+  {q:'¿Cuánto es 3.6 ÷ 0.09?',o:['a) 400','b) 4','c) 40'],a:2,k:'mc-36-009'},
+  {q:'¿Cuánto es 0.84 ÷ 4?',o:['a) 0.21','b) 2.1','c) 0.021'],a:0,k:'mc-084-4'},
+  {q:'Un tubo de 7.5 m se corta en trozos de 1.5 m. ¿Cuántos trozos salen?',o:['a) 6','b) 50','c) 5'],a:2,k:'mc-tubo'},
+  {q:'¿Cuál división da un resultado MAYOR que 12?',o:['a) 12 ÷ 2','b) 12 ÷ 0.5','c) 12 ÷ 1'],a:1,k:'mc-mayor-12'},
+  {q:'¿Cuánto es 2.4 ÷ 0.04?',o:['a) 6','b) 60','c) 600'],a:1,k:'mc-24-004'},
+  {q:'L 45.60 se reparten entre 3 hermanos. ¿Cuánto le toca a cada uno?',o:['a) L 15.02','b) L 152.00','c) L 15.20'],a:2,k:'mc-hermanos'},
+  {q:'¿Cuánto es 1 ÷ 0.25?',o:['a) 0.4','b) 4','c) 40'],a:1,k:'mc-1-025'}
 ];
 const evalCPBank=[
-  {q:'El ___ es el número que está afuera e indica en cuántas partes se reparte.',a:'divisor'},
-  {q:'Mover el punto un espacio equivale a multiplicar por ___.',a:'10'},
-  {q:'Si el divisor es menor a 1, el cociente será ___ que el dividendo.',a:'mayor'},
-  {q:'La respuesta de una división se llama ___.',a:'cociente'},
-  {q:'12 ÷ 0.4 es equivalente a ___ ÷ 4.',a:'120'},
+  {q:'9.9 ÷ 0.9 = ___.',a:'11',acc:['11'],k:'cp-99-09'},
+  {q:'9 ÷ 0.3 = ___.',a:'30',acc:['30'],k:'cp-9-03'},
+  {q:'0.65 ÷ 5 = ___.',a:'0.13',acc:['0.13','.13'],k:'cp-065-5'},
+  {q:'7.7 ÷ 0.11 = ___.',a:'70',acc:['70'],k:'cp-77-011'},
+  {q:'0.9 ÷ 0.009 = ___.',a:'100',acc:['100'],k:'cp-09-0009'},
+  {q:'12 ÷ 0.4 = ___ ÷ 4.',a:'120',acc:['120'],k:'cp-12-04'},
+  {q:'16 ÷ 0.8 = ___.',a:'20',acc:['20'],k:'cp-16-08'},
+  {q:'Una cinta de 4.2 m se corta en 6 pedazos iguales; cada uno mide ___ m.',a:'0.7',acc:['0.7','.7'],k:'cp-cinta'},
+  {q:'15 ÷ 0.01 = ___.',a:'1,500',acc:['1,500','1500','1 500','1.500'],k:'cp-15-001'},
+  {q:'0.56 ÷ 0.07 se convierte en 56 ÷ ___.',a:'7',acc:['7','siete'],k:'cp-056-007'}
 ];
 const evalPRBank=[
-  {term:'Divisor Decimal',def:'Se debe convertir en entero moviendo el punto'},
-  {term:'Cero al Cociente',def:'Se usa cuando lo que bajamos es menor que el divisor'},
-  {term:'Agregar Ceros',def:'Se hace en el dividendo si faltan cifras al mover el punto'},
-  {term:'Divisor Menor a 1',def:'Provoca que el cociente sea mayor que el dividendo'},
-  {term:'Equivalencia',def:'Multiplicar dividendo y divisor por la misma cantidad'},
+  {term:'Dividendo',def:'El número que se reparte',k:'pr-dividendo'},
+  {term:'Divisor',def:'El número entre el que se reparte',k:'pr-divisor'},
+  {term:'Cociente',def:'El resultado de una división',k:'pr-cociente'},
+  {term:'Residuo',def:'Lo que sobra al dividir',k:'pr-residuo'},
+  {term:'Punto decimal',def:'El signo que separa los enteros de lo que no llega a uno',k:'pr-punto'},
+  {term:'Décima',def:'La primera cifra después del punto',k:'pr-decima'},
+  {term:'Centésima',def:'La segunda cifra después del punto',k:'pr-centesima'},
+  {term:'División exacta',def:'La que no deja nada sobrante',k:'pr-exacta'},
+  {term:'Número entero',def:'El que se escribe sin punto',k:'pr-entero'},
+  {term:'Cero de relleno',def:'El que se agrega cuando faltan cifras al correr el punto',k:'pr-cero'}
 ];
 
 const evalExplainBank=[
