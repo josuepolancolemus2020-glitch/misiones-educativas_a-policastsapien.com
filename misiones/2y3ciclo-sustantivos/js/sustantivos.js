@@ -886,73 +886,58 @@ window.addEventListener('resize', () => {
 });
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank = [
-    { q: 'El sustantivo es la palabra que nombra personas, animales, cosas, lugares e ideas.', a: true },
-    { q: 'Los sustantivos propios se escriben siempre con minúscula.', a: false },
-    { q: '«Ejército» es un sustantivo colectivo porque nombra un grupo de soldados.', a: true },
-    { q: 'Los sustantivos abstractos se pueden percibir con los cinco sentidos.', a: false },
-    { q: '«Agua» es un sustantivo contable.', a: false },
-    { q: 'El plural de «lápiz» es «lápices».', a: true },
-    { q: '«Panadería» es un sustantivo primitivo.', a: false },
-    { q: 'Los sustantivos concretos se pueden ver, oír, tocar, oler o saborear.', a: true },
-    { q: '«Perro» es un sustantivo propio.', a: false },
-    { q: 'Los sustantivos masculinos llevan el artículo «el» o «los».', a: true },
-    { q: '«Valentía» es un sustantivo concreto.', a: false },
-    { q: '«Casita» es un sustantivo en forma diminutiva.', a: true },
-    { q: 'Un sustantivo común nombra a un ser específico y único.', a: false },
-    { q: '«Flor» es un sustantivo primitivo.', a: true },
-    { q: 'Los sustantivos colectivos siempre se escriben en plural.', a: false },
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+const evalTFBank=[
+  {q:'«Honduras» es un sustantivo propio.',a:true,k:'tf-honduras'},
+  {q:'«Valentía» es un sustantivo concreto.',a:false,k:'tf-valentia'},
+  {q:'«Enjambre» es un sustantivo colectivo.',a:true,k:'tf-enjambre'},
+  {q:'«Arena» es un sustantivo contable.',a:false,k:'tf-arena'},
+  {q:'«Libertad» es un sustantivo colectivo.',a:false,k:'tf-libertad'},
+  {q:'«Mesa» es un sustantivo común.',a:true,k:'tf-mesa'},
+  {q:'«Alegría» es un sustantivo abstracto.',a:true,k:'tf-alegria'},
+  {q:'«Árbol» es un sustantivo colectivo.',a:false,k:'tf-arbol'},
+  {q:'«Mar» es un sustantivo primitivo.',a:true,k:'tf-mar'},
+  {q:'«Manada» nombra a un solo animal.',a:false,k:'tf-manada'}
 ];
-const evalMCBank = [
-    { q: '¿Qué es un sustantivo?', o: ['a) Palabra que nombra seres y cosas', 'b) Palabra que indica acción', 'c) Palabra que describe cualidades', 'd) Palabra que une oraciones'], a: 0 },
-    { q: '¿Cuál es un sustantivo propio?', o: ['a) Tegucigalpa', 'b) perro', 'c) ciudad', 'd) libertad'], a: 0 },
-    { q: '¿Qué tipo de sustantivo es «amor»?', o: ['a) Concreto', 'b) Abstracto', 'c) Colectivo', 'd) Propio'], a: 1 },
-    { q: '¿Cuál es un sustantivo colectivo?', o: ['a) soldado', 'b) mesa', 'c) enjambre', 'd) alegría'], a: 2 },
-    { q: '¿Cómo se forma el plural de «reloj»?', o: ['a) relojs', 'b) relojes', 'c) relojces', 'd) reloje'], a: 1 },
-    { q: '¿Qué sustantivo es incontable?', o: ['a) arena', 'b) libro', 'c) gato', 'd) estrella'], a: 0 },
-    { q: '¿Cuál es un sustantivo derivado de «flor»?', o: ['a) florida', 'b) florido', 'c) florero', 'd) floral'], a: 2 },
-    { q: '¿Qué tipo de sustantivo es «chocolate»?', o: ['a) Abstracto', 'b) Colectivo', 'c) Concreto', 'd) Propio'], a: 2 },
-    { q: '¿Cuál es un sustantivo individual?', o: ['a) bosque', 'b) árbol', 'c) ejército', 'd) manada'], a: 1 },
-    { q: '¿Qué forma tiene «perrazo»?', o: ['a) Diminutiva', 'b) Despectiva', 'c) Aumentativa', 'd) Primitiva'], a: 2 },
-    { q: 'Los sustantivos que terminan en -z forman el plural cambiando -z por:', o: ['a) -zs', 'b) -zes', 'c) -zces', 'd) -ces'], a: 3 },
-    { q: '¿Cuál de estos es un sustantivo abstracto?', o: ['a) mesa', 'b) río', 'c) guitarra', 'd) justicia'], a: 3 },
-    { q: '¿Qué artículo acompaña a los sustantivos femeninos?', o: ['a) el', 'b) la', 'c) los', 'd) un'], a: 1 },
-    { q: '¿Cuál es un sustantivo primitivo?', o: ['a) panadería', 'b) florero', 'c) zapatero', 'd) pan'], a: 3 },
-    { q: '«Rebaño» es un sustantivo colectivo de:', o: ['a) ovejas', 'b) árboles', 'c) soldados', 'd) abejas'], a: 0 },
+const evalMCBank=[
+  {q:'¿Cuál de estas palabras es un sustantivo propio?',o:['a) Copán','b) ciudad','c) perro','d) libertad'],a:0,k:'mc-propio'},
+  {q:'¿Qué clase de sustantivo es «miedo»?',o:['a) concreto','b) abstracto','c) colectivo','d) propio'],a:1,k:'mc-miedo'},
+  {q:'¿Cuál es un sustantivo colectivo?',o:['a) soldado','b) mesa','c) bosque','d) alegría'],a:2,k:'mc-colectivo'},
+  {q:'¿Cuál de estas palabras no se puede contar?',o:['a) agua','b) libro','c) gato','d) estrella'],a:0,k:'mc-incontable'},
+  {q:'¿Cuál es un sustantivo derivado de «flor»?',o:['a) florido','b) florero','c) floral','d) flora'],a:1,k:'mc-derivado-flor'},
+  {q:'¿Cuál de estos es un sustantivo común?',o:['a) Tegucigalpa','b) Lempira','c) cerro','d) Ulúa'],a:2,k:'mc-comun'},
+  {q:'¿Cuál nombra a un solo ser?',o:['a) bosque','b) pino','c) ejército','d) manada'],a:1,k:'mc-individual'},
+  {q:'¿Cuál de estos sustantivos es primitivo?',o:['a) perrito','b) casita','c) florero','d) sal'],a:3,k:'mc-primitivo'},
+  {q:'«Rebaño» es el grupo de…',o:['a) ovejas','b) árboles','c) soldados','d) abejas'],a:0,k:'mc-rebano'},
+  {q:'¿Cuál de estas palabras es un sustantivo?',o:['a) correr','b) bonito','c) montaña','d) rápidamente'],a:2,k:'mc-es-sustantivo'}
 ];
-const evalCPBank = [
-    { q: 'Los sustantivos ___ se escriben siempre con mayúscula inicial.', a: 'propios' },
-    { q: '«Bosque» es un sustantivo ___ porque nombra un conjunto de árboles.', a: 'colectivo' },
-    { q: 'La palabra «amor» es un sustantivo ___.', a: 'abstracto' },
-    { q: '«Panadería» es un sustantivo ___ de la palabra «pan».', a: 'derivado' },
-    { q: 'El plural de «lápiz» es ___.', a: 'lápices' },
-    { q: 'Los sustantivos ___ se pueden percibir con los cinco sentidos.', a: 'concretos' },
-    { q: '«Agua» es un sustantivo ___ porque no se puede contar.', a: 'incontable' },
-    { q: '«Casita» es un sustantivo en forma ___.', a: 'diminutiva' },
-    { q: 'Los sustantivos ___ llevan el artículo «el» o «los».', a: 'masculinos' },
-    { q: 'El ___ nombra a más de un ser u objeto.', a: 'plural' },
-    { q: '«Flor» es un sustantivo ___ porque no viene de ninguna otra palabra.', a: 'primitivo' },
-    { q: 'Los sustantivos ___ nombran a cualquier ser de su clase sin distinguirlo.', a: 'comunes' },
-    { q: '«Ejército» es un sustantivo ___ que nombra un grupo de soldados.', a: 'colectivo' },
-    { q: '«Perrazo» es un sustantivo en forma ___.', a: 'aumentativa' },
-    { q: 'Un sustantivo ___ nombra a un solo ser u objeto.', a: 'individual' },
+const evalCPBank=[
+  {q:'Un lápiz, dos ___.',a:'lápices',acc:['lápices'],k:'cp-lapices'},
+  {q:'Un pez, tres ___.',a:'peces',acc:['peces'],k:'cp-peces'},
+  {q:'Una voz, muchas ___.',a:'voces',acc:['voces'],k:'cp-voces'},
+  {q:'De «zapato» sale «___», el que los hace.',a:'zapatero',acc:['zapatero'],k:'cp-zapato'},
+  {q:'De «pan» sale «___», donde lo venden.',a:'panadería',acc:['panadería'],k:'cp-pan'},
+  {q:'De «zapato» sale «___», la tienda donde los venden.',a:'zapatería',acc:['zapatería'],k:'cp-zapateria'},
+  {q:'Un grupo de perros se llama ___.',a:'jauría',acc:['jauría'],k:'cp-jauria'},
+  {q:'Un grupo de soldados forma un ___.',a:'ejército',acc:['ejército'],k:'cp-ejercito'},
+  {q:'Los nombres de personas, como Carlos, empiezan con letra ___.',a:'mayúscula',acc:['mayúscula'],k:'cp-mayuscula'},
+  {q:'Un perro grande: un ___.',a:'perrazo (perrón)',acc:['perrazo','perrón'],k:'cp-perrazo'}
 ];
-const evalPRBank = [
-    { term: 'Sustantivo propio', def: 'Nombra a un ser o lugar específico con mayúscula' },
-    { term: 'Sustantivo común', def: 'Nombra a cualquier ser de su clase' },
-    { term: 'Sustantivo concreto', def: 'Se percibe con los cinco sentidos' },
-    { term: 'Sustantivo abstracto', def: 'Nombra sentimientos, ideas o cualidades' },
-    { term: 'Sustantivo colectivo', def: 'Nombra un grupo de seres en singular' },
-    { term: 'Sustantivo individual', def: 'Nombra a un solo ser u objeto' },
-    { term: 'Sustantivo contable', def: 'Se puede contar con números' },
-    { term: 'Sustantivo incontable', def: 'Se mide pero no se cuenta' },
-    { term: 'Sustantivo primitivo', def: 'Palabra original que no viene de otra' },
-    { term: 'Sustantivo derivado', def: 'Se forma con sufijos a partir de un primitivo' },
-    { term: 'Aumentativo', def: 'Forma que agranda: perrazo, casona' },
-    { term: 'Diminutivo', def: 'Forma que achica o da cariño: casita, perrito' },
-    { term: 'Género masculino', def: 'Lleva el artículo «el» o «los»' },
-    { term: 'Género femenino', def: 'Lleva el artículo «la» o «las»' },
-    { term: 'Número plural', def: 'Nombra más de un ser: casas, flores' },
+const evalPRBank=[
+  {term:'Artículo',def:'La palabrita que va antes del nombre: el, la, los, las',k:'pr-articulo'},
+  {term:'Género',def:'Si la palabra es masculina o femenina',k:'pr-genero'},
+  {term:'Número',def:'Si se habla de uno o de varios',k:'pr-numero'},
+  {term:'Singular',def:'Cuando se habla de uno solo',k:'pr-singular'},
+  {term:'Plural',def:'Cuando se habla de muchos',k:'pr-plural'},
+  {term:'Sufijo',def:'La terminación que se añade para formar otra palabra',k:'pr-sufijo'},
+  {term:'Aumentativo',def:'Forma que agranda',k:'pr-aumentativo'},
+  {term:'Diminutivo',def:'Forma que achica o da cariño',k:'pr-diminutivo'},
+  {term:'Despectivo',def:'Forma que desprecia',k:'pr-despectivo'},
+  {term:'Oración',def:'Grupo de palabras con sentido completo',k:'pr-oracion'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
