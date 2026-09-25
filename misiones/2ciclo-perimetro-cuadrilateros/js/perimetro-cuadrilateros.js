@@ -692,45 +692,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El perímetro es la suma de todos los lados.',a:true},
-  {q:'El área se mide en centímetros lineales (cm).',a:false},
-  {q:'El perímetro de un cuadrado es 4 × lado.',a:true},
-  {q:'El área de un rectángulo es base × altura.',a:true},
-  {q:'Un cuadrilátero tiene cinco lados.',a:false},
-  {q:'El cuadrado tiene sus cuatro lados iguales.',a:true},
-  {q:'El área se expresa en unidades cuadradas (cm²).',a:true},
-  {q:'Para cercar un terreno se calcula el área.',a:false},
-  {q:'El perímetro de un rectángulo de 6 × 4 es 20 cm.',a:true},
-  {q:'El área de un cuadrado de lado 5 es 20 cm².',a:false}
+  {q:'Un rectángulo de 6 × 4 cm tiene 20 cm de perímetro.',a:true,k:'tf-6x4'},
+  {q:'Un cuadrado de 5 cm de lado tiene 20 cm² de área.',a:false,k:'tf-cuad-5'},
+  {q:'Un cuadrado de 8 m de lado tiene 32 m de perímetro.',a:true,k:'tf-cuad-8'},
+  {q:'Un rectángulo de 8 × 3 m tiene 24 m² de área.',a:true,k:'tf-8x3'},
+  {q:'Un rectángulo de 10 × 2 cm tiene 20 cm de perímetro.',a:false,k:'tf-10x2'},
+  {q:'Un cuadrado de 6 cm de lado tiene 24 cm² de área.',a:false,k:'tf-cuad-6'},
+  {q:'Un terreno de 12 × 5 m tiene 34 m de cerco.',a:true,k:'tf-12x5'},
+  {q:'Un cuadrado de 1 m de lado tiene 4 m² de área.',a:false,k:'tf-cuad-1'},
+  {q:'Un cuarto de 4 × 4 m necesita 16 baldosas de 1 m².',a:true,k:'tf-4x4'},
+  {q:'Un rectángulo de 7 × 2 m tiene 9 m de perímetro.',a:false,k:'tf-7x2'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el perímetro de un cuadrado de lado 7 cm?',o:['a) 49 cm','b) 14 cm','c) 21 cm','d) 28 cm'],a:3},
-  {q:'¿Cuál es el área de un cuadrado de lado 7 cm?',o:['a) 28 cm²','b) 14 cm²','c) 49 cm²','d) 42 cm²'],a:2},
-  {q:'¿Cuál es el área de un rectángulo de 9 × 4?',o:['a) 26 cm²','b) 13 cm²','c) 36 cm²','d) 18 cm²'],a:2},
-  {q:'¿Cuál es el perímetro de un rectángulo de 9 × 4?',o:['a) 36 cm','b) 26 cm','c) 13 cm','d) 18 cm'],a:1},
-  {q:'¿En qué unidad se mide el perímetro?',o:['a) cm','b) cm²','c) litros','d) grados'],a:0},
-  {q:'Para pintar el piso de un cuarto se calcula:',o:['a) el área','b) el perímetro','c) el volumen','d) la altura'],a:0},
-  {q:'La fórmula del perímetro del rectángulo es:',o:['a) base × altura','b) 2 × (base + altura)','c) 4 × lado','d) lado × lado'],a:1},
-  {q:'Un cuadrilátero tiene:',o:['a) 3 lados','b) 5 lados','c) 6 lados','d) 4 lados'],a:3}
+  {q:'¿Cuál es el perímetro de un cuadrado de lado 7 cm?',o:['a) 49 cm','b) 14 cm','c) 21 cm','d) 28 cm'],a:3,k:'mc-per-7'},
+  {q:'¿Cuál es el área de un cuadrado de lado 8 cm?',o:['a) 32 cm²','b) 16 cm²','c) 64 cm²','d) 48 cm²'],a:2,k:'mc-area-8'},
+  {q:'¿Cuál es el área de un rectángulo de 9 × 4 cm?',o:['a) 27 cm²','b) 13 cm²','c) 36 cm²','d) 18 cm²'],a:2,k:'mc-area-9x4'},
+  {q:'¿Cuál es el perímetro de un rectángulo de 11 × 3 cm?',o:['a) 33 cm','b) 28 cm','c) 14 cm','d) 56 cm'],a:1,k:'mc-per-11x3'},
+  {q:'Un rectángulo tiene 30 m² de área y uno de sus lados mide 5 m. ¿Cuánto mide el otro?',o:['a) 6 m','b) 25 m','c) 35 m','d) 150 m'],a:0,k:'mc-altura'},
+  {q:'Un cuadrado tiene 44 cm de perímetro. ¿Cuánto mide cada lado?',o:['a) 4 cm','b) 22 cm','c) 11 cm','d) 40 cm'],a:2,k:'mc-lado-44'},
+  {q:'Un cuadrado tiene 144 m² de área. ¿Cuánto mide cada lado?',o:['a) 12 m','b) 36 m','c) 72 m','d) 144 m'],a:0,k:'mc-lado-144'},
+  {q:'Con 24 m de malla, ¿qué terreno cuadrado se cerca justo?',o:['a) uno de 4 m de lado','b) uno de 6 m de lado','c) uno de 8 m de lado','d) uno de 12 m de lado'],a:1,k:'mc-malla-24'},
+  {q:'¿Qué rectángulo tiene más área?',o:['a) 8 × 1','b) 5 × 4','c) 6 × 3','d) 7 × 2'],a:1,k:'mc-mas-area'},
+  {q:'Un patio de 10 × 6 m se cubre con baldosas de 1 m². ¿Cuántas hacen falta?',o:['a) 16','b) 32','c) 60','d) 600'],a:2,k:'mc-patio'}
 ];
 const evalCPBank=[
-  {q:'La medida del contorno de una figura es el ___.',a:'perímetro',acc:['perimetro','el perimetro']},
-  {q:'La superficie de una figura es el ___.',a:'área',acc:['area','el area']},
-  {q:'El perímetro de un cuadrado es 4 × ___.',a:'lado',acc:['lado','el lado']},
-  {q:'El área de un rectángulo es base × ___.',a:'altura',acc:['altura','la altura']},
-  {q:'El área se mide en unidades ___.',a:'cuadradas',acc:['cuadradas','cuadrada']},
-  {q:'Un cuadrilátero tiene ___ lados.',a:'cuatro',acc:['cuatro','4']},
-  {q:'El perímetro de un cuadrado de lado 5 es ___ cm.',a:'20',acc:['20','veinte']},
-  {q:'El área de un cuadrado de lado 5 es ___ cm².',a:'25',acc:['25','veinticinco']}
+  {q:'Un cuadrado de 13 cm de lado tiene ___ cm de perímetro.',a:'52',acc:['52'],k:'cp-per-13'},
+  {q:'Un cuadrado de 15 cm de lado tiene ___ cm² de área.',a:'225',acc:['225'],k:'cp-area-15'},
+  {q:'Un rectángulo de 7 × 6 m tiene ___ m de perímetro.',a:'26',acc:['26'],k:'cp-per-7x6'},
+  {q:'Un rectángulo de 13 × 3 cm tiene ___ cm² de área.',a:'39',acc:['39'],k:'cp-area-13x3'},
+  {q:'Un terreno de 20 × 15 m necesita ___ m de cerco.',a:'70',acc:['70'],k:'cp-cerco'},
+  {q:'Un rectángulo de 40 m² con un lado de 8 m tiene el otro lado de ___ m.',a:'5',acc:['5','cinco'],k:'cp-lado-40'},
+  {q:'Un cuadrado de 68 cm de perímetro tiene lados de ___ cm.',a:'17',acc:['17'],k:'cp-lado-68'},
+  {q:'Un cuarto de 3 × 7 m necesita ___ baldosas de 1 m².',a:'21',acc:['21'],k:'cp-baldosas'},
+  {q:'Un rectángulo de 25 × 4 cm tiene ___ cm² de área.',a:'100',acc:['100','cien'],k:'cp-area-25x4'},
+  {q:'Un cuadrado de 50 m de lado tiene ___ m de perímetro.',a:'200',acc:['200'],k:'cp-per-50'}
 ];
 const evalPRBank=[
-  {term:'Perímetro',def:'Medida del contorno (suma de los lados)'},
-  {term:'Área',def:'Medida de la superficie'},
-  {term:'Cuadrado',def:'Cuadrilátero de 4 lados iguales'},
-  {term:'Rectángulo',def:'Cuadrilátero con base y altura distintas'},
-  {term:'P = 4 × lado',def:'Fórmula del perímetro del cuadrado'},
-  {term:'A = base × altura',def:'Fórmula del área del rectángulo'}
+  {term:'Perímetro',def:'La medida de la orilla: la suma de todos los lados',k:'pr-perimetro'},
+  {term:'Área',def:'Lo que cubre la figura por dentro',k:'pr-area'},
+  {term:'Cuadrado',def:'Tiene sus cuatro lados iguales y esquinas rectas',k:'pr-cuadrado'},
+  {term:'Rectángulo',def:'Tiene los lados de enfrente iguales y esquinas rectas',k:'pr-rectangulo'},
+  {term:'Cuadrilátero',def:'Figura de cuatro lados',k:'pr-cuadrilatero'},
+  {term:'Base',def:'El lado sobre el que se apoya la figura',k:'pr-base'},
+  {term:'Altura',def:'Lo que mide la figura de abajo hacia arriba',k:'pr-altura'},
+  {term:'Unidades cuadradas',def:'Las que se usan para medir el área',k:'pr-unidades'},
+  {term:'Lado',def:'Cada segmento que forma el borde',k:'pr-lado'},
+  {term:'Metro cuadrado',def:'Un cuadrado de un metro por lado',k:'pr-metro-cuadrado'}
 ];
 const EVAL_FORMAS = 30;
 function _evalRng(forma) {
