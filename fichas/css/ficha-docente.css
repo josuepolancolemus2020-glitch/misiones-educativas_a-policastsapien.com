@@ -50,6 +50,11 @@ body {
   display: flex; align-items: flex-end; gap: 8px;
   font-size: 12px; font-weight: 700; color: var(--gris); margin-bottom: 12px;
 }
+/* La raya para escribir fuera del renglón del nombre (el plan en blanco, los
+   completar): solo tenía estilo dentro de .idline, y fuera de ahí no medía
+   nada ni llevaba borde, así que en papel no había dónde escribir. */
+.raya { display: inline-block; min-width: 110px; height: 14px; border-bottom: 1px solid var(--linea); margin: 0 3px; vertical-align: baseline; }
+.raya.corta { min-width: 60px; }
 .idline .raya { flex: 1; border-bottom: 1px solid var(--linea); height: 14px; }
 .idline .corta { flex: 0 0 70px; }
 

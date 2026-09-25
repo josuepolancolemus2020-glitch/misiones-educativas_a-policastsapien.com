@@ -34,6 +34,12 @@
   }
   .pag-pie b { color: var(--soc-osc); }
 
+  /* La raya donde escribe el alumno —completar, verdadero o falso, pareados—.
+     Solo tenía estilo dentro del renglón del nombre (.idline .raya), así que
+     fuera de ahí no medía nada ni llevaba borde: fotocopiada, la pregunta decía
+     «y se llama .» sin ningún sitio donde escribir. */
+  .raya { display: inline-block; flex: 0 0 auto; min-width: 110px; height: 1.05em; border-bottom: 1.3px solid var(--tinta); margin: 0 4px; vertical-align: baseline; }
+  .raya.corta { min-width: 70px; }
   .idline { display: flex; align-items: flex-end; gap: 8px; font-size: 11pt; font-weight: 700; margin-bottom: 9px; }
   .idline .raya { flex: 1; border-bottom: 1.3px solid var(--tinta); min-height: 1.15em; }
   .idline .raya.corta { flex: 0 0 70px; }

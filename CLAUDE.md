@@ -6432,8 +6432,11 @@ formato:** en las fichas de los tres poderes y de la Constitución, **la raya do
 el alumno escribe no se imprime**. El completar y el verdadero o falso usan
 `<span class="raya corta">`, y esa clase solo tiene estilo dentro del renglón del
 nombre (`.idline .raya`): fuera de ahí no mide nada y no lleva borde. Fotocopiada,
-la ficha dice «y se llama .» sin ningún sitio donde escribir. Queda apuntado aquí
-para arreglarlo aparte.
+la ficha dice «y se llama .» sin ningún sitio donde escribir. **Arreglado el 25 de
+septiembre de 2026**, a pedido del autor: una regla `.raya` suelta en las dos
+fichas y en `fichas/css/ficha-docente.css`, que tenía la misma avería en las ocho
+fichas del maestro (el plan en blanco y los completar). Las diez siguen saliendo
+en sus hojas, contadas en el PDF.
 
 ### La quinta: la Constitución, y lo que enseñó
 
