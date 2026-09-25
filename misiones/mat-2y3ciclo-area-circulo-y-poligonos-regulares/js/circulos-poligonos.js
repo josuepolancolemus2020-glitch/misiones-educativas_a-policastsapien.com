@@ -392,58 +392,58 @@ function genExplainTask(out,count){ _instrBlock(out,'Instrucción',['Copia las p
 function toggleAns(){ ansVisible=!ansVisible; document.querySelectorAll('.tg-answer').forEach(el=>el.style.display=ansVisible?'block':'none'); sfx('click'); }
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El área de un círculo se calcula multiplicando Pi por su radio al cuadrado.',a:true},
-  {q:'La apotema es el segmento más largo de un polígono.',a:false},
-  {q:'El diámetro equivale exactamente a dos radios.',a:true},
-  {q:'Un sector circular está delimitado por tres apotemas.',a:false},
-  {q:'El área de un hexágono regular se calcula con A = (P · a) / 2.',a:true},
-  {q:'El perímetro se expresa en unidades cuadradas (cm²).',a:false},
-  {q:'Pi (π) es un valor constante aproximado a 3.1416.',a:true},
-  {q:'El radio es la distancia del centro a cualquier punto del borde del círculo.',a:true},
-  {q:'La fórmula del área del círculo sirve también para el área de un cuadrado.',a:false},
-  {q:'La apotema de un polígono regular forma un ángulo de 90° con el lado.',a:true},
-  {q:'El perímetro de un sector circular es la suma de su arco y dos radios.',a:true},
-  {q:'Un octágono regular tiene 6 lados.',a:false},
-  {q:'Para calcular el perímetro de un pentágono regular, se multiplica el lado por 5.',a:true},
-  {q:'El centro del polígono está a la misma distancia de todos sus vértices.',a:true},
-  {q:'Unidades cúbicas se utilizan para medir áreas.',a:false},
+  {q:'Si el radio mide 5 cm, el diámetro mide 10 cm.',a:true,k:'tf-radio-5'},
+  {q:'Un hexágono regular de 4 cm de lado tiene 24 cm de perímetro.',a:true,k:'tf-hex-4'},
+  {q:'Un círculo de radio 2 cm tiene un área de 12.56 cm² (usa π = 3.14).',a:true,k:'tf-area-r2'},
+  {q:'El área se mide en cm³.',a:false,k:'tf-unidades'},
+  {q:'Un octágono regular tiene 6 lados.',a:false,k:'tf-octagono'},
+  {q:'Si el diámetro mide 18 m, el radio mide 36 m.',a:false,k:'tf-diam-18'},
+  {q:'Un pentágono regular de 3 cm de lado tiene 15 cm de perímetro.',a:true,k:'tf-pent-3'},
+  {q:'Un círculo de radio 10 cm tiene un área de 31.4 cm² (usa π = 3.14).',a:false,k:'tf-area-r10'},
+  {q:'Un polígono de perímetro 30 cm y apotema 4 cm tiene 60 cm² de área.',a:true,k:'tf-pa-30-4'},
+  {q:'Un cuadrado de 5 cm de lado tiene 20 cm² de área.',a:false,k:'tf-cuadrado-5'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es la fórmula del área del círculo?',o:['a) A = π · r','b) A = π · r²','c) A = (P·a)/2','d) A = L · L'],a:1},
-  {q:'¿Qué representa la "a" en la fórmula de polígonos?',o:['a) Área','b) Altura','c) Arco','d) Apotema'],a:3},
-  {q:'El segmento del centro del círculo a su borde se llama:',o:['a) Cuerda','b) Diámetro','c) Apotema','d) Radio'],a:3},
-  {q:'Si el radio es 4cm, el diámetro es:',o:['a) 8cm','b) 2cm','c) 16cm','d) 12cm'],a:0},
-  {q:'Un sector circular parece:',o:['a) Un cuadrado','b) Un hexágono','c) Una rebanada de pizza','d) Una línea'],a:2},
-  {q:'La apotema forma un ángulo con el lado de:',o:['a) 45°','b) 180°','c) 90°','d) 360°'],a:2},
-  {q:'¿En qué unidades se mide el área?',o:['a) cm²','b) cm³','c) Litros','d) m'],a:0},
-  {q:'Fórmula de área para un pentágono regular:',o:['a) A = (P·a)/2','b) A = π·r²','c) A = b·h','d) A = l³'],a:0},
-  {q:'El número Pi (π) equivale aproximadamente a:',o:['a) 2.14','b) 3.1416','c) 1.41','d) 9.81'],a:1},
-  {q:'¿Qué necesitamos para calcular el perímetro de un hexágono regular?',o:['a) La apotema','b) Conocer su lado','c) El número Pi','d) El radio'],a:1},
+  {q:'¿Cuál es el área de un círculo de radio 3 cm? (usa π = 3.14)',o:['a) 9.42 cm²','b) 18.84 cm²','c) 28.26 cm²','d) 28.26 cm'],a:2,k:'mc-area-r3'},
+  {q:'Si el radio es 4 cm, el diámetro es…',o:['a) 8 cm','b) 2 cm','c) 16 cm','d) 4 cm'],a:0,k:'mc-radio-4'},
+  {q:'¿Cuántos lados tiene un hexágono regular?',o:['a) 5','b) 7','c) 6','d) 8'],a:2,k:'mc-hexagono'},
+  {q:'Un hexágono regular de 5 cm de lado y 4.3 cm de apotema tiene un área de…',o:['a) 30 cm²','b) 129 cm²','c) 21.5 cm²','d) 64.5 cm²'],a:3,k:'mc-hex-area'},
+  {q:'¿Cuál es el perímetro de un triángulo equilátero de 9 cm de lado?',o:['a) 27 cm','b) 18 cm','c) 81 cm','d) 3 cm'],a:0,k:'mc-triangulo-9'},
+  {q:'La mitad de un círculo de radio 20 cm tiene un área de… (usa π = 3.14)',o:['a) 1,256 cm²','b) 62.8 cm²','c) 628 cm²','d) 125.6 cm²'],a:2,k:'mc-medio-r20'},
+  {q:'Un polígono regular tiene perímetro 40 cm y apotema 9 cm. Su área es…',o:['a) 180 cm²','b) 360 cm²','c) 45 cm²','d) 20 cm²'],a:0,k:'mc-pa-40-9'},
+  {q:'¿Cuál de estas figuras es un polígono regular?',o:['a) un rectángulo de 2 × 5','b) un triángulo de lados 3, 4 y 5','c) un círculo','d) un cuadrado'],a:3,k:'mc-regular'},
+  {q:'Un pentágono regular tiene 60 cm de perímetro. ¿Cuánto mide cada lado?',o:['a) 5 cm','b) 12 cm','c) 55 cm','d) 300 cm'],a:1,k:'mc-pent-60'},
+  {q:'Un círculo de radio 4 m tiene un área de… (usa π = 3.14)',o:['a) 50.24 m²','b) 25.12 m²','c) 12.56 m²','d) 100.48 m²'],a:0,k:'mc-area-r4'}
 ];
 const evalCPBank=[
-  {q:'La ___ es la distancia del centro al punto medio del lado del polígono.',a:'apotema'},
-  {q:'El área de un círculo se calcula con Pi y el ___ al cuadrado.',a:'radio'},
-  {q:'Un ___ circular está formado por un arco y dos radios.',a:'sector'},
-  {q:'El área siempre se expresa en unidades ___.',a:'cuadradas'},
-  {q:'El ___ de un círculo es igual a dos radios.',a:'diámetro'},
-  {q:'Para polígonos regulares, el Área es Perímetro por apotema entre ___.',a:'dos'},
-  {q:'La letra "P" en la fórmula del polígono significa ___.',a:'perimetro'},
-  {q:'El perímetro de un sector suma el arco y dos ___.',a:'radios'},
-  {q:'El valor aproximado de Pi es ___.',a:'3.1416'},
-  {q:'El punto interior a la misma distancia de los vértices es el ___.',a:'centro'},
+  {q:'Si el radio mide 7 cm, el diámetro mide ___ cm.',a:'14',acc:['14'],k:'cp-radio-7'},
+  {q:'Si el diámetro mide 50 m, el radio mide ___ m.',a:'25',acc:['25'],k:'cp-diam-50'},
+  {q:'Un hexágono regular de 7 cm de lado tiene ___ cm de perímetro.',a:'42',acc:['42'],k:'cp-hex-7'},
+  {q:'Un cuadrado de 7 m de lado tiene ___ m² de área.',a:'49',acc:['49'],k:'cp-cuadrado-7'},
+  {q:'Un polígono de perímetro 26 cm y apotema 5 cm tiene ___ cm² de área.',a:'65',acc:['65'],k:'cp-pa-26-5'},
+  {q:'Un círculo de radio 5 cm tiene ___ cm² de área (usa π = 3.14).',a:'78.5',acc:['78.5','78.50'],k:'cp-area-r5'},
+  {q:'Un pentágono regular de 16 cm de lado tiene ___ cm de perímetro.',a:'80',acc:['80'],k:'cp-pent-16'},
+  {q:'Un triángulo equilátero de 17 cm de lado tiene ___ cm de perímetro.',a:'51',acc:['51'],k:'cp-tri-17'},
+  {q:'La cuarta parte de un círculo de 44 cm² tiene ___ cm² de área.',a:'11',acc:['11'],k:'cp-cuarto'},
+  {q:'Un hexágono regular tiene 78 cm de perímetro; cada lado mide ___ cm.',a:'13',acc:['13'],k:'cp-hex-78'}
 ];
 const evalPRBank=[
-  {term:'A = π · r²',def:'Fórmula del área del círculo'},
-  {term:'A = (P · a) / 2',def:'Fórmula del área de polígonos regulares'},
-  {term:'Apotema',def:'Segmento del centro al lado del polígono'},
-  {term:'Radio',def:'Segmento del centro al borde del círculo'},
-  {term:'Diámetro',def:'Segmento que cruza el círculo por el centro'},
-  {term:'Sector Circular',def:'Porción delimitada por dos radios y un arco'},
-  {term:'Perímetro',def:'Medida del contorno o borde de una figura'},
-  {term:'Unidades Cuadradas',def:'Unidades utilizadas para expresar el área'},
-  {term:'Pi (π)',def:'Constante matemática aproximada a 3.1416'},
-  {term:'Centro',def:'Punto interior equidistante a los vértices'},
+  {term:'Radio',def:'Del centro al borde del círculo',k:'pr-radio'},
+  {term:'Diámetro',def:'Cruza el círculo pasando por el centro',k:'pr-diametro'},
+  {term:'Apotema',def:'Del centro del polígono al punto medio de un lado',k:'pr-apotema'},
+  {term:'Sector circular',def:'Una rebanada del círculo: dos radios y un arco',k:'pr-sector'},
+  {term:'Arco',def:'Un pedazo del borde del círculo',k:'pr-arco'},
+  {term:'Perímetro',def:'La medida del borde de una figura',k:'pr-perimetro'},
+  {term:'Área',def:'Lo que mide la superficie de una figura',k:'pr-area'},
+  {term:'Pi (π)',def:'El número que se usa en el círculo, cerca de 3.14',k:'pr-pi'},
+  {term:'Lado',def:'Cada segmento que forma el borde del polígono',k:'pr-lado'},
+  {term:'Centro',def:'El punto que está a la misma distancia de todos los vértices',k:'pr-centro'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
