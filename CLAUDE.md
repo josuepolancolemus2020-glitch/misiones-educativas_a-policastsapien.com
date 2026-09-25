@@ -6365,6 +6365,74 @@ De paso se arregló una pregunta calcada de otra misión: la comparación pedía
 cultura, lugar o concepto corresponde a cada caso?», y en esta no hay culturas ni
 lugares. Ahora pregunta de quién habla cada caso.
 
+### La cuarta: los tres poderes, y lo que enseñó
+
+Medido antes de tocar nada: la conceptual repetía algún dato en **las 30 formas**
+(146 veces), la de pensamiento crítico en **29 de 30** (68 veces), y la ficha
+hacía **32 preguntas sobre 18 datos**. La separación de poderes salía tres veces
+en la ficha, y una de ellas era la pregunta abierta que pide explicarla.
+
+Una misión que enseña una **estructura** —tres poderes, sus normas, su jerarquía—
+tiene una trampa que no tenían las anteriores, y de ahí salieron tres decisiones:
+
+1. ⚠️ **Ninguna pregunta junta una institución con lo que hace.** Lo que hace cada
+   poder se adivina por su nombre —legislar, ejecutar, juzgar—, así que «el
+   Congreso aprobó el Estatuto» escrito en una pregunta contestaba sola «¿quién
+   ejerce el Poder Legislativo?» en otra. Los tres poderes son el TEMA, como los
+   nombres en la de próceres; lo que va en la raya es un número, una fecha o una
+   palabra que no sale en ninguna otra.
+2. **En pensamiento crítico, cada sección tiene su terreno** y no pisa el de las
+   otras: quién hace qué vive solo en la comparación; la jerarquía, el reglamento
+   y La Gaceta, en los errores; los casos cuentan conductas —una regla que nadie
+   enseña escrita, una autoridad que se cree por encima de la ley, un dato
+   inventado—; las decisiones son de rendición de cuentas; y las causas y los
+   efectos salen del Estatuto del Docente. Las secciones que sacan UN ítem por
+   forma pueden repetir tema entre sus propios ítems, porque nunca caen juntos.
+3. ⚠️ **La ficha no pregunta lo que ya contestan su hoja 4 ni sus dos preguntas
+   abiertas.** La hoja 4 lleva la rendición de cuentas y las preguntas de
+   investigar —donde «el juzgado» y «el Poder Judicial» salen juntos—, y debajo
+   empieza el completar; y las abiertas piden la separación de poderes y el
+   recorrido de una ley «con un ejemplo de verdad». Por eso las 32 preguntas de la
+   ficha no tocan la rendición, ni la separación, ni el Estatuto del Docente:
+   preguntan quién ejerce cada poder, la jerarquía y los conceptos, y el
+   recorrido lo cuenta el alumno con sus palabras.
+
+Los bancos son de **diez**, el piso de lo revisado dato por dato. Y cada dato del
+Estatuto se volvió a leer en su PDF antes de preguntarlo —el 11 y el 29 de
+septiembre de 1997, Tegucigalpa, el Salón de Sesiones, los artículos 93 y 101—,
+igual que los ocho escalones del Código de la Niñez. **«Diputados» no aparece en
+ninguna fuente del repositorio**, así que ninguna pregunta afirma nada de ellos:
+salen solo donde ya estaban, en lo que la misión manda a investigar.
+
+⚠️ **La sonda aprendió dos cosas, y la segunda costó un intento fallido.**
+
+- **Las fichas de los tres poderes y de la Constitución no tienen la forma de
+  siempre** —la ficha entera numerada en `<h2>` con su emoji («✏️ 8. Completa»), y
+  cada pregunta en un bloque `.preg`—, y la sonda se rendía con un «se revisa
+  leyéndola». Ahora lee las dos formas, y de paso la de la Constitución, que
+  todavía no se revisa, sale medida: 8 pistas.
+- Daba por pista **un nombre puesto en una lista**: «¿Qué poder HACE las leyes?»
+  contesta «El Legislativo», y la selección de al lado ofrece «El Judicial · El
+  Legislativo · El Ejecutivo». Eso no dice qué hace el Legislativo. El primer
+  arreglo fue eximir las palabras del «Tema:» de la portada, como ya se eximen las
+  del título, y **se probó al revés antes de darlo por bueno**: escribiendo «El
+  Legislativo hace las leyes» en otra pregunta, la sonda ya no lo veía, porque
+  «hace» es palabra vacía y el nombre quedaba eximido. Se deshizo. Lo que quedó es
+  más preciso: para una **selección** o un **pareado**, un nombre solo cuenta si
+  la otra pregunta lo AFIRMA —su enunciado, un verdadero o falso, un completar—,
+  no si lo pone en sus opciones o en una columna. Para el **completar** se sigue
+  mirando todo, que es la lección de «Hartling». Se comprobó con las dos pistas
+  plantadas —el nombre en un enunciado y una respuesta del completar puesta de
+  opción—, y salieron rojas las dos.
+
+⚠️ **Y lo que se encontró y NO se tocó, porque el encargo era el contenido y no el
+formato:** en las fichas de los tres poderes y de la Constitución, **la raya donde
+el alumno escribe no se imprime**. El completar y el verdadero o falso usan
+`<span class="raya corta">`, y esa clase solo tiene estilo dentro del renglón del
+nombre (`.idline .raya`): fuera de ahí no mide nada y no lleva borde. Fotocopiada,
+la ficha dice «y se llama .» sin ningún sitio donde escribir. Queda apuntado aquí
+para arreglarlo aparte.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

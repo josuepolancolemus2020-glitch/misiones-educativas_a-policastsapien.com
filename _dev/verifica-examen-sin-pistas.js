@@ -280,12 +280,28 @@ function pista(X, Y, tema, nombres, titulo = new Set()) {
   const vistoY = palabras(Y.visible);
   const enY = new Set(vistoY.map(p => p.r));
   const utiles = ps => ps.filter(p => !tema.has(p.r));
+  /* ⚠️ Un nombre que en la otra pregunta sale solo como OPCIÓN, o en una
+     columna de los pareados, no delata a una selección ni a un pareado.
+     Se encontró en la de los tres poderes: «¿Qué poder HACE las leyes?»
+     tiene por respuesta «El Legislativo», y la sonda la daba por escrita en
+     la selección de al lado, que ofrece «El Judicial · El Legislativo · El
+     Ejecutivo», y en el pareado «Poder Legislativo». Ninguna de las dos dice
+     qué hace el Legislativo: lo ponen en una lista, igual que la propia
+     pregunta, que ya enseña sus cuatro opciones. Por eso, para esas dos
+     clases de pregunta, un nombre solo cuenta si está en lo que la otra
+     AFIRMA —el enunciado de la selección, el verdadero o falso, el
+     completar—. Para el completar se sigue mirando todo: ahí el alumno tiene
+     que escribir la respuesta, y verla en una lista de opciones es verla
+     escrita, que es la lección de «Hartling» en Aspectos Cívicos. */
+  const afirmaY = Y.tipo === 'seleccion' ? Y.ctx : Y.tipo === 'pareado' ? '' : Y.visible;
+  const enLista = X.tipo === 'seleccion' || X.tipo === 'pareado';
+  const enYnombre = enLista ? new Set(palabras(afirmaY).map(p => p.r)) : enY;
 
   if (X.tipo === 'pareado') {
     /* El pareado se contesta EMPAREJANDO: lo delata otra pregunta que
        junte las dos mitades, o que repita el nombre de la de la izquierda. */
     const T = utiles(palabras(X.term)).filter(p => !nombres.has(p.r)), D = utiles(palabras(X.def));
-    const fuerteT = T.filter(p => p.fuerte && !titulo.has(p.r) && enY.has(p.r));
+    const fuerteT = T.filter(p => p.fuerte && !titulo.has(p.r) && enYnombre.has(p.r));
     if (fuerteT.length) return 'repite «' + X.term + '»';
     if (T.some(p => enY.has(p.r)) && D.some(p => enY.has(p.r))) return 'junta «' + X.term + '» con «' + X.def + '»';
     return null;
@@ -316,7 +332,7 @@ function pista(X, Y, tema, nombres, titulo = new Set()) {
 
   const R = utiles(palabras(X.resp || ''));
   if (!R.length) return null;
-  const fuertes = R.filter(p => p.fuerte && !titulo.has(p.r) && enY.has(p.r));
+  const fuertes = R.filter(p => p.fuerte && !titulo.has(p.r) && enYnombre.has(p.r));
   if (fuertes.length) return 'deja escrito «' + fuertes.map(p => p.r).join(', ') + '»';
   const comunes = [...new Set(R.filter(p => enY.has(p.r)).map(p => p.r))];
   if (!comunes.length) return null;
@@ -400,12 +416,17 @@ function divEntero(html, desde) {
 }
 
 /* Las fichas no numeran igual sus secciones —«I. Completa los espacios»,
-   «8. Completa»—, así que se buscan por lo que son y no por su número. */
+   «8. Completa»—, así que se buscan por lo que son y no por su número.
+   ⚠️ Y no todas usan el mismo encabezado: las de los tres poderes y la
+   Constitución numeran la ficha entera en `<h2>` con su emoji delante
+   («✏️ 8. Completa», «🔗 11. Pareados») y escriben cada pregunta en un
+   bloque `.preg`, no en un `<li>`. Sin leer esa forma, la sonda se rendía
+   con un «se revisa leyéndola» y dos fichas enteras quedaban sin vigilar. */
 const TITULO = {
-  completa: /<h3[^>]*>\s*(?:[IVX]+|\d+)\.\s*Complet/,
-  vf: /<h3[^>]*>\s*(?:[IVX]+|\d+)\.\s*Verdadero/,
-  seleccion: /<h3[^>]*>\s*(?:[IVX]+|\d+)\.\s*Selecci/,
-  pareados: /<h3[^>]*>\s*(?:[IVX]+|\d+)\.\s*(?:T[ée]rminos|Relaciona|Pareados|Une)/
+  completa: /<h[23][^>]*>\s*(?:[^\s<\w]+\s*)?(?:[IVX]+|\d+)\.\s*Complet/,
+  vf: /<h[23][^>]*>\s*(?:[^\s<\w]+\s*)?(?:[IVX]+|\d+)\.\s*Verdadero/,
+  seleccion: /<h[23][^>]*>\s*(?:[^\s<\w]+\s*)?(?:[IVX]+|\d+)\.\s*Selecci/,
+  pareados: /<h[23][^>]*>\s*(?:[^\s<\w]+\s*)?(?:[IVX]+|\d+)\.\s*(?:T[ée]rminos|Relaciona|Pareados|Une)/
 };
 
 function itemsFicha(html) {
@@ -417,7 +438,12 @@ function itemsFicha(html) {
     const fin = resto.search(/<h3[\s>]|<h2[\s>]|<div class="pauta"|class="felic"/);
     return fin < 0 ? resto : resto.slice(0, fin);
   };
-  const lis = t => t ? [...t.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => m[1]) : [];
+  /* Una pregunta es un <li> o, en la otra forma, un `.preg-q` con su número. */
+  const lis = t => {
+    if (!t) return [];
+    const L = [...t.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => m[1]);
+    return L.length ? L : [...t.matchAll(/<div class="preg-q"><span class="preg-n">\d+<\/span>([\s\S]*?)<\/div>/g)].map(m => m[1]);
+  };
   const iPauta = html.search(/<div class="pauta"/);
   const bloquePauta = iPauta < 0 ? '' : divEntero(html, iPauta);
   const lineaPauta = re => { const m = bloquePauta.match(re); return m ? limpiaHtml(m[1]) : ''; };

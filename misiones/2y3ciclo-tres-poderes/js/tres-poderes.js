@@ -372,78 +372,80 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+/* UN DATO, UNA PREGUNTA. Cada forma saca 5 preguntas de cada banco al azar,
+   y cualquier par de preguntas de estos cuatro bancos puede caer en la misma
+   hoja. Antes los cuatro preguntaban lo mismo de cuatro maneras: «El Poder
+   Legislativo lo ejerce el ___ Nacional» en el completar, «El Poder
+   Legislativo lo ejerce la Corte Suprema» en el verdadero o falso, «¿Quién
+   ejerce el Poder Legislativo?» en la selección y «Hace las leyes. Lo ejerce
+   el Congreso Nacional» en los pareados. Medido el 25 de septiembre de 2026:
+   las 30 formas preguntaban algún dato dos veces, 146 veces en total.
+
+   Por eso cada ítem lleva su `k`, el dato que pregunta, y ninguna `k` se
+   repite en los cuatro bancos. Y la respuesta de una pregunta no aparece
+   escrita en otra, ni como opción equivocada. Tres decisiones que salen de
+   ahí, y que no son de estilo:
+   - los nombres de los tres poderes son el TEMA de la prueba, no su
+     respuesta: salen en muchas preguntas y ninguna pide escribirlos;
+   - ⚠️ ninguna pregunta junta una institución con lo que hace («el Congreso
+     aprueba…», «la Corte resuelve…»). Lo que hace cada poder se adivina por
+     su nombre —legislar, ejecutar, juzgar—, así que con esa frase escrita
+     en otra pregunta, quién ejerce cada poder se contestaba solo;
+   - lo que se escribe en la raya —un número, una fecha, una palabra— no sale
+     en ninguna otra pregunta.
+
+   ⚠️ Son DIEZ por banco y no quince, a propósito. Esta misión enseña una
+   estructura —tres poderes, sus normas, su jerarquía y una ley de verdad—,
+   y con quince por banco la única forma de llenarlo era volver a preguntar
+   lo mismo, que es justo lo que había que quitar.
+   Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el Judicial.',a:true},
-  {q:'El Poder Legislativo lo ejerce la Corte Suprema de Justicia.',a:false},
-  {q:'Una ley aprobada por el Congreso Nacional se llama decreto.',a:true},
-  {q:'La Constitución de la República está por encima de todas las demás leyes.',a:true},
-  {q:'Un reglamento puede decir más cosas que la ley que reglamenta.',a:false},
-  {q:'«Al Poder Ejecutivo. Por Tanto: Ejecútese» lo firma el Presidente de la República.',a:true},
-  {q:'El Poder Judicial es el que aprueba las leyes.',a:false},
-  {q:'La jurisprudencia la establece la Corte Suprema de Justicia.',a:true},
-  {q:'En un Estado de Derecho manda la voluntad de quien tiene el poder.',a:false},
-  {q:'La rendición de cuentas es un favor que hace el funcionario, no una obligación.',a:false},
-  {q:'El Estatuto del Docente es el Decreto 136-97, aprobado por el Congreso Nacional.',a:true},
-  {q:'El Reglamento del Estatuto del Docente lo dictó la Secretaría de Educación.',a:true},
-  {q:'Los tres poderes están separados para que el trabajo salga más rápido.',a:false},
-  {q:'Una ley entra en vigencia cuando se publica en el Diario Oficial La Gaceta.',a:true},
-  {q:'Si dos normas dicen cosas distintas, manda siempre la más nueva.',a:false},
-  {q:'El Presidente de la República encabeza el Poder Ejecutivo.',a:true},
-  {q:'Los juzgados y tribunales forman parte del Poder Judicial.',a:true},
-  {q:'El Congreso Nacional se reúne en su Salón de Sesiones.',a:true},
-  {q:'En un Estado de Derecho la ley no se le aplica a quien gobierna.',a:false},
-  {q:'La Constitución dice cómo se organiza el Estado y qué derechos tiene cada persona.',a:true}
+  {q:'El Poder Ejecutivo cumple y hace cumplir las leyes.',a:true,k:'ejecutivo-hace'},
+  {q:'Un reglamento puede exigir más de lo que exige su propia ley.',a:false,k:'reglamento-limite'},
+  {q:'La Constitución dice cómo se organiza el Estado y qué derechos tiene cada persona.',a:true,k:'constitucion-que'},
+  {q:'Cuando dos normas dicen cosas distintas, manda siempre la más nueva.',a:false,k:'regla-rango'},
+  {q:'El Estatuto del Docente empieza citando la Constitución de la República.',a:true,k:'estatuto-cita'},
+  {q:'Explicar en qué gastó el dinero público es un favor que el funcionario hace si quiere.',a:false,k:'rendicion-obligacion'},
+  {q:'El artículo 101 del Estatuto del Docente dice desde cuándo empieza a valer.',a:true,k:'articulo-101'},
+  {q:'Una ley obliga a todos desde el día en que se aprueba, aunque todavía no se haya publicado.',a:false,k:'vigencia'},
+  {q:'El Estatuto del Docente dice cómo entra un maestro a su plaza y qué le deben pagar.',a:true,k:'estatuto-rige'},
+  {q:'Una regla que «siempre se ha hecho así» vale como ley, aunque nadie la haya escrito.',a:false,k:'regla-escrita'}
 ];
 const evalMCBank=[
-  {q:'¿Cuáles son los tres poderes del Estado?',o:['Civil, militar y religioso','Nacional, departamental y municipal','Ejecutivo, Legislativo y Judicial','Presidente, alcalde y juez'],a:2},
-  {q:'¿Quién ejerce el Poder Legislativo?',o:['El Congreso Nacional','El Presidente de la República','La Corte Suprema','Las Secretarías de Estado'],a:0},
-  {q:'¿Qué hace el Poder Judicial?',o:['Escribe las leyes','Cobra los impuestos','Nombra al Presidente','Aplica la ley a cada caso'],a:3},
-  {q:'¿Cómo se llama una ley aprobada por el Congreso Nacional?',o:['Acuerdo','Decreto','Sentencia','Circular'],a:1},
-  {q:'¿Por qué la Constitución es la ley fundamental?',o:['Porque es la más larga','Porque es la más antigua','Porque está por encima de las demás','Porque la firma el Presidente'],a:2},
-  {q:'¿Qué significa «Por Tanto: Ejecútese» al pie de una ley?',o:['Que el Presidente manda cumplirla','Que ya se venció','Que un juez la anuló','Que falta discutirla'],a:0},
-  {q:'¿Quién dicta el reglamento de una ley?',o:['La Corte Suprema','El Congreso Nacional','Los diputados','El Ejecutivo, por medio de una Secretaría'],a:3},
-  {q:'¿Qué es un Estado de Derecho?',o:['Un país con ejército propio','Aquel donde manda la ley y no la voluntad del que gobierna','Un país que cobra impuestos','Un país con tres poderes y un rey'],a:1},
-  {q:'¿Para qué sirve que los tres poderes estén separados?',o:['Para repartir el trabajo','Para gastar menos','Para que cada uno pueda pararle la mano a los otros','Por costumbre desde la Independencia'],a:2},
-  {q:'¿Qué es la rendición de cuentas?',o:['Explicar qué se hizo con el cargo y con el dinero de todos','Un impuesto anual','El conteo de votos','Un examen para los diputados'],a:0},
-  {q:'Un maestro cree que no le respetaron lo que dice el Estatuto. ¿A dónde acude?',o:['Al Congreso Nacional','A la Presidencia','A los juzgados y tribunales','Al Diario Oficial'],a:2},
-  {q:'¿Cuándo entra en vigencia una ley?',o:['Cuando la firma el Presidente','Al publicarse en el Diario Oficial La Gaceta','Cuando la aprueba el Congreso','Cuando la Corte la revisa'],a:1},
-  {q:'Si un reglamento dice más de lo que dice su ley, ¿qué pasa?',o:['Manda el reglamento, que es más nuevo','No puede: el reglamento no puede pasarse de la ley','Deciden los diputados','Manda el que firme primero'],a:1},
-  {q:'¿Qué es la jurisprudencia?',o:['El reglamento de una ley','Un decreto del Congreso','Lo que la Corte Suprema resuelve una y otra vez','El texto de la Constitución'],a:2},
-  {q:'¿Qué documento ordena las normas por rango y pone la Constitución de primera?',o:['El Estatuto del Docente','El Código de la Niñez y la Adolescencia','El Reglamento del Estatuto','El Diario Oficial'],a:1}
+  {q:'¿Qué poder del Estado HACE las leyes?',o:['El Judicial','El Legislativo','El Ejecutivo','Los tres a la vez'],a:1,k:'legislativo-hace'},
+  {q:'Dos vecinos pelean por dónde pasa el cerco entre sus terrenos. ¿Qué poder decide qué dice la ley en ese caso?',o:['El Legislativo','El Ejecutivo','El Judicial','Ninguno: que se arreglen solos'],a:2,k:'judicial-hace'},
+  {q:'¿Qué dice el reglamento de una ley?',o:['Cómo se aplica','Quién la aprobó','Cuánto tiempo va a valer','Cuánto cuesta cumplirla'],a:0,k:'reglamento-que'},
+  {q:'¿Qué poder dicta los reglamentos de las leyes?',o:['El Legislativo','El Judicial','Ninguno: cada escuela hace el suyo','El Ejecutivo'],a:3,k:'reglamento-quien'},
+  {q:'¿Por qué se dice que la Constitución es la ley FUNDAMENTAL?',o:['Porque es la más antigua','Porque está por encima de todas las demás','Porque es la más larga','Porque la escribió un solo presidente'],a:1,k:'constitucion-arriba'},
+  {q:'¿Dónde se reúne el Congreso Nacional?',o:['En el edificio de la Corte Suprema','En la Secretaría de Educación','En su Salón de Sesiones','En la alcaldía de cada ciudad'],a:2,k:'salon'},
+  {q:'¿Qué va en el segundo escalón de la jerarquía de normas?',o:['Las órdenes que da cada alcalde','Las reglas que pone cada escuela','Las promesas de los candidatos','Los tratados o convenios de los que el país forma parte'],a:3,k:'tratados'},
+  {q:'¿Para qué sirve que los tres poderes estén separados?',o:['Para que cada uno pueda pararle la mano a los otros','Para que el trabajo salga más rápido','Para gastar menos dinero','Por costumbre, desde siempre'],a:0,k:'separacion'},
+  {q:'¿Quién puede preguntarle a un funcionario en qué gastó el dinero público?',o:['Solo el Presidente','Cualquier ciudadano','Solo sus jefes','Nadie: es asunto suyo'],a:1,k:'rendicion-quien'},
+  {q:'¿En qué ciudad se aprobó el Estatuto del Docente?',o:['San Pedro Sula','Comayagua','Tegucigalpa','La Ceiba'],a:2,k:'estatuto-ciudad'}
 ];
 const evalCPBank=[
-  {q:'Los tres poderes del Estado son el Ejecutivo, el Legislativo y el ___.',a:'Judicial'},
-  {q:'El Poder Legislativo lo ejerce el ___ Nacional.',a:'Congreso'},
-  {q:'El Poder Ejecutivo lo encabeza el ___ de la República.',a:'Presidente'},
-  {q:'El Poder Judicial lo encabeza la ___ Suprema de Justicia.',a:'Corte'},
-  {q:'La ley que está por encima de todas las demás es la ___.',a:'Constitución'},
-  {q:'Una ley aprobada por el Congreso se llama ___.',a:'decreto'},
-  {q:'La norma con que una Secretaría reglamenta una ley se llama ___.',a:'acuerdo'},
-  {q:'Cuando manda la ley y no quien gobierna, hay Estado de ___.',a:'Derecho'},
-  {q:'Explicar en qué se gastó el dinero de todos es la rendición de ___.',a:'cuentas'},
-  {q:'Una ley entra en vigencia al publicarse en el Diario Oficial La ___.',a:'Gaceta'},
-  {q:'Lo que la Corte Suprema resuelve una y otra vez se llama ___.',a:'jurisprudencia'},
-  {q:'El Estatuto del Docente es el Decreto ___.',a:'136-97'},
-  {q:'El Congreso Nacional se reúne en su ___ de Sesiones.',a:'Salón'},
-  {q:'Los ___ y tribunales forman parte del Poder Judicial.',a:'juzgados'},
-  {q:'El reglamento no puede decir ___ que la ley que reglamenta.',a:'más'}
+  {q:'En el séptimo escalón de la jerarquía de normas va la ___ de la Corte Suprema de Justicia.',a:'jurisprudencia',k:'jurisprudencia'},
+  {q:'En el cuarto escalón de la jerarquía de normas va el Código de ___.',a:'Familia',k:'codigo-familia'},
+  {q:'En el último escalón de la jerarquía de normas van los ___ generales del derecho.',a:'principios',k:'principios'},
+  {q:'La lista de las normas por rango, de la más alta a la más baja, está en el Código de la ___ y la Adolescencia.',a:'Niñez',k:'codigo-ordena'},
+  {q:'El Estatuto del Docente es el ___ 136-97.',a:'Decreto',k:'decreto'},
+  {q:'El Reglamento del Estatuto del Docente lleva el número ___.',a:'0760-SE-99',k:'reglamento-numero'},
+  {q:'La orden «Ejecútese» del Estatuto del Docente se firmó el ___ de septiembre de 1997.',a:'29',k:'ejecutese-fecha'},
+  {q:'El Estatuto del Docente se aprobó el ___ de septiembre de 1997.',a:'11',k:'estatuto-fecha'},
+  {q:'El artículo ___ del Estatuto del Docente mandaba que se hiciera su reglamento.',a:'93',k:'articulo-93'},
+  {q:'En tu centro, lo que se hizo con la merienda escolar y con los fondos del comité de padres se explica en una ___.',a:'asamblea',k:'rendicion-escuela'}
 ];
 const evalPRBank=[
-  {term:'Poder Legislativo',def:'Hace las leyes. Lo ejerce el Congreso Nacional'},
-  {term:'Poder Ejecutivo',def:'Cumple y hace cumplir las leyes. Lo encabeza el Presidente'},
-  {term:'Poder Judicial',def:'Aplica la ley a cada caso. Lo encabeza la Corte Suprema de Justicia'},
-  {term:'Constitución',def:'La ley fundamental: está por encima de todas las demás'},
-  {term:'Decreto',def:'El nombre de una ley aprobada por el Congreso Nacional'},
-  {term:'Acuerdo',def:'La norma con que el Ejecutivo reglamenta una ley'},
-  {term:'Jurisprudencia',def:'Lo que la Corte Suprema resuelve una y otra vez'},
-  {term:'Estado de Derecho',def:'Donde manda la ley y no la voluntad de quien gobierna'},
-  {term:'Rendición de cuentas',def:'Explicar públicamente qué se hizo con el cargo y con el dinero de todos'},
-  {term:'La Gaceta',def:'El Diario Oficial: al publicarse ahí, una ley entra en vigencia'},
-  {term:'Salón de Sesiones',def:'Donde se reúne el Congreso Nacional a aprobar las leyes'},
-  {term:'Ejecútese',def:'La palabra con que el Presidente manda que una ley empiece a cumplirse'},
-  {term:'Reglamento',def:'Dice CÓMO se aplica una ley, y no puede decir más que ella'},
-  {term:'Secretaría de Estado',def:'Parte del Ejecutivo: dicta acuerdos y aplica las leyes de su ramo'},
-  {term:'Deberes',def:'Lo que a cada persona le toca cumplir para que la convivencia funcione'}
+  {term:'Poder Legislativo',def:'El Congreso Nacional',k:'legislativo-quien'},
+  {term:'Poder Ejecutivo',def:'El Presidente de la República',k:'ejecutivo-quien'},
+  {term:'Poder Judicial',def:'La Corte Suprema de Justicia',k:'judicial-quien'},
+  {term:'Acuerdo',def:'La norma que dicta una Secretaría de Estado',k:'acuerdo'},
+  {term:'Ley',def:'Una regla que vale para todo el país',k:'ley'},
+  {term:'Deberes',def:'Lo que a cada persona le toca cumplir para que la convivencia funcione',k:'deberes'},
+  {term:'Derechos',def:'Lo que nadie te puede quitar, y el Estado tiene que respetar',k:'derechos'},
+  {term:'La Gaceta',def:'El Diario Oficial de Honduras',k:'gaceta'},
+  {term:'Estado de Derecho',def:'Donde manda la ley, y no la voluntad de quien gobierna',k:'estado-derecho'},
+  {term:'Rendición de cuentas',def:'Explicar qué se hizo con el cargo y con el dinero de todos',k:'rendicion'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -529,75 +531,90 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+/* ⚠️ En pensamiento crítico cada forma saca UN caso, UN error, UNA decisión,
+   UNA comparación, DOS causas y TRES efectos, y todo eso cae en la misma
+   hoja. Antes se pisaban: el caso de «la Corte Suprema hace las leyes», el
+   error «la Corte Suprema de Justicia aprueba las leyes» y la comparación
+   que pedía decir quién aprueba las leyes preguntaban lo mismo, y la causa
+   «el Congreso Nacional aprobó el Estatuto» lo dejaba contestado. Medido el
+   25 de septiembre de 2026: 29 de las 30 formas repetían algún dato.
+
+   Ahora cada sección tiene su terreno y no pisa el de las otras:
+   - QUIÉN HACE QUÉ —los tres poderes, la ley y la sentencia— vive solo en la
+     comparación, y ninguna otra sección nombra al Congreso, al Presidente o
+     a la Corte haciendo su trabajo;
+   - la JERARQUÍA, el reglamento y La Gaceta viven en los errores;
+   - los CASOS cuentan conductas —una regla que nadie enseña escrita, una
+     autoridad que se cree por encima de la ley, un dato inventado—;
+   - las DECISIONES son de rendición de cuentas y de respeto;
+   - las CAUSAS y los EFECTOS salen del Estatuto del Docente y de lo que es
+     una ley. */
 const critCaseBank=[
-  {txt:'Un alumno dice que el Presidente puede cambiar una ley cuando quiera, porque es la máxima autoridad del país.'},
-  {txt:'En el acto cívico, alguien afirma que la Corte Suprema de Justicia hace las leyes.'},
-  {txt:'Una maestra dice que su Estatuto lo escribió la Secretaría de Educación.'},
-  {txt:'Un vecino cuenta que fue a la alcaldía a reclamar un pleito con su hermano y le dijeron que ahí eso no se resuelve.'},
-  {txt:'Un compañero dice que si los tres poderes se pusieran siempre de acuerdo, el país funcionaría mejor.'},
-  {txt:'En la reunión de padres nadie pregunta en qué se gastó el dinero de la merienda escolar.'}
+  {txt:'En la cancha del barrio, el encargado dice que los de otra colonia no pueden jugar, y cuando le preguntan dónde está escrito eso, contesta que «así ha sido siempre».',k:'caso-cancha'},
+  {txt:'Un funcionario deja el carro donde está prohibido y dice que a él no lo pueden multar, porque es autoridad.',k:'caso-autoridad-multa'},
+  {txt:'A un vecino le cobran un permiso que ninguna ley pide, y él cree que no puede reclamar porque el que se lo cobra es una autoridad.',k:'caso-permiso'},
+  {txt:'Para el periódico mural, un grupo escribe cuántos diputados tiene el Congreso Nacional poniendo el número que recordó uno de ellos, sin buscarlo.',k:'caso-numero'},
+  {txt:'Un compañero dice que sería mejor que una sola persona hiciera las leyes, las mandara cumplir y juzgara los pleitos, porque así todo saldría más rápido.',k:'caso-uno-solo'},
+  {txt:'Un compañero asegura lo que dice una ley sin haberla leído nunca, y cuando le preguntan de dónde lo sacó, contesta que «eso dice la gente».',k:'caso-sin-leer'}
 ];
 const critCaseQuestions=[
-  '1. ¿De qué poder del Estado habla este caso?',
-  '2. ¿Lo que se dice es correcto? ¿Por qué?',
-  '3. ¿A quién le toca de verdad hacer eso?',
+  '1. ¿Qué pasa en este caso?',
+  '2. ¿Lo que se dice o se hace es correcto? ¿Por qué?',
+  '3. ¿Qué dato de la misión te sirve para responder?',
   '4. ¿Qué le explicarías tú a esa persona para que le quede claro?'
 ];
 const critCaseGuides=[
-  'Puede ser el Legislativo (el Congreso Nacional), el Ejecutivo (el Presidente y las Secretarías) o el Judicial (la Corte Suprema y los tribunales).',
-  'Se valora que el alumno distinga QUÉ HACE cada poder: uno hace la ley, otro la cumple y la hace cumplir, y el tercero la aplica a cada caso. Confundirlos es el error más común.',
-  'Cada cosa tiene su poder: aprobar una ley es del Congreso; reglamentarla y ejecutarla, del Ejecutivo; resolver un pleito, del Judicial. Rendir cuentas les toca a los tres.',
+  'Se valora que cuente la situación con sus palabras: quién dice o hace qué, y de qué regla o de qué autoridad se habla.',
+  'Se valora que diga si está bien o mal y lo sostenga: una regla de verdad está escrita y se puede señalar con el dedo; la ley vale igual para el que gobierna que para cualquiera; nadie hace la ley, la cumple y juzga él solo; y un dato que no se sabe se busca en la fuente: no se inventa.',
+  'Se valora que use un dato de verdad de la misión: qué es una ley, qué es un Estado de Derecho, por qué los poderes están separados o dónde se busca lo que la misión no dice.',
   'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle de la persona.'
 ];
 const critErrorBank=[
-  {txt:'"El Presidente hace las leyes y el Congreso las cumple."',
-   g1:'Es al revés: el CONGRESO NACIONAL hace las leyes, y una ley suya se llama decreto.',
-   g2:'El PRESIDENTE las cumple y las hace cumplir: por eso firma «Por Tanto: Ejecútese».'},
-  {txt:'"La Corte Suprema de Justicia aprueba las leyes del país."',
-   g1:'Las leyes las aprueba el CONGRESO NACIONAL, que es el Poder Legislativo.',
-   g2:'La CORTE SUPREMA encabeza el Poder Judicial: aplica la ley a cada caso y establece jurisprudencia.'},
-  {txt:'"Un reglamento puede agregarle cosas a la ley, porque es más nuevo."',
-   g1:'No puede: el reglamento dice CÓMO se aplica la ley y no puede decir más que ella.',
-   g2:'Si pudiera, el Ejecutivo estaría haciendo leyes sin pasar por el Congreso.'},
-  {txt:'"Como la Constitución es muy antigua, las leyes nuevas mandan sobre ella."',
-   g1:'Manda la que está más ARRIBA, no la más nueva: la Constitución es la ley fundamental.',
-   g2:'El Código de la Niñez ordena las normas por rango y la pone en el número 1.'}
+  {txt:'"Un reglamento puede agregarle a la ley cosas que ella no dice, porque es más nuevo."',
+   g1:'El reglamento solo dice CÓMO se aplica la ley: no puede AGREGARLE nada.',
+   g2:'Y ser más nuevo no le da más fuerza: manda la norma que está más ARRIBA.',k:['reglamento-limite','regla-rango']},
+  {txt:'"Como la Constitución es muy antigua, cualquier ley nueva puede decir lo contrario de lo que ella dice."',
+   g1:'No manda la más nueva: manda la que está más ARRIBA.',
+   g2:'Y la Constitución va en el PRIMER escalón: por eso ninguna ley puede contradecirla.',k:['regla-rango','constitucion-arriba']},
+  {txt:'"Una ley obliga a todos desde el día en que se aprueba, y se publica en cualquier periódico."',
+   g1:'Obliga desde que se PUBLICA, no desde que se aprueba.',
+   g2:'Y no en cualquiera: en el Diario Oficial LA GACETA.',k:['vigencia','gaceta']},
+  {txt:'"En la jerarquía de normas, los reglamentos van por encima de las leyes, y los principios generales del derecho van de primeros."',
+   g1:'Los reglamentos van DEBAJO de las leyes, en el escalón 6.',
+   g2:'Los principios generales del derecho van de ÚLTIMOS, en el escalón 8: de primera va la CONSTITUCIÓN.',k:['reglamento-escalon','principios-escalon']}
 ];
 const critDecisionBank=[
-  'Un compañero dice que el Presidente hace las leyes; conviene mostrarle el encabezado de una ley de verdad, o dejarlo así porque casi nadie lo sabe.',
-  'Para la exposición sobre los poderes, conviene decir de dónde salió cada dato, o inventar lo que falte para que quede más completo.',
-  'Te toca averiguar cuántos diputados hay; conviene buscarlo en la Constitución o en tu libro, o poner el primer número que alguien recuerde.',
-  'En la reunión de padres nadie pregunta por el dinero de la merienda; conviene preguntar con respeto, o quedarse callado para no incomodar.',
-  'Un funcionario no quiere explicar en qué gastó un fondo; conviene insistir porque es dinero de todos, o aceptar que él sabrá lo que hace.'
+  'En la reunión de padres nadie pregunta en qué se gastó el dinero de la merienda escolar; conviene preguntar con respeto, o quedarse callado para no incomodar.',
+  'Un funcionario no quiere explicar en qué gastó un fondo del pueblo; conviene insistir porque es dinero de todos, o aceptar que él sabrá lo que hace.',
+  'Te eligen para el comité de padres que maneja el fondo de la escuela; conviene anotar cada gasto y enseñarlo en la asamblea, o guardar los recibos para ti porque todos confían en ti.',
+  'La calle de tu comunidad lleva meses dañada; conviene averiguar a quién le toca arreglarla y hacerle llegar el problema, o quejarse solo en la pulpería.',
+  'En el acto cívico, un compañero confunde el nombre de uno de los tres poderes; conviene corregirlo con respeto y con el dato en la mano, o reírse de él delante de todos.'
 ];
-const critDecisionGuide='La mejor decisión busca la verdad y la comprueba: un poder se estudia por lo que HACE y no por quién manda más; los datos se buscan en la fuente y no en la memoria de alguien; y preguntar en qué se gastó el dinero de todos no es una falta de respeto, es exactamente lo que la rendición de cuentas espera de un ciudadano.';
+const critDecisionGuide='La mejor decisión busca la verdad y trata con respeto: preguntar en qué se gastó el dinero de todos no es una falta de respeto, es exactamente lo que la rendición de cuentas espera de un ciudadano; quien maneja un fondo lo explica con los recibos en la mano, no con un «confíen en mí»; un problema de la comunidad se le lleva a quien le toca resolverlo, porque quejarse donde nadie puede hacer nada no lo arregla; y a quien se equivoca se le corrige con el dato, no con la burla.';
 const critCompareBank=[
-  {a:'Aprueba las leyes y las llama decretos.',b:'Manda que las leyes se cumplan y dicta acuerdos.',
-   ga:'El Poder Legislativo: el Congreso Nacional.',
-   gb:'El Poder Ejecutivo: el Presidente y las Secretarías de Estado.',
-   gr:'Los dos trabajan sobre la misma ley, pero uno la ESCRIBE y el otro la PONE A FUNCIONAR. Por eso el acuerdo del Ejecutivo nunca puede decir más de lo que dice el decreto del Congreso.'},
-  {a:'Una ley que vale igual para todo el país.',b:'Una decisión que resuelve el caso de dos personas.',
-   ga:'La hace el Poder Legislativo.',
-   gb:'La dicta el Poder Judicial.',
-   gr:'La ley es general y la sentencia es de un caso concreto. El Legislativo escribe la regla, el Judicial dice qué significa esa regla cuando hay pleito — y si lo repite muchas veces, eso es jurisprudencia.'},
-  {a:'La Constitución de la República.',b:'El reglamento de una ley.',
-   ga:'Es la ley fundamental: el escalón más alto.',
-   gb:'Es de los escalones bajos: lo dicta el Ejecutivo.',
-   gr:'Las dos son normas escritas, pero no mandan igual. Si el reglamento dice lo contrario de la Constitución, gana la Constitución: cuando dos normas chocan, manda la que está más arriba, no la más nueva.'}
+  {a:'Discute y aprueba las leyes que rigen a todo el país.',b:'Pone las leyes a funcionar: manda que se cumplan.',
+   ga:'El Poder Legislativo, que ejerce el Congreso Nacional.',
+   gb:'El Poder Ejecutivo, que encabeza el Presidente de la República.',
+   gr:'Los dos trabajan con la misma ley, pero uno la ESCRIBE y el otro la PONE A FUNCIONAR. Por eso lo que dicta el Ejecutivo para aplicarla nunca puede decir más de lo que la ley dice.',k:['legislativo-obra','ejecutivo-obra']},
+  {a:'Una regla que rige en todo el país.',b:'Una decisión que resuelve el pleito entre dos vecinos.',
+   ga:'Una ley: la hace el Poder Legislativo.',
+   gb:'Una sentencia: la dicta el Poder Judicial.',
+   gr:'La ley es general y la sentencia es de un caso. El Legislativo escribe la regla para todos, y el Judicial dice qué significa esa regla cuando dos personas no se ponen de acuerdo.',k:['ley-general','sentencia']},
+  {a:'Lo que a cada persona le toca cumplir para que la convivencia funcione.',b:'Lo que nadie te puede quitar, y el Estado tiene que respetarte.',
+   ga:'Los deberes.',
+   gb:'Los derechos.',
+   gr:'Van juntos y no son lo mismo: los deberes se cumplen y los derechos se respetan. El que exige sus derechos y no cumple sus deberes le pide a la convivencia algo que él no pone.',k:['deberes','derechos']}
 ];
 const critCauseBank=[
-  {cause:'El Congreso Nacional aprobó el Estatuto del Docente como Decreto 136-97.',guide:'Por eso ese documento lleva arriba «PODER LEGISLATIVO» y su número con el año en que se aprobó.'},
-  {cause:'El Presidente firmó al pie «Al Poder Ejecutivo. Por Tanto: Ejecútese».',guide:'Por eso la ley dejó de ser un papel aprobado y pasó a cumplirse en todo el país.'},
-  {cause:'El Artículo 93 del Estatuto mandaba que se hiciera su reglamento.',guide:'Por eso la Secretaría de Educación dictó el Acuerdo 0760-SE-99, que dice cómo se aplica.'},
-  {cause:'La Constitución está en el escalón más alto de la jerarquía normativa.',guide:'Por eso ninguna ley, reglamento ni acuerdo puede decir lo contrario de lo que ella dice.'},
-  {cause:'Los tres poderes están separados y cada uno puede pararle la mano a los otros.',guide:'Por eso una persona común puede reclamarle a una autoridad y ganarle: eso es un Estado de Derecho.'}
+  {cause:'El Artículo 93 del Estatuto del Docente mandaba que se hiciera su reglamento.',guide:'Por eso la Secretaría de Educación dictó el Acuerdo 0760-SE-99, que dice cómo se aplica el Estatuto.',k:'articulo-93'},
+  {cause:'El Estatuto del Docente se aprobó en 1997.',guide:'Por eso su número, el 136-97, termina en 97: un decreto lleva su número y su año.',k:'decreto-anio'},
+  {cause:'El Estatuto del Docente es la ley que rige al maestro que tienes delante.',guide:'Por eso, si no le pagan lo que le toca, tiene una ley escrita que señalar para reclamar.',k:'estatuto-rige'}
 ];
 const critEffectBank=[
-  {effect:'Una ley aprobada por el Congreso todavía no obliga a nadie.',guide:'Porque entra en vigencia al publicarse en el Diario Oficial La Gaceta, no antes.'},
-  {effect:'Un maestro con un problema laboral va a los juzgados y no al Congreso.',guide:'Porque el Legislativo escribe la ley para todos, y el Judicial la aplica a cada caso.'},
-  {effect:'Un reglamento no puede exigir algo que su ley no exige.',guide:'Porque si pudiera, el Ejecutivo estaría haciendo leyes sin pasar por el Congreso.'},
-  {effect:'Los funcionarios tienen que explicar en qué gastaron el dinero público.',guide:'Porque ese dinero no es suyo: es de todos, y por eso cualquier ciudadano puede preguntarlo.'},
-  {effect:'Separar los poderes hace que las cosas vayan más lentas.',guide:'Porque es a propósito: la lentitud es el precio de que nadie pueda decidir solo y sin control.'}
+  {effect:'A una ley no se le puede contestar «no la cumplo porque no me gusta».',guide:'Porque una ley no es un consejo, y no depende del gusto de nadie: obliga igual al que le gusta y al que no.',k:'ley-no-consejo'},
+  {effect:'Lo que la Corte Suprema decide en muchos casos parecidos termina sirviendo para otros casos.',guide:'Porque lo que resuelve una y otra vez se vuelve jurisprudencia, y la jurisprudencia también es fuente de derecho.',k:'jurisprudencia'},
+  {effect:'Con solo leer el encabezado de una hoja, se puede saber de qué poder salió.',guide:'Porque una ley del Congreso lleva arriba «PODER LEGISLATIVO · DECRETO No …», y una norma del Ejecutivo dice «ACUERDA».',k:'encabezado'},
+  {effect:'El trabajo del Estado está repartido en tres poderes.',guide:'Porque así lo organiza la Constitución, que es la que dice cómo se organiza el Estado.',k:'constitucion-reparte'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -618,11 +635,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la ley y la rendición de cuentas <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con la ley y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué poder o qué concepto corresponde a cada caso? 2. ¿Qué hace o qué pide cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -655,8 +672,8 @@ function printEvalCrit(){
   let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la ley y la rendición de cuentas</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con la ley y con la rendición de cuentas.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué poder o qué concepto corresponde a cada caso? 2. ¿Qué hace o qué pide cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
