@@ -87,7 +87,7 @@ const qzData=[
    e:'Las dos son correctas: gobernó y construyó como prócer, y peleó y murió por su idea como héroe.'},
   {q:'¿Quién fue el primer Jefe de Estado de Honduras, en 1824?',o:['José Trinidad Cabañas','Ramón Rosa','Dionisio de Herrera','José Trinidad Reyes'],c:2,
    e:'Y bajo su gobierno se creó el Escudo Nacional, en 1825.'},
-  {q:'¿Por qué el Día del Maestro Hondureño es el 17 de septiembre?',o:['Porque ese día se fundó la primera escuela','Por el nacimiento de José Trinidad Reyes, que fundó la primera universidad','Porque cae cerca del 15 de septiembre','Por un decreto de la Reforma Liberal'],c:1,
+  {q:'¿Por qué el Día del Maestro Hondureño es el 17 de septiembre?',o:['Porque ese día se fundó la primera escuela','Porque honra a José Trinidad Reyes, que fundó la primera universidad','Porque cae cerca del 15 de septiembre','Por un decreto de la Reforma Liberal'],c:1,
    e:'El Padre Reyes hizo país con una escuela, y esa escuela sigue abierta.'},
   {q:'¿Qué hicieron juntos Marco Aurelio Soto y Ramón Rosa?',o:['Firmaron el Acta de Independencia','Pelearon contra la conquista española','Fundaron la República Federal de Centro América','Impulsaron la Reforma Liberal y la educación pública'],c:3,
    e:'Soto en la presidencia y Rosa de ministro: de ahí sale el Código de Instrucción Pública de 1882.'},
@@ -368,78 +368,86 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+/* UN DATO, UNA PREGUNTA. Cada forma saca 5 preguntas de cada banco al azar,
+   y cualquier par de preguntas de estos cuatro bancos puede caer en la misma
+   hoja. Antes los cuatro preguntaban lo mismo de cuatro maneras: «El Héroe
+   Nacional es ___» en el completar, «Lempira es el Héroe Nacional» en el
+   verdadero o falso, «¿Quién es el Héroe Nacional?» en la selección y
+   «Lempira · Héroe Nacional» en los pareados. Medido el 25 de septiembre de
+   2026: las 30 formas preguntaban algún dato dos veces, 162 veces en total.
+
+   Por eso cada ítem lleva su `k`, el dato que pregunta, y ninguna `k` se
+   repite en los cuatro bancos. Y la respuesta de una pregunta no aparece
+   escrita en otra, ni como opción equivocada. Tres decisiones que salen de
+   ahí, y que no son de estilo:
+   - los NOMBRES son el tema de la prueba, no su respuesta: salen en muchas
+     preguntas, cada vez con un dato distinto, y solo «¿Quién es el Héroe
+     Nacional?» pide un nombre, con los cuatro nombres de opciones;
+   - lo que se escribe en la raya —un año, un lugar, una palabra— no sale en
+     ninguna otra pregunta;
+   - los pareados no juntan a una persona con su obra: juntan un AÑO o una
+     FECHA con lo que pasó, y una palabra con lo que quiere decir. Quién hizo
+     qué ya lo preguntan las otras tres secciones.
+
+   ⚠️ Son DOCE por banco y no quince, a propósito. Ocho personajes no dan
+   sesenta datos distintos: con quince, la única forma de llenar el banco era
+   volver a preguntar lo mismo, que es justo lo que había que quitar.
+   Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'Lempira es el Héroe Nacional de Honduras.',a:true},
-  {q:'Un prócer es el que defiende a su pueblo con las armas.',a:false},
-  {q:'José Cecilio del Valle redactó el Acta de Independencia de Centroamérica.',a:true},
-  {q:'Francisco Morazán nació el 3 de octubre de 1792.',a:true},
-  {q:'Dionisio de Herrera fue el primer Jefe de Estado de Honduras.',a:true},
-  {q:'El Escudo Nacional se creó durante el gobierno de Marco Aurelio Soto.',a:false},
-  {q:'A José Trinidad Cabañas se le llamó «el caballero sin tacha y sin miedo».',a:true},
-  {q:'José Trinidad Reyes fundó la primera universidad del país.',a:true},
-  {q:'El Día del Maestro Hondureño se celebra por Francisco Morazán.',a:false},
-  {q:'Ramón Rosa fue ministro de Marco Aurelio Soto.',a:true},
-  {q:'El Código de Instrucción Pública es de 1882.',a:true},
-  {q:'Lempira resistió desde el Peñol de Cerquín.',a:true},
-  {q:'Morazán presidió la República Federal de Centro América.',a:true},
-  {q:'Lempira fue presidente de Honduras.',a:false},
-  {q:'A Francisco Morazán se le llama héroe y también prócer, y las dos formas son correctas.',a:true},
-  {q:'Se sabe con exactitud dónde está enterrado Lempira.',a:false},
-  {q:'La Reforma Liberal la encabezó Marco Aurelio Soto.',a:true},
-  {q:'El DCNB solo nombra a Francisco Morazán entre los próceres.',a:false},
-  {q:'Las mujeres, los indígenas y los garífunas también construyeron el país.',a:true},
-  {q:'Morazán murió un 15 de septiembre, el día de la Independencia.',a:true}
+  {q:'Se sabe con exactitud dónde quedó enterrado Lempira.',a:false,k:'lempira-tumba'},
+  {q:'En el Himno Nacional se nombra a muchos hondureños, y Lempira es uno de ellos.',a:false,k:'lempira-himno'},
+  {q:'A Francisco Morazán solo se le puede llamar prócer: decirle héroe es un error.',a:false,k:'morazan-ambos'},
+  {q:'Francisco Morazán murió un 15 de septiembre, el día de la Independencia.',a:true,k:'morazan-muere-dia'},
+  {q:'Dionisio de Herrera organizó las primeras leyes y las primeras cuentas del país.',a:true,k:'herrera-leyes'},
+  {q:'José Trinidad Cabañas nunca llegó a gobernar Honduras.',a:false,k:'cabanas-presidente'},
+  {q:'José Trinidad Cabañas peleó en contra de Francisco Morazán.',a:false,k:'cabanas-morazan'},
+  {q:'José Trinidad Reyes fue sacerdote, músico y poeta.',a:true,k:'reyes-oficios'},
+  {q:'Francisco Morazán quiso quitarle privilegios a unos pocos.',a:true,k:'morazan-privilegios'},
+  {q:'Ramón Rosa fue ministro de Marco Aurelio Soto.',a:true,k:'rosa-ministro'},
+  {q:'Francisco Morazán abandonó su idea en cuanto las cosas se pusieron difíciles.',a:false,k:'morazan-no-se-rindio'},
+  {q:'En el gobierno de Marco Aurelio Soto empezaron a construirse las escuelas públicas de verdad.',a:true,k:'soto-escuelas'}
 ];
 const evalMCBank=[
-  {q:'¿Quién es el Héroe Nacional de Honduras?',o:['Francisco Morazán','Lempira','José Cecilio del Valle','Ramón Rosa'],a:1},
-  {q:'¿Qué diferencia a un héroe de un prócer?',o:['El héroe es más antiguo','El prócer siempre es militar','No hay diferencia','El héroe defiende y el prócer funda'],a:3},
-  {q:'¿Quién redactó el Acta de Independencia?',o:['José Cecilio del Valle','Dionisio de Herrera','Lempira','Marco Aurelio Soto'],a:0},
-  {q:'¿Dónde y cuándo nació Francisco Morazán?',o:['En Choluteca, en 1781','En Comayagua, en 1805','En Tegucigalpa, en 1792','En Gracias, en 1777'],a:2},
-  {q:'¿Quién fue el primer Jefe de Estado de Honduras?',o:['José Trinidad Cabañas','Ramón Rosa','José Trinidad Reyes','Dionisio de Herrera'],a:3},
-  {q:'¿Por qué el Día del Maestro es el 17 de septiembre?',o:['Por la Independencia','Por el natalicio de José Trinidad Reyes','Por la Reforma Liberal','Por el Código de 1882'],a:1},
-  {q:'¿Qué impulsó Ramón Rosa en 1882?',o:['El Escudo Nacional','La República Federal','El Himno Nacional','El Código de Instrucción Pública'],a:3},
-  {q:'¿Desde dónde resistió Lempira la conquista?',o:['Desde el Peñol de Cerquín','Desde Tegucigalpa','Desde Copán','Desde Trujillo'],a:0},
-  {q:'¿Qué unía la República Federal que presidió Morazán?',o:['A Honduras y Guatemala','A los cinco países de Centroamérica','A Honduras y México','A toda América'],a:1},
-  {q:'¿Qué significa «sin tacha» en el apodo de Cabañas?',o:['Que no perdió batallas','Que no robó','Que no tenía familia','Que no hablaba en público'],a:1},
-  {q:'¿Quién encabezó la Reforma Liberal?',o:['Marco Aurelio Soto','Lempira','José Cecilio del Valle','Francisco Morazán'],a:0},
-  {q:'¿En qué año fue el primer gobierno de Honduras como Estado?',o:['1537','1821','1824','1882'],a:2},
-  {q:'¿Qué símbolo patrio nació durante el gobierno de Dionisio de Herrera?',o:['La Bandera','El Himno','El Escudo','La orquídea'],a:2},
-  {q:'Según el DCNB, ¿quiénes más contribuyeron a la historia del país?',o:['Solo los presidentes','Solo los militares','Las mujeres, los indígenas y los afrocaribeños','Nadie más'],a:2},
-  {q:'¿Qué hizo José Trinidad Reyes?',o:['Redactó la Constitución','Fundó la primera universidad','Ganó la batalla de Cerquín','Diseñó la Bandera'],a:1}
+  {q:'¿Quién es el Héroe Nacional de Honduras?',o:['Francisco Morazán','José Cecilio del Valle','Lempira','Dionisio de Herrera'],a:2,k:'lempira-heroe-nacional'},
+  {q:'¿Por qué a José Cecilio del Valle le decían «el Sabio»?',o:['Porque ganó muchas batallas','Porque escribió el Himno Nacional','Porque fue el primero en gobernar Honduras','Porque era de los hombres más leídos de su tiempo'],a:3,k:'valle-sabio'},
+  {q:'¿Qué países unía la República Federal que presidió Francisco Morazán?',o:['Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica','Honduras, Guatemala y México','Honduras y Nicaragua','Honduras, Panamá y Colombia'],a:0,k:'morazan-federacion'},
+  {q:'¿Qué símbolo patrio se creó durante el gobierno de Dionisio de Herrera?',o:['La Bandera','El Escudo','El Himno','El pino'],a:1,k:'herrera-escudo'},
+  {q:'¿Qué llevó Marco Aurelio Soto al país para modernizarlo?',o:['El Himno Nacional','El correo y el telégrafo','La Bandera de cinco estrellas','La primera radio del país'],a:1,k:'soto-correos'},
+  {q:'¿Qué pasó con la unión por la que peleó Morazán?',o:['Sigue unida hasta hoy','Se juntó con los países de Sudamérica','Se deshizo: no se logró mantenerla unida','Se volvió un solo país llamado Honduras'],a:2,k:'morazan-fin-union'},
+  {q:'¿Cómo quería José Cecilio del Valle que se hiciera la Independencia?',o:['Con leyes y no con sangre','Con un ejército','Pidiendo ayuda a otro rey','Esperando a que España se fuera sola'],a:0,k:'valle-leyes'},
+  {q:'¿Dónde nació José Trinidad Cabañas?',o:['En Comayagua','En Gracias','En Trujillo','En Tegucigalpa'],a:3,k:'cabanas-lugar'},
+  {q:'¿Qué quería Ramón Rosa que fuera la educación?',o:['Un favor de los que mandan','Una obligación, y no un favor de nadie','Un lujo para unos pocos','Un negocio para quien pudiera pagar'],a:1,k:'rosa-obligacion'},
+  {q:'De cada personaje se pregunta quién fue, qué hizo y por qué se le recuerda. ¿Qué es lo que más vale saber?',o:['Su fecha de nacimiento','Su nombre completo','Qué cambió gracias a su obra','Dónde está su estatua'],a:2,k:'que-vale-mas'},
+  {q:'Según el DCNB, ¿de quiénes más hay que explicar su contribución a la historia del país?',o:['Solo de los presidentes','Solo de los militares','De los que tienen estatua','De las mujeres, los indígenas y los afrocaribeños'],a:3,k:'los-que-faltan'},
+  {q:'¿En qué año llegaron los garífunas a Honduras?',o:['1797','1837','1897','1947'],a:0,k:'garifunas-1797'}
 ];
 const evalCPBank=[
-  {q:'El Héroe Nacional de Honduras es ___.',a:'Lempira'},
-  {q:'Un ___ defiende a su pueblo; un prócer ayuda a fundar la nación.',a:'héroe'},
-  {q:'El Acta de Independencia la redactó José Cecilio del ___.',a:'Valle'},
-  {q:'Francisco Morazán nació el 3 de octubre de ___.',a:'1792'},
-  {q:'El primer Jefe de Estado de Honduras fue Dionisio de ___.',a:'Herrera'},
-  {q:'A José Trinidad Cabañas le llamaron el caballero sin tacha y sin ___.',a:'miedo'},
-  {q:'José Trinidad Reyes fundó la primera ___ del país.',a:'universidad'},
-  {q:'El Día del Maestro Hondureño es el 17 de ___.',a:'septiembre'},
-  {q:'Ramón Rosa impulsó el Código de Instrucción Pública de ___.',a:'1882'},
-  {q:'Marco Aurelio Soto encabezó la ___ Liberal.',a:'Reforma'},
-  {q:'Lempira resistió desde el Peñol de ___.',a:'Cerquín'},
-  {q:'Morazán presidió la República ___ de Centro América.',a:'Federal'},
-  {q:'El Día de Lempira se celebra el 20 de ___.',a:'julio'},
-  {q:'El Escudo Nacional nació durante el gobierno de Dionisio de Herrera, en ___.',a:'1825'},
-  {q:'Morazán murió el 15 de septiembre de ___.',a:'1842'}
+  {q:'El cerro que le servía de fortaleza a Lempira era el Peñol de ___.',a:'Cerquín',k:'lempira-cerquin'},
+  {q:'El Día de Lempira se celebra el 20 de ___.',a:'julio',k:'lempira-dia'},
+  {q:'Lempira fue cacique de los pueblos ___.',a:'lencas',k:'lempira-lencas'},
+  {q:'José Cecilio del Valle redactó el ___ de Independencia.',a:'Acta',k:'valle-acta'},
+  {q:'José Cecilio del Valle nació en el año ___.',a:'1777',k:'valle-1777'},
+  {q:'Francisco Morazán nació en el año ___.',a:'1792',k:'morazan-1792'},
+  {q:'Dionisio de Herrera fue el primer ___ de Estado de Honduras.',a:'Jefe',k:'herrera-jefe'},
+  {q:'Dionisio de Herrera nació en la ciudad de ___.',a:'Choluteca',k:'herrera-lugar'},
+  {q:'A José Trinidad Cabañas le llamaron el caballero sin tacha y sin ___.',a:'miedo',k:'cabanas-miedo'},
+  {q:'José Trinidad Reyes fundó la primera ___ del país.',a:'universidad',k:'reyes-universidad'},
+  {q:'Ramón Rosa impulsó el Código de Instrucción Pública de ___.',a:'1882',k:'rosa-1882'},
+  {q:'Marco Aurelio Soto encabezó la ___ Liberal.',a:'Reforma',k:'soto-reforma'}
 ];
 const evalPRBank=[
-  {term:'Lempira',def:'Héroe Nacional: resistió la conquista desde el Peñol de Cerquín'},
-  {term:'José Cecilio del Valle',def:'Redactó el Acta de Independencia de Centroamérica'},
-  {term:'Francisco Morazán',def:'Presidió la República Federal de Centro América'},
-  {term:'Dionisio de Herrera',def:'Primer Jefe de Estado de Honduras, en 1824'},
-  {term:'José Trinidad Cabañas',def:'El caballero sin tacha y sin miedo'},
-  {term:'José Trinidad Reyes',def:'Fundó la primera universidad del país'},
-  {term:'Marco Aurelio Soto',def:'Encabezó la Reforma Liberal'},
-  {term:'Ramón Rosa',def:'Impulsó el Código de Instrucción Pública de 1882'},
-  {term:'20 de julio',def:'Día de Lempira'},
-  {term:'3 de octubre',def:'Natalicio de Francisco Morazán'},
-  {term:'17 de septiembre',def:'Día del Maestro Hondureño'},
-  {term:'Peñol de Cerquín',def:'El cerro desde donde resistió Lempira'},
-  {term:'1821',def:'Año de la Independencia de Centroamérica'},
-  {term:'1882',def:'Año del Código de Instrucción Pública'},
-  {term:'Héroe',def:'El que defiende a su pueblo'}
+  {term:'1821',def:'Se declara la Independencia',k:'independencia-1821'},
+  {term:'1824',def:'Honduras tiene su primer gobierno propio',k:'herrera-1824'},
+  {term:'1876',def:'Empieza la época de Marco Aurelio Soto y Ramón Rosa',k:'soto-1876'},
+  {term:'1805',def:'Nace José Trinidad Cabañas',k:'cabanas-1805'},
+  {term:'3 de octubre',def:'Natalicio de Francisco Morazán',k:'morazan-natalicio'},
+  {term:'22 de noviembre',def:'Nace José Cecilio del Valle',k:'valle-natalicio'},
+  {term:'1781',def:'Nace Dionisio de Herrera',k:'herrera-1781'},
+  {term:'«Sin tacha»',def:'Que no robó',k:'cabanas-tacha'},
+  {term:'Un héroe',def:'Defiende a su pueblo',k:'heroe'},
+  {term:'Un prócer',def:'Ayuda a fundar la nación',k:'procer'},
+  {term:'Tres siglos',def:'Lo que separa a Lempira de Morazán',k:'tres-siglos'},
+  {term:'1842',def:'Muere Francisco Morazán',k:'morazan-muere-ano'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -525,81 +533,96 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+/* La prueba de pensamiento crítico sigue la misma regla que la conceptual, y
+   aquí muerde más porque se contesta escribiendo: el dato que otra sección deja
+   a la vista se copia tal cual. Antes el caso de la moneda contaba lo mismo que
+   la causa de Lempira y que el efecto de la moneda; el error del Día del
+   Maestro, lo mismo que la causa de la universidad; y la comparación de Reyes y
+   Rosa dejaba escrito «1882», la corrección de otro error. Medido el 25 de
+   septiembre de 2026: las 30 formas preguntaban algún dato dos veces.
+
+   Cómo se reparte ahora, y no es de estilo:
+   - los CASOS cuentan una conducta —una discusión, un mural, un cartel—, no un
+     dato: el dato lo pide el resto de la prueba;
+   - cada ERROR trae dos errores de verdad, y la pauta escribe en MAYÚSCULAS lo
+     que el alumno tiene que poner, que es lo que no puede salir en otra parte;
+   - las COMPARACIONES describen dos obras sin nombre, y el alumno dice de quién
+     es cada una. Los nombres salen en otras preguntas, cada vez con OTRO dato:
+     lo que delataría la respuesta es el nombre junto a esa obra;
+   - las causas y los efectos preguntan por qué se le recuerda a alguien, y
+     ninguna deja a la vista el porqué de otra. */
 const critCaseBank=[
-  {txt:'En el acto del 15 de septiembre, un alumno dice que Lempira firmó el Acta de Independencia.'},
-  {txt:'Una maestra pregunta por qué la moneda de Honduras se llama Lempira si Lempira no fue presidente.'},
-  {txt:'Un alumno de noveno dice que Francisco Morazán fracasó, porque la Federación se deshizo igual.'},
-  {txt:'En la clase se comenta que José Trinidad Cabañas salió del gobierno tan pobre como entró, y alguien dice que entonces fue un mal presidente.'},
-  {txt:'Al hacer el mural de los próceres, el grupo se da cuenta de que las nueve figuras que dibujaron son hombres.'},
-  {txt:'Un niño pregunta por qué el Día del Maestro se celebra el 17 de septiembre y no el día en que empezó la escuela.'}
+  {txt:'Antes del desfile, dos compañeros discuten: uno dice que Francisco Morazán fue un héroe y el otro, que fue un prócer. Ninguno quiere ceder.',k:'caso-morazan-ambos'},
+  {txt:'Al terminar el mural de los próceres, el grupo se da cuenta de que las nueve figuras que dibujaron son hombres.',k:'caso-mural'},
+  {txt:'Para el cartel de la exposición falta la fecha de nacimiento de José Trinidad Reyes, y alguien propone inventarla porque total nadie la va a revisar.',k:'caso-inventar'},
+  {txt:'Para el concurso de carteles, un grupo pone el nombre y el retrato de cada prócer, pero ni una palabra de lo que hizo.',k:'caso-sin-obra'},
+  {txt:'Un compañero dice que estudiar a los próceres no sirve de nada, porque todos murieron hace mucho.',k:'caso-ya-no-importan'},
+  {txt:'Para ganar tiempo, un grupo copia la biografía de un prócer de un cuaderno viejo, sin revisar si los datos están bien.',k:'caso-copiar'}
 ];
 const critCaseQuestions=[
-  '1. ¿De qué prócer o héroe habla este caso?',
-  '2. ¿Lo que se dice es correcto? ¿Por qué?',
-  '3. ¿Qué hizo de verdad esa persona, y en qué época?',
-  '4. ¿Qué le explicarías tú a ese compañero para que le quede claro?'
+  '1. ¿Qué pasa en este caso?',
+  '2. ¿Lo que se dice o se hace es correcto? ¿Por qué?',
+  '3. ¿Qué dato de la misión te sirve para responder?',
+  '4. ¿Qué le explicarías tú a esa persona para que le quede claro?'
 ];
 const critCaseGuides=[
-  'Puede ser Lempira —el Héroe Nacional— o alguno de los siete próceres: Valle, Morazán, Herrera, Cabañas, Reyes, Soto o Rosa.',
-  'Se valora que el alumno distinga la ÉPOCA: Lempira es de la conquista, hacia 1537; la Independencia es de 1821; la Reforma Liberal, de 1876 en adelante. Confundirlas es el error más común.',
-  'Cada uno tiene su obra: defender (Lempira), escribir el Acta (Valle), la Federación (Morazán), el primer Estado (Herrera), la honradez (Cabañas), la universidad (Reyes), la Reforma (Soto y Rosa).',
-  'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle del compañero.'
+  'Se valora que cuente la situación con sus palabras: quién dice o hace qué, y de quién se habla.',
+  'Se valora que diga si está bien o mal y lo sostenga: a un personaje se le juzga por lo que hizo; un dato que no se sabe se busca y, si no aparece, se dice que falta: no se inventa.',
+  'Se valora que use un dato de verdad de la misión: quién fue la persona, qué hizo y en qué época, o lo que pide el DCNB sobre los que casi nunca salen en la lista.',
+  'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle.'
 ];
 const critErrorBank=[
-  {txt:'"Lempira firmó el Acta de Independencia y Francisco Morazán fue un cacique lenca."',
-   g1:'El Acta la redactó JOSÉ CECILIO DEL VALLE, en 1821.',
-   g2:'LEMPIRA fue el cacique lenca, tres siglos antes; MORAZÁN presidió la República Federal.'},
-  {txt:'"El Día del Maestro Hondureño se celebra por Francisco Morazán, que fundó la primera universidad."',
-   g1:'La primera universidad la fundó JOSÉ TRINIDAD REYES.',
-   g2:'El 17 de septiembre es por el natalicio del Padre Reyes; el de Morazán es el 3 de OCTUBRE.'},
-  {txt:'"Dionisio de Herrera fue el primer presidente de la República Federal de Centro América."',
-   g1:'Herrera fue el primer Jefe de Estado DE HONDURAS, en 1824, no de la Federación.',
-   g2:'Quien presidió la República Federal fue FRANCISCO MORAZÁN.'},
-  {txt:'"Marco Aurelio Soto y Ramón Rosa pelearon contra la conquista española."',
-   g1:'La conquista fue en el siglo XVI; ellos son de la REFORMA LIBERAL, desde 1876.',
-   g2:'Lo suyo fue la educación y las leyes: el Código de Instrucción Pública de 1882.'},
-  {txt:'"Un prócer es el que defiende a su pueblo con las armas y un héroe el que escribe las leyes."',
+  {txt:'"Lempira fue presidente de Honduras, y se sabe muy bien dónde está enterrado."',
+   g1:'No fue presidente: fue un CACIQUE lenca.',
+   g2:'Nunca se supo dónde quedó enterrado: su tumba es DESCONOCIDA.',k:['lempira-cacique','lempira-tumba']},
+  {txt:'"Francisco Morazán nació un 15 de septiembre de 1842."',
+   g1:'Nació el 3 de OCTUBRE de 1792.',
+   g2:'El 15 de septiembre de 1842 es el día en que MURIÓ.',k:['morazan-nace','morazan-muere']},
+  {txt:'"A José Cecilio del Valle le decían «el Valiente», porque ganó muchas batallas."',
+   g1:'Le decían «el SABIO».',
+   g2:'Y no por batallas: porque era de los hombres más LEÍDOS de su tiempo.',k:['valle-sabio','valle-leido']},
+  {txt:'"José Trinidad Cabañas nunca llegó a ser presidente, y nació en Choluteca."',
+   g1:'Sí fue PRESIDENTE de Honduras.',
+   g2:'Nació en TEGUCIGALPA, en 1805.',k:['cabanas-presidente','cabanas-nace']},
+  {txt:'"Un prócer es el que defiende a su pueblo con las armas, y un héroe es el que escribe las leyes."',
    g1:'Es al revés: el HÉROE defiende a su pueblo.',
-   g2:'El PRÓCER ayuda a fundar la nación: construye lo que todavía no existe.'},
-  {txt:'"Los ocho próceres y héroes son todos los que construyeron Honduras."',
-   g1:'El DCNB pide explicar también la contribución de LAS MUJERES, LOS INDÍGENAS Y LOS AFROCARIBEÑOS.',
-   g2:'Las estatuas son de ocho o diez hombres, pero el país no lo levantaron ocho o diez personas.'}
+   g2:'El PRÓCER ayuda a fundar la nación: construye lo que todavía no existe.',k:['heroe','procer']},
+  {txt:'"Dionisio de Herrera nació en Tegucigalpa en 1805."',
+   g1:'Nació en CHOLUTECA.',
+   g2:'Y en 1781: el que nació en 1805 fue José Trinidad Cabañas.',k:['herrera-nace-lugar','herrera-nace-ano']}
 ];
 const critDecisionBank=[
-  'Para el mural del Mes de la Patria, conviene averiguar qué hizo cada prócer y escribirlo al lado de su dibujo, o copiar los nombres y ya.',
-  'Si un compañero confunde a Lempira con Morazán, conviene mostrarle en qué siglo vivió cada uno, o dejarlo pasar porque total es historia vieja.',
-  'Al preparar la exposición, conviene decir de dónde salió cada dato, o inventar lo que falte para que quede más bonito.',
-  'Para saber a quién de tu municipio se le debe algo, conviene preguntarle a una persona mayor de la comunidad, o copiar la lista de un cuaderno viejo.',
-  'Si en el mural salen solo hombres, conviene buscar qué hicieron las mujeres de esa época, o dejarlo así porque en los libros no aparecen.'
+  'Si un compañero confunde la época de dos próceres, conviene mostrarle la línea del tiempo, o dejarlo pasar porque total es historia vieja.',
+  'Para el Mes de la Patria, conviene que cada grupo investigue a un prócer distinto y se lo cuente a los demás, o que todos copien la misma lámina del libro.',
+  'Para saber a quién de tu municipio se le debe algo, conviene preguntarle a una persona mayor de la comunidad, o dar por hecho que ahí nunca pasó nada importante.',
+  'Si en el acto cívico un compañero se ríe mientras leen la vida de un prócer, conviene pedirle respeto, o reírse con él para no quedar mal.',
+  'Si en la exposición un compañero dice un dato equivocado de un prócer, conviene corregirlo con respeto y con la fuente en la mano, o burlarse de él delante de todos.'
 ];
-const critDecisionGuide='La mejor decisión busca la verdad y la dice completa: un prócer se estudia por lo que HIZO y no por su nombre; las épocas no se confunden —la conquista, la Independencia y la Reforma Liberal están separadas por siglos—; un dato se consulta y no se inventa; a un compañero equivocado se le corrige con respeto y con la fuente en la mano; y cuando en la lista faltan las mujeres, los indígenas o los garífunas, se busca lo que falta en vez de darlo por normal.';
+const critDecisionGuide='La mejor decisión busca la verdad y respeta a las personas: las épocas no se confunden, porque la conquista, la Independencia y la Reforma Liberal están separadas por siglos; un prócer se estudia investigando lo que hizo, no copiando una lámina; la historia de la comunidad se busca preguntándole a quien la vivió; ante la vida de un prócer se guarda respeto; y a un compañero equivocado se le corrige con respeto y con la fuente en la mano.';
 const critCompareBank=[
-  {a:'Defendió a su pueblo de la conquista, hacia 1537.',b:'Presidió la República Federal de Centro América.',
-   ga:'Lempira.',
-   gb:'Francisco Morazán.',
-   gr:'Los dos pelearon por defender algo y los dos murieron haciéndolo, pero los separan tres siglos: Lempira defendía su tierra de quien llegaba, y Morazán, la unión de cinco países que ya eran libres.'},
-  {a:'Escribió el Acta de Independencia.',b:'Fue el primer Jefe de Estado de Honduras.',
+  {a:'Redactó el documento con el que Centroamérica se separó de España.',b:'Fue el primero en gobernar Honduras como Estado.',
    ga:'José Cecilio del Valle.',
    gb:'Dionisio de Herrera.',
-   gr:'Los dos son de la misma época y los dos construyeron con papeles, pero uno escribió el documento que SEPARÓ a Centroamérica de España y el otro tuvo que gobernar lo que quedó después.'},
-  {a:'Fundó la primera universidad del país.',b:'Impulsó el Código de Instrucción Pública de 1882.',
+   gr:'Los dos son de la misma época y los dos construyeron con papeles: uno escribió el documento que separó a Centroamérica de España, y el otro tuvo que gobernar lo que quedó, cuando todavía no había nada hecho.',k:['valle-acta','herrera-primero']},
+  {a:'Fundó la primera universidad del país.',b:'Impulsó la ley de 1882 que hizo de la educación una obligación del Estado.',
    ga:'José Trinidad Reyes.',
    gb:'Ramón Rosa.',
-   gr:'Los dos hicieron país con educación, pero de formas distintas: Reyes ABRIÓ una escuela con sus manos, y Rosa escribió la ley que obligó al Estado a abrirlas todas.'}
+   gr:'Los dos hicieron país con la educación, pero de distinta forma: uno abrió una escuela con sus manos, y el otro escribió la ley que obligó al Estado a abrirlas todas.',k:['reyes-universidad','rosa-ley']},
+  {a:'Resistió desde el Peñol de Cerquín, un cerro que le servía de fortaleza.',b:'Encabezó la Reforma Liberal, que cambió cómo se gobernaba el país.',
+   ga:'Lempira.',
+   gb:'Marco Aurelio Soto.',
+   gr:'Los separan más de tres siglos: uno defendió a su pueblo de la conquista, y por eso es héroe; el otro construyó desde el gobierno lo que todavía no existía, y por eso es prócer.',k:['lempira-cerquin','soto-reforma']}
 ];
 const critCauseBank=[
-  {cause:'Lempira dirigió la resistencia lenca contra la conquista y murió peleando.',guide:'Por eso es el Héroe Nacional, la moneda lleva su nombre y hay un departamento que se llama como él.'},
-  {cause:'La Independencia de Centroamérica se firmó en un documento y no se ganó en una batalla.',guide:'Por eso el prócer más recordado de 1821 es el que lo escribió: José Cecilio del Valle, «el Sabio».'},
-  {cause:'José Trinidad Reyes fundó la primera universidad del país.',guide:'Por eso el Día del Maestro Hondureño se celebra el día de su nacimiento, el 17 de septiembre.'},
-  {cause:'Marco Aurelio Soto y Ramón Rosa hicieron de la educación una obligación del Estado.',guide:'Por eso hoy un niño de cualquier pueblo tiene derecho a una escuela pública y gratuita.'},
-  {cause:'Las mujeres, los indígenas y los garífunas casi nunca aparecen escritos en la historia oficial.',guide:'Por eso el DCNB pide explicar su contribución y el costo que pagaron: si no se busca, no aparece.'}
+  {cause:'Entre Lempira y Francisco Morazán hay tres siglos.',guide:'Por eso no se conocieron ni pudieron pelear juntos: uno es de la conquista y el otro, de la Independencia.',k:'tres-siglos'},
+  {cause:'Los garífunas llegaron a Honduras en 1797 y levantaron pueblos enteros.',guide:'Por eso también son parte de la historia del país, aunque casi nunca salgan en la lista de los próceres.',k:'garifunas'},
+  {cause:'Cuando empezó el primer gobierno de Honduras, no había nada hecho.',guide:'Por eso a quien le tocó gobernar tuvo que organizar desde cero las leyes y las cuentas del país.',k:'herrera-leyes'}
 ];
 const critEffectBank=[
-  {effect:'La moneda de Honduras se llama lempira.',guide:'Porque el país honra así al cacique lenca que dirigió la resistencia contra la conquista.'},
-  {effect:'Francisco Morazán tiene estatuas en varios países de Centroamérica, no solo en Honduras.',guide:'Porque presidió la República Federal que unía a los cinco, y su idea era de toda la región.'},
-  {effect:'El Escudo Nacional es el símbolo patrio más antiguo del país.',guide:'Porque nació en 1825, durante el gobierno de Dionisio de Herrera, el primer Jefe de Estado.'},
-  {effect:'A José Trinidad Cabañas se le recuerda por algo que no se ve en un monumento.',guide:'Porque lo suyo fue la honradez: salió del gobierno tan pobre como entró.'},
-  {effect:'La escuela pública y gratuita existe hoy en Honduras.',guide:'Porque la Reforma Liberal, con Soto en la presidencia y Rosa de ministro, la puso por ley en 1882.'}
+  {effect:'A José Trinidad Cabañas se le recuerda por algo que no se ve en un monumento.',guide:'Porque fue honrado: salió del gobierno tan pobre como entró, y por eso le llamaron el caballero «sin tacha».',k:'cabanas-honradez'},
+  {effect:'El Escudo Nacional es el símbolo patrio más antiguo del país.',guide:'Porque nació en 1825, cuatro años después de la Independencia: los demás símbolos llegaron más tarde.',k:'escudo-antiguo'},
+  {effect:'La moneda de Honduras se llama lempira.',guide:'Porque así honra el país a su Héroe Nacional.',k:'lempira-moneda'},
+  {effect:'Francisco Morazán es el hondureño más conocido fuera de Honduras.',guide:'Porque presidió la República Federal, que unía a cinco países, y peleó por esa unión hasta el final sin rendirse.',k:'morazan-conocido'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -624,7 +647,7 @@ function genEvalCrit(){
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿De quién habla cada caso? 2. ¿Qué cambió para el país con lo que hizo cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -658,7 +681,7 @@ function printEvalCrit(){
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones: la memoria y el respeto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hicieron los próceres y con el respeto a la memoria del país.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿De quién habla cada caso? 2. ¿Qué cambió para el país con lo que hizo cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});

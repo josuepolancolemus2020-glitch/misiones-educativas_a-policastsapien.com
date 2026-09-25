@@ -6304,6 +6304,67 @@ pregunta no se escribe sin leer lo que la misión enseña:
    Honduras ni España», y la cuarta también habla de Francia: es el León. Lo que
    solo hace la quinta es **nombrarlo**.
 
+### La tercera: los próceres, y lo que enseñó
+
+Medido antes de tocar nada, el 25 de septiembre de 2026: la conceptual preguntaba
+algún dato dos veces en **las 30 formas** (162 veces), la de pensamiento crítico
+también en **las 30** (99 veces), y la ficha hacía **40 preguntas sobre 19
+datos**: «¿Quién es el Héroe Nacional?» salía en el completar, en el verdadero o
+falso, en la selección y en los pareados.
+
+Una misión que es de **personas** no se arregla igual que una de símbolos o de
+estrofas, y de ahí salieron cuatro decisiones:
+
+1. ⚠️ **Los nombres son el TEMA de la prueba, no su respuesta.** Salen en muchas
+   preguntas, cada vez con un dato distinto, y casi nada pide escribir un nombre:
+   lo que va en la raya es un año, un lugar o una palabra, y eso no sale en
+   ninguna otra pregunta. Solo «¿Quién es el Héroe Nacional?» pide un nombre, con
+   los cuatro nombres de opciones.
+2. **Los pareados no juntan a una persona con su obra**: juntan un año o una fecha
+   con lo que pasó, y una palabra con lo que quiere decir («Un héroe · Defiende a
+   su pueblo», ««Sin tacha» · Que no robó»). Quién hizo qué ya lo preguntan las
+   otras tres secciones, y un pareado de obras repetiría cada una.
+3. ⚠️ **Los bancos son de DOCE y no de quince, a propósito.** Ocho personas no dan
+   sesenta datos distintos: con quince, la única forma de llenar el banco era
+   volver a preguntar lo mismo, que es justo lo que había que quitar.
+   `verifica-mision-nueva` pedía quince a todo banco y ahora acepta **desde diez**
+   solo si el banco lleva `k` en cada ítem —o sea, si ya se revisó dato por
+   dato—; uno sin `k` sigue necesitando quince. Diez es el doble de lo que saca
+   cada forma. Se comprobó al revés quitándole la `k` a un ítem: salió roja.
+4. **En la comparación de pensamiento crítico, el alumno dice DE QUIÉN es cada obra**
+   («Fundó la primera universidad del país»), y los nombres salen en otras
+   preguntas con otro dato. La sonda los daba por pista y no lo eran: saber que a
+   Reyes le falta la fecha de nacimiento en un cartel no dice quién fundó la
+   universidad. Ahora un **nombre propio** delata solo **junto a la obra** —la
+   misma regla que los pareados— y lo escrito en MAYÚSCULAS o con números sigue
+   delatando solo. Se comprobó metiendo «Reyes no hizo nada por la universidad»
+   en un caso: salió roja.
+
+⚠️ **Y otra vez lo que solo se ve LEYENDO, con la sonda en verde.** Tres pistas no
+compartían ni una palabra con su respuesta:
+
+- «Tres siglos · Lo que separa a Lempira de Morazán» junto a los años de Morazán
+  permitía **calcular** que Lempira murió hacia 1500 y elegir 1537 entre opciones
+  separadas de cien en cien. Se quitó la pregunta del año: la de las épocas vale
+  más.
+- «¿Qué países unía la República Federal que presidió Morazán?» dejaba ver que era
+  falso «a Morazán solo se le conoce dentro de Honduras».
+- «1821 · Se **firma** la Independencia» le soplaba a «¿Cómo quería Valle que se
+  hiciera? · Con leyes y no con sangre». Ahora dice «se declara».
+
+⚠️ **Y la revisión encontró un dato que el propio archivo prohíbe.** El «porque» de
+José Trinidad Reyes decía que el Día del Maestro Hondureño es «el día de su
+**nacimiento**», y la cabecera de `js/data/proceres-honduras.js` dice que su fecha
+de nacimiento **no se escribe** porque ninguna fuente del repositorio la trae. Lo
+repetían una pregunta del quiz y una causa de la prueba. Queda lo que ya dice la
+misión de Aspectos Cívicos —que el Día del Maestro lo honra— y nada más. Tampoco
+eso tiene un PDF que lo acredite en `_dev/`: está apuntado para cuando entre la
+fuente.
+
+De paso se arregló una pregunta calcada de otra misión: la comparación pedía «¿Qué
+cultura, lugar o concepto corresponde a cada caso?», y en esta no hay culturas ni
+lugares. Ahora pregunta de quién habla cada caso.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

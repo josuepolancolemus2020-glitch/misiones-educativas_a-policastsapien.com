@@ -218,14 +218,25 @@ function itemsConceptual(b) {
    - «frase»: las causas y los efectos, frases enteras. Una palabra suelta
      en común no es una pista; dos del mismo dato, sí.
    El razonamiento de la comparación (gr) no entra: es la explicación para
-   el maestro, no lo que se le pide al alumno. */
+   el maestro, no lo que se le pide al alumno.
+
+   ⚠️ Y en la comparación, un NOMBRE PROPIO no delata solo. En la de los
+   próceres el alumno lee dos obras sin nombre —«Fundó la primera
+   universidad del país»— y dice de quién es cada una; los nombres salen en
+   otras preguntas, cada vez con OTRO dato («falta la fecha de nacimiento de
+   José Trinidad Reyes»), y eso no le dice quién fundó la universidad: lo que
+   se lo diría es el nombre JUNTO a esa obra. Es la misma regla de los
+   pareados, que se contestan emparejando. Lo escrito en MAYÚSCULAS o con
+   números —«los símbolos MAYORES»— sí delata solo, como siempre: ahí la
+   mayúscula marca lo que el alumno tiene que escribir, no a quién. */
 function itemsCritico(b) {
   const L = [];
   const k = it => it && typeof it === 'object' ? it.k : undefined;
   (b.critCaseBank || []).forEach((it, i) => L.push({ banco: 'critCaseBank', i, k: k(it), visible: it.txt || it, oculto: '' }));
   (b.critErrorBank || []).forEach((it, i) => L.push({ banco: 'critErrorBank', i, k: k(it), visible: it.txt, oculto: [it.g1, it.g2].join(' '), modo: 'mayusculas' }));
   (b.critDecisionBank || []).forEach((it, i) => L.push({ banco: 'critDecisionBank', i, k: k(it), visible: typeof it === 'string' ? it : it.txt, oculto: '' }));
-  (b.critCompareBank || []).forEach((it, i) => L.push({ banco: 'critCompareBank', i, k: k(it), visible: it.a + ' ' + it.b, oculto: [it.ga, it.gb].join(' '), modo: 'fuertes' }));
+  (b.critCompareBank || []).forEach((it, i) => L.push({ banco: 'critCompareBank', i, k: k(it), visible: it.a + ' ' + it.b, oculto: [it.ga, it.gb].join(' '), modo: 'fuertes',
+    lados: [{ oculto: it.ga, obra: it.a }, { oculto: it.gb, obra: it.b }] }));
   (b.critCauseBank || []).forEach((it, i) => L.push({ banco: 'critCauseBank', i, k: k(it), visible: it.cause, oculto: it.guide, modo: 'frase' }));
   (b.critEffectBank || []).forEach((it, i) => L.push({ banco: 'critEffectBank', i, k: k(it), visible: it.effect, oculto: it.guide, modo: 'frase' }));
   return L;
@@ -277,6 +288,18 @@ function pista(X, Y, tema, nombres, titulo = new Set()) {
     const fuerteT = T.filter(p => p.fuerte && !titulo.has(p.r) && enY.has(p.r));
     if (fuerteT.length) return 'repite «' + X.term + '»';
     if (T.some(p => enY.has(p.r)) && D.some(p => enY.has(p.r))) return 'junta «' + X.term + '» con «' + X.def + '»';
+    return null;
+  }
+
+  if (X.oculto && X.lados) {
+    for (const lado of X.lados) {
+      const N = utiles(palabras(lado.oculto)).filter(p => p.fuerte && !titulo.has(p.r));
+      const vistos = [...new Set(N.filter(p => enY.has(p.r)).map(p => p.r))];
+      if (!vistos.length) continue;
+      if (N.some(p => p.mayus || p.num)) return 'deja escrito «' + vistos.join(', ') + '»';
+      const obra = [...new Set(utiles(palabras(lado.obra)).filter(p => !N.some(n => n.r === p.r) && enY.has(p.r)).map(p => p.r))];
+      if (obra.length) return 'junta «' + vistos.join(', ') + '» con «' + obra.join(', ') + '», que es lo que hizo';
+    }
     return null;
   }
 

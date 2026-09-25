@@ -117,6 +117,11 @@ const PROCERES = [
     dato: 'Su apodo tiene dos mitades y las dos importan: «sin tacha» es que no robó; «sin miedo», que no se echó atrás.',
     fecha: null
   },
+  /* ⚠️ Su «porque» decía que el Día del Maestro Hondureño es «el día de su
+     nacimiento». Eso afirma una fecha de nacimiento, y la cabecera de este
+     archivo dice justo que la suya NO se escribe porque ninguna fuente del
+     repositorio la trae. Queda lo que sí dice la misión de Aspectos Cívicos
+     —que el Día del Maestro lo honra— y nada más. */
   {
     clave: 'reyes', nombre: 'José Trinidad Reyes', apodo: 'el Padre Reyes', emoji: '📚',
     clase: 'prócer',
@@ -127,7 +132,7 @@ const PROCERES = [
       'Enseñó, escribió y abrió las puertas del estudio a quien no las tenía.',
       'Fue sacerdote, músico y poeta además de maestro.'
     ],
-    porque: 'Casi todos los próceres hicieron país con leyes o con armas. Él lo hizo con una escuela, y esa escuela sigue abierta: es la razón de que el Día del Maestro Hondureño sea el día de su nacimiento.',
+    porque: 'Casi todos los próceres hicieron país con leyes o con armas. Él lo hizo con una escuela, y esa escuela sigue abierta: por eso el Día del Maestro Hondureño lo honra.',
     dato: 'El 17 de septiembre, Día del Maestro Hondureño, se celebra por él.',
     fecha: { dia: '17 de septiembre', que: 'Día del Maestro Hondureño' }
   },

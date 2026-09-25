@@ -125,7 +125,7 @@ if (html.includes('id="s-explica"')) tamanos.push(['explicaData', 5]);
    forma buena de hacerlo y pintaba de rojo una misión sana. */
 function cuantosTiene(nombre) {
   const lit = jsSrc.match(new RegExp('const ' + nombre + '\\s*=\\s*(\\[[\\s\\S]*?\\n\\]);'));
-  if (lit) return eval(lit[1]).length;
+  if (lit) { const arr = eval(lit[1]); conK[nombre] = arr.length > 0 && arr.every(x => x && typeof x === 'object' && x.k); return arr.length; }
   const gen = sentenciaDe(jsSrc, nombre);
   if (!gen) return null;
   /* Se cargan antes los archivos de datos que la propia misión enlaza: el
@@ -158,12 +158,24 @@ function sentenciaDe(src, nombre) {
   return null;
 }
 
+/* ⚠️ Un banco de la evaluación que ya pasó por la revisión de «ninguna
+   pregunta le regala la respuesta a otra» —sus ítems llevan `k`, el dato que
+   preguntan— puede tener MENOS de quince, y no es un descuido. En la misión de
+   los próceres son ocho personas: no hay sesenta datos distintos que
+   preguntar, y la única forma de llegar a quince por banco era volver a
+   preguntar lo mismo, que es justo lo que se quitó. El piso es diez, el doble
+   de lo que saca cada forma: con menos, dos formas seguidas saldrían casi
+   iguales. Un banco SIN `k` sigue necesitando quince. */
+const conK = {};
+const PISO_REVISADO = 10;
 tamanos
   .forEach(([nombre, min]) => {
     let n;
     try { n = cuantosTiene(nombre); } catch (e) { ojo(nombre + ': ' + e.message); return; }
     if (n === null || n === undefined) { mal('falta ' + nombre); return; }
-    if (n < min) mal(`${nombre} tiene ${n} y hacen falta al menos ${min}`);
+    if (n < min && /^eval(TF|MC|CP|PR)Bank$/.test(nombre) && conK[nombre] && n >= PISO_REVISADO)
+      bien(`${nombre}: ${n} (revisado dato por dato: ninguno se pregunta dos veces)`);
+    else if (n < min) mal(`${nombre} tiene ${n} y hacen falta al menos ${min}`);
     else bien(`${nombre}: ${n}`);
   });
 
