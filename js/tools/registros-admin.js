@@ -1711,6 +1711,13 @@ function adColectaCompleta(c, d) {
   const esp = adColectaEsperados(c, d);
   return esp > 0 && adColectaDieron(c, d) >= esp;
 }
+/* «1 de 3 completas»: la misma frase en la pantalla, el WhatsApp y el papel.
+   Con una sola colecta devuelve '' porque «1 de 1» no dice nada. */
+function adColectasCompletasTxt(d) {
+  const cs = d.colectas || [];
+  if (cs.length < 2) return '';
+  return cs.filter(x => adColectaCompleta(x, d)).length + ' de ' + cs.length;
+}
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
@@ -1734,9 +1741,8 @@ function adColectaTxtResumen(c, d) {
     (gastos.length ? gastos.map(g => '   • ' + g.d + ': ' + adLps(g.m)).join('\n') + '\n' : '') +
     '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
     /* con una sola colecta «1 de 1» no dice nada: solo sale si hay más */
-    ((d.colectas || []).length > 1
-      ? '🗂️ Colectas del grupo: *' + d.colectas.filter(x => adColectaCompleta(x, d)).length +
-        ' de ' + d.colectas.length + '* completas\n\n'
+    (adColectasCompletasTxt(d)
+      ? '🗂️ Colectas del grupo: *' + adColectasCompletasTxt(d) + '* completas\n\n'
       : '') +
     'Cortado al ' + adFechaBonita(adHoy()) + '.\n_Anotado con M.E.T.A.S_';
 }
@@ -1781,6 +1787,7 @@ function adRenderEco(body, d) {
     ${d.colectas.length ? `
     <div class="pa-card">
       <div class="pa-card-title">🗂️ Mis colectas</div>
+      ${adColectasCompletasTxt(d) ? `<p class="ad-col-completas">✅ <strong>${adColectasCompletasTxt(d)}</strong> completas</p>` : ''}
       ${d.colectas.slice().reverse().map(c => {
         const t = adColectaTotales(c);
         const pagaron = adColectaDieron(c, d);
@@ -2575,6 +2582,7 @@ function adRenderColecta(body, d) {
         <div class="ad-barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${pagaron} de ${esp}</div>
         ${adColectaBarraSvg(c, d, 18)}
         <div class="ad-barra-esc" aria-hidden="true"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
+        ${adColectasCompletasTxt(d) ? `<p class="ad-col-completas">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</p>` : ''}
       </div>
       <div class="ad-btn-row">
         <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 Enviar resumen por WhatsApp</button>
@@ -2796,8 +2804,8 @@ ${(() => {
   <div class="barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)} alumnos</div>
   ${adColectaBarraSvg(c, d, 22)}
   <div class="barra-esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
-  ${(d.colectas || []).length > 1
-    ? `<div class="barra-rot" style="margin-top:2mm">🗂️ Colectas del grupo: <strong>${d.colectas.filter(x => adColectaCompleta(x, d)).length} de ${d.colectas.length}</strong> completas</div>`
+  ${adColectasCompletasTxt(d)
+    ? `<div class="barra-rot" style="margin-top:2mm">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</div>`
     : ''}
 </div>`;
 })()}
