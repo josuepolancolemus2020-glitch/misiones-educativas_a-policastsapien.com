@@ -350,73 +350,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un fenómeno natural se convierte en desastre cuando afecta a una comunidad vulnerable.',a:true},
-  {q:'El huracán Mitch ocurrió en el año 1998.',a:true},
-  {q:'El huracán Mitch alcanzó la categoría 1 en la escala Saffir-Simpson.',a:false},
-  {q:'El riesgo se calcula como Amenaza × Vulnerabilidad.',a:true},
-  {q:'El terremoto es una amenaza hidrometeorológica.',a:false},
-  {q:'Los huracanes se forman sobre el mar cálido.',a:true},
-  {q:'Reforestar las laderas ayuda a prevenir deslizamientos.',a:true},
-  {q:'La alerta roja significa que todo está normal.',a:false},
-  {q:'COPECO coordina la respuesta ante desastres en Honduras.',a:true},
-  {q:'La vulnerabilidad disminuye al vivir a la orilla de un río crecido.',a:false},
-  {q:'La prevención se realiza antes de que ocurra el desastre.',a:true},
-  {q:'La inundación ocurre cuando el agua cubre terrenos normalmente secos.',a:true},
-  {q:'La deforestación reduce el riesgo de deslizamientos.',a:false},
-  {q:'Durante un terremoto conviene agacharse, cubrirse y sujetarse.',a:true},
-  {q:'El Mitch causó pocos daños en Honduras.',a:false},
+  {q:'En el huracán de 1998, las comunidades más dañadas eran las que vivían junto a los ríos.',a:true,k:'tf-junto-rios'},
+  {q:'Una inundación cubre de agua terrenos que suelen estar secos.',a:true,k:'tf-inundacion'},
+  {q:'Un huracán es una tormenta que gira.',a:true,k:'tf-gira'},
+  {q:'En el huracán de 1998, lo que más destruyó fue el agua, más que el viento.',a:true,k:'tf-agua'},
+  {q:'Las lluvias intensas pueden hacer crecer los ríos.',a:true,k:'tf-rios-crecen'},
+  {q:'Construir la casa a la orilla de una quebrada es más seguro.',a:false,k:'tf-quebrada'},
+  {q:'La deforestación hace que la tierra de los cerros se sostenga mejor.',a:false,k:'tf-deforestacion'},
+  {q:'Una tormenta trae lluvias, rayos y vientos fuertes.',a:true,k:'tf-tormenta'},
+  {q:'Un aguacero siempre es un desastre, caiga donde caiga.',a:false,k:'tf-aguacero'},
+  {q:'Durante un temblor, lo mejor es usar el ascensor para salir rápido.',a:false,k:'tf-ascensor'}
 ];
 const evalMCBank=[
-  {q:'¿Cuándo un fenómeno natural se vuelve desastre?',o:['a) Cuando afecta a una comunidad vulnerable','b) Siempre','c) Solo de noche','d) Nunca'],a:0},
-  {q:'¿En qué año ocurrió el huracán Mitch?',o:['a) 1988','b) 1998','c) 2008','d) 2020'],a:1},
-  {q:'¿Qué categoría alcanzó el huracán Mitch?',o:['a) 1','b) 3','c) 2','d) 5'],a:3},
-  {q:'¿Cuál es la fórmula del riesgo?',o:['a) Lluvia + Viento','b) Amenaza × Vulnerabilidad','c) Amenaza − Prevención','d) Solo la amenaza'],a:1},
-  {q:'¿Cuál es una amenaza geológica?',o:['a) Huracán','b) Sequía','c) Inundación','d) Terremoto'],a:3},
-  {q:'¿Sobre qué se forman los huracanes?',o:['a) Montañas','b) Desiertos','c) Mar cálido','d) Polos'],a:2},
-  {q:'¿Qué acción reduce el riesgo de deslizamiento?',o:['a) Deforestar','b) Botar basura','c) Reforestar','d) Construir en la ladera'],a:2},
-  {q:'¿Qué institución coordina los desastres en Honduras?',o:['a) COPECO','b) La escuela','c) El hospital','d) El correo'],a:0},
-  {q:'¿Qué significa la alerta roja?',o:['a) Peligro, evacuar','b) Normal','c) Atención','d) Ya pasó'],a:0},
-  {q:'¿Qué es la vulnerabilidad?',o:['a) El fenómeno peligroso','b) Un tipo de huracán','c) La debilidad de la comunidad','d) Una institución'],a:2},
-  {q:'¿Cuál es una amenaza hidrometeorológica?',o:['a) Terremoto','b) Erupción volcánica','c) Tsunami','d) Inundación'],a:3},
-  {q:'¿Qué es la mitigación?',o:['a) Provocar el desastre','b) Ignorar el peligro','c) Disminuir el impacto de la amenaza','d) Aumentar el riesgo'],a:2},
-  {q:'¿Qué se debe hacer durante un terremoto?',o:['a) Correr sin mirar','b) Agacharse, cubrirse y sujetarse','c) Usar el ascensor','d) Asomarse a la ventana'],a:1},
-  {q:'¿Qué parte tranquila tiene el huracán en su centro?',o:['a) El ojo','b) La cola','c) La base','d) La raíz'],a:0},
-  {q:'¿Qué se prepara para estar listos ante una emergencia?',o:['a) Un juego de mesa','b) Una mochila de emergencia','c) Nada','d) Más basura'],a:1},
+  {q:'¿En qué meses de 1998 pasó el gran huracán por Honduras?',o:['a) octubre y noviembre','b) enero y febrero','c) junio y julio','d) abril y mayo'],a:0,k:'mc-meses'},
+  {q:'¿Qué categoría llegó a tener el huracán de 1998?',o:['a) 1','b) 2','c) 3','d) 5'],a:3,k:'mc-categoria'},
+  {q:'¿Cuál de estos fenómenos viene del agua y del clima?',o:['a) erupción volcánica','b) deslizamiento','c) sismo','d) inundación'],a:3,k:'mc-hidro'},
+  {q:'¿Qué sale de un volcán en erupción?',o:['a) lava, ceniza y gases','b) agua dulce','c) nieve','d) arena de playa'],a:0,k:'mc-volcan'},
+  {q:'¿Qué se debe hacer durante un sismo?',o:['a) correr sin mirar','b) agacharse, cubrirse y sujetarse','c) asomarse a la ventana','d) subir a la azotea'],a:1,k:'mc-agacharse'},
+  {q:'¿Qué conviene tener lista en casa para una emergencia?',o:['a) un juego de mesa','b) la televisión encendida','c) una mochila de emergencia','d) nada'],a:2,k:'mc-mochila'},
+  {q:'Cayó el mismo aguacero en dos casas. ¿Por qué la del vecino de Kenia no se inundó?',o:['a) tenía techo nuevo','b) estaba en la loma','c) llovió menos ahí','d) tenía perro'],a:1,k:'mc-loma'},
+  {q:'¿Qué significa la alerta roja?',o:['a) todo normal','b) ya pasó el peligro','c) prepararse con calma','d) peligro: hay que irse ya del lugar'],a:3,k:'mc-roja'},
+  {q:'¿Qué le da fuerza a un huracán?',o:['a) el agua caliente del mar','b) la luna','c) los volcanes','d) el frío de los polos'],a:0,k:'mc-energia'},
+  {q:'¿Qué es un desastre?',o:['a) cualquier lluvia','b) los daños que deja un fenómeno en una comunidad que no puede enfrentarlos sola','c) un día nublado','d) un tipo de nube'],a:1,k:'mc-desastre'}
 ];
 const evalCPBank=[
-  {q:'El huracán ___ golpeó Honduras en 1998.',a:'mitch'},
-  {q:'La ___ es el fenómeno que puede causar daño.',a:'amenaza'},
-  {q:'La ___ es la debilidad de la comunidad ante la amenaza.',a:'vulnerabilidad'},
-  {q:'El ___ es la probabilidad de sufrir daños.',a:'riesgo'},
-  {q:'Los huracanes se forman sobre el ___ cálido.',a:'mar'},
-  {q:'El ___ es una amenaza geológica que mueve el suelo.',a:'terremoto'},
-  {q:'La ___ es cuando el agua cubre terrenos secos.',a:'inundación'},
-  {q:'La alerta ___ indica que hay que evacuar.',a:'roja'},
-  {q:'La ___ son acciones para evitar daños antes del desastre.',a:'prevención'},
-  {q:'En Honduras, ___ coordina la respuesta a desastres.',a:'copeco'},
-  {q:'La escala ___ clasifica los huracanes en 5 categorías.',a:'saffir-simpson'},
-  {q:'El ___ es el desplazamiento de tierra por una ladera.',a:'deslizamiento'},
-  {q:'La ___ temprana avisa a tiempo para poder evacuar.',a:'alerta'},
-  {q:'La ___ busca disminuir el impacto de la amenaza.',a:'mitigación'},
-  {q:'El centro tranquilo del huracán se llama ___.',a:'ojo'},
+  {q:'El huracán que golpeó Honduras en 1998 se llamó ___.',a:'Mitch',acc:['Mitch'],k:'cp-mitch'},
+  {q:'La falta prolongada de lluvia se llama ___.',a:'sequía',acc:['sequía'],k:'cp-sequia'},
+  {q:'Olas gigantes tras un sismo en el fondo del mar: eso es un ___.',a:'tsunami',acc:['tsunami'],k:'cp-tsunami'},
+  {q:'Sembrar árboles en los cerros para sostener el suelo es ___.',a:'reforestar',acc:['reforestar'],k:'cp-reforestar'},
+  {q:'Salir a una zona segura antes de que llegue el peligro es una ___.',a:'evacuación',acc:['evacuación'],k:'cp-evacuacion'},
+  {q:'Un movimiento brusco del suelo por la energía de adentro de la Tierra es un ___.',a:'terremoto',acc:['terremoto'],k:'cp-terremoto'},
+  {q:'El aviso que llega a tiempo para salir se llama alerta ___.',a:'temprana',acc:['temprana'],k:'cp-temprana'},
+  {q:'Un huracán nace sobre agua de mar a más de ___ °C.',a:'26',acc:['26','veintiséis'],k:'cp-26'},
+  {q:'El huracán de 1998 avanzó sobre ___.',a:'Centroamérica',acc:['Centroamérica'],k:'cp-centroamerica'},
+  {q:'Cuando un río lleva mucha más agua de lo normal, se dice que está ___.',a:'crecido',acc:['crecido'],k:'cp-crecido'}
 ];
 const evalPRBank=[
-  {term:'Amenaza',def:'Fenómeno que puede causar daño'},
-  {term:'Vulnerabilidad',def:'Debilidad de la comunidad ante la amenaza'},
-  {term:'Riesgo',def:'Probabilidad de sufrir daños'},
-  {term:'Huracán Mitch',def:'Desastre categoría 5 que golpeó Honduras en 1998'},
-  {term:'Inundación',def:'El agua cubre terrenos normalmente secos'},
-  {term:'Deslizamiento',def:'Tierra y rocas bajan por una ladera'},
-  {term:'Terremoto',def:'Movimiento brusco del suelo'},
-  {term:'Prevención',def:'Acciones para evitar daños antes'},
-  {term:'Mitigación',def:'Medidas para disminuir el impacto'},
-  {term:'Alerta temprana',def:'Aviso a tiempo para evacuar'},
-  {term:'COPECO',def:'Institución hondureña de contingencias'},
-  {term:'Saffir-Simpson',def:'Escala que clasifica los huracanes'},
-  {term:'Ojo del huracán',def:'Centro tranquilo del huracán'},
-  {term:'Refugio',def:'Lugar seguro donde protegerse'},
-  {term:'Reforestar',def:'Sembrar árboles para reducir deslizamientos'},
+  {term:'Amenaza',def:'El fenómeno que puede causar daño',k:'pr-amenaza'},
+  {term:'Vulnerabilidad',def:'La debilidad de una comunidad',k:'pr-vulnerabilidad'},
+  {term:'Riesgo',def:'La probabilidad de sufrir daños',k:'pr-riesgo'},
+  {term:'Prevención',def:'Lo que se hace antes para evitar daños',k:'pr-prevencion'},
+  {term:'Mitigación',def:'Lo que se hace para reducir el impacto',k:'pr-mitigacion'},
+  {term:'Saffir-Simpson',def:'Clasifica los huracanes por su viento',k:'pr-saffir'},
+  {term:'Refugio',def:'Lugar seguro donde protegerse',k:'pr-refugio'},
+  {term:'Deslizamiento',def:'Tierra y rocas que bajan por una ladera',k:'pr-deslizamiento'},
+  {term:'Ojo del huracán',def:'Su centro tranquilo',k:'pr-ojo'},
+  {term:'COPECO',def:'Coordina la respuesta en Honduras',k:'pr-copeco'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -512,12 +497,12 @@ function evalSwitchMode(mode){
 }
 
 const critCaseBank=[
-  {txt:'En 1998, en una comunidad hondureña ubicada a la orilla de un río y con los cerros cercanos deforestados, cayeron lluvias muy intensas durante varios días por el huracán Mitch. El río se desbordó, hubo deslizamientos y muchas casas quedaron destruidas.'},
-  {txt:'Un barrio construido al pie de un cerro sin árboles recibe lluvias fuertes durante una semana. El suelo se satura de agua, la ladera cede y un deslizamiento afecta varias viviendas de la parte baja.'},
-  {txt:'Una aldea situada junto a un río, con viviendas frágiles y sin plan de emergencia, es sorprendida por una tormenta tropical. El río crece de noche y el agua inunda las casas antes de que la gente pueda salir.'},
-  {txt:'Durante un huracán, una comunidad que había deforestado sus montañas y tirado basura en los cauces sufre inundaciones y deslizamientos más graves que las comunidades vecinas que conservaban sus bosques.'},
-  {txt:'Tras días de lluvia por un ciclón, una familia que vive en una zona baja y de riesgo no atendió la alerta amarilla. Cuando llegó la alerta roja, el agua ya subía y tuvieron que ser rescatados del techo de su casa.'},
-  {txt:'Una escuela ubicada cerca de una quebrada, sin muros de contención ni simulacros, queda incomunicada cuando las lluvias intensas de un huracán provocan el desbordamiento de la quebrada y un deslizamiento en el camino.'},
+  {k:'ca-rio-cerros',txt:'En una comunidad hondureña a la orilla de un río, con los cerros de alrededor sin árboles, cayeron lluvias muy fuertes durante varios días por un huracán. El río se desbordó, hubo derrumbes y muchas casas quedaron destruidas.'},
+  {k:'ca-barrio-cerro',txt:'Un barrio construido al pie de un cerro sin árboles recibe lluvias fuertes durante una semana. El suelo se llena de agua, la ladera cede y el lodo cae sobre varias viviendas de la parte baja.'},
+  {k:'ca-aldea-noche',txt:'Una aldea junto a un río, con viviendas frágiles y sin plan de emergencia, es sorprendida por una tormenta tropical. El río crece de noche y el agua entra a las casas antes de que la gente pueda salir.'},
+  {k:'ca-cauce-seco',txt:'Una colonia nueva se construyó sobre el cauce de una quebrada que llevaba años seca. En el primer invierno fuerte, el agua volvió a correr por donde siempre había corrido y se llevó las paredes de tres casas.'},
+  {k:'ca-lamina',txt:'Una familia vive en una casa de lámina suelta en la parte baja de la colonia. Durante una tormenta, el viento arrancó el techo y el agua entró hasta las camas.'},
+  {k:'ca-escuela-quebrada',txt:'Una escuela cerca de una quebrada, sin muros de contención ni simulacros, queda incomunicada cuando las lluvias de un huracán desbordan la quebrada y el lodo tapa el camino.'},
 ];
 const critCaseQuestions=[
   '1. Identifica en el caso cuál es la amenaza y cuáles son las condiciones de vulnerabilidad.',
@@ -533,22 +518,22 @@ const critCaseGuides=[
 ];
 
 const critErrorBank=[
-  {txt:'"Un fenómeno natural siempre es un desastre, aunque ocurra en un lugar deshabitado y no cause ningún daño."',
+  {k:'er-siempre-desastre',txt:'"Un fenómeno natural siempre es un desastre, aunque ocurra en un lugar deshabitado y no cause ningún daño."',
    g1:'Un fenómeno natural solo se convierte en desastre cuando afecta a una comunidad vulnerable y causa daños.',
    g2:'Si ocurre en un lugar deshabitado y no hay daños, es solo un fenómeno o una amenaza, no un desastre.'},
-  {txt:'"El riesgo se calcula sumando la lluvia y el viento, y no tiene nada que ver con cómo vive la gente."',
+  {k:'er-riesgo-suma',txt:'"El riesgo se calcula sumando la lluvia y el viento, y no tiene nada que ver con cómo vive la gente."',
    g1:'El riesgo se calcula como Amenaza × Vulnerabilidad, no sumando lluvia y viento.',
    g2:'Sí depende de cómo vive la gente: la vulnerabilidad (zonas peligrosas, casas frágiles) es parte del riesgo.'},
-  {txt:'"El terremoto y la inundación son amenazas hidrometeorológicas, porque ambos se relacionan con la lluvia."',
-   g1:'El terremoto es una amenaza geológica, se origina dentro de la Tierra, no en el clima.',
+  {k:'er-terremoto-hidro',txt:'"El terremoto y la inundación son amenazas hidrometeorológicas, porque ambos se relacionan con la lluvia."',
+   g1:'El terremoto es una amenaza geológica: se origina dentro de la Tierra, no en el clima.',
    g2:'La inundación sí es hidrometeorológica; el error es meter al terremoto en ese grupo.'},
-  {txt:'"Para prevenir deslizamientos lo mejor es cortar todos los árboles del cerro y construir casas en la ladera."',
-   g1:'Cortar los árboles (deforestar) aumenta el riesgo de deslizamiento, no lo previene.',
-   g2:'Construir en la ladera aumenta la vulnerabilidad; lo correcto es reforestar y no construir en zonas de riesgo.'},
-  {txt:'"La alerta roja significa que ya pasó el peligro y podemos volver tranquilos a la orilla del río."',
+  {k:'er-mochila-tarde',txt:'"La mochila de emergencia se arma cuando ya está lloviendo fuerte; antes no hace falta."',
+   g1:'La mochila se prepara con tiempo, antes de la temporada de lluvias: es prevención.',
+   g2:'Con la lluvia encima no hay tiempo de buscar agua, linterna, medicinas ni documentos, y hay que salir ya.'},
+  {k:'er-alerta-roja',txt:'"La alerta roja significa que ya pasó el peligro y podemos volver tranquilos a la orilla del río."',
    g1:'La alerta roja significa peligro y que hay que evacuar, no que ya pasó.',
    g2:'Volver a la orilla del río crecido es muy peligroso; hay que alejarse del cauce y buscar zonas altas.'},
-  {txt:'"El huracán Mitch ocurrió en 2008, fue de categoría 1 y casi no afectó a Honduras."',
+  {k:'er-mitch',txt:'"El huracán Mitch ocurrió en 2008, fue de categoría 1 y casi no afectó a Honduras."',
    g1:'El huracán Mitch ocurrió en 1998, no en 2008.',
    g2:'Fue de categoría 5 y causó uno de los peores desastres de la historia de Honduras.'},
 ];
@@ -563,36 +548,37 @@ const critDecisionBank=[
 const critDecisionGuide='Debe proponer 3 acciones concretas de gestión de riesgos (reforestar, no construir o reubicarse fuera de la zona de riesgo, elaborar un plan familiar y practicar simulacros, preparar la mochila de emergencia, identificar rutas y zonas seguras, limpiar cauces y drenajes, atender las alertas tempranas) y explicar por qué cada una reduce la vulnerabilidad y el riesgo de desastre.';
 
 const critCompareBank=[
-  {a:'Una comunidad con cerros reforestados, casas seguras y un plan de emergencia recibe un huracán y sufre pocos daños.',b:'Una comunidad con cerros deforestados, casas frágiles y sin plan recibe el mismo huracán y sufre inundaciones y deslizamientos graves.',
+  {k:'co-reforestada',a:'Una comunidad con cerros reforestados, casas seguras y un plan de emergencia recibe un huracán y sufre pocos daños.',b:'Una comunidad con cerros deforestados, casas frágiles y sin plan recibe el mismo huracán y sufre inundaciones y derrumbes graves.',
    ga:'Baja vulnerabilidad: la prevención y el buen manejo del ambiente redujeron el riesgo.',
    gb:'Alta vulnerabilidad: la deforestación y la falta de preparación aumentaron el riesgo.',
    gr:'La amenaza (el huracán) fue la misma; la diferencia en los daños se debe a la distinta vulnerabilidad de cada comunidad.'},
-  {a:'Un terremoto sacude una ciudad y derrumba edificios en pocos segundos.',b:'Un huracán se acerca durante varios días y provoca lluvias, inundaciones y deslizamientos.',
+  {k:'co-sismo-huracan',a:'Un terremoto sacude una ciudad y derrumba edificios en pocos segundos.',b:'Un huracán se acerca durante varios días y provoca lluvias, inundaciones y derrumbes.',
    ga:'Amenaza geológica: se origina dentro de la Tierra y actúa de forma rápida y repentina.',
    gb:'Amenaza hidrometeorológica: se relaciona con el clima y suele avisarse con días de anticipación.',
-   gr:'No son el mismo tipo de amenaza: una es geológica y súbita, la otra es hidrometeorológica y permite alerta temprana.'},
-  {a:'Una familia atiende la alerta temprana, evacua a tiempo y llega segura al refugio.',b:'Otra familia ignora la alerta, se queda en su casa junto al río y debe ser rescatada.',
-   ga:'Buena gestión del riesgo: la preparación y la evacuación salvaron vidas.',
-   gb:'Mala gestión del riesgo: ignorar la alerta aumentó el peligro.',
-   gr:'Ante la misma amenaza, la decisión de prepararse y evacuar marcó la diferencia entre estar a salvo o en peligro.'},
-  {a:'Una inundación cubre de agua los cultivos de una zona baja cercana a un río.',b:'Un deslizamiento de lodo y rocas baja por una ladera deforestada tras las lluvias.',
+   gr:'No son el mismo tipo de amenaza: una es geológica y súbita, la otra es hidrometeorológica y permite avisar con tiempo.'},
+  {k:'co-bloque-lamina',a:'Una casa de bloque, con el techo amarrado, aguanta los vientos de una tormenta.',b:'Una casa de lámina suelta, en la misma calle, pierde el techo con los mismos vientos.',
+   ga:'Menor vulnerabilidad: la construcción reforzada resiste la amenaza.',
+   gb:'Mayor vulnerabilidad: los materiales frágiles y sin amarrar ceden ante el viento.',
+   gr:'El viento fue el mismo; lo que cambió fue qué tan preparada estaba cada casa.'},
+  {k:'co-inundacion-derrumbe',a:'Una inundación cubre de agua los cultivos de una zona baja cercana a un río.',b:'Un derrumbe de lodo y rocas baja por una ladera deforestada tras las lluvias.',
    ga:'Inundación: el agua cubre terrenos secos por el desbordamiento del río.',
-   gb:'Deslizamiento: la tierra saturada de agua se desprende por la pendiente.',
-   gr:'Ambos pueden ocurrir por las mismas lluvias, pero son amenazas distintas: una es exceso de agua en zonas bajas y la otra es movimiento de tierra en laderas.'},
+   gb:'Deslizamiento: la tierra llena de agua se desprende por la pendiente.',
+   gr:'Pueden venir de las mismas lluvias, pero son amenazas distintas: una es exceso de agua en zonas bajas y la otra es movimiento de tierra en laderas.'},
 ];
 
 const critCauseBank=[
-  {cause:'Una comunidad deforesta los cerros que rodean sus casas.',guide:'El suelo queda sin raíces que lo sostengan y, con las lluvias, aumenta el riesgo de deslizamientos.'},
-  {cause:'Las personas tiran basura en el cauce del río y tapan los drenajes.',guide:'El agua no corre bien y, al llover fuerte, el río se desborda y provoca inundaciones.'},
-  {cause:'Una familia construye su casa a la orilla de un río que se desborda.',guide:'Aumenta su vulnerabilidad: ante una crecida, la casa puede inundarse o ser arrastrada.'},
-  {cause:'Una comunidad ignora la alerta temprana de un huracán.',guide:'No evacua a tiempo y queda expuesta al peligro, con más riesgo de pérdidas humanas.'},
+  {k:'cau-simulacros',cause:'Una escuela practica simulacros dos veces al año.',guide:'Cuando suena la alarma, los alumnos conocen la ruta y salen en orden en pocos minutos, sin empujarse.'},
+  {k:'cau-mochila',cause:'Una familia deja lista su mochila de emergencia al empezar el invierno.',guide:'Si hay que salir de noche, no pierde tiempo buscando agua, linterna, medicinas ni papeles.'},
+  {k:'cau-muros',cause:'Un pueblo construye muros de contención y drenajes en sus calles empinadas.',guide:'El agua de la lluvia corre por donde debe y el lodo no baja sobre las casas de abajo.'},
+  {k:'cau-prohibe-orilla',cause:'Un municipio prohíbe construir casas en la orilla del río.',guide:'Menos familias quedan en la zona que se inunda: baja la vulnerabilidad del pueblo.'},
 ];
 const critEffectBank=[
-  {effect:'El río se desborda de noche e inunda las casas de una zona baja.',guide:'Lluvias muy intensas de un huracán o tormenta, sumadas a vivir en zona inundable.'},
-  {effect:'Un deslizamiento de lodo sepulta viviendas al pie de un cerro.',guide:'Deforestación de la ladera y suelo saturado por lluvias prolongadas.'},
-  {effect:'En 1998 Honduras sufre uno de sus peores desastres, con miles de víctimas.',guide:'El paso del huracán Mitch, de categoría 5, sobre comunidades vulnerables.'},
-  {effect:'Una familia logra ponerse a salvo antes de que llegue la crecida.',guide:'Atendió la alerta temprana y evacuó a tiempo hacia una zona segura.'},
+  {k:'ef-anciano',effect:'Un anciano que no puede caminar solo llega a salvo al refugio durante una emergencia.',guide:'Los vecinos tenían un plan y sabían quién necesitaba ayuda para salir.'},
+  {k:'ef-vidrios',effect:'Después de un temblor fuerte, nadie de la familia se cortó con vidrios.',guide:'Se agacharon, se cubrieron y se sujetaron lejos de las ventanas.'},
+  {k:'ef-techo',effect:'El techo de una casa aguantó los vientos de un huracán.',guide:'Lo habían amarrado y reforzado antes de la temporada de huracanes.'},
+  {k:'ef-ayuda',effect:'Después de una tormenta, la ayuda llegó rápido a todas las familias de una aldea.',guide:'El comité local ya tenía anotado dónde vivía cada familia y avisó enseguida a COPECO.'},
 ];
+
 
 function genEvalCrit(){
   sfx('click');
