@@ -778,7 +778,7 @@ const evalPRBank=[
   {term:'Transportador',def:'El instrumento para medir ángulos',k:'pr-transportador'},
   {term:'Lados',def:'Las dos líneas que forman el ángulo',k:'pr-lados'},
   {term:'Grado',def:'La unidad con que se miden los ángulos',k:'pr-grado'},
-  {term:'Abertura',def:'Cuánto se separan los lados de un ángulo',k:'pr-abertura'}
+  {term:'Ángulo reflejo',def:'Mide más de 180° y menos de 360°',k:'pr-reflejo'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 const EVAL_FORMAS = 30;
