@@ -746,45 +746,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Los múltiplos de un número nunca se acaban.',a:true},
-  {q:'El 4 es divisor de 18.',a:false},
-  {q:'Todo número que termina en 0 es par.',a:true},
-  {q:'Todos los números impares son primos.',a:false},
-  {q:'El número 2 es el único primo par.',a:true},
-  {q:'El número 1 es primo porque solo se divide entre 1.',a:false},
-  {q:'Un número compuesto tiene más de dos divisores.',a:true},
-  {q:'La descomposición factorial de 18 es 2 × 9.',a:false},
-  {q:'Si un número termina en 5, es divisible entre 5.',a:true},
-  {q:'El 51 es un número primo.',a:false}
+  {q:'42 es múltiplo de 7.',a:true,k:'tf-42-7'},
+  {q:'4 es divisor de 18.',a:false,k:'tf-4-18'},
+  {q:'31 es un número primo.',a:true,k:'tf-31'},
+  {q:'51 es un número primo.',a:false,k:'tf-51'},
+  {q:'Los divisores de 10 son 1, 2, 5 y 10.',a:true,k:'tf-div-10'},
+  {q:'2 × 2 × 3 es la factorización de 12.',a:true,k:'tf-fact-12'},
+  {q:'2 × 2 × 5 es la factorización de 30.',a:false,k:'tf-fact-30'},
+  {q:'27 es un número compuesto.',a:true,k:'tf-27'},
+  {q:'135 es un número par.',a:false,k:'tf-135'},
+  {q:'90 es múltiplo de 8.',a:false,k:'tf-90-8'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál de estos números es múltiplo de 7?',o:['a) 42','b) 27','c) 47','d) 37'],a:0},
-  {q:'¿Cuántos divisores tiene el número 16?',o:['a) 3','b) 4','c) 5','d) 2'],a:2},
-  {q:'¿Cuál de estos números es primo?',o:['a) 31','b) 33','c) 39','d) 35'],a:0},
-  {q:'La descomposición en factores primos de 20 es:',o:['a) 4 × 5','b) 2 × 10','c) 20 × 1','d) 2 × 2 × 5'],a:3},
-  {q:'¿Cuál número es par y múltiplo de 5 a la vez?',o:['a) 25','b) 52','c) 55','d) 70'],a:3},
-  {q:'¿Cuál número NO es divisor de 36?',o:['a) 6','b) 8','c) 9','d) 12'],a:1},
-  {q:'¿Qué número no es primo ni compuesto?',o:['a) el 0','b) el 1','c) el 2','d) el 3'],a:1},
-  {q:'¿Cuál es el número cuya factorización es 3 × 3 × 5?',o:['a) 30','b) 15','c) 45','d) 90'],a:2}
+  {q:'¿Cuál de estos números es múltiplo de 6?',o:['a) 48','b) 26','c) 34','d) 50'],a:0,k:'mc-mult-6'},
+  {q:'¿Cuál de estos números tiene exactamente tres divisores?',o:['a) 6','b) 9','c) 10','d) 12'],a:1,k:'mc-tres-div'},
+  {q:'¿Cuál de estos números es primo?',o:['a) 33','b) 39','c) 49','d) 37'],a:3,k:'mc-primo'},
+  {q:'¿Cuál es la factorización de 20?',o:['a) 4 × 5','b) 2 × 10','c) 20 × 1','d) 2 × 2 × 5'],a:3,k:'mc-fact-20'},
+  {q:'¿Cuál número es par y múltiplo de 5 a la vez?',o:['a) 70','b) 25','c) 52','d) 55'],a:0,k:'mc-par-5'},
+  {q:'¿Cuál número NO es divisor de 36?',o:['a) 6','b) 8','c) 9','d) 12'],a:1,k:'mc-no-div-36'},
+  {q:'¿Cuál de estos números no es primo ni compuesto?',o:['a) 1','b) 2','c) 3','d) 5'],a:0,k:'mc-el-1'},
+  {q:'¿Qué número tiene la factorización 3 × 3 × 5?',o:['a) 30','b) 15','c) 45','d) 90'],a:2,k:'mc-fact-45'},
+  {q:'¿Cuál de estos números es impar?',o:['a) 73','b) 108','c) 250','d) 64'],a:0,k:'mc-impar'},
+  {q:'¿Qué número sigue? 15, 30, 45, ___',o:['a) 55','b) 60','c) 65','d) 50'],a:1,k:'mc-sigue-15'}
 ];
 const evalCPBank=[
-  {q:'Los múltiplos de 6 son: 6, 12, 18, ___ …',a:'24',acc:['24','veinticuatro']},
-  {q:'Un número que divide a otro en forma exacta se llama ___.',a:'divisor',acc:['divisor','un divisor']},
-  {q:'Un número primo tiene exactamente ___ divisores.',a:'dos (2)',acc:['dos','2','dos 2','dos divisores','2 divisores']},
-  {q:'Los números que terminan en 1, 3, 5, 7 o 9 se llaman ___.',a:'impares',acc:['impares','impar','numeros impares']},
-  {q:'El único número primo que es par es el ___.',a:'2',acc:['2','dos','el 2','el dos','numero 2','numero dos']},
-  {q:'Escribir 30 = 2 × 3 × 5 se llama descomposición en factores ___.',a:'primos',acc:['primos','primo']},
-  {q:'Un número es divisible entre 3 si la ___ de sus cifras es múltiplo de 3.',a:'suma',acc:['suma','la suma']},
-  {q:'El número 1 no es primo ni ___.',a:'compuesto',acc:['compuesto']}
+  {q:'Los múltiplos de 6 son: 6, 12, 18, ___.',a:'24',acc:['24','veinticuatro'],k:'cp-mult-6'},
+  {q:'El número primo que sigue después del 7 es ___.',a:'11',acc:['11','once'],k:'cp-primo-7'},
+  {q:'Los divisores de 21 son 1, 3, 7 y ___.',a:'21',acc:['21'],k:'cp-div-21'},
+  {q:'El número 91 es 7 × ___.',a:'13',acc:['13'],k:'cp-91'},
+  {q:'La factorización de 34 es 2 × ___.',a:'17',acc:['17'],k:'cp-fact-34'},
+  {q:'9 × 8 = ___.',a:'72',acc:['72'],k:'cp-9x8'},
+  {q:'El número par que va justo después de 99 es ___.',a:'100',acc:['100','cien'],k:'cp-par-99'},
+  {q:'Entre 20 y 30, el único número primo terminado en 3 es ___.',a:'23',acc:['23'],k:'cp-primo-23'},
+  {q:'El mayor divisor de 38, sin contar al 38, es ___.',a:'19',acc:['19'],k:'cp-div-38'},
+  {q:'El primer múltiplo común de 5 y 7 es ___.',a:'35',acc:['35'],k:'cp-comun-5-7'}
 ];
 const evalPRBank=[
-  {term:'Múltiplo',def:'Resultado de multiplicar un número por 1, 2, 3…'},
-  {term:'Divisor',def:'Número que divide a otro con residuo cero'},
-  {term:'Número primo',def:'Tiene exactamente dos divisores: 1 y él mismo'},
-  {term:'Número compuesto',def:'Tiene más de dos divisores'},
-  {term:'Número par',def:'Termina en 0, 2, 4, 6 u 8'},
-  {term:'Factor primo',def:'Divisor primo que aparece en la descomposición'}
+  {term:'Múltiplo',def:'Lo que resulta de multiplicar un número por 1, 2, 3…',k:'pr-multiplo'},
+  {term:'Divisor',def:'Número que divide a otro sin que sobre nada',k:'pr-divisor'},
+  {term:'Número primo',def:'Tiene exactamente dos divisores: el 1 y él mismo',k:'pr-primo'},
+  {term:'Número compuesto',def:'Tiene más de dos divisores',k:'pr-compuesto'},
+  {term:'Divisible',def:'Lo que se dice de un número cuando otro lo divide exacto',k:'pr-divisible'},
+  {term:'Cociente',def:'El resultado de una división',k:'pr-cociente'},
+  {term:'Factorización',def:'Escribir un número como multiplicación de primos',k:'pr-factorizacion'},
+  {term:'Factor',def:'Cada número que se multiplica',k:'pr-factor'},
+  {term:'Residuo',def:'Lo que sobra en una división',k:'pr-residuo'},
+  {term:'Producto',def:'El resultado de una multiplicación',k:'pr-producto'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
