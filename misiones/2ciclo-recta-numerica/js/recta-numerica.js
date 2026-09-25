@@ -690,38 +690,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El origen de la recta numérica es el cero.',a:true},
-  {q:'En la recta numérica los números crecen hacia la izquierda.',a:false},
-  {q:'El punto medio entre 40 y 60 es 50.',a:true},
-  {q:'En 90−35=55, el sustraendo es 90.',a:false},
-  {q:'Los sumandos son los números que se juntan en una adición.',a:true},
-  {q:'Si la escala es de 10 en 10, después del 70 viene el 71.',a:false},
-  {q:'Sumar es avanzar hacia la derecha en la recta numérica.',a:true},
-  {q:'La diferencia es el resultado de la sustracción.',a:true},
-  {q:'Para saber cuánto le falta a 65 para llegar a 100 se usa la suma.',a:false},
-  {q:'La prueba de la resta dice: sustraendo + diferencia = minuendo.',a:true}
+  {q:'En la recta numérica los números crecen hacia la izquierda.',a:false,k:'tf-crecen'},
+  {q:'En una recta de 0 a 40 con marcas cada 5, hay 4 saltos.',a:false,k:'tf-contar-saltos'},
+  {q:'Si las marcas van de 10 en 10, después del 70 viene el 71.',a:false,k:'tf-siguiente-marca'},
+  {q:'Para sumar en la recta se salta hacia la derecha.',a:true,k:'tf-sumar-derecha'},
+  {q:'Si a 80 le quitas 35, quedan 45.',a:true,k:'tf-resta-80'},
+  {q:'Si una recta va de 0 a 100 en 5 saltos iguales, cada salto vale 20.',a:true,k:'tf-valor-salto'},
+  {q:'La prueba de 120 − 45 = 75 es 75 + 45 = 120.',a:true,k:'tf-prueba-resta'},
+  {q:'300 − 125 = 175.',a:true,k:'tf-resta-300'},
+  {q:'En la recta, 3 saltos de 50 desde el 0 llegan al 100.',a:false,k:'tf-saltos-50'},
+  {q:'El 45 queda entre el 50 y el 60 en la recta.',a:false,k:'tf-entre-45'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el punto medio entre 200 y 300?',o:['a) 250','b) 205','c) 230','d) 295'],a:0},
-  {q:'En una recta de 0 a 80 con marcas cada 10, ¿qué número está en la 5.ª marca después del 0?',o:['a) 5','b) 40','c) 50','d) 55'],a:2},
-  {q:'En 720−245=475, ¿cómo se llama el número 720?',o:['a) minuendo','b) sustraendo','c) diferencia','d) sumando'],a:0},
-  {q:'¿Qué operación responde "cuánto le falta a 38 para llegar a 52"?',o:['a) 38+52','b) 52−38','c) 52+38','d) 38−52'],a:1},
-  {q:'Ana tiene 385 lempiras y recibe 150. ¿Cuánto tiene ahora?',o:['a) 235','b) 435','c) 545','d) 535'],a:3}
+  {q:'¿Qué número está entre 130 y 140?',o:['a) 129','b) 135','c) 141','d) 145'],a:1,k:'mc-entre-130'},
+  {q:'En una recta de 0 a 80 con marcas cada 10, ¿qué número está en la 5.ª marca después del 0?',o:['a) 5','b) 40','c) 50','d) 55'],a:2,k:'mc-quinta-marca'},
+  {q:'Si 720 − ___ = 475, ¿qué número falta?',o:['a) 255','b) 1,195','c) 245','d) 235'],a:2,k:'mc-falta-720'},
+  {q:'¿Qué operación responde «cuánto le falta a 38 para llegar a 52»?',o:['a) 38 + 52','b) 52 − 38','c) 52 + 38','d) 38 − 52'],a:1,k:'mc-cuanto-falta'},
+  {q:'Ana tiene 385 lempiras y recibe 150. ¿Cuánto tiene ahora?',o:['a) 235','b) 435','c) 545','d) 535'],a:3,k:'mc-ana-385'},
+  {q:'Desde el 60 das 3 saltos de 10 hacia la izquierda. ¿Dónde caes?',o:['a) 30','b) 90','c) 57','d) 63'],a:0,k:'mc-saltos-izquierda'},
+  {q:'¿Qué palabra de un problema pide sumar?',o:['a) quedan','b) gasta','c) regala','d) junta'],a:3,k:'mc-palabra-sumar'},
+  {q:'Un bus lleva 45 personas y bajan 18. ¿Cuántas quedan?',o:['a) 63','b) 27','c) 37','d) 33'],a:1,k:'mc-bus-45'},
+  {q:'En la recta, ¿qué número está más a la derecha?',o:['a) 99','b) 109','c) 190','d) 91'],a:2,k:'mc-mas-derecha'},
+  {q:'Si cada salto vale 25, ¿cuántos saltos hay del 0 al 150?',o:['a) 6','b) 15','c) 5','d) 10'],a:0,k:'mc-saltos-25'}
 ];
 const evalCPBank=[
-  {q:'El punto de partida de la recta numérica se llama ___.',a:'origen'},
-  {q:'El valor de cada salto entre marcas se llama ___.',a:'escala'},
-  {q:'El resultado de la adición se llama suma o ___.',a:'total'},
-  {q:'En 90−35=55, el número 35 es el ___.',a:'sustraendo'},
-  {q:'El punto ___ entre 20 y 40 es 30.',a:'medio'}
+  {q:'550 + 280 = ___.',a:'830',acc:['830'],k:'cp-suma-550'},
+  {q:'1,000 − 375 = ___.',a:'625',acc:['625'],k:'cp-resta-1000'},
+  {q:'El número que está en medio de 80 y 100 es ___.',a:'90',acc:['90'],k:'cp-medio-80'},
+  {q:'Desde el 12 avanzas 3 saltos de 4. Llegas al ___.',a:'24',acc:['24'],k:'cp-saltos-12'},
+  {q:'75 + ___ = 100.',a:'25',acc:['25'],k:'cp-falta-75'},
+  {q:'Pedro tenía 500 lempiras y gastó 120. Le quedan ___ lempiras.',a:'380',acc:['380'],k:'cp-pedro-500'},
+  {q:'El número que está 100 a la izquierda de 1,250 es ___.',a:'1,150',acc:['1,150','1150','1 150','1.150'],k:'cp-izquierda-1250'},
+  {q:'___ − 40 = 65.',a:'105',acc:['105'],k:'cp-minuendo-105'},
+  {q:'199 + 1 = ___.',a:'200',acc:['200'],k:'cp-suma-199'},
+  {q:'En una tienda hay 240 panes y se venden 70. Quedan ___ panes.',a:'170',acc:['170'],k:'cp-panes-240'}
 ];
 const evalPRBank=[
-  {term:'Origen',def:'Punto de partida de la recta numérica (el cero)'},
-  {term:'Escala',def:'Valor de cada salto entre las marcas de la recta'},
-  {term:'Minuendo',def:'Número al que se le quita en una sustracción'},
-  {term:'Diferencia',def:'Resultado de la sustracción'},
-  {term:'Punto medio',def:'Número que está a la misma distancia de otros dos'}
+  {term:'Origen',def:'El punto de la recta donde está el cero',k:'pr-origen'},
+  {term:'Escala',def:'Lo que vale cada salto entre dos marcas',k:'pr-escala'},
+  {term:'Marca',def:'Cada rayita de la recta donde va un número',k:'pr-marca'},
+  {term:'Sumando',def:'Cada número que se agrega en una suma',k:'pr-sumando'},
+  {term:'Total',def:'El resultado de una suma',k:'pr-total'},
+  {term:'Minuendo',def:'El número al que se le quita en una resta',k:'pr-minuendo'},
+  {term:'Sustraendo',def:'El número que se quita en una resta',k:'pr-sustraendo'},
+  {term:'Diferencia',def:'El resultado de una resta',k:'pr-diferencia'},
+  {term:'Adición',def:'La operación de agregar',k:'pr-adicion'},
+  {term:'Sustracción',def:'La operación de quitar',k:'pr-sustraccion'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
