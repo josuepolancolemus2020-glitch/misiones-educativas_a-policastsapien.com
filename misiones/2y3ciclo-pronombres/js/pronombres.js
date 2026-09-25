@@ -861,73 +861,58 @@ window.addEventListener('resize', () => {
 });
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank = [
-    { q: 'El pronombre es una palabra que se usa para sustituir al sustantivo y evitar repeticiones.', a: true },
-    { q: '"Nosotros" es un pronombre personal tónico.', a: true },
-    { q: 'Un pronombre enclítico va escrito después del verbo y unido a él (ej: dímelo).', a: true },
-    { q: 'Los pronombres relativos (que, quien, cual) sirven para realizar preguntas directas.', a: false },
-    { q: 'En "Este libro es mío", la palabra "mío" es un pronombre posesivo.', a: true },
-    { q: '"Alguien" y "nadie" son ejemplos de pronombres indefinidos.', a: true },
-    { q: 'El pronombre "te" en "te llamo mañana" es un pronombre tónico.', a: false },
-    { q: 'Los pronombres demostrativos sustituyen al nombre indicando la distancia (cerca, media, lejos).', a: true },
-    { q: 'En "Mi casa", la palabra "Mi" es un pronombre posesivo.', a: false },
-    { q: 'El uso de "vos" en Honduras es un ejemplo de pronombre de segunda persona singular.', a: true },
-    { q: '"Dáselo" tiene pronombres proclíticos.', a: false },
-    { q: 'Los pronombres interrogativos siempre llevan tilde (qué, quién, cuánto).', a: true },
-    { q: 'El pronombre es una palabra que se usa para nombrar las cualidades de las cosas.', a: false },
-    { q: '"Me, te, se, lo, la" son pronombres personales átonos.', a: true },
-    { q: 'Los pronombres posesivos acompañan al sustantivo igual que los determinantes.', a: false },
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+const evalTFBank=[
+  {q:'En «Quiero esa», «esa» es un pronombre.',a:true,k:'tf-esa'},
+  {q:'En «Mi cuaderno es azul», «mi» es un pronombre.',a:false,k:'tf-mi'},
+  {q:'«Pásamela» junta el verbo con dos pronombres.',a:true,k:'tf-pasamela'},
+  {q:'«¿Que quieres?» está bien escrito, sin tilde.',a:false,k:'tf-que-tilde'},
+  {q:'En «Marta llegó y ella saludó», «ella» sustituye a «Marta».',a:true,k:'tf-ella-marta'},
+  {q:'«Los niños juegan» se puede decir «Él juega».',a:false,k:'tf-ellos'},
+  {q:'En «Alguien tocó la puerta», «alguien» es un pronombre.',a:true,k:'tf-alguien'},
+  {q:'En «Escríbeme», el pronombre va escrito aparte del verbo.',a:false,k:'tf-escribeme'},
+  {q:'«Usted» se usa para hablarle con respeto a una persona.',a:true,k:'tf-usted'},
+  {q:'Un pronombre siempre va delante de un sustantivo.',a:false,k:'tf-solo'}
 ];
-const evalMCBank = [
-    { q: '¿Cuál es la función del pronombre en la oración?', o: ['a) Sustituir al sustantivo', 'b) Describir', 'c) Unir párrafos', 'd) Indicar acción'], a: 0 },
-    { q: '"La niña QUE canta es mi hermana". La palabra en mayúsculas es un pronombre:', o: ['a) Posesivo', 'b) Personal', 'c) Relativo', 'd) Demostrativo'], a: 2 },
-    { q: '¿Cuál de estos es un pronombre enclítico?', o: ['a) Me dijo', 'b) Irse', 'c) Se fue', 'd) Te busco'], a: 1 },
-    { q: '"No quiero este, dame AQUEL". La palabra en mayúsculas es un pronombre:', o: ['a) Personal', 'b) Demostrativo', 'c) Indefinido', 'd) Numeral'], a: 1 },
-    { q: '¿Qué pronombre personal reemplaza a "tú" en el habla hondureña?', o: ['a) Vos', 'b) Ustedes', 'c) Nosotros', 'd) Vosotros'], a: 0 },
-    { q: 'En "LO compré ayer", el pronombre "LO" es:', o: ['a) Enclítico', 'b) Proclítico', 'c) Tónico', 'd) Demostrativo'], a: 1 },
-    { q: '¿Qué tipo de pronombre indica una cantidad o identidad imprecisa?', o: ['a) Relativo', 'b) Posesivo', 'c) Tónico', 'd) Indefinido'], a: 3 },
-    { q: '"¿QUIÉN llegó?". Es un pronombre:', o: ['a) Interrogativo', 'b) Relativo', 'c) Personal', 'd) Exclamativo'], a: 0 },
-    { q: '"El lápiz es MÍO". ¿Qué clase de pronombre es "mío"?', o: ['a) Personal', 'b) Demostrativo', 'c) Relativo', 'd) Posesivo'], a: 3 },
-    { q: '¿Cuál de los siguientes es un pronombre personal tónico?', o: ['a) Me', 'b) Nosotros', 'c) Lo', 'd) Te'], a: 1 },
-    { q: '"No vino NADIE a la fiesta". La palabra "nadie" es un pronombre:', o: ['a) Relativo', 'b) Personal', 'c) Indefinido', 'd) Demostrativo'], a: 2 },
-    { q: '"TE lo advertí". El pronombre "te" funciona de forma:', o: ['a) Proclítica', 'b) Enclítica', 'c) Posesiva', 'd) Interrogativa'], a: 0 },
-    { q: '¿Cuál de estos es un pronombre demostrativo?', o: ['a) Suyo', 'b) Alguien', 'c) Aquel', 'd) Yo'], a: 2 },
-    { q: 'En "DÁMELO rápido", el pronombre es:', o: ['a) Tónico', 'b) Proclítico', 'c) Enclítico', 'd) Demostrativo'], a: 2 },
-    { q: '"El coche QUE compré es azul". La palabra "que" es un pronombre:', o: ['a) Interrogativo', 'b) Personal', 'c) Demostrativo', 'd) Relativo'], a: 3 },
+const evalMCBank=[
+  {q:'¿Cuál es el pronombre en «Nosotros barremos el aula»?',o:['a) barremos','b) nosotros','c) aula','d) el'],a:1,k:'mc-nosotros'},
+  {q:'«Juan compró pan»: cambiando «pan» por un pronombre queda…',o:['a) Juan él compró','b) Juan compró lo','c) Juan lo compró','d) Juan compró su'],a:2,k:'mc-lo-compro'},
+  {q:'En «Ese libro es tuyo», el pronombre es…',o:['a) ese','b) libro','c) es','d) tuyo'],a:3,k:'mc-tuyo'},
+  {q:'¿Cuál está bien escrita?',o:['a) Tráemelo el lunes','b) Trae me lo el lunes','c) Traeme lo el lunes','d) Me trae lo el lunes'],a:0,k:'mc-traemelo'},
+  {q:'¿Qué pronombre sustituye a «Carlos y tú»?',o:['a) nosotros','b) ustedes','c) ellos','d) él'],a:1,k:'mc-ustedes'},
+  {q:'En «La maestra que llegó es nueva», «que» se refiere a…',o:['a) nueva','b) llegó','c) la maestra','d) es'],a:2,k:'mc-que-maestra'},
+  {q:'¿En cuál oración «aquella» es un pronombre?',o:['a) Aquella casa es grande','b) Aquella niña canta','c) Aquella tarde llovió','d) Aquella es mi casa'],a:3,k:'mc-aquella'},
+  {q:'¿Cuál pregunta está bien escrita?',o:['a) ¿Cual es tu nombre?','b) ¿Cuál es tu nombre?','c) ¿cual es tu nombre?','d) Cual es tu nombre?'],a:1,k:'mc-cual'},
+  {q:'«Dígale que lo lleve mañana» no se entiende porque…',o:['a) tiene faltas de ortografía','b) le sobran palabras','c) no tiene verbo','d) falta el contexto: no dice a quién ni qué'],a:3,k:'mc-contexto'},
+  {q:'«Saludé a mi tía» con un pronombre queda…',o:['a) La saludé','b) Ella saludé','c) Su saludé','d) Saludé la'],a:0,k:'mc-la-saludo'}
 ];
-const evalCPBank = [
-    { q: 'La función del ___ es evitar repeticiones sustituyendo al sustantivo.', a: 'pronombre' },
-    { q: 'Los pronombres personales ___ no dependen del verbo y pueden funcionar solos (ej: Yo, tú, él).', a: 'tónicos' },
-    { q: 'El pronombre átono que va antes y separado del verbo conjugado se llama ___.', a: 'proclítico' },
-    { q: 'El pronombre átono que va pegado al final del verbo (ej: dímelo) se llama ___.', a: 'enclítico' },
-    { q: '"Mío", "tuyo", y "suyo" son pronombres ___.', a: 'posesivos' },
-    { q: 'Los pronombres ___ indican la distancia entre el hablante y el objeto sustituido (este, ese, aquel).', a: 'demostrativos' },
-    { q: 'Palabras como "alguien", "algo" o "nadie" funcionan como pronombres ___.', a: 'indefinidos' },
-    { q: 'Los pronombres ___ enlazan oraciones refiriéndose a un antecedente ya mencionado (que, cual).', a: 'relativos' },
-    { q: 'Los pronombres ___ sirven para preguntar y llevan tilde (qué, quién, cuánto).', a: 'interrogativos' },
-    { q: 'En Honduras se usa el pronombre "___ " en lugar de "tú".', a: 'vos' },
-    { q: 'Los pronombres "me, te, se, lo, la, le" son pronombres personales ___.', a: 'átonos' },
-    { q: 'El pronombre que sustituye sin precisar cantidad exacta se llama ___.', a: 'indefinido' },
-    { q: 'Un pronombre que va antes del verbo y separado de él se denomina ___.', a: 'proclítico' },
-    { q: '"Yo, tú, él, nosotros, ustedes" son pronombres personales ___.', a: 'tónicos' },
-    { q: 'El pronombre ___ se refiere a un antecedente ya mencionado y une oraciones.', a: 'relativo' },
+const evalCPBank=[
+  {q:'«Dame» + «lo» = ___.',a:'dámelo',acc:['dámelo'],k:'cp-damelo'},
+  {q:'«Busca» + «la» = ___.',a:'búscala',acc:['búscala'],k:'cp-buscala'},
+  {q:'Mi abuelo llegó y ___ trajo mangos (en lugar de «mi abuelo»).',a:'él',acc:['él'],k:'cp-el'},
+  {q:'«¿___ es tu mamá?» pregunta por una persona.',a:'quién',acc:['quién'],k:'cp-quien'},
+  {q:'El lápiz de Sofía es azul; el ___ (el que es de mí) es verde.',a:'mío',acc:['mío'],k:'cp-mio'},
+  {q:'Compré tres mangos y ___ comí (en lugar de «los mangos»).',a:'los',acc:['los'],k:'cp-los'},
+  {q:'«Ana y Luisa bailan» → «___ bailan».',a:'ellas',acc:['ellas'],k:'cp-ellas'},
+  {q:'«Llama» + «me» = ___.',a:'llámame',acc:['llámame'],k:'cp-llamame'},
+  {q:'Toqué y no abrió ___ (ni una persona).',a:'nadie',acc:['nadie'],k:'cp-nadie'},
+  {q:'«¿___ cuesta el cuaderno?» pregunta por el precio.',a:'cuánto',acc:['cuánto'],k:'cp-cuanto'}
 ];
-const evalPRBank = [
-    { term: 'Pronombre Personal Tónico', def: 'Funciona solo, no depende del verbo (Yo, tú, nosotros)' },
-    { term: 'Pronombre Átono Proclítico', def: 'Va antes del verbo y separado (Me lo dio)' },
-    { term: 'Pronombre Átono Enclítico', def: 'Va después del verbo y unido (Dámelo)' },
-    { term: 'Pronombre Demostrativo', def: 'Sustituye indicando distancia (este, ese, aquel)' },
-    { term: 'Pronombre Posesivo', def: 'Sustituye indicando pertenencia (mío, tuyo, suyo)' },
-    { term: 'Pronombre Indefinido', def: 'Sustituye sin precisar cantidad exacta (alguien, nadie)' },
-    { term: 'Pronombre Relativo', def: 'Une oraciones refiriéndose a un nombre anterior (que, cual)' },
-    { term: 'Pronombre Interrogativo', def: 'Se usa para preguntar y lleva tilde (quién, qué)' },
-    { term: 'Voseo', def: 'Uso de "vos" en lugar de "tú" en Honduras y Centroamérica' },
-    { term: 'Pronombre Personal Átono', def: 'Acompaña obligatoriamente al verbo (me, te, se, lo)' },
-    { term: 'Concordancia pronominal', def: 'El pronombre debe coincidir en persona y número' },
-    { term: 'Antecedente', def: 'Sustantivo al que se refiere el pronombre relativo' },
-    { term: 'Tónico', def: 'Tiene acento propio y puede funcionar independientemente' },
-    { term: 'Átono', def: 'Sin acento propio, depende del verbo para funcionar' },
-    { term: 'Persona gramatical', def: 'Categoría que indica quién habla (1ª), a quién (2ª) o de quién (3ª)' },
+const evalPRBank=[
+  {term:'Tónico',def:'Funciona solo, sin apoyarse en el verbo',k:'pr-tonico'},
+  {term:'Átono',def:'No va solo: se apoya en el verbo',k:'pr-atono'},
+  {term:'Proclítico',def:'Va antes del verbo y separado de él',k:'pr-proclitico'},
+  {term:'Enclítico',def:'Va pegado al final del verbo',k:'pr-enclitico'},
+  {term:'Demostrativo',def:'Sustituye diciendo a qué distancia está la cosa',k:'pr-demostrativo'},
+  {term:'Posesivo',def:'Sustituye diciendo de quién es',k:'pr-posesivo'},
+  {term:'Indefinido',def:'Sustituye sin decir exactamente quién ni cuánto',k:'pr-indefinido'},
+  {term:'Relativo',def:'Une dos oraciones y se refiere a algo ya nombrado',k:'pr-relativo'},
+  {term:'Interrogativo',def:'Sirve para preguntar',k:'pr-interrogativo'},
+  {term:'Voseo',def:'Decir «vos» en lugar de «tú»',k:'pr-voseo'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
