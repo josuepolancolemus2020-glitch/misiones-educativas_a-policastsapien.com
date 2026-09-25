@@ -6500,6 +6500,24 @@ Constitución—, la de los tres poderes arrastra la misma tabla, y el Clasifica
 Laboratorio le hablan al alumno de «el repositorio», que es una palabra de quien
 escribe el código. Quedan apuntados para arreglarlos aparte.
 
+### Y el diagnóstico de la ruta, que se contesta de corrido
+
+El diagnóstico de la Ruta de la Patria (`js/data/diagnosticos.js`) son veinte
+preguntas **una detrás de otra y sin vuelta atrás**, así que ahí lo que cuesta
+caro es distinto: que una pregunta deje escrita la respuesta de una que viene
+**después**. Pasaba tres veces, y las tres en una opción equivocada o en un
+enunciado, que es donde nadie mira: la opción «Siete, las estrofas del Himno»
+contestaba de cuántas partes consta el Himno; «Cuenta la muerte de Lempira», a
+quién cae «envuelto en su sangre» en la tercera estrofa; y «el Héroe Nacional que
+resistió la conquista» adelantaba que el héroe es el que defiende a su pueblo.
+
+⚠️ **Y una decía lo que la misión de los próceres se niega a decir:** «el Día del
+Maestro es el 17 de septiembre por el natalicio de José Trinidad Reyes». Esa es
+justo la fecha de nacimiento que `js/data/proceres-honduras.js` NO escribe,
+porque ninguna fuente del repositorio la trae. Queda lo que sí dice la misión:
+que el Día del Maestro lo honra. Un diagnóstico que afirma lo que la ruta calla
+le enseña al alumno el dato sin fuente antes de empezar.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

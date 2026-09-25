@@ -79,20 +79,31 @@ const DIAGNOSTICOS = {
     { etapa: 6, q: 'Antes de diseñar un robot, lo primero es…', o: ['Comprar los materiales', 'Identificar bien el problema y a quién afecta', 'Escribir el programa', 'Pintarlo bonito'], a: 1 },
   ],
   /* Ruta de la Patria (Educación Cívica): las preguntas salen del evalMCBank
-     de la misión, de lo más básico a lo que cuesta más. */
+     de la misión, de lo más básico a lo que cuesta más.
+     ⚠️ Van una detrás de otra y no hay vuelta atrás, así que lo que cuesta
+     caro es que una pregunta deje escrita la respuesta de una que viene
+     DESPUÉS. Pasaba tres veces, las tres en una opción equivocada o en el
+     enunciado: «Siete, las estrofas del Himno» contestaba de cuántas partes
+     consta el Himno; «Cuenta la muerte de Lempira», a quién cae «envuelto en
+     su sangre» en la tercera estrofa; y «el Héroe Nacional que resistió la
+     conquista» adelantaba que el héroe es el que defiende a su pueblo. Y la
+     del Día del Maestro decía «por el natalicio de José Trinidad Reyes»,
+     que es justo la fecha que la misión de los próceres NO escribe porque
+     ninguna fuente del repositorio la trae: queda lo que sí dice, que el día
+     lo honra. Revisado el 25 de septiembre de 2026. */
   patria: [
     { etapa: 1, q: '¿Cuáles son los tres símbolos patrios mayores de Honduras?', o: ['El pino, la orquídea y la guara roja', 'La Bandera, el Escudo y el Himno Nacional', 'El mapa, la moneda y la lengua', 'El venado, el volcán y el arco iris'], a: 1 },
-    { etapa: 1, q: '¿Cuántas estrellas tiene la Bandera Nacional y qué representan?', o: ['Tres, los poderes del Estado', 'Siete, las estrofas del Himno', 'Cinco, las naciones de la antigua Federación de Centroamérica', 'Cinco, los mares que rodean al país'], a: 2 },
+    { etapa: 1, q: '¿Cuántas estrellas tiene la Bandera Nacional y qué representan?', o: ['Tres, los poderes del Estado', 'Dieciocho, los departamentos del país', 'Cinco, las naciones de la antigua Federación de Centroamérica', 'Cinco, los mares que rodean al país'], a: 2 },
     { etapa: 1, q: '¿Quién escribió la letra del Himno Nacional de Honduras?', o: ['Carlos Hartling', 'Ramón Rosa', 'José Trinidad Reyes', 'Augusto C. Coello'], a: 3 },
-    { etapa: 1, q: '¿Quién es el Héroe Nacional que resistió la conquista española?', o: ['Lempira', 'Francisco Morazán', 'José Cecilio del Valle', 'José Trinidad Cabañas'], a: 0 },
+    { etapa: 1, q: '¿Quién es el Héroe Nacional de Honduras?', o: ['Lempira', 'Francisco Morazán', 'José Cecilio del Valle', 'José Trinidad Cabañas'], a: 0 },
     { etapa: 2, q: '¿De cuántas partes consta el Himno Nacional de Honduras?', o: ['Un coro y siete estrofas', 'Solo siete estrofas', 'Un coro y tres estrofas', 'Un coro y diez estrofas'], a: 0 },
     { etapa: 2, q: 'En los actos cívicos de la escuela, ¿qué parte del Himno se canta junto con el coro?', o: ['La primera estrofa', 'La cuarta estrofa', 'La séptima estrofa', 'Todas las estrofas'], a: 2 },
-    { etapa: 2, q: '¿Qué hace el coro del Himno Nacional?', o: ['Cuenta la llegada de Cristóbal Colón', 'Describe la Bandera y el Escudo', 'Cuenta la muerte de Lempira', 'Promete defender la patria'], a: 1 },
+    { etapa: 2, q: '¿Qué hace el coro del Himno Nacional?', o: ['Cuenta la llegada de Cristóbal Colón', 'Describe la Bandera y el Escudo', 'Cuenta la Revolución Francesa', 'Promete defender la patria'], a: 1 },
     { etapa: 2, q: 'En la tercera estrofa, ¿quién cae «envuelto en su sangre»?', o: ['Francisco Morazán', 'Cristóbal Colón', 'José Cecilio del Valle', 'Lempira'], a: 3 },
     { etapa: 3, q: '¿Cuál es la diferencia entre un héroe y un prócer?', o: ['El héroe defiende a su pueblo; el prócer ayuda a fundar la nación', 'El héroe es militar y el prócer es civil', 'No hay ninguna diferencia', 'El prócer es más antiguo'], a: 0 },
     { etapa: 3, q: '¿Quién redactó el Acta de Independencia de Centroamérica?', o: ['Francisco Morazán', 'Lempira', 'José Cecilio del Valle', 'Marco Aurelio Soto'], a: 2 },
     { etapa: 3, q: '¿Quién fue el primer Jefe de Estado de Honduras, en 1824?', o: ['José Trinidad Cabañas', 'Ramón Rosa', 'José Trinidad Reyes', 'Dionisio de Herrera'], a: 3 },
-    { etapa: 3, q: '¿Por qué el Día del Maestro Hondureño es el 17 de septiembre?', o: ['Por la Independencia de Centroamérica', 'Por el natalicio de José Trinidad Reyes, que fundó la primera universidad', 'Por el Código de Instrucción Pública', 'Por el natalicio de Francisco Morazán'], a: 1 },
+    { etapa: 3, q: '¿A quién honra el Día del Maestro Hondureño, el 17 de septiembre?', o: ['A Francisco Morazán', 'A José Trinidad Reyes', 'A Lempira', 'A José Cecilio del Valle'], a: 1 },
     { etapa: 4, q: '¿Cuáles son los tres poderes del Estado?', o: ['Civil, militar y religioso', 'Ejecutivo, Legislativo y Judicial', 'Nacional, departamental y municipal', 'Presidente, alcalde y juez'], a: 1 },
     { etapa: 4, q: '¿Qué poder del Estado HACE las leyes?', o: ['El Judicial', 'El Ejecutivo', 'El Legislativo, por medio del Congreso Nacional', 'Los tres a la vez'], a: 2 },
     { etapa: 4, q: '¿Por qué se dice que la Constitución es la ley fundamental?', o: ['Porque es la más larga', 'Porque está por encima de todas las demás', 'Porque es la más antigua', 'Porque la firma el Presidente'], a: 1 },
