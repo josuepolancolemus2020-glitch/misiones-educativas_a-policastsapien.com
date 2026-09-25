@@ -13,7 +13,7 @@
 
    · ⚠️ CADA ARTÍCULO TIENE QUE DECIR DE QUÉ LEY SALIÓ, Y ESA LEY TIENE QUE
      ESTAR EN `_dev/leyes/`. La Constitución NO está en el repositorio: todo
-     lo que esta misión enseña sale de las cuatro leyes que sí están y que la
+     lo que esta misión enseña sale de las tres normas que sí están y que la
      citan por número. Escrito así, la regla es una frase en un comentario que
      nadie vuelve a leer; aquí se comprueba: del `donde` de cada artículo se
      saca su número de decreto o de acuerdo y se busca el PDF. El día que

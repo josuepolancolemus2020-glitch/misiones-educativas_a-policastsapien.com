@@ -2668,9 +2668,11 @@ Constitución no está en `_dev/leyes/`** y el entorno no la alcanza. Así que s
 texto no se escribe — ni el de un artículo, ni cuántos tiene, ni en qué año se
 aprobó.
 
-Lo que sí se puede enseñar sale de **las cuatro leyes que SÍ están** y que la
-citan por número. De cada artículo se escribe lo único que esas leyes acreditan:
-**cuál es y para qué lo invocan**.
+Lo que sí se puede enseñar sale de **las tres normas que SÍ están** —el Estatuto
+del Docente, su Reglamento y el Código de la Niñez— y que la citan por número. De
+cada artículo se escribe lo único que esas normas acreditan: **cuál es y para qué
+lo invocan**. (Aquí decía «las cuatro leyes», y la pantalla y la ficha también:
+son tres, y el Reglamento es un acuerdo. Está contado más abajo, en «La quinta».)
 
 | artículo | quién lo cita, y para qué |
 |---|---|
@@ -6432,6 +6434,71 @@ el alumno escribe no se imprime**. El completar y el verdadero o falso usan
 nombre (`.idline .raya`): fuera de ahí no mide nada y no lleva borde. Fotocopiada,
 la ficha dice «y se llama .» sin ningún sitio donde escribir. Queda apuntado aquí
 para arreglarlo aparte.
+
+### La quinta: la Constitución, y lo que enseñó
+
+Medido antes de tocar nada: la conceptual repetía algún dato en **las 30 formas**
+(162 veces), la de pensamiento crítico también en **las 30** (69 veces), y la ficha
+hacía **26 preguntas sobre 14 datos**: el artículo 165 salía cuatro veces, el
+numeral otras cuatro y el 162 tres. Y su hoja 5 abre con las preguntas de
+investigar —«Busca el artículo 128 y lee su numeral 7 completo. ¿Qué dice
+exactamente sobre el trabajo de los menores?»—, y debajo el completar pedía «El
+artículo 128 numeral ___ trata del trabajo de los menores»: la respuesta, escrita
+en la misma hoja.
+
+Tres decisiones, y las tres valen para la siguiente misión de leyes:
+
+1. **Cada número de artículo sale en UNA pregunta, con su tema.** «El artículo
+   128, en su numeral 7, trata del empleo de los menores» escrito en otra pregunta
+   contestaba sola la que pide el numeral. Y los **pareados son de vocabulario**
+   de las leyes que la misión enseña a leer —«Actividad retribuida»,
+   «Impostergable», «Permiso previo»—: los artículos y sus números ya los
+   preguntan las otras secciones, y un pareado de artículos repetía cada una.
+2. ⚠️ **Los casos de pensamiento crítico salen del archivo de datos**
+   (`CONST_CASOS.casos.filter(…)`), y a la prueba van **tres de los cinco**: el
+   niño que trabaja, la autoridad que no dice de dónde saca el permiso y los
+   alumnos que no pueden opinar. Los otros dos —el nombramiento sin concurso y el
+   Estatuto que «no aplica aquí»— se contestan con el Estatuto del Docente, que
+   es justo de lo que tratan los errores y los efectos. Se siguen analizando en
+   la misión y en la ficha; en la prueba no caen.
+3. ⚠️ **En la ficha cuenta la hoja y cuenta el pie.** No se pregunta lo que manda
+   a investigar su hoja 5 —el 128 y su numeral, el 165, el convenio de los
+   derechos del niño—, ni «ley fundamental», que va escrito en el pie de cada
+   hoja del examen («La Constitución: mi Ley Fundamental»). Y **una respuesta
+   aceptada también es una respuesta**, que salió al escribir la nueva: la pauta
+   aceptaba «facultades (o permisos)» y el pareado decía «Permiso previo»; y
+   «cópiala entera» se contestaba con el «lee su numeral 7 completo» de la misma
+   hoja. Las dos se cambiaron por preguntas con una sola respuesta buena.
+
+⚠️ **La sonda no veía los casos.** El banco de casos no es una lista escrita: se
+arma del archivo de datos, y la sonda solo leía listas literales, así que los
+daba por inexistentes y la prueba salía limpia **sin haberlos mirado**. Ahora
+arma el banco como la misión —con sus archivos de datos cargados antes— y se
+comprobó al revés: con «enseñar» plantado en un caso, que es la corrección de uno
+de los errores, sale roja en cuatro formas. (El primer plantado fue «ley
+fundamental» y no la vio: es palabra del título, que se exime a propósito.)
+
+⚠️ **Y al leer los PDF salieron dos datos malos que no eran de las preguntas.**
+La misión, la ficha y esta normativa decían **«cuatro leyes hondureñas de verdad»
+que citan la Constitución**, y son **tres normas**: el Estatuto (Decreto 136-97),
+su Reglamento (Acuerdo 0760-SE-99, que es un acuerdo y no una ley) y el Código de
+la Niñez (Decreto 73-96). Y decían que **cada una** «se apoya también en convenios
+internacionales»: de las tres, **solo el Código** los nombra —el Estatuto y el
+Reglamento no traen ni uno, buscado en el PDF—. Un niño que cuenta las leyes de
+la ficha encuentra tres y lee cuatro. Arreglado en la pantalla, en la ficha y en
+el archivo de datos.
+
+De paso, la toma de decisiones de pensamiento crítico pedía justificar «con lo
+que hace cada poder del Estado y con la rendición de cuentas», que es la
+instrucción de la misión de los tres poderes, de la que esta se calcó.
+
+⚠️ **Lo que se encontró y NO se tocó, porque no son la evaluación ni la ficha:**
+el Generador de Tareas de esta misión arrastra instrucciones de las misiones de
+las que se calcó —«escribe al lado a qué poder del Estado se refiere» y una tabla
+«para cada persona, qué hizo y en qué época vivió» cuyas filas son artículos de la
+Constitución—, la de los tres poderes arrastra la misma tabla, y el Clasifica y el
+Laboratorio le hablan al alumno de «el repositorio», que es una palabra de quien
+escribe el código. Quedan apuntados para arreglarlos aparte.
 
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 

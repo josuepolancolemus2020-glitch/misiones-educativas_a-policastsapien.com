@@ -109,6 +109,38 @@ function banco(src, nombre) {
   try { return vm.runInNewContext('(' + lit + ')'); } catch (e) { return null; }
 }
 
+/* ⚠️ Un banco también puede estar GENERADO de un archivo de datos: los casos
+   de pensamiento crítico de la Constitución salen de CONST_CASOS
+   (`CONST_CASOS.casos.filter(…).map(…)`). Sin leerlos, la sonda no veía los
+   casos: los daba por inexistentes y la prueba salía limpia sin haberlos
+   mirado. Se arma como en la misión, con sus archivos de datos cargados
+   antes —la lección de verifica-mision-nueva: lo que hay que medir es lo que
+   el banco TIENE, no cómo está escrito—. */
+function bancoGenerado(src, nombre, html) {
+  const m = new RegExp('(?:const|let|var)\\s+' + nombre + '\\s*=').exec(src);
+  if (!m) return null;
+  let prof = 0, cad = null, i = m.index + m[0].length;
+  for (; i < src.length; i++) {
+    const c = src[i];
+    if (cad) { if (c === '\\') { i++; continue; } if (c === cad) cad = null; continue; }
+    if (c === '"' || c === "'" || c === '`') { cad = c; continue; }
+    if ('([{'.includes(c)) prof++;
+    else if (')]}'.includes(c)) prof--;
+    else if (c === ';' && prof === 0) break;
+  }
+  const caja = {};
+  vm.createContext(caja);
+  try {
+    (String(html).match(/src="[^"]*\/(js\/data\/[A-Za-z0-9._-]+\.js)"/g) || []).forEach(s => {
+      const rel = s.match(/(js\/data\/[A-Za-z0-9._-]+\.js)/)[1];
+      const p = path.join(RAIZ, rel);
+      if (fs.existsSync(p)) vm.runInContext(fs.readFileSync(p, 'utf8'), caja);
+    });
+    vm.runInContext('this.__banco = (' + src.slice(m.index + m[0].length, i) + ');', caja);
+    return Array.isArray(caja.__banco) ? caja.__banco : null;
+  } catch (e) { return null; }
+}
+
 function cuerpoDe(src, nombreFn) {
   const m = new RegExp('function\\s+' + nombreFn + '\\s*\\(').exec(src);
   if (!m) return null;
@@ -537,12 +569,12 @@ for (const dir of fs.readdirSync(MIS).sort()) {
   const src = sinComentarios(fs.readFileSync(archivo, 'utf8'));
   const nombresC = ['evalCPBank', 'evalTFBank', 'evalMCBank', 'evalPRBank'];
   const nombresK = ['critCaseBank', 'critErrorBank', 'critDecisionBank', 'critCompareBank', 'critCauseBank', 'critEffectBank'];
-  const bancos = {};
-  [...nombresC, ...nombresK].forEach(n => { const b = banco(src, n); if (b) bancos[n] = b; });
-  const conceptual = itemsConceptual(bancos);
-  const conK = conceptual.filter(it => it.k).length;
   const htmlArchivo = fs.readdirSync(path.join(MIS, dir)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
   const html = htmlArchivo ? fs.readFileSync(path.join(MIS, dir, htmlArchivo), 'utf8') : '';
+  const bancos = {};
+  [...nombresC, ...nombresK].forEach(n => { const b = banco(src, n) || bancoGenerado(src, n, html); if (b) bancos[n] = b; });
+  const conceptual = itemsConceptual(bancos);
+  const conK = conceptual.filter(it => it.k).length;
   const ficha = fichaDe(dir, html);
   const m = { dir, archivo, src, bancos, conceptual, ficha, titulo: palabrasTitulo(html) };
   if (conK === 0) pendientes.push(m);

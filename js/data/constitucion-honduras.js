@@ -29,9 +29,14 @@
      la Constitución y elaboran un análisis crítico».
 
    · LOS ARTÍCULOS de abajo NO se sacaron de la Constitución —que no está
-     aquí— sino de las CUATRO LEYES que sí están en `_dev/leyes/` y que la
-     citan por número. De cada uno se escribe lo único que esas leyes
-     acreditan: QUÉ ARTÍCULO es y PARA QUÉ lo invocan. Uno solo, el 162,
+     aquí— sino de las TRES NORMAS que sí están en `_dev/leyes/` y que la
+     citan por número —el Estatuto del Docente, su Reglamento y el Código
+     de la Niñez—. ⚠️ Decía «cuatro leyes», y la pantalla y la ficha lo
+     repetían: son tres, y el Reglamento es un acuerdo, no una ley. Y solo el
+     Código se apoya en convenios internacionales; el texto de abajo decía
+     que las tres. Contado y leído en los PDF el 25 de septiembre de 2026.
+     De cada artículo se escribe lo único que esas normas acreditan: QUÉ
+     ARTÍCULO es y PARA QUÉ lo invocan. Uno solo, el 162,
      aparece citado palabra por palabra, y por eso es el único cuyo TEXTO se
      puede enseñar.
 
@@ -117,7 +122,7 @@ const CONST_ARTICULOS = [
    ambos textos, como la presencia de uno fortalece al otro». */
 const CONST_SE_APOYAN = {
   titulo: 'Una ley sola es débil; con la Constitución detrás, no',
-  texto: 'Mira lo que hacen las cuatro leyes de arriba: ninguna se sostiene sola. Cada una nombra el artículo de la Constitución en el que se apoya, y encima se apoya también en convenios internacionales que Honduras firmó. Tres textos sosteniendo lo mismo, cada uno desde su altura.',
+  texto: 'Mira lo que hacen las tres normas de arriba: ninguna se sostiene sola. Cada una nombra el artículo de la Constitución en el que se apoya, y el Código de la Niñez se apoya además en convenios internacionales que Honduras firmó. Tres textos sosteniendo lo mismo, cada uno desde su altura.',
   ejemplo: 'El trabajo de un niño está protegido por la Constitución (artículo 128 numeral 7), por el Código de la Niñez (que exige permiso previo) y por los convenios internacionales que el propio Código nombra entre sus fuentes. Quien quiera saltárselo tiene que saltarse los tres.',
   fuente: 'Es una expectativa del DCNB de sexto grado: ver «las relaciones que existen entre ambos textos, como la presencia de uno fortalece al otro».'
 };
@@ -130,11 +135,11 @@ const CONST_CASOS = {
   titulo: 'Cuando un artículo no se cumple',
   intro: 'Que algo esté escrito en la Constitución no significa que pase. Estos cinco casos son para analizarlos, no para contestarlos rápido: en cada uno, di qué artículo de los que viste no se está cumpliendo y qué se podría hacer.',
   casos: [
-    { caso: 'Un niño de diez años vende en el mercado todo el día y no va a la escuela. Nadie pidió permiso a ninguna Secretaría.', pista: 'Mira el artículo 128 numeral 7 y el Artículo 119 del Código de la Niñez: el permiso previo no es un trámite, es la condición.' },
-    { caso: 'En una escuela nombran de maestro a alguien sin título docente, saltándose el concurso.', pista: 'El Estatuto del Docente existe por mandato del Artículo 165. Saltárselo no es un descuido administrativo: es incumplir lo que la Constitución mandó ordenar.' },
-    { caso: 'Una autoridad dicta una regla nueva y, cuando le preguntan de dónde saca el permiso, no contesta.', pista: 'El Reglamento del Estatuto empieza diciendo en qué artículos se apoya. El que no puede decirlo, no tiene el permiso.' },
-    { caso: 'A un grupo de alumnos no se les deja opinar en la elección del Gobierno Escolar porque «son muy chicos».', pista: 'El Código dice que los niños gozan de las libertades de la Constitución. La edad regula CÓMO se ejerce un derecho, no si existe.' },
-    { caso: 'Un maestro dice que su horario y su salario los decide el director, y que el Estatuto «no aplica aquí».', pista: 'Una regla de un centro no puede decir lo contrario de una ley nacional, y una ley no puede decir lo contrario de la Constitución. Es la jerarquía de las normas.' }
+    { clave: 'trabajo-nino', caso: 'Un niño de diez años vende en el mercado todo el día y no va a la escuela. Nadie pidió permiso a ninguna Secretaría.', pista: 'Mira el artículo 128 numeral 7 y el Artículo 119 del Código de la Niñez: el permiso previo no es un trámite, es la condición.' },
+    { clave: 'nombramiento', caso: 'En una escuela nombran de maestro a alguien sin título docente, saltándose el concurso.', pista: 'El Estatuto del Docente existe por mandato del Artículo 165. Saltárselo no es un descuido administrativo: es incumplir lo que la Constitución mandó ordenar.' },
+    { clave: 'permiso-autoridad', caso: 'Una autoridad dicta una regla nueva y, cuando le preguntan de dónde saca el permiso, no contesta.', pista: 'El Reglamento del Estatuto empieza diciendo en qué artículos se apoya. El que no puede decirlo, no tiene el permiso.' },
+    { clave: 'gobierno-escolar', caso: 'A un grupo de alumnos no se les deja opinar en la elección del Gobierno Escolar porque «son muy chicos».', pista: 'El Código dice que los niños gozan de las libertades de la Constitución. La edad regula CÓMO se ejerce un derecho, no si existe.' },
+    { clave: 'estatuto-no-aplica', caso: 'Un maestro dice que su horario y su salario los decide el director, y que el Estatuto «no aplica aquí».', pista: 'Una regla de un centro no puede decir lo contrario de una ley nacional, y una ley no puede decir lo contrario de la Constitución. Es la jerarquía de las normas.' }
   ],
   comoSeAnaliza: [
     '1. ¿Qué artículo NO se está cumpliendo? Nómbralo entero.',

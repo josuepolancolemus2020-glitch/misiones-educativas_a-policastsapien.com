@@ -362,78 +362,79 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+/* UN DATO, UNA PREGUNTA. Cada forma saca 5 preguntas de cada banco al azar,
+   y cualquier par de preguntas de estos cuatro bancos puede caer en la misma
+   hoja. Antes los cuatro preguntaban lo mismo de cuatro maneras: «El artículo
+   ___ ordenó que se escribiera el Estatuto» en el completar, «El Estatuto
+   existe por mandato del artículo 165» en el verdadero o falso, «¿Qué artículo
+   ordenó escribir el Estatuto?» en la selección y «Artículo 165 · Ordenó que se
+   escribiera el Estatuto» en los pareados. Medido el 25 de septiembre de 2026:
+   las 30 formas preguntaban algún dato dos veces, 162 veces en total.
+
+   Por eso cada ítem lleva su `k`, el dato que pregunta, y ninguna `k` se
+   repite en los cuatro bancos. Y la respuesta de una pregunta no aparece
+   escrita en otra, ni como opción equivocada. Tres decisiones que salen de
+   ahí, y que no son de estilo:
+   - ⚠️ cada número de artículo sale en UNA pregunta con su tema. «El artículo
+     128, en su numeral 7, trata del empleo de los menores» escrito en otra
+     pregunta contestaba sola la que pide el numeral;
+   - lo que se escribe en la raya —un número, una palabra— no sale en ninguna
+     otra pregunta;
+   - los pareados son de VOCABULARIO de las leyes que la misión enseña a leer
+     («Actividad retribuida», «Impostergable»): los artículos y sus números ya
+     los preguntan las otras tres secciones, y un pareado de artículos
+     repetiría cada una.
+
+   ⚠️ Son DIEZ por banco y no quince, a propósito: con quince, la única forma
+   de llenar el banco era volver a preguntar lo mismo.
+   Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'La Constitución de la República es la ley fundamental de Honduras.',a:true},
-  {q:'En «artículo 128 numeral 7», el 7 es el año en que se escribió.',a:false},
-  {q:'Citar «el artículo 128» sin decir de qué norma es, basta para identificarlo.',a:false},
-  {q:'Una Constitución solo sirve para prohibir cosas.',a:false},
-  {q:'El Estatuto del Docente existe por mandato del artículo 165 de la Constitución.',a:true},
-  {q:'El artículo 162 dice que el educador responde ante sus discípulos, su institución y la sociedad.',a:true},
-  {q:'Una Secretaría puede dictar un reglamento sin decir de dónde saca las facultades.',a:false},
-  {q:'El Código de la Niñez exige permiso previo para que un niño trabaje en actividad retribuida.',a:true},
-  {q:'Los niños tienen las libertades de la Constitución, no solo las que les da el Código.',a:true},
-  {q:'Si un convenio internacional dice lo mismo que la Constitución, uno de los dos sobra.',a:false},
-  {q:'Un derecho que viene de la Constitución se lo puede quitar una ley menor.',a:false},
-  {q:'La democracia participativa se ejerce también entre una elección y otra.',a:true},
-  {q:'Que un artículo esté escrito garantiza que se cumpla.',a:false},
-  {q:'El Reglamento del Estatuto cita los artículos 245 numeral 11, 157 y 163 de la Constitución.',a:true},
-  {q:'Los artículos 34 y 168 se citan para los docentes de otra nacionalidad.',a:true},
-  {q:'Un artículo es un punto numerado dentro de un numeral.',a:false},
-  {q:'Cuando la Constitución, una ley y un convenio protegen lo mismo, el derecho está mejor sostenido.',a:true},
-  {q:'La distancia entre lo que dice un derecho y lo que pasa se llama «déficit y vigencia».',a:true},
-  {q:'Para reclamar un derecho no hace falta saber qué dice la norma.',a:false},
-  {q:'Una regla de un centro puede decir lo contrario de una ley nacional.',a:false}
+  {q:'Citar «el artículo 128» sin decir de qué norma es, basta para saber de qué artículo se habla.',a:false,k:'cita-completa'},
+  {q:'El Estatuto del Docente copia palabra por palabra un artículo de la Constitución.',a:true,k:'162-literal'},
+  {q:'Los artículos 34 y 168 de la Constitución se citan para los maestros que vienen de otro país.',a:true,k:'a34-168'},
+  {q:'Para reclamar un derecho no hace falta saber qué dice la norma.',a:false,k:'saber-norma'},
+  {q:'Cuando tres normas distintas protegen el mismo derecho, ese derecho es más difícil de saltar.',a:true,k:'se-apoyan'},
+  {q:'Un caso concreto en que no se cumple un artículo lo resuelve el Congreso Nacional.',a:false,k:'reclamar-judicial'},
+  {q:'Nombrar de maestro a alguien saltándose el concurso incumple una ley que la Constitución mandó escribir.',a:true,k:'caso-nombramiento'},
+  {q:'El permiso para que un niño trabaje se puede pedir después de que ya empezó a trabajar.',a:false,k:'permiso-previo'},
+  {q:'El Estatuto del Docente habla de los maestros que vienen de otro país en su Artículo 8.',a:true,k:'estatuto-art8'},
+  {q:'Una regla de un centro puede decir lo contrario de una ley nacional.',a:false,k:'regla-centro'}
 ];
 const evalMCBank=[
-  {q:'¿Qué es un numeral dentro de una cita legal?',o:['El año de la norma','Un punto numerado dentro de un artículo','La página','El número de reformas'],a:1},
-  {q:'¿Por qué hay que citar de qué norma es un artículo?',o:['Porque hay un artículo con ese número en casi todas las leyes','Por cortesía','Porque lo exige el formato','Porque cambia cada año'],a:0},
-  {q:'¿Qué artículo ordenó que se escribiera el Estatuto del Docente?',o:['El 128','El 162','El 165','El 245'],a:2},
-  {q:'Según el artículo 162, ¿ante quién responde PRIMERO el educador?',o:['Ante la Secretaría','Ante sus discípulos','Ante el director','Ante el Congreso'],a:1},
-  {q:'¿Qué exige el Código de la Niñez para que un niño trabaje en actividad retribuida?',o:['Solo su voluntad','Un contrato escrito','Permiso previo de la Secretaría de Trabajo pedido por sus padres','Nada si es medio tiempo'],a:2},
-  {q:'¿Qué cita una Secretaría antes de dictar un reglamento?',o:['Su presupuesto','La fecha de vencimiento','El nombre del ministro','Los artículos de los que saca sus facultades'],a:3},
-  {q:'«Los niños gozan de las libertades consignadas en la Constitución» significa que…',o:['El Código se las concede','Ya las tienen por la Constitución y el Código se suma','Valen solo en la escuela','Se piden por escrito'],a:1},
-  {q:'¿Qué pasa cuando la Constitución, una ley y un convenio protegen lo mismo?',o:['Se contradicen','Sobra uno','Manda el más nuevo','El derecho queda más difícil de saltar'],a:3},
-  {q:'¿Qué es la democracia participativa?',o:['Votar y esperar cuatro años','Que votan solo los adultos','Que deciden los tres poderes','Que la gente decide, pregunta y reclama también entre elecciones'],a:3},
-  {q:'¿Qué muestra un caso en que un artículo no se cumple?',o:['La distancia entre lo escrito y lo que pasa','Que el artículo no sirve','Que hay que borrarlo','Que la ley es nueva'],a:0},
-  {q:'¿En qué ley del repositorio se lee el artículo 162 citado palabra por palabra?',o:['En el Estatuto del Docente','En el Código de la Niñez','En el Reglamento del Estatuto','En La Gaceta'],a:0},
-  {q:'¿Para qué cita el Estatuto los artículos 34 y 168?',o:['Para el salario','Para las vacaciones','Para los docentes de otra nacionalidad','Para los concursos'],a:2},
-  {q:'Una regla de un centro contradice una ley nacional. ¿Cuál manda?',o:['La del centro, que es más cercana','La más nueva','La ley nacional','Ninguna'],a:2},
-  {q:'¿Qué hace falta para poder reclamar un derecho?',o:['Tener dinero','Saber qué dice la norma','Ser mayor de edad','Vivir en la ciudad'],a:1},
-  {q:'¿Qué NO se puede saber leyendo solo las leyes que citan a la Constitución?',o:['El texto completo de esos artículos','Qué artículo citan','Para qué lo invocan','En qué ley aparecen'],a:0}
+  {q:'Según el artículo 162, ¿ante quién responde PRIMERO el educador?',o:['Ante la Secretaría','Ante sus discípulos','Ante el director','Ante el Congreso'],a:1,k:'162-discipulos'},
+  {q:'¿Qué Secretaría da el permiso para que un menor tenga un empleo pagado?',o:['La de Salud','La de Finanzas','La de Trabajo','Ninguna: no hace falta permiso'],a:2,k:'permiso-secretaria'},
+  {q:'Para leer el texto completo de un artículo de la Constitución, ¿dónde hay que buscarlo?',o:['En la Constitución misma','En el Código de la Niñez','En el Reglamento del Estatuto','En lo que recuerda un compañero'],a:0,k:'buscar-texto'},
+  {q:'Al analizar un caso en que un artículo no se cumple, ¿qué es lo PRIMERO que hay que decir?',o:['Quién tenía que cumplirlo','A quién le cuesta','Qué artículo no se está cumpliendo','Qué harías tú'],a:2,k:'paso-uno'},
+  {q:'¿Para qué sirven los casos de artículos que no se cumplen?',o:['Para acusar a alguien de la comunidad','Para memorizarlos','Para copiarlos en el cuaderno','Para pensarlos en clase, con respeto y sin nombres'],a:3,k:'casos-para-pensar'},
+  {q:'¿Qué pide el currículo que hagas con los artículos de la Constitución?',o:['Memorizarlos todos','Seleccionarlos y analizarlos','Copiarlos sin leerlos','Nada, porque ya se cumplen'],a:1,k:'seleccionar-analizar'},
+  {q:'Al decir quién tenía que cumplir un artículo, ¿qué respuesta NO sirve?',o:['Una persona','Una autoridad','Una institución','«El sistema»'],a:3,k:'no-el-sistema'},
+  {q:'En el paso «¿A quién le cuesta?», ¿qué hay que hacer?',o:['Ponerle nombre al daño: qué pierde esa persona','Enojarse mucho','Decir de quién es la culpa','Esperar a que alguien lo arregle'],a:0,k:'paso-dano'},
+  {q:'En el paso «¿Qué harías tú?», ¿qué cuenta como buena respuesta?',o:['Un deseo, aunque no se pueda','Una cosa que esté a tu alcance','Nada, porque no te toca','Una queja'],a:1,k:'paso-alcance'},
+  {q:'A unos alumnos no los dejan opinar en la elección del Gobierno Escolar porque «son muy chicos». ¿Qué es lo correcto?',o:['La edad regula cómo se ejerce un derecho, no si existe','Los niños todavía no tienen derechos','Solo opinan los mayores de edad','Opinar no es un derecho'],a:0,k:'edad-derecho'}
 ];
 const evalCPBank=[
-  {q:'La unidad numerada de una ley se llama ___.',a:'artículo'},
-  {q:'Un punto numerado dentro de un artículo se llama ___.',a:'numeral'},
-  {q:'La ley que está por encima de todas las demás es la ___.',a:'Constitución'},
-  {q:'El artículo ___ ordenó que se escribiera el Estatuto del Docente.',a:'165'},
-  {q:'El artículo ___ habla de las responsabilidades del educador.',a:'162'},
-  {q:'El artículo 128 numeral ___ trata del trabajo de los menores.',a:'7'},
-  {q:'Antes de firmar un reglamento hay que decir de dónde salen las ___.',a:'facultades'},
-  {q:'Los niños gozan de las ___ consignadas en la Constitución.',a:'libertades'},
-  {q:'La democracia en que la gente decide entre elecciones se llama ___.',a:'participativa'},
-  {q:'El Estatuto del Docente es el Decreto ___.',a:'136-97'},
-  {q:'El Reglamento del Estatuto es el Acuerdo ___.',a:'0760-SE-99'},
-  {q:'El Código de la Niñez y la Adolescencia es el Decreto ___.',a:'73-96'},
-  {q:'Un niño necesita permiso previo de la Secretaría de ___ para trabajar.',a:'Trabajo'},
-  {q:'Cuando tres textos protegen lo mismo, el derecho queda más ___.',a:'fuerte'},
-  {q:'A la distancia entre lo escrito y lo que pasa el currículo la llama déficit y ___.',a:'vigencia'}
+  {q:'El artículo ___ de la Constitución ordenó que se escribiera el Estatuto del Docente.',a:'165',k:'a165'},
+  {q:'El artículo 128 de la Constitución, en su numeral ___, trata del empleo de los menores.',a:'7',k:'a128-numeral'},
+  {q:'Los niños gozan de las ___ que consigna la Constitución.',a:'libertades',k:'libertades'},
+  {q:'El Estatuto del Docente es el Decreto ___.',a:'136-97',k:'estatuto-decreto'},
+  {q:'El Reglamento del Estatuto del Docente es el Acuerdo ___.',a:'0760-SE-99',k:'reglamento-acuerdo'},
+  {q:'El Código de la Niñez y la Adolescencia es el Decreto ___.',a:'73-96',k:'codigo-decreto'},
+  {q:'El permiso para que un niño trabaje lo tienen que pedir sus ___ o su representante legal.',a:'padres',k:'permiso-padres'},
+  {q:'El Reglamento del Estatuto se apoya en el artículo 245 numeral ___ de la Constitución.',a:'11',k:'a245-numeral'},
+  {q:'El artículo 162 dice que la docencia le da al educador responsabilidades científicas y ___.',a:'morales',k:'162-morales'},
+  {q:'El Reglamento del Estatuto del Docente lo dictó la Secretaría de ___.',a:'Educación',k:'reglamento-quien'}
 ];
 const evalPRBank=[
-  {term:'Artículo',def:'La unidad numerada de una ley, con un tema propio'},
-  {term:'Numeral',def:'Un punto numerado dentro de un artículo'},
-  {term:'Artículo 162',def:'Habla de las responsabilidades del educador ante sus discípulos'},
-  {term:'Artículo 165',def:'Ordenó que se escribiera el Estatuto del Docente'},
-  {term:'Artículo 128 numeral 7',def:'Sujeta a él el trabajo de los menores'},
-  {term:'Artículos 245, 157 y 163',def:'Las facultades con que el Ejecutivo dicta un reglamento'},
-  {term:'Artículos 34 y 168',def:'Se citan para los docentes de otra nacionalidad'},
-  {term:'Decreto 136-97',def:'El Estatuto del Docente Hondureño'},
-  {term:'Acuerdo 0760-SE-99',def:'El Reglamento General del Estatuto del Docente'},
-  {term:'Decreto 73-96',def:'El Código de la Niñez y la Adolescencia'},
-  {term:'Democracia participativa',def:'La gente decide, pregunta y reclama también entre elecciones'},
-  {term:'Convenio internacional',def:'Texto que Honduras firma y que refuerza lo que dice la Constitución'},
-  {term:'Déficit y vigencia',def:'La distancia entre lo que un derecho dice y lo que de verdad pasa'},
-  {term:'Facultades',def:'El permiso, sacado de la Constitución, con que una autoridad firma'},
-  {term:'Ley fundamental',def:'El nombre que recibe la Constitución por estar sobre todas'}
+  {term:'Artículo',def:'La unidad numerada de una ley, con un tema propio',k:'articulo'},
+  {term:'Facultades',def:'El permiso con que una autoridad firma una norma',k:'facultades'},
+  {term:'Mandato',def:'Un encargo de la Constitución que alguien tiene que cumplir',k:'mandato'},
+  {term:'Convenio internacional',def:'Un texto que Honduras firma con otros países',k:'convenio'},
+  {term:'Democracia participativa',def:'La gente decide, pregunta y reclama también entre elecciones',k:'participativa'},
+  {term:'Déficit y vigencia',def:'La distancia entre lo que dice un derecho y lo que de verdad pasa',k:'deficit'},
+  {term:'Ley fundamental',def:'La que está por encima de todas las demás',k:'ley-fundamental'},
+  {term:'Magisterio',def:'Los maestros del país, todos juntos',k:'magisterio'},
+  {term:'Impostergable',def:'Que no se puede dejar para después',k:'impostergable'},
+  {term:'Actividad retribuida',def:'Un trabajo por el que se recibe pago',k:'retribuida'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -519,7 +520,28 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
-const critCaseBank=CONST_CASOS.casos.map(c => ({txt: c.caso}));
+/* ⚠️ En pensamiento crítico cada forma saca UN caso, UN error, UNA decisión,
+   UNA comparación, DOS causas y TRES efectos, y todo eso cae en la misma
+   hoja. Antes se pisaban: el caso del niño que vende en el mercado pedía
+   nombrar el artículo que no se cumple, y el error de al lado decía «el
+   artículo 128 dice que los niños no pueden trabajar»; la comparación ponía
+   el trabajo de los menores frente al mercado, y los efectos contaban que un
+   niño no puede emplearse sin permiso. Medido el 25 de septiembre de 2026: las
+   30 formas repetían algún dato, 69 veces.
+
+   Ahora cada sección tiene su terreno y no pisa el de las otras:
+   - los CASOS son tres de los cinco de la misión —el niño que trabaja, la
+     autoridad que no dice de dónde saca el permiso y los alumnos que no
+     pueden opinar—, y ninguna otra sección nombra su artículo;
+   - ⚠️ los otros dos —el nombramiento sin concurso y el Estatuto que «no
+     aplica aquí»— se analizan en la misión y en la ficha, y aquí NO salen,
+     porque su respuesta es el Estatuto del Docente, que es de lo que tratan
+     los errores y los efectos;
+   - la comparación es de ideas —lo escrito y lo que pasa, votar y participar,
+     la memoria y la fuente—, y las decisiones, de respeto y de participación. */
+const critCaseBank=CONST_CASOS.casos
+  .filter(c => ['trabajo-nino','permiso-autoridad','gobierno-escolar'].includes(c.clave))
+  .map(c => ({txt: c.caso, k: 'caso-' + c.clave}));
 const critCaseQuestions=[
   '1. ¿Qué artículo NO se está cumpliendo? Nómbralo entero.',
   '2. ¿Quién tenía que cumplirlo?',
@@ -533,54 +555,50 @@ const critCaseGuides=[
   'Un caso concreto lo resuelve el Poder Judicial; una regla nueva, el Congreso. Y lo que haga el alumno tiene que estar a su alcance, no ser un deseo.'
 ];
 const critErrorBank=[
-  {txt:'"El artículo 128 dice que los niños no pueden trabajar."',
-   g1:'La cita está a medias: es el ARTÍCULO 128 NUMERAL 7, y sin el numeral no se sabe de qué punto se habla.',
-   g2:'Y no dice «no pueden»: el Código de la Niñez exige PERMISO PREVIO de la Secretaría de Trabajo, pedido por los padres o el representante.'},
-  {txt:'"Como el Estatuto del Docente es una ley, está por encima de la Constitución porque es más nueva."',
-   g1:'Manda la que está más ARRIBA, no la más nueva: la Constitución es la ley fundamental.',
-   g2:'Además el Estatuto existe PORQUE la Constitución lo ordenó, en su artículo 165.'},
-  {txt:'"Una Constitución solo sirve para prohibir cosas."',
-   g1:'También ENCARGA: hay leyes que existen porque ella mandó escribirlas.',
-   g2:'Y reparte facultades: el Reglamento del Estatuto se dicta «en uso de las facultades» de los artículos 245 numeral 11, 157 y 163.'},
-  {txt:'"Los derechos de los niños se los da el Código de la Niñez."',
-   g1:'El Código dice lo contrario: los niños GOZAN de las libertades consignadas en la Constitución.',
-   g2:'El Código se suma; no concede. Por eso una ley menor no se las puede quitar.'}
+  {txt:'"El Estatuto del Docente es el Decreto 73-96, y el Código de la Niñez es el Decreto 136-97."',
+   g1:'Están cambiados: el Estatuto del Docente es el Decreto 136-97.',
+   g2:'Y el Código de la Niñez y la Adolescencia es el Decreto 73-96.',k:['estatuto-decreto','codigo-decreto']},
+  {txt:'"Los artículos 34 y 168 se citan para los alumnos que vienen de otro país, y el Estatuto del Docente no dice nada de ellos."',
+   g1:'Se citan para los que vienen de otro país a ENSEÑAR, no para los alumnos.',
+   g2:'Y el Estatuto sí habla de ellos: en su artículo OCHO.',k:['a34-168','estatuto-art8']},
+  {txt:'"La Constitución solo prohíbe cosas, y ninguna ley existe porque ella la mandara hacer."',
+   g1:'También ENCARGA: manda que se escriban leyes.',
+   g2:'El Estatuto del Docente existe porque lo ordenó el artículo 165.',k:['constitucion-encarga','a165']},
+  {txt:'"Como el Estatuto del Docente es más nuevo, puede decir lo contrario de la Constitución."',
+   g1:'No manda la más nueva: manda la que está más ARRIBA.',
+   g2:'La Constitución es la ley FUNDAMENTAL: ninguna ley puede contradecirla.',k:['regla-rango','ley-fundamental']}
 ];
 const critDecisionBank=[
-  'Vas a citar un artículo en tu tarea; conviene copiar la cita entera con el nombre de la norma, o poner solo el número porque se entiende.',
-  'Un compañero dice que la Constitución no sirve porque no se cumple; conviene analizar un caso concreto con los cinco pasos, o darle la razón y no hablar del tema.',
-  'Para el trabajo te piden un artículo de la Constitución; conviene buscar el texto de verdad en la biblioteca, o copiar lo que alguien recuerda.',
-  'Ves un caso parecido a uno de los de esta misión en tu comunidad; conviene hablarlo en clase sin nombres, o señalar a la persona delante de todos.',
-  'Hay que elegir el Gobierno Escolar; conviene participar y después analizar cómo se hizo, o dejar que decidan los de siempre.'
+  'Un compañero dice que la Constitución no sirve porque no se cumple; conviene analizar un caso concreto con los cinco pasos, o darle la razón y no hablar más del tema.',
+  'Ves un caso parecido a los de la misión en tu comunidad; conviene hablarlo en clase con respeto y sin nombres, o señalar a la persona delante de todos.',
+  'En clase, un compañero pregunta qué quiere decir una palabra de un artículo y otros se ríen; conviene defender su pregunta, o reírse con los demás.',
+  'Te toca explicar un artículo en clase; conviene contar para qué lo usan las leyes que lo citan, o leer el número y sentarte.',
+  'El grupo tiene que escoger qué artículo de la Constitución presentar; conviene que cada uno diga por qué escogió el suyo y decidir juntos, o dejar que escoja el que más grita.'
 ];
-const critDecisionGuide='La mejor decisión comprueba antes de afirmar: una cita se copia entera y de la fuente, no de la memoria de alguien; un derecho que no se cumple se analiza caso por caso en vez de darlo por inútil; y un caso real se habla con respeto y sin nombres, porque el objetivo es entender qué falló, no acusar a un vecino.';
+const critDecisionGuide='La mejor decisión busca entender y trata con respeto: un artículo que no se cumple se analiza caso por caso en vez de darlo por inútil; un caso real se habla sin nombres, porque el objetivo es entender qué falló y no acusar a un vecino; la pregunta sobre una palabra difícil se defiende, porque las leyes también son para el que pregunta; un artículo se explica por lo que hace, no solo por su número; y lo que es de todos se decide oyendo a todos, que es la democracia en pequeño.';
 const critCompareBank=[
-  {a:'Artículo 165 de la Constitución.',b:'Decreto 136-97 del Congreso Nacional.',
-   ga:'La Constitución: ordenó que existiera el Estatuto.',
-   gb:'El Estatuto del Docente: la ley que se escribió para cumplir ese mandato.',
-   gr:'Los dos hablan de lo mismo, pero uno ENCARGA y el otro CUMPLE el encargo. Por eso el Estatuto empieza nombrando el artículo que lo mandó hacer.'},
-  {a:'«Artículo 128».',b:'«Artículo 128 numeral 7 de la Constitución de la República».',
-   ga:'Una cita a medias: no identifica nada.',
-   gb:'Una cita completa: dice el artículo, el punto dentro de él y de qué norma.',
-   gr:'Las dos parecen lo mismo y no lo son. Hay un artículo 128 en casi todas las leyes del país, así que la primera no lleva a ninguna parte.'},
-  {a:'Lo que dice la Constitución sobre el trabajo de los menores.',b:'Lo que se ve en el mercado un día cualquiera.',
+  {a:'Lo que dice un derecho escrito en la Constitución.',b:'Lo que de verdad pasa en la calle un día cualquiera.',
    ga:'El derecho escrito.',
    gb:'Lo que de verdad pasa.',
-   gr:'A esa distancia el currículo la llama «déficit y vigencia» de un derecho. Notarla no es pesimismo: es el primer paso para reclamarlo, y por eso el DCNB pide analizar casos.'}
+   gr:'A esa distancia el currículo la llama «déficit y vigencia» de un derecho. Notarla no es pesimismo: es el primer paso para reclamarlo, y por eso el DCNB pide analizar casos.',k:['derecho-escrito','lo-que-pasa']},
+  {a:'Votar cada cuatro años y esperar a la próxima elección.',b:'Decidir, preguntar y reclamar también entre una elección y otra.',
+   ga:'Una democracia que solo vota.',
+   gb:'La democracia participativa.',
+   gr:'En las dos se vota, pero en la primera la gente se queda callada cuatro años y en la segunda sigue decidiendo, preguntando y reclamando. Y para reclamar hace falta saber qué dice la norma.',k:['solo-votar','participativa']},
+  {a:'Lo que un compañero recuerda que dice un artículo.',b:'Lo que dice el texto de la Constitución, abierto sobre la mesa.',
+   ga:'Una memoria: puede estar equivocada, y no se puede comprobar.',
+   gb:'La fuente: se puede leer y comprobar.',
+   gr:'Las dos dicen qué pone un artículo, pero solo una se puede comprobar. Por eso la misión no escribe de memoria el texto de la Constitución: manda a buscarlo.',k:['memoria','fuente']}
 ];
 const critCauseBank=[
-  {cause:'El artículo 165 de la Constitución ordenó que se hiciera el Estatuto del Docente.',guide:'Por eso el Decreto 136-97 empieza llamándolo «un mandato impostergable» y nombrando ese artículo.'},
-  {cause:'El artículo 162 dice que el educador responde frente a sus discípulos.',guide:'Por eso el magisterio tiene una ley propia y no las reglas de cualquier otro empleo.'},
-  {cause:'Una Secretaría tiene que decir de qué artículos saca sus facultades.',guide:'Por eso el Reglamento del Estatuto empieza citando los artículos 245 numeral 11, 157 y 163.'},
-  {cause:'La Constitución está por encima de todas las demás normas.',guide:'Por eso una regla de un centro no puede decir lo contrario de una ley, ni una ley lo contrario de ella.'},
-  {cause:'Un mismo derecho aparece en la Constitución, en una ley y en un convenio internacional.',guide:'Por eso queda más difícil de saltar: el currículo lo dice como «la presencia de uno fortalece al otro».'}
+  {cause:'El currículo pide seleccionar artículos de la Constitución y analizarlos.',guide:'Por eso la misión no pide memorizar artículos: pide saber leerlos, buscarlos y notar cuándo no se cumplen.',k:'seleccionar'},
+  {cause:'Para reclamar un derecho hace falta saber qué dice la norma.',guide:'Por eso quien no sabe qué le toca, no lo puede pedir: conocer la norma es la primera forma de participar.',k:'saber-norma'},
+  {cause:'Un mismo derecho está escrito en la Constitución, en una ley y en un convenio internacional.',guide:'Por eso queda más difícil de saltar: quien quiera saltárselo tiene que saltarse los tres.',k:'se-apoyan'}
 ];
 const critEffectBank=[
-  {effect:'El Estatuto del Docente existe.',guide:'Porque el artículo 165 de la Constitución mandó que se escribiera.'},
-  {effect:'Un niño no puede emplearse sin permiso previo de la Secretaría de Trabajo.',guide:'Porque el Código de la Niñez lo exige y lo sujeta al artículo 128 numeral 7 de la Constitución.'},
-  {effect:'Un reglamento firmado sin decir de dónde salen sus facultades no vale.',guide:'Porque en el Estado nadie manda «porque sí»: el permiso tiene que venir de la Constitución.'},
-  {effect:'Una ley menor no puede quitarle a un niño una libertad constitucional.',guide:'Porque esa libertad no se la dio la ley menor: ya la tenía por la Constitución.'},
-  {effect:'Hay artículos escritos que no se cumplen.',guide:'Porque escribir un derecho no lo hace pasar: por eso el currículo pide analizar casos y no solo memorizar.'}
+  {effect:'Los maestros tienen una ley propia, y no las reglas de cualquier otro empleo.',guide:'Porque el artículo 162 dice que la docencia les da responsabilidades frente a sus alumnos, frente a su institución y ante la sociedad.',k:'162-ley-propia'},
+  {effect:'El Reglamento del Estatuto del Docente se llama Acuerdo 0760-SE-99.',guide:'Porque lo dictó la Secretaría de Educación, en 1999, y una norma del Ejecutivo se llama acuerdo.',k:'reglamento-acuerdo'},
+  {effect:'El Estatuto del Docente empieza con las palabras «PODER LEGISLATIVO».',guide:'Porque lo aprobó el Congreso Nacional: es un decreto, no un acuerdo.',k:'poder-legislativo'}
 ];
 function genEvalCrit(){
   sfx('click');
@@ -601,11 +619,11 @@ function genEvalCrit(){
   out.appendChild(s2);
   const dec=_pickF(critDecisionBank,1,rngC)[0];
   const s3=document.createElement('div');
-  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: comprobar antes de afirmar <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s3.innerHTML=`<div class="eval-section-title">III. Toma de decisiones: la Constitución en tu día a día <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-scenario">${dec}</div><div class="crit-q-block"><div class="crit-q-label">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que aprendiste de la Constitución.</div><textarea class="crit-textarea" rows="4" aria-label="Recomendaciones y su justificación"></textarea><div class="crit-pauta">${critDecisionGuide}</div></div><div class="crit-selfscore"><label for="critScore2">Obtenido:</label><input type="number" id="critScore2" class="crit-score-input" data-score="2" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno que el otro no? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -638,8 +656,8 @@ function printEvalCrit(){
   let s1=`<div class="sec-title"><span>I. Caso de análisis: el civismo de todos los días</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.kase.txt}</p>`;
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
-  let s3=`<div class="sec-title"><span>III. Toma de decisiones: comprobar antes de afirmar</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que hace cada poder del Estado y con la rendición de cuentas.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s3=`<div class="sec-title"><span>III. Toma de decisiones: la Constitución en tu día a día</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que aprendiste de la Constitución.</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué es cada caso? 2. ¿Qué tiene cada uno que el otro no? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
