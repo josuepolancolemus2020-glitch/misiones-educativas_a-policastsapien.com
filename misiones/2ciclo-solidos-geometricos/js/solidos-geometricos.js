@@ -764,73 +764,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El cubo tiene 6 caras, 12 aristas y 8 vértices.',a:true},
-  {q:'El cilindro es un poliedro.',a:false},
-  {q:'La arista es la línea donde se juntan dos caras.',a:true},
-  {q:'La pirámide tiene dos bases iguales y paralelas.',a:false},
-  {q:'La esfera no tiene caras planas, ni aristas, ni vértices.',a:true},
-  {q:'Un prisma toma el nombre de la figura de su base.',a:true},
-  {q:'El cono tiene una base circular y una punta.',a:true},
-  {q:'Todos los cuerpos redondos pueden rodar.',a:true},
-  {q:'Cualquier grupo de seis cuadrados, doblado, forma un cubo.',a:false},
-  {q:'Al girar un rectángulo sobre su eje se obtiene un cilindro.',a:true},
-  {q:'El prisma triangular tiene 5 caras.',a:true},
-  {q:'En todo poliedro, caras más vértices es igual a aristas más dos.',a:true},
-  {q:'La pirámide cuadrangular tiene 4 caras en total.',a:false},
-  {q:'El vértice es el punto donde se juntan varias aristas.',a:true},
-  {q:'Un cuadrado y un cubo son lo mismo.',a:false}
+  {q:'El cubo tiene 6 caras, 12 aristas y 8 vértices.',a:true,k:'tf-cubo'},
+  {q:'El cilindro tiene 2 vértices.',a:false,k:'tf-cilindro-vertices'},
+  {q:'La esfera tiene una cara plana.',a:false,k:'tf-esfera-cara'},
+  {q:'El prisma triangular tiene 5 caras.',a:true,k:'tf-prisma-tri-caras'},
+  {q:'La pirámide cuadrangular tiene 5 vértices.',a:true,k:'tf-pir-cuad-vertices'},
+  {q:'Un embudo tiene forma de cono.',a:true,k:'tf-embudo'},
+  {q:'La pirámide triangular tiene 6 caras.',a:false,k:'tf-pir-tri-caras'},
+  {q:'Una pelota de fútbol tiene forma de cilindro.',a:false,k:'tf-pelota'},
+  {q:'El prisma hexagonal tiene 8 caras.',a:true,k:'tf-prisma-hex-caras'},
+  {q:'El prisma hexagonal tiene 10 vértices.',a:false,k:'tf-prisma-hex-vertices'}
 ];
 const evalMCBank=[
-  {q:'¿Cuántas aristas tiene un cubo?',o:['a) 12','b) 8','c) 6','d) 4'],a:0},
-  {q:'¿Cuál de estos es un cuerpo redondo?',o:['a) El prisma hexagonal','b) La esfera','c) La pirámide','d) El cubo'],a:1},
-  {q:'La pirámide cuadrangular tiene…',o:['a) 4 caras y 4 vértices','b) 6 caras y 8 vértices','c) 5 caras y 5 vértices','d) 8 caras y 12 vértices'],a:2},
-  {q:'¿Qué figura plana girando forma una esfera?',o:['a) Un rectángulo','b) Un triángulo','c) Un cuadrado','d) Un semicírculo'],a:3},
-  {q:'Un lápiz común, sin punta, tiene forma de…',o:['a) prisma hexagonal','b) cilindro','c) cono','d) pirámide'],a:0},
-  {q:'¿Cuántas caras tiene el prisma pentagonal?',o:['a) 5','b) 7','c) 10','d) 15'],a:1},
-  {q:'La diferencia principal entre prisma y pirámide es…',o:['a) el color','b) el material','c) el número de bases','d) el tamaño'],a:2},
-  {q:'Un poliedro tiene 6 caras y 12 aristas. Según la cuenta de Euler, ¿cuántos vértices tiene?',o:['a) 6','b) 12','c) 4','d) 8'],a:3},
-  {q:'El barquillo del helado tiene forma de…',o:['a) cono','b) cilindro','c) pirámide','d) esfera'],a:0},
-  {q:'¿Cuántos vértices tiene el cilindro?',o:['a) Dos','b) Ninguno','c) Cuatro','d) Uno'],a:1},
-  {q:'El patrón o desarrollo de un sólido es…',o:['a) su peso en gramos','b) el color de sus caras','c) el sólido desdoblado y aplanado','d) la suma de sus aristas'],a:2},
-  {q:'¿Cuál de estos sólidos NO rueda?',o:['a) La esfera','b) El cilindro','c) El cono','d) El prisma rectangular'],a:3},
-  {q:'El prisma triangular tiene 5 caras y 9 aristas. ¿Cuántos vértices tiene?',o:['a) 6','b) 5','c) 9','d) 3'],a:0},
-  {q:'La cúspide es…',o:['a) la base de un prisma','b) el vértice donde se juntan las caras de una pirámide','c) una cara curva','d) el filo del cubo'],a:1},
-  {q:'Una tienda de campaña con dos bases triangulares tiene forma de…',o:['a) pirámide','b) cono','c) prisma triangular','d) cilindro'],a:2}
+  {q:'¿Cuántas aristas tiene la pirámide triangular?',o:['a) 3','b) 4','c) 6','d) 8'],a:2,k:'mc-pir-tri-aristas'},
+  {q:'¿Cuál de estos objetos tiene forma de esfera?',o:['a) una lata','b) una naranja','c) un dado','d) un barquillo'],a:1,k:'mc-naranja'},
+  {q:'¿Cuántas caras tiene el prisma pentagonal?',o:['a) 7','b) 5','c) 6','d) 8'],a:0,k:'mc-prisma-pent-caras'},
+  {q:'Una lata de leche tiene forma de…',o:['a) cono','b) cubo','c) cilindro','d) pirámide'],a:2,k:'mc-lata'},
+  {q:'¿Cuántos vértices tiene el prisma triangular?',o:['a) 3','b) 6','c) 5','d) 9'],a:1,k:'mc-prisma-tri-vertices'},
+  {q:'El barquillo del helado tiene forma de…',o:['a) cono','b) cilindro','c) pirámide','d) esfera'],a:0,k:'mc-barquillo'},
+  {q:'¿Cuál de estos no puede rodar?',o:['a) la esfera','b) el cilindro','c) el cono','d) el cubo'],a:3,k:'mc-no-rueda'},
+  {q:'¿Cuántas aristas tiene la pirámide hexagonal?',o:['a) 6','b) 12','c) 7','d) 18'],a:1,k:'mc-pir-hex-aristas'},
+  {q:'Una tienda de campaña con dos triángulos a los lados tiene forma de…',o:['a) prisma triangular','b) pirámide','c) cono','d) cilindro'],a:0,k:'mc-tienda'},
+  {q:'¿Cuántas aristas tiene el prisma triangular?',o:['a) 6','b) 12','c) 9','d) 5'],a:2,k:'mc-prisma-tri-aristas'}
 ];
 const evalCPBank=[
-  {q:'La línea donde se juntan dos caras se llama ___.',a:'arista'},
-  {q:'El punto donde se juntan varias aristas se llama ___.',a:'vértice'},
-  {q:'Un sólido con todas las caras planas se llama ___.',a:'poliedro'},
-  {q:'El cubo tiene ___ caras.',a:'6'},
-  {q:'El cubo tiene ___ aristas.',a:'12'},
-  {q:'El cubo tiene ___ vértices.',a:'8'},
-  {q:'El sólido que tiene dos bases iguales y paralelas es el ___.',a:'prisma'},
-  {q:'El sólido que tiene una sola base y una punta es la ___.',a:'pirámide'},
-  {q:'Al girar un triángulo sobre su eje se forma un ___.',a:'cono'},
-  {q:'Al girar un rectángulo sobre su eje se forma un ___.',a:'cilindro'},
-  {q:'El sólido que no tiene caras planas ni aristas ni vértices es la ___.',a:'esfera'},
-  {q:'El sólido desdoblado y aplanado para recortarlo se llama ___.',a:'patrón'},
-  {q:'En todo poliedro, caras más vértices es igual a aristas más ___.',a:'2'},
-  {q:'El prisma triangular tiene ___ caras.',a:'5'},
-  {q:'Una lata de leche tiene forma de ___.',a:'cilindro'}
+  {q:'El prisma pentagonal tiene ___ aristas.',a:'15',acc:['15','quince'],k:'cp-prisma-pent-aristas'},
+  {q:'El prisma pentagonal tiene ___ vértices.',a:'10',acc:['10','diez'],k:'cp-prisma-pent-vertices'},
+  {q:'El prisma hexagonal tiene ___ aristas.',a:'18',acc:['18','dieciocho'],k:'cp-prisma-hex-aristas'},
+  {q:'La pirámide hexagonal tiene ___ vértices.',a:'7',acc:['7','siete'],k:'cp-pir-hex-vertices'},
+  {q:'La pirámide cuadrangular tiene ___ aristas.',a:'8',acc:['8','ocho'],k:'cp-pir-cuad-aristas'},
+  {q:'La pirámide triangular tiene ___ vértices.',a:'4',acc:['4','cuatro'],k:'cp-pir-tri-vertices'},
+  {q:'La esfera tiene ___ vértices.',a:'0',acc:['0','cero','ninguno'],k:'cp-esfera-vertices'},
+  {q:'El prisma triangular tiene ___ caras que son triángulos.',a:'2',acc:['2','dos'],k:'cp-prisma-tri-triangulos'},
+  {q:'El prisma triangular tiene ___ caras que son rectángulos.',a:'3',acc:['3','tres'],k:'cp-prisma-tri-rectangulos'},
+  {q:'La pirámide hexagonal tiene ___ caras que son triángulos.',a:'6',acc:['6','seis'],k:'cp-pir-hex-triangulos'}
 ];
 const evalPRBank=[
-  {term:'Cara',def:'Cada superficie plana que cierra el sólido'},
-  {term:'Arista',def:'La línea donde se juntan dos caras'},
-  {term:'Vértice',def:'El punto donde se juntan varias aristas'},
-  {term:'Poliedro',def:'Sólido con todas las caras planas'},
-  {term:'Cuerpo redondo',def:'Sólido con alguna superficie curva'},
-  {term:'Prisma',def:'Tiene dos bases iguales y paralelas'},
-  {term:'Pirámide',def:'Tiene una sola base y una cúspide'},
-  {term:'Cilindro',def:'Dos bases circulares y una superficie curva'},
-  {term:'Cono',def:'Una base circular y una punta'},
-  {term:'Esfera',def:'Todos sus puntos a la misma distancia del centro'},
-  {term:'Cúspide',def:'El vértice superior de una pirámide'},
-  {term:'Patrón',def:'El sólido desdoblado para recortarlo y armarlo'},
-  {term:'Cuerpo de revolución',def:'El que se forma al girar una figura plana'},
-  {term:'Cuenta de Euler',def:'Caras más vértices igual a aristas más dos'},
-  {term:'Cubo',def:'Prisma con sus seis caras cuadradas'}
+  {term:'Poliedro',def:'Sólido con todas sus superficies planas',k:'pr-poliedro'},
+  {term:'Cuerpo redondo',def:'El que puede rodar',k:'pr-redondo'},
+  {term:'Cúspide',def:'La punta de arriba donde se juntan las superficies triangulares',k:'pr-cuspide'},
+  {term:'Patrón',def:'El cuerpo desdoblado y aplanado para recortarlo',k:'pr-patron'},
+  {term:'Cuerpo de revolución',def:'El que se forma al girar una figura plana',k:'pr-revolucion'},
+  {term:'Eje',def:'La línea alrededor de la cual gira una figura',k:'pr-eje'},
+  {term:'Superficie curva',def:'La parte redonda de un cuerpo',k:'pr-curva'},
+  {term:'Sólido',def:'Figura que tiene largo, ancho y alto',k:'pr-solido'},
+  {term:'Base',def:'La figura de abajo que le da el nombre al prisma o a la pirámide',k:'pr-base'},
+  {term:'Fórmula de Euler',def:'Caras más vértices es igual a aristas más dos',k:'pr-euler'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
