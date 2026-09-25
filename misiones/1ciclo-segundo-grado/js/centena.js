@@ -791,45 +791,69 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+/* UN DATO, UNA PREGUNTA. Cada forma saca 5 preguntas de cada banco y
+   cualquier par de los cuatro bancos puede caer en la misma hoja. Antes se
+   repetían: «La coma se coloca cada ___ cifras» en el completar, «La coma se
+   escribe cada tres cifras» en el verdadero o falso y «Período · Bloque de
+   tres cifras separado por la coma» en los pareados; «El número 1,000 se lee
+   ___» junto a «1,000 se lee un mil». Medido el 25 de septiembre de 2026: las
+   30 formas preguntaban algún dato dos veces.
+
+   Cada ítem lleva su `k` y ninguna se repite. Tres decisiones de esta misión:
+   - ⚠️ el millón NO se escribe en cifras en ninguna otra pregunta: «1,000,000»
+     o cualquier número de siete cifras contesta solo cuántos ceros tiene;
+   - lo que va en la raya —un número, una palabra— no aparece escrito en otra
+     pregunta, tampoco como opción;
+   - los ejercicios de leer y escribir usan números distintos entre sí, para
+     que la respuesta de uno no sea el ejemplo de otro.
+   Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'La coma se escribe cada tres cifras, contando desde la derecha.',a:true},
-  {q:'Un millón tiene 5 ceros.',a:false},
-  {q:'El número 1,000 se lee "un mil".',a:false},
-  {q:'Diez centenas forman una unidad de millar.',a:true},
-  {q:'El número 99,999 es mayor que 100,000.',a:false},
-  {q:'En 304,000 el cero que sigue al 3 guarda el lugar de las decenas de millar.',a:true},
-  {q:'El número 105 se lee "ciento cinco".',a:true},
-  {q:'"Doscientos cinco mil" se escribe 250,000.',a:false},
-  {q:'Todos los números de 7 cifras se leen con la palabra "millón" o "millones".',a:true},
-  {q:'Al comparar 76,500 y 76,050, el mayor es 76,050.',a:false}
+  {q:'El número 1,000 se lee «un mil».',a:false,k:'lectura-un-mil'},
+  {q:'En 61,824 la cifra 8 está en el lugar de las unidades.',a:false,k:'lugar-61824'},
+  {q:'En 304,000 el cero que va entre el 3 y el 4 guarda un lugar vacío.',a:true,k:'relleno-304'},
+  {q:'Después de 9,999 sigue el 10,000.',a:true,k:'sucesor-9999'},
+  {q:'El número 105 se lee «cien cinco».',a:false,k:'ciento'},
+  {q:'«Doscientos cinco mil» se escribe 250,000.',a:false,k:'escribir-205mil'},
+  {q:'Si dos números tienen la misma cantidad de cifras, se comparan empezando por la izquierda.',a:true,k:'comparar-izquierda'},
+  {q:'Las comas de un número se colocan contando desde la derecha.',a:true,k:'coma-derecha'},
+  {q:'Entre dos números, siempre gana el que tiene más cifras.',a:true,k:'mas-cifras'},
+  {q:'En el número 582, el 5 vale 5.',a:false,k:'valor-582'}
 ];
 const evalMCBank=[
-  {q:'¿Cómo se lee el número 45,000?',o:['a) Cuatro mil quinientos','b) Cuatrocientos cincuenta mil','c) Cuarenta y cinco mil','d) Cuarenta y cinco millones'],a:2},
-  {q:'¿Cuántos ceros tiene un millón escrito en cifras?',o:['a) 6','b) 5','c) 7','d) 4'],a:0},
-  {q:'¿Cuál es el valor del 7 en 78,500?',o:['a) 7','b) 700','c) 7,000','d) 70,000'],a:3},
-  {q:'"Trescientos cinco mil" se escribe:',o:['a) 3,005','b) 350,000','c) 30,500','d) 305,000'],a:3},
-  {q:'¿Cuál número es MAYOR?',o:['a) 100,001','b) 99,999','c) 100,000','d) 89,999'],a:0},
-  {q:'¿Qué número sigue después de 9,999?',o:['a) 9,100','b) 10,000','c) 99,991','d) 9,000'],a:1},
-  {q:'La coma separa los números en bloques de tres cifras llamados:',o:['a) cifras','b) decenas','c) períodos','d) sumandos'],a:2},
-  {q:'"Dos millones cuarenta mil" se escribe:',o:['a) 2,400,000','b) 2,040,000','c) 240,000','d) 2,004,000'],a:1}
+  {q:'¿Cómo se lee el número 45,000?',o:['a) Cuatro mil quinientos','b) Cuatrocientos cincuenta mil','c) Cuarenta y cinco mil','d) Cuarenta y cinco millones'],a:2,k:'leer-45000'},
+  {q:'¿Cuál es el valor del 7 en 78,500?',o:['a) 7','b) 700','c) 7,000','d) 70,000'],a:3,k:'valor-78500'},
+  {q:'«Seiscientos mil ochenta» se escribe:',o:['a) 600,080','b) 680,000','c) 600,800','d) 6,080'],a:0,k:'escribir-600080'},
+  {q:'¿Cuál número es MAYOR?',o:['a) 76,050','b) 76,500','c) 75,999','d) 76,005'],a:1,k:'comparar-76'},
+  {q:'Cada bloque de cifras que separa la coma se llama:',o:['a) cifra','b) decena','c) período','d) sumando'],a:2,k:'periodo'},
+  {q:'¿Qué número está entre 29,999 y 30,001?',o:['a) 29,000','b) 30,000','c) 31,000','d) 30,010'],a:1,k:'entre-30000'},
+  {q:'Al leer 52,300, ¿qué palabra va después de «cincuenta y dos»?',o:['a) cien','b) millón','c) ciento','d) mil'],a:3,k:'apellido-mil'},
+  {q:'Lo que vale una cifra según el lugar que ocupa se llama:',o:['a) valor posicional','b) cifra','c) sucesor','d) antecesor'],a:0,k:'valor-posicional'},
+  {q:'¿Cuántas cifras tiene el número 45,120?',o:['a) 4','b) 7','c) 5','d) 3'],a:2,k:'cifras-45120'},
+  {q:'¿Cuál es el MAYOR número de cinco cifras?',o:['a) 10,000','b) 99,999','c) 100,000','d) 90,000'],a:1,k:'mayor-5cifras'}
 ];
 const evalCPBank=[
-  {q:'La coma se coloca cada ___ cifras, contando desde la derecha.',a:'tres (3)',acc:['tres','3','tres 3','tres cifras','3 cifras']},
-  {q:'Un millón se escribe con un 1 seguido de ___ ceros.',a:'seis (6)',acc:['seis','6','seis 6','seis ceros','6 ceros']},
-  {q:'Diez centenas forman una unidad de ___.',a:'millar',acc:['millar','un millar','mil']},
-  {q:'Los bloques de tres cifras separados por comas se llaman ___.',a:'períodos',acc:['periodos','periodo','los periodos']},
-  {q:'El número 1,000 se lee ___.',a:'mil',acc:['mil']},
-  {q:'El número 100 se lee "cien", pero 105 se lee "___ cinco".',a:'ciento',acc:['ciento']},
-  {q:'Para comparar dos números, primero se cuenta cuántas ___ tiene cada uno.',a:'cifras',acc:['cifras','digitos','las cifras']},
-  {q:'En 304,000, los ceros de ___ guardan el lugar de las posiciones vacías.',a:'relleno',acc:['relleno','rellenos']}
+  {q:'En un número grande, la coma se coloca cada ___ cifras.',a:'tres (3)',acc:['tres','3','tres cifras','3 cifras'],k:'coma-cada'},
+  {q:'Un millón se escribe con un 1 seguido de ___ ceros.',a:'seis (6)',acc:['seis','6','seis ceros','6 ceros'],k:'millon-ceros'},
+  {q:'El número 83,201 se lee «ochenta y tres mil doscientos ___».',a:'uno',acc:['uno','1','un'],k:'leer-83201'},
+  {q:'Escribe con cifras «setenta mil nueve»: ___.',a:'70,009',acc:['70,009','70009','70 009','70.009'],k:'dictado-70009'},
+  {q:'50,000 − 1 = ___.',a:'49,999',acc:['49,999','49999','49 999','49.999'],k:'antecesor-50000'},
+  {q:'La tabla de posiciones que la misión dibuja en el Bloque 5 tiene ___ posiciones.',a:'nueve (9)',acc:['nueve','9','nueve posiciones','9 posiciones'],k:'posiciones-9'},
+  {q:'El número 700 se lee «___».',a:'setecientos',acc:['setecientos'],k:'leer-700'},
+  {q:'Escribe con cifras «siete mil setenta»: ___.',a:'7,070',acc:['7,070','7070','7 070','7.070'],k:'dictado-7070'},
+  {q:'Escribe con cifras «doce mil»: ___.',a:'12,000',acc:['12,000','12000','12 000','12.000'],k:'dictado-12000'},
+  {q:'Escribe con cifras «ochocientos mil»: ___.',a:'800,000',acc:['800,000','800000','800 000','800.000'],k:'dictado-800000'}
 ];
 const evalPRBank=[
-  {term:'Decena',def:'Grupo de 10 unidades'},
-  {term:'Centena',def:'Grupo de 100 unidades: 10 decenas'},
-  {term:'Unidad de millar',def:'Vale 1,000: diez centenas juntas'},
-  {term:'Millón',def:'Se escribe con un 1 y seis ceros'},
-  {term:'Período',def:'Bloque de tres cifras separado por la coma'},
-  {term:'Valor posicional',def:'Lo que vale una cifra según el lugar que ocupa'}
+  {term:'Decena',def:'Grupo de 10 unidades',k:'decena'},
+  {term:'Centena',def:'Grupo de 100 unidades',k:'centena'},
+  {term:'Unidad de millar',def:'Grupo de 1,000 unidades',k:'unidad-millar'},
+  {term:'Cifra',def:'Cada uno de los signos del 0 al 9',k:'cifra'},
+  {term:'Sucesor',def:'El número que va justo después',k:'sucesor'},
+  {term:'Antecesor',def:'El número que va justo antes',k:'antecesor'},
+  {term:'Centena de millar',def:'Grupo de 100,000 unidades',k:'centena-millar'},
+  {term:'Menor que',def:'Lo que se dice del número que pierde al comparar',k:'signo-menor'},
+  {term:'Igual a',def:'Dos números con las mismas cifras en los mismos lugares',k:'signo-igual'},
+  {term:'Unidad',def:'Lo que se cuenta de uno en uno',k:'unidad'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),

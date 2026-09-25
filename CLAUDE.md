@@ -6521,6 +6521,37 @@ porque ninguna fuente del repositorio la trae. Queda lo que sí dice la misión:
 que el Día del Maestro lo honra. Un diagnóstico que afirma lo que la ruta calla
 le enseña al alumno el dato sin fuente antes de empezar.
 
+### La Ruta del Número empieza por Números Grandes, y las matemáticas muerden distinto
+
+Medido antes de tocar nada (`1ciclo-segundo-grado`): la conceptual repetía algún
+dato en **29 de 30 formas**, y la ficha preguntaba once cosas dos veces —la coma
+cada tres cifras, el período, los seis ceros del millón, «ciento cinco», los
+ceros de relleno— entre el completar, el verdadero o falso y los pareados.
+
+⚠️ **En una misión de números, la respuesta se cuela como NÚMERO, no como
+palabra.** Tres formas que la sonda no nombra y que se buscaron leyendo:
+
+1. **Un número escrito entero enseña sus ceros.** Una opción «2,040,000» le deja
+   contar al alumno cuántos ceros lleva un millón; si la ficha pregunta eso, no
+   puede aparecer ningún número de siete cifras en la misma prueba.
+2. **La escalera se deduce de una lista de pareados.** «Decena: 10 · Centena:
+   100 · Unidad de millar: 1,000» contesta «cada peldaño vale ___ veces más»
+   aunque no diga «diez». Por eso la escalera ya no se pregunta en la prueba
+   —ni en la ficha ni en los bancos de la misión—: los pareados son de
+   posiciones y los contestan esas mismas cifras. Esto la sonda no lo ve, se ve
+   leyendo.
+3. **Una pregunta que define contesta al pareado de esa definición.** «El
+   número que va justo antes de 50,000 es ___» era, palabra por palabra, la
+   definición de «Antecesor» del pareado. Ahora es «50,000 − 1 = ___», que pide
+   lo mismo sin regalar nada.
+
+Y los números de las preguntas **no se reparten entre secciones**: si el
+completar pide leer 27,418, la selección múltiple lee 52,000, que no comparte
+ninguna palabra («cuarenta», «seis», «tres» son respuestas de otras preguntas y
+no pueden salir escritas ni en una opción). La instrucción de la selección
+pasó de «Encierra en un círculo» a **«Rellena el círculo de la letra de la
+respuesta correcta»**, que es la normativa del papel.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
