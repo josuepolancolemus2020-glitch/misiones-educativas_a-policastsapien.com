@@ -692,45 +692,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un polígono regular tiene todos sus lados iguales.',a:true},
-  {q:'La apotema es la distancia entre dos vértices.',a:false},
-  {q:'El hexágono tiene 6 lados.',a:true},
-  {q:'El área de un polígono regular es (P × apotema) ÷ 2.',a:true},
-  {q:'El pentágono tiene 6 lados.',a:false},
-  {q:'El perímetro es el número de lados por el lado.',a:true},
-  {q:'El área se mide en unidades cuadradas (cm²).',a:true},
-  {q:'En la fórmula del área se usa el lado en vez de la apotema.',a:false},
-  {q:'El perímetro de un hexágono de lado 5 es 30.',a:true},
-  {q:'Un pentágono de P = 20 y apotema 4 tiene área 80 cm².',a:false}
+  {q:'Un hexágono regular de 5 cm de lado tiene 30 cm de perímetro.',a:true,k:'tf-hex-5'},
+  {q:'Un pentágono de 20 cm de perímetro y 4 cm de apotema tiene 80 cm² de área.',a:false,k:'tf-area-20-4'},
+  {q:'Un cuadrado de 7 cm de lado tiene 28 cm de perímetro.',a:true,k:'tf-cuad-7'},
+  {q:'Un octágono regular de 3 m de lado tiene 21 m de perímetro.',a:false,k:'tf-oct-3'},
+  {q:'Un polígono de 50 cm de perímetro y 6 cm de apotema tiene 150 cm² de área.',a:true,k:'tf-area-50-6'},
+  {q:'Un triángulo equilátero de 9 cm de lado tiene 18 cm de perímetro.',a:false,k:'tf-tri-9'},
+  {q:'Un hexágono regular de 60 cm de perímetro tiene lados de 10 cm.',a:true,k:'tf-hex-60'},
+  {q:'Un pentágono regular de 8 cm de lado tiene 40 cm de perímetro.',a:true,k:'tf-pent-8'},
+  {q:'Un heptágono regular de 2 m de lado tiene 12 m de perímetro.',a:false,k:'tf-hept-2'},
+  {q:'Un polígono de 30 cm de perímetro y 5 cm de apotema tiene 150 cm² de área.',a:false,k:'tf-area-30-5'}
 ];
 const evalMCBank=[
-  {q:'¿Cuántos lados tiene un hexágono?',o:['a) 4','b) 5','c) 6','d) 7'],a:2},
-  {q:'¿Cuántos lados tiene un pentágono?',o:['a) 6','b) 4','c) 5','d) 7'],a:2},
-  {q:'¿Cuál es la fórmula del área de un polígono regular?',o:['a) lado × lado','b) (P × apotema) ÷ 2','c) 4 × lado','d) base × altura'],a:1},
-  {q:'¿Cuál es el perímetro de un hexágono de lado 5?',o:['a) 25','b) 35','c) 11','d) 30'],a:3},
-  {q:'Un pentágono con P = 20 y apotema 4 tiene área:',o:['a) 80 cm²','b) 40 cm²','c) 24 cm²','d) 60 cm²'],a:1},
-  {q:'La apotema va del centro al:',o:['a) punto medio del lado','b) vértice','c) otro centro','d) exterior'],a:0},
-  {q:'¿Cuál es el perímetro de un pentágono de lado 6?',o:['a) 30','b) 36','c) 11','d) 25'],a:0},
-  {q:'El área se mide en:',o:['a) cm','b) litros','c) grados','d) cm²'],a:3}
+  {q:'¿Cuál es el perímetro de un hexágono regular de 4 cm de lado?',o:['a) 10 cm','b) 16 cm','c) 24 cm','d) 20 cm'],a:2,k:'mc-hex-4'},
+  {q:'¿Cuál es el perímetro de un pentágono regular de 7 cm de lado?',o:['a) 35 cm','b) 42 cm','c) 12 cm','d) 28 cm'],a:0,k:'mc-pent-7'},
+  {q:'Un polígono de 36 cm de perímetro y 5 cm de apotema tiene un área de…',o:['a) 180 cm²','b) 90 cm²','c) 41 cm²','d) 31 cm²'],a:1,k:'mc-area-36-5'},
+  {q:'Un hexágono regular de 42 cm de perímetro tiene lados de…',o:['a) 6 cm','b) 7 cm','c) 8 cm','d) 36 cm'],a:1,k:'mc-hex-42'},
+  {q:'Un octágono regular de 11 cm de lado tiene un perímetro de…',o:['a) 88 cm','b) 19 cm','c) 77 cm','d) 99 cm'],a:0,k:'mc-oct-11'},
+  {q:'Un polígono de 26 m de perímetro y 3 m de apotema tiene un área de…',o:['a) 78 m²','b) 29 m²','c) 39 m²','d) 23 m²'],a:2,k:'mc-area-26-3'},
+  {q:'Un pentágono regular de 45 cm de perímetro tiene lados de…',o:['a) 5 cm','b) 9 cm','c) 15 cm','d) 40 cm'],a:1,k:'mc-pent-45'},
+  {q:'Un cuadrado de 16 m de lado tiene un perímetro de…',o:['a) 32 m','b) 256 m','c) 64 m','d) 48 m'],a:2,k:'mc-cuad-16'},
+  {q:'Un triángulo equilátero de 11 cm de lado tiene un perímetro de…',o:['a) 22 cm','b) 33 cm','c) 121 cm','d) 14 cm'],a:1,k:'mc-tri-11'},
+  {q:'Un hexágono regular de 10 cm de lado y 8.7 cm de apotema tiene un área de…',o:['a) 261 cm²','b) 522 cm²','c) 60 cm²','d) 87 cm²'],a:0,k:'mc-hex-area'}
 ];
 const evalCPBank=[
-  {q:'Un polígono con lados y ángulos iguales es un polígono ___.',a:'regular',acc:['regular']},
-  {q:'La distancia del centro al punto medio del lado es la ___.',a:'apotema',acc:['apotema','la apotema']},
-  {q:'El hexágono tiene ___ lados.',a:'seis',acc:['seis','6']},
-  {q:'El pentágono tiene ___ lados.',a:'cinco',acc:['cinco','5']},
-  {q:'El perímetro es número de lados × ___.',a:'lado',acc:['lado','el lado']},
-  {q:'El área es (P × apotema) ÷ ___.',a:'2',acc:['2','dos']},
-  {q:'El perímetro de un hexágono de lado 5 es ___.',a:'30',acc:['30','treinta']},
-  {q:'El área se mide en unidades ___.',a:'cuadradas',acc:['cuadradas','cuadrada']}
+  {q:'Un pentágono regular de 14 cm de lado tiene ___ cm de perímetro.',a:'70',acc:['70'],k:'cp-pent-14'},
+  {q:'Un hexágono regular de 9 m de lado tiene ___ m de perímetro.',a:'54',acc:['54'],k:'cp-hex-9'},
+  {q:'Un octágono regular de 48 cm de perímetro tiene lados de ___ cm.',a:'6',acc:['6','seis'],k:'cp-oct-48'},
+  {q:'Un polígono de 40 cm de perímetro y 7 cm de apotema tiene ___ cm² de área.',a:'140',acc:['140'],k:'cp-area-40-7'},
+  {q:'Un polígono de 80 m de perímetro y 10 m de apotema tiene ___ m² de área.',a:'400',acc:['400'],k:'cp-area-80-10'},
+  {q:'Un cuadrado de 17 cm de lado tiene ___ cm de perímetro.',a:'68',acc:['68'],k:'cp-cuad-17'},
+  {q:'Un triángulo equilátero de 39 cm de perímetro tiene lados de ___ cm.',a:'13',acc:['13'],k:'cp-tri-39'},
+  {q:'Un heptágono regular de 8 cm de lado tiene ___ cm de perímetro.',a:'56',acc:['56'],k:'cp-hept-8'},
+  {q:'Un hexágono regular de 20 cm de lado tiene ___ cm de perímetro.',a:'120',acc:['120'],k:'cp-hex-20'},
+  {q:'Un polígono de 100 cm de perímetro y 12 cm de apotema tiene ___ cm² de área.',a:'600',acc:['600'],k:'cp-area-100-12'}
 ];
 const evalPRBank=[
-  {term:'Polígono regular',def:'Figura con lados y ángulos iguales'},
-  {term:'Apotema',def:'Distancia del centro al punto medio del lado'},
-  {term:'Hexágono',def:'Polígono regular de 6 lados'},
-  {term:'Pentágono',def:'Polígono regular de 5 lados'},
-  {term:'Perímetro',def:'Número de lados por el lado'},
-  {term:'Área',def:'(Perímetro × apotema) ÷ 2'}
+  {term:'Polígono regular',def:'Todo en él es igual: cada borde y cada esquina',k:'pr-regular'},
+  {term:'Polígono',def:'Figura cerrada con bordes rectos',k:'pr-poligono'},
+  {term:'Apotema',def:'Va desde el medio de la figura hasta la mitad de un borde',k:'pr-apotema'},
+  {term:'Vértice',def:'La esquina donde se juntan dos bordes',k:'pr-vertice'},
+  {term:'Perímetro',def:'La medida de todo el borde',k:'pr-perimetro'},
+  {term:'Área',def:'Lo que cubre la figura por dentro',k:'pr-area'},
+  {term:'Lado',def:'Cada segmento recto del borde',k:'pr-lado'},
+  {term:'Unidades cuadradas',def:'Las que se usan para el área, como el cm²',k:'pr-unidades'},
+  {term:'Ángulo',def:'La abertura que forman dos bordes en una esquina',k:'pr-angulo'},
+  {term:'Centro',def:'El punto de adentro que está igual de lejos de todas las esquinas',k:'pr-centro'}
 ];
 const EVAL_FORMAS = 30;
 function _evalRng(forma) {
