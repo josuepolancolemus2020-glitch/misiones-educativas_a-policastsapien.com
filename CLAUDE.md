@@ -6593,6 +6593,15 @@ salieron en el camino:
   de Numeración Maya imprime arriba el error «confundir el tzolkín con el haab»
   con sus 260 y 365 días; la de Multiplicar fracciones, «multiplicar siempre
   agranda». Lo que esa hoja ya contesta no se pregunta en ella.
+- ⚠️ **Un pareado solo puede preguntar un término que la misión ENSEÑA.** Al
+  buscar nombres que no chocaran se colaron «dividendo» y «cociente» en Teoría
+  de Números, «precio unitario» en Multiplicación de decimales y «división
+  exacta» en División de decimales, y ninguna de esas misiones los enseña: el
+  alumno perdía cinco puntos por una palabra que nunca vio. Y al revés se dio
+  por no enseñado el ángulo reflejo en Ángulos básicos mirando solo el HTML,
+  cuando lo enseñan las actividades del JS. Cada término se busca en el HTML y
+  en el JS de la misión —sin contar los bancos de la evaluación, que es lo que
+  se está escribiendo— antes de ponerlo.
 
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 

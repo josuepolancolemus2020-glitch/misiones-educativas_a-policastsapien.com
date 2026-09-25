@@ -592,7 +592,7 @@ const evalPRBank=[
   {term:'Raíz cuadrada',def:'El número que, multiplicado por sí mismo, da el que está dentro del signo',k:'pr-raiz'},
   {term:'Radical',def:'El signo √',k:'pr-radical'},
   {term:'Al cuadrado',def:'Con exponente 2',k:'pr-al-cuadrado'},
-  {term:'Producto',def:'El resultado de una multiplicación',k:'pr-producto'},
+  {term:'Cuadrícula',def:'Dibujo de cuadritos iguales que muestra un cuadrado perfecto',k:'pr-cuadricula'},
   {term:'Factor',def:'Cada número que se multiplica',k:'pr-factor'},
   {term:'Operación inversa',def:'La que deshace lo que hizo otra',k:'pr-inversa'}
 ];

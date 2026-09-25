@@ -594,10 +594,10 @@ const evalPRBank=[
   {term:'Residuo',def:'Lo que sobra al dividir',k:'pr-residuo'},
   {term:'Punto decimal',def:'El signo que separa los enteros de lo que no llega a uno',k:'pr-punto'},
   {term:'Décima',def:'La primera cifra después del punto',k:'pr-decima'},
-  {term:'Centésima',def:'La segunda cifra después del punto',k:'pr-centesima'},
-  {term:'División exacta',def:'La que no deja nada sobrante',k:'pr-exacta'},
+  {term:'Casita',def:'La forma de escribir la división con el divisor afuera',k:'pr-casita'},
+  {term:'Decimal',def:'Un número con punto, como 4.5',k:'pr-decimal'},
   {term:'Número entero',def:'El que se escribe sin punto',k:'pr-entero'},
-  {term:'Cero de relleno',def:'El que se agrega cuando faltan cifras al correr el punto',k:'pr-cero'}
+  {term:'Agregar ceros',def:'Lo que se hace a la derecha cuando faltan cifras al correr el punto',k:'pr-agregar-ceros'}
 ];
 
 const evalExplainBank=[

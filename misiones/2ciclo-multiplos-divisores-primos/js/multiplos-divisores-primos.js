@@ -793,7 +793,7 @@ const evalPRBank=[
   {term:'Número primo',def:'Tiene exactamente dos divisores: el 1 y él mismo',k:'pr-primo'},
   {term:'Número compuesto',def:'Tiene más de dos divisores',k:'pr-compuesto'},
   {term:'Divisible',def:'Lo que se dice de un número cuando otro lo divide exacto',k:'pr-divisible'},
-  {term:'Cociente',def:'El resultado de una división',k:'pr-cociente'},
+  {term:'Árbol de factores',def:'Un dibujo que va partiendo el número hasta que solo quedan primos',k:'pr-arbol'},
   {term:'Factorización',def:'Escribir un número como multiplicación de primos',k:'pr-factorizacion'},
   {term:'Factor',def:'Cada número que se multiplica',k:'pr-factor'},
   {term:'Residuo',def:'Lo que sobra en una división',k:'pr-residuo'},

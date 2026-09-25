@@ -582,7 +582,7 @@ const evalCPBank=[
   {q:'La suma de las cifras de 7,253 es ___.',a:'17',acc:['17'],k:'cp-suma-7253'},
   {q:'Dos buses salen juntos; uno vuelve cada 5 días y el otro cada 6. Vuelven a salir juntos dentro de ___ días.',a:'30',acc:['30'],k:'cp-buses'},
   {q:'Se cortan dos cintas de 38 m y 57 m en pedazos iguales, lo más largos posible. Cada pedazo mide ___ m.',a:'19',acc:['19'],k:'cp-cintas'},
-  {q:'El primer múltiplo de 7 después del 50 es ___.',a:'56',acc:['56'],k:'cp-multiplo-7'},
+  {q:'El primer número después del 50 que se divide exacto entre 7 es ___.',a:'56',acc:['56'],k:'cp-multiplo-7'},
   {q:'Los divisores de 35 son 1, 5, 7 y ___.',a:'35',acc:['35'],k:'cp-divisores-35'},
   {q:'Con la suma alternada, 2 − 7 + 5 = ___.',a:'0',acc:['0','cero'],k:'cp-alternada'},
   {q:'Un número con solo dos divisores, el 1 y él mismo, se llama número ___.',a:'primo',acc:['primo'],k:'cp-primo'}
@@ -592,12 +592,12 @@ const evalPRBank=[
   {term:'Residuo',def:'Lo que sobra en una división',k:'pr-residuo'},
   {term:'M.C.D.',def:'El divisor común más grande de dos números',k:'pr-mcd'},
   {term:'m.c.m.',def:'El múltiplo común más pequeño de dos números',k:'pr-mcm'},
-  {term:'Dividendo',def:'El número que se reparte en una división',k:'pr-dividendo'},
+  {term:'Múltiplo',def:'Lo que resulta de multiplicar un número por 1, 2, 3…',k:'pr-multiplo'},
   {term:'Divisor',def:'Número entre el que otro se divide exacto',k:'pr-divisor'},
   {term:'Suma alternada',def:'Se suma una cifra, se resta la siguiente, y así',k:'pr-suma-alternada'},
   {term:'Última cifra',def:'Lo único que se mira para el 2, el 5 y el 10',k:'pr-ultima-cifra'},
   {term:'Suma de las cifras',def:'Lo que se mira para el 3 y el 9',k:'pr-suma-cifras'},
-  {term:'Cociente',def:'El resultado de una división',k:'pr-cociente'}
+  {term:'Regla de divisibilidad',def:'Un truco para saber si un número se divide exacto, sin hacer la división',k:'pr-regla'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),

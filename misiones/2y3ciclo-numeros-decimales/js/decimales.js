@@ -712,7 +712,7 @@ const evalPRBank=[
   {term:'Parte entera',def:'Lo que va a la izquierda del punto',k:'pr-parte-entera'},
   {term:'Redondear',def:'Quedarse con menos cifras, mirando la que sigue',k:'pr-redondear'},
   {term:'Truncar',def:'Cortar cifras sin mirar la que sigue',k:'pr-truncar'},
-  {term:'Números enteros',def:'Los que se escriben sin punto: 1, 2, 3…',k:'pr-enteros'},
+  {term:'Lugar',def:'La posición que ocupa cada cifra en el número',k:'pr-lugar'},
   {term:'Número decimal',def:'El que tiene parte entera y parte decimal',k:'pr-numero-decimal'},
   {term:'Coma',def:'En Honduras, separa los miles, como en 1,500',k:'pr-coma'}
 ];

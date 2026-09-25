@@ -818,8 +818,8 @@ const evalPRBank=[
   {term:'Milésima',def:'La tercera cifra después del punto',k:'pr-milesima'},
   {term:'Estimar',def:'Calcular con números redondos para ver si el resultado es razonable',k:'pr-estimar'},
   {term:'Cero de relleno',def:'El que se agrega cuando faltan lugares después del punto',k:'pr-cero-relleno'},
-  {term:'Punto decimal',def:'El signo que separa los enteros de lo que no llega a uno',k:'pr-punto'},
-  {term:'Precio unitario',def:'Lo que cuesta una sola unidad',k:'pr-precio-unitario'}
+  {term:'Punto',def:'El signo que separa los enteros de lo que no llega a uno',k:'pr-punto'},
+  {term:'Precio por cantidad',def:'La multiplicación que resuelve una compra',k:'pr-precio'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
