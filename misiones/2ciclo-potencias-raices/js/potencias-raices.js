@@ -543,38 +543,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'9²=81.',a:true},
-  {q:'La raíz cuadrada de 100 es 50.',a:false},
-  {q:'150 es un cuadrado perfecto.',a:false},
-  {q:'En 6², el número 2 es el exponente.',a:true},
-  {q:'Las potencias se resuelven después que las sumas.',a:false},
-  {q:'√196=14.',a:true},
-  {q:'5×2 es lo mismo que 5².',a:false},
-  {q:'El cuadrado perfecto más grande menor que 200 es 196.',a:true},
-  {q:'La raíz cuadrada deshace la operación de elevar al cuadrado.',a:true},
-  {q:'√50 es un número entero exacto.',a:false}
+  {q:'9² = 81.',a:true,k:'tf-9-cuadrado'},
+  {q:'√100 = 50.',a:false,k:'tf-raiz-100'},
+  {q:'150 es un cuadrado perfecto.',a:false,k:'tf-150'},
+  {q:'√196 = 14.',a:true,k:'tf-raiz-196'},
+  {q:'5 × 2 es lo mismo que 5².',a:false,k:'tf-doble-no'},
+  {q:'En 4² + 1, primero se calcula 4².',a:true,k:'tf-orden'},
+  {q:'√80 es un número entero.',a:false,k:'tf-raiz-80'},
+  {q:'3² + 4² = 25.',a:true,k:'tf-3-4'},
+  {q:'7² = 49.',a:true,k:'tf-7-cuadrado'},
+  {q:'11² = 111.',a:false,k:'tf-11-cuadrado'}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto es 8²?',o:['a) 16','b) 64','c) 82','d) 32'],a:1},
-  {q:'¿Cuál es la raíz cuadrada de 169?',o:['a) 12','b) 84.5','c) 13','d) 14'],a:2},
-  {q:'¿Cuál de estos es un cuadrado perfecto?',o:['a) 121','b) 130','c) 110','d) 140'],a:0},
-  {q:'En la potencia 10², ¿cuál es la base?',o:['a) 2','b) 100','c) 20','d) 10'],a:3},
-  {q:'¿Cuánto es 4² + √9?',o:['a) 19','b) 22','c) 13','d) 25'],a:0}
+  {q:'¿Cuánto es 8²?',o:['a) 16','b) 64','c) 82','d) 32'],a:1,k:'mc-8-cuadrado'},
+  {q:'¿Cuánto es √169?',o:['a) 12','b) 84.5','c) 13','d) 14'],a:2,k:'mc-raiz-169'},
+  {q:'¿Cuál de estos es un cuadrado perfecto?',o:['a) 225','b) 230','c) 210','d) 220'],a:0,k:'mc-cuadrado-perfecto'},
+  {q:'En 10², ¿qué número se multiplica por sí mismo?',o:['a) 2','b) 100','c) 20','d) 10'],a:3,k:'mc-base-10'},
+  {q:'¿Cuánto es 4² + √9?',o:['a) 19','b) 22','c) 13','d) 25'],a:0,k:'mc-suma-potencias'},
+  {q:'¿Cuánto es 6² − √4?',o:['a) 34','b) 32','c) 36','d) 30'],a:0,k:'mc-resta-potencias'},
+  {q:'¿Cuántas baldosas hay en un piso cuadrado de 12 baldosas por lado?',o:['a) 24','b) 48','c) 144','d) 124'],a:2,k:'mc-baldosas-12'},
+  {q:'¿Entre qué números está √50?',o:['a) 6 y 7','b) 7 y 8','c) 5 y 6','d) 8 y 9'],a:1,k:'mc-entre-50'},
+  {q:'¿Cuánto es 40²?',o:['a) 80','b) 1,600','c) 402','d) 160'],a:1,k:'mc-40-cuadrado'},
+  {q:'¿Qué número elevado al cuadrado da 36?',o:['a) 6','b) 18','c) 12','d) 4'],a:0,k:'mc-raiz-36'}
 ];
 const evalCPBank=[
-  {q:'En 6², el número 6 es la ___.',a:'base'},
-  {q:'La raíz cuadrada de 81 es ___.',a:'9'},
-  {q:'El símbolo √ se llama ___.',a:'radical'},
-  {q:'El cuadrado perfecto más pequeño (mayor que 0) es ___.',a:'1'},
-  {q:'Las potencias se resuelven ___ que las sumas y restas.',a:'antes'}
+  {q:'30² = ___.',a:'900',acc:['900'],k:'cp-30-cuadrado'},
+  {q:'√400 = ___.',a:'20',acc:['20'],k:'cp-raiz-400'},
+  {q:'El cuadrado perfecto más cercano a 130 es ___.',a:'121',acc:['121'],k:'cp-cercano-130'},
+  {q:'5² + 1 = ___.',a:'26',acc:['26'],k:'cp-5-mas-1'},
+  {q:'Una sala cuadrada tiene 16 baldosas por lado: en total son ___ baldosas.',a:'256',acc:['256'],k:'cp-sala-16'},
+  {q:'___² = 289.',a:'17',acc:['17'],k:'cp-raiz-289'},
+  {q:'√196 + √196 = ___.',a:'28',acc:['28'],k:'cp-doble-raiz'},
+  {q:'12² − 100 = ___.',a:'44',acc:['44'],k:'cp-12-menos'},
+  {q:'0² = ___.',a:'0',acc:['0','cero'],k:'cp-cero'},
+  {q:'50² = ___.',a:'2,500',acc:['2,500','2500','2 500','2.500'],k:'cp-50-cuadrado'}
 ];
 const evalPRBank=[
-  {term:'Potencia',def:'Multiplicación repetida de un mismo número'},
-  {term:'Exponente',def:'Indica cuántas veces se repite la base'},
-  {term:'Cuadrado Perfecto',def:'Resultado de elevar un número entero al cuadrado'},
-  {term:'Raíz Cuadrada',def:'Operación inversa a elevar al cuadrado'},
-  {term:'Radical',def:'Símbolo que representa la raíz cuadrada'}
+  {term:'Potencia',def:'El resultado de elevar un número',k:'pr-potencia'},
+  {term:'Base',def:'El número que se repite al multiplicar',k:'pr-base'},
+  {term:'Exponente',def:'El número pequeño de arriba, que dice cuántas veces se multiplica',k:'pr-exponente'},
+  {term:'Cuadrado perfecto',def:'Número que sale de multiplicar un entero por sí mismo',k:'pr-cuadrado-perfecto'},
+  {term:'Raíz cuadrada',def:'El número que, multiplicado por sí mismo, da el que está dentro del signo',k:'pr-raiz'},
+  {term:'Radical',def:'El signo √',k:'pr-radical'},
+  {term:'Al cuadrado',def:'Con exponente 2',k:'pr-al-cuadrado'},
+  {term:'Producto',def:'El resultado de una multiplicación',k:'pr-producto'},
+  {term:'Factor',def:'Cada número que se multiplica',k:'pr-factor'},
+  {term:'Operación inversa',def:'La que deshace lo que hizo otra',k:'pr-inversa'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
