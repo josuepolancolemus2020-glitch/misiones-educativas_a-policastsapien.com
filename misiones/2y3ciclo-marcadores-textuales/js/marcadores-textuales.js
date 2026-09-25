@@ -350,73 +350,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Los marcadores textuales enlazan y organizan las ideas de un texto.',a:true},
-  {q:'"Sin embargo" es un marcador de adición.',a:false},
-  {q:'"Además" y "también" son marcadores de adición.',a:true},
-  {q:'"Porque" es un marcador de causa.',a:true},
-  {q:'"Por lo tanto" es un marcador de consecuencia.',a:true},
-  {q:'"En primer lugar" es un marcador de cierre.',a:false},
-  {q:'A los marcadores textuales también se les llama conectores.',a:true},
-  {q:'"Pero" y "no obstante" expresan contraste.',a:true},
-  {q:'"Por ejemplo" es un marcador de ejemplificación.',a:true},
-  {q:'Los marcadores textuales no sirven para nada en el texto.',a:false},
-  {q:'"En conclusión" es un marcador de cierre o conclusión.',a:true},
-  {q:'Los marcadores aportan cohesión al texto.',a:true},
-  {q:'"Ya que" y "puesto que" son marcadores de consecuencia.',a:false},
-  {q:'Los marcadores de orden ayudan a enumerar y organizar las ideas.',a:true},
-  {q:'"Por eso" indica la consecuencia de una idea anterior.',a:true},
+  {q:'En «Llovió mucho, así que se suspendió el partido», lo que va después de «así que» es lo que pasó por la lluvia.',a:true,k:'tf-asi-que'},
+  {q:'En «Es barato; no obstante, no lo compré», «no obstante» suma una idea más.',a:false,k:'tf-no-obstante'},
+  {q:'En «No salimos, dado que estaba lloviendo», lo que va después de «dado que» explica por qué no salimos.',a:true,k:'tf-dado-que'},
+  {q:'En «Estudio inglés; asimismo, practico piano», «asimismo» opone las dos ideas.',a:false,k:'tf-asimismo'},
+  {q:'«Mientras» sirve para decir que dos cosas pasan a la vez.',a:true,k:'tf-mientras'},
+  {q:'«En resumen» se usa para empezar un texto.',a:false,k:'tf-en-resumen'},
+  {q:'«O sea» sirve para decir lo mismo con otras palabras.',a:true,k:'tf-o-sea'},
+  {q:'En «Sembramos, después regamos», «después» dice por qué regamos.',a:false,k:'tf-despues'},
+  {q:'Un texto puede tener todas las palabras bien escritas y aun así no entenderse, si le faltan los marcadores.',a:true,k:'tf-sin-marcadores'},
+  {q:'«Aunque» e «incluso» quieren decir lo mismo.',a:false,k:'tf-aunque-incluso'}
 ];
 const evalMCBank=[
-  {q:'¿Para qué sirven los marcadores textuales?',o:['a) Para contar historias','b) Para enlazar y organizar las ideas','c) Para describir','d) Para rimar'],a:1},
-  {q:'"Sin embargo" es un marcador de...',o:['a) Adición','b) Causa','c) Orden','d) Contraste'],a:3},
-  {q:'¿Cuál es un marcador de consecuencia?',o:['a) Además','b) Porque','c) Primero','d) Por lo tanto'],a:3},
-  {q:'"Porque" indica...',o:['a) Consecuencia','b) Adición','c) Causa','d) Cierre'],a:2},
-  {q:'¿Qué marcador AÑADE una idea?',o:['a) Además','b) Sin embargo','c) Por eso','d) Porque'],a:0},
-  {q:'"En primer lugar, por último" son marcadores de...',o:['a) Contraste','b) Orden','c) Causa','d) Ejemplo'],a:1},
-  {q:'¿Cuál es un marcador de cierre?',o:['a) En conclusión','b) Por ejemplo','c) También','d) Mientras'],a:0},
-  {q:'Otro nombre para los marcadores textuales es...',o:['a) Conectores','b) Adjetivos','c) Verbos','d) Rimas'],a:0},
-  {q:'Los marcadores aportan al texto...',o:['a) Rimas','b) Dibujos','c) Cohesión','d) Personajes'],a:2},
-  {q:'"Por ejemplo" es un marcador de...',o:['a) Contraste','b) Ejemplificación','c) Causa','d) Orden'],a:1},
-  {q:'¿Cuál expresa CONTRASTE?',o:['a) Además','b) En cambio','c) Porque','d) Primero'],a:1},
-  {q:'"Ya que" es un marcador de...',o:['a) Consecuencia','b) Adición','c) Causa','d) Cierre'],a:2},
-  {q:'¿Cuál NO es un marcador textual?',o:['a) Sin embargo','b) Por lo tanto','c) Mesa','d) Además'],a:2},
-  {q:'"Más tarde" y "entonces" son marcadores de...',o:['a) Tiempo','b) Contraste','c) Causa','d) Adición'],a:0},
-  {q:'"Es decir" sirve para...',o:['a) Oponer ideas','b) Dar la causa','c) Cerrar el texto','d) Aclarar o ejemplificar'],a:3},
+  {q:'¿Cuál completa mejor «Tenía hambre, ___ me comí dos baleadas»?',o:['a) en cambio','b) por eso','c) antes','d) o sea'],a:1,k:'mc-por-eso'},
+  {q:'¿Cuál completa mejor «El río creció; ___, el puente sigue en pie»?',o:['a) porque','b) a continuación','c) sin embargo','d) también'],a:2,k:'mc-sin-embargo'},
+  {q:'¿Cuál completa mejor «Llegué tarde ___ perdí el bus»?',o:['a) asimismo','b) finalmente','c) por último','d) porque'],a:3,k:'mc-porque'},
+  {q:'«Barrimos el aula. ___, limpiamos las ventanas.»',o:['a) A continuación','b) Porque','c) O sea','d) Pero'],a:0,k:'mc-a-continuacion'},
+  {q:'¿Cuál de estas palabras NO es un marcador textual?',o:['a) además','b) ventana','c) pero','d) luego'],a:1,k:'mc-no-marcador'},
+  {q:'«Me gusta el mango y ___ la piña.»',o:['a) ya que','b) también','c) por lo tanto','d) antes'],a:1,k:'mc-tambien'},
+  {q:'«___, cerramos la reunión dando gracias.»',o:['a) Ya que','b) En cambio','c) Para terminar','d) Incluso'],a:2,k:'mc-para-terminar'},
+  {q:'En «Lavó los platos; luego, barrió la cocina», «luego» dice…',o:['a) por qué barrió','b) qué pasó después','c) qué es un plato','d) lo contrario'],a:1,k:'mc-luego'},
+  {q:'«Compré útiles, ___, lo que se necesita para escribir.»',o:['a) porque','b) sin embargo','c) es decir','d) antes'],a:2,k:'mc-es-decir'},
+  {q:'«Juan no estudió; ___, perdió el examen.»',o:['a) además','b) antes','c) o sea','d) por consiguiente'],a:3,k:'mc-por-consiguiente'}
 ];
 const evalCPBank=[
-  {q:'Las palabras que enlazan las ideas de un texto son los marcadores ___.',a:'textuales'},
-  {q:'"Además" y "también" son marcadores de ___.',a:'adición'},
-  {q:'"Sin embargo" y "pero" son marcadores de ___.',a:'contraste'},
-  {q:'"Porque" y "ya que" son marcadores de ___.',a:'causa'},
-  {q:'"Por lo tanto" y "por eso" son marcadores de ___.',a:'consecuencia'},
-  {q:'"En primer lugar" y "a continuación" son marcadores de ___.',a:'orden'},
-  {q:'"En conclusión" y "en resumen" son marcadores de ___.',a:'cierre'},
-  {q:'"Por ejemplo" es un marcador de ___.',a:'ejemplificación'},
-  {q:'A los marcadores textuales también se les llama ___.',a:'conectores'},
-  {q:'Los marcadores aportan ___ al texto porque enlazan sus partes.',a:'cohesión'},
-  {q:'El marcador "en cambio" expresa ___ entre dos ideas.',a:'contraste'},
-  {q:'El marcador "puesto que" indica la ___ de algo.',a:'causa'},
-  {q:'El marcador "por consiguiente" indica una ___.',a:'consecuencia'},
-  {q:'"Más tarde" y "entonces" son marcadores de ___.',a:'tiempo'},
-  {q:'Un conjunto de oraciones sobre una misma idea es un ___.',a:'párrafo'},
+  {q:'Tenía fiebre; por lo ___, no fui a la escuela.',a:'tanto',acc:['tanto'],k:'cp-por-lo-tanto'},
+  {q:'Vendemos tamales y ___ nacatamales (una palabra que suma).',a:'además',acc:['además'],k:'cp-ademas'},
+  {q:'No compré el libro, ___ que estaba muy caro.',a:'ya',acc:['ya'],k:'cp-ya-que'},
+  {q:'___ lavamos los frijoles y en segundo lugar los ponemos a cocer.',a:'primero',acc:['primero'],k:'cp-primero'},
+  {q:'Estaba cansado, ___ terminó la tarea (cuatro letras).',a:'pero',acc:['pero'],k:'cp-pero'},
+  {q:'El cuento termina bien. En ___, fue una buena lectura.',a:'conclusión',acc:['conclusión'],k:'cp-en-conclusion'},
+  {q:'___ de entrar al aula, nos lavamos las manos.',a:'antes',acc:['antes'],k:'cp-antes'},
+  {q:'Mi hermana canta muy bien; ___, toca la guitarra (empieza con «igual»).',a:'igualmente',acc:['igualmente'],k:'cp-igualmente'},
+  {q:'Varias oraciones que hablan de una misma idea forman un ___.',a:'párrafo',acc:['párrafo'],k:'cp-parrafo'},
+  {q:'Ayer fuimos al río; ___ tarde, volvimos a casa.',a:'más',acc:['más'],k:'cp-mas-tarde'}
 ];
 const evalPRBank=[
-  {term:'Marcadores textuales',def:'Palabras que enlazan las ideas de un texto'},
-  {term:'Adición',def:'Suma ideas: además, también'},
-  {term:'Contraste',def:'Opone ideas: pero, sin embargo'},
-  {term:'Causa',def:'Da el motivo: porque, ya que'},
-  {term:'Consecuencia',def:'Da el resultado: por lo tanto, por eso'},
-  {term:'Orden',def:'Organiza: en primer lugar, por último'},
-  {term:'Ejemplificación',def:'Aclara: por ejemplo, es decir'},
-  {term:'Cierre',def:'Concluye: en conclusión, en resumen'},
-  {term:'Tiempo',def:'Sitúa en el tiempo: más tarde, entonces'},
-  {term:'Cohesión',def:'Unión entre las partes de un texto'},
-  {term:'Conector',def:'Otro nombre de los marcadores'},
-  {term:'Párrafo',def:'Oraciones sobre una misma idea'},
-  {term:'sin embargo',def:'Marcador de contraste'},
-  {term:'por lo tanto',def:'Marcador de consecuencia'},
-  {term:'además',def:'Marcador de adición'},
+  {term:'De orden',def:'Organiza los pasos, uno tras otro',k:'pr-orden'},
+  {term:'De adición',def:'Suma una idea más',k:'pr-adicion'},
+  {term:'De contraste',def:'Opone una idea a otra',k:'pr-contraste'},
+  {term:'De causa',def:'Da el motivo',k:'pr-causa'},
+  {term:'De consecuencia',def:'Da el resultado',k:'pr-consecuencia'},
+  {term:'De ejemplo',def:'Aclara con un caso',k:'pr-ejemplo'},
+  {term:'De tiempo',def:'Dice cuándo pasa algo',k:'pr-tiempo'},
+  {term:'De cierre',def:'Concluye el texto',k:'pr-cierre'},
+  {term:'Cohesión',def:'Que las partes del texto no queden sueltas',k:'pr-cohesion'},
+  {term:'Conector',def:'Otro nombre del marcador textual',k:'pr-conector'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -512,12 +497,12 @@ function evalSwitchMode(mode){
 }
 
 const critCaseBank=[
-  {txt:'"Me gusta mucho el fútbol. Además, practico natación los sábados. Sin embargo, mi deporte favorito es el baloncesto, porque puedo jugarlo con mis amigos. Por lo tanto, casi siempre elijo jugar baloncesto."'},
-  {txt:'"En primer lugar, hay que lavar las verduras. A continuación, se cortan en trozos. Después, se cuecen en agua. Por último, se sirven calientes. En conclusión, es una receta muy sencilla."'},
-  {txt:'"Estudié toda la semana; por lo tanto, aprobé el examen. Sin embargo, mi amigo no estudió. En cambio, él prefirió jugar. Por eso, no obtuvo una buena nota."'},
-  {txt:'"El reciclaje es importante porque cuida el planeta. Además, ahorra recursos. Por ejemplo, reciclar papel salva árboles. En conclusión, todos deberíamos reciclar."'},
-  {txt:'"Quería ir al parque, pero estaba lloviendo. No obstante, salí con paraguas. Más tarde, dejó de llover. Finalmente, pude jugar un rato."'},
-  {txt:'"La lectura tiene muchos beneficios. En primer lugar, aumenta el vocabulario. En segundo lugar, mejora la imaginación. Asimismo, ayuda a concentrarse. Por consiguiente, es un hábito muy valioso."'},
+  {k:'ca-deportes',txt:'"Me gusta mucho el fútbol. Además, practico natación los sábados. Sin embargo, mi deporte favorito es el baloncesto, porque puedo jugarlo con mis amigos. Por lo tanto, casi siempre elijo jugar baloncesto."'},
+  {k:'ca-receta',txt:'"En primer lugar, hay que lavar las verduras. A continuación, se cortan en trozos. Después, se cuecen en agua. Por último, se sirven calientes. En conclusión, es una receta muy sencilla."'},
+  {k:'ca-examen',txt:'"Estudié toda la semana; por lo tanto, aprobé el examen. Sin embargo, mi amigo no estudió. En cambio, él prefirió jugar. Por eso, no obtuvo una buena nota."'},
+  {k:'ca-reciclaje',txt:'"El reciclaje es importante porque cuida el planeta. Además, ahorra recursos. Por ejemplo, reciclar papel salva árboles. En conclusión, todos deberíamos reciclar."'},
+  {k:'ca-lluvia',txt:'"Quería ir al parque, pero estaba lloviendo. No obstante, salí con paraguas. Más tarde, dejó de llover. Finalmente, pude jugar un rato."'},
+  {k:'ca-lectura',txt:'"La lectura tiene muchos beneficios. En primer lugar, aumenta el vocabulario. En segundo lugar, mejora la imaginación. Asimismo, ayuda a concentrarse. Por consiguiente, es un hábito muy valioso."'},
 ];
 const critCaseQuestions=[
   '1. Copia dos marcadores textuales que aparezcan en el texto.',
@@ -533,24 +518,18 @@ const critCaseGuides=[
 ];
 
 const critErrorBank=[
-  {txt:'"El marcador \'sin embargo\' sirve para añadir una idea nueva, igual que \'además\'."',
-   g1:'"Sin embargo" es un marcador de contraste, no de adición.',
-   g2:'Para añadir se usan marcadores como "además" o "también"; no cumplen la misma función.'},
-  {txt:'"\'Porque\' y \'por lo tanto\' significan lo mismo: los dos indican la causa de algo."',
-   g1:'"Porque" indica la causa (el motivo).',
-   g2:'"Por lo tanto" indica la consecuencia (el resultado), no la causa; son relaciones distintas.'},
-  {txt:'"Los marcadores textuales no sirven para nada; se pueden quitar y el texto queda igual de claro."',
-   g1:'Los marcadores sí sirven: enlazan y organizan las ideas.',
-   g2:'Sin ellos el texto pierde cohesión y cuesta más entender la relación entre las ideas.'},
-  {txt:'"\'En primer lugar\' es un marcador de cierre que se usa para terminar un texto."',
-   g1:'"En primer lugar" es un marcador de orden que abre o inicia una enumeración.',
-   g2:'Para cerrar se usan marcadores como "en conclusión" o "finalmente".'},
-  {txt:'"\'Por ejemplo\' es un marcador de contraste que opone dos ideas diferentes."',
-   g1:'"Por ejemplo" es un marcador de ejemplificación: sirve para aclarar con ejemplos.',
-   g2:'Los que oponen ideas (contraste) son "pero", "sin embargo", "en cambio".'},
-  {txt:'"A los marcadores textuales se les llama adjetivos, y su función es decir cómo son las cosas."',
+  {k:'er-adjetivos',txt:'"A los marcadores textuales se les llama adjetivos, y su función es decir cómo son las cosas."',
    g1:'A los marcadores textuales se les llama conectores, no adjetivos.',
    g2:'Su función es enlazar ideas, no describir cómo son las cosas (eso lo hacen los adjetivos).'},
+  {k:'er-solo-inicio',txt:'"Un marcador solo puede ir en la primera oración del texto; en medio ya no se usa."',
+   g1:'Los marcadores van donde haga falta enlazar dos ideas: al principio, en medio o al final.',
+   g2:'Casi todos aparecen EN MEDIO, entre una oración y la siguiente, porque ahí es donde se muestra la relación.'},
+  {k:'er-varias-palabras',txt:'"Un marcador tiene que ser una sola palabra; una expresión de dos o tres palabras ya no cuenta."',
+   g1:'Muchos marcadores son expresiones de varias palabras y funcionan como una sola pieza.',
+   g2:'Se reconocen por lo que HACEN —enlazar dos ideas—, no por cuántas palabras tienen.'},
+  {k:'er-solo-escrito',txt:'"Los marcadores solo se usan en los textos escritos; cuando hablamos no usamos ninguno."',
+   g1:'También los usamos al hablar, todos los días, casi sin darnos cuenta.',
+   g2:'Al contar algo en voz alta enlazamos igual las ideas: explicamos por qué pasó, qué vino después o qué no salió como se esperaba.'},
 ];
 
 const critDecisionBank=[
@@ -563,35 +542,35 @@ const critDecisionBank=[
 const critDecisionGuide='Debe elegir un marcador adecuado a la relación pedida y explicar por qué: para añadir → "además/también"; para oponer → "sin embargo/pero"; para la causa → "porque/ya que"; para la consecuencia → "por lo tanto/por eso"; para cerrar → "en conclusión/finalmente". Se valora que use el marcador en una oración de ejemplo.';
 
 const critCompareBank=[
-  {a:'"Estudié mucho, por lo tanto aprobé."',b:'"Aprobé porque estudié mucho."',
+  {k:'co-consecuencia-causa',a:'"Estudié mucho, por lo tanto aprobé."',b:'"Aprobé porque estudié mucho."',
    ga:'"Por lo tanto" es un marcador de consecuencia: presenta el resultado (aprobar).',
    gb:'"Porque" es un marcador de causa: presenta el motivo (estudiar).',
    gr:'No expresan lo mismo: uno señala la consecuencia y el otro la causa, aunque ambas oraciones hablen de estudiar y aprobar.'},
-  {a:'"Me gusta el cine y además el teatro."',b:'"Me gusta el cine, sin embargo no el teatro."',
-   ga:'"Además" es un marcador de adición: suma una idea (también el teatro).',
-   gb:'"Sin embargo" es un marcador de contraste: opone una idea (el teatro no).',
+  {k:'co-adicion-contraste',a:'"Hoy hay tarea de Español y además de Ciencias."',b:'"Hoy hay tarea de Español; sin embargo, no de Ciencias."',
+   ga:'"Además" es un marcador de adición: suma una idea (también hay de Ciencias).',
+   gb:'"Sin embargo" es un marcador de contraste: opone una idea (de Ciencias no hay).',
    gr:'No expresan lo mismo: uno añade y el otro contrapone; cambian por completo el sentido de la oración.'},
-  {a:'"En primer lugar, prepara los materiales."',b:'"En conclusión, ya tienes tu trabajo listo."',
+  {k:'co-orden-cierre',a:'"En primer lugar, prepara los materiales."',b:'"En conclusión, ya tienes tu trabajo listo."',
    ga:'"En primer lugar" es un marcador de orden: abre o inicia la secuencia.',
    gb:'"En conclusión" es un marcador de cierre: termina o resume el texto.',
    gr:'No cumplen la misma función: uno inicia y el otro cierra; van en momentos distintos del texto.'},
-  {a:'"Hay muchos animales; por ejemplo, el león."',b:'"Es un animal fuerte; en cambio, es tranquilo."',
+  {k:'co-ejemplo-contraste',a:'"Hay muchos animales; por ejemplo, el león."',b:'"Es un animal fuerte; en cambio, es tranquilo."',
    ga:'"Por ejemplo" es un marcador de ejemplificación: aclara con un ejemplo.',
    gb:'"En cambio" es un marcador de contraste: opone dos ideas.',
    gr:'No expresan lo mismo: uno da un ejemplo y el otro marca una oposición.'},
 ];
 
 const critCauseBank=[
-  {cause:'En un texto quieres unir dos ideas mostrando que una se opone a la otra.',guide:'Usarás un marcador de contraste, como "sin embargo", "pero" o "en cambio".'},
-  {cause:'Quieres explicar el motivo por el que ocurrió algo.',guide:'Usarás un marcador de causa, como "porque", "ya que" o "puesto que".'},
-  {cause:'Vas a enumerar varios puntos en orden dentro de tu texto.',guide:'Usarás marcadores de orden, como "en primer lugar", "a continuación" y "por último".'},
-  {cause:'Quieres cerrar tu texto resumiendo la idea principal.',guide:'Usarás un marcador de cierre, como "en conclusión", "en resumen" o "finalmente".'},
+  {k:'cau-pizarra',cause:'El maestro escribe en la pizarra «leer el texto, subrayar, copiar en el cuaderno, en parejas», sin ninguna palabra que amarre esas ideas.',guide:'Cada quien lo entiende a su manera: unos lo hacen solos y otros en parejas, unos subrayan antes y otros después, y llegan trabajos distintos.'},
+  {k:'cau-adorno',cause:'Un compañero mete un marcador en cada oración de su texto, aunque no haga falta.',guide:'El texto se vuelve pesado y confuso: un marcador sirve cuando muestra una relación de verdad, no de adorno.'},
+  {k:'cau-noticia',cause:'Una noticia cuenta dos hechos, uno detrás del otro, sin decir si uno provocó al otro.',guide:'El lector no sabe si un hecho fue la razón del otro o si solo pasaron el mismo día.'},
+  {k:'cau-inicio-final',cause:'Alguien escribe «en conclusión» en la primera oración de su texto.',guide:'El lector cree que el texto ya se acaba cuando apenas empieza, y se pierde.'},
 ];
 const critEffectBank=[
-  {effect:'El lector entiende que la segunda idea es el resultado de la primera.',guide:'Se usó un marcador de consecuencia, como "por lo tanto" o "por eso".'},
-  {effect:'El lector entiende que se le está sumando una idea a la anterior.',guide:'Se usó un marcador de adición, como "además" o "también".'},
-  {effect:'El lector entiende que se le da un ejemplo para aclarar la idea.',guide:'Se usó un marcador de ejemplificación, como "por ejemplo" o "es decir".'},
-  {effect:'El lector nota que las ideas están bien enlazadas y el texto se sigue con facilidad.',guide:'Se usaron marcadores textuales, que aportan cohesión al texto.'},
+  {k:'ef-mama',effect:'Una mamá lee en el cuaderno «Estudió; sin embargo, reprobó» y entiende que su hijo sí se esforzó.',guide:'La palabra entre las dos ideas le dice que el resultado no fue el que se esperaba: se opone a lo anterior.'},
+  {k:'ef-cuento',effect:'A un cuento le quitan todas las palabras que enlazan: los hechos siguen ahí, pero ya no se sabe cómo se relacionan.',guide:'Esas palabras no cuentan hechos: muestran la relación entre ellos, y sin ellas cada idea queda suelta.'},
+  {k:'ef-dos-textos',effect:'Dos alumnos escriben con las mismas oraciones, cambian una sola palabra de enlace y sus textos dicen cosas distintas.',guide:'La palabra de enlace decide la relación entre las ideas: cambiarla cambia el sentido.'},
+  {k:'ef-receta',effect:'Un niño sigue una receta paso a paso sin equivocarse, sin haberla hecho nunca.',guide:'Las palabras que ordenan los pasos le dijeron qué iba antes y qué iba después.'},
 ];
 
 function genEvalCrit(){
