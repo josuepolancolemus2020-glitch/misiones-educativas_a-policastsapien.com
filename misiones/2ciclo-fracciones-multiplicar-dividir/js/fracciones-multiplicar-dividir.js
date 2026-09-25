@@ -747,73 +747,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Para multiplicar dos fracciones hay que buscar primero el denominador común.',a:false},
-  {q:'El producto de 2/3 × 4/5 es 8/15.',a:true},
-  {q:'Al dividir dos fracciones se voltea la segunda y se multiplica.',a:true},
-  {q:'El recíproco de 3/7 es 7/3.',a:true},
-  {q:'Multiplicar siempre da un resultado mayor que los factores.',a:false},
-  {q:'La fracción mixta 2 1/4 equivale a la impropia 9/4.',a:true},
-  {q:'Para multiplicar una fracción por un número natural, el natural se escribe con denominador 1.',a:true},
-  {q:'Al dividir 6 entre 1/2 el resultado es 3.',a:false},
-  {q:'En un problema, la palabra «de» suele indicar una multiplicación.',a:true},
-  {q:'El resultado 10/12 ya está en su mínima expresión.',a:false},
-  {q:'Se pueden cancelar factores en cruz antes de multiplicar dos fracciones.',a:true},
-  {q:'Para multiplicar una fracción mixta se multiplica primero el entero y después la fracción, por separado.',a:false},
-  {q:'El orden de los factores no cambia el producto, también con fracciones.',a:true},
-  {q:'Toda fracción multiplicada por 1 cambia de valor.',a:false},
-  {q:'Dividir entre una fracción menor que 1 da un resultado mayor que el número original.',a:true}
+  {q:'Para multiplicar 1/2 × 1/3 primero hay que convertirlas a sextos.',a:false,k:'tf-sin-comun'},
+  {q:'3/5 × 2/7 = 6/35.',a:true,k:'tf-3-5-por-2-7'},
+  {q:'Al dividir 6 entre 1/2 el resultado es 3.',a:false,k:'tf-6-entre-medio'},
+  {q:'3/7 × 7/3 = 1.',a:true,k:'tf-reciproco-3-7'},
+  {q:'Multiplicar por una fracción siempre agranda el número.',a:false,k:'tf-agranda'},
+  {q:'2 1/4 = 9/4.',a:true,k:'tf-mixta-9-4'},
+  {q:'5 × 2/3 = 10/3.',a:true,k:'tf-natural'},
+  {q:'10/12 no se puede reducir más.',a:false,k:'tf-10-12'},
+  {q:'1/3 de 30 son 10.',a:true,k:'tf-tercio-30'},
+  {q:'2/5 ÷ 1/3 = 5/2 × 1/3.',a:false,k:'tf-volteo-mal'}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto es 3/5 × 2/7?',o:['a) 6/35','b) 5/12','c) 6/12','d) 3/35'],a:0},
-  {q:'¿Cuál es el recíproco de 9/4?',o:['a) 9/4','b) 4/9','c) 1/9','d) 4/4'],a:1},
-  {q:'Para resolver 5/6 ÷ 2/3 se escribe…',o:['a) 6/5 × 2/3','b) 5/6 + 3/2','c) 5/6 × 3/2','d) 5/6 × 2/3'],a:2},
-  {q:'La fracción mixta 4 2/3 escrita como impropia es…',o:['a) 42/3','b) 8/3','c) 6/3','d) 14/3'],a:3},
-  {q:'¿Cuánto es 4 × 3/8, simplificado?',o:['a) 3/2','b) 12/32','c) 4/8','d) 7/8'],a:0},
-  {q:'¿Cuánto es 8 ÷ 2/3?',o:['a) 16/3','b) 12','c) 8/3','d) 4/3'],a:1},
-  {q:'En su mínima expresión, 18/24 es…',o:['a) 9/12','b) 6/8','c) 3/4','d) 2/3'],a:2},
-  {q:'«Se vendieron 3/4 de las 20 rosquillas». ¿Cuántas se vendieron?',o:['a) 5','b) 12','c) 60','d) 15'],a:3},
-  {q:'¿Cuánto es 2/3 × 3/2?',o:['a) 1','b) 6/6 sin simplificar es la única respuesta','c) 5/5','d) 4/9'],a:0},
-  {q:'Al multiplicar 30 por 1/6 el resultado es…',o:['a) 180','b) 5','c) 36','d) 30/1'],a:1},
-  {q:'¿Cuál de estas operaciones da un resultado MAYOR que 10?',o:['a) 10 × 1/2','b) 10 × 3/4','c) 10 ÷ 1/2','d) 10 × 2/5'],a:2},
-  {q:'¿Cuánto es 1/2 × 2/3 × 3/4?',o:['a) 6/9','b) 3/4','c) 1/2','d) 1/4'],a:3},
-  {q:'¿Cuánto es 2 1/2 × 2?',o:['a) 5','b) 4 1/2','c) 2 2/2','d) 4 1/4'],a:0},
-  {q:'¿Cuánto es 3/4 ÷ 3?',o:['a) 9/4','b) 1/4','c) 3/12 y no se simplifica','d) 4/3'],a:1},
-  {q:'¿Qué error hay en «2/5 ÷ 1/3 = 5/2 × 1/3»?',o:['a) Ninguno, está bien','b) Faltó buscar denominador común','c) Volteó la primera en vez de la segunda','d) Sumó en vez de multiplicar'],a:2}
+  {q:'¿Cuánto es 2/3 × 4/5?',o:['a) 8/15','b) 6/8','c) 8/5','d) 2/15'],a:0,k:'mc-2-3-por-4-5'},
+  {q:'¿Qué fracción, multiplicada por 9/4, da 1?',o:['a) 9/4','b) 4/9','c) 1/9','d) 4/4'],a:1,k:'mc-reciproco-9-4'},
+  {q:'Para resolver 5/6 ÷ 2/3 se escribe…',o:['a) 6/5 × 2/3','b) 5/6 + 3/2','c) 5/6 × 3/2','d) 5/6 × 2/3'],a:2,k:'mc-dividir'},
+  {q:'4 2/3 = ?',o:['a) 42/3','b) 8/3','c) 6/3','d) 14/3'],a:3,k:'mc-mixta-4-2-3'},
+  {q:'¿Cuánto es 4 × 3/8, reducido?',o:['a) 12/32','b) 4/8','c) 7/8','d) 3/2'],a:3,k:'mc-4-por-3-8'},
+  {q:'¿Cuánto es 8 ÷ 2/3?',o:['a) 12','b) 16/3','c) 8/3','d) 4/3'],a:0,k:'mc-8-entre'},
+  {q:'15/33 reducida al máximo es…',o:['a) 15/11','b) 5/11','c) 3/11','d) 5/33'],a:1,k:'mc-15-33'},
+  {q:'«Se vendieron 3/4 de las 20 rosquillas». ¿Cuántas se vendieron?',o:['a) 5','b) 12','c) 60','d) 15'],a:3,k:'mc-rosquillas'},
+  {q:'¿Cuánto es 1/2 × 2/3 × 3/4?',o:['a) 1/4','b) 6/9','c) 3/4','d) 1/2'],a:0,k:'mc-tres-fracciones'},
+  {q:'¿Cuál de estas operaciones da más de 10?',o:['a) 10 × 1/2','b) 10 × 3/4','c) 10 ÷ 1/2','d) 10 × 2/5'],a:2,k:'mc-mas-de-10'}
 ];
 const evalCPBank=[
-  {q:'Para multiplicar fracciones se multiplica numerador por numerador y denominador por ___.',a:'denominador'},
-  {q:'Para dividir fracciones se voltea la ___ fracción y se multiplica.',a:'segunda'},
-  {q:'La fracción volteada se llama ___ o inverso.',a:'recíproco'},
-  {q:'Antes de multiplicar una fracción mixta hay que convertirla en ___.',a:'impropia'},
-  {q:'El resultado de 2/3 × 4/5 es ___.',a:'8/15'},
-  {q:'El recíproco de 7/2 es ___.',a:'2/7'},
-  {q:'Un número natural se escribe como fracción poniéndole denominador ___.',a:'1'},
-  {q:'El resultado de 6 ÷ 1/2 es ___.',a:'12'},
-  {q:'En «2/3 de 15», la palabra «de» significa ___.',a:'multiplicar'},
-  {q:'La fracción 12/16 en su mínima expresión es ___.',a:'3/4'},
-  {q:'La mixta 3 1/2 escrita como impropia es ___.',a:'7/2'},
-  {q:'Al multiplicar una cantidad por una fracción menor que 1, el resultado ___ (crece o encoge).',a:'encoge'},
-  {q:'Toda fracción multiplicada por su recíproco da ___.',a:'1'},
-  {q:'El resultado de 20 × 3/4 es ___.',a:'15'},
-  {q:'La propiedad que dice que el orden de los factores no cambia el producto se llama ___.',a:'conmutativa'}
+  {q:'3/4 × 2/5 = ___.',a:'3/10',acc:['3/10','6/20'],k:'cp-3-4-por-2-5'},
+  {q:'La fracción que, multiplicada por 11/4, da 1 es ___.',a:'4/11',acc:['4/11'],k:'cp-reciproco-11-4'},
+  {q:'6 ÷ 1/3 = ___.',a:'18',acc:['18'],k:'cp-6-entre-tercio'},
+  {q:'3 1/2 = ___/2.',a:'7',acc:['7','siete'],k:'cp-mixta-3-1-2'},
+  {q:'20/28 reducida al máximo es ___.',a:'5/7',acc:['5/7'],k:'cp-20-28'},
+  {q:'2/3 de 21 son ___.',a:'14',acc:['14'],k:'cp-dos-tercios-21'},
+  {q:'5/12 × 2/5 = ___.',a:'1/6',acc:['1/6','10/60'],k:'cp-5-12-por-2-5'},
+  {q:'8/9 ÷ 4 = ___.',a:'2/9',acc:['2/9','8/36'],k:'cp-8-9-entre-4'},
+  {q:'99 × 1/9 = ___.',a:'11',acc:['11','once'],k:'cp-99-por-noveno'},
+  {q:'5/8 × 1 = ___.',a:'5/8',acc:['5/8'],k:'cp-por-uno'}
 ];
 const evalPRBank=[
-  {term:'Multiplicar fracciones',def:'Numerador por numerador y denominador por denominador'},
-  {term:'Recíproco',def:'La misma fracción volteada, como 3/4 y 4/3'},
-  {term:'Dividir fracciones',def:'Voltear la segunda fracción y multiplicar'},
-  {term:'Fracción mixta',def:'Un entero acompañado de una fracción, como 2 1/4'},
-  {term:'Fracción impropia',def:'Aquella cuyo numerador es mayor o igual que el denominador'},
-  {term:'Mínima expresión',def:'La fracción reducida hasta que ya no se puede dividir más'},
-  {term:'La palabra «de»',def:'Señal de que el problema se resuelve multiplicando'},
-  {term:'Cancelar en cruz',def:'Simplificar antes de multiplicar para trabajar con números chicos'},
-  {term:'Propiedad conmutativa',def:'El orden de los factores no cambia el producto'},
-  {term:'Propiedad asociativa',def:'Al multiplicar tres fracciones se pueden agrupar como convenga'},
-  {term:'Multiplicar por 1',def:'Deja la fracción igual y sirve para hallar equivalentes'},
-  {term:'Producto',def:'El resultado de una multiplicación'},
-  {term:'Cociente',def:'El resultado de una división'},
-  {term:'Máximo común divisor',def:'El número entre el que se divide arriba y abajo para simplificar'},
-  {term:'Numerador',def:'El número de arriba de la fracción'}
+  {term:'Recíproco',def:'La misma fracción volteada',k:'pr-reciproco'},
+  {term:'Producto',def:'El resultado de una multiplicación',k:'pr-producto'},
+  {term:'Cociente',def:'El resultado de una división',k:'pr-cociente'},
+  {term:'Fracción mixta',def:'Un entero acompañado de una fracción',k:'pr-mixta'},
+  {term:'Fracción impropia',def:'La que tiene arriba igual o más que abajo',k:'pr-impropia'},
+  {term:'Mínima expresión',def:'La fracción reducida hasta que ya no se puede dividir más',k:'pr-minima'},
+  {term:'Cancelar en cruz',def:'Simplificar antes de multiplicar, arriba de una con abajo de la otra',k:'pr-cancelar'},
+  {term:'Propiedad conmutativa',def:'Cambiar el orden de los factores no cambia el resultado',k:'pr-conmutativa'},
+  {term:'Numerador',def:'El número de arriba de una fracción',k:'pr-numerador'},
+  {term:'Denominador',def:'El número de abajo de una fracción',k:'pr-denominador'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
