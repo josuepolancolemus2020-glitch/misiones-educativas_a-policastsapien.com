@@ -544,38 +544,60 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada. En números la pista se cuela como NÚMERO:
+// «1,000,000» escrito deja contar sus cifras, y «vale 100,000» en un pareado
+// contesta «99,999 + 1». Por eso las posiciones se definen por su lugar y no
+// por su valor. Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'En el número 452,318, el dígito 5 vale 50,000.',a:true},
-  {q:'Un millón se escribe con 6 cifras.',a:false},
-  {q:'Los ceros de relleno no tienen ningún propósito en un número.',a:false},
-  {q:'300,040 se lee "trescientos mil cuarenta".',a:true},
-  {q:'87,340 es menor que 9,500 porque el primer dígito (8) es menor que 9.',a:false},
-  {q:'Al sumar y una columna da 10 o más, se lleva 1 a la siguiente posición.',a:true},
-  {q:'La forma expandida de 706,040 es 700,000+6,000+40.',a:true},
-  {q:'Para leer un número grande se separa en grupos de tres cifras desde la derecha.',a:true},
-  {q:'El número 5,006 es igual al número 5,600.',a:false},
-  {q:'999,999 es el número más grande de 6 cifras.',a:true}
+  {q:'En el número 452,318, el dígito 5 vale 50,000.',a:true,k:'tf-valor-5'},
+  {q:'Un millón se escribe con 6 cifras.',a:false,k:'tf-millon-cifras'},
+  {q:'El número 4,500 se lee «cuatro mil quinientos».',a:true,k:'tf-leer-4500'},
+  {q:'300,040 se lee «trescientos mil cuarenta».',a:true,k:'tf-leer-300040'},
+  {q:'87,340 es menor que 9,500 porque 8 es menor que 9.',a:false,k:'tf-comparar-primer-digito'},
+  {q:'Para sumar 3,245 + 51, el 5 del 51 se pone debajo del 3.',a:false,k:'tf-alinear-suma'},
+  {q:'706,040 = 700,000 + 6,000 + 40.',a:true,k:'tf-expandida-706040'},
+  {q:'El número 12,000 se lee «doce mil».',a:true,k:'tf-leer-12000'},
+  {q:'El número 5,006 es igual al número 5,600.',a:false,k:'tf-5006'},
+  {q:'En 2,468 la cifra 4 está en el lugar de las decenas.',a:false,k:'tf-lugar-2468'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el valor del dígito 4 en 573,420?',o:['a) 4','b) 400','c) 4,000','d) 40,000'],a:1},
-  {q:'¿Cómo se lee el número 908,050?',o:['a) Novecientos ocho mil cincuenta','b) Noventa mil ochocientos cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],a:0},
-  {q:'¿Cuántas cifras tiene un millón (1,000,000)?',o:['a) 5','b) 6','c) 7','d) 8'],a:2},
-  {q:'¿Cuál número es mayor: 87,340 o 9,500?',o:['a) 87,340','b) 9,500','c) Son iguales','d) No se puede saber'],a:0},
-  {q:'¿Qué haces si al sumar una columna da 12?',o:['a) Escribo el 12 completo','b) Resto 10','c) Ignoro el resultado','d) Escribo el 2 y llevo 1'],a:3}
+  {q:'¿Cuál es el valor del dígito 4 en 573,420?',o:['a) 4','b) 400','c) 4,000','d) 40,000'],a:1,k:'mc-valor-4'},
+  {q:'¿Cómo se lee el número 908,050?',o:['a) Novecientos ocho mil cincuenta','b) Noventa mil ochocientos cincuenta','c) Nueve mil ochenta y cinco','d) Novecientos ochenta mil cinco'],a:0,k:'mc-leer-908050'},
+  {q:'¿Cuál de estos números es el mayor?',o:['a) 64,209','b) 64,092','c) 9,999','d) 64,290'],a:3,k:'mc-mayor'},
+  {q:'¿Cuánto es 2,700 + 300?',o:['a) 2,730','b) 2,400','c) 2,000','d) 3,000'],a:3,k:'mc-suma-2700'},
+  {q:'«Doscientos cuatro mil setenta» en cifras es:',o:['a) 204,070','b) 240,070','c) 204,700','d) 2,470'],a:0,k:'mc-escribir-204070'},
+  {q:'¿Qué número es 30,000 + 500 + 8?',o:['a) 3,508','b) 30,508','c) 35,008','d) 30,580'],a:1,k:'mc-expandida-30508'},
+  {q:'¿En cuál número el 7 vale 7,000?',o:['a) 17,025','b) 71,025','c) 10,725','d) 10,257'],a:0,k:'mc-7-vale-7000'},
+  {q:'¿Cuánto es 3,040 × 10?',o:['a) 30,400','b) 3,400','c) 304','d) 304,000'],a:0,k:'mc-x10'},
+  {q:'¿Cuál es el número más grande de seis cifras?',o:['a) 909,999','b) 99,999','c) 999,999','d) 900,000'],a:2,k:'mc-mayor-6cifras'},
+  {q:'Si a 45,300 le sumas 1,000, ¿qué obtienes?',o:['a) 45,400','b) 55,300','c) 45,310','d) 46,300'],a:3,k:'mc-suma-1000'}
 ];
 const evalCPBank=[
-  {q:'La posición de valor 1,000 se llama unidad de ___.',a:'millar'},
-  {q:'Un millón se escribe con ___ cifras.',a:'7'},
-  {q:'En 452,318 el dígito 2 vale ___.',a:'2,000'},
-  {q:'Los ___ de relleno ocupan una posición sin valor.',a:'ceros'},
-  {q:'Para comparar números grandes, primero se cuenta la cantidad de ___.',a:'cifras'}
+  {q:'En 386,000 el dígito 3 vale ___.',a:'300,000',acc:['300,000','300000','300 000','300.000'],k:'cp-valor-3'},
+  {q:'40,003 se lee «cuarenta mil ___».',a:'tres',acc:['tres','3'],k:'cp-leer-40003'},
+  {q:'Si dos números tienen la misma cantidad de cifras, se comparan empezando por la ___.',a:'izquierda',acc:['izquierda','la izquierda'],k:'cp-comparar-izquierda'},
+  {q:'52,070 = 50,000 + 2,000 + ___.',a:'70',acc:['70'],k:'cp-expandida-52070'},
+  {q:'«Seiscientos mil seis» en cifras se escribe ___.',a:'600,006',acc:['600,006','600006','600 006','600.006'],k:'cp-escribir-600006'},
+  {q:'20,000 − 1 = ___.',a:'19,999',acc:['19,999','19999','19 999','19.999'],k:'cp-resta-20000'},
+  {q:'4,580 + 1,420 = ___.',a:'6,000',acc:['6,000','6000','6 000','6.000'],k:'cp-suma-acarreo'},
+  {q:'99,999 + 1 = ___.',a:'100,000',acc:['100,000','100000','100 000','100.000'],k:'cp-suma-99999'},
+  {q:'Escribe en cifras «ochenta mil doce»: ___.',a:'80,012',acc:['80,012','80012','80 012','80.012'],k:'cp-escribir-80012'},
+  {q:'El número más pequeño de cinco cifras es ___.',a:'10,000',acc:['10,000','10000','10 000','10.000'],k:'cp-menor-5cifras'}
 ];
 const evalPRBank=[
-  {term:'Valor Posicional',def:'Sistema donde cada cifra vale según su lugar'},
-  {term:'Cero de Relleno',def:'Ocupa una posición sin valor para no perder el lugar'},
-  {term:'Forma Expandida',def:'Descomposición de un número según el valor de cada cifra'},
-  {term:'Centena de Millar',def:'Posición de valor 100,000'},
-  {term:'Acarreo',def:'Se lleva 1 a la siguiente columna al sumar 10 o más'}
+  {term:'Valor Posicional',def:'Lo que vale una cifra según el lugar que ocupa',k:'pr-valor-posicional'},
+  {term:'Cero de Relleno',def:'El cero que guarda un lugar vacío',k:'pr-cero-relleno'},
+  {term:'Forma Expandida',def:'El número escrito como la suma del valor de cada cifra',k:'pr-forma-expandida'},
+  {term:'Centena de Millar',def:'La sexta posición, contando desde la derecha',k:'pr-centena-millar'},
+  {term:'Unidad de Millar',def:'La cuarta posición, contando desde la derecha',k:'pr-unidad-millar'},
+  {term:'Acarreo',def:'Llevar 1 a la columna siguiente cuando una suma da 10 o más',k:'pr-acarreo'},
+  {term:'Cifra',def:'Cada uno de los signos del 0 al 9',k:'pr-cifra'},
+  {term:'Sucesor',def:'El número que va justo después',k:'pr-sucesor'},
+  {term:'Antecesor',def:'El número que va justo antes',k:'pr-antecesor'},
+  {term:'Unidad',def:'Lo que se cuenta de uno en uno',k:'pr-unidad'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),

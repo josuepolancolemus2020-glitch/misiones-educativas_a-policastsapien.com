@@ -6552,6 +6552,16 @@ no pueden salir escritas ni en una opción). La instrucción de la selección
 pasó de «Encierra en un círculo» a **«Rellena el círculo de la letra de la
 respuesta correcta»**, que es la normativa del papel.
 
+⚠️ **Valor Posicional tenía bancos de CINCO**, y cada forma saca cinco: las 30
+formas eran la misma prueba en otro orden, y el alumno que la hizo una vez se
+sabía las demás. Ahora son diez por banco, con su `k`. Y ahí salió la regla de
+los pareados de posiciones: **se definen por su LUGAR** («la sexta posición,
+contando desde la derecha»), **nunca por su valor** — «Posición de valor
+100,000» contestaba sola «99,999 + 1 = ___». En la ficha, la hoja de los
+pareados lleva la felicitación con «ceros de relleno», «acarreo» y «forma
+expandida», así que esos tres términos se preguntan en la misión y no en el
+papel.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
