@@ -6136,6 +6136,100 @@ Hoy son **83 misiones y 4 592 fichas**, y ninguna se contradice. Los números no
 se escriben dentro de la sonda: se cuentan, que si no se pondría roja el día
 que entre una misión sin que nada esté roto.
 
+## Normativa: ninguna pregunta le regala la respuesta a otra
+
+Lo pidió un maestro el 25 de septiembre de 2026, con la ficha de Aspectos
+Cívicos en la mano: «a veces en el mismo examen están las respuestas que se
+plantean allí mismo de otra forma, **mis alumnos se dan cuenta de eso**». Tenía
+razón, y medida: el completar pedía «La Bandera lleva ___ estrellas», el V/F
+decía «tiene cuatro estrellas», la selección preguntaba «¿Qué representan las
+**cinco** estrellas?» y el pareado ponía «Tres franjas y cinco estrellas».
+Cuatro preguntas, un dato, y la respuesta de la primera escrita en las otras
+tres. Y «Hartling», la respuesta de un completar, era la opción a) de la
+selección de al lado.
+
+| antes de tocar nada, en Aspectos Cívicos | |
+|---|---|
+| formas de la Evaluación Conceptual que repetían algún dato | **30 de 30** (164 veces) |
+| formas de Pensamiento Crítico que se regalaban algo | **28 de 30** (75 veces) |
+| la ficha: 40 preguntas para | **20 datos**: diez de ellos, preguntados de dos a cuatro maneras |
+
+Eso no mide lo que el alumno sabe: mide si lee la hoja entera antes de
+contestar. Y el que la lee entera saca la nota del que estudió, en la prueba que
+entra en su expediente.
+
+**Cuatro reglas, y ninguna es de adorno:**
+
+1. **Un dato, una pregunta**, en todo lo que puede caer en la misma hoja. En la
+   evaluación eso es **cualquier par de los cuatro bancos**: cada forma saca
+   cinco de cada uno al azar, así que no vale con revisar la Forma 1. Cada ítem
+   lleva su `k` —el dato que pregunta— y ninguna `k` se repite.
+2. ⚠️ **La respuesta no aparece escrita en otra pregunta, tampoco como opción
+   equivocada.** Esto la `k` no lo ve —son dos datos distintos— y es la que más
+   se cuela: el distractor natural de «¿quién escribió la letra?» es el que
+   compuso la música, y así se le regala al completar de al lado. Los nombres,
+   los años y los números salen **una vez**. Los distractores se buscan fuera
+   del temario del examen (Ramón Rosa, Juan Ramón Molina), no dentro.
+3. ⚠️ **En la ficha cuenta también la HOJA.** Se encontró mirándola impresa, con
+   todo en verde: la hoja 4 lleva arriba la tabla de las fechas y el «Así sí /
+   Así no», y debajo empieza el completar. Una pregunta por el 15 de septiembre
+   o por el silencio del Himno se contestaba leyendo la misma hoja, y el maestro
+   que fotocopia las hojas de la prueba no puede separarlas. Esas preguntas se
+   sacan de la teoría de las hojas anteriores.
+4. **Se cambia el contenido, no el formato.** Mismo número de preguntas por
+   sección, mismas filas largas y cortas en la selección múltiple, misma clave
+   de pareados. La ficha siguió saliendo en sus siete hojas, y la evaluación en
+   sus dos.
+
+⚠️ **Y el mismo tema no es lo mismo que el mismo dato, pero se le parece.** «¿Por
+qué la rosa dejó de ser la flor nacional?» no dice «orquídea», pero le quita al
+completar de la flor su error más común. Se quitó. Si dos preguntas hablan del
+mismo símbolo, se mira si una le sirve a la otra de descarte.
+
+**En pensamiento crítico muerde más**, porque se contesta escribiendo y el dato
+que otra sección deja a la vista se copia tal cual: «Corrige el error» pedía
+decir que el árbol nacional es el pino y la toma de decisiones de la misma hoja
+decía «explicarle que es el pino». Por eso ahí los casos cuentan **conductas**, no
+datos: el dato lo pide el resto de la prueba. Y la pauta de los errores escribe
+en MAYÚSCULAS lo que el alumno tiene que poner («lleva CINCO estrellas»), que es
+lo que la sonda busca en las otras secciones.
+
+```
+node _dev/verifica-examen-sin-pistas.js                    (está en npm test)
+node _dev/verifica-examen-sin-pistas.js --todas            → mide las pendientes
+node _dev/verifica-examen-sin-pistas.js --todas --detalle  → y tres pistas de cada una
+```
+
+Arma las 30 formas con **el mismo generador de la misión** (su `_evalRng` y su
+`_pickF`, leídos del archivo), pero lo que exige es más que eso: que el conjunto
+entero esté limpio, porque el día que entre una pregunta al banco todas las
+formas se vuelven a barajar. Se comprobó al revés metiendo cuatro pistas a
+propósito —un distractor con «Coello», un dato repetido, una decisión que
+decía «siete estrofas» y un «pino» en la ficha— y salió roja con las cuatro; y
+una de ellas **no caía en ninguna de las 30 formas de hoy**, que es justo por qué
+no basta con mirar las formas.
+
+⚠️ **Una misión «pasó por la revisión» cuando sus bancos llevan `k`**, y solo a
+esas se les exige. Las demás se miden y no se ponen rojas: la revisión se hace
+leyendo, de una en una, y la `k` la pone quien leyó. Lo que la sonda mide sola
+en las pendientes son las pistas que se ven en el texto; que dos preguntas
+pregunten el mismo dato con palabras distintas solo lo ve quien lee.
+
+**Lo que queda, medido el 25 de septiembre de 2026 con `--todas`:** las pistas
+de texto están en casi todas. En Multiplicación de decimales el completar pide
+«2.5 × 1.3 = ___» y el V/F de la misma hoja dice «El resultado de 2.5 × 1.3 es
+3.25»; en Próceres, el completar pide «el Día de Lempira se celebra el 20 de
+___» y el pareado dice «20 de julio · Día de Lempira». Las Pruebas de Fin de
+Grado arman sus bancos por materia y quedan fuera de la sonda: se revisan
+leyendo, y la sonda lo dice en vez de callarlo.
+
+⚠️ **Dos cosas de la herramienta, pagadas con falsos positivos antes de servir.**
+Quitaba la vocal final para juntar «blanca» con «blanco», y juntó «canta» con
+«Canto a Honduras»: ahora solo quita el plural. Y daba por nombre propio toda
+palabra con mayúscula, así que «José» delataba a José Trinidad Reyes desde José
+Trinidad Cabañas: las palabras que repiten varios nombres de la misma columna no
+identifican a nadie. Es la lección de «Cuadrado **Perfecto**» una vez más.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

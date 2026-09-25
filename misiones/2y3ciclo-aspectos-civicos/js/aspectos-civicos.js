@@ -358,78 +358,91 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+/* UN DATO, UNA PREGUNTA. Cada forma saca 5 preguntas de cada banco al azar,
+   y cualquier par de preguntas de estos cuatro bancos puede caer en la misma
+   hoja. Antes los cuatro preguntaban lo mismo de cuatro maneras: el completar
+   pedía «___ estrellas», el pareado decía «Tres franjas y cinco estrellas» y
+   la selección preguntaba «¿Qué representan las cinco estrellas?». Medido el
+   25 de septiembre de 2026: las 30 formas repetían algún dato, 164 veces en
+   total, y los alumnos contestaban una pregunta leyendo la de al lado.
+
+   Por eso cada ítem lleva su `k`, el dato que pregunta, y ninguna `k` se
+   repite en los cuatro bancos. Y hay una segunda regla que la `k` no ve: la
+   respuesta de una pregunta no puede aparecer escrita en otra, ni como
+   opción equivocada: «Hartling», que era la respuesta de un completar, era
+   también la opción a) de la selección sobre la letra. Los nombres, las
+   fechas y los números salen UNA vez.
+   Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'Los símbolos patrios mayores son la Bandera, el Escudo y el Himno Nacional.',a:true},
-  {q:'La Bandera Nacional tiene cuatro estrellas en el centro.',a:false},
-  {q:'Las cinco estrellas representan a las cinco naciones de la antigua Federación de Centroamérica.',a:true},
-  {q:'La franja del centro de la Bandera es de color blanco.',a:true},
-  {q:'El azul de la Bandera representa los dos mares que bañan al país y el cielo.',a:true},
-  {q:'El Escudo Nacional es un cuadrado con un río en el centro.',a:false},
-  {q:'En el Escudo Nacional hay un volcán entre dos torres.',a:true},
-  {q:'La letra del Himno Nacional la escribió Augusto C. Coello.',a:true},
-  {q:'La música del Himno Nacional la compuso Francisco Morazán.',a:false},
-  {q:'El Himno Nacional tiene un coro y siete estrofas.',a:true},
-  {q:'En los actos escolares se canta el coro y la séptima estrofa.',a:true},
-  {q:'El árbol nacional de Honduras es la ceiba.',a:false},
-  {q:'La flor nacional de Honduras es la orquídea Rhyncholaelia digbyana.',a:true},
-  {q:'La guara roja es el ave nacional y el venado cola blanca el mamífero nacional.',a:true},
-  {q:'Lempira fue el cacique lenca que dirigió la resistencia contra la conquista.',a:true},
-  {q:'Francisco Morazán luchó por separar a los países de Centroamérica.',a:false},
-  {q:'José Cecilio del Valle redactó el Acta de Independencia de Centroamérica.',a:true},
-  {q:'La Independencia de Centroamérica se firmó el 15 de septiembre de 1821.',a:true},
-  {q:'El Día de la Bandera Nacional se celebra el 15 de septiembre.',a:false},
-  {q:'Mientras se canta el Himno Nacional hay que quedarse de pie y en silencio.',a:true},
+  {q:'Los símbolos patrios mayores son tres: la Bandera, el Escudo y el Himno Nacional.',a:true,k:'mayores'},
+  {q:'Los símbolos patrios mayores representan al Estado en los actos oficiales y fuera del país.',a:true,k:'mayores-estado'},
+  {q:'Los símbolos patrios menores se declararon antes que los mayores.',a:false,k:'menores-cuando'},
+  {q:'Las estrellas de la Bandera recuerdan a los departamentos más grandes del país.',a:false,k:'bandera-estrellas-significado'},
+  {q:'La franja del centro de la Bandera Nacional es azul turquesa.',a:false,k:'bandera-franja-centro'},
+  {q:'Las franjas de la Bandera Nacional son horizontales y del mismo ancho.',a:true,k:'bandera-franjas'},
+  {q:'La Bandera Nacional se iza al empezar el día.',a:true,k:'bandera-izar'},
+  {q:'En el Escudo Nacional, las dos torres significan la defensa.',a:true,k:'escudo-torres'},
+  {q:'Muchas calles, parques y departamentos llevan el nombre de un prócer.',a:true,k:'proceres-nombres'},
+  {q:'En los actos escolares se canta el coro y la primera estrofa del Himno.',a:false,k:'himno-se-canta'},
+  {q:'El Himno Nacional se estrenó en 1904.',a:true,k:'himno-primera-vez'},
+  {q:'Cuando pasa la Bandera en el desfile hay que quedarse quieto y firme.',a:true,k:'respeto-pasa-bandera'},
+  {q:'Si la Bandera toca el suelo no importa, con tal de levantarla después.',a:false,k:'respeto-suelo'},
+  {q:'La Bandera se puede usar como mantel o como adorno en una fiesta.',a:false,k:'respeto-adorno'},
+  {q:'Se vale escribir o dibujar encima del Escudo Nacional.',a:false,k:'respeto-escudo'},
 ];
 const evalMCBank=[
-  {q:'¿Cuáles son los tres símbolos patrios mayores de Honduras?',o:['a) El pino, la orquídea y la guara roja','b) La Bandera, el Escudo y el Himno Nacional','c) El mapa, la moneda y la lengua','d) El venado, el volcán y el arco iris'],a:1},
-  {q:'¿Cuántas estrellas tiene la Bandera Nacional y qué representan?',o:['a) Tres, los poderes del Estado','b) Siete, las estrofas del Himno','c) Cinco, las naciones de la antigua Federación de Centroamérica','d) Cinco, los mares que rodean al país'],a:2},
-  {q:'¿De qué colores son las franjas de la Bandera Nacional?',o:['a) Azul turquesa, blanca y azul turquesa','b) Azul, blanca y roja','c) Verde, blanca y azul','d) Blanca, azul y blanca'],a:0},
-  {q:'¿Qué representa el color blanco de la Bandera?',o:['a) Los bosques de pino','b) La riqueza de las minas','c) La sangre de los héroes','d) La paz y la pureza del pueblo'],a:3},
-  {q:'¿Qué figura geométrica forma el centro del Escudo Nacional?',o:['a) Un círculo','b) Un triángulo equilátero','c) Un cuadrado','d) Un rombo'],a:1},
-  {q:'¿Qué se ve en la base del triángulo del Escudo Nacional?',o:['a) Un volcán entre dos torres','b) Un puerto con barcos','c) Una escuela y una iglesia','d) Un río entre dos montañas'],a:0},
-  {q:'¿Qué representan las cornucopias del Escudo Nacional?',o:['a) La unión centroamericana','b) La defensa del territorio','c) La abundancia y la riqueza de la tierra','d) Los tres poderes del Estado'],a:2},
-  {q:'¿Quién escribió la letra del Himno Nacional de Honduras?',o:['a) Carlos Hartling','b) Ramón Rosa','c) José Trinidad Reyes','d) Augusto C. Coello'],a:3},
-  {q:'¿Quién compuso la música del Himno Nacional de Honduras?',o:['a) Carlos Hartling','b) Augusto C. Coello','c) Marco Aurelio Soto','d) Dionisio de Herrera'],a:0},
-  {q:'¿Cuántas estrofas tiene el Himno Nacional?',o:['a) Cinco','b) Siete','c) Nueve','d) Tres'],a:1},
-  {q:'¿Cuál es el árbol nacional de Honduras?',o:['a) La ceiba','b) El roble','c) El pino','d) El cedro'],a:2},
-  {q:'¿Cuál es la flor nacional de Honduras desde 1969?',o:['a) La rosa','b) El girasol','c) La buganvilia','d) La orquídea Rhyncholaelia digbyana'],a:3},
-  {q:'¿Quién es el Héroe Nacional que resistió la conquista española?',o:['a) Lempira','b) Francisco Morazán','c) José Cecilio del Valle','d) José Trinidad Cabañas'],a:0},
-  {q:'¿Por qué se recuerda a Francisco Morazán?',o:['a) Por escribir el Himno Nacional','b) Por luchar por la unión de Centroamérica','c) Por fundar la primera universidad','d) Por diseñar la Bandera'],a:1},
-  {q:'¿Qué se conmemora el 15 de septiembre?',o:['a) El Día de la Bandera','b) El Día del Maestro','c) La Independencia de Centroamérica','d) El Día de Lempira'],a:2},
+  {q:'¿Qué representan los símbolos patrios menores?',o:['a) Las leyes del país','b) La naturaleza y el territorio del país','c) Los partidos políticos','d) Las fiestas de cada pueblo'],a:1,k:'menores-representan'},
+  {q:'¿Qué representa el azul turquesa de la Bandera Nacional?',o:['a) La riqueza de las minas','b) La sangre de los héroes','c) Los dos mares que bañan al país y el cielo','d) Las montañas del interior'],a:2,k:'bandera-azul'},
+  {q:'¿Qué representa el triángulo equilátero del Escudo Nacional?',o:['a) Los tres poderes del Estado','b) La igualdad, porque sus tres lados miden lo mismo','c) Los tres ríos más largos del país','d) Las tres montañas más altas'],a:1,k:'escudo-triangulo'},
+  {q:'¿Quién compuso la música del Himno Nacional?',o:['a) Ramón Rosa','b) Marco Aurelio Soto','c) Juan Ramón Molina','d) Carlos Hartling'],a:3,k:'himno-musica'},
+  {q:'¿Qué describe el coro del Himno Nacional?',o:['a) La Bandera Nacional','b) Una batalla en la montaña','c) La vida de un prócer','d) El nacimiento de un río'],a:0,k:'himno-coro'},
+  {q:'¿En qué año el gobierno declaró oficial el Himno Nacional?',o:['a) 1910','b) 1915','c) 1932','d) 1948'],a:1,k:'himno-oficial'},
+  {q:'¿Cuál es el ave nacional de Honduras?',o:['a) El quetzal','b) El tucán','c) El colibrí','d) La guara roja'],a:3,k:'ave'},
+  {q:'¿Qué se conmemora el 15 de septiembre?',o:['a) La Independencia de Centroamérica','b) El Día de la Madre','c) El Día del Árbol','d) El Día del Idioma'],a:0,k:'independencia'},
+  {q:'¿Cómo se guarda la Bandera Nacional?',o:['a) Limpia y bien doblada','b) Hecha una bola en una caja','c) Mojada, para que no se arrugue','d) Colgada en la ventana todo el año'],a:0,k:'respeto-guardar'},
+  {q:'¿Cuántos departamentos tiene el mapa de Honduras?',o:['a) 12','b) 15','c) 18','d) 20'],a:2,k:'mapa'},
+  {q:'¿Dónde se usa el Escudo Nacional?',o:['a) En las camisetas de fútbol','b) En los documentos oficiales, los sellos y la moneda','c) Solo en los libros de texto','d) En los billetes de lotería'],a:1,k:'escudo-uso'},
+  {q:'¿De qué habla la tercera estrofa del Himno Nacional?',o:['a) De la fundación de Tegucigalpa','b) De la guerra contra los piratas','c) De los tres siglos de la época colonial','d) De la construcción del ferrocarril'],a:2,k:'himno-tercera-estrofa'},
+  {q:'¿Qué dice el óvalo que rodea al Escudo Nacional?',o:['a) República de Honduras, libre, soberana e independiente','b) Unidos por la paz y el progreso','c) Honor, trabajo y lealtad','d) Tierra de montañas y de ríos'],a:0,k:'escudo-ovalo'},
+  {q:'¿Cómo se le llama al mes de septiembre en Honduras?',o:['a) El Mes de la Lectura','b) El Mes del Árbol','c) El Mes del Deporte','d) El Mes de la Patria'],a:3,k:'mes-patria'},
+  {q:'¿Cómo se llamaba el Himno Nacional cuando se compuso?',o:['a) Marcha de la Libertad','b) Canción de la Montaña','c) Himno del Pueblo','d) Canto a Honduras'],a:3,k:'himno-nombre'},
 ];
+/* «cinco (5)» y no «cinco»: la calificación quita los paréntesis y acepta
+   cada palabra de la respuesta, así que vale igual el que escribe la
+   palabra y el que escribe el número. */
 const evalCPBank=[
-  {q:'Los tres símbolos patrios mayores son la Bandera, el Escudo y el ___.',a:'Himno'},
-  {q:'La franja del centro de la Bandera Nacional es de color ___.',a:'blanco'},
-  {q:'La Bandera Nacional lleva ___ estrellas en el centro.',a:'cinco'},
-  {q:'Las estrellas representan a las naciones de la antigua Federación de ___.',a:'Centroamérica'},
-  {q:'La figura del centro del Escudo Nacional es un ___ equilátero.',a:'triángulo'},
-  {q:'En el Escudo, entre las dos torres, se levanta un ___.',a:'volcán'},
-  {q:'La letra del Himno Nacional es de Augusto C. ___.',a:'Coello'},
-  {q:'La música del Himno Nacional es de Carlos ___.',a:'Hartling'},
-  {q:'El Himno Nacional tiene un coro y ___ estrofas.',a:'siete'},
-  {q:'En los actos escolares se canta el coro y la ___ estrofa.',a:'séptima'},
-  {q:'El árbol nacional de Honduras es el ___.',a:'pino'},
-  {q:'La flor nacional de Honduras es la ___.',a:'orquídea'},
-  {q:'El Héroe Nacional que resistió la conquista fue ___.',a:'Lempira'},
-  {q:'El Acta de Independencia la redactó José Cecilio del ___.',a:'Valle'},
-  {q:'La Independencia de Centroamérica se firmó en el año ___.',a:'1821'},
+  {q:'En el centro de la Bandera Nacional van ___ estrellas.',a:'cinco (5)',k:'bandera-estrellas'},
+  {q:'La Bandera Nacional nació por decreto del 16 de febrero de ___.',a:'1866',k:'bandera-decreto'},
+  {q:'El Escudo Nacional se creó el 3 de octubre de ___.',a:'1825',k:'escudo-fecha'},
+  {q:'En el Escudo, entre las dos torres, se levanta un ___.',a:'volcán',k:'escudo-volcan'},
+  {q:'El Escudo lleva un arco iris y un ___ naciente.',a:'sol',k:'escudo-sol'},
+  {q:'En la parte de arriba del Escudo hay herramientas de minería y aljabas con ___.',a:'flechas',k:'escudo-aljabas'},
+  {q:'La letra del Himno Nacional la escribió Augusto C. ___.',a:'Coello',k:'himno-letra'},
+  {q:'Además del coro, el Himno Nacional tiene ___ estrofas.',a:'siete (7)',k:'himno-estrofas'},
+  {q:'El Día del Maestro Hondureño se celebra el ___ de septiembre.',a:'17 (diecisiete)',k:'dia-maestro'},
+  {q:'La quinta estrofa del Himno recuerda el ejemplo de libertad que llegó de ___.',a:'Francia',k:'himno-quinta-estrofa'},
+  {q:'El árbol nacional de Honduras es el ___.',a:'pino',k:'arbol'},
+  {q:'La flor nacional de Honduras es la ___.',a:'orquídea',k:'flor'},
+  {q:'El cacique lenca que resistió la conquista y es Héroe Nacional se llama ___.',a:'Lempira',k:'lempira'},
+  {q:'A Francisco Morazán se le llama el Paladín de la ___ Centroamericana.',a:'Unión',k:'morazan'},
+  {q:'Mientras se canta el Himno Nacional se está de pie, firme y en ___.',a:'silencio',k:'respeto-himno'},
 ];
 const evalPRBank=[
-  {term:'La Bandera Nacional',def:'Tres franjas y cinco estrellas azul turquesa'},
-  {term:'El Escudo Nacional',def:'Triángulo con un volcán entre dos torres'},
-  {term:'El Himno Nacional',def:'Un coro y siete estrofas'},
-  {term:'Augusto C. Coello',def:'Escribió la letra del Himno Nacional'},
-  {term:'Carlos Hartling',def:'Compuso la música del Himno Nacional'},
-  {term:'Las cinco estrellas',def:'Las naciones de la antigua Federación de Centroamérica'},
-  {term:'El color blanco',def:'La paz y la pureza del pueblo'},
-  {term:'El Pino',def:'El árbol nacional de Honduras'},
-  {term:'La orquídea',def:'La flor nacional desde 1969'},
-  {term:'La Guara Roja',def:'El ave nacional de Honduras'},
-  {term:'El Venado Cola Blanca',def:'El mamífero nacional de Honduras'},
-  {term:'Lempira',def:'El cacique lenca, Héroe Nacional'},
-  {term:'Francisco Morazán',def:'El Paladín de la Unión Centroamericana'},
-  {term:'José Cecilio del Valle',def:'Redactó el Acta de Independencia'},
-  {term:'15 de septiembre de 1821',def:'Independencia de Centroamérica'},
+  {term:'El blanco de la Bandera',def:'La paz y la pureza del pueblo',k:'bandera-blanco'},
+  {term:'1 de septiembre',def:'Día de la Bandera Nacional',k:'dia-bandera'},
+  {term:'10 de septiembre',def:'Día del Niño Hondureño',k:'dia-nino'},
+  {term:'11 de junio',def:'Día del Estudiante Hondureño',k:'dia-estudiante'},
+  {term:'José Cecilio del Valle',def:'El Sabio que redactó el Acta',k:'valle'},
+  {term:'Guatemala',def:'Donde se firmó el Acta de 1821',k:'acta-lugar'},
+  {term:'Dionisio de Herrera',def:'Primer Jefe de Estado de Honduras',k:'herrera'},
+  {term:'José Trinidad Cabañas',def:'«El caballero sin tacha y sin miedo»',k:'cabanas'},
+  {term:'José Trinidad Reyes',def:'Sacerdote que fundó la primera universidad',k:'reyes'},
+  {term:'Las cornucopias del Escudo',def:'La abundancia y la riqueza de la tierra',k:'escudo-cornucopias'},
+  {term:'La primera estrofa del Himno',def:'La llegada de Cristóbal Colón',k:'himno-primera-estrofa'},
+  {term:'La segunda estrofa del Himno',def:'La tierra que los conquistadores quisieron para su rey',k:'himno-segunda-estrofa'},
+  {term:'El venado cola blanca',def:'El mamífero nacional',k:'mamifero'},
+  {term:'Un héroe',def:'Defiende a su pueblo',k:'heroe'},
+  {term:'Un prócer',def:'Ayuda a fundar la nación',k:'procer'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -515,13 +528,24 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+/* La misma regla que en la conceptual, y aquí muerde más: esta prueba se
+   contesta escribiendo, así que el dato que otra sección deja a la vista se
+   copia tal cual. Pasaba: «Corrige el error» pedía decir que el árbol
+   nacional es el pino, y la toma de decisiones de la misma hoja decía
+   «explicarle que es el pino»; el caso de la maestra contaba las cinco
+   estrellas que el error pedía corregir. Medido el 25 de septiembre de
+   2026: 28 de las 30 formas se regalaban algo, 75 veces en total.
+
+   Ahora cada caso, error, comparación, causa y efecto lleva su `k`, y un
+   dato que una sección pide no aparece en otra. Por eso los casos cuentan
+   CONDUCTAS y no datos: el dato lo pide el resto de la prueba. */
 const critCaseBank=[
-  {txt:'En el acto del lunes, un alumno de sexto grado se queda platicando mientras sus compañeros cantan el Himno Nacional.'},
-  {txt:'La escolta de la escuela iza la Bandera Nacional y todos los alumnos se quedan de pie y en silencio hasta que llega arriba.'},
-  {txt:'Una maestra explica que las cinco estrellas de la Bandera recuerdan a los países que formaron una sola nación centroamericana.'},
-  {txt:'Un grupo de alumnos prepara el desfile del 15 de septiembre y ensaya el Himno Nacional todas las tardes.'},
-  {txt:'Un niño pregunta por qué la moneda de Honduras se llama Lempira si Lempira fue un cacique y no un presidente.'},
-  {txt:'En la clase se comenta que la flor nacional dejó de ser la rosa porque esa flor no nace en Honduras.'},
+  {txt:'En el acto del lunes, un alumno de sexto grado se queda platicando mientras sus compañeros cantan el Himno Nacional.',k:'caso-platicar'},
+  {txt:'La escolta de la escuela iza la Bandera Nacional y todos los alumnos se quedan de pie y en silencio hasta que llega arriba.',k:'caso-izar'},
+  {txt:'Unos alumnos quieren pintar la Bandera en el piso del corredor, para que todos pasen encima al entrar al aula.',k:'caso-pisar'},
+  {txt:'En la tienda de la esquina usan una Bandera Nacional vieja como trapo para limpiar el mostrador.',k:'caso-trapo'},
+  {txt:'Un alumno se equivoca al cantar el Himno en el acto, y un compañero se burla de él delante de todos.',k:'caso-burla'},
+  {txt:'Durante el acto, un grupo de alumnos que llegó tarde espera en la puerta, en silencio, hasta que termina el Himno.',k:'caso-esperar'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué símbolo patrio o qué fecha cívica aparece en este caso?',
@@ -530,66 +554,75 @@ const critCaseQuestions=[
   '4. ¿Qué harías tú en esa situación y qué le dirías a un compañero?',
 ];
 const critCaseGuides=[
-  'Puede aparecer un símbolo mayor (la Bandera, el Escudo, el Himno), uno menor (el pino, la orquídea, la guara roja, el venado) o una fecha cívica.',
-  'Se respeta cuando se está de pie, firme y en silencio, y cuando la Bandera no toca el suelo ni se usa de adorno. No se respeta cuando se platica, se juega o se le pinta encima.',
-  'Cada símbolo cuenta algo: las cinco estrellas hablan de la Federación de Centroamérica, el nombre de la moneda honra a Lempira, y la orquídea sustituyó a la rosa por ser originaria del país.',
+  'Aparece un símbolo patrio mayor: la Bandera Nacional o el Himno Nacional.',
+  'Se respeta cuando se está de pie, firme y en silencio, y cuando la Bandera no toca el suelo, no se pisa ni se usa de trapo o de adorno. No se respeta cuando se platica, se juega o se le pinta encima, ni cuando alguien se burla del que se equivoca.',
+  'Los símbolos representan a todo el país: por eso la Bandera no se pisa ni se usa de trapo, y el Himno se escucha de pie, firme y en silencio.',
   'Respuesta abierta. Se valora que el alumno proponga corregir con respeto y explicar el porqué, no burlarse ni acusar.',
 ];
 const critErrorBank=[
   {txt:'"La Bandera de Honduras tiene tres estrellas y la franja del centro es azul."',
    g1:'La Bandera lleva CINCO estrellas, no tres.',
-   g2:'La franja del centro es BLANCA; las de arriba y abajo son azul turquesa.'},
+   g2:'La franja del centro es BLANCA; las de arriba y abajo son azul turquesa.',
+   k:['bandera-estrellas','bandera-franja-centro']},
   {txt:'"La letra del Himno Nacional la escribió Carlos Hartling y la música es de Augusto C. Coello."',
-   g1:'Es al revés: la LETRA es de Augusto C. Coello.',
-   g2:'La MÚSICA es de Carlos Hartling, músico alemán.'},
+   g1:'Es al revés: la letra es de AUGUSTO C. COELLO.',
+   g2:'La música es de CARLOS HARTLING, músico alemán.',
+   k:['himno-letra','himno-musica']},
   {txt:'"El Himno Nacional tiene tres estrofas y en los actos se canta la primera."',
    g1:'El Himno tiene un coro y SIETE estrofas.',
-   g2:'En los actos escolares se canta el coro y la SÉPTIMA estrofa.'},
-  {txt:'"El árbol nacional de Honduras es la ceiba y la flor nacional es la rosa."',
-   g1:'El árbol nacional es el PINO, declarado en 1928.',
-   g2:'La flor nacional es la ORQUÍDEA desde 1969; la rosa lo fue antes y se cambió por no ser originaria del país.'},
+   g2:'En los actos escolares se canta el coro y la SÉPTIMA estrofa.',
+   k:['himno-estrofas','himno-se-canta']},
+  {txt:'"La guara roja es el mamífero nacional y el venado cola blanca es el ave nacional."',
+   g1:'Es al revés: la GUARA ROJA es el ave nacional.',
+   g2:'El VENADO COLA BLANCA es el mamífero nacional; los dos se declararon en 1993.',
+   k:['ave','mamifero']},
   {txt:'"Lempira firmó el Acta de Independencia y Francisco Morazán fue un cacique lenca."',
    g1:'El Acta de Independencia la redactó JOSÉ CECILIO DEL VALLE, en 1821.',
-   g2:'LEMPIRA fue el cacique lenca; MORAZÁN fue el presidente que luchó por la unión de Centroamérica.'},
+   g2:'LEMPIRA fue el cacique lenca; MORAZÁN fue el presidente que luchó por la unión de Centroamérica.',
+   k:['valle','lempira','morazan']},
   {txt:'"El Día de la Bandera es el 15 de septiembre y ese mismo día nació Francisco Morazán."',
-   g1:'El Día de la Bandera es el 1 DE SEPTIEMBRE; el 15 es la Independencia de Centroamérica.',
-   g2:'Morazán NACIÓ el 3 de octubre de 1792; el 15 de septiembre de 1842 fue el día de su MUERTE.'},
+   g1:'El Día de la Bandera es el 1 de septiembre, no el 15: el 15 es la Independencia de Centroamérica.',
+   g2:'Morazán NACIÓ el 3 de octubre de 1792; el 15 de septiembre de 1842 fue el día de su MUERTE.',
+   k:['dia-bandera','independencia','morazan-nacio']},
 ];
 const critDecisionBank=[
-  'Cuando empieza el Himno Nacional en el acto cívico, conviene ponerse de pie y guardar silencio, o seguir platicando con el compañero de al lado.',
+  'Cuando pasa la Bandera en el desfile, conviene quedarse quieto y firme, o seguir platicando y comiendo con los amigos.',
   'Si la Bandera Nacional se cae al patio, conviene levantarla enseguida y guardarla limpia y doblada, o dejarla ahí hasta que termine el acto.',
-  'Para saber qué representan las cinco estrellas de la Bandera, conviene buscarlo en el libro de Ciencias Sociales o preguntarle al maestro, o inventar una explicación.',
-  'Para un mural del Mes de la Patria, conviene dibujar el Escudo Nacional completo con todas sus partes, o dibujar solo el triángulo porque es más fácil.',
-  'Si un compañero dice que el árbol nacional es la ceiba, conviene explicarle con respeto que es el pino y mostrarle dónde lo dice, o reírse de él delante de todos.',
+  'Para saber qué significan las partes del Escudo, conviene buscarlo en el libro de Ciencias Sociales o preguntarle al maestro, o inventar una explicación.',
+  'Para el periódico mural de la escuela, conviene dibujar el Escudo Nacional completo con todas sus partes, o dibujar solo el triángulo porque es más fácil.',
+  'Si al cantar el Himno alguien no se sabe la letra, conviene aprenderla completa, sin cambiarle nada, o inventar lo que le falte.',
 ];
-const critDecisionGuide='La mejor decisión respeta el símbolo y respeta a las personas: ante el Himno se está de pie y en silencio; la Bandera nunca se deja en el suelo; los datos se consultan y no se inventan; un símbolo patrio se muestra COMPLETO y no a medias; y a un compañero equivocado se le corrige con respeto, no con burla.';
+const critDecisionGuide='La mejor decisión respeta el símbolo y respeta a las personas: cuando pasa la Bandera se está quieto y firme; la Bandera nunca se deja en el suelo; los datos se consultan y no se inventan; un símbolo patrio se muestra COMPLETO y no a medias; y el Himno se aprende y se canta completo, sin cambiarle la letra.';
 const critCompareBank=[
-  {a:'Símbolo con tres franjas y cinco estrellas azul turquesa.',b:'Símbolo con un triángulo, un volcán y dos torres.',
-   ga:'La Bandera Nacional.',
-   gb:'El Escudo Nacional.',
-   gr:'Los dos son símbolos patrios mayores, pero la Bandera se iza y se lleva en el desfile, y el Escudo se usa en los documentos y sellos oficiales del Estado.'},
-  {a:'Cacique lenca que resistió la conquista española hacia 1537.',b:'Presidente que luchó por mantener unida a Centroamérica.',
-   ga:'Lempira.',
-   gb:'Francisco Morazán.',
-   gr:'Los dos son héroes de Honduras, pero vivieron en épocas muy distintas: Lempira defendió su pueblo de la conquista, y Morazán, tres siglos después, defendió la unión de las cinco naciones ya independientes.'},
-  {a:'Se le rinde homenaje el 1 de septiembre y abre el Mes de la Patria.',b:'Se celebra el 15 de septiembre y recuerda el año 1821.',
-   ga:'El Día de la Bandera Nacional.',
-   gb:'El Día de la Independencia de Centroamérica.',
-   gr:'Las dos son fechas cívicas de septiembre, pero una honra a un símbolo y la otra recuerda un hecho histórico: la firma del Acta de Independencia.'},
+  {a:'Representan al Estado en los actos oficiales y fuera del país.',b:'Representan la naturaleza y el territorio del país.',
+   ga:'Los símbolos patrios MAYORES: la Bandera, el Escudo y el Himno Nacional.',
+   gb:'Los símbolos patrios MENORES: el pino, la orquídea, la guara roja, el venado cola blanca y el mapa.',
+   gr:'Los dos grupos son símbolos patrios, pero los mayores representan al Estado y nacieron primero, y los menores representan la naturaleza y llegaron mucho después.',
+   k:['mayores','menores']},
+  {a:'Fue el primer Jefe de Estado de Honduras, en 1824.',b:'Presidente recordado por su honradez: «el caballero sin tacha y sin miedo».',
+   ga:'Dionisio de Herrera.',
+   gb:'José Trinidad Cabañas.',
+   gr:'Los dos gobernaron Honduras, pero Herrera fue el primero en dirigir el Estado y a Cabañas se le recuerda sobre todo por su honradez.',
+   k:['herrera','cabanas']},
+  {a:'Símbolo patrio creado en 1825: el más antiguo de los tres.',b:'Símbolo patrio que el gobierno declaró oficial en 1915.',
+   ga:'El Escudo Nacional.',
+   gb:'El Himno Nacional.',
+   gr:'Los dos son símbolos patrios mayores, pero el Escudo se ve en los sellos y en los documentos, y el Himno se canta; el Escudo es el más antiguo de los tres, y el Himno fue el último en hacerse oficial.',
+   k:['escudo-fecha','himno-oficial']},
 ];
 const critCauseBank=[
-  {cause:'Las cinco naciones de Centroamérica se independizaron juntas en 1821.',guide:'Por eso la Bandera lleva cinco estrellas: recuerdan a la Federación que formaron.'},
-  {cause:'La rosa no es una flor originaria de Honduras.',guide:'Por eso en 1969 se cambió la flor nacional por la orquídea, que sí nace en los bosques del país.'},
-  {cause:'El pino es el árbol que más abunda en las montañas hondureñas.',guide:'Por eso se declaró árbol nacional, y Honduras tiene el mayor bosque de pino de Centroamérica.'},
-  {cause:'Los símbolos patrios representan a todo el país.',guide:'Por eso se les rinde honores y no se usan como adorno ni se les dibuja encima.'},
-  {cause:'El Himno Nacional es largo: tiene un coro y siete estrofas.',guide:'Por eso en los actos escolares se canta solo el coro y la séptima estrofa.'},
+  {cause:'La rosa no es una flor originaria de Honduras.',guide:'Por eso en 1969 se cambió la flor nacional por la orquídea, que sí es de aquí.',k:'flor'},
+  {cause:'El pino es el árbol que más abunda en las montañas hondureñas.',guide:'Por eso se declaró árbol nacional, y Honduras tiene el mayor bosque de pino de Centroamérica.',k:'arbol'},
+  {cause:'Los símbolos patrios representan a todo el país.',guide:'Por eso se les rinde honores y no se usan como adorno ni se les dibuja encima.',k:'respeto-simbolos'},
+  {cause:'Los tres lados del triángulo del Escudo miden lo mismo.',guide:'Por eso el triángulo representa la igualdad.',k:'escudo-triangulo'},
+  {cause:'Cuando se creó el Escudo, Honduras todavía era parte de la Federación del Centro.',guide:'Por eso al principio el Escudo decía «Estado de Honduras de la Federación del Centro».',k:'escudo-federacion'},
 ];
 const critEffectBank=[
-  {effect:'La moneda de Honduras se llama Lempira.',guide:'Porque el país honra así al cacique lenca que dirigió la resistencia contra la conquista.'},
-  {effect:'El Escudo Nacional lleva la fecha 15 de septiembre de 1821.',guide:'Porque ese día se firmó el Acta de Independencia de Centroamérica.'},
-  {effect:'En septiembre las escuelas ensayan el Himno y preparan desfiles.',guide:'Porque septiembre es el Mes de la Patria: empieza el día 1 con el Día de la Bandera y culmina el 15 con la Independencia.'},
-  {effect:'Hoy hay guaras rojas volando libres sobre las ruinas de Copán.',guide:'Porque el ave nacional está protegida y varios grupos las crían y las devuelven al bosque.'},
-  {effect:'El 17 de septiembre se celebra el Día del Maestro Hondureño.',guide:'Porque honra a José Trinidad Reyes, el sacerdote que fundó la primera universidad del país.'},
+  {effect:'En septiembre las escuelas ensayan el Himno y preparan desfiles.',guide:'Porque septiembre es el Mes de la Patria.',k:'mes-patria'},
+  {effect:'El 17 de septiembre se celebra el Día del Maestro Hondureño.',guide:'Porque honra a José Trinidad Reyes, el sacerdote que fundó la primera universidad del país.',k:'dia-maestro'},
+  {effect:'El Escudo Nacional lleva dos torres.',guide:'Porque las torres representan la defensa y la soberanía del territorio.',k:'escudo-torres'},
+  {effect:'Muchas calles, parques y departamentos llevan el nombre de un prócer.',guide:'Porque así el país recuerda a quienes hicieron la patria con su trabajo o su lucha.',k:'proceres-nombres'},
+  {effect:'El Escudo Nacional lleva cornucopias.',guide:'Porque las cornucopias, los cuernos de la abundancia, representan la abundancia y la riqueza de la tierra.',k:'escudo-cornucopias'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -614,7 +647,7 @@ function genEvalCrit(){
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿A qué símbolo, prócer o grupo de símbolos se refiere cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -648,7 +681,7 @@ function printEvalCrit(){
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones: respetar los símbolos</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con los símbolos patrios, los próceres y el respeto que se les debe.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿A qué símbolo, prócer o grupo de símbolos se refiere cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
