@@ -861,73 +861,58 @@ window.addEventListener('resize',()=>{
 });
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank = [
-  {q:'Asia es el continente más grande y más poblado del mundo.',a:true},
-  {q:'El Río Nilo es el más largo del mundo y está en Asia.',a:false},
-  {q:'La Unión Europea está formada por 27 países.',a:true},
-  {q:'El Desierto del Sahara está en el norte de África.',a:true},
-  {q:'El Monte Everest mide 8,849 metros y es la cumbre más alta.',a:true},
-  {q:'Europa tiene más de 2,000 idiomas distintos.',a:false},
-  {q:'Honduras exporta café y banano a la Unión Europea.',a:true},
-  {q:'El Monzón es un fenómeno climático típico de Europa.',a:false},
-  {q:'El Mar Mediterráneo separa Europa de África.',a:true},
-  {q:'África es el continente más pequeño del mundo.',a:false},
-  {q:'KOICA es la agencia de cooperación de Corea del Sur en Honduras.',a:true},
-  {q:'Europa colonizó gran parte de África y Asia entre los siglos XV y XX.',a:true},
-  {q:'China es la segunda economía más grande del mundo.',a:true},
-  {q:'El Himalaya está en el continente africano.',a:false},
-  {q:'Honduras importa tecnología y productos manufacturados de Asia.',a:true},
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+const evalTFBank=[
+  {q:'Asia es el continente más grande del mundo.',a:true,k:'tf-asia-grande'},
+  {q:'África es el continente más pequeño del mundo.',a:false,k:'tf-africa-pequeno'},
+  {q:'En África se hablan más de 2,000 idiomas.',a:true,k:'tf-idiomas'},
+  {q:'La Gran Muralla está en Asia.',a:true,k:'tf-muralla'},
+  {q:'La Torre Eiffel está en África.',a:false,k:'tf-eiffel'},
+  {q:'Nigeria y Sudáfrica son países de África.',a:true,k:'tf-nigeria'},
+  {q:'Honduras compra ropa y tecnología a China.',a:true,k:'tf-china'},
+  {q:'En Europa hay más de 40 países.',a:true,k:'tf-europa-paises'},
+  {q:'Los Urales son montañas de América.',a:false,k:'tf-urales'},
+  {q:'Honduras y los países de África se relacionan sobre todo en la ONU.',a:true,k:'tf-onu'}
 ];
-const evalMCBank = [
-  {q:'¿Cuál es el continente más grande del mundo?',o:['a) Asia','b) Europa','c) África','d) América'],a:0},
-  {q:'¿Qué río es el más largo del mundo?',o:['a) Amazonas','b) Congo','c) Ganges','d) Nilo'],a:3},
-  {q:'¿Cuántos países forman la Unión Europea?',o:['a) 44','b) 15','c) 54','d) 27'],a:3},
-  {q:'¿En qué continente se encuentra el Desierto del Sahara?',o:['a) Asia','b) África','c) América','d) Europa'],a:1},
-  {q:'¿Cuál es la cumbre más alta del mundo?',o:['a) Mont Blanc','b) Kilimanjaro','c) Monte Everest','d) Aconcagua'],a:2},
-  {q:'¿Cuántos países tiene el continente africano?',o:['a) 35','b) 44','c) 54','d) 65'],a:2},
-  {q:'¿Qué fenómeno climático caracteriza al sur de Asia?',o:['a) Tifón','b) Huracán','c) Blizzard','d) Monzón'],a:3},
-  {q:'¿Qué exporta principalmente Honduras a la UE?',o:['a) Petróleo','b) Tecnología','c) Café y banano','d) Autos'],a:2},
-  {q:'¿Qué mar separa Europa de África?',o:['a) Mar Caribe','b) Mar Mediterráneo','c) Mar Rojo','d) Mar del Norte'],a:1},
-  {q:'¿Qué agencia surcoreana apoya a Honduras?',o:['a) KOICA','b) JICA','c) USAID','d) GIZ'],a:0},
-  {q:'¿Cuántos idiomas se hablan en África aproximadamente?',o:['a) 500','b) 1,000','c) 2,000','d) 5,000'],a:2},
-  {q:'¿Qué proceso histórico explica la influencia europea en África?',o:['a) Colonialismo','b) Renacimiento','c) Revolución Industrial','d) Globalización'],a:0},
-  {q:'¿Cuál es la segunda economía más grande del mundo?',o:['a) EE.UU.','b) China','c) Japón','d) Alemania'],a:1},
-  {q:'¿En qué cordillera está el Monte Everest?',o:['a) Himalaya','b) Alpes','c) Andes','d) Ural'],a:0},
-  {q:'¿Qué importa Honduras principalmente de Asia?',o:['a) Café','b) Productos manufacturados y tecnología','c) Banano','d) Petróleo'],a:1},
+const evalMCBank=[
+  {q:'¿Cuántos países tiene África?',o:['a) 27','b) 44','c) 54','d) 100'],a:2,k:'mc-54'},
+  {q:'¿Cuál de estos monumentos está en Europa?',o:['a) la Gran Muralla','b) el Coliseo','c) el Taj Mahal','d) Angkor Wat'],a:1,k:'mc-coliseo'},
+  {q:'¿Qué cordilleras están en Europa?',o:['a) los Andes','b) las Rocosas','c) los Alpes y los Pirineos','d) la Sierra Madre'],a:2,k:'mc-alpes'},
+  {q:'¿Qué ríos son de Europa?',o:['a) el Danubio y el Rin','b) el Congo y el Níger','c) el Amazonas','d) el Mississippi'],a:0,k:'mc-danubio'},
+  {q:'¿Qué vende Honduras a Europa?',o:['a) autos','b) petróleo','c) trenes','d) café, banano y textiles'],a:3,k:'mc-exporta'},
+  {q:'¿Qué música tiene raíces africanas?',o:['a) la ópera','b) el jazz y el blues','c) el vals','d) el tango'],a:1,k:'mc-jazz'},
+  {q:'¿Qué idiomas europeos se hablan hoy en muchos países africanos?',o:['a) chino y japonés','b) hindi','c) francés, inglés y portugués','d) náhuatl'],a:2,k:'mc-idiomas-europeos'},
+  {q:'¿Qué montaña africana mide 5,895 m?',o:['a) Kilimanjaro','b) Everest','c) Mont Blanc','d) Aconcagua'],a:0,k:'mc-kilimanjaro'},
+  {q:'¿Qué desierto está en Asia?',o:['a) el de Chihuahua','b) el Atacama','c) el Kalahari','d) el Gobi'],a:3,k:'mc-gobi'},
+  {q:'¿Por qué se dice que África es el continente más joven?',o:['a) porque la mayoría de su gente es joven','b) porque se formó hace poco','c) porque tiene pocos países','d) porque lo descubrieron tarde'],a:0,k:'mc-joven'}
 ];
-const evalCPBank = [
-  {q:'El continente más grande y más poblado del mundo es ___ .',a:'Asia'},
-  {q:'El río más largo del mundo es el ___, en África.',a:'Nilo'},
-  {q:'La Unión Europea está formada por ___ países.',a:'27'},
-  {q:'El desierto del Sahara está en el ___ de África.',a:'norte'},
-  {q:'El Monte Everest tiene una altura de ___ metros.',a:'8,849'},
-  {q:'Honduras exporta ___ principalmente a la Unión Europea.',a:'café y banano'},
-  {q:'El ___ es el fenómeno climático de lluvias estacionales en Asia.',a:'monzón'},
-  {q:'El Mar ___ separa Europa de África.',a:'Mediterráneo'},
-  {q:'África tiene aproximadamente ___ idiomas distintos.',a:'2,000'},
-  {q:'KOICA es la agencia de cooperación de ___ del Sur en Honduras.',a:'Corea'},
-  {q:'El Monte Everest está en la cordillera del ___ .',a:'Himalaya'},
-  {q:'Europa colonizó gran parte de ___ y Asia entre los siglos XV y XX.',a:'África'},
-  {q:'China es la ___ economía más grande del mundo.',a:'segunda'},
-  {q:'Honduras importa ___ y tecnología principalmente de Asia.',a:'productos manufacturados'},
-  {q:'El continente africano tiene ___ países.',a:'54'},
+const evalCPBank=[
+  {q:'El canal de ___ une el mar entre Europa y África con el camino hacia Asia.',a:'Suez',acc:['Suez'],k:'cp-suez'},
+  {q:'La moneda de muchos países de Europa es el ___.',a:'euro',acc:['euro'],k:'cp-euro'},
+  {q:'Grecia y ___ fueron grandes civilizaciones antiguas de Europa.',a:'Roma',acc:['Roma'],k:'cp-roma'},
+  {q:'China e ___ son los dos países con más gente del mundo.',a:'India',acc:['India'],k:'cp-india'},
+  {q:'Las pirámides más famosas del mundo están en ___.',a:'Egipto',acc:['Egipto'],k:'cp-egipto'},
+  {q:'A África se le llama la cuna de la ___.',a:'humanidad',acc:['humanidad'],k:'cp-humanidad'},
+  {q:'El Ganges y el ___ son ríos de Asia.',a:'Yangtze',acc:['Yangtze','Yangtsé'],k:'cp-yangtze'},
+  {q:'Europa fue la cuna del Renacimiento y de la Revolución ___.',a:'Industrial',acc:['Industrial'],k:'cp-industrial'},
+  {q:'La religión que más se practica en Europa es el ___.',a:'cristianismo',acc:['cristianismo'],k:'cp-cristianismo'},
+  {q:'Asia tiene unos ___ países.',a:'48',acc:['48','cuarenta y ocho'],k:'cp-48'}
 ];
-const evalPRBank = [
-  {term:'Asia',def:'Continente más grande y más poblado del mundo'},
-  {term:'Nilo',def:'Río más largo del mundo (6,650 km), en África'},
-  {term:'Sahara',def:'Desierto caluroso más grande del mundo, norte de África'},
-  {term:'Unión Europea',def:'Bloque político de 27 países europeos'},
-  {term:'Everest',def:'Cumbre más alta del mundo (8,849 m), en los Himalayas'},
-  {term:'Monzón',def:'Vientos estacionales que traen lluvias en Asia del sur'},
-  {term:'Mediterráneo',def:'Mar que separa Europa de África'},
-  {term:'Colonialismo',def:'Dominio europeo sobre África y Asia (ss. XV–XX)'},
-  {term:'KOICA',def:'Agencia de cooperación de Corea del Sur en Honduras'},
-  {term:'Himalaya',def:'Cordillera más alta del mundo, en Asia Central'},
-  {term:'Cooperación',def:'Relación de apoyo entre países (HN–Europa y HN–Asia)'},
-  {term:'África',def:'Segundo continente más grande; 54 países y 2,000 idiomas'},
-  {term:'Europa',def:'Continente de 44 países; sede de la Unión Europea'},
-  {term:'Café y banano',def:'Principales exportaciones de Honduras a Europa'},
-  {term:'Tecnología',def:'Principal importación de Honduras desde Asia'},
+const evalPRBank=[
+  {term:'Nilo',def:'El río más largo, en África',k:'pr-nilo'},
+  {term:'Sahara',def:'El desierto caliente del norte de África',k:'pr-sahara'},
+  {term:'Everest',def:'La cumbre más alta del mundo',k:'pr-everest'},
+  {term:'Himalaya',def:'La cordillera donde está el techo del mundo',k:'pr-himalaya'},
+  {term:'Monzón',def:'Vientos que traen las lluvias del sur de Asia',k:'pr-monzon'},
+  {term:'Mediterráneo',def:'El mar entre Europa y África',k:'pr-mediterraneo'},
+  {term:'Colonialismo',def:'Dominio de Europa sobre otros continentes',k:'pr-colonialismo'},
+  {term:'KOICA',def:'Cooperación de Corea del Sur en Honduras',k:'pr-koica'},
+  {term:'Unión Europea',def:'Bloque de países europeos con mercado único',k:'pr-ue'},
+  {term:'AACUE',def:'Acuerdo de comercio entre Centroamérica y Europa',k:'pr-aacue'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
