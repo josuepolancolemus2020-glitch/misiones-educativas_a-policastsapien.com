@@ -886,73 +886,58 @@ window.addEventListener('resize', () => {
 });
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank = [
-    { q: 'El verbo expresa una acción, estado o proceso.', a: true },
-    { q: 'Los verbos en infinitivo terminan en -ar, -er, -ir.', a: true },
-    { q: 'El modo indicativo se usa para expresar dudas o deseos.', a: false },
-    { q: 'Un verbo regular mantiene su raíz al ser conjugado.', a: true },
-    { q: '«Ser», «estar» y «parecer» son verbos de acción.', a: false },
-    { q: 'El tiempo futuro indica una acción que ya ocurrió.', a: false },
-    { q: 'La desinencia es la parte final del verbo que cambia al conjugarlo.', a: true },
-    { q: 'El verbo es el núcleo del sujeto en la oración.', a: false },
-    { q: '«Nosotros» es un pronombre de primera persona del plural.', a: true },
-    { q: '«Fui» es la conjugación pasada de un verbo regular.', a: false },
-    { q: 'El modo imperativo se usa para dar órdenes.', a: true },
-    { q: 'La raíz de un verbo irregular nunca cambia.', a: false },
-    { q: '«Comer» pertenece a la primera conjugación.', a: false },
-    { q: '«Tú» corresponde a la segunda persona del singular.', a: true },
-    { q: 'Los tiempos verbales básicos son pasado, presente y futuro.', a: true },
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+const evalTFBank=[
+  {q:'En «El gato duerme en el sofá», el verbo es «duerme».',a:true,k:'tf-duerme'},
+  {q:'«Cantaré» está en tiempo pasado.',a:false,k:'tf-cantare'},
+  {q:'«Vivir» pertenece a la tercera conjugación.',a:true,k:'tf-vivir'},
+  {q:'«Comer» pertenece a la primera conjugación.',a:false,k:'tf-comer'},
+  {q:'«Nosotros jugamos» está en primera persona del plural.',a:true,k:'tf-jugamos'},
+  {q:'«Ayer corrí» está en tiempo futuro.',a:false,k:'tf-corri'},
+  {q:'«Ellas bailan» está en tercera persona del plural.',a:true,k:'tf-bailan'},
+  {q:'«Feliz» es un verbo.',a:false,k:'tf-feliz'},
+  {q:'«Hoy estudio» está en tiempo presente.',a:true,k:'tf-estudio'},
+  {q:'«Tú escribes» está en primera persona.',a:false,k:'tf-escribes'}
 ];
-const evalMCBank = [
-    { q: '¿Cuál de las siguientes palabras es un verbo?', o: ['a) Feliz', 'b) Saltar', 'c) Casa', 'd) Rápido'], a: 1 },
-    { q: 'El verbo principal de «El gato duerme en el sofá» es:', o: ['a) El', 'b) gato', 'c) duerme', 'd) sofá'], a: 2 },
-    { q: '¿A qué conjugación pertenece el verbo «vivir»?', o: ['a) Primera', 'b) Segunda', 'c) Tercera', 'd) Cuarta'], a: 2 },
-    { q: '¿En qué tiempo está «Yo cantaré en el teatro»?', o: ['a) Presente', 'b) Futuro', 'c) Pasado', 'd) Infinitivo'], a: 1 },
-    { q: '¿Qué modo verbal expresa una duda o deseo?', o: ['a) Indicativo', 'b) Imperativo', 'c) Copulativo', 'd) Subjuntivo'], a: 3 },
-    { q: '¿Cuál de estos verbos es copulativo?', o: ['a) Correr', 'b) Escribir', 'c) Parecer', 'd) Comer'], a: 2 },
-    { q: 'Un verbo que cambia su raíz al ser conjugado es:', o: ['a) Regular', 'b) Infinitivo', 'c) Auxiliar', 'd) Irregular'], a: 3 },
-    { q: '¿En qué persona está «Nosotros jugamos»?', o: ['a) Primera', 'b) Segunda', 'c) Tercera', 'd) Ninguna'], a: 0 },
-    { q: '¿Cuál es la raíz del verbo «cantar»?', o: ['a) can-', 'b) cant-', 'c) -ar', 'd) canta-'], a: 1 },
-    { q: '¿En qué modo está «¡Estudia para el examen!»?', o: ['a) Imperativo', 'b) Indicativo', 'c) Subjuntivo', 'd) Infinitivo'], a: 0 },
-    { q: '¿Cuál es el infinitivo de «comió»?', o: ['a) Comido', 'b) Comiendo', 'c) Comida', 'd) Comer'], a: 3 },
-    { q: 'El número de un verbo indica si el sujeto es:', o: ['a) Pasado o presente', 'b) Singular o plural', 'c) Regular o irregular', 'd) Acción o estado'], a: 1 },
-    { q: 'El pronombre para la tercera persona del plural es:', o: ['a) Ellos', 'b) Yo', 'c) Tú', 'd) Él'], a: 0 },
-    { q: '¿Cuál de estos verbos es regular?', o: ['a) Amar (amo, amé)', 'b) Ir (fui)', 'c) Ser (soy)', 'd) Tener (tuve)'], a: 0 },
-    { q: 'Si una acción sucede hoy, el verbo está en:', o: ['a) Pasado', 'b) Futuro', 'c) Presente', 'd) Imperativo'], a: 2 },
+const evalMCBank=[
+  {q:'¿Cuál de estas palabras es un verbo?',o:['a) feliz','b) saltar','c) casa','d) rápido'],a:1,k:'mc-saltar'},
+  {q:'¿En qué tiempo está «Mañana viajaremos»?',o:['a) futuro','b) pasado','c) presente','d) ninguno'],a:0,k:'mc-viajaremos'},
+  {q:'¿A qué conjugación pertenece «beber»?',o:['a) primera','b) segunda','c) tercera','d) cuarta'],a:1,k:'mc-beber'},
+  {q:'¿Cuál es el verbo en «Los niños juegan en el patio»?',o:['a) niños','b) patio','c) los','d) juegan'],a:3,k:'mc-juegan'},
+  {q:'¿En qué persona está «Yo leo»?',o:['a) primera','b) segunda','c) tercera','d) ninguna'],a:0,k:'mc-yo-leo'},
+  {q:'¿Cómo queda «cantar» en pasado, con «ella»?',o:['a) canta','b) cantará','c) cantó','d) cantando'],a:2,k:'mc-canto'},
+  {q:'«Corrieron» viene del verbo…',o:['a) corriendo','b) correr','c) corrido','d) corre'],a:1,k:'mc-correr'},
+  {q:'«Él come» está en…',o:['a) primera persona','b) segunda persona','c) tercera persona','d) ninguna persona'],a:2,k:'mc-el-come'},
+  {q:'¿Cuál de estos verbos es de la primera conjugación?',o:['a) temer','b) amar','c) subir','d) vender'],a:1,k:'mc-amar'},
+  {q:'¿Qué palabra de «Mi perro ladra mucho» es el verbo?',o:['a) ladra','b) mi','c) perro','d) mucho'],a:0,k:'mc-ladra'}
 ];
-const evalCPBank = [
-    { q: 'Los verbos terminados en -ar pertenecen a la ___ conjugación.', a: 'primera' },
-    { q: 'El tiempo ___ indica que una acción ya ha ocurrido.', a: 'pasado' },
-    { q: 'La parte del verbo que no cambia en los verbos regulares se llama ___.', a: 'raíz' },
-    { q: 'El modo ___ se utiliza para expresar órdenes o ruegos.', a: 'imperativo' },
-    { q: '«Ser» y «estar» son ejemplos de verbos ___.', a: 'copulativos' },
-    { q: 'Los verbos ___ cambian su raíz al ser conjugados.', a: 'irregulares' },
-    { q: 'La parte final que se añade a la raíz se llama ___.', a: 'desinencia' },
-    { q: 'El verbo es el núcleo del ___ en la oración.', a: 'predicado' },
-    { q: 'Si la acción ocurre en este mismo instante, está en tiempo ___.', a: 'presente' },
-    { q: 'El pronombre «Yo» corresponde a la primera ___ del singular.', a: 'persona' },
-    { q: 'Los verbos terminados en -er pertenecen a la ___ conjugación.', a: 'segunda' },
-    { q: 'Si una acción la realizan varias personas, el verbo está en número ___.', a: 'plural' },
-    { q: 'El modo ___ se usa para expresar hechos reales y seguros.', a: 'indicativo' },
-    { q: 'El nombre del verbo, que no indica tiempo ni persona, es el ___.', a: 'infinitivo' },
-    { q: 'El tiempo ___ indica que la acción ocurrirá más adelante.', a: 'futuro' },
+const evalCPBank=[
+  {q:'Yo ___ (nadar) todos los días.',a:'nado',acc:['nado'],k:'cp-nado'},
+  {q:'Ayer nosotros ___ (comer) tamales.',a:'comimos',acc:['comimos'],k:'cp-comimos'},
+  {q:'Mañana ellos ___ (viajar) a Copán.',a:'viajarán',acc:['viajarán'],k:'cp-viajaran'},
+  {q:'Tú ___ (leer) el libro ahora.',a:'lees',acc:['lees'],k:'cp-lees'},
+  {q:'«Bailamos» viene del verbo ___.',a:'bailar',acc:['bailar'],k:'cp-bailar'},
+  {q:'Ustedes ___ (estar) contentos.',a:'están',acc:['están'],k:'cp-estan'},
+  {q:'Ayer yo ___ (ir) al mercado.',a:'fui',acc:['fui'],k:'cp-fui'},
+  {q:'Mañana tú ___ (jugar) fútbol.',a:'jugarás',acc:['jugarás'],k:'cp-jugaras'},
+  {q:'Ellas ___ (vivir) en Choluteca.',a:'viven',acc:['viven'],k:'cp-viven'},
+  {q:'Ayer ella ___ (dormir) temprano.',a:'durmió',acc:['durmió'],k:'cp-durmio'}
 ];
-const evalPRBank = [
-    { term: 'Verbo', def: 'Expresa acción, estado o proceso' },
-    { term: 'Infinitivo', def: 'Terminaciones -ar, -er, -ir' },
-    { term: 'Raíz', def: 'Parte invariable del verbo regular' },
-    { term: 'Desinencia', def: 'Terminación que indica tiempo y persona' },
-    { term: 'Verbo regular', def: 'Conserva su raíz al conjugarse' },
-    { term: 'Verbo irregular', def: 'Cambia su raíz al conjugarse' },
-    { term: 'Tiempo presente', def: 'La acción ocurre ahora' },
-    { term: 'Tiempo pasado', def: 'La acción ya ocurrió' },
-    { term: 'Tiempo futuro', def: 'La acción ocurrirá después' },
-    { term: 'Modo indicativo', def: 'Expresa un hecho real' },
-    { term: 'Modo subjuntivo', def: 'Expresa duda o deseo' },
-    { term: 'Modo imperativo', def: 'Expresa una orden o ruego' },
-    { term: 'Número singular', def: 'Un solo sujeto realiza la acción' },
-    { term: 'Número plural', def: 'Varios sujetos realizan la acción' },
-    { term: 'Verbo copulativo', def: 'Ser, estar o parecer (expresa estado)' },
+const evalPRBank=[
+  {term:'Raíz',def:'La parte del verbo que no cambia en los regulares',k:'pr-raiz'},
+  {term:'Desinencia',def:'La terminación que cambia según quién y cuándo',k:'pr-desinencia'},
+  {term:'Infinitivo',def:'El verbo sin conjugar, terminado en -ar, -er o -ir',k:'pr-infinitivo'},
+  {term:'Modo indicativo',def:'Habla de hechos reales',k:'pr-indicativo'},
+  {term:'Modo subjuntivo',def:'Habla de dudas o deseos',k:'pr-subjuntivo'},
+  {term:'Modo imperativo',def:'Da órdenes',k:'pr-imperativo'},
+  {term:'Verbo copulativo',def:'Ser, estar o parecer',k:'pr-copulativo'},
+  {term:'Verbo irregular',def:'Cambia por dentro al conjugarse: tener → tuve',k:'pr-irregular'},
+  {term:'Predicado',def:'La parte de la oración donde está el verbo',k:'pr-predicado'},
+  {term:'Sujeto',def:'Quien hace la acción',k:'pr-sujeto'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
