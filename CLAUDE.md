@@ -6562,6 +6562,23 @@ pareados lleva la felicitación con «ceros de relleno», «acarreo» y «forma
 expandida», así que esos tres términos se preguntan en la misión y no en el
 papel.
 
+Y la forma que salió en las seis siguientes de la ruta —Recta Numérica, Teoría
+de Números, Múltiplos, Potencias, Fracciones— es la misma: **los NOMBRES
+(minuendo, M.C.D., radical, fracción impropia) se preguntan solo en los
+pareados**, y el resto de la prueba pide HACER con números que no salen en
+ninguna otra pregunta. Una definición en los pareados que es la propia regla
+—«número par: termina en 0, 2, 4, 6 u 8»— contesta cualquier «¿135 es par?»,
+así que esas no van.
+
+⚠️ **La sonda no ve bien las fracciones, y eso hay que mirarlo a mano.** Un
+número corto no cuenta como pista para ella (a propósito: el 5 sale en todas
+las preguntas de matemáticas), y «3/5» tampoco. En Fracciones se buscó cada
+respuesta en el texto de las demás con una expresión que respeta la barra, y
+salieron seis: «5/6» pedido en una suma y escrito en otra pregunta, «3/5» en el
+completar y en la suma de al lado. Y de paso se vio que **no leía las opciones
+en fila** (`preg-ops fila`): de la ficha de Fracciones miraba 31 preguntas de
+40 y la daba por limpia. Ya las lee.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

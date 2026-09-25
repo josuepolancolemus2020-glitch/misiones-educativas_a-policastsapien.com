@@ -486,8 +486,11 @@ function itemsFicha(html) {
   if (!I.length || !II.length || iIII < 0 || iIV < 0 || iIV < iIII || !bloquePauta) return null;
 
   /* La selección múltiple sigue a veces en la hoja siguiente: se toman los
-     bloques .preg que hay entre el título de la selección y el de los pareados. */
-  const pregs = [...html.slice(iIII, iIV).matchAll(/<div class="preg-q">([\s\S]*?)<\/div>\s*<div class="preg-ops">([\s\S]*?)<\/div>/g)]
+     bloques .preg que hay entre el título de la selección y el de los pareados.
+     ⚠️ Las opciones pueden ir en `preg-ops fila` —las fracciones sueltas van en
+     un renglón—: pedir la clase exacta dejaba fuera nueve de las diez
+     preguntas de la ficha de Fracciones y la daba por limpia sin mirarlas. */
+  const pregs = [...html.slice(iIII, iIV).matchAll(/<div class="preg-q">([\s\S]*?)<\/div>\s*<div class="preg-ops[^"]*">([\s\S]*?)<\/div>/g)]
     .map(m => ({ q: limpiaHtml(m[1].replace(/<span class="preg-n">\d+<\/span>/, '')),
       ops: [...m[2].matchAll(/<span class="op[^"]*">([\s\S]*?)<\/span>/g)].map(o => sinLetra(limpiaHtml(o[1]))) }));
 
