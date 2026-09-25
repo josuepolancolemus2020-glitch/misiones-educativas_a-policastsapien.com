@@ -1742,7 +1742,13 @@ function adColectaTxtResumen(c, d) {
     '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
     /* con una sola colecta «1 de 1» no dice nada: solo sale si hay más */
     (adColectasCompletasTxt(d)
-      ? '🗂️ Colectas del grupo: *' + adColectasCompletasTxt(d) + '* completas\n\n'
+      ? '🗂️ Colectas del grupo: *' + adColectasCompletasTxt(d) + '* completas\n' +
+        /* la barra de cada una, con cuadritos como la de arriba. Van nombres de
+           COLECTAS, nunca de alumnos; y la % exacta al lado, porque diez
+           cuadros no distinguen un 52 de un 56 */
+        d.colectas.map(x => '• ' + x.concepto + (x.id === c.id ? ' (esta)' : '') + '\n   ' +
+          adColectaBarraTxt(x, d) + ' ' + adColectaPct(x, d) + ' %' + (adColectaCompleta(x, d) ? ' ✔' : '')).join('\n') +
+        '\n\n'
       : '') +
     'Cortado al ' + adFechaBonita(adHoy()) + '.\n_Anotado con M.E.T.A.S_';
 }
