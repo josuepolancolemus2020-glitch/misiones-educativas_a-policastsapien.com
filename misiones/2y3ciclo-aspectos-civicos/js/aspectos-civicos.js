@@ -395,14 +395,14 @@ const evalMCBank=[
   {q:'¿Qué representa el azul turquesa de la Bandera Nacional?',o:['a) La riqueza de las minas','b) La sangre de los héroes','c) Los dos mares que bañan al país y el cielo','d) Las montañas del interior'],a:2,k:'bandera-azul'},
   {q:'¿Qué representa el triángulo equilátero del Escudo Nacional?',o:['a) Los tres poderes del Estado','b) La igualdad, porque sus tres lados miden lo mismo','c) Los tres ríos más largos del país','d) Las tres montañas más altas'],a:1,k:'escudo-triangulo'},
   {q:'¿Quién compuso la música del Himno Nacional?',o:['a) Ramón Rosa','b) Marco Aurelio Soto','c) Juan Ramón Molina','d) Carlos Hartling'],a:3,k:'himno-musica'},
-  {q:'¿Qué describe el coro del Himno Nacional?',o:['a) La Bandera Nacional','b) Una batalla en la montaña','c) La vida de un prócer','d) El nacimiento de un río'],a:0,k:'himno-coro'},
+  {q:'¿Qué describe el coro del Himno Nacional?',o:['a) La Bandera y el Escudo','b) Una batalla en la montaña','c) La vida de un prócer','d) El nacimiento de un río'],a:0,k:'himno-coro'},
   {q:'¿En qué año el gobierno declaró oficial el Himno Nacional?',o:['a) 1910','b) 1915','c) 1932','d) 1948'],a:1,k:'himno-oficial'},
   {q:'¿Cuál es el ave nacional de Honduras?',o:['a) El quetzal','b) El tucán','c) El colibrí','d) La guara roja'],a:3,k:'ave'},
   {q:'¿Qué se conmemora el 15 de septiembre?',o:['a) La Independencia de Centroamérica','b) El Día de la Madre','c) El Día del Árbol','d) El Día del Idioma'],a:0,k:'independencia'},
   {q:'¿Cómo se guarda la Bandera Nacional?',o:['a) Limpia y bien doblada','b) Hecha una bola en una caja','c) Mojada, para que no se arrugue','d) Colgada en la ventana todo el año'],a:0,k:'respeto-guardar'},
   {q:'¿Cuántos departamentos tiene el mapa de Honduras?',o:['a) 12','b) 15','c) 18','d) 20'],a:2,k:'mapa'},
   {q:'¿Dónde se usa el Escudo Nacional?',o:['a) En las camisetas de fútbol','b) En los documentos oficiales, los sellos y la moneda','c) Solo en los libros de texto','d) En los billetes de lotería'],a:1,k:'escudo-uso'},
-  {q:'¿De qué habla la tercera estrofa del Himno Nacional?',o:['a) De la fundación de Tegucigalpa','b) De la guerra contra los piratas','c) De los tres siglos de la época colonial','d) De la construcción del ferrocarril'],a:2,k:'himno-tercera-estrofa'},
+  {q:'¿De qué habla la cuarta estrofa del Himno Nacional?',o:['a) De la fundación de Tegucigalpa','b) De la guerra contra los piratas','c) De los tres siglos de la época colonial','d) De la construcción del ferrocarril'],a:2,k:'himno-cuarta-estrofa'},
   {q:'¿Qué dice el óvalo que rodea al Escudo Nacional?',o:['a) República de Honduras, libre, soberana e independiente','b) Unidos por la paz y el progreso','c) Honor, trabajo y lealtad','d) Tierra de montañas y de ríos'],a:0,k:'escudo-ovalo'},
   {q:'¿Cómo se le llama al mes de septiembre en Honduras?',o:['a) El Mes de la Lectura','b) El Mes del Árbol','c) El Mes del Deporte','d) El Mes de la Patria'],a:3,k:'mes-patria'},
   {q:'¿Cómo se llamaba el Himno Nacional cuando se compuso?',o:['a) Marcha de la Libertad','b) Canción de la Montaña','c) Himno del Pueblo','d) Canto a Honduras'],a:3,k:'himno-nombre'},
@@ -439,7 +439,7 @@ const evalPRBank=[
   {term:'José Trinidad Reyes',def:'Sacerdote que fundó la primera universidad',k:'reyes'},
   {term:'Las cornucopias del Escudo',def:'La abundancia y la riqueza de la tierra',k:'escudo-cornucopias'},
   {term:'La primera estrofa del Himno',def:'La llegada de Cristóbal Colón',k:'himno-primera-estrofa'},
-  {term:'La segunda estrofa del Himno',def:'La tierra que los conquistadores quisieron para su rey',k:'himno-segunda-estrofa'},
+  {term:'La segunda estrofa del Himno',def:'Cuando despertó, ya ondeaba una bandera extranjera',k:'himno-segunda-estrofa'},
   {term:'El venado cola blanca',def:'El mamífero nacional',k:'mamifero'},
   {term:'Un héroe',def:'Defiende a su pueblo',k:'heroe'},
   {term:'Un prócer',def:'Ayuda a fundar la nación',k:'procer'},
@@ -718,9 +718,9 @@ const parteData={
   himno:{
     nombre:'El Himno Nacional',icon:'🎵',
     estructura:{title:'¿Qué es?',info:'• El <strong>canto</strong> con que Honduras se presenta ante el mundo<br>• Se canta de pie, firme y en silencio<br>• Es el <strong>tercer</strong> símbolo patrio mayor'},
-    funcion:{title:'¿Cómo es?',info:'• Tiene un <strong>coro y siete estrofas</strong><br>• El <strong>coro describe la Bandera:</strong> «Tu bandera es un lampo de cielo…»<br>• En los actos escolares se canta el <strong>coro, la séptima estrofa y el coro</strong>'},
+    funcion:{title:'¿Cómo es?',info:'• Tiene un <strong>coro y siete estrofas</strong><br>• El <strong>coro describe la Bandera y el Escudo:</strong> «Tu bandera es un lampo de cielo…»<br>• En los actos escolares se canta el <strong>coro, la séptima estrofa y el coro</strong>'},
     ubicacion:{title:'¿Quién lo hizo?',info:'• <strong>Letra:</strong> Augusto C. Coello, escritor hondureño<br>• <strong>Música:</strong> Carlos Hartling, músico alemán<br>• Oficializado por acuerdo del gobierno en <strong>1915</strong>'},
-    dato:{title:'Dato curioso',info:'• Se compuso en <strong>1903</strong> y se llamaba «Canto a Honduras»<br>• Se cantó por primera vez el <strong>15 de septiembre de 1904</strong><br>• Las seis primeras estrofas cuentan la <strong>historia del país</strong>: la llegada de Colón, la colonia, la resistencia de Lempira y la Independencia'}
+    dato:{title:'Dato curioso',info:'• Se compuso en <strong>1903</strong> y se llamaba «Canto a Honduras»<br>• Se cantó por primera vez el <strong>15 de septiembre de 1904</strong><br>• Las seis primeras estrofas cuentan la <strong>historia del país</strong>: la llegada de Colón, la resistencia de Lempira, la colonia y la Independencia'}
   },
   menores:{
     nombre:'Los símbolos menores',icon:'🌲',

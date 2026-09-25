@@ -2428,6 +2428,28 @@ Si se toca la letra, la ficha **se vuelve a repartir** (`node
 _dev/reparte-hojas-ficha.js ficha-himno-nacional`): son nueve hojas y un
 párrafo que crece dos renglones parte una en dos.
 
+### ⚠️ Y el ORDEN de las estrofas tampoco puede tener dos originales
+
+Aspectos Cívicos —la etapa 1 de esta misma ruta— no copia la letra, pero
+**resume de qué habla cada estrofa**, en su pantalla y en su ficha. Y el 25 de
+septiembre de 2026, revisando sus exámenes, se encontró que tenía **la tercera y
+la cuarta al revés**: ponía la colonia en la tercera y a Lempira en la cuarta,
+cuando la tercera es la de «envuelto en su sangre Lempira». La segunda estaba
+resumida con un «para su rey» que no dice ningún verso suyo, y el coro
+«describía la Bandera» cuando pinta la Bandera **y el Escudo**.
+
+El alumno abre las dos misiones seguidas: estudiaba un orden en la etapa 1 y el
+contrario en la etapa 2, y el diagnóstico de la ruta le pregunta el bueno.
+Nada lo cazaba, porque era texto bien escrito en el sitio de siempre.
+
+Ahora `verifica-himno` lo mira también: el resumen de cada estrofa en la
+pantalla y en la ficha de Aspectos Cívicos tiene que parecerse **más a su propio
+`tema` de `himno.js` que al de cualquier otra**. No exige la misma frase —«la
+llegada de Cristóbal Colón a la costa del Caribe» resume bien la primera—, y es
+justo lo que dos estrofas cambiadas de sitio no pueden cumplir. Con la misión de
+antes sale roja con nueve fallos; con la de hoy, verde. El coro, en la pantalla,
+en el Laboratorio y en la ficha, tiene que nombrar lo mismo que su `tema`.
+
 ## Normativa: a quién se nombra prócer lo decide el DCNB, no el gusto de nadie
 
 La tercera misión de la Ruta de la Patria son los **héroes y próceres**

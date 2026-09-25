@@ -192,6 +192,66 @@ if (!fs.existsSync(MISION)) {
   }
 }
 
+/* ⚠️ El Himno no se enseña solo en su misión. Aspectos Cívicos —la etapa 1 de
+   la misma ruta— resume en una tarjeta y en su ficha de qué habla cada estrofa,
+   y el 25 de septiembre de 2026 se encontró que tenía la tercera y la cuarta AL
+   REVÉS: la colonia donde va Lempira. Y el coro, describiendo solo la Bandera.
+   El alumno abre las dos misiones seguidas, así que estudiaba un orden en la
+   etapa 1 y el contrario en la etapa 2, y el diagnóstico de la ruta le pregunta
+   el bueno. No lo cazaba nada: era texto bien escrito, en el sitio de siempre.
+
+   No se exige la misma frase —«la llegada de Cristóbal Colón a la costa del
+   Caribe» resume igual de bien la primera—: se exige que el resumen de cada
+   estrofa se parezca MÁS a su propio tema de himno.js que al de cualquier otra.
+   Es lo que un par de estrofas cambiadas de sitio no puede cumplir. */
+console.log('\n🇭🇳 De qué habla cada estrofa, en Aspectos Cívicos');
+{
+  const CIVICOS = path.join(RAIZ, 'misiones', '2y3ciclo-aspectos-civicos', 'aspectos-civicos.html');
+  const CIVJS = path.join(RAIZ, 'misiones', '2y3ciclo-aspectos-civicos', 'js', 'aspectos-civicos.js');
+  const CIVFICHA = path.join(RAIZ, 'fichas', 'ficha-aspectos-civicos.html');
+  const PARADA = new Set('el la los las de del y a al en que su sus un una por para con se lo le'.split(' '));
+  /* Cinco letras bastan para juntar «colonia» con «colonial» y «Francia» con
+     «Francesa», que es como se dice lo mismo con otras palabras. */
+  const raices = (t) => new Set(pelar(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .split(/[^a-z0-9]+/).filter(p => p.length >= 3 && !PARADA.has(p)).map(p => p.slice(0, 5)));
+  const parecido = (a, b) => { const B = raices(b); return [...raices(a)].filter(r => B.has(r)).length; };
+  const estrofas = HIMNO.filter(e => e.clave !== 'coro').sort((a, b) => a.n - b.n);
+  const coro = HIMNO.find(e => e.clave === 'coro');
+
+  const revisaResumenes = (donde, resumenes) => {
+    if (resumenes.length !== estrofas.length) { mal(donde + ': se leyeron ' + resumenes.length + ' resúmenes de estrofa y el Himno tiene ' + estrofas.length); return; }
+    const malos = [];
+    resumenes.forEach((txt, i) => {
+      const puntos = estrofas.map(e => parecido(txt, e.tema));
+      const mejor = Math.max(...puntos);
+      if (!mejor) malos.push((i + 1) + 'ª dice «' + pelar(txt) + '», que no se parece al tema de ninguna estrofa (la suya es «' + estrofas[i].tema + '»)');
+      else if (puntos[i] < mejor) malos.push((i + 1) + 'ª dice «' + pelar(txt) + '», que es «' + estrofas[puntos.indexOf(mejor)].tema + '» (' + estrofas[puntos.indexOf(mejor)].titulo.toLowerCase() + ')');
+    });
+    if (malos.length) malos.forEach(m => mal(donde + ', la ' + m));
+    else ok(donde + ': las ' + resumenes.length + ' estrofas, cada una con su tema y en su orden');
+  };
+
+  const html = fs.readFileSync(CIVICOS, 'utf8');
+  revisaResumenes('la pantalla', [...html.matchAll(/<div class="t-art">\S+\s+(?:Primera|Segunda|Tercera|Cuarta|Quinta|Sexta|Séptima)<\/div><div class="t-info">([\s\S]*?)<\/div>/g)].map(m => m[1]));
+  const ficha = fs.readFileSync(CIVFICHA, 'utf8');
+  revisaResumenes('la ficha', [...ficha.matchAll(/<tr><td class="k">[1-7]ª<\/td><td>([\s\S]*?)<\/td><\/tr>/g)].map(m => m[1]));
+
+  /* El coro PINTA dos símbolos, la Bandera y el Escudo, y decir solo uno es
+     enseñar la mitad de la respuesta que el diagnóstico de la ruta pide. */
+  const hace = raices(coro.tema);
+  const dichos = [
+    ['la pantalla', (html.match(/El coro<\/div><div class="t-info">([\s\S]*?)<\/div>/) || [])[1]],
+    ['el Laboratorio', (fs.readFileSync(CIVJS, 'utf8').match(/coro describe ([^:<]*)/) || [])[1]],
+    ['la ficha', (ficha.match(/El coro<\/b>([\s\S]*?):/) || [])[1]]
+  ];
+  dichos.forEach(([donde, t]) => {
+    if (!t) return mal(donde + ' de Aspectos Cívicos ya no dice qué describe el coro: ¿cambió la forma del texto?');
+    const faltan = [...hace].filter(r => !raices(t).has(r));
+    if (faltan.length) mal(donde + ' de Aspectos Cívicos dice que el coro describe «' + pelar(t).replace(/^describe\s+/i, '') + '» y el Himno dice «' + coro.tema + '»');
+    else ok(donde + ' de Aspectos Cívicos: el coro describe ' + coro.tema.toLowerCase());
+  });
+}
+
 console.log('\n' + (fallos
   ? '❌ ' + fallos + ' fallo(s)' + (avisos ? ', ' + avisos + ' aviso(s)' : '')
   : '✅ la pantalla y el papel dicen el mismo Himno' + (avisos ? ' (' + avisos + ' aviso)' : '')) + '\n');
