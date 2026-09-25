@@ -855,73 +855,58 @@ window.addEventListener('resize', () => {
 });
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank = [
-    { q: 'El adverbio modifica al verbo, al adjetivo o a otro adverbio.', a: true },
-    { q: 'El adverbio cambia de género y número según la palabra que acompaña.', a: false },
-    { q: '"Aquí" y "allí" son adverbios de lugar.', a: true },
-    { q: '"Hoy" y "ayer" son adverbios de modo.', a: false },
-    { q: 'Muchos adverbios de modo se forman agregando el sufijo "-mente" al adjetivo femenino.', a: true },
-    { q: '"Mucho" y "poco" son adverbios de cantidad.', a: true },
-    { q: '"Sí" y "también" son adverbios de negación.', a: false },
-    { q: '"Nunca" y "jamás" son adverbios de negación.', a: true },
-    { q: '"Quizás" y "tal vez" son adverbios de duda.', a: true },
-    { q: 'Cuando hay dos adverbios en -mente seguidos, ambos deben llevar el sufijo completo.', a: false },
-    { q: 'El adverbio "rápidamente" se forma a partir del adjetivo "rápida" más el sufijo "-mente".', a: true },
-    { q: '"Bien" y "mal" son adverbios de modo.', a: true },
-    { q: 'El adverbio "lejos" indica tiempo.', a: false },
-    { q: 'El adverbio es una palabra invariable.', a: true },
-    { q: '"Bastante" y "demasiado" pueden funcionar como adverbios de cantidad.', a: true },
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+const evalTFBank=[
+  {q:'En «Ellas cantan bonito», «bonito» es un adverbio.',a:true,k:'tf-bonito'},
+  {q:'«Ellas bailan lentas» está bien escrito.',a:false,k:'tf-lentas'},
+  {q:'«Felizmente» se forma con «feliz» + -mente.',a:true,k:'tf-felizmente'},
+  {q:'El adverbio que sale de «fácil» se escribe «facilmente», sin tilde.',a:false,k:'tf-facilmente'},
+  {q:'El adverbio cambia de género y de número, igual que el adjetivo.',a:false,k:'tf-invariable'},
+  {q:'«Tranquilamente» se arma con «tranquila» + -mente.',a:true,k:'tf-tranquila'},
+  {q:'Lo correcto es «Escribió limpiamente y claramente».',a:false,k:'tf-serie'},
+  {q:'En «Mi abuela es cariñosa», «cariñosa» es un adverbio.',a:false,k:'tf-carinosa'},
+  {q:'En «Quizás llueva en Tela», «quizás» es un adverbio.',a:true,k:'tf-quizas'},
+  {q:'En «Estudiaremos después del recreo», «después» es un adverbio.',a:true,k:'tf-despues'}
 ];
-const evalMCBank = [
-    { q: '¿Cuál es la función del adverbio en la oración?', o: ['a) Sustituir al sustantivo', 'b) Indicar género y número', 'c) Unir oraciones', 'd) Modificar al verbo, adjetivo u otro adverbio'], a: 3 },
-    { q: '"Llegó TARDE a la reunión". La palabra en mayúsculas es adverbio de:', o: ['a) Lugar', 'b) Tiempo', 'c) Modo', 'd) Cantidad'], a: 1 },
-    { q: '"Vive CERCA del colegio". La palabra en mayúsculas es adverbio de:', o: ['a) Tiempo', 'b) Cantidad', 'c) Lugar', 'd) Duda'], a: 2 },
-    { q: '"Estudia MUCHO para el examen". La palabra en mayúsculas es adverbio de:', o: ['a) Modo', 'b) Negación', 'c) Cantidad', 'd) Afirmación'], a: 2 },
-    { q: '"SÍ, iré a la fiesta". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Negación', 'c) Duda', 'd) Lugar'], a: 0 },
-    { q: '"NUNCA llega temprano". La palabra en mayúsculas es adverbio de:', o: ['a) Afirmación', 'b) Tiempo', 'c) Negación', 'd) Modo'], a: 2 },
-    { q: '"QUIZÁS venga mañana". La palabra en mayúsculas es adverbio de:', o: ['a) Duda', 'b) Negación', 'c) Lugar', 'd) Cantidad'], a: 0 },
-    { q: '¿Cuál de estos es un adverbio de modo?', o: ['a) Mucho', 'b) Lentamente', 'c) Aquí', 'd) Hoy'], a: 1 },
-    { q: '¿Cómo se forma el adverbio a partir del adjetivo "feliz"?', o: ['a) Felizamente', 'b) Felizemente', 'c) Felizmente', 'd) Felicidad'], a: 2 },
-    { q: '"Es un niño MUY inteligente". La palabra en mayúsculas es adverbio de:', o: ['a) Cantidad', 'b) Modo', 'c) Tiempo', 'd) Lugar'], a: 0 },
-    { q: '¿Cuál de estos NO es un adverbio de tiempo?', o: ['a) Ayer', 'b) Despacio', 'c) Siempre', 'd) Pronto'], a: 1 },
-    { q: '"Tampoco" es un adverbio de:', o: ['a) Afirmación', 'b) Duda', 'c) Modo', 'd) Negación'], a: 3 },
-    { q: 'El adverbio es una palabra:', o: ['a) Variable en género', 'b) Variable en número', 'c) Solo se usa en plural', 'd) Invariable'], a: 3 },
-    { q: '"Habló clara y precisamente". ¿Por qué "clara" no lleva "-mente"?', o: ['a) Es un error', 'b) Porque en una serie de adverbios en -mente, solo el último lleva el sufijo', 'c) Porque modifica a un sustantivo', 'd) Porque es un adjetivo'], a: 1 },
-    { q: '¿Cuál de estos es un adverbio de cantidad?', o: ['a) Bastante', 'b) Jamás', 'c) Aquí', 'd) Bien'], a: 0 },
+const evalMCBank=[
+  {q:'¿Cuál es el adverbio en «Mi tío vive lejos»?',o:['a) tío','b) vive','c) lejos','d) mi'],a:2,k:'mc-lejos'},
+  {q:'¿Cuál es el adverbio que sale de «amable»?',o:['a) amablemente','b) amablamente','c) amablomente','d) amabilidad'],a:0,k:'mc-amable'},
+  {q:'¿Cuál está bien escrita?',o:['a) Corrieron alegremente y velozmente','b) Corrieron alegre y velozmente','c) Corrieron alegres y veloces','d) Corrieron alegrementes y veloz'],a:1,k:'mc-serie-veloz'},
+  {q:'¿En cuál oración «bajo» es un adverbio?',o:['a) El niño bajo juega','b) Es un árbol bajo','c) Habla bajo en la biblioteca','d) La mesa es baja'],a:2,k:'mc-bajo'},
+  {q:'Completa: «Ellas llegaron ___»',o:['a) tempranas','b) tempranos','c) temprana','d) temprano'],a:3,k:'mc-temprano'},
+  {q:'El adverbio de «rápido» se arma desde…',o:['a) rápido','b) rápida','c) rapidez','d) rapid'],a:1,k:'mc-rapida'},
+  {q:'¿Qué palabra de «Mañana iremos al río» es un adverbio?',o:['a) mañana','b) iremos','c) al','d) río'],a:0,k:'mc-manana'},
+  {q:'En «Tal vez venga Luis», «tal vez» funciona como…',o:['a) un sustantivo','b) un adverbio','c) un verbo','d) un adjetivo'],a:1,k:'mc-talvez'},
+  {q:'¿Cuál oración tiene un adverbio mal escrito?',o:['a) Contestó correctamente','b) Trabajó honradamente','c) Salió deprisa','d) Saludó cortesmente'],a:3,k:'mc-cortes'},
+  {q:'¿Cuántos adverbios hay en «Ayer comimos bien»?',o:['a) 1','b) 2','c) 3','d) 0'],a:1,k:'mc-cuantos'}
 ];
-const evalCPBank = [
-    { q: 'La función del ___ es modificar al verbo, al adjetivo o a otro adverbio.', a: 'adverbio' },
-    { q: 'El adverbio es una palabra ___, no cambia de género ni número.', a: 'invariable' },
-    { q: 'Los adverbios de ___ indican dónde ocurre la acción (aquí, allí, cerca).', a: 'lugar' },
-    { q: 'Los adverbios de ___ indican cuándo ocurre la acción (hoy, ayer, siempre).', a: 'tiempo' },
-    { q: 'Los adverbios de ___ indican cómo se realiza la acción (bien, mal, así).', a: 'modo' },
-    { q: 'Los adverbios de ___ indican la intensidad de la acción (mucho, poco, muy).', a: 'cantidad' },
-    { q: '"Sí" y "también" son adverbios de ___.', a: 'afirmación' },
-    { q: '"No", "nunca" y "jamás" son adverbios de ___.', a: 'negación' },
-    { q: '"Quizás" y "tal vez" son adverbios de ___.', a: 'duda' },
-    { q: 'Muchos adverbios de modo se forman agregando el sufijo "___" al adjetivo en femenino.', a: 'mente' },
-    { q: 'El adverbio formado a partir de "lenta" es "lenta___".', a: 'mente' },
-    { q: 'Cuando hay varios adverbios en -mente seguidos, solo el ___ conserva el sufijo completo.', a: 'último' },
-    { q: '"Rápido" puede funcionar como adjetivo o como ___ según la oración.', a: 'adverbio' },
-    { q: 'El adverbio "lejos" pertenece a la clase de adverbios de ___.', a: 'lugar' },
-    { q: 'El adverbio "bastante" pertenece a la clase de adverbios de ___.', a: 'cantidad' },
+const evalCPBank=[
+  {q:'«Lenta» + -mente = ___.',a:'lentamente',acc:['lentamente'],k:'cp-lentamente'},
+  {q:'«Débil» + -mente = ___.',a:'débilmente',acc:['débilmente'],k:'cp-debil'},
+  {q:'Respondió serena y ___ (educada + -mente).',a:'educadamente',acc:['educadamente'],k:'cp-serie-educada'},
+  {q:'En «Los perros ladran fuerte», el adverbio es ___.',a:'fuerte',acc:['fuerte'],k:'cp-fuerte'},
+  {q:'«Cómoda» + -mente = ___ (con su tilde).',a:'cómodamente',acc:['cómodamente'],k:'cp-comoda'},
+  {q:'«Sincera» + -mente = ___.',a:'sinceramente',acc:['sinceramente'],k:'cp-sincera'},
+  {q:'El adverbio de «práctico» se arma con «___» + -mente.',a:'práctica',acc:['práctica'],k:'cp-practica'},
+  {q:'En «Mi prima vive cerca», el adverbio es ___.',a:'cerca',acc:['cerca'],k:'cp-cerca'},
+  {q:'Ellas duermen ___ (tarde / tardes).',a:'tarde',acc:['tarde'],k:'cp-tarde'},
+  {q:'En «Hoy hace calor en Choluteca», el adverbio es ___.',a:'hoy',acc:['hoy'],k:'cp-hoy'}
 ];
-const evalPRBank = [
-    { term: 'Adverbio de Lugar', def: 'Indica dónde ocurre la acción (aquí, allí, cerca, lejos)' },
-    { term: 'Adverbio de Tiempo', def: 'Indica cuándo ocurre la acción (hoy, ayer, siempre, nunca)' },
-    { term: 'Adverbio de Modo', def: 'Indica cómo se realiza la acción (bien, mal, así, rápidamente)' },
-    { term: 'Adverbio de Cantidad', def: 'Indica la intensidad o cantidad (mucho, poco, muy, bastante)' },
-    { term: 'Adverbio de Afirmación', def: 'Confirma lo expresado (sí, también, claro)' },
-    { term: 'Adverbio de Negación', def: 'Niega lo expresado (no, nunca, jamás, tampoco)' },
-    { term: 'Adverbio de Duda', def: 'Expresa posibilidad o incertidumbre (quizás, tal vez, acaso)' },
-    { term: 'Sufijo -mente', def: 'Se agrega al adjetivo femenino para formar un adverbio de modo' },
-    { term: 'Invariabilidad', def: 'Característica del adverbio de no cambiar en género ni número' },
-    { term: 'Adverbios en serie', def: 'Cuando hay varios adverbios en -mente juntos, solo el último lleva el sufijo' },
-    { term: 'Adjetivo vs Adverbio', def: 'El adjetivo concuerda en género y número; el adverbio es invariable' },
-    { term: 'Locución adverbial', def: 'Grupo de palabras que funciona como un solo adverbio (ej: tal vez, de repente)' },
-    { term: 'Modificador', def: 'Función principal del adverbio: complementa al verbo, adjetivo u otro adverbio' },
-    { term: 'Adverbio interrogativo', def: 'Adverbio usado para preguntar (dónde, cuándo, cómo, cuánto)' },
-    { term: 'Adverbio exclamativo', def: 'Adverbio usado en exclamaciones (qué, cuán, cuánto)' },
+const evalPRBank=[
+  {term:'De lugar',def:'Responde ¿dónde?',k:'pr-lugar'},
+  {term:'De tiempo',def:'Responde ¿cuándo?',k:'pr-tiempo'},
+  {term:'De modo',def:'Responde ¿cómo?',k:'pr-modo'},
+  {term:'De cantidad',def:'Responde ¿cuánto?',k:'pr-cantidad'},
+  {term:'De afirmación',def:'Confirma lo que se dice',k:'pr-afirmacion'},
+  {term:'De negación',def:'Rechaza lo que se dice',k:'pr-negacion'},
+  {term:'De duda',def:'Deja la cosa sin asegurar',k:'pr-duda'},
+  {term:'Al verbo',def:'Lo que modifica «pronto» en «llegó pronto»',k:'pr-verbo'},
+  {term:'A un adjetivo',def:'Lo que modifica «muy» en «muy alto»',k:'pr-adjetivo'},
+  {term:'A otro adverbio',def:'Lo que modifica «casi» en «casi nunca»',k:'pr-otro-adverbio'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
