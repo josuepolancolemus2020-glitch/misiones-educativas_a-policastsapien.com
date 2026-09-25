@@ -689,45 +689,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El resultado de una multiplicación se llama producto.',a:true},
-  {q:'Multiplicar por cero da el mismo número.',a:false},
-  {q:'En el cálculo vertical se empieza por las unidades.',a:true},
-  {q:'El acarreo es la cifra que se lleva a la siguiente columna.',a:true},
-  {q:'El orden de los factores cambia el producto.',a:false},
-  {q:'Multiplicar por 10 agrega un cero a la derecha.',a:true},
-  {q:'El segundo producto parcial se escribe sin desplazar.',a:false},
-  {q:'Los números que se multiplican se llaman factores.',a:true},
-  {q:'6 × 8 = 48.',a:true},
-  {q:'7 × 9 = 61.',a:false}
+  {q:'6 × 8 = 48.',a:true,k:'tf-6-8'},
+  {q:'7 × 9 = 61.',a:false,k:'tf-7-9'},
+  {q:'9 × 9 = 18.',a:false,k:'tf-9-9'},
+  {q:'13 × 3 = 39.',a:true,k:'tf-13-3'},
+  {q:'52 × 10 = 5,200.',a:false,k:'tf-52-10'},
+  {q:'15 × 4 = 60.',a:true,k:'tf-15-4'},
+  {q:'11 × 11 = 111.',a:false,k:'tf-11-11'},
+  {q:'8 × 125 = 1,000.',a:true,k:'tf-8-125'},
+  {q:'32 × 3 = 69.',a:false,k:'tf-32-3'},
+  {q:'20 × 30 = 600.',a:true,k:'tf-20-30'}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto es 8 × 7?',o:['a) 54','b) 63','c) 56','d) 49'],a:2},
-  {q:'¿Cuánto es 34 × 5?',o:['a) 150','b) 160','c) 170','d) 175'],a:2},
-  {q:'El resultado de multiplicar se llama:',o:['a) suma','b) factor','c) resto','d) producto'],a:3},
-  {q:'¿Cuánto es 60 × 10?',o:['a) 600','b) 60','c) 6,000','d) 610'],a:0},
-  {q:'¿Cuánto es 23 × 4?',o:['a) 92','b) 82','c) 96','d) 84'],a:0},
-  {q:'¿Cuánto es 45 × 0?',o:['a) 45','b) 0','c) 450','d) 1'],a:1},
-  {q:'En 6 × 9 = 54, en las unidades escribo 4 y llevo:',o:['a) 4','b) 54','c) 0','d) 5'],a:3},
-  {q:'¿Cuánto es 12 × 12?',o:['a) 124','b) 144','c) 122','d) 132'],a:1}
+  {q:'¿Cuánto es 8 × 7?',o:['a) 54','b) 63','c) 56','d) 58'],a:2,k:'mc-8-7'},
+  {q:'¿Cuánto es 34 × 5?',o:['a) 150','b) 160','c) 170','d) 175'],a:2,k:'mc-34-5'},
+  {q:'¿Cuánto es 70 × 10?',o:['a) 700','b) 70','c) 7,000','d) 710'],a:0,k:'mc-70-10'},
+  {q:'¿Cuánto es 23 × 4?',o:['a) 92','b) 82','c) 96','d) 84'],a:0,k:'mc-23-4'},
+  {q:'¿Cuánto es 47 × 0?',o:['a) 47','b) 0','c) 470','d) 1'],a:1,k:'mc-47-0'},
+  {q:'En 6 × 9 = 54, escribo el 4 y llevo:',o:['a) 4','b) 54','c) 0','d) 5'],a:3,k:'mc-llevo'},
+  {q:'¿Cuánto es 12 × 12?',o:['a) 124','b) 144','c) 122','d) 132'],a:1,k:'mc-12-12'},
+  {q:'¿Cuánto es 105 × 3?',o:['a) 315','b) 305','c) 318','d) 335'],a:0,k:'mc-105-3'},
+  {q:'¿Cuánto es 46 × 21?',o:['a) 946','b) 92','c) 986','d) 966'],a:3,k:'mc-46-21'},
+  {q:'¿Cuánto es 7 × 7?',o:['a) 47','b) 49','c) 48','d) 14'],a:1,k:'mc-7-7'}
 ];
 const evalCPBank=[
-  {q:'El resultado de una multiplicación es el ___.',a:'producto',acc:['producto','el producto']},
-  {q:'Los números que se multiplican son los ___.',a:'factores',acc:['factores','factor']},
-  {q:'La cifra que se lleva a la otra columna es el ___.',a:'acarreo',acc:['acarreo','el acarreo']},
-  {q:'Multiplicar 7 × 8 = ___.',a:'56',acc:['56','cincuenta y seis']},
-  {q:'Cualquier número multiplicado por 0 da ___.',a:'0',acc:['0','cero']},
-  {q:'Para multiplicar por 10 se agrega un ___ a la derecha.',a:'cero',acc:['cero','0','un cero']},
-  {q:'Multiplicar 6 × 6 = ___.',a:'36',acc:['36','treinta y seis']},
-  {q:'El número de arriba en el cálculo vertical es el ___.',a:'multiplicando',acc:['multiplicando','el multiplicando']}
+  {q:'9 × 5 = ___.',a:'45',acc:['45','cuarenta y cinco'],k:'cp-9-5'},
+  {q:'6 × 6 = ___.',a:'36',acc:['36','treinta y seis'],k:'cp-6-6'},
+  {q:'14 × 3 = ___.',a:'42',acc:['42'],k:'cp-14-3'},
+  {q:'25 × 4 = ___.',a:'100',acc:['100','cien'],k:'cp-25-4'},
+  {q:'38 × 10 = ___.',a:'380',acc:['380'],k:'cp-38-10'},
+  {q:'16 × 5 = ___.',a:'80',acc:['80','ochenta'],k:'cp-16-5'},
+  {q:'123 × 2 = ___.',a:'246',acc:['246'],k:'cp-123-2'},
+  {q:'50 × 50 = ___.',a:'2,500',acc:['2,500','2500','2 500','2.500'],k:'cp-50-50'},
+  {q:'31 × 12 = ___.',a:'372',acc:['372'],k:'cp-31-12'},
+  {q:'99 × 2 = ___.',a:'198',acc:['198'],k:'cp-99-2'}
 ];
 const evalPRBank=[
-  {term:'Factor',def:'Cada número que se multiplica'},
-  {term:'Producto',def:'Resultado de la multiplicación'},
-  {term:'Acarreo',def:'Cifra que se lleva a la siguiente columna'},
-  {term:'Multiplicando',def:'Número que se va a multiplicar (arriba)'},
-  {term:'Producto parcial',def:'Resultado de multiplicar por una sola cifra'},
-  {term:'Propiedad conmutativa',def:'El orden de los factores no cambia el producto'}
+  {term:'Factor',def:'Cada número que se multiplica',k:'pr-factor'},
+  {term:'Producto',def:'El resultado de la multiplicación',k:'pr-producto'},
+  {term:'Acarreo',def:'La cifra que se lleva a la columna de al lado',k:'pr-acarreo'},
+  {term:'Multiplicando',def:'El número de arriba en la cuenta',k:'pr-multiplicando'},
+  {term:'Multiplicador',def:'El número de abajo, por el que se multiplica',k:'pr-multiplicador'},
+  {term:'Producto parcial',def:'Lo que da multiplicar por una sola cifra de abajo',k:'pr-producto-parcial'},
+  {term:'Propiedad conmutativa',def:'Cambiar el orden de los factores no cambia el resultado',k:'pr-conmutativa'},
+  {term:'Unidades',def:'La columna de la derecha, por donde se empieza',k:'pr-unidades'},
+  {term:'Decenas',def:'La segunda columna, contando desde la derecha',k:'pr-decenas'},
+  {term:'Tabla de multiplicar',def:'Un número multiplicado del 1 al 10, en lista',k:'pr-tabla'}
 ];
 const EVAL_FORMAS = 30;
 function _evalRng(forma) {
