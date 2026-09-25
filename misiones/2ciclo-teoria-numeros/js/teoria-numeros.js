@@ -546,38 +546,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un número es divisible entre otro cuando el residuo de la división es cero.',a:true},
-  {q:'432 es divisible entre 9 porque 4+3+2 = 9.',a:true},
-  {q:'Un número es divisible entre 3 si termina en 3, 6 o 9.',a:false},
-  {q:'121 es divisible entre 11 porque su suma alternada da 0.',a:true},
-  {q:'El m.c.m. de dos números siempre es su producto.',a:false},
-  {q:'El M.C.D. de 12 y 18 es 6.',a:true},
-  {q:'El m.c.m. se usa para repartir en partes iguales.',a:false},
-  {q:'Todo número divisible entre 9 también es divisible entre 3.',a:true},
-  {q:'El M.C.D. de 8 y 15 es 1 porque son primos entre sí.',a:true},
-  {q:'Un número que termina en 0 es divisible entre 2, 5 y 10.',a:true}
+  {q:'432 es divisible entre 9.',a:true,k:'tf-432-9'},
+  {q:'51 es divisible entre 2.',a:false,k:'tf-51-2'},
+  {q:'75 es divisible entre 10.',a:false,k:'tf-75-10'},
+  {q:'121 es divisible entre 11.',a:true,k:'tf-121-11'},
+  {q:'El m.c.m. de 3 y 5 es 8.',a:false,k:'tf-mcm-3-5'},
+  {q:'El M.C.D. de 16 y 28 es 4.',a:true,k:'tf-mcd-16-28'},
+  {q:'124 es divisible entre 3.',a:false,k:'tf-124-3'},
+  {q:'350 es divisible entre 10.',a:true,k:'tf-350-10'},
+  {q:'El M.C.D. de 8 y 15 es 3.',a:false,k:'tf-mcd-8-15'},
+  {q:'6 es divisor de 42.',a:true,k:'tf-6-42'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál de estos números es divisible entre 9?',o:['a) 2,835','b) 517','c) 1,234','d) 88'],a:0},
-  {q:'¿Cuál es el m.c.m. de 4 y 10?',o:['a) 20','b) 40','c) 2','d) 14'],a:0},
-  {q:'¿Cuál es el M.C.D. de 24 y 36?',o:['a) 72','b) 6','c) 4','d) 12'],a:3},
-  {q:'¿Qué regla se usa para saber si un número es divisible entre 11?',o:['a) Mirar la última cifra','b) Sumar todas las cifras','c) La suma alternada de las cifras','d) Contar las cifras'],a:2},
-  {q:'Dos campanas suenan cada 6 y cada 9 minutos. ¿Cada cuánto suenan juntas?',o:['a) Cada 3 min','b) Cada 18 min','c) Cada 54 min','d) Cada 15 min'],a:1}
+  {q:'¿Cuál de estos números es divisible entre 9?',o:['a) 2,835','b) 517','c) 1,234','d) 88'],a:0,k:'mc-div-9'},
+  {q:'¿Cuál es el m.c.m. de 4 y 10?',o:['a) 20','b) 40','c) 2','d) 14'],a:0,k:'mc-mcm-4-10'},
+  {q:'¿Cuál es el M.C.D. de 24 y 36?',o:['a) 72','b) 6','c) 4','d) 12'],a:3,k:'mc-mcd-24-36'},
+  {q:'¿Cuál de estos números es divisible entre 11?',o:['a) 134','b) 123','c) 143','d) 125'],a:2,k:'mc-div-11'},
+  {q:'Dos campanas suenan cada 6 y cada 9 minutos. ¿Cada cuánto suenan juntas?',o:['a) Cada 3 min','b) Cada 18 min','c) Cada 54 min','d) Cada 15 min'],a:1,k:'mc-campanas'},
+  {q:'¿Cuál número es divisible entre 2 y entre 5 a la vez?',o:['a) 25','b) 42','c) 70','d) 55'],a:2,k:'mc-div-2-y-5'},
+  {q:'Se reparten 28 mangos y 42 naranjas en bolsas iguales, sin que sobre nada. ¿Cuántas bolsas, como máximo?',o:['a) 7','b) 14','c) 42','d) 28'],a:1,k:'mc-bolsas'},
+  {q:'¿Cuál de estas divisiones es exacta?',o:['a) 29 ÷ 4','b) 35 ÷ 6','c) 50 ÷ 3','d) 48 ÷ 8'],a:3,k:'mc-exacta'},
+  {q:'¿Cuál de estos números es divisible entre 3?',o:['a) 125','b) 211','c) 402','d) 100'],a:2,k:'mc-div-3'},
+  {q:'¿Qué par de números solo comparten el divisor 1?',o:['a) 4 y 6','b) 7 y 10','c) 9 y 12','d) 10 y 15'],a:1,k:'mc-solo-1'}
 ];
 const evalCPBank=[
-  {q:'Un número es divisible entre 10 si termina en ___.',a:'0 (cero)'},
-  {q:'Para el 9 se comprueba que la ___ de las cifras sea múltiplo de 9.',a:'suma'},
-  {q:'El múltiplo común más pequeño de dos números se llama ___.',a:'m.c.m.'},
-  {q:'El divisor común más grande de dos números se llama ___.',a:'M.C.D.'},
-  {q:'Un número con solo dos divisores (1 y él mismo) se llama ___.',a:'primo'}
+  {q:'El m.c.m. de 3 y 7 es ___.',a:'21',acc:['21'],k:'cp-mcm-3-7'},
+  {q:'El M.C.D. de 26 y 39 es ___.',a:'13',acc:['13'],k:'cp-mcd-26-39'},
+  {q:'El primer número de tres cifras divisible entre 11 es ___.',a:'110',acc:['110'],k:'cp-primero-11'},
+  {q:'La suma de las cifras de 7,253 es ___.',a:'17',acc:['17'],k:'cp-suma-7253'},
+  {q:'Dos buses salen juntos; uno vuelve cada 5 días y el otro cada 6. Vuelven a salir juntos dentro de ___ días.',a:'30',acc:['30'],k:'cp-buses'},
+  {q:'Se cortan dos cintas de 38 m y 57 m en pedazos iguales, lo más largos posible. Cada pedazo mide ___ m.',a:'19',acc:['19'],k:'cp-cintas'},
+  {q:'El primer múltiplo de 7 después del 50 es ___.',a:'56',acc:['56'],k:'cp-multiplo-7'},
+  {q:'Los divisores de 35 son 1, 5, 7 y ___.',a:'35',acc:['35'],k:'cp-divisores-35'},
+  {q:'Con la suma alternada, 2 − 7 + 5 = ___.',a:'0',acc:['0','cero'],k:'cp-alternada'},
+  {q:'Un número con solo dos divisores, el 1 y él mismo, se llama número ___.',a:'primo',acc:['primo'],k:'cp-primo'}
 ];
 const evalPRBank=[
-  {term:'Divisibilidad',def:'División exacta, con residuo cero'},
-  {term:'Regla del 9',def:'La suma de las cifras es múltiplo de 9'},
-  {term:'Regla del 11',def:'La suma alternada da 0 o múltiplo de 11'},
-  {term:'m.c.m.',def:'El múltiplo común más pequeño'},
-  {term:'M.C.D.',def:'El divisor común más grande'}
+  {term:'Divisible',def:'Lo que se dice de un número cuando la división da residuo cero',k:'pr-divisible'},
+  {term:'Residuo',def:'Lo que sobra en una división',k:'pr-residuo'},
+  {term:'M.C.D.',def:'El divisor común más grande de dos números',k:'pr-mcd'},
+  {term:'m.c.m.',def:'El múltiplo común más pequeño de dos números',k:'pr-mcm'},
+  {term:'Dividendo',def:'El número que se reparte en una división',k:'pr-dividendo'},
+  {term:'Divisor',def:'Número entre el que otro se divide exacto',k:'pr-divisor'},
+  {term:'Suma alternada',def:'Se suma una cifra, se resta la siguiente, y así',k:'pr-suma-alternada'},
+  {term:'Última cifra',def:'Lo único que se mira para el 2, el 5 y el 10',k:'pr-ultima-cifra'},
+  {term:'Suma de las cifras',def:'Lo que se mira para el 3 y el 9',k:'pr-suma-cifras'},
+  {term:'Cociente',def:'El resultado de una división',k:'pr-cociente'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
