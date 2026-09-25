@@ -802,58 +802,58 @@ window.addEventListener('resize',()=>{
 });
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El adjetivo relacional admite morfemas de grado y se puede cuantificar con "muy".',a:false},
-  {q:'La apócope adjetival es la pérdida de la terminación fónica al anteponerse al sustantivo.',a:true},
-  {q:'El adyacente modifica indirectamente al sustantivo mediante un verbo copulativo.',a:false},
-  {q:'"El actual gerente" contiene un adjetivo con valor adverbial temporal.',a:true},
-  {q:'El complemento predicativo modifica sintácticamente al verbo y al nombre al mismo tiempo.',a:true},
-  {q:'Los adjetivos elativos léxicos exigen construcciones con "muy" o "-ísimo".',a:false},
-  {q:'"Paupérrimo" es un superlativo absoluto sintético.',a:true},
-  {q:'El adjetivo "solar" en "energía solar" es un adjetivo calificativo intersectivo.',a:false},
-  {q:'El epíteto es un adjetivo explicativo que señala una cualidad inherente, típicamente antepuesto.',a:true},
-  {q:'El atributo y el predicativo cumplen exactamente la misma función con cualquier verbo.',a:false},
-  {q:'Un adjetivo restrictivo delimita la extensión semántica del sustantivo.',a:true},
-  {q:'"Óptimo" representa el superlativo absoluto supletivo de "grande".',a:false},
-  {q:'Los determinantes y cuantificadores ya no se agrupan dentro de los adjetivos calificativos estrictos.',a:true},
-  {q:'El superlativo relativo compara al elemento con la totalidad de un grupo ("el más rápido del equipo").',a:true},
-  {q:'"Un pobre hombre" y "un hombre pobre" comparten idéntico significado referencial.',a:false},
+  {q:'En «Llegó el tren», no hay ningún adjetivo.',a:true,k:'tf-sin-adjetivo'},
+  {q:'En «Los niños llegaron cansados», «cansados» concuerda con «niños» y dice cómo llegaron.',a:true,k:'tf-cansados'},
+  {q:'«Paupérrimo» es la forma culta de «muy pobre».',a:true,k:'tf-pauperrimo'},
+  {q:'«Un pobre hombre» y «un hombre pobre» quieren decir lo mismo.',a:false,k:'tf-pobre-hombre'},
+  {q:'En «el presunto ladrón», «presunto» afirma que la persona robó.',a:false,k:'tf-presunto'},
+  {q:'«Óptimo» quiere decir «muy bueno».',a:true,k:'tf-optimo'},
+  {q:'«Muy diminuto» es la forma correcta de reforzar «diminuto».',a:false,k:'tf-diminuto'},
+  {q:'«Grandérrimo» es una forma correcta.',a:false,k:'tf-granderrimo'},
+  {q:'«Mayor» es la forma de comparar de «grande».',a:true,k:'tf-mayor'},
+  {q:'En «El agua está fría», «fría» va en femenino aunque se diga «el agua».',a:true,k:'tf-agua'}
 ];
 const evalMCBank=[
-  {q:'Identifica el adjetivo relacional en las siguientes opciones:',o:['a) Perro enorme','b) Casa hermosísima','c) Análisis literario','d) Llegaron exhaustos'],a:2},
-  {q:'¿Qué función sintáctica ejerce "sucios" en «Trajeron sucios los abrigos»?',o:['a) Adyacente Nominal','b) Complemento Predicativo','c) Atributo','d) Núcleo del SN'],a:1},
-  {q:'Un adjetivo elativo léxico inherente es:',o:['a) Diminuto','b) Grandísimo','c) Muy pequeño','d) El más guapo'],a:0},
-  {q:'¿Cuál es el superlativo absoluto supletivo de "malo"?',o:['a) Peor','b) Pésimo','c) Malísimo','d) El más malo'],a:1},
-  {q:'La estructura sintáctica de "El rey magno" presenta un adjetivo:',o:['a) Explicativo antepuesto / Epíteto','b) Restrictivo pospuesto','c) Apocopado','d) Predicativo temporal'],a:0},
-  {q:'El adjetivo "presunto" en "el presunto culpable" se clasifica sintácticamente como:',o:['a) Adjetivo adverbial modal','b) Adjetivo relacional','c) Adjetivo calificativo de grado','d) Superlativo relativo'],a:0},
-  {q:'La concordancia del atributo en «El aula y el patio están...» exige:',o:['a) limpias (fem. plural)','b) limpio (masc. singular)','c) limpia (fem. singular)','d) limpios (masc. plural)'],a:3},
-  {q:'El sufijo culto "-érrimo" se aplica correctamente en:',o:['a) Fuertérrimo','b) Grandérrimo','c) Celebérrimo','d) Pobrísimo'],a:2},
-  {q:'Un adjetivo restrictivo se caracteriza por:',o:['a) Ir siempre antepuesto','b) Limitar la referencia del SN al que modifica','c) Ser invariable en género','d) Funcionar siempre como atributo'],a:1},
-  {q:'"Mejor" es una forma morfológica que corresponde al grado:',o:['a) Superlativo sintético','b) Positivo elativo','c) Adverbial modal','d) Comparativo léxico supletivo'],a:3},
+  {q:'¿En cuál NO se puede poner «muy» delante del adjetivo?',o:['a) un examen difícil','b) un río ancho','c) una ley electoral','d) una tarde fría'],a:2,k:'mc-electoral'},
+  {q:'¿Cuál de estas formas lleva el sufijo culto -érrimo?',o:['a) libérrimo','b) buenísimo','c) rapidísimo','d) altísimo'],a:0,k:'mc-liberrimo'},
+  {q:'En «Trajeron sucios los abrigos», «sucios» concuerda con…',o:['a) trajeron','b) nadie','c) los abrigos','d) el verbo solamente'],a:2,k:'mc-sucios'},
+  {q:'¿Qué palabra significa «muy malo» sin usar «muy» ni «-ísimo»?',o:['a) peorcito','b) pésimo','c) malito','d) maloso'],a:1,k:'mc-pesimo'},
+  {q:'En «un gran rey», «gran» quiere decir…',o:['a) de mucho tamaño','b) que tiene muchos años','c) importante, grandioso','d) que es rey de verdad'],a:2,k:'mc-gran-rey'},
+  {q:'¿Cuál completa bien «Las niñas y los niños están ___»?',o:['a) contentas','b) contento','c) contenta','d) contentos'],a:3,k:'mc-contentos'},
+  {q:'En «Los alumnos aplicados aprobaron», ¿qué dice el adjetivo?',o:['a) que aprobaron solo los aplicados','b) que todos eran aplicados','c) que nadie aprobó','d) que el examen fue fácil'],a:0,k:'mc-aplicados'},
+  {q:'¿Cuál es el núcleo de «muy orgulloso de su hija»?',o:['a) muy','b) orgulloso','c) su','d) hija'],a:1,k:'mc-nucleo'},
+  {q:'¿Cuál es el adjetivo en «Compré un machete nuevo»?',o:['a) compré','b) un','c) machete','d) nuevo'],a:3,k:'mc-nuevo'},
+  {q:'«El más alto del grado» compara a uno con…',o:['a) una sola persona','b) nadie','c) todo el grupo','d) el profesor'],a:2,k:'mc-mas-alto'}
 ];
 const evalCPBank=[
-  {q:'La pérdida del elemento fónico final del adjetivo en posición prenominal se denomina ___.',a:'apócope'},
-  {q:'El adjetivo que clasifica al sustantivo y rechaza la gradación es el adjetivo ___.',a:'relacional'},
-  {q:'La función sintáctica que modifica simultáneamente al verbo pleno y al sujeto/CD es el Complemento ___.',a:'predicativo'},
-  {q:'Los adjetivos como "enorme" o "diminuto" encierran un valor extremo, por lo que se denominan ___ léxicos.',a:'elativos'},
-  {q:'"Paupérrimo" es el grado superlativo absoluto de origen latino correspondiente al adjetivo ___.',a:'pobre'},
-  {q:'El adjetivo que tiene un comportamiento temporal o modal asimilable al adverbio es el adjetivo ___.',a:'adverbial'},
-  {q:'El ___ destaca una cualidad inherente y prototípica del sustantivo, situándose a menudo en posición antepuesta.',a:'epíteto'},
-  {q:'Un adjetivo ___ delimita o restringe la referencia del sustantivo excluyendo a otros elementos.',a:'restrictivo'},
-  {q:'La forma "óptimo" representa el superlativo absoluto supletivo del adjetivo ___.',a:'bueno'},
-  {q:'Sintácticamente, el adjetivo constituye el núcleo del Sintagma ___.',a:'adjetival'},
+  {q:'Delante de «amigo», «bueno» se escribe ___: un ___ amigo.',a:'buen',acc:['buen'],k:'cp-buen'},
+  {q:'La forma de comparar de «malo» (en vez de «más malo») es ___.',a:'peor',acc:['peor'],k:'cp-peor'},
+  {q:'El adjetivo que sale de «Honduras» es ___: la bandera ___.',a:'hondureña',acc:['hondureña'],k:'cp-hondurena'},
+  {q:'«Mi abuela parece ___» (cansado): el adjetivo concuerda con «abuela».',a:'cansada',acc:['cansada'],k:'cp-cansada'},
+  {q:'«Muy pequeño», en su forma culta, es ___.',a:'mínimo',acc:['mínimo'],k:'cp-minimo'},
+  {q:'En «la crisis económica», el adjetivo equivale a «de la ___».',a:'economía',acc:['economía'],k:'cp-economia'},
+  {q:'En «el sistema solar», «solar» viene del sustantivo ___.',a:'sol',acc:['sol'],k:'cp-sol'},
+  {q:'El adjetivo concuerda con el sustantivo en género y en ___.',a:'número',acc:['número'],k:'cp-numero'},
+  {q:'En «un amigo viejo», el amigo es de mucha ___.',a:'edad',acc:['edad'],k:'cp-edad'},
+  {q:'En «la luna llena», el sustantivo al que acompaña el adjetivo es ___.',a:'luna',acc:['luna'],k:'cp-luna'}
 ];
 const evalPRBank=[
-  {term:'Adjetivo Relacional',def:'No admite cuantificación de grado.'},
-  {term:'Adjetivo Adverbial',def:'Funciona modal o temporalmente.'},
-  {term:'C. Predicativo',def:'Modifica a un verbo no copulativo.'},
-  {term:'Atributo',def:'Base de predicación con V. Copulativo.'},
-  {term:'Elativo',def:'Intensidad máxima léxica inherente.'},
-  {term:'Apócope',def:'Supresión del fonema final prenominal.'},
-  {term:'Epíteto',def:'Cualidad inherente u obvia antepuesta.'},
-  {term:'Restrictivo',def:'Limita la extensión del nombre.'},
-  {term:'Superlativo Absoluto',def:'Grado supremo morfológico.'},
-  {term:'Base Supletiva',def:'Cambio de raíz (bueno -> mejor).'},
+  {term:'Adjetivo relacional',def:'Clasifica y no admite «muy»',k:'pr-relacional'},
+  {term:'Adjetivo adverbial',def:'Aporta un valor de tiempo o de modo',k:'pr-adverbial'},
+  {term:'Adyacente',def:'Va junto al nombre, dentro del mismo grupo',k:'pr-adyacente'},
+  {term:'Atributo',def:'Va con ser, estar o parecer',k:'pr-atributo'},
+  {term:'Complemento predicativo',def:'Va con un verbo pleno y concuerda con el nombre',k:'pr-predicativo'},
+  {term:'Elativo léxico',def:'Trae de fábrica la intensidad máxima',k:'pr-elativo'},
+  {term:'Apócope',def:'Pierde su final delante del nombre',k:'pr-apocope'},
+  {term:'Epíteto',def:'Dice una cualidad que ya se sabe de la cosa',k:'pr-epiteto'},
+  {term:'Restrictivo',def:'Separa a unos de los demás',k:'pr-restrictivo'},
+  {term:'Forma supletiva',def:'Cambia de raíz en vez de añadir un sufijo',k:'pr-supletiva'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════

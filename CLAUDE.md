@@ -6611,6 +6611,33 @@ no pueden ir en los pareados. Ahí van los que las demás preguntas no usan
 (poliedro, cúspide, patrón, eje, capacidad), y las cuentas se reparten por
 sólido y por dato: cada combinación sale una vez.
 
+**La Ruta de la Palabra quedó completa también**, sus nueve misiones y sus nueve
+fichas. En gramática la forma es la misma y se nota más: las CLASES (las siete de
+adverbios, las de pronombres, aguda-llana-esdrújula, los ocho tipos de marcador)
+van en los pareados, y el resto de la prueba le pide al alumno HACER con palabras
+que no salen en ninguna otra pregunta —tildar «murciélago», pegar «dámelo»,
+elegir el marcador que completa una oración—. Donde las clases son justo lo que
+se reconoce (los tipos de textos, los tipos de adjetivo), se hace al revés: la
+selección da un fragmento y el alumno lo clasifica, y los pareados se quedan con
+las piezas que las otras preguntas no usan (nudo, tesis, verso). Tres cosas más:
+
+- ⚠️ **La prueba de pensamiento crítico también se lee**, y la sonda la exige en
+  cuanto la misión tiene `critCaseBank`: Acentuación, Marcadores y Tipos de
+  textos la tenían con una causa y una decisión que eran la misma pregunta con
+  otras palabras. Ahí las causas y los efectos pasaron a contar lo que le pasa a
+  alguien —la «papa» del mercado, el afiche que no pidió ayuda—, que es a la vez
+  la regla del relato y lo único que no repite el terreno de las otras
+  secciones. Las de las rutas del Número y de la Forma no traen esa prueba, y
+  por eso allí no se tocó.
+- ⚠️ **La teoría impresa en las hojas de la prueba cuenta entera**, no solo la
+  de la hoja de cada sección: el recuadro de Honduras de la ficha del Adjetivo
+  Avanzado cae en la hoja 4 y nombra el epíteto, el relacional y el adverbial,
+  así que en la ficha esos pareados se cambiaron por otros (explicativo,
+  calificativo, determinativo, cuantificador). La felicitación de Pronombres
+  habla de «vos», y en su ficha el voseo se cambió por el antecedente.
+- **Una palabra que es a la vez de dos clases no se pregunta.** «Nunca» es de
+  tiempo y de negación; ninguna prueba de Adverbios la pide clasificar.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
