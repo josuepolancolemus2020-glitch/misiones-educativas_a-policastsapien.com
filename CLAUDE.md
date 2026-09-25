@@ -6243,7 +6243,8 @@ pregunten el mismo dato con palabras distintas solo lo ve quien lee.
 de texto están en casi todas. En Multiplicación de decimales el completar pide
 «2.5 × 1.3 = ___» y el V/F de la misma hoja dice «El resultado de 2.5 × 1.3 es
 3.25»; en Próceres, el completar pide «el Día de Lempira se celebra el 20 de
-___» y el pareado dice «20 de julio · Día de Lempira». Las Pruebas de Fin de
+___» y el pareado dice «20 de julio · Día de Lempira» (las dos ya se
+arreglaron, más abajo). Las Pruebas de Fin de
 Grado arman sus bancos por materia y quedan fuera de la sonda: se revisan
 leyendo, y la sonda lo dice en vez de callarlo.
 

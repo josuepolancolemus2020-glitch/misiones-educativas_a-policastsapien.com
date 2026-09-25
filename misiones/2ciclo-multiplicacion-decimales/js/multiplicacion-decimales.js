@@ -768,73 +768,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Para multiplicar decimales hay que alinear los puntos, como en la suma.',a:false},
-  {q:'El producto lleva tantas cifras decimales como tengan los dos factores juntos.',a:true},
-  {q:'El resultado de 2.5 × 1.3 es 3.25.',a:true},
-  {q:'0.2 × 0.3 es igual a 0.6.',a:false},
-  {q:'Al multiplicar por 10, el punto se corre un lugar a la derecha.',a:true},
-  {q:'Al multiplicar por 0.1, el número se hace más grande.',a:false},
-  {q:'40 × 0.5 da 20.',a:true},
-  {q:'Estimar con números redondos sirve para saber si el punto quedó bien puesto.',a:true},
-  {q:'El número 0.25 equivale a la fracción 1/4.',a:true},
-  {q:'En 4.07 hay tres cifras decimales.',a:false},
-  {q:'Multiplicar 3.47 por 100 da 347.',a:true},
-  {q:'Cuando el producto necesita más cifras decimales de las que tiene, se agregan ceros a la izquierda.',a:true},
-  {q:'Multiplicar siempre da un resultado mayor que los dos factores.',a:false},
-  {q:'Tres libras a L 42.50 cuestan L 127.50.',a:true},
-  {q:'El punto del producto se pone donde estaba en el factor más grande.',a:false}
+  {q:'Para multiplicar decimales hay que alinear los puntos, como en la suma.',a:false,k:'tf-alinear'},
+  {q:'2.5 × 1.3 = 3.25.',a:true,k:'tf-25-13'},
+  {q:'0.2 × 0.3 = 0.6.',a:false,k:'tf-02-03'},
+  {q:'30 × 0.5 = 15.',a:true,k:'tf-30-05'},
+  {q:'3.47 × 100 = 347.',a:true,k:'tf-347-100'},
+  {q:'Al multiplicar un número por 0.1 se hace más grande.',a:false,k:'tf-por-01'},
+  {q:'4.07 tiene tres cifras después del punto.',a:false,k:'tf-407'},
+  {q:'2 × 0.25 = 0.5.',a:true,k:'tf-2-025'},
+  {q:'2.4 × 10 = 2.40.',a:false,k:'tf-24-10'},
+  {q:'Tres libras a L 42.50 cuestan L 127.50.',a:true,k:'tf-libras'}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto es 3.2 × 1.5?',o:['a) 4.80','b) 48','c) 0.48','d) 4.7'],a:0},
-  {q:'¿Cuántas cifras decimales tiene el producto de 1.25 × 0.4?',o:['a) Dos','b) Tres','c) Una','d) Cuatro'],a:1},
-  {q:'¿Cuánto es 0.4 × 0.2?',o:['a) 0.8','b) 8','c) 0.08','d) 0.6'],a:2},
-  {q:'¿Cuánto es 5.63 × 100?',o:['a) 56.3','b) 5,630','c) 0.0563','d) 563'],a:3},
-  {q:'¿Cuánto es 24 × 0.5?',o:['a) 12','b) 48','c) 24.5','d) 2.4'],a:0},
-  {q:'Sin calcular: 9.8 × 4.1 anda cerca de…',o:['a) 4','b) 40','c) 400','d) 0.4'],a:1},
-  {q:'Cuatro libras de azúcar a L 16.25 cuestan…',o:['a) L 20.25','b) L 6.50','c) L 65.00','d) L 650.00'],a:2},
-  {q:'El decimal 0.5 escrito como fracción es…',o:['a) 5/100','b) 1/5','c) 5/10 y no se puede reducir','d) 1/2'],a:3},
-  {q:'¿Cuál de estas operaciones da un resultado MENOR que 30?',o:['a) 30 × 0.9','b) 30 × 1.1','c) 30 × 2','d) 30 × 1.5'],a:0},
-  {q:'¿Cuánto es 7.5 × 0.1?',o:['a) 75','b) 0.75','c) 7.6','d) 0.075'],a:1},
-  {q:'Un producto tiene que llevar tres cifras decimales y la cuenta dio 45. ¿Cómo se escribe?',o:['a) 45.000','b) 4.500','c) 0.045','d) 450'],a:2},
-  {q:'¿Cuánto es 1.2 × 1.2?',o:['a) 2.4','b) 14.4','c) 1.4','d) 1.44'],a:3},
-  {q:'¿Qué error hay en «0.3 × 0.4 = 1.2»?',o:['a) El punto quedó mal: son 0.12','b) La multiplicación está mal hecha','c) Faltó alinear los puntos','d) Ninguno, está bien'],a:0},
-  {q:'¿Cuánto es 0.06 × 10?',o:['a) 0.006','b) 0.6','c) 6','d) 60'],a:1},
-  {q:'Media libra de queso a L 45.00 la libra cuesta…',o:['a) L 90.00','b) L 45.50','c) L 22.50','d) L 4.50'],a:2}
+  {q:'¿Cuánto es 3.2 × 1.5?',o:['a) 4.80','b) 48','c) 0.48','d) 4.7'],a:0,k:'mc-32-15'},
+  {q:'¿Cuántas cifras van después del punto en el resultado de 0.15 × 0.45?',o:['a) 2','b) 4','c) 3','d) 5'],a:1,k:'mc-cifras-025-035'},
+  {q:'¿Cuánto es 0.4 × 0.2?',o:['a) 0.8','b) 8','c) 0.08','d) 0.6'],a:2,k:'mc-04-02'},
+  {q:'¿Cuánto es 5.63 × 100?',o:['a) 56.3','b) 5,630','c) 0.0563','d) 563'],a:3,k:'mc-563-100'},
+  {q:'¿Cuánto es 8 × 0.75?',o:['a) 8.75','b) 0.6','c) 60','d) 6'],a:3,k:'mc-8-075'},
+  {q:'Sin calcular: 9.8 × 4.1 anda cerca de…',o:['a) 4','b) 0.4','c) 40','d) 400'],a:2,k:'mc-estimar'},
+  {q:'Cuatro libras de azúcar a L 16.25 cuestan…',o:['a) L 20.25','b) L 6.50','c) L 65.00','d) L 650.00'],a:2,k:'mc-azucar'},
+  {q:'¿Cuál de estas operaciones da un resultado MENOR que 30?',o:['a) 30 × 0.9','b) 30 × 1.1','c) 30 × 2','d) 30 × 1.5'],a:0,k:'mc-menor-30'},
+  {q:'¿Cuánto es 0.004 × 10?',o:['a) 0.0004','b) 0.04','c) 0.4','d) 4'],a:1,k:'mc-0004-10'},
+  {q:'¿Cuánto es 1.2 × 1.2?',o:['a) 2.4','b) 14.4','c) 1.4','d) 1.44'],a:3,k:'mc-12-12'}
 ];
 const evalCPBank=[
-  {q:'Para multiplicar decimales se multiplica primero como si no hubiera ___.',a:'punto'},
-  {q:'El producto lleva tantas cifras decimales como tengan los dos ___ juntos.',a:'factores'},
-  {q:'El resultado de 2.5 × 1.3 es ___.',a:'3.25'},
-  {q:'El resultado de 0.2 × 0.3 es ___.',a:'0.06'},
-  {q:'Al multiplicar por 10 el punto salta un lugar a la ___.',a:'derecha'},
-  {q:'Al multiplicar por 0.1 el punto salta un lugar a la ___.',a:'izquierda'},
-  {q:'El resultado de 3.47 × 100 es ___.',a:'347'},
-  {q:'Cuando faltan lugares para las cifras decimales se agregan ___ a la izquierda.',a:'ceros'},
-  {q:'La primera cifra después del punto son las ___.',a:'décimas'},
-  {q:'El resultado de 40 × 0.5 es ___.',a:'20'},
-  {q:'Comprobar con números redondos antes de dar el resultado se llama ___.',a:'estimar'},
-  {q:'El decimal 0.25 escrito como fracción reducida es ___.',a:'1/4'},
-  {q:'Tres libras a L 42.50 cuestan L ___.',a:'127.50'},
-  {q:'Al multiplicar por un decimal menor que 1 el resultado ___ (crece o encoge).',a:'encoge'},
-  {q:'El resultado de 1.2 × 1.2 es ___.',a:'1.44'}
+  {q:'1.5 × 3 = ___.',a:'4.5',acc:['4.5'],k:'cp-15-3'},
+  {q:'0.5 × 0.7 = ___.',a:'0.35',acc:['0.35','.35'],k:'cp-05-07'},
+  {q:'2.36 × 10 = ___.',a:'23.6',acc:['23.6'],k:'cp-236-10'},
+  {q:'9.3 × 0.1 = ___.',a:'0.93',acc:['0.93','.93'],k:'cp-93-01'},
+  {q:'0.03 × 3 = ___.',a:'0.09',acc:['0.09','.09'],k:'cp-003-3'},
+  {q:'5 × 1.8 = ___.',a:'9',acc:['9','9.0'],k:'cp-5-18'},
+  {q:'0.7 × 20 = ___.',a:'14',acc:['14','14.0'],k:'cp-07-20'},
+  {q:'6.05 × 100 = ___.',a:'605',acc:['605','605.0'],k:'cp-605-100'},
+  {q:'0.9 × 0.9 = ___.',a:'0.81',acc:['0.81','.81'],k:'cp-09-09'},
+  {q:'1.5 × 12 = ___.',a:'18',acc:['18','18.0'],k:'cp-15-12'}
 ];
 const evalPRBank=[
-  {term:'Multiplicar decimales',def:'Multiplicar como si no hubiera punto y ponerlo al final'},
-  {term:'Cifra decimal',def:'Cada número que va después del punto'},
-  {term:'Factor',def:'Cada uno de los números que se multiplican'},
-  {term:'Producto',def:'El resultado de la multiplicación'},
-  {term:'Décima',def:'La primera cifra después del punto'},
-  {term:'Centésima',def:'La segunda cifra después del punto'},
-  {term:'Milésima',def:'La tercera cifra después del punto'},
-  {term:'Multiplicar por 10',def:'El punto salta un lugar a la derecha'},
-  {term:'Multiplicar por 0.1',def:'El punto salta un lugar a la izquierda'},
-  {term:'Estimar',def:'Calcular con números redondos para ver si el resultado es razonable'},
-  {term:'Cero de relleno',def:'El que se agrega cuando faltan lugares decimales, como en 0.06'},
-  {term:'Decimal menor que 1',def:'Factor que hace encoger el resultado'},
-  {term:'0.25',def:'El decimal que equivale a un cuarto'},
-  {term:'0.5',def:'El decimal que equivale a la mitad'},
-  {term:'Precio por cantidad',def:'Multiplicación que resuelve una compra'}
+  {term:'Factor',def:'Cada uno de los números que se multiplican',k:'pr-factor'},
+  {term:'Producto',def:'El resultado de la multiplicación',k:'pr-producto'},
+  {term:'Cifra decimal',def:'Cada cifra que va después del punto',k:'pr-cifra-decimal'},
+  {term:'Décima',def:'La primera cifra después del punto',k:'pr-decima'},
+  {term:'Centésima',def:'La segunda cifra después del punto',k:'pr-centesima'},
+  {term:'Milésima',def:'La tercera cifra después del punto',k:'pr-milesima'},
+  {term:'Estimar',def:'Calcular con números redondos para ver si el resultado es razonable',k:'pr-estimar'},
+  {term:'Cero de relleno',def:'El que se agrega cuando faltan lugares después del punto',k:'pr-cero-relleno'},
+  {term:'Punto decimal',def:'El signo que separa los enteros de lo que no llega a uno',k:'pr-punto'},
+  {term:'Precio unitario',def:'Lo que cuesta una sola unidad',k:'pr-precio-unitario'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
