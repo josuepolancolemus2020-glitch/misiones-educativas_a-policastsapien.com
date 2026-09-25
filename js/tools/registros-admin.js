@@ -2761,6 +2761,14 @@ th{background:#e8eef9;font-size:11px;}
 .barra svg{display:block;}
 .barra-rot{font-size:12px;margin-bottom:1.5mm;}
 .barra-esc{display:flex;justify-content:space-between;font-size:9.5px;color:#555;margin-top:1mm;}
+/* las barras de TODAS las colectas del grupo: el informe es de una, pero la
+   familia pregunta «¿y la rifa cómo va?», y la respuesta cabe en unas filas */
+table.cols{margin:1mm 0 0;break-inside:avoid;}
+table.cols td{border:none;border-bottom:1px solid #ddd;padding:2px 6px;vertical-align:middle;font-size:11px;}
+table.cols td.cn{width:38%;}
+table.cols td.cn small{color:#555;font-size:9.5px;}
+table.cols td.cd,table.cols td.cp{white-space:nowrap;width:1%;}
+table.cols tr.esta td{font-weight:bold;}
 .firmas{display:flex;gap:14mm;margin-top:14mm;}
 .firma{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:2mm;font-size:11px;}
 .noprint{margin-bottom:5mm;}
@@ -2805,7 +2813,13 @@ ${(() => {
   ${adColectaBarraSvg(c, d, 22)}
   <div class="barra-esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
   ${adColectasCompletasTxt(d)
-    ? `<div class="barra-rot" style="margin-top:2mm">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</div>`
+    ? `<div class="barra-rot" style="margin-top:3mm">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</div>
+  <table class="cols">
+  <tbody>${d.colectas.map(x => `<tr${x.id === c.id ? ' class="esta"' : ''}>
+    <td class="cn">${adEsc(x.concepto)}${x.id === c.id ? ' <em>(este informe)</em>' : ''}<br><small>${adFechaBonita(x.fecha)}</small></td>
+    <td class="cd">${adColectaDieron(x, d)} de ${adColectaEsperados(x, d)}</td>
+    <td class="cp">${adColectaPct(x, d)} %${adColectaCompleta(x, d) ? ' ✔' : ''}</td>
+    <td class="cb">${adColectaBarraSvg(x, d, 10)}</td></tr>`).join('')}</tbody></table>`
     : ''}
 </div>`;
 })()}
