@@ -6603,6 +6603,14 @@ salieron en el camino:
   en el JS de la misión —sin contar los bancos de la evaluación, que es lo que
   se está escribiendo— antes de ponerlo.
 
+**La Ruta de la Forma quedó completa el mismo día**, sus siete misiones y sus
+siete fichas, con la misma forma. En geometría la trampa cambia de cara: los
+nombres de las piezas —cara, arista, vértice, prisma— son justo las palabras
+con que se escriben las demás preguntas («¿cuántas aristas tiene…?»), así que
+no pueden ir en los pareados. Ahí van los que las demás preguntas no usan
+(poliedro, cúspide, patrón, eje, capacidad), y las cuentas se reparten por
+sólido y por dato: cada combinación sale una vez.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

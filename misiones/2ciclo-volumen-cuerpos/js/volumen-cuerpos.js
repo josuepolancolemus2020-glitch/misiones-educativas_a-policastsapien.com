@@ -757,73 +757,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El volumen es el espacio que ocupa un cuerpo.',a:true},
-  {q:'El volumen se mide en centímetros cuadrados (cm²).',a:false},
-  {q:'El volumen de un cubo de 3 cm de arista es 27 cm³.',a:true},
-  {q:'Para hallar el volumen de un prisma se multiplica largo por ancho por alto.',a:true},
-  {q:'En la fórmula del cilindro se usa el diámetro del círculo.',a:false},
-  {q:'Un decímetro cúbico equivale a un litro.',a:true},
-  {q:'Un metro cúbico tiene 100 decímetros cúbicos.',a:false},
-  {q:'El volumen del cilindro también se puede pensar como área de la base por altura.',a:true},
-  {q:'Un tanque de 1 m³ guarda 1,000 litros de agua.',a:true},
-  {q:'Si se duplica la arista de un cubo, su volumen también se duplica.',a:false},
-  {q:'Antes de multiplicar las medidas hay que pasarlas todas a la misma unidad.',a:true},
-  {q:'El área sirve para saber cuánto papel se necesita para forrar una caja.',a:true},
-  {q:'De centímetros cúbicos a decímetros cúbicos se divide entre 1,000.',a:true},
-  {q:'La capacidad de un recipiente y su volumen miden cosas distintas.',a:false},
-  {q:'El volumen de un prisma de 5 × 4 × 2 cm es 40 cm³.',a:true}
+  {q:'Un cubo de 3 cm de arista tiene 27 cm³ de volumen.',a:true,k:'tf-cubo-3'},
+  {q:'Un prisma de 5 × 4 × 2 cm tiene 40 cm³ de volumen.',a:true,k:'tf-prisma-542'},
+  {q:'Un tanque de 1 m³ guarda 100 litros.',a:false,k:'tf-tanque-1'},
+  {q:'Si se duplica la arista de un cubo, su volumen se duplica.',a:false,k:'tf-duplica'},
+  {q:'Un prisma de 10 × 3 × 3 m tiene 90 m³ de volumen.',a:true,k:'tf-prisma-1033'},
+  {q:'De cm³ a dm³ se divide entre 100.',a:false,k:'tf-cm3-dm3'},
+  {q:'Un cubo de 5 cm de arista tiene 25 cm³ de volumen.',a:false,k:'tf-cubo-5'},
+  {q:'Un cilindro de radio 1 m y altura 1 m tiene 3.14 m³ de volumen (usa π = 3.14).',a:true,k:'tf-cilindro-1'},
+  {q:'6 m³ son 600 dm³.',a:false,k:'tf-6m3'},
+  {q:'Una caja de 2 × 2 × 2 m tiene 8 m³ de volumen.',a:true,k:'tf-caja-222'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el volumen de un cubo de 4 cm de arista?',o:['a) 64 cm³','b) 16 cm³','c) 12 cm³','d) 48 cm³'],a:0},
-  {q:'La fórmula del volumen del cilindro es…',o:['a) π × d × h','b) π × r² × h','c) 2 × π × r','d) r² × h'],a:1},
-  {q:'¿Cuántos dm³ hay en 3 m³?',o:['a) 30','b) 300','c) 3,000','d) 3,000,000'],a:2},
-  {q:'¿Qué unidad corresponde al volumen?',o:['a) m','b) m²','c) kg','d) m³'],a:3},
-  {q:'El volumen de un prisma de 6 × 3 × 2 cm es…',o:['a) 36 cm³','b) 11 cm³','c) 18 cm³','d) 22 cm³'],a:0},
-  {q:'Un cilindro tiene 6 cm de diámetro. Su radio es…',o:['a) 12 cm','b) 3 cm','c) 6 cm','d) 36 cm'],a:1},
-  {q:'¿Cuántos litros caben en un tanque de 2 m³?',o:['a) 200','b) 20','c) 2,000','d) 2'],a:2},
-  {q:'Para saber cuánto papel se necesita para forrar una caja se calcula…',o:['a) su volumen','b) su capacidad','c) su peso','d) su área'],a:3},
-  {q:'Si un cubo tiene 8 cm³ de volumen, su arista mide…',o:['a) 2 cm','b) 4 cm','c) 8 cm','d) 3 cm'],a:0},
-  {q:'¿Cuál de estas cantidades NO cabe en 1 m³?',o:['a) 900 litros','b) 1,200 litros','c) 500 dm³','d) 999 litros'],a:1},
-  {q:'El volumen de un cilindro de radio 2 cm y altura 10 cm (con π = 3.14) es…',o:['a) 62.8 cm³','b) 40 cm³','c) 125.6 cm³','d) 12.56 cm³'],a:2},
-  {q:'De decímetros cúbicos a metros cúbicos se…',o:['a) multiplica por 100','b) multiplica por 1,000','c) divide entre 100','d) divide entre 1,000'],a:3},
-  {q:'Si se duplica la arista de un cubo, su volumen se hace…',o:['a) ocho veces mayor','b) el doble','c) cuatro veces mayor','d) igual'],a:0},
-  {q:'Una pila de 2 × 1 × 0.5 m tiene un volumen de…',o:['a) 3.5 m³','b) 1 m³','c) 2 m³','d) 0.5 m³'],a:1},
-  {q:'El volumen del prisma y el del cilindro se calculan los dos con…',o:['a) la suma de las aristas','b) el número de caras','c) el área de la base por la altura','d) el perímetro por dos'],a:2}
+  {q:'¿Cuál es el volumen de un cubo de 4 cm de arista?',o:['a) 64 cm³','b) 16 cm³','c) 12 cm³','d) 48 cm³'],a:0,k:'mc-cubo-4'},
+  {q:'Un prisma de 6 × 3 × 2 cm tiene un volumen de…',o:['a) 36 cm³','b) 11 cm³','c) 18 cm³','d) 22 cm³'],a:0,k:'mc-prisma-632'},
+  {q:'Un cilindro tiene 6 cm de diámetro. Su radio es…',o:['a) 12 cm','b) 3 cm','c) 6 cm','d) 9 cm'],a:1,k:'mc-radio-6'},
+  {q:'¿Cuántos litros caben en un tanque de 2 m³?',o:['a) 200','b) 20','c) 2,000','d) 2'],a:2,k:'mc-tanque-2'},
+  {q:'Si un cubo tiene 1,000 cm³ de volumen, su arista mide…',o:['a) 10 cm','b) 100 cm','c) 333 cm','d) 30 cm'],a:0,k:'mc-arista-1000'},
+  {q:'¿Cuál de estas cantidades NO cabe en 1 m³?',o:['a) 900 litros','b) 1,200 litros','c) 500 dm³','d) 999 litros'],a:1,k:'mc-no-cabe'},
+  {q:'Un cilindro de radio 2 cm y altura 10 cm (usa π = 3.14) tiene un volumen de…',o:['a) 62.8 cm³','b) 40 cm³','c) 125.6 cm³','d) 12.56 cm³'],a:2,k:'mc-cilindro-2-10'},
+  {q:'Si se triplica la arista de un cubo, su volumen se hace…',o:['a) tres veces mayor','b) nueve veces mayor','c) 27 veces mayor','d) seis veces mayor'],a:2,k:'mc-triplica'},
+  {q:'Una pila de 2 × 1 × 0.5 m tiene un volumen de…',o:['a) 3.5 m³','b) 1 m³','c) 2 m³','d) 0.5 m³'],a:1,k:'mc-pila'},
+  {q:'Una pecera de 40 × 20 × 30 cm tiene un volumen de…',o:['a) 90 cm³','b) 2,400 cm³','c) 24,000 cm³','d) 240 cm³'],a:2,k:'mc-pecera'}
 ];
 const evalCPBank=[
-  {q:'El espacio que ocupa un cuerpo se llama ___.',a:'volumen'},
-  {q:'El volumen se mide en unidades ___ (cm³, m³).',a:'cúbicas'},
-  {q:'El volumen del cubo se halla multiplicando la ___ tres veces.',a:'arista'},
-  {q:'El volumen de un cubo de 3 cm de arista es ___ cm³.',a:'27'},
-  {q:'El volumen de un prisma es largo por ancho por ___.',a:'alto'},
-  {q:'En la fórmula del cilindro se usa el ___ del círculo.',a:'radio'},
-  {q:'Un decímetro cúbico equivale a un ___.',a:'litro'},
-  {q:'Un metro cúbico tiene ___ decímetros cúbicos.',a:'1000'},
-  {q:'En un tanque de 1 m³ caben ___ litros de agua.',a:'1000'},
-  {q:'El volumen de un prisma de 5 × 4 × 2 cm es ___ cm³.',a:'40'},
-  {q:'La superficie se mide en cm² y el volumen en ___.',a:'cm³'},
-  {q:'Si el diámetro mide 10 cm, el radio mide ___ cm.',a:'5'},
-  {q:'Al duplicar la arista de un cubo, el volumen se hace ___ veces mayor.',a:'8'},
-  {q:'Lo que cabe dentro de un recipiente se llama ___.',a:'capacidad'},
-  {q:'De cm³ a dm³ se divide entre ___.',a:'1000'}
+  {q:'Un cubo de 6 cm de arista tiene ___ cm³ de volumen.',a:'216',acc:['216'],k:'cp-cubo-6'},
+  {q:'Un prisma de 7 × 2 × 3 m tiene ___ m³ de volumen.',a:'42',acc:['42'],k:'cp-prisma-723'},
+  {q:'5,000 cm³ son ___ dm³.',a:'5',acc:['5','cinco'],k:'cp-5000cm3'},
+  {q:'Un cilindro de radio 3 cm y altura 5 cm tiene ___ cm³ (usa π = 3.14).',a:'141.3',acc:['141.3','141.30'],k:'cp-cilindro-3-5'},
+  {q:'Una caja de 20 × 5 × 4 cm tiene ___ cm³.',a:'400',acc:['400'],k:'cp-caja-2054'},
+  {q:'Un cubo de 7 m de arista tiene ___ m³.',a:'343',acc:['343'],k:'cp-cubo-7'},
+  {q:'8 m³ son ___ dm³.',a:'8,000',acc:['8,000','8000','8 000','8.000'],k:'cp-8m3'},
+  {q:'Un prisma de 12 × 5 × 2 cm tiene ___ cm³.',a:'120',acc:['120'],k:'cp-prisma-1252'},
+  {q:'Una piscina de 8 × 5 × 2 m tiene ___ m³.',a:'80',acc:['80'],k:'cp-piscina'},
+  {q:'La cuarta parte de 1 m³ guarda ___ litros.',a:'250',acc:['250'],k:'cp-cuarto-m3'}
 ];
 const evalPRBank=[
-  {term:'Volumen',def:'El espacio que ocupa un cuerpo'},
-  {term:'Centímetro cúbico',def:'Un cubito de 1 cm por lado'},
-  {term:'Volumen del cubo',def:'Arista por arista por arista'},
-  {term:'Volumen del prisma',def:'Largo por ancho por alto'},
-  {term:'Volumen del cilindro',def:'π por el radio al cuadrado por la altura'},
-  {term:'Área de la base',def:'Lo que se multiplica por la altura en prismas y cilindros'},
-  {term:'Radio',def:'La mitad del diámetro, y lo que va en la fórmula'},
-  {term:'Decímetro cúbico',def:'Equivale exactamente a un litro'},
-  {term:'Metro cúbico',def:'Un cubo de un metro por lado, o 1,000 litros'},
-  {term:'Capacidad',def:'Lo que cabe dentro de un recipiente'},
-  {term:'Área',def:'La superficie, que se mide en unidades cuadradas'},
-  {term:'Escalón de unidades',def:'Cada paso multiplica o divide entre 1,000'},
-  {term:'Altura',def:'Lo alto del cuerpo, el tercer factor de la fórmula'},
-  {term:'Arista',def:'El lado del cubo que se multiplica tres veces'},
-  {term:'π',def:'El número 3.14 que aparece en la fórmula del cilindro'}
+  {term:'Volumen',def:'El espacio que ocupa un cuerpo',k:'pr-volumen'},
+  {term:'Capacidad',def:'Lo que cabe dentro de un recipiente',k:'pr-capacidad'},
+  {term:'Centímetro cúbico',def:'Un cubito de un centímetro por lado',k:'pr-cm3'},
+  {term:'Decímetro cúbico',def:'El cubo que equivale exactamente a un litro',k:'pr-dm3'},
+  {term:'Metro cúbico',def:'Un cubo de un metro por lado',k:'pr-m3'},
+  {term:'Unidades cúbicas',def:'Las que llevan el pequeño 3 arriba',k:'pr-cubicas'},
+  {term:'Área de la base',def:'Lo que se multiplica por la altura en prismas y cilindros',k:'pr-area-base'},
+  {term:'Superficie',def:'Lo que se forra por fuera de una caja',k:'pr-superficie'},
+  {term:'Prisma rectangular',def:'Cuerpo con forma de caja',k:'pr-prisma-rect'},
+  {term:'Litro',def:'La unidad con que se miden los líquidos',k:'pr-litro'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),
