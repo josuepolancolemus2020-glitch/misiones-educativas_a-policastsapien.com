@@ -765,73 +765,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'En la numeración maya, el punto vale 1 y la barra vale 5.',a:true},
-  {q:'Los mayas usaban un sistema de base 10, igual que el nuestro.',a:false},
-  {q:'La concha representa el cero.',a:true},
-  {q:'El número 7 en maya se escribe con una barra y dos puntos.',a:true},
-  {q:'Los números mayas se leen de arriba hacia abajo.',a:false},
-  {q:'En un número maya de dos niveles, el nivel de arriba vale 20 veces más que el de abajo.',a:true},
-  {q:'Al sumar en maya, cinco puntos se cambian por una barra.',a:true},
-  {q:'El kin es el mes maya.',a:false},
-  {q:'El uinal tiene 20 días.',a:true},
-  {q:'El tun tiene 400 días.',a:false},
-  {q:'El uayeb son los cinco días que se añaden al final del haab.',a:true},
-  {q:'El tzolkín es el calendario ritual de 260 días.',a:true},
-  {q:'El haab tiene 365 días.',a:true},
-  {q:'Un katún equivale a 20 tunes.',a:true},
-  {q:'Los mayas nunca usaron el cero en sus cuentas.',a:false}
+  {q:'El punto vale 1 y la barra vale 5.',a:true,k:'tf-valores'},
+  {q:'Los mayas contaban de 10 en 10, igual que nosotros.',a:false,k:'tf-base'},
+  {q:'Tres barras y cuatro puntos forman el 18.',a:false,k:'tf-3b-4p'},
+  {q:'En maya, el 6 se escribe con una barra y un punto.',a:true,k:'tf-seis'},
+  {q:'En un número de dos niveles, el de arriba vale 20 veces más que el de abajo.',a:true,k:'tf-niveles'},
+  {q:'El cero maya se dibujaba como una concha.',a:true,k:'tf-concha'},
+  {q:'Dos barras y un punto forman el 12.',a:false,k:'tf-2b-1p'},
+  {q:'Dos puntos arriba y una barra abajo forman el 45.',a:true,k:'tf-45'},
+  {q:'Un punto arriba y una concha abajo forman el 21.',a:false,k:'tf-21'},
+  {q:'Un número con un punto arriba y un punto abajo vale 2.',a:false,k:'tf-2-niveles'}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto vale el punto en la numeración maya?',o:['a) 1','b) 5','c) 10','d) 20'],a:0},
-  {q:'¿Cómo se escribe el 12 en maya?',o:['a) Una barra y siete puntos','b) Dos barras y dos puntos','c) Doce puntos','d) Tres barras'],a:1},
-  {q:'El símbolo de la concha representa…',o:['a) el 5','b) el 20','c) el 0','d) el 1'],a:2},
-  {q:'La base del sistema de numeración maya es…',o:['a) 5','b) 10','c) 12','d) 20'],a:3},
-  {q:'Un número maya con un punto arriba y una concha abajo vale…',o:['a) 20','b) 10','c) 1','d) 21'],a:0},
-  {q:'¿Cuántos días tiene un uinal?',o:['a) 18','b) 20','c) 260','d) 360'],a:1},
-  {q:'¿Cuántos días tiene un tun?',o:['a) 400','b) 365','c) 360','d) 260'],a:2},
-  {q:'El calendario tzolkín tiene…',o:['a) 365 días','b) 360 días','c) 400 días','d) 260 días'],a:3},
-  {q:'¿Cuántos uinales forman un tun?',o:['a) 18','b) 20','c) 13','d) 5'],a:0},
-  {q:'El uayeb son…',o:['a) los 20 nombres de día','b) los cinco días finales del haab','c) los 13 números del tzolkín','d) los 400 días del baktún'],a:1},
-  {q:'¿Qué número es dos puntos arriba y tres puntos abajo?',o:['a) 23','b) 32','c) 43','d) 5'],a:2},
-  {q:'Al sumar en maya, cuatro barras se cambian por…',o:['a) cinco puntos','b) una concha','c) dos barras','d) un punto del nivel de arriba'],a:3},
-  {q:'Un katún equivale a…',o:['a) 20 tunes','b) 20 kines','c) 18 uinales','d) 5 días'],a:0},
-  {q:'El aporte matemático más famoso de los mayas fue…',o:['a) la tabla del 9','b) el uso del cero','c) los números romanos','d) el sistema decimal'],a:1},
-  {q:'En Honduras, las fechas mayas talladas en piedra se pueden ver sobre todo en…',o:['a) Tegucigalpa','b) Roatán','c) Copán','d) Choluteca'],a:2}
+  {q:'¿Cómo se escribe el 12 en maya?',o:['a) Una barra y siete puntos','b) Dos barras y dos puntos','c) Doce puntos','d) Tres barras'],a:1,k:'mc-doce'},
+  {q:'¿Qué número forman tres barras?',o:['a) 3','b) 6','c) 15','d) 30'],a:2,k:'mc-tres-barras'},
+  {q:'¿Qué número es un punto arriba y dos barras abajo?',o:['a) 21','b) 30','c) 12','d) 3'],a:1,k:'mc-30'},
+  {q:'¿Qué número es dos puntos arriba y tres puntos abajo?',o:['a) 23','b) 32','c) 43','d) 5'],a:2,k:'mc-43'},
+  {q:'¿Cómo se escribe el 40?',o:['a) Dos puntos arriba y una concha abajo','b) Cuatro barras','c) Dos barras arriba','d) Ocho barras'],a:0,k:'mc-40'},
+  {q:'¿Qué número es dos barras y tres puntos?',o:['a) 13','b) 23','c) 18','d) 15'],a:0,k:'mc-13'},
+  {q:'Al sumar 3 + 4 en maya, los siete puntos se escriben como…',o:['a) siete puntos','b) dos barras','c) una barra y dos puntos','d) una concha'],a:2,k:'mc-3-mas-4'},
+  {q:'¿Cuál es el número más grande que cabe en un solo nivel?',o:['a) 7','b) 20','c) 5','d) 19'],a:3,k:'mc-un-nivel'},
+  {q:'El aporte de los mayas que más cambió las matemáticas fue…',o:['a) el uso del cero','b) la tabla del 7','c) los números romanos','d) el sistema decimal'],a:0,k:'mc-aporte'},
+  {q:'¿Qué número es tres puntos arriba y una concha abajo?',o:['a) 3','b) 30','c) 60','d) 300'],a:2,k:'mc-60'}
 ];
 const evalCPBank=[
-  {q:'En la numeración maya el punto vale ___.',a:'1'},
-  {q:'En la numeración maya la barra vale ___.',a:'5'},
-  {q:'El símbolo maya del cero es la ___.',a:'concha'},
-  {q:'El sistema de numeración maya es de base ___.',a:'20'},
-  {q:'Los números mayas se leen de abajo hacia ___.',a:'arriba'},
-  {q:'El día maya se llama ___.',a:'kin'},
-  {q:'El mes maya de 20 días se llama ___.',a:'uinal'},
-  {q:'El tun tiene ___ días.',a:'360'},
-  {q:'Los cinco días finales del haab se llaman ___.',a:'uayeb'},
-  {q:'El calendario ritual maya de 260 días es el ___.',a:'tzolkín'},
-  {q:'El calendario solar maya de 365 días es el ___.',a:'haab'},
-  {q:'Un katún equivale a 20 ___.',a:'tunes'},
-  {q:'Al sumar en maya, cinco puntos se cambian por una ___.',a:'barra'},
-  {q:'Un punto en el segundo nivel vale ___.',a:'20'},
-  {q:'Las estelas con fechas mayas más famosas de Honduras están en ___.',a:'Copán'}
+  {q:'Cuatro puntos y una barra forman el ___.',a:'9',acc:['9','nueve'],k:'cp-9'},
+  {q:'Dos barras y cuatro puntos forman el ___.',a:'14',acc:['14'],k:'cp-14'},
+  {q:'Un punto arriba y cuatro puntos abajo forman el ___.',a:'24',acc:['24'],k:'cp-24'},
+  {q:'Un punto arriba y dos puntos abajo forman el ___.',a:'22',acc:['22'],k:'cp-22'},
+  {q:'Tres barras y dos puntos forman el ___.',a:'17',acc:['17'],k:'cp-17'},
+  {q:'Un punto arriba y una barra abajo forman el ___.',a:'25',acc:['25'],k:'cp-25'},
+  {q:'Dos puntos arriba y dos barras abajo forman el ___.',a:'50',acc:['50'],k:'cp-50'},
+  {q:'El 80 se escribe con ___ puntos arriba y una concha abajo.',a:'4',acc:['4','cuatro'],k:'cp-80'},
+  {q:'8 + 8 en maya da el ___.',a:'16',acc:['16'],k:'cp-8-mas-8'},
+  {q:'Una barra y tres puntos forman el ___.',a:'8',acc:['8','ocho'],k:'cp-8'}
 ];
 const evalPRBank=[
-  {term:'Punto',def:'Símbolo maya que vale 1'},
-  {term:'Barra',def:'Símbolo maya que vale 5'},
-  {term:'Concha',def:'Símbolo maya que representa el cero'},
-  {term:'Sistema vigesimal',def:'El que cuenta de 20 en 20'},
-  {term:'Segundo nivel',def:'Cada símbolo vale 20 veces más'},
-  {term:'Kin',def:'El día en el calendario maya'},
-  {term:'Uinal',def:'Veinte días, el mes maya'},
-  {term:'Tun',def:'Dieciocho uinales, o sea 360 días'},
-  {term:'Uayeb',def:'Los cinco días que cierran el haab'},
-  {term:'Katún',def:'Veinte tunes, casi veinte años'},
-  {term:'Baktún',def:'Veinte katunes, casi cuatrocientos años'},
-  {term:'Tzolkín',def:'Calendario ritual de 260 días'},
-  {term:'Haab',def:'Calendario solar de 365 días'},
-  {term:'Copán',def:'Ciudad maya de Honduras con estelas y fechas talladas'},
-  {term:'El cero maya',def:'Aporte de América a las matemáticas del mundo'}
+  {term:'Kin',def:'El día en el calendario maya',k:'pr-kin'},
+  {term:'Uinal',def:'El mes maya, de veinte días',k:'pr-uinal'},
+  {term:'Tun',def:'Un año de 360 días',k:'pr-tun'},
+  {term:'Katún',def:'Casi veinte años de cuenta',k:'pr-katun'},
+  {term:'Baktún',def:'Casi cuatrocientos años de cuenta',k:'pr-baktun'},
+  {term:'Uayeb',def:'Los cinco días que cierran el año solar',k:'pr-uayeb'},
+  {term:'Tzolkín',def:'El calendario ritual de 260 días',k:'pr-tzolkin'},
+  {term:'Haab',def:'El calendario solar de 365 días',k:'pr-haab'},
+  {term:'Copán',def:'La ciudad maya más famosa de Honduras',k:'pr-copan'},
+  {term:'Estela',def:'Piedra grande tallada con fechas y figuras',k:'pr-estela'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 // La Forma N genera SIEMPRE el mismo examen y la misma pauta («bucle exacto»),

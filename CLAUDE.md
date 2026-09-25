@@ -6580,6 +6580,20 @@ completar y en la suma de al lado. Y de paso se vio que **no leía las opciones
 en fila** (`preg-ops fila`): de la ficha de Fracciones miraba 31 preguntas de
 40 y la daba por limpia. Ya las lee.
 
+**La Ruta del Número quedó completa el 25 de septiembre de 2026**: sus trece
+misiones, con bancos de diez y su `k`, y sus trece fichas. Dos cosas más que
+salieron en el camino:
+
+- ⚠️ **Las fichas no tienen todas el mismo marcado.** La de Fracciones pone las
+  opciones en `preg-ops fila`, la de Numeración Maya las escribe en una línea
+  con `<i></i><u>a</u>`, y la de División de decimales tiene cuatro opciones
+  donde la misión tiene tres. Al reescribir una ficha se respeta el suyo: el
+  encargo es el contenido, no el formato.
+- ⚠️ **La hoja del examen trae teoría, y hay que leerla antes de escribir.** La
+  de Numeración Maya imprime arriba el error «confundir el tzolkín con el haab»
+  con sus 260 y 365 días; la de Multiplicar fracciones, «multiplicar siempre
+  agranda». Lo que esa hoja ya contesta no se pregunta en ella.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
