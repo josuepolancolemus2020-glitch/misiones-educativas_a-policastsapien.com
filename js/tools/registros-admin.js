@@ -1704,6 +1704,13 @@ function adColectaBarraTxt(c, d) {
   const llenos = Math.max(0, Math.min(10, Math.round(adColectaPct(c, d) / 10)));
   return '🟦'.repeat(llenos) + '⬜'.repeat(10 - llenos);
 }
+/* Una colecta está COMPLETA cuando dio todo el que cuenta: la misma regla de
+   la barra llena, con el total corregido (sin los de prueba). Se cuenta por
+   alumnos y no por dinero, igual que la participación: un abono no la cierra. */
+function adColectaCompleta(c, d) {
+  const esp = adColectaEsperados(c, d);
+  return esp > 0 && adColectaDieron(c, d) >= esp;
+}
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
@@ -1726,6 +1733,11 @@ function adColectaTxtResumen(c, d) {
     '🧾 Gastado: *' + adLps(t.gas) + '*\n' +
     (gastos.length ? gastos.map(g => '   • ' + g.d + ': ' + adLps(g.m)).join('\n') + '\n' : '') +
     '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
+    /* con una sola colecta «1 de 1» no dice nada: solo sale si hay más */
+    ((d.colectas || []).length > 1
+      ? '🗂️ Colectas del grupo: *' + d.colectas.filter(x => adColectaCompleta(x, d)).length +
+        ' de ' + d.colectas.length + '* completas\n\n'
+      : '') +
     'Cortado al ' + adFechaBonita(adHoy()) + '.\n_Anotado con M.E.T.A.S_';
 }
 
