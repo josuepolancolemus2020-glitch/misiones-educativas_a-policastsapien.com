@@ -167,8 +167,8 @@ if (!fs.existsSync(MISION)) {
   const letraPlana = limpia(HIMNO.flatMap(e => e.versos).concat(HIMNO_CORO_CANTADO).join(' '));
 
   /* La única excepción, y va nombrada con su motivo: el caso de pensamiento
-     crítico en que una alumna copia el coro MAL, con las repeticiones que se
-     cantan. Ese error está escrito a propósito y es lo que se le pide
+     crítico en que una alumna copia la séptima estrofa MAL, con el primer verso
+     repetido. Ese error está escrito a propósito y es lo que se le pide
      detectar; si coincidiera con el Himno, el caso no tendría gracia. */
   const APROPOSITO = [
     'Por guardar ese emblema divino, por guardar ese emblema divino, marcharemos, oh patria, a la muerte…'

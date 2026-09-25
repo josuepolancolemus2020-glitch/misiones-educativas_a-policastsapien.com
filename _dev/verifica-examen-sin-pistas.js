@@ -247,11 +247,25 @@ function temaDe(items) {
 
 function claves(it) { return [].concat(it.k || []).filter(Boolean); }
 
+/* ⚠️ El NOMBRE de la prueba no delata nada: va impreso en el pie de cada hoja
+   de la ficha y arriba de la pantalla. «Honduras» es la respuesta de «¿con qué
+   título se escribió el Himno?» —«Canto a Honduras»— y la sonda la daba por
+   escrita en la hoja de la séptima estrofa («serán muchos, Honduras, tus
+   muertos»), cuando el pie de esa misma hoja ya dice «El Himno Nacional de
+   Honduras». Las palabras del título solo dejan de contar como pista POR SÍ
+   SOLAS; junto a otra palabra de la pregunta siguen contando, porque ahí sí
+   pueden decir la respuesta. */
+function palabrasTitulo(html) {
+  const t = (String(html).match(/<title>([^<]*)<\/title>/) || [])[1] || '';
+  const limpio = t.replace(/\|[^|]*$/, '').replace(/Ficha Did[aá]ctica|Misi[oó]n/gi, ' ');
+  return new Set(palabras(limpio).map(p => p.r));
+}
+
 /* ¿El ítem Y le deja ver la respuesta del ítem X?
    `nombres`: las palabras que repiten VARIOS de la columna de los
    pareados —«José», «Trinidad»—, que no identifican a nadie: José
    Trinidad Cabañas y José Trinidad Reyes son dos próceres distintos. */
-function pista(X, Y, tema, nombres) {
+function pista(X, Y, tema, nombres, titulo = new Set()) {
   const vistoY = palabras(Y.visible);
   const enY = new Set(vistoY.map(p => p.r));
   const utiles = ps => ps.filter(p => !tema.has(p.r));
@@ -260,7 +274,7 @@ function pista(X, Y, tema, nombres) {
     /* El pareado se contesta EMPAREJANDO: lo delata otra pregunta que
        junte las dos mitades, o que repita el nombre de la de la izquierda. */
     const T = utiles(palabras(X.term)).filter(p => !nombres.has(p.r)), D = utiles(palabras(X.def));
-    const fuerteT = T.filter(p => p.fuerte && enY.has(p.r));
+    const fuerteT = T.filter(p => p.fuerte && !titulo.has(p.r) && enY.has(p.r));
     if (fuerteT.length) return 'repite «' + X.term + '»';
     if (T.some(p => enY.has(p.r)) && D.some(p => enY.has(p.r))) return 'junta «' + X.term + '» con «' + X.def + '»';
     return null;
@@ -268,8 +282,8 @@ function pista(X, Y, tema, nombres) {
 
   if (X.oculto) {
     const O = utiles(palabras(X.oculto));
-    const delata = X.modo === 'mayusculas' ? O.filter(p => p.mayus || p.num)
-      : X.modo === 'fuertes' ? O.filter(p => p.fuerte) : O.filter(p => p.num);
+    const delata = (X.modo === 'mayusculas' ? O.filter(p => p.mayus || p.num)
+      : X.modo === 'fuertes' ? O.filter(p => p.fuerte) : O.filter(p => p.num)).filter(p => !titulo.has(p.r));
     const vistas = [...new Set(delata.filter(p => enY.has(p.r)).map(p => p.r))];
     if (vistas.length) return 'deja escrito «' + vistas.join(', ') + '»';
     if (X.modo !== 'frase') return null;
@@ -279,7 +293,7 @@ function pista(X, Y, tema, nombres) {
 
   const R = utiles(palabras(X.resp || ''));
   if (!R.length) return null;
-  const fuertes = R.filter(p => p.fuerte && enY.has(p.r));
+  const fuertes = R.filter(p => p.fuerte && !titulo.has(p.r) && enY.has(p.r));
   if (fuertes.length) return 'deja escrito «' + fuertes.map(p => p.r).join(', ') + '»';
   const comunes = [...new Set(R.filter(p => enY.has(p.r)).map(p => p.r))];
   if (!comunes.length) return null;
@@ -303,7 +317,7 @@ function nombresRepetidos(items) {
   return new Set([...cuenta].filter(([, n]) => n >= 2).map(([r]) => r));
 }
 
-function revisaPares(items, juntos, tema) {
+function revisaPares(items, juntos, tema, titulo) {
   const choques = [];
   const nombres = nombresRepetidos(items);
   for (let a = 0; a < items.length; a++) {
@@ -314,7 +328,7 @@ function revisaPares(items, juntos, tema) {
         const kc = claves(X).filter(k => claves(Y).includes(k));
         if (kc.length) choques.push({ X, Y, por: 'preguntan el mismo dato (' + kc.join(', ') + ')' });
       }
-      const p = pista(X, Y, tema, nombres);
+      const p = pista(X, Y, tema, nombres, titulo);
       if (p) choques.push({ X, Y, por: 'la segunda ' + p + ', que es la respuesta de la primera' });
     }
   }
@@ -322,7 +336,7 @@ function revisaPares(items, juntos, tema) {
 }
 
 /* Arma las formas con el generador de la misión y cuenta las que chocan. */
-function formasConChoque(gen, rec, bancos, items, tema) {
+function formasConChoque(gen, rec, bancos, items, tema, titulo) {
   const porBanco = {};
   items.forEach(it => { (porBanco[it.banco] = porBanco[it.banco] || [])[it.i] = it; });
   let malas = 0;
@@ -335,7 +349,7 @@ function formasConChoque(gen, rec, bancos, items, tema) {
       if (!Array.isArray(arr)) continue;
       gen.pick(arr.map((_, i) => i), p.n, r).forEach(i => { if (porBanco[p.banco] && porBanco[p.banco][i]) hoja.push(porBanco[p.banco][i]); });
     }
-    const ch = revisaPares(hoja, () => true, tema);
+    const ch = revisaPares(hoja, () => true, tema, titulo);
     if (ch.length) { malas++; if (ejemplos.length < 3) ejemplos.push({ f, ch: ch[0] }); }
   }
   return { malas, ejemplos, fiel: rec.fiel };
@@ -416,9 +430,22 @@ function itemsFicha(html) {
     resp: respIII[i + 1] >= 0 ? p.ops[respIII[i + 1]] || '' : '', ctx: p.q }));
   const defPorLetra = {};
   filas.forEach(f => { const m = f.b.match(/^([A-J])\.\s*(.*)$/); if (m) defPorLetra[m[1]] = m[2]; });
-  filas.filter(f => !/^Columna/i.test(f.a)).forEach((f, i) => {
+  let terminos = filas.filter(f => !/^Columna/i.test(f.a)).map(f => f.a);
+  /* Hay fichas que ponen los pareados en DOS listas en vez de una tabla —la
+     del Himno: «Columna A — Palabra del Himno» y «Columna B — Qué significa»—.
+     Sin leerlas, la sonda contaba 30 preguntas donde hay 40 y daba por limpia
+     una sección que no había mirado. */
+  if (!terminos.length) {
+    const listas = [...(sec('pareados') || '').matchAll(/<ol\b([^>]*)>([\s\S]*?)<\/ol>/g)];
+    const colA = listas.find(l => !/type="A"/.test(l[1])), colB = listas.find(l => /type="A"/.test(l[1]));
+    if (colA && colB) {
+      terminos = [...colA[2].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => limpiaHtml(m[1]));
+      [...colB[2].matchAll(/<li>([\s\S]*?)<\/li>/g)].forEach((m, i) => { defPorLetra['ABCDEFGHIJ'[i]] = limpiaHtml(m[1]); });
+    }
+  }
+  terminos.forEach((t, i) => {
     const def = defPorLetra[respIV[i + 1]] || '';
-    L.push({ banco: 'ficha IV', i: i + 1, tipo: 'pareado', visible: f.a + ' · ' + def, term: f.a, def, resp: '', ctx: '' });
+    L.push({ banco: 'ficha IV', i: i + 1, tipo: 'pareado', visible: t + ' · ' + def, term: t, def, resp: '', ctx: '' });
   });
   const faltan = !Object.keys(respI).length || !Object.keys(respIII).length || !Object.keys(respIV).length;
 
@@ -468,7 +495,7 @@ for (const dir of fs.readdirSync(MIS).sort()) {
   const htmlArchivo = fs.readdirSync(path.join(MIS, dir)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
   const html = htmlArchivo ? fs.readFileSync(path.join(MIS, dir, htmlArchivo), 'utf8') : '';
   const ficha = fichaDe(dir, html);
-  const m = { dir, archivo, src, bancos, conceptual, ficha };
+  const m = { dir, archivo, src, bancos, conceptual, ficha, titulo: palabrasTitulo(html) };
   if (conK === 0) pendientes.push(m);
   else revisadas.push(m);
 }
@@ -489,14 +516,14 @@ function revisa(m, exigir) {
     if (!sinK.length && !rep.length) bien('Conceptual: ' + items.length + ' preguntas, ' + vistas.size + ' datos distintos: ninguno se pregunta dos veces');
   }
   const temaC = temaDe(items);
-  const chC = revisaPares(items, () => true, temaC).filter(c => !c.por.startsWith('preguntan'));
+  const chC = revisaPares(items, () => true, temaC, m.titulo).filter(c => !c.por.startsWith('preguntan'));
   if (exigir) {
     if (chC.length) chC.forEach(c => mal('Conceptual: ' + nombre(c.X) + ' y ' + nombre(c.Y) + ': ' + c.por));
     else bien('Conceptual: ninguna respuesta aparece escrita en otra pregunta, tampoco como opción equivocada');
   }
   const recC = receta(m.src, 'genEval');
   if (gen && recC) {
-    r.conceptual = formasConChoque(gen, recC, m.bancos, items, temaC);
+    r.conceptual = formasConChoque(gen, recC, m.bancos, items, temaC, m.titulo);
     r.conceptual.total = gen.formas;
     if (exigir) {
       if (r.conceptual.malas) mal('Conceptual: ' + r.conceptual.malas + ' de las ' + gen.formas + ' formas llevan un choque');
@@ -514,7 +541,7 @@ function revisa(m, exigir) {
     /* Dos ítems del mismo banco solo caen juntos si de ese banco se sacan
        varios (las causas, los efectos); de los demás sale uno. */
     const juntos = (a, b) => a.banco !== b.banco || (cuantos[a.banco] || 1) > 1;
-    const chK = revisaPares(itemsK, juntos, temaK);
+    const chK = revisaPares(itemsK, juntos, temaK, m.titulo);
     if (exigir) {
       const sinK = itemsK.filter(it => !it.k && it.banco !== 'critDecisionBank');
       sinK.slice(0, 5).forEach(it => mal('Pensamiento crítico, sin `k`: ' + nombre(it)));
@@ -522,7 +549,7 @@ function revisa(m, exigir) {
       if (!sinK.length && !chK.length) bien('Pensamiento crítico: ' + itemsK.length + ' casos, errores, comparaciones, causas y efectos sin pistas cruzadas');
     }
     if (gen) {
-      r.critico = formasConChoque(gen, recK, m.bancos, itemsK.map(it => it), temaK);
+      r.critico = formasConChoque(gen, recK, m.bancos, itemsK.map(it => it), temaK, m.titulo);
       r.critico.total = gen.formas;
       if (exigir) {
         if (r.critico.malas) mal('Pensamiento crítico: ' + r.critico.malas + ' de las ' + gen.formas + ' formas llevan un choque');
@@ -533,17 +560,19 @@ function revisa(m, exigir) {
 
   /* 3 · La ficha */
   if (m.ficha) {
-    const leida = itemsFicha(fs.readFileSync(m.ficha, 'utf8'));
+    const htmlFicha = fs.readFileSync(m.ficha, 'utf8');
+    const leida = itemsFicha(htmlFicha);
+    const tituloF = palabrasTitulo(htmlFicha);
     if (!leida) { if (exigir) ojo('la ficha ' + path.basename(m.ficha) + ' no tiene la forma de siempre: se revisa leyéndola'); }
     else {
       if (leida.faltan && exigir) ojo('la pauta de ' + path.basename(m.ficha) + ' no se pudo leer entera');
       const temaF = temaDe(leida.items);
-      const chF = revisaPares(leida.items, () => true, temaF);
+      const chF = revisaPares(leida.items, () => true, temaF, tituloF);
       if (leida.teoria) {
         const hoja = { banco: 'teoría de la misma hoja', i: '', visible: leida.teoria };
         const nombresF = nombresRepetidos(leida.items);
         leida.items.forEach(X => {
-          const p = pista(X, hoja, temaF, nombresF);
+          const p = pista(X, hoja, temaF, nombresF, tituloF);
           if (p) chF.push({ X, Y: hoja, por: 'la teoría impresa en la misma hoja ' + p + ', que es la respuesta' });
         });
       }

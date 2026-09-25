@@ -2380,9 +2380,9 @@ distinguir mayúsculas ni signos, porque «Infame eslabón» encabeza una tarjet
 y en el Himno va a media frase.
 
 Hay **una excepción, nombrada y con su motivo** dentro de la sonda: el caso de
-pensamiento crítico donde una alumna copia el coro MAL, con las repeticiones
-que se cantan. Ese error está escrito a propósito y es lo que se le pide
-detectar.
+pensamiento crítico donde una alumna copia la séptima estrofa MAL, con el
+primer verso repetido. Ese error está escrito a propósito y es lo que se le
+pide detectar.
 
 ### Se escribe de un modo y se canta de otro
 
@@ -6251,6 +6251,58 @@ Quitaba la vocal final para juntar «blanca» con «blanco», y juntó «canta»
 palabra con mayúscula, así que «José» delataba a José Trinidad Reyes desde José
 Trinidad Cabañas: las palabras que repiten varios nombres de la misma columna no
 identifican a nadie. Es la lección de «Cuadrado **Perfecto**» una vez más.
+
+### La segunda: el Himno Nacional, y lo que enseñó
+
+Se pasó la misma revisión por el Himno (id 68) y estaba igual o peor: **30 de 30
+formas** de la conceptual preguntaban un dato dos veces (169 veces), **29 de 30**
+de pensamiento crítico (73), y la ficha hacía **40 preguntas sobre 25 datos**. La
+selección citaba entero el verso «cinco estrellas de pálido azul» que el completar
+de al lado pedía rellenar, y «Era ___, la libre» iba junto a «¿qué país es el
+León?».
+
+⚠️ **En una misión hecha de partes, el tema de cada parte se pregunta UNA vez.**
+Aquí va en los pareados («La tercera estrofa · La muerte de Lempira»), y el resto
+de la prueba **cita el verso sin decir de qué estrofa es**. Una pregunta que dice
+«en la tercera estrofa, ¿qué es el sepulcro del héroe?» no nombra a Lempira, y aun
+así le dice al alumno cuál de los pareados va con la tercera: eso no lo ve ninguna
+sonda, se ve leyendo. Lo mismo vale para las rutas que se estrenen después con la
+misma forma —próceres, poderes, artículos—.
+
+⚠️ **La hoja 6 de la ficha lleva impresa la séptima estrofa entera**, con sus ocho
+versos numerados y el «por eso es la que se canta en los actos». Así que de esa
+ficha salieron todas las preguntas que esa hoja contesta: cuántos versos tiene una
+parte, cuántas estrofas hay («las otras seis» más esta), cuál se canta, el
+vocabulario de la séptima y la conducta ante el Himno. Siguen en la evaluación de
+la misión, que no comparte hoja con nada.
+
+**Y la sonda aprendió dos cosas, las dos pagadas con un error suyo:**
+
+- **El nombre de la prueba no delata nada por sí solo.** Marcaba «Canto a
+  Honduras» —la respuesta del título original— porque la hoja de la séptima dice
+  «serán muchos, Honduras, tus muertos»; y el pie de esa misma hoja ya dice «El
+  Himno Nacional de Honduras». Las palabras del `<title>` dejan de contar como
+  pista **solas**; junto a otra palabra de la pregunta siguen contando. Se comprobó
+  al revés: una frase con «Canto a Honduras» escrita en otro ítem sale roja.
+- **Hay fichas que ponen los pareados en dos listas y no en una tabla**, y la del
+  Himno es una. La sonda leía 30 preguntas donde hay 40 y **daba por limpia una
+  sección que no había mirado**, que es la forma más cara de mentir. Ahora lee las
+  dos formas, y se comprobó metiendo «lampo» y «resplandor» en un verdadero o
+  falso: salió roja.
+
+⚠️ **Y la revisión encontró tres cosas que no eran de preguntas**, porque una
+pregunta no se escribe sin leer lo que la misión enseña:
+
+1. La misión decía que entre el estreno y el día en que se volvió oficial
+   «pasaron **doce** años»; son 1904 y 1915, **once**, que es lo que decían el
+   archivo de datos, la ficha y la pauta de la propia prueba.
+2. El dato de la primera estrofa —«Honduras es el único país de América donde
+   Colón puso pie en tierra firme»— no lo acredita ninguna fuente del repositorio.
+   Se cambió por uno que se comprueba **leyendo la propia letra**: el Himno nunca
+   dice su nombre, lo llama «el audaz navegante» y «aquel hombre».
+3. El de la quinta decía «la única estrofa que habla de un país que no es
+   Honduras ni España», y la cuarta también habla de Francia: es el León. Lo que
+   solo hace la quinta es **nombrarlo**.
 
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 

@@ -99,7 +99,11 @@ const HIMNO = [
     tema: 'La llegada de Cristóbal Colón',
     resumen: 'Honduras antes de 1502, y el día en que Colón llegó a sus costas.',
     explicacion: 'Le habla a Honduras como a una mujer indígena dormida junto al mar. «El audaz navegante» es Cristóbal Colón, que llegó a estas costas en 1502, en su cuarto viaje. Quedó tan admirado de lo que vio que besó la orilla del mar, «la orla azul de su manto», como quien saluda con respeto.',
-    dato: 'Honduras es el único país de América donde Colón puso pie en tierra firme del continente.',
+    /* El dato que iba aquí —«Honduras es el único país de América donde Colón
+       puso pie en tierra firme»— no lo acredita ninguna fuente del repositorio,
+       y es de los que cada país cuenta a su manera. Este se comprueba leyendo
+       la propia letra, que es la fuente que el alumno tiene delante. */
+    dato: 'El Himno nunca dice su nombre: lo llama «el audaz navegante» y, en la estrofa siguiente, «aquel hombre».',
     palabras: [
       { p: 'India virgen',   s: 'La tierra hondureña antes de la llegada de los europeos' },
       { p: 'cuencas de oro', s: 'Las bahías y ensenadas doradas de la costa' },
@@ -199,7 +203,10 @@ const HIMNO = [
     tema: 'La Revolución Francesa',
     resumen: 'Explica quién era el León: Francia, que se levantó contra su rey y encendió el ejemplo de libertad.',
     explicacion: 'Aquí el poema contesta la pregunta que dejó la estrofa anterior: el León era Francia. Cuenta la Revolución Francesa de 1789, cuando el pueblo despertó furioso llamado por Dantón, uno de sus oradores; mandó a la muerte al rey y puso en su lugar el culto a la Razón. De ahí salieron las ideas de libertad e igualdad que llegaron a América y empujaron la Independencia.',
-    dato: 'Es la única estrofa que habla de un país que no es Honduras ni España.',
+    /* Decía «la única que habla de un país que no es Honduras ni España», y la
+       cuarta también habla de Francia: es el León. Lo que solo hace esta es
+       NOMBRARLO. */
+    dato: 'Es la única estrofa que nombra a otro país, y lo nombra dos veces: Francia.',
     palabras: [
       { p: 'iracunda',  s: 'Llena de ira, furiosa' },
       { p: 'viril',     s: 'Enérgico, valiente' },

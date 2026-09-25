@@ -361,78 +361,95 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+/* UN DATO, UNA PREGUNTA. Cada forma saca 5 preguntas de cada banco al azar,
+   y cualquier par de preguntas de estos cuatro bancos puede caer en la misma
+   hoja. Antes los cuatro preguntaban lo mismo de cuatro maneras: el completar
+   pedía «Era ___, la libre» y la selección de al lado preguntaba qué país es el
+   León; «Hartling» era la respuesta de un pareado y la opción a) de la
+   selección sobre la letra; y la selección citaba entero «cinco estrellas de
+   pálido azul», que era el verso que el completar pedía rellenar. Medido el
+   25 de septiembre de 2026: las 30 formas preguntaban algún dato dos veces,
+   169 veces en total.
+
+   Por eso cada ítem lleva su `k`, el dato que pregunta, y ninguna `k` se
+   repite en los cuatro bancos. Y la respuesta de una pregunta no aparece
+   escrita en otra, ni como opción equivocada: los nombres, los años y los
+   números salen UNA vez. De ahí salen tres decisiones que no son de estilo:
+   - el tema de cada parte se pregunta SOLO en los pareados, y las demás
+     preguntas citan el verso sin decir de qué estrofa es: «En la tercera
+     estrofa…» al lado de «La tercera estrofa · La muerte de Lempira» le dice
+     al alumno cuál es cuál;
+   - la palabra que un completar pide no sale en ninguna otra pregunta, ni en
+     el verso que otra cita;
+   - y el vocabulario de los pareados no se pregunta en otra sección.
+   Lo vigila _dev/verifica-examen-sin-pistas.js. */
 const evalTFBank=[
-  {q:'La letra del Himno Nacional es de Augusto C. Coello.',a:true},
-  {q:'La música del Himno Nacional la compuso un músico alemán, Carlos Hartling.',a:true},
-  {q:'El Himno Nacional tiene un coro y siete estrofas.',a:true},
-  {q:'Cada estrofa del Himno tiene cinco versos.',a:false},
-  {q:'En los actos escolares se canta el coro, la séptima estrofa y otra vez el coro.',a:true},
-  {q:'El coro del Himno describe la Bandera y el Escudo.',a:true},
-  {q:'La primera estrofa habla de la Independencia de Centroamérica.',a:false},
-  {q:'La primera estrofa se refiere a la llegada de Cristóbal Colón.',a:true},
-  {q:'El «extraño pendón» de la segunda estrofa es la bandera de otro país.',a:true},
-  {q:'La tercera estrofa cuenta la muerte de Lempira.',a:true},
-  {q:'Del sepulcro de Lempira se conoce el lugar exacto.',a:false},
-  {q:'La cuarta estrofa habla de los tres siglos de dominio colonial.',a:true},
-  {q:'El León que ruge indignado en la cuarta estrofa es España.',a:false},
-  {q:'La quinta estrofa se refiere a la Revolución Francesa.',a:true},
-  {q:'Dantón fue un orador de la Revolución Francesa.',a:true},
-  {q:'La sexta estrofa cuenta la Independencia de Honduras.',a:true},
-  {q:'El «infame eslabón» representa la cadena de la opresión colonial.',a:true},
-  {q:'La séptima estrofa cuenta un hecho del pasado.',a:false},
-  {q:'La séptima estrofa es el juramento de defender la Bandera.',a:true},
-  {q:'El Himno Nacional se declaró oficial en 1915.',a:true},
+  {q:'El Himno Nacional se declaró oficial en 1915.',a:true,k:'oficial'},
+  {q:'Al escribir el coro se ponen las repeticiones que se oyen al cantarlo.',a:false,k:'escrito-sin-repeticiones'},
+  {q:'«Atlante» es el nombre poético del océano Pacífico.',a:false,k:'atlante'},
+  {q:'«Un país donde el sol se levanta» es España, que queda al oriente.',a:true,k:'e2-pais-sol'},
+  {q:'El Himno escribe con todas sus letras el nombre de Colón.',a:false,k:'e1-colon-sin-nombre'},
+  {q:'El Himno Nacional es uno de los tres símbolos patrios mayores.',a:true,k:'simbolo-mayor'},
+  {q:'Mientras suena el Himno, uno puede quedarse sentado si lo canta.',a:false,k:'respeto-de-pie'},
+  {q:'Si pasa la Bandera mientras suena el Himno, uno se queda quieto.',a:true,k:'respeto-bandera-pasa'},
+  {q:'En la cuarta estrofa, el León ruge de alegría.',a:false,k:'e4-leon-indignado'},
+  {q:'«La alta cabellera de monte salvaje» son los bosques de las montañas.',a:true,k:'e6-cabellera'},
+  {q:'«Cuando erguiste la pálida frente» quiere decir «cuando bajaste la cabeza».',a:false,k:'e2-erguiste'},
+  {q:'«Extasiado» quiere decir admirado ante algo hermoso.',a:true,k:'e1-extasiado'},
+  {q:'«La épica hazaña» es un hecho heroico, digno de contarse.',a:true,k:'e3-epica'},
+  {q:'«Soberbia» quiere decir humilde.',a:false,k:'e5-soberbia'},
+  {q:'«Un mar rumoroso» es un mar que suena con un rumor suave.',a:true,k:'coro-rumoroso'},
 ];
 const evalMCBank=[
-  {q:'¿Quién escribió la letra del Himno Nacional de Honduras?',o:['a) Carlos Hartling','b) Augusto C. Coello','c) Francisco Morazán','d) José Cecilio del Valle'],a:1},
-  {q:'¿Quién compuso la música del Himno Nacional?',o:['a) Carlos Hartling','b) Augusto C. Coello','c) José Trinidad Reyes','d) Ramón Rosa'],a:0},
-  {q:'¿Cómo está formado el Himno Nacional?',o:['a) Tres estrofas y un coro','b) Solo siete estrofas','c) Un coro y siete estrofas','d) Un coro y cinco estrofas'],a:2},
-  {q:'¿Cuántos versos tiene cada estrofa del Himno?',o:['a) Cuatro','b) Seis','c) Diez','d) Ocho'],a:3},
-  {q:'¿Qué describe el coro del Himno Nacional?',o:['a) La Bandera y el Escudo','b) La Independencia','c) La conquista española','d) Los próceres del país'],a:0},
-  {q:'«Cinco estrellas de pálido azul» se refiere a:',o:['a) Los cinco departamentos del sur','b) Las cinco naciones de la antigua Federación de Centroamérica','c) Los cinco próceres','d) Las cinco estrofas cantadas'],a:1},
-  {q:'¿A qué hecho se refiere la primera estrofa?',o:['a) A la muerte de Lempira','b) A la Independencia','c) A la llegada de Cristóbal Colón','d) A la Revolución Francesa'],a:2},
-  {q:'En la segunda estrofa, ¿qué es «un extraño pendón»?',o:['a) Un ave desconocida','b) Una nube con forma rara','c) Un barco perdido','d) La bandera de otro país'],a:3},
-  {q:'¿Qué cuenta la tercera estrofa?',o:['a) La resistencia y la muerte de Lempira','b) La llegada de los españoles','c) La firma del Acta de Independencia','d) El juramento a la Bandera'],a:0},
-  {q:'Según la tercera estrofa, del sepulcro de Lempira se sabe que:',o:['a) Está en la capital','b) Su lugar es ignorado','c) Está en Copán','d) Se perdió en el mar'],a:1},
-  {q:'¿Cuántos siglos de dominio colonial nombra la cuarta estrofa?',o:['a) Dos','b) Cinco','c) Tres','d) Cuatro'],a:2},
-  {q:'En la cuarta estrofa, el León que ruge indignado representa a:',o:['a) España','b) Inglaterra','c) Honduras','d) Francia'],a:3},
-  {q:'¿Qué acontecimiento cuenta la quinta estrofa?',o:['a) La Revolución Francesa','b) La conquista de Honduras','c) La llegada de Colón','d) La Reforma Liberal'],a:0},
-  {q:'¿Qué representa el «infame eslabón» de la sexta estrofa?',o:['a) Una joya del rey','b) La cadena de la opresión colonial','c) El ancla de un barco','d) Un puente sobre el río'],a:1},
-  {q:'¿Por qué la séptima estrofa es la que se canta en los actos?',o:['a) Porque es la más corta','b) Porque la escribió Hartling','c) Porque es el juramento de defender la patria','d) Porque cuenta la llegada de Colón'],a:2},
+  {q:'¿Quién escribió la letra del Himno Nacional?',o:['a) Juan Ramón Molina','b) Augusto C. Coello','c) Froylán Turcios','d) Ramón Rosa'],a:1,k:'autor-letra'},
+  {q:'¿Qué país es el León que ruge al otro lado del Atlante?',o:['a) España','b) Inglaterra','c) Portugal','d) Francia'],a:3,k:'e4-leon'},
+  {q:'¿Qué recuerdan las «cinco estrellas de pálido azul»?',o:['a) Las cinco naciones de la antigua Federación de Centroamérica','b) Los cinco departamentos más poblados del país','c) Los cinco héroes del país','d) Los cinco ríos más largos'],a:0,k:'coro-estrellas'},
+  {q:'¿Qué representa «el infame eslabón» destrozado?',o:['a) Una joya de la corona','b) El ancla de un barco','c) La cadena de la opresión colonial','d) La reja de una cárcel'],a:2,k:'e6-eslabon'},
+  {q:'En el coro, ¿qué es «un astro de nítida luz»?',o:['a) La luna llena','b) Una estrella del mar','c) Un faro del puerto','d) El sol que nace'],a:3,k:'coro-astro'},
+  {q:'¿Cómo está formado el Himno Nacional?',o:['a) Un coro y tres estrofas','b) Un coro y siete estrofas','c) Solo siete estrofas','d) Un coro y cinco estrofas'],a:1,k:'estructura-partes'},
+  {q:'¿Cuántos versos tiene cada parte del Himno?',o:['a) Ocho','b) Cuatro','c) Seis','d) Doce'],a:0,k:'estructura-versos'},
+  {q:'En el acto cívico, ¿qué estrofa se canta junto con el coro?',o:['a) La primera','b) La cuarta','c) La séptima','d) La sexta'],a:2,k:'acto-septima'},
+  {q:'¿Con qué título se escribió el Himno en 1903?',o:['a) «Marcha de la Libertad»','b) «Himno del Pueblo»','c) «Canción de la Montaña»','d) «Canto a Honduras»'],a:3,k:'titulo'},
+  {q:'¿Por qué el Himno dice «enseñastes», con -s?',o:['a) Porque sin esa letra al verso le falta una sílaba','b) Es una falta de ortografía','c) Porque así lo escribía la gente de antes','d) Porque rima con «mundo»'],a:0,k:'e6-enseniastes'},
+  {q:'«La orla azul de tu espléndido manto» es:',o:['a) Un vestido de fiesta','b) La orilla del mar','c) El cielo de la tarde','d) Una manta de lana'],a:1,k:'e1-orla'},
+  {q:'Carlos Hartling compuso la música del Himno. ¿De dónde era?',o:['a) De Guatemala','b) De Italia','c) De Alemania','d) De Estados Unidos'],a:2,k:'autor-musica'},
+  {q:'«Tu inútil reclamo en la atmósfera azul se perdió» quiere decir que:',o:['a) Las quejas del pueblo no las escuchaba nadie','b) El viento se llevó una carta','c) Una canción se oía muy lejos','d) El cielo se nubló de repente'],a:0,k:'e4-reclamo'},
+  {q:'«India virgen y hermosa dormías»: ¿a quién le habla el poema?',o:['a) A una muchacha del pueblo','b) A la luna del Caribe','c) A la madre de un soldado','d) A la tierra hondureña, antes de los europeos'],a:3,k:'e1-india'},
+  {q:'«Aquel hombre te había soñado y en tu busca a la mar se lanzó» quiere decir que:',o:['a) Llegó por casualidad, perdido en el mar','b) Ya pensaba en estas tierras y salió a buscarlas','c) Venía huyendo de una guerra','d) Nunca quiso cruzar el mar'],a:1,k:'e2-sonado'},
 ];
 const evalCPBank=[
-  {q:'Tu bandera es un ___ de cielo.',a:'lampo'},
-  {q:'Por un bloque de ___ cruzado.',a:'nieve'},
-  {q:'Cinco estrellas de ___ azul.',a:'pálido'},
-  {q:'India virgen y hermosa ___.',a:'dormías'},
-  {q:'El audaz ___ te halló.',a:'navegante'},
-  {q:'Ya flotaba un extraño ___.',a:'pendón'},
-  {q:'Porque envuelto en su sangre ___.',a:'Lempira'},
-  {q:'Y el severo perfil de un ___.',a:'peñón'},
-  {q:'Por tres ___ tus hijos oyeron.',a:'siglos'},
-  {q:'Indignado rugía un ___.',a:'León'},
-  {q:'Era ___, la libre, la heroica.',a:'Francia'},
-  {q:'Al reclamo viril de ___.',a:'Dantón'},
-  {q:'Destrozado el infame ___.',a:'eslabón'},
-  {q:'Por guardar ese ___ divino.',a:'emblema'},
-  {q:'Pero todos caerán con ___.',a:'honor'},
+  {q:'Por un bloque de ___ cruzado.',a:'nieve',k:'coro-nieve'},
+  {q:'De un volcán tras la cima ___.',a:'desnuda',k:'coro-cima'},
+  {q:'Cuando echada en tus cuencas de ___.',a:'oro',k:'e1-cuencas'},
+  {q:'Más allá del Atlante ___.',a:'azulado',k:'e2-azulado'},
+  {q:'En la viva ansiedad de tu ___.',a:'anhelo',k:'e2-anhelo'},
+  {q:'Y el severo perfil de un ___.',a:'peñón',k:'e3-penon'},
+  {q:'El mandato imperioso del ___.',a:'amo',k:'e4-amo'},
+  {q:'Percibió, poderoso y ___.',a:'distante',k:'e4-distante'},
+  {q:'Al reclamo viril de ___.',a:'Dantón',k:'e5-danton'},
+  {q:'El altar de la diosa ___.',a:'Razón',k:'e5-razon'},
+  {q:'De tu sueño ___ y profundo.',a:'servil',k:'e6-servil'},
+  {q:'Como un ave de negro ___.',a:'plumaje',k:'e6-plumaje'},
+  {q:'Por guardar ese emblema ___.',a:'divino',k:'e7-divino'},
+  {q:'Pero todos caerán con ___.',a:'honor',k:'e7-honor'},
+  {q:'El Himno se estrenó el 15 de septiembre de ___.',a:'1904',k:'estreno'},
 ];
 const evalPRBank=[
-  {term:'El coro',def:'Describe la Bandera y el Escudo'},
-  {term:'Primera estrofa',def:'La llegada de Cristóbal Colón'},
-  {term:'Segunda estrofa',def:'El extraño pendón sobre nuestro cielo'},
-  {term:'Tercera estrofa',def:'La resistencia y la muerte de Lempira'},
-  {term:'Cuarta estrofa',def:'Los tres siglos de colonia'},
-  {term:'Quinta estrofa',def:'La Revolución Francesa y Dantón'},
-  {term:'Sexta estrofa',def:'La Independencia y el eslabón roto'},
-  {term:'Séptima estrofa',def:'El juramento de defender la Bandera'},
-  {term:'Augusto C. Coello',def:'Escribió la letra del Himno'},
-  {term:'Carlos Hartling',def:'Compuso la música del Himno'},
-  {term:'Lampo',def:'Resplandor, destello de luz'},
-  {term:'Pendón',def:'Bandera o estandarte'},
-  {term:'Eslabón',def:'Anillo de una cadena'},
-  {term:'Peñón',def:'Monte de piedra donde cayó Lempira'},
-  {term:'1915',def:'Año en que se declaró oficial'},
+  {term:'El coro',def:'Describe la Bandera y el Escudo',k:'coro-tema'},
+  {term:'La primera estrofa',def:'La llegada de Cristóbal Colón',k:'e1-tema'},
+  {term:'La segunda estrofa',def:'Ya ondea sobre el país una bandera ajena',k:'e2-tema'},
+  {term:'La tercera estrofa',def:'La resistencia y la muerte de Lempira',k:'e3-tema'},
+  {term:'La cuarta estrofa',def:'Los tres siglos de colonia',k:'e4-tema'},
+  {term:'La quinta estrofa',def:'Un pueblo que despierta y se levanta contra su rey',k:'e5-tema'},
+  {term:'La sexta estrofa',def:'La Independencia',k:'e6-tema'},
+  {term:'La séptima estrofa',def:'El juramento de defender la patria',k:'e7-tema'},
+  {term:'«lampo»',def:'Resplandor, destello de luz',k:'voc-lampo'},
+  {term:'«dombo»',def:'La bóveda del cielo',k:'voc-dombo'},
+  {term:'«sepulcro»',def:'Tumba',k:'voc-sepulcro'},
+  {term:'«iracunda»',def:'Llena de ira, furiosa',k:'voc-iracunda'},
+  {term:'«fugaz»',def:'Que dura poco y se va deprisa',k:'voc-fugaz'},
+  {term:'«pliegues»',def:'Los dobleces de una tela',k:'voc-pliegues'},
+  {term:'«audaz»',def:'Atrevido, que no tiene miedo',k:'voc-audaz'},
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -518,81 +535,98 @@ function evalSwitchMode(mode){
     cBtn.classList.add('active');cBtn.setAttribute('aria-selected','true');
   }
 }
+/* La misma regla que en la conceptual, y aquí muerde más: esta prueba se
+   contesta escribiendo, así que el dato que otra sección deja a la vista se
+   copia tal cual. Pasaba: «Corrige el error» pedía escribir que el que muere
+   en la tercera estrofa es LEMPIRA, y la causa de la misma hoja decía «nunca
+   se supo dónde quedó enterrado el cacique Lempira»; el error del León pedía
+   FRANCIA y el efecto de al lado decía «la quinta estrofa habla de Francia».
+   Medido el 25 de septiembre de 2026: 29 de las 30 formas preguntaban algún
+   dato dos veces, 73 veces en total.
+
+   Ahora cada caso, error, comparación, causa y efecto lleva su `k`, y lo que
+   una sección pide no aparece en otra. Por eso los casos cuentan CONDUCTAS o
+   situaciones, y la pauta de los errores escribe en MAYÚSCULAS lo que el
+   alumno tiene que poner: eso es lo que no puede salir en ninguna otra parte.
+
+   ⚠️ El primer caso copia un verso dos veces A PROPÓSITO: es el error que el
+   alumno tiene que ver. Por eso _dev/verifica-himno.js lo nombra como la
+   única cita que no coincide con el Himno. */
 const critCaseBank=[
-  {txt:'En el acto del lunes, un alumno de sexto grado canta el coro y después se queda callado cuando empieza la séptima estrofa, porque no se la sabe.'},
-  {txt:'Una alumna de noveno copia en el examen la séptima estrofa así: «Por guardar ese emblema divino, por guardar ese emblema divino, marcharemos, oh patria, a la muerte…».'},
-  {txt:'Un maestro explica que el coro del Himno no cuenta ninguna historia: describe la Bandera y el Escudo con palabras.'},
-  {txt:'Un niño pregunta por qué en la tercera estrofa dice que la lucha del indio fue «inútil», si Lempira es el héroe nacional.'},
-  {txt:'En clase se comenta que la quinta estrofa del Himno habla de Francia y de la diosa Razón, y alguien dice que eso no tiene nada que ver con Honduras.'},
-  {txt:'Una alumna dice que el Himno tiene cuatro estrofas, porque son las que alcanzó a escuchar en el desfile.'},
+  {txt:'Una alumna de noveno copia en el examen una estrofa así: «Por guardar ese emblema divino, por guardar ese emblema divino, marcharemos, oh patria, a la muerte…».',k:'caso-verso-repetido'},
+  {txt:'En el recreo, un grupo canta el Himno Nacional cambiándole la letra para hacer reír a los demás.',k:'caso-letra-broma'},
+  {txt:'En clase alguien dice que una estrofa del Himno habla de otro país, y que eso no tiene nada que ver con Honduras.',k:'caso-otro-pais'},
+  {txt:'Mientras suena el Himno, pasa la escolta con la Bandera y un alumno se pone a buscar algo en su mochila.',k:'caso-bandera-pasa'},
+  {txt:'En septiembre, una tienda pone el Himno Nacional de música de fondo para atraer clientes.',k:'caso-musica-fondo'},
+  {txt:'En el acto del lunes, un alumno canta el Himno con las manos en los bolsillos y mascando chicle.',k:'caso-chicle'},
 ];
 const critCaseQuestions=[
-  '1. ¿De qué parte del Himno habla este caso: del coro o de alguna estrofa? ¿De cuál?',
-  '2. ¿Lo que se dice o se hace en el caso es correcto? ¿Por qué?',
-  '3. ¿Qué cuenta o qué describe esa parte del Himno?',
-  '4. ¿Qué le explicarías tú a ese compañero para que le quede claro?',
+  '1. ¿Qué pasa en este caso?',
+  '2. ¿Lo que se dice o se hace es correcto? ¿Por qué?',
+  '3. ¿Qué parte del Himno, o qué norma de respeto, te sirve para responder?',
+  '4. ¿Qué le explicarías tú a esa persona para que le quede claro?',
 ];
 const critCaseGuides=[
-  'Puede ser el coro —que describe la Bandera y el Escudo— o una de las siete estrofas, cada una con su tema: Colón, la conquista, Lempira, la colonia, Francia y la Independencia.',
-  'Se valora que el alumno distinga lo cantado de lo escrito (las repeticiones son de la música), que sepa que el Himno tiene un coro y SIETE estrofas, y que en los actos se canta el coro y la séptima.',
-  'Cada parte tiene un trabajo: el coro pinta los símbolos; las seis primeras estrofas cuentan la historia en orden; la séptima es la promesa de defender la patria.',
-  'Respuesta abierta. Se valora que explique con respeto y con un dato concreto del Himno, no que se burle del compañero.',
+  'Se valora que cuente la situación con sus palabras: quién hace qué y en qué momento.',
+  'Se valora que diga si está bien o mal y lo sostenga: escrito, cada verso va una sola vez; el Himno se canta de pie, firme y con respeto, sin cambiarle la letra ni usarlo de fondo.',
+  'Una estrofa que habla de otro país cuenta el ejemplo de libertad que empujó la Independencia. Ante el Himno se está de pie, firme, quieto si pasa la Bandera, y se canta.',
+  'Respuesta abierta. Se valora que explique con respeto y con un dato concreto, no que se burle.',
 ];
 const critErrorBank=[
   {txt:'"La letra del Himno Nacional la escribió Carlos Hartling y la música es de Augusto C. Coello."',
-   g1:'Es al revés: la LETRA es de Augusto C. Coello, escritor hondureño.',
-   g2:'La MÚSICA es de Carlos Hartling, músico alemán que vivió en Honduras.'},
-  {txt:'"El Himno Nacional tiene tres estrofas y en los actos escolares se canta la primera."',
-   g1:'El Himno tiene un coro y SIETE estrofas, de ocho versos cada una.',
-   g2:'En los actos se canta el coro, la SÉPTIMA estrofa y otra vez el coro.'},
-  {txt:'"El coro del Himno cuenta la llegada de Cristóbal Colón a Honduras."',
-   g1:'El coro NO cuenta historia: describe la Bandera y el Escudo.',
-   g2:'La llegada de Colón se cuenta en la PRIMERA estrofa: «el audaz navegante te halló».'},
-  {txt:'"En la tercera estrofa del Himno, el héroe que muere envuelto en su sangre es Francisco Morazán."',
-   g1:'El de la tercera estrofa es LEMPIRA, el cacique lenca que resistió la conquista hacia 1537.',
-   g2:'Francisco Morazán NO aparece en el Himno; el único hondureño nombrado es Lempira.'},
-  {txt:'"El León que ruge indignado al otro lado del Atlante, en la cuarta estrofa, es España."',
-   g1:'El León es FRANCIA, y la quinta estrofa lo dice con su nombre: «Era Francia, la libre, la heroica».',
-   g2:'España es de donde vino Colón —«un país donde el sol se levanta»— y quien mantuvo la colonia tres siglos.'},
-  {txt:'"El Himno se escribió en 1821, el año de la Independencia, y se volvió oficial ese mismo día."',
+   g1:'Es al revés: la letra es de AUGUSTO C. COELLO, escritor hondureño.',
+   g2:'La música es de CARLOS HARTLING, músico alemán que vivió en Honduras.',k:'err-autores'},
+  {txt:'"El Himno Nacional tiene un coro y tres estrofas de cuatro versos cada una."',
+   g1:'Tiene un coro y SIETE estrofas.',
+   g2:'Cada parte tiene OCHO versos, no cuatro.',k:'err-estructura'},
+  {txt:'"En los actos escolares se canta la primera estrofa, que es la que promete defender la patria."',
+   g1:'No es la primera: se canta la SÉPTIMA, entre el coro y el coro.',
+   g2:'La que PROMETE defender la patria es la séptima; la primera cuenta un hecho del pasado.',k:'err-acto'},
+  {txt:'"En la tercera estrofa, el héroe que muere envuelto en su sangre es Francisco Morazán, y el Himno dice dónde está su tumba."',
+   g1:'El que muere es LEMPIRA, el cacique lenca que dirigió la resistencia; Morazán no aparece en el Himno.',
+   g2:'El Himno dice lo contrario: el lugar de su sepulcro es IGNORADO, nadie sabe dónde está.',k:'err-lempira'},
+  {txt:'"El León que ruge de alegría al otro lado del Atlante es España."',
+   g1:'El León es FRANCIA: la estrofa siguiente lo dice con su nombre.',
+   g2:'Y no ruge de alegría: ruge INDIGNADO, enojado por una injusticia.',k:'err-leon'},
+  {txt:'"El Himno se escribió en 1821 y se volvió oficial ese mismo año."',
    g1:'La letra se escribió en 1903 y se cantó por primera vez el 15 de septiembre de 1904.',
-   g2:'Se declaró oficial en 1915: pasaron once años entre el estreno y el decreto.'},
+   g2:'Se declaró oficial en 1915, once años después de su estreno.',k:'err-fechas'},
 ];
 const critDecisionBank=[
   'Cuando empieza el Himno Nacional en el acto cívico, conviene ponerse de pie y cantarlo, o quedarse sentado esperando a que termine.',
-  'Para aprenderse la séptima estrofa antes del examen, conviene estudiarla verso por verso entendiendo lo que dice, o repetirla de corrido sin saber qué significa.',
-  'Al copiar el coro en el examen, conviene escribirlo como está escrito, o copiarlo con las repeticiones que se cantan («Tu bandera, tu bandera…»).',
+  'Para aprenderse una estrofa antes del examen, conviene estudiarla verso por verso entendiendo lo que dice, o repetirla de corrido sin saber qué significa.',
+  'Si en el acto el Himno suena grabado en una bocina, conviene cantarlo igual, o quedarse callado escuchando la grabación.',
   'Si un compañero dice que el Himno tiene cinco estrofas, conviene mostrarle la letra completa y contarlas juntos, o reírse de él delante de todos.',
   'Para explicar una estrofa en el examen, conviene decir con tus palabras de qué habla y qué significan sus palabras difíciles, o volver a copiar la estrofa más bonito.',
 ];
-const critDecisionGuide='La mejor decisión respeta el Himno y respeta a las personas: ante el Himno se está de pie y se canta; una estrofa se estudia entendiéndola, no repitiéndola a ciegas; escrito, el verso va una sola vez, sin las repeticiones de la música; explicar es decirlo con tus palabras, no volver a copiarlo; y a un compañero equivocado se le corrige con respeto y con el dato en la mano.';
+const critDecisionGuide='La mejor decisión respeta el Himno y respeta a las personas: ante el Himno se está de pie y se canta, aunque suene grabado; una estrofa se estudia entendiéndola, no repitiéndola a ciegas; explicar es decirlo con tus palabras, no volver a copiarlo; y a un compañero equivocado se le corrige con respeto y con la letra en la mano.';
 const critCompareBank=[
-  {a:'Parte del Himno que describe la Bandera y el Escudo.',b:'Parte del Himno que promete defender la patria hasta la muerte.',
+  {a:'Parte del Himno que no cuenta historia: pinta los símbolos con palabras.',b:'Parte del Himno que cuenta cómo un navegante llegó a estas costas.',
    ga:'El coro.',
-   gb:'La séptima estrofa.',
-   gr:'Las dos se cantan en el acto cívico, pero hacen cosas distintas: el coro PINTA los símbolos y no cuenta historia, y la séptima es la única que mira al futuro, porque promete.'},
-  {a:'Estrofa que cuenta la llegada de Cristóbal Colón a las costas de Honduras.',b:'Estrofa que cuenta la muerte de Lempira y el peñón que lo recuerda.',
-   ga:'La primera estrofa.',
-   gb:'La tercera estrofa.',
-   gr:'Las dos cuentan la época de la conquista, pero la primera es el encuentro —Colón admirado besa la orilla del mar— y la tercera es la resistencia que termina en derrota.'},
-  {a:'Estrofa que resume los tres siglos de la colonia y oye rugir a un León.',b:'Estrofa que dice quién era ese León y cuenta su revolución.',
+   gb:'La primera estrofa.',
+   gr:'Las dos hablan de Honduras, pero de distinta manera: el coro PINTA la Bandera y el Escudo y no cuenta nada; la primera estrofa sí cuenta un hecho, la llegada de Colón, sin decir nunca su nombre.',k:'cmp-coro-primera'},
+  {a:'Estrofa en la que ya ondea sobre el país una bandera ajena.',b:'Estrofa en la que el país despierta de su sueño servil.',
+   ga:'La segunda estrofa.',
+   gb:'La sexta estrofa.',
+   gr:'Las dos son un despertar con signo contrario: en la segunda, al levantar la frente, el país ya tiene encima una bandera extraña y empieza la conquista; en la sexta despierta para romper la cadena y ser libre.',k:'cmp-segunda-sexta'},
+  {a:'Estrofa que resume los tres siglos de la colonia y oye rugir a un León.',b:'Estrofa que dice quién era ese León.',
    ga:'La cuarta estrofa.',
    gb:'La quinta estrofa.',
-   gr:'Van pegadas y hay que leerlas juntas: la cuarta deja la pregunta —un León ruge al otro lado del Atlante— y la quinta la contesta: era Francia.'},
+   gr:'Van pegadas y hay que leerlas juntas: la cuarta deja la pregunta, un León que ruge al otro lado del Atlante, y la quinta la contesta con su nombre: era Francia.',k:'cmp-cuarta-quinta'},
 ];
 const critCauseBank=[
-  {cause:'La música del Himno repite pedazos del coro para que cuadre con la melodía.',guide:'Por eso cantado se oye «Tu bandera, tu bandera…», pero escrito el verso va UNA sola vez.'},
-  {cause:'El Himno completo es largo: un coro y siete estrofas de ocho versos cada una.',guide:'Por eso en los actos escolares se canta solo el coro y la séptima estrofa.'},
-  {cause:'Las seis primeras estrofas cuentan la historia de Honduras en orden.',guide:'Por eso el Himno se puede estudiar como una película: Colón, la conquista, Lempira, la colonia, Francia y la Independencia.'},
-  {cause:'Nunca se supo dónde quedó enterrado el cacique Lempira.',guide:'Por eso la tercera estrofa dice que de aquella hazaña solo quedaron la leyenda, un sepulcro ignorado y el perfil de un peñón.'},
-  {cause:'Los versos del Himno tienen que medir todos lo mismo para que la música les calce.',guide:'Por eso la sexta estrofa dice «enseñastes» con -s: sin esa letra al verso le faltaría una sílaba.'},
+  {cause:'Los versos del Himno tienen que medir todos lo mismo para que la música les calce.',guide:'Por eso el Himno dice «enseñastes», con -s: sin esa letra al verso le faltaría una sílaba.',k:'causa-medida'},
+  {cause:'Dantón llamó con fuerza a su pueblo a despertar.',guide:'Por eso el Himno dice que aquel pueblo despertó «al reclamo viril de Dantón».',k:'causa-danton'},
+  {cause:'España quedaba al otro lado del océano y mandaba desde lejos.',guide:'Por eso el Himno dice que el reclamo de los hijos «en la atmósfera azul se perdió»: nadie lo escuchaba.',k:'causa-lejos'},
+  {cause:'Los que defienden la patria están dispuestos a dar la vida por ella.',guide:'Por eso el Himno dice que, aunque sean muchos los muertos, «todos caerán con honor».',k:'causa-honor'},
+  {cause:'El Himno es un poema que cuenta de dónde viene Honduras.',guide:'Por eso, para explicar una estrofa, hay que saber qué pasó en ella: no basta con cantarla.',k:'causa-poema'},
 ];
 const critEffectBank=[
-  {effect:'La séptima estrofa es la que se canta en las escuelas y en los partidos.',guide:'Porque es la única que no cuenta el pasado: es el juramento de defender la Bandera, y eso vale para hoy.'},
-  {effect:'La quinta estrofa del Himno habla de Francia, de Dantón y de la diosa Razón.',guide:'Porque de la Revolución Francesa salieron las ideas de libertad e igualdad que llegaron a América y empujaron la Independencia.'},
-  {effect:'El coro nombra un mar, un volcán y un astro de nítida luz.',guide:'Porque está describiendo el Escudo Nacional: el mar que lo rodea, el volcán entre las torres y el sol naciente sobre la cima.'},
-  {effect:'En la segunda estrofa Honduras levanta la frente y ya ondea «un extraño pendón».',guide:'Porque ese es el momento en que empieza la conquista: la bandera que ondea sobre el país es la de otra nación.'},
-  {effect:'La sexta estrofa habla de un «infame eslabón» destrozado.',guide:'Porque el eslabón es la cadena de la opresión colonial, y romperla es la Independencia del 15 de septiembre de 1821.'},
+  {effect:'El Himno habla de un «infame eslabón» destrozado.',guide:'Porque el eslabón es un anillo de la cadena de la opresión colonial, y romperlo es la Independencia.',k:'efecto-eslabon'},
+  {effect:'La palabra «Atlante» aparece dos veces en el Himno.',guide:'Porque es el mar por donde llegó todo lo que cambió a Honduras: primero la conquista, después el ejemplo de libertad.',k:'efecto-atlante'},
+  {effect:'En el examen te pueden preguntar quién es «el audaz navegante».',guide:'Porque el Himno nunca escribe su nombre: hay que saber que es Cristóbal Colón.',k:'efecto-navegante'},
+  {effect:'El Himno habla del «altar de la diosa Razón».',guide:'Porque aquella revolución puso el culto a la razón en el lugar de la religión.',k:'efecto-razon'},
+  {effect:'El Himno le habla a Honduras como a una «India virgen y hermosa» que dormía.',guide:'Porque la compara con una mujer indígena dormida junto al mar: así era la tierra antes de que llegaran los europeos.',k:'efecto-india'},
 ];
 function genEvalCrit(){
   sfx('click');
@@ -617,7 +651,7 @@ function genEvalCrit(){
   out.appendChild(s3);
   const cmp=_pickF(critCompareBank,1,rngC)[0];
   const s4=document.createElement('div');
-  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+  s4.innerHTML=`<div class="eval-section-title">IV. Comparación razonada <span class="eval-pts">20 pts</span></div><div class="eval-item"><div class="crit-compare-grid"><div class="crit-compare-box"><h5>Caso A</h5>${cmp.a}</div><div class="crit-compare-box"><h5>Caso B</h5>${cmp.b}</div></div><div class="crit-q-block"><div class="crit-q-label">1. ¿Qué parte del Himno corresponde a cada caso? 2. ¿Qué característica tiene cada una? 3. ¿Por qué no son lo mismo?</div><textarea class="crit-textarea" rows="4" aria-label="Comparación razonada de los casos A y B"></textarea><div class="crit-pauta">Caso A: ${cmp.ga} · Caso B: ${cmp.gb} · ${cmp.gr}</div></div><div class="crit-selfscore"><label for="critScore3">Obtenido:</label><input type="number" id="critScore3" class="crit-score-input" data-score="3" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
   out.appendChild(s4);
   const causes=_pickF(critCauseBank,2,rngC),effects=_pickF(critEffectBank,3,rngC);
   let ceRows='';
@@ -651,7 +685,7 @@ function printEvalCrit(){
   critCaseQuestions.forEach(q=>{s1+=`<p class="crit-print-q">${q}</p>${lines(1)}`;});
   let s2=`<div class="sec-title"><span>II. Corrige el error</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.err.txt}</p><p class="crit-print-q">Identifica dos errores y corrígelos con tus propias palabras:</p><p class="crit-print-q"><strong>Error 1:</strong></p>${lines(1)}<p class="crit-print-q"><strong>Error 2:</strong></p>${lines(1)}`;
   let s3=`<div class="sec-title"><span>III. Toma de decisiones: el Himno y su estudio</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><p class="crit-print-scenario">${d.dec}</p><p class="crit-print-q">¿Qué opción recomendarías? Explica por qué, relacionándolo con lo que dice el Himno y con el respeto que se le debe.</p>${lines(2)}`;
-  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué cultura, lugar o concepto corresponde a cada caso? 2. ¿Qué característica tiene cada uno? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
+  let s4=`<div class="sec-title"><span>IV. Comparación razonada</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20</span></div></div><div class="crit-compare-print-grid"><div class="crit-compare-print-box"><strong>Caso A:</strong> ${d.cmp.a}</div><div class="crit-compare-print-box"><strong>Caso B:</strong> ${d.cmp.b}</div></div><p class="crit-print-q">1. ¿Qué parte del Himno corresponde a cada caso? 2. ¿Qué característica tiene cada una? 3. ¿Por qué no son lo mismo?</p>${lines(2)}`;
   let ceTbl='<table class="crit-print-tbl"><tr><th>Causa</th><th>Efecto</th></tr>';
   d.causes.forEach(it=>{ceTbl+=`<tr><td>${it.cause}</td><td></td></tr>`;});
   d.effects.forEach(it=>{ceTbl+=`<tr><td></td><td>${it.effect}</td></tr>`;});
