@@ -727,45 +727,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200); });
 
 // ===================== EVALUACIÓN FINAL (CONCEPTUAL) =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un ángulo recto mide exactamente 90°.',a:true},
-  {q:'Un ángulo agudo mide más de 90°.',a:false},
-  {q:'El ángulo llano mide 180° y forma una línea recta.',a:true},
-  {q:'El transportador sirve para medir longitudes.',a:false},
-  {q:'Dos ángulos complementarios suman 90°.',a:true},
-  {q:'Un ángulo obtuso mide menos de 90°.',a:false},
-  {q:'El vértice es el punto donde se unen los lados de un ángulo.',a:true},
-  {q:'Un ángulo completo mide 180°.',a:false},
-  {q:'Dos ángulos suplementarios suman 180°.',a:true},
-  {q:'La bisectriz divide un ángulo en dos partes iguales.',a:true}
+  {q:'El complemento de 70° es 20°.',a:true,k:'tf-comp-70'},
+  {q:'El suplemento de 80° es 110°.',a:false,k:'tf-sup-80'},
+  {q:'30° y 60° son complementarios.',a:true,k:'tf-30-60'},
+  {q:'125° y 45° son suplementarios.',a:false,k:'tf-125-45'},
+  {q:'El complemento de 45° es 45°.',a:true,k:'tf-comp-45'},
+  {q:'Dos ángulos de 90° juntos forman 180°.',a:true,k:'tf-90-90'},
+  {q:'El suplemento de 150° es 50°.',a:false,k:'tf-sup-150'},
+  {q:'Tres ángulos de 60° juntos forman 90°.',a:false,k:'tf-tres-60'},
+  {q:'El complemento de 5° es 85°.',a:true,k:'tf-comp-5'},
+  {q:'100° y 100° son suplementarios.',a:false,k:'tf-100-100'}
 ];
 const evalMCBank=[
-  {q:'¿Cuánto mide un ángulo recto?',o:['a) 45°','b) 180°','c) 90°','d) 360°'],a:2},
-  {q:'Un ángulo de 150° es:',o:['a) obtuso','b) agudo','c) recto','d) llano'],a:0},
-  {q:'¿Qué instrumento mide ángulos?',o:['a) la regla','b) el compás','c) la balanza','d) el transportador'],a:3},
-  {q:'El complemento de 70° es:',o:['a) 110°','b) 20°','c) 30°','d) 90°'],a:1},
-  {q:'El suplemento de 80° es:',o:['a) 20°','b) 10°','c) 120°','d) 100°'],a:3},
-  {q:'Un ángulo llano mide:',o:['a) 90°','b) 180°','c) 270°','d) 360°'],a:1},
-  {q:'El punto de unión de los dos lados se llama:',o:['a) vértice','b) grado','c) lado','d) arco'],a:0},
-  {q:'Un ángulo que mide 250° es:',o:['a) obtuso','b) llano','c) reflejo','d) completo'],a:2}
+  {q:'¿Cuál es el complemento de 25°?',o:['a) 85°','b) 65°','c) 155°','d) 25°'],a:1,k:'mc-comp-25'},
+  {q:'¿Cuál es el suplemento de 40°?',o:['a) 50°','b) 40°','c) 320°','d) 140°'],a:3,k:'mc-sup-40'},
+  {q:'¿Qué par de ángulos es complementario?',o:['a) 40° y 40°','b) 50° y 50°','c) 37° y 53°','d) 90° y 90°'],a:2,k:'mc-par-comp'},
+  {q:'¿Qué par de ángulos es suplementario?',o:['a) 90° y 80°','b) 130° y 50°','c) 100° y 60°','d) 45° y 45°'],a:1,k:'mc-par-sup'},
+  {q:'Un ángulo de 20° y otro de 32° juntos miden…',o:['a) 12°','b) 22°','c) 52°','d) 72°'],a:2,k:'mc-20-32'},
+  {q:'Si a un ángulo recto le quitas 35°, queda…',o:['a) 55°','b) 45°','c) 25°','d) 125°'],a:0,k:'mc-recto-35'},
+  {q:'¿Cuántos ángulos de 30° caben en un ángulo de 90°?',o:['a) 5','b) 4','c) 3','d) 6'],a:2,k:'mc-30-en-90'},
+  {q:'¿Cuántos ángulos de 20° caben en un ángulo de 180°?',o:['a) 6','b) 10','c) 18','d) 9'],a:3,k:'mc-20-en-180'},
+  {q:'Un ángulo de 110° y otro de 35° juntos miden…',o:['a) 145°','b) 135°','c) 85°','d) 155°'],a:0,k:'mc-110-35'},
+  {q:'El complemento del complemento de 42° es…',o:['a) 48°','b) 42°','c) 90°','d) 138°'],a:1,k:'mc-comp-comp'}
 ];
 const evalCPBank=[
-  {q:'Un ángulo recto mide ___ grados.',a:'90',acc:['90','noventa']},
-  {q:'El instrumento que mide ángulos es el ___.',a:'transportador',acc:['transportador','el transportador']},
-  {q:'Un ángulo agudo mide menos de ___ grados.',a:'90',acc:['90','noventa']},
-  {q:'Dos ángulos que suman 90° se llaman ___.',a:'complementarios',acc:['complementarios','complementario']},
-  {q:'El ángulo ___ mide 180° y forma una línea recta.',a:'llano',acc:['llano']},
-  {q:'El punto donde se unen los lados de un ángulo es el ___.',a:'vértice',acc:['vertice','el vertice']},
-  {q:'Dos ángulos que suman 180° se llaman ___.',a:'suplementarios',acc:['suplementarios','suplementario']},
-  {q:'La ___ divide un ángulo en dos partes iguales.',a:'bisectriz',acc:['bisectriz','la bisectriz']}
+  {q:'El complemento de 15° es ___.',a:'75°',acc:['75','75°','75 grados'],k:'cp-comp-15'},
+  {q:'El suplemento de 60° es ___.',a:'120°',acc:['120','120°','120 grados'],k:'cp-sup-60'},
+  {q:'El complemento de 83° es ___.',a:'7°',acc:['7','7°','7 grados'],k:'cp-comp-83'},
+  {q:'El suplemento de 142° es ___.',a:'38°',acc:['38','38°','38 grados'],k:'cp-sup-142'},
+  {q:'40° + 28° = ___.',a:'68°',acc:['68','68°','68 grados'],k:'cp-40-28'},
+  {q:'Un ángulo recto menos 12° deja ___.',a:'78°',acc:['78','78°','78 grados'],k:'cp-recto-12'},
+  {q:'Dos ángulos iguales suman 124°; cada uno mide ___.',a:'62°',acc:['62','62°','62 grados'],k:'cp-iguales-124'},
+  {q:'Si un ángulo mide 88°, su complemento mide ___.',a:'2°',acc:['2','2°','2 grados'],k:'cp-comp-88'},
+  {q:'El suplemento de 1° es ___.',a:'179°',acc:['179','179°','179 grados'],k:'cp-sup-1'},
+  {q:'360° − 200° = ___.',a:'160°',acc:['160','160°','160 grados'],k:'cp-360-200'}
 ];
 const evalPRBank=[
-  {term:'Ángulo agudo',def:'Mide menos de 90°'},
-  {term:'Ángulo recto',def:'Mide exactamente 90°'},
-  {term:'Ángulo obtuso',def:'Mide más de 90° y menos de 180°'},
-  {term:'Ángulo llano',def:'Mide 180° (línea recta)'},
-  {term:'Transportador',def:'Instrumento para medir ángulos'},
-  {term:'Bisectriz',def:'Recta que divide el ángulo en dos partes iguales'}
+  {term:'Ángulo agudo',def:'Mide menos de 90°',k:'pr-agudo'},
+  {term:'Ángulo recto',def:'Mide exactamente 90°',k:'pr-recto'},
+  {term:'Ángulo obtuso',def:'Mide más de 90° y menos de 180°',k:'pr-obtuso'},
+  {term:'Ángulo llano',def:'Mide 180°: forma una línea recta',k:'pr-llano'},
+  {term:'Ángulo completo',def:'Una vuelta entera: 360°',k:'pr-completo'},
+  {term:'Vértice',def:'El punto donde se unen los dos lados',k:'pr-vertice'},
+  {term:'Transportador',def:'El instrumento para medir ángulos',k:'pr-transportador'},
+  {term:'Lados',def:'Las dos líneas que forman el ángulo',k:'pr-lados'},
+  {term:'Grado',def:'La unidad con que se miden los ángulos',k:'pr-grado'},
+  {term:'Abertura',def:'Cuánto se separan los lados de un ángulo',k:'pr-abertura'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 const EVAL_FORMAS = 30;
