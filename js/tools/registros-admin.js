@@ -1721,7 +1721,10 @@ function adColectasCompletasTxt(d) {
 /* Resumen para WhatsApp: SOLO cifras. Ni un nombre ni un número de lista,
    porque va al grupo de padres y ahí «#14 no ha dado» es señalar a un niño
    delante de todos. Quién pagó se sabe por el recibo de cada familia. */
-function adColectaTxtResumen(c, d) {
+/* conGrupo: añade al final las demás colectas del grupo con sus barras. Es
+   OPCIONAL y va apagado por defecto: el mensaje de la excursión no tiene por
+   qué contarle al grupo cómo va la rifa, y eso lo decide el maestro. */
+function adColectaTxtResumen(c, d, conGrupo) {
   const t = adColectaTotales(c);
   const pagaron = adColectaDieron(c, d);
   const esp = adColectaEsperados(c, d);
@@ -1741,7 +1744,7 @@ function adColectaTxtResumen(c, d) {
     (gastos.length ? gastos.map(g => '   • ' + g.d + ': ' + adLps(g.m)).join('\n') + '\n' : '') +
     '💼 Saldo: *' + adLps(t.saldo) + '*\n\n' +
     /* con una sola colecta «1 de 1» no dice nada: solo sale si hay más */
-    (adColectasCompletasTxt(d)
+    (conGrupo && adColectasCompletasTxt(d)
       ? '🗂️ Colectas del grupo: *' + adColectasCompletasTxt(d) + '* completas\n' +
         /* la barra de cada una, con cuadritos como la de arriba. Van nombres de
            COLECTAS, nunca de alumnos; y la % exacta al lado, porque diez
@@ -2591,7 +2594,8 @@ function adRenderColecta(body, d) {
         ${adColectasCompletasTxt(d) ? `<p class="ad-col-completas">🗂️ Colectas del grupo: <strong>${adColectasCompletasTxt(d)}</strong> completas</p>` : ''}
       </div>
       <div class="ad-btn-row">
-        <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 Enviar resumen por WhatsApp</button>
+        <button class="pa-generate-btn ad-btn-sec" id="ad-col-wa">📲 ${adColectasCompletasTxt(d) ? 'Enviar solo esta colecta' : 'Enviar resumen por WhatsApp'}</button>
+        ${adColectasCompletasTxt(d) ? '<button class="pa-generate-btn ad-btn-sec" id="ad-col-wa-todas">📲 Enviar con todas las colectas del grupo</button>' : ''}
       </div>
       <p class="pa-optional-hint">El resumen lleva solo cifras: ningún nombre ni número de lista.</p>
       ${(() => {
@@ -2682,7 +2686,12 @@ function adRenderColecta(body, d) {
 
   document.getElementById('ad-col-wa').addEventListener('click', () => {
     const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
-    adGastoEnviar(adColectaTxtResumen(cc, dd));
+    adGastoEnviar(adColectaTxtResumen(cc, dd, false));
+  });
+  const waTodas = document.getElementById('ad-col-wa-todas');
+  if (waTodas) waTodas.addEventListener('click', () => {
+    const dd = adLoad(); const cc = adColecta(dd, _adColectaId); if (!cc) return;
+    adGastoEnviar(adColectaTxtResumen(cc, dd, true));
   });
 
   document.getElementById('ad-col-total').addEventListener('click', async () => {
