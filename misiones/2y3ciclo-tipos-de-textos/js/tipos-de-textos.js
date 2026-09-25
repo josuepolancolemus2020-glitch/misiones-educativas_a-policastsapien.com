@@ -350,73 +350,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El tipo de un texto depende de su propósito comunicativo.',a:true},
-  {q:'El texto narrativo sirve para dar instrucciones paso a paso.',a:false},
-  {q:'La estructura del texto narrativo es inicio, nudo y desenlace.',a:true},
-  {q:'El texto descriptivo usa muchos adjetivos para decir cómo es algo.',a:true},
-  {q:'El texto expositivo defiende una opinión para convencer.',a:false},
-  {q:'El texto argumentativo presenta una tesis y argumentos.',a:true},
-  {q:'Una receta de cocina es un texto instructivo.',a:true},
-  {q:'El texto dialogado se reconoce por las rayas de diálogo.',a:true},
-  {q:'El poema es un texto no literario.',a:false},
-  {q:'El narrador es la voz que cuenta la historia.',a:true},
-  {q:'La noticia y el informe son textos literarios.',a:false},
-  {q:'El texto expositivo informa de forma clara y objetiva.',a:true},
-  {q:'Los conectores unen las ideas de un texto.',a:true},
-  {q:'El texto instructivo suele usar verbos en imperativo o infinitivo.',a:true},
-  {q:'Contar una historia es el propósito del texto descriptivo.',a:false},
+  {q:'Un texto se reconoce por su tamaño: los cortos son de un tipo y los largos de otro.',a:false,k:'tf-tamano'},
+  {q:'Un mismo tema, como el río Ulúa, puede escribirse como cuento, como poema o como informe.',a:true,k:'tf-mismo-tema'},
+  {q:'Las leyendas cuentan hechos que les pasan a alguien.',a:true,k:'tf-leyendas'},
+  {q:'Una descripción solo sirve para personas, no para lugares ni animales.',a:false,k:'tf-descripcion'},
+  {q:'El manual de una licuadora busca emocionar a quien lo lee.',a:false,k:'tf-manual'},
+  {q:'Un poema busca emocionar más que dar datos exactos.',a:true,k:'tf-poema'},
+  {q:'En una receta, el orden de los pasos no importa.',a:false,k:'tf-orden-pasos'},
+  {q:'Un informe sobre el dengue explica sin inventar nada.',a:true,k:'tf-informe'},
+  {q:'Una fábula es un texto que da instrucciones para armar algo.',a:false,k:'tf-fabula'},
+  {q:'Las noticias del periódico cuentan hechos que pasaron de verdad.',a:true,k:'tf-noticia'}
 ];
 const evalMCBank=[
-  {q:'¿Qué determina el tipo de un texto?',o:['a) Su tamaño','b) Su propósito comunicativo','c) El autor','d) El título'],a:1},
-  {q:'¿Qué texto cuenta hechos con personajes?',o:['a) Descriptivo','b) Instructivo','c) Narrativo','d) Expositivo'],a:2},
-  {q:'Una receta es un texto...',o:['a) Poético','b) Narrativo','c) Argumentativo','d) Instructivo'],a:3},
-  {q:'¿Cuál es el propósito del texto argumentativo?',o:['a) Convencer','b) Informar','c) Describir','d) Contar'],a:0},
-  {q:'¿Qué texto usa muchos adjetivos?',o:['a) Instructivo','b) Expositivo','c) Descriptivo','d) Dialogado'],a:2},
-  {q:'¿Cuáles son las partes de la estructura narrativa?',o:['a) Tesis y argumentos','b) Inicio, nudo y desenlace','c) Materiales y pasos','d) Saludo y despedida'],a:1},
-  {q:'Un artículo de enciclopedia es un texto...',o:['a) Poético','b) Expositivo','c) Instructivo','d) Argumentativo'],a:1},
-  {q:'¿Qué texto se reconoce por las rayas de diálogo?',o:['a) Expositivo','b) Descriptivo','c) Instructivo','d) Dialogado'],a:3},
-  {q:'¿Cuál es un texto literario?',o:['a) La noticia','b) La receta','c) El poema','d) El informe'],a:2},
-  {q:'La voz que cuenta la historia se llama...',o:['a) Narrador','b) Autor','c) Lector','d) Personaje'],a:0},
-  {q:'¿Qué texto informa sin dar opiniones?',o:['a) Argumentativo','b) Expositivo','c) Poético','d) Narrativo'],a:1},
-  {q:'El ensayo es un ejemplo de texto...',o:['a) Argumentativo','b) Instructivo','c) Descriptivo','d) Dialogado'],a:0},
-  {q:'¿Qué texto expresa sentimientos en verso?',o:['a) Poético','b) Expositivo','c) Instructivo','d) Narrativo'],a:0},
-  {q:'La obra de teatro es un texto...',o:['a) Expositivo','b) Instructivo','c) Descriptivo','d) Dialogado'],a:3},
-  {q:'¿Qué palabras unen las ideas de un texto?',o:['a) Los adjetivos','b) Los verbos','c) Los conectores','d) Los sustantivos'],a:2},
+  {q:'«Lava el arroz. Luego, ponlo a hervir con sal.» Es un texto…',o:['a) narrativo','b) instructivo','c) poético','d) descriptivo'],a:1,k:'mc-arroz'},
+  {q:'«Había una vez un zorro que vivía cerca de una quebrada…» Es un texto…',o:['a) expositivo','b) argumentativo','c) narrativo','d) instructivo'],a:2,k:'mc-zorro'},
+  {q:'«El colibrí es pequeñito, de plumas verdes brillantes y pico largo y fino.» Es un texto…',o:['a) descriptivo','b) argumentativo','c) dialogado','d) instructivo'],a:0,k:'mc-colibri'},
+  {q:'«Pienso que el recreo debería durar más, porque jugar ayuda a aprender.» Es un texto…',o:['a) narrativo','b) descriptivo','c) argumentativo','d) instructivo'],a:2,k:'mc-recreo'},
+  {q:'«—¿Jugamos fútbol? —Claro, voy por la pelota.» Es un texto…',o:['a) poético','b) dialogado','c) expositivo','d) descriptivo'],a:1,k:'mc-futbol'},
+  {q:'«La Tierra tarda un año en dar la vuelta al Sol.» Es un texto…',o:['a) expositivo','b) poético','c) dialogado','d) narrativo'],a:0,k:'mc-tierra'},
+  {q:'«Luna de plata que alumbras / mi pueblo en la oscuridad…» Es un texto…',o:['a) instructivo','b) argumentativo','c) expositivo','d) poético'],a:3,k:'mc-luna'},
+  {q:'Un anuncio que dice «¡Compre ya las mejores tortillas!» quiere…',o:['a) contar un cuento','b) convencer a quien lo lee','c) describir un paisaje','d) dar una receta'],a:1,k:'mc-anuncio'},
+  {q:'¿Qué parte de un texto dice de qué trata, antes de empezar a leerlo?',o:['a) la firma','b) la última línea','c) el título','d) la fecha'],a:2,k:'mc-titulo'},
+  {q:'¿Cuál de estos sirve para algo práctico en la vida diaria?',o:['a) una leyenda','b) un poema','c) una fábula','d) un recibo de la pulpería'],a:3,k:'mc-recibo'}
 ];
 const evalCPBank=[
-  {q:'El texto que cuenta una historia es el ___.',a:'narrativo'},
-  {q:'El texto que describe cómo es algo es el ___.',a:'descriptivo'},
-  {q:'El texto que informa un tema sin opinar es el ___.',a:'expositivo'},
-  {q:'El texto que defiende una opinión es el ___.',a:'argumentativo'},
-  {q:'El texto que indica los pasos para hacer algo es el ___.',a:'instructivo'},
-  {q:'El texto que reproduce una conversación es el ___.',a:'dialogado'},
-  {q:'El texto que expresa sentimientos en verso es el ___.',a:'poético'},
-  {q:'La voz que cuenta la historia es el ___.',a:'narrador'},
-  {q:'La parte final de la estructura narrativa es el ___.',a:'desenlace'},
-  {q:'La opinión que defiende un texto argumentativo es la ___.',a:'tesis'},
-  {q:'El propósito ___ es la intención con que se escribe un texto.',a:'comunicativo'},
-  {q:'La receta y el manual son ejemplos de texto ___.',a:'instructivo'},
-  {q:'El cuento, la novela y el poema son textos ___.',a:'literarios'},
-  {q:'Las palabras que unen las ideas del texto son los ___.',a:'conectores'},
-  {q:'La parte donde surge el conflicto en la narración es el ___.',a:'nudo'},
+  {q:'«Corta», «mezcla» y «hornea» son verbos en modo ___: dan órdenes.',a:'imperativo',acc:['imperativo'],k:'cp-imperativo'},
+  {q:'Las palabras que dicen cómo es algo, como «verde» o «alto», se llaman ___.',a:'adjetivos',acc:['adjetivos'],k:'cp-adjetivos'},
+  {q:'Los textos que buscan emocionar con el lenguaje, como un cuento, se llaman ___.',a:'literarios',acc:['literarios'],k:'cp-literarios'},
+  {q:'Quien informa debe ser ___: contar las cosas como son, sin meter su gusto.',a:'objetivo',acc:['objetivo'],k:'cp-objetivo'},
+  {q:'En un diálogo escrito, cada vez que alguien habla se pone una ___ (—).',a:'raya',acc:['raya'],k:'cp-raya'},
+  {q:'Antes de los pasos, una receta pone la lista de ___.',a:'ingredientes',acc:['ingredientes'],k:'cp-ingredientes'},
+  {q:'«Ayer llovió» tiene el verbo en tiempo ___.',a:'pasado',acc:['pasado'],k:'cp-pasado'},
+  {q:'El libro donde se buscan temas ordenados de la A a la Z es la ___.',a:'enciclopedia',acc:['enciclopedia'],k:'cp-enciclopedia'},
+  {q:'En «Él caminó hasta el río», quien cuenta habla en ___ persona.',a:'tercera',acc:['tercera'],k:'cp-tercera'},
+  {q:'«El agua hierve a 100 grados» tiene el verbo en tiempo ___.',a:'presente',acc:['presente'],k:'cp-presente'}
 ];
 const evalPRBank=[
-  {term:'Texto narrativo',def:'Cuenta hechos o historias'},
-  {term:'Texto descriptivo',def:'Dice cómo son personas u objetos'},
-  {term:'Texto expositivo',def:'Informa y explica de forma objetiva'},
-  {term:'Texto argumentativo',def:'Defiende una opinión con razones'},
-  {term:'Texto instructivo',def:'Indica los pasos para hacer algo'},
-  {term:'Texto dialogado',def:'Reproduce una conversación'},
-  {term:'Texto poético',def:'Expresa sentimientos en verso'},
-  {term:'Narrador',def:'Voz que cuenta la historia'},
-  {term:'Desenlace',def:'Parte final donde se resuelve el conflicto'},
-  {term:'Tesis',def:'Opinión que se defiende'},
-  {term:'Receta',def:'Ejemplo de texto instructivo'},
-  {term:'Noticia',def:'Texto no literario que informa un hecho'},
-  {term:'Conectores',def:'Palabras que unen las ideas'},
-  {term:'Nudo',def:'Parte donde surge el conflicto'},
-  {term:'Propósito comunicativo',def:'Intención con la que se escribe'},
+  {term:'Inicio',def:'Presenta dónde y con quién empieza la historia',k:'pr-inicio'},
+  {term:'Nudo',def:'Aparece el problema',k:'pr-nudo'},
+  {term:'Desenlace',def:'Se resuelve el problema',k:'pr-desenlace'},
+  {term:'Narrador',def:'La voz que cuenta la historia',k:'pr-narrador'},
+  {term:'Personaje',def:'Quien vive los hechos de la historia',k:'pr-personaje'},
+  {term:'Tesis',def:'La opinión que se defiende',k:'pr-tesis'},
+  {term:'Argumento',def:'Una razón que apoya esa opinión',k:'pr-argumento'},
+  {term:'Propósito comunicativo',def:'Para qué se escribe un texto',k:'pr-proposito'},
+  {term:'Conector',def:'Palabra que une una idea con otra',k:'pr-conector'},
+  {term:'Verso',def:'Cada renglón de un poema',k:'pr-verso'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -512,12 +497,12 @@ function evalSwitchMode(mode){
 }
 
 const critCaseBank=[
-  {txt:'"Primero, lava las manzanas. Luego, córtalas en trozos pequeños. Después, mézclalas con el yogur y añade la miel. Finalmente, sirve la ensalada bien fría."'},
-  {txt:'"Había una vez un zorro muy astuto que vivía en el bosque. Un día encontró un racimo de uvas muy altas. Saltó y saltó, pero no las alcanzó. Al final se marchó diciendo que estaban verdes."'},
-  {txt:'"El agua es un líquido incoloro, inodoro e insípido. Está formada por hidrógeno y oxígeno. Es fundamental para la vida de los seres vivos y cubre gran parte del planeta."'},
-  {txt:'"Considero que debemos reciclar la basura en la escuela. En primer lugar, cuidamos el ambiente. Además, damos ejemplo a los más pequeños. Por lo tanto, todos deberíamos separar los residuos."'},
-  {txt:'"Mi abuela tenía el cabello blanco como la nieve y unos ojos pequeños y brillantes. Sus manos eran arrugadas y suaves, y siempre olían a canela y a pan recién horneado."'},
-  {txt:'"—¿A dónde vas tan temprano? —preguntó María. —Voy al mercado a comprar frutas —respondió Juan—. ¿Quieres acompañarme? —¡Claro! Espera un momento."'},
+  {k:'ca-ensalada',txt:'"Primero, lava las manzanas. Luego, córtalas en trozos pequeños. Después, mézclalas con el yogur y añade la miel. Finalmente, sirve la ensalada bien fría."'},
+  {k:'ca-zorro',txt:'"Había una vez un zorro muy astuto que vivía en el bosque. Un día encontró un racimo de uvas muy altas. Saltó y saltó, pero no las alcanzó. Al final se marchó diciendo que estaban verdes."'},
+  {k:'ca-agua',txt:'"El agua es un líquido incoloro, inodoro e insípido. Está formada por hidrógeno y oxígeno. Es fundamental para la vida de los seres vivos y cubre gran parte del planeta."'},
+  {k:'ca-reciclar',txt:'"Considero que debemos reciclar la basura en la escuela. En primer lugar, cuidamos el ambiente. Además, damos ejemplo a los más pequeños. Por lo tanto, todos deberíamos separar los residuos."'},
+  {k:'ca-abuela',txt:'"Mi abuela tenía el cabello blanco como la nieve y unos ojos pequeños y brillantes. Sus manos eran arrugadas y suaves, y siempre olían a canela y a pan recién horneado."'},
+  {k:'ca-mercado',txt:'"—¿A dónde vas tan temprano? —preguntó María. —Voy al mercado a comprar frutas —respondió Juan—. ¿Quieres acompañarme? —¡Claro! Espera un momento."'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué tipo de texto es? Justifica tu respuesta.',
@@ -535,22 +520,22 @@ const critCaseGuides=[
 ];
 
 const critErrorBank=[
-  {txt:'"El texto narrativo sirve para dar instrucciones paso a paso, y por eso una receta de cocina es un buen ejemplo de texto narrativo."',
+  {k:'er-narrativo-receta',txt:'"El texto narrativo sirve para dar instrucciones paso a paso, y por eso una receta de cocina es un buen ejemplo de texto narrativo."',
    g1:'El texto narrativo cuenta hechos o historias, no da instrucciones paso a paso.',
    g2:'La receta es un texto instructivo, no narrativo.'},
-  {txt:'"El texto expositivo defiende una opinión para convencer al lector, igual que hace un artículo de opinión."',
+  {k:'er-expositivo-opina',txt:'"El texto expositivo defiende una opinión para convencer al lector, igual que hace un artículo de opinión."',
    g1:'El texto expositivo informa de forma objetiva, no defiende opiniones.',
    g2:'El que defiende una opinión para convencer es el argumentativo; el artículo de opinión es argumentativo.'},
-  {txt:'"La estructura del texto narrativo es introducción, tesis y conclusión, y siempre se escribe en verso."',
+  {k:'er-estructura',txt:'"La estructura del texto narrativo es introducción, tesis y conclusión, y siempre se escribe en verso."',
    g1:'La estructura narrativa es inicio, nudo y desenlace, no introducción-tesis-conclusión.',
    g2:'No se escribe en verso; el que suele ir en verso es el texto poético.'},
-  {txt:'"El poema es un texto no literario y su propósito es informar datos exactos sobre un tema."',
+  {k:'er-poema',txt:'"El poema es un texto no literario y su propósito es informar datos exactos sobre un tema."',
    g1:'El poema es un texto literario, no no literario.',
    g2:'Su propósito es expresar sentimientos con belleza, no informar datos exactos.'},
-  {txt:'"El texto descriptivo cuenta una historia con inicio, nudo y desenlace usando verbos de acción."',
+  {k:'er-descriptivo',txt:'"El texto descriptivo cuenta una historia con inicio, nudo y desenlace usando verbos de acción."',
    g1:'El texto descriptivo describe cómo es algo; el que cuenta una historia es el narrativo.',
    g2:'Lo propio del descriptivo son los adjetivos, no la estructura de inicio, nudo y desenlace.'},
-  {txt:'"El narrador es el autor real que escribió el libro, y siempre cuenta la historia en tercera persona."',
+  {k:'er-narrador-autor',txt:'"El narrador es el autor real que escribió el libro, y siempre cuenta la historia en tercera persona."',
    g1:'El narrador es la voz interna que cuenta la historia, no necesariamente el autor real.',
    g2:'No siempre es en tercera persona: puede ser narrador protagonista, que cuenta en primera persona.'},
 ];
@@ -565,36 +550,37 @@ const critDecisionBank=[
 const critDecisionGuide='Debe identificar el tipo de texto adecuado según el propósito (instructivo para explicar pasos, argumentativo para convencer, expositivo para informar, narrativo para contar, descriptivo para describir), explicar por qué ese tipo es el correcto y mencionar sus marcas o su estructura (por ejemplo, verbos en imperativo y pasos numerados en el instructivo; tesis y argumentos en el argumentativo).';
 
 const critCompareBank=[
-  {a:'"El agua hierve a 100 grados centígrados al nivel del mar. Está formada por hidrógeno y oxígeno."',b:'"Creo que todos deberíamos ahorrar agua, porque es un recurso escaso y sin ella no hay vida."',
+  {k:'co-agua',a:'"El agua hierve a 100 grados centígrados al nivel del mar. Está formada por hidrógeno y oxígeno."',b:'"Creo que todos deberíamos ahorrar agua, porque es un recurso escaso y sin ella no hay vida."',
    ga:'Texto expositivo: informa un dato objetivo, sin opinión.',
    gb:'Texto argumentativo: defiende una opinión (ahorrar agua) con razones.',
    gr:'No son el mismo tipo: uno solo informa de forma objetiva y el otro busca convencer dando argumentos.'},
-  {a:'"Había una vez una niña que vivía en un bosque y un día se perdió camino a casa de su abuela."',b:'"Corta el papel en cuadros, dóblalo por la mitad y pégalo sobre la cartulina."',
+  {k:'co-nina-papel',a:'"Había una vez una niña que vivía en un bosque y un día se perdió camino a casa de su abuela."',b:'"Corta el papel en cuadros, dóblalo por la mitad y pégalo sobre la cartulina."',
    ga:'Texto narrativo: cuenta una historia con personajes y acontecimientos.',
    gb:'Texto instructivo: indica los pasos para hacer algo con verbos en imperativo.',
    gr:'No son el mismo tipo: uno cuenta hechos en el tiempo y el otro ordena acciones para lograr un resultado.'},
-  {a:'"La casa era grande, de paredes blancas y un techo rojo rodeado de flores de muchos colores."',b:'"Ayer llegué tarde a casa, dejé la mochila y salí corriendo a jugar con mis amigos."',
+  {k:'co-casa-tarde',a:'"La casa era grande, de paredes blancas y un techo rojo rodeado de flores de muchos colores."',b:'"Ayer llegué tarde a casa, dejé la mochila y salí corriendo a jugar con mis amigos."',
    ga:'Texto descriptivo: dice cómo es la casa usando adjetivos.',
    gb:'Texto narrativo: cuenta acciones que ocurrieron en el tiempo.',
    gr:'No son el mismo tipo: uno describe cómo es algo y el otro relata qué sucedió.'},
-  {a:'"—¿Terminaste la tarea? —preguntó mamá. —Todavía no —contesté yo."',b:'"El delfín es un mamífero marino muy inteligente que se comunica con sonidos."',
+  {k:'co-mama-delfin',a:'"—¿Terminaste la tarea? —preguntó mamá. —Todavía no —contesté yo."',b:'"El delfín es un mamífero marino muy inteligente que se comunica con sonidos."',
    ga:'Texto dialogado: reproduce una conversación con rayas de diálogo.',
    gb:'Texto expositivo: informa sobre un tema de forma objetiva.',
    gr:'No son el mismo tipo: uno muestra un diálogo entre personajes y el otro explica un tema.'},
 ];
 
 const critCauseBank=[
-  {cause:'Un texto usa verbos en imperativo (mezcla, corta) y numera las acciones en orden.',guide:'Es un texto instructivo, porque indica los pasos para hacer algo.'},
-  {cause:'Un texto presenta una tesis y la defiende con argumentos y conectores como "por lo tanto".',guide:'Es un texto argumentativo, cuyo propósito es convencer al lector.'},
-  {cause:'Un texto está lleno de adjetivos y responde a la pregunta "¿cómo es?".',guide:'Es un texto descriptivo, porque describe cómo son las personas o las cosas.'},
-  {cause:'Un texto cuenta hechos con personajes y tiene inicio, nudo y desenlace.',guide:'Es un texto narrativo, porque relata una historia en el tiempo.'},
+  {k:'cau-afiche',cause:'El comité de padres pega un afiche que solo cuenta lo bonita que es la escuela, cuando lo que querían era pedir ayuda para arreglar el techo.',guide:'Nadie se entera de que hace falta ayuda: para pedir y convencer hacían falta una opinión clara y razones, no adjetivos.'},
+  {k:'cau-poema-ciencias',cause:'Una niña entrega en su tarea de Ciencias una canción inventada sobre la lluvia, cuando le pedían explicar cómo se forma.',guide:'La canción entretiene, pero no explica: la tarea pedía datos claros, sin inventar.'},
+  {k:'cau-experimento',cause:'Un maestro deja las instrucciones de un experimento contadas como una historia larga, sin separar nada.',guide:'Los alumnos se pierden y lo hacen en otro orden: hacía falta la lista de materiales y los pasos numerados.'},
+  {k:'cau-ficha-animal',cause:'En la ficha de un animal, un alumno escribe solo «el tepezcuintle es el animal más bonito del mundo».',guide:'No informa nada de cómo vive ni qué come: le faltaron datos objetivos y le sobró su gusto.'},
 ];
 const critEffectBank=[
-  {effect:'El lector aprende, paso a paso, cómo preparar un plato de comida.',guide:'Se usó un texto instructivo, como una receta.'},
-  {effect:'El lector queda convencido de una opinión gracias a las razones dadas.',guide:'Se usó un texto argumentativo, como un ensayo o artículo de opinión.'},
-  {effect:'El lector se informa de forma objetiva sobre qué es un volcán.',guide:'Se usó un texto expositivo, como un artículo de enciclopedia.'},
-  {effect:'El lector se emociona con una historia de personajes y aventuras.',guide:'Se usó un texto narrativo, como un cuento o una novela.'},
+  {k:'ef-volcan',effect:'Los compañeros de Karla hicieron el volcán de bicarbonato sin equivocarse, aunque nunca lo habían hecho.',guide:'Karla les dio un texto instructivo: los materiales primero y los pasos en orden, con verbos que dan órdenes.'},
+  {k:'ef-basurero',effect:'El patronato aceptó poner un basurero en la esquina después de leer la carta de los alumnos de sexto.',guide:'La carta era argumentativa: decía lo que pedían y daba razones que convencieron.'},
+  {k:'ef-abuelo',effect:'El abuelo, que vive lejos, leyó la carta de su nieta y se acordó del río del pueblo como si lo estuviera viendo.',guide:'La carta era descriptiva: decía con detalle cómo era el río, sus piedras, su agua fría y su ruido.'},
+  {k:'ef-sismo',effect:'En la feria de ciencias, todos entendieron qué es un sismo leyendo un cartel, sin que nadie les diera su opinión.',guide:'El cartel era expositivo: explicaba el tema con datos claros y sin opiniones.'},
 ];
+
 
 function genEvalCrit(){
   sfx('click');
