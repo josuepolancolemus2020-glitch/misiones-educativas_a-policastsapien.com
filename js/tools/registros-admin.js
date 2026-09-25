@@ -2796,6 +2796,9 @@ ${(() => {
   <div class="barra-rot">📊 Participación del grupo: <strong>${adColectaPct(c, d)} %</strong> · ${adColectaDieron(c, d)} de ${adColectaEsperados(c, d)} alumnos</div>
   ${adColectaBarraSvg(c, d, 22)}
   <div class="barra-esc"><span>0 %</span><span>25 %</span><span>50 %</span><span>75 %</span><span>100 %</span></div>
+  ${(d.colectas || []).length > 1
+    ? `<div class="barra-rot" style="margin-top:2mm">🗂️ Colectas del grupo: <strong>${d.colectas.filter(x => adColectaCompleta(x, d)).length} de ${d.colectas.length}</strong> completas</div>`
+    : ''}
 </div>`;
 })()}
 <div class="firmas">
