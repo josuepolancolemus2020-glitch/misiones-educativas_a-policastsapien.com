@@ -136,113 +136,113 @@
         '<h2>✍️ 5. Test Yourself! Activities</h2>' +
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>The ordered steps for getting something done make up an <span class="linea-resp"></span>.</li>' +
-        '<li>An instruction that everyone carries out the same way is an <span class="linea-resp"></span> instruction.</li>' +
-        '<li>«Put in a little» is an <span class="linea-resp"></span> instruction.</li>' +
-        '<li>Splitting a big problem into small parts is called <span class="linea-resp"></span>.</li>' +
-        '<li>Something that repeats over and over is a <span class="linea-resp"></span>.</li>' +
-        '<li>Keeping only what matters, like a map, is called <span class="linea-resp"></span>.</li>' +
-        '<li>In an algorithm the <span class="linea-resp"></span> of the steps matters a lot.</li>' +
-        '<li>Every step of an algorithm starts with a clear <span class="linea-resp"></span>.</li>' +
-        '<li>The computer does <span class="linea-resp"></span> what it is told.</li>' +
-        '<li>A big problem is beaten by splitting it into small <span class="linea-resp"></span>.</li>' +
+        '<li>Kenia was left making the baleadas while her mom went to the <span class="linea-resp"></span>.</li>' +
+        '<li>That day there was no <span class="linea-resp"></span> at Kenia’s house.</li>' +
+        '<li>Kenia’s beans <span class="linea-resp"></span> on the griddle.</li>' +
+        '<li>Finding what repeats saves <span class="linea-resp"></span>.</li>' +
+        '<li>Writing a plan step by step is «programming» with pencil and <span class="linea-resp"></span>.</li>' +
+        '<li>The machine does not <span class="linea-resp"></span>: it obeys.</li>' +
+        '<li>If you already know how to make one baleada, you know how to make <span class="linea-resp"></span>.</li>' +
+        '<li>To raise the flag, first you have to <span class="linea-resp"></span> up.</li>' +
+        '<li>Kenia put the tortilla on the griddle <span class="linea-resp"></span> spreading the beans.</li>' +
+        '<li>To plant beans: cotton, a bean, light and <span class="linea-resp"></span> every day.</li>' +
         '</ol>' +
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
         '<ol>' +
-        '<li>____ An algorithm is a list of ordered steps for getting something done.</li>' +
-        '<li>____ «Put in a little salt» is an exact instruction.</li>' +
-        '<li>____ «Add 2 spoonfuls of sugar» is an exact instruction.</li>' +
-        '<li>____ The computer guesses what we mean.</li>' +
-        '<li>____ Decomposing means splitting a big problem into small parts.</li>' +
-        '<li>____ A pattern is something that repeats.</li>' +
-        '<li>____ Abstraction is keeping only what matters, like a map.</li>' +
-        '<li>____ The order of the steps of an algorithm does not matter.</li>' +
-        '<li>____ The recipe for baleadas is an algorithm.</li>' +
-        '<li>____ Every step of an algorithm must start with a clear verb.</li>' +
+        '<li>____ Kenia was left alone making the baleadas.</li>' +
+        '<li>____ Putting on your shoes before your socks turns out fine.</li>' +
+        '<li>____ «Add 2 spoonfuls of sugar» is an order everyone carries out the same way.</li>' +
+        '<li>____ A stone from the river is a plan of steps.</li>' +
+        '<li>____ Raising the flag on civic Monday follows steps in order.</li>' +
+        '<li>____ A good plan writes down every detail, even the useless ones.</li>' +
+        '<li>____ Planting beans can also be written as steps.</li>' +
+        '<li>____ When a program fails, it is always the machine’s fault.</li>' +
+        '<li>____ Folding the baleada before making the tortilla turns out fine.</li>' +
+        '<li>____ A huge problem is best tackled all in one go.</li>' +
         '</ol>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What is an algorithm?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>Which of these instructions is EXACT?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a pretty drawing</span>' +
-        '<span class="op"><i>b</i> ordered steps for getting something done</span>' +
-        '<span class="op"><i>c</i> a kind of computer</span>' +
-        '<span class="op"><i>d</i> a very big number</span>' +
+        '<span class="op"><i>a</i> Walk around over there</span>' +
+        '<span class="op"><i>b</i> Take 3 steps forward</span>' +
+        '<span class="op"><i>c</i> Move a little</span>' +
+        '<span class="op"><i>d</i> Go fast</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>Which one of these instructions is EXACT?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>What went wrong for Kenia with the baleadas?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> walk over there</span>' +
-        '<span class="op"><i>b</i> take 3 steps forward</span>' +
-        '<span class="op"><i>c</i> move a little</span>' +
-        '<span class="op"><i>d</i> go fast</span>' +
+        '<span class="op"><i>a</i> She spread the beans before cooking the tortilla</span>' +
+        '<span class="op"><i>b</i> She forgot to buy flour</span>' +
+        '<span class="op"><i>c</i> She did not light the griddle</span>' +
+        '<span class="op"><i>d</i> She ate the dough</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>Why does the instruction «put in a little» fail?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>What does a machine do with instructions?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> everyone understands a different amount</span>' +
-        '<span class="op"><i>b</i> because it is very long</span>' +
-        '<span class="op"><i>c</i> because it is in English</span>' +
-        '<span class="op"><i>d</i> because it has numbers</span>' +
+        '<span class="op"><i>a</i> It picks what it wants</span>' +
+        '<span class="op"><i>b</i> It deletes them</span>' +
+        '<span class="op"><i>c</i> It does exactly what they say</span>' +
+        '<span class="op"><i>d</i> It changes their order</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>What does a computer do with instructions?</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>To organize the school fair, it is best to…</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> it guesses what we want</span>' +
-        '<span class="op"><i>b</i> it picks the one it likes</span>' +
-        '<span class="op"><i>c</i> it changes their order</span>' +
-        '<span class="op"><i>d</i> it runs exactly what it is told</span>' +
+        '<span class="op"><i>a</i> Do everything at once with no plan</span>' +
+        '<span class="op"><i>b</i> Wait for it to organize itself</span>' +
+        '<span class="op"><i>c</i> Cancel it</span>' +
+        '<span class="op"><i>d</i> Split it into parts: food, games, invitations</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>Decomposing a problem means…</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>Why does the order «add a little» fail?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> erasing it</span>' +
-        '<span class="op"><i>b</i> splitting it into small parts</span>' +
-        '<span class="op"><i>c</i> making it bigger</span>' +
-        '<span class="op"><i>d</i> hiding it</span>' +
+        '<span class="op"><i>a</i> Because it is too long</span>' +
+        '<span class="op"><i>b</i> Because everyone understands a different amount</span>' +
+        '<span class="op"><i>c</i> Because it is in Spanish</span>' +
+        '<span class="op"><i>d</i> Because it has numbers</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>What is a pattern?</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>A good step starts with…</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> something that repeats</span>' +
-        '<span class="op"><i>b</i> a bug in the program</span>' +
-        '<span class="op"><i>c</i> a map</span>' +
-        '<span class="op"><i>d</i> a prize</span>' +
+        '<span class="op"><i>a</i> A riddle</span>' +
+        '<span class="op"><i>b</i> A greeting</span>' +
+        '<span class="op"><i>c</i> An action word, such as «wash» or «cut»</span>' +
+        '<span class="op"><i>d</i> A joke</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>Abstraction means…</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>Which small part belongs to «setting up the school garden»?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> writing everything in detail</span>' +
-        '<span class="op"><i>b</i> repeating the steps</span>' +
-        '<span class="op"><i>c</i> keeping only what matters</span>' +
-        '<span class="op"><i>d</i> making a realistic drawing</span>' +
+        '<span class="op"><i>a</i> Buying a TV</span>' +
+        '<span class="op"><i>b</i> Painting the flag</span>' +
+        '<span class="op"><i>c</i> Making a fruit drink</span>' +
+        '<span class="op"><i>d</i> Preparing the soil</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>Which one is an algorithm from your everyday life?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>What is computational thinking?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the color blue</span>' +
-        '<span class="op"><i>b</i> a stone</span>' +
-        '<span class="op"><i>c</i> a number</span>' +
-        '<span class="op"><i>d</i> brushing your teeth step by step</span>' +
+        '<span class="op"><i>a</i> Using the computer all day</span>' +
+        '<span class="op"><i>b</i> Thinking in steps, parts and what repeats before acting</span>' +
+        '<span class="op"><i>c</i> Memorizing numbers</span>' +
+        '<span class="op"><i>d</i> Writing fast</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>To organize the school fair it is best to…</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>What matters to sell nance drinks at the fair?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> split it into parts: food, games, invitations</span>' +
-        '<span class="op"><i>b</i> do everything at once with no plan</span>' +
-        '<span class="op"><i>c</i> wait for it to organize itself</span>' +
-        '<span class="op"><i>d</i> cancel it</span>' +
+        '<span class="op"><i>a</i> The color of the bowl</span>' +
+        '<span class="op"><i>b</i> The time of day</span>' +
+        '<span class="op"><i>c</i> The nances, the sugar and the ice</span>' +
+        '<span class="op"><i>d</i> The name of the cup</span>' +
         '</div></div>' +
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>A good algorithm step starts with…</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>What repeats when making tortillas?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a joke</span>' +
-        '<span class="op"><i>b</i> a clear verb (wash, cut, glue)</span>' +
-        '<span class="op"><i>c</i> a greeting</span>' +
-        '<span class="op"><i>d</i> a riddle</span>' +
+        '<span class="op"><i>a</i> Each tortilla is patted and cooked the same way</span>' +
+        '<span class="op"><i>b</i> Nothing, each one is different</span>' +
+        '<span class="op"><i>c</i> Only the first one is cooked</span>' +
+        '<span class="op"><i>d</i> The dough changes every time</span>' +
         '</div></div>',
 
       /* ═══════════ PÁGINA 6 ═══════════
@@ -252,16 +252,16 @@
         '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
-        '<tr><td>1. ____ Algorithm</td><td>A. A list of steps in order</td></tr>' +
-        '<tr><td>2. ____ Exact instruction</td><td>B. Each action of the algorithm; it starts with a verb</td></tr>' +
-        '<tr><td>3. ____ Ambiguous instruction</td><td>C. A machine that does exactly what it is told</td></tr>' +
-        '<tr><td>4. ____ Sequence</td><td>D. Ordered steps for getting a task done</td></tr>' +
-        '<tr><td>5. ____ Decompose</td><td>E. Keeping only what matters, like a map</td></tr>' +
-        '<tr><td>6. ____ Pattern</td><td>F. A command that everyone carries out the same way</td></tr>' +
-        '<tr><td>7. ____ Abstraction</td><td>G. A huge task that is beaten part by part</td></tr>' +
-        '<tr><td>8. ____ Step</td><td>H. A confusing command that everyone understands differently</td></tr>' +
-        '<tr><td>9. ____ Big problem</td><td>I. Split a big problem into small parts</td></tr>' +
-        '<tr><td>10. ____ Computer</td><td>J. Something that repeats over and over</td></tr>' +
+        '<tr><td>1. ____ Algorithm</td><td>A. Keeping only what matters</td></tr>' +
+        '<tr><td>2. ____ Ambiguity</td><td>B. A group in charge of one part of the fair</td></tr>' +
+        '<tr><td>3. ____ Decompose</td><td>C. Ordered steps to achieve something</td></tr>' +
+        '<tr><td>4. ____ Pattern</td><td>D. It is packed with steps in order</td></tr>' +
+        '<tr><td>5. ____ Abstraction</td><td>E. What you do to a huge problem before sharing it out</td></tr>' +
+        '<tr><td>6. ____ Verb</td><td>F. It does not draw every stone on the road</td></tr>' +
+        '<tr><td>7. ____ Recipe</td><td>G. «Wash», «knead», «fold»</td></tr>' +
+        '<tr><td>8. ____ Committee</td><td>H. «Make it pretty»</td></tr>' +
+        '<tr><td>9. ____ Map</td><td>I. What repeats</td></tr>' +
+        '<tr><td>10. ____ Backpack</td><td>J. A cooking algorithm</td></tr>' +
         '</table>' +
         '<div class="felic">' +
         '🏅 <b>Congratulations! You have completed the Mission Computational Thinking.</b> Now you know how to write ' +
@@ -285,10 +285,10 @@
         '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. algorithm &nbsp; 2. exact &nbsp; 3. ambiguous &nbsp; 4. decomposing &nbsp; 5. pattern &nbsp; 6. abstraction &nbsp; 7. order &nbsp; 8. verb &nbsp; 9. exactly &nbsp; 10. parts</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6T, 7T, 8F, 9T, 10T</div>' +
-        '<div><span class="pt">III. Multiple choice:</span> 1b, 2b, 3a, 4d, 5b, 6a, 7c, 8d, 9a, 10b</div>' +
-        '<div><span class="pt">IV. Matching:</span> 1D, 2F, 3H, 4A, 5I, 6J, 7E, 8B, 9G, 10C</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. corner store &nbsp; 2. lunch &nbsp; 3. burned &nbsp; 4. work &nbsp; 5. paper &nbsp; 6. guess &nbsp; 7. fifty &nbsp; 8. line &nbsp; 9. after &nbsp; 10. water</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9F, 10F</div>' +
+        '<div><span class="pt">III. Multiple choice:</span> 1b, 2a, 3c, 4d, 5b, 6c, 7d, 8b, 9c, 10a</div>' +
+        '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '</div>' +
         '<div class="nota-doc">' +
         '<strong>Note for the teacher:</strong> this study sheet is based on the interactive content of the M.E.T.A.S platform, ' +
