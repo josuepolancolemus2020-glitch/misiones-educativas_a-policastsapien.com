@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La respiración toma oxígeno del aire y expulsa dióxido de carbono.',a:true},
-  {q:'Al espirar expulsamos oxígeno.',a:false},
-  {q:'El corazón bombea la sangre a todo el cuerpo.',a:true},
-  {q:'Los pulmones pertenecen al sistema circulatorio.',a:false},
-  {q:'El intercambio de gases ocurre en los alvéolos.',a:true},
-  {q:'Las arterias regresan la sangre al corazón.',a:false},
-  {q:'Las venas traen la sangre de vuelta al corazón.',a:true},
-  {q:'El diafragma es el músculo de la respiración.',a:true},
-  {q:'Los glóbulos rojos transportan el oxígeno.',a:true},
-  {q:'El corazón tiene cuatro cavidades.',a:true},
-  {q:'Fumar es bueno para los pulmones.',a:false},
-  {q:'Los capilares son vasos sanguíneos muy finos.',a:true},
-  {q:'La tráquea lleva el aire hacia los bronquios.',a:true},
-  {q:'El oxígeno pasa a la sangre en el estómago.',a:false},
-  {q:'Hacer ejercicio fortalece el corazón y los pulmones.',a:true},
+  {q:'Hay que respirar aire puro para cuidar los pulmones.',a:true,k:'tf-aire-puro'},
+  {q:'Los pulmones son parte del sistema digestivo.',a:false,k:'tf-pulmones'},
+  {q:'El corazón nunca deja de latir mientras vivimos.',a:true,k:'tf-nunca'},
+  {q:'Los pulmones tienen millones de saquitos por dentro.',a:true,k:'tf-saquitos'},
+  {q:'Hacer ejercicio fortalece el corazón.',a:true,k:'tf-ejercicio-corazon'},
+  {q:'Fumar es bueno para los pulmones.',a:false,k:'tf-fumar'},
+  {q:'La sangre llega a todas las partes del cuerpo.',a:true,k:'tf-todas-partes'},
+  {q:'El oxígeno pasa a la sangre en el estómago.',a:false,k:'tf-estomago'},
+  {q:'Al subir una cuesta corriendo, uno respira más rápido.',a:true,k:'tf-cuesta'},
+  {q:'El corazón es un músculo.',a:true,k:'tf-musculo'}
 ];
 const evalMCBank=[
-  {q:'¿Qué gas toma el cuerpo del aire al respirar?',o:['a) El oxígeno','b) El nitrógeno','c) El dióxido de carbono','d) El humo'],a:0},
-  {q:'¿Qué gas expulsamos al espirar?',o:['a) El oxígeno','b) El dióxido de carbono','c) El nitrógeno','d) El hidrógeno'],a:1},
-  {q:'¿Qué órgano bombea la sangre?',o:['a) Los pulmones','b) El estómago','c) El hígado','d) El corazón'],a:3},
-  {q:'¿Dónde ocurre el intercambio de gases?',o:['a) En la tráquea','b) En el corazón','c) En los alvéolos','d) En las venas'],a:2},
-  {q:'¿Qué vasos salen del corazón hacia el cuerpo?',o:['a) Las arterias','b) Las venas','c) Los bronquios','d) Los alvéolos'],a:0},
-  {q:'¿Qué vasos regresan la sangre al corazón?',o:['a) Las arterias','b) Los capilares','c) Las venas','d) La tráquea'],a:2},
-  {q:'¿Qué músculo permite la respiración?',o:['a) El bíceps','b) El corazón','c) El diafragma','d) La lengua'],a:2},
-  {q:'¿Qué transportan los glóbulos rojos?',o:['a) Nutrientes','b) Oxígeno','c) Agua','d) Grasa'],a:1},
-  {q:'¿Cuántas cavidades tiene el corazón?',o:['a) Dos','b) Tres','c) Cinco','d) Cuatro'],a:3},
-  {q:'¿A qué sistema pertenecen los pulmones?',o:['a) Circulatorio','b) Respiratorio','c) Digestivo','d) Óseo'],a:1},
-  {q:'¿Qué tubo lleva el aire a los bronquios?',o:['a) La tráquea','b) La aorta','c) La vena','d) El esófago'],a:0},
-  {q:'¿Cómo se llaman los vasos más finos, que llegan a las células?',o:['a) Los capilares','b) Las arterias','c) Las venas','d) Los alvéolos'],a:0},
-  {q:'¿Qué hábito cuida el corazón y los pulmones?',o:['a) Fumar','b) Comer mucha grasa','c) Hacer ejercicio','d) No moverse'],a:2},
-  {q:'Los órganos esponjosos de la respiración son…',o:['a) los riñones','b) los huesos','c) las venas','d) los pulmones'],a:3},
-  {q:'La parte líquida de la sangre se llama…',o:['a) plaquetas','b) plasma','c) hemoglobina','d) linfa'],a:1},
+  {q:'¿Qué le pasa al corazón cuando corremos?',o:['a) se detiene','b) late más lento','c) se enfría','d) late más rápido'],a:3,k:'mc-late-rapido'},
+  {q:'¿Qué órgano bombea la sangre?',o:['a) los pulmones','b) el estómago','c) el corazón','d) el hígado'],a:2,k:'mc-corazon'},
+  {q:'¿Qué transportan las células rojas de la sangre?',o:['a) oxígeno','b) grasa','c) agua sola','d) aire'],a:0,k:'mc-rojos'},
+  {q:'¿Qué sustancia le da su color a la sangre?',o:['a) la sal','b) el azúcar','c) el agua','d) la hemoglobina'],a:3,k:'mc-hemoglobina'},
+  {q:'¿Cuáles son las cavidades de arriba del corazón?',o:['a) los riñones','b) las costillas','c) las aurículas','d) los huesos'],a:2,k:'mc-auriculas'},
+  {q:'¿Qué daña más a los pulmones?',o:['a) caminar','b) el humo del cigarro','c) dormir bien','d) tomar agua'],a:1,k:'mc-humo'},
+  {q:'¿Cómo son los pulmones por dentro?',o:['a) duros como hueso','b) esponjosos','c) huecos y vacíos','d) de metal'],a:1,k:'mc-esponjosos'},
+  {q:'¿Por qué a Marvin se le cansaron las piernas al subir con los baldes?',o:['a) tenía hambre','b) hacía frío','c) no dormió','d) les faltaba oxígeno'],a:3,k:'mc-marvin'},
+  {q:'¿Qué nombre tienen los dos movimientos de respirar?',o:['a) subir y bajar','b) entrar y salir el aire','c) comer y beber','d) dormir y despertar'],a:1,k:'mc-movimientos'},
+  {q:'¿Qué parte del camino del aire viene después de la faringe?',o:['a) la laringe','b) la nariz','c) el estómago','d) el corazón'],a:0,k:'mc-laringe'}
 ];
 const evalCPBank=[
-  {q:'El sistema ___ toma oxígeno del aire.',a:'respiratorio'},
-  {q:'El ___ bombea la sangre a todo el cuerpo.',a:'corazón'},
-  {q:'El intercambio de gases ocurre en los ___.',a:'alvéolos'},
-  {q:'Las ___ salen del corazón hacia el cuerpo.',a:'arterias'},
-  {q:'Las ___ regresan la sangre al corazón.',a:'venas'},
-  {q:'El músculo de la respiración es el ___.',a:'diafragma'},
-  {q:'Los glóbulos ___ transportan el oxígeno.',a:'rojos'},
-  {q:'Al espirar expulsamos ___ de carbono.',a:'dióxido'},
-  {q:'El corazón tiene ___ cavidades.',a:'cuatro'},
-  {q:'Los vasos sanguíneos más finos son los ___.',a:'capilares'},
-  {q:'La ___ lleva el aire hacia los bronquios.',a:'tráquea'},
-  {q:'Los pulmones pertenecen al sistema ___.',a:'respiratorio'},
-  {q:'La parte líquida de la sangre es el ___.',a:'plasma'},
-  {q:'Para cuidar el corazón conviene hacer ___.',a:'ejercicio'},
-  {q:'Al inspirar entra ___ a los pulmones.',a:'oxígeno'},
+  {q:'El gas de desecho que expulsamos es el ___ de carbono.',a:'dióxido',acc:['dióxido'],k:'cp-dioxido'},
+  {q:'El corazón tiene ___ cavidades.',a:'cuatro',acc:['cuatro','4'],k:'cp-cuatro'},
+  {q:'Las cavidades de abajo del corazón se llaman ___.',a:'ventrículos',acc:['ventrículos'],k:'cp-ventriculos'},
+  {q:'El sistema ___ transporta la sangre por todo el cuerpo.',a:'circulatorio',acc:['circulatorio'],k:'cp-circulatorio'},
+  {q:'El corazón es del tamaño de un ___.',a:'puño',acc:['puño'],k:'cp-puno'},
+  {q:'La ___ filtra y calienta el aire antes de que entre.',a:'nariz',acc:['nariz'],k:'cp-nariz'},
+  {q:'La sangre transporta oxígeno, nutrientes y ___.',a:'desechos',acc:['desechos'],k:'cp-desechos'},
+  {q:'Los pulmones son ___ órganos esponjosos en el pecho.',a:'dos',acc:['dos','2'],k:'cp-dos'},
+  {q:'Contar los latidos en la muñeca es tomarse el ___.',a:'pulso',acc:['pulso'],k:'cp-pulso'},
+  {q:'Los pulmones están dentro del ___.',a:'pecho',acc:['pecho','tórax'],k:'cp-pecho'}
 ];
 const evalPRBank=[
-  {term:'Respiración',def:'Tomar oxígeno del aire y expulsar dióxido de carbono'},
-  {term:'Corazón',def:'Órgano musculoso que bombea la sangre'},
-  {term:'Pulmones',def:'Órganos donde se intercambian los gases'},
-  {term:'Alvéolos',def:'Sacos donde la sangre toma oxígeno'},
-  {term:'Arterias',def:'Vasos que salen del corazón'},
-  {term:'Venas',def:'Vasos que regresan la sangre al corazón'},
-  {term:'Capilares',def:'Vasos muy finos que llegan a las células'},
-  {term:'Diafragma',def:'Músculo que permite la respiración'},
-  {term:'Tráquea',def:'Tubo que lleva el aire a los bronquios'},
-  {term:'Glóbulos rojos',def:'Transportan el oxígeno'},
-  {term:'Glóbulos blancos',def:'Defienden el cuerpo de los microbios'},
-  {term:'Plaquetas',def:'Ayudan a coagular la sangre'},
-  {term:'Plasma',def:'Parte líquida de la sangre'},
-  {term:'Inspiración',def:'Entrada de aire con oxígeno'},
-  {term:'Espiración',def:'Salida de aire con dióxido de carbono'},
+  {term:'Alvéolos',def:'Saquitos donde la sangre toma el oxígeno',k:'pr-alveolos'},
+  {term:'Arterias',def:'Salen del corazón hacia el cuerpo',k:'pr-arterias'},
+  {term:'Venas',def:'Regresan la sangre al corazón',k:'pr-venas'},
+  {term:'Capilares',def:'Vasos finísimos que llegan a las células',k:'pr-capilares'},
+  {term:'Diafragma',def:'Músculo bajo los pulmones que ayuda a respirar',k:'pr-diafragma'},
+  {term:'Tráquea',def:'Tubo con anillos por donde baja el aire',k:'pr-traquea'},
+  {term:'Glóbulos blancos',def:'Defienden al cuerpo de los microbios',k:'pr-blancos'},
+  {term:'Plaquetas',def:'Tapan las heridas',k:'pr-plaquetas'},
+  {term:'Bronquios',def:'Llevan el aire dentro de los pulmones',k:'pr-bronquios'},
+  {term:'Plasma',def:'La parte líquida de la sangre',k:'pr-plasma'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un joven fuma cigarrillos todos los días y le cuesta respirar cuando corre.'},
-  {txt:'Una persona nunca hace ejercicio, come mucha grasa y se cansa al subir las gradas.'},
-  {txt:'En un cuarto cerrado con mucho humo, varios niños empiezan a toser y les duele la cabeza.'},
-  {txt:'Un niño con anemia (pocos glóbulos rojos) siempre se siente cansado y sin aire.'},
-  {txt:'Una familia vive cerca de una fábrica con mucho humo y a menudo tienen tos.'},
-  {txt:'Una persona pasa todo el día sentada, sin moverse, y su corazón está muy débil.'},
+  {k:'ca-fuma',txt:'Un joven fuma cigarrillos todos los días y le cuesta respirar cuando corre.'},
+  {k:'ca-sedentario',txt:'Una persona nunca hace ejercicio, come mucha grasa y se cansa al subir las gradas.'},
+  {k:'ca-cuarto-humo',txt:'En un cuarto cerrado con mucho humo, varios niños empiezan a toser y les duele la cabeza.'},
+  {k:'ca-anemia',txt:'Un niño con anemia (pocos glóbulos rojos) siempre se siente cansado y sin aire.'},
+  {k:'ca-fabrica',txt:'Una familia vive cerca de una fábrica con mucho humo y a menudo tienen tos.'},
+  {k:'ca-sentada',txt:'Una persona pasa todo el día sentada, sin moverse, y su corazón está muy débil.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué hábito o problema de salud se observa en este caso?',
@@ -520,19 +505,19 @@ const critCaseGuides=[
   'Porque llevan oxígeno a todas las células; sin ellos el cuerpo no podría vivir. Cuidarlos evita enfermedades graves.',
 ];
 const critErrorBank=[
-  {txt:'"Los pulmones bombean la sangre a todo el cuerpo."',
+  {k:'er-pulmones-bombean',txt:'"Los pulmones bombean la sangre a todo el cuerpo."',
    g1:'Quien bombea la sangre es el CORAZÓN.',
    g2:'Los pulmones sirven para el intercambio de gases, no para bombear.'},
-  {txt:'"Al respirar tomamos dióxido de carbono y expulsamos oxígeno."',
+  {k:'er-gases-reves',txt:'"Al respirar tomamos dióxido de carbono y expulsamos oxígeno."',
    g1:'Es al revés: tomamos OXÍGENO del aire.',
    g2:'Lo que expulsamos es DIÓXIDO DE CARBONO.'},
-  {txt:'"Las venas llevan la sangre del corazón hacia el cuerpo."',
+  {k:'er-venas',txt:'"Las venas llevan la sangre del corazón hacia el cuerpo."',
    g1:'Las que salen del corazón son las ARTERIAS.',
    g2:'Las venas REGRESAN la sangre al corazón.'},
-  {txt:'"Fumar no daña los pulmones ni el corazón."',
-   g1:'Fumar SÍ daña gravemente los pulmones y el corazón.',
-   g2:'Provoca tos, falta de aire, cáncer y problemas del corazón.'},
-  {txt:'"El intercambio de gases ocurre en el estómago."',
+  {k:'er-solo-oxigeno',txt:'"La sangre solo lleva oxígeno; nada más."',
+   g1:'La sangre también lleva NUTRIENTES y DESECHOS.',
+   g2:'Reparte lo que las células necesitan y recoge lo que les sobra.'},
+  {k:'er-estomago',txt:'"El intercambio de gases ocurre en el estómago."',
    g1:'Ocurre en los ALVÉOLOS de los pulmones.',
    g2:'El estómago pertenece al sistema digestivo, no al respiratorio.'},
 ];
@@ -545,31 +530,27 @@ const critDecisionBank=[
 ];
 const critDecisionGuide='Para cuidar el corazón y los pulmones conviene elegir hábitos saludables: hacer ejercicio, respirar aire limpio, NO fumar y comer sano (poca grasa). Estos hábitos fortalecen el corazón, mejoran la respiración y llevan más oxígeno al cuerpo. La mejor decisión casi siempre es la opción más activa y natural, que evita el humo y la comida chatarra.';
 const critCompareBank=[
-  {a:'Vasos que salen del corazón y llevan la sangre al cuerpo.',b:'Vasos que regresan la sangre al corazón.',
-   ga:'Las arterias.',
-   gb:'Las venas.',
-   gr:'Las dos transportan sangre, pero las arterias salen del corazón y las venas regresan a él; van en sentidos contrarios.'},
-  {a:'Órgano esponjoso donde la sangre toma oxígeno.',b:'Órgano musculoso que bombea la sangre.',
-   ga:'Los pulmones.',
-   gb:'El corazón.',
-   gr:'Los dos son vitales, pero los pulmones hacen el intercambio de gases y el corazón bombea la sangre; cumplen funciones distintas.'},
-  {a:'Movimiento en que entra aire con oxígeno.',b:'Movimiento en que sale aire con dióxido de carbono.',
-   ga:'La inspiración.',
-   gb:'La espiración.',
-   gr:'Son dos movimientos opuestos de la respiración: en uno entra el aire y en el otro sale.'},
+  {k:'co-pulso-respiracion',a:'Lo que contamos al poner dos dedos en la muñeca.',b:'Las veces que entra y sale el aire en un minuto.',
+   ga:'El pulso: los latidos del corazón.',
+   gb:'La frecuencia de la respiración.',
+   gr:'Las dos cosas se cuentan y las dos suben con el ejercicio, pero una es del corazón y la otra de los pulmones.'},
+  {k:'co-auriculas',a:'Las dos cavidades de arriba del corazón.',b:'Las dos cavidades de abajo del corazón.',
+   ga:'Las aurículas.',
+   gb:'Los ventrículos.',
+   gr:'Las cuatro son parte del corazón, pero unas reciben la sangre y las otras la empujan hacia afuera.'},
 ];
 const critCauseBank=[
-  {cause:'Una persona fuma cigarrillos todos los días.',guide:'Sus pulmones se dañan; tose, le falta el aire y puede enfermar el corazón.'},
-  {cause:'Alguien nunca hace ejercicio y come mucha grasa.',guide:'Su corazón se debilita y las arterias se pueden tapar con grasa.'},
-  {cause:'Un niño respira mucho humo dentro de su casa.',guide:'Le da tos y le cuesta respirar bien.'},
-  {cause:'Una persona tiene pocos glóbulos rojos (anemia).',guide:'Le llega poco oxígeno a las células y se cansa con facilidad.'},
+  {k:'cau-diafragma',cause:'El diafragma baja.',guide:'Entra el aire a los pulmones: es la inspiración.'},
+  {k:'cau-corte',cause:'Una persona se corta un dedo.',guide:'Las plaquetas ayudan a que la herida se tape y deje de sangrar.'},
+  {k:'cau-microbio',cause:'Entra un microbio al cuerpo.',guide:'Los glóbulos blancos lo atacan para defender al cuerpo.'},
+  {k:'cau-contrae',cause:'El corazón se contrae.',guide:'Empuja la sangre por todo el cuerpo: es un latido.'},
 ];
 const critEffectBank=[
-  {effect:'Un joven respira más rápido cuando hace ejercicio.',guide:'Su cuerpo necesita más oxígeno, por eso respira más rápido.'},
-  {effect:'A una persona el corazón le late más rápido al correr.',guide:'El corazón bombea más para llevar oxígeno a los músculos.'},
-  {effect:'Alguien que fuma tiene tos y le falta el aire.',guide:'El humo del cigarrillo dañó sus pulmones.'},
-  {effect:'A una persona con las arterias tapadas le puede fallar el corazón.',guide:'La grasa acumulada impide que la sangre circule bien.'},
+  {k:'ef-dormir',effect:'Al dormir respiramos más despacio.',guide:'En reposo el cuerpo gasta menos oxígeno.'},
+  {k:'ef-montana',effect:'En una montaña muy alta cuesta más respirar.',guide:'Allá arriba el aire trae menos oxígeno.'},
+  {k:'ef-baldes',effect:'A Marvin se le cansaron las piernas subiendo la cuesta con los baldes.',guide:'Les faltaba oxígeno, y el oxígeno se lo lleva la sangre.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
