@@ -840,8 +840,8 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿En qué departamento está la reserva más grande del país?',o:['a) Choluteca','b) Gracias a Dios','c) Valle','d) Ocotepeque'],a:1,k:'mc-gracias-a-dios'},
-  {q:'¿En qué año la UNESCO declaró Patrimonio de la Humanidad a la reserva más grande del país?',o:['a) 1952','b) 1982','c) 1996','d) 2011'],a:1,k:'mc-1982'},
-  {q:'¿Cuánto mide el punto más alto de Honduras?',o:['a) 849 m','b) 1,500 m','c) 2,849 m','d) 5,000 m'],a:2,k:'mc-2849'},
+  {q:'¿En qué año la UNESCO declaró Patrimonio de la Humanidad a la reserva más grande del país?',o:['a) 1970','b) 1982','c) 1996','d) 2011'],a:1,k:'mc-1982'},
+  {q:'¿En qué año se declaró la primera área protegida del país?',o:['a) 1952','b) 1975','c) 1998','d) 2005'],a:0,k:'mc-1952'},
   {q:'¿Qué parte del agua de Tegucigalpa sale de la primera área protegida del país?',o:['a) 10 %','b) 40 %','c) 80 %','d) toda'],a:1,k:'mc-40'},
   {q:'¿Qué instituto administra las áreas protegidas de Honduras?',o:['a) la UNAH','b) COPECO','c) el ICF','d) el SANAA'],a:2,k:'mc-icf'},
   {q:'¿Qué animales viven en el bosque lluvioso de La Mosquitia?',o:['a) el jaguar y el tapir','b) el pingüino','c) el camello','d) el oso polar'],a:0,k:'mc-jaguar'},

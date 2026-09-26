@@ -6638,6 +6638,27 @@ las piezas que las otras preguntas no usan (nudo, tesis, verso). Tres cosas más
 - **Una palabra que es a la vez de dos clases no se pregunta.** «Nunca» es de
   tiempo y de negación; ninguna prueba de Adverbios la pide clasificar.
 
+**La Ruta del Planeta quedó completa también**, sus ocho misiones y sus ocho
+fichas. En geografía el que delata es el NOMBRE PROPIO: «el río más
+caudaloso», «el punto más alto», «la zona protegida más grande» son la
+definición de un nombre, así que el nombre va en el pareado y las demás
+preguntas hablan del lugar sin nombrarlo («la reserva más grande del país»).
+Y dos cosas que salieron por el camino:
+
+- ⚠️ **El examen no pregunta cifras que envejecen**, aunque la misión las
+  enseñe: el porcentaje de las remesas en el PIB, qué lugar ocupa China entre
+  las economías, cuántos países firmaron hoy el Tratado Antártico. La vara es
+  la de siempre —lo que se escribe en papel se fecha—, y una pregunta de
+  examen no se puede fechar.
+- ⚠️ **Dos misiones de la misma ruta dan dos alturas para el Cerro Las
+  Minas**: 2,849 m en Áreas Protegidas y 2,870 m en Geografía de Honduras. No
+  hay en `_dev/` con qué acreditar ninguna de las dos, así que ninguna prueba
+  pregunta la altura (se quitó la que lo hacía). Queda pendiente el día que
+  entre la fuente: se corrige la teoría de la que esté mal, en la pantalla y
+  en la ficha.
+- **La prueba de pensamiento crítico de Áreas Protegidas tiene otra forma**
+  (datos, clasifica, argumenta) y la sonda no la lee; no se tocó.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

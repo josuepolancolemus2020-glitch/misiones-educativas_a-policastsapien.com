@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Honduras está ubicada en Centroamérica.',a:true},
-  {q:'El punto más alto de Honduras es el Pico Bonito.',a:false},
-  {q:'El río Coco o Segovia es el más largo del país.',a:true},
-  {q:'El Lago de Yojoa es el único lago natural de Honduras.',a:true},
-  {q:'Honduras se divide en 18 departamentos.',a:true},
-  {q:'La capital de Honduras es San Pedro Sula.',a:false},
-  {q:'El Mar Caribe limita al norte de Honduras.',a:true},
-  {q:'El río Choluteca pertenece a la vertiente del Caribe.',a:false},
-  {q:'Las Islas de la Bahía son Roatán, Utila y Guanaja.',a:true},
-  {q:'La Laguna de Caratasca está en La Mosquitia.',a:true},
-  {q:'Honduras tiene costas en el Mar Caribe y en el Océano Pacífico.',a:true},
-  {q:'En las montañas hace más calor que en las costas.',a:false},
-  {q:'Los departamentos se dividen en municipios.',a:true},
-  {q:'El Golfo de Fonseca está al norte del país.',a:false},
-  {q:'Cerca de las tres cuartas partes de Honduras son montañas.',a:true},
+  {q:'Honduras tiene costas en dos mares.',a:true,k:'tf-dos-mares'},
+  {q:'Cerca de las tres cuartas partes de Honduras son montañas.',a:true,k:'tf-montanas'},
+  {q:'Chamelecón, Aguán y Patuca son ríos que corren hacia el norte.',a:true,k:'tf-rios-norte'},
+  {q:'La estación lluviosa va de mayo a octubre.',a:true,k:'tf-lluviosa'},
+  {q:'Honduras se divide en 18 departamentos.',a:true,k:'tf-18'},
+  {q:'La costa del sur es más larga que la del norte.',a:false,k:'tf-costa-sur'},
+  {q:'El valle de Sula es muy fértil.',a:true,k:'tf-sula'},
+  {q:'Guatemala limita con Honduras por el este.',a:false,k:'tf-guatemala'},
+  {q:'Santa Rosa de Copán está en la región occidental.',a:true,k:'tf-santa-rosa'},
+  {q:'En la costa del sur se cultivan camarones y melones.',a:true,k:'tf-camarones'}
 ];
 const evalMCBank=[
-  {q:'¿En qué región de América está Honduras?',o:['a) Sudamérica','b) Norteamérica','c) Centroamérica','d) El Caribe insular'],a:2},
-  {q:'¿Cuál es el punto más alto de Honduras?',o:['a) El Cerro Las Minas','b) El Pico Bonito','c) El Cerro Azul','d) La Montaña de la Flor'],a:0},
-  {q:'¿Cuál es el río más largo del país?',o:['a) El Ulúa','b) El Choluteca','c) El Coco o Segovia','d) El Aguán'],a:2},
-  {q:'¿Cuál es el único lago natural de Honduras?',o:['a) El Lago de Yojoa','b) La Laguna de Caratasca','c) El Cajón','d) El Golfo de Fonseca'],a:0},
-  {q:'¿En cuántos departamentos se divide Honduras?',o:['a) 15','b) 18','c) 22','d) 298'],a:1},
-  {q:'¿Cuál es la capital de Honduras?',o:['a) Tegucigalpa','b) San Pedro Sula','c) Comayagua','d) Choluteca'],a:0},
-  {q:'¿Con qué mar limita Honduras al norte?',o:['a) El Océano Pacífico','b) El Mar Caribe','c) El Golfo de Fonseca','d) El Mar Mediterráneo'],a:1},
-  {q:'¿Qué río pertenece a la vertiente del Pacífico?',o:['a) El Ulúa','b) El Choluteca','c) El Patuca','d) El Aguán'],a:1},
-  {q:'¿Cuál es el departamento insular de Honduras?',o:['a) Gracias a Dios','b) Atlántida','c) Valle','d) Islas de la Bahía'],a:3},
-  {q:'¿Cuál es la laguna más grande del país?',o:['a) La de Yojoa','b) La de Fonseca','c) La de Alvarado','d) La de Caratasca'],a:3},
-  {q:'¿En qué departamento está el Cerro Las Minas?',o:['a) Lempira','b) Cortés','c) Olancho','d) Valle'],a:0},
-  {q:'¿Cuántos municipios tiene Honduras?',o:['a) 100','b) 200','c) 298','d) 350'],a:2},
-  {q:'¿Qué río riega el fértil Valle de Sula?',o:['a) El Choluteca','b) El Coco','c) El Nacaome','d) El Ulúa'],a:3},
-  {q:'¿Cuál es la extensión aproximada de Honduras?',o:['a) 50,000 km²','b) 200,000 km²','c) 112,492 km²','d) 8,000 km²'],a:2},
-  {q:'¿Cómo se llama la región oriental de grandes bosques?',o:['a) El Merendón','b) La Mosquitia','c) El Valle de Sula','d) El Golfo de Fonseca'],a:1},
+  {q:'¿Con qué país limita Honduras por el este?',o:['a) Guatemala','b) Nicaragua','c) Belice','d) México'],a:1,k:'mc-este'},
+  {q:'¿Qué cordilleras son de Honduras?',o:['a) los Andes','b) los Alpes','c) el Merendón y Nombre de Dios','d) el Himalaya'],a:2,k:'mc-cordilleras'},
+  {q:'¿Qué río corre hacia el Pacífico?',o:['a) el Aguán','b) el Patuca','c) el Chamelecón','d) el Choluteca'],a:3,k:'mc-choluteca'},
+  {q:'¿En qué departamento está la capital?',o:['a) Francisco Morazán','b) Cortés','c) Atlántida','d) Olancho'],a:0,k:'mc-francisco-morazan'},
+  {q:'¿Cuántos municipios tiene Honduras?',o:['a) 18','b) 100','c) 298','d) 500'],a:2,k:'mc-298'},
+  {q:'¿Qué clima tiene Honduras?',o:['a) polar','b) tropical','c) desértico','d) de nieve'],a:1,k:'mc-tropical'},
+  {q:'¿Cómo le dicen a Honduras por el lugar donde está?',o:['a) la puerta del sur','b) la tierra del hielo','c) el país del desierto','d) el corazón de Centroamérica'],a:3,k:'mc-corazon'},
+  {q:'¿Qué se cultiva mucho en las montañas del occidente?',o:['a) trigo','b) café','c) uva','d) manzana'],a:1,k:'mc-cafe'},
+  {q:'¿Cómo se llaman las tierras planas entre montañas?',o:['a) valles','b) golfos','c) playas','d) cerros'],a:0,k:'mc-valles'},
+  {q:'¿Qué ciudad forma el Distrito Central junto con la capital?',o:['a) San Pedro Sula','b) Comayagüela','c) La Ceiba','d) Choluteca'],a:1,k:'mc-comayaguela'}
 ];
 const evalCPBank=[
-  {q:'Honduras está en la región de ___.',a:'Centroamérica'},
-  {q:'El punto más alto es el Cerro ___.',a:'Las Minas'},
-  {q:'El río más largo es el ___.',a:'Coco o Segovia'},
-  {q:'El único lago natural es el Lago de ___.',a:'Yojoa'},
-  {q:'Honduras tiene ___ departamentos.',a:'18'},
-  {q:'La capital de Honduras es ___.',a:'Tegucigalpa'},
-  {q:'Al norte, Honduras limita con el Mar ___.',a:'Caribe'},
-  {q:'Al sur del país está el Golfo de ___.',a:'Fonseca'},
-  {q:'Los ríos Choluteca y Nacaome son de la vertiente del ___.',a:'Pacífico'},
-  {q:'Las Islas de la Bahía son Roatán, Utila y ___.',a:'Guanaja'},
-  {q:'La laguna más grande es la de ___.',a:'Caratasca'},
-  {q:'Los departamentos se dividen en ___.',a:'municipios'},
-  {q:'El clima de Honduras es ___.',a:'tropical'},
-  {q:'La región oriental de grandes bosques es La ___.',a:'Mosquitia'},
-  {q:'El río ___ riega el Valle de Sula.',a:'Ulúa'},
+  {q:'Honduras mide unos ___ km².',a:'112,492',acc:['112,492','112492','112.492'],k:'cp-extension'},
+  {q:'Por el norte, Honduras limita con el Mar ___.',a:'Caribe',acc:['Caribe'],k:'cp-caribe'},
+  {q:'En la costa sur está la ciudad de San ___, con su muelle.',a:'Lorenzo',acc:['Lorenzo'],k:'cp-san-lorenzo'},
+  {q:'Roatán, Utila y ___ están frente a la costa norte.',a:'Guanaja',acc:['Guanaja'],k:'cp-guanaja'},
+  {q:'El punto más alto del país está en la Montaña de ___.',a:'Celaque',acc:['Celaque'],k:'cp-celaque'},
+  {q:'El río ___ riega el fértil valle de Sula.',a:'Ulúa',acc:['Ulúa'],k:'cp-ulua'},
+  {q:'La estación seca va de noviembre a ___.',a:'abril',acc:['abril'],k:'cp-abril'},
+  {q:'En las costas el clima es ___ todo el año.',a:'cálido',acc:['cálido','caliente'],k:'cp-calido'},
+  {q:'La región oriental es la menos ___ del país.',a:'poblada',acc:['poblada'],k:'cp-poblada'},
+  {q:'La Esperanza es famosa por su clima ___.',a:'fresco',acc:['fresco','frío','templado'],k:'cp-fresco'}
 ];
 const evalPRBank=[
-  {term:'Honduras',def:'País del centro de Centroamérica (112,492 km²)'},
-  {term:'Cerro Las Minas',def:'El punto más alto del país (2,870 m)'},
-  {term:'Río Coco o Segovia',def:'El río más largo de Honduras'},
-  {term:'Lago de Yojoa',def:'El único lago natural'},
-  {term:'Laguna de Caratasca',def:'La laguna más grande, en La Mosquitia'},
-  {term:'Tegucigalpa',def:'La capital de Honduras'},
-  {term:'Mar Caribe',def:'El mar que limita al norte'},
-  {term:'Golfo de Fonseca',def:'La entrada del Pacífico, al sur'},
-  {term:'Islas de la Bahía',def:'Departamento insular: Roatán, Utila y Guanaja'},
-  {term:'Vertiente del Caribe',def:'Agrupa ríos largos como el Ulúa y el Patuca'},
-  {term:'Vertiente del Pacífico',def:'Agrupa ríos cortos como el Choluteca'},
-  {term:'Departamento',def:'División política grande (hay 18)'},
-  {term:'Municipio',def:'División dentro del departamento (hay 298)'},
-  {term:'La Mosquitia',def:'Región oriental de grandes bosques'},
-  {term:'Puerto Cortés',def:'El puerto más importante, en el Caribe'},
+  {term:'Cerro Las Minas',def:'El punto más alto del país',k:'pr-las-minas'},
+  {term:'Río Coco o Segovia',def:'El río más largo de Honduras',k:'pr-coco'},
+  {term:'Lago de Yojoa',def:'El único lago natural',k:'pr-yojoa'},
+  {term:'Laguna de Caratasca',def:'La laguna más grande',k:'pr-caratasca'},
+  {term:'Golfo de Fonseca',def:'La salida al Pacífico, en el sur',k:'pr-fonseca'},
+  {term:'Islas de la Bahía',def:'El departamento hecho de islas',k:'pr-islas'},
+  {term:'La Mosquitia',def:'La región de grandes bosques del oriente',k:'pr-mosquitia'},
+  {term:'Puerto Cortés',def:'El puerto más importante',k:'pr-puerto-cortes'},
+  {term:'Tegucigalpa',def:'La capital de Honduras',k:'pr-tegucigalpa'},
+  {term:'Represa El Cajón',def:'Embalse que produce electricidad',k:'pr-cajon'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una familia de Choluteca viaja de vacaciones a Roatán: sale del calor seco del sur y llega a una isla del Caribe.'},
-  {txt:'En el Valle de Sula, el río Ulúa crece con las lluvias de mayo a octubre y a veces se desborda sobre los cultivos.'},
-  {txt:'Un turista quiere subir al punto más alto de Honduras y pregunta a qué departamento debe viajar.'},
-  {txt:'Un pueblo pesquero del Golfo de Fonseca vive de la pesca y del cultivo de camarón.'},
-  {txt:'Una cooperativa de café busca tierras frescas de montaña para sembrar un cafetal de calidad.'},
-  {txt:'Un barco carga bananos en Puerto Cortés y los lleva a otros países.'},
+  {k:'ca-roatan',txt:'Una familia de Choluteca viaja de vacaciones a Roatán: sale del calor seco del sur y llega a una isla del norte.'},
+  {k:'ca-olancho',txt:'Una escuela de Olancho busca en el mapa hacia qué mar corren los ríos de su departamento.'},
+  {k:'ca-ocotepeque',txt:'Un grupo de Ocotepeque sube a la montaña con suéter, aunque abajo, en el pueblo, hace calor.'},
+  {k:'ca-cruceros',txt:'Una comunidad de la costa norte recibe cada año a turistas que llegan en crucero.'},
+  {k:'ca-comayagua',txt:'Un agricultor de Comayagua riega su siembra con agua del río en la época seca.'},
+  {k:'ca-melones',txt:'Un camión lleva melones del sur hasta el puerto para venderlos en otros países.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué lugares o elementos geográficos de Honduras aparecen en este caso?',
@@ -520,56 +505,57 @@ const critCaseGuides=[
   'Una buena recomendación usa la geografía: sembrar café en montaña, construir lejos de ríos que se desbordan, usar el puerto más cercano.',
 ];
 const critErrorBank=[
-  {txt:'"La capital de Honduras es San Pedro Sula y el país tiene 15 departamentos."',
+  {k:'er-capital',txt:'"La capital de Honduras es San Pedro Sula y el país tiene 15 departamentos."',
    g1:'La capital es TEGUCIGALPA (Distrito Central).',
    g2:'Honduras tiene 18 departamentos.'},
-  {txt:'"El río más largo de Honduras es el Ulúa y desemboca en el Océano Pacífico."',
+  {k:'er-rio-largo',txt:'"El río más largo de Honduras es el Ulúa y desemboca en el Océano Pacífico."',
    g1:'El río más largo es el COCO O SEGOVIA.',
    g2:'El Ulúa desemboca en el MAR CARIBE.'},
-  {txt:'"El Lago de Yojoa es una laguna que está en La Mosquitia."',
-   g1:'El Lago de Yojoa es el ÚNICO LAGO NATURAL, entre Comayagua, Cortés y Santa Bárbara.',
+  {k:'er-yojoa',txt:'"El Lago de Yojoa es una laguna que está en La Mosquitia."',
+   g1:'El Lago de Yojoa es el ÚNICO LAGO NATURAL del país.',
    g2:'La laguna de La Mosquitia es la de CARATASCA.'},
-  {txt:'"Honduras limita al norte con el Océano Pacífico y al sur con el Mar Caribe."',
+  {k:'er-norte-sur',txt:'"Honduras limita al norte con el Océano Pacífico y al sur con el Mar Caribe."',
    g1:'Al NORTE está el Mar Caribe.',
    g2:'Al SUR está el Golfo de Fonseca (Océano Pacífico).'},
-  {txt:'"Honduras es un país plano y su punto más alto es el Pico Bonito."',
+  {k:'er-plano',txt:'"Honduras es un país plano y su punto más alto es el Pico Bonito."',
    g1:'Honduras es MONTAÑOSO: unas tres cuartas partes son montañas.',
-   g2:'El punto más alto es el CERRO LAS MINAS (2,870 m), en Celaque.'},
+   g2:'El punto más alto es el CERRO LAS MINAS, en Celaque.'},
 ];
 const critDecisionBank=[
   'Para sembrar café de calidad, conviene elegir tierras frescas de montaña, o las llanuras cálidas de la costa.',
   'Para exportar bananos del Valle de Sula, conviene usar Puerto Cortés en el Caribe, o el puerto de San Lorenzo en el Pacífico.',
-  'Para conocer arrecifes de coral, conviene viajar a las Islas de la Bahía, o al Lago de Yojoa.',
+  'Para bañarse en agua dulce y tranquila, conviene buscar una poza de río, o el mar abierto con olas.',
   'Si una comunidad vive junto a un río que se desborda cada año, conviene construir las casas en zonas altas, o en la orilla del río.',
-  'Para observar aves y pescar en agua dulce, conviene visitar el Lago de Yojoa, o el Golfo de Fonseca.',
+  'Para cruzar un río crecido, conviene esperar a que baje, o cruzarlo a pie.',
 ];
 const critDecisionGuide='La mejor decisión aprovecha la geografía: el café se da en montañas frescas; los bananos del Valle de Sula salen por Puerto Cortés porque está cerca y en el Caribe; los arrecifes están en las Islas de la Bahía; junto a un río que se desborda se construye en zonas altas; y el Lago de Yojoa es agua dulce, ideal para aves y pesca.';
 const critCompareBank=[
-  {a:'Agrupa ríos largos y caudalosos que desembocan en el Mar Caribe.',b:'Agrupa ríos cortos que desembocan en el Golfo de Fonseca.',
-   ga:'La vertiente del Caribe.',
-   gb:'La vertiente del Pacífico.',
-   gr:'Las dos agrupan ríos, pero se diferencian por el mar donde desembocan y por el largo de sus ríos.'},
-  {a:'División política grande; Honduras tiene 18.',b:'División más pequeña; Honduras tiene 298.',
+  {k:'co-costas',a:'Costa larga del norte, con puertos y bananeras.',b:'Costa corta del sur, dentro de un golfo.',
+   ga:'La costa del Caribe.',
+   gb:'La costa del Pacífico, en el Golfo de Fonseca.',
+   gr:'Las dos son costas de Honduras, pero dan a mares distintos y la del norte es mucho más larga.'},
+  {k:'co-valle-montana',a:'Tierra plana entre montañas, como Sula o Comayagua.',b:'Tierra alta con cordilleras, como el Merendón.',
+   ga:'Un valle.',
+   gb:'Una montaña (cordillera).',
+   gr:'Los dos son formas del relieve, pero el valle es plano y bajo y la montaña es alta; en Honduras hay muchas más montañas que valles.'},
+  {k:'co-depto-municipio',a:'División política grande del país.',b:'División más pequeña, que está dentro de la grande.',
    ga:'El departamento.',
    gb:'El municipio.',
    gr:'Los dos organizan el territorio, pero los municipios están dentro de los departamentos.'},
-  {a:'El único lago natural, famoso por sus aves y peces.',b:'La laguna más grande, en La Mosquitia.',
-   ga:'El Lago de Yojoa.',
-   gb:'La Laguna de Caratasca.',
-   gr:'Los dos son cuerpos de agua tranquila, pero uno es un lago del interior y la otra es una laguna costera del oriente.'},
 ];
 const critCauseBank=[
-  {cause:'Honduras tiene montañas altas y frescas.',guide:'En ellas se cultiva café de buena calidad y el clima es templado.'},
-  {cause:'Llueve mucho de mayo a octubre.',guide:'Los ríos crecen y algunos, como el Ulúa, pueden desbordarse.'},
-  {cause:'El Valle de Sula es plano, fértil y regado por el río Ulúa.',guide:'Allí hay grandes cultivos y ciudades como San Pedro Sula.'},
-  {cause:'Honduras tiene costas en el Caribe y en el Pacífico.',guide:'Puede pescar y comerciar por los dos mares con sus puertos.'},
+  {k:'cau-montanoso',cause:'Honduras tiene muchísimas montañas.',guide:'Casi no hay llano: por eso los valles se llenan de siembras y de ciudades.'},
+  {k:'cau-sin-carreteras',cause:'La Mosquitia casi no tiene carreteras.',guide:'Los viajes se hacen por río, por mar o en avioneta.'},
+  {k:'cau-sula',cause:'El valle de Sula es plano y fértil.',guide:'Allí hay grandes cultivos y creció una ciudad grande.'},
+  {k:'cau-centro',cause:'Honduras está en medio de Centroamérica.',guide:'Limita con tres países: Guatemala, El Salvador y Nicaragua.'},
 ];
 const critEffectBank=[
-  {effect:'A las Islas de la Bahía llegan muchos turistas.',guide:'Porque tienen playas y arrecifes de coral en el Mar Caribe.'},
-  {effect:'En la costa hace más calor que en la montaña.',guide:'Porque el clima cambia con la altitud: a mayor altura, más fresco.'},
-  {effect:'La Mosquitia tiene pocos habitantes.',guide:'Porque es una región de grandes bosques y ríos, de difícil acceso.'},
-  {effect:'El sur del país produce camarones y melones.',guide:'Porque el Golfo de Fonseca y su llanura cálida lo permiten.'},
+  {k:'ef-turistas-islas',effect:'A Roatán, Utila y Guanaja llegan muchos turistas.',guide:'Tienen playas y arrecifes de coral.'},
+  {k:'ef-sueter',effect:'En La Esperanza la gente usa suéter en diciembre.',guide:'Está en lo alto de la montaña: a más altura, más fresco.'},
+  {k:'ef-puentes',effect:'En la costa norte hay que cruzar muchos puentes grandes.',guide:'Allí bajan ríos largos y caudalosos.'},
+  {k:'ef-ventanas',effect:'Las casas de la costa tienen ventanas grandes y techos altos.',guide:'Hace calor todo el año.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
