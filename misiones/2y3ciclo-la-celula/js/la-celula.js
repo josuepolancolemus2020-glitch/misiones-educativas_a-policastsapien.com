@@ -350,73 +350,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La célula es la unidad estructural y funcional de todos los seres vivos.',a:true},
-  {q:'La mitocondria produce la energía (ATP) de la célula.',a:true},
-  {q:'La célula animal tiene pared celular y cloroplastos.',a:false},
-  {q:'El cloroplasto realiza la fotosíntesis y solo está en la célula vegetal.',a:true},
-  {q:'Las bacterias son células eucariotas con núcleo definido.',a:false},
-  {q:'La membrana celular controla lo que entra y sale de la célula.',a:true},
-  {q:'El núcleo guarda el ADN en las células eucariotas.',a:true},
-  {q:'Los ribosomas se encargan de fabricar las proteínas.',a:true},
-  {q:'La pared celular de las plantas está hecha de celulosa.',a:true},
-  {q:'La célula procariota tiene su ADN encerrado en un núcleo definido.',a:false},
-  {q:'Según la teoría celular, toda célula proviene de otra célula preexistente.',a:true},
-  {q:'La vacuola de la célula vegetal es grande y central.',a:true},
-  {q:'La fotosíntesis produce glucosa y oxígeno a partir de luz, agua y CO₂.',a:true},
-  {q:'El citoplasma es una cubierta rígida que rodea la célula por fuera.',a:false},
-  {q:'La mitocondria solo se encuentra en la célula vegetal.',a:false},
+  {q:'Robert Hooke llamó «celdas» a los cuartitos que vio.',a:true,k:'tf-hooke'},
+  {q:'Todos los organismos, desde el más pequeño hasta un árbol, están formados por células.',a:true,k:'tf-todos'},
+  {q:'Las células no necesitan alimento.',a:false,k:'tf-alimento'},
+  {q:'La célula es la porción más pequeña que tiene vida propia.',a:true,k:'tf-porcion'},
+  {q:'La célula animal y la vegetal tienen la misma forma.',a:false,k:'tf-misma-forma'},
+  {q:'La célula se descubrió hace muy poco, cuando ya había computadoras.',a:false,k:'tf-reciente'},
+  {q:'Solo algunas células tienen una capa que las separa de lo de afuera.',a:false,k:'tf-capa'},
+  {q:'Las primeras formas de vida en la Tierra fueron células sencillas.',a:true,k:'tf-primeras'},
+  {q:'Toda célula nueva sale de otra célula que ya existía.',a:true,k:'tf-otra'},
+  {q:'Dentro de la célula ocurren reacciones químicas.',a:true,k:'tf-reacciones'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es la unidad estructural y funcional de los seres vivos?',o:['a) El átomo','b) La célula','c) El tejido','d) El órgano'],a:1},
-  {q:'¿Qué organelo produce la energía (ATP) de la célula?',o:['a) Mitocondria','b) Ribosoma','c) Vacuola','d) Núcleo'],a:0},
-  {q:'¿Qué organelo realiza la fotosíntesis?',o:['a) Mitocondria','b) Ribosoma','c) Cloroplasto','d) Lisosoma'],a:2},
-  {q:'¿Qué tipo de célula NO tiene núcleo definido?',o:['a) Eucariota','b) Vegetal','c) Procariota','d) Animal'],a:2},
-  {q:'¿Qué estructura rígida rodea a la célula vegetal?',o:['a) Pared celular','b) Membrana','c) Citoplasma','d) Vacuola'],a:0},
-  {q:'¿Dónde se guarda el ADN en una célula eucariota?',o:['a) En la mitocondria','b) En la membrana','c) En el núcleo','d) En el citoplasma libre'],a:2},
-  {q:'¿Qué organelo fabrica las proteínas?',o:['a) Vacuola','b) Cloroplasto','c) Núcleo','d) Ribosoma'],a:3},
-  {q:'¿Qué estructura tiene la célula vegetal pero NO la animal?',o:['a) Cloroplasto','b) Núcleo','c) Membrana','d) Mitocondria'],a:0},
-  {q:'Según la teoría celular, ¿de dónde proviene toda célula?',o:['a) Del aire','b) De otra célula preexistente','c) De materia sin vida','d) Del agua'],a:1},
-  {q:'¿Qué controla la membrana celular?',o:['a) La reproducción','b) Lo que entra y sale de la célula','c) La fotosíntesis','d) El color de la célula'],a:1},
-  {q:'¿Qué organelo almacena agua, alimentos o desechos?',o:['a) Ribosoma','b) Mitocondria','c) Vacuola','d) Núcleo'],a:2},
-  {q:'¿Qué ejemplo corresponde a una célula procariota?',o:['a) Célula de una hoja','b) Neurona','c) Glóbulo rojo','d) Bacteria'],a:3},
-  {q:'¿De qué material está hecha la pared celular de las plantas?',o:['a) Quitina','b) Celulosa','c) Proteína','d) Grasa'],a:1},
-  {q:'¿Qué produce la fotosíntesis?',o:['a) Solo agua','b) Solo dióxido de carbono','c) Proteínas','d) Glucosa y oxígeno'],a:3},
-  {q:'¿Cómo se llama el medio gelatinoso donde flotan los organelos?',o:['a) Citoplasma','b) Núcleo','c) Membrana','d) Pared'],a:0},
+  {q:'¿Qué instrumento hace falta para ver casi todas las células?',o:['a) a) El telescopio','b) b) El microscopio','c) c) El termómetro','d) d) La brújula'],a:1,k:'mc-microscopio'},
+  {q:'¿Qué tipo de célula forma el cuerpo humano?',o:['a) a) Procariota','b) b) Mineral','c) c) Eucariota','d) d) Sin vida'],a:2,k:'mc-eucariota'},
+  {q:'¿Qué clase de célula es una bacteria?',o:['a) a) Procariota','b) b) Eucariota','c) c) Vegetal','d) d) Animal'],a:0,k:'mc-procariota'},
+  {q:'¿Qué pigmento verde capta la luz en las plantas?',o:['a) a) La hemoglobina','b) b) La melanina','c) c) La clorofila','d) d) El caroteno'],a:2,k:'mc-clorofila'},
+  {q:'¿Qué gas libera una planta cuando fabrica su alimento?',o:['a) a) Dióxido de carbono','b) b) Nitrógeno','c) c) Humo','d) d) Oxígeno'],a:3,k:'mc-oxigeno'},
+  {q:'¿Qué forma tiene la célula vegetal?',o:['a) a) Redonda y blanda','b) b) Rectangular y fija','c) c) De estrella','d) d) Cambia cada día'],a:1,k:'mc-forma-vegetal'},
+  {q:'¿Cuántas células tiene, más o menos, el cuerpo humano?',o:['a) a) 37','b) b) 37 mil','c) c) 37 millones','d) d) 37 billones'],a:3,k:'mc-37-billones'},
+  {q:'¿Cuántos postulados tiene la teoría celular?',o:['a) a) Tres','b) b) Dos','c) c) Cinco','d) d) Diez'],a:0,k:'mc-postulados'},
+  {q:'¿Quién enunció «omnis cellula e cellula»?',o:['a) a) Robert Hooke','b) b) Isaac Newton','c) c) Rudolf Virchow','d) d) Charles Darwin'],a:2,k:'mc-virchow'},
+  {q:'¿En qué unidad se mide el tamaño de una célula?',o:['a) a) En metros','b) b) En micrómetros','c) c) En kilogramos','d) d) En litros'],a:1,k:'mc-micrometros'}
 ];
 const evalCPBank=[
-  {q:'La ___ es la unidad estructural y funcional de los seres vivos.',a:'célula'},
-  {q:'La ___ produce la energía (ATP) de la célula.',a:'mitocondria'},
-  {q:'El ___ guarda el ADN y dirige la célula eucariota.',a:'núcleo'},
-  {q:'El ___ realiza la fotosíntesis en la célula vegetal.',a:'cloroplasto'},
-  {q:'La célula ___ no tiene núcleo definido, como las bacterias.',a:'procariota'},
-  {q:'La ___ celular controla lo que entra y sale de la célula.',a:'membrana'},
-  {q:'Los ___ se encargan de fabricar las proteínas.',a:'ribosomas'},
-  {q:'La pared celular de las plantas está hecha de ___.',a:'celulosa'},
-  {q:'La célula ___ tiene núcleo definido y organelos con membrana.',a:'eucariota'},
-  {q:'La ___ almacena agua, alimentos o desechos en la célula.',a:'vacuola'},
-  {q:'El pigmento verde del cloroplasto se llama ___.',a:'clorofila'},
-  {q:'La fotosíntesis libera ___ al ambiente.',a:'oxígeno'},
-  {q:'El medio gelatinoso donde flotan los organelos es el ___.',a:'citoplasma'},
-  {q:'La molécula que guarda la información genética es el ___.',a:'ADN'},
-  {q:'Toda célula proviene de otra célula ___.',a:'preexistente'},
+  {q:'La célula de un músculo y la de un nervio son distintas porque están ___.',a:'especializadas',acc:['especializadas'],k:'cp-especializadas'},
+  {q:'La información hereditaria de la célula se guarda en el ___.',a:'ADN',acc:['ADN'],k:'cp-adn'},
+  {q:'Las plantas fabrican su alimento con la luz por medio de la ___.',a:'fotosíntesis',acc:['fotosíntesis','fotosintesis'],k:'cp-fotosintesis'},
+  {q:'Un ser formado por muchas células se llama ___.',a:'pluricelular',acc:['pluricelular','multicelular'],k:'cp-pluricelular'},
+  {q:'La energía que usa la célula se guarda en una molécula llamada ___.',a:'ATP',acc:['ATP'],k:'cp-atp'},
+  {q:'La cubierta de la célula vegetal está hecha de ___.',a:'celulosa',acc:['celulosa'],k:'cp-celulosa'},
+  {q:'Robert Hooke vio las primeras células en un trozo de ___.',a:'corcho',acc:['corcho'],k:'cp-corcho'},
+  {q:'Para formar piel nueva en la herida de don Tulio, sus células se ___.',a:'dividen',acc:['dividen','dividieron','multiplican','multiplicaron'],k:'cp-dividen'},
+  {q:'La célula nace, se nutre, crece, se ___ y muere.',a:'reproduce',acc:['reproduce'],k:'cp-reproduce'},
+  {q:'Los organelos son pequeñas ___ con funciones específicas.',a:'máquinas',acc:['máquinas','maquinas'],k:'cp-maquinas'}
 ];
 const evalPRBank=[
-  {term:'Célula',def:'Unidad estructural y funcional de los seres vivos'},
-  {term:'Núcleo',def:'Guarda el ADN y dirige la célula'},
-  {term:'Mitocondria',def:'Produce la energía (ATP) por respiración celular'},
-  {term:'Cloroplasto',def:'Realiza la fotosíntesis; exclusivo de la célula vegetal'},
-  {term:'Membrana celular',def:'Controla lo que entra y sale de la célula'},
-  {term:'Pared celular',def:'Cubierta rígida de celulosa en la célula vegetal'},
-  {term:'Ribosoma',def:'Fabrica las proteínas'},
-  {term:'Vacuola',def:'Almacena agua, alimentos o desechos'},
-  {term:'Citoplasma',def:'Medio gelatinoso donde flotan los organelos'},
-  {term:'ADN',def:'Molécula que guarda la información genética'},
-  {term:'Procariota',def:'Célula sin núcleo definido, como las bacterias'},
-  {term:'Eucariota',def:'Célula con núcleo definido y organelos con membrana'},
-  {term:'Fotosíntesis',def:'Fabricación de alimento con luz, agua y CO₂'},
-  {term:'Teoría celular',def:'Toda célula proviene de otra célula preexistente'},
-  {term:'Clorofila',def:'Pigmento verde que capta la luz en el cloroplasto'},
+  {term:'Membrana celular',def:'Controla lo que entra y sale',k:'pr-membrana'},
+  {term:'Mitocondria',def:'Central energética de la célula',k:'pr-mitocondria'},
+  {term:'Ribosoma',def:'Fabrica las proteínas',k:'pr-ribosoma'},
+  {term:'Vacuola',def:'Almacén de agua, alimento o desechos',k:'pr-vacuola'},
+  {term:'Núcleo',def:'Centro de mando de la célula',k:'pr-nucleo'},
+  {term:'Citoplasma',def:'Medio gelatinoso donde flotan los organelos',k:'pr-citoplasma'},
+  {term:'Cloroplasto',def:'Donde la planta fabrica su alimento',k:'pr-cloroplasto'},
+  {term:'Pared celular',def:'Protege por fuera a la célula de la planta',k:'pr-pared'},
+  {term:'Centriolo',def:'Lo tiene la célula animal y no la vegetal',k:'pr-centriolo'},
+  {term:'Unicelular',def:'Ser formado por una sola célula',k:'pr-unicelular'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -503,12 +488,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Ana observa al microscopio una célula que tiene pared celular, varios cloroplastos verdes y una gran vacuola central que ocupa casi todo su interior.'},
-  {txt:'Un estudiante dibuja una célula que presenta una cubierta rígida por fuera, cloroplastos con clorofila y una vacuola central muy grande.'},
-  {txt:'En una muestra de una hoja se ve, al microscopio, una célula con forma rectangular fija, pared celular y muchos cloroplastos.'},
-  {txt:'Bajo el microscopio aparece una célula verde, con pared de celulosa y una vacuola central enorme que empuja al núcleo hacia un lado.'},
-  {txt:'María examina una célula de una planta y anota que tiene pared celular, cloroplastos y una vacuola central que ocupa gran parte del espacio.'},
-  {txt:'Se observa una célula con forma fija, cubierta rígida externa, pigmentos verdes en su interior y una sola vacuola grande y central.'},
+  {k:'ca-ana',txt:'Ana observa al microscopio una célula que tiene pared celular, varios cloroplastos verdes y una gran vacuola central que ocupa casi todo su interior.'},
+  {k:'ca-dibujo',txt:'Un estudiante dibuja una célula que presenta una cubierta rígida por fuera, cloroplastos con clorofila y una vacuola central muy grande.'},
+  {k:'ca-hoja',txt:'En una muestra de una hoja se ve, al microscopio, una célula con forma rectangular fija, pared celular y muchos cloroplastos.'},
+  {k:'ca-verde',txt:'Bajo el microscopio aparece una célula verde, con pared de celulosa y una vacuola central enorme que empuja al núcleo hacia un lado.'},
+  {k:'ca-maria',txt:'María examina una célula de una planta y anota que tiene pared celular, cloroplastos y una vacuola central que ocupa gran parte del espacio.'},
+  {k:'ca-forma',txt:'Se observa una célula con forma fija, cubierta rígida externa, pigmentos verdes en su interior y una sola vacuola grande y central.'},
 ];
 const critCaseQuestions=[
   '1. ¿Es una célula animal o vegetal? Justifica con dos estructuras observadas.',
@@ -523,21 +508,18 @@ const critCaseGuides=[
   'Sin cloroplastos no podría hacer fotosíntesis: dejaría de producir su propio alimento y se debilitaría por falta de energía.',
 ];
 const critErrorBank=[
-  {txt:'"La célula animal tiene pared celular y cloroplastos, por eso puede hacer fotosíntesis igual que la vegetal."',
-   g1:'La célula animal NO tiene pared celular ni cloroplastos: esas estructuras son exclusivas (o casi) de la célula vegetal.',
-   g2:'La célula animal no hace fotosíntesis; obtiene su energía de los alimentos mediante la respiración celular.'},
-  {txt:'"El núcleo produce la energía de la célula, mientras que la mitocondria guarda el ADN y dirige todas sus funciones."',
-   g1:'La mitocondria es la que produce la energía (ATP) por respiración celular, no el núcleo.',
-   g2:'El núcleo es el que guarda el ADN y dirige la célula, no la mitocondria.'},
-  {txt:'"Las bacterias son células eucariotas porque tienen un núcleo bien definido que encierra su ADN."',
-   g1:'Las bacterias son PROcariotas, no eucariotas.',
-   g2:'Su ADN está libre en el citoplasma (nucleoide), sin un núcleo definido que lo encierre.'},
-  {txt:'"La membrana celular es rígida y da forma a la célula, mientras que la pared celular controla lo que entra y sale."',
-   g1:'La membrana celular es flexible y es la que controla lo que entra y sale (permeabilidad selectiva).',
-   g2:'La pared celular (en plantas, hongos y bacterias) es la cubierta rígida que da forma y protección.'},
-  {txt:'"Los ribosomas realizan la fotosíntesis, y los cloroplastos se encargan de fabricar las proteínas de la célula."',
-   g1:'La fotosíntesis la realizan los cloroplastos, no los ribosomas.',
-   g2:'Las proteínas las fabrican los ribosomas, no los cloroplastos.'},
+  {k:'er-nucleo-mitocondria',txt:'"El núcleo produce la energía de la célula, mientras que la mitocondria guarda el ADN y dirige todas sus funciones."',
+   g1:'la mitocondria es la que produce la energía (ATP) por respiración celular, no el núcleo.',
+   g2:'el núcleo es el que guarda el ADN y dirige la célula, no la mitocondria.'},
+  {k:'er-no-vivas',txt:'"Las células no están vivas: lo que está vivo es la persona entera."',
+   g1:'la célula es la porción más pequeña que tiene vida propia.',
+   g2:'como cualquier ser vivo, nace, se nutre, respira, crece, se reproduce y muere.'},
+  {k:'er-de-la-nada',txt:'"Cuando el cuerpo necesita una célula nueva, la célula aparece de la nada."',
+   g1:'toda célula viene de otra célula que ya existía.',
+   g2:'es el tercer postulado de la teoría celular: «omnis cellula e cellula».'},
+  {k:'er-todas-iguales',txt:'"En un perro todas las células son iguales y hacen el mismo trabajo."',
+   g1:'en un ser de muchas células, las células están especializadas.',
+   g2:'cada tipo hace un trabajo distinto y todas trabajan juntas.'},
 ];
 const critDecisionBank=[
   'Un agricultor coloca sus plantas en un cuarto oscuro y nota que se ponen amarillas, débiles y dejan de crecer.',
@@ -548,31 +530,21 @@ const critDecisionBank=[
 ];
 const critDecisionGuide='Las plantas necesitan LUZ para la fotosíntesis: sin luz, los cloroplastos no producen alimento ni clorofila, por eso las hojas pierden el color verde y la planta se debilita. Se recomienda ubicarlas donde reciban luz solar, no excederse en el riego y asegurar buen suelo; así la célula vegetal puede fabricar su energía y mantenerse sana.';
 const critCompareBank=[
-  {a:'Una célula sin núcleo definido, con su ADN suelto en el citoplasma, muy pequeña y sencilla.',b:'Una célula con núcleo definido y organelos rodeados de membrana, más grande y compleja.',
+  {k:'co-pro-eu',a:'Una célula sin núcleo definido, con su material hereditario suelto, muy pequeña y sencilla.',b:'Una célula con núcleo definido y organelos rodeados de membrana, más grande y compleja.',
    ga:'Célula procariota (ejemplo: una bacteria).',
    gb:'Célula eucariota (ejemplo: una planta o un animal).',
    gr:'No son el mismo tipo: la diferencia clave es la presencia de un núcleo definido y de organelos con membrana.'},
-  {a:'Una célula con pared celular, cloroplastos y una vacuola central grande.',b:'Una célula sin pared, sin cloroplastos, con varias vacuolas pequeñas y centriolos.',
-   ga:'Célula vegetal.',
-   gb:'Célula animal.',
-   gr:'No son iguales: la vegetal fabrica su alimento y tiene cubierta rígida; la animal no.'},
-  {a:'Un organelo lleno de clorofila que capta la luz del sol.',b:'Un organelo que "quema" nutrientes para liberar energía.',
-   ga:'Cloroplasto — realiza la fotosíntesis.',
-   gb:'Mitocondria — realiza la respiración celular.',
-   gr:'No son el mismo organelo: uno produce alimento con luz y el otro libera energía de los alimentos.'},
 ];
 const critCauseBank=[
-  {cause:'A una célula vegetal se le retiran todos los cloroplastos.',guide:'Deja de hacer fotosíntesis: no produce su propio alimento y se debilita por falta de energía.'},
-  {cause:'La membrana celular de una célula se rompe.',guide:'La célula pierde el control de lo que entra y sale; se descontrola y puede morir.'},
-  {cause:'Una célula pierde su núcleo.',guide:'Pierde la información genética y la dirección de sus funciones; no puede reproducirse ni funcionar bien.'},
-  {cause:'Las mitocondrias de una célula dejan de funcionar.',guide:'La célula se queda sin energía (ATP) para realizar sus procesos vitales.'},
+  {k:'cau-sin-alimento',cause:'Una célula se queda sin alimento por mucho tiempo.',guide:'Se queda sin energía y muere, como cualquier ser vivo.'},
+  {k:'cau-ameba',cause:'La única célula de una ameba muere.',guide:'Muere la ameba entera, porque era un ser unicelular.'},
 ];
 const critEffectBank=[
-  {effect:'Una planta pierde el color verde de sus hojas.',guide:'Falta de luz o daño en los cloroplastos y la clorofila (no puede hacer fotosíntesis).'},
-  {effect:'Una célula se hincha y estalla al colocarla en agua pura.',guide:'Entró demasiada agua por la membrana (ósmosis) y, sin pared celular, no resistió la presión.'},
-  {effect:'Una célula deja de producir proteínas.',guide:'Fallo o ausencia de ribosomas, que son los encargados de fabricarlas.'},
-  {effect:'Un organismo microscópico sobrevive sin tener un núcleo definido.',guide:'Es una célula procariota: su ADN libre y su estructura simple le permiten vivir así.'},
+  {k:'ef-simple-vista',effect:'Nadie puede ver las células de su piel a simple vista.',guide:'Son microscópicas: su tamaño se mide en micrómetros.'},
+  {k:'ef-proteinas',effect:'Una célula deja de producir proteínas.',guide:'Fallan sus ribosomas, que son los que las fabrican.'},
+  {k:'ef-corcho',effect:'Un trozo de corcho, visto con aumento, parece un panal de cuartitos.',guide:'Son las cubiertas de células que ya murieron; así se descubrió la célula.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
