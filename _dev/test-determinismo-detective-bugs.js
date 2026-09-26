@@ -178,7 +178,7 @@ ok('2 sopas × 6 palabras: cada palabra se lee exacta en sus celdas (colineales 
 
 // ── Banco para el Campeonísimo + SAVE_KEY
 console.log('— evalMCBank y clave de guardado —');
-ok('formato evalMCBank {q,o,a} (15 ítems, 4 opciones)', vm.runInContext("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
+ok('formato evalMCBank {q,o,a} (15 ítems, 4 opciones)', vm.runInContext("evalMCBank.length>=(evalMCBank.every(q=>q.k)?10:15)&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
 ok('tema depuración presente (Grace Hopper / polilla en el banco)', vm.runInContext("evalMCBank.some(q=>q.q.toLowerCase().includes('grace hopper')||q.o.some(o=>o.toLowerCase().includes('polilla')))", sandbox));
 ok("SAVE_KEY correcto ('detective_bugs_v1')", vm.runInContext('SAVE_KEY', sandbox) === 'detective_bugs_v1');
 

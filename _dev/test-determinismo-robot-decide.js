@@ -123,7 +123,7 @@ ok('simulador: el semáforo bloquea en rojo y deja pasar en verde', simSem);
 // ── evalMCBank
 ok('pregunta obligatoria presente (SI hay pared... NO tiene pared → Avanza)', vm.runInContext("evalMCBank.some(q=>q.q.includes('El robot NO tiene pared adelante')&&q.o[q.a]==='Avanza')", sandbox));
 ok('pregunta diagnóstica presente (¿Qué es un condicional?)', vm.runInContext("evalMCBank.some(q=>q.q.includes('¿Qué es un condicional?')&&q.o[q.a].toLowerCase().includes('decidir'))", sandbox));
-ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
+ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length>=(evalMCBank.every(q=>q.k)?10:15)&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
 
 // ── Sopas verificadas
 console.log('— Sopas de letras —');

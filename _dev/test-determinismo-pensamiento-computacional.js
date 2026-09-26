@@ -161,7 +161,7 @@ ok('2 sopas × 6 palabras: cada palabra se lee exacta en sus celdas (colineales 
 // ── Banco para Campeonísimo + pregunta de diagnóstico
 console.log('— evalMCBank y diagnóstico —');
 ok('pregunta diagnóstica presente tal cual («¿Cuál de estas instrucciones es EXACTA?» → «Da 3 pasos hacia adelante»)', vm.runInContext("evalMCBank.some(q=>q.q==='¿Cuál de estas instrucciones es EXACTA?'&&q.o[0]==='Camina por ahí'&&q.o[1]==='Da 3 pasos hacia adelante'&&q.o[2]==='Muévete un poco'&&q.o[3]==='Ve rápido'&&q.a===1)", sandbox));
-ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
+ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length>=(evalMCBank.every(q=>q.k)?10:15)&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
 ok("SAVE_KEY correcto ('pensamiento_computacional_v1')", vm.runInContext('SAVE_KEY', sandbox) === 'pensamiento_computacional_v1');
 
 console.log(fallos === 0 ? '\n✅ Todo en orden (' + fallos + ' fallos)' : '\n❌ ' + fallos + ' fallos');

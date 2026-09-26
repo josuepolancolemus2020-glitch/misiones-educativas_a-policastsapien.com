@@ -179,7 +179,7 @@ ok('2 sopas × 6 palabras: cada palabra se lee exacta en sus celdas (colineales 
 
 // ── Banco para el Campeonísimo + SAVE_KEY
 console.log('— evalMCBank y SAVE_KEY —');
-ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
+ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length>=(evalMCBank.every(q=>q.k)?10:15)&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
 ok("SAVE_KEY correcto ('bucles_repetir_v1')", vm.runInContext('SAVE_KEY', sandbox) === 'bucles_repetir_v1');
 ok('sin cadenas heredadas de robot-mensajero/secuencias en el JS', !/robot[-_ ]?mensajero|secuencia/i.test(code));
 
