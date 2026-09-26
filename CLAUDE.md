@@ -1137,6 +1137,12 @@ Lo que la sostiene, y que no se puede improvisar:
 - **Un título nunca cierra una hoja**: baja con lo que encabeza.
 - **La hoja del docente no se toca**: se imprime suelta y no se
   fotocopia, así que ni recibe ni cede.
+- ⚠️ **La evaluación arranca en hoja propia** (`data-hoja-propia` en su
+  título). Buscando el mínimo de hojas, el repartidor metió el examen de la
+  Historia de la IA debajo de «¿Cuánto tardó?», una actividad llena de los
+  años que el examen pregunta: la respuesta en la misma hoja, y el maestro que
+  fotocopia el examen no puede separarlas. Lo llevan las siete fichas de la
+  ruta de IA; una ficha nueva con examen lo lleva también.
 - **Manda el mínimo de hojas, no las que la ficha traía.** Si ahora caben
   en menos, se imprimen en menos: cada hoja de más son 43 hojas de más en
   el fotocopiado del grado.

@@ -380,78 +380,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Turing preguntó en 1950 si las máquinas podían pensar.',a:true},
-  {q:'El nombre «Inteligencia Artificial» nació en 2022.',a:false},
-  {q:'El nombre nació en el Dartmouth College, en 1956.',a:true},
-  {q:'ELIZA entendía de verdad lo que le decían.',a:false},
-  {q:'Hubo dos inviernos en que el campo casi se para.',a:true},
-  {q:'Los inviernos llegaron porque se acabó la luz.',a:false},
-  {q:'En 1997 Deep Blue ganó al ajedrez a Garri Kaspárov.',a:true},
-  {q:'Deep Blue aprendía de sus partidas.',a:false},
-  {q:'En 2012 una red profunda ganó el concurso de imágenes.',a:true},
-  {q:'AlphaGo ganó al Go calculando todas las jugadas.',a:false},
-  {q:'AlphaGo aprendió jugando contra sí mismo.',a:true},
-  {q:'La pieza técnica de los chats de hoy es de 2017.',a:true},
-  {q:'Las tres patas son datos, cómputo y algoritmos.',a:true},
-  {q:'Con una sola de las tres patas habría bastado.',a:false},
-  {q:'La primera neurona de papel se publicó en 1943.',a:true},
-  {q:'El perceptrón de 1958 aprendía solo, ajustando números.',a:true},
-  {q:'El programa de damas de Arthur Samuel le ganó a él.',a:true},
-  {q:'Los sistemas expertos aprendían solos de los ejemplos.',a:false},
-  {q:'Las tarjetas gráficas se hicieron para los videojuegos.',a:true},
-  {q:'La historia de la IA empezó en 2022.',a:false}
+  {q:'Las tarjetas gráficas sirvieron para entrenar redes.',a:true,k:'tf-tarjetas'},
+  {q:'Una red profunda se entrenó con un millón de fotos etiquetadas.',a:true,k:'tf-millon'},
+  {q:'El primer invierno cerró laboratorios.',a:true,k:'tf-laboratorios'},
+  {q:'El taller donde nació el nombre del campo duró un verano.',a:true,k:'tf-verano'},
+  {q:'Mucha gente le contaba cosas íntimas al programa que conversaba.',a:true,k:'tf-intimas'},
+  {q:'Deep Blue aprendía de sus partidas.',a:false,k:'tf-deep-blue'},
+  {q:'Con una sola de las tres patas habría bastado.',a:false,k:'tf-una-pata'},
+  {q:'Los sistemas expertos aprendían solos de los ejemplos.',a:false,k:'tf-expertos'},
+  {q:'El perceptrón necesitaba que alguien le escribiera la regla.',a:false,k:'tf-perceptron'},
+  {q:'La neurona de papel era una célula de verdad, guardada en un frasco.',a:false,k:'tf-frasco'}
 ];
 const evalMCBank=[
-  {q:'¿Quién preguntó en 1950 si las máquinas pueden pensar?',o:['John McCarthy','Arthur Samuel','Alan Turing','Joseph Weizenbaum'],a:2},
-  {q:'¿Dónde y cuándo nació el nombre «Inteligencia Artificial»?',o:['En el taller de Dartmouth, en 1956','En Londres, en 1950','En Nueva York, en 1997','En internet, en 2022'],a:0},
-  {q:'¿Qué enseñó ELIZA en 1966?',o:['Que las máquinas ya entendían','Que los chats son recientes','Que las máquinas sienten','Que algo puede contestar como persona sin entender nada'],a:3},
-  {q:'¿Por qué hubo dos inviernos de la IA?',o:['Se prohibió investigar','Se prometió de más y se cortó el dinero','Se perdieron los programas','Se acabó la luz'],a:1},
-  {q:'¿Qué pasó en 1997?',o:['Nació el nombre del campo','Se abrió el primer chat','Una máquina ganó al campeón de ajedrez','Se inventó la red neuronal'],a:2},
-  {q:'¿Cómo ganaba Deep Blue?',o:['Aprendiendo de sus partidas','Preguntándole a un experto','Copiando a los campeones','Calculando muchísimas jugadas por segundo'],a:3},
-  {q:'¿Qué pasó en 2012?',o:['Una red profunda ganó el concurso de imágenes','Se inventó la cámara digital','Nació el primer robot','Se cerró un laboratorio'],a:0},
-  {q:'¿Cómo aprendió AlphaGo?',o:['Con un libro de aperturas','Jugando millones de partidas contra sí mismo','Con fotos etiquetadas','Calculando todas las jugadas'],a:1},
-  {q:'¿De qué año es el artículo del transformador?',o:['De 1956','De 1997','De 2022','De 2017'],a:3},
-  {q:'¿Cuáles son las tres patas?',o:['Robots, sensores y motores','Dinero, publicidad y suerte','Datos, cómputo y algoritmos','Internet, teléfonos y satélites'],a:2},
-  {q:'¿Qué aportaron las tarjetas gráficas?',o:['Los datos','El cómputo','Los algoritmos','Las etiquetas'],a:1},
-  {q:'¿Qué fue el perceptrón, de 1958?',o:['La máquina que aprendió sola, ajustando números','El primer robot que caminó','El primer chat','Un tipo de computadora personal'],a:0},
-  {q:'¿Qué hicieron McCulloch y Pitts en 1943?',o:['Ganaron un campeonato de ajedrez','Fundaron un laboratorio','Publicaron un modelo matemático de una neurona','Escribieron el primer chat'],a:2},
-  {q:'¿Por qué cayeron los sistemas expertos?',o:['Porque nadie los usaba','Porque eran ilegales','Porque no había computadoras','Porque mantener miles de reglas a mano salía carísimo'],a:3},
-  {q:'¿Qué cambió en noviembre de 2022?',o:['Un chat de IA generativa se abrió al público','Se inventó la Inteligencia Artificial','Se construyó la primera computadora','Se publicó el artículo del transformador'],a:0}
+  {q:'¿Quién preguntó si las máquinas pueden pensar?',o:['Warren McCulloch','Frank Rosenblatt','Alan Turing','Joseph Weizenbaum'],a:2,k:'mc-turing'},
+  {q:'¿Por qué hubo dos inviernos de la Inteligencia Artificial?',o:['Se prohibió investigar','Se prometió de más y se cortó el dinero','Se perdieron los programas','Se acabó la luz'],a:1,k:'mc-inviernos'},
+  {q:'¿Por qué cayeron los sistemas expertos?',o:['Porque nadie los usaba','Porque eran ilegales','Porque no había computadoras','Porque mantener miles de reglas a mano salía carísimo'],a:3,k:'mc-expertos'},
+  {q:'El primo de Kenia dice que la Inteligencia Artificial se inventó con el chat. ¿Qué confunde?',o:['Cuándo nació la idea con cuándo llegó al público','El ajedrez con el Go','Un robot con una persona','Las fotos con los textos'],a:0,k:'mc-kenia'},
+  {q:'¿Por qué AlphaGo no podía ganar calculando todas las jugadas?',o:['Porque no tenía luz','Porque el Go tiene demasiadas jugadas','Porque estaba prohibido','Porque jugaba sin tablero'],a:1,k:'mc-go'},
+  {q:'¿Qué hacía el perceptrón?',o:['Conversaba','Jugaba ajedrez','Separaba dos clases de figuras','Traducía letreros'],a:2,k:'mc-perceptron'},
+  {q:'¿Qué hizo Joseph Weizenbaum?',o:['Ganó al ajedrez','Construyó la primera computadora','Inventó internet','Hizo un programa que conversaba'],a:3,k:'mc-weizenbaum'},
+  {q:'¿Qué cambió cuando el chat se abrió al público?',o:['Se apagaron las computadoras','Se prohibió en las escuelas','Salió de los laboratorios y entró en las tareas escolares','Nada'],a:2,k:'mc-chat'},
+  {q:'¿Quién organizó el taller donde nació el nombre del campo?',o:['Lee Sedol','John McCarthy','Walter Pitts','Frank Rosenblatt'],a:1,k:'mc-mccarthy'},
+  {q:'¿Qué vio el público cuando una máquina ganó al ajedrez?',o:['Que se puede ganar sin entender nada','Que la máquina sentía','Que el ajedrez era fácil','Que la máquina hacía trampa'],a:0,k:'mc-ajedrez'}
 ];
 const evalCPBank=[
-  {q:'En 1950 Alan Turing preguntó si las máquinas podían ___.',a:'pensar'},
-  {q:'El nombre nació en 1956, en el taller de ___.',a:'Dartmouth'},
-  {q:'El programa que conversaba en 1966 se llamaba ___.',a:'ELIZA'},
-  {q:'Los dos períodos en que el campo casi se para se llaman los dos ___.',a:'inviernos'},
-  {q:'En 1997 Deep Blue ganó al campeón mundial de ___.',a:'ajedrez'},
-  {q:'En 2012 las máquinas aprendieron a reconocer ___.',a:'imágenes'},
-  {q:'En 2016 AlphaGo ganó al juego del ___.',a:'Go'},
-  {q:'La pieza técnica de 2017 se llama ___.',a:'transformador'},
-  {q:'Las tres patas son datos, algoritmos y ___.',a:'cómputo'},
-  {q:'Las tarjetas gráficas se habían hecho para los ___.',a:'videojuegos'},
-  {q:'La máquina que aprendió sola en 1958 fue el ___.',a:'perceptrón'},
-  {q:'El programa de damas de 1959 lo escribió Arthur ___.',a:'Samuel'},
-  {q:'Los programas con las reglas de un experto eran sistemas ___.',a:'expertos'},
-  {q:'AlphaGo aprendió jugando contra sí ___.',a:'mismo'},
-  {q:'En 2022 un chat de IA generativa se abrió al ___.',a:'público'}
+  {q:'El nombre del campo se escribió por primera vez en un taller del ___ College.',a:'Dartmouth',acc:['Dartmouth','dartmouth'],k:'cp-dartmouth'},
+  {q:'El programa que devolvía en pregunta lo que le decían se llamaba ___.',a:'ELIZA',acc:['ELIZA','Eliza','eliza'],k:'cp-eliza'},
+  {q:'Deep Blue le ganó al campeón mundial Garri ___.',a:'Kaspárov',acc:['Kaspárov','Kasparov','kasparov','kaspárov'],k:'cp-kasparov'},
+  {q:'AlphaGo aprendió jugando millones de partidas contra sí ___.',a:'mismo',acc:['mismo'],k:'cp-mismo'},
+  {q:'La manera nueva de armar redes de texto se llama ___.',a:'transformador',acc:['transformador'],k:'cp-transformador'},
+  {q:'Las tarjetas gráficas se habían hecho para los ___.',a:'videojuegos',acc:['videojuegos','juegos'],k:'cp-videojuegos'},
+  {q:'Las tres patas son datos, algoritmos y ___.',a:'cómputo',acc:['cómputo','computo'],k:'cp-computo'},
+  {q:'El programa de damas que le ganó a su autor lo escribió Arthur ___.',a:'Samuel',acc:['Samuel','samuel'],k:'cp-samuel'},
+  {q:'El chat de IA generativa se abrió al público en el mes de ___.',a:'noviembre',acc:['noviembre'],k:'cp-noviembre'},
+  {q:'La pregunta sobre las máquinas se cambió por el juego de ___.',a:'imitación',acc:['imitación','imitacion'],k:'cp-imitacion'}
 ];
 const evalPRBank=[
-  {term:'1936',def:'Turing describe la máquina que calcula todo'},
-  {term:'1943',def:'El primer modelo matemático de una neurona'},
-  {term:'1950',def:'«¿Pueden pensar las máquinas?», en la revista Mind'},
-  {term:'1956',def:'Nace el nombre, en Dartmouth'},
-  {term:'1958',def:'El perceptrón: la máquina que aprendió sola'},
-  {term:'1959',def:'Un programa de damas que le gana a su autor'},
-  {term:'1966',def:'ELIZA conversaba sin entender nada'},
-  {term:'Los años setenta',def:'El primer invierno: se cortó el dinero'},
-  {term:'Los años ochenta',def:'Los sistemas expertos y el segundo invierno'},
-  {term:'1997',def:'Deep Blue gana el ajedrez al campeón mundial'},
-  {term:'2012',def:'El año en que las máquinas aprendieron a ver'},
-  {term:'2016',def:'AlphaGo gana al Go, que se creía imposible'},
-  {term:'2017',def:'El transformador: el motor de los chats de hoy'},
-  {term:'2022',def:'La IA generativa llega al teléfono de todos'},
-  {term:'Datos, cómputo y algoritmos',def:'Las tres cosas que tuvieron que juntarse'}
+  {term:'1936',def:'Turing describe una máquina que puede calcular cualquier cosa',k:'pr-1936'},
+  {term:'1943',def:'La primera neurona de papel',k:'pr-1943'},
+  {term:'1950',def:'Se pregunta si las máquinas pueden pensar',k:'pr-1950'},
+  {term:'1956',def:'Unos investigadores le ponen nombre al campo',k:'pr-1956'},
+  {term:'1958',def:'La primera máquina que aprendió sola, ajustando números',k:'pr-1958'},
+  {term:'1959',def:'Nace el nombre «aprendizaje de máquina»',k:'pr-1959'},
+  {term:'1966',def:'Un programa conversa y no entiende nada',k:'pr-1966'},
+  {term:'1997',def:'Una máquina le gana al campeón mundial de ajedrez',k:'pr-1997'},
+  {term:'2012',def:'Las máquinas aprenden a reconocer imágenes',k:'pr-2012'},
+  {term:'2017',def:'El motor de los chats de hoy',k:'pr-2017'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -538,12 +518,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un compañero dice que la Inteligencia Artificial se inventó en 2022, con el chat.'},
-  {txt:'Una noticia promete que en dos años las máquinas harán todo el trabajo.'},
-  {txt:'Alguien dice que ELIZA, en 1966, entendía porque contestaba bien.'},
-  {txt:'Un texto dice que en 1997 Deep Blue «pensó» mejor que Kaspárov.'},
-  {txt:'Un estudiante escribe que el transformador se inventó en 2022.'},
-  {txt:'Un adulto dice que no hay que estudiar esto porque «ya se murió otras veces».'}
+  {k:'ca-promesa',txt:'Una noticia promete que en dos años las máquinas harán todo el trabajo.'},
+  {k:'ca-murio',txt:'Un adulto dice que no hay que estudiar esto porque «ya se murió otras veces».'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué afirma este caso y en qué año lo sitúa?',
@@ -558,60 +534,26 @@ const critCaseGuides=[
   'Respuesta abierta. Se valora que explique con respeto y con un hito concreto. Ni la IA nació ayer, ni los inviernos prueban que no sirve.'
 ];
 const critErrorBank=[
-  {txt:'"La Inteligencia Artificial se inventó en 2022."',
-   g1:'La pregunta es de 1950 y el nombre, de 1956. En 2022 llegó al público.',
-   g2:'Confundir la idea con la fama es el error más común.'},
-  {txt:'"ELIZA entendía a la gente porque le contestaba bien."',
-   g1:'ELIZA devolvía en pregunta lo que le decían. No entendía nada.',
-   g2:'Contestar como una persona no es entender. Vale igual hoy.'},
-  {txt:'"Deep Blue pensó mejor que el campeón mundial."',
-   g1:'Deep Blue no pensaba: calculaba muchísimas jugadas por segundo.',
-   g2:'Se puede ganar sin entender nada. Eso enseñó ese partido.'},
-  {txt:'"Los inviernos pasaron porque la tecnología no servía."',
-   g1:'La tecnología avanzaba. Lo que falló fueron las promesas.',
-   g2:'Al cortarse el dinero, lo perdieron también los que iban bien.'},
-  {txt:'"AlphaGo ganó al Go calculando todas las jugadas posibles."',
-   g1:'En el Go no se pueden calcular todas: son demasiadas.',
-   g2:'Aprendió jugando millones de partidas contra sí mismo.'},
-  {txt:'"Bastaba con tener mejores algoritmos para que la IA despegara."',
-   g1:'Hicieron falta las tres patas: datos, cómputo y algoritmos.',
-   g2:'Sin datos ni tarjetas gráficas no habría pasado nada.'}
+  {k:'er-deep-blue',txt:'"Deep Blue pensó mejor que el campeón mundial."',g1:'Deep Blue no pensaba: calculaba muchísimas jugadas por segundo.',g2:'Se puede ganar sin entender nada. Eso enseñó ese partido.'},
+  {k:'er-eliza',txt:'"ELIZA entendía a la gente porque le contestaba bien."',g1:'ELIZA devolvía en pregunta lo que le decían. No entendía nada.',g2:'Contestar como una persona no es entender. Vale igual hoy.'},
 ];
 const critDecisionBank=[
   'Vas a citar una fecha; conviene decir de dónde la sacaste, o darla por sabida.',
-  'Una noticia promete que la IA curará todo; conviene compartirla ya, o preguntar quién lo dice.',
   'Tu libro no trae nada; conviene copiar lo primero de internet, o buscar la fuente.',
-  'Un compañero se burla porque «ya fracasó»; conviene darle la razón, o contarle qué pasó.',
-  'No estás seguro entre dos años; conviene poner el que suene mejor, o escribir la década.'
+  'No estás seguro entre dos años; conviene poner el que suene mejor, o escribir la década.',
 ];
 const critDecisionGuide='La mejor decisión dice de dónde sale el dato. La promesa se pregunta antes. El año que no se confirma va como década.';
 const critCompareBank=[
-  {a:'Deep Blue, en 1997.',b:'AlphaGo, en 2016.',
-   ga:'Ganaba calculando muchísimas jugadas por segundo.',
-   gb:'Ganaba con lo que aprendió jugando contra sí mismo.',
-   gr:'Los dos ganaron a campeones humanos, por caminos contrarios. En el ajedrez se calcula a lo bruto. En el Go hubo que aprender.'},
-  {a:'Un sistema experto de los años ochenta.',b:'Una red entrenada con ejemplos.',
-   ga:'Guarda las reglas que una persona escribió.',
-   gb:'Saca la regla ella misma, de los ejemplos.',
-   gr:'El sistema experto no mejoraba solo, y mantener miles de reglas a mano era carísimo. La red saca la regla de los datos: por eso esperó a ellos.'},
-  {a:'El artículo de 2017.',b:'El chat que se abrió en 2022.',
-   ga:'La pieza técnica: una manera nueva de armar redes de texto.',
-   gb:'Es el producto: esa idea entrenada en grande, al alcance de cualquiera.',
-   gr:'Cinco años separan la idea de su llegada al público. La IA generativa no se inventó en 2022: en 2022 se hizo famosa.'}
+  {k:'co-expertos',a:'Un sistema experto de los años ochenta.',b:'Una red entrenada con ejemplos.',ga:'Guarda las reglas que una persona escribió.',gb:'Saca la regla ella misma, de los ejemplos.',gr:'El sistema experto no mejoraba solo, y mantener miles de reglas a mano era carísimo. La red saca la regla de los datos: por eso esperó a ellos.'},
 ];
 const critCauseBank=[
-  {cause:'En 1956 un grupo se reunió en Dartmouth y le puso nombre.',guide:'Por eso ese año se pregunta en los exámenes.'},
-  {cause:'Se prometió traducción automática y máquinas que razonan en pocos años.',guide:'Por eso, al no llegar, se cortó el dinero: el primer invierno.'},
-  {cause:'Las tarjetas gráficas de los videojuegos servían para entrenar redes.',guide:'Por eso en 2012 se entrenó con un millón de fotos.'},
-  {cause:'El Go tiene demasiadas jugadas para calcularlas todas.',guide:'Por eso AlphaGo aprendió jugando contra sí mismo.'},
-  {cause:'En 2017 se presentó una manera de entrenar redes de texto más rápido.',guide:'Por eso, cinco años después, el chat llegó a cualquiera.'}
+  {k:'ca-dartmouth',cause:'En 1956 un grupo se reunió en Dartmouth y le puso nombre.',guide:'Por eso ese año se pregunta en los exámenes.'},
+  {k:'ca-tarjetas',cause:'Las tarjetas gráficas de los videojuegos servían para entrenar redes.',guide:'Por eso en 2012 se entrenó con un millón de fotos.'},
 ];
 const critEffectBank=[
-  {effect:'Mucha gente cree que la IA se inventó en 2022.',guide:'Porque ese año llegó a su teléfono. La idea es de 1950.'},
-  {effect:'Hoy hay que desconfiar de las promesas muy grandes.',guide:'Porque ya pasó dos veces y las dos acabó en invierno.'},
-  {effect:'ELIZA asustó a su propio autor.',guide:'Porque la gente le contaba cosas íntimas a un programa que no entendía nada.'},
-  {effect:'Los sistemas expertos de los ochenta no escalaron.',guide:'Porque las reglas las escribía y mantenía una persona, y eran miles.'},
-  {effect:'Hicieron falta setenta años para que esto despegara.',guide:'Porque las tres patas no estuvieron listas a la vez hasta hace poco.'}
+  {k:'ef-2022',effect:'Mucha gente cree que la IA se inventó en 2022.',guide:'Porque ese año llegó a su teléfono. La idea es de 1950.'},
+  {k:'ef-alphago',effect:'AlphaGo hizo una jugada que sorprendió a los expertos.',guide:'Porque aprendió jugando millones de partidas contra sí mismo, no copiando a nadie.'},
+  {k:'ef-tareas',effect:'Un maestro corrige textos que no sabe de dónde salen.',guide:'Porque, desde que el chat llegó al público, entró en las tareas escolares.'},
 ];
 function genEvalCrit(){
   sfx('click');

@@ -381,6 +381,12 @@ const REPARTIR = ({ trozos, K, TOPE, mm, clasesFijas }) => {
   document.querySelector('.doc').appendChild(sec);
 
   const esTitulo = trozos.map(t => /^<h[1-6][\s>]/i.test(t.html.replace(/^<!--[\s\S]*?-->\s*/, '').trim()));
+  // Un bloque marcado data-hoja-propia —la evaluación— arranca SIEMPRE en hoja
+  // nueva. El repartidor buscaba el mínimo de hojas y metió el examen debajo de
+  // una actividad que traía los años que el examen pregunta: en papel eso es la
+  // respuesta en la misma hoja, y el maestro que fotocopia el examen no puede
+  // separarlas.
+  const hojaPropia = trozos.map(t => /^<[a-z0-9]+[^>]*\sdata-hoja-propia/i.test(t.html.replace(/^<!--[\s\S]*?-->\s*/, '').trim()));
 
   // Una hoja que reciba bloques de las páginas de actividades lleva su clase:
   // es la que subraya los rótulos y numera en negrita.
@@ -403,6 +409,7 @@ const REPARTIR = ({ trozos, K, TOPE, mm, clasesFijas }) => {
     let actual = [], i = 0;
     while (i < trozos.length) {
       const prueba = actual.concat(i);
+      if (actual.length && hojaPropia[i]) { hojas.push(actual); actual = []; continue; }
       if (!actual.length || altoDe(prueba, hojas.length) <= tope) { actual = prueba; i++; continue; }
       // No cabe: se cierra la hoja. Y un título nunca la cierra: si quedó el
       // último, baja a la hoja siguiente con lo que encabeza.

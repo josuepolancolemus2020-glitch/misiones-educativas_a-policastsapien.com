@@ -6,16 +6,16 @@ const D = require('../../js/data/ia-descubre.js');
 const { esc, arma, portada, preguntas, clave, IA_EPOCAS, IA_HITOS, IA_TRES_PATAS, IA_LECCION_INVIERNOS } = A;
 
 const EVAL = [
-  { q: '¿Quién preguntó en 1950 si las máquinas pueden pensar?', o: ['John McCarthy', 'Arthur Samuel', 'Alan Turing', 'Joseph Weizenbaum'], a: 2 },
-  { q: '¿Dónde y cuándo nació el nombre «Inteligencia Artificial»?', o: ['En el taller de Dartmouth, en 1956', 'En Londres, en 1950', 'En Nueva York, en 1997', 'En internet, en 2022'], a: 0 },
-  { q: '¿Qué enseñó ELIZA en 1966?', o: ['Que las máquinas ya entendían', 'Que los chats son recientes', 'Que las máquinas sienten', 'Que algo puede contestar como persona sin entender nada'], a: 3 },
+  { q: '¿Quién preguntó si las máquinas pueden pensar?', o: ['Warren McCulloch', 'Frank Rosenblatt', 'Alan Turing', 'Joseph Weizenbaum'], a: 2 },
+  { q: '¿Dónde nació el nombre del campo?', o: ['En un taller del Dartmouth College', 'En una fábrica de teléfonos', 'En un concurso de ajedrez', 'En una escuela de Londres'], a: 0 },
+  { q: '¿Qué enseñó ELIZA?', o: ['Que las máquinas ya entendían', 'Que las máquinas sienten', 'Que el ajedrez es fácil', 'Que algo puede contestar como persona sin entender nada'], a: 3 },
   { q: '¿Por qué hubo dos inviernos de la IA?', o: ['Se prohibió investigar', 'Se prometió de más y se cortó el dinero', 'Se perdieron los programas', 'Se acabó la luz'], a: 1 },
-  { q: '¿Qué pasó en 1997?', o: ['Nació el nombre del campo', 'Se abrió el primer chat', 'Una máquina ganó al campeón de ajedrez', 'Se inventó la red neuronal'], a: 2 },
-  { q: '¿Qué pasó en 2012?', o: ['Una red profunda ganó el concurso de imágenes', 'Se inventó la cámara digital', 'Nació el primer robot', 'Se cerró un laboratorio'], a: 0 },
-  { q: '¿Cómo aprendió AlphaGo?', o: ['Con un libro de aperturas', 'Jugando millones de partidas contra sí mismo', 'Con fotos etiquetadas', 'Calculando todas las jugadas'], a: 1 },
-  { q: '¿De qué año es el artículo del transformador?', o: ['De 1956', 'De 1997', 'De 2022', 'De 2017'], a: 3 },
-  { q: '¿Cuáles son las tres patas?', o: ['Robots, sensores y motores', 'Dinero, publicidad y suerte', 'Datos, cómputo y algoritmos', 'Internet, teléfonos y satélites'], a: 2 },
-  { q: '¿Qué cambió en noviembre de 2022?', o: ['Un chat de IA generativa se abrió al público', 'Se inventó la Inteligencia Artificial', 'Se construyó la primera computadora', 'Se publicó el artículo del transformador'], a: 0 },
+  { q: '¿Cómo le ganaba Deep Blue al campeón de ajedrez?', o: ['Aprendiendo de sus partidas', 'Preguntándole a un experto', 'Calculando muchísimas jugadas por segundo', 'Copiando a los campeones'], a: 2 },
+  { q: '¿Qué pasó el año en que las máquinas aprendieron a ver?', o: ['Una red profunda ganó el concurso de reconocer imágenes', 'Se inventó la cámara', 'Nació el primer robot', 'Se inventó internet'], a: 0 },
+  { q: '¿Cómo aprendió AlphaGo?', o: ['Con un libro de aperturas', 'Jugando millones de partidas contra sí mismo', 'Con fotos etiquetadas', 'Leyendo reglas escritas'], a: 1 },
+  { q: '¿De qué año es la manera nueva de armar redes de texto?', o: ['De 1936', 'De 1966', 'De 2012', 'De 2017'], a: 3 },
+  { q: '¿Cuáles son las tres patas?', o: ['Robots, sensores y motores', 'Luz, papel y suerte', 'Datos, cómputo y algoritmos', 'Internet, teléfonos y satélites'], a: 2 },
+  { q: '¿Qué pasó cuando un chat de IA generativa se abrió al público?', o: ['Se apagaron las computadoras', 'Se prohibió', 'Nada cambió', 'Salió de los laboratorios y entró en las tareas escolares'], a: 3 },
 ];
 
 /* La línea del tiempo se arma de js/data/ia-historia.js: aquí NO se escribe ni
@@ -190,7 +190,7 @@ ${D.IA_TIEMPO_PARES.map(p => { const q = _par(p); return '        <tr><td>' + q.
 `);
 
 P.push(`
-    <h2>🔓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+    <h2 data-hoja-propia>🔓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
 ${preguntas(EVAL)}
 `);

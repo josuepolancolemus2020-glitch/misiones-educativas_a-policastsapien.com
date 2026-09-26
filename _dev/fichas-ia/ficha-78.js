@@ -313,7 +313,7 @@ ${IA_TAREAS_CLASE.map(t => `        <tr><td>${esc(t.t)}</td><td>${CIR}</td><td>$
 
 // ── Página 9 · evaluación ──────────────────────────────────────────────────
 P.push(`
-    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+    <h2 data-hoja-propia>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
 ${preguntas(EVAL)}
 
