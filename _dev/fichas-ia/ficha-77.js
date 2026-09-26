@@ -16,15 +16,15 @@ const { esc, arma, portada, preguntas, clave,
 
 const EVAL = [
   { q: '¿Qué afirma la palabra «singularidad»?', o: ['Que una máquina mejore máquinas más rápido de lo que podemos seguir', 'Que la IA ya piensa como una persona', 'Que las computadoras se apagarán', 'Que la IA es peligrosa'], a: 0 },
-  { q: 'Una promesa sin fecha…', o: ['Es más seria', 'No se puede incumplir nunca', 'Se cumple sola', 'Vale más'], a: 1 },
-  { q: 'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?', o: ['Cinco fuentes', 'Un eco', 'Una prueba', 'Un estudio'], a: 1 },
-  { q: '¿Cuándo se reconoce un punto de inflexión?', o: ['El mismo día, por el ruido', 'Casi siempre mirando para atrás', 'Cuando lo dice un experto', 'Cuando sale en televisión'], a: 1 },
+  { q: 'Una promesa sin fecha…', o: ['Es más seria', 'Se cumple sola', 'Vale más', 'No se puede incumplir nunca'], a: 3 },
+  { q: 'Cinco páginas dicen lo mismo y ninguna dice de dónde. ¿Qué tenés?', o: ['Cinco fuentes', 'Una prueba', 'Un eco', 'Un estudio'], a: 2 },
+  { q: '¿Cuándo se reconoce un punto de inflexión?', o: ['El mismo día, por el ruido', 'Cuando lo dice un experto', 'Cuando sale en televisión', 'Casi siempre mirando para atrás'], a: 3 },
   { q: '¿Qué se rompió en los dos inviernos?', o: ['La confianza', 'Las computadoras', 'Los cables', 'Las leyes'], a: 0 },
-  { q: 'Lo que SÍ se sabe hoy es que la máquina…', o: ['Quiere cosas', 'Aprende de ejemplos que alguien eligió', 'Se mejora sola', 'Entiende lo que lee'], a: 1 },
+  { q: 'Lo que SÍ se sabe hoy es que la máquina…', o: ['Quiere cosas', 'Se mejora sola', 'Aprende de ejemplos que alguien eligió', 'Entiende lo que lee'], a: 2 },
   { q: 'Saber qué gana alguien diciendo algo…', o: ['Lo vuelve falso', 'Pone lo que dice en su sitio', 'Lo vuelve verdadero', 'No sirve'], a: 1 },
-  { q: '«Contenido patrocinado» quiere decir que…', o: ['Es falso', 'Alguien pagó por publicarlo y el medio lo dice', 'Es del gobierno', 'Es gratis'], a: 1 },
+  { q: '«Contenido patrocinado» quiere decir que…', o: ['Alguien pagó por publicarlo y el medio lo dice', 'Es falso', 'Es del gobierno', 'Es gratis'], a: 0 },
   { q: 'Dos noticias del mes se contradicen. Lo más probable es que…', o: ['Una mienta', 'Midan cosas distintas', 'Las dos mientan', 'La nueva tenga razón'], a: 1 },
-  { q: '¿Cuál es la fecha que más importa?', o: ['La del artículo', 'La del hecho', 'La de la foto', 'La del comentario'], a: 1 },
+  { q: '¿Cuál es la fecha que más importa?', o: ['La del artículo', 'La de la foto', 'La del hecho', 'La del comentario'], a: 2 },
 ];
 
 const P = [];
@@ -163,8 +163,7 @@ P.push(`
 
 ${preguntas(EVAL)}
 
-    <div class="felic"><b>¡Bien hecho!</b> Te llevás cuatro preguntas que sirven hoy y dentro de veinte
-      años: quién lo dice, qué gana, para cuándo y con qué se comprueba.</div>
+    <div class="felic"><b>¡Bien hecho!</b> Antes de entregar, revisá tus respuestas <b>una por una</b>.</div>
 `);
 
 // ── Página 7 · hoja del docente ────────────────────────────────────────────

@@ -388,73 +388,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Una promesa sin fecha no se puede incumplir.',a:true},
-  {q:'Si cinco páginas dicen lo mismo, el dato está comprobado.',a:false},
-  {q:'Un punto de inflexión se reconoce mirando atrás.',a:true},
-  {q:'En los inviernos de la IA falló la electricidad.',a:false},
-  {q:'Saber qué gana ayuda a leerlo, sin volverlo falso.',a:true},
-  {q:'Que un texto diga «contenido patrocinado» significa que es mentira.',a:false},
-  {q:'Las máquinas aprenden de ejemplos que alguien eligió.',a:true},
-  {q:'Ya existen máquinas que se mejoran solas, sin nadie.',a:false},
-  {q:'Dos noticias que se contradicen suelen medir cosas distintas.',a:true},
-  {q:'La singularidad ya se puede comprobar.',a:false},
-  {q:'La fecha del hecho y la del artículo pueden ser distintas.',a:true},
-  {q:'Un titular que asusta trae más pruebas que uno aburrido.',a:false},
-  {q:'En los inviernos se rompió la confianza.',a:true},
-  {q:'Si una afirmación no dice quién la hace, se le puede preguntar igual.',a:false},
-  {q:'Ponerle vos una fecha a una promesa te deja juzgarla ese día.',a:true}
+  {q:'Dos noticias que se contradicen suelen medir cosas distintas.',a:true,k:'tf-miden'},
+  {q:'En esta misión, las afirmaciones las va a comprobar el propio alumno.',a:true,k:'tf-alumno'},
+  {q:'Un organismo que publica su método se puede revisar.',a:true,k:'tf-metodo'},
+  {q:'Una afirmación puede ser cierta aunque no traiga nada que abrir.',a:true,k:'tf-cierta'},
+  {q:'Una promesa sin fecha no se puede incumplir.',a:true,k:'tf-sin-fecha'},
+  {q:'Si una afirmación no dice quién la hace, se le puede preguntar igual.',a:false,k:'tf-sin-dueno'},
+  {q:'Esta misión afirma que ya estamos en los albores.',a:false,k:'tf-afirma'},
+  {q:'Una frase del grupo del colegio se vuelve cierta de tanto circular.',a:false,k:'tf-circular'},
+  {q:'La IA de hoy entiende lo que lee.',a:false,k:'tf-entiende'},
+  {q:'Un titular que asusta trae más pruebas que uno aburrido.',a:false,k:'tf-asusta'}
 ];
 const evalMCBank=[
-  {q:'¿Qué afirma la palabra «singularidad»?',o:['Que una máquina mejore máquinas más rápido de lo que podemos seguir','Que la IA ya siente','Que las computadoras fallarán','Que la IA se apagará sola'],a:0},
-  {q:'La primera pregunta del termómetro es…',o:['¿Cuánto cuesta?','¿Es nuevo?','¿Lo comparten muchos?','¿Quién lo dice, con su nombre?'],a:3},
-  {q:'Una promesa sin fecha…',o:['Es más seria','No se puede incumplir nunca','Se cumple sola','Vale más'],a:1},
-  {q:'Cinco páginas copiando lo mismo son…',o:['Cinco fuentes','Un eco','Una prueba','Un estudio'],a:1},
-  {q:'Un punto de inflexión se reconoce…',o:['Por el ruido del día','En la televisión','Mirando para atrás','Cuando lo dice una empresa'],a:2},
-  {q:'¿Qué se rompió en los dos inviernos?',o:['Las computadoras','Los cables','Las leyes','La confianza'],a:3},
-  {q:'Lo que SÍ se sabe hoy es que la máquina…',o:['Quiere cosas','Aprende de ejemplos que alguien eligió','Se mejora sola','Entiende lo que lee'],a:1},
-  {q:'«Contenido patrocinado» quiere decir…',o:['Que es falso','Que alguien pagó por publicarlo y el medio lo dice','Que es del gobierno','Que es viejo'],a:1},
-  {q:'Dos noticias del mes se contradicen. Lo más probable es que…',o:['Midan cosas distintas','Una mienta','Las dos mientan','La nueva tenga razón'],a:0},
-  {q:'¿Qué hace comprobable a una afirmación?',o:['Que la compartan mucho','Que suene segura','Que traiga quién, cuándo y un documento','Que esté bien escrita'],a:2},
-  {q:'Para comprobar hay que abrir…',o:['La fuente original','El resumen','Otro artículo','Un foro'],a:0},
-  {q:'Si una promesa no trae plazo, te toca…',o:['Ponerle vos una fecha y volver ese día','Creerla','Descartarla siempre','Compartirla'],a:0},
-  {q:'Un titular con la palabra más fuerte busca…',o:['Precisión','Ayudar','Explicar','Que se comparta'],a:3},
-  {q:'Esta misión no dice si estamos en los albores porque…',o:['Es secreto','Es difícil','Nadie lo sabe','No importa'],a:2},
-  {q:'La fecha que más importa es la…',o:['Del artículo','De la foto','Del hecho','Del comentario'],a:2}
+  {q:'¿Qué hace comprobable a una afirmación?',o:['Que la compartan mucho','Que suene segura','Que traiga quién, cuándo y un documento','Que esté bien escrita'],a:2,k:'mc-comprobable'},
+  {q:'Un compañero va a dejar de inscribirse por una frase del grupo. ¿Qué hacés?',o:['No me meto','Paso la frase con él por las cuatro preguntas','La reenvío','Le digo que tiene razón'],a:1,k:'mc-companero'},
+  {q:'¿Cómo se reconoce un cambio grande de verdad?',o:['Por el ruido del día','En la televisión','Mirando para atrás','Cuando lo dice una empresa'],a:2,k:'mc-atras'},
+  {q:'¿Qué gana un medio con un titular que asusta?',o:['Lectores','Nada','Pruebas','Premios'],a:0,k:'mc-titular'},
+  {q:'Un anuncio de becas viene marcado como pagado. ¿Qué hacés?',o:['Lo descarto','Lo reenvío','Busco los requisitos','Lo creo todo'],a:2,k:'mc-becas'},
+  {q:'¿Qué pasa si decidís tu futuro por algo que nadie puede comprobar?',o:['Nada','Ganás tiempo','Te hacés experto','Si no pasa, lo que perdiste es tuyo'],a:3,k:'mc-futuro'},
+  {q:'¿Por qué es honesto fechar lo que se promete?',o:['Porque así se puede juzgar después','Porque es bonito','Porque lo pide la ley','Porque asusta'],a:0,k:'mc-fechar'},
+  {q:'Encontraste una afirmación con institución, fecha y documento. ¿Qué hacés?',o:['Le creo porque suena seria','Abro el documento','La comparto','La descarto'],a:1,k:'mc-institucion'},
+  {q:'Un titular dice que los modelos «matan». ¿Qué suele haber debajo?',o:['Un juego inventado','Una guerra','Un robot armado','Nada'],a:0,k:'mc-matan'},
+  {q:'¿Cuál de estas frases del futuro se puede abrir hoy?',o:['«En dos años lo hará todo»','«Pronto nadie trabajará»','«Todo cambiará»','«Desde agosto, esta ley obliga a etiquetar lo generado»'],a:3,k:'mc-ley'}
 ];
 const evalCPBank=[
-  {q:'Una promesa sin ___ no se puede incumplir.',a:'fecha'},
-  {q:'Muchas páginas copiando lo mismo son un ___.',a:'eco'},
-  {q:'Un punto de inflexión se reconoce mirando ___.',a:'atrás'},
-  {q:'En los inviernos se rompió la ___.',a:'confianza'},
-  {q:'La primera pregunta es quién lo ___.',a:'dice'},
-  {q:'La segunda es qué ___ diciéndolo.',a:'gana'},
-  {q:'La cuarta es con qué se ___.',a:'comprueba'},
-  {q:'La máquina aprende de ___.',a:'ejemplos'},
-  {q:'Lo que alguien pagó por publicar es contenido ___.',a:'patrocinado'},
-  {q:'Para comprobar se abre la fuente ___.',a:'original'},
-  {q:'La singularidad afirma algo del ___.',a:'futuro'},
-  {q:'Dos noticias contrarias miden cosas ___.',a:'distintas'},
-  {q:'De una noticia importa la fecha del ___, no la del artículo.',a:'hecho'},
-  {q:'A una afirmación sin dueño no se le puede ___.',a:'preguntar'},
-  {q:'La vara para leer lo de hoy son los dos ___.',a:'inviernos'}
+  {q:'Marvin quería estudiar ___.',a:'computación',acc:['computación','computacion'],k:'cp-computacion'},
+  {q:'Marvin se gradúa en ___.',a:'noviembre',acc:['noviembre'],k:'cp-noviembre'},
+  {q:'Marvin leyó la misma frase en ___ páginas.',a:'tres',acc:['tres','3'],k:'cp-tres'},
+  {q:'La frase del grupo no decía quién la dijo: solo traía el ___.',a:'plazo',acc:['plazo'],k:'cp-plazo'},
+  {q:'La segunda pregunta es qué ___ el que lo afirma.',a:'gana',acc:['gana'],k:'cp-gana'},
+  {q:'La cuarta pregunta es con qué se ___.',a:'comprueba',acc:['comprueba'],k:'cp-comprueba'},
+  {q:'Esta misión no pudo ___ ninguna de las páginas que encontró.',a:'abrir',acc:['abrir'],k:'cp-abrir'},
+  {q:'Buscar no es ___.',a:'leer',acc:['leer'],k:'cp-leer'},
+  {q:'De cada afirmación se nombra el ___, nunca la empresa ni la persona.',a:'medio',acc:['medio'],k:'cp-medio'},
+  {q:'Lo que sí se sabe: la máquina aprende de ___ que alguien eligió.',a:'ejemplos',acc:['ejemplos'],k:'cp-ejemplos'}
 ];
 const evalPRBank=[
-  {term:'Singularidad',def:'La afirmación de que el cambio se acelerará solo'},
-  {term:'Punto de inflexión',def:'El día en que algo que no se podía hacer se pudo'},
-  {term:'Invierno',def:'Cuando se prometió de más y el campo casi se para'},
-  {term:'Eco',def:'Muchas páginas copiando lo mismo sin fuente'},
-  {term:'Fuente original',def:'El documento que responde por el dato'},
-  {term:'Contenido patrocinado',def:'Lo que alguien pagó por publicar'},
-  {term:'¿Quién lo dice?',def:'La pregunta que busca a alguien que responda'},
-  {term:'¿Qué gana?',def:'La pregunta que pone la afirmación en su sitio'},
-  {term:'¿Para cuándo?',def:'La pregunta que deja juzgar una promesa'},
-  {term:'¿Con qué se comprueba?',def:'La pregunta que pide un documento'},
-  {term:'Fecha del hecho',def:'Cuándo pasó, no cuándo se publicó'},
-  {term:'Caducidad',def:'El día de volver a mirar si se cumplió'},
-  {term:'Cápsula del tiempo',def:'Tu predicción escrita hoy, con su fecha'},
-  {term:'Las tres patas',def:'Datos, cómputo y algoritmos'},
-  {term:'Dossier',def:'Las afirmaciones de un mes, con su fecha'}
+  {term:'Singularidad',def:'La afirmación de que el cambio se acelerará solo',k:'pr-singularidad'},
+  {term:'Punto de inflexión',def:'El día en que algo que no se podía hacer se pudo',k:'pr-inflexion'},
+  {term:'Eco',def:'Muchas páginas copiando lo mismo sin fuente',k:'pr-eco'},
+  {term:'Contenido patrocinado',def:'Lo que alguien pagó por publicar',k:'pr-patrocinado'},
+  {term:'Caducidad',def:'El día de volver a mirar si se cumplió',k:'pr-caducidad'},
+  {term:'Cápsula del tiempo',def:'Tu predicción escrita hoy, con su fecha',k:'pr-capsula'},
+  {term:'Dossier',def:'Las afirmaciones de un mes, con su fecha',k:'pr-dossier'},
+  {term:'Fecha del hecho',def:'Cuándo pasó, no cuándo se publicó',k:'pr-fecha-hecho'},
+  {term:'Fuente original',def:'El documento que responde por el dato',k:'pr-fuente'},
+  {term:'Invierno',def:'Cuando se prometió de más y el campo casi se para',k:'pr-invierno'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -541,12 +526,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En el grupo del colegio circula que «en dos años la IA lo hará todo». Un compañero deja de inscribirse.'},
-  {txt:'Un diario publica, marcado como contenido patrocinado, que habrá becas de Inteligencia Artificial.'},
-  {txt:'El mismo mes, otro diario publica que al país le falta infraestructura y gente formada.'},
-  {txt:'Un titular dice que los modelos de IA «mienten, roban y matan». Debajo hay un juego inventado.'},
-  {txt:'Un organismo internacional publica un estudio, con fecha y método, sobre cuánta IA usan las universidades.'},
-  {txt:'Un investigador de seguridad renuncia y explica por escrito por qué cree que la industria va muy rápido.'}
+  {k:'ca-organismo',txt:'Un organismo internacional publica un estudio, con fecha y método, sobre cuánta IA usan las universidades.'},
+  {k:'ca-investigador',txt:'Un investigador de seguridad renuncia y explica por escrito por qué cree que la industria va muy rápido.'},
 ];
 const critCaseQuestions=[
   '1. Pasá la afirmación por las cuatro preguntas. ¿Cuántas contesta?',
@@ -561,60 +542,24 @@ const critCaseGuides=[
   'Respuesta abierta, pero tiene que traer una FECHA concreta. Sin fecha no hay examen posible.'
 ];
 const critErrorBank=[
-  {txt:'"Lo leí en cinco páginas distintas, así que es verdad."',
-   g1:'Sin decir de dónde, son un eco: no cinco fuentes.',
-   g2:'Una fuente que se pueda abrir vale más que cincuenta copias.'},
-  {txt:'"Lo dice una empresa que vende cursos de IA, así que es mentira."',
-   g1:'Saber qué gana lo pone en su sitio, no lo vuelve falso.',
-   g2:'Se comprueba igual.'},
-  {txt:'"Como puede haber una singularidad, no vale la pena estudiar nada."',
-   g1:'Es decidir tu vida con algo que nadie puede comprobar.',
-   g2:'Si mañana no pasa, el año perdido es el tuyo.'},
-  {txt:'"Esta noticia es de septiembre, así que el hecho es de septiembre."',
-   g1:'La fecha del artículo no es la del hecho.',
-   g2:'Muchas listas traen como nuevo algo de hace años.'},
-  {txt:'"Si el titular es tan fuerte, algo habrá."',
-   g1:'La palabra más fuerte es la que más se comparte.',
-   g2:'Debajo suele haber algo más pequeño: una simulación.'},
-  {txt:'"Dos noticias se contradicen: una de las dos miente."',
-   g1:'Casi siempre miden cosas distintas.',
-   g2:'Puede haber becas y faltar infraestructura a la vez.'}
+  {k:'er-eco',txt:'"Lo leí en cinco páginas distintas, así que es verdad."',g1:'Sin decir de dónde, son un eco: no cinco fuentes.',g2:'Una fuente que se pueda abrir vale más que cincuenta copias.'},
+  {k:'er-fecha',txt:'"Esta noticia es de septiembre, así que el hecho es de septiembre."',g1:'La fecha del artículo no es la del hecho.',g2:'Muchas listas traen como nuevo algo de hace años.'},
 ];
 const critDecisionBank=[
-  'Un compañero deja de inscribirse por un mensaje del grupo. ¿No meterse, o pasar esa frase con él por las cuatro preguntas?',
-  'Encontraste una afirmación con institución, fecha y documento. ¿Creerle porque suena seria, o abrir el documento?',
-  'Un anuncio de becas te interesa y está marcado como patrocinado. ¿Descartarlo, o buscar los requisitos?',
   'Una promesa de la industria no trae plazo. ¿Discutirla ahora, o apuntarla con fecha y volver ese día?',
-  'Un titular te indigna y el grupo está abierto. ¿Compartirlo, o buscar primero el estudio que hay debajo?'
 ];
 const critDecisionGuide='La mejor decisión va al documento y le pone fecha a lo que no se puede juzgar. Abrir el estudio, buscar los requisitos, apuntar la promesa: se hacen en minutos. Y ayudar a un compañero con esa frase no es meterse.';
 const critCompareBank=[
-  {a:'Una afirmación comprobable.',b:'Una afirmación verdadera.',
-   ga:'Trae quién, cuándo y un documento que se puede abrir.',
-   gb:'Coincide con lo que pasó.',
-   gr:'No son lo mismo. Algo comprobable puede resultar falso al comprobarlo. Y algo verdadero puede llegar sin nada que abrir. A una noticia de hoy solo podés exigirle lo primero.'},
-  {a:'Un punto de inflexión.',b:'Una noticia grande.',
-   ga:'Cambia lo que se puede hacer, y se nota años después.',
-   gb:'Ocupa portadas el día que pasa.',
-   gr:'Casi nunca coinciden. El artículo del que salen los chats de hoy pasó desapercibido. Por eso lo honesto es fechar y volver.'},
-  {a:'«En dos años lo hará todo.»',b:'«Desde agosto, esta ley obliga a etiquetar lo generado por IA.»',
-   ga:'No dice quién, ni qué gana, ni con qué. Solo un plazo.',
-   gb:'Dice quién, desde cuándo, y el texto está publicado.',
-   gr:'Las dos hablan del futuro y no se parecen. Una se puede abrir hoy mismo; la otra no tiene por dónde agarrarse.'}
+  {k:'co-inflexion',a:'Un punto de inflexión.',b:'Una noticia grande.',ga:'Cambia lo que se puede hacer, y se nota años después.',gb:'Ocupa portadas el día que pasa.',gr:'Casi nunca coinciden. El artículo del que salen los chats de hoy pasó desapercibido. Por eso lo honesto es fechar y volver.'},
 ];
 const critCauseBank=[
-  {cause:'Una promesa sin fecha no se puede incumplir.',guide:'Por eso quien promete evita los plazos. Ponerle vos la fecha es la defensa.'},
-  {cause:'Publicar «lo último» cada mes da visitas, y copiar sale barato.',guide:'Por eso casi todo lo que sale al buscar noticias de IA son ecos.'},
-  {cause:'Un titular con la palabra más fuerte se comparte más.',guide:'Por eso «sacó a un jugador de un juego» se publica como «mata».'},
-  {cause:'En los dos inviernos se prometió de más.',guide:'Por eso la vara no es si algo impresiona, sino qué se prometió y para cuándo.'},
-  {cause:'Tu vida se decide con lo que sabés ese día.',guide:'Por eso una frase sin dueño puede costar una matrícula.'}
+  {k:'ca-inviernos',cause:'En los dos inviernos se prometió de más.',guide:'Por eso la vara no es si algo impresiona, sino qué se prometió y para cuándo.'},
+  {k:'ca-titular',cause:'Un titular con la palabra más fuerte se comparte más.',guide:'Por eso «sacó a un jugador de un juego» se publica como «mata».'},
 ];
 const critEffectBank=[
-  {effect:'Un alumno deja de inscribirse por un mensaje reenviado.',guide:'Porque la frase traía un plazo y sonaba segura, y nadie preguntó quién la decía.'},
-  {effect:'Una familia se entera tarde de unas becas que sí existían.',guide:'Porque el anuncio venía marcado como patrocinado y se descartó entero.'},
-  {effect:'Un titular de verdad sobre IA deja de leerse.',guide:'Porque antes se gastaron las alarmas con titulares sin nada debajo.'},
-  {effect:'Una promesa se puede juzgar dentro de un año.',guide:'Porque alguien la apuntó con su fecha el día que se hizo.'},
-  {effect:'Dos noticias contrarias resultan ser las dos ciertas.',guide:'Porque una medía anuncios y la otra infraestructura.'}
+  {k:'ef-contrarias',effect:'Dos noticias contrarias resultan ser las dos ciertas.',guide:'Porque una medía anuncios y la otra infraestructura.'},
+  {k:'ef-becas',effect:'Una familia se entera tarde de unas becas que sí existían.',guide:'Porque el anuncio venía marcado como patrocinado y se descartó entero.'},
+  {k:'ef-inscribirse',effect:'Un alumno deja de inscribirse por un mensaje reenviado.',guide:'Porque la frase traía un plazo y sonaba segura, y nadie preguntó quién la decía.'},
 ];
 function genEvalCrit(){
   sfx('click');
