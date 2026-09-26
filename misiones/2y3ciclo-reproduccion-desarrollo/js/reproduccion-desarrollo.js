@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La reproducción da origen a nuevos seres de la misma especie.',a:true},
-  {q:'Los ovarios producen los espermatozoides.',a:false},
-  {q:'Los testículos producen los espermatozoides.',a:true},
-  {q:'El óvulo es la célula reproductora femenina.',a:true},
-  {q:'La fecundación es la unión del espermatozoide con el óvulo.',a:true},
-  {q:'El bebé crece dentro del estómago de la madre.',a:false},
-  {q:'El útero es el órgano donde crece el bebé.',a:true},
-  {q:'El embarazo dura aproximadamente nueve meses.',a:true},
-  {q:'El cigoto es la primera célula del nuevo ser.',a:true},
-  {q:'La pubertad es la etapa en que el cuerpo madura para reproducirse.',a:true},
-  {q:'La reproducción humana es asexual.',a:false},
-  {q:'La fecundación ocurre en las trompas de Falopio.',a:true},
-  {q:'El bebé recibe alimento por el cordón umbilical.',a:true},
-  {q:'El espermatozoide se produce en los ovarios.',a:false},
-  {q:'La vejez es la última etapa de la vida.',a:true},
+  {q:'La reproducción humana es sexual.',a:true,k:'tf-sexual'},
+  {q:'El espermatozoide es la célula reproductora del varón.',a:true,k:'tf-espermatozoide'},
+  {q:'El embarazo dura unos 9 meses.',a:true,k:'tf-9-meses'},
+  {q:'A los varones les cambia la voz al crecer.',a:true,k:'tf-voz'},
+  {q:'Los cambios del cuerpo al crecer son normales.',a:true,k:'tf-normales'},
+  {q:'Todas las personas empiezan a cambiar exactamente a la misma edad.',a:false,k:'tf-misma-edad'},
+  {q:'La madre embarazada debe ir a sus controles médicos.',a:true,k:'tf-controles'},
+  {q:'El bebé crece dentro del estómago de la madre.',a:false,k:'tf-estomago'},
+  {q:'Kenia estaba enferma el día de su primera menstruación.',a:false,k:'tf-kenia'},
+  {q:'Al crecer hay que cuidar más la higiene del cuerpo.',a:true,k:'tf-higiene'}
 ];
 const evalMCBank=[
-  {q:'¿Qué es la reproducción?',o:['a) Comer alimentos','b) Respirar aire','c) Dar origen a nuevos seres de la misma especie','d) Mover el cuerpo'],a:2},
-  {q:'¿Qué órganos producen los espermatozoides?',o:['a) Los ovarios','b) Los testículos','c) El útero','d) Los pulmones'],a:1},
-  {q:'¿Qué órganos producen los óvulos?',o:['a) Los testículos','b) El corazón','c) Los ovarios','d) El estómago'],a:2},
-  {q:'¿Qué es la fecundación?',o:['a) La unión del espermatozoide y el óvulo','b) El nacimiento','c) La respiración','d) El crecimiento de los huesos'],a:0},
-  {q:'¿En qué órgano crece el bebé?',o:['a) En el útero','b) En el estómago','c) En los pulmones','d) En el corazón'],a:0},
-  {q:'¿Cuánto dura aproximadamente el embarazo?',o:['a) 3 meses','b) 9 meses','c) 6 meses','d) 12 meses'],a:1},
-  {q:'¿Cómo se llama la célula reproductora masculina?',o:['a) Espermatozoide','b) Óvulo','c) Cigoto','d) Glóbulo'],a:0},
-  {q:'¿Cómo se llama la célula reproductora femenina?',o:['a) Espermatozoide','b) Neurona','c) Plaqueta','d) Óvulo'],a:3},
-  {q:'¿Cuál es la primera célula del nuevo ser?',o:['a) El óvulo','b) El espermatozoide','c) La neurona','d) El cigoto'],a:3},
-  {q:'¿Cómo se llama la etapa en que el cuerpo madura para reproducirse?',o:['a) La vejez','b) La infancia','c) La pubertad','d) La adultez'],a:2},
-  {q:'¿Dónde ocurre la fecundación?',o:['a) En el estómago','b) En las trompas de Falopio','c) En los pulmones','d) En el corazón'],a:1},
-  {q:'¿Por dónde recibe alimento el bebé en el embarazo?',o:['a) Por la boca','b) Por la nariz','c) Por el cordón umbilical','d) Por los oídos'],a:2},
-  {q:'¿Cuál es el orden correcto de las etapas de la vida?',o:['a) Adultez, infancia, vejez','b) Vejez, adultez, infancia','c) Adolescencia, infancia, vejez','d) Infancia, adolescencia, adultez, vejez'],a:3},
-  {q:'El órgano donde crece el bebé pertenece al sistema…',o:['a) masculino','b) femenino','c) digestivo','d) óseo'],a:1},
-  {q:'La reproducción humana es de tipo…',o:['a) sexual','b) asexual','c) por esporas','d) por semillas'],a:0},
+  {q:'¿Qué es la reproducción?',o:['a) comer alimentos','b) respirar aire','c) dar origen a nuevos seres de la misma especie','d) mover el cuerpo'],a:2,k:'mc-reproduccion'},
+  {q:'¿Qué célula aporta la madre?',o:['a) el óvulo','b) el espermatozoide','c) la neurona','d) el glóbulo'],a:0,k:'mc-ovulo'},
+  {q:'¿Cómo se llama la unión del espermatozoide con el óvulo?',o:['a) el nacimiento','b) la fecundación','c) la respiración','d) la digestión'],a:1,k:'mc-fecundacion'},
+  {q:'¿Entre qué edades, más o menos, empieza a cambiar el cuerpo?',o:['a) a los 2 años','b) a los 40','c) entre los 10 y los 15 años','d) a los 70'],a:2,k:'mc-edad'},
+  {q:'¿Qué cambio es propio de las mujeres al crecer?',o:['a) les cambia la barba','b) se desarrollan las mamas','c) se hacen más bajas','d) no cambia nada'],a:1,k:'mc-mamas'},
+  {q:'¿Cuál es la primera etapa de la vida?',o:['a) la adultez','b) la juventud','c) la adolescencia','d) la infancia'],a:3,k:'mc-infancia'},
+  {q:'¿Cuál es la última etapa de la vida?',o:['a) la juventud','b) la adultez','c) la vejez','d) la adolescencia'],a:2,k:'mc-vejez'},
+  {q:'¿Qué hizo daño en la historia de Kenia?',o:['a) que le enseñaran demasiado','b) que nadie le hubiera explicado nada','c) que la llevaran al médico','d) que tuviera amigas'],a:1,k:'mc-nadie'},
+  {q:'¿Qué es lo mejor si algo de tu cuerpo te preocupa?',o:['a) preguntar a un adulto de confianza o al médico','b) callarlo','c) esconderlo','d) no hacer nada'],a:0,k:'mc-preguntar'},
+  {q:'¿Qué etapa sigue a la niñez?',o:['a) la vejez','b) la adultez','c) la adolescencia','d) ninguna'],a:2,k:'mc-adolescencia'}
 ];
 const evalCPBank=[
-  {q:'Los ___ producen los espermatozoides.',a:'testículos'},
-  {q:'Los ___ producen los óvulos.',a:'ovarios'},
-  {q:'La ___ une el espermatozoide con el óvulo.',a:'fecundación'},
-  {q:'El bebé crece dentro del ___ de la madre.',a:'útero'},
-  {q:'El embarazo dura unos ___ meses.',a:'nueve'},
-  {q:'La primera célula del nuevo ser es el ___.',a:'cigoto'},
-  {q:'La ___ es la etapa en que el cuerpo madura para reproducirse.',a:'pubertad'},
-  {q:'El espermatozoide es la célula reproductora ___.',a:'masculina'},
-  {q:'El óvulo es la célula reproductora ___.',a:'femenina'},
-  {q:'La fecundación ocurre en las trompas de ___.',a:'Falopio'},
-  {q:'El bebé recibe alimento por el cordón ___.',a:'umbilical'},
-  {q:'La reproducción humana es de tipo ___.',a:'sexual'},
-  {q:'La última etapa de la vida es la ___.',a:'vejez'},
-  {q:'Después del embarazo, el bebé nace en el ___.',a:'parto'},
-  {q:'El embarazo también se llama ___.',a:'gestación'},
+  {q:'En la mujer, al crecer comienza el ciclo ___.',a:'menstrual',acc:['menstrual'],k:'cp-menstrual'},
+  {q:'Al crecer, los hombros de los varones se ___.',a:'ensanchan',acc:['ensanchan'],k:'cp-ensanchan'},
+  {q:'Los cambios del cuerpo los dirigen las hormonas ___.',a:'sexuales',acc:['sexuales'],k:'cp-sexuales'},
+  {q:'En la reproducción humana intervienen un hombre y una ___.',a:'mujer',acc:['mujer'],k:'cp-mujer'},
+  {q:'Gracias a la reproducción, la ___ continúa de padres a hijos.',a:'vida',acc:['vida'],k:'cp-vida'},
+  {q:'Durante el embarazo la madre debe alimentarse bien y ___.',a:'descansar',acc:['descansar'],k:'cp-descansar'},
+  {q:'Al crecer aumenta la ___ de los niños y las niñas.',a:'estatura',acc:['estatura'],k:'cp-estatura'},
+  {q:'El bebé recibe alimento y ___ de la madre.',a:'oxígeno',acc:['oxígeno'],k:'cp-oxigeno'},
+  {q:'El cuerpo propio y el de los demás se deben ___.',a:'respetar',acc:['respetar'],k:'cp-respetar'},
+  {q:'Al crecer, en la cara y el cuerpo aparece ___.',a:'vello',acc:['vello'],k:'cp-vello'}
 ];
 const evalPRBank=[
-  {term:'Reproducción',def:'Dar origen a nuevos seres de la misma especie'},
-  {term:'Testículos',def:'Producen los espermatozoides'},
-  {term:'Ovarios',def:'Producen los óvulos'},
-  {term:'Útero',def:'Órgano donde crece el bebé'},
-  {term:'Espermatozoide',def:'Célula reproductora masculina'},
-  {term:'Óvulo',def:'Célula reproductora femenina'},
-  {term:'Fecundación',def:'Unión del espermatozoide con el óvulo'},
-  {term:'Cigoto',def:'Primera célula del nuevo ser'},
-  {term:'Embarazo',def:'El bebé crece en el útero unos 9 meses'},
-  {term:'Pubertad',def:'Etapa en que el cuerpo madura'},
-  {term:'Parto',def:'Momento en que nace el bebé'},
-  {term:'Trompas de Falopio',def:'Donde ocurre la fecundación'},
-  {term:'Cordón umbilical',def:'Lleva alimento y oxígeno al bebé'},
-  {term:'Infancia',def:'Primera etapa de la vida'},
-  {term:'Vejez',def:'Última etapa de la vida'},
+  {term:'Testículos',def:'Producen las células reproductoras del varón',k:'pr-testiculos'},
+  {term:'Ovarios',def:'Producen las células reproductoras de la mujer',k:'pr-ovarios'},
+  {term:'Útero',def:'Aloja al bebé',k:'pr-utero'},
+  {term:'Trompas de Falopio',def:'Ahí se unen las dos células',k:'pr-trompas'},
+  {term:'Cigoto',def:'La primera célula del nuevo ser',k:'pr-cigoto'},
+  {term:'Cordón umbilical',def:'Une al bebé con la madre',k:'pr-cordon'},
+  {term:'Placenta',def:'Órgano de la madre que alimenta al bebé por dentro',k:'pr-placenta'},
+  {term:'Parto',def:'Cuando nace el bebé',k:'pr-parto'},
+  {term:'Pubertad',def:'Etapa en que el cuerpo madura',k:'pr-pubertad'},
+  {term:'Gestación',def:'Otro nombre del embarazo',k:'pr-gestacion'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un niño de 12 años nota que su voz empieza a cambiar y le crece vello en el cuerpo, y se siente confundido.'},
-  {txt:'Una niña comienza a tener cambios en su cuerpo durante la pubertad y no sabe si es normal.'},
-  {txt:'Una madre embarazada quiere que su bebé nazca sano y pregunta qué debe hacer.'},
-  {txt:'Un grupo de estudiantes se burla de un compañero por los cambios de su cuerpo en la pubertad.'},
-  {txt:'Una familia espera un bebé y los hermanos preguntan cómo se alimenta el bebé dentro de la madre.'},
-  {txt:'Un adolescente cree que todos deben cambiar al mismo tiempo y a la misma edad en la pubertad.'},
+  {k:'ca-voz',txt:'Un niño de 12 años nota que su voz empieza a cambiar y le crece vello en el cuerpo, y se siente confundido.'},
+  {k:'ca-nina-cambios',txt:'Una niña comienza a tener cambios en su cuerpo durante la pubertad y no sabe si es normal.'},
+  {k:'ca-embarazada',txt:'Una madre embarazada quiere que su bebé nazca sano y pregunta qué debe hacer.'},
+  {k:'ca-burla',txt:'Un grupo de estudiantes se burla de un compañero por los cambios de su cuerpo en la pubertad.'},
+  {k:'ca-hermanos',txt:'Una familia espera un bebé y los hermanos preguntan cómo se alimenta el bebé dentro de la madre.'},
+  {k:'ca-verguenza',txt:'Una niña tiene vergüenza de preguntarle a su mamá sobre los cambios de su cuerpo.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué etapa o situación del desarrollo se observa en este caso?',
@@ -520,19 +505,19 @@ const critCaseGuides=[
   'Porque son parte natural de la vida; conocerlos y respetarlos ayuda a cuidar la salud y a tratar bien a los demás.',
 ];
 const critErrorBank=[
-  {txt:'"Los ovarios producen los espermatozoides."',
+  {k:'er-ovarios',txt:'"Los ovarios producen los espermatozoides."',
    g1:'Los ovarios producen los ÓVULOS.',
    g2:'Los espermatozoides los producen los TESTÍCULOS.'},
-  {txt:'"El bebé crece dentro del estómago de la madre."',
+  {k:'er-estomago',txt:'"El bebé crece dentro del estómago de la madre."',
    g1:'El bebé crece dentro del ÚTERO.',
    g2:'El estómago pertenece al sistema digestivo, no al reproductor.'},
-  {txt:'"La fecundación es el momento en que nace el bebé."',
+  {k:'er-fecundacion',txt:'"La fecundación es el momento en que nace el bebé."',
    g1:'La fecundación es la UNIÓN del espermatozoide con el óvulo.',
    g2:'El nacimiento ocurre al final del embarazo, en el PARTO.'},
-  {txt:'"Todos los niños y niñas cambian a la misma edad en la pubertad."',
+  {k:'er-misma-edad',txt:'"Todos los niños y niñas cambian a la misma edad en la pubertad."',
    g1:'La pubertad ocurre a EDADES DISTINTAS en cada persona.',
    g2:'Cada cuerpo tiene su propio ritmo; todo es normal.'},
-  {txt:'"El espermatozoide y el óvulo son la misma célula."',
+  {k:'er-misma-celula',txt:'"El espermatozoide y el óvulo son la misma célula."',
    g1:'El espermatozoide es la célula MASCULINA.',
    g2:'El óvulo es la célula FEMENINA; son distintas.'},
 ];
@@ -545,31 +530,26 @@ const critDecisionBank=[
 ];
 const critDecisionGuide='Lo más saludable y responsable es informarse bien con adultos de confianza o personal de salud, cuidar la higiene, respetar el cuerpo propio y el de los demás, y acudir al médico cuando hace falta. Los cambios de la pubertad y el embarazo son naturales; conocerlos con información correcta evita miedos y burlas y ayuda a tomar buenas decisiones.';
 const critCompareBank=[
-  {a:'Órganos que producen los espermatozoides.',b:'Órganos que producen los óvulos.',
-   ga:'Los testículos.',
-   gb:'Los ovarios.',
-   gr:'Los dos producen células reproductoras, pero los testículos son del sistema masculino y los ovarios del femenino.'},
-  {a:'Célula reproductora masculina.',b:'Célula reproductora femenina.',
-   ga:'El espermatozoide.',
-   gb:'El óvulo.',
-   gr:'Ambas son células reproductoras y al unirse forman el cigoto, pero una la aporta el padre y la otra la madre.'},
-  {a:'Momento en que se unen el espermatozoide y el óvulo.',b:'Momento en que nace el bebé.',
-   ga:'La fecundación.',
-   gb:'El parto.',
-   gr:'La fecundación es el comienzo de la nueva vida y el parto es el nacimiento; entre ambos ocurre el embarazo.'},
+  {k:'co-varones-mujeres',a:'Cambia la voz y se ensanchan los hombros.',b:'Se desarrollan las mamas y se ensanchan las caderas.',
+   ga:'Cambios de los varones.',
+   gb:'Cambios de las mujeres.',
+   gr:'Los dos son cambios de la misma etapa y los dirigen las hormonas, pero no son iguales en unos y en otras.'},
+  {k:'co-infancia-vejez',a:'La primera etapa de la vida, cuando se aprende a hablar y a caminar.',b:'La última etapa de la vida.',
+   ga:'La infancia.',
+   gb:'La vejez.',
+   gr:'Las dos son etapas del desarrollo humano; entre ellas están la adolescencia y la adultez.'},
 ];
 const critCauseBank=[
-  {cause:'El espermatozoide se une con el óvulo.',guide:'Ocurre la fecundación y se forma el cigoto, la primera célula del nuevo ser.'},
-  {cause:'Comienza la pubertad en un adolescente.',guide:'Las hormonas producen cambios físicos y emocionales en su cuerpo.'},
-  {cause:'Una madre embarazada acude a sus controles médicos y se alimenta bien.',guide:'Aumenta la probabilidad de que el bebé nazca sano.'},
-  {cause:'El cigoto se implanta en el útero.',guide:'Comienza el embarazo y el bebé empieza a crecer.'},
+  {k:'cau-habitos',cause:'Un adolescente duerme bien, come variado y hace ejercicio.',guide:'Crece sano y con energía.'},
+  {k:'cau-hormonas',cause:'Las hormonas sexuales empiezan a trabajar.',guide:'Comienzan los cambios del cuerpo de la adolescencia.'},
+  {k:'cau-confianza',cause:'Una familia habla con confianza de los cambios del cuerpo.',guide:'Los hijos preguntan a tiempo y no pasan miedo, como le pasó a Kenia.'},
 ];
 const critEffectBank=[
-  {effect:'A un adolescente le cambia la voz y le crece vello.',guide:'Es efecto de las hormonas sexuales durante la pubertad.'},
-  {effect:'Un bebé recibe alimento y oxígeno sin comer ni respirar por sí mismo.',guide:'Los recibe por el cordón umbilical, unido a la placenta de la madre.'},
-  {effect:'Después de unos nueve meses, nace un bebé.',guide:'Ha terminado el embarazo y ocurre el parto.'},
-  {effect:'Con los años, una persona pasa de niño a adulto y luego a anciano.',guide:'Es el desarrollo humano: infancia, adolescencia, adultez y vejez.'},
+  {k:'ef-caderas',effect:'A una niña de 11 años se le ensanchan las caderas.',guide:'Su cuerpo empieza a madurar: es la pubertad.'},
+  {k:'ef-nueve-meses',effect:'Después de unos nueve meses, nace un bebé.',guide:'Terminó el embarazo y ocurre el parto.'},
+  {k:'ef-etapas',effect:'Con los años, una persona pasa de niño a adulto y luego a anciano.',guide:'Es el desarrollo humano: infancia, adolescencia, adultez y vejez.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });

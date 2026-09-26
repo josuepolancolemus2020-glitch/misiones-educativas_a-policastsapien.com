@@ -6659,6 +6659,16 @@ Y dos cosas que salieron por el camino:
 - **La prueba de pensamiento crítico de Áreas Protegidas tiene otra forma**
   (datos, clasifica, argumenta) y la sonda no la lee; no se tocó.
 
+**La Ruta del Cuerpo quedó completa también**, sus cinco sistemas con sus
+fichas. En el cuerpo lo que delata es el ÓRGANO: «¿qué órgano bombea la
+sangre?» se contesta solo si otra pregunta dice «el corazón bombea». Así que
+los órganos van en el pareado, con lo que hacen, y las demás preguntas
+preguntan cómo se nota, qué pasa si falla o en qué orden va, sin nombrarlos.
+Y en pensamiento crítico los casos cuentan lo que le pasa a una persona,
+las causas y los efectos salen de los hábitos, y los errores corrigen los
+datos del cuerpo: si un caso dice «que su bebé nazca sano», ninguna causa
+puede hablar de los controles médicos del embarazo, porque se copia.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
