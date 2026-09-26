@@ -358,73 +358,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El cerebelo controla la memoria y el lenguaje.',a:false},
-  {q:'La mielina acelera la conducción del impulso nervioso.',a:true},
-  {q:'La médula espinal mide aproximadamente 45 cm en adultos.',a:true},
-  {q:'El Sistema Nervioso Central está formado por el encéfalo y la médula espinal.',a:true},
-  {q:'El arco reflejo pasa siempre por el cerebro antes de generar respuesta.',a:false},
-  {q:'La dopamina es un neurotransmisor relacionado con el movimiento y el placer.',a:true},
-  {q:'El SNP está formado por 12 pares de nervios craneales y 31 pares espinales.',a:true},
-  {q:'La esclerosis múltiple destruye la vaina de mielina.',a:true},
-  {q:'El tronco encefálico controla principalmente el equilibrio y la postura.',a:false},
-  {q:'El Alzheimer es la principal causa de demencia a nivel mundial.',a:true},
-  {q:'Las dendritas transmiten el impulso nervioso hacia otras células.',a:false},
-  {q:'El cerebro humano contiene aproximadamente 86,000 millones de neuronas.',a:true},
-  {q:'El sistema nervioso autónomo controla funciones voluntarias como caminar.',a:false},
-  {q:'La epilepsia se caracteriza por descargas eléctricas anormales en el cerebro.',a:true},
-  {q:'Las neuronas sensoriales llevan información del SNC hacia los músculos.',a:false},
+  {q:'Marvin quitó la mano del comal antes de sentir el dolor.',a:true,k:'tf-comal'},
+  {q:'El cerebro humano tiene unos 86,000 millones de neuronas.',a:true,k:'tf-86000'},
+  {q:'El sistema nervioso voluntario controla el caminar y el escribir.',a:true,k:'tf-voluntario'},
+  {q:'La dopamina se relaciona con el movimiento y el placer.',a:true,k:'tf-dopamina'},
+  {q:'La serotonina tiene que ver con el estado de ánimo.',a:true,k:'tf-serotonina'},
+  {q:'El simpático se activa en momentos de estrés, de «lucha o huye».',a:true,k:'tf-simpatico'},
+  {q:'El sistema nervioso periférico tiene 31 pares de nervios espinales.',a:true,k:'tf-31'},
+  {q:'El cráneo y la columna vertebral protegen al sistema nervioso central.',a:true,k:'tf-craneo'},
+  {q:'El lóbulo frontal rige la personalidad y el razonamiento.',a:true,k:'tf-frontal'},
+  {q:'La esclerosis múltiple destruye los huesos de la columna.',a:false,k:'tf-esclerosis'}
 ];
 const evalMCBank=[
-  {q:'¿Qué parte del encéfalo controla el equilibrio y la coordinación?',o:['a) Cerebro','b) Médula espinal','c) Cerebelo','d) Tronco encefálico'],a:2},
-  {q:'¿Cómo se llama la vaina que acelera la conducción del impulso nervioso?',o:['a) Sinapsis','b) Dendrita','c) Axón','d) Mielina'],a:3},
-  {q:'¿Cuántos pares de nervios craneales tiene el Sistema Nervioso Periférico?',o:['a) 8 pares','b) 10 pares','c) 31 pares','d) 12 pares'],a:3},
-  {q:'¿Qué neurotransmisor se relaciona con el movimiento y el placer?',o:['a) Dopamina','b) GABA','c) Serotonina','d) Acetilcolina'],a:0},
-  {q:'¿Qué tipo de neurona lleva impulsos del SNC a los músculos?',o:['a) Sensorial','b) Motora','c) Interneurona','d) Aferente'],a:1},
-  {q:'¿Qué enfermedad se caracteriza por pérdida de dopamina y temblores?',o:['a) Parkinson','b) Alzheimer','c) Epilepsia','d) Meningitis'],a:0},
-  {q:'¿Qué estructura conecta los dos hemisferios del cerebro?',o:['a) Cerebelo','b) Tronco encefálico','c) Médula espinal','d) Cuerpo calloso'],a:3},
-  {q:'¿A qué velocidad máxima viajan los impulsos en fibras mielinizadas?',o:['a) 30 m/s','b) 60 m/s','c) 120 m/s','d) 90 m/s'],a:2},
-  {q:'¿Qué parte del encéfalo controla la respiración y el latido cardíaco?',o:['a) Cerebro','b) Cerebelo','c) Tronco encefálico','d) Hipocampo'],a:2},
-  {q:'¿Cuántos pares de nervios espinales tiene el SNP?',o:['a) 12 pares','b) 31 pares','c) 21 pares','d) 42 pares'],a:1},
-  {q:'¿Qué enfermedad daña la vaina de mielina afectando la conducción nerviosa?',o:['a) Esclerosis múltiple','b) Alzheimer','c) Parkinson','d) Epilepsia'],a:0},
-  {q:'¿Qué es la sinapsis?',o:['a) Parte del axón','b) Espacio entre neuronas','c) Tipo de neurona','d) Vaina del axón'],a:1},
-  {q:'¿Cuál es la unidad estructural y funcional del sistema nervioso?',o:['a) Neurona','b) Sinapsis','c) Mielina','d) Dendrita'],a:0},
-  {q:'¿Qué parte del encéfalo controla el pensamiento y el lenguaje?',o:['a) Cerebelo','b) Tronco encefálico','c) Cerebro','d) Médula espinal'],a:2},
-  {q:'¿Cuál es el tipo de neurona que recibe estímulos y los envía al SNC?',o:['a) Motora','b) Sensorial','c) Interneurona','d) Eferente'],a:1},
+  {q:'¿Cuál es la parte más grande del encéfalo?',o:['a) el bulbo','b) el cerebro','c) la hipófisis','d) el ojo'],a:1,k:'mc-cerebro'},
+  {q:'¿Cuántos pares de nervios craneales hay?',o:['a) 8','b) 12','c) 20','d) 50'],a:1,k:'mc-12'},
+  {q:'¿Qué enfermedad causa temblores por la pérdida de un neurotransmisor?',o:['a) Alzheimer','b) anemia','c) Parkinson','d) gripe'],a:2,k:'mc-parkinson'},
+  {q:'¿Qué tipo de neurona lleva las órdenes a los músculos?',o:['a) sensorial','b) la de la piel','c) ninguna','d) motora'],a:3,k:'mc-motora'},
+  {q:'¿Qué parte del sistema nervioso trae la calma después de un susto?',o:['a) el parasimpático','b) el hueso','c) la piel','d) el estómago'],a:0,k:'mc-parasimpatico'},
+  {q:'¿Qué neurotransmisor tiene que ver con los músculos?',o:['a) acetilcolina','b) sal','c) azúcar','d) agua'],a:0,k:'mc-acetilcolina'},
+  {q:'¿Qué hace el GABA en el sistema nervioso?',o:['a) acelera todo','b) frena o inhibe','c) digiere','d) da color'],a:1,k:'mc-gaba'},
+  {q:'¿A qué velocidad pueden viajar los impulsos nerviosos?',o:['a) 1 m/s','b) 1 km por hora','c) hasta 120 m/s','d) como la luz'],a:2,k:'mc-120'},
+  {q:'¿Qué enfermedad se debe a descargas eléctricas anormales en el cerebro?',o:['a) anemia','b) asma','c) caries','d) epilepsia'],a:3,k:'mc-epilepsia'},
+  {q:'¿Qué es un estímulo?',o:['a) algo del ambiente que el cuerpo capta','b) un hueso','c) un músculo','d) una enfermedad'],a:0,k:'mc-estimulo'}
 ];
 const evalCPBank=[
-  {q:'La ___ es la unidad estructural y funcional del sistema nervioso.',a:'neurona'},
-  {q:'La vaina de ___ acelera la conducción del impulso nervioso.',a:'mielina'},
-  {q:'El SNP está formado por ___ pares de nervios craneales.',a:'12'},
-  {q:'El ___ coordina el equilibrio y los movimientos finos.',a:'cerebelo'},
-  {q:'La sinapsis química libera ___ para transmitir el impulso.',a:'neurotransmisores'},
-  {q:'El arco reflejo es procesado en la ___ espinal.',a:'médula'},
-  {q:'El Alzheimer destruye ___ y afecta la memoria progresivamente.',a:'neuronas'},
-  {q:'El ___ es el neurotransmisor asociado al movimiento y el placer.',a:'dopamina'},
-  {q:'Las neuronas ___ llevan información desde los receptores al SNC.',a:'sensoriales'},
-  {q:'El tronco encefálico controla funciones vitales como la ___.',a:'respiración'},
-  {q:'La esclerosis múltiple afecta la vaina de ___.',a:'mielina'},
-  {q:'El sistema nervioso ___ controla funciones involuntarias.',a:'autónomo'},
-  {q:'El cerebro está dividido en dos ___ separados por el cuerpo calloso.',a:'hemisferios'},
-  {q:'La neurona tiene tres partes: soma, dendrita y ___.',a:'axón'},
-  {q:'El Parkinson se produce por pérdida del neurotransmisor ___.',a:'dopamina'},
+  {q:'El Alzheimer es la principal causa de ___.',a:'demencia',acc:['demencia'],k:'cp-demencia'},
+  {q:'El sistema nervioso ___ controla lo involuntario, como el latido.',a:'autónomo',acc:['autónomo'],k:'cp-autonomo'},
+  {q:'El cerebro se divide en dos ___.',a:'hemisferios',acc:['hemisferios'],k:'cp-hemisferios'},
+  {q:'Una neurona puede conectarse con hasta ___ otras neuronas.',a:'10,000',acc:['10,000','10000','10.000'],k:'cp-10000'},
+  {q:'La médula espinal mide unos ___ cm en un adulto.',a:'45',acc:['45'],k:'cp-45'},
+  {q:'A las neuronas sensoriales también se les llama ___.',a:'aferentes',acc:['aferentes'],k:'cp-aferentes'},
+  {q:'A las neuronas motoras también se les llama ___.',a:'eferentes',acc:['eferentes'],k:'cp-eferentes'},
+  {q:'La parte central de la neurona, donde está el núcleo, se llama ___.',a:'soma',acc:['soma'],k:'cp-soma'},
+  {q:'La pérdida de coordinación de los movimientos se llama ___.',a:'ataxia',acc:['ataxia'],k:'cp-ataxia'},
+  {q:'Para cuidar la cabeza al andar en bicicleta se usa ___.',a:'casco',acc:['casco'],k:'cp-casco'}
 ];
 const evalPRBank=[
-  {term:'Neurona',def:'Unidad estructural y funcional del sistema nervioso'},
-  {term:'Sinapsis',def:'Espacio entre dos neuronas donde se transmite el impulso'},
-  {term:'Mielina',def:'Vaina lipídica que acelera la conducción del impulso nervioso'},
-  {term:'Cerebelo',def:'Coordina el equilibrio, la postura y los movimientos finos'},
-  {term:'Arco reflejo',def:'Respuesta involuntaria rápida procesada en la médula espinal'},
-  {term:'Dopamina',def:'Neurotransmisor del movimiento y el placer; su pérdida causa Parkinson'},
-  {term:'SNC',def:'Sistema Nervioso Central: encéfalo más médula espinal'},
-  {term:'SNP',def:'Sistema Nervioso Periférico: 12 pares craneales y 31 pares espinales'},
-  {term:'Tronco encefálico',def:'Controla respiración, latido y presión arterial; une cerebro y médula'},
-  {term:'Alzheimer',def:'Enfermedad neurodegenerativa progresiva; principal causa de demencia'},
-  {term:'Axón',def:'Prolongación de la neurona que transmite el impulso hacia otras células'},
-  {term:'Neurona sensorial',def:'Lleva impulsos aferentes desde los receptores hacia el SNC'},
-  {term:'Médula espinal',def:'Conduce impulsos entre encéfalo y cuerpo; procesa reflejos medulares'},
-  {term:'Esclerosis múltiple',def:'Enfermedad autoinmune que destruye la vaina de mielina'},
-  {term:'Neurotransmisores',def:'Sustancias químicas de la sinapsis: dopamina, serotonina, acetilcolina'},
+  {term:'Neurona',def:'Célula que conduce los impulsos',k:'pr-neurona'},
+  {term:'Sinapsis',def:'El espacio entre dos neuronas',k:'pr-sinapsis'},
+  {term:'Mielina',def:'Vaina que acelera el impulso',k:'pr-mielina'},
+  {term:'Cerebelo',def:'Afina el equilibrio y la postura',k:'pr-cerebelo'},
+  {term:'Arco reflejo',def:'Respuesta rápida que no pasa por el cerebro',k:'pr-arco'},
+  {term:'Tronco encefálico',def:'Controla la respiración y el latido',k:'pr-tronco'},
+  {term:'Dendrita',def:'Recibe los impulsos de otras neuronas',k:'pr-dendrita'},
+  {term:'Axón',def:'Lleva el impulso hacia otras células',k:'pr-axon'},
+  {term:'Cuerpo calloso',def:'Puente entre las dos mitades del cerebro',k:'pr-calloso'},
+  {term:'Interneurona',def:'Conecta neuronas dentro del sistema central',k:'pr-interneurona'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -520,12 +505,12 @@ function evalSwitchMode(mode){
 }
 
 const critCaseBank=[
-  {txt:'Daniela toca accidentalmente una taza muy caliente y retira la mano de inmediato, antes de pensar conscientemente en lo ocurrido.'},
-  {txt:'Carlos pisa sin darse cuenta un vidrio roto y levanta el pie de inmediato, antes de sentir el dolor por completo.'},
-  {txt:'A Sofía le llega de golpe una luz muy brillante a los ojos y parpadea rápidamente sin proponérselo.'},
-  {txt:'Luis toca por error una plancha caliente mientras dobla la ropa y retira la mano al instante, antes de darse cuenta del calor.'},
-  {txt:'El médico golpea suavemente la rodilla de Mario con un martillo de reflejos y su pierna se extiende sola, sin que él lo decida.'},
-  {txt:'Ana se acerca demasiado a una olla con agua hirviendo y aparta la mano apenas siente el vapor caliente sobre su piel.'},
+  {k:'ca-taza',txt:'Daniela toca accidentalmente una taza muy caliente y retira la mano de inmediato, antes de pensar conscientemente en lo ocurrido.'},
+  {k:'ca-vidrio',txt:'Carlos pisa sin darse cuenta un vidrio roto y levanta el pie de inmediato, antes de sentir el dolor por completo.'},
+  {k:'ca-luz',txt:'A Sofía le llega de golpe una luz muy brillante a los ojos y parpadea rápidamente sin proponérselo.'},
+  {k:'ca-plancha',txt:'Luis toca por error una plancha caliente mientras dobla la ropa y retira la mano al instante, antes de darse cuenta del calor.'},
+  {k:'ca-rodilla',txt:'El médico golpea suavemente la rodilla de Mario con un martillo de reflejos y su pierna se extiende sola, sin que él lo decida.'},
+  {k:'ca-olla',txt:'Ana se acerca demasiado a una olla con agua hirviendo y aparta la mano apenas siente el vapor caliente sobre su piel.'},
 ];
 const critCaseQuestions=[
   '1. Explica qué ocurrió en su sistema nervioso desde el estímulo hasta la respuesta.',
@@ -541,22 +526,22 @@ const critCaseGuides=[
 ];
 
 const critErrorBank=[
-  {txt:'"El cerebro controla todos los reflejos del cuerpo. Cuando una persona se quema, primero piensa en el dolor y luego la médula espinal decide mover la mano."',
-   g1:'No todos los reflejos pasan por el cerebro: el arco reflejo se procesa directamente en la médula espinal.',
-   g2:'El orden está invertido: primero la médula espinal genera la respuesta motora (retirar la mano) y solo después el cerebro percibe el dolor.'},
-  {txt:'"Las neuronas motoras llevan la información de los sentidos hacia el cerebro, mientras que las neuronas sensoriales llevan las órdenes hacia los músculos."',
+  {k:'er-dendrita-axon',txt:'"Las dendritas son las que llevan el impulso hacia otras células, y el axón es el que lo recibe."',
+   g1:'Las DENDRITAS reciben los impulsos de otras neuronas.',
+   g2:'El AXÓN es el que lleva el impulso hacia otras células.'},
+  {k:'er-sensorial-motora',txt:'"Las neuronas motoras llevan la información de los sentidos hacia el cerebro, mientras que las neuronas sensoriales llevan las órdenes hacia los músculos."',
    g1:'Las funciones están invertidas: las neuronas sensoriales (aferentes) llevan la información de los sentidos hacia el SNC.',
    g2:'Las neuronas motoras (eferentes) son las que llevan las órdenes del SNC hacia los músculos, no al revés.'},
-  {txt:'"El cerebelo es el encargado de pensar, recordar y tomar decisiones, mientras que el cerebro solo se encarga de mantener el equilibrio."',
+  {k:'er-cerebro-cerebelo',txt:'"El cerebelo es el encargado de pensar, recordar y tomar decisiones, mientras que el cerebro solo se encarga de mantener el equilibrio."',
    g1:'El cerebro (corteza cerebral) es el que controla el pensamiento, la memoria y la toma de decisiones, no el cerebelo.',
    g2:'El cerebelo es el que coordina el equilibrio, la postura y los movimientos finos, no el cerebro.'},
-  {txt:'"La médula espinal forma parte del Sistema Nervioso Periférico, y los nervios craneales pertenecen al Sistema Nervioso Central."',
+  {k:'er-snc-snp',txt:'"La médula espinal forma parte del Sistema Nervioso Periférico, y los nervios craneales pertenecen al Sistema Nervioso Central."',
    g1:'La médula espinal es parte del Sistema Nervioso Central (SNC), junto con el encéfalo.',
    g2:'Los nervios craneales son parte del Sistema Nervioso Periférico (SNP), no del SNC.'},
-  {txt:'"El sistema nervioso simpático calma el cuerpo después de una situación de estrés, mientras que el parasimpático lo activa en momentos de peligro."',
+  {k:'er-simpatico',txt:'"El sistema nervioso simpático calma el cuerpo después de una situación de estrés, mientras que el parasimpático lo activa en momentos de peligro."',
    g1:'El sistema simpático es el que activa al cuerpo ante el peligro o el estrés ("lucha o huye"), no lo calma.',
    g2:'El sistema parasimpático es el que calma y restaura al cuerpo después del estrés ("descanso y digestión"), no lo activa.'},
-  {txt:'"La falta de acetilcolina causa la enfermedad de Parkinson, y la dopamina es la encargada de contraer los músculos esqueléticos."',
+  {k:'er-dopamina',txt:'"La falta de acetilcolina causa la enfermedad de Parkinson, y la dopamina es la encargada de contraer los músculos esqueléticos."',
    g1:'El Parkinson es causado por la pérdida de dopamina, no por la falta de acetilcolina.',
    g2:'La acetilcolina es el neurotransmisor encargado de la contracción muscular voluntaria, no la dopamina.'},
 ];
@@ -571,36 +556,36 @@ const critDecisionBank=[
 const critDecisionGuide='Debe proponer 3 cambios concretos relacionados con los hábitos de cuidado del sistema nervioso (dormir 8–9 h, hacer ejercicio físico, alimentarse bien, leer/aprender, evitar el exceso de pantallas, evitar alcohol/drogas/estimulantes, usar casco, manejar el estrés) y explicar con sus palabras por qué cada cambio ayuda a la salud del sistema nervioso.';
 
 const critCompareBank=[
-  {a:'Una persona olvida nombres, lugares y conversaciones recientes, y su confusión empeora con el tiempo.',b:'Una persona tiene temblores en reposo, rigidez muscular y dificultad para iniciar movimientos.',
+  {k:'co-alz-park',a:'Una persona olvida nombres, lugares y conversaciones recientes, y su confusión empeora con el tiempo.',b:'Una persona tiene temblores en reposo, rigidez muscular y dificultad para iniciar movimientos.',
    ga:'Alzheimer — afecta principalmente la memoria y las funciones cognitivas (destruye neuronas y sinapsis).',
    gb:'Parkinson — afecta principalmente el movimiento, por la pérdida de dopamina en el cerebro.',
    gr:'No son el mismo problema porque afectan funciones distintas del sistema nervioso (memoria/cognición vs. control motor) y tienen causas diferentes (degeneración relacionada con la memoria vs. falta de dopamina).'},
-  {a:'Una persona sufre descargas eléctricas anormales en el cerebro que producen convulsiones repentinas.',b:'Una persona presenta debilidad muscular progresiva y problemas de visión por daño a la vaina de mielina.',
+  {k:'co-epi-em',a:'Una persona sufre descargas eléctricas anormales en el cerebro que producen convulsiones repentinas.',b:'Una persona presenta debilidad muscular progresiva y problemas de visión por daño a la vaina de mielina.',
    ga:'Epilepsia — afecta la actividad eléctrica normal de las neuronas cerebrales.',
    gb:'Esclerosis múltiple — afecta la conducción del impulso nervioso al dañar la mielina.',
    gr:'No son el mismo problema: una altera la actividad eléctrica del cerebro (descargas anormales) y la otra daña la estructura que acelera la conducción del impulso (la mielina).'},
-  {a:'Una persona presenta fiebre alta, rigidez de cuello y dolor de cabeza intenso por inflamación de las meninges.',b:'Una persona presenta pérdida progresiva de la memoria y confusión que empeora con los años.',
+  {k:'co-mening-alz',a:'Una persona presenta fiebre alta, rigidez de cuello y dolor de cabeza intenso por inflamación de las meninges.',b:'Una persona presenta pérdida progresiva de la memoria y confusión que empeora con los años.',
    ga:'Meningitis — es una infección/inflamación de las meninges que rodean el SNC.',
    gb:'Alzheimer — es una enfermedad neurodegenerativa que destruye neuronas relacionadas con la memoria.',
    gr:'No son el mismo problema: una es una infección aguda que inflama las membranas del SNC y la otra es una degeneración progresiva y crónica de las neuronas.'},
-  {a:'Una persona tiene temblor en reposo y mucha dificultad para iniciar sus movimientos.',b:'Una persona sufre episodios breves de pérdida de conciencia acompañados de movimientos involuntarios.',
+  {k:'co-park-epi',a:'Una persona tiene temblor en reposo y mucha dificultad para iniciar sus movimientos.',b:'Una persona sufre episodios breves de pérdida de conciencia acompañados de movimientos involuntarios.',
    ga:'Parkinson — afecta el control del movimiento por falta de dopamina.',
    gb:'Epilepsia — afecta la actividad eléctrica normal del cerebro.',
    gr:'No son el mismo problema: uno es un trastorno progresivo del movimiento por falta de un neurotransmisor, y el otro es un trastorno episódico causado por descargas eléctricas anormales.'},
 ];
 
 const critCauseBank=[
-  {cause:'Una persona duerme pocas horas varios días seguidos.',guide:'Bajo rendimiento, falta de concentración, irritabilidad y dificultad para consolidar la memoria (el sistema nervioso no logra descansar ni repararse).'},
-  {cause:'Una persona anda en bicicleta sin casco y cae fuertemente.',guide:'Riesgo de traumatismo craneal y posible daño al tejido cerebral.'},
-  {cause:'Una persona consume alcohol en exceso de forma constante.',guide:'Daño a las neuronas (especialmente del cerebelo), pérdida de coordinación y deterioro cognitivo progresivo.'},
-  {cause:'Una persona pasa muchas horas frente a pantallas sin descanso.',guide:'Fatiga visual, dolores de cabeza y alteración del sueño, lo que afecta el descanso del sistema nervioso.'},
+  {k:'cau-alcohol',cause:'Una persona consume alcohol en exceso de forma constante.',guide:'Daño a las neuronas, pérdida de coordinación y deterioro de la memoria.'},
+  {k:'cau-lectura',cause:'Una persona lee todos los días.',guide:'Ejercita la memoria, la atención y el lenguaje.'},
+  {k:'cau-golpe',cause:'Un jugador se golpea fuerte la cabeza contra otro en un partido.',guide:'Puede sufrir una conmoción: mareo, confusión o pérdida del conocimiento, y debe revisarlo un médico.'},
+  {k:'cau-volumen',cause:'Una persona escucha música a todo volumen con audífonos, todos los días.',guide:'Puede dañar el oído y los nervios que llevan el sonido al cerebro.'},
 ];
 const critEffectBank=[
-  {effect:'Retira la mano rápidamente.',guide:'Tocó algo muy caliente o doloroso: se activó un arco reflejo ante un estímulo nocivo.'},
-  {effect:'Tiene dificultad para mantener el equilibrio.',guide:'Posible daño o mal funcionamiento del cerebelo.'},
-  {effect:'Olvida conversaciones y nombres recientes.',guide:'Degeneración de neuronas relacionadas con la memoria, como ocurre en el Alzheimer.'},
-  {effect:'Sufre convulsiones repentinas e involuntarias.',guide:'Descargas eléctricas anormales en el cerebro, como ocurre en la epilepsia.'},
+  {k:'ef-pierna-dormida',effect:'Una persona con la pierna dormida no siente cuando se la tocan.',guide:'El nervio de la pierna quedó apretado y no lleva bien la información.'},
+  {k:'ef-pupilas',effect:'Las pupilas se achican solas al salir al sol.',guide:'El sistema nervioso autónomo las ajusta sin que la persona lo decida.'},
+  {k:'ef-bicicleta',effect:'Un niño aprende a andar en bicicleta y después ya no tiene que pensar cada pedalazo.',guide:'Con la práctica, el movimiento se vuelve automático: lo afinan el cerebelo y las conexiones entre neuronas.'},
 ];
+
 
 function genEvalCrit(){
   sfx('click');
