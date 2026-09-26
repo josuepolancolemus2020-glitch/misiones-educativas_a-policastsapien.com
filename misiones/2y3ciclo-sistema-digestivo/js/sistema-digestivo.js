@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La nutrición es el proceso por el que el cuerpo aprovecha los alimentos.',a:true},
-  {q:'Los carbohidratos sirven sobre todo para construir el cuerpo.',a:false},
-  {q:'Las proteínas construyen y reparan el cuerpo.',a:true},
-  {q:'La digestión empieza en la boca.',a:true},
-  {q:'El estómago mezcla el alimento con jugos gástricos.',a:true},
-  {q:'Los nutrientes pasan a la sangre en el intestino grueso.',a:false},
-  {q:'El hígado fabrica la bilis, que ayuda a digerir las grasas.',a:true},
-  {q:'El intestino grueso absorbe el agua y forma las heces.',a:true},
-  {q:'La primera etapa de la digestión es la absorción.',a:false},
-  {q:'Lavarse las manos antes de comer ayuda a evitar enfermedades.',a:true},
-  {q:'El aparato digestivo mide alrededor de 9 metros.',a:true},
-  {q:'El hígado y el páncreas son glándulas anexas del aparato digestivo.',a:true},
-  {q:'Las frutas y verduras aportan sobre todo vitaminas y minerales.',a:true},
-  {q:'Comer mucha comida chatarra es bueno para la salud.',a:false},
-  {q:'La saliva ablanda el alimento y empieza la digestión en la boca.',a:true},
+  {q:'Tener la panza llena no siempre quiere decir estar bien nutrido.',a:true,k:'tf-panza'},
+  {q:'Las grasas son energía de reserva.',a:true,k:'tf-grasas'},
+  {q:'La digestión empieza en la boca.',a:true,k:'tf-boca'},
+  {q:'Masticar es parte de la digestión.',a:true,k:'tf-masticar'},
+  {q:'Lavarse las manos antes de comer ayuda a evitar enfermedades.',a:true,k:'tf-manos'},
+  {q:'El huevo y la leche ayudan a crecer.',a:true,k:'tf-huevo'},
+  {q:'Las verduras deben lavarse antes de comerlas.',a:true,k:'tf-lavar-verduras'},
+  {q:'Las verduras regulan y protegen el cuerpo.',a:true,k:'tf-verduras'},
+  {q:'El agua que bebemos también es parte de una buena nutrición.',a:true,k:'tf-agua'},
+  {q:'El ano expulsa lo que el cuerpo no aprovecha.',a:true,k:'tf-ano'}
 ];
 const evalMCBank=[
-  {q:'¿Qué sistema del cuerpo transforma los alimentos?',o:['a) El digestivo','b) El nervioso','c) El respiratorio','d) El óseo'],a:0},
-  {q:'¿Qué nutriente da energía rápida?',o:['a) Las proteínas','b) Las grasas','c) Los carbohidratos','d) El agua'],a:2},
-  {q:'¿Qué nutriente construye y repara el cuerpo?',o:['a) Los carbohidratos','b) Las proteínas','c) Las grasas','d) Las vitaminas'],a:1},
-  {q:'¿En qué órgano empieza la digestión?',o:['a) El estómago','b) La boca','c) El esófago','d) El hígado'],a:1},
-  {q:'¿En qué órgano se mezcla el alimento con jugos gástricos?',o:['a) La boca','b) El esófago','c) El hígado','d) El estómago'],a:3},
-  {q:'¿En qué órgano pasan los nutrientes a la sangre?',o:['a) El intestino delgado','b) El estómago','c) El intestino grueso','d) La boca'],a:0},
-  {q:'¿Qué glándula fabrica la bilis?',o:['a) El páncreas','b) El estómago','c) Las salivales','d) El hígado'],a:3},
-  {q:'¿Qué órgano absorbe el agua y forma las heces?',o:['a) El intestino delgado','b) El estómago','c) El intestino grueso','d) El esófago'],a:2},
-  {q:'¿Cuál es la primera etapa de la digestión?',o:['a) La absorción','b) La ingestión','c) La digestión','d) La egestión'],a:1},
-  {q:'¿Qué debemos hacer antes de comer?',o:['a) Correr','b) Dormir','c) Lavarnos las manos','d) Ver televisión'],a:2},
-  {q:'¿Cuál de estos alimentos aporta sobre todo proteínas?',o:['a) La tortilla','b) El azúcar','c) El frijol','d) El aguacate'],a:2},
-  {q:'¿Cómo se llama la masa de alimento masticado y ensalivado?',o:['a) Quimo','b) Bilis','c) Heces','d) Bolo alimenticio'],a:3},
-  {q:'Las glándulas salivales, el hígado y el páncreas son…',o:['a) órganos del tubo','b) glándulas anexas','c) nutrientes','d) músculos'],a:1},
-  {q:'¿Qué paso hace que los nutrientes lleguen a la sangre?',o:['a) La absorción','b) La ingestión','c) La egestión','d) La masticación'],a:0},
-  {q:'Para nutrirnos bien debemos comer…',o:['a) variado y equilibrado','b) solo dulces','c) solo carne','d) mucha comida frita'],a:0},
+  {q:'¿Qué nutriente da energía rápida?',o:['a) las proteínas','b) las grasas','c) los carbohidratos','d) el agua'],a:2,k:'mc-carbohidratos'},
+  {q:'¿Qué nutriente construye y repara el cuerpo?',o:['a) los carbohidratos','b) las proteínas','c) las grasas','d) el azúcar'],a:1,k:'mc-proteinas'},
+  {q:'¿Cuántos grupos principales de nutrientes hay?',o:['a) dos','b) cinco','c) diez','d) uno'],a:1,k:'mc-cinco'},
+  {q:'¿Cuál es la primera etapa de la digestión?',o:['a) la egestión','b) la ingestión','c) la respiración','d) el sueño'],a:1,k:'mc-ingestion'},
+  {q:'¿En qué etapa pasan los nutrientes a la sangre?',o:['a) la absorción','b) el sueño','c) la masticación','d) la respiración'],a:0,k:'mc-absorcion'},
+  {q:'¿Qué pasa en la etapa llamada digestión?',o:['a) entra el alimento','b) sale lo que sobra','c) el alimento se deshace en partes muy pequeñas','d) se duerme'],a:2,k:'mc-digestion'},
+  {q:'¿Cuál de estas comidas es más completa?',o:['a) tortilla, frijol, huevo y aguacate','b) solo tortilla con fresco','c) solo dulces','d) solo arroz'],a:0,k:'mc-completa'},
+  {q:'¿Qué parte de la boca corta y muele el alimento?',o:['a) las uñas','b) el pelo','c) los dientes','d) los ojos'],a:2,k:'mc-dientes'},
+  {q:'¿Qué alimento tiene grasas buenas?',o:['a) arroz','b) aguacate','c) naranja','d) agua'],a:1,k:'mc-aguacate'},
+  {q:'¿Por qué Kenia se dormía a media mañana, si comía todos los días?',o:['a) le faltaban nutrientes','b) no comía nada','c) comía demasiado frijol','d) dormía mucho de noche'],a:0,k:'mc-kenia'}
 ];
 const evalCPBank=[
-  {q:'El sistema ___ transforma los alimentos en nutrientes.',a:'digestivo'},
-  {q:'Los ___ dan energía rápida al cuerpo (maíz, arroz).',a:'carbohidratos'},
-  {q:'Las ___ construyen y reparan el cuerpo (frijol, huevo).',a:'proteínas'},
-  {q:'La digestión empieza en la ___.',a:'boca'},
-  {q:'El ___ mezcla el alimento con jugos gástricos.',a:'estómago'},
-  {q:'Los nutrientes pasan a la sangre en el intestino ___.',a:'delgado'},
-  {q:'El ___ fabrica la bilis para digerir las grasas.',a:'hígado'},
-  {q:'El intestino ___ absorbe el agua y forma las heces.',a:'grueso'},
-  {q:'La primera etapa de la digestión es la ___.',a:'ingestión'},
-  {q:'El paso de los nutrientes a la sangre se llama ___.',a:'absorción'},
-  {q:'Antes de comer debemos ___ las manos.',a:'lavarnos'},
-  {q:'La masa de alimento masticado y ensalivado es el ___ alimenticio.',a:'bolo'},
-  {q:'El líquido de la boca que empieza la digestión es la ___.',a:'saliva'},
-  {q:'El hígado y el páncreas son glándulas ___.',a:'anexas'},
-  {q:'Para nutrirnos bien debemos comer variado y ___.',a:'equilibrado'},
+  {q:'Alimentarse es comer; ___ es lo que el cuerpo hace por dentro con la comida.',a:'nutrirse',acc:['nutrirse'],k:'cp-nutrirse'},
+  {q:'Lo que el cuerpo no aprovecha sale como ___.',a:'heces',acc:['heces'],k:'cp-heces'},
+  {q:'El líquido de la boca que empieza la digestión es la ___.',a:'saliva',acc:['saliva'],k:'cp-saliva'},
+  {q:'Las sustancias de los alimentos que el cuerpo aprovecha se llaman ___.',a:'nutrientes',acc:['nutrientes'],k:'cp-nutrientes'},
+  {q:'El tubo digestivo mide unos ___ metros.',a:'9',acc:['9','nueve'],k:'cp-9'},
+  {q:'El mango, el banano y la naranja dan sobre todo ___.',a:'vitaminas',acc:['vitaminas'],k:'cp-vitaminas'},
+  {q:'Comer de todos los grupos de alimentos es comer ___.',a:'equilibrado',acc:['equilibrado'],k:'cp-equilibrado'},
+  {q:'La comida con mucha grasa, sal y azúcar se llama comida ___.',a:'chatarra',acc:['chatarra'],k:'cp-chatarra'},
+  {q:'La ___ es el proceso en que el cuerpo aprovecha los alimentos.',a:'nutrición',acc:['nutrición'],k:'cp-nutricion'},
+  {q:'El alimento se deshace con los dientes y con los ___ digestivos.',a:'jugos',acc:['jugos'],k:'cp-jugos'}
 ];
 const evalPRBank=[
-  {term:'Nutrición',def:'Aprovechar los alimentos para obtener energía y materiales'},
-  {term:'Aparato digestivo',def:'Órganos que digieren el alimento'},
-  {term:'Carbohidratos',def:'Nutriente que da energía rápida (maíz, arroz)'},
-  {term:'Proteínas',def:'Nutriente que construye y repara (frijol, huevo)'},
-  {term:'Boca',def:'Órgano donde empieza la digestión'},
-  {term:'Estómago',def:'Mezcla el alimento con jugos gástricos'},
-  {term:'Intestino delgado',def:'Absorbe los nutrientes a la sangre'},
-  {term:'Intestino grueso',def:'Absorbe el agua y forma las heces'},
-  {term:'Hígado',def:'Glándula que fabrica la bilis'},
-  {term:'Bilis',def:'Sustancia que ayuda a digerir las grasas'},
-  {term:'Absorción',def:'Paso de los nutrientes a la sangre'},
-  {term:'Ingestión',def:'Primera etapa: entra el alimento por la boca'},
-  {term:'Saliva',def:'Líquido de la boca que empieza la digestión'},
-  {term:'Bolo alimenticio',def:'Alimento masticado y mezclado con saliva'},
-  {term:'Glándulas anexas',def:'Salivales, hígado y páncreas; fabrican jugos'},
+  {term:'Esófago',def:'Tubo que baja el bocado',k:'pr-esofago'},
+  {term:'Estómago',def:'Mezcla el alimento con jugos',k:'pr-estomago'},
+  {term:'Intestino delgado',def:'Pasa los nutrientes a la sangre',k:'pr-delgado'},
+  {term:'Intestino grueso',def:'Absorbe el agua de lo que sobra',k:'pr-grueso'},
+  {term:'Hígado',def:'Fabrica la bilis',k:'pr-higado'},
+  {term:'Páncreas',def:'Glándula anexa que ayuda con sus jugos',k:'pr-pancreas'},
+  {term:'Quimo',def:'La papilla que sale del estómago',k:'pr-quimo'},
+  {term:'Egestión',def:'Sale lo que el cuerpo no aprovecha',k:'pr-egestion'},
+  {term:'Bolo alimenticio',def:'Bocado masticado y ensalivado',k:'pr-bolo'},
+  {term:'Glándulas salivales',def:'Humedecen la boca',k:'pr-salivales'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un niño solo come dulces, frituras y refrescos, y casi nunca frutas ni verduras. Se cansa rápido y se enferma seguido.'},
-  {txt:'Una niña come muy rápido y sin masticar bien; después casi siempre le duele el estómago.'},
-  {txt:'Un joven no se lava las manos antes de comer y a menudo tiene diarrea y parásitos.'},
-  {txt:'En una familia casi no comen frutas, verduras ni frijol; varios sufren de estreñimiento.'},
-  {txt:'Un niño solo desayuna un refresco antes de ir a la escuela y no logra concentrarse en clase.'},
-  {txt:'Una persona come muchísima grasa y comida frita todos los días, y ha subido mucho de peso.'},
+  {k:'ca-chatarra',txt:'Un niño solo come dulces, frituras y refrescos, y casi nunca frutas ni verduras. Se cansa rápido y se enferma seguido.'},
+  {k:'ca-rapido',txt:'Una niña come muy rápido y sin masticar bien; después casi siempre le duele el estómago.'},
+  {k:'ca-manos',txt:'Un joven no se lava las manos antes de comer y a menudo tiene diarrea y parásitos.'},
+  {k:'ca-fibra',txt:'En una familia casi no comen frutas, verduras ni frijol; varios sufren de estreñimiento.'},
+  {k:'ca-refresco',txt:'Un niño solo desayuna un refresco antes de ir a la escuela y no logra concentrarse en clase.'},
+  {k:'ca-grasa',txt:'Una persona come muchísima grasa y comida frita todos los días, y ha subido mucho de peso.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué error o hábito de alimentación se observa en este caso?',
@@ -520,56 +505,57 @@ const critCaseGuides=[
   'Porque la nutrición da al cuerpo la energía y los materiales para crecer, moverse y estar sano; y la higiene evita enfermedades digestivas.',
 ];
 const critErrorBank=[
-  {txt:'"El estómago es donde los nutrientes pasan a la sangre."',
-   g1:'La absorción de los nutrientes ocurre sobre todo en el INTESTINO DELGADO.',
+  {k:'er-estomago-absorbe',txt:'"El estómago es donde los nutrientes pasan a la sangre."',
+   g1:'La absorción de los nutrientes ocurre sobre todo en el intestino delgado, no en el estómago.',
    g2:'El estómago mezcla el alimento con jugos gástricos, pero no realiza la absorción principal.'},
-  {txt:'"Los carbohidratos sirven para construir y reparar el cuerpo."',
+  {k:'er-carbohidratos',txt:'"Los carbohidratos sirven para construir y reparar el cuerpo."',
    g1:'Los carbohidratos dan ENERGÍA rápida.',
    g2:'Los que construyen y reparan el cuerpo son las PROTEÍNAS.'},
-  {txt:'"El hígado forma parte del tubo por donde pasa el alimento."',
+  {k:'er-higado-tubo',txt:'"El hígado forma parte del tubo por donde pasa el alimento."',
    g1:'El hígado es una GLÁNDULA ANEXA: el alimento NO pasa por dentro de él.',
    g2:'Solo vierte la bilis al intestino delgado para ayudar a digerir las grasas.'},
-  {txt:'"Comer solo dulces y frituras es una alimentación saludable."',
-   g1:'Una alimentación saludable es VARIADA y EQUILIBRADA.',
-   g2:'El exceso de dulces y frituras causa caries, obesidad y otros problemas.'},
-  {txt:'"Da igual comer con las manos sucias."',
-   g1:'NO da igual: comer con las manos sucias causa parásitos y diarrea.',
-   g2:'Lavarse las manos antes de comer protege el aparato digestivo.'},
+  {k:'er-empieza-estomago',txt:'"La digestión empieza en el estómago; en la boca solo se tritura."',
+   g1:'La digestión empieza antes de llegar al estómago: con la saliva y los dientes.',
+   g2:'Ahí la saliva comienza a deshacer el alimento mientras los dientes lo trituran.'},
+  {k:'er-esofago',txt:'"El esófago es el órgano que digiere el alimento."',
+   g1:'El esófago solo BAJA el bocado hasta el estómago.',
+   g2:'La digestión la hacen los dientes, la saliva y los jugos digestivos.'},
 ];
 const critDecisionBank=[
   'En el recreo, un niño puede comprar una bolsa de churros con refresco, o una fruta con agua. Duda cuál elegir.',
   'Una mamá prepara la lonchera de su hijo: puede ponerle frijoles con tortilla y una fruta, o galletas dulces y soda.',
   'Después de jugar, un joven tiene mucha sed: puede tomar agua, o un refresco azucarado grande.',
   'Una familia decide qué cenar: verduras con pollo, o comida frita como casi todos los días.',
-  'Un estudiante quiere tener energía para estudiar y piensa qué desayunar antes de la escuela.',
+  'Un estudiante quiere rendir en clase y piensa qué desayunar antes de la escuela.',
 ];
 const critDecisionGuide='Para nutrirnos bien conviene elegir alimentos VARIADOS y NATURALES: frutas, verduras, frijol, tortilla, huevo y agua, y evitar el exceso de azúcar, grasa y comida chatarra. Una buena alimentación, con higiene, nos da energía, nos ayuda a crecer y previene enfermedades. La mejor decisión casi siempre es la opción más natural y equilibrada.';
 const critCompareBank=[
-  {a:'Un órgano que mezcla el alimento con jugos gástricos hasta hacer una papilla.',b:'Un órgano largo que absorbe los nutrientes y los pasa a la sangre.',
-   ga:'El estómago.',
-   gb:'El intestino delgado.',
-   gr:'Los dos participan en la digestión, pero el estómago mezcla y el intestino delgado absorbe; cumplen funciones distintas.'},
-  {a:'Un nutriente que da energía rápida, como el de la tortilla y el arroz.',b:'Un nutriente que construye y repara el cuerpo, como el del frijol y el huevo.',
-   ga:'Un carbohidrato.',
-   gb:'Una proteína.',
-   gr:'No son iguales: uno da energía y el otro sirve para crecer y reparar el cuerpo.'},
-  {a:'Un órgano por donde pasa el alimento, como el estómago.',b:'Una glándula que fabrica jugos pero por dentro NO pasa el alimento, como el hígado.',
-   ga:'Un órgano del tubo digestivo.',
-   gb:'Una glándula anexa.',
-   gr:'Ambos ayudan a digerir, pero por el tubo pasa el alimento y la glándula solo vierte sus jugos.'},
+  {k:'co-alimentarse',a:'Comer un plato de comida.',b:'Lo que el cuerpo hace por dentro con esa comida.',
+   ga:'Alimentarse: un acto voluntario.',
+   gb:'Nutrirse: un proceso involuntario.',
+   gr:'No son lo mismo: se puede comer mucho y no nutrirse bien, como Kenia.'},
+  {k:'co-ingestion',a:'El alimento entra por la boca.',b:'Lo que sobra sale del cuerpo.',
+   ga:'La ingestión, la primera etapa.',
+   gb:'La egestión, la última etapa.',
+   gr:'Las dos son etapas de la digestión, pero una abre el recorrido y la otra lo cierra.'},
+  {k:'co-vitaminas-grasas',a:'El nutriente de la naranja que protege el cuerpo.',b:'El nutriente del aguacate que se guarda de reserva.',
+   ga:'Las vitaminas.',
+   gb:'Las grasas.',
+   gr:'Los dos son nutrientes, pero unas regulan y protegen y las otras son reserva.'},
 ];
 const critCauseBank=[
-  {cause:'Una persona solo come comida chatarra y casi nada de frutas y verduras.',guide:'Su cuerpo no recibe todos los nutrientes: se cansa, se enferma y puede subir de peso.'},
-  {cause:'Un niño no se lava las manos antes de comer.',guide:'Puede contraer parásitos y diarrea.'},
-  {cause:'Alguien come muy rápido y sin masticar bien.',guide:'El estómago trabaja de más y puede doler; la digestión se dificulta.'},
-  {cause:'Una persona casi no come fibra ni bebe suficiente agua.',guide:'Puede sufrir estreñimiento: le cuesta ir al baño.'},
+  {k:'cau-bolo',cause:'En la boca, el alimento se mastica y se mezcla con saliva.',guide:'Se forma el bolo alimenticio, que es fácil de tragar.'},
+  {k:'cau-quimo',cause:'Los jugos del estómago mezclan el bocado durante un buen rato.',guide:'Se forma el quimo, una papilla.'},
+  {k:'cau-heces',cause:'El intestino grueso absorbe el agua de lo que sobra.',guide:'Se forman las heces.'},
+  {k:'cau-sangre',cause:'Los nutrientes llegan a la sangre.',guide:'La sangre los lleva a todas las células del cuerpo.'},
 ];
 const critEffectBank=[
-  {effect:'Un niño se cansa rápido y se enferma seguido.',guide:'Puede deberse a una mala alimentación, sin suficientes nutrientes.'},
-  {effect:'A alguien le da diarrea después de comer en la calle.',guide:'Probablemente comió con las manos o alimentos sucios (falta de higiene).'},
-  {effect:'Una persona sube mucho de peso.',guide:'Come más grasa, azúcar y comida chatarra de lo que su cuerpo gasta.'},
-  {effect:'A un niño le cuesta ir al baño (estreñimiento).',guide:'Le falta fibra (frutas, verduras, frijol) y agua en su alimentación.'},
+  {k:'ef-crece',effect:'Un niño crece y sus heridas sanan pronto.',guide:'Come suficientes proteínas: frijol, huevo y leche.'},
+  {k:'ef-fuerzas',effect:'Una niña tiene fuerzas para jugar toda la tarde.',guide:'Comió carbohidratos, como la tortilla y el arroz.'},
+  {k:'ef-protege',effect:'Una familia que come fruta todos los días se enferma menos.',guide:'Las frutas tienen vitaminas que regulan y protegen el cuerpo.'},
+  {k:'ef-horas',effect:'El cuerpo aguanta varias horas sin comer.',guide:'Usa la reserva que guardan las grasas.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
