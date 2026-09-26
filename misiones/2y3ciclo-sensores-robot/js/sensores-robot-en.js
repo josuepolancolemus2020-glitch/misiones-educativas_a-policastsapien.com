@@ -494,119 +494,68 @@
       ],
 
       evalTFBank: [
-        { q: 'The sensor turns something from the world into a signal for the controller.', a: true },
-        { q: 'The sensor is the one that decides what the robot will do.', a: false },
-        { q: 'The light sensor is like the human eye.', a: true },
-        { q: 'The wheel motor is a sensor.', a: false },
-        { q: 'The ultrasonic sensor measures distance with the echo, like a bat.', a: true },
-        { q: 'The microphone is the robot’s sound sensor.', a: true },
-        { q: 'The touch sensor needs something to touch it or press it.', a: true },
-        { q: 'The moisture sensor is used to know whether the soil is dry.', a: true },
+        { q: 'The school’s water is pumped up with a pump.', a: true },
+        { q: 'The tank overflowed for lack of a warning.', a: true },
+        { q: 'Without sensors the robot would know nothing about what happens around it.', a: true },
+        { q: 'A sensor measures many times per second without getting tired.', a: true },
+        { q: 'A robot can carry several sensors at once.', a: true },
         { q: 'Sensors are never wrong.', a: false },
-        { q: 'The robot chain is: sensor → controller → actuator.', a: true },
-        { q: 'The robot’s speaker is a sound sensor.', a: false },
-        { q: 'The supermarket automatic door uses a sensor to detect you.', a: true },
-        { q: 'A dirty or blocked sensor can give a wrong reading.', a: true },
-        { q: 'The temperature sensor measures how much light there is in the room.', a: false },
-        { q: 'In the human body the chain is receptor → brain → effector.', a: true }
+        { q: 'A wet sensor may report wrongly.', a: true },
+        { q: 'The sensor moves the robot’s wheels.', a: false },
+        { q: 'The body also has its own three-part chain.', a: true },
+        { q: 'A sensor cannot fail even when it is very dark.', a: false }
       ],
 
       evalMCBank: [
-        { q: 'What is a sensor?', o: ['a) The part that senses and turns the world into a signal', 'b) The part that moves the robot', 'c) The robot’s battery', 'd) The list of instructions'], a: 0 },
-        { q: 'Which human sense is the light sensor like?', o: ['a) Hearing', 'b) Taste', 'c) Smell', 'd) Sight'], a: 3 },
-        { q: 'Which sensor does a robot need so it does not crash into the wall?', o: ['a) Moisture', 'b) Distance', 'c) Temperature', 'd) Sound'], a: 1 },
-        { q: 'The ultrasonic sensor works like…', o: ['a) The bat, with the echo', 'b) The ant, with its legs', 'c) The flower, with the sun', 'd) The fish, with its fins'], a: 0 },
-        { q: 'Which one of these is NOT a sensor?', o: ['a) The microphone', 'b) The thermometer', 'c) The motor', 'd) The pushbutton'], a: 2 },
-        { q: 'What is the correct chain inside the robot?', o: ['a) Actuator → controller → sensor', 'b) Controller → sensor → actuator', 'c) Sensor → actuator → controller', 'd) Sensor → controller → actuator'], a: 3 },
-        { q: 'Which sensor tells you when to water the coffee field?', o: ['a) Moisture', 'b) Light', 'c) Sound', 'd) Touch'], a: 0 },
-        { q: 'Which sensor does the line-following car use?', o: ['a) Temperature', 'b) Light', 'c) Moisture', 'd) Sound'], a: 1 },
-        { q: 'The cell phone screen switches off next to your ear thanks to…', o: ['a) The speaker', 'b) The battery', 'c) A proximity sensor', 'd) The vibration motor'], a: 2 },
-        { q: 'Which sensor does the digital thermometer at the health center have?', o: ['a) Temperature', 'b) Sound', 'c) Moisture', 'd) Light'], a: 0 },
-        { q: 'What happens if the light sensor is covered in mud?', o: ['a) Nothing, sensors never fail', 'b) It gives a wrong reading and the robot decides wrong', 'c) The robot cleans itself', 'd) The robot gains more speed'], a: 1 },
-        { q: 'What is the difference between a sensor and an actuator?', o: ['a) The sensor acts and the actuator senses', 'b) They both do the same thing', 'c) The actuator decides and the sensor obeys', 'd) The sensor senses and the actuator carries out the action'], a: 3 },
-        { q: 'Which sensor detects that the robot crashed?', o: ['a) Light', 'b) Moisture', 'c) Touch', 'd) Temperature'], a: 2 },
-        { q: 'Which body part is the controller compared to?', o: ['a) The skin', 'b) The brain', 'c) The ear', 'd) The muscle'], a: 1 },
-        { q: 'The component inside the light sensor is called…', o: ['a) Valve', 'b) Propeller', 'c) Photoresistor', 'd) Gear'], a: 2 }
+        { q: 'What was the tank pump missing?', o: ['a) Strength', 'b) Finding out that the tank was already full', 'c) Water', 'd) Paint'], a: 1 },
+        { q: 'What does the sensor do with what it picks up?', o: ['a) It turns it into data for whoever decides', 'b) It erases it', 'c) It keeps it forever', 'd) It switches it off'], a: 0 },
+        { q: 'Why is the sensor called the robot’s «reporter»?', o: ['a) Because it talks a lot', 'b) Because it writes news', 'c) Because it only reports: it does not decide or act', 'd) Because it works at night'], a: 2 },
+        { q: 'What happens if the sensor gives a wrong reading?', o: ['a) Nothing', 'b) The robot gets it wrong too', 'c) The robot fixes itself', 'd) The robot switches off'], a: 1 },
+        { q: 'What is the robot’s input of information?', o: ['a) The motor', 'b) The wheel', 'c) The sensor', 'd) The speaker'], a: 2 },
+        { q: 'In the body’s chain, what goes in the middle?', o: ['a) The foot', 'b) The brain', 'c) The hand', 'd) The skin'], a: 1 },
+        { q: 'How many things does each sensor perceive?', o: ['a) All of them', 'b) Only one', 'c) None', 'd) Five'], a: 1 },
+        { q: 'What makes the line follower leave the track?', o: ['a) Having its sensor dirty with mud', 'b) Going slowly', 'c) Having a full battery', 'd) Being in the classroom'], a: 0 },
+        { q: 'Which sense of the body is like the microphone?', o: ['a) Sight', 'b) Taste', 'c) Smell', 'd) Hearing'], a: 3 },
+        { q: 'If a part tells you something about the world, it is…', o: ['a) A sensor', 'b) A motor', 'c) A wheel', 'd) A speaker'], a: 0 }
       ],
 
       evalCPBank: [
-        { q: 'The sensor turns something from the world into a ___ for the controller.', a: 'signal' },
-        { q: 'The light sensor is like the human ___.', a: 'eye' },
-        { q: 'The robot’s sound sensor is the ___.', a: 'microphone' },
-        { q: 'The distance sensor measures with the ___, just like a bat.', a: 'echo' },
-        { q: 'The ___ sensor reports whether the soil of the coffee field is dry.', a: 'moisture' },
-        { q: 'The touch sensor is a ___ that gets pressed in a crash.', a: 'pushbutton' },
-        { q: 'The robot chain is sensor → controller → ___.', a: 'actuator' },
-        { q: 'In the body the chain is receptor → brain → ___.', a: 'effector' },
-        { q: 'The motor and the speaker do not sense: they are ___.', a: 'actuators' },
-        { q: 'The component inside the light sensor is called a ___.', a: 'photoresistor' },
-        { q: 'A dirty or blocked sensor gives a ___ reading.', a: 'wrong' },
-        { q: 'The digital thermometer is a ___ sensor.', a: 'temperature' },
-        { q: 'The ___ door of the supermarket opens thanks to a sensor.', a: 'automatic' },
-        { q: 'The distance sensor that uses ultrasound is called ___.', a: 'ultrasonic' },
-        { q: 'The sensor does not decide: the one that decides is the ___.', a: 'controller' }
+        { q: 'The pump was turned on and off by Mr. ___.', a: 'Chico', acc: ['Chico'] },
+        { q: 'The sensor sends an electrical ___.', a: 'signal', acc: ['signal'] },
+        { q: 'In the body, the sensor is called the ___.', a: 'receptor', acc: ['receptor'] },
+        { q: 'The ultrasonic sensor works like the ___.', a: 'bat', acc: ['bat'] },
+        { q: 'Information always ___ the robot through the sensor.', a: 'enters', acc: ['enters'] },
+        { q: 'Without sensors, the robot would be blind and ___.', a: 'deaf', acc: ['deaf'] },
+        { q: 'The gate stays open because nobody ___ when someone comes in.', a: 'notices', acc: ['notices'] },
+        { q: 'On Wednesday there was no water in the school ___.', a: 'bathrooms', acc: ['bathrooms', 'restrooms', 'toilets'] },
+        { q: 'The digital thermometer at the health center measures ___ in seconds.', a: 'fever', acc: ['fever'] },
+        { q: 'The supermarket door opens on its own when someone comes ___.', a: 'near', acc: ['near', 'close'] }
       ],
 
       evalPRBank: [
-        { term: 'Sensor', def: 'It senses the world and turns it into a signal' },
-        { term: 'Light sensor', def: 'It tells bright from dark; it serves the line follower' },
-        { term: 'Distance sensor', def: 'It measures how far away an object is with the echo' },
-        { term: 'Touch sensor', def: 'A pushbutton that reports when something presses it' },
-        { term: 'Temperature sensor', def: 'It measures heat or cold: the digital thermometer' },
-        { term: 'Sound sensor', def: 'Microphone: it picks up noises, voices and claps' },
-        { term: 'Moisture sensor', def: 'It measures the water in the soil: it tells you when to water' },
-        { term: 'Actuator', def: 'It carries out the action: motor, wheel, speaker or light' },
-        { term: 'Controller', def: 'It receives the signal and decides what will be done' },
-        { term: 'Signal', def: 'Electric data the sensor sends to the controller' },
-        { term: 'Photoresistor', def: 'A component that changes with the light it receives' },
-        { term: 'Ultrasonic sensor', def: 'A sensor that sends out sound and waits for the echo' },
-        { term: 'Wrong reading', def: 'What a dirty, wet or blocked sensor reports' },
-        { term: 'Proximity sensor', def: 'It switches the cell phone screen off next to your ear' },
-        { term: 'Receptor', def: 'The name of the sensor in the human body' }
+        { term: 'Light sensor', def: 'The hallway lamp that turns on by itself' },
+        { term: 'Distance sensor', def: 'It measures how far away an object is' },
+        { term: 'Touch sensor', def: 'The push button that warns of a crash' },
+        { term: 'Temperature sensor', def: 'It measures how hot or cold it is' },
+        { term: 'Sound sensor', def: 'The robot that starts when you clap' },
+        { term: 'Humidity sensor', def: 'It warns when to water the coffee farm' },
+        { term: 'Proximity sensor', def: 'It turns off the phone screen next to your ear' },
+        { term: 'Actuator', def: 'The speaker that beeps in reverse' },
+        { term: 'Controller', def: 'It is always in the middle of the other two' },
+        { term: 'Photoresistor', def: 'It changes with the brightness it receives' }
       ],
 
       critSensorBank: [
-        { txt: 'A robot waters the school garden only when the soil is dry.', ans: 'Moisture sensor: it measures the water in the soil; if the soil is dry, the controller decides to turn the irrigation on. If the sensor gets wet on the outside it may report «moist» and the garden is left without water.' },
-        { txt: 'A delivery robot stops before crashing into a wall or a person.', ans: 'Distance sensor (ultrasonic): it uses the echo to measure how close the obstacle is; if it is too close, the controller decides to brake. If something blocks the sensor, the echo never comes back and the robot crashes.' },
-        { txt: 'A robotic hallway lamp turns itself on when night falls.', ans: 'Light sensor: it detects that there is little light; the controller decides to turn the lamp on. If the sensor is dirty, it may «see» darkness at noon and turn the lamp on for no reason.' },
-        { txt: 'A robot looks after the chick incubator and warns if it gets cold.', ans: 'Temperature sensor: it measures the heat; if it drops too low, the controller decides to switch on the lamp or the alarm. If the sensor sits far from the chicks, the reading is useless.' },
-        { txt: 'A toy robot starts up when the child claps twice.', ans: 'Sound sensor (microphone): it picks up the claps; the controller decides to start the motors. In a noisy place the sensor can get confused and start up on its own.' },
-        { txt: 'A robotic car follows a black line painted on the classroom floor.', ans: 'Light sensor: it tells black apart from the bright floor; the controller decides to correct the course. With a dirty lens or in low light it gives wrong readings and the car drifts off.' },
-        { txt: 'The supermarket door opens when a person walks up to it.', ans: 'Distance or motion sensor: it detects the person nearby; the controller decides to open and the motor slides the door. If the sensor points the wrong way, the door opens when nobody is coming through.' },
-        { txt: 'The robot detects that somebody pressed its emergency button.', ans: 'Touch sensor (pushbutton): it is triggered by contact; the controller decides to stop everything. It is a sensor that needs to be touched: it does not work from a distance.' }
+        {txt:'A delivery robot stops before crashing into a wall or a person.',ans:'Distance sensor (ultrasonic): it uses the echo to measure how close the obstacle is; if it is too close, the controller decides to brake. If something blocks the sensor, the echo never comes back and the robot crashes.'},
+        {txt:'A toy robot starts up when the child claps twice.',ans:'Sound sensor (microphone): it picks up the claps; the controller decides to start the motors. In a noisy place the sensor can get confused and start up on its own.'},
+        {txt:'When its emergency button is pressed, the robot stops dead.',ans:'Touch sensor (pushbutton): it is triggered by contact; the controller decides to stop everything. It is a sensor that needs to be touched: it does not work from a distance.'}
       ],
 
       critErrorBank: [
-        {
-          txt: '"The sensor moves the robot: that is why the car goes forward."',
-          g1: 'The sensor MOVES NOTHING: it only senses and sends a signal to the controller.',
-          g2: 'The one that moves the car is the ACTUATOR (the motor), after the controller has decided. The chain is sensor → controller → actuator.'
-        },
-        {
-          txt: '"Sensors are the robot’s muscles and actuators are its senses."',
-          g1: 'It is the other way round: SENSORS are the «senses» (they sense light, sound, distance, heat, moisture).',
-          g2: 'ACTUATORS are the «muscles» (motors, wheels, arms, speakers) that carry out the action.'
-        },
-        {
-          txt: '"A sensor is never wrong: it always tells the truth."',
-          g1: 'A sensor CAN give a wrong reading if it is dirty, wet, blocked or badly placed.',
-          g2: 'And if the sensor reports badly, the controller decides badly: that is why the line follower drifts off the line when the sensor is muddy.'
-        },
-        {
-          txt: '"With one single light sensor the robot can already measure distance and temperature."',
-          g1: 'Each sensor senses ONE single thing: the light sensor only measures how much light there is.',
-          g2: 'To measure distance you need a distance sensor (ultrasonic) and for heat a temperature sensor. That is why robots carry several sensors.'
-        },
-        {
-          txt: '"The touch sensor can warn about the obstacle before reaching it."',
-          g1: 'The touch sensor needs CONTACT: it reports once the robot has already crashed into something or pressed it.',
-          g2: 'To know BEFORE that happens you need a sensor that senses without touching, such as the ultrasonic distance sensor.'
-        },
-        {
-          txt: '"Sensors think and decide what the robot must do."',
-          g1: 'Sensors DO NOT think and DO NOT decide: they only measure and turn what they measured into a signal.',
-          g2: 'The one that decides is the CONTROLLER, following its program: «if the sensor reads X, then do Y».'
-        }
+        {txt:'"The sensor moves the robot: that is why the car goes forward."',g1:'The sensor MOVES NOTHING: it only senses and sends a signal to the controller.',g2:'The one that moves the car is the ACTUATOR (the motor), after the controller has decided. The chain is sensor → controller → actuator.'},
+        {txt:'"A sensor is never wrong: it always tells the truth."',g1:'A sensor CAN give a wrong reading if it is dirty, wet, blocked or badly placed.',g2:'And if the sensor reports badly, the controller decides badly: that is why the line follower drifts off the line when the sensor is muddy.'},
+        {txt:'"With one single light sensor the robot can already measure distance and temperature."',g1:'Each sensor senses ONE single thing: the light sensor only measures how much light there is.',g2:'To measure distance you need a distance sensor (ultrasonic) and for heat a temperature sensor. That is why robots carry several sensors.'},
+        {txt:'"Sensors think and decide what the robot must do."',g1:'Sensors DO NOT think and DO NOT decide: they only measure and turn what they measured into a signal.',g2:'The one that decides is the CONTROLLER, following its program: «if the sensor reads X, then do Y».'}
       ],
 
       critCicloQuestions: [
@@ -616,79 +565,18 @@
       ],
 
       critCicloBank: [
-        {
-          txt: 'The supermarket automatic door opens when a person walks up and closes when nobody else is coming through.',
-          p: 'A distance or motion sensor senses that somebody is near the door.',
-          d: 'The controller decides to open when it detects somebody and to close when there is nobody left.',
-          a: 'A motor (actuator) slides the door to one side and then brings it back.'
-        },
-        {
-          txt: 'The school garden robot measures the soil every morning; if it is dry it turns the water on and, once the soil is moist, it turns it off.',
-          p: 'The moisture sensor senses how much water the soil holds.',
-          d: 'The controller decides to turn the irrigation on if the soil is dry and to shut it off once the soil is moist.',
-          a: 'A valve or pump (actuator) lets the water through and then cuts it off.'
-        },
-        {
-          txt: 'The lamp in the school hallway turns itself on at nightfall and off at daybreak.',
-          p: 'The light sensor senses how much light there is in the hallway.',
-          d: 'The controller decides to turn it on when there is little light and to turn it off when daylight comes back.',
-          a: 'The lamp or bulb (actuator) turns on and off.'
-        },
-        {
-          txt: 'The classroom line-following car travels along a black track painted on the floor without drifting off.',
-          p: 'The light sensor senses whether the floor under the car is dark (the line) or bright (off the line).',
-          d: 'The controller decides to correct the course toward the side where it finds the line again.',
-          a: 'The wheel motors (actuators) spin more on one side than on the other in order to turn.'
-        },
-        {
-          txt: 'The chick incubator robot watches over the heat all night long.',
-          p: 'The temperature sensor senses how many degrees there are inside the incubator.',
-          d: 'The controller decides to switch the lamp on if it is cold and to switch it off once there is enough heat.',
-          a: 'The heat lamp (actuator) turns on; an alarm may sound if the problem goes on.'
-        }
+        {txt:'The supermarket automatic door opens when a person walks up and closes when nobody else is coming through.',p:'A distance or motion sensor senses that somebody is near the door.',d:'The controller decides to open when it detects somebody and to close when there is nobody left.',a:'A motor (actuator) slides the door to one side and then brings it back.'},
+        {txt:'The school garden robot measures the soil every morning; if it is dry it turns the water on and, once the soil is moist, it turns it off.',p:'The moisture sensor senses how much water the soil holds.',d:'The controller decides to turn the irrigation on if the soil is dry and to shut it off once the soil is moist.',a:'A valve or pump (actuator) lets the water through and then cuts it off.'},
+        {txt:'The lamp in the school hallway turns itself on at nightfall and off at daybreak.',p:'The light sensor senses how much light there is in the hallway.',d:'The controller decides to turn it on when there is little light and to turn it off when daylight comes back.',a:'The lamp or bulb (actuator) turns on and off.'},
+        {txt:'The classroom line-following car travels along a black track painted on the floor without drifting off.',p:'The light sensor senses whether the floor under the car is dark (the line) or bright (off the line).',d:'The controller decides to correct the course toward the side where it finds the line again.',a:'The wheel motors (actuators) spin more on one side than on the other in order to turn.'},
+        {txt:'The chick incubator robot watches over the heat all night long.',p:'The temperature sensor senses how many degrees there are inside the incubator.',d:'The controller decides to switch the lamp on if it is cold and to switch it off once there is enough heat.',a:'The heat lamp (actuator) turns on; an alarm may sound if the problem goes on.'}
       ],
 
       critCompareBank: [
-        {
-          a: 'The part of the robot that picks up information from the world: light, sound, distance, heat or moisture.',
-          b: 'The part of the robot that carries out the action: motors, wheels, arms, speakers or lights.',
-          ga: 'The sensor.',
-          gb: 'The actuator.',
-          gr: 'Similarity: both are robot parts connected to the controller and both need power. Difference: the sensor brings information in (it senses) and the actuator sends action out (it does), like the senses and the muscles of the body.'
-        },
-        {
-          a: 'A sensor that tells whether the floor is bright or dark so the robot does not drift off the track.',
-          b: 'A sensor that uses the echo to measure how many centimeters are left before a crash.',
-          ga: 'The light sensor.',
-          gb: 'The distance sensor (ultrasonic).',
-          gr: 'Similarity: both sense WITHOUT touching and both report to the controller. Difference: the light one measures brightness and the distance one measures how far away an object is; one serves the line follower and the other one is used to dodge obstacles.'
-        },
-        {
-          a: 'A sensor that is triggered only when something touches it or presses it.',
-          b: 'A sensor that senses objects even when they are several centimeters away.',
-          ga: 'The touch sensor (pushbutton).',
-          gb: 'The distance sensor (ultrasonic) or the proximity sensor.',
-          gr: 'Similarity: both detect obstacles. Difference: the touch one reports once the crash HAS ALREADY happened and the distance one reports BEFORE, which is why it is used to brake in time.'
-        },
-        {
-          a: 'The organ of the human body that picks up light and sends it to the brain.',
-          b: 'The robot component that changes with the light it receives and reports to the controller.',
-          ga: 'The eye (receptor).',
-          gb: 'The light sensor or photoresistor.',
-          gr: 'Similarity: both sense light and send the information to whoever decides (brain or controller). Difference: the eye is a living organ of the body and the sensor is a manufactured electronic component.'
-        },
-        {
-          a: 'A sensor that measures how hot or cold a place is.',
-          b: 'A sensor that measures how much water there is in the soil or in the air.',
-          ga: 'The temperature sensor.',
-          gb: 'The moisture sensor.',
-          gr: 'Similarity: both keep watch over the environment and both are very useful in Honduran farming. Difference: the temperature one serves the incubator or the thermometer at the health center, and the moisture one helps decide when to water the coffee field.'
-        }
+        {a:'The glass thermometer that a person reads by looking at it.',b:'The digital thermometer that sends its data by itself.',ga:'An instrument read by a person.',gb:'A sensor that sends a signal to the controller.',gr:'Similarity: both measure the same thing. Difference: the first needs someone to look at it; the second reports by itself and a robot can use it.'}
       ],
 
       critDesignBank: [
-        'In the school garden water gets wasted: sometimes they water when the soil is still wet and other times they forget for days.',
-        'In the school hallway the light is left on all day long and the power bill is sky-high.',
         'At the coffee mill the beans dry in the sun out in the yard and nobody gives the warning in time when it starts to rain.',
         'The school gate is left open because nobody notices when somebody comes in or goes out.',
         'In the grain storehouse the corn spoils because of the moisture and nobody notices until it is already ruined.',

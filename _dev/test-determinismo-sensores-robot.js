@@ -79,12 +79,13 @@ const c15 = JSON.parse(a.crit);
 ok('crítica: 2 casos sensor + 1 error + 1 cadena + 1 comparación + 1 diseño (5 × 20 = 100)', c15.sens.length === 2 && !!c15.err && !!c15.cic && !!c15.cmp && typeof c15.dis === 'string' && 5 * 20 === 100);
 const banks = vm.runInContext('JSON.stringify({cp:evalCPBank,tf:evalTFBank,mc:evalMCBank,pr:evalPRBank})', sandbox);
 const B = JSON.parse(banks);
-ok('4 bancos × 15 ítems (CP/VF/MC/PR)', B.cp.length === 15 && B.tf.length === 15 && B.mc.length === 15 && B.pr.length === 15);
+/* Revisados dato por dato (septiembre de 2026): diez por banco, cada uno con su `k`. */
+ok('4 bancos × 10 ítems con su k (CP/VF/MC/PR)', [B.cp, B.tf, B.mc, B.pr].every(b => b.length === 10 && b.every(x => x.k)));
 ok('evalMCBank en formato {q,o,a} con 4 opciones y respuesta válida (Campeonísimo)',
   B.mc.every(it => typeof it.q === 'string' && Array.isArray(it.o) && it.o.length === 4 && Number.isInteger(it.a) && it.a >= 0 && it.a <= 3));
 ok('evalTFBank booleano y con verdaderas y falsas', B.tf.every(it => typeof it.a === 'boolean') && B.tf.some(it => it.a) && B.tf.some(it => !it.a));
 ok('evalCPBank con hueco ___ en todas las preguntas', B.cp.every(it => it.q.includes('___') && typeof it.a === 'string' && it.a.length > 0));
-ok('evalPRBank con términos y definiciones únicos', new Set(B.pr.map(x => x.term)).size === 15 && new Set(B.pr.map(x => x.def)).size === 15);
+ok('evalPRBank con términos y definiciones únicos', new Set(B.pr.map(x => x.term)).size === B.pr.length && new Set(B.pr.map(x => x.def)).size === B.pr.length);
 ok('documento crítico trae las 5 secciones', ['Elige el sensor y justifica', 'Corrige el error conceptual', 'Analiza la cadena', 'Comparación razonada', 'Diseña el sistema de sensores'].every(s => a.docCrit.includes(s)));
 ok('colores de impresión: acento #0e7490 y fondo #ecfeff en ambos documentos', ['docConcept', 'docCrit'].every(k => a[k].includes('#0e7490') && a[k].includes('#ecfeff')));
 ok('pauta .pa en verde #007a00 (conceptual)', a.docConcept.includes('.pa{color:#007a00'));

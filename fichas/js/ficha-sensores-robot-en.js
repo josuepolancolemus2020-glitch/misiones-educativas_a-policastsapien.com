@@ -173,125 +173,125 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>The sensor turns something from the world into a <span class="linea-resp"></span> for the controller.</li>' +
-        '<li>The light sensor is like the human <span class="linea-resp"></span>.</li>' +
-        '<li>The robot’s sound sensor is the <span class="linea-resp"></span>.</li>' +
-        '<li>The distance sensor measures with the <span class="linea-resp"></span>, just like a bat.</li>' +
-        '<li>The <span class="linea-resp"></span> sensor reports whether the soil of the coffee field is dry.</li>' +
-        '<li>The touch sensor is a <span class="linea-resp"></span> that gets pressed in a crash.</li>' +
-        '<li>The robot chain is: sensor → controller → <span class="linea-resp"></span>.</li>' +
-        '<li>In the body the chain is: receptor → brain → <span class="linea-resp"></span>.</li>' +
-        '<li>The digital thermometer is a <span class="linea-resp"></span> sensor.</li>' +
-        '<li>A dirty or blocked sensor gives a <span class="linea-resp"></span> reading.</li>' +
+        '<li>The pump was turned on and off by Mr. <span class="linea-resp"></span>.</li>' +
+        '<li>The sensor sends an electrical <span class="linea-resp"></span>.</li>' +
+        '<li>In the body, the sensor is called the <span class="linea-resp"></span>.</li>' +
+        '<li>The ultrasonic sensor works like the <span class="linea-resp"></span>.</li>' +
+        '<li>Information always <span class="linea-resp"></span> the robot through the sensor.</li>' +
+        '<li>Without sensors, the robot would be blind and <span class="linea-resp"></span>.</li>' +
+        '<li>The gate stays open because nobody <span class="linea-resp"></span> when someone comes in.</li>' +
+        '<li>On Wednesday there was no water in the school <span class="linea-resp"></span>.</li>' +
+        '<li>The digital thermometer at the health center measures <span class="linea-resp"></span> in seconds.</li>' +
+        '<li>The supermarket door opens on its own when someone comes <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ The sensor turns something from the world into a signal for the controller.</li>' +
-        '<li>____ The sensor is the one that decides what the robot will do.</li>' +
-        '<li>____ The light sensor is like the human eye.</li>' +
-        '<li>____ The wheel motor is a sensor.</li>' +
-        '<li>____ The ultrasonic sensor measures distance with the echo.</li>' +
-        '<li>____ The touch sensor senses obstacles without touching them.</li>' +
-        '<li>____ The moisture sensor is used to know whether the soil is dry.</li>' +
+        '<li>____ The school’s water is pumped up with a pump.</li>' +
         '<li>____ Sensors are never wrong.</li>' +
-        '<li>____ The supermarket automatic door uses a sensor to detect you.</li>' +
-        '<li>____ The temperature sensor measures how much light there is in the room.</li>' +
+        '<li>____ The tank overflowed for lack of a warning.</li>' +
+        '<li>____ The sensor moves the robot’s wheels.</li>' +
+        '<li>____ Without sensors the robot would know nothing about what happens around it.</li>' +
+        '<li>____ A sensor cannot fail even when it is very dark.</li>' +
+        '<li>____ A sensor measures many times per second without getting tired.</li>' +
+        '<li>____ A robot can carry several sensors at once.</li>' +
+        '<li>____ A wet sensor may report wrongly.</li>' +
+        '<li>____ The body also has its own three-part chain.</li>' +
         '</ol>' +
 
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What is a sensor?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>What was the tank pump missing?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the part that moves the robot</span>' +
-        '<span class="op"><i>b</i> the part that senses and turns it into a signal</span>' +
-        '<span class="op"><i>c</i> the robot’s battery</span>' +
-        '<span class="op"><i>d</i> the list of instructions</span>' +
+        '<span class="op"><i>a</i> Strength</span>' +
+        '<span class="op"><i>b</i> Finding out that the tank was already full</span>' +
+        '<span class="op"><i>c</i> Water</span>' +
+        '<span class="op"><i>d</i> Paint</span>' +
         '</div></div>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>Which human sense is the light sensor like?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>What does the sensor do with what it picks up?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> hearing</span>' +
-        '<span class="op"><i>b</i> taste</span>' +
-        '<span class="op"><i>c</i> sight</span>' +
-        '<span class="op"><i>d</i> smell</span>' +
+        '<span class="op"><i>a</i> It turns it into data for whoever decides</span>' +
+        '<span class="op"><i>b</i> It erases it</span>' +
+        '<span class="op"><i>c</i> It keeps it forever</span>' +
+        '<span class="op"><i>d</i> It switches it off</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>Which sensor does a robot need so it does not crash into the wall?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>Why is the sensor called the robot’s «reporter»?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> moisture</span>' +
-        '<span class="op"><i>b</i> distance</span>' +
-        '<span class="op"><i>c</i> temperature</span>' +
-        '<span class="op"><i>d</i> sound</span>' +
+        '<span class="op"><i>a</i> Because it talks a lot</span>' +
+        '<span class="op"><i>b</i> Because it writes news</span>' +
+        '<span class="op"><i>c</i> Because it only reports: it does not decide or act</span>' +
+        '<span class="op"><i>d</i> Because it works at night</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>The ultrasonic sensor works like…</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>What happens if the sensor gives a wrong reading?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the bat, with the echo</span>' +
-        '<span class="op"><i>b</i> the ant, with its legs</span>' +
-        '<span class="op"><i>c</i> the flower, with the sun</span>' +
-        '<span class="op"><i>d</i> the fish, with its fins</span>' +
+        '<span class="op"><i>a</i> Nothing</span>' +
+        '<span class="op"><i>b</i> The robot gets it wrong too</span>' +
+        '<span class="op"><i>c</i> The robot fixes itself</span>' +
+        '<span class="op"><i>d</i> The robot switches off</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>Which one of these is NOT a sensor?</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>What is the robot’s input of information?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the microphone</span>' +
-        '<span class="op"><i>b</i> the thermometer</span>' +
-        '<span class="op"><i>c</i> the pushbutton</span>' +
-        '<span class="op"><i>d</i> the motor</span>' +
+        '<span class="op"><i>a</i> The motor</span>' +
+        '<span class="op"><i>b</i> The wheel</span>' +
+        '<span class="op"><i>c</i> The sensor</span>' +
+        '<span class="op"><i>d</i> The speaker</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>What is the correct chain inside the robot?</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>In the body’s chain, what goes in the middle?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> sensor → controller → actuator</span>' +
-        '<span class="op"><i>b</i> actuator → controller → sensor</span>' +
-        '<span class="op"><i>c</i> controller → sensor → actuator</span>' +
-        '<span class="op"><i>d</i> sensor → actuator → controller</span>' +
+        '<span class="op"><i>a</i> The foot</span>' +
+        '<span class="op"><i>b</i> The brain</span>' +
+        '<span class="op"><i>c</i> The hand</span>' +
+        '<span class="op"><i>d</i> The skin</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>Which sensor tells you when the coffee field needs watering?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>How many things does each sensor perceive?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> light</span>' +
-        '<span class="op"><i>b</i> sound</span>' +
-        '<span class="op"><i>c</i> moisture</span>' +
-        '<span class="op"><i>d</i> touch</span>' +
+        '<span class="op"><i>a</i> All of them</span>' +
+        '<span class="op"><i>b</i> Only one</span>' +
+        '<span class="op"><i>c</i> None</span>' +
+        '<span class="op"><i>d</i> Five</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>Which sensor does the line-following car use?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>What makes the line follower leave the track?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> light</span>' +
-        '<span class="op"><i>b</i> temperature</span>' +
-        '<span class="op"><i>c</i> moisture</span>' +
-        '<span class="op"><i>d</i> sound</span>' +
+        '<span class="op"><i>a</i> Having its sensor dirty with mud</span>' +
+        '<span class="op"><i>b</i> Going slowly</span>' +
+        '<span class="op"><i>c</i> Having a full battery</span>' +
+        '<span class="op"><i>d</i> Being in the classroom</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>What happens if the light sensor is covered in mud?</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>Which sense of the body is like the microphone?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> nothing: sensors never fail</span>' +
-        '<span class="op"><i>b</i> the robot cleans itself</span>' +
-        '<span class="op full"><i>c</i> it gives a wrong reading and the robot decides wrong</span>' +
-        '<span class="op"><i>d</i> the robot gains more speed</span>' +
+        '<span class="op"><i>a</i> Sight</span>' +
+        '<span class="op"><i>b</i> Taste</span>' +
+        '<span class="op"><i>c</i> Smell</span>' +
+        '<span class="op"><i>d</i> Hearing</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>The component inside the light sensor is called…</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>If a part tells you something about the world, it is…</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> valve</span>' +
-        '<span class="op"><i>b</i> photoresistor</span>' +
-        '<span class="op"><i>c</i> propeller</span>' +
-        '<span class="op"><i>d</i> gear</span>' +
+        '<span class="op"><i>a</i> A sensor</span>' +
+        '<span class="op"><i>b</i> A motor</span>' +
+        '<span class="op"><i>c</i> A wheel</span>' +
+        '<span class="op"><i>d</i> A speaker</span>' +
         '</div></div>',
 
       /* ═══════════ PÁGINA 6 ═══════════
@@ -302,16 +302,16 @@
 
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
-        '<tr><td>1. ____ Sensor</td><td>A. Microphone: it picks up noises, voices and claps</td></tr>' +
-        '<tr><td>2. ____ Light sensor</td><td>B. Pushbutton that reports when something presses it</td></tr>' +
-        '<tr><td>3. ____ Distance sensor</td><td>C. It receives the sensor’s signal and decides what to do</td></tr>' +
-        '<tr><td>4. ____ Touch sensor</td><td>D. It measures the water in the soil: it tells you when to water</td></tr>' +
-        '<tr><td>5. ____ Temperature sensor</td><td>E. It senses the world and turns it into a signal</td></tr>' +
-        '<tr><td>6. ____ Sound sensor</td><td>F. It carries out the action: motor, wheel, speaker or light</td></tr>' +
-        '<tr><td>7. ____ Moisture sensor</td><td>G. It tells bright from dark: it serves the line follower</td></tr>' +
-        '<tr><td>8. ____ Actuator</td><td>H. Electric data that travels from the sensor to the controller</td></tr>' +
-        '<tr><td>9. ____ Controller</td><td>I. It measures heat: the thermometer at the health center</td></tr>' +
-        '<tr><td>10. ____ Signal</td><td>J. It uses the echo to measure how far away an object is</td></tr>' +
+        '<tr><td>1. ____ Light sensor</td><td>A. The robot that starts when you clap</td></tr>' +
+        '<tr><td>2. ____ Distance sensor</td><td>B. The speaker that beeps in reverse</td></tr>' +
+        '<tr><td>3. ____ Touch sensor</td><td>C. The hallway lamp that turns on by itself</td></tr>' +
+        '<tr><td>4. ____ Temperature sensor</td><td>D. It changes with the brightness it receives</td></tr>' +
+        '<tr><td>5. ____ Sound sensor</td><td>E. The push button that warns of a crash</td></tr>' +
+        '<tr><td>6. ____ Humidity sensor</td><td>F. It is always in the middle of the other two</td></tr>' +
+        '<tr><td>7. ____ Proximity sensor</td><td>G. It warns when to water the coffee farm</td></tr>' +
+        '<tr><td>8. ____ Actuator</td><td>H. It measures how far away an object is</td></tr>' +
+        '<tr><td>9. ____ Controller</td><td>I. It measures how hot or cold it is</td></tr>' +
+        '<tr><td>10. ____ Photoresistor</td><td>J. It turns off the phone screen next to your ear</td></tr>' +
         '</table>' +
 
         '<div class="felic">' +
@@ -342,10 +342,10 @@
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in the blanks:</span> 1. signal &nbsp; 2. eye &nbsp; 3. microphone &nbsp; 4. echo &nbsp; 5. moisture &nbsp; 6. pushbutton &nbsp; 7. actuator &nbsp; 8. effector &nbsp; 9. temperature &nbsp; 10. wrong</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
-        '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3b, 4a, 5d, 6a, 7c, 8a, 9c, 10b</div>' +
-        '<div><span class="pt">IV. Matching:</span> 1E, 2G, 3J, 4B, 5I, 6A, 7D, 8F, 9C, 10H</div>' +
+        '<div><span class="pt">I. Fill in the blanks:</span> 1. Chico &nbsp; 2. signal &nbsp; 3. receptor &nbsp; 4. bat &nbsp; 5. enters &nbsp; 6. deaf &nbsp; 7. notices &nbsp; 8. bathrooms &nbsp; 9. fever &nbsp; 10. near</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8T, 9T, 10T</div>' +
+        '<div><span class="pt">III. Multiple choice:</span> 1b, 2a, 3c, 4b, 5c, 6b, 7b, 8a, 9d, 10a</div>' +
+        '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '</div>' +
 
         '<div class="nota-doc">' +
