@@ -368,16 +368,16 @@ const evalTFBank=[
   {q:'Dentro de la célula ocurren reacciones químicas.',a:true,k:'tf-reacciones'}
 ];
 const evalMCBank=[
-  {q:'¿Qué instrumento hace falta para ver casi todas las células?',o:['a) a) El telescopio','b) b) El microscopio','c) c) El termómetro','d) d) La brújula'],a:1,k:'mc-microscopio'},
-  {q:'¿Qué tipo de célula forma el cuerpo humano?',o:['a) a) Procariota','b) b) Mineral','c) c) Eucariota','d) d) Sin vida'],a:2,k:'mc-eucariota'},
-  {q:'¿Qué clase de célula es una bacteria?',o:['a) a) Procariota','b) b) Eucariota','c) c) Vegetal','d) d) Animal'],a:0,k:'mc-procariota'},
-  {q:'¿Qué pigmento verde capta la luz en las plantas?',o:['a) a) La hemoglobina','b) b) La melanina','c) c) La clorofila','d) d) El caroteno'],a:2,k:'mc-clorofila'},
-  {q:'¿Qué gas libera una planta cuando fabrica su alimento?',o:['a) a) Dióxido de carbono','b) b) Nitrógeno','c) c) Humo','d) d) Oxígeno'],a:3,k:'mc-oxigeno'},
-  {q:'¿Qué forma tiene la célula vegetal?',o:['a) a) Redonda y blanda','b) b) Rectangular y fija','c) c) De estrella','d) d) Cambia cada día'],a:1,k:'mc-forma-vegetal'},
-  {q:'¿Cuántas células tiene, más o menos, el cuerpo humano?',o:['a) a) 37','b) b) 37 mil','c) c) 37 millones','d) d) 37 billones'],a:3,k:'mc-37-billones'},
-  {q:'¿Cuántos postulados tiene la teoría celular?',o:['a) a) Tres','b) b) Dos','c) c) Cinco','d) d) Diez'],a:0,k:'mc-postulados'},
-  {q:'¿Quién enunció «omnis cellula e cellula»?',o:['a) a) Robert Hooke','b) b) Isaac Newton','c) c) Rudolf Virchow','d) d) Charles Darwin'],a:2,k:'mc-virchow'},
-  {q:'¿En qué unidad se mide el tamaño de una célula?',o:['a) a) En metros','b) b) En micrómetros','c) c) En kilogramos','d) d) En litros'],a:1,k:'mc-micrometros'}
+  {q:'¿Qué instrumento hace falta para ver casi todas las células?',o:['a) El telescopio','b) El microscopio','c) El termómetro','d) La brújula'],a:1,k:'mc-microscopio'},
+  {q:'¿Qué tipo de célula forma el cuerpo humano?',o:['a) Procariota','b) Mineral','c) Eucariota','d) Sin vida'],a:2,k:'mc-eucariota'},
+  {q:'¿Qué clase de célula es una bacteria?',o:['a) Procariota','b) Eucariota','c) Vegetal','d) Animal'],a:0,k:'mc-procariota'},
+  {q:'¿Qué pigmento verde capta la luz en las plantas?',o:['a) La hemoglobina','b) La melanina','c) La clorofila','d) El caroteno'],a:2,k:'mc-clorofila'},
+  {q:'¿Qué gas libera una planta cuando fabrica su alimento?',o:['a) Dióxido de carbono','b) Nitrógeno','c) Humo','d) Oxígeno'],a:3,k:'mc-oxigeno'},
+  {q:'¿Qué forma tiene la célula vegetal?',o:['a) Redonda y blanda','b) Rectangular y fija','c) De estrella','d) Cambia cada día'],a:1,k:'mc-forma-vegetal'},
+  {q:'¿Cuántas células tiene, más o menos, el cuerpo humano?',o:['a) 37','b) 37 mil','c) 37 millones','d) 37 billones'],a:3,k:'mc-37-billones'},
+  {q:'¿Cuántos postulados tiene la teoría celular?',o:['a) Tres','b) Dos','c) Cinco','d) Diez'],a:0,k:'mc-postulados'},
+  {q:'¿Quién enunció «omnis cellula e cellula»?',o:['a) Robert Hooke','b) Isaac Newton','c) Rudolf Virchow','d) Charles Darwin'],a:2,k:'mc-virchow'},
+  {q:'¿En qué unidad se mide el tamaño de una célula?',o:['a) En metros','b) En micrómetros','c) En kilogramos','d) En litros'],a:1,k:'mc-micrometros'}
 ];
 const evalCPBank=[
   {q:'La célula de un músculo y la de un nervio son distintas porque están ___.',a:'especializadas',acc:['especializadas'],k:'cp-especializadas'},
