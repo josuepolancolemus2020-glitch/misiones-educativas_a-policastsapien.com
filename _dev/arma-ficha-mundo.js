@@ -130,12 +130,12 @@ function repartirMC(mc, semilla) {
 }
 
 const MC = repartirMC([
-  ['La masa se vuelve tortilla. ¿Qué cambió?', ['la forma', 'la materia', 'el nombre', 'nada'], 0],
-  ['El clavo se llena de herrumbre. ¿Qué cambió?', ['el dueño', 'la materia', 'solo la forma', 'nada'], 1],
-  ['A la aldea la vuelven municipio. ¿Qué le pasó al suelo?', ['cambió de materia', 'cambió de forma', 'nada: cambió lo que decimos', 'se hizo más grande'], 2],
-  ['La palabra «átomo» quiere decir…', ['muy pequeño', 'lo que brilla', 'lo que pesa', 'lo que no se parte'], 3],
-  ['Se quema un tronco y queda un puño de ceniza. ¿Se perdió materia?', ['no: lo que se fue en humo también pesa', 'sí, casi toda', 'sí, la mitad', 'no se puede saber'], 0],
-  ['Una cosmovisión es…', ['un mapa del cielo', 'la forma entera en que un pueblo explica el mundo', 'una lista de fechas', 'un aparato'], 1],
+  ['¿Qué rama de la filosofía pregunta de qué está hecho el mundo?', ['la metafísica', 'la ética', 'la lógica', 'la estética'], 0],
+  ['¿Qué dijo Parménides?', ['que el cambio que vemos nos engaña', 'que todo cambia siempre', 'que todo sale del agua', 'que los números no existen'], 0],
+  ['El reflejo del cerro en la laguna…', ['es lo que parece, no un cerro', 'es otro cerro', 'es un cerro chiquito', 'es un cerro de agua'], 0],
+  ['¿Cuál de estas preguntas sigue sin aparato que la mida?', ['¿Por qué hay algo y no más bien nada?', '¿Qué es el fuego?', '¿Cuánto pesa?', '¿De qué es la sal?'], 0],
+  ['La sal disuelta en agua vuelve a salir. ¿Qué enseña eso?', ['que el atajo de «se deshace» falla', 'que la sal se va', 'que el agua pesa', 'que la sal arde'], 0],
+  ['Demócrito le puso nombre a las piezas chiquitísimas…', ['sin verlas nunca', 'con un microscopio', 'pesándolas una por una', 'contándolas'], 0],
 ], 20260917);
 
 /* ══════════════════ las hojas ══════════════════ */

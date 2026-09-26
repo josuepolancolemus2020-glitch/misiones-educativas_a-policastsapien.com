@@ -426,73 +426,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La metafísica pregunta de qué está hecho el mundo y qué es real.',a:true},
-  {q:'Cuando la masa se vuelve tortilla, cambia la materia.',a:false},
-  {q:'Cuando la leña se vuelve ceniza, cambia la materia.',a:true},
-  {q:'Si a una escuela le cambian el nombre, al edificio le pasó algo.',a:false},
-  {q:'El aire es materia: pesa y ocupa lugar.',a:true},
-  {q:'La palabra «átomo» quiere decir «lo que no se parte».',a:true},
-  {q:'Hoy se sabe que el átomo no se puede partir.',a:false},
-  {q:'Al quemar un tronco se pierde materia, porque queda poca ceniza.',a:false},
-  {q:'Todos tenemos una cosmovisión, aunque nunca la hayamos escrito.',a:true},
-  {q:'Una cosmovisión se resume bien en un solo renglón.',a:false},
-  {q:'Heráclito decía que todo cambia siempre.',a:true},
-  {q:'Parménides estaba de acuerdo con Heráclito.',a:false},
-  {q:'«¿Sigue siendo el mismo machete?» tiene una sola respuesta correcta.',a:false},
-  {q:'El atajo de «si se puede deshacer, cambió la forma» sirve casi siempre. Pero no siempre.',a:true},
-  {q:'Todas las preguntas de la metafísica se le pasaron a la ciencia.',a:false}
+  {q:'Cuando la leña se vuelve ceniza, cambia la materia.',a:true,k:'tf-lena'},
+  {q:'Cuando la tortilla se tuesta y queda totoposte, cambia la materia.',a:true,k:'tf-totoposte'},
+  {q:'Si a la escuela le cambian el nombre, al edificio le pasó algo.',a:false,k:'tf-escuela'},
+  {q:'El aire es materia: pesa y ocupa lugar.',a:true,k:'tf-aire'},
+  {q:'Hoy se sabe que la pieza más chiquita de la materia no se puede partir.',a:false,k:'tf-parte'},
+  {q:'El pan partido en dos ya es otra sustancia.',a:false,k:'tf-pan'},
+  {q:'Todos tenemos una manera de explicar el mundo, aunque nunca la hayamos escrito.',a:true,k:'tf-todos'},
+  {q:'La filosofía hace estas preguntas antes de poder medirlas.',a:true,k:'tf-antes'},
+  {q:'El cabello mojado que se peina para el otro lado cambió de materia.',a:false,k:'tf-cabello'},
+  {q:'En Honduras todos los pueblos explican el mundo de la misma manera.',a:false,k:'tf-varias'}
 ];
 const evalMCBank=[
-  {q:'¿De qué se ocupa la metafísica?',o:['De qué es real y qué cambia','De medir la temperatura','De escribir sin faltas','De contar dinero'],a:0},
-  {q:'La hoja de papel se vuelve avión. ¿Qué cambió?',o:['La forma','La materia','El dueño','Nada'],a:0},
-  {q:'El guineo se pone negro. ¿Qué cambió?',o:['La forma','El nombre','El lugar','La materia'],a:3},
-  {q:'La aldea se vuelve municipio. ¿Qué cambió?',o:['La materia del suelo','La forma del terreno','Todo','Lo que decimos de ella'],a:3},
-  {q:'¿Qué pregunta hay que hacerse para saber si cambió la materia?',o:['¿Se ve distinto de lejos?','¿Quedó algo distinto de lo que había?','¿Cuánto costó?','¿A quién le gusta?'],a:1},
-  {q:'¿Con qué se contestaba antes «de qué está hecho todo»?',o:['Con una tabla de elementos','Con cuatro cosas: agua, aire, fuego y tierra','Con un microscopio','Con una balanza'],a:1},
-  {q:'¿Qué le faltaba a quien pensaba que al quemar se perdía materia?',o:['Pensar más','Un libro','Una balanza','Más tiempo'],a:2},
-  {q:'¿Qué hizo Demócrito?',o:['Midió el aire','Dibujó el río','Pesó la ceniza','Pensó que todo está hecho de piezas chiquitísimas'],a:3},
-  {q:'¿Qué enseña que Heráclito y Parménides no se pusieran de acuerdo?',o:['Que uno de los dos mentía','Que la filosofía no sirve','Que hay discusiones que siguen abiertas','Que nadie pensaba bien'],a:2},
-  {q:'Tres preguntas contesta toda cosmovisión. ¿Cuál de estas es una?',o:['¿Qué se debe respetar, y por qué?','¿Cuánto cuesta el maíz?','¿Qué día es hoy?','¿Cuántos somos?'],a:0},
-  {q:'El agua de la quebrada ya bajó toda. ¿Es la misma quebrada?',o:['Depende de tu regla: si lo que la hace es el agua o su camino','Sí, siempre','No, nunca','No se puede opinar'],a:0},
-  {q:'¿Por qué aquí no se escribe la cosmovisión de ningún pueblo?',o:['Porque no importa','Porque no se puede acreditar y se manda a averiguarla donde vivís','Porque es secreta','Porque no hay ninguna'],a:1},
-  {q:'¿Cuál de estas NO tiene forma de medirse todavía?',o:['Cuánto pesa el aire','Por qué hay algo y no más bien nada','De qué está hecha el agua','Si el hierro se oxida'],a:1},
-  {q:'La sal disuelta en agua vuelve a salir. ¿Qué enseña eso?',o:['Que la sal desaparece','Que el agua es materia','Que el atajo de «si se deshace, cambió la forma» no siempre acierta','Que la sal es un átomo'],a:2},
-  {q:'El reflejo del cerro en la laguna, ¿es un cerro?',o:['Sí, uno más','Sí, si se ve claro','No: es lo que parece, no lo que está ahí','Solo de día'],a:2}
+  {q:'¿Qué hay que preguntarse para saber si cambió la materia?',o:['¿Se ve distinto de lejos?','¿Quedó algo distinto de lo que había?','¿Cuánto costó?','¿A quién le gusta?'],a:1,k:'mc-prueba-materia'},
+  {q:'¿Qué hay que preguntarse para saber si solo cambió lo que decimos?',o:['¿Le pasó algo a la cosa?','¿Cuánto pesa?','¿Es más grande?','¿Se puede tocar?'],a:0,k:'mc-prueba-cosa'},
+  {q:'Antes, ¿con qué se contestaba «de qué está hecho todo»?',o:['Con un microscopio','Con cuatro cosas: agua, aire, fuego y tierra','Con los números','Con un reloj'],a:1,k:'mc-cuatro'},
+  {q:'Dos pensadores de esta unidad nunca se pusieron de acuerdo sobre el cambio. ¿Qué enseña eso?',o:['Que uno de los dos mentía','Que la filosofía no sirve','Que hay discusiones que siguen abiertas','Que nadie pensaba bien'],a:2,k:'mc-discusion'},
+  {q:'El agua de la quebrada ya bajó toda. ¿Es la misma quebrada?',o:['Depende de tu regla: si lo que la hace es el agua o su camino','Sí, siempre','No, nunca','No se puede opinar'],a:0,k:'mc-quebrada'},
+  {q:'¿Por qué la misión no escribe lo que cree ningún pueblo de Honduras?',o:['Porque no importa','Porque no se puede acreditar: se averigua donde vivís','Porque es secreto','Porque no hay ninguno'],a:1,k:'mc-investiga'},
+  {q:'¿Cuál de estas preguntas NO tiene forma de medirse todavía?',o:['Cuánto pesa el aire','De qué está hecha el agua','Si el hierro se oxida','Por qué hay algo y no más bien nada'],a:3,k:'mc-algo'},
+  {q:'La sal disuelta en agua vuelve a salir. ¿Qué enseña eso?',o:['Que la sal desaparece','Que el agua pesa','Que el atajo de «si se puede deshacer» no siempre acierta','Que la sal se quemó'],a:2,k:'mc-sal'},
+  {q:'El reflejo del cerro en la laguna, ¿es un cerro?',o:['Sí, uno más','Sí, si se ve claro','Solo de día','No: es lo que parece, no lo que está ahí'],a:3,k:'mc-reflejo'},
+  {q:'Toda manera de explicar el mundo contesta tres preguntas. ¿Cuál es una?',o:['¿Qué se debe respetar, y por qué?','¿Cuánto cuesta el maíz?','¿Qué día es hoy?','¿Cuántos somos?'],a:0,k:'mc-cosmo'}
 ];
 const evalCPBank=[
-  {q:'La rama que pregunta qué es real y qué cambia es la ___.',a:'metafísica'},
-  {q:'Aquello de lo que está hecha una cosa es la ___.',a:'materia'},
-  {q:'El modo en que está acomodada esa materia es la ___.',a:'forma'},
-  {q:'La palabra átomo quiere decir «que no se ___».',a:'parte'},
-  {q:'La forma entera en que un pueblo explica el mundo es su ___.',a:'cosmovisión'},
-  {q:'Si la leña se vuelve ceniza, cambió la ___.',a:'materia'},
-  {q:'Si el alambre se dobla, cambió la ___.',a:'forma'},
-  {q:'Si a la calle le cambian el nombre, no le pasó nada a la ___.',a:'cosa'},
-  {q:'Lo que está ahí aunque nadie lo mire es lo ___.',a:'real'},
-  {q:'El que puso el ejemplo del río fue ___.',a:'Heráclito'},
-  {q:'El que dijo que el cambio nos engaña fue ___.',a:'Parménides'},
-  {q:'El que pensó las piezas sin verlas nunca fue ___.',a:'Demócrito'},
-  {q:'Antes se contestaba que todo estaba hecho de agua, aire, fuego y ___.',a:'tierra'},
-  {q:'Para saber si se pierde materia al quemar hizo falta una ___.',a:'balanza'},
-  {q:'La pregunta «¿por qué hay algo y no más bien nada?» sigue ___.',a:'abierta'}
+  {q:'Uno de los griegos de esta unidad dijo que no te bañás dos veces en el mismo ___.',a:'río',acc:['río','rio'],k:'cp-rio'},
+  {q:'El clavo se llena de ___ con la lluvia.',a:'herrumbre',acc:['herrumbre','óxido','oxido'],k:'cp-herrumbre'},
+  {q:'Para saber si al quemar se pierde algo, no hacía falta pensar más: hacía falta una ___.',a:'balanza',acc:['balanza'],k:'cp-balanza'},
+  {q:'Hoy los elementos se cuentan y se ordenan en una ___.',a:'tabla',acc:['tabla'],k:'cp-tabla'},
+  {q:'¿Dónde está el número 7 cuando nadie lo ___?',a:'escribe',acc:['escribe'],k:'cp-siete'},
+  {q:'La aldea que se vuelve ___ sigue en el mismo sitio.',a:'municipio',acc:['municipio'],k:'cp-municipio'},
+  {q:'Alguien pensó en piezas chiquitísimas sin ___ nunca.',a:'verlas',acc:['verlas'],k:'cp-verlas'},
+  {q:'Para saber qué clase de cambio fue, preguntate: ¿sigue siendo la misma ___?',a:'sustancia',acc:['sustancia'],k:'cp-sustancia'},
+  {q:'Al averiguar en tu comunidad, se anota quién lo ___.',a:'contó',acc:['contó','conto'],k:'cp-conto'},
+  {q:'La misma masa da tortilla o ___.',a:'bola',acc:['bola'],k:'cp-bola'}
 ];
 const evalPRBank=[
-  {term:'Metafísica',def:'La rama que pregunta qué es real y qué cambia'},
-  {term:'Materia',def:'Aquello de lo que está hecha una cosa'},
-  {term:'Forma',def:'El modo en que está acomodada esa materia'},
-  {term:'Cambio',def:'Que algo deje de ser como era'},
-  {term:'Real',def:'Lo que está ahí aunque nadie lo esté mirando'},
-  {term:'Cosmovisión',def:'La forma entera en que un pueblo explica el mundo'},
-  {term:'Átomo',def:'Una palabra que quiere decir «que no se puede partir»'},
-  {term:'Cambió la forma',def:'La materia es la misma: solo se acomodó de otro modo'},
-  {term:'Cambió la materia',def:'Lo que quedó es otra sustancia'},
-  {term:'Cambió lo que decimos',def:'A la cosa no le pasó nada: cambió su nombre o su dueño'},
-  {term:'Demócrito',def:'Pensó que todo está hecho de piezas que se repiten'},
-  {term:'Heráclito',def:'Dijo que todo cambia siempre, y puso el ejemplo del río'},
-  {term:'Parménides',def:'Dijo que lo que es, es, y que el cambio nos engaña'},
-  {term:'La balanza',def:'Lo que faltaba para saber que al quemar no se pierde nada'},
-  {term:'«¿Por qué hay algo?»',def:'La pregunta que sigue sin aparato que la mida'}
+  {term:'Metafísica',def:'La rama que pregunta de qué está hecho el mundo',k:'pr-metafisica'},
+  {term:'Cosmovisión',def:'La manera entera en que un pueblo explica el mundo',k:'pr-cosmovision'},
+  {term:'Átomo',def:'Palabra que quiere decir «que no se parte»',k:'pr-atomo'},
+  {term:'Demócrito',def:'Pensó que todo está hecho de piezas que se repiten',k:'pr-democrito'},
+  {term:'Heráclito',def:'Dijo que todo cambia siempre, sin parar',k:'pr-heraclito'},
+  {term:'Parménides',def:'Dijo que el cambio que vemos nos engaña',k:'pr-parmenides'},
+  {term:'Química',def:'La ciencia que fue midiendo lo que la filosofía preguntó',k:'pr-quimica'},
+  {term:'Identidad',def:'Lo que hace que algo siga siendo lo mismo',k:'pr-identidad'},
+  {term:'Grecia',def:'Donde vivieron los tres pensadores de esta unidad',k:'pr-grecia'},
+  {term:'Juzgados',def:'Donde todavía se discute qué cambia y qué se queda',k:'pr-juzgados'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -579,11 +564,10 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'A Elvin le dejaron el machete del abuelo. Le cambiaron el mango hace años y la hoja el verano pasado. Su hermana dice que ese ya no es el del abuelo. Y que le toca la mitad. Llevan tres semanas sin hablarse.'},
-  {txt:'En la pulpería le venden a doña Nely un saco de sal mojada. Ella reclama que ya no es sal. El pulpero dice que sí, que la seca y queda igual. Se pasan la mañana discutiendo.'},
-  {txt:'Un muchacho quema el rastrojo. Dice que la tierra «se comió» la milpa vieja: de un montón grande quedó un puño de ceniza. Al año siguiente vuelve a quemar y la cosecha baja otra vez.'},
-  {txt:'En la escuela le cambian el nombre y le ponen el de otra persona. Un alumno dice que ya no es la misma escuela. Otro dice que es la misma, que solo le cambiaron el rótulo.'},
-  {txt:'Una niña ve el cerro en la laguna. Dice que entonces hay dos cerros. Su hermano se ríe de ella y no le explica nada. Ella se queda sin entender por qué no son dos.'}
+  {k:'cs-machete',txt:'A Elvin le dejaron el machete del abuelo. Le cambiaron el mango hace años y la hoja el verano pasado. Su hermana dice que ese ya no es el del abuelo. Y que le toca la mitad. Llevan tres semanas sin hablarse.'},
+  {k:'cs-sal',txt:'En la pulpería le venden a doña Nely un saco de sal mojada. Ella reclama que ya no es sal. El pulpero dice que sí, que la seca y queda igual. Se pasan la mañana discutiendo.'},
+  {k:'cs-rastrojo',txt:'Un muchacho quema el rastrojo. Dice que la tierra «se comió» la milpa vieja: de un montón grande quedó un puño de ceniza. Al año siguiente vuelve a quemar y la cosecha baja otra vez.'},
+  {k:'cs-escuela',txt:'En la escuela le cambian el nombre y le ponen el de otra persona. Un alumno dice que ya no es la misma escuela. Otro dice que es la misma, que solo le cambiaron el rótulo.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué cambió en el caso: la forma, la materia, o solo lo que decimos? Di por qué.',
@@ -595,61 +579,27 @@ const critCaseGuides=[
   'Se valora que NOMBRE la clase y dé la señal. Si la materia es la misma, cambió la forma. Si quedó otra sustancia, la materia. Si a la cosa no le pasó nada, solo lo que decimos.',
   'La prueba es siempre la misma. ¿Le pasó algo A LA COSA? ¿O solo a lo que decimos de ella? Y después: ¿sigue siendo la misma sustancia?',
   'Se califica que le ponga nombre al daño concreto. Tres semanas sin hablarse. Una mañana perdida. Una cosecha que baja. No la indignación.',
-  'Los casos de identidad son el machete y la escuela. NO tienen una sola respuesta buena. Decirlo vale puntos. Los de forma y materia —la sal, la ceniza— sí se deciden con la prueba.'
+  'El machete y la escuela NO tienen una sola respuesta buena, y decirlo vale puntos. La sal y la ceniza sí se deciden con la prueba.'
 ];
 const critErrorBank=[
-  {txt:'"Si algo se ve distinto, es que cambió de materia."',
-   g1:'No: la masa hecha tortilla se ve distinta y es la misma materia. Lo que cambió fue la forma.',
-   g2:'La prueba no es cómo se ve: es si quedó otra sustancia. Otro color, otro olor, otro sabor. Y que ya no se pueda volver atrás sin más.'},
-  {txt:'"Al quemar un tronco se pierde materia, porque queda muy poca ceniza."',
-   g1:'Lo que se fue no desapareció. Salió en humo y en gases, y eso también pesa.',
-   g2:'Pesando lo que entra y lo que sale, da lo mismo. Y lo que faltaba para saberlo no era pensar más: era una balanza.'},
-  {txt:'"La palabra átomo quiere decir que ya se comprobó que esa pieza no se parte."',
-   g1:'La palabra se puso PENSANDO, sin medir nada. Quiere decir «lo que no se parte» porque así se imaginó.',
-   g2:'Después se midió y el átomo sí se parte. El nombre falló y la idea de las piezas acertó. Una idea puede servir aunque su nombre quede mal.'},
-  {txt:'"Cada pueblo cuenta el origen del mundo a su modo. Así que da igual lo que diga cualquiera."',
-   g1:'Que haya varias no quiere decir que se puedan inventar. Una cosmovisión es de un pueblo. Se averigua preguntándole a ese pueblo.',
-   g2:'Por eso aquí no hay ninguna escrita. Se manda a averiguarla donde vivís, con respeto y anotando quién lo contó.'}
+  {k:'er-atomo',txt:'"La palabra átomo quiere decir que ya se comprobó que esa pieza no se parte."',g1:'La palabra se puso PENSANDO, sin medir nada. Quiere decir «lo que no se parte» porque así se imaginó.',g2:'Después se midió y el átomo sí se parte. El nombre falló y la idea de las piezas acertó. Una idea puede servir aunque su nombre quede mal.'},
 ];
 const critDecisionBank=[
-  'El guineo de la refrigeradora se puso negro. ¿Decís que cambió la materia, o probás primero si por dentro sigue igual?',
-  'Alguien te dice que el aire no es nada porque no se ve. ¿Le das la razón, o buscás cómo comprobar si pesa?',
-  'Tu hermano dice que la bicicleta con llantas nuevas y pintura nueva ya es otra. ¿Discutís, o decís primero cuál es tu regla?',
-  'Te cuentan en la casa por qué se respeta un cerro del pueblo. ¿Lo anotás con el nombre de quien te lo contó, o lo das por sabido?',
-  'En la escuela dicen que el agua está hecha de piezas que nadie ha visto. ¿Lo creés porque lo dijeron, o preguntás cómo se supo?'
-];
-const critDecisionGuide='Primero se dice la REGLA y después se decide. Lo que se puede comprobar, se comprueba: el aire se pesa. Lo que no tiene respuesta única se discute con la regla en la mano. Y lo aprendido de alguien se anota con su nombre.';
+  'Te preguntan si el número 7 existe, si nadie lo puede tocar ni pesar. ¿Decís que no de una vez, o lo pensás antes con un ejemplo?'
+]
+const critDecisionGuide='Se valora que no conteste de una vez: hay cosas que sirven sin poder tocarse ni pesarse. Lo que se califica es que lo piense con un ejemplo y diga su razón.';
 const critCompareBank=[
-  {a:'La masa que se vuelve tortilla.',b:'La leña que se vuelve ceniza.',
-   ga:'Cambió la forma: es la misma materia acomodada de otro modo.',
-   gb:'Cambió la materia: lo que quedó es otra sustancia.',
-   gr:'Las dos se ven distintas después, y por eso se confunden. Lo que las separa no es cómo se ven. Es si quedó algo distinto de lo que había.'},
-  {a:'A la escuela le cambian el nombre.',b:'A la escuela le tumban una pared.',
-   ga:'Cambió lo que decimos: al edificio no le pasó nada.',
-   gb:'Le pasó algo a la cosa: cambió su forma.',
-   gr:'Es la frontera de la unidad. Un cambio de nombre, de dueño o de lugar no le pasa a la cosa. Y aun así se habla de él como si sí.'},
-  {a:'«El átomo no se parte», dicho pensando.',b:'«El átomo sí se parte», dicho midiendo.',
-   ga:'Es una idea buena que llegó sin instrumento.',
-   gb:'Es una medida que corrigió la idea.',
-   gr:'La filosofía hizo la pregunta y la ciencia la fue midiendo. Que la medida corrija no quita nada: sin la pregunta no habría qué medir.'},
-  {a:'«¿De qué está hecha el agua?»',b:'«¿Por qué hay algo y no más bien nada?»',
-   ga:'Se le pasó a la ciencia, y hoy se contesta midiendo.',
-   gb:'Sigue sin aparato que la mida.',
-   gr:'Las dos son preguntas de la misma rama. Decir que la segunda no sirve porque no se mide es un error. Es pedirle a una pregunta que sea otra.'}
+  {k:'cm-medir',a:'«¿De qué está hecha el agua?»',b:'«¿Por qué hay algo y no más bien nada?»',ga:'Se le pasó a la ciencia, y hoy se contesta midiendo.',gb:'Sigue sin aparato que la mida.',gr:'Las dos son preguntas de la misma rama. Decir que la segunda no sirve porque no se mide es un error. Es pedirle a una pregunta que sea otra.'},
+  {k:'cm-cambio',a:'«Todo cambia siempre, como el agua del río».',b:'«Lo que es, es: el cambio que vemos nos engaña».',ga:'Heráclito: para él lo raro es que algo parezca quedarse.',gb:'Parménides: para él hay que desconfiar de lo que se ve cambiar.',gr:'Dicen lo contrario, y ninguno de los dos se pudo quedar con la razón. La discusión sigue abierta, y eso no es un fallo.'},
 ];
 const critCauseBank=[
-  {cause:'La palabra «átomo» se puso pensando, sin haber medido nada.',guide:'Por eso quiere decir «lo que no se parte»: así se lo imaginaron. Después se midió y resultó que sí se parte.'},
-  {cause:'De un tronco grande queda un puño de ceniza.',guide:'Por eso durante siglos pareció que al quemar se perdía materia. Con una balanza se vio que no: lo que se va en humo también pesa.'},
-  {cause:'Al machete del abuelo le cambiaron el mango y después la hoja.',guide:'Por eso la pregunta de si sigue siendo el mismo no tiene una sola respuesta. Depende de qué hace a una cosa: de qué está hecha, o para qué sirve.'},
-  {cause:'Una cosmovisión se aprende oyendo en la casa, no leyéndola.',guide:'Por eso todos tenemos una aunque nunca la hayamos escrito. Y por eso se averigua preguntando donde uno vive.'},
-  {cause:'Heráclito y Parménides dijeron lo contrario el uno del otro.',guide:'Por eso la discusión sigue abierta, y eso no es un fallo. Enseña a no ganar una discusión solo con lo que uno ve.'}
+  {k:'ca-casa',cause:'Una cosmovisión se aprende oyendo en la casa, no leyéndola.',guide:'Por eso todos tenemos una aunque nunca la hayamos escrito. Y por eso se averigua preguntando donde uno vive.'},
+  {k:'ca-varias',cause:'En Honduras hay varias maneras de explicar el mundo, y no todas contestan igual.',guide:'Por eso ninguna se resume bien en un renglón, y por eso no se puede escribir una por todas.'},
 ];
 const critEffectBank=[
-  {effect:'Dos hermanos se pasan tres semanas sin hablarse por un machete.',guide:'Porque los dos tienen media razón, y ninguno dijo antes con qué regla contestaba. Esa pregunta no se gana gritando.'},
-  {effect:'Alguien vuelve a quemar el rastrojo cada año y la cosecha le baja.',guide:'Porque creyó que la materia se perdía en el fuego. Lo que se fue estaba en el humo. Lo que quedó en el suelo no alcanza.'},
-  {effect:'La idea de las piezas chiquitísimas sirvió aunque su nombre estuviera mal.',guide:'Porque lo que acertó fue la idea: que todo está hecho de piezas. No la palabra. Una cosa se puede corregir sin tirar la otra.'},
-  {effect:'La misma pregunta que hizo la filosofía hoy la contesta la química.',guide:'Porque la pregunta no cambió: apareció con qué medirla. La filosofía la hizo y la ciencia la fue midiendo.'},
-  {effect:'Aquí no está escrita la cosmovisión de ningún pueblo de Honduras.',guide:'Porque no se puede acreditar. Ponerle a un pueblo una creencia que no se sostiene es peor que callarla. Por eso se manda a averiguarla donde uno vive.'}
+  {k:'ef-reflejo',effect:'Una niña cree que hay dos cerros porque ve uno en la laguna.',guide:'Porque confundió lo que parece con lo que está ahí. El reflejo se ve, pero no es un cerro.'},
+  {k:'ef-globo',effect:'Un globo inflado pesa un poquito más que el mismo globo vacío.',guide:'Porque el aire es materia: pesa y ocupa lugar, aunque no se vea.'},
+  {k:'ef-kinder',effect:'Una muchacha no sabe si es la misma persona que era en el kínder.',guide:'Porque depende de su regla: si lo que la hace ella es su cuerpo, que casi todo se ha cambiado, o lo que recuerda.'},
 ];
 function genEvalCrit(){
   sfx('click');
