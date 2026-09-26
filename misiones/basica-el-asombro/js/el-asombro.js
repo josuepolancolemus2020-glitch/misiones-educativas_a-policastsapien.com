@@ -380,73 +380,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La palabra «filosofía» quiere decir ganas de saber.',a:true},
-  {q:'«Filosofía» quiere decir «el que ya sabe todo».',a:false},
-  {q:'Una pregunta de hechos tiene una sola respuesta y se puede comprobar.',a:true},
-  {q:'Una pregunta de valor se responde buscando en el diccionario.',a:false},
-  {q:'«¿Qué es un amigo?» es una pregunta de significado.',a:true},
-  {q:'«¿Cuánto cuesta un cuaderno?» es una pregunta de valor.',a:false},
-  {q:'En una pregunta de valor lo que se califica es la razón que se da.',a:true},
-  {q:'Tales de Mileto explicó el mundo contando un mito.',a:false},
-  {q:'Sócrates preguntaba y no daba las respuestas.',a:true},
-  {q:'Sócrates escribió muchos libros que todavía se leen.',a:false},
-  {q:'Hipatia de Alejandría fue filósofa y matemática.',a:true},
-  {q:'La ética es la rama que pregunta qué es la belleza.',a:false},
-  {q:'Las Ciencias Naturales nacieron de la pregunta «¿de qué está hecho el mundo?».',a:true},
-  {q:'El diálogo es discutir para ganarle al otro.',a:false},
-  {q:'La duda, en esta materia, es una herramienta de trabajo y no un defecto.',a:true}
+  {q:'Una pregunta de hechos se contesta buscando, por ejemplo en un libro o en un mapa.',a:true,k:'tf-hechos'},
+  {q:'Una buena pregunta se contesta con un sí o con un no.',a:false,k:'tf-buena'},
+  {q:'Tales de Mileto se equivocó en su respuesta, y aun así lo cambió todo.',a:true,k:'tf-tales-error'},
+  {q:'Sócrates no escribió libros: lo que sabemos de él lo contaron otros.',a:true,k:'tf-socrates-libros'},
+  {q:'Hipatia enseñaba solo a los hijos de los reyes.',a:false,k:'tf-hipatia-alumnos'},
+  {q:'Las Ciencias Naturales nacieron de la pregunta «¿de qué está hecho el mundo?».',a:true,k:'tf-naturales'},
+  {q:'Según la palabra, un filósofo es el que ya tiene todas las respuestas.',a:false,k:'tf-filosofo'},
+  {q:'Arte y Música nació de la pregunta «¿qué es lo bello?».',a:true,k:'tf-arte'},
+  {q:'Una pregunta que se puede discutir un año entero no sirve para nada.',a:false,k:'tf-anio'},
+  {q:'La filosofía va al lado de las demás asignaturas, como una rama más.',a:false,k:'tf-raiz'}
 ];
 const evalMCBank=[
-  {q:'¿Qué quiere decir la palabra «filosofía»?',o:['Ganas de saber','El que ya sabe','Escuela de pensar','Libro antiguo'],a:0},
-  {q:'¿Qué quiere decir el trozo «sofía» de la palabra?',o:['Amor','Escuela','Sabiduría','Pregunta'],a:2},
-  {q:'¿Cuál es la señal de una pregunta de hechos?',o:['Que es muy larga','Que nadie la ha contestado','Que tiene una sola respuesta y se puede comprobar','Que la hizo un filósofo'],a:2},
-  {q:'«¿Está bien callarse cuando molestan a otro?» es una pregunta…',o:['de valor','de hechos','de significado','sin clase'],a:0},
-  {q:'«¿Qué es el tiempo?» es una pregunta…',o:['de hechos','de valor','sin respuesta','de significado'],a:3},
-  {q:'En una pregunta de valor, ¿qué se califica?',o:['La letra','La razón que se da','Si contestó sí','La rapidez'],a:1},
-  {q:'¿Qué hizo Tales de Mileto que fue nuevo?',o:['Escribió el primer libro','Buscó una causa natural en vez de un mito','Inventó la escuela','Midió la Tierra'],a:1},
-  {q:'La respuesta de Tales estaba equivocada. ¿Por qué importa igual?',o:['Porque era famoso','Porque nadie lo comprobó','Porque cambió la clase de respuesta que se buscaba','Porque la escribió'],a:2},
-  {q:'¿Cómo trabajaba Sócrates?',o:['Daba la respuesta correcta','Escribía libros','Cobraba por enseñar','Preguntaba hasta que el otro veía sola su contradicción'],a:3},
-  {q:'¿Qué junta Hipatia de Alejandría en su trabajo?',o:['Pensar y medir','Leer y copiar','Mandar y obedecer','Rezar y cantar'],a:0},
-  {q:'La rama que pregunta «¿cómo sé que sé?» es la…',o:['estética','epistemología','política','lógica'],a:1},
-  {q:'La rama que pregunta «¿qué debo hacer?» es la…',o:['metafísica','estética','ética','lógica'],a:2},
-  {q:'¿Con qué pregunta nació el Español como asignatura?',o:['¿Qué es una palabra?','¿Quién debe mandar?','¿Qué es lo bello?','¿Qué es un número?'],a:0},
-  {q:'¿Qué convierte una pregunta en una ciencia?',o:['Que lo diga un sabio','Que sea nueva','Hallar cómo comprobar la respuesta','Que se discuta mucho'],a:2},
-  {q:'¿Por qué esta materia se llama la raíz y no otra rama?',o:['Porque es la más difícil','Porque cada asignatura nació de una pregunta filosófica','Porque va al final del año','Porque no tiene examen'],a:1}
+  {q:'¿Qué quiere decir «sofía», el final de la palabra filosofía?',o:['Escuela','Libro','Sabiduría','Maestro'],a:2,k:'mc-sofia'},
+  {q:'«¿Cuánto cuesta un cuaderno en la librería?» es una pregunta…',o:['de valor','de hechos','de significado','sin clase'],a:1,k:'mc-ej-hechos'},
+  {q:'«¿Está bien callarse cuando molestan a otro?» es una pregunta…',o:['de valor','de hechos','de significado','sin clase'],a:0,k:'mc-ej-valor'},
+  {q:'«¿Qué es el tiempo?» es una pregunta…',o:['de hechos','de valor','sin clase','de significado'],a:3,k:'mc-ej-signif'},
+  {q:'¿Qué fue lo nuevo de Tales de Mileto?',o:['Escribió el primer libro','Buscó una causa natural en vez de un mito','Inventó la escuela','Midió la Tierra'],a:1,k:'mc-tales'},
+  {q:'¿Cómo trabajaba Sócrates?',o:['Daba la respuesta correcta','Dictaba sus clases','Cobraba por enseñar','Preguntaba hasta que el otro veía solo que se contradecía'],a:3,k:'mc-socrates'},
+  {q:'¿Con qué pregunta nació el Español como asignatura?',o:['¿Qué es un río?','¿Qué es una estrella?','¿Qué es una palabra?','¿Cuántos años tiene el mundo?'],a:2,k:'mc-espanol'},
+  {q:'¿Qué juntaba Hipatia de Alejandría en su trabajo?',o:['Pensar y medir','Leer y copiar','Mandar y obedecer','Rezar y cantar'],a:0,k:'mc-hipatia'},
+  {q:'En una pregunta de valor, ¿qué se califica?',o:['La letra','La razón que se da','El sí o el no','La rapidez'],a:1,k:'mc-valor'},
+  {q:'¿Cómo se trabaja una pregunta de significado?',o:['Buscando la cifra en un libro','Votando','Preguntándole al más grande','Pensando con otros y poniendo ejemplos'],a:3,k:'mc-signif'}
 ];
 const evalCPBank=[
-  {q:'La palabra «filosofía» quiere decir ganas de ___.',a:'saber'},
-  {q:'El trozo «sofía» quiere decir ___.',a:'sabiduría'},
-  {q:'Una pregunta de hechos se responde ___.',a:'buscando'},
-  {q:'Una pregunta de valor se responde dando ___.',a:'razones'},
-  {q:'Una pregunta de significado pide una ___.',a:'definición'},
-  {q:'Lo que sientes cuando algo de siempre te parece raro es el ___.',a:'asombro'},
-  {q:'Pensar entre varios para entender se llama ___.',a:'diálogo'},
-  {q:'En esta materia, no estar seguro todavía se llama ___.',a:'duda'},
-  {q:'La rama que pregunta qué debo hacer es la ___.',a:'ética'},
-  {q:'La rama que pregunta cómo sé que sé es la ___.',a:'epistemología'},
-  {q:'La rama que pregunta qué hace buena a una razón es la ___.',a:'lógica'},
-  {q:'La rama que pregunta qué es la belleza es la ___.',a:'estética'},
-  {q:'Las Ciencias Naturales nacieron preguntando de qué está hecho el ___.',a:'mundo'},
-  {q:'Tales de Mileto buscó una causa ___ en vez de contar un mito.',a:'natural'},
-  {q:'Sócrates decía que lo único que sabía era que no sabía ___.',a:'nada'}
+  {q:'En la palabra filosofía, el trozo «filo» quiere decir ___.',a:'amor',acc:['amor','ganas','ganas de','cariño'],k:'cp-filo'},
+  {q:'Sócrates decía que lo único que sabía era que no sabía ___.',a:'nada',acc:['nada'],k:'cp-socrates-nada'},
+  {q:'Sócrates vivía en la ciudad de ___.',a:'Atenas',acc:['Atenas'],k:'cp-atenas'},
+  {q:'Tales de Mileto dijo que todo salía del ___.',a:'agua',acc:['agua'],k:'cp-agua'},
+  {q:'Hipatia enseñaba en la ciudad de la gran ___ del mundo antiguo.',a:'biblioteca',acc:['biblioteca'],k:'cp-biblioteca'},
+  {q:'El diálogo no es discutir para ganar: es discutir para ___.',a:'entender',acc:['entender','comprender'],k:'cp-dialogo'},
+  {q:'Matemáticas nació de la pregunta «¿qué es un ___?».',a:'número',acc:['número','numero'],k:'cp-matematicas'},
+  {q:'Ciencias Sociales nació de la pregunta «¿quién debe ___?».',a:'mandar',acc:['mandar'],k:'cp-sociales'},
+  {q:'Educación Física nació de la pregunta «¿el cuerpo soy yo o es algo que ___?».',a:'tengo',acc:['tengo'],k:'cp-efis'},
+  {q:'La gramática empezó cuando alguien se preguntó por qué unos ___ significan algo y otros no.',a:'sonidos',acc:['sonidos'],k:'cp-gramatica'}
 ];
 const evalPRBank=[
-  {term:'Filosofía',def:'Ganas de saber: «filo» es amor y «sofía» es sabiduría'},
-  {term:'Asombro',def:'Lo que sientes cuando algo de todos los días te parece raro'},
-  {term:'Diálogo',def:'Pensar entre varios para entender, no para ganar'},
-  {term:'Duda',def:'No estar seguro todavía; aquí es la herramienta de trabajo'},
-  {term:'Sabiduría',def:'Saber usar lo que uno sabe, que no es tener muchos datos'},
-  {term:'Pregunta de hechos',def:'Tiene una sola respuesta y se puede comprobar'},
-  {term:'Pregunta de significado',def:'Pide una definición y se contesta con ejemplos'},
-  {term:'Pregunta de valor',def:'Pregunta si algo está bien y se responde dando razones'},
-  {term:'Lógica',def:'La rama que pregunta qué hace que una razón sea buena'},
-  {term:'Epistemología',def:'La rama que pregunta cómo sé que sé'},
-  {term:'Ética',def:'La rama que pregunta qué debo hacer'},
-  {term:'Estética',def:'La rama que pregunta qué es la belleza'},
-  {term:'Tales de Mileto',def:'El primero que conocemos que explicó el mundo sin un mito'},
-  {term:'Sócrates',def:'Preguntaba en la plaza y no daba las respuestas'},
-  {term:'Hipatia de Alejandría',def:'Filósofa y matemática, y maestra de quien quisiera aprender'}
+  {term:'Lógica',def:'Revisa si lo que decimos se sostiene',k:'pr-logica'},
+  {term:'Metafísica',def:'Pregunta qué es real, qué cambia y qué se queda',k:'pr-metafisica'},
+  {term:'Epistemología',def:'Pregunta cómo sé que sé',k:'pr-epistemologia'},
+  {term:'Ética',def:'Pregunta qué debo hacer',k:'pr-etica'},
+  {term:'Estética',def:'Pregunta qué es la belleza',k:'pr-estetica'},
+  {term:'Filosofía política',def:'Pregunta quién debe hacer las reglas',k:'pr-politica'},
+  {term:'Antropología filosófica',def:'Pregunta qué me hace ser yo',k:'pr-persona'},
+  {term:'Filosofía del lenguaje',def:'Mira qué hacen las palabras con las ideas',k:'pr-lenguaje'},
+  {term:'Asombro',def:'Lo que sientes cuando algo de todos los días te parece raro',k:'pr-asombro'},
+  {term:'Duda',def:'No estar seguro todavía: aquí es la herramienta de trabajo',k:'pr-duda'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -533,11 +518,11 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En la casa, una niña pregunta por qué hay que levantarse tan temprano. Le contestan «porque yo lo digo». A la semana ya no pregunta nada.'},
-  {txt:'Un maestro deja de tarea «¿está bien mentir?». Un alumno copia del diccionario la definición de «mentira» y la entrega. Le ponen mala nota y él no entiende por qué.'},
-  {txt:'En el grupo del barrio dicen que la quebrada se secó porque «así es la vida». Nadie pregunta cuándo empezó a bajar ni quién saca el agua arriba. Tres meses después el pozo de la escuela tampoco da.'},
-  {txt:'Un muchacho pasa dos tardes buscando en internet «¿qué es la amistad?». Copia cinco respuestas distintas, las entrega todas y dice que no sabe cuál es la buena.'},
-  {txt:'Una alumna pregunta en clase de Matemáticas qué es un número. La clase se ríe y le dicen que eso no viene en el examen.'}
+  {k:'cs-yolodigo',txt:'En la casa, una niña pregunta por qué hay que levantarse tan temprano. Le contestan «porque yo lo digo». A la semana ya no pregunta nada.'},
+  {k:'cs-mentir',txt:'Un maestro deja de tarea «¿está bien mentir?». Un alumno copia del diccionario la definición de «mentira» y la entrega. Le ponen mala nota y él no entiende por qué.'},
+  {k:'cs-quebrada',txt:'En el grupo del barrio dicen que la quebrada se secó porque «así es la vida». Nadie pregunta cuándo empezó a bajar ni quién saca el agua arriba. Tres meses después el pozo de la escuela tampoco da.'},
+  {k:'cs-amistad',txt:'Un muchacho pasa dos tardes buscando en internet «¿qué es la amistad?». Copia cinco respuestas distintas, las entrega todas y dice que no sabe cuál es la buena.'},
+  {k:'cs-numero',txt:'Una alumna pregunta en clase de Matemáticas qué es un número. La clase se ríe y le dicen que eso no viene en el examen.'},
 ];
 const critCaseQuestions=[
   '1. ¿De qué clase es la pregunta del caso: de hechos, de significado o de valor? Di por qué.',
@@ -552,58 +537,28 @@ const critCaseGuides=[
   'La pregunta buena abre y se puede trabajar. Vale «¿quién saca el agua arriba?» y no vale «¿por qué el mundo es injusto?»: esa segunda no se puede empezar por ningún lado.'
 ];
 const critErrorBank=[
-  {txt:'"La filosofía sirve para aprenderse de memoria los nombres de los filósofos."',
-   g1:'La palabra dice lo contrario: «filo» es ganas de y «sofía» es sabiduría. Junto, ganas de SABER, no de recordar nombres.',
-   g2:'Y lo que esta unidad evalúa no son nombres: es distinguir las tres clases de pregunta y dar una razón. Los nombres se olvidan; la destreza queda.'},
-  {txt:'"Tales de Mileto no importa, porque su respuesta estaba equivocada: dijo que todo salía del agua."',
-   g1:'Lo que cambió no fue su respuesta: fue la CLASE de respuesta que buscó, una causa natural en vez de un mito.',
-   g2:'Y equivocarse con una respuesta que se puede comprobar es justo lo que permite corregirla. Un mito no se puede comprobar, así que tampoco se puede corregir.'},
-  {txt:'"«¿Está bien copiar en un examen?» tiene una sola respuesta correcta, igual que «¿cuántos días tiene febrero?»."',
-   g1:'Son de clases distintas. La de febrero es de hechos y se comprueba en un calendario; la de copiar es de valor y se responde dando razones.',
-   g2:'En las de valor hay varias respuestas buenas, porque lo que se califica es la razón. Exigir una sola ahí es ponerle mala nota al que pensó.'},
-  {txt:'"Una pregunta que no tiene respuesta no sirve para nada."',
-   g1:'Muchas no se cierran con un dato: se entienden cada vez mejor. «¿Qué es un amigo?» se puede discutir un año y seguir valiendo la pena.',
-   g2:'Y de esas preguntas salieron las asignaturas de la escuela. Si no sirvieran para nada, no habría de dónde hubieran salido.'}
+  {k:'er-filo',txt:'"La filosofía sirve para aprenderse de memoria los nombres de los filósofos."',g1:'La palabra dice lo contrario: «filo» es ganas de y «sofía» es sabiduría. Junto, ganas de SABER, no de recordar nombres.',g2:'Y lo que esta unidad evalúa no son nombres: es distinguir las tres clases de pregunta y dar una razón. Los nombres se olvidan; la destreza queda.'},
+  {k:'er-tales',txt:'"Tales de Mileto no importa, porque su respuesta estaba equivocada: dijo que todo salía del agua."',g1:'Lo que cambió no fue su respuesta: fue la CLASE de respuesta que buscó, una causa natural en vez de un mito.',g2:'Y equivocarse con una respuesta que se puede comprobar es justo lo que permite corregirla. Un mito no se puede comprobar, así que tampoco se puede corregir.'},
+  {k:'er-sinrespuesta',txt:'"Una pregunta que no tiene respuesta no sirve para nada."',g1:'Muchas no se cierran con un dato: se entienden cada vez mejor. «¿Qué es un amigo?» se puede discutir un año y seguir valiendo la pena.',g2:'Y de esas preguntas salieron las asignaturas de la escuela. Si no sirvieran para nada, no habría de dónde hubieran salido.'},
 ];
 const critDecisionBank=[
   'Te sale en clase una pregunta que no viene en el libro. ¿La anotas para el diálogo del grupo, o la dejas pasar porque no sale en el examen?',
-  'Te dejan de tarea «¿qué es ser valiente?». ¿Escribes una definición con dos ejemplos, o copias la primera línea del diccionario?',
   'Un compañero afirma algo y no da ninguna razón. ¿Le preguntas por qué y le pides un ejemplo, o le das la razón para no quedar mal?',
-  'Te piden cuántos habitantes tiene tu municipio. ¿Lo buscas en una fuente que se pueda citar, o lo discuten en el grupo hasta ponerse de acuerdo?',
-  'En el diálogo alguien te convence con una razón mejor que la tuya. ¿Lo dices y cambias de idea, o sostienes lo tuyo para no perder?'
+  'En el diálogo alguien te convence con una razón mejor que la tuya. ¿Lo dices y cambias de idea, o sostienes lo tuyo para no perder?',
 ];
-const critDecisionGuide='De qué CLASE es la pregunta: eso se ve primero. Una de hechos se busca en una fuente que se pueda citar, y no se vota. Una de significado pide ejemplos. Una de valor se sostiene con razones.';
+const critDecisionGuide='Se valora que elija lo que hace pensar más, y que dé su razón. Anotar la pregunta, pedir una razón y cambiar de idea ante una mejor son las tres cosas que esta materia enseña a hacer.';
 const critCompareBank=[
-  {a:'«¿Cuántos días tiene febrero?»',b:'«¿Está bien copiar en un examen?»',
-   ga:'De hechos: una sola respuesta, y se comprueba.',
-   gb:'De valor: varias respuestas buenas, y se califica la razón.',
-   gr:'Las dos son preguntas y parecen lo mismo. Buscar la segunda en un libro cuesta tardes perdidas. Discutir la primera en grupo gasta una clase en algo que se comprobaba en dos minutos.'},
-  {a:'Un mito que explica de dónde viene la lluvia.',b:'Una causa natural que explica de dónde viene la lluvia.',
-   ga:'No se puede comprobar, así que no se puede corregir.',
-   gb:'Se puede comprobar, así que se puede corregir.',
-   gr:'Ese es el cambio que hizo Tales de Mileto, y por eso importa aunque su respuesta estuviera equivocada.'},
-  {a:'«Porque yo lo digo».',b:'«Porque si no, el bus se va sin vos».',
-   ga:'No es una razón: es quien manda.',
-   gb:'Es una razón: se puede discutir y hasta comprobar.',
-   gr:'La diferencia no está en la educación con que se dice: está en que la segunda se puede examinar y la primera no. Ahí empieza la unidad que sigue, la de la lógica.'},
-  {a:'Sabiduría.',b:'Muchos datos.',
-   ga:'Saber usar lo que uno sabe.',
-   gb:'Tener información guardada.',
-   gr:'Un teléfono guarda más datos que cualquier persona y no es sabio. Por eso la palabra dice ganas de saber, y no cantidad de saber.'}
+  {k:'cm-socrates',a:'Un maestro que dicta la respuesta y pasa al tema siguiente.',b:'Sócrates, que preguntaba hasta que el otro veía solo que se contradecía.',ga:'El alumno copia la respuesta y la olvida.',gb:'La persona llega sola a ver su error, y eso se le queda.',gr:'Los dos enseñan, pero de maneras distintas. De la segunda viene el diálogo: quien pregunta bien hace pensar más que quien contesta rápido.'},
+  {k:'cm-raiz',a:'La filosofía como una asignatura más, al lado de las otras.',b:'La filosofía como la raíz de todas las asignaturas.',ga:'Sería una rama más, con su propio tema.',gb:'Cada asignatura nació de una pregunta filosófica. Matemáticas, de «¿qué es un número?».',gr:'Por eso esta materia va debajo de las demás y no al lado: es la raíz del árbol.'},
 ];
 const critCauseBank=[
-  {cause:'La palabra «filosofía» está hecha de «filo», ganas de, y «sofía», sabiduría.',guide:'Por eso un filósofo no es el que ya sabe: es el que quiere saber. Por eso esta materia se hace preguntando y no memorizando.'},
-  {cause:'Una pregunta de valor tiene varias respuestas buenas.',guide:'Por eso lo que se califica es la razón que se da, y no el sí o el no.'},
-  {cause:'Tales de Mileto buscó una causa natural en vez de contar un mito.',guide:'Por eso ahí arranca el camino que termina en las Ciencias Naturales, aunque su respuesta estuviera equivocada.'},
-  {cause:'Cada asignatura de la escuela nació de una pregunta filosófica.',guide:'Por eso esta materia va debajo de las demás y no al lado: es la raíz del árbol y no otra rama.'},
-  {cause:'Sócrates no daba las respuestas: preguntaba.',guide:'Por eso de él viene el diálogo: quien pregunta bien hace pensar más que quien contesta rápido.'}
+  {k:'ca-hipatia',cause:'Hipatia de Alejandría juntaba en su trabajo pensar y medir.',guide:'Por eso se recuerda que la filosofía y las matemáticas nacieron juntas.'},
+  {k:'ca-asombro',cause:'Todo empieza cuando algo de todos los días de pronto te parece raro.',guide:'Por eso las preguntas buenas salen de lo de siempre y no solo de los libros: el asombro es por donde empieza todo.'},
 ];
 const critEffectBank=[
-  {effect:'Alguien pasa tres tardes buscando en los libros la respuesta a «¿está bien copiar?» y no la encuentra.',guide:'Porque es una pregunta de valor y no está escrita en ninguna parte: se responde dando razones.'},
-  {effect:'Un niño al que le contestan «porque yo lo digo» deja de preguntar.',guide:'Porque eso no es una razón, y una pregunta a la que nunca se le da una razón enseña que preguntar no sirve.'},
-  {effect:'La misma pregunta se puede discutir un año entero y seguir valiendo la pena.',guide:'Porque las de significado y las de valor no se cierran con un dato: se van entendiendo mejor.'},
-  {effect:'Dos personas discuten una hora la misma pregunta y las dos salen pensando distinto de como entraron.',guide:'Porque en una pregunta de valor lo que se examina son las razones, y oír la del otro obliga a mirar la propia.'},
-  {effect:'Alguien escribe su pregunta y al mes la vuelve a leer y ya no piensa igual.',guide:'Porque una pregunta de significado no se cierra con un dato: se va entendiendo mejor, y escrita se nota que uno cambió de idea.'}
+  {k:'ef-anio',effect:'La misma pregunta se puede discutir un año entero y seguir valiendo la pena.',guide:'Porque las de significado y las de valor no se cierran con un dato: se van entendiendo mejor.'},
+  {k:'ef-dialogo',effect:'Dos personas discuten una hora la misma pregunta y las dos salen pensando distinto de como entraron.',guide:'Porque en una pregunta de valor lo que se examina son las razones, y oír la del otro obliga a mirar la propia.'},
+  {k:'ef-duda',effect:'En una clase donde decir «todavía no sé» no se castiga, se hacen más preguntas.',guide:'Porque aquí la duda no es un defecto: es la herramienta de trabajo. Quien no puede dudar, no pregunta.'},
 ];
 function genEvalCrit(){
   sfx('click');
