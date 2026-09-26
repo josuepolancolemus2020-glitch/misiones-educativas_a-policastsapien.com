@@ -481,16 +481,16 @@ const evalTFBank=[
   {q:'SUMA y RESTA cambian el valor de la cajita.',a:true,k:'tf-cambian'}
 ];
 const evalMCBank=[
-  {q:'¿Qué instrucción mira el valor sin cambiarlo?',o:['a) GUARDA','b) MUESTRA','c) SUMA','d) RESTA'],a:1,k:'mc-muestra'},
-  {q:'¿Qué hace GUARDA 5 EN puntos si puntos ya tenía 8?',o:['a) Deja 13','b) Deja 8','c) Da error','d) Deja 5 y borra el 8'],a:3,k:'mc-guarda'},
-  {q:'Ejecuta: GUARDA 4 EN goles · SUMA 1 A goles · SUMA 1 A goles. ¿Cuánto vale goles?',o:['a) 3','b) 4','c) 6','d) 8'],a:2,k:'mc-goles'},
-  {q:'Ejecuta: GUARDA 10 EN dinero · RESTA 4 A dinero. ¿Cuánto queda?',o:['a) 14','b) 10','c) 6','d) 4'],a:2,k:'mc-dinero'},
-  {q:'GUARDA 6 EN puntos · ___ deja puntos en 9. ¿Qué instrucción falta?',o:['a) RESTA 3 A puntos','b) GUARDA 15 EN puntos','c) MUESTRA puntos','d) SUMA 3 A puntos'],a:3,k:'mc-falta'},
-  {q:'¿Cuántos valores guarda una cajita a la vez?',o:['a) Dos','b) Uno','c) Diez','d) Todos los que quiera'],a:1,k:'mc-uno'},
-  {q:'¿Qué le pasaba a cada gol que anotaba Marvin cuando caía el siguiente?',o:['a) Lo borraba al escribir el nuevo','b) Lo sumaba al siguiente','c) Lo guardaba en otra cajita','d) Nada, quedaban todos'],a:0,k:'mc-marvin'},
-  {q:'¿Qué hace RESTA 2 A vidas?',o:['a) Aumenta 2 al valor','b) Quita 2 usando el valor actual','c) Borra la cajita','d) Enseña el valor'],a:1,k:'mc-resta'},
-  {q:'¿Cuál de estas cuentas sube de 1 en 1?',o:['a) La venta de la pulpería','b) La asistencia del aula','c) El dinero de la alcancía','d) El precio del maíz'],a:1,k:'mc-asistencia'},
-  {q:'¿Qué conviene anotar en la tabla de valores?',o:['a) El nombre del alumno','b) Solo el resultado final','c) Un dibujo de la cajita','d) El valor de la cajita después de cada línea'],a:3,k:'mc-trazar'}
+  {q:'¿Qué instrucción mira el valor sin cambiarlo?',o:['GUARDA','MUESTRA','SUMA','RESTA'],a:1,k:'mc-muestra'},
+  {q:'¿Qué hace GUARDA 5 EN puntos si puntos ya tenía 8?',o:['Deja 13','Deja 8','Da error','Deja 5 y borra el 8'],a:3,k:'mc-guarda'},
+  {q:'Ejecuta: GUARDA 4 EN goles · SUMA 1 A goles · SUMA 1 A goles. ¿Cuánto vale goles?',o:['3','4','6','8'],a:2,k:'mc-goles'},
+  {q:'Ejecuta: GUARDA 10 EN dinero · RESTA 4 A dinero. ¿Cuánto queda?',o:['14','10','6','4'],a:2,k:'mc-dinero'},
+  {q:'GUARDA 6 EN puntos · ___ deja puntos en 9. ¿Qué instrucción falta?',o:['RESTA 3 A puntos','GUARDA 15 EN puntos','MUESTRA puntos','SUMA 3 A puntos'],a:3,k:'mc-falta'},
+  {q:'¿Cuántos valores guarda una cajita a la vez?',o:['Dos','Uno','Diez','Todos los que quiera'],a:1,k:'mc-uno'},
+  {q:'¿Qué le pasaba a cada gol que anotaba Marvin cuando caía el siguiente?',o:['Lo borraba al escribir el nuevo','Lo sumaba al siguiente','Lo guardaba en otra cajita','Nada, quedaban todos'],a:0,k:'mc-marvin'},
+  {q:'¿Qué hace RESTA 2 A vidas?',o:['Aumenta 2 al valor','Quita 2 usando el valor actual','Borra la cajita','Enseña el valor'],a:1,k:'mc-resta'},
+  {q:'¿Cuál de estas cuentas sube de 1 en 1?',o:['La venta de la pulpería','La asistencia del aula','El dinero de la alcancía','El precio del maíz'],a:1,k:'mc-asistencia'},
+  {q:'¿Qué conviene anotar en la tabla de valores?',o:['El nombre del alumno','Solo el resultado final','Un dibujo de la cajita','El valor de la cajita después de cada línea'],a:3,k:'mc-trazar'}
 ];
 const evalCPBank=[
   {q:'Marvin llevaba la cuenta del partido en una ___.',a:'hoja',acc:['hoja'],k:'cp-hoja'},

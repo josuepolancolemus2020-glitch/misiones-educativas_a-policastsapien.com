@@ -578,16 +578,16 @@ const evalTFBank=[
   {q:'Solo las computadoras tienen errores; las tareas de la casa no.',a:false,k:'tf-casa'}
 ];
 const evalMCBank=[
-  {q:'¿Qué encontró Grace Hopper en 1947 dentro de una computadora?',o:['a) Un ratón de campo','b) Un tornillo suelto','c) Un mensaje secreto','d) Una polilla de verdad'],a:3,k:'mc-polilla'},
-  {q:'El programa dice GIRA IZQUIERDA donde debía decir GIRA DERECHA. ¿Qué tipo de bug es?',o:['a) Instrucción equivocada','b) Orden cambiado','c) N del bucle errada','d) Bug de lógica'],a:0,k:'mc-equivocada'},
-  {q:'El programa dice REPITE 5 pero debía repetir solo 3 veces. ¿Qué tipo de bug es?',o:['a) Instrucción de menos','b) N del bucle errada','c) Orden cambiado','d) Condición al revés'],a:1,k:'mc-n-errada'},
-  {q:'En la receta, doblan la baleada antes de untar los frijoles. ¿Qué tipo de bug es?',o:['a) Instrucción equivocada','b) N del bucle errada','c) Orden cambiado','d) Bug de lógica'],a:2,k:'mc-orden'},
-  {q:'El robot llega a la meta, pero pasando por la casilla prohibida. ¿Qué tipo de bug es?',o:['a) Instrucción de más','b) Orden cambiado','c) Condición al revés','d) Bug de lógica'],a:3,k:'mc-logica'},
-  {q:'Al programa le falta la instrucción ENTREGA al final. ¿Qué tipo de bug es?',o:['a) Instrucción de menos (falta una)','b) Instrucción de más (sobra una)','c) Orden cambiado','d) Condición al revés'],a:0,k:'mc-menos'},
-  {q:'El programa dice «SI HAY PARED: AVANZA» en vez de «SI NO HAY PARED: AVANZA». ¿Qué tipo de bug es?',o:['a) N del bucle errada','b) Instrucción de más','c) Condición al revés','d) Orden cambiado'],a:2,k:'mc-condicion'},
-  {q:'¿Por qué no le sirvió a Kenia volver a escribir todo el programa?',o:['a) Copiaba otra vez la misma falla','b) El robot estaba roto','c) La computadora no la dejaba','d) Escribía muy despacio'],a:0,k:'mc-kenia'},
-  {q:'Cuando el robot choca, ¿de quién es la culpa?',o:['a) De la computadora','b) Del robot','c) De una línea del programa','d) De la cuadrícula'],a:2,k:'mc-culpa'},
-  {q:'¿Cuántas cosas cambia un buen detective antes de volver a probar?',o:['a) Todas','b) Una','c) Cinco','d) Ninguna'],a:1,k:'mc-una'}
+  {q:'¿Qué encontró Grace Hopper en 1947 dentro de una computadora?',o:['Un ratón de campo','Un tornillo suelto','Un mensaje secreto','Una polilla de verdad'],a:3,k:'mc-polilla'},
+  {q:'El programa dice GIRA IZQUIERDA donde debía decir GIRA DERECHA. ¿Qué tipo de bug es?',o:['Instrucción equivocada','Orden cambiado','N del bucle errada','Bug de lógica'],a:0,k:'mc-equivocada'},
+  {q:'El programa dice REPITE 5 pero debía repetir solo 3 veces. ¿Qué tipo de bug es?',o:['Instrucción de menos','N del bucle errada','Orden cambiado','Condición al revés'],a:1,k:'mc-n-errada'},
+  {q:'En la receta, doblan la baleada antes de untar los frijoles. ¿Qué tipo de bug es?',o:['Instrucción equivocada','N del bucle errada','Orden cambiado','Bug de lógica'],a:2,k:'mc-orden'},
+  {q:'El robot llega a la meta, pero pasando por la casilla prohibida. ¿Qué tipo de bug es?',o:['Instrucción de más','Orden cambiado','Condición al revés','Bug de lógica'],a:3,k:'mc-logica'},
+  {q:'Al programa le falta la instrucción ENTREGA al final. ¿Qué tipo de bug es?',o:['Instrucción de menos (falta una)','Instrucción de más (sobra una)','Orden cambiado','Condición al revés'],a:0,k:'mc-menos'},
+  {q:'El programa dice «SI HAY PARED: AVANZA» en vez de «SI NO HAY PARED: AVANZA». ¿Qué tipo de bug es?',o:['N del bucle errada','Instrucción de más','Condición al revés','Orden cambiado'],a:2,k:'mc-condicion'},
+  {q:'¿Por qué no le sirvió a Kenia volver a escribir todo el programa?',o:['Copiaba otra vez la misma falla','El robot estaba roto','La computadora no la dejaba','Escribía muy despacio'],a:0,k:'mc-kenia'},
+  {q:'Cuando el robot choca, ¿de quién es la culpa?',o:['De la computadora','Del robot','De una línea del programa','De la cuadrícula'],a:2,k:'mc-culpa'},
+  {q:'¿Cuántas cosas cambia un buen detective antes de volver a probar?',o:['Todas','Una','Cinco','Ninguna'],a:1,k:'mc-una'}
 ];
 const evalCPBank=[
   {q:'Grace Hopper era ___.',a:'programadora',acc:['programadora'],k:'cp-programadora'},
