@@ -6694,6 +6694,27 @@ pregunta lo que se ve, lo que se mide o a quién le pasa. Dos cosas más:
   «sin puntos fijos»; ninguna otra lo pedía. Desde entonces
   `verifica-examen-sin-pistas` lo revisa en **todas** las fichas.
 
+**La Ruta del Código quedó completa también**, sus siete misiones. En
+programación lo que se pregunta cuatro veces es el nombre de la pieza
+(secuencia, bucle, variable, condicional), y el remedio es el mismo: el
+nombre va en el pareado y lo demás pide TRAZAR —qué hace el robot, cuánto
+vale la cajita, cuántas instrucciones se escriben y cuántas se ejecutan—.
+Tres cosas que valen para las siguientes:
+
+- ⚠️ **Las sondas de determinismo de estas misiones piden preguntas exactas**
+  —la del diagnóstico de la ruta, escrita letra por letra— y pedían quince
+  preguntas por banco. Se les mantuvo la pregunta y se aceptan diez cuando el
+  banco lleva `k`. Una de ellas se publicó en rojo porque el paso de publicar
+  miraba la salida con `grep` y no el resultado: ahora se para si alguna sonda
+  sale roja.
+- ⚠️ **En las bilingües, la edición en inglés se reescribe en el MISMO orden**:
+  el `-en.js` de la misión fila por fila (lo comprueba `verifica-bancos-en`)
+  y el examen de la ficha en inglés, con su pauta, en el mismo orden que la
+  española. Los bancos se declaran con `let` —se reasignan al cambiar de
+  idioma— y no con `const`.
+- **Cada banco conserva su forma**: si las opciones no llevaban letra delante,
+  siguen sin llevarla. En dos misiones salió «a) GUARDA» y se corrigió.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
