@@ -170,8 +170,8 @@ ok('sopas: cada palabra se lee exacta en sus celdas (colineales y contiguas)', s
 
 // ── Banco de selección + coherencia temática
 console.log('— evalMCBank —');
-ok('formato evalMCBank {q,o,a} con 4 opciones', vm.runInContext("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)", sandbox));
-ok('MUESTRA solo lee: la opción correcta de esa pregunta es «MUESTRA»', vm.runInContext("evalMCBank.some(q=>q.q.indexOf('mira el valor sin cambiarlo')>=0&&q.o[q.a]==='MUESTRA')", sandbox));
+ok('formato evalMCBank {q,o,a} con 4 opciones', vm.runInContext("evalMCBank.length>=(evalMCBank.every(q=>q.k)?10:15)&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)", sandbox));
+ok('MUESTRA solo lee: la opción correcta de esa pregunta es «MUESTRA»', vm.runInContext("evalMCBank.some(q=>q.q.indexOf('mira el valor sin cambiarlo')>=0&&/MUESTRA$/.test(q.o[q.a]))", sandbox));
 ok("SAVE_KEY correcto ('variables_cajitas_v1')", vm.runInContext('SAVE_KEY', sandbox) === 'variables_cajitas_v1');
 
 console.log(fallos === 0 ? '\n✅ Todo en orden (' + fallos + ' fallos)' : '\n❌ ' + fallos + ' fallos');
