@@ -13,16 +13,16 @@ const D = require('../../js/data/ia-descubre.js');
    misma hoja la fotocopia un maestro para alumnos de cuarto. */
 
 const EVAL = [
-  { q: '¿Cuáles son las tres señales de casi toda estafa?', o: ['Urgencia, secreto y canal nuevo', 'Faltas de ortografía y emojis', 'Un número largo y un enlace', 'Que llegue de noche y por audio'], a: 0 },
-  { q: 'Un audio con la voz de tu mamá pide dinero a un número nuevo. ¿Qué hacés?', o: ['Le contesto por audio', 'Cuelgo y la llamo al número de siempre', 'Reconozco su voz y lo mando', 'Le pregunto algo que solo ella sabe'], a: 1 },
-  { q: 'Un programa acierta el 95 %. ¿Qué NO dice ese número?', o: ['Cuántas veces acertó', 'A quién le cae el error', 'Cuántos casos revisó', 'Que a veces se equivoca'], a: 1 },
+  { q: '¿Cuáles son las tres señales de casi toda estafa?', o: ['Faltas de ortografía y emojis', 'Un número largo y un enlace', 'Urgencia, secreto y canal nuevo', 'Que llegue de noche y por audio'], a: 2 },
+  { q: 'Un audio con la voz de tu mamá pide dinero desde un número nuevo. ¿Qué hacés?', o: ['Le contesto por audio', 'Reconozco su voz y lo mando', 'Le pregunto algo que solo ella sabe', 'Cuelgo y la llamo al número de siempre'], a: 3 },
+  { q: 'Un programa acierta el 95 %. ¿Qué NO dice ese número?', o: ['A quién le cae el error', 'Cuántas veces acertó', 'Cuántos casos revisó', 'Que a veces se equivoca'], a: 0 },
   { q: '¿Por qué una palabra escrita en un grupo deja de servir?', o: ['Porque se olvida', 'Porque la lee cualquiera del grupo', 'Porque caduca al mes', 'Porque cambia sola'], a: 1 },
-  { q: '¿De qué está hecha casi toda estafa creíble?', o: ['De tecnología muy cara', 'De lo que la familia publicó', 'De suerte', 'De un día festivo'], a: 1 },
-  { q: 'Subir al grupo la foto del salón con los nombres es…', o: ['Una foto normal', 'Publicar datos de treinta personas', 'Un problema de espacio', 'Cosa de la aplicación'], a: 1 },
-  { q: 'Un chat que siempre te da la razón está…', o: ['Cuidándote', 'Prediciendo lo que encaja con lo tuyo', 'Comprobando datos', 'Aprendiendo a quererte'], a: 1 },
-  { q: 'La pregunta que desarma «Deciden por vos» es…', o: ['¿Con qué ejemplos, y a quién le cae el error?', '¿Cuánto cuesta?', '¿Es rápido?', '¿Lo usan mis amigos?'], a: 0 },
-  { q: 'Un aviso del maestro sin prisa ni secreto, por el grupo de siempre, es…', o: ['Sospechoso', 'Un mensaje normal', 'Una estafa disimulada', 'Una prueba'], a: 1 },
-  { q: 'Reenviar un video sin comprobarlo es…', o: ['Ayudar a avisar', 'Parte del daño', 'Algo neutral', 'Obligatorio en un grupo'], a: 1 },
+  { q: '¿De qué está hecha casi toda estafa creíble?', o: ['De lo que la familia publicó', 'De tecnología muy cara', 'De suerte', 'De un día festivo'], a: 0 },
+  { q: 'Subir al grupo la foto del salón con los nombres es…', o: ['Una foto normal', 'Un problema de espacio', 'Publicar datos de treinta personas', 'Cosa de la aplicación'], a: 2 },
+  { q: 'Un chat que siempre te da la razón está…', o: ['Cuidándote', 'Comprobando datos', 'Aprendiendo a quererte', 'Prediciendo lo que encaja con lo tuyo'], a: 3 },
+  { q: 'La pregunta que desarma «Te quitan el criterio» es…', o: ['¿Esto lo decidí yo?', '¿Cuánto cuesta?', '¿Es rápido?', '¿Lo usan mis amigos?'], a: 0 },
+  { q: '¿Qué cuesta desconfiar de todos los mensajes?', o: ['Nada', 'Que el aviso de verdad no lo lea nadie', 'Menos estafas', 'Más amigos'], a: 1 },
+  { q: 'Reenviar un video sin comprobarlo es…', o: ['Ayudar a avisar', 'Algo neutral', 'Obligatorio en un grupo', 'Parte del daño'], a: 3 },
 ];
 
 /* Las cinco defensas del simulador, con su veredicto ya calculado. */
@@ -191,9 +191,7 @@ P.push(`
 
 ${preguntas(EVAL)}
 
-    <div class="felic"><b>¡Bien hecho!</b> Con estas diez ya tenés lo que de verdad defiende: las tres
-      señales, el canal de siempre y la pregunta de a quién le cae el error. No hace falta saber de
-      computadoras. Hace falta acordarse.</div>
+    <div class="felic"><b>¡Bien hecho!</b> Antes de entregar, revisá tus respuestas <b>una por una</b>.</div>
 `);
 
 // ── Página 9 · hoja del docente ────────────────────────────────────────────

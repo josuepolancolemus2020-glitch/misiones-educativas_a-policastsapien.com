@@ -380,73 +380,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Las tres señales son urgencia, secreto y canal nuevo.',a:true},
-  {q:'Si la voz suena igual a la de tu mamá, el mensaje es suyo.',a:false},
-  {q:'Volver por el canal de siempre sirve aunque el mensaje parezca real.',a:true},
-  {q:'Un programa que acierta el 95 % reparte sus errores por igual.',a:false},
-  {q:'La palabra de la familia se acuerda en persona.',a:true},
-  {q:'Subir la foto de tus compañeros solo te afecta a vos.',a:false},
-  {q:'Un mensaje sin las tres señales puede ser normal.',a:true},
-  {q:'Preguntarle por audio algo que «solo ella sabe» es seguro.',a:false},
-  {q:'Lo que más convence de un engaño es lo verdadero.',a:true},
-  {q:'Un ensayo generado es tuyo si le ponés tu nombre.',a:false},
-  {q:'Una decisión sobre una persona la revisa una persona.',a:true},
-  {q:'Los peligros de la IA se arreglan borrando las aplicaciones.',a:false},
-  {q:'Esperar diez minutos y contarlo desarma la urgencia y el secreto.',a:true},
-  {q:'La opinión fabricada se nota porque el mensaje se repite mucho.',a:false},
-  {q:'Un sistema sin otra forma de entrar deja gente afuera.',a:true}
+  {q:'Una estafa creíble se arma con lo que la propia familia publicó.',a:true,k:'tf-familia-publico'},
+  {q:'Una decisión sobre una persona la revisa una persona.',a:true,k:'tf-revisa'},
+  {q:'Si un sistema con cámara no reconoce una cara, necesita otra forma de entrar.',a:true,k:'tf-camara'},
+  {q:'Lo que más convence de un engaño es lo verdadero.',a:true,k:'tf-verdadero'},
+  {q:'Reenviar un video sin comprobarlo es parte del daño.',a:true,k:'tf-reenviar'},
+  {q:'Preguntarle por audio algo que «solo ella sabe» es seguro.',a:false,k:'tf-solo-ella'},
+  {q:'Los peligros de la IA se arreglan borrando las aplicaciones.',a:false,k:'tf-borrar-apps'},
+  {q:'La opinión fabricada se nota porque el mensaje se repite mucho.',a:false,k:'tf-opinion'},
+  {q:'Un chat que siempre te da la razón te está cuidando.',a:false,k:'tf-chat-razon'},
+  {q:'Borrar una foto del grupo la borra de todos los teléfonos.',a:false,k:'tf-borrar-foto'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál NO es una de las tres señales?',o:['Urgencia','Faltas de ortografía','Secreto','Canal nuevo'],a:1},
-  {q:'Ante un mensaje que pide dinero, la defensa que sirve siempre es…',o:['Reconocer la voz','Pedir una foto','Volver por el canal de siempre','Contestar por audio'],a:2},
-  {q:'Un promedio de aciertos alto NO dice…',o:['Cuántas veces acertó','A quién le cae el error','Que a veces se equivoca','Cuántos casos revisó'],a:1},
-  {q:'La familia «Deciden por vos» se desarma con…',o:['Apagar el teléfono','Reconocer la voz','Borrar la cuenta','Las tres preguntas del sesgo'],a:3},
-  {q:'¿Por qué una palabra clave escrita en un grupo ya no sirve?',o:['Porque la lee cualquiera del grupo','Porque se olvida','Porque caduca','Porque cambia sola'],a:0},
-  {q:'La foto del salón con los nombres, subida al grupo, es un problema de…',o:['Ortografía','Espacio','Privacidad de treinta personas','Batería'],a:2},
-  {q:'Un chat que siempre te da la razón está…',o:['Cuidándote','Aprendiendo a quererte','Prediciendo lo que encaja con lo tuyo','Comprobando datos'],a:2},
-  {q:'¿De qué está hecha una estafa creíble?',o:['De tecnología muy cara','De lo que la familia publicó','De suerte','De un día festivo'],a:1},
-  {q:'Un aviso del maestro sin prisa ni secreto, por el grupo de siempre, es…',o:['Un mensaje normal','Sospechoso','Una estafa disimulada','Una prueba'],a:0},
-  {q:'La pregunta que desarma «Te engañan» es…',o:['¿Cuánto cuesta?','¿Quién lo hizo?','¿Lo comprobé por otro camino?','¿Está de moda?'],a:2},
-  {q:'La pregunta que desarma «Se quedan con lo tuyo» es…',o:['¿Cuánta batería gasta?','¿Es gratis?','¿Lo usan mis amigos?','¿Se lo daría a un desconocido?'],a:3},
-  {q:'La pregunta que desarma «Te quitan el criterio» es…',o:['¿Es rápido?','¿Me gusta?','¿Es popular?','¿Lo decidí yo, y lo puedo explicar?'],a:3},
-  {q:'Ante un remedio que «cura todo» según un estudio, lo primero es…',o:['Preguntar qué estudio y quién lo hizo','Probarlo un día','Compartirlo por si sirve','Comprarlo barato'],a:0},
-  {q:'Si un sistema con cámara no reconoce una cara, hace falta…',o:['Cambiar de cara','Otra forma de entrar','Esperar','Reclamar al aparato'],a:1},
-  {q:'Reenviar un video sin comprobarlo es…',o:['Parte del daño','Ayudar a avisar','Neutral','Obligatorio'],a:0}
+  {q:'¿Cuál NO es una de las tres señales?',o:['Faltas de ortografía','Urgencia','Secreto','Canal nuevo'],a:0,k:'mc-senales'},
+  {q:'La pregunta que desarma «Te engañan» es…',o:['¿Cuánto cuesta?','¿Quién lo hizo?','¿Lo comprobé por otro camino?','¿Está de moda?'],a:2,k:'mc-enganan'},
+  {q:'La pregunta que desarma «Se quedan con lo tuyo» es…',o:['¿Cuánta batería gasta?','¿Es gratis?','¿Lo usan mis amigos?','¿Se lo daría a un desconocido?'],a:3,k:'mc-quedan'},
+  {q:'La pregunta que desarma «Te quitan el criterio» es…',o:['¿Esto lo decidí yo?','¿Es rápido?','¿Me gusta?','¿Es popular?'],a:0,k:'mc-criterio'},
+  {q:'¿Qué se le pregunta a un programa que elige entre personas?',o:['Cuánto cuesta y quién lo vende','Si es rápido','Si me cae bien','Con qué ejemplos se entrenó y quién los eligió'],a:3,k:'mc-sesgo'},
+  {q:'¿En cuántas familias se reparten los peligros?',o:['Dos','Tres','Cuatro','Seis'],a:2,k:'mc-familias'},
+  {q:'¿Cuántas defensas enseña la misión?',o:['Dos','Seis','Ocho','Una'],a:1,k:'mc-defensas'},
+  {q:'Un compañero va a mandar dinero por un mensaje raro. ¿Qué hacés?',o:['No me meto','Le digo que llame antes de mandar nada','Le presto más dinero','Lo reenvío'],a:1,k:'mc-companero'},
+  {q:'¿Por qué las tres señales están en casi toda estafa?',o:['Porque sin ellas el engaño no funciona','Porque son obligatorias','Por casualidad','Porque las pone el teléfono'],a:0,k:'mc-por-que'},
+  {q:'Un mensaje raro te pide que no le contés a nadie. ¿Qué hacés?',o:['Lo mando rápido','Lo cuento igual y espero','Lo borro sin leer','Contesto por otro número'],a:1,k:'mc-no-contes'}
 ];
 const evalCPBank=[
-  {q:'La señal que te quita el tiempo es la ___.',a:'urgencia'},
-  {q:'La señal que te deja sin contarlo es el ___.',a:'secreto'},
-  {q:'La tercera señal es el canal ___.',a:'nuevo'},
-  {q:'La defensa que sirve siempre es volver al canal de ___.',a:'siempre'},
-  {q:'Una voz fabricada demuestra que la voz no es una ___.',a:'prueba'},
-  {q:'Un promedio alto esconde a quién le cae el ___.',a:'error'},
-  {q:'La palabra de la familia se acuerda en ___.',a:'persona'},
-  {q:'Lo que subís de otras personas no es ___.',a:'tuyo'},
-  {q:'Un trabajo que no podés ___ no es tuyo.',a:'explicar'},
-  {q:'Ante algo que decide sobre personas, preguntá con qué ___ se entrenó.',a:'ejemplos'},
-  {q:'La familia que te engaña se desarma por otro ___.',a:'camino'},
-  {q:'Lo que más convence de un engaño es lo que no es ___.',a:'mentira'},
-  {q:'Un mensaje sin ninguna señal es un mensaje ___.',a:'normal'},
-  {q:'Una decisión sobre una persona la revisa una ___.',a:'persona'},
-  {q:'Un sistema sin otra puerta deja gente ___.',a:'afuera'}
+  {q:'A Yoselin un programa le rechazó la beca en unos pocos ___.',a:'segundos',acc:['segundos'],k:'cp-segundos'},
+  {q:'El programa de becas acertaba el ___ %.',a:'92',acc:['92','noventa y dos'],k:'cp-92'},
+  {q:'A Yoselin el error del programa le costó el ___.',a:'año',acc:['año'],k:'cp-ano'},
+  {q:'Ante un mensaje raro, se vuelve a preguntar por el número de ___.',a:'siempre',acc:['siempre'],k:'cp-siempre'},
+  {q:'Una voz se fabrica con muy poca ___.',a:'grabación',acc:['grabación','grabacion'],k:'cp-grabacion'},
+  {q:'Lo que se publica queda, y lo puede leer ___.',a:'cualquiera',acc:['cualquiera'],k:'cp-cualquiera'},
+  {q:'Un trabajo que no podés ___ no es tuyo.',a:'explicar',acc:['explicar'],k:'cp-explicar'},
+  {q:'Ante un remedio que «cura todo», preguntá qué ___ y quién lo hizo.',a:'estudio',acc:['estudio'],k:'cp-estudio'},
+  {q:'La foto del salón con los nombres expone a ___ compañeros.',a:'treinta',acc:['treinta','30'],k:'cp-treinta'},
+  {q:'Un mensaje sin ninguna de las tres señales puede ser ___.',a:'normal',acc:['normal'],k:'cp-normal'}
 ];
 const evalPRBank=[
-  {term:'Urgencia',def:'Te quita el tiempo de pensar'},
-  {term:'Secreto',def:'Te deja sin quien te aconseje'},
-  {term:'Canal nuevo',def:'Te saca de donde contestás siempre'},
-  {term:'Voz fabricada',def:'Se hace con una grabación corta'},
-  {term:'Video de algo que no pasó',def:'Alguien diciendo lo que nunca dijo'},
-  {term:'Suplantación',def:'Una cuenta nueva que parece la de un conocido'},
-  {term:'Sesgo que decide',def:'El error cae siempre sobre los mismos'},
-  {term:'Promedio que esconde',def:'No dice a quién le falla'},
-  {term:'Privacidad',def:'Lo de otros no es tuyo para subirlo'},
-  {term:'Juguete que oye',def:'Necesita escuchar para funcionar'},
-  {term:'El que decide qué ves',def:'Te da lo que te hace quedarte'},
-  {term:'El que siempre te da la razón',def:'Predice lo que encaja con lo tuyo'},
-  {term:'Volver por el canal de siempre',def:'La defensa ante cualquier mensaje raro'},
-  {term:'Palabra acordada en persona',def:'Sirve mientras no se escriba'},
-  {term:'Las tres preguntas',def:'Qué ejemplos, quién los eligió, a quién le cae el error'}
+  {term:'Urgencia',def:'Te quita el tiempo de pensar',k:'pr-urgencia'},
+  {term:'Secreto',def:'Te deja sin quien te aconseje',k:'pr-secreto'},
+  {term:'Canal nuevo',def:'Te saca de donde contestás siempre',k:'pr-canal'},
+  {term:'Suplantación',def:'Una cuenta nueva que parece la de un conocido',k:'pr-suplantacion'},
+  {term:'Sesgo que decide',def:'El error cae siempre sobre los mismos',k:'pr-sesgo'},
+  {term:'Promedio que esconde',def:'No dice a quién le falla',k:'pr-promedio'},
+  {term:'Privacidad',def:'Lo de otros no es tuyo para subirlo',k:'pr-privacidad'},
+  {term:'Juguete que oye',def:'Necesita escuchar para funcionar',k:'pr-juguete'},
+  {term:'El que decide qué ves',def:'Te da lo que te hace quedarte',k:'pr-decide'},
+  {term:'Palabra acordada en persona',def:'Sirve mientras no se escriba',k:'pr-palabra'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -533,12 +518,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'A un alumno le llega un audio con la voz de su papá. Le pide retirar dinero y no contarlo hasta la noche.'},
-  {txt:'En el grupo circula un video del director: se suspenden las clases. Nadie lo encuentra en una cuenta oficial.'},
-  {txt:'Un programa descarta las becas de las escuelas pequeñas: casi no vio ninguna. Acierta el 92 %.'},
-  {txt:'Una alumna sube al grupo la foto del salón con el nombre de cada compañero.'},
-  {txt:'Un estudiante entra a estudiar y pasa dos horas viendo videos que no buscó.'},
-  {txt:'El maestro avisa de la reunión del jueves por el grupo de siempre, sin prisa ni secreto.'}
+  {k:'ca-videos',txt:'Un estudiante entra a estudiar y pasa dos horas viendo videos que no buscó.'},
+  {k:'ca-director',txt:'En el grupo circula un video del director: se suspenden las clases. Nadie lo encuentra en una cuenta oficial.'},
 ];
 const critCaseQuestions=[
   '1. ¿De qué familia es, y cómo se llama el peligro?',
@@ -553,60 +534,23 @@ const critCaseGuides=[
   'Respuesta abierta. Se valora que sea concreta y que pueda hacerla con su teléfono. Por ejemplo: llamar al número de siempre, pedir que revise una persona, borrar la foto y pedir permiso, poner la hora de salir.'
 ];
 const critErrorBank=[
-  {txt:'"Yo me doy cuenta de una estafa por la voz."',
-   g1:'La voz se fabrica con poca grabación.',
-   g2:'Lo que no se fabrica es el número de siempre.'},
-  {txt:'"Ese programa acierta el 95 %, así que es justo."',
-   g1:'Acertar mucho y repartir bien los errores no es lo mismo.',
-   g2:'Ese 5 % puede caer siempre sobre el mismo grupo.'},
-  {txt:'"Es una foto del salón, no es información privada."',
-   g1:'Sí lo es: son treinta caras con nombre.',
-   g2:'Y lo que salió no vuelve.'},
-  {txt:'"Como puede haber estafas, mejor no le creo a ningún mensaje."',
-   g1:'Desconfiar de todo cuesta lo mismo que creerlo todo.',
-   g2:'Por eso se miran las tres señales: separan lo raro de lo normal.'},
-  {txt:'"Si el chat me da la razón es porque tengo razón."',
-   g1:'Está hecho para seguir la conversación, y encaja con lo tuyo.',
-   g2:'Lo que importa se habla con una persona.'},
-  {txt:'"Yo no mandé el video falso, solo lo reenvié."',
-   g1:'La desinformación vive de los reenvíos.',
-   g2:'Comprobar antes de compartir es la parte que te toca.'}
+  {k:'er-desconfiar',txt:'"Como puede haber estafas, mejor no le creo a ningún mensaje."',g1:'Desconfiar de todo cuesta lo mismo que creerlo todo.',g2:'Por eso se miran las tres señales: separan lo raro de lo normal.'},
 ];
 const critDecisionBank=[
-  'Un audio urgente con la voz de un familiar pide dinero. ¿Lo mandás, o llamás vos al número de siempre?',
-  'Un video que te indigna circula en el grupo. ¿Lo reenviás, o buscás quién lo firma?',
   'Un programa rechazó la beca de tu prima en segundos. ¿Lo aceptás, o pedís que una persona la revise?',
-  'Querés subir la foto del salón. ¿La subís porque salen todos bien, o les preguntás antes?',
-  'Un compañero está por mandar dinero por un mensaje raro. ¿No te metés, o le decís que llame primero?'
 ];
 const critDecisionGuide='Comprobar por otro camino antes de actuar. Pedir que revise una persona. Preguntar antes de publicar lo de otros. Avisarle a un compañero.';
 const critCompareBank=[
-  {a:'Una alucinación.',b:'Una estafa con voz fabricada.',
-   ga:'El modelo se inventa un dato sin que nadie se lo pida.',
-   gb:'Alguien fabrica la voz a propósito para quitarte dinero.',
-   gr:'La primera es cómo funciona la máquina. La segunda es una decisión de alguien: hay intención, y eso cambia quién responde.'},
-  {a:'Un programa que acierta el 95 % repartido parejo.',b:'Un programa que acierta el 95 % fallando siempre con el mismo grupo.',
-   ga:'El error le toca de vez en cuando a cualquiera.',
-   gb:'El error le toca siempre a los mismos.',
-   gr:'El promedio es idéntico y no se parecen en nada. La pregunta es «¿a quién le cae el error?».'},
-  {a:'Desconfiar de todo mensaje.',b:'Mirar las tres señales.',
-   ga:'Te deja sin creerle a nadie, ni al aviso del maestro.',
-   gb:'Te deja separar lo raro de lo normal en diez segundos.',
-   gr:'Defenderse no es vivir asustado. Es tener una comprobación corta y usarla siempre.'}
+  {k:'co-alucinacion',a:'Una alucinación.',b:'Una estafa con voz fabricada.',ga:'El modelo se inventa un dato sin que nadie se lo pida.',gb:'Alguien fabrica la voz a propósito para quitarte dinero.',gr:'La primera es cómo funciona la máquina. La segunda es una decisión de alguien: hay intención, y eso cambia quién responde.'},
 ];
 const critCauseBank=[
-  {cause:'Quien engaña necesita que no pienses, que no consultes y que no contestes por donde siempre.',guide:'Por eso las tres señales están en casi toda estafa: sin ellas no funciona.'},
-  {cause:'Una voz se fabrica con muy poca grabación.',guide:'Por eso la voz ya no es una prueba.'},
-  {cause:'Un modelo acierta más con los grupos de los que vio más ejemplos.',guide:'Por eso un promedio alto puede esconder que a un grupo pequeño le falla.'},
-  {cause:'Lo que se publica queda y lo puede leer cualquiera.',guide:'Por eso una estafa creíble se arma con lo que la propia familia subió.'},
-  {cause:'Un chat está hecho para seguir la conversación.',guide:'Por eso tiende a darte la razón, y no sustituye a una persona.'}
+  {k:'ca-senales',cause:'Quien engaña necesita que no pienses, que no consultes y que no contestes por donde siempre.',guide:'Por eso las tres señales están en casi toda estafa: sin ellas no funciona.'},
+  {k:'ca-chat',cause:'Un chat está hecho para seguir la conversación.',guide:'Por eso tiende a darte la razón, y no sustituye a una persona.'},
 ];
 const critEffectBank=[
-  {effect:'Una familia pierde el dinero de una matrícula por un audio.',guide:'Porque la voz se fabricó con un video público y nadie llamó.'},
-  {effect:'Una alumna de aldea se queda sin beca aunque cumplía.',guide:'Porque el programa casi no vio solicitudes como la suya.'},
-  {effect:'Treinta compañeros quedan publicados con su nombre.',guide:'Porque alguien subió una foto que no era suya.'},
-  {effect:'Un aviso de verdad del maestro no lo lee casi nadie.',guide:'Porque en ese grupo circularon tantos mensajes falsos que nadie cree nada.'},
-  {effect:'Un alumno se defiende de un mensaje raro en diez segundos.',guide:'Porque buscó las tres señales y volvió por el canal de siempre.'}
+  {k:'ef-foto',effect:'Treinta compañeros quedan publicados con su nombre.',guide:'Porque alguien subió una foto que no era suya.'},
+  {k:'ef-viaje',effect:'Una familia sube las fotos del viaje y un desconocido sabe que la casa está sola.',guide:'Porque lo que se publica queda, y lo puede ver cualquiera.'},
+  {k:'ef-casa',effect:'En una casa se dice algo privado delante de un aparato que responde a la voz.',guide:'Porque para contestar tiene que estar escuchando.'},
 ];
 function genEvalCrit(){
   sfx('click');
