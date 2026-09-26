@@ -98,16 +98,16 @@ ${o.tareas.map(t => `        <tr><td>${esc(t.t)}</td><td>${tipoDe(t.tipo).e} ${e
     </div>`;
 
 const EVAL = [
-  { q: '¿Qué se lleva la máquina?', o: ['Oficios enteros', 'Tareas sueltas de un oficio', 'Solo el trabajo de oficina', 'Nada todavía'], a: 1 },
-  { q: 'La pregunta que sirve para elegir qué estudiar es…', o: ['¿De qué tareas está hecho ese oficio?', '¿Ese oficio se salva?', '¿Qué dicen en el grupo?', '¿Cuánto paga?'], a: 0 },
-  { q: '¿Qué clase de tarea se lleva casi entera?', o: ['Las de manos', 'Las de estar con alguien', 'Las de papel', 'Ninguna'], a: 2 },
-  { q: '¿Cuál casi no toca?', o: ['Las de mirar', 'Las de manos', 'Las de papel', 'Las de sumar'], a: 1 },
-  { q: 'Contar tareas no es lo mismo que contar…', o: ['Personas', 'Oficios', 'Dinero', 'Horas'], a: 3 },
-  { q: 'Sumar, ordenar y buscar en una lista es…', o: ['Algo que una computadora normal ya hacía', 'Inteligencia Artificial recién salida', 'Imposible para una máquina', 'Cosa de robots'], a: 0 },
-  { q: 'Una tarea de clase que la máquina no puede entregar…', o: ['Es más larga', 'Es más difícil', 'Lleva por lo menos un escudo', 'La pone el director'], a: 2 },
-  { q: '¿Cuál de estas cuatro lleva escudo?', o: ['Copiá la definición de adjetivo', 'Escribí un resumen', 'Resolvé veinte ejercicios', 'Medí tu patio y sacá su área'], a: 3 },
-  { q: 'Copiar la tarea dejó de servir porque…', o: ['Está prohibido', 'Al examen llegás igual que si no la hubieras hecho', 'La máquina se equivoca siempre', 'El maestro se da cuenta'], a: 1 },
-  { q: '«En dos años la máquina lo hará todo» no sirve porque…', o: ['Es muy corta', 'Nadie la dijo', 'No le pasa a nadie con nombre ni termina en una decisión', 'Habla de computadoras'], a: 2 },
+  { q: '¿Qué pasa con los ocho oficios de esta ficha?', o: ['Se van casi todos', 'Ninguno se va entero y ninguno se salva entero', 'Solo se salvan los de papel', 'Se salva solo el de la maestra'], a: 1 },
+  { q: 'Ponerle la vía a un niño de tres años es una tarea…', o: ['De papel', 'De mirar', 'De manos', 'De estar con alguien'], a: 2 },
+  { q: 'La ficha cuenta tareas y no horas. ¿Por qué importa eso?', o: ['Porque una tarea puede llevarse el día entero y otra cinco minutos', 'Porque las horas no se pueden contar', 'Porque la máquina trabaja de noche', 'Porque así lo pide el examen'], a: 0 },
+  { q: 'Una computadora suma los gastos del mes. ¿Eso es Inteligencia Artificial?', o: ['Sí, es la más nueva', 'Sí, porque la computadora piensa', 'Depende del precio', 'No: una computadora normal ya lo hacía antes'], a: 3 },
+  { q: '«Traé el precio del frijol en la pulpería de tu barrio». La máquina no puede entregarla porque…', o: ['Es muy larga', 'Usa un dato de aquí que no está escrito en ninguna parte', 'La prohíbe el maestro', 'Es de Ciencias Sociales'], a: 1 },
+  { q: '¿Qué hay que saberse bien, ahora que la máquina escribe?', o: ['Las respuestas del libro, de memoria', 'Nada, porque ella lo sabe', 'Lo que sirve para comprobar lo que te dice', 'Solo las fechas'], a: 2 },
+  { q: '¿Qué es lo mejor que trae la máquina para el que estudia?', o: ['Hace la tarea por vos', 'Nunca se equivoca', 'Sabe todo de tu aldea', 'Te explica otra vez, sin cansarse'], a: 3 },
+  { q: 'Entregaste un dato falso que te copió la máquina. ¿Quién responde?', o: ['Vos, porque lo entregaste', 'La máquina', 'El que hizo la máquina', 'Nadie'], a: 0 },
+  { q: 'Un escenario sirve para decidir. Una profecía…', o: ['Siempre se cumple', 'La dicen los expertos', 'Te deja mirando', 'Trae una fecha exacta'], a: 2 },
+  { q: 'Si de una tarea no se puede decir CON QUÉ se la lleva la máquina…', o: ['Se la lleva igual', 'Se la lleva a medias', 'La hace más rápido', 'No se la lleva'], a: 3 },
 ];
 
 const P = [];
@@ -313,12 +313,11 @@ ${IA_TAREAS_CLASE.map(t => `        <tr><td>${esc(t.t)}</td><td>${CIR}</td><td>$
 
 // ── Página 9 · evaluación ──────────────────────────────────────────────────
 P.push(`
-    <h2 data-hoja-propia>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
+    <h2>🎓 Evaluación · Rellena el círculo de la respuesta correcta <span style="font-size:9.5pt;font-weight:400">(40 pts · 4 cada una)</span></h2>
 
 ${preguntas(EVAL)}
 
-    <div class="felic"><b>¡Bien hecho!</b> De aquí te llevás una pregunta que sirve toda la vida. No es
-      «¿mi oficio se salva?». Es <b>«¿de qué tareas está hecho?»</b>.</div>
+    <div class="felic"><b>¡Bien hecho!</b> Antes de entregar, revisá tus respuestas una por una.</div>
 `);
 
 // ── Página 10 · hoja del docente ───────────────────────────────────────────

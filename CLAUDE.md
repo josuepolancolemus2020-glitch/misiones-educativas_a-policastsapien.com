@@ -6743,6 +6743,26 @@ decía «no se pudo leer entera» y no comprobaba que ningún pareado cayera en 
 propia fila. Ahora lee las dos formas, y la ficha **conserva la suya**: el
 formato de la pauta no se toca.
 
+### La Ruta de la Máquina que Aprende, y lo que enseñó
+
+Sus siete misiones y sus siete fichas, con la misma forma. Tres cosas propias:
+
+- ⚠️ **Una pregunta de examen no puede afirmar lo que la ruta ya midió que es
+  falso.** Los bancos de la 72 preguntaban que «con pocos ejemplos la máquina se
+  equivoca más», que es justo la promesa que costó rehacer el «Enséñale a la
+  máquina»: lo que importa es CUÁLES ejemplos, no cuántos. Se quitó de los
+  bancos; el objetivo de la ficha y el archivo de datos no se tocaron.
+- ⚠️ **La felicitación también contesta.** En la 72, la 76, la 77 y la 78 el
+  recuadro «¡Bien hecho!», puesto debajo del examen, resumía la lección, que
+  era la respuesta de una de las diez preguntas. Ahora solo pide revisar.
+- ⚠️ **Las fichas de esta ruta se arman, así que hay que mirar dónde cae el
+  examen.** En la 73, la 74 y la 75 el repartidor lo dejaba en la misma hoja
+  que la teoría que lo contesta (las reglas de oro, «¿cuánto tardó?»), y por
+  eso su `<h2>` lleva `data-hoja-propia`. Donde el examen comparte hoja con una
+  actividad de escribir que no contesta nada (la 72 y la 78), se deja así: una
+  hoja propia ahí es una hoja de más por alumno. Y de paso salieron cuatro
+  fichas que ya se partían al imprimir: la 73, la 74, la 75 y la 76.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

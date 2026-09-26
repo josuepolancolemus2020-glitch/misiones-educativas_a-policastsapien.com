@@ -462,85 +462,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un oficio es un montón de tareas distintas.',a:true},
-  {q:'La máquina se lleva oficios enteros.',a:false},
-  {q:'Las tareas de papel son las primeras en irse.',a:true},
-  {q:'Las tareas de manos se las lleva casi todas.',a:false},
-  {q:'Mirar algo y decir qué es también se lo lleva.',a:true},
-  {q:'Ninguno de los ocho oficios desaparece entero.',a:true},
-  {q:'La pregunta buena es «¿mi oficio se salva?».',a:false},
-  {q:'Sumar y ordenar una lista es Inteligencia Artificial.',a:false},
-  {q:'Este conteo mide horas de trabajo.',a:false},
-  {q:'Se cuentan tareas, no horas.',a:true},
-  {q:'A don Chele le quedan las tareas más largas del día.',a:true},
-  {q:'Copiar la tarea hoy sirve igual que antes.',a:false},
-  {q:'Una tarea que se hace delante de alguien no se copia.',a:true},
-  {q:'Una tarea con un dato de tu barrio la entrega la máquina.',a:false},
-  {q:'Saberse las cosas sirve para comprobar lo que te dicen.',a:true},
-  {q:'Explicar en voz alta lo que hiciste lleva escudo.',a:true},
-  {q:'La máquina puede ver que un niño no desayunó.',a:false},
-  {q:'Una máquina responde ante la madre por la nota.',a:false},
-  {q:'Ningún oficio de los ocho se salva entero.',a:true},
-  {q:'Lo que entregás con tu nombre lo respondés vos.',a:true}
+  {q:'A don Chele le quedan las tareas más largas del día.',a:true,k:'tf-chele'},
+  {q:'Reconocer una plaga en la foto de una hoja se lo puede llevar la máquina.',a:true,k:'tf-plaga'},
+  {q:'A la profesora Delmy le quitan planillas y promedios.',a:true,k:'tf-delmy'},
+  {q:'A un padre enojado lo atiende mejor una persona.',a:true,k:'tf-padre'},
+  {q:'La misión mira por dentro ocho oficios de Honduras.',a:true,k:'tf-ocho'},
+  {q:'Copiar la tarea hoy sirve igual que antes.',a:false,k:'tf-copiar'},
+  {q:'Una máquina responde ante la madre por la nota que puso.',a:false,k:'tf-madre'},
+  {q:'La máquina se cansa después de muchas tareas.',a:false,k:'tf-cansa'},
+  {q:'En el grupo del colegio le dijeron a Katy una sola cosa, clara.',a:false,k:'tf-grupo'},
+  {q:'Todo lo que hace un agricultor es trabajo de oficina.',a:false,k:'tf-oficina'}
 ];
 const evalMCBank=[
-  {q:'La máquina no se lleva oficios: se lleva…',o:['tareas','años','pueblos','sueldos'],a:0},
-  {q:'Una tarea de papel es…',o:['levantar una pared','sumar y ordenar','convencer a alguien','cargar sacos'],a:1},
-  {q:'Una tarea de mirar es…',o:['fiarle a una señora','doblar el hierro','ver qué plaga tiene la hoja','sacar la cuenta'],a:2},
-  {q:'Una tarea de manos es…',o:['buscar un expediente','contestar el correo','sacar promedios','ponerle la vía a un niño'],a:3},
-  {q:'La clase de tarea que MÁS se lleva la máquina es…',o:['la de papel','la de manos','la de gente','ninguna'],a:0},
-  {q:'La clase de tarea que MENOS se lleva es…',o:['la de papel','la de manos','la de mirar','la de escribir'],a:1},
-  {q:'De los ocho oficios mirados, desaparecen enteros…',o:['todos','la mitad','ninguno','tres'],a:2},
-  {q:'Calificar exámenes de marcar se lo lleva…',o:['la voz fabricada','el refuerzo','el parecido','una cuenta de siempre'],a:3},
-  {q:'A la profesora Delmy NO se le puede quitar…',o:['responder por la nota que puso','llenar planillas','sacar promedios','calificar marcas'],a:0},
-  {q:'Don Toño, el albañil, pierde sobre todo…',o:['levantar la pared','calcular los bloques y la arena','doblar el hierro','hablar con el dueño'],a:1},
-  {q:'Doña Tere sigue haciendo ella…',o:['sacar la cuenta del día','ver qué tomate no aguanta','convencer al que duda','saber qué se vende el sábado'],a:2},
-  {q:'Sumar, ordenar y buscar en una lista…',o:['es lo más nuevo que hay','solo funciona con internet','no lo hace ninguna máquina','ya lo hacía una computadora normal'],a:3},
-  {q:'Este conteo de la misión cuenta…',o:['horas','sueldos','años','tareas'],a:3},
-  {q:'A don Chele le quedan cinco tareas de siete, y esas cinco…',o:['se llevan todo el día','no cuestan nada','las hace la máquina','duran un minuto'],a:0},
-  {q:'Copiar la tarea que te hace una máquina te deja…',o:['con mejor nota final','llegando al examen sin saber','sin tarea','con más tiempo libre'],a:1},
-  {q:'Una tarea con escudo es…',o:['un resumen de la Independencia','un ensayo sobre la contaminación','medir tu patio y sacar su área','veinte ejercicios de fracciones'],a:2},
-  {q:'Los tres escudos son…',o:['largo, corto y difícil','papel, mirar y manos','nota, firma y examen','delante, de aquí y de manos'],a:3},
-  {q:'Lo que hay que saberse hoy sirve para…',o:['comprobar lo que te dicen','copiar más rápido','no estudiar','escribir bonito'],a:0},
-  {q:'Lo que entregás con tu nombre…',o:['lo revisa la máquina','lo respondés vos','no lo firma nadie','no tiene dueño'],a:1},
-  {q:'Antes de elegir qué estudiar, Katy tiene que preguntar…',o:['cuánto paga','quién lo dijo','de qué tareas está hecho','cuándo va a pasar'],a:2}
+  {q:'Don Toño, el albañil, pierde sobre todo…',o:['levantar la pared','calcular los bloques y la arena','doblar el hierro','hablar con el dueño'],a:1,k:'mc-tono'},
+  {q:'Doña Tere sigue haciendo ella…',o:['sacar la cuenta del día','ver qué tomate no aguanta','convencer al que duda','saber qué se vende el sábado'],a:2,k:'mc-tere'},
+  {q:'¿Cuál de estas tareas no te la puede entregar hecha una máquina?',o:['un resumen de la Independencia','un ensayo sobre la contaminación','entrevistar a tu vecina','veinte ejercicios de fracciones'],a:2,k:'mc-vecina'},
+  {q:'¿Qué le hace el programa a la señorita Lesly?',o:['Le prepara el café','Le cambia el horario','La despide','Le contesta el correo de siempre'],a:3,k:'mc-lesly'},
+  {q:'¿Por qué la predicción del valle no le sirve a don Chele?',o:['Porque los datos no eran de su ladera','Porque no tiene teléfono','Porque no sabe leer','Porque allá no llueve'],a:0,k:'mc-ladera'},
+  {q:'Un colegio quitó la tarea escrita y no puso otra. ¿Qué pasó?',o:['Llegaron al examen sin haber escrito un párrafo','Sacaron mejor nota','No pasó nada','Aprendieron más'],a:0,k:'mc-colegio'},
+  {q:'Katy elige carrera el lunes. ¿Qué le conviene?',o:['Elegir la que suena mejor','Partir el oficio en tareas','Hacer lo que diga el grupo','Esperar sin hacer nada'],a:1,k:'mc-katy'},
+  {q:'¿Qué tarea sigue siendo de Sandra, la enfermera?',o:['Decirle a una madre que hay que viajar','Marcar lo raro en la radiografía','Ordenar expedientes','Sumar facturas'],a:0,k:'mc-sandra'},
+  {q:'Te ofrecen un programa para las cuentas del negocio. ¿Qué mirás antes?',o:['De qué color es','Cuánto pesa','Si es nuevo','Qué tareas te quita'],a:3,k:'mc-programa'},
+  {q:'Dicen que los buses se van a manejar solos. ¿Qué pregunta don Gerardo?',o:['Cuánto cuesta','Qué color tiene','Si es nuevo','Si el programa conoce su calle de tierra con lluvia'],a:3,k:'mc-bus'}
 ];
 const evalCPBank=[
-  {q:'Un oficio es un montón de ___.',a:'tareas'},
-  {q:'Las tareas de ___ son las primeras en irse.',a:'papel'},
-  {q:'Mirar algo y decir qué es es una tarea de ___.',a:'mirar'},
-  {q:'Levantar una pared es una tarea de ___.',a:'manos'},
-  {q:'Convencer y responder son tareas de estar con ___.',a:'alguien'},
-  {q:'Ningún oficio desaparece ___.',a:'entero'},
-  {q:'Se cuentan tareas, no ___.',a:'horas'},
-  {q:'Sumar y ordenar ya lo hacía una computadora ___.',a:'normal'},
-  {q:'Ponerle nombre a algo por su ___ con los ejemplos.',a:'parecido'},
-  {q:'Con datos medidos, la máquina puede ___ lo que pasará.',a:'predecir'},
-  {q:'Una tarea con ___ no se puede copiar.',a:'escudo'},
-  {q:'Un escudo es hacerlo ___ de alguien.',a:'delante'},
-  {q:'Otro escudo es usar un dato de ___.',a:'aquí'},
-  {q:'Saberse las cosas sirve para ___.',a:'comprobar'},
-  {q:'Lo que entregás lo ___ vos.',a:'firmás'},
-  {q:'La pregunta buena es de qué tareas está ___.',a:'hecho'}
+  {q:'En el arranque, la familia junta la matrícula vendiendo ___.',a:'pan',acc:['pan'],k:'cp-pan'},
+  {q:'Lo que se decide con la carrera son tres ___ de vida.',a:'años',acc:['años','anos'],k:'cp-anos'},
+  {q:'Se cuentan tareas, no ___.',a:'horas',acc:['horas'],k:'cp-horas'},
+  {q:'Ningún oficio desaparece ___.',a:'entero',acc:['entero','completo'],k:'cp-entero'},
+  {q:'Contestar las preguntas del público en una exposición se hace ___ de todos.',a:'delante',acc:['delante','frente'],k:'cp-delante'},
+  {q:'Una tarea que pide un dato de tu ___ no te la entrega hecha una máquina.',a:'barrio',acc:['barrio','casa','comunidad'],k:'cp-barrio'},
+  {q:'Saberse las cosas sirve para ___ lo que te dicen.',a:'comprobar',acc:['comprobar'],k:'cp-comprobar'},
+  {q:'Lo que entregás con tu nombre lo ___ vos.',a:'respondés',acc:['respondés','respondes','firmás','firmas'],k:'cp-respondes'},
+  {q:'La pregunta buena es de qué tareas está ___ ese oficio.',a:'hecho',acc:['hecho'],k:'cp-hecho'},
+  {q:'La máquina no puede darse cuenta de que un niño no ___.',a:'desayunó',acc:['desayunó','desayuno','comió'],k:'cp-desayuno'}
 ];
 const evalPRBank=[
-  {term:'Tarea de papel',def:'Escribir, copiar, sumar, ordenar y buscar'},
-  {term:'Tarea de mirar',def:'Mirar algo y decir qué es o qué tiene'},
-  {term:'Tarea de manos',def:'Hacerlo con el cuerpo, en un sitio'},
-  {term:'Tarea de estar con alguien',def:'Convencer, darse cuenta y responder por lo hecho'},
-  {term:'Oficio',def:'Un montón de tareas distintas'},
-  {term:'Parecido',def:'Ponerle nombre a algo por lo que se parece'},
-  {term:'Predecir',def:'Decir lo que pasará con datos que alguien midió'},
-  {term:'Texto generado',def:'Un escrito que suena seguro y a veces inventa'},
-  {term:'Voz fabricada',def:'Una voz hecha con unos segundos de audio'},
-  {term:'Refuerzo',def:'Mejorar a fuerza de intentos, sin que le digan cómo'},
-  {term:'La cuenta de siempre',def:'Lo que una computadora normal ya hacía antes'},
-  {term:'Escudo',def:'Lo que hace que una tarea no se pueda copiar'},
-  {term:'Delante de alguien',def:'Explicarlo en voz alta y contestar una pregunta'},
-  {term:'Dato de aquí',def:'Algo de tu casa o de tu barrio que nadie escribió'},
-  {term:'Conteo de tareas',def:'Cuenta tareas, nunca horas de trabajo'},
-  {term:'La pregunta buena',def:'¿De qué tareas está hecho ese oficio?'}
+  {term:'Tarea de papel',def:'Escribir, copiar, sumar, ordenar y buscar',k:'pr-papel'},
+  {term:'Tarea de mirar',def:'Mirar algo y decir qué es o qué tiene',k:'pr-mirar'},
+  {term:'Tarea de manos',def:'Hacerlo con el cuerpo, en un sitio',k:'pr-manos'},
+  {term:'Tarea de estar con alguien',def:'Convencer, darse cuenta y responder por lo hecho',k:'pr-gente'},
+  {term:'Parecido',def:'Ponerle nombre a algo por lo que se parece',k:'pr-parecido'},
+  {term:'Predecir',def:'Decir lo que pasará con datos que alguien midió',k:'pr-predecir'},
+  {term:'Voz fabricada',def:'Una voz hecha con unos segundos de audio',k:'pr-voz'},
+  {term:'Refuerzo',def:'Mejorar a fuerza de intentos, sin que le digan cómo',k:'pr-refuerzo'},
+  {term:'La cuenta de siempre',def:'Lo que una computadora normal ya hacía antes',k:'pr-cuenta'},
+  {term:'Escudo',def:'Lo que hace que una tarea no se pueda copiar',k:'pr-escudo'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -627,12 +600,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Katy termina noveno. Le dicen que estudie computación y también que no estudie eso. Nadie le contó de qué tareas está hecho ese trabajo.'},
-  {txt:'A la señorita Lesly el programa le contesta el correo de siempre. En la dirección dicen que sobra medio puesto. Nadie miró sus otras tareas.'},
-  {txt:'A don Beto le compraron un programa que suma las facturas. Ahora quieren que también decida a quién se le fía.'},
-  {txt:'Un colegio deja de mandar tareas escritas porque la máquina las hace. No puso otras tareas en su lugar.'},
-  {txt:'A la enfermera Sandra le ponen un programa que marca lo raro en las radiografías. Le dicen que ya no hace falta que mire.'},
-  {txt:'Don Gerardo oye que los buses se van a manejar solos. Su ruta es de tierra y con lluvia. Nadie midió esa calle.'}
+  {k:'ca-lesly',txt:'A la señorita Lesly el programa le contesta el correo de siempre. En la dirección dicen que sobra medio puesto. Nadie miró sus otras tareas.'},
+  {k:'ca-sandra',txt:'A la enfermera Sandra le ponen un programa que marca lo raro en las radiografías. Le dicen que ya no hace falta que mire.'},
 ];
 const critCaseQuestions=[
   '1. ¿De qué tareas está hecho ese oficio? Escribí tres.',
@@ -649,69 +618,24 @@ const critCaseGuides=[
   'Se valora que la pregunta la pueda contestar otra persona. «¿Qué va a pasar?» no vale.'
 ];
 const critErrorBank=[
-  {txt:'"La máquina va a acabar con el oficio de maestra."',
-   g1:'Se lleva tareas, no oficios. A Delmy le quita planillas y promedios.',
-   g2:'No le quita darse cuenta de que un niño no desayunó.'},
-  {txt:'"Lo de manos también se lo lleva, es cuestión de tiempo."',
-   g1:'De las tareas de manos se lleva muy poca cosa.',
-   g2:'Levantar la pared y doblar el hierro se hacen en el terreno.'},
-  {txt:'"Ordenar una lista ya es Inteligencia Artificial."',
-   g1:'Eso lo hacía una computadora normal desde mucho antes.',
-   g2:'Quien lo vende como nuevo te vende humo de hace sesenta años.'},
-  {txt:'"Al albañil le queda la mitad del día libre."',
-   g1:'Se cuentan tareas, no horas. Perdió dos tareas cortas.',
-   g2:'Las que le quedan son las que se llevan el día entero.'},
-  {txt:'"Con la máquina ya no hace falta estudiar nada."',
-   g1:'Si no sabés nada, no cazás el dato que te inventa.',
-   g2:'Lo que hay que saberse es lo que sirve para comprobar.'},
-  {txt:'"Cualquier tarea de la escuela la entrega una máquina."',
-   g1:'Las que llevan escudo, no. Tu patio no lo puede medir.',
-   g2:'A tu vecina tampoco la puede ir a entrevistar.'}
+  {k:'er-cuenta',txt:'"Ordenar una lista ya es Inteligencia Artificial."',g1:'Eso lo hacía una computadora normal desde mucho antes.',g2:'Quien lo vende como nuevo te vende humo de hace sesenta años.'},
+  {k:'er-horas',txt:'"Al albañil le queda la mitad del día libre."',g1:'Se cuentan tareas, no horas. Perdió dos tareas cortas.',g2:'Las que le quedan son las que se llevan el día entero.'},
 ];
 const critDecisionBank=[
-  'Katy elige carrera el lunes. ¿Mirar cuál suena mejor, o partir el oficio en tareas?',
   'A tu tío le ofrecen un programa para sus cuentas. ¿Firmar, o mirar qué tareas le quita?',
-  'El maestro manda un resumen para la casa. ¿Copiarlo, o pedirle una tarea con escudo?',
-  'Un vecino dice que su oficio se acaba. ¿Darle la razón, o escribir sus tareas una por una?'
 ];
 const critDecisionGuide='Las cuatro cambian una frase suelta por tareas que se pueden mirar. Un oficio se parte en tareas antes de elegirlo. Un programa se mira por lo que quita. Una tarea con escudo se pide, no se espera.';
 const critCompareBank=[
-  {a:'Un oficio.',b:'Una tarea.',
-   ga:'Es un montón de tareas distintas.',
-   gb:'Es una sola cosa que se hace.',
-   gr:'La máquina se lleva tareas, nunca el oficio entero.'},
-  {a:'Una tarea de papel.',b:'Una tarea de manos.',
-   ga:'Escribir, copiar, sumar y ordenar. Casi toda se va.',
-   gb:'Se hace con el cuerpo, en un sitio. Casi no se va.',
-   gr:'Por eso hay que mirar de qué tareas está hecho el oficio.'},
-  {a:'Sumar una lista.',b:'Decidir a quién se le fía.',
-   ga:'Es una cuenta de siempre: la máquina no falla.',
-   gb:'Hay que conocer a esa persona y responder después.',
-   gr:'Una se va; la otra sigue siendo de don Beto.'},
-  {a:'Un resumen para la casa.',b:'Medir tu patio.',
-   ga:'La máquina lo entrega hecho y bien.',
-   gb:'Nadie midió tu patio: los números los ponés vos.',
-   gr:'La segunda lleva escudo; la primera, ninguno.'},
-  {a:'Mirar una radiografía.',b:'Decirle a una madre que hay que viajar.',
-   ga:'Marcar lo raro se lo lleva el parecido.',
-   gb:'Hay que decirlo de una forma que ella pueda oír.',
-   gr:'A Sandra le quitan una tarea y le queda la otra.'}
+  {k:'co-oficio',a:'Un oficio.',b:'Una tarea.',ga:'Es un montón de tareas distintas.',gb:'Es una sola cosa que se hace.',gr:'La máquina se lleva tareas, nunca el oficio entero.'},
 ];
 const critCauseBank=[
-  {cause:'Casi todas sus tareas eran de papel.',guide:'Por eso su oficio es de los que más cambian de forma.'},
-  {cause:'Nadie midió la lluvia en su ladera.',guide:'Por eso la predicción del valle no le sirve a don Chele.'},
-  {cause:'El colegio quitó la tarea escrita y no puso otra.',guide:'Por eso llegaron al examen sin haber escrito un párrafo.'},
-  {cause:'La tarea pedía un dato de su propio barrio.',guide:'Por eso la máquina no pudo entregarla hecha.'},
-  {cause:'Le contaron las tareas que perdió, no las horas.',guide:'Por eso parecía que le quedaba medio día libre.'},
-  {cause:'Le vendieron como nuevo lo que hace una cuenta de siempre.',guide:'Por eso pagó de más por sumar y ordenar una lista.'}
+  {k:'ca-ladera',cause:'Nadie midió la lluvia en su ladera.',guide:'Por eso la predicción del valle no le sirve a don Chele.'},
+  {k:'ca-barrio',cause:'La tarea pedía un dato de su propio barrio.',guide:'Por eso la máquina no pudo entregarla hecha.'},
 ];
 const critEffectBank=[
-  {effect:'Tres años de estudio en un oficio que nadie miró por dentro.',guide:'Porque eligió por lo que decía el grupo, sin partirlo en tareas.'},
-  {effect:'Media milpa perdida y la semilla de la siguiente siembra.',guide:'Porque sembró con una predicción que no medía su ladera.'},
-  {effect:'Cuarenta y tres tareas iguales, escritas por la misma máquina.',guide:'Porque la tarea que mandaron no llevaba ningún escudo.'},
-  {effect:'Un dato inventado entregado con el nombre del alumno.',guide:'Porque lo que la máquina escribe lo firma quien lo entrega.'},
-  {effect:'La señorita Lesly con la mitad del correo hecho a las nueve.',guide:'Porque contestar lo de siempre es una tarea de papel.'},
-  {effect:'Un padre enojado atendido por una persona, no por un programa.',guide:'Porque bajarle el enojo a alguien no es una tarea que se delegue.'}
+  {k:'ef-katy',effect:'Tres años de estudio en un oficio que nadie miró por dentro.',guide:'Porque eligió por lo que decía el grupo, sin partirlo en tareas.'},
+  {k:'ef-padre',effect:'Un padre enojado atendido por una persona, no por un programa.',guide:'Porque bajarle el enojo a alguien no es una tarea que se delegue.'},
+  {k:'ef-dato',effect:'Un dato inventado entregado con el nombre del alumno.',guide:'Porque lo que la máquina escribe lo firma quien lo entrega.'},
 ];
 function genEvalCrit(){
   sfx('click');
