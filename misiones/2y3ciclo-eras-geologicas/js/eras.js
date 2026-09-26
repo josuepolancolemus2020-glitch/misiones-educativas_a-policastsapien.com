@@ -978,73 +978,58 @@ let _sopaResizeTimer = null;
 window.addEventListener('resize', () => { clearTimeout(_sopaResizeTimer); _sopaResizeTimer = setTimeout(() => { if (document.getElementById('s-sopa').classList.contains('active')) _renderSopaGrid(); }, 200); });
 
 // ===================== EVALUACIÓN FINAL =====================
-const evalTFBank = [
-    { q: 'La era Precámbrica es la más larga de la historia de la Tierra.', a: true },
-    { q: 'Los dinosaurios vivieron en la era Cuaternaria.', a: false },
-    { q: 'Pangea fue un supercontinente que existía en la era Mesozoica.', a: true },
-    { q: 'Los trilobites son fósiles guía de la era Mesozoica.', a: false },
-    { q: 'El ser humano apareció en la era Cuaternaria.', a: true },
-    { q: 'La vida en los mares comenzó en la era Paleozoica.', a: true },
-    { q: 'Las glaciaciones ocurrieron en la era Precámbrica.', a: false },
-    { q: 'La extinción del Cretácico fue causada por un meteorito.', a: true },
-    { q: 'Los mamíferos gigantes dominaron la era Cenozoica.', a: true },
-    { q: 'Las primeras bacterias surgieron en la era Paleozoica.', a: false },
-    { q: 'La era Paleozoica se conoce como «Era de los Dinosaurios».', a: false },
-    { q: 'Las primeras aves aparecieron en la era Mesozoica.', a: true },
-    { q: 'La Tierra tiene aproximadamente 4,600 millones de años.', a: true },
-    { q: 'La Edad de Hielo ocurrió en la era Cuaternaria.', a: true },
-    { q: 'La diversificación de las aves ocurrió en la era Cenozoica.', a: true },
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+const evalTFBank=[
+  {q:'La primera etapa de la Tierra duró la mayor parte de su historia.',a:true,k:'tf-primera-larga'},
+  {q:'Durante la primera etapa, la Tierra era una gran bola de volcanes y lava.',a:true,k:'tf-volcanes'},
+  {q:'Los seres humanos convivieron con los mamuts.',a:true,k:'tf-mamuts'},
+  {q:'Los dinosaurios y los seres humanos vivieron al mismo tiempo.',a:false,k:'tf-dinos-humanos'},
+  {q:'Los anfibios aparecieron en la misma era que los trilobites.',a:true,k:'tf-anfibios'},
+  {q:'Hubo seres vivos en el mar mucho antes que en tierra firme.',a:true,k:'tf-mar-antes'},
+  {q:'Hace 540 millones de años la vida se llenó de animales en los mares.',a:true,k:'tf-540'},
+  {q:'Las primeras aves aparecieron cuando todavía había dinosaurios.',a:true,k:'tf-aves'},
+  {q:'El ser humano apareció hace muy poco, comparado con la edad de la Tierra.',a:true,k:'tf-humano-reciente'},
+  {q:'Las aves aparecieron antes que las bacterias.',a:false,k:'tf-aves-bacterias'}
 ];
-const evalMCBank = [
-    { q: '¿Cuál es la era más larga?', o: ['a) Paleozoica', 'b) Mesozoica', 'c) Precámbrica', 'd) Cuaternaria'], a: 2 },
-    { q: '¿En qué era vivieron los dinosaurios?', o: ['a) Precámbrica', 'b) Mesozoica', 'c) Paleozoica', 'd) Cenozoica'], a: 1 },
-    { q: '¿Qué fue Pangea?', o: ['a) Un océano', 'b) Un supercontinente', 'c) Un fósil', 'd) Una glaciación'], a: 1 },
-    { q: 'Los trilobites son fósiles de la era:', o: ['a) Cenozoica', 'b) Mesozoica', 'c) Paleozoica', 'd) Cuaternaria'], a: 2 },
-    { q: '¿Qué causó la extinción de los dinosaurios?', o: ['a) Meteorito', 'b) Glaciación', 'c) Terremoto', 'd) Volcán'], a: 0 },
-    { q: '¿En qué era apareció el Homo sapiens?', o: ['a) Mesozoica', 'b) Cenozoica', 'c) Cuaternaria', 'd) Paleozoica'], a: 2 },
-    { q: '¿Qué era se caracteriza por mamíferos gigantes?', o: ['a) Paleozoica', 'b) Precámbrica', 'c) Cuaternaria', 'd) Cenozoica'], a: 3 },
-    { q: '¿Qué evento caracteriza la era Cuaternaria?', o: ['a) Edad de Hielo', 'b) Dinosaurios', 'c) Formación Tierra', 'd) Vida en mares'], a: 0 },
-    { q: '¿En qué era aparecieron los primeros vertebrados?', o: ['a) Precámbrica', 'b) Mesozoica', 'c) Cuaternaria', 'd) Paleozoica'], a: 3 },
-    { q: '¿Qué se formó durante la era Precámbrica?', o: ['a) La Tierra y océanos', 'b) Dinosaurios', 'c) Civilizaciones', 'd) Mamíferos'], a: 0 },
-    { q: 'La mayor extinción masiva ocurrió al final de:', o: ['a) Cenozoica', 'b) Paleozoica', 'c) Mesozoica', 'd) Precámbrica'], a: 1 },
-    { q: '¿Qué era se conoce como «Vida Antigua»?', o: ['a) Mesozoica', 'b) Cenozoica', 'c) Cuaternaria', 'd) Paleozoica'], a: 3 },
-    { q: 'Las primeras aves aparecieron en:', o: ['a) Mesozoica', 'b) Paleozoica', 'c) Precámbrica', 'd) Cenozoica'], a: 0 },
-    { q: '¿Cuántas eras geológicas principales hay?', o: ['a) 3', 'b) 4', 'c) 5', 'd) 6'], a: 2 },
-    { q: 'La diversificación de aves ocurrió en:', o: ['a) Paleozoica', 'b) Cenozoica', 'c) Mesozoica', 'd) Precámbrica'], a: 1 },
+const evalMCBank=[
+  {q:'¿En cuántas eras grandes se cuenta la historia de la Tierra en esta misión?',o:['a) 3','b) 4','c) 5','d) 6'],a:2,k:'mc-cinco'},
+  {q:'El nombre del supercontinente viene del griego. ¿Qué significa?',o:['a) tierra del sur','b) toda la Tierra','c) mar grande','d) montaña de fuego'],a:1,k:'mc-significa'},
+  {q:'En la primera etapa de la Tierra, ¿qué se formaba entre erupciones de lava?',o:['a) la Luna','b) el Sol','c) la corteza','d) los polos'],a:2,k:'mc-corteza'},
+  {q:'¿Qué prueba un caracol de mar convertido en piedra en lo alto de una montaña?',o:['a) que ese cerro estuvo bajo el agua','b) que alguien lo tiró ahí','c) que llovió mucho','d) que era de plástico'],a:0,k:'mc-caracol'},
+  {q:'¿Qué seres vivían en los primeros océanos?',o:['a) ballenas','b) dinosaurios','c) cangrejos','d) bacterias simples'],a:3,k:'mc-bacterias'},
+  {q:'¿Qué animales ocuparon el lugar de los dinosaurios cuando estos desaparecieron?',o:['a) los insectos','b) las algas','c) los mamíferos','d) las bacterias'],a:2,k:'mc-mamiferos'},
+  {q:'¿Cómo se llamaba la parte sur del supercontinente?',o:['a) Atlántida','b) Gondwana','c) Eurasia','d) Mesoamérica'],a:1,k:'mc-gondwana'},
+  {q:'¿Cuál fue la peor desaparición de especies de la historia?',o:['a) la del Pérmico','b) la del Cretácico','c) la de hace cien años','d) la del huracán Mitch'],a:0,k:'mc-permico'},
+  {q:'¿Hace cuántos millones de años empezó la era de los dinosaurios?',o:['a) 100','b) 250','c) 400','d) 10'],a:1,k:'mc-250'},
+  {q:'Ordena de más antiguo a más reciente:',o:['a) dinosaurios → bacterias → ser humano','b) ser humano → dinosaurios → bacterias','c) bacterias → ser humano → dinosaurios','d) bacterias → dinosaurios → ser humano'],a:3,k:'mc-orden'}
 ];
-const evalCPBank = [
-    { q: 'La era más larga es la ___.', a: 'Precámbrica' },
-    { q: 'Los dinosaurios vivieron en la era ___.', a: 'Mesozoica' },
-    { q: 'El supercontinente se llamaba ___.', a: 'Pangea' },
-    { q: 'Los trilobites son fósiles de la era ___.', a: 'Paleozoica' },
-    { q: 'El ser humano apareció en la era ___.', a: 'Cuaternaria' },
-    { q: 'La ___ de Hielo ocurrió en la era Cuaternaria.', a: 'Edad' },
-    { q: 'Los mamíferos ___ dominaron la era Cenozoica.', a: 'gigantes' },
-    { q: 'Los primeros ___ aparecieron en la era Paleozoica.', a: 'vertebrados' },
-    { q: 'Un ___ causó la extinción de los dinosaurios.', a: 'meteorito' },
-    { q: 'Las primeras ___ surgieron en la era Precámbrica.', a: 'bacterias' },
-    { q: 'La era ___ se conoce como «Vida Antigua».', a: 'Paleozoica' },
-    { q: 'Las primeras ___ aparecieron en la era Mesozoica.', a: 'aves' },
-    { q: 'La ___ de las aves ocurrió en la era Cenozoica.', a: 'diversificación' },
-    { q: 'La Tierra tiene aproximadamente ___ millones de años.', a: '4,600' },
-    { q: 'La era ___ es en la que vivimos actualmente.', a: 'Cuaternaria' },
+const evalCPBank=[
+  {q:'La Tierra tiene unos ___ millones de años.',a:'4,600',acc:['4,600','4600','4.600'],k:'cp-4600'},
+  {q:'La parte norte del supercontinente se llamaba ___.',a:'Laurasia',acc:['Laurasia'],k:'cp-laurasia'},
+  {q:'Los primeros animales con columna vertebral fueron ___ primitivos.',a:'peces',acc:['peces'],k:'cp-peces'},
+  {q:'Los ___ eran animales de mar que hoy se encuentran convertidos en piedra en rocas muy antiguas.',a:'trilobites',acc:['trilobites'],k:'cp-trilobites'},
+  {q:'El único supercontinente se partió poco a poco en los ___ de hoy.',a:'continentes',acc:['continentes'],k:'cp-continentes'},
+  {q:'La época de mucho frío de la última era se llama la Edad de ___.',a:'Hielo',acc:['Hielo'],k:'cp-hielo'},
+  {q:'El ser humano apareció hace unos ___ millones de años.',a:'2.6',acc:['2.6','2,6'],k:'cp-26'},
+  {q:'La atmósfera de la primera etapa de la Tierra no tenía ___.',a:'oxígeno',acc:['oxígeno'],k:'cp-oxigeno'},
+  {q:'Los dinosaurios desaparecieron hace unos ___ millones de años.',a:'66',acc:['66','sesenta y seis'],k:'cp-66'},
+  {q:'El nombre científico del ser humano es Homo ___.',a:'sapiens',acc:['sapiens'],k:'cp-sapiens'}
 ];
-const evalPRBank = [
-    { term: 'Era Precámbrica', def: 'Formación de la Tierra y primeras bacterias' },
-    { term: 'Era Paleozoica', def: 'Vida en los mares y primeros vertebrados' },
-    { term: 'Era Mesozoica', def: 'Era de los dinosaurios y primeras aves' },
-    { term: 'Era Cenozoica', def: 'Mamíferos gigantes y diversificación de aves' },
-    { term: 'Era Cuaternaria', def: 'Edad de Hielo y aparición del ser humano' },
-    { term: 'Fósil', def: 'Resto de ser vivo conservado en roca' },
-    { term: 'Pangea', def: 'Supercontinente que se fragmentó en el Mesozoico' },
-    { term: 'Extinción masiva', def: 'Desaparición de muchas especies a la vez' },
-    { term: 'Trilobite', def: 'Artrópodo fósil guía del Paleozoico' },
-    { term: 'Glaciación', def: 'Período de frío extremo con capas de hielo' },
-    { term: 'Homo sapiens', def: 'Especie humana de la era Cuaternaria' },
-    { term: 'Mamut', def: 'Mamífero gigante de la era Cenozoica' },
-    { term: 'Meteorito', def: 'Causó la extinción de los dinosaurios' },
-    { term: 'Primeros vertebrados', def: 'Peces primitivos de la era Paleozoica' },
-    { term: 'Diversificación de aves', def: 'Evento de la era Cenozoica' },
+const evalPRBank=[
+  {term:'Era Precámbrica',def:'La más larga: volcanes y los primeros seres',k:'pr-precambrica'},
+  {term:'Era Paleozoica',def:'Vida en los mares y primeros vertebrados',k:'pr-paleozoica'},
+  {term:'Era Mesozoica',def:'La de los dinosaurios',k:'pr-mesozoica'},
+  {term:'Era Cenozoica',def:'Los mamíferos gigantes',k:'pr-cenozoica'},
+  {term:'Era Cuaternaria',def:'La del ser humano',k:'pr-cuaternaria'},
+  {term:'Pangea',def:'El supercontinente',k:'pr-pangea'},
+  {term:'Fósil',def:'Resto de un ser vivo guardado en la roca',k:'pr-fosil'},
+  {term:'Meteorito',def:'Roca del espacio que acabó con los dinosaurios',k:'pr-meteorito'},
+  {term:'Glaciación',def:'Tiempo de frío en que el suelo se cubre de capas heladas',k:'pr-glaciacion'},
+  {term:'Extinción masiva',def:'Muchas especies desaparecen a la vez',k:'pr-extincion'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
