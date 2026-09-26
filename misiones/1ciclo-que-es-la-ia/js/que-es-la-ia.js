@@ -384,78 +384,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La Inteligencia Artificial son programas de computadora.',a:true},
-  {q:'Una máquina está viva igual que un perro.',a:false},
-  {q:'Para aprender, una máquina necesita muchos ejemplos.',a:true},
-  {q:'La computadora siente alegría cuando gana.',a:false},
-  {q:'Una instrucción es una orden que la máquina obedece.',a:true},
-  {q:'Con pocos ejemplos, la máquina se equivoca más.',a:true},
-  {q:'La Inteligencia Artificial es magia.',a:false},
-  {q:'Al dictar un mensaje, una máquina convierte la voz en letras.',a:true},
-  {q:'Está bien darle a la máquina la dirección de mi casa.',a:false},
-  {q:'Un robot se enciende y se apaga; un ser vivo no.',a:true},
-  {q:'Las máquinas que aprenden las hicieron personas.',a:true},
-  {q:'Si la máquina dice algo raro, le aviso a una persona grande.',a:true},
-  {q:'Una máquina nunca se equivoca.',a:false},
-  {q:'La cámara encuentra caras porque vio muchísimas fotos.',a:true},
-  {q:'Todo lo que dice una máquina es cierto.',a:false},
-  {q:'Un ejemplo es cada cosa que le mostramos para que aprenda.',a:true},
-  {q:'Un pino y un zanate son máquinas.',a:false},
-  {q:'La máquina puede quedarse con lo que le escribimos.',a:true},
-  {q:'Una calculadora come y duerme.',a:false},
-  {q:'Un dato es un pedacito de información que se guarda.',a:true}
+  {q:'Selvin copió en su tarea lo que le dijo el teléfono.',a:true,k:'tf-copio'},
+  {q:'La máquina piensa como tú.',a:false,k:'tf-piensa'},
+  {q:'La máquina se cansa y se enoja.',a:false,k:'tf-cansa'},
+  {q:'La máquina sabe todo lo que le preguntes.',a:false,k:'tf-sabe-todo'},
+  {q:'Una máquina come y duerme.',a:false,k:'tf-come'},
+  {q:'La ruta más rápida sale de cuánto tardaron otros por ese camino.',a:true,k:'tf-ruta'},
+  {q:'La música que te recomienda sale de gente que oye parecido a ti.',a:true,k:'tf-musica'},
+  {q:'Lo que se manda a internet puede quedarse.',a:true,k:'tf-internet'},
+  {q:'Una máquina se compone o se bota.',a:true,k:'tf-bota'},
+  {q:'Una foto de otros niños se puede mandar sin preguntarles.',a:false,k:'tf-foto-otros'}
 ];
 const evalMCBank=[
-  {q:'¿Qué es la Inteligencia Artificial?',o:['Programas que hacen cosas de personas','Un robot dentro del teléfono','Una persona dentro de la computadora','Un juego de video'],a:0},
-  {q:'¿Cuál de estos está VIVO?',o:['Un teléfono','Un pino','Una calculadora','Un robot'],a:1},
-  {q:'¿Cómo aprende una máquina a reconocer una cara?',o:['Nació sabiendo','Alguien se la dibujó','Viendo muchísimas fotos de caras','Porque tiene ojos'],a:2},
-  {q:'Si a una máquina le enseñamos POCOS ejemplos…',o:['Aprende más rápido','Aprende igual de bien','No pasa nada','Se equivoca más'],a:3},
-  {q:'¿La máquina siente alegría o tristeza?',o:['No: es un aparato y no siente nada','Sí, cuando gana','Solo sin batería','Sí, como un perro'],a:0},
-  {q:'Una instrucción es…',o:['Un dibujo','Una orden que la máquina obedece','Un premio','Una foto'],a:1},
-  {q:'Le dictas un mensaje y el teléfono lo escribe. ¿Qué pasó?',o:['Te leyó la mente','Hay alguien escuchando','Una máquina convirtió tu voz en letras','Fue magia'],a:2},
-  {q:'¿Qué NO se le cuenta a una máquina?',o:['Mi color favorito','Qué es un triángulo','Una pregunta de la tarea','La dirección de mi casa'],a:3},
-  {q:'La máquina te dio un dato y no estás seguro. ¿Qué haces?',o:['Lo busco en el libro o le pregunto a mi maestra','Le creo, porque es computadora','Se lo cuento a todos','Le pregunto lo mismo otra vez'],a:0},
-  {q:'¿Qué es un ejemplo, en Inteligencia Artificial?',o:['Un premio para la máquina','Lo que le mostramos para que aprenda','Un error de la computadora','Un tipo de teléfono'],a:1},
-  {q:'¿Por qué se dice que la Inteligencia Artificial NO es magia?',o:['Porque no funciona','Porque solo sirve de noche','Porque son datos y matemática, y alguien la hizo','Porque es muy cara'],a:2},
-  {q:'¿Qué hace que algo sea un ser vivo?',o:['Que tenga colores','Que se encienda','Que haga ruido','Que nazca, crezca, se alimente y muera'],a:3},
-  {q:'¿Quién elige los ejemplos con que aprende una máquina?',o:['Nadie, los busca sola','Personas','El sol','La batería'],a:1},
-  {q:'Si algo en la pantalla te asusta, ¿qué haces?',o:['Le aviso a una persona grande','Lo comparto con mis amigos','Apago todo y no digo nada','Le contesto a la máquina'],a:0},
-  {q:'¿Qué SÍ hace una máquina con Inteligencia Artificial?',o:['Sentir cariño','Tener hambre','Traducir un letrero','Crecer'],a:2}
+  {q:'¿Por qué el teléfono se equivocó con el animal de Selvin?',o:['Porque tenía hambre','Le puso el nombre de lo que más se le parecía','Porque Selvin le mintió','Porque es mágico'],a:1,k:'mc-parecia'},
+  {q:'¿Cuál de estos está VIVO?',o:['Un teléfono','Un robot','Un zanate','Una calculadora'],a:2,k:'mc-zanate'},
+  {q:'Le decimos a la máquina paso por paso qué hacer. ¿Qué pasa?',o:['Obedece y no aprende nada','Aprende sola','Se enoja','Se inventa otro paso'],a:0,k:'mc-pasos'},
+  {q:'Una máquina aprendió solo con nances chiquitos. Le llega un nance grande. ¿Qué pasa?',o:['Lo reconoce seguro','Se apaga','Pide más batería','Se puede equivocar: nunca vio uno así'],a:3,k:'mc-nance-grande'},
+  {q:'¿Qué NO se le cuenta a una máquina?',o:['Mi color favorito','Qué es un triángulo','Cómo se escribe una palabra','El teléfono de mi mamá'],a:3,k:'mc-telefono-mama'},
+  {q:'Una foto rara te asusta en la pantalla. ¿Qué haces?',o:['La comparto','Le aviso a una persona grande','Le contesto','Apago y no digo nada'],a:1,k:'mc-asusta'},
+  {q:'¿Quién elige las fotos con que aprende una máquina?',o:['Nadie','La batería','Personas','El sol'],a:2,k:'mc-quien-elige'},
+  {q:'¿Cómo aprendió la cámara qué forma tiene una cara?',o:['Con muchísimas fotos','Con una regla','Porque tiene ojos','Nació sabiendo'],a:0,k:'mc-camara'},
+  {q:'Hace años, la gente le contaba su vida a un programa. ¿Qué le pasaba al programa?',o:['Se ponía triste','No entendía nada','Se cansaba','Lloraba'],a:1,k:'mc-programa'},
+  {q:'Alguien dibujó la cruz movida un poquito. ¿Qué dice la máquina de los puntitos?',o:['Que es una cruz','Que es un aro','Que es una raya','Que no sabe'],a:2,k:'mc-raya'}
 ];
 const evalCPBank=[
-  {q:'Los programas que hacen cosas de personas se llaman Inteligencia ___.',a:'Artificial'},
-  {q:'Una máquina no está ___.',a:'viva'},
-  {q:'Para aprender, la máquina necesita muchos ___.',a:'ejemplos'},
-  {q:'Una orden clara que la máquina obedece se llama ___.',a:'instrucción'},
-  {q:'La computadora no ___ nada: es un aparato.',a:'siente'},
-  {q:'Con pocos ejemplos, la máquina se ___ más.',a:'equivoca'},
-  {q:'La Inteligencia Artificial no es ___.',a:'magia'},
-  {q:'Si algo me asusta, le aviso a una ___ grande.',a:'persona'},
-  {q:'Un pedacito de información que se guarda es un ___.',a:'dato'},
-  {q:'Un perro está vivo; un robot es una ___.',a:'máquina'},
-  {q:'La cámara encuentra ___ porque vio muchísimas fotos.',a:'caras'},
-  {q:'La dirección de mi casa ___ se le cuenta a la máquina.',a:'no'},
-  {q:'Antes de creerle un dato a la máquina, hay que ___.',a:'comprobar'},
-  {q:'Las máquinas que aprenden las hicieron ___.',a:'personas'},
-  {q:'Un ser vivo nace, crece, se alimenta y ___.',a:'muere'}
+  {q:'Selvin le tomó la foto al ___ de su abuelo.',a:'chivo',acc:['chivo'],k:'cp-chivo'},
+  {q:'El teléfono le contestó que era un ___.',a:'perro',acc:['perro'],k:'cp-perro'},
+  {q:'La tarea le salió mala y la repitió de ___.',a:'noche',acc:['noche'],k:'cp-noche'},
+  {q:'Moverse no es estar vivo: un ___ también se mueve.',a:'ventilador',acc:['ventilador'],k:'cp-ventilador'},
+  {q:'Hace ___ años ya había un programa que conversaba.',a:'sesenta',acc:['sesenta','60'],k:'cp-sesenta'},
+  {q:'En la actividad, la máquina aprende a separar nances de ___.',a:'anonas',acc:['anonas','anona'],k:'cp-anonas'},
+  {q:'La máquina de los puntitos no ve dibujos: cuenta ___.',a:'casillas',acc:['casillas','cuadritos'],k:'cp-casillas'},
+  {q:'Para entender tu dictado, la máquina oyó millones de ___.',a:'voces',acc:['voces'],k:'cp-voces'},
+  {q:'Con fotos de hojas sanas y enfermas aprende a reconocer una ___.',a:'plaga',acc:['plaga','enfermedad'],k:'cp-plaga'},
+  {q:'El teclado que adivina la palabra es un modelo de ___ chiquito.',a:'lenguaje',acc:['lenguaje'],k:'cp-lenguaje'}
 ];
 const evalPRBank=[
-  {term:'Inteligencia Artificial',def:'Programas que hacen cosas de personas'},
-  {term:'Máquina',def:'Una cosa hecha por personas para hacer un trabajo'},
-  {term:'Instrucción',def:'Una orden clara que la máquina obedece'},
-  {term:'Ejemplo',def:'Lo que le mostramos para que aprenda'},
-  {term:'Dato',def:'Un pedacito de información que se puede guardar'},
-  {term:'Ser vivo',def:'Nace, crece, se alimenta y muere'},
-  {term:'Robot',def:'Una máquina que se mueve y hace un trabajo'},
-  {term:'Cámara',def:'La parte del teléfono que toma las fotos'},
-  {term:'Voz',def:'Lo que la máquina convierte en letras cuando dictas'},
-  {term:'Traducir',def:'Pasar un texto de un idioma a otro'},
-  {term:'Equivocarse',def:'Lo que le pasa con pocos ejemplos'},
-  {term:'Comprobar',def:'Buscar el dato en el libro o con quien lo sabe'},
-  {term:'Privado',def:'Lo que es tuyo y de tu familia, y no se comparte'},
-  {term:'Magia',def:'Lo que la Inteligencia Artificial NO es'},
-  {term:'Persona grande',def:'A quien le avisas si algo te asusta'}
+  {term:'Inteligencia Artificial',def:'Programas que hacen tareas de personas',k:'pr-ia'},
+  {term:'Máquina',def:'Aparato hecho para un trabajo: no nace ni muere',k:'pr-maquina'},
+  {term:'Instrucción',def:'Una orden clara que se obedece sin preguntar',k:'pr-instruccion'},
+  {term:'Ejemplo',def:'Una foto, un sonido o una frase que le mostramos para que aprenda',k:'pr-ejemplo'},
+  {term:'Ser vivo',def:'Nace, crece, se alimenta y muere',k:'pr-vivo'},
+  {term:'Dato',def:'Un pedacito de información que se guarda',k:'pr-dato'},
+  {term:'Predecir',def:'Adivinar lo que viene después, por lo que más se repite',k:'pr-predecir'},
+  {term:'Etiqueta',def:'El nombre que una persona le pone a cada ejemplo',k:'pr-etiqueta'},
+  {term:'Comprobar',def:'Buscar el dato en el libro o con quien lo sabe',k:'pr-comprobar'},
+  {term:'Privado',def:'Lo que es tuyo y de tu familia, y no se comparte',k:'pr-privado'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -542,12 +522,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Un compañero dice que su teléfono lo quiere porque le contesta.'},
-  {txt:'Una niña le escribe a un chat la dirección de su casa.'},
-  {txt:'Un niño copia en su tarea un dato de la máquina, sin buscarlo.'},
-  {txt:'Alguien dice que la Inteligencia Artificial es magia y nadie la entiende.'},
-  {txt:'Un compañero le enseñó solo tres fotos de nances y se enoja porque falla.'},
-  {txt:'Un niño sube una foto de todos sus compañeros sin preguntarles.'}
+  {k:'ca-direccion',txt:'Una niña le escribe a un chat la dirección de su casa.'},
+  {k:'ca-foto',txt:'Un niño sube una foto de todos sus compañeros sin preguntarles.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué está pasando aquí?',
@@ -556,68 +532,35 @@ const critCaseQuestions=[
   '4. ¿Cómo se lo explicarías?'
 ];
 const critCaseGuides=[
-  'Vale si reconoce de qué trata: máquina que parece persona, dato privado, dato sin comprobar o pocos ejemplos.',
+  'Vale si reconoce de qué trata: un dato privado o una foto que también es de otros.',
   'Vale si separa lo que la máquina HACE de lo que la gente CREE que hace.',
-  'Cada caso tiene salida: no dar datos de la casa, comprobar en el libro, dar más ejemplos, pedir permiso.',
+  'Cada caso tiene salida: no dar datos de la casa y pedir permiso antes de subir una foto.',
   'Respuesta abierta. Vale si lo explica con respeto y con un ejemplo suyo.'
 ];
 const critErrorBank=[
-  {txt:'"Mi teléfono me quiere porque me contesta."',
-   g1:'Una máquina no siente nada. Contesta porque alguien la programó.',
-   g2:'Contestar como una persona no es entender ni sentir.'},
-  {txt:'"Si la computadora lo dijo, es verdad."',
-   g1:'Las máquinas se equivocan con lo que no estaba en sus ejemplos.',
-   g2:'Un dato se comprueba en el libro o con quien lo sabe.'},
-  {txt:'"La Inteligencia Artificial apareció sola, por magia."',
-   g1:'La hicieron personas, con datos y matemática.',
-   g2:'Alguien la programó y alguien eligió sus ejemplos.'},
-  {txt:'"Con dos o tres ejemplos la máquina ya aprende bien."',
-   g1:'Con pocos ejemplos se equivoca: le falta ver de todo.',
-   g2:'Mientras más ejemplos buenos, mejor reconoce lo que nunca vio.'},
-  {txt:'"Puedo subir la foto de mis compañeros, total no dice sus nombres."',
-   g1:'Esa foto también es de ellos: hay que pedir permiso.',
-   g2:'Lo que se sube puede quedar guardado y ya no se controla.'},
-  {txt:'"Un robot está vivo porque se mueve."',
-   g1:'Moverse no es estar vivo: un ventilador se mueve.',
-   g2:'Lo vivo nace, crece, come y muere. El robot se enciende.'}
+  {k:'er-magia',txt:'"La Inteligencia Artificial apareció sola, por magia."',g1:'La hicieron personas, con datos y matemática.',g2:'Alguien la programó y alguien eligió sus ejemplos.'},
+  {k:'er-siente',txt:'"Mi teléfono me quiere porque me contesta."',g1:'Una máquina no siente nada. Contesta porque alguien la programó.',g2:'Contestar como una persona no es entender ni sentir.'},
 ];
 const critDecisionBank=[
-  'Un chat te pide tu nombre completo y tu escuela. ¿Se los das o no?',
-  '¿Copias el dato que te dio la máquina o lo buscas en tu libro?',
   'Un compañero está asustado por un mensaje raro. ¿No haces caso o lo acompañas donde la maestra?',
-  'Le enseñaste cinco ejemplos a un programa y falla. ¿Lo dejas o le das más?',
-  'Quieres subir una foto donde salen tus compañeros. ¿La subes o les preguntas antes?'
+  '¿Copias el dato que te dio la máquina o lo buscas en tu libro?',
 ];
 /* Va con <br> a propósito: en un teléfono, cinco salidas seguidas en un solo
    párrafo son un muro de texto que el alumno se salta entero. */
-const critDecisionGuide='Vale si cuida a las personas y comprueba el dato.<br>Los datos de la casa no se dan. Un dato se busca en el libro. Un susto se cuenta a una persona grande.<br>Una máquina que falla necesita más ejemplos. Una foto de otro se sube con permiso.';
+const critDecisionGuide='Vale si cuida a las personas y comprueba el dato.<br>Los datos de la casa no se dan. Un dato se busca en el libro. Un susto se cuenta a una persona grande.';
 const critCompareBank=[
-  {a:'Un perro.',b:'Un robot.',
-   ga:'Es un ser vivo: nace, crece, come, siente y muere.',
-   gb:'Es una máquina: la hicieron personas, se enciende y se apaga.',
-   gr:'Los dos se mueven, pero moverse no es estar vivo. Al robot hay que enseñarle todo.'},
-  {a:'Una instrucción.',b:'Un ejemplo.',
-   ga:'Es una orden clara que la máquina obedece.',
-   gb:'Es una cosa que le mostramos para que aprenda sola.',
-   gr:'Con instrucciones le decimos QUÉ hacer, paso por paso. Con ejemplos busca sola lo que se repite.'},
-  {a:'Mi color favorito.',b:'La dirección de mi casa.',
-   ga:'Se lo puedo contar a una máquina sin problema.',
-   gb:'No se lo cuento nunca a una máquina.',
-   gr:'Los dos son datos míos. Uno no le sirve a nadie para hacerme daño; el otro sí.'}
+  {k:'co-instruccion',a:'Una instrucción.',b:'Un ejemplo.',ga:'Es una orden clara que la máquina obedece.',gb:'Es una cosa que le mostramos para que aprenda sola.',gr:'Con instrucciones le decimos QUÉ hacer, paso por paso. Con ejemplos busca sola lo que se repite.'},
 ];
 const critCauseBank=[
-  {cause:'Le enseñamos miles de fotos de caras.',guide:'Por eso encuentra caras en fotos que nunca vio.'},
-  {cause:'Solo le enseñamos tres ejemplos.',guide:'Por eso falla tanto: le faltó ver de todo.'},
-  {cause:'La máquina es un aparato y no tiene sentimientos.',guide:'Por eso no te quiere, aunque te conteste bonito.'},
-  {cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no le damos los datos de nuestra casa.'},
-  {cause:'Las máquinas las hicieron personas, con datos y matemática.',guide:'Por eso no es magia, y por eso se equivoca.'}
+  {k:'ca-caras',cause:'Le enseñamos miles de fotos de caras.',guide:'Por eso encuentra caras en fotos que nunca vio.'},
+  {k:'ca-teclado',cause:'El teclado vio muchísimas frases escritas.',guide:'Por eso adivina la palabra que sigue.'},
+  {k:'ca-nances',cause:'La máquina de las frutas solo vio nances chiquitos.',guide:'Por eso se equivoca con un nance grande: nunca vio uno así.'},
 ];
 const critEffectBank=[
-  {effect:'El teléfono escribe lo que le dictas.',guide:'Porque oyó millones de voces antes de oír la tuya.'},
-  {effect:'La máquina no reconoce un nance.',guide:'Porque nadie le enseñó fotos de nances.'},
-  {effect:'No hay que creerle todo a una máquina.',guide:'Porque contesta igual de segura cuando sabe y cuando falla.'},
-  {effect:'Un robot no se cansa nunca.',guide:'Porque no está vivo: no siente sueño, ni hambre, ni dolor.'},
-  {effect:'Una foto de tus compañeros no se sube sin preguntarles.',guide:'Porque esa foto también es de ellos.'}
+  {k:'ef-voces',effect:'El teléfono escribe lo que le dictas.',guide:'Porque oyó millones de voces antes de oír la tuya.'},
+  {k:'ef-ruta',effect:'La ruta que te marca el teléfono esquiva el tráfico.',guide:'Porque aprendió de cuánto tardaron otros por ese camino.'},
+  {k:'ef-musica',effect:'La música que te sugiere se parece a la que oyes.',guide:'Porque te junta con gente que oye parecido.'},
+  {k:'ef-hoja',effect:'Una hoja enferma de milpa se reconoce en una foto.',guide:'Porque vio fotos de hojas sanas y enfermas, etiquetadas por personas.'},
 ];
 function genEvalCrit(){
   sfx('click');

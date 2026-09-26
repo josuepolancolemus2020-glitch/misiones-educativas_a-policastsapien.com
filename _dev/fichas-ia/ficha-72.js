@@ -9,14 +9,14 @@ const { esc, con, arma, portada, preguntas, clave, fichaConcepto, tablaReglas, t
 const EVAL = [
   { q: '¿Qué es la Inteligencia Artificial?', o: ['Programas que hacen cosas de personas', 'Un robot dentro del teléfono', 'Una persona dentro de la computadora', 'Un juego de video'], a: 0 },
   { q: '¿Cuál de estos está VIVO?', o: ['Un teléfono', 'Un pino', 'Una calculadora', 'Un robot'], a: 1 },
-  { q: '¿Cómo aprende una máquina a reconocer una cara?', o: ['Nació sabiendo', 'Alguien se la dibujó', 'Viendo muchísimas fotos de caras', 'Porque tiene ojos'], a: 2 },
-  { q: 'Con POCOS ejemplos, la máquina…', o: ['Aprende más rápido', 'Aprende igual de bien', 'No pasa nada', 'Se equivoca más'], a: 3 },
-  { q: '¿La máquina siente alegría o tristeza?', o: ['No: es un aparato y no siente nada', 'Sí, cuando gana', 'Solo sin batería', 'Sí, como un perro'], a: 0 },
-  { q: 'Una instrucción es…', o: ['Un dibujo', 'Una orden que la máquina obedece', 'Un premio', 'Una foto'], a: 1 },
+  { q: '¿Cómo aprendió la cámara qué forma tiene una cara?', o: ['Nació sabiendo', 'Alguien se la dibujó', 'Con muchísimas fotos de caras', 'Porque tiene ojos'], a: 2 },
+  { q: '¿Por qué no hay que creerle todo a una máquina?', o: ['Porque es mala', 'Porque siempre miente', 'Porque no tiene batería', 'Porque a veces se lo inventa'], a: 3 },
+  { q: '¿La máquina siente alegría o tristeza?', o: ['No: es un aparato y no siente nada', 'Sí, cuando gana', 'Solo sin batería', 'Sí, como una persona'], a: 0 },
+  { q: 'Una instrucción es…', o: ['Un dibujo', 'Una orden que la máquina obedece', 'Un premio', 'Un sonido'], a: 1 },
   { q: '¿Qué NO se le cuenta a una máquina?', o: ['Mi color favorito', 'Qué es un triángulo', 'La dirección de mi casa', 'Una pregunta de la tarea'], a: 2 },
-  { q: 'La máquina te dio un dato y no estás seguro. ¿Qué haces?', o: ['Le creo, porque es computadora', 'Se lo cuento a todos', 'Le pregunto lo mismo otra vez', 'Lo busco en el libro o con mi maestra'], a: 3 },
-  { q: '¿Por qué la Inteligencia Artificial NO es magia?', o: ['Porque son datos y matemática, y alguien la hizo', 'Porque no funciona', 'Porque solo sirve de noche', 'Porque es muy cara'], a: 0 },
-  { q: '¿Qué hace que algo sea un ser vivo?', o: ['Que tenga colores', 'Que nazca, crezca, se alimente y muera', 'Que se encienda', 'Que haga ruido'], a: 1 },
+  { q: 'Una foto rara te asusta en la pantalla. ¿Qué haces?', o: ['La comparto', 'Le contesto', 'Apago y no digo nada', 'Le aviso a una persona grande'], a: 3 },
+  { q: 'Le dictas un mensaje y el teléfono lo escribe. ¿Qué pasó?', o: ['Una máquina convirtió tu voz en letras', 'Te leyó la mente', 'Hay alguien escuchando', 'Fue suerte'], a: 0 },
+  { q: '¿Qué hace la máquina de los puntitos con un dibujo nuevo?', o: ['Lo mira como tú', 'Cuenta casillas iguales', 'Lo borra', 'Le pone color'], a: 1 },
 ];
 
 const P = [];
@@ -235,8 +235,7 @@ P.push(`
 
 ${preguntas(EVAL)}
 
-    <div class="felic"><b>¡Bien hecho!</b> Ya sabes lo más importante: la máquina <b>no está viva</b>,
-      <b>aprende con ejemplos</b> y hay cosas que <b>no se le cuentan</b>.</div>
+    <div class="felic"><b>¡Bien hecho!</b> Antes de entregar, revisa tus respuestas <b>una por una</b>.</div>
 `);
 
 // ── Página 7 · hoja del docente ────────────────────────────────────────────
