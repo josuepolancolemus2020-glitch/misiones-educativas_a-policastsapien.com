@@ -538,7 +538,11 @@ function itemsFicha(html) {
      tabla de las fechas y el «Así sí / Así no», y debajo el completar. Una
      pregunta por el 15 de septiembre se contestaba leyendo la misma hoja, y
      el maestro que fotocopia las hojas de la prueba no puede separarlas. */
-  const iAct = Math.min(...[html.search(/<h2[^>]*>[^<]*Actividades/), donde('completa')].filter(i => i >= 0));
+  /* Las fichas de programación y robótica traen además «🎲 Actividades
+     desconectadas (sin computadora)», que es teoría para hacer en el aula y
+     no el examen: tomarla por el principio de la prueba daba por «misma hoja»
+     la página ANTERIOR, y acusaba a un pareado sano de estar contestado. */
+  const iAct = Math.min(...[html.search(/<h2[^>]*>(?![^<]*desconectadas)[^<]*Actividades/), donde('completa')].filter(i => i >= 0));
   const iHoja = html.lastIndexOf('<section class="pagina"', iAct);
   const teoria = iHoja >= 0 && isFinite(iAct) ? limpiaHtml(html.slice(iHoja, iAct)) : '';
   return { items: L, faltan, teoria };
