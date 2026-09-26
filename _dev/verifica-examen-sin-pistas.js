@@ -728,7 +728,7 @@ for (const f of fs.readdirSync(path.join(RAIZ, 'fichas')).filter(n => n.endsWith
   const h = fs.readFileSync(path.join(RAIZ, 'fichas', f), 'utf8');
   const m = h.match(/<span class="pt">IV\. Pareados:<\/span>\s*([^<]+)/);
   if (!m) continue;
-  const clave = m[1].split(',').map(x => x.trim()).filter(Boolean);
+  const clave = m[1].split(/,|&nbsp;/).map(x => x.trim()).filter(Boolean);
   const propias = clave.filter(x => { const k = x.match(/^(\d+)([A-J])$/); return k && 'ABCDEFGHIJ'[+k[1] - 1] === k[2]; });
   if (propias.length) { alineadas++; mal(f + ': el pareado ' + propias.join(', ') + ' cae en su propia fila (se contesta sin leer)'); }
 }

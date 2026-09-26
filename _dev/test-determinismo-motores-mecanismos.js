@@ -53,7 +53,7 @@ prohibidas.forEach(p => {
 // ── Bancos de la evaluación conceptual ──
 console.log('— Bancos de la evaluación conceptual (4 × 15) —');
 ['evalTFBank', 'evalMCBank', 'evalCPBank', 'evalPRBank'].forEach(b => {
-  ok(b + ' tiene 15 ítems', g(b + '.length') === 15);
+  ok(b + ' tiene 15 ítems (o 10 revisados, con su k)', g(b + '.length') === 15 || (g(b + '.length') === 10 && g(b + '.every(x=>x.k)')));
 });
 const mc = g('JSON.parse(JSON.stringify(evalMCBank))');
 ok('evalMCBank en formato {q,o,a} con 4 opciones y respuesta válida',
@@ -68,7 +68,7 @@ ok('evalTFBank: respuestas booleanas y ambos valores presentes',
   tf.every(it => typeof it.a === 'boolean') && tf.some(it => it.a) && tf.some(it => !it.a));
 const pr = g('JSON.parse(JSON.stringify(evalPRBank))');
 ok('evalPRBank: términos y definiciones únicos',
-  new Set(pr.map(x => x.term)).size === 15 && new Set(pr.map(x => x.def)).size === 15);
+  new Set(pr.map(x => x.term)).size === pr.length && new Set(pr.map(x => x.def)).size === pr.length);
 
 // ── Selección determinista de la evaluación conceptual ──
 console.log('— Evaluación conceptual (semilla _evalRng(100000+forma)) —');

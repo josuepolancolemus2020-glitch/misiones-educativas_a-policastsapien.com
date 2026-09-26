@@ -478,112 +478,69 @@
       ],
 
       evalTFBank: [
-        { q: 'The motor turns electrical energy into rotation.', a: true },
-        { q: 'Two gears that mesh their teeth turn in the same direction.', a: false },
-        { q: 'A small gear that drives a big one gives it more force.', a: true },
-        { q: 'A big gear that drives a small one gives it more speed.', a: true },
-        { q: 'With mechanisms you gain force and speed at the same time.', a: false },
-        { q: 'In a train of three gears, the first and the third turn alike.', a: true },
-        { q: 'If the belt between two pulleys is crossed, the turning is reversed.', a: true },
-        { q: 'The servomotor turns nonstop and never stops at an exact angle.', a: false },
-        { q: 'The lever needs a fulcrum in order to work.', a: true },
-        { q: 'The worm gear is used to gain a huge amount of speed.', a: false },
-        { q: 'The crank and rod turns rotation into back-and-forth motion.', a: true },
-        { q: 'On a bicycle, a small sprocket makes the wheel turn faster.', a: true },
-        { q: 'The corn mill takes advantage of a mechanism that gives a lot of force.', a: true },
-        { q: 'Pulleys with a belt are used to transmit the turning over a distance.', a: true },
-        { q: 'The lever multiplies the force with no drawback at all.', a: false }
+        { q: 'Marvin’s little car did not start on the floor.', a: true },
+        { q: 'Marvin’s motor was broken.', a: false },
+        { q: 'The motor turns electrical energy into spin.', a: true },
+        { q: 'With the motor alone, with nothing else, you gain a lot of force.', a: false },
+        { q: 'Mechanisms are also found at home and in the yard.', a: true },
+        { q: 'The corn mill is made to give a lot of force.', a: true },
+        { q: 'A robot can have several motors.', a: true },
+        { q: 'Marvin’s little car spun super fast in the air.', a: true },
+        { q: 'The motor is the robot’s most important actuator.', a: true },
+        { q: 'A mechanism gives the robot brand-new energy.', a: false }
       ],
 
       evalMCBank: [
-        { q: 'What does a robot’s motor do?', o: ['a) It stores the program’s information', 'b) It senses the light around it', 'c) It cools the battery down', 'd) It turns electrical energy into rotation'], a: 3 },
-        { q: 'Two gears with their teeth meshed: how do they turn?', o: ['a) In the same direction', 'b) One turns and the other stays still', 'c) Both of them upward', 'd) In opposite directions'], a: 3 },
-        { q: 'A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?', o: ['a) It turns faster and with more force', 'b) It turns faster and with less force', 'c) It turns slower and with more force', 'd) It does not turn'], a: 2 },
-        { q: 'A 40-tooth wheel drives a 10-tooth pinion. What happens to the pinion?', o: ['a) It turns faster and with less force', 'b) It turns slower', 'c) It turns with more force', 'd) It turns just like the wheel'], a: 0 },
-        { q: 'In a train of THREE gears, the first and the third one…', o: ['a) Turn in opposite directions', 'b) Never turn', 'c) Turn in the same direction', 'd) Turn twice as fast'], a: 2 },
-        { q: 'Which motor turns to an exact angle and stays there?', o: ['a) The servomotor', 'b) The DC motor', 'c) The gearmotor', 'd) The worm gear'], a: 0 },
-        { q: 'What is the belt between two pulleys for?', o: ['a) To store energy', 'b) To brake the motor', 'c) To paint the wheel', 'd) To carry the turning over a distance'], a: 3 },
-        { q: 'What happens if the belt is put on crossed?', o: ['a) The second shaft turns the other way', 'b) The belt snaps', 'c) Nothing happens', 'd) The pulley gets bigger'], a: 0 },
-        { q: 'What does a lever need in order to work?', o: ['a) An electric motor', 'b) A fulcrum', 'c) A battery', 'd) A belt'], a: 1 },
-        { q: 'The lever multiplies the force, but in exchange…', o: ['a) It always breaks', 'b) The load side travels a shorter distance', 'c) It needs electricity', 'd) It turns nonstop'], a: 1 },
-        { q: 'Which mechanism turns rotation into back-and-forth motion?', o: ['a) The fixed pulley', 'b) The wheel and axle', 'c) The crank and rod', 'd) The idler gear'], a: 2 },
-        { q: 'Which mechanism gives a huge amount of force and very little speed?', o: ['a) The DC motor on its own', 'b) The fixed pulley', 'c) The worm gear', 'd) The idler gear'], a: 2 },
-        { q: 'On a bicycle, what is best for climbing a steep hill?', o: ['a) The biggest sprocket', 'b) The smallest sprocket', 'c) Taking the chain off', 'd) A bigger chainring'], a: 0 },
-        { q: 'What is the trade every mechanism makes?', o: ['a) You gain force and speed at the same time', 'b) Whatever you gain in force you lose in speed', 'c) You lose everything', 'd) The mechanism creates brand-new energy'], a: 1 },
-        { q: 'Which Honduran machine uses a crank and gears to take the husk off the coffee?', o: ['a) The corn mill', 'b) The coffee pulper', 'c) The wheelbarrow', 'd) The gate winch'], a: 1 }
+        { q: 'A 10-tooth gear drives a 30-tooth gear. What happens to the 30-tooth gear?', o: ['a) a) It turns faster and with more force', 'b) b) It turns faster and with less force', 'c) c) It turns slower and with more force', 'd) d) It does not turn'], a: 2 },
+        { q: 'What was Marvin’s little car missing to start with weight on top?', o: ['a) a) A bigger battery', 'b) b) Something that traded speed for force', 'c) c) More lights', 'd) d) Paint'], a: 1 },
+        { q: 'In a train of three gears, how do the first and the third turn?', o: ['a) a) In opposite directions', 'b) b) They do not turn', 'c) c) In the same direction', 'd) d) At double speed'], a: 2 },
+        { q: 'What is best to ride up a hill on a bicycle?', o: ['a) a) The biggest sprocket', 'b) b) The smallest sprocket', 'c) c) Taking off the seat', 'd) d) Releasing the brakes'], a: 0 },
+        { q: 'What comes out of a motor, just as it comes out?', o: ['a) a) Slow, strong spin', 'b) b) Fast, weak spin', 'c) c) Light', 'd) d) Heat'], a: 1 },
+        { q: 'What question should you ask before choosing a mechanism?', o: ['a) a) What color is it?', 'b) b) How much does it cost?', 'c) c) Do I need force or speed?', 'd) d) Who made it?'], a: 2 },
+        { q: 'If the first of two meshed gears turns to the right, which way does the second turn?', o: ['a) a) To the left', 'b) b) To the right', 'c) c) It does not turn', 'd) d) Upward'], a: 0 },
+        { q: 'What do a robot’s mechanisms need in order to work?', o: ['a) a) A motor that drives them', 'b) b) Water', 'c) c) A screen', 'd) d) A sound sensor'], a: 0 },
+        { q: 'What is always lost when a mechanism gives more force?', o: ['a) a) Nothing', 'b) b) Color', 'c) c) Speed', 'd) d) Weight'], a: 2 },
+        { q: 'What are the parts that carry the motor’s movement to where it is needed called?', o: ['a) a) Sensors', 'b) b) Batteries', 'c) c) Programs', 'd) d) Mechanisms'], a: 3 }
       ],
 
       evalCPBank: [
-        { q: 'The motor turns electrical energy into ___ movement.', a: 'turning' },
-        { q: 'The motor is the robot’s ___: the part that carries out the movement.', a: 'actuator' },
-        { q: 'The ___ turns to an exact angle and stays there.', a: 'servomotor' },
-        { q: 'Two gears in contact turn in ___ directions.', a: 'opposite' },
-        { q: 'Each point sticking out of a gear is called a ___.', a: 'tooth' },
-        { q: 'If a small gear drives a big one, you gain ___.', a: 'force' },
-        { q: 'If a big gear drives a small one, you gain ___.', a: 'speed' },
-        { q: 'The belt joins two ___ and transmits the turning over a distance.', a: 'pulleys' },
-        { q: 'If the belt is put on ___, the turning is reversed.', a: 'crossed' },
-        { q: 'The lever is a bar that turns on its ___.', a: 'fulcrum' },
-        { q: 'The ___ gear gives a lot of force and very little speed.', a: 'worm' },
-        { q: 'The crank-and-rod mechanism turns rotation into ___.', a: 'back-and-forth motion' },
-        { q: 'On a bicycle, the ___ carries the turning from the chainring to the sprocket.', a: 'chain' },
-        { q: 'Out of three gears in a row, the first and the third turn in the same ___.', a: 'direction' },
-        { q: 'The lever multiplies the force, but it travels a shorter ___.', a: 'distance' }
+        { q: 'Marvin attached the motor ___ to the wheels.', a: 'directly', acc: ['directly', 'straight'] },
+        { q: 'The motor was fine and the ___ was full.', a: 'battery', acc: ['battery'] },
+        { q: 'Mechanisms can be built with cardboard and materials from your ___.', a: 'surroundings', acc: ['surroundings', 'environment'] },
+        { q: 'A 10-tooth gear driving a 40-tooth gear gives ___ times more force.', a: 'four', acc: ['four', '4'] },
+        { q: 'The pulper takes the ___ off the coffee.', a: 'husk', acc: ['husk', 'pulp', 'skin'] },
+        { q: 'The winch helps open a very ___ gate.', a: 'heavy', acc: ['heavy'] },
+        { q: 'Two gears drag each other without ___.', a: 'slipping', acc: ['slipping'] },
+        { q: 'For the fair, Marvin put a small ___ on top of the car.', a: 'book', acc: ['book'] },
+        { q: 'The motor is the muscle; the mechanisms are the bones and the ___.', a: 'joints', acc: ['joints'] },
+        { q: 'The pulper is turned by ___.', a: 'hand', acc: ['hand'] }
       ],
 
       evalPRBank: [
-        { term: 'Motor', def: 'It turns electrical energy into rotation' },
-        { term: 'Servomotor', def: 'A motor that turns to an exact angle and stops there' },
-        { term: 'Gearmotor', def: 'A motor with a gearbox: less speed, more force' },
-        { term: 'Gear', def: 'A toothed wheel; two in contact turn opposite ways' },
-        { term: 'Tooth', def: 'Each point of the gear that meshes into the other one' },
-        { term: 'Idler gear', def: 'The middle one: it only changes the direction of the turning' },
-        { term: 'Pulley', def: 'A grooved wheel for the rope or the belt to run through' },
-        { term: 'Belt', def: 'A strip that joins two pulleys and carries the turning over a distance' },
-        { term: 'Crossed belt', def: 'A setup that reverses the direction of the turning' },
-        { term: 'Lever', def: 'A rigid bar that multiplies the force' },
-        { term: 'Fulcrum', def: 'The fixed point the lever turns on' },
-        { term: 'Wheel and axle', def: 'The wheel turns with the axle and drags the load along' },
-        { term: 'Worm gear', def: 'A threaded worm: a huge amount of force, little speed' },
-        { term: 'Crank and rod', def: 'It turns rotation into back-and-forth motion' },
-        { term: 'Chain and sprockets', def: 'They carry the turning from the chainring to the bicycle sprocket' }
+        { term: 'Servomotor', def: 'It turns to an exact angle and stays there' },
+        { term: 'Gear motor', def: 'A motor with its own gearbox' },
+        { term: 'Fan', def: 'It needs speed more than force' },
+        { term: 'Pulley', def: 'A wheel with a groove the rope runs through' },
+        { term: 'Lever', def: 'The builder’s wheelbarrow is one' },
+        { term: 'Worm gear', def: 'A threaded «worm»' },
+        { term: 'Crank and connecting rod', def: 'It turns spin into back-and-forth motion' },
+        { term: 'Chain', def: 'It joins the chainring to the bicycle’s back wheel' },
+        { term: 'Crossed belt', def: 'It makes the spin come out reversed' },
+        { term: 'DC motor', def: 'It spins nonstop as long as there is current' }
       ],
 
       critMecBank: [
-        { txt: 'At school a bucket of water has to be raised from the well, but the children cannot pull the rope upward.', ans: 'A fixed PULLEY on the well: it changes the direction of the force and lets you pull downward, which is far easier; with a movable pulley you also need less force.' },
-        { txt: 'A small motor has to open a very heavy gate, and the gate must not slide back on its own.', ans: 'A WORM GEAR (or a reduction gearbox): it brings the speed right down and multiplies the force; on top of that, a worm gear does not let the load drive it backward.' },
-        { txt: 'The motor’s turning has to reach a shaft half a meter away, without the parts touching each other.', ans: 'PULLEYS AND A BELT (or chain and sprockets): they transmit the turning over a distance. If the belt is put on crossed, the second shaft also turns the other way.' },
-        { txt: 'A robot has to move a sign from one side to the other, over and over, with the motor always turning the same way.', ans: 'A CRANK AND ROD: it turns the motor’s rotation into back-and-forth motion, like the needle of the sewing machine.' },
-        { txt: 'A big stone has to be lifted in the yard and all you have is an iron bar and a block.', ans: 'A LEVER: the bar resting on the block (the fulcrum) close to the stone multiplies the force; in exchange, the end you push travels a longer distance.' },
-        { txt: 'The robot car goes incredibly fast, but it gets stuck when it climbs a ramp with a book on top.', ans: 'REDUCTION GEARS (a small pinion driving a big toothed wheel) or a gearmotor: it loses speed, but it gains the force it needs to climb.' }
+        {txt:'At school a bucket of water has to be raised from the well, but the children cannot pull the rope upward.',ans:'A fixed PULLEY on the well: it changes the direction of the force and lets you pull downward, which is far easier; with a movable pulley you also need less force.'},
+        {txt:'A small motor has to open a very heavy gate, and the gate must not slide back on its own.',ans:'A WORM GEAR (or a reduction gearbox): it brings the speed right down and multiplies the force; on top of that, a worm gear does not let the load drive it backward.'},
+        {txt:'The motor’s turning has to reach a shaft half a meter away, without the parts touching each other.',ans:'PULLEYS AND A BELT (or chain and sprockets): they transmit the turning over a distance. If the belt is put on crossed, the second shaft also turns the other way.'},
+        {txt:'A robot has to move a sign from one side to the other, over and over, with the motor always turning the same way.',ans:'A CRANK AND ROD: it turns the motor’s rotation into back-and-forth motion, like the needle of the sewing machine.'},
+        {txt:'A big stone has to be lifted in the yard and all you have is an iron bar and a block.',ans:'A LEVER: the bar resting on the block (the fulcrum) close to the stone multiplies the force; in exchange, the end you push travels a longer distance.'}
       ],
 
       critErrorBank: [
-        {
-          txt: '"With gears you gain force and speed at the same time."',
-          g1: 'False: the mechanism does not create energy, it only shares it out. Whatever you gain in force you lose in speed.',
-          g2: 'If the big wheel turns slower, that is exactly because it is delivering more force: you never win everything.'
-        },
-        {
-          txt: '"Two gears that mesh always turn the same way."',
-          g1: 'It is the other way round: two gears in contact turn in OPPOSITE DIRECTIONS, because the teeth push each other.',
-          g2: 'To get the first and the last one turning alike you need THREE gears; the middle one is the idler gear.'
-        },
-        {
-          txt: '"The motor on its own, with no mechanism at all, is good for lifting heavy things."',
-          g1: 'A DC motor turns very fast but with very little force: on its own it hardly lifts anything.',
-          g2: 'It needs a reduction (gears or a worm gear) that trades speed for force: that is what a gearmotor is.'
-        },
-        {
-          txt: '"On a bicycle, the biggest sprocket is the one for going faster."',
-          g1: 'It is the opposite: with the big sprocket the wheel turns slower, but with more force (that is for climbing hills).',
-          g2: 'To go faster on flat ground you use the small sprocket: more speed, less force.'
-        },
-        {
-          txt: '"The lever makes force appear out of nowhere."',
-          g1: 'The lever multiplies the force, but in exchange the end you push travels a LONGER distance than the load.',
-          g2: 'And with no fulcrum there is no lever: the bar needs a fixed point to turn on.'
-        }
+        {txt:'"With gears you gain force and speed at the same time."',g1:'False: the mechanism does not create energy, it only shares it out. Whatever you gain in force you lose in speed.',g2:'If the big wheel turns slower, that is exactly because it is delivering more force: you never win everything.'},
+        {txt:'"On a bicycle, the biggest sprocket is the one for going faster."',g1:'It is the opposite: with the big sprocket the wheel turns slower, but with more force (that is for climbing hills).',g2:'To go faster on flat ground you use the small sprocket: more speed, less force.'},
+        {txt:'"The servomotor spins nonstop, just like a fan’s motor."',g1:'the servomotor turns to an exact angle and stays there.',g2:'the one that spins nonstop while there is current is the DC motor.'}
       ],
 
       critTrenQuestions: [
@@ -593,75 +550,20 @@
       ],
 
       critTrenBank: [
-        {
-          txt: 'A motor drives a 10-tooth pinion and that pinion drives a 30-tooth wheel. The first one turns to the RIGHT (clockwise).',
-          p: 'The 30-tooth wheel turns to the LEFT (counterclockwise): two gears in contact always turn in opposite directions.',
-          d: 'It turns 3 times slower, but with 3 times more force (30 ÷ 10 = 3): the small one driving the big one gives force.',
-          a: 'To gain speed you would have to swap them around: let the 30-tooth wheel be the one driving the 10-tooth pinion.'
-        },
-        {
-          txt: 'A 40-tooth wheel drives a 10-tooth pinion. The big wheel turns to the LEFT.',
-          p: 'The pinion turns to the RIGHT: at every contact the direction is reversed.',
-          d: 'It turns 4 times faster, but with 4 times less force (40 ÷ 10 = 4): the big one driving the small one gives speed.',
-          a: 'If force were needed (to lift weight, for instance), I would put the small pinion driving the big wheel.'
-        },
-        {
-          txt: 'Three gears in a row: 20, 12 and 20 teeth. The first one turns to the RIGHT.',
-          p: 'The third one also turns to the RIGHT: with three gears, the first and the third turn in the same direction.',
-          d: 'It turns at the SAME speed and with the same force: the middle one is an idler gear and does not change the ratio, because the first and the last have the same number of teeth.',
-          a: 'To gain force you would have to swap the last one for a gear with more teeth than the first (or take the idler out to reverse the direction).'
-        },
-        {
-          txt: 'The motor drives a 10-tooth pinion, that one drives a 20-tooth gear and the last one has 40 teeth. The motor turns to the LEFT.',
-          p: 'The last one also turns to the LEFT: since there are three gears, the first and the third turn alike.',
-          d: 'It turns 4 times slower and with 4 times more force (40 ÷ 10 = 4): only the first and the last count; the middle one does not change the ratio.',
-          a: 'To gain speed you would have to finish with a gear that has fewer teeth than the first one.'
-        },
-        {
-          txt: 'A small pulley mounted on the motor drives a big pulley through an open belt (not crossed).',
-          p: 'The big pulley turns in the SAME direction: an open belt does not reverse the turning; it is only reversed if the belt is crossed.',
-          d: 'It turns slower but with more force: the big pulley makes fewer turns than the small one in the same time.',
-          a: 'To reverse the direction it would be enough to cross the belt; to gain speed, make the big pulley the driving one.'
-        }
+        {txt:'A motor drives a 10-tooth pinion and that pinion drives a 30-tooth wheel. The first one turns to the RIGHT (clockwise).',p:'The 30-tooth wheel turns to the LEFT (counterclockwise): two gears in contact always turn in opposite directions.',d:'It turns 3 times slower, but with 3 times more force (30 ÷ 10 = 3): the small one driving the big one gives force.',a:'To gain speed you would have to swap them around: let the 30-tooth wheel be the one driving the 10-tooth pinion.'},
+        {txt:'A 40-tooth wheel drives a 10-tooth pinion. The big wheel turns to the LEFT.',p:'The pinion turns to the RIGHT: at every contact the direction is reversed.',d:'It turns 4 times faster, but with 4 times less force (40 ÷ 10 = 4): the big one driving the small one gives speed.',a:'If force were needed (to lift weight, for instance), I would put the small pinion driving the big wheel.'},
+        {txt:'Three gears in a row: 20, 12 and 20 teeth. The first one turns to the RIGHT.',p:'The third one also turns to the RIGHT: with three gears, the first and the third turn in the same direction.',d:'It turns at the SAME speed and with the same force: the middle one is an idler gear and does not change the ratio, because the first and the last have the same number of teeth.',a:'To gain force you would have to swap the last one for a gear with more teeth than the first (or take the idler out to reverse the direction).'},
+        {txt:'The motor drives a 10-tooth pinion, that one drives a 20-tooth gear and the last one has 40 teeth. The motor turns to the LEFT.',p:'The last one also turns to the LEFT: since there are three gears, the first and the third turn alike.',d:'It turns 4 times slower and with 4 times more force (40 ÷ 10 = 4): only the first and the last count; the middle one does not change the ratio.',a:'To gain speed you would have to finish with a gear that has fewer teeth than the first one.'}
       ],
 
       critCompareBank: [
-        {
-          a: 'Two toothed wheels whose teeth mesh and push each other directly.',
-          b: 'Two grooved wheels joined by a strip that runs all the way around both of them.',
-          ga: 'Gears.',
-          gb: 'Pulleys with a belt.',
-          gr: 'Similarity: both transmit the turning from one shaft to another and both can trade speed for force. Difference: gears work pressed together, they reverse the direction and they do not slip; pulleys with a belt transmit over a distance, they keep the direction (unless the belt is crossed) and they can slip.'
-        },
-        {
-          a: 'A 10-tooth pinion drives a 40-tooth wheel.',
-          b: 'A 40-tooth wheel drives a 10-tooth pinion.',
-          ga: 'A reduction: you gain force.',
-          gb: 'A multiplication: you gain speed.',
-          gr: 'Similarity: in both cases the wheels turn in opposite directions and the ratio is 1 to 4. Difference: the first setup gives 4 times more force and 4 times less speed; the second one, exactly the other way round.'
-        },
-        {
-          a: 'A motor that turns nonstop as long as current reaches it.',
-          b: 'A motor that turns to an exact angle and stays there.',
-          ga: 'The DC motor.',
-          gb: 'The servomotor.',
-          gr: 'Similarity: both are actuators and both turn electricity into movement. Difference: the DC motor is for wheels and propellers (continuous turning); the servomotor is for arms, grippers and rudders, because it controls the exact position.'
-        },
-        {
-          a: 'A rigid bar resting on a fixed point that multiplies a person’s force.',
-          b: 'A mechanism that turns the motor’s rotation into a back-and-forth movement.',
-          ga: 'The lever.',
-          gb: 'The crank and rod.',
-          gr: 'Similarity: both are mechanisms that change the shape of the movement and both can be built with cardboard and materials from around you. Difference: the lever multiplies the force in a short swing; the crank and rod turns continuous rotation into back-and-forth motion, like the treadle sewing machine.'
-        }
+        {a:'A motor that spins super fast, but with very little force.',b:'A motor that comes with its own gearbox: it turns slower, but with much more force.',ga:'The DC motor.',gb:'The gear motor.',gr:'Similarity: both turn electricity into spin. Difference: the first is for fans and propellers; the second, for moving weight.'}
       ],
 
       critDesignBank: [
         'In your community sacks of coffee have to be lifted onto the cart and people are hurting their backs.',
-        'The school gate is so heavy that the children cannot open it by themselves.',
         'The corn mill at home is terribly hard to turn: you have to push far too hard on the crank.',
-        'A robot for the school fair has to move a sign from one side to the other, nonstop, with a single motor.',
-        'The class robot car goes incredibly fast, but it gets stuck when it carries a book on top.'
+        'At school, opening and closing the curtain of the assembly hall takes a huge effort and it gets stuck.'
       ],
 
       critDesignGuide: 'Rubric with 3 criteria (20 pts total): ① MECHANISM (7 pts): choose and name a mechanism that suits the problem (lever, pulley, gears, belt, worm gear, wheel and axle or crank and rod). ② RATIO (6 pts): explain whether it needs FORCE or SPEED and how it gets it (which wheel or bar is the big one and which is the small one, where the fulcrum goes). ③ JUSTIFICATION (7 pts): recognize the trade (whatever you gain in force you lose in speed) and propose a realistic solution with materials from around you. Any design counts as long as the mechanism solves the problem and the student explains why.',

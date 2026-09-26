@@ -188,134 +188,134 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>The motor turns electrical energy into <span class="linea-resp"></span> movement.</li>' +
-        '<li>Two gears in contact turn in <span class="linea-resp"></span> directions.</li>' +
-        '<li>If a small gear drives a big one, you gain <span class="linea-resp"></span>.</li>' +
-        '<li>If a big gear drives a small one, you gain <span class="linea-resp"></span>.</li>' +
-        '<li>The lever turns on its <span class="linea-resp"></span>.</li>' +
-        '<li>The <span class="linea-resp"></span> joins two pulleys and transmits the turning over a distance.</li>' +
-        '<li>If the belt is put on crossed, the turning is <span class="linea-resp"></span>.</li>' +
-        '<li>The <span class="linea-resp"></span> gear gives a lot of force and very little speed.</li>' +
-        '<li>The crank and rod turns rotation into <span class="linea-resp"></span> motion.</li>' +
-        '<li>Out of three gears in a row, the first and the third turn in the same <span class="linea-resp"></span>.</li>' +
+        '<li>Marvin attached the motor <span class="linea-resp"></span> to the wheels.</li>' +
+        '<li>The motor was fine and the <span class="linea-resp"></span> was full.</li>' +
+        '<li>Mechanisms can be built with cardboard and materials from your <span class="linea-resp"></span>.</li>' +
+        '<li>A 10-tooth gear driving a 40-tooth gear gives <span class="linea-resp"></span> times more force.</li>' +
+        '<li>The pulper takes the <span class="linea-resp"></span> off the coffee.</li>' +
+        '<li>The winch helps open a very <span class="linea-resp"></span> gate.</li>' +
+        '<li>Two gears drag each other without <span class="linea-resp"></span>.</li>' +
+        '<li>For the fair, Marvin put a small <span class="linea-resp"></span> on top of the car.</li>' +
+        '<li>The motor is the muscle; the mechanisms are the bones and the <span class="linea-resp"></span>.</li>' +
+        '<li>The pulper is turned by <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ The motor turns electrical energy into movement.</li>' +
-        '<li>____ Two gears that mesh their teeth turn in the same direction.</li>' +
-        '<li>____ A small gear that drives a big one gives it more force.</li>' +
-        '<li>____ With mechanisms you gain force and speed at the same time.</li>' +
-        '<li>____ In a train of three gears, the first and the third turn alike.</li>' +
-        '<li>____ A crossed belt reverses the direction of the turning.</li>' +
-        '<li>____ The worm gear is used to gain a huge amount of speed.</li>' +
-        '<li>____ The lever needs a fulcrum in order to work.</li>' +
-        '<li>____ The crank and rod turns rotation into back-and-forth motion.</li>' +
-        '<li>____ The servomotor turns nonstop and never stops at an exact angle.</li>' +
+        '<li>____ Marvin’s little car did not start on the floor.</li>' +
+        '<li>____ Marvin’s motor was broken.</li>' +
+        '<li>____ The motor turns electrical energy into spin.</li>' +
+        '<li>____ With the motor alone, with nothing else, you gain a lot of force.</li>' +
+        '<li>____ Mechanisms are also found at home and in the yard.</li>' +
+        '<li>____ A mechanism gives the robot brand-new energy.</li>' +
+        '<li>____ The corn mill is made to give a lot of force.</li>' +
+        '<li>____ A robot can have several motors.</li>' +
+        '<li>____ Marvin’s little car spun super fast in the air.</li>' +
+        '<li>____ The motor is the robot’s most important actuator.</li>' +
         '</ol>' +
 
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What does a robot’s motor do?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>A 10-tooth gear drives a 30-tooth gear. What happens to the 30-tooth gear?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> it stores the program’s information</span>' +
-        '<span class="op"><i>b</i> it turns electrical energy into rotation</span>' +
-        '<span class="op"><i>c</i> it cools the battery down</span>' +
-        '<span class="op"><i>d</i> it holds up the fulcrum</span>' +
+        '<span class="op"><i>a</i> It turns faster and with more force</span>' +
+        '<span class="op"><i>b</i> It turns faster and with less force</span>' +
+        '<span class="op"><i>c</i> It turns slower and with more force</span>' +
+        '<span class="op"><i>d</i> It does not turn</span>' +
         '</div>' +
         '</div>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>Two gears with their teeth meshed: how do they turn?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>What was Marvin’s little car missing to start with weight on top?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> in the same direction</span>' +
-        '<span class="op"><i>b</i> one turns and the other stays still</span>' +
-        '<span class="op"><i>c</i> in opposite directions</span>' +
-        '<span class="op"><i>d</i> both of them upward</span>' +
+        '<span class="op"><i>a</i> A bigger battery</span>' +
+        '<span class="op"><i>b</i> Something that traded speed for force</span>' +
+        '<span class="op"><i>c</i> More lights</span>' +
+        '<span class="op"><i>d</i> Paint</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>A 10-tooth gear drives a 30-tooth one. What happens to the 30-tooth one?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>In a train of three gears, how do the first and the third turn?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> it turns slower and with more force</span>' +
-        '<span class="op"><i>b</i> it turns faster and with more force</span>' +
-        '<span class="op"><i>c</i> it turns faster and with less force</span>' +
-        '<span class="op"><i>d</i> it does not turn</span>' +
+        '<span class="op"><i>a</i> In opposite directions</span>' +
+        '<span class="op"><i>b</i> They do not turn</span>' +
+        '<span class="op"><i>c</i> In the same direction</span>' +
+        '<span class="op"><i>d</i> At double speed</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>A 40-tooth wheel drives a 10-tooth pinion. What happens to the pinion?</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>What does the winch turn to open the gate?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> it turns slower</span>' +
-        '<span class="op"><i>b</i> it turns with more force</span>' +
-        '<span class="op"><i>c</i> it turns just like the wheel</span>' +
-        '<span class="op"><i>d</i> it turns faster and with less force</span>' +
+        '<span class="op"><i>a</i> Gears</span>' +
+        '<span class="op"><i>b</i> Water</span>' +
+        '<span class="op"><i>c</i> Air</span>' +
+        '<span class="op"><i>d</i> Light</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>In a train of THREE gears, the first and the third one…</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>What comes out of a motor, just as it comes out?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> turn in opposite directions</span>' +
-        '<span class="op"><i>b</i> turn in the same direction</span>' +
-        '<span class="op"><i>c</i> never turn</span>' +
-        '<span class="op"><i>d</i> turn twice as fast</span>' +
+        '<span class="op"><i>a</i> Slow, strong spin</span>' +
+        '<span class="op"><i>b</i> Fast, weak spin</span>' +
+        '<span class="op"><i>c</i> Light</span>' +
+        '<span class="op"><i>d</i> Heat</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>Which motor turns to an exact angle and stays there?</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>What question should you ask before choosing a mechanism?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the DC motor</span>' +
-        '<span class="op"><i>b</i> the gearmotor</span>' +
-        '<span class="op"><i>c</i> the servomotor</span>' +
-        '<span class="op"><i>d</i> the worm gear</span>' +
+        '<span class="op"><i>a</i> What color is it?</span>' +
+        '<span class="op"><i>b</i> How much does it cost?</span>' +
+        '<span class="op"><i>c</i> Do I need force or speed?</span>' +
+        '<span class="op"><i>d</i> Who made it?</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>What happens if the belt between two pulleys is put on crossed?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>If the first of two meshed gears turns to the right, which way does the second turn?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the second shaft turns the other way</span>' +
-        '<span class="op"><i>b</i> the belt always snaps</span>' +
-        '<span class="op"><i>c</i> nothing happens</span>' +
-        '<span class="op"><i>d</i> the pulley gets bigger</span>' +
+        '<span class="op"><i>a</i> To the left</span>' +
+        '<span class="op"><i>b</i> To the right</span>' +
+        '<span class="op"><i>c</i> It does not turn</span>' +
+        '<span class="op"><i>d</i> Upward</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>What does a lever need in order to work?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>What do a robot’s mechanisms need in order to work?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> an electric motor</span>' +
-        '<span class="op"><i>b</i> a battery</span>' +
-        '<span class="op"><i>c</i> a belt</span>' +
-        '<span class="op"><i>d</i> a fulcrum</span>' +
+        '<span class="op"><i>a</i> A motor that drives them</span>' +
+        '<span class="op"><i>b</i> Water</span>' +
+        '<span class="op"><i>c</i> A screen</span>' +
+        '<span class="op"><i>d</i> A sound sensor</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>Which mechanism turns rotation into back-and-forth motion?</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>What is always lost when a mechanism gives more force?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the fixed pulley</span>' +
-        '<span class="op"><i>b</i> the crank and rod</span>' +
-        '<span class="op"><i>c</i> the wheel and axle</span>' +
-        '<span class="op"><i>d</i> the idler gear</span>' +
+        '<span class="op"><i>a</i> Nothing</span>' +
+        '<span class="op"><i>b</i> Color</span>' +
+        '<span class="op"><i>c</i> Speed</span>' +
+        '<span class="op"><i>d</i> Weight</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>To climb a steep hill on a bicycle it is best to use…</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>What are the parts that carry the motor’s movement to where it is needed called?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the smallest sprocket</span>' +
-        '<span class="op"><i>b</i> taking the chain off</span>' +
-        '<span class="op"><i>c</i> the biggest sprocket</span>' +
-        '<span class="op"><i>d</i> a crossed belt</span>' +
+        '<span class="op"><i>a</i> Sensors</span>' +
+        '<span class="op"><i>b</i> Batteries</span>' +
+        '<span class="op"><i>c</i> Programs</span>' +
+        '<span class="op"><i>d</i> Mechanisms</span>' +
         '</div>' +
         '</div>',
 
@@ -325,16 +325,16 @@
 
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
-        '<tr><td>1. ____ Motor</td><td>A. A wheel with teeth that mesh; two in contact turn opposite ways</td></tr>' +
-        '<tr><td>2. ____ Servomotor</td><td>B. The fixed point the lever bar turns on</td></tr>' +
-        '<tr><td>3. ____ Gear</td><td>C. A strip that joins two pulleys and carries the turning over a distance</td></tr>' +
-        '<tr><td>4. ____ Pulley</td><td>D. It turns rotation into back-and-forth motion</td></tr>' +
-        '<tr><td>5. ____ Belt</td><td>E. A threaded worm that gives a lot of force and very little speed</td></tr>' +
-        '<tr><td>6. ____ Lever</td><td>F. It turns electrical energy into rotation</td></tr>' +
-        '<tr><td>7. ____ Fulcrum</td><td>G. The central bar that turns with the wheel and drags the load along</td></tr>' +
-        '<tr><td>8. ____ Worm gear</td><td>H. A rigid bar that turns on a support and multiplies the force</td></tr>' +
-        '<tr><td>9. ____ Crank and rod</td><td>I. A motor that turns to an exact angle and stops there</td></tr>' +
-        '<tr><td>10. ____ Wheel and axle</td><td>J. A wheel with a groove for a rope or a belt to run through</td></tr>' +
+        '<tr><td>1. ____ Servomotor</td><td>A. The builder’s wheelbarrow is one</td></tr>' +
+        '<tr><td>2. ____ Gear motor</td><td>B. It joins the chainring to the bicycle’s back wheel</td></tr>' +
+        '<tr><td>3. ____ Fan</td><td>C. It turns to an exact angle and stays there</td></tr>' +
+        '<tr><td>4. ____ Pulley</td><td>D. It spins nonstop as long as there is current</td></tr>' +
+        '<tr><td>5. ____ Lever</td><td>E. It needs speed more than force</td></tr>' +
+        '<tr><td>6. ____ Worm gear</td><td>F. It makes the spin come out reversed</td></tr>' +
+        '<tr><td>7. ____ Crank and connecting rod</td><td>G. A threaded «worm»</td></tr>' +
+        '<tr><td>8. ____ Chain</td><td>H. A motor with its own gearbox</td></tr>' +
+        '<tr><td>9. ____ Crossed belt</td><td>I. A wheel with a groove the rope runs through</td></tr>' +
+        '<tr><td>10. ____ DC motor</td><td>J. It turns spin into back-and-forth motion</td></tr>' +
         '</table>' +
 
         '<div class="felic">' +
@@ -366,10 +366,10 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. turning &nbsp; 2. opposite &nbsp; 3. force &nbsp; 4. speed &nbsp; 5. fulcrum &nbsp; 6. belt &nbsp; 7. reversed &nbsp; 8. worm &nbsp; 9. back-and-forth &nbsp; 10. direction</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6T, 7F, 8T, 9T, 10F</div>' +
-        '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3a, 4d, 5b, 6c, 7a, 8d, 9b, 10c</div>' +
-        '<div><span class="pt">IV. Matching:</span> 1F &nbsp; 2I &nbsp; 3A &nbsp; 4J &nbsp; 5C &nbsp; 6H &nbsp; 7B &nbsp; 8E &nbsp; 9D &nbsp; 10G</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. directly &nbsp; 2. battery &nbsp; 3. surroundings &nbsp; 4. four &nbsp; 5. husk &nbsp; 6. heavy &nbsp; 7. slipping &nbsp; 8. book &nbsp; 9. joints &nbsp; 10. hand</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8T, 9T, 10T</div>' +
+        '<div><span class="pt">III. Multiple choice:</span> 1c, 2b, 3c, 4a, 5b, 6c, 7a, 8a, 9c, 10d</div>' +
+        '<div><span class="pt">IV. Matching:</span> 1C &nbsp; 2H &nbsp; 3E &nbsp; 4I &nbsp; 5A &nbsp; 6G &nbsp; 7J &nbsp; 8B &nbsp; 9F &nbsp; 10D</div>' +
         '</div>' +
 
         '<div class="nota-doc">' +
