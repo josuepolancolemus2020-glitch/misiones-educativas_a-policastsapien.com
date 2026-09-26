@@ -703,6 +703,22 @@ if (TODAS) {
   console.log('');
 }
 
+/* ⚠️ En papel, un pareado que cae en su propia fila se contesta sin leer:
+   el 6 de la Columna A al lado de la F de la Columna B. Así salieron 52 fichas
+   armadas por la misma herramienta —la permutación que usaba dejaba el 6 en su
+   sitio— y ninguna sonda lo veía. La clave de la pauta dice qué letra va con
+   cada número; si alguna es la de su propia fila, está mal. */
+let alineadas = 0;
+for (const f of fs.readdirSync(path.join(RAIZ, 'fichas')).filter(n => n.endsWith('.html')).sort()) {
+  const h = fs.readFileSync(path.join(RAIZ, 'fichas', f), 'utf8');
+  const m = h.match(/<span class="pt">IV\. Pareados:<\/span>\s*([^<]+)/);
+  if (!m) continue;
+  const clave = m[1].split(',').map(x => x.trim()).filter(Boolean);
+  const propias = clave.filter(x => { const k = x.match(/^(\d+)([A-J])$/); return k && 'ABCDEFGHIJ'[+k[1] - 1] === k[2]; });
+  if (propias.length) { alineadas++; mal(f + ': el pareado ' + propias.join(', ') + ' cae en su propia fila (se contesta sin leer)'); }
+}
+if (!alineadas) console.log('✅ Pareados de las fichas: ninguno cae en su propia fila\n');
+
 console.log((fallos ? '❌ ' : '✅ ') + fallos + ' fallo(s) · ' + revisadas.length + ' misión(es) revisada(s), ' + pendientes.length + ' pendiente(s)' +
   (TODAS ? '' : ' (--todas las mide)') + '\n');
 process.exit(fallos ? 1 : 0);

@@ -6685,6 +6685,14 @@ pregunta lo que se ve, lo que se mide o a quién le pasa. Dos cosas más:
   publicadas como «a) a) El telescopio», en la pantalla y en la ficha. No lo
   cazó ninguna sonda: el archivo compila y el examen se califica bien. Se vio
   leyendo el banco escrito, y se arregló el mismo día.
+- ⚠️ **Y la herramienta que rearmaba las fichas dejaba un pareado en su propia
+  fila.** Barajaba la Columna B siempre con la misma permutación, y esa
+  permutación dejaba el 6 en su sitio: en **52 fichas** el término 6 quedaba
+  al lado de la F, que era su respuesta, y se contestaba sin leer. Más dos
+  fichas escritas a mano con el mismo defecto (Himno, 3C; Próceres, 8H). Lo
+  vio la sonda de determinismo de Mi Primer Programa, que exige una Columna B
+  «sin puntos fijos»; ninguna otra lo pedía. Desde entonces
+  `verifica-examen-sin-pistas` lo revisa en **todas** las fichas.
 
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 

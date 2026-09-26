@@ -65,7 +65,8 @@ ok('tras la Forma 30 sigue la 1 (evalFormNum cicla)', R('evalFormNum') === 1);
 const cd = JSON.parse(c1a);
 ok('estructura 5+5+5+5 ítems', cd.cp.length === 5 && cd.tf.length === 5 && cd.mc.length === 5 && cd.pr.terms.length === 5);
 ok('puntaje conceptual = 100 (20×5)', (cd.cp.length + cd.tf.length + cd.mc.length + cd.pr.terms.length) * 5 === 100);
-ok('los 4 bancos conceptuales tienen 15 ítems cada uno', R('evalTFBank.length===15&&evalMCBank.length===15&&evalCPBank.length===15&&evalPRBank.length===15'));
+/* Revisados dato por dato (septiembre de 2026): diez por banco, cada ítem con su `k`. */
+ok('los 4 bancos conceptuales tienen 10 ítems cada uno, con su k', R('[evalTFBank,evalMCBank,evalCPBank,evalPRBank].every(b=>b.length===10&&b.every(i=>i.k))'));
 // Derangement determinista en las 30 formas: pareados sin punto fijo
 let sinPuntosFijos = true, formaMala = null;
 for (let f = 1; f <= 30; f++) {
@@ -183,11 +184,11 @@ ok('simulador: salir del patio detiene el programa', simChoque);
 
 // ── evalMCBank (Campeonísimo)
 console.log('— Bancos y Campeonísimo —');
-ok('formato evalMCBank {q,o,a} para el Campeonísimo', R("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)"));
+ok('formato evalMCBank {q,o,a} para el Campeonísimo', R("evalMCBank.length>=10&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)"));
 ok('pregunta diagnóstica presente (¿Qué es un programa completo?)', R("evalMCBank.some(q=>q.q.includes('¿Qué es un programa completo?')&&q.o[q.a].toLowerCase().includes('evento'))"));
 ok('pregunta obligatoria del proyecto integrador (bucle + condicional juntos)', R("evalMCBank.some(q=>q.q.includes('REPETIR 6 VECES')&&q.o[q.a].toLowerCase().includes('bucle y un condicional'))"));
 ok('banco de completar sin respuestas vacías', R("evalCPBank.every(i=>i.q.includes('___')&&!!i.a)"));
-ok('banco de pareados con términos y definiciones únicos', R("new Set(evalPRBank.map(i=>i.term)).size===15&&new Set(evalPRBank.map(i=>i.def)).size===15"));
+ok('banco de pareados con términos y definiciones únicos', R("new Set(evalPRBank.map(i=>i.term)).size===evalPRBank.length&&new Set(evalPRBank.map(i=>i.def)).size===evalPRBank.length"));
 
 // ── Sopas verificadas
 console.log('— Sopas de letras —');
@@ -210,8 +211,11 @@ ok('ficha: 10 completar + 10 V/F + 10 selección + 10 pareados',
   (ficha.match(/<li>____ /g) || []).length === 10 &&
   (ficha.match(/class="preg-n"/g) || []).length === 10 &&
   (ficha.match(/<td>\d+\. ____ /g) || []).length === 10);
-const claveFicha = '1C, 2G, 3E, 4I, 5H, 6J, 7A, 8F, 9D, 10B';
-ok('ficha: pauta de pareados presente', ficha.includes(claveFicha));
+/* La clave no se escribe aquí: cambia cada vez que se reescribe la prueba.
+   Lo que se exige es que esté y que use las diez letras una vez cada una. */
+const claveFicha = ((ficha.match(/IV\. Pareados:<\/span>\s*([^<]+)/) || [])[1] || '').trim();
+const letrasClave = claveFicha.split(/,\s*/).map(x => x.replace(/^\d+/, ''));
+ok('ficha: pauta de pareados presente', letrasClave.length === 10 && new Set(letrasClave).size === 10);
 // La Columna B nunca en orden 1A-2B-3C: permutación sin puntos fijos
 const pares = claveFicha.split(', ').map(s => ({ n: parseInt(s, 10), l: s.replace(/\d+/, '') }));
 const letras = 'ABCDEFGHIJ';
