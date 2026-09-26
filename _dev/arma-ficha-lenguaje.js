@@ -133,12 +133,12 @@ function repartirMC(mc, semilla) {
 }
 
 const MC = repartirMC([
-  ['En la mesa, «¿me pasás la sal?» ¿qué hace?', ['Pide una acción', 'Pregunta un dato', 'Afirma algo', 'Exclama'], 0],
-  ['«Una silla es algo donde uno se sienta.» Esa definición…', ['está justa', 'es muy ancha: entra una piedra', 'es muy angosta', 'no dice nada'], 1],
-  ['«Un ave es un animal que vuela.» Esa definición…', ['está justa', 'es muy ancha', 'es muy angosta: deja fuera la gallina', 'no dice nada'], 2],
-  ['«Te espero en el banco» dice dos cosas. ¿Con qué se arregla?', ['Escribiéndola más bonita', 'Hablando más fuerte', 'Cambiando de tema', 'Preguntando en cuál de los dos'], 3],
-  ['«¿Por qué el abono caro rinde más?» ¿Qué tiene de raro?', ['Da por hecho que rinde más', 'Es muy larga', 'No lleva signos', 'Nada: es una pregunta normal'], 0],
-  ['«Es de mejor calidad» no se puede comprobar porque…', ['es mentira', 'no dice mejor en qué ni cuánto', 'está mal escrita', 'nadie la dice'], 1],
+  ['«¡Qué buena idea!», dicho con la cara de que no lo es…', ['dice lo contrario', 'pide un favor', 'pregunta la hora', 'cuenta un dato'], 0],
+  ['«Una silla es algo donde uno se sienta.» ¿Qué falla?', ['deja entrar una piedra', 'está justa', 'deja fuera las sillas', 'no dice nada'], 0],
+  ['¿Quién dijo que cada palabra arrastra la vida de quien la usa?', ['Ortega y Gasset', 'Bertrand Russell', 'René Descartes', 'Aristóteles'], 0],
+  ['«Lo invirtió» y «lo gastó»: ¿qué tienen igual?', ['la plata ya no está', 'la cantidad', 'el dueño', 'nada'], 0],
+  ['¿Cómo se arregla «Dejé medio pan»?', ['midiendo: ¿mitad o entero?', 'gritándola', 'escribiéndola igual', 'cambiando de tema'], 0],
+  ['¿Qué enseña Bertrand Russell?', ['a aclarar la frase antes de discutirla', 'a hablar rápido', 'a medir la luz', 'a contar votos'], 0],
 ], 20260918);
 
 /* ══════════════════ las hojas ══════════════════ */

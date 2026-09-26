@@ -464,73 +464,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Una frase se juzga solo por su forma, no por lo que hace.',a:false},
-  {q:'«¿Me pasás la sal?» es un pedido aunque tenga forma de pregunta.',a:true},
-  {q:'«Te espero en el banco» puede querer decir dos cosas.',a:true},
-  {q:'Una frase ambigua está mal escrita.',a:false},
-  {q:'Preguntar es lo que arregla una frase ambigua.',a:true},
-  {q:'«Un ave es un animal que vuela» es una definición muy angosta.',a:true},
-  {q:'«Una silla es algo donde uno se sienta» es una definición muy ancha.',a:true},
-  {q:'Una definición justa aguanta las dos pruebas.',a:true},
-  {q:'«De segunda mano» y «usada» nombran cosas distintas.',a:false},
-  {q:'Elegir una palabra en vez de otra es siempre mentir.',a:false},
-  {q:'«¿Por qué el abono caro rinde más?» ya da por hecho que rinde más.',a:true},
-  {q:'A una palabra que no se puede comprobar se le pide un número o un ejemplo.',a:true},
-  {q:'Toda palabra fuerte es una trampa.',a:false},
-  {q:'La retórica es el arte de decir las cosas para que convenzan.',a:true},
-  {q:'De un pensador, esta misión escribe la fecha en que nació.',a:false}
+  {q:'«¿Me pasás la sal?», en la mesa, es un pedido aunque tenga forma de pregunta.',a:true,k:'tf-sal'},
+  {q:'«Ya son las seis», en una visita que se alargó, solo cuenta la hora.',a:false,k:'tf-seis'},
+  {q:'«¡Ay, me quemé!» dice cómo se siente el que habla.',a:true,k:'tf-quemar'},
+  {q:'«¿Cuántos departamentos tiene Honduras?» no espera ninguna respuesta.',a:false,k:'tf-departamentos'},
+  {q:'«Te espero en el banco» está mal escrita.',a:false,k:'tf-banco'},
+  {q:'«Un ave es un animal que vuela» deja fuera a la gallina.',a:true,k:'tf-ave'},
+  {q:'«De segunda mano» y «usada» nombran bolsas distintas.',a:false,k:'tf-bolsa'},
+  {q:'Una frase que exclama dice más de la cosa que de quien habla.',a:false,k:'tf-exclama'},
+  {q:'Marlon y el otro se fueron a las cuatro sin haberse visto.',a:true,k:'tf-marlon'},
+  {q:'«Qué calor hace aquí», junto a la ventana cerrada, pide que la abran.',a:true,k:'tf-calor'}
 ];
 const evalMCBank=[
-  {q:'¿De qué se ocupa la filosofía del lenguaje?',o:['De medir el tiempo','De contar dinero','De qué hacen las palabras con las ideas','De la letra bonita'],a:2},
-  {q:'«Cerrá el portón, por favor». ¿Qué hace la frase?',o:['Afirma','Pide','Pregunta','Exclama'],a:1},
-  {q:'«¡Ay, me quemé!». ¿Qué hace la frase?',o:['Pide un dato','Afirma un número','Manda','Suelta lo que siente'],a:3},
-  {q:'¿Cuál es la prueba de una frase que afirma?',o:['Que sea larga','Que se pueda contestar «es verdad» o «es mentira»','Que lleve signos','Que la diga un adulto'],a:1},
-  {q:'«Vendí la vaca de mi tío» es ambigua porque…',o:['tiene una falta','es muy corta','no se sabe de quién era ni a quién','no lleva tilde'],a:2},
-  {q:'¿Qué arregla una frase ambigua?',o:['Gritarla','Preguntar cuál de las dos','Escribirla de nuevo igual','Cambiar de tema'],a:1},
-  {q:'Una definición que deja entrar lo que no es, es…',o:['muy angosta','muy ancha','justa','imposible'],a:1},
-  {q:'Una definición que deja fuera lo que sí es, es…',o:['muy ancha','justa','muy angosta','bonita'],a:2},
-  {q:'«Lo invirtió» y «lo gastó» hablan del mismo dinero. La diferencia es…',o:['hacia dónde apunta la palabra','la cantidad','el dueño','la fecha'],a:0},
-  {q:'¿Qué hace la pregunta «¿por qué el abono caro rinde más?»',o:['Da por hecho lo que no se discutió','Pide un dato limpio','Manda comprar','Exclama'],a:0},
-  {q:'¿Cómo se desarma el nombre que ya juzga?',o:['Repitiéndolo','Aceptándolo','Cambiándole el nombre y volviendo a mirar','Escribiéndolo grande'],a:2},
-  {q:'«Es más natural» es una palabra que…',o:['se mide con balanza','está prohibida','es un número','no se puede comprobar así'],a:3},
-  {q:'De los cuatro casos de la unidad, ¿cuántos NO son trampa?',o:['ninguno','tres','todos','uno'],a:3},
-  {q:'¿Qué enseña Bertrand Russell, según esta misión?',o:['A pedir que la frase se aclare antes de discutirla','A medir la luz','A contar votos','A cantar'],a:0},
-  {q:'¿Qué enseña Ortega y Gasset, según esta misión?',o:['A preguntar qué quiere decir el otro','A hablar más rápido','A escribir sin tildes','A no preguntar'],a:0}
+  {q:'¿Qué hay que preguntarse para saber si una frase afirma?',o:['¿Se puede contestar «es verdad» o «es mentira»?','¿Es larga?','¿Lleva signos?','¿La dice un adulto?'],a:0,k:'mc-prueba'},
+  {q:'«Vendí la vaca de mi tío» dice dos cosas porque…',o:['tiene una falta','no se sabe de quién era ni a quién se vendió','es muy corta','no lleva tilde'],a:1,k:'mc-vaca'},
+  {q:'¿Cómo se arregla «Dejé medio pan»?',o:['Gritándola','Escribiéndola igual','Midiendo: ¿la mitad, o uno entero?','Cambiando de tema'],a:2,k:'mc-pan'},
+  {q:'«Una silla es algo donde uno se sienta». ¿Qué falla?',o:['No incluye las sillas','Es muy corta','No tiene verbo','Una piedra también cabe ahí'],a:3,k:'mc-silla'},
+  {q:'«Lo invirtió» y «lo gastó»: ¿qué tienen igual?',o:['En las dos, la plata ya no está','Cambia la cantidad','Cambia el dueño','Nada'],a:0,k:'mc-plata'},
+  {q:'¿Cómo se desarma «¿Por qué el abono caro rinde más?»?',o:['Comprando el caro','Contestando primero si rinde más','Preguntando el precio','Repitiéndola'],a:1,k:'mc-cargada'},
+  {q:'Te dicen «es de mejor calidad». ¿Qué hay que pedir?',o:['Que lo repitan','Un descuento','El número o el ejemplo','Nada'],a:2,k:'mc-vaga'},
+  {q:'Tu papá dice «la puerta está abierta» con el frío entrando. ¿Qué hace la frase?',o:['Cuenta un dato','Pregunta','Exclama','Quiere que la cierren'],a:3,k:'mc-puerta'},
+  {q:'«¿Y vos qué hora creés que es?», a alguien que llegó tarde…',o:['está diciendo que llegó tarde','quiere saber la hora','pide un reloj','exclama'],a:0,k:'mc-hora'},
+  {q:'En Matemáticas, «número par» se define…',o:['como cada uno quiera','con un dibujo','de modo que un número entre o no entre','por votación'],a:2,k:'mc-par'}
 ];
 const evalCPBank=[
-  {q:'La rama que mira qué hacen las palabras es la filosofía del ___.',a:'lenguaje'},
-  {q:'Una frase que pide un dato es una ___.',a:'pregunta'},
-  {q:'Una frase que quiere que hagas algo ___ o manda.',a:'pide'},
-  {q:'Una frase que suelta lo que siente ___.',a:'exclama'},
-  {q:'Una frase que dice dos cosas a la vez es ___.',a:'ambigua'},
-  {q:'Decir qué entra y qué no entra en una palabra es ___.',a:'definir'},
-  {q:'Una definición que deja entrar lo que no es, es muy ___.',a:'ancha'},
-  {q:'Una definición que deja fuera lo que sí es, es muy ___.',a:'angosta'},
-  {q:'Lo que el que habla quiere lograr al decirlo es su ___.',a:'intención'},
-  {q:'El arte de decir las cosas para que convenzan es la ___.',a:'retórica'},
-  {q:'Lo que la frase dice, sin lo que insinúa, es su sentido ___.',a:'literal'},
-  {q:'A la palabra que no se puede comprobar se le pide un ___.',a:'número'},
-  {q:'Lo que una palabra le hace entender al que la oye es su ___.',a:'significado'},
-  {q:'De la filosofía analítica viene el trabajo de ___ las frases.',a:'aclarar'},
-  {q:'El arte de interpretar lo que el otro quiso decir es la ___.',a:'hermenéutica'}
+  {q:'«¿Podés cerrar el portón?» no pregunta si podés: te está ___ que lo cerrés.',a:'pidiendo',acc:['pidiendo'],k:'cp-porton'},
+  {q:'«¿Quién dejó esto aquí?», dicho por el maestro, no busca un nombre: busca que alguien lo ___.',a:'quite',acc:['quite'],k:'cp-morral'},
+  {q:'«Compré una bolsa vieja» se arregla preguntando: ¿usada, o de las de ___?',a:'antes',acc:['antes'],k:'cp-vieja'},
+  {q:'Una definición que sirve para discutir aguanta las dos ___.',a:'pruebas',acc:['pruebas'],k:'cp-pruebas'},
+  {q:'Una casa chiquita puede llamarse «acogedora» o «___».',a:'apretada',acc:['apretada'],k:'cp-casa'},
+  {q:'En Ciencias Sociales, quien pone el nombre a un hecho ya contó la ___.',a:'historia',acc:['historia'],k:'cp-historia'},
+  {q:'«Una silla es un mueble con asiento y ___, para una persona.»',a:'respaldo',acc:['respaldo'],k:'cp-respaldo'},
+  {q:'Al preguntar en tu comunidad, se anota quién lo dijo y qué ___.',a:'día',acc:['día','dia'],k:'cp-dia'},
+  {q:'A una palabra fuerte que sí vale no hay que desarmarla: se ___, como todo.',a:'comprueba',acc:['comprueba'],k:'cp-comprueba'},
+  {q:'Al préstamo que llaman «regalo» se le cambia el ___ y se vuelve a mirar.',a:'nombre',acc:['nombre'],k:'cp-nombre'}
 ];
 const evalPRBank=[
-  {term:'Afirma',def:'Dice que algo es así; se contesta «es verdad» o «es mentira».'},
-  {term:'Pregunta',def:'Deja un hueco y espera que alguien lo llene con un dato.'},
-  {term:'Pide o manda',def:'No quiere un dato: quiere que el otro haga algo.'},
-  {term:'Exclama',def:'Sale de golpe y dice cómo se siente el que habla.'},
-  {term:'Ambiguo',def:'Que quiere decir dos cosas, y no se sabe cuál.'},
-  {term:'Definición muy ancha',def:'Deja entrar cosas que no son.'},
-  {term:'Definición muy angosta',def:'Deja fuera cosas que sí son.'},
-  {term:'Intención',def:'Lo que el que habla quiere lograr al decirlo.'},
-  {term:'Retórica',def:'El arte de decir las cosas para que convenzan.'},
-  {term:'Literal',def:'Lo que la frase dice, sin lo que insinúa.'},
-  {term:'Pregunta cargada',def:'Da por hecho lo que todavía no se discutió.'},
-  {term:'Palabra vaga',def:'Suena a dato y no dice nada que se pueda medir.'},
-  {term:'Bertrand Russell',def:'Mostró que una frase puede estar bien escrita y no decir nada claro.'},
-  {term:'Ortega y Gasset',def:'Dijo que cada palabra arrastra la vida de quien la usa.'},
-  {term:'Hermenéutica',def:'El arte de interpretar lo que el otro quiso decir.'}
+  {term:'Ambiguo',def:'Que quiere decir dos cosas, y no se sabe cuál',k:'pr-ambiguo'},
+  {term:'Intención',def:'Lo que el que habla quiere lograr al decirlo',k:'pr-intencion'},
+  {term:'Retórica',def:'El arte de decir las cosas para que convenzan',k:'pr-retorica'},
+  {term:'Literal',def:'Lo que la frase dice, sin lo que insinúa',k:'pr-literal'},
+  {term:'Hermenéutica',def:'El arte de interpretar lo que el otro quiso decir',k:'pr-hermeneutica'},
+  {term:'Bertrand Russell',def:'Miró las frases con la lupa con que se miran las cuentas',k:'pr-russell'},
+  {term:'Ortega y Gasset',def:'Dijo que cada palabra arrastra la vida de quien la usa',k:'pr-ortega'},
+  {term:'Ironía',def:'Suena a elogio y afirma lo contrario',k:'pr-ironia'},
+  {term:'Significado',def:'Lo que una palabra le hace entender al que la oye',k:'pr-significado'},
+  {term:'Filosofía del lenguaje',def:'Mira qué hacen las palabras con las ideas',k:'pr-lenguaje'}
 ];
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
 const EVAL_FORMAS = 30;
@@ -616,11 +601,11 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'A Marlon le mandaron un mensaje: «Te espero en el banco a las tres». Él fue al banco de la plaza. El otro lo esperó en la banca del parque.<br>\nLos dos se fueron a las cuatro sin verse. El trámite se pasó para otro día.'},
-  {txt:'En la pulpería le dijeron a doña Chepa que ese jabón «es de mejor calidad». Pagó el doble. Lava igual que el otro. Nadie le mintió: nadie le dijo mejor en qué.'},
-  {txt:'A Wilmer le preguntaron: «¿Por qué el abono caro rinde más?». Él contestó que por los minerales. Compró ocho sacos. La milpa salió igual que la del vecino, que usó el de siempre.'},
-  {txt:'En el papel decía «regalo de la cooperativa». La mamá de Selvin firmó tranquila. A los seis meses le pidieron el dinero: era un préstamo, y el nombre no lo decía.'},
-  {txt:'El maestro puso en el pizarrón: «Un ave es un animal que vuela». Kenia levantó la mano y preguntó por la gallina. La clase se detuvo diez minutos, y la definición se arregló.'}
+  {k:'cs-marlon',txt:'A Marlon le mandaron un mensaje: «Te espero en el banco a las tres». Él fue al banco de la plaza. El otro lo esperó en la banca del parque.<br>\nLos dos se fueron a las cuatro sin verse. El trámite se pasó para otro día.'},
+  {k:'cs-chepa',txt:'En la pulpería le dijeron a doña Chepa que ese jabón «es de mejor calidad». Pagó el doble. Lava igual que el otro. Nadie le mintió: nadie le dijo mejor en qué.'},
+  {k:'cs-wilmer',txt:'A Wilmer le preguntaron: «¿Por qué el abono caro rinde más?». Él contestó que por los minerales. Compró ocho sacos. La milpa salió igual que la del vecino, que usó el de siempre.'},
+  {k:'cs-selvin',txt:'En el papel decía «regalo de la cooperativa». La mamá de Selvin firmó tranquila. A los seis meses le pidieron el dinero: era un préstamo, y el nombre no lo decía.'},
+  {k:'cs-kenia',txt:'El maestro puso en el pizarrón: «Un ave es un animal que vuela». Kenia levantó la mano y preguntó por la gallina. La clase se detuvo diez minutos, y la definición se arregló.'},
 ];
 const critCaseQuestions=[
   '1. En el caso, ¿qué HACE la frase: afirma, pregunta, pide o exclama?',
@@ -635,64 +620,24 @@ const critCaseGuides=[
   'Tiene que ser una pregunta que se pueda hacer en voz alta. «¿En cuál de los dos bancos?», «¿mejor en qué, y cuánto?», «¿rinde más?», «¿esto se devuelve?». «Investigar más» no vale: no dice qué hacer.'
 ];
 const critErrorBank=[
-  {txt:'"Si la frase está bien escrita, quiere decir una sola cosa."',
-   g1:'Las cuatro frases de la unidad están bien escritas y dicen dos cosas cada una.',
-   g2:'Lo que arregla el doble sentido no es la ortografía: es preguntar cuál de las dos.'},
-  {txt:'"Elegir una palabra suave en vez de una fuerte es mentir."',
-   g1:'No: las dos nombran la misma cosa. «De segunda mano» y «usada» son la misma bolsa.',
-   g2:'Lo que hace es apuntar. El trabajo es darse cuenta hacia dónde, y decidir uno mismo.'},
-  {txt:'"Toda palabra fuerte es una trampa, así que hay que desconfiar de todas."',
-   g1:'De las cuatro de la unidad, una NO es trampa: «se cayó el puente» cuando el puente se cayó.',
-   g2:'Desconfiar de todas las palabras cuesta lo mismo que creerlas todas. Es la misma lección que el mensaje sin señales.'},
-  {txt:'"Una definición larga es mejor que una corta."',
-   g1:'El largo no dice nada. Lo que se mide es qué entra y qué queda fuera.',
-   g2:'Se le pasan las dos pruebas: buscar lo que entra y no debería, y lo que queda fuera y sí debería.'},
-  {txt:'"Contestar una pregunta siempre es lo correcto."',
-   g1:'No si la pregunta ya trae la respuesta metida dentro.',
-   g2:'«¿Por qué el abono caro rinde más?» se contesta al revés: primero, ¿rinde más?'},
-  {txt:'"La intención del que habla no se puede saber, así que no vale preguntarla."',
-   g1:'No se adivina: se pregunta. Y muchas veces la frase misma la muestra.',
-   g2:'Una frase que pide una acción tiene una intención distinta de una que pide un dato, y eso sí se ve.'}
+  {k:'er-suave',txt:'"Elegir una palabra suave en vez de una fuerte es mentir."',g1:'No: las dos nombran la misma cosa. «De segunda mano» y «usada» son la misma bolsa.',g2:'Lo que hace es apuntar. El trabajo es darse cuenta hacia dónde, y decidir uno mismo.'},
+  {k:'er-fuerte',txt:'"Toda palabra fuerte es una trampa, así que hay que desconfiar de todas."',g1:'De las cuatro de la unidad, una NO es trampa: «se cayó el puente» cuando el puente se cayó.',g2:'Desconfiar de todas las palabras cuesta lo mismo que creerlas todas. Es la misma lección que el mensaje sin señales.'},
 ];
 const critDecisionBank=[
-  {txt:'Te llega «Te espero en el banco a las tres». ¿Vas y ves, o preguntás en cuál de los dos?'},
-  {txt:'En la pulpería te dicen que un producto «es de mejor calidad». ¿Lo pagás, o preguntás mejor en qué y cuánto?'},
-  {txt:'Alguien te pregunta por qué algo es mejor, y vos no sabés si lo es. ¿Contestás, o contestás la de atrás primero?'},
-  {txt:'Un papel dice «regalo» y hay que firmarlo. ¿Firmás, o preguntás si eso se devuelve?'},
-  {txt:'En clase te dan una definición y se te ocurre un caso que no encaja. ¿Te lo callás, o levantás la mano?'}
+  {k:'de-aviso',txt:'Leés un aviso de la alcaldía. ¿Te fijás solo en lo que dice, o también en qué quiere lograr el que lo escribió?'},
 ];
-const critDecisionGuide='Primero se pregunta qué HACE la frase. Si dice dos cosas, se pide la que es. Si trae una palabra que no se puede comprobar, se pide el número. Y si la pregunta ya trae la respuesta dentro, se contesta la de atrás primero.';
+const critDecisionGuide='Se valora que mire las dos cosas: lo que la frase dice y lo que quiere lograr quien la escribió. Leer solo lo literal deja fuera la mitad del mensaje.';
 const critCompareBank=[
-  {a:'«¿Me pasás la sal?»',b:'«¿Cuánto cuesta la sal?»',
-   ga:'Pide una acción: quiere que le pasen la sal.',
-   gb:'Pide un dato: quiere un número.',
-   gr:'Las dos tienen forma de pregunta y no hacen lo mismo. La forma no dice lo que la frase hace.'},
-  {a:'«La bolsa es de segunda mano».',b:'«La bolsa es usada».',
-   ga:'Nombra la bolsa y suaviza.',
-   gb:'Nombra la misma bolsa y no suaviza.',
-   gr:'La bolsa es la misma. Lo que cambia es hacia dónde apunta la palabra, y eso no es mentir: es elegir.'},
-  {a:'«Un ave es un animal que vuela».',b:'«Una silla es algo donde uno se sienta».',
-   ga:'Es muy angosta: deja fuera a la gallina.',
-   gb:'Es muy ancha: deja entrar una piedra.',
-   gr:'Las dos están mal y por razones contrarias. Por eso se le pasan las dos pruebas a toda definición.'},
-  {a:'«¿Por qué el abono caro rinde más?»',b:'«¿El abono caro rinde más?»',
-   ga:'Da por hecho que rinde más y solo deja discutir el porqué.',
-   gb:'Deja la pregunta abierta: se puede contestar que no.',
-   gr:'Una sola palabra de diferencia. La primera ya ganó la discusión antes de empezarla.'}
+  {k:'cm-sal',a:'«¿Me pasás la sal?»',b:'«¿Cuánto cuesta la sal?»',ga:'Pide una acción: quiere que le pasen la sal.',gb:'Pide un dato: quiere un número.',gr:'Las dos tienen forma de pregunta y no hacen lo mismo. La forma no dice lo que la frase hace.'},
 ];
 const critCauseBank=[
-  {cause:'La forma de la frase no dice lo que la frase hace.',guide:'Por eso «¿me pasás la sal?» es un pedido. Nadie contesta «sí» y se queda sentado.'},
-  {cause:'La palabra «banco» nombra dos cosas distintas.',guide:'Por eso Marlon y el otro se esperaron en dos sitios. Lo arreglaba una pregunta de cuatro palabras.'},
-  {cause:'«De mejor calidad» no dice mejor en qué ni cuánto.',guide:'Por eso doña Chepa pagó el doble por un jabón que lava igual. A una palabra vaga se le pide el número.'},
-  {cause:'Una pregunta puede traer la respuesta metida dentro.',guide:'Por eso a Wilmer le quedó aceptado que el abono caro rinde más, y compró ocho sacos.'},
-  {cause:'Quien pone el nombre decide antes de que se mire la cosa.',guide:'Por eso «regalo» se firmó tranquilo y a los seis meses había que devolverlo.'}
+  {k:'ca-ortega',cause:'Cada palabra arrastra la vida de quien la usa.',guide:'Por eso dos personas usan la misma palabra y no dicen lo mismo, y conviene preguntar qué quiere decir el otro.'},
+  {k:'ca-russell',cause:'Una frase puede estar bien escrita y no decir nada claro.',guide:'Por eso hay que pedir que se aclare antes de ponerse a discutirla.'},
 ];
 const critEffectBank=[
-  {effect:'Dos personas se esperan una hora en dos sitios distintos.',guide:'Porque la frase decía dos cosas y cada uno eligió una sin darse cuenta.'},
-  {effect:'Alguien paga el doble por algo que funciona igual.',guide:'Porque la palabra que lo convenció no se podía comprobar, y nadie pidió el número.'},
-  {effect:'Una mamá firma un préstamo creyendo que no debe nada.',guide:'Porque el papel le puso el nombre «regalo», y el nombre decidió antes de leer.'},
-  {effect:'La clase se detiene diez minutos y la definición mejora.',guide:'Porque alguien buscó lo que quedaba fuera y sí debería entrar: la gallina.'},
-  {effect:'Un muchacho deja de creerle a toda palabra fuerte.',guide:'Porque dio por trampa las cuatro, y una no lo era. Desconfiar de todo cuesta lo mismo que creerlo todo.'}
+  {k:'ef-ironia',effect:'Alguien lee «¡Qué buena idea!» en un mensaje y no sabe si lo están felicitando.',guide:'Porque por escrito no se ve la cara, y la ironía suena a elogio y dice lo contrario.'},
+  {k:'ef-seis',effect:'Una visita se queda hasta tarde aunque le dijeron «ya son las seis».',guide:'Porque tomó la frase como un dato y no vio que le estaban pidiendo que se fuera.'},
+  {k:'ef-pronto',effect:'Dos personas quedan en verse «pronto»: una espera una hora y la otra una semana.',guide:'Porque la misma palabra no le dice lo mismo a cada uno. Se arregla preguntando cuándo es eso.'},
 ];
 function genEvalCrit(){
   sfx('click');

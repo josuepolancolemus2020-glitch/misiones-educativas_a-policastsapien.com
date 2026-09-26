@@ -6763,6 +6763,31 @@ Sus siete misiones y sus siete fichas, con la misma forma. Tres cosas propias:
   hoja propia ahí es una hoja de más por alumno. Y de paso salieron cuatro
   fichas que ya se partían al imprimir: la 73, la 74, la 75 y la 76.
 
+### La Ruta de la Raíz, y lo que enseñó
+
+Sus cinco unidades de Filosofía, con la misma forma y una trampa propia:
+**aquí el nombre de la clase es a la vez la palabra con que se escriben las
+demás preguntas**. «Cambió la materia», «es una opinión», «pide una acción»:
+si la clase se pregunta en la selección múltiple, cualquier verdadero o falso
+que diga «cambia la materia» la deja escrita. Por eso **las clases se aplican
+solo en el verdadero o falso** (su respuesta es V o F, que no delata nada), y
+**los pareados llevan términos que no salen en ninguna otra pregunta**: las
+ramas, los pensadores, las palabras técnicas.
+
+⚠️ **Las cinco fichas salían resueltas de maneras distintas, y ninguna daba
+error:**
+- en la 1, la actividad «¿De qué clase es?» iba en el orden H·S·V repetido
+  doce veces;
+- en la 2, «¿Razón o conclusión?» traía siempre la razón primero, y «¿Está
+  bien hecho?» repetía cuatro argumentos, dos de ellos ya contestados en la
+  actividad de la regla;
+- en la 3, 4 y 5 (las que se arman), la selección múltiple repetía ejemplos de
+  la actividad 1 o dejaba escrito lo que pedía la tabla de la actividad 5.
+
+Las de las unidades 3 a 5 se corrigieron **en su armador**, no en el HTML, y
+se volvieron a repartir: una opción larga pasó la 5 de diez hojas a once, y se
+acortó hasta volver a diez.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
