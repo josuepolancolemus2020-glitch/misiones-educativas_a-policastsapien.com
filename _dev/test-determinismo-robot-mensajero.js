@@ -121,8 +121,14 @@ const simOk = vm.runInContext(`(function(){
 })()`, sandbox);
 ok('simulador: AVANZA×3 + ENTREGA desde C5 mirando N termina en C2 entregado', simOk);
 ok('pregunta diagnóstica presente (Norte→AVANZA,GIRA DERECHA,AVANZA → Este)', vm.runInContext("evalMCBank.some(q=>q.q.includes('mira hacia arriba (Norte)')&&q.o[q.a].includes('Este'))", sandbox));
-ok('pregunta diagnóstica presente (¿Qué es una secuencia?)', vm.runInContext("evalMCBank.some(q=>q.q.includes('¿Qué es una secuencia en programación?')&&q.o[q.a].toLowerCase().includes('orden'))", sandbox));
-ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number')", sandbox));
+/* Desde que la prueba no se regala respuestas (septiembre de 2026), «qué es
+   una secuencia» vive en los pareados y no en la selección: preguntarlo en
+   las dos era dejar escrita la respuesta de una en la otra. El diagnóstico de
+   la ruta lleva su propia copia de la pregunta. */
+ok('la secuencia sigue en la prueba (pareado «Secuencia»)', vm.runInContext("evalPRBank.some(p=>p.term==='Secuencia'&&/orden/i.test(p.def))", sandbox));
+/* Los bancos revisados dato por dato son de diez (verifica-mision-nueva lo
+   acepta desde diez cuando cada ítem lleva su `k`). */
+ok('formato evalMCBank {q,o,a} para el Campeonísimo', vm.runInContext("evalMCBank.length>=10&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.k)", sandbox));
 
 console.log(fallos === 0 ? '\n✅ Todo en orden (' + fallos + ' fallos)' : '\n❌ ' + fallos + ' fallos');
 process.exit(fallos === 0 ? 0 : 1);

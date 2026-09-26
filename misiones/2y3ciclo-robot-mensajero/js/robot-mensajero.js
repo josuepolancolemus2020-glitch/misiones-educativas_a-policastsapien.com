@@ -517,7 +517,7 @@ const evalTFBank=[
   {q:'El robot adivina lo que queremos decir.',a:false,k:'tf-adivina'}
 ];
 const evalMCBank=[
-  {q:'El robot mira al Norte y ejecuta AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?',o:['a) Este','b) Norte','c) Sur','d) Oeste'],a:0,k:'mc-traza1'},
+  {q:'Un robot mira hacia arriba (Norte) y ejecuta: AVANZA, GIRA DERECHA, AVANZA. ¿Hacia dónde mira al final?',o:['a) Este','b) Norte','c) Sur','d) Oeste'],a:0,k:'mc-traza1'},
   {q:'El robot mira al Oeste y ejecuta GIRA DERECHA. ¿Hacia dónde mira ahora?',o:['a) Sur','b) Norte','c) Este','d) Oeste'],a:1,k:'mc-oeste-derecha'},
   {q:'¿Cuál de estas es una instrucción EXACTA?',o:['a) «Ve por allá»','b) «Haz algo útil»','c) «Camina 3 pasos hacia adelante»','d) «Pon bastante harina»'],a:2,k:'mc-exacta'},
   {q:'¿Qué pasa si una instrucción saca al robot del mapa?',o:['a) El robot vuela','b) El robot llega igual','c) El robot choca con el borde','d) Aparece otro mapa'],a:2,k:'mc-borde'},
