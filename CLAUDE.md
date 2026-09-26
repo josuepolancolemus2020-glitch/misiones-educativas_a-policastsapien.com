@@ -6715,6 +6715,28 @@ Tres cosas que valen para las siguientes:
 - **Cada banco conserva su forma**: si las opciones no llevaban letra delante,
   siguen sin llevarla. En dos misiones salió «a) GUARDA» y se corrigió.
 
+### Las rutas del Código y de los Robots, y lo que enseñaron
+
+Son ocho misiones bilingües, y ahí la revisión se hace **dos veces**: el `-en.js`
+lleva los bancos fila a fila con el español —también los de pensamiento
+crítico— y la ficha en inglés vive en `fichas/js/ficha-<slug>-en.js`. Cambiar
+solo el español deja al alumno que estudia en inglés con las preguntas viejas,
+sin un solo error. `verifica-bancos-en.js` se corre con los dos archivos.
+
+⚠️ **En pensamiento crítico, cada sección se queda con SU proyecto.** En Robots
+que Resuelven Problemas el huerto, el vado, el café y la basura salían a la vez
+en el caso, el proceso, la comparación y el diseño: el regador que se quedaba
+abierto en una sección era la respuesta de la otra. Ahora el caso habla de la
+basura y la milpa, el proceso del huerto y del café, la comparación usa otros
+ejemplos y el diseño es el de la inundación. Lo mismo en Programando un Robot
+con el contador de botellas, el bucle sin salida y el sensor de pared.
+
+⚠️ **Y la sonda no leía la pauta de pareados escrita «1. C &nbsp; 2. H»**, que
+es como la trae la ficha de Robots que Resuelven Problemas: esperaba «1C, 2H»,
+decía «no se pudo leer entera» y no comprobaba que ningún pareado cayera en su
+propia fila. Ahora lee las dos formas, y la ficha **conserva la suya**: el
+formato de la pauta no se toca.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

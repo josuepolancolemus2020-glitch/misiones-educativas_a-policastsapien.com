@@ -519,7 +519,7 @@ function itemsFicha(html) {
   const respIII = {};
   [...pIII.matchAll(/(\d+)\s*([a-e])\b/g)].forEach(m => { respIII[+m[1]] = 'abcde'.indexOf(m[2]); });
   const respIV = {};
-  [...pIV.matchAll(/(\d+)\s*([A-J])\b/g)].forEach(m => { respIV[+m[1]] = m[2]; });
+  [...pIV.matchAll(/(\d+)\.?\s*([A-J])\b/g)].forEach(m => { respIV[+m[1]] = m[2]; });
 
   const L = [];
   I.forEach((li, i) => L.push({ banco: 'ficha I', i: i + 1, tipo: 'completar', visible: limpiaHtml(li), resp: respI[i + 1] || '', ctx: limpiaHtml(li) }));
@@ -729,7 +729,7 @@ for (const f of fs.readdirSync(path.join(RAIZ, 'fichas')).filter(n => n.endsWith
   const m = h.match(/<span class="pt">IV\. Pareados:<\/span>\s*([^<]+)/);
   if (!m) continue;
   const clave = m[1].split(/,|&nbsp;/).map(x => x.trim()).filter(Boolean);
-  const propias = clave.filter(x => { const k = x.match(/^(\d+)([A-J])$/); return k && 'ABCDEFGHIJ'[+k[1] - 1] === k[2]; });
+  const propias = clave.filter(x => { const k = x.match(/^(\d+)\.?\s*([A-J])$/); return k && 'ABCDEFGHIJ'[+k[1] - 1] === k[2]; });
   if (propias.length) { alineadas++; mal(f + ': el pareado ' + propias.join(', ') + ' cae en su propia fila (se contesta sin leer)'); }
 }
 if (!alineadas) console.log('✅ Pareados de las fichas: ninguno cae en su propia fila\n');

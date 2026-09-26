@@ -179,134 +179,134 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>The design cycle starts by <span class="linea-resp"></span> the problem.</li>' +
-        '<li>In the brainstorming stage you write down lots of <span class="linea-resp"></span>.</li>' +
-        '<li>The labeled drawing of the robot is called the <span class="linea-resp"></span>.</li>' +
-        '<li>The first version you can actually test is the <span class="linea-resp"></span>.</li>' +
-        '<li>When testing you have to <span class="linea-resp"></span> what fails.</li>' +
-        '<li>If the prototype fails, you have to <span class="linea-resp"></span> and test again.</li>' +
-        '<li>The last stage of the cycle is to <span class="linea-resp"></span> the result.</li>' +
-        '<li>The money available is a <span class="linea-resp"></span> of the project.</li>' +
-        '<li>What the robot must achieve in order to succeed is the <span class="linea-resp"></span>.</li>' +
-        '<li>The watering robot needs a <span class="linea-resp"></span> sensor.</li>' +
+        '<li>At the fair, the robot from Kenia’s group <span class="linea-resp"></span> very well.</li>' +
+        '<li>The box that warns when the tank fills up was made in one <span class="linea-resp"></span>.</li>' +
+        '<li>The design cycle is a <span class="linea-resp"></span>, not a straight line.</li>' +
+        '<li>In the coffee yard, the <span class="linea-resp"></span> sensor warns that the roof has to close.</li>' +
+        '<li>The coffee yard roof is closed by a motor with a <span class="linea-resp"></span>.</li>' +
+        '<li>The ford alarm uses a water <span class="linea-resp"></span> sensor.</li>' +
+        '<li>The trash sorter must get <span class="linea-resp"></span> out of every 20 containers right.</li>' +
+        '<li>The garden sprinkler cannot cost more than <span class="linea-resp"></span> lempiras.</li>' +
+        '<li>The presentation to the class lasts two <span class="linea-resp"></span>.</li>' +
+        '<li>For safety, the robot works with low <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ The design cycle starts by identifying the problem.</li>' +
-        '<li>____ The first thing a good team does is build the robot and look for the problem afterwards.</li>' +
-        '<li>____ In the brainstorming stage it is a good idea to write down lots of possible solutions.</li>' +
-        '<li>____ The sketch shows which sensor, which mechanism and which program the robot carries.</li>' +
-        '<li>____ The prototype is the final version, and it is never changed again.</li>' +
-        '<li>____ When testing you write down what fails and what works.</li>' +
-        '<li>____ If the prototype fails the test, you have to give the project up.</li>' +
-        '<li>____ Cost, time and safety are constraints of the project.</li>' +
-        '<li>____ The safety of whoever uses the robot is not the team’s business.</li>' +
-        '<li>____ Communicating the result is the last stage of the design cycle.</li>' +
+        '<li>____ At the fair, the judges asked both groups the same question.</li>' +
+        '<li>____ The tank group used more parts than Kenia’s group.</li>' +
+        '<li>____ After a failure, it is best to change one single thing before trying again.</li>' +
+        '<li>____ A good prototype works the first time.</li>' +
+        '<li>____ Robots help people; they do not just replace them.</li>' +
+        '<li>____ If the robot does not meet the goal, you can ask for less so it looks like it worked.</li>' +
+        '<li>____ Sometimes, while trying it out, you find the real problem was a different one.</li>' +
+        '<li>____ The model has to look pretty to be tested.</li>' +
+        '<li>____ In the team, everybody checks and gives an opinion, not only the one who draws.</li>' +
+        '<li>____ To solve a problem in your community you need an expensive laboratory.</li>' +
         '</ol>' +
 
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>Which is the first stage of the design cycle?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>The ford alert goes where there is no socket. What power source is best?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> build the prototype</span>' +
-        '<span class="op"><i>b</i> identify the problem</span>' +
-        '<span class="op"><i>c</i> communicate the result</span>' +
-        '<span class="op"><i>d</i> test the robot</span>' +
+        '<span class="op"><i>a</i> A one-kilometer cable</span>' +
+        '<span class="op"><i>b</i> A candle</span>' +
+        '<span class="op"><i>c</i> A battery with a solar panel</span>' +
+        '<span class="op"><i>d</i> None</span>' +
         '</div>' +
         '</div>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What do you do in the brainstorming stage?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>Why does the school garden dry out?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> write down lots of possible solutions</span>' +
-        '<span class="op"><i>b</i> paint the robot in bright colors</span>' +
-        '<span class="op"><i>c</i> grade the team</span>' +
-        '<span class="op"><i>d</i> put the materials away</span>' +
+        '<span class="op"><i>a</i> Because salt falls on it</span>' +
+        '<span class="op"><i>b</i> Because on days off nobody comes to water it</span>' +
+        '<span class="op"><i>c</i> Because birds eat it</span>' +
+        '<span class="op"><i>d</i> Because it fills with trash</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>What does a good design sketch contain?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>What wakes the families when water gets into the houses at night?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the attendance list</span>' +
-        '<span class="op"><i>b</i> the selling price</span>' +
-        '<span class="op full"><i>c</i> which sensor, which mechanism, which energy and which program it carries</span>' +
-        '<span class="op"><i>d</i> only the robot’s name</span>' +
+        '<span class="op"><i>a</i> A siren and a flashing light</span>' +
+        '<span class="op"><i>b</i> A poster on the wall</span>' +
+        '<span class="op"><i>c</i> A clock</span>' +
+        '<span class="op"><i>d</i> A fan</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>What is a prototype?</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>What actuator does the school garden sprinkler need?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op full"><i>a</i> the first version of the robot, made so it can be tested</span>' +
-        '<span class="op"><i>b</i> a drawing with no parts</span>' +
-        '<span class="op"><i>c</i> the team’s certificate</span>' +
-        '<span class="op"><i>d</i> a robot brought in from a factory</span>' +
+        '<span class="op"><i>a</i> A camera</span>' +
+        '<span class="op"><i>b</i> A water pump or valve</span>' +
+        '<span class="op"><i>c</i> A horn</span>' +
+        '<span class="op"><i>d</i> A mirror</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>During the test, what should the team do?</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>Which team role writes the robot’s instructions?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> hide the failures</span>' +
-        '<span class="op"><i>b</i> change project</span>' +
-        '<span class="op"><i>c</i> hand out prizes</span>' +
-        '<span class="op"><i>d</i> write down what fails and what works</span>' +
+        '<span class="op"><i>a</i> The designer</span>' +
+        '<span class="op"><i>b</i> The builder</span>' +
+        '<span class="op"><i>c</i> The programmer</span>' +
+        '<span class="op"><i>d</i> The audience</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>«The robot must not cost more than 200 lempiras» is an example of…</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>Which sensor does the cornfield scarecrow need so it spins only when the birds arrive?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a success criterion</span>' +
-        '<span class="op"><i>b</i> a constraint</span>' +
-        '<span class="op"><i>c</i> a sketch</span>' +
-        '<span class="op"><i>d</i> a prototype</span>' +
+        '<span class="op"><i>a</i> Moisture</span>' +
+        '<span class="op"><i>b</i> Motion</span>' +
+        '<span class="op"><i>c</i> Temperature</span>' +
+        '<span class="op"><i>d</i> Sound</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>Which sensor suits the robot that warns about floods?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>Next to each drawn part of the robot you write…</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> color</span>' +
-        '<span class="op"><i>b</i> sound</span>' +
-        '<span class="op"><i>c</i> water level</span>' +
-        '<span class="op"><i>d</i> touch</span>' +
+        '<span class="op"><i>a</i> its price</span>' +
+        '<span class="op"><i>b</i> its color</span>' +
+        '<span class="op"><i>c</i> its weight</span>' +
+        '<span class="op"><i>d</i> what it is for</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>Which actuator does the school garden waterer need?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>What happens to the coffee spread out in the yard?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a water pump or valve</span>' +
-        '<span class="op"><i>b</i> a camera</span>' +
-        '<span class="op"><i>c</i> a moisture sensor</span>' +
-        '<span class="op"><i>d</i> a bigger battery</span>' +
+        '<span class="op"><i>a</i> Birds eat it</span>' +
+        '<span class="op"><i>b</i> It gets mixed with plastic</span>' +
+        '<span class="op"><i>c</i> It burns in the sun</span>' +
+        '<span class="op"><i>d</i> A sudden downpour soaks it</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>Which instruction is right for the watering robot?</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>In the garden sprinkler trial, what failed?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> water nonstop, always</span>' +
-        '<span class="op full"><i>b</i> if the soil is dry, then turn the water on</span>' +
-        '<span class="op"><i>c</i> wait until it rains</span>' +
-        '<span class="op"><i>d</i> switch the river crossing alarm off</span>' +
+        '<span class="op"><i>a</i> The water opened but did not close</span>' +
+        '<span class="op"><i>b</i> The battery exploded</span>' +
+        '<span class="op"><i>c</i> No water came out</span>' +
+        '<span class="op"><i>d</i> The soil turned to stone</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>Which one is an ethical question about design?</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>For the ford, which of these ideas is an automatic alarm?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op full"><i>a</i> who does the robot benefit and who might it harm?</span>' +
-        '<span class="op"><i>b</i> what color should I paint it?</span>' +
-        '<span class="op"><i>c</i> how many screws does it take?</span>' +
-        '<span class="op"><i>d</i> who draws best?</span>' +
+        '<span class="op"><i>a</i> A painted ruler</span>' +
+        '<span class="op"><i>b</i> A watchman</span>' +
+        '<span class="op"><i>c</i> A float that rings a bell</span>' +
+        '<span class="op"><i>d</i> Asking the neighbor</span>' +
         '</div>' +
         '</div>',
 
@@ -316,16 +316,16 @@
 
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
-        '<tr><td>1. ____ Design cycle</td><td>A. Write down lots of possible solutions before choosing</td></tr>' +
-        '<tr><td>2. ____ Identify</td><td>B. Fix what failed and test it again</td></tr>' +
-        '<tr><td>3. ____ Brainstorm</td><td>C. The first version of the robot, made so it can be tested</td></tr>' +
-        '<tr><td>4. ____ Sketch</td><td>D. A limit of cost, materials, time or safety</td></tr>' +
-        '<tr><td>5. ____ Prototype</td><td>E. Present the project to the class in two minutes</td></tr>' +
-        '<tr><td>6. ____ Test</td><td>F. The 7 steps engineers follow to solve a problem</td></tr>' +
-        '<tr><td>7. ____ Improve</td><td>G. What the robot must achieve in order to succeed</td></tr>' +
-        '<tr><td>8. ____ Communicate</td><td>H. Try it out several times and write down what fails</td></tr>' +
-        '<tr><td>9. ____ Criterion</td><td>I. Say what is going wrong, who it affects and why it matters</td></tr>' +
-        '<tr><td>10. ____ Constraint</td><td>J. A labeled drawing with the robot’s parts and what they do</td></tr>' +
+        '<tr><td>1. ____ Identify</td><td>A. Try it several times, measure and write down what fails</td></tr>' +
+        '<tr><td>2. ____ Brainstorm</td><td>B. What the robot must achieve, and it is measured</td></tr>' +
+        '<tr><td>3. ____ Design</td><td>C. Say what is wrong, who it affects and why it matters</td></tr>' +
+        '<tr><td>4. ____ Build</td><td>D. Thinking about who the robot helps and who it could affect</td></tr>' +
+        '<tr><td>5. ____ Test</td><td>E. Sketch which sensor, which mechanism, which power and which program</td></tr>' +
+        '<tr><td>6. ____ Improve</td><td>F. The limit you cannot go past, and it is respected</td></tr>' +
+        '<tr><td>7. ____ Communicate</td><td>G. Fix what failed and test again</td></tr>' +
+        '<tr><td>8. ____ Criterion</td><td>H. Write down lots of solutions without judging them, then choose</td></tr>' +
+        '<tr><td>9. ____ Constraint</td><td>I. Put the prototype together with the materials available</td></tr>' +
+        '<tr><td>10. ____ Design ethics</td><td>J. Present the problem, the design, the test and the improvement</td></tr>' +
         '</table>' +
 
         '<div class="felic">' +
@@ -357,10 +357,10 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. identifying &nbsp; 2. ideas &nbsp; 3. sketch &nbsp; 4. prototype &nbsp; 5. write down &nbsp; 6. improve it &nbsp; 7. communicate &nbsp; 8. constraint &nbsp; 9. criterion &nbsp; 10. moisture</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4T, 5F, 6T, 7F, 8T, 9F, 10T</div>' +
-        '<div><span class="pt">III. Multiple choice:</span> 1b, 2a, 3c, 4a, 5d, 6b, 7c, 8a, 9b, 10a</div>' +
-        '<div><span class="pt">IV. Matching:</span> 1. F &nbsp; 2. I &nbsp; 3. A &nbsp; 4. J &nbsp; 5. C &nbsp; 6. H &nbsp; 7. B &nbsp; 8. E &nbsp; 9. G &nbsp; 10. D</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. danced &nbsp; 2. week &nbsp; 3. wheel &nbsp; 4. rain &nbsp; 5. pulley &nbsp; 6. level &nbsp; 7. 19 &nbsp; 8. 200 &nbsp; 9. minutes &nbsp; 10. voltage</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
+        '<div><span class="pt">III. Multiple choice:</span> 1c, 2b, 3a, 4b, 5c, 6b, 7d, 8d, 9a, 10c</div>' +
+        '<div><span class="pt">IV. Matching:</span> 1. C &nbsp; 2. H &nbsp; 3. E &nbsp; 4. I &nbsp; 5. A &nbsp; 6. G &nbsp; 7. J &nbsp; 8. B &nbsp; 9. F &nbsp; 10. D</div>' +
         '</div>' +
 
         '<div class="pauta" style="margin-top:10px;">' +

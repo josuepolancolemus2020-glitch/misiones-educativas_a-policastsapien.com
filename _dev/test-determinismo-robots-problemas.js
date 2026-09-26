@@ -56,9 +56,10 @@ prohibidas.forEach(p => {
 });
 
 // ── Bancos de la evaluación conceptual ──
-console.log('— Bancos de la evaluación conceptual (4 × 15) —');
+console.log('— Bancos de la evaluación conceptual (4 × 10) —');
+/* Revisados dato por dato (septiembre de 2026): diez por banco, cada uno con su `k`. */
 ['evalTFBank', 'evalMCBank', 'evalCPBank', 'evalPRBank'].forEach(b => {
-  ok(b + ' tiene 15 ítems', g(b + '.length') === 15);
+  ok(b + ' tiene 10 ítems, cada uno con su k', g(b + '.length') === 10 && g(b + '.every(x=>x.k)'));
 });
 const mc = g('JSON.parse(JSON.stringify(evalMCBank))');
 ok('evalMCBank en formato {q,o,a} con 4 opciones y respuesta válida',
@@ -66,7 +67,7 @@ ok('evalMCBank en formato {q,o,a} con 4 opciones y respuesta válida',
     && Number.isInteger(it.a) && it.a >= 0 && it.a <= 3 && typeof it.o[it.a] === 'string'));
 ok('evalMCBank: las opciones van etiquetadas a) b) c) d)',
   mc.every(it => it.o.every((op, i) => op.startsWith('abcd'[i] + ') '))));
-ok('evalMCBank: enunciados únicos', new Set(mc.map(x => x.q)).size === 15);
+ok('evalMCBank: enunciados únicos', new Set(mc.map(x => x.q)).size === 10);
 const cp = g('JSON.parse(JSON.stringify(evalCPBank))');
 ok('evalCPBank: todos los ítems llevan el hueco ___', cp.every(it => it.q.includes('___') && it.a.length > 1));
 const tf = g('JSON.parse(JSON.stringify(evalTFBank))');
@@ -74,16 +75,19 @@ ok('evalTFBank: respuestas booleanas y ambos valores presentes',
   tf.every(it => typeof it.a === 'boolean') && tf.some(it => it.a) && tf.some(it => !it.a));
 const pr = g('JSON.parse(JSON.stringify(evalPRBank))');
 ok('evalPRBank: términos y definiciones únicos',
-  new Set(pr.map(x => x.term)).size === 15 && new Set(pr.map(x => x.def)).size === 15);
+  new Set(pr.map(x => x.term)).size === 10 && new Set(pr.map(x => x.def)).size === 10);
 
 // ── Bancos de la prueba crítica ──
 console.log('— Bancos de pensamiento crítico —');
-ok('critCasoBank tiene 6 casos con pauta', g('critCasoBank.length') === 6 && g('critCasoBank.every(c=>c.txt.length>20&&c.ans.length>40)'));
-ok('critErrorBank tiene 5 errores con dos correcciones', g('critErrorBank.length') === 5 && g('critErrorBank.every(e=>!!e.g1&&!!e.g2)'));
-ok('critProcesoBank tiene 5 casos con falló/mejora/comunicación', g('critProcesoBank.length') === 5 && g('critProcesoBank.every(c=>!!c.f&&!!c.m&&!!c.c)'));
+/* Cada sección de la prueba crítica tiene su propio proyecto: el huerto, el
+   café, el vado y la basura ya no salen a la vez en el caso, el proceso, la
+   comparación y el diseño. Lo que se exige es que alcancen para la prueba. */
+ok('critCasoBank alcanza para 2 casos con pauta', g('critCasoBank.length') >= 2 && g('critCasoBank.every(c=>c.txt.length>20&&c.ans.length>40)'));
+ok('critErrorBank tiene errores con dos correcciones', g('critErrorBank.length') >= 1 && g('critErrorBank.every(e=>!!e.g1&&!!e.g2)'));
+ok('critProcesoBank tiene casos con falló/mejora/comunicación', g('critProcesoBank.length') >= 1 && g('critProcesoBank.every(c=>!!c.f&&!!c.m&&!!c.c)'));
 ok('critProcesoQuestions tiene 3 preguntas', g('critProcesoQuestions.length') === 3);
-ok('critCompareBank tiene 4 comparaciones completas', g('critCompareBank.length') === 4 && g('critCompareBank.every(c=>!!c.a&&!!c.b&&!!c.ga&&!!c.gb&&!!c.gr)'));
-ok('critDesignBank tiene 5 problemas hondureños', g('critDesignBank.length') === 5);
+ok('critCompareBank tiene comparaciones completas', g('critCompareBank.length') >= 1 && g('critCompareBank.every(c=>!!c.a&&!!c.b&&!!c.ga&&!!c.gb&&!!c.gr)'));
+ok('critDesignBank tiene problemas hondureños', g('critDesignBank.length') >= 1);
 const guia = g('critDesignGuide');
 ok('la rúbrica del proyecto final tiene 4 criterios (5 pts c/u = 20)',
   ['①', '②', '③', '④'].every(s => guia.includes(s)) && guia.includes('20 pts')

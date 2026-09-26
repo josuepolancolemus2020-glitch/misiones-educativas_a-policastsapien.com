@@ -413,73 +413,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 let evalTFBank=[
-  {q:'El ciclo de diseño empieza por identificar el problema.',a:true},
-  {q:'Lo primero que hace un buen equipo es construir el robot.',a:false},
-  {q:'En la etapa de idear conviene anotar muchas soluciones.',a:true},
-  {q:'El boceto indica qué sensor, qué mecanismo y qué programa lleva el robot.',a:true},
-  {q:'El prototipo es la versión final que ya no se cambia.',a:false},
-  {q:'Al probar hay que anotar lo que falla.',a:true},
-  {q:'Si el prototipo falla, el equipo debe abandonar el proyecto.',a:false},
-  {q:'Mejorar significa corregir lo que falló y volver a probar.',a:true},
-  {q:'El costo y el tiempo son restricciones del proyecto.',a:true},
-  {q:'Un criterio es lo que el robot debe lograr para tener éxito.',a:true},
-  {q:'La seguridad de quien usa el robot no es asunto del equipo.',a:false},
-  {q:'Comunicar el resultado es la última etapa del ciclo.',a:true},
-  {q:'Un buen robot es el que resuelve un problema real de su comunidad.',a:true},
-  {q:'Los robots deben reemplazar a las personas sin avisarles.',a:false},
-  {q:'En el equipo hay roles: diseñador, programador, constructor y probador.',a:true}
+  {q:'En la feria, el jurado les hizo a los dos grupos la misma pregunta.',a:true,k:'tf-jurado'},
+  {q:'El grupo del tanque usó más piezas que el grupo de Kenia.',a:false,k:'tf-piezas'},
+  {q:'Un buen prototipo sale bien la primera vez.',a:false,k:'tf-primera'},
+  {q:'Después de un fallo, conviene cambiar una sola cosa antes de volver a ensayar.',a:true,k:'tf-una-cosa'},
+  {q:'Si el robot no cumple, se puede pedir menos para que parezca que funcionó.',a:false,k:'tf-pedir-menos'},
+  {q:'La maqueta tiene que verse bonita para poder probarse.',a:false,k:'tf-bonita'},
+  {q:'Los robots ayudan a las personas, no las reemplazan sin más.',a:true,k:'tf-reemplazan'},
+  {q:'Para resolver un problema de la comunidad hace falta un laboratorio caro.',a:false,k:'tf-laboratorio'},
+  {q:'A veces, al ensayar, se descubre que el problema verdadero era otro.',a:true,k:'tf-otro'},
+  {q:'En el equipo, todos revisan y opinan, no solo el que dibuja.',a:true,k:'tf-opinan'}
 ];
 let evalMCBank=[
-  {q:'¿Cuál es la primera etapa del ciclo de diseño?',o:['a) Construir','b) Identificar el problema','c) Comunicar','d) Probar'],a:1},
-  {q:'¿Qué se hace en la etapa de idear?',o:['a) Pintar el robot','b) Calificar al equipo','c) Anotar muchas soluciones posibles','d) Guardar los materiales'],a:2},
-  {q:'¿Qué contiene un buen boceto de diseño?',o:['a) Solo el nombre del robot','b) Sensores, mecanismos, energía y programa','c) La lista de asistencia','d) El precio de venta'],a:1},
-  {q:'¿Qué es un prototipo?',o:['a) La primera versión que se puede probar','b) Un dibujo sin partes','c) El diploma del equipo','d) Un robot de fábrica'],a:0},
-  {q:'Durante la prueba, ¿qué debe hacer el equipo?',o:['a) Esconder los fallos','b) Cambiar de proyecto','c) Repartir premios','d) Anotar qué falla y qué funciona'],a:3},
-  {q:'El prototipo falló tres veces. ¿Qué corresponde hacer?',o:['a) Rendirse','b) Decir que funcionó','c) Copiar a otro equipo','d) Mejorar el diseño y volver a probar'],a:3},
-  {q:'«No debe costar más de 200 lempiras» es un ejemplo de…',o:['a) Criterio','b) Restricción','c) Boceto','d) Prototipo'],a:1},
-  {q:'«Debe avisar antes de que el agua llegue al vado» es un ejemplo de…',o:['a) Restricción de tiempo','b) Criterio de éxito','c) Rol del equipo','d) Material'],a:1},
-  {q:'¿Qué sensor conviene al robot que alerta de inundaciones?',o:['a) De nivel de agua','b) De color','c) De sonido','d) De tacto'],a:0},
-  {q:'¿Qué actuador necesita el regador del huerto escolar?',o:['a) Una bomba o válvula de agua','b) Una cámara','c) Un sensor de humedad','d) Una batería'],a:0},
-  {q:'¿Qué instrucción es correcta para el robot regador?',o:['a) Riega siempre sin parar','b) Espera a que llueva','c) Apaga la alarma','d) Si la tierra está seca, entonces abre el agua'],a:3},
-  {q:'El proyecto se instala en el vado y no hay tomacorriente. ¿Qué energía conviene?',o:['a) Un cable de un kilómetro','b) Una vela','c) Batería con panel solar','d) Ninguna'],a:2},
-  {q:'¿Cuál es la última etapa del ciclo de diseño?',o:['a) Comunicar el resultado','b) Probar','c) Idear','d) Construir'],a:0},
-  {q:'¿Cuál es una pregunta ética del diseño?',o:['a) ¿De qué color lo pinto?','b) ¿Cuántos tornillos lleva?','c) ¿A quién beneficia y a quién podría afectar?','d) ¿Quién dibuja mejor?'],a:2},
-  {q:'¿Qué rol del equipo se encarga de ensayar el robot y anotar los fallos?',o:['a) El diseñador','b) El programador','c) El probador','d) El constructor'],a:2}
+  {q:'La alerta del vado va donde no hay tomacorriente. ¿Qué energía conviene?',o:['a) a) Un cable de un kilómetro','b) b) Una vela','c) c) Batería con panel solar','d) d) Ninguna'],a:2,k:'mc-energia'},
+  {q:'¿Qué mueve los envases en el clasificador de basura?',o:['a) a) Una bocina','b) b) Una banda con motor y una compuerta','c) c) Una lámpara','d) d) Un timbre'],a:1,k:'mc-banda'},
+  {q:'¿Qué despierta a las familias cuando el agua entra a las casas de noche?',o:['a) a) Una sirena y una luz intermitente','b) b) Un cartel en la pared','c) c) Un reloj','d) d) Un ventilador'],a:0,k:'mc-sirena'},
+  {q:'¿Qué actuador necesita el regador del huerto escolar?',o:['a) a) Una cámara','b) b) Una bomba o válvula de agua','c) c) Una bocina','d) d) Un espejo'],a:1,k:'mc-bomba'},
+  {q:'¿Qué rol del equipo escribe las instrucciones del robot?',o:['a) a) El diseñador','b) b) El constructor','c) c) El programador','d) d) El público'],a:2,k:'mc-programador'},
+  {q:'En la feria, ¿qué tenía la caja del otro grupo que no tenía el robot de Kenia?',o:['a) a) Más piezas','b) b) Un problema que resolver','c) c) Música','d) d) Más horas de trabajo'],a:1,k:'mc-kenia'},
+  {q:'Al lado de cada parte dibujada del robot se escribe…',o:['a) a) su precio','b) b) su color','c) c) su peso','d) d) para qué sirve'],a:3,k:'mc-justifica'},
+  {q:'¿Qué le pasa al café tendido en el patio?',o:['a) a) Se lo comen los pájaros','b) b) Se mezcla con plástico','c) c) Se quema al sol','d) d) Un aguacero de repente lo moja'],a:3,k:'mc-cafe'},
+  {q:'En el ensayo del regador del huerto, ¿qué falló?',o:['a) a) El agua se abrió pero no se cerró','b) b) La batería explotó','c) c) No salió agua','d) d) La tierra se volvió piedra'],a:0,k:'mc-cierre'},
+  {q:'Para el vado, ¿cuál de estas ideas es una alarma automática?',o:['a) a) Una regla pintada','b) b) Un vigilante','c) c) Una boya que hace sonar un timbre','d) d) Preguntarle al vecino'],a:2,k:'mc-boya'}
 ];
 let evalCPBank=[
-  {q:'El ciclo de diseño empieza al ___ el problema.',a:'identificar'},
-  {q:'En la etapa de ___ se anotan muchas soluciones posibles.',a:'idear'},
-  {q:'El dibujo rotulado del robot se llama ___.',a:'boceto'},
-  {q:'La primera versión que se puede probar es el ___.',a:'prototipo'},
-  {q:'Al ___ el prototipo se anota qué falla y qué funciona.',a:'probar'},
-  {q:'Si el prototipo falla, hay que ___ el diseño y volver a probar.',a:'mejorar'},
-  {q:'La última etapa del ciclo de diseño es ___ el resultado.',a:'comunicar'},
-  {q:'El dinero disponible es una ___ del proyecto.',a:'restricción'},
-  {q:'Lo que el robot debe lograr para tener éxito es el ___.',a:'criterio'},
-  {q:'El robot regador necesita un sensor de ___ para medir la tierra.',a:'humedad'},
-  {q:'El robot que alerta de inundaciones mide el ___ del agua.',a:'nivel'},
-  {q:'El miembro del equipo que ensaya el robot y anota los fallos es el ___.',a:'probador'},
-  {q:'Pensar a quién beneficia y a quién afecta el robot es parte de la ___.',a:'ética'},
-  {q:'Una maqueta de material ___ permite construir un prototipo barato.',a:'reciclado'},
-  {q:'La presentación final dura dos ___ ante la clase.',a:'minutos'}
+  {q:'En la feria, el robot del grupo de Kenia ___ muy bien.',a:'bailaba',acc:['bailaba','baila'],k:'cp-bailaba'},
+  {q:'La caja que avisa cuando se llena el tanque se hizo en una ___.',a:'semana',acc:['semana'],k:'cp-semana'},
+  {q:'El ciclo de diseño es una ___, no una línea recta.',a:'rueda',acc:['rueda','circulo','círculo'],k:'cp-rueda'},
+  {q:'En el patio de café, el sensor de ___ avisa que hay que cerrar el techo.',a:'lluvia',acc:['lluvia'],k:'cp-lluvia'},
+  {q:'El techo del patio de café lo cierra un motor con ___.',a:'polea',acc:['polea'],k:'cp-polea'},
+  {q:'La alarma del vado usa un sensor de ___ de agua.',a:'nivel',acc:['nivel'],k:'cp-nivel'},
+  {q:'El clasificador de basura debe acertar ___ de cada 20 envases.',a:'19',acc:['19','diecinueve'],k:'cp-19'},
+  {q:'El regador del huerto no puede costar más de ___ lempiras.',a:'200',acc:['200','doscientos'],k:'cp-200'},
+  {q:'La presentación ante la clase dura dos ___.',a:'minutos',acc:['minutos'],k:'cp-minutos'},
+  {q:'Por seguridad, el robot trabaja con bajo ___.',a:'voltaje',acc:['voltaje'],k:'cp-voltaje'}
 ];
 let evalPRBank=[
-  {term:'Ciclo de diseño',def:'Los 7 pasos que siguen los ingenieros para resolver un problema'},
-  {term:'Identificar',def:'Decir qué falla, a quién afecta y por qué importa'},
-  {term:'Idear',def:'Anotar muchas soluciones posibles antes de escoger'},
-  {term:'Diseñar',def:'Bocetar sensores, mecanismos, energía y programa'},
-  {term:'Prototipo',def:'Primera versión del robot, hecha para poder probarla'},
-  {term:'Probar',def:'Ensayar varias veces y anotar los fallos'},
-  {term:'Mejorar',def:'Corregir lo que falló y volver a probar'},
-  {term:'Comunicar',def:'Presentar el proyecto al público con claridad'},
-  {term:'Criterio',def:'Lo que el robot debe lograr para tener éxito'},
-  {term:'Restricción',def:'Límite de costo, materiales, tiempo o seguridad'},
-  {term:'Boceto',def:'Dibujo rápido con las partes del robot rotuladas'},
-  {term:'Maqueta',def:'Modelo del robot armado con material reciclado'},
-  {term:'Ética del diseño',def:'Pensar a quién beneficia y a quién podría afectar'},
-  {term:'Probador',def:'Rol del equipo que ensaya y anota lo que falla'},
-  {term:'Rúbrica',def:'Tabla con los criterios con que se califica el proyecto'}
+  {term:'Identificar',def:'Decir qué falla, a quién afecta y por qué importa',k:'pr-identificar'},
+  {term:'Idear',def:'Anotar muchas soluciones sin juzgarlas y después escoger',k:'pr-idear'},
+  {term:'Diseñar',def:'Bocetar qué sensor, qué mecanismo, qué energía y qué programa',k:'pr-disenar'},
+  {term:'Construir',def:'Armar el prototipo con el material disponible',k:'pr-construir'},
+  {term:'Probar',def:'Ensayar varias veces, medir y anotar qué falla',k:'pr-probar'},
+  {term:'Mejorar',def:'Corregir lo que falló y volver a probar',k:'pr-mejorar'},
+  {term:'Comunicar',def:'Presentar el problema, el diseño, la prueba y la mejora',k:'pr-comunicar'},
+  {term:'Criterio',def:'Lo que el robot debe lograr, y se mide',k:'pr-criterio'},
+  {term:'Restricción',def:'El límite que no se puede pasar, y se respeta',k:'pr-restriccion'},
+  {term:'Ética del diseño',def:'Pensar a quién beneficia el robot y a quién podría afectar',k:'pr-etica'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -566,29 +551,12 @@ function evalSwitchMode(mode){
   }
 }
 let critCasoBank=[
-  {txt:'En la aldea, el café tendido en el patio se moja cuando llueve de repente y la cosecha se pierde.',ans:'Problema: la lluvia repentina daña el café tendido y afecta a las familias cafetaleras. Sensor: de lluvia o de humedad. Actuador: motor con polea que cierra el techo corredizo. Programa: si detecta lluvia, entonces cierra el techo.'},
-  {txt:'En invierno el río crece y los niños no saben si es seguro cruzar el vado para llegar a la escuela.',ans:'Problema: nadie sabe si el vado es seguro y hay riesgo de accidente. Sensor: de nivel de agua. Actuador: bocina y luz roja de alarma. Programa: si el nivel pasa la marca, entonces enciende la alarma.'},
-  {txt:'La huerta escolar se seca los fines de semana porque nadie llega a regarla.',ans:'Problema: sin riego el fin de semana se pierden las plantas del huerto. Sensor: de humedad de la tierra. Actuador: bomba o válvula de agua. Programa: si la tierra está seca, entonces abre el agua hasta que se humedezca.'},
-  {txt:'En el barrio el agua entra a las casas de noche y nadie alcanza a sacar sus cosas.',ans:'Problema: la inundación nocturna sorprende a las familias. Sensor: de nivel de agua y de lluvia. Actuador: sirena y luz intermitente. Programa: si el agua sube de la marca, entonces suena la sirena y enciende la luz.'},
-  {txt:'En el centro educativo el plástico y el papel se mezclan en el mismo depósito.',ans:'Problema: la basura mezclada no se puede reciclar. Sensor: de peso o de color. Actuador: banda con motor y compuerta que desvía. Programa: si el envase es liviano, entonces desvía al depósito del plástico.'},
-  {txt:'Los pájaros se comen el maíz recién sembrado de la milpa cuando nadie está cuidando.',ans:'Problema: se pierde la siembra por falta de vigilancia. Sensor: de movimiento. Actuador: brazo giratorio con cintas y bocina. Programa: si detecta movimiento en la milpa, entonces gira el brazo y suena.'}
+  {k:'ca-basura',txt:'En el centro educativo el plástico y el papel se mezclan en el mismo depósito.',ans:'Problema: la basura mezclada no se puede reciclar. Sensor: de peso o de color. Actuador: banda con motor y compuerta que desvía. Programa: si el envase es liviano, entonces desvía al depósito del plástico.'},
+  {k:'ca-milpa',txt:'Los pájaros se comen el maíz recién sembrado de la milpa cuando nadie está cuidando.',ans:'Problema: se pierde la siembra por falta de vigilancia. Sensor: de movimiento. Actuador: brazo giratorio con cintas y bocina. Programa: si detecta movimiento en la milpa, entonces gira el brazo y suena.'},
 ];
 let critErrorBank=[
-  {txt:'"Lo primero que hace un buen equipo es construir el robot; el problema se busca después."',
-   g1:'Está al revés: la PRIMERA etapa es IDENTIFICAR el problema, decir qué falla, a quién afecta y por qué importa.',
-   g2:'Construir sin problema definido desperdicia tiempo y materiales: no habría criterio con qué comparar la prueba.'},
-  {txt:'"Si el prototipo falla en la prueba, el proyecto fracasó y hay que empezar otro tema."',
-   g1:'Fallar NO es fracasar: la prueba sirve justamente para descubrir qué falla y anotarlo.',
-   g2:'Después de la prueba viene MEJORAR: se cambia lo que falló y se vuelve a probar (iterar) hasta cumplir el criterio.'},
-  {txt:'"El criterio y la restricción son lo mismo: los dos son reglas del proyecto."',
-   g1:'El CRITERIO dice lo que el robot DEBE LOGRAR (por ejemplo, avisar antes de que el agua llegue al vado).',
-   g2:'La RESTRICCIÓN es el LÍMITE que no se puede pasar: costo, materiales disponibles, tiempo y seguridad.'},
-  {txt:'"Un robot bonito y caro siempre es mejor que uno sencillo de material reciclado."',
-   g1:'Lo que hace bueno a un robot es RESOLVER el problema cumpliendo el criterio, no su apariencia.',
-   g2:'Un diseño caro puede violar la restricción de costo y quedar fuera del alcance de la comunidad.'},
-  {txt:'"No importa a quién afecte el robot: si funciona, ya está bien hecho."',
-   g1:'Falta la ÉTICA del diseño: hay que preguntarse a quién beneficia y a quién podría perjudicar.',
-   g2:'También falta la SEGURIDAD de quien lo usa: voltaje bajo, cables aislados y partes sin filo son parte del diseño.'}
+  {k:'er-construir',txt:'"Lo primero que hace un buen equipo es construir el robot; el problema se busca después."',g1:'Está al revés: la PRIMERA etapa es IDENTIFICAR el problema, decir qué falla, a quién afecta y por qué importa.',g2:'Construir sin problema definido desperdicia tiempo y materiales: no habría con qué comparar la prueba.'},
+  {k:'er-etica',txt:'"No importa a quién afecte el robot: si funciona, ya está bien hecho."',g1:'Falta la ÉTICA del diseño: hay que preguntarse a quién beneficia y a quién podría perjudicar.',g2:'También falta la SEGURIDAD de quien lo usa: voltaje bajo, cables aislados y partes sin filo son parte del diseño.'},
 ];
 let critProcesoQuestions=[
   '1. ¿Qué falló en la prueba y cómo se dieron cuenta?',
@@ -596,51 +564,14 @@ let critProcesoQuestions=[
   '3. ¿Cómo comunicarías el resultado a tu comunidad?',
 ];
 let critProcesoBank=[
-  {txt:'El equipo del huerto probó su regador tres veces: el agua se abrió bien, pero nunca se cerró y el terreno quedó encharcado.',
-   f:'Falló el cierre: el programa abría el agua pero no tenía la orden de cerrarla cuando la tierra ya estaba húmeda. Lo notaron porque midieron el terreno después de cada ensayo.',
-   m:'Agregar al programa: si la tierra ya está húmeda, entonces cierra la válvula; y volver a probar tres veces midiendo el agua usada.',
-   c:'Mostrando a la comunidad la tabla de las tres pruebas antes y después de la mejora, con el boceto y una demostración corta.'},
-  {txt:'La alarma del vado sonó, pero cuando sonó el agua ya cubría el camino y nadie alcanzó a devolverse.',
-   f:'Falló el momento del aviso: el sensor estaba colocado demasiado bajo, así que avisaba tarde. Lo descubrieron al comparar la hora del aviso con la hora en que el agua tapó el vado.',
-   m:'Subir el sensor y poner una segunda marca de aviso temprano; repetir la prueba con agua y cronómetro.',
-   c:'Avisando en la escuela y en la iglesia, con un cartel que explique qué significa cada sonido de la alarma.'},
-  {txt:'El clasificador de basura pasó 20 envases: 18 llegaron al depósito correcto y 2 se fueron al equivocado.',
-   f:'Falló la separación de los envases más livianos: la compuerta se movía tarde. Lo supieron porque contaron los aciertos y los errores de los 20 envases.',
-   m:'Adelantar el momento en que se mueve la compuerta y hacer más lenta la banda; repetir la prueba con otros 20 envases.',
-   c:'Presentando en dos minutos el problema, el porcentaje de aciertos antes y después, y la maqueta funcionando.'},
-  {txt:'El techo automático del patio de secado del café cerró bien, pero tardó tanto que el café ya se había mojado.',
-   f:'Falló el tiempo de respuesta: el motor era muy lento para el tamaño del techo. Lo midieron con cronómetro desde la primera gota hasta el cierre completo.',
-   m:'Usar una polea que dé más velocidad o dividir el techo en dos partes que cierren a la vez; volver a medir el tiempo.',
-   c:'Explicando a las familias cafetaleras cuánto café se salva por cada minuto que se gana al cerrar.'},
-  {txt:'El espantapájaros robótico funcionó el primer día, pero al tercer día se quedó sin batería antes del mediodía.',
-   f:'Falló la fuente de energía: la batería no alcanzaba para toda la jornada. Lo notaron al anotar la hora en que dejaba de girar cada día.',
-   m:'Agregar un panel solar pequeño para recargar la batería y hacer que el brazo gire solo cuando el sensor detecte movimiento.',
-   c:'Compartiendo con los vecinos la tabla de horas de funcionamiento antes y después del panel solar.'}
+  {k:'pc-regador',txt:'El equipo del huerto probó su regador tres veces: el agua se abrió bien, pero nunca se cerró y el terreno quedó encharcado.',f:'Falló el cierre: el programa abría el agua pero no tenía la orden de cerrarla cuando la tierra ya estaba húmeda. Lo notaron porque midieron el terreno después de cada ensayo.',m:'Agregar al programa: si la tierra ya está húmeda, entonces cierra la válvula; y volver a probar tres veces midiendo el agua usada.',c:'Mostrando a la comunidad la tabla de las tres pruebas antes y después de la mejora, con el boceto y una demostración corta.'},
+  {k:'pc-cafe',txt:'El techo automático del patio de secado del café cerró bien, pero tardó tanto que el café ya se había mojado.',f:'Falló el tiempo de respuesta: el motor era muy lento para el tamaño del techo. Lo midieron con cronómetro desde la primera gota hasta el cierre completo.',m:'Usar una polea que dé más velocidad o dividir el techo en dos partes que cierren a la vez; volver a medir el tiempo.',c:'Explicando a las familias cafetaleras cuánto café se salva por cada minuto que se gana al cerrar.'},
 ];
 let critCompareBank=[
-  {a:'Enunciado que dice qué falla, a quién afecta y por qué importa (ejemplo: la huerta se seca el fin de semana).',b:'Propuesta concreta para resolverlo (ejemplo: un regador que abre el agua cuando la tierra está seca).',
-   ga:'El problema.',
-   gb:'La solución.',
-   gr:'Semejanza: los dos se escriben en la ficha del proyecto y hablan de la misma necesidad. Diferencia: el problema describe la situación y a las personas afectadas; la solución propone el robot y sus partes.'},
-  {a:'Lo que el robot DEBE LOGRAR para considerarse un éxito (ejemplo: avisar antes de que el agua llegue al vado).',b:'El LÍMITE que no se puede pasar (ejemplo: no gastar más de 200 lempiras ni más de tres semanas).',
-   ga:'El criterio.',
-   gb:'La restricción.',
-   gr:'Semejanza: los dos se escriben antes de diseñar y guían las decisiones del equipo. Diferencia: el criterio mide el éxito; la restricción limita el costo, los materiales, el tiempo o la seguridad.'},
-  {a:'Primera versión armada con material disponible para poder ensayarla y descubrir fallos.',b:'Etapa en la que se cambia lo que falló y se vuelve a ensayar hasta cumplir el criterio.',
-   ga:'El prototipo.',
-   gb:'La mejora (iterar).',
-   gr:'Semejanza: los dos forman parte del ciclo de diseño y necesitan pruebas con datos anotados. Diferencia: el prototipo es el objeto que se construye; mejorar es la acción de corregirlo tras la prueba.'},
-  {a:'Dibujo rotulado que muestra qué sensor, qué mecanismo, qué energía y qué programa llevará el robot.',b:'Presentación de dos minutos ante la clase con el problema, el diseño, la prueba y la mejora.',
-   ga:'El boceto del diseño.',
-   gb:'La comunicación del proyecto.',
-   gr:'Semejanza: los dos explican el robot a otras personas y necesitan claridad. Diferencia: el boceto se hace antes de construir y guía al equipo; la comunicación se hace al final y muestra los resultados obtenidos.'}
+  {k:'co-criterio',a:'Lo que el robot DEBE LOGRAR para considerarse un éxito (ejemplo: separar bien 19 de cada 20 envases).',b:'El LÍMITE que no se puede pasar (ejemplo: no gastar más de 200 lempiras).',ga:'El criterio.',gb:'La restricción.',gr:'Semejanza: los dos se escriben antes de dibujar y guían las decisiones del equipo. Diferencia: el criterio mide el éxito; la restricción pone el límite de costo, materiales o tiempo.'},
 ];
 let critDesignBank=[
-  'En tu comunidad, la cosecha de café se pierde cuando llueve de repente y los granos están secándose en el patio.',
-  'En invierno el río crece y los niños no saben si es seguro cruzar el vado para llegar a la escuela.',
-  'La huerta escolar se seca porque nadie llega a regarla los fines de semana ni en vacaciones.',
   'El agua de la quebrada inunda las casas del barrio de noche y las familias no alcanzan a resguardar sus cosas.',
-  'En el centro educativo la basura se mezcla: plástico, papel y restos de comida van al mismo depósito.',
 ];
 let critDesignGuide='Rúbrica de 4 criterios (total 20 pts): ① PROBLEMA BIEN DEFINIDO (5 pts): dice qué falla, a quién afecta y por qué importa, con un criterio de éxito medible. ② SENSORES Y MECANISMOS JUSTIFICADOS (5 pts): nombra qué sensor mide la señal del problema, qué mecanismo o actuador ejecuta la acción y qué fuente de energía usa, explicando POR QUÉ escogió cada uno. ③ PROGRAMA COHERENTE (5 pts): escribe la instrucción principal en la forma «si pasa X, entonces hace Y», y respeta las restricciones de costo, materiales, tiempo y seguridad. ④ MEJORA TRAS LA PRUEBA (5 pts): describe cómo probaría el prototipo (qué mediría y cuántas veces) y qué mejoraría si falla, mostrando que fallar es parte del proceso.';
 function genEvalCrit(){

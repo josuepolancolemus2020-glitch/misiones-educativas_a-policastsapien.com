@@ -469,112 +469,65 @@
       ],
 
       evalTFBank: [
-        { q: 'The design cycle starts by identifying the problem.', a: true },
-        { q: 'The first thing a good team does is build the robot.', a: false },
-        { q: 'In the brainstorming stage it is a good idea to write down lots of solutions.', a: true },
-        { q: 'The sketch shows which sensor, which mechanism and which program the robot carries.', a: true },
-        { q: 'The prototype is the final version, and it is never changed again.', a: false },
-        { q: 'When testing you have to write down what fails.', a: true },
-        { q: 'If the prototype fails, the team should give the project up.', a: false },
-        { q: 'Improving means fixing what failed and testing again.', a: true },
-        { q: 'Cost and time are constraints of the project.', a: true },
-        { q: 'A criterion is what the robot must achieve in order to succeed.', a: true },
-        { q: 'The safety of whoever uses the robot is not the team’s business.', a: false },
-        { q: 'Communicating the result is the last stage of the cycle.', a: true },
-        { q: 'A good robot is one that solves a real problem in its community.', a: true },
-        { q: 'Robots should replace people without telling them.', a: false },
-        { q: 'The team has roles: designer, programmer, builder and tester.', a: true }
+        { q: 'At the fair, the judges asked both groups the same question.', a: true },
+        { q: 'The tank group used more parts than Kenia’s group.', a: false },
+        { q: 'A good prototype works the first time.', a: false },
+        { q: 'After a failure, it is best to change one single thing before trying again.', a: true },
+        { q: 'If the robot does not meet the goal, you can ask for less so it looks like it worked.', a: false },
+        { q: 'The model has to look pretty to be tested.', a: false },
+        { q: 'Robots help people; they do not just replace them.', a: true },
+        { q: 'To solve a problem in your community you need an expensive laboratory.', a: false },
+        { q: 'Sometimes, while trying it out, you find the real problem was a different one.', a: true },
+        { q: 'In the team, everybody checks and gives an opinion, not only the one who draws.', a: true }
       ],
 
       evalMCBank: [
-        { q: 'Which is the first stage of the design cycle?', o: ['a) Build', 'b) Identify the problem', 'c) Communicate', 'd) Test'], a: 1 },
-        { q: 'What do you do in the brainstorming stage?', o: ['a) Paint the robot', 'b) Grade the team', 'c) Write down lots of possible solutions', 'd) Put the materials away'], a: 2 },
-        { q: 'What does a good design sketch contain?', o: ['a) Only the robot’s name', 'b) Sensors, mechanisms, energy and program', 'c) The attendance list', 'd) The selling price'], a: 1 },
-        { q: 'What is a prototype?', o: ['a) The first version you can actually test', 'b) A drawing with no parts', 'c) The team’s certificate', 'd) A factory-made robot'], a: 0 },
-        { q: 'During the test, what should the team do?', o: ['a) Hide the failures', 'b) Change project', 'c) Hand out prizes', 'd) Write down what fails and what works'], a: 3 },
-        { q: 'The prototype failed three times. What is the right thing to do?', o: ['a) Give up', 'b) Say that it worked', 'c) Copy another team', 'd) Improve the design and test again'], a: 3 },
-        { q: '«It must not cost more than 200 lempiras» is an example of…', o: ['a) A criterion', 'b) A constraint', 'c) A sketch', 'd) A prototype'], a: 1 },
-        { q: '«It must warn before the water reaches the crossing» is an example of…', o: ['a) A time constraint', 'b) A success criterion', 'c) A team role', 'd) A material'], a: 1 },
-        { q: 'Which sensor suits the robot that warns about floods?', o: ['a) Water level', 'b) Color', 'c) Sound', 'd) Touch'], a: 0 },
-        { q: 'Which actuator does the school garden waterer need?', o: ['a) A water pump or valve', 'b) A camera', 'c) A moisture sensor', 'd) A battery'], a: 0 },
-        { q: 'Which instruction is right for the watering robot?', o: ['a) Water nonstop, always', 'b) Wait until it rains', 'c) Switch the alarm off', 'd) If the soil is dry, then turn the water on'], a: 3 },
-        { q: 'The project goes at the river crossing and there is no power outlet. Which energy suits it?', o: ['a) A one-kilometer cable', 'b) A candle', 'c) A battery with a solar panel', 'd) None'], a: 2 },
-        { q: 'Which is the last stage of the design cycle?', o: ['a) Communicate the result', 'b) Test', 'c) Brainstorm', 'd) Build'], a: 0 },
-        { q: 'Which one is an ethical question about design?', o: ['a) What color should I paint it?', 'b) How many screws does it take?', 'c) Who does it benefit and who might it harm?', 'd) Who draws best?'], a: 2 },
-        { q: 'Which team role is in charge of trying the robot out and writing down the failures?', o: ['a) The designer', 'b) The programmer', 'c) The tester', 'd) The builder'], a: 2 }
+        { q: 'The ford alert goes where there is no socket. What power source is best?', o: ['a) a) A one-kilometer cable', 'b) b) A candle', 'c) c) A battery with a solar panel', 'd) d) None'], a: 2 },
+        { q: 'What moves the containers in the trash sorter?', o: ['a) a) A horn', 'b) b) A belt with a motor and a gate', 'c) c) A lamp', 'd) d) A bell'], a: 1 },
+        { q: 'What wakes the families when water gets into the houses at night?', o: ['a) a) A siren and a flashing light', 'b) b) A poster on the wall', 'c) c) A clock', 'd) d) A fan'], a: 0 },
+        { q: 'What actuator does the school garden sprinkler need?', o: ['a) a) A camera', 'b) b) A water pump or valve', 'c) c) A horn', 'd) d) A mirror'], a: 1 },
+        { q: 'Which team role writes the robot’s instructions?', o: ['a) a) The designer', 'b) b) The builder', 'c) c) The programmer', 'd) d) The audience'], a: 2 },
+        { q: 'At the fair, what did the other group’s box have that Kenia’s robot did not?', o: ['a) a) More parts', 'b) b) A problem to solve', 'c) c) Music', 'd) d) More hours of work'], a: 1 },
+        { q: 'Next to each drawn part of the robot you write…', o: ['a) a) its price', 'b) b) its color', 'c) c) its weight', 'd) d) what it is for'], a: 3 },
+        { q: 'What happens to the coffee spread out in the yard?', o: ['a) a) Birds eat it', 'b) b) It gets mixed with plastic', 'c) c) It burns in the sun', 'd) d) A sudden downpour soaks it'], a: 3 },
+        { q: 'In the garden sprinkler trial, what failed?', o: ['a) a) The water opened but did not close', 'b) b) The battery exploded', 'c) c) No water came out', 'd) d) The soil turned to stone'], a: 0 },
+        { q: 'For the ford, which of these ideas is an automatic alarm?', o: ['a) a) A painted ruler', 'b) b) A watchman', 'c) c) A float that rings a bell', 'd) d) Asking the neighbor'], a: 2 }
       ],
 
       evalCPBank: [
-        { q: 'The design cycle starts by ___ the problem.', a: 'identifying' },
-        { q: 'In the ___ stage lots of possible solutions are written down.', a: 'brainstorming' },
-        { q: 'The labeled drawing of the robot is called the ___.', a: 'sketch' },
-        { q: 'The first version you can actually test is the ___.', a: 'prototype' },
-        { q: 'When you ___ the prototype you write down what fails and what works.', a: 'test' },
-        { q: 'If the prototype fails, you have to ___ the design and test again.', a: 'improve' },
-        { q: 'The last stage of the design cycle is to ___ the result.', a: 'communicate' },
-        { q: 'The money available is a ___ of the project.', a: 'constraint' },
-        { q: 'What the robot must achieve in order to succeed is the ___.', a: 'criterion' },
-        { q: 'The watering robot needs a ___ sensor to measure the soil.', a: 'moisture' },
-        { q: 'The robot that warns about floods measures the water ___.', a: 'level' },
-        { q: 'The team member who tries the robot out and writes down the failures is the ___.', a: 'tester' },
-        { q: 'Thinking about who the robot benefits and who it affects is part of design ___.', a: 'ethics' },
-        { q: 'A model made of ___ material lets you build a cheap prototype.', a: 'recycled' },
-        { q: 'The final presentation lasts two ___ in front of the class.', a: 'minutes' }
+        { q: 'At the fair, the robot from Kenia’s group ___ very well.', a: 'danced', acc: ['danced', 'dances'] },
+        { q: 'The box that warns when the tank fills up was made in one ___.', a: 'week', acc: ['week'] },
+        { q: 'The design cycle is a ___, not a straight line.', a: 'wheel', acc: ['wheel', 'circle'] },
+        { q: 'In the coffee yard, the ___ sensor warns that the roof has to close.', a: 'rain', acc: ['rain'] },
+        { q: 'The coffee yard roof is closed by a motor with a ___.', a: 'pulley', acc: ['pulley'] },
+        { q: 'The ford alarm uses a water ___ sensor.', a: 'level', acc: ['level'] },
+        { q: 'The trash sorter must get ___ out of every 20 containers right.', a: '19', acc: ['19', 'nineteen'] },
+        { q: 'The garden sprinkler cannot cost more than ___ lempiras.', a: '200', acc: ['200', 'two hundred'] },
+        { q: 'The presentation to the class lasts two ___.', a: 'minutes', acc: ['minutes'] },
+        { q: 'For safety, the robot works with low ___.', a: 'voltage', acc: ['voltage'] }
       ],
 
       evalPRBank: [
-        { term: 'Design cycle', def: 'The 7 steps engineers follow to solve a problem' },
-        { term: 'Identify', def: 'Say what is going wrong, who it affects and why it matters' },
-        { term: 'Brainstorm', def: 'Write down lots of possible solutions before choosing' },
-        { term: 'Design', def: 'Sketch sensors, mechanisms, energy and program' },
-        { term: 'Prototype', def: 'The first version of the robot, made so it can be tested' },
-        { term: 'Test', def: 'Try it out several times and write down the failures' },
-        { term: 'Improve', def: 'Fix what failed and test it again' },
-        { term: 'Communicate', def: 'Present the project clearly to an audience' },
-        { term: 'Criterion', def: 'What the robot must achieve in order to succeed' },
-        { term: 'Constraint', def: 'A limit of cost, materials, time or safety' },
-        { term: 'Sketch', def: 'A quick drawing with the robot’s parts labeled' },
-        { term: 'Model', def: 'A version of the robot built out of recycled material' },
-        { term: 'Design ethics', def: 'Thinking about who benefits and who might be harmed' },
-        { term: 'Tester', def: 'The team role that tries it out and notes what fails' },
-        { term: 'Rubric', def: 'A table with the criteria the project is graded by' }
+        { term: 'Identify', def: 'Say what is wrong, who it affects and why it matters' },
+        { term: 'Brainstorm', def: 'Write down lots of solutions without judging them, then choose' },
+        { term: 'Design', def: 'Sketch which sensor, which mechanism, which power and which program' },
+        { term: 'Build', def: 'Put the prototype together with the materials available' },
+        { term: 'Test', def: 'Try it several times, measure and write down what fails' },
+        { term: 'Improve', def: 'Fix what failed and test again' },
+        { term: 'Communicate', def: 'Present the problem, the design, the test and the improvement' },
+        { term: 'Criterion', def: 'What the robot must achieve, and it is measured' },
+        { term: 'Constraint', def: 'The limit you cannot go past, and it is respected' },
+        { term: 'Design ethics', def: 'Thinking about who the robot helps and who it could affect' }
       ],
 
       critCasoBank: [
-        { txt: 'In the village, the coffee laid out to dry in the yard gets soaked when it rains suddenly and the harvest is lost.', ans: 'Problem: sudden rain ruins the coffee laid out to dry and hurts the coffee-growing families. Sensor: rain or moisture. Actuator: a motor with a pulley that closes the sliding roof. Program: if it detects rain, then close the roof.' },
-        { txt: 'In the rainy season the river rises and the children do not know whether it is safe to cross to get to school.', ans: 'Problem: nobody knows whether the crossing is safe and there is a risk of an accident. Sensor: water level. Actuator: a horn and a red warning light. Program: if the level goes past the mark, then switch the alarm on.' },
-        { txt: 'The school garden dries out at weekends because nobody comes to water it.', ans: 'Problem: with no watering at the weekend the garden plants are lost. Sensor: soil moisture. Actuator: a water pump or valve. Program: if the soil is dry, then turn the water on until it is moist.' },
-        { txt: 'In the neighborhood the water gets into the houses at night and nobody manages to move their things.', ans: 'Problem: the night-time flood catches the families by surprise. Sensor: water level and rain. Actuator: a siren and a flashing light. Program: if the water goes past the mark, then sound the siren and switch the light on.' },
-        { txt: 'At school the plastic and the paper end up in the same bin.', ans: 'Problem: mixed trash cannot be recycled. Sensor: weight or color. Actuator: a belt with a motor and a gate that diverts. Program: if the container is light, then divert it to the plastic bin.' },
-        { txt: 'The birds eat the freshly sown corn in the cornfield when nobody is watching.', ans: 'Problem: the sowing is lost for lack of watching over it. Sensor: motion. Actuator: a rotating arm with ribbons and a horn. Program: if it detects movement in the cornfield, then spin the arm and sound the horn.' }
+        {k:'ca-basura',txt:'At school the plastic and the paper end up in the same bin.',ans:'Problem: mixed trash cannot be recycled. Sensor: weight or color. Actuator: a belt with a motor and a gate that diverts. Program: if the container is light, then divert it to the plastic bin.'},
+        {k:'ca-milpa',txt:'The birds eat the freshly sown corn in the cornfield when nobody is watching.',ans:'Problem: the sowing is lost for lack of watching over it. Sensor: motion. Actuator: a rotating arm with ribbons and a horn. Program: if it detects movement in the cornfield, then spin the arm and sound the horn.'}
       ],
 
       critErrorBank: [
-        {
-          txt: '"The first thing a good team does is build the robot; the problem gets looked for afterwards."',
-          g1: 'That is backwards: the FIRST stage is to IDENTIFY the problem. Say what is going wrong, who it affects and why it matters.',
-          g2: 'Building with no problem defined wastes time and materials: there would be no criterion to compare the test against.'
-        },
-        {
-          txt: '"If the prototype fails the test, the project has failed and you have to start on another topic."',
-          g1: 'Failing is NOT failure: the test is there precisely to discover what goes wrong and write it down.',
-          g2: 'After the test comes IMPROVING: you change what failed and test again (iterate) until it meets the criterion.'
-        },
-        {
-          txt: '"A criterion and a constraint are the same thing: they are both project rules."',
-          g1: 'The CRITERION says what the robot MUST ACHIEVE (for example, warning before the water reaches the crossing).',
-          g2: 'The CONSTRAINT is the LIMIT that cannot be crossed: cost, available materials, time and safety.'
-        },
-        {
-          txt: '"A pretty, expensive robot is always better than a simple one made of recycled material."',
-          g1: 'What makes a robot good is SOLVING the problem and meeting the criterion, not the way it looks.',
-          g2: 'An expensive design can break the cost constraint and end up beyond the community’s reach.'
-        },
-        {
-          txt: '"It does not matter who the robot affects: if it works, it is well made."',
-          g1: 'Design ETHICS is missing: you have to ask who it benefits and who it might harm.',
-          g2: 'The SAFETY of whoever uses it is missing too: low voltage, insulated wires and no sharp parts are part of the design.'
-        }
+        {k:'er-construir',txt:'"The first thing a good team does is build the robot; the problem gets looked for afterwards."',g1:'That is backwards: the FIRST stage is to IDENTIFY the problem. Say what is going wrong, who it affects and why it matters.',g2:'Building with no problem defined wastes time and materials: there would be nothing to compare the test against.'},
+        {k:'er-etica',txt:'"It does not matter who the robot affects: if it works, it is well made."',g1:'Design ETHICS is missing: you have to ask who it benefits and who it might harm.',g2:'The SAFETY of whoever uses it is missing too: low voltage, insulated wires and no sharp parts are part of the design.'}
       ],
 
       critProcesoQuestions: [
@@ -584,71 +537,16 @@
       ],
 
       critProcesoBank: [
-        {
-          txt: 'The garden team tested their waterer three times: the water turned on fine, but it never shut off and the plot ended up waterlogged.',
-          f: 'The shutting-off failed: the program turned the water on but had no order to shut it off once the soil was already moist. They noticed because they measured the plot after every trial.',
-          m: 'Add to the program: if the soil is already moist, then close the valve; and test three more times measuring the water used.',
-          c: 'By showing the community the table of the three tests before and after the improvement, with the sketch and a short demonstration.'
-        },
-        {
-          txt: 'The river crossing alarm went off, but by the time it sounded the water was already over the road and nobody managed to turn back.',
-          f: 'The timing of the warning failed: the sensor was mounted too low, so it warned late. They found out by comparing the time of the warning with the time the water covered the crossing.',
-          m: 'Raise the sensor and add a second early-warning mark; repeat the test with water and a stopwatch.',
-          c: 'By announcing it at the school and at the church, with a poster explaining what each alarm sound means.'
-        },
-        {
-          txt: 'The trash sorter ran 20 containers through: 18 reached the right bin and 2 went to the wrong one.',
-          f: 'Separating the lightest containers failed: the gate moved too late. They knew because they counted the hits and misses out of the 20 containers.',
-          m: 'Move the gate earlier and slow the belt down; repeat the test with another 20 containers.',
-          c: 'By presenting in two minutes the problem, the percentage of hits before and after, and the working model.'
-        },
-        {
-          txt: 'The automatic roof over the coffee drying yard closed properly, but it took so long that the coffee had already got wet.',
-          f: 'The response time failed: the motor was far too slow for the size of the roof. They measured it with a stopwatch from the first drop to the roof fully closed.',
-          m: 'Use a pulley that gives more speed, or split the roof into two halves that close at the same time; then measure the time again.',
-          c: 'By explaining to the coffee-growing families how much coffee is saved for every minute gained in closing it.'
-        },
-        {
-          txt: 'The robotic scarecrow worked on the first day, but by the third day the battery ran out before noon.',
-          f: 'The energy source failed: the battery did not last the whole day. They noticed by writing down the time it stopped spinning each day.',
-          m: 'Add a small solar panel to recharge the battery and make the arm spin only when the sensor detects movement.',
-          c: 'By sharing with the neighbors the table of running hours before and after the solar panel.'
-        }
+        {k:'pc-regador',txt:'The garden team tested their waterer three times: the water turned on fine, but it never shut off and the plot ended up waterlogged.',f:'The shutting-off failed: the program turned the water on but had no order to shut it off once the soil was already moist. They noticed because they measured the plot after every trial.',m:'Add to the program: if the soil is already moist, then close the valve; and test three more times measuring the water used.',c:'By showing the community the table of the three tests before and after the improvement, with the sketch and a short demonstration.'},
+        {k:'pc-cafe',txt:'The automatic roof over the coffee drying yard closed properly, but it took so long that the coffee had already got wet.',f:'The response time failed: the motor was far too slow for the size of the roof. They measured it with a stopwatch from the first drop to the roof fully closed.',m:'Use a pulley that gives more speed, or split the roof into two halves that close at the same time; then measure the time again.',c:'By explaining to the coffee-growing families how much coffee is saved for every minute gained in closing it.'}
       ],
 
       critCompareBank: [
-        {
-          a: 'A statement that says what is going wrong, who it affects and why it matters (for example: the garden dries out at the weekend).',
-          b: 'A concrete proposal to solve it (for example: a waterer that turns the water on when the soil is dry).',
-          ga: 'The problem.', gb: 'The solution.',
-          gr: 'Similarity: both are written on the project sheet and both talk about the same need. Difference: the problem describes the situation and the people affected; the solution proposes the robot and its parts.'
-        },
-        {
-          a: 'What the robot MUST ACHIEVE to count as a success (for example: warning before the water reaches the crossing).',
-          b: 'The LIMIT that cannot be crossed (for example: spending no more than 200 lempiras and no more than three weeks).',
-          ga: 'The criterion.', gb: 'The constraint.',
-          gr: 'Similarity: both are written before designing and both guide the team’s decisions. Difference: the criterion measures success; the constraint limits the cost, the materials, the time or the safety.'
-        },
-        {
-          a: 'The first version, built with whatever is available so it can be tried out and its faults discovered.',
-          b: 'The stage in which what failed is changed and it is tried again until it meets the criterion.',
-          ga: 'The prototype.', gb: 'Improving (iterating).',
-          gr: 'Similarity: both are part of the design cycle and both need tests with the data written down. Difference: the prototype is the object you build; improving is the act of fixing it after the test.'
-        },
-        {
-          a: 'A labeled drawing showing which sensor, which mechanism, which energy and which program the robot will carry.',
-          b: 'A two-minute presentation to the class with the problem, the design, the test and the improvement.',
-          ga: 'The design sketch.', gb: 'Communicating the project.',
-          gr: 'Similarity: both explain the robot to other people and both need to be clear. Difference: the sketch is made before building and guides the team; the communication happens at the end and shows the results obtained.'
-        }
+        {k:'co-criterio',a:'What the robot MUST ACHIEVE to count as a success (for example: sorting 19 out of every 20 containers correctly).',b:'The LIMIT that cannot be crossed (for example: spending no more than 200 lempiras).',ga:'The criterion.',gb:'The constraint.',gr:'Similarity: both are written before designing and both guide the team’s decisions. Difference: the criterion measures success; the constraint sets the limit on cost, materials or time.'}
       ],
 
       critDesignBank: [
-        'In your community, the coffee harvest is lost when it rains suddenly and the beans are drying out in the yard.',
-        'In the rainy season the river rises and the children do not know whether it is safe to cross to get to school.',
-        'The school garden dries out because nobody comes to water it at weekends or during the holidays.',
-        'The water from the creek floods the houses in the neighborhood at night and the families do not manage to move their things.',
-        'At school the trash gets mixed together: plastic, paper and food scraps all go into the same bin.'
+        'The water from the creek floods the houses in the neighborhood at night and the families do not manage to move their things.'
       ],
 
       critDesignGuide: 'Rubric with 4 criteria (20 pts total): ① A WELL-DEFINED PROBLEM (5 pts): says what is going wrong, who it affects and why it matters, with a measurable success criterion. ② JUSTIFIED SENSORS AND MECHANISMS (5 pts): names which sensor measures the signal of the problem, which mechanism or actuator carries out the action and which energy source it uses, explaining WHY each one was chosen. ③ A COHERENT PROGRAM (5 pts): writes the main order in the form «if X happens, then do Y», matching the sensor with the actuator. ④ TEST, IMPROVEMENT AND ETHICS (5 pts): says how it would be tested and measured, proposes an improvement if it does not meet the criterion, and mentions who it benefits, who it might harm and how it is kept safe.',
