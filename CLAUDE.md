@@ -6669,6 +6669,23 @@ las causas y los efectos salen de los hábitos, y los errores corrigen los
 datos del cuerpo: si un caso dice «que su bebé nazca sano», ninguna causa
 puede hablar de los controles médicos del embarazo, porque se copia.
 
+**Las Rutas de la Vida, la Materia y el Tiempo quedaron completas**, sus seis
+misiones con sus fichas. En ciencias lo que se pregunta cuatro veces es el
+NOMBRE de una clase —un reino, un organelo, un cambio de estado, una forma de
+energía—, y el remedio fue el mismo que con los órganos: el nombre va en el
+pareado con un ejemplo («Mutualismo · La abeja y la flor»), y lo demás
+pregunta lo que se ve, lo que se mide o a quién le pasa. Dos cosas más:
+
+- ⚠️ **Un recuadro de teoría en la hoja del examen también contesta.** En la
+  ficha de La Materia, «La materia en tu casa» decía «es la evaporación»,
+  «es la solidificación» y «se hace hielo» encima del completar. La sonda lo
+  cazó; esas preguntas se cambiaron solo en la ficha.
+- ⚠️ **La letra de la opción la pone el armador, no quien escribe el banco.**
+  En La Célula las opciones se escribieron ya con su «a)» y salieron
+  publicadas como «a) a) El telescopio», en la pantalla y en la ficha. No lo
+  cazó ninguna sonda: el archivo compila y el examen se califica bien. Se vio
+  leyendo el banco escrito, y se arregló el mismo día.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por

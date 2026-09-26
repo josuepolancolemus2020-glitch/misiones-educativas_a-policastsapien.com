@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Precolombino significa antes de la llegada de Cristóbal Colón.',a:true},
-  {q:'La gran ciudad maya de Honduras fue Tikal.',a:false},
-  {q:'Los mayas vivieron en la región llamada Mesoamérica.',a:true},
-  {q:'La numeración maya conocía el cero.',a:true},
-  {q:'La escritura maya era jeroglífica.',a:true},
-  {q:'Los mayas conocieron el caballo antes de 1492.',a:false},
-  {q:'El maíz era el alimento sagrado de los pueblos precolombinos.',a:true},
-  {q:'El Popol Vuh es el libro sagrado de los mayas quichés.',a:true},
-  {q:"Yax K'uk' Mo' fundó la dinastía de Copán.",a:true},
-  {q:'Los lencas eran el pueblo más numeroso de la Honduras precolombina.',a:true},
-  {q:'Los incas crearon su imperio en México.',a:false},
-  {q:'Copán es Patrimonio de la Humanidad (UNESCO).',a:true},
-  {q:'Los mayas fueron un solo reino con una sola capital.',a:false},
-  {q:'Copán fue abandonada siglos antes de la llegada de los españoles.',a:true},
-  {q:'El pueblo garífuna es precolombino.',a:false},
+  {q:'Antes de 1492 América ya tenía ciudades y escritura.',a:true,k:'tf-ciudades'},
+  {q:'Los mayas vivían en el norte de Sudamérica.',a:false,k:'tf-sudamerica'},
+  {q:'Los mayas conocieron el caballo antes de 1492.',a:false,k:'tf-caballo'},
+  {q:'La numeración maya contaba de 20 en 20.',a:true,k:'tf-veinte'},
+  {q:'Los mayas observaban el Sol, la Luna y Venus.',a:true,k:'tf-venus'},
+  {q:'El pueblo garífuna es precolombino.',a:false,k:'tf-garifuna'},
+  {q:'Los mayas cazaban con armas de hierro.',a:false,k:'tf-hierro'},
+  {q:'Machu Picchu fue construida por los incas.',a:true,k:'tf-machu'},
+  {q:'Los tolupanes, los pech y los tawahkas vivían en los bosques.',a:true,k:'tf-bosques'},
+  {q:'En la sociedad maya, los campesinos estaban por encima del rey.',a:false,k:'tf-sociedad'}
 ];
 const evalMCBank=[
-  {q:'¿Qué significa «precolombino»?',o:['a) Después de la independencia','b) De la época colonial','c) Antes de la llegada de Cristóbal Colón','d) Del siglo XX'],a:2},
-  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Tenochtitlan','c) Cusco','d) Copán'],a:3},
-  {q:'¿En qué región cultural vivieron los mayas?',o:['a) Mesoamérica','b) Los Andes','c) La Patagonia','d) El Amazonas'],a:0},
-  {q:'¿Qué gran avance tenía la numeración maya?',o:['a) El cero','b) Las fracciones decimales','c) Los números romanos','d) El signo de porcentaje'],a:0},
-  {q:'¿Cómo era la escritura de los mayas?',o:['a) Con alfabeto latino','b) No tenían escritura','c) Solo con números','d) Jeroglífica'],a:3},
-  {q:'¿Qué monumento de Copán tiene el texto maya más largo?',o:['a) El Altar Q','b) La Estela A','c) La Escalinata Jeroglífica','d) El juego de pelota'],a:2},
-  {q:'¿Qué muestra el Altar Q de Copán?',o:['a) El calendario solar','b) Un mapa de Mesoamérica','c) Los 16 gobernantes de la ciudad','d) La historia del maíz'],a:2},
-  {q:'¿Quién fundó la dinastía de Copán?',o:['a) 18 Conejo','b) Moctezuma','c) Atahualpa',"d) Yax K'uk' Mo'"],a:3},
-  {q:'¿Cuál era el alimento base de los pueblos precolombinos?',o:['a) El trigo','b) El maíz','c) El arroz','d) La cebada'],a:1},
-  {q:'¿Cómo se llama el libro sagrado de los mayas quichés?',o:['a) El Popol Vuh','b) El Códice Real','c) La Crónica Maya','d) El Libro del Consejo Azteca'],a:0},
-  {q:'¿Cuál era el pueblo indígena más numeroso de Honduras?',o:['a) Los aztecas','b) Los lencas','c) Los incas','d) Los olmecas'],a:1},
-  {q:'¿Qué pueblo hondureño estaba emparentado con los mayas?',o:['a) Los pech','b) Los chortís','c) Los tawahkas','d) Los tolupanes'],a:1},
-  {q:'¿Dónde florecieron los aztecas?',o:['a) En los Andes','b) En Honduras','c) En el centro de México','d) En el Amazonas'],a:2},
-  {q:'¿Dónde crearon su imperio los incas?',o:['a) En los Andes (Perú)','b) En México','c) En Guatemala','d) En el Caribe'],a:0},
-  {q:'¿En qué año llegó Cristóbal Colón a América?',o:['a) 1392','b) 1492','c) 1592','d) 1821'],a:1},
+  {q:'¿Cuál fue la gran ciudad maya de Honduras?',o:['a) Tikal','b) Palenque','c) Copán','d) Cusco'],a:2,k:'mc-copan'},
+  {q:'¿Qué gran avance tenía la numeración maya?',o:['a) El cero','b) Las fracciones decimales','c) Los números romanos','d) El signo de porcentaje'],a:0,k:'mc-cero'},
+  {q:'¿Qué pueblo era el más numeroso de la Honduras precolombina?',o:['a) Los pech','b) Los lencas','c) Los garífunas','d) Los tolupanes'],a:1,k:'mc-lencas'},
+  {q:'¿Qué se sembraba junto con el maíz?',o:['a) Trigo y arroz','b) Café y caña','c) Cebada y papa','d) Frijol y calabaza'],a:3,k:'mc-frijol'},
+  {q:'¿Dónde florecieron los aztecas?',o:['a) En Guatemala','b) En el centro de México','c) En Honduras','d) En el Caribe'],a:1,k:'mc-aztecas'},
+  {q:'¿En qué año la UNESCO protegió las ruinas mayas de Honduras?',o:['a) 1492','b) 1502','c) 1980','d) 1821'],a:2,k:'mc-1980'},
+  {q:'¿Qué quiere decir «pre» en la palabra precolombino?',o:['a) Antes','b) Después','c) Durante','d) Nunca'],a:0,k:'mc-pre'},
+  {q:'¿Qué guiaba el calendario maya?',o:['a) Los viajes en barco','b) Las guerras con España','c) Las carreras de caballos','d) Las siembras y las ceremonias'],a:3,k:'mc-calendario'},
+  {q:'¿Qué construían los mayas?',o:['a) Puentes de hierro','b) Iglesias','c) Pirámides, templos y canchas de pelota','d) Fábricas'],a:2,k:'mc-piramides'},
+  {q:'¿En qué parte de Honduras vivían los mayas?',o:['a) En La Mosquitia','b) En el occidente','c) En las Islas de la Bahía','d) En el sur'],a:1,k:'mc-occidente'}
 ];
 const evalCPBank=[
-  {q:'Precolombino significa antes de la llegada de ___.',a:'Colón'},
-  {q:'La gran ciudad maya de Honduras fue ___.',a:'Copán'},
-  {q:'Los mayas vivieron en la región llamada ___.',a:'Mesoamérica'},
-  {q:'La numeración maya conocía el número ___.',a:'cero'},
-  {q:'La escritura maya era ___.',a:'jeroglífica'},
-  {q:'El alimento sagrado era el ___.',a:'maíz'},
-  {q:'El libro sagrado maya-quiché es el Popol ___.',a:'Vuh'},
-  {q:'La dinastía de Copán la fundó Yax K\'uk\' ___.',a:'Mo\''},
-  {q:'El pueblo más numeroso de Honduras eran los ___.',a:'lencas'},
-  {q:'El maíz se cultivaba en un campo llamado ___.',a:'milpa'},
-  {q:'Las estelas son monumentos de ___ tallada.',a:'piedra'},
-  {q:'Copán fue declarada Patrimonio de la ___.',a:'Humanidad'},
-  {q:'Los aztecas florecieron en el centro de ___.',a:'México'},
-  {q:'Los incas crearon su imperio en los ___.',a:'Andes'},
-  {q:'Colón llegó a América en el año ___.',a:'1492'},
+  {q:'Los mayas escribían el número cinco con una ___.',a:'barra',acc:['barra','raya'],k:'cp-barra'},
+  {q:'El maíz se cultivaba en un campo llamado ___.',a:'milpa',acc:['milpa'],k:'cp-milpa'},
+  {q:'El pueblo garífuna llegó a Honduras en el año ___.',a:'1797',acc:['1797'],k:'cp-1797'},
+  {q:'Los incas crearon su imperio en los ___.',a:'Andes',acc:['Andes'],k:'cp-andes'},
+  {q:'Los mayas no eran un solo reino: eran muchas ciudades-___.',a:'estado',acc:['estado','estados'],k:'cp-estado'},
+  {q:'La gran ciudad maya de Honduras decayó y fue abandonada hacia el siglo ___.',a:'IX',acc:['IX','9','nueve'],k:'cp-ix'},
+  {q:'Las ruinas mayas de Honduras son Patrimonio de la ___.',a:'Humanidad',acc:['Humanidad'],k:'cp-humanidad'},
+  {q:'Kenia contestó que antes de Colón solo había ___.',a:'monte',acc:['monte'],k:'cp-monte'},
+  {q:'La bisabuela de Kenia habla una ___ muy antigua.',a:'lengua',acc:['lengua','idioma'],k:'cp-lengua'},
+  {q:'Los tolupanes, pech y tawahkas vivían de la caza, la pesca y la ___.',a:'agricultura',acc:['agricultura'],k:'cp-agricultura'}
 ];
 const evalPRBank=[
-  {term:'Precolombino',def:'Lo anterior a la llegada de Colón (1492)'},
-  {term:'Copán',def:'La gran ciudad maya de Honduras'},
-  {term:'Mesoamérica',def:'Región cultural donde vivieron los mayas'},
-  {term:'Escalinata Jeroglífica',def:'Escalera con el texto maya más largo'},
-  {term:'Estela',def:'Monumento de piedra con retratos de gobernantes'},
-  {term:'Altar Q',def:'Muestra a los 16 reyes de Copán'},
-  {term:'El cero',def:'Gran avance de la numeración maya'},
-  {term:'Popol Vuh',def:'Libro sagrado de los mayas quichés'},
-  {term:"Yax K'uk' Mo'",def:'Fundador de la dinastía de Copán'},
-  {term:'El maíz',def:'Alimento sagrado; se cultivaba en la milpa'},
-  {term:'Los lencas',def:'El pueblo más numeroso de Honduras'},
-  {term:'Los chortís',def:'Pueblo hondureño emparentado con los mayas'},
-  {term:'Los aztecas',def:'Civilización del centro de México'},
-  {term:'Los incas',def:'Civilización de los Andes (Perú)'},
-  {term:'1492',def:'Año de la llegada de Colón a América'},
+  {term:'Escalinata Jeroglífica',def:'El texto maya tallado más largo',k:'pr-escalinata'},
+  {term:'Altar Q',def:'Muestra a los 16 reyes de la ciudad',k:'pr-altar'},
+  {term:'Estela',def:'Monumento de piedra con el retrato de un gobernante',k:'pr-estela'},
+  {term:'Popol Vuh',def:'Cuenta que las personas fueron hechas de maíz',k:'pr-popol'},
+  {term:'Yax K\'uk\' Mo\'',def:'Fundó la dinastía en el siglo V',k:'pr-yax'},
+  {term:'18 Conejo',def:'El rey más famoso, gran constructor',k:'pr-conejo'},
+  {term:'Tenochtitlan',def:'Capital azteca construida sobre un lago',k:'pr-tenochtitlan'},
+  {term:'Cusco',def:'Capital de los incas',k:'pr-cusco'},
+  {term:'Chortís',def:'Pueblo emparentado con los mayas',k:'pr-chortis'},
+  {term:'Mesoamérica',def:'Región cultural del sur de México y Centroamérica',k:'pr-mesoamerica'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,10 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una escuela visita el Parque Arqueológico de Copán: los estudiantes ven estelas, el juego de pelota y la Escalinata Jeroglífica.'},
-  {txt:'Una familia lenca de La Esperanza elabora ollas y comales de barro con las técnicas heredadas de sus antepasados.'},
-  {txt:'Un estudiante descubre que los mayas escribían el número cinco con una barra y que conocían el cero.'},
-  {txt:'Un campesino siembra su milpa con maíz, frijol y calabaza, igual que se hacía hace siglos.'},
-  {txt:'Un turista pregunta por qué Copán fue abandonada si los españoles todavía no habían llegado a América.'},
-  {txt:'En una feria escolar, un grupo presenta el Popol Vuh y cuenta que las personas fueron hechas de maíz.'},
+  {k:'ca-lenca',txt:'Una familia lenca de La Esperanza elabora ollas y comales de barro con las técnicas heredadas de sus antepasados.'},
+  {k:'ca-milpa',txt:'Un campesino siembra su milpa con maíz, frijol y calabaza, igual que se hacía hace siglos.'},
+  {k:'ca-turista',txt:'Un turista pregunta por qué Copán fue abandonada si los españoles todavía no habían llegado a América.'},
+  {k:'ca-feria',txt:'En una feria escolar, un grupo presenta el Popol Vuh y cuenta que las personas fueron hechas de maíz.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué elementos del mundo precolombino aparecen en este caso?',
@@ -520,56 +503,37 @@ const critCaseGuides=[
   'Porque es la raíz de nuestra identidad: valorar Copán y las culturas vivas (lencas, chortís, pech…) nos ayuda a conocernos y a proteger ese patrimonio.',
 ];
 const critErrorBank=[
-  {txt:'"La gran ciudad maya de Honduras fue Tikal y está en el departamento de Olancho."',
-   g1:'La gran ciudad maya de Honduras fue COPÁN (Tikal está en Guatemala).',
-   g2:'Copán está en el occidente, en el departamento de COPÁN.'},
-  {txt:'"Los mayas no tenían escritura y tampoco conocían el cero."',
-   g1:'Los mayas SÍ tenían escritura: la JEROGLÍFICA, la más desarrollada de América.',
-   g2:'Su numeración SÍ conocía el CERO, un gran avance.'},
-  {txt:'"Los mayas montaban a caballo y sembraban trigo en la milpa."',
-   g1:'El CABALLO llegó con los españoles: no existía en la América precolombina.',
-   g2:'En la milpa se sembraba MAÍZ (con frijol y calabaza), no trigo.'},
-  {txt:'"Copán fue abandonada porque los españoles la conquistaron en 1492."',
-   g1:'Copán decayó y fue abandonada hacia el SIGLO IX, siglos ANTES de los españoles.',
-   g2:'En 1492 llegó COLÓN a América; la conquista fue después y no causó el abandono de Copán.'},
-  {txt:'"Los incas vivieron en México y los aztecas en los Andes."',
+  {k:'er-incas-aztecas',txt:'"Los incas vivieron en México y los aztecas en los Andes."',
    g1:'Es al revés: los AZTECAS florecieron en el centro de MÉXICO.',
    g2:'Los INCAS crearon su imperio en los ANDES (Perú).'},
+  {k:'er-garifunas',txt:'"Los garífunas vivían en Honduras antes de que llegara Colón."',
+   g1:'llegaron en 1797, ya en la época colonial.',
+   g2:'son parte valiosa de nuestra cultura, pero no son precolombinos.'},
+  {k:'er-sociedad',txt:'"En la sociedad maya todos eran iguales y nadie mandaba."',
+   g1:'arriba estaban el rey, los nobles y los sacerdotes.',
+   g2:'abajo estaban los campesinos y los artesanos, que sostenían la ciudad.'},
 ];
 const critDecisionBank=[
-  'Para conocer la civilización maya de Honduras, conviene visitar el Parque Arqueológico de Copán, o una playa del Caribe.',
   'Si encuentras una pieza antigua de barro en el campo, conviene avisar a las autoridades y no moverla, o llevártela de recuerdo.',
-  'Para aprender sobre el origen del mundo según los mayas, conviene leer el Popol Vuh, o un mapa de carreteras.',
-  'Para conocer la cultura lenca viva, conviene visitar los talleres de alfarería de La Esperanza o Lempira, o buscarla en las ruinas de Copán.',
-  'Si quieres explicar la numeración maya en clase, conviene mostrar los puntos, las barras y el cero, o decir que usaban números romanos.',
+  'Para saber qué lengua hablaba tu familia antes, conviene preguntarle a la abuela, o suponer que no hablaban ninguna.',
 ];
 const critDecisionGuide='La mejor decisión valora y protege la herencia precolombina: Copán es el lugar para conocer a los mayas de Honduras; las piezas antiguas son patrimonio y se reportan, no se toman; el Popol Vuh explica las creencias mayas; la cultura lenca sigue viva en su alfarería; y la numeración maya usaba puntos, barras y el cero.';
 const critCompareBank=[
-  {a:'Civilización de Mesoamérica; su gran ciudad en Honduras fue Copán.',b:'Pueblo indígena más numeroso de Honduras; su alfarería sigue viva.',
-   ga:'Los mayas.',
-   gb:'Los lencas.',
-   gr:'Los dos son pueblos precolombinos de Honduras, pero los mayas construyeron grandes ciudades de piedra y los lencas destacaron en la vida agrícola y la cerámica.'},
-  {a:'Monumento de piedra tallada con el retrato de un gobernante.',b:'Escalera de Copán con el texto maya tallado más largo.',
+  {k:'co-estela-escalinata',a:'Monumento de piedra tallada con el retrato de un gobernante.',b:'Escalera de Copán con el texto maya tallado más largo.',
    ga:'La estela.',
    gb:'La Escalinata Jeroglífica.',
    gr:'Los dos son monumentos tallados de Copán, pero la estela retrata a un rey y la escalinata cuenta la historia completa de la dinastía.'},
-  {a:'Civilización del centro de México; su capital fue Tenochtitlan.',b:'Civilización de los Andes; construyó Machu Picchu.',
-   ga:'Los aztecas.',
-   gb:'Los incas.',
-   gr:'Las dos fueron grandes civilizaciones precolombinas, pero florecieron en lugares distintos: México y los Andes del Perú.'},
 ];
 const critCauseBank=[
-  {cause:'Los mayas observaban el Sol, la Luna y las estrellas.',guide:'Crearon un calendario muy preciso que guiaba las siembras y ceremonias.'},
-  {cause:'Los mayas dominaban la agricultura del maíz.',guide:'Pudieron alimentar grandes ciudades y el maíz se volvió sagrado en sus creencias.'},
-  {cause:'Copán fue declarada Patrimonio de la Humanidad.',guide:'Llegan visitantes de todo el mundo y sus ruinas se protegen para el futuro.'},
-  {cause:'Los pueblos precolombinos no conocían el caballo ni el hierro.',guide:'Trabajaban con herramientas de piedra y cargaban todo con su propia fuerza.'},
+  {k:'cau-astronomia',cause:'Los mayas observaban el Sol, la Luna y las estrellas.',guide:'Crearon un calendario muy preciso que guiaba las siembras y ceremonias.'},
+  {k:'cau-patrimonio',cause:'La UNESCO declaró Patrimonio de la Humanidad las ruinas mayas de Honduras.',guide:'Llegan visitantes de todo el mundo y las ruinas se protegen para el futuro.'},
 ];
 const critEffectBank=[
-  {effect:'Hoy podemos leer la historia de los reyes de Copán.',guide:'Porque los mayas la escribieron con jeroglíficos en la Escalinata y las estelas.'},
-  {effect:'Las tortillas y el maíz siguen en la mesa hondureña.',guide:'Porque son herencia de la agricultura precolombina de la milpa.'},
-  {effect:'En La Esperanza y en Lempira se elabora alfarería lenca.',guide:'Porque la cultura lenca sigue viva y transmite sus técnicas de generación en generación.'},
-  {effect:'Sabemos que las personas «fueron hechas de maíz» según los mayas.',guide:'Porque así lo cuenta el Popol Vuh, su libro sagrado.'},
+  {k:'ef-arquitectura',effect:'En las ruinas de la ciudad maya hay pirámides, templos y una cancha de pelota.',guide:'Porque los mayas fueron grandes arquitectos.'},
+  {k:'ef-numeros',effect:'Los mayas podían escribir números muy grandes.',guide:'Porque contaban de 20 en 20 y conocían el cero.'},
+  {k:'ef-herencia',effect:'Muchas palabras y comidas de hoy vienen de los pueblos precolombinos.',guide:'Porque su cultura sigue viva en nosotros.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
