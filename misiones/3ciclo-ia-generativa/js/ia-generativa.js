@@ -387,78 +387,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un modelo de lenguaje predice la palabra siguiente más probable.',a:true},
-  {q:'Un modelo de lenguaje busca la respuesta en una enciclopedia.',a:false},
-  {q:'Una alucinación es un dato inventado y dicho con seguridad.',a:true},
-  {q:'Si el modelo contesta muy seguro, el dato es correcto.',a:false},
-  {q:'Verificar es buscar la fuente original que responde por el dato.',a:true},
-  {q:'Preguntarle otra vez a la misma IA es verificar.',a:false},
-  {q:'Las cuatro piezas de una petición son contexto, tarea, formato y ejemplo.',a:true},
-  {q:'Una falsificación profunda puede imitar la voz de alguien real.',a:true},
-  {q:'Está bien darle a un chat la dirección de tu casa.',a:false},
-  {q:'Lo que se escribe en internet puede quedar guardado.',a:true},
-  {q:'Compartir sin comprobar ayuda a que la desinformación llegue más lejos.',a:true},
-  {q:'Usar IA para entender es lo mismo que entregar lo suyo.',a:false},
-  {q:'Cuando se usa IA en un trabajo, se declara.',a:true},
-  {q:'Si un libro que cita la IA suena perfecto, existe.',a:false},
-  {q:'La IA generativa también produce imágenes, voz y video.',a:true},
-  {q:'Los modelos de lenguaje vienen de una idea técnica de 2017.',a:true},
-  {q:'Si no puedes verificar un dato, úsalo igual y avisa después.',a:false},
-  {q:'Una foto de tus compañeros se sube solo con su permiso.',a:true},
-  {q:'Un audio urgente pidiendo dinero se comprueba llamando por otro medio.',a:true},
-  {q:'La IA generativa quita la necesidad de pensar por uno mismo.',a:false}
+  {q:'Un audio falso puede servir para humillar a alguien.',a:true,k:'tf-humillar'},
+  {q:'El primer paso para verificar es separar el dato de la explicación.',a:true,k:'tf-paso1'},
+  {q:'Saludar y dar las gracias no le dicen al chat qué quieres.',a:true,k:'tf-saludar'},
+  {q:'Lo que subes puede quedar guardado en otra computadora.',a:true,k:'tf-guardado'},
+  {q:'Un chat puede escribir un párrafo redondo sobre algo que no sabe.',a:true,k:'tf-parrafo'},
+  {q:'Si el chat contesta muy seguro, el dato es correcto.',a:false,k:'tf-seguro'},
+  {q:'Otra página que repite lo mismo sirve para comprobar un dato.',a:false,k:'tf-otra-pagina'},
+  {q:'Escribir la pregunta en mayúsculas mejora la respuesta.',a:false,k:'tf-mayusculas'},
+  {q:'Cada vez es más fácil notar una foto fabricada.',a:false,k:'tf-notar'},
+  {q:'Una foto de otros niños se puede subir sin preguntarles.',a:false,k:'tf-foto-ninos'}
 ];
 const evalMCBank=[
-  {q:'¿Qué hace un modelo de lenguaje cuando te contesta?',o:['Consulta una enciclopedia','Le pregunta a una persona','Copia una página','Predice la palabra siguiente más probable'],a:3},
-  {q:'¿Qué es una alucinación?',o:['Un virus','Un dato inventado dicho con toda seguridad','Un error de la pantalla','Una falla de la conexión'],a:1},
-  {q:'La IA te cita un libro perfecto para tu tema. ¿Qué haces?',o:['Compruebo que exista','Lo cito, suena confiable','Le pregunto a la IA si existe','Le cambio el título'],a:0},
-  {q:'¿Cuáles son las cuatro piezas de una petición?',o:['Quién, cómo, cuándo y dónde','Título, cuerpo, firma y fecha','Contexto, tarea, formato y ejemplo','Saludo, pregunta, gracias y adiós'],a:2},
-  {q:'¿Qué es una falsificación profunda?',o:['Una foto movida','Un filtro de colores','Un error de la cámara','Foto, voz o video hechos para parecer reales'],a:3},
-  {q:'Te llega un audio de un familiar pidiendo dinero urgente. ¿Qué haces?',o:['Lo llamo yo por otro medio','Le mando el dinero','Lo reenvío al grupo','Le contesto por audio'],a:0},
-  {q:'¿Qué NO se le escribe nunca a un chat de IA?',o:['Una duda de matemática','Una clave o tu dirección','Un texto tuyo para corregir','Una lista de ideas'],a:1},
-  {q:'¿Por qué el tono seguro de un modelo no prueba nada?',o:['Porque escribe despacio','Porque siempre duda','Porque fue hecho para completar texto, no para comprobarlo','Porque no sabe escribir'],a:2},
-  {q:'¿Cuál es el primer paso para verificar un dato?',o:['Separar el dato de la explicación','Compartirlo','Buscar en otra IA','Copiarlo al cuaderno'],a:0},
-  {q:'Compartes sin comprobar algo que resultó falso. ¿Qué pasó?',o:['Nada, no lo escribiste tú','Es culpa de la IA','No tiene importancia','Ayudaste a que la desinformación llegue más lejos'],a:3},
-  {q:'¿Qué diferencia hay entre usar IA para aprender y para entregar?',o:['Ninguna','Las dos están prohibidas','Una enseña, la otra te deja sin aprender','La segunda es más rápida'],a:2},
-  {q:'¿Qué hay que hacer cuando no se puede verificar un dato?',o:['Usarlo y avisar después','No usarlo','Usarlo solo en el examen','Cambiarle las palabras'],a:1},
-  {q:'¿De dónde salen los chats de IA generativa de hoy?',o:['De un invento de 2022','De los sistemas expertos','De ELIZA, de 1966','De una idea técnica de 2017, entrenada en grande'],a:3},
-  {q:'¿Qué significa que la IA generativa sea «generativa»?',o:['Que produce texto, imagen, voz o video nuevos','Que es gratis','Que funciona sin internet','Que aprende de cada usuario'],a:0},
-  {q:'¿Cuándo se declara que se usó IA en un trabajo?',o:['Nunca, no hace falta','Siempre que se haya usado','Solo si sale mal','Solo si lo pregunta el maestro'],a:1}
+  {q:'La IA te cita una ley con su número. ¿Qué haces?',o:['Abro la ley y la leo','Copio el número','Le pregunto a la IA si existe','Le cambio el número'],a:0,k:'mc-ley'},
+  {q:'¿Qué NO se le escribe nunca a un chat?',o:['Una duda de matemática','Tu dirección','Un texto tuyo para corregir','Una lista de ideas'],a:1,k:'mc-direccion'},
+  {q:'Una foto de un desastre te indigna. ¿Qué haces antes de reenviarla?',o:['La reenvío ya','Averiguo de dónde salió','Le pongo un texto','La guardo sin mirar'],a:1,k:'mc-foto'},
+  {q:'«Explicame qué es la fotosíntesis»: ¿qué pieza de la petición es?',o:['La tarea','El saludo','La firma','El título'],a:0,k:'mc-tarea'},
+  {q:'¿Qué es lo que más inventa un chat?',o:['Saludos','Títulos de libros y nombres de autores','Signos de puntuación','Colores'],a:1,k:'mc-inventa'},
+  {q:'¿Por qué la máquina le dijo a Kenia «cinco estrofas»?',o:['Porque lo leyó en el Himno','Porque se equivocó el teclado','Porque era lo más probable, no lo verdadero','Porque alguien la engañó'],a:2,k:'mc-probable'},
+  {q:'¿Qué diferencia hay entre usar IA para aprender y para entregar?',o:['Ninguna','Las dos están prohibidas','Una enseña y la otra te deja sin aprender','La segunda es más rápida'],a:2,k:'mc-aprender'},
+  {q:'¿Qué de esto NO es verificar?',o:['Buscar la ley','Leer el libro','Preguntarle otra vez a la misma IA','Ir a la institución'],a:2,k:'mc-no-verificar'},
+  {q:'¿Qué guarda la máquina después de entrenar?',o:['Todas las fotos','Todos los ejemplos','Las contraseñas','Los números que ajustó'],a:3,k:'mc-modelo'},
+  {q:'¿Cuántas piezas tiene una buena petición?',o:['Dos','Tres','Cinco','Cuatro'],a:3,k:'mc-piezas'}
 ];
 const evalCPBank=[
-  {q:'Un modelo de lenguaje ___ la palabra siguiente más probable.',a:'predice'},
-  {q:'Un dato inventado y dicho con seguridad es una ___.',a:'alucinación'},
-  {q:'Antes de usar un dato de una IA hay que ___.',a:'verificarlo'},
-  {q:'La pieza que dice quién eres y para qué es el ___.',a:'contexto'},
-  {q:'La pieza que dice cómo lo quieres es el ___.',a:'formato'},
-  {q:'Una foto o voz fabricadas para engañar son una falsificación ___.',a:'profunda'},
-  {q:'Lo que escribes en internet puede quedar ___.',a:'guardado'},
-  {q:'Compartir algo sin comprobarlo ya es ___.',a:'desinformación'},
-  {q:'Verificar es ir a la ___ que responde por el dato.',a:'fuente'},
-  {q:'Si un dato no se puede verificar, lo mejor es no ___.',a:'usarlo'},
-  {q:'La IA generativa produce texto, imagen, voz y ___.',a:'video'},
-  {q:'Cuando se usa IA en un trabajo, se ___.',a:'declara'},
-  {q:'El tono seguro de un modelo no ___ que el dato sea bueno.',a:'prueba'},
-  {q:'Un audio que pide dinero se comprueba llamando por otro ___.',a:'medio'},
-  {q:'Los chats de hoy vienen de una idea técnica de ___.',a:'2017'}
+  {q:'Kenia copió que el Himno tiene cinco estrofas, y son ___.',a:'siete',acc:['siete','7'],k:'cp-siete'},
+  {q:'Su maestra se lo marcó en ___.',a:'rojo',acc:['rojo'],k:'cp-rojo'},
+  {q:'En «En el recreo los niños juegan…», lo más probable que sigue es «al ___».',a:'fútbol',acc:['fútbol','futbol'],k:'cp-futbol'},
+  {q:'La pieza de la petición que dice quién eres y para qué es el ___.',a:'contexto',acc:['contexto'],k:'cp-contexto'},
+  {q:'La pieza que dice cómo lo quieres es el ___.',a:'formato',acc:['formato'],k:'cp-formato'},
+  {q:'Si llega un audio pidiendo dinero, lo compruebas llamando tú por otro ___.',a:'camino',acc:['camino','medio'],k:'cp-camino'},
+  {q:'Cuando usas IA en un trabajo, lo ___.',a:'declaras',acc:['declaras','dices','declaro'],k:'cp-declaras'},
+  {q:'Mentir es decir algo falso a ___.',a:'sabiendas',acc:['sabiendas'],k:'cp-sabiendas'},
+  {q:'Si no puedes comprobar un dato, no lo ___.',a:'usas',acc:['usas','uso','usa','usar'],k:'cp-usas'},
+  {q:'Un dato inventado pasa a tu guía de estudio y de ahí al ___.',a:'examen',acc:['examen'],k:'cp-examen'}
 ];
 const evalPRBank=[
-  {term:'IA generativa',def:'Produce texto, imagen, voz o video nuevos'},
-  {term:'Modelo de lenguaje',def:'Predice la palabra siguiente más probable'},
-  {term:'Alucinación',def:'Un dato inventado y dicho con toda seguridad'},
-  {term:'Petición',def:'El encargo, con sus cuatro piezas'},
-  {term:'Contexto',def:'La pieza que dice quién eres y para qué'},
-  {term:'Tarea',def:'La pieza que dice qué quieres exactamente'},
-  {term:'Formato',def:'La pieza que dice cómo lo quieres'},
-  {term:'Ejemplo',def:'La pieza que dice a qué se tiene que parecer'},
-  {term:'Falsificación profunda',def:'Foto, voz o video hechos para parecer reales'},
-  {term:'Verificar',def:'Comprobar el dato en la fuente que responde por él'},
-  {term:'Fuente original',def:'El libro, la ley o la institución del dato'},
-  {term:'Desinformación',def:'Lo que se propaga al compartir sin comprobar'},
-  {term:'Privacidad',def:'Lo que subes ya no lo controlas'},
-  {term:'Declarar el uso',def:'Decir en el trabajo dónde se usó la IA'},
-  {term:'2017',def:'El año de la idea técnica de los chats de hoy'}
+  {term:'IA generativa',def:'Produce texto, imagen, voz o video nuevos',k:'pr-generativa'},
+  {term:'Modelo de lenguaje',def:'Predice la palabra siguiente más probable',k:'pr-modelo'},
+  {term:'Alucinación',def:'Un dato inventado y dicho con toda seguridad',k:'pr-alucinacion'},
+  {term:'Falsificación profunda',def:'Foto, voz o video hechos para parecer de una persona real',k:'pr-falsificacion'},
+  {term:'Fuente original',def:'El libro, la ley o la institución que responde por el dato',k:'pr-fuente'},
+  {term:'Privacidad',def:'Tu nombre, tu cara, tu casa y tu familia',k:'pr-privacidad'},
+  {term:'Desinformación',def:'Lo que se propaga al compartir sin comprobar',k:'pr-desinformacion'},
+  {term:'Algoritmo',def:'Dice cómo buscar el patrón en los ejemplos',k:'pr-algoritmo'},
+  {term:'Red neuronal',def:'Muchas cuentas pequeñas puestas en capas',k:'pr-red'},
+  {term:'Petición',def:'El encargo que le escribes a un chat',k:'pr-peticion'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -545,12 +525,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una alumna entrega un informe con tres citas que la IA le dio. Ninguna existe.'},
-  {txt:'Circula un audio con la voz del director. Dice que mañana no hay clases.'},
-  {txt:'Un compañero le da a un chat su nombre, su escuela y su dirección.'},
-  {txt:'Un estudiante entrega una tarea escrita entera por una IA y no lo dice.'},
-  {txt:'Una foto de un desastre se comparte cien veces. Es de otro país.'},
-  {txt:'Un maestro le pide a una IA que le explique un tema. Después lo comprueba.'}
+  {k:'ca-audio',txt:'Circula un audio con la voz del director. Dice que mañana no hay clases.'},
+  {k:'ca-maestro',txt:'Un maestro le pide a una IA que le explique un tema. Después lo comprueba.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué está pasando aquí y cómo se llama?',
@@ -565,60 +541,24 @@ const critCaseGuides=[
   'Respuesta abierta. Se valora que sea concreta y que la pueda hacer de verdad.'
 ];
 const critErrorBank=[
-  {txt:'"Si la IA lo dijo con tanta seguridad, será cierto."',
-   g1:'El tono seguro no es señal de nada. Escribe igual cuando inventa.',
-   g2:'Fue hecho para completar texto, no para comprobarlo.'},
-  {txt:'"Para verificar un dato, le pregunto otra vez a la misma IA."',
-   g1:'Eso no verifica nada: es el mismo sistema contestando otra vez.',
-   g2:'Verificar es ir a la fuente: el libro, la ley, la institución.'},
-  {txt:'"Yo no escribí la noticia falsa, solo la compartí."',
-   g1:'La desinformación vive de quien la reenvía, no de quien la escribe.',
-   g2:'Compartir sin comprobar ya es parte del daño.'},
-  {txt:'"Le doy mis datos porque así me contesta mejor."',
-   g1:'Lo escrito puede quedar guardado, y ya no lo controlas.',
-   g2:'Se le pide lo mismo sin dar un dato de tu familia.'},
-  {txt:'"Si el libro que citó suena perfecto para mi tema, existe."',
-   g1:'Los títulos inventados suenan perfectos: el modelo los arma para encajar.',
-   g2:'Que suene bien es razón para desconfiar, no para creer.'},
-  {txt:'"Usar IA para hacer la tarea es lo mismo que usarla para entender."',
-   g1:'No: en un caso aprendo yo, en el otro entrego algo que no hice.',
-   g2:'Y cuando se usa, se declara. Decirlo no quita mérito.'}
+  {k:'er-misma-ia',txt:'"Para verificar un dato, le pregunto otra vez a la misma IA."',g1:'Eso no verifica nada: es el mismo sistema contestando otra vez.',g2:'Verificar es ir a la fuente: el libro, la ley, la institución.'},
+  {k:'er-libro',txt:'"Si el libro que citó suena perfecto para mi tema, existe."',g1:'Los títulos inventados suenan perfectos: el modelo los arma para encajar.',g2:'Que suene bien es razón para desconfiar, no para creer.'},
 ];
 const critDecisionBank=[
-  'Un dato perfecto para tu exposición, y no hay tiempo de comprobarlo. ¿Usarlo, o quitarlo?',
-  'Te llega un video que te indigna. ¿Compartirlo ya, o mirar antes de dónde salió?',
-  'Un chat te pide tu nombre y tu escuela. ¿Dárselos, o pedirle lo mismo sin datos?',
   'Usaste IA para ordenar tu ensayo. ¿Decirlo, o callarlo porque lo escribiste tú?',
-  'Un compañero va a mandar dinero por un audio. ¿Decirle que llame, o no meterse?'
 ];
 const critDecisionGuide='La mejor decisión comprueba antes de usar y de compartir. No entrega datos de otros. Declara el uso de la IA. Cuesta tiempo.';
 const critCompareBank=[
-  {a:'Un buscador de internet.',b:'Un modelo de lenguaje.',
-   ga:'Te devuelve páginas que existen, con su dirección.',
-   gb:'Te arma un texto prediciendo palabra por palabra.',
-   gr:'El buscador te enseña DÓNDE está el dato. El modelo te lo da masticado. Falta un paso: buscar la fuente.'},
-  {a:'Una alucinación.',b:'Una falsificación profunda.',
-   ga:'El modelo inventa un dato sin que nadie se lo pida.',
-   gb:'Alguien fabrica a propósito una foto, voz o video para engañar.',
-   gr:'La primera es un accidente. La segunda, una decisión con intención. Eso cambia quién responde.'},
-  {a:'Usar IA para entender un tema.',b:'Usar IA para entregar la tarea.',
-   ga:'Le pido que me explique o que corrija lo mío.',
-   gb:'Copio lo que escribió y le pongo mi nombre.',
-   gr:'En la primera yo sé más y puedo defenderlo. En la segunda afirmo que hice algo que no hice.'}
+  {k:'co-buscador',a:'Un buscador de internet.',b:'Un modelo de lenguaje.',ga:'Te devuelve páginas que existen, con su dirección.',gb:'Te arma un texto prediciendo palabra por palabra.',gr:'El buscador te enseña DÓNDE está el dato. El modelo te lo da masticado. Falta un paso: buscar la fuente.'},
 ];
 const critCauseBank=[
-  {cause:'El modelo fue entrenado para predecir la palabra siguiente, no para comprobar.',guide:'Por eso inventa con la misma seguridad con que acierta: alucina.'},
-  {cause:'Imitar una voz necesita muy pocos segundos de grabación.',guide:'Por eso un audio que pide dinero se comprueba llamando por otro medio.'},
-  {cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no se dan datos de la familia ni fotos de otras personas.'},
-  {cause:'La desinformación se propaga por los reenvíos.',guide:'Por eso comprobar antes de compartir es parte de la defensa.'},
-  {cause:'Una petición sin contexto ni formato deja al modelo adivinando.',guide:'Por eso el resultado sale genérico, y las cuatro piezas cambian tanto.'}
+  {k:'ca-predecir',cause:'El modelo fue entrenado para predecir la palabra siguiente, no para comprobar.',guide:'Por eso inventa con la misma seguridad con que acierta: alucina.'},
+  {k:'ca-guardado',cause:'Lo que se escribe en internet puede quedar guardado.',guide:'Por eso no se dan datos de la familia ni fotos de otras personas.'},
 ];
 const critEffectBank=[
-  {effect:'Una alumna reprueba por citar tres libros que no existen.',guide:'Porque el modelo arma títulos que encajan, y ella no comprobó.'},
-  {effect:'Una familia no manda al niño a clases por un audio falso.',guide:'Porque una voz se imita con pocos segundos y nadie llamó a comprobar.'},
-  {effect:'Un dato inventado acaba en el examen de todo un grado.',guide:'Porque alguien lo copió sin verificar y pasó a la guía de estudio.'},
-  {effect:'Declarar que usaste IA no te quita mérito.',guide:'Porque lo que se valora es lo que entendiste y puedes defender.'},
-  {effect:'Una petición con sus cuatro piezas da un resultado mucho mejor.',guide:'Porque el modelo deja de adivinar para quién es y qué se quiere.'}
+  {k:'ef-examen',effect:'Un dato inventado acaba en el examen de todo un grado.',guide:'Porque alguien lo copió sin verificar y pasó a la guía de estudio.'},
+  {k:'ef-piezas',effect:'Una petición con sus cuatro piezas da un resultado mucho mejor.',guide:'Porque el modelo deja de adivinar para quién es y qué se quiere.'},
+  {k:'ef-noticia',effect:'Una noticia falsa llega a cien grupos en una tarde.',guide:'Porque cada quien la reenvió sin comprobar de dónde salió.'},
 ];
 function genEvalCrit(){
   sfx('click');

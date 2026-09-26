@@ -9,14 +9,14 @@ const { esc, arma, portada, preguntas, clave, fichaConcepto, tablaReglas,
 const EVAL = [
   { q: '¿Qué hace un modelo de lenguaje cuando te contesta?', o: ['Consulta una enciclopedia', 'Le pregunta a una persona', 'Copia una página', 'Predice la palabra siguiente más probable'], a: 3 },
   { q: '¿Qué es una alucinación?', o: ['Un virus', 'Un dato inventado dicho con toda seguridad', 'Un error de la pantalla', 'Una falla de la conexión'], a: 1 },
-  { q: 'La IA te cita un libro perfecto para tu tema. ¿Qué haces?', o: ['Compruebo que exista', 'Lo cito, suena confiable', 'Le pregunto a la IA si existe', 'Le cambio el título'], a: 0 },
+  { q: 'La IA te cita un libro perfecto para tu tema. ¿Qué haces?', o: ['Compruebo que exista', 'Lo cito así', 'Le cambio el título', 'Lo copio en el cuaderno'], a: 0 },
   { q: '¿Cuáles son las cuatro piezas de una petición?', o: ['Quién, cómo, cuándo y dónde', 'Título, cuerpo, firma y fecha', 'Contexto, tarea, formato y ejemplo', 'Saludo, pregunta, gracias y adiós'], a: 2 },
   { q: '¿Qué es una falsificación profunda?', o: ['Una foto movida', 'Un filtro de colores', 'Un error de la cámara', 'Foto, voz o video hechos para parecer reales'], a: 3 },
-  { q: 'Te llega un audio de un familiar pidiendo dinero urgente. ¿Qué haces?', o: ['Lo llamo yo por otro medio', 'Le mando el dinero', 'Lo reenvío al grupo', 'Le contesto por audio'], a: 0 },
-  { q: '¿Qué NO se le escribe nunca a un chat de IA?', o: ['Una duda de matemática', 'Una clave o tu dirección', 'Un texto tuyo para corregir', 'Una lista de ideas'], a: 1 },
-  { q: '¿Por qué el tono seguro no prueba nada?', o: ['Porque escribe despacio', 'Porque siempre duda', 'Fue hecho para completar texto, no para comprobarlo', 'Porque no sabe escribir'], a: 2 },
-  { q: 'Compartes sin comprobar algo que resultó falso. ¿Qué pasó?', o: ['Nada, no lo escribiste tú', 'Es culpa de la IA', 'No tiene importancia', 'Ayudaste a que la desinformación llegue más lejos'], a: 3 },
-  { q: '¿Cuándo se declara que se usó IA en un trabajo?', o: ['Nunca, no hace falta', 'Siempre que se haya usado', 'Solo si sale mal', 'Solo si lo pregunta el maestro'], a: 1 },
+  { q: 'Una foto de un desastre te indigna. ¿Qué haces antes de reenviarla?', o: ['La reenvío ya', 'Averiguo de dónde salió', 'Le pongo un texto', 'La guardo sin mirar'], a: 1 },
+  { q: '¿Qué NO se le escribe nunca a un chat de IA?', o: ['Tu dirección', 'Una duda de matemática', 'Un texto tuyo para corregir', 'Una lista de ideas'], a: 0 },
+  { q: '¿Qué de esto NO es verificar?', o: ['Buscar la ley', 'Leer el libro', 'Preguntarle otra vez a la misma IA', 'Ir a la institución'], a: 2 },
+  { q: '¿Qué diferencia hay entre usar IA para aprender y para entregar?', o: ['Ninguna', 'Las dos están prohibidas', 'Una enseña y la otra te deja sin aprender', 'La segunda es más rápida'], a: 2 },
+  { q: '¿Cuándo se declara que se usó IA en un trabajo?', o: ['Siempre que se haya usado', 'Nunca, no hace falta', 'Solo si sale mal', 'Solo si lo pregunta el maestro'], a: 0 },
 ];
 
 const P = [];
