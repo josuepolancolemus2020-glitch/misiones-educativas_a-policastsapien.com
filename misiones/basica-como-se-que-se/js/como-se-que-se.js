@@ -432,73 +432,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La epistemología separa creer, opinar y saber.',a:true},
-  {q:'«Lo creo» y «lo sé» quieren decir lo mismo.',a:false},
-  {q:'Una opinión se comprueba midiéndola.',a:false},
-  {q:'Para decir «lo sé» hay que poder decir con qué se comprueba.',a:true},
-  {q:'Los sentidos no sirven, porque a veces se equivocan.',a:false},
-  {q:'El lápiz dentro del vaso de agua se quiebra de verdad.',a:false},
-  {q:'La misma agua tibia puede sentirse caliente en una mano y fría en la otra.',a:true},
-  {q:'La memoria guarda los hechos exactamente igual con los años.',a:false},
-  {q:'Lo que otro cuenta cambia cuanto más lejos está de quien lo vio.',a:true},
-  {q:'Si un razonamiento parte de algo falso, la conclusión puede salir falsa.',a:true},
-  {q:'Si el instrumento está mal, la medida sigue siendo buena.',a:false},
-  {q:'Decir «no sé» deja la puerta abierta para ir a averiguarlo.',a:true},
-  {q:'El empirismo dice que todo lo que sabemos entró por los sentidos.',a:true},
-  {q:'La ciencia de hoy usó que ganara una sola de las dos escuelas.',a:false},
-  {q:'Si nada puede hacerte cambiar de idea, no estabas sabiendo: estabas defendiendo.',a:true}
+  {q:'«Dicen que el puente está cerrado» es algo que ya se sabe.',a:false,k:'tf-puente'},
+  {q:'«Esta canción es fea» se puede comprobar con una medida.',a:false,k:'tf-cancion'},
+  {q:'«En mi grado somos cuarenta y tres» se puede comprobar contando.',a:true,k:'tf-43'},
+  {q:'Los sentidos no sirven, porque a veces se equivocan.',a:false,k:'tf-sentidos'},
+  {q:'La misma agua tibia puede sentirse caliente en una mano y fría en la otra.',a:true,k:'tf-manos'},
+  {q:'La memoria guarda los hechos exactamente igual con los años.',a:false,k:'tf-memoria'},
+  {q:'Si lo de arriba era falso, lo que se razona desde ahí también puede salir falso.',a:true,k:'tf-razon'},
+  {q:'Si la cinta de medir está mala, todos miden mal y nadie lo nota.',a:true,k:'tf-medida'},
+  {q:'La ciencia de hoy eligió una sola de las dos escuelas.',a:false,k:'tf-escuelas'},
+  {q:'Lo que se cuenta o se mide lo puede revisar cualquiera.',a:true,k:'tf-revisar'}
 ];
 const evalMCBank=[
-  {q:'¿De qué se ocupa la epistemología?',o:['De medir el tiempo','De escribir bien','De separar creer, opinar y saber','De contar dinero'],a:2},
-  {q:'«Dicen que el puente está cerrado» es…',o:['algo que creo','una opinión','un saber comprobado','una medida'],a:0},
-  {q:'«Esta canción es fea» es…',o:['un saber','una opinión','una creencia','una hipótesis'],a:1},
-  {q:'«En mi grado somos cuarenta y tres» es…',o:['una opinión','una creencia','un rumor','un saber: se cuenta'],a:3},
-  {q:'¿Qué se le pregunta a una creencia para pasarla a saber?',o:['¿A quién le gusta?','¿Cuántos lo dicen?','¿Cómo lo sé y con qué lo compruebo?','¿Suena bien?'],a:2},
-  {q:'¿Cuál de estas NO se puede comprobar?',o:['La puerta mide más que yo','El agua está fría','El azul es el color más bonito','Somos cuarenta y tres'],a:2},
-  {q:'La moneda que aparece al echar agua en la taza enseña que…',o:['la luz se dobla al salir del agua','la moneda se mueve','el agua la empuja','la taza cambia'],a:0},
-  {q:'¿Qué arregla que la piel no mida grados?',o:['Esperar','Frotar las manos','Preguntar','Un termómetro'],a:3},
-  {q:'La fuente que cambia cuanto más lejos está de quien lo vio es…',o:['la medida','lo que otro cuenta','el razonamiento','los sentidos'],a:1},
-  {q:'¿Para qué sirve la medida, sobre todo?',o:['Para adornar el cuaderno','Para ganar la discusión','Para no preguntar','Para que dos que no se ponen de acuerdo miren lo mismo'],a:3},
-  {q:'¿Qué hace el paso 1 de comprobar?',o:['Buscar quién lo dijo','Decir exactamente qué se afirma','Escribirlo bonito','Votar'],a:1},
-  {q:'¿Por qué hay que buscar a quien diga lo contrario?',o:['Porque si solo buscás lo que te da la razón, siempre lo encontrás','Para discutir','Para ganar tiempo','Porque lo pide el maestro'],a:0},
-  {q:'«2 + 2 son 4» no hace falta comprobarlo en el patio. Eso lo dice el…',o:['empirismo','rumor','racionalismo','método'],a:2},
-  {q:'De qué color es el techo de tu escuela hay que mirarlo. Eso lo dice el…',o:['empirismo','racionalismo','azar','reglamento'],a:0},
-  {q:'¿Qué hizo René Descartes?',o:['Midió la luz','Dudó de todo para buscar algo seguro','Contó los alumnos','Escribió cuentos'],a:1}
+  {q:'¿Qué se le pregunta a una creencia para pasarla a saber?',o:['¿A quién le gusta?','¿Cuántos lo dicen?','¿Cómo lo sé y con qué lo compruebo?','¿Suena bien?'],a:2,k:'mc-pasar'},
+  {q:'La moneda que aparece al echar agua en la taza enseña que…',o:['la luz se dobla al salir del agua','la moneda se mueve','el agua la empuja','la taza cambia'],a:0,k:'mc-moneda'},
+  {q:'¿Por qué el cuadrito rodeado de negro se ve más claro?',o:['porque es de otro color','porque el ojo compara con lo que tiene al lado','porque brilla','porque está más cerca'],a:1,k:'mc-cuadrito'},
+  {q:'Lo que otro cuenta cambia más cuanto más…',o:['rápido lo cuenta','viejo es','largo es el cuento','lejos está del que estuvo ahí'],a:3,k:'mc-otros'},
+  {q:'¿Para qué sirve la medida, sobre todo?',o:['Para adornar el cuaderno','Para ganar la discusión','Para no preguntar','Para que dos que no se ponen de acuerdo miren lo mismo'],a:3,k:'mc-medida'},
+  {q:'Antes de comprobar algo, ¿qué hay que hacer primero?',o:['Buscar quién lo dijo','Aclarar exactamente qué se afirma','Escribirlo bonito','Votar'],a:1,k:'mc-primero'},
+  {q:'¿Por qué hay que buscar a quien diga lo contrario?',o:['Para discutir','Para ganar tiempo','Porque si solo buscás lo que te da la razón, siempre lo encontrás','Porque lo pide el maestro'],a:2,k:'mc-contrario'},
+  {q:'¿Qué NO se puede averiguar pensando solo, sin mirar?',o:['Cuántos alumnos hay hoy en tu aula','Que 2 + 2 son 4','Que un triángulo tiene tres lados','Que 10 es más que 5'],a:0,k:'mc-corto-pensar'},
+  {q:'¿Qué NO se saca solo mirando?',o:['De qué color es el techo','Cuántos árboles hay en el patio','Que dos rectas paralelas no se juntan nunca','Si llueve hoy'],a:2,k:'mc-corto-mirar'},
+  {q:'¿Qué gana el que dice «no sé» en vez de decir «sé» sin comprobarlo?',o:['Que queda bien','Que no estudia','Que gana la discusión','Que puede ir a averiguarlo'],a:3,k:'mc-nose'}
 ];
 const evalCPBank=[
-  {q:'La rama que pregunta cómo sé que sé es la ___.',a:'epistemología'},
-  {q:'Dar algo por cierto sin comprobarlo es ___.',a:'creer'},
-  {q:'Un juicio donde otro puede pensar lo contrario es una ___.',a:'opinión'},
-  {q:'De dónde salió el dato es su ___.',a:'fuente'},
-  {q:'Una respuesta propuesta antes de comprobarla es una ___.',a:'hipótesis'},
-  {q:'Para decir «lo sé» hay que poder decir con qué se ___.',a:'comprueba'},
-  {q:'La escuela que dice que todo entra por los sentidos es el ___.',a:'empirismo'},
-  {q:'La escuela que confía primero en la razón es el ___.',a:'racionalismo'},
-  {q:'El que dudó de todo para buscar lo seguro fue ___.',a:'Descartes'},
-  {q:'El que dijo que la mente empieza vacía fue ___.',a:'Locke'},
-  {q:'El lápiz dentro del vaso se ve quebrado porque la luz se ___.',a:'dobla'},
-  {q:'La fuente que se acomoda sola con el tiempo es la ___.',a:'memoria'},
-  {q:'Para que dos personas que discuten miren lo mismo se usa la ___.',a:'medida'},
-  {q:'El quinto paso es decir qué te haría cambiar de ___.',a:'idea'},
-  {q:'Cuando no lo comprobaste y no lo sabés, se vale decir «no ___».',a:'sé'}
+  {q:'El lápiz dentro del vaso de agua se ve ___.',a:'quebrado',acc:['quebrado','roto','doblado'],k:'cp-lapiz'},
+  {q:'Lo que recordás se arregla escribiéndolo el mismo ___.',a:'día',acc:['día','dia'],k:'cp-dia'},
+  {q:'La mente empieza ___, dijo uno de los pensadores de esta unidad.',a:'vacía',acc:['vacía','vacia'],k:'cp-vacia'},
+  {q:'En Ciencias Naturales, lo que esperabas se escribe ___ del experimento.',a:'antes',acc:['antes'],k:'cp-antes'},
+  {q:'El que dice «sé» sin comprobarlo se queda con lo que le ___.',a:'contaron',acc:['contaron'],k:'cp-contaron'},
+  {q:'«Ese abono es mejor» no se comprueba; «ese abono da más ___ por planta» sí.',a:'mazorcas',acc:['mazorcas','mazorca'],k:'cp-mazorcas'},
+  {q:'Si nada te haría cambiar de idea, no estabas sabiendo: estabas ___.',a:'defendiendo',acc:['defendiendo'],k:'cp-defendiendo'},
+  {q:'En un trabajo escrito, anotá de dónde sacaste cada ___.',a:'dato',acc:['dato'],k:'cp-dato'},
+  {q:'En Ciencias Sociales se buscan dos ___ de un mismo hecho para ver en qué se separan.',a:'versiones',acc:['versiones'],k:'cp-versiones'},
+  {q:'Para ver qué quedaba en pie, alguien decidió ___ de todo.',a:'dudar',acc:['dudar'],k:'cp-dudar'}
 ];
 const evalPRBank=[
-  {term:'Epistemología',def:'La rama que separa creer, opinar y saber'},
-  {term:'Creer',def:'Dar algo por cierto sin haberlo comprobado'},
-  {term:'Opinar',def:'Dar un juicio donde otro puede pensar lo contrario'},
-  {term:'Saber',def:'Que sea así y poder decir con qué se comprueba'},
-  {term:'Fuente',def:'De dónde salió lo que decís'},
-  {term:'Hipótesis',def:'Una respuesta que se propone antes de comprobarla'},
-  {term:'Comprobar',def:'Hacer algo que daría otro resultado si fuera falso'},
-  {term:'Los sentidos',def:'La fuente por la que entró casi todo lo que sabés'},
-  {term:'La memoria',def:'La fuente que se acomoda sola con el tiempo'},
-  {term:'Lo que otro cuenta',def:'La fuente que cambia por el camino'},
-  {term:'La medida',def:'Lo que deja que dos que discuten miren lo mismo'},
-  {term:'Racionalismo',def:'La escuela que confía primero en la razón'},
-  {term:'Empirismo',def:'La escuela que dice que todo entró por los sentidos'},
-  {term:'«No sé»',def:'La respuesta que deja la puerta abierta a averiguarlo'},
-  {term:'El quinto paso',def:'Decir qué te haría cambiar de idea'}
+  {term:'Epistemología',def:'La rama que pregunta cómo sé que sé',k:'pr-epistemologia'},
+  {term:'Hipótesis',def:'Una respuesta que se propone para poder comprobarla',k:'pr-hipotesis'},
+  {term:'Fuente',def:'De dónde salió lo que decís',k:'pr-fuente'},
+  {term:'Racionalismo',def:'La escuela que confía primero en la razón',k:'pr-racionalismo'},
+  {term:'Empirismo',def:'La escuela que dice que todo entró por los sentidos',k:'pr-empirismo'},
+  {term:'René Descartes',def:'Encontró algo de lo que no podía dudar: que estaba pensando',k:'pr-descartes'},
+  {term:'John Locke',def:'Puso la experiencia en el centro',k:'pr-locke'},
+  {term:'Termómetro',def:'Da el mismo número para las dos manos',k:'pr-termometro'},
+  {term:'Tacto',def:'El sentido que desarma el engaño del vaso con agua',k:'pr-tacto'},
+  {term:'Opinión',def:'Un juicio donde otro puede pensar lo contrario sin equivocarse',k:'pr-opinion'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -585,11 +570,11 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En el recreo alguien le dijo a Yeimy que el examen de Matemáticas se había pasado para el jueves. Ella no estudió esa noche. El martes el examen estaba ahí. Sacó 40. Con esa nota se quedó fuera del cuadro de honor.'},
-  {txt:'En el grupo de la aldea circula que la semilla nueva rinde el doble. Nadie dice quién la sembró ni cuántas mazorcas contó. Tres vecinos compran, y en la cosecha rinde igual que la de siempre.'},
-  {txt:'Dos hermanos discuten una hora si la puerta del cuarto es más ancha que la de la cocina. Cada uno está seguro. La cinta métrica está en el mismo cuarto, colgada de un clavo.'},
-  {txt:'Un muchacho dice que no le cree a nadie. Ni a los libros, ni a los maestros, ni a lo que ve. Deja de preguntar y deja de comprobar. Y cuando el aviso del maestro es de verdad, tampoco lo lee.'},
-  {txt:'Una niña dice que el agua de la pila está caliente y su hermano que está fría. Los dos acaban de venir: ella del sol, él de lavar con agua helada. Se pelean media tarde por eso.'}
+  {k:'cs-yeimy',txt:'En el recreo alguien le dijo a Yeimy que el examen de Matemáticas se había pasado para el jueves. Ella no estudió esa noche. El martes el examen estaba ahí. Sacó 40. Con esa nota se quedó fuera del cuadro de honor.'},
+  {k:'cs-semilla',txt:'En el grupo de la aldea circula que la semilla nueva rinde el doble. Nadie dice quién la sembró ni cuántas mazorcas contó. Tres vecinos compran, y en la cosecha rinde igual que la de siempre.'},
+  {k:'cs-puerta',txt:'Dos hermanos discuten una hora si la puerta del cuarto es más ancha que la de la cocina. Cada uno está seguro. La cinta métrica está en el mismo cuarto, colgada de un clavo.'},
+  {k:'cs-nadie',txt:'Un muchacho dice que no le cree a nadie. Ni a los libros, ni a los maestros, ni a lo que ve. Deja de preguntar y deja de comprobar. Y cuando el aviso del maestro es de verdad, tampoco lo lee.'},
+  {k:'cs-pila',txt:'Una niña dice que el agua de la pila está caliente y su hermano que está fría. Los dos acaban de venir: ella del sol, él de lavar con agua helada. Se pelean media tarde por eso.'},
 ];
 const critCaseQuestions=[
   '1. En el caso, ¿lo que se afirma se sabe, se cree o es una opinión? Di por qué.',
@@ -604,58 +589,24 @@ const critCaseGuides=[
   'Tiene que ser algo que se pueda hacer. Preguntarle al maestro, contar las mazorcas, descolgar la cinta. O meter la mano los dos a la misma agua. «Investigar más» no vale: no dice qué hacer.'
 ];
 const critErrorBank=[
-  {txt:'"Si mucha gente lo dice, entonces se sabe."',
-   g1:'Cuánta gente lo dice no es una fuente: es lo que otro cuenta, repetido. Sigue faltando quien lo vio o lo midió.',
-   g2:'Y eso ya se vio en la unidad 2. «Porque todo el mundo lo compra» es una razón que no sostiene. A Wilmer le costó media siembra.'},
-  {txt:'"Los sentidos engañan, así que no hay que creerle a lo que se ve."',
-   g1:'Los sentidos son la fuente principal y funcionan. Casi todo lo que sabés entró por ahí.',
-   g2:'Lo que enseñan los cuatro engaños es cuándo cruzarlos. En los cuatro, otro sentido o una medida lo arregla en un minuto. Desconfiar de todo cuesta lo mismo que creerlo todo.'},
-  {txt:'"«Esta canción es fea» está mal dicho, porque no se puede comprobar."',
-   g1:'Es una opinión. Y una opinión no se comprueba. No es verdad ni mentira para todos.',
-   g2:'Pedirle pruebas a un gusto es el error contrario, y cuesta igual. Lo que sí se le puede pedir es una razón. Qué de la canción no le gusta.'},
-  {txt:'"Si estoy seguro, entonces lo sé."',
-   g1:'Estar seguro es un sentimiento; saber es poder decir con qué se comprueba. Los dos hermanos de la puerta estaban seguros los dos.',
-   g2:'La prueba del quinto paso lo separa. Si nada puede hacerte cambiar de idea, no estabas sabiendo. Estabas defendiendo.'}
+  {k:'er-cancion',txt:'"«Esta canción es fea» está mal dicho, porque no se puede comprobar."',g1:'Es una opinión. Y una opinión no se comprueba. No es verdad ni mentira para todos.',g2:'Pedirle pruebas a un gusto es el error contrario, y cuesta igual. Lo que sí se le puede pedir es una razón. Qué de la canción no le gusta.'},
 ];
 const critDecisionBank=[
-  'Te llega un mensaje de que mañana no hay clases. ¿Lo reenviás, o preguntás primero a quien lo decide?',
-  'Dos compañeros discuten quién es más alto y los dos están seguros. ¿Opinás vos también, o traés la cinta?',
-  'Tu tío dice que ese árbol tiene cien años. ¿Lo repetís como dato, o preguntás cómo lo sabe?',
-  'Creías que de tu casa a la escuela hay diez minutos. ¿Lo dejás así, o lo medís con el reloj una vez?',
-  'Alguien te dice algo que te da la razón en una discusión. ¿Lo usás de una, o buscás también quién dice lo contrario?'
-];
-const critDecisionGuide='Primero se pregunta de dónde salió el dato. Lo que se puede contar o medir, se mide. Lo que solo se oyó, se lleva a quien lo vio. Y lo que te da la razón se revisa igual, o no se estaba comprobando.';
+  'Te toca contar en clase qué pasó en el partido del domingo, y no fuiste. ¿Lo contás como si lo hubieras visto, o decís quién te lo contó?'
+]
+const critDecisionGuide='Se valora que diga de dónde salió lo que cuenta: si lo vio, si lo midió o si se lo contaron. Contarlo como visto cuando fue oído es pasar una creencia por un saber.';
 const critCompareBank=[
-  {a:'«En mi grado somos cuarenta y tres».',b:'«En mi grado somos como cuarenta».',
-   ga:'Se sabe: se cuenta, y cualquiera puede volver a contar.',
-   gb:'Se cree: es un número de memoria, sin comprobar.',
-   gr:'Las dos suenan parecidas y una se puede revisar en dos minutos. Lo que las separa no es el número: es si alguien los contó.'},
-  {a:'«Esa semilla rinde más».',b:'«Esa semilla me gusta más».',
-   ga:'Es una creencia: se puede comprobar contando mazorcas.',
-   gb:'Es una opinión: otro puede preferir la otra sin equivocarse.',
-   gr:'Es la frontera de la unidad. A la primera hay que pedirle pruebas; a la segunda, una razón. Confundirlas lleva a pedirle pruebas a un gusto o a creerle a un dato sin comprobar.'},
-  {a:'El lápiz que se ve quebrado en el vaso.',b:'El lápiz que se toca con la mano dentro del vaso.',
-   ga:'El ojo ve lo que la luz le entrega, y la luz se dobla.',
-   gb:'El tacto no se dobla: ahí el lápiz está entero.',
-   gr:'No es que un sentido mienta y el otro no. Es que cada uno falla en cosas distintas, y por eso se cruzan.'},
-  {a:'«2 + 2 son 4».',b:'«El techo de mi escuela es de lámina».',
-   ga:'Se saca pensando con orden: es el racionalismo.',
-   gb:'Hay que ir a mirarlo: es el empirismo.',
-   gr:'Las dos son cosas que se saben, y por caminos distintos. Por eso la ciencia de hoy usa las dos y no elige una.'}
+  {k:'cm-lapiz',a:'El lápiz que se ve quebrado en el vaso.',b:'El lápiz que se toca con la mano dentro del vaso.',ga:'El ojo ve lo que la luz le entrega, y la luz se dobla.',gb:'El tacto no se dobla: ahí el lápiz está entero.',gr:'No es que un sentido mienta y el otro no. Es que cada uno falla en cosas distintas, y por eso se cruzan.'},
+  {k:'cm-escuelas',a:'«2 + 2 son 4».',b:'«El techo de mi escuela es de lámina».',ga:'Se saca pensando con orden: es el racionalismo.',gb:'Hay que ir a mirarlo: es el empirismo.',gr:'Las dos son cosas que se saben, y por caminos distintos. Por eso la ciencia de hoy usa las dos y no elige una.'},
 ];
 const critCauseBank=[
-  {cause:'Un dato que se oyó en el recreo no dice quién lo vio.',guide:'Por eso es una creencia y no un saber. Y por eso a Yeimy le costó una nota. No preguntó cómo lo sabía quien se lo dijo.'},
-  {cause:'La piel no mide grados: compara con lo que tenía antes.',guide:'Por eso la misma agua tibia se siente caliente en una mano y fría en la otra. Ahí hace falta un termómetro.'},
-  {cause:'Una opinión no es verdad ni mentira para todos.',guide:'Por eso no se comprueba. Pedirle pruebas a un gusto es el error contrario a creer sin comprobar.'},
-  {cause:'Si solo buscás lo que te da la razón, siempre vas a encontrarlo.',guide:'Por eso el cuarto paso manda buscar a quien diga lo contrario. Sin eso, comprobar se vuelve juntar aplausos.'},
-  {cause:'La razón sola no averigua cuántos alumnos hay hoy en tu aula.',guide:'Por eso ninguna de las dos escuelas ganó. La ciencia mide con los sentidos y saca cuentas con la razón.'}
+  {k:'ca-contrario',cause:'Si solo buscás lo que te da la razón, siempre vas a encontrarlo.',guide:'Por eso el cuarto paso manda buscar a quien diga lo contrario. Sin eso, comprobar se vuelve juntar aplausos.'},
+  {k:'ca-memoria',cause:'La memoria se acomoda sola con el tiempo.',guide:'Por eso dos personas que estuvieron en lo mismo lo cuentan distinto, y por eso conviene escribirlo el mismo día.'},
 ];
 const critEffectBank=[
-  {effect:'Tres vecinos compran una semilla que rinde igual que la de siempre.',guide:'Porque nadie preguntó quién la había sembrado ni cuántas mazorcas contó. Era una creencia que circulaba como si fuera un saber.'},
-  {effect:'Dos hermanos discuten una hora con la cinta métrica colgada al lado.',guide:'Porque los dos estaban seguros, y estar seguro no es saber. La medida habría cerrado la discusión en un minuto.'},
-  {effect:'Alguien deja de creerle a todo, hasta al aviso que era de verdad.',guide:'Porque de que una fuente falle a veces no se sigue que no sirva nunca. Desconfiar de todo cuesta lo mismo que creerlo todo.'},
-  {effect:'Una misma tarde la cuentan distinto dos personas que estuvieron ahí.',guide:'Porque la memoria se acomoda sola. Se arregla escribiéndolo el mismo día y preguntándole al otro que estuvo.'},
-  {effect:'Alguien cambia de idea cuando le muestran una medida, y no queda mal.',guide:'Porque eso es lo que hace el quinto paso: decir antes qué te haría cambiar. Cambiar por una razón mejor no es perder.'}
+  {k:'ef-cambiar',effect:'Alguien cambia de idea cuando le muestran una medida, y no queda mal.',guide:'Porque eso es lo que hace el quinto paso: decir antes qué te haría cambiar. Cambiar por una razón mejor no es perder.'},
+  {k:'ef-moneda',effect:'Alguien que se alejó de la taza ve aparecer la moneda cuando le echan agua.',guide:'Porque la luz se dobla al salir del agua y le llega. La moneda no se movió.'},
+  {k:'ef-cuadritos',effect:'Dos cuadritos pintados con el mismo lápiz se ven de distinto tono.',guide:'Porque el ojo compara con lo que tiene al lado. Tapando los fondos con un papel, quedan iguales.'},
 ];
 function genEvalCrit(){
   sfx('click');

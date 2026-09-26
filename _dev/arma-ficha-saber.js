@@ -135,12 +135,12 @@ function repartirMC(mc, semilla) {
 }
 
 const MC = repartirMC([
-  ['«Dicen que mañana no hay clases» es…', ['algo que creo', 'un saber', 'una opinión', 'una medida'], 0],
-  ['«Los tamales de doña Nely son los mejores» es…', ['un saber', 'una opinión', 'una creencia', 'un rumor'], 1],
-  ['¿Qué se le pregunta a una creencia para pasarla a saber?', ['¿A quién le gusta?', '¿Cuántos lo dicen?', '¿Cómo lo sé y con qué lo compruebo?', '¿Suena bien?'], 2],
-  ['La misma agua tibia se siente distinta en cada mano porque…', ['el agua cambia', 'una mano está sucia', 'el agua se mueve', 'la piel compara, no mide grados'], 3],
-  ['La fuente que más cambia al pasar de boca en boca es…', ['lo que otro cuenta', 'la medida', 'el razonamiento', 'la vista'], 0],
-  ['Decir «no sé» es…', ['perder la discusión', 'el punto de partida para averiguarlo', 'lo mismo que opinar', 'una falta'], 1],
+  ['La moneda aparece en la taza al echar agua porque…', ['la luz se dobla al salir del agua', 'la moneda flota', 'el agua la empuja', 'la taza se inclina'], 0],
+  ['¿Qué NO se puede averiguar pensando solo, sin mirar?', ['cuántos alumnos hay hoy en tu aula', 'que 2 + 2 son 4', 'que 10 es más que 5', 'que un triángulo tiene tres lados'], 0],
+  ['¿Por qué hay que buscar a quien diga lo contrario?', ['si solo buscás lo que te da la razón, lo hallás siempre', 'para pelear', 'para ganar tiempo', 'porque sí'], 0],
+  ['La misma agua tibia se siente distinta en cada mano porque…', ['la piel compara, no mide grados', 'el agua cambia', 'una mano está sucia', 'el agua se mueve'], 0],
+  ['¿Quién decidió dudar de todo para ver qué quedaba en pie?', ['René Descartes', 'John Locke', 'Sócrates', 'Demócrito'], 0],
+  ['Decir «no sé» es…', ['el punto de partida para averiguarlo', 'perder la discusión', 'lo mismo que opinar', 'una falta'], 0],
 ], 20260918);
 
 /* ══════════════════ las hojas ══════════════════ */
