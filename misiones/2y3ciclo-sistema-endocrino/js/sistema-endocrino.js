@@ -350,73 +350,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'El sistema endocrino usa hormonas que viajan por la sangre.',a:true},
-  {q:'La insulina sube el nivel de azúcar en la sangre.',a:false},
-  {q:'La hipófisis es la glándula maestra del sistema endocrino.',a:true},
-  {q:'La tiroides regula el metabolismo mediante la tiroxina.',a:true},
-  {q:'Las glándulas exocrinas liberan hormonas directamente a la sangre.',a:false},
-  {q:'El glucagón sube el nivel de azúcar en la sangre.',a:true},
-  {q:'El hipotálamo une el sistema nervioso con el sistema endocrino.',a:true},
-  {q:'La adrenalina prepara el cuerpo ante el peligro (lucha o huye).',a:true},
-  {q:'La melatonina regula el metabolismo del cuerpo.',a:false},
-  {q:'La diabetes se produce por falta o mal uso de la insulina.',a:true},
-  {q:'El sistema endocrino responde más rápido que el sistema nervioso.',a:false},
-  {q:'La homeostasis es el equilibrio interno que mantiene el cuerpo.',a:true},
-  {q:'El páncreas produce insulina y glucagón.',a:true},
-  {q:'La falta de yodo puede provocar bocio en la tiroides.',a:true},
-  {q:'El cortisol es la hormona que regula el ciclo del sueño.',a:false},
+  {q:'Las hormonas viajan por la sangre.',a:true,k:'tf-sangre'},
+  {q:'Tener el azúcar de la sangre muy alto por mucho tiempo daña el cuerpo.',a:true,k:'tf-azucar-alto'},
+  {q:'Una emoción fuerte puede hacer que se liberen hormonas.',a:true,k:'tf-emocion'},
+  {q:'La adrenalina prepara el cuerpo ante un peligro.',a:true,k:'tf-adrenalina'},
+  {q:'Las glándulas endocrinas vierten sus hormonas directo a la sangre.',a:true,k:'tf-endocrinas'},
+  {q:'Una hormona puede hacer efecto en un órgano lejos de la glándula que la produjo.',a:true,k:'tf-lejos'},
+  {q:'Las hormonas actúan aunque haya muy poquita cantidad.',a:true,k:'tf-poquita'},
+  {q:'Dormir mal no tiene nada que ver con las hormonas.',a:false,k:'tf-dormir'},
+  {q:'Hacer ejercicio y comer bien ayudan a prevenir problemas con el azúcar.',a:true,k:'tf-ejercicio'},
+  {q:'La hormona del crecimiento hace crecer los huesos.',a:true,k:'tf-crecimiento'}
 ];
 const evalMCBank=[
-  {q:'¿Qué mensajero químico usa el sistema endocrino?',o:['a) Impulso eléctrico','b) Hormona','c) Neurotransmisor','d) Enzima'],a:1},
-  {q:'¿Cuál es la glándula maestra?',o:['a) Tiroides','b) Páncreas','c) Pineal','d) Hipófisis'],a:3},
-  {q:'¿Qué hormona baja el azúcar en la sangre?',o:['a) Insulina','b) Glucagón','c) Adrenalina','d) Cortisol'],a:0},
-  {q:'¿Qué glándula regula el metabolismo con la tiroxina?',o:['a) Suprarrenal','b) Timo','c) Tiroides','d) Hipófisis'],a:2},
-  {q:'¿Por dónde viajan las hormonas?',o:['a) Nervios','b) Linfa','c) Sangre','d) Médula'],a:2},
-  {q:'¿Qué estructura une el sistema nervioso y el endocrino?',o:['a) Cerebelo','b) Hipotálamo','c) Timo','d) Médula'],a:1},
-  {q:'¿Qué hormona prepara el cuerpo ante el peligro?',o:['a) Melatonina','b) Insulina','c) Adrenalina','d) Tiroxina'],a:2},
-  {q:'¿Cómo se llama el equilibrio interno del cuerpo?',o:['a) Metabolismo','b) Homeostasis','c) Sinapsis','d) Digestión'],a:1},
-  {q:'¿Qué enfermedad causa la falta o mal uso de la insulina?',o:['a) Bocio','b) Gigantismo','c) Diabetes','d) Cushing'],a:2},
-  {q:'¿Qué hormona sube el azúcar en la sangre durante el ayuno?',o:['a) Insulina','b) Glucagón','c) Melatonina','d) Tiroxina'],a:1},
-  {q:'¿Qué glándula produce melatonina?',o:['a) Tiroides','b) Suprarrenal','c) Hipófisis','d) Pineal'],a:3},
-  {q:'¿Qué diferencia al sistema endocrino del nervioso?',o:['a) Es lento y duradero','b) Es más rápido','c) Usa impulsos eléctricos','d) No usa la sangre'],a:0},
-  {q:'¿Qué glándulas producen adrenalina y cortisol?',o:['a) Suprarrenales','b) Tiroides','c) Pineal','d) Paratiroides'],a:0},
-  {q:'¿Qué mineral necesita la tiroides para producir tiroxina?',o:['a) Hierro','b) Calcio','c) Sodio','d) Yodo'],a:3},
-  {q:'¿Cómo libera sus hormonas una glándula endocrina?',o:['a) Directo a la sangre','b) Por conductos','c) Por la saliva','d) Por el sudor'],a:0},
+  {q:'¿Qué es una hormona?',o:['a) un hueso','b) un mensajero químico','c) un impulso eléctrico','d) un músculo'],a:1,k:'mc-hormona'},
+  {q:'¿Qué hormona baja el azúcar de la sangre?',o:['a) insulina','b) adrenalina','c) melatonina','d) cortisol'],a:0,k:'mc-insulina'},
+  {q:'¿Qué le pasa al corazón con la adrenalina?',o:['a) se detiene','b) late más lento','c) late más rápido','d) no cambia'],a:2,k:'mc-corazon'},
+  {q:'¿Qué enfermedad aparece por falta o mal uso de la insulina?',o:['a) gripe','b) diabetes','c) asma','d) caries'],a:1,k:'mc-diabetes'},
+  {q:'¿Qué hormona hace que el cuerpo use más rápido la energía?',o:['a) tiroxina','b) melatonina','c) insulina','d) cortisol'],a:0,k:'mc-tiroxina'},
+  {q:'¿Qué sistema es más lento, pero de efecto más duradero?',o:['a) el nervioso','b) el óseo','c) el digestivo','d) el de las hormonas'],a:3,k:'mc-lento'},
+  {q:'¿Qué hormona regula el sueño?',o:['a) glucagón','b) adrenalina','c) melatonina','d) tiroxina'],a:2,k:'mc-melatonina'},
+  {q:'¿Qué hormona sube el azúcar cuando uno lleva horas sin comer?',o:['a) glucagón','b) melatonina','c) insulina','d) tiroxina'],a:0,k:'mc-glucagon'},
+  {q:'¿Qué mineral necesita el cuerpo para fabricar tiroxina?',o:['a) hierro','b) sodio','c) calcio','d) yodo'],a:3,k:'mc-yodo'},
+  {q:'¿Cuál es una hormona del estrés?',o:['a) melatonina','b) cortisol','c) insulina','d) glucagón'],a:1,k:'mc-cortisol'}
 ];
 const evalCPBank=[
-  {q:'La ___ es la hormona que baja el azúcar en la sangre.',a:'insulina'},
-  {q:'La glándula maestra del sistema endocrino es la ___.',a:'hipófisis'},
-  {q:'La tiroides regula el metabolismo mediante la ___.',a:'tiroxina'},
-  {q:'Las hormonas viajan por el cuerpo a través de la ___.',a:'sangre'},
-  {q:'El ___ une el sistema nervioso con el sistema endocrino.',a:'hipotálamo'},
-  {q:'La ___ prepara el cuerpo ante el peligro (lucha o huye).',a:'adrenalina'},
-  {q:'El equilibrio interno del cuerpo se llama ___.',a:'homeostasis'},
-  {q:'La enfermedad por falta o mal uso de la insulina es la ___.',a:'diabetes'},
-  {q:'El ___ sube el azúcar en la sangre durante el ayuno.',a:'glucagón'},
-  {q:'La hormona ___ regula el ciclo de sueño y vigilia.',a:'melatonina'},
-  {q:'La falta de yodo en la dieta puede causar ___ en la tiroides.',a:'bocio'},
-  {q:'Las glándulas ___ producen adrenalina y cortisol.',a:'suprarrenales'},
-  {q:'El ___ produce insulina y glucagón para controlar la glucosa.',a:'páncreas'},
-  {q:'El mecanismo por el que una hormona frena su propia producción es la ___ negativa.',a:'retroalimentación'},
-  {q:'La hormona del crecimiento (GH) es producida por la ___.',a:'hipófisis'},
+  {q:'El azúcar que va en la sangre se llama ___.',a:'glucosa',acc:['glucosa'],k:'cp-glucosa'},
+  {q:'Crecer muy poco por falta de la hormona del crecimiento se llama ___.',a:'enanismo',acc:['enanismo'],k:'cp-enanismo'},
+  {q:'Crecer demasiado por exceso de esa misma hormona se llama ___.',a:'gigantismo',acc:['gigantismo'],k:'cp-gigantismo'},
+  {q:'Un nivel de azúcar muy bajo en la sangre se llama ___.',a:'hipoglucemia',acc:['hipoglucemia'],k:'cp-hipoglucemia'},
+  {q:'Pasar muchas horas sin comer es estar en ___.',a:'ayuno',acc:['ayuno'],k:'cp-ayuno'},
+  {q:'La adrenalina prepara al cuerpo para «lucha o ___».',a:'huye',acc:['huye'],k:'cp-huye'},
+  {q:'Las paratiroides controlan el ___ de los huesos.',a:'calcio',acc:['calcio'],k:'cp-calcio'},
+  {q:'El ___ es una glándula del pecho que ayuda a las defensas en la niñez.',a:'timo',acc:['timo'],k:'cp-timo'},
+  {q:'La sal ___ lleva el mineral que necesita la glándula del cuello.',a:'yodada',acc:['yodada'],k:'cp-yodada'},
+  {q:'Las glándulas que vierten por conductos, como las del sudor, se llaman ___.',a:'exocrinas',acc:['exocrinas'],k:'cp-exocrinas'}
 ];
 const evalPRBank=[
-  {term:'Hormona',def:'Mensajero químico que viaja por la sangre'},
-  {term:'Hipófisis',def:'Glándula maestra que dirige a las demás'},
-  {term:'Tiroides',def:'Regula el metabolismo con la tiroxina'},
-  {term:'Insulina',def:'Hormona que baja el azúcar en la sangre'},
-  {term:'Glucagón',def:'Hormona que sube el azúcar en la sangre'},
-  {term:'Adrenalina',def:'Prepara el cuerpo ante el peligro (lucha o huye)'},
-  {term:'Melatonina',def:'Regula el ciclo de sueño y vigilia'},
-  {term:'Páncreas',def:'Glándula que produce insulina y glucagón'},
-  {term:'Hipotálamo',def:'Une el sistema nervioso con el endocrino'},
-  {term:'Homeostasis',def:'Equilibrio interno que mantiene el cuerpo'},
-  {term:'Cortisol',def:'Hormona del estrés de las suprarrenales'},
-  {term:'Diabetes',def:'Enfermedad por falta o mal uso de la insulina'},
-  {term:'Glándula exocrina',def:'Libera sustancias por conductos, sin hormonas'},
-  {term:'Bocio',def:'Agrandamiento de la tiroides por falta de yodo'},
-  {term:'Retroalimentación',def:'Mecanismo que frena la producción de hormona'},
+  {term:'Hipófisis',def:'La glándula maestra',k:'pr-hipofisis'},
+  {term:'Tiroides',def:'Glándula del cuello que regula la energía',k:'pr-tiroides'},
+  {term:'Páncreas',def:'Controla el azúcar de la sangre',k:'pr-pancreas'},
+  {term:'Hipotálamo',def:'Une el sistema nervioso con el endocrino',k:'pr-hipotalamo'},
+  {term:'Suprarrenales',def:'Glándulas sobre los riñones, las del susto',k:'pr-suprarrenales'},
+  {term:'Pineal',def:'La glándula del sueño',k:'pr-pineal'},
+  {term:'Homeostasis',def:'El equilibrio interno del cuerpo',k:'pr-homeostasis'},
+  {term:'Retroalimentación',def:'El freno que para la propia producción',k:'pr-retro'},
+  {term:'Bocio',def:'Crecimiento de una glándula por falta de yodo',k:'pr-bocio'},
+  {term:'Metabolismo',def:'Cómo el cuerpo usa la energía de los alimentos',k:'pr-metabolismo'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -512,12 +497,12 @@ function evalSwitchMode(mode){
 }
 
 const critCaseBank=[
-  {txt:'Ana se come un gran pedazo de pastel muy dulce. Un rato después, su nivel de azúcar en la sangre, que había subido bastante, vuelve por sí solo a la normalidad sin que ella haga nada conscientemente.'},
-  {txt:'Luis toma un vaso grande de jugo azucarado. Al poco tiempo, la glucosa en su sangre, que se había elevado, regresa sola a su valor normal.'},
-  {txt:'Después del almuerzo, a Sofía le sube el azúcar en la sangre; en las horas siguientes su cuerpo la regula hasta dejarla en un nivel normal.'},
-  {txt:'Mario desayuna cereal con mucha azúcar. Su glucemia se dispara, pero pasado un tiempo su organismo la hace descender hasta la normalidad.'},
-  {txt:'Una persona come varios dulces seguidos y su azúcar en sangre sube; poco después su cuerpo la equilibra de nuevo sin ayuda externa.'},
-  {txt:'Tras merendar pan y refresco, a Carla le sube la glucosa, pero su cuerpo la vuelve a bajar hasta un nivel estable en un par de horas.'},
+  {k:'ca-pastel',txt:'Ana se come un gran pedazo de pastel muy dulce. Un rato después, su nivel de azúcar en la sangre, que había subido bastante, vuelve por sí solo a la normalidad sin que ella haga nada conscientemente.'},
+  {k:'ca-jugo',txt:'Luis toma un vaso grande de jugo azucarado. Al poco tiempo, la glucosa en su sangre, que se había elevado, regresa sola a su valor normal.'},
+  {k:'ca-almuerzo',txt:'Después del almuerzo, a Sofía le sube el azúcar en la sangre; en las horas siguientes su cuerpo la regula hasta dejarla en un nivel normal.'},
+  {k:'ca-cereal',txt:'Mario desayuna cereal con mucha azúcar. Su glucemia se dispara, pero pasado un tiempo su organismo la hace descender hasta la normalidad.'},
+  {k:'ca-dulces',txt:'Una persona come varios dulces seguidos y su azúcar en sangre sube; poco después su cuerpo la equilibra de nuevo sin ayuda externa.'},
+  {k:'ca-refresco',txt:'Tras merendar pan y refresco, a Carla le sube la glucosa, pero su cuerpo la vuelve a bajar hasta un nivel estable en un par de horas.'},
 ];
 const critCaseQuestions=[
   '1. Explica qué ocurrió en su sistema endocrino desde que subió el azúcar hasta que volvió a la normalidad.',
@@ -533,22 +518,22 @@ const critCaseGuides=[
 ];
 
 const critErrorBank=[
-  {txt:'"El sistema endocrino envía mensajes eléctricos por los nervios y produce respuestas muy rápidas y de corta duración."',
+  {k:'er-electrico',txt:'"El sistema endocrino envía mensajes eléctricos por los nervios y produce respuestas muy rápidas y de corta duración."',
    g1:'El sistema endocrino usa mensajeros químicos (hormonas) transportados por la sangre, no impulsos eléctricos por los nervios.',
    g2:'Sus respuestas son lentas y duraderas; las rápidas y breves son las del sistema nervioso.'},
-  {txt:'"La insulina sube el nivel de azúcar en la sangre, y el glucagón lo baja."',
+  {k:'er-insulina',txt:'"La insulina sube el nivel de azúcar en la sangre, y el glucagón lo baja."',
    g1:'La insulina baja la glucosa, ordenando a las células que la capten y guarden.',
    g2:'El glucagón sube la glucosa, liberándola a la sangre; las funciones están invertidas.'},
-  {txt:'"La tiroides es la glándula maestra que controla a todas las demás, y la hipófisis regula el metabolismo con la tiroxina."',
+  {k:'er-maestra',txt:'"La tiroides es la glándula maestra que controla a todas las demás, y la hipófisis regula el metabolismo con la tiroxina."',
    g1:'La glándula maestra es la hipófisis, no la tiroides.',
    g2:'La que regula el metabolismo con la tiroxina es la tiroides, no la hipófisis.'},
-  {txt:'"Las glándulas endocrinas liberan sus hormonas a través de conductos, igual que las glándulas sudoríparas."',
+  {k:'er-conductos',txt:'"Las glándulas endocrinas liberan sus hormonas a través de conductos, igual que las glándulas sudoríparas."',
    g1:'Las glándulas endocrinas liberan las hormonas directamente a la sangre, sin conductos.',
    g2:'Las que usan conductos son las exocrinas (como las sudoríparas), y esas no producen hormonas.'},
-  {txt:'"La adrenalina es producida por la tiroides y sirve para regular el sueño durante la noche."',
+  {k:'er-adrenalina',txt:'"La adrenalina es producida por la tiroides y sirve para regular el sueño durante la noche."',
    g1:'La adrenalina la producen las glándulas suprarrenales, no la tiroides.',
    g2:'La adrenalina prepara el cuerpo ante el peligro; la que regula el sueño es la melatonina (glándula pineal).'},
-  {txt:'"La diabetes se produce por exceso de tiroxina, y el bocio por falta de insulina."',
+  {k:'er-diabetes-bocio',txt:'"La diabetes se produce por exceso de tiroxina, y el bocio por falta de insulina."',
    g1:'La diabetes se debe a la falta o mal uso de la insulina, no al exceso de tiroxina.',
    g2:'El bocio se relaciona con problemas de la tiroides y la falta de yodo, no con la insulina.'},
 ];
@@ -556,43 +541,43 @@ const critErrorBank=[
 const critDecisionBank=[
   'Un estudiante consume muchos dulces y refrescos todos los días, casi no hace ejercicio y ha subido de peso rápidamente. En un chequeo le dicen que tiene riesgo de diabetes.',
   'Una persona vive con mucho estrés, duerme muy pocas horas y siempre está cansada, irritable y con las defensas bajas.',
-  'Una joven casi no consume sal yodada ni alimentos variados y ha notado su cuello un poco inflamado, con cansancio y frío frecuente.',
+  'Una joven casi no come alimentos variados y siempre se siente cansada y con frío.',
   'Un joven usa el celular hasta muy tarde todas las noches, duerme pocas horas y le cuesta mucho conciliar el sueño.',
   'Una persona se automedica con hormonas sin control médico para "verse mejor" y ha presentado cambios de humor y molestias.',
 ];
 const critDecisionGuide='Debe proponer 3 cambios concretos relacionados con el cuidado del sistema endocrino (alimentación balanceada y baja en azúcar, consumir sal yodada, hacer ejercicio, dormir 8–9 h, manejar el estrés, evitar la automedicación hormonal, hacerse chequeos médicos) y explicar con sus palabras por qué cada cambio ayuda al equilibrio hormonal (homeostasis).';
 
 const critCompareBank=[
-  {a:'Una persona siempre tiene frío, se siente muy cansada, sube de peso y su ritmo corporal es lento.',b:'Una persona está nerviosa, pierde peso, suda mucho y su corazón late muy rápido.',
+  {k:'co-tiroides',a:'Una persona siempre tiene frío, se siente muy cansada, sube de peso y su ritmo corporal es lento.',b:'Una persona está nerviosa, pierde peso, suda mucho y su corazón late muy rápido.',
    ga:'Hipotiroidismo — hay poca tiroxina, por lo que el metabolismo va lento.',
    gb:'Hipertiroidismo — hay exceso de tiroxina, por lo que el metabolismo va acelerado.',
    gr:'No son el mismo problema: uno se debe a la falta de hormona tiroidea y el otro a su exceso; producen efectos opuestos en el metabolismo.'},
-  {a:'Una persona orina mucho, tiene mucha sed y su azúcar en la sangre está muy alta.',b:'Un niño crece muchísimo más que los demás debido a un exceso de hormona del crecimiento.',
+  {k:'co-diabetes-gigantismo',a:'Una persona orina mucho, tiene mucha sed y su azúcar en la sangre está muy alta.',b:'Un niño crece muchísimo más que los demás debido a un exceso de hormona del crecimiento.',
    ga:'Diabetes — falta o mal uso de la insulina, con azúcar alta en la sangre.',
    gb:'Gigantismo — exceso de hormona del crecimiento (GH) producida por la hipófisis.',
    gr:'No son el mismo problema: uno afecta el control del azúcar (páncreas/insulina) y el otro el crecimiento (hipófisis/GH).'},
-  {a:'Un niño no crece lo suficiente porque le falta hormona del crecimiento.',b:'Un adulto tiene la cara redonda, grasa en el tronco y debilidad por un exceso de cortisol.',
+  {k:'co-enanismo-cushing',a:'Un niño no crece lo suficiente porque le falta hormona del crecimiento.',b:'Un adulto tiene la cara redonda, grasa en el tronco y debilidad por un exceso de cortisol.',
    ga:'Enanismo hipofisario — falta de hormona del crecimiento (GH).',
    gb:'Síndrome de Cushing — exceso de cortisol producido por las suprarrenales.',
    gr:'No son el mismo problema: uno es por falta de GH y el otro por exceso de cortisol; intervienen glándulas y hormonas distintas.'},
-  {a:'Después de comer, a una persona no le baja el azúcar porque su cuerpo no usa bien la insulina.',b:'Una persona tiene el cuello inflamado (bocio) por falta de yodo en su alimentación.',
-   ga:'Diabetes tipo 2 — el cuerpo no responde bien a la insulina (resistencia).',
-   gb:'Bocio — la tiroides se agranda por falta de yodo para producir tiroxina.',
-   gr:'No son el mismo problema: uno afecta el control de la glucosa (insulina) y el otro la producción de hormona tiroidea (tiroides/yodo).'},
+  {k:'co-susto-sueno',a:'Un niño se asusta con un perro bravo y el corazón se le acelera.',b:'Un joven trasnocha con el celular y a la mañana siguiente le cuesta despertar.',
+   ga:'Adrenalina — la liberan las suprarrenales ante el peligro.',
+   gb:'Melatonina — la pineal la libera con la oscuridad; la luz de la pantalla la retrasa.',
+   gr:'No es el mismo mensajero: una hormona prepara para el peligro y la otra regula el sueño; las dos salen de glándulas distintas.'},
 ];
 
 const critCauseBank=[
-  {cause:'Una persona come muchos dulces y su páncreas no logra usar bien la insulina.',guide:'La glucosa se acumula en la sangre y, con el tiempo, puede desarrollar diabetes.'},
-  {cause:'Una persona no consume sal yodada ni alimentos con yodo.',guide:'La tiroides no fabrica suficiente tiroxina y puede aparecer bocio (agrandamiento de la tiroides).'},
-  {cause:'Una persona vive con estrés constante durante mucho tiempo.',guide:'Sus glándulas suprarrenales liberan cortisol de forma prolongada, lo que afecta el sueño, el ánimo y las defensas.'},
-  {cause:'Una persona usa pantallas hasta muy tarde y duerme muy poco.',guide:'Se altera la producción de melatonina y se desregula el ciclo de sueño y vigilia.'},
+  {k:'cau-ayuno',cause:'Una persona lleva muchas horas sin comer.',guide:'El glucagón hace que el hígado suelte azúcar a la sangre.'},
+  {k:'cau-calcio',cause:'La sangre necesita más calcio.',guide:'Las paratiroides lo ajustan, sacándolo de los huesos si hace falta.'},
+  {k:'cau-orden',cause:'La hipófisis manda una orden a la tiroides.',guide:'La tiroides libera más tiroxina y el cuerpo gasta más energía.'},
+  {k:'cau-suficiente',cause:'Ya hay suficiente hormona en la sangre.',guide:'La glándula frena su producción: es la retroalimentación negativa.'},
 ];
 const critEffectBank=[
-  {effect:'Tiene mucha sed, orina con frecuencia y su azúcar en sangre está alta.',guide:'Falta o mal uso de la insulina, como ocurre en la diabetes.'},
-  {effect:'Siempre tiene frío, está cansada y su metabolismo es lento.',guide:'Poca producción de tiroxina por la tiroides (hipotiroidismo).'},
-  {effect:'Un niño crece exageradamente más que los demás.',guide:'Exceso de hormona del crecimiento (GH) de la hipófisis (gigantismo).'},
-  {effect:'Ante un susto, el corazón se acelera y el cuerpo se pone alerta.',guide:'Liberación de adrenalina por las glándulas suprarrenales.'},
+  {k:'ef-mareo',effect:'Un niño que no desayunó se siente débil y mareado a media mañana.',guide:'Se le bajó el azúcar de la sangre (hipoglucemia).'},
+  {k:'ef-estirón',effect:'Un joven crece mucho de estatura en pocos años.',guide:'La hormona del crecimiento de la hipófisis actúa en sus huesos.'},
+  {k:'ef-temperatura',effect:'El cuerpo mantiene casi la misma temperatura, haga frío o calor.',guide:'Es la homeostasis: el cuerpo corrige solo sus cambios para seguir en equilibrio.'},
 ];
+
 
 function genEvalCrit(){
   sfx('click');
