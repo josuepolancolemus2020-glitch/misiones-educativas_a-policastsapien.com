@@ -474,112 +474,67 @@
       ],
 
       evalTFBank: [
-        { q: 'Electric current needs a closed path in order to flow.', a: true },
-        { q: 'The switch is used to open or close the path of the current.', a: true },
-        { q: 'Copper is a good conductor of electricity.', a: true },
-        { q: 'Plastic and dry wood are good conductors.', a: false },
-        { q: 'In a series circuit, if one bulb burns out they all go dark.', a: true },
-        { q: 'In a parallel circuit, each load has its own path.', a: true },
-        { q: 'The lights in a house are wired in series.', a: false },
-        { q: 'An LED can be connected either way round because it has no polarity.', a: false },
-        { q: 'An LED needs a resistor so the current does not burn it out.', a: true },
-        { q: 'Voltage is the push the source gives to the current.', a: true },
-        { q: 'Resistance is the obstacle that opposes the flow of current.', a: true },
-        { q: 'To experiment in the classroom we should use the 110-volt wall outlet.', a: false },
-        { q: 'We must never touch electrical appliances with wet hands.', a: true },
-        { q: 'A short circuit heats up the battery and can be dangerous.', a: true },
-        { q: 'Used batteries can be thrown in the regular household trash.', a: false }
+        { q: 'The group’s robot stopped turning on before the fair.', a: true },
+        { q: 'The robot’s fault was in the battery.', a: false },
+        { q: 'From the outside, a broken circuit looks just like a dead battery.', a: true },
+        { q: 'Electricity is a form of energy.', a: true },
+        { q: 'You experiment with dry hands.', a: true },
+        { q: 'Salty water lets electricity through.', a: true },
+        { q: 'Electricity can cause harm.', a: true },
+        { q: 'A charger’s cable never gets damaged.', a: false },
+        { q: 'In hamlets with no power lines there is no way to have light.', a: false },
+        { q: 'A circuit works even if a wire is loose.', a: false }
       ],
 
       evalMCBank: [
-        { q: 'What is an electric circuit?', o: ['a) A coiled-up wire', 'b) The closed path that current flows along', 'c) A dead battery', 'd) A painted bulb'], a: 1 },
-        { q: 'What are the parts of a basic circuit?', o: ['a) Source, wires, switch and load', 'b) Sun, water, air and soil', 'c) Motor, wheel, screw and nail', 'd) Paper, glue, scissors and ruler'], a: 0 },
-        { q: 'What is the switch for?', o: ['a) To raise the voltage', 'b) To paint the circuit', 'c) To open or close the path of the current', 'd) To cool the battery down'], a: 2 },
-        { q: 'If a wire comes loose, the circuit is left…', o: ['a) In parallel', 'b) In series', 'c) Closed', 'd) Open, and nothing works'], a: 3 },
-        { q: 'In a SERIES circuit one bulb burns out. What happens?', o: ['a) They all go dark', 'b) The others shine brighter', 'c) Nothing happens', 'd) The battery recharges'], a: 0 },
-        { q: 'Why are the lights in a house wired IN PARALLEL?', o: ['a) Because they use less wire', 'b) Because if one fails, the rest stay on', 'c) Because they shine dimmer', 'd) Because they need no switch'], a: 1 },
-        { q: 'Which of these materials is an INSULATOR?', o: ['a) Copper', 'b) Iron', 'c) Dry plastic', 'd) Salt water'], a: 2 },
-        { q: 'Which of these materials is a CONDUCTOR?', o: ['a) Dry wood', 'b) Glass', 'c) Rubber', 'd) Copper wire'], a: 3 },
-        { q: 'Why does an LED need a resistor?', o: ['a) So the current does not burn it out', 'b) To give it color', 'c) So it weighs more', 'd) To glue it to the wire'], a: 0 },
-        { q: 'What does voltage measure?', o: ['a) The weight of the wire', 'b) The push the source gives to the current', 'c) The light of the bulb', 'd) The size of the battery'], a: 1 },
-        { q: 'What is a short circuit?', o: ['a) A very short, pretty circuit', 'b) A parallel circuit', 'c) A shortcut with no load that heats up the battery', 'd) A colorful wire'], a: 2 },
-        { q: 'Which of these practices is SAFE?', o: ['a) Pushing wires into the wall outlet', 'b) Touching plugs with wet hands', 'c) Joining the two battery terminals with wire', 'd) Experimenting only with batteries and insulated wires'], a: 3 },
-        { q: 'In an LED, what does electrical energy turn into?', o: ['a) Light', 'b) Sound', 'c) Water', 'd) Wind'], a: 0 },
-        { q: 'In a motor, what does electrical energy turn into?', o: ['a) Light', 'b) Movement', 'c) Cold', 'd) Paper'], a: 1 },
-        { q: 'What do you do with used batteries?', o: ['a) Throw them in the regular trash', 'b) Bury them in the garden', 'c) Take them to a collection point or special drop-off', 'd) Throw them in the river'], a: 2 }
+        { q: 'What is an electric circuit?', o: ['a) a) A coiled wire', 'b) b) The closed path the current flows along', 'c) c) A dead battery', 'd) d) A painted bulb'], a: 1 },
+        { q: 'Which part of the circuit makes use of the electricity?', o: ['a) a) The source', 'b) b) The wire', 'c) c) The load', 'd) d) The pole'], a: 2 },
+        { q: 'In an LED, what does electrical energy turn into?', o: ['a) a) Light', 'b) b) Sound', 'c) c) Water', 'd) d) Wind'], a: 0 },
+        { q: 'In a motor, what does electrical energy turn into?', o: ['a) a) Sound', 'b) b) Motion', 'c) c) Cold', 'd) d) Paper'], a: 1 },
+        { q: 'Which of these practices is SAFE?', o: ['a) a) Putting wires into the wall outlet', 'b) b) Touching appliances with wet hands', 'c) c) Joining the two poles of the battery', 'd) d) Experimenting only with batteries'], a: 3 },
+        { q: 'What does the battery do in the circuit?', o: ['a) a) It pushes the current', 'b) b) It encloses it', 'c) c) It slows it down', 'd) d) It switches it off'], a: 0 },
+        { q: 'How many volts do the batteries used in class have?', o: ['a) a) 1.5 V or 9 V', 'b) b) 110 V', 'c) c) 220 V', 'd) d) 1000 V'], a: 0 },
+        { q: 'If the current were the water in an irrigation ditch, what would the battery be?', o: ['a) a) The channel', 'b) b) The pump', 'c) c) The sluice gate', 'd) d) The mill'], a: 1 },
+        { q: 'Where do used batteries go?', o: ['a) a) In the regular trash', 'b) b) Into the river', 'c) c) To a collection center', 'd) d) Into the garden'], a: 2 },
+        { q: 'What does the phone charger do?', o: ['a) a) It turns the house current into a small, safe one', 'b) b) It stores light', 'c) c) It cools the phone', 'd) d) It heats the cable'], a: 0 }
       ],
 
       evalCPBank: [
-        { q: 'Current flows only if the path is ___.', a: 'closed' },
-        { q: 'The battery is the ___ of energy of the circuit.', a: 'source' },
-        { q: 'The ___ opens or closes the way for the current.', a: 'switch' },
-        { q: 'Inside the wire there is ___, which is a good conductor.', a: 'copper' },
-        { q: 'A material that does not let current through is called an ___.', a: 'insulator' },
-        { q: 'A material that lets current through is called a ___.', a: 'conductor' },
-        { q: 'In a ___ circuit there is a single path for the current.', a: 'series' },
-        { q: 'In a ___ circuit each load has its own path.', a: 'parallel' },
-        { q: 'The push the source gives is called ___.', a: 'voltage' },
-        { q: 'The obstacle that opposes the flow of current is called ___.', a: 'resistance' },
-        { q: 'The LED turns electricity into ___.', a: 'light' },
-        { q: 'The motor turns electricity into ___.', a: 'movement' },
-        { q: 'When the current finds a shortcut with no load, a ___ happens.', a: 'short circuit' },
-        { q: 'To experiment in the classroom we use only ___.', a: 'batteries' },
-        { q: 'The LED has ___: it only lights up connected one way round.', a: 'polarity' }
+        { q: 'The robot stopped turning on the ___ before the fair.', a: 'day', acc: ['day', 'eve'] },
+        { q: 'The fault was a loose wire the size of a ___.', a: 'fingernail', acc: ['fingernail', 'nail'] },
+        { q: 'The solar panel charges a ___ during the day.', a: 'battery', acc: ['battery'] },
+        { q: 'The battery has a positive pole and a ___ one.', a: 'negative', acc: ['negative'] },
+        { q: 'The old Christmas ___ lights all went out together.', a: 'tree', acc: ['tree'] },
+        { q: 'When a bulb burns out in the living room, the one in the ___ stays on.', a: 'kitchen', acc: ['kitchen'] },
+        { q: 'Each order the circuit carries out, like lighting up or turning, is an ___.', a: 'action', acc: ['action'] },
+        { q: 'The group spent the money of ___ good batteries.', a: 'two', acc: ['two', '2'] },
+        { q: 'The solar lamp’s LED turns on at ___.', a: 'night', acc: ['night'] },
+        { q: 'Electricity is neither created nor destroyed: it is ___.', a: 'transformed', acc: ['transformed'] }
       ],
 
       evalPRBank: [
-        { term: 'Electric circuit', def: 'A closed path that current flows along' },
-        { term: 'Source', def: 'Battery that pushes the current' },
-        { term: 'Switch', def: 'It opens or closes the path of the current' },
-        { term: 'Wire', def: 'A copper path covered with plastic' },
-        { term: 'Load', def: 'LED, motor or buzzer that puts the electricity to use' },
-        { term: 'Open circuit', def: 'The path is cut and nothing works' },
-        { term: 'Series circuit', def: 'A single path: if one burns out they all go dark' },
-        { term: 'Parallel circuit', def: 'Each load has its path; that is how house lights are wired' },
-        { term: 'Conductor', def: 'A material that lets current through, such as copper' },
-        { term: 'Insulator', def: 'A material that blocks current, such as plastic' },
-        { term: 'Voltage', def: 'The push of the source, measured in volts' },
-        { term: 'Current', def: 'The amount of electricity going through, measured in amperes' },
-        { term: 'Resistance', def: 'The obstacle to the flow of current; it protects the LED' },
-        { term: 'Short circuit', def: 'A shortcut with no load that heats up the battery; it is dangerous' },
-        { term: 'Polarity', def: 'The LED only lights up connected one way round' }
+        { term: 'Series circuit', def: 'A single path: if one burns out, they all go out' },
+        { term: 'Parallel circuit', def: 'That is how the house lights are wired' },
+        { term: 'Conductor', def: 'The copper inside the wire' },
+        { term: 'Insulator', def: 'The plastic that covers the wire' },
+        { term: 'Short circuit', def: 'A shortcut with no load that heats the battery' },
+        { term: 'Switch', def: 'The circuit’s «sluice gate»' },
+        { term: 'Voltage', def: 'The push, measured in volts' },
+        { term: 'Resistor', def: 'It protects the LED' },
+        { term: 'Polarity', def: 'The LED only lights up one way' },
+        { term: 'Buzzer', def: 'A load that turns electricity into sound' }
       ],
 
       critSensorBank: [
-        { txt: 'You built the circuit with a battery, wires, a switch and an LED; you close the switch and the LED does NOT light up.', ans: 'Check in this order: ① that the path is complete (wires firmly attached, no loose ends), ② that the battery still has charge, ③ the polarity of the LED (long leg to +, short leg to −) and ④ that it has its resistor. A single open point is enough to stop everything.' },
-        { txt: 'The bulb lights up only while you press the wires together with your hand; as soon as you let go it goes out.', ans: 'There is a loose contact: the circuit opens when you let go. The joint must be secured (twist the wire tightly, use electrical tape or a battery holder) so the path stays closed on its own.' },
-        { txt: 'The battery gets extremely hot, so does the wire, and the load is still dark.', ans: 'It is a SHORT CIRCUIT: the current found a shortcut from + to − without going through the load. You must disconnect it right away (the battery can burn you or burst) and rebuild the circuit so the current goes through the load.' },
-        { txt: 'You have two bulbs wired in series and neither lights up; on checking, one has a broken filament.', ans: 'In SERIES there is a single path: the burned-out bulb opens the circuit and that is why both go dark. Replace the burned-out bulb, or wire them in PARALLEL so each one has its own path.' },
-        { txt: 'Of two bulbs in parallel, one does not light up and the other one shines normally.', ans: 'Since they are in PARALLEL, each has its own path: the fault is only in the dark bulb (burned out or badly connected). Check that branch; the other one keeps working because its path is complete.' },
-        { txt: 'You connected an LED straight to a 9 V battery, with no resistor, and it burned out instantly.', ans: 'With no resistor too much current goes through the LED and destroys it. Always put a resistor in series with the LED to limit the current; you also have to respect its polarity.' }
+        {txt:'The bulb lights up only while you press the wires together with your hand; as soon as you let go it goes out.',ans:'There is a loose contact: the circuit opens when you let go. The joint must be secured (twist the wire tightly, use electrical tape or a battery holder) so the path stays closed on its own.'},
+        {txt:'You have two bulbs wired in series and neither lights up; on checking, one has a broken filament.',ans:'In SERIES there is a single path: the burned-out bulb opens the circuit and that is why both go dark. Replace the burned-out bulb, or wire them in PARALLEL so each one has its own path.'}
       ],
 
       critErrorBank: [
-        {
-          txt: '"Current gets through even with the switch open, just more slowly."',
-          g1: 'False: with the switch OPEN the path is cut and NO current gets through at all; it is not a matter of speed.',
-          g2: 'Current needs a CLOSED, complete path: it leaves one terminal of the battery, goes through the load and returns to the other terminal.'
-        },
-        {
-          txt: '"The lights in a house are wired in series: that is why, when one bulb burns out, the rest stay on."',
-          g1: 'That contradicts itself: in SERIES, if one bulb burns out they ALL go dark, because there is a single path.',
-          g2: 'House lights are wired in PARALLEL: each lamp has its own path and gets all the voltage, which is why the rest stay on.'
-        },
-        {
-          txt: '"Water never conducts electricity, so it makes no difference if your hands are wet."',
-          g1: 'Tap water, river water and sweat carry SALTS and they do conduct electricity.',
-          g2: 'That is why you never touch appliances, plugs or wires with wet hands: a wet body becomes part of the circuit.'
-        },
-        {
-          txt: '"To make the LED shine brighter, take off the resistor and connect it straight to the 9 V battery."',
-          g1: 'With no resistor too much current gets through and the LED BURNS OUT in an instant: it does not shine brighter, it is destroyed.',
-          g2: 'On top of that the LED has POLARITY: connected backwards it does not light up. The resistor always goes in series with it.'
-        },
-        {
-          txt: '"If you join the two terminals of the battery with a wire, the battery recharges itself."',
-          g1: 'It does not recharge: you create a SHORT CIRCUIT, the current flows with no load to limit it and the battery HEATS UP.',
-          g2: 'It is dangerous: the battery can burn your hand, leak or burst. The current must always go through a load (LED, motor or buzzer).'
-        }
+        {txt:'"Current gets through even with the switch open, just more slowly."',g1:'False: with the switch OPEN the path is cut and NO current gets through at all; it is not a matter of speed.',g2:'Current needs a CLOSED, complete path: it leaves one terminal of the battery, goes through the load and returns to the other terminal.'},
+        {txt:'"Water never conducts electricity, so it makes no difference if your hands are wet."',g1:'Tap water, river water and sweat carry SALTS and they do conduct electricity.',g2:'That is why you never touch appliances, plugs or wires with wet hands: a wet body becomes part of the circuit.'},
+        {txt:'"To make the LED shine brighter, take off the resistor and connect it straight to the 9 V battery."',g1:'With no resistor too much current gets through and it BURNS OUT in an instant: it does not shine brighter, it is destroyed.',g2:'On top of that it has POLARITY: connected backwards it does not light up. The resistor always goes in series with it.'},
+        {txt:'"If you join the two terminals of the battery with a wire, the battery recharges itself."',g1:'It does not recharge: you create a SHORT CIRCUIT, the current flows with no load to limit it and the battery HEATS UP.',g2:'It is dangerous: the battery can burn your hand, leak or burst. The current must always go through a load, such as a motor or a buzzer.'}
       ],
 
       critCicloQuestions: [
@@ -589,73 +544,19 @@
       ],
 
       critCicloBank: [
-        {
-          txt: 'The battery flashlight your family uses during power outages: when you slide the button, the bulb lights up.',
-          p: 'The current leaves the + terminal of the batteries, goes through the spring and the metal strip, reaches the switch and from there the bulb, and comes back to the − terminal.',
-          d: 'The circuit would be left OPEN and the bulb would go out, because the current needs a closed, complete path.',
-          a: 'The electrical energy of the batteries turns into light energy (and a little heat) in the bulb.'
-        },
-        {
-          txt: 'A toy car with a battery, a switch and a motor that makes the wheels turn.',
-          p: 'The current leaves the + of the battery, runs along the wire to the closed switch, goes through the motor and returns to the − of the battery.',
-          d: 'With the switch open or a wire loose the motor stops: with no closed path no current flows.',
-          a: 'Electrical energy turns into energy of movement (mechanical) in the motor.'
-        },
-        {
-          txt: 'The classroom bell: when you press a button, a buzzer connected to a battery sounds.',
-          p: 'The current leaves the battery, goes through the button (which works as a switch) and through the buzzer, and returns to the battery.',
-          d: 'When you let go of the button the circuit opens and the sound stops immediately, because the path is interrupted.',
-          a: 'Electrical energy turns into sound energy in the buzzer.'
-        },
-        {
-          txt: 'The solar lamp in the village: a solar panel charges a battery during the day and at night it lights an LED.',
-          p: 'During the day the current goes from the solar panel to the battery; at night it leaves the battery, goes through the switching circuit and the LED, and returns.',
-          d: 'If a wire comes loose, the LED does not light up even with a full battery: the path is open.',
-          a: 'The energy of the sun (light) turns into electrical energy, is stored in the battery and turns back into light in the LED.'
-        },
-        {
-          txt: 'The cell phone charger: you plug it into the wall outlet and the phone battery fills up.',
-          p: 'The current comes in from the wall outlet to the charger, which turns it into low-voltage current, and travels along the cord to the phone battery.',
-          d: 'If the cord is damaged or badly connected, the path opens and the phone does not charge.',
-          a: 'Electrical energy turns into chemical energy stored in the battery, and later into light, sound and movement in the phone.'
-        }
+        {txt:'The battery flashlight your family uses during power outages: when you slide the button, the bulb lights up.',p:'The current leaves the + terminal of the batteries, goes through the spring and the metal strip, reaches the switch and from there the bulb, and comes back to the − terminal.',d:'The circuit would be left OPEN and the bulb would go out, because the current needs a closed, complete path.',a:'The electrical energy of the batteries turns into light energy (and a little heat) in the bulb.'},
+        {txt:'A toy car with a battery, a switch and a motor that makes the wheels turn.',p:'The current leaves the + of the battery, runs along the wire to the closed switch, goes through the motor and returns to the − of the battery.',d:'With the switch open or a wire loose the motor stops: with no closed path no current flows.',a:'Electrical energy turns into energy of movement (mechanical) in the motor.'},
+        {txt:'The classroom bell: when you press a button, a buzzer connected to a battery sounds.',p:'The current leaves the battery, goes through the button (which works as a switch) and through the buzzer, and returns to the battery.',d:'When you let go of the button the circuit opens and the sound stops immediately, because the path is interrupted.',a:'Electrical energy turns into sound energy in the buzzer.'},
+        {txt:'The cell phone charger: you plug it into the wall outlet and the phone battery fills up.',p:'The current comes in from the wall outlet to the charger, which turns it into low-voltage current, and travels along the cord to the phone battery.',d:'If the cord is damaged or badly connected, the path opens and the phone does not charge.',a:'Electrical energy turns into chemical energy stored in the battery, and later into light, sound and movement in the phone.'}
       ],
 
       critCompareBank: [
-        {
-          a: 'A connection with a single path: the bulbs share the voltage and, if one burns out, they all go dark.',
-          b: 'A connection in which each bulb has its own path and gets all the voltage; if one burns out, the rest keep going.',
-          ga: 'The series circuit.',
-          gb: 'The parallel circuit.',
-          gr: 'Similarity: both have a source, wires and several loads on a closed path. Difference: in series the path is single (one fault turns everything off and the light is dimmer); in parallel there are several paths (each load is independent). That is why houses are wired in parallel.'
-        },
-        {
-          a: 'A material that lets current through easily, like the copper inside the wire.',
-          b: 'A material that does not let current through, like the plastic that covers the wire.',
-          ga: 'The conductor.',
-          gb: 'The insulator.',
-          gr: 'Similarity: both are present in the very same wire and both are needed for it to work safely. Difference: the conductor forms the path of the current; the insulator wraps it and protects us. Careful: water with salts conducts, which is why you do not touch appliances with wet hands.'
-        },
-        {
-          a: 'The state of the circuit in which the path is complete and the load works.',
-          b: 'The state of the circuit in which the path is cut and nothing works.',
-          ga: 'The closed circuit.',
-          gb: 'The open circuit.',
-          gr: 'Similarity: both have a source, wires and a load; the switch changes one into the other. Difference: closed lets the current flow (the LED lights up); open stops it (because of the switch, a loose wire or a burned-out bulb in series).'
-        },
-        {
-          a: 'The push the battery gives to the current; it is measured in volts (V).',
-          b: 'The obstacle that opposes the flow of current; it is measured in ohms (Ω) and it protects the LED.',
-          ga: 'Voltage.',
-          gb: 'Resistance.',
-          gr: 'Similarity: both decide how much current goes through the circuit. Difference: voltage pushes (more voltage, more current) and resistance holds back (more resistance, less current). That is why an LED on a 9 V battery needs a resistor and on a 1.5 V battery you barely notice.'
-        }
+        {a:'A material that lets current through easily, like the copper inside the wire.',b:'A material that does not let current through, like the plastic that covers the wire.',ga:'The conductor.',gb:'The insulator.',gr:'Similarity: both are present in the very same wire and both are needed for it to work safely. Difference: the conductor forms the path of the current; the insulator wraps it and protects us. Careful: water with salts conducts, which is why you do not touch appliances with wet hands.'}
       ],
 
       critDesignBank: [
         'Power outages are frequent at your house and at night nobody can find the candles or the flashlight.',
         'The henhouse is dark and the fox gets in at night without anyone noticing.',
-        'There is no bell at school: the teacher has to go out to the yard and shout that it is recess time.',
         'The village has no power lines, but it does get plenty of sun all day long.',
         'At the corner store nobody notices when a customer comes in, because the owner is in the kitchen.'
       ],

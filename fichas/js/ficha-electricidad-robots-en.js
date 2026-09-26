@@ -204,31 +204,31 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>Current flows only if the path is <span class="linea-resp"></span>.</li>' +
-        '<li>The battery is the <span class="linea-resp"></span> of energy of the circuit.</li>' +
-        '<li>The <span class="linea-resp"></span> opens or closes the way for the current.</li>' +
-        '<li>Inside the wire there is <span class="linea-resp"></span>, which is a good conductor.</li>' +
-        '<li>Dry plastic is an <span class="linea-resp"></span>.</li>' +
-        '<li>In a <span class="linea-resp"></span> circuit all the bulbs go dark if one burns out.</li>' +
-        '<li>The lights in a house are wired in <span class="linea-resp"></span>.</li>' +
-        '<li>The LED carries a <span class="linea-resp"></span> so the current does not burn it out.</li>' +
-        '<li>The push the source gives is called <span class="linea-resp"></span>.</li>' +
-        '<li>To experiment in the classroom we use only <span class="linea-resp"></span>.</li>' +
+        '<li>The robot stopped turning on the <span class="linea-resp"></span> before the fair.</li>' +
+        '<li>The fault was a loose wire the size of a <span class="linea-resp"></span>.</li>' +
+        '<li>The phone charger is unplugged by pulling on the <span class="linea-resp"></span>.</li>' +
+        '<li>The battery has a positive pole and a <span class="linea-resp"></span> one.</li>' +
+        '<li>The old Christmas <span class="linea-resp"></span> lights all went out together.</li>' +
+        '<li>When a bulb burns out in the living room, the one in the <span class="linea-resp"></span> stays on.</li>' +
+        '<li>Each order the circuit carries out, like lighting up or turning, is an <span class="linea-resp"></span>.</li>' +
+        '<li>The group spent the money of <span class="linea-resp"></span> good batteries.</li>' +
+        '<li>In the flashlight, what opens and closes the path is the <span class="linea-resp"></span> you slide.</li>' +
+        '<li>Electricity is neither created nor destroyed: it is <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ Electric current needs a closed path in order to flow.</li>' +
-        '<li>____ Dry plastic and dry wood are conductors.</li>' +
-        '<li>____ The switch is used to open or close the path of the current.</li>' +
-        '<li>____ The lights in a house are wired in series.</li>' +
-        '<li>____ In a series circuit, if one bulb burns out they all go dark.</li>' +
-        '<li>____ The LED has polarity: it only lights up connected one way round.</li>' +
-        '<li>____ It is safe to experiment with the 110-volt wall outlet.</li>' +
-        '<li>____ Water with salts conducts electricity.</li>' +
-        '<li>____ Used batteries go in the regular household trash.</li>' +
-        '<li>____ A short circuit heats up the battery and can be dangerous.</li>' +
+        '<li>____ The group’s robot stopped turning on before the fair.</li>' +
+        '<li>____ The robot’s fault was in the battery.</li>' +
+        '<li>____ From the outside, a broken circuit looks just like a dead battery.</li>' +
+        '<li>____ A charger’s cable never gets damaged.</li>' +
+        '<li>____ Electricity is a form of energy.</li>' +
+        '<li>____ In hamlets with no power lines there is no way to have light.</li>' +
+        '<li>____ You experiment with dry hands.</li>' +
+        '<li>____ A circuit works even if a wire is loose.</li>' +
+        '<li>____ Salty water lets electricity through.</li>' +
+        '<li>____ Electricity can cause harm.</li>' +
         '</ol>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
@@ -236,93 +236,93 @@
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What is an electric circuit?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>What did they replace first when the robot would not turn on?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a coiled-up wire</span>' +
-        '<span class="op"><i>b</i> the closed path that current flows along</span>' +
-        '<span class="op"><i>c</i> a dead battery</span>' +
-        '<span class="op"><i>d</i> a painted bulb</span>' +
+        '<span class="op"><i>a</i> The motor</span>' +
+        '<span class="op"><i>b</i> The battery</span>' +
+        '<span class="op"><i>c</i> A wire</span>' +
+        '<span class="op"><i>d</i> A bulb</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What are the parts of a basic circuit?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>Which part of the circuit makes use of the electricity?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> sun, water, air and soil</span>' +
-        '<span class="op"><i>b</i> motor, wheel, screw and nail</span>' +
-        '<span class="op"><i>c</i> source, wires, switch and load</span>' +
-        '<span class="op"><i>d</i> paper, glue, scissors and ruler</span>' +
+        '<span class="op"><i>a</i> The source</span>' +
+        '<span class="op"><i>b</i> The wire</span>' +
+        '<span class="op"><i>c</i> The load</span>' +
+        '<span class="op"><i>d</i> The pole</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>What is the switch for?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>In an LED, what does electrical energy turn into?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> to open or close the path of the current</span>' +
-        '<span class="op"><i>b</i> to raise the voltage</span>' +
-        '<span class="op"><i>c</i> to cool the battery down</span>' +
-        '<span class="op"><i>d</i> to paint the circuit</span>' +
+        '<span class="op"><i>a</i> Light</span>' +
+        '<span class="op"><i>b</i> Sound</span>' +
+        '<span class="op"><i>c</i> Water</span>' +
+        '<span class="op"><i>d</i> Wind</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>If a wire comes loose, the circuit is left…</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>In a motor, what does electrical energy turn into?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> in parallel</span>' +
-        '<span class="op"><i>b</i> in series</span>' +
-        '<span class="op"><i>c</i> closed</span>' +
-        '<span class="op"><i>d</i> open, and nothing works</span>' +
+        '<span class="op"><i>a</i> Sound</span>' +
+        '<span class="op"><i>b</i> Motion</span>' +
+        '<span class="op"><i>c</i> Cold</span>' +
+        '<span class="op"><i>d</i> Paper</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>In a SERIES circuit one bulb burns out. What happens?</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>Which of these practices is SAFE?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the others shine brighter</span>' +
-        '<span class="op"><i>b</i> they all go dark</span>' +
-        '<span class="op"><i>c</i> nothing happens</span>' +
-        '<span class="op"><i>d</i> the battery recharges</span>' +
+        '<span class="op"><i>a</i> Putting wires into the wall outlet</span>' +
+        '<span class="op"><i>b</i> Touching appliances with wet hands</span>' +
+        '<span class="op"><i>c</i> Joining the two poles of the battery</span>' +
+        '<span class="op"><i>d</i> Experimenting only with batteries</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>Which of these materials is an INSULATOR?</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>What does the battery do in the circuit?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> copper</span>' +
-        '<span class="op"><i>b</i> iron</span>' +
-        '<span class="op"><i>c</i> dry plastic</span>' +
-        '<span class="op"><i>d</i> salt water</span>' +
+        '<span class="op"><i>a</i> It pushes the current</span>' +
+        '<span class="op"><i>b</i> It encloses it</span>' +
+        '<span class="op"><i>c</i> It slows it down</span>' +
+        '<span class="op"><i>d</i> It switches it off</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>Why does an LED carry a resistor?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>How many volts do the batteries used in class have?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> so the current does not burn it out</span>' +
-        '<span class="op"><i>b</i> to give it color</span>' +
-        '<span class="op"><i>c</i> so it weighs more</span>' +
-        '<span class="op"><i>d</i> to glue it to the wire</span>' +
+        '<span class="op"><i>a</i> 1.5 V or 9 V</span>' +
+        '<span class="op"><i>b</i> 110 V</span>' +
+        '<span class="op"><i>c</i> 220 V</span>' +
+        '<span class="op"><i>d</i> 1000 V</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>What is a short circuit?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>If the current were the water in an irrigation ditch, what would the battery be?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a parallel circuit</span>' +
-        '<span class="op"><i>b</i> a colorful wire</span>' +
-        '<span class="op"><i>c</i> a very short, pretty circuit</span>' +
-        '<span class="op full"><i>d</i> a shortcut with no load that heats up the battery</span>' +
+        '<span class="op"><i>a</i> The channel</span>' +
+        '<span class="op"><i>b</i> The pump</span>' +
+        '<span class="op"><i>c</i> The sluice gate</span>' +
+        '<span class="op"><i>d</i> The mill</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>Which of these practices is SAFE?</div>' +
+        '<div class="preg-q"><span class="preg-n">9</span>Where do used batteries go?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> pushing wires into the wall outlet</span>' +
-        '<span class="op full"><i>b</i> experimenting only with batteries and insulated wires</span>' +
-        '<span class="op"><i>c</i> touching plugs with wet hands</span>' +
-        '<span class="op"><i>d</i> joining the two battery terminals with wire</span>' +
+        '<span class="op"><i>a</i> In the regular trash</span>' +
+        '<span class="op"><i>b</i> Into the river</span>' +
+        '<span class="op"><i>c</i> To a collection center</span>' +
+        '<span class="op"><i>d</i> Into the garden</span>' +
         '</div></div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>In a motor, what does electrical energy turn into?</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>What does the classroom bell do when its button is pressed?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> light</span>' +
-        '<span class="op"><i>b</i> cold</span>' +
-        '<span class="op"><i>c</i> movement</span>' +
-        '<span class="op"><i>d</i> water</span>' +
+        '<span class="op"><i>a</i> It rings</span>' +
+        '<span class="op"><i>b</i> It lights up</span>' +
+        '<span class="op"><i>c</i> It spins</span>' +
+        '<span class="op"><i>d</i> It cools down</span>' +
         '</div></div>',
 
       /* ═══════════ PÁGINA 6 ═══════════
@@ -333,16 +333,16 @@
 
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
-        '<tr><td>1. ____ Electric circuit</td><td>A. It opens or closes the way for the current</td></tr>' +
-        '<tr><td>2. ____ Source (battery)</td><td>B. Each load has its own path; that is how house lights are wired</td></tr>' +
-        '<tr><td>3. ____ Switch</td><td>C. A closed path that current flows along</td></tr>' +
-        '<tr><td>4. ____ Conductor</td><td>D. The obstacle that opposes the flow of current; it protects the LED</td></tr>' +
-        '<tr><td>5. ____ Insulator</td><td>E. It pushes the current; it has a + terminal and a − terminal</td></tr>' +
-        '<tr><td>6. ____ Series circuit</td><td>F. A shortcut with no load that heats up the battery; it is dangerous</td></tr>' +
-        '<tr><td>7. ____ Parallel circuit</td><td>G. A material that does not let current through, such as plastic</td></tr>' +
-        '<tr><td>8. ____ Voltage</td><td>H. A single path: if one bulb burns out, they all go dark</td></tr>' +
-        '<tr><td>9. ____ Resistance</td><td>I. A material that lets current through, such as copper</td></tr>' +
-        '<tr><td>10. ____ Short circuit</td><td>J. The push of the source, measured in volts</td></tr>' +
+        '<tr><td>1. ____ Series circuit</td><td>A. A shortcut with no load that heats the battery</td></tr>' +
+        '<tr><td>2. ____ Parallel circuit</td><td>B. It protects the LED</td></tr>' +
+        '<tr><td>3. ____ Conductor</td><td>C. A single path: if one burns out, they all go out</td></tr>' +
+        '<tr><td>4. ____ Insulator</td><td>D. A load that turns electricity into sound</td></tr>' +
+        '<tr><td>5. ____ Short circuit</td><td>E. The copper inside the wire</td></tr>' +
+        '<tr><td>6. ____ Switch</td><td>F. The LED only lights up one way</td></tr>' +
+        '<tr><td>7. ____ Ampere</td><td>G. The circuit’s «sluice gate»</td></tr>' +
+        '<tr><td>8. ____ Resistor</td><td>H. That is how the house lights are wired</td></tr>' +
+        '<tr><td>9. ____ Polarity</td><td>I. The plastic that covers the wire</td></tr>' +
+        '<tr><td>10. ____ Buzzer</td><td>J. The unit current is measured in</td></tr>' +
         '</table>' +
 
         '<div class="felic">' +
@@ -373,10 +373,10 @@
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in the blanks:</span> 1. closed &nbsp; 2. source &nbsp; 3. switch &nbsp; 4. copper &nbsp; 5. insulator &nbsp; 6. series &nbsp; 7. parallel &nbsp; 8. resistor &nbsp; 9. voltage &nbsp; 10. batteries</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6T, 7F, 8T, 9F, 10T</div>' +
-        '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3a, 4d, 5b, 6c, 7a, 8d, 9b, 10c</div>' +
-        '<div><span class="pt">IV. Matching:</span> 1C, 2E, 3A, 4I, 5G, 6H, 7B, 8J, 9D, 10F</div>' +
+        '<div><span class="pt">I. Fill in the blanks:</span> 1. day &nbsp; 2. fingernail &nbsp; 3. plug &nbsp; 4. negative &nbsp; 5. tree &nbsp; 6. kitchen &nbsp; 7. action &nbsp; 8. two &nbsp; 9. button &nbsp; 10. transformed</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10T</div>' +
+        '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3a, 4b, 5d, 6a, 7a, 8b, 9c, 10a</div>' +
+        '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '</div>' +
 
         '<div class="caja regla" style="margin-top:12px;">🔎 <b>Answers for the conductor and insulator table (page 3):</b> ' +

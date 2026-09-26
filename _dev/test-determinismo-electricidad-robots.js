@@ -98,11 +98,15 @@ ok('misma forma → mismo documento impreso (crítica)', docs[2] === docs[3]);
 
 // ── Bancos ──
 console.log('— Bancos de ítems —');
-ok('4 bancos × 15 ítems (TF / MC / CP / PR)', vm.runInContext('evalTFBank.length===15&&evalMCBank.length===15&&evalCPBank.length===15&&evalPRBank.length===15', sandbox));
+/* Revisados dato por dato (septiembre de 2026): diez por banco, cada uno con su `k`. */
+ok('4 bancos × 10 ítems con su k (TF / MC / CP / PR)', vm.runInContext('[evalTFBank,evalMCBank,evalCPBank,evalPRBank].every(b=>b.length===10&&b.every(x=>x.k))', sandbox));
 ok('formato evalMCBank {q,o,a} con 4 opciones y respuesta válida (Campeonísimo)',
   vm.runInContext("evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)", sandbox));
-ok('bancos críticos completos (6 diagnósticos, 5 errores, 5 análisis, 4 comparaciones, 5 diseños)',
-  vm.runInContext('critSensorBank.length===6&&critErrorBank.length===5&&critCicloBank.length===5&&critCompareBank.length===4&&critDesignBank.length===5', sandbox));
+/* Cada sección de la prueba crítica tiene su propio terreno: las que contaban
+   la misma escena (el foco en serie, el LED sin resistencia, la lámpara solar)
+   se quedaron en UNA. Lo que se exige es que alcancen para armar la prueba. */
+ok('bancos críticos alcanzan para la prueba (2 diagnósticos, y al menos 1 de lo demás)',
+  vm.runInContext('critSensorBank.length>=2&&critErrorBank.length>=1&&critCicloBank.length>=1&&critCompareBank.length>=1&&critDesignBank.length>=1', sandbox));
 ok('temario eléctrico presente (serie/paralelo, conductor/aislante, seguridad)',
   vm.runInContext("['serie','paralelo','conductor','aislante','cortocircuito'].every(t=>JSON.stringify([evalTFBank,evalMCBank,evalCPBank,evalPRBank]).toLowerCase().includes(t))", sandbox));
 
