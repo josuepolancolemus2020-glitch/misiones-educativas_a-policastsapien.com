@@ -388,78 +388,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un programa que aprende saca la regla de los ejemplos.',a:true},
-  {q:'La etiqueta la pone la máquina sola.',a:false},
-  {q:'Entrenar cuesta tiempo; usar lo aprendido es rápido.',a:true},
-  {q:'Probar con los ejemplos del entrenamiento dice si aprendió.',a:false},
-  {q:'El sesgo aparece cuando los ejemplos están mal repartidos.',a:true},
-  {q:'Si la máquina falla con un caso que nunca vio, la culpa es de ella.',a:false},
-  {q:'En el supervisado los ejemplos traen su etiqueta.',a:true},
-  {q:'En el no supervisado sabe el nombre de cada grupo.',a:false},
-  {q:'El aprendizaje por refuerzo usa premios.',a:true},
-  {q:'Ninguna máquina acierta el cien por ciento.',a:true},
-  {q:'Un dato es un pedacito de información que se guarda.',a:true},
-  {q:'El patrón es lo que se repite en muchos ejemplos.',a:true},
-  {q:'Si una persona etiqueta mal, la máquina aprende ese error.',a:true},
-  {q:'Con ejemplos buenos y variados reconoce mejor lo nuevo.',a:true},
-  {q:'La máquina entiende lo que ve, como una persona.',a:false},
-  {q:'Un error del 10 % significa que a nadie le pasa nada.',a:false},
-  {q:'Para cazar un sesgo se mira con qué se entrenó.',a:true},
-  {q:'Entrenada en una sola aldea, la máquina sirve en todo el país.',a:false},
-  {q:'La prueba se hace con ejemplos que la máquina nunca vio.',a:true},
-  {q:'Agrupar por parecido, sin etiquetas, es no supervisado.',a:true}
+  {q:'En la historia del alumno cambiado de escuela, el sistema de notas estaba malo.',a:false,k:'tf-sistema-malo'},
+  {q:'Un programa de siempre nunca mejora solo.',a:true,k:'tf-nunca-mejora'},
+  {q:'Hay máquinas que aciertan el cien por ciento.',a:false,k:'tf-cien'},
+  {q:'Una máquina entiende lo que ve, como una persona.',a:false,k:'tf-entiende'},
+  {q:'Enseñarle a una máquina se hace una vez y cuesta tiempo.',a:true,k:'tf-una-vez'},
+  {q:'Detrás de un programa que aprende también hay una persona.',a:true,k:'tf-persona'},
+  {q:'Si las fotos vienen marcadas mal, la máquina aprende mal.',a:true,k:'tf-marcadas'},
+  {q:'Juntar y marcar los datos es lo más rápido del trabajo.',a:false,k:'tf-rapido'},
+  {q:'El detector de plagas aprendió con diez mil fotos de hojas marcadas.',a:true,k:'tf-diez-mil'},
+  {q:'Para aprender, alguien tiene que explicarle a la máquina con palabras qué es cada cosa.',a:false,k:'tf-palabras'}
 ];
 const evalMCBank=[
-  {q:'¿Qué diferencia a un programa que APRENDE de uno de siempre?',o:['Que es más caro','Que saca la regla de los ejemplos','Que no usa computadora','Que nunca se equivoca'],a:1},
-  {q:'¿Qué es una etiqueta?',o:['El precio del programa','Un adorno de la pantalla','La respuesta correcta que le pone una persona','El nombre de la máquina'],a:2},
-  {q:'¿Para qué sirve PROBAR con ejemplos nuevos?',o:['Para saber si aprendió o memorizó','Para gastar menos batería','Para que se entretenga','Para hacerla más rápida'],a:0},
-  {q:'Se entrenó con maíz, frijol y café. Ve una hoja de plátano.',o:['La reconoce igual','Se apaga','La ignora','Se puede equivocar: nunca vio una'],a:3},
-  {q:'¿Cómo se llama ese fallo?',o:['Patrón','Sesgo','Etiqueta','Refuerzo'],a:1},
-  {q:'¿De quién es la culpa de un sesgo?',o:['De la máquina','De nadie','De quien eligió los ejemplos','Del que la usa'],a:2},
-  {q:'Aprender con ejemplos que traen su respuesta se llama…',o:['Aprendizaje supervisado','Aprendizaje por refuerzo','Aprendizaje no supervisado','Memorización'],a:0},
-  {q:'Junta fotos parecidas sin que nadie las nombre. Eso es…',o:['Supervisado','Por refuerzo','Memorización','No supervisado'],a:3},
-  {q:'Un robot gana puntos cuando avanza sin caerse. Eso es…',o:['Supervisado','Aprendizaje por refuerzo','No supervisado','Un patrón'],a:1},
-  {q:'¿Qué es un patrón?',o:['Un error de la máquina','El precio de los datos','Lo que se repite en muchos ejemplos','Una etiqueta mal puesta'],a:2},
-  {q:'Acierta 9 de cada 10. ¿Qué hay que preguntarse?',o:['Nada, está muy bien','Si se puede apagar','Cuánto cuesta','A quién le toca ese error'],a:3},
-  {q:'Falla siempre con lo mismo. ¿Qué se mira primero?',o:['Con qué ejemplos la entrenaron','La marca del teléfono','Cuánta batería tiene','El color de la pantalla'],a:0},
-  {q:'¿Por qué la etiqueta la pone una persona?',o:['Porque es más rápido','Porque la máquina no sabe la respuesta','Porque las máquinas no escriben','Por costumbre'],a:1},
-  {q:'¿Qué pasa si los ejemplos vienen de una sola aldea?',o:['Nada, sirve igual','Entrena más rápido','Puede fallar en el resto del país','Aprende dos patrones'],a:2},
-  {q:'¿Qué es entrenar?',o:['Apagar y encender la máquina','Copiar los datos a otra parte','Borrar los ejemplos viejos','Mostrarle ejemplos hasta hallar el patrón'],a:3}
+  {q:'¿Qué hace un programa de siempre con un caso que su regla no dice?',o:['Falla','Aprende solo','Pregunta a la maestra','Lo adivina bien'],a:0,k:'mc-regla'},
+  {q:'¿Qué le sirve a la máquina para reconocer un nance?',o:['Que son caros','Que crecen en árboles','Que casi siempre son pequeños y amarillos','Que saben dulce'],a:2,k:'mc-nance'},
+  {q:'Entrenada solo con manzanas y peras, ¿qué pasa con un nance?',o:['Lo reconoce','Lo pela','Lo cuenta dos veces','Para ella no existe'],a:3,k:'mc-manzanas'},
+  {q:'Ante un sistema que decide algo importante, ¿qué se pregunta?',o:['De qué color es','Cuánto pesa','Con qué ejemplos lo entrenaron','Si tiene sonido'],a:2,k:'mc-tres-preguntas'},
+  {q:'En la curva de ejemplos, ¿qué pasa con los aciertos al darle más?',o:['Bajan','Suben y después casi no cambian','Se quedan en cero','Suben sin parar'],a:1,k:'mc-curva'},
+  {q:'En la ronda trampa, ¿con qué número se ve que la regla era «menor que 8»?',o:['Con el 2','Con el 4','Con el 10','Con el 6'],a:2,k:'mc-trampa'},
+  {q:'Sin fotos de plátano, ¿qué le dice el detector al productor de plátano con una hoja sana?',o:['Que está enferma','Que está sana','Que es de café','Nada'],a:0,k:'mc-sin-platano'},
+  {q:'La máquina te dio un dato para la tarea. ¿Qué haces?',o:['Lo copio tal cual','Lo compruebo en el libro','Lo invento','Lo borro'],a:1,k:'mc-tarea'},
+  {q:'En «Tú eres la máquina», ¿cuándo ves la respuesta de verdad?',o:['Antes de contestar','Después de decir si entra o no','Nunca','Al final del juego'],a:1,k:'mc-ronda'},
+  {q:'La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?',o:['Nada, está muy bien','Si se puede apagar','Cuánto cuesta','A quién le toca ese error'],a:3,k:'mc-quien-cae'}
 ];
 const evalCPBank=[
-  {q:'La respuesta correcta que pone una persona se llama ___.',a:'etiqueta'},
-  {q:'Mostrarle ejemplos hasta hallar el patrón se llama ___.',a:'entrenar'},
-  {q:'Examinarla con ejemplos que nunca vio se llama ___.',a:'probar'},
-  {q:'Con los ejemplos mal repartidos aparece el ___.',a:'sesgo'},
-  {q:'Lo que se repite en muchos ejemplos es el ___.',a:'patrón'},
-  {q:'Las veces que la máquina contesta mal son el ___.',a:'error'},
-  {q:'Un pedacito de información que se guarda es un ___.',a:'dato'},
-  {q:'Aprender con ejemplos etiquetados es aprendizaje ___.',a:'supervisado'},
-  {q:'Aprender con premios es aprendizaje por ___.',a:'refuerzo'},
-  {q:'Agrupar lo que se parece es aprendizaje no ___.',a:'supervisado'},
-  {q:'Antes de confiar hay que preguntar quién eligió los ___.',a:'ejemplos'},
-  {q:'No entiende lo que ve: encuentra lo que se ___.',a:'repite'},
-  {q:'Si la persona etiqueta mal, la máquina aprende ese ___.',a:'error'},
-  {q:'Lo que queda guardado después de entrenar es el ___.',a:'modelo'},
-  {q:'Entrenar cuesta ___ y se hace una sola vez.',a:'tiempo'}
+  {q:'A ___ lo cambiaron de escuela a mitad de año.',a:'Wilmer',acc:['Wilmer','wilmer'],k:'cp-wilmer'},
+  {q:'El sistema de notas dijo que no estaba en la ___.',a:'lista',acc:['lista'],k:'cp-lista'},
+  {q:'Su maestro lo llevó en un ___ aparte.',a:'cuaderno',acc:['cuaderno'],k:'cp-cuaderno'},
+  {q:'Regla de un programa de siempre: si la nota es menor que ___, escribe reprobado.',a:'60',acc:['60','sesenta'],k:'cp-sesenta'},
+  {q:'Los datos son la ___ de la Inteligencia Artificial.',a:'comida',acc:['comida','alimento'],k:'cp-comida'},
+  {q:'Aprender con ejemplos que ya dicen lo que son es como estudiar con el ___ al lado.',a:'solucionario',acc:['solucionario'],k:'cp-solucionario'},
+  {q:'Hay máquinas que aprenden ___ perdiendo millones de partidas.',a:'ajedrez',acc:['ajedrez'],k:'cp-ajedrez'},
+  {q:'En la curva, la máquina separa semillas de frijol rojo y ___.',a:'negro',acc:['negro'],k:'cp-negro'},
+  {q:'En la ronda trampa, «los pares» y «menor que 8» coinciden hasta el ___ ejemplo.',a:'quinto',acc:['quinto','5'],k:'cp-quinto'},
+  {q:'Una máquina separa sola las fotos de la fiesta y las del ___.',a:'campo',acc:['campo'],k:'cp-campo'}
 ];
 const evalPRBank=[
-  {term:'Dato',def:'Un pedacito de información que se guarda'},
-  {term:'Etiqueta',def:'La respuesta correcta que pone una persona'},
-  {term:'Entrenar',def:'Mostrarle ejemplos hasta hallar el patrón'},
-  {term:'Patrón',def:'Lo que se repite en muchos ejemplos'},
-  {term:'Probar',def:'Examinarla con ejemplos que nunca vio'},
-  {term:'Error',def:'Las veces que la máquina contesta mal'},
-  {term:'Sesgo',def:'Fallar con lo que faltó en los ejemplos'},
-  {term:'Supervisado',def:'Los ejemplos traen su etiqueta puesta'},
-  {term:'No supervisado',def:'Agrupa lo que se parece, sin etiquetas'},
-  {term:'Por refuerzo',def:'Aprende probando: premio si le sale bien'},
-  {term:'Modelo',def:'Lo que queda guardado después de entrenar'},
-  {term:'Ejemplo',def:'Cada cosa que le mostramos para que aprenda'},
-  {term:'Instrucción',def:'Una orden que obedece sin aprender nada'},
-  {term:'Reparto de los ejemplos',def:'Lo primero que se mira si falla siempre igual'},
-  {term:'Quien elige los ejemplos',def:'De quién es la culpa de un sesgo'}
+  {term:'Memorizar',def:'Acordarse solo de lo que vio, sin reconocer lo nuevo',k:'pr-memorizar'},
+  {term:'Etiqueta',def:'La respuesta correcta que escribe una persona',k:'pr-etiqueta'},
+  {term:'Entrenar',def:'Mostrarle ejemplos una y otra vez hasta que separe las clases',k:'pr-entrenar'},
+  {term:'Patrón',def:'Lo que se repite y sirve para reconocer lo nuevo',k:'pr-patron'},
+  {term:'Probar',def:'Examinarla con ejemplos que nunca vio',k:'pr-probar'},
+  {term:'Sesgo',def:'Fallar con lo que faltó en los ejemplos',k:'pr-sesgo'},
+  {term:'Supervisado',def:'Cada ejemplo ya dice lo que es',k:'pr-supervisado'},
+  {term:'No supervisado',def:'Junta por parecido, sin saber el nombre del grupo',k:'pr-no-supervisado'},
+  {term:'Por refuerzo',def:'Aprende con premios cuando le sale bien',k:'pr-refuerzo'},
+  {term:'Modelo',def:'Lo que queda guardado cuando termina de aprender',k:'pr-modelo'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -546,12 +526,8 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Una aplicación de plagas se entrenó con fotos del occidente. Un productor del litoral dice que nunca le acierta.'},
-  {txt:'Un programa corrige exámenes. Se entrenó con letra de computadora y los alumnos escriben a mano.'},
-  {txt:'Una máquina clasifica recibos y acierta 95 de cada 100. El dueño ya no revisa.'},
-  {txt:'Para ir rápido, alguien etiqueta doscientas fotos sin mirarlas.'},
-  {txt:'Un programa agrupó solo a los clientes. El gerente pregunta el nombre de cada grupo.'},
-  {txt:'Una escuela prueba su clasificador con las cien fotos del entrenamiento. Acertó las cien.'}
+  {k:'ca-letra',txt:'Un programa corrige exámenes. Se entrenó con letra de computadora y los alumnos escriben a mano.'},
+  {k:'ca-recibos',txt:'Una máquina clasifica recibos y acierta 95 de cada 100. El dueño ya no revisa.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué falló aquí: los datos, el entrenamiento, la prueba o el uso?',
@@ -566,60 +542,24 @@ const critCaseGuides=[
   'Que diga a quién le toca: el productor, el alumno, el del recibo.'
 ];
 const critErrorBank=[
-  {txt:'"La máquina se equivocó con el plátano porque está mal hecha."',
-   g1:'No. Nunca vio una hoja de plátano: es sesgo.',
-   g2:'No se cambia de máquina: se juntan los ejemplos que faltaban.'},
-  {txt:'"La probamos con los mismos ejemplos del entrenamiento y acertó todo."',
-   g1:'Acertar con lo que ya vio no prueba nada: pudo memorizarlo.',
-   g2:'La prueba se hace con ejemplos que NUNCA vio.'},
-  {txt:'"Acierta el 95 %, así que ya no hay que revisar nada."',
-   g1:'Ese 5 % son casos reales. A cada uno le toca una persona.',
-   g2:'Un porcentaje alto no dice a QUIÉN le cae el error.'},
-  {txt:'"Las etiquetas se pueden poner rápido, al azar, para no perder tiempo."',
-   g1:'La etiqueta es la respuesta correcta. Si está mal, aprende mal.',
-   g2:'Entrenar con etiquetas malas sale más caro que ponerlas bien.'},
-  {txt:'"El no supervisado también dice cómo se llama cada grupo."',
-   g1:'No. Agrupa por parecido, pero no sabe ningún nombre.',
-   g2:'Ponerle nombre a cada grupo le toca a una persona.'},
-  {txt:'"Si la máquina aprende sola, ya no hacen falta personas."',
-   g1:'Hacen falta más que antes: juntan datos, etiquetan, eligen la prueba y revisan.',
-   g2:'Sola busca el patrón. Todo lo demás lo deciden personas.'}
+  {k:'er-etiquetas',txt:'"Las etiquetas se pueden poner rápido, al azar, para no perder tiempo."',g1:'La etiqueta es la respuesta correcta. Si está mal, aprende mal.',g2:'Entrenar con etiquetas malas sale más caro que ponerlas bien.'},
+  {k:'er-personas',txt:'"Si la máquina aprende sola, ya no hacen falta personas."',g1:'Hacen falta más que antes: juntan datos, etiquetan, eligen la prueba y revisan.',g2:'Sola busca el patrón. Todo lo demás lo deciden personas.'},
 ];
 const critDecisionBank=[
-  'Tu clasificador falla con un cultivo. ¿Juntas ejemplos de él, o avisas que no sirve?',
-  'Te falta tiempo. ¿Etiquetas menos ejemplos pero bien, o muchos y al azar?',
   'Vas a probarlo. ¿Usas ejemplos que ya vio, o nuevos aunque saque menos?',
-  'Acierta 9 de cada 10 en tu aldea. ¿Dices que sirve en todo el país, o dónde se probó?',
-  'Te ofrecen más datos, todos del mismo lugar. ¿Los aceptas, o buscas de otros?'
 ];
 const critDecisionGuide='La mejor decisión cuida el DATO y dice la verdad sobre el alcance. Se juntan los ejemplos que faltan. Se etiqueta bien aunque sean menos. Se prueba con ejemplos nuevos aunque el número baje. No se promete lo que no se probó.';
 const critCompareBank=[
-  {a:'Entrenar.',b:'Probar.',
-   ga:'Mostrarle ejemplos con su etiqueta hasta hallar el patrón.',
-   gb:'Examinarla con ejemplos que nunca vio, para ver si aprendió.',
-   gr:'Los dos usan ejemplos, pero no los mismos. Probar dice si entrenar sirvió.'},
-  {a:'Un programa que sigue reglas escritas.',b:'Un programa que aprende de ejemplos.',
-   ga:'Hace lo que una persona escribió, paso por paso.',
-   gb:'Saca la regla de lo que se repite en los ejemplos.',
-   gr:'El primero nunca mejora solo. El segundo reconoce lo nuevo, pero falla con lo que no vio.'},
-  {a:'El error de la máquina.',b:'El sesgo de los ejemplos.',
-   ga:'Las veces que contesta mal, repartidas entre todos.',
-   gb:'Fallar siempre con el mismo grupo, que faltaba en los ejemplos.',
-   gr:'Un 5 % repartido es una cosa. Un 5 % que cae SIEMPRE en la misma aldea es otra.'}
+  {k:'co-reglas',a:'Un programa que sigue reglas escritas.',b:'Un programa que aprende de ejemplos.',ga:'Hace lo que una persona escribió, paso por paso.',gb:'Saca la regla de lo que se repite en los ejemplos.',gr:'El primero nunca mejora solo. El segundo reconoce lo nuevo, pero falla con lo que no vio.'},
 ];
 const critCauseBank=[
-  {cause:'Los ejemplos de entrenar venían de una sola zona.',guide:'Por eso falla en el resto del país, aunque en su zona acierte.'},
-  {cause:'Se probó con los mismos ejemplos del entrenamiento.',guide:'Por eso los números salieron perfectos y no dicen nada.'},
-  {cause:'Una persona etiquetó las fotos con prisa, sin mirarlas.',guide:'Por eso aprendió los errores de esa persona y los repite.'},
-  {cause:'Se juntaron ejemplos de los cuatro cultivos de la zona.',guide:'Por eso reconoce hojas de los cuatro, hasta de fincas nuevas.'},
-  {cause:'Busca lo que se repite y no entiende lo que ve.',guide:'Por eso acierta con lo parecido y se pierde con lo distinto.'}
+  {k:'ca-zona',cause:'Los ejemplos de entrenar venían de una sola zona.',guide:'Por eso falla en el resto del país, aunque en su zona acierte.'},
+  {k:'ca-cuatro',cause:'Se juntaron ejemplos de los cuatro cultivos de la zona.',guide:'Por eso reconoce hojas de los cuatro, hasta de fincas nuevas.'},
 ];
 const critEffectBank=[
-  {effect:'Le dice a un productor que su cultivo está enfermo, y está sano.',guide:'Porque nunca vio hojas de ese cultivo. Es sesgo, no enfermedad.'},
-  {effect:'Un modelo con 95 % de aciertos sigue necesitando revisión.',guide:'Porque ese 5 % son casos reales y le tocan a alguien.'},
-  {effect:'Entrenado con letra de computadora, falla con la letra a mano.',guide:'Porque la letra a mano no estaba en sus ejemplos.'},
-  {effect:'Hay que ponerle nombre a mano a los grupos.',guide:'Porque los juntó por parecido, pero no sabe cómo se llaman.'},
-  {effect:'Juntar y etiquetar datos es lo más lento.',guide:'Porque esa parte no se puede dejar sola sin errores.'}
+  {k:'ef-grupos',effect:'Hay que ponerle nombre a mano a los grupos.',guide:'Porque los juntó por parecido, pero no sabe cómo se llaman.'},
+  {k:'ef-ajedrez',effect:'La máquina de ajedrez perdió millones de partidas antes de jugar bien.',guide:'Porque aprende probando: gana un premio solo cuando le sale bien.'},
+  {k:'ef-explicar',effect:'La máquina no sabe explicar por qué dijo «plaga».',guide:'Porque no entiende la hoja: solo la compara con las que vio.'},
 ];
 function genEvalCrit(){
   sfx('click');

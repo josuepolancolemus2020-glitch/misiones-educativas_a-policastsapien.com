@@ -10,12 +10,12 @@ const EVAL = [
   { q: '¿Qué es una etiqueta?', o: ['El precio del programa', 'Un adorno de la pantalla', 'La respuesta correcta que le pone una persona', 'El nombre de la máquina'], a: 2 },
   { q: '¿Para qué sirve PROBAR con ejemplos nuevos?', o: ['Para saber si aprendió o solo se lo memorizó', 'Para gastar menos batería', 'Para que se entretenga', 'Para hacerla más rápida'], a: 0 },
   { q: 'Se entrenó con maíz, frijol y café. Ve una hoja de plátano.', o: ['La reconoce igual', 'Se apaga', 'La ignora', 'Se puede equivocar: nunca vio una'], a: 3 },
-  { q: '¿Cómo se llama ese fallo?', o: ['Patrón', 'Sesgo', 'Etiqueta', 'Refuerzo'], a: 1 },
   { q: '¿De quién es la responsabilidad de un sesgo?', o: ['De la máquina', 'De nadie', 'De quien eligió los ejemplos', 'Del que la usa'], a: 2 },
-  { q: 'Aprender con ejemplos que ya traen su respuesta se llama…', o: ['Aprendizaje supervisado', 'Aprendizaje por refuerzo', 'Aprendizaje no supervisado', 'Memorización'], a: 0 },
-  { q: 'Junta fotos parecidas y nadie le dice cómo se llaman. Eso es…', o: ['Supervisado', 'Por refuerzo', 'Memorización', 'No supervisado'], a: 3 },
-  { q: 'Un robot gana puntos cuando avanza sin caerse. Eso es…', o: ['Supervisado', 'Aprendizaje por refuerzo', 'No supervisado', 'Un patrón'], a: 1 },
+  { q: 'Junta fotos parecidas y nadie le dice cómo se llaman. Eso es…', o: ['Supervisado', 'No supervisado', 'Memorización', 'Copia'], a: 1 },
+  { q: '¿Qué es un patrón?', o: ['Un error de la máquina', 'El precio de los datos', 'Lo que se repite en muchos ejemplos', 'Una marca mal puesta'], a: 2 },
   { q: 'La máquina acierta 9 de cada 10. ¿Qué hay que preguntarse?', o: ['Nada, está muy bien', 'Si se puede apagar', 'Cuánto cuesta', 'A quién le toca ese error'], a: 3 },
+  { q: 'Las fotos se marcaron con prisa, sin mirarlas. ¿Qué pasa?', o: ['La máquina aprende esos errores', 'La máquina las corrige sola', 'No pasa nada', 'Aprende más rápido'], a: 0 },
+  { q: 'Un robot gana puntos cuando avanza sin caerse. ¿Cómo aprende?', o: ['Con premios, probando', 'Leyendo un libro', 'Con fotos de otros robots', 'Sin hacer nada'], a: 0 },
 ];
 
 const CICLO = [
