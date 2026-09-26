@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La taxonomía es la ciencia que identifica, nombra y clasifica a los seres vivos.',a:true},
-  {q:'Robert Whittaker propuso los cinco reinos en 1969.',a:true},
-  {q:'Las bacterias pertenecen al reino Protista.',a:false},
-  {q:'Los seres autótrofos fabrican su propio alimento.',a:true},
-  {q:'El reino es el grupo más pequeño de la clasificación.',a:false},
-  {q:'Los hongos, como las setas y los mohos, pertenecen al reino Fungi.',a:true},
-  {q:'Las plantas son seres heterótrofos que comen otros seres vivos.',a:false},
-  {q:'La ameba y el paramecio pertenecen al reino Protista.',a:true},
-  {q:'El ser humano pertenece al reino Animalia.',a:true},
-  {q:'Los seres unicelulares están formados por muchas células.',a:false},
-  {q:'Los hongos fabrican su alimento por fotosíntesis, igual que las plantas.',a:false},
-  {q:'La célula procariota no tiene núcleo definido.',a:true},
-  {q:'Los animales invertebrados tienen columna vertebral.',a:false},
-  {q:'El nombre científico se escribe con el género y la especie, como Homo sapiens.',a:true},
-  {q:'Las plantas producen gran parte del oxígeno que respiramos.',a:true},
+  {q:'Los seres vivos se ordenan del grupo más grande al más pequeño.',a:true,k:'tf-orden'},
+  {q:'Carlos Linneo creó el sistema moderno de clasificación.',a:true,k:'tf-linneo'},
+  {q:'Las bacterias fueron los primeros seres vivos de la Tierra.',a:true,k:'tf-primeros'},
+  {q:'Todas las bacterias son dañinas.',a:false,k:'tf-daninas'},
+  {q:'Los hongos hacen fotosíntesis, igual que las plantas.',a:false,k:'tf-hongo-fotosintesis'},
+  {q:'El ser humano pertenece al mismo reino que los hongos.',a:false,k:'tf-humano-hongo'},
+  {q:'Los hongos pueden ser de una sola célula o de muchas.',a:true,k:'tf-hongo-celulas'},
+  {q:'Algunas algas producen gran parte del oxígeno del planeta.',a:true,k:'tf-algas'},
+  {q:'Los animales no tienen pared celular.',a:true,k:'tf-sin-pared'},
+  {q:'Un ser que vive en el agua siempre es un pez.',a:false,k:'tf-agua-pez'}
 ];
 const evalMCBank=[
-  {q:'¿Cómo se llama la ciencia que clasifica y nombra a los seres vivos?',o:['a) Biología','b) Taxonomía','c) Ecología','d) Geología'],a:1},
-  {q:'¿Cuántos reinos propuso Robert Whittaker en 1969?',o:['a) Tres','b) Cuatro','c) Cinco','d) Seis'],a:2},
-  {q:'¿A qué reino pertenecen las bacterias?',o:['a) Protista','b) Fungi','c) Monera','d) Animalia'],a:2},
-  {q:'¿Qué reino reúne a los hongos, las setas y los mohos?',o:['a) Fungi','b) Plantae','c) Monera','d) Protista'],a:0},
-  {q:'¿Cuál es el grupo MÁS PEQUEÑO de la clasificación?',o:['a) El reino','b) La familia','c) El género','d) La especie'],a:3},
-  {q:'¿Qué reino está formado por seres pluricelulares y autótrofos?',o:['a) Plantae','b) Animalia','c) Fungi','d) Monera'],a:0},
-  {q:'La ameba, el paramecio y las algas pertenecen al reino…',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],a:1},
-  {q:'¿Qué significa que un ser vivo sea "autótrofo"?',o:['a) Que se mueve','b) Que come otros seres','c) Que es unicelular','d) Que fabrica su propio alimento'],a:3},
-  {q:'¿A qué reino pertenece el ser humano?',o:['a) Plantae','b) Protista','c) Animalia','d) Fungi'],a:2},
-  {q:'¿Qué caracteriza a una célula procariota?',o:['a) No tiene núcleo definido','b) Tiene muchos organelos','c) Hace fotosíntesis','d) Es muy grande'],a:0},
-  {q:'¿Cuál de estos seres vivos es un descomponedor típico?',o:['a) El pino','b) El hongo','c) El águila','d) El pez'],a:1},
-  {q:'¿Qué grupo de animales tiene columna vertebral?',o:['a) Invertebrados','b) Insectos','c) Moluscos','d) Vertebrados'],a:3},
-  {q:'¿De qué está hecha la pared celular de los hongos?',o:['a) Celulosa','b) Proteína','c) Quitina','d) Grasa'],a:2},
-  {q:'¿Qué reino fue el primero en aparecer en la Tierra?',o:['a) Monera','b) Animalia','c) Plantae','d) Fungi'],a:0},
-  {q:'¿Cómo se escribe el nombre científico del ser humano?',o:['a) Ser humano','b) Homo sapiens','c) Humano común','d) Persona sapiens'],a:1},
+  {q:'¿A qué reino pertenece la bacteria del yogur?',o:['a) Protista','b) Fungi','c) Monera','d) Animalia'],a:2,k:'mc-yogur'},
+  {q:'¿A qué reino pertenecen la ameba y el paramecio?',o:['a) Monera','b) Protista','c) Plantae','d) Fungi'],a:1,k:'mc-ameba'},
+  {q:'¿A qué reino pertenece un champiñón?',o:['a) Fungi','b) Plantae','c) Monera','d) Protista'],a:0,k:'mc-champinon'},
+  {q:'¿Qué nivel de la clasificación viene justo después del reino?',o:['a) El filo','b) El género','c) La familia','d) La especie'],a:0,k:'mc-filo'},
+  {q:'¿Cuál es el nombre científico del ser humano?',o:['a) Humano común','b) Persona sapiens','c) Humano racional','d) Homo sapiens'],a:3,k:'mc-homo-sapiens'},
+  {q:'¿Qué pregunta NO sirve para saber a qué reino pertenece un ser vivo?',o:['a) ¿Cuántas células tiene?','b) ¿Cómo se alimenta?','c) ¿De qué color es?','d) ¿Qué tipo de célula tiene?'],a:2,k:'mc-color'},
+  {q:'¿Qué se hace con las levaduras?',o:['a) Vidrio','b) Queso y otros alimentos','c) Papel','d) Jabón'],a:1,k:'mc-levaduras'},
+  {q:'¿Qué necesitaba don Tulio para salvar su milpa?',o:['a) Más veneno para insectos','b) Regar más','c) Sembrar otra vez','d) Un remedio contra hongos'],a:3,k:'mc-tulio'},
+  {q:'¿Qué tienen en común las plantas y los animales?',o:['a) Los dos son pluricelulares','b) Los dos fabrican su alimento','c) Los dos tienen pared celular','d) Los dos se desplazan'],a:0,k:'mc-pluricelulares'},
+  {q:'¿Cuál de estos animales NO tiene columna?',o:['a) El pez','b) La rana','c) El caracol','d) El perro'],a:2,k:'mc-caracol'}
 ];
 const evalCPBank=[
-  {q:'La ___ es la ciencia que identifica, nombra y clasifica a los seres vivos.',a:'taxonomía'},
-  {q:'El reino de las bacterias se llama reino ___.',a:'Monera'},
-  {q:'Un ser ___ fabrica su propio alimento por fotosíntesis.',a:'autótrofo'},
-  {q:'Un ser ___ obtiene su alimento de otros seres vivos.',a:'heterótrofo'},
-  {q:'Los hongos, las setas y los mohos pertenecen al reino ___.',a:'Fungi'},
-  {q:'El grupo más pequeño de la clasificación es la ___.',a:'especie'},
-  {q:'La ameba y las algas pertenecen al reino ___.',a:'Protista'},
-  {q:'El ser humano pertenece al reino ___.',a:'Animalia'},
-  {q:'Las plantas fabrican su alimento mediante la ___.',a:'fotosíntesis'},
-  {q:'Las bacterias son seres ___ porque tienen una sola célula.',a:'unicelulares'},
-  {q:'Los animales con columna vertebral se llaman ___.',a:'vertebrados'},
-  {q:'La pared celular de los hongos está hecha de ___.',a:'quitina'},
-  {q:'El biólogo ___ propuso los cinco reinos en 1969.',a:'Whittaker'},
-  {q:'El nombre científico de los seres vivos se escribe en ___.',a:'latín'},
-  {q:'Los hongos y bacterias que reciclan restos muertos se llaman ___.',a:'descomponedores'},
+  {q:'La pared de los hongos está hecha de ___.',a:'quitina',acc:['quitina'],k:'cp-quitina'},
+  {q:'Los seres que fabrican su propio alimento se llaman ___.',a:'autótrofos',acc:['autótrofos','autotrofos','autótrofo','autotrofo'],k:'cp-autotrofos'},
+  {q:'Un ser formado por una sola célula es ___.',a:'unicelular',acc:['unicelular'],k:'cp-unicelular'},
+  {q:'La pared de las plantas está hecha de ___.',a:'celulosa',acc:['celulosa'],k:'cp-celulosa'},
+  {q:'El biólogo que propuso los cinco reinos se llamaba Robert ___.',a:'Whittaker',acc:['Whittaker','Whitaker'],k:'cp-whittaker'},
+  {q:'Los animales con columna se llaman ___.',a:'vertebrados',acc:['vertebrados'],k:'cp-vertebrados'},
+  {q:'El nombre científico se escribe en ___.',a:'latín',acc:['latín','latin'],k:'cp-latin'},
+  {q:'Los hongos que reciclan los restos de seres muertos se llaman ___.',a:'descomponedores',acc:['descomponedores'],k:'cp-descomponedores'},
+  {q:'Las plantas fabrican su alimento gracias a la ___ de sus cloroplastos.',a:'clorofila',acc:['clorofila'],k:'cp-clorofila'},
+  {q:'Los hongos que crecen en el pan viejo se llaman ___.',a:'mohos',acc:['mohos','moho'],k:'cp-mohos'}
 ];
 const evalPRBank=[
-  {term:'Taxonomía',def:'Ciencia que identifica, nombra y clasifica a los seres vivos'},
-  {term:'Reino',def:'Grupo más grande de la clasificación de los seres vivos'},
-  {term:'Especie',def:'Grupo más pequeño de la clasificación'},
-  {term:'Monera',def:'Reino de las bacterias (unicelular y procariota)'},
-  {term:'Protista',def:'Reino de la ameba, el paramecio y las algas'},
-  {term:'Fungi',def:'Reino de los hongos, las setas y los mohos'},
-  {term:'Plantae',def:'Reino de las plantas, autótrofas por fotosíntesis'},
-  {term:'Animalia',def:'Reino de los animales, incluido el ser humano'},
-  {term:'Autótrofo',def:'Ser vivo que fabrica su propio alimento'},
-  {term:'Heterótrofo',def:'Ser vivo que obtiene su alimento de otros seres'},
-  {term:'Procariota',def:'Célula sin núcleo definido, como las bacterias'},
-  {term:'Eucariota',def:'Célula con núcleo definido'},
-  {term:'Vertebrado',def:'Animal que tiene columna vertebral'},
-  {term:'Descomponedor',def:'Ser vivo que recicla los restos de seres muertos'},
-  {term:'Nombre científico',def:'Nombre en latín formado por el género y la especie'},
+  {term:'Monera',def:'Los seres más pequeños y sencillos, sin núcleo',k:'pr-monera'},
+  {term:'Protista',def:'El reino más variado; casi todos viven en el agua',k:'pr-protista'},
+  {term:'Fungi',def:'Durante mucho tiempo se creyó que eran plantas',k:'pr-fungi'},
+  {term:'Plantae',def:'Fabrican su alimento con la luz del Sol',k:'pr-plantae'},
+  {term:'Animalia',def:'Se desplazan y buscan su alimento',k:'pr-animalia'},
+  {term:'Taxonomía',def:'Ciencia que ordena y nombra a los seres vivos',k:'pr-taxonomia'},
+  {term:'Especie',def:'Seres tan parecidos que tienen hijos fértiles entre sí',k:'pr-especie'},
+  {term:'Heterótrofo',def:'No puede fabricar su propio alimento',k:'pr-heterotrofo'},
+  {term:'Eucariota',def:'Célula que sí tiene núcleo',k:'pr-eucariota'},
+  {term:'Taxón',def:'Cada nivel de la clasificación',k:'pr-taxon'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,11 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'Pedro observa un ser vivo que crece sobre un tronco húmedo: no es de color verde, no se mueve y parece alimentarse de la madera muerta que va descomponiendo.'},
-  {txt:'En un pan olvidado aparece una mancha aterciopelada que crece día a día. No tiene hojas ni raíces y se nutre del propio pan.'},
-  {txt:'María encuentra en el bosque unas "sombrillitas" que brotan del suelo tras la lluvia. No son verdes y crecen sobre hojas en descomposición.'},
-  {txt:'Un estudiante examina un ser vivo eucariota, con pared de quitina, que no tiene clorofila y absorbe el alimento del lugar donde vive.'},
-  {txt:'Sobre una fruta podrida se ve crecer una pelusa blanca y esponjosa que se alimenta de la fruta y ayuda a descomponerla.'},
-  {txt:'En un frasco de laboratorio, una levadura se reproduce en la masa del pan y transforma sus azúcares sin usar la luz del sol.'},
+  {k:'ca-tronco',txt:'Pedro observa un ser vivo que crece sobre un tronco húmedo: no es de color verde, no se mueve y parece alimentarse de la madera muerta que va descomponiendo.'},
+  {k:'ca-pan',txt:'En un pan olvidado aparece una mancha aterciopelada que crece día a día. No tiene hojas ni raíces y se nutre del propio pan.'},
+  {k:'ca-sombrillitas',txt:'María encuentra en el bosque unas "sombrillitas" que brotan del suelo tras la lluvia. No son verdes y crecen sobre hojas en descomposición.'},
+  {k:'ca-quitina',txt:'Un estudiante examina un ser vivo eucariota, con pared de quitina, que no tiene clorofila y absorbe el alimento del lugar donde vive.'},
+  {k:'ca-fruta',txt:'Sobre una fruta podrida se ve crecer una pelusa blanca y esponjosa que se alimenta de la fruta y ayuda a descomponerla.'},
 ];
 const critCaseQuestions=[
   '1. ¿A qué reino pertenece este ser vivo? Justifica tu respuesta.',
@@ -520,19 +504,13 @@ const critCaseGuides=[
   'Es un descomponedor: recicla los restos de seres muertos y devuelve los nutrientes al suelo, manteniendo el equilibrio de la naturaleza.',
 ];
 const critErrorBank=[
-  {txt:'"Las bacterias pertenecen al reino Fungi porque son muy pequeñas y se ven con el microscopio."',
+  {k:'er-bacterias-fungi',txt:'"Las bacterias pertenecen al reino Fungi porque son muy pequeñas y se ven con el microscopio."',
    g1:'Las bacterias pertenecen al reino MONERA, no al reino Fungi.',
    g2:'El tamaño no define el reino: lo definen el tipo de célula (procariota) y la forma de nutrición.'},
-  {txt:'"Los hongos son plantas porque no se mueven y viven fijos sobre el suelo o los troncos."',
-   g1:'Los hongos forman su propio reino, el reino Fungi; no son plantas.',
-   g2:'No hacen fotosíntesis: son heterótrofos y su pared celular es de quitina, no de celulosa.'},
-  {txt:'"Todos los seres del reino Monera son pluricelulares y tienen células eucariotas con núcleo."',
-   g1:'El reino Monera está formado por seres UNIcelulares.',
-   g2:'Sus células son procariotas (sin núcleo definido), no eucariotas.'},
-  {txt:'"Las plantas son heterótrofas porque toman agua y sales minerales del suelo para vivir."',
+  {k:'er-plantas-heterotrofas',txt:'"Las plantas son heterótrofas porque toman agua y sales minerales del suelo para vivir."',
    g1:'Las plantas son AUTÓTROFAS: fabrican su propio alimento mediante la fotosíntesis.',
    g2:'Tomar agua y sales no es alimentarse; su alimento (glucosa) lo fabrican ellas mismas con la luz.'},
-  {txt:'"El ser humano pertenece al reino Plantae porque es un ser vivo grande y complejo."',
+  {k:'er-humano-plantae',txt:'"El ser humano pertenece al reino Plantae porque es un ser vivo grande y complejo."',
    g1:'El ser humano pertenece al reino ANIMALIA.',
    g2:'Es pluricelular, heterótrofo y se desplaza; las plantas, en cambio, son autótrofas y viven fijas.'},
 ];
@@ -545,31 +523,22 @@ const critDecisionBank=[
 ];
 const critDecisionGuide='Los hongos (reino Fungi) y muchas bacterias (reino Monera) son DESCOMPONEDORES: reciclan los restos de seres muertos y devuelven los nutrientes al suelo. Sin ellos, la materia muerta se acumula y las plantas se quedan sin nutrientes. Por eso todos los reinos cumplen un papel en el equilibrio de la naturaleza; conviene cuidarlos y no eliminarlos por completo.';
 const critCompareBank=[
-  {a:'Un ser vivo unicelular, sin núcleo definido, con su ADN suelto en el citoplasma.',b:'Un ser vivo pluricelular, con núcleo, que fabrica su alimento con la luz del sol.',
+  {k:'co-bacteria-planta',a:'Un ser vivo unicelular, sin núcleo definido, con su ADN suelto en el citoplasma.',b:'Un ser vivo de muchas células, con núcleo, que no se mueve y tiene raíces.',
    ga:'Una bacteria (reino Monera).',
    gb:'Una planta (reino Plantae).',
    gr:'Pertenecen a reinos distintos: se diferencian por el nº de células, el tipo de célula y la forma de nutrición.'},
-  {a:'Un ser vivo que absorbe su alimento de la materia muerta y tiene pared de quitina.',b:'Un ser vivo que se desplaza para buscar y comer a otros seres vivos.',
-   ga:'Un hongo (reino Fungi).',
-   gb:'Un animal (reino Animalia).',
-   gr:'Ambos son heterótrofos, pero el hongo absorbe su alimento y el animal lo captura y lo digiere.'},
-  {a:'Un organismo unicelular eucariota que vive en el agua, como la ameba.',b:'Un organismo unicelular procariota, sin núcleo definido, como una bacteria.',
-   ga:'Un protista (reino Protista).',
-   gb:'Una bacteria (reino Monera).',
-   gr:'Los dos son unicelulares, pero el protista es eucariota (con núcleo) y la bacteria es procariota (sin núcleo).'},
 ];
 const critCauseBank=[
-  {cause:'Desaparecen todos los hongos y bacterias descomponedores de un ecosistema.',guide:'Los restos de seres muertos se acumulan y los nutrientes no regresan al suelo.'},
-  {cause:'Se extinguen todas las plantas de un lugar.',guide:'Los animales se quedan sin oxígeno ni alimento y las cadenas alimenticias se rompen.'},
-  {cause:'Las algas del reino Protista que viven en el mar desaparecen.',guide:'Se reduce gran parte del oxígeno del planeta, porque esas algas lo producen.'},
-  {cause:'Un animal deja de encontrar otros seres vivos de qué alimentarse.',guide:'Como es heterótrofo y no fabrica su alimento, se debilita y puede morir.'},
+  {k:'cau-plantas',cause:'Se extinguen todas las plantas de un lugar.',guide:'Los animales se quedan sin oxígeno ni alimento y las cadenas alimenticias se rompen.'},
+  {k:'cau-algas',cause:'Las algas que viven en el mar desaparecen.',guide:'Se reduce gran parte del oxígeno del planeta, porque esas algas lo producen.'},
+  {k:'cau-animal',cause:'Un animal deja de encontrar de qué alimentarse.',guide:'Como no fabrica su alimento, se debilita y puede morir.'},
 ];
 const critEffectBank=[
-  {effect:'En un tronco húmedo crece un ser vivo que no es verde y absorbe la madera muerta.',guide:'Es un hongo (reino Fungi): heterótrofo y descomponedor.'},
-  {effect:'Un ser vivo unicelular sobrevive sin tener un núcleo definido.',guide:'Es una bacteria del reino Monera: su célula es procariota.'},
-  {effect:'Una planta crece sana y bien verde en un jardín soleado.',guide:'Sus cloroplastos hacen fotosíntesis con la luz del sol (nutrición autótrofa).'},
-  {effect:'Una ameba se desplaza en una gota de agua y captura su alimento.',guide:'Es un protista (reino Protista): eucariota, unicelular y heterótrofo.'},
+  {k:'ef-planta-verde',effect:'Una planta crece sana y bien verde en un jardín soleado.',guide:'Fabrica su propio alimento con la luz: es autótrofa.'},
+  {k:'ef-ameba',effect:'Una ameba se desplaza en una gota de agua y captura su alimento.',guide:'Es un protista: vive en el agua y es de una sola célula.'},
+  {k:'ef-masa-pan',effect:'La masa del pan crece y se esponja.',guide:'Lo hacen las levaduras, que son hongos.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
