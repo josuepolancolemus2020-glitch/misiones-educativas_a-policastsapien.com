@@ -190,134 +190,134 @@
         '<h3>I. Fill in the blanks <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>The robot’s list of exact instructions is called the <span class="linea-resp"></span>.</li>' +
-        '<li>The robot cycle is: read the sensors, decide, move the actuators and <span class="linea-resp"></span>.</li>' +
-        '<li>To repeat a block many times you use a <span class="linea-resp"></span>.</li>' +
-        '<li>The IF… THEN… ELSE block is called a <span class="linea-resp"></span>.</li>' +
-        '<li>The little box where the robot stores a number is called a <span class="linea-resp"></span>.</li>' +
-        '<li>The program written in plain language before loading it is the <span class="linea-resp"></span>.</li>' +
-        '<li>Finding and fixing the mistakes in the program is called <span class="linea-resp"></span>.</li>' +
-        '<li>The <span class="linea-resp"></span> sensor tells the black apart from the light floor.</li>' +
-        '<li>The <span class="linea-resp"></span> carry out the order: motors and wheels.</li>' +
-        '<li>When the robot reaches the goal, the program ends with the instruction <span class="linea-resp"></span>.</li>' +
+        '<li>In the story, the robot crashed on the <span class="linea-resp"></span> step.</li>' +
+        '<li>The robot was useless for the <span class="linea-resp"></span> the next day.</li>' +
+        '<li>To go from A5 to A1 in a straight line, the robot needs <span class="linea-resp"></span> FORWARD instructions.</li>' +
+        '<li>The watering robot reads the <span class="linea-resp"></span> sensor to know whether the soil is dry.</li>' +
+        '<li>If the soil is dry, the watering robot opens the <span class="linea-resp"></span>.</li>' +
+        '<li>The color sensor tells the <span class="linea-resp"></span> line apart from the light floor.</li>' +
+        '<li>In the notebook, each written step goes on its own line and is <span class="linea-resp"></span>.</li>' +
+        '<li>The robot’s cycle keeps going as long as it has <span class="linea-resp"></span>.</li>' +
+        '<li>TURN changes the robot’s direction, but it does not move it to another <span class="linea-resp"></span>.</li>' +
+        '<li>To count bottles, the robot writes objects = objects + <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
 
         '<ol>' +
-        '<li>____ The program is the list of exact instructions the robot runs step by step.</li>' +
+        '<li>____ When the robot crashes, the mistake is almost always in the program and not in the machine.</li>' +
         '<li>____ The robot guesses what the programmer meant to say.</li>' +
-        '<li>____ A loop is used to repeat a block of instructions.</li>' +
-        '<li>____ The TURN RIGHT instruction moves the robot one square ahead.</li>' +
-        '<li>____ A conditional chooses between two paths depending on what the sensor reads.</li>' +
-        '<li>____ A variable stores a number, such as how many times the robot turned.</li>' +
-        '<li>____ Pseudocode is written after loading the program into the robot.</li>' +
-        '<li>____ A loop that never ends causes no problem at all.</li>' +
-        '<li>____ Debugging is finding and fixing the mistakes in the program.</li>' +
-        '<li>____ If the final instruction is missing, the robot works out when to stop on its own.</li>' +
+        '<li>____ A program with sensors still works if the obstacles are moved around.</li>' +
+        '<li>____ Written steps are fine even if another person has to ask you what you meant.</li>' +
+        '<li>____ In the watering robot’s written steps, the plant count starts at zero.</li>' +
+        '<li>____ The motors and wheels are the ones that read the sensors.</li>' +
+        '<li>____ The robot moves toward the way it is facing.</li>' +
+        '<li>____ The simulator robot can move diagonally.</li>' +
+        '<li>____ In the simulator, the robot shows ✔ when the sensor answers yes.</li>' +
+        '<li>____ A robot with a full battery no longer needs a program.</li>' +
         '</ol>' +
 
         '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">1</span>What is a robot’s program?</div>' +
+        '<div class="preg-q"><span class="preg-n">1</span>The robot has to move forward seven times in a row. What is best to write?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> its battery</span>' +
-        '<span class="op"><i>b</i> the list of exact instructions it runs step by step</span>' +
-        '<span class="op"><i>c</i> its metal shell</span>' +
-        '<span class="op"><i>d</i> the name its owner gave it</span>' +
+        '<span class="op"><i>a</i> Seven sensors</span>' +
+        '<span class="op"><i>b</i> FORWARD just once</span>' +
+        '<span class="op"><i>c</i> REPEAT 7 TIMES: FORWARD</span>' +
+        '<span class="op"><i>d</i> TURN seven times</span>' +
         '</div>' +
         '</div>',
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">2</span>What is the cycle of a programmed robot?</div>' +
+        '<div class="preg-q"><span class="preg-n">2</span>What is the first step of a robot’s cycle?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> sleep → dream → wake up</span>' +
-        '<span class="op"><i>b</i> act → switch off → charge</span>' +
-        '<span class="op full"><i>c</i> read the sensors → decide → move the actuators → repeat</span>' +
-        '<span class="op"><i>d</i> turn → turn → turn</span>' +
+        '<span class="op"><i>a</i> Reading its sensors</span>' +
+        '<span class="op"><i>b</i> Moving the wheels</span>' +
+        '<span class="op"><i>c</i> Switching off</span>' +
+        '<span class="op"><i>d</i> Erasing the program</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">3</span>The robot has to move forward 8 equal squares. Which block is best to use?</div>' +
+        '<div class="preg-q"><span class="preg-n">3</span>There is a crate right ahead. With «IF there is a wall ahead THEN TURN RIGHT, ELSE FORWARD», what does the robot do?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a loop: repeat 8 times FORWARD</span>' +
-        '<span class="op"><i>b</i> a variable</span>' +
-        '<span class="op"><i>c</i> a color sensor</span>' +
-        '<span class="op"><i>d</i> the WAIT instruction</span>' +
+        '<span class="op"><i>a</i> It moves forward and crashes</span>' +
+        '<span class="op"><i>b</i> It jumps over the crate</span>' +
+        '<span class="op"><i>c</i> It stops forever</span>' +
+        '<span class="op"><i>d</i> It turns without touching the crate</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">4</span>«IF the wall sensor detects an obstacle THEN turn, ELSE go forward» is…</div>' +
+        '<div class="preg-q"><span class="preg-n">4</span>When you look for the mistake, how much should you change in each test?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a loop</span>' +
-        '<span class="op"><i>b</i> a variable</span>' +
-        '<span class="op"><i>c</i> an actuator</span>' +
-        '<span class="op"><i>d</i> a conditional</span>' +
+        '<span class="op"><i>a</i> The whole program</span>' +
+        '<span class="op"><i>b</i> One single instruction</span>' +
+        '<span class="op"><i>c</i> Nothing</span>' +
+        '<span class="op"><i>d</i> The robot</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">5</span>What is a variable for in the program?</div>' +
+        '<div class="preg-q"><span class="preg-n">5</span>In the watering robot’s steps, what does the robot do if the soil is NOT dry?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> for moving the wheels</span>' +
-        '<span class="op"><i>b</i> for storing a number, such as how many times it turned</span>' +
-        '<span class="op"><i>c</i> for charging the battery</span>' +
-        '<span class="op"><i>d</i> for painting the robot</span>' +
+        '<span class="op"><i>a</i> It waters the plant</span>' +
+        '<span class="op"><i>b</i> It switches off</span>' +
+        '<span class="op"><i>c</i> It continues on its way</span>' +
+        '<span class="op"><i>d</i> It goes back to the start</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">6</span>What is pseudocode?</div>' +
+        '<div class="preg-q"><span class="preg-n">6</span>A line follower with «REPEAT FOREVER» reaches the goal. What happens?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> a broken-down robot</span>' +
-        '<span class="op"><i>b</i> a secret language machines speak</span>' +
-        '<span class="op full"><i>c</i> the program written in plain language before loading it</span>' +
-        '<span class="op"><i>d</i> a special sensor</span>' +
+        '<span class="op"><i>a</i> It goes straight past and off the table</span>' +
+        '<span class="op"><i>b</i> It stops by itself</span>' +
+        '<span class="op"><i>c</i> It goes back to the start</span>' +
+        '<span class="op"><i>d</i> It switches off</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">7</span>The robot crashed into the wall. What has to be done?</div>' +
+        '<div class="preg-q"><span class="preg-n">7</span>In the story of the robot that crashed, what was the mistake?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op full"><i>a</i> debug: check the program step by step and fix it</span>' +
-        '<span class="op"><i>b</i> give the robot a new name</span>' +
-        '<span class="op"><i>c</i> move the wall somewhere else</span>' +
-        '<span class="op"><i>d</i> switch the sensors off for good</span>' +
+        '<span class="op"><i>a</i> The order was badly written</span>' +
+        '<span class="op"><i>b</i> It looked just once and went on blindly</span>' +
+        '<span class="op"><i>c</i> The battery was flat</span>' +
+        '<span class="op"><i>d</i> The sensor was backwards</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">8</span>Which instruction changes the robot’s direction without moving it off its square?</div>' +
+        '<div class="preg-q"><span class="preg-n">8</span>With «REPEAT WHILE there is no obstacle: FORWARD», when does the robot stop moving forward?</div>' +
+        '<div class="preg-ops">' +
+        '<span class="op"><i>a</i> Never</span>' +
+        '<span class="op"><i>b</i> On the second step</span>' +
+        '<span class="op"><i>c</i> When it runs out of paper</span>' +
+        '<span class="op"><i>d</i> When something appears ahead</span>' +
+        '</div>' +
+        '</div>' +
+
+        '<div class="preg">' +
+        '<div class="preg-q"><span class="preg-n">9</span>The robot has to wait for the teacher’s signal before leaving. Which instruction goes first?</div>' +
         '<div class="preg-ops">' +
         '<span class="op"><i>a</i> FORWARD</span>' +
         '<span class="op"><i>b</i> WAIT</span>' +
-        '<span class="op"><i>c</i> TURN LEFT</span>' +
-        '<span class="op"><i>d</i> STOP</span>' +
+        '<span class="op"><i>c</i> STOP</span>' +
+        '<span class="op"><i>d</i> TURN LEFT</span>' +
         '</div>' +
         '</div>' +
 
         '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">9</span>Which sensor does a robot use to follow the line in the school hallway?</div>' +
+        '<div class="preg-q"><span class="preg-n">10</span>The robot is facing North and gets TURN RIGHT. Which way is it facing now?</div>' +
         '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> the moisture sensor</span>' +
-        '<span class="op"><i>b</i> the line (color) sensor</span>' +
-        '<span class="op"><i>c</i> the sound sensor</span>' +
-        '<span class="op"><i>d</i> the temperature sensor</span>' +
-        '</div>' +
-        '</div>' +
-
-        '<div class="preg">' +
-        '<div class="preg-q"><span class="preg-n">10</span>A loop that never ends…</div>' +
-        '<div class="preg-ops">' +
-        '<span class="op"><i>a</i> makes the robot faster</span>' +
-        '<span class="op"><i>b</i> saves battery</span>' +
-        '<span class="op"><i>c</i> is the best way to program</span>' +
-        '<span class="op"><i>d</i> is a mistake: the robot never reaches the goal</span>' +
+        '<span class="op"><i>a</i> South</span>' +
+        '<span class="op"><i>b</i> West</span>' +
+        '<span class="op"><i>c</i> East</span>' +
+        '<span class="op"><i>d</i> North</span>' +
         '</div>' +
         '</div>',
 
@@ -327,16 +327,16 @@
 
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
-        '<tr><td>1. ____ Program</td><td>A. IF the sensor detects something, THEN…, ELSE…</td></tr>' +
-        '<tr><td>2. ____ Loop</td><td>B. The program written in plain language, before loading it</td></tr>' +
-        '<tr><td>3. ____ Conditional</td><td>C. A wrong instruction, or one out of order, that makes the robot fail</td></tr>' +
-        '<tr><td>4. ____ Variable</td><td>D. The list of exact instructions the robot runs step by step</td></tr>' +
-        '<tr><td>5. ____ Pseudocode</td><td>E. It tells the black line apart from the light floor</td></tr>' +
-        '<tr><td>6. ____ Debug</td><td>F. It moves the robot one square ahead</td></tr>' +
-        '<tr><td>7. ____ Bug</td><td>G. It repeats a block of instructions several times</td></tr>' +
-        '<tr><td>8. ____ Line sensor</td><td>H. The final instruction: the robot stays still on the goal</td></tr>' +
-        '<tr><td>9. ____ FORWARD</td><td>I. A little box with a name where the robot stores a number</td></tr>' +
-        '<tr><td>10. ____ STOP</td><td>J. To find and fix the mistakes in the program</td></tr>' +
+        '<tr><td>1. ____ Program</td><td>A. The steps in plain language, before loading them into the robot</td></tr>' +
+        '<tr><td>2. ____ Loop</td><td>B. Motor or wheel that carries out the order</td></tr>' +
+        '<tr><td>3. ____ Branch</td><td>C. List of exact instructions the robot carries out step by step</td></tr>' +
+        '<tr><td>4. ____ Variable</td><td>D. A number that goes up every time the robot picks something up</td></tr>' +
+        '<tr><td>5. ____ Pseudocode</td><td>E. Each of the two paths of an IF… ELSE</td></tr>' +
+        '<tr><td>6. ____ Debug</td><td>F. Final instruction: the robot stays still on the goal</td></tr>' +
+        '<tr><td>7. ____ Bug</td><td>G. Find and fix the mistakes in the program</td></tr>' +
+        '<tr><td>8. ____ Actuator</td><td>H. Repeats a block of instructions several times</td></tr>' +
+        '<tr><td>9. ____ STOP</td><td>I. A labeled little box where a number is kept</td></tr>' +
+        '<tr><td>10. ____ Counter</td><td>J. A wrong or out-of-order instruction that makes the robot fail</td></tr>' +
         '</table>' +
 
         '<div class="felic">' +
@@ -367,10 +367,10 @@
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +
-        '<div><span class="pt">I. Fill in:</span> 1. program &nbsp; 2. repeat &nbsp; 3. loop &nbsp; 4. conditional &nbsp; 5. variable &nbsp; 6. pseudocode &nbsp; 7. debugging &nbsp; 8. line &nbsp; 9. actuators &nbsp; 10. STOP</div>' +
-        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6T, 7F, 8F, 9T, 10F</div>' +
-        '<div><span class="pt">III. Multiple choice:</span> 1b, 2c, 3a, 4d, 5b, 6c, 7a, 8c, 9b, 10d</div>' +
-        '<div><span class="pt">IV. Matching:</span> 1D, 2G, 3A, 4I, 5B, 6J, 7C, 8E, 9F, 10H</div>' +
+        '<div><span class="pt">I. Fill in:</span> 1. third &nbsp; 2. fair &nbsp; 3. four &nbsp; 4. moisture &nbsp; 5. valve &nbsp; 6. black &nbsp; 7. numbered &nbsp; 8. battery &nbsp; 9. square &nbsp; 10. 1</div>' +
+        '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
+        '<div><span class="pt">III. Multiple choice:</span> 1c, 2a, 3d, 4b, 5c, 6a, 7b, 8d, 9b, 10c</div>' +
+        '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
         '<div><span class="pt">Grid on page 3 (one valid solution):</span> from A5 facing North — ' +
         '1) IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD · 2) the same block · 3) the same block (here the sensor detects the crate on A2 and it turns East) · ' +
         '4) IF THERE IS A LINE → FORWARD, ELSE → TURN RIGHT · 5) the same block · 6) IF THERE IS A LINE → FORWARD, ELSE → TURN LEFT · ' +

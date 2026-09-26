@@ -493,112 +493,65 @@
       ],
 
       evalTFBank: [
-        { q: 'The program is the list of exact instructions the robot runs step by step.', a: true },
-        { q: 'The robot cycle is: read the sensors → decide → move the actuators → repeat.', a: true },
         { q: 'The robot guesses what the programmer meant to say.', a: false },
-        { q: 'A loop is used to repeat a block of instructions.', a: true },
-        { q: 'A conditional chooses between two paths depending on what the sensor reads.', a: true },
-        { q: 'The TURN RIGHT instruction moves the robot two squares ahead.', a: false },
-        { q: 'A variable is a little box with a name where the robot stores a number.', a: true },
-        { q: 'Pseudocode is written after loading the program into the robot.', a: false },
-        { q: 'Debugging is finding and fixing the mistakes in the program.', a: true },
-        { q: 'A loop that never ends causes no problem at all.', a: false },
-        { q: 'The line sensor tells the black line apart from the light floor.', a: true },
-        { q: 'If the final instruction is missing, the robot still knows when to stop.', a: false },
-        { q: 'The robot cycle runs only once and then the robot switches off.', a: false },
-        { q: 'The actuators carry out the order the program sends.', a: true },
-        { q: 'A counter subtracts one every time the robot picks up an object.', a: false }
+        { q: 'When the robot crashes, the mistake is almost always in the program and not in the machine.', a: true },
+        { q: 'A program with sensors still works if the obstacles are moved around.', a: true },
+        { q: 'Written steps are fine even if another person has to ask you what you meant.', a: false },
+        { q: 'In the watering robot’s written steps, the plant count starts at zero.', a: true },
+        { q: 'The robot moves toward the way it is facing.', a: true },
+        { q: 'The motors and wheels are the ones that read the sensors.', a: false },
+        { q: 'The simulator robot can move diagonally.', a: false },
+        { q: 'In the simulator, the robot shows ✔ when the sensor answers yes.', a: true },
+        { q: 'A robot with a full battery no longer needs a program.', a: false }
       ],
 
       evalMCBank: [
-        { q: 'What is a robot’s program?', o: ['a) Its battery', 'b) Its metal shell', 'c) The list of exact instructions it runs step by step', 'd) The name its owner gave it'], a: 2 },
-        { q: 'What is the cycle of a programmed robot?', o: ['a) Sleep → dream → wake up', 'b) Read the sensors → decide → move the actuators → repeat', 'c) Act → switch off → charge', 'd) Turn → turn → turn'], a: 1 },
-        { q: 'The robot has to move forward 8 equal squares. Which block is best to use?', o: ['a) A loop: repeat 8 times FORWARD', 'b) A variable', 'c) A color sensor', 'd) The WAIT instruction'], a: 0 },
-        { q: '«IF the wall sensor detects an obstacle THEN turn, ELSE go forward» is…', o: ['a) A conditional', 'b) A loop', 'c) A variable', 'd) An actuator'], a: 0 },
-        { q: 'What is a variable for in the program?', o: ['a) For moving the wheels', 'b) For storing a number, such as how many times it turned', 'c) For charging the battery', 'd) For painting the robot'], a: 1 },
-        { q: 'What is pseudocode?', o: ['a) The program written in plain language before loading it', 'b) A broken-down robot', 'c) A secret language machines speak', 'd) A special sensor'], a: 0 },
-        { q: 'The robot crashed into the wall. What has to be done?', o: ['a) Give the robot a new name', 'b) Debug: check the program step by step and fix it', 'c) Move the wall somewhere else', 'd) Switch the sensors off for good'], a: 1 },
-        { q: 'Which instruction changes the robot’s direction without moving it off its square?', o: ['a) FORWARD', 'b) WAIT', 'c) TURN LEFT', 'd) STOP'], a: 2 },
-        { q: 'Which sensor does a robot use to follow the line in the school hallway?', o: ['a) The moisture sensor', 'b) The sound sensor', 'c) The line (color) sensor', 'd) The temperature sensor'], a: 2 },
-        { q: 'A loop that never ends…', o: ['a) makes the robot faster', 'b) is a mistake: the robot never reaches the goal', 'c) saves battery', 'd) is the best way to program'], a: 1 },
-        { q: 'What does «the robot does what the program says, not what you meant to say» mean?', o: ['a) That the robot is disobedient', 'b) That the robot invents new instructions', 'c) That the robot needs no program', 'd) That it runs every instruction literally, even a wrong one'], a: 3 },
-        { q: 'Which block does a robot need in order to count how many bottles it picked up in the yard?', o: ['a) A temperature sensor', 'b) The WAIT instruction', 'c) A horn', 'd) A counter variable'], a: 3 },
-        { q: 'What does the WAIT instruction do?', o: ['a) It moves the robot one square', 'b) It repeats the whole program', 'c) It lets time go by without moving the robot', 'd) It erases the program'], a: 2 },
-        { q: 'What is the first step in programming a robot properly?', o: ['a) Writing the pseudocode in plain language', 'b) Pressing buttons at random', 'c) Changing the battery', 'd) Taking its sensors off'], a: 0 },
-        { q: 'In the school garden, which conditional does the watering robot use?', o: ['a) IF it is sunny THEN switch the robot off', 'b) IF there is noise THEN turn', 'c) IF there is a line THEN water', 'd) IF the soil is dry THEN open the water, ELSE keep going'], a: 3 }
+        { q: 'The robot has to move forward seven times in a row. What is best to write?', o: ['a) a) Seven sensors', 'b) b) FORWARD just once', 'c) c) REPEAT 7 TIMES: FORWARD', 'd) d) TURN seven times'], a: 2 },
+        { q: 'What is the first step of a robot’s cycle?', o: ['a) a) Reading its sensors', 'b) b) Moving the wheels', 'c) c) Switching off', 'd) d) Erasing the program'], a: 0 },
+        { q: 'There is a crate right ahead. With «IF there is a wall ahead THEN TURN RIGHT, ELSE FORWARD», what does the robot do?', o: ['a) a) It moves forward and crashes', 'b) b) It jumps over the crate', 'c) c) It stops forever', 'd) d) It turns without touching the crate'], a: 3 },
+        { q: 'When you look for the mistake, how much should you change in each test?', o: ['a) a) The whole program', 'b) b) One single instruction', 'c) c) Nothing', 'd) d) The robot'], a: 1 },
+        { q: 'In the watering robot’s steps, what does the robot do if the soil is NOT dry?', o: ['a) a) It waters the plant', 'b) b) It switches off', 'c) c) It keeps going', 'd) d) It goes back to the start'], a: 2 },
+        { q: 'A line follower with «REPEAT FOREVER» reaches the goal. What happens?', o: ['a) a) It goes straight past and off the table', 'b) b) It stops by itself', 'c) c) It goes back to the start', 'd) d) It switches off'], a: 0 },
+        { q: 'In the story of the robot that crashed, what was the mistake?', o: ['a) a) The order was badly written', 'b) b) It looked just once and went on blindly', 'c) c) The battery was flat', 'd) d) The sensor was backwards'], a: 1 },
+        { q: 'With «REPEAT WHILE there is no obstacle: FORWARD», when does the robot stop moving forward?', o: ['a) a) Never', 'b) b) On the second step', 'c) c) When it runs out of paper', 'd) d) When something appears ahead'], a: 3 },
+        { q: 'The robot has to wait for the teacher’s signal before leaving. Which instruction goes first?', o: ['a) a) FORWARD', 'b) b) WAIT', 'c) c) STOP', 'd) d) TURN LEFT'], a: 1 },
+        { q: 'The robot is facing North and gets TURN RIGHT. Which way is it facing now?', o: ['a) a) South', 'b) b) West', 'c) c) East', 'd) d) North'], a: 2 }
       ],
 
       evalCPBank: [
-        { q: 'The robot’s list of exact instructions is called the ___.', a: 'program' },
-        { q: 'The robot cycle is: read the sensors, decide, move the actuators and ___.', a: 'repeat' },
-        { q: 'To repeat a block many times you use a ___.', a: 'loop' },
-        { q: 'The IF… THEN… ELSE block is called a ___.', a: 'conditional' },
-        { q: 'The little box where the robot stores a number is called a ___.', a: 'variable' },
-        { q: 'The program written in plain language before loading it is the ___.', a: 'pseudocode' },
-        { q: 'Finding and fixing the mistakes in the program is called ___.', a: 'debugging' },
-        { q: 'A mistake in the program is also called a ___.', a: 'bug' },
-        { q: 'The instruction that moves the robot one square ahead is ___.', a: 'forward' },
-        { q: 'The instruction that changes the robot’s direction is ___ right or left.', a: 'turn' },
-        { q: 'The ___ sensor tells the black apart from the light floor.', a: 'line' },
-        { q: 'The ___ sensor reports whether there is an obstacle right ahead.', a: 'wall' },
-        { q: 'The variable that adds one each time is called a ___.', a: 'counter' },
-        { q: 'The ___ carry out the order: motors and wheels.', a: 'actuators' },
-        { q: 'When the robot reaches the goal, the program ends with the ___ instruction.', a: 'stop' }
+        { q: 'In the story, the robot crashed on the ___ step.', a: 'third', acc: ['third', '3rd', '3'] },
+        { q: 'The robot was useless for the ___ the next day.', a: 'fair', acc: ['fair'] },
+        { q: 'To go from A5 to A1 in a straight line, the robot needs ___ FORWARD instructions.', a: 'four', acc: ['four', '4'] },
+        { q: 'The watering robot reads the ___ sensor to know whether the soil is dry.', a: 'moisture', acc: ['moisture', 'humidity'] },
+        { q: 'If the soil is dry, the watering robot opens the ___.', a: 'valve', acc: ['valve'] },
+        { q: 'The color sensor tells the ___ line apart from the light floor.', a: 'black', acc: ['black'] },
+        { q: 'In the notebook, each written step goes on its own line and is ___.', a: 'numbered', acc: ['numbered'] },
+        { q: 'The robot’s cycle keeps going as long as it has ___.', a: 'battery', acc: ['battery', 'power'] },
+        { q: 'TURN changes the robot’s direction, but it does not move it to another ___.', a: 'square', acc: ['square', 'cell', 'place'] },
+        { q: 'To count bottles, the robot writes objects = objects + ___.', a: '1', acc: ['1', 'one'] }
       ],
 
       evalPRBank: [
-        { term: 'Program', def: 'The list of exact instructions the robot runs step by step' },
-        { term: 'Robot cycle', def: 'Read the sensors → decide → move the actuators → repeat' },
-        { term: 'Loop', def: 'It repeats a block of instructions several times' },
-        { term: 'Conditional', def: 'IF the sensor detects something, THEN…, ELSE…' },
-        { term: 'Variable', def: 'A little box with a name where a number is stored' },
-        { term: 'Counter', def: 'A variable that adds one every time something happens' },
-        { term: 'Pseudocode', def: 'The program written in plain language before loading it' },
-        { term: 'Debug', def: 'To find and fix the mistakes in the program' },
-        { term: 'Bug', def: 'A wrong instruction, or one out of order, that makes the robot fail' },
-        { term: 'FORWARD', def: 'It moves the robot one square ahead' },
-        { term: 'TURN RIGHT', def: 'It changes the robot’s direction without changing square' },
-        { term: 'WAIT', def: 'It lets time go by without moving the robot' },
-        { term: 'STOP', def: 'The final instruction: the robot stays still on the goal' },
-        { term: 'Line sensor', def: 'It tells the black line apart from the light floor' },
-        { term: 'Wall sensor', def: 'It reports whether there is an obstacle right ahead' }
+        { term: 'Program', def: 'List of exact instructions the robot carries out step by step' },
+        { term: 'Loop', def: 'Repeats a block of instructions several times' },
+        { term: 'Conditional', def: 'Chooses one branch or another depending on what the sensor reads' },
+        { term: 'Variable', def: 'A labeled little box where a number is kept' },
+        { term: 'Pseudocode', def: 'The steps in plain language, before loading them into the robot' },
+        { term: 'Debug', def: 'Find and fix the mistakes in the program' },
+        { term: 'Bug', def: 'A wrong or out-of-order instruction that makes the robot fail' },
+        { term: 'Actuator', def: 'Motor or wheel that carries out the order' },
+        { term: 'STOP', def: 'Final instruction: the robot stays still on the goal' },
+        { term: 'Counter', def: 'A number that goes up every time the robot picks something up' }
       ],
 
       critFaltaBank: [
-        { txt: 'The robot has to go from A5 to A1 moving forward 4 squares, but the program says: FORWARD · FORWARD · FORWARD · STOP. The robot ends one square short of the goal.', ans: 'One FORWARD instruction is missing (there must be 4 in all) before STOP. It can also be written with a loop: REPEAT 4 TIMES FORWARD and then STOP.' },
-        { txt: 'The line-following robot works fine, but when it reaches the goal it keeps walking and falls off the table. Program: REPEAT FOREVER: IF there is a line THEN FORWARD, ELSE TURN RIGHT.', ans: 'The STOP instruction is missing, and so is the loop’s exit condition («repeat UNTIL you reach the goal»). Without them the loop never ends.' },
-        { txt: 'The robot has to turn at the corner of the hallway, but the program says: FORWARD · FORWARD · FORWARD and the robot crashes into the wall in front of it.', ans: 'A TURN (right or left) is missing before the last FORWARD; better still: use the conditional IF THERE IS A WALL AHEAD THEN TURN RIGHT, ELSE FORWARD.' },
-        { txt: 'The robot picks up bottles in the yard, but in the end it always says it collected 0 objects. Program: REPEAT: IF there is an object THEN PICK IT UP.', ans: 'Raising the counter is missing: after PICK IT UP you have to write «objects = objects + 1». Without that instruction the variable never changes.' },
-        { txt: 'The watering robot opens the water and never closes it again: the garden floods. Program: IF the soil is dry THEN OPEN THE VALVE.', ans: 'The ELSE branch is missing: IF the soil is dry THEN OPEN THE VALVE, ELSE CLOSE THE VALVE. Every conditional must also say what to do when the answer is NO.' },
-        { txt: 'The robot has to wait for the teacher’s signal before starting off, but it shoots away the moment it is switched on. Program: FORWARD · FORWARD · STOP.', ans: 'The WAIT instruction at the start is missing (or a conditional: IF the sound sensor hears the signal THEN FORWARD, ELSE WAIT).' }
+        {k:'cr-contador',txt:'The robot picks up bottles in the yard, but in the end it always says it collected 0 objects. Program: REPEAT: IF there is an object THEN PICK IT UP.',ans:'Raising the counter is missing: after PICK IT UP you have to write «objects = objects + 1». Without that instruction the variable never changes.'},
+        {k:'cr-regador',txt:'The watering robot opens the water and never closes it again: the garden floods. Program: IF the soil is dry THEN OPEN THE VALVE.',ans:'The ELSE branch is missing: IF the soil is dry THEN OPEN THE VALVE, ELSE CLOSE THE VALVE. Every conditional must also say what to do when the answer is NO.'}
       ],
 
       critErrorBank: [
-        {
-          txt: '«My robot does not need to read the sensors: I already know where the walls are, so I just write FORWARD lots of times.»',
-          g1: 'Without reading the sensors the robot senses nothing: if anything moves (a chair, a backpack) it will crash, because it repeats FORWARD blindly.',
-          g2: 'The robot cycle always starts by READING THE SENSORS: without that step no decision is possible, because the conditional needs the sensor’s data in order to choose a branch.'
-        },
-        {
-          txt: '«I wrote REPEAT FOREVER: FORWARD. That way the robot is sure to reach the goal.»',
-          g1: 'A loop with no exit condition never ends: the robot will go straight past the goal and off the schoolyard.',
-          g2: 'You have to write «REPEAT UNTIL you reach the goal» and close with STOP: every loop needs a way to finish.'
-        },
-        {
-          txt: '«The robot got it wrong, so the robot is broken: it has to be replaced.»',
-          g1: 'Almost always the one that got it wrong was the PROGRAM, not the machine: the robot runs literally whatever was written for it.',
-          g2: 'The right thing to do is DEBUG: test the program step by step, find the wrong instruction and fix it.'
-        },
-        {
-          txt: '«I wrote TURN RIGHT four times in a row so the robot would go faster.»',
-          g1: 'TURN only changes the direction: it does not move the robot off its square, so after 4 turns the robot is exactly where it started.',
-          g2: 'To move you have to use FORWARD (or a loop REPEAT 4 TIMES FORWARD): turning and going forward are different instructions.'
-        },
-        {
-          txt: '«There is no need to write the pseudocode: I would rather try instructions at random until the robot arrives.»',
-          g1: 'Pseudocode is written BEFORE, so you can think the route through in plain language; trying things at random wastes time and teaches you nothing about where the mistake is.',
-          g2: 'Besides, without pseudocode you cannot debug: there is nothing to compare what the robot did against what it was supposed to do.'
-        }
+        {k:'er-descompuesto',txt:'«The robot got it wrong, so the robot is broken: it has to be replaced.»',g1:'Almost always the one that got it wrong was the PROGRAM, not the machine: the robot runs literally whatever was written for it.',g2:'The right thing to do is DEBUG: test the program step by step, find the wrong instruction and fix it.'},
+        {k:'er-azar',txt:'«Thinking the steps through in the notebook is a waste of time: I would rather try orders at random until the robot arrives.»',g1:'Pseudocode is written BEFORE, so you can think the route through in plain language; trying things at random wastes time and teaches you nothing about where the mistake is.',g2:'Besides, without pseudocode you cannot debug: there is nothing to compare what the robot did against what it was supposed to do.'}
       ],
 
       critTraceQuestions: [
@@ -633,40 +586,12 @@
       ],
 
       critCompareBank: [
-        {
-          a: 'PROGRAM A: FORWARD · FORWARD · FORWARD · FORWARD · STOP',
-          b: 'PROGRAM B: FORWARD · FORWARD · FORWARD · STOP',
-          ga: 'Program A is the correct one: it covers the 4 squares and stops right on the goal.',
-          gb: 'Program B «almost» works: it is one FORWARD short, so the robot stops one square before the goal.',
-          gr: 'Similarity: they use the same instructions and both end with STOP. Difference: the number of repetitions. A loop REPEAT 4 TIMES FORWARD avoids this counting mistake.'
-        },
-        {
-          a: 'PROGRAM A: REPEAT UNTIL YOU REACH THE GOAL: IF there is a line ahead THEN FORWARD, ELSE TURN RIGHT. Then STOP.',
-          b: 'PROGRAM B: REPEAT FOREVER: IF there is a line ahead THEN FORWARD, ELSE TURN RIGHT.',
-          ga: 'Program A is the correct one: its loop has an exit condition («until you reach the goal») and it ends with STOP.',
-          gb: 'Program B «almost» works: it follows the line just as well, but its loop never ends and the robot goes straight past the goal.',
-          gr: 'Similarity: both follow the line with the same conditional. Difference: only A can stop. Every loop needs a way to finish.'
-        },
-        {
-          a: 'PROGRAM A: IF THERE IS A WALL AHEAD THEN TURN RIGHT, ELSE FORWARD.',
-          b: 'PROGRAM B: FORWARD (without ever reading the wall sensor).',
-          ga: 'Program A is the correct one: it reads the sensor before moving and then decides; it still works even if the obstacles move around.',
-          gb: 'Program B «almost» works: it goes forward fine while the way is clear, but it crashes the moment an obstacle turns up.',
-          gr: 'Similarity: both make the robot move forward. Difference: only A completes the full cycle read the sensors → decide → act; B acts blindly.'
-        },
-        {
-          a: 'PROGRAM A: objects = 0 · REPEAT: IF there is an object THEN PICK IT UP and objects = objects + 1.',
-          b: 'PROGRAM B: REPEAT: IF there is an object THEN PICK IT UP.',
-          ga: 'Program A is the correct one: it uses a counter variable and raises it every time it picks something up.',
-          gb: 'Program B «almost» works: it picks up the trash just the same, but in the end it does not know how many objects it collected.',
-          gr: 'Similarity: both pick up the trash with the same conditional. Difference: only A saves the information in a variable; with no counter the data is lost.'
-        }
+        {k:'co-salida',a:'PROGRAM A: REPEAT UNTIL YOU REACH THE GOAL: IF there is a line ahead THEN FORWARD, ELSE TURN RIGHT. Then STOP.',b:'PROGRAM B: REPEAT FOREVER: IF there is a line ahead THEN FORWARD, ELSE TURN RIGHT.',ga:'Program A is the correct one: its loop has an exit condition («until you reach the goal») and it ends with STOP.',gb:'Program B «almost» works: it follows the line just as well, but its loop never ends and the robot goes straight past the goal.',gr:'Similarity: both follow the line with the same conditional. Difference: only A can stop. Every loop needs a way to finish.'},
+        {k:'co-pared',a:'PROGRAM A: IF THERE IS A WALL AHEAD THEN TURN RIGHT, ELSE FORWARD.',b:'PROGRAM B: FORWARD (without ever reading the wall sensor).',ga:'Program A is the correct one: it reads the sensor before moving and then decides; it still works even if the obstacles move around.',gb:'Program B «almost» works: it goes forward fine while the way is clear, but it crashes the moment an obstacle turns up.',gr:'Similarity: both make the robot move forward. Difference: only A completes the full cycle read the sensors → decide → act; B acts blindly.'}
       ],
 
       critDesignBank: [
         'At your school, the hallway from the gate to the principal’s office has a black line painted on the floor, and the attendance list has to be taken there every single day.',
-        'The schoolyard is covered in bottles and bags every morning, and cleaning it up eats half an hour of class time.',
-        'The school garden dries out over the weekend because nobody comes to water it.',
         'In your community’s cornfield the birds eat the corn and somebody has to spend all day scaring them off.',
         'At the corner store in the neighborhood somebody has to check at night whether the door was left open.'
       ],

@@ -123,16 +123,20 @@ ok('misma forma → mismo documento impreso (crítica)', docs[2] === docs[3]);
 
 // ── Bancos ──────────────────────────────────────────────────────────────
 console.log('— Bancos de ítems —');
-ok('evalMCBank: 15 ítems en formato {q,o,a} para el Campeonísimo',
-  ev("evalMCBank.length===15&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)"));
-ok('los 4 bancos conceptuales tienen 15 ítems cada uno',
-  ev('evalTFBank.length===15&&evalMCBank.length===15&&evalCPBank.length===15&&evalPRBank.length===15'));
-ok('V/F equilibrado (entre 6 y 9 verdaderos de 15)', (() => { const v = ev('evalTFBank.filter(x=>x.a).length'); return v >= 6 && v <= 9; })());
+ok('evalMCBank: 10 ítems en formato {q,o,a} para el Campeonísimo',
+  ev("evalMCBank.length===10&&evalMCBank.every(q=>typeof q.q==='string'&&Array.isArray(q.o)&&q.o.length===4&&typeof q.a==='number'&&q.a>=0&&q.a<4)"));
+/* Revisados dato por dato (septiembre de 2026): diez por banco, cada uno con su `k`. */
+ok('los 4 bancos conceptuales tienen 10 ítems cada uno, con su k',
+  ev('[evalTFBank,evalMCBank,evalCPBank,evalPRBank].every(b=>b.length===10&&b.every(x=>x.k))'));
+ok('V/F equilibrado (entre 4 y 6 verdaderos de 10)', (() => { const v = ev('evalTFBank.filter(x=>x.a).length'); return v >= 4 && v <= 6; })());
 ok('evalCPBank: cada ítem trae el hueco ___ y su respuesta', ev("evalCPBank.every(x=>x.q.includes('___')&&typeof x.a==='string'&&x.a.length>0)"));
 ok('evalPRBank: términos y definiciones únicos',
-  ev('new Set(evalPRBank.map(x=>x.term)).size===15&&new Set(evalPRBank.map(x=>x.def)).size===15'));
-ok('bancos de la crítica con material suficiente para 30 formas',
-  ev('critFaltaBank.length>=6&&critErrorBank.length>=5&&critTraceBank.length>=4&&critCompareBank.length>=4&&critDesignBank.length>=5'));
+  ev('new Set(evalPRBank.map(x=>x.term)).size===10&&new Set(evalPRBank.map(x=>x.def)).size===10'));
+/* Cada sección de la prueba crítica tiene su propio terreno: el contador, el
+   bucle sin salida y el sensor de pared ya no salen a la vez en lo que falta,
+   los errores, la comparación y el diseño. Lo que se exige es que alcancen. */
+ok('bancos de la crítica alcanzan para la prueba (2 de lo que falta, y al menos 1 de lo demás)',
+  ev('critFaltaBank.length>=2&&critErrorBank.length>=1&&critTraceBank.length>=1&&critCompareBank.length>=1&&critDesignBank.length>=1'));
 ok('rúbrica de diseño con los 4 criterios (pseudocódigo, condicional, bucle, variable)',
   ev("['PSEUDOCÓDIGO','CONDICIONAL','BUCLE','VARIABLE'].every(k=>critDesignGuide.includes(k))"));
 ok('quiz, clasificación, identifica y completa reescritos',
