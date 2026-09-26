@@ -411,73 +411,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'La razón suele ir después de la palabra «porque».',a:true},
-  {q:'La conclusión es lo que se da para sostener lo otro.',a:false},
-  {q:'«Porque yo lo digo» no es una razón: no hay nada que examinar.',a:true},
-  {q:'Una razón amarilla es mentira.',a:false},
-  {q:'Un argumento es una razón amarrada a una conclusión.',a:true},
-  {q:'Una falacia es un argumento que parece bueno y no sostiene nada.',a:true},
-  {q:'Si un argumento está bien hecho, su conclusión es siempre verdad.',a:false},
-  {q:'Si una de las razones es falsa, la conclusión puede salir falsa aunque el armado esté bien.',a:true},
-  {q:'La regla «si llueve, la cancha se moja» también se puede leer al revés.',a:false},
-  {q:'De «la cancha está mojada» no se sigue que haya llovido.',a:true},
-  {q:'Atacar a quien habla en vez de a lo que dice es la falacia contra la persona.',a:true},
-  {q:'Sacar una regla de dos casos es un falso dilema.',a:false},
-  {q:'Un falso dilema se desarma nombrando una tercera salida.',a:true},
-  {q:'Aristóteles enseñaba lógica con juegos y acertijos.',a:false},
-  {q:'La lógica no dice qué pensar: dice cómo se arman las ideas para que se sostengan.',a:true}
+  {q:'La razón casi siempre va después de la palabra «porque».',a:true,k:'tf-porque'},
+  {q:'Lewis Carroll vivió en Inglaterra.',a:true,k:'tf-inglaterra'},
+  {q:'Aristóteles fue alumno de Platón.',a:true,k:'tf-platon'},
+  {q:'De «las hojas del patio están mordidas» se sigue, sin más, que fue un zompopo.',a:false,k:'tf-hojas'},
+  {q:'La lógica te dice qué opinar sobre cada tema.',a:false,k:'tf-forma'},
+  {q:'En «si el río baja, entonces se puede cruzar», el «si… entonces» pone una condición.',a:true,k:'tf-condicion'},
+  {q:'Con un armado bueno y razones verdaderas, se puede confiar en lo que sale.',a:true,k:'tf-ok'},
+  {q:'Un argumento mal armado nunca acierta, ni de casualidad.',a:false,k:'tf-suerte'},
+  {q:'Los conectores son el puente entre la lógica y el Español.',a:true,k:'tf-espanol'},
+  {q:'Lewis Carroll nunca escribió cuentos: solo acertijos.',a:false,k:'tf-cuento'}
 ];
 const evalMCBank=[
-  {q:'En «no salgas, porque el río viene crecido», ¿cuál es la conclusión?',o:['No salgas','Que el río viene crecido','Que hay que caminar','No hay conclusión'],a:0},
-  {q:'¿Qué hace el nexo de un argumento?',o:['Da la razón','Amarra la razón con la conclusión','Cierra el tema','Pone la fecha'],a:1},
-  {q:'«Porque conté los sacos y faltan tres» es una razón…',o:['roja','amarilla','verde','sin color'],a:2},
-  {q:'«Porque el que lo vende es amable» es una razón…',o:['verde','amarilla','roja','falsa'],a:1},
-  {q:'«Porque siempre se ha hecho así» es una razón…',o:['verde','amarilla','roja','buena'],a:2},
-  {q:'¿Cuál es la prueba de una razón verde?',o:['Que la diga alguien importante','Que sea bonita','Que la digan muchos','Que si fuera verdad, tendría que serlo la conclusión'],a:3},
-  {q:'La regla es «si llueve, la cancha se moja». ¿Qué SÍ se puede concluir?',o:['Llovió, así que está mojada','Está mojada, así que llovió','No está mojada, así que no hay regla','Nada'],a:0},
-  {q:'«Todos los peces vuelan. La tilapia es un pez. Así que la tilapia vuela.» Este argumento…',o:['está mal hecho','está bien hecho, pero parte de una mentira','no es un argumento','es verdad'],a:1},
-  {q:'«Todos los pinos son árboles. El mango es un árbol. Así que el mango es un pino.» Este argumento…',o:['está bien hecho','es verdad','está mal hecho','no tiene conclusión'],a:2},
-  {q:'«No le creas, si ni terminó la escuela» es…',o:['contra la persona','un falso dilema','una generalización apresurada','una razón verde'],a:0},
-  {q:'«En ese pueblo son tramposos: me tocaron dos» es…',o:['contra la persona','una generalización apresurada','un falso dilema','apelación a la mayoría'],a:1},
-  {q:'«O te vas a la ciudad o te quedás sin futuro» es…',o:['contra la persona','apelación a la mayoría','un falso dilema','una razón verde'],a:2},
-  {q:'«Compralo, si todo el mundo lo compra» es…',o:['una razón verde','un falso dilema','contra la persona','apelación a la mayoría'],a:3},
-  {q:'¿Qué fue lo nuevo que hizo Aristóteles?',o:['Puso en orden las formas del razonamiento','Escribió cuentos para niños','Midió la Tierra','Inventó el semáforo'],a:0},
-  {q:'¿Para qué armaba Lewis Carroll silogismos absurdos?',o:['Para que se viera el ARMADO y no el tema','Para hacer reír y nada más','Para probar que la lógica no sirve','Para vender libros'],a:0}
+  {q:'«Porque la suma da 48 y el recibo dice 84» es una razón…',o:['roja','amarilla','verde','sin color'],a:2,k:'mc-verde'},
+  {q:'«Porque el que lo vende es amable» es una razón…',o:['verde','amarilla','roja','sin color'],a:1,k:'mc-amarilla'},
+  {q:'«Porque soy el mayor» es una razón…',o:['verde','amarilla','sin color','roja'],a:3,k:'mc-roja'},
+  {q:'La regla es «si llueve, la cancha se moja». ¿Qué SÍ se puede concluir?',o:['Llovió, así que está mojada','Está mojada, así que llovió','No está mojada, así que no hay regla','Nada'],a:0,k:'mc-sientonces'},
+  {q:'«Todos los peces vuelan. La tilapia es un pez. Así que la tilapia vuela.» Este argumento…',o:['Es verdad','No es un argumento','Está bien armado, pero una razón es mentira','No tiene razones'],a:2,k:'mc-tilapia'},
+  {q:'«Todos los pinos son árboles. El mango es un árbol. Así que el mango es un pino.» Este argumento…',o:['Es verdad','Todo en él es verdad','No tiene conclusión','Sus razones son verdad, pero la conclusión no se sigue'],a:3,k:'mc-mango'},
+  {q:'«No le creas, si ni terminó la escuela» es…',o:['contra la persona','un falso dilema','una generalización apresurada','apelación a la mayoría'],a:0,k:'mc-persona'},
+  {q:'«En ese pueblo son tramposos: me tocaron dos» es…',o:['contra la persona','una generalización apresurada','un falso dilema','apelación a la mayoría'],a:1,k:'mc-apresurada'},
+  {q:'«O te vas a la ciudad o te quedás sin futuro» es…',o:['contra la persona','apelación a la mayoría','una generalización apresurada','un falso dilema'],a:3,k:'mc-dilema'},
+  {q:'«Compralo, si todo el mundo lo compra» es…',o:['un falso dilema','contra la persona','apelación a la mayoría','una generalización apresurada'],a:2,k:'mc-mayoria'}
 ];
 const evalCPBank=[
-  {q:'La palabra que anuncia la razón es ___.',a:'porque'},
-  {q:'Las palabras que anuncian la conclusión son ___.',a:'así que'},
-  {q:'Una razón y una conclusión amarradas forman un ___.',a:'argumento'},
-  {q:'Un argumento que parece bueno y no sostiene nada es una ___.',a:'falacia'},
-  {q:'Que el armado de un argumento esté bien se llama ___.',a:'validez'},
-  {q:'Decir dos cosas que no pueden ser verdad a la vez es una ___.',a:'contradicción'},
-  {q:'Atacar a quien habla es la falacia contra la ___.',a:'persona'},
-  {q:'Sacar una regla de dos o tres casos es una generalización ___.',a:'apresurada'},
-  {q:'Ofrecer dos salidas como si no hubiera más es un falso ___.',a:'dilema'},
-  {q:'Poner como razón cuánta gente lo hace es una apelación a la ___.',a:'mayoría'},
-  {q:'En el semáforo, la razón que sirve es la de color ___.',a:'verde'},
-  {q:'En el semáforo, la que no se puede examinar es la de color ___.',a:'rojo'},
-  {q:'La palabra que anuncia una objeción es «sin ___».',a:'embargo'},
-  {q:'El que puso en orden las formas del razonamiento fue ___.',a:'Aristóteles'},
-  {q:'El que enseñaba lógica con juegos y acertijos fue Lewis ___.',a:'Carroll'}
+  {q:'Que el armado de un argumento esté bien se llama ___.',a:'validez',acc:['validez'],k:'cp-validez'},
+  {q:'Platón fue alumno de ___, el de la unidad anterior.',a:'Sócrates',acc:['Sócrates','Socrates'],k:'cp-socrates'},
+  {q:'Wilmer compró ___ sacos del abono caro.',a:'ocho',acc:['ocho','8'],k:'cp-ocho'},
+  {q:'La milpa de Wilmer salió igual que la del ___, que compró el abono barato.',a:'vecino',acc:['vecino'],k:'cp-vecino'},
+  {q:'¿Por qué 7 × 8 da 56? No vale «porque me lo ___».',a:'aprendí',acc:['aprendí','aprendi'],k:'cp-aprendi'},
+  {q:'«Por lo tanto» presenta la conclusión en el texto ___.',a:'escrito',acc:['escrito'],k:'cp-escrito'},
+  {q:'Aristóteles vio que hay armados que funcionan ___, sin importar de qué se hable.',a:'siempre',acc:['siempre'],k:'cp-siempre'},
+  {q:'Un argumento no es una pelea: es una ___.',a:'construcción',acc:['construcción','construccion'],k:'cp-construccion'},
+  {q:'Descubrir que uno mismo se contradice no es retroceder: es ___.',a:'avanzar',acc:['avanzar'],k:'cp-avanzar'},
+  {q:'Lewis Carroll era profesor de ___.',a:'matemáticas',acc:['matemáticas','matematicas','matemática'],k:'cp-carroll'}
 ];
 const evalPRBank=[
-  {term:'Razón',def:'Lo que se da para sostener lo que se dice'},
-  {term:'Conclusión',def:'Lo que se quiere que creas'},
-  {term:'Nexo',def:'La palabra que amarra la razón con la conclusión'},
-  {term:'Argumento',def:'Una razón y una conclusión amarradas'},
-  {term:'Falacia',def:'Un argumento que parece bueno y no sostiene nada'},
-  {term:'Contradicción',def:'Decir dos cosas que no pueden ser verdad a la vez'},
-  {term:'Validez',def:'Que el armado del argumento esté bien'},
-  {term:'Razón verde',def:'Se puede comprobar y de verdad sostiene lo que dice'},
-  {term:'Razón amarilla',def:'Puede ser verdad, pero no sostiene lo que se quiere probar'},
-  {term:'Razón roja',def:'No dice nada que se pueda examinar'},
-  {term:'Contra la persona',def:'Se ataca a quien habla en vez de a lo que dice'},
-  {term:'Generalización apresurada',def:'Se saca una regla de dos o tres casos'},
-  {term:'Falso dilema',def:'Se ofrecen dos salidas como si no hubiera más'},
-  {term:'Apelación a la mayoría',def:'Se ofrece como razón cuánta gente lo hace'},
-  {term:'Aristóteles',def:'El primero que puso en orden las formas del razonamiento'}
+  {term:'Razón',def:'Lo que se da para sostener lo que se dice',k:'pr-razon'},
+  {term:'Conclusión',def:'Lo que se quiere que creas',k:'pr-conclusion'},
+  {term:'Nexo',def:'La palabra que amarra las dos partes',k:'pr-nexo'},
+  {term:'Argumento',def:'Una razón y una conclusión amarradas',k:'pr-argumento'},
+  {term:'Falacia',def:'Un argumento que parece bueno y no lo es',k:'pr-falacia'},
+  {term:'Contradicción',def:'Decir dos cosas que no pueden ser verdad a la vez',k:'pr-contradiccion'},
+  {term:'Demostración',def:'Un resultado que vale porque se sigue de lo anterior',k:'pr-demostracion'},
+  {term:'Lewis Carroll',def:'Enseñaba lógica con juegos y acertijos',k:'pr-carroll'},
+  {term:'Sin embargo',def:'Presenta la objeción',k:'pr-sinembargo'},
+  {term:'Inferencia',def:'Sacar una conclusión de lo que se observó',k:'pr-inferencia'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -564,11 +549,11 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En la pulpería le dicen a Wilmer que el abono caro es el bueno «porque todo el mundo lo compra». Compra ocho sacos y ahí se va la mitad del dinero de la siembra. La milpa sale igual que la del vecino.'},
-  {txt:'En el grupo del barrio dicen que no hay que hacerle caso a don Chele sobre el agua «porque ni terminó la escuela». Don Chele había contado los tubos y sabía dónde estaba la fuga. Tres meses después el pozo de la escuela tampoco da.'},
-  {txt:'A una muchacha le dicen que o se va a la ciudad o se queda sin futuro. Se va sin plan, no le sale trabajo y vuelve a los cuatro meses debiendo el pasaje. Nadie le nombró una tercera salida.'},
-  {txt:'Un muchacho dice que en la aldea de al lado son tramposos porque le tocaron dos que lo fueron. Deja de venderles y pierde la mitad de sus clientes en una temporada.'},
-  {txt:'En clase alguien dice: «Todos los peces vuelan. La tilapia es un pez. Así que la tilapia vuela». Media clase se ríe y nadie sabe explicar dónde está el error.'}
+  {k:'cs-wilmer',txt:'En la pulpería le dicen a Wilmer que el abono caro es el bueno «porque todo el mundo lo compra». Compra ocho sacos y ahí se va la mitad del dinero de la siembra. La milpa sale igual que la del vecino.'},
+  {k:'cs-chele',txt:'En el grupo del barrio dicen que no hay que hacerle caso a don Chele sobre el agua «porque ni terminó la escuela». Don Chele había contado los tubos y sabía dónde estaba la fuga. Tres meses después el pozo de la escuela tampoco da.'},
+  {k:'cs-ciudad',txt:'A una muchacha le dicen que o se va a la ciudad o se queda sin futuro. Se va sin plan, no le sale trabajo y vuelve a los cuatro meses debiendo el pasaje. Nadie le nombró una tercera salida.'},
+  {k:'cs-aldea',txt:'Un muchacho dice que en la aldea de al lado son tramposos porque le tocaron dos que lo fueron. Deja de venderles y pierde la mitad de sus clientes en una temporada.'},
+  {k:'cs-tilapia',txt:'En clase alguien dice: «Todos los peces vuelan. La tilapia es un pez. Así que la tilapia vuela». Media clase se ríe y nadie sabe explicar dónde está el error.'},
 ];
 const critCaseQuestions=[
   '1. ¿Cuál es la conclusión del caso y con qué razón la sostienen?',
@@ -583,58 +568,28 @@ const critCaseGuides=[
   'La pregunta buena va a la COSA, no a la persona ni al gentío. ¿En qué es mejor? ¿Cuántos casos, de cuántos? ¿Solo hay dos salidas? ¿Y qué tiene que ver quién lo dice?'
 ];
 const critErrorBank=[
-  {txt:'"Si un argumento está bien armado, su conclusión es verdad."',
-   g1:'No: «todos los peces vuelan, la tilapia es un pez, así que la tilapia vuela» está perfectamente armado y la conclusión es un disparate.',
-   g2:'Lo que falla ahí no es el armado: es que una de las razones era mentira. Bien hecho y verdadero son dos cosas, y se combinan de cuatro maneras.'},
-  {txt:'"La cancha está mojada, así que llovió."',
-   g1:'La regla es «si llueve, la cancha se moja», y va en un solo sentido. No dice que SOLO la lluvia la moje.',
-   g2:'La pudo mojar la pila o un tubo reventado. Leer la regla al revés es el error más común del examen, y el que hay que saberse.'},
-  {txt:'"Si alguien no estudió, sus razones no valen."',
-   g1:'Eso es atacar a quien habla en vez de a lo que dice: la falacia contra la persona.',
-   g2:'Y deja fuera la razón buena del que no tiene títulos, que es justo lo que le pasó a don Chele con los tubos. Se desarma pidiendo la razón, no el título.'},
-  {txt:'"Una razón amarilla es mentira."',
-   g1:'No: una razón amarilla puede ser perfectamente verdad. El saco caro puede ser caro de verdad.',
-   g2:'Lo que le pasa es que NO sostiene lo que se quiere probar. Ser verdad y sostener son dos cosas distintas, y el semáforo separa eso.'}
+  {k:'er-cancha',txt:'"La cancha está mojada, así que llovió."',g1:'La regla es «si llueve, la cancha se moja», y va en un solo sentido. No dice que SOLO la lluvia la moje.',g2:'La pudo mojar la pila o un tubo reventado. Leer la regla al revés es el error más común del examen, y el que hay que saberse.'},
+  {k:'er-amarilla',txt:'"Una razón amarilla es mentira."',g1:'No: una razón amarilla puede ser perfectamente verdad. El saco caro puede ser caro de verdad.',g2:'Lo que le pasa es que NO sostiene lo que se quiere probar. Ser verdad y sostener son dos cosas distintas, y el semáforo separa eso.'},
 ];
 const critDecisionBank=[
-  'Te dicen que compres lo caro «porque todo el mundo lo compra». ¿Lo comprás, o pedís una razón de la cosa?',
   'Alguien te asegura algo y no da ninguna razón. ¿Le das la razón para no quedar mal, o le preguntás por qué?',
-  'Te ofrecen dos salidas y ninguna te sirve. ¿Elegís la menos mala, o nombrás una tercera?',
-  'Un compañero te da una razón mejor que la tuya. ¿Lo decís y cambiás de idea, o sostenés lo tuyo para no perder?',
-  'Alguien saca una regla de dos casos que le pasaron. ¿La repetís, o preguntás de cuántos casos, de cuántos?'
-];
-const critDecisionGuide='Primero se separa la conclusión de la razón. Después se mira el semáforo. Verde: se puede comprobar. Amarilla: se pide otra que sí sostenga. Roja: se pide una razón de la cosa. Y cambiar de idea con una razón mejor no es perder.';
+  'Tenés que escribirle a la directora para que arreglen el baño. ¿Ponés solo lo que querés, o le das una razón que ella pueda comprobar?',
+  'Ves las hojas del patio mordidas. ¿Decís de una vez qué animal fue, o buscás otra señal antes de concluir?'
+]
+const critDecisionGuide='Se valora que pida o dé una razón que se pueda comprobar, y que no saque más de lo que lo observado permite. Pedir el porqué no es faltar al respeto.';
 const critCompareBank=[
-  {a:'«Porque conté los sacos y faltan tres».',b:'«Porque yo lo digo».',
-   ga:'Razón verde: se puede comprobar y sostiene lo que dice.',
-   gb:'Razón roja: no hay nada que examinar.',
-   gr:'La diferencia no está en la educación con que se dice: está en que la primera se puede examinar y la segunda no. La segunda es quien manda, no una razón.'},
-  {a:'«Si llueve, la cancha se moja. Llovió. Así que está mojada».',b:'«Si llueve, la cancha se moja. Está mojada. Así que llovió».',
-   ga:'Usa la regla en su sentido: la conclusión se sostiene.',
-   gb:'Lee la regla al revés: la conclusión no se sigue.',
-   gr:'Son casi la misma frase y por eso se confunden. La regla no dice que SOLO la lluvia moje la cancha: la pudo mojar la pila.'},
-  {a:'«Todos los pinos son árboles. Este es un pino. Así que es un árbol».',b:'«Todos los peces vuelan. La tilapia es un pez. Así que vuela».',
-   ga:'Bien armado y con razones verdaderas: la conclusión es verdad.',
-   gb:'Bien armado y con una razón falsa: la conclusión sale falsa.',
-   gr:'El armado de los dos es el mismo. Lo que cambia es de dónde parten, y eso demuestra que estar bien hecho no garantiza llegar a la verdad.'},
-  {a:'«No le creas: si ni terminó la escuela».',b:'«No le creas: contó mal los tubos, y aquí está la cuenta».',
-   ga:'Ataca a quien habla: la falacia contra la persona.',
-   gb:'Ataca lo que dice, y se puede comprobar.',
-   gr:'Las dos rechazan lo mismo, y solo una da una razón. La primera deja fuera al que sabe y no tiene títulos, que es como se pierde un pozo.'}
+  {k:'cm-color',a:'«Porque conté los sacos y faltan tres».',b:'«Porque yo lo digo».',ga:'Razón verde: se puede comprobar y sostiene lo que dice.',gb:'Razón roja: no hay nada que examinar.',gr:'La diferencia no está en la educación con que se dice: está en que la primera se puede examinar y la segunda no. La segunda es quien manda, no una razón.'},
+  {k:'cm-nexo',a:'«No salgas, porque el río viene crecido».',b:'«El río viene crecido, así que no salgas».',ga:'La razón va después de «porque».',gb:'La conclusión va después de «así que».',gr:'Las dos dicen lo mismo con el orden al revés. Lo que te dice cuál es cuál no es el orden: es el nexo.'},
 ];
 const critCauseBank=[
-  {cause:'«Porque todo el mundo lo compra» no dice nada del abono.',guide:'Por eso es una razón roja: no hay nada que examinar. A Wilmer le costó la mitad del dinero de la siembra.'},
-  {cause:'La regla «si llueve, la cancha se moja» va en un solo sentido.',guide:'Por eso del suelo mojado no se sigue que llovió: lo pudo mojar la pila. Leerla al revés es el error más común.'},
-  {cause:'Un argumento puede estar bien armado y partir de una razón falsa.',guide:'Por eso la conclusión puede salir falsa con el armado perfecto. Estar bien hecho y ser verdad son dos cosas.'},
-  {cause:'Una falacia se parece mucho a un argumento bueno.',guide:'Por eso hay que aprenderse la pregunta que la desarma y no solo su nombre: en la pulpería nadie anuncia que está usando una.'},
-  {cause:'Sacar una regla de dos casos es una generalización apresurada.',guide:'Por eso así se arman las famas de un barrio entero, y por eso se desarma preguntando de cuántos casos, de cuántos.'}
+  {k:'ca-falacia',cause:'Una falacia se parece mucho a un argumento bueno.',guide:'Por eso hay que aprenderse la pregunta que la desarma y no solo su nombre: en la pulpería nadie anuncia que está usando una.'},
+  {k:'ca-aristoteles',cause:'Aristóteles vio que hay armados que funcionan sin importar de qué se hable.',guide:'Por eso la lógica se puede enseñar: no es una opinión sobre cada tema, es una forma.'},
+  {k:'ca-carroll',cause:'Lewis Carroll armaba a propósito silogismos que eran un disparate.',guide:'Por eso se veía el ARMADO y no el tema: si el armado es bueno, funciona aunque lo que diga sea absurdo.'},
 ];
 const critEffectBank=[
-  {effect:'Alguien compra ocho sacos de abono caro y la milpa sale igual que la del vecino.',guide:'Porque la razón que le dieron era roja: cuánta gente lo compra no dice nada del abono. Y él no supo pedir otra.'},
-  {effect:'Nadie le hace caso al que sabe dónde está la fuga y el pozo se seca.',guide:'Porque lo rechazaron por quién es y no por lo que decía. Es la falacia contra la persona. Deja fuera la razón buena del que no tiene títulos.'},
-  {effect:'Alguien elige entre dos salidas malas sin buscar una tercera.',guide:'Porque le pusieron un falso dilema: dos opciones ofrecidas como si no hubiera más. Se desarma nombrando la tercera.'},
-  {effect:'Media clase se ríe de «la tilapia vuela» y nadie sabe decir dónde está el error.',guide:'Porque el armado está perfecto y lo falso es una de las razones de arriba. Lo que falta no es reírse: es saber separar armado de verdad.'},
-  {effect:'Dos personas discuten una hora y las dos salen pensando distinto de como entraron.',guide:'Porque se examinaron las razones y no las personas. Cambiar de idea con una razón mejor es lo que la unidad enseña, no una derrota.'}
+  {k:'ef-dialogo',effect:'Dos personas discuten una hora y las dos salen pensando distinto de como entraron.',guide:'Porque se examinaron las razones y no las personas. Cambiar de idea con una razón mejor es lo que la unidad enseña, no una derrota.'},
+  {k:'ef-noticia',effect:'En una noticia faltaba la razón, y nadie en la casa lo notó.',guide:'Porque nadie buscó primero la conclusión y después con qué la sostenían. Sin separar las dos partes, no se nota la que falta.'},
+  {k:'ef-aprendi',effect:'Un alumno escribe «7 × 8 = 56 porque me lo aprendí» y el día que se equivoca no sabe cómo revisarlo.',guide:'Porque en Matemáticas un resultado vale porque se sigue de lo anterior. Sin esa demostración, no hay por dónde buscar el error.'},
 ];
 function genEvalCrit(){
   sfx('click');
