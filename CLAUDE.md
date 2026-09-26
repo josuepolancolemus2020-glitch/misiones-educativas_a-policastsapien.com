@@ -6788,6 +6788,31 @@ Las de las unidades 3 a 5 se corrigieron **en su armador**, no en el HTML, y
 se volvieron a repartir: una opción larga pasó la 5 de diez hojas a once, y se
 acortó hasta volver a diez.
 
+### Inglés, y el vocabulario corto
+
+La última pendiente fue **Hello! Saludos** (`2y3ciclo-ingles-saludos`), y tuvo
+un problema que ninguna otra tenía: el examen entero se hace con unas quince
+expresiones, así que «Good morning» salía en las cuatro secciones a la vez.
+
+Dos cosas lo resolvieron, y valen para la siguiente misión de idioma:
+
+- **Cada expresión se pregunta UNA vez**, y las que se usan de distractor son
+  solo las que el verdadero o falso nombra (su respuesta es V o F, que no delata
+  ninguna palabra). Una expresión que es respuesta de una pregunta no puede ser
+  opción equivocada de otra: eso también la escribe.
+- **Los pareados van del español al inglés.** La respuesta de un pareado es la
+  columna A, y en inglés esas palabras están en todas las preguntas; en español
+  («Hasta luego», «¿Cuántos años tienes?») no salen en ninguna otra.
+
+La sonda no se queja de «you», «good» o «thank» y es a propósito: una palabra
+que sale en cuatro preguntas o más es el TEMA de la prueba, no una pista. Lo
+que caza es lo que sale en dos o tres.
+
+Con esta, **las 79 misiones con evaluación de plantilla están revisadas** y
+`verifica-examen-sin-pistas` exige la `k` en todas. Quedan fuera, dichas por
+la propia sonda, las cuatro Pruebas de Fin de Grado: arman sus bancos por
+materia y se revisan leyéndolas.
+
 ## Normativa: en la sopa, la palabra tiene que ESTAR en la rejilla
 
 Descubierto el 16 de septiembre de 2026 pasando `verifica-mision-nueva.js` por
