@@ -347,73 +347,58 @@ let _sopaResizeTimer=null;
 window.addEventListener('resize',()=>{clearTimeout(_sopaResizeTimer);_sopaResizeTimer=setTimeout(()=>{if(document.getElementById('s-sopa').classList.contains('active'))buildSopa();},200);});
 
 // ===================== EVALUACIÓN FINAL =====================
+// UN DATO, UNA PREGUNTA. Cada forma saca cinco de cada banco y pueden caer
+// juntas cualesquiera, así que ninguna pregunta pide un dato que otra ya pide
+// (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
+// tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
+// Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
 const evalTFBank=[
-  {q:'Un ecosistema está formado por los seres vivos, su medio físico y sus relaciones.',a:true},
-  {q:'Los factores abióticos son los seres vivos del ecosistema.',a:false},
-  {q:'Las plantas y las algas son los productores del ecosistema.',a:true},
-  {q:'Los descomponedores reciclan la materia muerta y devuelven nutrientes al suelo.',a:true},
-  {q:'Un animal herbívoro es un consumidor primario.',a:true},
-  {q:'La energía de una cadena alimenticia viene del suelo.',a:false},
-  {q:'Una población es un grupo de individuos de la misma especie.',a:true},
-  {q:'En el mutualismo, una especie se beneficia y la otra sale perjudicada.',a:false},
-  {q:'El agua, la luz y la temperatura son factores abióticos.',a:true},
-  {q:'El arrecife de coral es un ecosistema acuático marino.',a:true},
-  {q:'El bosque nublado es un ecosistema acuático.',a:false},
-  {q:'Los descomponedores más comunes son los hongos y las bacterias.',a:true},
-  {q:'En una cadena alimenticia, la energía aumenta de un nivel al siguiente.',a:false},
-  {q:'El hábitat es el lugar donde vive un ser vivo.',a:true},
-  {q:'La ecología es la ciencia que estudia los ecosistemas.',a:true},
+  {q:'Un ecosistema está formado solo por seres vivos.',a:false,k:'tf-solo-vivos'},
+  {q:'Si se quita un eslabón de un ecosistema, otros seres vivos sufren.',a:true,k:'tf-eslabon'},
+  {q:'Si deja de llover, los animales del ecosistema no se ven afectados.',a:false,k:'tf-lluvia'},
+  {q:'Los hongos cazan a otros animales para comer.',a:false,k:'tf-hongos'},
+  {q:'La energía pasa de un ser vivo al siguiente en la cadena.',a:true,k:'tf-pasa'},
+  {q:'Una maceta con su planta y su tierra puede ser un ecosistema.',a:true,k:'tf-maceta'},
+  {q:'La rana puede ser comida por el halcón.',a:true,k:'tf-rana-halcon'},
+  {q:'Un mismo animal puede comer varias cosas.',a:true,k:'tf-varias'},
+  {q:'El desierto y la sabana son ecosistemas terrestres.',a:true,k:'tf-desierto'},
+  {q:'El aire es un ser vivo del ecosistema.',a:false,k:'tf-aire'}
 ];
 const evalMCBank=[
-  {q:'¿Qué es un ecosistema?',o:['a) El conjunto de seres vivos, su medio y sus relaciones','b) Solo los animales de un lugar','c) Solo las plantas','d) Solo el agua y el suelo'],a:0},
-  {q:'¿Cómo se llaman los componentes SIN vida de un ecosistema?',o:['a) Bióticos','b) Abióticos','c) Orgánicos','d) Vivos'],a:1},
-  {q:'¿Qué seres vivos son los productores?',o:['a) Los animales','b) Las plantas','c) Los hongos','d) Las bacterias'],a:1},
-  {q:'Un animal herbívoro es un consumidor…',o:['a) productor','b) descomponedor','c) terciario','d) primario'],a:3},
-  {q:'¿Quiénes reciclan la materia muerta?',o:['a) Los productores','b) Los descomponedores','c) Los herbívoros','d) Los depredadores'],a:1},
-  {q:'En una cadena alimenticia, ¿de dónde viene la energía?',o:['a) Del suelo','b) Del agua','c) Del aire','d) Del Sol'],a:3},
-  {q:'Un grupo de individuos de la misma especie se llama…',o:['a) población','b) comunidad','c) bioma','d) hábitat'],a:0},
-  {q:'La relación en la que AMBAS especies se benefician es el…',o:['a) parasitismo','b) depredación','c) mutualismo','d) competencia'],a:2},
-  {q:'¿Cuál de estos es un factor abiótico?',o:['a) Una planta','b) Un pez','c) El agua','d) Una bacteria'],a:2},
-  {q:'El arrecife de coral de las Islas de la Bahía es un ecosistema…',o:['a) acuático','b) terrestre','c) de desierto','d) de montaña'],a:0},
-  {q:'¿Cuál de estos animales es un consumidor carnívoro?',o:['a) El venado','b) El conejo','c) La vaca','d) El puma'],a:3},
-  {q:'El lugar donde vive un ser vivo se llama…',o:['a) hábitat','b) nicho','c) bioma','d) población'],a:0},
-  {q:'¿Cuál es un ecosistema terrestre de Honduras?',o:['a) El arrecife','b) El bosque nublado','c) El manglar','d) El río Patuca'],a:1},
-  {q:'La ciencia que estudia los ecosistemas se llama…',o:['a) taxonomía','b) geología','c) ecología','d) astronomía'],a:2},
-  {q:'En una cadena, la energía de un nivel al siguiente…',o:['a) aumenta','b) desaparece','c) disminuye','d) se duplica'],a:2},
+  {q:'¿Qué ciencia estudia los ecosistemas?',o:['a) La taxonomía','b) La geología','c) La ecología','d) La astronomía'],a:2,k:'mc-ecologia'},
+  {q:'¿Cómo se llama al ser vivo que es cazado?',o:['a) Cazador','b) Presa','c) Parásito','d) Huésped'],a:1,k:'mc-presa'},
+  {q:'¿Cuál de estos es un ecosistema marino?',o:['a) El arrecife de coral','b) El río','c) La laguna','d) El bosque'],a:0,k:'mc-marino'},
+  {q:'¿Qué nivel es más grande que el ecosistema?',o:['a) Un venado','b) Una manada de venados','c) Un nido','d) El bioma'],a:3,k:'mc-bioma'},
+  {q:'¿En qué tipo de ecosistema están los ríos y los lagos?',o:['a) Acuático de agua dulce','b) Terrestre','c) Marino','d) De desierto'],a:0,k:'mc-agua-dulce'},
+  {q:'¿Qué perdió la aldea cuando espantó a los gavilanes?',o:['a) Sus pollos','b) Maíz, porque las ratas se multiplicaron','c) El agua del pozo','d) Nada'],a:1,k:'mc-gavilanes'},
+  {q:'En la cadena pasto → saltamontes → rana → halcón, ¿qué consumidor es el halcón?',o:['a) Primario','b) Secundario','c) Terciario','d) Ninguno'],a:2,k:'mc-halcon'},
+  {q:'¿Qué forma el medio físico de un ecosistema?',o:['a) Los animales','b) Los hongos','c) El agua, el aire y el suelo','d) Las plantas'],a:2,k:'mc-medio'},
+  {q:'¿Qué animal come solo plantas?',o:['a) El puma','b) El halcón','c) La rana','d) El venado'],a:3,k:'mc-venado'},
+  {q:'¿De dónde sacan su alimento las plantas y las algas?',o:['a) Lo fabrican por fotosíntesis','b) De otros animales','c) De restos muertos','d) Del suelo solamente'],a:0,k:'mc-fotosintesis'}
 ];
 const evalCPBank=[
-  {q:'El conjunto de seres vivos, su medio físico y sus relaciones es un ___.',a:'ecosistema'},
-  {q:'Los factores ___ son los componentes sin vida del ecosistema.',a:'abióticos'},
-  {q:'Las plantas y las algas son los ___ del ecosistema.',a:'productores'},
-  {q:'Los ___ reciclan la materia muerta y devuelven nutrientes al suelo.',a:'descomponedores'},
-  {q:'Un animal herbívoro es un consumidor ___.',a:'primario'},
-  {q:'En la cadena alimenticia, la energía viene del ___.',a:'Sol'},
-  {q:'Un grupo de individuos de la misma especie es una ___.',a:'población'},
-  {q:'La relación en la que ambas especies se benefician es el ___.',a:'mutualismo'},
-  {q:'El ___ es el lugar donde vive un ser vivo.',a:'hábitat'},
-  {q:'Los seres vivos de un ecosistema son los factores ___.',a:'bióticos'},
-  {q:'La ciencia que estudia los ecosistemas se llama ___.',a:'ecología'},
-  {q:'El bosque nublado y el bosque de pino son ecosistemas ___.',a:'terrestres'},
-  {q:'El arrecife, el manglar y el río son ecosistemas ___.',a:'acuáticos'},
-  {q:'El conjunto de todas las poblaciones de un lugar es la ___.',a:'comunidad'},
-  {q:'Cuando una especie caza y se come a otra, la relación es de ___.',a:'depredación'},
+  {q:'En una cadena alimenticia, el ___ es la fuente de la energía.',a:'Sol',acc:['Sol'],k:'cp-sol'},
+  {q:'Los consumidores primarios también se llaman ___.',a:'herbívoros',acc:['herbívoros','herbivoros'],k:'cp-herbivoros'},
+  {q:'Un ser vivo que caza y se come a otro es un ___.',a:'depredador',acc:['depredador'],k:'cp-depredador'},
+  {q:'El medio físico de un ecosistema se llama ___.',a:'biotopo',acc:['biotopo'],k:'cp-biotopo'},
+  {q:'Al conjunto de los seres vivos de un ecosistema se le llama también ___.',a:'biocenosis',acc:['biocenosis'],k:'cp-biocenosis'},
+  {q:'El papel o «trabajo» de un ser vivo en el ecosistema es su ___ ecológico.',a:'nicho',acc:['nicho'],k:'cp-nicho'},
+  {q:'Cuando muchas cadenas se conectan forman una ___ alimenticia.',a:'red',acc:['red'],k:'cp-red'},
+  {q:'La palabra «eco» quiere decir ___.',a:'casa',acc:['casa'],k:'cp-casa'},
+  {q:'La energía ___ de un nivel de la cadena al siguiente.',a:'disminuye',acc:['disminuye','baja'],k:'cp-disminuye'},
+  {q:'Un solo ser vivo es un ___.',a:'individuo',acc:['individuo'],k:'cp-individuo'}
 ];
 const evalPRBank=[
-  {term:'Ecosistema',def:'Seres vivos, su medio físico y sus relaciones'},
-  {term:'Factores bióticos',def:'Los seres vivos del ecosistema'},
-  {term:'Factores abióticos',def:'Los componentes sin vida (agua, luz, suelo)'},
-  {term:'Productores',def:'Fabrican su alimento; base de la cadena (plantas)'},
-  {term:'Consumidores',def:'Animales que comen a otros seres vivos'},
-  {term:'Descomponedores',def:'Reciclan la materia muerta (hongos y bacterias)'},
-  {term:'Población',def:'Individuos de la misma especie en un lugar'},
-  {term:'Comunidad',def:'Todas las poblaciones que conviven en un lugar'},
-  {term:'Cadena alimenticia',def:'Muestra quién se come a quién'},
-  {term:'Mutualismo',def:'Relación en la que ambas especies se benefician'},
-  {term:'Depredación',def:'Un ser vivo caza y se come a otro'},
-  {term:'Hábitat',def:'El lugar donde vive un ser vivo'},
-  {term:'Ecosistema terrestre',def:'El que está sobre la tierra (bosque, selva)'},
-  {term:'Ecosistema acuático',def:'El que está en el agua (río, mar, arrecife)'},
-  {term:'Ecología',def:'Ciencia que estudia los ecosistemas'},
+  {term:'Factores abióticos',def:'Lo que no tiene vida en un ecosistema',k:'pr-abioticos'},
+  {term:'Productores',def:'La base de toda cadena alimenticia',k:'pr-productores'},
+  {term:'Descomponedores',def:'Cierran el ciclo de la materia',k:'pr-descomponedores'},
+  {term:'Población',def:'Todos los venados de un bosque',k:'pr-poblacion'},
+  {term:'Comunidad',def:'Venados, árboles y aves de un mismo lugar, juntos',k:'pr-comunidad'},
+  {term:'Mutualismo',def:'La abeja y la flor',k:'pr-mutualismo'},
+  {term:'Parasitismo',def:'La garrapata y el perro',k:'pr-parasitismo'},
+  {term:'Competencia',def:'Dos aves que buscan el mismo fruto',k:'pr-competencia'},
+  {term:'Hábitat',def:'El lugar donde vive un ser vivo',k:'pr-habitat'},
+  {term:'Biosfera',def:'Toda la vida del planeta',k:'pr-biosfera'}
 ];
 
 // ══════════ Formas deterministas v1 (M.E.T.A.S, jul 2026) ══════════
@@ -500,12 +485,12 @@ function evalSwitchMode(mode){
   }
 }
 const critCaseBank=[
-  {txt:'En un bosque cazan a todos los pumas (depredadores). Al poco tiempo, los venados se multiplican tanto que acaban con casi todo el pasto.'},
-  {txt:'En una laguna desaparecen todas las ranas. Los insectos que ellas comían aumentan sin control y dañan las plantas de la orilla.'},
-  {txt:'En un pastizal se eliminan todas las aves. Las orugas y los saltamontes se multiplican y devoran los cultivos.'},
-  {txt:'En un río contaminan el agua y mueren los peces pequeños. Las garzas que se alimentaban de ellos se quedan sin comida.'},
-  {txt:'En un bosque talan todos los árboles (productores). Los herbívoros que comían sus hojas y frutos empiezan a pasar hambre.'},
-  {txt:'A una isla llega una especie nueva que se come todos los huevos de las aves; las poblaciones de aves bajan muchísimo.'},
+  {k:'ca-pumas',txt:'En un bosque cazan a todos los pumas (depredadores). Al poco tiempo, los venados se multiplican tanto que acaban con casi todo el pasto.'},
+  {k:'ca-ranas',txt:'En una laguna desaparecen todas las ranas. Los insectos que ellas comían aumentan sin control y dañan las plantas de la orilla.'},
+  {k:'ca-aves',txt:'En un pastizal se eliminan todas las aves. Las orugas y los saltamontes se multiplican y devoran los cultivos.'},
+  {k:'ca-peces',txt:'En un río contaminan el agua y mueren los peces pequeños. Las garzas que se alimentaban de ellos se quedan sin comida.'},
+  {k:'ca-arboles',txt:'En un bosque talan todos los árboles (productores). Los herbívoros que comían sus hojas y frutos empiezan a pasar hambre.'},
+  {k:'ca-huevos',txt:'A una isla llega una especie nueva que se come todos los huevos de las aves; las poblaciones de aves bajan muchísimo.'},
 ];
 const critCaseQuestions=[
   '1. ¿Qué papel cumplía en la cadena la especie que cambió (productor, consumidor o depredador)?',
@@ -520,19 +505,13 @@ const critCaseGuides=[
   'Proteger a todas las especies y su hábitat, evitar la caza y la contaminación, y no eliminar a los depredadores ni a los productores, porque cada uno cumple un papel.',
 ];
 const critErrorBank=[
-  {txt:'"Los factores abióticos son los seres vivos del ecosistema, como los animales y las plantas."',
-   g1:'Los factores abióticos son los componentes SIN vida: el agua, la luz, el suelo y la temperatura.',
-   g2:'Los seres vivos (animales, plantas, hongos, bacterias) son los factores BIÓTICOS.'},
-  {txt:'"Los animales son productores porque también forman parte del ecosistema."',
-   g1:'Los productores son las plantas y las algas, que fabrican su propio alimento.',
-   g2:'Los animales son consumidores: se alimentan de otros seres vivos.'},
-  {txt:'"En una cadena alimenticia la energía viene del suelo y aumenta en cada nivel."',
+  {k:'er-energia',txt:'"En una cadena alimenticia la energía viene del suelo y aumenta en cada nivel."',
    g1:'La energía viene del SOL, no del suelo.',
    g2:'La energía DISMINUYE de un nivel al siguiente, no aumenta.'},
-  {txt:'"Los descomponedores no sirven para nada; solo ensucian el ecosistema."',
+  {k:'er-descomponedores',txt:'"Los descomponedores no sirven para nada; solo ensucian el ecosistema."',
    g1:'Los descomponedores (hongos y bacterias) reciclan la materia muerta.',
    g2:'Devuelven los nutrientes al suelo; sin ellos, los restos se acumularían y las plantas no tendrían de qué alimentarse.'},
-  {txt:'"El arrecife de coral y el manglar son ecosistemas terrestres."',
+  {k:'er-arrecife',txt:'"El arrecife de coral y el manglar son ecosistemas terrestres."',
    g1:'Son ecosistemas ACUÁTICOS: viven en el agua o entre el agua y la tierra.',
    g2:'Los ecosistemas terrestres están sobre tierra firme, como el bosque o el pinar.'},
 ];
@@ -545,31 +524,25 @@ const critDecisionBank=[
 ];
 const critDecisionGuide='Cada ecosistema de Honduras es único y nos presta servicios importantes: agua, oxígeno, pesca, protección de la costa y biodiversidad. La mejor decisión es CONSERVARLO: usarlo de forma sostenible, evitar la contaminación y la tala, y proteger a las especies. Destruir un ecosistema afecta a todos los seres vivos que dependen de él, incluidas las personas.';
 const critCompareBank=[
-  {a:'Un ser vivo que fabrica su alimento con la luz del sol, como el pasto.',b:'Un animal que se alimenta comiendo ese pasto, como el venado.',
+  {k:'co-productor-consumidor',a:'Un ser vivo que fabrica su propio alimento, como el pasto.',b:'Un animal que se alimenta comiendo ese pasto, como el venado.',
    ga:'Un productor.',
    gb:'Un consumidor primario (herbívoro).',
    gr:'Cumplen papeles distintos: el productor crea el alimento y el consumidor lo aprovecha; ambos son eslabones de la misma cadena.'},
-  {a:'El agua, la luz del sol y la temperatura de un lago.',b:'Los peces, las plantas acuáticas y las garzas de ese mismo lago.',
+  {k:'co-bioticos',a:'El agua, la luz y la temperatura de un lago.',b:'Los peces, las plantas acuáticas y las garzas de ese mismo lago.',
    ga:'Factores abióticos.',
    gb:'Factores bióticos.',
    gr:'No son lo mismo: unos son componentes sin vida y otros son los seres vivos; juntos forman el ecosistema.'},
-  {a:'El bosque nublado de Celaque, lleno de árboles y niebla en la montaña.',b:'El arrecife de coral de Roatán, bajo el agua del mar.',
-   ga:'Un ecosistema terrestre.',
-   gb:'Un ecosistema acuático (marino).',
-   gr:'Los dos son ecosistemas, pero uno está sobre la tierra y el otro dentro del agua.'},
 ];
 const critCauseBank=[
-  {cause:'Se talan todos los árboles (productores) de un bosque.',guide:'Los herbívoros se quedan sin alimento y la cadena se rompe; muchos animales emigran o mueren.'},
-  {cause:'Cazan a todos los depredadores (pumas) de un bosque.',guide:'Los herbívoros se multiplican sin control y acaban con las plantas.'},
-  {cause:'Contaminan un río con basura y aguas negras.',guide:'Mueren los peces y otros seres del agua; el ecosistema acuático se degrada.'},
-  {cause:'Desaparecen los descomponedores de un ecosistema.',guide:'Los restos muertos se acumulan y los nutrientes no vuelven al suelo.'},
+  {k:'cau-sequia',cause:'Deja de llover durante muchos meses en un pastizal.',guide:'Las plantas se secan y los animales que se alimentan de ellas también sufren.'},
+  {k:'cau-abejas',cause:'Desaparecen las abejas de una zona de cultivos.',guide:'Las flores no se polinizan y la cosecha baja: las dos especies se ayudaban.'},
 ];
 const critEffectBank=[
-  {effect:'En un bosque hay demasiados venados y casi no queda pasto.',guide:'Probablemente desaparecieron sus depredadores, que controlaban su número.'},
-  {effect:'Las hojas y los animales muertos de un bosque no se pudren y se acumulan.',guide:'Faltan descomponedores (hongos y bacterias) que reciclen la materia.'},
-  {effect:'En un río mueren los peces y el agua huele mal.',guide:'El río está contaminado con basura o aguas negras.'},
-  {effect:'Muchos peces jóvenes desaparecen de la costa.',guide:'Se destruyeron los manglares, que eran su "guardería".'},
+  {k:'ef-garrapatas',effect:'Un perro lleno de garrapatas se pone débil.',guide:'Las garrapatas son parásitas: se benefician de él y lo perjudican.'},
+  {k:'ef-fruto',effect:'Dos aves que buscan el mismo fruto pelean por él.',guide:'Compiten por el mismo alimento.'},
+  {k:'ef-frio',effect:'En un lago muy frío no viven los peces de agua caliente.',guide:'La temperatura, que no tiene vida, decide quién puede vivir ahí.'},
 ];
+
 function genEvalCrit(){
   sfx('click');
   _injectFormaSel('genEvalCrit', 'evalCritFormaSel', evalCritFormNum, function (v) { evalCritFormNum = v; });
