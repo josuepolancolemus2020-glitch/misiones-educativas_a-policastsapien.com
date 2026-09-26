@@ -428,112 +428,71 @@
       ],
 
       evalTFBank: [
-        { q: 'A robot senses, thinks and acts.', a: true },
-        { q: 'The hammer is a robot because it acts.', a: false },
-        { q: 'Sensors are the «senses» of the robot.', a: true },
-        { q: 'The robot’s controller works like the brain.', a: true },
-        { q: 'The robot’s actuators work like the senses.', a: false },
-        { q: 'The blender is a robot because it moves.', a: false },
-        { q: 'The robot vacuum senses, thinks and acts.', a: true },
+        { q: 'A machine that only acts is already a robot.', a: false },
+        { q: 'Marvin was able to explain why the puppet was not a robot.', a: false },
+        { q: 'A robot can be shaped like an animal or a little cart.', a: true },
         { q: 'Robots think and feel just like people.', a: false },
-        { q: 'The program is the list of instructions the robot follows.', a: true },
-        { q: 'A drone can inspect the coffee fields from the air.', a: true },
-        { q: 'A robot’s power can come from a battery.', a: true },
-        { q: 'A simple machine, such as a lever, has sensors.', a: false },
-        { q: 'In the maquilas there are robotic arms that sew and cut.', a: true },
-        { q: 'The robot cycle is: act → think → sense.', a: false },
-        { q: 'With no program, the controller does not know what to decide.', a: true }
+        { q: 'Without written instructions, a robot does not know what to do.', a: true },
+        { q: 'In hospitals there is surgery assisted by robots.', a: true },
+        { q: 'The iron that heats up when you plug it in is a robot.', a: false },
+        { q: 'A door that opens on its own when you come near is a simple robot.', a: true },
+        { q: 'All robots look like the ones in the movies.', a: false },
+        { q: 'The little cart that follows a line on the floor is a robot.', a: true }
       ],
 
       evalMCBank: [
-        { q: 'What is a robot?', o: ['a) Any metal machine', 'b) A toy with lights', 'c) A machine that senses, thinks and acts', 'd) A computer with a screen'], a: 2 },
-        { q: 'Which part of the robot works like its «senses»?', o: ['a) The actuators', 'b) The sensors', 'c) The wheels', 'd) The battery'], a: 1 },
-        { q: 'Which of these machines is a robot?', o: ['a) The hammer', 'b) The blender', 'c) The vacuum that detects obstacles and chooses its own route', 'd) The bicycle'], a: 2 },
-        { q: 'Which part of the robot decides what to do?', o: ['a) The motor', 'b) The controller', 'c) The speaker', 'd) The wheel'], a: 1 },
-        { q: 'Which part of the robot are its «muscles»?', o: ['a) The actuators', 'b) The sensors', 'c) The program', 'd) The antenna'], a: 0 },
-        { q: 'What is the order of the robot cycle?', o: ['a) Act → sense → think', 'b) Sense → think → act', 'c) Think → act → sense', 'd) Sense → act → think'], a: 1 },
-        { q: 'Why is the hammer NOT a robot?', o: ['a) Because it neither senses nor decides', 'b) Because it is small', 'c) Because it is made of metal', 'd) Because it has no lights'], a: 0 },
-        { q: 'Why is the blender NOT a robot?', o: ['a) Because it acts but does not decide on its own', 'b) Because it does not spin', 'c) Because it belongs in the kitchen', 'd) Because it uses electricity'], a: 0 },
-        { q: 'Which sensor does a robot need in order to stop before an obstacle?', o: ['a) Temperature', 'b) Moisture', 'c) Sound', 'd) Distance'], a: 3 },
-        { q: 'Which robot inspects the coffee fields in Honduras?', o: ['a) The humanoid', 'b) The robot vacuum', 'c) The surgical robot', 'd) The drone'], a: 3 },
-        { q: 'What do robotic arms do in the maquila?', o: ['a) They sew and cut by following a program', 'b) They think for the workers', 'c) They sell the clothes', 'd) They design the fashion'], a: 0 },
-        { q: 'What is a robot’s program?', o: ['a) A television channel', 'b) The list of instructions it obeys step by step', 'c) Its internal battery', 'd) Its metal case'], a: 1 },
-        { q: 'How do robots «think»?', o: ['a) Just like people', 'b) They guess what to do', 'c) They dream the answers', 'd) They follow the instructions in their program'], a: 3 },
-        { q: 'Which one is a robot shaped like a person?', o: ['a) The drone', 'b) The industrial arm', 'c) The humanoid', 'd) The robot vacuum'], a: 2 },
-        { q: 'Where does a robot get its power from?', o: ['a) From food', 'b) From the water it drinks', 'c) From the battery or the electricity', 'd) From the air'], a: 2 }
+        { q: 'What is a robot?', o: ['a) Any metal machine', 'b) A toy with lights', 'c) A machine that senses, decides and acts', 'd) A computer with a screen'], a: 2 },
+        { q: 'What is the order of the robot cycle?', o: ['a) Act → sense → decide', 'b) Sense → decide → act', 'c) Decide → act → sense', 'd) Sense → act → decide'], a: 1 },
+        { q: 'Why is the puppet at the fair not a robot?', o: ['a) Because it does not notice anything or decide anything', 'b) Because it is small', 'c) Because it is made of plastic', 'd) Because it has no lights'], a: 0 },
+        { q: 'Which part of your body is like the robot’s camera?', o: ['a) The stomach', 'b) The bones', 'c) The eyes', 'd) The nails'], a: 2 },
+        { q: 'What do robotic arms do in the maquila?', o: ['a) They think for the workers', 'b) They sell the clothes', 'c) They design fashion', 'd) They sew and cut cloth'], a: 3 },
+        { q: 'Which robot cleans the house and chooses where to go?', o: ['a) The blender', 'b) The robot vacuum', 'c) The hammer', 'd) The iron'], a: 1 },
+        { q: 'What did the puppet at the fair move?', o: ['a) Its head', 'b) Its arm', 'c) Its wheels', 'd) Its eyes'], a: 1 },
+        { q: 'Where did you learn the comparison with the body before?', o: ['a) In the Route of the Body', 'b) In the Route of the Homeland', 'c) In the Numbers route', 'd) Nowhere'], a: 0 },
+        { q: 'Which one is NOT a type of robot?', o: ['a) Mobile', 'b) Industrial', 'c) Humanoid', 'd) Blender'], a: 3 },
+        { q: 'What does the robot do in the first step of its cycle?', o: ['a) It finds out what is happening around it', 'b) It moves the wheels', 'c) It switches off', 'd) It saves the battery'], a: 0 }
       ],
 
       evalCPBank: [
-        { q: 'A robot senses, ___ and acts.', a: 'thinks' },
-        { q: 'Sensors are the ___ of the robot.', a: 'senses' },
-        { q: 'The controller works like the ___ of the body.', a: 'brain' },
-        { q: 'Actuators work like the ___ of the body.', a: 'muscles' },
-        { q: 'The robot follows the instructions in its ___.', a: 'program' },
-        { q: 'The robot cycle is sense, think and ___.', a: 'act' },
-        { q: 'The ___ is a flying robot that inspects crops.', a: 'drone' },
-        { q: 'The robot gets its power from the ___.', a: 'battery' },
-        { q: 'The motor and the wheel are examples of ___.', a: 'actuators' },
-        { q: 'The robot’s camera is an example of a ___.', a: 'sensor' },
-        { q: 'In the maquilas, ___ arms sew and cut.', a: 'robotic' },
-        { q: 'The hammer is not a robot: it is a ___ machine.', a: 'simple' },
-        { q: 'A robot shaped like a person is a ___.', a: 'humanoid' },
-        { q: 'The ___ sensor measures whether the soil is dry.', a: 'moisture' },
-        { q: 'The robot that cleans the floor and avoids obstacles is the robot ___.', a: 'vacuum' }
+        { q: 'They asked Marvin ___ it was not a robot, and he said nothing.', a: 'why', acc: ['why'] },
+        { q: 'The puppet waved the same way by day and by ___.', a: 'night', acc: ['night'] },
+        { q: 'The robot’s motors work like the ___ of your body.', a: 'muscles', acc: ['muscles'] },
+        { q: 'The robot cycle repeats many times per ___.', a: 'second', acc: ['second'] },
+        { q: 'Robots follow instructions written by ___.', a: 'people', acc: ['people', 'humans'] },
+        { q: 'Only a machine that completes the ___ parts of the cycle is a robot.', a: 'three', acc: ['three', '3'] },
+        { q: 'A mobile robot moves around on ___.', a: 'wheels', acc: ['wheels'] },
+        { q: 'In this mission you learn with logic, paper and ___.', a: 'games', acc: ['games'] },
+        { q: 'The robot that helps in surgery works with great ___.', a: 'precision', acc: ['precision'] },
+        { q: 'Receptor → brain → ___, like in your body.', a: 'effector', acc: ['effector'] }
       ],
 
       evalPRBank: [
-        { term: 'Robot', def: 'A machine that senses, thinks and acts' },
-        { term: 'Sensor', def: 'It picks up light, sound, distance or temperature' },
-        { term: 'Controller', def: 'The «brain» that decides using the program' },
-        { term: 'Actuator', def: 'Motor, wheel or arm that carries out the action' },
-        { term: 'Program', def: 'A list of step-by-step instructions' },
-        { term: 'Power', def: 'Battery or electricity that brings the robot to life' },
-        { term: 'Drone', def: 'A flying robot; it inspects crops from the air' },
+        { term: 'Sensor', def: 'It picks up light, sound or distance' },
+        { term: 'Controller', def: 'It receives the information and chooses what to do' },
+        { term: 'Actuator', def: 'A motor or wheel that carries out the action' },
+        { term: 'Battery', def: 'The robot’s «food»' },
+        { term: 'Drone', def: 'It flies with propellers over the coffee farm' },
         { term: 'Humanoid', def: 'A robot shaped like a person' },
-        { term: 'Simple machine', def: 'It neither senses nor decides, like the hammer' },
-        { term: 'Home appliance', def: 'It acts when switched on, but does not decide alone' },
-        { term: 'Robot cycle', def: 'Sense → think → act' },
-        { term: 'Industrial robot', def: 'An arm that sews or cuts in the garment factory' },
-        { term: 'Distance sensor', def: 'It keeps the robot from crashing into obstacles' },
-        { term: 'Robot vacuum', def: 'It cleans on its own: it detects and picks its route' },
-        { term: 'Robotics', def: 'The science that studies and builds robots' }
+        { term: 'Simple machine', def: 'It does not sense, does not decide and you move it' },
+        { term: 'Home appliance', def: 'It acts when switched on, but does not decide' },
+        { term: 'Industrial robot', def: 'A fixed arm that works in a factory' },
+        { term: 'Unplugged robotics', def: 'Learning robotics with no computer or cables' }
       ],
 
       critSensorBank: [
-        { txt: 'A robot waters the school garden only when the soil is dry.', ans: 'Moisture sensor: it measures the water in the soil; if it is dry, the controller decides to turn the irrigation on.' },
-        { txt: 'A delivery robot stops before crashing into a wall or a person.', ans: 'Distance sensor: it measures how close the obstacle is; if it is too close, the controller decides to brake.' },
-        { txt: 'A robotic lamp switches itself on when night falls.', ans: 'Light sensor: it detects that it got dark; the controller decides to switch the lamp on.' },
-        { txt: 'A robot looks after the chick incubator and warns if it gets cold.', ans: 'Temperature sensor: it measures the heat; if it drops too low, the controller decides to switch on the alarm or the bulb.' },
-        { txt: 'A toy robot starts up when the child claps twice.', ans: 'Sound sensor: it picks up the claps; the controller decides to start the motors.' },
-        { txt: 'A robotic car follows a black line painted on the classroom floor.', ans: 'Light sensor: it tells black apart from light on the floor; the controller decides to correct the course so it does not drift off.' }
+        {txt:'A robot waters the school garden only when the soil is dry.',ans:'Moisture sensor: it measures the water in the soil; if it is dry, the controller decides to turn the irrigation on.'},
+        {txt:'A delivery robot stops before crashing into a wall or a person.',ans:'Distance sensor: it measures how close the obstacle is; if it is too close, the controller decides to brake.'},
+        {txt:'A robotic lamp switches itself on when night falls.',ans:'Light sensor: it detects that it got dark; the controller decides to switch the lamp on.'},
+        {txt:'A robot looks after the chick incubator and warns if it gets cold.',ans:'Temperature sensor: it measures the heat; if it drops too low, the controller decides to switch on the alarm or the bulb.'},
+        {txt:'A toy robot starts up when the child claps twice.',ans:'Sound sensor: it picks up the claps; the controller decides to start the motors.'},
+        {txt:'A robotic car follows a black line painted on the classroom floor.',ans:'Light sensor: it tells black apart from light on the floor; the controller decides to correct the course so it does not drift off.'}
       ],
 
       critErrorBank: [
-        {
-          txt: '"The blender is a robot because it moves."',
-          g1: 'Moving (acting) is not enough to be a robot: the blender DOES NOT SENSE its surroundings with sensors.',
-          g2: 'It does not DECIDE on its own either: a person switches it on and off. A robot completes the whole sense → think → act cycle.'
-        },
-        {
-          txt: '"Sensors are the robot’s muscles and actuators are its senses."',
-          g1: 'It is the other way round: SENSORS are the robot’s «senses» (they pick up light, sound, distance, temperature).',
-          g2: 'ACTUATORS are the «muscles» (motors, wheels, arms) that carry out the action.'
-        },
-        {
-          txt: '"Robots think and feel just like people."',
-          g1: 'Robots DO NOT think like people: they follow the instructions in their PROGRAM.',
-          g2: 'They do not feel emotions either: their sensors only measure data (light, distance, heat) and the controller decides according to what was programmed.'
-        },
-        {
-          txt: '"The hammer is a robot because it is a machine and it works hard."',
-          g1: 'The hammer is a SIMPLE MACHINE: it has no sensors and no program, it senses nothing.',
-          g2: 'It neither decides nor acts on its own: all the force and all the decisions come from the person using it.'
-        },
-        {
-          txt: '"A robot needs no program: it just knows what to do."',
-          g1: 'With no PROGRAM the controller does not know what to decide: the program is its list of exact instructions.',
-          g2: 'What looks like the robot «knowing» is the work of the people who programmed it step by step.'
-        }
+        {txt:'"The blender is a robot because it moves."',g1:'Moving (acting) is not enough to be a robot: the blender DOES NOT SENSE its surroundings with sensors.',g2:'It does not DECIDE on its own either: a person switches it on and off. A robot completes the whole sense → think → act cycle.'},
+        {txt:'"Robots think and feel just like people."',g1:'Robots DO NOT think like people: they follow the instructions in their PROGRAM.',g2:'They do not feel emotions either: their sensors only measure data (light, distance, heat) and the controller decides according to what was programmed.'},
+        {txt:'"The hammer is a robot because it is a machine and it works hard."',g1:'The hammer is a SIMPLE MACHINE: it has no sensors and no program, it senses nothing.',g2:'It neither decides nor acts on its own: all the force and all the decisions come from the person using it.'},
+        {txt:'"A robot needs no program: it just knows what to do."',g1:'With no PROGRAM the controller does not know what to decide: the program is its list of exact instructions.',g2:'What looks like the robot «knowing» is the work of the people who programmed it step by step.'}
       ],
 
       critCicloQuestions: [
@@ -543,70 +502,21 @@
       ],
 
       critCicloBank: [
-        {
-          txt: 'The robot vacuum cleans the house: when it meets a chair it goes around it, and when its battery runs low it returns to the charger on its own.',
-          p: 'It senses the obstacles (distance or touch sensor) and the level of its own battery.',
-          d: 'It decides to go around the chair and, if the battery is low, it decides to head back to the charger.',
-          a: 'It acts with its motors and wheels: it turns, changes route and travels to the charger.'
-        },
-        {
-          txt: 'The supermarket automatic door opens when a person walks up and closes when nobody else is coming through.',
-          p: 'It senses the person with a motion or distance sensor.',
-          d: 'It decides to open when it detects somebody nearby and to close when there is nobody left.',
-          a: 'It acts with a motor (actuator) that slides the door.'
-        },
-        {
-          txt: 'A drone flies over the coffee field: it takes photos of the plants and, if it spots a diseased area, it alerts the farmer.',
-          p: 'It senses the crop with its camera (sensor) and its position with GPS.',
-          d: 'It decides which area to inspect and recognizes when an area looks diseased.',
-          a: 'It acts with its propellers (motors) to fly and sends the alert to the farmer’s phone.'
-        },
-        {
-          txt: 'The garden robot measures the soil every morning; if it is dry it turns the water on and, once the soil is moist, it turns it off.',
-          p: 'It senses the moisture of the soil with its moisture sensor.',
-          d: 'It decides to turn the water on if the soil is dry and to turn it off once it is moist.',
-          a: 'It acts with a valve or pump (actuator) that lets the water through.'
-        },
-        {
-          txt: 'In the garment factory, a robotic arm sews pockets: it picks up the fabric, places it in the exact spot and sews the whole seam.',
-          p: 'It senses the position of the fabric with its sensors.',
-          d: 'It decides where to place the fabric and when to start and finish the seam, according to its program.',
-          a: 'It acts by moving the arm and the needle (actuators) to sew.'
-        }
+        {txt:'The robot vacuum cleans the house: when it meets a chair it goes around it, and when its battery runs low it returns to the charger on its own.',p:'It senses the obstacles (distance or touch sensor) and the level of its own battery.',d:'It decides to go around the chair and, if the battery is low, it decides to head back to the charger.',a:'It acts with its motors and wheels: it turns, changes route and travels to the charger.'},
+        {txt:'The supermarket automatic door opens when a person walks up and closes when nobody else is coming through.',p:'It senses the person with a motion or distance sensor.',d:'It decides to open when it detects somebody nearby and to close when there is nobody left.',a:'It acts with a motor (actuator) that slides the door.'},
+        {txt:'A drone flies over the coffee field: it takes photos of the plants and, if it spots a diseased area, it alerts the farmer.',p:'It senses the crop with its camera (sensor) and its position with GPS.',d:'It decides which area to inspect and recognizes when an area looks diseased.',a:'It acts with its propellers (motors) to fly and sends the alert to the farmer’s phone.'},
+        {txt:'In the garment factory, a robotic arm sews pockets: it picks up the fabric, places it in the exact spot and sews the whole seam.',p:'It senses the position of the fabric with its sensors.',d:'It decides where to place the fabric and when to start and finish the seam, according to its program.',a:'It acts by moving the arm and the needle (actuators) to sew.'}
       ],
 
       critCompareBank: [
-        {
-          a: 'A machine that acts when you switch it on, but chooses nothing on its own (example: the blender).',
-          b: 'A machine that senses with sensors, decides with its program and acts on its own (example: the robot vacuum).',
-          ga: 'The home appliance.', gb: 'The robot.',
-          gr: 'Similarity: both use electric power and both act. Difference: only the robot senses and decides; the home appliance is controlled by a person.'
-        },
-        {
-          a: 'The part of the robot that picks up information: light, sound, distance, temperature.',
-          b: 'The part of the robot that carries out the action: motors, wheels, arms, lights.',
-          ga: 'The sensor.', gb: 'The actuator.',
-          gr: 'Similarity: both are robot parts connected to the controller. Difference: the sensor brings information in (it senses) and the actuator sends action out (it acts), like the senses and the muscles of the body.'
-        },
-        {
-          a: 'A tool with no motor and no sensors: the person provides all the force (example: the hammer).',
-          b: 'A machine that completes the sense → think → act cycle (example: the drone).',
-          ga: 'The simple machine.', gb: 'The robot.',
-          gr: 'Similarity: both help us get work done. Difference: the simple machine senses nothing and decides nothing; the robot works on its own by following its program.'
-        },
-        {
-          a: 'A flying robot with a camera that inspects the coffee fields from the air.',
-          b: 'A fixed factory robot that sews and cuts fabric by following its program.',
-          ga: 'The drone.', gb: 'The robotic arm (industrial robot).',
-          gr: 'Similarity: both are robots: they sense, decide and act. Difference: the drone is mobile and flies over the fields; the industrial arm works in a fixed spot inside the factory.'
-        }
+        {a:'The part of the robot that works as its «senses».',b:'The part of the robot that works as its «muscles».',ga:'The sensor.',gb:'The actuator.',gr:'Similarity: both are robot parts connected to the controller. Difference: the sensor brings information in (it senses) and the actuator sends action out (it acts), like the senses and the muscles of the body.'},
+        {a:'A robot that moves around the house or the classroom on wheels.',b:'A robot shaped like a person, that walks and moves its arms.',ga:'The mobile robot.',gb:'The humanoid.',gr:'Similarity: both sense, decide and act. Difference: one moves on wheels and the other has a body shaped like a person.'}
       ],
 
       critDesignBank: [
         'In your community, the coffee harvest is lost when it rains all of a sudden while the beans are drying in the yard.',
         'During the rainy season the river rises and the children cannot tell whether it is safe to cross the ford on their way to school.',
         'The corner store needs to be watched at night, when nobody is around.',
-        'In the dry season the school garden dries out because nobody comes to water it at weekends.',
         'Birds eat the corn in the field when nobody is guarding it.'
       ],
 

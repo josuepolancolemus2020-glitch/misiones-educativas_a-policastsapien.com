@@ -261,6 +261,7 @@ function itemsConceptual(b) {
    pareados, que se contestan emparejando. Lo escrito en MAYÚSCULAS o con
    números —«los símbolos MAYORES»— sí delata solo, como siempre: ahí la
    mayúscula marca lo que el alumno tiene que escribir, no a quién. */
+const CRIT_CONOCIDOS = ['critCaseBank', 'critErrorBank', 'critDecisionBank', 'critCompareBank', 'critCauseBank', 'critEffectBank'];
 function itemsCritico(b) {
   const L = [];
   const k = it => it && typeof it === 'object' ? it.k : undefined;
@@ -271,6 +272,19 @@ function itemsCritico(b) {
     lados: [{ oculto: it.ga, obra: it.a }, { oculto: it.gb, obra: it.b }] }));
   (b.critCauseBank || []).forEach((it, i) => L.push({ banco: 'critCauseBank', i, k: k(it), visible: it.cause, oculto: it.guide, modo: 'frase' }));
   (b.critEffectBank || []).forEach((it, i) => L.push({ banco: 'critEffectBank', i, k: k(it), visible: it.effect, oculto: it.guide, modo: 'frase' }));
+  /* Las misiones de robótica traen bancos propios —el sensor que hace falta,
+     el ciclo percibir-decidir-actuar, el mecanismo, el diseño— con otros
+     nombres. Sin leerlos, la sonda daba por limpia una prueba que no había
+     mirado. Lo que el alumno lee es el texto (`txt`, o la cadena entera); lo
+     demás es la pauta. */
+  Object.keys(b).filter(n => /^crit\w*Bank$/.test(n) && !CRIT_CONOCIDOS.includes(n)).forEach(n => {
+    (b[n] || []).forEach((it, i) => {
+      if (typeof it === 'string') { L.push({ banco: n, i, k: undefined, visible: it, oculto: '', sinPauta: true }); return; }
+      const vis = it.txt || it.q || it.situ || '';
+      const oc = Object.keys(it).filter(c => c !== 'k' && c !== 'txt' && c !== 'q' && c !== 'situ' && typeof it[c] === 'string').map(c => it[c]).join(' ');
+      L.push({ banco: n, i, k: k(it), visible: vis, oculto: oc, modo: 'frase' });
+    });
+  });
   return L;
 }
 
@@ -579,7 +593,8 @@ for (const dir of fs.readdirSync(MIS).sort()) {
   const htmlArchivo = fs.readdirSync(path.join(MIS, dir)).find(f => f.endsWith('.html') && !f.startsWith('juego-'));
   const html = htmlArchivo ? fs.readFileSync(path.join(MIS, dir, htmlArchivo), 'utf8') : '';
   const bancos = {};
-  [...nombresC, ...nombresK].forEach(n => { const b = banco(src, n) || bancoGenerado(src, n, html); if (b) bancos[n] = b; });
+  const nombresOtros = [...new Set([...src.matchAll(/(?:const|let|var)\s+(crit\w*Bank)\s*=/g)].map(x => x[1]))].filter(n => !nombresK.includes(n));
+  [...nombresC, ...nombresK, ...nombresOtros].forEach(n => { const b = banco(src, n) || bancoGenerado(src, n, html); if (b) bancos[n] = b; });
   const conceptual = itemsConceptual(bancos);
   const conK = conceptual.filter(it => it.k).length;
   const ficha = fichaDe(dir, html);
@@ -631,7 +646,7 @@ function revisa(m, exigir) {
     const juntos = (a, b) => a.banco !== b.banco || (cuantos[a.banco] || 1) > 1;
     const chK = revisaPares(itemsK, juntos, temaK, m.titulo);
     if (exigir) {
-      const sinK = itemsK.filter(it => !it.k && it.banco !== 'critDecisionBank');
+      const sinK = itemsK.filter(it => !it.k && it.banco !== 'critDecisionBank' && !it.sinPauta);
       sinK.slice(0, 5).forEach(it => mal('Pensamiento crítico, sin `k`: ' + nombre(it)));
       chK.forEach(c => mal('Pensamiento crítico: ' + nombre(c.X) + ' y ' + nombre(c.Y) + ': ' + c.por));
       if (!sinK.length && !chK.length) bien('Pensamiento crítico: ' + itemsK.length + ' casos, errores, comparaciones, causas y efectos sin pistas cruzadas');
