@@ -85,7 +85,7 @@
     var el = A.el;
     var g = el('g', { class: 'rn-salto-g am-fuera' }, padre);
     var p = el('path', { class: 'am-trazo rn-salto', d: d, 'data-de': de, 'data-a': a, style: 'stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round' }, g);
-    var t = el('text', { class: 'am-rotulo rn-salto-num', x: xR, y: yR, 'text-anchor': anchor || 'middle', 'font-size': 13, style: 'fill:var(--sec,#00838f)' }, g);
+    var t = el('text', { class: 'am-rotulo rn-salto-num', x: xR, y: yR, 'text-anchor': anchor || 'middle', 'font-size': 13, style: 'fill:var(--am-sec,#00838f)' }, g);
     t.textContent = rotulo;
     return { g: g, camino: p };
   }
@@ -146,7 +146,7 @@
     saltosV.push(salto(pila, 30, LUNES, curvaV(30, LUNES), '8', 138, (yV(30) + yV(LUNES)) / 2 + 4.5, 'start'));
     llave = el('g', { class: 'am-fuera' }, pila);
     el('path', { class: 'am-trazo', d: 'M 166 ' + yV(LUNES) + ' L 172 ' + yV(LUNES) + ' L 172 ' + yV(VIERNES) + ' L 166 ' + yV(VIERNES), style: 'stroke-width:1.6' }, llave);
-    var t14 = el('text', { class: 'am-rotulo', x: 178, y: (yV(LUNES) + yV(VIERNES)) / 2 + 6, 'font-size': 17, style: 'fill:var(--sec,#00838f)' }, llave);
+    var t14 = el('text', { class: 'am-rotulo', x: 178, y: (yV(LUNES) + yV(VIERNES)) / 2 + 6, 'font-size': 17, style: 'fill:var(--am-sec,#00838f)' }, llave);
     t14.textContent = '14';
 
     /* La resta y su prueba (paso 3), escritas sobre el agua. */

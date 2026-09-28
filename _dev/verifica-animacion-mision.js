@@ -111,6 +111,23 @@ const LEER = `
       rana: todos('.rn-rana').map(function (g) { return centro(g.querySelector('text')).x; })[0]
     };
   };
+  window.__amExtra.amReparto = function (raiz, centro) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    return {
+      platos: todos('.tn-plato').map(function (p) { return centro(p).x; }).sort(function (a, b) { return a - b; }),
+      cuadernos: todos('.tn-cuaderno').map(function (g) { return centro(g); }),
+      lapices: todos('.tn-lapiz').map(function (g) { return centro(g); }),
+      sobran: todos('.tn-sobran').map(function (t) { return { que: t.getAttribute('data-que'), n: +t.getAttribute('data-n'), texto: t.textContent }; }),
+      chips: todos('.tn-chip').map(function (g) {
+        return { fila: +g.getAttribute('data-fila'), v: +g.getAttribute('data-v'), x: centro(g).x, dice: g.textContent.trim(),
+                 marcada: vis(g.querySelector('.tn-marca')) };
+      }),
+      comunes: todos('.tn-comun').map(function (g) { return { v: +g.getAttribute('data-v'), x: centro(g).x }; }),
+      mayor: todos('.tn-mayor').map(function (r) { return { v: +r.getAttribute('data-v'), x: centro(r).x }; }),
+      mcd: todos('.tn-mcd').map(function (t) { return { x: centro(t).x, texto: t.textContent }; })
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -126,7 +143,10 @@ const LEER = `
       .sort(function (a, b) { return a.x - b.x; }).map(function (d) { return d.t; }).join('');
     var vale = 0;
     [].forEach.call(raiz.querySelectorAll('[data-vale]'), function (e) { if (window.__amVisible(e)) vale += +e.getAttribute('data-vale'); });
+    var tarjeta = raiz.closest('[data-animacion]').getBoundingClientRect().top;
     return {
+      yBoton: raiz.querySelector('.am-sigue').getBoundingClientRect().top - tarjeta,
+      yDibujo: raiz.querySelector('.am-escenario').getBoundingClientRect().top - tarjeta,
       paso: raiz.amControl.paso(),
       cifra: raiz.querySelector('.am-cifra').textContent,
       palabras: raiz.querySelector('.am-palabras').textContent,
@@ -159,6 +179,87 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Teoría de Números: los 48 cuadernos y los 36 lápices. Se cuenta el
+     dibujo pieza por pieza: en qué grupo cayó cada una (el plato más
+     cercano) y cuántas se quedaron en la mesa. Los divisores, los comunes y
+     el mayor se calculan AQUÍ, aparte, y se comparan con las fichas que se
+     ven: si alguien cambia un número del dibujo, la cuenta no cuadra. */
+  amReparto(e, n) {
+    const x = e.extra, r = [];
+    const divs = m => { const d = []; for (let i = 1; i <= m; i++) if (m % i === 0) d.push(i); return d; };
+    const D48 = divs(48), D36 = divs(36), COM = D48.filter(v => D36.includes(v)), MCD = Math.max(...COM);
+    const MESA = 90;                     // arriba de esto es la mesa; abajo, los grupos
+    const k = /grupos/.test(e.cifra) ? parseInt(e.cifra, 10) : 0;
+    if (k) {
+      r.push([x.platos.length === k, `paso ${n}: se ven ${k} grupos, los que dice el marcador`, x.platos.length]);
+      const grupoDe = p => {
+        let mejor = -1, d = 1e9;
+        x.platos.forEach((px, i) => { const dd = Math.abs(px - p.x); if (dd < d) { d = dd; mejor = i; } });
+        return d <= 6 ? mejor : -1;
+      };
+      const reparto = lista => {
+        const por = x.platos.map(() => 0);
+        let mesa = 0, sueltas = 0;
+        lista.forEach(p => { if (p.y < MESA) mesa++; else { const g = grupoDe(p); if (g < 0) sueltas++; else por[g]++; } });
+        return { por, mesa, sueltas };
+      };
+      const C = reparto(x.cuadernos), L = reparto(x.lapices);
+      const parejo = a => a.length > 0 && a.every(v => v === a[0]);
+      r.push([C.sueltas === 0 && parejo(C.por) && C.por[0] === Math.floor(48 / k) && C.mesa === 48 % k,
+        `paso ${n}: a cada grupo le tocan ${Math.floor(48 / k)} cuadernos y en la mesa quedan ${48 % k}`, [C.por, C.mesa]]);
+      r.push([L.sueltas === 0 && parejo(L.por) && L.por[0] === Math.floor(36 / k) && L.mesa === 36 % k,
+        `paso ${n}: a cada grupo le tocan ${Math.floor(36 / k)} lápices y en la mesa quedan ${36 % k}`, [L.por, L.mesa]]);
+      const dC = +((e.palabras.match(/(\d+) cuadernos?/) || [])[1] || 0);
+      const dL = +((e.palabras.match(/(\d+) lápi(?:z|ces)/) || [])[1] || 0);
+      if (/^sobra/.test(e.palabras)) {
+        r.push([dC === C.mesa && dL === L.mesa, `paso ${n}: el marcador dice lo que se quedó en la mesa (${e.palabras})`, [C.mesa, L.mesa]]);
+      } else {
+        r.push([C.mesa === 0 && L.mesa === 0 && dC === C.por[0] && dL === L.por[0],
+          `paso ${n}: no sobra nada, y el marcador dice lo que le toca a cada grupo (${e.palabras})`, [C.por[0], L.por[0]]]);
+      }
+      const rot = que => (x.sobran.find(s => s.que === que) || {}).n;
+      r.push([x.sobran.length === 2 && rot('cuadernos') === C.mesa && rot('lapices') === L.mesa,
+        `paso ${n}: el rótulo de cada montón dice lo que se quedó en la mesa`, x.sobran.map(s => s.texto)]);
+      if (n === 7) r.push([k === MCD, `paso 7: se reparte entre el Máximo Común Divisor de 48 y 36 (${MCD})`, k]);
+    } else {
+      const arriba = x.cuadernos.filter(p => p.y < MESA).length + x.lapices.filter(p => p.y < MESA).length;
+      r.push([x.cuadernos.length === 48 && x.lapices.length === 36 && arriba === 84 && x.platos.length === 0,
+        `paso ${n}: los 48 cuadernos y los 36 lápices están en el montón, sin repartir`, [x.cuadernos.length, x.lapices.length, arriba]]);
+      if (n !== 6) r.push([e.cifra === '48 y 36', `paso ${n}: el marcador dice 48 y 36`, e.cifra]);
+    }
+    if (n >= 4 && n <= 6) {
+      const fila = f => x.chips.filter(c => c.fila === f).sort((a, b) => a.x - b.x);
+      const f48 = fila(48), f36 = fila(36);
+      r.push([JSON.stringify(f48.map(c => c.v)) === JSON.stringify(D48) && f48.every(c => +c.dice === c.v),
+        `paso ${n}: la fila de arriba son los divisores de 48, en orden`, f48.map(c => c.dice)]);
+      r.push([JSON.stringify(f36.map(c => c.v)) === JSON.stringify(D36) && f36.every(c => +c.dice === c.v),
+        `paso ${n}: la de abajo, los de 36`, f36.map(c => c.dice)]);
+      let columnas = true;
+      f48.forEach(a => f36.forEach(b => { if ((Math.abs(a.x - b.x) < 1) !== (a.v === b.v)) columnas = false; }));
+      r.push([columnas, `paso ${n}: cada número tiene su columna: el que está en las dos filas queda uno encima del otro`]);
+      const com = x.comunes.map(c => c.v).sort((a, b) => a - b);
+      const marcadas = x.chips.filter(c => c.marcada).map(c => c.v);
+      if (n === 4) r.push([com.length === 0 && marcadas.length === 0, 'paso 4: todavía no se marca ningún común', com]);
+      else {
+        const enSuColumna = x.comunes.every(c => {
+          const a = f48.find(q => q.v === c.v), b = f36.find(q => q.v === c.v);
+          return a && b && Math.abs(a.x - c.x) < 1 && Math.abs(b.x - c.x) < 1;
+        });
+        r.push([JSON.stringify(com) === JSON.stringify(COM) && enSuColumna,
+          `paso ${n}: los puentes unen justo los divisores comunes (${COM.join(', ')})`, com]);
+        r.push([marcadas.length === 2 * COM.length && marcadas.every(v => COM.includes(v)),
+          `paso ${n}: y esas fichas están pintadas en las dos filas`, marcadas.length]);
+      }
+      if (n === 6) {
+        const m = x.mayor[0], col = m && f48.find(q => q.v === m.v);
+        r.push([x.mayor.length === 1 && m.v === MCD && +e.cifra === MCD && !!col && Math.abs(col.x - m.x) < 1 &&
+          x.mcd.length === 1 && Math.abs(x.mcd[0].x - m.x) < 1,
+          `paso 6: el marco va en la columna del ${MCD}, el mayor de los comunes, y el marcador dice ${e.cifra}`, x.mayor.map(q => q.v)]);
+      } else r.push([x.mayor.length === 0 && x.mcd.length === 0, `paso ${n}: el marco del mayor todavía no está`]);
+    }
+    return r;
+  },
+
   /* Recta Numérica: la vara de la pila de don Tulio. Todo se lee sobre
      el dibujo con la regla que dan las marcas que se ven. */
   amVara(e, n) {
@@ -320,6 +421,11 @@ function frases(t) {
     const xp0 = await pag.evaluate(() => (document.getElementById('xpPts') || {}).textContent);
     const tarjeta = pag.locator(`#${m.id}`);
     await tarjeta.scrollIntoViewIfNeeded();
+    /* El aparato vuelve a medir las frases cuando llega la letra de la
+       misión y cuando se pone la letra grande (con un respiro de 80 ms):
+       un alumno no toca antes, y la sonda tampoco. */
+    await pag.evaluate(() => document.fonts && document.fonts.ready);
+    await pag.waitForTimeout(400);
 
     /* 0 · montada, y en su sitio */
     const base = await pag.evaluate(id => {
@@ -356,6 +462,13 @@ function frases(t) {
     ok(vistos.every(e => e.texto.trim()) , `las ${vistos.length} frases existen y son de 25 palabras o menos`);
     const vuelta = await pag.evaluate(id => window.__amLeer(id), m.id);
     ok(vuelta.paso === 0 && vuelta.texto === vistos[0].texto, 'el último paso empieza otra vez desde el principio');
+    /* ⚠️ El botón que avanza no se mueve de un paso a otro, ni el dibujo.
+       Se movían hasta 58 px en un teléfono de 360 px, porque la frase y el
+       marcador cambian de largo: el que toca «siguiente» de corrido caía
+       en el hueco o encima de la frase. */
+    const rango = k => Math.max(...vistos.map(e => e[k])) - Math.min(...vistos.map(e => e[k]));
+    ok(rango('yBoton') <= 1 && rango('yDibujo') <= 1, 'el botón que avanza y el dibujo no se mueven de un paso a otro',
+      { boton: Math.round(rango('yBoton')), dibujo: Math.round(rango('yDibujo')) });
 
     /* 2 · atrás, y el teclado */
     await pag.click(`#${m.id} .am-sigue`);
@@ -398,8 +511,10 @@ function frases(t) {
     ok(errores.length === 0, 'sin errores de JavaScript', errores.slice(0, 2));
     await ctx.close();
 
-    /* 3-bis · y CON movimiento, se mueve */
-    const ctx2 = await nav.newContext(Object.assign({}, SIN_SW, { viewport: { width: 360, height: 740 } }));
+    /* 3-bis · y CON movimiento, se mueve. Se abre en la pantalla OSCURA,
+       que es como la tienen muchos teléfonos, para mirar también el
+       contraste. */
+    const ctx2 = await nav.newContext(Object.assign({}, SIN_SW, { viewport: { width: 360, height: 740 }, colorScheme: 'dark' }));
     await ctx2.addInitScript(() => {
       try { localStorage.setItem('METAS_ALUMNO_V1', JSON.stringify({ nombre: 'Ana López', num: '7', grupo: '4-1' })); } catch (e) { }
     });
@@ -414,6 +529,39 @@ function frases(t) {
       return { clase: svg.classList.contains('am-quieto'), dur: getComputedStyle(hijo).transitionDuration };
     }, m.id);
     ok(!mov.clase && /[1-9]/.test(mov.dur), 'sin «reducir movimiento», los pasos se mueven', mov);
+    /* ⚠️ En la pantalla oscura el número del marcador y las cifras del
+       dibujo se leen: el azul de la misión, pensado para fondo claro, se
+       leía a 2,8:1 sobre la tarjeta oscura. Se piden 4,5:1, que es lo que
+       se le pide a una letra normal (el marcador es grande, pero las cifras
+       de las fichas no). Se miran en todos los pasos: cada uno enseña
+       cifras distintas. */
+    const contrastes = [];
+    const pasos2 = await pag2.evaluate(id => document.getElementById(id).amControl.pasos, m.id);
+    for (let n = 0; n < pasos2; n++) {
+      contrastes.push(...await pag2.evaluate(([id, n]) => {
+        const raiz = document.getElementById(id);
+        raiz.amControl.ir(n);
+        const rgb = c => (c.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
+        const lum = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; const [r, g, b] = rgb(c); return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+        const razon = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+        let fondo = 'rgb(255, 255, 255)';
+        for (let e = raiz; e; e = e.parentElement) {
+          const bg = getComputedStyle(e).backgroundColor;
+          if (bg && !/rgba\(.*,\s*0\)$/.test(bg) && bg !== 'transparent') { fondo = bg; break; }
+        }
+        const out = [['marcador', razon(getComputedStyle(raiz.querySelector('.am-cifra')).color, fondo)]];
+        /* Las cifras del dibujo que se ven en este paso, sobre su ficha (del
+           color de la tarjeta). */
+        const seVe = el => { for (let e = el; e && e.tagName.toLowerCase() !== 'svg'; e = e.parentNode) { const cs = getComputedStyle(e); if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity < 0.99) return false; } return true; };
+        [].forEach.call(raiz.querySelectorAll('text.am-digito'), t => {
+          if (seVe(t)) out.push(['cifra ' + t.textContent + ' (paso ' + n + ')', razon(getComputedStyle(t).fill, fondo)]);
+        });
+        return out.map(o => [o[0], Math.round(o[1] * 10) / 10]);
+      }, [m.id, n]));
+    }
+    const bajas = contrastes.filter(c => c[1] < 4.5);
+    ok(bajas.length === 0, 'en la pantalla oscura, el marcador y las cifras del dibujo se leen (4,5:1 o más)',
+      bajas.length ? bajas.slice(0, 3) : Math.min(...contrastes.map(c => c[1])));
     await ctx2.close();
   }
 

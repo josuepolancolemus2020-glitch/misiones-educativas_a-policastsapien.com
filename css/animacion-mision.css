@@ -22,7 +22,46 @@
    a secas (0-1-0). Es la lección que ya costó el título gris sobre
    negro de la tapa de los videos. */
 
-.am-raiz { margin-top: 0.2rem; }
+.am-raiz {
+  position: relative;          /* de aquí cuelga la copia invisible que mide (.am-medida) */
+  margin-top: 0.2rem;
+  --am-pri: var(--pri, #1565c0);
+  --am-sec: var(--sec, #00838f);
+}
+
+/* ⚠️ En la pantalla oscura la tinta se aclara. --pri y --sec son colores
+   pensados para letra sobre fondo CLARO: sobre la tarjeta oscura el azul
+   de la misión se leía a 2,8:1, y eso era el número grande del marcador y
+   las cifras de las fichas, con la vista cansada. Cada misión ya trae su
+   versión clara (--pri-lt, --sec-lt); aquí solo se usa, con los MISMOS dos
+   selectores con que la misión se pone oscura. El botón que avanza no
+   cambia: lleva letra blanca, y esa se lee mejor sobre el tono de siempre. */
+[data-theme="dark"] .am-raiz {
+  --am-pri: var(--pri-lt, #5e92f3);
+  --am-sec: var(--sec-lt, #4ebaaa);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .am-raiz {
+    --am-pri: var(--pri-lt, #5e92f3);
+    --am-sec: var(--sec-lt, #4ebaaa);
+  }
+}
+
+/* La copia invisible donde se miden todas las frases y rótulos de la
+   escena (js/animacion-mision.js, «igualar»): mismo ancho, misma letra,
+   sin ocupar sitio y sin que nadie la vea ni la oiga. */
+.am-raiz .am-medida {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+.am-raiz .am-medida .am-texto { min-height: 0; margin: 0; }
+.am-raiz .am-medida .am-palabras { display: block; min-height: 0; }
 
 /* ── El marcador: cuántos hay, en cifras y en palabras ───────────────
    Va FUERA del dibujo, en HTML, a propósito: el texto de un SVG se
@@ -45,7 +84,7 @@
   font-weight: 700;
   font-size: 2.2rem;
   line-height: 1.1;
-  color: var(--pri, #1565c0);
+  color: var(--am-pri);
   font-variant-numeric: tabular-nums;
 }
 .am-raiz .am-palabras {
@@ -66,7 +105,7 @@
   font-family: 'Fredoka', sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
-  color: var(--sec, #00838f);
+  color: var(--am-sec);
   opacity: 0;
   pointer-events: none;
 }
@@ -155,18 +194,18 @@
 
 /* ── Piezas del dibujo con el color de la misión ──────────────────── */
 .am-raiz .am-fondo      { fill: none; }   /* el tinte lo pone .am-escenario */
-.am-raiz .am-trazo      { fill: none; stroke: var(--pri, #1565c0); stroke-width: 1.6; }
+.am-raiz .am-trazo      { fill: none; stroke: var(--am-pri); stroke-width: 1.6; }
 .am-raiz .am-linea      { fill: none; stroke: var(--gray, #636e72); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.55; }
 .am-raiz .am-linea.am-fuera { opacity: 0; }
 .am-raiz .am-hueco      { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.2; stroke-dasharray: 4 3; }
 .am-raiz .am-letra      { fill: var(--dark, #1b2838); font-family: 'Fredoka', sans-serif; font-weight: 600; }
-.am-raiz .am-digito     { fill: var(--pri, #1565c0); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+.am-raiz .am-digito     { fill: var(--am-pri); font-family: 'Fredoka', sans-serif; font-weight: 700; }
 /* La ficha de una cifra, lo que vale debajo, y el relleno de una barra:
    las tres piezas que casi toda escena de números vuelve a necesitar. */
-.am-raiz .am-ficha      { fill: var(--card, #fff); stroke: var(--pri, #1565c0); stroke-width: 1.6; }
-.am-raiz .am-valor      { fill: var(--sec, #00838f); font-family: 'Fredoka', sans-serif; font-weight: 600; }
-.am-raiz .am-relleno    { fill: var(--pri, #1565c0); }
-.am-raiz .am-relleno-2  { fill: var(--sec, #00838f); }
+.am-raiz .am-ficha      { fill: var(--card, #fff); stroke: var(--am-pri); stroke-width: 1.6; }
+.am-raiz .am-valor      { fill: var(--am-sec); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .am-relleno    { fill: var(--am-pri); }
+.am-raiz .am-relleno-2  { fill: var(--am-sec); }
 /* Un rótulo que se lee encima de CUALQUIER cosa: el agua, el cemento de
    una pila, el fondo claro o el oscuro. El halo es un trazo del color de
    la tarjeta pintado DEBAJO de la letra (paint-order), así que en la
@@ -262,8 +301,8 @@
 .am-raiz .am-atajo {
   flex: 1 1 100%;
   background: transparent;
-  color: var(--pri, #1565c0);
-  border: 2px dashed var(--pri, #1565c0);
+  color: var(--am-pri);
+  border: 2px dashed var(--am-pri);
 }
 .am-raiz .am-mandos button:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
 .am-raiz .am-mandos button[hidden] { display: none; }

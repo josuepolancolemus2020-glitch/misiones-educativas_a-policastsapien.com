@@ -133,7 +133,7 @@ const qzData=[
   {q:'Un número termina en 0. ¿Entre cuáles es SEGURO que es divisible?',o:['a) Entre 2, 5 y 10','b) Solo entre 10','c) Entre 3 y 9','d) Entre 11'],c:0,feedback:'Terminar en 0 garantiza divisibilidad entre 2 (par), entre 5 y entre 10.'},
   {q:'¿Qué regla usas para saber si un número es divisible entre 3?',o:['a) Mirar la última cifra','b) La suma alternada','c) Contar las cifras','d) Sumar todas sus cifras'],c:3,feedback:'Si la suma de las cifras es múltiplo de 3, el número es divisible entre 3.'},
   {q:'Dos buses salen de la terminal: uno cada 15 minutos y otro cada 20. ¿Cada cuánto salen juntos?',o:['a) Cada 5 min (M.C.D.)','b) Cada 60 min (m.c.m.)','c) Cada 35 min','d) Cada 300 min'],c:1,feedback:'Es un problema de coincidencia → m.c.m.(15,20) = 60 minutos.'},
-  {q:'Quiero repartir 24 lápices y 36 borradores en paquetes iguales, lo más grandes posible. ¿Cuántos paquetes armo?',o:['a) 12 (M.C.D.)','b) 72 (m.c.m.)','c) 6','d) 4'],c:0,feedback:'Es un problema de reparto → M.C.D.(24,36) = 12 paquetes.'},
+  {q:'Quiero repartir 24 lápices y 36 borradores en el mayor número de paquetes iguales, sin que sobre nada. ¿Cuántos paquetes armo?',o:['a) 12 (M.C.D.)','b) 72 (m.c.m.)','c) 6','d) 4'],c:0,feedback:'Es un problema de reparto → M.C.D.(24,36) = 12 paquetes, de 2 lápices y 3 borradores.'},
   {q:'¿Cuál es el M.C.D. de 8 y 15?',o:['a) 1','b) 0','c) No existe','d) 120'],c:0,feedback:'8 y 15 no comparten divisores mayores que 1: son primos entre sí y su M.C.D. es 1.'},
   {q:'¿Cuál de estos números es divisible entre 11?',o:['a) 123','b) 456','c) 209','d) 87'],c:2,feedback:'En 209: (9+2) − 0 = 11 → divisible. Comprobación: 209 ÷ 11 = 19.'}
 ];
@@ -256,7 +256,7 @@ const idData=[
   {s:['Para','el','nueve','se','suman','todas','las','cifras.'],c:2,art:'Divisor cuya regla usa la suma de todas las cifras'},
   {s:['Para','el','once','se','usa','la','suma','alternada.'],c:2,art:'Divisor cuya regla usa la suma alternada'},
   {s:['El','m.c.m.','es','el','múltiplo','común','más','pequeño.'],c:1,art:'Sirve para saber cuándo coinciden dos eventos'},
-  {s:['El','M.C.D.','es','el','divisor','común','más','grande.'],c:1,art:'Sirve para repartir en partes iguales lo más grandes posible'},
+  {s:['El','M.C.D.','es','el','divisor','común','más','grande.'],c:1,art:'Sirve para repartir en partes iguales, sin que sobre nada'},
   {s:['Un','número','primo','solo','tiene','dos','divisores.'],c:2,art:'Número con exactamente dos divisores: 1 y él mismo'}
 ];
 let idIdx=0, idDone=false;
@@ -287,7 +287,7 @@ const cmpData=[
   {s:'La regla del 11 usa la suma ___ de las cifras.',opts:['total','doble','alternada'],c:2},
   {s:'El m.c.m. es el múltiplo común más ___.',opts:['grande','pequeño','famoso'],c:1},
   {s:'El M.C.D. es el divisor común más ___.',opts:['pequeño','grande','raro'],c:1},
-  {s:'Para repartir en partes iguales lo más grandes posible se usa el ___.',opts:['M.C.D.','m.c.m.','residuo'],c:0},
+  {s:'Para repartir dos cantidades en el mayor número de grupos iguales se usa el ___.',opts:['M.C.D.','m.c.m.','residuo'],c:0},
   {s:'Para saber cuándo dos eventos coinciden se usa el ___.',opts:['M.C.D.','divisor','m.c.m.'],c:2}
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -467,7 +467,7 @@ const completeTaskDB=[
 ];
 const explainQuestions=[
   {q:'Explica cómo compruebas que 2,835 es divisible entre 9 sin dividir.',ans:'Sumo sus cifras: 2+8+3+5 = 18. Como 18 es múltiplo de 9, el número es divisible entre 9.'},
-  {q:'Explica la diferencia entre m.c.m. y M.C.D.',ans:'El m.c.m. es el múltiplo común más pequeño (sirve para saber cuándo coinciden dos eventos); el M.C.D. es el divisor común más grande (sirve para repartir en partes iguales lo más grandes posible).'},
+  {q:'Explica la diferencia entre m.c.m. y M.C.D.',ans:'El m.c.m. es el múltiplo común más pequeño (sirve para saber cuándo coinciden dos eventos); el M.C.D. es el divisor común más grande (sirve para repartir en partes iguales, sin que sobre nada).'},
   {q:'Explica paso a paso cómo encuentras el M.C.D. de 8 y 20.',ans:'Escribo los divisores de 8: 1,2,4,8 y los de 20: 1,2,4,5,10,20. Los comunes son 1, 2 y 4. El mayor es 4, así que M.C.D.(8,20)=4.'}
 ];
 const pensamientoTaskDB=[
@@ -778,7 +778,7 @@ const explicaData = [
     q: '¿Cómo decides si un problema se resuelve con m.c.m. o con M.C.D.? Da un ejemplo de cada uno.',
     hint: '💡 Pista: piensa en "coincidir" versus "repartir".',
     rubric: ['✓ Asocia el m.c.m. con eventos que se repiten y COINCIDEN', '✓ Asocia el M.C.D. con REPARTIR o dividir en partes iguales', '✓ Da un ejemplo válido de cada uno'],
-    suggested: 'Si el problema habla de cosas que se repiten y pregunta cuándo coinciden (buses, semáforos, campanas), uso el m.c.m. Si habla de repartir o cortar en partes iguales lo más grandes posible, uso el M.C.D. Ejemplos: "¿cada cuánto salen juntos dos buses?" → m.c.m.; "¿cuántas bolsas iguales armo con 12 dulces y 18 galletas?" → M.C.D.'
+    suggested: 'Si el problema habla de cosas que se repiten y pregunta cuándo coinciden (buses, semáforos, campanas), uso el m.c.m. Si habla de repartir o cortar en partes iguales sin que sobre nada, uso el M.C.D. Ejemplos: "¿cada cuánto salen juntos dos buses?" → m.c.m.; "¿cuántas bolsas iguales armo, como máximo, con 12 dulces y 18 galletas?" → M.C.D.'
   },
   {
     q: 'Inventa un problema de la vida real que se resuelva con el M.C.D. y resuélvelo.',

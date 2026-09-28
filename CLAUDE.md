@@ -5869,6 +5869,103 @@ cada salto de la raya en que empieza a la raya en que acaba, los puntos, la
 rana y las cuentas del marcador. Se comprobó al revés poniendo la rana en el
 22: el marcador decía 24 y salió roja.
 
+### La cuarta: Teoría de Números, y lo que enseñó
+
+En **Teoría de Números** (`misiones/2ciclo-teoria-numeros/`,
+`js/animacion-reparto.js`) la historia es el maestro que tenía que repartir 48
+cuadernos y 36 lápices en grupos iguales, sin que sobrara nada, y se pasó
+media hora de su almuerzo probando: entre 5, entre 7, entre 8. La animación
+hace esas mismas pruebas **repartiendo de verdad**, uno a cada grupo por
+vuelta, con lo que no alcanza para otra vuelta quedándose en la mesa, en fila,
+con su «sobran 3». Entre 8 los cuadernos salen justos y los lápices no, y ahí
+se nombra «divisible». Después, sin probar, vienen los divisores de 48 y los
+de 36; los comunes, y el mayor, el 12, que es el Máximo Común Divisor. Al
+final se reparte entre 12: 4 cuadernos y 3 lápices a cada grupo, sin que
+sobre nada. Cuatro cosas que valen para las demás:
+
+1. ⚠️ **Las dos filas de divisores comparten las columnas.** Cada número
+   tiene la suya, así que un divisor común es una columna con DOS fichas,
+   unidas por un puente, y eso se ve sin leer. El 8 del maestro está solo en
+   la fila de arriba, y por eso le sobraban lápices; el 5 y el 7 no tienen
+   columna.
+2. ⚠️ **Lo que va debajo NO se regala, otra vez.** El «Predice» de esta
+   misión pregunta si 432 es divisible entre 9, dónde caen juntos una rana
+   de 4 en 4 y un conejo de 6 en 6, y cuántas bolsas salen con 12 dulces y
+   18 galletas. Por eso la escena no usa la regla de sumar las cifras, ni
+   múltiplos que coinciden, ni esos números: solo los del reparto de la
+   historia.
+3. ⚠️ **Una opacidad escrita en línea le gana a `.am-fuera`.** Los platos de
+   los grupos llevaban `style="opacity:0.6"` y NO se apagaban nunca: se
+   veían debajo de los divisores. Lo que tiene que poder apagarse lleva el
+   tono en `fill-opacity`, no en `opacity`. Solo se vio mirando la captura.
+4. **Se midió a tamaño real antes de darlo por bueno.** A 360 px el dibujo
+   se ve al 89 %: las cifras de las fichas salían de 11 px y un cuaderno de
+   11 × 6. Las piezas se dibujan a su medida y se ponen un 30 % más grandes,
+   y las trece columnas van de lado a lado: 12,5 px las cifras y 14 px los
+   cuadernos. Más grande no cabe, porque doce grupos llenan el ancho.
+
+⚠️ **Y al leer la misión para escribir la escena salió un error de contenido
+que llevaba publicado.** Tres ejemplos decían «bolsas iguales, **lo más
+grandes posible**» y daban de respuesta el **mayor número** de bolsas: 12
+dulces y 18 galletas en 6 bolsas, 24 lápices y 36 borradores en 12 paquetes
+(en el Quiz) y 24 naranjas y 36 mangos en 12 canastas (en la ficha). Es al
+revés: 6 bolsas de 2 dulces y 3 galletas son las MÁS CHICAS que se pueden
+armar; las más grandes serían una sola bolsa con todo. Lo que da el M.C.D.
+en esos problemas es el mayor NÚMERO de grupos iguales, que es lo que dicen la
+historia, el «Predice» y la prueba de la misión. Se corrigió la frase y se
+dejó la respuesta: en la pantalla, en el Quiz, en el completar, en las
+explicaciones y en la ficha, que sigue en sus siete hojas. «Lo más grande
+posible» sí vale para el TROZO en que se cortan dos cosas (dos cintas de 12
+y 18 m en trozos de 6), y así lo dice ahora el bloque de Aprende.
+
+La sonda de esta escena **cuenta el dibujo pieza por pieza**: en qué grupo
+cayó cada cuaderno y cada lápiz (el plato más cercano), cuántos se quedaron
+en la mesa, que el marcador y el rótulo de cada montón digan eso mismo, que
+las dos filas sean los divisores de 48 y de 36, que un número comparta
+columna solo consigo mismo, que los puentes unan justo los comunes y que el
+marco caiga en la columna del mayor. Los divisores, los comunes y el máximo
+los calcula ELLA, aparte. Se comprobó al revés con tres averías plantadas a
+la vez —una ficha que decía 18 donde va 16, el marco en la columna del 6 y un
+cuaderno sobrante metido en un grupo— y salió roja con las tres.
+
+### El aparato, afinado con la cuarta: el botón quieto y la tinta clara
+
+Al medir la cuarta salieron dos cosas del aparato compartido que llevaban
+publicadas en las tres primeras, y se arreglaron ahí, en un solo sitio:
+
+1. ⚠️ **El botón que avanza se movía hasta 58 px de un paso a otro.** La
+   frase y las palabras del marcador cambian de largo, y el alto mínimo de
+   tres renglones de la hoja no alcanzaba a 360 px con la letra grande con
+   que abre la misión; en Valor Posicional se movía también el dibujo, 27
+   px. El que toca «siguiente» de corrido caía en el hueco o encima de la
+   frase. Ahora el aparato **mide** (`igualar`): escribe cada frase y cada
+   rótulo de la escena en una copia invisible del mismo ancho y se queda con
+   el alto del más largo. En una copia y no en la frase de verdad, porque
+   esa se anuncia (`aria-live`) y escribir en ella todas seguidas sería
+   leérselas de golpe a quien usa lector de pantalla.
+
+   ⚠️ Y hubo que medir otra vez: la letra grande la pone
+   `js/metas-presentacion.js` DESPUÉS de montar, y el aviso del cambio de
+   tamaño que trae borraba al del cambio de letra, así que una vez de cada
+   dos la animación se quedaba medida con la letra chica. Los avisos se
+   juntan. Medido después, a 360 y a 412 px: el dibujo, 0 px en las cuatro;
+   el botón, 0 o 1 px, que es el redondeo de medio píxel y no se nota.
+2. ⚠️ **En la pantalla oscura, la tinta se aclara.** El número grande del
+   marcador y las cifras de las fichas iban en `--pri`, un azul pensado
+   para fondo claro, y sobre la tarjeta oscura se leían a **2,8:1**. Ahora
+   el aparato usa `--am-pri` y `--am-sec`, que en la pantalla oscura son el
+   `--pri-lt` y el `--sec-lt` que cada misión ya trae (5,2:1), con los
+   mismos dos selectores con que la misión se pone oscura. El botón que
+   avanza no cambia: lleva letra blanca, que se lee mejor sobre el tono de
+   siempre. Lo que una escena pinta en línea con el color de la misión va
+   también con `--am-pri` / `--am-sec`.
+
+Las dos las vigila ahora la sonda de navegador en todas las escenas: que el
+botón y el dibujo no se muevan de un paso a otro (±1 px), y que en la
+pantalla oscura el marcador y cada cifra que se ve midan 4,5:1 o más. Se
+comprobaron al revés: sin `igualar` el botón vuelve a moverse 58 px, y con la
+tinta de antes sale 2,8:1, las dos en rojo en las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -5904,11 +6001,12 @@ la frase de reserva, que no haya bucle de dibujo ni nada de fuera, que no
 llame a `fin()` ni a `pts()`, y que el aparato esté en el armazón del service
 worker. La segunda la recorre paso a paso en un teléfono de 360 px: que cada
 paso diga algo distinto y en frases de 25 palabras o menos, que «Atrás»
-vuelva y el último paso empiece otra vez, el teclado, «reducir movimiento»,
-los 44 px, que no dé XP, que no pida nada fuera, que no reviente, y lo de su
-escena. Las dos se comprobaron al revés: con la tarjeta movida debajo del
-«Predice» sale roja la primera, y con las filas del millón apagadas, la
-segunda.
+vuelva y el último paso empiece otra vez, que el botón y el dibujo no se
+muevan de un paso a otro, el teclado, «reducir movimiento», los 44 px, que
+en la pantalla oscura el marcador y las cifras se lean, que no dé XP, que no
+pida nada fuera, que no reviente, y lo de su escena. Las dos se comprobaron
+al revés: con la tarjeta movida debajo del «Predice» sale roja la primera, y
+con las filas del millón apagadas, la segunda.
 
 ## Normativa: las Sugerencias de una misión salen del teléfono
 

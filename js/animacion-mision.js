@@ -299,6 +299,73 @@
     asentar(svg);
     if (!sinMovimiento.matches) svg.classList.remove('am-quieto');
 
+    /* ⚠️ El botón que avanza NO se mueve de un paso a otro. La frase y
+       las palabras del marcador cambian de largo en cada paso, y en un
+       teléfono de 360 px, con la letra grande con que abre la misión, el
+       botón subía y bajaba hasta 58 px: el dedo del que toca «siguiente»
+       de corrido caía en el hueco o encima de la frase, y en Valor
+       Posicional se movía hasta el dibujo. Un alto mínimo escrito a mano
+       no alcanza, porque cuántos renglones son depende del ancho, de la
+       letra y de la frase. Así que se MIDE: cada frase y cada rótulo de la
+       escena se escriben en una copia invisible del mismo ancho, y se
+       queda el alto del más largo.
+       Se mide en una copia y no en la frase de verdad porque esa se
+       anuncia (aria-live): escribir en ella todas las frases seguidas
+       sería leérselas de golpe a quien usa lector de pantalla. */
+    var medida = crear('div', 'am-medida');
+    medida.setAttribute('aria-hidden', 'true');
+    var mTexto = crear('p', 'am-texto');
+    var mPalabras = crear('em', 'am-palabras');
+    medida.appendChild(mTexto);
+    medida.appendChild(mPalabras);
+    raiz.appendChild(medida);
+    var anchoMedido = -1;
+    function igualar(forzar) {
+      var ancho = raiz.clientWidth;
+      /* Con la sección escondida no hay nada que medir: se mide al volver
+         a verla (el ResizeObserver avisa cuando pasa de 0 a su ancho). */
+      if (!ancho) { anchoMedido = -1; return; }
+      if (!forzar && ancho === anchoMedido) return;
+      anchoMedido = ancho;
+      var altoT = 0, altoP = 0;
+      for (var m = 0; m < escena.pasos; m++) {
+        mTexto.textContent = escena.texto(m);
+        var dato = escena.marcador ? escena.marcador(m, m) : null;
+        mPalabras.textContent = dato && dato.palabras ? dato.palabras : '';
+        altoT = Math.max(altoT, mTexto.getBoundingClientRect().height);
+        altoP = Math.max(altoP, mPalabras.getBoundingClientRect().height);
+      }
+      texto.style.minHeight = Math.ceil(altoT) + 'px';
+      palabras.style.minHeight = Math.ceil(altoP) + 'px';
+    }
+    /* Los avisos se juntan: la letra grande llega al <body> DESPUÉS de
+       montar (la pone js/metas-presentacion.js) y el cambio de alto que
+       trae dispara también el de tamaño. Si el último aviso borrara al
+       anterior, el «hay que volver a medir» se perdía y la animación se
+       quedaba medida con la letra chica: pasaba una vez de cada dos. */
+    var espera = null, forzarLuego = false;
+    function igualarLuego(forzar) {
+      forzarLuego = forzarLuego || forzar;
+      clearTimeout(espera);
+      espera = setTimeout(function () {
+        var f = forzarLuego;
+        forzarLuego = false;
+        igualar(f);
+      }, 80);
+    }
+    igualar(true);
+    /* Tres cosas cambian los renglones: que llegue la letra de la misión
+       (sale primero con la del sistema), que cambie el ancho (el teléfono
+       se acuesta) y que se ponga o se quite la letra grande, que es una
+       clase en el <body> y no cambia el ancho. */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { igualar(true); });
+    if (window.ResizeObserver) new ResizeObserver(function () { igualarLuego(false); }).observe(raiz);
+    else window.addEventListener('resize', function () { igualarLuego(false); });
+    if (window.MutationObserver) {
+      new MutationObserver(function () { igualarLuego(true); })
+        .observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
+
     var control = {
       ir: function (m) { ir(m, false); },
       paso: function () { return n; },
