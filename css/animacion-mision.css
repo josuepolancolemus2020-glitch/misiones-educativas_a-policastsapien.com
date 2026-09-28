@@ -118,7 +118,8 @@
   transition:
     transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
     opacity 0.5s ease var(--d, 0s),
-    fill-opacity 0.5s ease var(--d, 0s);
+    fill-opacity 0.5s ease var(--d, 0s),
+    stroke-dashoffset 0.8s linear var(--d, 0s);
 }
 .am-raiz .am-fuera { opacity: 0; }
 
@@ -166,6 +167,34 @@
 .am-raiz .am-valor      { fill: var(--sec, #00838f); font-family: 'Fredoka', sans-serif; font-weight: 600; }
 .am-raiz .am-relleno    { fill: var(--pri, #1565c0); }
 .am-raiz .am-relleno-2  { fill: var(--sec, #00838f); }
+/* Un rótulo que se lee encima de CUALQUIER cosa: el agua, el cemento de
+   una pila, el fondo claro o el oscuro. El halo es un trazo del color de
+   la tarjeta pintado DEBAJO de la letra (paint-order), así que en la
+   pantalla oscura la letra clara lleva borde oscuro y al revés. */
+.am-raiz .am-rotulo {
+  fill: var(--dark, #1b2838);
+  stroke: var(--card, #fff);
+  stroke-width: 3.2px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+}
+/* El brinco de un salto (una rana en la recta, una ficha que salta): la
+   pieza de fuera (.am-viaja) va de un sitio a otro a paso PAREJO, y la de
+   dentro (.am-salta) sube frenando y baja acelerando. Juntas dibujan una
+   parábola, que es lo que hace algo que salta; con la curva de siempre la
+   pieza llegaba antes de tiempo y parecía volar delante de su flecha.
+   Con «reducir movimiento» no brinca: llega. */
+.am-raiz .am-escenario svg .am-viaja {
+  transition: transform 0.8s linear var(--d, 0s), opacity 0.5s ease var(--d, 0s);
+}
+.am-raiz .am-salta { animation: amSalta 0.8s linear var(--d, 0s) both; }
+@keyframes amSalta {
+  0%   { transform: translateY(0); animation-timing-function: cubic-bezier(0.33, 0.66, 0.66, 1); }
+  50%  { transform: translateY(-24px); animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0.33); }
+  100% { transform: translateY(0); }
+}
 /* Lo que ya NO está se dibuja con raya cortada, no solo más pálido: la
    diferencia tiene que verse sin distinguir colores y fotocopiada. */
 .am-raiz .am-roto       { stroke-dasharray: 2 1.6; fill-opacity: 0; }

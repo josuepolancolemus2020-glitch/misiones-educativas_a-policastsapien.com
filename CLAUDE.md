@@ -5831,6 +5831,44 @@ la cuenta de abajo dé lo que dice, las diez barras iguales, el ×10 de cada
 columna y dónde va la coma. Se comprobó al revés dejando quieto el 4 cuando
 Marvin copia: el tablero decía 40,528 y salió roja.
 
+### La tercera: Recta Numérica, y lo que enseñó
+
+En **Recta Numérica, Suma y Resta** (`misiones/2ciclo-recta-numerica/`,
+`js/animacion-vara.js`) la historia es don Tulio, que mide el agua de la pila
+con una vara marcada (el lunes 38 y el viernes 24), y de si subió o bajó
+depende que haya que racionar. La animación hace bajar el agua de la raya del
+38 a la del 24, cuenta cuánto bajó en saltos (6 hasta el 30 y 8 más), escribe
+la resta y su prueba, y entonces **la vara se acuesta y es la recta
+numérica**: la historia decía que «una vara marcada es una recta numérica
+puesta de pie», y aquí se ve pasar. Después Salta, la rana de la misión,
+retrocede para restar y avanza para sumar. Cinco cosas que valen para las
+demás:
+
+1. **La historia pregunta y la animación deja contestar ANTES de
+   enseñar.** El paso 0 repite la pregunta («¿Subió o bajó? Decídelo antes
+   de tocar») y el agua baja solo cuando el alumno toca.
+2. **Lo que salta avanza a paso parejo** (`.am-viaja`, en el aparato) **y
+   brinca subiendo frenado y bajando acelerado** (`.am-salta`). Así dibuja
+   una parábola; con la curva de siempre la rana llegaba antes de tiempo y
+   parecía volar delante de su flecha. Se midió congelando la animación: el
+   punto más alto cae justo bajo el vértice de la flecha.
+3. **La flecha se dibuja mientras se salta** (`A.trazar`, en el aparato): la
+   raya es un solo guion del largo del camino que se corre.
+4. ⚠️ **Lo que va dentro del dibujo se tiñe de la tarjeta, no de un color
+   fijo.** La pila era de cemento claro fijo, y en la pantalla oscura los
+   números de encima (con halo del color de la tarjeta) salían claros con
+   borde negro sobre fondo claro. Ahora la pila usa `--border` y `--card`.
+   Solo se vio con la captura en modo oscuro.
+5. **Las cuentas de las frases van con espacios que no se parten**
+   (` `): «38 − 24 = 14» se cortaba entre renglones y se leía como dos
+   cosas.
+
+La sonda de esta escena **saca la regla de las marcas que se ven** (valor =
+a + b · posición) y con ella lee el dibujo en cada paso: el nivel del agua,
+cada salto de la raya en que empieza a la raya en que acaba, los puntos, la
+rana y las cuentas del marcador. Se comprobó al revés poniendo la rana en el
+22: el marcador decía 24 y salió roja.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

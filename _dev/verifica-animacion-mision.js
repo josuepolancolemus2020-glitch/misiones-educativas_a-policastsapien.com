@@ -91,6 +91,26 @@ const LEER = `
       };
     }
   };
+  window.__amExtra.amVara = function (raiz, centro) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function enVista(b) { return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function salto(p) {
+      var g = p.parentNode, t = g.querySelector('.rn-salto-num');
+      return { caja: enVista(p.getBoundingClientRect()), de: +p.getAttribute('data-de'), a: +p.getAttribute('data-a'), dice: t ? t.textContent : '' };
+    }
+    var agua = raiz.querySelector('.rn-agua');
+    return {
+      marcasV: todos('.rn-marca').map(function (t) { var c = centro(t); return { v: +t.getAttribute('data-v'), x: c.x, y: c.y }; }),
+      marcasH: todos('.rn-marca-h').map(function (t) { var c = centro(t); return { v: +t.getAttribute('data-v'), x: c.x, y: c.y }; }),
+      agua: vis(agua) ? enVista(agua.getBoundingClientRect()).y0 : null,
+      saltos: [].filter.call(raiz.querySelectorAll('.rn-salto'), function (p) { return vis(p.parentNode); }).map(salto),
+      cuentas: todos('.rn-cuenta').map(function (t) { return t.textContent; }),
+      puntos: todos('.rn-punto').map(function (c) { var q = centro(c); return { v: +c.getAttribute('data-v'), x: q.x, y: q.y }; }),
+      rana: todos('.rn-rana').map(function (g) { return centro(g.querySelector('text')).x; })[0]
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -109,6 +129,7 @@ const LEER = `
     return {
       paso: raiz.amControl.paso(),
       cifra: raiz.querySelector('.am-cifra').textContent,
+      palabras: raiz.querySelector('.am-palabras').textContent,
       texto: raiz.querySelector('.am-texto').textContent,
       boton: raiz.querySelector('.am-sigue').textContent,
       huevos: huevos, digitos: digitos, vale: vale,
@@ -119,15 +140,67 @@ const LEER = `
 /* Una cuenta escrita en la pantalla («40,000 + 5,000 = 45,000»,
    «10 × 100,000 = 1,000,000»): se hace aparte y se compara. */
 function cuenta(txt) {
-  const [izq, der] = txt.replace(/,/g, '').split('=');
-  const terminos = izq.includes('×') ? izq.split('×') : izq.split('+');
-  const vals = terminos.map(t => +t.trim());
-  const hecho = izq.includes('×') ? vals.reduce((a, b) => a * b, 1) : vals.reduce((a, b) => a + b, 0);
+  const [izq, der] = txt.replace(/,/g, '').replace(/\u00a0/g, ' ').split('=');
+  let hecho;
+  if (izq.includes('×')) hecho = izq.split('×').map(t => +t.trim()).reduce((a, b) => a * b, 1);
+  else hecho = (izq.replace(/\s/g, '').replace(/−/g, '-').match(/[+-]?\d+(\.\d+)?/g) || []).map(Number).reduce((a, b) => a + b, 0);
   return { hecho, dice: +der.trim() };
+}
+
+/* De dónde a dónde mide una recta: con las marcas que se ven se saca la
+   regla (valor = a + b · posición) y se lee cualquier punto del dibujo. */
+function regla(marcas, eje) {
+  if (marcas.length < 2) return null;
+  const m = marcas.slice().sort((p, q) => p[eje] - q[eje]);
+  const p0 = m[0], p1 = m[m.length - 1];
+  const b = (p1.v - p0.v) / (p1[eje] - p0[eje]);
+  return pos => p0.v + b * (pos - p0[eje]);
 }
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Recta Numérica: la vara de la pila de don Tulio. Todo se lee sobre
+     el dibujo con la regla que dan las marcas que se ven. */
+  amVara(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (p, q, tol) => Math.abs(p - q) <= (tol || 0.5);
+    if (n <= 3) {
+      const v = regla(x.marcasV, 'y');
+      const nivel = v ? v(x.agua) : NaN;
+      const espera = n === 0 ? 38 : 24;
+      r.push([cerca(nivel, espera), `paso ${n}: el agua está en la raya del ${espera}`, Math.round(nivel * 10) / 10]);
+      if (n <= 1) r.push([+e.cifra === espera, `paso ${n}: y el marcador dice ${espera}`, e.cifra]);
+      if (n >= 2) {
+        const bien = x.saltos.every(s => {
+          const lo = v(s.caja.y1), hi = v(s.caja.y0);
+          return cerca(Math.min(s.de, s.a), lo, 0.6) && cerca(Math.max(s.de, s.a), hi, 0.6) && +s.dice === Math.abs(s.a - s.de);
+        });
+        const total = x.saltos.reduce((t, s) => t + Math.abs(s.a - s.de), 0);
+        r.push([x.saltos.length === 2 && bien && total === 38 - 24,
+          `paso ${n}: cada salto va de la raya en que empieza a la raya en que acaba, y suman 38 − 24`, x.saltos.map(s => [s.de, s.a, s.dice])]);
+      }
+      if (n === 3) {
+        const malas = x.cuentas.filter(c => { const k = cuenta(c); return k.hecho !== k.dice; });
+        r.push([x.cuentas.length === 2 && malas.length === 0, 'paso 3: la resta y su prueba dan lo que dicen', x.cuentas]);
+      }
+    } else {
+      const v = regla(x.marcasH, 'x');
+      const malos = x.puntos.filter(p => !cerca(v(p.x), p.v));
+      r.push([malos.length === 0 && x.puntos.length === (n >= 6 ? 3 : 2), `paso ${n}: cada punto de la recta cae en su número`, x.puntos.map(p => p.v)]);
+      const espera = n === 4 ? 38 : +e.cifra;
+      r.push([cerca(v(x.rana), espera), `paso ${n}: la rana está en el ${espera}`, Math.round(v(x.rana) * 10) / 10]);
+      if (n >= 5) {
+        const s = x.saltos[0];
+        const bien = s && x.saltos.length === 1 && cerca(v(s.caja.x0), Math.min(s.de, s.a), 0.6) && cerca(v(s.caja.x1), Math.max(s.de, s.a), 0.6) &&
+          +s.dice.replace('−', '-') === s.a - s.de && s.a === espera;
+        r.push([!!bien, `paso ${n}: el salto va de ${s ? s.de : '?'} a ${s ? s.a : '?'}, dice ${s ? s.dice : '?'} y acaba donde está la rana`, s && [s.de, s.a, s.dice]]);
+        const k = cuenta(e.palabras);
+        r.push([k.hecho === k.dice && k.dice === +e.cifra, `paso ${n}: la cuenta del marcador da (${e.palabras})`, [k.hecho, k.dice]]);
+      }
+    }
+    return r;
+  },
+
   /* Valor Posicional: la libreta de Marvin. El número se ARMA mirando
      en qué columna quedó cada ficha, no se lee de ningún sitio. */
   amLibreta(e, n) {

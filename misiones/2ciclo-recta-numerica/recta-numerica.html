@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -74,6 +77,19 @@
     <div class="tip"><span class="ti">❓</span><div>Una vara marcada es una <strong>recta numérica</strong>
     puesta de pie: cada número tiene su sitio y ese sitio dice cuál es mayor. ¿Subió o bajó, y cuánto?
     Contéstalo antes de seguir.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia le pregunta al alumno si el agua subió o bajó y cuánto, y aquí
+       lo comprueba, con la misma vara, que al final se acuesta y es la recta
+       numérica. La mueve él, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-vara.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira bajar el agua</h2>
+    <div id="amVara">
+      <p>El lunes el agua llegaba a la marca 38 y el viernes a la 24: bajó, porque el 24 queda más abajo. De 24 a 38 hay 6 hasta el 30 y 8 más: bajó 14, y 38 − 24 = 14.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -768,6 +784,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la vara: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-vara.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

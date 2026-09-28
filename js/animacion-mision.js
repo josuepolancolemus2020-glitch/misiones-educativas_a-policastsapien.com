@@ -107,6 +107,20 @@
     n.classList.toggle('am-fuera', !si);
   }
 
+  /* Dibuja una línea poco a poco (una flecha que sale mientras la rana
+     salta): la raya entera es un solo guion del largo del camino, y se
+     corre de fuera a dentro. Se mide el largo una vez; sin movimiento
+     (.am-quieto) la raya aparece de golpe, como todo lo demás. */
+  function trazar(n, si, demora) {
+    if (n._amL == null) {
+      try { n._amL = Math.ceil(n.getTotalLength()) + 2; } catch (e) { n._amL = 0; }
+      if (n._amL) n.style.strokeDasharray = n._amL + ' ' + n._amL;
+    }
+    if (!n._amL) return;
+    if (demora != null) n.style.setProperty('--d', Math.round(demora) + 'ms');
+    n.style.strokeDashoffset = si ? '0' : String(n._amL);
+  }
+
   /* Azar con semilla (mulberry32): el montón de huevos sale revuelto,
      pero SIEMPRE igual. Lo que se ve tiene que poder repetirse, para
      contarlo en el aula y para que una sonda lo mida. */
@@ -207,9 +221,15 @@
       el: el,
       mover: mover,
       ver: ver,
+      trazar: trazar,
       azar: azar,
       barajar: barajar,
-      asentar: function () { asentar(svg); }
+      asentar: function () { asentar(svg); },
+      /* ¿Este paso llega sin movimiento? (el primer pintado, un salto con
+         «Atrás» hecho por código, o «reducir movimiento»). Lo que la escena
+         anime con keyframes propios —un brinco— lo tiene que preguntar,
+         porque .am-quieto solo apaga las transiciones. */
+      quieto: function () { return svg.classList.contains('am-quieto'); }
     };
 
     escena.construir(svg, ayuda);
