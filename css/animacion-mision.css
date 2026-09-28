@@ -1,0 +1,245 @@
+/* =====================================================================
+   M.E.T.A.S — css/animacion-mision.css
+   La animación que explica el tema, justo después de la historia con
+   que abre la misión. Va con js/animacion-mision.js.
+
+   APARATO COMPARTIDO, NO COPIADO. Se estrenó en Números Grandes y va a
+   ir misión por misión por toda la ruta de Matemáticas: copiarlo sería
+   arreglarlo en una y dejarlo roto en las demás. Es la misma razón por
+   la que existen css/videos-mision.css y css/parque-3d.css.
+
+   SE TIÑE DE LA MISIÓN. Aquí no hay un color de marca escrito: todo
+   sale de los tokens que la misión ya declaró (--pri, --sec, --card,
+   --border, --dark, --gray). Por eso se enlaza DESPUÉS del CSS de la
+   misión; al revés, no hay tokens todavía. Lo único con color propio
+   es lo que la escena dibuja de verdad (un huevo es color huevo en las
+   dos pantallas, la clara y la oscura).
+   ===================================================================== */
+
+/* ⚠️ Todo lo que declara COLOR o TAMAÑO DE LETRA cuelga de .am-raiz.
+   El aparato vive dentro de una .card, y la hoja de cada misión trae
+   reglas como `.card p { … }` (0-1-1) que le ganarían a un `.am-texto`
+   a secas (0-1-0). Es la lección que ya costó el título gris sobre
+   negro de la tapa de los videos. */
+
+.am-raiz { margin-top: 0.2rem; }
+
+/* ── El marcador: cuántos hay, en cifras y en palabras ───────────────
+   Va FUERA del dibujo, en HTML, a propósito: el texto de un SVG se
+   encoge con el dibujo y no crece con la letra grande, y este número
+   es lo que el alumno tiene que poder leer desde el pupitre. */
+.am-raiz .am-marcador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 3.6rem;
+  margin-bottom: 0.4rem;
+}
+.am-raiz .am-fila {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.am-raiz .am-cifra {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  color: var(--pri, #1565c0);
+  font-variant-numeric: tabular-nums;
+}
+.am-raiz .am-palabras {
+  font-style: normal;
+  font-size: 1rem;
+  color: var(--gray, #636e72);
+}
+/* El «+10» que sube y se va. Va colgado a la DERECHA de la cifra y
+   fuera de la fila (absolute): si ocupara sitio, la cifra quedaría
+   corrida a la izquierda de las palabras que tiene debajo. */
+.am-raiz .am-salto {
+  position: absolute;
+  left: 100%;
+  top: 0.35em;
+  margin-left: 0.4rem;
+  white-space: nowrap;
+  font-style: normal;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--sec, #00838f);
+  opacity: 0;
+  pointer-events: none;
+}
+.am-raiz .am-salto.am-sube { animation: amSube 1.2s ease-out; }
+@keyframes amSube {
+  0%   { opacity: 0; transform: translateY(8px); }
+  20%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+.am-raiz .am-cifra.am-pop { animation: amPop 0.35s ease-out; }
+@keyframes amPop {
+  0%, 100% { transform: scale(1); }
+  40%      { transform: scale(1.12); }
+}
+
+/* ── El escenario ─────────────────────────────────────────────────── */
+.am-raiz .am-escenario {
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 14px;
+  background: var(--card, #fff);
+  overflow: hidden;
+}
+/* Tope de 560 px: en una PC el dibujo no necesita llenar 860 px para
+   leerse, y así el botón queda a la vista sin deslizar. */
+.am-raiz .am-escenario svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0 auto;
+  /* El dibujo no se toca: avanzar es cosa del botón. Un toque suelto
+     al deslizar la página no puede cambiar de paso. */
+  pointer-events: none;
+}
+
+/* ── Cómo se mueve ────────────────────────────────────────────────
+   Cada paso es un ESTADO: la escena dice dónde va cada pieza y el
+   navegador la lleva hasta ahí con una transición. No hay un solo
+   bucle de dibujo corriendo: entre toque y toque, el teléfono no gasta
+   nada. Y volver atrás sale gratis, porque es ir a otro estado.
+
+   --d es la demora de CADA pieza (la cascada con que caen los huevos en
+   su fila). Va en una variable y no en transition-delay a secas para
+   que la escena pueda ponérsela a cada una sin pisar la transición. */
+.am-raiz .am-escenario svg * {
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
+    opacity 0.5s ease var(--d, 0s),
+    fill-opacity 0.5s ease var(--d, 0s);
+}
+.am-raiz .am-fuera { opacity: 0; }
+
+/* Una CAPA entera que se apaga (.am-capa) además se ESCONDE al terminar
+   de apagarse. Lo transparente se sigue pintando en cada cuadro de las
+   transiciones; lo escondido, no. Se esconde con medio segundo de
+   retraso, que es lo que dura el apagado, y aparece al instante. */
+.am-raiz .am-escenario svg .am-capa {
+  visibility: visible;
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1),
+    opacity 0.5s ease,
+    visibility 0s linear 0s;
+}
+.am-raiz .am-escenario svg .am-capa.am-fuera {
+  visibility: hidden;
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1),
+    opacity 0.5s ease,
+    visibility 0s linear 0.5s;
+}
+
+/* Sin movimiento: el primer pintado (que no tiene de dónde venir) y
+   quien pidió «reducir movimiento» en su teléfono. La animación sigue
+   diciendo lo mismo, paso a paso; solo que cada paso llega de golpe. */
+.am-raiz .am-quieto,
+.am-raiz .am-quieto * { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .am-raiz *,
+  .am-raiz *::before,
+  .am-raiz *::after { transition: none !important; animation: none !important; }
+}
+
+/* ── Piezas del dibujo con el color de la misión ──────────────────── */
+.am-raiz .am-fondo      { fill: var(--pri-gl, rgba(21, 101, 192, 0.08)); }
+.am-raiz .am-trazo      { fill: none; stroke: var(--pri, #1565c0); stroke-width: 1.6; }
+.am-raiz .am-linea      { fill: none; stroke: var(--gray, #636e72); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.55; }
+.am-raiz .am-linea.am-fuera { opacity: 0; }
+.am-raiz .am-hueco      { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.am-raiz .am-letra      { fill: var(--dark, #1b2838); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .am-digito     { fill: var(--pri, #1565c0); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* Lo que ya NO está se dibuja con raya cortada, no solo más pálido: la
+   diferencia tiene que verse sin distinguir colores y fotocopiada. */
+.am-raiz .am-roto       { stroke-dasharray: 2 1.6; fill-opacity: 0; }
+
+/* ── El avance y la frase ─────────────────────────────────────────── */
+.am-raiz .am-avance {
+  height: 6px;
+  margin: 0.7rem 0 0.2rem;
+  border-radius: 3px;
+  background: var(--border, #e2e8f0);
+  overflow: hidden;
+}
+.am-raiz .am-avance i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--pri, #1565c0), var(--sec, #00838f));
+  transition: width 0.5s ease;
+}
+/* Alto mínimo de tres renglones: si la frase cambia de largo en cada
+   paso, los botones suben y bajan y el dedo toca en el hueco. */
+.am-raiz .am-texto {
+  min-height: 4.6em;
+  margin: 0.6rem 0 0.7rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--dark, #1b2838);
+}
+
+/* ── Los mandos ───────────────────────────────────────────────────
+   44 px de blanco de toque, la regla de siempre. El botón que avanza
+   es el grande y va a la derecha, donde cae el pulgar; «Atrás» es
+   chico a propósito, porque se usa poco y no puede robarle el toque. */
+.am-raiz .am-mandos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.am-raiz .am-mandos button {
+  min-height: 44px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 12px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  line-height: 1.2;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.am-raiz .am-atras {
+  flex: 0 0 auto;
+  min-width: 48px;
+  background: var(--card, #fff);
+  color: var(--dark, #1b2838);
+  border: 2px solid var(--border, #e2e8f0);
+}
+.am-raiz .am-sigue {
+  flex: 1 1 11rem;
+  background: linear-gradient(135deg, var(--pri, #1565c0), var(--sec, #00838f));
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 12px var(--pri-gl, rgba(21, 101, 192, 0.2));
+}
+.am-raiz .am-atajo {
+  flex: 1 1 100%;
+  background: transparent;
+  color: var(--pri, #1565c0);
+  border: 2px dashed var(--pri, #1565c0);
+}
+.am-raiz .am-mandos button:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+.am-raiz .am-mandos button[hidden] { display: none; }
+
+/* La letra grande de la misión agranda <p>, <span>, <li> y los títulos
+   con un 25 % y !important. Los botones y el marcador no están en esa
+   lista, así que aquí crecen lo mismo a mano: un botón que se queda
+   chico al lado de un párrafo grande se lee peor que antes. */
+body.letra-grande .am-raiz .am-mandos button { font-size: 1.25rem; }
+body.letra-grande .am-raiz .am-palabras      { font-size: 1.25rem; }
+body.letra-grande .am-raiz .am-cifra         { font-size: 2.6rem; }
+body.letra-grande .am-raiz .am-salto         { font-size: 1.35rem; }
+
+@media print {
+  .am-raiz .am-mandos,
+  .am-raiz .am-avance { display: none; }
+}

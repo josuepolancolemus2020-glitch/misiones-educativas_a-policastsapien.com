@@ -15,7 +15,7 @@
 //    las etiquetas ?v=NN de las páginas (normativa de sellado del CLAUDE.md).
 //    CACHE_DATOS no se toca nunca: subirlo volvería a borrarle al alumno lo
 //    que tenía guardado, que es justo lo que este arreglo vino a evitar.
-const CACHE_NAME = 'meta-app-v339';
+const CACHE_NAME = 'meta-app-v340';
 const CACHE_APP = CACHE_NAME;
 const CACHE_DATOS = 'meta-datos-v1';
 
@@ -108,6 +108,13 @@ const STATIC_ASSETS = [
   './js/videos-mision.js',
   './css/videos-mision.css',
   './js/data/videos-misiones.js',
+  // La animación que explica el tema, después de la historia de cada
+  // misión. Sin estos dos, sin señal la tarjeta se queda con su frase de
+  // reserva: justo en el aula sin internet, donde una explicación que se
+  // mueve vale más. La escena de cada misión vive en su carpeta y entra
+  // en CACHE_DATOS la primera vez que se abre, como el resto de la misión.
+  './js/animacion-mision.js',
+  './css/animacion-mision.css',
   // El vocabulario y las fechas de la Ruta de la Máquina que Aprende. Las
   // cuatro misiones los PINTAN de aquí en vez de escribirlos, así que sin
   // ellos esas pantallas salen vacías.

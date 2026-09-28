@@ -5695,6 +5695,122 @@ clave de otra**. La **12** abre una de ellas de verdad, y a propósito **no
 la del estreno**: lo que solo se ve abriéndola es que el `go()` de esa
 misión conteste, que es de quien depende el botón de la tapa del final.
 
+## Normativa: la animación que explica el tema va después de la historia
+
+Lo pidió el autor el 28 de septiembre de 2026, para la ruta de Matemáticas
+y «una por una»: una animación que explique el tema, justo después de la
+historia con que abre cada misión, con «lo mejor en calidad y ahorro de
+recursos». Se estrenó en **Números Grandes** (`misiones/1ciclo-segundo-grado/`),
+la primera de la Ruta del Número.
+
+No es adorno, y el sitio no es casual: la historia termina diciendo qué va a
+ver el alumno («eso es lo que vas a ver aquí»), y lo ve ahí mismo. En Números
+Grandes la historia es Kenia, que contó los huevos de uno en uno, se perdió en
+el sesenta y dijo «ciento tres» donde eran ciento treinta. La animación es esa
+misma mesa: el alumno junta los 130 huevos **de diez en diez** —cada toque es
+una decena y el marcador cuenta 10, 20, 30…, y en el sesenta la frase le
+recuerda dónde se perdió Kenia—, diez decenas se juntan en **una centena**, la
+tabla C D U dice **1 3 0**, y después el error de Kenia se hace a la vista: el
+3 se muda de las decenas a las unidades y **se van 27 huevos**. Son las mismas
+cifras en otro lugar. Y el mismo truco sigue hasta el millón.
+
+Vive en dos piezas, como los videos y el andamio de los juegos 3D:
+
+| dónde | qué hay |
+|---|---|
+| `js/animacion-mision.js` + `css/animacion-mision.css` | el aparato: escenario, marcador, frase, botones, «reducir movimiento». En `STATIC_ASSETS` |
+| `misiones/<carpeta>/js/animacion-<tema>.js` | la escena de esa misión: qué se dibuja y dónde va cada pieza en cada paso |
+
+**Seis reglas, y ninguna es de adorno:**
+
+1. **Va JUSTO después de la historia**, en la sección por la que el alumno
+   entra (la marcada `active`), en una tarjeta con `data-animacion`. Dos
+   tarjetas más abajo es la segunda pantalla, que es como no ponerla.
+2. **La mueve el alumno, paso a paso; no corre sola.** Cada toque es un paso
+   y la frase se lee antes de pedir el siguiente. Una animación que avanza
+   sola va al ritmo de quien la hizo, y el niño de cuarto que lee despacio se
+   queda con la mitad. En el aula, el maestro la lleva al ritmo de su
+   explicación. Y juntar los huevos con el dedo es contar de diez en diez
+   **haciéndolo**, que es la regla del relato.
+3. **Cada paso es un ESTADO y el movimiento es de CSS.** La escena dice dónde
+   va cada pieza en el paso N y el navegador la lleva hasta ahí. No hay un
+   solo bucle de dibujo: entre toque y toque el teléfono no gasta nada, y
+   «Atrás» sale gratis. ⚠️ Medido con la CPU frenada seis veces, que es un
+   teléfono barato: de 45 a 60 cuadros por segundo. Lo único que se atascaba
+   era crear los doscientos cuadros del camino al millón **al tocar el
+   botón** (383 ms el peor cuadro); ahora son unos cuarenta, hechos con
+   patrones de patrones y armados al cargar, y el peor cuadro es de 133 ms.
+4. ⚠️ **Lo que el marcador dice, el dibujo lo tiene.** En cada paso los huevos
+   que se ven enteros son la cifra del marcador, y en el camino al millón
+   cada cuadro dice lo que vale (`data-vale`) y la sonda suma lo que se ve.
+   Una animación que dice un número y enseña otro enseña a no creerle a la
+   pantalla. Y no es teoría: así se cazó, antes de publicar, que las nueve
+   filas del diez mil y del millón **no salían nunca** —la clase vacía `''`
+   es falsa en JavaScript y con `clase || 'am-fuera'` nacían apagadas—. El
+   marcador decía 10,000 y se veía un millar.
+5. **Sin movimiento también se entiende.** Con «reducir movimiento» cada paso
+   llega de golpe, con la misma frase y el mismo dibujo. La frase se anuncia
+   (`aria-live`), el dibujo no dice nada que no diga la frase, los botones
+   son de 44 px y Enter y la barra espaciadora avanzan. Lo que ya no está se
+   dibuja con **raya cortada**, no solo más pálido: sin distinguir colores y
+   fotocopiado también se ve.
+6. **Mirarla no da XP ni marca la sección.** Es la regla de los videos: nadie
+   puede comprobar que el niño la miró, y un puntaje que se gana tocando
+   «siguiente» veinte veces es un puntaje regalado.
+
+**Y dos de contenido, de las que ninguna sonda sabe:**
+
+- ⚠️ **En Honduras un cartón de huevos es de 30**, así que la decena no se
+  llama «cartón»: se llama fila, y la centena, cuadro. Es como se acomodan
+  en la mesa para contar. Con «cartón de 10» se le enseña al niño un empaque
+  que no existe, y la mamá que vende huevos lo corrige delante de él.
+- **El millón se dibuja, no se nombra.** Cada cuadro nuevo es diez del
+  anterior, con su espacio en medio para que se cuenten. Cuando un huevo ya
+  no cabe en un punto de la pantalla, la centena entera se dibuja como un
+  cuadrito, y la frase lo dice («cada cuadrito ya es una centena de
+  huevos»): se cambia el dibujo, nunca la cuenta.
+
+### Cómo se pone en la misión siguiente
+
+Tres piezas en el HTML, y ninguna toca el aparato:
+
+```html
+<link rel="stylesheet" href="../../css/animacion-mision.css">   <!-- tras el CSS de la misión -->
+<div class="card ac-teal" data-animacion>                        <!-- JUSTO tras la historia -->
+  <h2>…</h2>
+  <div id="amX"><p>frase de reserva, por si el aparato no llega</p></div>
+</div>
+<script src="../../js/animacion-mision.js"></script>             <!-- al final del body -->
+<script src="js/animacion-<tema>.js"></script>
+```
+
+La escena llama a `AnimacionMision.montar('#amX', escena)` con su `vista`,
+sus `pasos`, `construir`, `pintar(n, antes)`, `texto(n)`, `boton(n)`,
+`atajo(n)` y `marcador(n)`; la cabecera de `js/animacion-mision.js` lo
+cuenta entero. Y en `_dev/verifica-animacion-mision.js` se le añade su
+entrada a `ESCENAS`: lo que esa escena afirma, contado sobre el dibujo.
+
+**Antes de publicar una animación:**
+
+```
+node _dev/verifica-animaciones.js          → leída del archivo (está en npm test)
+node _dev/servidor-estatico.js             (en otra terminal)
+node _dev/verifica-animacion-mision.js     → abierta y recorrida entera con el dedo
+```
+
+La primera mira lo que se rompe al copiar el bloque: que vaya justo después
+de la historia y en la sección activa, el orden de la hoja y de los
+`<script>`, que la escena monte el bloque que de verdad está en la tarjeta,
+la frase de reserva, que no haya bucle de dibujo ni nada de fuera, que no
+llame a `fin()` ni a `pts()`, y que el aparato esté en el armazón del service
+worker. La segunda la recorre paso a paso en un teléfono de 360 px: que cada
+paso diga algo distinto y en frases de 25 palabras o menos, que «Atrás»
+vuelva y el último paso empiece otra vez, el teclado, «reducir movimiento»,
+los 44 px, que no dé XP, que no pida nada fuera, que no reviente, y lo de su
+escena. Las dos se comprobaron al revés: con la tarjeta movida debajo del
+«Predice» sale roja la primera, y con las filas del millón apagadas, la
+segunda.
+
 ## Normativa: las Sugerencias de una misión salen del teléfono
 
 El botón **💬 Sugerencias** de cada misión lleva años ahí y durante todo
