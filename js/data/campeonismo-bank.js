@@ -155,14 +155,14 @@ const CAMP_BANK = {
     // Geografía y Coordenadas
     { q: '¿Qué mide la latitud?', o: ['La distancia de este a oeste', 'La distancia angular desde el ecuador hacia los polos', 'El tiempo en cada zona horaria', 'La altura sobre el nivel del mar'], c: 1, mision: 'Geografía y Coordenadas' },
     { q: '¿A cuántos grados de latitud se encuentra el ecuador?', o: ['90°', '45°', '23°', '0°'], c: 3, mision: 'Geografía y Coordenadas' },
-    { q: '¿Qué línea imaginaria divide la Tierra en hemisferio norte y sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El Ecuador', 'Círculo polar ártico'], c: 2, mision: 'Geografía y Coordenadas' },
-    { q: '¿Cuál es la latitud del trópico de Capricornio?', o: ["23° 26' Norte", "66° 34' Sur", '0° Sur', "23° 26' Sur"], c: 3, mision: 'Geografía y Coordenadas' },
+    { q: '¿Qué línea imaginaria divide la Tierra en hemisferio norte y sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El ecuador', 'Círculo polar ártico'], c: 2, mision: 'Geografía y Coordenadas' },
+    { q: '¿Cuál es la latitud del trópico de Capricornio?', o: ["23° 26' norte", "66° 34' sur", '0° sur', "23° 26' sur"], c: 3, mision: 'Geografía y Coordenadas' },
     { q: '¿Qué es el meridiano de Greenwich?', o: ['El paralelo de 0° latitud', 'El meridiano de 0° longitud que pasa por el Reino Unido', 'La línea que separa el Ártico', 'Un paralelo de 90°'], c: 1, mision: 'Geografía y Coordenadas' },
     { q: '¿Para qué sirven las coordenadas geográficas?', o: ['Para medir la temperatura', 'Para calcular la altitud', 'Para ubicar cualquier punto exacto en la Tierra', 'Para predecir el clima'], c: 2, mision: 'Geografía y Coordenadas' },
     { q: '¿En cuántas franjas (husos horarios) se divide la Tierra?', o: ['12', '36', '24', '48'], c: 2, mision: 'Geografía y Coordenadas' },
     { q: 'Honduras se encuentra en la zona climática llamada:', o: ['Zona polar', 'Zona templada norte', 'Zona templada sur', 'Zona tórrida'], c: 3, mision: 'Geografía y Coordenadas' },
     { q: '¿Cuál de estos es un paralelo importante de la Tierra?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'Primer Meridiano', 'Meridiano 90°'], c: 1, mision: 'Geografía y Coordenadas' },
-    { q: 'La longitud se mide desde:', o: ['El Ecuador', 'El polo norte', 'El meridiano de Greenwich', 'El trópico de Capricornio'], c: 2, mision: 'Geografía y Coordenadas' },
+    { q: 'La longitud se mide desde:', o: ['El ecuador', 'El polo norte', 'El meridiano de Greenwich', 'El trópico de Capricornio'], c: 2, mision: 'Geografía y Coordenadas' },
     // Continentes: Europa, Asia y África
     { q: '¿Cuál es el continente más grande y más poblado del mundo?', o: ['África', 'Europa', 'América', 'Asia'], c: 3, mision: 'Continentes: Europa, Asia y África' },
     { q: '¿Qué río es el más largo del mundo?', o: ['Congo', 'Níger', 'Zambeze', 'Nilo'], c: 3, mision: 'Continentes: Europa, Asia y África' },

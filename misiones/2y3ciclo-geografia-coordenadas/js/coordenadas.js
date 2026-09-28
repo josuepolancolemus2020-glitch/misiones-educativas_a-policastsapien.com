@@ -188,12 +188,12 @@ function go(id){
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Latitud',a:'📐 Distancia angular medida desde el <strong>ecuador</strong> hacia los polos. Se expresa en grados (°) Norte o Sur. Va de 0° (Ecuador) a 90° (Polos).'},
+  {w:'Latitud',a:'📐 Distancia angular medida desde el <strong>ecuador</strong> hacia los polos. Se expresa en grados (°) norte o sur. Va de 0° (Ecuador) a 90° (Polos).'},
   {w:'Longitud',a:'🧭 Distancia angular medida desde el <strong>meridiano de Greenwich</strong> hacia el este u oeste. Va de 0° a 180°.'},
   {w:'Paralelo',a:'🌐 Línea imaginaria que rodea la Tierra de forma <strong>horizontal</strong>, paralela al ecuador. Indica la latitud de un lugar.'},
   {w:'Meridiano',a:'🗺️ Línea imaginaria que va de <strong>polo a polo</strong> en sentido vertical. Indica la longitud de un lugar.'},
   {w:'Ecuador',a:'🌍 Paralelo principal ubicado a <strong>0° de latitud</strong>. Divide la Tierra en hemisferio norte y hemisferio sur.'},
-  {w:'Meridiano de Greenwich',a:'🏴 Meridiano principal ubicado a <strong>0° de longitud</strong>. Divide la Tierra en hemisferio oriental y Occidental. Pasa por el Reino Unido.'},
+  {w:'Meridiano de Greenwich',a:'🏴 Meridiano principal ubicado a <strong>0° de longitud</strong>. Divide la Tierra en hemisferio oriental y occidental. Pasa por el Reino Unido.'},
   {w:'Coordenadas Geográficas',a:'📍 Sistema formado por <strong>latitud y longitud</strong> que permite ubicar cualquier punto exacto sobre la superficie terrestre.'},
   {w:'Trópico de Cáncer',a:'☀️ Paralelo ubicado a <strong>23° 26\' Norte</strong>. Es el límite norte de la zona tropical. El Sol cae perpendicularmente aquí en el solsticio de junio.'},
   {w:'Trópico de Capricornio',a:'🌞 Paralelo ubicado a <strong>23° 26\' Sur</strong>. Es el límite sur de la zona tropical. El Sol cae perpendicularmente aquí en el solsticio de diciembre.'},
@@ -224,14 +224,14 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 const qzData=[
   {q:'¿Qué mide la latitud?',o:['a) La distancia de este a oeste','b) El tiempo en cada zona horaria','c) La distancia angular desde el ecuador hacia los polos','d) La altura sobre el nivel del mar'],c:2},
   {q:'¿A cuántos grados de latitud se encuentra el ecuador?',o:['a) 0°','b) 90°','c) 45°','d) 23°'],c:0},
-  {q:'¿Qué línea imaginaria divide la Tierra en hemisferio norte y hemisferio sur?',o:['a) El Ecuador','b) Meridiano de Greenwich','c) Trópico de Cáncer','d) Círculo polar ártico'],c:0},
-  {q:'¿Cuál es la latitud del trópico de Capricornio?',o:['a) 23° 26\' Norte','b) 66° 34\' Sur','c) 23° 26\' Sur','d) 0° Sur'],c:2},
+  {q:'¿Qué línea imaginaria divide la Tierra en hemisferio norte y hemisferio sur?',o:['a) El ecuador','b) Meridiano de Greenwich','c) Trópico de Cáncer','d) Círculo polar ártico'],c:0},
+  {q:'¿Cuál es la latitud del trópico de Capricornio?',o:['a) 23° 26\' norte','b) 66° 34\' sur','c) 23° 26\' sur','d) 0° sur'],c:2},
   {q:'¿Qué es el meridiano de Greenwich?',o:['a) El paralelo de 0° latitud','b) La línea que separa el Ártico','c) Un paralelo de 90°','d) El meridiano de 0° longitud que pasa por el Reino Unido'],c:3},
   {q:'¿Para qué sirven las coordenadas geográficas?',o:['a) Para medir la temperatura','b) Para ubicar cualquier punto exacto en la Tierra','c) Para calcular la altitud','d) Para predecir el clima'],c:1},
   {q:'¿En cuántas franjas (husos horarios) se divide la Tierra?',o:['a) 12','b) 24','c) 36','d) 48'],c:1},
   {q:'Honduras se encuentra en la zona climática llamada:',o:['a) Zona polar','b) Zona templada norte','c) Zona tórrida','d) Zona templada sur'],c:2},
   {q:'¿Cuál de estos es un paralelo importante de la Tierra?',o:['a) Meridiano de Greenwich','b) Primer Meridiano','c) Meridiano 90°','d) Trópico de Cáncer'],c:3},
-  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El polo norte','c) El trópico de Capricornio','d) El meridiano de Greenwich'],c:3},
+  {q:'La longitud se mide desde:',o:['a) El ecuador','b) El polo norte','c) El trópico de Capricornio','d) El meridiano de Greenwich'],c:3},
   {q:'¿Qué ocurre en el círculo polar ártico durante el solsticio de verano?',o:['a) El Sol no se pone (sol de medianoche)','b) El Sol nunca sale','c) Hay 24 horas de noche','d) El Sol cae perpendicularmente'],c:0},
   {q:'Un punto con coordenadas 15°N, 87°W se encuentra al:',o:['a) Sur del ecuador y al este de Greenwich','b) Norte del ecuador y al oeste de Greenwich','c) Sur del ecuador y al oeste de Greenwich','d) Norte del ecuador y al este de Greenwich'],c:1},
 ];
@@ -575,10 +575,10 @@ function resetReto(){
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
   {s:'El Ecuador divide la Tierra en dos hemisferios.',type:'Paralelo de referencia (Ecuador)'},
-  {s:'La latitud de Tegucigalpa es aproximadamente 14° Norte.',type:'Coordenada de latitud (14° N)'},
+  {s:'La latitud de Tegucigalpa es aproximadamente 14° norte.',type:'Coordenada de latitud (14° N)'},
   {s:'El meridiano de Greenwich fue establecido en 1884.',type:'Meridiano de referencia (0° longitud)'},
   {s:'Los trópicos delimitan la zona tórrida de la Tierra.',type:'Paralelos tropicales (Cáncer y Capricornio)'},
-  {s:'Honduras tiene una longitud de aproximadamente 87° Oeste.',type:'Coordenada de longitud (87° O)'},
+  {s:'Honduras tiene una longitud de aproximadamente 87° oeste.',type:'Coordenada de longitud (87° O)'},
   {s:'Los husos horarios se calculan cada 15 grados de longitud.',type:'Sistema de husos horarios'},
   {s:'El Círculo polar ártico marca el límite de la zona fría norte.',type:'Paralelo polar (66° 34\' N)'},
   {s:'La zona tórrida es la región más cálida del planeta.',type:'Zona climática tórrida'},
@@ -592,7 +592,7 @@ const classifyTaskDB=[
   {w:'Trópico Capricornio',gen:'Paralelo',n:'23° 26\'',g:'Latitud sur',t:'Límite zona tórrida'},
   {w:'Círculo polar ártico',gen:'Paralelo',n:'66° 34\'',g:'Latitud norte',t:'Límite zona polar'},
   {w:'Meridiano 90°O',gen:'Meridiano',n:'90°',g:'Longitud oeste',t:'Referencia horaria'},
-  {w:'Latitud 15° N',gen:'Coordenada',n:'15°',g:'Norte Ecuador',t:'Honduras aprox.'},
+  {w:'Latitud 15° N',gen:'Coordenada',n:'15°',g:'Norte del ecuador',t:'Honduras aprox.'},
   {w:'Antípoda',gen:'Punto',n:'±180°',g:'Longitud opuesta',t:'Punto opuesto'},
 ];
 const completeTaskDB=[
@@ -634,7 +634,7 @@ function _instrBlock(out, title, lines){
 }
 
 function genIdentifyTask(out, count){
-  _instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto geográfico indicado en cada oración. Escribe al lado qué tipo de elemento es.','<strong>Ejemplo:</strong> El Ecuador divide la Tierra. → <span style="color:var(--jade);font-weight:700;">Paralelo de referencia (Ecuador)</span>']);
+  _instrBlock(out,'Instrucción',['Copia en tu cuaderno; subraya, colorea o encierra el concepto geográfico indicado en cada oración. Escribe al lado qué tipo de elemento es.','<strong>Ejemplo:</strong> El ecuador divide la Tierra. → <span style="color:var(--jade);font-weight:700;">Paralelo de referencia (Ecuador)</span>']);
   _pick(identifyTaskDB, Math.min(count, identifyTaskDB.length)).forEach((item,i)=>{
     const div=document.createElement('div'); div.className='tg-task';
     div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content"><strong>${item.s}</strong><div style="border-bottom:1.5px solid var(--border);min-width:220px;margin-top:0.5rem;height:1.3rem;">&nbsp;</div><div class="tg-answer">✅ ${item.type}</div></div>`;
@@ -1087,7 +1087,7 @@ const critZonaOpts = ['Tórrida', 'Templada', 'Polar'];
 // con respuesta modelo + rúbrica). Derivados del dato clave HN 15°N 87°O.
 const critExpBank = [
     { case: 'Un barco pesquero hondureño reporta por radio su posición: 16°N, 87°O, y pide auxilio porque se le acabó el combustible cerca de La Ceiba. La estación de guardacostas debe ubicarlo en el mapa para el rescate.', ask: 'Explica en qué hemisferios está el barco (N/S y E/O) y por qué esas coordenadas lo sitúan en el Caribe hondureño, no en otro océano.', model: '16°N indica hemisferio norte (al norte del ecuador) y 87°O indica hemisferio occidental (al oeste de Greenwich). Esa combinación cae en el mar Caribe frente a la costa norte de Honduras (La Ceiba está a unos 16°N, 87°O, redondeando). El guardacostas traza el paralelo 16°N y el meridiano 87°O y su cruce marca el punto exacto del rescate.', crit: ['Identifica ambos hemisferios (N y O) (5 pts)', 'Justifica la ubicación cruzando paralelo y meridiano (5 pts)'] },
-    { case: 'Un avión despega del aeropuerto Toncontín (Tegucigalpa, ≈14°N) con rumbo al sur y su GPS marca que va a cruzar el ecuador (0°) hacia Sudamérica.', ask: 'Describe qué cambia en la latitud al cruzar el ecuador y a qué hemisferio pasa el avión. ¿Cambia de zona climática?', model: 'Antes del ecuador el avión vuela en el hemisferio norte con latitud N; al cruzar los 0° pasa al hemisferio sur y su latitud empieza a contarse en grados S. Como sale de la zona tórrida hondureña y se mantiene entre los trópicos por un tiempo, sigue en zona tórrida hasta pasar los 23°26\'S. El Ecuador es la línea de 0° que separa ambos hemisferios.', crit: ['Explica el cambio de hemisferio N→S al cruzar el ecuador (5 pts)', 'Relaciona la latitud con la zona climática (trópicos) (5 pts)'] },
+    { case: 'Un avión despega del aeropuerto Toncontín (Tegucigalpa, ≈14°N) con rumbo al sur y su GPS marca que va a cruzar el ecuador (0°) hacia Sudamérica.', ask: 'Describe qué cambia en la latitud al cruzar el ecuador y a qué hemisferio pasa el avión. ¿Cambia de zona climática?', model: 'Antes del ecuador el avión vuela en el hemisferio norte con latitud N; al cruzar los 0° pasa al hemisferio sur y su latitud empieza a contarse en grados S. Como sale de la zona tórrida hondureña y se mantiene entre los trópicos por un tiempo, sigue en zona tórrida hasta pasar los 23°26\'S. El ecuador es la línea de 0° que separa ambos hemisferios.', crit: ['Explica el cambio de hemisferio N→S al cruzar el ecuador (5 pts)', 'Relaciona la latitud con la zona climática (trópicos) (5 pts)'] },
     { case: 'Un excursionista pierde el sendero en las montañas de Olancho. Tiene una brújula y un GPS que le da la posición 14°N, 86°O. Debe caminar hacia el pueblo más cercano, que está al oeste de su posición.', ask: 'Explica cómo usa la latitud y la longitud para saber dónde está y hacia qué dirección (aumentar o disminuir la longitud) debe caminar para ir al oeste.', model: 'La latitud 14°N le dice cuán al norte del ecuador está y la longitud 86°O cuán al oeste de Greenwich. Para ir hacia el oeste debe moverse hacia longitudes mayores en grados O (de 86°O hacia 87°O, 88°O…), alejándose de Greenwich; su latitud casi no cambia si camina en línea recta al oeste. Con ambas coordenadas ubica su punto y con la brújula mantiene el rumbo oeste.', crit: ['Interpreta latitud y longitud de su posición (5 pts)', 'Deduce que ir al oeste aumenta los grados O de longitud (5 pts)'] },
     { case: 'Una lancha de investigación marca en su bitácora que pasó del punto 16°N, 87°O al punto 16°N, 88°O en una hora de navegación.', ask: 'Explica en qué dirección (E, O, N o S) navegó la lancha y por qué la latitud no cambió, solo la longitud.', model: 'La latitud se mantuvo en 16°N, así que no subió ni bajó respecto al ecuador; solo cambió la longitud de 87°O a 88°O, es decir, se alejó más de Greenwich hacia el oeste. Por lo tanto, navegó hacia el oeste siguiendo el mismo paralelo 16°N. Cambiar solo la longitud significa moverse a lo largo de un paralelo (dirección E-O).', crit: ['Determina que navegó hacia el oeste (5 pts)', 'Explica que moverse por un paralelo cambia solo la longitud (5 pts)'] }
 ];

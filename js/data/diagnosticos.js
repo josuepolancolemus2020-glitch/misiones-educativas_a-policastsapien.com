@@ -42,7 +42,7 @@ const DIAGNOSTICOS = {
     { etapa: 9, q: 'Un adjetivo restrictivo se caracteriza por:', o: ['Limitar la referencia del sustantivo al que modifica', 'Ir siempre antepuesto', 'Ser invariable en género', 'Funcionar siempre como atributo'], a: 0 },
   ],
   planeta: [
-    { etapa: 1, q: '¿Qué línea imaginaria divide la Tierra en hemisferio norte y hemisferio sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El Ecuador', 'Círculo polar ártico'], a: 2 },
+    { etapa: 1, q: '¿Qué línea imaginaria divide la Tierra en hemisferio norte y hemisferio sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El ecuador', 'Círculo polar ártico'], a: 2 },
     { etapa: 2, q: '¿Cuál es el continente más pequeño del mundo?', o: ['Europa', 'Antártida', 'Oceanía', 'América Central'], a: 2 },
     { etapa: 3, q: '¿Cuál es el continente más grande y más poblado del mundo?', o: ['África', 'Europa', 'América', 'Asia'], a: 3 },
     { etapa: 4, q: '¿Cuándo un fenómeno natural se convierte en desastre?', o: ['Siempre que ocurre', 'Cuando afecta a una comunidad vulnerable y causa daños', 'Solo si ocurre de noche', 'Cuando lo predice la ciencia'], a: 1 },
