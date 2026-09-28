@@ -86,7 +86,10 @@
 .am-raiz .am-escenario {
   border: 2px solid var(--border, #e2e8f0);
   border-radius: 14px;
-  background: var(--card, #fff);
+  /* El tinte va en el contenedor y no dentro del dibujo: en una PC el
+     dibujo tiene tope de ancho, y con el tinte dentro quedaba una franja
+     blanca a cada lado, como un cuadro pegado encima de otro. */
+  background: linear-gradient(var(--pri-gl, rgba(21, 101, 192, 0.08)), var(--pri-gl, rgba(21, 101, 192, 0.08))), var(--card, #fff);
   overflow: hidden;
 }
 /* Tope de 560 px: en una PC el dibujo no necesita llenar 860 px para
@@ -150,13 +153,19 @@
 }
 
 /* ── Piezas del dibujo con el color de la misión ──────────────────── */
-.am-raiz .am-fondo      { fill: var(--pri-gl, rgba(21, 101, 192, 0.08)); }
+.am-raiz .am-fondo      { fill: none; }   /* el tinte lo pone .am-escenario */
 .am-raiz .am-trazo      { fill: none; stroke: var(--pri, #1565c0); stroke-width: 1.6; }
 .am-raiz .am-linea      { fill: none; stroke: var(--gray, #636e72); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.55; }
 .am-raiz .am-linea.am-fuera { opacity: 0; }
 .am-raiz .am-hueco      { fill: none; stroke: var(--gray, #636e72); stroke-width: 1.2; stroke-dasharray: 4 3; }
 .am-raiz .am-letra      { fill: var(--dark, #1b2838); font-family: 'Fredoka', sans-serif; font-weight: 600; }
 .am-raiz .am-digito     { fill: var(--pri, #1565c0); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* La ficha de una cifra, lo que vale debajo, y el relleno de una barra:
+   las tres piezas que casi toda escena de números vuelve a necesitar. */
+.am-raiz .am-ficha      { fill: var(--card, #fff); stroke: var(--pri, #1565c0); stroke-width: 1.6; }
+.am-raiz .am-valor      { fill: var(--sec, #00838f); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .am-relleno    { fill: var(--pri, #1565c0); }
+.am-raiz .am-relleno-2  { fill: var(--sec, #00838f); }
 /* Lo que ya NO está se dibuja con raya cortada, no solo más pálido: la
    diferencia tiene que verse sin distinguir colores y fotocopiada. */
 .am-raiz .am-roto       { stroke-dasharray: 2 1.6; fill-opacity: 0; }

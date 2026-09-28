@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,19 @@
     <div class="tip"><span class="ti">❓</span><div>Nadie se equivocó de dígito. Se equivocaron de
     <strong>lugar</strong>, y en un número el lugar vale tanto como la cifra. Antes de leer la regla,
     prueba a adivinarla aquí abajo.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia pide adivinar la regla «aquí abajo», y aquí abajo el alumno ve
+       lo que hizo Marvin, cifra por cifra, antes de que nadie se la diga. La
+       mueve él, paso a paso. El aparato es compartido (js/animacion-mision.js)
+       y la escena es de esta misión (js/animacion-libreta.js). La frase de
+       dentro es de reserva: si el aparato no llega a cargar, se lee eso en vez
+       de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira qué pasó en la libreta</h2>
+    <div id="amLibreta">
+      <p>En 45,280 el 4 vale 40,000, el 5 vale 5,000, el 2 vale 200 y el 8 vale 80. Sin el 0, las cuatro cifras se corren un lugar a la derecha, cada una vale diez veces menos y queda 4,528.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -766,6 +782,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la libreta: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-libreta.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

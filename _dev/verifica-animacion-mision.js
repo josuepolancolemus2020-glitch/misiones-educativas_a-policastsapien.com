@@ -68,6 +68,29 @@ const LEER = `
     }
     return true;
   };
+  /* Lo que cada escena necesita que se mida, además de lo de todas. */
+  window.__amExtra = {
+    amLibreta: function (raiz, centro) {
+      var vis = window.__amVisible;
+      function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+      return {
+        cols: todos('.vp-col').map(function (c) { return { x: centro(c).x, lugar: +c.getAttribute('data-lugar') }; }),
+        lugares: todos('.vp-lugarval').map(function (c) { return { x: centro(c).x, lugar: +c.getAttribute('data-lugar') }; })
+          .sort(function (a, b) { return a.x - b.x; }).map(function (c) { return c.lugar; }),
+        cartas: todos('.vp-carta').map(function (g) {
+          var r = g.querySelector('rect');
+          return { x: centro(r).x, cifra: +g.getAttribute('data-cifra'), caida: r.classList.contains('am-roto'),
+                   raya: getComputedStyle(r).strokeDasharray,
+                   valores: [].filter.call(g.querySelectorAll('.vp-valor'), vis).map(function (v) { return +v.getAttribute('data-valor'); }) };
+        }),
+        flechas: todos('.vp-flecha').length,
+        comas: todos('.vp-coma').map(function (c) { return centro(c).x; }),
+        sumas: todos('.vp-suma').map(function (t) { return t.textContent; }),
+        tramos: todos('.vp-tramo').map(function (t) { return t.getBoundingClientRect().width; }),
+        marvin: (todos('.vp-marvin')[0] || { getBoundingClientRect: function () { return { width: 0 }; } }).getBoundingClientRect().width
+      };
+    }
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -88,12 +111,67 @@ const LEER = `
       cifra: raiz.querySelector('.am-cifra').textContent,
       texto: raiz.querySelector('.am-texto').textContent,
       boton: raiz.querySelector('.am-sigue').textContent,
-      huevos: huevos, digitos: digitos, vale: vale
+      huevos: huevos, digitos: digitos, vale: vale,
+      extra: window.__amExtra[id] ? window.__amExtra[id](raiz, centro) : null
     };
   };`;
 
+/* Una cuenta escrita en la pantalla («40,000 + 5,000 = 45,000»,
+   «10 × 100,000 = 1,000,000»): se hace aparte y se compara. */
+function cuenta(txt) {
+  const [izq, der] = txt.replace(/,/g, '').split('=');
+  const terminos = izq.includes('×') ? izq.split('×') : izq.split('+');
+  const vals = terminos.map(t => +t.trim());
+  const hecho = izq.includes('×') ? vals.reduce((a, b) => a * b, 1) : vals.reduce((a, b) => a + b, 0);
+  return { hecho, dice: +der.trim() };
+}
+
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Valor Posicional: la libreta de Marvin. El número se ARMA mirando
+     en qué columna quedó cada ficha, no se lee de ningún sitio. */
+  amLibreta(e, n) {
+    const x = e.extra, r = [];
+    const num = +e.cifra.replace(/,/g, '');
+    const enTabla = x.cartas.filter(c => !c.caida);
+    const lugarDe = c => {
+      const col = x.cols.reduce((m, k) => Math.abs(k.x - c.x) < Math.abs(m.x - c.x) ? k : m, x.cols[0]);
+      return Math.abs(col.x - c.x) < 6 ? col.lugar : NaN;
+    };
+    const armado = enTabla.reduce((s, c) => s + c.cifra * lugarDe(c), 0);
+    const lugares = enTabla.map(lugarDe).sort((a, b) => b - a);
+    const seguidas = lugares.every((l, i) => l === Math.pow(10, lugares.length - 1 - i));
+    r.push([armado === num && seguidas, `paso ${n}: las fichas, cada una en su columna, forman ${armado.toLocaleString('en-US')} y el marcador dice ${e.cifra}`, lugares]);
+    const malValor = enTabla.filter(c => c.valores.length && c.valores[0] !== c.cifra * lugarDe(c));
+    r.push([malValor.length === 0, `paso ${n}: lo que dice debajo de cada ficha es la cifra por su lugar`, malValor.map(c => [c.cifra, c.valores[0]])]);
+    for (const s of x.sumas) {
+      if (s.includes('?')) continue;
+      const c = cuenta(s);
+      r.push([c.hecho === c.dice && c.dice === num, `paso ${n}: la cuenta de abajo da lo que dice (${s})`, [c.hecho, c.dice, num]]);
+    }
+    const caidas = x.cartas.filter(c => c.caida);
+    if (n === 2 || n === 3) {
+      r.push([caidas.length === 1 && caidas[0].cifra === 0 && caidas[0].raya !== 'none',
+        `paso ${n}: el 0 está afuera de la tabla, con raya cortada`, caidas.map(c => c.cifra)]);
+    } else r.push([caidas.length === 0, `paso ${n}: no hay ninguna ficha tirada`, caidas.length]);
+    if (n === 3) {
+      const iguales = x.tramos.every(w => Math.abs(w - x.marvin) < 0.6);
+      r.push([x.tramos.length === 10 && iguales && x.marvin > 0,
+        'paso 3: la barra larga son diez barras iguales a la de Marvin', [x.tramos.length, x.marvin]]);
+    }
+    if (n >= 5) {
+      const porDiez = x.lugares.every((l, i) => i === x.lugares.length - 1 || l === 10 * x.lugares[i + 1]);
+      r.push([porDiez && x.lugares[x.lugares.length - 1] === 1 && x.flechas === x.lugares.length - 1,
+        `paso ${n}: cada columna vale diez veces la de su derecha, con su flecha`, [x.lugares, x.flechas]]);
+    }
+    const colX = l => (x.cols.find(c => c.lugar === l) || {}).x;
+    const entre = (cx, a, b) => cx > colX(a) && cx < colX(b);
+    const comasBien = x.comas.length === (n === 6 ? 2 : 1) && x.comas.some(cx => entre(cx, 1000, 100)) &&
+      (n !== 6 || x.comas.some(cx => entre(cx, 1000000, 100000)));
+    r.push([comasBien, `paso ${n}: la coma va entre los miles y las centenas${n === 6 ? ', y entre el millón y los miles' : ''}`, x.comas]);
+    return r;
+  },
+
   /* Números Grandes: los 130 huevos de doña Chepa. */
   amHuevos(e, n) {
     const num = e.cifra === '?' ? null : +e.cifra.replace(/,/g, '');

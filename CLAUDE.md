@@ -5795,6 +5795,42 @@ Vive en dos piezas, como los videos y el andamio de los juegos 3D:
   cuadrito, y la frase lo dice («cada cuadrito ya es una centena de
   huevos»): se cambia el dibujo, nunca la cuenta.
 
+### La segunda: Valor Posicional, y lo que enseñó
+
+En **Valor Posicional hasta el Millón** (`misiones/2ciclo-valor-posicional/`,
+`js/animacion-libreta.js`) la historia es Marvin, que copió el total de la
+colecta, 45,280, como 4,528. La animación hace ese error a la vista: el 0 se
+cae de la tabla y las otras cuatro cifras se corren un lugar a la derecha,
+cada una diez veces menos. Después vienen dos barras (la larga son **diez
+barras iguales a la de Marvin, del mismo color**, que llegan una por una), el
+cero devuelto, la regla del ×10 entre columnas y el lugar siguiente, un
+millón con sus seis ceros de relleno. Cuatro cosas que valen para las demás:
+
+1. ⚠️ **Lo que va debajo NO se regala.** La tarjeta cae justo encima del
+   «🔮 Predice», así que antes de escribir una escena se leen sus preguntas.
+   Aquí una pregunta cuánto vale el 5 de 452,318, que está en las decenas de
+   millar; por eso la escena nunca pone un 5 en esa columna (en el 45,280 de
+   la historia el 5 está en las unidades de millar), y la frase del paso 0
+   PREGUNTA cuánto vale el 4 antes de enseñarlo. La historia le pedía al
+   alumno «adivinar la regla aquí abajo», y ahora es lo que pasa.
+2. **La coma es del lugar, no de la cifra**: se queda quieta entre las
+   unidades de millar y las centenas, y en el paso del error se ve al 4
+   cruzarla. Es exactamente lo que distingue 45,280 de 4,528 en la libreta.
+3. **El hueco de abajo se llena con contenido de la misión, no se deja
+   vacío.** El tablero ocupa la mitad de arriba; abajo va la forma expandida
+   de cada paso (el Bloque 3), con signos de pregunta en el paso 0.
+4. **El tinte del escenario va en el contenedor** (`.am-escenario`) y no en
+   el dibujo: en una PC el dibujo tiene tope de ancho, y con el tinte dentro
+   quedaba una franja blanca a cada lado. Se vio en las capturas de PC de las
+   dos misiones, con todas las sondas en verde.
+
+Y la sonda de esta escena **arma el número** mirando en qué columna quedó
+cada ficha, sin leerlo de ningún sitio, y lo compara con el marcador en los
+siete pasos. Revisa también la cifra por su lugar debajo de cada ficha, que
+la cuenta de abajo dé lo que dice, las diez barras iguales, el ×10 de cada
+columna y dónde va la coma. Se comprobó al revés dejando quieto el 4 cuando
+Marvin copia: el tablero decía 40,528 y salió roja.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
