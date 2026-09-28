@@ -4368,6 +4368,30 @@ existe ahí.** `node --check` no lo caza: al condicionar el logro con
 `retoOk`— y habrían reventado el Reto al terminarse el tiempo. Se
 revisó después, no antes, y por poco.
 
+⚠️ **Y la fiesta tampoco se regala.** La estrella del arranque se quitaba,
+pero el confeti se quedó: `fin()` lo lanza **antes** de que el envoltorio
+deshaga la marca, así que la misión abría con confeti cayendo sin que el
+alumno hubiera tocado nada. Medido el 28 de septiembre de 2026, abriendo
+las 91 sin tocar nada: **34 lo tiraban**, que son justo las que regalaban
+estrellas. Se vio mirando las capturas de la animación de Números Grandes,
+con todas las sondas en verde. Felicitar por abrir es regalar la estrella
+con otra cara: enseña que la fiesta no significa nada, y la del día que sí
+se la gana se la cree menos.
+
+Ahora, antes del primer toque, el envoltorio **calla** `launchConfetti` y
+`sfx` mientras dura esa llamada a `fin()` y los devuelve al salir. Son
+declaraciones de función en las 91 misiones, o sea propiedades del objeto
+global, y por eso se pueden callar desde fuera sin tocar ni una misión. Dos
+cosas que no se ven venir:
+
+- ⚠️ **Se devuelven en un `finally`.** Si la misión reventara dentro de
+  `fin()`, la fiesta se quedaría callada el resto de la visita, y el alumno
+  que se ganara la estrella de verdad ya no vería el confeti. Por eso
+  `envolver` corre lo de después aunque lo de dentro falle.
+- **Lo que se gana sigue con su fiesta.** La sonda comprueba las dos
+  mitades: abrir no tira ni una pieza de confeti, y calificar la prueba sí.
+  Con el `estrella-ganada.js` de antes sale roja con 120 piezas.
+
 **Antes de publicar un cambio del puntaje:**
 
 ```
@@ -4377,7 +4401,8 @@ node _dev/verifica-estrella-ganada.js
 
 Lee del archivo **las 74** —que el aparato esté y que esté en el `<head>`—,
 y en el navegador hace lo que de verdad importa: abrir y **no tener ni una
-estrella**, que generar la prueba no la dé y calificarla sí, que calificar
+estrella ni una pieza de confeti**, que generar la prueba no la dé y
+calificarla sí —con su confeti—, que calificar
 otra vez **no vuelva a pagar**, que la sección de leer se gane **llegando al
 final y no asomándose**, que la prueba **no** esté entre las de leer, y que
 recargar **no vuelva a pagar las mismas tarjetas** pero **sí conserve** lo

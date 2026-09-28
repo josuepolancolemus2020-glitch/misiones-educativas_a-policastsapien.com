@@ -54,6 +54,12 @@ async function abrirMision(nav, rel) {
   await ctx.route('**/*.supabase.co/**', r => r.abort());
   await ctx.addInitScript(() => {
     try { localStorage.setItem('METAS_ALUMNO_V1', JSON.stringify({ nombre: 'Ana López', num: '7', grupo: '6-1' })); } catch (e) { }
+    /* El confeti se cuenta desde el primer momento: el que tira el arranque
+       cae antes de que la sonda pueda preguntar nada. */
+    window.__confeti = 0;
+    document.addEventListener('DOMContentLoaded', () => new MutationObserver(ms => {
+      for (const m of ms) for (const n of m.addedNodes) if (n.classList && n.classList.contains('confetti-piece')) window.__confeti++;
+    }).observe(document.body, { childList: true }));
   });
   const pg = await ctx.newPage();
   const errores = [];
@@ -121,6 +127,12 @@ const estrellas = pg => pg.evaluate(() => ({
     const r = await estrellas(pg);
     ok('no tiene ni una estrella', r.e.length === 0, r);
     ok('y el XP está en cero', r.xp === 0, r);
+    /* ⚠️ La estrella ya no se regalaba y el confeti SÍ: fin() lo lanza antes
+       de que el envoltorio deshaga la marca. Medido el 28 de septiembre de
+       2026, 34 de las 91 misiones abrían con confeti cayendo. Esta misión
+       era una de ellas. */
+    const confeti = await pg.evaluate(() => window.__confeti);
+    ok('y no le tira confeti: abrir no es ganar nada', confeti === 0, confeti);
     ok('sin errores de JavaScript', !errores.length, errores.slice(0, 2));
     await ctx.close();
   }
@@ -134,9 +146,14 @@ const estrellas = pg => pg.evaluate(() => ({
     await pg.waitForTimeout(500);
     ok('generarla NO da la estrella', !(await estrellas(pg)).e.includes('s-evaluacion'));
 
+    const confetiAntes = await pg.evaluate(() => window.__confeti);
     await pg.evaluate(() => gradeEval());
     await pg.waitForTimeout(600);
     ok('calificarla SÍ la da', (await estrellas(pg)).e.includes('s-evaluacion'));
+    /* Y la fiesta sigue ahí para lo que se gana: callar el confeti del
+       arranque no puede llevarse el de verdad. */
+    const confetiDespues = await pg.evaluate(() => window.__confeti);
+    ok('y ahí SÍ hay confeti, que esa estrella es suya', confetiDespues > confetiAntes, [confetiAntes, confetiDespues]);
 
     /* Y no paga dos veces por lo mismo. */
     const antes = (await estrellas(pg)).xp;

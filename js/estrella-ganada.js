@@ -68,12 +68,29 @@
     var orig = window[nombre];
     window[nombre] = function () {
       var st = antes ? antes.apply(null, arguments) : null;
-      var r = orig.apply(this, arguments);
-      if (despues) despues(st);
-      return r;
+      /* finally: lo de después corre aunque la misión reviente por dentro.
+         Si no, lo que se calló antes (la fiesta del arranque, más abajo) se
+         quedaba callado el resto de la visita, y el alumno que se ganara la
+         estrella de verdad ya no vería el confeti. */
+      try { return orig.apply(this, arguments); }
+      finally { if (despues) despues(st); }
     };
     return true;
   }
+
+  /* La fiesta —el confeti y el sonido de «sección completada»— de un fin()
+     que se va a deshacer. Las misiones la llaman por su nombre desde dentro
+     de fin(), y las dos son declaraciones de función (propiedades del objeto
+     global) en todas, así que se pueden callar mientras dura esa llamada. */
+  var FIESTA = ['launchConfetti', 'sfx'];
+  function callarFiesta() {
+    var g = {};
+    FIESTA.forEach(function (n) {
+      if (typeof window[n] === 'function') { g[n] = window[n]; window[n] = function () { }; }
+    });
+    return g;
+  }
+  function devolverFiesta(g) { for (var n in g) window[n] = g[n]; }
 
   function marcadas() { return (typeof done !== 'undefined' && done && done.has) ? done : null; }
 
@@ -164,8 +181,18 @@
          —que no hace nada, porque ya está— y el envoltorio la borraba
          igual. Costó una prueba que salió con la estrella desaparecida
          después de recargar. */
-      return { id: id, antesDelGesto: !huboGesto, yaEstaba: d ? d.has(id) : true };
+      var st = { id: id, antesDelGesto: !huboGesto, yaEstaba: d ? d.has(id) : true };
+      /* ⚠️ Y la fiesta se calla. La estrella ya no se regalaba, pero el
+         confeti SÍ: fin() lo lanza antes de que este envoltorio deshaga la
+         marca, así que 34 de las 91 misiones abrían con confeti cayendo sin
+         que el alumno hubiera tocado nada (medido el 28 de septiembre de
+         2026). Felicitar por abrir es regalar la estrella con otra cara:
+         enseña que la fiesta no significa nada, y la del día que sí se la
+         gana se la cree menos. */
+      if (st.antesDelGesto && !st.yaEstaba) st.fiesta = callarFiesta();
+      return st;
     }, function (st) {
+      if (st && st.fiesta) devolverFiesta(st.fiesta);
       if (st && st.antesDelGesto && !st.yaEstaba) {
         /* La misión la marcó al abrir. No se gana así, pero SÍ dice cuál
            es: es la lista de las secciones que solo se leen, escrita por
