@@ -90,7 +90,7 @@ ${IA_CONCEPTOS.filter(c => c.ciclo === 1).map(fichaConcepto).join('\n')}
     <div class="dos">
       <div class="dB"><b>📋 Con instrucciones</b>
         Le decimos <strong>paso por paso</strong> qué hacer. Obedece y no aprende nada.
-        <ul><li><em>«Enciende la luz. Espera cinco segundos. Apágala.»</em></li></ul>
+        <ul><li><em>«Enciende la luz. Espera cinco segundos. Apágala».</em></li></ul>
       </div>
       <div class="dA"><b>🍎 Con ejemplos</b>
         No le decimos qué hacer. Le <strong>mostramos muchas cosas</strong> y busca sola lo que se repite.

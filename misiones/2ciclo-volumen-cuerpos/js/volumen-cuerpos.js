@@ -112,20 +112,20 @@ function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.cl
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Volumen',a:'📦 el <strong>espacio que ocupa</strong> un cuerpo. El área se mide en la superficie; el volumen, por dentro.'},
-  {w:'Unidad de volumen',a:'🧊 el <strong>centímetro cúbico</strong> (cm³) es un cubito de 1 cm por lado. El volumen se cuenta en cubitos.'},
+  {w:'Volumen',a:'📦 El <strong>espacio que ocupa</strong> un cuerpo. El área se mide en la superficie; el volumen, por dentro.'},
+  {w:'Unidad de volumen',a:'🧊 El <strong>centímetro cúbico</strong> (cm³) es un cubito de 1 cm por lado. El volumen se cuenta en cubitos.'},
   {w:'Volumen del cubo',a:'🧊 <strong>V = arista × arista × arista</strong> (a³). Si la arista mide 4 cm: 4 × 4 × 4 = 64 cm³.'},
   {w:'Volumen del prisma',a:'📦 <strong>V = largo × ancho × alto</strong>, o dicho de otro modo: área de la base por la altura.'},
   {w:'Volumen del cilindro',a:'🥫 <strong>V = π × radio² × altura</strong>. También es área de la base por altura, pero la base es un círculo.'},
-  {w:'Área de la base × altura',a:'🔑 la <strong>misma idea</strong> sirve para el prisma y el cilindro: se calcula la base y se multiplica por lo alto que sea.'},
-  {w:'El radio, no el diámetro',a:'⚠️ en la fórmula del cilindro va el <strong>radio</strong>. Si te dan el diámetro, se parte a la mitad primero.'},
-  {w:'Metro cúbico (m³)',a:'📏 un cubo de 1 metro por lado. Es lo que se usa para medir arena, tierra o el agua de un tanque.'},
-  {w:'De m³ a cm³',a:'🪜 cada escalón multiplica o divide entre <strong>1,000</strong>: 1 m³ = 1,000 dm³ = 1,000,000 cm³. No entre 100.'},
+  {w:'Área de la base × altura',a:'🔑 La <strong>misma idea</strong> sirve para el prisma y el cilindro: se calcula la base y se multiplica por lo alto que sea.'},
+  {w:'El radio, no el diámetro',a:'⚠️ En la fórmula del cilindro va el <strong>radio</strong>. Si te dan el diámetro, se parte a la mitad primero.'},
+  {w:'Metro cúbico (m³)',a:'📏 Un cubo de 1 metro por lado. Es lo que se usa para medir arena, tierra o el agua de un tanque.'},
+  {w:'De m³ a cm³',a:'🪜 Cada escalón multiplica por <strong>1,000</strong> o divide entre <strong>1,000</strong>: 1 m³ = 1,000 dm³ = 1,000,000 cm³. No entre 100.'},
   {w:'Un litro es un dm³',a:'💧 <strong>1 dm³ = 1 litro</strong> exacto. Por eso un tanque de 1 m³ guarda 1,000 litros de agua.'},
-  {w:'Área contra volumen',a:'📐 el área se mide en <strong>cm²</strong> (superficie, para pintar) y el volumen en <strong>cm³</strong> (espacio, para llenar).'},
-  {w:'Capacidad',a:'🪣 lo que <strong>cabe dentro</strong> de un recipiente. Se mide en litros, y es el mismo espacio que el volumen.'},
-  {w:'Las medidas, en la misma unidad',a:'⚠️ antes de multiplicar hay que pasar todo a la <strong>misma unidad</strong>: no se puede multiplicar metros por centímetros.'},
-  {w:'Para qué sirve',a:'🏗️ para saber cuánta arena lleva una obra, cuántas cajas caben en un carro o cuántos litros aguanta un tanque.'}
+  {w:'Área contra volumen',a:'📐 El área se mide en <strong>cm²</strong> (superficie, para pintar) y el volumen en <strong>cm³</strong> (espacio, para llenar).'},
+  {w:'Capacidad',a:'🪣 Lo que <strong>cabe dentro</strong> de un recipiente. Se mide en litros, y es el mismo espacio que el volumen.'},
+  {w:'Las medidas, en la misma unidad',a:'⚠️ Antes de multiplicar hay que pasar todo a la <strong>misma unidad</strong>: no se puede multiplicar metros por centímetros.'},
+  {w:'Para qué sirve',a:'🏗️ Para saber cuánta arena lleva una obra, cuántas cajas caben en un carro o cuántos litros aguanta un tanque.'}
 ];
 let fcIdx=0;
 function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=fcData[fcIdx].a; document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
@@ -315,7 +315,7 @@ function checkClass(){
   if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}
   else{fb('fbCls','Hay errores. Los errados llevan ✗ (tócalos para devolverlos al banco).',false);sfx('no');}
 }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -524,36 +524,36 @@ function predDoble(i,a){
 // ===================== RETO FINAL (con parejas variables) =====================
 const retoPairs=[
   {
-    name:'Volumen vs número 📦', hint:'Calcula el volumen de A y compáralo con B',
+    name:'Volumen vs. número 📦', hint:'Calcula el volumen de A y compáralo con B',
     pool:[
-      {w:'A: cubo de arista 3 cm vs B: 27 cm³',t:'igual'},{w:'A: cubo de arista 2 cm vs B: 10 cm³',t:'menor'},{w:'A: cubo de arista 5 cm vs B: 100 cm³',t:'mayor'},
-      {w:'A: prisma 4 × 3 × 2 vs B: 24 cm³',t:'igual'},{w:'A: prisma 2 × 2 × 3 vs B: 15 cm³',t:'menor'},{w:'A: prisma 5 × 4 × 3 vs B: 50 cm³',t:'mayor'},
-      {w:'A: cubo de arista 4 cm vs B: 64 cm³',t:'igual'},{w:'A: prisma 3 × 3 × 2 vs B: 20 cm³',t:'menor'},{w:'A: prisma 6 × 5 × 2 vs B: 55 cm³',t:'mayor'},
-      {w:'A: prisma 10 × 2 × 1 vs B: 20 cm³',t:'igual'},{w:'A: cubo de arista 2 cm vs B: 9 cm³',t:'menor'},{w:'A: cubo de arista 6 cm vs B: 200 cm³',t:'mayor'}
+      {w:'A: cubo de arista 3 cm vs. B: 27 cm³',t:'igual'},{w:'A: cubo de arista 2 cm vs. B: 10 cm³',t:'menor'},{w:'A: cubo de arista 5 cm vs. B: 100 cm³',t:'mayor'},
+      {w:'A: prisma 4 × 3 × 2 vs. B: 24 cm³',t:'igual'},{w:'A: prisma 2 × 2 × 3 vs. B: 15 cm³',t:'menor'},{w:'A: prisma 5 × 4 × 3 vs. B: 50 cm³',t:'mayor'},
+      {w:'A: cubo de arista 4 cm vs. B: 64 cm³',t:'igual'},{w:'A: prisma 3 × 3 × 2 vs. B: 20 cm³',t:'menor'},{w:'A: prisma 6 × 5 × 2 vs. B: 55 cm³',t:'mayor'},
+      {w:'A: prisma 10 × 2 × 1 vs. B: 20 cm³',t:'igual'},{w:'A: cubo de arista 2 cm vs. B: 9 cm³',t:'menor'},{w:'A: cubo de arista 6 cm vs. B: 200 cm³',t:'mayor'}
     ]
   },
   {
     name:'Unidades y litros 💧', hint:'Convierte A y compáralo con B. Recuerda: 1 dm³ = 1 litro',
     pool:[
-      {w:'A: 1 m³ vs B: 1,000 litros',t:'igual'},{w:'A: 1 m³ vs B: 1,500 litros',t:'menor'},{w:'A: 2 m³ vs B: 1,500 litros',t:'mayor'},
-      {w:'A: 5 dm³ vs B: 5 litros',t:'igual'},{w:'A: 3 dm³ vs B: 5 litros',t:'menor'},{w:'A: 8 dm³ vs B: 5 litros',t:'mayor'},
-      {w:'A: 1 dm³ vs B: 1,000 cm³',t:'igual'},{w:'A: 500 cm³ vs B: 1 litro',t:'menor'},{w:'A: 1,500 cm³ vs B: 1 litro',t:'mayor'},
-      {w:'A: 0.5 m³ vs B: 500 litros',t:'igual'},{w:'A: 0.2 m³ vs B: 500 litros',t:'menor'},{w:'A: 3 m³ vs B: 2,500 litros',t:'mayor'}
+      {w:'A: 1 m³ vs. B: 1,000 litros',t:'igual'},{w:'A: 1 m³ vs. B: 1,500 litros',t:'menor'},{w:'A: 2 m³ vs. B: 1,500 litros',t:'mayor'},
+      {w:'A: 5 dm³ vs. B: 5 litros',t:'igual'},{w:'A: 3 dm³ vs. B: 5 litros',t:'menor'},{w:'A: 8 dm³ vs. B: 5 litros',t:'mayor'},
+      {w:'A: 1 dm³ vs. B: 1,000 cm³',t:'igual'},{w:'A: 500 cm³ vs. B: 1 litro',t:'menor'},{w:'A: 1,500 cm³ vs. B: 1 litro',t:'mayor'},
+      {w:'A: 0.5 m³ vs. B: 500 litros',t:'igual'},{w:'A: 0.2 m³ vs. B: 500 litros',t:'menor'},{w:'A: 3 m³ vs. B: 2,500 litros',t:'mayor'}
     ]
   },
   {
     name:'¿Área o volumen? 📐', hint:'Fíjate en la unidad: cm² es superficie y cm³ es espacio',
     pool:[
-      {w:'A: superficie de un cuadrado de 4 cm vs B: 16 cm²',t:'igual'},{w:'A: volumen de un cubo de 2 cm vs B: 12 cm³',t:'menor'},{w:'A: volumen de un cubo de 4 cm vs B: 16 cm³',t:'mayor'},
-      {w:'A: superficie de un cuadrado de 5 cm vs B: 25 cm²',t:'igual'},{w:'A: superficie de un cuadrado de 3 cm vs B: 12 cm²',t:'menor'},{w:'A: volumen de un cubo de 3 cm vs B: 9 cm³',t:'mayor'},
-      {w:'A: volumen de un prisma 2 × 2 × 2 vs B: 8 cm³',t:'igual'},{w:'A: superficie de un cuadrado de 2 cm vs B: 8 cm²',t:'menor'},{w:'A: volumen de un cubo de 5 cm vs B: 100 cm³',t:'mayor'},
-      {w:'A: volumen de un prisma 3 × 2 × 1 vs B: 6 cm³',t:'igual'},{w:'A: volumen de un prisma 1 × 2 × 2 vs B: 6 cm³',t:'menor'},{w:'A: volumen de un prisma 4 × 4 × 2 vs B: 30 cm³',t:'mayor'}
+      {w:'A: superficie de un cuadrado de 4 cm vs. B: 16 cm²',t:'igual'},{w:'A: volumen de un cubo de 2 cm vs. B: 12 cm³',t:'menor'},{w:'A: volumen de un cubo de 4 cm vs. B: 16 cm³',t:'mayor'},
+      {w:'A: superficie de un cuadrado de 5 cm vs. B: 25 cm²',t:'igual'},{w:'A: superficie de un cuadrado de 3 cm vs. B: 12 cm²',t:'menor'},{w:'A: volumen de un cubo de 3 cm vs. B: 9 cm³',t:'mayor'},
+      {w:'A: volumen de un prisma 2 × 2 × 2 vs. B: 8 cm³',t:'igual'},{w:'A: superficie de un cuadrado de 2 cm vs. B: 8 cm²',t:'menor'},{w:'A: volumen de un cubo de 5 cm vs. B: 100 cm³',t:'mayor'},
+      {w:'A: volumen de un prisma 3 × 2 × 1 vs. B: 6 cm³',t:'igual'},{w:'A: volumen de un prisma 1 × 2 × 2 vs. B: 6 cm³',t:'menor'},{w:'A: volumen de un prisma 4 × 4 × 2 vs. B: 30 cm³',t:'mayor'}
     ]
   }
 ];
 let currentRetoPairIdx=0;
 let retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
-function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' — 💡 '+rp.hint; }
+function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' · 💡 '+rp.hint; }
 function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; resetReto(); _retoPairLbl(); showToast('🔀 Pareja: '+retoPairs[currentRetoPairIdx].name); }
 function startReto(){
     if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30;
@@ -604,7 +604,7 @@ function _tgTask(out,i,inner){ const div=document.createElement('div'); div.clas
 const pensamientoTaskDB=[
   {q:'Una caja mide 30 cm × 20 cm × 10 cm. ¿Cuántos litros le caben?',a:'30 × 20 × 10 = 6,000 cm³ = 6 dm³ = 6 litros.'},
   {q:'¿Por qué al duplicar la arista de un cubo el volumen se hace ocho veces mayor y no el doble?',a:'Porque la arista entra tres veces en la cuenta: 2 × 2 × 2 = 8.'},
-  {q:'Un camión lleva 6 m³ de arena. ¿Cuántos viajes hacen falta para 20 m³?',a:'20 ÷ 6 = 3.33, así que hacen falta 4 viajes.'},
+  {q:'Un camión lleva 6 m³ de arena. ¿Cuántos viajes hacen falta para 20 m³?',a:'20 ÷ 6 ≈ 3.33, así que hacen falta 4 viajes.'},
   {q:'Un balde tiene forma de cilindro de 15 cm de radio y 40 cm de alto. ¿Cuántos litros le caben? (π = 3.14)',a:'3.14 × 225 × 40 = 28,260 cm³ ≈ 28.26 litros.'},
   {q:'Explica cómo sabrías, sin fórmulas, cuántos cubitos de 1 cm³ caben en una caja de 5 × 4 × 3 cm.',a:'Se cuentan por capas: 5 × 4 = 20 cubitos por capa, y hay 3 capas: 60 cubitos.'},
   {q:'Un tanque de agua es un cubo de 1.2 m de arista. ¿Aguanta 2,000 litros?',a:'1.2 × 1.2 × 1.2 = 1.728 m³ = 1,728 litros. No aguanta 2,000: faltan 272.'},
@@ -625,7 +625,7 @@ function genTask(){ sfx('click'); const type=document.getElementById('tgType').v
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
 // 🧊 Volumen del cubo (aleatorio: nunca se repite)
 function genVolCuboTask(out,count){
-  _instrBlock(out,'🧊 Volumen del cubo',['Multiplica la arista por sí misma tres veces.','No olvides escribir la unidad: cm³.']);
+  _instrBlock(out,'🧊 Volumen del cubo',['Usa la arista tres veces como factor: arista × arista × arista.','No olvides escribir la unidad: cm³.']);
   for(let i=0;i<count;i++){
     const a=_tgRint(2,12);
     _tgTask(out,i,`<div class="tg-op">Cubo de arista ${a} cm → V = ________</div><div class="tg-answer" style="display:${ansVisible?'block':'none'}">R/ ${a} × ${a} × ${a} = ${_volCubo(a)} cm³</div>`);
@@ -650,7 +650,7 @@ function genVolCilindroTask(out,count){
 }
 // 🪜 Cambios de unidad, de 1,000 en 1,000
 function genUnidadesTask(out,count){
-  _instrBlock(out,'🪜 Cambia de unidad',['Cada escalón multiplica o divide entre 1,000.','Recuerda que 1 dm³ es 1 litro.']);
+  _instrBlock(out,'🪜 Cambia de unidad',['Cada escalón multiplica por 1,000 o divide entre 1,000.','Recuerda que 1 dm³ es 1 litro.']);
   const casos=[['m³','dm³',1000],['dm³','cm³',1000],['dm³','m³',0.001],['cm³','dm³',0.001],['m³','litros',1000],['dm³','litros',1]];
   for(let i=0;i<count;i++){
     const c=casos[_tgRint(0,casos.length-1)], v=_tgRint(1,9)*(c[2]<1?1000:1);
@@ -850,11 +850,11 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 function genEval(){
   sfx('click');
   _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */ window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final — Forma ${cf}`;
+  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final · Forma ${cf}`;
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -872,7 +872,7 @@ function genEval(){
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item eval-auto-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">—</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">?</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -947,7 +947,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Volumen de Cuerpos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
@@ -964,8 +964,8 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Volumen de Cuerpos · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Volumen de Cuerpos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Volumen de Cuerpos · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Evaluación Final · Volumen de Cuerpos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
@@ -977,13 +977,13 @@ const explicaData = [
     q: 'Un compañero calculó el volumen de un cubo de 5 cm y escribió 25 cm³. Explícale qué le pasó.',
     hint: '💡 Pista: cuenta cuántas veces entra la arista en la cuenta.',
     rubric: ['✓ Señala que multiplicó solo dos veces (eso es el área de una cara)', '✓ Recuerda que el volumen lleva las tres dimensiones', '✓ Da el resultado: 125 cm³'],
-    suggested: 'Multiplicó 5 × 5 y le dio 25, pero eso es el área de una cara, no el volumen. El volumen lleva las tres dimensiones: 5 × 5 × 5 = 125 cm³. Además la unidad delata el error: 25 cm² sería superficie.'
+    suggested: 'Multiplicó 5 × 5 y le dio 25, pero eso es el área de una cara, no el volumen. El volumen lleva las tres dimensiones: 5 × 5 × 5 = 125 cm³. Además, la unidad delata el error: 25 cm² sería superficie.'
   },
   {
     q: 'Explica por qué un tanque de 1 m³ guarda 1,000 litros y no 100.',
     hint: '💡 Pista: cada escalón de las unidades cúbicas vale 1,000.',
     rubric: ['✓ Explica que 1 m³ = 1,000 dm³', '✓ Recuerda que 1 dm³ = 1 litro', '✓ Concluye que son 1,000 litros'],
-    suggested: 'Un metro tiene 10 decímetros, pero como el volumen lleva las tres dimensiones son 10 × 10 × 10 = 1,000 decímetros cúbicos. Y como cada dm³ es un litro, en 1 m³ caben 1,000 litros.'
+    suggested: 'Un metro tiene 10 decímetros, pero, como el volumen lleva las tres dimensiones, son 10 × 10 × 10 = 1,000 decímetros cúbicos. Y como cada dm³ es un litro, en 1 m³ caben 1,000 litros.'
   },
   {
     q: 'Te dan un cilindro de 10 cm de diámetro y 20 cm de altura. Explica paso a paso cómo hallas su volumen.',
@@ -995,7 +995,7 @@ const explicaData = [
     q: 'Tu mamá quiere saber cuánta agua le cabe a una pila de 2 m de largo, 1 m de ancho y medio metro de hondo. Resuélvelo y explícale el resultado en litros.',
     hint: '💡 Pista: primero el volumen en m³ y después pásalo a litros.',
     rubric: ['✓ Calcula 2 × 1 × 0.5 = 1 m³', '✓ Convierte: 1 m³ = 1,000 litros', '✓ Explica el resultado con palabras sencillas'],
-    suggested: 'Multiplico las tres medidas: 2 × 1 × 0.5 = 1 m³. Como cada metro cúbico son 1,000 litros, la pila le aguanta 1,000 litros de agua llena hasta el borde.'
+    suggested: 'Multiplico las tres medidas: 2 × 1 × 0.5 = 1 m³. Como cada metro cúbico son 1,000 litros, la pila, llena hasta el borde, aguanta 1,000 litros de agua.'
   },
   {
     q: '¿En qué se diferencia calcular el área de una caja y calcular su volumen? Pon un ejemplo de cuándo se usa cada uno.',
@@ -1109,10 +1109,10 @@ function genRadarItems() {
   tipos.forEach(tp => {
     if (tp === 0) {
       const v = _opRint(1, 9);
-      items.push({ text: `${v} m³ ¿cuántos dm³ son?`, ansNum: v * 1000 });
+      items.push({ text: `${v} m³, ¿cuántos dm³ son?`, ansNum: v * 1000 });
     } else if (tp === 1) {
       const v = _opRint(1, 9);
-      items.push({ text: `${v} dm³ ¿cuántos litros son?`, ansNum: v });
+      items.push({ text: `${v} dm³, ¿cuántos litros son?`, ansNum: v });
     } else if (tp === 2) {
       const casos = [['pintar una pared', 'área'], ['llenar un tanque', 'volumen'], ['forrar una caja', 'área'], ['la arena de un camión', 'volumen']];
       const c = casos[_opRint(0, 3)];
@@ -1122,7 +1122,7 @@ function genRadarItems() {
       items.push({ text: `Un cilindro tiene ${d} cm de diámetro. ¿Cuánto mide su radio?`, ansNum: d / 2 });
     } else {
       const a = _VOL_ARISTAS[_opRint(0, 4)];
-      items.push({ text: `¿En qué unidad se escribe el volumen de un cubo medido en centímetros? Escribe <em>cm2</em> o <em>cm3</em>.`, ansTxt: ['cm3', 'cm³'], ansShow: 'cm³ — el volumen va al cubo' });
+      items.push({ text: `¿En qué unidad se escribe el volumen de un cubo medido en centímetros? Escribe <em>cm2</em> o <em>cm3</em>.`, ansTxt: ['cm3', 'cm³'], ansShow: 'cm³: el volumen va al cubo' });
     }
   });
   return items;
@@ -1178,7 +1178,7 @@ function genRetoItems() {
   { const a = _RT_DOBLE[_opRint(0, _RT_DOBLE.length - 1)];
     items.push({ text: `Un cubo de ${a} cm de arista tiene ${a * a * a} cm³. Si se duplica la arista, ¿cuántas veces mayor será el volumen? Escribe solo el número.`, ansNum: 8, pts: 5 }); }
   { const u = _RT_UNI[_opRint(0, _RT_UNI.length - 1)];
-    items.push({ text: `Un tanque guarda ${u[0]} ${u[1]}. Una familia gasta 250 litros al día. ¿Para cuántos días completos le alcanza?`, ansNum: Math.floor(u[2] / 250), just: `${u[2]} litros ÷ 250`, ansShow: `${Math.floor(u[2] / 250)} días — ${u[2]} litros entre 250`, pts: 10 }); }
+    items.push({ text: `Un tanque guarda ${u[0]} ${u[1]}. Una familia gasta 250 litros al día. ¿Para cuántos días completos le alcanza?`, ansNum: Math.floor(u[2] / 250), just: `${u[2]} litros ÷ 250`, ansShow: `${Math.floor(u[2] / 250)} días (${u[2]} litros entre 250)`, pts: 10 }); }
   return items;
 }
 
@@ -1188,7 +1188,7 @@ function genEvalOp() {
   const _sO = document.getElementById('evalOpFormaSel');
   if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
   const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra todo el azar de la prueba operativa */ evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
-  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Volumen de Cuerpos`;
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa · Forma ${cf} · Volumen de Cuerpos`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
@@ -1227,7 +1227,7 @@ function genEvalOp() {
   s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Son medidas de verdad: pilas, baúles y barriles. Escribe la respuesta numérica.</p>';
   viItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansShow || _fmtNum(it.ansNum)} — ${it.just}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansShow || _fmtNum(it.ansNum)} · ${it.just}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
@@ -1287,7 +1287,7 @@ function printEvalOp() {
   let s1 = `<div class="sec-title"><span>I. Calcula el volumen</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Aplica la fórmula que toca y escribe la respuesta en la línea. 4 pts c/u.</p>`;
   d.mdItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
   const rdTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Radar: unidades, litros y radio</th><th>Respuesta</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${_plano(it.text)}</td><td></td></tr>`).join('')}</table>`;
-  let s2 = `<div class="sec-title"><span>II. Radar de unidades</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel básico. Recuerda: 1 m³ = 1,000 dm³ = 1,000 litros · el radio es la mitad del diámetro · suma de cifras · 5 → termina en 0 o 5 · 10 → termina en 0. 2 pts c/u.</p>${rdTbl(d.rdItems)}`;
+  let s2 = `<div class="sec-title"><span>II. Radar de unidades</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel básico. Recuerda: 1 m³ = 1,000 dm³ = 1,000 litros · el radio es la mitad del diámetro. 2 pts c/u.</p>${rdTbl(d.rdItems)}`;
   const rgTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>Pista</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td>${it.hint}</td><td></td></tr>`).join('')}</table>`;
   let s3 = `<div class="sec-title"><span>III. ¿Qué medida se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel intermedio. Con el volumen y dos medidas, la tercera sale dividiendo. 4 pts c/u.</p>${rgTbl(d.rgItems)}`;
   let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Resuelve en el espacio mostrando tu procedimiento y escribe la respuesta. 10 pts c/u.</p>`;
@@ -1298,9 +1298,9 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">I. Calcula el volumen</div><table class="p-tbl">${d.mdItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow || _fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">II. Radar de unidades</div><table class="p-tbl">${d.rdItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">III. ¿Qué medida se esconde en ▢?</div><table class="p-tbl">${d.rgItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${it.ansShow || _fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow || _fmtNum(it.ansNum)} — ${it.just}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow || _fmtNum(it.ansNum)} · ${it.just}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento crítico</div><table class="p-tbl">${d.rtItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow} (${it.pts} pts)</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Volumen de Cuerpos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Volumen de Cuerpos · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Volumen de Cuerpos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Volumen de Cuerpos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Volumen de Cuerpos · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Volumen de Cuerpos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1320,7 +1320,7 @@ function openDiploma(){
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();

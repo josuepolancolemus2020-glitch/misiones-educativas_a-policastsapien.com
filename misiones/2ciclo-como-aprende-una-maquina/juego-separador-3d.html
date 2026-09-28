@@ -176,7 +176,7 @@ var CASOS = [
     clases:[{nombre:'Sana', emoji:'🌿', color:0x38d3c6, cls:'b'},
             {nombre:'Con plaga', emoji:'🍂', color:0xf6b93b, cls:'a'}],
     ejes:['Tamaño','Manchas','Color'],
-    cuento:'Mira el dibujo <b>desde arriba</b>: están revueltas. Gira y míralo de lado — se separan por <b>cuántas manchas</b> tienen, que es la medida de en medio.',
+    cuento:'Mira el dibujo <b>desde arriba</b>: están revueltas. Gira y míralo de lado: se separan por <b>cuántas manchas</b> tienen, que es la medida de en medio.',
     nubes:[{clase:0,grupo:'a',centro:[0,-0.55,0],radio:[0.85,0.24,0.85],n:12},
            {clase:1,grupo:'b',centro:[0, 0.55,0],radio:[0.85,0.24,0.85],n:12}],
     semilla:3303,
@@ -193,7 +193,7 @@ var CASOS = [
            {clase:1,grupo:'b',centro:[-0.52, 0.52,0],radio:[0.30,0.30,0.9],n:6},
            {clase:1,grupo:'b',centro:[ 0.52,-0.52,0],radio:[0.30,0.30,0.9],n:6}],
     semilla:4404, imposible:true,
-    leccion:'No te faltó maña: NINGÚN plano los separa. Una máquina de verdad haría una de dos cosas — pedir otra medida, o usar una frontera curva en vez de un plano.'
+    leccion:'No te faltó maña: NINGÚN plano los separa. Una máquina de verdad haría una de dos cosas: pedir otra medida o usar una frontera curva en vez de un plano.'
   }
 ];
 
@@ -454,7 +454,7 @@ function terminar(bien, est){
   var ojo = document.getElementById('fin-ojo');
   if(d.imposible){
     ojo.style.display = '';
-    ojo.innerHTML = '⚠️ Esto le pasa a las máquinas de verdad todos los días. Cuando los ejemplos no se pueden separar con las medidas que hay, <b>no se fuerza la respuesta</b>: se consigue otra medida. Lo que NO se puede hacer es fingir que salió.';
+    ojo.innerHTML = '⚠️ Esto les pasa a las máquinas de verdad todos los días. Cuando los ejemplos no se pueden separar con las medidas que hay, <b>no se fuerza la respuesta</b>: se consigue otra medida. Lo que NO se puede hacer es fingir que salió.';
   } else { ojo.style.display = 'none'; }
   document.getElementById('fin-bt').style.display = caso < CASOS.length-1 ? '' : 'none';
   document.getElementById('fin-rep').style.display = caso < CASOS.length-1 ? 'none' : '';

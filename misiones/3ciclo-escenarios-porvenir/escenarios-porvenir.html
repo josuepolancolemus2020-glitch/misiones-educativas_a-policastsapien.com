@@ -112,7 +112,7 @@
     <p>Juntando los ocho oficios, tarea por tarea, esto es lo que se lleva la máquina:</p>
     <div class="tt-barras" id="tt-barras"></div>
     <div class="tip"><span class="ti">🔑</span><div>Se lleva casi todo lo de <strong>papel</strong> y casi todo lo de <strong>mirar</strong>. Casi nada de lo de <strong>manos</strong> ni de lo de <strong>estar con alguien</strong>.</div></div>
-    <div class="tip"><span class="ti">⚠️</span><div>Esto cuenta <strong>tareas, no horas</strong>. A don Chele la máquina le quita la cuenta de los gastos y el aviso de la plaga. Lo que le queda —sembrar, limpiar, cosechar y acarrear— se lleva el día entero.</div></div>
+    <div class="tip"><span class="ti">⚠️</span><div>Esto cuenta <strong>tareas, no horas</strong>. A don Chele la máquina le quita la cuenta de los gastos, el cálculo de cuándo sembrar y el aviso de la plaga. Lo que le queda (sembrar, limpiar, cosechar y acarrear) se lleva el día entero.</div></div>
     <p>Y ningún oficio se va entero. Mirá cuánto pierde cada uno:</p>
     <div class="ofi-tabla" id="ofi-tabla"></div>
     <div class="tip"><div>Ninguno llega a cero y ninguno llega a cien. <strong>Todos cambian de forma; ninguno desaparece.</strong></div></div>
@@ -219,7 +219,7 @@
 <!-- ===== FLASHCARDS ===== -->
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <h2>🃏 Flashcards: toca para voltear</h2>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
@@ -378,7 +378,7 @@
 <!-- ===== RETO ===== -->
 <div class="sec" id="s-reto" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada uno lo más rápido que puedas.</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con los otros dos grupos.</p>
     <div class="game" aria-live="polite">
@@ -462,10 +462,10 @@
     <div class="eval-print-header">
       <h2>Evaluación Final · Escenarios por venir · Educación Básica · III Ciclo</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
     </div>
-    <h2 id="eval-screen-title">🎓 Evaluación Final — Escenarios por venir</h2>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · Escenarios por venir</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
@@ -481,10 +481,10 @@
     <div class="eval-print-header">
       <h2>Evaluación Competencial · Pensamiento Crítico · Escenarios por venir · Educación Básica · III Ciclo</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
     </div>
-    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Escenarios por venir</h2>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · Escenarios por venir</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>

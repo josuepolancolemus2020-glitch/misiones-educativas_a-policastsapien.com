@@ -153,21 +153,21 @@ const CAMP_BANK = {
   /* ── CIENCIAS SOCIALES ───────────────────────────────────── */
   sociales: [
     // Geografía y Coordenadas
-    { q: '¿Qué mide la latitud?', o: ['La distancia de este a oeste', 'La distancia angular desde el Ecuador hacia los polos', 'El tiempo en cada zona horaria', 'La altura sobre el nivel del mar'], c: 1, mision: 'Geografía y Coordenadas' },
-    { q: '¿A cuántos grados de latitud se encuentra el Ecuador?', o: ['90°', '45°', '23°', '0°'], c: 3, mision: 'Geografía y Coordenadas' },
-    { q: '¿Qué línea imaginaria divide la Tierra en Hemisferio Norte y Sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El Ecuador', 'Círculo Polar Ártico'], c: 2, mision: 'Geografía y Coordenadas' },
-    { q: '¿Cuál es la latitud del Trópico de Capricornio?', o: ["23° 26' Norte", "66° 34' Sur", '0° Sur', "23° 26' Sur"], c: 3, mision: 'Geografía y Coordenadas' },
-    { q: '¿Qué es el Meridiano de Greenwich?', o: ['El paralelo de 0° latitud', 'El meridiano de 0° longitud que pasa por el Reino Unido', 'La línea que separa el Ártico', 'Un paralelo de 90°'], c: 1, mision: 'Geografía y Coordenadas' },
+    { q: '¿Qué mide la latitud?', o: ['La distancia de este a oeste', 'La distancia angular desde el ecuador hacia los polos', 'El tiempo en cada zona horaria', 'La altura sobre el nivel del mar'], c: 1, mision: 'Geografía y Coordenadas' },
+    { q: '¿A cuántos grados de latitud se encuentra el ecuador?', o: ['90°', '45°', '23°', '0°'], c: 3, mision: 'Geografía y Coordenadas' },
+    { q: '¿Qué línea imaginaria divide la Tierra en hemisferio norte y sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El Ecuador', 'Círculo polar ártico'], c: 2, mision: 'Geografía y Coordenadas' },
+    { q: '¿Cuál es la latitud del trópico de Capricornio?', o: ["23° 26' Norte", "66° 34' Sur", '0° Sur', "23° 26' Sur"], c: 3, mision: 'Geografía y Coordenadas' },
+    { q: '¿Qué es el meridiano de Greenwich?', o: ['El paralelo de 0° latitud', 'El meridiano de 0° longitud que pasa por el Reino Unido', 'La línea que separa el Ártico', 'Un paralelo de 90°'], c: 1, mision: 'Geografía y Coordenadas' },
     { q: '¿Para qué sirven las coordenadas geográficas?', o: ['Para medir la temperatura', 'Para calcular la altitud', 'Para ubicar cualquier punto exacto en la Tierra', 'Para predecir el clima'], c: 2, mision: 'Geografía y Coordenadas' },
     { q: '¿En cuántas franjas (husos horarios) se divide la Tierra?', o: ['12', '36', '24', '48'], c: 2, mision: 'Geografía y Coordenadas' },
-    { q: 'Honduras se encuentra en la zona climática llamada:', o: ['Zona Polar', 'Zona Templada Norte', 'Zona Templada Sur', 'Zona Tórrida'], c: 3, mision: 'Geografía y Coordenadas' },
+    { q: 'Honduras se encuentra en la zona climática llamada:', o: ['Zona polar', 'Zona templada norte', 'Zona templada sur', 'Zona tórrida'], c: 3, mision: 'Geografía y Coordenadas' },
     { q: '¿Cuál de estos es un paralelo importante de la Tierra?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'Primer Meridiano', 'Meridiano 90°'], c: 1, mision: 'Geografía y Coordenadas' },
-    { q: 'La longitud se mide desde:', o: ['El Ecuador', 'El Polo Norte', 'El Meridiano de Greenwich', 'El Trópico de Capricornio'], c: 2, mision: 'Geografía y Coordenadas' },
+    { q: 'La longitud se mide desde:', o: ['El Ecuador', 'El polo norte', 'El meridiano de Greenwich', 'El trópico de Capricornio'], c: 2, mision: 'Geografía y Coordenadas' },
     // Continentes: Europa, Asia y África
     { q: '¿Cuál es el continente más grande y más poblado del mundo?', o: ['África', 'Europa', 'América', 'Asia'], c: 3, mision: 'Continentes: Europa, Asia y África' },
     { q: '¿Qué río es el más largo del mundo?', o: ['Congo', 'Níger', 'Zambeze', 'Nilo'], c: 3, mision: 'Continentes: Europa, Asia y África' },
     { q: '¿Qué bloque político-económico agrupa 27 países de Europa?', o: ['OTAN', 'G20', 'Unión Europea', 'ONU'], c: 2, mision: 'Continentes: Europa, Asia y África' },
-    { q: '¿En qué continente se encuentra el Monte Everest?', o: ['Europa', 'África', 'Asia', 'América'], c: 2, mision: 'Continentes: Europa, Asia y África' },
+    { q: '¿En qué continente se encuentra el monte Everest?', o: ['Europa', 'África', 'Asia', 'América'], c: 2, mision: 'Continentes: Europa, Asia y África' },
     { q: '¿Cuál es el desierto caluroso más grande del mundo?', o: ['Gobi', 'Kalahari', 'Atacama', 'Sahara'], c: 3, mision: 'Continentes: Europa, Asia y África' },
     { q: '¿Cuántos países tiene el continente africano?', o: ['35', '44', '54', '62'], c: 2, mision: 'Continentes: Europa, Asia y África' },
     { q: '¿Qué fenómeno climático de Asia trae lluvias estacionales esenciales para la agricultura?', o: ['Tifón', 'Huracán', 'Monzón', 'Tsunami'], c: 2, mision: 'Continentes: Europa, Asia y África' },
@@ -176,7 +176,7 @@ const CAMP_BANK = {
     // Continentes: América, Oceanía y Antártida
     { q: '¿Cuál es el río más caudaloso del mundo?', o: ['Nilo', 'Congo', 'Amazonas', 'Mississippi'], c: 2, mision: 'Continentes: América, Oceanía y Antártida' },
     { q: '¿En qué región de América se ubica Honduras?', o: ['América del Norte', 'América del Sur', 'América Central', 'El Caribe'], c: 2, mision: 'Continentes: América, Oceanía y Antártida' },
-    { q: '¿Cómo se llama el acuerdo de libre comercio entre Honduras y EE.UU.?', o: ['AACUE', 'NAFTA', 'CAFTA-DR', 'MERCOSUR'], c: 2, mision: 'Continentes: América, Oceanía y Antártida' },
+    { q: '¿Cómo se llama el acuerdo de libre comercio entre Honduras y EE. UU.?', o: ['AACUE', 'NAFTA', 'CAFTA-DR', 'MERCOSUR'], c: 2, mision: 'Continentes: América, Oceanía y Antártida' },
     { q: '¿Cuál es el continente más pequeño del mundo?', o: ['Europa', 'Antártida', 'Oceanía', 'América Central'], c: 2, mision: 'Continentes: América, Oceanía y Antártida' },
     { q: '¿Qué país es a la vez el único país-continente del mundo?', o: ['Nueva Zelanda', 'Australia', 'Papúa Nueva Guinea', 'Fiyi'], c: 1, mision: 'Continentes: América, Oceanía y Antártida' },
     { q: '¿Cuál es el arrecife de coral más grande del mundo?', o: ['Barrera de Mesoamérica', 'Barrera del Caribe', 'Gran Barrera de Coral', 'Arrecife de las Maldivas'], c: 2, mision: 'Continentes: América, Oceanía y Antártida' },
@@ -215,7 +215,7 @@ const CAMP_BANK = {
 
     // Condicionales: el Robot Decide
     { q: 'En «SI la tierra está seca ENTONCES riega, SINO no riegues», ¿cuál es la condición?', o: ['riega', 'no riegues', '¿la tierra está seca?', 'la huerta'], c: 2, mision: 'Condicionales: el Robot Decide' },
-    { q: 'En un condicional SI…ENTONCES SIN rama SINO, si la condición es falsa el robot…', o: ['no hace nada y sigue con la siguiente instrucción', 'se apaga', 'repite el programa', 'ejecuta la acción igual'], c: 0, mision: 'Condicionales: el Robot Decide' },
+    { q: 'En un condicional SI… ENTONCES SIN rama SINO, si la condición es falsa el robot…', o: ['no hace nada y sigue con la siguiente instrucción', 'se apaga', 'repite el programa', 'ejecuta la acción igual'], c: 0, mision: 'Condicionales: el Robot Decide' },
     { q: '¿Cuál de estas frases NO puede ser una condición?', o: ['¿Hay pared adelante?', '¿Está lloviendo?', 'AVANZA tres casillas', '¿El semáforo está en rojo?'], c: 2, mision: 'Condicionales: el Robot Decide' },
     { q: 'En la pulpería: «SI hay cambio ENTONCES cobra, SINO pide sencillo». Si NO hay cambio, ¿qué hace?', o: ['Cobra', 'Pide sencillo', 'Cierra la pulpería', 'Regala el producto'], c: 1, mision: 'Condicionales: el Robot Decide' },
     { q: '¿Cuántas respuestas posibles tiene una condición?', o: ['Tres', 'Dos: verdadera o falsa', 'Cuatro', 'Todas las que quiera'], c: 1, mision: 'Condicionales: el Robot Decide' },

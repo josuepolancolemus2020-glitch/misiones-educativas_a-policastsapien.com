@@ -152,8 +152,8 @@ ok('la sección V imprime la rúbrica de 4 criterios en la pauta',
 ['docConcept', 'docCrit'].forEach(k => {
   const doc = a[k];
   ok('[' + k + '] encabezado Nombre/Parcial/Fecha', doc.includes('<strong>Nombre:</strong>') && doc.includes('<strong>Parcial:</strong>') && doc.includes('<strong>Fecha:</strong>'));
-  ok('[' + k + '] encabezado Centro Educativo/Grado/Nº', doc.includes('<strong>Centro Educativo:</strong>') && doc.includes('<strong>Grado y Sección:</strong>') && doc.includes('<strong>Nº Lista:</strong>'));
-  ok('[' + k + '] pie normativo con Nº de Evaluación temática y casillas', doc.includes('Nº de Evaluación temática realizada:') && doc.includes('Evaluación con valor en el parcial') && doc.includes('Evaluación solo de repaso'));
+  ok('[' + k + '] encabezado Centro Educativo/Grado/N.º', doc.includes('<strong>Centro Educativo:</strong>') && doc.includes('<strong>Grado y Sección:</strong>') && doc.includes('<strong>N.º Lista:</strong>'));
+  ok('[' + k + '] pie normativo con N.º de Evaluación temática y casillas', doc.includes('N.º de Evaluación temática realizada:') && doc.includes('Evaluación con valor en el parcial') && doc.includes('Evaluación solo de repaso'));
   ok('[' + k + '] etiqueta Forma en el pie', doc.includes('class="forma-tag"'));
   ok('[' + k + '] pauta marcada como documento exclusivo del docente', doc.includes('Documento exclusivo del docente'));
   ok('[' + k + '] ajuste automático a 1 página (script fit)', /function fit\(/.test(doc) && doc.includes('@page{size:letter portrait'));

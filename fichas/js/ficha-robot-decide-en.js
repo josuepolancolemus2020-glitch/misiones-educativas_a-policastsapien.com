@@ -2,7 +2,7 @@
    Ficha didáctica «Condicionales: el Robot Decide» — en inglés
    ------------------------------------------------------------
    Misma traducción de autor que la misión (conditional ·
-   condition · IF…THEN…ELSE · THEN branch · ELSE branch · sensor
+   condition · IF… THEN… ELSE · THEN branch · ELSE branch · sensor
    · true/false · chained · bug) y en inglés AMERICANO, que es el
    que enseñan las bilingües de Honduras: color, center,
    «Student No.».
@@ -10,7 +10,7 @@
    El lenguaje del simulador SÍ se traduce aquí en el texto,
    porque en la ficha es papel y nadie compara nada: AVANZA →
    FORWARD, GIRA DERECHA → TURN RIGHT, ESPERA → WAIT, ENTREGA →
-   DELIVER, SI…ENTONCES…SINO → IF…THEN…ELSE.
+   DELIVER, SI… ENTONCES… SINO → IF… THEN… ELSE.
 
    Las 7 páginas se traducen enteras (data-i18n="p1".."p7") para
    que la maquetación impresa no se desarme.
@@ -26,7 +26,7 @@
 
   window.MISION_EN = {
 
-    titulo: 'Study Sheet · Mission: Conditionals — the Robot Decides',
+    titulo: 'Study Sheet · Conditionals: the Robot Decides',
 
     html: {
 
@@ -36,9 +36,9 @@
 
         '<div class="fh">' +
         '<div class="fh-txt">' +
-        '<div class="f-badge">📄 Study Sheet: Mission — Conditionals: the Robot Decides</div>' +
+        '<div class="f-badge">📄 Study Sheet · Conditionals: the Robot Decides</div>' +
         '<div class="f-meta"><b>Subject:</b> Programming &nbsp;·&nbsp; <b>Level:</b> Basic Education</div>' +
-        '<div class="f-meta"><b>Topic:</b> IF… THEN… ELSE conditionals in plain-language pseudocode: the condition as a yes/no question, the robot’s sensors (is there a wall ahead? is the traffic light green?), which branch runs and which one is ignored, chained conditionals and the common mistakes — with and without a computer</div>' +
+        '<div class="f-meta"><b>Topic:</b> IF… THEN… ELSE conditionals in plain-language pseudocode: the condition as a yes/no question, the robot’s sensors (is there a wall ahead? is the traffic light green?), which branch runs and which one is ignored, chained conditionals and the common mistakes, with and without a computer</div>' +
         '</div>' +
         '<div class="fh-qr">' +
         '<img src="img/qr-mision-robot-decide.png" alt="Mission QR code">' +
@@ -73,7 +73,7 @@
         '<div class="cc"><span class="c-emoji">👉</span><b>THEN branch</b>If the answer is YES: «I take an umbrella».</div>' +
         '<div class="cn"><span class="c-emoji">👈</span><b>ELSE branch</b>If the answer is NO: «I take a cap».</div>' +
         '</div>' +
-        '<p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">🔀 IF (condition) THEN (the yes branch) ELSE (the no branch) — only ONE branch runs!</p>' +
+        '<p style="font-size:9pt;color:var(--gris);margin:8px 0 0;text-align:center;">🔀 IF (condition) THEN (the yes branch) ELSE (the no branch): only ONE branch runs!</p>' +
         '</div>',
 
       /* ═══════════ PÁGINA 2 ═══════════ */
@@ -115,7 +115,7 @@
         'traffic light green?». Those are <strong>chained conditionals</strong>, and the <strong>order</strong> of the ' +
         'questions can change the final decision.</p>' +
 
-        '<h3>⚠️ Common mistakes — do not fall for them!</h3>' +
+        '<h3>⚠️ Common mistakes: do not fall for them!</h3>' +
         '<table>' +
         '<tr><th>Mistake</th><th>Why it is wrong</th><th>The right way</th></tr>' +
         '<tr><td class="k" style="white-space:normal;">Thinking both branches run</td><td>In a conditional only one branch runs.</td><td>Choosing the branch that matches the answer ✔</td></tr>' +
@@ -173,7 +173,7 @@
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>IF there is a wall ahead THEN turn right, ELSE go forward. The robot has NO wall ahead. What does it do?</div>' +
@@ -268,7 +268,7 @@
 
       /* ═══════════ PÁGINA 6 ═══════════ */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Maybe</td><td>A. An instruction for not crossing on red</td></tr>' +
@@ -303,7 +303,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +

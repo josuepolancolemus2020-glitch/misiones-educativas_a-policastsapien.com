@@ -531,8 +531,6 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 .op-pira-cell.op-pira-empty{background:transparent;border-style:dashed;color:var(--gray);}
 
 
-/* ===== FLASHCARDS: el reverso siempre en minúscula ===== */
-.fc-back .fca, #fcA{text-transform:lowercase !important;} /* blindado: Font Awesome también usa la clase .fa */
 
 /* ===== PREDICE: exploradores interactivos ===== */
 .pd-explore-btn{font-family:'Fredoka',sans-serif;background:var(--purple);color:#fff;border:none;border-radius:12px;padding:0.4rem 0.9rem;font-size:0.8rem;cursor:pointer;margin-bottom:0.5rem;transition:transform 0.2s;}
@@ -576,7 +574,7 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 .eval-pr-sel.eval-input-ok{border-color:var(--jade);background:var(--jade-gl);}
 .eval-pr-sel.eval-input-no{border-color:var(--red);background:rgba(214,48,49,0.08);}
 
-/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards mayúscula inicial y letra mayor ===== */
+/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards con letra mayor ===== */
 /* Contraste del feedback correcto/incorrecto (Predice y mini-quiz) */
 .predice-fb.ok{background:rgba(0,184,148,0.14);color:#075e44;border:1.5px solid #00b894;font-weight:700;}
 .predice-fb.err{background:rgba(214,48,49,0.10);color:#8f1d1d;border:1.5px solid #d63031;font-weight:700;}
@@ -593,11 +591,10 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 [data-theme="dark"] .memo-back{background:#242a3d;color:#e8f0fe;}
 [data-theme="dark"] .memo-back.memo-term{background:#1565c0;color:#ffffff;}
 [data-theme="dark"] .memo-card.matched .memo-back{background:rgba(0,184,148,0.18);color:#7dedc9;}
-/* Flashcards: mayúscula inicial + letra más grande sin desbordar
-   (se conserva el text-transform:lowercase blindado; ::first-letter lo corrige al inicio) */
+/* Flashcards: letra más grande sin desbordar. Sin ::first-letter: la mayúscula
+   inicial la trae el texto, igual que la de cada oración y la de los nombres. */
 .fc-back{overflow-y:auto;}
 #fcA{font-size:1.28rem;line-height:1.5;}
-#fcA::first-letter{text-transform:uppercase !important;}
 
 /* ── La barra de XP en pantallas angostas ─────────────────────────────
    Son siete elementos en una fila que no se encoge (botón de volver,

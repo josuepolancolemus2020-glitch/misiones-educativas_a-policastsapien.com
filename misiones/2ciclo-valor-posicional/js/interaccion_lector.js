@@ -122,7 +122,7 @@ window.WidgetLectorJSON = {
       const hasZeroFill = digits.some((d, i) => d === 0 && i > firstSig);
       if (n === 0) noteEl.textContent = 'Usa las flechas ▲▼ para cambiar cada cifra y mira cómo cambia la lectura.';
       else if (hasZeroFill) noteEl.textContent = '🟠 Las casillas anaranjadas son ceros de relleno: ocupan el lugar para que las otras cifras no pierdan su valor.';
-      else noteEl.textContent = 'Ninguna posición está vacía. ¡Prueba poner alguna cifra en 0 para ver un cero de relleno!';
+      else noteEl.textContent = 'Ninguna posición está vacía. ¡Prueba a poner alguna cifra en 0 para ver un cero de relleno!';
     }
 
     document.getElementById('wl-btn-rnd').addEventListener('click', () => {

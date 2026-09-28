@@ -88,7 +88,7 @@
         '<h2>🔦 They changed the battery three times</h2>' +
         '<p>The group’s robot stopped switching on the night before the fair. They changed the battery. Nothing. They ' +
         'changed the motor. Nothing. They changed the battery again and bought another one. Nothing. It was <strong>one ' +
-        'loose wire</strong> the size of a fingernail, at a spot nobody looked at — and it cost them the evening and the ' +
+        'loose wire</strong> the size of a fingernail, at a spot nobody looked at, and it cost them the evening and the ' +
         'price of two perfectly good batteries.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>A circuit is a <strong>closed path</strong>: one single break anywhere and nothing works, and from the ' +
@@ -487,16 +487,16 @@
       ],
 
       evalMCBank: [
-        { q: 'What is an electric circuit?', o: ['a) a) A coiled wire', 'b) b) The closed path the current flows along', 'c) c) A dead battery', 'd) d) A painted bulb'], a: 1 },
-        { q: 'Which part of the circuit makes use of the electricity?', o: ['a) a) The source', 'b) b) The wire', 'c) c) The load', 'd) d) The pole'], a: 2 },
-        { q: 'In an LED, what does electrical energy turn into?', o: ['a) a) Light', 'b) b) Sound', 'c) c) Water', 'd) d) Wind'], a: 0 },
-        { q: 'In a motor, what does electrical energy turn into?', o: ['a) a) Sound', 'b) b) Motion', 'c) c) Cold', 'd) d) Paper'], a: 1 },
-        { q: 'Which of these practices is SAFE?', o: ['a) a) Putting wires into the wall outlet', 'b) b) Touching appliances with wet hands', 'c) c) Joining the two poles of the battery', 'd) d) Experimenting only with batteries'], a: 3 },
-        { q: 'What does the battery do in the circuit?', o: ['a) a) It pushes the current', 'b) b) It encloses it', 'c) c) It slows it down', 'd) d) It switches it off'], a: 0 },
-        { q: 'How many volts do the batteries used in class have?', o: ['a) a) 1.5 V or 9 V', 'b) b) 110 V', 'c) c) 220 V', 'd) d) 1000 V'], a: 0 },
-        { q: 'If the current were the water in an irrigation ditch, what would the battery be?', o: ['a) a) The channel', 'b) b) The pump', 'c) c) The sluice gate', 'd) d) The mill'], a: 1 },
-        { q: 'Where do used batteries go?', o: ['a) a) In the regular trash', 'b) b) Into the river', 'c) c) To a collection center', 'd) d) Into the garden'], a: 2 },
-        { q: 'What does the phone charger do?', o: ['a) a) It turns the house current into a small, safe one', 'b) b) It stores light', 'c) c) It cools the phone', 'd) d) It heats the cable'], a: 0 }
+        { q: 'What is an electric circuit?', o: ['a) A coiled wire', 'b) The closed path the current flows along', 'c) A dead battery', 'd) A painted bulb'], a: 1 },
+        { q: 'Which part of the circuit makes use of the electricity?', o: ['a) The source', 'b) The wire', 'c) The load', 'd) The pole'], a: 2 },
+        { q: 'In an LED, what does electrical energy turn into?', o: ['a) Light', 'b) Sound', 'c) Water', 'd) Wind'], a: 0 },
+        { q: 'In a motor, what does electrical energy turn into?', o: ['a) Sound', 'b) Motion', 'c) Cold', 'd) Paper'], a: 1 },
+        { q: 'Which of these practices is SAFE?', o: ['a) Putting wires into the wall outlet', 'b) Touching appliances with wet hands', 'c) Joining the two poles of the battery', 'd) Experimenting only with batteries'], a: 3 },
+        { q: 'What does the battery do in the circuit?', o: ['a) It pushes the current', 'b) It encloses it', 'c) It slows it down', 'd) It switches it off'], a: 0 },
+        { q: 'How many volts do the batteries used in class have?', o: ['a) 1.5 V or 9 V', 'b) 110 V', 'c) 220 V', 'd) 1000 V'], a: 0 },
+        { q: 'If the current were the water in an irrigation ditch, what would the battery be?', o: ['a) The channel', 'b) The pump', 'c) The sluice gate', 'd) The mill'], a: 1 },
+        { q: 'Where do used batteries go?', o: ['a) In the regular trash', 'b) Into the river', 'c) To a collection center', 'd) Into the garden'], a: 2 },
+        { q: 'What does the phone charger do?', o: ['a) It turns the house current into a small, safe one', 'b) It stores light', 'c) It cools the phone', 'd) It heats the cable'], a: 0 }
       ],
 
       evalCPBank: [
@@ -509,7 +509,7 @@
         { q: 'Each order the circuit carries out, like lighting up or turning, is an ___.', a: 'action', acc: ['action'] },
         { q: 'The group spent the money of ___ good batteries.', a: 'two', acc: ['two', '2'] },
         { q: 'The solar lamp’s LED turns on at ___.', a: 'night', acc: ['night'] },
-        { q: 'Electricity is neither created nor destroyed: it is ___.', a: 'transformed', acc: ['transformed'] }
+        { q: 'Energy is neither created nor destroyed: it is ___.', a: 'transformed', acc: ['transformed'] }
       ],
 
       evalPRBank: [
@@ -783,8 +783,8 @@
       [/¡Memoria completada en (\d+) intentos! \+2 XP extra/g, 'Memory game finished in $1 tries! +2 XP bonus'],
       [/Resultado: (\d+)\/(\d+) \((\d+)%\) ¡Bien hecho!/g, 'Result: $1/$2 ($3%) Well done!'],
       [/✅ ¡Encontraste: ([A-ZÑ]+)!/g, '✅ You found $1!'],
-      [/🔄 Grupo: (.+?) vs (.+)/g, '🔄 Group: $1 vs $2'],
-      [/🔄 Pareja: (.+?) vs (.+)/g, '🔄 Pair: $1 vs $2'],
+      [/🔄 Grupo: (.+?) vs\. (.+)/g, '🔄 Group: $1 vs $2'],
+      [/🔄 Pareja: (.+?) vs\. (.+)/g, '🔄 Pair: $1 vs $2'],
       [/🔄 Caso: /g, '🔄 Case: '],
       [/🏅 ¡Logro desbloqueado! /g, '🏅 Achievement unlocked! '],
       [/La respuesta correcta es: /g, 'The correct answer is: '],

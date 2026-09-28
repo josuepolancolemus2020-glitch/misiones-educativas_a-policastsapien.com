@@ -68,13 +68,13 @@ const IA_HITOS = [
     titulo: 'La pregunta: «¿pueden pensar las máquinas?»',
     quien: 'Alan Turing',
     que: 'Pregunta si las máquinas pueden pensar. Luego la cambia por otra que sí se puede probar: conversar a ciegas sin notar que es máquina. Es el juego de imitación.',
-    porque: 'Es el acta de nacimiento de la idea. Turing no dijo que piense: dijo que se mire lo que HACE.',
+    porque: 'Es el acta de nacimiento de la idea. Turing no dijo que la máquina piense: dijo que se mire lo que HACE.',
     acredita: 'Artículo «Computing Machinery and Intelligence», en la revista Mind.' },
 
   { orden: 4, anio: '1956', epoca: 'nace', emoji: '🏷️',
     titulo: 'El nombre: «Inteligencia Artificial»',
     quien: 'John McCarthy y el taller de Dartmouth',
-    que: 'Unos investigadores pasan un verano en el Dartmouth College, sobre máquinas que aprenden. Ahí se escribe el término por primera vez.',
+    que: 'Unos investigadores pasan un verano en el Dartmouth College pensando en máquinas que aprenden. Ahí se escribe el término por primera vez.',
     porque: 'Un campo sin nombre no existe. Ese año lo preguntan todos los exámenes.',
     acredita: 'La propuesta escrita del «Dartmouth Summer Research Project on Artificial Intelligence».' },
 
@@ -128,9 +128,9 @@ const IA_HITOS = [
     acredita: 'El artículo «ImageNet Classification with Deep Convolutional Neural Networks» y los resultados publicados del concurso ILSVRC de ese año.' },
 
   { orden: 12, anio: '2016', epoca: 'deshielo', emoji: '⚫',
-    titulo: 'AlphaGo gana al Go, que se creía imposible',
+    titulo: 'AlphaGo gana al go, que se creía imposible',
     quien: 'AlphaGo contra Lee Sedol',
-    que: 'Un programa gana al mejor jugador de Go. El Go tiene demasiadas jugadas para calcularlas todas. Aprendió jugando millones de partidas contra sí mismo.',
+    que: 'Un programa gana a uno de los mejores jugadores de go. El go tiene demasiadas jugadas para calcularlas todas. Aprendió jugando millones de partidas contra sí mismo.',
     porque: 'Es el aprendizaje por refuerzo en una foto: aprender probando y premiándose. Y una jugada suya sorprendió a los expertos.',
     acredita: 'El enfrentamiento se jugó en público, en Seúl, y está documentado partida por partida.' },
 

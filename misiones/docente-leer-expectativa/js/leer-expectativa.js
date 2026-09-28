@@ -108,7 +108,7 @@ const PELDANOS = [
     tit: 'El verbo es lo que se evalúa',
     sub: 'Lo primero que se busca en cualquier expectativa',
     txt: 'Una expectativa de logro se lee como se lee una receta: primero el verbo. El verbo dice ' +
-         'qué tiene que <b>hacer</b> el alumno, y por lo tanto qué va a tener que hacer el día de la ' +
+         'qué tiene que <b>hacer</b> el alumno y, por lo tanto, qué va a tener que hacer el día de la ' +
          'evaluación. No es un detalle de redacción: <b>«identifican» no se evalúa igual que ' +
          '«analizan»</b>. El DCNB no usa los verbos al azar y tampoco usa muchos. Contando los del ' +
          'currículo de Básica, los más repetidos son <b>Identifican</b>, <b>Analizan</b>, ' +
@@ -120,7 +120,7 @@ const PELDANOS = [
       'Subraye el verbo antes de leer el resto de la fila. Va siempre al principio y en plural.',
       'Pregúntese: ¿qué tendría que ver yo para dar por logrado ese verbo?',
       '«Identifican» y «Reconocen» se comprueban señalando o nombrando.',
-      '«Clasifican» y «Comparan» piden agrupar o poner en frente uno de otro: no basta con nombrar.',
+      '«Clasifican» y «Comparan» piden agrupar o poner uno frente a otro: no basta con nombrar.',
       '«Analizan», «Explican» y «Elaboran» piden producir algo: una razón, un texto, un objeto.',
     ],
     nohacer: [
@@ -185,7 +185,7 @@ const PELDANOS = [
     tit: 'La coletilla que dice desde dónde mirar el tema',
     sub: 'Ciencias Naturales lo marca con todas sus letras',
     txt: 'Algunas áreas cierran la expectativa con una fórmula fija: <b>«con énfasis en el componente ' +
-         '…»</b>. No es relleno. Dice desde qué mirada hay que trabajar el contenido, y por lo tanto ' +
+         '…»</b>. No es relleno. Dice desde qué mirada hay que trabajar el contenido y, por lo tanto, ' +
          'qué debe quedar subrayado al final de la clase. En el currículo de Ciencias Naturales de ' +
          'Básica aparecen, entre otros, los componentes <b>ambiente</b>, <b>salud</b>, ' +
          '<b>diversidad</b>, <b>sostenibilidad</b> e <b>interrelación</b>. La misma planta se estudia ' +
@@ -362,7 +362,7 @@ const FC = [
   ['¿Qué es el objeto de una expectativa?', 'Aquello sobre lo que se ejerce el verbo. Se copia completo: «los elementos ambientales», no «la naturaleza».'],
   ['¿Qué es el techo o alcance de una expectativa?', 'El límite explícito que trae escrito: «los dos tipos más evidentes», «números cuadrados pequeños». Marca hasta dónde se puede evaluar.'],
   ['¿Qué significa «con énfasis en el componente…»?', 'Dice desde qué mirada hay que trabajar el contenido. En Ciencias Naturales aparecen ambiente, salud, diversidad, sostenibilidad e interrelación.'],
-  ['¿En qué orden van las tres columnas de la tabla del DCNB?', 'Expectativas de Logro, luego Contenidos Conceptuales (■) y Actitudinales (●), y por último Procesos y Actividades Sugeridas.'],
+  ['¿En qué orden van las tres columnas de la tabla del DCNB?', 'Expectativas de Logro, luego Contenidos Conceptuales (■) y Actitudinales (●), y, por último, Procesos y Actividades Sugeridas.'],
   ['¿Qué dice cada columna?', 'La primera, a dónde llegar. La segunda, con qué. La tercera, cómo.'],
   ['¿Qué marca el cuadrito (■) en la segunda columna?', 'Los contenidos conceptuales. Se evalúan con pregunta, explicación o prueba escrita.'],
   ['¿Qué marca el círculo (●) en la segunda columna?', 'Los contenidos actitudinales. Solo se comprueban observando a lo largo del tiempo.'],
@@ -440,7 +440,7 @@ function memoToca(i) {
 const QZ = [
   { q: 'Al leer una expectativa de logro, lo primero que conviene subrayar es…',
     o: ['El verbo', 'El nombre del bloque', 'El grado', 'El área'],
-    c: 0, e: 'El verbo dice qué tendrá que hacer el alumno, y por lo tanto qué instrumento de evaluación hace falta.' },
+    c: 0, e: 'El verbo dice qué tendrá que hacer el alumno y, por lo tanto, qué instrumento de evaluación hace falta.' },
   { q: 'En la tabla del DCNB, la columna del medio es…',
     o: ['Procesos y Actividades Sugeridas', 'Contenidos Conceptuales y Actitudinales',
         'Expectativas de Logro', 'La de evaluación'],

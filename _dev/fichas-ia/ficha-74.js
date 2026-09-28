@@ -101,13 +101,13 @@ P.push(`
       <p>Numera del <strong>1</strong> (el más antiguo) al <strong>8</strong> (el más reciente):</p>
 
       <table>
-        <tr><td style="width:50%"><span class="linea-resp" style="min-width:30px"></span> AlphaGo gana al Go</td><td><span class="linea-resp" style="min-width:30px"></span> Nace el nombre en Dartmouth</td></tr>
+        <tr><td style="width:50%"><span class="linea-resp" style="min-width:30px"></span> AlphaGo gana al go</td><td><span class="linea-resp" style="min-width:30px"></span> Nace el nombre en Dartmouth</td></tr>
         <tr><td><span class="linea-resp" style="min-width:30px"></span> Deep Blue gana al ajedrez</td><td><span class="linea-resp" style="min-width:30px"></span> La pregunta de Turing</td></tr>
         <tr><td><span class="linea-resp" style="min-width:30px"></span> Un chat de IA llega al público</td><td><span class="linea-resp" style="min-width:30px"></span> ELIZA conversa con la gente</td></tr>
         <tr><td><span class="linea-resp" style="min-width:30px"></span> El artículo del transformador</td><td><span class="linea-resp" style="min-width:30px"></span> Las máquinas aprenden a ver</td></tr>
       </table>
 
-      <h3>🔗 Actividad 2 · Uní cada año con lo que pasó <span class="val">(16 pts)</span></h3>
+      <h3>🔗 Actividad 2 · Une cada año con lo que pasó <span class="val">(16 pts)</span></h3>
 
       <table>
         <tr><th style="width:18%">Año</th><th>Escribe la letra</th><th>Lo que pasó</th></tr>
@@ -118,7 +118,7 @@ P.push(`
         <tr><td class="k">2012</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>E.</b> ELIZA conversa sin entender nada</td></tr>
         <tr><td class="k">2016</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>F.</b> El campo estrena nombre</td></tr>
         <tr><td class="k">2017</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>G.</b> Las máquinas aprenden a ver</td></tr>
-        <tr><td class="k">2022</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>H.</b> AlphaGo gana al Go</td></tr>
+        <tr><td class="k">2022</td><td><span class="linea-resp" style="min-width:40px"></span></td><td><b>H.</b> AlphaGo gana al go</td></tr>
       </table>
     </div>
 `);
@@ -146,7 +146,7 @@ P.push(`
 
       <ol>
         <li>Busca en una noticia o en un video una promesa de HOY sobre la Inteligencia Artificial.
-            Escribila tal cual.</li>
+            Escríbela tal cual.</li>
         <li>¿Quién la hace, y qué gana si la gente se la cree?</li>
         <li>¿Para cuándo la promete? ¿Una fecha, o un «pronto»?</li>
         <li>Sabiendo lo de los dos inviernos, ¿qué le preguntarías a quien la hizo?</li>
@@ -203,13 +203,13 @@ P.push(`
       <div><span class="pt">Actividad 1 · Ordena la línea del tiempo (20 pts):</span>
         AlphaGo <b>6</b> · Dartmouth <b>2</b> · Deep Blue <b>4</b> · La pregunta de Turing <b>1</b> ·
         El chat al público <b>8</b> · ELIZA <b>3</b> · El transformador <b>7</b> · Las máquinas ven <b>5</b>.</div>
-      <div><span class="pt">Actividad 2 · Uní cada año (16 pts):</span>
+      <div><span class="pt">Actividad 2 · Une cada año (16 pts):</span>
         1950-C · 1956-F · 1966-E · 1997-A · 2012-G · 2016-H · 2017-D · 2022-B.</div>
       <div><span class="pt">Actividad 3 · Con tus palabras (24 pts):</span> respuesta abierta.
         1) Que nombre 1950, 1956 y 1966, y que distinga la idea de su llegada al público.
         2) Que sean dos períodos en que el campo casi se para porque se prometió de más, y que la
         lección es sobre la CONFIANZA, no sobre la tecnología.
-        3) Que Deep Blue calculaba y AlphaGo aprendió jugando contra sí mismo, porque en el Go hay
+        3) Que Deep Blue calculaba y AlphaGo aprendió jugando contra sí mismo, porque en el go hay
         demasiadas jugadas.</div>
       <div><span class="pt">Actividad 4 · Investiga:</span> <b>no lleva respuesta a propósito.</b> Se valora
         que copie la promesa tal cual, que diga quién la hace y qué gana, que note si hay fecha, y que su

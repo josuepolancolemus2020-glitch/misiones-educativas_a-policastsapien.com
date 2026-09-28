@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚔️ Área vs Volumen: El Duelo de las Dimensiones | Misión Volumen de Cuerpos</title>
+<title>⚔️ Área vs. Volumen: El Duelo de las Dimensiones | Misión Volumen de Cuerpos</title>
 <meta name="description" content="Combate por turnos: a los enemigos planos se les ataca con área y a los cuerpos con volumen. Aprende a distinguir 2D de 3D.">
 <!-- El andamio de los juegos 3D: telón, velos, lienzo y mandos.
      Lo que se toca ahí se toca en los doce juegos a la vez. -->
@@ -70,7 +70,7 @@
 
 <div id="lienzo">
   <div class="barras-vida">
-    <div class="barra enemigo"><div class="fila"><span id="en-nom">—</span><span id="en-vida">0/0</span></div><div class="riel"><div class="relleno" id="en-rel" style="width:100%"></div></div></div>
+    <div class="barra enemigo"><div class="fila"><span id="en-nom">?</span><span id="en-vida">0/0</span></div><div class="riel"><div class="relleno" id="en-rel" style="width:100%"></div></div></div>
     <div class="barra heroe"><div class="fila"><span>🛡️ Tú</span><span id="yo-vida">100/100</span></div><div class="riel"><div class="relleno" id="yo-rel" style="width:100%"></div></div></div>
   </div>
   <div class="chapa" id="chapa"></div>
@@ -566,7 +566,7 @@ function caer(){
   document.getElementById('fin-emoji').textContent = '💀';
   document.getElementById('fin-tit').textContent = 'Te tumbaron';
   document.getElementById('fin-txt').textContent =
-    'La regla es corta: si tiene DOS medidas es plano y va con área; si tiene TRES, es un cuerpo y va con volumen.';
+    'La regla es corta: si tiene DOS medidas, es plano y va con área; si tiene TRES, es un cuerpo y va con volumen.';
   document.getElementById('fin-regla').style.display = 'flex';
   document.getElementById('fin-bt').textContent = '🔄 Otra vez';
   document.getElementById('velo-fin').classList.add('ver');

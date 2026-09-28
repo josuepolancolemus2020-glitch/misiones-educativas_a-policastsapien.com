@@ -9,7 +9,7 @@
    · Inglés AMERICANO estricto: color, center, catalog, analyze,
      traffic light, «Student No.».
    · Vocabulario estándar de programación escolar: conditional ·
-     condition · IF…THEN…ELSE · THEN branch · ELSE branch ·
+     condition · IF… THEN… ELSE · THEN branch · ELSE branch ·
      sensor · true/false · chained conditionals · bug · trace.
    · Lo cultural se explica, no se calca: milpa → cornfield,
      fogón de leña → wood cookfire, pulpería → corner store,
@@ -98,7 +98,7 @@
         'The whole period was lost arguing over who had understood it right.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>«Cloudy» is not «it rains». A <strong>condition</strong> only works if what it says is <strong>true or ' +
-        'false</strong>, with no middle ground — and that is the difference between a robot that obeys and forty-three ' +
+        'false</strong>, with no middle ground, and that is the difference between a robot that obeys and forty-three ' +
         'people who interpret.</div></div>',
 
       a1:
@@ -202,7 +202,7 @@
         '</div>',
 
       e2:
-        '<h2>⚠️ Common mistakes — do not fall for them!</h2>' +
+        '<h2>⚠️ Common mistakes: do not fall for them!</h2>' +
         '<div class="vs-grid">' +
         '<div class="vs-box vs-a">' +
         '<h4>🚫 Thinking both branches run</h4>' +
@@ -249,7 +249,7 @@
 
       labh2: '🔬 Simulator: the Robot that Decides',
 
-      labintro: 'Choose a map, build your program by tapping the buttons — include the <strong>conditionals</strong> 🌳🚦 so the robot DECIDES! — and press <strong>▶ Run</strong>. You will see how it evaluates each condition (✔ yes / ✘ no) step by step.',
+      labintro: 'Choose a map, build your program by tapping the buttons (include the <strong>conditionals</strong> 🌳🚦 so the robot DECIDES!) and press <strong>▶ Run</strong>. You will see how it evaluates each condition (✔ yes / ✘ no) step by step.',
 
       labmapa:
         '<span class="lab-group-label">🗺️ Map:</span>' +
@@ -319,8 +319,8 @@
       fcData: [
         { w: 'Conditional', a: '🔀 An instruction that makes the robot <strong>decide</strong>: <strong>IF</strong> something is true <strong>THEN</strong> it does one thing, <strong>ELSE</strong> it does another.' },
         { w: 'Condition', a: '❓ The <strong>yes-or-no question</strong> that decides which branch runs, such as «is there a wall ahead?».' },
-        { w: 'IF…THEN', a: '✅ A conditional <strong>with no ELSE</strong>: if the condition is true it does the action; if it is false, it <strong>does nothing</strong>.' },
-        { w: 'IF…THEN…ELSE', a: '🔀 A conditional <strong>with two paths</strong>: one if the answer is <strong>yes</strong> and another if it is <strong>no</strong>.' },
+        { w: 'IF… THEN', a: '✅ A conditional <strong>with no ELSE</strong>: if the condition is true it does the action; if it is false, it <strong>does nothing</strong>.' },
+        { w: 'IF… THEN… ELSE', a: '🔀 A conditional <strong>with two paths</strong>: one if the answer is <strong>yes</strong> and another if it is <strong>no</strong>.' },
         { w: 'THEN branch', a: '👉 The path that runs when the answer to the condition is <strong>YES</strong> (true).' },
         { w: 'ELSE branch', a: '👈 The path that runs when the answer to the condition is <strong>NO</strong> (false).' },
         { w: 'Sensor', a: '📡 The part of the robot that <strong>answers the question</strong> of the condition: it sees the wall or the color of the traffic light.' },
@@ -334,7 +334,7 @@
       ],
 
       memoPairs: [
-        { id: 'condicional', t: 'Conditional', d: '🔀 IF…THEN…ELSE: the robot decides' },
+        { id: 'condicional', t: 'Conditional', d: '🔀 IF… THEN… ELSE: the robot decides' },
         { id: 'condicion', t: 'Condition', d: '❓ The yes-or-no question' },
         { id: 'entonces', t: 'THEN branch', d: '👉 The path when the answer is YES' },
         { id: 'sino', t: 'ELSE branch', d: '👈 The path when the answer is NO' },
@@ -345,7 +345,7 @@
       qzData: [
         { q: 'What is a conditional?', o: ['a) A list of steps that are always the same', 'b) A 90° turn', 'c) A mistake in the program', 'd) An instruction that makes the robot DECIDE according to a condition'], c: 3 },
         { q: 'What is the CONDITION of a conditional?', o: ['a) A yes-or-no question', 'b) An order such as FORWARD', 'c) The color of the robot', 'd) The final square'], c: 0 },
-        { q: 'In IF…THEN…ELSE, when does the ELSE branch run?', o: ['a) When the condition is true', 'b) Always', 'c) When the condition is false', 'd) Never'], c: 2 },
+        { q: 'In IF… THEN… ELSE, when does the ELSE branch run?', o: ['a) When the condition is true', 'b) Always', 'c) When the condition is false', 'd) Never'], c: 2 },
         { q: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD. The robot has NO wall ahead. What does it do?', o: ['a) It turns right', 'b) It goes forward', 'c) It stops', 'd) It turns left'], c: 1 },
         { q: 'How many branches run in ONE conditional?', o: ['a) Only one: the other is ignored', 'b) Both at once', 'c) None', 'd) It depends on the color'], c: 0 },
         { q: 'Which one of these is a CONDITION (a yes/no question)?', o: ['a) FORWARD', 'b) TURN LEFT', 'c) Is the traffic light green?', 'd) DELIVER'], c: 2 },
@@ -415,7 +415,7 @@
 
       _wgtBugDefs: [
         {
-          goal: 'The robot has to TURN when it runs into a wall 🌳 and go FORWARD if the way is clear.',
+          goal: 'The robot has to TURN when it reaches a wall 🌳 and go FORWARD if the way is clear.',
           lines: ['IF THERE IS A WALL AHEAD → FORWARD, ELSE → TURN RIGHT', 'FORWARD', 'DELIVER'], bug: 0, fix: 'the branches are swapped: it should turn when there IS a wall'
         },
         {
@@ -423,7 +423,7 @@
           lines: ['FORWARD', 'IF THE TRAFFIC LIGHT IS GREEN → WAIT, ELSE → FORWARD', 'DELIVER'], bug: 1, fix: 'the branches are swapped: it should go forward on green'
         },
         {
-          goal: 'The robot has to turn when it runs into a wall 🌳.',
+          goal: 'The robot has to turn when it reaches a wall 🌳.',
           lines: ['FORWARD', 'IF THE TRAFFIC LIGHT IS GREEN → TURN RIGHT, ELSE → FORWARD', 'FORWARD'], bug: 1, fix: 'the condition is wrong: it has to ask about the WALL, not about the traffic light'
         },
         {
@@ -472,9 +472,9 @@
       ],
 
       bugCondDB: [
-        { goal: 'turning when it runs into a wall 🌳', mala: 'IF THERE IS A WALL AHEAD → FORWARD, ELSE → TURN RIGHT', buena: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD', err: 'the branches are swapped' },
+        { goal: 'turning when it reaches a wall 🌳', mala: 'IF THERE IS A WALL AHEAD → FORWARD, ELSE → TURN RIGHT', buena: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD', err: 'the branches are swapped' },
         { goal: 'crossing only on a green light 🚦', mala: 'IF THE TRAFFIC LIGHT IS GREEN → WAIT, ELSE → FORWARD', buena: 'IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → WAIT', err: 'the branches are swapped' },
-        { goal: 'turning when it bumps into a tree 🌳', mala: 'IF THE TRAFFIC LIGHT IS GREEN → TURN RIGHT, ELSE → FORWARD', buena: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD', err: 'the condition is wrong (it has to ask about the wall)' },
+        { goal: 'turning when it reaches a tree 🌳', mala: 'IF THE TRAFFIC LIGHT IS GREEN → TURN RIGHT, ELSE → FORWARD', buena: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD', err: 'the condition is wrong (it has to ask about the wall)' },
         { goal: 'waiting on a red light 🔴', mala: 'IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → TURN RIGHT', buena: 'IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → WAIT', err: 'the ELSE branch should be WAIT' },
         { goal: 'taking an umbrella if it rains ☔', mala: 'IF IT IS RAINING → I leave the umbrella, ELSE → I take the umbrella', buena: 'IF IT IS RAINING → I take the umbrella, ELSE → I leave the umbrella', err: 'the branches are swapped' }
       ],
@@ -537,7 +537,7 @@
       ],
 
       OP_COMPLETA_BANK: [
-        { txt: 'The robot has to TURN when it bumps into a tree 🌳.', prog: 'IF ___ → TURN RIGHT, ELSE → FORWARD', opts: ['THERE IS A WALL AHEAD', 'THE TRAFFIC LIGHT IS GREEN', 'IT IS NIGHT', 'IT RAINS'], ans: 0 },
+        { txt: 'The robot has to TURN when it reaches a tree 🌳.', prog: 'IF ___ → TURN RIGHT, ELSE → FORWARD', opts: ['THERE IS A WALL AHEAD', 'THE TRAFFIC LIGHT IS GREEN', 'IT IS NIGHT', 'IT RAINS'], ans: 0 },
         { txt: 'The robot crosses the street only on a green light 🚦.', prog: 'IF THE TRAFFIC LIGHT IS GREEN → ___, ELSE → WAIT', opts: ['FORWARD', 'TURN RIGHT', 'WAIT', 'DELIVER'], ans: 0 },
         { txt: 'The robot waits when the light is red 🔴.', prog: 'IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → ___', opts: ['WAIT', 'FORWARD', 'TURN LEFT', 'DELIVER'], ans: 0 },
         { txt: 'The robot goes around the wall in front of it 🌳.', prog: 'IF THERE IS A WALL AHEAD → ___, ELSE → FORWARD', opts: ['TURN RIGHT', 'FORWARD', 'WAIT', 'DELIVER'], ans: 0 },
@@ -559,10 +559,10 @@
       OP_VIDA_RUBRICA: 'The CONDITION is a yes/no question (4 pts) · The THEN branch is the YES action (3 pts) · The ELSE branch is the NO action (3 pts)',
 
       OP_BUG_BANK: [
-        { goal: 'turning when it runs into a wall 🌳', lines: ['IF THERE IS A WALL AHEAD → FORWARD, ELSE → TURN RIGHT', 'FORWARD', 'DELIVER'], linea: 1, correcta: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD' },
+        { goal: 'turning when it reaches a wall 🌳', lines: ['IF THERE IS A WALL AHEAD → FORWARD, ELSE → TURN RIGHT', 'FORWARD', 'DELIVER'], linea: 1, correcta: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD' },
         { goal: 'crossing only on a green light 🚦', lines: ['FORWARD', 'IF THE TRAFFIC LIGHT IS GREEN → WAIT, ELSE → FORWARD', 'DELIVER'], linea: 2, correcta: 'IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → WAIT' },
         { goal: 'waiting on a red light 🔴', lines: ['IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → TURN RIGHT', 'FORWARD', 'DELIVER'], linea: 1, correcta: 'IF THE TRAFFIC LIGHT IS GREEN → FORWARD, ELSE → WAIT' },
-        { goal: 'turning when it bumps into a tree 🌳', lines: ['FORWARD', 'IF THE TRAFFIC LIGHT IS GREEN → TURN RIGHT, ELSE → FORWARD', 'DELIVER'], linea: 2, correcta: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD' },
+        { goal: 'turning when it reaches a tree 🌳', lines: ['FORWARD', 'IF THE TRAFFIC LIGHT IS GREEN → TURN RIGHT, ELSE → FORWARD', 'DELIVER'], linea: 2, correcta: 'IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD' },
         { goal: 'taking an umbrella when it rains ☔', lines: ['IF IT IS RAINING → I leave the umbrella, ELSE → I take the umbrella', 'I leave the house', 'I get to school'], linea: 1, correcta: 'IF IT IS RAINING → I take the umbrella, ELSE → I leave the umbrella' }
       ],
 
@@ -596,8 +596,8 @@
     frases: {
       /* — mensaje de WhatsApp: lo propio de esta misión —
          (lo común a todas las misiones vive en js/metas-i18n.js) */
-      'Aprende a que el robot *DECIDA* con condicionales SI…ENTONCES…SINO. 🤖':
-        'Teach the robot to *DECIDE* with IF…THEN…ELSE conditionals. 🤖',
+      'Aprende a hacer que el robot *DECIDA* con condicionales SI… ENTONCES… SINO. 🤖':
+        'Teach the robot to *DECIDE* with IF… THEN… ELSE conditionals. 🤖',
       /* — pestañas propias de esta misión — */
       'Condicional': 'Conditional', 'Simulador': 'Simulator',
       /* — el lenguaje del simulador, cuando cae solo en un nodo de texto — */
@@ -650,11 +650,11 @@
       '🐛 Encontrar el error': '🐛 Find the mistake',
       /* — evaluación conceptual y prueba operativa — */
       'Evaluación Final · Condicionales: el Robot Decide · Educación Básica · Programación': 'Final Test · Conditionals: the Robot Decides · Basic Education · Programming',
-      'Examen de Programación — Prueba Operativa · Condicionales: el Robot Decide · Educación Básica': 'Programming Exam — Practical Test · Conditionals: the Robot Decides · Basic Education',
-      '🎓 Evaluación Final — Condicionales: el Robot Decide': '🎓 Final Test — Conditionals: the Robot Decides',
-      '🤖 Prueba Operativa — Condicionales: el Robot Decide': '🤖 Practical Test — Conditionals: the Robot Decides',
-      '✅ PAUTA — Evaluación Final · Condicionales: el Robot Decide': '✅ ANSWER KEY — Final Test · Conditionals: the Robot Decides',
-      '✅ PAUTA — Prueba Operativa · Condicionales: el Robot Decide': '✅ ANSWER KEY — Practical Test · Conditionals: the Robot Decides',
+      'Examen de Programación · Prueba Operativa · Condicionales: el Robot Decide · Educación Básica': 'Programming Exam · Practical Test · Conditionals: the Robot Decides · Basic Education',
+      '🎓 Evaluación Final · Condicionales: el Robot Decide': '🎓 Final Test · Conditionals: the Robot Decides',
+      '🤖 Prueba Operativa · Condicionales: el Robot Decide': '🤖 Practical Test · Conditionals: the Robot Decides',
+      '✅ PAUTA: Evaluación Final · Condicionales: el Robot Decide': '✅ ANSWER KEY: Final Test · Conditionals: the Robot Decides',
+      '✅ PAUTA: Prueba Operativa · Condicionales: el Robot Decide': '✅ ANSWER KEY: Practical Test · Conditionals: the Robot Decides',
       '🔄 Nueva Prueba Operativa': '🔄 New Practical Test',
       /* — prueba operativa: títulos de sección y consignas — */
       'I. Ejecuta el condicional': 'I. Run the conditional',
@@ -675,8 +675,8 @@
         'Run conditionals on the grid, predict the branch, complete conditionals and catch bugs. Answer on screen and press',
       'para autoevaluarte.': 'to check yourself.',
       /* — generador de tareas: consigna propia del trazado — */
-      'Copia la cuadrícula en tu cuaderno. Traza el programa con el dedo — ¡evalúa el condicional en cada paso! — y escribe la casilla donde TERMINA el robot 🤖.':
-        'Copy the grid in your notebook. Trace the program with your finger — evaluate the conditional at every step! — and write the square the robot ENDS UP on 🤖.',
+      'Copia la cuadrícula en tu cuaderno. Traza el programa con el dedo (¡evalúa el condicional en cada paso!) y escribe la casilla donde TERMINA el robot 🤖.':
+        'Copy the grid in your notebook. Trace the program with your finger (evaluate the conditional at every step!) and write the square the robot ENDS UP on 🤖.',
       /* — constancia — */
       'Misión Condicionales: el Robot Decide': 'Mission · Conditionals: the Robot Decides',
       '¡Sigue aprendiendo!': 'Keep learning!',
@@ -782,7 +782,7 @@
       [/ENTONCES/g, 'THEN'], [/SINO/g, 'ELSE'],
       /* — títulos con número de forma: antes que la regla suelta «Forma N» — */
       [/🎓 Evaluación Final · Forma (\d+) · Condicionales: el Robot Decide/g, '🎓 Final Test · Form $1 · Conditionals: the Robot Decides'],
-      [/🤖 Prueba Operativa — Forma (\d+) · Condicionales: el Robot Decide/g, '🤖 Practical Test — Form $1 · Conditionals: the Robot Decides'],
+      [/🤖 Prueba Operativa · Forma (\d+) · Condicionales: el Robot Decide/g, '🤖 Practical Test · Form $1 · Conditionals: the Robot Decides'],
       [/Evaluación Condicionales: el Robot Decide/g, 'Test · Conditionals: the Robot Decides'],
       [/Prueba Operativa Condicionales: el Robot Decide/g, 'Practical Test · Conditionals: the Robot Decides'],
       /* — etiquetas de accesibilidad con número — */

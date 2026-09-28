@@ -141,9 +141,9 @@ function calcTotalGE() {
 function geValidateCode(raw) {
   const code = raw.trim().toUpperCase();
   if (!code) return { ok: false, msg: 'Escribe tu código de votación.' };
-  // Formato: [1-6][A|B][1-99]  ej: 4B26
+  // Formato: [1-6][A|B][1-99]  ej.: 4B26
   if (!/^[1-6][AB]\d{1,2}$/.test(code))
-    return { ok: false, msg: 'Código inválido. Formato: Grado(1-6) + Sección(A/B) + NºLista(1-99). Ej: 4B26' };
+    return { ok: false, msg: 'Código inválido. Formato: Grado(1-6) + Sección(A/B) + NºLista(1-99). Ej.: 4B26' };
   const lista = parseInt(code.slice(2));
   if (lista < 1 || lista > 99)
     return { ok: false, msg: 'El número de lista debe estar entre 1 y 99.' };

@@ -168,7 +168,7 @@ window.WidgetMovimientoJSON = {
         if (correctBtn) correctBtn.className = 'wm-pred-btn wm-ok';
       }
       const labels = { mayor: 'MAYOR', menor: 'MENOR', igual: 'IGUAL' };
-      const expl = ex.r < 1 ? 'El divisor es menor que 1, por eso el cociente CRECE.' : ex.r > 1 ? 'El divisor es mayor que 1, por eso el cociente DECRECE.' : 'El divisor es 1, el cociente es igual al dividendo.';
+      const expl = ex.r < 1 ? 'El divisor es menor que 1, por eso el cociente CRECE.' : ex.r > 1 ? 'El divisor es mayor que 1, por eso el cociente DECRECE.' : 'El divisor es 1, por eso el cociente es igual al dividendo.';
       if (predFbEl) {
         predFbEl.textContent = (isOk ? '✔ ¡Correcto! ' : '💡 La respuesta es ' + labels[correct] + '. ') + expl + ' Desliza el control para ver la transformación.';
         predFbEl.className = 'wm-pred-fb show ' + (isOk ? 'ok' : 'err');

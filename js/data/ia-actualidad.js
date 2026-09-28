@@ -50,12 +50,12 @@
    cumplió es un hito; lo que no, un invierno pequeño—.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* La fecha en que se armó este dossier. La pantalla la enseña SIEMPRE: una
+/* La fecha en que se armó este dosier. La pantalla la enseña SIEMPRE: una
    lista de «lo que está pasando» sin fecha es una mentira en tres meses. */
 const IA_HOY_FECHA = '16 de septiembre de 2026';
 const IA_HOY_MES = 'septiembre de 2026';
 
-/* ── El dossier ───────────────────────────────────────────────────────────
+/* ── El dosier ───────────────────────────────────────────────────────────
    Ocho afirmaciones de este mes, ordenadas de la que más trae para
    comprobarse a la que menos. El alumno no tiene que creerse ninguna: tiene
    que clasificarlas y comprobar una. */
@@ -73,7 +73,7 @@ const IA_HOY = [
     k: 'europa', emoji: '⚖️', fecha: 'desde agosto de 2026', comprobable: 'alta',
     afirma: 'En la Unión Europea ya se aplica parte de su reglamento de Inteligencia Artificial. Obliga a marcar lo que produce una máquina.',
     quien: 'La propia Unión Europea publica el reglamento y su fecha. Lo cuentan también medios de tecnología.',
-    gana: 'Un Estado gana que su ley se cumpla. Y la ley está escrita: no depende de quién la cuente.',
+    gana: 'La Unión Europea gana que su ley se cumpla. Y la ley está escrita: no depende de quién la cuente.',
     trae: 'Un texto legal publicado, con su artículo y su fecha.',
     comprueba: 'Abrí el reglamento en el sitio oficial. Buscá el artículo de transparencia. Fijate a quién obliga y desde cuándo.',
     importa: 'No rige en Honduras. Pero lo que se fabrica allá llega aquí. Y «esto lo hizo una máquina» sirve en cualquier idioma.',
@@ -101,7 +101,7 @@ const IA_HOY = [
     afirma: 'Se anunciaron becas de Inteligencia Artificial para Honduras. Las dan juntas una alcaldía y una empresa de tecnología.',
     quien: 'Un diario hondureño, marcado como contenido patrocinado: alguien pagó por publicarlo.',
     gana: 'La empresa gana gente formada en SU tecnología. La alcaldía gana el anuncio. Pero las becas pueden existir y servirte.',
-    trae: 'La etiqueta de patrocinado, que es honesta del medio. Faltan los requisitos y las fechas.',
+    trae: 'La etiqueta de patrocinado, que el medio pone por honestidad. Faltan los requisitos y las fechas.',
     comprueba: 'Buscá el anuncio en el sitio de la alcaldía. Mirá los requisitos. Si aparecen, apuntá la fecha de cierre.',
     importa: 'Si son de verdad, te tocan a vos. Comprobarlo no es desconfiar: es llegar a tiempo.',
   },
@@ -173,7 +173,7 @@ const IA_TERMOMETRO = [
   { k: 'cuando', emoji: '📅', pregunta: 'Si es una promesa, ¿para cuándo?',
     si: 'Trae una fecha, un plazo o un año.',
     no: 'Dice «pronto», «en los próximos años», «está a la vuelta de la esquina».',
-    porque: 'Una promesa sin fecha no se puede incumplir nunca. Con fecha, el tiempo la califica sola.' },
+    porque: 'Una promesa sin fecha no se puede incumplir nunca. Con fecha, el tiempo la califica solo.' },
   { k: 'comprueba', emoji: '📎', pregunta: '¿Con qué se comprueba?',
     si: 'Hay un documento, una ley, un estudio o un dato que se puede abrir.',
     no: 'Solo hay otras páginas repitiendo lo mismo.',
@@ -185,7 +185,7 @@ const IA_TERMOMETRO_TRAMOS = [
   { min: 4, k: 'comprobable', emoji: '📎', nombre: 'Se puede comprobar hoy',
     dice: 'Trae todo lo que hace falta. Eso no la vuelve verdadera: la vuelve **comprobable**. Andá al documento.' },
   { min: 3, k: 'seria', emoji: '🧭', nombre: 'Se puede seguir la pista',
-    dice: 'Le falta una pieza. Nombrala: ¿quién? ¿para cuándo? ¿con qué? Y buscá **esa**.' },
+    dice: 'Le falta una pieza. Nombrala: ¿quién?, ¿para cuándo?, ¿con qué? Y buscá **esa**.' },
   { min: 2, k: 'promesa', emoji: '⏳', nombre: 'Promesa sin fecha de examen',
     dice: 'Suena bien y no se puede incumplir. Ponele vos la fecha y volvé a leerla en un año.' },
   { min: 0, k: 'humo', emoji: '💨', nombre: 'Eco',
@@ -209,7 +209,7 @@ const IA_FRASES = [
   { k: 'europa', emoji: '⚖️', texto: 'Desde este año, en la Unión Europea lo que produce una máquina tiene que poder reconocerse como tal.',
     de: 'El reglamento europeo de Inteligencia Artificial.',
     tiene: { quien: true, gana: true, cuando: true, comprueba: true },
-    porque: 'Las cuatro. Lo dice un Estado con su nombre. Gana que su ley se cumpla. Trae fecha. Y el texto está publicado.' },
+    porque: 'Las cuatro. Lo dice una autoridad con su nombre. Gana que su ley se cumpla. Trae fecha. Y el texto está publicado.' },
   { k: 'renuncia', emoji: '🚨', texto: 'La industria corre hacia sistemas que se mejoran solos, sin saber todavía cómo mantenerlos bajo control.',
     de: 'Un investigador de seguridad que renunció, en septiembre de 2026.',
     tiene: { quien: true, gana: true, cuando: false, comprueba: true },
@@ -235,7 +235,7 @@ function iaFraseTramo(n) { return IA_TERMOMETRO_TRAMOS.find(t => n >= t.min); }
    misión y lo que no se puede sacar de una lista de años. */
 const IA_INFLEXION = {
   que: 'Un punto de inflexión es el día en que algo que no se podía hacer empezó a poder hacerse. Después, todo cambió por eso.',
-  cuando: 'Casi siempre se reconocen mirando para atrás. En su momento parecían una noticia más.',
+  cuando: 'Casi siempre se reconoce mirando para atrás. En su momento parecía una noticia más.',
   reglas: [
     { e: '🔎', t: 'Se reconoce por lo que vino DESPUÉS, no por el ruido que hizo.', p: 'El artículo del que salen los chats de hoy pasó desapercibido. La máquina que ganó al ajedrez llenó portadas y cambió menos.' },
     { e: '🏗️', t: 'Casi siempre es que se juntó algo que faltaba.', p: 'Datos, cómputo y algoritmos: las tres patas de la etapa 3. Una idea sola no mueve nada.' },

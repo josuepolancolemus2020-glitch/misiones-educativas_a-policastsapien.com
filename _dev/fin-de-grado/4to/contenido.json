@@ -49,7 +49,7 @@
        "Junta las dos partes en ese orden y queda 243806, un número de seis cifras.",
        "Ahora mira el 4: está en el lugar de las decenas de millar, así que vale cuarenta mil."
       ],
-      "resultado": "Se escribe 243806, y el 4 vale 40000, o sea cuarenta mil."
+      "resultado": "Se escribe 243806, y el 4 vale 40000, o sea, cuarenta mil."
      },
      {
       "enunciado": "Ordena de mayor a menor estos números: 90000, 89999, 90500 y 9800.",
@@ -109,7 +109,7 @@
    },
    {
     "titulo": "➕ Sumar, restar, multiplicar y dividir sin perder cifras",
-    "intro": "Las cuatro operaciones se equivocan casi siempre por lo mismo: por una cifra mal colocada. Al sumar y al restar, cada cifra tiene que quedar debajo de la que le toca, unidades con unidades y decenas con decenas. Al multiplicar por dos cifras salen dos resultados parciales, y el segundo va corrido un lugar porque esa cifra son decenas. Al dividir se va bajando cifra por cifra, y cuando el divisor no cabe se escribe un cero en el cociente, que es el cero que más se pierde. Y cuando en un mismo renglón hay sumas y restas, se resuelve de izquierda a derecha.",
+    "intro": "En las cuatro operaciones uno se equivoca casi siempre por lo mismo: por una cifra mal colocada. Al sumar y al restar, cada cifra tiene que quedar debajo de la que le toca, unidades con unidades y decenas con decenas. Al multiplicar por dos cifras salen dos resultados parciales, y el segundo va corrido un lugar porque esa cifra son decenas. Al dividir se va bajando cifra por cifra, y cuando el divisor no cabe se escribe un cero en el cociente, que es el cero que más se pierde. Y cuando en un mismo renglón hay sumas y restas, se resuelve de izquierda a derecha.",
     "reglas": [
      {
       "tipo": "regla",
@@ -141,7 +141,7 @@
       "enunciado": "Multiplica 253 x 47.",
       "pasos": [
        "Multiplica primero por las unidades del 47, que son 7: 253 x 7 = 1771.",
-       "Ahora por la otra cifra, que son 4 decenas, o sea 40: 253 x 4 = 1012, y como son decenas se corre un lugar y se lee 10120.",
+       "Ahora por la otra cifra, que son 4 decenas, o sea, 40: 253 x 4 = 1012, y como son decenas se corre un lugar y se lee 10120.",
        "Suma los dos resultados parciales: 1771 + 10120 = 11891.",
        "Revisa por encima: 253 es casi 250 y 47 es casi 50, y 250 x 50 = 12500. El resultado tiene que andar un poco por debajo de esa cifra, y 11891 lo está."
       ],
@@ -269,7 +269,7 @@
    },
    {
     "titulo": "📐 Ángulos, figuras, perímetro y medidas",
-    "intro": "Un ángulo se nombra por lo abierto que está: el recto es la esquina de una hoja de papel y mide 90 grados; el agudo es más cerrado y el obtuso más abierto; el llano queda estirado como una línea, con sus 180 grados. Los triángulos se clasifican por sus lados y los cuadriláteros por sus lados y sus ángulos. El perímetro es lo que mide el borde, o sea el alambre que da la vuelta: se suma. Y en las medidas hay una sola idea: cuando pasas de una unidad grande a una chica multiplicas, porque salen más pedazos; cuando pasas de la chica a la grande divides.",
+    "intro": "Un ángulo se nombra por lo abierto que está: el recto es la esquina de una hoja de papel y mide 90 grados; el agudo es más cerrado y el obtuso más abierto; el llano queda estirado como una línea, con sus 180 grados. Los triángulos se clasifican por sus lados y los cuadriláteros por sus lados y sus ángulos. El perímetro es lo que mide el borde, o sea, el alambre que da la vuelta: se suma. Y en las medidas hay una sola idea: cuando pasas de una unidad grande a una chica multiplicas, porque salen más pedazos; cuando pasas de la chica a la grande divides.",
     "reglas": [
      {
       "tipo": "regla",
@@ -508,7 +508,7 @@
    },
    {
     "titulo": "🔤 La palabra que no conoces y la palabra que falta",
-    "intro": "En la prueba hay dos preguntas parecidas y las dos se resuelven leyendo la oración completa. En la primera te subrayan una palabra difícil y te preguntan qué significa ahí: la respuesta está en las palabras vecinas, que se llaman contexto y siempre traen pistas, una explicación, una comparación o algo contrario. En la segunda falta una palabra en el texto y tienes que escoger la que cabe: ahí manda la concordancia, o sea que el verbo vaya en plural si el sujeto es plural, y que el adjetivo vaya en femenino si el sustantivo es femenino. Para las dos sirve la misma técnica: tapar y probar.",
+    "intro": "En la prueba hay dos preguntas parecidas y las dos se resuelven leyendo la oración completa. En la primera te subrayan una palabra difícil y te preguntan qué significa ahí: la respuesta está en las palabras vecinas, que se llaman contexto y siempre traen pistas, una explicación, una comparación o algo contrario. En la segunda falta una palabra en el texto y tienes que escoger la que cabe: ahí manda la concordancia, o sea, que el verbo vaya en plural si el sujeto es plural, y que el adjetivo vaya en femenino si el sustantivo es femenino. Para las dos sirve la misma técnica: tapar y probar.",
     "reglas": [
      {
       "tipo": "regla",
@@ -525,7 +525,7 @@
     ],
     "ejemplos": [
      {
-      "enunciado": "Al mediodía el sol pegaba tan fuerte que el zacate del potrero se veía marchito. Las vacas se metieron debajo del guanacaste y no salieron hasta las cuatro. Don Rigoberto acarreó dos baldes de agua para el bebedero, porque el pozo también andaba bajo y la lluvia no llegaba desde hacía tres semanas.\n\n¿Qué significa la palabra marchito en el texto?",
+      "enunciado": "Al mediodía el sol pegaba tan fuerte que el zacate del potrero se veía marchito. Las vacas se metieron debajo del guanacaste y no salieron hasta las cuatro. Don Rigoberto acarreó dos baldes de agua para el bebedero, porque el pozo también andaba bajo y la lluvia no llegaba desde hacía tres semanas.\n\n¿Qué significa la palabra «marchito» en el texto?",
       "pasos": [
        "Leo la oración entera: el sol pegaba tan fuerte que el zacate se veía marchito.",
        "Busco las pistas del vecindario: sol fuerte, el pozo bajo y tres semanas sin lluvia.",
@@ -535,7 +535,7 @@
       "resultado": "Marchito significa seco y sin fuerza, y las pistas son el sol fuerte, el pozo bajo y las tres semanas sin lluvia."
      },
      {
-      "enunciado": "Mi tía Chabela crió tres gallinas en el solar de su casa. Cada mañana les echa maíz quebrado y les cambia el agua del bebedero. Desde que empezó a cuidarlas así, sus gallinas ____ un huevo cada día y ya no hay que comprarlos en la pulpería.\n\n¿Qué palabra falta en la línea y por qué?",
+      "enunciado": "Mi tía Chabela crio tres gallinas en el solar de su casa. Cada mañana les echa maíz quebrado y les cambia el agua del bebedero. Desde que empezó a cuidarlas así, sus gallinas ____ un huevo cada día y ya no hay que comprarlos en la pulpería.\n\n¿Qué palabra falta en la línea y por qué?",
       "pasos": [
        "Leo la oración completa y busco el sujeto: sus gallinas, que son varias.",
        "Como el sujeto está en plural, el verbo tiene que ir en plural: ponen, no pone.",
@@ -571,7 +571,7 @@
       [
        "por ejemplo, tales como",
        "Casos que la ilustran",
-       "granos básicos, por ejemplo maíz y frijoles"
+       "granos básicos, por ejemplo, maíz y frijoles"
       ]
      ]
     },
@@ -607,7 +607,7 @@
        "Descarto la noticia: la noticia informa de un hecho que ya pasó, y aquí se está ofreciendo algo.",
        "Descarto el instructivo: no hay lista de materiales ni pasos numerados."
       ],
-      "resultado": "Es un anuncio, porque ofrece un producto y da los datos del cliente: qué venden, dónde, cuándo y a qué precio."
+      "resultado": "Es un anuncio, porque ofrece un producto y da los datos que el cliente necesita: qué venden, dónde, cuándo y a qué precio."
      },
      {
       "enunciado": "Cómo hacer una maceta con una botella. Materiales: una botella plástica vacía, tierra negra, una semilla y un clavo. 1. Corta la botella por la mitad, con ayuda de una persona adulta. 2. Hazle tres agujeros en el fondo. 3. Llena la botella con tierra negra hasta dos dedos del borde. 4. Entierra la semilla y riégala poquito. 5. Ponla donde le dé el sol de la mañana.\n\n¿Qué tipo de texto es y para qué sirve?",
@@ -662,7 +662,7 @@
     },
     "error": {
      "mal": "Entregar una anécdota así: Un día fuimos al río. Fin.",
-     "porque": "Dice dónde empezó, pero no cuenta qué pasó ni cómo terminó, y sin eso no hay anécdota: queda un renglón suelto. Además le falta el título.",
+     "porque": "Dice dónde empezó, pero no cuenta qué pasó ni cómo terminó, y sin eso no hay anécdota: queda un renglón suelto. Además, le falta el título.",
      "bien": "Ponle título y cuéntala en tres partes. Por ejemplo: La chancleta perdida. El domingo fuimos al río con mis primos. Cuando estábamos cruzando, a mi hermano se le fue una chancleta con la corriente y la fuimos persiguiendo hasta la poza. Al final la sacamos con un palo, llena de lodo, y regresamos riéndonos todo el camino."
     }
    }
@@ -1238,7 +1238,7 @@
    },
    {
     "consigna": "Describe en por lo menos seis renglones a una persona de tu comunidad que tú conozcas bien: cómo es por fuera y cómo es por dentro. Cuenta también una cosa que esa persona hace y que muestre cómo es.",
-    "guia": "Una buena respuesta dice quién es la persona y describe las dos cosas que se piden: lo que se ve (alto, de pelo blanco, de manos gruesas) y lo que no se ve (paciente, alegre, trabajadora). La parte que más vale es la acción: un hecho concreto que demuestre lo que dijo, como que le guarda pan a los niños que pasan o que se levanta a las cuatro a ordeñar. Se esperan adjetivos que concuerden con el sustantivo (una señora trabajadora, no trabajador). Se descuenta si solo hace una lista de adjetivos sin ningún hecho, si describe únicamente el aspecto físico o si no se entiende de quién está hablando."
+    "guia": "Una buena respuesta dice quién es la persona y describe las dos cosas que se piden: lo que se ve (alto, de pelo blanco, de manos gruesas) y lo que no se ve (paciente, alegre, trabajadora). La parte que más vale es la acción: un hecho concreto que demuestre lo que dijo, como que les guarda pan a los niños que pasan o que se levanta a las cuatro a ordeñar. Se esperan adjetivos que concuerden con el sustantivo (una señora trabajadora, no trabajador). Se descuenta si solo hace una lista de adjetivos sin ningún hecho, si describe únicamente el aspecto físico o si no se entiende de quién está hablando."
    }
   ]
  },
@@ -1258,7 +1258,7 @@
     "solucion": "Lo que va antes de la palabra mil son los millares: ciento cuatro, o sea 104. Lo que va después son las unidades: doscientos, o sea 200. Juntos quedan 104200, un número de seis cifras. El 1004200 tiene un cero de más y el 10420 una cifra de menos; el 140200 se lee ciento cuarenta mil doscientos."
    },
    {
-    "texto": "En la escuela de la aldea hay 1358 libros y les regalaron 947 más. ¿Cuántos libros hay ahora?",
+    "texto": "En la escuela de la aldea hay 1358 libros y le regalaron 947 más. ¿Cuántos libros hay ahora?",
     "o": [
      "2305",
      "2205",
@@ -1392,7 +1392,7 @@
     "solucion": "El texto cuenta de principio a fin cómo trabaja don Aparicio: qué recibe, qué le hace al aparato y cuándo lo entrega. La mesa, el precio y el cuartito son detalles que ocupan un renglón cada uno."
    },
    {
-    "texto": "El camino a la escuela quedó lodoso después del temporal. Los niños que vienen de la aldea llegaron con los zapatos embarrados hasta el tobillo, y la maestra los dejó lavarse en la pila antes de entrar al aula.\n\n¿Qué significa la palabra embarrados en el texto?",
+    "texto": "El camino a la escuela quedó lodoso después del temporal. Los niños que vienen de la aldea llegaron con los zapatos embarrados hasta el tobillo, y la maestra los dejó lavarse en la pila antes de entrar al aula.\n\n¿Qué significa la palabra «embarrados» en el texto?",
     "o": [
      "Rotos por el uso",
      "Nuevos y limpios",
@@ -1404,7 +1404,7 @@
     "solucion": "Las pistas están antes y después: el camino quedó lodoso por el temporal y la maestra los dejó lavarse en la pila. Nadie se lava los zapatos por estar rotos ni por estar limpios, y de cordones el texto no dice nada."
    },
    {
-    "texto": "El río bajó turbio después de la lluvia y nadie quiso sacar agua de ahí. Doña Chinda dijo que había que esperar dos días, hasta que el lodo se asentara en el fondo y el agua volviera a verse clara.\n\n¿Qué significa la palabra turbio en el texto?",
+    "texto": "El río bajó turbio después de la lluvia y nadie quiso sacar agua de ahí. Doña Chinda dijo que había que esperar dos días, hasta que el lodo se asentara en el fondo y el agua volviera a verse clara.\n\n¿Qué significa la palabra «turbio» en el texto?",
     "o": [
      "Frío como el hielo",
      "Seco, sin una gota",
@@ -1476,7 +1476,7 @@
     "solucion": "Ofrece un producto y da lo que el cliente necesita saber: qué venden, dónde, qué día y a qué precio. No narra una historia, no lleva pasos numerados y no informa de un hecho ocurrido: es un anuncio."
    },
    {
-    "texto": "Refresco de tamarindo. Materiales: una libra de tamarindo, agua, azúcar y un colador. 1. Ponga el tamarindo en agua tibia media hora. 2. Estruje la fruta con la mano hasta que suelte la pulpa. 3. Cuele el líquido para quitarle las semillas. 4. Agregue azúcar al gusto y hielo.\n\n¿Qué tipo de texto es el anterior?",
+    "texto": "Refresco de tamarindo. Materiales: una libra de tamarindo, agua, azúcar y un colador. 1. Ponga el tamarindo en agua tibia media hora. 2. Estruje la fruta con la mano hasta que suelte la pulpa. 3. Cuele el líquido para quitarle las semillas. 4. Agregue azúcar al gusto.\n\n¿Qué tipo de texto es el anterior?",
     "o": [
      "Una fábula, porque deja una enseñanza al final",
      "Un instructivo, porque lleva materiales y pasos numerados",
@@ -1496,7 +1496,7 @@
     "materia": "mat",
     "mal": "El alumno suma 468 + 275 y contesta 633. Sumó 8 + 5 = 13 y escribió el 13 completo o solo el 3, pero sin llevarse la unidad a la columna siguiente. Lo mismo hizo con las decenas.",
     "porque": "Cada vez que una columna pasa de 9 hay que llevar una unidad a la columna de al lado, porque diez unidades son una decena y diez decenas son una centena. Si no se lleva, se pierden 10 en las decenas y 100 en las centenas: por eso 633 queda 110 unidades por debajo del resultado verdadero.",
-    "bien": "468 + 275 = 743. Unidades: 8 + 5 = 13, se escribe 3 y se lleva 1. Decenas: 6 + 7 = 13, más 1 que llevaba son 14: se escribe 4 y se lleva 1. Centenas: 4 + 2 = 6, más 1 son 7. Revisión por encima: 468 es casi 500 y 275 es casi 300, así que el resultado tiene que andar cerca de 750."
+    "bien": "468 + 275 = 743. Unidades: 8 + 5 = 13, se escribe 3 y se lleva 1. Decenas: 6 + 7 = 13, más 1 que llevaba son 14: se escribe 4 y se lleva 1. Centenas: 4 + 2 = 6, más 1 son 7. Revisión por encima: 468 es casi 500 y 275 es casi 300, así que el resultado tiene que andar un poco por debajo de 800."
    },
    {
     "titulo": "Restar el de arriba del de abajo para que salga más fácil",
@@ -1509,7 +1509,7 @@
     "titulo": "El segundo renglón de la multiplicación sin correr",
     "materia": "mat",
     "mal": "Al multiplicar 234 x 21 el alumno escribe 234 x 1 = 234 y 234 x 2 = 468, y suma los dos así como quedaron, uno debajo del otro: 702.",
-    "porque": "El 2 del 21 no vale 2: vale 2 decenas, o sea 20. Su resultado hay que correrlo un lugar a la izquierda, que es lo mismo que ponerle un cero al final. Sin correrlo, la cuenta está diciendo que 234 se tomó 3 veces (1 + 2) en vez de 21 veces, y por eso 702 es exactamente 234 x 3.",
+    "porque": "El 2 del 21 no vale 2: vale 2 decenas, o sea, 20. Su resultado hay que correrlo un lugar a la izquierda, que es lo mismo que ponerle un cero al final. Sin correrlo, la cuenta está diciendo que 234 se tomó 3 veces (1 + 2) en vez de 21 veces, y por eso 702 es exactamente 234 x 3.",
     "bien": "234 x 1 = 234. 234 x 2 = 468, pero como ese 2 son decenas se corre un lugar y se lee 4680. La suma es 234 + 4680 = 4914. Revisión por encima: 234 es más de 200 y 21 es más de 20, así que el resultado tiene que pasar de 4000."
    },
    {
@@ -1536,16 +1536,16 @@
    {
     "titulo": "Contestar con lo que uno cree y no con lo que dice el texto",
     "materia": "esp",
-    "mal": "El texto dice: 'Selvin se levantó a las cuatro de la mañana porque la escuela le queda a dos horas de camino y no quería llegar tarde'. Le preguntan por qué se levantó tan temprano y el alumno contesta: porque los gallos lo despertaron, o porque en el campo todos madrugan. Ninguna de las dos cosas está escrita.",
+    "mal": "El texto dice: «Selvin se levantó a las cuatro de la mañana porque la escuela le queda a dos horas de camino y no quería llegar tarde». Le preguntan por qué se levantó tan temprano y el alumno contesta: porque los gallos lo despertaron, o porque en el campo todos madrugan. Ninguna de las dos cosas está escrita.",
     "porque": "En una prueba de lectura la respuesta correcta es la que se puede señalar con el dedo en el texto, no la que uno supone por lo que ve en su casa. Lo que el alumno sabe puede ser cierto en la vida y falso en ese texto, y la prueba califica el texto.",
-    "bien": "Se busca la parte que contesta y se subraya antes de escoger. Aquí el texto lo dice completo: 'porque la escuela le queda a dos horas de camino y no quería llegar tarde'. Regla del examen: si no puedo señalar el renglón donde está, no es mi respuesta."
+    "bien": "Se busca la parte que contesta y se subraya antes de escoger. Aquí el texto lo dice completo: «porque la escuela le queda a dos horas de camino y no quería llegar tarde». Regla del examen: si no puedo señalar el renglón donde está, no es mi respuesta."
    },
    {
     "titulo": "El significado que uno se sabe en vez del de la oración",
     "materia": "esp",
-    "mal": "La oración dice: 'Doña Lucía puso la ropa en el patio para que agarrara sol'. Le preguntan qué significa agarrara en esa oración y el alumno contesta: tomar algo con la mano y apretarlo con los dedos. Es el significado que se sabe de memoria, pero en esa oración la ropa no tiene manos.",
+    "mal": "La oración dice: «Doña Lucía puso la ropa en el patio para que agarrara sol». Le preguntan qué significa agarrara en esa oración y el alumno contesta: tomar algo con la mano y apretarlo con los dedos. Es el significado que se sabe de memoria, pero en esa oración la ropa no tiene manos.",
     "porque": "Muchas palabras tienen varios significados y la oración decide cuál está funcionando en ese momento. Contestar con el más conocido, sin volver a leer la oración completa, es responder a otra pregunta.",
-    "bien": "Se lee la oración entera, se tapa la palabra y se piensa qué otra cabría ahí sin cambiar el sentido. En 'para que agarrara sol' cabe 'recibiera': entonces ahí agarrara significa recibir el sol para secarse. Después se prueba la opción escogida dentro de la oración; si suena rara, no es esa."
+    "bien": "Se lee la oración entera, se tapa la palabra y se piensa qué otra cabría ahí sin cambiar el sentido. En «para que agarrara sol» cabe «recibiera»: entonces ahí agarrara significa recibir el sol para secarse. Después se prueba la opción escogida dentro de la oración; si suena rara, no es esa."
    }
   ],
   "estrategia": [

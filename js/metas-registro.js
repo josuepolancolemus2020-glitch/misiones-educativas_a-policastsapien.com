@@ -408,7 +408,7 @@
       '🚀 Misión: ' + tituloMision() + '\n' +
       '📅 Enviado: ' + hoy.fecha + ' ' + hoy.hora + '\n\n' +
       '✅ Secciones completadas: ' + hechas + (tabs.length ? ' de ' + tabs.length : '') + '\n' +
-      '⭐ XP: ' + (xpActual() === null ? '—' : xpActual()) + '\n' +
+      '⭐ XP: ' + (xpActual() === null ? 'sin dato' : xpActual()) + '\n' +
       '⏱️ Tiempo activo: ' + Math.round(minutos) + ' min\n' +
       '📋 ' + linea('evaluacion', 'Evaluación conceptual') + '\n' +
       '🧮 ' + linea('prueba_operativa', 'Prueba operativa') + '\n' +
@@ -497,16 +497,16 @@
       '<h3>👋 ¡Hola, explorador!</h3>' +
       '<p>Escribe tus datos <strong>una sola vez</strong> para que tu maestro sepa que estos logros son tuyos.</p>' +
       '<label for="metasIdNombre">👤 Tu nombre o código de alumno</label>' +
-      '<input id="metasIdNombre" type="text" maxlength="60" autocomplete="off" placeholder="Ej: Ana López o A07">' +
+      '<input id="metasIdNombre" type="text" maxlength="60" autocomplete="off" placeholder="Ej.: Ana López o A07">' +
       '<label for="metasIdNum">🔢 Tu número de lista <span id="metasIdNumOpc">(opcional)</span></label>' +
-      '<input id="metasIdNum" type="text" maxlength="10" inputmode="numeric" autocomplete="off" placeholder="Ej: 7">' +
+      '<input id="metasIdNum" type="text" maxlength="10" inputmode="numeric" autocomplete="off" placeholder="Ej.: 7">' +
       '<div id="metasIdNumMsg" class="metas-id-aulamsg"></div>' +
       '<label for="metasIdEscuela">🏫 Tu escuela o centro educativo</label>' +
-      '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej: Esc. Francisco Morazán">' +
+      '<input id="metasIdEscuela" type="text" maxlength="80" autocomplete="off" placeholder="Ej.: Esc. Francisco Morazán">' +
       '<label for="metasIdGrado">📚 Grado y sección</label>' +
-      '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej: 6to A">' +
+      '<input id="metasIdGrado" type="text" maxlength="30" autocomplete="off" placeholder="Ej.: 6to A">' +
       '<label for="metasIdAula">🔑 Código de aula (te lo da tu maestro)</label>' +
-      '<input id="metasIdAula" type="text" maxlength="8" autocomplete="off" placeholder="Ej: K2M9P" style="text-transform:uppercase;letter-spacing:3px;font-weight:800;">' +
+      '<input id="metasIdAula" type="text" maxlength="8" autocomplete="off" placeholder="Ej.: K2M9P" style="text-transform:uppercase;letter-spacing:3px;font-weight:800;">' +
       '<div id="metasIdAulaMsg" class="metas-id-aulamsg"></div>' +
       '<div id="metasIdReinicio" style="display:none;margin-top:10px;padding:9px 11px;border-radius:10px;' +
         'border-left:4px solid #b45309;background:#fffbeb;color:#7c3f0a;font-size:13.5px;line-height:1.5">' +

@@ -90,11 +90,11 @@ ok('documento crítico trae las 5 secciones', ['Elige el sensor y justifica', 'C
 ok('colores de impresión: acento #0e7490 y fondo #ecfeff en ambos documentos', ['docConcept', 'docCrit'].every(k => a[k].includes('#0e7490') && a[k].includes('#ecfeff')));
 ok('pauta .pa en verde #007a00 (conceptual)', a.docConcept.includes('.pa{color:#007a00'));
 ok('encabezado dice Robótica en ambos documentos', a.docConcept.includes('Robótica') && a.docCrit.includes('Robótica'));
-ok('normativa: pie con Nº de evaluación, casillas y Forma en ambos documentos',
-  ['docConcept', 'docCrit'].every(k => a[k].includes('Nº de Evaluación temática realizada')
+ok('normativa: pie con N.º de evaluación, casillas y Forma en ambos documentos',
+  ['docConcept', 'docCrit'].every(k => a[k].includes('N.º de Evaluación temática realizada')
     && a[k].includes('Evaluación con valor en el parcial') && a[k].includes('Evaluación solo de repaso')
     && a[k].includes('class="forma-tag"')));
-ok('normativa: encabezado con Parcial + Centro Educativo + Nº Lista', ['docConcept', 'docCrit'].every(k => a[k].includes('Parcial:') && a[k].includes('Centro Educativo:') && a[k].includes('Nº Lista:')));
+ok('normativa: encabezado con Parcial + Centro Educativo + N.º Lista', ['docConcept', 'docCrit'].every(k => a[k].includes('Parcial:') && a[k].includes('Centro Educativo:') && a[k].includes('N.º Lista:')));
 ok('clave ZipGrade solo en la conceptual', a.docConcept.includes('ZipGrade') && !a.docCrit.includes('ZipGrade'));
 ok('auto-ajuste fit() de una página en ambos documentos', a.docConcept.includes('function fit(') && a.docCrit.includes('function fit('));
 

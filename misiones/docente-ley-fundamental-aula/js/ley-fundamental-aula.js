@@ -59,7 +59,7 @@ function pintaXP() {
 const ARTS = [
   {
     num: 'Art. 6', corto: 'Rendir cuentas',
-    tit: 'La educación es plata pública, y se rinde cuentas de ella',
+    tit: 'La educación es plata pública, y se rinden cuentas de ella',
     sub: 'Ley Fundamental de Educación, artículo 6',
     txt: 'La ley declara la educación una inversión social pública. De ahí saca una consecuencia ' +
          'que mucha gente en los centros todavía toma como desconfianza personal: quien administra ' +
@@ -97,7 +97,7 @@ const ARTS = [
          'hasta terminar la educación media. La ley se la carga a los padres, madres o tutores: ' +
          'ellos tienen el deber de procurar que sus hijos la cursen. No es un consejo pedagógico, ' +
          'es una obligación legal, y los consejos de desarrollo educativo tienen entre sus tareas ' +
-         'velar porque se cumpla.',
+         'velar por que se cumpla.',
     cita: 'Es obligación de los padres, madres o tutores procurar que sus hijos cursen desde un ' +
           'año de educación prebásica hasta la educación media.',
     aula: 'Ante la familia que va a sacar al niño de la escuela, usted no está pidiendo un favor: ' +
@@ -507,7 +507,7 @@ function cpRevisa() {
   r.className = 'resu on ' + (bien === CP.length ? 'bien' : 'mal');
   r.innerHTML = `<span class="resu-num">${bien}/${CP.length}</span>` +
     (bien === CP.length ? 'Los datos duros los tiene. Esos son los que caen tal cual en la prueba.'
-                        : 'Vuelva al recorrido por artículos con las que falló: el número se pega cuando se sabe qué manda.');
+                        : 'Vuelva al recorrido por artículos con los que falló: el número se pega cuando se sabe qué manda.');
   if (bien === CP.length && !S.completa) { S.completa = 1; xp(6); }
   guardar();
 }
@@ -517,7 +517,7 @@ function cpRevisa() {
    ejercicio: es el orden en que se memorizan, porque en un examen la
    pregunta llega por el número, no por el tema. */
 const RETO = [
-  { t: 'La educación es inversión social pública y se rinde cuentas', o: 6 },
+  { t: 'La educación es inversión social pública y se rinden cuentas', o: 6 },
   { t: 'Gratuidad: prohibido exigir aportaciones', o: 7 },
   { t: 'Obligación de los padres: de prebásica a media', o: 8 },
   { t: 'El año lectivo tiene doscientos días', o: 16 },

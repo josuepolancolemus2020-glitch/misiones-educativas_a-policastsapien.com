@@ -166,14 +166,14 @@ var RETOS = [
    cumple:function(el){ return el.length === 4 && el.indexOf('platano') < 0; },
    pide:'Enciende los otros cuatro y apaga el plátano.',
    leccion:'Le falló al plátano, a las seis hojas, y siempre para el mismo lado: le dijo <b>enfermo</b> al que estaba sano. Una hoja de plátano sana tiene más manchas que una de café enferma, así que el detector la juzgó con la vara del café.',
-   ojo:'⚠️ El productor de plátano recibe un aviso de plaga que no existe, fumiga, gasta y desconfía. Nadie programó eso: <b>salió de qué fotos se tomaron</b>. Por eso el sesgo no es una falla del programa, es una decisión de quien junta los ejemplos — y aquí esa persona eras tú.'},
+   ojo:'⚠️ El productor de plátano recibe un aviso de plaga que no existe, fumiga, gasta y desconfía. Nadie programó eso: <b>salió de qué fotos se tomaron</b>. Por eso el sesgo no es una falla del programa, es una decisión de quien junta los ejemplos, y aquí esa persona eras tú.'},
   {n:'El que nunca viste', emoji:'🥭',
    texto:'Llegó el <b>mango</b> a la escuela, y no está en ningún chip. Enciende lo que quieras y prueba.',
    forastero:true,
    cumple:function(el){ return el.length === CULTIVOS.length; },
    pide:'Para este reto enciéndelos todos: es lo más que puedes hacer.',
    leccion:'Con los cinco encendidos le sigue fallando al mango. No te faltó maña: <b>el mango no estaba en tus ejemplos y no hay chip que lo meta</b>.',
-   ojo:'⚠️ Esto es lo que de verdad cuesta caro. Por bien que elijas, lo que tu máquina nunca vio lo va a fallar — y ni siquiera te va a avisar de que es algo nuevo: le va a poner el nombre de lo más parecido que tenga. Antes de creerle a una máquina hay que preguntar <b>con qué la entrenaron</b>.'}
+   ojo:'⚠️ Esto es lo que de verdad cuesta caro. Por bien que elijas, lo que tu máquina nunca vio lo va a fallar, y ni siquiera te va a avisar de que es algo nuevo: le va a poner el nombre de lo más parecido que tenga. Antes de creerle a una máquina hay que preguntar <b>con qué la entrenaron</b>.'}
 ];
 
 var esc3, ejemplosTodos = [], pruebaTodos = [], mallasEj = [], mallasPr = [];
@@ -359,7 +359,7 @@ function mostrar(){
   document.getElementById('res-tit').textContent = logrado ? d.n : 'Todavía no es el reto';
   document.getElementById('res-form').innerHTML =
     'Acertó <b>'+u.bien+' de '+u.total+'</b> hojas que nunca había visto' +
-    '<br>Entrenado con: ' + (u.elegidos.length ? u.elegidos.map(function(c){ return nombreDe(c).emoji; }).join(' ') : '—');
+    '<br>Entrenado con: ' + (u.elegidos.length ? u.elegidos.map(function(c){ return nombreDe(c).emoji; }).join(' ') : 'nada');
 
   if(logrado){
     var est = corridas <= 1 ? 3 : (corridas <= 3 ? 2 : 1);

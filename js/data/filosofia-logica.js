@@ -76,7 +76,7 @@ const LOG_SEMAFORO = [
 
 /* ── Las razones de ejemplo, con su color. UN SOLO SITIO. ── */
 const LOG_RAZONES = [
-  { r: 'Porque el suelo está mojado y no ha pasado la pila',      color: 'verde' },
+  { r: 'Porque el suelo está mojado y la pila no se ha rebalsado',      color: 'verde' },
   { r: 'Porque la malla mide 20 metros y el cerco pide 24',       color: 'verde' },
   { r: 'Porque conté los sacos y faltan tres',                    color: 'verde' },
   { r: 'Porque el pan está duro y lo compramos el lunes',         color: 'verde' },
@@ -116,22 +116,22 @@ const LOG_RAZONES = [
 const LOG_FALACIAS = [
   { clave: 'persona', nombre: 'Contra la persona', emoji: '👤',
     mecanismo: 'Se ataca a quien habla en vez de a lo que dice.',
-    suena: '«No le creas: si ni terminó la escuela.»',
+    suena: '«No le creas: si ni terminó la escuela».',
     desarma: '¿Qué tiene que ver quién lo dice con si es verdad? Pedile la razón, no el título.',
     cuesta: 'Se pierde la razón buena de quien no tiene con qué defenderse.' },
   { clave: 'apresurada', nombre: 'Generalización apresurada', emoji: '🔢',
     mecanismo: 'Se saca una regla de dos o tres casos.',
-    suena: '«En ese pueblo son bien tramposos: me tocaron dos.»',
+    suena: '«En ese pueblo son bien tramposos: me tocaron dos».',
     desarma: '¿Cuántos casos viste, y de cuántos? Dos de doscientos no es una regla.',
     cuesta: 'Así se arman las famas de un barrio entero, y no se quitan.' },
   { clave: 'dilema', nombre: 'Falso dilema', emoji: '🚪',
     mecanismo: 'Se ofrecen dos salidas como si no hubiera más.',
-    suena: '«O te vas a la ciudad o te quedás sin futuro.»',
+    suena: '«O te vas a la ciudad o te quedás sin futuro».',
     desarma: '¿Solo hay dos? Nombrá una tercera y el dilema se cae.',
     cuesta: 'Se decide con miedo una cosa que tenía otras salidas.' },
   { clave: 'mayoria', nombre: 'Apelación a la mayoría', emoji: '👥',
     mecanismo: 'Se ofrece como razón cuánta gente lo hace.',
-    suena: '«Compralo: si todo el mundo lo compra.»',
+    suena: '«Compralo: si todo el mundo lo compra».',
     desarma: 'Si todo el mundo se equivoca, ¿deja de ser un error? Pedí una razón de la cosa, no del gentío.',
     cuesta: 'Es la que le costó a Wilmer la mitad del dinero de la siembra.' }
 ];

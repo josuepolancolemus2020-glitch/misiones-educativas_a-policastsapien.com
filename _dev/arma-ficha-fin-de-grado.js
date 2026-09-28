@@ -87,13 +87,24 @@ const tabla = t => !t ? '' : `<table>
 ${t.filas.map(f => `  <tr>${f.map((c, i) => `<td${i === 0 ? ' class="k"' : ''}>${esc(c)}</td>`).join('')}</tr>`).join('\n')}
 </table>`;
 
-// Parte un enunciado largo en (mini-texto, pregunta) cuando trae los dos
+// Parte un enunciado largo en (minitexto, pregunta) cuando trae los dos
 function parteTexto(s) {
   const corte = s.indexOf('\n\n');
   if (corte > 0) return [s.slice(0, corte), s.slice(corte + 2)];
   if (s.length > 190) {
+    /* Si el enunciado nombra su pregunta («… Pregunta: según el texto, ¿…?»),
+       se parte ahí. Partirlo en el «¿» dejaba «Pregunta:» colgando al final
+       del minitexto impreso, sin nada detrás, o media pregunta fuera de su
+       título («Pregunta: según el texto,»). Salió en la revisión de
+       ortografía del 27 de septiembre de 2026, leyendo el papel. */
+    /* Y la pregunta sube al título de «Ejemplo resuelto N:» con mayúscula,
+       como los demás ejemplos: después de esos dos puntos va una pregunta
+       entera, no el final de una frase. */
+    const mayus = q => q.replace(/^([¿¡«]*)(\p{Ll})/u, (_, a, c) => a + c.toUpperCase());
+    const p = s.search(/\s*Pregunta:\s*/);
+    if (p > 60) return [s.slice(0, p).trim(), mayus(s.slice(p).replace(/^\s*Pregunta:\s*/, ''))];
     const m = s.match(/([¿].*)$/s);
-    if (m && m.index > 60) return [s.slice(0, m.index).trim(), m[1]];
+    if (m && m.index > 60) return [s.slice(0, m.index).trim(), mayus(m[1])];
   }
   return ['', s];
 }
@@ -163,7 +174,7 @@ secs.push = function (s) { s.bloques = []; Array.prototype.push.call(this, s); r
 
 /* 1 · portada */
 S('', 'Presentación y objetivos');
-B(`<div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>`);
+B(`<div class="idline"><span>Nombre:</span><span class="raya"></span><span>N.º-Lista:</span><span class="raya corta"></span></div>`);
 B(`<div class="fh">
   <div class="fh-txt">
     <div class="f-badge">📄 Ficha Didáctica: Prueba de Fin de Grado, ${M.grado} Grado</div>
@@ -240,7 +251,7 @@ B(`<h3>II. Verdadero o Falso <span class="val">(Valor: 10 puntos c/u)</span> · 
 <ol>
 ${C.actMat.vf.map(i => `  <li>____ ${esc(i.texto)}</li>`).join('\n')}
 </ol>`);
-B(`<h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> · Encierra en un círculo la letra correcta.</h3>`);
+B(`<h3>III. Selección múltiple <span class="val">(Valor: 10 puntos c/u)</span> · Rellena el círculo de la letra correcta.</h3>`);
 C.actMat.mc.forEach((it, i) => B(pregunta(it, i + 1, false)));
 B(`<h3>IV. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B que corresponde.</h3>
 ${parMat.html}`);
@@ -272,7 +283,7 @@ C.actEsp.lectura.preguntas.forEach((it, i) => B(pregunta(it, i + 1, false)));
 const tiposDelGrado = [...new Set(C.actEsp.tipos.map(t => t.tipo))].sort();
 B(`<h3>IV. ¿Qué tipo de texto es? <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea: ${tiposDelGrado.slice(0, -1).join(', ')} o ${tiposDelGrado[tiposDelGrado.length - 1]}.</h3>
 <ol>
-${C.actEsp.tipos.map(t => `  <li>«${esc(t.fragmento)}» <span class="linea-resp"></span></li>`).join('\n')}
+${C.actEsp.tipos.map(t => { const p = /[^.]\.$/.test(t.fragmento); return `  <li>«${esc(p ? t.fragmento.slice(0, -1) : t.fragmento)}»${p ? '.' : ''} <span class="linea-resp"></span></li>`; }).join('\n')}
 </ol>`);
 B(`<h3>V. Relaciona (Pareados) <span class="val">(Valor: 10 puntos c/u)</span> · Escribe en la línea la letra de la Columna B.</h3>
 ${parEsp.html}`);
@@ -344,7 +355,7 @@ ${C.actEsp.escritura.map((e, i) => `  <div><span class="pt">Consigna ${i + 1}:</
 </div>`);
 B(`<div class="nota-doc">
   <strong>Nota para el docente:</strong> esta ficha está basada en la misión «Prueba de Fin de Grado: ${M.grado} Grado»
-  de la plataforma M.E.T.A.S y es la más extensa de la serie a propósito: no repasa un tema sino el temario
+  de la plataforma M.E.T.A.S y es de las más extensas de la serie a propósito: no repasa un tema, sino el temario
   completo del año en las dos materias que la prueba oficial evalúa. Puede trabajarse por partes: las hojas de
   franja azul en los días de Matemáticas y las de franja dorada en los de Español, dejando el simulacro para la
   víspera del examen. Los ítems de esta ficha son <strong>distintos</strong> a los de la misión interactiva, así que

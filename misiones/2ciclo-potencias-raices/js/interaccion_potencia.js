@@ -51,7 +51,7 @@ window.WidgetPotenciaJSON = {
 
         <div class="wp-footer-text" id="wp-footer">
           <span id="wp-txt-n" style="color:#f59e0b; font-weight:bold;">1</span>² = <span style="color:#7c3aed; font-weight:bold;" id="wp-txt-n2">1</span><br>
-          <span id="wp-txt-logic" style="font-size: 0.85rem; color: #636e72; display: block; margin-top: 0.5rem;">√1 = 1 — la raíz cuadrada deshace la potencia.</span>
+          <span id="wp-txt-logic" style="font-size: 0.85rem; color: #636e72; display: block; margin-top: 0.5rem;">√1 = 1: la raíz cuadrada deshace la potencia.</span>
         </div>
         <div style="margin-top:1.2rem;">
           <div style="font-family:'Fredoka',sans-serif;font-size:0.95rem;color:#2d3436;margin-bottom:0.5rem;">📊 Tabla de ejemplos (resaltado = valor actual)</div>
@@ -101,7 +101,7 @@ window.WidgetPotenciaJSON = {
       nBar.style.width = Math.max(6, (n / MAX_N) * 100) + '%';
       n2Bar.style.width = Math.max(6, (n2 / MAX_N2) * 100) + '%';
 
-      txtLogic.innerHTML = `√${n2} = ${n} — la raíz cuadrada deshace la potencia.`;
+      txtLogic.innerHTML = `√${n2} = ${n}: la raíz cuadrada deshace la potencia.`;
     }
 
     function highlightTableRow(n) {

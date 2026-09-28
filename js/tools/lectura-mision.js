@@ -1567,8 +1567,8 @@
           '</div>' +
           '<div class="lm-veredicto">🩺 ' + veredicto(vel, nc) + '</div>' +
           '<p class="lm-pista">La banda de ' + st.grado + 'º es de <strong>fin de grado</strong> (' + esc(LECTURA_NORMAS.fuenteCorta) + '): ' +
-            'si estamos a mitad del año, es normal ir por debajo. Aquí no se mide la <em>precisión</em> —cuántas palabras se ' +
-            'cambian o se saltan—, porque para eso alguien tiene que escucharte: esa parte la toma tu maestro en Mi aula.</p>' +
+            'si estamos a mitad del año, es normal ir por debajo. Aquí no se mide la <em>precisión</em> (cuántas palabras se ' +
+            'cambian o se saltan), porque para eso alguien tiene que escucharte: esa parte la toma tu maestro en Mi aula.</p>' +
         '</div>' +
 
         '<div class="card ac-purple">' +
@@ -1641,7 +1641,7 @@
       var pctC = nc ? nc.pct : 100;
       if (pctC < 60 && !lento) {
         return 'Vas rápido, pero se te está escapando lo que dice el texto. Eso todavía no es leer: es descifrar de prisa. ' +
-          'Prueba a bajar la marcha y leer «para contárselo a alguien» — la velocidad ya la tienes.';
+          'Prueba a bajar la marcha y leer «para contárselo a alguien»: la velocidad ya la tienes.';
       }
       if (pctC >= 80 && lento) {
         return 'Entendiste muy bien aunque todavía leas despacio, y ese es el camino difícil, que es el bueno. ' +
@@ -1832,13 +1832,13 @@
           '<p class="lp-aviso">Esta hoja <strong>no se fotocopia</strong>: es la del maestro.</p>' +
           ACTOS.map(function (a, i) {
             return '<div class="lp-cl"><div class="lp-cl-t">' + a.icono + ' ' + esc(a.titulo) + '</div>' +
-              '<div class="lp-cl-r">' + (actos[i].clave || '—') + '</div></div>';
+              '<div class="lp-cl-r">' + (actos[i].clave || 'Respuesta abierta') + '</div></div>';
           }).join('') +
           '<div class="lp-cl"><div class="lp-cl-t">🩺 Cómo se lee el resultado</div><div class="lp-cl-r">' +
             (banda ? 'En ' + grado + 'º se espera de <b>' + banda[0] + ' a ' + banda[1] + ' palabras por minuto</b> ' +
               '(' + esc(LECTURA_NORMAS.fuenteCorta) + '), y es meta de <b>fin de grado</b>: a mitad de año es normal ir por debajo. ' : '') +
             'En las preguntas <b>críticas</b> la letra marca la opinión mejor razonada; si el alumno defiende otra con un buen ' +
-            'porqué, <b>también vale</b>. Aquí no se mide la precisión —cuántas palabras cambia o se salta—: para eso hay que ' +
+            'porqué, <b>también vale</b>. Aquí no se mide la precisión (cuántas palabras cambia o se salta): para eso hay que ' +
             'escucharlo, y esa toma se hace en 📖 Lectura de Mi aula.</div></div>' +
           '<footer class="lp-foot">M.E.T.A.S · clave de ' + esc(t.titulo) + '</footer>' +
         '</section>';

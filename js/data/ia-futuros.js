@@ -48,7 +48,7 @@
       `node _dev/mide-legibilidad.js`.
 
    ⚠️ Y UNA HONESTIDAD QUE NO SE PUEDE SALTAR: se cuentan TAREAS, no HORAS.
-   Don Chele pierde dos tareas de siete y las cinco que le quedan son las que
+   Don Chele pierde tres tareas de siete y las cuatro que le quedan son las que
    se llevan todo el día. La pantalla lo dice con esas palabras, porque un
    porcentaje que se lee mal enseña peor que ninguno. Es la misma lección que
    «el promedio que esconde» de la etapa 5.
@@ -298,7 +298,7 @@ const IA_TAREAS_CLASE = [
   { k: 'linea', t: 'Hacé la línea del tiempo de los próceres', copia: true, escudos: [],
     porque: 'Son fechas escritas. Ojo: a veces inventa una, y va firmada por vos.' },
   { k: 'preguntas', t: 'Leé este texto y contestá cinco preguntas', copia: true, escudos: [],
-    porque: 'Lee y contesta mejor que rápido. No hay forma de saber si vos leíste.' },
+    porque: 'Lee y contesta en un segundo. No hay forma de saber si vos leíste.' },
   { k: 'explicar', t: 'Explicá en voz alta cómo resolviste el problema 5', copia: false, escudos: ['delante'],
     porque: 'Aquí se ve en diez segundos quién lo hizo. No hay dónde esconderse.' },
   { k: 'patio', t: 'Medí tu patio y sacá su perímetro y su área', copia: false, escudos: ['manos'],

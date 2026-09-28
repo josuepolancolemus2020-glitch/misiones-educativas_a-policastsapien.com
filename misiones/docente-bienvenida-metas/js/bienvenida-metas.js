@@ -212,8 +212,7 @@ const PARADAS = [
     tit: 'Hoy {{MISIONES}} misiones, y la lista sigue creciendo',
     sub: 'Lo único que la mayoría de los maestros conoce',
     txt: 'Hoy son <b>{{MISIONES}} misiones</b> repartidas en <b>{{RUTAS}} rutas</b> y ' +
-         '<b>{{MATERIAS}} materias</b> (Español, Matemáticas, Ciencias Naturales, Ciencias ' +
-         'Sociales, Programación, Robótica e Inglés), escritas para el alumno hondureño y ' +
+         '<b>{{MATERIAS}} materias</b>, escritas para el alumno hondureño y ' +
          'alineadas al DCNB. Ese <b>hoy</b> va a propósito: el catálogo <b>está en construcción y ' +
          'no para</b>. La meta declarada es cubrir el <b>currículo completo de Básica en sus tres ' +
          'ciclos y el de Media</b>, y para eso entran temas nuevos durante todo el año. Cada misión ' +
@@ -232,7 +231,7 @@ const PARADAS = [
       'Todavía no cubren el programa completo: hoy son {{MISIONES}} temas, no el año entero. Lo que aún no está, lo sigue dando usted.',
       'No sustituyen su clase. La misión practica y evalúa; explicar sigue siendo suyo.',
       'No ponen la nota oficial: el examen sale con pauta, pero quien califica y quien decide es usted.',
-      'No todas traen la prueba de pensamiento crítico: hoy la tienen 46, y las demás se van poniendo al día.',
+      'No todas traen la prueba de pensamiento crítico: la mayoría ya la tiene, y las demás se van poniendo al día.',
     ],
     aula: 'Lo que se ahorra aquí es redactar exámenes. Cada misión da <b>30 formas</b> de su ' +
           'evaluación, y cada forma sale idéntica cada vez que se pide: imprime hoy y reimprime en ' +
@@ -272,7 +271,7 @@ const PARADAS = [
     tit: 'Una clave por alumno, y se acabó el «¿cómo va mi hijo?»',
     sub: 'Sin aplicación, sin cuenta y sin molestarlo a usted',
     txt: 'La familia entra a una página, escribe su <b>clave de familia</b> (el número de lista de ' +
-         'su hijo más cuatro caracteres, por ejemplo <b>15-K7QM</b>) y un asistente de chat le ' +
+         'su hijo más cuatro caracteres, por ejemplo, <b>15-K7QM</b>) y un asistente de chat le ' +
          'cuenta, en lenguaje llano, cómo va: notas de cada evaluación, boleta del parcial, faltas, ' +
          'conducta, avisos del maestro, colaboraciones con su recibo y consejos para apoyar en ' +
          'casa. <b>No necesita cuenta, ni correo, ni instalar nada</b>, y no ve nombres de otros ' +
@@ -321,7 +320,7 @@ const PARADAS = [
       'No reemplaza leer la ley: las misiones citan el documento y le dicen dónde bajarlo, gratis.',
     ],
     aula: 'Lo que gana aquí es autoridad. Un maestro que puede citar el artículo, enseñar el dato y ' +
-          'presentar el papel no discute de memoria en una reunión: llega con con qué sostenerlo.',
+          'presentar el papel no discute de memoria en una reunión: llega con algo que lo sostiene.',
   },
   {
     ic: '🔗', corto: 'Lo que nadie más le da: las flechas',
@@ -345,7 +344,7 @@ const PARADAS = [
       'Entre a su cuenta también desde la computadora y compruebe que ve exactamente lo mismo.',
     ],
     nohacer: [
-      'No escriba dos listas: una en Mi aula y otra en un cuaderno aparte. La que se parte, se pierde.',
+      'No escriba dos listas: una en Mi aula y otra en un cuaderno aparte. La que se parte se pierde.',
       'No cambie el código de aula a mitad de año sin avisar al grado.',
       'Un nombre mal escrito al inicio se arrastra a la boleta, al recibo y a la clave. Se corrige el primer día.',
       'No dicte el código de aula fuera de su grado: no es un secreto, pero es su aula.',
@@ -379,7 +378,7 @@ const PARADAS = [
       'No reparta claves sin explicar qué se ve con ellas. Una clave sin explicación se vuelve un reclamo.',
       'No lo anuncie como «la aplicación de la escuela» ante los padres si el centro no lo decidió así.',
     ],
-    aula: 'Al viernes de esa semana ya tiene tres cosas que antes no tenía: quién trabajó y cuánto, ' +
+    aula: 'Para el viernes de esa semana ya tiene tres cosas que antes no tenía: quién trabajó y cuánto, ' +
           'una nota con su análisis, y una vía para que la casa lo sepa sin llamarlo a usted.',
   },
 ];
@@ -440,10 +439,10 @@ const FC = [
   ['¿Qué necesita el alumno para que su trabajo le llegue al maestro?', 'El código de aula: cinco letras que el maestro dicta una vez. No necesita cuenta ni contraseña.'],
   ['¿Cómo entra la familia al asistente?', 'Con su clave de familia (el número de lista más cuatro caracteres). Sin cuenta, sin correo y sin instalar nada.'],
   ['¿Qué ve la familia con su clave?', 'Las notas, la boleta del parcial, las faltas, la conducta, los avisos del maestro y las colaboraciones de su hijo o hija. De ningún otro alumno.'],
-  ['¿Qué pasa si el alumno se queda sin señal a mitad de una misión?', 'Sigue trabajando: la misión ya está en el teléfono, y los resultados se envían solos cuando aparece señal. Para Programación y Robótica basta con cartón, cinta y tijeras: están diseñadas desconectado primero.'],
+  ['¿Qué pasa si el alumno se queda sin señal a mitad de una misión?', 'Sigue trabajando: la misión ya está en el teléfono, y los resultados se envían solos cuando aparece señal. Para Programación y Robótica basta con cartón, cinta y tijeras: están diseñadas «desconectado primero».'],
   ['¿Por qué existe el botón «Actualizar» y cuándo se usa?', 'Porque la plataforma cambia seguido y el teléfono guarda la versión vieja para poder trabajar sin señal. Ese botón trae lo último y lo deja a usted donde estaba. Úselo si un colega le habla de algo que usted no ve.'],
   ['¿M.E.T.A.S sustituye a SACE?', 'No. SACE es el registro oficial del Estado y no tiene sustituto. M.E.T.A.S es el trabajo diario con el que esa nota se gana, se sustenta y se explica.'],
-  ['¿De quién es la frase de la portada y qué dice?', 'De José Cecilio del Valle: «América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América.»'],
+  ['¿De quién es la frase de la portada y qué dice?', 'De José Cecilio del Valle: «América de día cuando escriba. América de noche cuando piense. El estudio más digno de un americano es América».'],
 ];
 let _fc = 0;
 function fcPinta() {
@@ -894,7 +893,7 @@ const DG = [
         'El índice de guías de policastsapien.com, para leer, imprimir y repartir', 'No existen todavía'], c: 2 },
   { b: 4, q: 'Para dar clase de Programación y Robótica hace falta:',
     o: ['Un laboratorio con computadoras', 'Un kit de robótica por equipo',
-        'Comprar tarjetas programables', 'Cartón, cinta, tijeras y lo que ya tiene: están diseñadas desconectado primero'], c: 3 },
+        'Comprar tarjetas programables', 'Cartón, cinta, tijeras y lo que ya tiene: están diseñadas «desconectado primero»'], c: 3 },
 
   { b: 0, q: 'Para el aula sin dispositivos, cada misión trae además:',
     o: ['Una ficha didáctica imprimible con su código QR', 'Un video para descargar',

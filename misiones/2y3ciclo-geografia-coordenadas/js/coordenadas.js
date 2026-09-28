@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Geografía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Geografía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -188,19 +188,19 @@ function go(id){
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Latitud',a:'📐 Distancia angular medida desde el <strong>Ecuador</strong> hacia los polos. Se expresa en grados (°) Norte o Sur. Va de 0° (Ecuador) a 90° (Polos).'},
-  {w:'Longitud',a:'🧭 Distancia angular medida desde el <strong>Meridiano de Greenwich</strong> hacia el Este u Oeste. Va de 0° a 180°.'},
-  {w:'Paralelo',a:'🌐 Línea imaginaria que rodea la Tierra de forma <strong>horizontal</strong>, paralela al Ecuador. Indica la latitud de un lugar.'},
+  {w:'Latitud',a:'📐 Distancia angular medida desde el <strong>ecuador</strong> hacia los polos. Se expresa en grados (°) Norte o Sur. Va de 0° (Ecuador) a 90° (Polos).'},
+  {w:'Longitud',a:'🧭 Distancia angular medida desde el <strong>meridiano de Greenwich</strong> hacia el este u oeste. Va de 0° a 180°.'},
+  {w:'Paralelo',a:'🌐 Línea imaginaria que rodea la Tierra de forma <strong>horizontal</strong>, paralela al ecuador. Indica la latitud de un lugar.'},
   {w:'Meridiano',a:'🗺️ Línea imaginaria que va de <strong>polo a polo</strong> en sentido vertical. Indica la longitud de un lugar.'},
-  {w:'Ecuador',a:'🌍 Paralelo principal ubicado a <strong>0° de latitud</strong>. Divide la Tierra en Hemisferio Norte y Hemisferio Sur.'},
-  {w:'Meridiano de Greenwich',a:'🏴 Meridiano principal ubicado a <strong>0° de longitud</strong>. Divide la Tierra en Hemisferio Oriental y Occidental. Pasa por el Reino Unido.'},
+  {w:'Ecuador',a:'🌍 Paralelo principal ubicado a <strong>0° de latitud</strong>. Divide la Tierra en hemisferio norte y hemisferio sur.'},
+  {w:'Meridiano de Greenwich',a:'🏴 Meridiano principal ubicado a <strong>0° de longitud</strong>. Divide la Tierra en hemisferio oriental y Occidental. Pasa por el Reino Unido.'},
   {w:'Coordenadas Geográficas',a:'📍 Sistema formado por <strong>latitud y longitud</strong> que permite ubicar cualquier punto exacto sobre la superficie terrestre.'},
   {w:'Trópico de Cáncer',a:'☀️ Paralelo ubicado a <strong>23° 26\' Norte</strong>. Es el límite norte de la zona tropical. El Sol cae perpendicularmente aquí en el solsticio de junio.'},
   {w:'Trópico de Capricornio',a:'🌞 Paralelo ubicado a <strong>23° 26\' Sur</strong>. Es el límite sur de la zona tropical. El Sol cae perpendicularmente aquí en el solsticio de diciembre.'},
-  {w:'Círculo Polar Ártico',a:'🧊 Paralelo ubicado a <strong>66° 34\' Norte</strong>. Marca el límite de la zona polar norte, donde ocurre el sol de medianoche.'},
-  {w:'Círculo Polar Antártico',a:'🐧 Paralelo ubicado a <strong>66° 34\' Sur</strong>. Marca el límite de la zona polar sur y la región antártica.'},
-  {w:'Hemisferio',a:'🌏 Cada una de las <strong>dos mitades</strong> en que se divide la Tierra. Puede ser Norte/Sur (según el Ecuador) u Oriental/Occidental (según Greenwich).'},
-  {w:'Zona Tórrida',a:'🔥 Zona climática comprendida entre los <strong>Trópicos de Cáncer y Capricornio</strong>. Es la más cálida de la Tierra. Honduras está en esta zona.'},
+  {w:'Círculo polar ártico',a:'🧊 Paralelo ubicado a <strong>66° 34\' Norte</strong>. Marca el límite de la zona polar norte, donde ocurre el sol de medianoche.'},
+  {w:'Círculo polar antártico',a:'🐧 Paralelo ubicado a <strong>66° 34\' Sur</strong>. Marca el límite de la zona polar sur y la región antártica.'},
+  {w:'Hemisferio',a:'🌏 Cada una de las <strong>dos mitades</strong> en que se divide la Tierra. Puede ser norte/sur (según el ecuador) u oriental/occidental (según Greenwich).'},
+  {w:'Zona tórrida',a:'🔥 Zona climática comprendida entre los <strong>trópicos de Cáncer y Capricornio</strong>. Es la más cálida de la Tierra. Honduras está en esta zona.'},
   {w:'Huso Horario',a:'🕐 Cada una de las <strong>24 franjas verticales</strong> en que se divide la Tierra para organizar la hora. Cada huso equivale a 15° de longitud.'},
   {w:'Antípoda',a:'🌐 Punto de la Tierra <strong>diametralmente opuesto</strong> a otro. Sus coordenadas son la misma latitud pero con signo contrario, y la longitud ± 180°.'},
 ];
@@ -222,18 +222,18 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'¿Qué mide la latitud?',o:['a) La distancia de este a oeste','b) El tiempo en cada zona horaria','c) La distancia angular desde el Ecuador hacia los polos','d) La altura sobre el nivel del mar'],c:2},
-  {q:'¿A cuántos grados de latitud se encuentra el Ecuador?',o:['a) 0°','b) 90°','c) 45°','d) 23°'],c:0},
-  {q:'¿Qué línea imaginaria divide la Tierra en Hemisferio Norte y Hemisferio Sur?',o:['a) El Ecuador','b) Meridiano de Greenwich','c) Trópico de Cáncer','d) Círculo Polar Ártico'],c:0},
-  {q:'¿Cuál es la latitud del Trópico de Capricornio?',o:['a) 23° 26\' Norte','b) 66° 34\' Sur','c) 23° 26\' Sur','d) 0° Sur'],c:2},
-  {q:'¿Qué es el Meridiano de Greenwich?',o:['a) El paralelo de 0° latitud','b) La línea que separa el Ártico','c) Un paralelo de 90°','d) El meridiano de 0° longitud que pasa por el Reino Unido'],c:3},
+  {q:'¿Qué mide la latitud?',o:['a) La distancia de este a oeste','b) El tiempo en cada zona horaria','c) La distancia angular desde el ecuador hacia los polos','d) La altura sobre el nivel del mar'],c:2},
+  {q:'¿A cuántos grados de latitud se encuentra el ecuador?',o:['a) 0°','b) 90°','c) 45°','d) 23°'],c:0},
+  {q:'¿Qué línea imaginaria divide la Tierra en hemisferio norte y hemisferio sur?',o:['a) El Ecuador','b) Meridiano de Greenwich','c) Trópico de Cáncer','d) Círculo polar ártico'],c:0},
+  {q:'¿Cuál es la latitud del trópico de Capricornio?',o:['a) 23° 26\' Norte','b) 66° 34\' Sur','c) 23° 26\' Sur','d) 0° Sur'],c:2},
+  {q:'¿Qué es el meridiano de Greenwich?',o:['a) El paralelo de 0° latitud','b) La línea que separa el Ártico','c) Un paralelo de 90°','d) El meridiano de 0° longitud que pasa por el Reino Unido'],c:3},
   {q:'¿Para qué sirven las coordenadas geográficas?',o:['a) Para medir la temperatura','b) Para ubicar cualquier punto exacto en la Tierra','c) Para calcular la altitud','d) Para predecir el clima'],c:1},
   {q:'¿En cuántas franjas (husos horarios) se divide la Tierra?',o:['a) 12','b) 24','c) 36','d) 48'],c:1},
-  {q:'Honduras se encuentra en la zona climática llamada:',o:['a) Zona Polar','b) Zona Templada Norte','c) Zona Tórrida','d) Zona Templada Sur'],c:2},
+  {q:'Honduras se encuentra en la zona climática llamada:',o:['a) Zona polar','b) Zona templada norte','c) Zona tórrida','d) Zona templada sur'],c:2},
   {q:'¿Cuál de estos es un paralelo importante de la Tierra?',o:['a) Meridiano de Greenwich','b) Primer Meridiano','c) Meridiano 90°','d) Trópico de Cáncer'],c:3},
-  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El Polo Norte','c) El Trópico de Capricornio','d) El Meridiano de Greenwich'],c:3},
-  {q:'¿Qué ocurre en el Círculo Polar Ártico durante el solsticio de verano?',o:['a) El Sol no se pone (sol de medianoche)','b) El Sol nunca sale','c) Hay 24 horas de noche','d) El Sol cae perpendicularmente'],c:0},
-  {q:'Un punto con coordenadas 15°N, 87°W se encuentra al:',o:['a) Sur del Ecuador y al este de Greenwich','b) Norte del Ecuador y al oeste de Greenwich','c) Sur del Ecuador y al oeste de Greenwich','d) Norte del Ecuador y al este de Greenwich'],c:1},
+  {q:'La longitud se mide desde:',o:['a) El Ecuador','b) El polo norte','c) El trópico de Capricornio','d) El meridiano de Greenwich'],c:3},
+  {q:'¿Qué ocurre en el círculo polar ártico durante el solsticio de verano?',o:['a) El Sol no se pone (sol de medianoche)','b) El Sol nunca sale','c) Hay 24 horas de noche','d) El Sol cae perpendicularmente'],c:0},
+  {q:'Un punto con coordenadas 15°N, 87°W se encuentra al:',o:['a) Sur del ecuador y al este de Greenwich','b) Norte del ecuador y al oeste de Greenwich','c) Sur del ecuador y al oeste de Greenwich','d) Norte del ecuador y al este de Greenwich'],c:1},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -291,22 +291,22 @@ const classGroups = [
     words:[
       {w:'Ecuador',t:'paralelo'},{w:'Greenwich',t:'meridiano'},{w:'Trópico de Cáncer',t:'paralelo'},
       {w:'Longitud 0°',t:'meridiano'},{w:'Latitud 0°',t:'paralelo'},{w:'Dirección E-O',t:'paralelo'},
-      {w:'Dirección N-S',t:'meridiano'},{w:'Círculo Polar',t:'paralelo'},{w:'Polo a polo',t:'meridiano'},
+      {w:'Dirección N-S',t:'meridiano'},{w:'Círculo polar',t:'paralelo'},{w:'Polo a polo',t:'meridiano'},
       {w:'Trópico Capricornio',t:'paralelo'}
     ]
   },
   {
-    label:['Hemisferio Norte','Hemisferio Sur'], headA:'🌍 H. Norte', headB:'🌎 H. Sur', colA:'norte', colB:'sur',
+    label:['Hemisferio norte','Hemisferio sur'], headA:'🌍 H. norte', headB:'🌎 H. sur', colA:'norte', colB:'sur',
     words:[
       {w:'Europa',t:'norte'},{w:'Antártida',t:'sur'},{w:'Trópico de Cáncer',t:'norte'},
-      {w:'Trópico de Capricornio',t:'sur'},{w:'Círculo Polar Ártico',t:'norte'},{w:'Círculo Polar Antártico',t:'sur'},
+      {w:'Trópico de Capricornio',t:'sur'},{w:'Círculo polar ártico',t:'norte'},{w:'Círculo polar antártico',t:'sur'},
       {w:'Honduras',t:'norte'},{w:'Argentina',t:'sur'},{w:'Canadá',t:'norte'},{w:'Australia',t:'sur'}
     ]
   },
   {
-    label:['Zona Tórrida','Zona Polar'], headA:'🔥 Tórrida', headB:'🧊 Polar', colA:'torrida', colB:'polar',
+    label:['Zona tórrida','Zona polar'], headA:'🔥 Tórrida', headB:'🧊 Polar', colA:'torrida', colB:'polar',
     words:[
-      {w:'Ecuador',t:'torrida'},{w:'Polo Norte',t:'polar'},{w:'Honduras',t:'torrida'},
+      {w:'Ecuador',t:'torrida'},{w:'Polo norte',t:'polar'},{w:'Honduras',t:'torrida'},
       {w:'Antártida',t:'polar'},{w:'Entre los trópicos',t:'torrida'},{w:'Más calurosa',t:'torrida'},
       {w:'Hielos perpetuos',t:'polar'},{w:'Selva amazónica',t:'torrida'},{w:'Ártico',t:'polar'},
       {w:'México',t:'torrida'}
@@ -373,7 +373,7 @@ function nextClassGroup(){
   sfx('click');
   currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;
   buildClass(); document.getElementById('fbCls').classList.remove('show');
-  showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);
+  showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
@@ -426,13 +426,13 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 
 // ===================== COMPLETA =====================
 const cmpData=[
-  {s:'El ___ divide la Tierra en Hemisferio Norte y Hemisferio Sur.',opts:['Greenwich','Ecuador','Ártico'],c:1},
-  {s:'La latitud se mide desde el Ecuador hacia los ___ .',opts:['meridianos','polos','trópicos'],c:1},
-  {s:'El Meridiano de Greenwich tiene ___ grados de longitud.',opts:['90°','45°','0°'],c:2},
-  {s:'Honduras está ubicada en el Hemisferio ___ .',opts:['Norte','Sur','Oriental'],c:0},
+  {s:'El ___ divide la Tierra en hemisferio norte y hemisferio sur.',opts:['Greenwich','Ecuador','Ártico'],c:1},
+  {s:'La latitud se mide desde el ecuador hacia los ___ .',opts:['meridianos','polos','trópicos'],c:1},
+  {s:'El meridiano de Greenwich tiene ___ grados de longitud.',opts:['90°','45°','0°'],c:2},
+  {s:'Honduras está ubicada en el hemisferio ___ .',opts:['norte','sur','oriental'],c:0},
   {s:'La zona entre los trópicos se llama zona ___ .',opts:['tórrida','polar','templada'],c:0},
   {s:'Los husos horarios se organizan según la ___ .',opts:['latitud','longitud','altitud'],c:1},
-  {s:'El Trópico de Cáncer está a 23° 26\' al ___ del Ecuador.',opts:['Norte','Sur','Este'],c:0},
+  {s:'El trópico de Cáncer está a 23° 26\' al ___ del ecuador.',opts:['norte','sur','este'],c:0},
   {s:'Para localizar un punto exacto necesitas la latitud y la ___ .',opts:['altitud','temperatura','longitud'],c:2},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -482,7 +482,7 @@ const retoPairs = [
     words: [
       {w:'Ecuador',t:'paralelo'},{w:'Greenwich',t:'meridiano'},{w:'Trópico de Cáncer',t:'paralelo'},
       {w:'Longitud 0°',t:'meridiano'},{w:'Latitud 0°',t:'paralelo'},{w:'Va de E a O',t:'paralelo'},
-      {w:'Va de N a S',t:'meridiano'},{w:'Círculo Polar',t:'paralelo'},{w:'Huso horario',t:'meridiano'},
+      {w:'Va de N a S',t:'meridiano'},{w:'Círculo polar',t:'paralelo'},{w:'Huso horario',t:'meridiano'},
       {w:'Capricornio',t:'paralelo'},{w:'90° longitud',t:'meridiano'},{w:'45° latitud',t:'paralelo'},
     ]
   },
@@ -561,7 +561,7 @@ function nextRetoPair(){
   document.getElementById('retoWord').textContent = '¡Prepárate!';
   document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
   document.getElementById('fbReto').classList.remove('show');
-  showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+  showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto(){
   sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0;
@@ -576,11 +576,11 @@ function resetReto(){
 const identifyTaskDB=[
   {s:'El Ecuador divide la Tierra en dos hemisferios.',type:'Paralelo de referencia (Ecuador)'},
   {s:'La latitud de Tegucigalpa es aproximadamente 14° Norte.',type:'Coordenada de latitud (14° N)'},
-  {s:'El Meridiano de Greenwich fue establecido en 1884.',type:'Meridiano de referencia (0° longitud)'},
-  {s:'Los Trópicos delimitan la zona tórrida de la Tierra.',type:'Paralelos tropicales (Cáncer y Capricornio)'},
+  {s:'El meridiano de Greenwich fue establecido en 1884.',type:'Meridiano de referencia (0° longitud)'},
+  {s:'Los trópicos delimitan la zona tórrida de la Tierra.',type:'Paralelos tropicales (Cáncer y Capricornio)'},
   {s:'Honduras tiene una longitud de aproximadamente 87° Oeste.',type:'Coordenada de longitud (87° O)'},
   {s:'Los husos horarios se calculan cada 15 grados de longitud.',type:'Sistema de husos horarios'},
-  {s:'El Círculo Polar Ártico marca el límite de la zona fría norte.',type:'Paralelo polar (66° 34\' N)'},
+  {s:'El Círculo polar ártico marca el límite de la zona fría norte.',type:'Paralelo polar (66° 34\' N)'},
   {s:'La zona tórrida es la región más cálida del planeta.',type:'Zona climática tórrida'},
   {s:'Las coordenadas de un punto se expresan con latitud y longitud.',type:'Sistema de coordenadas geográficas'},
   {s:'Los meridianos van de polo a polo dividiendo la longitud.',type:'Líneas de longitud (meridianos)'},
@@ -588,27 +588,27 @@ const identifyTaskDB=[
 const classifyTaskDB=[
   {w:'Ecuador',gen:'Paralelo',n:'0°',g:'Latitud',t:'Referencia N-S'},
   {w:'Greenwich',gen:'Meridiano',n:'0°',g:'Longitud',t:'Referencia E-O'},
-  {w:'Trópico Cáncer',gen:'Paralelo',n:'23° 26\'',g:'Latitud Norte',t:'Límite zona tórrida'},
-  {w:'Trópico Capricornio',gen:'Paralelo',n:'23° 26\'',g:'Latitud Sur',t:'Límite zona tórrida'},
-  {w:'Círculo Polar Ártico',gen:'Paralelo',n:'66° 34\'',g:'Latitud Norte',t:'Límite zona polar'},
-  {w:'Meridiano 90°O',gen:'Meridiano',n:'90°',g:'Longitud Oeste',t:'Referencia horaria'},
+  {w:'Trópico Cáncer',gen:'Paralelo',n:'23° 26\'',g:'Latitud norte',t:'Límite zona tórrida'},
+  {w:'Trópico Capricornio',gen:'Paralelo',n:'23° 26\'',g:'Latitud sur',t:'Límite zona tórrida'},
+  {w:'Círculo polar ártico',gen:'Paralelo',n:'66° 34\'',g:'Latitud norte',t:'Límite zona polar'},
+  {w:'Meridiano 90°O',gen:'Meridiano',n:'90°',g:'Longitud oeste',t:'Referencia horaria'},
   {w:'Latitud 15° N',gen:'Coordenada',n:'15°',g:'Norte Ecuador',t:'Honduras aprox.'},
   {w:'Antípoda',gen:'Punto',n:'±180°',g:'Longitud opuesta',t:'Punto opuesto'},
 ];
 const completeTaskDB=[
-  {s:'La ___ se mide desde el Ecuador hacia los polos.',opts:['longitud','latitud','altitud'],ans:'latitud'},
-  {s:'El Meridiano de Greenwich tiene ___ grados de longitud.',opts:['90°','180°','0°'],ans:'0°'},
-  {s:'Entre los Trópicos se encuentra la zona ___ .',opts:['polar','templada','tórrida'],ans:'tórrida'},
-  {s:'Honduras está en el Hemisferio ___ del Ecuador.',opts:['Sur','Norte','Oriental'],ans:'Norte'},
+  {s:'La ___ se mide desde el ecuador hacia los polos.',opts:['longitud','latitud','altitud'],ans:'latitud'},
+  {s:'El meridiano de Greenwich tiene ___ grados de longitud.',opts:['90°','180°','0°'],ans:'0°'},
+  {s:'Entre los trópicos se encuentra la zona ___ .',opts:['polar','templada','tórrida'],ans:'tórrida'},
+  {s:'Honduras está en el hemisferio ___ del ecuador.',opts:['sur','norte','oriental'],ans:'norte'},
   {s:'Las coordenadas geográficas combinan latitud y ___ .',opts:['altitud','temperatura','longitud'],ans:'longitud'},
   {s:'Cada huso horario equivale a ___ grados de longitud.',opts:['10°','15°','30°'],ans:'15°'},
-  {s:'El Trópico de Cáncer está en el Hemisferio ___ .',opts:['Sur','Este','Norte'],ans:'Norte'},
+  {s:'El trópico de Cáncer está en el hemisferio ___ .',opts:['sur','este','norte'],ans:'norte'},
   {s:'Los meridianos van de ___ a polo.',opts:['mar','ecuador','polo'],ans:'polo'},
 ];
 const explainQuestions=[
-  {q:'¿Qué son las coordenadas geográficas y para qué sirven? Da un ejemplo.',ans:'Son el sistema de latitud y longitud que permiten ubicar cualquier punto en la Tierra. Ej: Tegucigalpa ≈ 14°N, 87°O.'},
+  {q:'¿Qué son las coordenadas geográficas y para qué sirven? Da un ejemplo.',ans:'Son el sistema de latitud y longitud que permiten ubicar cualquier punto en la Tierra. Ej.: Tegucigalpa ≈ 14°N, 87°O.'},
   {q:'¿Cuál es la diferencia entre un paralelo y un meridiano?',ans:'Los paralelos son líneas horizontales que miden latitud (Norte/Sur). Los meridianos son líneas verticales que miden longitud (Este/Oeste).'},
-  {q:'¿Por qué es importante el Meridiano de Greenwich?',ans:'Porque es el punto de referencia (0° longitud) desde el cual se mide la longitud de todos los lugares del mundo y se organizan los husos horarios.'},
+  {q:'¿Por qué es importante el meridiano de Greenwich?',ans:'Porque es el punto de referencia (0° longitud) desde el cual se mide la longitud de todos los lugares del mundo y se organizan los husos horarios.'},
   {q:'Explica las tres zonas climáticas según los paralelos.',ans:'Zona tórrida (entre trópicos, la más caliente), zonas templadas (entre trópicos y círculos polares) y zonas polares (más allá de los círculos polares, las más frías).'},
   {q:'¿Qué son los husos horarios y cómo se calculan?',ans:'Son 24 franjas verticales en que se divide la Tierra para organizar la hora. Cada una corresponde a 15° de longitud (360° ÷ 24 horas = 15°).'},
 ];
@@ -904,8 +904,8 @@ const evalPRBank=[
   {term:'Greenwich',def:'Parte la Tierra en este y oeste',k:'pr-greenwich'},
   {term:'Trópico de Cáncer',def:'El trópico del norte',k:'pr-cancer'},
   {term:'Trópico de Capricornio',def:'El trópico del sur',k:'pr-capricornio'},
-  {term:'Círculo Polar Ártico',def:'Rodea el polo de arriba',k:'pr-artico'},
-  {term:'Círculo Polar Antártico',def:'Rodea el polo de abajo',k:'pr-antartico'},
+  {term:'Círculo polar ártico',def:'Rodea el polo de arriba',k:'pr-artico'},
+  {term:'Círculo polar antártico',def:'Rodea el polo de abajo',k:'pr-antartico'},
   {term:'Zona tórrida',def:'Entre los dos trópicos, la más caliente',k:'pr-torrida'},
   {term:'Zona polar',def:'Dentro de los círculos polares, la más fría',k:'pr-polar'},
   {term:'Zona templada',def:'Entre un trópico y un círculo polar',k:'pr-templada'},
@@ -955,11 +955,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Coordenadas Geográficas`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Coordenadas Geográficas`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
     out.appendChild(bar);
 
     // I. Completar (1-5)
@@ -1001,7 +1001,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { const selHtml = '<select class="eval-pr-sel" data-epr="' + i + '" aria-label="Letra para ' + item.term + '"><option value="">—</option>' + letters.map(L => '<option value="' + L + '">' + L + '</option>').join('') + '</select>'; colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> ${selHtml} ${item.term}</div>`; });
+    prItems.forEach((item, i) => { const selHtml = '<select class="eval-pr-sel" data-epr="' + i + '" aria-label="Letra para ' + item.term + '"><option value="">?</option>' + letters.map(L => '<option value="' + L + '">' + L + '</option>').join('') + '</select>'; colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> ${selHtml} ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1086,24 +1086,24 @@ const critZonaOpts = ['Tórrida', 'Templada', 'Polar'];
 // ── IV. Problemas del explorador hondureño (casos contextualizados; abiertos,
 // con respuesta modelo + rúbrica). Derivados del dato clave HN 15°N 87°O.
 const critExpBank = [
-    { case: 'Un barco pesquero hondureño reporta por radio su posición: 15°N, 87°O, y pide auxilio porque se le acabó el combustible cerca de La Ceiba. La estación de guardacostas debe ubicarlo en el mapa para el rescate.', ask: 'Explica en qué hemisferios está el barco (N/S y E/O) y por qué esas coordenadas lo sitúan en el Caribe hondureño, no en otro océano.', model: '15°N indica Hemisferio Norte (al norte del Ecuador) y 87°O indica Hemisferio Occidental (al oeste de Greenwich). Esa combinación cae en el mar Caribe frente a la costa norte de Honduras (La Ceiba está a unos 15°N, 87°O). El guardacostas traza el paralelo 15°N y el meridiano 87°O y su cruce marca el punto exacto del rescate.', crit: ['Identifica ambos hemisferios (N y O) — 5 pts', 'Justifica la ubicación cruzando paralelo y meridiano — 5 pts'] },
-    { case: 'Un avión despega del aeropuerto Toncontín (Tegucigalpa, ≈14°N) con rumbo al sur y su GPS marca que va a cruzar el Ecuador (0°) hacia Sudamérica.', ask: 'Describe qué cambia en la latitud al cruzar el Ecuador y a qué hemisferio pasa el avión. ¿Cambia de zona climática?', model: 'Antes del Ecuador el avión vuela en el Hemisferio Norte con latitud N; al cruzar los 0° pasa al Hemisferio Sur y su latitud empieza a contarse en grados S. Como sale de la zona tórrida hondureña y se mantiene entre los trópicos por un tiempo, sigue en zona tórrida hasta pasar los 23°26\'S. El Ecuador es la línea de 0° que separa ambos hemisferios.', crit: ['Explica el cambio de hemisferio N→S al cruzar el Ecuador — 5 pts', 'Relaciona la latitud con la zona climática (trópicos) — 5 pts'] },
-    { case: 'Un excursionista pierde el sendero en las montañas de Olancho. Su GPS le da la posición 14°N, 86°O y una brújula. Debe caminar hacia el pueblo más cercano, que está al oeste de su posición.', ask: 'Explica cómo usa la latitud y la longitud para saber dónde está y hacia qué dirección (aumentar o disminuir la longitud) debe caminar para ir al oeste.', model: 'La latitud 14°N le dice cuán al norte del Ecuador está y la longitud 86°O cuán al oeste de Greenwich. Para ir hacia el oeste debe moverse hacia longitudes mayores en grados O (de 86°O hacia 87°O, 88°O…), alejándose de Greenwich; su latitud casi no cambia si camina en línea recta al oeste. Con ambas coordenadas ubica su punto y con la brújula mantiene el rumbo oeste.', crit: ['Interpreta latitud y longitud de su posición — 5 pts', 'Deduce que ir al oeste aumenta los grados O de longitud — 5 pts'] },
-    { case: 'Una lancha de investigación marca en su bitácora que pasó del punto 16°N, 87°O al punto 16°N, 88°O en una hora de navegación.', ask: 'Explica en qué dirección (E, O, N o S) navegó la lancha y por qué la latitud no cambió, solo la longitud.', model: 'La latitud se mantuvo en 16°N, así que no subió ni bajó respecto al Ecuador; solo cambió la longitud de 87°O a 88°O, es decir, se alejó más de Greenwich hacia el Oeste. Por lo tanto navegó hacia el Oeste siguiendo el mismo paralelo 16°N. Cambiar solo la longitud significa moverse a lo largo de un paralelo (dirección E-O).', crit: ['Determina que navegó hacia el Oeste — 5 pts', 'Explica que moverse por un paralelo cambia solo la longitud — 5 pts'] }
+    { case: 'Un barco pesquero hondureño reporta por radio su posición: 16°N, 87°O, y pide auxilio porque se le acabó el combustible cerca de La Ceiba. La estación de guardacostas debe ubicarlo en el mapa para el rescate.', ask: 'Explica en qué hemisferios está el barco (N/S y E/O) y por qué esas coordenadas lo sitúan en el Caribe hondureño, no en otro océano.', model: '16°N indica hemisferio norte (al norte del ecuador) y 87°O indica hemisferio occidental (al oeste de Greenwich). Esa combinación cae en el mar Caribe frente a la costa norte de Honduras (La Ceiba está a unos 16°N, 87°O, redondeando). El guardacostas traza el paralelo 16°N y el meridiano 87°O y su cruce marca el punto exacto del rescate.', crit: ['Identifica ambos hemisferios (N y O) (5 pts)', 'Justifica la ubicación cruzando paralelo y meridiano (5 pts)'] },
+    { case: 'Un avión despega del aeropuerto Toncontín (Tegucigalpa, ≈14°N) con rumbo al sur y su GPS marca que va a cruzar el ecuador (0°) hacia Sudamérica.', ask: 'Describe qué cambia en la latitud al cruzar el ecuador y a qué hemisferio pasa el avión. ¿Cambia de zona climática?', model: 'Antes del ecuador el avión vuela en el hemisferio norte con latitud N; al cruzar los 0° pasa al hemisferio sur y su latitud empieza a contarse en grados S. Como sale de la zona tórrida hondureña y se mantiene entre los trópicos por un tiempo, sigue en zona tórrida hasta pasar los 23°26\'S. El Ecuador es la línea de 0° que separa ambos hemisferios.', crit: ['Explica el cambio de hemisferio N→S al cruzar el ecuador (5 pts)', 'Relaciona la latitud con la zona climática (trópicos) (5 pts)'] },
+    { case: 'Un excursionista pierde el sendero en las montañas de Olancho. Tiene una brújula y un GPS que le da la posición 14°N, 86°O. Debe caminar hacia el pueblo más cercano, que está al oeste de su posición.', ask: 'Explica cómo usa la latitud y la longitud para saber dónde está y hacia qué dirección (aumentar o disminuir la longitud) debe caminar para ir al oeste.', model: 'La latitud 14°N le dice cuán al norte del ecuador está y la longitud 86°O cuán al oeste de Greenwich. Para ir hacia el oeste debe moverse hacia longitudes mayores en grados O (de 86°O hacia 87°O, 88°O…), alejándose de Greenwich; su latitud casi no cambia si camina en línea recta al oeste. Con ambas coordenadas ubica su punto y con la brújula mantiene el rumbo oeste.', crit: ['Interpreta latitud y longitud de su posición (5 pts)', 'Deduce que ir al oeste aumenta los grados O de longitud (5 pts)'] },
+    { case: 'Una lancha de investigación marca en su bitácora que pasó del punto 16°N, 87°O al punto 16°N, 88°O en una hora de navegación.', ask: 'Explica en qué dirección (E, O, N o S) navegó la lancha y por qué la latitud no cambió, solo la longitud.', model: 'La latitud se mantuvo en 16°N, así que no subió ni bajó respecto al ecuador; solo cambió la longitud de 87°O a 88°O, es decir, se alejó más de Greenwich hacia el oeste. Por lo tanto, navegó hacia el oeste siguiendo el mismo paralelo 16°N. Cambiar solo la longitud significa moverse a lo largo de un paralelo (dirección E-O).', crit: ['Determina que navegó hacia el oeste (5 pts)', 'Explica que moverse por un paralelo cambia solo la longitud (5 pts)'] }
 ];
 
 // ── V.a Detective del error — afirmaciones falsas calcadas de los distractores
 // de los bancos V/F y de Selección Múltiple de la misión (autocalificable por
 // palabra clave, con corrección modelo en la pauta).
 const critErrBank = [
-    { bad: 'El Trópico de Cáncer es un meridiano porque va de polo a polo.', key: 'paralelo', fix: 'El Trópico de Cáncer es un paralelo (línea horizontal que mide latitud); los meridianos son los que van de polo a polo.' },
-    { bad: 'El Meridiano de Greenwich se encuentra a 90° de longitud.', key: '0', fix: 'El Meridiano de Greenwich está a 0° de longitud; es la referencia desde donde se mide la longitud.' },
+    { bad: 'El trópico de Cáncer es un meridiano porque va de polo a polo.', key: 'paralelo', fix: 'El trópico de Cáncer es un paralelo (línea horizontal que mide latitud); los meridianos son los que van de polo a polo.' },
+    { bad: 'El meridiano de Greenwich se encuentra a 90° de longitud.', key: '0', fix: 'El meridiano de Greenwich está a 0° de longitud; es la referencia desde donde se mide la longitud.' },
     { bad: 'Los paralelos van de polo a polo dividiendo la longitud.', key: 'meridianos', fix: 'Los meridianos van de polo a polo; los paralelos son horizontales y miden la latitud.' },
     { bad: 'La zona polar es la región más cálida de la Tierra.', key: 'torrida', fix: 'La zona tórrida (entre los trópicos) es la más cálida; la zona polar es la más fría.' },
-    { bad: 'El Círculo Polar Ártico está a 23° de latitud Norte.', key: '66', fix: "El Círculo Polar Ártico está a 66° 34' de latitud Norte; a 23° 26' N está el Trópico de Cáncer." },
-    { bad: 'Honduras se encuentra en el Hemisferio Sur del Ecuador.', key: 'norte', fix: 'Honduras (15°N) está en el Hemisferio Norte, al norte del Ecuador.' },
+    { bad: 'El círculo polar ártico está a 23° de latitud norte.', key: '66', fix: "El círculo polar ártico está a 66° 34' de latitud norte; a 23° 26' N está el trópico de Cáncer." },
+    { bad: 'Honduras se encuentra en el hemisferio sur del ecuador.', key: 'norte', fix: 'Honduras (15°N) está en el hemisferio norte, al norte del ecuador.' },
     { bad: 'Cada huso horario equivale a 24° de longitud.', key: '15', fix: 'Cada huso horario equivale a 15° de longitud (360° ÷ 24 h = 15°).' },
-    { bad: 'El Trópico de Capricornio está al Norte del Ecuador.', key: 'sur', fix: "El Trópico de Capricornio está a 23° 26' al Sur del Ecuador." }
+    { bad: 'El trópico de Capricornio está al norte del ecuador.', key: 'sur', fix: "El trópico de Capricornio está a 23° 26' al sur del ecuador." }
 ];
 
 // ── V.b Antípodas — regla de la flashcard «Antípoda»: misma latitud con signo
@@ -1161,8 +1161,8 @@ function _critPlanisSVG(pts) {
 <text x="6" y="137" font-size="7" fill="#e67e22" font-weight="600">Tr. Capricornio 23°S</text>
 <line x1="4" y1="90" x2="276" y2="90" stroke="#e74c3c" stroke-width="2.2"/>
 <text x="6" y="88" font-size="7.5" fill="#e74c3c" font-weight="bold">Ecuador 0°</text>
-<text x="265" y="60" font-size="7.5" fill="#2c3e50" text-anchor="end" opacity="0.7">H. Norte</text>
-<text x="265" y="120" font-size="7.5" fill="#2c3e50" text-anchor="end" opacity="0.7">H. Sur</text>
+<text x="265" y="60" font-size="7.5" fill="#2c3e50" text-anchor="end" opacity="0.7">H. norte</text>
+<text x="265" y="120" font-size="7.5" fill="#2c3e50" text-anchor="end" opacity="0.7">H. sur</text>
 ${markers}
 </svg>`;
 }
@@ -1183,7 +1183,7 @@ function genEvalCrit() {
 
     // Barra de distribución + progresión de dificultad declarada
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: leer el planisferio (I) y ubicarse (II), aplicar la regla horaria (III), resolver casos reales (IV) y detectar errores + calcular antípodas (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Planisferio 20</span><span class="eval-score-pill esp-tf">II. ¿Dónde estoy? 20</span><span class="eval-score-pill esp-mc">III. Husos 20</span><span class="eval-score-pill esp-pr">IV. Explorador 20</span><span class="eval-score-pill esp-cp">V. Error+Antípodas 20</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: leer el planisferio (I) y ubicarse (II), aplicar la regla horaria (III), resolver casos reales (IV) y detectar errores + calcular antípodas (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Planisferio 20</span><span class="eval-score-pill esp-tf">II. ¿Dónde estoy? 20</span><span class="eval-score-pill esp-mc">III. Husos 20</span><span class="eval-score-pill esp-pr">IV. Explorador 20</span><span class="eval-score-pill esp-cp">V. Error+Antípodas 20</span></div>`;
     out.appendChild(bar);
 
     // ── I. Lectura del planisferio (5 puntos × 4 pts = 20)
@@ -1192,9 +1192,9 @@ function genEvalCrit() {
     plItems.forEach((p, i) => {
         plRows += `<div class="crit-coord-row"><span class="crit-coord-lbl">${'ABCDE'[i]}.</span>
 <label>Lat <input class="crit-num-input" type="text" inputmode="numeric" data-pl-lat="${i}" aria-label="Latitud del punto ${'ABCDE'[i]}">°</label>
-<select class="crit-hemi-select" data-pl-lath="${i}" aria-label="Hemisferio N/S del punto ${'ABCDE'[i]}"><option value="">—</option><option value="N">N</option><option value="S">S</option></select>
+<select class="crit-hemi-select" data-pl-lath="${i}" aria-label="Hemisferio N/S del punto ${'ABCDE'[i]}"><option value="">?</option><option value="N">N</option><option value="S">S</option></select>
 <label>Long <input class="crit-num-input" type="text" inputmode="numeric" data-pl-lon="${i}" aria-label="Longitud del punto ${'ABCDE'[i]}">°</label>
-<select class="crit-hemi-select" data-pl-lonh="${i}" aria-label="Hemisferio E/O del punto ${'ABCDE'[i]}"><option value="">—</option><option value="E">E</option><option value="O">O</option></select></div>`;
+<select class="crit-hemi-select" data-pl-lonh="${i}" aria-label="Hemisferio E/O del punto ${'ABCDE'[i]}"><option value="">?</option><option value="E">E</option><option value="O">O</option></select></div>`;
     });
     const plPauta = plItems.map((p, i) => `${'ABCDE'[i]} = ${p.lat}°${p.latH}, ${p.lon}°${p.lonH}`).join(' · ');
     const s1 = document.createElement('div');
@@ -1214,13 +1214,13 @@ function genEvalCrit() {
     let deRows = '';
     deItems.forEach((it, i) => {
         deRows += `<div class="crit-de-item"><div class="crit-scenario"><strong>${i + 1}.</strong> Un punto está en <strong>${it.lat}° ${it.latH}, ${it.lon}° ${it.lonH}</strong>.</div><div class="crit-de-fields">
-<label>Hemisferio N/S: <select class="crit-hemi-select" data-de-ns="${i}" aria-label="Hemisferio N/S del punto ${i + 1}"><option value="">—</option><option value="N">Norte</option><option value="S">Sur</option></select></label>
-<label>Hemisferio E/O: <select class="crit-hemi-select" data-de-eo="${i}" aria-label="Hemisferio E/O del punto ${i + 1}"><option value="">—</option><option value="E">Este</option><option value="O">Oeste</option></select></label>
-<label>Zona climática: <select class="crit-hemi-select" data-de-z="${i}" aria-label="Zona climática del punto ${i + 1}"><option value="">—</option>${critZonaOpts.map(z => `<option value="${z}">${z}</option>`).join('')}</select></label>
+<label>Hemisferio N/S: <select class="crit-hemi-select" data-de-ns="${i}" aria-label="Hemisferio N/S del punto ${i + 1}"><option value="">?</option><option value="N">Norte</option><option value="S">Sur</option></select></label>
+<label>Hemisferio E/O: <select class="crit-hemi-select" data-de-eo="${i}" aria-label="Hemisferio E/O del punto ${i + 1}"><option value="">?</option><option value="E">Este</option><option value="O">Oeste</option></select></label>
+<label>Zona climática: <select class="crit-hemi-select" data-de-z="${i}" aria-label="Zona climática del punto ${i + 1}"><option value="">?</option>${critZonaOpts.map(z => `<option value="${z}">${z}</option>`).join('')}</select></label>
 </div><div class="crit-pauta">Hemisferios: ${_hemNSWord(it.latH)} y ${_hemEOWord(it.lonH)} · Zona ${it.zona} (latitud ${it.lat}°).</div><div class="eval-item-feedback" id="critFbDe${i}" aria-live="polite"></div></div>`;
     });
     const s2 = document.createElement('div');
-    s2.innerHTML = `<div class="eval-section-title">II. ¿Dónde estoy? <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Para cada coordenada, indica el hemisferio Norte/Sur, el hemisferio Este/Oeste y la zona climática. Recuerda: 0°–23°26' tórrida · 23°26'–66°34' templada · más de 66°34' polar.</p>${deRows}</div>`;
+    s2.innerHTML = `<div class="eval-section-title">II. ¿Dónde estoy? <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Para cada coordenada, indica el hemisferio norte/sur, el hemisferio este/oeste y la zona climática. Recuerda: 0°–23°26' tórrida · 23°26'–66°34' templada · más de 66°34' polar.</p>${deRows}</div>`;
     out.appendChild(s2);
 
     // ── III. Relojero de husos horarios (5 × 4 pts = 20)
@@ -1238,7 +1238,7 @@ function genEvalCrit() {
         hzRows += `<div class="crit-hz-item"><div class="crit-scenario"><strong>${i + 1}.</strong> Si en Greenwich (0°) son las <strong>${it.base}:00</strong>, ¿qué hora es a <strong>${it.deg}° ${_hemEOWord(it.hemi)}</strong>?</div><label class="crit-hz-lbl">Hora: <input class="crit-num-input crit-hz-input" type="text" inputmode="numeric" data-hz="${i}" placeholder="ej. ${it.ans} o ${it.ans}:00" aria-label="Hora en el punto ${i + 1}"></label><div class="crit-pauta">${it.deg}° ÷ 15° = ${it.deg / 15} husos hacia el ${_hemEOWord(it.hemi)} → ${it.base}:00 ${it.hemi === 'E' ? '+' : '−'} ${it.deg / 15} h = ${it.ans}:00.</div><div class="eval-item-feedback" id="critFbHz${i}" aria-live="polite"></div></div>`;
     });
     const s3 = document.createElement('div');
-    s3.innerHTML = `<div class="eval-section-title">III. Relojero de husos horarios <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Aplica la regla enseñada: 360° ÷ 24 h = 15° por huso. Al Este se suma la hora; al Oeste se resta. Escribe la hora (formato 7 o 7:00).</p>${hzRows}</div>`;
+    s3.innerHTML = `<div class="eval-section-title">III. Relojero de husos horarios <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Aplica la regla enseñada: 360° ÷ 24 h = 15° por huso. Al este se suma la hora; al oeste se resta. Escribe la hora (formato 7 o 7:00).</p>${hzRows}</div>`;
     out.appendChild(s3);
 
     // ── IV. Problemas del explorador hondureño (2 casos × 10 pts = 20; autoevaluación por casillas)
@@ -1261,9 +1261,9 @@ function genEvalCrit() {
     const anAns = { lat: an.lat, latH: _flipNS(an.latH), lon: 180 - an.lon, lonH: _flipEO(an.lonH) };
     const anBlock = `<div class="crit-q-block"><div class="crit-scenario">🌐 Calcula la <strong>antípoda</strong> del punto <strong>${an.lat}°${an.latH}, ${an.lon}°${an.lonH}</strong> (${an.place}). Regla: misma latitud con signo (hemisferio) contrario, y longitud 180° − la longitud dada, invirtiendo E/O.</div><div class="crit-de-fields">
 <label>Lat antípoda: <input class="crit-num-input" type="text" inputmode="numeric" data-anti-lat aria-label="Latitud de la antípoda">°</label>
-<select class="crit-hemi-select" data-anti-lath aria-label="Hemisferio N/S de la antípoda"><option value="">—</option><option value="N">N</option><option value="S">S</option></select>
+<select class="crit-hemi-select" data-anti-lath aria-label="Hemisferio N/S de la antípoda"><option value="">?</option><option value="N">N</option><option value="S">S</option></select>
 <label>Long antípoda: <input class="crit-num-input" type="text" inputmode="numeric" data-anti-lon aria-label="Longitud de la antípoda">°</label>
-<select class="crit-hemi-select" data-anti-lonh aria-label="Hemisferio E/O de la antípoda"><option value="">—</option><option value="E">E</option><option value="O">O</option></select>
+<select class="crit-hemi-select" data-anti-lonh aria-label="Hemisferio E/O de la antípoda"><option value="">?</option><option value="E">E</option><option value="O">O</option></select>
 </div><div class="crit-pauta">Antípoda = ${anAns.lat}°${anAns.latH}, ${anAns.lon}°${anAns.lonH}. (Misma latitud ${an.lat}°, hemisferio ${_hemNSWord(anAns.latH)}; longitud 180° − ${an.lon}° = ${anAns.lon}°, hemisferio ${_hemEOWord(anAns.lonH)}.)</div><div class="eval-item-feedback" id="critFbAnti" aria-live="polite"></div></div>`;
     const s5 = document.createElement('div');
     s5.innerHTML = `<div class="eval-section-title">V. Detective del error y antípodas <span class="eval-pts">20 pts · (a) 10 · (b) 10</span></div><div class="eval-item"><p class="crit-q-label">(a) Cada afirmación es falsa. Reescríbela correctamente (2 × 5 pts).</p>${erRows}<p class="crit-q-label" style="margin-top:0.7rem;">(b) Calcula la antípoda usando la regla de la flashcard (10 pts).</p>${anBlock}</div>`;
@@ -1391,11 +1391,11 @@ function printEvalCrit() {
     s1 += `</div>`;
 
     // II. ¿Dónde estoy?
-    let s2 = `<div class="sec-title"><span>II. ¿Dónde estoy?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Para cada coordenada escribe: hemisferio Norte/Sur, hemisferio Este/Oeste y zona climática (tórrida 0°–23°26' · templada 23°26'–66°34' · polar >66°34').</p>`;
+    let s2 = `<div class="sec-title"><span>II. ¿Dónde estoy?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Para cada coordenada escribe: hemisferio norte/sur, hemisferio este/oeste y zona climática (tórrida 0°–23°26' · templada 23°26'–66°34' · polar >66°34').</p>`;
     d.de.forEach((it, i) => { s2 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text"><strong>${it.lat}° ${it.latH}, ${it.lon}° ${it.lonH}</strong> → N/S: <span class="cp-blank-sm"></span> · E/O: <span class="cp-blank-sm"></span> · Zona: <span class="cp-blank"></span></span></div>`; });
 
     // III. Husos horarios
-    let s3 = `<div class="sec-title"><span>III. Relojero de husos horarios</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Regla: 360° ÷ 24 h = 15° por huso. Al Este se suma, al Oeste se resta. Escribe la hora resultante.</p>`;
+    let s3 = `<div class="sec-title"><span>III. Relojero de husos horarios</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Regla: 360° ÷ 24 h = 15° por huso. Al este se suma, al oeste se resta. Escribe la hora resultante.</p>`;
     d.hz.forEach((it, i) => { s3 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="cp-text">Si en Greenwich son las <strong>${it.base}:00</strong>, ¿qué hora es a <strong>${it.deg}° ${_hemEOWord(it.hemi)}</strong>? &nbsp; Hora: <span class="cp-blank"></span></span></div>`; });
 
     // IV. Explorador
@@ -1464,20 +1464,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Coordenadas Geográficas · Educación Básica · Ciencias Sociales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Planisferio 20 · II. ¿Dónde estoy? 20 · III. Husos 20 · IV. Explorador 20 · V. Error+Antípodas 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Coordenadas Geográficas · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Coordenadas Geográficas · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — IV y V.a: usar respuesta modelo y rúbrica como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20. IV y V.a: usar respuesta modelo y rúbrica como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1540,7 +1540,7 @@ let s4 = `<div class="pr-section"><div class="sec-title"><span>IV. Términos Par
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1615,21 +1615,21 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 <div class="ph">
   <h2>Evaluación Final de Misión Coordenadas Geográficas - Geografía - Ciencias Sociales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Coordenadas Geográficas · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Coordenadas Geográficas · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1707,9 +1707,9 @@ function labUpdateSentence(){
   const el = document.getElementById('lab-sentence');
   if(!el) return;
   const parts = [];
-  if(LAB_STATE.ecuador) parts.push('el <strong>Ecuador</strong> (0° lat.)');
-  if(LAB_STATE.tropicos) parts.push('los <strong>Trópicos</strong> (±23° 26\')');
-  if(LAB_STATE.polares) parts.push('los <strong>Círculos Polares</strong> (±66° 34\')');
+  if(LAB_STATE.ecuador) parts.push('el <strong>ecuador</strong> (0° lat.)');
+  if(LAB_STATE.tropicos) parts.push('los <strong>trópicos</strong> (±23° 26\')');
+  if(LAB_STATE.polares) parts.push('los <strong>círculos polares</strong> (±66° 34\')');
   if(LAB_STATE.meridianos) parts.push('los <strong>meridianos</strong> de longitud');
   if(parts.length === 0){
     el.innerHTML = '🌍 Activa las líneas para ver el planisferio.';
@@ -1752,7 +1752,7 @@ function openDiploma(){
   const mi = pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent = msgs[mi];
   document.getElementById('diplDate').textContent = 'Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr = unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr = unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent = achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();

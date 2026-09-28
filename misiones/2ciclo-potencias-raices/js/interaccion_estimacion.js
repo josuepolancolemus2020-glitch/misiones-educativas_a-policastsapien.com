@@ -90,7 +90,7 @@ window.WidgetEstimacionJSON = {
       // X no perfecto, estrictamente entre f² y (f+1)²
       const x = rint(f * f + 1, (f + 1) * (f + 1) - 1);
       current = { x, f };
-      qEl.innerHTML = `El número <span class="we2-x">${x}</span> no es un cuadrado perfecto.<br>¿Entre cuáles cuadrados perfectos está?`;
+      qEl.innerHTML = `El número <span class="we2-x">${x}</span> no es un cuadrado perfecto.<br>¿Entre qué cuadrados perfectos está?`;
       // Opciones: correcta + 2 distractores desplazados según el nivel
       const mk = (base) => ({ base, label: `Entre ${base}² (${base * base}) y ${base + 1}² (${(base + 1) * (base + 1)})` });
       const candidates = [mk(f)];

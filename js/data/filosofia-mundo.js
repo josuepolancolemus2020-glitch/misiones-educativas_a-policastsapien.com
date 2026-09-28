@@ -136,7 +136,7 @@ const MUN_CAMBIOS = [
   { c: 'El terreno pasa a nombre de otro dueño',             q: 'nombre' },
   { c: 'A la escuela le cambian el nombre',                  q: 'nombre' },
   { c: 'La aldea se vuelve municipio',                       q: 'nombre' },
-  { c: 'Tu amigo se va a vivir lejos y ahora le decís así',  q: 'nombre' },
+  { c: 'A tu primo le empiezan a llamar por su apodo',       q: 'nombre' },
   { c: 'La calle del mango ahora se llama de otro modo',     q: 'nombre' },
   { c: 'El equipo del barrio se pone otro nombre',           q: 'nombre' },
   { c: 'Elvin pasa a ser el más alto: el otro se fue',      q: 'nombre' },

@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Ciencias Naturales._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Ciencias Naturales._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -282,7 +282,7 @@ function go(id) {
 // ===================== SIMULADOR INTERACTIVO =====================
 const erasInfo = [
     {
-        titulo: 'Era Precámbrica', tiempo: '4,600 – 540 Millones de años',
+        titulo: 'Era Precámbrica', tiempo: '4,600 – 540 millones de años',
         bg: 'linear-gradient(135deg, #ff4e50, #f9d423)', bc1: '#ff4e50', bc2: '#f9d423',
         imgUrl: 'descriptivas-img/era-precambrica_edit.webp',
         imgTexto: 'Observa la ilustración: El planeta era una inmensa bola volcánica. La corteza terrestre aún se estaba formando entre erupciones de lava. Las primeras formas de vida, bacterias simples, surgieron en esos océanos primitivos.',
@@ -291,28 +291,28 @@ const erasInfo = [
         h2: '🌎 Evento clave', p2: 'Formación de la Tierra, los océanos y una atmósfera sin oxígeno (tóxica).'
     },
     {
-        titulo: 'Era Paleozoica', tiempo: '540 – 250 Millones de años',
+        titulo: 'Era Paleozoica', tiempo: '540 – 250 millones de años',
         bg: 'linear-gradient(135deg, #1cb5e0, #000046)', bc1: '#1cb5e0', bc2: '#000046',
         imgUrl: 'descriptivas-img/era-paleozoica_edit.webp',
-        imgTexto: 'Conocida como "Vida Antigua". Observa el fondo oceánico: El animal con caparazón en la arena es un Trilobite, el rey de los mares de esa época. También puedes ver a los primeros vertebrados: peces primitivos.',
+        imgTexto: 'Conocida como "Vida Antigua". Observa el fondo oceánico: El animal con caparazón en la arena es un trilobite, el rey de los mares de esa época. También puedes ver a los primeros vertebrados: peces primitivos.',
         desc: 'Conocida como «Vida Antigua». Los mares se llenaron de vida: trilobites, primeros peces y vertebrados. Luego surgieron anfibios y reptiles. Al final ocurrió la peor extinción masiva: desapareció el 90% de las especies (Extinción del Pérmico).',
-        h1: '🦐 Fósil Guía', p1: 'Los Trilobites dominaron los mares. Surgieron los primeros peces y anfibios.',
+        h1: '🦐 Fósil Guía', p1: 'Los trilobites dominaron los mares. Surgieron los primeros peces y anfibios.',
         h2: '💥 Extinción', p2: 'Terminó con la extinción del Pérmico, donde desapareció el 90% de las especies.'
     },
     {
-        titulo: 'Era Mesozoica', tiempo: '250 – 66 Millones de años',
+        titulo: 'Era Mesozoica', tiempo: '250 – 66 millones de años',
         bg: 'linear-gradient(135deg, #56ab2f, #a8e063)', bc1: '#56ab2f', bc2: '#a8e063',
         imgUrl: 'descriptivas-img/era-mesozoica_edit.webp',
-        imgTexto: 'La "Era de los Dinosaurios". Fíjate en la imagen: un imponente T-Rex camina por una selva, mientras que en el cielo vuela un Pterodactyl (reptil volador). Al final, aparecen las primeras aves.',
+        imgTexto: 'La "Era de los Dinosaurios". Fíjate en la imagen: un imponente T-Rex camina por una selva, mientras que en el cielo vuela un pterodáctilo (reptil volador). Más tarde, aparecen las primeras aves.',
         desc: 'La «Era de los Dinosaurios». Enormes reptiles dominaron tierra, mar y aire. Existía un supercontinente llamado Pangea que se fragmentó. Aparecieron las primeras aves y plantas con flores. Terminó con el impacto de un meteorito gigante.',
         h1: '🦕 Dominio', p1: 'Dinosaurios terrestres, reptiles voladores y marinos. Aparecen plantas con flores.',
         h2: '🌍 Supercontinente', p2: 'Pangea se fragmentó. Terminó de golpe con el impacto de un meteorito gigante.'
     },
     {
-        titulo: 'Era Cenozoica', tiempo: '66 – 2.6 Millones de años',
+        titulo: 'Era Cenozoica', tiempo: '66 – 2.6 millones de años',
         bg: 'linear-gradient(135deg, #fa709a, #fee140)', bc1: '#fa709a', bc2: '#f39c12',
         imgUrl: 'descriptivas-img/era-cenozoica_edit.webp',
-        imgTexto: 'Tras la extinción de los dinosaurios, los mamíferos tomaron el control. En la ilustración destacan grandes mamíferos peludos como el Mamut y depredadores temibles como el Tigre dientes de sable.',
+        imgTexto: 'Tras la extinción de los dinosaurios, los mamíferos tomaron el control. En la ilustración destacan grandes mamíferos peludos como el mamut y depredadores temibles como el tigre dientes de sable.',
         desc: 'Tras la extinción de los dinosaurios, los mamíferos tomaron el control y crecieron a tamaños gigantes: mamuts, tigres dientes de sable, megaterios. Las aves se diversificaron y los continentes adoptaron posiciones cercanas a las actuales.',
         h1: '🐅 Nuevos Reyes', p1: 'Mamíferos gigantes dominaron: mamuts, tigres dientes de sable, megaterios.',
         h2: '🦅 Evolución', p2: 'Aves y mamíferos ocuparon los espacios que dejaron libres los dinosaurios.'
@@ -321,8 +321,8 @@ const erasInfo = [
         titulo: 'Era Cuaternaria', tiempo: '2.6 M.a. – Actualidad',
         bg: 'linear-gradient(135deg, #8fd3f4, #84fab0)', bc1: '#3498db', bc2: '#2ecc71',
         imgUrl: 'descriptivas-img/era-cuaternaria_edit.webp',
-        imgTexto: '¡Nuestra era! La imagen muestra las características Edades de Hielo (glaciaciones) cubriendo las montañas. Lo más importante: los primeros humanos (Homo sapiens) descubren el fuego.',
-        desc: '¡Nuestra era! Ocurrieron grandes Edades de Hielo (glaciaciones) que cubrieron enormes áreas con hielo. Lo más importante: apareció el Homo sapiens, descubrió el fuego, inventó herramientas, creó la agricultura y desarrolló la civilización.',
+        imgTexto: '¡Nuestra era! La imagen muestra las típicas Edades de Hielo (glaciaciones) cubriendo las montañas. Lo más importante: los seres humanos dominan el fuego y aparece el Homo sapiens.',
+        desc: '¡Nuestra era! Ocurrieron grandes Edades de Hielo (glaciaciones) que cubrieron enormes áreas con hielo. Lo más importante: apareció el Homo sapiens, que ya usaba el fuego y las herramientas, creó la agricultura y desarrolló la civilización.',
         h1: '🧑 Ser Humano', p1: 'Aparición y desarrollo de nuestra especie (Homo sapiens) y la civilización.',
         h2: '❄️ Glaciaciones', p2: 'Ocurrieron grandes Edades de Hielo que obligaron a humanos y animales a adaptarse.'
     }
@@ -355,17 +355,17 @@ const fcData = [
     { w: 'Era Precámbrica', a: '🌋 La era más larga. <strong>Primeras bacterias</strong> y formación de los océanos. Atmósfera sin oxígeno.' },
     { w: 'Era Paleozoica', a: '🐚 «Vida Antigua». <strong>Trilobites</strong>, primeros peces, anfibios y reptiles. Extinción del Pérmico.' },
     { w: 'Era Mesozoica', a: '🦖 Era de los <strong>Dinosaurios</strong>. Pangea se fragmenta. Primeras aves y flores.' },
-    { w: 'Era Cenozoica', a: '🐘 Dominio de los <strong>Mamíferos gigantes</strong>: mamuts, tigres dientes de sable.' },
+    { w: 'Era Cenozoica', a: '🐘 Dominio de los <strong>mamíferos gigantes</strong>: mamuts, tigres dientes de sable.' },
     { w: 'Era Cuaternaria', a: '🧑 <strong>Edad de Hielo</strong> y aparición del <strong>ser humano</strong> (Homo sapiens).' },
     { w: 'Pangea', a: '🌍 <strong>Supercontinente</strong> que existía en la era Mesozoica y se dividió en los continentes actuales.' },
     { w: 'Trilobite', a: '🦐 <strong>Artrópodo marino</strong> que dominó los océanos paleozoicos. Es el fósil guía de esa era.' },
     { w: 'Meteorito', a: '☄️ Impactó la Tierra hace <strong>66 millones de años</strong> y causó la extinción de los dinosaurios.' },
     { w: 'Extinción del Pérmico', a: '☠️ La <strong>peor extinción</strong> de la historia: desapareció el <strong>90%</strong> de las especies.' },
-    { w: 'Glaciación', a: '❄️ Período de frío extremo con enormes capas de hielo. Ocurrieron en la era <strong>Cuaternaria</strong>.' },
-    { w: 'Homo sapiens', a: '🧠 Nuestra especie. Apareció en la era <strong>Cuaternaria</strong>, descubrió el fuego y creó civilización.' },
+    { w: 'Glaciación', a: '❄️ Período de frío extremo con enormes capas de hielo. Ocurrieron varias en la era <strong>Cuaternaria</strong>.' },
+    { w: 'Homo sapiens', a: '🧠 Nuestra especie. Apareció en la era <strong>Cuaternaria</strong>, ya usaba el fuego y creó la civilización.' },
     { w: 'Mamut', a: '🐘 Mamífero gigante y peludo de la era <strong>Cenozoica</strong>. Se extinguió durante las glaciaciones.' },
     { w: 'Fósil', a: '🦴 Resto de un ser vivo <strong>conservado en roca</strong>. Nos cuenta la historia de la vida en la Tierra.' },
-    { w: 'Dinosaurio', a: '🦕 Reptil gigante que dominó la Tierra en la era <strong>Mesozoica</strong> durante 185 millones de años.' },
+    { w: 'Dinosaurio', a: '🦕 Reptil gigante que dominó la Tierra en la era <strong>Mesozoica</strong> durante unos 165 millones de años.' },
 ];
 let fcIdx = 0;
 function upFC() {
@@ -516,7 +516,7 @@ function nextClassGroup() {
     sfx('click');
     currentClassGroupIdx = (currentClassGroupIdx + 1) % classGroups.length;
     buildClass(); document.getElementById('fbCls').classList.remove('show');
-    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs ' + classGroups[currentClassGroupIdx].label[1]);
+    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs. ' + classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass() { sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -525,7 +525,7 @@ const idData = [
     { s: ['En', 'esta', 'era', 'se', 'formó', 'la', 'Tierra.'], c: 6, art: 'Busca la palabra clave → Precámbrica (Tierra)' },
     { s: ['Los', 'dinosaurios', 'dominaron', 'el', 'planeta.'], c: 1, art: 'Busca la palabra clave → Mesozoica' },
     { s: ['Dominaron', 'los', 'mamíferos', 'gigantes', 'como', 'el', 'mamut.'], c: 3, art: 'Busca el adjetivo clave → Cenozoica' },
-    { s: ['El', 'ser', 'humano', 'apareció', 'y', 'creó', 'el', 'fuego.'], c: 2, art: 'Busca la palabra clave → Cuaternaria' },
+    { s: ['El', 'ser', 'humano', 'apareció', 'y', 'dominó', 'el', 'fuego.'], c: 2, art: 'Busca la palabra clave → Cuaternaria' },
     { s: ['Los', 'trilobites', 'reinaron', 'en', 'los', 'mares.'], c: 1, art: 'Busca el animal → Paleozoica' },
     { s: ['Pangea', 'se', 'fragmentó', 'en', 'varios', 'continentes.'], c: 0, art: 'Busca el supercontinente → Mesozoica' },
     { s: ['Las', 'glaciaciones', 'cubrieron', 'todo', 'de', 'hielo.'], c: 1, art: 'Busca el evento climático → Cuaternaria' },
@@ -704,7 +704,7 @@ function nextRetoPair() {
     document.getElementById('retoWord').textContent = '¡Prepárate!';
     document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
     document.getElementById('fbReto').classList.remove('show');
-    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto() {
     sfx('click'); clearInterval(retoTimerInt); retoRunning = false; retoSec = 30; retoOk = 0; retoErr = 0;
@@ -753,7 +753,7 @@ const explainQuestions = [
     { q: '¿Qué diferencia la era Cenozoica de la Cuaternaria?', ans: 'Cenozoica: mamíferos gigantes. Cuaternaria: Edad de Hielo y aparición del ser humano.' },
     { q: '¿Qué fue Pangea y en qué era se fragmentó?', ans: 'Supercontinente único que se fragmentó en la era Mesozoica.' },
     { q: '¿Qué caracteriza a la era Paleozoica?', ans: 'Vida en los mares, primeros vertebrados, trilobites, primeros anfibios y reptiles.' },
-    { q: '¿Cómo se extinguieron los dinosaurios?', ans: 'Un meteorito impactó la Tierra hace 66 M.a. al final de la era Mesozoica.' },
+    { q: '¿Cómo se extinguieron los dinosaurios?', ans: 'Un meteorito impactó contra la Tierra hace 66 M.a. al final de la era Mesozoica.' },
 ];
 let ansVisible = false;
 
@@ -990,7 +990,7 @@ const evalTFBank=[
   {q:'Los dinosaurios y los seres humanos vivieron al mismo tiempo.',a:false,k:'tf-dinos-humanos'},
   {q:'Los anfibios aparecieron en la misma era que los trilobites.',a:true,k:'tf-anfibios'},
   {q:'Hubo seres vivos en el mar mucho antes que en tierra firme.',a:true,k:'tf-mar-antes'},
-  {q:'Hace 540 millones de años la vida se llenó de animales en los mares.',a:true,k:'tf-540'},
+  {q:'Hace 540 millones de años, los mares se llenaron de animales.',a:true,k:'tf-540'},
   {q:'Las primeras aves aparecieron cuando todavía había dinosaurios.',a:true,k:'tf-aves'},
   {q:'El ser humano apareció hace muy poco, comparado con la edad de la Tierra.',a:true,k:'tf-humano-reciente'},
   {q:'Las aves aparecieron antes que las bacterias.',a:false,k:'tf-aves-bacterias'}
@@ -1075,11 +1075,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Las Eras Geológicas`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Las Eras Geológicas`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
     const cpItems = _pickF(evalCPBank, 5, rng);
     const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -1097,7 +1097,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">?</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1225,7 +1225,7 @@ function printEval() {
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1300,21 +1300,21 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 <div class="ph">
   <h2>Evaluación Final · Misión Las Eras Geológicas · CC.NN.</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Las Eras Geológicas · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Las Eras Geológicas · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1352,7 +1352,7 @@ const critCCBank = [
     { c: 'La atmósfera sin oxígeno de la era Precámbrica', e: 'La vida solo podía existir en los océanos, no en tierra firme' },
     { c: 'La extinción de los dinosaurios al final del Cretácico', e: 'Los mamíferos ocuparon los espacios libres y dominaron la era Cenozoica' },
     { c: 'Las glaciaciones (Edad de Hielo) de la era Cuaternaria', e: 'Humanos y animales tuvieron que adaptarse al frío extremo' },
-    { c: 'El descubrimiento del fuego por el Homo sapiens', e: 'El ser humano pudo cocinar, abrigarse y desarrollar la civilización' },
+    { c: 'El dominio del fuego por los seres humanos', e: 'El ser humano pudo cocinar, abrigarse y desarrollar la civilización' },
     { c: 'La aparición de plantas con flores y primeras aves en el Mesozoico', e: 'Aumentó la diversidad de la vida terrestre' },
 ];
 // ── II. Razonamiento cronológico (eventos con su antigüedad en M.a. para ordenar)
@@ -1374,7 +1374,7 @@ const critFossilBank = [
     { clue: 'Una antigua capa de hielo sobre la cima de las montañas.', era: 'Cuaternaria', rasgo: 'Las glaciaciones o Edad de Hielo ocurrieron en la era Cuaternaria.' },
     { clue: 'Bacterias simples en rocas muy antiguas, sin señales de oxígeno.', era: 'Precámbrica', rasgo: 'Las primeras bacterias surgieron en la Precámbrica, cuando no había oxígeno.' },
     { clue: 'El fósil de un pez primitivo, uno de los primeros vertebrados.', era: 'Paleozoica', rasgo: 'Los primeros peces y vertebrados aparecieron en la era Paleozoica.' },
-    { clue: 'Herramientas de piedra junto a restos de una hoguera.', era: 'Cuaternaria', rasgo: 'El Homo sapiens creó herramientas y descubrió el fuego en la Cuaternaria.' },
+    { clue: 'Herramientas de piedra junto a restos de una hoguera.', era: 'Cuaternaria', rasgo: 'En la Cuaternaria, los seres humanos hacían herramientas y dominaban el fuego.' },
     { clue: 'El fósil de un ave primitiva junto a las primeras plantas con flores.', era: 'Mesozoica', rasgo: 'Las primeras aves y las flores aparecieron en la era Mesozoica.' },
 ];
 const critEraOptions = ['Precámbrica', 'Paleozoica', 'Mesozoica', 'Cenozoica', 'Cuaternaria'];
@@ -1393,13 +1393,13 @@ const critErrBank = [
 const critArgBank = [
     { q: '¿Por qué la extinción del Cretácico abrió paso al dominio de los mamíferos?', model: 'Al extinguirse los dinosaurios por el meteorito, quedaron libres muchos espacios y recursos; los mamíferos, que antes eran pequeños, crecieron, se diversificaron y llegaron a dominar la era Cenozoica.' },
     { q: '¿Qué evidencia usan los científicos (fósiles, estratos) para reconstruir las eras aunque no existieran humanos que las observaran?', model: 'Estudian los fósiles conservados en las rocas y el orden de las capas o estratos: las capas más profundas son más antiguas. Comparando fósiles y estratos deducen qué seres vivos existieron y en qué orden.' },
-    { q: 'Explica por qué la vida tardó tanto en salir de los océanos hacia la tierra firme.', model: 'En la era Precámbrica la atmósfera no tenía oxígeno y la tierra era hostil, por eso la vida solo podía sobrevivir en el agua. Solo cuando se formó oxígeno y una atmósfera protectora la vida pudo colonizar la tierra firme.' },
-    { q: '¿Por qué decimos que la era Precámbrica es la más larga, aunque parezca que "no pasó nada"?', model: 'Duró desde hace 4,600 hasta 540 millones de años, miles de millones de años. En ella se formó la Tierra, los océanos, la atmósfera y surgió la primera vida: fueron cambios enormes, pero muy lentos.' },
+    { q: 'Explica por qué la vida tardó tanto en salir de los océanos hacia la tierra firme.', model: 'En la era Precámbrica la atmósfera no tenía oxígeno y la tierra era hostil; por eso la vida solo podía sobrevivir en el agua. Solo cuando se formó oxígeno y una atmósfera protectora la vida pudo colonizar la tierra firme.' },
+    { q: '¿Por qué decimos que la era Precámbrica es la más larga, aunque parezca que "no pasó nada"?', model: 'Duró desde hace 4,600 hasta hace 540 millones de años: más de cuatro mil millones de años. En ella se formó la Tierra, los océanos, la atmósfera y surgió la primera vida: fueron cambios enormes, pero muy lentos.' },
     { q: 'La Tierra tiene 4,600 M.a. y el ser humano apareció hace unos 2.6 M.a. ¿Qué te dice esta comparación de magnitudes sobre nuestra historia?', model: 'El ser humano existe hace muy poco comparado con la edad de la Tierra: si los 4,600 M.a. fueran un solo día, el humano aparecería en los últimos segundos. Nuestra historia es diminuta frente a la del planeta.' },
 ];
 
 function _critEraSelect(cls, dataAttr, i) {
-    return `<select class="${cls}" ${dataAttr}="${i}" aria-label="Era observada ${i + 1}"><option value="">— elige la era —</option>${critEraOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
+    return `<select class="${cls}" ${dataAttr}="${i}" aria-label="Era observada ${i + 1}"><option value="">Elige la era</option>${critEraOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
 }
 
 function genEvalCrit() {
@@ -1417,7 +1417,7 @@ function genEvalCrit() {
 
     // Barra de distribución + progresión de dificultad
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: de relacionar y ordenar (I–II) a interpretar evidencia (III), corregir errores (IV) y argumentar (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Causa-efecto 20</span><span class="eval-score-pill esp-tf">II. Cronología 20</span><span class="eval-score-pill esp-mc">III. Fósiles 20</span><span class="eval-score-pill esp-pr">IV. Error 15</span><span class="eval-score-pill esp-cp">V. Argumenta 25</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: de relacionar y ordenar (I–II) a interpretar evidencia (III), corregir errores (IV) y argumentar (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Causa-efecto 20</span><span class="eval-score-pill esp-tf">II. Cronología 20</span><span class="eval-score-pill esp-mc">III. Fósiles 20</span><span class="eval-score-pill esp-pr">IV. Error 15</span><span class="eval-score-pill esp-cp">V. Argumenta 25</span></div>`;
     out.appendChild(bar);
 
     // ── I. Causa y consecuencia (matching, 4×5=20)
@@ -1426,7 +1426,7 @@ function genEvalCrit() {
     const ccLetters = ['A', 'B', 'C', 'D'];
     const ccCorrect = ccItems.map(it => ccLetters[ccDefs.findIndex(d => d.e === it.e)]);
     let ccLeft = '<div class="crit-match-col"><h5>🎯 Causa</h5>';
-    ccItems.forEach((it, i) => { ccLeft += `<div class="crit-match-row"><span class="crit-match-n">${i + 1}.</span> <select class="crit-cc-select" data-cc="${i}" aria-label="Consecuencia de la causa ${i + 1}"><option value="">—</option>${ccLetters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${it.c}</div>`; });
+    ccItems.forEach((it, i) => { ccLeft += `<div class="crit-match-row"><span class="crit-match-n">${i + 1}.</span> <select class="crit-cc-select" data-cc="${i}" aria-label="Consecuencia de la causa ${i + 1}"><option value="">?</option>${ccLetters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${it.c}</div>`; });
     ccLeft += '</div>';
     let ccRight = '<div class="crit-match-col"><h5>💥 Consecuencia</h5>';
     ccDefs.forEach((it, i) => { ccRight += `<div class="crit-match-row"><span class="crit-match-n">${ccLetters[i]}.</span> ${it.e}</div>`; });
@@ -1644,20 +1644,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Las Eras Geológicas · Educación Básica · Ciencias Naturales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Causa-efecto 20 · II. Cronología 20 · III. Fósiles 20 · IV. Error 15 · V. Argumenta 25 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Las Eras Geológicas · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Las Eras Geológicas · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 15 · V 25 — secciones abiertas: usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 15 · V 25. Secciones abiertas: usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1680,7 +1680,7 @@ function openDiploma() {
     const mi = pct === 100 ? 5 : pct >= 80 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : pct >= 20 ? 1 : 0;
     document.getElementById('diplMsg').textContent = msgs[mi];
     document.getElementById('diplDate').textContent = 'Honduras, ' + new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún — ¡sigue completando secciones!';
+    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún. ¡Sigue completando secciones!';
     document.getElementById('diplAch').textContent = achStr;
     document.getElementById('diplomaOverlay').classList.add('open');
     document.querySelector('.diploma-input').focus();
@@ -1756,7 +1756,7 @@ function checkOrdenacion() {
         sfx('ok');
         if (!xpTracker.asim.has('ord')) { xpTracker.asim.add('ord'); pts(5); fin('s-asimilacion'); launchConfetti(); }
     } else {
-        fb('fbOrd', 'Hay eras fuera de lugar — las rojas necesitan moverse.', false);
+        fb('fbOrd', 'Hay eras fuera de lugar: las marcadas con ✗ necesitan moverse.', false);
         sfx('no');
     }
 }
@@ -1815,7 +1815,7 @@ function selectAsocRight(el) {
     } else {
         sfx('no');
         asocSel.classList.remove('asoc-sel'); asocSel = null;
-        fb('fbAsoc', 'Esa pareja no coincide — intenta de nuevo.', false);
+        fb('fbAsoc', 'Esa pareja no coincide. Intenta de nuevo.', false);
     }
 }
 
@@ -1876,7 +1876,7 @@ function checkAnagrama() {
     if (anaLetters.map(o => o.letter).join('') === anaWord) {
         _winAna();
     } else {
-        fb('fbAna', 'Aún no es correcto — sigue intercambiando letras.', false);
+        fb('fbAna', 'Aún no es correcto. Sigue intercambiando letras.', false);
         sfx('no');
     }
 }
@@ -1939,7 +1939,7 @@ function checkCrucigrama() {
         sfx('ok');
         if (!xpTracker.asim.has('cruci')) { xpTracker.asim.add('cruci'); pts(5); launchConfetti(); }
     } else {
-        fb('fbCruci', 'Alguna respuesta no es correcta. Revisa las marcadas en rojo.', false);
+        fb('fbCruci', 'Alguna respuesta no es correcta. Revisa las que llevan ✗.', false);
         sfx('no');
     }
 }

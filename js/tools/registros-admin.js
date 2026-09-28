@@ -671,13 +671,13 @@ function adRenderLista(body, d) {
       <div class="pa-card-title">🏫 Mi grupo</div>
       <div class="pa-row-2">
         <div class="pa-field"><label>Grado</label>
-          <input id="ad-grado" class="pa-inp-field" value="${adEsc(d.grado)}" placeholder="ej: 6º"></div>
+          <input id="ad-grado" class="pa-inp-field" value="${adEsc(d.grado)}" placeholder="ej.: 6º"></div>
         <div class="pa-field"><label>Sección</label>
-          <input id="ad-seccion" class="pa-inp-field" value="${adEsc(d.seccion)}" placeholder="ej: A"></div>
+          <input id="ad-seccion" class="pa-inp-field" value="${adEsc(d.seccion)}" placeholder="ej.: A"></div>
       </div>
       <div class="pa-field"><label>Colegio / escuela</label>
         <input id="ad-escuela" class="pa-inp-field" value="${adEsc(d.escuela)}"
-               placeholder="ej: Esc. Francisco Morazán (útil si trabajas en dos)"></div>
+               placeholder="ej.: Esc. Francisco Morazán (útil si trabajas en dos)"></div>
       <div class="pa-field"><label>Clases que le das a este grupo</label>
         <input id="ad-materias" class="pa-inp-field" value="${adEsc(d.materias.join(', '))}"
                placeholder="Separadas por coma"></div>
@@ -1811,7 +1811,7 @@ function adRenderEco(body, d) {
     </div>` : ''}`;
 
   document.getElementById('ad-nueva-colecta').addEventListener('click', async () => {
-    const concepto = await metasPrompt('¿Cuál es el acuerdo o colaboración?\n(ej: **Aporte día del niño**, acordado en reunión)', {
+    const concepto = await metasPrompt('¿Cuál es el acuerdo o colaboración?\n(ej.: **Aporte día del niño**, acordado en reunión)', {
       icono: '💰', titulo: 'Nueva colecta', okTxt: 'Siguiente',
       valida: v => String(v).trim().length >= 3 ? '' : 'Escribe el concepto (mínimo 3 letras).',
     });
@@ -2340,7 +2340,7 @@ function adRenderInventario(body, d) {
   document.getElementById('ad-inv-volver').addEventListener('click', () => { _adInvOn = 0; renderAdmin(); });
 
   /* La regla de propiedad se explica según lo que el maestro acaba de elegir:
-     el campo extra también cambia (donante vs detalle). */
+     el campo extra también cambia (donante vs. detalle). */
   const regla = document.getElementById('ad-inv-regla');
   const extraLbl = document.getElementById('ad-inv-extra-lbl');
   const extraInp = document.getElementById('ad-inv-nota');
@@ -3935,7 +3935,7 @@ function adRenderSace(body, d) {
           </div>
           <div class="pa-field"><label>Nombre del centro educativo</label>
             <input id="ad-boleta-centro" class="pa-inp-field" value="${adEsc(d.escuela)}"
-                   placeholder="Ej: John Arnold Cook"></div>
+                   placeholder="Ej.: John Arnold Cook"></div>
           <div class="pa-row-2">
             <div class="pa-field"><label>Nombre del director(a)</label>
               <input id="ad-bol-director" class="pa-inp-field" value="${adEsc(d.boleta.director)}" placeholder="Director(a)"></div>
@@ -3944,13 +3944,13 @@ function adRenderSace(body, d) {
           </div>
           <div class="pa-row-2">
             <div class="pa-field"><label>Lugar (aldea/colonia)</label>
-              <input id="ad-bol-lugar" class="pa-inp-field" value="${adEsc(d.boleta.lugar)}" placeholder="Ej: Col. Colinas de Suiza"></div>
+              <input id="ad-bol-lugar" class="pa-inp-field" value="${adEsc(d.boleta.lugar)}" placeholder="Ej.: Col. Colinas de Suiza"></div>
             <div class="pa-field"><label>Municipio</label>
-              <input id="ad-bol-municipio" class="pa-inp-field" value="${adEsc(d.boleta.municipio)}" placeholder="Ej: Villanueva"></div>
+              <input id="ad-bol-municipio" class="pa-inp-field" value="${adEsc(d.boleta.municipio)}" placeholder="Ej.: Villanueva"></div>
           </div>
           <div class="pa-row-2">
             <div class="pa-field"><label>Departamento</label>
-              <input id="ad-bol-depto" class="pa-inp-field" value="${adEsc(d.boleta.departamento)}" placeholder="Ej: Cortés"></div>
+              <input id="ad-bol-depto" class="pa-inp-field" value="${adEsc(d.boleta.departamento)}" placeholder="Ej.: Cortés"></div>
             <div class="pa-field"><label>Año lectivo</label>
               <input id="ad-bol-anio" class="pa-inp-field" inputmode="numeric" maxlength="4" value="${adEsc(d.boleta.anio)}" placeholder="${new Date().getFullYear()}"></div>
           </div>
@@ -5476,9 +5476,9 @@ function adRenderCom(body, d) {
       </div>
       <div id="av-form" style="display:${edit ? 'block' : 'none'};margin-top:10px;border-top:1px dashed #ccc;padding-top:10px">
         <div class="pa-field"><label>Título del aviso</label>
-          <input id="av-titulo" class="pa-inp-field" maxlength="120" value="${edit ? adEsc(edit.titulo) : ''}" placeholder="ej: Reunión de padres"></div>
+          <input id="av-titulo" class="pa-inp-field" maxlength="120" value="${edit ? adEsc(edit.titulo) : ''}" placeholder="ej.: Reunión de padres"></div>
         <div class="pa-field"><label>Detalle (lo que leerá la familia)</label>
-          <textarea id="av-texto" class="pa-paste-area" rows="3" maxlength="1200" placeholder="ej: Este viernes 18 a las 3:00 pm en el aula. Traer lápiz.">${edit ? adEsc(edit.texto) : ''}</textarea></div>
+          <textarea id="av-texto" class="pa-paste-area" rows="3" maxlength="1200" placeholder="ej.: Este viernes 18 a las 3:00 pm en el aula. Traer lápiz.">${edit ? adEsc(edit.texto) : ''}</textarea></div>
         <div class="pa-row-2">
           <div class="pa-field"><label>Tipo</label>
             <select id="av-tipo" class="pa-inp-field">
@@ -5496,7 +5496,7 @@ function adRenderCom(body, d) {
         </div>
         <div class="pa-field" id="av-alumnos-box" style="display:${edit && edit.tipo === 'individual' ? 'block' : 'none'}">
           <label>Números de lista (separados por coma)</label>
-          <input id="av-alumnos" class="pa-inp-field" inputmode="numeric" value="${edit && edit.alumnos ? edit.alumnos.join(', ') : ''}" placeholder="ej: 3, 15, 22"></div>
+          <input id="av-alumnos" class="pa-inp-field" inputmode="numeric" value="${edit && edit.alumnos ? edit.alumnos.join(', ') : ''}" placeholder="ej.: 3, 15, 22"></div>
         <div class="ad-btn-row">
           <button class="pa-add-btn" id="av-publicar">${edit ? '💾 Guardar cambios' : '📣 Publicar aviso'}</button>
           <button class="pa-generate-btn ad-btn-sec" id="av-cancelar">Cancelar</button>
@@ -5627,7 +5627,7 @@ function adRenderCom(body, d) {
       return;
     }
     if (tipo === 'individual' && !nums.length) {
-      await metasAlert('Para un aviso individual, escribe los números de lista (ej: 3, 15).', { icono: '👤', titulo: 'Comunicados' });
+      await metasAlert('Para un aviso individual, escribe los números de lista (ej.: 3, 15).', { icono: '👤', titulo: 'Comunicados' });
       return;
     }
     const gg = avGrupo(d.id);
@@ -5679,7 +5679,7 @@ function adRenderCom(body, d) {
     toast(nueva.activa ? '📖 Respuesta guardada' : '📖 Pregunta apagada');
   }));
   document.getElementById('av-faq-add').addEventListener('click', async () => {
-    const p = await metasPrompt('¿Qué pregunta hacen las familias? (ej: **¿Hay clases de refuerzo?**)', {
+    const p = await metasPrompt('¿Qué pregunta hacen las familias? (ej.: **¿Hay clases de refuerzo?**)', {
       icono: '📖', titulo: 'Ficha del aula', okTxt: 'Siguiente',
       valida: v => String(v).trim().length >= 5 ? '' : 'Escribe la pregunta completa.' });
     if (p === null) return;

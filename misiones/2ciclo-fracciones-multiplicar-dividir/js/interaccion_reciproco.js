@@ -91,7 +91,7 @@ window.WidgetReciprocoJSON = {
         btn.classList.add('wrc-no'); streak = 0;
         stEl.innerHTML = `${b}/${a} × ${c}/${d} = ${b * c}/${a * d} ❌ ese no es el resultado`;
         msgEl.className = 'wrc-msg err';
-        msgEl.innerHTML = `💡 Volteaste la primera. La que se voltea es la que <strong>divide</strong>, o sea la segunda: ${a}/${b} × ${d}/${c} = <strong>${fmt(a * d, b * c)}</strong>.`;
+        msgEl.innerHTML = `💡 Volteaste la primera. La que se voltea es la que <strong>divide</strong>, o sea, la segunda: ${a}/${b} × ${d}/${c} = <strong>${fmt(a * d, b * c)}</strong>.`;
         if (typeof sfx === 'function') sfx('no');
       } else {
         btn.classList.add('wrc-no'); streak = 0;

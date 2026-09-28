@@ -202,15 +202,15 @@ const LEN_AMBIG_OJO = 'Ojo: la frase no está mal escrita. Lo que pasa es que di
 const LEN_DEFINIR = [
   { clave: 'ancha', emoji: '🫙', nombre: 'Muy ancha',
     que: 'Deja entrar cosas que no son.',
-    ej: '«Una silla es algo donde uno se sienta.» Entonces una piedra es una silla.',
+    ej: '«Una silla es algo donde uno se sienta». Entonces una piedra es una silla.',
     prueba: 'Buscá algo que entre y no debería.' },
   { clave: 'angosta', emoji: '🥃', nombre: 'Muy angosta',
     que: 'Deja fuera cosas que sí son.',
-    ej: '«Un ave es un animal que vuela.» Entonces la gallina no es ave.',
+    ej: '«Un ave es un animal que vuela». Entonces la gallina no es ave.',
     prueba: 'Buscá algo que quede fuera y sí debería entrar.' },
   { clave: 'justa', emoji: '🎯', nombre: 'Justa',
     que: 'Entra todo lo que es y nada de lo que no.',
-    ej: '«Una silla es un mueble con asiento y respaldo, para una persona.»',
+    ej: '«Una silla es un mueble con asiento y respaldo, para una persona».',
     prueba: 'Probá las dos de arriba. Si aguanta las dos, sirve.' }
 ];
 

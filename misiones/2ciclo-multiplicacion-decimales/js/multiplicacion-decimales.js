@@ -117,20 +117,20 @@ function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.cl
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Multiplicar decimales',a:'✖️ se multiplica <strong>como si no hubiera punto</strong>, y al final se le pone. Los puntos no se alinean: eso es de la suma.'},
-  {w:'¿Dónde va el punto?',a:'📍 se cuentan las cifras decimales de los <strong>dos factores</strong> y se ponen esas mismas en el producto. 2.5 × 1.3 → dos cifras → <strong>3.25</strong>.'},
-  {w:'Cifra decimal',a:'🔢 cada número que va <strong>después del punto</strong>. En 4.07 hay dos: el 0 y el 7.'},
-  {w:'Cuando falta lugar',a:'0️⃣ 0.2 × 0.3 = 6, y hacen falta <strong>dos</strong> cifras decimales: se agrega un cero delante y queda <strong>0.06</strong>.'},
-  {w:'Multiplicar por 10',a:'➡️ el punto salta <strong>un lugar a la derecha</strong>: 3.47 × 10 = 34.7. Por 100 saltan dos y por 1,000 saltan tres.'},
-  {w:'Multiplicar por 0.1',a:'⬅️ el punto salta <strong>un lugar a la izquierda</strong> y el número encoge: 34.7 × 0.1 = 3.47.'},
+  {w:'Multiplicar decimales',a:'✖️ Se multiplica <strong>como si no hubiera punto</strong>, y al final se le pone. Los puntos no se alinean: eso es de la suma.'},
+  {w:'¿Dónde va el punto?',a:'📍 Se cuentan las cifras decimales de los <strong>dos factores</strong> y se ponen esas mismas en el producto. 2.5 × 1.3 → dos cifras → <strong>3.25</strong>.'},
+  {w:'Cifra decimal',a:'🔢 Cada número que va <strong>después del punto</strong>. En 4.07 hay dos: el 0 y el 7.'},
+  {w:'Cuando falta lugar',a:'0️⃣ En 0.2 × 0.3, 2 × 3 = 6, y hacen falta <strong>dos</strong> cifras decimales: se agrega un cero delante y queda <strong>0.06</strong>.'},
+  {w:'Multiplicar por 10',a:'➡️ El punto salta <strong>un lugar a la derecha</strong>: 3.47 × 10 = 34.7. Por 100 salta dos y por 1,000 salta tres.'},
+  {w:'Multiplicar por 0.1',a:'⬅️ El punto salta <strong>un lugar a la izquierda</strong> y el número encoge: 34.7 × 0.1 = 3.47.'},
   {w:'Estimar antes',a:'🎯 4.8 × 2.1 es casi 5 × 2 = 10, así que el resultado tiene que andar por 10. Si sale 100.8, el punto quedó mal puesto.'},
-  {w:'Factor',a:'✖️ cada uno de los números que se multiplican. En 2.5 × 4 los factores son 2.5 y 4.'},
-  {w:'Producto',a:'🟰 el resultado de la multiplicación. En 2.5 × 4 = 10, el producto es 10.'},
-  {w:'Décima, centésima, milésima',a:'📏 la primera cifra después del punto son <strong>décimas</strong>, la segunda <strong>centésimas</strong> y la tercera <strong>milésimas</strong>.'},
-  {w:'Multiplicar y encoger',a:'📉 al multiplicar por un decimal <strong>menor que 1</strong> el resultado es MENOR: 40 × 0.5 = 20. Es la mitad, no el doble.'},
+  {w:'Factor',a:'✖️ Cada uno de los números que se multiplican. En 2.5 × 4 los factores son 2.5 y 4.'},
+  {w:'Producto',a:'🟰 El resultado de la multiplicación. En 2.5 × 4 = 10, el producto es 10.'},
+  {w:'Décima, centésima, milésima',a:'📏 La primera cifra después del punto son <strong>décimas</strong>, la segunda <strong>centésimas</strong> y la tercera <strong>milésimas</strong>.'},
+  {w:'Multiplicar y encoger',a:'📉 Al multiplicar por un decimal <strong>menor que 1</strong> el resultado es MENOR: 40 × 0.5 = 20. Es la mitad, no el doble.'},
   {w:'Decimal a fracción',a:'🍕 0.25 son 25 centésimas: <strong>25/100 = 1/4</strong>. Las cifras después del punto dicen el denominador.'},
-  {w:'Precio por cantidad',a:'💵 lo que más se usa en la vida: 3 libras a L 24.50 son 3 × 24.50 = <strong>L 73.50</strong>.'},
-  {w:'Comprobar con la calculadora',a:'✅ el currículo lo pide: se hace la cuenta a mano y después se comprueba. Si no coinciden, casi siempre es el punto.'}
+  {w:'Precio por cantidad',a:'💵 Lo que más se usa en la vida: 3 libras a L 24.50 son 3 × 24.50 = <strong>L 73.50</strong>.'},
+  {w:'Comprobar con la calculadora',a:'✅ El currículo lo pide: se hace la cuenta a mano y después se comprueba. Si no coinciden, casi siempre es el punto.'}
 ];
 let fcIdx=0;
 function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=fcData[fcIdx].a; document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
@@ -320,7 +320,7 @@ function checkClass(){
   if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}
   else{fb('fbCls','Hay errores. Los errados llevan ✗ (tócalos para devolverlos al banco).',false);sfx('no');}
 }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -423,7 +423,7 @@ const prediceData = [
     explore: 'rejilla'
   },
   {
-    q: 'Una libra de café cuesta L 42.50. ¿Tres libras costarán más o menos de L 100?',
+    q: 'Una libra de café cuesta L 42.50. ¿Tres libras costarán más de L 100 o menos?',
     opts: ['Menos de L 100', 'Más de L 100', 'Exactamente L 100'],
     correct: 1,
     feedback: '¡Exacto! Cada libra anda por 40, y 3 × 40 ya son 120: pasa de 100. El total es L 127.50.',
@@ -540,36 +540,36 @@ function predEstimar(i,p){
 // ===================== RETO FINAL (con parejas variables) =====================
 const retoPairs=[
   {
-    name:'Producto vs número ✖️', hint:'Calcula A y compárala con B',
+    name:'Producto vs. número ✖️', hint:'Calcula A y compárala con B',
     pool:[
-      {w:'A: 2.5 × 4 vs B: 10',t:'igual'},{w:'A: 0.5 × 8 vs B: 6',t:'menor'},{w:'A: 1.5 × 6 vs B: 8',t:'mayor'},
-      {w:'A: 1.2 × 5 vs B: 6',t:'igual'},{w:'A: 0.25 × 8 vs B: 4',t:'menor'},{w:'A: 2.5 × 6 vs B: 12',t:'mayor'},
-      {w:'A: 0.75 × 4 vs B: 3',t:'igual'},{w:'A: 0.1 × 40 vs B: 8',t:'menor'},{w:'A: 3.5 × 4 vs B: 12',t:'mayor'},
-      {w:'A: 1.25 × 4 vs B: 5',t:'igual'},{w:'A: 0.2 × 15 vs B: 5',t:'menor'},{w:'A: 4.5 × 2 vs B: 8',t:'mayor'}
+      {w:'A: 2.5 × 4 vs. B: 10',t:'igual'},{w:'A: 0.5 × 8 vs. B: 6',t:'menor'},{w:'A: 1.5 × 6 vs. B: 8',t:'mayor'},
+      {w:'A: 1.2 × 5 vs. B: 6',t:'igual'},{w:'A: 0.25 × 8 vs. B: 4',t:'menor'},{w:'A: 2.5 × 6 vs. B: 12',t:'mayor'},
+      {w:'A: 0.75 × 4 vs. B: 3',t:'igual'},{w:'A: 0.1 × 40 vs. B: 8',t:'menor'},{w:'A: 3.5 × 4 vs. B: 12',t:'mayor'},
+      {w:'A: 1.25 × 4 vs. B: 5',t:'igual'},{w:'A: 0.2 × 15 vs. B: 5',t:'menor'},{w:'A: 4.5 × 2 vs. B: 8',t:'mayor'}
     ]
   },
   {
     name:'Saltos del punto ➡️', hint:'Multiplicar por 10, 100 o 0.1 solo mueve el punto',
     pool:[
-      {w:'A: 3.4 × 10 vs B: 34',t:'igual'},{w:'A: 3.4 × 0.1 vs B: 1',t:'menor'},{w:'A: 0.56 × 100 vs B: 50',t:'mayor'},
-      {w:'A: 0.75 × 100 vs B: 75',t:'igual'},{w:'A: 12.5 × 0.1 vs B: 2',t:'menor'},{w:'A: 2.8 × 10 vs B: 25',t:'mayor'},
-      {w:'A: 0.09 × 100 vs B: 9',t:'igual'},{w:'A: 4.2 × 0.01 vs B: 0.1',t:'menor'},{w:'A: 1.5 × 1,000 vs B: 1,000',t:'mayor'},
-      {w:'A: 6.7 × 10 vs B: 67',t:'igual'},{w:'A: 0.8 × 0.1 vs B: 0.5',t:'menor'},{w:'A: 0.35 × 1,000 vs B: 300',t:'mayor'}
+      {w:'A: 3.4 × 10 vs. B: 34',t:'igual'},{w:'A: 3.4 × 0.1 vs. B: 1',t:'menor'},{w:'A: 0.56 × 100 vs. B: 50',t:'mayor'},
+      {w:'A: 0.75 × 100 vs. B: 75',t:'igual'},{w:'A: 12.5 × 0.1 vs. B: 2',t:'menor'},{w:'A: 2.8 × 10 vs. B: 25',t:'mayor'},
+      {w:'A: 0.09 × 100 vs. B: 9',t:'igual'},{w:'A: 4.2 × 0.01 vs. B: 0.1',t:'menor'},{w:'A: 1.5 × 1,000 vs. B: 1,000',t:'mayor'},
+      {w:'A: 6.7 × 10 vs. B: 67',t:'igual'},{w:'A: 0.8 × 0.1 vs. B: 0.5',t:'menor'},{w:'A: 0.35 × 1,000 vs. B: 300',t:'mayor'}
     ]
   },
   {
     name:'Compras en lempiras 💵', hint:'Multiplica el precio por la cantidad y compara con B',
     pool:[
-      {w:'A: 4 panes de L 2.50 vs B: L 10',t:'igual'},{w:'A: 3 jugos de L 12.50 vs B: L 40',t:'menor'},{w:'A: 5 libras de L 22.50 vs B: L 100',t:'mayor'},
-      {w:'A: 2 libras de L 42.50 vs B: L 85',t:'igual'},{w:'A: 6 rosquillas de L 1.50 vs B: L 10',t:'menor'},{w:'A: 4 kilos de L 27.50 vs B: L 100',t:'mayor'},
-      {w:'A: 3 cuadernos de L 15.50 vs B: L 46.50',t:'igual'},{w:'A: 2 refrescos de L 18.50 vs B: L 40',t:'menor'},{w:'A: 5 mangos de L 6.50 vs B: L 30',t:'mayor'},
-      {w:'A: 8 huevos de L 4.25 vs B: L 34',t:'igual'},{w:'A: 4 bolsas de L 9.75 vs B: L 40',t:'menor'},{w:'A: 3 platos de L 45.50 vs B: L 130',t:'mayor'}
+      {w:'A: 4 panes de L 2.50 vs. B: L 10',t:'igual'},{w:'A: 3 jugos de L 12.50 vs. B: L 40',t:'menor'},{w:'A: 5 libras de L 22.50 vs. B: L 100',t:'mayor'},
+      {w:'A: 2 libras de L 42.50 vs. B: L 85',t:'igual'},{w:'A: 6 rosquillas de L 1.50 vs. B: L 10',t:'menor'},{w:'A: 4 kilos de L 27.50 vs. B: L 100',t:'mayor'},
+      {w:'A: 3 cuadernos de L 15.50 vs. B: L 46.50',t:'igual'},{w:'A: 2 refrescos de L 18.50 vs. B: L 40',t:'menor'},{w:'A: 5 mangos de L 6.50 vs. B: L 30',t:'mayor'},
+      {w:'A: 8 huevos de L 4.25 vs. B: L 34',t:'igual'},{w:'A: 4 bolsas de L 9.75 vs. B: L 40',t:'menor'},{w:'A: 3 platos de L 45.50 vs. B: L 130',t:'mayor'}
     ]
   }
 ];
 let currentRetoPairIdx=0;
 let retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
-function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' — 💡 '+rp.hint; }
+function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' · 💡 '+rp.hint; }
 function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; resetReto(); _retoPairLbl(); showToast('🔀 Pareja: '+retoPairs[currentRetoPairIdx].name); }
 function startReto(){
     if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30;
@@ -623,7 +623,7 @@ const pensamientoTaskDB=[
   {q:'¿Puede el producto de dos decimales ser menor que los dos? Da un ejemplo.',a:'Sí: 0.5 × 0.4 = 0.2, que es menor que 0.5 y que 0.4. Pasa cuando los dos son menores que 1.'},
   {q:'Con 2.5 metros de tela a L 68.50 el metro, ¿alcanzan L 150?',a:'2.5 × 68.50 = L 171.25, así que no alcanzan: faltan L 21.25.'},
   {q:'Explica por qué multiplicar por 0.1 es lo mismo que dividir entre 10.',a:'0.1 es una décima parte, así que tomar 0.1 de un número es partirlo en 10 y quedarse con una parte.'},
-  {q:'Marta escribió 1.5 × 4 = 60. ¿Qué le pasó y cuánto es de verdad?',a:'Multiplicó 15 × 4 = 60 y se olvidó del punto. El resultado lleva una cifra decimal: 6.0, o sea 6.'},
+  {q:'Marta escribió 1.5 × 4 = 60. ¿Qué le pasó y cuánto es de verdad?',a:'Multiplicó 15 × 4 = 60 y se olvidó del punto. El resultado lleva una cifra decimal: 6.0, o sea, 6.'},
   {q:'Una pulpería vende 12 refrescos al día a L 15.50. ¿Cuánto recibe en una semana?',a:'12 × 15.50 = L 186 al día; por 7 días son L 1,302.'},
   {q:'¿Cuántas cifras decimales tendrá el producto de 0.125 × 0.4 antes de quitar los ceros del final?',a:'Cuatro: tres del primero y una del segundo. Da 0.0500, que se escribe 0.05.'}
 ];
@@ -676,7 +676,7 @@ function genComprasTask(out,count){
 }
 // 🎯 Estimar con números redondos
 function genEstimaTask(out,count){
-  _instrBlock(out,'🎯 Estima antes de calcular',['Redondea los dos factores al entero más cercano.','Escribe cuánto anda el resultado, sin hacer la cuenta exacta.']);
+  _instrBlock(out,'🎯 Estima antes de calcular',['Redondea los dos factores al entero más cercano.','Escribe por cuánto anda el resultado, sin hacer la cuenta exacta.']);
   for(let i=0;i<count;i++){
     const a=(_tgRint(11,99)/10), b=(_tgRint(11,99)/10);
     _tgTask(out,i,`<div class="tg-op">${a} × ${b} anda cerca de ________</div><div class="tg-answer" style="display:${ansVisible?'block':'none'}">R/ cerca de ${Math.round(a)*Math.round(b)} (exacto: ${_decMul(a,b)})</div>`);
@@ -861,11 +861,11 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 function genEval(){
   sfx('click');
   _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */ window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final — Forma ${cf}`;
+  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final · Forma ${cf}`;
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -883,7 +883,7 @@ function genEval(){
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item eval-auto-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">—</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">?</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -958,7 +958,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Multiplicación de Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
@@ -975,8 +975,8 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Multiplicación de Decimales · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Multiplicación de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Multiplicación de Decimales · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Evaluación Final · Multiplicación de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
@@ -1121,19 +1121,19 @@ function genRadarItems() {
     if (tp === 0) {
       const a = _decNoRedondo(11, 99, 10, _opRint), b = _decNoRedondo(11, 99, 10, _opRint);
       const n = String(a).length - 2 + String(b).length - 2;
-      items.push({ text: `¿Cuántas cifras decimales lleva el producto de ${a} × ${b}? Escribe solo el número.`, ansTxt: [String(n), n === 2 ? 'dos' : 'una'], ansShow: `${n} — una de cada factor` });
+      items.push({ text: `¿Cuántas cifras decimales lleva el producto de ${a} × ${b}? Escribe solo el número.`, ansTxt: [String(n), n === 2 ? 'dos' : 'una'], ansShow: `${n}: una de cada factor` });
     } else if (tp === 1) {
       const a = _opRint(101, 999) / 100, k = _DEC_POT[_opRint(0, 2)];
-      items.push({ text: `¿Hacia dónde salta el punto en ${a} × ${_fmtNum(k)}? Escribe <em>derecha</em> o <em>izquierda</em>.`, ansTxt: ['derecha'], ansShow: `derecha — el resultado es ${_decMul(a, k)}` });
+      items.push({ text: `¿Hacia dónde salta el punto en ${a} × ${_fmtNum(k)}? Escribe <em>derecha</em> o <em>izquierda</em>.`, ansTxt: ['derecha'], ansShow: `derecha: el resultado es ${_decMul(a, k)}` });
     } else if (tp === 2) {
       const a = _decNoRedondo(11, 99, 10, _opRint), f = [0.1, 0.01][_opRint(0, 1)];
-      items.push({ text: `¿El resultado de ${a} × ${f} es mayor o menor que ${a}? Escribe <em>mayor</em> o <em>menor</em>.`, ansTxt: ['menor'], ansShow: `menor — ${f} es menos que un entero: da ${_decMul(a, f)}` });
+      items.push({ text: `¿El resultado de ${a} × ${f} es mayor o menor que ${a}? Escribe <em>mayor</em> o <em>menor</em>.`, ansTxt: ['menor'], ansShow: `menor, porque ${f} es menos que un entero: da ${_decMul(a, f)}` });
     } else if (tp === 3) {
       const a = _decNoRedondo(11, 99, 10, _opRint), b = _decNoRedondo(11, 99, 10, _opRint);
-      items.push({ text: `Estima con números redondos: ¿cerca de cuánto anda ${a} × ${b}? Escribe solo el número estimado.`, ansTxt: [String(Math.round(a) * Math.round(b))], ansShow: `${Math.round(a) * Math.round(b)} — el exacto es ${_decMul(a, b)}` });
+      items.push({ text: `Estima con números redondos: ¿cerca de cuánto anda ${a} × ${b}? Escribe solo el número estimado.`, ansTxt: [String(Math.round(a) * Math.round(b))], ansShow: `${Math.round(a) * Math.round(b)} (el exacto es ${_decMul(a, b)})` });
     } else {
       const a = _opRint(1, 9) / 10, b = _opRint(1, 9) / 10;
-      items.push({ text: `¿Cuántos ceros hay que agregar delante en ${a} × ${b}? Escribe <em>uno</em> o <em>ninguno</em>.`, ansTxt: (Math.round(a * 10) * Math.round(b * 10) < 10) ? ['uno', '1'] : ['ninguno', '0'], ansShow: (Math.round(a * 10) * Math.round(b * 10) < 10 ? 'uno' : 'ninguno') + ` — el resultado es ${_decMul(a, b)}` });
+      items.push({ text: `¿Cuántos ceros hay que agregar delante en ${a} × ${b}? Escribe <em>uno</em> o <em>ninguno</em>.`, ansTxt: (Math.round(a * 10) * Math.round(b * 10) < 10) ? ['uno', '1'] : ['ninguno', '0'], ansShow: (Math.round(a * 10) * Math.round(b * 10) < 10 ? 'uno' : 'ninguno') + ` (el resultado es ${_decMul(a, b)})` });
     }
   });
   return items;
@@ -1176,7 +1176,7 @@ function genVidaItems() {
     items.push({ text: `Un metro de ${t[1]} cuesta L ${p.toFixed(2)}. ¿Cuánto cuestan ${t[0]} metros?`, ansTxt: [..._decAcc(_decMul(p, t[0])), (Math.round(p * t[0] * 100) / 100).toFixed(2)], ansShow: _lps(p * t[0]), just: `${t[0]} × ${p.toFixed(2)}` }); }
   { const p = _DEC_PRECIOS[_opRint(0, _DEC_PRECIOS.length - 1)], k = _opRint(4, 8);
     const total = Number(_decMul(p, k)), paga = Math.floor(total / 50) * 50 + 50;
-    items.push({ text: `Se compran ${k} unidades de L ${p.toFixed(2)} y se paga con L ${paga}. ¿Cuánto le devuelven de vuelto?`, ansTxt: [..._decAcc(_decFmt(paga - total, 2)), (paga - total).toFixed(2)], ansShow: _lps(paga - total), just: `${paga} − ${total.toFixed(2)}` }); }
+    items.push({ text: `Se compran ${k} unidades de L ${p.toFixed(2)} y se paga con L ${paga}. ¿Cuánto le dan de vuelto?`, ansTxt: [..._decAcc(_decFmt(paga - total, 2)), (paga - total).toFixed(2)], ansShow: _lps(paga - total), just: `${paga} − ${total.toFixed(2)}` }); }
   return items;
 }
 
@@ -1187,12 +1187,12 @@ const _RT_CEROS = [[0.2, 0.3], [0.1, 0.4], [0.2, 0.2], [0.3, 0.3], [0.1, 0.9]];
 function genRetoItems() {
   const items = [];
   { const c = _RT_MALPUNTO[_opRint(0, _RT_MALPUNTO.length - 1)];
-    items.push({ text: `Un compañero escribió ${c[0]} × ${c[1]} = ${c[2]}: multiplicó bien pero se olvidó del punto. Escribe el resultado correcto.`, ansTxt: _decAcc(_decMul(c[0], c[1])), ansShow: _decMul(c[0], c[1]), pts: 5 }); }
+    items.push({ text: `Un compañero escribió ${c[0]} × ${c[1]} = ${c[2]}: multiplicó bien, pero se olvidó del punto. Escribe el resultado correcto.`, ansTxt: _decAcc(_decMul(c[0], c[1])), ansShow: _decMul(c[0], c[1]), pts: 5 }); }
   { const c = _RT_ENCOGE[_opRint(0, _RT_ENCOGE.length - 1)];
-    items.push({ text: `Sin calcular: ¿${c[0]} × ${c[1]} da más o menos que ${c[0]}? Escribe <em>más</em> o <em>menos</em>.`, ansTxt: ['menos'], ansShow: `menos — ${c[1]} es menor que 1, así que da ${_decMul(c[0], c[1])}`, pts: 5 }); }
+    items.push({ text: `Sin calcular: ¿${c[0]} × ${c[1]} da más o menos que ${c[0]}? Escribe <em>más</em> o <em>menos</em>.`, ansTxt: ['menos'], ansShow: `menos: ${c[1]} es menor que 1, así que da ${_decMul(c[0], c[1])}`, pts: 5 }); }
   { const c = _RT_CEROS[_opRint(0, _RT_CEROS.length - 1)];
     const p = _DEC_PRECIOS[_opRint(0, _DEC_PRECIOS.length - 1)];
-    items.push({ text: `Media libra de queso cuesta la mitad de L ${p.toFixed(2)} y además se compran 2 libras enteras al mismo precio. ¿Cuánto se paga en total?`, ansTxt: [..._decAcc(_decFmt(p * 2.5, 2)), (Math.round(p * 250) / 100).toFixed(2)], ansShow: _lps(p * 2.5) + ` — es 2.5 × ${p.toFixed(2)}`, pts: 10 }); }
+    items.push({ text: `Media libra de queso cuesta la mitad de L ${p.toFixed(2)} y además se compran 2 libras enteras al mismo precio. ¿Cuánto se paga en total?`, ansTxt: [..._decAcc(_decFmt(p * 2.5, 2)), (Math.round(p * 250) / 100).toFixed(2)], ansShow: _lps(p * 2.5) + ` (es 2.5 × ${p.toFixed(2)})`, pts: 10 }); }
   return items;
 }
 
@@ -1202,7 +1202,7 @@ function genEvalOp() {
   const _sO = document.getElementById('evalOpFormaSel');
   if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
   const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra todo el azar de la prueba operativa */ evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
-  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Multiplicación de Decimales`;
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa · Forma ${cf} · Multiplicación de Decimales`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
@@ -1241,7 +1241,7 @@ function genEvalOp() {
   s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Son compras de verdad: resuelve en tu cuaderno y escribe el total en lempiras.</p>';
   viItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansShow || _fmtNum(it.ansNum)} — ${it.just}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${it.ansShow || _fmtNum(it.ansNum)} · ${it.just}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
@@ -1301,7 +1301,7 @@ function printEvalOp() {
   let s1 = `<div class="sec-title"><span>I. Multiplica y coloca el punto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. Multiplica sin el punto, cuenta las cifras decimales y escribe la respuesta en la línea. 4 pts c/u.</p>`;
   d.mdItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
   const rdTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Radar del punto: cuenta, estima y decide</th><th>Respuesta</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${_plano(it.text)}</td><td></td></tr>`).join('')}</table>`;
-  let s2 = `<div class="sec-title"><span>II. Radar del punto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel básico. Recuerda: el producto lleva las cifras decimales de los dos factores · por 10 el punto va a la derecha · por 0.1 a la izquierda · suma de cifras · 5 → termina en 0 o 5 · 10 → termina en 0. 2 pts c/u.</p>${rdTbl(d.rdItems)}`;
+  let s2 = `<div class="sec-title"><span>II. Radar del punto</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 10 pts</span></div></div><p class="opx-instr">Nivel básico. Recuerda: el producto lleva las cifras decimales de los dos factores · por 10 el punto va a la derecha · por 0.1 a la izquierda. 2 pts c/u.</p>${rdTbl(d.rdItems)}`;
   const rgTbl = (items) => `<table class="rnd-tbl"><tr><th>#</th><th>Operación</th><th>Pista</th><th>▢ =</th></tr>${items.map((it, i) => `<tr><td>${i+1}</td><td>${it.expr}</td><td>${it.hint}</td><td></td></tr>`).join('')}</table>`;
   let s3 = `<div class="sec-title"><span>III. ¿Qué se esconde en ▢?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel intermedio. Mira dónde quedó el punto: eso dice qué falta en el recuadro. 4 pts c/u.</p>${rgTbl(d.rgItems)}`;
   let s4 = `<div class="sec-title"><span>IV. Problemas de la vida real</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel avanzado. Resuelve en el espacio mostrando tu procedimiento y escribe la respuesta. 10 pts c/u.</p>`;
@@ -1312,9 +1312,9 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">I. Multiplica y coloca el punto</div><table class="p-tbl">${d.mdItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow || _fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">II. Radar del punto</div><table class="p-tbl">${d.rdItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">III. ¿Qué se esconde en ▢?</div><table class="p-tbl">${d.rgItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${it.ansShow || _fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow || _fmtNum(it.ansNum)} — ${it.just}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow || _fmtNum(it.ansNum)} · ${it.just}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento crítico</div><table class="p-tbl">${d.rtItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow} (${it.pts} pts)</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Multiplicación de Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Multiplicación de Decimales · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Multiplicación de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Multiplicación de Decimales · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Multiplicación de Decimales · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Multiplicación de Decimales · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1334,7 +1334,7 @@ function openDiploma(){
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();

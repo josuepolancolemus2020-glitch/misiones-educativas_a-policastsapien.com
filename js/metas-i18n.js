@@ -89,9 +89,9 @@
     '🔑 Código de aula (te lo da tu maestro)': '🔑 Classroom code (your teacher gives it to you)',
     '✅ Guardar': '✅ Save', 'Ahora no': 'Not right now', 'Cancelar': 'Cancel',
     /* ejemplos de los campos (viven en el atributo placeholder) */
-    'Ej: Ana López o A07': 'e.g., Ana López or A07', 'Ej: 7': 'e.g., 7',
-    'Ej: Esc. Francisco Morazán': 'e.g., Francisco Morazán School', 'Ej: 6to A': 'e.g., 6th A',
-    'Ej: K2M9P': 'e.g., K2M9P', 'Escribe aquí con tus palabras...': 'Write here in your own words…',
+    'Ej.: Ana López o A07': 'e.g., Ana López or A07', 'Ej.: 7': 'e.g., 7',
+    'Ej.: Esc. Francisco Morazán': 'e.g., Francisco Morazán School', 'Ej.: 6to A': 'e.g., 6th A',
+    'Ej.: K2M9P': 'e.g., K2M9P', 'Escribe aquí con tus palabras...': 'Write here in your own words…',
     '👤 Aún no te has identificado': '👤 You have not identified yourself yet',
     '✍️ Escribir mis datos': '✍️ Enter my details',
     '👤 Cambiar alumno': '👤 Change student',
@@ -136,9 +136,6 @@
     '🔤 Letra': '🔤 Text size', '🔄 Reiniciar XP': '🔄 Reset XP', '🏅 Mis Logros': '🏅 My Achievements',
     /* flashcards y memorama */
     '🃏 Flashcards: toca para voltear': '🃏 Flashcards: tap to flip',
-    /* rótulo viejo, con raya: lo siguen usando las misiones de la Ruta del
-       Código. Se borra cuando esa ruta pase el barrido de guiones largos. */
-    '🃏 Flashcards — Toca para voltear': '🃏 Flashcards: tap to flip',
     '🃏 Toca · Enter para voltear': '🃏 Tap · press Enter to flip',
     '◀ Anterior': '◀ Previous', 'Siguiente ▶': 'Next ▶',
     '🔄 Mezclar de nuevo': '🔄 Shuffle again',
@@ -172,8 +169,6 @@
     'Cargando...': 'Loading…',
     /* reto */
     '🏆 Reto Final: ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
-    /* rótulo viejo, con raya: ver la nota de las flashcards */
-    '🏆 Reto Final — ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
     'Clasifica cada término lo más rápido que puedas.': 'Sort each term as fast as you can.',
     '💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.':
       '💡 Tip: when you finish, use "Change pair" to play with other categories and get even quicker.',
@@ -202,7 +197,7 @@
     '🎓 Evaluación Conceptual': '🎓 Concept Test', '🧠 Pensamiento Crítico': '🧠 Critical Thinking',
     /* la versión impresa añade la materia al final */
     'Nombre:': 'Name:', 'Fecha:': 'Date:', 'Centro Educativo:': 'School:', 'Instituto:': 'School:',
-    'Grado y Sección:': 'Grade and section:', 'Nº Lista:': 'Student No.:', 'Parcial:': 'Term:',
+    'Grado y Sección:': 'Grade and section:', 'N.º Lista:': 'Student No.:', 'Parcial:': 'Term:',
     'Valor total: 100 puntos · Cada respuesta vale 5 puntos': 'Total value: 100 points · Each answer is worth 5 points',
     'Valor total: 100 puntos · 5 secciones de 20 puntos': 'Total value: 100 points · 5 sections of 20 points',
     'Copia el examen en tu cuaderno y responde las preguntas, después selecciona Ver Pauta para que te autoevalúes. Genera nuevas preguntas cuando quieras.':
@@ -250,12 +245,9 @@
     'Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u': 'Total value: 100 pts | 4 sections × 5 questions × 5 pts each',
     'Valor total: 100 pts | 5 secciones × 20 pts c/u · respuesta abierta, usar como guía de corrección':
       'Total value: 100 pts | 5 sections × 20 pts each · open answers, use as a marking guide',
-    /* rótulo viejo, con raya: ver la nota de las flashcards */
-    'Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección':
-      'Total value: 100 pts | 5 sections × 20 pts each · open answers, use as a marking guide',
     'I. Completar': 'I. Fill in', 'II. V o F': 'II. T or F', 'III. Selección': 'III. Multiple choice', 'IV. Pareados': 'IV. Matching',
-    'Total, obtenido': 'Total score', 'de 100%': 'of 100%', 'de 100': 'of 100', 'de 25%': 'of 25%', 'de 20': 'of 20',
-    'Nº de Evaluación temática realizada:': 'Topic test number:',
+    'Total obtenido': 'Total score', 'de 100%': 'of 100%', 'de 100': 'of 100', 'de 25%': 'of 25%', 'de 20': 'of 20',
+    'N.º de Evaluación temática realizada:': 'Topic test number:',
     'Evaluación con valor en el parcial': 'Test counts toward the term grade',
     'Evaluación solo de repaso': 'Practice test only',
     '1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.':
@@ -266,7 +258,7 @@
        METAS_TR_TEXTO línea por línea antes de abrir WhatsApp. Aquí viven las
        líneas idénticas en todas las misiones; el gancho propio de cada una y
        su título en la constancia van en su <mision>-en.js. */
-    'Practica sobre este tema y sobresale en ser de los mejores alumnos. 🏆':
+    'Practica este tema y ponte entre los mejores alumnos. 🏆':
       'Practice this topic and stand out as one of the best students. 🏆',
     'Desbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋':
       'Unlock *every achievement* and enter *your details* so your teacher can see everything you have earned. 📋',
@@ -347,8 +339,8 @@
     [/Resultado: (\d+)\/(\d+) \((\d+)%\) ¡Bien hecho!/g, 'Result: $1/$2 ($3%) Well done!'],
     [/✅ ¡Encontraste: ([A-ZÑÁÉÍÓÚ]+)!/g, '✅ You found $1!'],
     /* avisos y rótulos que nombran el grupo, la pareja o el caso */
-    [/🔄 Grupo: (.+?) vs (.+)/g, '🔄 Group: $1 vs $2'],
-    [/🔄 Pareja: (.+?) vs (.+)/g, '🔄 Pair: $1 vs $2'],
+    [/🔄 Grupo: (.+?) vs\. (.+)/g, '🔄 Group: $1 vs. $2'],
+    [/🔄 Pareja: (.+?) vs\. (.+)/g, '🔄 Pair: $1 vs. $2'],
     [/🔄 Caso: /g, '🔄 Case: '],
     // el aviso lleva por delante el icono del logro, y cada misión usa el suyo
     [/ ¡Logro desbloqueado! /g, ' Achievement unlocked! '],
@@ -376,15 +368,13 @@
          frase completa. El marcador de progreso de la constancia va aquí
          porque lleva el porcentaje dentro. */
     [/\*Misión Asignada\*/g, '*Mission Assigned*'],
-    [/Se te hará prueba escrita y serás excelente estudiante en Robótica\./g,
+    [/Se te hará una prueba escrita y serás excelente estudiante en Robótica\./g,
       'You will take a written test and become an excellent Robotics student.'],
-    [/Se te hará prueba escrita y serás excelente estudiante en Programación\./g,
+    [/Se te hará una prueba escrita y serás excelente estudiante en Programación\./g,
       'You will take a written test and become an excellent Programming student.'],
     [/🏅 Progreso: (\d+)% ·/g, '🏅 Progress: $1% ·'],
     /* impresión: clave ZipGrade y número de forma */
-    /* acepta los dos puntos (rótulo ya barrido) y la raya vieja, que sigue
-       viva en la Ruta del Código hasta que le toque su tanda */
-    [/🎯 Clave rápida estilo ZipGrade · Forma (\d+)(?::| —) respuestas correctas ya rellenadas para digitar la clave en la app/g,
+    [/🎯 Clave rápida estilo ZipGrade · Forma (\d+): respuestas correctas ya rellenadas para digitar la clave en la app/g,
       '🎯 ZipGrade-style quick key · Form $1: correct answers already filled in so you can type the key into the app'],
     [/Test Version \/ Forma:/g, 'Test Version / Form:'],
     [/Forma (\d+)/g, 'Form $1'],

@@ -52,8 +52,8 @@
       /* ---------- APRENDE ---------- */
       a0:
         '<h2>🫓 Kenia’s baleadas</h2>' +
-        '<p>Kenia was left making the <em>baleadas</em> —the Honduran folded flour tortilla— while her mother ' +
-        'walked to the corner store. She did every step she had seen done, without skipping a single one — but she ' +
+        '<p>Kenia was left making the <em>baleadas</em> (the Honduran folded flour tortilla) while her mother ' +
+        'walked to the corner store. She did every step she had seen done, without skipping a single one, but she ' +
         'spread the beans first and put the tortilla on the griddle afterward. The beans burned on the griddle and the ' +
         'dough stayed raw. There was no lunch in her house that day.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
@@ -164,7 +164,7 @@
         '</div>',
 
       e2:
-        '<h2>⚠️ Common mistakes — do not fall for them!</h2>' +
+        '<h2>⚠️ Common mistakes: do not fall for them!</h2>' +
         '<div class="vs-grid">' +
         '<div class="vs-box vs-a">' +
         '<h4>🚫 Believing the computer guesses</h4>' +
@@ -688,7 +688,7 @@
       'Hay pasos fuera de orden. Revisa el arreglo.': 'Some steps are out of order. Check the arrangement.',
       '🌫️ ¿Exacta o ambigua?': '🌫️ Exact or ambiguous?',
       '¡Cuida tu racha 🔥!': 'Watch your streak 🔥!',
-      '¿Una persona-robot podría ejecutar esta orden tal como está escrita?':
+      '¿Una persona robot podría ejecutar esta orden tal como está escrita?':
         'Could a human robot carry out this instruction exactly as it is written?',
       '«Da 3 pasos hacia adelante»': '«Take 3 steps forward»',
       '🧩 Descompón el problema': '🧩 Decompose the problem',
@@ -699,7 +699,7 @@
       'Esas no son las 3 partes. Las correctas quedaron en verde.': 'Those are not the 3 parts. The correct ones are in green.',
       '🎉 ¡Descompusiste todos los problemas!': '🎉 You decomposed every problem!',
       /* — reto — */
-      '🏆 Reto Final — ¡30 segundos!': '🏆 Final Challenge — 30 seconds!',
+      '🏆 Reto Final: ¡30 segundos!': '🏆 Final Challenge: 30 seconds!',
       /* — generador de tareas — */
       '🫓 Escribir el algoritmo de una tarea de casa': '🫓 Write the algorithm for a chore at home',
       '🌫️ Marcar la instrucción ambigua': '🌫️ Spot the ambiguous instruction',
@@ -707,7 +707,7 @@
       '🔁 Encontrar el patrón': '🔁 Find the pattern',
       'Escribe en tu cuaderno el ALGORITMO de cada tarea: de 4 a 6 pasos numerados, cada paso con un verbo claro y en el orden correcto.':
         'Write the ALGORITHM for each chore in your notebook: 4 to 6 numbered steps, each one with a clear verb and in the right order.',
-      'Recuerda: instrucciones EXACTAS (cantidades y lugares claros), como si programaras a una persona-robot.':
+      'Recuerda: instrucciones EXACTAS (cantidades y lugares claros), como si programaras a una persona robot.':
         'Remember: EXACT instructions (clear amounts and places), as if you were programming a human robot.',
       'En cada grupo hay UNA instrucción ambigua escondida entre instrucciones exactas. Escribe la letra de la ambigua y corrígela para volverla exacta.':
         'In each group there is ONE ambiguous instruction hidden among exact ones. Write the letter of the ambiguous one and correct it to make it exact.',
@@ -719,11 +719,11 @@
       /* — evaluación conceptual — */
       'Evaluación Final · El Pensamiento Computacional · Educación Básica · Programación':
         'Final Test · Computational Thinking · Basic Education · Programming',
-      '🎓 Evaluación Final — El Pensamiento Computacional': '🎓 Final Test — Computational Thinking',
+      '🎓 Evaluación Final · El Pensamiento Computacional': '🎓 Final Test · Computational Thinking',
       /* — prueba operativa — */
-      'Examen de Programación — Prueba Operativa · El Pensamiento Computacional · Educación Básica':
-        'Programming Exam — Practical Test · Computational Thinking · Basic Education',
-      '🧠 Prueba Operativa — El Pensamiento Computacional': '🧠 Practical Test — Computational Thinking',
+      'Examen de Programación · Prueba Operativa · El Pensamiento Computacional · Educación Básica':
+        'Programming Exam · Practical Test · Computational Thinking · Basic Education',
+      '🧠 Prueba Operativa · El Pensamiento Computacional': '🧠 Practical Test · Computational Thinking',
       '🔄 Nueva Prueba Operativa': '🔄 New Practical Test',
       'Ordena algoritmos, caza instrucciones ambiguas, completa pasos perdidos y descompón problemas. Responde en pantalla y presiona Calificar prueba para autoevaluarte. Genera una nueva prueba cuando quieras.':
         'Put algorithms in order, hunt ambiguous instructions, fill in missing steps and decompose problems. Answer on screen and press Grade the test to check yourself. Generate a new test whenever you like.',
@@ -739,7 +739,7 @@
         'Basic level. The steps are numbered but OUT OF ORDER. Write the right order with the numbers separated by hyphens (e.g., 2-4-1-3).',
       'Nivel básico. Los pasos están numerados pero DESORDENADOS. Escribe el orden correcto con los números separados por guiones (p. ej. 2-4-1-3). 4 pts c/u.':
         'Basic level. The steps are numbered but OUT OF ORDER. Write the right order with the numbers separated by hyphens (e.g., 2-4-1-3). 4 pts each.',
-      'Agilidad. ¿Una persona-robot podría ejecutar la instrucción tal como está escrita?':
+      'Agilidad. ¿Una persona robot podría ejecutar la instrucción tal como está escrita?':
         'Speed round. Could a human robot carry out the instruction exactly as it is written?',
       'Agilidad. Escribe E si la instrucción es EXACTA (todos la ejecutan igual) o A si es AMBIGUA (cada quien entiende distinto). 2 pts c/u.':
         'Speed round. Write E if the instruction is EXACT (everyone carries it out the same way) or A if it is AMBIGUOUS (everyone understands it differently). 2 pts each.',
@@ -761,9 +761,9 @@
       'de 10 pts': 'of 10 pts', 'de 20 pts': 'of 20 pts', 'de 30 pts': 'of 30 pts',
       'Pasos clave:': 'Key steps:', 'Rúbrica (10 pts):': 'Rubric (10 pts):',
       '¿Qué tiene de malo el paso': 'What is wrong with the step',
-      'Nº del paso malo (5 pts):': 'No. of the bad step (5 pts):',
+      'N.º del paso malo (5 pts):': 'No. of the bad step (5 pts):',
       '¿Qué tiene de malo? (5 pts):': 'What is wrong with it? (5 pts):',
-      'Nº del paso malo:': 'No. of the bad step:',
+      'N.º del paso malo:': 'No. of the bad step:',
       'Es: (a) ambiguo   (b) inútil   →': 'It is: (a) ambiguous   (b) useless   →',
       '🧮 Prueba interactiva:': '🧮 Interactive test:',
       'responde en pantalla y presiona': 'answer on screen and press',
@@ -820,8 +820,8 @@
       [/Escribe el algoritmo para: /g, 'Write the algorithm for: '],
       [/✅ Ejemplo de pauta: /g, '✅ Sample answer: '],
       [/ \(acepta otras partes lógicas\)/g, ' (other logical parts are acceptable)'],
-      [/✅ La ambigua es la ([a-d])\) «(.+?)» — corrígela con cantidades o lugares claros\./g,
-        '✅ The ambiguous one is $1) «$2» — correct it with clear amounts or places.'],
+      [/✅ La ambigua es la ([a-d])\) «(.+?)»\. Corrígela con cantidades o lugares claros\./g,
+        '✅ The ambiguous one is $1) «$2». Correct it with clear amounts or places.'],
       [/Parte 1:/g, 'Part 1:'], [/Parte 2:/g, 'Part 2:'], [/Parte 3:/g, 'Part 3:'],
       [/¿Qué 2 elementos siguen\?/g, 'Which 2 items come next?'],
       [/¿Cuál es la unidad que se repite\?/g, 'What is the unit that repeats?'],
@@ -829,10 +829,10 @@
       [/ · La unidad que se repite es: /g, ' · The unit that repeats is: '],
       /* — evaluación conceptual y prueba operativa: títulos con la Forma — */
       [/🎓 Evaluación Final · Forma (\d+) · El Pensamiento Computacional/g, '🎓 Final Test · Form $1 · Computational Thinking'],
-      [/✅ PAUTA — Evaluación Final · El Pensamiento Computacional · Forma (\d+)/g, '✅ ANSWER KEY — Final Test · Computational Thinking · Form $1'],
+      [/✅ PAUTA: Evaluación Final · El Pensamiento Computacional · Forma (\d+)/g, '✅ ANSWER KEY: Final Test · Computational Thinking · Form $1'],
       [/Evaluación El Pensamiento Computacional · Forma (\d+)/g, 'Computational Thinking Test · Form $1'],
-      [/🧠 Prueba Operativa — Forma (\d+) · El Pensamiento Computacional/g, '🧠 Practical Test — Form $1 · Computational Thinking'],
-      [/✔ PAUTA — Prueba Operativa · El Pensamiento Computacional · Forma (\d+)/g, '✔ ANSWER KEY — Practical Test · Computational Thinking · Form $1'],
+      [/🧠 Prueba Operativa · Forma (\d+) · El Pensamiento Computacional/g, '🧠 Practical Test · Form $1 · Computational Thinking'],
+      [/✔ PAUTA: Prueba Operativa · El Pensamiento Computacional · Forma (\d+)/g, '✔ ANSWER KEY: Practical Test · Computational Thinking · Form $1'],
       [/Prueba Operativa El Pensamiento Computacional · Forma (\d+)/g, 'Computational Thinking Practical Test · Form $1'],
       [/Valor total: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts/g,
         'Total value: 100 pts · I: 20 pts · II: 10 pts · III: 20 pts · IV: 30 pts · V: 20 pts'],

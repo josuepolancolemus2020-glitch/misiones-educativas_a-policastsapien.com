@@ -87,7 +87,7 @@
     <h2>¿Aprendió o se lo memorizó?</h2>
     <p>La máquina decide mirando a sus <b>vecinos más cercanos</b>. Tú eliges <b>a cuántos</b> les pregunta: a uno solo, a tres, a cinco…</p>
     <p style="font-size:.84rem;color:#c9b4d6;">Mientras ajustas solo ves la nota de <b>los ejemplos que ya vio</b>. La otra sale al examinarla, y tienes <b>tres exámenes</b> por tanda.</p>
-    <div class="chapas"><span>Los que se equivoca se ponen BLANCOS</span><span>Tres tandas</span></div>
+    <div class="chapas"><span>Los que falla se ponen BLANCOS</span><span>Tres tandas</span></div>
     <div class="mapa" id="mapa-ini"></div>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
   </div>
@@ -142,7 +142,7 @@ var TANDAS = [
    traidores:[tr(0, 0.45,-0.35,0.2), tr(0, 0.55, 0.30,-0.3), tr(1,-0.50, 0.10,0.35), tr(1,-0.44,-0.42,-0.15)],
    nubesPr:[Object.assign({centro:[-0.5,0,0], radio:[0.34,0.5,0.5], n:10}, A),
             Object.assign({centro:[ 0.5,0,0], radio:[0.34,0.5,0.5], n:10}, B)], semPr:8822,
-   leccion:'Con <b>un</b> vecino, la máquina se cree a cada traidor y le hace un huequito a su alrededor: por eso acierta TODOS los que ya vio. Preguntándole a más vecinos, los buenos desmienten al traidor.'},
+   leccion:'Con <b>un</b> vecino, la máquina se cree a cada traidor y le hace un huequito a su alrededor: por eso acierta TODOS los que ya vio. Preguntándoles a más vecinos, los buenos desmienten al traidor.'},
   {n:'Pocos de uno, muchos del otro', emoji:'⚖️', meta:19,
    cuento:'Aquí hay <b>muchos más</b> de una clase que de la otra. Cuidado con pasarte de vecinos: si les preguntas a demasiados, siempre gana el montón grande.',
    nubesEj:[Object.assign({centro:[-0.45,0,0], radio:[0.30,0.55,0.55], n:9}, A),
@@ -151,7 +151,7 @@ var TANDAS = [
               tr(1,-0.38,-0.30,-0.2), tr(1,-0.46,0.45,0.35)],
    nubesPr:[Object.assign({centro:[-0.45,0,0], radio:[0.30,0.55,0.55], n:10}, A),
             Object.assign({centro:[ 0.45,0,0], radio:[0.30,0.55,0.55], n:10}, B)], semPr:4422,
-   leccion:'Ni tan poco ni tanto. Con un vecino se memoriza; con veintiuno ya no mira a los de al lado, mira a media nube — y como de una clase hay más, empieza a contestar siempre lo mismo.'},
+   leccion:'Ni tan poco ni tanto. Con un vecino se memoriza; con veintiuno ya no mira a los de al lado, mira a media nube, y como de una clase hay más, empieza a contestar siempre lo mismo.'},
   {n:'Los montones pegados', emoji:'🤏', meta:19,
    cuento:'Los dos montones están <b>casi tocándose</b>. Aquí la frontera es fina y los traidores hacen más daño que nunca.',
    nubesEj:[Object.assign({centro:[-0.34,0,0], radio:[0.26,0.6,0.6], n:11}, A),
@@ -160,7 +160,7 @@ var TANDAS = [
               tr(1,-0.30, 0.35,-0.2), tr(1,-0.36,-0.28,0.3)],
    nubesPr:[Object.assign({centro:[-0.34,0,0], radio:[0.26,0.6,0.6], n:10}, A),
             Object.assign({centro:[ 0.34,0,0], radio:[0.26,0.6,0.6], n:10}, B)], semPr:5678,
-   leccion:'Esta es la que se parece a los problemas de verdad: nunca hay una raya limpia. Lo que se busca no es acertar todos los ejemplos — es acertar los que vengan mañana.'}
+   leccion:'Esta es la que se parece a los problemas de verdad: nunca hay una raya limpia. Lo que se busca no es acertar todos los ejemplos: es acertar los que vengan mañana.'}
 ];
 
 var esc3, ejemplos = [], pruebaPts = [], mallasEj = [], mallasPr = [];
@@ -325,7 +325,7 @@ function mostrar(logrado, kk, ya, nuevo){
   var ojo = document.getElementById('res-ojo');
   if(kk === 1){
     ojo.style.display = '';
-    ojo.innerHTML = '⚠️ Fíjate bien: sacó <b>todos</b> los que ya había visto. Y no es porque sea lista — es porque a cada ejemplo el vecino más cercano es ÉL MISMO. Eso no es aprender, es <b>memorizar</b>, y por eso a una máquina se la examina siempre con ejemplos que nunca vio.';
+    ojo.innerHTML = '⚠️ Fíjate bien: sacó <b>todos</b> los que ya había visto. Y no es porque sea lista: es porque a cada ejemplo el vecino más cercano es ÉL MISMO. Eso no es aprender, es <b>memorizar</b>, y por eso a una máquina se la examina siempre con ejemplos que nunca vio.';
   } else if(logrado){
     ojo.style.display = '';
     ojo.innerHTML = '✅ Y mira lo que pasó por el camino: sacó <b>menos</b> nota en los ejemplos que ya conocía y <b>más</b> en los nuevos. Cuando esas dos notas se separan mucho, la máquina está memorizando.';

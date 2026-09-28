@@ -78,12 +78,12 @@ const CONST_ARTICULOS = [
     citaLiteral: 'Por su carácter informativo y formativo la docencia tiene formación social y humana que determina para el educador responsabilidades científicas y morales frente a sus discípulos, frente a la institución en que labora y ante la sociedad.',
     paraQue: 'Con este artículo empieza el Estatuto del Docente: es la razón por la que el magisterio tiene una ley propia y no las reglas de cualquier otro empleo.',
     donde: 'Estatuto del Docente Hondureño, Decreto 136-97, considerandos.',
-    porQueImporta: 'Fíjate en a quién nombra primero: «frente a sus discípulos». Antes que a la institución y antes que a la sociedad. La Constitución pone al alumno delante — y ese alumno eres tú.'
+    porQueImporta: 'Fíjate en a quién nombra primero: «frente a sus discípulos». Antes que a la institución y antes que a la sociedad. La Constitución pone al alumno delante, y ese alumno eres tú.'
   },
   {
     art: 'Artículo 165', clave: 'a165', emoji: '📜',
     tema: 'La Constitución no solo prohíbe: MANDA hacer leyes',
-    paraQue: 'El Estatuto del Docente existe porque este artículo lo ordenó. El Congreso lo llama «un mandato impostergable instituido en el Artículo 165 de la Constitución de la República».',
+    paraQue: 'El Estatuto del Docente existe porque este artículo lo ordenó. El Congreso lo llama «un mandato impostergable instituido en el artículo 165 de la Constitución de la República».',
     donde: 'Estatuto del Docente Hondureño, Decreto 136-97, considerandos.',
     porQueImporta: 'Casi todo el mundo cree que una Constitución sirve para prohibir. También ENCARGA: hay leyes que existen porque ella mandó que se escribieran, y mientras no se escriben, ese mandato está sin cumplir.'
   },
@@ -91,7 +91,7 @@ const CONST_ARTICULOS = [
     art: 'Artículos 34 y 168', clave: 'a34', emoji: '🌎',
     tema: 'Los maestros de otros países',
     paraQue: 'Un docente extranjero puede entrar a la carrera docente hondureña, y el Estatuto lo sujeta a lo que dicen estos artículos de la Constitución además de al Código del Trabajo.',
-    donde: 'Estatuto del Docente Hondureño, Decreto 136-97, Artículo 8.',
+    donde: 'Estatuto del Docente Hondureño, Decreto 136-97, artículo 8.',
     porQueImporta: 'Una ley no decide sola: dice «sujeto a lo prevenido en los Artículos 34, 168 y demás relacionados de la Constitución». Escribe encima de un piso que ya estaba puesto.'
   },
   {
@@ -105,14 +105,14 @@ const CONST_ARTICULOS = [
     art: 'Artículo 128 numeral 7', clave: 'a128', emoji: '🧒',
     tema: 'El trabajo de los niños',
     paraQue: 'El Código de la Niñez sujeta a este artículo el empleo de un niño en cualquier actividad retribuida, y además exige el permiso previo de la Secretaría de Trabajo, pedido por los padres o el representante legal.',
-    donde: 'Código de la Niñez y la Adolescencia, Decreto 73-96, Artículo 119.',
-    porQueImporta: 'Es el artículo de esta lista que más cerca te toca, y el que más se incumple. Dos leyes lo protegen a la vez —la Constitución y el Código— y aun así hay niños trabajando sin ningún permiso.'
+    donde: 'Código de la Niñez y la Adolescencia, Decreto 73-96, artículo 119.',
+    porQueImporta: 'Es el artículo de esta lista que más cerca te toca, y el que más se incumple. Dos leyes lo protegen a la vez (la Constitución y el Código) y aun así hay niños trabajando sin ningún permiso.'
   },
   {
     art: 'Las libertades, todas juntas', clave: 'libertades', emoji: '🕊️',
     tema: 'Lo que un niño tiene por ser persona',
     paraQue: 'El Código de la Niñez lo dice en una sola línea: «Los niños gozan de las libertades consignadas en la Constitución de la República, en los convenios internacionales de que Honduras forme parte y en el presente Código».',
-    donde: 'Código de la Niñez y la Adolescencia, Decreto 73-96, Artículo 27.',
+    donde: 'Código de la Niñez y la Adolescencia, Decreto 73-96, artículo 27.',
     porQueImporta: 'No dice que el Código le DA libertades al niño: dice que el niño YA las tiene por la Constitución, y que el Código se suma. Un derecho que viene de la Constitución no se lo puede quitar una ley menor.'
   }
 ];
@@ -135,9 +135,9 @@ const CONST_CASOS = {
   titulo: 'Cuando un artículo no se cumple',
   intro: 'Que algo esté escrito en la Constitución no significa que pase. Estos cinco casos son para analizarlos, no para contestarlos rápido: en cada uno, di qué artículo de los que viste no se está cumpliendo y qué se podría hacer.',
   casos: [
-    { clave: 'trabajo-nino', caso: 'Un niño de diez años vende en el mercado todo el día y no va a la escuela. Nadie pidió permiso a ninguna Secretaría.', pista: 'Mira el artículo 128 numeral 7 y el Artículo 119 del Código de la Niñez: el permiso previo no es un trámite, es la condición.' },
-    { clave: 'nombramiento', caso: 'En una escuela nombran de maestro a alguien sin título docente, saltándose el concurso.', pista: 'El Estatuto del Docente existe por mandato del Artículo 165. Saltárselo no es un descuido administrativo: es incumplir lo que la Constitución mandó ordenar.' },
-    { clave: 'permiso-autoridad', caso: 'Una autoridad dicta una regla nueva y, cuando le preguntan de dónde saca el permiso, no contesta.', pista: 'El Reglamento del Estatuto empieza diciendo en qué artículos se apoya. El que no puede decirlo, no tiene el permiso.' },
+    { clave: 'trabajo-nino', caso: 'Un niño de diez años vende en el mercado todo el día y no va a la escuela. Nadie pidió permiso a ninguna Secretaría.', pista: 'Mira el artículo 128 numeral 7 y el artículo 119 del Código de la Niñez: el permiso previo no es un trámite, es la condición.' },
+    { clave: 'nombramiento', caso: 'En una escuela nombran de maestro a alguien sin título docente, saltándose el concurso.', pista: 'El Estatuto del Docente existe por mandato del artículo 165. Saltárselo no es un descuido administrativo: es incumplir lo que la Constitución mandó ordenar.' },
+    { clave: 'permiso-autoridad', caso: 'Una autoridad dicta una regla nueva y, cuando le preguntan de dónde saca el permiso, no contesta.', pista: 'El Reglamento del Estatuto empieza diciendo en qué artículos se apoya. El que no puede decirlo no tiene el permiso.' },
     { clave: 'gobierno-escolar', caso: 'A un grupo de alumnos no se les deja opinar en la elección del Gobierno Escolar porque «son muy chicos».', pista: 'El Código dice que los niños gozan de las libertades de la Constitución. La edad regula CÓMO se ejerce un derecho, no si existe.' },
     { clave: 'estatuto-no-aplica', caso: 'Un maestro dice que su horario y su salario los decide el director, y que el Estatuto «no aplica aquí».', pista: 'Una regla de un centro no puede decir lo contrario de una ley nacional, y una ley no puede decir lo contrario de la Constitución. Es la jerarquía de las normas.' }
   ],
@@ -148,7 +148,7 @@ const CONST_CASOS = {
     '4. ¿A dónde se reclama? Recuerda cuál de los tres poderes resuelve un caso concreto.',
     '5. ¿Qué harías tú? Una cosa que esté a tu alcance, no un deseo.'
   ],
-  aviso: 'Estos casos NO señalan a nadie de tu comunidad. Son situaciones inventadas para pensar. Si uno se parece a algo que conoces, eso es lo que hay que hablar en clase — con respeto y sin nombres.'
+  aviso: 'Estos casos NO señalan a nadie de tu comunidad. Son situaciones inventadas para pensar. Si uno se parece a algo que conoces, eso es lo que hay que hablar en clase, con respeto y sin nombres.'
 };
 
 /* La democracia participativa es la expectativa literal, y el DCNB nombra el
@@ -156,7 +156,7 @@ const CONST_CASOS = {
    con lo suyo; la misión del Gobierno Escolar es otra. */
 const CONST_DEMOCRACIA = {
   titulo: 'Para qué sirve todo esto: la democracia participativa',
-  texto: 'Democracia no es solo votar cada cuatro años. Participativa quiere decir que entre elección y elección la gente también decide, pregunta y reclama. Y para poder reclamar hace falta saber QUÉ dice la norma: quien no sabe qué le toca, no puede pedirlo.',
+  texto: 'Democracia no es solo votar cada cuatro años. Participativa quiere decir que entre elección y elección la gente también decide, pregunta y reclama. Y para poder reclamar hace falta saber QUÉ dice la norma: quien no sabe qué le toca no puede pedirlo.',
   porEso: 'Por eso esta misión no te pide memorizar artículos: te pide saber leerlos, saber dónde buscarlos y notar cuándo no se cumplen. Eso es lo que convierte un derecho escrito en un derecho que sirve.',
   enTuEscuela: 'El DCNB pone el ejemplo en tu propio centro: participar en la elección del Gobierno Escolar y hacer un análisis crítico de cómo se hizo. Ahí se practica en pequeño lo mismo que pasa en el país.',
   fuente: 'Expectativa del DCNB, Quinto Grado: «Respetan, valoran y practican positivamente la Democracia participativa como forma de Vida y Gobierno».'

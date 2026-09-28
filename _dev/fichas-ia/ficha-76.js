@@ -6,6 +6,9 @@ const { esc, arma, portada, preguntas, clave, tablaReglas,
 /* Las cuentas de las dos actividades de Descubre: la pauta se CALCULA de aquí,
    no se escribe, igual que en las otras cuatro fichas de la ruta. */
 const D = require('../../js/data/ia-descubre.js');
+/* Una cita entre comillas lleva su punto final DETRÁS de las comillas de
+   cierre («… todavía».), como pide la Ortografía de 2010. */
+const cita = s => { const p = /[^.]\.$/.test(s); return `«${esc(p ? s.slice(0, -1) : s)}»${p ? '.' : ''}`; };
 
 /* ⚠️ La prosa de esta ficha se escribe en lenguaje llano: frases de 25 palabras
    como mucho, párrafos de 45, una idea por frase. Lo mide
@@ -78,7 +81,7 @@ P.push(`
     <p>Una tabla por familia. <strong>Marcá con una ✗ los cuatro que te puedan pasar a vos este año</strong>
        y copialos en tu cuaderno con su pregunta.</p>
 
-${IA_FAMILIAS.map(f => `    <div class="ilus"><div class="ilus-t">${f.emoji} ${esc(f.nombre)} — ❓ ${esc(f.pregunta)}</div>
+${IA_FAMILIAS.map(f => `    <div class="ilus"><div class="ilus-t">${f.emoji} ${esc(f.nombre)} · ❓ ${esc(f.pregunta)}</div>
     <table>
       <tr><th style="width:4%"></th><th style="width:26%">El peligro</th><th>Qué hace la máquina</th></tr>
 ${IA_PELIGROS.filter(p => p.familia === f.k).map(p => `      <tr><td></td><td class="k">${p.emoji} ${esc(p.nombre)}</td><td>${esc(p.mecanismo)}</td></tr>`).join('\n')}
@@ -113,7 +116,7 @@ P.push(`
       <p>Subrayá en cada mensaje los pedazos que sean <strong>señal</strong>. Escribí al lado cuál es:
          urgencia, secreto o canal nuevo. <strong>Uno de los cuatro no trae ninguna.</strong></p>
 
-${IA_MENSAJES.map((m, i) => `      <div class="ilus"><div class="ilus-t">${i + 1}. ${m.emoji} ${esc(m.de)}</div><p>«${esc(m.trozos.map(z => z.txt).join('').trim())}»</p><p>Señales que encontré: <span class="linea-resp" style="min-width:60%"></span></p></div>`).join('\n')}
+${IA_MENSAJES.map((m, i) => `      <div class="ilus"><div class="ilus-t">${i + 1}. ${m.emoji} ${esc(m.de)}</div><p>${cita(m.trozos.map(z => z.txt).join('').trim())}</p><p>Señales que encontré: <span class="linea-resp" style="min-width:60%"></span></p></div>`).join('\n')}
 
       <p>¿Cuál no traía ninguna? <span class="linea-resp" style="min-width:45%"></span> ¿Y por qué eso
          también importa? <span class="linea-resp" style="min-width:100%"></span></p>
@@ -128,7 +131,7 @@ P.push(`
       <p>Este es el mensaje que le llegó a una alumna. Todo lo que lo hace creíble salió de <strong>algo
          publicado</strong>. Escribí de dónde pudo salir cada pieza:</p>
 
-      <div class="ilus"><div class="ilus-t">📨 El mensaje</div><p><i>«${esc(D.iaEstafaMensaje(D.IA_ESTAFA_PIEZAS.map(p => p.k)))}»</i></p></div>
+      <div class="ilus"><div class="ilus-t">📨 El mensaje</div><p><i>${cita(D.iaEstafaMensaje(D.IA_ESTAFA_PIEZAS.map(p => p.k)))}</i></p></div>
 
       <table>
         <tr><th style="width:44%">La pieza del mensaje</th><th>¿De dónde pudo salir?</th></tr>
@@ -204,7 +207,7 @@ P.push(`
         ${IA_MENSAJES.map((m, i) => (i + 1) + '. ' + (m.trozos.some(z => z.t) ? [...new Set(m.trozos.filter(z => z.t).map(z => z.t))].join(' + ') : '<b>ninguna señal</b>')).join(' · ')}.
         El cuarto es el que más enseña: es un mensaje normal, y reconocerlo es parte de la destreza.</div>
       <div><span class="pt">Actividad 2 · La estafa por dentro (20 pts):</span> las seis piezas salen de algo
-        publicado —${D.IA_ESTAFA_PIEZAS.map(p => esc(p.publico.toLowerCase())).join('; ')}—, salvo el número
+        publicado (${D.IA_ESTAFA_PIEZAS.filter(p => p.k !== 'canal').map(p => esc(p.publico.replace(/^\p{Lu}/u, c => c.toLowerCase()))).join('; ')}), salvo el número
         nuevo, que lo pone quien engaña. Las defensas:
         ${D.IA_ESTAFA_DEFENSAS.map(d => esc(d.que) + ' <b>' + VEREDICTO[d.vale] + '</b>').join(' · ')}.</div>
       <div><span class="pt">Actividad 3 · El promedio que esconde (20 pts):</span>
@@ -230,8 +233,8 @@ P.push(`
       la propia familia publicó. Eso es lo que le permite defenderse. Y termina siempre en la otra mitad, qué
       lo hubiera parado. Es como se enseña a reconocer un correo falso en cualquier oficina.
       <br><br>
-      <b>Tres peligros van sin caso con nombres:</b> el remedio milagroso, la opinión fabricada y —fuera de
-      esta ficha— el uso militar, que es de Educación Media. En un pueblo, un caso con nombres se parece a
+      <b>Tres peligros van sin caso con nombres:</b> el remedio milagroso, la opinión fabricada y (fuera de
+      esta ficha) el uso militar, que es de Educación Media. En un pueblo, un caso con nombres se parece a
       alguien, y la clase acaba señalando a una persona de verdad. Es la misma decisión que los casos de la
       misión de la Constitución.
       <br><br>

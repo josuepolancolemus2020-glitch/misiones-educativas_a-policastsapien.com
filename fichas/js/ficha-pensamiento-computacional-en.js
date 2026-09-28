@@ -37,7 +37,7 @@
         '<div class="fh-txt">' +
         '<div class="f-badge">📄 Study Sheet: Mission Computational Thinking</div>' +
         '<div class="f-meta"><b>Subject:</b> Programming &nbsp;·&nbsp; <b>Level:</b> Basic Education</div>' +
-        '<div class="f-meta"><b>Topic:</b> Thinking before programming: what an algorithm is (the recipe for baleadas), exact vs. ambiguous instructions, breaking big problems into small parts, patterns and abstraction — all with no computer</div>' +
+        '<div class="f-meta"><b>Topic:</b> Thinking before programming: what an algorithm is (the recipe for baleadas), exact vs. ambiguous instructions, breaking big problems into small parts, patterns and abstraction, all with no computer</div>' +
         '</div>' +
         '<div class="fh-qr">' +
         '<img src="img/qr-mision-pensamiento-computacional.png" alt="Mission QR code">' +
@@ -107,7 +107,7 @@
         '<p>A <strong>big problem</strong> (organizing the school fair) is scary as a whole, but it is beaten once it is ' +
         '<strong>decomposed</strong>: one committee prepares the food, another the games and another invites the families. ' +
         'Then you look for the <strong>pattern</strong>: what repeats is always done the same way and saves work.</p>' +
-        '<h3>⚠️ Common mistakes — do not fall for them!</h3>' +
+        '<h3>⚠️ Common mistakes: do not fall for them!</h3>' +
         '<table>' +
         '<tr><th>Mistake</th><th>Why it is wrong</th><th>The right way</th></tr>' +
         '<tr><td class="k" style="white-space:normal;">Believing the computer «guesses»</td><td>It runs exactly what is written, even if it is wrong.</td><td>Write exact instructions ✔</td></tr>' +
@@ -119,7 +119,7 @@
         '<h2>🎲 4. Unplugged activities (no computer)</h2>' +
         '<div class="caja regla">🤖 <b>The human robot:</b> in pairs. One student writes the instructions for a simple ' +
         'task (drawing a house, making a paper airplane, putting a book in the backpack) and the other is the «robot»: ' +
-        'they carry out each instruction <strong>to the letter</strong>, exaggerating every ambiguity — if it says «put in a ' +
+        'they carry out each instruction <strong>to the letter</strong>, exaggerating every ambiguity: if it says «put in a ' +
         'window», the robot may draw it as big as the house! When the task fails, together they find the ambiguous ' +
         'instruction and correct it with exact amounts and places. Then they switch roles.</div>' +
         '<div class="caja regla">🎪 <b>Decompose the fair:</b> the teacher writes the big problem «organize the school ' +
@@ -163,7 +163,7 @@
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>Which of these instructions is EXACT?</div>' +
         '<div class="preg-ops">' +
@@ -249,7 +249,7 @@
          La Columna B conserva el orden del original: la pauta
          1D · 2F · 3H · 4A · 5I · 6J · 7E · 8B · 9G · 10C vale igual. */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Algorithm</td><td>A. Keeping only what matters</td></tr>' +
@@ -282,7 +282,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
         '<div class="pauta">' +
         '<div><span class="pt">I. Fill in:</span> 1. corner store &nbsp; 2. lunch &nbsp; 3. burned &nbsp; 4. work &nbsp; 5. paper &nbsp; 6. guess &nbsp; 7. fifty &nbsp; 8. line &nbsp; 9. after &nbsp; 10. water</div>' +
@@ -293,7 +293,7 @@
         '<div class="nota-doc">' +
         '<strong>Note for the teacher:</strong> this study sheet is based on the interactive content of the M.E.T.A.S platform, ' +
         '«Mission Computational Thinking» (Basic Education), stage 1 of the Code Path (Programming) and suitable from 4th grade on. ' +
-        'It works on computational thinking with a fully unplugged approach — this stage does not use any simulator yet —: ' +
+        'It works on computational thinking with a fully unplugged approach (this stage does not use any simulator yet): ' +
         'algorithms from everyday Honduran life (the recipe for baleadas, raising the flag, planting a bean, the nance drink), ' +
         'exact vs. ambiguous instructions, decomposition of big problems, patterns and abstraction. The interactive mission ' +
         '(QR code on the cover) includes the «robot teacher» lab with 4 scenarios and 4 challenges per scenario; the unplugged ' +

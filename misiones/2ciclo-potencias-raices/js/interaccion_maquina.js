@@ -127,7 +127,7 @@ window.WidgetMaquinaJSON = {
             if (typeof sfx === 'function') sfx('ok');
             if (!awarded.has(n) && typeof pts === 'function') { awarded.add(n); pts(2); }
           } else {
-            setMsg(`💡 Saldrá <strong>${n}</strong>: la raíz cuadrada busca el número que multiplicado por sí mismo da ${n * n}. Presiona <strong>Sacar la raíz</strong> para verlo.`, 'err');
+            setMsg(`💡 Saldrá <strong>${n}</strong>: la raíz cuadrada busca el número que, multiplicado por sí mismo, da ${n * n}. Presiona <strong>Sacar la raíz</strong> para verlo.`, 'err');
             if (typeof sfx === 'function') sfx('no');
           }
           btnRoot.disabled = false;

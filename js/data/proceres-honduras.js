@@ -68,7 +68,7 @@ const PROCERES = [
       'Defendió que la Independencia se hiciera con leyes y no con sangre.'
     ],
     porque: 'La Independencia de Centroamérica no se ganó en una batalla: se escribió. Y el que la escribió fue él. Sin ese documento, el 15 de septiembre no tendría nada que celebrar.',
-    dato: 'Su firma está en el papel que separó a cinco países de España, el mismo día y de una sola vez.',
+    dato: 'Suyo es el texto del papel que separó a cinco países de España, el mismo día y de una sola vez.',
     fecha: null
   },
   {
@@ -80,19 +80,19 @@ const PROCERES = [
     papel: 'Presidente de la República Federal de Centro América',
     hizo: [
       'Gobernó la Federación que unía a Guatemala, El Salvador, Honduras, Nicaragua y Costa Rica.',
-      'Impulsó la educación pública y quitarle privilegios a unos pocos.',
+      'Impulsó la educación pública y quiso quitarles privilegios a unos pocos.',
       'Peleó hasta el final por mantener unidas a las cinco naciones. No lo consiguió.'
     ],
-    porque: 'Es el hondureño más conocido fuera de Honduras, y no por ganar: por no rendirse. Su idea —que Centroamérica valía más junta que repartida— sigue discutiéndose hoy.',
+    porque: 'Es el hondureño más conocido fuera de Honduras, y no por ganar: por no rendirse. Su idea (que Centroamérica valía más junta que repartida) sigue discutiéndose hoy.',
     dato: 'Nació un 3 de octubre y murió un 15 de septiembre, el día de la Independencia, en 1842.',
     fecha: { dia: '3 de octubre', que: 'Natalicio de Francisco Morazán' }
   },
   {
-    clave: 'herrera', nombre: 'Dionisio de Herrera', apodo: 'el primer Jefe de Estado', emoji: '🏛️',
+    clave: 'herrera', nombre: 'Dionisio de Herrera', apodo: 'el primer jefe de Estado', emoji: '🏛️',
     clase: 'prócer',
     epoca: 'El nacimiento del Estado, 1824',
     nacio: 'Nació en Choluteca el 9 de octubre de 1781',
-    papel: 'Primer Jefe de Estado de Honduras, en 1824',
+    papel: 'Primer jefe de Estado de Honduras, en 1824',
     hizo: [
       'Fue el primero en gobernar Honduras como Estado, después de la Independencia.',
       'Bajo su gobierno se creó el Escudo Nacional, en 1825.',
@@ -123,7 +123,7 @@ const PROCERES = [
      repositorio la trae. Queda lo que sí dice la misión de Aspectos Cívicos
      —que el Día del Maestro lo honra— y nada más. */
   {
-    clave: 'reyes', nombre: 'José Trinidad Reyes', apodo: 'el Padre Reyes', emoji: '📚',
+    clave: 'reyes', nombre: 'José Trinidad Reyes', apodo: 'el padre Reyes', emoji: '📚',
     clase: 'prócer',
     epoca: 'Mediados del siglo XIX',
     papel: 'Sacerdote que fundó la primera universidad del país',
@@ -180,7 +180,7 @@ const PROCERES = [
    libro trae. */
 const PROCERES_QUIENES_FALTAN = {
   titulo: 'Los que hicieron el país y casi nunca salen en la lista',
-  texto: 'Las estatuas son de ocho o diez hombres, pero el país no lo levantaron ocho o diez personas. Los pueblos indígenas y lencas defendieron su tierra mucho después de Lempira. Los garífunas llegaron a la costa en 1797 y levantaron pueblos enteros. Y las mujeres sostuvieron las casas, las escuelas y los hospitales de cada época sin que su nombre quedara escrito casi en ningún lado.',
+  texto: 'Las estatuas son de ocho o diez hombres, pero el país no lo levantaron ocho o diez personas. Los pueblos indígenas, como los lencas, defendieron su tierra mucho después de Lempira. Los garífunas llegaron a la costa en 1797 y levantaron pueblos enteros. Y las mujeres sostuvieron las casas, las escuelas y los hospitales de cada época sin que su nombre quedara escrito casi en ningún lado.',
   pregunta: '¿Quién de tu municipio merecería una estatua y no la tiene? Pregúntale a una persona mayor de tu comunidad y escribe su historia.',
   fuente: 'Es una expectativa del DCNB: «Explican la contribución y el costo pagado por las mujeres, los indígenas y los afrocaribeños en la historia del país».'
 };

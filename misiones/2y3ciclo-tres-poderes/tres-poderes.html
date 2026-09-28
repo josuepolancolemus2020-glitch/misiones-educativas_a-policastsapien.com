@@ -70,14 +70,14 @@
         clase</strong> mientras se averiguaba.</p>
         <div class="tip"><span class="ti">❓</span><div>«Siempre se ha hecho así» no es una regla: una regla
         de verdad está escrita, tiene rango y se puede señalar con el dedo. Quién la escribe, quién la hace
-        cumplir y quién decide cuando hay pleito son <strong>tres poderes distintos</strong> — y esta misión
+        cumplir y quién decide cuando hay pleito son <strong>tres poderes distintos</strong>, y esta misión
         te enseña a saber a cuál le toca.</div></div>
       </div>
       <div class="card ac-teal">
         <h2>📕 La ley que manda sobre todas las demás</h2>
         <p>Una <strong>ley</strong> es una regla escrita que vale para todo el país y que el Estado puede hacer
-           cumplir. No es un consejo. Pero no todas las leyes mandan igual: hay uno que está por encima de
-           todos, y es la <strong>Constitución de la República</strong>.</p>
+           cumplir. No es un consejo. Pero no todas las leyes mandan igual: hay una que está por encima de
+           todas, y es la <strong>Constitución de la República</strong>.</p>
         <!-- La jerarquía se pinta desde js/data/poderes-honduras.js, y se copia
              ENTERA: recortarla sería enseñar un orden que no es el que dice la ley. -->
         <div id="pod-jerarquia"></div>
@@ -152,8 +152,8 @@
 <!-- ===== LAB ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🔬 Laboratorio de los Próceres</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige a una persona y qué quieres saber de ella. Es la forma más rápida de repasar antes del examen.</p>
+    <h2>🔬 Laboratorio de los Poderes</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un poder y qué quieres saber de él. Es la forma más rápida de repasar antes del examen.</p>
     <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Poder Legislativo</strong> → <strong>¿Qué hace?</strong></div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
@@ -162,7 +162,7 @@
     </div>
     <div class="lab-controls">
       <div class="lab-group">
-        <span class="lab-group-label">👤 Quién:</span>
+        <span class="lab-group-label">⚖️ Cuál:</span>
         <button class="lab-btn lab-cont-btn active-pri" data-parte="legislativo" onclick="labShowParte('legislativo')">📜 Legislativo</button>
         <button class="lab-btn lab-cont-btn" data-parte="ejecutivo" onclick="labShowParte('ejecutivo')">🏛️ Ejecutivo</button>
         <button class="lab-btn lab-cont-btn" data-parte="judicial" onclick="labShowParte('judicial')">⚖️ Judicial</button>
@@ -170,10 +170,10 @@
       </div>
       <div class="lab-group">
         <span class="lab-group-label">📌 Aspecto:</span>
-        <button class="lab-btn lab-asp-btn active-sec" data-aspecto="estructura" onclick="labShowAspecto('estructura')">👤 ¿Quién fue?</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🔨 ¿Qué hizo?</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🏅 ¿Por qué se le recuerda?</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">💡 Dato curioso</button>
+        <button class="lab-btn lab-asp-btn active-sec" data-aspecto="estructura" onclick="labShowAspecto('estructura')">📌 ¿Qué hace?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">👤 ¿Quién lo ejerce?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">📜 En una ley de verdad</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">📚 De dónde sale este dato</button>
       </div>
     </div>
   </div>
@@ -186,7 +186,7 @@
 <!-- ===== FLASHCARDS ===== -->
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <h2>🃏 Flashcards: toca para voltear</h2>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
@@ -289,20 +289,20 @@
 <div class="sec" id="s-widgets" role="tabpanel">
 
   <div class="card ac-teal">
-    <h2>🔗 Ordena la línea del tiempo</h2>
-    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ponerlos del más antiguo al más reciente:</p>
+    <h2>🔗 Ordena los pasos</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ponerlos en orden:</p>
     <div class="sort-list" id="routeList"></div>
     <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
-      <button class="btn btn-pri" onclick="nextRoute()">🔄 Otra línea</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Otra secuencia</button>
     </div>
     <div id="fbRoute" class="fb" role="alert"></div>
   </div>
 
   <div class="card ac-gold">
-    <h2>🕵️ ¿Quién fue?</h2>
-    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee lo que hizo y di de quién se trata:</p>
+    <h2>🕵️ ¿Qué poder es?</h2>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee la pista y di de qué poder se trata:</p>
     <div class="neuron-desc" id="neuronDesc">Cargando…</div>
     <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbNeuron" class="fb" role="alert"></div>
@@ -313,10 +313,10 @@
   </div>
 
   <div class="card ac-jade">
-    <h2>🔗 Empareja: el apodo → la persona</h2>
+    <h2>🔗 Empareja: el verbo → el poder</h2>
     <p class="id-prog" id="neuroProg" aria-live="polite">1 de 6</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">A casi todos se les quedó un apodo, y en el examen se pregunta. ¿De quién es este?</p>
-    <div class="neuro-trans-display" id="neuroTrans">«el Sabio Valle»</div>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Cada poder tiene su verbo, y en el examen se pregunta. ¿De cuál es este?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Cargando…</div>
     <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbNeuro" class="fb" role="alert"></div>
     <div style="margin-top:0.8rem;">
@@ -345,7 +345,7 @@
 <!-- ===== RETO ===== -->
 <div class="sec" id="s-reto" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada uno lo más rápido que puedas.</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
     <div class="game" aria-live="polite">
@@ -429,10 +429,10 @@
     <div class="eval-print-header">
       <h2>Evaluación Final · Los Tres Poderes del Estado · Educación Básica · Educación Cívica</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
     </div>
-    <h2 id="eval-screen-title">🎓 Evaluación Final — Los Tres Poderes del Estado</h2>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · Los Tres Poderes del Estado</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
@@ -448,10 +448,10 @@
     <div class="eval-print-header">
       <h2>Evaluación Competencial · Pensamiento Crítico · Los Tres Poderes del Estado · Educación Básica</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
     </div>
-    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — Los Tres Poderes del Estado</h2>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · Los Tres Poderes del Estado</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
@@ -475,7 +475,7 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>los tres poderes, uno por uno</strong> —qué hace, quién lo ejerce y cómo se ve en una ley de verdad—, su línea del tiempo y las actividades, para imprimir y estudiar sin teléfono.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>los tres poderes, uno por uno</strong> (qué hace, quién lo ejerce y cómo se ve en una ley de verdad), su línea del tiempo y las actividades, para imprimir y estudiar sin teléfono.</p>
       <a href="../../fichas/ficha-tres-poderes.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
@@ -525,7 +525,7 @@
 <!-- NAV -->
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
   <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">👥</span> Los ocho</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">⚖️</span> Uno por uno</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>

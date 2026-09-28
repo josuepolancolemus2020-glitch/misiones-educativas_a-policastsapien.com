@@ -149,7 +149,7 @@ function lecVeredicto(grado, ppm, palabrasLeidas, errores, compCorrectas, compDe
       (flancos.join(' y ') || 'los detalles') + '. La fluidez completa es velocidad, precisión y comprensión juntas.';
   } else {
     txt = 'Aún está por debajo de la banda de su grado. La receta probada: diez minutos diarios de lectura en voz alta ' +
-      'con un texto de su nivel, releyendo el mismo texto dos o tres días — la relectura es el ejercicio que más sube la fluidez.';
+      'con un texto de su nivel, releyendo el mismo texto dos o tres días: la relectura es el ejercicio que más sube la fluidez.';
   }
   return { velocidad: vel, precision: prec, comprension: comp, texto: txt };
 }

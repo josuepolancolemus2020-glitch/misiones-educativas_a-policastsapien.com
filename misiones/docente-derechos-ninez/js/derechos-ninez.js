@@ -105,7 +105,7 @@ const SITUACIONES = [
     sub: 'Código de la Niñez, artículos 24 y 165',
     txt: 'El artículo 24 declara que la dignidad forma parte de la personalidad de los niños, y ' +
          'que es deber de todas las personas protegerlos contra cualquier trato inhumano, ' +
-         'violento, aterrorizante, humillante o destructivo, <b>aún cuando se pretenda que se debe ' +
+         'violento, aterrorizante, humillante o destructivo, <b>aun cuando se pretenda que se debe ' +
          'a razones disciplinarias o correctivas</b> y quienquiera que sea quien lo haga. Esa ' +
          'frase cierra la puerta al argumento más repetido del oficio: «era para corregirlo». El ' +
          'artículo 165 pone nombre a las conductas: agresiones emocionales o de palabra, ' +
@@ -184,7 +184,7 @@ const SITUACIONES = [
       'No use «porque yo lo digo» como fundamento de una sanción.',
     ],
     aula: 'Escuchar primero le va a ahorrar la mitad de los conflictos con las familias. Casi ' +
-          'ningún padre reclama por la sanción: reclaman porque a su hijo no lo oyeron.',
+          'ningún padre reclama por la sanción: los que reclaman lo hacen porque a su hijo no lo oyeron.',
   },
   {
     ic: '📉', corto: 'La nota que quieren impugnar',
@@ -277,7 +277,7 @@ const SITUACIONES = [
     tit: 'Contra la deserción, la ley le da un papel activo',
     sub: 'Código de la Niñez, artículo 39',
     txt: 'El Código no deja la deserción en manos de la casa: dice que <b>las autoridades ' +
-         'escolares, los padres o representantes legales y los maestros velarán porque el ambiente ' +
+         'escolares, los padres o representantes legales y los maestros velarán por que el ambiente ' +
          'y el tratamiento escolar constituyan un incentivo para evitar la deserción, la ' +
          'repitencia y el ausentismo</b>. Es decir: el trato que se da dentro del aula es parte del ' +
          'problema o parte de la solución, y la ley se lo dice al maestro por su nombre. Añade que ' +
@@ -387,7 +387,7 @@ const FC = [
   ['¿Qué debe hacer el maestro que detecta una dificultad de aprendizaje?', 'Dar cuenta del hecho a sus superiores jerárquicos y a los padres o representantes legales. Artículo 110.'],
   ['¿Qué derecho tiene el alumno sobre sus evaluaciones?', 'El de impugnarlas ante las instancias correspondientes, de acuerdo con la ley y los reglamentos. Artículo 35 literal c).'],
   ['¿Quiénes son responsables de la educación de un niño, según el artículo 38?', 'El padre y la madre, los representantes legales y también sus maestros.'],
-  ['¿Qué manda el artículo 39 sobre la deserción?', 'Que las autoridades escolares, los padres y los maestros velen porque el ambiente y el trato escolar sean un incentivo para evitar la deserción, la repitencia y el ausentismo.'],
+  ['¿Qué manda el artículo 39 sobre la deserción?', 'Que las autoridades escolares, los padres y los maestros velen por que el ambiente y el trato escolar sean un incentivo para evitar la deserción, la repitencia y el ausentismo.'],
   ['¿A qué edad mínima se puede autorizar el trabajo de un niño?', 'A los catorce años. En ningún caso se autoriza a un menor de catorce. Artículo 120.'],
   ['¿Cuál es la jornada máxima de un niño trabajador?', 'Cuatro horas diarias entre los catorce y los dieciséis años; seis horas entre los dieciséis y los dieciocho. Artículo 125.'],
 ];
@@ -577,7 +577,7 @@ const CP = [
   ['El artículo ____ dice que la disciplina no justifica un trato humillante.', ['24', 'veinticuatro']],
   ['El castigo que niega derechos se llama maltrato por ____.', ['supresion', 'supresión']],
   ['En ningún caso se autoriza a trabajar a un niño menor de ____ años.', ['14', 'catorce']],
-  ['Deben becarse al menos el ____ por ciento del alumnado de cada establecimiento.', ['5', 'cinco']],
+  ['Debe becarse al menos el ____ por ciento del alumnado de cada establecimiento.', ['5', 'cinco']],
 ];
 function cpPinta() {
   const c = document.getElementById('completa');

@@ -213,7 +213,7 @@ const PARADAS = [
     pasos: [
       'Escriba en Mi aula los nombres <b>tal como están en la matrícula oficial</b>, completos y sin abreviar.',
       'Si llega un alumno de otro centro, el traslado lo hace el centro de origen y <b>el suyo tiene que aceptarlo</b>: pregunte en la dirección si ya quedó aceptado.',
-      'Si un alumno repite, avise para que quede registrado <b>como repitiente</b>. El manual advierte que si no, el alumno está en el centro y no aparece en los cuadros de notas del docente.',
+      'Si un alumno repite, avise para que quede registrado <b>como repitiente</b>. El manual advierte que, si no, el alumno está en el centro y no aparece en los cuadros de notas del docente.',
       'Al cerrar el año, compare su lista con la del centro: los nombres que no calzan se arreglan ahí.',
     ],
     nohacer: [
@@ -407,7 +407,7 @@ const PARADAS = [
          'colecta. Todo eso lo lleva M.E.T.A.S sin que usted haga nada extra: <b>boleta</b>, ' +
          '<b>Parte Mensual</b>, <b>Evidencia de misiones</b>, <b>economía con recibo</b>. Es la ' +
          'misma lógica del artículo 6 de la Ley Fundamental de Educación, que ya tiene su misión en ' +
-         'esta serie: lo que no está en papel, no ocurrió.',
+         'esta serie: lo que no está en papel no ocurrió.',
     ofi: 'La nota oficial y el registro del alumno, comprobables en Ver Cuadro #1: el dato que certifica.',
     metas: 'El instrumento, la pauta, la asistencia, el análisis, el Parte Mensual y los recibos.',
     manda: 'Usted. El respaldo lo arma quien lo va a necesitar, y se arma antes.',
@@ -482,7 +482,7 @@ const FC = [
   ['¿Se puede corregir una nota ya subida?', 'Modificarla sí. Eliminarla o ponerla en cero, no. Por eso nunca se sube una nota provisional «para ir adelantando».'],
   ['¿Cuáles son los módulos del perfil docente?', 'Nueve: Tablero de Estadísticas, Perfil del Docente, Puestos de Trabajo, Notas, Zona de Descargas, Alumnos, Polimedias, Salud y Voucher. Ninguno da clase.'],
   ['¿Quién matricula, traslada y registra repitientes?', 'El administrador del centro. Esos módulos no existen en el perfil del docente, así que el maestro no puede hacerlo ni queriendo.'],
-  ['¿Y si un alumno repite y no lo registran como repitiente?', 'El manual avisa: el alumno está en el centro pero no aparece en los cuadros de notas del docente. Conviene comprobarlo al inicio del año.'],
+  ['¿Y si un alumno repite y no lo registran como repitiente?', 'El manual avisa: el alumno está en el centro, pero no aparece en los cuadros de notas del docente. Conviene comprobarlo al inicio del año.'],
   ['¿La familia tiene acceso al sistema oficial?', 'Sí: el administrador del centro se lo genera con usuario y contraseña, y solo si el alumno tiene matrícula activa.'],
   ['¿En qué se diferencia de la clave de familia?', 'La clave la genera el maestro, es anónima, no pide cuenta ni correo y enseña el día a día de un solo alumno. El acceso oficial enseña el expediente.'],
   ['¿De dónde salen los certificados y las boletas oficiales?', 'Del módulo Documentos, y los extiende el director del centro: constancia de matrícula, cuadros finales, certificados y boletas.'],
@@ -568,7 +568,7 @@ const QZ = [
   { q: 'Una nota que ya subió al sistema oficial…',
     o: ['Se puede modificar, pero no eliminar ni poner en cero', 'Se puede borrar y volver a empezar',
         'Queda bloqueada y no se toca', 'Se corrige llamando a la Dirección Departamental'],
-    c: 0, e: 'Por eso no se suben notas provisionales: lo que entra, se queda, aunque se pueda corregir su valor.' },
+    c: 0, e: 'Por eso no se suben notas provisionales: lo que entra se queda, aunque se pueda corregir su valor.' },
   { q: 'Un alumno aparece en su lista de Mi aula. Eso quiere decir que…',
     o: ['Ya quedó matriculado', 'Usted lo tiene en su lista de trabajo, nada más',
         'El centro ya lo registró', 'Tiene expediente oficial abierto'],
@@ -944,7 +944,7 @@ const DG = [
         'Publicarlo en el aula', 'Decidir a quién atiende primero y con qué'], c: 3 },
 
   { b: 0, q: 'Si un alumno repite y no queda registrado como repitiente:',
-    o: ['Está en el centro pero no aparece en los cuadros de notas del docente', 'No pasa nada, se arregla al cierre',
+    o: ['Está en el centro, pero no aparece en los cuadros de notas del docente', 'No pasa nada, se arregla al cierre',
         'El sistema lo detecta solo', 'Lo corrige el maestro desde su perfil'], c: 0 },
   { b: 1, q: 'Después de subir el archivo de notas conviene:',
     o: ['Esperar el correo de confirmación', 'Volver a subirlo por seguridad',
@@ -984,7 +984,7 @@ const DIAG_SALIDA = [
   'Vuelva al momento 4: la nota se sube en un archivo que usted descarga, llena con la nota total y las inasistencias, y vuelve a subir.',
   'Prepare cómo va a entregar las claves de familia, y aclare que no son el acceso al sistema oficial: ese lo genera la dirección.',
   'Arme su carpeta de respaldo antes de necesitarla: criterio escrito, instrumento, pauta y registro. Los certificados los extiende el centro.',
-  'Vuelva a la sección «Cada cosa en su sitio»: hay decisiones que no las toma ningún sistema, las toma usted.',
+  'Vuelva a la sección «Cada cosa en su sitio»: hay decisiones que no toma ningún sistema: las toma usted.',
 ];
 function dgCalifica() {
   let bien = 0;

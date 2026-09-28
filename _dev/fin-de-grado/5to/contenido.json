@@ -25,7 +25,7 @@
   "bloques": [
    {
     "titulo": "🍕 Fracciones: equivalentes, mixtas, sumadas y restadas",
-    "intro": "Una fracción dice en cuántos pedazos iguales partiste algo y cuántos tomaste. El de abajo, el denominador, dice el tamaño del pedazo; el de arriba, el numerador, dice cuántos agarraste. Dos fracciones distintas pueden valer lo mismo: media tortilla es 1/2 y también 2/4, porque se partió más chico pero se tomaron más pedazos. Esas son las fracciones equivalentes. Cuando el numerador es mayor que el denominador, la fracción pasa de un entero y también se puede escribir como número mixto: un entero con su fracción al lado. Para comparar dos fracciones, o para sumarlas y restarlas, los pedazos tienen que ser del mismo tamaño; por eso lo primero que se busca es un denominador común. En la pulpería lo compruebas sin cuentas: si pides 3/4 de libra de queso te dan más que si pides 2/3, porque con denominador 12 son 9/12 contra 8/12.",
+    "intro": "Una fracción dice en cuántos pedazos iguales partiste algo y cuántos tomaste. El de abajo, el denominador, dice el tamaño del pedazo; el de arriba, el numerador, dice cuántos agarraste. Dos fracciones distintas pueden valer lo mismo: media tortilla es 1/2 y también 2/4, porque se partió más chico, pero se tomaron más pedazos. Esas son las fracciones equivalentes. Cuando el numerador es mayor que el denominador, la fracción pasa de un entero y también se puede escribir como número mixto: un entero con su fracción al lado. Para comparar dos fracciones, o para sumarlas y restarlas, los pedazos tienen que ser del mismo tamaño; por eso lo primero que se busca es un denominador común. En la pulpería lo compruebas sin cuentas: si pides 3/4 de libra de queso te dan más que si pides 2/3, porque con denominador 12 son 9/12 contra 8/12.",
     "reglas": [
      {
       "tipo": "regla",
@@ -37,7 +37,7 @@
      },
      {
       "tipo": "regla",
-      "texto": "Para sumar o restar con el mismo denominador, se operan solo los numeradores y el denominador se queda quieto: el denominador nunca se suma. Si los denominadores son distintos, primero se busca el m.c.m., se convierten las dos fracciones y hasta entonces se opera."
+      "texto": "Para sumar o restar con el mismo denominador, se operan solo los numeradores y el denominador se queda quieto: el denominador nunca se suma. Si los denominadores son distintos, primero se busca el m.c.m., se convierten las dos fracciones y solo entonces se opera."
      }
     ],
     "ejemplos": [
@@ -54,10 +54,10 @@
      {
       "enunciado": "Don Vicente caminó 2 1/2 kilómetros en la mañana y 1 3/4 kilómetros en la tarde. ¿Cuánto caminó en todo el día?",
       "pasos": [
-       "Vuelve impropia cada fracción mixta: 2 x 2 + 1 = 5, o sea 5/2; y 1 x 4 + 3 = 7, o sea 7/4.",
+       "Vuelve impropia cada fracción mixta: 2 x 2 + 1 = 5, o sea, 5/2; y 1 x 4 + 3 = 7, o sea, 7/4.",
        "Busca denominador común: el m.c.m. de 2 y 4 es 4. Entonces 5/2 = 10/4, y 7/4 se queda igual.",
        "Suma solo los numeradores: 10/4 + 7/4 = 17/4.",
-       "Vuelve a número mixto: 17 ÷ 4 da 4 y sobra 1, o sea 4 1/4. Revisa que tenga sentido: caminó más de 4 kilómetros, y eso es más que cada tramo por separado."
+       "Vuelve a número mixto: 17 ÷ 4 da 4 y sobra 1, o sea, 4 1/4. Revisa que tenga sentido: caminó más de 4 kilómetros, y eso es más que cada tramo por separado."
       ],
       "resultado": "Caminó 4 1/4 kilómetros en todo el día."
      }
@@ -129,7 +129,7 @@
       "enunciado": "En la pulpería el litro de leche cuesta L.24.75. Doña Lidia se lleva 6 litros. ¿Cuánto paga?",
       "pasos": [
        "Multiplica sin fijarte en el punto: 2475 x 6 = 14850.",
-       "Cuenta las cifras decimales de los factores: 24.75 tiene dos y el 6 no tiene ninguna, o sea dos en total.",
+       "Cuenta las cifras decimales de los factores: 24.75 tiene dos y el 6 no tiene ninguna, o sea, dos en total.",
        "Corre el punto dos lugares desde la derecha en 14850 y queda 148.50.",
        "Revisa si tiene sentido: 6 litros a casi L.25.00 cada uno andan por los L.150.00, así que el resultado calza."
       ],
@@ -156,7 +156,7 @@
       [
        "I",
        "1",
-       "III es 3 y IV es 4, porque el I delante del V resta"
+       "III es 3 y IV es 4, porque la I delante de la V resta"
       ],
       [
        "V",
@@ -369,7 +369,7 @@
     "reglas": [
      {
       "tipo": "regla",
-      "texto": "El tema cubre el texto completo. Si al leer la opción te sobra texto por fuera, o sea si quedan renglones que esa opción no toca, entonces es un detalle y no el tema."
+      "texto": "El tema cubre el texto completo. Si al leer la opción te sobra texto por fuera, o sea, si quedan renglones que esa opción no toca, entonces es un detalle y no el tema."
      },
      {
       "tipo": "truco",
@@ -444,7 +444,7 @@
     "reglas": [
      {
       "tipo": "regla",
-      "texto": "Cuando la pregunta dice según el texto, la respuesta está escrita. Búscala, subráyala y hasta entonces mira las opciones."
+      "texto": "Cuando la pregunta dice según el texto, la respuesta está escrita. Búscala, subráyala y solo entonces mira las opciones."
      },
      {
       "tipo": "truco",
@@ -510,12 +510,12 @@
     "error": {
      "mal": "Contestar que la montaña del texto era bonita, porque el alumno se imagina las montañas así.",
      "porque": "Trajo su propia idea en vez de leer las palabras del texto. En una prueba de lectura no se califica lo que uno se imagina: se califica lo que el texto dice.",
-     "bien": "Se subrayan las palabras con que el texto describe la montaña, por ejemplo empinada y llena de rocas, y se escoge la opción que diga eso mismo."
+     "bien": "Se subrayan las palabras con que el texto describe la montaña, por ejemplo, empinada y llena de rocas, y se escoge la opción que diga eso mismo."
     }
    },
    {
     "titulo": "🔤 La palabra que no conoces, la frase hecha y la palabra que falta",
-    "intro": "En la prueba hay tres preguntas parecidas y las tres se resuelven leyendo la oración completa. En la primera te subrayan una palabra difícil y te preguntan qué significa AHÍ, en ese texto: la respuesta está en las palabras que la rodean, o sea en su contexto. En la segunda te subrayan una frase entera, de esas cuyas palabras juntas significan otra cosa, como quedarse con la boca abierta: esas no se entienden palabra por palabra, se entienden completas. Y en la tercera te dan un texto con un espacio en blanco y cuatro palabras para escoger: ahí hay que fijarse en dos cosas, que la palabra tenga sentido y que concuerde en género y en número con lo que la acompaña. En las tres sirve la misma técnica: sustituir, o sea meter cada opción en el lugar y leer la oración entera.",
+    "intro": "En la prueba hay tres preguntas parecidas y las tres se resuelven leyendo la oración completa. En la primera te subrayan una palabra difícil y te preguntan qué significa AHÍ, en ese texto: la respuesta está en las palabras que la rodean, o sea, en su contexto. En la segunda te subrayan una frase entera, de esas cuyas palabras juntas significan otra cosa, como quedarse con la boca abierta: esas no se entienden palabra por palabra, se entienden completas. Y en la tercera te dan un texto con un espacio en blanco y cuatro palabras para escoger: ahí hay que fijarse en dos cosas, que la palabra tenga sentido y que concuerde en género y en número con lo que la acompaña. En las tres sirve la misma técnica: sustituir, o sea, meter cada opción en el lugar y leer la oración entera.",
     "reglas": [
      {
       "tipo": "regla",
@@ -527,7 +527,7 @@
      },
      {
       "tipo": "idea",
-      "texto": "Fíjate en las palabras vecinas que avisan. Es decir y o sea traen la explicación pegada. Pero y en cambio traen lo contrario. Como e igual que traen una comparación. Y los dos puntos casi siempre traen el significado servido."
+      "texto": "Fíjate en las palabras vecinas que avisan. «Es decir» y «o sea» traen la explicación pegada. «Pero» y «en cambio» traen lo contrario. «Como» e «igual que» traen una comparación. Y los dos puntos casi siempre traen el significado servido."
      }
     ],
     "ejemplos": [
@@ -710,7 +710,7 @@
    {
     "texto": "En números romanos, el 14 se escribe ___.",
     "respuesta": "XIV",
-    "solucion": "El 14 son 10 más 4. El 10 es X y el 4 es IV, porque el I delante del V resta uno. Juntos dan XIV. No se escribe XIIII: la I no se repite cuatro veces."
+    "solucion": "El 14 son 10 más 4. El 10 es X y el 4 es IV, porque la I delante de la V resta uno. Juntos dan XIV. No se escribe XIIII: la I no se repite cuatro veces."
    },
    {
     "texto": "6.4 x 10 = ___",
@@ -1251,7 +1251,7 @@
    },
    {
     "consigna": "En tu escuela se hará una feria de comidas para juntar fondos y arreglar el techo del aula. Elabora un anuncio que llame la atención de las familias del pueblo y las invite a llegar.",
-    "guia": "Una buena respuesta contesta las cuatro preguntas del anuncio: qué se va a hacer (la feria de comidas), cuándo (día y hora), dónde (el lugar exacto) y a quién se invita. Va escrito en pocas palabras, con un título grande que se lea de lejos y una frase que llame (¡Lo esperamos!, ¡Venga con su familia!). Suma calidad decir para qué es el fondo, porque eso convence a la gente a llegar. Se descuenta si le falta la fecha o el lugar, si lo escribe como un párrafo largo de conversación en vez de un cartel, o si no se entiende qué se está anunciando."
+    "guia": "Una buena respuesta contesta las cuatro preguntas del anuncio: qué se va a hacer (la feria de comidas), cuándo (día y hora), dónde (el lugar exacto) y a quién se invita. Va escrito en pocas palabras, con un título grande que se lea de lejos y una frase que llame (¡Lo esperamos!, ¡Venga con su familia!). Suma calidad decir para qué es el fondo, porque eso anima a la gente a llegar. Se descuenta si le falta la fecha o el lugar, si lo escribe como un párrafo largo de conversación en vez de un cartel, o si no se entiende qué se está anunciando."
    },
    {
     "consigna": "Describe en por lo menos ocho renglones el camino que recorres de tu casa a la escuela: cómo es, qué se ve y qué se oye, y qué te pasa cuando llueve.",
@@ -1512,14 +1512,14 @@
     "titulo": "El número mixto pegado como si fuera una fracción",
     "materia": "mat",
     "mal": "Le piden convertir 2 1/4 a fracción impropia y el alumno escribe 21/4. Junta el 2 y el 1 y les deja el mismo denominador.",
-    "porque": "Un número mixto no se pega: el entero hay que convertirlo en pedazos del mismo tamaño que la fracción. Mire lo que salió: 21/4 son más de cinco enteros, y el número que le dieron es apenas dos y un poquito. Cuando la respuesta sale del doble o del triple de lo que se está midiendo, la cuenta ya avisó que está mala.",
-    "bien": "Se multiplica el entero por el denominador y se le suma el numerador: 2 x 4 = 8 y 8 + 1 = 9, entonces 2 1/4 = 9/4. Para revisarlo se vuelve atrás: 9 ÷ 4 da 2 y sobra 1, o sea 2 1/4. Y se comprueba con la cabeza: 9/4 son dos enteros y un cuarto, justo lo que decía el número mixto."
+    "porque": "Un número mixto no se pega: el entero hay que convertirlo en pedazos del mismo tamaño que la fracción. Mira lo que salió: 21/4 son más de cinco enteros, y el número que le dieron es apenas dos y un poquito. Cuando la respuesta sale el doble o el triple de lo que se está midiendo, la cuenta ya avisó que está mala.",
+    "bien": "Se multiplica el entero por el denominador y se le suma el numerador: 2 x 4 = 8 y 8 + 1 = 9, entonces 2 1/4 = 9/4. Para revisarlo se vuelve atrás: 9 ÷ 4 da 2 y sobra 1, o sea, 2 1/4. Y se comprueba con la cabeza: 9/4 son dos enteros y un cuarto, justo lo que decía el número mixto."
    },
    {
     "titulo": "Sumar o restar fracciones sin igualar los denominadores",
     "materia": "mat",
-    "mal": "El alumno escribe 7/8 menos 1/2 = 6/6, o sea 1. Restó 7 menos 1 arriba y 8 menos 2 abajo. En otra pregunta, con 1/3 + 1/4, contesta 2/7.",
-    "porque": "El denominador no es una cantidad que se sume ni que se reste: dice el tamaño del pedazo. Los octavos y las mitades no son pedazos iguales, así que no se pueden juntar hasta que midan lo mismo. Y fíjese en el resultado: a 7/8 le quitó algo y le salió un entero, que es MÁS de lo que tenía; en la otra, juntó dos pedazos y le salió 2/7, que es menos que 1/3. Las dos respuestas son imposibles.",
+    "mal": "El alumno escribe 7/8 menos 1/2 = 6/6, o sea, 1. Restó 7 menos 1 arriba y 8 menos 2 abajo. En otra pregunta, con 1/3 + 1/4, contesta 2/7.",
+    "porque": "El denominador no es una cantidad que se sume ni que se reste: dice el tamaño del pedazo. Los octavos y las mitades no son pedazos iguales, así que no se pueden juntar hasta que midan lo mismo. Y fíjate en el resultado: a 7/8 le quitó algo y le salió un entero, que es MÁS de lo que tenía; en la otra, juntó dos pedazos y le salió 2/7, que es menos que 1/3. Las dos respuestas son imposibles.",
     "bien": "Primero se busca el m.c.m. de los denominadores y se convierten las dos fracciones. En la primera, el m.c.m. de 8 y 2 es 8: 1/2 = 4/8, entonces 7/8 menos 4/8 = 3/8, que es menor que 7/8, como tenía que ser. En la segunda, el m.c.m. de 3 y 4 es 12: 4/12 + 3/12 = 7/12, que es mayor que cada sumando."
    },
    {
@@ -1527,40 +1527,40 @@
     "materia": "mat",
     "mal": "El alumno divide 84.5 entre 5 y contesta 169, porque hizo la división sin ver el punto y ya no lo puso. Otro multiplica 3.148 por 25, hace 3148 x 25 = 78700 y contesta 787. Y comprando 4 libras de queso a L.23.75 la libra contesta L.950.00.",
     "porque": "Al hacer la cuenta como si fueran enteros el punto desaparece de la vista, y si nadie lo vuelve a poner en su lugar la respuesta queda diez o cien veces más grande de lo que es. En el dinero eso se nota rapidito: nadie paga L.950.00 por cuatro libras de queso. Y en una división entre 5 el resultado tiene que salir MENOR que lo que se repartió: 169 es el doble de 84.5.",
-    "bien": "Al multiplicar se cuentan las cifras decimales de los dos factores y el resultado lleva esa misma cantidad: 3.148 tiene tres y el 25 ninguna, así que de 78700 se separan tres desde la derecha y queda 78.700, o sea 78.7. Al dividir un decimal entre un entero, el punto del cociente se sube justo arriba del punto del dividendo: 84.5 ÷ 5 = 16.9. Y antes de contestar conviene calcular por encima: 4 libras a casi L.24.00 andan por los L.96.00."
+    "bien": "Al multiplicar se cuentan las cifras decimales de los dos factores y el resultado lleva esa misma cantidad: 3.148 tiene tres y el 25 ninguna, así que de 78700 se separan tres desde la derecha y queda 78.700, o sea, 78.7. Al dividir un decimal entre un entero, el punto del cociente se sube justo arriba del punto del dividendo: 84.5 ÷ 5 = 16.9. Y antes de contestar conviene calcular por encima: 4 libras a casi L.24.00 andan por los L.96.00."
    },
    {
     "titulo": "El área contestada donde pedían el perímetro",
     "materia": "mat",
-    "mal": "Le piden el área de un huerto de 8 metros por 5 metros y el alumno contesta 26, que es lo que mide el contorno. En otra pregunta contesta bien el número pero escribe metros donde iban metros cuadrados.",
+    "mal": "Le piden el área de un huerto de 8 metros por 5 metros y el alumno contesta 26, que es lo que mide el contorno. En otra pregunta contesta bien el número, pero escribe metros donde iban metros cuadrados.",
     "porque": "El perímetro mide el contorno y se suma: sirve para saber cuánto alambre lleva la cerca. El área mide la superficie y se multiplica: sirve para saber cuánta grama o cuántas baldosas se necesitan. Como el número solo no dice nada, la unidad es la que delata el error: si le piden cuánta tierra hay que preparar y contesta en metros simples, midió el borde y no el terreno.",
-    "bien": "Huerto de 8 m por 5 m: el área es 8 x 5 = 40 metros cuadrados, y el perímetro es 8 + 5 + 8 + 5 = 26 metros. Regla para acordarse: una medida sola va en metros, dos medidas multiplicadas van en metros cuadrados. Y en el triángulo no se olvide el paso de dividir entre dos, porque el triángulo es la mitad del rectángulo que lo encierra."
+    "bien": "Huerto de 8 m por 5 m: el área es 8 x 5 = 40 metros cuadrados, y el perímetro es 8 + 5 + 8 + 5 = 26 metros. Regla para acordarse: una medida sola va en metros, dos medidas multiplicadas van en metros cuadrados. Y en el triángulo no olvides el paso de dividir entre dos, porque el triángulo es la mitad del rectángulo que lo encierra."
    },
    {
     "titulo": "La circunferencia calculada con el radio sin duplicarlo",
     "materia": "mat",
     "mal": "Le dan un reloj de 9 centímetros de radio y le piden el contorno. El alumno multiplica 3.14 x 9 y contesta 28.26 centímetros.",
-    "porque": "La fórmula de la circunferencia trabaja con el DIÁMETRO, y lo que le dieron fue el radio, que es la mitad. Al usarlo tal cual, el contorno le sale a la mitad del que es. Es el mismo descuido al revés cuando le dan el diámetro y lo usa como si fuera radio: ahí el resultado sale del doble.",
-    "bien": "Primero se saca el diámetro: 9 x 2 = 18 centímetros. Después se multiplica: 3.14 x 18 = 56.52 centímetros. También sirve la fórmula corrida, 2 x 3.14 x radio, que es lo mismo. Antes de contestar conviene mirar el número: el contorno de un círculo siempre sale como tres veces su diámetro, ni más ni menos."
+    "porque": "La fórmula de la circunferencia trabaja con el DIÁMETRO, y lo que le dieron fue el radio, que es la mitad. Al usarlo tal cual, el contorno le sale a la mitad del que es. Es el mismo descuido al revés cuando le dan el diámetro y lo usa como si fuera radio: ahí el resultado sale el doble.",
+    "bien": "Primero se saca el diámetro: 9 x 2 = 18 centímetros. Después se multiplica: 3.14 x 18 = 56.52 centímetros. También sirve la fórmula corrida, 2 x 3.14 x radio, que es lo mismo. Antes de contestar conviene mirar el número: el contorno de un círculo siempre sale un poco más de tres veces su diámetro."
    },
    {
     "titulo": "Marcar el detalle que más llama la atención",
     "materia": "esp",
     "mal": "El texto cuenta cómo la escuela se organizó para arreglar el techo del aula: quiénes juntaron el dinero, quiénes compraron las láminas y quiénes trabajaron el sábado. De pasada dice que doña Fidelina regaló treinta tamales. Le preguntan de qué trata el texto y el alumno contesta: de los treinta tamales que regaló doña Fidelina.",
-    "porque": "El tema es de lo que trata el texto completo, y un detalle ocupa un renglón, aunque sea el dato que más se queda pegado en la memoria. Los números y los nombres se recuerdan fácil, pero eso no los convierte en el tema.",
+    "porque": "El tema es aquello de lo que trata el texto completo, y un detalle ocupa un renglón, aunque sea el dato que más se queda pegado en la memoria. Los números y los nombres se recuerdan fácil, pero eso no los convierte en el tema.",
     "bien": "El tema es el que cubre todos los renglones: que la escuela entera se organizó para arreglar el techo del aula. Prueba rápida: se lee la opción y se pregunta si el texto completo habla de eso. De los tamales habla una línea; del trabajo repartido hablan todos los párrafos."
    },
    {
     "titulo": "Escoger la opción que repite las palabras del texto",
     "materia": "esp",
-    "mal": "El texto dice: 'El bus sale de la terminal a las seis, pero ese martes esperó hasta las siete a que cambiaran una llanta'. Le preguntan a qué hora salió el bus ese martes y el alumno marca la opción que dice a las seis, porque esa hora la vio escrita en el texto.",
+    "mal": "El texto dice: «El bus sale de la terminal a las seis, pero ese martes esperó hasta las siete a que cambiaran una llanta». Le preguntan a qué hora salió el bus ese martes y el alumno marca la opción que dice a las seis, porque esa hora la vio escrita en el texto.",
     "porque": "Reconocer las palabras da confianza, y por eso la prueba pone a propósito una opción copiada del texto que contesta OTRA cosa. Ahí lo escrito es cierto (a las seis sale siempre), pero la pregunta era por ese martes.",
     "bien": "Se lee la pregunta completa y se subraya el renglón que la contesta, no el que se parece. Aquí la pregunta dice ese martes, y el texto dice que ese día esperó hasta las siete. Regla del examen: la opción tiene que contestar la pregunta, no solo aparecer en el texto."
    },
    {
     "titulo": "Entender la frase hecha al pie de la letra",
     "materia": "esp",
-    "mal": "El texto dice: 'Cuando oyó de noche el río bajando crecido, a Marlon se le fue el alma a los pies'. Le preguntan qué significa esa frase y el alumno contesta que el alma se le bajó hasta los pies, o que le dolieron los pies.",
+    "mal": "El texto dice: «Cuando oyó de noche el río bajando crecido, a Marlon se le fue el alma a los pies». Le preguntan qué significa esa frase y el alumno contesta que el alma se le bajó hasta los pies, o que le dolieron los pies.",
     "porque": "Tradujo la frase palabra por palabra. Las frases hechas se entienden completas: sus palabras juntas significan algo distinto de lo que significa cada una por separado, y quien las lee sueltas contesta a otra cosa.",
     "bien": "Se lee la oración entera y se mira qué le está pasando a la persona. Aquí Marlon oye de noche el río bajando crecido, así que la frase significa que se asustó mucho. Y si una frase suena rara traducida palabra por palabra, es señal de que hay que buscarle el significado de conjunto."
    }

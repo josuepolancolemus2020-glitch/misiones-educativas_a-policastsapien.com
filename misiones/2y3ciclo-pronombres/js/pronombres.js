@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -198,15 +198,15 @@ function go(id) {
 // ===================== FLASHCARD DATA =====================
 const fcData = [
     { w: 'Pronombre', a: '👤 Palabra que <strong>sustituye al sustantivo</strong>. Su función es evitar repeticiones y su significado depende del contexto.' },
-    { w: 'Personales Tónicos', a: '🗣️ Pueden funcionar solos o tras preposición (no dependen del verbo). Ej: <strong>Yo, tú, él, nosotros, ustedes, mí, ti</strong>.' },
-    { w: 'Personales Átonos', a: '🔗 Acompañan obligatoriamente al verbo. Ej: <strong>Me, te, se, nos, os, lo, la, le, los, las, les</strong>.' },
-    { w: 'Demostrativos', a: '👉 Sustituyen al nombre indicando distancia. Van solos. Ej: "No quiero este libro, quiero <strong>ese</strong>".' },
-    { w: 'Posesivos', a: '💼 Sustituyen indicando pertenencia. Ej: "Mi casa es pequeña, la <strong>tuya</strong> es grande".' },
-    { w: 'Relativos', a: '🔗 Unen oraciones y se refieren a un sustantivo mencionado antes (antecedente). Ej: "El libro <strong>que</strong> leí".' },
-    { w: 'Indefinidos', a: '🤷 Sustituyen a una persona o cosa sin precisar la cantidad. Ej: "<strong>Alguien</strong> llamó", "No vino <strong>nadie</strong>".' },
-    { w: 'Interrogativos', a: '❓ Sirven para preguntar, sustituyendo aquello por lo que se pregunta. Llevan tilde. Ej: "¿<strong>Quién</strong> vino?", "¿<strong>Qué</strong> es eso?".' },
-    { w: 'Pronombre Enclítico', a: '▶️ Es un pronombre átono que va <strong>pegado al final</strong> del verbo, formando una sola palabra. Ej: Dáme<strong>lo</strong>, ir<strong>se</strong>.' },
-    { w: 'Pronombre Proclítico', a: '◀️ Es un pronombre átono que va <strong>separado y antes</strong> del verbo conjugado. Ej: <strong>Te</strong> llamo, <strong>me lo</strong> dijo.' },
+    { w: 'Personales Tónicos', a: '🗣️ Pueden funcionar solos o tras preposición (no dependen del verbo). Ej.: <strong>Yo, tú, él, nosotros, ustedes, mí, ti</strong>.' },
+    { w: 'Personales Átonos', a: '🔗 Acompañan obligatoriamente al verbo. Ej.: <strong>Me, te, se, nos, os, lo, la, le, los, las, les</strong>.' },
+    { w: 'Demostrativos', a: '👉 Sustituyen al nombre indicando distancia. Van solos. Ej.: "No quiero este libro, quiero <strong>ese</strong>".' },
+    { w: 'Posesivos', a: '💼 Sustituyen indicando pertenencia. Ej.: "Mi casa es pequeña, la <strong>tuya</strong> es grande".' },
+    { w: 'Relativos', a: '🔗 Unen oraciones y se refieren a un sustantivo mencionado antes (antecedente). Ej.: "El libro <strong>que</strong> leí".' },
+    { w: 'Indefinidos', a: '🤷 Sustituyen a una persona o cosa sin precisar la cantidad. Ej.: "<strong>Alguien</strong> llamó", "No vino <strong>nadie</strong>".' },
+    { w: 'Interrogativos', a: '❓ Sirven para preguntar, sustituyendo aquello por lo que se pregunta. Llevan tilde. Ej.: "¿<strong>Quién</strong> vino?", "¿<strong>Qué</strong> es eso?".' },
+    { w: 'Pronombre Enclítico', a: '▶️ Es un pronombre átono que va <strong>pegado al final</strong> del verbo, formando una sola palabra. Ej.: Dáme<strong>lo</strong>, ir<strong>se</strong>.' },
+    { w: 'Pronombre Proclítico', a: '◀️ Es un pronombre átono que va <strong>separado y antes</strong> del verbo conjugado. Ej.: <strong>Te</strong> llamo, <strong>me lo</strong> dijo.' },
     { w: 'El Voseo', a: '🇭🇳 Uso del pronombre <strong>"vos"</strong> en lugar de "tú" para la segunda persona singular. Muy común en Honduras.' },
 ];
 let fcIdx = 0;
@@ -236,7 +236,7 @@ const qzData = [
     { q: '"TE lo advertí". El pronombre "te" está funcionando de forma:', o: ['a) Proclítica', 'b) Enclítica', 'c) Posesiva', 'd) Interrogativa'], c: 0 },
     { q: '"El coche QUE compré es azul". La palabra "que" es un pronombre:', o: ['a) Interrogativo', 'b) Relativo', 'c) Personal', 'd) Demostrativo'], c: 1 },
     { q: '¿Cuál de estos es un pronombre demostrativo?', o: ['a) Suyo', 'b) Alguien', 'c) Yo', 'd) Aquel'], c: 3 },
-    { q: '¿Qué diferencia a "Aquel carro" de "Quiero AQUEL"?', o: ['a) Ninguna, ambos son pronombres', 'b) El 1ero es determinante (acompaña), el 2do es pronombre (sustituye)', 'c) El 1ero es pronombre, el 2do es adjetivo', 'd) Ambos son adjetivos'], c: 1 },
+    { q: '¿Qué diferencia a "Aquel carro" de "Quiero AQUEL"?', o: ['a) Ninguna, ambos son pronombres', 'b) El primero es determinante (acompaña), el segundo es pronombre (sustituye)', 'c) El primero es pronombre, el segundo es adjetivo', 'd) Ambos son adjetivos'], c: 1 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
 function buildQz() { qzIdx = 0; qzSel = -1; qzDone = false; showQz(); }
@@ -363,7 +363,7 @@ function nextClassGroup() {
     sfx('click');
     currentClassGroupIdx = (currentClassGroupIdx + 1) % classGroups.length;
     buildClass(); document.getElementById('fbCls').classList.remove('show');
-    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs ' + classGroups[currentClassGroupIdx].label[1]);
+    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs. ' + classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass() { sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -414,7 +414,7 @@ function checkId(i, span) {
             correct.forEach(ci => { if (ci !== i) allWords[ci].classList.add('id-ok'); });
             const others = correct.filter(ci => ci !== i)
                 .map(ci => '"' + idData[idIdx].s[ci].replace(/[,.]$/, '') + '"').join(' y ');
-            fb('fbId', `¡Correcto! +5 XP — ${others} también es ${idData[idIdx].art.toLowerCase()} en esta oración.`, true);
+            fb('fbId', `¡Correcto! +5 XP. También ${others} es ${idData[idIdx].art.toLowerCase()} en esta oración.`, true);
         } else {
             fb('fbId', '¡Correcto! +5 XP', true);
         }
@@ -434,7 +434,7 @@ const cmpData = [
     { s: 'Un pronombre átono que va antes del verbo conjugado se llama ___.', opts: ['proclítico', 'enclítico', 'tónico'], c: 0 },
     { s: 'El pronombre "vos" utilizado en Honduras reemplaza al pronombre "___".', opts: ['él', 'tú', 'nosotros'], c: 1 },
     { s: '"El regalo es TUYO". La palabra "tuyo" es un pronombre ___.', opts: ['personal', 'demostrativo', 'posesivo'], c: 2 },
-    { s: 'Un pronombre pegado al final de un verbo (ej: "dámelo") se llama ___.', opts: ['enclítico', 'proclítico', 'relativo'], c: 0 },
+    { s: 'Un pronombre pegado al final de un verbo (ej.: "dámelo") se llama ___.', opts: ['enclítico', 'proclítico', 'relativo'], c: 0 },
     { s: '"NADIE lo sabía". La palabra "nadie" es un pronombre ___.', opts: ['relativo', 'indefinido', 'interrogativo'], c: 1 },
     { s: 'Los pronombres personales ___ pueden funcionar como sujeto por sí solos.', opts: ['átonos', 'relativos', 'tónicos'], c: 2 },
 ];
@@ -563,7 +563,7 @@ function nextRetoPair() {
     document.getElementById('retoWord').textContent = '¡Prepárate!';
     document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
     document.getElementById('fbReto').classList.remove('show');
-    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto() {
     sfx('click'); clearInterval(retoTimerInt); retoRunning = false; retoSec = 30; retoOk = 0; retoErr = 0;
@@ -603,14 +603,14 @@ const completeTaskDB = [
     { s: '___ llamó por teléfono anoche.', opts: ['Aquel', 'Alguien', 'Tuyo'], ans: 'Alguien' },
     { s: 'El perro ___ ladra es de mi vecino.', opts: ['quien', 'que', 'cual'], ans: 'que' },
     { s: '¿___ trajo esa comida tan rica?', opts: ['Quién', 'Que', 'Nadie'], ans: 'Quién' },
-    { s: 'Dá___ el libro que te pedí.', opts: ['me', 'mío', 'yo'], ans: 'me' },
+    { s: 'Da___ el libro que te pedí.', opts: ['me', 'mío', 'yo'], ans: 'me' },
     { s: '___ de los estudiantes aprobó el examen.', opts: ['Ninguno', 'Ese', 'Suyo'], ans: 'Ninguno' },
     { s: 'Vos ___ muy buena persona.', opts: ['sos', 'eres', 'sois'], ans: 'sos' },
 ];
 const explainQuestions = [
-    { q: '¿Qué es un pronombre y para qué sirve?', ans: 'Sustituye al sustantivo para evitar repeticiones. Ej: Yo, él, esto.' },
+    { q: '¿Qué es un pronombre y para qué sirve?', ans: 'Sustituye al sustantivo para evitar repeticiones. Ej.: Yo, él, esto.' },
     { q: '¿Cuál es la diferencia entre un pronombre tónico y uno átono?', ans: 'El tónico funciona solo (yo, tú), el átono necesita al verbo (me, te, se).' },
-    { q: '¿Qué es un pronombre enclítico? Da un ejemplo.', ans: 'Es un pronombre átono pegado al final del verbo. Ej: dámelo, irse.' },
+    { q: '¿Qué es un pronombre enclítico? Da un ejemplo.', ans: 'Es un pronombre átono pegado al final del verbo. Ej.: dámelo, irse.' },
     { q: 'Explica la diferencia entre pronombre demostrativo y determinante demostrativo.', ans: 'El pronombre va solo y sustituye (quiero ese), el determinante acompaña al nombre (ese libro).' },
     { q: '¿Qué es el voseo? ¿Dónde se usa?', ans: 'Es el uso de "vos" en lugar de "tú". Se usa en Honduras y Centroamérica.' },
 ];
@@ -958,11 +958,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Los Pronombres`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Los Pronombres`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
     const cpItems = _pickF(evalCPBank, 5, rng);
     const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -980,7 +980,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">?</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1108,7 +1108,7 @@ function printEval() {
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1181,23 +1181,23 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 @media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body><div id="evalPage">
 <div class="ph">
-  <h2>Evaluación Final de Misión Los Pronombres — Español — Lengua</h2>
+  <h2>Evaluación Final de Misión Los Pronombres · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Pronombres · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Los Pronombres · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1209,7 +1209,7 @@ ${s1}${s2}${s3}${s4}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 // Segunda evaluación imprimible de la misión (Español · Lengua). Todo el
-// contenido nace de los bancos y tarjetas de ESTA misión (pronombres vs
+// contenido nace de los bancos y tarjetas de ESTA misión (pronombres vs.
 // determinantes, proclítico/enclítico, voseo hondureño, antecedente). Formas
 // deterministas: semilla _evalRng(200000+cf). Progresión de dificultad:
 // identificar → transformar → transformar → analizar/argumentar → producir.
@@ -1231,7 +1231,7 @@ function evalSwitchMode(mode) {
 
 // ── I. ¿Pronombre o determinante? — Juez gramatical (pares mínimos del tip de Aprende)
 const critJuezBank = [
-    { frase: 'Está mesa se ve así porque marqué <b>Esa</b>… <b>Esa</b> mesa está sucia.', foco: 'Esa', pre: '', post: ' mesa está sucia.', t: 'D', pista: 'Acompaña al sustantivo «mesa».' },
+    { frase: 'Esta mesa se ve así porque marqué <b>Esa</b>… <b>Esa</b> mesa está sucia.', foco: 'Esa', pre: '', post: ' mesa está sucia.', t: 'D', pista: 'Acompaña al sustantivo «mesa».' },
     { frase: 'Quiero <b>esa</b>, no la otra.', foco: 'esa', pre: 'Quiero ', post: ', no la otra.', t: 'P', pista: 'Sustituye al sustantivo; va sola.' },
     { frase: '<b>Aquel</b> carro es rojo.', foco: 'Aquel', pre: '', post: ' carro es rojo.', t: 'D', pista: 'Acompaña al sustantivo «carro».' },
     { frase: 'Dame <b>aquel</b>, por favor.', foco: 'aquel', pre: 'Dame ', post: ', por favor.', t: 'P', pista: 'Sustituye al sustantivo; va solo.' },
@@ -1255,7 +1255,7 @@ const critReescribeBank = [
 ];
 // ── III. Cambia la posición (proclítico ↔ enclítico; obligatorio en infinitivo, gerundio, imperativo)
 const critPosicionBank = [
-    { given: 'Me lo dio', target: 'Conviértelo en orden (enclítico):', ans: 'dámelo', alts: ['damelo'], regla: 'En el imperativo afirmativo el pronombre va pegado al final: dá+me+lo = dámelo.' },
+    { given: 'Me lo dio', target: 'Conviértelo en orden (enclítico):', ans: 'dámelo', alts: ['damelo'], regla: 'En el imperativo afirmativo el pronombre va pegado al final: da + me + lo = dámelo.' },
     { given: 'Te llamo', target: 'Conviértelo en orden (enclítico):', ans: 'llámame', alts: ['llamame'], regla: 'En el imperativo el pronombre es enclítico: llama+me = llámame.' },
     { given: 'Viéndolo', target: 'Escríbelo con el verbo conjugado (proclítico):', ans: 'lo veo', alts: ['lo veo'], regla: 'Con el verbo conjugado el pronombre va antes y separado: lo veo.' },
     { given: 'Se fue', target: 'Conviértelo en infinitivo (enclítico obligatorio):', ans: 'irse', alts: ['irse'], regla: 'Con el infinitivo el pronombre va pegado: ir+se = irse.' },
@@ -1282,7 +1282,7 @@ const critRegistroBank = [
     { who: 'Te diriges a un maestro nuevo durante la clase.', ans: 'usted', model: 'USTED: por respeto a la autoridad en un contexto formal.' },
     { who: 'Juegas fútbol con tus compañeros de equipo.', ans: 'vos', model: 'VOS: por la confianza entre amigos y compañeros.' },
 ];
-// ── V. Detective del texto (mini-párrafo hondureño con 2 errores plantados)
+// ── V. Detective del texto (minipárrafo hondureño con 2 errores plantados)
 const critDetectiveBank = [
     {
         text: 'En la escuela de Danlí, los alumnos recibieron a los maestros que llegaron tarde. Después, el director dijo: «No quiero eso silla, quiero aquella».',
@@ -1330,17 +1330,17 @@ function genEvalCrit() {
 
     // Barra de distribución + progresión de dificultad
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II–III) → analizar y argumentar (IV) → producir (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Juez 20</span><span class="eval-score-pill esp-tf">II. Reescribe 20</span><span class="eval-score-pill esp-mc">III. Posición 20</span><span class="eval-score-pill esp-pr">IV. Vos/usted 20</span><span class="eval-score-pill esp-cp">V. Detective 20</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II–III) → analizar y argumentar (IV) → producir (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Juez 20</span><span class="eval-score-pill esp-tf">II. Reescribe 20</span><span class="eval-score-pill esp-mc">III. Posición 20</span><span class="eval-score-pill esp-pr">IV. Vos/usted 20</span><span class="eval-score-pill esp-cp">V. Detective 20</span></div>`;
     out.appendChild(bar);
 
     // ── I. ¿Pronombre o determinante? (5×4=20, radios P/D autocalificables)
     const juItems = _pickF(critJuezBank, 5, rngC);
     let juRows = '';
     juItems.forEach((it, i) => {
-        juRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 1}.</span> ${it.pre}<b class="crit-foco">${it.foco}</b>${it.post}</div><div class="crit-juez-opts"><label class="crit-radio"><input type="radio" name="juez${i}" value="P"> Pronombre (sustituye)</label><label class="crit-radio"><input type="radio" name="juez${i}" value="D"> Determinante (acompaña)</label></div><div class="crit-pauta">${it.t === 'P' ? 'Pronombre' : 'Determinante'} — ${it.pista}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`;
+        juRows += `<div class="crit-q-block"><div class="crit-scenario"><span class="crit-juez-n">${i + 1}.</span> ${it.pre}<b class="crit-foco">${it.foco}</b>${it.post}</div><div class="crit-juez-opts"><label class="crit-radio"><input type="radio" name="juez${i}" value="P"> Pronombre (sustituye)</label><label class="crit-radio"><input type="radio" name="juez${i}" value="D"> Determinante (acompaña)</label></div><div class="crit-pauta">${it.t === 'P' ? 'Pronombre' : 'Determinante'}: ${it.pista}</div><div class="eval-item-feedback" id="critFbJu${i}" aria-live="polite"></div></div>`;
     });
     const s1 = document.createElement('div');
-    s1.innerHTML = `<div class="eval-section-title">I. ¿Pronombre o determinante? — Juez gramatical <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Observa la palabra en negrita. Marca si es <b>Pronombre</b> (sustituye al sustantivo, va sola) o <b>Determinante</b> (acompaña al sustantivo). En tu cuaderno, subraya la pista: ¿acompaña o sustituye?</p>${juRows}</div>`;
+    s1.innerHTML = `<div class="eval-section-title">I. Juez gramatical: ¿pronombre o determinante? <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Observa la palabra en negrita. Marca si es <b>Pronombre</b> (sustituye al sustantivo, va sola) o <b>Determinante</b> (acompaña al sustantivo). En tu cuaderno, subraya la pista: ¿acompaña o sustituye?</p>${juRows}</div>`;
     out.appendChild(s1);
 
     // ── II. Reescribe sin repetir (5×4=20, palabras clave + respuesta modelo)
@@ -1357,7 +1357,7 @@ function genEvalCrit() {
     const poItems = _pickF(critPosicionBank, 5, rngC);
     let poRows = '';
     poItems.forEach((it, i) => {
-        poRows += `<div class="crit-q-block"><div class="crit-pos-row"><span class="crit-juez-n">${i + 1}.</span> <span class="crit-pos-given">${it.given}</span> <span class="crit-pos-arrow">→</span> <span class="crit-pos-target">${it.target}</span></div><input type="text" class="crit-pos-input" data-pos="${i}" autocomplete="off" aria-label="Reescribe cambiando la posición ${i + 1}"><div class="crit-pauta">${it.ans} — ${it.regla}</div><div class="eval-item-feedback" id="critFbPo${i}" aria-live="polite"></div></div>`;
+        poRows += `<div class="crit-q-block"><div class="crit-pos-row"><span class="crit-juez-n">${i + 1}.</span> <span class="crit-pos-given">${it.given}</span> <span class="crit-pos-arrow">→</span> <span class="crit-pos-target">${it.target}</span></div><input type="text" class="crit-pos-input" data-pos="${i}" autocomplete="off" aria-label="Reescribe cambiando la posición ${i + 1}"><div class="crit-pauta">${it.ans} · ${it.regla}</div><div class="eval-item-feedback" id="critFbPo${i}" aria-live="polite"></div></div>`;
     });
     const s3 = document.createElement('div');
     s3.innerHTML = `<div class="eval-section-title">III. Cambia la posición: proclítico ↔ enclítico <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Reescribe el verbo cambiando la posición del pronombre. Recuerda: es <b>enclítico obligatorio</b> con infinitivo, gerundio e imperativo.</p>${poRows}</div>`;
@@ -1381,7 +1381,7 @@ function genEvalCrit() {
     // ── V. Detective del texto (2 errores × 10 = 20, autoevaluación con rúbrica)
     const deItem = _pickF(critDetectiveBank, 1, rngC)[0];
     const s5 = document.createElement('div');
-    s5.innerHTML = `<div class="eval-section-title">V. Detective del texto <span class="eval-pts">20 pts · 2 errores × 10 pts</span></div><div class="eval-item"><p class="crit-q-label">Lee el párrafo. Tiene <b>2 errores</b> con pronombres. Para cada uno: <b>localiza</b> el error, <b>nombra</b> el tipo de pronombre y <b>corrígelo</b>.</p><div class="crit-scenario crit-detective-text">${deItem.text}</div><div class="crit-q-block"><div class="crit-q-label">Error 1 — tipo, problema y corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 1"></textarea></div><div class="crit-q-block"><div class="crit-q-label">Error 2 — tipo, problema y corrección:</div><textarea class="crit-textarea" rows="2" aria-label="Error 2"></textarea></div><div class="crit-pauta">${deItem.errores.map((e, i) => `Error ${i + 1} — <b>${e.tipo}</b>: ${e.problema} Corrección: ${e.correccion}`).join('<br>')}</div><div class="crit-rubric"><strong>📋 Rúbrica (2 criterios · 10 pts c/u):</strong> 1) Localiza y <b>nombra bien el tipo</b> de pronombre de cada error. 2) <b>Corrige</b> adecuadamente respetando la concordancia y evitando la ambigüedad. <em>Bien = 10; incompleto = 5; ausente = 0.</em></div><div class="crit-selfscore"><label for="critScoreV">Obtenido (autoevaluación):</label><input type="number" id="critScoreV" class="crit-score-input" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
+    s5.innerHTML = `<div class="eval-section-title">V. Detective del texto <span class="eval-pts">20 pts · 2 errores × 10 pts</span></div><div class="eval-item"><p class="crit-q-label">Lee el párrafo. Tiene <b>2 errores</b> con pronombres. Para cada uno: <b>localiza</b> el error, <b>nombra</b> el tipo de pronombre y <b>corrígelo</b>.</p><div class="crit-scenario crit-detective-text">${deItem.text}</div><div class="crit-q-block"><div class="crit-q-label">Error 1 (tipo, problema y corrección):</div><textarea class="crit-textarea" rows="2" aria-label="Error 1"></textarea></div><div class="crit-q-block"><div class="crit-q-label">Error 2 (tipo, problema y corrección):</div><textarea class="crit-textarea" rows="2" aria-label="Error 2"></textarea></div><div class="crit-pauta">${deItem.errores.map((e, i) => `Error ${i + 1} (<b>${e.tipo}</b>): ${e.problema} Corrección: ${e.correccion}`).join('<br>')}</div><div class="crit-rubric"><strong>📋 Rúbrica (2 criterios · 10 pts c/u):</strong> 1) Localiza y <b>nombra bien el tipo</b> de pronombre de cada error. 2) <b>Corrige</b> adecuadamente respetando la concordancia y evitando la ambigüedad. <em>Bien = 10; incompleto = 5; ausente = 0.</em></div><div class="crit-selfscore"><label for="critScoreV">Obtenido (autoevaluación):</label><input type="number" id="critScoreV" class="crit-score-input" min="0" max="20" value="0"> <span>de 20 pts</span></div></div>`;
     out.appendChild(s5);
 
     window._evalCritData = {
@@ -1415,7 +1415,7 @@ function gradeEvalCrit() {
         const sel = document.querySelector(`input[name="juez${i}"]:checked`);
         const ok = !!sel && sel.value === it.t;
         if (ok) detail.ju += 4;
-        _setCritFb('critFbJu' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + (it.t === 'P' ? 'Pronombre' : 'Determinante') + ' — ' + it.pista);
+        _setCritFb('critFbJu' + i, ok, ok ? 'Correcto. +4 pts' : 'Revisar. R/ ' + (it.t === 'P' ? 'Pronombre' : 'Determinante') + ': ' + it.pista);
     });
 
     // II. Reescribe sin repetir (palabra clave, 4 pts c/u)
@@ -1478,7 +1478,7 @@ function printEvalCrit() {
     const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
 
     // I. ¿Pronombre o determinante? (marca P o D)
-    let s1 = `<div class="sec-title"><span>I. ¿Pronombre o determinante? — Juez gramatical</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Observa la palabra en negrita. Escribe <b>P</b> (pronombre, sustituye) o <b>D</b> (determinante, acompaña) y subraya la pista.</p>`;
+    let s1 = `<div class="sec-title"><span>I. Juez gramatical: ¿pronombre o determinante?</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Observa la palabra en negrita. Escribe <b>P</b> (pronombre, sustituye) o <b>D</b> (determinante, acompaña) y subraya la pista.</p>`;
     d.ju.forEach((it, i) => { s1 += `<div class="cp-row"><span class="qn">${i + 1}.</span><span class="tf-blank"></span><span class="cp-text">${it.pre}<b>${it.foco}</b>${it.post}</span></div>`; });
 
     // II. Reescribe sin repetir
@@ -1502,9 +1502,9 @@ function printEvalCrit() {
     let pR = '';
     pR += `<div class="p-sec"><div class="p-ttl">I. ¿Pronombre o determinante?</div>${d.ju.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.t}</strong> (${it.t === 'P' ? 'Pronombre' : 'Determinante'}): ${it.pista}</div>`).join('')}</div>`;
     pR += `<div class="p-sec"><div class="p-ttl">II. Reescribe sin repetir</div>${d.re.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.model}</div>`).join('')}</div>`;
-    pR += `<div class="p-sec"><div class="p-ttl">III. Cambia la posición</div>${d.po.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.ans}</strong> — ${it.regla}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec"><div class="p-ttl">III. Cambia la posición</div>${d.po.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.ans}</strong> · ${it.regla}</div>`).join('')}</div>`;
     pR += `<div class="p-sec"><div class="p-ttl">IV. Habla hondureña</div>${d.vo.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.ans}</strong></div>`).join('')}${d.reg.map((it, i) => `<div class="p-crit-line"><strong>${i + 3}. ${it.ans}:</strong> ${it.model}</div>`).join('')}</div>`;
-    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del texto (respuestas sugeridas)</div>${d.de.errores.map((e, i) => `<div class="p-crit-line"><strong>Error ${i + 1} — ${e.tipo}:</strong> ${e.problema} Corrección: ${e.correccion}</div>`).join('')}</div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del texto (respuestas sugeridas)</div>${d.de.errores.map((e, i) => `<div class="p-crit-line"><strong>Error ${i + 1} (${e.tipo}):</strong> ${e.problema} Corrección: ${e.correccion}</div>`).join('')}</div>`;
 
     const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Pronombres · Forma ${forma}</title><style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -1551,20 +1551,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Los Pronombres · Educación Básica · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Juez 20 · II. Reescribe 20 · III. Posición 20 · IV. Vos/usted 20 · V. Detective 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Pronombres · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Los Pronombres · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20. Secciones abiertas: usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1587,7 +1587,7 @@ function openDiploma() {
     const mi = pct === 100 ? 5 : pct >= 80 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : pct >= 20 ? 1 : 0;
     document.getElementById('diplMsg').textContent = msgs[mi];
     document.getElementById('diplDate').textContent = 'Honduras, ' + new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún — ¡sigue completando secciones!';
+    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún. ¡Sigue completando secciones!';
     document.getElementById('diplAch').textContent = achStr;
     document.getElementById('diplomaOverlay').classList.add('open');
     document.querySelector('.diploma-input').focus();
@@ -1750,7 +1750,7 @@ function copiarEnlaceAlumno() {
 function asignarEnClassroom() {
     const out = document.getElementById('tgOut');
     const url = encodeURIComponent(window.location.href);
-    const titulo = encodeURIComponent('Misión Los Pronombres | Educación Básica – policastsapien.com');
+    const titulo = encodeURIComponent('Misión Los Pronombres | Educación Básica · policastsapien.com');
     const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
 
     if (!out || out.innerHTML.trim() === '') {
@@ -1760,7 +1760,7 @@ function asignarEnClassroom() {
 
     const tipoEl = document.getElementById('tgType');
     const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
-    let texto = '📚 MISIÓN: LOS PRONOMBRES | Educación Básica – Español · Lengua\n';
+    let texto = '📚 MISIÓN: LOS PRONOMBRES | Educación Básica · Español · Lengua\n';
     texto += '🔗 ' + window.location.href + '\n';
     texto += '📋 Tipo de tarea: ' + tipoText + '\n';
     texto += '─'.repeat(45) + '\n\n';

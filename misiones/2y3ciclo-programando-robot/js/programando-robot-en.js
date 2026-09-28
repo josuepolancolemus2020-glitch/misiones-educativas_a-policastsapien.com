@@ -9,7 +9,7 @@
    · Inglés AMERICANO estricto: color, center, catalog, analyze,
      practicing, «Student No.».
    · Vocabulario estándar de programación escolar: program ·
-     instruction · conditional (IF…THEN…ELSE) · loop · variable ·
+     instruction · conditional (IF… THEN… ELSE) · loop · variable ·
      counter · pseudocode · debug · bug · sensor · actuator ·
      step-by-step test.
    · Lo cultural se explica, no se calca: milpa → cornfield,
@@ -94,7 +94,7 @@
       a0:
         '<h2>🧱 It looked at the wall once</h2>' +
         '<p>They wrote the robot this: <strong>«if there is a wall, stop; move forward ten steps»</strong>. And they wrote ' +
-        'it once, at the start. The robot looked: no wall. So it took all ten steps in a row — and crashed on the third ' +
+        'it once, at the start. The robot looked: no wall. So it took all ten steps in a row, and crashed on the third ' +
         'one, sensor first. That left it useless for the next day’s fair.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>The instruction was not wrong: what was wrong was <strong>how many times</strong> it is given. A robot that ' +
@@ -189,9 +189,9 @@
         '2. <span class="pk">REPEAT</span> 10 <span class="pk">TIMES</span>:\n' +
         '3.    FORWARD\n' +
         '4.    <span class="pk">IF</span> the moisture sensor says «dry soil» <span class="pk">THEN</span> open the valve\n' +
-        '5.    <span class="pk">ELSE</span> keep going\n' +
+        '5.    <span class="pk">ELSE</span> close the valve\n' +
         '6.    plants = plants + 1\n' +
-        '7. STOP and report how many plants it watered</div>' +
+        '7. STOP and report how many plants it checked</div>' +
         '<div class="tip">' +
         '<span class="ti">✏️</span>' +
         '<div><strong>The notebook rule:</strong> one instruction per line, numbered and with no confusing sentences. If someone else can follow it <b>without asking a single question</b>, your pseudocode is well written.</div>' +
@@ -484,7 +484,7 @@
         { q: 'Write in pseudocode the program of a robot that follows the black line down the school hallway.', ans: 'REPEAT UNTIL YOU REACH THE CLASSROOM: IF the line sensor sees black ahead THEN FORWARD, ELSE TURN RIGHT. On arrival: STOP. (Any clear wording with a loop and a conditional counts.)' },
         { q: 'What is debugging a program? Explain why the robot «does what the program says, not what you meant to say».', ans: 'Debugging is finding and fixing the mistakes (bugs) in the program by testing it step by step. The robot does not guess: it runs every instruction literally, which is why one instruction too many, too few or out of order makes it crash or get lost.' },
         { q: 'Design the program of a robot that picks up the trash in the schoolyard and counts how many objects it collected.', ans: 'Open answer. It must include: a loop («repeat while there are objects left»), a conditional with the obstacle sensor («if there is an object ahead then pick it up») and a counter variable («objects = objects + 1»), and it must end with STOP.' },
-        { q: 'Write the program of the school garden watering robot using a loop, a conditional and a variable.', ans: 'Open answer. For example: plants = 0. REPEAT 10 TIMES: FORWARD; IF the moisture sensor says dry soil THEN open the valve, ELSE keep going; plants = plants + 1. At the end STOP and report how many plants it watered.' }
+        { q: 'Write the program of the school garden watering robot using a loop, a conditional and a variable.', ans: 'Open answer. For example: plants = 0. REPEAT 10 TIMES: FORWARD; IF the moisture sensor says dry soil THEN open the valve, ELSE close the valve; plants = plants + 1. At the end STOP and report how many plants it checked.' }
       ],
 
       sopaSets: [
@@ -506,16 +506,16 @@
       ],
 
       evalMCBank: [
-        { q: 'The robot has to move forward seven times in a row. What is best to write?', o: ['a) a) Seven sensors', 'b) b) FORWARD just once', 'c) c) REPEAT 7 TIMES: FORWARD', 'd) d) TURN seven times'], a: 2 },
-        { q: 'What is the first step of a robot’s cycle?', o: ['a) a) Reading its sensors', 'b) b) Moving the wheels', 'c) c) Switching off', 'd) d) Erasing the program'], a: 0 },
-        { q: 'There is a crate right ahead. With «IF there is a wall ahead THEN TURN RIGHT, ELSE FORWARD», what does the robot do?', o: ['a) a) It moves forward and crashes', 'b) b) It jumps over the crate', 'c) c) It stops forever', 'd) d) It turns without touching the crate'], a: 3 },
-        { q: 'When you look for the mistake, how much should you change in each test?', o: ['a) a) The whole program', 'b) b) One single instruction', 'c) c) Nothing', 'd) d) The robot'], a: 1 },
-        { q: 'In the watering robot’s steps, what does the robot do if the soil is NOT dry?', o: ['a) a) It waters the plant', 'b) b) It switches off', 'c) c) It keeps going', 'd) d) It goes back to the start'], a: 2 },
-        { q: 'A line follower with «REPEAT FOREVER» reaches the goal. What happens?', o: ['a) a) It goes straight past and off the table', 'b) b) It stops by itself', 'c) c) It goes back to the start', 'd) d) It switches off'], a: 0 },
-        { q: 'In the story of the robot that crashed, what was the mistake?', o: ['a) a) The order was badly written', 'b) b) It looked just once and went on blindly', 'c) c) The battery was flat', 'd) d) The sensor was backwards'], a: 1 },
-        { q: 'With «REPEAT WHILE there is no obstacle: FORWARD», when does the robot stop moving forward?', o: ['a) a) Never', 'b) b) On the second step', 'c) c) When it runs out of paper', 'd) d) When something appears ahead'], a: 3 },
-        { q: 'The robot has to wait for the teacher’s signal before leaving. Which instruction goes first?', o: ['a) a) FORWARD', 'b) b) WAIT', 'c) c) STOP', 'd) d) TURN LEFT'], a: 1 },
-        { q: 'The robot is facing North and gets TURN RIGHT. Which way is it facing now?', o: ['a) a) South', 'b) b) West', 'c) c) East', 'd) d) North'], a: 2 }
+        { q: 'The robot has to move forward seven times in a row. What is best to write?', o: ['a) Seven sensors', 'b) FORWARD just once', 'c) REPEAT 7 TIMES: FORWARD', 'd) TURN seven times'], a: 2 },
+        { q: 'What is the first step of a robot’s cycle?', o: ['a) Reading its sensors', 'b) Moving the wheels', 'c) Switching off', 'd) Erasing the program'], a: 0 },
+        { q: 'There is a crate right ahead. With «IF there is a wall ahead THEN TURN RIGHT, ELSE FORWARD», what does the robot do?', o: ['a) It moves forward and crashes', 'b) It jumps over the crate', 'c) It stops forever', 'd) It turns without touching the crate'], a: 3 },
+        { q: 'When you look for the mistake, how much should you change in each test?', o: ['a) The whole program', 'b) One single instruction', 'c) Nothing', 'd) The robot'], a: 1 },
+        { q: 'In the watering robot’s steps, what does the robot do if the soil is NOT dry?', o: ['a) It waters the plant', 'b) It switches off', 'c) It keeps going', 'd) It goes back to the start'], a: 2 },
+        { q: 'A line follower with «REPEAT FOREVER» reaches the goal. What happens?', o: ['a) It goes straight past and off the table', 'b) It stops by itself', 'c) It goes back to the start', 'd) It switches off'], a: 0 },
+        { q: 'In the story of the robot that crashed, what was the mistake?', o: ['a) The order was badly written', 'b) It looked just once and went on blindly', 'c) The battery was flat', 'd) The sensor was backwards'], a: 1 },
+        { q: 'With «REPEAT WHILE there is no obstacle: FORWARD», when does the robot stop moving forward?', o: ['a) Never', 'b) On the second step', 'c) When it runs out of paper', 'd) When something appears ahead'], a: 3 },
+        { q: 'The robot has to wait for the teacher’s signal before leaving. Which instruction goes first?', o: ['a) FORWARD', 'b) WAIT', 'c) STOP', 'd) TURN LEFT'], a: 1 },
+        { q: 'The robot is facing North and gets TURN RIGHT. Which way is it facing now?', o: ['a) South', 'b) West', 'c) East', 'd) North'], a: 2 }
       ],
 
       evalCPBank: [

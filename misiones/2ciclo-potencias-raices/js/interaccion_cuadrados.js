@@ -89,7 +89,7 @@ window.WidgetCuadradosJSON = {
 
     function loadPrediction() {
       const [a, b] = predPair;
-      predQEl.textContent = `🔮 ¿Cuál cuadrado perfecto es mayor: ${a}² o ${b}²?`;
+      predQEl.textContent = `🔮 ¿Qué cuadrado perfecto es mayor: ${a}² o ${b}²?`;
       predOptsEl.innerHTML = `
         <button class="wq-pred-btn" id="wq-p-a">${a}²</button>
         <button class="wq-pred-btn" id="wq-p-b">${b}²</button>
@@ -108,7 +108,7 @@ window.WidgetCuadradosJSON = {
           if (correctBtn) correctBtn.className = 'wq-pred-btn wq-ok';
         }
         const winner = correct === 'igual' ? 'Son iguales' : `${correct === 'a' ? a : b}² = ${correct === 'a' ? a*a : b*b}`;
-        predFbEl.textContent = (isOk ? '✔ ¡Correcto! ' : '💡 La respuesta correcta es: ' + winner + '. ') + 'Entre más grande la base (n), más grande el cuadrado perfecto (n²). Desliza el control para explorarlo.';
+        predFbEl.textContent = (isOk ? '✔ ¡Correcto! ' : '💡 La respuesta correcta es: ' + winner + '. ') + 'Cuanto más grande la base (n), más grande el cuadrado perfecto (n²). Desliza el control para explorarlo.';
         predFbEl.className = 'wq-pred-fb show ' + (isOk ? 'ok' : 'err');
         if (typeof sfx === 'function') sfx(isOk ? 'ok' : 'no');
       }

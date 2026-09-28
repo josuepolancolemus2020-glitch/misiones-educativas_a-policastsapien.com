@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Gramática Española._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Gramática Española._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -169,20 +169,20 @@ function fb(id, msg, ok){
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Adjetivo Relacional',a:'🔗 Clasifica el sustantivo en un ámbito. No admite grado ni prefijo "muy". Ej: <em>crisis <strong>económica</strong></em>.'},
-  {w:'Adjetivo Adverbial',a:'⏱️ Tiene significado temporal o modal, similar a un adverbio. Ej: <em>el <strong>presunto</strong> asesino</em>, <em>el <strong>actual</strong> jefe</em>.'},
-  {w:'Adjetivo Calificativo',a:'✨ Denota propiedades o cualidades graduables. Son el núcleo canónico del SAdj. Ej: <em>un hombre <strong>pobre</strong></em>.'},
-  {w:'Función: Adyacente',a:'📖 Modifica directamente al sustantivo dentro del Sintagma Nominal (SN). Ej: <em>la casa <strong>roja</strong></em>.'},
-  {w:'Función: Atributo',a:'⚓ Se predica del sujeto a través de un verbo copulativo o semicopulativo. Ej: <em>El libro es <strong>extenso</strong></em>.'},
-  {w:'Función: C. Predicativo',a:'🎯 Modifica a un verbo pleno y concuerda con el Sujeto o C.D. Ej: <em>Llegaron <strong>cansados</strong></em> / <em>Tomó <strong>fría</strong> la sopa</em>.'},
-  {w:'Posición Restrictiva',a:'🛑 Pospuesto al sustantivo, selecciona un subgrupo limitando la referencia. Ej: <em>los abrigos <strong>rojos</strong></em> (solo esos).'},
-  {w:'Posición No Restrictiva',a:'📖 Antepuesto o entre comas, aporta una nota explicativa sin delimitar el grupo. Ej: <em>las <strong>verdes</strong> hojas</em> (epíteto).'},
-  {w:'Superlativo Relativo',a:'📈 Expresa el grado máximo pero dentro de un conjunto delimitado. Ej: <em><strong>el más alto</strong> de la clase</em>.'},
-  {w:'Superlativo Absoluto Léxico',a:'🏛️ Formas sintéticas herederas del latín. Ej: <em>óptimo (bueno), pésimo (malo), máximo (grande)</em>.'},
-  {w:'Superlativo con -érrimo',a:'🧬 Sufijo culto aplicado a ciertos adjetivos. Ej: <em>paupérrimo (pobre), celebérrimo (célebre), libérrimo (libre)</em>.'},
-  {w:'Apócope Adjetival',a:'✂️ Pérdida de sonido(s) final(es) al anteponerse al sustantivo. Ej: <em>santo -> <strong>san</strong> Pablo, grande -> <strong>gran</strong> hombre</em>.'},
-  {w:'Adjetivos Elativos',a:'🔥 Llevan el grado extremo en su léxico. Rechazan cuantificadores de grado. Ej: <em>enorme, diminuto, precioso, atroz</em>.'},
-  {w:'Base Léxica Supletiva',a:'🔄 Sustitución total de la raíz en la formación de grados. Ej: <em>bueno -> mejor, malo -> peor</em>.'},
+  {w:'Adjetivo Relacional',a:'🔗 Clasifica el sustantivo en un ámbito. No admite grado ni el adverbio "muy". Ej.: <em>crisis <strong>económica</strong></em>.'},
+  {w:'Adjetivo Adverbial',a:'⏱️ Tiene significado temporal o modal, similar a un adverbio. Ej.: <em>el <strong>presunto</strong> asesino</em>, <em>el <strong>actual</strong> jefe</em>.'},
+  {w:'Adjetivo Calificativo',a:'✨ Denota propiedades o cualidades graduables. Es el núcleo canónico del SAdj. Ej.: <em>un hombre <strong>pobre</strong></em>.'},
+  {w:'Función: Adyacente',a:'📖 Modifica directamente al sustantivo dentro del Sintagma Nominal (SN). Ej.: <em>la casa <strong>roja</strong></em>.'},
+  {w:'Función: Atributo',a:'⚓ Se predica del sujeto a través de un verbo copulativo o semicopulativo. Ej.: <em>El libro es <strong>extenso</strong></em>.'},
+  {w:'Función: C. Predicativo',a:'🎯 Modifica a un verbo pleno y concuerda con el Sujeto o C.D. Ej.: <em>Llegaron <strong>cansados</strong></em> / <em>Tomó <strong>fría</strong> la sopa</em>.'},
+  {w:'Posición Restrictiva',a:'🛑 Pospuesto al sustantivo, selecciona un subgrupo limitando la referencia. Ej.: <em>los abrigos <strong>rojos</strong></em> (solo esos).'},
+  {w:'Posición No Restrictiva',a:'📖 Antepuesto o entre comas, aporta una nota explicativa sin delimitar el grupo. Ej.: <em>las <strong>verdes</strong> hojas</em> (epíteto).'},
+  {w:'Superlativo Relativo',a:'📈 Expresa el grado máximo, pero dentro de un conjunto delimitado. Ej.: <em><strong>el más alto</strong> de la clase</em>.'},
+  {w:'Superlativo Absoluto Léxico',a:'🏛️ Formas sintéticas herederas del latín. Ej.: <em>óptimo (bueno), pésimo (malo), máximo (grande)</em>.'},
+  {w:'Superlativo con -érrimo',a:'🧬 Sufijo culto aplicado a ciertos adjetivos. Ej.: <em>paupérrimo (pobre), celebérrimo (célebre), libérrimo (libre)</em>.'},
+  {w:'Apócope Adjetival',a:'✂️ Pérdida de sonido(s) final(es) al anteponerse al sustantivo. Ej.: <em>santo -> <strong>san</strong> Pablo, grande -> <strong>gran</strong> hombre</em>.'},
+  {w:'Adjetivos Elativos',a:'🔥 Llevan el grado extremo en su léxico. Rechazan cuantificadores de grado. Ej.: <em>enorme, diminuto, precioso, atroz</em>.'},
+  {w:'Base Léxica Supletiva',a:'🔄 Sustitución total de la raíz en la formación de grados. Ej.: <em>bueno -> mejor, malo -> peor</em>.'},
 ];
 let fcIdx = 0;
 function upFC(){
@@ -202,12 +202,12 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== QUIZ DATA =====================
 const qzData=[
-  {q:'Según la NGLE, ¿qué característica principal define a un adjetivo relacional?',o:['a) Clasifican el nombre y no admiten grados de intensidad','b) Admiten adverbios en -mente','c) Siempre van antepuestos','d) Indican emociones subjetivas'],c:0},
+  {q:'Según la NGLE, ¿qué característica principal define a los adjetivos relacionales?',o:['a) Clasifican el nombre y no admiten grados de intensidad','b) Admiten adverbios en -mente','c) Siempre van antepuestos','d) Indican emociones subjetivas'],c:0},
   {q:'En la oración «Los niños llegaron cansados», la función sintáctica de "cansados" es:',o:['a) Atributo','b) Adyacente Nominal','c) Complemento Predicativo','d) Adverbio de modo'],c:2},
-  {q:'¿Cuál de estos adjetivos es un Elativo Léxico?',o:['a) Enorme','b) Altísimo','c) Muy grande','d) El más rápido'],c:0},
+  {q:'¿Cuál de estos adjetivos es un elativo léxico?',o:['a) Enorme','b) Altísimo','c) Muy grande','d) El más rápido'],c:0},
   {q:'¿Qué tipo de adjetivo encontramos en «el actual presidente»?',o:['a) Adjetivo relacional','b) Adjetivo adverbial','c) Adjetivo calificativo de superioridad','d) Epíteto'],c:1},
   {q:'Identifica el superlativo absoluto formado con sufijo culto de "pobre":',o:['a) Paupérrimo','b) Pobrísimo','c) Muy pobre','d) El más pobre'],c:0},
-  {q:'En «un viejo amigo» vs «un amigo viejo», el cambio de posición provoca:',o:['a) Una restricción sintáctica incorrecta','b) La apócope del adjetivo','c) Un cambio semántico (adverbial vs calificativo)','d) Un superlativo relativo'],c:2},
+  {q:'En «un viejo amigo» vs. «un amigo viejo», el cambio de posición provoca:',o:['a) Una restricción sintáctica incorrecta','b) La apócope del adjetivo','c) Un cambio semántico (adverbial vs. calificativo)','d) Un superlativo relativo'],c:2},
   {q:'¿Cuál es el superlativo absoluto léxico (supletivo) de "malo"?',o:['a) Peor','b) Malísimo','c) El peor','d) Pésimo'],c:3},
   {q:'La pérdida de fonemas al final de un adjetivo antepuesto (ej. "gran" por "grande") se denomina:',o:['a) Elisión','b) Síncopa','c) Metátesis','d) Apócope'],c:3},
   {q:'¿Qué función tiene el adjetivo en «El examen parece complejo»?',o:['a) Adyacente','b) Atributo','c) Complemento Predicativo','d) Núcleo del sujeto'],c:1},
@@ -327,7 +327,7 @@ function nextClassGroup(){
   sfx('click');
   currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;
   buildClass(); document.getElementById('fbCls').classList.remove('show');
-  showToast('🔄 Categoría: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);
+  showToast('🔄 Categoría: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
@@ -375,11 +375,11 @@ function resetId(){ sfx('click'); idIdx=0; showId(); document.getElementById('fb
 // ===================== COMPLETA =====================
 const cmpData=[
   {s:'El adjetivo "libre" forma su superlativo culto absoluto como ___.',opts:['librísimo','libérrimo','muy libre'],c:1},
-  {s:'Aquel dirigente era considerado un ___ hombre de estado (apócope de grande).',opts:['grande','gran','grandioso'],c:1},
+  {s:'Aquel dirigente era considerado un ___ hombre de Estado (apócope de grande).',opts:['grande','gran','grandioso'],c:1},
   {s:'Si algo es más que bueno en su grado sumo morfológico léxico, es ___.',opts:['mejor','buenísimo','óptimo'],c:2},
   {s:'Los adjetivos ___ no admiten grado, por lo que no decimos "una energía muy solar".',opts:['calificativos','adverbiales','relacionales'],c:2},
-  {s:'La concordancia del atributo en "El agua y la leche están ___" exige plural y masculino por regla de adyacencia heterogénea.',opts:['frías','fríos','frío'],c:0}, // Regla: sust femeninos coord -> adjetivo femenino plural (Agua es fem aunque lleve "El")
-  {s:'El uso del adjetivo en "un ___ amigo" (de muchos años) vs "un amigo ___" (de edad avanzada) refleja un cambio semántico.',opts:['viejo','antiguo','mayor'],c:0},
+  {s:'Completa con la concordancia del atributo: "El agua y la leche están ___".',opts:['frías','fríos','frío'],c:0}, // Regla: sust femeninos coord -> adjetivo femenino plural (Agua es fem aunque lleve "El")
+  {s:'El uso del adjetivo en "un ___ amigo" (de muchos años) vs. "un amigo ___" (de edad avanzada) refleja un cambio semántico.',opts:['viejo','antiguo','mayor'],c:0},
   {s:'El adjetivo "célebre" tiene el superlativo absoluto ___.',opts:['celebrísimo','celebérrimo','muy célebre'],c:1},
   {s:'En "Trajeron ___ las bebidas", el adjetivo funciona como Complemento Predicativo.',opts:['frías','fríos','fría'],c:0},
 ];
@@ -498,7 +498,7 @@ function nextRetoPair(){
   document.getElementById('retoWord').textContent = '¡Preparación mental!';
   document.getElementById('retoScore').textContent = '✅ 0 precisas | ❌ 0 errores';
   document.getElementById('fbReto').classList.remove('show');
-  showToast(`🔀 Eje de clasificación: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+  showToast(`🔀 Eje de clasificación: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto(){
   sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0;
@@ -534,7 +534,7 @@ const classifyTaskDB=[
 ];
 const completeTaskDB=[
   {s:'La terminación de superlativo absoluto culto para adjetivos que contenían "r" latina (como pobre) es ___.',opts:['-ísimo','-érrimo','-mente'],ans:'-érrimo'},
-  {s:'Un adjetivo ___ no expresa una propiedad, sino una pertenencia a una clase o tipo (Ej: energía solar).',opts:['calificativo','relacional','adverbial'],ans:'relacional'},
+  {s:'Un adjetivo ___ no expresa una propiedad, sino una pertenencia a una clase o tipo (Ej.: energía solar).',opts:['calificativo','relacional','adverbial'],ans:'relacional'},
   {s:'En la oración "María corre rápida", el adjetivo funciona sintácticamente como ___.',opts:['Atributo','Complemento Predicativo','Adyacente'],ans:'Complemento Predicativo'},
   {s:'La pérdida del segmento final de un adjetivo (como santo -> san) se denomina ___.',opts:['apócope','elisión','síncopa'],ans:'apócope'},
   {s:'Un adjetivo en posición antepuesta que destaca una cualidad natural del sustantivo se llama ___.',opts:['epíteto','restrictivo','relacional'],ans:'epíteto'},
@@ -543,7 +543,7 @@ const completeTaskDB=[
 const explainQuestions=[
   {q:'Explica la diferencia sintáctica y semántica entre un adjetivo Calificativo y uno Relacional según la NGLE.',ans:'Calificativo denota cualidades, admite grado (muy grande) y posición libre. Relacional clasifica, no admite grado (*muy solar) y suele ser restrictivo pospuesto.'},
   {q:'¿Cómo se diferencia la función de Atributo de la de Complemento Predicativo?',ans:'El atributo aparece exclusivamente con verbos copulativos/semicopulativos. El predicativo modifica a un verbo predicativo pleno y al SN simultáneamente.'},
-  {q:'¿Qué es la apócope adjetival? Da tres ejemplos.',ans:'Es la pérdida de uno o varios sonidos al final de palabra antepuesta a sustantivo. Ej: bueno->buen, grande->gran, santo->san.'},
+  {q:'¿Qué es la apócope adjetival? Da tres ejemplos.',ans:'Es la pérdida de uno o varios sonidos al final de palabra antepuesta a sustantivo. Ej.: bueno->buen, grande->gran, santo->san.'},
   {q:'Define qué son los adjetivos elativos léxicos frente a los superlativos morfológicos.',ans:'Elativos tienen el grado extremo en su significado raíz y rechazan marcas de grado (enorme, diminuto, atroz). Superlativos morfológicos añaden sufijos (-ísimo, -érrimo).'},
 ];
 let ansVisible = false;
@@ -596,7 +596,7 @@ function genClassifyTask(out, count){
 }
 
 function genCompleteTask(out, count){
-  _instrBlock(out,'Instrucción Lexicológica',['Completa los axiomas gramaticales utilizando la terminología precisa propuesta por la Nueva Gramática de la Lengua Española.']);
+  _instrBlock(out,'Instrucción Lexicológica',['Completa los axiomas gramaticales utilizando la terminología precisa propuesta por la Nueva gramática de la lengua española.']);
   const pool=_shuffle([...completeTaskDB]);
   const limit=Math.min(count, pool.length);
   for(let i=0;i<limit;i++){
@@ -609,7 +609,7 @@ function genCompleteTask(out, count){
 }
 
 function genExplainTask(out, count){
-  _instrBlock(out,'Desarrollo Teórico',['Fundamenta tu respuesta en base a los criterios morfosintácticos y semánticos contemporáneos de la lengua española.']);
+  _instrBlock(out,'Desarrollo Teórico',['Fundamenta tu respuesta con base en los criterios morfosintácticos y semánticos contemporáneos de la lengua española.']);
   const pool=_shuffle([...explainQuestions]);
   const limit=Math.min(count, pool.length);
   for(let i=0;i<limit;i++){
@@ -899,11 +899,11 @@ function genEval(){
   window._currentEvalForm = cf;
   evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
   saveProgress();
-  document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Sintaxis y Semántica`;
+  document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Sintaxis y Semántica`;
   evalAnsVisible = false;
   const out = document.getElementById('evalOut'); out.innerHTML='';
   const bar = document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-tf">V/F 25pts</span><span class="eval-score-pill esp-mc">Selección 25pts</span><span class="eval-score-pill esp-cp">Completar 25pts</span><span class="eval-score-pill esp-pr">Pareados 25pts</span></div>`;
   out.appendChild(bar);
   const tfItems = _pickF(evalTFBank,5, rng);
   const s1 = document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Juicio Gramatical (V/F) <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -937,7 +937,7 @@ function genEval(){
   const s4 = document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Correspondencia <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard = document.createElement('div'); matchCard.className='eval-item';
   let colLeft='<div class="eval-match-col"><h4>📌 Categoría Sintáctica</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">—</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">?</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>🔑 Axioma Morfosemántico</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1032,7 +1032,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1108,20 +1108,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Final: El Adjetivo Avanzado (Nivel Superior) - Gramática Española</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Cuenta:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Cuenta:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ MATRIZ DE RESPUESTAS — Evaluación El Adjetivo · Forma ${forma}</div>
+    <div class="p-main">✅ MATRIZ DE RESPUESTAS · Evaluación El Adjetivo · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del catedrático · Uso restringido</div>
     <div class="p-meta">Valor total: 100 pts | 4 bloques × 5 ítems × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
   const win=window.open('','_blank','');
@@ -1205,14 +1205,14 @@ const critTipoOpts=['calificativo','relacional','adverbial','calificativo apocop
 // ── V. Miniensayo NGLE (pregunta rotada por forma; rúbrica de 4 criterios ×5)
 const critEnsayoBank=[
   {q:'¿Por qué la NGLE reclasifica los tradicionales «adjetivos determinativos» (mi, este, algún) como determinantes y cuantificadores, y reserva «adjetivo» para calificativos, relacionales y adverbiales? Argumenta con ejemplos propios.', model:'Los antiguos «determinativos» no expresan propiedades del sustantivo, sino que lo actualizan, señalan o cuantifican (mi, este, algún); por eso la NGLE los agrupa como determinantes/cuantificadores. El término «adjetivo» queda para los que modifican semánticamente el nombre: calificativos (grande), relacionales (solar) y adverbiales (presunto). Se espera que el alumno aporte ejemplos propios de cada clase.'},
-  {q:'Explica la diferencia entre la función de Atributo y la de Complemento Predicativo, con ejemplos originales tuyos.', model:'El atributo aparece solo con verbos copulativos o semicopulativos (ser, estar, parecer) y se predica del sujeto: «El libro es extenso». El complemento predicativo acompaña a un verbo pleno y concuerda a la vez con el verbo y con el sujeto o el CD: «Llegaron cansados», «Trajo fría la sopa». Se valoran ejemplos originales del alumno.'},
+  {q:'Explica la diferencia entre la función de Atributo y la de Complemento Predicativo, con ejemplos originales tuyos.', model:'El atributo aparece solo con verbos copulativos o semicopulativos (ser, estar, parecer) y se predica del sujeto: «El libro es extenso». El complemento predicativo acompaña a un verbo pleno, lo complementa y concuerda con el sujeto o el CD: «Llegaron cansados», «Trajo fría la sopa». Se valoran ejemplos originales del alumno.'},
   {q:'Argumenta por qué los adjetivos relacionales no admiten gradación ni el cuantificador «muy», frente a los calificativos, ilustrándolo con ejemplos propios.', model:'Los relacionales clasifican al sustantivo en un ámbito (crisis económica, energía solar); no denotan una cualidad graduable, por eso resulta agramatical *muy solar. Los calificativos sí expresan propiedades escalables y admiten grado (muy grande, grandísimo). Se esperan ejemplos propios que contrasten ambas clases.'},
-  {q:'Explica el cambio de significado que produce la posición del adjetivo (antepuesto vs. pospuesto) y ejemplifícalo con pares propios distintos a los vistos en clase.', model:'La anteposición suele dar valores explicativos, afectivos o adverbiales, y la posposición valores restrictivos o calificativos: pobre hombre / hombre pobre, viejo amigo / amigo viejo. Además la anteposición puede provocar apócope (gran rey). Se valoran pares originales del alumno con la explicación del contraste.'},
+  {q:'Explica el cambio de significado que produce la posición del adjetivo (antepuesto vs. pospuesto) y ejemplifícalo con pares propios distintos a los vistos en clase.', model:'La anteposición suele dar valores explicativos, afectivos o adverbiales, y la posposición valores restrictivos o calificativos: pobre hombre / hombre pobre, viejo amigo / amigo viejo. Además, la anteposición puede provocar apócope (gran rey). Se valoran pares originales del alumno con la explicación del contraste.'},
   {q:'Desarrolla por qué los adjetivos elativos léxicos rechazan las marcas de grado, contrastándolos con los superlativos morfológicos, con ejemplos propios.', model:'Los elativos léxicos (enorme, diminuto, atroz, precioso) llevan ya el grado extremo en su raíz, por lo que rechazan «muy» o -ísimo (*muy enorme). Los superlativos morfológicos construyen el grado con sufijos: altísimo, paupérrimo, libérrimo. Se esperan ejemplos propios de cada tipo.'},
 ];
 
 function _critSel(cls, dataAttr, i, opts, label){
-  return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${label}"><option value="">—</option>${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+  return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${label}"><option value="">?</option>${opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
 }
 
 function genEvalCrit(){
@@ -1229,7 +1229,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut'); out.innerHTML='';
 
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → juzgar y transformar (II–III) → analizar la matriz (IV) → producir el ensayo (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Análisis 20</span><span class="eval-score-pill esp-tf">II. Gramaticalidad 20</span><span class="eval-score-pill esp-mc">III. Contraste 20</span><span class="eval-score-pill esp-pr">IV. Matriz 20</span><span class="eval-score-pill esp-cp">V. Miniensayo 20</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → juzgar y transformar (II–III) → analizar la matriz (IV) → producir el ensayo (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Análisis 20</span><span class="eval-score-pill esp-tf">II. Gramaticalidad 20</span><span class="eval-score-pill esp-mc">III. Contraste 20</span><span class="eval-score-pill esp-pr">IV. Matriz 20</span><span class="eval-score-pill esp-cp">V. Miniensayo 20</span></div>`;
   out.appendChild(bar);
 
   // ── I. Análisis sintáctico dirigido (5×4=20): adjetivo(2) + clase(1) + función(1)
@@ -1441,20 +1441,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Prueba de Pensamiento Crítico · El Adjetivo Avanzado (NGLE) · Gramática Española</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Cuenta:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Universidad/Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Carrera/Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Cuenta:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Análisis 20 · II. Gramaticalidad 20 · III. Contraste 20 · IV. Matriz 20 · V. Miniensayo 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row" style="display:flex;align-items:baseline;justify-content:flex-start;margin-left:18%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.28rem;padding:0.1rem 0;color:#8a6600;"><span>Total obtenido:</span><span class="obt-line" style="min-width:80px;"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · El Adjetivo Avanzado · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · El Adjetivo Avanzado · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas (III y V): usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20. Secciones abiertas (III y V): usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1477,7 +1477,7 @@ function openDiploma(){
   const mi = pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent = msgs[mi];
   document.getElementById('diplDate').textContent = 'Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr = unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡completa el análisis sintáctico!';
+  const achStr = unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Completa el análisis sintáctico!';
   document.getElementById('diplAch').textContent = achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();

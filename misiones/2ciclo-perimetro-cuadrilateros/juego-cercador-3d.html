@@ -584,7 +584,7 @@ function pintarMarcador(){ document.getElementById('marcador').textContent = '�
 function pintarMapa(){
   var html = TERRENOS.map(function(d,i){
     return '<span'+(i===nivel?' class="aqui"':'')+'>'+d.emoji+'<br>'+
-           (mejor[i] ? '⭐'.repeat(mejor[i]) : '—')+'</span>';
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '☆')+'</span>';
   }).join('');
   var a = document.getElementById('mapa-ini'), b = document.getElementById('mapa-fin');
   if(a) a.innerHTML = html;

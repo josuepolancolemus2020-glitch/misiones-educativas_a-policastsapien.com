@@ -94,7 +94,7 @@
         'science fair and it did not move <strong>a single inch</strong>. The motor was fine and the battery was full.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>What comes out of a motor is <strong>fast, weak</strong> spin, and it is almost never useful as it is. ' +
-        'Between the motor and the wheel goes something that trades speed for <strong>force</strong> — and without it, ' +
+        'Between the motor and the wheel goes something that trades speed for <strong>force</strong>, and without it, ' +
         'the fastest car in the world will not pull a book.</div></div>',
 
       a1:
@@ -445,7 +445,7 @@
       classifyTaskDB: [
         { w: 'A small gear driving a big one', gen: 'Reduction: less speed, more force', n: 'Opposite directions', g: 'Force', t: 'The coffee pulper' },
         { w: 'A big gear driving a small one', gen: 'Multiplication: more speed, less force', n: 'Opposite directions', g: 'Speed', t: 'The table fan' },
-        { w: 'A train of three equal gears', gen: 'It only changes the direction of the turning', n: 'The 1st and the 3rd turn alike', g: 'Neither force nor speed: they stay the same', t: 'The gate winch' },
+        { w: 'A train of three equal gears', gen: 'It only changes the direction of the turning', n: 'The 1st and the 3rd turn alike', g: 'Neither force nor speed: they stay the same', t: 'A gear toy' },
         { w: 'Pulleys joined by an open belt', gen: 'It transmits the turning over a distance', n: 'Same direction', g: 'It depends on the size of the pulleys', t: 'The belt of the mill' },
         { w: 'Pulleys joined by a crossed belt', gen: 'It transmits the turning and reverses the direction', n: 'Opposite directions', g: 'It depends on the size of the pulleys', t: 'Workshops and old machines' },
         { w: 'A lever with the fulcrum close to the load', gen: 'It multiplies the person’s force', n: 'The bar goes up and down (back and forth)', g: 'Force', t: 'The bricklayer’s wheelbarrow' },
@@ -491,16 +491,16 @@
       ],
 
       evalMCBank: [
-        { q: 'A 10-tooth gear drives a 30-tooth gear. What happens to the 30-tooth gear?', o: ['a) a) It turns faster and with more force', 'b) b) It turns faster and with less force', 'c) c) It turns slower and with more force', 'd) d) It does not turn'], a: 2 },
-        { q: 'What was Marvin’s little car missing to start with weight on top?', o: ['a) a) A bigger battery', 'b) b) Something that traded speed for force', 'c) c) More lights', 'd) d) Paint'], a: 1 },
-        { q: 'In a train of three gears, how do the first and the third turn?', o: ['a) a) In opposite directions', 'b) b) They do not turn', 'c) c) In the same direction', 'd) d) At double speed'], a: 2 },
-        { q: 'What is best to ride up a hill on a bicycle?', o: ['a) a) The biggest sprocket', 'b) b) The smallest sprocket', 'c) c) Taking off the seat', 'd) d) Releasing the brakes'], a: 0 },
-        { q: 'What comes out of a motor, just as it comes out?', o: ['a) a) Slow, strong spin', 'b) b) Fast, weak spin', 'c) c) Light', 'd) d) Heat'], a: 1 },
-        { q: 'What question should you ask before choosing a mechanism?', o: ['a) a) What color is it?', 'b) b) How much does it cost?', 'c) c) Do I need force or speed?', 'd) d) Who made it?'], a: 2 },
-        { q: 'If the first of two meshed gears turns to the right, which way does the second turn?', o: ['a) a) To the left', 'b) b) To the right', 'c) c) It does not turn', 'd) d) Upward'], a: 0 },
-        { q: 'What do a robot’s mechanisms need in order to work?', o: ['a) a) A motor that drives them', 'b) b) Water', 'c) c) A screen', 'd) d) A sound sensor'], a: 0 },
-        { q: 'What is always lost when a mechanism gives more force?', o: ['a) a) Nothing', 'b) b) Color', 'c) c) Speed', 'd) d) Weight'], a: 2 },
-        { q: 'What are the parts that carry the motor’s movement to where it is needed called?', o: ['a) a) Sensors', 'b) b) Batteries', 'c) c) Programs', 'd) d) Mechanisms'], a: 3 }
+        { q: 'A 10-tooth gear drives a 30-tooth gear. What happens to the 30-tooth gear?', o: ['a) It turns faster and with more force', 'b) It turns faster and with less force', 'c) It turns slower and with more force', 'd) It does not turn'], a: 2 },
+        { q: 'What was Marvin’s little car missing to start with weight on top?', o: ['a) A bigger battery', 'b) Something that traded speed for force', 'c) More lights', 'd) Paint'], a: 1 },
+        { q: 'In a train of three gears, how do the first and the third turn?', o: ['a) In opposite directions', 'b) They do not turn', 'c) In the same direction', 'd) At double speed'], a: 2 },
+        { q: 'What is best to ride up a hill on a bicycle?', o: ['a) The biggest sprocket', 'b) The smallest sprocket', 'c) Taking off the seat', 'd) Releasing the brakes'], a: 0 },
+        { q: 'What comes out of a motor, just as it comes out?', o: ['a) Slow, strong spin', 'b) Fast, weak spin', 'c) Light', 'd) Heat'], a: 1 },
+        { q: 'What question should you ask before choosing a mechanism?', o: ['a) What color is it?', 'b) How much does it cost?', 'c) Do I need force or speed?', 'd) Who made it?'], a: 2 },
+        { q: 'If the first of two meshed gears turns to the right, which way does the second turn?', o: ['a) To the left', 'b) To the right', 'c) It does not turn', 'd) Upward'], a: 0 },
+        { q: 'What do a robot’s mechanisms need in order to work?', o: ['a) A motor that drives them', 'b) Water', 'c) A screen', 'd) A sound sensor'], a: 0 },
+        { q: 'What is always lost when a mechanism gives more force?', o: ['a) Nothing', 'b) Color', 'c) Speed', 'd) Weight'], a: 2 },
+        { q: 'What are the parts that carry the motor’s movement to where it is needed called?', o: ['a) Sensors', 'b) Batteries', 'c) Programs', 'd) Mechanisms'], a: 3 }
       ],
 
       evalCPBank: [
@@ -540,7 +540,7 @@
       critErrorBank: [
         {txt:'"With gears you gain force and speed at the same time."',g1:'False: the mechanism does not create energy, it only shares it out. Whatever you gain in force you lose in speed.',g2:'If the big wheel turns slower, that is exactly because it is delivering more force: you never win everything.'},
         {txt:'"On a bicycle, the biggest sprocket is the one for going faster."',g1:'It is the opposite: with the big sprocket the wheel turns slower, but with more force (that is for climbing hills).',g2:'To go faster on flat ground you use the small sprocket: more speed, less force.'},
-        {txt:'"The servomotor spins nonstop, just like a fan’s motor."',g1:'the servomotor turns to an exact angle and stays there.',g2:'the one that spins nonstop while there is current is the DC motor.'}
+        {txt:'"The servomotor spins nonstop, just like a fan’s motor."',g1:'The servomotor turns to an exact angle and stays there.',g2:'The one that spins nonstop while there is current is the DC motor.'}
       ],
 
       critTrenQuestions: [
@@ -570,10 +570,10 @@
 
       gearCases: [
         { ctx: 'The robot’s motor drives a 10-tooth pinion that drags a 30-tooth wheel along.', gears: [10, 30], dirFirst: 1, keyDir: -1, keyRel: 'fuerza', uso: 'This is how a gearmotor is put together: the robot loses speed, but it gains the force it needs to climb the ramp.' },
-        { ctx: 'In the coffee pulper, the big 40-tooth wheel drives a 10-tooth pinion.', gears: [40, 10], dirFirst: 1, keyDir: -1, keyRel: 'velocidad', uso: 'This is used when something has to turn fast, even if it is with less force.' },
+        { ctx: 'In the desk fan, the big 40-tooth wheel drives a 10-tooth pinion.', gears: [40, 10], dirFirst: 1, keyDir: -1, keyRel: 'velocidad', uso: 'This is used when something has to turn fast, even if it is with less force.' },
         { ctx: 'Three equal 20-tooth gears in a row: the middle one is an idler gear.', gears: [20, 20, 20], dirFirst: -1, keyDir: -1, keyRel: 'igual', uso: 'The idler gear is only there so the first and the last one turn in the same direction.' },
         { ctx: 'The motor drives a 10-tooth pinion, that one drives a 20-tooth gear and the last one has 40 teeth.', gears: [10, 20, 40], dirFirst: 1, keyDir: 1, keyRel: 'fuerza', uso: 'Only the first and the last one count: the middle one changes the direction, not the ratio.' },
-        { ctx: 'The gate winch carries two gears of the same size, 24 teeth each.', gears: [24, 24], dirFirst: -1, keyDir: 1, keyRel: 'igual', uso: 'When the two are equal, only the direction of the turning changes: neither force nor speed.' },
+        { ctx: 'A toy carries two gears of the same size, 24 teeth each.', gears: [24, 24], dirFirst: -1, keyDir: 1, keyRel: 'igual', uso: 'When the two are equal, only the direction of the turning changes: neither force nor speed.' },
         { ctx: 'The bicycle chainring (36 teeth) drives a 12-tooth idler gear and that one drives the 12-tooth sprocket.', gears: [36, 12, 12], dirFirst: 1, keyDir: 1, keyRel: 'velocidad', uso: 'The wheel turns much faster than the pedal: perfect for flat roads.' }
       ],
 
@@ -595,7 +595,7 @@
     frases: {
       /* mensaje de WhatsApp: lo propio de esta misión
          (lo común a todas las misiones vive en js/metas-i18n.js) */
-      '_Se te hará prueba escrita y serás excelente estudiante en Robótica: motores, engranajes, poleas y palancas._ ⚙️':
+      '_Se te hará una prueba escrita y serás excelente estudiante en Robótica: motores, engranajes, poleas y palancas._ ⚙️':
         '_You will take a written test and become an excellent Robotics student: motors, gears, pulleys and levers._ ⚙️',
       /* pestañas propias de esta misión */
       'Mecanismos': 'Mechanisms', 'Engranajes': 'Gears',

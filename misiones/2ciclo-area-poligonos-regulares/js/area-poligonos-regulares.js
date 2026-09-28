@@ -103,20 +103,20 @@ function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.cl
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Polígono regular',a:'figura con todos sus <strong>lados y ángulos iguales</strong>. ej: hexágono, pentágono.'},
-  {w:'Lado',a:'cada uno de los <strong>segmentos iguales</strong> que forman el contorno del polígono.'},
-  {w:'Apotema',a:'distancia del <strong>centro</strong> al <strong>punto medio de un lado</strong>. es clave para el área.'},
-  {w:'Centro',a:'punto que está a la <strong>misma distancia</strong> de todos los vértices y lados.'},
-  {w:'Perímetro',a:'suma de todos los lados: <strong>P = número de lados × lado</strong>.'},
-  {w:'Área',a:'superficie del polígono: <strong>A = (P × apotema) ÷ 2</strong>. se mide en cm².'},
-  {w:'Hexágono',a:'polígono regular de <strong>6 lados</strong> iguales (como un panal de abejas).'},
-  {w:'Pentágono',a:'polígono regular de <strong>5 lados</strong> iguales.'},
-  {w:'Vértice',a:'<strong>punto</strong> donde se unen dos lados del polígono.'},
-  {w:'Fórmula del área',a:'<strong>A = (perímetro × apotema) ÷ 2</strong>. sirve para todo polígono regular.'},
+  {w:'Polígono regular',a:'Figura con todos sus <strong>lados y ángulos iguales</strong>. Ej.: hexágono, pentágono.'},
+  {w:'Lado',a:'Cada uno de los <strong>segmentos iguales</strong> que forman el contorno del polígono.'},
+  {w:'Apotema',a:'Distancia del <strong>centro</strong> al <strong>punto medio de un lado</strong>. Es clave para el área.'},
+  {w:'Centro',a:'Punto que está a la <strong>misma distancia</strong> de todos los vértices y lados.'},
+  {w:'Perímetro',a:'Suma de todos los lados: <strong>P = número de lados × lado</strong>.'},
+  {w:'Área',a:'Superficie del polígono: <strong>A = (P × apotema) ÷ 2</strong>. Se mide en cm².'},
+  {w:'Hexágono',a:'Polígono regular de <strong>6 lados</strong> iguales (como un panal de abejas).'},
+  {w:'Pentágono',a:'Polígono regular de <strong>5 lados</strong> iguales.'},
+  {w:'Vértice',a:'<strong>Punto</strong> donde se unen dos lados del polígono.'},
+  {w:'Fórmula del área',a:'<strong>A = (perímetro × apotema) ÷ 2</strong>. Sirve para todo polígono regular.'},
   {w:'Fórmula del perímetro',a:'<strong>P = n × lado</strong>, donde n es el número de lados.'},
-  {w:'Unidad cuadrada',a:'unidad del área: <strong>cm², m²</strong>. lleva el pequeño ².'},
-  {w:'Ángulos iguales',a:'en un polígono regular <strong>todos los ángulos miden lo mismo</strong>.'},
-  {w:'Superficie',a:'lo que <strong>cubre</strong> el polígono por dentro; su medida es el área.'}
+  {w:'Unidad cuadrada',a:'Unidad del área: <strong>cm², m²</strong>. Lleva el pequeño ².'},
+  {w:'Ángulos iguales',a:'En un polígono regular <strong>todos los ángulos miden lo mismo</strong>.'},
+  {w:'Superficie',a:'Lo que <strong>cubre</strong> el polígono por dentro; su medida es el área.'}
 ];
 let fcIdx=0;
 function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=fcData[fcIdx].a; document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
@@ -130,7 +130,7 @@ const memoPairs=[
   {id:'apotema',t:'Apotema',d:'📏 del centro al punto medio del lado'},
   {id:'hexagono',t:'Hexágono',d:'⬡ 6 lados iguales'},
   {id:'pentagono',t:'Pentágono',d:'⬠ 5 lados iguales'},
-  {id:'perimetro',t:'Perímetro',d:'➕ nº de lados × lado'},
+  {id:'perimetro',t:'Perímetro',d:'➕ n.º de lados × lado'},
   {id:'area',t:'Área',d:'🟦 (P × apotema) ÷ 2'}
 ];
 let memoDeck=[],memoOpen=[],memoLock=false,memoMoves=0,memoFound=0;
@@ -226,7 +226,7 @@ const classGroups=[
   },
   {
     label:['Perímetro','Área'], headA:'📐 Es PERÍMETRO', headB:'🔷 Es ÁREA', colA:'per', colB:'area',
-    words:[{w:'suma de los lados',t:'per'},{w:'(P × apotema) ÷ 2',t:'area'},{w:'nº de lados × lado',t:'per'},{w:'mide la superficie',t:'area'},{w:'se mide en cm',t:'per'},{w:'se mide en cm²',t:'area'},{w:'el contorno del polígono',t:'per'},{w:'usa la apotema',t:'area'},{w:'rodea la figura',t:'per'},{w:'lo de adentro',t:'area'}]
+    words:[{w:'suma de los lados',t:'per'},{w:'(P × apotema) ÷ 2',t:'area'},{w:'n.º de lados × lado',t:'per'},{w:'mide la superficie',t:'area'},{w:'se mide en cm',t:'per'},{w:'se mide en cm²',t:'area'},{w:'el contorno del polígono',t:'per'},{w:'usa la apotema',t:'area'},{w:'rodea la figura',t:'per'},{w:'lo de adentro',t:'area'}]
   },
   {
     label:['Regular','Irregular'], headA:'✅ Polígono REGULAR', headB:'🚫 Polígono IRREGULAR', colA:'reg', colB:'irr',
@@ -234,7 +234,7 @@ const classGroups=[
   },
   {
     label:['Lado','Apotema'], headA:'📏 Es el LADO', headB:'🎯 Es la APOTEMA', colA:'lado', colB:'apo',
-    words:[{w:'segmento del contorno',t:'lado'},{w:'del centro al lado',t:'apo'},{w:'se multiplica por nº de lados',t:'lado'},{w:'perpendicular al lado',t:'apo'},{w:'forma el perímetro',t:'lado'},{w:'sirve para el área',t:'apo'},{w:'une dos vértices seguidos',t:'lado'},{w:'parte del centro',t:'apo'},{w:'todos miden igual en un regular',t:'lado'},{w:'nunca toca los vértices',t:'apo'}]
+    words:[{w:'segmento del contorno',t:'lado'},{w:'del centro al lado',t:'apo'},{w:'se multiplica por n.º de lados',t:'lado'},{w:'perpendicular al lado',t:'apo'},{w:'forma el perímetro',t:'lado'},{w:'sirve para el área',t:'apo'},{w:'une dos vértices seguidos',t:'lado'},{w:'parte del centro',t:'apo'},{w:'todos miden igual en un regular',t:'lado'},{w:'nunca toca los vértices',t:'apo'}]
   }
 ];
 let currentClassGroupIdx=0, clsSelected=null;
@@ -295,7 +295,7 @@ function checkClass(){
   if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}
   else{fb('fbCls','Hay errores. Los errados llevan ✗ (tócalos para devolverlos al banco).',false);sfx('no');}
 }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -508,36 +508,36 @@ function ansWArea(){ if(!wAreCur) return; const ok=_isIntMatch(document.getEleme
 // ===================== RETO FINAL =====================
 const retoPairs=[
   {
-    name:'Compara perímetros 📐', hint:'P = nº de lados × lado. Calcula A y compara con B',
+    name:'Compara perímetros 📐', hint:'P = n.º de lados × lado. Calcula A y compara con B',
     pool:[
-      {w:'A: perímetro de hexágono lado 5 vs B: 24',t:'mayor'},{w:'A: perímetro de pentágono lado 4 vs B: 20',t:'igual'},{w:'A: perímetro de pentágono lado 3 vs B: 20',t:'menor'},
-      {w:'A: perímetro de hexágono lado 4 vs B: 24',t:'igual'},{w:'A: perímetro de hexágono lado 6 vs B: 30',t:'mayor'},{w:'A: perímetro de pentágono lado 2 vs B: 15',t:'menor'},
-      {w:'A: perímetro de pentágono lado 5 vs B: 25',t:'igual'},{w:'A: perímetro de hexágono lado 7 vs B: 40',t:'mayor'},{w:'A: perímetro de hexágono lado 3 vs B: 25',t:'menor'},
-      {w:'A: perímetro de hexágono lado 10 vs B: 60',t:'igual'},{w:'A: perímetro de pentágono lado 9 vs B: 40',t:'mayor'},{w:'A: perímetro de pentágono lado 4 vs B: 24',t:'menor'}
+      {w:'A: perímetro de hexágono lado 5 vs. B: 24',t:'mayor'},{w:'A: perímetro de pentágono lado 4 vs. B: 20',t:'igual'},{w:'A: perímetro de pentágono lado 3 vs. B: 20',t:'menor'},
+      {w:'A: perímetro de hexágono lado 4 vs. B: 24',t:'igual'},{w:'A: perímetro de hexágono lado 6 vs. B: 30',t:'mayor'},{w:'A: perímetro de pentágono lado 2 vs. B: 15',t:'menor'},
+      {w:'A: perímetro de pentágono lado 5 vs. B: 25',t:'igual'},{w:'A: perímetro de hexágono lado 7 vs. B: 40',t:'mayor'},{w:'A: perímetro de hexágono lado 3 vs. B: 25',t:'menor'},
+      {w:'A: perímetro de hexágono lado 10 vs. B: 60',t:'igual'},{w:'A: perímetro de pentágono lado 9 vs. B: 40',t:'mayor'},{w:'A: perímetro de pentágono lado 4 vs. B: 24',t:'menor'}
     ]
   },
   {
     name:'Compara áreas 🔷', hint:'A = (P × apotema) ÷ 2. Calcula A y compara con B',
     pool:[
-      {w:'A: área de P=20 y apotema 4 vs B: 30',t:'mayor'},{w:'A: área de P=20 y apotema 3 vs B: 30',t:'igual'},{w:'A: área de P=20 y apotema 2 vs B: 30',t:'menor'},
-      {w:'A: área de P=30 y apotema 4 vs B: 60',t:'igual'},{w:'A: área de P=24 y apotema 5 vs B: 50',t:'mayor'},{w:'A: área de P=18 y apotema 3 vs B: 40',t:'menor'},
-      {w:'A: área de P=36 y apotema 5 vs B: 90',t:'igual'},{w:'A: área de P=40 y apotema 6 vs B: 100',t:'mayor'},{w:'A: área de P=16 y apotema 4 vs B: 40',t:'menor'},
-      {w:'A: área de P=25 y apotema 4 vs B: 50',t:'igual'},{w:'A: área de P=30 y apotema 6 vs B: 80',t:'mayor'},{w:'A: área de P=20 y apotema 5 vs B: 60',t:'menor'}
+      {w:'A: área de P=20 y apotema 4 vs. B: 30',t:'mayor'},{w:'A: área de P=20 y apotema 3 vs. B: 30',t:'igual'},{w:'A: área de P=20 y apotema 2 vs. B: 30',t:'menor'},
+      {w:'A: área de P=30 y apotema 4 vs. B: 60',t:'igual'},{w:'A: área de P=24 y apotema 5 vs. B: 50',t:'mayor'},{w:'A: área de P=18 y apotema 3 vs. B: 40',t:'menor'},
+      {w:'A: área de P=36 y apotema 5 vs. B: 90',t:'igual'},{w:'A: área de P=40 y apotema 6 vs. B: 100',t:'mayor'},{w:'A: área de P=16 y apotema 4 vs. B: 40',t:'menor'},
+      {w:'A: área de P=25 y apotema 4 vs. B: 50',t:'igual'},{w:'A: área de P=30 y apotema 6 vs. B: 80',t:'mayor'},{w:'A: área de P=20 y apotema 5 vs. B: 60',t:'menor'}
     ]
   },
   {
     name:'Lados y fórmulas 🔶', hint:'Recuerda: pentágono 5, hexágono 6. Compara A con B',
     pool:[
-      {w:'A: lados de un hexágono vs B: 5',t:'mayor'},{w:'A: lados de un pentágono vs B: 5',t:'igual'},{w:'A: lados de un cuadrado vs B: 5',t:'menor'},
-      {w:'A: lados de un hexágono vs B: lados de un pentágono',t:'mayor'},{w:'A: lados de un pentágono vs B: lados de un cuadrado',t:'mayor'},{w:'A: lados de un triángulo vs B: lados de un cuadrado',t:'menor'},
-      {w:'A: lados de un hexágono vs B: 6',t:'igual'},{w:'A: lados de un octágono vs B: 6',t:'mayor'},{w:'A: lados de un triángulo vs B: 5',t:'menor'},
-      {w:'A: lados de un pentágono vs B: 5',t:'igual'},{w:'A: lados de un heptágono vs B: 6',t:'mayor'},{w:'A: lados de un cuadrado vs B: 6',t:'menor'}
+      {w:'A: lados de un hexágono vs. B: 5',t:'mayor'},{w:'A: lados de un pentágono vs. B: 5',t:'igual'},{w:'A: lados de un cuadrado vs. B: 5',t:'menor'},
+      {w:'A: lados de un hexágono vs. B: lados de un pentágono',t:'mayor'},{w:'A: lados de un pentágono vs. B: lados de un cuadrado',t:'mayor'},{w:'A: lados de un triángulo vs. B: lados de un cuadrado',t:'menor'},
+      {w:'A: lados de un hexágono vs. B: 6',t:'igual'},{w:'A: lados de un octágono vs. B: 6',t:'mayor'},{w:'A: lados de un triángulo vs. B: 5',t:'menor'},
+      {w:'A: lados de un pentágono vs. B: 5',t:'igual'},{w:'A: lados de un heptágono vs. B: 6',t:'mayor'},{w:'A: lados de un cuadrado vs. B: 6',t:'menor'}
     ]
   }
 ];
 let currentRetoPairIdx=0;
 let retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
-function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' — 💡 '+rp.hint; }
+function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' · 💡 '+rp.hint; }
 function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; resetReto(); _retoPairLbl(); showToast('🔀 Pareja: '+retoPairs[currentRetoPairIdx].name); }
 function startReto(){
     if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30;
@@ -580,10 +580,10 @@ function _tgTask(out,i,inner){ const div=document.createElement('div'); div.clas
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
 function _tgPoli(){ const p=_polys[_tgRint(0,1)]; const lado=[2,4,6,8,10][_tgRint(0,4)]; const apotema=_tgRint(3,9); return {n:p.n,name:p.name,lado,apotema,per:_perimPoli(p.n,lado),area:_areaPoli(p.n,lado,apotema)}; }
 const pensamientoTaskDB=[
-  {q:'Marta dice: "el área de un polígono es P × apotema". ¿Tiene razón? Explica.',ans:'No. Falta dividir entre 2: A = (P × apotema) ÷ 2. Sin dividir, el área sale del doble.',type:'🔎 Detectar error'},
+  {q:'Marta dice: "El área de un polígono es P × apotema". ¿Tiene razón? Explica.',ans:'No. Falta dividir entre 2: A = (P × apotema) ÷ 2. Sin dividir, el área sale el doble.',type:'🔎 Detectar error'},
   {q:'Un hexágono y un pentágono tienen el mismo lado (6). ¿Cuál tiene mayor perímetro? Explica.',ans:'El hexágono: P = 6 × 6 = 36, mayor que el pentágono P = 5 × 6 = 30. Tiene más lados.',type:'🧠 Comparar'},
   {q:'¿Por qué la fórmula del área sirve para pentágonos y hexágonos por igual?',ans:'Porque solo cambia el número de lados al calcular el perímetro; la fórmula (P × apotema) ÷ 2 es la misma.',type:'🧠 Razonar'},
-  {q:'Inventa un polígono regular con su lado y apotema y calcula su área.',ans:'Respuesta variable. Ej: hexágono lado 4, apotema 3 → P=24, A=(24×3)÷2=36 cm².',type:'✏️ Crear problema'},
+  {q:'Inventa un polígono regular con su lado y apotema y calcula su área.',ans:'Respuesta variable. Ej.: hexágono lado 4, apotema 3 → P=24, A=(24×3)÷2=36 cm².',type:'✏️ Crear problema'},
   {q:'¿En qué se parecen y en qué se diferencian la apotema y un lado?',ans:'Ambos son distancias del polígono. El lado forma el contorno; la apotema va del centro al punto medio del lado y sirve para el área.',type:'🧠 Razonar'},
   {q:'Un pentágono tiene P = 30 y apotema 4. Otro tiene P = 20 y apotema 6. ¿Cuál tiene mayor área?',ans:'El primero: (30×4)÷2=60. El segundo: (20×6)÷2=60. ¡Tienen la misma área, 60 cm²!',type:'🧠 Comparar'}
 ];
@@ -599,19 +599,19 @@ function genPensamientoTask(out,count){
 let ansVisible=false;
 function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='perimetro') genPerimetroTask(out,count); else if(type==='area') genAreaTask(out,count); else if(type==='mixto') genMixtoTask(out,count); else if(type==='problemas') genProblemasTask(out,count); else if(type==='pensamiento') genPensamientoTask(out,count); fin('s-tareas'); }
 function genPerimetroTask(out,count){
-  _instrBlock(out,'Instrucción — Perímetro',['Calcula el perímetro de cada polígono regular.','<strong>Fórmula:</strong> P = número de lados × lado.']);
+  _instrBlock(out,'Instrucción: Perímetro',['Calcula el perímetro de cada polígono regular.','<strong>Fórmula:</strong> P = número de lados × lado.']);
   for(let i=0;i<count;i++){ const f=_tgPoli(); _tgTask(out,i,`<strong>Perímetro de un ${f.name} de lado ${f.lado} cm</strong>${_tgLines(1)}<div class="tg-answer">✔ ${f.n} × ${f.lado} = ${f.per} cm</div>`); }
 }
 function genAreaTask(out,count){
-  _instrBlock(out,'Instrucción — Área',['Calcula el área de cada polígono regular con A = (P × apotema) ÷ 2.','<strong>Recuerda:</strong> primero el perímetro, luego multiplica por la apotema y divide entre 2.']);
+  _instrBlock(out,'Instrucción: Área',['Calcula el área de cada polígono regular con A = (P × apotema) ÷ 2.','<strong>Recuerda:</strong> primero el perímetro, luego multiplica por la apotema y divide entre 2.']);
   for(let i=0;i<count;i++){ const f=_tgPoli(); _tgTask(out,i,`<strong>Área de un ${f.name}: lado ${f.lado} cm, apotema ${f.apotema} cm</strong>${_tgLines(2)}<div class="tg-answer">✔ P = ${f.per}; A = (${f.per} × ${f.apotema}) ÷ 2 = ${f.area} cm²</div>`); }
 }
 function genMixtoTask(out,count){
-  _instrBlock(out,'Instrucción — Perímetro y área',['Para cada polígono calcula el perímetro (cm) y el área (cm²).','<strong>No olvides</strong> dividir entre 2 al calcular el área.']);
+  _instrBlock(out,'Instrucción: Perímetro y área',['Para cada polígono calcula el perímetro (cm) y el área (cm²).','<strong>No olvides</strong> dividir entre 2 al calcular el área.']);
   for(let i=0;i<count;i++){ const f=_tgPoli(); _tgTask(out,i,`<strong>${f.name} de lado ${f.lado} y apotema ${f.apotema}: perímetro y área</strong>${_tgLines(2)}<div class="tg-answer">✔ P = ${f.per} cm · A = (${f.per} × ${f.apotema}) ÷ 2 = ${f.area} cm²</div>`); }
 }
 function genProblemasTask(out,count){
-  _instrBlock(out,'Instrucción — Problemas de polígonos',['Lee cada problema, decide qué fórmula usar y resuelve.','<strong>Pista:</strong> "borde/cerca" = perímetro; "superficie/cubrir" = área (usa la apotema).']);
+  _instrBlock(out,'Instrucción: Problemas de polígonos',['Lee cada problema, decide qué fórmula usar y resuelve.','<strong>Pista:</strong> "borde/cerca" = perímetro; "superficie/cubrir" = área (usa la apotema).']);
   const NAMES=['Ana','Luis','Marta','José','Carmen','Pedro'];
   for(let i=0;i<count;i++){
     const n=NAMES[_tgRint(0,NAMES.length-1)]; const f=_tgPoli();
@@ -776,11 +776,11 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 function genEval(){
   sfx('click');
   _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final — Forma ${cf}`;
+  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final · Forma ${cf}`;
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -798,7 +798,7 @@ function genEval(){
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item eval-auto-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">—</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">?</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -869,7 +869,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Área de Polígonos Regulares · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
 .zg-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.4rem;}
@@ -885,8 +885,8 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Área de Polígonos Regulares · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Área de Polígonos Regulares · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Área de Polígonos Regulares · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Evaluación Final · Área de Polígonos Regulares · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
@@ -919,7 +919,7 @@ const explicaData = [
     suggested: 'El polígono se puede dividir en triángulos iguales con el vértice en el centro; el lado es la base y la apotema es la altura. Como el área de un triángulo es (base × altura) ÷ 2, al sumar todos aparece la división entre 2.'
   },
   {
-    q: 'Explica en qué se parece y en qué se diferencia calcular el perímetro y el área de un polígono regular.',
+    q: 'Explica en qué se parecen y en qué se diferencian calcular el perímetro y calcular el área de un polígono regular.',
     hint: '💡 Pista: piensa en qué datos usa cada uno.',
     rubric: ['✓ El perímetro solo usa los lados (n × lado)', '✓ El área usa el perímetro y la apotema', '✓ El perímetro está en cm y el área en cm²'],
     suggested: 'El perímetro solo necesita los lados: n × lado, y se mide en cm. El área necesita además la apotema: (P × apotema) ÷ 2, y se mide en cm². El área usa el perímetro como parte del cálculo.'
@@ -1015,7 +1015,7 @@ function genAreaItems() {
   }
   return items;
 }
-// IV. Problemas del entorno hondureño (2 × 10 = 20 pts) — decidir perímetro vs área y costo en lempiras
+// IV. Problemas del entorno hondureño (2 × 10 = 20 pts) — decidir perímetro vs. área y costo en lempiras
 function genProblemaHNItems() {
   const items = [];
   const ladoA = [2, 4, 6, 8][_opRint(0, 3)]; const apoA = _opRint(3, 6);
@@ -1045,19 +1045,19 @@ function genPensarItems() {
   const tp = _opRint(0, 2);
   if (tp === 0) {
     const f = _opPoli();
-    items.push({ text: `${nom} calculó el área de un ${f.name} con P = ${f.per} y apotema ${f.apotema} así: ${f.per} × ${f.apotema} = ${f.per * f.apotema} cm². ¿Qué error cometió? Escribe el área correcta`, ansNum: f.area, extra: `${f.area} cm² — olvidó dividir entre 2 (Error 1): A = (${f.per} × ${f.apotema}) ÷ 2` });
+    items.push({ text: `${nom} calculó el área de un ${f.name} con P = ${f.per} y apotema ${f.apotema} así: ${f.per} × ${f.apotema} = ${f.per * f.apotema} cm². ¿Qué error cometió? Escribe el área correcta`, ansNum: f.area, extra: `${f.area} cm². Olvidó dividir entre 2 (Error 1): A = (${f.per} × ${f.apotema}) ÷ 2` });
   } else if (tp === 1) {
     const l = [2, 4, 6, 8, 10][_opRint(0, 4)];
-    items.push({ text: `${nom} calculó el perímetro de un hexágono de lado ${l} así: 5 × ${l} = ${5 * l}. ¿Qué error cometió? Escribe el perímetro correcto`, ansNum: 6 * l, extra: `${6 * l} — contó mal los lados (Error 3): el hexágono tiene 6 lados, P = 6 × ${l}` });
+    items.push({ text: `${nom} calculó el perímetro de un hexágono de lado ${l} así: 5 × ${l} = ${5 * l}. ¿Qué error cometió? Escribe el perímetro correcto`, ansNum: 6 * l, extra: `${6 * l}. Contó mal los lados (Error 3): el hexágono tiene 6 lados, P = 6 × ${l}` });
   } else {
     const p = _polys[_opRint(0, 1)]; const lado = [2, 4, 6, 8, 10][_opRint(0, 4)];
     let apo = _opRint(3, 9); if (apo === lado) apo++;
     const per = _perimPoli(p.n, lado);
-    items.push({ text: `${nom} calculó el área de un ${p.name} de lado ${lado} y apotema ${apo} usando el lado: (${per} × ${lado}) ÷ 2 = ${(per * lado) / 2} cm². ¿Qué error cometió? Escribe el área correcta`, ansNum: (per * apo) / 2, extra: `${(per * apo) / 2} cm² — confundió la apotema con el lado (Error 2): en el área se usa la apotema` });
+    items.push({ text: `${nom} calculó el área de un ${p.name} de lado ${lado} y apotema ${apo} usando el lado: (${per} × ${lado}) ÷ 2 = ${(per * lado) / 2} cm². ¿Qué error cometió? Escribe el área correcta`, ansNum: (per * apo) / 2, extra: `${(per * apo) / 2} cm². Confundió la apotema con el lado (Error 2): en el área se usa la apotema` });
   }
   const lc = [2, 4, 6, 8, 10][_opRint(0, 4)];
-  if (_opRint(0, 1) === 0) items.push({ text: `Un hexágono y un pentágono tienen el mismo lado: ${lc} cm. Sin calcular los dos perímetros completos, ¿cuántos cm más mide el perímetro del hexágono?`, ansNum: lc, extra: `${lc} cm — el hexágono tiene un lado más que el pentágono (6 − 5 = 1 lado de ${lc} cm)` });
-  else items.push({ text: `Un hexágono y un pentágono tienen el mismo lado: ${lc} cm. Sin calcular, decide cuál tiene mayor perímetro y escribe ese perímetro mayor`, ansNum: 6 * lc, extra: `${6 * lc} cm — el del hexágono: con el mismo lado gana el polígono con más lados (6 × ${lc})` });
+  if (_opRint(0, 1) === 0) items.push({ text: `Un hexágono y un pentágono tienen el mismo lado: ${lc} cm. Sin calcular los dos perímetros completos, ¿cuántos cm más mide el perímetro del hexágono?`, ansNum: lc, extra: `${lc} cm. El hexágono tiene un lado más que el pentágono (6 − 5 = 1 lado de ${lc} cm)` });
+  else items.push({ text: `Un hexágono y un pentágono tienen el mismo lado: ${lc} cm. Sin calcular, decide cuál tiene mayor perímetro y escribe ese perímetro mayor`, ansNum: 6 * lc, extra: `${6 * lc} cm. Es el del hexágono: con el mismo lado gana el polígono con más lados (6 × ${lc})` });
   return items;
 }
 // III. Medida escondida (5 × 4 = 20 pts) — razonamiento inverso
@@ -1080,19 +1080,19 @@ function genEvalOp() {
   const _sO = document.getElementById('evalOpFormaSel');
   if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
   const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
-  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Área de Polígonos Regulares`;
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa · Forma ${cf} · Área de Polígonos Regulares`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
   const peItems = genPerimItems();
   const s1 = document.createElement('div');
-  s1.innerHTML = '<div class="eval-section-title">I. Perímetro de polígonos regulares <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. P = nº de lados × lado. Pentágono: 5 lados · Hexágono: 6 lados.</p>';
+  s1.innerHTML = '<div class="eval-section-title">I. Perímetro de polígonos regulares <span class="eval-pts">20 pts · 4 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel básico. P = n.º de lados × lado. Pentágono: 5 lados · Hexágono: 6 lados.</p>';
   peItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-pe="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbPe${i}" aria-live="polite"></div>`; s1.appendChild(d); });
   out.appendChild(s1);
 
   const arItems = genAreaItems();
   const s2 = document.createElement('div');
-  s2.innerHTML = '<div class="eval-section-title">II. Área con la fórmula <span class="eval-pts">30 pts · 6 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Dos pasos: primero P = nº de lados × lado (si no lo dan) y luego A = (P × apotema) ÷ 2.</p>';
+  s2.innerHTML = '<div class="eval-section-title">II. Área con la fórmula <span class="eval-pts">30 pts · 6 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel intermedio. Dos pasos: primero P = n.º de lados × lado (si no lo dan) y luego A = (P × apotema) ÷ 2.</p>';
   arItems.forEach((it, i) => { const d = document.createElement('div'); d.className = 'eval-item eval-auto-item'; d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-ar="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} (${it.extra})</div><div class="eval-item-feedback" id="evalFbAr${i}" aria-live="polite"></div>`; s2.appendChild(d); });
   out.appendChild(s2);
 
@@ -1151,7 +1151,7 @@ function printEvalOp() {
   if (!window._evalOpData) { showToast('⚠️ Genera una prueba operativa primero'); return; }
   sfx('click');
   const forma = window._currentEvalOpForm || 1; const d = window._evalOpData;
-  let s1 = `<div class="sec-title"><span>I. Perímetro de polígonos regulares</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. P = nº de lados × lado. 4 pts c/u.</p>`;
+  let s1 = `<div class="sec-title"><span>I. Perímetro de polígonos regulares</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="opx-instr">Nivel básico. P = n.º de lados × lado. 4 pts c/u.</p>`;
   d.peItems.forEach((it, i) => { s1 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
   let s2 = `<div class="sec-title"><span>II. Área con la fórmula</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 30 pts</span></div></div><p class="opx-instr">Nivel intermedio. Dos pasos: primero P (si no lo dan) y luego A = (P × apotema) ÷ 2. 6 pts c/u.</p>`;
   d.arItems.forEach((it, i) => { s2 += `<div class="opx-print-row"><span class="qn">${i+1}.</span><span class="prb-text">${it.text}</span><span class="opx-blank"></span></div>`; });
@@ -1167,7 +1167,7 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">III. Medida escondida</div><table class="p-tbl">${d.faItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas del entorno hondureño</div><table class="p-tbl">${d.hnItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.extra}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del error y comparación</div><table class="p-tbl">${d.dtItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.extra}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Área de Polígonos Regulares · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Área de Polígonos Regulares · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 30 · III: 20 · IV: 20 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Área de Polígonos Regulares · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Área de Polígonos Regulares · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Área de Polígonos Regulares · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 30 · III: 20 · IV: 20 · V: 10 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Área de Polígonos Regulares · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();</script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1187,7 +1187,7 @@ function openDiploma(){
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();

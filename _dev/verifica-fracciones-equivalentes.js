@@ -47,9 +47,20 @@ const ok = (bien, txt, extra) => {
   // desde fuera; se comprueban en el archivo, que es donde viven.
   const fuente = require('fs').readFileSync('misiones/2y3ciclo-fracciones/js/fracciones.js', 'utf8');
 
-  console.log('\nY la pauta de «3/4 − 1/4» ya está simplificada');
-  const mPauta = fuente.match(/\{q:'3\/4 − 1\/4 = ___',a:'([^']+)'\}/);
-  ok(!!mPauta && mPauta[1] === '1/2', 'la respuesta modelo es «1/2», no «2/4»', mPauta && mPauta[1]);
+  /* Esto miraba UNA pregunta, «3/4 − 1/4 = ___», cuya pauta decía «2/4». La
+     pregunta salió del banco el 25 de septiembre de 2026, en la revisión de
+     «ninguna pregunta le regala la respuesta a otra», y la sonda se quedó roja
+     buscando algo que ya no existe: una sonda que falla sin avería enseña a no
+     mirarla. Lo que de verdad vigilaba sigue valiendo para todo el banco: que
+     ninguna respuesta modelo en forma de fracción se pueda simplificar, que es
+     la que el maestro lee en la pauta. */
+  console.log('\nY las pautas del completar ya vienen simplificadas');
+  const banco = (fuente.match(/const evalCPBank=\[([\s\S]*?)\n\];/) || [])[1] || '';
+  const fracs = [...banco.matchAll(/a:'(\d+)\/(\d+)'/g)].map(m => [+m[1], +m[2]]);
+  const mcd = (a, b) => (b ? mcd(b, a % b) : a);
+  const sinSimplificar = fracs.filter(([n, d]) => mcd(n, d) !== 1).map(([n, d]) => `${n}/${d}`);
+  ok(fracs.length > 0 && sinSimplificar.length === 0,
+    `ninguna de las ${fracs.length} respuestas modelo en fracción se puede simplificar`, sinSimplificar);
 
   console.log('\nEl problema del pastel enseña a simplificar en vez de callarlo');
   const conSimp = (fuente.match(/characteristic:'[^']+',simp:'[^']+'/g) || []);

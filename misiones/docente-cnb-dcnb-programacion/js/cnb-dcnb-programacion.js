@@ -224,7 +224,7 @@ const PELDANOS = [
           'intencionalidades educativas y las competencias de carácter Conceptual, Procedimental y ' +
           'Actitudinal.',
     pasos: [
-      'Para planificar la clase, mande la expectativa de logro de su grado: es la que está a su altura.',
+      'Para planificar la clase, manda la expectativa de logro de su grado: es la que está a su altura.',
       'Para rendir cuentas de resultados, hable de estándares: es el idioma de las evaluaciones externas.',
       'Escriba la expectativa completa en su plan, no un resumen: en el resumen se pierde el verbo, y el verbo es el que dice qué se evalúa.',
     ],
@@ -382,7 +382,7 @@ const FC = [
   ['¿Cuáles son los tres ejes transversales del CNB?', 'La Identidad, El Trabajo y La Democracia Participativa. Atraviesan todas las áreas: no son una materia aparte.'],
   ['¿Qué son los Estándares Educativos?', 'Declaraciones claras, exigentes y consistentes sobre lo que se espera que aprenda el alumnado del Sistema Educativo Nacional.'],
   ['¿Qué son las expectativas de logro?', 'Opciones de carácter curricular que concretizan las intencionalidades educativas y las competencias de carácter conceptual, procedimental y actitudinal.'],
-  ['¿Qué tres columnas trae la tabla del DCNB, y en qué orden?', 'Expectativas de Logro, luego Contenidos Conceptuales (■) y Actitudinales (●), y por último Procesos y Actividades Sugeridas.'],
+  ['¿Qué tres columnas trae la tabla del DCNB, y en qué orden?', 'Expectativas de Logro, luego Contenidos Conceptuales (■) y Actitudinales (●), y, por último, Procesos y Actividades Sugeridas.'],
 ];
 let _fc = 0;
 function fcPinta() {

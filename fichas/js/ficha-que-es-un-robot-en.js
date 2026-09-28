@@ -30,7 +30,7 @@
         '<div class="idline"><span>Name:</span><span class="raya"></span><span>Student No.:</span><span class="raya corta"></span></div>' +
         '<div class="fh">' +
         '<div class="fh-txt">' +
-        '<div class="f-badge">📄 Study Sheet: Mission — What Is a Robot?</div>' +
+        '<div class="f-badge">📄 Study Sheet · Mission: What Is a Robot?</div>' +
         '<div class="f-meta"><b>Subject:</b> Robotics &nbsp;·&nbsp; <b>Level:</b> Basic Education &nbsp;·&nbsp; <b>Robot Path · Stage 1</b></div>' +
         '<div class="f-meta"><b>Topic:</b> The sense → think → act cycle, the 3 parts of a robot (sensors, controller, actuators), robot vs simple machine vs home appliance, and robots in real life in Honduras (unplugged robotics: no computer needed)</div>' +
         '</div>' +
@@ -158,7 +158,7 @@
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
 
         '<div class="preg"><div class="preg-q"><span class="preg-n">1</span>What is a robot?</div>' +
         '<div class="preg-ops">' +
@@ -243,7 +243,7 @@
       /* ═══════════ PÁGINA 6 ═══════════
          La Columna B mantiene el orden del original: la pauta no cambia. */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
         '<tr><td>1. ____ Sensor</td><td>A. It flies with propellers over the coffee farm</td></tr>' +
@@ -273,7 +273,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
         '<div class="pauta">' +

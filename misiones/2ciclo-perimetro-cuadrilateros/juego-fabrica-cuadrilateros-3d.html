@@ -506,9 +506,9 @@ function verComo(){
   var av = document.getElementById('aviso');
   av.className = 'aviso';
   if(o.perim !== undefined && o.area !== undefined)
-    av.textContent = 'Con el perímetro sabes cuánto suman la base y la altura (la mitad del perímetro). Busca dos números que sumen eso y multipliquen el área.';
+    av.textContent = 'Con el perímetro sabes cuánto suman la base y la altura (la mitad del perímetro). Busca dos números que sumen eso y que, multiplicados, den el área.';
   else if(o.area !== undefined && tipo === 'cuadrado')
-    av.textContent = 'Busca el número que multiplicado por sí mismo dé el área.';
+    av.textContent = 'Busca el número que, multiplicado por sí mismo, dé el área.';
   else if(o.area !== undefined)
     av.textContent = 'El área es base × altura: si sabes el área y la base, prueba alturas hasta que cuadre.';
   else

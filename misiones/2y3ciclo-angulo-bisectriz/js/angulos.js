@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Matemáticas._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Matemáticas._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -158,14 +158,14 @@ const qzData=[
   {q:'¿Cuánto mide un ángulo recto?',
    o:['a) 90°','b) 45°','c) 180°','d) 360°'],c:0,
    hint:'💡 Piensa en la esquina perfecta de una hoja de papel o en las manecillas de un reloj a las 3:00.',
-   exp:'Un ángulo recto mide exactamente 90°. Se identifica con un pequeño cuadrado en el vértice. Ni más ni menos — la mitad de un llano.'},
+   exp:'Un ángulo recto mide exactamente 90°. Se identifica con un pequeño cuadrado en el vértice. Ni más ni menos: la mitad de un llano.'},
   {q:'Un ángulo de 135° es de tipo:',
    o:['a) Agudo','b) Recto','c) Llano','d) Obtuso'],c:3,
-   hint:'💡 135° está entre 90° y 180°. ¿Cuál tipo de ángulo vive en ese rango?',
+   hint:'💡 135° está entre 90° y 180°. ¿Qué tipo de ángulo vive en ese rango?',
    exp:'Es obtuso: mide más de 90° pero menos de 180°. Agudo sería menor de 90°; llano sería exactamente 180°.'},
   {q:'¿Qué hace la bisectriz de un ángulo?',
    o:['a) Lo elimina','b) Lo divide en dos partes iguales','c) Lo duplica','d) Lo convierte en recto'],c:1,
-   hint:'💡 La palabra "bisectriz" viene del latín "bi" (dos) + "secar" (cortar). ¿Qué corta en dos?',
+   hint:'💡 La palabra "bisectriz" viene del latín "bi" (dos) + "secare" (cortar). ¿Qué corta en dos?',
    exp:'La bisectriz es el rayo que divide el ángulo exactamente por la mitad, creando dos ángulos iguales. Fórmula: ángulo ÷ 2.'},
   {q:'Si un ángulo mide 60°, su bisectriz crea dos ángulos de:',
    o:['a) 20°','b) 30°','c) 45°','d) 60°'],c:1,
@@ -178,7 +178,7 @@ const qzData=[
   {q:'Un ángulo de 55° es de tipo:',
    o:['a) Agudo','b) Recto','c) Obtuso','d) Llano'],c:0,
    hint:'💡 55° es menor que 90°. ¿Qué tipo de ángulo mide menos de 90°?',
-   exp:'Es agudo porque mide menos de 90°. Todo ángulo entre 0° y 89° es agudo — más cerrado que una esquina de cuaderno.'},
+   exp:'Es agudo porque mide menos de 90°. Todo ángulo entre 0° y 89° es agudo: más cerrado que una esquina de cuaderno.'},
   {q:'¿Cuánto suman dos ángulos complementarios?',
    o:['a) 45°','b) 180°','c) 90°','d) 360°'],c:2,
    hint:'💡 Complementario → piensa en un ángulo recto. Un recto mide exactamente…',
@@ -230,7 +230,7 @@ function checkQz(){
   }else{
     opts[qzSel].classList.add('wrong');
     opts[q.c].classList.add('correct');
-    fb('fbQz','Incorrecto — observa la explicación abajo.',false);
+    fb('fbQz','Incorrecto. Observa la explicación abajo.',false);
     sfx('no');
     expEl.className='exp-box show err';
   }
@@ -256,7 +256,7 @@ const classGroups = [
     words:[{w:'30°',t:'ag'},{w:'120°',t:'ob'},{w:'45°',t:'ag'},{w:'135°',t:'ob'},{w:'60°',t:'ag'},{w:'150°',t:'ob'},{w:'15°',t:'ag'},{w:'110°',t:'ob'},{w:'75°',t:'ag'},{w:'165°',t:'ob'}] },
   { label:['Complementarios','Suplementarios'], headA:'🧩 Complementarios (=90°)', headB:'🔗 Suplementarios (=180°)', colA:'cm', colB:'sp',
     words:[{w:'30° y 60°',t:'cm'},{w:'110° y 70°',t:'sp'},{w:'45° y 45°',t:'cm'},{w:'90° y 90°',t:'sp'},{w:'25° y 65°',t:'cm'},{w:'120° y 60°',t:'sp'},{w:'50° y 40°',t:'cm'},{w:'135° y 45°',t:'sp'},{w:'10° y 80°',t:'cm'},{w:'100° y 80°',t:'sp'}] },
-  { label:['<90°','≥90°'], headA:'📐 Menor que 90°', headB:'📏 Mayor o igual a 90°', colA:'me', colB:'ma',
+  { label:['<90°','≥90°'], headA:'📐 Menor que 90°', headB:'📏 Mayor o igual que 90°', colA:'me', colB:'ma',
     words:[{w:'Agudo de 20°',t:'me'},{w:'Recto de 90°',t:'ma'},{w:'Agudo de 89°',t:'me'},{w:'Obtuso de 100°',t:'ma'},{w:'Agudo de 1°',t:'me'},{w:'Llano de 180°',t:'ma'},{w:'Agudo de 55°',t:'me'},{w:'Obtuso de 170°',t:'ma'},{w:'Agudo de 44°',t:'me'},{w:'Completo de 360°',t:'ma'}] },
 ];
 let currentClassGroupIdx = 0, clsSelectedWord = null;
@@ -267,7 +267,7 @@ function buildClass(){
   ['col-left','col-right'].forEach(colId=>{ const col=document.getElementById(colId); col.onclick=(e)=>{ if(!clsSelectedWord||e.target.classList.contains('drop-item')) return; const targetId=colId==='col-left'?'items-left':'items-right'; const wordsCol=document.getElementById(targetId); const item=document.createElement('div'); item.className='drop-item'; item.textContent=clsSelectedWord.textContent; item.dataset.t=clsSelectedWord.dataset.t; const original=clsSelectedWord; item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();sfx('click');}}; wordsCol.appendChild(item); clsSelectedWord.remove(); clsSelectedWord=null; sfx('click'); }; });
 }
 function checkClass(){ const remaining=document.querySelectorAll('#clsBank .wb-item').length; if(remaining>0){fb('fbCls','Mueve todas las palabras a las columnas primero.',false);return;} const group=classGroups[currentClassGroupIdx]; let allOk=true; document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{ const inLeft=el.parentElement.id==='items-left'; const expectedType=inLeft?group.colA:group.colB; if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;} }); if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);} if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');} }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -319,7 +319,7 @@ function checkCmp(){
   if(cmpSel===cmpData[cmpIdx].c){
     opts[cmpSel].classList.add('correct');
     document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);
-    fb('fbCmp','¡Correcto! +5 XP — Presiona «Siguiente» para continuar.',true);
+    fb('fbCmp','¡Correcto! +5 XP. Presiona «Siguiente» para continuar.',true);
     if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}
     sfx('ok');
   }else{
@@ -352,7 +352,7 @@ function startReto(){ if(retoRunning)return; sfx('click'); retoRunning=true; ret
 function showRetoWord(){ if(retoPool.length===0) retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').textContent=retoCurrent.w; }
 function ansReto(t){ if(!retoRunning||!retoCurrent)return; const firstPlay=!xpTracker.reto.has(currentRetoPairIdx); if(t===retoCurrent.t){sfx('ok');retoOk++;if(firstPlay)pts(1);}else{sfx('no');retoErr++;if(firstPlay)pts(-1);} document.getElementById('retoScore').textContent=`✅ ${retoOk} correctas | ❌ ${retoErr} errores`; showRetoWord(); }
 function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(currentRetoPairIdx); if(retoOk>=5){fin('s-reto');unlockAchievement('reto_hero');fb('fbReto',`¡Excelente! ${retoOk} correctas de ${retoOk+retoErr}.`,true);}else{fb('fbReto',`${retoOk} correctas. ¡Intenta de nuevo para mejorar!`,false);} }
-function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; updateRetoButtons(); resetReto(); showToast('🔄 Pareja: '+retoPairs[currentRetoPairIdx].label[0]+' vs '+retoPairs[currentRetoPairIdx].label[1]); }
+function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; updateRetoButtons(); resetReto(); showToast('🔄 Pareja: '+retoPairs[currentRetoPairIdx].label[0]+' vs. '+retoPairs[currentRetoPairIdx].label[1]); }
 function resetReto(){ if(retoTimerInt) clearInterval(retoTimerInt); retoRunning=false; retoOk=0; retoErr=0; retoSec=30; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
 
 // ===================== GENERADOR DE TAREAS =====================
@@ -399,7 +399,7 @@ const explainQuestions=[
   {q:'¿Cuándo son complementarios dos ángulos?',ans:'Cuando su suma es exactamente 90°.'},
   {q:'¿Cuándo son suplementarios dos ángulos?',ans:'Cuando su suma es exactamente 180°.'},
   {q:'¿Qué instrumento se usa para medir ángulos?',ans:'El transportador.'},
-  {q:'Si un ángulo mide 100°, ¿cuánto mide su bisectriz?',ans:'Cada mitad mide 50°.'},
+  {q:'Si un ángulo mide 100°, ¿cuánto mide cada mitad que forma su bisectriz?',ans:'Cada mitad mide 50°.'},
   {q:'¿Qué es el vértice de un ángulo?',ans:'Es el punto de origen donde se unen los dos rayos.'},
   {q:'¿En qué se diferencia un ángulo llano de un completo?',ans:'El llano mide 180° (línea recta) y el completo 360° (vuelta entera).'},
   {q:'¿Cuál es el complemento de un ángulo de 60°?',ans:'30° (porque 60° + 30° = 90°).'},
@@ -514,9 +514,9 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 
 function genEval(){
   sfx('click'); _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */ window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📝 Evaluación Final — Forma ${cf} · Ángulos y Bisectriz`;
+  document.getElementById('eval-screen-title').textContent=`📝 Evaluación Final · Forma ${cf} · Ángulos y Bisectriz`;
   evalAnsVisible=false; const out=document.getElementById('evalOut'); out.innerHTML='';
-  const bar=document.createElement('div');bar.className='eval-score-bar'; bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+  const bar=document.createElement('div');bar.className='eval-score-bar'; bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -533,7 +533,7 @@ function genEval(){
   const prItems=_pickF(evalPRBank,5, rng); const shuffledDefs=_shuffleF(prItems, rng); const letters=['A','B','C','D','E'];
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item';
-  let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>'; prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;}); colLeft+='</div>';
+  let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>'; prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">?</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;}); colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>'; shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;}); colRight+='</div>';
   const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return `${i+16}→${letter}`;}).join(' · ');
   matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;
@@ -644,7 +644,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -719,21 +719,21 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 <div class="ph">
   <h2>Evaluación Final · Misión Ángulos y Bisectriz · Matemáticas</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Ángulos y Bisectriz · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Ángulos y Bisectriz · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
   const win=window.open('','_blank',''); if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;} win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
@@ -852,7 +852,7 @@ function genRetoOrden() {
 function genRetoError() {
   if (_opRnd() < 0.5) {
     const a = 2 * _opRint(20, 80); const wrong = a / 2 + _opRint(1, 2) * 5;
-    return { txt: `Una estudiante escribió: «La bisectriz de un ángulo de ${a}° crea dos ángulos de ${wrong}° cada uno». Es el mismo error de la lección («la bisectriz de 90° crea dos de 50°»): las mitades no suman el ángulo. Escribe el valor correcto de cada mitad.`, op: `${a}° ÷ 2`, ans: String(a / 2) };
+    return { txt: `Una estudiante escribió: «La bisectriz de un ángulo de ${a}° crea dos ángulos de ${wrong}° cada uno». Es un error común («la bisectriz de 90° crea dos de 50°»): las mitades no suman el ángulo. Escribe el valor correcto de cada mitad.`, op: `${a}° ÷ 2`, ans: String(a / 2) };
   }
   const x = _opRint(10, 80);
   return { txt: `Un estudiante escribió: «El complemento de ${x}° es ${180 - x}°». Confundió complemento (suman 90°) con suplemento (suman 180°). Escribe el complemento correcto de ${x}°.`, op: `90° − ${x}°`, ans: String(90 - x) };
@@ -873,7 +873,7 @@ function genEvalOp() {
   _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
   saveProgress();
   const P = { cls: 4, bis: 2, flt: 4, prb: 10 };
-  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Ángulos y Bisectriz`;
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa · Forma ${cf} · Ángulos y Bisectriz`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
@@ -1030,7 +1030,7 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas</div><table class="p-tbl">${d.prbItems.map((it, i) => `<tr><td class="pn">${i + 1}.</td><td class="pa">${it.op} = ${it.ans}°</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de olimpiada</div><div class="p-ord-line"><strong>1.</strong> ${g0.pauta.join(' · ')}</div><div class="p-ord-line"><strong>2.</strong> Detective del error: ${d.retoErr.op} = ${d.retoErr.ans}°</div><div class="p-ord-line"><strong>3.</strong> Bisectriz de la bisectriz: ${d.retoCua.op} = ${d.retoCua.ans}°</div></div>`;
 
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos y Bisectriz · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:110px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.opx-mini-blank{display:inline-block;min-width:60px;border-bottom:1.5px solid #111;}.mono{font-family:'Courier New',monospace;font-weight:700;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:10pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.2rem 0.4rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.rnd-tbl td:last-child{min-width:90px;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.15rem 0.25rem;text-align:center;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Ángulos y Bisectriz · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Ángulos y Bisectriz · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 5×4 · II: 5×2 · III: 5×4 · IV: 3×10 · V: 10+5+5 · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos y Bisectriz · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:110px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.opx-mini-blank{display:inline-block;min-width:60px;border-bottom:1.5px solid #111;}.mono{font-family:'Courier New',monospace;font-weight:700;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:10pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.2rem 0.4rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.rnd-tbl td:last-child{min-width:90px;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.15rem 0.25rem;text-align:center;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Ángulos y Bisectriz · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Ángulos y Bisectriz · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 5×4 · II: 5×2 · III: 5×4 · IV: 3×10 · V: 10+5+5 · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1044,7 +1044,7 @@ function openDiploma(){
   const msgs=['🚀 ¡ÁNIMO! Comienza tu misión. ¡Cada paso cuenta!','🌱 ¡GRAN INICIO! Estás dando los primeros pasos.','📚 ¡BUEN TRABAJO! Vas progresando muy bien.','💪 ¡MUY BIEN! Dominas gran parte del contenido.','🌟 ¡INCREÍBLE avance! Estás cerca de la excelencia.','🏆 ¡EXTRAORDINARIO! Completaste TODA la misión. ¡Eres experto en Ángulos y Bisectriz!'];
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0; document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr; document.getElementById('diplomaOverlay').classList.add('open'); document.querySelector('.diploma-input').focus();
 }
 function closeDiploma(){ document.getElementById('diplomaOverlay').classList.remove('open'); }

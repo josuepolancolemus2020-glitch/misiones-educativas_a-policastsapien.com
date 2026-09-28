@@ -134,7 +134,7 @@ function repartirMC(mc, semilla) {
 
 const MC = repartirMC([
   ['«¡Qué buena idea!», dicho con la cara de que no lo es…', ['dice lo contrario', 'pide un favor', 'pregunta la hora', 'cuenta un dato'], 0],
-  ['«Una silla es algo donde uno se sienta.» ¿Qué falla?', ['deja entrar una piedra', 'está justa', 'deja fuera las sillas', 'no dice nada'], 0],
+  ['«Una silla es algo donde uno se sienta». ¿Qué falla?', ['deja entrar una piedra', 'está justa', 'deja fuera las sillas', 'no dice nada'], 0],
   ['¿Quién dijo que cada palabra arrastra la vida de quien la usa?', ['Ortega y Gasset', 'Bertrand Russell', 'René Descartes', 'Aristóteles'], 0],
   ['«Lo invirtió» y «lo gastó»: ¿qué tienen igual?', ['la plata ya no está', 'la cantidad', 'el dueño', 'nada'], 0],
   ['¿Cómo se arregla «Dejé medio pan»?', ['midiendo: ¿mitad o entero?', 'gritándola', 'escribiéndola igual', 'cambiando de tema'], 0],
@@ -148,7 +148,7 @@ let p;
 // ── 1 ──
 const L = D.LEN_LENGUAJE;
 p = [];
-p.push('<div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>');
+p.push('<div class="idline"><span>Nombre:</span><span class="raya"></span><span>N.º-Lista:</span><span class="raya corta"></span></div>');
 p.push(`<div class="fh">
       <div class="fh-txt">
         <div class="f-badge">📄 Ficha Didáctica: Misión Palabras que piensan</div>
@@ -162,8 +162,8 @@ p.push(`<div class="fh">
       </div>
     </div>`);
 p.push('<h2>¿Por qué esta ficha?</h2>');
-p.push('<p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva\n       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>');
-p.push(`<div class="caja idea"><b>Lo que hay que sacar de aquí:</b> una frase no solo dice cosas.\n      <b>Hace</b> cosas. Saber qué hace —y darse cuenta cuando la forma engaña— es la destreza de\n      esta unidad. ${esc(L.ojo)}</div>`);
+p.push('<p>En un aula de 43 alumnos con tres teléfonos, la misión no les llega a todos. Esta hoja lleva\n       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>');
+p.push(`<div class="caja idea"><b>Lo que hay que sacar de aquí:</b> una frase no solo dice cosas.\n      <b>Hace</b> cosas. Saber qué hace (y darse cuenta cuando la forma engaña) es la destreza de\n      esta unidad. ${esc(L.ojo)}</div>`);
 p.push('<h3>Objetivos</h3>');
 p.push(`<ol class="objetivos">
       <li>Decir qué hace una frase: si afirma, si pregunta, si pide o si exclama, con su prueba.</li>
@@ -195,7 +195,7 @@ p = [];
 p.push('<h2>La forma no dice lo que la frase hace</h2>');
 p.push('<p>Estas ocho parecen una cosa y hacen otra. Lo que lo decide no es la frase: es <b>dónde se\n       dice</b>. Leé la frase, mirá dónde, y después lo que hace.</p>');
 p.push('<table><tr><th style="width:30%">La frase</th><th style="width:28%">Dónde se dice</th><th style="width:14%">Parece</th><th>Y hace</th></tr>' +
-  D.LEN_DISFRAZ.map(d => `<tr><td class="k">«${esc(d.f)}»</td><td>${esc(d.donde)}</td><td>${esc(d.forma)}</td><td><b>${esc(d.hace)}</b> — ${esc(d.como)}</td></tr>`).join('') + '</table>');
+  D.LEN_DISFRAZ.map(d => `<tr><td class="k">«${esc(d.f)}»</td><td>${esc(d.donde)}</td><td>${esc(d.forma)}</td><td><b>${esc(d.hace)}</b>. ${esc(d.como)}</td></tr>`).join('') + '</table>');
 p.push(`<div class="caja idea">${rot('Ojo:', D.LEN_DISFRAZ_OJO)}</div>`);
 pags.push(p);
 
@@ -316,15 +316,15 @@ p.push('<div><span class="pt">2. La prueba de cada clase (8 pts)</span> ' +
   [0, 1, 2, 3].map(i => `${i + 1} → ${'abcd'[ACT2[i]]} (${esc(AC[ACT2[i]].nombre)})`).join(' · ') +
   '. Las pruebas NO salen en el orden de las clases: hay que leerlas.</div>');
 p.push('<div><span class="pt">3. Escribí unas tuyas (10 pts)</span> ⚠️ <b>No tiene una sola respuesta ' +
-  'buena, a propósito.</b> Se califica que diga POR QUÉ —la prueba, no la forma—, y que la frase de ' +
+  'buena, a propósito.</b> Se califica que diga POR QUÉ (la prueba, no la forma), y que la frase de ' +
   'doble sentido se pueda leer de verdad de dos maneras. Si la frase que trajo parece una cosa y ' +
   'hace otra, eso vale doble: es lo que más cuesta de la unidad. Y la pregunta que la arregla tiene ' +
   'que pedir el dato que falta, no repetir la frase.</div>');
 p.push('<div><span class="pt">4. Selección múltiple (6 pts)</span> ' +
   MC.map(([, , k], i) => `${i + 1}. ${'abcd'[k]}`).join(' · ') + '</div>');
 p.push('<div><span class="pt">5. ¿Cuál trae trampa? (8 pts)</span> ' +
-  D.LEN_TRUCOS.map((t, i) => `${i + 1}. ${t.truco ? 'SÍ' : 'NO'} — ${esc(t.desarma)}`).join(' · ') +
-  '. ⚠️ La cuarta <b>no trae trampa</b>, y marcarla es el error que hay que corregir hablando: una ' +
+  D.LEN_TRUCOS.map((t, i) => `${i + 1}. ${t.truco ? 'SÍ' : 'NO'}. ${esc(t.desarma)}`).join(' · ') +
+  ' ⚠️ La cuarta <b>no trae trampa</b>, y marcarla es el error que hay que corregir hablando: una ' +
   'unidad donde toda palabra fuerte es trampa deja a un alumno que no le cree a nadie.</div>');
 p.push('<div><span class="pt">Investiga</span> ⚠️ <b>No trae respuestas, a propósito.</b> Las cuatro se ' +
   'contestan donde vive el alumno y no en esta hoja. Se califica que diga DE DÓNDE sacó cada cosa, ' +

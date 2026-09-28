@@ -139,18 +139,23 @@ Reglas de ahorro y calidad:
 2. **Predice** (primera impresión, debe encantar): cada predicción lleva su
    explorador interactivo ("🔍 Explorar la pista") que induce a la respuesta
    jugando: medir distancias, animaciones, tocar y descubrir.
-3. **Flashcards**: reverso en minúscula PERO con **mayúscula inicial**
-   (ortografía: todo texto comienza en mayúscula) y **letra grande sin
-   desbordes**. ⚠️ CAUSA RAÍZ del bug histórico: NUNCA usar `class="fa"` en el
-   div del reverso, porque Font Awesome 6 mapea las letras a-z y los dígitos 0-9 a
-   ICONOS con forma de MAYÚSCULA e impone su fuente (ninguna regla
-   `text-transform` puede arreglarlo porque el glifo mismo es mayúsculo; las
-   tildes ú/á delatan el bug al caer a la fuente normal). La clase correcta es
-   `fca` y el CSS blindado obligatorio:
-   `#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}`
-   (corregido en las 28 misiones el 2026-07-05, commit c8e995f) + el ajuste de
-   legibilidad jul-2026 (aplicado a las 28):
-   `.fc-back{overflow-y:auto;} #fcA{font-size:1.28rem;line-height:1.5;} #fcA::first-letter{text-transform:uppercase !important;}`
+3. **Flashcards**: el reverso se escribe **como se escribe en el cuaderno**:
+   mayúscula al empezar, mayúscula después de cada punto y en los nombres
+   propios, y **letra grande sin desbordes**. ⚠️ CAUSA RAÍZ del bug histórico:
+   NUNCA usar `class="fa"` en el div del reverso, porque Font Awesome 6 mapea
+   las letras a-z y los dígitos 0-9 a ICONOS con forma de MAYÚSCULA e impone su
+   fuente (ninguna regla `text-transform` puede arreglarlo porque el glifo mismo
+   es mayúsculo; las tildes ú/á delatan el bug al caer a la fuente normal). La
+   clase correcta es `fca` y el CSS de la letra:
+   `#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;}`
+   + el ajuste de legibilidad jul-2026:
+   `.fc-back{overflow-y:auto;} #fcA{font-size:1.28rem;line-height:1.5;}`
+
+   ⚠️ **Sin `text-transform` en el reverso, ni `lowercase` ni `::first-letter`.**
+   Estuvo puesto en las 83 misiones hasta septiembre de 2026 y escribía mal lo
+   que el archivo tenía bien: «honduras», «lempira», «sace», «avanza, gira
+   derecha» y cada oración en minúscula después del punto. Ninguna sonda que lee
+   el archivo podía verlo. Lo vigila ahora `_dev/verifica-ortografia.js`.
 4. **Clasifica**: seleccionar y colocar (SIN arrastre). Si hay un elemento
    seleccionado y se toca uno ya colocado, se INSERTA el seleccionado en esa
    caja (no se saca el tocado); solo sin selección el toque devuelve al banco.

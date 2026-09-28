@@ -1363,7 +1363,7 @@ function renderPadre() {
         (empieza con el número de lista, ej. <strong>15-K7QM</strong>). Es secreta: solo su familia la conoce.</p>
       <div class="padre-tel-row">
         <input id="padre-codigo" class="pa-inp-field padre-codigo-inp" maxlength="12"
-               autocomplete="off" autocapitalize="characters" placeholder="ej: 15-K7QM" value="${_pEsc(codigoIni)}">
+               autocomplete="off" autocapitalize="characters" placeholder="ej.: 15-K7QM" value="${_pEsc(codigoIni)}">
         <button class="padre-wa-btn" onclick="padreConsultarNube()">Consultar</button>
       </div>
       <div id="padre-nube-out"></div>

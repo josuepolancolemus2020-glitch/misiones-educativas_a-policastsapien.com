@@ -77,7 +77,7 @@ window.WidgetCajaJSON = {
       answered = false;
       tkEl.innerHTML = `<div class="wcj-l"><span>${k} ${c[0]}</span><span>a ${lps(precio)} c/u</span></div>` +
         (pideVuelto ? `<div class="wcj-l"><span>paga con</span><span>${lps(paga)}</span></div>` : '');
-      pgEl.textContent = pideVuelto ? '¿Cuánto le devuelves de vuelto?' : '¿Cuánto es el total?';
+      pgEl.textContent = pideVuelto ? '¿Cuánto le das de vuelto?' : '¿Cuánto es el total?';
       const bueno = pideVuelto ? vuelto : total;
       const malos = pideVuelto
         ? [paga - precio * (k + 1), Math.abs(paga - precio)]

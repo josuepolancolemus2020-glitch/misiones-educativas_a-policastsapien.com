@@ -50,7 +50,7 @@ window.WidgetConstructorJSON = {
         </div>
         <div class="wc2-controls">
           <div class="wc2-slider-wrap">
-            <label class="wc2-label" for="wc2-slider"><span>Explorar posición:</span> <span id="wc2-slider-lbl">—</span></label>
+            <label class="wc2-label" for="wc2-slider"><span>Explorar posición:</span> <span id="wc2-slider-lbl"></span></label>
             <input type="range" id="wc2-slider" class="wc2-slider" min="0" max="5" value="0" step="1" disabled>
           </div>
           <button class="wc2-btn-rnd" id="wc2-btn-rnd">🔄 Variar número</button>
@@ -104,7 +104,7 @@ window.WidgetConstructorJSON = {
       const val = dgt * POS_VALUES[idx];
       renderNumber(idx);
       sliderLbl.textContent = POS_LABELS[idx];
-      posLabelEl.textContent = `Número: ${fmt(ex.n)} — dígito señalado: ${dgt}`;
+      posLabelEl.textContent = `Número: ${fmt(ex.n)} · dígito señalado: ${dgt}`;
       valueEl.textContent = dgt === 0 ? 'Este dígito vale 0 (cero de relleno)' : `Este dígito vale: ${fmt(val)}`;
     }
 
@@ -114,7 +114,7 @@ window.WidgetConstructorJSON = {
       const valA = digits[ex.posA] * POS_VALUES[ex.posA];
       const valB = digits[ex.posB] * POS_VALUES[ex.posB];
       const correct = valA > valB ? 'a' : valA < valB ? 'b' : 'igual';
-      predQEl.textContent = `🔮 En el número ${fmt(ex.n)}, ¿cuál dígito vale más: el de la posición ${POS_LABELS[ex.posA]} o el de la posición ${POS_LABELS[ex.posB]}?`;
+      predQEl.textContent = `🔮 En el número ${fmt(ex.n)}, ¿qué dígito vale más: el de la posición ${POS_LABELS[ex.posA]} o el de la posición ${POS_LABELS[ex.posB]}?`;
       predOptsEl.innerHTML = `
         <button class="wc2-pred-btn" id="wc2-p-a">El de ${POS_LABELS[ex.posA]}</button>
         <button class="wc2-pred-btn" id="wc2-p-b">El de ${POS_LABELS[ex.posB]}</button>

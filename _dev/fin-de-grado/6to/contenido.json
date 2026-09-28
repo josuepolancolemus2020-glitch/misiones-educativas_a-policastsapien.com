@@ -42,10 +42,10 @@
     ],
     "ejemplos": [
      {
-      "enunciado": "Ordena de menor a mayor: 3/4, 2/3 5/8.",
+      "enunciado": "Ordena de menor a mayor: 3/4, 2/3 y 5/8.",
       "pasos": [
        "Busca un denominador común de 4, 3 y 8: el 24 sirve, porque los tres caben exacto en 24.",
-       "Convierte cada una: 3/4 = 18/24 (24 ÷ 4 = 6 y 3 x 6 = 18), 2/3 = 16/24 5/8 = 15/24.",
+       "Convierte cada una: 3/4 = 18/24 (24 ÷ 4 = 6 y 3 x 6 = 18), 2/3 = 16/24 y 5/8 = 15/24.",
        "Ya con el mismo denominador solo miras los numeradores: 15 es el menor y 18 el mayor.",
        "Escribe el orden con las fracciones originales, no con las convertidas."
       ],
@@ -56,7 +56,7 @@
       "pasos": [
        "Un número mixto es un entero con su fracción al lado: 1 1/3 se lee «uno y un tercio», y no es lo mismo que 11/3.",
        "Convierte el número mixto a fracción: 1 1/3 = (1 x 3 + 1)/3 = 4/3.",
-       "Denominador común de 3 y 5: el 15. Entonces 4/3 = 20/15 2/5 = 6/15.",
+       "Denominador común de 3 y 5: el 15. Entonces 4/3 = 20/15 y 2/5 = 6/15.",
        "Suma solo los numeradores: 20/15 + 6/15 = 26/15.",
        "Vuelve a número mixto: 26 ÷ 15 da 1 y sobran 11, así que 26/15 = 1 11/15."
       ],
@@ -104,8 +104,8 @@
     },
     "error": {
      "mal": "2/5 + 1/3 = 3/8",
-     "porque": "Sumaste arriba con arriba y abajo con abajo. Los quintos y los tercios no son pedazos del mismo tamaño. Fíjate además que 3/8 es menor que 2/5: el total nunca puede quedar más pequeño que una de las partes.",
-     "bien": "Denominador común 15: 2/5 = 6/15 1/3 = 5/15, entonces 6/15 + 5/15 = 11/15."
+     "porque": "Sumaste arriba con arriba y abajo con abajo. Los quintos y los tercios no son pedazos del mismo tamaño. Fíjate, además, en que 3/8 es menor que 2/5: el total nunca puede quedar más pequeño que una de las partes.",
+     "bien": "Denominador común 15: 2/5 = 6/15 y 1/3 = 5/15, entonces 6/15 + 5/15 = 11/15."
     }
    },
    {
@@ -252,7 +252,7 @@
     },
     "error": {
      "mal": "Dos buses salen de la terminal, uno cada 15 minutos y otro cada 20. Para saber cuándo vuelven a salir juntos busqué el M.C.D. y contesté 5 minutos.",
-     "porque": "El M.C.D. sirve para repartir, no para coincidir. Además 5 minutos es menos de lo que tarda cualquiera de los dos buses en volver a salir, así que la respuesta ni siquiera es posible.",
+     "porque": "El M.C.D. sirve para repartir, no para coincidir. Además, 5 minutos es menos de lo que tarda cualquiera de los dos buses en volver a salir, así que la respuesta ni siquiera es posible.",
      "bien": "Se usa el m.c.m.: múltiplos de 15 son 15, 30, 45 y 60; múltiplos de 20 son 20, 40 y 60. Coinciden a los 60 minutos."
     }
    },
@@ -340,7 +340,7 @@
   "bloques": [
    {
     "titulo": "🎯 La idea principal: de qué trata el texto",
-    "intro": "Cuando terminas de leer un texto, alguien te pregunta: ¿de qué trataba? Si contestas con una sola oración que cubre todo lo leído, encontraste la idea principal. Si contestas con un dato suelto, encontraste un detalle. Los dos están en el texto, pero no valen lo mismo. La idea principal manda sobre las demás oraciones: los detalles existen para explicarla o darle ejemplos. En la prueba te van a pedir la idea principal, el mejor título o el tema. Son la misma pregunta con distinto disfraz.",
+    "intro": "Cuando terminas de leer un texto, alguien te pregunta: «¿De qué trataba?» Si contestas con una sola oración que cubre todo lo leído, encontraste la idea principal. Si contestas con un dato suelto, encontraste un detalle. Los dos están en el texto, pero no valen lo mismo. La idea principal manda sobre las demás oraciones: los detalles existen para explicarla o darle ejemplos. En la prueba te van a pedir la idea principal, el mejor título o el tema. Son la misma pregunta con distinto disfraz.",
     "reglas": [
      {
       "tipo": "regla",
@@ -367,14 +367,14 @@
       "resultado": "La idea principal es que la pulpería de doña Reina recibe distintos clientes según la hora del día, porque esa oración abarca los cuatro momentos que narra el texto."
      },
      {
-      "enunciado": "El comal de barro se calienta despacio y guarda el calor mucho tiempo. Por eso la tortilla se cuece pareja y no se quema por un lado. En cambio, la plancha de metal se calienta rápido pero se enfría igual de rápido, y hay que estar atendiendo el fuego. Doña Elvira, de Comayagua, cambió su plancha por un comal de barro y dice que ahora hace el doble de tortillas con la misma leña. Pregunta: ¿cuál es el mejor título para este texto?",
+      "enunciado": "El comal de barro se calienta despacio y guarda el calor mucho tiempo. Por eso la tortilla se cuece pareja y no se quema por un lado. En cambio, la plancha de metal se calienta rápido, pero se enfría igual de rápido, y hay que estar atendiendo el fuego. Doña Elvira, de Comayagua, cambió su plancha por un comal de barro y dice que ahora hace el doble de tortillas con la misma leña. Pregunta: ¿cuál es el mejor título para este texto?",
       "pasos": [
        "Busco de qué habla: del comal de barro comparado con la plancha de metal.",
        "Busco qué dice: que el comal guarda mejor el calor y por eso rinde más.",
-       "Un título de una sola parte, como Doña Elvira de Comayagua, deja fuera casi todo el texto: es un detalle.",
-       "Un título general de más, como La cocina hondureña, no dice nada de lo que el texto explica."
+       "Un título de una sola parte, como «Doña Elvira de Comayagua», deja fuera casi todo el texto: es un detalle.",
+       "Un título general de más, como «La cocina hondureña», no dice nada de lo que el texto explica."
       ],
-      "resultado": "El mejor título es Por qué el comal de barro rinde más que la plancha, porque nombra a los dos objetos comparados y la razón que explica el texto."
+      "resultado": "El mejor título es «Por qué el comal de barro rinde más que la plancha», porque nombra a los dos objetos comparados y la razón que explica el texto."
      }
     ],
     "tabla": {
@@ -408,14 +408,14 @@
      ]
     },
     "error": {
-     "mal": "Marcar como idea principal la opción Los niños compran topogigios al mediodía.",
+     "mal": "Marcar como idea principal la opción «Los niños compran topogigios al mediodía».",
      "porque": "Es verdadera y está escrita en el texto, y eso hace que el alumno la sienta segura. Pero solo cuenta uno de los cuatro momentos del día: deja fuera la madrugada, la media mañana y la tarde.",
      "bien": "Antes de marcar, pregúntate si esa opción cubre el texto completo. Si le sobra texto por fuera, es un detalle."
     }
    },
    {
     "titulo": "🔍 Literal e inferencial: lo que dice y lo que se deduce",
-    "intro": "Hay dos clases de preguntas de comprensión y conviene que sepas cuál te están haciendo. La literal te pide algo que está escrito con todas sus letras: la buscas y la copias. La inferencial te pide algo que el autor no escribió pero dejó ver: la deduces juntando pistas. Se reconocen por cómo empiezan. Según el texto, ¿qué hizo? es literal. ¿Por qué lo hizo? o ¿qué pretendía? es inferencial. Y en las dos, la respuesta se apoya en el texto: nunca en lo que tú imaginas.",
+    "intro": "Hay dos clases de preguntas de comprensión y conviene que sepas cuál te están haciendo. La literal te pide algo que está escrito con todas sus letras: la buscas y la copias. La inferencial te pide algo que el autor no escribió pero dejó ver: la deduces juntando pistas. Se reconocen por cómo empiezan. «Según el texto, ¿qué hizo?» es literal. «¿Por qué lo hizo?» o «¿qué pretendía?» es inferencial. Y en las dos, la respuesta se apoya en el texto: nunca en lo que tú imaginas.",
     "reglas": [
      {
       "tipo": "regla",
@@ -444,7 +444,7 @@
      {
       "enunciado": "El bus de la ruta a La Esperanza sale de la terminal a las seis. Don Rigoberto, el chofer, revisa las llantas antes de arrancar. Ese martes encontró una casi lisa y avisó que saldrían hasta las siete, mientras la cambiaba. Tres pasajeros se bajaron molestos y buscaron otro bus. El resto esperó. A las siete en punto el bus salió con la llanta nueva. Pregunta: según el texto, ¿a qué hora salió el bus ese martes?",
       "pasos": [
-       "Miro cómo empieza la pregunta: dice según el texto, así que la respuesta está escrita.",
+       "Miro cómo empieza la pregunta: dice «según el texto», así que la respuesta está escrita.",
        "Busco la palabra clave salió en el texto y encuentro dos horas: las seis y las siete.",
        "Leo con cuidado: las seis es la hora de siempre, no la de ese martes.",
        "Subrayo la oración final: a las siete en punto el bus salió con la llanta nueva."
@@ -485,11 +485,11 @@
    },
    {
     "titulo": "🔤 Vocabulario en contexto: la palabra que no conoces",
-    "intro": "En la prueba te van a subrayar una palabra difícil y te van a preguntar qué significa en ese texto. Tranquilo: no es prueba de memoria ni necesitas diccionario. La respuesta está en las palabras que rodean a la subrayada. Ese vecindario se llama contexto, y siempre trae pistas: un ejemplo, una explicación, una comparación o una palabra opuesta. Además hay una técnica que casi nunca falla y se llama sustituir: metes cada opción en el lugar de la palabra y lees la oración completa. La que suena bien y no cambia el sentido, esa es.",
+    "intro": "En la prueba te van a subrayar una palabra difícil y te van a preguntar qué significa en ese texto. Tranquilo: no es prueba de memoria ni necesitas diccionario. La respuesta está en las palabras que rodean a la subrayada. Ese vecindario se llama contexto, y siempre trae pistas: un ejemplo, una explicación, una comparación o una palabra opuesta. Además, hay una técnica que casi nunca falla y se llama sustituir: metes cada opción en el lugar de la palabra y lees la oración completa. La que suena bien y no cambia el sentido, esa es.",
     "reglas": [
      {
       "tipo": "regla",
-      "texto": "La misma palabra cambia de significado según el texto. Banco puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que sabes: busca el que sirve ahí."
+      "texto": "La misma palabra cambia de significado según el texto. «Banco» puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que sabes: busca el que sirve ahí."
      },
      {
       "tipo": "truco",
@@ -497,15 +497,15 @@
      },
      {
       "tipo": "idea",
-      "texto": "Fíjate en las palabras vecinas que avisan. Es decir y o sea traen la explicación pegada. Pero y en cambio traen lo contrario. Como y igual que traen una comparación."
+      "texto": "Fíjate en las palabras vecinas que avisan. «Es decir» y «o sea» traen la explicación pegada. «Pero» y «en cambio» traen lo contrario. «Como» e «igual que» traen una comparación."
      }
     ],
     "ejemplos": [
      {
-      "enunciado": "El río de la aldea venía manso desde hacía semanas. Los niños lo cruzaban a pie por el vado para ir a la escuela. Pero el jueves llovió toda la noche en la montaña y el viernes bajó bramando, arrastrando ramas y piedras. Don Chepe, que vive frente al vado, no dejó pasar a nadie ese día. Pregunta: en el texto, la palabra manso significa:",
+      "enunciado": "El río de la aldea venía manso desde hacía semanas. Los niños lo cruzaban a pie por el vado para ir a la escuela. Pero el jueves llovió toda la noche en la montaña y el viernes bajó bramando, arrastrando ramas y piedras. Don Chepe, que vive frente al vado, no dejó pasar a nadie ese día. Pregunta: en el texto, la palabra «manso» significa:",
       "pasos": [
        "Busco la palabra en su oración: el río venía manso desde hacía semanas.",
-       "Busco la pista del vecindario: la palabra pero anuncia lo contrario, y lo contrario es bajó bramando y arrastrando piedras.",
+       "Busco la pista del vecindario: la palabra «pero» anuncia lo contrario, y lo contrario es que bajó bramando y arrastrando piedras.",
        "Si bramando y arrastrando es lo contrario de manso, entonces manso es tranquilo y sin fuerza.",
        "Sustituyo para comprobar: el río venía tranquilo desde hacía semanas. Encaja, y explica que los niños lo cruzaran a pie."
       ],
@@ -515,7 +515,7 @@
       "enunciado": "En la feria de Copán, don Isidro vende sombreros de junco. Su puesto es el más concurrido de todo el corredor: hay gente esperando turno desde que abre hasta que cierra. Los otros vendedores lo miran y no entienden. Él dice que el secreto no es el precio, sino que se aprende el nombre de cada cliente que vuelve. Pregunta: en el texto, la palabra concurrido significa:",
       "pasos": [
        "Leo la oración completa: su puesto es el más concurrido de todo el corredor.",
-       "Busco la explicación pegada: los dos puntos avisan que viene la aclaración, y dice hay gente esperando turno desde que abre hasta que cierra.",
+       "Busco la explicación pegada: los dos puntos avisan que viene la aclaración, y dice que hay gente esperando turno desde que abre hasta que cierra.",
        "Pruebo las opciones sustituyendo: caro no encaja, porque el texto dice que el secreto no es el precio.",
        "Pruebo visitado por mucha gente: su puesto es el más visitado por mucha gente de todo el corredor. Encaja perfecto."
       ],
@@ -589,7 +589,7 @@
      {
       "enunciado": "Cómo sembrar frijol en una cubeta. 1. Consigue una cubeta vieja y hazle tres hoyos en el fondo. 2. Llena con tierra negra hasta dos dedos del borde. 3. Entierra cuatro frijoles a dos centímetros de hondo. 4. Riega poquito cada tarde. 5. A los ocho días saldrán las primeras hojas. No mojes de más: el frijol se pudre. Pregunta: ¿qué tipo de texto es y para qué sirve?",
       "pasos": [
-       "Miro el título: empieza con Cómo, que anuncia una manera de hacer algo.",
+       "Miro el título: empieza con «Cómo», que anuncia una manera de hacer algo.",
        "Miro la forma: los renglones van numerados del 1 al 5, en orden.",
        "Miro los verbos: consigue, llena, entierra, riega. Son verbos que dan órdenes al lector.",
        "Confirmo la utilidad: al seguir los pasos en ese orden, se logra el resultado."
@@ -638,8 +638,8 @@
      ]
     },
     "error": {
-     "mal": "Escribir en la pregunta de opinión: Yo pienso que sí está bien, porque me gusta.",
-     "porque": "Da la postura pero ninguna razón, y me gusta no es un argumento: no explica nada que el lector pueda comprobar o discutir. Ahí se pierden los puntos de la parte escrita.",
+     "mal": "Escribir en la pregunta de opinión: «Yo pienso que sí está bien, porque me gusta».",
+     "porque": "Da la postura pero ninguna razón, y «me gusta» no es un argumento: no explica nada que el lector pueda comprobar o discutir. Ahí se pierden los puntos de la parte escrita.",
      "bien": "Escribe la postura y agrega dos razones que se puedan defender. Si te preguntan si la escuela debería abrir la biblioteca los sábados: Yo pienso que sí, primero porque muchos alumnos no tienen libros en la casa y ahí podrían estudiar, y segundo porque los sábados el aula está vacía y no estorba a nadie. Por eso estoy de acuerdo."
     }
    }
@@ -707,7 +707,7 @@
    {
     "texto": "Para sumar 1/3 + 1/4 se suman los numeradores entre sí y los denominadores entre sí, así que el resultado es 2/7.",
     "a": false,
-    "solucion": "Falso. Son fracciones heterogéneas: hay que buscar denominador común. El m.c.m. de 3 y 4 es 12, entonces 1/3 = 4/12 1/4 = 3/12. La suma es 4/12 + 3/12 = 7/12. Fíjate que 2/7 es menor que 1/3, y al sumar dos fracciones positivas el resultado nunca puede ser menor que uno de los sumandos."
+    "solucion": "Falso. Son fracciones heterogéneas: hay que buscar denominador común. El m.c.m. de 3 y 4 es 12, entonces 1/3 = 4/12 y 1/4 = 3/12. La suma es 4/12 + 3/12 = 7/12. Fíjate en que 2/7 es menor que 1/3, y al sumar dos fracciones positivas el resultado nunca puede ser menor que uno de los sumandos."
    },
    {
     "texto": "El número 415 es divisible entre 3.",
@@ -737,7 +737,7 @@
    {
     "texto": "La fracción 3/4 es menor que 2/3.",
     "a": false,
-    "solucion": "Falso. Con denominador común 12: 3/4 = 9/12 2/3 = 8/12. Como 9/12 es mayor, 3/4 es mayor que 2/3. En decimales: 3/4 = 0.75 exacto, y 2/3 es un decimal que no termina nunca, aproximadamente 0.67."
+    "solucion": "Falso. Con denominador común 12: 3/4 = 9/12 y 2/3 = 8/12. Como 9/12 es mayor, 3/4 es mayor que 2/3. En decimales: 3/4 = 0.75 exacto, y 2/3 es un decimal que no termina nunca, aproximadamente 0.67."
    },
    {
     "texto": "El mínimo común múltiplo de 3 y 12 es 36.",
@@ -859,7 +859,7 @@
      "1/4, 3/5, 2/5"
     ],
     "a": 1,
-    "solucion": "Se convierten a decimales: 1/4 = 0.25, 2/5 = 0.40 3/5 = 0.60. De menor a mayor queda 1/4, 2/5, 3/5. También sirve el denominador común 20: 5/20, 8/20 12/20."
+    "solucion": "Se convierten a decimales: 1/4 = 0.25, 2/5 = 0.40 y 3/5 = 0.60. De menor a mayor queda 1/4, 2/5, 3/5. También sirve el denominador común 20: 5/20, 8/20 y 12/20."
    }
   ],
   "pareados": [
@@ -1095,7 +1095,7 @@
      "solucion": "Correcta la tercera opción. El texto no dice qué pasaría si desaparecieran; hay que deducirlo. Explica que al llevar polen de una planta a otra ayudan a que la milpa y los frutales den mejor cosecha, así que sin ellos la cosecha bajaría. Las otras tres inventan efectos que el texto no sostiene con ninguna pista."
     },
     {
-     "texto": "En el texto, la palabra mansos quiere decir que los jicotes son:",
+     "texto": "En el texto, la palabra «mansos» quiere decir que los jicotes son:",
      "o": [
       "muy grandes, del tamaño de un abejón",
       "flojos, que no les gusta trabajar",
@@ -1107,7 +1107,7 @@
      "solucion": "Correcta la cuarta opción. Las pistas están antes y después: 'no tienen aguijón' y 'trabajan cerca de las personas sin causar miedo'. Además, en la misma oración dice 'mansos y muy trabajadores', lo que descarta que signifique flojos. El tamaño y el color no se mencionan en ninguna línea del texto."
     },
     {
-     "texto": "En la última oración, talar los árboles significa:",
+     "texto": "En la última oración, «talar los árboles» significa:",
      "o": [
       "cortarlos y tumbarlos",
       "sembrarlos otra vez",
@@ -1142,7 +1142,7 @@
     "solucion": "Fábula. Los personajes son animales que hablan y representan conductas humanas (la constancia y la presunción). Un texto así cierra con moraleja."
    },
    {
-    "fragmento": "Querida abuela Chepa: le escribo desde Tegucigalpa para contarle que ya empecé sexto grado y la extraño mucho.",
+    "fragmento": "Querida abuela Chepa: Le escribo desde Tegucigalpa para contarle que ya empecé sexto grado y la extraño mucho.",
     "tipo": "carta",
     "solucion": "Carta. Empieza con un saludo dirigido a una persona concreta seguido de dos puntos, y quien escribe le habla de usted a su destinataria. Terminará con despedida y firma."
    },
@@ -1235,7 +1235,7 @@
     "solucion": "0.4 se lee cuatro décimos, o sea 4/10. Se simplifica dividiendo arriba y abajo entre 2: 4 ÷ 2 = 2 y 10 ÷ 2 = 5, entonces 0.4 = 2/5. El 4/100 sale de leer el 4 como centésimo, el 1/4 de confundirlo con 0.25 y el 4/5 de simplificar mal."
    },
    {
-    "texto": "Tres botellas tienen 3/4, 1/2 5/8 de litro de jugo. ¿Cuál es el orden de esas fracciones de menor a mayor?",
+    "texto": "Tres botellas tienen 3/4, 1/2 y 5/8 de litro de jugo. ¿Cuál es el orden de esas fracciones de menor a mayor?",
     "o": [
      "1/2, 5/8, 3/4",
      "3/4, 5/8, 1/2",
@@ -1244,7 +1244,7 @@
     ],
     "a": 0,
     "tema": "comparar-fracciones",
-    "solucion": "Con denominador común 8: 3/4 = 6/8, 1/2 = 4/8 5/8 se queda igual. Comparando los numeradores, 4/8 es menor que 5/8 5/8 es menor que 6/8. El orden de menor a mayor es 1/2, 5/8, 3/4. Quien se guía por el denominador más grande escoge mal."
+    "solucion": "Con denominador común 8: 3/4 = 6/8, 1/2 = 4/8 y 5/8 se queda igual. Comparando los numeradores, 4/8 es menor que 5/8 y 5/8 es menor que 6/8. El orden de menor a mayor es 1/2, 5/8, 3/4. Quien se guía por el denominador más grande escoge mal."
    },
    {
     "texto": "Doña Rosa usó 1 1/4 libras de maíz en la mañana y 2/3 de libra en la tarde. ¿Cuántas libras de maíz usó en total?",
@@ -1256,7 +1256,7 @@
     ],
     "a": 3,
     "tema": "suma-fracciones",
-    "solucion": "1 1/4 = 5/4. Con denominador común 12: 5/4 = 15/12 2/3 = 8/12. Entonces 15/12 + 8/12 = 23/12 = 1 11/12 libras. El 1 3/7 sale de sumar numeradores con numeradores y denominadores con denominadores, el 7/12 de restar en vez de sumar y el 2 11/12 de agregarle un entero de más."
+    "solucion": "1 1/4 = 5/4. Con denominador común 12: 5/4 = 15/12 y 2/3 = 8/12. Entonces 15/12 + 8/12 = 23/12 = 1 11/12 libras. El 1 3/7 sale de sumar numeradores con numeradores y denominadores con denominadores, el 7/12 de restar en vez de sumar y el 2 11/12 de agregarle un entero de más."
    },
    {
     "texto": "De un listón de 3/4 de metro se cortan pedazos de 1/8 de metro cada uno. ¿Cuántos pedazos salen?",
@@ -1319,7 +1319,7 @@
     "solucion": "Es el m.c.m. de 9 y 12. Como 9 = 3 x 3 y 12 = 2 x 2 x 3, el m.c.m. es 2 x 2 x 3 x 3 = 36. Se comprueba con los múltiplos de 12: 12, 24 y 36, y 36 también es múltiplo de 9 (9, 18, 27, 36). El 3 es el M.C.D., el 21 es la suma y el 108 es el producto de los dos números."
    },
    {
-    "texto": "Un comal redondo mide 40 centímetros de diámetro. ¿Cuál es su área? (tome pi = 3.14)",
+    "texto": "Un comal redondo mide 40 centímetros de diámetro. ¿Cuál es su área? (toma pi = 3.14)",
     "o": [
      "125.6 cm²",
      "1256 cm²",
@@ -1369,7 +1369,7 @@
     "solucion": "El texto cuenta de principio a fin la jornada de trabajo de don Rigoberto y termina diciendo que de eso ha vivido su familia veinte años. La hora es un detalle, el camino apenas se menciona y del precio de las naranjas el texto no dice nada."
    },
    {
-    "texto": "El verano fue largo y el agua se puso escasa en la aldea. La quebrada bajó tanto que apenas mojaba las piedras, y las familias tuvieron que acarrear baldes desde el pozo del centro. Don Nicolás midió el nivel cada mañana y anotó los números en un cuaderno.\n\n¿Qué significa la palabra escasa en el texto?",
+    "texto": "El verano fue largo y el agua se puso escasa en la aldea. La quebrada bajó tanto que apenas mojaba las piedras, y las familias tuvieron que acarrear baldes desde el pozo del centro. Don Nicolás midió el nivel cada mañana y anotó los números en un cuaderno.\n\n¿Qué significa la palabra «escasa» en el texto?",
     "o": [
      "Poca, casi no había",
      "Sucia, con lodo del fondo",
@@ -1381,7 +1381,7 @@
     "solucion": "La oración siguiente explica la palabra: la quebrada bajó tanto que apenas mojaba las piedras y hubo que ir por agua al pozo. Eso es falta de agua, no suciedad ni temperatura. Que la acarrearan en baldes es la consecuencia, no el significado."
    },
    {
-    "texto": "Antes de que salga el sol, mi abuelo se va a la milpa con el machete al hombro. Limpia, siembra y regresa cuando el comal ya está caliente. Al llegar dice que la faena del día ya quedó cumplida, y solo entonces se sienta a tomar su café. Nunca lo he visto quedarse en la hamaca.\n\n¿Qué significa la palabra faena en el texto?",
+    "texto": "Antes de que salga el sol, mi abuelo se va a la milpa con el machete al hombro. Limpia, siembra y regresa cuando el comal ya está caliente. Al llegar dice que la faena del día ya quedó cumplida, y solo entonces se sienta a tomar su café. Nunca lo he visto quedarse en la hamaca.\n\n¿Qué significa la palabra «faena» en el texto?",
     "o": [
      "El camino que lleva a la milpa",
      "El trabajo del día",
@@ -1393,7 +1393,7 @@
     "solucion": "Antes de esa oración el texto dice lo que el abuelo hizo en la milpa: limpiar y sembrar. La faena es eso, el trabajo de la jornada, y por eso queda cumplida cuando regresa. El café se toma después de la faena, así que no puede ser el desayuno; el camino a la milpa no se menciona y la última oración descarta el descanso."
    },
    {
-    "texto": "Doña Petrona hace las tortillas más parejas del barrio. Sus manos son tan diestras que palmea una tortilla mientras voltea otra en el comal, sin quemarse. Las muchachas se sientan a mirarla para aprender, pero ninguna le lleva el paso todavía.\n\n¿Qué significa la palabra diestras en el texto?",
+    "texto": "Doña Petrona hace las tortillas más parejas del barrio. Sus manos son tan diestras que palmea una tortilla mientras voltea otra en el comal, sin quemarse. Las muchachas se sientan a mirarla para aprender, pero ninguna le lleva el paso todavía.\n\n¿Qué significa la palabra «diestras» en el texto?",
     "o": [
      "Grandes y fuertes",
      "Limpias y secas",
@@ -1472,7 +1472,7 @@
     "titulo": "Sumar los de abajo también",
     "materia": "mat",
     "mal": "El alumno escribe 1/4 + 2/4 = 3/8. Suma los de arriba (1 + 2 = 3) y también los de abajo (4 + 4 = 8). En un problema de la pulpería: 1/4 de libra de café más 2/4 de libra de café le da 3/8 de libra, o sea menos de media libra.",
-    "porque": "El denominador no es un número que se suma: dice en cuántos pedazos iguales se partió la unidad, y esos pedazos siguen siendo cuartos antes y después de juntarlos. Fíjese en lo que salió: 3/8 es menos que 2/4 (2/4 son 4/8), o sea menos que una de las dos partes que juntó. Si al sumar pedazos el resultado sale más chico que una de las partes, la cuenta ya avisó que está mala.",
+    "porque": "El denominador no es un número que se suma: dice en cuántos pedazos iguales se partió la unidad, y esos pedazos siguen siendo cuartos antes y después de juntarlos. Fíjate en lo que salió: 3/8 es menos que 2/4 (2/4 son 4/8), o sea menos que una de las dos partes que juntó. Si al sumar pedazos el resultado sale más chico que una de las partes, la cuenta ya avisó que está mala.",
     "bien": "Con el mismo denominador se suman solo los numeradores y el denominador se queda igual: 1/4 + 2/4 = 3/4. Tres cuartos de libra es más que 2/4 y más que 1/4, que es lo que tiene que pasar cuando se juntan dos pedazos. Si los denominadores son distintos, primero se busca el m.c.m. para igualarlos: en 1/2 + 1/3, el m.c.m. de 2 y 3 es 6, entonces 3/6 + 2/6 = 5/6."
    },
    {
@@ -1500,7 +1500,7 @@
     "titulo": "Dividir fracciones al revés y dejar la respuesta sin simplificar",
     "materia": "mat",
     "mal": "En 3/4 dividido entre 1/2 el alumno voltea la primera fracción y hace 4/3 por 1/2 = 4/6, o multiplica derecho y escribe 3/8. Y cuando le sale bien 6/4, deja 6/4 escrito así, sin simplificar.",
-    "porque": "En una división de fracciones la primera se queda tal como está y la que se invierte es la segunda, la del divisor. Dividir 3/4 entre 1/2 es preguntar cuántas mitades caben en 3/4, y cabe más de una: por eso la respuesta tiene que salir mayor que 1, y las dos cuentas malas dan 4/6 (que es 2/3) y 3/8, las dos menores que 1. Y una respuesta sin simplificar es una respuesta a medias: en la prueba 6/4 3/2 valen lo mismo, pero la hoja pide la fracción en su forma más simple.",
+    "porque": "En una división de fracciones la primera se queda tal como está y la que se invierte es la segunda, la del divisor. Dividir 3/4 entre 1/2 es preguntar cuántas mitades caben en 3/4, y cabe más de una: por eso la respuesta tiene que salir mayor que 1, y las dos cuentas malas dan 4/6 (que es 2/3) y 3/8, las dos menores que 1. Y una respuesta sin simplificar es una respuesta a medias: en la prueba 6/4 y 3/2 valen lo mismo, pero la hoja pide la fracción en su forma más simple.",
     "bien": "3/4 dividido entre 1/2: la primera se queda, la segunda se invierte y se multiplica: 3/4 por 2/1 = 6/4. Ahora se simplifica dividiendo arriba y abajo entre el M.C.D. de 6 y 4, que es 2: 6 entre 2 = 3 y 4 entre 2 = 2, queda 3/2, o sea 1 1/2. Se comprueba con la pregunta: en 3/4 de tortilla cabe una mitad entera (que es 2/4) y todavía sobra 1/4, que es la mitad de una mitad; por eso caben 1 1/2 mitades, igual que 3/2. Correcto."
    },
    {
@@ -1526,13 +1526,13 @@
    }
   ],
   "estrategia": [
-   "Duerma temprano y desayune: un examen largo con hambre no lo pasa nadie.",
-   "Lleve dos lápices con punta, borrador y regla, y revise la mochila la noche antes.",
-   "Lea cada pregunta completa hasta el punto final antes de mirar las opciones.",
-   "En lectura, subraye en el texto la parte donde encontró la respuesta.",
-   "En matemáticas, escriba el procedimiento en la hoja y revise si el resultado tiene sentido.",
-   "La pregunta que se le trabe déjela señalada al lado del número y siga: regrese al final con el tiempo que le sobre.",
-   "Rellene completo el círculo de la respuesta que escogió y no deje ninguna pregunta en blanco: una respuesta pensada vale más que un espacio vacío."
+   "Duerme temprano y desayuna: un examen largo con hambre no lo pasa nadie.",
+   "Lleva dos lápices con punta, borrador y regla, y revisa la mochila la noche antes.",
+   "Lee cada pregunta completa hasta el punto final antes de mirar las opciones.",
+   "En lectura, subraya en el texto la parte donde encontraste la respuesta.",
+   "En matemáticas, escribe el procedimiento en la hoja y revisa si el resultado tiene sentido.",
+   "La pregunta que se te trabe déjala señalada al lado del número y sigue: regresa al final con el tiempo que te sobre.",
+   "Rellena completo el círculo de la respuesta que escogiste y no dejes ninguna pregunta en blanco: una respuesta pensada vale más que un espacio vacío."
   ]
  }
 }

@@ -42,7 +42,7 @@ const DIAGNOSTICOS = {
     { etapa: 9, q: 'Un adjetivo restrictivo se caracteriza por:', o: ['Limitar la referencia del sustantivo al que modifica', 'Ir siempre antepuesto', 'Ser invariable en género', 'Funcionar siempre como atributo'], a: 0 },
   ],
   planeta: [
-    { etapa: 1, q: '¿Qué línea imaginaria divide la Tierra en Hemisferio Norte y Hemisferio Sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El Ecuador', 'Círculo Polar Ártico'], a: 2 },
+    { etapa: 1, q: '¿Qué línea imaginaria divide la Tierra en hemisferio norte y hemisferio sur?', o: ['Meridiano de Greenwich', 'Trópico de Cáncer', 'El Ecuador', 'Círculo polar ártico'], a: 2 },
     { etapa: 2, q: '¿Cuál es el continente más pequeño del mundo?', o: ['Europa', 'Antártida', 'Oceanía', 'América Central'], a: 2 },
     { etapa: 3, q: '¿Cuál es el continente más grande y más poblado del mundo?', o: ['África', 'Europa', 'América', 'Asia'], a: 3 },
     { etapa: 4, q: '¿Cuándo un fenómeno natural se convierte en desastre?', o: ['Siempre que ocurre', 'Cuando afecta a una comunidad vulnerable y causa daños', 'Solo si ocurre de noche', 'Cuando lo predice la ciencia'], a: 1 },
@@ -102,7 +102,7 @@ const DIAGNOSTICOS = {
     { etapa: 2, q: 'En la tercera estrofa, ¿quién cae «envuelto en su sangre»?', o: ['Francisco Morazán', 'Cristóbal Colón', 'José Cecilio del Valle', 'Lempira'], a: 3 },
     { etapa: 3, q: '¿Cuál es la diferencia entre un héroe y un prócer?', o: ['El héroe defiende a su pueblo; el prócer ayuda a fundar la nación', 'El héroe es militar y el prócer es civil', 'No hay ninguna diferencia', 'El prócer es más antiguo'], a: 0 },
     { etapa: 3, q: '¿Quién redactó el Acta de Independencia de Centroamérica?', o: ['Francisco Morazán', 'Lempira', 'José Cecilio del Valle', 'Marco Aurelio Soto'], a: 2 },
-    { etapa: 3, q: '¿Quién fue el primer Jefe de Estado de Honduras, en 1824?', o: ['José Trinidad Cabañas', 'Ramón Rosa', 'José Trinidad Reyes', 'Dionisio de Herrera'], a: 3 },
+    { etapa: 3, q: '¿Quién fue el primer jefe de Estado de Honduras, en 1824?', o: ['José Trinidad Cabañas', 'Ramón Rosa', 'José Trinidad Reyes', 'Dionisio de Herrera'], a: 3 },
     { etapa: 3, q: '¿A quién honra el Día del Maestro Hondureño, el 17 de septiembre?', o: ['A Francisco Morazán', 'A José Trinidad Reyes', 'A Lempira', 'A José Cecilio del Valle'], a: 1 },
     { etapa: 4, q: '¿Cuáles son los tres poderes del Estado?', o: ['Civil, militar y religioso', 'Ejecutivo, Legislativo y Judicial', 'Nacional, departamental y municipal', 'Presidente, alcalde y juez'], a: 1 },
     { etapa: 4, q: '¿Qué poder del Estado HACE las leyes?', o: ['El Judicial', 'El Ejecutivo', 'El Legislativo, por medio del Congreso Nacional', 'Los tres a la vez'], a: 2 },

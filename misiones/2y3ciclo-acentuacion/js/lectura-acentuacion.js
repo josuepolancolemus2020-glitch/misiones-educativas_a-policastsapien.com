@@ -39,8 +39,8 @@ const LECTURA_ACENTUACION = {
   /* ════════ 4º GRADO (95–115 palabras · 3 literales, 1 inferencial, 1 crítica) ════════ */
   4: [
     { id: 'LT4-01', titulo: 'El álbum de mi papá', genero: 'narrativo',
-      texto: 'Mi papá guarda un álbum de fotografías arriba del ropero. Un día me dijo: mirá, este sí lo podés ver, pero con las manos limpias. Aquí está él a los quince años, flaquísimo, con una camisa que ya no existe. Yo le pregunté qué pasó con el árbol de mango que sale atrás y me contestó que lo cortaron cuando hicieron la carretera. En otra fotografía está mi mamá, más joven que yo ahora. Le pregunté cómo se conocieron y él se rió sin decirme nada. Después me dio el álbum y me dijo: guardalo vos, que a mí ya se me olvidan los nombres.',
-      porRegla: ['papá', 'álbum', 'fotografías', 'día', 'mirá', 'podés', 'Aquí', 'está', 'flaquísimo', 'pregunté', 'pasó', 'árbol', 'atrás', 'contestó', 'fotografía', 'mamá', 'rió', 'Después'],
+      texto: 'Mi papá guarda un álbum de fotografías arriba del ropero. Un día me dijo: «Mirá, este sí lo podés ver, pero con las manos limpias». Aquí está él a los quince años, flaquísimo, con una camisa que ya no existe. Yo le pregunté qué pasó con el árbol de mango que sale atrás y me contestó que lo cortaron cuando hicieron la carretera. En otra fotografía está mi mamá, más joven que yo ahora. Le pregunté cómo se conocieron y él se rio sin decirme nada. Después me dio el álbum y me dijo: «Guardalo vos, que a mí ya se me olvidan los nombres».',
+      porRegla: ['papá', 'álbum', 'fotografías', 'día', 'mirá', 'podés', 'Aquí', 'está', 'flaquísimo', 'pregunté', 'pasó', 'árbol', 'atrás', 'contestó', 'fotografía', 'mamá', 'Después'],
       diacritica: ['sí', 'él', 'qué', 'más', 'cómo', 'mí'],
       neutros: [],
       preguntas: [
@@ -57,7 +57,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT4-02', titulo: 'El árbol del patio', genero: 'narrativo',
-      texto: 'En el patio de la escuela hay un árbol de jocote que sembró un alumno hace más de veinte años. Nadie sabe quién fue él. La maestra dice que sí hay un nombre escrito en la corteza, pero ya casi no se lee. Los niños se sientan debajo cuando hace calor y en marzo se pelean por los jocotes. Un día vino un señor mayor, preguntó por el árbol y se quedó viéndolo un rato largo. No dijo quién era. Cuando le preguntaron si él lo había sembrado, contestó: qué importa eso ahora; lo que importa es que todavía está aquí.',
+      texto: 'En el patio de la escuela hay un árbol de jocote que sembró un alumno hace más de veinte años. Nadie sabe quién fue él. La maestra dice que sí hay un nombre escrito en la corteza, pero ya casi no se lee. Los niños se sientan debajo cuando hace calor y en marzo se pelean por los jocotes. Un día vino un señor mayor, preguntó por el árbol y se quedó viéndolo un rato largo. No dijo quién era. Cuando le preguntaron si él lo había sembrado, contestó: «¿Qué importa eso ahora? Lo que importa es que todavía está aquí».',
       porRegla: ['árbol', 'sembró', 'día', 'preguntó', 'quedó', 'viéndolo', 'había', 'contestó', 'todavía', 'está', 'aquí'],
       diacritica: ['más', 'quién', 'él', 'sí', 'qué'],
       neutros: [],
@@ -75,7 +75,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT4-03', titulo: 'La lámpara de gas', genero: 'expositivo',
-      texto: 'Antes de que llegara la energía eléctrica, en muchas casas se alumbraban con una lámpara de gas. Tenía un depósito, una mecha de algodón y un tubo de vidrio que se llama bombillo. Había que limpiarlo casi a diario, porque el humo lo dejaba negro. La mecha se cortaba pareja con una tijera: si quedaba disparejo, la llama hacía punta y ahumaba más. Mi abuela dice que ella estudió así toda la primaria. Le pregunté si no era difícil y me dijo que sí, pero que él le cortaba la mecha cada noche. El olor a gas todavía le recuerda las tareas, y eso le gusta más de lo que uno creería.',
+      texto: 'Antes de que llegara la energía eléctrica, en muchas casas se alumbraban con una lámpara de gas. Tenía un depósito, una mecha de algodón y un tubo de vidrio que se llama bombillo. Había que limpiarlo casi a diario, porque el humo lo dejaba negro. La mecha se cortaba pareja con una tijera: si quedaba dispareja, la llama hacía punta y ahumaba más. Mi abuela estudió así toda la primaria, junto a su papá. Le pregunté si no era difícil y me dijo que sí, pero que él le cortaba la mecha cada noche. El olor a gas todavía le recuerda las tareas, y eso le gusta más de lo que uno creería.',
       porRegla: ['energía', 'eléctrica', 'lámpara', 'Tenía', 'depósito', 'algodón', 'Había', 'hacía', 'estudió', 'así', 'pregunté', 'difícil', 'todavía', 'creería'],
       diacritica: ['más', 'sí', 'él'],
       neutros: [],
@@ -86,14 +86,14 @@ const LECTURA_ACENTUACION = {
           o: ['Porque el humo lo dejaba negro y la luz salía débil.', 'Para que no se quebrara.', 'Porque se llenaba de polvo.'], c: 0 },
         { tipo: 'literal', q: '¿Cómo se cortaba la mecha?', r: 'Pareja, con una tijera.',
           o: ['Pareja, con una tijera.', 'Con la mano.', 'En punta.'], c: 0 },
-        { tipo: 'inferencial', q: '¿Por qué nunca le pareció difícil a la abuela?', r: 'Porque no conocía otra cosa: para ella era lo normal.',
+        { tipo: 'inferencial', q: '¿Por qué la abuela estudiaba así aunque fuera difícil?', r: 'Porque no conocía otra cosa: para ella era lo normal.',
           o: ['Porque tenía muy buena vista.', 'Porque estudiaba de día.', 'Porque no conocía otra cosa: para ella era lo normal.'], c: 2 },
         { tipo: 'critica', q: '¿Por qué el olor le recuerda las tareas? Argumenta.', r: 'Respuesta abierta: se valora que relacione un olor con un recuerdo repetido.',
           o: ['Porque los cuadernos olían a gas.', 'Porque le gustaba ese olor.', 'Porque durante años estudió con esa lámpara, y el olor quedó pegado al recuerdo.'], c: 2 },
       ] },
 
     { id: 'LT4-04', titulo: 'El pájaro que aprendió a hablar', genero: 'narrativo',
-      texto: 'A mi tía le regalaron un perico y ella le enseñó dos frases. La primera era su propio nombre; la segunda, «¿ya comiste?». El animal las repetía todo el día, sin saber qué decía. Un domingo llegó el médico a ver a mi abuelo, que estaba enfermo. Cuando entró al cuarto, el perico gritó desde la cocina: ¿ya comiste? Todos se rieron, hasta mi abuelo, que llevaba dos días sin hablar. Mi tía dice que aquel día el perico hizo más que cualquier medicina. Yo creo que él ni cuenta se dio, pero eso no le quita nada.',
+      texto: 'A mi tía le regalaron un perico y ella le enseñó dos frases. La primera era su propio nombre; la segunda, «¿ya comiste?». El animal las repetía todo el día, sin saber qué decía. Un domingo llegó el médico a ver a mi abuelo, que estaba enfermo. Cuando entró al cuarto, el perico gritó desde la cocina: «¿Ya comiste?». Todos se rieron, hasta mi abuelo, que llevaba dos días sin hablar. Mi tía dice que aquel día el perico hizo más que cualquier medicina. Yo creo que él ni cuenta se dio, pero eso no le quita nada.',
       porRegla: ['tía', 'enseñó', 'repetía', 'día', 'decía', 'llegó', 'médico', 'entró', 'gritó', 'días'],
       diacritica: ['qué', 'más', 'él'],
       neutros: [],
@@ -111,8 +111,8 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT4-05', titulo: 'El cumpleaños de Andrés', genero: 'narrativo',
-      texto: 'A Andrés le hicieron una fiesta sorpresa y casi se descubre todo. Su mamá compró la piñata el sábado y la escondió arriba del ropero, pero él la vio cuando buscaba su balón. No dijo nada. El domingo llegaron sus primos y él fingió que se sorprendía. Actuó tan mal que su prima le preguntó: ¿vos ya sabías? Él contestó que no, y todos supieron que sí. Después, cuando ya estaban comiendo el pastel, su mamá le dijo al oído: te vi la cara, mijo. Él se rió y le contestó: ¿y vos creés que no sé mirar? Yo también te vi la cara a vos cuando escondiste la piñata.',
-      porRegla: ['Andrés', 'mamá', 'compró', 'sábado', 'escondió', 'balón', 'fingió', 'sorprendía', 'Actuó', 'preguntó', 'sabías', 'contestó', 'Después', 'oído', 'rió', 'creés', 'también'],
+      texto: 'A Andrés le hicieron una fiesta sorpresa y casi se descubre todo. Su mamá compró la piñata el sábado y la escondió arriba del ropero, pero él la vio cuando buscaba su balón. No dijo nada. El domingo llegaron sus primos y él fingió que se sorprendía. Actuó tan mal que su prima le preguntó: ¿vos ya sabías? Él contestó que no, y todos supieron que sí. Después, cuando ya estaban comiendo el pastel, su mamá le dijo al oído: «Te vi la cara, mijo». Él se rio y le contestó: «¿Y vos creés que no sé mirar? Yo también te vi la cara a vos cuando escondiste la piñata».',
+      porRegla: ['Andrés', 'mamá', 'compró', 'sábado', 'escondió', 'balón', 'fingió', 'sorprendía', 'Actuó', 'preguntó', 'sabías', 'contestó', 'Después', 'oído', 'creés', 'también'],
       diacritica: ['él', 'sí', 'sé'],
       neutros: [],
       preguntas: [
@@ -123,7 +123,7 @@ const LECTURA_ACENTUACION = {
         { tipo: 'literal', q: '¿Qué le dijo la mamá al oído?', r: 'Que le vio la cara.',
           o: ['Que le vio la cara.', 'Que repartiera el pastel.', 'Que se portara bien.'], c: 0 },
         { tipo: 'inferencial', q: '¿Por qué todos supieron que sí sabía?', r: 'Porque actuó tan mal fingiendo sorpresa que se le notó.',
-          o: ['Porque su mamá se los contó.', 'Porque su prima lo delató.', 'Porque actuó tan mal fingiendo sorpresa que se le notó.'], c: 2 },
+          o: ['Porque su mamá se lo contó.', 'Porque su prima lo delató.', 'Porque actuó tan mal fingiendo sorpresa que se le notó.'], c: 2 },
         { tipo: 'critica', q: '¿Hizo bien Andrés en fingir? Defiende tu postura.', r: 'Respuesta abierta: se valora que note la intención de no arruinarle el gusto a los demás.',
           o: ['No: debió decir la verdad de una vez.', 'Sí: quiso no arruinarle la sorpresa a los que la prepararon.', 'Da igual, igual lo descubrieron.'], c: 1 },
       ] },
@@ -146,11 +146,11 @@ const LECTURA_ACENTUACION = {
         { tipo: 'inferencial', q: '¿Qué quiere decir que «todavía no se acostumbra a que sea tan fácil»?', r: 'Que le cuesta creer que ahora hablar no cueste esfuerzo ni espera.',
           o: ['Que le cuesta creer que ahora hablar no cueste esfuerzo ni espera.', 'Que prefiere el teléfono viejo.', 'Que no sabe usar el celular.'], c: 0 },
         { tipo: 'critica', q: '¿Se aprovecha más lo que cuesta conseguir? Defiende tu postura.', r: 'Respuesta abierta: se valora que argumente con el ejemplo del texto o con uno propio.',
-          o: ['Muchas veces sí, aunque eso no vuelve mejor lo difícil.', 'Sí siempre: lo fácil no se valora.', 'No: da igual lo que cueste.'], c: 0 },
+          o: ['Muchas veces sí, aunque eso no vuelve mejor lo difícil.', 'Sí, siempre: lo fácil no se valora.', 'No: da igual lo que cueste.'], c: 0 },
       ] },
 
     { id: 'LT5-02', titulo: 'El músico del parque', genero: 'narrativo',
-      texto: 'En el parque central toca un señor con una guitarra vieja y un sombrero en el suelo. Yo pasaba por ahí todos los días y nunca le dejaba nada. Un día lo oí tocar una canción que mi papá cantaba, y me quedé parado sin darme cuenta. Cuando terminó, él me preguntó: ¿te gustó, muchacho? Le dije que sí, que mi papá la cantaba. Me preguntó dónde estaba él y le contesté que había fallecido. El señor no dijo nada. Volvió a tocarla completa, más despacio, mirándome a mí. Después siguió con otra como si nada. Desde entonces siempre le dejo algo, aunque él nunca me lo pidió. Sé que no se acuerda de mí, y qué importa: yo sí me acuerdo de él.',
+      texto: 'En el parque central toca un señor con una guitarra vieja y un sombrero en el suelo. Yo pasaba por ahí todos los días y nunca le dejaba nada. Un día lo oí tocar una canción que mi papá cantaba, y me quedé parado sin darme cuenta. Cuando terminó, él me preguntó: «¿Te gustó, muchacho?». Le dije que sí, que mi papá la cantaba. Me preguntó dónde estaba él y le contesté que había fallecido. El señor no dijo nada. Volvió a tocarla completa, más despacio, mirándome a mí. Después siguió con otra como si nada. Desde entonces siempre le dejo algo, aunque él nunca me lo pidió. Sé que no se acuerda de mí, y qué importa: yo sí me acuerdo de él.',
       porRegla: ['ahí', 'días', 'día', 'oí', 'canción', 'papá', 'quedé', 'terminó', 'preguntó', 'gustó', 'contesté', 'había', 'Volvió', 'mirándome', 'Después', 'siguió', 'pidió'],
       diacritica: ['él', 'sí', 'dónde', 'más', 'mí', 'Sé', 'qué'],
       neutros: [],
@@ -168,7 +168,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT5-03', titulo: 'Los números del médico', genero: 'expositivo',
-      texto: 'En el centro de salud la enfermera anota tres números en la tarjeta de cada niño: el peso, la talla y el perímetro del brazo. Ese último es el que más dice y casi nadie lo sabe. Si el brazo de un niño pequeño mide menos de cierta medida, hay desnutrición aguda aunque el peso parezca normal. La cinta que se usa tiene colores: verde, amarillo y rojo, para que se entienda sin saber leer números. La médica del turno explica siempre lo mismo a las madres: si le sale amarillo, todavía estamos a tiempo; si le sale rojo, hay que actuar hoy, no mañana. Y les enseña cómo medirlo ellas mismas en la casa. Si a él le sale rojo, dice, no esperés a nadie más: vení.',
+      texto: 'En el centro de salud la enfermera anota tres números en la tarjeta de cada niño: el peso, la talla y el perímetro del brazo. Ese último es el que más dice y casi nadie lo sabe. Si el brazo de un niño pequeño mide menos de cierta medida, hay desnutrición aguda aunque el peso parezca normal. La cinta que se usa tiene colores: verde, amarillo y rojo, para que se entienda sin saber leer números. La médica del turno explica siempre lo mismo a las madres: «Si le sale amarillo, todavía estamos a tiempo; si le sale rojo, hay que actuar hoy, no mañana». Y les enseña cómo medirlo ellas mismas en la casa. Si a él le sale rojo, dice, no esperés a nadie más: vení.',
       porRegla: ['números', 'perímetro', 'último', 'desnutrición', 'médica', 'todavía', 'esperés', 'vení'],
       diacritica: ['más', 'cómo', 'él'],
       neutros: [],
@@ -186,7 +186,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT5-04', titulo: 'La brújula sin aguja', genero: 'narrativo',
-      texto: 'Nos perdimos en el bosque de pino cuando bajábamos de la montaña. Mi tío no llevaba brújula ni teléfono con señal. Yo me asusté y él no. Me dijo: sentate, que perderse no es lo peor; lo peor es caminar rápido sin saber para dónde. Después me enseñó a mirar el sol y los troncos. Dijo que del lado donde crece más musgo suele haber menos sol, y que el agua siempre baja, así que si uno sigue una quebrada tarde o temprano encuentra gente. Seguimos la quebrada hora y media y salimos a una champa. Ahí él tomó café como si nada. Yo todavía me acuerdo de la primera frase más que del camino.',
+      texto: 'Nos perdimos en el bosque de pino cuando bajábamos de la montaña. Mi tío no llevaba brújula ni teléfono con señal. Yo me asusté y él no. Me dijo: «Sentate, que perderse no es lo peor; lo peor es caminar rápido sin saber para dónde». Después me enseñó a mirar el sol y los troncos. Dijo que del lado donde crece más musgo suele haber menos sol, y que el agua siempre baja, así que si uno sigue una quebrada tarde o temprano encuentra gente. Seguimos la quebrada hora y media y salimos a una champa. Ahí él tomó café como si nada. Yo todavía me acuerdo de la primera frase más que del camino.',
       porRegla: ['bajábamos', 'tío', 'brújula', 'teléfono', 'asusté', 'rápido', 'Después', 'enseñó', 'así', 'Ahí', 'tomó', 'café', 'todavía'],
       diacritica: ['él', 'dónde', 'más'],
       neutros: [],
@@ -204,7 +204,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT5-05', titulo: 'El árbitro del barrio', genero: 'narrativo',
-      texto: 'En la cancha del barrio nadie quería pitar los partidos, porque al árbitro siempre le gritan. Entonces don Óscar, que ya está mayor, se ofreció. Puso una sola condición: que el que reclamara saliera del campo, así fuera el mejor. El primer domingo expulsó a tres. El segundo, a uno. El tercero, a nadie. Un muchacho le preguntó por qué era tan estricto y él contestó algo que se quedó dando vueltas: yo no vine a que ustedes estén de acuerdo conmigo; vine para que puedan jugar. Ahora los partidos duran los noventa minutos completos y ya casi no hay pleitos. Él sigue equivocándose de vez en cuando y todos lo saben, pero nadie le grita. Mi tío dice que sí se equivoca menos que antes, y que aquí ya nadie discute qué es falta.',
+      texto: 'En la cancha del barrio nadie quería pitar los partidos, porque al árbitro siempre le gritan. Entonces don Óscar, que ya está mayor, se ofreció. Puso una sola condición: que el que reclamara saliera del campo, así fuera el mejor. El primer domingo expulsó a tres. El segundo, a uno. El tercero, a nadie. Un muchacho le preguntó por qué era tan estricto y él contestó algo que se quedó dando vueltas: «Yo no vine a que ustedes estén de acuerdo conmigo; vine para que puedan jugar». Ahora los partidos duran los noventa minutos completos y ya casi no hay pleitos. Él sigue equivocándose de vez en cuando y todos lo saben, pero nadie le grita. Mi tío dice que sí se equivoca menos que antes, y que aquí ya nadie discute qué es falta.',
       porRegla: ['quería', 'árbitro', 'Óscar', 'está', 'ofreció', 'condición', 'así', 'expulsó', 'preguntó', 'contestó', 'quedó', 'estén', 'equivocándose', 'tío', 'aquí'],
       diacritica: ['qué', 'él', 'sí'],
       neutros: [],
@@ -215,7 +215,7 @@ const LECTURA_ACENTUACION = {
           o: ['A tres.', 'A uno.', 'A nadie.'], c: 2 },
         { tipo: 'inferencial', q: '¿Por qué bajó tanto el número de expulsados?', r: 'Porque los jugadores entendieron la regla y dejaron de reclamar.',
           o: ['Porque los jugadores entendieron la regla y dejaron de reclamar.', 'Porque llegaron menos jugadores.', 'Porque él se ablandó.'], c: 0 },
-        { tipo: 'inferencial', q: '¿Qué significa «no vine a que estén de acuerdo conmigo; vine para que puedan jugar»?', r: 'Que su trabajo es que el partido exista, no que le den la razón.',
+        { tipo: 'inferencial', q: '¿Qué significa «no vine a que ustedes estén de acuerdo conmigo; vine para que puedan jugar»?', r: 'Que su trabajo es que el partido exista, no que le den la razón.',
           o: ['Que su trabajo es que el partido exista, no que le den la razón.', 'Que no quiere hablar con nadie.', 'Que no le importa equivocarse.'], c: 0 },
         { tipo: 'critica', q: '¿Por qué nadie le grita aunque se equivoque? Argumenta.', r: 'Respuesta abierta: se valora que note la autoridad ganada por sostener una regla pareja.',
           o: ['Porque le tienen miedo.', 'Porque se ganó el respeto sosteniendo la misma regla para todos.', 'Porque es mayor.'], c: 1 },
@@ -236,7 +236,7 @@ const LECTURA_ACENTUACION = {
           o: ['Que la secretaria se equivoca menos en la máquina.', 'Que la máquina era más rápida.', 'Que la computadora fallaba.'], c: 0 },
         { tipo: 'inferencial', q: '¿Por qué se equivoca menos en la máquina?', r: 'Porque corregir cuesta, así que piensa la frase antes de escribirla.',
           o: ['Porque corregir cuesta, así que piensa la frase antes de escribirla.', 'Porque las teclas son más grandes.', 'Porque escribe más despacio por costumbre.'], c: 0 },
-        { tipo: 'inferencial', q: '¿Qué quiere decir «lo hace más lento, que a veces es lo mismo»?', r: 'Que ir más despacio produce el mismo efecto que pensar mejor.',
+        { tipo: 'inferencial', q: '¿Qué quiere decir «lo hace más lento, y él dice que a veces es lo mismo»?', r: 'Que ir más despacio produce el mismo efecto que pensar mejor.',
           o: ['Que ir más despacio produce el mismo efecto que pensar mejor.', 'Que la máquina está descompuesta.', 'Que la lentitud es un defecto.'], c: 0 },
         { tipo: 'critica', q: '¿Conviene que corregir sea difícil? Defiende tu postura.', r: 'Respuesta abierta: se valora que discuta el costo de la fricción frente a lo que hace ganar.',
           o: ['No: entre más fácil, mejor.', 'A veces sí: la facilidad de borrar quita la costumbre de decidir antes.', 'Da igual, lo que importa es el resultado.'], c: 1 },
@@ -257,7 +257,7 @@ const LECTURA_ACENTUACION = {
         { tipo: 'inferencial', q: '¿Qué significa «la causa está en la casa»?', r: 'Que muchas enfermedades vienen de las condiciones en que se vive, no del cuerpo solo.',
           o: ['Que muchas enfermedades vienen de las condiciones en que se vive.', 'Que hay que desinfectar las casas.', 'Que la gente se enferma por descuido.'], c: 0 },
         { tipo: 'critica', q: '¿Vale la pena una consulta más larga? Argumenta.', r: 'Respuesta abierta: se valora que compare el costo inmediato con el resultado a mediano plazo.',
-          o: ['No: hay mucha gente esperando.', 'Solo si el paciente lo pide.', 'Sí si evita que la persona vuelva por lo mismo, como pasó aquí.'], c: 2 },
+          o: ['No: hay mucha gente esperando.', 'Solo si el paciente lo pide.', 'Sí, si evita que la persona vuelva por lo mismo, como pasó aquí.'], c: 2 },
       ] },
 
     { id: 'LT6-03', titulo: 'El día que se cayó el sistema', genero: 'narrativo',
@@ -279,8 +279,8 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT6-04', titulo: 'Cómo se afila un machete', genero: 'instructivo',
-      texto: 'Un machete mal afilado cansa más y corta menos, y además es más peligroso, porque rebota. Se afila con lima, no con piedra de agua: la piedra es para el cuchillo. Sujetá el machete firme, con el filo hacia arriba, y pasá la lima siempre en un solo sentido, empujando; nunca de ida y vuelta, que eso solo lo desgasta. El ángulo importa más que la fuerza: hay que mantener el mismo, más o menos como un cuarto de un ángulo recto. Vas a saber que está listo cuando se levante una rebaba finísima del otro lado. Ahí se le da unas pasadas suaves para quitarla. Y al terminar, límpielo y guárdelo seco: el óxido come el filo más rápido que el trabajo. Si él te queda áspero al tacto, todavía le falta; cuando ya no, dejalo así. ¿Y cómo sabés que está bueno? Rebana el zacate sin jalarlo.',
-      porRegla: ['además', 'Sujetá', 'pasá', 'ángulo', 'está', 'finísima', 'Ahí', 'límpielo', 'guárdelo', 'óxido', 'rápido', 'áspero', 'todavía', 'así', 'sabés'],
+      texto: 'Un machete mal afilado cansa más y corta menos, y además es más peligroso, porque rebota. Se afila con lima, no con piedra de agua: la piedra es para el cuchillo. Sujetá el machete firme, con el filo hacia arriba, y pasá la lima siempre en un solo sentido, empujando; nunca de ida y vuelta, que eso solo lo desgasta. El ángulo importa más que la fuerza: hay que mantener el mismo, más o menos como un cuarto de un ángulo recto. Vas a saber que está listo cuando se levante una rebaba finísima del otro lado. Ahí se le dan unas pasadas suaves para quitarla. Y al terminar, limpialo y guardalo seco: el óxido come el filo más rápido que el trabajo. Si él te queda áspero al tacto, todavía le falta; cuando ya no, dejalo así. ¿Y cómo sabés que está bueno? Rebana el zacate sin jalarlo.',
+      porRegla: ['además', 'Sujetá', 'pasá', 'ángulo', 'está', 'finísima', 'Ahí', 'óxido', 'rápido', 'áspero', 'todavía', 'así', 'sabés'],
       diacritica: ['más', 'él', 'cómo'],
       neutros: [],
       preguntas: [
@@ -297,7 +297,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT6-05', titulo: 'El examen que ella no firmó', genero: 'narrativo',
-      texto: 'A mitad del examen de Matemáticas, la profesora Ángela se dio cuenta de que un problema estaba mal planteado: no tenía solución. Faltaban veinte minutos. Podía dejarlo así y anular después esa pregunta, que es lo que casi todos habrían hecho. En cambio detuvo el examen, pidió disculpas y les dio a todos diez minutos más. Un alumno le reclamó que él ya lo había resuelto «de alguna manera». Ella le contestó: si lo resolviste, es que inventaste un dato, y eso no es lo que te estoy pidiendo. Después le entregó al director un informe escrito reconociendo el error, sin que nadie se lo pidiera. Aquello le costó un llamado de atención. Ella dice que sí lo volvería a hacer, porque lo que no se anota nunca se corrige. Él, el director, todavía no está de acuerdo.',
+      texto: 'A mitad del examen de Matemáticas, la profesora Ángela se dio cuenta de que un problema estaba mal planteado: no tenía solución. Faltaban veinte minutos. Podía dejarlo así y anular después esa pregunta, que es lo que casi todos habrían hecho. En cambio, detuvo el examen, pidió disculpas y les dio a todos diez minutos más. Un alumno le reclamó que él ya lo había resuelto «de alguna manera». Ella le contestó: «Si lo resolviste, es que inventaste un dato, y eso no es lo que te estoy pidiendo». Después le entregó al director un informe escrito reconociendo el error, sin que nadie se lo pidiera. Aquello le costó un llamado de atención. Ella dice que sí lo volvería a hacer, porque lo que no se anota nunca se corrige. Él, el director, todavía no está de acuerdo.',
       porRegla: ['Matemáticas', 'Ángela', 'tenía', 'solución', 'Podía', 'así', 'después', 'habrían', 'pidió', 'reclamó', 'había', 'contestó', 'entregó', 'costó', 'atención', 'volvería', 'todavía', 'está'],
       diacritica: ['más', 'él', 'sí'],
       neutros: [],
@@ -318,7 +318,7 @@ const LECTURA_ACENTUACION = {
   /* ════════ 7º GRADO (140–170 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
   7: [
     { id: 'LT7-01', titulo: 'La tilde que costó una casa', genero: 'expositivo',
-      texto: 'En un juzgado se discutió durante meses una escritura por culpa de una tilde. El documento decía que el terreno se repartía «entre él y su hermano»; en la copia registrada, alguien había escrito «entre el y su hermano», sin tilde. Parece una tontería y no lo es: «el» sin tilde es artículo y no señala a nadie, mientras que «él» señala a una persona concreta. El abogado de la otra parte argumentó que así el texto quedaba incompleto y que había que interpretarlo de otra manera. Tardaron casi un año en resolverlo. Al final ganó quien tenía el original firmado. La secretaria del juzgado dice que desde entonces revisa dos veces cada «él», cada «sí» y cada «más» de los documentos que pasan por sus manos, y que nadie le tuvo que explicar por qué. Cuando alguien le dice que exagera, ella contesta lo mismo: ¿vos sabés cuánto vale esa casa? Sí, yo sé, porque la vi discutirse un año entero por una rayita.',
+      texto: 'En un juzgado se discutió durante meses una escritura por culpa de una tilde. El documento decía que el terreno se repartía «entre él y su hermano»; en la copia registrada, alguien había escrito «entre el y su hermano», sin tilde. Parece una tontería y no lo es: «el» sin tilde es artículo y no señala a nadie, mientras que «él» señala a una persona concreta. El abogado de la otra parte argumentó que así el texto quedaba incompleto y que había que interpretarlo de otra manera. Tardaron casi un año en resolverlo. Al final ganó quien tenía el original firmado. La secretaria del juzgado dice que desde entonces revisa dos veces cada «él», cada «sí» y cada «más» de los documentos que pasan por sus manos, y que nadie le tuvo que explicar por qué. Cuando alguien le dice que exagera, ella contesta lo mismo: «¿Vos sabés cuánto vale esa casa?». Sí, yo sé, porque la vi discutirse un año entero por una rayita.',
       porRegla: ['discutió', 'decía', 'repartía', 'había', 'tontería', 'artículo', 'argumentó', 'así', 'ganó', 'tenía', 'sabés'],
       diacritica: ['él', 'sí', 'más', 'qué', 'cuánto', 'sé'],
       neutros: [],
@@ -336,7 +336,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT7-02', titulo: 'El sonido del motor', genero: 'narrativo',
-      texto: 'Don Álvaro repara motores desde hace cuarenta años y casi no usa aparatos de diagnóstico. Le pide al cliente que encienda y se queda oyendo con la cabeza ladeada, como si escuchara música. Un mecánico joven del taller de al lado le preguntó una vez cómo lo hacía. Él contestó: yo no sé más que vos de motores; lo que pasa es que yo he oído más. Después le explicó qué cambia según el ruido: un golpeteo parejo arriba es válvula; uno que sube con la aceleración, biela; un silbido, aire que entra por donde no debe. El muchacho empezó a grabar los motores con su teléfono y a compararlos. A los dos años ya diagnosticaba de oído casi tan rápido como él. Don Álvaro dice que aquello es lo que más le ha gustado de su oficio: que sí se puede enseñar.',
+      texto: 'Don Álvaro repara motores desde hace cuarenta años y casi no usa aparatos de diagnóstico. Le pide al cliente que encienda y se queda oyendo con la cabeza ladeada, como si escuchara música. Un mecánico joven del taller de al lado le preguntó una vez cómo lo hacía. Él contestó: «Yo no sé más que vos de motores; lo que pasa es que yo he oído más». Después le explicó qué cambia según el ruido: un golpeteo parejo arriba es válvula; uno que sube con la aceleración, biela; un silbido, aire que entra por donde no debe. El muchacho empezó a grabar los motores con su teléfono y a compararlos. A los dos años ya diagnosticaba de oído casi tan rápido como él. Don Álvaro dice que aquello es lo que más le ha gustado de su oficio: que sí se puede enseñar.',
       porRegla: ['Álvaro', 'diagnóstico', 'música', 'mecánico', 'preguntó', 'hacía', 'contestó', 'oído', 'Después', 'explicó', 'según', 'válvula', 'aceleración', 'empezó', 'teléfono', 'rápido'],
       diacritica: ['cómo', 'Él', 'sé', 'más', 'qué', 'sí'],
       neutros: [],
@@ -354,7 +354,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT7-03', titulo: 'La biblioteca de la esquina', genero: 'narrativo',
-      texto: 'Una señora abrió una biblioteca en el corredor de su casa con ciento veinte libros, casi todos regalados. No pide carné ni depósito. Anota en un cuaderno quién se llevó qué y confía. Le preguntaron cuántos libros ha perdido en cinco años y contestó, sin dudar, que once. Después aclaró algo que a mucha gente le extraña: no los cuenta como pérdida. Dijo que si un muchacho se quedó con un libro, en el peor de los casos ese libro está en una casa donde antes no había ninguno. Lo que sí la preocupa es otra cosa: que un niño no vuelva porque perdió uno y le da vergüenza. Por eso puso un letrero grande en la entrada que dice: si lo perdiste, vení igual. Desde que lo puso, tres devolvieron libros con años de atraso. Uno de ellos le dijo que no había vuelto por vergüenza. Ella le contestó que sí sabía, que por eso mismo puso el letrero, y que él no era el único.',
+      texto: 'Una señora abrió una biblioteca en el corredor de su casa con ciento veinte libros, casi todos regalados. No pide carné ni depósito. Anota en un cuaderno quién se llevó qué y confía. Le preguntaron cuántos libros ha perdido en cinco años y contestó, sin dudar, que once. Después aclaró algo que a mucha gente le extraña: no los cuenta como pérdida. Dijo que si un muchacho se quedó con un libro, en el peor de los casos ese libro está en una casa donde antes no había ninguno. Lo que sí la preocupa es otra cosa: que un niño no vuelva porque perdió uno y le da vergüenza. Por eso puso un letrero grande en la entrada que dice: «Si lo perdiste, vení igual». Desde que lo puso, tres devolvieron libros con años de atraso. Uno de ellos le dijo que no había vuelto por vergüenza. Ella le contestó que sí sabía, que por eso mismo puso el letrero, y que él no era el único.',
       porRegla: ['abrió', 'carné', 'depósito', 'llevó', 'confía', 'contestó', 'Después', 'aclaró', 'pérdida', 'quedó', 'está', 'había', 'perdió', 'vení', 'sabía', 'único'],
       diacritica: ['quién', 'qué', 'cuántos', 'sí', 'él'],
       neutros: [],
@@ -390,8 +390,8 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT7-05', titulo: 'El apodo que no se fue', genero: 'narrativo',
-      texto: 'A un compañero de sexto le pusieron un apodo en tercer grado por algo que ya nadie recuerda. Él nunca dijo que le molestara. Se reía cuando lo llamaban así, incluso más fuerte que los demás, y eso todos lo tomamos como permiso. En noveno hubo un trabajo de Español donde cada quien escribía una carta a sí mismo del futuro. La profesora leyó algunas en voz alta, con permiso. En la de él había una línea sola sobre el apodo: ojalá para entonces ya nadie se acuerde de cómo me dicen. Nadie se rió. Después del recreo, sin ponernos de acuerdo, varios empezamos a llamarlo por su nombre. Él no dijo nada tampoco esa vez. Pero al día siguiente llegó distinto, y hasta hoy no sé cómo explicar en qué se le notaba. Él tampoco lo diría, creo. Hay cosas que solo se saben mirando a alguien, y esa fue una.',
-      porRegla: ['reía', 'así', 'demás', 'escribía', 'leyó', 'había', 'línea', 'ojalá', 'rió', 'Después', 'día', 'llegó', 'diría'],
+      texto: 'A un compañero de sexto le pusieron un apodo en tercer grado por algo que ya nadie recuerda. Él nunca dijo que le molestara. Se reía cuando lo llamaban así, incluso más fuerte que los demás, y eso todos lo tomamos como permiso. En noveno hubo un trabajo de Español donde cada quien escribía una carta a sí mismo del futuro. La profesora leyó algunas en voz alta, con permiso. En la de él había una línea sola sobre el apodo: «Ojalá para entonces ya nadie se acuerde de cómo me dicen». Nadie se rio. Después del recreo, sin ponernos de acuerdo, varios empezamos a llamarlo por su nombre. Él no dijo nada tampoco esa vez. Pero al día siguiente llegó distinto, y hasta hoy no sé cómo explicar en qué se le notaba. Él tampoco lo diría, creo. Hay cosas que solo se saben mirando a alguien, y esa fue una.',
+      porRegla: ['reía', 'así', 'demás', 'escribía', 'leyó', 'había', 'línea', 'ojalá', 'Después', 'día', 'llegó', 'diría'],
       diacritica: ['Él', 'más', 'sí', 'cómo', 'sé', 'qué'],
       neutros: [],
       preguntas: [
@@ -402,7 +402,7 @@ const LECTURA_ACENTUACION = {
         { tipo: 'inferencial', q: '¿Por qué se reía más fuerte que los demás?', r: 'Para que no se notara que le dolía.',
           o: ['Para que no se notara que le dolía.', 'Porque le hacía gracia.', 'Porque quería caer bien.'], c: 0 },
         { tipo: 'inferencial', q: '¿Por qué el grupo cambió sin ponerse de acuerdo?', r: 'Porque todos entendieron a la vez lo que hasta entonces habían leído como permiso.',
-          o: ['Porque la profesora se los ordenó.', 'Porque todos entendieron a la vez lo que habían leído como permiso.', 'Porque se cansaron del apodo.'], c: 1 },
+          o: ['Porque la profesora se lo ordenó.', 'Porque todos entendieron a la vez lo que habían leído como permiso.', 'Porque se cansaron del apodo.'], c: 1 },
         { tipo: 'critica', q: '¿Basta con que alguien se ría para pensar que no le molesta? Argumenta.', r: 'Respuesta abierta: se valora que reconozca la risa como defensa y la dificultad de decirlo.',
           o: ['Sí: si no dice nada, es que está bien.', 'Solo si se ríe mucho.', 'No: reírse suele ser la única salida que le queda al que no se anima a decirlo.'], c: 2 },
       ] },
@@ -411,8 +411,8 @@ const LECTURA_ACENTUACION = {
   /* ════════ 8º GRADO (155–185 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
   8: [
     { id: 'LT8-01', titulo: 'El acta que nadie leyó', genero: 'narrativo',
-      texto: 'En una asamblea de patronato se aprobó por unanimidad un proyecto de alcantarillado. El acta la redactó el secretario esa misma noche y la firmaron catorce personas sin leerla, porque ya era tarde. Tres meses después apareció el problema: el acta decía que la comunidad aportaría la mano de obra «y los materiales menores», y nadie recordaba haber aprobado eso último. El secretario juró que así se dijo. Otros juraron que no. No hubo mala fe de nadie, y aun así la comunidad terminó pagando cemento que no tenía previsto. Desde entonces cambiaron una sola cosa: el acta se lee en voz alta antes de firmar, aunque sea tarde y aunque todos quieran irse. Doña Mercedes, que propuso la medida, lo dijo con una frase que ahí repiten siempre: si te da pereza oírla, imagináte lo que da pagarla. Y agregó algo más que se les quedó: yo no sé leer rápido, pero sé que lo que no oí no lo aprobé. Él, el secretario, fue el primero en apoyarla.',
-      porRegla: ['aprobó', 'redactó', 'después', 'apareció', 'decía', 'aportaría', 'último', 'juró', 'así', 'terminó', 'tenía', 'ahí', 'oírla', 'imagináte', 'agregó', 'quedó', 'rápido', 'oí', 'aprobé'],
+      texto: 'En una asamblea de patronato se aprobó por unanimidad un proyecto de alcantarillado. El acta la redactó el secretario esa misma noche y la firmaron catorce personas sin leerla, porque ya era tarde. Tres meses después apareció el problema: el acta decía que la comunidad aportaría la mano de obra «y los materiales menores», y nadie recordaba haber aprobado eso último. El secretario juró que así se dijo. Otros juraron que no. No hubo mala fe de nadie, y aun así la comunidad terminó pagando cemento que no tenía previsto. Desde entonces cambiaron una sola cosa: el acta se lee en voz alta antes de firmar, aunque sea tarde y aunque todos quieran irse. Doña Mercedes, que propuso la medida, lo dijo con una frase que ahí repiten siempre: «Si te da pereza oírla, imaginate lo que da pagarla». Y agregó algo más que se les quedó: «Yo no sé leer rápido, pero sé que lo que no oí no lo aprobé». Él, el secretario, fue el primero en apoyarla.',
+      porRegla: ['aprobó', 'redactó', 'después', 'apareció', 'decía', 'aportaría', 'último', 'juró', 'así', 'terminó', 'tenía', 'ahí', 'oírla', 'agregó', 'quedó', 'rápido', 'oí', 'aprobé'],
       diacritica: ['más', 'sé', 'Él'],
       neutros: [],
       preguntas: [
@@ -447,14 +447,14 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT8-03', titulo: 'El préstamo del celular', genero: 'narrativo',
-      texto: 'A una señora del mercado le ofrecieron un celular en cuotas y firmó sin leer el contrato, porque la letra era chiquísima y el vendedor tenía prisa. El aparato costaba cuatro mil lempiras; ella terminó pagando casi nueve mil. Cuando reclamó, le enseñaron el papel: ahí estaba todo, en su lugar, con los intereses escritos. Nadie la engañó en el sentido de mentirle. Su hija llevó el contrato a una organización de consumidores y ahí le explicaron dos cosas. La primera, que el interés era legal aunque fuera altísimo. La segunda, y esa sí le sirvió: que la ley obliga a informar el costo total antes de firmar, no solo la cuota mensual. Con eso reclamó y le devolvieron una parte. Hoy ella les pregunta a las compañeras del mercado una sola cosa antes de que firmen: ¿cuánto vas a pagar en total? Y si el vendedor no lo dice claro, que no firmen. Ella lo repite así: no preguntés cuánto es la cuota; preguntá cuánto vas a pagar en total, y que te lo escriba él.',
+      texto: 'A una señora del mercado le ofrecieron un celular en cuotas y firmó sin leer el contrato, porque la letra era chiquísima y el vendedor tenía prisa. El aparato costaba cuatro mil lempiras; ella terminó pagando casi nueve mil. Cuando reclamó, le enseñaron el papel: ahí estaba todo, en su lugar, con los intereses escritos. Nadie la engañó en el sentido de mentirle. Su hija llevó el contrato a una organización de consumidores y ahí le explicaron dos cosas. La primera, que el interés era legal aunque fuera altísimo. La segunda, y esa sí le sirvió: que la ley obliga a informar el costo total antes de firmar, no solo la cuota mensual. Con eso reclamó y le devolvieron una parte. Hoy ella les pregunta a las compañeras del mercado una sola cosa antes de que firmen: «¿Cuánto vas a pagar en total?». Y si el vendedor no lo dice claro, que no firmen. Ella lo repite así: «No preguntés cuánto es la cuota; preguntá cuánto vas a pagar en total, y que te lo escriba él».',
       porRegla: ['firmó', 'chiquísima', 'tenía', 'terminó', 'reclamó', 'ahí', 'engañó', 'llevó', 'organización', 'interés', 'altísimo', 'sirvió', 'así', 'preguntés', 'preguntá'],
       diacritica: ['sí', 'cuánto', 'él'],
       neutros: [],
       preguntas: [
         { tipo: 'literal', q: '¿Cuánto costaba el aparato y cuánto pagó?', r: 'Costaba cuatro mil y pagó casi nueve mil.',
           o: ['Costaba nueve mil y pagó cuatro mil.', 'Costaba cuatro mil y pagó casi nueve mil.', 'Costaba mil y pagó dos mil.'], c: 1 },
-        { tipo: 'literal', q: '¿Qué obliga la ley antes de firmar?', r: 'Informar el costo total, no solo la cuota mensual.',
+        { tipo: 'literal', q: '¿A qué obliga la ley antes de firmar?', r: 'Informar el costo total, no solo la cuota mensual.',
           o: ['Informar el costo total, no solo la cuota mensual.', 'Dar tres días para arrepentirse.', 'Leer el contrato en voz alta.'], c: 0 },
         { tipo: 'inferencial', q: '¿Por qué el texto dice que nadie la engañó?', r: 'Porque todo estaba escrito en el contrato; el problema fue que no se lo informaron claro.',
           o: ['Porque ella aceptó voluntariamente.', 'Porque el vendedor era honrado.', 'Porque todo estaba escrito; el problema fue que no se lo informaron claro.'], c: 2 },
@@ -465,7 +465,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT8-04', titulo: 'El río que cambió de nombre', genero: 'expositivo',
-      texto: 'Un río del oriente aparece en los mapas oficiales con un nombre y la gente de la zona lo llama de otro. No es un error de imprenta: son dos capas de historia. El nombre del mapa lo puso una comisión en el siglo pasado, tomándolo de una hacienda; el que usa la gente es más antiguo y viene de la lengua que se hablaba ahí antes. Cuando llegó un proyecto de agua, el conflicto se volvió práctico. Los documentos hablaban de un río que, según los vecinos, no existía; y los vecinos hablaban de otro que no salía en ningún papel. Tardaron meses en darse cuenta de que era el mismo. El técnico que lo resolvió no hizo nada complicado: llevó el mapa a la comunidad y pidió que le señalaran con el dedo dónde estaba cada cosa. Ahora el mapa lleva los dos nombres, uno debajo del otro. Un ingeniero preguntó cuál era el correcto y el técnico le contestó: ¿correcto para quién? Él usa el del papel; ellos usan el suyo, y los dos llegan al mismo río.',
+      texto: 'Un río del oriente aparece en los mapas oficiales con un nombre y la gente de la zona lo llama con otro. No es un error de imprenta: son dos capas de historia. El nombre del mapa lo puso una comisión en el siglo pasado, tomándolo de una hacienda; el que usa la gente es más antiguo y viene de la lengua que se hablaba ahí antes. Cuando llegó un proyecto de agua, el conflicto se volvió práctico. Los documentos hablaban de un río que, según los vecinos, no existía; y los vecinos hablaban de otro que no salía en ningún papel. Tardaron meses en darse cuenta de que era el mismo. El técnico que lo resolvió no hizo nada complicado: llevó el mapa a la comunidad y pidió que le señalaran con el dedo dónde estaba cada cosa. Ahora el mapa lleva los dos nombres, uno debajo del otro. Un ingeniero preguntó cuál era el correcto y el técnico le contestó: «¿Correcto para quién?». Él usa el del papel; ellos usan el suyo, y los dos llegan al mismo río.',
       porRegla: ['río', 'comisión', 'tomándolo', 'ahí', 'llegó', 'volvió', 'práctico', 'según', 'existía', 'salía', 'ningún', 'técnico', 'resolvió', 'llevó', 'pidió', 'preguntó', 'contestó'],
       diacritica: ['más', 'dónde', 'cuál', 'quién', 'Él'],
       neutros: [],
@@ -483,7 +483,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT8-05', titulo: 'La deuda de la pulpería', genero: 'narrativo',
-      texto: 'Don Jesús llevaba treinta años fiando en su pulpería y anotando en un cuaderno de espiral. Cuando murió, sus hijos encontraron catorce cuadernos y una deuda pendiente de más de sesenta mil lempiras repartida entre medio barrio. El hijo mayor quiso cobrar; el menor decía que no, que su papá jamás había cobrado a nadie. Discutieron dos semanas. Al final hicieron algo que no se le ocurrió a ninguno de los dos: le preguntaron a la gente. Pusieron un aviso diciendo que cada quien pasara a ver su cuenta y decidiera. En un mes pagaron cuarenta y dos personas; otras nueve pidieron plazo; tres dijeron que no podían y nadie les insistió. Se recuperó más de la mitad. El hijo menor dice que lo que más le sorprendió no fue el dinero: fue que casi todos ya sabían de memoria cuánto debían, aunque nadie se los hubiera cobrado nunca. Una señora le dijo: yo sé lo que le debo a él desde hace años; solo estaba esperando que alguien me dijera dónde pagar. Y sí pagó, hasta el último centavo.',
+      texto: 'Don Jesús llevaba treinta años fiando en su pulpería y anotando en un cuaderno de espiral. Cuando murió, sus hijos encontraron catorce cuadernos y una deuda pendiente de más de sesenta mil lempiras repartida entre medio barrio. El hijo mayor quiso cobrar; el menor decía que no, que su papá jamás había cobrado a nadie. Discutieron dos semanas. Al final hicieron algo que no se le ocurrió a ninguno de los dos: le preguntaron a la gente. Pusieron un aviso diciendo que cada quien pasara a ver su cuenta y decidiera. En un mes pagaron cuarenta y dos personas; otras nueve pidieron plazo; tres dijeron que no podían y nadie les insistió. Se recuperó más de la mitad. El hijo menor dice que lo que más le sorprendió no fue el dinero: fue que casi todos ya sabían de memoria cuánto debían, aunque nadie se lo hubiera cobrado nunca. Una señora le dijo: «Yo sé lo que le debo a él desde hace años; solo estaba esperando que alguien me dijera dónde pagar». Y sí pagó, hasta el último centavo.',
       porRegla: ['Jesús', 'pulpería', 'murió', 'decía', 'papá', 'jamás', 'había', 'ocurrió', 'podían', 'insistió', 'recuperó', 'sorprendió', 'sabían', 'debían', 'pagó', 'último'],
       diacritica: ['más', 'cuánto', 'sé', 'él', 'dónde', 'sí'],
       neutros: [],
@@ -535,12 +535,12 @@ const LECTURA_ACENTUACION = {
           o: ['Que al confiar más, bajamos la atención justo donde podría fallar.', 'Que la herramienta se vuelve más lenta.', 'Que hay que actualizarla seguido.'], c: 0 },
         { tipo: 'critica', q: '¿Convendría apagarlo? Defiende tu postura.', r: 'Respuesta abierta: se valora que evite los extremos y proponga un criterio de uso.',
           o: ['No, pero conviene revisar a mano lo propio, lo local y los nombres.', 'Sí: así uno aprende de verdad.', 'No: hay que confiar en la tecnología.'], c: 0 },
-        { tipo: 'critica', q: '¿Qué otras herramientas te ahorran esfuerzo y también atención? Da un ejemplo.', r: 'Respuesta abierta: se valora que traslade la idea a otro caso —el mapa, la calculadora— con un ejemplo propio.',
+        { tipo: 'critica', q: '¿Qué otras herramientas te ahorran esfuerzo y también atención? Da un ejemplo.', r: 'Respuesta abierta: se valora que traslade la idea a otro caso (el mapa, la calculadora) con un ejemplo propio.',
           o: ['El mapa del teléfono: uno llega, pero después no sabría volver solo.', 'Ninguna: las herramientas solo ayudan.', 'La televisión.'], c: 0 },
       ] },
 
     { id: 'LT9-03', titulo: 'La entrevista de trabajo', genero: 'narrativo',
-      texto: 'A un muchacho de la aldea lo llamaron a una entrevista en la ciudad. Llevaba su certificado de noveno, planchado, dentro de una bolsa plástica. Le preguntaron por qué debían contratarlo a él y no a otro. Contestó lo que le habían enseñado en el colegio: que era responsable, puntual y trabajador. Como todos. No quedó. Volvió a los seis meses a otra entrevista y esa vez respondió distinto: dijo que él caminaba dos horas para llegar al colegio y que no faltó ni un día en tres años, y que si le daban el trabajo iban a tener que echarlo, porque solo no se iba a ir. Lo contrataron. Después el jefe le contó por qué: las tres palabras del principio las dice cualquiera y no se pueden comprobar; lo de las dos horas caminando sí, y además ya estaba hecho. No prometió nada. Contó algo que había pasado, y eso pesó más que cualquier promesa. Él lo dice ahora así, cuando le preguntan: yo no sabía qué responder, solo dije lo único que sí sabía de mí. Lleva cuatro años en ese trabajo.',
+      texto: 'A un muchacho de la aldea lo llamaron a una entrevista en la ciudad. Llevaba su certificado de noveno, planchado, dentro de una bolsa plástica. Le preguntaron por qué debían contratarlo a él y no a otro. Contestó lo que le habían enseñado en el colegio: que era responsable, puntual y trabajador. Como todos. No quedó. Volvió a los seis meses a otra entrevista y esa vez respondió distinto: dijo que él caminaba dos horas para llegar al colegio y que no faltó ni un día en tres años, y que si le daban el trabajo iban a tener que echarlo, porque solo no se iba a ir. Lo contrataron. Después el jefe le contó por qué: las tres palabras del principio las dice cualquiera y no se pueden comprobar; lo de las dos horas caminando sí, y además ya estaba hecho. No prometió nada. Contó algo que había pasado, y eso pesó más que cualquier promesa. Él lo dice ahora así, cuando le preguntan: «Yo no sabía qué responder, solo dije lo único que sí sabía de mí». Lleva cuatro años en ese trabajo.',
       porRegla: ['plástica', 'debían', 'Contestó', 'habían', 'quedó', 'Volvió', 'respondió', 'faltó', 'día', 'Después', 'contó', 'además', 'prometió', 'había', 'pesó', 'así', 'sabía', 'único'],
       diacritica: ['qué', 'él', 'sí', 'más', 'mí'],
       neutros: [],
@@ -558,7 +558,7 @@ const LECTURA_ACENTUACION = {
       ] },
 
     { id: 'LT9-04', titulo: 'Los apellidos del cementerio', genero: 'narrativo',
-      texto: 'Un profesor de Sociales mandó a sus alumnos de noveno a copiar los apellidos del cementerio del pueblo. Parecía un trabajo raro y resultó ser el mejor del año. Encontraron que once apellidos concentraban más de la mitad de las tumbas, y que casi todos aparecían también en la lista de la escuela. Encontraron algo más: entre mil novecientos treinta y mil novecientos sesenta hay muchísimas tumbas de niños menores de cinco años, y después de esa fecha casi ninguna. Un alumno preguntó por qué, y ahí el profesor no contestó: los mandó a preguntar en sus casas. Volvieron con la respuesta que él quería que trajeran de ahí y no de un libro: la campaña de vacunación y el agua entubada. Al final del trabajo, una alumna escribió una frase que el profesor todavía guarda: nunca había pensado que una vacuna se pudiera ver desde afuera, contando piedras. El profesor cuenta que aquel año no cambió el programa ni pidió más recursos: solamente sacó a treinta muchachos del aula una mañana. Y todavía se pregunta por qué no lo había hecho antes, si estaba ahí, a cuatro cuadras.',
+      texto: 'Un profesor de Sociales mandó a sus alumnos de noveno a copiar los apellidos del cementerio del pueblo. Parecía un trabajo raro y resultó ser el mejor del año. Encontraron que once apellidos concentraban más de la mitad de las tumbas, y que casi todos aparecían también en la lista de la escuela. Encontraron algo más: entre mil novecientos treinta y mil novecientos sesenta hay muchísimas tumbas de niños menores de cinco años, y después de esa fecha casi ninguna. Un alumno preguntó por qué, y ahí el profesor no contestó: los mandó a preguntar en sus casas. Volvieron con la respuesta que él quería que trajeran de ahí y no de un libro: la campaña de vacunación y el agua entubada. Al final del trabajo, una alumna escribió una frase que el profesor todavía guarda: «Nunca había pensado que una vacuna se pudiera ver desde afuera, contando piedras». El profesor cuenta que aquel año no cambió el programa ni pidió más recursos: solamente sacó a treinta muchachos del aula una mañana. Y todavía se pregunta por qué no lo había hecho antes, si estaba ahí, a cuatro cuadras.',
       porRegla: ['mandó', 'Parecía', 'resultó', 'aparecían', 'también', 'muchísimas', 'después', 'preguntó', 'ahí', 'contestó', 'quería', 'vacunación', 'escribió', 'todavía', 'había', 'cambió', 'pidió', 'sacó'],
       diacritica: ['más', 'qué', 'él'],
       neutros: [],
@@ -617,7 +617,7 @@ const LECTURA_ACENTUACION_TALLER = [
   { id: 'caza', icono: '🎯', titulo: 'Caza de tildes', forma: 'cazar', meta: 10,
     instruccion: function (t, u, info) {
       return 'En esta lectura hay <strong>' + info.total + ' palabras con tilde</strong>. Encuentra ' +
-        '<strong>al menos ' + info.meta + '</strong> y tócalas. Si tocás una que no lleva tilde, ' +
+        '<strong>al menos ' + info.meta + '</strong> y tócalas. Si tocas una que no lleva tilde, ' +
         'te digo por qué no la lleva: también se aprende así.';
     },
     enPapel: function (t, u, info) {
@@ -650,7 +650,7 @@ const LECTURA_ACENTUACION_TALLER = [
     } },
 
   { id: 'clasifica', icono: '🗂️', titulo: '¿Por la regla o diacrítica?', forma: 'dosGrupos',
-    pista: 'Mirala en su oración antes de decidir',
+    pista: 'Mírala en su oración antes de decidir',
     grupos: [
       { clave: 'a', titulo: '📐 Por la regla', pista: 'aguda, llana o esdrújula', nombre: 'tildada por la regla' },
       { clave: 'b', titulo: '🆚 Diacrítica', pista: 'distingue dos palabras iguales', nombre: 'tilde diacrítica' }
@@ -667,7 +667,7 @@ const LECTURA_ACENTUACION_TALLER = [
            a SU palabra, no una regla en abstracto. */
         var c = (typeof LECTURA_ACENTOS !== 'undefined') ? LECTURA_ACENTOS.clasificar(it.palabra) : null;
         it.explica = c
-          ? '<strong>' + u.esc(c.silabas.join('-')) + '</strong> — ' + c.regla
+          ? '<strong>' + u.esc(c.silabas.join('-')) + '</strong>: ' + c.regla
           : '«' + u.esc(it.palabra) + '» lleva tilde.';
         return it;
       });

@@ -65,7 +65,9 @@ const plano = s => String(s)
   .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ')
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
   .replace(/[«»“”"'’]/g, ' ')
-  .replace(/\s+/g, ' ').trim().toLowerCase();
+  /* el punto de cierre va DETRÁS de las comillas («… tú».): se junta con la
+     palabra para que la ficha y el dato se lean igual, caiga donde caiga */
+  .replace(/\s+/g, ' ').replace(/ ([.,;:])/g, '$1').trim().toLowerCase();
 
 const leer = r => fs.readFileSync(path.join(RAIZ, r), 'utf8');
 

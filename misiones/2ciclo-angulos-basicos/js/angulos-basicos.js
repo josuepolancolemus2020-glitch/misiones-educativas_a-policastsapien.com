@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada: Ángulos — Tipos y Transportador* 🚀\n\nAprende a identificar ángulos agudos, rectos, obtusos, llanos y completos, y domina el uso del transportador. 📐\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada: Ángulos: Tipos y Transportador* 🚀\n\nAprende a identificar ángulos agudos, rectos, obtusos, llanos y completos, y domina el uso del transportador. 📐\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -117,20 +117,20 @@ function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.cl
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Ángulo',a:'figura formada por <strong>dos rayos</strong> (lados) que parten de un mismo punto. su abertura se mide en grados.'},
-  {w:'Vértice',a:'<strong>punto</strong> donde se unen los dos lados del ángulo. es el centro desde donde se abre.'},
-  {w:'Lado del ángulo',a:'cada uno de los <strong>dos rayos</strong> que forman el ángulo y salen del vértice.'},
-  {w:'Grado (°)',a:'unidad para <strong>medir</strong> la abertura de un ángulo. una vuelta completa tiene 360°.'},
-  {w:'Ángulo Agudo',a:'mide <strong>menos de 90°</strong>. es cerradito, como la punta de una pizza. ej: 45°.'},
-  {w:'Ángulo Recto',a:'mide <strong>exactamente 90°</strong>. como la esquina de una hoja o de una pared.'},
-  {w:'Ángulo Obtuso',a:'mide <strong>más de 90° y menos de 180°</strong>. está bien abierto. ej: 130°.'},
-  {w:'Ángulo Llano',a:'mide <strong>exactamente 180°</strong>. sus lados forman una <strong>línea recta</strong>.'},
-  {w:'Ángulo Completo',a:'mide <strong>360°</strong>. es una <strong>vuelta entera</strong>: los dos lados coinciden.'},
-  {w:'Ángulo Reflejo',a:'mide <strong>más de 180° y menos de 360°</strong>. es el ángulo "grande" que sobra.'},
-  {w:'Transportador',a:'instrumento en forma de <strong>semicírculo</strong> con escala de 0° a 180° para <strong>medir y trazar</strong> ángulos.'},
-  {w:'Complementarios',a:'dos ángulos que <strong>suman 90°</strong>. ej: 30° y 60° son complementarios.'},
-  {w:'Suplementarios',a:'dos ángulos que <strong>suman 180°</strong>. ej: 120° y 60° son suplementarios.'},
-  {w:'Bisectriz',a:'recta que <strong>divide un ángulo</strong> en dos ángulos <strong>iguales</strong>.'}
+  {w:'Ángulo',a:'Figura formada por <strong>dos rayos</strong> (lados) que parten de un mismo punto. Su abertura se mide en grados.'},
+  {w:'Vértice',a:'<strong>Punto</strong> donde se unen los dos lados del ángulo. Es el centro desde donde se abre.'},
+  {w:'Lado del ángulo',a:'Cada uno de los <strong>dos rayos</strong> que forman el ángulo y salen del vértice.'},
+  {w:'Grado (°)',a:'Unidad para <strong>medir</strong> la abertura de un ángulo. Una vuelta completa tiene 360°.'},
+  {w:'Ángulo Agudo',a:'Mide <strong>menos de 90°</strong>. Es cerradito, como la punta de una pizza. Ej.: 45°.'},
+  {w:'Ángulo Recto',a:'Mide <strong>exactamente 90°</strong>. Como la esquina de una hoja o de una pared.'},
+  {w:'Ángulo Obtuso',a:'Mide <strong>más de 90° y menos de 180°</strong>. Está bien abierto. Ej.: 130°.'},
+  {w:'Ángulo Llano',a:'Mide <strong>exactamente 180°</strong>. Sus lados forman una <strong>línea recta</strong>.'},
+  {w:'Ángulo Completo',a:'Mide <strong>360°</strong>. Es una <strong>vuelta entera</strong>: los dos lados coinciden.'},
+  {w:'Ángulo Reflejo',a:'Mide <strong>más de 180° y menos de 360°</strong>. Es el ángulo "grande" que sobra.'},
+  {w:'Transportador',a:'Instrumento en forma de <strong>semicírculo</strong> con escala de 0° a 180° para <strong>medir y trazar</strong> ángulos.'},
+  {w:'Complementarios',a:'Dos ángulos que <strong>suman 90°</strong>. Ej.: 30° y 60° son complementarios.'},
+  {w:'Suplementarios',a:'Dos ángulos que <strong>suman 180°</strong>. Ej.: 120° y 60° son suplementarios.'},
+  {w:'Bisectriz',a:'Recta que <strong>divide un ángulo</strong> en dos ángulos <strong>iguales</strong>.'}
 ];
 let fcIdx=0;
 function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=fcData[fcIdx].a; document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
@@ -140,7 +140,7 @@ function prevFC(){ sfx('click'); fcIdx=(fcIdx-1+fcData.length)%fcData.length; up
 
 // ===================== JUEGO: MEMORIA DE LOS ÁNGULOS =====================
 const memoPairs=[
-  {id:'agudo',t:'Agudo',d:'🔺 mide menos de 90° · ej: 45°'},
+  {id:'agudo',t:'Agudo',d:'🔺 mide menos de 90° · ej.: 45°'},
   {id:'recto',t:'Recto',d:'📐 mide exactamente 90°'},
   {id:'obtuso',t:'Obtuso',d:'🔻 más de 90° y menos de 180°'},
   {id:'llano',t:'Llano',d:'📏 mide 180° · línea recta'},
@@ -195,7 +195,7 @@ const qzData=[
   {q:'¿Cuál es el complemento de un ángulo de 60°?',o:['a) 120°','b) 40°','c) 30°','d) 60°'],c:2,feedback:'Los complementarios suman 90°: 90° − 60° = 30°.'},
   {q:'¿Cuál es el suplemento de un ángulo de 110°?',o:['a) 70°','b) 90°','c) 80°','d) 250°'],c:0,feedback:'Los suplementarios suman 180°: 180° − 110° = 70°.'},
   {q:'El punto donde se unen los dos lados de un ángulo se llama:',o:['a) vértice','b) grado','c) lado','d) arco'],c:0,feedback:'El vértice es el punto de unión de los dos lados del ángulo.'},
-  {q:'Un ángulo que mide más de 180° y menos de 360° se llama:',o:['a) llano','b) completo','c) reflejo','d) obtuso'],c:2,feedback:'El ángulo reflejo mide más de 180° pero no llega a los 360°.'}
+  {q:'Un ángulo que mide más de 180° y menos de 360° se llama:',o:['a) llano','b) completo','c) reflejo','d) obtuso'],c:2,feedback:'El ángulo reflejo mide más de 180°, pero no llega a los 360°.'}
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -310,7 +310,7 @@ function checkClass(){
   if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}
   else{fb('fbCls','Hay errores. Los errados llevan ✗ (tócalos para devolverlos al banco).',false);sfx('no');}
 }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -401,7 +401,7 @@ const prediceData = [
     opts: ['Agudo', 'Recto', 'Obtuso'],
     correct: 2,
     feedback: '¡Correcto! 130° es mayor que 90° y menor que 180°: es obtuso.',
-    wrongFeedback: 'La respuesta es: obtuso. 130° pasa de 90° pero no llega a 180°.',
+    wrongFeedback: 'La respuesta es: obtuso. 130° pasa de 90°, pero no llega a 180°.',
     explore: 'clasif'
   },
   {
@@ -542,34 +542,34 @@ const retoPairs=[
   {
     name:'Compara medidas 📐', hint:'Recuerda: recto=90°, llano=180°, completo=360°. Compara A con B',
     pool:[
-      {w:'A: un ángulo recto vs B: 90°',t:'igual'},{w:'A: un ángulo agudo de 40° vs B: 90°',t:'menor'},{w:'A: un ángulo llano vs B: 90°',t:'mayor'},
-      {w:'A: un ángulo obtuso de 120° vs B: 180°',t:'menor'},{w:'A: un ángulo completo vs B: 180°',t:'mayor'},{w:'A: un ángulo llano vs B: 180°',t:'igual'},
-      {w:'A: un ángulo agudo de 89° vs B: un ángulo recto',t:'menor'},{w:'A: un ángulo obtuso de 100° vs B: un ángulo recto',t:'mayor'},{w:'A: dos ángulos rectos vs B: un ángulo llano',t:'igual'},
-      {w:'A: un ángulo de 45° vs B: 45°',t:'igual'},{w:'A: un ángulo reflejo de 200° vs B: 180°',t:'mayor'},{w:'A: un ángulo de 30° vs B: 60°',t:'menor'}
+      {w:'A: un ángulo recto vs. B: 90°',t:'igual'},{w:'A: un ángulo agudo de 40° vs. B: 90°',t:'menor'},{w:'A: un ángulo llano vs. B: 90°',t:'mayor'},
+      {w:'A: un ángulo obtuso de 120° vs. B: 180°',t:'menor'},{w:'A: un ángulo completo vs. B: 180°',t:'mayor'},{w:'A: un ángulo llano vs. B: 180°',t:'igual'},
+      {w:'A: un ángulo agudo de 89° vs. B: un ángulo recto',t:'menor'},{w:'A: un ángulo obtuso de 100° vs. B: un ángulo recto',t:'mayor'},{w:'A: dos ángulos rectos vs. B: un ángulo llano',t:'igual'},
+      {w:'A: un ángulo de 45° vs. B: 45°',t:'igual'},{w:'A: un ángulo reflejo de 200° vs. B: 180°',t:'mayor'},{w:'A: un ángulo de 30° vs. B: 60°',t:'menor'}
     ]
   },
   {
-    name:'Complemento vs B 🔗', hint:'El complemento de A = 90° − A. Calcula y compáralo con B',
+    name:'Complemento vs. B 🔗', hint:'El complemento de A = 90° − A. Calcula y compáralo con B',
     pool:[
-      {w:'A: complemento de 30° vs B: 60°',t:'igual'},{w:'A: complemento de 40° vs B: 60°',t:'menor'},{w:'A: complemento de 20° vs B: 60°',t:'mayor'},
-      {w:'A: complemento de 45° vs B: 45°',t:'igual'},{w:'A: complemento de 10° vs B: 90°',t:'menor'},{w:'A: complemento de 25° vs B: 50°',t:'mayor'},
-      {w:'A: complemento de 60° vs B: 30°',t:'igual'},{w:'A: complemento de 70° vs B: 30°',t:'menor'},{w:'A: complemento de 15° vs B: 70°',t:'mayor'},
-      {w:'A: complemento de 50° vs B: 40°',t:'igual'},{w:'A: complemento de 80° vs B: 20°',t:'menor'},{w:'A: complemento de 35° vs B: 50°',t:'mayor'}
+      {w:'A: complemento de 30° vs. B: 60°',t:'igual'},{w:'A: complemento de 40° vs. B: 60°',t:'menor'},{w:'A: complemento de 20° vs. B: 60°',t:'mayor'},
+      {w:'A: complemento de 45° vs. B: 45°',t:'igual'},{w:'A: complemento de 10° vs. B: 90°',t:'menor'},{w:'A: complemento de 25° vs. B: 50°',t:'mayor'},
+      {w:'A: complemento de 60° vs. B: 30°',t:'igual'},{w:'A: complemento de 70° vs. B: 30°',t:'menor'},{w:'A: complemento de 15° vs. B: 70°',t:'mayor'},
+      {w:'A: complemento de 50° vs. B: 40°',t:'igual'},{w:'A: complemento de 80° vs. B: 20°',t:'menor'},{w:'A: complemento de 35° vs. B: 50°',t:'mayor'}
     ]
   },
   {
-    name:'Suplemento vs B ↔️', hint:'El suplemento de A = 180° − A. Calcula y compáralo con B',
+    name:'Suplemento vs. B ↔️', hint:'El suplemento de A = 180° − A. Calcula y compáralo con B',
     pool:[
-      {w:'A: suplemento de 120° vs B: 60°',t:'igual'},{w:'A: suplemento de 100° vs B: 60°',t:'mayor'},{w:'A: suplemento de 150° vs B: 60°',t:'menor'},
-      {w:'A: suplemento de 90° vs B: 90°',t:'igual'},{w:'A: suplemento de 130° vs B: 40°',t:'mayor'},{w:'A: suplemento de 160° vs B: 30°',t:'menor'},
-      {w:'A: suplemento de 45° vs B: 135°',t:'igual'},{w:'A: suplemento de 70° vs B: 100°',t:'mayor'},{w:'A: suplemento de 140° vs B: 50°',t:'menor'},
-      {w:'A: suplemento de 80° vs B: 100°',t:'igual'},{w:'A: suplemento de 110° vs B: 60°',t:'mayor'},{w:'A: suplemento de 170° vs B: 20°',t:'menor'}
+      {w:'A: suplemento de 120° vs. B: 60°',t:'igual'},{w:'A: suplemento de 100° vs. B: 60°',t:'mayor'},{w:'A: suplemento de 150° vs. B: 60°',t:'menor'},
+      {w:'A: suplemento de 90° vs. B: 90°',t:'igual'},{w:'A: suplemento de 130° vs. B: 40°',t:'mayor'},{w:'A: suplemento de 160° vs. B: 30°',t:'menor'},
+      {w:'A: suplemento de 45° vs. B: 135°',t:'igual'},{w:'A: suplemento de 70° vs. B: 100°',t:'mayor'},{w:'A: suplemento de 140° vs. B: 50°',t:'menor'},
+      {w:'A: suplemento de 80° vs. B: 100°',t:'igual'},{w:'A: suplemento de 110° vs. B: 60°',t:'mayor'},{w:'A: suplemento de 170° vs. B: 20°',t:'menor'}
     ]
   }
 ];
 let currentRetoPairIdx=0;
 let retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
-function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' — 💡 '+rp.hint; }
+function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' · 💡 '+rp.hint; }
 function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; resetReto(); _retoPairLbl(); showToast('🔀 Pareja: '+retoPairs[currentRetoPairIdx].name); }
 function startReto(){
     if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30;
@@ -616,11 +616,11 @@ function _tgLines(n){ let s=''; for(let i=0;i<n;i++) s+='<div style="border-bott
 function _tgTask(out,i,inner){ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content">${inner}</div>`; out.appendChild(div); }
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
 const pensamientoTaskDB=[
-  {q:'Pedro dice: "un ángulo de 90° es agudo porque es pequeño". ¿Tiene razón? Explica.',ans:'No. 90° es exactamente un ángulo RECTO. Los agudos miden MENOS de 90°.',type:'🔎 Detectar error'},
+  {q:'Pedro dice: "Un ángulo de 90° es agudo porque es pequeño". ¿Tiene razón? Explica.',ans:'No. 90° es exactamente un ángulo RECTO. Los agudos miden MENOS de 90°.',type:'🔎 Detectar error'},
   {q:'Un ángulo y su complemento son iguales. ¿Cuánto mide cada uno? Explica.',ans:'45° cada uno, porque 45° + 45° = 90° (complementarios).',type:'🕵️ Ángulo misterioso'},
   {q:'¿Puede un triángulo tener dos ángulos rectos? Justifica tu respuesta.',ans:'No. 90° + 90° = 180° y no quedarían grados para el tercer ángulo (los tres suman 180°).',type:'🧠 Razonar'},
   {q:'Explica los pasos para dibujar con el transportador un ángulo de 120°.',ans:'Respuesta variable: centro del transportador en el vértice, 0° sobre un lado, marcar 120° y trazar el segundo lado.',type:'📐 Con transportador'},
-  {q:'Inventa una situación de la vida real donde se use un ángulo recto y explícala.',ans:'Respuesta variable. Ej: la esquina de una ventana, el cruce de dos calles perpendiculares.',type:'✏️ Crear problema'},
+  {q:'Inventa una situación de la vida real donde se use un ángulo recto y explícala.',ans:'Respuesta variable. Ej.: la esquina de una ventana, el cruce de dos calles perpendiculares.',type:'✏️ Crear problema'},
   {q:'Un ángulo mide 200°. ¿Es posible? ¿Cómo se llama? Explica.',ans:'Sí es posible: es un ángulo REFLEJO (mide más de 180° y menos de 360°).',type:'🧠 Razonar'}
 ];
 function genPensamientoTask(out,count){
@@ -635,20 +635,20 @@ function genPensamientoTask(out,count){
 let ansVisible=false;
 function genTask(){ sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); ansVisible=false; const out=document.getElementById('tgOut'); out.innerHTML=''; if(type==='tipos') genTiposTask(out,count); else if(type==='complemento') genComplementoTask(out,count); else if(type==='suplemento') genSuplementoTask(out,count); else if(type==='suma') genSumaTask(out,count); else if(type==='pensamiento') genPensamientoTask(out,count); fin('s-tareas'); }
 function genTiposTask(out,count){
-  _instrBlock(out,'Instrucción — Clasificar ángulos',['Escribe si cada ángulo es agudo, recto, obtuso, llano, reflejo o completo.','<strong>Recuerda:</strong> agudo &lt;90° · recto =90° · obtuso 90°–180° · llano =180° · reflejo 180°–360° · completo =360°']);
+  _instrBlock(out,'Instrucción: Clasificar ángulos',['Escribe si cada ángulo es agudo, recto, obtuso, llano, reflejo o completo.','<strong>Recuerda:</strong> agudo &lt;90° · recto =90° · obtuso 90°–180° · llano =180° · reflejo 180°–360° · completo =360°']);
   const pool=[15,30,45,60,75,89,90,100,120,135,150,170,180,200,270,360];
   for(let i=0;i<count;i++){ const g=pool[_tgRint(0,pool.length-1)]; _tgTask(out,i,`<strong>¿Qué tipo de ángulo mide ${g}°?</strong>${_tgLines(1)}<div class="tg-answer">✔ ángulo ${_tipoAngulo(g)}</div>`); }
 }
 function genComplementoTask(out,count){
-  _instrBlock(out,'Instrucción — Complemento',['Calcula el complemento de cada ángulo: lo que le falta para llegar a 90°.','<strong>Fórmula:</strong> complemento = 90° − ángulo']);
+  _instrBlock(out,'Instrucción: Complemento',['Calcula el complemento de cada ángulo: lo que le falta para llegar a 90°.','<strong>Fórmula:</strong> complemento = 90° − ángulo']);
   for(let i=0;i<count;i++){ const a=_tgRint(5,85); _tgTask(out,i,`<strong>Complemento de ${a}°</strong>${_tgLines(1)}<div class="tg-answer">✔ 90° − ${a}° = ${90-a}°</div>`); }
 }
 function genSuplementoTask(out,count){
-  _instrBlock(out,'Instrucción — Suplemento',['Calcula el suplemento de cada ángulo: lo que le falta para llegar a 180°.','<strong>Fórmula:</strong> suplemento = 180° − ángulo']);
+  _instrBlock(out,'Instrucción: Suplemento',['Calcula el suplemento de cada ángulo: lo que le falta para llegar a 180°.','<strong>Fórmula:</strong> suplemento = 180° − ángulo']);
   for(let i=0;i<count;i++){ const a=_tgRint(10,170); _tgTask(out,i,`<strong>Suplemento de ${a}°</strong>${_tgLines(1)}<div class="tg-answer">✔ 180° − ${a}° = ${180-a}°</div>`); }
 }
 function genSumaTask(out,count){
-  _instrBlock(out,'Instrucción — Suma de ángulos',['Halla el ángulo que falta. En un triángulo los tres ángulos suman 180°; sobre una línea recta también suman 180°.','<strong>Pista:</strong> resta los ángulos conocidos del total.']);
+  _instrBlock(out,'Instrucción: Suma de ángulos',['Halla el ángulo que falta. En un triángulo los tres ángulos suman 180°; sobre una línea recta también suman 180°.','<strong>Pista:</strong> resta los ángulos conocidos del total.']);
   for(let i=0;i<count;i++){
     if(i%2===0){ let a=_tgRint(30,80), b=_tgRint(30,80); while(a+b>=175) b=_tgRint(30,80); _tgTask(out,i,`<strong>Un triángulo tiene ángulos de ${a}° y ${b}°. ¿Cuánto mide el tercero?</strong>${_tgLines(1)}<div class="tg-answer">✔ 180° − ${a}° − ${b}° = ${180-a-b}°</div>`); }
     else{ const a=_tgRint(20,150); _tgTask(out,i,`<strong>Dos ángulos sobre una recta: uno mide ${a}°. ¿Cuánto mide el otro?</strong>${_tgLines(1)}<div class="tg-answer">✔ 180° − ${a}° = ${180-a}°</div>`); }
@@ -813,11 +813,11 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 function genEval(){
   sfx('click');
   _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final — Forma ${cf}`;
+  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final · Forma ${cf}`;
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -835,7 +835,7 @@ function genEval(){
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item eval-auto-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">—</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">?</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -908,7 +908,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Ángulos: Tipos y Transportador · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
@@ -925,8 +925,8 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Ángulos: Tipos y Transportador · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Ángulos: Tipos y Transportador · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Ángulos: Tipos y Transportador · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Evaluación Final · Ángulos: Tipos y Transportador · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
@@ -944,7 +944,7 @@ const explicaData = [
     q: 'Explica los pasos para medir correctamente un ángulo con el transportador.',
     hint: '💡 Pista: piensa dónde va el centro y desde dónde se cuenta.',
     rubric: ['✓ Coloca el centro del transportador en el vértice', '✓ Alinea el 0° con uno de los lados', '✓ Lee el número por donde pasa el otro lado'],
-    suggested: 'Primero pongo el centro del transportador exactamente en el vértice del ángulo. Luego alineo la línea del 0° con uno de los lados. Por último leo el número de grados por donde pasa el otro lado.'
+    suggested: 'Primero pongo el centro del transportador exactamente en el vértice del ángulo. Luego alineo la línea del 0° con uno de los lados. Por último, leo el número de grados por donde pasa el otro lado.'
   },
   {
     q: 'Un ángulo mide 40°. Explica cómo hallar su complemento y su suplemento.',
@@ -1106,12 +1106,12 @@ function genEvalOp() {
   const _sO = document.getElementById('evalOpFormaSel');
   if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
   const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
-  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Ángulos: Tipos y Transportador`;
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa · Forma ${cf} · Ángulos: Tipos y Transportador`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
   const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-  bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Progresión: I–II identificar y medir (básico) → III calcular (intermedio) → IV aplicar (avanzado) → V corregir el error (desafío)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Clasifica 20 pts</span><span class="eval-score-pill esp-tf">II. Transportador 20 pts</span><span class="eval-score-pill esp-mc">III. Comp./Supl. 20 pts</span><span class="eval-score-pill esp-pr">IV. Problemas 30 pts</span><span class="eval-score-pill esp-cp">V. Detective 10 pts</span></div>`;
+  bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Progresión: I–II identificar y medir (básico) → III calcular (intermedio) → IV aplicar (avanzado) → V corregir el error (desafío)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Clasifica 20 pts</span><span class="eval-score-pill esp-tf">II. Transportador 20 pts</span><span class="eval-score-pill esp-mc">III. Comp./Supl. 20 pts</span><span class="eval-score-pill esp-pr">IV. Problemas 30 pts</span><span class="eval-score-pill esp-cp">V. Detective 10 pts</span></div>`;
   out.appendChild(bar);
 
   const clItems = genClasificaOpItems();
@@ -1198,7 +1198,7 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">III. Complemento y suplemento</div><table class="p-tbl">${d.csItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}°</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.pvItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansNum}° · ${it.extra}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Detective del error</div><table class="p-tbl">${d.deItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.pauta}</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos: Tipos y Transportador · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Ángulos: Tipos y Transportador · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 20 · III: 20 · IV: 30 · V: 10 · Forma ${forma}</p><p class="ph-crit" style="font-weight:400;">Progresión: I–II identificar y medir · III calcular · IV aplicar · V corregir el error</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Ángulos: Tipos y Transportador · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Ángulos: Tipos y Transportador · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Ángulos: Tipos y Transportador · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 20 · III: 20 · IV: 30 · V: 10 · Forma ${forma}</p><p class="ph-crit" style="font-weight:400;">Progresión: I–II identificar y medir · III calcular · IV aplicar · V corregir el error</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Ángulos: Tipos y Transportador · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1218,7 +1218,7 @@ function openDiploma(){
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();
@@ -1231,7 +1231,7 @@ function shareWA(){
   const msg=document.getElementById('diplMsg').textContent;
   const date=document.getElementById('diplDate').textContent;
   const achText=unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join('\n');
-  const txt=`${stars} CONSTANCIA DE LOGRO ${stars}\n\n📚 Misión: Ángulos — Tipos y Transportador\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText?'\n\n🏆 Logros desbloqueados:\n'+achText:''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
+  const txt=`${stars} CONSTANCIA DE LOGRO ${stars}\n\n📚 Misión: Ángulos: Tipos y Transportador\n👤 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText?'\n\n🏆 Logros desbloqueados:\n'+achText:''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
   _waShare(txt);
 }
 async function captureDiploma() {

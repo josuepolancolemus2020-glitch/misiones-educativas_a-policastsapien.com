@@ -105,20 +105,20 @@ function go(id){ sfx('click'); document.querySelectorAll('.sec').forEach(s=>s.cl
 
 // ===================== FLASHCARD DATA =====================
 const fcData=[
-  {w:'Múltiplo',a:'resultado de multiplicar un número por 1, 2, 3… los múltiplos de 4 son <strong>4, 8, 12, 16…</strong> ¡y nunca se acaban!'},
-  {w:'Divisor',a:'número que divide a otro en forma <strong>exacta</strong> (residuo 0). el 3 es divisor de 12 porque 12÷3=4 exacto.'},
-  {w:'Número Par',a:'termina en <strong>0, 2, 4, 6 u 8</strong>. se puede repartir en parejas sin que sobre nada.'},
-  {w:'Número Impar',a:'termina en <strong>1, 3, 5, 7 o 9</strong>. al repartir en parejas siempre <strong>sobra 1</strong>.'},
-  {w:'Número Primo',a:'tiene exactamente <strong>dos divisores</strong>: el 1 y él mismo. ejemplos: 2, 3, 5, 7, 11, 13…'},
-  {w:'Número Compuesto',a:'tiene <strong>más de dos divisores</strong>. el 12 tiene seis: 1, 2, 3, 4, 6 y 12.'},
-  {w:'El número 1',a:'<strong>no es primo ni compuesto</strong>: tiene un solo divisor (él mismo).'},
-  {w:'El número 2',a:'es el <strong>único primo que es par</strong>. todos los demás pares tienen al 2 como divisor extra.'},
-  {w:'Factor Primo',a:'divisor de un número que además es primo. los factores primos de 12 son <strong>2 y 3</strong>.'},
-  {w:'Descomposición Factorial',a:'escribir un número como producto de factores primos: <strong>12 = 2 × 2 × 3</strong>.'},
-  {w:'Criba de Eratóstenes',a:'método para descubrir primos: se <strong>tachan los múltiplos</strong> de 2, 3, 5, 7… y los que quedan sin tachar son primos.'},
-  {w:'Criterio del 2',a:'un número es divisible entre 2 si su <strong>última cifra es par</strong> (0, 2, 4, 6, 8).'},
-  {w:'Criterio del 5',a:'un número es divisible entre 5 si termina en <strong>0 o en 5</strong>.'},
-  {w:'Criterio del 3',a:'un número es divisible entre 3 si la <strong>suma de sus cifras</strong> es múltiplo de 3. 51 → 5+1=6 ✔.'}
+  {w:'Múltiplo',a:'Resultado de multiplicar un número por 1, 2, 3… Los múltiplos de 4 son <strong>4, 8, 12, 16…</strong> ¡y nunca se acaban!'},
+  {w:'Divisor',a:'Número que divide a otro en forma <strong>exacta</strong> (residuo 0). El 3 es divisor de 12 porque 12÷3=4 exacto.'},
+  {w:'Número Par',a:'Termina en <strong>0, 2, 4, 6 u 8</strong>. Se puede repartir en parejas sin que sobre nada.'},
+  {w:'Número Impar',a:'Termina en <strong>1, 3, 5, 7 o 9</strong>. Al repartir en parejas siempre <strong>sobra 1</strong>.'},
+  {w:'Número Primo',a:'Tiene exactamente <strong>dos divisores</strong>: el 1 y él mismo. Ejemplos: 2, 3, 5, 7, 11, 13…'},
+  {w:'Número Compuesto',a:'Tiene <strong>más de dos divisores</strong>. El 12 tiene seis: 1, 2, 3, 4, 6 y 12.'},
+  {w:'El número 1',a:'<strong>No es primo ni compuesto</strong>: tiene un solo divisor (él mismo).'},
+  {w:'El número 2',a:'Es el <strong>único primo que es par</strong>. Todos los demás pares tienen al 2 como divisor extra.'},
+  {w:'Factor Primo',a:'Divisor de un número que además es primo. Los factores primos de 12 son <strong>2 y 3</strong>.'},
+  {w:'Descomposición Factorial',a:'Escribir un número como producto de factores primos: <strong>12 = 2 × 2 × 3</strong>.'},
+  {w:'Criba de Eratóstenes',a:'Método para descubrir primos: se <strong>tachan los múltiplos</strong> de 2, 3, 5, 7… y los que quedan sin tachar son primos.'},
+  {w:'Criterio del 2',a:'Un número es divisible entre 2 si su <strong>última cifra es par</strong> (0, 2, 4, 6, 8).'},
+  {w:'Criterio del 5',a:'Un número es divisible entre 5 si termina en <strong>0 o en 5</strong>.'},
+  {w:'Criterio del 3',a:'Un número es divisible entre 3 si la <strong>suma de sus cifras</strong> es múltiplo de 3. 51 → 5+1=6 ✔.'}
 ];
 let fcIdx=0;
 function upFC(){ document.getElementById('fcInner').classList.remove('flipped'); document.getElementById('fcW').textContent=fcData[fcIdx].w; document.getElementById('fcA').innerHTML=fcData[fcIdx].a; document.getElementById('fcCtr').textContent=(fcIdx+1)+' / '+fcData.length; }
@@ -179,7 +179,7 @@ const qzData=[
   {q:'¿Cuál de estos números es múltiplo de 6?',o:['a) 32','b) 26','c) 40','d) 42'],c:3,feedback:'42 = 6 × 7. Los múltiplos de 6 son 6, 12, 18, 24, 30, 36, 42…'},
   {q:'¿Cuál es divisor de 20?',o:['a) 3','b) 4','c) 6','d) 9'],c:1,feedback:'20 ÷ 4 = 5 exacto (residuo 0), así que 4 es divisor de 20.'},
   {q:'¿Cuál de estos números es impar?',o:['a) 195','b) 348','c) 570','d) 236'],c:0,feedback:'195 termina en 5, que es cifra impar. ¡Solo la última cifra decide!'},
-  {q:'¿Cuál de estos números es primo?',o:['a) 21','b) 23','c) 25','d) 27'],c:1,feedback:'23 solo tiene dos divisores: 1 y 23. En cambio 21=3×7, 25=5×5 y 27=3×9.'},
+  {q:'¿Cuál de estos números es primo?',o:['a) 21','b) 23','c) 25','d) 27'],c:1,feedback:'23 solo tiene dos divisores: 1 y 23. En cambio, 21=3×7, 25=5×5 y 27=3×9.'},
   {q:'¿Cuántos divisores tiene el número 12?',o:['a) 4','b) 6','c) 5','d) 2'],c:1,feedback:'Los divisores de 12 son: 1, 2, 3, 4, 6 y 12. ¡Seis en total!'},
   {q:'La descomposición en factores primos de 18 es:',o:['a) 2 × 3 × 3','b) 2 × 9','c) 3 × 6','d) 18 × 1'],c:0,feedback:'2 × 9 y 3 × 6 dan 18, pero 9 y 6 NO son primos. La correcta es 2 × 3 × 3.'},
   {q:'¿Por qué el 1 no es un número primo?',o:['a) porque es impar','b) porque es muy pequeño','c) porque es par','d) porque tiene un solo divisor'],c:3,feedback:'Un primo necesita exactamente DOS divisores; el 1 solo tiene uno (él mismo).'},
@@ -300,7 +300,7 @@ function checkClass(){
   if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}
   else{fb('fbCls','Hay errores. Los errados llevan ✗ (tócalos para devolverlos al banco).',false);sfx('no');}
 }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -514,34 +514,34 @@ const retoPairs=[
   {
     name:'Cuenta divisores 🔑', hint:'Cuenta los divisores de A (¡no olvides el 1 y el mismo número!) y compara con B',
     pool:[
-      {w:'A: divisores de 12 vs B: 6',t:'igual'},{w:'A: divisores de 7 vs B: 3',t:'menor'},{w:'A: divisores de 16 vs B: 4',t:'mayor'},
-      {w:'A: divisores de 9 vs B: 3',t:'igual'},{w:'A: divisores de 25 vs B: 5',t:'menor'},{w:'A: divisores de 20 vs B: 5',t:'mayor'},
-      {w:'A: divisores de 11 vs B: 2',t:'igual'},{w:'A: divisores de 15 vs B: 6',t:'menor'},{w:'A: divisores de 24 vs B: 6',t:'mayor'},
-      {w:'A: divisores de 10 vs B: 4',t:'igual'},{w:'A: divisores de 13 vs B: 4',t:'menor'},{w:'A: divisores de 36 vs B: 8',t:'mayor'}
+      {w:'A: divisores de 12 vs. B: 6',t:'igual'},{w:'A: divisores de 7 vs. B: 3',t:'menor'},{w:'A: divisores de 16 vs. B: 4',t:'mayor'},
+      {w:'A: divisores de 9 vs. B: 3',t:'igual'},{w:'A: divisores de 25 vs. B: 5',t:'menor'},{w:'A: divisores de 20 vs. B: 5',t:'mayor'},
+      {w:'A: divisores de 11 vs. B: 2',t:'igual'},{w:'A: divisores de 15 vs. B: 6',t:'menor'},{w:'A: divisores de 24 vs. B: 6',t:'mayor'},
+      {w:'A: divisores de 10 vs. B: 4',t:'igual'},{w:'A: divisores de 13 vs. B: 4',t:'menor'},{w:'A: divisores de 36 vs. B: 8',t:'mayor'}
     ]
   },
   {
     name:'Doble, triple y mitad 🔁', hint:'Doble = ×2, triple = ×3, mitad = ÷2. Calcula A y compara con B',
     pool:[
-      {w:'A: el doble de 26 vs B: 50',t:'mayor'},{w:'A: la mitad de 84 vs B: 42',t:'igual'},{w:'A: el triple de 15 vs B: 50',t:'menor'},
-      {w:'A: el doble de 45 vs B: 90',t:'igual'},{w:'A: la mitad de 70 vs B: 40',t:'menor'},{w:'A: el triple de 20 vs B: 55',t:'mayor'},
-      {w:'A: el doble de 38 vs B: 80',t:'menor'},{w:'A: la mitad de 96 vs B: 48',t:'igual'},{w:'A: el triple de 12 vs B: 30',t:'mayor'},
-      {w:'A: el doble de 55 vs B: 110',t:'igual'},{w:'A: el triple de 25 vs B: 80',t:'menor'},{w:'A: la mitad de 120 vs B: 55',t:'mayor'}
+      {w:'A: el doble de 26 vs. B: 50',t:'mayor'},{w:'A: la mitad de 84 vs. B: 42',t:'igual'},{w:'A: el triple de 15 vs. B: 50',t:'menor'},
+      {w:'A: el doble de 45 vs. B: 90',t:'igual'},{w:'A: la mitad de 70 vs. B: 40',t:'menor'},{w:'A: el triple de 20 vs. B: 55',t:'mayor'},
+      {w:'A: el doble de 38 vs. B: 80',t:'menor'},{w:'A: la mitad de 96 vs. B: 48',t:'igual'},{w:'A: el triple de 12 vs. B: 30',t:'mayor'},
+      {w:'A: el doble de 55 vs. B: 110',t:'igual'},{w:'A: el triple de 25 vs. B: 80',t:'menor'},{w:'A: la mitad de 120 vs. B: 55',t:'mayor'}
     ]
   },
   {
     name:'Factorizaciones 🌳', hint:'Multiplica los factores primos de A y compara el resultado con B',
     pool:[
-      {w:'A: 2 × 2 × 3 vs B: 12',t:'igual'},{w:'A: 2 × 3 × 5 vs B: 28',t:'mayor'},{w:'A: 2 × 2 × 5 vs B: 24',t:'menor'},
-      {w:'A: 3 × 3 × 2 vs B: 18',t:'igual'},{w:'A: 2 × 2 × 2 vs B: 10',t:'menor'},{w:'A: 5 × 5 vs B: 20',t:'mayor'},
-      {w:'A: 2 × 3 × 7 vs B: 42',t:'igual'},{w:'A: 3 × 5 vs B: 16',t:'menor'},{w:'A: 2 × 2 × 3 × 3 vs B: 30',t:'mayor'},
-      {w:'A: 2 × 5 × 5 vs B: 50',t:'igual'},{w:'A: 3 × 3 × 3 vs B: 30',t:'menor'},{w:'A: 2 × 2 × 2 × 5 vs B: 36',t:'mayor'}
+      {w:'A: 2 × 2 × 3 vs. B: 12',t:'igual'},{w:'A: 2 × 3 × 5 vs. B: 28',t:'mayor'},{w:'A: 2 × 2 × 5 vs. B: 24',t:'menor'},
+      {w:'A: 3 × 3 × 2 vs. B: 18',t:'igual'},{w:'A: 2 × 2 × 2 vs. B: 10',t:'menor'},{w:'A: 5 × 5 vs. B: 20',t:'mayor'},
+      {w:'A: 2 × 3 × 7 vs. B: 42',t:'igual'},{w:'A: 3 × 5 vs. B: 16',t:'menor'},{w:'A: 2 × 2 × 3 × 3 vs. B: 30',t:'mayor'},
+      {w:'A: 2 × 5 × 5 vs. B: 50',t:'igual'},{w:'A: 3 × 3 × 3 vs. B: 30',t:'menor'},{w:'A: 2 × 2 × 2 × 5 vs. B: 36',t:'mayor'}
     ]
   }
 ];
 let currentRetoPairIdx=0;
 let retoPool=[], retoOk=0, retoErr=0, retoTimerInt=null, retoSec=30, retoRunning=false, retoCurrent=null;
-function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' — 💡 '+rp.hint; }
+function _retoPairLbl(){ const rp=retoPairs[currentRetoPairIdx]; const el=document.getElementById('retoPairLbl'); if(el) el.textContent='🎯 Pareja actual: '+rp.name+' · 💡 '+rp.hint; }
 function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; resetReto(); _retoPairLbl(); showToast('🔀 Pareja: '+retoPairs[currentRetoPairIdx].name); }
 function startReto(){
     if(retoRunning)return; sfx('click'); retoRunning=true; retoOk=0; retoErr=0; retoSec=30;
@@ -590,12 +590,12 @@ function _tgRint(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function _tgLines(n){ let s=''; for(let i=0;i<n;i++) s+='<div style="border-bottom:1.5px solid var(--border);min-width:200px;margin-top:0.4rem;height:1.3rem;">&nbsp;</div>'; return s; }
 function _tgTask(out,i,inner){ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content">${inner}</div>`; out.appendChild(div); }
 const pensamientoTaskDB=[
-  {q:'Sara dice: "todos los números impares son primos". Encuentra DOS números que demuestren que se equivoca.',ans:'Ejemplos: 9 (3×3), 15 (3×5), 21, 25, 27… son impares pero compuestos.',type:'🔎 Detectar error'},
+  {q:'Sara dice: "Todos los números impares son primos". Encuentra DOS números que demuestren que se equivoca.',ans:'Ejemplos: 9 (3×3), 15 (3×5), 21, 25, 27… son impares pero compuestos.',type:'🔎 Detectar error'},
   {q:'Un número misterioso es primo, par y menor que 10. ¿Cuál es y por qué es el único?',ans:'Es el 2. Todos los demás pares se dividen entre 2, así que tienen más de dos divisores.',type:'🕵️ Número misterioso'},
-  {q:'¿Puede un número terminar en 0 y NO ser múltiplo de 5? Justifica.',ans:'No. Todo número que termina en 0 es divisible entre 10, y por lo tanto también entre 5 y entre 2.',type:'🧠 Razonar'},
+  {q:'¿Puede un número terminar en 0 y NO ser múltiplo de 5? Justifica.',ans:'No. Todo número que termina en 0 es divisible entre 10, y, por lo tanto, también entre 5 y entre 2.',type:'🧠 Razonar'},
   {q:'Escribe un número de dos cifras que sea múltiplo de 2, de 3 y de 5 a la vez, y explica cómo lo encontraste.',ans:'30, 60 o 90. Debe terminar en 0 (mult. de 2 y 5) y la suma de cifras debe ser múltiplo de 3.',type:'⚡ Triple pista'},
   {q:'¿Cuál número tiene MÁS divisores: 13 o 12? Cuenta y explica la diferencia entre primo y compuesto.',ans:'12 tiene 6 divisores (1,2,3,4,6,12); 13 solo 2 (1 y 13). 12 es compuesto y 13 primo.',type:'🔑 Contar divisores'},
-  {q:'Inventa un problema de la vida real donde se necesite repartir 24 objetos en partes iguales y resuélvelo con divisores.',ans:'Respuesta variable. Ej: "24 mangos en bolsas de 6: 24÷6=4 bolsas". Funciona con 1,2,3,4,6,8,12,24.',type:'✏️ Crear problema'}
+  {q:'Inventa un problema de la vida real donde se necesite repartir 24 objetos en partes iguales y resuélvelo con divisores.',ans:'Respuesta variable. Ej.: "24 mangos en bolsas de 6: 24÷6=4 bolsas". Funciona con 1,2,3,4,6,8,12,24.',type:'✏️ Crear problema'}
 ];
 function genPensamientoTask(out,count){
   _instrBlock(out,'Instrucción',['Desarrolla con argumentos. Escribe, explica o inventa según se pide.','<em>Lo importante es tu razonamiento, no solo el resultado.</em>']);
@@ -611,7 +611,7 @@ function genTask(){ sfx('click'); const type=document.getElementById('tgType').v
 function _instrBlock(out,title,lines){ const ib=document.createElement('div'); ib.className='tg-instruction-block'; ib.innerHTML=`<h4>📋 ${title}</h4>`+lines.map(l=>`<p>${l}</p>`).join(''); out.appendChild(ib); }
 // ✖️ Escribir múltiplos (aleatorio: nunca se repite)
 function genMultiplosTask(out,count){
-  _instrBlock(out,'Instrucción — Múltiplos',['Escribe los primeros 6 múltiplos de cada número (empieza multiplicando por 1) y ENCIERRA el que se indica.','<strong>Pista:</strong> los múltiplos se obtienen multiplicando por 1, 2, 3, 4…']);
+  _instrBlock(out,'Instrucción: Múltiplos',['Escribe los primeros 6 múltiplos de cada número (empieza multiplicando por 1) y ENCIERRA el que se indica.','<strong>Pista:</strong> los múltiplos se obtienen multiplicando por 1, 2, 3, 4…']);
   for(let i=0;i<count;i++){
     const n=_tgRint(2,12); const k=_tgRint(3,6);
     const lista=[1,2,3,4,5,6].map(j=>n*j);
@@ -620,7 +620,7 @@ function genMultiplosTask(out,count){
 }
 // 🔑 Encontrar todos los divisores
 function genDivisoresTask(out,count){
-  _instrBlock(out,'Instrucción — Divisores',['Encuentra TODOS los divisores de cada número. Búscalos en parejas: si a×b da el número, tanto a como b son divisores.','<strong>Recuerda:</strong> el 1 y el mismo número SIEMPRE son divisores.']);
+  _instrBlock(out,'Instrucción: Divisores',['Encuentra TODOS los divisores de cada número. Búscalos en parejas: si a×b da el número, tanto a como b son divisores.','<strong>Recuerda:</strong> el 1 y el mismo número SIEMPRE son divisores.']);
   const pool=[12,16,18,20,24,28,30,32,36,40,45,48,50,54,60];
   for(let i=0;i<count;i++){
     const n=pool[_tgRint(0,pool.length-1)];
@@ -630,7 +630,7 @@ function genDivisoresTask(out,count){
 }
 // 2️⃣ Clasificar pares e impares
 function genParImparTask(out,count){
-  _instrBlock(out,'Instrucción — Pares e impares',['Clasifica cada lista: escribe P debajo de los pares e I debajo de los impares.','<strong>Truco:</strong> solo mira la ÚLTIMA cifra: 0,2,4,6,8 → par; 1,3,5,7,9 → impar.']);
+  _instrBlock(out,'Instrucción: Pares e impares',['Clasifica cada lista: escribe P debajo de los pares e I debajo de los impares.','<strong>Truco:</strong> solo mira la ÚLTIMA cifra: 0,2,4,6,8 → par; 1,3,5,7,9 → impar.']);
   for(let i=0;i<count;i++){
     const nums=[]; while(nums.length<6){ const v=_tgRint(10,9999); if(!nums.includes(v)) nums.push(v); }
     const ans=nums.map(v=>v+(v%2===0?'→P':'→I')).join(' · ');
@@ -639,7 +639,7 @@ function genParImparTask(out,count){
 }
 // 💎 ¿Primo o compuesto?
 function genPrimosTask(out,count){
-  _instrBlock(out,'Instrucción — ¿Primo o compuesto?',['Decide si cada número es PRIMO o COMPUESTO y justifica escribiendo sus divisores.','<strong>Recuerda:</strong> primo = exactamente 2 divisores. Prueba dividir entre 2, 3, 5 y 7.']);
+  _instrBlock(out,'Instrucción: ¿Primo o compuesto?',['Decide si cada número es PRIMO o COMPUESTO y justifica escribiendo sus divisores.','<strong>Recuerda:</strong> primo = exactamente 2 divisores. Prueba dividir entre 2, 3, 5 y 7.']);
   for(let i=0;i<count;i++){
     const n=_tgRint(4,60);
     const divs=_divisoresDe(n);
@@ -649,7 +649,7 @@ function genPrimosTask(out,count){
 }
 // 🌳 Descomposición en factores primos
 function genFactorizarTask(out,count){
-  _instrBlock(out,'Instrucción — Factores primos',['Descompón cada número con el árbol de factores: divide entre el menor primo posible (2, 3, 5, 7…) hasta llegar a 1.','<strong>Comprueba:</strong> al multiplicar todos los factores primos debe salir el número original.']);
+  _instrBlock(out,'Instrucción: Factores primos',['Descompón cada número con el árbol de factores: divide entre el menor primo posible (2, 3, 5, 7…) hasta llegar a 1.','<strong>Comprueba:</strong> al multiplicar todos los factores primos debe salir el número original.']);
   const pool=[12,18,20,24,28,30,36,40,42,45,48,54,60,72,75,80,84,90,96,100];
   for(let i=0;i<count;i++){
     const n=pool[_tgRint(0,pool.length-1)];
@@ -839,11 +839,11 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 function genEval(){
   sfx('click');
   _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */ window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final — Forma ${cf}`;
+  document.getElementById('eval-screen-title').textContent=`📋 Evaluación Final · Forma ${cf}`;
   evalAnsVisible=false;
   const out=document.getElementById('evalOut'); out.innerHTML='';
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">4 secciones × 5 preguntas × 5 pts = 100 pts</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Completar 25 pts</span><span class="eval-score-pill esp-tf">II. V/F 25 pts</span><span class="eval-score-pill esp-mc">III. Selección 25 pts</span><span class="eval-score-pill esp-pr">IV. Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   const cpItems=_pickF(evalCPBank,5, rng);
   const s1=document.createElement('div'); s1.innerHTML='<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -861,7 +861,7 @@ function genEval(){
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item eval-auto-item';
   let colLeft='<div class="eval-match-col"><h4>📘 Términos</h4>';
-  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">—</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ const selHtml='<select class="eval-pr-sel" data-epr="'+i+'" aria-label="Letra para '+item.term+'"><option value="">?</option>'+letters.map(L=>'<option value="'+L+'">'+L+'</option>').join('')+'</select>'; colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> ${selHtml} ${item.term}</div>`; });
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>📗 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -936,7 +936,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Evaluación Múltiplos, Divisores y Primos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.25rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.qn{font-weight:700;min-width:22px;flex-shrink:0;color:#1565c0;}.tf-row{display:flex;align-items:flex-start;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.25rem 0.2rem;border-bottom:1px solid #eee;}.tf-blank{display:inline-block;min-width:42px;border-bottom:1.5px solid #111;flex-shrink:0;margin:0 0.2rem;margin-top:0.2rem;}.tf-text{flex:1;}.mc-item{border:1px solid #ddd;border-radius:4px;padding:0.28rem 0.45rem;margin-bottom:0.22rem;break-inside:avoid;}.mc-q{font-size:10.5pt;line-height:1.4;display:flex;gap:0.3rem;margin-bottom:0.18rem;}.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.22rem 0.55rem;}.mc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0.08rem 0.25rem;margin-left:1.3rem;}.mc-opt{font-size:9.5pt;display:flex;align-items:center;gap:0.22rem;}.mc-opt input{width:12px;height:12px;flex-shrink:0;}.cp-row{display:flex;align-items:baseline;gap:0.3rem;font-size:10.5pt;line-height:1.4;padding:0.22rem 0.2rem;border-bottom:1px solid #eee;}.cp-text{flex:1;}.cp-blank{display:inline-block;min-width:130px;border-bottom:1.5px solid #111;margin:0 0.12rem;}.pr-section{break-inside:avoid;}.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 0.5rem;margin-top:0.15rem;}.pr-head{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.pr-item{font-size:10pt;padding:0.22rem 0.32rem;background:#e3f2fd;border-radius:3px;margin-bottom:0.12rem;display:flex;align-items:center;gap:0.22rem;line-height:1.2;}.pr-num{font-weight:700;color:#1565c0;min-width:19px;flex-shrink:0;}.pr-line{display:inline-block;min-width:19px;border-bottom:1.5px solid #111;margin-right:0.14rem;flex-shrink:0;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-lbl{font-weight:700;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.obt-pct{font-weight:700;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.4rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #1565c0;}.zg-wrap{margin-top:0.5rem;border:1px solid #bbb;border-radius:4px;padding:0.3rem 0.55rem;break-inside:avoid;page-break-inside:avoid;}
 .zg-title{font-size:9.5pt;font-weight:700;margin-bottom:0.3rem;}
@@ -953,8 +953,8 @@ const doc=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Eva
 .pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}
 .pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}
-.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Múltiplos, Divisores y Primos · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE — Evaluación Final · Múltiplos, Divisores y Primos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
-  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
+.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Final · Misión Múltiplos, Divisores y Primos · Matemática</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 4 secciones × 5 preguntas × 5 pts c/u · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA DOCENTE: Evaluación Final · Múltiplos, Divisores y Primos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts | 4 secciones × 5 preguntas × 5 pts | Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div>
+  ${zgBlock}</div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
   win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
@@ -984,7 +984,7 @@ const explicaData = [
     q: 'Descompón el número 36 en factores primos y explica cada paso del árbol.',
     hint: '💡 Pista: divide siempre entre el menor primo posible (2, luego 3…).',
     rubric: ['✓ Divide sucesivamente: 36÷2=18, 18÷2=9, 9÷3=3, 3÷3=1', '✓ Escribe la factorización: 36 = 2 × 2 × 3 × 3', '✓ Comprueba multiplicando los factores: 2×2×3×3=36'],
-    suggested: 'Divido 36 entre 2 y da 18; 18 entre 2 da 9; 9 ya no se divide entre 2, así que uso el 3: 9÷3=3 y 3÷3=1. Los factores primos son 2, 2, 3 y 3, o sea 36 = 2 × 2 × 3 × 3. Compruebo: 2×2=4, 4×9=36 ✔.'
+    suggested: 'Divido 36 entre 2 y da 18; 18 entre 2 da 9; 9 ya no se divide entre 2, así que uso el 3: 9÷3=3 y 3÷3=1. Los factores primos son 2, 2, 3 y 3, o sea, 36 = 2 × 2 × 3 × 3. Compruebo: 2×2=4, 4×9=36 ✔.'
   },
   {
     q: 'Inventa un problema de la vida real donde se repartan 24 objetos en partes iguales y resuélvelo usando los divisores de 24.',
@@ -1091,20 +1091,20 @@ function genRadarItems() {
   tipos.forEach(tp => {
     if (tp === 0) {
       const last = _opRint(0, 9); const n = _opRint(120, 899) * 10 + last; const esPar = last % 2 === 0;
-      items.push({ text: `Radar Par-Impar: sin dividir, ¿el número ${_fmtNum(n)} es par o impar? Escribe <em>par</em> o <em>impar</em>.`, ansTxt: esPar ? ['par'] : ['impar'], ansShow: (esPar ? 'par' : 'impar') + ` — la última cifra manda: termina en ${last}` });
+      items.push({ text: `Radar Par-Impar: sin dividir, ¿el número ${_fmtNum(n)} es par o impar? Escribe <em>par</em> o <em>impar</em>.`, ansTxt: esPar ? ['par'] : ['impar'], ansShow: (esPar ? 'par' : 'impar') + `: la última cifra manda, termina en ${last}` });
     } else if (tp === 1) {
       const last = _opRnd() < 0.5 ? [0, 5][_opRint(0, 1)] : [1, 2, 3, 4, 6, 7, 8, 9][_opRint(0, 7)];
       const n = _opRint(70, 900) * 10 + last; const ok = last === 0 || last === 5;
-      items.push({ text: `Criterio del 5: ¿${_fmtNum(n)} es divisible entre 5? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + ` — termina en ${last}` + (ok ? ' (0 o 5)' : ' (ni 0 ni 5)') });
+      items.push({ text: `Criterio del 5: ¿${_fmtNum(n)} es divisible entre 5? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + `: termina en ${last}` + (ok ? ' (0 o 5)' : ' (ni 0 ni 5)') });
     } else if (tp === 2) {
       const n = _opRint(102, 987); const s = _sumaCifras(n); const ok = n % 3 === 0;
-      items.push({ text: `Criterio del 3: suma las cifras de ${_fmtNum(n)}. ¿Es divisible entre 3? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + ` — suma de cifras: ${s}, ${ok ? 'sí' : 'no'} es múltiplo de 3` });
+      items.push({ text: `Criterio del 3: suma las cifras de ${_fmtNum(n)}. ¿Es divisible entre 3? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + `: la suma de cifras es ${s}, que ${ok ? 'sí' : 'no'} es múltiplo de 3` });
     } else if (tp === 3) {
       const last = _opRnd() < 0.5 ? 0 : _opRint(1, 9); const n = _opRint(80, 999) * 10 + last; const ok = last === 0;
-      items.push({ text: `Criterio del 10: ¿${_fmtNum(n)} es divisible entre 10? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + ` — termina en ${last}` + (ok ? '' : ', no en 0') });
+      items.push({ text: `Criterio del 10: ¿${_fmtNum(n)} es divisible entre 10? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + `: termina en ${last}` + (ok ? '' : ', no en 0') });
     } else {
       const last = _opRint(0, 9); const n = _opRint(300, 999) * 10 + last; const ok = last % 2 === 0;
-      items.push({ text: `Criterio del 2: sin dividir, ¿${_fmtNum(n)} es divisible entre 2? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + ` — su última cifra es ${last}, cifra ${ok ? 'par' : 'impar'}` });
+      items.push({ text: `Criterio del 2: sin dividir, ¿${_fmtNum(n)} es divisible entre 2? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ok ? ['si', 'sí'] : ['no'], ansShow: (ok ? 'sí' : 'no') + `: su última cifra es ${last}, cifra ${ok ? 'par' : 'impar'}` });
     }
   });
   return items;
@@ -1148,7 +1148,7 @@ function genVidaItems() {
       const usaPrimo = _opRnd() < 0.5;
       if (usaPrimo) {
         const p = _MD_PRIMOS[_opRint(2, _MD_PRIMOS.length - 1)];
-        items.push({ text: `Para el desfile hay ${p} estudiantes. ¿De cuántas maneras se pueden formar en filas iguales con más de 1 fila y más de 1 estudiante por fila, sin que sobre nadie? (Si no se puede, escribe 0 y piensa por qué.)`, ansNum: 0, just: `0 maneras — ${p} es primo: sus únicos divisores son 1 y ${p}, así que solo cabe 1 × ${p}` });
+        items.push({ text: `Para el desfile hay ${p} estudiantes. ¿De cuántas maneras se pueden formar en filas iguales con más de 1 fila y más de 1 estudiante por fila, sin que sobre nadie? (Si no se puede, escribe 0 y piensa por qué.)`, ansNum: 0, just: `0 maneras, porque ${p} es primo: sus únicos divisores son 1 y ${p}, así que solo cabe 1 × ${p}` });
       } else {
         const pool = [12, 18, 20, 24, 30, 36]; const n = pool[_opRint(0, pool.length - 1)];
         const modos = _divisoresDe(n).length - 2;
@@ -1166,16 +1166,16 @@ const _RT_FACT_BUENAS = [30, 42, 66, 70, 105];
 function genRetoItems() {
   const items = [];
   { const n = _RT_IMPARES_COMP[_opRint(0, _RT_IMPARES_COMP.length - 1)]; const name = OP_NAMES[_opRint(0, OP_NAMES.length - 1)]; const s = _sumaCifras(n);
-    items.push({ pts: 5, text: `Detective del error: ${name} dice que ${n} es primo "porque es impar". ¿Tiene razón? Escribe <em>sí</em> o <em>no</em> y justifícalo en tu cuaderno con el criterio del 3.`, ansTxt: ['no'], ansShow: `no — Error 2: no todo impar es primo. La suma de sus cifras es ${s} (múltiplo de 3), así que ${n} = 3 × ${n / 3}: es compuesto` }); }
+    items.push({ pts: 5, text: `Detective del error: ${name} dice que ${n} es primo "porque es impar". ¿Tiene razón? Escribe <em>sí</em> o <em>no</em> y justifícalo en tu cuaderno con el criterio del 3.`, ansTxt: ['no'], ansShow: `no (Error 2): no todo impar es primo. La suma de sus cifras es ${s} (múltiplo de 3), así que ${n} = 3 × ${n / 3}: es compuesto` }); }
   { const esBuena = _opRnd() < 0.5;
     if (esBuena) { const n = _RT_FACT_BUENAS[_opRint(0, _RT_FACT_BUENAS.length - 1)]; const f = _factoriza(n);
-      items.push({ pts: 5, text: `Juez de factorizaciones: ¿${n} = ${f.join(' × ')} es una descomposición en factores primos TERMINADA? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ['si', 'sí'], ansShow: `sí — todos los factores (${f.join(', ')}) son primos: el árbol terminó` });
+      items.push({ pts: 5, text: `Juez de factorizaciones: ¿${n} = ${f.join(' × ')} es una descomposición en factores primos TERMINADA? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ['si', 'sí'], ansShow: `sí: todos los factores (${f.join(', ')}) son primos y el árbol terminó` });
     } else { const fm = _RT_FACT_MALAS[_opRint(0, _RT_FACT_MALAS.length - 1)]; const n = fm[0]; const f = _factoriza(n);
-      items.push({ pts: 5, text: `Juez de factorizaciones: ¿${n} = ${fm[1]} es una descomposición en factores primos TERMINADA? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ['no'], ansShow: `no — Error 5: quedan factores compuestos. La factorización completa es ${n} = ${f.join(' × ')}` }); } }
+      items.push({ pts: 5, text: `Juez de factorizaciones: ¿${n} = ${fm[1]} es una descomposición en factores primos TERMINADA? Escribe <em>sí</em> o <em>no</em>.`, ansTxt: ['no'], ansShow: `no (Error 5): quedan factores compuestos. La factorización completa es ${n} = ${f.join(' × ')}` }); } }
   { const m = _opRint(3, 9); const ks = _pickF([2, 3, 4, 5, 6, 7, 8, 9], 4, _opRnd);
     const intruso = m * _opRint(2, 9) + _opRint(1, m - 1);
     const lista = _shuffleF(ks.map(k => m * k).concat([intruso]), _opRnd);
-    items.push({ pts: 10, text: `El intruso de la Criba: cuatro de estos números son múltiplos de ${m} y uno NO lo es: ${lista.map(_fmtNum).join(' · ')}. Escribe el número intruso.`, ansNum: intruso, ansShow: `${_fmtNum(intruso)} — no está en la tabla del ${m}; los demás (${ks.map(k => m * k).sort((a, b) => a - b).map(_fmtNum).join(', ')}) sí son múltiplos de ${m}`, lista }); }
+    items.push({ pts: 10, text: `El intruso de la Criba: cuatro de estos números son múltiplos de ${m} y uno NO lo es: ${lista.map(_fmtNum).join(' · ')}. Escribe el número intruso.`, ansNum: intruso, ansShow: `${_fmtNum(intruso)}: no está en la tabla del ${m}; los demás (${ks.map(k => m * k).sort((a, b) => a - b).map(_fmtNum).join(', ')}) sí son múltiplos de ${m}`, lista }); }
   return items;
 }
 
@@ -1185,7 +1185,7 @@ function genEvalOp() {
   const _sO = document.getElementById('evalOpFormaSel');
   if (_sO && parseInt(_sO.value, 10)) evalOpFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_sO.value, 10)));
   const cf = evalOpFormNum; window._currentEvalOpForm = cf; _opRnd = _evalRng(100000 + cf); /* la Forma cf siembra todo el azar de la prueba operativa */ evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1; _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; }); saveProgress();
-  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa — Forma ${cf} · Múltiplos, Divisores y Primos`;
+  document.getElementById('evalop-screen-title').textContent = `📐 Prueba Operativa · Forma ${cf} · Múltiplos, Divisores y Primos`;
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
@@ -1224,7 +1224,7 @@ function genEvalOp() {
   s4.innerHTML = '<div class="eval-section-title">IV. Problemas de la vida real <span class="eval-pts">30 pts · 10 pts c/u</span></div><p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.5rem;">Nivel avanzado. Resuelve en tu cuaderno con múltiplos, divisores y primos; escribe la respuesta numérica.</p>';
   viItems.forEach((it, i) => {
     const d = document.createElement('div'); d.className = 'eval-item eval-auto-item';
-    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} — ${it.just}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`;
+    d.innerHTML = `<div class="opx-row"><span class="eval-num">${i+1}</span><span class="opx-expr">${it.text}</span><input class="eval-cp-input" type="text" data-vi="${i}" autocomplete="off" inputmode="numeric"></div><div class="eval-answer">${_fmtNum(it.ansNum)} · ${it.just}</div><div class="eval-item-feedback" id="evalFbVi${i}" aria-live="polite"></div>`;
     s4.appendChild(d);
   });
   out.appendChild(s4);
@@ -1295,9 +1295,9 @@ function printEvalOp() {
   pR += `<div class="p-sec"><div class="p-ttl">I. Múltiplos y divisores</div><table class="p-tbl">${d.mdItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">II. Radar de divisibilidad</div><table class="p-tbl">${d.rdItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec"><div class="p-ttl">III. La Regla de Oro</div><table class="p-tbl">${d.rgItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">▢ = ${_fmtNum(it.ansNum)}</td></tr>`).join('')}</table></div>`;
-  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)} — ${it.just}</td></tr>`).join('')}</table></div>`;
+  pR += `<div class="p-sec"><div class="p-ttl">IV. Problemas de la vida real</div><table class="p-tbl">${d.viItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${_fmtNum(it.ansNum)} · ${it.just}</td></tr>`).join('')}</table></div>`;
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de pensamiento crítico</div><table class="p-tbl">${d.rtItems.map((it, i) => `<tr><td class="pn">${i+1}.</td><td class="pa">${it.ansShow} (${it.pts} pts)</td></tr>`).join('')}</table></div>`;
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Múltiplos, Divisores y Primos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Múltiplos, Divisores y Primos · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Múltiplos, Divisores y Primos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Múltiplos, Divisores y Primos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.45rem 0 0.2rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;flex-shrink:0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.22rem;}.opx-blank{display:inline-block;width:80px;flex:none;border-bottom:1.5px solid #111;min-height:13px;margin-left:0.3rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:10pt;padding:0.24rem 0.1rem;border-bottom:1px dotted #ddd;}.opx-space{height:26px;border-bottom:1px dotted #ccc;margin:0 0 2px 20px;}.prb-text{flex:1;line-height:1.35;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.16rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.45rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.3rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#1565c0;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:700;font-family:'Courier New',monospace;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:8mm 10mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Múltiplos, Divisores y Primos · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Múltiplos, Divisores y Primos · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1317,7 +1317,7 @@ function openDiploma(){
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏆 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();

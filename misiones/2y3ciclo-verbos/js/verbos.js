@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -196,19 +196,19 @@ function fb(id, msg, ok) {
 // ===================== FLASHCARD DATA =====================
 const fcData = [
     { w: 'Verbo', a: '🏃‍♂️ Palabra que expresa una <strong>acción</strong>, <strong>estado</strong> o <strong>proceso</strong> del sujeto.' },
-    { w: 'Infinitivo', a: '🏁 Nombre del verbo. Sus terminaciones son <strong>-ar</strong>, <strong>-er</strong>, o <strong>-ir</strong> (amar, comer, vivir).' },
-    { w: 'Raíz', a: '🌱 Parte invariable del verbo que contiene su <strong>significado principal</strong>. Ej: de <em>cant-ar</em> es <em>cant-</em>.' },
-    { w: 'Desinencia', a: '🧩 Parte final que se añade a la raíz para indicar tiempo, persona y número. Ej: cant-<em>amos</em>.' },
-    { w: 'Tiempo Pasado', a: '⏪ Expresa una acción que <strong>ya ocurrió</strong>. Ej: Yo <em>jugué</em>, tú <em>comiste</em>.' },
-    { w: 'Tiempo Presente', a: '▶️ Expresa una acción que ocurre <strong>en este momento</strong>. Ej: Yo <em>juego</em>, él <em>corre</em>.' },
-    { w: 'Tiempo Futuro', a: '⏩ Expresa una acción que <strong>ocurrirá después</strong>. Ej: Yo <em>jugaré</em>, nosotros <em>dormiremos</em>.' },
-    { w: 'Modo Indicativo', a: '✅ Expresa hechos <strong>reales o seguros</strong>. Ej: Él <em>estudia</em> mucho.' },
-    { w: 'Modo Subjuntivo', a: '💭 Expresa <strong>dudas, deseos o posibilidades</strong>. Ej: Ojalá él <em>estudie</em>.' },
-    { w: 'Modo Imperativo', a: '⚠️ Expresa <strong>órdenes, mandatos o ruegos</strong>. Ej: ¡<em>Estudia</em> ahora mismo!' },
-    { w: 'Verbo Regular', a: '📏 Al conjugarse, <strong>mantiene su raíz igual</strong> en todos los tiempos. Ej: cantar (canto, canté).' },
-    { w: 'Verbo Irregular', a: '🔄 Al conjugarse, <strong>cambia su raíz</strong> o desinencia. Ej: ir (fui, iré), ser (soy, seré).' },
-    { w: 'Persona Gramatical', a: '🗣️ Indica quién realiza la acción: <strong>1ra</strong> (yo/nosotros), <strong>2da</strong> (tú/ustedes), <strong>3ra</strong> (él/ellos).' },
-    { w: 'Número Gramatical', a: '🔢 Indica si la acción la realiza uno (<strong>Singular</strong>) o varios sujetos (<strong>Plural</strong>).' },
+    { w: 'Infinitivo', a: '🏁 Nombre del verbo. Sus terminaciones son <strong>-ar</strong>, <strong>-er</strong> o <strong>-ir</strong> (amar, comer, vivir).' },
+    { w: 'Raíz', a: '🌱 Parte invariable del verbo que contiene su <strong>significado principal</strong>. Ej.: de <em>cant-ar</em> es <em>cant-</em>.' },
+    { w: 'Desinencia', a: '🧩 Parte final que se añade a la raíz para indicar tiempo, persona y número. Ej.: cant-<em>amos</em>.' },
+    { w: 'Tiempo Pasado', a: '⏪ Expresa una acción que <strong>ya ocurrió</strong>. Ej.: Yo <em>jugué</em>, tú <em>comiste</em>.' },
+    { w: 'Tiempo Presente', a: '▶️ Expresa una acción que ocurre <strong>en este momento</strong>. Ej.: Yo <em>juego</em>, él <em>corre</em>.' },
+    { w: 'Tiempo Futuro', a: '⏩ Expresa una acción que <strong>ocurrirá después</strong>. Ej.: Yo <em>jugaré</em>, nosotros <em>dormiremos</em>.' },
+    { w: 'Modo Indicativo', a: '✅ Expresa hechos <strong>reales o seguros</strong>. Ej.: Él <em>estudia</em> mucho.' },
+    { w: 'Modo Subjuntivo', a: '💭 Expresa <strong>dudas, deseos o posibilidades</strong>. Ej.: Ojalá él <em>estudie</em>.' },
+    { w: 'Modo Imperativo', a: '⚠️ Expresa <strong>órdenes, mandatos o ruegos</strong>. Ej.: ¡<em>Estudia</em> ahora mismo!' },
+    { w: 'Verbo Regular', a: '📏 Al conjugarse, <strong>mantiene su raíz igual</strong> en todos los tiempos. Ej.: cantar (canto, canté).' },
+    { w: 'Verbo Irregular', a: '🔄 Al conjugarse, <strong>cambia su raíz</strong> o desinencia. Ej.: ir (fui, iré), ser (soy, seré).' },
+    { w: 'Persona Gramatical', a: '🗣️ Indica quién realiza la acción: <strong>1.ª</strong> (yo/nosotros), <strong>2.ª</strong> (tú/ustedes), <strong>3.ª</strong> (él/ellos).' },
+    { w: 'Número Gramatical', a: '🔢 Indica si la acción la realiza uno (<strong>singular</strong>) o varios sujetos (<strong>plural</strong>).' },
 ];
 let fcIdx = 0;
 function upFC() {
@@ -368,7 +368,7 @@ function nextClassGroup() {
     sfx('click');
     currentClassGroupIdx = (currentClassGroupIdx + 1) % classGroups.length;
     buildClass(); document.getElementById('fbCls').classList.remove('show');
-    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs ' + classGroups[currentClassGroupIdx].label[1]);
+    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs. ' + classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass() { sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -549,7 +549,7 @@ function nextRetoPair() {
     document.getElementById('retoWord').textContent = '¡Prepárate!';
     document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
     document.getElementById('fbReto').classList.remove('show');
-    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto() {
     sfx('click'); clearInterval(retoTimerInt); retoRunning = false; retoSec = 30; retoOk = 0; retoErr = 0;
@@ -579,21 +579,21 @@ const identifyTaskDB = [
     { s: 'Tú pareces cansado.', type: 'Verbo parecer (copulativo)' },
 ];
 const classifyTaskDB = [
-    { w: 'corrió', inf: 'correr', t: 'pasado', p: '3ra', n: 'singular' },
-    { w: 'cantamos', inf: 'cantar', t: 'presente', p: '1ra', n: 'plural' },
-    { w: 'viviré', inf: 'vivir', t: 'futuro', p: '1ra', n: 'singular' },
-    { w: 'lees', inf: 'leer', t: 'presente', p: '2da', n: 'singular' },
-    { w: 'saltaron', inf: 'saltar', t: 'pasado', p: '3ra', n: 'plural' },
-    { w: 'escribirá', inf: 'escribir', t: 'futuro', p: '3ra', n: 'singular' },
-    { w: 'soy', inf: 'ser', t: 'presente', p: '1ra', n: 'singular' },
-    { w: 'jugaban', inf: 'jugar', t: 'pasado', p: '3ra', n: 'plural' },
-    { w: 'dibujas', inf: 'dibujar', t: 'presente', p: '2da', n: 'singular' },
-    { w: 'estudiaré', inf: 'estudiar', t: 'futuro', p: '1ra', n: 'singular' },
-    { w: 'dormimos', inf: 'dormir', t: 'pasado/presente', p: '1ra', n: 'plural' },
-    { w: 'fui', inf: 'ir/ser', t: 'pasado', p: '1ra', n: 'singular' },
-    { w: 'comerán', inf: 'comer', t: 'futuro', p: '3ra', n: 'plural' },
-    { w: 'ríe', inf: 'reír', t: 'presente', p: '3ra', n: 'singular' },
-    { w: 'viajaste', inf: 'viajar', t: 'pasado', p: '2da', n: 'singular' },
+    { w: 'corrió', inf: 'correr', t: 'pasado', p: '3.ª', n: 'singular' },
+    { w: 'cantamos', inf: 'cantar', t: 'presente', p: '1.ª', n: 'plural' },
+    { w: 'viviré', inf: 'vivir', t: 'futuro', p: '1.ª', n: 'singular' },
+    { w: 'lees', inf: 'leer', t: 'presente', p: '2.ª', n: 'singular' },
+    { w: 'saltaron', inf: 'saltar', t: 'pasado', p: '3.ª', n: 'plural' },
+    { w: 'escribirá', inf: 'escribir', t: 'futuro', p: '3.ª', n: 'singular' },
+    { w: 'soy', inf: 'ser', t: 'presente', p: '1.ª', n: 'singular' },
+    { w: 'jugaban', inf: 'jugar', t: 'pasado', p: '3.ª', n: 'plural' },
+    { w: 'dibujas', inf: 'dibujar', t: 'presente', p: '2.ª', n: 'singular' },
+    { w: 'estudiaré', inf: 'estudiar', t: 'futuro', p: '1.ª', n: 'singular' },
+    { w: 'dormimos', inf: 'dormir', t: 'pasado/presente', p: '1.ª', n: 'plural' },
+    { w: 'fui', inf: 'ir/ser', t: 'pasado', p: '1.ª', n: 'singular' },
+    { w: 'comerán', inf: 'comer', t: 'futuro', p: '3.ª', n: 'plural' },
+    { w: 'ríe', inf: 'reír', t: 'presente', p: '3.ª', n: 'singular' },
+    { w: 'viajaste', inf: 'viajar', t: 'pasado', p: '2.ª', n: 'singular' },
 ];
 const completeTaskDB = [
     { s: 'Ayer nosotros ___ al parque a jugar fútbol.', opts: ['fuimos', 'iremos', 'vamos'], ans: 'fuimos' },
@@ -612,7 +612,7 @@ const explainQuestions = [
     { q: '¿Cuáles son las tres conjugaciones de los verbos en infinitivo?', ans: 'Primera conjugación termina en -ar, segunda en -er, tercera en -ir.' },
     { q: 'Explica la diferencia entre un verbo regular y uno irregular.', ans: 'El regular mantiene su raíz al conjugarse (cantar). El irregular cambia su raíz o desinencia (ir, ser).' },
     { q: '¿Cuáles son los tiempos verbales básicos?', ans: 'Pasado (ayer), Presente (hoy) y Futuro (mañana).' },
-    { q: '¿Qué es un verbo copulativo y cuáles son los más comunes?', ans: 'Unen el sujeto con un atributo, indicando estado. Los más comunes son ser, estar y parecer.' },
+    { q: '¿Qué es un verbo copulativo y cuáles son los más comunes?', ans: 'Une el sujeto con un atributo, indicando estado. Los más comunes son ser, estar y parecer.' },
 ];
 let ansVisible = false;
 
@@ -646,7 +646,7 @@ function genIdentifyTask(out, count) {
 }
 
 function genClassifyTask(out, count) {
-    _instrBlock(out, 'Instrucción', ['Copia la siguiente tabla en tu cuaderno. Para cada verbo conjugado, completa cuál es su infinitivo, el tiempo en que está, su persona (1ra, 2da, 3ra) y su número (singular o plural).']);
+    _instrBlock(out, 'Instrucción', ['Copia la siguiente tabla en tu cuaderno. Para cada verbo conjugado, completa cuál es su infinitivo, el tiempo en que está, su persona (1.ª, 2.ª, 3.ª) y su número (singular o plural).']);
     const items = _pick(classifyTaskDB, Math.min(count, classifyTaskDB.length));
     const wrap = document.createElement('div'); wrap.style.overflowX = 'auto';
     const th = (t, extra = '') => `<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;
@@ -983,11 +983,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Los Verbos`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Los Verbos`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
     const cpItems = _pickF(evalCPBank, 5, rng);
     const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -1005,7 +1005,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">?</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1107,7 +1107,7 @@ function printEval() {
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
     const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1180,23 +1180,23 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 @media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body><div id="evalPage">
 <div class="ph">
-  <h2>Evaluación Final de Misión Los Verbos — Español — Lengua</h2>
+  <h2>Evaluación Final de Misión Los Verbos · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Verbos · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Los Verbos · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1228,20 +1228,20 @@ function evalSwitchMode(mode) {
 
 // ── I. Cirujano del verbo (raíz + desinencia + conjugación; derivado de classifyTaskDB)
 const critCirBank = [
-    { w: 'corrió', raiz: 'corr', des: 'ió', inf: 'correr', conj: '2da' },
-    { w: 'cantamos', raiz: 'cant', des: 'amos', inf: 'cantar', conj: '1ra' },
-    { w: 'viviré', raiz: 'viv', des: 'iré', inf: 'vivir', conj: '3ra' },
-    { w: 'lees', raiz: 'le', des: 'es', inf: 'leer', conj: '2da' },
-    { w: 'saltaron', raiz: 'salt', des: 'aron', inf: 'saltar', conj: '1ra' },
-    { w: 'escribirá', raiz: 'escrib', des: 'irá', inf: 'escribir', conj: '3ra' },
-    { w: 'jugaban', raiz: 'jug', des: 'aban', inf: 'jugar', conj: '1ra' },
-    { w: 'dibujas', raiz: 'dibuj', des: 'as', inf: 'dibujar', conj: '1ra' },
-    { w: 'estudiaré', raiz: 'estudi', des: 'aré', inf: 'estudiar', conj: '1ra' },
-    { w: 'dormimos', raiz: 'dorm', des: 'imos', inf: 'dormir', conj: '3ra' },
-    { w: 'comerán', raiz: 'com', des: 'erán', inf: 'comer', conj: '2da' },
-    { w: 'viajaste', raiz: 'viaj', des: 'aste', inf: 'viajar', conj: '1ra' },
+    { w: 'corrió', raiz: 'corr', des: 'ió', inf: 'correr', conj: '2.ª' },
+    { w: 'cantamos', raiz: 'cant', des: 'amos', inf: 'cantar', conj: '1.ª' },
+    { w: 'viviré', raiz: 'viv', des: 'iré', inf: 'vivir', conj: '3.ª' },
+    { w: 'lees', raiz: 'le', des: 'es', inf: 'leer', conj: '2.ª' },
+    { w: 'saltaron', raiz: 'salt', des: 'aron', inf: 'saltar', conj: '1.ª' },
+    { w: 'escribirá', raiz: 'escrib', des: 'irá', inf: 'escribir', conj: '3.ª' },
+    { w: 'jugaban', raiz: 'jug', des: 'aban', inf: 'jugar', conj: '1.ª' },
+    { w: 'dibujas', raiz: 'dibuj', des: 'as', inf: 'dibujar', conj: '1.ª' },
+    { w: 'estudiaré', raiz: 'estudi', des: 'aré', inf: 'estudiar', conj: '1.ª' },
+    { w: 'dormimos', raiz: 'dorm', des: 'imos', inf: 'dormir', conj: '3.ª' },
+    { w: 'comerán', raiz: 'com', des: 'erán', inf: 'comer', conj: '2.ª' },
+    { w: 'viajaste', raiz: 'viaj', des: 'aste', inf: 'viajar', conj: '1.ª' },
 ];
-const critConjOptions = [{ v: '1ra', t: '1ra (-ar)' }, { v: '2da', t: '2da (-er)' }, { v: '3ra', t: '3ra (-ir)' }];
+const critConjOptions = [{ v: '1.ª', t: '1.ª (-ar)' }, { v: '2.ª', t: '2.ª (-er)' }, { v: '3.ª', t: '3.ª (-ir)' }];
 // ── II. Detective del tiempo y modo (pistas contextuales al estilo de cmpData)
 const critTMBank = [
     { s: 'Ayer nosotros <strong>fuimos</strong> al parque a jugar fútbol.', pista: 'Ayer', t: 'pasado', m: 'indicativo' },
@@ -1259,14 +1259,14 @@ const critTiempoOptions = ['pasado', 'presente', 'futuro'];
 const critModoOptions = ['indicativo', 'subjuntivo', 'imperativo'];
 // ── III. Detective del error de concordancia (persona/número mal conjugados)
 const critConcBank = [
-    { bad: 'Nosotros canta en el coro de la escuela.', fix: 'cantamos', model: 'El sujeto «nosotros» es 1ra persona del plural: el verbo debe ser «cantamos».' },
-    { bad: 'Los pájaros vuela alto en el cielo azul.', fix: 'vuelan', model: 'El sujeto «los pájaros» es plural (3ra persona): el verbo debe ser «vuelan».' },
-    { bad: 'Yo comes frutas todas las mañanas.', fix: 'como', model: '«Yo» es 1ra persona del singular: el verbo debe ser «como».' },
-    { bad: 'Tú estudian para el examen de Español.', fix: 'estudias', model: '«Tú» es 2da persona del singular: el verbo debe ser «estudias».' },
-    { bad: 'Ella dibujamos un paisaje del campo.', fix: 'dibuja', model: '«Ella» es 3ra persona del singular: el verbo debe ser «dibuja».' },
+    { bad: 'Nosotros canta en el coro de la escuela.', fix: 'cantamos', model: 'El sujeto «nosotros» es 1.ª persona del plural: el verbo debe ser «cantamos».' },
+    { bad: 'Los pájaros vuela alto en el cielo azul.', fix: 'vuelan', model: 'El sujeto «los pájaros» es plural (3.ª persona): el verbo debe ser «vuelan».' },
+    { bad: 'Yo comes frutas todas las mañanas.', fix: 'como', model: '«Yo» es 1.ª persona del singular: el verbo debe ser «como».' },
+    { bad: 'Tú estudian para el examen de Español.', fix: 'estudias', model: '«Tú» es 2.ª persona del singular: el verbo debe ser «estudias».' },
+    { bad: 'Ella dibujamos un paisaje del campo.', fix: 'dibuja', model: '«Ella» es 3.ª persona del singular: el verbo debe ser «dibuja».' },
     { bad: 'Ustedes lee un cuento cada noche.', fix: 'leen', model: '«Ustedes» es plural: el verbo debe ser «leen».' },
-    { bad: 'Mi mamá preparan la cena de la familia.', fix: 'prepara', model: '«Mi mamá» es un solo sujeto (3ra persona singular): el verbo debe ser «prepara».' },
-    { bad: 'Ellos duerme en el sofá de la sala.', fix: 'duermen', model: '«Ellos» es 3ra persona del plural: el verbo debe ser «duermen».' },
+    { bad: 'Mi mamá preparan la cena de la familia.', fix: 'prepara', model: '«Mi mamá» es un solo sujeto (3.ª persona singular): el verbo debe ser «prepara».' },
+    { bad: 'Ellos duerme en el sofá de la sala.', fix: 'duermen', model: '«Ellos» es 3.ª persona del plural: el verbo debe ser «duermen».' },
 ];
 // ── IV. Transformador de oraciones (contexto hondureño; verificación por forma verbal clave)
 const critTransBank = [
@@ -1283,16 +1283,16 @@ const critTransBank = [
 const critArgBank = [
     {
         q: 'Aplica la «prueba de la raíz»: conjuga «cantar» y «tener» en pasado (yo) y en futuro (yo), y demuestra con esas formas por qué «cantar» es regular y «tener» es irregular.',
-        model: 'Cantar: yo canté, yo cantaré — la raíz cant- se mantiene igual en todos los tiempos: es REGULAR. Tener: yo tuve, yo tendré — la raíz ten- cambia a tuv- y tendr-: es IRREGULAR porque no conserva su raíz al conjugarse.'
+        model: 'Cantar: yo canté, yo cantaré. La raíz cant- se mantiene igual en todos los tiempos: es REGULAR. Tener: yo tuve, yo tendré. La raíz ten- cambia a tuv- y tendr-: es IRREGULAR porque no conserva su raíz al conjugarse.'
     },
     {
         q: 'Argumenta por qué «ser», «estar» y «parecer» son verbos copulativos y no de acción. Escribe un ejemplo propio con uno de ellos.',
-        model: 'No expresan una acción que el sujeto realiza: unen el sujeto con una cualidad o estado (atributo). Ejemplo: «Mi abuela es cariñosa» — «es» no indica movimiento ni acción; solo une a la abuela con su cualidad.'
+        model: 'No expresan una acción que el sujeto realiza: unen el sujeto con una cualidad o estado (atributo). Ejemplo: «Mi abuela es cariñosa». Ahí «es» no indica movimiento ni acción; solo une a la abuela con su cualidad.'
     },
 ];
 
 function _critSel(cls, dataAttr, i, opts, aria) {
-    return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${aria}"><option value="">—</option>${opts.map(o => typeof o === 'string' ? `<option value="${o}">${o}</option>` : `<option value="${o.v}">${o.t}</option>`).join('')}</select>`;
+    return `<select class="${cls}" ${dataAttr}="${i}" aria-label="${aria}"><option value="">?</option>${opts.map(o => typeof o === 'string' ? `<option value="${o}">${o}</option>` : `<option value="${o.v}">${o.t}</option>`).join('')}</select>`;
 }
 function _critEq(student, expected) {
     return normalizeEvalAnswer(student).replace(/-/g, '') === normalizeEvalAnswer(expected).replace(/-/g, '');
@@ -1317,7 +1317,7 @@ function genEvalCrit() {
 
     // Barra de distribución + progresión de dificultad declarada
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar y separar (I) → analizar pistas de tiempo y modo (II) → detectar y corregir errores (III) → transformar oraciones (IV) → argumentar (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Cirujano 20</span><span class="eval-score-pill esp-tf">II. Tiempo y modo 20</span><span class="eval-score-pill esp-mc">III. Concordancia 20</span><span class="eval-score-pill esp-pr">IV. Transformador 20</span><span class="eval-score-pill esp-cp">V. Argumenta 20</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar y separar (I) → analizar pistas de tiempo y modo (II) → detectar y corregir errores (III) → transformar oraciones (IV) → argumentar (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Cirujano 20</span><span class="eval-score-pill esp-tf">II. Tiempo y modo 20</span><span class="eval-score-pill esp-mc">III. Concordancia 20</span><span class="eval-score-pill esp-pr">IV. Transformador 20</span><span class="eval-score-pill esp-cp">V. Argumenta 20</span></div>`;
     out.appendChild(bar);
 
     // ── I. Cirujano del verbo (5×4=20)
@@ -1327,7 +1327,7 @@ function genEvalCrit() {
         cirRows += `<div class="crit-q-block"><div class="crit-scenario"><strong>🔪 Verbo ${i + 1}:</strong> <em style="font-size:1.05rem;">${it.w}</em></div><div class="crit-cir-row">Raíz: <input class="eval-cp-input crit-cir-input" type="text" data-cirr="${i}" autocomplete="off" aria-label="Raíz del verbo ${it.w}"> + Desinencia: <input class="eval-cp-input crit-cir-input" type="text" data-cird="${i}" autocomplete="off" aria-label="Desinencia del verbo ${it.w}"> · Conjugación del infinitivo: ${_critSel('crit-sel', 'data-circ', i, critConjOptions, 'Conjugación del infinitivo de ' + it.w)}</div><div class="eval-answer">${it.raiz}- + -${it.des} → infinitivo ${it.inf}, ${it.conj} conjugación</div><div class="eval-item-feedback" id="critFbCir${i}" aria-live="polite"></div></div>`;
     });
     const s1 = document.createElement('div');
-    s1.innerHTML = `<div class="eval-section-title">I. Cirujano del verbo <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Opera cada verbo conjugado: sepáralo en <strong>raíz</strong> + <strong>desinencia</strong> y elige la <strong>conjugación</strong> de su infinitivo (1ra -ar, 2da -er, 3ra -ir).</p>${cirRows}</div>`;
+    s1.innerHTML = `<div class="eval-section-title">I. Cirujano del verbo <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Opera cada verbo conjugado: sepáralo en <strong>raíz</strong> + <strong>desinencia</strong> y elige la <strong>conjugación</strong> de su infinitivo (1.ª -ar, 2.ª -er, 3.ª -ir).</p>${cirRows}</div>`;
     out.appendChild(s1);
 
     // ── II. Detective del tiempo y modo (5×4=20)
@@ -1467,7 +1467,7 @@ function printEvalCrit() {
     const lines = (n) => Array(n).fill('<div class="ln"></div>').join('');
 
     // I. Cirujano del verbo
-    let s1 = `<div class="sec-title"><span>I. Cirujano del verbo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Separa cada verbo conjugado en raíz + desinencia y escribe la conjugación de su infinitivo (1ra -ar, 2da -er, 3ra -ir).</p>`;
+    let s1 = `<div class="sec-title"><span>I. Cirujano del verbo</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Separa cada verbo conjugado en raíz + desinencia y escribe la conjugación de su infinitivo (1.ª -ar, 2.ª -er, 3.ª -ir).</p>`;
     d.cir.forEach((it, i) => { s1 += `<div class="cir-row"><span class="qn">${i + 1}.</span><strong class="cir-w">${it.w}</strong> → Raíz: <span class="cp-blank sm"></span> + Desinencia: <span class="cp-blank sm"></span> · Conjugación: <span class="cp-blank sm"></span></div>`; });
 
     // II. Detective del tiempo y modo
@@ -1542,20 +1542,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Los Verbos · Educación Básica · Español</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Cirujano 20 · II. Tiempo y modo 20 · III. Concordancia 20 · IV. Transformador 20 · V. Argumenta 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="critPautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Verbos · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Los Verbos · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20. Secciones abiertas: usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critPage",252,0.55,1.3);fit("critPautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1578,7 +1578,7 @@ function openDiploma() {
     const mi = pct === 100 ? 5 : pct >= 80 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : pct >= 20 ? 1 : 0;
     document.getElementById('diplMsg').textContent = msgs[mi];
     document.getElementById('diplDate').textContent = 'Honduras, ' + new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún — ¡sigue completando secciones!';
+    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún. ¡Sigue completando secciones!';
     document.getElementById('diplAch').textContent = achStr;
     document.getElementById('diplomaOverlay').classList.add('open');
     document.querySelector('.diploma-input').focus();

@@ -135,7 +135,7 @@ const MC = repartirMC([
   ['El reflejo del cerro en la laguna…', ['es lo que parece, no un cerro', 'es otro cerro', 'es un cerro chiquito', 'es un cerro de agua'], 0],
   ['¿Cuál de estas preguntas sigue sin aparato que la mida?', ['¿Por qué hay algo y no más bien nada?', '¿Qué es el fuego?', '¿Cuánto pesa?', '¿De qué es la sal?'], 0],
   ['La sal disuelta en agua vuelve a salir. ¿Qué enseña eso?', ['que el atajo de «se deshace» falla', 'que la sal se va', 'que el agua pesa', 'que la sal arde'], 0],
-  ['Demócrito le puso nombre a las piezas chiquitísimas…', ['sin verlas nunca', 'con un microscopio', 'pesándolas una por una', 'contándolas'], 0],
+  ['Demócrito les puso nombre a las piezas chiquitísimas…', ['sin verlas nunca', 'con un microscopio', 'pesándolas una por una', 'contándolas'], 0],
 ], 20260917);
 
 /* ══════════════════ las hojas ══════════════════ */
@@ -144,7 +144,7 @@ let p;
 
 // ── 1 ──
 p = [];
-p.push('<div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>');
+p.push('<div class="idline"><span>Nombre:</span><span class="raya"></span><span>N.º-Lista:</span><span class="raya corta"></span></div>');
 p.push(`<div class="fh">
       <div class="fh-txt">
         <div class="f-badge">📄 Ficha Didáctica: Misión ¿De qué está hecho el mundo?</div>
@@ -157,7 +157,7 @@ p.push(`<div class="fh">
       </div>
     </div>`);
 p.push('<h2>¿Por qué esta ficha?</h2>');
-p.push('<p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva\n       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>');
+p.push('<p>En un aula de 43 alumnos con tres teléfonos, la misión no les llega a todos. Esta hoja lleva\n       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>');
 p.push('<div class="caja idea"><b>Lo que hay que sacar de aquí:</b> no todo cambio es el mismo cambio.\n      A veces cambia la forma, a veces la materia, y a veces no le pasa nada a la cosa: solo cambia\n      lo que decimos de ella. Saber cuál es cuál es la destreza de esta unidad.</div>');
 p.push('<h3>Objetivos</h3>');
 p.push(`<ol class="objetivos">
@@ -175,7 +175,7 @@ pags.push(p);
 // ── 2 ──
 p = [];
 p.push('<h2>Cuatro preguntas que no se cierran solas</h2>');
-p.push(`<p>${esc(D.MUN_METAFISICA.hace)} Se llama <b>${esc(D.MUN_METAFISICA.nombre)}</b>, y pregunta: ${esc(D.MUN_METAFISICA.pregunta)}</p>`);
+p.push(`<p>${esc(D.MUN_METAFISICA.hace)} Se llama <b>${esc(D.MUN_METAFISICA.nombre.toLowerCase())}</b>, y pregunta: ${esc(D.MUN_METAFISICA.pregunta)}</p>`);
 p.push('<div class="rejilla">' + D.MUN_PREGUNTAS.map(x =>
   `<div><b>${x.emoji} ${esc(x.nombre)}</b><p class="q">${esc(x.que)}</p><p class="h"><i>${esc(x.aqui)}</i></p><p class="h">${esc(x.hoy)}</p></div>`).join('') + '</div>');
 p.push(`<div class="caja truco">${rot('Ojo:', D.MUN_METAFISICA.ojo)}</div>`);
@@ -226,7 +226,7 @@ pags.push(p);
 // ── 6 ──
 p = [];
 p.push('<h2>Tres que discutieron esto primero</h2>');
-p.push('<p>Uno pensó las piezas sin verlas; los otros dos no se pusieron de acuerdo, y su discusión\n       sigue abierta. Aquí <b>no hay ni una fecha</b>, y no es un olvido: una fecha que no se puede\n       acreditar no se escribe. Ponerlas es la investigación de más adelante.</p>');
+p.push('<p>Uno pensó las piezas sin verlas; los otros dos no se pusieron de acuerdo, y su discusión\n       sigue abierta. Aquí <b>no hay ni una fecha</b>, y no es un olvido: una fecha que no se puede\n       acreditar no se escribe.</p>');
 D.MUN_PENSADORES.forEach(x => p.push(
   `<div class="pens"><b>${x.emoji} ${esc(x.nombre)}</b><p class="w">${esc(x.donde)}</p><p class="p">${esc(x.quien)}</p>` +
   `<p class="p"><b>Qué hizo:</b> ${esc(x.hizo)}</p><p class="p"><b>Por qué se le recuerda:</b> ${esc(x.porque)}</p>` +

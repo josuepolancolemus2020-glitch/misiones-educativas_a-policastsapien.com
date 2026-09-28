@@ -91,7 +91,7 @@
         'half the parts and in one week. The judges asked both groups the same question, and only one could answer it.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>A robot is not judged by how hard it was to build: it is judged by <strong>who it is useful to</strong>. ' +
-        'This last stage is exactly that — find the problem first, then build.</div></div>',
+        'This last stage is exactly that: find the problem first, then build.</div></div>',
 
       a1:
         '<h2>🏆 A robot is there to solve problems</h2>' +
@@ -482,16 +482,16 @@
       ],
 
       evalMCBank: [
-        { q: 'The ford alert goes where there is no socket. What power source is best?', o: ['a) a) A one-kilometer cable', 'b) b) A candle', 'c) c) A battery with a solar panel', 'd) d) None'], a: 2 },
-        { q: 'What moves the containers in the trash sorter?', o: ['a) a) A horn', 'b) b) A belt with a motor and a gate', 'c) c) A lamp', 'd) d) A bell'], a: 1 },
-        { q: 'What wakes the families when water gets into the houses at night?', o: ['a) a) A siren and a flashing light', 'b) b) A poster on the wall', 'c) c) A clock', 'd) d) A fan'], a: 0 },
-        { q: 'What actuator does the school garden sprinkler need?', o: ['a) a) A camera', 'b) b) A water pump or valve', 'c) c) A horn', 'd) d) A mirror'], a: 1 },
-        { q: 'Which team role writes the robot’s instructions?', o: ['a) a) The designer', 'b) b) The builder', 'c) c) The programmer', 'd) d) The audience'], a: 2 },
-        { q: 'At the fair, what did the other group’s box have that Kenia’s robot did not?', o: ['a) a) More parts', 'b) b) A problem to solve', 'c) c) Music', 'd) d) More hours of work'], a: 1 },
-        { q: 'Next to each drawn part of the robot you write…', o: ['a) a) its price', 'b) b) its color', 'c) c) its weight', 'd) d) what it is for'], a: 3 },
-        { q: 'What happens to the coffee spread out in the yard?', o: ['a) a) Birds eat it', 'b) b) It gets mixed with plastic', 'c) c) It burns in the sun', 'd) d) A sudden downpour soaks it'], a: 3 },
-        { q: 'In the garden sprinkler trial, what failed?', o: ['a) a) The water opened but did not close', 'b) b) The battery exploded', 'c) c) No water came out', 'd) d) The soil turned to stone'], a: 0 },
-        { q: 'For the ford, which of these ideas is an automatic alarm?', o: ['a) a) A painted ruler', 'b) b) A watchman', 'c) c) A float that rings a bell', 'd) d) Asking the neighbor'], a: 2 }
+        { q: 'The ford alert goes where there is no socket. What power source is best?', o: ['a) A one-kilometer cable', 'b) A candle', 'c) A battery with a solar panel', 'd) None'], a: 2 },
+        { q: 'What moves the containers in the trash sorter?', o: ['a) A horn', 'b) A belt with a motor and a gate', 'c) A lamp', 'd) A bell'], a: 1 },
+        { q: 'What wakes the families when water gets into the houses at night?', o: ['a) A siren and a flashing light', 'b) A poster on the wall', 'c) A clock', 'd) A fan'], a: 0 },
+        { q: 'What actuator does the school garden sprinkler need?', o: ['a) A camera', 'b) A water pump or valve', 'c) A horn', 'd) A mirror'], a: 1 },
+        { q: 'Which team role writes the robot’s instructions?', o: ['a) The designer', 'b) The builder', 'c) The programmer', 'd) The audience'], a: 2 },
+        { q: 'At the fair, what did the other group’s box have that Kenia’s robot did not?', o: ['a) More parts', 'b) A problem to solve', 'c) Music', 'd) More hours of work'], a: 1 },
+        { q: 'Next to each drawn part of the robot you write…', o: ['a) its price', 'b) its color', 'c) its weight', 'd) what it is for'], a: 3 },
+        { q: 'What happens to the coffee spread out in the yard?', o: ['a) Birds eat it', 'b) It gets mixed with plastic', 'c) It burns in the sun', 'd) A sudden downpour soaks it'], a: 3 },
+        { q: 'In the garden sprinkler trial, what failed?', o: ['a) The water opened but did not close', 'b) The battery exploded', 'c) No water came out', 'd) The soil turned to stone'], a: 0 },
+        { q: 'For the ford, which of these ideas is an automatic alarm?', o: ['a) A painted ruler', 'b) A watchman', 'c) A float that rings a bell', 'd) Asking the neighbor'], a: 2 }
       ],
 
       evalCPBank: [
@@ -573,7 +573,7 @@
             disenar: '✏️ Sketch: a rain sensor at the edge of the yard, a sliding roof on rails moved by a motor with a pulley, a battery recharged by a solar panel, and a program with one main order.',
             construir: '🔧 A scale prototype with cardboard, two thread pulleys, a toy motor and a tray of corn kernels standing in for the coffee.',
             probar: '🧪 Test: water is sprayed on the sensor and the time is taken. In three trials the roof closed in 95, 88 and 91 seconds: it does NOT meet the one-minute criterion.',
-            mejorar: '🔁 Improvement: split the roof into two panels that close at the same time and use a smaller pulley on the motor. New trials: 42, 39 and 44 seconds. ✅ It meets the criterion.',
+            mejorar: '🔁 Improvement: split the roof into two panels that close at the same time and use a bigger pulley on the motor. New trials: 42, 39 and 44 seconds. ✅ It meets the criterion.',
             comunicar: '📢 A 2-minute presentation to the class and to the cooperative: problem, sketch, table of times before and after, and how much coffee is saved per harvest.'
           },
           decisiones: [
@@ -582,7 +582,7 @@
             { etapa: 'disenar', k: 'mecanismo', q: 'Which mechanism moves the roof?', opts: ['A gear that spins a propeller', 'A motor with a pulley on rails', 'A magnet'], a: 1, why: 'The pulley multiplies the motor’s force and lets a heavy roof slide along the rails.' },
             { etapa: 'disenar', k: 'energia', q: 'There is no power outlet near the yard. Which energy does it use?', opts: ['A battery recharged by a solar panel', 'A 300-meter cable from the house', 'A candle'], a: 0, why: 'The drying yard is in the sun all day: the panel recharges the battery and avoids long, dangerous cables.' },
             { etapa: 'disenar', k: 'programa', q: 'What is the main instruction of the program?', opts: ['Close the roof every hour', 'If the sensor detects rain, then close the roof', 'Open the roof when somebody walks past'], a: 1, why: 'The «if X happens, then do Y» structure connects what the sensor measures with what the actuator does.' },
-            { etapa: 'mejorar', k: 'mejora', q: 'The roof closed in 91 seconds and the criterion is 60. Which improvement is right?', opts: ['Lower the criterion to 120 seconds', 'Split the roof into two panels and use a smaller pulley', 'Take the sensor off'], a: 1, why: 'You improve the design, not the criterion: two panels travel half the distance and the pulley gives more speed.' }
+            { etapa: 'mejorar', k: 'mejora', q: 'The roof closed in 91 seconds and the criterion is 60. Which improvement is right?', opts: ['Lower the criterion to 120 seconds', 'Split the roof into two panels and use a bigger pulley', 'Take the sensor off'], a: 1, why: 'You improve the design, not the criterion: two panels travel half the distance and the pulley gives more speed.' }
           ],
           orden: [4, 0, 6, 2, 5, 1, 3]
         },
@@ -681,7 +681,7 @@
          (lo común a todas las misiones vive en js/metas-i18n.js) */
       'Cierra la *Ruta de los Robots*: aprende el ciclo de diseño de ingeniería y crea un robot que resuelva un problema de tu comunidad. 🛠️':
         'Close the *Robot Path*: learn the engineering design cycle and build a robot that solves a problem in your community. 🛠️',
-      '_Se te hará prueba escrita y presentarás tu proyecto en equipo._ 🤖':
+      '_Se te hará una prueba escrita y presentarás tu proyecto en equipo._ 🤖':
         '_You will take a written test and present your project as a team._ 🤖',
       /* pestañas propias de esta misión */
       'Criterios': 'Criteria', 'Taller': 'Workshop',
@@ -722,8 +722,10 @@
       /* generador de tareas */
       '🗂️ Fichas de proyecto': '🗂️ Project sheets',
       '💡 Explicar y diseñar proyectos': '💡 Explain and design projects',
-      'Copia en tu cuaderno; subraya, colorea o encierra el concepto de robótica indicado en cada oración. Escribe al lado qué parte o tipo de robot es.':
-        'Copy this in your notebook; underline, color or circle the robotics concept in each sentence. Next to it, write which part or kind of robot it is.',
+      'Copia cada oración en tu cuaderno. Escribe al lado qué etapa del ciclo de diseño o qué concepto describe.':
+        'Copy each sentence in your notebook. Next to it, write which stage of the design cycle or which concept it describes.',
+      'Preguntan a los vecinos cuándo crece el río. →': 'They ask the neighbors when the river rises. →',
+      'Identificar el problema': 'Identify the problem',
       'Copia la siguiente tabla en tu cuaderno. Para cada proyecto responde: ¿qué problema resuelve?, ¿qué sensor lleva?, ¿qué actuador lleva? y ¿qué restricción tiene? Explica con tus palabras.':
         'Copy the table below in your notebook. For each project answer: which problem does it solve? which sensor does it carry? which actuator does it carry? and what constraint does it have? Explain in your own words.',
       'Proyecto': 'Project', '¿Qué problema resuelve?': 'Which problem does it solve?',

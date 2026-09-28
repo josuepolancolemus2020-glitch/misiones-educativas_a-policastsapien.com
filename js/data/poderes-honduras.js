@@ -62,16 +62,16 @@ const PODERES = [
     queHace: 'Discute y aprueba las leyes que rigen a todo el país. Una ley suya se llama DECRETO y lleva su número y su año.',
     ejemplo: 'El Estatuto del Docente es el Decreto 136-97: lo aprobó el Congreso Nacional en su Salón de Sesiones, en Tegucigalpa, el 11 de septiembre de 1997.',
     pista: 'Si una hoja dice «PODER LEGISLATIVO · DECRETO No …», la hizo el Congreso.',
-    fuente: 'Estatuto del Docente Hondureño, Decreto 136-97, encabezado y Artículo 101 (`_dev/leyes/estatuto-docente-decreto-136-97.pdf`).'
+    fuente: 'Estatuto del Docente Hondureño, Decreto 136-97, encabezado y artículo 101 (`_dev/leyes/estatuto-docente-decreto-136-97.pdf`).'
   },
   {
     clave: 'ejecutivo', nombre: 'Poder Ejecutivo', emoji: '🏛️',
     verbo: 'CUMPLE y hace cumplir las leyes',
     quien: 'El Presidente de la República, con las Secretarías de Estado',
     queHace: 'Pone las leyes a funcionar: manda ejecutarlas y dicta los reglamentos que dicen CÓMO se aplican. Una norma suya se llama ACUERDO.',
-    ejemplo: 'Al pie del mismo Estatuto se lee «Al Poder Ejecutivo. Por Tanto: Ejecútese», firmado el 29 de septiembre de 1997 por Carlos Roberto Reina Idiaquez, Presidente Constitucional de la República. Y como el Artículo 93 del Estatuto mandaba reglamentarlo, la Secretaría de Educación dictó el Acuerdo 0760-SE-99.',
+    ejemplo: 'Al pie del mismo Estatuto se lee «Al Poder Ejecutivo. Por Tanto: Ejecútese», firmado el 29 de septiembre de 1997 por Carlos Roberto Reina Idiáquez, Presidente Constitucional de la República. Y como el artículo 93 del Estatuto mandaba reglamentarlo, la Secretaría de Educación dictó el Acuerdo 0760-SE-99.',
     pista: 'Si una hoja dice «Por Tanto: Ejecútese» o «ACUERDA», es del Ejecutivo.',
-    fuente: 'Estatuto del Docente, cierre y Artículo 93; Reglamento General del Estatuto, Acuerdo 0760-SE-99 (`_dev/leyes/`).'
+    fuente: 'Estatuto del Docente, cierre y artículo 93; Reglamento General del Estatuto, Acuerdo 0760-SE-99 (`_dev/leyes/`).'
   },
   {
     clave: 'judicial', nombre: 'Poder Judicial', emoji: '⚖️',
@@ -80,7 +80,7 @@ const PODERES = [
     queHace: 'Cuando dos personas no se ponen de acuerdo, o alguien incumple una ley, decide qué dice la ley en ESE caso. Lo que resuelve la Corte Suprema una y otra vez se llama JURISPRUDENCIA, y también es fuente de derecho.',
     ejemplo: 'El Código de la Niñez pone entre las fuentes del derecho aplicable a los niños «la jurisprudencia establecida por la Corte Suprema de Justicia relacionada con los niños». Y las copias oficiales de las leyes que se usaron para escribir esta misión llevan al pie www.poderjudicial.gob.hn.',
     pista: 'El Legislativo la escribe, el Ejecutivo la aplica a todos, y el Judicial la aplica a TU caso.',
-    fuente: 'Código de la Niñez y la Adolescencia, Decreto 73-96, Artículo 4 numeral 7 (`_dev/leyes/codigo-ninez-adolescencia-decreto-73-96.pdf`).'
+    fuente: 'Código de la Niñez y la Adolescencia, Decreto 73-96, artículo 4 numeral 7 (`_dev/leyes/codigo-ninez-adolescencia-decreto-73-96.pdf`).'
   }
 ];
 
@@ -101,9 +101,9 @@ const PODERES_JERARQUIA = {
     'La jurisprudencia de la Corte Suprema de Justicia',
     'Los principios generales del derecho'
   ],
-  remate: 'La Constitución va de primera. Por eso ninguna ley puede decir lo contrario de lo que ella dice — y por eso el Estatuto del Docente empieza citándola.',
-  fijate: 'Y fíjate en el escalón 6 y en el 7: ahí están los reglamentos, que los dicta el Ejecutivo, y la jurisprudencia, que la hace el Judicial. Los tres poderes salen en la misma lista, cada uno en su altura.',
-  fuente: 'Código de la Niñez y la Adolescencia, Decreto 73-96, Artículo 4. Se copian los ocho escalones completos, en su orden: recortar la lista sería enseñar una jerarquía que no es la que dice la ley.'
+  remate: 'La Constitución va de primera. Por eso ninguna ley puede decir lo contrario de lo que ella dice, y por eso el Estatuto del Docente empieza citándola.',
+  fijate: 'Y fíjate en el escalón 6 y en el 7: ahí están los reglamentos, que dicta el Ejecutivo, y la jurisprudencia, que hace el Judicial. Los tres poderes salen en la misma lista, cada uno en su altura.',
+  fuente: 'Código de la Niñez y la Adolescencia, Decreto 73-96, artículo 4. Se copian los ocho escalones completos, en su orden: recortar la lista sería enseñar una jerarquía que no es la que dice la ley.'
 };
 
 /* Los conceptos que el DCNB pide aclarar, con sus palabras: «Aclaran
@@ -112,7 +112,7 @@ const PODERES_JERARQUIA = {
 const PODERES_CONCEPTOS = [
   { palabra: 'Ley', emoji: '📄', definicion: 'Una regla escrita que vale para todo el país y que el Estado puede hacer cumplir. No es un consejo: se cumple.' },
   { palabra: 'Constitución', emoji: '📕', definicion: 'La ley fundamental: la que está por encima de todas las demás y dice cómo se organiza el Estado y qué derechos tiene cada persona.' },
-  { palabra: 'Estado de Derecho', emoji: '⚖️', definicion: 'Cuando manda la ley y no la voluntad de quien tiene el poder — y la ley vale igual para el que gobierna que para cualquiera.' },
+  { palabra: 'Estado de Derecho', emoji: '⚖️', definicion: 'Cuando manda la ley y no la voluntad de quien tiene el poder, y la ley vale igual para el que gobierna que para cualquiera.' },
   { palabra: 'Deberes', emoji: '🤝', definicion: 'Lo que a cada persona le toca cumplir para que la convivencia funcione.' },
   { palabra: 'Derechos', emoji: '🛡️', definicion: 'Lo que nadie te puede quitar y el Estado tiene que respetarte y hacerte respetar.' }
 ];
@@ -128,11 +128,11 @@ const PODERES_RECORRIDO = {
     { n: 1, poder: 'legislativo', titulo: 'El Congreso la aprueba',
       texto: 'El 11 de septiembre de 1997, en el Salón de Sesiones del Congreso Nacional, en Tegucigalpa, se aprueba el Decreto 136-97. La hoja lleva arriba «PODER LEGISLATIVO».' },
     { n: 2, poder: 'legislativo', titulo: 'Y dice desde cuándo vale',
-      texto: 'Su Artículo 101 manda que entre en vigencia al publicarse en el Diario Oficial La Gaceta. Antes de eso, todavía no obliga a nadie.' },
+      texto: 'Su artículo 101 manda que entre en vigencia al publicarse en el Diario Oficial La Gaceta. Antes de eso, todavía no obliga a nadie.' },
     { n: 3, poder: 'ejecutivo', titulo: 'El Presidente manda ejecutarla',
-      texto: 'El 29 de septiembre de 1997 se lee al pie: «Al Poder Ejecutivo. Por Tanto: Ejecútese», con la firma de Carlos Roberto Reina Idiaquez, Presidente Constitucional de la República.' },
+      texto: 'El 29 de septiembre de 1997 se lee al pie: «Al Poder Ejecutivo. Por Tanto: Ejecútese», con la firma de Carlos Roberto Reina Idiáquez, Presidente Constitucional de la República.' },
     { n: 4, poder: 'ejecutivo', titulo: 'Y una Secretaría dice cómo se aplica',
-      texto: 'El Artículo 93 del Estatuto mandaba reglamentarlo. La Secretaría de Educación dicta el Acuerdo 0760-SE-99 «en uso de las facultades establecidas en los artículos 245 numeral 11, 157 y 163 de la Constitución de la República».' },
+      texto: 'El artículo 93 del Estatuto mandaba reglamentarlo. La Secretaría de Educación dicta el Acuerdo 0760-SE-99 «en uso de las facultades establecidas en los artículos 245 numeral 11, 157 y 163 de la Constitución de la República».' },
     { n: 5, poder: 'judicial', titulo: 'Y si hay pleito, lo resuelven los tribunales',
       texto: 'Un maestro al que no le respetan lo que el Estatuto le da no va al Congreso ni a la Presidencia: va a los juzgados. Lo que la Corte Suprema resuelve una y otra vez se vuelve jurisprudencia, y también es fuente de derecho.' }
   ]
@@ -144,7 +144,7 @@ const PODERES_RECORRIDO = {
    poderes». */
 const PODERES_SEPARACION = {
   titulo: '¿Y por qué no lo hace todo uno solo? Sería más rápido',
-  texto: 'Sería más rápido, y por eso mismo no se hace. Si el mismo que escribe la ley es el que decide si la rompiste y el que te castiga, no hay a quién reclamarle: eres tú solo contra alguien que no puede equivocarse. Separarlos es más lento a propósito, porque cada uno puede pararle la mano a los otros dos.',
+  texto: 'Sería más rápido, y por eso mismo no se hace. Si el mismo que escribe la ley es el que decide si la rompiste y el que te castiga, no hay a quién reclamarle: eres tú solo contra alguien que no puede equivocarse. Separarlos es más lento a propósito, porque cada uno puede pararles la mano a los otros dos.',
   casos: [
     { situacion: 'El Congreso aprueba una ley que va contra la Constitución.', quien: 'judicial', quePasa: 'Los tribunales pueden dejarla sin aplicar: la Constitución está por encima.' },
     { situacion: 'Un funcionario del Ejecutivo aplica una ley a su manera.', quien: 'judicial', quePasa: 'La persona afectada puede llevarlo ante un juez, que decide qué dice la ley de verdad.' },
@@ -170,7 +170,7 @@ const PODERES_RENDICION = {
    COMPARADOS con la realidad, que es lo único que un número no enseña. */
 const PODERES_INVESTIGA = {
   titulo: 'Lo que no te vamos a decir: averígualo tú',
-  intro: 'Estas respuestas cambian y están en la Constitución de la República. Búscalas en tu libro de Ciencias Sociales, en la biblioteca o pregúntale a tu maestro — y después haz la segunda pregunta, que es la que de verdad importa.',
+  intro: 'Estas respuestas cambian y están en la Constitución de la República. Búscalas en tu libro de Ciencias Sociales, en la biblioteca o pregúntale a tu maestro, y después haz la segunda pregunta, que es la que de verdad importa.',
   preguntas: [
     { q: '¿Cuántos diputados tiene el Congreso Nacional, y cuántos son de tu departamento?', luego: '¿Sabes el nombre de uno solo? ¿Cómo le harías llegar un problema de tu comunidad?' },
     { q: '¿Cuánto dura en el cargo el Presidente de la República?', luego: '¿Qué pasa cuando se acaba ese tiempo? ¿Quién lo decide?' },

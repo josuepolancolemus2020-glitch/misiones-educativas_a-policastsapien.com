@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -198,8 +198,8 @@ const fcData = [
     { w: 'Sustantivo', a: '📝 Palabra que sirve para <strong>nombrar</strong> personas, animales, cosas, lugares, sentimientos e ideas. Es el núcleo del sujeto.' },
     { w: 'Sustantivo Propio', a: '👤 Nombra a un ser o lugar <strong>específico y único</strong>. Se escribe con <strong>mayúscula</strong>: María, Honduras, Copán.' },
     { w: 'Sustantivo Común', a: '🏠 Nombra a cualquier ser de su clase <strong>sin distinguirlo</strong>: perro, ciudad, río, escuela.' },
-    { w: 'Sustantivo Concreto', a: '🪨 Se puede percibir con los <strong>cinco sentidos</strong>: ver, oír, tocar, oler o saborear. Ej: mesa, música, chocolate.' },
-    { w: 'Sustantivo Abstracto', a: '💭 No se puede percibir con los sentidos: <strong>sentimientos, ideas, cualidades</strong>. Ej: amor, libertad, valentía.' },
+    { w: 'Sustantivo Concreto', a: '🪨 Se puede percibir con los <strong>cinco sentidos</strong>: ver, oír, tocar, oler o saborear. Ej.: mesa, música, chocolate.' },
+    { w: 'Sustantivo Abstracto', a: '💭 No se puede percibir con los sentidos: <strong>sentimientos, ideas, cualidades</strong>. Ej.: amor, libertad, valentía.' },
     { w: 'Sustantivo Individual', a: '🐕 Nombra a <strong>un solo ser</strong> u objeto: árbol, soldado, abeja, estrella.' },
     { w: 'Sustantivo Colectivo', a: '🌳 Nombra un <strong>conjunto o grupo</strong> de seres (en singular): bosque (árboles), ejército (soldados), enjambre (abejas).' },
     { w: 'Sustantivo Contable', a: '🔢 Se puede <strong>contar</strong> con números: tres libros, cinco gatos, dos casas.' },
@@ -363,7 +363,7 @@ function nextClassGroup() {
     sfx('click');
     currentClassGroupIdx = (currentClassGroupIdx + 1) % classGroups.length;
     buildClass(); document.getElementById('fbCls').classList.remove('show');
-    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs ' + classGroups[currentClassGroupIdx].label[1]);
+    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs. ' + classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass() { sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -549,7 +549,7 @@ function nextRetoPair() {
     document.getElementById('retoWord').textContent = '¡Prepárate!';
     document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
     document.getElementById('fbReto').classList.remove('show');
-    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto() {
     sfx('click'); clearInterval(retoTimerInt); retoRunning = false; retoSec = 30; retoOk = 0; retoErr = 0;
@@ -608,7 +608,7 @@ const completeTaskDB = [
     { s: 'La ___ es un valor muy importante en la sociedad.', opts: ['mesa', 'justicia', 'perro'], ans: 'justicia' },
 ];
 const explainQuestions = [
-    { q: '¿Qué es un sustantivo? Menciona 2 ejemplos.', ans: 'Es la palabra que sirve para nombrar personas, animales, cosas, etc. Ej: mesa, Carlos.' },
+    { q: '¿Qué es un sustantivo? Menciona 2 ejemplos.', ans: 'Es la palabra que sirve para nombrar personas, animales, cosas, etc. Ej.: mesa, Carlos.' },
     { q: '¿Cuál es la diferencia entre un sustantivo común y uno propio?', ans: 'El común nombra en general (ciudad) y el propio distingue (París) y va con mayúscula.' },
     { q: 'Explica qué son los sustantivos abstractos y da un ejemplo.', ans: 'Son los que nombran ideas o sentimientos que no se ven ni tocan. Ejemplo: paz, amor.' },
     { q: '¿Qué es un sustantivo colectivo? Menciona uno.', ans: 'El que nombra a un grupo de seres en singular. Ejemplo: jauría, enjambre.' },
@@ -646,7 +646,7 @@ function genIdentifyTask(out, count) {
 }
 
 function genClassifyTask(out, count) {
-    _instrBlock(out, 'Instrucción', ['Copia la siguiente tabla en tu cuaderno. Para cada sustantivo, completa cuál es su forma en singular, su clase (Común/Propio/etc.), su género (Masculino/Femenino) y su número (Singular/Plural).']);
+    _instrBlock(out, 'Instrucción', ['Copia la siguiente tabla en tu cuaderno. Para cada sustantivo, completa cuál es su forma en singular, su clase (común/propio/etc.), su género (masculino/femenino) y su número (singular/plural).']);
     const items = _pick(classifyTaskDB, Math.min(count, classifyTaskDB.length));
     const wrap = document.createElement('div'); wrap.style.overflowX = 'auto';
     const th = (t, extra = '') => `<th style="padding:0.3rem 0.4rem;border:1px solid var(--border);font-size:0.72rem;text-align:center;${extra}">${t}</th>`;
@@ -983,11 +983,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Los Sustantivos`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Los Sustantivos`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
     const cpItems = _pickF(evalCPBank, 5, rng);
     const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -1005,7 +1005,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">?</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1137,7 +1137,7 @@ function printEval() {
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1210,23 +1210,23 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 @media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body><div id="evalPage">
 <div class="ph">
-  <h2>Evaluación Final de Misión Los Sustantivos — Español — Lengua</h2>
+  <h2>Evaluación Final de Misión Los Sustantivos · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Sustantivos · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Los Sustantivos · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1254,7 +1254,7 @@ function evalSwitchMode(mode) {
     }
 }
 
-// ── I. Corrector de mayúsculas: mini-textos hondureños con los propios de la misión
+// ── I. Corrector de mayúsculas: minitextos hondureños con los propios de la misión
 //    (classGroups, retoPairs, identifyTaskDB, completeTaskDB) escritos en minúscula.
 const critMayusBank = [
     { text: 'maría viajó de tegucigalpa a copán con su perro rex. Al regresar, le contó la aventura a su abuela carmen.', props: ['María', 'Tegucigalpa', 'Copán', 'Rex', 'Carmen'] },
@@ -1329,7 +1329,7 @@ function genEvalCrit() {
 
     // Barra de distribución + progresión de dificultad
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar y aplicar la regla (I), analizar por completo (II), transformar palabras (III), argumentar el intruso (IV) y producir texto propio (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Mayúsculas 20</span><span class="eval-score-pill esp-tf">II. Análisis 20</span><span class="eval-score-pill esp-mc">III. Fábrica 20</span><span class="eval-score-pill esp-pr">IV. Intruso 20</span><span class="eval-score-pill esp-cp">V. Escritor 20</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar y aplicar la regla (I), analizar por completo (II), transformar palabras (III), argumentar el intruso (IV) y producir texto propio (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Mayúsculas 20</span><span class="eval-score-pill esp-tf">II. Análisis 20</span><span class="eval-score-pill esp-mc">III. Fábrica 20</span><span class="eval-score-pill esp-pr">IV. Intruso 20</span><span class="eval-score-pill esp-cp">V. Escritor 20</span></div>`;
     out.appendChild(bar);
 
     // ── I. Corrector de mayúsculas (5×4=20)
@@ -1337,12 +1337,12 @@ function genEvalCrit() {
     let mayRows = '';
     mayItem.props.forEach((p, i) => { mayRows += `<div class="crit-q-block"><div class="crit-q-label">Propio ${i + 1}: <input type="text" class="eval-cp-input" data-may="${i}" autocomplete="off" aria-label="Sustantivo propio ${i + 1} corregido"></div><div class="crit-pauta">${p}</div><div class="eval-item-feedback" id="critFbMay${i}" aria-live="polite"></div></div>`; });
     const s1 = document.createElement('div');
-    s1.innerHTML = `<div class="eval-section-title">I. Corrector de mayúsculas <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Lee el mini-texto: hay 5 sustantivos propios escritos incorrectamente en minúscula. Escríbelos corregidos, con su mayúscula, en el orden en que aparecen.</p><div class="crit-scenario">📖 ${mayItem.text}</div>${mayRows}</div>`;
+    s1.innerHTML = `<div class="eval-section-title">I. Corrector de mayúsculas <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Lee el minitexto: hay 5 sustantivos propios escritos incorrectamente en minúscula. Escríbelos corregidos, con su mayúscula, en el orden en que aparecen.</p><div class="crit-scenario">📖 ${mayItem.text}</div>${mayRows}</div>`;
     out.appendChild(s1);
 
     // ── II. Tabla de análisis completo (5×4=20) — tomada de classifyTaskDB
     const tabItems = _pickF(classifyTaskDB, 5, rngC);
-    const _critSel = (i, attr, opts, lbl) => `<select class="crit-tbl-select" data-tab="${i}" data-attr="${attr}" aria-label="${lbl} de ${tabItems[i].w}"><option value="">—</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+    const _critSel = (i, attr, opts, lbl) => `<select class="crit-tbl-select" data-tab="${i}" data-attr="${attr}" aria-label="${lbl} de ${tabItems[i].w}"><option value="">?</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
     let tabRows = '';
     tabItems.forEach((it, i) => { tabRows += `<div class="crit-tbl-row"><div class="crit-tbl-word">${i + 1}. ${it.w}</div><div class="crit-tbl-selects"><label>Clase ${_critSel(i, 't', critClaseOpts, 'Clase')}</label><label>Género ${_critSel(i, 'p', critGenOpts, 'Género')}</label><label>Número ${_critSel(i, 'n', critNumOpts, 'Número')}</label></div><div class="crit-pauta">Clase: ${it.t} · Género: ${it.p} · Número: ${it.n}</div><div class="eval-item-feedback" id="critFbTab${i}" aria-live="polite"></div></div>`; });
     const s2 = document.createElement('div');
@@ -1435,7 +1435,7 @@ function gradeEvalCrit() {
         const selr = document.querySelector(`input[name="intr${i}"]:checked`);
         const ok = !!selr && selr.value === it.bad;
         if (ok) detail.intr += 5;
-        _setCritFb('critFbIntr' + i, ok, ok ? 'Correcto. +5 pts — compara tu justificación con la pauta' : 'Revisar. R/ El intruso es «' + it.bad + '». ' + it.why);
+        _setCritFb('critFbIntr' + i, ok, ok ? 'Correcto. +5 pts. Compara tu justificación con la pauta' : 'Revisar. R/ El intruso es «' + it.bad + '». ' + it.why);
     });
 
     // V. Escritor hondureño (autoevaluación por casillas de rúbrica, 10 pts por oración)
@@ -1477,7 +1477,7 @@ function printEvalCrit() {
     d.intr.forEach((it, i) => { s4 += `<p class="crit-print-scenario"><strong>${i + 1})</strong> ${it.words.join(' · ')}</p><p class="crit-print-q">Justifica por qué:</p>${lines(1)}`; });
 
     // V. Escritor hondureño
-    let s5 = `<div class="sec-title"><span>V. Escritor hondureño</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Redacta 2 oraciones (o un mini-párrafo). Oración 1: usa el propio hondureño «<strong>${d.esc.propio}</strong>» y el colectivo «<strong>${d.esc.colectivo.w}</strong>». Oración 2: usa el abstracto «<strong>${d.esc.abstracto}</strong>» y un sustantivo común de tu elección.</p>${lines(2)}${lines(2)}<div class="rub-box"><strong>Rúbrica (por oración, 10 pts):</strong> usa las clases pedidas (4) · mayúsculas correctas (3) · concordancia de género y número (3)</div>`;
+    let s5 = `<div class="sec-title"><span>V. Escritor hondureño</span><div class="obt-row"><span class="obt-lbl">Obtenido:</span><span class="obt-line"></span><span class="obt-pct">de 20 pts</span></div></div><p class="crit-print-q">Redacta 2 oraciones (o un minipárrafo). Oración 1: usa el propio hondureño «<strong>${d.esc.propio}</strong>» y el colectivo «<strong>${d.esc.colectivo.w}</strong>». Oración 2: usa el abstracto «<strong>${d.esc.abstracto}</strong>» y un sustantivo común de tu elección.</p>${lines(2)}${lines(2)}<div class="rub-box"><strong>Rúbrica (por oración, 10 pts):</strong> usa las clases pedidas (4) · mayúsculas correctas (3) · concordancia de género y número (3)</div>`;
 
     // Pauta
     let pR = '';
@@ -1485,7 +1485,7 @@ function printEvalCrit() {
     pR += `<div class="p-sec"><div class="p-ttl">II. Tabla de análisis</div>${d.tab.map(it => `<div class="p-crit-line"><strong>${it.w}:</strong> ${it.t} · ${it.p} · ${it.n}</div>`).join('')}</div>`;
     pR += `<div class="p-sec"><div class="p-ttl">III. Fábrica de palabras</div>${d.fab.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}.</strong> ${it.a}${it.acc.length > 1 ? ' (también: ' + it.acc.slice(1).join(', ') + ')' : ''}</div>`).join('')}</div>`;
     pR += `<div class="p-sec"><div class="p-ttl">IV. Detective del intruso</div>${d.intr.map((it, i) => `<div class="p-crit-line"><strong>${i + 1}. ${it.bad}:</strong> ${it.why}</div>`).join('')}</div>`;
-    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Escritor hondureño (guía de corrección)</div><div class="p-crit-line"><strong>Rúbrica por oración (10 pts):</strong> usa las clases pedidas (4) · mayúsculas correctas (3) · concordancia de género y número (3).</div><div class="p-crit-line"><strong>Oración 1 — ejemplo:</strong> Cuando viajamos a ${d.esc.propio}, ${d.esc.colectivo.ej}.</div><div class="p-crit-line"><strong>Oración 2 — ejemplo:</strong> Al terminar el paseo, todos sentimos una gran ${d.esc.abstracto}.</div></div>`;
+    pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Escritor hondureño (guía de corrección)</div><div class="p-crit-line"><strong>Rúbrica por oración (10 pts):</strong> usa las clases pedidas (4) · mayúsculas correctas (3) · concordancia de género y número (3).</div><div class="p-crit-line"><strong>Oración 1 (ejemplo):</strong> Cuando viajamos a ${d.esc.propio}, ${d.esc.colectivo.ej}.</div><div class="p-crit-line"><strong>Oración 2 (ejemplo):</strong> Al terminar el paseo, todos sentimos una gran ${d.esc.abstracto}.</div></div>`;
 
     const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pensamiento Crítico Los Sustantivos · Forma ${forma}</title><style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -1538,20 +1538,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Los Sustantivos · Educación Básica · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Mayúsculas 20 · II. Análisis 20 · III. Fábrica 20 · IV. Intruso 20 · V. Escritor 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="critPautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Sustantivos · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Los Sustantivos · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — sección V abierta: usar la rúbrica como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20. Sección V abierta: usar la rúbrica como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("critEvalPage",252,0.55,1.3);fit("critPautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1574,7 +1574,7 @@ function openDiploma() {
     const mi = pct === 100 ? 5 : pct >= 80 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : pct >= 20 ? 1 : 0;
     document.getElementById('diplMsg').textContent = msgs[mi];
     document.getElementById('diplDate').textContent = 'Honduras, ' + new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún — ¡sigue completando secciones!';
+    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún. ¡Sigue completando secciones!';
     document.getElementById('diplAch').textContent = achStr;
     document.getElementById('diplomaOverlay').classList.add('open');
     document.querySelector('.diploma-input').focus();

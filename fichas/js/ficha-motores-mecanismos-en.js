@@ -33,7 +33,7 @@
 
         '<div class="fh">' +
         '<div class="fh-txt">' +
-        '<div class="f-badge">📄 Study Sheet: Mission — Motors and Mechanisms</div>' +
+        '<div class="f-badge">📄 Study Sheet · Mission: Motors and Mechanisms</div>' +
         '<div class="f-meta"><b>Subject:</b> Robotics &nbsp;·&nbsp; <b>Level:</b> Basic Education &nbsp;·&nbsp; <b>Robot Path · Stage 3</b></div>' +
         '<div class="f-meta"><b>Topic:</b> How a robot moves: the motor as an actuator (DC motor and servomotor), gears and direction of rotation, the force-speed ratio, pulleys and belts, levers, wheel and axle, worm gear and crank and rod, with the mechanisms of real life in Honduras</div>' +
         '</div>' +
@@ -215,7 +215,7 @@
         '<li>____ The motor is the robot’s most important actuator.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>A 10-tooth gear drives a 30-tooth gear. What happens to the 30-tooth gear?</div>' +
@@ -321,7 +321,7 @@
 
       /* ═══════════ PÁGINA 6 ═══════════ */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
@@ -361,7 +361,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
@@ -377,8 +377,8 @@
         '«Mission Motors and Mechanisms» (Basic Education, Cycles II and III), stage 3 of the Robot Path in the ' +
         'Robotics area. The approach is <strong>unplugged robotics</strong>: every concept (the motor as an actuator, the DC ' +
         'motor, the servomotor and the gearmotor, gears, direction of rotation, the force-speed ratio, pulleys and belts, levers ' +
-        'and the fulcrum, wheel and axle, worm gear and crank and rod) is worked on with no hardware at all — cardboard, string, ' +
-        'a ruler and a pencil — so the sheet can be used in classrooms with no computers and no connectivity. The idea running ' +
+        'and the fulcrum, wheel and axle, worm gear and crank and rod) is worked on with no hardware at all (cardboard, string, ' +
+        'a ruler and a pencil), so the sheet can be used in classrooms with no computers and no connectivity. The idea running ' +
         'through it all, and the one that must come across clearly, is the <strong>trade</strong>: every mechanism swaps force for speed and you never win ' +
         'everything; that is why, before choosing a mechanism, the student must always ask «do I need force or do I need ' +
         'speed?». It covers every concept assessed on the platform (fill in the blank, true/false, multiple choice and matching) ' +

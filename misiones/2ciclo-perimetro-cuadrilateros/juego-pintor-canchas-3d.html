@@ -116,7 +116,7 @@
     <div class="emoji-gr">🎨</div>
     <h2>El Pintor de Canchas</h2>
     <p>Cada piso trae sus dos medidas. Compra las baldosas <b>justas</b> para cubrirlo y después míralas caer fila por fila.</p>
-    <div class="chapas"><span>Cada baldosa es 1 m × 1 m</span><span>Área = la superficie</span><span>Se cuentan FILAS × COLUMNAS</span><span>👆 Toca el piso y pone una fila</span></div>
+    <div class="chapas"><span>Cada baldosa es 1 m × 1 m</span><span>Área = la superficie</span><span>Se cuentan FILAS × COLUMNAS</span><span>👆 Toca el piso y se pone una fila</span></div>
     <p style="font-size:.82rem;color:#9aa5bd;">Tienes tres cajas de herramientas 🧰. Cada compra errada te cuesta una.</p>
     <div class="mapa" id="mapa-ini"></div>
     <button class="bt bt-p" onclick="cerrar('velo-ini')">Empezar</button>
@@ -156,9 +156,9 @@ var PISOS = [
   {n:'El aula de sexto',        emoji:'🏫', b:6,  h:5,
    nota:'5 filas de 6 baldosas: 6 × 5 = 30 baldosas, o sea 30 m².'},
   {n:'El pasillo',              emoji:'🚪', b:12, h:2,
-   nota:'Aquí el perímetro (28 m) es MAYOR que el área (24 m²). No siempre gana el área: son cosas distintas, no dos tamaños del mismo.'},
+   nota:'Aquí el perímetro (28 m) es MAYOR que el área (24 m²). No siempre gana el área: son cosas distintas, no dos tamaños de lo mismo.'},
   {n:'El comedor',              emoji:'🍽️', b:7,  h:7,
-   nota:'Un piso cuadrado: 7 × 7 = 49 baldosas. En el cuadrado, área es lado por lado.'},
+   nota:'Un piso cuadrado: 7 × 7 = 49 baldosas. En el cuadrado, el área es lado por lado.'},
   {n:'La media cancha',         emoji:'🏀', b:9,  h:8,
    nota:'8 filas de 9: 72 baldosas. Contarlas de una en una tardaría; multiplicar es contar rápido.'},
   {n:'La casa del conserje',    emoji:'🏠', b:11, h:6,
@@ -548,7 +548,7 @@ function pintarMarcador(){ document.getElementById('marcador').textContent = '�
 function pintarMapa(){
   var html = PISOS.map(function(d,i){
     return '<span'+(i===nivel?' class="aqui"':'')+'>'+d.emoji+'<br>'+
-           (mejor[i] ? '⭐'.repeat(mejor[i]) : '—')+'</span>';
+           (mejor[i] ? '⭐'.repeat(mejor[i]) : '☆')+'</span>';
   }).join('');
   var a = document.getElementById('mapa-ini'), b = document.getElementById('mapa-fin');
   if(a) a.innerHTML = html;

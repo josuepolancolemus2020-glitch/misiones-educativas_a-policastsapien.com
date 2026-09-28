@@ -31,7 +31,7 @@
 
         '<div class="fh">' +
         '<div class="fh-txt">' +
-        '<div class="f-badge">📄 Study Sheet: Mission — Electricity for Robots</div>' +
+        '<div class="f-badge">📄 Study Sheet · Mission: Electricity for Robots</div>' +
         '<div class="f-meta"><b>Subject:</b> Robotics &nbsp;·&nbsp; <b>Level:</b> Basic Education &nbsp;·&nbsp; <b>Robot Path · Stage 4</b></div>' +
         '<div class="f-meta"><b>Topic:</b> The basic circuit (source, wires, switch and load), open and closed circuits, series and parallel, conductors and insulators, voltage, current and resistance, and electrical safety</div>' +
         '</div>' +
@@ -82,8 +82,8 @@
         '<h2 style="margin-top:0;">🟢🔴 2. Closed circuit and open circuit</h2>' +
 
         '<div class="tri">' +
-        '<div class="tnuc"><b>🟢 Closed — it works</b>The path is <strong>complete</strong>: the current leaves the <strong>+</strong>, goes through the load and comes back to the <strong>−</strong>. The LED lights up, the motor spins, the buzzer sounds.</div>' +
-        '<div class="torg"><b>🔴 Open — it does not work</b>The path is <strong>cut</strong>: switch turned off, loose wire or a burned-out bulb in series. No current flows even with a brand-new battery.</div>' +
+        '<div class="tnuc"><b>🟢 Closed: it works</b>The path is <strong>complete</strong>: the current leaves the <strong>+</strong>, goes through the load and comes back to the <strong>−</strong>. The LED lights up, the motor spins, the buzzer sounds.</div>' +
+        '<div class="torg"><b>🔴 Open: it does not work</b>The path is <strong>cut</strong>: switch turned off, loose wire or a burned-out bulb in series. No current flows even with a brand-new battery.</div>' +
         '</div>' +
 
         '<h3>✏️ The symbols for drawing circuits</h3>' +
@@ -213,7 +213,7 @@
         '<li>Each order the circuit carries out, like lighting up or turning, is an <span class="linea-resp"></span>.</li>' +
         '<li>The group spent the money of <span class="linea-resp"></span> good batteries.</li>' +
         '<li>In the flashlight, what opens and closes the path is the <span class="linea-resp"></span> you slide.</li>' +
-        '<li>Electricity is neither created nor destroyed: it is <span class="linea-resp"></span>.</li>' +
+        '<li>Energy is neither created nor destroyed: it is <span class="linea-resp"></span>.</li>' +
         '</ol>' +
 
         '<h3>II. True or False <span class="val">(Value: 10 points each)</span></h3>' +
@@ -233,7 +233,7 @@
 
       /* ═══════════ PÁGINA 5 ═══════════ */
       p5:
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>What did they replace first when the robot would not turn on?</div>' +
@@ -329,7 +329,7 @@
          La Columna B conserva el orden del español: la pauta
          1C · 2E · 3A · 4I · 5G · 6H · 7B · 8J · 9D · 10F vale igual. */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
@@ -368,7 +368,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
@@ -397,7 +397,7 @@
         'these circuits power sensors and actuators. It is a good idea to supervise the building of circuits, check that the ' +
         'batteries are never left in a short circuit (they heat up) and organize the collection of used batteries with the class. The interactive ' +
         'mission (QR code on the cover) lets students practice in the <strong>Circuit Laboratory</strong> ' +
-        '—opening and closing the switch, seeing the loose wire, the battery backwards, the short circuit, series and parallel— ' +
+        '(opening and closing the switch, seeing the loose wire, the battery backwards, the short circuit, series and parallel) ' +
         'with instant feedback before solving this sheet. ' +
         '<em>The Spanish and English versions share the same answer key: Column B keeps the same order in both.</em>' +
         '</div>'

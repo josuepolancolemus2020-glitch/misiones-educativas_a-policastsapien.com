@@ -46,7 +46,7 @@ window.WidgetAzulejosJSON = {
         <div class="waz-gridwrap"><div class="waz-grid" id="waz-grid"></div></div>
         <div class="waz-leg" id="waz-leg"></div>
         <div class="waz-opts" id="waz-opts"></div>
-        <div class="waz-msg" id="waz-msg">Mira la rejilla: lo morado es la parte que le toca a las dos. ¿Qué fracción del cuadro completo es?</div>
+        <div class="waz-msg" id="waz-msg">Mira la rejilla: lo morado es la parte que les toca a las dos. ¿Qué fracción del cuadro completo es?</div>
         <div class="waz-streak" id="waz-streak">🔥 Racha: 0</div>
       </div>`;
 
@@ -102,7 +102,7 @@ window.WidgetAzulejosJSON = {
         optsEl.appendChild(btn);
       });
       msgEl.className = 'waz-msg';
-      msgEl.innerHTML = 'Cuenta los cuadros morados y cuéntalos todos: esa es la fracción que buscas.';
+      msgEl.innerHTML = 'Cuenta los cuadros morados y después todos los del cuadro: esa es la fracción que buscas.';
     }
 
     function responder(btn, txt) {

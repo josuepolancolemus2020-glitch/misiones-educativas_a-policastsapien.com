@@ -45,7 +45,7 @@ P.push(portada('Cómo Aprende una Máquina',
     <div class="dos">
       <div class="dB"><b>📋 Programa de siempre</b>
         Una persona escribe las <strong>reglas</strong>. La computadora obedece.
-        <ul><li><em>«Si la nota es menor que 60, escribe reprobado.»</em></li>
+        <ul><li><em>«Si la nota es menor que 60, escribe reprobado».</em></li>
             <li>Nunca mejora solo. Falla con lo que la regla no dice.</li></ul>
       </div>
       <div class="dA"><b>🍎 Programa que aprende</b>
@@ -150,7 +150,7 @@ P.push(`
         <li>Juega millones de partidas y se premia cada vez que gana. <span class="linea-resp" style="min-width:50px"></span></li>
         <li>Le damos recibos ya clasificados en «pagado» y «pendiente». <span class="linea-resp" style="min-width:50px"></span></li>
         <li>Agrupa sola a los clientes que compran parecido, sin nombres. <span class="linea-resp" style="min-width:50px"></span></li>
-        <li>Un robot prueba caminar y gana puntos si avanza sin caerse. <span class="linea-resp" style="min-width:50px"></span></li>
+        <li>Un robot prueba a caminar y gana puntos si avanza sin caerse. <span class="linea-resp" style="min-width:50px"></span></li>
       </ol>
 
       <h3>📦 Actividad 3 · ¿Dato o etiqueta? <span class="val">(12 pts)</span></h3>

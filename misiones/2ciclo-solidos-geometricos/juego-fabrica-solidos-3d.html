@@ -75,7 +75,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 
 <div id="lienzo">
   <div class="pedido" id="pedido"></div>
-  <div class="nombre" id="nombre">—</div>
+  <div class="nombre" id="nombre">?</div>
   <div class="cuentas">
     <div class="tri">
       <div class="c-cara">caras<b id="n-caras">0</b></div>
@@ -389,7 +389,7 @@ function ganar(){
     p.nota.replace(/\n/g,'<br>');
   document.getElementById('fin-txt').textContent = limpio
     ? '✨ Pedido limpio: a la primera y sin pista. +6 ⭐'
-    : '+4 ⭐ (un pedido limpio —a la primera y sin pista— da 6)';
+    : '+4 ⭐ (un pedido limpio, a la primera y sin pista, da 6)';
   var ultimo = (pedido >= PEDIDOS.length-1);
   var res = document.getElementById('fin-resumen');
   if(ultimo){

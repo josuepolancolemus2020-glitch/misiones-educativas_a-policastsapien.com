@@ -100,7 +100,7 @@ ${o.tareas.map(t => `        <tr><td>${esc(t.t)}</td><td>${tipoDe(t.tipo).e} ${e
 const EVAL = [
   { q: '¿Qué pasa con los ocho oficios de esta ficha?', o: ['Se van casi todos', 'Ninguno se va entero y ninguno se salva entero', 'Solo se salvan los de papel', 'Se salva solo el de la maestra'], a: 1 },
   { q: 'Ponerle la vía a un niño de tres años es una tarea…', o: ['De papel', 'De mirar', 'De manos', 'De estar con alguien'], a: 2 },
-  { q: 'La ficha cuenta tareas y no horas. ¿Por qué importa eso?', o: ['Porque una tarea puede llevarse el día entero y otra cinco minutos', 'Porque las horas no se pueden contar', 'Porque la máquina trabaja de noche', 'Porque así lo pide el examen'], a: 0 },
+  { q: 'La ficha cuenta tareas y no horas. ¿Por qué importa eso?', o: ['Porque una tarea puede llevarse el día entero y otra, cinco minutos', 'Porque las horas no se pueden contar', 'Porque la máquina trabaja de noche', 'Porque así lo pide el examen'], a: 0 },
   { q: 'Una computadora suma los gastos del mes. ¿Eso es Inteligencia Artificial?', o: ['Sí, es la más nueva', 'Sí, porque la computadora piensa', 'Depende del precio', 'No: una computadora normal ya lo hacía antes'], a: 3 },
   { q: '«Traé el precio del frijol en la pulpería de tu barrio». La máquina no puede entregarla porque…', o: ['Es muy larga', 'Usa un dato de aquí que no está escrito en ninguna parte', 'La prohíbe el maestro', 'Es de Ciencias Sociales'], a: 1 },
   { q: '¿Qué hay que saberse bien, ahora que la máquina escribe?', o: ['Las respuestas del libro, de memoria', 'Nada, porque ella lo sabe', 'Lo que sirve para comprobar lo que te dice', 'Solo las fechas'], a: 2 },
@@ -166,7 +166,7 @@ ${IA_CAPACIDADES.map((c, i) => `      <tr><td class="k">${LETRAS[i]}</td>${tdk(`
 P.push(`
     <h2>${ofiEjemplo.e} 4. Un oficio por dentro: ${esc(ofiEjemplo.quien)}</h2>
 
-    <p>Así se desarma un oficio: ${esc(ofiEjemplo.nombre)}, tarea por tarea. Mirá la última columna. Cada
+    <p>Así se desarma un oficio: ${esc(ofiEjemplo.nombre.toLowerCase())}, tarea por tarea. Mirá la última columna. Cada
        tarea que la máquina se lleva dice <b>con qué</b>.</p>
 
     <table>
@@ -336,7 +336,7 @@ P.push(`
       <div><span class="pt">Actividad 1 · Un oficio, tarea por tarea (30 pts):</span> el veredicto de cada
         tarea, en el orden impreso (${SIG.si} se la lleva · ${SIG.medias} a medias · ${SIG.no} no puede) y
         la letra del <b>con qué</b>. Cada alumno hace un oficio: son seis o siete tareas.
-${ofiRestantes.map(o => `        <br><b>${o.e} ${esc(o.nombre)}</b> — ` +
+${ofiRestantes.map(o => `        <br><b>${o.e} ${esc(o.nombre)}:</b> ` +
   o.tareas.map((t, i) => `${i + 1} ${SIG[t.maquina]}${conQue(t) ? ' ' + conQue(t) : ''}`).join(' · ')).join('\n')}
         <br><i>Y lo que hay que decir en voz alta: lo que le queda a cada oficio es de manos o de estar
         con alguien, y no es lo que sobra. Es lo que nadie más puede hacer.</i></div>

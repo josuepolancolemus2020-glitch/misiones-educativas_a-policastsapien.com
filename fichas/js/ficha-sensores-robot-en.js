@@ -30,7 +30,7 @@
 
         '<div class="fh">' +
         '<div class="fh-txt">' +
-        '<div class="f-badge">📡 Study Sheet: Mission — Sensors, The Robot’s Senses</div>' +
+        '<div class="f-badge">📡 Study Sheet · Mission: Sensors, The Robot’s Senses</div>' +
         '<div class="f-meta"><b>Subject:</b> Robotics &nbsp;·&nbsp; <b>Level:</b> Basic Education &nbsp;·&nbsp; <b>Robot Path · Stage 2</b></div>' +
         '<div class="f-meta"><b>Topic:</b> What a sensor is, the main types (light, distance, touch, temperature, sound and moisture), the sensor → controller → actuator chain compared with the human body, the difference between sensor and actuator, and the sensors of everyday life in Honduras (unplugged robotics: no computer needed)</div>' +
         '</div>' +
@@ -54,7 +54,7 @@
         '<h2>📡 1. What is a sensor?</h2>' +
 
         '<p>A <strong>sensor</strong> is the part of the robot that <strong>SENSES</strong>. It picks up something from the real world ' +
-        '—light, distance, heat, contact, sound or moisture— and <strong>turns it into a signal</strong> that the ' +
+        '(light, distance, heat, contact, sound or moisture) and <strong>turns it into a signal</strong> that the ' +
         '<strong>controller</strong> understands. With no sensors, the robot would be «blind and deaf».</p>' +
 
         '<div class="caja truco">💡 <b>Handy trick:</b> the sensor is the robot’s <strong>reporter</strong>: it only reports. ' +
@@ -200,7 +200,7 @@
         '<li>____ The body also has its own three-part chain.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>What was the tank pump missing?</div>' +
@@ -298,7 +298,7 @@
          La Columna B conserva el orden del español: la pauta
          1E · 2G · 3J · 4B · 5I · 6A · 7D · 8F · 9C · 10H vale igual. */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
         '<tr><th style="width:42%;">Column A</th><th>Column B</th></tr>' +
@@ -337,7 +337,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This page prints on a <strong>separate sheet</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
@@ -353,7 +353,7 @@
         '«Mission Sensors: The Robot’s Senses» (Basic Education, Cycles II and III), stage 2 of the Robot Path in the Robotics area, ' +
         'and it follows on from stage 1 («What Is a Robot?»). The approach is <strong>unplugged robotics</strong>: every concept ' +
         '(sensor, signal, types of sensors, the sensor → controller → actuator chain, sensor vs actuator and wrong readings) is worked ' +
-        'on with no hardware at all — with paper, games and observation — so the sheet can be used in classrooms with no computers and ' +
+        'on with no hardware at all (with paper, games and observation), so the sheet can be used in classrooms with no computers and ' +
         'no internet. The <strong>unplugged activities</strong> on page 3 are the heart of the lesson: blindfolding yourself in order to ' +
         '«be» a touch sensor, measuring distance in steps and comparing it with the echo of a clap (like the ultrasonic sensor), guessing ' +
         'objects inside a bag by touch alone, and simulating a <strong>dirty sensor</strong> by looking through a half-blocked tube. ' +

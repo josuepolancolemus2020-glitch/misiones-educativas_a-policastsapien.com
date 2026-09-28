@@ -2,7 +2,7 @@
    Ficha didáctica «Programando un Robot» — versión en inglés
    ------------------------------------------------------------
    Misma traducción de autor que la misión (program · instruction
-   · conditional IF…THEN…ELSE · loop · variable · counter ·
+   · conditional IF… THEN… ELSE · loop · variable · counter ·
    pseudocode · debug · bug · sensor · actuator) y en inglés
    AMERICANO, que es el que enseñan las bilingües de Honduras:
    color, center, «Student No.».
@@ -10,8 +10,8 @@
    El lenguaje del simulador SÍ se traduce aquí, porque en la
    ficha es texto impreso y no un identificador que el programa
    compare: AVANZA → FORWARD, GIRA DERECHA → TURN RIGHT,
-   ESPERA → WAIT, DETENTE → STOP, SI…ENTONCES…SINO →
-   IF…THEN…ELSE, REPITE N VECES → REPEAT N TIMES.
+   ESPERA → WAIT, DETENTE → STOP, SI… ENTONCES… SINO →
+   IF… THEN… ELSE, REPITE N VECES → REPEAT N TIMES.
 
    Las 7 páginas se traducen enteras (data-i18n="p1".."p7") para
    que la maquetación impresa no se desarme.
@@ -37,7 +37,7 @@
 
         '<div class="fh">' +
         '<div class="fh-txt">' +
-        '<div class="f-badge">📄 Study Sheet: Mission — Programming a Robot</div>' +
+        '<div class="f-badge">📄 Study Sheet · Mission: Programming a Robot</div>' +
         '<div class="f-meta"><b>Subject:</b> Robotics &nbsp;·&nbsp; <b>Level:</b> Basic Education &nbsp;·&nbsp; <b>Robot Path · Stage 5</b></div>' +
         '<div class="f-meta"><b>Topic:</b> The cycle read the sensors → decide → move the actuators → repeat; movement and waiting instructions; conditionals with sensors; loops; variables; pseudocode and debugging (unplugged robotics: no computer needed)</div>' +
         '</div>' +
@@ -144,9 +144,9 @@
         '2. <b>REPEAT</b> 10 <b>TIMES</b>:\n' +
         '3.    FORWARD\n' +
         '4.    <b>IF</b> the moisture sensor says «dry soil» <b>THEN</b> open the valve\n' +
-        '5.    <b>ELSE</b> keep going\n' +
+        '5.    <b>ELSE</b> close the valve\n' +
         '6.    plants = plants + 1\n' +
-        '7. STOP and report how many plants it watered</div>' +
+        '7. STOP and report how many plants it checked</div>' +
 
         '<h2>🎲 6. Unplugged activities (no computer)</h2>' +
 
@@ -217,7 +217,7 @@
         '<li>____ A robot with a full battery no longer needs a program.</li>' +
         '</ol>' +
 
-        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span> — Circle the correct letter.</h3>' +
+        '<h3>III. Multiple choice <span class="val">(Value: 10 points each)</span>. Circle the correct letter.</h3>' +
 
         '<div class="preg">' +
         '<div class="preg-q"><span class="preg-n">1</span>The robot has to move forward seven times in a row. What is best to write?</div>' +
@@ -323,7 +323,7 @@
 
       /* ═══════════ PÁGINA 6 ═══════════ */
       p6:
-        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span> — Write on the line the letter from Column B that matches.</h3>' +
+        '<h3>IV. Matching <span class="val">(Value: 10 points each)</span>. Write on the line the letter from Column B that matches.</h3>' +
 
         '<table>' +
         '<tr><th style="width:40%;">Column A</th><th>Column B</th></tr>' +
@@ -362,7 +362,7 @@
 
       /* ═══════════ PÁGINA 7 · HOJA SUELTA DEL DOCENTE ═══════════ */
       p7:
-        '<h2>✅ Answer Key — Teacher’s Sheet</h2>' +
+        '<h2>✅ Answer Key · Teacher’s Sheet</h2>' +
 
         '<p style="font-size:10pt;color:var(--gris);">This sheet is printed <strong>separately</strong>: it is only for the teacher or for guided self-assessment.</p>' +
 
@@ -371,7 +371,7 @@
         '<div><span class="pt">II. True or False:</span> 1T, 2F, 3T, 4F, 5T, 6F, 7T, 8F, 9T, 10F</div>' +
         '<div><span class="pt">III. Multiple choice:</span> 1c, 2a, 3d, 4b, 5c, 6a, 7b, 8d, 9b, 10c</div>' +
         '<div><span class="pt">IV. Matching:</span> 1C, 2H, 3E, 4I, 5A, 6G, 7J, 8B, 9F, 10D</div>' +
-        '<div><span class="pt">Grid on page 3 (one valid solution):</span> from A5 facing North — ' +
+        '<div><span class="pt">Grid on page 3 (one valid solution):</span> from A5 facing North: ' +
         '1) IF THERE IS A WALL AHEAD → TURN RIGHT, ELSE → FORWARD · 2) the same block · 3) the same block (here the sensor detects the crate on A2 and it turns East) · ' +
         '4) IF THERE IS A LINE → FORWARD, ELSE → TURN RIGHT · 5) the same block · 6) IF THERE IS A LINE → FORWARD, ELSE → TURN LEFT · ' +
         '7) and 8) the same block (it goes up the line on C2 and C1) · 9) IF THERE IS A LINE → FORWARD, ELSE → TURN RIGHT · 10) FORWARD · 11) FORWARD · 12) STOP on E1. ' +

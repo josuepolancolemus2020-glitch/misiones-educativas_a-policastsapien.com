@@ -58,7 +58,7 @@ const HITOS = [
          'formados, ni edificios para cumplirlo. Durante medio siglo la escuela vive de la ' +
          'voluntad local y de la Iglesia.',
     doc: 'Constituciones y decretos de la república temprana.',
-    aula: 'Es el punto de partida: en Honduras la escuela pública no vino con la independencia, ' +
+    aula: 'Es el punto de partida: en Honduras la escuela pública no vino con la Independencia, ' +
           'llegó sesenta años después. Por eso el sistema es más joven de lo que se cree.',
   },
   {
@@ -304,7 +304,7 @@ function memoToca(i) {
    cuatro letras (normativa 1-ter: ninguna pasa del 40%). Aquí el
    reparto es a=2, b=2, c=3, d=2 sobre nueve preguntas. */
 const QZ = [
-  { q: '¿Qué había en Honduras en materia de escuela pública el día de la independencia, en 1821?',
+  { q: '¿Qué había en Honduras en materia de escuela pública el día de la Independencia, en 1821?',
     o: ['Casi nada: la enseñanza dependía del cabildo, la parroquia o el bolsillo familiar',
         'Un sistema nacional de escuelas primarias gratuitas',
         'Escuelas normales en cada departamento',
@@ -458,7 +458,7 @@ function cpRevisa() {
   r.className = 'resu on ' + (bien === CP.length ? 'bien' : 'mal');
   r.innerHTML = `<span class="resu-num">${bien}/${CP.length}</span>` +
     (bien === CP.length ? 'Los datos duros los tiene. Esos son los que caen tal cual en la prueba.'
-                        : 'Vuelva a la línea de tiempo por las que falló: se memorizan mejor con su historia.');
+                        : 'Vuelva a la línea de tiempo por las fechas que falló: se memorizan mejor con su historia.');
   if (bien === CP.length && !S.completa) { S.completa = 1; xp(6); }
   guardar();
 }
@@ -610,7 +610,7 @@ function sopaLinterna() {
    cinco en cada letra (normativa 1-ter). */
 const CN = [
   { q: 'La escuela pública hondureña se funda con:',
-    o: ['El Código de Instrucción Pública de 1882', 'La independencia de 1821',
+    o: ['El Código de Instrucción Pública de 1882', 'La Independencia de 1821',
         'La Ley Orgánica de 1966', 'La Constitución de 1982'], c: 0 },
   { q: 'El Código de Instrucción Pública fue obra del gobierno de:',
     o: ['Francisco Morazán', 'Tiburcio Carías Andino', 'Marco Aurelio Soto', 'Ramón Villeda Morales'], c: 2 },

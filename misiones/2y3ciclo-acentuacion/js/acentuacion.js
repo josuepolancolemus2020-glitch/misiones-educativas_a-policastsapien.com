@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -198,20 +198,20 @@ function go(id) {
 
 // ===================== FLASHCARD DATA =====================
 const fcData = [
-    { w: 'Sílaba', a: '🔤 Unidad mínima de pronunciación de una palabra. Toda sílaba tiene como núcleo una <strong>vocal</strong>. Ej: ca-sa (2 sílabas).' },
-    { w: 'Sílaba tónica', a: '💪 La sílaba que se pronuncia con <strong>mayor intensidad</strong> dentro de la palabra. Ej: en "ca-MI-no", la tónica es "mi".' },
+    { w: 'Sílaba', a: '🔤 Unidad mínima de pronunciación de una palabra. Toda sílaba tiene como núcleo una <strong>vocal</strong>. Ej.: ca-sa (2 sílabas).' },
+    { w: 'Sílaba tónica', a: '💪 La sílaba que se pronuncia con <strong>mayor intensidad</strong> dentro de la palabra. Ej.: en "ca-MI-no", la tónica es "mi".' },
     { w: 'Vocales fuertes y débiles', a: '🔡 Fuertes (abiertas): <strong>a, e, o</strong>. Débiles (cerradas): <strong>i, u</strong>. Su combinación determina si hay diptongo, triptongo o hiato.' },
-    { w: 'Diptongo', a: '🔗 Unión de <strong>dos vocales</strong> en una misma sílaba: fuerte + débil átona (o viceversa), o dos débiles distintas. Ej: ai-re, pia-no, ciu-dad.' },
-    { w: 'Triptongo', a: '🔺 Unión de <strong>tres vocales</strong> en una misma sílaba: débil átona + fuerte + débil átona. Ej: buey, U-ru-guay, miau.' },
-    { w: 'Hiato simple', a: '➗ Dos vocales <strong>fuertes</strong> juntas que se pronuncian en sílabas separadas. Ej: ca-os, po-e-ta, te-a-tro.' },
-    { w: 'Hiato acentual', a: '⚡ Vocal <strong>débil tónica</strong> junto a una fuerte (o viceversa); rompe el diptongo y <strong>siempre lleva tilde</strong> en la débil. Ej: dí-a, ba-úl, pa-ís.' },
-    { w: 'Palabra Aguda', a: '🔚 La sílaba tónica es la <strong>última</strong>. Lleva tilde si termina en <strong>n, s o vocal</strong>. Ej: camión, sofá, compás.' },
-    { w: 'Palabra Llana (Grave)', a: '➖ La sílaba tónica es la <strong>penúltima</strong>. Lleva tilde si <strong>NO</strong> termina en n, s o vocal. Ej: árbol, azúcar.' },
-    { w: 'Palabra Esdrújula', a: '⏫ La sílaba tónica es la <strong>antepenúltima</strong>. <strong>Siempre</strong> lleva tilde. Ej: música, médico.' },
-    { w: 'Palabra Sobresdrújula', a: '🔝 La sílaba tónica está antes de la antepenúltima. <strong>Siempre</strong> lleva tilde. Ej: cuéntaselo, explícaselo.' },
-    { w: 'Tilde diacrítica', a: '🆚 Tilde que distingue dos palabras que se escriben igual pero tienen <strong>función gramatical distinta</strong>. Ej: él (pronombre) / el (artículo).' },
-    { w: 'Mayúsculas y tilde', a: '🔠 Las palabras escritas en <strong>mayúscula también llevan tilde</strong> si la regla lo exige. Ej: ÁFRICA, CAMIÓN, MÚSICA.' },
-    { w: 'Adverbios en -mente', a: '🔧 Conservan la tilde del adjetivo original si este la tenía. Ej: fácil → fácilmente; rápida → rápidamente; lenta → lentamente (sin tilde).' },
+    { w: 'Diptongo', a: '🔗 Unión de <strong>dos vocales</strong> en una misma sílaba: fuerte + débil átona (o viceversa), o dos débiles distintas. Ej.: ai-re, pia-no, ciu-dad.' },
+    { w: 'Triptongo', a: '🔺 Unión de <strong>tres vocales</strong> en una misma sílaba: débil átona + fuerte + débil átona. Ej.: buey, U-ru-guay, miau.' },
+    { w: 'Hiato simple', a: '➗ Dos vocales <strong>fuertes</strong> juntas que se pronuncian en sílabas separadas. Ej.: ca-os, po-e-ta, te-a-tro.' },
+    { w: 'Hiato acentual', a: '⚡ Vocal <strong>débil tónica</strong> junto a una fuerte (o viceversa); rompe el diptongo y <strong>siempre lleva tilde</strong> en la débil. Ej.: dí-a, ba-úl, pa-ís.' },
+    { w: 'Palabra Aguda', a: '🔚 La sílaba tónica es la <strong>última</strong>. Lleva tilde si termina en <strong>n, s o vocal</strong>. Ej.: camión, sofá, compás.' },
+    { w: 'Palabra Llana (Grave)', a: '➖ La sílaba tónica es la <strong>penúltima</strong>. Lleva tilde si <strong>NO</strong> termina en n, s o vocal. Ej.: árbol, azúcar.' },
+    { w: 'Palabra Esdrújula', a: '⏫ La sílaba tónica es la <strong>antepenúltima</strong>. <strong>Siempre</strong> lleva tilde. Ej.: música, médico.' },
+    { w: 'Palabra Sobresdrújula', a: '🔝 La sílaba tónica está antes de la antepenúltima. <strong>Siempre</strong> lleva tilde. Ej.: cuéntaselo, explícaselo.' },
+    { w: 'Tilde diacrítica', a: '🆚 Tilde que distingue dos palabras que se escriben igual pero tienen <strong>función gramatical distinta</strong>. Ej.: él (pronombre) / el (artículo).' },
+    { w: 'Mayúsculas y tilde', a: '🔠 Las palabras escritas en <strong>mayúscula también llevan tilde</strong> si la regla lo exige. Ej.: ÁFRICA, CAMIÓN, MÚSICA.' },
+    { w: 'Adverbios en -mente', a: '🔧 Conservan la tilde del adjetivo original si este la tenía. Ej.: fácil → fácilmente; rápida → rápidamente; lenta → lentamente (sin tilde).' },
 ];
 let fcIdx = 0;
 function upFC() {
@@ -367,7 +367,7 @@ function nextClassGroup() {
     sfx('click');
     currentClassGroupIdx = (currentClassGroupIdx + 1) % classGroups.length;
     buildClass(); document.getElementById('fbCls').classList.remove('show');
-    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs ' + classGroups[currentClassGroupIdx].label[1]);
+    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs. ' + classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass() { sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -427,7 +427,7 @@ const cmpData = [
     { s: 'Hoy hace un ___ muy bonito.', opts: ['dia', 'día', 'diá'], c: 1 },
     { s: '¿___ es tu nombre?', opts: ['Cómo', 'Como', 'Comó'], c: 0 },
     { s: 'El examen fue ___ difícil.', opts: ['bastante', 'bastente', 'bastanté'], c: 0 },
-    { s: '___ tu hermano si quiere venir.', opts: ['Preguntale', 'Pregúntale', 'Pregúntalé'], c: 1 },
+    { s: '___ a tu hermano si quiere venir.', opts: ['Preguntale', 'Pregúntale', 'Pregúntalé'], c: 1 },
 ];
 let cmpIdx = 0, cmpSel = -1, cmpDone = false;
 function showCmp() {var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -472,8 +472,8 @@ function checkCmp() {
 // Widget 1: Ordenar pasos de acentuación
 const routeSets = [
     { label: 'Pasos para saber si una palabra lleva tilde', steps: ['Separar la palabra en sílabas', 'Identificar la sílaba tónica', 'Determinar si es aguda, llana, esdrújula o sobresdrújula', 'Aplicar la regla de tildación correspondiente', 'Escribir la tilde si corresponde'] },
-    { label: 'Pasos para distinguir diptongo de hiato', steps: ['Identificar las dos vocales que están juntas', 'Determinar si cada una es fuerte (a,e,o) o débil (i,u)', 'Si hay una fuerte y una débil átona, es diptongo', 'Si la vocal débil es tónica, es hiato acentual (lleva tilde)', 'Si ambas vocales son fuertes, es hiato simple'] },
-    { label: 'Pasos para aplicar la tilde diacrítica', steps: ['Identificar una palabra que se escribe igual a otra', 'Determinar su función gramatical en la oración', 'Comprobar si es pronombre o adverbio interrogativo/exclamativo', 'Aplicar la tilde solo si corresponde a esa función'] },
+    { label: 'Pasos para distinguir diptongo de hiato', steps: ['Identificar las dos vocales que están juntas', 'Determinar si cada una es fuerte (a, e, o) o débil (i, u)', 'Si hay una fuerte y una débil átona, es diptongo', 'Si la vocal débil es tónica, es hiato acentual (lleva tilde)', 'Si ambas vocales son fuertes, es hiato simple'] },
+    { label: 'Pasos para aplicar la tilde diacrítica', steps: ['Identificar una palabra que se escribe igual que otra', 'Determinar su función gramatical en la oración', 'Comprobar si es pronombre o adverbio interrogativo/exclamativo', 'Aplicar la tilde solo si corresponde a esa función'] },
 ];
 let currentRouteIdx = 0, routeItems = [];
 function buildRoute() { routeItems = _shuffle([...routeSets[currentRouteIdx].steps]); renderRoute(); const fbEl = document.getElementById('fbRoute'); if (fbEl) fbEl.classList.remove('show'); }
@@ -670,7 +670,7 @@ function nextRetoPair() {
     document.getElementById('retoWord').textContent = '¡Prepárate!';
     document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
     document.getElementById('fbReto').classList.remove('show');
-    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto() {
     sfx('click'); clearInterval(retoTimerInt); retoRunning = false; retoSec = 30; retoOk = 0; retoErr = 0;
@@ -687,7 +687,7 @@ const identifyTaskDB = [
     { s: 'Compramos un sofá nuevo para la sala.', type: 'Palabra aguda con tilde (sofá)' },
     { s: 'El árbol del jardín es centenario.', type: 'Palabra llana con tilde (árbol)' },
     { s: 'Cuéntaselo a tu mejor amigo.', type: 'Palabra sobresdrújula (Cuéntaselo)' },
-    { s: 'Él no quiso acompañarnos al cine.', type: 'Tilde diacrítica — pronombre personal (Él)' },
+    { s: 'Él no quiso acompañarnos al cine.', type: 'Tilde diacrítica: pronombre personal (Él)' },
     { s: 'Tuvimos un día muy soleado.', type: 'Hiato acentual (día)' },
     { s: 'El perro juega en el jardín.', type: 'Palabra aguda con tilde (jardín)' },
     { s: '¿Dónde dejaste el baúl?', type: 'Adverbio interrogativo con tilde (Dónde) / Hiato acentual (baúl)' },
@@ -718,7 +718,7 @@ const explainQuestions = [
     { q: '¿Qué es la sílaba tónica y cómo se identifica?', ans: 'Es la sílaba que se pronuncia con mayor intensidad o fuerza dentro de una palabra.' },
     { q: 'Explica la diferencia entre diptongo e hiato.', ans: 'El diptongo une dos vocales en una sola sílaba (fuerte+débil átona o dos débiles); el hiato las separa en sílabas distintas (dos fuertes, o una débil tónica junto a una fuerte).' },
     { q: '¿Cuáles son las reglas de tildación de las palabras agudas y llanas?', ans: 'Las agudas llevan tilde si terminan en n, s o vocal. Las llanas llevan tilde si NO terminan en n, s o vocal.' },
-    { q: '¿Qué es la tilde diacrítica? Da un ejemplo.', ans: 'Es la tilde que distingue palabras que se escriben igual pero cumplen funciones gramaticales distintas. Ej: tú (pronombre) / tu (posesivo).' },
+    { q: '¿Qué es la tilde diacrítica? Da un ejemplo.', ans: 'Es la tilde que distingue palabras que se escriben igual pero cumplen funciones gramaticales distintas. Ej.: tú (pronombre) / tu (posesivo).' },
     { q: '¿Por qué las palabras esdrújulas y sobresdrújulas siempre llevan tilde?', ans: 'Porque son las menos frecuentes en español y la ortografía marca siempre su acentuación para evitar confusión en la pronunciación.' },
 ];
 let ansVisible = false;
@@ -1058,11 +1058,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · La Acentuación`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · La Acentuación`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
     const cpItems = _pickF(evalCPBank, 5, rng);
     const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -1080,7 +1080,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">?</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1203,7 +1203,7 @@ function printEval() {
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1276,23 +1276,23 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 @media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body><div id="evalPage">
 <div class="ph">
-  <h2>Evaluación Final de Misión La Acentuación — Español — Lengua</h2>
+  <h2>Evaluación Final de Misión La Acentuación · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión La Acentuación · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión La Acentuación · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1320,27 +1320,27 @@ function evalSwitchMode(mode) {
 }
 
 const critCaseBank = [
-    { k: 'ca-mateo', txt: 'Mateo escribió en su cuaderno: "El sabado fui al jardin con mi abuela y vimos un arbol muy alto cerca del rio."',
+    { k: 'ca-mateo', txt: 'Mateo escribió en su cuaderno: "El sabado fui al jardin con mi abuela y vimos un arbol muy alto cerca del rio".',
         palabras: 'sábado, jardín, árbol, río',
         faltantes: ['«sábado» → esdrújula (SÁ-ba-do): siempre lleva tilde', '«jardín» → aguda terminada en n', '«árbol» → llana terminada en consonante distinta de n/s', '«río» → hiato acentual (í tónica + o): la débil tónica siempre se tilda'],
         corregida: 'El sábado fui al jardín con mi abuela y vimos un árbol muy alto cerca del río.' },
-    { k: 'ca-camila', txt: 'Camila escribió: "Compre un sofa nuevo para la sala y tambien una mesa pequeña de color cafe."',
+    { k: 'ca-camila', txt: 'Camila escribió: "Compre un sofa nuevo para la sala y tambien una mesa pequeña de color cafe".',
         palabras: 'compré, sofá, también, café',
         faltantes: ['«compré» → aguda terminada en vocal', '«sofá» → aguda terminada en vocal', '«también» → aguda terminada en n', '«café» → aguda terminada en vocal'],
         corregida: 'Compré un sofá nuevo para la sala y también una mesa pequeña de color café.' },
-    { k: 'ca-luis', txt: 'Luis escribió: "Mi materia favorita son las matematicas, porque el profesor explica con ejemplos muy practicos."',
+    { k: 'ca-luis', txt: 'Luis escribió: "Mi materia favorita son las matematicas, porque el profesor explica con ejemplos muy practicos".',
         palabras: 'matemáticas, prácticos',
         faltantes: ['«matemáticas» → esdrújula (ma-te-MÁ-ti-cas): siempre lleva tilde', '«prácticos» → esdrújula (PRÁC-ti-cos): siempre lleva tilde'],
         corregida: 'Mi materia favorita son las matemáticas, porque el profesor explica con ejemplos muy prácticos.' },
-    { k: 'ca-ana', txt: 'Ana escribió: "El no sabe si vendra a la fiesta, pero yo si quiero ir con el este sabado."',
+    { k: 'ca-ana', txt: 'Ana escribió: "El no sabe si vendra a la fiesta, pero yo si quiero ir con el este sabado".',
         palabras: 'él (2 veces), vendrá, sí, sábado',
         faltantes: ['«él» → tilde diacrítica: pronombre personal, aparece 2 veces («Él no sabe», «con él»)', '«vendrá» → aguda terminada en vocal', '«sí» → tilde diacrítica: adverbio de afirmación (el primer «si» condicional va sin tilde)', '«sábado» → esdrújula: siempre lleva tilde'],
         corregida: 'Él no sabe si vendrá a la fiesta, pero yo sí quiero ir con él este sábado.' },
-    { k: 'ca-pedro', txt: 'Pedro escribió: "Cuentaselo a tu hermano antes de que se entere por otra persona, el se va a molestar."',
+    { k: 'ca-pedro', txt: 'Pedro escribió: "Cuentaselo a tu hermano antes de que se entere por otra persona: el se va a molestar".',
         palabras: 'cuéntaselo, él',
         faltantes: ['«cuéntaselo» → sobresdrújula (verbo + pronombres átonos): siempre lleva tilde', '«él» → tilde diacrítica: pronombre personal («tu» posesivo y «se» pronombre átono van sin tilde)'],
-        corregida: 'Cuéntaselo a tu hermano antes de que se entere por otra persona, él se va a molestar.' },
-    { k: 'ca-sofia', txt: 'Sofía escribió: "Tuvimos un dia muy especial: vimos un arcoiris despues de la lluvia y comimos un pastel de chocolate."',
+        corregida: 'Cuéntaselo a tu hermano antes de que se entere por otra persona: él se va a molestar.' },
+    { k: 'ca-sofia', txt: 'Sofía escribió: "Tuvimos un dia muy especial: vimos un arcoiris despues de la lluvia y comimos un pastel de chocolate".',
         palabras: 'día, arcoíris, después',
         faltantes: ['«día» → hiato acentual (í tónica + a): la débil tónica siempre se tilda', '«arcoíris» → hiato acentual (o + í tónica)', '«después» → aguda terminada en s'],
         corregida: 'Tuvimos un día muy especial: vimos un arcoíris después de la lluvia y comimos un pastel de chocolate.' },
@@ -1365,7 +1365,7 @@ const critErrorBank = [
     { k: 'er-agudas-siempre', txt: '"Las palabras agudas siempre llevan tilde, sin importar en qué letra terminen. Por ejemplo, reloj y pared deberían escribirse \'reló\' y \'paréd\'."',
         g1: 'No es cierto que las agudas siempre lleven tilde: solo la llevan si terminan en n, s o vocal.',
         g2: '"Reloj" y "pared" terminan en consonantes distintas de n y s, por eso NO llevan tilde: se escriben "reloj" y "pared".' },
-    { k: 'er-esdrujulas', txt: '"Las palabras esdrújulas casi nunca llevan tilde, solo en casos especiales. Por eso \'pajaro\' y \'medico\' se escriben sin tilde."',
+    { k: 'er-esdrujulas', txt: '"Las palabras esdrújulas casi nunca llevan tilde, solo en casos especiales. Por eso \'pajaro\' y \'medico\' se escriben sin tilde".',
         g1: 'Las palabras esdrújulas SIEMPRE llevan tilde, sin excepción alguna.',
         g2: '"Pájaro" y "médico" son esdrújulas (tónica en la antepenúltima sílaba) y por eso deben escribirse con tilde.' },
     { k: 'er-poeta', txt: '"El diptongo ocurre cuando dos vocales fuertes como la a y la e están juntas, por ejemplo en la palabra \'poeta\'."',
@@ -1377,7 +1377,7 @@ const critErrorBank = [
     { k: 'er-cualquier-vocal', txt: '"La tilde se puede poner en cualquier vocal de la palabra: da igual escribir \'ratón\' que \'rátón\' o \'ratòn\'."',
         g1: 'La tilde no va en cualquier vocal: va solo sobre la vocal de la sílaba que suena más fuerte, y siempre inclinada hacia la derecha.',
         g2: '"Ratón" se pronuncia ra-tón, con la fuerza al final: la tilde va en la «ó» y en ninguna otra vocal.' },
-    { k: 'er-sobresdrujulas', txt: '"Las palabras sobresdrújulas, como devuelvemelo y digaselo, no necesitan tilde porque son muy largas y ya se entienden igual."',
+    { k: 'er-sobresdrujulas', txt: '"Las palabras sobresdrújulas, como devuelvemelo y digaselo, no necesitan tilde porque son muy largas y ya se entienden igual".',
         g1: 'La longitud de la palabra no determina si lleva tilde; las sobresdrújulas SIEMPRE llevan tilde, sin excepción.',
         g2: 'Lo correcto es escribir "devuélvemelo" y "dígaselo", con tilde en la sílaba tónica (antes de la antepenúltima).' },
 ];
@@ -1423,7 +1423,7 @@ const critCompareBank = [
         gb: '"Claramente" no lleva tilde porque "clara" tampoco la lleva (llana terminada en vocal).',
         gr: 'Los adverbios terminados en -mente no siguen las reglas generales de la palabra completa: conservan la tilde solo si el adjetivo original la llevaba.' },
     { k: 'co-buey-baul', a: 'La palabra "buey" tiene tres vocales juntas y no lleva tilde.', b: 'La palabra "baúl" tiene dos vocales juntas y sí lleva tilde.',
-        ga: '"Buey" tiene un triptongo (débil + fuerte + débil) en una sola sílaba; es aguda terminada en "y", que se comporta como consonante, por eso no se tilda.',
+        ga: '"Buey" tiene un triptongo (débil + fuerte + débil) en una sola sílaba: es un monosílabo, y los monosílabos no llevan tilde (salvo la diacrítica).',
         gb: '"Baúl" tiene un hiato acentual (a + ú tónica): la vocal débil tónica siempre lleva tilde.',
         gr: 'No es el mismo caso: en el triptongo las vocales permanecen en una sola sílaba y se aplican las reglas generales; en el hiato acentual la vocal débil tónica se tilda siempre, sin importar otras reglas.' },
     { k: 'co-examen', a: 'La palabra "examen" no lleva tilde.', b: 'Su plural, "exámenes", sí lleva tilde.',
@@ -1526,7 +1526,7 @@ function printEvalCrit() {
     pR += `<div class="p-sec"><div class="p-ttl">III. Toma de decisiones</div><div class="p-crit-line">${d.dec.guide}</div></div>`;
     pR += `<div class="p-sec"><div class="p-ttl">IV. Comparación</div><div class="p-crit-line"><strong>Caso A:</strong> ${d.cmp.ga}</div><div class="p-crit-line"><strong>Caso B:</strong> ${d.cmp.gb}</div><div class="p-crit-line">${d.cmp.gr}</div></div>`;
     pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Causas y efectos</div>${d.causes.map(it => `<div class="p-crit-line"><strong>Causa:</strong> ${it.cause} → <strong>Efecto:</strong> ${it.guide}</div>`).join('')}${d.effects.map(it => `<div class="p-crit-line"><strong>Efecto:</strong> ${it.effect} → <strong>Causa:</strong> ${it.guide}</div>`).join('')}</div>`;
-    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Acentuación · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #c49000;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#fef9e7;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#fef9e7;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#c49000;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#c49000;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Acentuación · Educación Básica · Español</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA — Pensamiento Crítico · La Acentuación · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u — respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
+    const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Pensamiento Crítico La Acentuación · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;padding:1mm 5mm;}.ph{margin-bottom:0.3rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.2rem;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:3px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:12px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:9.5pt;text-align:center;color:#555;margin-top:0.1rem;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.1rem 0.4rem;margin:0.2rem 0 0.1rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #c49000;background:#fef9e7;color:#c49000;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9.5pt;font-weight:700;font-style:italic;color:#c49000;}.obt-lbl{white-space:nowrap;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #c49000;height:12px;}.obt-pct{white-space:nowrap;}.crit-print-scenario{font-size:10.5pt;background:#fef9e7;border-left:3px solid #c49000;padding:0.2rem 0.5rem;margin:0.1rem 0 0.2rem;line-height:1.3;}.crit-print-q{font-size:10pt;font-weight:600;margin:0.15rem 0 0.08rem;line-height:1.25;}.ln{border-bottom:1px solid #111;min-height:12px;margin-bottom:2px;}.crit-compare-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.15rem 0;}.crit-compare-print-box{font-size:9.5pt;background:#fef9e7;border-radius:4px;padding:0.25rem 0.4rem;line-height:1.25;}.crit-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:0.15rem;}.crit-print-tbl th,.crit-print-tbl td{border:1px solid #999;padding:0.3rem 0.45rem;text-align:left;height:30px;vertical-align:middle;}.crit-print-tbl th{background:#fef9e7;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #333;padding-bottom:0.3rem;margin-bottom:0.4rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.08rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.9rem;}.p-sec{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.45rem;}.p-ttl{font-size:11pt;font-weight:700;border-bottom:1px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.18rem;}.p-crit-line{font-size:11pt;color:#c49000;margin-bottom:0.18rem;line-height:1.35;}.total-row{display:flex;align-items:baseline;justify-content:flex-start;margin-left:20%;gap:7px;font-size:11pt;font-weight:700;font-style:italic;margin-top:0.2rem;padding:0.1rem 0;color:#c49000;}.total-row .obt-line{min-width:80px;border-bottom:1.5px solid #c49000;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:12.7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalPage"><div class="ph"><h2>Evaluación Competencial · Pensamiento Crítico · La Acentuación · Educación Básica · Español</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 puntos · 5 secciones de 20 puntos</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100</span></div></div><div class="pauta-wrap" id="pautaPage"><div class="p-head"><div class="p-main">✅ PAUTA: Pensamiento Crítico · La Acentuación · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">Valor total: 100 pts | 5 secciones × 20 pts c/u · respuesta abierta, usar como guía de corrección</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",250,0.55,1.2);fit("pautaPage",250,0.55,1.2);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
     win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1560,7 +1560,7 @@ const parteData = {
         regla: { title: 'Regla', info: 'La sílaba tónica está <strong>antes de la antepenúltima</strong> sílaba. <strong>Siempre llevan tilde.</strong> Se forman generalmente al unir un verbo con uno o más pronombres enclíticos (-me, -te, -lo, -la, -selo...). Ejemplo: CÓ-me-te-lo.' },
         ejemplos: { title: 'Ejemplos', info: 'cómetelo, explícaselo, dígamelo, cuéntaselo, llévatelo, devuélvemelo.' },
         casos: { title: 'Casos especiales', info: 'Son las palabras menos frecuentes en español. Casi siempre resultan de agregar varios pronombres átonos a un verbo en imperativo, infinitivo o gerundio.' },
-        errores: { title: 'Errores comunes', info: 'Olvidar que estas palabras siempre llevan tilde, incluso si la palabra base (el verbo) no la llevaba originalmente. Ej: "cuenta" (sin tilde) → "cuéntaselo" (con tilde).' }
+        errores: { title: 'Errores comunes', info: 'Olvidar que estas palabras siempre llevan tilde, incluso si la palabra base (el verbo) no la llevaba originalmente. Ej.: "cuenta" (sin tilde) → "cuéntaselo" (con tilde).' }
     }
 };
 let labParte = 'agudas', labAspecto = 'regla';
@@ -1582,7 +1582,7 @@ function openDiploma() {
     const mi = pct === 100 ? 5 : pct >= 80 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : pct >= 20 ? 1 : 0;
     document.getElementById('diplMsg').textContent = msgs[mi];
     document.getElementById('diplDate').textContent = 'Honduras, ' + new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún — ¡sigue completando secciones!';
+    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún. ¡Sigue completando secciones!';
     document.getElementById('diplAch').textContent = achStr;
     document.getElementById('diplomaOverlay').classList.add('open');
     document.querySelector('.diploma-input').focus();
@@ -1748,7 +1748,7 @@ function copiarEnlaceAlumno() {
 function asignarEnClassroom() {
     const out = document.getElementById('tgOut');
     const url = encodeURIComponent(window.location.href);
-    const titulo = encodeURIComponent('Misión La Acentuación | Educación Básica – policastsapien.com');
+    const titulo = encodeURIComponent('Misión La Acentuación | Educación Básica · policastsapien.com');
     const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
 
     if (!out || out.innerHTML.trim() === '') {
@@ -1758,7 +1758,7 @@ function asignarEnClassroom() {
 
     const tipoEl = document.getElementById('tgType');
     const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
-    let texto = '📚 MISIÓN: LA ACENTUACIÓN | Educación Básica – Español · Lengua\n';
+    let texto = '📚 MISIÓN: LA ACENTUACIÓN | Educación Básica · Español · Lengua\n';
     texto += '🔗 ' + window.location.href + '\n';
     texto += '📋 Tipo de tarea: ' + tipoText + '\n';
     texto += '─'.repeat(45) + '\n\n';

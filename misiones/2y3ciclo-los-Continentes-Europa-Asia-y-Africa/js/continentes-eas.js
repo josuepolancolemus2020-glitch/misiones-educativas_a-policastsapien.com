@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Geografía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Geografía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -182,20 +182,20 @@ function go(id){
 
 // ===================== FLASHCARD DATA =====================
 const fcData = [
-  {w:'Europa',a:'🌍 Sexto continente en tamaño. Comprende <strong>44 países</strong>. Cuna del Renacimiento, la Ilustración y la Revolución Industrial. Es el principal socio comercial de Honduras gracias a la <strong>Unión Europea</strong>.'},
+  {w:'Europa',a:'🌍 Sexto continente en tamaño. Comprende <strong>44 países</strong>. Cuna del Renacimiento, la Ilustración y la Revolución Industrial. Es uno de los principales socios comerciales de Honduras, gracias a la <strong>Unión Europea</strong>.'},
   {w:'Asia',a:'🌏 El continente <strong>más grande y más poblado</strong> del mundo (60% de la población mundial). Alberga a China, India y Japón. Tiene economías muy poderosas y la cordillera más alta: el <strong>Himalaya</strong>.'},
   {w:'África',a:'🌍 El <strong>segundo continente más grande</strong>, con <strong>54 países</strong> y más de 1,400 millones de personas. Cuna de la humanidad. Posee una enorme riqueza cultural con más de <strong>2,000 idiomas</strong>.'},
   {w:'Unión Europea (UE)',a:'🇪🇺 Bloque político y económico de <strong>27 países</strong> europeos con mercado único y libre circulación. Muchos usan el <strong>euro (€)</strong>. Es el mayor socio de cooperación y comercio de Honduras en Europa.'},
   {w:'Mar Mediterráneo',a:'🌊 Mar interior que separa <strong>Europa de África</strong>. Ha sido la principal ruta comercial e histórica entre civilizaciones: Grecia, Roma, Egipto, Fenicia. Cuna de la cultura occidental.'},
-  {w:'Monte Everest',a:'🏔️ La cumbre <strong>más alta del mundo</strong> con <strong>8,849 m</strong>, en los <strong>Himalayas</strong>, frontera Nepal–China. Escalado por primera vez en 1953. Símbolo del poder geográfico de Asia.'},
+  {w:'Monte Everest',a:'🏔️ La cumbre <strong>más alta del mundo</strong> con <strong>8,849 m</strong>, en el <strong>Himalaya</strong>, frontera Nepal–China. Escalado por primera vez en 1953. Símbolo del poder geográfico de Asia.'},
   {w:'Desierto del Sahara',a:'🏜️ El desierto caluroso <strong>más grande del mundo</strong>, en el norte de África. Cubre <strong>9.2 millones de km²</strong>. Separa el norte árabe del sur subsahariano. Su nombre significa "desierto" en árabe.'},
   {w:'Río Nilo',a:'🌊 El río <strong>más largo del mundo</strong> con <strong>6,650 km</strong>, en el noreste de África. Fundamento de la <strong>civilización egipcia</strong>. Atraviesa 11 países africanos y desemboca en el Mediterráneo.'},
   {w:'Monzón asiático',a:'💨 Sistema de <strong>vientos estacionales</strong> que domina el sur y sureste de Asia. Trae lluvias abundantes en verano y tiempo seco en invierno. Es fundamental para la agricultura del arroz en India, China y Bangladés.'},
   {w:'Cooperación HN–Europa',a:'🤝 Europa apoya a Honduras en proyectos de <strong>salud, educación y desarrollo rural</strong>. Honduras exporta a la UE: <strong>café, banano, textiles y palma africana</strong>. El AACUE facilita el comercio.'},
   {w:'Diversidad cultural africana',a:'🎭 África tiene más de <strong>2,000 idiomas</strong> y 54 naciones. Conserva ricas tradiciones en <strong>música, arte, gastronomía y literatura</strong>. Raíces de ritmos globales: jazz, blues, reggae y afrobeat.'},
-  {w:'Economías asiáticas',a:'📈 China es la <strong>2.ª economía mundial</strong>, Japón la 3.ª, India la 5.ª. Exportan tecnología, autos y manufacturas. Los "<strong>Tigres asiáticos</strong>" (Corea del Sur, Taiwán, Singapur, Hong Kong) son ejemplos de desarrollo acelerado.'},
-  {w:'Colonialismo',a:'📜 Proceso (ss. XV–XX) donde Europa <strong>dominó y colonizó</strong> África, Asia y América. Dejó herencias lingüísticas (inglés, francés, español en África) y fronteras artificiales. Tuvo impactos económicos y sociales profundos.'},
-  {w:'Relaciones HN–Asia',a:'🏭 Honduras <strong>importa</strong> de China: ropa, tecnología, maquinaria. Exporta <strong>mariscos, café</strong> a Japón y Corea del Sur. <strong>KOICA</strong> (Corea del Sur) ofrece becas y apoyo en formación técnica en Honduras.'},
+  {w:'Economías asiáticas',a:'📈 China es la <strong>2.ª economía mundial</strong>; Japón e India están entre las cinco primeras. Exportan tecnología, autos y manufacturas. Los "<strong>Tigres asiáticos</strong>" (Corea del Sur, Taiwán, Singapur, Hong Kong) son ejemplos de desarrollo acelerado.'},
+  {w:'Colonialismo',a:'📜 Proceso (ss. XV–XX) en el que Europa <strong>dominó y colonizó</strong> África, Asia y América. Dejó herencias lingüísticas (inglés, francés, español en África) y fronteras artificiales. Tuvo impactos económicos y sociales profundos.'},
+  {w:'Relaciones HN–Asia',a:'🏭 Honduras <strong>importa</strong> de China: ropa, tecnología, maquinaria. Exporta <strong>mariscos y café</strong> a Japón y Corea del Sur. <strong>KOICA</strong> (Corea del Sur) ofrece becas y apoyo en formación técnica en Honduras.'},
   {w:'Relaciones HN–África',a:'🌍 Las relaciones son indirectas, principalmente por la <strong>ONU y la Unión Africana</strong>. Comparten desafíos de desarrollo, cambio climático y cooperación Sur–Sur. Honduras aprende de modelos africanos de integración regional.'},
 ];
 let fcIdx = 0;
@@ -219,7 +219,7 @@ const qzData = [
   {q:'¿Cuál es el continente más grande y más poblado del mundo?',o:['a) África','b) Asia','c) Europa','d) América'],c:1},
   {q:'¿Qué río es el más largo del mundo y se encuentra en África?',o:['a) Congo','b) Níger','c) Nilo','d) Zambeze'],c:2},
   {q:'¿Qué bloque político-económico agrupa 27 países de Europa?',o:['a) Unión Europea','b) OTAN','c) G20','d) ONU'],c:0},
-  {q:'¿En qué continente se encuentra el Monte Everest?',o:['a) Europa','b) África','c) América','d) Asia'],c:3},
+  {q:'¿En qué continente se encuentra el monte Everest?',o:['a) Europa','b) África','c) América','d) Asia'],c:3},
   {q:'¿Cuál es el desierto caluroso más grande del mundo?',o:['a) Gobi','b) Sahara','c) Kalahari','d) Atacama'],c:1},
   {q:'¿Cuántos países tiene el continente africano?',o:['a) 35','b) 44','c) 54','d) 62'],c:2},
   {q:'¿Qué exporta Honduras principalmente hacia la Unión Europea?',o:['a) Petróleo y minerales','b) Tecnología y autos','c) Medicamentos','d) Café, banano y textiles'],c:3},
@@ -362,7 +362,7 @@ function nextClassGroup(){
   sfx('click');
   currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;
   buildClass(); document.getElementById('fbCls').classList.remove('show');
-  showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);
+  showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -420,9 +420,9 @@ const cmpData = [
   {s:'La Unión Europea está formada por ___ países.',opts:['44','54','27'],c:2},
   {s:'El desierto del Sahara está en el ___ de África.',opts:['norte','sur','este'],c:0},
   {s:'Honduras exporta principalmente ___ a la Unión Europea.',opts:['petróleo','café y banano','tecnología'],c:1},
-  {s:'El Monte Everest está en la cordillera del ___ .',opts:['Atlas','Himalaya','Alpes'],c:1},
+  {s:'El monte Everest está en la cordillera del ___ .',opts:['Atlas','Himalaya','Alpes'],c:1},
   {s:'El ___ es el fenómeno climático que trae lluvias estacionales a Asia.',opts:['huracán','tifón','monzón'],c:2},
-  {s:'El Mar ___ separa Europa de África.',opts:['Rojo','Mediterráneo','Negro'],c:1},
+  {s:'El mar ___ separa Europa de África.',opts:['Rojo','Mediterráneo','Negro'],c:1},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
 function showCmp(){var _fbC=document.getElementById('fbCmp');if(_fbC)_fbC.classList.remove('show');
@@ -547,7 +547,7 @@ function nextRetoPair(){
   document.getElementById('retoWord').textContent = '¡Prepárate!';
   document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
   document.getElementById('fbReto').classList.remove('show');
-  showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+  showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto(){
   sfx('click'); clearInterval(retoTimerInt); retoRunning=false; retoSec=30; retoOk=0; retoErr=0;
@@ -563,21 +563,21 @@ const identifyTaskDB = [
   {s:'Europa está formada por 44 países con una gran diversidad cultural e histórica.',type:'Continente europeo (44 países)'},
   {s:'El Nilo es el río más largo del mundo, con 6,650 km, en el noreste de África.',type:'Río africano más largo (6,650 km)'},
   {s:'La Unión Europea es un bloque político y económico de 27 países con mercado común.',type:'Bloque político europeo (27 países)'},
-  {s:'El Himalaya alberga las cumbres más altas del planeta, incluyendo el Monte Everest.',type:'Sistema montañoso asiático'},
-  {s:'El Sahara es el desierto caluroso más grande del mundo, ubicado al norte de África.',type:'Desierto africano (9.2 millones km²)'},
+  {s:'El Himalaya alberga las cumbres más altas del planeta, incluyendo el monte Everest.',type:'Sistema montañoso asiático'},
+  {s:'El Sahara es el desierto caluroso más grande del mundo, ubicado al norte de África.',type:'Desierto africano (9.2 millones de km²)'},
   {s:'Honduras exporta café, banano y textiles principalmente a la Unión Europea.',type:'Relación comercial HN–Europa'},
   {s:'El monzón determina las temporadas de lluvia en el sur y sureste asiático.',type:'Fenómeno climático de Asia'},
   {s:'África tiene más de 2,000 idiomas y 54 países independientes reconocidos.',type:'Diversidad cultural africana'},
-  {s:'El Mar Mediterráneo ha sido la ruta comercial más importante entre Europa y África.',type:'Mar que une los continentes'},
+  {s:'El mar Mediterráneo ha sido la ruta comercial más importante entre Europa y África.',type:'Mar que une los continentes'},
   {s:'KOICA, la agencia surcoreana, apoya proyectos de formación técnica en Honduras.',type:'Cooperación HN–Asia (Corea del Sur)'},
 ];
 const classifyTaskDB = [
-  {w:'Europa',gen:'Continente',n:'6.º más grande',g:'Hemisferio Norte',t:'44 países, sede de la UE'},
+  {w:'Europa',gen:'Continente',n:'6.º más grande',g:'Hemisferio norte',t:'44 países, sede de la UE'},
   {w:'Asia',gen:'Continente',n:'El más grande',g:'Hemisferios N y S',t:'60% de la población mundial'},
   {w:'África',gen:'Continente',n:'2.º más grande',g:'Hemisferios N y S',t:'54 países, +2,000 idiomas'},
   {w:'Nilo',gen:'Río',n:'6,650 km',g:'Noreste de África',t:'El más largo del mundo'},
   {w:'Himalaya',gen:'Cordillera',n:'8,849 m (Everest)',g:'Asia Central',t:'Más alta del mundo'},
-  {w:'Sahara',gen:'Desierto',n:'9.2 millones km²',g:'Norte de África',t:'Mayor desierto caluroso'},
+  {w:'Sahara',gen:'Desierto',n:'9.2 millones de km²',g:'Norte de África',t:'Mayor desierto caluroso'},
   {w:'Unión Europea',gen:'Bloque político',n:'27 países',g:'Europa',t:'Socio comercial de HN'},
   {w:'Monzón',gen:'Fenómeno climático',n:'Estacional',g:'Sur y Sureste de Asia',t:'Lluvias agrícolas en verano'},
 ];
@@ -586,15 +586,15 @@ const completeTaskDB = [
   {s:'El río más largo del mundo es el ___ .',opts:['Congo','Nilo','Amazonas'],ans:'Nilo'},
   {s:'La Unión Europea agrupa ___ países.',opts:['44','27','54'],ans:'27'},
   {s:'El desierto Sahara está en el norte de ___ .',opts:['Asia','Europa','África'],ans:'África'},
-  {s:'El Monte Everest está en el ___ .',opts:['Atlas','Himalaya','Alpes'],ans:'Himalaya'},
+  {s:'El monte Everest está en el ___ .',opts:['Atlas','Himalaya','Alpes'],ans:'Himalaya'},
   {s:'Honduras exporta ___ a la Unión Europea.',opts:['petróleo','café y banano','tecnología'],ans:'café y banano'},
   {s:'El ___ trae lluvias estacionales a Asia.',opts:['tifón','huracán','monzón'],ans:'monzón'},
-  {s:'El Mar ___ separa Europa de África.',opts:['Rojo','Mediterráneo','Negro'],ans:'Mediterráneo'},
+  {s:'El mar ___ separa Europa de África.',opts:['Rojo','Mediterráneo','Negro'],ans:'Mediterráneo'},
 ];
 const explainQuestions = [
   {q:'¿Cuáles son las principales diferencias geográficas entre Europa, Asia y África?',ans:'Europa es el 6.º más grande (44 países); Asia es el más grande y poblado (48 países, Himalaya, Everest); África es el 2.º más grande (54 países, Sahara, Nilo).'},
-  {q:'¿Por qué es importante la Unión Europea para Honduras? Menciona al menos dos razones.',ans:'La UE es el principal destino de exportaciones hondureñas (café, banano, textiles) y también el mayor donante de cooperación y desarrollo para Honduras.'},
-  {q:'¿Qué es el monzón asiático y por qué es vital para la región?',ans:'Es un sistema de vientos estacionales que trae lluvias intensas en verano a India, China y el Sudeste Asiático. Es fundamental para la agricultura del arroz que alimenta a miles de millones de personas.'},
+  {q:'¿Por qué es importante la Unión Europea para Honduras? Menciona al menos dos razones.',ans:'La UE es uno de los principales destinos de las exportaciones hondureñas (café, banano, textiles) y también el mayor donante de cooperación y desarrollo para Honduras.'},
+  {q:'¿Qué es el monzón asiático y por qué es vital para la región?',ans:'Es un sistema de vientos estacionales que trae lluvias intensas en verano a India, China y el sudeste Asiático. Es fundamental para la agricultura del arroz que alimenta a miles de millones de personas.'},
   {q:'¿Cómo afectó el colonialismo europeo a África y Asia? Menciona dos consecuencias.',ans:'El colonialismo (ss. XV–XX) dejó fronteras artificiales, explotó recursos naturales, impuso idiomas europeos y generó desigualdad económica que todavía se siente hoy.'},
   {q:'¿Qué relaciones comerciales y de cooperación tiene Honduras con Asia?',ans:'Honduras importa de China: ropa, tecnología y maquinaria. Exporta mariscos y café a Japón y Corea del Sur. KOICA (Corea del Sur) apoya becas y formación técnica.'},
 ];
@@ -881,7 +881,7 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'¿Cuántos países tiene África?',o:['a) 27','b) 44','c) 54','d) 100'],a:2,k:'mc-54'},
   {q:'¿Cuál de estos monumentos está en Europa?',o:['a) la Gran Muralla','b) el Coliseo','c) el Taj Mahal','d) Angkor Wat'],a:1,k:'mc-coliseo'},
-  {q:'¿Qué cordilleras están en Europa?',o:['a) los Andes','b) las Rocosas','c) los Alpes y los Pirineos','d) la Sierra Madre'],a:2,k:'mc-alpes'},
+  {q:'¿Qué cordilleras están en Europa?',o:['a) los Andes','b) las Rocosas','c) los Alpes y los Pirineos','d) la sierra Madre'],a:2,k:'mc-alpes'},
   {q:'¿Qué ríos son de Europa?',o:['a) el Danubio y el Rin','b) el Congo y el Níger','c) el Amazonas','d) el Mississippi'],a:0,k:'mc-danubio'},
   {q:'¿Qué vende Honduras a Europa?',o:['a) autos','b) petróleo','c) trenes','d) café, banano y textiles'],a:3,k:'mc-exporta'},
   {q:'¿Qué música tiene raíces africanas?',o:['a) la ópera','b) el jazz y el blues','c) el vals','d) el tango'],a:1,k:'mc-jazz'},
@@ -897,7 +897,7 @@ const evalCPBank=[
   {q:'China e ___ son los dos países con más gente del mundo.',a:'India',acc:['India'],k:'cp-india'},
   {q:'Las pirámides más famosas del mundo están en ___.',a:'Egipto',acc:['Egipto'],k:'cp-egipto'},
   {q:'A África se le llama la cuna de la ___.',a:'humanidad',acc:['humanidad'],k:'cp-humanidad'},
-  {q:'El Ganges y el ___ son ríos de Asia.',a:'Yangtze',acc:['Yangtze','Yangtsé'],k:'cp-yangtze'},
+  {q:'El Ganges y el ___ son ríos de Asia.',a:'Yangtsé',acc:['Yangtsé','Yangtse','Yangtze'],k:'cp-yangtze'},
   {q:'Europa fue la cuna del Renacimiento y de la Revolución ___.',a:'Industrial',acc:['Industrial'],k:'cp-industrial'},
   {q:'La religión que más se practica en Europa es el ___.',a:'cristianismo',acc:['cristianismo'],k:'cp-cristianismo'},
   {q:'Asia tiene unos ___ países.',a:'48',acc:['48','cuarenta y ocho'],k:'cp-48'}
@@ -1000,7 +1000,7 @@ function genEval(){
   const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
   let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-  prItems.forEach((item,i)=>{ colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+  prItems.forEach((item,i)=>{ colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">?</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
   colLeft += '</div>';
   let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
   shuffledDefs.forEach((item,i)=>{ colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1127,7 +1127,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1202,7 +1202,7 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 <div class="ph">
   <h2>Evaluación Final · Los Continentes: Europa, Asia y África · Geografía · Ciencias Sociales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
@@ -1216,7 +1216,7 @@ ${s1}${s2}${s3}${s4}
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
   const win = window.open('','_blank','');
@@ -1251,21 +1251,21 @@ function evalSwitchMode(mode){
 // ── I. Compara los continentes (datos reales de los stat-bars de la misión)
 const critContinentBank = [
   { key:'Europa', icon:'🌍', cells:{
-    area:{print:'10.5 millones km²', digits:'105'},
+    area:{print:'10.5 millones de km²', digits:'105'},
     paises:{print:'44 países', num:'44'},
     relieve:{print:'Alpes / río Danubio', alts:['alpes','danubio','rin','volga','pirineos','urales']},
     poblacion:{print:'~748 millones', digits:'748'},
     org:{print:'Unión Europea (UE)', alts:['union europea','ue']}
   }},
   { key:'Asia', icon:'🌏', cells:{
-    area:{print:'44.6 millones km²', digits:'446'},
+    area:{print:'44.6 millones de km²', digits:'446'},
     paises:{print:'48 países', num:'48'},
-    relieve:{print:'Himalaya – Everest (8,849 m)', alts:['himalaya','everest','ganges','yangtze','gobi']},
+    relieve:{print:'Himalaya: Everest (8,849 m)', alts:['himalaya','everest','ganges','yangtze','gobi']},
     poblacion:{print:'~4,700 millones (60% humanidad)', digits:'4700'},
     org:{print:'Tigres asiáticos / ASEAN', alts:['tigres','asean']}
   }},
   { key:'África', icon:'🌍', cells:{
-    area:{print:'30.4 millones km²', digits:'304'},
+    area:{print:'30.4 millones de km²', digits:'304'},
     paises:{print:'54 países', num:'54'},
     relieve:{print:'Río Nilo (6,650 km) / Sahara', alts:['nilo','sahara','kilimanjaro','congo']},
     poblacion:{print:'~1,400 millones', digits:'1400'},
@@ -1293,14 +1293,14 @@ const critInterpBank = [
 const critCCBank = [
   { c:'El monzón asiático trae lluvias estacionales', e:'Hace posible la agricultura del arroz en India, China y Bangladés' },
   { c:'El colonialismo europeo (ss. XV–XX) sobre África', e:'Dejó fronteras artificiales e idiomas francés, inglés y portugués' },
-  { c:'El Mar Mediterráneo comunicó a los pueblos antiguos', e:'Permitió el intercambio entre Grecia, Roma, Egipto y Fenicia' },
-  { c:'La apertura del Canal de Suez', e:'Conectó el Mediterráneo con Asia y acortó las rutas de comercio' },
+  { c:'El mar Mediterráneo comunicó a los pueblos antiguos', e:'Permitió el intercambio entre Grecia, Roma, Egipto y Fenicia' },
+  { c:'La apertura del canal de Suez', e:'Unió el Mediterráneo con el mar Rojo y acortó las rutas de comercio entre Europa y Asia' },
   { c:'La Unión Europea creó un mercado único con el euro', e:'Facilitó el comercio y la libre circulación entre 27 países' },
   { c:'Honduras firmó el acuerdo AACUE con la Unión Europea', e:'Le facilita exportar café, banano y textiles al mercado europeo' },
   { c:'KOICA, agencia de Corea del Sur, coopera con Honduras', e:'Ofrece becas y formación técnica a jóvenes hondureños' },
   { c:'El río Nilo atraviesa el noreste de África', e:'Fue el fundamento de la civilización egipcia' }
 ];
-// ── IV. Honduras y el mundo (comercio HN real: exporta vs importa)
+// ── IV. Honduras y el mundo (comercio HN real: exporta vs. importa)
 const critTradeBank = [
   { p:'Celulares y tecnología de China', t:'importa' },
   { p:'Mariscos hacia Japón y Corea del Sur', t:'exporta' },
@@ -1315,17 +1315,17 @@ const critTradeBank = [
 const critErrBank = [
   { bad:'El Nilo, el río más largo del mundo, está en Asia.', key:'africa', fix:'El Nilo, el río más largo del mundo, está en África.' },
   { bad:'La Unión Europea agrupa 44 países.', key:'27', fix:'La Unión Europea agrupa 27 países (Europa tiene 44 países en total).' },
-  { bad:'El Himalaya y el Monte Everest están en África.', key:'asia', fix:'El Himalaya y el Monte Everest están en Asia.' },
+  { bad:'El Himalaya y el monte Everest están en África.', key:'asia', fix:'El Himalaya y el monte Everest están en Asia.' },
   { bad:'El desierto del Sahara, el más grande, está en Europa.', key:'africa', fix:'El desierto del Sahara está en el norte de África.' },
   { bad:'El monzón es un fenómeno climático típico de Europa.', key:'asia', fix:'El monzón es un fenómeno climático típico de Asia.' },
   { bad:'África tiene 27 países y una sola lengua.', key:'54', fix:'África tiene 54 países y más de 2,000 idiomas.' },
   { bad:'KOICA es una agencia de cooperación de Japón.', key:'corea', fix:'KOICA es la agencia de cooperación de Corea del Sur.' },
-  { bad:'El Mar Mediterráneo separa Asia de América.', key:'africa', fix:'El Mar Mediterráneo separa Europa de África.' }
+  { bad:'El mar Mediterráneo separa Asia de América.', key:'africa', fix:'El mar Mediterráneo separa Europa de África.' }
 ];
 
-function _critAcuSelect(){ return `<select class="crit-cc-select" data-hn-acuerdo aria-label="Acuerdo comercial con Europa"><option value="">— elige —</option>${['AACUE','KOICA','ASEAN','OTAN'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
-function _critAgSelect(){ return `<select class="crit-cc-select" data-hn-agencia aria-label="Agencia asiática de cooperación"><option value="">— elige —</option>${['KOICA','AACUE','GIZ','USAID'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
-function _critPaisSelect(){ return `<select class="crit-cc-select" data-hn-pais aria-label="País de la agencia KOICA"><option value="">— elige —</option>${['Corea del Sur','Japón','China','Alemania'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
+function _critAcuSelect(){ return `<select class="crit-cc-select" data-hn-acuerdo aria-label="Acuerdo comercial con Europa"><option value="">Elige</option>${['AACUE','KOICA','ASEAN','OTAN'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
+function _critAgSelect(){ return `<select class="crit-cc-select" data-hn-agencia aria-label="Agencia asiática de cooperación"><option value="">Elige</option>${['KOICA','AACUE','GIZ','USAID'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
+function _critPaisSelect(){ return `<select class="crit-cc-select" data-hn-pais aria-label="País de la agencia KOICA"><option value="">Elige</option>${['Corea del Sur','Japón','China','Alemania'].map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`; }
 
 function genEvalCrit(){
   sfx('click');
@@ -1342,7 +1342,7 @@ function genEvalCrit(){
 
   // Barra de distribución + progresión de dificultad
   const bar=document.createElement('div'); bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: comparar datos (I), interpretar cifras (II), relacionar causas (III), aplicar a Honduras (IV) y detectar errores (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Compara 20</span><span class="eval-score-pill esp-tf">II. Interpreta 20</span><span class="eval-score-pill esp-mc">III. Causa-efecto 20</span><span class="eval-score-pill esp-pr">IV. Honduras 25</span><span class="eval-score-pill esp-cp">V. Detective 15</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: comparar datos (I), interpretar cifras (II), relacionar causas (III), aplicar a Honduras (IV) y detectar errores (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Compara 20</span><span class="eval-score-pill esp-tf">II. Interpreta 20</span><span class="eval-score-pill esp-mc">III. Causa-efecto 20</span><span class="eval-score-pill esp-pr">IV. Honduras 25</span><span class="eval-score-pill esp-cp">V. Detective 15</span></div>`;
   out.appendChild(bar);
 
   // ── I. Compara los continentes (tabla 2 continentes × 5 criterios, 2 pts/celda = 20)
@@ -1354,7 +1354,7 @@ function genEvalCrit(){
     cmpRows+='</tr>';
   });
   const s1=document.createElement('div');
-  s1.innerHTML=`<div class="eval-section-title">I. Compara los continentes <span class="eval-pts">20 pts · 2 pts c/celda</span></div><div class="eval-item"><p class="crit-q-label">Completa la tabla con los datos reales de cada continente. Cada celda vale 2 puntos.</p><div style="overflow-x:auto;"><table class="crit-cmp-tbl"><thead><tr><th>Criterio</th><th>${contPair[0].icon} ${contPair[0].key}</th><th>${contPair[1].icon} ${contPair[1].key}</th></tr></thead><tbody>${cmpRows}</tbody></table></div><div class="crit-pauta">${contPair.map(c=>c.key+': '+critCriteria.map(cr=>cr.label.split(' ')[0]+' '+c.cells[cr.key].print).join('; ')).join(' — ')}</div><div class="eval-item-feedback" id="critFbCmp" aria-live="polite"></div></div>`;
+  s1.innerHTML=`<div class="eval-section-title">I. Compara los continentes <span class="eval-pts">20 pts · 2 pts c/celda</span></div><div class="eval-item"><p class="crit-q-label">Completa la tabla con los datos reales de cada continente. Cada celda vale 2 puntos.</p><div style="overflow-x:auto;"><table class="crit-cmp-tbl"><thead><tr><th>Criterio</th><th>${contPair[0].icon} ${contPair[0].key}</th><th>${contPair[1].icon} ${contPair[1].key}</th></tr></thead><tbody>${cmpRows}</tbody></table></div><div class="crit-pauta">${contPair.map(c=>c.key+': '+critCriteria.map(cr=>cr.label.split(' ')[0]+' '+c.cells[cr.key].print).join('; ')).join(' · ')}</div><div class="eval-item-feedback" id="critFbCmp" aria-live="polite"></div></div>`;
   out.appendChild(s1);
 
   // ── II. Interpreta los datos (4 selección × 4 + 1 justificación × 4 = 20)
@@ -1362,7 +1362,7 @@ function genEvalCrit(){
   let inRows='';
   interpItems.forEach((it,i)=>{ inRows+=`<div class="crit-q-block"><div class="crit-q-label">${i+1}. ${it.q}</div><div class="crit-mc-opts">${it.o.map((o,oi)=>`<label class="crit-mc-opt"><input type="radio" name="critInterp${i}" value="${oi}"> ${o}</label>`).join('')}</div><div class="eval-item-feedback" id="critFbInterp${i}" aria-live="polite"></div></div>`; });
   const s2=document.createElement('div');
-  s2.innerHTML=`<div class="eval-section-title">II. Interpreta los datos <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Razona con las cifras de la misión. Elige la opción correcta y justifica la última.</p>${inRows}<div class="crit-q-block"><div class="crit-q-label">5. Justifica: ¿por qué el 80% de la población mundial vive en Europa, Asia y África?</div><textarea class="crit-textarea" data-interp-just rows="2" aria-label="Justificación del 80% de la población"></textarea><div class="crit-pauta">Son los tres continentes más grandes y poblados del planeta; Asia sola reúne el 60% de la humanidad, por eso concentran la mayor parte de la población y de los socios de Honduras.</div><div class="eval-item-feedback" id="critFbInterpJust" aria-live="polite"></div></div></div>`;
+  s2.innerHTML=`<div class="eval-section-title">II. Interpreta los datos <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Razona con las cifras de la misión. Elige la opción correcta y justifica la última.</p>${inRows}<div class="crit-q-block"><div class="crit-q-label">5. Justifica: ¿por qué el 80% de la población mundial vive en Europa, Asia y África?</div><textarea class="crit-textarea" data-interp-just rows="2" aria-label="Justificación del 80% de la población"></textarea><div class="crit-pauta">Asia y África son los dos continentes más grandes, y Asia sola reúne el 60% de la humanidad, por eso concentran la mayor parte de la población y de los socios de Honduras.</div><div class="eval-item-feedback" id="critFbInterpJust" aria-live="polite"></div></div></div>`;
   out.appendChild(s2);
 
   // ── III. Causa y consecuencia (matching 4×5 = 20)
@@ -1371,7 +1371,7 @@ function genEvalCrit(){
   const ccLetters=['A','B','C','D'];
   const ccCorrect=ccItems.map(it=>ccLetters[ccDefs.findIndex(d=>d.e===it.e)]);
   let ccLeft='<div class="crit-match-col"><h5>🎯 Causa</h5>';
-  ccItems.forEach((it,i)=>{ ccLeft+=`<div class="crit-match-row"><span class="crit-match-n">${i+1}.</span> <select class="crit-cc-select" data-cc="${i}" aria-label="Consecuencia de la causa ${i+1}"><option value="">—</option>${ccLetters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${it.c}</div>`; });
+  ccItems.forEach((it,i)=>{ ccLeft+=`<div class="crit-match-row"><span class="crit-match-n">${i+1}.</span> <select class="crit-cc-select" data-cc="${i}" aria-label="Consecuencia de la causa ${i+1}"><option value="">?</option>${ccLetters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${it.c}</div>`; });
   ccLeft+='</div>';
   let ccRight='<div class="crit-match-col"><h5>💥 Consecuencia</h5>';
   ccDefs.forEach((it,i)=>{ ccRight+=`<div class="crit-match-row"><span class="crit-match-n">${ccLetters[i]}.</span> ${it.e}</div>`; });
@@ -1461,7 +1461,7 @@ function gradeEvalCrit(){
   const js=normalizeEvalAnswer(jt?jt.value:'');
   const jok=!!js && ['asia','pobla','grand','mayor','socio','80'].some(k=>js.includes(k));
   if(jok) detail.interp+=4;
-  _setCritFb('critFbInterpJust', jok, jok?'Correcto. +4 pts':'Revisar. R/ Son los continentes más grandes y poblados; Asia reúne el 60% de la humanidad.');
+  _setCritFb('critFbInterpJust', jok, jok?'Correcto. +4 pts':'Revisar. R/ Asia y África son los continentes más grandes, y Asia reúne el 60% de la humanidad.');
 
   // III. Causa y consecuencia (5 pts c/u)
   d.cc.correct.forEach((letter,i)=>{
@@ -1563,7 +1563,7 @@ function printEvalCrit(){
   // Pauta
   let pR='';
   pR+=`<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">I. Compara los continentes</div>${d.cmp.criteria.map(cr=>`<div class="p-crit-line"><strong>${cr.label}:</strong> ${c0.key} → ${c0.cells[cr.key].print} · ${c1.key} → ${c1.cells[cr.key].print}</div>`).join('')}</div>`;
-  pR+=`<div class="p-sec"><div class="p-ttl">II. Interpreta los datos</div>${d.interp.items.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.o[it.a]} — ${it.why}</div>`).join('')}<div class="p-crit-line"><strong>5.</strong> Son los continentes más grandes y poblados; Asia reúne el 60% de la humanidad y en ellos están los socios de Honduras.</div></div>`;
+  pR+=`<div class="p-sec"><div class="p-ttl">II. Interpreta los datos</div>${d.interp.items.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.o[it.a]}: ${it.why}</div>`).join('')}<div class="p-crit-line"><strong>5.</strong> Asia y África son los continentes más grandes, Asia reúne el 60% de la humanidad y en ellos están los socios de Honduras.</div></div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">III. Causa y consecuencia</div>${d.cc.items.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}→${d.cc.correct[i]}:</strong> ${it.c} → ${it.e}</div>`).join('')}</div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">IV. Honduras y el mundo</div><div class="p-crit-line"><strong>Caso 1:</strong> Acuerdo AACUE. Exporta café, banano, textiles y palma africana a la UE.</div><div class="p-crit-line"><strong>Caso 2:</strong> KOICA, de Corea del Sur.</div>${d.hn.trade.map(it=>`<div class="p-crit-line"><strong>${it.t==='exporta'?'Exporta':'Importa'}:</strong> ${it.p}</div>`).join('')}</div>`;
   pR+=`<div class="p-sec"><div class="p-ttl">V. Detective geográfico</div>${d.det.map((it,i)=>`<div class="p-crit-line"><strong>${i+1}.</strong> ${it.fix}</div>`).join('')}</div>`;
@@ -1622,20 +1622,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Los Continentes: Europa, Asia y África · Educación Básica · Ciencias Sociales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Compara 20 · II. Interpreta 20 · III. Causa-efecto 20 · IV. Honduras 25 · V. Detective 15 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Europa, Asia y África · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Europa, Asia y África · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 25 · V 15 — secciones abiertas: usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 25 · V 15. Secciones abiertas: usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.35);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){ showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1648,27 +1648,27 @@ ${s1}${s2}${s3}${s4}${s5}
 const continentData = {
   europa: {
     nombre:'Europa', icon:'🌍',
-    geo:{title:'Geografía',info:'• Área: 10.5 millones km² · 44 países<br>• Cordilleras: Alpes (Mont Blanc 4,808 m), Pirineos, Urales, Cárpatos<br>• Ríos: Danubio, Rin, Volga, Ebro<br>• Mares: Mediterráneo, Báltico, del Norte, Adriático<br>• Países más grandes: Rusia, Ucrania, Francia'},
-    eco:{title:'Economía',info:'• PIB entre los más altos del mundo<br>• Moneda: Euro (€) en 20 países de la UE<br>• Industrias clave: automóvil, farmacéutica, aeronáutica, turismo<br>• Mayor economía: Alemania (4.ª mundial)<br>• Turismo: recibe el 50% del turismo global'},
+    geo:{title:'Geografía',info:'• Área: 10.5 millones de km² · 44 países<br>• Cordilleras: Alpes (Mont Blanc 4,808 m), Pirineos, Urales, Cárpatos<br>• Ríos: Danubio, Rin, Volga, Ebro<br>• Mares: Mediterráneo, Báltico, del Norte, Adriático<br>• Países más grandes: Rusia, Ucrania, Francia'},
+    eco:{title:'Economía',info:'• PIB entre los más altos del mundo<br>• Moneda: el euro (€), en la mayoría de los países de la UE<br>• Industrias clave: automóvil, farmacéutica, aeronáutica, turismo<br>• Mayor economía: Alemania<br>• Turismo: recibe el 50% del turismo global'},
     soc:{title:'Sociedad',info:'• Población: ~748 millones de personas<br>• Alta esperanza de vida: 80+ años<br>• Tasa de alfabetización: 99%<br>• Libre circulación de personas en la UE (Schengen)<br>• Idiomas: inglés, francés, alemán, español, italiano, ruso…'},
-    cul:{title:'Cultura',info:'• Cuna del Renacimiento, la Ilustración y la Revolución Industrial<br>• Arte: Leonardo, Miguel Ángel, Picasso, Van Gogh<br>• Religión predominante: Cristianismo<br>• Patrimonio UNESCO: Coliseo (Roma), Torre Eiffel (París), Alhambra (España)<br>• Gastronomía: pizza, paella, croissant, sushi europeo'},
+    cul:{title:'Cultura',info:'• Cuna del Renacimiento, la Ilustración y la Revolución Industrial<br>• Arte: Leonardo, Miguel Ángel, Picasso, Van Gogh<br>• Religión predominante: cristianismo<br>• Patrimonio UNESCO: Coliseo (Roma), Torre Eiffel (París), Alhambra (España)<br>• Gastronomía: pizza, paella, cruasán'},
     hn:{title:'Honduras y Europa',info:'• Honduras exporta: café ☕, banano 🍌, textiles, palma africana<br>• UE da cooperación en salud, educación y medio ambiente<br>• Turistas europeos visitan: Copán, Roatán, La Ceiba<br>• AACUE (Acuerdo UE–Centroamérica): facilita el comercio<br>• Cooperación alemana GIZ y española AECID activas en HN'}
   },
   asia: {
     nombre:'Asia', icon:'🌏',
-    geo:{title:'Geografía',info:'• Área: 44.6 millones km² — el continente más grande del mundo<br>• 48 países<br>• Himalaya: Monte Everest 8,849 m (cumbre más alta del mundo)<br>• Ríos: Yangtze, Ganges, Indo, Mekong, Amarillo<br>• Desiertos: Gobi (Mongolia/China), Arábigo<br>• Mares: del Sur de China, Arábigo, Mar Rojo'},
-    eco:{title:'Economía',info:'• China: 2.ª economía mundial (industria, manufactura, tecnología)<br>• Japón: 3.ª economía (autos Toyota, Sony, Nintendo)<br>• India: 5.ª y en rápido crecimiento (TI, servicios)<br>• "Tigres asiáticos": Corea del Sur, Taiwán, Singapur, Hong Kong<br>• Arabia Saudita: petróleo (el mayor exportador del mundo)'},
-    soc:{title:'Sociedad',info:'• Población: ~4,700 millones (60% de la humanidad)<br>• China e India: más de 1,400 millones c/u<br>• Monzón: organiza la vida agrícola de miles de millones<br>• Brecha enorme entre países desarrollados y en desarrollo<br>• Religiones: Hinduismo, Budismo, Islam, Confucionismo, Sintoísmo'},
-    cul:{title:'Cultura',info:'• Cuna de las primeras civilizaciones: Mesopotamia, India, China<br>• Artes marciales, meditación, yoga, origami, caligrafía<br>• Gastronomía: sushi, curry, dim sum, pho, kebab<br>• Patrimonio: Gran Muralla China, Taj Mahal, Angkor Wat, Templos de Kioto<br>• Religiones con más seguidores: Hinduismo, Islam, Budismo'},
+    geo:{title:'Geografía',info:'• Área: 44.6 millones de km², el continente más grande del mundo<br>• 48 países<br>• Himalaya: monte Everest 8,849 m (cumbre más alta del mundo)<br>• Ríos: Yangtsé, Ganges, Indo, Mekong, Amarillo<br>• Desiertos: Gobi (Mongolia/China), Arábigo<br>• Mares: del sur de China, Arábigo, mar Rojo'},
+    eco:{title:'Economía',info:'• China: 2.ª economía mundial (industria, manufactura, tecnología)<br>• Japón: entre las cinco primeras (autos, electrónica, videojuegos)<br>• India: entre las cinco primeras y en rápido crecimiento (TI, servicios)<br>• "Tigres asiáticos": Corea del Sur, Taiwán, Singapur, Hong Kong<br>• Arabia Saudita: petróleo (el mayor exportador del mundo)'},
+    soc:{title:'Sociedad',info:'• Población: ~4,700 millones (60% de la humanidad)<br>• China e India: más de 1,400 millones c/u<br>• Monzón: organiza la vida agrícola de miles de millones<br>• Brecha enorme entre países desarrollados y en desarrollo<br>• Religiones: hinduismo, budismo, islam, confucianismo, sintoísmo'},
+    cul:{title:'Cultura',info:'• Cuna de las primeras civilizaciones: Mesopotamia, India, China<br>• Artes marciales, meditación, yoga, origami, caligrafía<br>• Gastronomía: sushi, curry, dim sum, pho, kebab<br>• Patrimonio: Gran Muralla China, Taj Mahal, Angkor Wat, templos de Kioto<br>• Religiones con más seguidores: hinduismo, islam, budismo'},
     hn:{title:'Honduras y Asia',info:'• Honduras importa de China: ropa 👕, tecnología 📱, maquinaria<br>• Japón: autos Toyota, Mitsubishi, motocicletas Honda<br>• KOICA (Corea del Sur): becas, formación técnica y voluntarios<br>• HN exporta: mariscos 🦐, café ☕ a Japón y Corea del Sur<br>• Creciente presencia de empresas chinas en infraestructura de HN'}
   },
   africa: {
     nombre:'África', icon:'🌍',
-    geo:{title:'Geografía',info:'• Área: 30.4 millones km² — 2.º continente más grande<br>• 54 países (la mayor cantidad de cualquier continente)<br>• Desierto Sahara: 9.2 millones km² (norte de África)<br>• Río Nilo: 6,650 km (el más largo del mundo)<br>• Selva del Congo (2.ª más grande del mundo)<br>• Kilimanjaro: 5,895 m (cumbre más alta de África)'},
+    geo:{title:'Geografía',info:'• Área: 30.4 millones de km², el 2.º continente más grande<br>• 54 países (la mayor cantidad de cualquier continente)<br>• Desierto Sahara: 9.2 millones de km² (norte de África)<br>• Río Nilo: 6,650 km (el más largo del mundo)<br>• Selva del Congo (2.ª más grande del mundo)<br>• Kilimanjaro: 5,895 m (cumbre más alta de África)'},
     eco:{title:'Economía',info:'• Gran variedad: Nigeria (mayor PIB africano), Sudáfrica, Egipto, Marruecos<br>• Recursos naturales: petróleo, diamantes, oro, cobre, coltán<br>• Agricultura: 60% de la fuerza laboral en zonas rurales<br>• En desarrollo: baja industrialización relativa<br>• Potencial enorme: juventud, recursos y tierras fértiles'},
-    soc:{title:'Sociedad',info:'• Población: ~1,400 millones y creciendo rápido<br>• Más de 2,000 idiomas nativos<br>• El continente más joven del mundo (edad media: 19 años)<br>• Desafíos: pobreza, acceso a salud y educación<br>• Organización: Unión Africana (UA) — 55 estados miembro'},
-    cul:{title:'Cultura',info:'• Cuna de la humanidad: los fósiles más antiguos del Homo sapiens<br>• Pirámides de Egipto, Gran Zimbabwe, Timbuktu<br>• Raíces de la música global: jazz, blues, reggae, afrobeat, salsa<br>• Arte, danza y tejidos cargados de simbolismo espiritual<br>• Colonialismo dejó herencias lingüísticas: francés, inglés, portugués'},
-    hn:{title:'Honduras y África',info:'• Relaciones diplomáticas a través de la ONU y organismos internacionales<br>• Cooperación Sur-Sur: experiencias compartidas en desarrollo<br>• Participación conjunta en foros G77 y Clima COP<br>• Honduras y África comparten desafíos: cambio climático, deuda externa<br>• Creciente interés en intercambio educativo y cultural'}
+    soc:{title:'Sociedad',info:'• Población: ~1,400 millones y creciendo rápido<br>• Más de 2,000 idiomas nativos<br>• El continente más joven del mundo (edad media: 19 años)<br>• Desafíos: pobreza, acceso a salud y educación<br>• Organización: Unión Africana (UA), con 55 Estados miembros'},
+    cul:{title:'Cultura',info:'• Cuna de la humanidad: los fósiles más antiguos del Homo sapiens<br>• Pirámides de Egipto, Gran Zimbabue, Tombuctú<br>• Raíces de la música global: jazz, blues, reggae, afrobeat, salsa<br>• Arte, danza y tejidos cargados de simbolismo espiritual<br>• El colonialismo dejó herencias lingüísticas: francés, inglés, portugués'},
+    hn:{title:'Honduras y África',info:'• Relaciones diplomáticas a través de la ONU y organismos internacionales<br>• Cooperación Sur-Sur: experiencias compartidas en desarrollo<br>• Participación conjunta en el G77 y en las cumbres del clima (COP)<br>• Honduras y África comparten desafíos: cambio climático, deuda externa<br>• Creciente interés en intercambio educativo y cultural'}
   }
 };
 
@@ -1735,7 +1735,7 @@ function openDiploma(){
   const mi = pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
   document.getElementById('diplMsg').textContent = msgs[mi];
   document.getElementById('diplDate').textContent = 'Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr = unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr = unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent = achStr;
   document.getElementById('diplomaOverlay').classList.add('open');
   document.querySelector('.diploma-input').focus();
@@ -1748,7 +1748,7 @@ function shareWA(){
   const msg = document.getElementById('diplMsg').textContent;
   const date = document.getElementById('diplDate').textContent;
   const achText = unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join('\n');
-  const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n🌍 Misión: Los Continentes — Europa, Asia y África\n🤗 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText?'\n\n🏅 Logros desbloqueados:\n'+achText:''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
+  const txt = `${stars} CONSTANCIA DE LOGRO ${stars}\n\n🌍 Misión: Los Continentes: Europa, Asia y África\n🤗 Estudiante: ${name}\n📊 Progreso: ${pct}% completado\n⭐ XP obtenido: ${xp} de ${MXP}${achText?'\n\n🏅 Logros desbloqueados:\n'+achText:''}\n\n${msg}\n\n📅 ${date}\n🏠 Proyecto Educativo M.E.T.A.S\n🌐 policastsapien.com`;
   _waShare(txt);
 }
 

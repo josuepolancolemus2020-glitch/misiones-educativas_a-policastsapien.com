@@ -150,7 +150,7 @@ let p;
 // ── 1 ──
 const E = D.SAB_EPISTEMOLOGIA;
 p = [];
-p.push('<div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>');
+p.push('<div class="idline"><span>Nombre:</span><span class="raya"></span><span>N.º-Lista:</span><span class="raya corta"></span></div>');
 p.push(`<div class="fh">
       <div class="fh-txt">
         <div class="f-badge">📄 Ficha Didáctica: Misión ¿Cómo sé que sé?</div>
@@ -164,7 +164,7 @@ p.push(`<div class="fh">
       </div>
     </div>`);
 p.push('<h2>¿Por qué esta ficha?</h2>');
-p.push('<p>En un aula de 43 alumnos con tres teléfonos, la misión no le llega a todos. Esta hoja lleva\n       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>');
+p.push('<p>En un aula de 43 alumnos con tres teléfonos, la misión no les llega a todos. Esta hoja lleva\n       lo mismo en papel. Se fotocopia, se lleva a casa y funciona sin señal y sin luz.</p>');
 p.push(`<div class="caja idea"><b>Lo que hay que sacar de aquí:</b> «lo sé», «lo creo» y «es mi\n      opinión» no son lo mismo, aunque se digan con el mismo tono. Decir cuál de las tres es, y con\n      qué se sostiene, es la destreza de esta unidad. ${esc(E.ojo)}</div>`);
 p.push('<h3>Objetivos</h3>');
 p.push(`<ol class="objetivos">
@@ -300,8 +300,8 @@ p.push('<div><span class="pt">2. La prueba de cada manera (6 pts)</span> ' +
   [0, 1, 2].map(i => `${i + 1} → ${'abc'[ACT2[i]]} (${esc(EST[ACT2[i]].nombre)})`).join(' · ') +
   '. Las pruebas NO salen en el orden de las maneras: hay que leerlas.</div>');
 p.push('<div><span class="pt">3. Comprueba una tuya (10 pts)</span> ⚠️ <b>No tiene una sola respuesta ' +
-  'buena, a propósito.</b> Se califica que lo escrito en el paso 1 se pueda comprobar —«ese abono ' +
-  'es mejor» no vale, «da más mazorcas por planta» sí—, que el paso 2 diga quién lo cuenta, y que ' +
+  'buena, a propósito.</b> Se califica que lo escrito en el paso 1 se pueda comprobar («ese abono ' +
+  'es mejor» no vale, «da más mazorcas por planta» sí), que el paso 2 diga quién lo cuenta, y que ' +
   'el paso 5 nombre algo concreto que le haría cambiar de idea. Un «nada» en el 5 no se califica ' +
   'mal: se le pregunta entonces si estaba sabiendo o defendiendo.</div>');
 p.push('<div><span class="pt">4. Selección múltiple (6 pts)</span> ' +

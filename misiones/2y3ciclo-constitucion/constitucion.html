@@ -68,7 +68,7 @@
         <h2>🧒 El muchacho de los bultos</h2>
         <p>En el mercado hay un muchacho de doce años cargando bultos desde antes de que abran. Todo el
         mundo lo ve. Uno dice «es que en su casa lo necesitan»; otro dice «eso no se puede». Ahí se acaba
-        la conversación, porque <strong>ninguno de los dos puede decir dónde está escrito</strong> — y
+        la conversación, porque <strong>ninguno de los dos puede decir dónde está escrito</strong>, y
         todo sigue igual mañana.</p>
         <div class="tip"><span class="ti">❓</span><div>Sí está escrito, con número y con ley. Un derecho que
         no se puede nombrar no se puede reclamar: se queda en opinión contra opinión. Aquí vas a aprender a
@@ -108,7 +108,7 @@
       <div class="card ac-teal">
         <h2>📑 Los artículos, uno por uno</h2>
         <p style="font-size:0.9rem;">De cada uno: qué artículo es, para qué lo cita la ley y por qué te importa.
-           Uno solo —el 162— aparece <strong>citado palabra por palabra</strong>, y por eso es el único cuyo texto
+           Uno solo, el 162, aparece <strong>citado palabra por palabra</strong>, y por eso es el único cuyo texto
            puedes leer aquí. De los demás se dice en voz alta que su texto hay que buscarlo: callarlo te dejaría
            creer que el resumen ES el artículo.</p>
         <!-- Del archivo de datos. Un solo sitio, un solo número. -->
@@ -136,9 +136,9 @@
 <!-- ===== LAB ===== -->
 <div class="sec" id="s-lab" role="tabpanel">
   <div class="card ac-jade">
-    <h2>🔬 Laboratorio de los Próceres</h2>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige a una persona y qué quieres saber de ella. Es la forma más rápida de repasar antes del examen.</p>
-    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Poder Legislativo</strong> → <strong>¿Qué hace?</strong></div>
+    <h2>🔬 Laboratorio de los Artículos</h2>
+    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem;">Elige un artículo y qué quieres saber de él. Es la forma más rápida de repasar antes del examen.</p>
+    <div id="lab-sentence" class="lab-sentence">🔬 Explorando: <strong>Art. 162</strong> → <strong>¿De qué trata?</strong></div>
     <div class="lab-stage">
       <div id="lab-display" class="lab-display-box">
         <!-- Rellenado por JS -->
@@ -146,7 +146,7 @@
     </div>
     <div class="lab-controls">
       <div class="lab-group">
-        <span class="lab-group-label">👤 Quién:</span>
+        <span class="lab-group-label">📑 Cuál:</span>
         <button class="lab-btn lab-cont-btn active-pri" data-parte="a162" onclick="labShowParte('a162')">🍎 Art. 162</button>
         <button class="lab-btn lab-cont-btn" data-parte="a165" onclick="labShowParte('a165')">📜 Art. 165</button>
         <button class="lab-btn lab-cont-btn" data-parte="a34" onclick="labShowParte('a34')">🌎 Art. 34 y 168</button>
@@ -156,10 +156,10 @@
       </div>
       <div class="lab-group">
         <span class="lab-group-label">📌 Aspecto:</span>
-        <button class="lab-btn lab-asp-btn active-sec" data-aspecto="estructura" onclick="labShowAspecto('estructura')">👤 ¿Quién fue?</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🔨 ¿Qué hizo?</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">🏅 ¿Por qué se le recuerda?</button>
-        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">💡 Dato curioso</button>
+        <button class="lab-btn lab-asp-btn active-sec" data-aspecto="estructura" onclick="labShowAspecto('estructura')">📌 ¿De qué trata?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="funcion" onclick="labShowAspecto('funcion')">🎯 ¿Para qué se cita?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="ubicacion" onclick="labShowAspecto('ubicacion')">💡 ¿Por qué importa?</button>
+        <button class="lab-btn lab-asp-btn" data-aspecto="dato" onclick="labShowAspecto('dato')">📚 Dónde se lee</button>
       </div>
     </div>
   </div>
@@ -172,7 +172,7 @@
 <!-- ===== FLASHCARDS ===== -->
 <div class="sec" id="s-flash" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🃏 Flashcards — Toca para voltear</h2>
+    <h2>🃏 Flashcards: toca para voltear</h2>
     <div class="fc-wrap">
       <div class="fc-inner" id="fcInner" onclick="flipCard()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}" tabindex="0" role="button" aria-label="Tarjeta de estudio. Presiona Enter para voltear">
         <div class="fc-front"><div class="fw" id="fcW"></div><div class="fhint">🃏 Toca · Enter para voltear</div></div>
@@ -275,20 +275,20 @@
 <div class="sec" id="s-widgets" role="tabpanel">
 
   <div class="card ac-teal">
-    <h2>🔗 Ordena la línea del tiempo</h2>
-    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ponerlos del más antiguo al más reciente:</p>
+    <h2>🔗 Ordena los pasos</h2>
+    <p style="font-size:0.85rem;margin-bottom:0.8rem;">Usa las flechas <strong>▲ ▼</strong> para ponerlos en orden:</p>
     <div class="sort-list" id="routeList"></div>
     <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
       <button class="btn btn-g" onclick="checkRoute()">✅ Verificar orden</button>
-      <button class="btn btn-pri" onclick="nextRoute()">🔄 Otra línea</button>
+      <button class="btn btn-pri" onclick="nextRoute()">🔄 Otra secuencia</button>
     </div>
     <div id="fbRoute" class="fb" role="alert"></div>
   </div>
 
   <div class="card ac-gold">
-    <h2>🕵️ ¿Quién fue?</h2>
-    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee lo que hizo y di de quién se trata:</p>
+    <h2>🕵️ ¿Qué artículo es?</h2>
+    <p class="id-prog" id="neuronProg" aria-live="polite">Pista 1</p>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Lee para qué se cita y di de qué artículo se trata:</p>
     <div class="neuron-desc" id="neuronDesc">Cargando…</div>
     <div class="cmp-opts" id="neuronOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbNeuron" class="fb" role="alert"></div>
@@ -299,10 +299,10 @@
   </div>
 
   <div class="card ac-jade">
-    <h2>🔗 Empareja: el apodo → la persona</h2>
+    <h2>🔗 Empareja: el tema → el artículo</h2>
     <p class="id-prog" id="neuroProg" aria-live="polite">1 de 6</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">A casi todos se les quedó un apodo, y en el examen se pregunta. ¿De quién es este?</p>
-    <div class="neuro-trans-display" id="neuroTrans">«el Sabio Valle»</div>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Cada artículo tiene su tema, y en el examen se pregunta. ¿De cuál es este?</p>
+    <div class="neuro-trans-display" id="neuroTrans">Cargando…</div>
     <div class="qz-opts" id="neuroOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbNeuro" class="fb" role="alert"></div>
     <div style="margin-top:0.8rem;">
@@ -311,10 +311,10 @@
   </div>
 
   <div class="card ac-purple">
-    <h2>⚖️ ¿De qué poder es?</h2>
+    <h2>🔍 ¿Verificado o hay que buscarlo?</h2>
     <p class="id-prog" id="enferProg" aria-live="polite">1 de 8</p>
-    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Uno hace las leyes, otro las hace cumplir y el tercero las aplica a cada caso. ¿De cuál es esto?</p>
-    <div class="neuro-trans-display" id="enferDisease">Defendió a su pueblo de la conquista española</div>
+    <p style="font-size:0.85rem;margin-bottom:0.6rem;">Unas cosas las acreditan las leyes de aquí; otras hay que ir a buscarlas. ¿De cuál es esto?</p>
+    <div class="neuro-trans-display" id="enferDisease">Cargando…</div>
     <div class="qz-opts" id="enferOpts" role="group" style="margin-top:0.8rem;"></div>
     <div id="fbEnfer" class="fb" role="alert"></div>
     <div style="margin-top:0.8rem;">
@@ -331,7 +331,7 @@
 <!-- ===== RETO ===== -->
 <div class="sec" id="s-reto" role="tabpanel">
   <div class="card ac-teal">
-    <h2>🏆 Reto Final — ¡30 segundos!</h2>
+    <h2>🏆 Reto Final: ¡30 segundos!</h2>
     <p style="font-size:0.88rem;margin-bottom:0.8rem;">Clasifica cada uno lo más rápido que puedas.</p>
     <p style="font-size:0.82rem;color:var(--pri);font-weight:600;margin-bottom:1rem;">💡 Consejo: Al terminar, usa "Variar pareja" para jugar con otras categorías y ganar más agilidad.</p>
     <div class="game" aria-live="polite">
@@ -415,10 +415,10 @@
     <div class="eval-print-header">
       <h2>Evaluación Final · La Constitución: mi Ley Fundamental · Educación Básica · Educación Cívica</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
     </div>
-    <h2 id="eval-screen-title">🎓 Evaluación Final — La Constitución: mi Ley Fundamental</h2>
+    <h2 id="eval-screen-title">🎓 Evaluación Final · La Constitución: mi Ley Fundamental</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Copia el examen en tu cuaderno y responde las preguntas, después selecciona <strong>Ver Pauta</strong> para que te autoevalúes. <strong>Genera nuevas preguntas cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEval()">🔄 Nueva Evaluación</button>
@@ -434,10 +434,10 @@
     <div class="eval-print-header">
       <h2>Evaluación Competencial · Pensamiento Crítico · La Constitución: mi Ley Fundamental · Educación Básica</h2>
       <div class="eval-ph-nombre"><strong>Nombre:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Fecha:</strong><span class="eval-ph-line-fecha">&nbsp;</span></div>
-      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>Nº Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
+      <div class="eval-ph-nombre"><strong>Centro Educativo:</strong><span class="eval-ph-line-full">&nbsp;</span><strong>Grado y Sección:</strong><span class="eval-ph-line-xs">&nbsp;</span><strong>N.º Lista:</strong><span class="eval-ph-line-xs">&nbsp;</span></div>
       <p style="font-size:0.72rem;margin-top:0.2rem;text-align:center;">Valor total: 100 puntos · 5 secciones de 20 puntos</p>
     </div>
-    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico — La Constitución: mi Ley Fundamental</h2>
+    <h2 id="evalcrit-screen-title">🧠 Prueba de Pensamiento Crítico · La Constitución: mi Ley Fundamental</h2>
     <p class="eval-desc" style="font-size:0.9rem;margin-bottom:0.8rem;">Responde cada caso con tus propias palabras (en pantalla o en tu cuaderno), compara con la <strong>Pauta</strong> y anótate el puntaje de cada sección. <strong>Genera una nueva prueba cuando quieras.</strong></p>
     <div class="eval-controls">
       <button class="btn btn-purple" onclick="genEvalCrit()">🔄 Nueva Prueba</button>
@@ -461,12 +461,12 @@
     <h2>📁 Recursos del Tema</h2>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">📄 Ficha didáctica imprimible</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>los seis artículos que las leyes de aquí citan por su número</strong> —qué dice cada uno y para qué sirve—, los cinco casos para analizar y las actividades, para imprimir y estudiar sin teléfono.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Guía de estudio de 7 páginas con <strong>los seis artículos que las leyes de aquí citan por su número</strong> (qué dice cada uno y para qué sirve), los cinco casos para analizar y las actividades, para imprimir y estudiar sin teléfono.</p>
       <a href="../../fichas/ficha-constitucion.html" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;">📄 Abrir / Imprimir la ficha</a>
     </div>
     <div style="border:1.5px solid var(--border,#e2e8f0);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;background:rgba(0,0,0,0.02);">
       <p style="font-size:0.98rem;font-weight:800;margin-bottom:0.4rem;">🇭🇳 Las otras cuatro etapas de la Ruta de la Patria</p>
-      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Esta es la etapa 5, y la que cierra por ahora. Antes van los símbolos patrios y las fechas cívicas, el Himno Nacional completo, los héroes y próceres, y los tres poderes del Estado —esa última es la que enseña QUIÉN hace cada cosa con la ley que aquí se lee—.</p>
+      <p style="font-size:0.86rem;margin-bottom:0.85rem;">Esta es la etapa 5, y la que cierra por ahora. Antes van los símbolos patrios y las fechas cívicas, el Himno Nacional completo, los héroes y próceres, y los tres poderes del Estado. Esa última es la que enseña QUIÉN hace cada cosa con la ley que aquí se lee.</p>
       <a href="../2y3ciclo-aspectos-civicos/aspectos-civicos.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🇭🇳 Etapa 1 · Símbolos</a>
       <a href="../2y3ciclo-himno-nacional/himno-nacional.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🎵 Etapa 2 · El Himno</a>
       <a href="../2y3ciclo-proceres-heroes/proceres-heroes.html" class="btn btn-pri" style="display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1rem;padding:0.7rem 1.4rem;margin-right:0.5rem;margin-bottom:0.5rem;">🏅 Etapa 3 · Próceres</a>
@@ -511,7 +511,7 @@
 <!-- NAV -->
 <nav class="nav" role="tablist" aria-label="Secciones de la misión">
   <button class="nav-t active" role="tab" aria-selected="true" aria-controls="s-aprende" data-s="s-aprende" onclick="go('s-aprende')"><span class="ico">📖</span> Aprende</button>
-  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">👥</span> Los ocho</button>
+  <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-estructura" data-s="s-estructura" onclick="go('s-estructura')"><span class="ico">📑</span> Los artículos</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-lab" data-s="s-lab" onclick="go('s-lab')"><span class="ico">🧪</span> Lab</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-flash" data-s="s-flash" onclick="go('s-flash')"><span class="ico">🃏</span> Flashcards</button>
   <button class="nav-t" role="tab" aria-selected="false" aria-controls="s-quiz" data-s="s-quiz" onclick="go('s-quiz')"><span class="ico">🧠</span> Quiz</button>

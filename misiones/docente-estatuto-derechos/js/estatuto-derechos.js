@@ -67,8 +67,8 @@ const TRAMITES = [
     ic: '🎓', corto: 'Entrar a la carrera',
     tit: 'Los cinco requisitos para ingresar',
     sub: 'Estatuto, artículo 7',
-    txt: 'La carrera docente no se entra por nombramiento a dedo: el Estatuto fija cinco ' +
-         'requisitos y son acumulativos, hay que cumplirlos todos. Dos de ellos sorprenden a ' +
+    txt: 'A la carrera docente no se entra por nombramiento a dedo: el Estatuto fija cinco ' +
+         'requisitos y son acumulativos: hay que cumplirlos todos. Dos de ellos sorprenden a ' +
          'mucha gente: estar afiliado a un colegio magisterial y solvente con él, y estar ' +
          'inscrito en el Escalafón de la carrera docente. Sin esos dos papeles, el expediente ' +
          'está incompleto aunque el título esté perfecto.',
@@ -516,7 +516,7 @@ const QZ = [
   { q: 'En un traslado a otro departamento, la primera prioridad del Reglamento es…',
     o: ['La seguridad personal', 'La antigüedad en el servicio',
         'El lugar de origen', 'El promedio de la evaluación'],
-    c: 0, e: 'Artículo 112: seguridad personal, enfermedad, integración familiar, lugar de origen y por último caso fortuito.' },
+    c: 0, e: 'Artículo 112: seguridad personal, enfermedad, integración familiar, lugar de origen y, por último, caso fortuito.' },
   { q: 'Los permisos especiales con goce de sueldo del artículo 13…',
     o: ['Son ilimitados si hay justificación', 'Se pierden si no se usan cada mes',
         'No pueden exceder de treinta días en el curso del año', 'Son treinta días por cada causa'],
@@ -645,7 +645,7 @@ function cpRevisa() {
   r.className = 'resu on ' + (bien === CP.length ? 'bien' : 'mal');
   r.innerHTML = `<span class="resu-num">${bien}/${CP.length}</span>` +
     (bien === CP.length ? 'Los plazos los tiene. Son los que hacen ganar o perder un derecho.'
-                        : 'Vuelva a los trámites por las que falló: el número se pega cuando se sabe para qué sirve.');
+                        : 'Vuelva a los trámites por los que falló: el número se pega cuando se sabe para qué sirve.');
   if (bien === CP.length && !S.completa) { S.completa = 1; xp(6); }
   guardar();
 }

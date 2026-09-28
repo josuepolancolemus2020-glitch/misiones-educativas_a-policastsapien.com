@@ -99,7 +99,7 @@ const IA_CONCEPTOS = [
   { clave: 'sesgo', emoji: '⚖️', palabra: 'Sesgo', ciclo: 2,
     corta: 'Se equivoca con lo que faltó en sus ejemplos.',
     definicion: 'Sus ejemplos estaban mal repartidos y falla con lo que faltaba. Alguien eligió mal: pregúntate quién.',
-    ejemplo: 'Entrenada solo con manzanas y peras, un nance no existe.' },
+    ejemplo: 'Si solo vio manzanas y peras, para ella un nance no existe.' },
 
   { clave: 'algoritmo', emoji: '🧩', palabra: 'Algoritmo', ciclo: 3,
     corta: 'La receta de pasos que la máquina sigue.',
@@ -134,7 +134,7 @@ const IA_CONCEPTOS = [
   { clave: 'peticion', emoji: '🧱', palabra: 'Petición', ciclo: 3,
     corta: 'Lo que le pides, con sus cuatro piezas.',
     definicion: 'Es el encargo que le escribes a una IA generativa. Las cuatro piezas: contexto, tarea, formato y ejemplo.',
-    ejemplo: '«Soy alumno de séptimo. Explicame la fotosíntesis en cinco viñetas cortas.»' },
+    ejemplo: '«Soy alumno de séptimo. Explicame la fotosíntesis en cinco viñetas cortas».' },
 
   { clave: 'deepfake', emoji: '🎭', palabra: 'Falsificación profunda', ciclo: 3,
     corta: 'Foto, voz o video fabricados que parecen reales.',

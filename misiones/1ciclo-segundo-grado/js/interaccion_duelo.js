@@ -57,12 +57,12 @@ window.WidgetDueloJSON = {
     function newRound() {
       answered = false;
       const modo = rint(0, 3);
-      if (modo === 0) { // distinta cantidad de cifras: la trampa clásica 99,999 vs 100,000
+      if (modo === 0) { // distinta cantidad de cifras: la trampa clásica 99,999 vs. 100,000
         const nd = rint(4, 8);
         A = rint(Math.pow(10, nd - 1), Math.pow(10, nd) - 1);
         B = rint(Math.pow(10, nd), Math.pow(10, nd + 1) - 1);
         if (rint(0, 1)) { const t = A; A = B; B = t; }
-      } else if (modo === 1) { // frontera exacta: 99,999 vs 100,000
+      } else if (modo === 1) { // frontera exacta: 99,999 vs. 100,000
         const p = Math.pow(10, rint(3, 8));
         A = p - rint(1, 9); B = p;
         if (rint(0, 1)) { const t = A; A = B; B = t; }

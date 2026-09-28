@@ -255,7 +255,7 @@ ${cuerpo.replace(/\s+$/, '')}
 }
 
 const portada = (titulo, tema, qr, objetivos) => `
-    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>Nº-Lista:</span><span class="raya corta"></span></div>
+    <div class="idline"><span>Nombre:</span><span class="raya"></span><span>N.º-Lista:</span><span class="raya corta"></span></div>
 
     <div class="fh">
       <div class="fh-txt">
@@ -304,7 +304,7 @@ ${IA_REGLAS_ORO.map(r => `      <tr><td class="k">${r.emoji} ${esc(r.regla)}</td
 
 const tablaMitos = () => `    <table>
       <tr><th style="width:44%">Lo que mucha gente cree</th><th>Lo que de verdad pasa</th></tr>
-${IA_MITOS.map(m => `      <tr><td>❌ «${esc(m.mito)}»</td><td>✅ ${esc(m.verdad)}</td></tr>`).join('\n')}
+${IA_MITOS.map(m => `      <tr><td>❌ «${esc(m.mito.replace(/([^.])\.$/, '$1'))}»${/[^.]\.$/.test(m.mito) ? '.' : ''}</td><td>✅ ${esc(m.verdad)}</td></tr>`).join('\n')}
     </table>`;
 
 module.exports = { RAIZ, esc, con, arma, portada, preguntas, clave, fichaConcepto, tablaReglas, tablaMitos,

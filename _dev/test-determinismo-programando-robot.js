@@ -103,7 +103,7 @@ ok('encabezado dice «Programando un Robot» y «Robótica» en ambos',
 ok('encabezado usa «Centro Educativo:» y NUNCA «Instituto:» en ambos',
   [0, 1].every(i => docs[i].includes('<strong>Centro Educativo:</strong>') && !docs[i].includes('Instituto:')));
 ok('pie normativo completo en ambos documentos',
-  [0, 1].every(i => docs[i].includes('Nº de Evaluación temática realizada:')
+  [0, 1].every(i => docs[i].includes('N.º de Evaluación temática realizada:')
     && docs[i].includes('Evaluación con valor en el parcial')
     && docs[i].includes('Evaluación solo de repaso')
     && docs[i].includes('Forma 3')));

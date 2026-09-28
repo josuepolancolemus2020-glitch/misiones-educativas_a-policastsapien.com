@@ -212,7 +212,7 @@ const IA_TIEMPO_PARES = [
   { a: '1958', b: '2012', por: 'El perceptrón es el abuelo de la red que ganó ImageNet. Una idea buena puede esperar medio siglo.' },
   { a: '1950', b: '1956', por: 'De la pregunta de Turing al nombre «Inteligencia Artificial» pasó poco. La idea ya estaba madura.' },
   { a: '1966', b: '2022', por: 'ELIZA parecía escuchar con unas pocas reglas. El chat de hoy es su tataranieto.' },
-  { a: '1997', b: '2016', por: 'Del ajedrez al Go. La primera ganó a fuerza de cálculo. La segunda ganó aprendiendo de ejemplos.' },
+  { a: '1997', b: '2016', por: 'Del ajedrez al go. La primera máquina ganó a fuerza de cálculo. La segunda ganó jugando contra sí misma.' },
 ];
 
 /* ── Etapa 4 · 🕵️ ¿Se puede comprobar? ────────────────────────────────────
@@ -277,7 +277,7 @@ const IA_ESCENARIOS = [
         pasa: 'La maestra le da otra oportunidad: escribirlo él. Le cuesta una tarde. Le queda algo que sí sabe explicar.' },
       { t: 'Usarla para entender y escribirlo él.',
         pasa: 'Le pide que le explique la Reforma Liberal. Comprueba las fechas en el libro. El ensayo es suyo.' },
-    ], regla: 'Lo que entregas tiene que poder explicarlo. Si no puedes, no es tuyo.' },
+    ], regla: 'Lo que entregas tienes que poder explicarlo. Si no puedes, no es tuyo.' },
   { k: 'noticia', e: '📺', titulo: 'La noticia que cierra la escuela', quien: 'don Chele, el maestro', cuesta: 'una semana de clases y cuarenta familias asustadas',
     situacion: 'Un domingo a don Chele le llega un video por el grupo de la comunidad. Un presentador con el logo de un canal dice que la escuela cierra el lunes. Medio pueblo ya lo compartió.',
     ops: [
@@ -292,7 +292,7 @@ const IA_ESCENARIOS = [
     situacion: 'Imagina un programa que califica solo los exámenes de redacción. A Sofía le marca mal un párrafo: escribió «chucho», «cipote» y «pisto». Ese programa aprendió con textos de otros países.',
     ops: [
       { t: 'Aceptar la nota. La máquina no falla.',
-        pasa: 'Sofía reprueba por escribir como se habla en su país. Le cae a todos los que escriben así. Es un sesgo.' },
+        pasa: 'Sofía reprueba por escribir como se habla en su país. Les cae a todos los que escriben así. Es un sesgo.' },
       { t: 'Pedir que una persona revise la nota.',
         pasa: 'La maestra lee el párrafo, reconoce el español de Honduras y corrige la nota.' },
       { t: 'Preguntar con qué ejemplos se entrenó.',
@@ -332,7 +332,7 @@ const IA_ESTAFA_PIEZAS = [
   { k: 'detalle', emoji: '🏫', que: 'El nombre de la escuela y de la tienda',
     publico: 'En las fotos del uniforme y en los comentarios',
     aporta: 'Parece un detalle que solo la familia sabe.',
-    texto: 'Dejáselo en la tienda del portón. ' },
+    texto: 'Dejá el sobre en la tienda del portón. ' },
   { k: 'canal', emoji: '📵', que: 'Un número nuevo, no el de la mamá',
     publico: 'Esta no se publicó: la pone quien engaña',
     aporta: 'El dinero llega a otro lado.',

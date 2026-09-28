@@ -131,8 +131,8 @@ ok('operativa: evalPage + pautaPage + fit binario + colores tec', docs[1].includ
 ok('pauta con respuestas en verde #007a00 (.pa)', docs[0].includes('.pa{color:#007a00') && docs[1].includes('.pa{color:#007a00'));
 ok('encabezado imprime «Programación»', docs[0].includes('Programación') && docs[1].includes('Programación'));
 ok('AMBAS pruebas usan «Centro Educativo:» y ninguna «Instituto:»', docs[0].includes('Centro Educativo:') && docs[1].includes('Centro Educativo:') && !docs[0].includes('Instituto:') && !docs[1].includes('Instituto:'));
-ok('encabezado línea 1 Nombre/Parcial/Fecha y línea 2 Centro/Grado/Nº', docs.every(d => d.includes('<strong>Nombre:</strong>') && d.includes('<strong>Parcial:</strong>') && d.includes('<strong>Fecha:</strong>') && d.includes('<strong>Grado:</strong>') && d.includes('<strong>Nº:</strong>')));
-ok('pie normativo (Nº de Evaluación temática + casillas + Forma N)', docs.every(d => d.includes('Nº de Evaluación temática realizada') && d.includes('Evaluación con valor en el parcial') && d.includes('Evaluación solo de repaso') && d.includes('forma-tag')));
+ok('encabezado línea 1 Nombre/Parcial/Fecha y línea 2 Centro/Grado/N.º', docs.every(d => d.includes('<strong>Nombre:</strong>') && d.includes('<strong>Parcial:</strong>') && d.includes('<strong>Fecha:</strong>') && d.includes('<strong>Grado:</strong>') && d.includes('<strong>N.º:</strong>')));
+ok('pie normativo (N.º de Evaluación temática + casillas + Forma N)', docs.every(d => d.includes('N.º de Evaluación temática realizada') && d.includes('Evaluación con valor en el parcial') && d.includes('Evaluación solo de repaso') && d.includes('forma-tag')));
 ok('clave ZipGrade SOLO en la conceptual', docs[0].includes('ZipGrade') && !docs[1].includes('ZipGrade'));
 ok('operativa impresa: SVG determinista, tablas de traza y puntos «•» en casillas vacías', docs[1].includes('<svg') && docs[1].includes('tz-tbl') && docs[1].includes('•'));
 ok('sin Forma R (semillas 300000/400000 no usadas)', !code.includes('300000') && !code.includes('400000'));

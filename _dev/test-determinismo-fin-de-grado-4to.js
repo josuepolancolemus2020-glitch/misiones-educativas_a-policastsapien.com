@@ -149,7 +149,7 @@ for (let f = 1; f <= 20; f++) {
       esperado = num(m[1]) * 100;
     } else if ((m = it.text.match(/mide (\d+) m de largo y (\d+) m de ancho\. ¿Cuánto mide su perímetro\?$/))) {
       esperado = 2 * (num(m[1]) + num(m[2]));
-    } else if ((m = it.text.match(/a las (\d+):(\d+) am y estudia (\d+) minutos/))) {
+    } else if ((m = it.text.match(/a las (\d+):(\d+) (?:am|a\. m\.) y estudia (\d+) minutos/))) {
       const t = num(m[1]) * 60 + num(m[2]) + num(m[3]);
       esperado = t % 60;
       // Terminar en punto deja al alumno escribiendo «0» minutos, o dejando la

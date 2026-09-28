@@ -220,6 +220,9 @@ button:focus-visible,input:focus-visible,.chip:focus-visible,.zone:focus-visible
 .opt:disabled{cursor:default}
 .opt.good{background:#0d3b22; border-color:var(--green); color:#a7f3d0}
 .opt.bad{background:#3b1111; border-color:var(--red); color:#fecaca}
+/* el acierto y el error se dicen también con un glifo: uno de cada doce niños no distingue el rojo del verde */
+.opt.good::after{content:' ✓';font-weight:900}
+.opt.bad::after{content:' ✗';font-weight:900}
 
 .quiz-q{
   flex:none; background:#0d1626; border:1px solid var(--line); border-radius:var(--r-md);
@@ -470,7 +473,7 @@ button:focus-visible,input:focus-visible,.chip:focus-visible,.zone:focus-visible
   <section id="scene-forja" class="scene" style="--accent:var(--pink)">
     <div class="scene-inner">
       <div class="head">
-        <div><h2>Forja de fórmulas</h2><p>Arrastra —o toca— cada pieza hasta su hueco.</p></div>
+        <div><h2>Forja de fórmulas</h2><p>Arrastra (o toca) cada pieza hasta su hueco.</p></div>
         <span class="pill" id="sf-pill">1 / 5</span>
       </div>
       <div class="board">
@@ -1477,7 +1480,7 @@ function srContestar(btn){
   }else{
     if(btn) btn.classList.add('bad');
     fallo(caja);
-    pista('#sr-hint', btn ? 'Esa no era. La correcta está en verde.' : 'Se acabó el tiempo. La correcta está en verde.', 'bad');
+    pista('#sr-hint', btn ? 'Esa no era. La correcta lleva ✓.' : 'Se acabó el tiempo. La correcta lleva ✓.', 'bad');
   }
   setTimeout(function(){
     SR.ronda++;

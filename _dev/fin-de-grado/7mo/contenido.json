@@ -130,7 +130,7 @@
       "pasos": [
        "Sumar un número negativo es lo mismo que restar, así que la operación es 3/8 menos 5/6.",
        "Los pedazos no son del mismo tamaño, así que hay que buscar denominador común: el m.c.m. de 8 y 6 es 24.",
-       "Se convierten las dos fracciones: 3/8 = 9/24 (porque 24 ÷ 8 = 3 y 3 x 3 = 9) 5/6 = 20/24 (porque 24 ÷ 6 = 4 y 5 x 4 = 20).",
+       "Se convierten las dos fracciones: 3/8 = 9/24 (porque 24 ÷ 8 = 3 y 3 x 3 = 9) y 5/6 = 20/24 (porque 24 ÷ 6 = 4 y 5 x 4 = 20).",
        "Se restan los numeradores y el denominador se queda igual: 9 menos 20 da -11, así que el resultado es -11/24.",
        "Se revisa si se puede simplificar: 11 es primo y no cabe en 24, así que ya está en su forma más simple."
       ],
@@ -393,10 +393,10 @@
       "pasos": [
        "Busco de qué habla: de la estufa con chimenea comparada con el fogón abierto.",
        "Busco qué dice: que saca el humo de la casa y gasta menos leña.",
-       "Descarto un título de una sola parte, como Doña Rufina y sus tortillas: deja fuera casi todo el texto.",
-       "Descarto un título general de más, como La cocina del campo: no dice nada de lo que el texto explica."
+       "Descarto un título de una sola parte, como «Doña Rufina y sus tortillas»: deja fuera casi todo el texto.",
+       "Descarto un título general de más, como «La cocina del campo»: no dice nada de lo que el texto explica."
       ],
-      "resultado": "El mejor título es Por qué la estufa con chimenea gana al fogón abierto, porque nombra las dos cosas comparadas y la razón que da el texto."
+      "resultado": "El mejor título es «Por qué la estufa con chimenea gana al fogón abierto», porque nombra las dos cosas comparadas y la razón que da el texto."
      }
     ],
     "tabla": {
@@ -445,7 +445,7 @@
      },
      {
       "tipo": "truco",
-      "texto": "En las preguntas de por qué, fíjate primero en si el texto trae la palabra porque. Si la trae, la respuesta está escrita y es literal. Si no la trae, la respuesta hay que deducirla de lo que el personaje hizo."
+      "texto": "En las preguntas de por qué, fíjate primero en si el texto trae la palabra «porque». Si la trae, la respuesta está escrita y es literal. Si no la trae, la respuesta hay que deducirla de lo que el personaje hizo."
      },
      {
       "tipo": "idea",
@@ -457,7 +457,7 @@
       "enunciado": "Wilmer llegó al aula con el uniforme salpicado de lodo hasta las rodillas. Dejó los zapatos afuera y se sentó de último, aunque su pupitre estaba adelante. Cuando el maestro preguntó quién había cruzado la quebrada esa mañana, Wilmer no levantó la mano; fue el único que llegó tarde y el único que llegó mojado. Pregunta: ¿qué se puede deducir de Wilmer?",
       "pasos": [
        "Reviso si la respuesta está escrita: el texto nunca dice qué le pasó, así que la pregunta es inferencial.",
-       "Junto la primera pista: llegó con lodo hasta las rodillas y con los zapatos para dejarlos afuera.",
+       "Junto la primera pista: llegó con lodo hasta las rodillas y dejó los zapatos afuera.",
        "Junto la segunda pista: el maestro preguntó justo por la quebrada, y Wilmer fue el único que llegó tarde y mojado.",
        "Deduzco lo único razonable: cruzó la quebrada crecida para llegar a clases, aunque no lo quiso decir."
       ],
@@ -490,7 +490,7 @@
       [
        "De causa",
        "¿Por qué...?, ¿qué provocó que...?",
-       "Buscas la palabra porque; si no está, deduces"
+       "Buscas la palabra «porque»; si no está, deduces"
       ],
       [
        "Inferencial",
@@ -516,7 +516,7 @@
     "reglas": [
      {
       "tipo": "regla",
-      "texto": "La misma palabra cambia de significado según el texto. Banco puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que ya te sabes: busca el que sirve ahí."
+      "texto": "La misma palabra cambia de significado según el texto. «Banco» puede ser un asiento, un lugar de dinero o un grupo de peces. No busques el significado que ya te sabes: busca el que sirve ahí."
      },
      {
       "tipo": "truco",
@@ -529,17 +529,17 @@
     ],
     "ejemplos": [
      {
-      "enunciado": "El camino que sube al caserío es tan angosto que dos motos no pueden pasar al mismo tiempo: una tiene que orillarse y esperar a que la otra baje. Cuando llueve, además, se pone resbaloso, y en esa subida ya nadie se arriesga. Pregunta: en el texto, la palabra angosto significa:",
+      "enunciado": "El camino que sube al caserío es tan angosto que dos motos no pueden pasar al mismo tiempo: una tiene que orillarse y esperar a que la otra baje. Cuando llueve, además, se pone resbaloso, y en esa subida ya nadie se arriesga. Pregunta: en el texto, la palabra «angosto» significa:",
       "pasos": [
        "Leo la oración completa donde está la palabra, no solo la palabra.",
        "Busco la pista pegada: los dos puntos anuncian la explicación, y dice que una moto tiene que orillarse para que pase la otra.",
-       "Si no caben dos motos a la vez, lo que falta es ancho. Entonces angosto tiene que ver con el ancho del camino.",
+       "Si no caben dos motos a la vez, lo que falta es ancho. Entonces «angosto» tiene que ver con el ancho del camino.",
        "Sustituyo para comprobar: el camino es tan estrecho que dos motos no pueden pasar al mismo tiempo. Encaja perfecto."
       ],
       "resultado": "Angosto significa estrecho, de poco ancho, porque el texto explica en seguida que dos motos no caben a la vez."
      },
      {
-      "enunciado": "Cuando el maestro dijo que iban a leer en voz alta delante de todo el grado, a Karen se le fue el alma a los pies. Se quedó mirando el cuaderno sin pasar la página. Al final leyó, y leyó bien, pero las manos le temblaron hasta el último renglón. Pregunta: ¿qué significa en el texto la expresión se le fue el alma a los pies?",
+      "enunciado": "Cuando el maestro dijo que iban a leer en voz alta delante de todo el grado, a Karen se le fue el alma a los pies. Se quedó mirando el cuaderno sin pasar la página. Al final leyó, y leyó bien, pero las manos le temblaron hasta el último renglón. Pregunta: ¿qué significa en el texto la expresión «se le fue el alma a los pies»?",
       "pasos": [
        "Reconozco que es una expresión: ni el alma ni los pies tienen que ver con lo que está pasando.",
        "Miro qué le ocurre a Karen justo antes: le acaban de decir que va a leer delante de todos.",
@@ -586,7 +586,7 @@
     },
     "error": {
      "mal": "Completar el hueco de «Antes de que saliera el sol, los pescadores ___ las redes en la orilla» con la frase «puse a ordenar».",
-     "porque": "La frase se escogió porque suena parecida a lo que hace un pescador, sin mirar quién es el sujeto de la oración. El sujeto es los pescadores, que son varios y no soy yo, así que el verbo tiene que ir en ellos y no en primera persona.",
+     "porque": "La frase se escogió porque suena parecida a lo que hace un pescador, sin mirar quién es el sujeto de la oración. El sujeto es «los pescadores», que son varios y no soy yo, así que el verbo tiene que ir en ellos y no en primera persona.",
      "bien": "Se lee la oración completa con la frase adentro antes de marcar. Con «extendían y revisaban» queda: los pescadores extendían y revisaban las redes en la orilla. Concuerda en persona y en número, y además tiene sentido."
     }
    },
@@ -621,9 +621,9 @@
      {
       "enunciado": "A mí me parece que el rastrojo no se debe quemar. En primer lugar, el fuego se pasa al monte vecino y ahí ya nadie lo controla. En segundo lugar, la tierra queda floja y con la primera lluvia se va al río. Por eso creo que es mejor incorporarlo al suelo. Pregunta: ¿qué tipo de texto es y cómo lo sabes?",
       "pasos": [
-       "Miro cómo empieza: con una opinión declarada, a mí me parece que.",
-       "Miro lo que viene después: dos razones presentadas con en primer lugar y en segundo lugar.",
-       "Miro el cierre: vuelve a la postura del principio con por eso creo que.",
+       "Miro cómo empieza: con una opinión declarada, «a mí me parece que».",
+       "Miro lo que viene después: dos razones presentadas con «en primer lugar» y «en segundo lugar».",
+       "Miro el cierre: vuelve a la postura del principio con «por eso creo que».",
        "Descarto la noticia: no informa de un hecho ocurrido, con lugar y fecha, sino de lo que piensa quien escribe."
       ],
       "resultado": "Es un comentario, porque da una opinión, la sostiene con dos razones distintas y cierra volviendo a su postura."
@@ -825,7 +825,7 @@
      "-3/20"
     ],
     "a": 3,
-    "solucion": "Denominador común 20: -2/5 = -8/20 1/4 = 5/20. Entonces -8/20 + 5/20 = -3/20. Sale negativo porque lo que se quita es mayor que lo que se agrega. El -13/20 sale de sumar las dos cantidades en vez de restarlas."
+    "solucion": "Denominador común 20: -2/5 = -8/20 y 1/4 = 5/20. Entonces -8/20 + 5/20 = -3/20. Sale negativo porque lo que se quita es mayor que lo que se agrega. El -13/20 sale de sumar las dos cantidades en vez de restarlas."
    },
    {
     "texto": "El litro de gasolina cuesta L.28.75. Don Julio le echó 4.2 litros a la motocicleta. ¿Cuánto pagó?",
@@ -1056,7 +1056,7 @@
    {
     "texto": "Una pregunta que empieza con «¿por qué...?» casi siempre pide encontrar una causa.",
     "a": true,
-    "solucion": "Verdadero. A veces la causa está escrita y la anuncia la palabra porque, y entonces la pregunta es literal. Si no está escrita, hay que deducirla de lo que el personaje hizo, y entonces es inferencial."
+    "solucion": "Verdadero. A veces la causa está escrita y la anuncia la palabra «porque», y entonces la pregunta es literal. Si no está escrita, hay que deducirla de lo que el personaje hizo, y entonces es inferencial."
    },
    {
     "texto": "Un texto informativo puede llevar personajes inventados que hablan entre ellos.",
@@ -1076,7 +1076,7 @@
   ],
   "lectura": {
    "titulo": "Los manglares: la muralla que nadie ve",
-   "texto": "En la costa de Honduras, donde el río se junta con el mar, crecen unos árboles que viven con los pies metidos en agua salada. Son los mangles, y al monte que forman se le llama manglar. Sus raíces salen del tronco por encima del agua y se hunden en el lodo como zancos, y por eso la corriente no se los lleva. Ese enredo de raíces hace tres trabajos a la vez. Primero, frena las olas y el viento cuando entra un temporal, así que las casas que quedan detrás sufren menos. Segundo, atrapa el lodo que baja del río y sostiene la tierra de la orilla, que si no se iría al mar poco a poco. Y tercero, sirve de criadero: los camarones, los cangrejos y muchos peces pasan ahí sus primeros meses, escondidos entre las raíces donde los peces grandes no alcanzan a entrar. Por eso, cuando se tumba un manglar para levantar casas o para abrir una piscina de camarones, la orilla se empieza a comer el mar y la pesca baja en toda la zona. Hoy varias comunidades cuidan el suyo y siembran mangle nuevo, porque aprendieron que ese monte lodoso y feo es la muralla que los protege.",
+   "texto": "En la costa de Honduras, donde el río se junta con el mar, crecen unos árboles que viven con los pies metidos en agua salada. Son los mangles, y al monte que forman se le llama manglar. Sus raíces salen del tronco por encima del agua y se hunden en el lodo como zancos, y por eso la corriente no se los lleva. Ese enredo de raíces hace tres trabajos a la vez. Primero, frena las olas y el viento cuando entra un temporal, así que las casas que quedan detrás sufren menos. Segundo, atrapa el lodo que baja del río y sostiene la tierra de la orilla, que, si no, se iría al mar poco a poco. Y tercero, sirve de criadero: los camarones, los cangrejos y muchos peces pasan ahí sus primeros meses, escondidos entre las raíces donde los peces grandes no alcanzan a entrar. Por eso, cuando se tumba un manglar para levantar casas o para abrir una piscina de camarones, el mar se empieza a comer la orilla y la pesca baja en toda la zona. Hoy varias comunidades cuidan el suyo y siembran mangle nuevo, porque aprendieron que ese monte lodoso y feo es la muralla que los protege.",
    "preguntas": [
     {
      "texto": "¿De qué trata principalmente el texto?",
@@ -1115,7 +1115,7 @@
      "solucion": "Correcta la primera opción. El texto lo dice con esas mismas palabras al hablar del tercer trabajo del manglar. Los peces grandes también se nombran, pero justo para decir lo contrario: son los que no alcanzan a entrar entre las raíces."
     },
     {
-     "texto": "Si en una comunidad se tumbara todo el manglar, ¿qué es más probable que ocurriera?",
+     "texto": "Si en una comunidad se tumbara todo el manglar, ¿qué sería más probable que ocurriera?",
      "o": [
       "Que el río dejara de bajar lodo",
       "Que las olas del temporal se volvieran más pequeñas",
@@ -1127,7 +1127,7 @@
      "solucion": "Correcta la tercera opción. El texto no dice qué pasaría en esa comunidad, hay que deducirlo. Explica que el manglar sostiene la tierra de la orilla y sirve de criadero, así que sin él la orilla se pierde y la pesca baja. Las otras tres van en contra de lo que el texto explica."
     },
     {
-     "texto": "En el texto, la palabra criadero significa:",
+     "texto": "En el texto, la palabra «criadero» significa:",
      "o": [
       "un lugar donde se vende pescado",
       "una red para atrapar camarones",
@@ -1239,7 +1239,7 @@
   "escritura": [
    {
     "consigna": "Escribe un cuento dialogado de por lo menos doce renglones en el que hablen dos personajes. Escoge uno de estos tres títulos: 1) El préstamo de la bicicleta; 2) La noche que se fue la luz; 3) El caballo que volvió solo. Recuerda que cada vez que habla un personaje se empieza un renglón nuevo con su raya de diálogo, y que se ponen dos puntos cuando el narrador anuncia lo que alguien va a decir.",
-    "guia": "Una buena respuesta copia arriba el título escogido y cuenta una historia con inicio, problema y final, no una conversación suelta. Tiene que haber por lo menos cuatro intervenciones habladas, cada una en renglón nuevo y con su raya de diálogo al principio, y por lo menos una vez los dos puntos cuando el narrador anuncia que alguien va a hablar. Los verbos van en pasado y se sostienen hasta el final. Suma calidad que se note quién es cada personaje por su manera de hablar, y que el narrador diga entre medio lo que hacen mientras hablan. Se descuenta si escribe todo en párrafo corrido contando lo que se dijeron en vez de hacerlos hablar, si no se distingue quién dice cada cosa, o si deja el cuento sin cerrar."
+    "guia": "Una buena respuesta copia arriba el título escogido y cuenta una historia con inicio, problema y final, no una conversación suelta. Tiene que haber por lo menos cuatro intervenciones habladas, cada una en renglón nuevo y con su raya de diálogo al principio, y por lo menos una vez los dos puntos cuando el narrador anuncia que alguien va a hablar. Los verbos van en pasado y se sostienen hasta el final. Suma calidad que se note quién es cada personaje por su manera de hablar, y que el narrador diga entremedias lo que hacen mientras hablan. Se descuenta si escribe todo en párrafo corrido contando lo que se dijeron en vez de hacerlos hablar, si no se distingue quién dice cada cosa, o si deja el cuento sin cerrar."
    },
    {
     "consigna": "En tu comunidad se propone que los alumnos de séptimo grado den una hora a la semana de apoyo a los niños de primero que todavía no leen bien. ¿Estás de acuerdo o no? Escribe un comentario de por lo menos diez renglones: di lo que piensas, defiéndelo con dos razones distintas y cierra con una oración de conclusión.",
@@ -1247,7 +1247,7 @@
    },
    {
     "consigna": "Describe en por lo menos ocho renglones a una persona de tu comunidad a la que todos conocen por su trabajo: cómo es por fuera, cómo es su modo de ser y qué hace un día cualquiera. No escribas su nombre hasta la última oración.",
-    "guia": "Una buena respuesta describe con palabras que se pueden ver y oír: las manos, la ropa, la manera de caminar, la voz, lo que siempre lleva consigo. Debe contestar las tres cosas que pide la consigna, y no quedarse solo en el aspecto físico: el modo de ser se muestra con lo que la persona hace, no con la palabra buena o trabajadora. Los adjetivos tienen que concordar en género y en número con lo que describen. Suma calidad un detalle concreto que solo se sabe si se le ha visto de cerca. Se descuenta si escribe una lista de palabras sueltas sin oraciones, si no llega a los ocho renglones, o si adelanta el nombre desde el principio y pierde el efecto que pide la consigna."
+    "guia": "Una buena respuesta describe con palabras que se pueden ver y oír: las manos, la ropa, la manera de caminar, la voz, lo que siempre lleva consigo. Debe contestar las tres cosas que pide la consigna, y no quedarse solo en el aspecto físico: el modo de ser se muestra con lo que la persona hace, no con las palabras «buena» o «trabajadora». Los adjetivos tienen que concordar en género y en número con lo que describen. Suma calidad un detalle concreto que solo se sabe si se le ha visto de cerca. Se descuenta si escribe una lista de palabras sueltas sin oraciones, si no llega a los ocho renglones, o si adelanta el nombre desde el principio y pierde el efecto que pide la consigna."
    }
   ]
  },
@@ -1422,7 +1422,7 @@
     ],
     "a": 1,
     "tema": "causa",
-    "solucion": "La causa no está escrita con la palabra porque, así que hay que deducirla de lo que hizo: se fue al centro de salud cargando al nieto, y el texto aclara que el niño llevaba dos días con calentura y no quiso comer. De la venta, del feriado y de la luz no hay ni una pista en el texto."
+    "solucion": "La causa no está escrita con la palabra «porque», así que hay que deducirla de lo que hizo: se fue al centro de salud cargando al nieto, y el texto aclara que el niño llevaba dos días con calentura y no quiso comer. De la venta, del feriado y de la luz no hay ni una pista en el texto."
    },
    {
     "texto": "El maíz se guarda en el silo bien seco, porque si le queda humedad se apelmaza y se echa a perder. Por eso don Justo lo asolea dos días enteros sobre un plástico antes de guardarlo, y lo mueve con el rastrillo cada tanto para que quede parejo.\n\n¿Qué significa en el texto la palabra asolea?",
@@ -1437,7 +1437,7 @@
     "solucion": "El vecindario de la palabra lo explica: el maíz tiene que quedar seco, y don Justo hace eso dos días enteros sobre un plástico antes de guardarlo. Lavarlo le agregaría humedad, que es justo lo contrario; guardarlo bajo techo y molerlo son otras acciones que el texto no está nombrando ahí."
    },
    {
-    "texto": "Cuando el bus se paró en media cuesta con toda la gente adentro, al chofer se le puso la piel de gallina. Se bajó sin decir nada, revisó el freno y no dejó que nadie se moviera hasta que las llantas quedaron bien trabadas con dos piedras.\n\n¿Qué significa en el texto la expresión se le puso la piel de gallina?",
+    "texto": "Cuando el bus se paró en media cuesta con toda la gente adentro, al chofer se le puso la piel de gallina. Se bajó sin decir nada, revisó el freno y no dejó que nadie se moviera hasta que las llantas quedaron bien trabadas con dos piedras.\n\n¿Qué significa en el texto la expresión «se le puso la piel de gallina»?",
     "o": [
      "Que le dio frío en la cuesta",
      "Que se enojó con los pasajeros",
@@ -1485,7 +1485,7 @@
     "solucion": "El sujeto es Todos, que son varios, así que la frase tiene que ir en tercera persona del plural y en pasado, igual que el verbo se quedaron que viene después. Solo se metieron corriendo cumple las dos cosas. Las otras están en primera persona, en segunda persona o sin conjugar."
    },
    {
-    "texto": "Yo pienso que el basurero del pueblo no debería estar a la orilla de la quebrada. En primer lugar, cuando llueve el agua arrastra la basura hasta donde la gente lava. En segundo lugar, el mal olor llega hasta las casas de abajo. Por eso creo que hay que moverlo a otro sitio.\n\n¿Qué tipo de texto es el anterior?",
+    "texto": "Yo pienso que el basurero del pueblo no debería estar a la orilla de la quebrada. En primer lugar, cuando llueve, el agua arrastra la basura hasta donde la gente lava. En segundo lugar, el mal olor llega hasta las casas de abajo. Por eso creo que hay que moverlo a otro sitio.\n\n¿Qué tipo de texto es el anterior?",
     "o": [
      "Una noticia, porque informa de algo que pasó en el pueblo",
      "Un comentario, porque da una opinión y la defiende con razones",
@@ -1504,7 +1504,7 @@
     "titulo": "El signo que se pierde al restar un negativo",
     "materia": "mat",
     "mal": "El alumno resuelve 8 - (-5) y escribe 3, porque vio dos signos de menos y restó. En la libreta de la pulpería le pasa lo mismo: a una cuenta de -12 le quitan una deuda de -5 y contesta que ahora debe 17.",
-    "porque": "Quitar una deuda no es hundirse más, es mejorar. Restar un número negativo es lo mismo que sumar su opuesto, porque quitar algo que estaba en contra deja el resultado más arriba, no más abajo. Fíjese en lo que salió: si a alguien que debe L.12 le perdonan L.5 de deuda, no puede terminar debiendo L.17.",
+    "porque": "Quitar una deuda no es hundirse más, es mejorar. Restar un número negativo es lo mismo que sumar su opuesto, porque quitar algo que estaba en contra deja el resultado más arriba, no más abajo. Fíjate en lo que salió: si a alguien que debe L.12 le perdonan L.5 de deuda, no puede terminar debiendo L.17.",
     "bien": "Se cambian los dos signos seguidos por una suma: 8 - (-5) = 8 + 5 = 13. Y en la cuenta de la pulpería, -12 - (-5) = -12 + 5 = -7, o sea que sigue debiendo, pero L.7 en vez de L.12. Regla corta para revisar: menos con menos da más."
    },
    {
@@ -1519,14 +1519,14 @@
     "materia": "mat",
     "mal": "El alumno escribe (-6)² = -36 y (-6)³ = 216. Las cifras le salen bien las dos veces; lo que pone al tanteo es el signo, a veces negativo porque el número lo era y a veces positivo porque se le olvida.",
     "porque": "El paréntesis dice que lo que se multiplica es el -6 completo, con su signo. Cada pareja de negativos se cancela: si el exponente es par no sobra ninguno y el resultado queda positivo; si es impar sobra uno suelto y el resultado queda negativo. No es cuestión de acordarse, es de contar.",
-    "bien": "(-6)² = (-6)(-6) = 36, positivo porque el exponente 2 es par. (-6)³ = (-6)(-6)(-6) = 36 x (-6) = -216, negativo porque el exponente 3 es impar. Revisión de un segundo: mire el exponente antes de escribir el signo, par positivo e impar negativo."
+    "bien": "(-6)² = (-6)(-6) = 36, positivo porque el exponente 2 es par. (-6)³ = (-6)(-6)(-6) = 36 x (-6) = -216, negativo porque el exponente 3 es impar. Revisión de un segundo: mira el exponente antes de escribir el signo, par positivo e impar negativo."
    },
    {
     "titulo": "La regla de tres usada donde la proporción es inversa",
     "materia": "mat",
     "mal": "Cuatro pintores pintan la escuela en 12 días. Le preguntan cuántos días tardarían 8 pintores y contesta 24 días, porque duplicó los pintores y duplicó los días.",
     "porque": "Aplicó la regla de tres directa a una relación que es inversa. En la directa las dos cantidades suben juntas (más metros de tela, más lempiras). Aquí no: si llegan más pintores el trabajo se acaba ANTES. Una respuesta mayor que 12 días ya avisa sola de que algo se hizo al revés, sin necesidad de repasar la cuenta.",
-    "bien": "En la inversa se multiplican las dos cantidades conocidas para saber el trabajo total y se reparte entre la tercera: 4 x 12 = 48 días de pintor, y 48 ÷ 8 = 6 días. Cuadra con el sentido común: el doble de gente, la mitad del tiempo. Prueba rápida antes de operar: pregúntese si al aumentar una cantidad la otra sube o baja."
+    "bien": "En la inversa se multiplican las dos cantidades conocidas para saber el trabajo total y se reparte entre la tercera: 4 x 12 = 48 días de pintor, y 48 ÷ 8 = 6 días. Cuadra con el sentido común: el doble de gente, la mitad del tiempo. Prueba rápida antes de operar: pregúntate si al aumentar una cantidad la otra sube o baja."
    },
    {
     "titulo": "La ecuación resuelta de un solo lado",
@@ -1540,13 +1540,13 @@
     "materia": "esp",
     "mal": "El texto cuenta que el vivero de la escuela produce mil arbolitos al año, que los alumnos los siembran en la orilla de la quebrada y que ya se ven los primeros árboles grandes. Le preguntan qué se dice del vivero y el alumno contesta: que produce mil arbolitos al año.",
     "porque": "Escogió el dato que más se le quedó pegado, que además es un número, y los números se recuerdan solos. Pero esa respuesta nombra únicamente lo que sale del vivero: deja fuera quiénes siembran, dónde siembran y qué se ha logrado ya. El tema junta las dos mitades, de qué habla y qué dice de eso.",
-    "bien": "Se dice que el vivero de la escuela abastece de arbolitos la orilla de la quebrada y que el trabajo ya está dando resultado. Prueba rápida antes de marcar: lea la opción y pregúntese si al texto le sobra algo por fuera. Si le sobra, es un dato suelto y no el tema."
+    "bien": "Se dice que el vivero de la escuela abastece de arbolitos la orilla de la quebrada y que el trabajo ya está dando resultado. Prueba rápida antes de marcar: lee la opción y pregúntate si al texto le sobra algo por fuera. Si le sobra, es un dato suelto y no el tema."
    },
    {
     "titulo": "La frase que falta escogida por lo que suena y no por lo que concuerda",
     "materia": "esp",
     "mal": "El texto dice: 'Antes de que saliera el sol, los pescadores ___ las redes en la orilla y contaban lo que habían sacado esa noche'. El alumno escoge 'puse a ordenar', porque ordenar redes es algo que hacen los pescadores.",
-    "porque": "Miró si la acción encajaba con el oficio, pero no miró quién la hace. El sujeto es los pescadores, que son varios y no soy yo, así que la frase tiene que ir en tercera persona del plural. Además, el verbo contaban que viene después ya marca la persona y el tiempo de toda la oración, y una frase en primera persona la rompe.",
+    "porque": "Miró si la acción encajaba con el oficio, pero no miró quién la hace. El sujeto es «los pescadores», que son varios y no soy yo, así que la frase tiene que ir en tercera persona del plural. Además, el verbo «contaban», que viene después, ya marca la persona y el tiempo de toda la oración, y una frase en primera persona la rompe.",
     "bien": "Se mete cada opción en el hueco y se lee la oración COMPLETA, hasta el punto final. Con la correcta queda: los pescadores extendían y revisaban las redes en la orilla y contaban lo que habían sacado. Concuerda en persona y en número, y tiene sentido. Las que se sienten raras al leerlas enteras se descartan."
    },
    {
@@ -1554,7 +1554,7 @@
     "materia": "esp",
     "mal": "Le piden un cuento dialogado y entrega un párrafo corrido: 'El niño le dijo al abuelo que ya no había agua en el pozo y el abuelo le contestó que fuera a la quebrada'. La historia se entiende, pero ahí no habla nadie: todo lo cuenta el narrador.",
     "porque": "La instrucción pide un cuento DIALOGADO, o sea con los personajes hablando por su cuenta, y eso se marca con dos señales que la prueba nombra: los dos puntos cuando el narrador anuncia lo que alguien va a decir, y la raya de diálogo al empezar cada intervención en renglón nuevo. Sin esas marcas se pierden puntos aunque la historia esté bien contada, porque no se está haciendo lo que se pidió.",
-    "bien": "El narrador cuenta y los personajes hablan. Después de la línea del narrador se abre renglón nuevo y se empieza con la raya para lo que dice el niño; luego otro renglón nuevo, con su raya, para lo que contesta el abuelo. Así se lee de un vistazo quién dijo cada cosa. Antes de entregar, cuente las intervenciones habladas: si no hay ninguna, todavía no es un cuento dialogado."
+    "bien": "El narrador cuenta y los personajes hablan. Después de la línea del narrador se abre renglón nuevo y se empieza con la raya para lo que dice el niño; luego otro renglón nuevo, con su raya, para lo que contesta el abuelo. Así se lee de un vistazo quién dijo cada cosa. Antes de entregar, cuenta las intervenciones habladas: si no hay ninguna, todavía no es un cuento dialogado."
    }
   ],
   "estrategia": [

@@ -80,9 +80,9 @@ ok('crítica: critEvalPage + critPautaPage + fit() binario', docs[1].includes('i
 ok('colores de la ruta tec (#0e7490 / #ecfeff) en ambos documentos', [0, 1].every(i => docs[i].includes('#0e7490') && docs[i].includes('#ecfeff')));
 ok('pauta con respuestas en verde #007a00 (.pa)', docs[0].includes('.pa{color:#007a00'));
 ok('pauta marcada «Documento exclusivo del docente»', [0, 1].every(i => docs[i].includes('Documento exclusivo del docente')));
-ok('encabezado con Parcial / Centro Educativo o Instituto / Nº Lista', [0, 1].every(i => docs[i].includes('Parcial:') && docs[i].includes('Nº Lista:')));
-ok('pie normativo: Nº de Evaluación temática + casillas + etiqueta Forma', [0, 1].every(i =>
-  docs[i].includes('Nº de Evaluación temática realizada') && docs[i].includes('Evaluación con valor en el parcial') &&
+ok('encabezado con Parcial / Centro Educativo o Instituto / N.º Lista', [0, 1].every(i => docs[i].includes('Parcial:') && docs[i].includes('N.º Lista:')));
+ok('pie normativo: N.º de Evaluación temática + casillas + etiqueta Forma', [0, 1].every(i =>
+  docs[i].includes('N.º de Evaluación temática realizada') && docs[i].includes('Evaluación con valor en el parcial') &&
   docs[i].includes('Evaluación solo de repaso') && docs[i].includes('forma-tag')));
 ok('encabezado dice «Robótica» y el tema de la misión', [0, 1].every(i => docs[i].includes('Robótica') && docs[i].includes('Electricidad para Robots')));
 ok('clave ZipGrade solo en la conceptual', docs[0].includes('ZipGrade') && !docs[1].includes('ZipGrade'));
@@ -195,7 +195,7 @@ ok('URL canónica y og:url correctas',
 console.log('— Identidad de la misión —');
 ok("SAVE_KEY propio ('electricidad_robots_v1')", vm.runInContext('SAVE_KEY', sandbox) === 'electricidad_robots_v1');
 const heredadas = ['que_es_un_robot', 'que-es-un-robot', '¿Qué es un Robot', 'Maestro Constructor',
-  'Sensor vs Actuador', 'Explorador Robótico', 'percibir → decidir → actuar', 'parteData', 'aspiradora robot'];
+  'Sensor vs. Actuador', 'Explorador Robótico', 'percibir → decidir → actuar', 'parteData', 'aspiradora robot'];
 const enJs = heredadas.filter(h => code.includes(h));
 const enHtml = heredadas.filter(h => html.includes(h));
 if (enJs.length) console.log('    · en el JS: ' + enJs.join(' | '));

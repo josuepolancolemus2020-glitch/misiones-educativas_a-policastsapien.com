@@ -1762,7 +1762,7 @@ body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size
    la derecha, y lo que se pierde es la firma —lo único de esta hoja que
    no se puede volver a poner después—. */
 @page{size:letter;margin:10mm;}
-/* ── COMPACTO (lo normal) vs UNA HOJA POR GRADO (para repartir) ──
+/* ── COMPACTO (lo normal) vs. UNA HOJA POR GRADO (para repartir) ──
    Lo que cambia entre los dos es DÓNDE PARTE LA HOJA, nunca lo que
    dice el papel. Compacto los grupos van seguidos y solo saltan cuando
    no caben enteros; repartiendo, cada grupo empieza hoja y se lleva su

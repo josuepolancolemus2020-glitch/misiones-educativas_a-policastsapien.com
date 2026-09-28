@@ -81,16 +81,16 @@ ${IA_TERMOMETRO.map(t => `      <tr><td class="k">${t.emoji} ${esc(t.pregunta)}<
     </table>
 
     <div class="caja idea"><b>Y lo que dice el resultado:</b><br>
-${IA_TERMOMETRO_TRAMOS.map(t => `      ${t.emoji} <b>${esc(t.nombre)}</b> (${t.min} de ${IA_TERMOMETRO.length} o más): ${esc(t.dice.replace(/\*\*/g, ''))}`).join('<br>')}</div>
+${IA_TERMOMETRO_TRAMOS.map((t, i, a) => `      ${t.emoji} <b>${esc(t.nombre)}</b> (${i ? (a[i - 1].min - 1 > t.min ? t.min + ' o ' + (a[i - 1].min - 1) : t.min) : t.min} de ${IA_TERMOMETRO.length}): ${esc(t.dice.replace(/\*\*/g, ''))}`).join('<br>')}</div>
 `);
 
 // ── Página 3 ───────────────────────────────────────────────────────────────
 P.push(`
-    <h2>📰 4. El dossier de ${esc(IA_HOY_MES)}</h2>
+    <h2>📰 4. El dosier de ${esc(IA_HOY_MES)}</h2>
 
     <div class="caja aviso"><b>⚠️ Aquí no se afirma ni un solo hecho. Decilo en voz alta en clase.</b>
       Quien armó esta ficha <b>no pudo abrir ninguna de estas páginas</b>: desde ahí están bloqueadas, y
-      <b>buscar no es leer</b>. Lo que hay es la afirmación, quién la publicó y cómo se comprueba. Dossier
+      <b>buscar no es leer</b>. Lo que hay es la afirmación, quién la publicó y cómo se comprueba. Dosier
       armado el <b>${esc(IA_HOY_FECHA)}</b>.</div>
 
     <table>
@@ -112,7 +112,7 @@ P.push(`
 
       <table>
         <tr><th>La frase</th><th style="width:8%">🧑</th><th style="width:8%">💰</th><th style="width:8%">📅</th><th style="width:8%">📎</th><th style="width:22%">¿En qué tramo cae?</th></tr>
-${IA_FRASES.map(f => `        <tr><td>${f.emoji} «${esc(f.texto)}»<br><i>${esc(f.de)}</i></td><td></td><td></td><td></td><td></td><td><span class="linea-resp" style="min-width:80%"></span></td></tr>`).join('\n')}
+${IA_FRASES.map(f => `        <tr><td>${f.emoji} «${esc(f.texto.replace(/([^.])\.$/, '$1'))}»${/[^.]\.$/.test(f.texto) ? '.' : ''}<br><i>${esc(f.de)}</i></td><td></td><td></td><td></td><td></td><td><span class="linea-resp" style="min-width:80%"></span></td></tr>`).join('\n')}
       </table>
 
       <p>De las cinco, ¿cuántas traen con qué comprobarse? <span class="linea-resp" style="min-width:60px"></span>
@@ -144,7 +144,7 @@ P.push(`
       </div>
 
       <h3>🔎 Actividad 4 · Comprobá UNA <span class="val">(14 pts)</span></h3>
-      <p>Elegí una afirmación del dossier y hacé el trabajo completo:</p>
+      <p>Elegí una afirmación del dosier y hacé el trabajo completo:</p>
       <ol>
         <li>¿Quién responde por ella, con nombre? <span class="linea-resp" style="min-width:70%"></span></li>
         <li>¿Qué documento habría que abrir? <span class="linea-resp" style="min-width:70%"></span></li>
@@ -172,7 +172,7 @@ P.push(`
 
     <div class="pauta">
       <div><span class="pt">Evaluación (40 pts):</span> ${clave(EVAL)}</div>
-      <div><span class="pt">Actividad 1 · El dossier (16 pts):</span>
+      <div><span class="pt">Actividad 1 · El dosier (16 pts):</span>
         ${IA_HOY.map(h => esc(h.fecha) + ': <b>' + (h.comprobable === 'alta' ? 'MUCHO' : (h.comprobable === 'media' ? 'ALGO' : 'POCO')) + '</b>').join(' · ')}.
         No se califica el acierto: se califica el motivo. «POCO porque no estoy de acuerdo» falló el
         ejercicio, aunque coincida la letra.</div>
@@ -196,7 +196,7 @@ P.push(`
       sabe. Afirmarlo sería justo lo que esta misión enseña a no hacer. Lo que se le da es la vara: las
       cuatro preguntas y los dos inviernos.
       <br><br>
-      <b>El dossier caduca.</b> Está fechado el ${esc(IA_HOY_FECHA)}. Dentro de un año va a servir para otra
+      <b>El dosier caduca.</b> Está fechado el ${esc(IA_HOY_FECHA)}. Dentro de un año va a servir para otra
       cosa: para mirar qué se cumplió. Ahí una promesa se vuelve hito o invierno, y es la mejor clase que da
       esta ficha. Cómo entra un hecho nuevo está en <b>_dev/actualidad/</b> del repositorio.
       <br><br>

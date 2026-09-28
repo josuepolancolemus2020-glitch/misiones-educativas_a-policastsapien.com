@@ -53,7 +53,7 @@ const LECTURA_PRONOMBRES = {
   /* ════════ 4º GRADO (95–115 palabras · 3 literales, 1 inferencial, 1 crítica) ════════ */
   4: [
     { id: 'LP4-01', titulo: 'El mandado de la esquina', genero: 'narrativo',
-      texto: 'Mi mamá me dio veinte lempiras y me dijo: andá vos, que yo estoy cocinando. Salí corriendo. En la pulpería estaba don Beto y le pedí una libra de arroz. Él me preguntó si eso era todo y yo le contesté que sí. Entonces me di cuenta de que había perdido el billete en el camino. Se me puso la cara caliente. Don Beto me dijo tranquilo: esto no es problema, llevátelo y me pagás después. Volví a mi casa y le conté a mi mamá. Ella no se enojó: me dijo que eso le pasó a ella también, y que aquello no se olvida. Al día siguiente fuimos las dos y le pagamos.',
+      texto: 'Mi mamá me dio veinte lempiras y me dijo: «Andá vos, que yo estoy cocinando». Salí corriendo. En la pulpería estaba don Beto y le pedí una libra de arroz. Él me preguntó si eso era todo y yo le contesté que sí. Entonces me di cuenta de que había perdido el billete en el camino. Se me puso la cara caliente. Don Beto me dijo tranquilo: «Esto no es problema, llevátelo y me pagás después». Volví a mi casa y le conté a mi mamá. Ella no se enojó: me dijo que eso le pasó a ella también, y que aquello no se olvida. Al día siguiente fuimos las dos y le pagamos.',
       pers: ['me', 'vos', 'yo', 'le', 'Él', 'Se', 'Ella'],
       demPos: ['eso', 'aquello', 'esto'],
       neutros: ['todo'],
@@ -71,7 +71,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP4-02', titulo: 'La bicicleta prestada', genero: 'narrativo',
-      texto: 'Wilmer me prestó su bicicleta el sábado. Me dijo: cuidámela, que esa me la regaló mi papá. Yo le prometí que sí. Anduve toda la tarde con ella y en una bajada me caí. La cadena se salió y el timbre se quebró. No le avisé enseguida porque me dio miedo. El domingo se la llevé y le conté todo. Él se quedó callado un rato. Después me dijo que lo del timbre no era nada, pero que no avisarle sí le había dolido. Eso me quedó dando vueltas, y aquello que dijo se me grabó. Nunca más le escondí algo a un amigo.',
+      texto: 'Wilmer me prestó su bicicleta el sábado. Me dijo: «Cuidámela, que esa me la regaló mi papá». Yo le prometí que sí. Anduve toda la tarde con ella y en una bajada me caí. La cadena se salió y el timbre se quebró. No le avisé enseguida porque me dio miedo. El domingo se la llevé y le conté todo. Él se quedó callado un rato. Después me dijo que lo del timbre no era nada, pero que no avisarle sí le había dolido. Eso me quedó dando vueltas, y aquello que dijo se me grabó. Nunca más le escondí algo a un amigo.',
       pers: ['me', 'Yo', 'le', 'Él', 'se', 'ella'],
       demPos: ['esa', 'Eso', 'aquello'],
       neutros: ['todo', 'nada', 'algo'],
@@ -89,7 +89,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP4-03', titulo: 'Esa es la mía', genero: 'narrativo',
-      texto: 'En la escuela nos dieron una planta a cada uno. Nos dijeron: esta es tuya, vos la cuidás. La mía era la más chiquita de todas. Alexis se burló de mí y me dijo que la suya iba a crecer primero. Yo no le contesté nada. Regué la mía todos los días y le puse una piedra al lado para que no se cayera. A los dos meses la de él se secó porque se le olvidaba regarla. La mía todavía está allá, junto a la cancha. Cuando alguien pregunta cuál es, yo digo: aquella, la del rincón. Esa es la mía.',
+      texto: 'En la escuela nos dieron una planta a cada uno. Nos dijeron: «Esta es tuya, vos la cuidás». La mía era la más chiquita de todas. Alexis se burló de mí y me dijo que la suya iba a crecer primero. Yo no le contesté nada. Regué la mía todos los días y le puse una piedra al lado para que no se cayera. A los dos meses la de él se secó porque se le olvidaba regarla. La mía todavía está allá, junto a la cancha. Cuando alguien pregunta cuál es, yo digo: «Aquella, la del rincón». Esa es la mía.',
       pers: ['nos', 'vos', 'se', 'mí', 'me', 'Yo', 'le', 'él'],
       demPos: ['esta', 'tuya', 'mía', 'suya', 'aquella', 'Esa'],
       neutros: ['nada', 'alguien', 'todas', 'todos'],
@@ -120,7 +120,7 @@ const LECTURA_PRONOMBRES = {
           o: ['Acusarlo enseguida.', 'Hacer su parte sin decir nada.', 'Recordárselo una vez, tranquilos, sin gritarle.'], c: 2 },
         { tipo: 'inferencial', q: '¿Por qué hay que ponerse de acuerdo antes y no después?', r: 'Porque después ya hay alguien enojado y cuesta más acordar.',
           o: ['Porque después ya hay alguien enojado y cuesta más acordar.', 'Porque después no hay tiempo.', 'Porque antes es más fácil olvidarse.'], c: 0 },
-        { tipo: 'critica', q: '¿Qué se aprende repartiendo tareas en la casa? Argumenta.', r: 'Respuesta abierta: se valora que traslade la idea a otros ámbitos —grupo de clase, trabajo—.',
+        { tipo: 'critica', q: '¿Qué se aprende repartiendo tareas en la casa? Argumenta.', r: 'Respuesta abierta: se valora que traslade la idea a otros ámbitos (grupo de clase, trabajo).',
           o: ['Nada: son solo trastes.', 'A repartir el trabajo sin que nadie se sienta usado, que sirve toda la vida.', 'A lavar más rápido.'], c: 1 },
       ] },
 
@@ -146,7 +146,7 @@ const LECTURA_PRONOMBRES = {
   /* ════════ 5º GRADO (110–135 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
   5: [
     { id: 'LP5-01', titulo: 'Lo nuestro y lo de todos', genero: 'narrativo',
-      texto: 'El patronato compró unas sillas plásticas para la casa comunal. Al principio cada quien se llevaba una prestada y no la devolvía. Doña Alba dijo en la reunión: si esto es de todos, entonces no es de nadie, y así se nos va a acabar. Nos propuso algo sencillo. Pintaron todas las sillas de un solo color, que nadie tiene en su casa, y colgaron una lista donde uno anota su nombre cuando se lleva alguna. Ella misma se encargó al principio. Ahora se encarga otra señora, porque se turnan cada tres meses. En dos años no se ha perdido ni una. Doña Alba, a quien todos le hacen caso, dice que el truco no fue la pintura ni aquello del color: fue que alguien se hiciera cargo. Esa es la parte que cuesta.',
+      texto: 'El patronato compró unas sillas plásticas para la casa comunal. Al principio cada quien se llevaba una prestada y no la devolvía. Doña Alba dijo en la reunión: «Si esto es de todos, entonces no es de nadie, y así se nos va a acabar». Nos propuso algo sencillo. Pintaron todas las sillas de un solo color, que nadie tiene en su casa, y colgaron una lista donde uno anota su nombre cuando se lleva alguna. Ella misma se encargó al principio. Ahora se encarga otra señora, porque se turnan cada tres meses. En dos años no se ha perdido ni una. Doña Alba, a quien todos le hacen caso, dice que el truco no fue la pintura ni aquello del color: fue que alguien se hiciera cargo. Esa es la parte que cuesta.',
       pers: ['se', 'nos', 'Ella', 'su', 'le'],
       demPos: ['esto', 'aquello', 'Esa'],
       neutros: ['nadie', 'algo', 'alguien', 'todos', 'todas', 'alguna', 'otra', 'misma', 'quien'],
@@ -155,16 +155,16 @@ const LECTURA_PRONOMBRES = {
           o: ['Las pintaron de un solo color que nadie tiene en su casa.', 'Les pusieron candado.', 'Las guardaron bajo llave.'], c: 0 },
         { tipo: 'literal', q: '¿Cada cuánto se turnan las encargadas?', r: 'Cada tres meses.',
           o: ['Cada año.', 'Cada semana.', 'Cada tres meses.'], c: 2 },
-        { tipo: 'inferencial', q: '¿Qué quiso decir doña Alba con «si es de todos, no es de nadie»?', r: 'Que sin alguien responsable, nadie cuida lo común.',
+        { tipo: 'inferencial', q: '¿Qué quiso decir doña Alba con «si esto es de todos, entonces no es de nadie»?', r: 'Que sin alguien responsable, nadie cuida lo común.',
           o: ['Que había que vender las sillas.', 'Que sin alguien responsable, nadie cuida lo común.', 'Que el patronato se equivocó al comprarlas.'], c: 1 },
         { tipo: 'inferencial', q: '¿Por qué dice que el truco no fue la pintura?', r: 'Porque lo que funcionó fue que alguien se hiciera cargo, no el color.',
           o: ['Porque lo que funcionó fue que alguien se hiciera cargo.', 'Porque el color era feo.', 'Porque la pintura se despintó.'], c: 0 },
-        { tipo: 'critica', q: '¿Qué se necesita para cuidar algo que es de todos? Propón algo.', r: 'Respuesta abierta: se valora que proponga una medida concreta —turnos, registro, responsable— y no solo buena voluntad.',
+        { tipo: 'critica', q: '¿Qué se necesita para cuidar algo que es de todos? Propón algo.', r: 'Respuesta abierta: se valora que proponga una medida concreta (turnos, registro, responsable) y no solo buena voluntad.',
           o: ['Que la gente sea más honrada.', 'Un candado y una multa.', 'Un responsable con nombre y un registro sencillo que rote.'], c: 2 },
       ] },
 
     { id: 'LP5-02', titulo: 'Vos sabés más de lo que creés', genero: 'narrativo',
-      texto: 'Marlon reprobó Matemáticas en el primer parcial y se convenció de que él era malo para eso. La profesora lo notó y un día lo llamó aparte. No le explicó ningún tema. Le preguntó cómo hacía él las cuentas cuando vendía pan los domingos con su abuela. Marlon le contó: primero junto los billetes iguales, después cuento de cinco en cinco y al final me acuerdo de lo que ya di de vuelto. Ella le dijo: eso que hacés es exactamente lo que no te sale en el examen, pero ahí lo hacés bien y rapidísimo. A él se le quedó grabado aquello, y esa frase la repite todavía. No se volvió el mejor de la clase, pero dejó de decir que era malo, y con eso le alcanzó para seguir intentando.',
+      texto: 'Marlon reprobó Matemáticas en el primer parcial y se convenció de que él era malo para eso. La profesora lo notó y un día lo llamó aparte. No le explicó ningún tema. Le preguntó cómo hacía él las cuentas cuando vendía pan los domingos con su abuela. Marlon le contó: «Primero junto los billetes iguales, después cuento de cinco en cinco y al final me acuerdo de lo que ya di de vuelto». Ella le dijo: «Eso que hacés es exactamente lo que no te sale en el examen, pero ahí lo hacés bien y rapidísimo». A él se le quedó grabado aquello, y esa frase la repite todavía. No se volvió el mejor de la clase, pero dejó de decir que era malo, y con eso le alcanzó para seguir intentando.',
       pers: ['se', 'él', 'le', 'su', 'me', 'Ella', 'te'],
       demPos: ['eso', 'aquello', 'esa'],
       neutros: ['ningún', 'mejor'],
@@ -218,9 +218,9 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP5-05', titulo: 'Se lo dije a ella primero', genero: 'narrativo',
-      texto: 'Cuando me dieron la beca, la primera a quien se lo conté fue a mi maestra de sexto, no a mis papás. Todavía me da pena admitirlo. Ella fue la que me dijo, hace cuatro años, que yo servía para estudiar, cuando ni yo mismo me lo creía. Le mandé un mensaje ese mismo día. Me contestó con una sola línea: ya lo sabía. Después, en la casa, se lo dije a mi mamá y ella lloró. Mi papá no dijo nada, pero al otro día llegó con un cuaderno nuevo y me lo puso en la mesa sin hablar. Cada quien lo celebró como pudo: esto de una manera, aquello de otra. Esa fue la mía.',
-      pers: ['me', 'se', 'Ella', 'yo', 'Le'],
-      demPos: ['ese', 'esto', 'aquello', 'Esa', 'mía'],
+      texto: 'Cuando me dieron la beca, la primera a quien se lo conté fue a mi maestra de sexto, no a mis papás. Todavía me da pena admitirlo. Ella fue la que me dijo, hace cuatro años, que yo servía para estudiar, cuando ni yo mismo me lo creía. Le mandé un mensaje ese mismo día. Me contestó con una sola línea: «Ya lo sabía». Después, en la casa, se lo dije a mi mamá y ella lloró. Mi papá no dijo nada, pero al otro día llegó con un cuaderno nuevo y me lo puso en la mesa sin hablar. Cada quien lo celebró como pudo: ella de una manera, él de otra. Esa fue la mía.',
+      pers: ['me', 'se', 'Ella', 'yo', 'Le', 'él'],
+      demPos: ['ese', 'Esa', 'mía'],
       neutros: ['nada', 'quien', 'mismo', 'otro', 'cada'],
       preguntas: [
         { tipo: 'literal', q: '¿A quién se lo contó primero?', r: 'A su maestra de sexto.',
@@ -257,7 +257,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP6-02', titulo: 'Nos cambiaron de maestro', genero: 'narrativo',
-      texto: 'A mitad de año nos cambiaron al profesor de Español y nos dieron a otro que nadie conocía. Nosotros lo recibimos mal a propósito. No le contestábamos, nos hacíamos los sordos y alguien le escondió el borrador. Él nunca nos gritó. Un lunes llegó y nos dijo: yo sé que ustedes querían al otro; a mí me pasó lo mismo cuando me cambiaron de escuela. Después nos preguntó qué era lo que más nos gustaba de él. Se lo dijimos. Él anotó todo eso en su cuaderno y lo fue haciendo poco a poco, a su manera. En diciembre le hicimos una tarjeta. La firmamos los treinta y dos. Nadie propuso quién la escribía: se nos ocurrió a todos casi al mismo tiempo. Aquello fue raro, y eso todavía lo comentamos. La letra de adentro es mía.',
+      texto: 'A mitad de año nos cambiaron al profesor de Español y nos dieron a otro que nadie conocía. Nosotros lo recibimos mal a propósito. No le contestábamos, nos hacíamos los sordos y alguien le escondió el borrador. Él nunca nos gritó. Un lunes llegó y nos dijo: «Yo sé que ustedes querían al otro; a mí me pasó lo mismo cuando me cambiaron de escuela». Después nos preguntó qué era lo que más nos gustaba de él. Se lo dijimos. Él anotó todo eso en su cuaderno y lo fue haciendo poco a poco, a su manera. En diciembre le hicimos una tarjeta. La firmamos los treinta y dos. Nadie propuso quién la escribía: se nos ocurrió a todos casi al mismo tiempo. Aquello fue raro, y eso todavía lo comentamos. La letra de adentro es mía.',
       pers: ['nos', 'Nosotros', 'le', 'Él', 'yo', 'ustedes', 'mí', 'me', 'Se'],
       demPos: ['eso', 'Aquello', 'mía'],
       neutros: ['nadie', 'alguien'],
@@ -271,7 +271,7 @@ const LECTURA_PRONOMBRES = {
         { tipo: 'inferencial', q: '¿Qué muestra que nadie propusiera quién escribía la tarjeta?', r: 'Que el cambio de trato ya era de todo el grupo, sin que nadie lo dirigiera.',
           o: ['Que estaban desorganizados.', 'Que el maestro se los pidió.', 'Que el cambio de trato ya era de todo el grupo, sin que nadie lo dirigiera.'], c: 2 },
         { tipo: 'critica', q: '¿Qué habría pasado si él les hubiera gritado? Argumenta.', r: 'Respuesta abierta: se valora que imagine la consecuencia y la contraste con lo que sí ocurrió.',
-          o: ['Habría confirmado que era el enemigo, y la pelea se alarga.', 'Se habrían callado y ya.', 'Habrían aprendido a respetar.'], c: 0 },
+          o: ['Habría confirmado que era el enemigo, y la pelea se habría alargado.', 'Se habrían callado y ya.', 'Habrían aprendido a respetar.'], c: 0 },
       ] },
 
     { id: 'LP6-03', titulo: 'Lo mío y lo tuyo en un cuarto', genero: 'expositivo',
@@ -298,20 +298,20 @@ const LECTURA_PRONOMBRES = {
       demPos: ['esto', 'aquello', 'eso', 'mío', 'suyo'],
       neutros: ['quien'],
       preguntas: [
-        { tipo: 'literal', q: '¿Cómo llevaba la cuenta el narrador?', r: 'En un papel, anotando cada préstamo.',
+        { tipo: 'literal', q: '¿Cómo llevaba la cuenta la narradora?', r: 'En un papel, anotando cada préstamo.',
           o: ['En el celular.', 'De memoria.', 'En un papel, anotando cada préstamo.'], c: 2 },
         { tipo: 'literal', q: '¿Qué le contestó la hermana cuando quiso pagarle?', r: 'Que no se lo aceptaba.',
           o: ['Que se lo pagara en cuotas.', 'Que no se lo aceptaba.', 'Que le pagara el doble.'], c: 1 },
         { tipo: 'inferencial', q: '¿Qué regla explicó la hermana?', r: 'Que uno le devuelve a quien viene atrás, no a quien le prestó.',
           o: ['Que entre familia no se cobra nunca.', 'Que uno le devuelve a quien viene atrás, no a quien le prestó.', 'Que hay que anotarlo todo.'], c: 1 },
-        { tipo: 'inferencial', q: '¿Por qué la prima se quedó confundida?', r: 'Porque es una regla que cuesta entender la primera vez, como le costó al narrador.',
-          o: ['Porque no le alcanzaba el dinero.', 'Porque es una regla que cuesta entender la primera vez.', 'Porque no confiaba en el narrador.'], c: 1 },
+        { tipo: 'inferencial', q: '¿Por qué la prima se quedó confundida?', r: 'Porque es una regla que cuesta entender la primera vez, como le costó a la narradora.',
+          o: ['Porque no le alcanzaba el dinero.', 'Porque es una regla que cuesta entender la primera vez.', 'Porque no confiaba en la narradora.'], c: 1 },
         { tipo: 'critica', q: '¿Funciona esa manera de prestar? Defiende tu postura.', r: 'Respuesta abierta: se valora que note lo que sostiene esa cadena y también lo que puede romperla.',
           o: ['Funciona mientras cada quien pase adelante lo que recibió.', 'No: así nadie devuelve nunca.', 'Sí, siempre y en todo caso.'], c: 0 },
       ] },
 
     { id: 'LP6-05', titulo: 'Se lo prometí a él', genero: 'narrativo',
-      texto: 'Mi papá se fue a trabajar a otro país cuando yo tenía nueve años. La última noche me hizo prometerle algo raro: no que sacara buenas notas, sino que le contara la verdad siempre, aunque a él no le gustara. Yo se lo prometí sin entenderlo. A los trece reprobé dos clases y quise esconderlo. Nadie de la casa se lo iba a decir. Pero me acordé de aquello y se lo conté yo mismo por teléfono. Él se quedó callado un rato largo. Después me dijo: eso que acabás de hacer vale más que las dos clases. No me regañó ni ese día ni después. Yo creo que él sabía desde el principio que lo difícil no iba a ser el estudio: era esto otro, aquello que no se ve por teléfono. La promesa era suya, pero el trabajo fue mío.',
+      texto: 'Mi papá se fue a trabajar a otro país cuando yo tenía nueve años. La última noche me hizo prometerle algo raro: no que sacara buenas notas, sino que le contara la verdad siempre, aunque a él no le gustara. Yo se lo prometí sin entenderlo. A los trece reprobé dos clases y quise esconderlo. Nadie de la casa se lo iba a decir. Pero me acordé de aquello y se lo conté yo mismo por teléfono. Él se quedó callado un rato largo. Después me dijo: «Eso que acabás de hacer vale más que las dos clases». No me regañó ni ese día ni después. Yo creo que él sabía desde el principio que lo difícil no iba a ser el estudio: era esto otro, aquello que no se ve por teléfono. La promesa era suya, pero el trabajo fue mío.',
       pers: ['se', 'yo', 'me', 'le', 'él'],
       demPos: ['aquello', 'eso', 'esto', 'suya', 'mío'],
       neutros: ['algo', 'Nadie'],
@@ -332,7 +332,7 @@ const LECTURA_PRONOMBRES = {
   /* ════════ 7º GRADO (140–170 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
   7: [
     { id: 'LP7-01', titulo: 'La disculpa que nadie pidió', genero: 'narrativo',
-      texto: 'En el equipo se armó un pleito por una falta en un entrenamiento. Kevin le entró fuerte a Josué y Josué le devolvió con el codo. El entrenador nos paró a todos y nos dijo: ustedes dos, arreglen esto ahora, delante de nosotros. Ninguno quiso hablar primero. Estuvimos ahí parados como diez minutos, en silencio, todos incómodos. Entonces Kevin dijo una cosa que no era exactamente una disculpa: yo no te quise pegar, se me fue la pierna. Josué le contestó igual de torcido: a mí también se me fue el codo. Se dieron la mano. El entrenador no les exigió más y siguió el entrenamiento. Después nos explicó por qué: si él los obligaba a decir la frase exacta, se la iban a decir a él y no entre ellos. Eso no le sirve a nadie. Aquello que dijeron era torcido, sí, pero era suyo y no mío ni de él: por eso funcionó.',
+      texto: 'En el equipo se armó un pleito por una falta en un entrenamiento. Kevin le entró fuerte a Josué y Josué le devolvió con el codo. El entrenador nos paró a todos y nos dijo: «Ustedes dos, arreglen esto ahora, delante de nosotros». Ninguno quiso hablar primero. Estuvimos ahí parados como diez minutos, en silencio, todos incómodos. Entonces Kevin dijo una cosa que no era exactamente una disculpa: «Yo no te quise pegar, se me fue la pierna». Josué le contestó igual de torcido: «A mí también se me fue el codo». Se dieron la mano. El entrenador no les exigió más y siguió el entrenamiento. Después nos explicó por qué: si él los obligaba a decir la frase exacta, se la iban a decir a él y no entre ellos. Eso no le sirve a nadie. Aquello que dijeron era torcido, sí, pero era suyo y no mío ni de él: por eso funcionó.',
       pers: ['se', 'le', 'nos', 'ustedes', 'nosotros', 'yo', 'te', 'me', 'mí', 'les', 'él', 'ellos'],
       demPos: ['esto', 'Eso', 'Aquello', 'suyo', 'mío'],
       neutros: ['nadie'],
@@ -350,7 +350,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP7-02', titulo: 'Ustedes deciden', genero: 'narrativo',
-      texto: 'La directora nos reunió a los de noveno y nos dijo algo que no esperábamos: el dinero de la excursión ya está, ustedes deciden en qué se gasta. Nos dio dos opciones y nos dejó solos en el aula. Al principio nadie hablaba y después hablábamos todos a la vez. Karen propuso votar de una vez; Eduardo dijo que no, que primero convenía oír a quien no había hablado. Le hicimos caso. Ahí salió que a tres compañeros el paseo largo no les servía porque ese día trabajaban. Nadie lo sabía. Al final elegimos la opción más corta, que ni siquiera era la que más votos tenía al principio. Cuando ella volvió, nos preguntó cómo lo habíamos decidido. Se lo contamos. Nos dijo que eso era exactamente lo que quería enseñarnos, y que la excursión era lo de menos. Aquello me quedó dando vueltas: la decisión fue nuestra de verdad, no suya, y eso se siente distinto. La firma de abajo es mía.',
+      texto: 'La directora nos reunió a los de noveno y nos dijo algo que no esperábamos: «El dinero de la excursión ya está, ustedes deciden en qué se gasta». Nos dio dos opciones y nos dejó solos en el aula. Al principio nadie hablaba y después hablábamos todos a la vez. Karen propuso votar de una vez; Eduardo dijo que no, que primero convenía oír a quien no había hablado. Le hicimos caso. Ahí salió que a tres compañeros el paseo largo no les servía porque ese día trabajaban. Nadie lo sabía. Al final elegimos la opción más corta, que ni siquiera era la que más votos tenía al principio. Cuando ella volvió, nos preguntó cómo lo habíamos decidido. Se lo contamos. Nos dijo que eso era exactamente lo que quería enseñarnos, y que la excursión era lo de menos. Aquello me quedó dando vueltas: la decisión fue nuestra de verdad, no suya, y eso se siente distinto. La firma de abajo es mía.',
       pers: ['nos', 'ustedes', 'se', 'Le', 'les', 'ella', 'me'],
       demPos: ['eso', 'Aquello', 'suya', 'mía'],
       neutros: ['algo', 'nadie', 'quien'],
@@ -368,7 +368,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP7-03', titulo: 'El chisme que me llegó', genero: 'narrativo',
-      texto: 'A mí me llegó de tercera mano: que ella había dicho que yo era una interesada. Me lo contó una prima, que se lo había contado otra, que decía que se lo oyó a alguien más. Yo me enojé todo el día y ya tenía pensado lo que le iba a decir. En la noche mi mamá me preguntó una cosa que me desarmó: ¿y vos se lo vas a reclamar a ella o a la que te lo contó? Porque la que lo dijo, si lo dijo, es una; la que te lo trajo hasta aquí es otra. Al otro día le pregunté a ella, directo y sin adorno. Me dijo que nunca lo había dicho, y le creí. Después me quedé pensando en la cadena. Aquello fue lo que más me impresionó: nadie de las tres inventó nada, y entre todas armaron algo que no existía. El enojo era mío, pero la culpa no era suya sola ni de ninguna.',
+      texto: 'A mí me llegó de tercera mano: que ella había dicho que yo era una interesada. Me lo contó una prima, que se lo había contado otra, que decía que se lo oyó a alguien más. Yo me enojé todo el día y ya tenía pensado lo que le iba a decir. En la noche mi mamá me preguntó una cosa que me desarmó: «¿Y vos se lo vas a reclamar a ella o a la que te lo contó?». Porque la que lo dijo, si lo dijo, es una; la que te lo trajo hasta aquí es otra. Al otro día le pregunté a ella, directo y sin adorno. Me dijo que nunca lo había dicho, y le creí. Después me quedé pensando en la cadena. Aquello fue lo que más me impresionó: nadie de las tres inventó nada, y entre todas armaron algo que no existía. El enojo era mío, pero la culpa no era suya sola ni de ninguna.',
       pers: ['mí', 'me', 'ella', 'yo', 'se', 'le', 'vos', 'te'],
       demPos: ['Aquello', 'mío', 'suya'],
       neutros: ['alguien', 'nadie', 'nada', 'algo'],
@@ -386,7 +386,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP7-04', titulo: 'Cuando ella se fue', genero: 'narrativo',
-      texto: 'Mi mamá se fue a España cuando yo tenía siete y mi hermano cuatro. A él le explicaron que ella iba a volver pronto; a mí no me explicaron nada, porque decían que yo ya entendía. Eso no era cierto. Durante años le contesté mal por teléfono, y ella nunca me lo reclamó. A los quince le pregunté por fin por qué se había ido. Me contestó con números, no con sentimientos: lo que ganaba aquí, lo que costaba la casa, lo que nos mandó cada mes. Yo le dije que no le había preguntado eso. Entonces ella se quedó callada y después me dijo, muy despacio: si te contesto lo otro, no puedo seguir trabajando mañana. Nunca se lo volví a preguntar. Y desde ese día le contesto bien el teléfono. Aquello no lo entendí de golpe: lo fui entendiendo. Esto que escribo ahora es mío, pero la parte difícil fue suya.',
+      texto: 'Mi mamá se fue a España cuando yo tenía siete y mi hermano cuatro. A él le explicaron que ella iba a volver pronto; a mí no me explicaron nada, porque decían que yo ya entendía. Eso no era cierto. Durante años le contesté mal por teléfono, y ella nunca me lo reclamó. A los quince le pregunté por fin por qué se había ido. Me contestó con números, no con sentimientos: lo que ganaba aquí, lo que costaba la casa, lo que nos mandó cada mes. Yo le dije que no le había preguntado eso. Entonces ella se quedó callada y después me dijo, muy despacio: «Si te contesto lo otro, no puedo seguir trabajando mañana». Nunca se lo volví a preguntar. Y desde ese día le contesto bien el teléfono. Aquello no lo entendí de golpe: lo fui entendiendo. Esto que escribo ahora es mío, pero la parte difícil fue suya.',
       pers: ['se', 'yo', 'él', 'le', 'ella', 'mí', 'me', 'nos', 'te'],
       demPos: ['Eso', 'Aquello', 'Esto', 'mío', 'suya'],
       neutros: ['nada'],
@@ -395,7 +395,7 @@ const LECTURA_PRONOMBRES = {
           o: ['Que ella iba a volver pronto.', 'Que se iba para siempre.', 'No le explicaron nada.'], c: 0 },
         { tipo: 'literal', q: '¿Con qué le contestó la mamá a los quince años?', r: 'Con números, no con sentimientos.',
           o: ['Con una carta larga.', 'No le contestó.', 'Con números, no con sentimientos.'], c: 2 },
-        { tipo: 'inferencial', q: '¿Por qué a él no le explicaron nada de niño?', r: 'Porque supusieron que ya entendía, y no era cierto.',
+        { tipo: 'inferencial', q: '¿Por qué a quien cuenta la historia no le explicaron nada?', r: 'Porque supusieron que ya entendía, y no era cierto.',
           o: ['Porque no estaba en la casa.', 'Porque no le interesaba.', 'Porque supusieron que ya entendía, y no era cierto.'], c: 2 },
         { tipo: 'inferencial', q: '¿Qué significa «si te contesto lo otro, no puedo seguir trabajando mañana»?', r: 'Que para sostener la separación tiene que no permitirse sentir lo que perdió.',
           o: ['Que la iban a despedir del trabajo.', 'Que para sostener la separación tiene que no permitirse sentir lo que perdió.', 'Que no tenía tiempo para hablar.'], c: 1 },
@@ -425,7 +425,7 @@ const LECTURA_PRONOMBRES = {
   /* ════════ 8º GRADO (155–185 palabras · 2 literales, 2 inferenciales, 1 crítica) ════════ */
   8: [
     { id: 'LP8-01', titulo: 'El testigo que se calló', genero: 'narrativo',
-      texto: 'A un compañero lo acusaron de haberse robado el dinero de la excursión. Yo estaba ahí y sabía que no había sido él, porque a esa hora estábamos juntos afuera. No dije nada. Me quedé callado tres días y me convencí de que alguien más lo iba a aclarar. Nadie lo hizo. A él lo suspendieron una semana y su mamá tuvo que venir. Cuando por fin hablé, ya lo habían castigado y lo único que conseguí fue que le levantaran la sanción, no que le devolvieran aquello. Él nunca me lo reclamó, y eso fue lo peor. Me dijo una sola cosa, sin enojo: yo sabía que vos sabías. Ese es mi recuerdo más incómodo del colegio, y no es el robo: es haber esperado a que otro hiciera lo que me tocaba a mí. Lo suyo se arregló en una semana; lo mío todavía no. Y aquello no se arregla pidiéndole perdón a él: se arregla la próxima vez que a mí me toque hablar y me dé miedo.',
+      texto: 'A un compañero lo acusaron de haberse robado el dinero de la excursión. Yo estaba ahí y sabía que no había sido él, porque a esa hora estábamos juntos afuera. No dije nada. Me quedé callado tres días y me convencí de que alguien más lo iba a aclarar. Nadie lo hizo. A él lo suspendieron una semana y su mamá tuvo que venir. Cuando por fin hablé, ya lo habían castigado y lo único que conseguí fue que le levantaran la sanción, no que le devolvieran aquello. Él nunca me lo reclamó, y eso fue lo peor. Me dijo una sola cosa, sin enojo: «Yo sabía que vos sabías». Ese es mi recuerdo más incómodo del colegio, y no es el robo: es haber esperado a que otro hiciera lo que me tocaba a mí. Lo suyo se arregló en una semana; lo mío todavía no. Y aquello no se arregla pidiéndole perdón a él: se arregla la próxima vez que a mí me toque hablar y me dé miedo.',
       pers: ['Yo', 'él', 'Me', 'le', 'vos', 'mí', 'se'],
       demPos: ['aquello', 'eso', 'suyo', 'mío'],
       neutros: ['nada', 'alguien', 'Nadie'],
@@ -443,7 +443,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP8-02', titulo: 'Lo que él no me dijo', genero: 'narrativo',
-      texto: 'Mi papá trabajó dieciocho años en una empresa y lo despidieron sin liquidación. Nosotros no supimos nada durante cuatro meses. Él salía a la misma hora, con la camisa planchada, y volvía a la misma hora. Nos dimos cuenta porque mi mamá encontró un recibo suyo de una venta de herramienta. Cuando ella se lo preguntó, él no lo negó. Dijo solamente: no quería que ustedes se preocuparan. Ese día se armó la única pelea que les he visto en mi vida. Mi mamá le gritó algo que yo entendí años después: al no decírnoslo, decidió por todos nosotros; nos quitó la posibilidad de ayudarle. Él le contestó que aquello era suyo, que él era el que tenía que resolverlo. Ninguno de los dos tenía toda la razón, y a mí me tocó verlo desde la puerta sin poder decir nada. Aquello me enseñó algo que no se enseña en ninguna clase: hay silencios que uno cree suyos y en realidad son de todos los que viven con uno.',
+      texto: 'Mi papá trabajó dieciocho años en una empresa y lo despidieron sin liquidación. Nosotros no supimos nada durante cuatro meses. Él salía a la misma hora, con la camisa planchada, y volvía a la misma hora. Nos dimos cuenta porque mi mamá encontró un recibo suyo de una venta de herramienta. Cuando ella se lo preguntó, él no lo negó. Dijo solamente: «No quería que ustedes se preocuparan». Ese día se armó la única pelea que les he visto en mi vida. Mi mamá le gritó algo que yo entendí años después: al no decírnoslo, decidió por todos nosotros; nos quitó la posibilidad de ayudarle. Él le contestó que aquello era suyo, que él era el que tenía que resolverlo. Ninguno de los dos tenía toda la razón, y a mí me tocó verlo desde la puerta sin poder decir nada. Aquello me enseñó algo que no se enseña en ninguna clase: hay silencios que uno cree suyos y en realidad son de todos los que viven con uno.',
       pers: ['Nosotros', 'Él', 'Nos', 'ella', 'se', 'ustedes', 'les', 'le', 'yo', 'mí', 'me'],
       demPos: ['suyo', 'aquello', 'suyos'],
       neutros: ['nada', 'algo'],
@@ -457,11 +457,11 @@ const LECTURA_PRONOMBRES = {
         { tipo: 'inferencial', q: '¿Por qué el texto dice que ninguno tenía toda la razón?', r: 'Porque él quiso protegerlos y ella defendía el derecho de la familia a saber.',
           o: ['Porque los dos gritaron.', 'Porque él quiso protegerlos y ella defendía el derecho de la familia a saber.', 'Porque no entendieron el problema.'], c: 1 },
         { tipo: 'critica', q: '¿Hasta dónde puede alguien ocultar un problema «para no preocupar»? Argumenta.', r: 'Respuesta abierta: se valora que ponga un criterio y no solo una opinión general.',
-          o: ['Siempre: para eso está el que sostiene la casa.', 'Nunca: hay que contarlo todo.', 'Hasta donde su decisión no le quite a los demás la posibilidad de actuar.'], c: 2 },
+          o: ['Siempre: para eso está el que sostiene la casa.', 'Nunca: hay que contarlo todo.', 'Hasta donde su decisión no les quite a los demás la posibilidad de actuar.'], c: 2 },
       ] },
 
     { id: 'LP8-03', titulo: 'La firma que no era suya', genero: 'expositivo',
-      texto: 'A una señora de una aldea le aparecieron dos préstamos que ella nunca pidió. Fue al banco y le dijeron que ahí estaba su firma. Ella no sabe firmar: pone su huella. Aquello fue lo que le salvó el caso, aunque le tomó dos años demostrarlo. Un abogado de oficio le explicó lo que a mucha gente no le explica nadie: cuando alguien reclama una deuda, es él quien tiene que probar que uno la contrajo, no uno probar que no. La carga de la prueba es suya. Ella lo repitió después en su comunidad, con sus palabras: si a vos te llega un cobro raro, no salgás a buscar papeles todavía; pediles a ellos que te enseñen lo que firmaste. A varios les sirvió. A una vecina le apareció lo mismo y en tres semanas se lo quitaron, porque preguntó eso desde el primer día y no después de pagar. Aquello que a una le costó dos años, a la otra le costó una pregunta, y la diferencia no fue la suerte: fue saberlo.',
+      texto: 'A una señora de una aldea le aparecieron dos préstamos que ella nunca pidió. Fue al banco y le dijeron que ahí estaba su firma. Ella no sabe firmar: pone su huella. Aquello fue lo que le salvó el caso, aunque le tomó dos años demostrarlo. Un abogado de oficio le explicó lo que a mucha gente no le explica nadie: cuando alguien reclama una deuda, es él quien tiene que probar que uno la contrajo, no uno probar que no. La carga de la prueba es suya. Ella lo repitió después en su comunidad, con sus palabras: «Si a vos te llega un cobro raro, no salgás a buscar papeles todavía; pediles a ellos que te enseñen lo que firmaste». A varios les sirvió. A una vecina le apareció lo mismo y en tres semanas se lo quitaron, porque preguntó eso desde el primer día y no después de pagar. Aquello que a una le costó dos años, a la otra le costó una pregunta, y la diferencia no fue la suerte: fue saberlo.',
       pers: ['le', 'ella', 'él', 'vos', 'te', 'ellos', 'les', 'se'],
       demPos: ['Aquello', 'suya', 'eso'],
       neutros: ['nadie', 'alguien', 'quien'],
@@ -479,7 +479,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP8-04', titulo: 'Nos toca a nosotros decidirlo', genero: 'narrativo',
-      texto: 'La junta de agua tenía que decidir si subía la cuota de treinta a cincuenta lempiras. En la asamblea todos sabían que hacía falta, y ninguno quería ser el que lo propusiera. Estuvimos hora y media hablando de otras cosas. Al final, don Melvin se paró y dijo: yo lo propongo, y me hago cargo de que me lo echen en cara. Aquello destrabó la reunión. Se votó y pasó, aunque no por mucho. Después él nos explicó por qué lo hizo así: no porque le gustara, sino porque cuando nadie firma una decisión, la decisión igual se toma, pero después nadie la defiende y se cae sola. Él prefirió que aquello tuviera dueño. Yo pensé mucho en eso. En un grupo lo más difícil casi nunca es saber qué hay que hacer: es que alguien diga en voz alta que fue idea suya. Aquello me quedó claro esa noche, y desde entonces trato de ser yo el que lo diga cuando nadie más quiere.',
+      texto: 'La junta de agua tenía que decidir si subía la cuota de treinta a cincuenta lempiras. En la asamblea todos sabían que hacía falta, y ninguno quería ser el que lo propusiera. Estuvimos hora y media hablando de otras cosas. Al final, don Melvin se paró y dijo: «Yo lo propongo, y me hago cargo de que me lo echen en cara». Aquello destrabó la reunión. Se votó y pasó, aunque no por mucho. Después él nos explicó por qué lo hizo así: no porque le gustara, sino porque cuando nadie firma una decisión, la decisión igual se toma, pero después nadie la defiende y se cae sola. Él prefirió que aquello tuviera dueño. Yo pensé mucho en eso. En un grupo lo más difícil casi nunca es saber qué hay que hacer: es que alguien diga en voz alta que fue idea suya. Aquello me quedó claro esa noche, y desde entonces trato de ser yo el que lo diga cuando nadie más quiere.',
       pers: ['se', 'yo', 'me', 'él', 'nos', 'le'],
       demPos: ['Aquello', 'eso', 'suya'],
       neutros: ['nadie', 'alguien'],
@@ -497,15 +497,15 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP8-05', titulo: 'El que pidió perdón primero', genero: 'narrativo',
-      texto: 'Dos primos míos dejaron de hablarse doce años por un pleito de una pared medianera. Cada uno tenía razón en su parte: el terreno era de uno y el muro lo había pagado el otro. Ninguno de los dos estaba dispuesto a ir primero, porque ir primero se leía como aceptar que la culpa era suya. La cosa se heredó a los hijos, que ni sabían por qué no se saludaban. Lo resolvió algo pequeño. Al mayor le dio un infarto y el otro llegó al hospital sin avisar. No hablaron del muro. Solo se dieron la mano y el que estaba en la cama dijo: qué tonto lo nuestro. Nada más. Después la familia inventó que hubo una disculpa formal, porque eso se cuenta mejor. Yo estaba ahí y sé que no la hubo. Bastó con que uno apareciera. Eso me hizo pensar en todo lo que uno se aguanta esperando una frase que a lo mejor nunca va a llegar, y que quizá tampoco hace falta.',
+      texto: 'Dos primos míos dejaron de hablarse doce años por un pleito de una pared medianera. Cada uno tenía razón en su parte: el terreno era de uno y el muro lo había pagado el otro. Ninguno de los dos estaba dispuesto a ir primero, porque ir primero se leía como aceptar que la culpa era suya. La cosa se heredó a los hijos, que ni sabían por qué no se saludaban. Lo resolvió algo pequeño. Al mayor le dio un infarto y el otro llegó al hospital sin avisar. No hablaron del muro. Solo se dieron la mano y el que estaba en la cama dijo: «¡Qué tonto lo nuestro!». Nada más. Después la familia inventó que hubo una disculpa formal, porque eso se cuenta mejor. Yo estaba ahí y sé que no la hubo. Bastó con que uno apareciera. Eso me hizo pensar en todo lo que uno se aguanta esperando una frase que a lo mejor nunca va a llegar, y que quizá tampoco hace falta.',
       pers: ['se', 'le', 'Yo', 'me'],
       demPos: ['míos', 'suya', 'eso'],
       neutros: ['algo', 'Nada'],
       preguntas: [
         { tipo: 'literal', q: '¿Cuánto tiempo dejaron de hablarse?', r: 'Doce años.',
           o: ['Toda la vida.', 'Dos años.', 'Doce años.'], c: 2 },
-        { tipo: 'literal', q: '¿Qué dijo el que estaba en la cama?', r: '«Qué tonto lo nuestro».',
-          o: ['Pidió perdón formalmente.', 'Le reclamó por el muro.', '«Qué tonto lo nuestro».'], c: 2 },
+        { tipo: 'literal', q: '¿Qué dijo el que estaba en la cama?', r: '«¡Qué tonto lo nuestro!».',
+          o: ['Pidió perdón formalmente.', 'Le reclamó por el muro.', '«¡Qué tonto lo nuestro!».'], c: 2 },
         { tipo: 'inferencial', q: '¿Por qué ninguno quería ir primero?', r: 'Porque ir primero se leía como aceptar que la culpa era suya.',
           o: ['Porque vivían lejos uno del otro.', 'Porque ir primero se leía como aceptar que la culpa era suya.', 'Porque los hijos se lo prohibían.'], c: 1 },
         { tipo: 'inferencial', q: '¿Por qué la familia inventó una disculpa formal?', r: 'Porque una historia con disculpa se cuenta mejor que una donde solo alguien apareció.',
@@ -536,7 +536,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP9-02', titulo: 'El nosotros de los discursos', genero: 'expositivo',
-      texto: 'Vale la pena fijarse en quién habla dentro de un discurso. Cuando alguien dice «nosotros logramos», se está incluyendo; cuando dice «se cometieron errores», desaparece: no hay nadie que los cometiera. Ese salto no es casual y los que escriben discursos lo saben perfectamente. Al éxito se le pone dueño y al fracaso se le quita. Conviene mirar también a quién deja afuera ese «nosotros». A veces es todo el país y a veces son ellos, los del partido, aunque suene igual. Y hay un tercer truco: el «ustedes» acusador, que separa al que habla de los que escuchan justo cuando toca repartir la culpa. Nada de esto es exclusivo de la política. Pasa en una reunión de trabajo y en una casa. Escuchar quién aparece y quién se borra en cada frase no vuelve a nadie desconfiado: lo vuelve difícil de engañar, que es distinto. Lo suyo, lo mío y lo de nadie no significan lo mismo, aunque nos las digan seguidas y en la misma frase. Aquello que suena a promesa de todos muchas veces solo compromete a esto: a nadie en particular.',
+      texto: 'Vale la pena fijarse en quién habla dentro de un discurso. Cuando alguien dice «nosotros logramos», se está incluyendo; cuando dice «se cometieron errores», desaparece: no hay nadie que los cometiera. Ese salto no es casual y los que escriben discursos lo saben perfectamente. Al éxito se le pone dueño y al fracaso se le quita. Conviene mirar también a quién deja afuera ese «nosotros». A veces es todo el país y a veces son ellos, los del partido, aunque suene igual. Y hay un tercer truco: el «ustedes» acusador, que separa al que habla de los que escuchan justo cuando toca repartir la culpa. Nada de esto es exclusivo de la política. Pasa en una reunión de trabajo y en una casa. Escuchar quién aparece y quién se borra en cada frase no vuelve a nadie desconfiado: lo vuelve difícil de engañar, que es distinto. Lo suyo, lo mío y lo de nadie no significan lo mismo, aunque nos los digan seguidos y en la misma frase. Aquello que suena a promesa de todos muchas veces solo compromete a esto: a nadie en particular.',
       pers: ['nosotros', 'se', 'le', 'ellos', 'ustedes', 'nos'],
       demPos: ['esto', 'suyo', 'mío', 'Aquello'],
       neutros: ['alguien', 'nadie', 'Nada'],
@@ -554,7 +554,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP9-03', titulo: 'Ella firmó por todas', genero: 'narrativo',
-      texto: 'En una empresa de maquila, ciento veinte trabajadoras reclamaron por el agua del comedor. Todas estaban de acuerdo y ninguna quería poner su nombre en el papel, porque a la que firmara la iban a marcar. Estuvieron tres semanas así. Entonces Yamileth dijo que ella lo firmaba. Tenía dos hijos y era la que más tenía que perder, y quizá por eso nadie se lo discutió. La respuesta llegó rápido: a ella la cambiaron de línea, le pusieron metas más altas y a los cuatro meses la despidieron con una excusa. Ellas no se quedaron calladas. Las ciento diecinueve firmaron entonces una carta, ya no por el agua, sino por ella. Eso no le devolvió el empleo. Le consiguió una indemnización y algo que ella misma valora más: que ninguna de las que se quedaron pueda decir hoy que aquello no fue asunto suyo. El bebedero, por cierto, lo pusieron a los dos meses, cuando ella ya no estaba. Aquello es lo que más rabia da de esto: que lo suyo sirvió, y que el precio no lo pagaron entre todas sino ella sola.',
+      texto: 'En una empresa de maquila, ciento veinte trabajadoras reclamaron por el agua del comedor. Todas estaban de acuerdo y ninguna quería poner su nombre en el papel, porque a la que firmara la iban a marcar. Estuvieron tres semanas así. Entonces Yamileth dijo que ella lo firmaba. Tenía dos hijos y era la que más tenía que perder, y quizá por eso nadie se lo discutió. La respuesta llegó rápido: a ella la cambiaron de línea, le pusieron metas más altas y a los cuatro meses la despidieron con una excusa. Ellas no se quedaron calladas. Las ciento diecinueve firmaron entonces una carta, ya no por el agua, sino por ella. Eso no le devolvió el empleo. Le consiguió una indemnización y algo que ella misma valora más: que ninguna de las que se quedaron pueda decir hoy que aquello no fue asunto suyo. El bebedero, por cierto, lo pusieron a los seis meses, cuando ella ya no estaba. Aquello es lo que más rabia da de esto: que lo suyo sirvió, y que el precio no lo pagaron entre todas sino ella sola.',
       pers: ['ella', 'se', 'le', 'Ellas'],
       demPos: ['eso', 'aquello', 'suyo', 'esto'],
       neutros: ['nadie', 'algo'],
@@ -572,7 +572,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP9-04', titulo: 'Nadie se hizo cargo', genero: 'expositivo',
-      texto: 'Cuando un puente se cae o un expediente se pierde, la primera respuesta suele ser la misma: no fue nadie. Cada oficina explica que aquello le correspondía a otra y todas dicen la verdad a medias, porque la responsabilidad estaba repartida de tal manera que nunca era de alguien en particular. Los que estudian las organizaciones lo llaman difusión de responsabilidad, y no es un defecto de las personas: es un defecto del diseño. Se arregla de una manera aburrida y muy eficaz: poniéndole nombre a cada tarea. No «el departamento revisará», sino «fulano revisa y firma». Cuando algo tiene dueño, se hace; cuando es de todos, se hace a medias o no se hace. Lo interesante es que quienes más se resisten a ese cambio no siempre son los que trabajan mal: muchas veces son los que trabajan bien y saben que, con su nombre en el papel, van a cargar también con lo que otros no hicieron. Aquello es un temor razonable y conviene atenderlo: si el nombre es suyo, la tarea tiene que ser suya de verdad, no esto de firmar por el trabajo ajeno.',
+      texto: 'Cuando un puente se cae o un expediente se pierde, la primera respuesta suele ser la misma: «No fue nadie». Cada oficina explica que aquello le correspondía a otra y todas dicen la verdad a medias, porque la responsabilidad estaba repartida de tal manera que nunca era de alguien en particular. Los que estudian las organizaciones lo llaman difusión de responsabilidad, y no es un defecto de las personas: es un defecto del diseño. Se arregla de una manera aburrida y muy eficaz: poniéndole nombre a cada tarea. No «el departamento revisará», sino «fulano revisa y firma». Cuando algo tiene dueño, se hace; cuando es de todos, se hace a medias o no se hace. Lo interesante es que quienes más se resisten a ese cambio no siempre son los que trabajan mal: muchas veces son los que trabajan bien y saben que, con su nombre en el papel, van a cargar también con lo que otros no hicieron. Aquello es un temor razonable y conviene atenderlo: si el nombre es suyo, la tarea tiene que ser suya de verdad, no esto de firmar por el trabajo ajeno.',
       pers: ['se', 'le'],
       demPos: ['aquello', 'suyo', 'suya', 'esto'],
       neutros: ['nadie', 'alguien', 'algo', 'quienes'],
@@ -590,7 +590,7 @@ const LECTURA_PRONOMBRES = {
       ] },
 
     { id: 'LP9-05', titulo: 'Lo que uno le debe a quien lo crio', genero: 'narrativo',
-      texto: 'A mi tía la crio su abuela, y ella crio después a tres sobrinos que no eran suyos. Cuando le preguntaban por qué, contestaba siempre lo mismo, medio en broma: porque a mí me tocó y no me consultaron. Uno de esos sobrinos se fue del país a los diecinueve y durante años le mandó dinero. Ella lo recibía y no decía nada. Un día él la llamó y le preguntó, incómodo, si con eso ya estaban a mano. Mi tía se rió y le contestó algo que a mí me costó entender de niño: vos no me debés nada, mijo; lo que a vos te tocaba era irte. Después me lo explicó a mí con otras palabras: ella no crio a nadie para que se lo pagaran, sino para que después ellos pudieran criar a otro. Lo que él le mandaba estaba bien, pero no era la deuda. La deuda, si acaso, se paga adelante. Yo entendí aquello mucho después, cuando me tocó a mí hacerme cargo de alguien, y ahí supe que esto que ella hizo no era generosidad suelta: era una manera de entender lo suyo y lo de uno.',
+      texto: 'A mi tía la crio su abuela, y ella crio después a tres sobrinos que no eran suyos. Cuando le preguntaban por qué, contestaba siempre lo mismo, medio en broma: «Porque a mí me tocó y no me consultaron». Uno de esos sobrinos se fue del país a los diecinueve y durante años le mandó dinero. Ella lo recibía y no decía nada. Un día él la llamó y le preguntó, incómodo, si con eso ya estaban a mano. Mi tía se rio y le contestó algo que a mí me costó entender de niño: «Vos no me debés nada, mijo; lo que a vos te tocaba era irte». Después me lo explicó a mí con otras palabras: ella no crio a nadie para que se lo pagaran, sino para que después ellos pudieran criar a otro. Lo que él le mandaba estaba bien, pero no era la deuda. La deuda, si acaso, se paga adelante. Yo entendí aquello mucho después, cuando me tocó a mí hacerme cargo de alguien, y ahí supe que esto que ella hizo no era generosidad suelta: era una manera de entender lo suyo y lo de uno.',
       pers: ['ella', 'le', 'mí', 'me', 'se', 'él', 'vos', 'te', 'ellos', 'Yo'],
       demPos: ['suyos', 'eso', 'aquello', 'esto', 'suyo'],
       neutros: ['nada', 'algo', 'nadie', 'alguien'],

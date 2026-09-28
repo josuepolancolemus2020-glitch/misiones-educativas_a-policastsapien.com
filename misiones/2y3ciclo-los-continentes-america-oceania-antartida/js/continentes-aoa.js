@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Geografía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Geografía._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -149,15 +149,15 @@ function go(id){
 const LAB_DATA={
   america:{
     label:'🌎 América',
-    geo:'🗺️ <strong>Geografía de América</strong><br>Área: <strong>42.5 millones km²</strong> · 35 países · ~15,000 km de norte a sur.<br>⛰️ Los Andes: cordillera más larga del mundo (~7,000 km).<br>💧 Río Amazonas: el más caudaloso del mundo (7,062 km).<br>🏔️ Aconcagua: 6,961 m (cumbre más alta del continente).<br>🌡️ Climas: ártico, templado, tropical, desértico.',
-    eco:'💰 <strong>Economía de América</strong><br>EE.UU.: <strong>1ª economía mundial</strong>.<br>CAFTA-DR: libre comercio entre EE.UU. y Centroamérica (incluye Honduras).<br>🌽 Mayor productor mundial de maíz y soja.<br>🛢️ Venezuela y México exportan petróleo.<br>💵 EE.UU. recibe más del 50% de las exportaciones hondureñas.',
-    soc:'👥 <strong>Sociedad de América</strong><br>Población: ~<strong>1,000 millones</strong> de personas.<br>Gran diversidad étnica: indígenas, mestizos, afrodescendientes, europeos, asiáticos.<br>🏘️ La región tiene alta desigualdad económica interna.<br>✈️ Más de 1 millón de hondureños viven en EE.UU. (mayor fuente de remesas).',
-    cul:'🎭 <strong>Cultura de América</strong><br>Cuna de civilizaciones precolombinas: <strong>Maya</strong> (Honduras, México, Guatemala), <strong>Azteca</strong> (México), <strong>Inca</strong> (Perú).<br>🏛️ Copán (Honduras): sitio arqueológico maya, Patrimonio UNESCO.<br>🎵 Música: marimba, salsa, cumbia, jazz, bossa nova, rock latinoamericano.',
-    hn:'🇭🇳 <strong>Honduras y América</strong><br>EE.UU. recibe más del <strong>50%</strong> de las exportaciones hondureñas: café ☕, banano 🍌, textiles, mariscos.<br>💵 Remesas desde EE.UU. y Canadá representan ~<strong>25% del PIB</strong> de Honduras.<br>🤝 OEA: Honduras es miembro activo de la Organización de Estados Americanos.<br>📋 CAFTA-DR facilita el comercio con EE.UU.'
+    geo:'🗺️ <strong>Geografía de América</strong><br>Área: <strong>42.5 millones de km²</strong> · 35 países · ~15,000 km de norte a sur.<br>⛰️ Los Andes: cordillera más larga del mundo (~7,000 km).<br>💧 Río Amazonas: el más caudaloso del mundo (7,062 km).<br>🏔️ Aconcagua: 6,961 m (cumbre más alta del continente).<br>🌡️ Climas: ártico, templado, tropical, desértico.',
+    eco:'💰 <strong>Economía de América</strong><br>EE. UU.: <strong>1ª economía mundial</strong>.<br>CAFTA-DR: libre comercio entre EE. UU. y Centroamérica (incluye Honduras).<br>🌽 Mayor productor mundial de maíz y soja.<br>🛢️ Venezuela y México exportan petróleo.<br>💵 EE. UU. recibe más del 50% de las exportaciones hondureñas.',
+    soc:'👥 <strong>Sociedad de América</strong><br>Población: ~<strong>1,000 millones</strong> de personas.<br>Gran diversidad étnica: indígenas, mestizos, afrodescendientes, europeos, asiáticos.<br>🏘️ La región tiene alta desigualdad económica interna.<br>✈️ Más de 1 millón de hondureños viven en EE. UU. (mayor fuente de remesas).',
+    cul:'🎭 <strong>Cultura de América</strong><br>Cuna de civilizaciones precolombinas: <strong>maya</strong> (Honduras, México, Guatemala), <strong>azteca</strong> (México), <strong>inca</strong> (Perú).<br>🏛️ Copán (Honduras): sitio arqueológico maya, Patrimonio UNESCO.<br>🎵 Música: marimba, salsa, cumbia, jazz, bossa nova, rock latinoamericano.',
+    hn:'🇭🇳 <strong>Honduras y América</strong><br>EE. UU. recibe más del <strong>50%</strong> de las exportaciones hondureñas: café ☕, banano 🍌, textiles, mariscos.<br>💵 Remesas desde EE. UU. y Canadá representan ~<strong>25% del PIB</strong> de Honduras.<br>🤝 OEA: Honduras es miembro activo de la Organización de Estados Americanos.<br>📋 CAFTA-DR facilita el comercio con EE. UU.'
   },
   oceania:{
     label:'🌏 Oceanía',
-    geo:'🗺️ <strong>Geografía de Oceanía</strong><br>El continente <strong>más pequeño</strong>: 8.5 millones km².<br>Comprende: Australia, Nueva Zelanda, Papua Nueva Guinea y miles de islas del Pacífico (Melanesia, Micronesia, Polinesia).<br>🪸 Gran Barrera de Coral (Australia): el mayor arrecife del mundo (2,300 km).<br>🗻 Monte Kosciuszko: 2,228 m (Australia).',
+    geo:'🗺️ <strong>Geografía de Oceanía</strong><br>El continente <strong>más pequeño</strong>: 8.5 millones de km².<br>Comprende: Australia, Nueva Zelanda, Papúa Nueva Guinea y miles de islas del Pacífico (Melanesia, Micronesia, Polinesia).<br>🪸 Gran Barrera de Coral (Australia): el mayor arrecife del mundo (2,300 km).<br>🗻 Monte Kosciuszko: 2,228 m (Australia).',
     eco:'💰 <strong>Economía de Oceanía</strong><br>Australia: <strong>13ª economía mundial</strong>. Exporta hierro, carbón, oro y productos agrícolas.<br>🥛 Nueva Zelanda: líder mundial en exportación de lácteos y carne.<br>🌊 Turismo en la Gran Barrera de Coral: ~6,000 millones USD/año.<br>🎰 Las naciones insulares dependen del turismo y la pesca.',
     soc:'👥 <strong>Sociedad de Oceanía</strong><br>Población: ~<strong>43 millones</strong>.<br>🪃 Aborígenes australianos: los habitantes <strong>más antiguos del mundo</strong> (60,000+ años de presencia).<br>🌺 Maoríes (Nueva Zelanda): pueblo polinesio famoso por el <em>haka</em> y su rica cultura oral.<br>🏝️ Comunidades insulares del Pacífico, vulnerables al cambio climático.',
     cul:'🎭 <strong>Cultura de Oceanía</strong><br>Arte rupestre aborigen: el más antiguo del mundo.<br>🎵 Haka maorí: danza guerrera ceremonial y deportiva de Nueva Zelanda.<br>🏛️ Ópera de Sídney: Patrimonio de la Humanidad (UNESCO).<br>🪸 Gran Barrera de Coral: Patrimonio Natural de la Humanidad.',
@@ -165,11 +165,11 @@ const LAB_DATA={
   },
   antartica:{
     label:'❄️ Antártida',
-    geo:'🗺️ <strong>Geografía de la Antártida</strong><br>Área: <strong>14.2 millones km²</strong> (más grande que Europa).<br>El continente más <strong>frío, seco y ventoso</strong> del mundo.<br>🌡️ Temperatura mínima registrada: <strong>-89.2°C</strong>.<br>💧 Contiene el <strong>70% del agua dulce</strong> del planeta en forma de hielo.<br>⛰️ Monte Vinson: 4,892 m (punto más alto).',
+    geo:'🗺️ <strong>Geografía de la Antártida</strong><br>Área: <strong>14.2 millones de km²</strong> (más grande que Europa).<br>El continente más <strong>frío, seco y ventoso</strong> del mundo.<br>🌡️ Temperatura mínima registrada: <strong>-89.2°C</strong>.<br>💧 Contiene el <strong>70% del agua dulce</strong> del planeta en forma de hielo.<br>⛰️ Monte Vinson: 4,892 m (punto más alto).',
     eco:'💰 <strong>Economía de la Antártida</strong><br>Sin economía comercial.<br>🔬 Solo investigación científica: <strong>53 estaciones</strong> de 29 países.<br>🚢 Turismo científico limitado: ~50,000 visitantes/año bajo estrictas regulaciones.<br>📜 El Tratado Antártico <strong>prohíbe la minería</strong> y el uso militar.',
     soc:'👥 <strong>Sociedad de la Antártida</strong><br>NO tiene <strong>población permanente</strong>.<br>🔬 Solo científicos e investigadores (aprox. <strong>4,000 en verano</strong> polar, ~1,000 en invierno).<br>📜 Tratado Antártico (1959): <strong>54 países firmantes</strong>. Ningún país puede reclamar soberanía territorial.<br>🌐 Es el único continente sin gobierno propio.',
     cul:'🎭 <strong>Antártida y la ciencia</strong><br>El continente de la <strong>investigación científica</strong> global.<br>🐧 Fauna: pingüinos (18 especies), focas leopardo, ballenas jorobadas, petreles.<br>🌡️ Pieza clave en el estudio del <strong>cambio climático</strong>.<br>❄️ Los núcleos de hielo revelan <strong>800,000 años</strong> de historia climática de la Tierra.',
-    hn:'🇭🇳 <strong>Honduras y la Antártida</strong><br>Honduras, como país tropical costero, es uno de los más <strong>vulnerables al deshielo antártico</strong> que elevaría el nivel del mar.<br>🌡️ Honduras apoya el <strong>Acuerdo de París</strong> sobre cambio climático, vinculado a la protección del hielo antártico.<br>⚠️ El aumento del nivel del mar amenaza zonas costeras del norte de Honduras y las Islas de la Bahía.'
+    hn:'🇭🇳 <strong>Honduras y la Antártida</strong><br>Honduras, como país tropical costero, es uno de los más <strong>vulnerables al deshielo antártico</strong>, que elevaría el nivel del mar.<br>🌡️ Honduras apoya el <strong>Acuerdo de París</strong> sobre cambio climático, vinculado a la protección del hielo antártico.<br>⚠️ El aumento del nivel del mar amenaza zonas costeras del norte de Honduras y las Islas de la Bahía.'
   }
 };
 
@@ -203,16 +203,16 @@ const fcData=[
   {w:'América',a:'🌎 El continente donde vivimos. Se extiende <strong>~15,000 km</strong> de norte a sur. Tiene 35 países divididos en América del Norte, Central y del Sur. Comprende ecosistemas desde el Ártico hasta la Patagonia.'},
   {w:'Río Amazonas',a:'💧 El río más <strong>caudaloso</strong> del mundo (7,062 km), en América del Sur. Nace en los Andes peruanos y desemboca en el Atlántico (Brasil). Su cuenca alberga el <strong>mayor bosque tropical del planeta</strong>.'},
   {w:'Los Andes',a:'⛰️ La <strong>cordillera más larga del mundo</strong> (~7,000 km), en América del Sur. Atraviesa Venezuela, Colombia, Ecuador, Perú, Bolivia, Chile y Argentina. Cima: <strong>Aconcagua (6,961 m)</strong>.'},
-  {w:'CAFTA-DR',a:'📋 Acuerdo de Libre Comercio entre <strong>EE.UU. y Centroamérica</strong> (incluyendo Honduras y Rep. Dominicana). Facilita el comercio de café ☕, banano 🍌 y textiles hondureños hacia EE.UU. sin aranceles.'},
+  {w:'CAFTA-DR',a:'📋 Acuerdo de Libre Comercio entre <strong>EE. UU. y Centroamérica</strong> (incluyendo Honduras y Rep. Dominicana). Facilita el comercio de café ☕, banano 🍌 y textiles hondureños hacia EE. UU. sin aranceles.'},
   {w:'OEA',a:'🤝 <strong>Organización de Estados Americanos</strong>: reúne a los 35 países del hemisferio. Sede en Washington D.C. Promueve la democracia, los derechos humanos y el desarrollo en América. Honduras es miembro activo.'},
-  {w:'Civilización Maya',a:'🏛️ Gran civilización precolombina que floreció en <strong>Honduras, México, Guatemala, Belice y El Salvador</strong>. Desarrollaron escritura, astronomía, matemáticas y arquitectura. <strong>Copán</strong> (Honduras) es su mayor ciudad arqueológica en el país.'},
-  {w:'Oceanía',a:'🌏 El continente <strong>más pequeño</strong> del mundo (8.5 millones km²). Formado por <strong>Australia</strong>, Nueva Zelanda, Papua Nueva Guinea y miles de islas del Pacífico (Melanesia, Micronesia, Polinesia). Población: ~43 millones.'},
+  {w:'Civilización maya',a:'🏛️ Gran civilización precolombina que floreció en <strong>Honduras, México, Guatemala, Belice y El Salvador</strong>. Desarrolló escritura, astronomía, matemáticas y arquitectura. <strong>Copán</strong> (Honduras) es su mayor ciudad arqueológica en el país.'},
+  {w:'Oceanía',a:'🌏 El continente <strong>más pequeño</strong> del mundo (8.5 millones de km²). Formado por <strong>Australia</strong>, Nueva Zelanda, Papúa Nueva Guinea y miles de islas del Pacífico (Melanesia, Micronesia, Polinesia). Población: ~43 millones.'},
   {w:'Gran Barrera de Coral',a:'🪸 El <strong>mayor arrecife de coral del mundo</strong> (2,300 km), frente a la costa nordeste de Australia. Patrimonio Natural de la Humanidad (UNESCO). Hogar de más de 1,500 especies de peces y 600 tipos de coral.'},
   {w:'Aborígenes australianos',a:'🪃 Los habitantes <strong>más antiguos del mundo</strong>, con más de 60,000 años de presencia en Australia. Poseen el arte rupestre más antiguo conocido. Su cultura es oral, basada en el "Tiempo del Sueño" o <em>Dreamtime</em>.'},
-  {w:'Antártida',a:'❄️ El <strong>continente más frío, seco y ventoso</strong> del mundo (14.2 millones km²). Temperatura mínima: <strong>-89.2°C</strong>. No tiene población permanente. Contiene el <strong>70% del agua dulce</strong> del planeta en forma de hielo.'},
+  {w:'Antártida',a:'❄️ El <strong>continente más frío, seco y ventoso</strong> del mundo (14.2 millones de km²). Temperatura mínima: <strong>-89.2°C</strong>. No tiene población permanente. Contiene el <strong>70% del agua dulce</strong> del planeta en forma de hielo.'},
   {w:'Tratado Antártico',a:'📜 Firmado en <strong>1959</strong> por 12 países; hoy tiene <strong>54 signatarios</strong>. Establece la Antártida como zona de paz y ciencia. Prohíbe actividades militares y minería comercial. Ningún país puede reclamar soberanía.'},
   {w:'Pingüinos',a:'🐧 Símbolo de la Antártida. En el mundo hay <strong>18 especies</strong>. En la Antártida habitan el pingüino emperador (el más grande: 1.2 m) y el pingüino de Adelia. No tienen depredadores terrestres naturales.'},
-  {w:'Remesas en Honduras',a:'💵 Las <strong>remesas</strong> son dinero enviado desde el exterior por hondureños emigrantes. Representan ~<strong>25% del PIB</strong> de Honduras. La mayoría proviene de <strong>EE.UU. y Canadá</strong>. Son la principal fuente de divisas del país.'},
+  {w:'Remesas en Honduras',a:'💵 Las <strong>remesas</strong> son dinero enviado desde el exterior por hondureños emigrantes. Representan ~<strong>25% del PIB</strong> de Honduras. La mayoría proviene de <strong>EE. UU. y Canadá</strong>. Son la principal fuente de divisas del país.'},
   {w:'Cambio climático y Antártida',a:'🌡️ El deshielo de la Antártida amenaza con elevar el nivel del mar hasta <strong>60 metros</strong> si se derritiera todo el hielo. Honduras, como país costero tropical, es <strong>altamente vulnerable</strong>. El Acuerdo de París busca limitar este riesgo.'},
   {w:'Maoríes',a:'🌺 Pueblo polinesio originario de <strong>Nueva Zelanda (Oceanía)</strong>. Llegaron ~800 años atrás. Famosos por el <strong>haka</strong> (danza guerrera). Su idioma, el <em>te reo māori</em>, es lengua oficial de Nueva Zelanda junto al inglés.'},
 ];
@@ -235,7 +235,7 @@ function prevFC(){sfx('click');fcIdx=(fcIdx-1+fcData.length)%fcData.length;upFC(
 const qzData=[
   {q:'¿Cuál es el río más caudaloso del mundo?',o:['a) Nilo','b) Congo','c) Mississippi','d) Amazonas'],c:3},
   {q:'¿En qué región de América se ubica Honduras?',o:['a) América Central','b) América del Norte','c) América del Sur','d) El Caribe'],c:0},
-  {q:'¿Cómo se llama el acuerdo de libre comercio entre Honduras y EE.UU.?',o:['a) AACUE','b) NAFTA','c) MERCOSUR','d) CAFTA-DR'],c:3},
+  {q:'¿Cómo se llama el acuerdo de libre comercio entre Honduras y EE. UU.?',o:['a) AACUE','b) NAFTA','c) MERCOSUR','d) CAFTA-DR'],c:3},
   {q:'¿Cuál es el continente más pequeño del mundo?',o:['a) Europa','b) Antártida','c) Oceanía','d) América Central'],c:2},
   {q:'¿Qué país es a la vez el único país-continente del mundo?',o:['a) Australia','b) Nueva Zelanda','c) Papúa Nueva Guinea','d) Fiyi'],c:0},
   {q:'¿Cuál es el arrecife de coral más grande del mundo?',o:['a) Gran Barrera de Coral','b) Barrera de Mesoamérica','c) Barrera del Caribe','d) Arrecife de las Maldivas'],c:0},
@@ -308,9 +308,9 @@ const classGroups=[
   {
     label:['HN exporta','HN importa'],headA:'📦 HN Exporta',headB:'📥 HN Importa',colA:'exporta',colB:'importa',
     words:[
-      {w:'Café a EE.UU.',t:'exporta'},{w:'Tecnología americana',t:'importa'},{w:'Banano a EE.UU.',t:'exporta'},
-      {w:'Maíz importado',t:'importa'},{w:'Textiles a EE.UU.',t:'exporta'},{w:'Maquinaria',t:'importa'},
-      {w:'Mariscos a EE.UU.',t:'exporta'},{w:'Combustibles',t:'importa'},{w:'Palma africana',t:'exporta'},{w:'Trigo importado',t:'importa'}
+      {w:'Café a EE. UU.',t:'exporta'},{w:'Tecnología americana',t:'importa'},{w:'Banano a EE. UU.',t:'exporta'},
+      {w:'Maíz importado',t:'importa'},{w:'Textiles a EE. UU.',t:'exporta'},{w:'Maquinaria',t:'importa'},
+      {w:'Mariscos a EE. UU.',t:'exporta'},{w:'Combustibles',t:'importa'},{w:'Palma africana',t:'exporta'},{w:'Trigo importado',t:'importa'}
     ]
   },
 ];
@@ -355,7 +355,7 @@ function checkClass(){
 function nextClassGroup(){
   sfx('click');currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length;
   buildClass();document.getElementById('fbCls').classList.remove('show');
-  showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]);
+  showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass(){sfx('click');buildClass();document.getElementById('fbCls').classList.remove('show');}
 
@@ -365,7 +365,7 @@ const idData=[
   {s:['Honduras','está','en','América','Central.'],c:3,art:'Región de América donde está Honduras'},
   {s:['Los','Andes','son','la','cordillera','más','larga.'],c:1,art:'Cordillera más larga del mundo'},
   {s:['Australia','es','un','país-continente','de','Oceanía.'],c:0,art:'País que es también un continente'},
-  {s:['El','CAFTA-DR','facilita','el','comercio','con','EE.UU.'],c:1,art:'Acuerdo de libre comercio con EE.UU.'},
+  {s:['El','CAFTA-DR','facilita','el','comercio','con','EE. UU.'],c:1,art:'Acuerdo de libre comercio con EE. UU.'},
   {s:['La','Antártida','no','tiene','población','permanente.'],c:1,art:'Continente sin habitantes permanentes'},
   {s:['Los','Maoríes','son','originarios','de','Nueva','Zelanda.'],c:1,art:'Pueblo originario de Nueva Zelanda'},
   {s:['El','Tratado','Antártico','fue','firmado','en','1959.'],c:1,art:'Acuerdo internacional sobre la Antártida'},
@@ -398,7 +398,7 @@ const cmpData=[
   {s:'Honduras está en ___ Central.',opts:['Asia','Europa','América'],c:2},
   {s:'La cordillera más larga del mundo es ___ .',opts:['el Himalaya','los Andes','los Alpes'],c:1},
   {s:'El Tratado Antártico fue firmado en ___ .',opts:['1959','1945','1972'],c:0},
-  {s:'El ___ facilita el comercio entre Honduras y EE.UU.',opts:['MERCOSUR','CAFTA-DR','OEA'],c:1},
+  {s:'El ___ facilita el comercio entre Honduras y EE. UU.',opts:['MERCOSUR','CAFTA-DR','OEA'],c:1},
   {s:'La Antártida contiene el ___ del agua dulce del planeta.',opts:['70%','30%','50%'],c:0},
   {s:'Los ___ son los pueblos originarios de Australia.',opts:['Maoríes','Aborígenes','Incas'],c:1},
 ];
@@ -490,7 +490,7 @@ function nextRetoPair(){
   document.getElementById('retoTimer').textContent='⏱ 30';document.getElementById('retoTimer').style.color='var(--pri)';
   document.getElementById('retoWord').textContent='¡Prepárate!';document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores';
   document.getElementById('fbReto').classList.remove('show');
-  showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+  showToast(`🔄 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto(){
   sfx('click');clearInterval(retoTimerInt);retoRunning=false;retoSec=30;retoOk=0;retoErr=0;
@@ -501,26 +501,26 @@ function resetReto(){
 
 // ===================== TASK GENERATOR =====================
 const identifyTaskDB=[
-  {s:'El Río Amazonas es el más caudaloso del mundo, con 7,062 km, en América del Sur.',type:'Río más caudaloso del mundo'},
+  {s:'El río Amazonas es el más caudaloso del mundo, con 7,062 km, en América del Sur.',type:'Río más caudaloso del mundo'},
   {s:'Honduras está ubicada en el corazón de América Central, miembro de la OEA.',type:'Región geográfica de Honduras'},
   {s:'Los Andes son la cordillera más larga del mundo (~7,000 km), en América del Sur.',type:'Cordillera más larga del mundo'},
-  {s:'El CAFTA-DR facilita el comercio entre Honduras y Estados Unidos sin aranceles.',type:'Acuerdo comercial entre Honduras y EE.UU.'},
+  {s:'El CAFTA-DR facilita el comercio entre Honduras y Estados Unidos sin aranceles.',type:'Acuerdo comercial entre Honduras y EE. UU.'},
   {s:'Australia es el único país que ocupa un continente entero (Oceanía).',type:'País-continente de Oceanía'},
   {s:'La Gran Barrera de Coral (Australia) es el arrecife más grande del mundo (2,300 km).',type:'Arrecife más grande del mundo'},
   {s:'La Antártida no tiene población permanente; solo científicos viven allí temporalmente.',type:'Continente sin residentes permanentes'},
   {s:'El Tratado Antártico (1959) protege la Antártida como zona de paz y ciencia.',type:'Acuerdo internacional que protege la Antártida'},
   {s:'Los aborígenes australianos llevan más de 60,000 años habitando Australia.',type:'Pueblo originario más antiguo del mundo'},
-  {s:'Las remesas desde EE.UU. y Canadá representan aproximadamente el 25% del PIB hondureño.',type:'Principal fuente de divisas de Honduras'},
+  {s:'Las remesas desde EE. UU. y Canadá representan aproximadamente el 25% del PIB hondureño.',type:'Principal fuente de divisas de Honduras'},
 ];
 const classifyTaskDB=[
   {w:'América',gen:'Continente',n:'42.5M km²',g:'Hemisferio Oeste',t:'35 países, CAFTA-DR, OEA'},
-  {w:'Oceanía',gen:'Continente-región',n:'8.5M km²',g:'Hemisferio Sur/Pacífico',t:'Australia, NZ, islas del Pacífico'},
-  {w:'Antártida',gen:'Continente',n:'14.2M km²',g:'Polo Sur',t:'Sin residentes permanentes, Tratado 1959'},
+  {w:'Oceanía',gen:'Continente-región',n:'8.5M km²',g:'Hemisferio sur/Pacífico',t:'Australia, NZ, islas del Pacífico'},
+  {w:'Antártida',gen:'Continente',n:'14.2M km²',g:'Polo sur',t:'Sin residentes permanentes, Tratado 1959'},
   {w:'Amazonas',gen:'Río',n:'7,062 km',g:'América del Sur',t:'El más caudaloso del mundo'},
   {w:'Los Andes',gen:'Cordillera',n:'~7,000 km',g:'América del Sur',t:'Más larga del mundo'},
   {w:'Gran Barrera de Coral',gen:'Arrecife',n:'2,300 km',g:'Costa NE de Australia',t:'Más grande del mundo, UNESCO'},
   {w:'Tratado Antártico',gen:'Acuerdo internacional',n:'54 signatarios',g:'Global',t:'Paz y ciencia en la Antártida'},
-  {w:'CAFTA-DR',gen:'Acuerdo comercial',n:'7 países',g:'EE.UU. y Centroamérica',t:'Libre comercio, incluye Honduras'},
+  {w:'CAFTA-DR',gen:'Acuerdo comercial',n:'7 países',g:'EE. UU. y Centroamérica',t:'Libre comercio, incluye Honduras'},
 ];
 const completeTaskDB=[
   {s:'El continente más pequeño del mundo es ___ .',opts:['América','Antártida','Oceanía'],ans:'Oceanía'},
@@ -528,15 +528,15 @@ const completeTaskDB=[
   {s:'Honduras está en ___ Central.',opts:['Asia','Europa','América'],ans:'América'},
   {s:'La cordillera más larga del mundo es ___ .',opts:['el Himalaya','los Andes','los Alpes'],ans:'los Andes'},
   {s:'El Tratado Antártico fue firmado en ___ .',opts:['1945','1972','1959'],ans:'1959'},
-  {s:'Honduras exporta ___ principalmente a EE.UU.',opts:['petróleo','café y textiles','tecnología'],ans:'café y textiles'},
+  {s:'Honduras exporta ___ principalmente a EE. UU.',opts:['petróleo','café y textiles','tecnología'],ans:'café y textiles'},
   {s:'La Antártida contiene el ___ del agua dulce del planeta.',opts:['30%','50%','70%'],ans:'70%'},
   {s:'Los ___ son los pueblos originarios de Australia.',opts:['Maoríes','Incas','Aborígenes'],ans:'Aborígenes'},
 ];
 const explainQuestions=[
-  {q:'¿Por qué es importante el CAFTA-DR para Honduras? Menciona al menos dos razones.',ans:'El CAFTA-DR elimina aranceles entre Honduras y EE.UU., facilitando la exportación de café, banano y textiles. También permite importar bienes más baratos y abre mercados para el sector maquilador hondureño.'},
+  {q:'¿Por qué es importante el CAFTA-DR para Honduras? Menciona al menos dos razones.',ans:'El CAFTA-DR elimina aranceles entre Honduras y EE. UU., facilitando la exportación de café, banano y textiles. También permite importar bienes más baratos y abre mercados para el sector maquilador hondureño.'},
   {q:'¿Cuáles son las principales diferencias geográficas entre América, Oceanía y Antártida?',ans:'América es el más extenso (42.5M km², 35 países, diversidad climática). Oceanía es el más pequeño (8.5M km², islas del Pacífico). Antártida (14.2M km²) es el más frío, sin residentes permanentes y cubierto de hielo.'},
   {q:'¿Por qué la Antártida es importante para Honduras y el mundo?',ans:'La Antártida contiene el 70% del agua dulce del planeta. Su deshielo elevaría el nivel del mar amenazando costas de todo el mundo, incluyendo las de Honduras. También es clave para estudiar el cambio climático.'},
-  {q:'¿Qué relación existe entre las remesas y la economía de Honduras?',ans:'Las remesas enviadas por hondureños desde EE.UU. y Canadá representan ~25% del PIB de Honduras. Son la principal fuente de divisas del país, superando las exportaciones. Benefician directamente a millones de familias hondureñas.'},
+  {q:'¿Qué relación existe entre las remesas y la economía de Honduras?',ans:'Las remesas enviadas por hondureños desde EE. UU. y Canadá representan ~25% del PIB de Honduras. Son la principal fuente de divisas del país, superando las exportaciones. Benefician directamente a millones de familias hondureñas.'},
   {q:'¿Qué importancia tienen los pueblos originarios de Oceanía? Menciona al menos dos grupos.',ans:'Los aborígenes australianos son los humanos con mayor antigüedad conocida (60,000+ años), guardianes del arte rupestre más antiguo. Los maoríes de Nueva Zelanda conservan una rica tradición oral, el idioma te reo māori y el haka, que hoy son lengua y símbolo nacional.'},
 ];
 let ansVisible=false;
@@ -737,7 +737,7 @@ const evalTFBank=[
 ];
 const evalMCBank=[
   {q:'¿Qué pueblo construyó sus ciudades en lo que hoy es Perú?',o:['a) los mayas','b) los aztecas','c) los incas','d) los vikingos'],a:2,k:'mc-incas'},
-  {q:'¿Qué productos vende Honduras a EE.UU.?',o:['a) petróleo y gas','b) café, banano y textiles','c) autos y aviones','d) hielo y carbón'],a:1,k:'mc-exporta'},
+  {q:'¿Qué productos vende Honduras a EE. UU.?',o:['a) petróleo y gas','b) café, banano y textiles','c) autos y aviones','d) hielo y carbón'],a:1,k:'mc-exporta'},
   {q:'¿Cuál de estos países está en la misma región que Honduras?',o:['a) Chile','b) Canadá','c) Belice','d) Venezuela'],a:2,k:'mc-belice'},
   {q:'¿Qué organización reúne a los países de América, y Honduras es parte de ella?',o:['a) la Unión Europea','b) la OEA','c) la Liga Árabe','d) la OTAN'],a:1,k:'mc-oea'},
   {q:'¿Qué animales son el símbolo de la Antártida?',o:['a) jaguares','b) canguros','c) llamas','d) pingüinos'],a:3,k:'mc-pinguinos'},
@@ -767,7 +767,7 @@ const evalPRBank=[
   {term:'Maoríes',def:'Pueblo originario famoso por el haka',k:'pr-maories'},
   {term:'Aborígenes',def:'Los habitantes más antiguos de Australia',k:'pr-aborigenes'},
   {term:'Tratado Antártico',def:'Firmado en 1959, cuida el continente helado',k:'pr-tratado'},
-  {term:'CAFTA-DR',def:'Libre comercio entre EE.UU. y Centroamérica',k:'pr-cafta'},
+  {term:'CAFTA-DR',def:'Libre comercio entre EE. UU. y Centroamérica',k:'pr-cafta'},
   {term:'Copán',def:'Ciudad maya de Honduras, Patrimonio de la Humanidad',k:'pr-copan'},
   {term:'Monte Vinson',def:'La cumbre más alta de la Antártida',k:'pr-vinson'}
 ];
@@ -836,7 +836,7 @@ function genEval(){
   const s4=document.createElement('div');s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div');matchCard.className='eval-item';
   let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>';
-  prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});
+  prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">?</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;});
   colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>';shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;});colRight+='</div>';
   const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return `${i+16}→${letter}`;}).join(' · ');
@@ -955,7 +955,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1030,21 +1030,21 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 <div class="ph">
   <h2>Evaluación · Los Continentes: América, Oceanía y Antártida · Forma ${forma} · Educación Básica · Ciencias Sociales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Los Continentes: América, Oceanía y Antártida · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Los Continentes: América, Oceanía y Antártida · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}
@@ -1083,8 +1083,8 @@ const critCompBank=[
 // ── II. Interpreto los datos (dato → implicación correcta entre opciones)
 const critInterpBank=[
   {dato:'La Antártida guarda el 70% del agua dulce del planeta en forma de hielo.',q:'¿Por qué su deshielo amenaza a Honduras?',opts:['Subiría el nivel del mar y amenazaría las costas del norte y las Islas de la Bahía','Honduras tendría más agua potable gratis','No afectaría a Honduras porque está muy lejos','Bajaría el nivel del mar y crecerían las playas'],correct:0,model:'Al derretirse ese hielo, sube el nivel del mar; Honduras, país costero tropical, vería inundadas zonas del norte y las Islas de la Bahía.'},
-  {dato:'Las remesas equivalen a ~25% del PIB de Honduras.',q:'¿Qué implica esto para la economía del país?',opts:['La economía hondureña depende mucho del dinero que envían los emigrantes','Honduras ya no necesita exportar nada','Las remesas casi no influyen en la economía','Significa que el 25% del país es propiedad de EE.UU.'],correct:0,model:'Una cuarta parte de la economía proviene del dinero enviado desde el exterior; es la principal fuente de divisas y sostiene a millones de familias.'},
-  {dato:'EE.UU. recibe más del 50% de las exportaciones hondureñas.',q:'¿Qué implica esta dependencia comercial?',opts:['Un cambio en el mercado de EE.UU. afecta fuertemente la economía de Honduras','Honduras exporta a todos los países por igual','EE.UU. produce la mitad de lo que consume Honduras','Honduras no comercia con Estados Unidos'],correct:0,model:'Al concentrar más de la mitad de las ventas en un solo país, cualquier crisis o cambio de política en EE.UU. golpea directamente la economía hondureña.'},
+  {dato:'Las remesas equivalen a ~25% del PIB de Honduras.',q:'¿Qué implica esto para la economía del país?',opts:['La economía hondureña depende mucho del dinero que envían los emigrantes','Honduras ya no necesita exportar nada','Las remesas casi no influyen en la economía','Significa que el 25% del país es propiedad de EE. UU.'],correct:0,model:'Una cuarta parte de la economía proviene del dinero enviado desde el exterior; es la principal fuente de divisas y sostiene a millones de familias.'},
+  {dato:'EE. UU. recibe más del 50% de las exportaciones hondureñas.',q:'¿Qué implica esta dependencia comercial?',opts:['Un cambio en el mercado de EE. UU. afecta fuertemente la economía de Honduras','Honduras exporta a todos los países por igual','EE. UU. produce la mitad de lo que consume Honduras','Honduras no comercia con Estados Unidos'],correct:0,model:'Al concentrar más de la mitad de las ventas en un solo país, cualquier crisis o cambio de política en EE. UU. golpea directamente la economía hondureña.'},
   {dato:'Los aborígenes australianos llevan más de 60,000 años en Australia.',q:'¿Qué se puede concluir de este dato?',opts:['Son una de las culturas vivas continuas más antiguas conocidas del mundo','Llegaron a Australia hace muy poco tiempo','Son originarios de Nueva Zelanda','Su cultura ya desapareció por completo'],correct:0,model:'Con 60,000+ años de presencia continua, representan la cultura viva más antigua conocida y guardan el arte rupestre más antiguo del mundo.'},
   {dato:'El Tratado Antártico (1959) prohíbe la minería y el uso militar.',q:'¿Qué implica para el futuro del continente?',opts:['La Antártida se conserva como zona de paz y ciencia, sin explotación comercial','Cualquier país puede extraer minerales si los necesita','Es territorio militar de una sola potencia','Se pueden construir grandes ciudades allí'],correct:0,model:'El tratado congela los reclamos de soberanía y reserva el continente para la investigación pacífica; nadie puede explotarlo comercialmente.'},
   {dato:'La Gran Barrera de Coral genera unos 6,000 millones de USD al año por turismo.',q:'¿Qué enseña este dato a un país con arrecifes?',opts:['Proteger un arrecife puede convertirlo en una fuente económica sostenible','Los arrecifes solo sirven para pescar sin límite','El turismo destruye siempre los arrecifes','Un arrecife no tiene ningún valor económico'],correct:0,model:'Conservar el arrecife y ofrecer ecoturismo regulado produce ingresos duraderos sin destruirlo; un modelo útil para el Caribe hondureño.'},
@@ -1093,18 +1093,18 @@ const critInterpBank=[
 const critAnalizBank=[
   {af:'Como Honduras está lejos de la Antártida, el deshielo antártico no la afecta.',valida:false,model:'No válida: el deshielo eleva el nivel del mar en todo el planeta; Honduras, país costero, es de los más vulnerables aunque esté lejos.'},
   {af:'El Tratado Antártico permite la minería si un país la necesita.',valida:false,model:'No válida: el Tratado Antártico prohíbe expresamente la minería y el uso militar; reserva el continente para la ciencia y la paz.'},
-  {af:'El Río Amazonas es el río más largo del mundo.',valida:false,model:'No válida: el Amazonas es el más caudaloso del mundo (mayor volumen de agua), no el más largo.'},
+  {af:'El río Amazonas es el río más largo del mundo.',valida:false,model:'No válida: el Amazonas es el más caudaloso del mundo (mayor volumen de agua), no el más largo.'},
   {af:'Los maoríes son un pueblo originario de Australia.',valida:false,model:'No válida: los maoríes son originarios de Nueva Zelanda (Oceanía); los pueblos originarios de Australia son los aborígenes.'},
   {af:'Honduras se ubica en América del Sur.',valida:false,model:'No válida: Honduras está en América Central, no en América del Sur.'},
-  {af:'El CAFTA-DR facilita el comercio de café y textiles entre Honduras y EE.UU.',valida:true,model:'Válida: el CAFTA-DR elimina aranceles y facilita que Honduras exporte café, banano y textiles a Estados Unidos.'},
+  {af:'El CAFTA-DR facilita el comercio de café y textiles entre Honduras y EE. UU.',valida:true,model:'Válida: el CAFTA-DR elimina aranceles y facilita que Honduras exporte café, banano y textiles a Estados Unidos.'},
   {af:'Oceanía es el continente más pequeño del mundo.',valida:true,model:'Válida: con 8.5 millones de km², Oceanía es el continente más pequeño.'},
   {af:'La Antártida no tiene población permanente.',valida:true,model:'Válida: solo viven allí científicos de forma temporal; ningún país tiene residentes permanentes.'},
 ];
-// ── IV. Casos hondureños (mini-caso de decisión: parte cerrada + justificación con rúbrica)
+// ── IV. Casos hondureños (minicaso de decisión: parte cerrada + justificación con rúbrica)
 const critCasoBank=[
-  {esc:'Un caficultor de Marcala quiere exportar su café a Estados Unidos sin pagar impuestos de aduana.',q:'¿Qué acuerdo le conviene aprovechar?',opts:['CAFTA-DR','MERCOSUR','Tratado Antártico','Acuerdo de París'],ans:'CAFTA-DR',model:'El CAFTA-DR elimina los aranceles entre Honduras y EE.UU., que recibe más del 50% de las exportaciones hondureñas; así su café entra sin impuestos y compite mejor.'},
-  {esc:'La alcaldesa de Islas de la Bahía quiere proteger sus arrecifes de coral y a la vez generar ingresos para la comunidad.',q:'¿De qué modelo de Oceanía puede aprender?',opts:['El ecoturismo de la Gran Barrera de Coral','La minería antártica','El haka maorí','El Tratado Antártico'],ans:'El ecoturismo de la Gran Barrera de Coral',model:'La Gran Barrera de Coral (Australia) genera miles de millones al año con ecoturismo marino regulado; conservar el arrecife y ofrecer visitas controladas protege el recurso y da empleo.'},
-  {esc:'Una familia de Olancho recibe cada mes dinero de un pariente que trabaja en EE.UU. y se pregunta por qué es tan importante para el país.',q:'¿Qué concepto explica ese dinero enviado desde el exterior?',opts:['Las remesas','Las importaciones','El Tratado Antártico','El haka'],ans:'Las remesas',model:'Ese dinero son las remesas, que equivalen a ~25% del PIB y son la principal fuente de divisas de Honduras; sostienen el consumo de muchas familias.'},
+  {esc:'Un caficultor de Marcala quiere exportar su café a Estados Unidos sin pagar impuestos de aduana.',q:'¿Qué acuerdo le conviene aprovechar?',opts:['CAFTA-DR','MERCOSUR','Tratado Antártico','Acuerdo de París'],ans:'CAFTA-DR',model:'El CAFTA-DR elimina los aranceles entre Honduras y EE. UU., que recibe más del 50% de las exportaciones hondureñas; así su café entra sin impuestos y compite mejor.'},
+  {esc:'La alcaldesa de Roatán quiere proteger sus arrecifes de coral y a la vez generar ingresos para la comunidad.',q:'¿De qué modelo de Oceanía puede aprender?',opts:['El ecoturismo de la Gran Barrera de Coral','La minería antártica','El haka maorí','El Tratado Antártico'],ans:'El ecoturismo de la Gran Barrera de Coral',model:'La Gran Barrera de Coral (Australia) genera miles de millones al año con ecoturismo marino regulado; conservar el arrecife y ofrecer visitas controladas protege el recurso y da empleo.'},
+  {esc:'Una familia de Olancho recibe cada mes dinero de un pariente que trabaja en EE. UU. y se pregunta por qué es tan importante para el país.',q:'¿Qué concepto explica ese dinero enviado desde el exterior?',opts:['Las remesas','Las importaciones','El Tratado Antártico','El haka'],ans:'Las remesas',model:'Ese dinero son las remesas, que equivalen a ~25% del PIB y son la principal fuente de divisas de Honduras; sostienen el consumo de muchas familias.'},
   {esc:'Un pescador de la costa norte nota que el mar sube poco a poco cada año y teme perder su playa.',q:'¿Qué fenómeno global, ligado a la Antártida, está detrás?',opts:['El deshielo por el cambio climático','El Tratado Antártico','El CAFTA-DR','El haka maorí'],ans:'El deshielo por el cambio climático',model:'El deshielo antártico por el cambio climático eleva el nivel del mar; por eso Honduras apoya el Acuerdo de París, que busca frenar ese calentamiento.'},
 ];
 // ── V. Detective geográfico (errores sembrados desde los distractores reales)
@@ -1132,7 +1132,7 @@ function genEvalCrit(){
   const out=document.getElementById('evalCritOut');out.innerHTML='';
 
   const bar=document.createElement('div');bar.className='eval-score-bar';
-  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: comparar datos (I), interpretarlos (II), evaluarlos con juicio (III), decidir en casos reales (IV) y cazar errores (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Comparo 20</span><span class="eval-score-pill esp-tf">II. Interpreto 20</span><span class="eval-score-pill esp-mc">III. Analizo 20</span><span class="eval-score-pill esp-pr">IV. Casos HN 20</span><span class="eval-score-pill esp-cp">V. Detective 20</span></div>`;
+  bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: comparar datos (I), interpretarlos (II), evaluarlos con juicio (III), decidir en casos reales (IV) y cazar errores (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Comparo 20</span><span class="eval-score-pill esp-tf">II. Interpreto 20</span><span class="eval-score-pill esp-mc">III. Analizo 20</span><span class="eval-score-pill esp-pr">IV. Casos HN 20</span><span class="eval-score-pill esp-cp">V. Detective 20</span></div>`;
   out.appendChild(bar);
 
   // ── I. Comparo los tres continentes (tabla; una celda por fila queda en blanco)
@@ -1145,7 +1145,7 @@ function genEvalCrit(){
   compRows.forEach((r,i)=>{
     compHtml+=`<tr><td class="crit-td-attr">${r.attr}</td>`;
     for(let c=0;c<3;c++){
-      if(c===r.blank){compHtml+=`<td><select class="crit-comp-select" data-comp="${i}" aria-label="Completa ${r.attr} de ${r.contins[c]}"><option value="">— elige —</option>${r.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></td>`;}
+      if(c===r.blank){compHtml+=`<td><select class="crit-comp-select" data-comp="${i}" aria-label="Completa ${r.attr} de ${r.contins[c]}"><option value="">Elige</option>${r.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></td>`;}
       else{compHtml+=`<td>${r.vals[c]}</td>`;}
     }
     compHtml+='</tr>';
@@ -1159,7 +1159,7 @@ function genEvalCrit(){
   const inItems=critInterpBank_pick(rngC);
   let inHtml='';
   inItems.forEach((it,i)=>{
-    inHtml+=`<div class="crit-q-block"><div class="crit-scenario"><strong>📊 Dato:</strong> ${it.dato}</div><div class="crit-q-label">${it.q}</div><div class="crit-mc-opts">${it.opts.map((o,oi)=>`<label class="crit-mc-opt"><input type="radio" name="interp${i}" value="${oi}"> ${o}</label>`).join('')}</div><div class="crit-pauta">${it.opts[it.correct]} — ${it.model}</div><div class="eval-item-feedback" id="critFbIn${i}" aria-live="polite"></div></div>`;
+    inHtml+=`<div class="crit-q-block"><div class="crit-scenario"><strong>📊 Dato:</strong> ${it.dato}</div><div class="crit-q-label">${it.q}</div><div class="crit-mc-opts">${it.opts.map((o,oi)=>`<label class="crit-mc-opt"><input type="radio" name="interp${i}" value="${oi}"> ${o}</label>`).join('')}</div><div class="crit-pauta">${it.opts[it.correct]}: ${it.model}</div><div class="eval-item-feedback" id="critFbIn${i}" aria-live="polite"></div></div>`;
   });
   const s2=document.createElement('div');
   s2.innerHTML=`<div class="eval-section-title">II. Interpreto los datos <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Marca la implicación correcta de cada dato y, en tu cuaderno, justifica una de tus respuestas.</p>${inHtml}</div>`;
@@ -1175,11 +1175,11 @@ function genEvalCrit(){
   s3.innerHTML=`<div class="eval-section-title">III. Analizo y justifico <span class="eval-pts">20 pts · 4 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Decide si cada afirmación es <strong>válida</strong> o <strong>no válida</strong> y justifícala en una línea.</p>${anHtml}</div>`;
   out.appendChild(s3);
 
-  // ── IV. Casos hondureños (2 mini-casos: select cerrado + justificación)
+  // ── IV. Casos hondureños (2 minicasos: select cerrado + justificación)
   const caItems=_pickF(critCasoBank,2,rngC).map(it=>({...it,opts:_shuffleF(it.opts,rngC)}));
   let caHtml='';
   caItems.forEach((it,i)=>{
-    caHtml+=`<div class="crit-fossil-item"><div class="crit-scenario"><strong>🇭🇳 Caso ${i+1}:</strong> ${it.esc}</div><div class="crit-q-label">${it.q}</div><select class="crit-caso-select" data-caso="${i}" aria-label="Respuesta del caso ${i+1}"><option value="">— elige —</option>${it.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><textarea class="crit-textarea" rows="2" aria-label="Justifica el caso ${i+1}" placeholder="Explica por qué (¿qué le conviene y por qué?)..."></textarea><div class="crit-pauta">${it.ans} — ${it.model}</div></div>`;
+    caHtml+=`<div class="crit-fossil-item"><div class="crit-scenario"><strong>🇭🇳 Caso ${i+1}:</strong> ${it.esc}</div><div class="crit-q-label">${it.q}</div><select class="crit-caso-select" data-caso="${i}" aria-label="Respuesta del caso ${i+1}"><option value="">Elige</option>${it.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><textarea class="crit-textarea" rows="2" aria-label="Justifica el caso ${i+1}" placeholder="Explica por qué (¿qué le conviene y por qué?)..."></textarea><div class="crit-pauta">${it.ans}: ${it.model}</div></div>`;
   });
   const s4=document.createElement('div');
   s4.innerHTML=`<div class="eval-section-title">IV. Casos hondureños <span class="eval-pts">20 pts · 10 pts c/u</span></div><div class="eval-item"><p class="crit-q-label">Lee cada caso, elige la opción correcta (5 pts) y justifica tu decisión (5 pts).</p>${caHtml}<div class="crit-rubric"><strong>📋 Rúbrica de la justificación (5 pts c/u):</strong> menciona el vínculo real de la misión (CAFTA-DR, ecoturismo, remesas, deshielo) · explica el beneficio o riesgo · redacción clara. <em>Completa = pts altos; incompleta = pts medios.</em></div><div class="crit-selfscore"><label for="critScoreCasos">Obtenido en las justificaciones (autoevaluación):</label><input type="number" id="critScoreCasos" class="crit-score-input" min="0" max="10" value="0"> <span>de 10 pts</span></div></div>`;
@@ -1381,20 +1381,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Los Continentes: América, Oceanía y la Antártida · Educación Básica · Ciencias Sociales</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Comparo 20 · II. Interpreto 20 · III. Analizo 20 · IV. Casos HN 20 · V. Detective 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · América, Oceanía y la Antártida · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · América, Oceanía y la Antártida · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20 — secciones abiertas: usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 20 · III 20 · IV 20 · V 20. Secciones abiertas: usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
   const win=window.open('','_blank','');
   if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;}

@@ -117,7 +117,7 @@ window.WidgetCocienteJSON = {
       } else if (divisor === 1) {
         cocBar.style.background = "#636e72"; // Gray (Equal)
         txtCoc.style.color = "#636e72";
-        txtLogic.innerHTML = `El divisor es exactamente 1, el cociente es <strong>IGUAL</strong> a 10.`;
+        txtLogic.innerHTML = `Como el divisor es exactamente 1, el cociente es <strong>IGUAL</strong> a 10.`;
       } else {
         cocBar.style.background = "#e84393"; // Pink/Red (Smaller)
         txtCoc.style.color = "#e84393";

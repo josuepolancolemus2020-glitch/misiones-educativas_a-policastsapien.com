@@ -457,7 +457,7 @@ function nContadas(k){ return Object.keys(contadas[k]).length; }
 
 function pintarCuenta(){
   var k = PARTES[parte].k;
-  document.getElementById('cuenta').textContent = seTocan(k) ? nContadas(k) : '—';
+  document.getElementById('cuenta').textContent = seTocan(k) ? nContadas(k) : '·';
   var t = document.getElementById('tabla');
   t.innerHTML = PARTES.map(function(p, i){
     var hecho = resultado[p.k] !== undefined;

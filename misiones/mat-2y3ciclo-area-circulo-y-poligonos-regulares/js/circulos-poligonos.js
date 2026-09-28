@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada: Círculos y Polígonos* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Matemáticas._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada: Círculos y Polígonos* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Matemáticas._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -130,7 +130,7 @@ const fcData=[
   {w:'Polígono Regular',a:'⬢ Figura geométrica plana que tiene <strong>todos sus lados y ángulos iguales</strong>.'},
   {w:'Centro (Polígono)',a:'🎯 Punto interior que está a la misma distancia (equidistante) de todos los <strong>vértices</strong> del polígono.'},
   {w:'Apotema (a)',a:'📐 Segmento que va desde el centro del polígono hasta el <strong>punto medio de cualquier lado</strong>, formando 90°.'},
-  {w:'Área de Polígonos',a:'🧮 Fórmula general para polígonos regulares: <strong>A = (P · a) / 2</strong> (Perímetro por apotema entre dos).'},
+  {w:'Área de Polígonos',a:'🧮 Fórmula general para polígonos regulares: <strong>A = (P · a) / 2</strong> (perímetro por apotema entre dos).'},
   {w:'Perímetro (P)',a:'🔄 La medida del contorno de una figura. En un polígono regular se calcula: <strong>lado × número de lados</strong>.'}
 ];
 let fcIdx = 0;
@@ -144,7 +144,7 @@ const qzData=[
   {q:'¿Cuál es la fórmula para calcular el área de un círculo?',
    o:['a) A = π · d','b) A = (P · a) / 2','c) A = π · r²','d) A = 2 · π · r'],c:2,
    hint:'💡 Piensa en el radio al cuadrado.',
-   exp:'El área de un círculo se calcula multiplicando Pi por el cuadrado de su radio (A = π · r²). La opción d) es para la circunferencia (perímetro).'},
+   exp:'El área de un círculo se calcula multiplicando pi por el cuadrado de su radio (A = π · r²). La opción d) es para la circunferencia (perímetro).'},
   {q:'Si el diámetro de un círculo es 10 cm, ¿cuál es su radio?',
    o:['a) 10 cm','b) 20 cm','c) 3.14 cm','d) 5 cm'],c:3,
    hint:'💡 Recuerda que el diámetro está formado por exactamente 2 radios.',
@@ -155,8 +155,8 @@ const qzData=[
    exp:'La apotema es el segmento perpendicular que une el centro del polígono con el punto medio de cualquiera de sus lados.'},
   {q:'Para encontrar el área de un hexágono regular usamos:',
    o:['a) A = l · l','b) A = (P · a) / 2','c) A = (b · h) / 2','d) A = π · r²'],c:1,
-   hint:'💡 Requiere conocer todo el contorno (Perímetro) y el segmento central (apotema).',
-   exp:'Para cualquier polígono regular (pentágono, hexágono, etc.), el área se calcula multiplicando su Perímetro (P) por su apotema (a) y dividiendo el resultado entre 2.'},
+   hint:'💡 Requiere conocer todo el contorno (perímetro) y el segmento central (apotema).',
+   exp:'Para cualquier polígono regular (pentágono, hexágono, etc.), el área se calcula multiplicando su perímetro (P) por su apotema (a) y dividiendo el resultado entre 2.'},
   {q:'¿Qué elementos delimitan un "Sector Circular"?',
    o:['a) Dos radios y un arco','b) Tres lados rectos','c) Un diámetro y una cuerda','d) Dos apotemas'],c:0,
    hint:'💡 Piensa en cómo se corta una porción de pizza desde el centro.',
@@ -172,7 +172,7 @@ const qzData=[
   {q:'Al calcular áreas, ¿en qué tipo de unidades se debe expresar el resultado?',
    o:['a) Unidades cúbicas (cm³)','b) Unidades lineales (cm)','c) Grados (°)','d) Unidades cuadradas (cm²)'],c:3,
    hint:'💡 Imagina que estás cubriendo la superficie con pequeños cuadritos.',
-   exp:'El área siempre se expresa en unidades cuadradas (cm², m², km²), ya que mide superficies bidimensionales, a diferencia del perímetro que es lineal.'},
+   exp:'El área siempre se expresa en unidades cuadradas (cm², m², km²), ya que mide superficies bidimensionales, a diferencia del perímetro, que es lineal.'},
 ];
 let qzIdx=0, qzSel=-1, qzDone=false;
 function buildQz(){ qzIdx=0; qzSel=-1; qzDone=false; showQz(); }
@@ -211,7 +211,7 @@ function checkQz(){
   }else{
     opts[qzSel].classList.add('wrong');
     opts[q.c].classList.add('correct');
-    fb('fbQz','Incorrecto — observa la explicación abajo.',false);
+    fb('fbQz','Incorrecto. Observa la explicación abajo.',false);
     sfx('no');
     expEl.className='exp-box show err';
   }
@@ -238,7 +238,7 @@ const classGroups = [
   { label:['Fórmulas de Área','Fórmulas Lineales'], headA:'🧮 Área (Superficie)', headB:'📏 Perímetro/Longitud', colA:'ar', colB:'lin',
     words:[{w:'A = π · r²',t:'ar'},{w:'P = lado × n',t:'lin'},{w:'A = (P · a) / 2',t:'ar'},{w:'d = 2 · r',t:'lin'},{w:'A. Sector = (π·r²·α)/360',t:'ar'},{w:'P = L_arco + 2r',t:'lin'}] },
   { label:['Unidades Lineales','Unidades Cuadradas'], headA:'📏 Unidades Lineales', headB:'🧊 Unidades Cuadradas', colA:'uni1', colB:'uni2',
-    words:[{w:'Centímetros (cm)',t:'uni1'},{w:'Metros Cuadrados (m²)',t:'uni2'},{w:'Kilómetros (km)',t:'uni1'},{w:'Centímetros Cua. (cm²)',t:'uni2'},{w:'Milímetros (mm)',t:'uni1'},{w:'Hectáreas (ha)',t:'uni2'}] },
+    words:[{w:'Centímetros (cm)',t:'uni1'},{w:'Metros cuadrados (m²)',t:'uni2'},{w:'Kilómetros (km)',t:'uni1'},{w:'Centímetros cuadrados (cm²)',t:'uni2'},{w:'Milímetros (mm)',t:'uni1'},{w:'Hectáreas (ha)',t:'uni2'}] },
 ];
 let currentClassGroupIdx = 0, clsSelectedWord = null;
 function buildClass(){
@@ -248,7 +248,7 @@ function buildClass(){
   ['col-left','col-right'].forEach(colId=>{ const col=document.getElementById(colId); col.onclick=(e)=>{ if(!clsSelectedWord||e.target.classList.contains('drop-item')) return; const targetId=colId==='col-left'?'items-left':'items-right'; const wordsCol=document.getElementById(targetId); const item=document.createElement('div'); item.className='drop-item'; item.textContent=clsSelectedWord.textContent; item.dataset.t=clsSelectedWord.dataset.t; const original=clsSelectedWord; item.onclick=(ev)=>{ev.stopPropagation();if(clsSelectedWord!==null){col.click();}else{document.getElementById('clsBank').appendChild(original);original.classList.remove('sel-word');item.remove();sfx('click');}}; wordsCol.appendChild(item); clsSelectedWord.remove(); clsSelectedWord=null; sfx('click'); }; });
 }
 function checkClass(){ const remaining=document.querySelectorAll('#clsBank .wb-item').length; if(remaining>0){fb('fbCls','Mueve todas las palabras a las columnas primero.',false);return;} const group=classGroups[currentClassGroupIdx]; let allOk=true; document.querySelectorAll('#items-left .drop-item,#items-right .drop-item').forEach(el=>{ const inLeft=el.parentElement.id==='items-left'; const expectedType=inLeft?group.colA:group.colB; if(el.dataset.t===expectedType){el.classList.add('cls-ok');}else{el.classList.add('cls-no');allOk=false;} }); if(!xpTracker.cls.has(currentClassGroupIdx)){xpTracker.cls.add(currentClassGroupIdx);pts(5);} if(allOk){fb('fbCls','¡Perfecto! +5 XP',true);sfx('fan');fin('s-clasifica');unlockAchievement('clasif_pro');}else{fb('fbCls','Hay errores. Los errados llevan ✗.',false);sfx('no');} }
-function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs '+classGroups[currentClassGroupIdx].label[1]); }
+function nextClassGroup(){ sfx('click'); currentClassGroupIdx=(currentClassGroupIdx+1)%classGroups.length; buildClass(); document.getElementById('fbCls').classList.remove('show'); showToast('🔄 Grupo: '+classGroups[currentClassGroupIdx].label[0]+' vs. '+classGroups[currentClassGroupIdx].label[1]); }
 function resetClass(){ sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
 // ===================== IDENTIFICAR =====================
@@ -281,7 +281,7 @@ const cmpData=[
   {s:'Un ___ circular está delimitado por dos radios y un arco.',opts:['polígono','sector','perímetro'],c:1},
   {s:'El área siempre se expresa en unidades ___.',opts:['cuadradas','lineales','cúbicas'],c:0},
   {s:'Para el área de un polígono, multiplicamos ___ por apotema y dividimos por dos.',opts:['Lado','Centro','Perímetro'],c:2},
-  {s:'El punto equidistante a todos los vértices es el ___.',opts:['radio','centro','vértice'],c:1},
+  {s:'El punto equidistante de todos los vértices es el ___.',opts:['radio','centro','vértice'],c:1},
   {s:'El perímetro de un hexágono de lado 4cm es ___ cm.',opts:['20','24','16'],c:1},
 ];
 let cmpIdx=0, cmpSel=-1, cmpDone=false;
@@ -299,7 +299,7 @@ function checkCmp(){
   if(cmpSel===cmpData[cmpIdx].c){
     opts[cmpSel].classList.add('correct');
     document.getElementById('cmpSent').innerHTML=cmpData[cmpIdx].s.replace('___',`<span class="blank" style="color:var(--jade);border-color:var(--jade)">${opts[cmpSel].textContent}</span>`);
-    fb('fbCmp','¡Correcto! +5 XP — Presiona «Siguiente» para continuar.',true);
+    fb('fbCmp','¡Correcto! +5 XP. Presiona «Siguiente» para continuar.',true);
     if(!xpTracker.cmp.has(cmpIdx)){xpTracker.cmp.add(cmpIdx);pts(5);}
     sfx('ok');
   }else{
@@ -332,7 +332,7 @@ function startReto(){ if(retoRunning)return; sfx('click'); retoRunning=true; ret
 function showRetoWord(){ if(retoPool.length===0) retoPool=_shuffle([...retoPairs[currentRetoPairIdx].words,...retoPairs[currentRetoPairIdx].words]); retoCurrent=retoPool.pop(); document.getElementById('retoWord').textContent=retoCurrent.w; }
 function ansReto(t){ if(!retoRunning||!retoCurrent)return; const firstPlay=!xpTracker.reto.has(currentRetoPairIdx); if(t===retoCurrent.t){sfx('ok');retoOk++;if(firstPlay)pts(1);}else{sfx('no');retoErr++;if(firstPlay)pts(-1);} document.getElementById('retoScore').textContent=`✅ ${retoOk} correctas | ❌ ${retoErr} errores`; showRetoWord(); }
 function endReto(){ retoRunning=false; document.getElementById('retoWord').textContent='🏁 ¡Tiempo!'; document.getElementById('retoTimer').style.color='var(--pri)'; xpTracker.reto.add(currentRetoPairIdx); if(retoOk>=5){fin('s-reto');unlockAchievement('reto_hero');fb('fbReto',`¡Excelente! ${retoOk} correctas de ${retoOk+retoErr}.`,true);}else{fb('fbReto',`${retoOk} correctas. ¡Intenta de nuevo para mejorar!`,false);} }
-function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; updateRetoButtons(); resetReto(); showToast('🔄 Pareja: '+retoPairs[currentRetoPairIdx].label[0]+' vs '+retoPairs[currentRetoPairIdx].label[1]); }
+function nextRetoPair(){ sfx('click'); currentRetoPairIdx=(currentRetoPairIdx+1)%retoPairs.length; updateRetoButtons(); resetReto(); showToast('🔄 Pareja: '+retoPairs[currentRetoPairIdx].label[0]+' vs. '+retoPairs[currentRetoPairIdx].label[1]); }
 function resetReto(){ if(retoTimerInt) clearInterval(retoTimerInt); retoRunning=false; retoOk=0; retoErr=0; retoSec=30; document.getElementById('retoTimer').textContent='⏱ 30'; document.getElementById('retoTimer').style.color='var(--pri)'; document.getElementById('retoWord').textContent='¡Prepárate!'; document.getElementById('retoScore').textContent='✅ 0 correctas | ❌ 0 errores'; document.getElementById('fbReto').classList.remove('show'); }
 
 // ===================== GENERADOR DE TAREAS =====================
@@ -344,7 +344,7 @@ const identifyTasks=[
   {q:'Porción circular delimitada por dos radios y un arco.',ans:'Sector circular.'},
   {q:'Medida del contorno de una figura plana.',ans:'Perímetro.'},
   {q:'Segmento que mide el doble del radio.',ans:'Diámetro.'},
-  {q:'Valor aproximado de Pi (π).',ans:'3.1416'},
+  {q:'Valor aproximado de pi (π).',ans:'3.1416'},
   {q:'Unidad correcta para medir una superficie (área).',ans:'Unidades Cuadradas (m², cm²...)'},
 ];
 const classifyTasks=[
@@ -362,19 +362,19 @@ const completeTasks=[
   {q:'La ___ es la distancia del centro al punto medio del lado del polígono.',blank:'apotema',ans:'apotema'},
   {q:'El ___ equivale a dos radios.',blank:'diámetro',ans:'diámetro'},
   {q:'El ___ del sector circular incluye el arco y dos radios.',blank:'perímetro',ans:'perímetro'},
-  {q:'Para el área de un polígono se necesita el Perímetro y la ___.',blank:'apotema',ans:'apotema'},
+  {q:'Para el área de un polígono se necesita el perímetro y la ___.',blank:'apotema',ans:'apotema'},
   {q:'El área se mide siempre en unidades ___.',blank:'cuadradas',ans:'cuadradas'},
   {q:'Un sector circular parece una rebanada de ___.',blank:'pizza',ans:'pizza'},
   {q:'Un hexágono regular tiene ___ lados iguales.',blank:'seis',ans:'seis'},
 ];
 const explainQuestions=[
-  {q:'¿Cuál es la diferencia entre círculo y circunferencia?',ans:'El círculo es la superficie plana interior, la circunferencia es el borde o perímetro.'},
+  {q:'¿Cuál es la diferencia entre círculo y circunferencia?',ans:'El círculo es la superficie plana interior; la circunferencia es el borde o perímetro.'},
   {q:'¿Qué es la apotema de un polígono regular?',ans:'El segmento que va del centro al punto medio de un lado (formando 90°).'},
   {q:'¿Cómo se calcula el perímetro de un octágono regular?',ans:'Multiplicando la medida de un lado por 8.'},
   {q:'¿Qué es un sector circular?',ans:'Una porción del círculo limitada por dos radios y un arco.'},
   {q:'¿Por qué el área se mide en centímetros cuadrados y no en centímetros?',ans:'Porque el área mide una superficie (2 dimensiones), mientras el centímetro mide longitud (1 dimensión).'},
   {q:'Si tienes el diámetro de un círculo, ¿cómo encuentras su área?',ans:'Se divide el diámetro entre 2 para sacar el radio, y luego se aplica A = π · r².'},
-  {q:'Explica la fórmula A = (P · a) / 2',ans:'Significa Área igual a Perímetro por apotema, todo dividido entre 2. Aplica a polígonos regulares.'},
+  {q:'Explica la fórmula A = (P · a) / 2',ans:'Significa Área igual a Perímetro por apotema, todo dividido entre 2. Se aplica a polígonos regulares.'},
 ];
 function genTask(){
   sfx('click'); const type=document.getElementById('tgType').value; const count=parseInt(document.getElementById('tgCount').value); const out=document.getElementById('tgOut'); out.innerHTML=''; ansVisible=false;
@@ -485,9 +485,9 @@ function _evalFormaSelector() { _injectFormaSel('genEval', 'evalFormaSel', evalF
 
 function genEval(){
   sfx('click'); _evalFormaSelector(); const _selF = document.getElementById('evalFormaSel'); if (_selF && parseInt(_selF.value, 10)) evalFormNum = Math.min(EVAL_FORMAS, Math.max(1, parseInt(_selF.value, 10))); const cf = evalFormNum; const rng = _evalRng(cf); /* la Forma cf siembra TODO el azar de esta evaluación */ window._currentEvalForm=cf; evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector(); saveProgress();
-  document.getElementById('eval-screen-title').textContent=`📝 Evaluación Final — Forma ${cf} · Áreas y Polígonos`;
+  document.getElementById('eval-screen-title').textContent=`📝 Evaluación Final · Forma ${cf} · Áreas y Polígonos`;
   evalAnsVisible=false; const out=document.getElementById('evalOut'); out.innerHTML='';
-  const bar=document.createElement('div');bar.className='eval-score-bar'; bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+  const bar=document.createElement('div');bar.className='eval-score-bar'; bar.innerHTML=`<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
   out.appendChild(bar);
   
   const cpItems=_pickF(evalCPBank,5, rng);
@@ -508,7 +508,7 @@ function genEval(){
   const prItems=_pickF(evalPRBank,5, rng); const shuffledDefs=_shuffleF(prItems, rng); const letters=['A','B','C','D','E'];
   const s4=document.createElement('div'); s4.innerHTML='<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
   const matchCard=document.createElement('div'); matchCard.className='eval-item';
-  let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>'; prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">—</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;}); colLeft+='</div>';
+  let colLeft='<div class="eval-match-col"><h4>📌 Términos</h4>'; prItems.forEach((item,i)=>{colLeft+=`<div class="eval-match-item"><span class="eval-match-letter">${i+16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i+16}"><option value="">?</option>${letters.map(l=>`<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`;}); colLeft+='</div>';
   let colRight='<div class="eval-match-col"><h4>🔑 Definiciones</h4>'; shuffledDefs.forEach((item,i)=>{colRight+=`<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`;}); colRight+='</div>';
   const ansKey=prItems.map((item,i)=>{const letter=letters[shuffledDefs.findIndex(d=>d.def===item.def)];return `${i+16}→${letter}`;}).join(' · ');
   matchCard.innerHTML=`<div class="eval-match-grid">${colLeft}${colRight}</div><div class="eval-answer" style="display:none;">${ansKey}</div><div class="eval-item-feedback" id="evalFbPr" aria-live="polite"></div>`;
@@ -614,7 +614,7 @@ function printEval(){
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc=`<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -689,21 +689,21 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 <div class="ph">
   <h2>Evaluación Final · Misión Áreas y Polígonos · Matemáticas</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Áreas y Polígonos · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Áreas y Polígonos · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
   const win=window.open('','_blank',''); if(!win){showToast('⚠️ Activa las ventanas emergentes para imprimir');return;} win.document.write(doc); win.document.close(); setTimeout(()=>win.print(),400);
 }
@@ -829,7 +829,7 @@ function genEvalOp() {
   evalOpFormNum = (evalOpFormNum % EVAL_FORMAS) + 1;
   _injectFormaSel('genEvalOp', 'evalOpFormaSel', evalOpFormNum, function (v) { evalOpFormNum = v; });
   saveProgress();
-  document.getElementById('evalop-screen-title').textContent = '📐 Prueba Operativa — Forma ' + cf + ' · Calculando Áreas y Perímetros';
+  document.getElementById('evalop-screen-title').textContent = '📐 Prueba Operativa · Forma ' + cf + ' · Calculando Áreas y Perímetros';
   evalOpAnsVisible = false;
   const out = document.getElementById('evalOpOut'); out.innerHTML = '';
 
@@ -990,7 +990,7 @@ function printEvalOp() {
   const fracDec = d.retoFrac.den === 3 ? ' (≈ 0.33)' : ' (= ' + _opFmt(d.retoFrac.num / d.retoFrac.den) + ')';
   pR += `<div class="p-sec" style="grid-column:1/-1;"><div class="p-ttl">V. Retos de olimpiada</div><div class="p-ord-line"><strong>1.</strong> ${d.ord.correctLetters.join(' → ')} (radios: ${d.ord.correctRadios.join(', ')} cm)</div><div class="p-ord-line"><strong>2.</strong> Detective del error: ${d.retoErr.ans} ${d.retoErr.u}</div><div class="p-ord-line"><strong>3.</strong> Fracción del círculo: ${d.retoFrac.ansTxt}${fracDec}</div></div>`;
 
-  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Áreas y Polígonos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:120px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalOpPage"><div class="ph"><h2>Examen de Matemáticas — Prueba Operativa · Calculando Áreas y Perímetros · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>Nº:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaOpPage"><div class="p-head"><div class="p-main">✔ PAUTA — Prueba Operativa · Calculando Áreas y Perímetros · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalOpPage",250,0.55,1.2);fit("pautaOpPage",250,0.55,1.2);})();</` + `script></body></html>`;
+  const doc = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Prueba Operativa Áreas y Polígonos · Forma ${forma}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial,Helvetica,sans-serif;font-size:11.5pt;color:#111;background:#fff;padding:4mm 6mm;width:201.9mm;margin:0 auto;}.ph{margin-bottom:0.5rem;}.ph h2{font-size:11pt;font-weight:700;text-align:center;margin-bottom:0.4rem;color:#1565c0;}.ph-line{display:flex;align-items:baseline;gap:5px;margin-bottom:4px;}.ph-fill{flex:1;border-bottom:1px solid #555;min-height:11px;display:block;}.ph-m{display:inline-block;min-width:80px;border-bottom:1px solid #555;}.ph-s{display:inline-block;min-width:52px;border-bottom:1px solid #555;}.ph-xs{display:inline-block;min-width:36px;border-bottom:1px solid #555;}.ph-crit{font-size:10pt;text-align:center;color:#1565c0;margin-top:0.15rem;font-weight:700;}.sec-title{font-size:10.5pt;font-weight:700;padding:0.22rem 0.5rem;margin:0.5rem 0 0.22rem;border-left:4px solid #1565c0;background:#e3f2fd;display:flex;justify-content:space-between;align-items:center;color:#1565c0;}.obt-row{display:flex;align-items:baseline;gap:4px;font-size:9pt;color:#1565c0;font-weight:700;font-style:italic;}.obt-line{display:inline-block;min-width:50px;border-bottom:1.5px solid #1565c0;height:12px;}.qn{font-weight:700;min-width:20px;display:inline-block;color:#1565c0;}.opx-instr{font-size:9pt;color:#555;margin-bottom:0.25rem;}.opx-print-row{display:flex;align-items:baseline;gap:0.4rem;font-size:11pt;padding:0.22rem 0.2rem;border-bottom:1px dotted #ddd;}.opx-print-expr{font-family:'Courier New',monospace;font-weight:700;}.opx-blank{display:inline-block;width:120px;flex:none;border-bottom:1.5px solid #111;min-height:14px;margin-left:0.4rem;}.rnd-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;margin-top:0.2rem;}.rnd-tbl{width:100%;border-collapse:collapse;font-size:9pt;}.rnd-tbl th,.rnd-tbl td{border:1px solid #bbb;padding:0.15rem 0.35rem;text-align:left;}.rnd-tbl th{background:#e3f2fd;color:#1565c0;font-size:8.5pt;}.ord-print-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.8rem;margin-top:0.2rem;}.ord-print-box{border:1px solid #ccc;border-radius:4px;padding:0.3rem 0.4rem;break-inside:avoid;}.ord-print-dir{font-size:9pt;font-weight:700;color:#1565c0;margin-bottom:0.2rem;}.ord-print-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;}.ord-print-tbl td{border:1px solid #bbb;padding:0.12rem 0.25rem;text-align:center;font-family:'Courier New',monospace;}.total-row{display:flex;align-items:baseline;justify-content:flex-end;gap:7px;font-size:11pt;color:#1565c0;font-weight:700;font-style:italic;margin-top:0.5rem;padding:0.2rem 0.5rem;background:#e3f2fd;border-radius:4px;}.total-row .obt-line{min-width:80px;}.pauta-wrap{page-break-before:always;padding-top:0.4rem;}.p-head{border-bottom:2px solid #1565c0;padding-bottom:0.35rem;margin-bottom:0.5rem;text-align:center;}.p-main{font-size:13pt;font-weight:700;color:#1565c0;}.p-sub{font-size:9pt;color:#c00;font-weight:700;margin:0.12rem 0;}.p-meta{font-size:9pt;color:#555;}.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}.p-sec{border:1px solid #cce0ff;border-radius:4px;padding:0.35rem 0.55rem;}.p-ttl{font-size:11pt;font-weight:700;color:#1565c0;border-bottom:1px solid #ddd;padding-bottom:0.15rem;margin-bottom:0.25rem;}.p-tbl{width:100%;border-collapse:collapse;font-size:11pt;}.p-tbl tr{border-bottom:1px dotted #ddd;}.p-tbl td{padding:0.14rem 0.2rem;vertical-align:top;}.pn{font-weight:700;width:24px;color:#1565c0;}.pa{color:#007a00;font-weight:600;font-family:'Courier New',monospace;}.p-ord-line{font-size:10.5pt;margin-bottom:0.2rem;color:#007a00;}.print-foot{position:fixed;bottom:2mm;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7.5pt;color:#111;background:#fff;padding:1px 3px;}.pf-item{display:flex;align-items:center;gap:4px;white-space:nowrap;}.pf-line{display:inline-block;min-width:34px;border-bottom:1px solid #555;height:9px;}.pf-box{display:inline-block;width:11px;height:11px;border:1.3px solid #111;border-radius:2px;background:#fff;flex-shrink:0;}.forma-tag{font-size:7pt;color:#555;border:1px solid #bbb;padding:1px 5px;border-radius:3px;background:white;white-space:nowrap;}@media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}</style></head><body><div id="evalOpPage"><div class="ph"><h2>Examen de Matemáticas · Prueba Operativa · Calculando Áreas y Perímetros · Educación Básica</h2><div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div><div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado:</strong><span class="ph-s">&nbsp;</span><strong>N.º:</strong><span class="ph-xs">&nbsp;</span></div><p class="ph-crit">Valor total: 100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Forma ${forma}</p></div>${s1}${s2}${s3}${s4}${s5}<div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div></div><div class="pauta-wrap" id="pautaOpPage"><div class="p-head"><div class="p-main">✔ PAUTA: Prueba Operativa · Calculando Áreas y Perímetros · Forma ${forma}</div><div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div><div class="p-meta">100 pts · I: 20 · II: 10 · III: 20 · IV: 30 · V: 20 · Matemáticas · Educación Básica</div></div><div class="p-grid">${pR}</div></div><div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div><script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalOpPage",250,0.55,1.2);fit("pautaOpPage",250,0.55,1.2);})();</` + `script></body></html>`;
   const win = window.open('', '_blank', '');
   if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
   win.document.write(doc); win.document.close(); setTimeout(() => win.print(), 400);
@@ -1004,7 +1004,7 @@ function openDiploma(){
   const msgs=['🚀 ¡ÁNIMO! Comienza tu misión. ¡Cada paso cuenta!','🌱 ¡GRAN INICIO! Estás dando los primeros pasos.','📚 ¡BUEN TRABAJO! Vas progresando muy bien.','💪 ¡MUY BIEN! Dominas gran parte del contenido.','🌟 ¡INCREÍBLE avance! Estás cerca de la excelencia.','🏆 ¡EXTRAORDINARIO! Completaste TODA la misión. ¡Eres experto en Áreas y Polígonos!'];
   const mi=pct===100?5:pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0; document.getElementById('diplMsg').textContent=msgs[mi];
   document.getElementById('diplDate').textContent='Honduras, '+new Date().toLocaleDateString('es-HN',{year:'numeric',month:'long',day:'numeric'});
-  const achStr=unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún — ¡sigue completando secciones!';
+  const achStr=unlockedAch.length>0?'🏅 Logros: '+unlockedAch.map(id=>ACHIEVEMENTS[id].icon+' '+ACHIEVEMENTS[id].label).join(', '):'Sin logros aún. ¡Sigue completando secciones!';
   document.getElementById('diplAch').textContent=achStr; document.getElementById('diplomaOverlay').classList.add('open'); document.querySelector('.diploma-input').focus();
 }
 function closeDiploma(){ document.getElementById('diplomaOverlay').classList.remove('open'); }

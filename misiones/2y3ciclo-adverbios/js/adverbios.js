@@ -3,7 +3,7 @@ function _waShare(texto){const enc=encodeURIComponent(texto);const esMovil=/Andr
 // Compartir misión por WhatsApp
 function compartirMision() {
     const url = window.location.href;
-    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica sobre este tema y sobresale en ser de los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
+    const texto = `🚀 *Misión Asignada* 🚀\n\nPractica este tema y ponte entre los mejores alumnos. 🏆\n\nDesbloquea *todos los logros* y puedes poner *tus datos* para que tu maestro observe todos tus logros. 📋\n\n_Se te hará una prueba escrita y serás excelente estudiante en Lengua y Literatura._ ✍️\n\n👇 *TOCA EL ENLACE PARA INICIAR TU MISIÓN* 👇\n${url}`;
     _waShare(texto);
 }
 
@@ -198,16 +198,16 @@ function go(id) {
 // ===================== FLASHCARD DATA =====================
 const fcData = [
     { w: 'Adverbio', a: '🧭 Palabra <strong>invariable</strong> que modifica al verbo, a un adjetivo o a otro adverbio. No cambia de género ni número.' },
-    { w: 'Adverbio de Lugar', a: '📍 Indica dónde ocurre la acción. Ej: <strong>aquí, allí, cerca, lejos, dentro, fuera</strong>.' },
-    { w: 'Adverbio de Tiempo', a: '⏰ Indica cuándo ocurre la acción. Ej: <strong>hoy, ayer, mañana, siempre, nunca, pronto</strong>.' },
-    { w: 'Adverbio de Modo', a: '🎯 Indica cómo se realiza la acción. Ej: <strong>bien, mal, así, rápidamente, despacio</strong>.' },
-    { w: 'Adverbio de Cantidad', a: '⚖️ Indica la intensidad o cantidad. Ej: <strong>mucho, poco, muy, bastante, demasiado</strong>.' },
-    { w: 'Adverbio de Afirmación', a: '✅ Confirma lo que se expresa. Ej: <strong>sí, también, claro, efectivamente</strong>.' },
-    { w: 'Adverbio de Negación', a: '❌ Niega lo que se expresa. Ej: <strong>no, nunca, jamás, tampoco</strong>.' },
-    { w: 'Adverbio de Duda', a: '❓ Expresa posibilidad o incertidumbre. Ej: <strong>quizás, tal vez, acaso, posiblemente</strong>.' },
-    { w: 'Sufijo "-mente"', a: '🔧 Se agrega al adjetivo en su forma <strong>femenina</strong> para formar un adverbio de modo. Ej: lenta → <strong>lentamente</strong>.' },
-    { w: 'Adverbio vs Adjetivo', a: '⚔️ El adjetivo <strong>concuerda</strong> en género y número ("niña rápida"). El adverbio es <strong>invariable</strong> ("corre rápido").' },
-    { w: 'Adverbios en serie', a: '🔗 Cuando hay dos o más adverbios en -mente seguidos, <strong>solo el último</strong> conserva el sufijo. Ej: "Habló clara y <strong>precisamente</strong>".' },
+    { w: 'Adverbio de Lugar', a: '📍 Indica dónde ocurre la acción. Ej.: <strong>aquí, allí, cerca, lejos, dentro, fuera</strong>.' },
+    { w: 'Adverbio de Tiempo', a: '⏰ Indica cuándo ocurre la acción. Ej.: <strong>hoy, ayer, mañana, siempre, nunca, pronto</strong>.' },
+    { w: 'Adverbio de Modo', a: '🎯 Indica cómo se realiza la acción. Ej.: <strong>bien, mal, así, rápidamente, despacio</strong>.' },
+    { w: 'Adverbio de Cantidad', a: '⚖️ Indica la intensidad o cantidad. Ej.: <strong>mucho, poco, muy, bastante, demasiado</strong>.' },
+    { w: 'Adverbio de Afirmación', a: '✅ Confirma lo que se expresa. Ej.: <strong>sí, también, claro, efectivamente</strong>.' },
+    { w: 'Adverbio de Negación', a: '❌ Niega lo que se expresa. Ej.: <strong>no, nunca, jamás, tampoco</strong>.' },
+    { w: 'Adverbio de Duda', a: '❓ Expresa posibilidad o incertidumbre. Ej.: <strong>quizás, tal vez, acaso, posiblemente</strong>.' },
+    { w: 'Sufijo "-mente"', a: '🔧 Se agrega al adjetivo en su forma <strong>femenina</strong> para formar un adverbio de modo. Ej.: lenta → <strong>lentamente</strong>.' },
+    { w: 'Adverbio vs. Adjetivo', a: '⚔️ El adjetivo <strong>concuerda</strong> en género y número ("niña rápida"). El adverbio es <strong>invariable</strong> ("corre rápido").' },
+    { w: 'Adverbios en serie', a: '🔗 Cuando hay dos o más adverbios en -mente seguidos, <strong>solo el último</strong> conserva el sufijo. Ej.: "Habló clara y <strong>precisamente</strong>".' },
 ];
 let fcIdx = 0;
 function upFC() {
@@ -236,7 +236,7 @@ const qzData = [
     { q: '"NUNCA lo haré". ¿Qué clase de adverbio es "nunca"?', o: ['a) Afirmación', 'b) Tiempo', 'c) Negación', 'd) Lugar'], c: 2 },
     { q: '"QUIZÁS llueva mañana". ¿Qué clase de adverbio es "quizás"?', o: ['a) Negación', 'b) Cantidad', 'c) Duda', 'd) Modo'], c: 2 },
     { q: '¿Cuál es el adverbio formado a partir del adjetivo "feliz"?', o: ['a) Felizmente', 'b) Felizamente', 'c) Felizemente', 'd) Felicidad'], c: 0 },
-    { q: '"Es un corredor RÁPIDO" vs "Corre RÁPIDO". ¿Cuál es la diferencia?', o: ['a) Ninguna, ambos son adverbios', 'b) El 1ero es adverbio, el 2do es adjetivo', 'c) Ambos son sustantivos', 'd) El 1ero es adjetivo (concuerda), el 2do es adverbio (invariable)'], c: 3 },
+    { q: '"Es un corredor RÁPIDO" vs. "Corre RÁPIDO". ¿Cuál es la diferencia?', o: ['a) Ninguna, ambos son adverbios', 'b) El primero es adverbio, el segundo es adjetivo', 'c) Ambos son sustantivos', 'd) El primero es adjetivo (concuerda), el segundo es adverbio (invariable)'], c: 3 },
 ];
 let qzIdx = 0, qzSel = -1, qzDone = false;
 function buildQz() { qzIdx = 0; qzSel = -1; qzDone = false; showQz(); }
@@ -363,7 +363,7 @@ function nextClassGroup() {
     sfx('click');
     currentClassGroupIdx = (currentClassGroupIdx + 1) % classGroups.length;
     buildClass(); document.getElementById('fbCls').classList.remove('show');
-    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs ' + classGroups[currentClassGroupIdx].label[1]);
+    showToast('🔄 Grupo: ' + classGroups[currentClassGroupIdx].label[0] + ' vs. ' + classGroups[currentClassGroupIdx].label[1]);
 }
 function resetClass() { sfx('click'); buildClass(); document.getElementById('fbCls').classList.remove('show'); }
 
@@ -414,7 +414,7 @@ function checkId(i, span) {
             correct.forEach(ci => { if (ci !== i) allWords[ci].classList.add('id-ok'); });
             const others = correct.filter(ci => ci !== i)
                 .map(ci => '"' + idData[idIdx].s[ci].replace(/[,.]$/, '') + '"').join(' y ');
-            fb('fbId', `¡Correcto! +5 XP — ${others} también es ${idData[idIdx].art.toLowerCase()} en esta oración.`, true);
+            fb('fbId', `¡Correcto! +5 XP. También ${others} es ${idData[idIdx].art.toLowerCase()} en esta oración.`, true);
         } else {
             fb('fbId', '¡Correcto! +5 XP', true);
         }
@@ -563,7 +563,7 @@ function nextRetoPair() {
     document.getElementById('retoWord').textContent = '¡Prepárate!';
     document.getElementById('retoScore').textContent = '✅ 0 correctas | ❌ 0 errores';
     document.getElementById('fbReto').classList.remove('show');
-    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs ${retoPairs[currentRetoPairIdx].label[1]}`);
+    showToast(`🔀 Pareja: ${retoPairs[currentRetoPairIdx].label[0]} vs. ${retoPairs[currentRetoPairIdx].label[1]}`);
 }
 function resetReto() {
     sfx('click'); clearInterval(retoTimerInt); retoRunning = false; retoSec = 30; retoOk = 0; retoErr = 0;
@@ -610,8 +610,8 @@ const completeTaskDB = [
 const explainQuestions = [
     { q: '¿Qué es un adverbio y para qué sirve?', ans: 'Es una palabra invariable que modifica al verbo, a un adjetivo o a otro adverbio.' },
     { q: '¿Cuál es la diferencia entre un adjetivo y un adverbio?', ans: 'El adjetivo concuerda en género y número con el sustantivo; el adverbio es invariable.' },
-    { q: '¿Cómo se forman los adverbios de modo terminados en -mente? Da un ejemplo.', ans: 'Se agrega "-mente" al adjetivo en su forma femenina. Ej: lenta → lentamente.' },
-    { q: 'Menciona tres tipos de adverbios y un ejemplo de cada uno.', ans: 'Lugar (aquí), Tiempo (ayer), Modo (bien), Cantidad (mucho), entre otros.' },
+    { q: '¿Cómo se forman los adverbios de modo terminados en -mente? Da un ejemplo.', ans: 'Se agrega "-mente" al adjetivo en su forma femenina. Ej.: lenta → lentamente.' },
+    { q: 'Menciona tres tipos de adverbios y un ejemplo de cada uno.', ans: 'Lugar (aquí), tiempo (ayer), modo (bien), cantidad (mucho), entre otros.' },
     { q: '¿Qué ocurre cuando hay dos o más adverbios en -mente seguidos en una oración?', ans: 'Solo el último conserva el sufijo "-mente"; los anteriores se usan en su forma de adjetivo femenino.' },
 ];
 let ansVisible = false;
@@ -867,7 +867,7 @@ const evalTFBank=[
   {q:'El adverbio que sale de «fácil» se escribe «facilmente», sin tilde.',a:false,k:'tf-facilmente'},
   {q:'El adverbio cambia de género y de número, igual que el adjetivo.',a:false,k:'tf-invariable'},
   {q:'«Tranquilamente» se arma con «tranquila» + -mente.',a:true,k:'tf-tranquila'},
-  {q:'Lo correcto es «Escribió limpiamente y claramente».',a:false,k:'tf-serie'},
+  {q:'La regla de la serie en -mente pide «Escribió limpiamente y claramente».',a:false,k:'tf-serie'},
   {q:'En «Mi abuela es cariñosa», «cariñosa» es un adverbio.',a:false,k:'tf-carinosa'},
   {q:'En «Quizás llueva en Tela», «quizás» es un adverbio.',a:true,k:'tf-quizas'},
   {q:'En «Estudiaremos después del recreo», «después» es un adverbio.',a:true,k:'tf-despues'}
@@ -875,7 +875,7 @@ const evalTFBank=[
 const evalMCBank=[
   {q:'¿Cuál es el adverbio en «Mi tío vive lejos»?',o:['a) tío','b) vive','c) lejos','d) mi'],a:2,k:'mc-lejos'},
   {q:'¿Cuál es el adverbio que sale de «amable»?',o:['a) amablemente','b) amablamente','c) amablomente','d) amabilidad'],a:0,k:'mc-amable'},
-  {q:'¿Cuál está bien escrita?',o:['a) Corrieron alegremente y velozmente','b) Corrieron alegre y velozmente','c) Corrieron alegres y veloces','d) Corrieron alegrementes y veloz'],a:1,k:'mc-serie-veloz'},
+  {q:'¿Cuál sigue la regla de la serie en -mente?',o:['a) Corrieron alegremente y velozmente','b) Corrieron alegre y velozmente','c) Corrieron alegres y veloces','d) Corrieron alegrementes y veloz'],a:1,k:'mc-serie-veloz'},
   {q:'¿En cuál oración «bajo» es un adverbio?',o:['a) El niño bajo juega','b) Es un árbol bajo','c) Habla bajo en la biblioteca','d) La mesa es baja'],a:2,k:'mc-bajo'},
   {q:'Completa: «Ellas llegaron ___»',o:['a) tempranas','b) tempranos','c) temprana','d) temprano'],a:3,k:'mc-temprano'},
   {q:'El adverbio de «rápido» se arma desde…',o:['a) rápido','b) rápida','c) rapidez','d) rapid'],a:1,k:'mc-rapida'},
@@ -952,11 +952,11 @@ function genEval() {
     window._currentEvalForm = cf;
     evalFormNum = (evalFormNum % EVAL_FORMAS) + 1; _evalFormaSelector();
     saveProgress();
-    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final — Forma ${cf} · Los Adverbios`;
+    document.getElementById('eval-screen-title').textContent = `📝 Evaluación Final · Forma ${cf} · Los Adverbios`;
     evalAnsVisible = false;
     const out = document.getElementById('evalOut'); out.innerHTML = '';
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Cada sección vale 25 puntos (5 preguntas × 5 pts)</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">Completar 25 pts</span><span class="eval-score-pill esp-tf">V/F 25 pts</span><span class="eval-score-pill esp-mc">Selección 25 pts</span><span class="eval-score-pill esp-pr">Pareados 25 pts</span></div>`;
     out.appendChild(bar);
     const cpItems = _pickF(evalCPBank, 5, rng);
     const s1 = document.createElement('div'); s1.innerHTML = '<div class="eval-section-title">I. Completar el espacio <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
@@ -974,7 +974,7 @@ function genEval() {
     const s4 = document.createElement('div'); s4.innerHTML = '<div class="eval-section-title">IV. Términos Pareados <span class="eval-pts">25 pts · 5 pts c/u</span></div>';
     const matchCard = document.createElement('div'); matchCard.className = 'eval-item';
     let colLeft = '<div class="eval-match-col"><h4>📌 Términos</h4>';
-    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">—</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
+    prItems.forEach((item, i) => { colLeft += `<div class="eval-match-item"><span class="eval-match-letter">${i + 16}.</span> <select class="eval-match-select" data-pr="${i}" aria-label="Respuesta pareada ${i + 16}"><option value="">?</option>${letters.map(l => `<option value="${l}">${l}</option>`).join('')}</select> ${item.term}</div>`; });
     colLeft += '</div>';
     let colRight = '<div class="eval-match-col"><h4>🔑 Definiciones</h4>';
     shuffledDefs.forEach((item, i) => { colRight += `<div class="eval-match-item"><span class="eval-match-letter">${letters[i]}.</span> ${item.def}</div>`; });
@@ -1102,7 +1102,7 @@ function printEval() {
     const zgCol1 = zgHead + zgKey.slice(0, 10).map(zgRow).join('');
     const zgCol2 = zgHead + zgKey.slice(10).map(zgRow).join('');
     const zgVer = ['A', 'B', 'C', 'D'].map((v, i) => ((forma - 1) % 4) === i ? `<span class="zg-c zg-fill">${v}</span>` : `<span class="zg-c">${v}</span>`).join('');
-    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma} — respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
+    const zgBlock = `<div class="zg-wrap"><div class="zg-title">🎯 Clave rápida estilo ZipGrade · Forma ${forma}: respuestas correctas ya rellenadas para digitar la clave en la app</div><div class="zg-grid"><div class="zg-col">${zgCol1}</div><div class="zg-col">${zgCol2}</div></div><div class="zg-ver"><span>Test Version / Forma:</span>${zgVer}</div><div class="zg-note">1–5 (Completar): se revisan a mano → ✓ (A) equivale a respuesta correcta · 6–10: V=A, F=B · Réplica visual de referencia; para escanear alumnos usa la hoja oficial de ZipGrade.</div></div>`;
 
 const doc = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1175,23 +1175,23 @@ body {font-family:Arial,Helvetica,sans-serif;font-size:12pt;color:#111;backgroun
 @media print{@page{size:letter portrait;margin:5mm 7mm;}body{padding-bottom:9mm;}}
 </style></head><body><div id="evalPage">
 <div class="ph">
-  <h2>Evaluación Final de Misión Los Adverbios — Español — Lengua</h2>
+  <h2>Evaluación Final de Misión Los Adverbios · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Instituto:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · Cada respuesta vale 5 puntos</p>
 </div>
 ${s1}${s2}${s3}${s4}
-<div class="total-row"><span>Total, obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
+<div class="total-row"><span>Total obtenido</span><span class="obt-line"></span><span>de 100%</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Evaluación Final · Misión Los Adverbios · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Evaluación Final · Misión Los Adverbios · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
     <div class="p-meta">Valor total: 100 pts | 4 secciones × 5 preguntas × 5 pts c/u</div>
   </div>
   <div class="p-grid">${pR}</div>
   ${zgBlock}
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.45);fit("pautaPage",252,0.55,1.3);})();</script></body></html>`;
 
     const win = window.open('', '_blank', '');
@@ -1203,7 +1203,7 @@ ${s1}${s2}${s3}${s4}
 
 // ===================== PRUEBA DE PENSAMIENTO CRÍTICO =====================
 // Segunda evaluación imprimible de la misión (Español · Lengua). Todo el
-// contenido nace de los bancos y tarjetas de ESTA misión (adjetivo vs adverbio,
+// contenido nace de los bancos y tarjetas de ESTA misión (adjetivo vs. adverbio,
 // sufijo -mente, adverbios en serie, clases). Formas deterministas: semilla
 // _evalRng(200000 + cf). Progresión de dificultad: identificar → transformar →
 // analizar el error → clasificar/argumentar en texto → producir.
@@ -1250,24 +1250,24 @@ const critMenteBank = [
 // ── III. Detective del error (errores que la misión enseña a evitar)
 const critErrBank = [
     { bad: 'Ella cantó felizamente en la fiesta.', key: 'felizmente', fix: 'Ella cantó felizmente en la fiesta.', rule: 'El adverbio de «feliz» es «felizmente»: el sufijo es -mente, nunca «-amente».' },
-    { bad: 'Habló claramente y precisamente.', key: 'clara', fix: 'Habló clara y precisamente.', rule: 'En una serie de adverbios en -mente, solo el ÚLTIMO conserva el sufijo; el anterior va como adjetivo femenino (clara).' },
+    { bad: 'Habló claramente y precisamente.', key: 'clara', fix: 'Habló clara y precisamente.', rule: 'En una serie de adverbios en -mente, lo normal es que solo el ÚLTIMO conserve el sufijo; el anterior va como adjetivo femenino (clara).' },
     { bad: 'Ellas corren rápidas.', key: 'rapido', fix: 'Ellas corren rápido.', rule: '«Rápido» modifica al verbo «corren»: es adverbio e invariable, no concuerda (no «rápidas»).' },
     { bad: '«Ayer» es un adverbio de lugar.', key: 'tiempo', fix: '«Ayer» es un adverbio de tiempo.', rule: '«Ayer» indica CUÁNDO ocurre la acción → adverbio de tiempo, no de lugar.' },
-    { bad: 'Hablaron lentamente y suavemente.', key: 'lenta', fix: 'Hablaron lenta y suavemente.', rule: 'Serie de -mente: solo el último lleva el sufijo (lenta y suavemente).' },
+    { bad: 'Hablaron lentamente y suavemente.', key: 'lenta', fix: 'Hablaron lenta y suavemente.', rule: 'Serie de -mente: lo normal es que solo el último lleve el sufijo (lenta y suavemente).' },
     { bad: '«Cerca» es un adverbio de tiempo.', key: 'lugar', fix: '«Cerca» es un adverbio de lugar.', rule: '«Cerca» indica DÓNDE ocurre la acción → adverbio de lugar.' },
     { bad: 'Los atletas llegaron rápidamentes.', key: 'rapidamente', fix: 'Los atletas llegaron rápidamente.', rule: 'El adverbio es invariable: no tiene plural; se dice «rápidamente», no «rápidamentes».' },
     { bad: '«Mucho» es un adverbio de modo.', key: 'cantidad', fix: '«Mucho» es un adverbio de cantidad.', rule: '«Mucho» indica intensidad o cantidad → adverbio de cantidad.' },
 ];
-// ── IV. El poder del adverbio en el texto (mini-párrafos hondureños con 5 adverbios subrayados)
+// ── IV. El poder del adverbio en el texto (minipárrafos hondureños con 5 adverbios subrayados)
 const critClassOptions = ['lugar', 'tiempo', 'modo', 'cantidad', 'afirmación', 'negación', 'duda'];
 const critTextBank = [
     {
         scene: '🛒 En el mercado',
-        html: 'Hoy fui temprano al mercado de mi comunidad. <u class="crit-adv">AQUÍ</u><sup>1</sup> los vendedores ofrecen <u class="crit-adv">SIEMPRE</u><sup>2</sup> frutas frescas. Mi mamá compró <u class="crit-adv">MUCHO</u><sup>3</sup> maíz y pagó cincuenta lempiras. «Regatea <u class="crit-adv">BIEN</u><sup>4</sup>», me dijo. <u class="crit-adv">QUIZÁS</u><sup>5</sup> mañana volvamos por más.',
+        html: 'Hoy fui temprano al mercado de mi comunidad. <u class="crit-adv">AQUÍ</u><sup>1</sup> los vendedores ofrecen <u class="crit-adv">SIEMPRE</u><sup>2</sup> frutas frescas. Mi mamá caminó <u class="crit-adv">MUCHO</u><sup>3</sup> buscando maíz y pagó cincuenta lempiras. «Regatea <u class="crit-adv">BIEN</u><sup>4</sup>», me dijo. <u class="crit-adv">QUIZÁS</u><sup>5</sup> mañana volvamos por más.',
         advs: [{ n: 1, w: 'AQUÍ', cls: 'lugar' }, { n: 2, w: 'SIEMPRE', cls: 'tiempo' }, { n: 3, w: 'MUCHO', cls: 'cantidad' }, { n: 4, w: 'BIEN', cls: 'modo' }, { n: 5, w: 'QUIZÁS', cls: 'duda' }],
         effect: [
-            { q: 'Si cambias SIEMPRE (nº 2) por NUNCA, ¿cómo cambia el sentido de la oración?', model: 'Cambia por completo: con NUNCA los vendedores ya no ofrecen frutas frescas de forma habitual; el adverbio de negación indica que jamás lo hacen, lo contrario de SIEMPRE.' },
-            { q: 'Si quitas el adverbio MUCHO (nº 3), ¿qué información se pierde?', model: 'Se pierde la cantidad: ya no sabríamos cuánto maíz compró. El adverbio de cantidad precisa la intensidad de la acción.' }
+            { q: 'Si cambias SIEMPRE (n.º 2) por NUNCA, ¿cómo cambia el sentido de la oración?', model: 'Cambia por completo: con NUNCA los vendedores ya no ofrecen frutas frescas de forma habitual; el adverbio de negación indica que jamás lo hacen, lo contrario de SIEMPRE.' },
+            { q: 'Si quitas el adverbio MUCHO (n.º 3), ¿qué información se pierde?', model: 'Se pierde la cantidad: ya no sabríamos cuánto caminó. El adverbio de cantidad precisa la intensidad de la acción.' }
         ]
     },
     {
@@ -1275,8 +1275,8 @@ const critTextBank = [
         html: '<u class="crit-adv">AYER</u><sup>1</sup> en la escuela estudiamos <u class="crit-adv">BASTANTE</u><sup>2</sup>. La maestra explicó <u class="crit-adv">CLARAMENTE</u><sup>3</sup> la lección. «<u class="crit-adv">SÍ</u><sup>4</sup>, entendimos todo», respondimos. Luego salimos <u class="crit-adv">AFUERA</u><sup>5</sup> al patio.',
         advs: [{ n: 1, w: 'AYER', cls: 'tiempo' }, { n: 2, w: 'BASTANTE', cls: 'cantidad' }, { n: 3, w: 'CLARAMENTE', cls: 'modo' }, { n: 4, w: 'SÍ', cls: 'afirmación' }, { n: 5, w: 'AFUERA', cls: 'lugar' }],
         effect: [
-            { q: 'Si cambias SÍ (nº 4) por NO, ¿cómo cambia el sentido de la respuesta?', model: 'Se invierte: con NO negamos, indicaría que NO entendieron. El adverbio de afirmación confirma; el de negación rechaza.' },
-            { q: 'Si cambias AYER (nº 1) por MAÑANA, ¿qué cambia en el tiempo del relato?', model: 'El relato deja de ser pasado: MAÑANA sitúa la acción en el futuro, algo que todavía no ha ocurrido.' }
+            { q: 'Si cambias SÍ (n.º 4) por NO, ¿cómo cambia el sentido de la respuesta?', model: 'Se invierte: con NO negamos, indicaría que NO entendimos. El adverbio de afirmación confirma; el de negación rechaza.' },
+            { q: 'Si cambias AYER (n.º 1) por MAÑANA, ¿qué cambia en el tiempo del relato?', model: 'El relato deja de ser pasado: MAÑANA sitúa la acción en el futuro, algo que todavía no ha ocurrido.' }
         ]
     },
     {
@@ -1284,8 +1284,8 @@ const critTextBank = [
         html: '<u class="crit-adv">CERCA</u><sup>1</sup> de mi casa hay una pulpería. <u class="crit-adv">HOY</u><sup>2</sup> compré pan y pagué diez lempiras. La señora me atendió <u class="crit-adv">AMABLEMENTE</u><sup>3</sup>. «<u class="crit-adv">TAMBIÉN</u><sup>4</sup> llévate leche», me dijo. <u class="crit-adv">POSIBLEMENTE</u><sup>5</sup> regrese en la tarde.',
         advs: [{ n: 1, w: 'CERCA', cls: 'lugar' }, { n: 2, w: 'HOY', cls: 'tiempo' }, { n: 3, w: 'AMABLEMENTE', cls: 'modo' }, { n: 4, w: 'TAMBIÉN', cls: 'afirmación' }, { n: 5, w: 'POSIBLEMENTE', cls: 'duda' }],
         effect: [
-            { q: 'Si cambias POSIBLEMENTE (nº 5) por SEGURAMENTE, ¿cómo cambia la certeza?', model: 'Aumenta la certeza: POSIBLEMENTE expresa duda; SEGURAMENTE expresa casi seguridad de que regresará.' },
-            { q: 'Si eliminas el adverbio CERCA (nº 1), ¿qué se pierde en la oración?', model: 'Se pierde el lugar: ya no sabríamos dónde está la pulpería respecto a la casa.' }
+            { q: 'Si cambias POSIBLEMENTE (n.º 5) por SEGURAMENTE, ¿cómo cambia la certeza?', model: 'Aumenta la certeza: POSIBLEMENTE expresa duda; SEGURAMENTE expresa casi seguridad de que regresará.' },
+            { q: 'Si eliminas el adverbio CERCA (n.º 1), ¿qué se pierde en la oración?', model: 'Se pierde el lugar: ya no sabríamos dónde está la pulpería respecto a la casa.' }
         ]
     }
 ];
@@ -1305,7 +1305,7 @@ const critProdRubric = [
 // Comparación estricta que SÍ exige la tilde (para el laboratorio -mente)
 function _critNormTilde(v) { return (v || '').toString().toLowerCase().replace(/\s+/g, ' ').trim(); }
 function _critClassSelect(dataAttr, i) {
-    return `<select class="crit-fossil-select" ${dataAttr}="${i}" aria-label="Clase del adverbio ${i + 1}"><option value="">— elige la clase —</option>${critClassOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
+    return `<select class="crit-fossil-select" ${dataAttr}="${i}" aria-label="Clase del adverbio ${i + 1}"><option value="">Elige la clase</option>${critClassOptions.map(e => `<option value="${e}">${e}</option>`).join('')}</select>`;
 }
 
 function genEvalCrit() {
@@ -1323,7 +1323,7 @@ function genEvalCrit() {
 
     // Barra de distribución + progresión de dificultad
     const bar = document.createElement('div'); bar.className = 'eval-score-bar';
-    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje — 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II) → analizar el error (III) → clasificar y argumentar en un texto (IV) → producir por escrito (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Adj/Adv 20</span><span class="eval-score-pill esp-tf">II. -mente 15</span><span class="eval-score-pill esp-mc">III. Error 20</span><span class="eval-score-pill esp-pr">IV. En el texto 25</span><span class="eval-score-pill esp-cp">V. Producción 20</span></div>`;
+    bar.innerHTML = `<div><div class="esb-title">📊 Distribución de puntaje · 100 puntos</div><div class="esb-dist">Dificultad creciente: identificar (I) → transformar (II) → analizar el error (III) → clasificar y argumentar en un texto (IV) → producir por escrito (V).</div></div><div style="display:flex;gap:0.4rem;flex-wrap:wrap;"><span class="eval-score-pill esp-cp">I. Adj/Adv 20</span><span class="eval-score-pill esp-tf">II. -mente 15</span><span class="eval-score-pill esp-mc">III. Error 20</span><span class="eval-score-pill esp-pr">IV. En el texto 25</span><span class="eval-score-pill esp-cp">V. Producción 20</span></div>`;
     out.appendChild(bar);
 
     // ── I. ¿Adjetivo o adverbio? (5 × 4 = 20; radios autocalificables + reescritura modelo)
@@ -1543,20 +1543,20 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 <div class="ph">
   <h2>Evaluación Competencial · Pensamiento Crítico · Los Adverbios · Educación Básica · Español · Lengua</h2>
   <div class="ph-line"><strong>Nombre:</strong><span class="ph-fill">&nbsp;</span><strong>Parcial:</strong><span class="ph-s">&nbsp;</span><strong>Fecha:</strong><span class="ph-m">&nbsp;</span></div>
-  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>Nº Lista:</strong><span class="ph-xs">&nbsp;</span></div>
+  <div class="ph-line"><strong>Centro Educativo:</strong><span class="ph-fill">&nbsp;</span><strong>Grado y Sección:</strong><span class="ph-s">&nbsp;</span><strong>N.º Lista:</strong><span class="ph-xs">&nbsp;</span></div>
   <p class="ph-crit">Valor total: 100 puntos · I. Adj/Adv 20 · II. -mente 15 · III. Error 20 · IV. En el texto 25 · V. Producción 20 · Forma ${forma}</p>
 </div>
 ${s1}${s2}${s3}${s4}${s5}
 <div class="total-row"><span>Total obtenido:</span><span class="obt-line"></span><span>de 100 pts</span></div>
 </div><div class="pauta-wrap" id="pautaPage">
   <div class="p-head">
-    <div class="p-main">✅ PAUTA — Pensamiento Crítico · Los Adverbios · Forma ${forma}</div>
+    <div class="p-main">✅ PAUTA: Pensamiento Crítico · Los Adverbios · Forma ${forma}</div>
     <div class="p-sub">Documento exclusivo del docente · No distribuir al estudiante</div>
-    <div class="p-meta">Valor total: 100 pts | I 20 · II 15 · III 20 · IV 25 · V 20 — secciones abiertas: usar como guía de corrección</div>
+    <div class="p-meta">Valor total: 100 pts | I 20 · II 15 · III 20 · IV 25 · V 20. Secciones abiertas: usar como guía de corrección</div>
   </div>
   <div class="p-grid">${pR}</div>
 </div>
-<div class="print-foot"><span class="pf-item"><strong>Nº de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
+<div class="print-foot"><span class="pf-item"><strong>N.º de Evaluación temática realizada:</strong><span class="pf-line">&nbsp;</span></span><span class="pf-item"><strong>Evaluación con valor en el parcial</strong><span class="pf-box"></span></span><span class="pf-item"><strong>Evaluación solo de repaso</strong><span class="pf-box"></span></span><span class="forma-tag">Forma ${forma}</span></div>
 <script>(function(){function fit(id,mm,min,max){var el=document.getElementById(id);if(!el)return;var target=mm*96/25.4;if(!el.getBoundingClientRect().height)return;var lo=min,hi=max,best=min;for(var i=0;i<12;i++){var z=(lo+hi)/2;el.style.zoom=z;if(el.getBoundingClientRect().height<=target){best=z;lo=z;}else{hi=z;}}el.style.zoom=best*0.995;}fit("evalPage",252,0.55,1.3);fit("pautaPage",252,0.55,1.3);})();<\/script></body></html>`;
     const win = window.open('', '_blank', '');
     if (!win) { showToast('⚠️ Activa las ventanas emergentes para imprimir'); return; }
@@ -1579,7 +1579,7 @@ function openDiploma() {
     const mi = pct === 100 ? 5 : pct >= 80 ? 4 : pct >= 60 ? 3 : pct >= 40 ? 2 : pct >= 20 ? 1 : 0;
     document.getElementById('diplMsg').textContent = msgs[mi];
     document.getElementById('diplDate').textContent = 'Honduras, ' + new Date().toLocaleDateString('es-HN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún — ¡sigue completando secciones!';
+    const achStr = unlockedAch.length > 0 ? '🏅 Logros: ' + unlockedAch.map(id => ACHIEVEMENTS[id].icon + ' ' + ACHIEVEMENTS[id].label).join(', ') : 'Sin logros aún. ¡Sigue completando secciones!';
     document.getElementById('diplAch').textContent = achStr;
     document.getElementById('diplomaOverlay').classList.add('open');
     document.querySelector('.diploma-input').focus();
@@ -1742,7 +1742,7 @@ function copiarEnlaceAlumno() {
 function asignarEnClassroom() {
     const out = document.getElementById('tgOut');
     const url = encodeURIComponent(window.location.href);
-    const titulo = encodeURIComponent('Misión Los Adverbios | Educación Básica – policastsapien.com');
+    const titulo = encodeURIComponent('Misión Los Adverbios | Educación Básica · policastsapien.com');
     const classroomUrl = 'https://classroom.google.com/share?url=' + url + '&title=' + titulo;
 
     if (!out || out.innerHTML.trim() === '') {
@@ -1752,7 +1752,7 @@ function asignarEnClassroom() {
 
     const tipoEl = document.getElementById('tgType');
     const tipoText = tipoEl ? tipoEl.options[tipoEl.selectedIndex].text.replace(/^\S+\s*/, '') : '';
-    let texto = '📚 MISIÓN: LOS ADVERBIOS | Educación Básica – Español · Lengua\n';
+    let texto = '📚 MISIÓN: LOS ADVERBIOS | Educación Básica · Español · Lengua\n';
     texto += '🔗 ' + window.location.href + '\n';
     texto += '📋 Tipo de tarea: ' + tipoText + '\n';
     texto += '─'.repeat(45) + '\n\n';

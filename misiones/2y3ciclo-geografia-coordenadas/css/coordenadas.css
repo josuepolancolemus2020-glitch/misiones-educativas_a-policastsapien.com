@@ -524,10 +524,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 }
 
 
-/* ===== ESTÁNDAR M.E.T.A.S: reverso de flashcards SIEMPRE en minúscula.
+/* ===== Reverso de las flashcards: aquí se fija la letra, NO las mayúsculas.
    Nunca usar class="fa" en texto: Font Awesome 6 dibuja a-z y 0-9 como iconos
-   con forma de MAYÚSCULA (por eso se veía el reverso en mayúsculas). ===== */
-#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;text-transform:lowercase !important;}
+   con forma de MAYÚSCULA (por eso se veía el reverso en mayúsculas).
+   Hubo un text-transform:lowercase y se quitó: con el archivo bien escrito, la
+   pantalla ponía «honduras», «lempira» y «sace», y cada oración en minúscula
+   después del punto. Las mayúsculas las pone el texto. ===== */
+#fcA{font-family:'Nunito','Fredoka',sans-serif !important;font-weight:600 !important;font-style:normal !important;}
 
 /* ==== prueba interactiva calificable en línea ==== */
 .eval-auto-item{break-inside:avoid;}
@@ -545,12 +548,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .eval-pr-sel.eval-input-ok{border-color:var(--jade,#00b894);background:rgba(0,184,148,0.1);}
 .eval-pr-sel.eval-input-no{border-color:#d63031;background:rgba(214,48,49,0.08);}
 
-/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards mayúscula inicial y letra mayor ===== */
-/* Flashcards: mayúscula inicial + letra más grande sin desbordar
-   (se conserva el text-transform:lowercase blindado; ::first-letter lo corrige al inicio) */
+/* ===== Ajustes de legibilidad jul-2026: contraste predice/mini-quiz/memorama + flashcards con letra mayor ===== */
+/* Flashcards: letra más grande sin desbordar. Sin ::first-letter: la mayúscula
+   inicial la trae el texto, igual que la de cada oración y la de los nombres. */
 .fc-back{overflow-y:auto;}
 #fcA{font-size:1.28rem;line-height:1.5;}
-#fcA::first-letter{text-transform:uppercase !important;}
 
 /* ── La barra de XP en pantallas angostas ─────────────────────────────
    Son siete elementos en una fila que no se encoge (botón de volver,

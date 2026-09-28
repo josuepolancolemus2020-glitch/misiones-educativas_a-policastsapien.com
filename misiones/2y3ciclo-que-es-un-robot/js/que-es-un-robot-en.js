@@ -86,7 +86,7 @@
         '<h2>👋 The doll that waves</h2>' +
         '<p>At the fair they set up a doll that moves its arm to wave. It moves the same with people in front of it and ' +
         'with nobody there, day and night, until someone switches it off. The kids were saying «it is a robot». Marvin ' +
-        'said it is not — and went quiet when they asked him <strong>why not</strong>.</p>' +
+        'said it is not, and went quiet when they asked him <strong>why not</strong>.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>That doll <strong>acts</strong>, and that is as far as it goes. It finds out nothing and it decides ' +
         'nothing: whatever the world does, it waves all the same. With the three parts of the cycle in his head, Marvin ' +
@@ -648,8 +648,8 @@
       [/¡Memoria completada en (\d+) intentos! \+2 XP extra/g, 'Memory game finished in $1 tries! +2 XP bonus'],
       [/Resultado: (\d+)\/(\d+) \((\d+)%\) ¡Bien hecho!/g, 'Result: $1/$2 ($3%) Well done!'],
       [/✅ ¡Encontraste: ([A-ZÑ]+)!/g, '✅ You found $1!'],
-      [/🔄 Grupo: (.+?) vs (.+)/g, '🔄 Group: $1 vs $2'],
-      [/🔄 Pareja: (.+?) vs (.+)/g, '🔄 Pair: $1 vs $2'],
+      [/🔄 Grupo: (.+?) vs\. (.+)/g, '🔄 Group: $1 vs $2'],
+      [/🔄 Pareja: (.+?) vs\. (.+)/g, '🔄 Pair: $1 vs $2'],
       [/🔄 Caso: /g, '🔄 Case: '],
       [/🏅 ¡Logro desbloqueado! /g, '🏅 Achievement unlocked! '],
       [/La respuesta correcta es: /g, 'The correct answer is: '],

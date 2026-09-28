@@ -43,7 +43,7 @@ const HIMNO_AUTORES = {
      acredita nada. El año es lo que el cuestionario cívico pregunta y lo que
      nadie discute. El día que entre a _dev/leyes/ el PDF de La Gaceta con ese
      decreto, se pone. */
-  oficial: 'Lo declaró oficial el gobierno de Alberto de Jesús Membreño en 1915, once años después de su estreno.',
+  oficial: 'Lo declaró oficial el Gobierno de Alberto de Jesús Membreño en 1915, once años después de su estreno.',
   estreno: 'Se compuso en 1903 con el nombre «Canto a Honduras» y se cantó por primera vez el 15 de septiembre de 1904.'
 };
 
@@ -98,7 +98,7 @@ const HIMNO = [
     ],
     tema: 'La llegada de Cristóbal Colón',
     resumen: 'Honduras antes de 1502, y el día en que Colón llegó a sus costas.',
-    explicacion: 'Le habla a Honduras como a una mujer indígena dormida junto al mar. «El audaz navegante» es Cristóbal Colón, que llegó a estas costas en 1502, en su cuarto viaje. Quedó tan admirado de lo que vio que besó la orilla del mar, «la orla azul de su manto», como quien saluda con respeto.',
+    explicacion: 'Le habla a Honduras como a una mujer indígena dormida junto al mar. «El audaz navegante» es Cristóbal Colón, que llegó a estas costas en 1502, en su cuarto viaje. Quedó tan admirado de lo que vio que besó la orilla del mar, «la orla azul de tu espléndido manto», como quien saluda con respeto.',
     /* El dato que iba aquí —«Honduras es el único país de América donde Colón
        puso pie en tierra firme»— no lo acredita ninguna fuente del repositorio,
        y es de los que cada país cuenta a su manera. Este se comprueba leyendo

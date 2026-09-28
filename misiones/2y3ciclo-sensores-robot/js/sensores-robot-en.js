@@ -91,7 +91,7 @@
         'and on Wednesday there was no water in the school restrooms.</p>' +
         '<div class="tip"><span class="ti">❓</span>' +
         '<div>That pump is not short on power: it is short on <strong>finding out</strong>. Nobody is telling it when the ' +
-        'tank is already full. That is exactly what a sensor does — and that is what this mission is about.</div></div>',
+        'tank is already full. That is exactly what a sensor does, and that is what this mission is about.</div></div>',
 
       a1:
         '<h2>📡 What is a sensor?</h2>' +
@@ -737,8 +737,8 @@
       [/¡Memoria completada en (\d+) intentos! \+2 XP extra/g, 'Memory game finished in $1 tries! +2 XP bonus'],
       [/Resultado: (\d+)\/(\d+) \((\d+)%\) ¡Bien hecho!/g, 'Result: $1/$2 ($3%) Well done!'],
       [/✅ ¡Encontraste: ([A-ZÑ]+)!/g, '✅ You found $1!'],
-      [/🔄 Grupo: (.+?) vs (.+)/g, '🔄 Group: $1 vs $2'],
-      [/🔄 Pareja: (.+?) vs (.+)/g, '🔄 Pair: $1 vs $2'],
+      [/🔄 Grupo: (.+?) vs\. (.+)/g, '🔄 Group: $1 vs $2'],
+      [/🔄 Pareja: (.+?) vs\. (.+)/g, '🔄 Pair: $1 vs $2'],
       [/🔄 Caso: /g, '🔄 Case: '],
       [/🏅 ¡Logro desbloqueado! /g, '🏅 Achievement unlocked! '],
       [/La respuesta correcta es: /g, 'The correct answer is: '],
