@@ -5822,6 +5822,125 @@ al maestro cuando falla**: esa va escrita bien («1358-SE-2014», no
 «1358-se-2014»). Aceptar todas las formas no cuesta nada; mostrar una mal
 escrita, sí.
 
+## Normativa: lo que se lee, bien escrito, y sin guiones largos
+
+El autor lo pidió el 27 de septiembre de 2026 con estas palabras: «haz una
+revisión misión por misión buscando errores de ortografía en el texto, en las
+tarjetas flashcard y lo demás. También quitar los guiones largos». Se hizo en
+**las 91 carpetas de `misiones/` y las 93 fichas**, más los archivos de datos
+que pintan, con la vara de la RAE (Ortografía de 2010 y el DPD) y quince
+revisores leyendo por tandas; nada de lo que marcaron se aplicó sin volver a
+leerlo en el archivo.
+
+**Por qué importa aquí más que en otro sitio:** la plataforma enseña a
+escribir. Un «rió» con tilde en la lectura de 5º, un «a) a)» en la prueba
+impresa o «Hemisferio Norte» con mayúscula en una misión y «hemisferio norte»
+en la de al lado le enseñan al alumno dos normas a la vez, y la que él copie
+al cuaderno es la que el maestro le va a corregir en rojo.
+
+**Seis cosas que salieron, y que valen para cualquier texto nuevo:**
+
+1. ⚠️ **Sin guiones largos (—) en lo que lee una persona.** Había más de mil
+   trescientos. Se cambiaron por lo que cada uno quería decir: **dos puntos**
+   si anuncia, **coma o paréntesis** si es un inciso, **punto** si empieza otra
+   idea y **«·»** entre las partes de un título. La raya solo se queda donde
+   es contenido: la misión de los tipos de textos **enseña la raya de
+   diálogo** y la pide en su examen.
+2. ⚠️ **El reverso de las flashcards no se escribe con CSS.** Las 83 hojas de
+   estilo llevaban `text-transform: lowercase` en `#fcA`, y el alumno estudiaba
+   «honduras», «lempira», «sace». La mayúscula la pone el texto.
+3. ⚠️ **La letra de la opción la pone el motor, no el banco**: cuatro misiones
+   de robótica —y sus `-en.js`— imprimían «a) a) Un cable enrollado» en
+   pantalla y en papel, 320 opciones.
+4. **El punto va DESPUÉS de las comillas** («…así».), 358 veces en 92
+   archivos. En las fichas que se arman, lo hace el armador (`cita()` en
+   `_dev/fichas-ia/ficha-76.js` y en el de Fin de Grado): corregirlo en el HTML
+   se pierde en el siguiente armado.
+5. **Formas unificadas en todo el catálogo**, porque eran costumbre y no
+   errata suelta: **vs.** (612), **Ej.:** (206), **EE. UU.**, **N.º** (612),
+   **a. m.**, el prefijo pegado (**minidemostración, miniquiz**), **«Total
+   obtenido»** sin la coma que partía el rótulo de cada prueba impresa (103),
+   **«SI… ENTONCES… SINO»** con su espacio, **«9.2 millones de km²»**,
+   **«jefe de Estado»**, las religiones en minúscula y los **genéricos
+   geográficos** en minúscula a media oración: «el golfo de Fonseca», «el mar
+   Caribe», «el hemisferio norte», «el trópico de Cáncer», «el ecuador» (la
+   línea; el país sigue con mayúscula). Un rótulo que empieza por el genérico
+   («⬆️ Hemisferio norte») lo conserva al principio.
+6. ⚠️ **Leer para corregir la ortografía destapa lo demás, y eso también se
+   arregla.** No se puede releer una oración sin ver que dice algo falso. Así
+   salieron, entre otras: un barco en apuros cerca de La Ceiba cuyas
+   coordenadas (15°N, 87°O) caían **en tierra, en Yoro**; Oceanía en el
+   hemisferio occidental; la UE como «principal» socio comercial y destino de
+   las exportaciones, con Estados Unidos por delante; Japón «3.ª economía» y
+   Alemania «4.ª», que ya no lo son; «manglares lacustres» en el lago de
+   Yojoa; la bahía de La Unión, que es de El Salvador, entre las zonas de
+   manglar de Honduras; la firma de José Cecilio del Valle en un Acta que
+   **redactó pero no firmó**; una cita del Himno cambiada («la orla azul de su
+   manto»); el Himno que «se escucha en silencio» en la etapa 1 y «se canta,
+   no se escucha» en la 2; una polea «más pequeña» que daba más velocidad; y
+   un regador que abría la válvula y no la cerraba nunca, **que es justo el
+   error que su propia misión enseña a corregir**. Donde la fuente no está en
+   el repositorio, no se cambió el dato: se anotó (ver abajo).
+
+⚠️ **Y en las bilingües se cambian a la vez el español, su clave en el `-en.js`
+y la traducción.** La trampa de siempre: `frases` mapea la cadena española
+EXACTA. Lo cazó la sonda nueva el mismo día: dos «persona-robot» seguían en el
+JS de Pensamiento Computacional con su clave inglesa ya cambiada, y la edición
+en inglés habría enseñado esas dos líneas en español **sin dar un solo error**.
+
+⚠️ **Una sustitución global también toca el código.** Cambiar «Ej:» por «Ej.:»
+convirtió tres claves de objeto (`ej: '…'`) en `ej.: '…'`, y esos tres
+archivos dejaron de compilar: la misión se habría pintado a medias. Lo cazó
+`verifica-sintaxis`, que es para eso. Después de un reemplazo en bloque se
+corre, y además los `<script>` en línea de las páginas tocadas, que esa sonda
+no lee.
+
+⚠️ **Las fichas que se arman se miden después de armar, y se reparten sin
+`--todas`.** Tres fichas de Fin de Grado (5º, 6º y 7º) llevaban publicado el
+texto viejo: el contenido corregido estaba en su `contenido.json` y nadie las
+había vuelto a armar. Y cuatro de IA salían con el corte del armador, sin
+repartir, partiéndose al imprimir. Al repartirlas con `--todas`, dos que ya
+cabían salieron **con una hoja más** —el repartidor mide con el colchón de 248
+mm y la ficha cabía en los 257 del papel— y se devolvieron a su corte: la
+ficha que hoy cabe y está en su mínimo se deja en paz.
+
+**Lo que NO se tocó, y por qué:**
+
+- **Los puntos cardinales de la Ruta del Código** («mirando al Norte»). Ahí son
+  los valores de la orientación del robot, que la misión escribe como
+  constantes junto a AVANZA y GIRA, y que el alumno escribe y la pantalla
+  compara. Son lenguaje de programación, no geografía.
+- **«4º», «6º-1»** sin el punto que la RAE pone antes de la letra volada: es la
+  forma del grupo que fija la normativa de arriba, y la leen `estParteGrupo`,
+  el chip de grado y las claves ya entregadas.
+- **«50%» sin espacio**, los **títulos con mayúscula en cada palabra** y las
+  **comillas rectas** donde las hay: son costumbres tipográficas repartidas por
+  todo el catálogo que no cambian lo que el alumno aprende de ortografía, y
+  moverlas es otra revisión.
+- **El Escudo**: Aspectos Cívicos pone arriba «una cordillera con robles y
+  pinos, herramientas de minería, aljabas y cornucopias», y la descripción
+  oficial —según se recuerda— pone arriba la aljaba y las cornucopias y abajo
+  los montes y la minería. **El decreto no está en `_dev/leyes/`**: el día que
+  entre, se confirma y se corrige, en la pantalla, en el completar y en la
+  ficha. Es la regla de siempre: buscar no es leer.
+- **«ciudades-estado»** (la RAE prefiere «ciudades Estado»): lo pide un
+  completar de la misión maya con su respuesta, y moverlo es cambiar un examen
+  por una preferencia, no por un error.
+
+```
+node _dev/verifica-ortografia.js            (está en `npm test`)
+node _dev/verifica-ortografia.js --detalle  (cada caso entero)
+```
+
+Vigila cinco cosas: las rayas en lo que se lee, el `text-transform` de las
+flashcards, la letra repetida de las opciones, las erratas ya corregidas y
+**las formas unificadas**. Solo lee **texto** —cadenas, plantillas, el texto
+del HTML, sus atributos que se leen y los `content:` del CSS—, nunca los
+comentarios: el sitio donde se explica que algo se quitó es justo donde ese
+algo sigue escrito. Y las formas unificadas no se buscan en los `-en.js`,
+porque en inglés «vs» es correcto. Se comprobó al revés con una página de
+prueba que llevaba las once formas mal escritas: salió roja con las once.
+
 ## Normativa: un símbolo patrio se muestra completo o no se muestra
 
 Vale para la bandera, el escudo y el himno, de Honduras y **de cualquier
