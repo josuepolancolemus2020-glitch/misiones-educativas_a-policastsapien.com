@@ -484,6 +484,37 @@ const LEER = `
       pliegue: todos('.bm-pliegue').map(extremos)
     };
   };
+  /* Perímetro y Área: el gallinero de Don Chele. Del piso se lee su caja; de
+     cada cuadrito, su caja y su número; de cada tramo de malla y de cada lado
+     de la orilla, sus dos puntas; de las tablas y de lo que faltó, sus puntas;
+     y de cada gallina, dónde está. Todo ya puesto en la vista. */
+  window.__amExtra.amGallinero = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function linea(el) { return [aVista(el, +el.getAttribute('x1'), +el.getAttribute('y1')), aVista(el, +el.getAttribute('x2'), +el.getAttribute('y2'))]; }
+    function caja(el) { var x = +el.getAttribute('x'), y = +el.getAttribute('y'), a = aVista(el, x, y), b = aVista(el, x + +el.getAttribute('width'), y + +el.getAttribute('height')); return [a[0], a[1], b[0], b[1]]; }
+    function medio(el) { var b = el.getBBox(); return aVista(el, b.x + b.width / 2, b.y + b.height / 2); }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function uno(sel) { return raiz.querySelector(sel); }
+    var hueco = uno('.gl-hueco');
+    return {
+      piso: caja(uno('.gl-piso')),
+      cuadros: todos('.gl-cuadro').filter(vis).map(function (q) { return { n: +q.getAttribute('data-n'), c: caja(q) }; }),
+      numeros: todos('.gl-num').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(t) }; }),
+      malla: todos('.gl-malla').filter(trazada).map(function (m) { return { m: +m.getAttribute('data-m'), l: linea(m) }; }),
+      postes: todos('.gl-poste').filter(vis).map(function (p) { return aVista(p, +p.getAttribute('cx'), +p.getAttribute('cy')); }),
+      hueco: vis(hueco) ? (hueco.getAttribute('d').match(/-?[0-9.]+/g) || []).map(Number).reduce(function (o, v, i, l) { if (i % 2 === 0) o.push(aVista(hueco, v, l[i + 1])); return o; }, []) : null,
+      tablas: vis(uno('.gl-tablas')) ? todos('.gl-tabla').map(linea) : [],
+      orilla: todos('.gl-orilla').filter(trazada).map(function (o) { return { lado: +o.getAttribute('data-lado'), l: linea(o) }; }),
+      lados: todos('.gl-lado').filter(vis).map(function (t) { return { lado: +t.getAttribute('data-lado'), dice: t.textContent, c: medio(t), cuenta: t.classList.contains('gl-lado-cuenta') }; }),
+      unCuadro: vis(uno('.gl-un-cuadro')) ? caja(uno('.gl-un-cuadro')) : null,
+      unaRaya: vis(uno('.gl-una-raya')) ? linea(uno('.gl-una-raya')) : null,
+      unidades: todos('.gl-unidad').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(t) }; }),
+      gallinas: todos('.gl-gallina').map(function (g) { return aVista(g, 0, 0); })
+    };
+  };
   /* Ángulos: Tipos y Transportador: la rampa de Kenia. Del mundo se leen el
      suelo y la rampa ya puestos en la vista, con el acercamiento que lleven
      encima; del transportador, su centro, su base, sus rayas y sus números,
@@ -609,6 +640,7 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 let escalaRedondel = 0;
+let escalaGallinero = null;
 
 const ESCENAS = {
   /* Área del Círculo: el redondel del patio. Todo se mide en el dibujo: la
@@ -830,6 +862,142 @@ const ESCENAS = {
       r.push([!x.listones.length && !x.marco.length, 'paso 5: solo la hoja', [x.listones.length, x.marco.length]]);
     }
     if (n === 0) r.push([nb(e.cifra) === '90°', 'paso 0: el marcador dice 90°, la esquina', e.cifra]);
+    return r;
+  },
+
+  /* Perímetro y Área de Cuadriláteros: el gallinero de Don Chele. La escala
+     sale del piso y de los rótulos de sus lados (4 m y 2 m); con ella se
+     cuentan los cuadritos de adentro, se mide cada tramo de malla y cada lado
+     de la orilla, y se ve dónde está la gallina. Lo que dice el marcador
+     tiene que ser lo que se cuenta en el dibujo. ⚠️ Y lo que va debajo no se
+     regala: el «Predice» pregunta el perímetro de un cuadrado de 5 cm y el
+     área de un rectángulo de 6 × 4. */
+  amGallinero(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const mismo = (p, q, t = 0.8) => dist(p, q) <= t;
+    const [px0, py0, px1, py1] = x.piso;
+    let S, L, H;
+    if (n !== 4) {
+      const rot = k => x.lados.find(l => l.lado === k);
+      const arriba = rot(0), izq = rot(3);
+      L = arriba ? parseFloat(nb(arriba.dice)) : NaN;
+      H = izq ? parseFloat(nb(izq.dice)) : NaN;
+      S = (px1 - px0) / L;
+      escalaGallinero = { S, L, H };
+      r.push([x.lados.length === 4 && cerca(S, (py1 - py0) / H, 0.3) && /^[0-9]+ m$/.test(nb(arriba.dice)),
+        `paso ${n}: el gallinero se ve con sus cuatro medidas, a escala (${S.toFixed(1)} px por metro)`, x.lados.map(l => l.dice)]);
+      /* Cada rótulo junto a su lado: arriba, a la derecha, abajo y a la
+         izquierda, y diciendo lo que mide ese lado. */
+      const junto = [[(px0 + px1) / 2, py0], [px1, (py0 + py1) / 2], [(px0 + px1) / 2, py1], [px0, (py0 + py1) / 2]];
+      const medidas = [L, H, L, H];
+      r.push([x.lados.every(l => dist(l.c, junto[l.lado]) < 30 && nb(l.dice) === `${medidas[l.lado]} m`),
+        `paso ${n}: cada medida está junto a su lado`, x.lados.map(l => [l.lado, l.dice, Math.round(dist(l.c, junto[l.lado]))])]);
+    } else {
+      /* En el paso 4 las medidas de los lados se apagan (el «1 m» va encima
+         del lado de arriba): la escala es la que se midió antes. */
+      ({ S, L, H } = escalaGallinero || {});
+      r.push([!!escalaGallinero && !x.lados.length, 'paso 4: las medidas de los lados se apagan', x.lados.length]);
+      if (!escalaGallinero) return r;
+    }
+    const AREA = L * H, ORILLA = 2 * (L + H);
+    const aMetros = p => [(p[0] - px0) / S, (p[1] - py0) / S];
+    const dentro = p => { const m = aMetros(p); return m[0] > 0 && m[0] < L && m[1] > 0 && m[1] < H; };
+    const largoM = l => dist(l[0], l[1]) / S;
+
+    const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
+    const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([![5, 6, 10, 20, 24, 25].some(v => numsDichos.includes(v)),
+      `paso ${n}: no sale ningún número de lo que pregunta el Predice`, numsDichos]);
+    const cifra = nb(e.cifra);
+    const cifraNum = parseFloat(cifra);
+
+    /* Las gallinas: dos siempre adentro; la de la esquina se sale cuando
+       faltó malla y vuelve cuando se cierra. */
+    const fueraGallinas = x.gallinas.filter(g => !dentro(g)).length;
+    const conHueco = n >= 2 && n <= 4;
+    r.push([x.gallinas.length === 3 && fueraGallinas === (conHueco ? 1 : 0),
+      `paso ${n}: ${conHueco ? 'una gallina se salió' : 'las tres gallinas están adentro'}`, fueraGallinas]);
+
+    if (n === 0) {
+      r.push([cifra === '¿?' && !x.cuadros.length && !x.malla.length && !numsDichos.includes(AREA) && !numsDichos.includes(ORILLA),
+        'paso 0: todavía no se cuenta nada, y la frase no adelanta ninguna cuenta', [cifra, numsDichos]]);
+    }
+    if (n === 1) {
+      /* Lo de adentro: cuadritos de un metro por lado que llenan el piso sin
+         encimarse, cada uno con su número, del 1 al último. */
+      const c = x.cuadros;
+      const deUnMetro = c.every(q => cerca((q.c[2] - q.c[0]) / S, 1, 0.02) && cerca((q.c[3] - q.c[1]) / S, 1, 0.02));
+      const suma = c.reduce((s, q) => s + (q.c[2] - q.c[0]) * (q.c[3] - q.c[1]), 0) / (S * S);
+      const adentro = c.every(q => q.c[0] >= px0 - 0.5 && q.c[2] <= px1 + 0.5 && q.c[1] >= py0 - 0.5 && q.c[3] <= py1 + 0.5);
+      const sinEncimar = c.every((q, i) => c.every((w, j) => i === j || q.c[2] <= w.c[0] + 0.5 || w.c[2] <= q.c[0] + 0.5 || q.c[3] <= w.c[1] + 0.5 || w.c[3] <= q.c[1] + 0.5));
+      r.push([c.length === AREA && deUnMetro && cerca(suma, AREA, 0.05) && adentro && sinEncimar,
+        `paso 1: lo de adentro son ${c.length} cuadritos de un metro por lado que llenan el piso`, [c.length, suma]]);
+      const nums = x.numeros.map(t => +nb(t.dice)).sort((a, b) => a - b);
+      const cadaUno = x.numeros.every(t => c.some(q => t.c[0] > q.c[0] && t.c[0] < q.c[2] && t.c[1] > q.c[1] && t.c[1] < q.c[3] && q.n === +nb(t.dice)));
+      r.push([nums.join(',') === Array.from({ length: AREA }, (_, i) => i + 1).join(',') && cadaUno,
+        'paso 1: cada cuadrito lleva su número, del 1 al último', nums]);
+      r.push([cifra === `${c.length} m²` && /2 filas de 4/.test(nb(e.palabras)) && H === 2 && L === 4,
+        'paso 1: el marcador dice los metros cuadrados que se contaron', cifra]);
+    }
+    if (n >= 2) {
+      /* La malla: tramos de un metro, uno detrás de otro por la orilla, desde
+         la esquina de arriba a la izquierda y en el sentido del reloj. */
+      const m = x.malla.slice().sort((a, b) => a.m - b.m);
+      const deUnMetro = m.every(t => cerca(largoM(t.l), 1, 0.02));
+      const seguidos = m.every((t, i) => i === 0 ? mismo(t.l[0], [px0, py0]) : mismo(t.l[0], m[i - 1].l[1]));
+      const porLaOrilla = m.every(t => t.l.every(p => { const q = aMetros(p); return (cerca(q[0], 0, 0.02) || cerca(q[0], L, 0.02) || cerca(q[1], 0, 0.02) || cerca(q[1], H, 0.02)); }));
+      const esperados = n === 5 ? ORILLA : AREA;
+      r.push([m.length === esperados && deUnMetro && seguidos && porLaOrilla,
+        `paso ${n}: ${m.length} tramos de malla de un metro, seguidos por la orilla`, [m.length, deUnMetro, seguidos, porLaOrilla]]);
+      const postes = x.postes;
+      r.push([postes.length === m.length + (n === 5 ? 0 : 1) && m.every(t => postes.some(p => mismo(p, t.l[0])) && postes.some(p => mismo(p, t.l[1]))),
+        `paso ${n}: un poste en cada punta de cada tramo`, postes.length]);
+      if (n >= 2 && n <= 4) {
+        /* Lo que faltó: desde donde se acabó la malla hasta cerrar, por la
+           orilla. Y las tablas encima, con su rendija en la esquina. */
+        const h = x.hueco;
+        const largoHueco = h ? h.slice(1).reduce((s, p, i) => s + dist(h[i], p), 0) / S : 0;
+        r.push([!!h && mismo(h[0], m[m.length - 1].l[1]) && mismo(h[h.length - 1], [px0, py0]) && cerca(largoHueco, ORILLA - AREA, 0.02),
+          `paso ${n}: lo que faltó va desde donde se acabó la malla hasta cerrar, y mide ${largoHueco.toFixed(2)} m`, largoHueco]);
+        r.push([m.length + largoHueco === ORILLA || cerca(m.length + largoHueco, ORILLA, 0.02),
+          `paso ${n}: la malla puesta más lo que faltó dan la orilla entera`, [m.length, largoHueco]]);
+        const tablasM = x.tablas.reduce((s, l) => s + largoM(l), 0);
+        r.push([x.tablas.length === 2 && tablasM < largoHueco && tablasM > largoHueco - 1,
+          `paso ${n}: las tablas tapan el hueco, pero no del todo`, [x.tablas.length, tablasM]]);
+        if (n === 2) r.push([cifraNum === ORILLA - AREA && / m$/.test(cifra) && /faltan 4/.test(nb(e.texto)), 'paso 2: el marcador dice los metros que faltaron', cifra]);
+      }
+    }
+    if (n === 3) {
+      /* La orilla, lado por lado: sus cuatro lados, y la suma. */
+      const o = x.orilla.slice().sort((a, b) => a.lado - b.lado);
+      const largos = o.map(t => Math.round(largoM(t.l) * 100) / 100);
+      r.push([o.length === 4 && largos.join(',') === [L, H, L, H].join(',') && mismo(o[0].l[0], [px0, py0]) && o.every((t, i) => i === 0 || mismo(t.l[0], o[i - 1].l[1])) && mismo(o[3].l[1], [px0, py0]),
+        `paso 3: la orilla, lado por lado: ${largos.join(' + ')}`, largos]);
+      const suma = largos.reduce((s, v) => s + v, 0);
+      r.push([cifraNum === suma && suma === ORILLA && / m$/.test(cifra) && nb(e.texto).includes(`${L} + ${H} + ${L} + ${H} = ${ORILLA}`),
+        `paso 3: el marcador y la frase dicen la suma de los lados (${suma} m)`, [cifra, suma]]);
+      r.push([x.lados.every(l => l.cuenta), 'paso 3: las cuatro medidas se marcan al contarlas', x.lados.map(l => l.cuenta)]);
+    }
+    if (n === 4) {
+      /* Un metro y un metro cuadrado: una raya de un metro y un cuadrito de un
+         metro por lado, cada uno con su rótulo al lado. */
+      const q = x.unCuadro, y = x.unaRaya;
+      r.push([!!q && cerca((q[2] - q[0]) / S, 1, 0.02) && cerca((q[3] - q[1]) / S, 1, 0.02), 'paso 4: el cuadrito mide un metro por lado', q]);
+      r.push([!!y && cerca(largoM(y), 1, 0.02), 'paso 4: la raya mide un metro', y && largoM(y)]);
+      const dq = x.unidades.find(u => nb(u.dice) === '1 m²'), dr = x.unidades.find(u => nb(u.dice) === '1 m');
+      r.push([!!dq && !!q && dq.c[0] > q[0] && dq.c[0] < q[2] && dq.c[1] > q[1] && dq.c[1] < q[3], 'paso 4: «1 m²» está dentro del cuadrito', dq && dq.c]);
+      r.push([!!dr && !!y && dist(dr.c, [(y[0][0] + y[1][0]) / 2, (y[0][1] + y[1][1]) / 2]) < 30, 'paso 4: «1 m» está junto a la raya', dr && dr.c]);
+      r.push([cifra === 'm y m²', 'paso 4: el marcador dice las dos unidades', cifra]);
+    }
+    if (n === 5) {
+      r.push([!x.hueco && !x.tablas.length, 'paso 5: ya no falta nada ni quedan tablas', [x.hueco, x.tablas.length]]);
+      const m = x.malla.slice().sort((a, b) => a.m - b.m);
+      r.push([m.length === ORILLA && mismo(m[m.length - 1].l[1], [px0, py0]) && cifraNum === m.length,
+        'paso 5: la malla da la vuelta entera y cierra, y el marcador dice sus metros', [m.length, cifra]]);
+    }
     return r;
   },
 

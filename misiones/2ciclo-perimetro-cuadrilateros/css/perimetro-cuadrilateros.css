@@ -634,3 +634,60 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 [data-theme="dark"] .juego-card{background:var(--card-bg);}
 [data-theme="dark"] .juego-card p{color:var(--dark);}
 [data-theme="dark"] .salto3d{color:var(--dark);}
+
+/* La animación del gallinero de Don Chele, que va después de la historia
+   (js/animacion-gallinero.js).
+
+   El botón que avanza lleva letra blanca sobre el degradado de la misión, y
+   la punta de --sec (#00838f) la dejaba en 4,5:1 justo: con el teal un tono
+   más oscuro pasa de 5:1. Es el mismo degradado de Teoría de Números.
+
+   El pasto, el piso, la malla, las tablas y las gallinas llevan su color en
+   las dos pantallas. La malla es malla y no una raya gris: va pintada con
+   un rombo de alambre, que es lo que la distingue de las tablas sin tener
+   que distinguir colores. Lo que faltó va en raya cortada. */
+:root {
+  --am-boton: linear-gradient(135deg, #1565c0, #00796b);
+  --gl-pasto: #d5ebc2; --gl-piso: #efdfc1; --gl-rejilla: #b99c72; --gl-cuadro: #dce9fa;
+  --gl-malla: #37474f; --gl-malla-fondo: #cfd8dc; --gl-poste: #6d4c41;
+  --gl-tabla: #a1887f; --gl-falta: #c62828;
+  --gl-pluma: #fffaf0; --gl-pluma-borde: #8d6e63; --gl-cresta: #d32f2f; --gl-pico: #f59e0b; --gl-pata: #d97706;
+}
+[data-theme="dark"] {
+  --gl-pasto: #22331d; --gl-piso: #4a3d2e; --gl-rejilla: #85704f; --gl-cuadro: #243a5a;
+  --gl-malla: #cfd8dc; --gl-malla-fondo: #37474f; --gl-poste: #d7b49e;
+  --gl-tabla: #8d6e63; --gl-falta: #ff8a80;
+  --gl-pluma: #f5f0e6; --gl-pluma-borde: #bcaaa4; --gl-cresta: #ef5350; --gl-pico: #fbbf24; --gl-pata: #f59e0b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --gl-pasto: #22331d; --gl-piso: #4a3d2e; --gl-rejilla: #85704f; --gl-cuadro: #243a5a;
+    --gl-malla: #cfd8dc; --gl-malla-fondo: #37474f; --gl-poste: #d7b49e;
+    --gl-tabla: #8d6e63; --gl-falta: #ff8a80;
+    --gl-pluma: #f5f0e6; --gl-pluma-borde: #bcaaa4; --gl-cresta: #ef5350; --gl-pico: #fbbf24; --gl-pata: #f59e0b;
+  }
+}
+.am-raiz .gl-pasto { fill: var(--gl-pasto); }
+.am-raiz .gl-piso { fill: var(--gl-piso); }
+.am-raiz .gl-rejilla { fill: none; stroke: var(--gl-rejilla); stroke-width: 1; }
+.am-raiz .gl-cuadro { fill: var(--gl-cuadro); }
+.am-raiz .gl-num { stroke: var(--gl-cuadro); stroke-width: 3px; stroke-linejoin: round; paint-order: stroke; }
+.am-raiz .gl-borde { fill: none; stroke: var(--gl-rejilla); stroke-width: 1.2; stroke-dasharray: 3 4; }
+/* Lo que faltó: la raya cortada del aparato (.am-hueco), pero roja y más
+   gruesa. Va con las dos clases porque la hoja del aparato se carga después
+   de esta y, con la misma fuerza, ganaría la suya. */
+.am-raiz .gl-hueco.am-hueco { stroke: var(--gl-falta); stroke-width: 2.6; }
+.am-raiz .gl-malla { stroke-width: 6; stroke-linecap: butt; }
+.am-raiz .gl-malla-fondo { fill: var(--gl-malla-fondo); }
+.am-raiz .gl-alambre { fill: none; stroke: var(--gl-malla); stroke-width: 1.4; }
+.am-raiz .gl-poste { fill: var(--gl-poste); }
+.am-raiz .gl-tabla { stroke: var(--gl-tabla); stroke-width: 8; stroke-linecap: butt; }
+.am-raiz .gl-orilla { stroke: var(--am-sec); stroke-width: 5; stroke-linecap: round; }
+.am-raiz .gl-lado.gl-lado-cuenta { fill: var(--am-sec); }
+.am-raiz .gl-un-cuadro { fill: var(--am-pri); fill-opacity: 0.3; stroke: var(--am-pri); stroke-width: 3; }
+.am-raiz .gl-una-raya { stroke: var(--am-sec); stroke-width: 7; stroke-linecap: round; }
+.am-raiz .gl-pluma { fill: var(--gl-pluma); stroke: var(--gl-pluma-borde); stroke-width: 1; }
+.am-raiz .gl-cresta { fill: var(--gl-cresta); }
+.am-raiz .gl-pico { fill: var(--gl-pico); }
+.am-raiz .gl-ojo { fill: #1b2838; }
+.am-raiz .gl-pata { stroke: var(--gl-pata); stroke-width: 1.6; stroke-linecap: round; }

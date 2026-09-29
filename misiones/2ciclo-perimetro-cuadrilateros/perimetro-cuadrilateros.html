@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -76,6 +79,22 @@
     confunden todo el tiempo: el <strong>perímetro</strong> se compra en metros de malla; el
     <strong>área</strong>, en metros cuadrados de grama. Saber cuál te toca es media pregunta del
     examen, y la otra media, del bolsillo.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       gallinero de Don Chele, de 4 m por 2 m. Por dentro caben 8 cuadritos
+       de un metro por lado, y él pidió 8 metros de malla; la malla va por la
+       orilla y con 8 metros no alcanza: faltan 4, y por las tablas se sale
+       una gallina. La orilla es 4 + 2 + 4 + 2 = 12 m, el perímetro. Un metro
+       es una raya, y un metro cuadrado, un cuadrito. La mueve el alumno,
+       paso a paso. El aparato es compartido (js/animacion-mision.js) y la
+       escena es de esta misión (js/animacion-gallinero.js). La frase de
+       dentro es de reserva: si el aparato no llega a cargar, se lee eso en
+       vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira dónde va la malla</h2>
+    <div id="amGallinero">
+      <p>El gallinero de Don Chele mide 4 m por 2 m. Por dentro caben 8 cuadritos de un metro por lado: son 8 metros cuadrados, el área. Pero la malla va por la orilla, y la orilla mide 4 + 2 + 4 + 2 = 12 metros: el perímetro. Con 8 metros de malla faltaban 4.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -831,6 +850,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación del gallinero: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-gallinero.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

@@ -6801,6 +6801,75 @@ dentro corrido a 25°, el transportador corrido 6 px del vértice, el marcador
 diciendo 30°, la raya tachando el 150 y un «90» en una frase), y salió roja con
 las cinco.
 
+### La decimoséptima: Perímetro y Área de Cuadriláteros, y lo que enseñó
+
+En **Perímetro y Área de Cuadriláteros** (`misiones/2ciclo-perimetro-cuadrilateros/`,
+`js/animacion-gallinero.js`) la historia es la de Don Chele. Fue a comprar
+malla para cercar el gallinero, midió lo de adentro en vez de la orilla y le
+faltó malla. Tapó el hueco con unas tablas, y esa noche se le salieron las
+gallinas. La animación es el gallinero visto desde arriba, de 4 m por 2 m,
+con tres gallinas adentro:
+
+- adentro caben 8 cuadritos de un metro por lado (2 filas de 4), y él pidió 8
+  metros de malla;
+- la malla se pone metro a metro, poste por poste, y con 8 metros no alcanza:
+  faltan 4. Las tablas no tapan el hueco del todo, y por la rendija de la
+  esquina se sale una gallina;
+- la orilla se cuenta lado por lado, 4 + 2 + 4 + 2 = 12 metros: eso es el
+  perímetro;
+- un metro es una raya y un metro cuadrado es un cuadrito, y para que se vea
+  la raya es el borde de arriba de ese mismo cuadrito;
+- con 12 metros de malla el gallinero cierra y la gallina vuelve adentro.
+
+Cinco cosas que valen para las demás:
+
+1. ⚠️ **Un gallinero donde la orilla da MÁS que lo de adentro.** Las cuentas
+   del Aprende y del «Predice» van todas al revés: en el rectángulo de 6 × 4,
+   lo de adentro da 24 y la orilla 20. Sin un caso como el de Don Chele, el
+   alumno se queda con la regla falsa de que el área es siempre el número
+   grande. Es la misma regla que ya siguen los juegos 3D de esta misión.
+2. ⚠️ **El tamaño se eligió contando la prueba.** Con un gallinero de 4 × 3,
+   la cuenta caía en nueve de las treinta formas de la operativa (un aula de
+   4 × 3, un área de 12 con base 4, el «sumando solo 4 + 3» de Ana…); con uno
+   de 4 × 2 no cae en ninguna, ni en la conceptual ni en la ficha. Lo que la
+   historia pide es que la orilla dé más que lo de adentro, y eso lo cumplen
+   los dos. Antes de escribir los números de una escena se cuentan las formas
+   que tocaría cada tamaño posible: cambiar el tamaño cuesta menos que
+   cambiar la prueba.
+3. **Lo que va debajo no se regala.** El «Predice» pregunta el perímetro de un
+   cuadrado de 5 cm, el área de un rectángulo de 6 × 4 y qué se calcula para
+   poner una cerca. La tercera ya la contesta la historia. De las otras dos,
+   aquí no sale ningún número (ni 5, ni 6, ni 10, ni 20, ni 24, ni 25); se
+   enseña el concepto con otro terreno, y la sonda los busca en cada paso.
+4. ⚠️ **La frase dice lo que el dibujo tiene, también en las gallinas.** La
+   historia dice «se le salieron las gallinas» y en el dibujo se sale una: la
+   frase dice «se salió una gallina». Las gallinas se paran en los cruces de
+   la rejilla, porque en el centro de un cuadrito tapaban su número y el «1 m²».
+5. ⚠️ **Una clase de la hoja del aparato gana si pesan lo mismo.** Lo que faltó
+   iba a ser rojo y salió gris: `.am-hueco` (del aparato) y `.gl-hueco` (de la
+   misión) pesaban lo mismo, y la hoja del aparato se carga DESPUÉS de la de la
+   misión. Se escribe con las dos clases. Se vio mirando la captura.
+
+La sonda de esta escena **cuenta y mide todo en el dibujo**. La escala sale del
+piso y de los rótulos de sus lados (4 m y 2 m). Comprueba:
+
+- que los cuadritos de adentro sean de un metro por lado, llenen el piso sin
+  encimarse y lleven su número del 1 al 8;
+- que la malla vaya en tramos de un metro, seguidos por la orilla desde la
+  esquina, con un poste en cada punta;
+- que lo que faltó empiece donde se acabó la malla y mida 4 m, y que las
+  tablas lo tapen sin llegar a cerrarlo;
+- que la orilla sea 4 + 2 + 4 + 2 = 12 y lo diga el marcador;
+- que el metro y el metro cuadrado midan lo que dicen;
+- que al final la malla dé la vuelta entera;
+- que una sola gallina esté afuera mientras falta malla, y ninguna antes ni
+  después.
+
+Se comprobó al revés con seis averías plantadas a la vez (un tramo de malla de
+1,3 m, un cuadrito más alto que un metro, lo que faltó empezando un poste
+antes, la gallina sin salirse, el marcador diciendo 14 y un «20» en una
+frase), y salió roja con las seis.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
