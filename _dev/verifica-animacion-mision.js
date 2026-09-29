@@ -404,6 +404,52 @@ const LEER = `
       pregunta: todos('.ma-pregunta').map(function (t) { var m = medio(t); return { dice: t.textContent, x: m.x, y: m.y }; })
     };
   };
+  /* Área del Círculo: el redondel del patio. Del cuadrado pedido se lee su
+     tamaño y su cuadrícula; de cada tajada, su punta, la mitad de su arco y
+     las dos puntas del arco, ya puestas en la vista con el movimiento que
+     lleven encima. Con eso la sonda mide el redondel, la tira y lo que
+     sobra, sin creerle a ningún rótulo. */
+  window.__amExtra.amRedondel = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function nums(t) { return (String(t).match(/-?[0-9]+(?:[.][0-9]+)?/g) || []).map(Number); }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function circulo(c) {
+      var cx = +c.getAttribute('cx'), cy = +c.getAttribute('cy'), o = aVista(c, cx, cy), b = aVista(c, cx + +c.getAttribute('r'), cy);
+      return { c: o, r: Math.hypot(b[0] - o[0], b[1] - o[1]) };
+    }
+    function lineas(p) {
+      var d = p.getAttribute('d'), re = /M ([-0-9.]+) ([-0-9.]+) ([VH]) ([-0-9.]+)/g, m, v = [], h = [];
+      while ((m = re.exec(d))) { if (m[3] === 'V') v.push(aVista(p, +m[1], +m[2])[0]); else h.push(aVista(p, +m[1], +m[2])[1]); }
+      return { v: v, h: h };
+    }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return [aVista(p, a.x, a.y), aVista(p, b.x, b.y)]; }
+    function textos(sel) { return todos(sel).map(function (t) { return t.textContent; }); }
+    var rejilla = raiz.querySelector('.rd-rejilla'), cortes = raiz.querySelector('.rd-cortes');
+    return {
+      pedido: todos('.rd-pedido').map(function (q) {
+        var x = +q.getAttribute('x'), y = +q.getAttribute('y'), a = aVista(q, x, y), b = aVista(q, x + +q.getAttribute('width'), y + +q.getAttribute('height'));
+        return { x0: a[0], y0: a[1], x1: b[0], y1: b[1] };
+      }),
+      rejilla: vis(rejilla) ? lineas(rejilla) : null,
+      lados: textos('.rd-lado'),
+      cordon: todos('.rd-cordon').map(circulo),
+      disco: todos('.rd-disco').map(circulo),
+      esquinas: todos('.rd-sobra').map(function (q) { return { rayada: getComputedStyle(q).fill.indexOf('url(') === 0 }; }),
+      cortes: trazada(cortes) ? (cortes.getAttribute('d').match(/L/g) || []).length : 0,
+      tajadas: todos('.rd-tajada').map(function (t) {
+        var n = nums(t.getAttribute('d')), R = n[4];
+        return { j: +t.getAttribute('data-j'), apice: aVista(t, 0, 0), medio: aVista(t, 0, -R), izq: aVista(t, n[2], n[3]), der: aVista(t, n[9], n[10]) };
+      }),
+      radio: textos('.rd-radio'),
+      cotaAlto: todos('.rd-cota-alto').map(extremos),
+      largo: textos('.rd-largo'),
+      area: textos('.rd-area'),
+      sobran: textos('.rd-sobran')
+    };
+  };
   /* Ángulos y Bisectriz: la esquina del marco de la pizarra. De cada
      listón se leen sus vértices ya puestos en la vista (con el movimiento que
      lleve encima), y de ahí se mide su corte; lo mismo con la cuña del hueco,
@@ -438,14 +484,16 @@ const LEER = `
       pliegue: todos('.bm-pliegue').map(extremos)
     };
   };
-  /* Las cuentas de la frase y de las palabras del marcador que el renglón
-     parte en dos («315 ÷» arriba y «4.5 = 70» abajo). Se le pregunta al
-     navegador: un Range por cuenta, y si sus pedazos caen en dos alturas,
-     se partió. */
+  /* Las cuentas de la frase, de las palabras del marcador y de su número
+     grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
+     abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
+     pedazos caen en dos alturas, se partió. El número grande entró cuando
+     «36 − 28.26 = 7.74» no cupo en un teléfono de 360 px y quedó con el
+     «7.74» solo en el segundo renglón. */
   window.__amPartidas = function (id) {
     var raiz = document.getElementById(id), out = [];
     var RE = /[0-9](?:[0-9.,]*[0-9])?°?(?:[ \u00a0]*[×÷+−=<>][ \u00a0]*[0-9](?:[0-9.,]*[0-9])?°?)+/g;
-    ['.am-texto', '.am-palabras'].forEach(function (sel) {
+    ['.am-texto', '.am-palabras', '.am-cifra'].forEach(function (sel) {
       var nodo = raiz.querySelector(sel).firstChild;
       if (!nodo || nodo.nodeType !== 3) return;
       var s = nodo.textContent, m;
@@ -515,7 +563,118 @@ function regla(marcas, eje) {
 }
 
 /* ── lo propio de cada escena ───────────────────────────────── */
+let escalaRedondel = 0;
+
 const ESCENAS = {
+  /* Área del Círculo: el redondel del patio. Todo se mide en el dibujo: la
+     escala sale del cuadrado pedido y de sus dos rótulos de 6 m, el radio
+     sale de las tajadas, y el largo de la tira es la suma de sus arcos. Las
+     cuentas las rehace la sonda con 3.14, que es el pi de la prueba de la
+     misión: que el redondel quepa justo en el cuadrado, que se parta en
+     tajadas iguales que lo cubren entero, que la tira tenga de alto el
+     radio y de largo media vuelta, que el área sea largo por alto y que lo
+     que sobró sea el cuadrado menos el redondel. */
+  amRedondel(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t).replace(/ /g, ' ');
+    const cerca = (a, b, t = 0.6) => Math.abs(a - b) <= t;
+    const mismo = (p, q, t = 1) => Math.hypot(p[0] - q[0], p[1] - q[1]) <= t;
+    const nums = t => (nb(t).match(/\d+(\.\d+)?/g) || []).map(Number);
+    const ang = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const d2 = v => Math.round(v * 100) / 100;
+    const PI = 3.14;
+    const T = x.tajadas;
+    /* Cuánto abre una tajada, vista desde su punta. */
+    const abre = t => { let a = Math.abs(ang(t.apice, t.der) - ang(t.apice, t.izq)); return a > 180 ? 360 - a : a; };
+    const radioDe = t => dist(t.apice, t.medio);
+
+    if (n <= 2 || n === 6) {
+      const q = x.pedido[0];
+      r.push([!!q && x.lados.filter(t => nb(t) === '6 m').length === 2, `paso ${n}: el cuadrado pedido, con sus dos lados de 6 m`, x.lados]);
+      if (!q) return r;
+      const lado = q.x1 - q.x0;
+      escalaRedondel = lado / 6;
+      const g = x.rejilla;
+      const parejas = l => l.slice().sort((a, b) => a - b).every((v, i, s) => !i || cerca(v - s[i - 1], lado / 6, 0.5));
+      const celdas = g ? (g.v.length - 1) * (g.h.length - 1) : 0;
+      const pideRejilla = n <= 1 || n === 6;
+      if (pideRejilla) r.push([cerca(q.y1 - q.y0, lado) && !!g && g.v.length === 7 && g.h.length === 7 && parejas(g.v) && parejas(g.h) &&
+        cerca(Math.min(...g.v), q.x0) && cerca(Math.max(...g.v), q.x1) && cerca(Math.min(...g.h), q.y0) && cerca(Math.max(...g.h), q.y1),
+        `paso ${n}: la cuadrícula parte el cuadrado en ${celdas} cuadritos de un metro por lado`, g && [g.v.length, g.h.length]]);
+      const c = x.cordon[0];
+      r.push([!!c && mismo(c.c, [(q.x0 + q.x1) / 2, (q.y0 + q.y1) / 2]) && cerca(c.r, lado / 2) && cerca(2 * c.r / escalaRedondel, 6, 0.05),
+        `paso ${n}: el redondel cabe justo en el cuadrado: mide 6 m de lado a lado`, c && [c.c, d2(c.r)]]);
+      if (n === 0) {
+        r.push([!T.length && !x.disco.length && !x.esquinas.length, 'paso 0: todavía no hay grama: ni el redondel ni lo que sobra', [T.length, x.disco.length, x.esquinas.length]]);
+        r.push([nums(e.cifra)[0] === celdas && celdas === 36, `paso 0: el marcador dice ${nb(e.cifra)}, los ${celdas} cuadritos`, e.cifra]);
+      }
+      if (n === 1 || n === 6) {
+        const dsk = x.disco[0];
+        r.push([!!dsk && !!c && mismo(dsk.c, c.c) && cerca(dsk.r, c.r) && !T.length && !x.cortes,
+          `paso ${n}: el redondel se ve entero: un disco, sin tajadas ni cortes`, [x.disco.length, T.length, x.cortes]]);
+      }
+      if (n >= 1) r.push([x.esquinas.length === 1 && x.esquinas[0].rayada, `paso ${n}: las esquinas que sobran se ven rayadas, no solo de otro color`, x.esquinas]);
+      if (n === 1) r.push([nums(e.cifra)[0] === celdas && /</.test(e.cifra), `paso 1: el marcador dice ${nb(e.cifra)}: cabe menos que los ${celdas} m²`, e.cifra]);
+      if (n === 2) {
+        const R = c ? c.r : 0;
+        const dirs = T.map(t => (ang(t.apice, t.medio) + 360) % 360).sort((a, b) => a - b);
+        const reparte = dirs.every((v, i) => !i || cerca(v - dirs[i - 1], 22.5, 0.4));
+        r.push([T.length === 16 && !x.disco.length && T.every(t => !!c && mismo(t.apice, c.c) && cerca(radioDe(t), R) && cerca(abre(t), 22.5, 0.3)) && reparte,
+          `paso 2: el redondel partido en ${T.length} tajadas iguales de 22.5°, con la punta en el centro, que lo cubren entero`, T.map(t => d2(abre(t))).slice(0, 3)]);
+        r.push([x.cortes === 16, 'paso 2: los 16 cortes, trazados del centro al borde', x.cortes]);
+        r.push([nums(e.cifra)[0] === T.length && /iguales/.test(e.palabras), `paso 2: el marcador dice ${nb(e.cifra)}, ${nb(e.palabras)}`, e.cifra]);
+      }
+      if (n === 6) {
+        const area = d2(PI * 3 * 3), falta = d2(celdas - area), m = nums(e.palabras), so = nums((x.sobran[0] || ''))[0];
+        r.push([nums(e.cifra)[0] === falta && m.length === 2 && m[0] === celdas && m[1] === area && so === falta,
+          `paso 6: sobraron ${celdas} − ${area} = ${falta} m², y eso dicen el marcador y el dibujo`, [e.cifra, e.palabras, x.sobran]]);
+        r.push([Math.round(falta) === 8 && /casi ocho/.test(e.texto), 'paso 6: 7.74 es «casi ocho», como dice la historia', falta]);
+      }
+    } else {
+      /* La tira: las mismas dieciséis tajadas, una arriba y otra abajo. */
+      const esc = escalaRedondel;
+      const arriba = T.filter(t => t.medio[1] < t.apice[1]), abajo = T.filter(t => t.medio[1] > t.apice[1]);
+      const R = T.length ? radioDe(T[0]) : 0;
+      r.push([T.length === 16 && arriba.length === 8 && abajo.length === 8 && !x.pedido.length && !x.disco.length && !x.cordon.length && !x.esquinas.length,
+        `paso ${n}: la tira: las mismas 16 tajadas, ${arriba.length} con el arco arriba y ${abajo.length} abajo`, [arriba.length, abajo.length]]);
+      if (T.length !== 16) return r;
+      const yA = arriba.map(t => t.apice[1]), yB = abajo.map(t => t.apice[1]);
+      const fila = l => l.every(v => cerca(v, l[0], 0.5));
+      const orden = T.slice().sort((a, b) => a.apice[0] - b.apice[0]);
+      const cuerda = dist(T[0].izq, T[0].der);
+      const pegadas = orden.every((t, i) => !i || (cerca(t.apice[0] - orden[i - 1].apice[0], cuerda / 2, 0.4) && (t.medio[1] < t.apice[1]) !== (orden[i - 1].medio[1] < orden[i - 1].apice[1])));
+      r.push([fila(yA) && fila(yB) && cerca(yA[0] - yB[0], R, 0.5) && pegadas && T.every(t => cerca(radioDe(t), R) && cerca(abre(t), 22.5, 0.3)),
+        `paso ${n}: una arriba y otra abajo, pegadas: de alto, la tira mide lo que el radio`, [d2(yA[0] - yB[0]), d2(R)]]);
+      const radioM = esc ? R / esc : 0;
+      const rot = nums(x.radio[0] || '')[0], ca = x.cotaAlto[0];
+      r.push([cerca(radioM, 3, 0.02) && rot === 3 && !!ca && cerca(Math.abs(ca[0][1] - ca[1][1]), R, 0.5),
+        `paso ${n}: el radio medido es ${d2(radioM)} m, y la cota de la izquierda dice ${x.radio[0]}`, [d2(radioM), x.radio]]);
+      /* Media vuelta: la suma de los arcos de una fila. */
+      const arcos = l => l.reduce((s, t) => s + R * abre(t) * Math.PI / 180, 0);
+      const mediaM = esc ? arcos(abajo) / esc : 0, largo = d2(PI * 3);
+      if (n === 3) r.push([nums(e.cifra)[0] === 3 && /radio/.test(e.palabras), `paso 3: el marcador dice ${nb(e.cifra)}, ${nb(e.palabras)}`, e.cifra]);
+      if (n >= 4) {
+        const lb = nums(x.largo[0] || '')[0];
+        r.push([cerca(mediaM, largo, 0.01) && cerca(arcos(arriba) / esc, largo, 0.01) && lb === largo,
+          `paso ${n}: medidos en el dibujo, los arcos de una fila suman ${d2(mediaM)} m, media vuelta, y la cota dice ${lb} m`, [d2(mediaM), x.largo]]);
+      }
+      if (n === 4) {
+        const m = nums(e.cifra);
+        r.push([m.length === 3 && m[0] === PI && m[1] === 3 && m[2] === largo, `paso 4: el marcador dice ${nb(e.cifra)}`, e.cifra]);
+      }
+      if (n === 5) {
+        const area = d2(largo * 3), m = nums(e.cifra), et = nums(x.area[0] || '')[0];
+        const areaDibujo = T.reduce((s, t) => s + R * R * abre(t) * Math.PI / 360, 0) / (esc * esc);
+        r.push([area === d2(PI * 3 * 3) && et === area && cerca(areaDibujo, area, 0.02),
+          `paso 5: largo por alto, ${largo} × 3 = ${area} m², que es 3.14 × 3 × 3; las tajadas del dibujo suman ${d2(areaDibujo)} m²`, [x.area, d2(areaDibujo)]]);
+        r.push([m.length === 3 && m[0] === largo && m[1] === 3 && m[2] === area && /pi/.test(e.palabras), `paso 5: el marcador dice ${nb(e.cifra)}`, e.cifra]);
+      }
+      if (n !== 5) r.push([!x.area.length, `paso ${n}: el área todavía no se dice`, x.area]);
+    }
+    return r;
+  },
+
   /* Ángulos y Bisectriz: la esquina del marco de don Tulio. El corte de
      cada listón se MIDE en sus vértices, tal como quedaron en la vista: que
      diga 40° lo que está cortado a 40°, que la cuña del hueco sea justo lo

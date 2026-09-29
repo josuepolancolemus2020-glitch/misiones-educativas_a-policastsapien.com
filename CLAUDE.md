@@ -6485,7 +6485,8 @@ más en una sola frase es un renglón de hueco en todos los pasos. Se acortaron
 las dos, sin quitarles nada de lo que dicen.
 
 Lo vigila la sonda de navegador en todas las escenas: le pregunta al navegador,
-con un Range por cuenta, si sus pedazos caen en dos alturas. Se comprobó al
+con un Range por cuenta, si sus pedazos caen en dos alturas, en la frase, en las
+palabras del marcador y en su número grande (este último, desde la decimoquinta). Se comprobó al
 revés con el aparato y las frases de antes: salieron rojas las tres escenas que
 tenían una cuenta partida.
 
@@ -6639,6 +6640,81 @@ un corte a 42° con el marcador diciendo 40°, los listones de la bisectriz
 llegando cortados sin sierra y la hoja que se dobla y no se abre), y salió roja
 con las cuatro.
 
+### La decimoquinta: Área de Círculos y Polígonos, y lo que enseñó
+
+En **Área del Círculo y Polígonos Regulares**
+(`misiones/mat-2y3ciclo-area-circulo-y-poligonos-regulares/`,
+`js/animacion-redondel.js`) la historia es la de la grama del redondel del
+patio: mide 6 m de lado a lado, el director encargó 36 m² («seis por seis») y
+solo cabían algo más de 28; casi ocho metros cuadrados pagados y tirados. La
+animación es el cuadrado de grama que se pidió, con su cuadrícula de 36
+cuadritos de un metro, y el redondel dentro. La grama llena el redondel y las
+esquinas quedan rayadas: cada una tapa casi dos cuadritos. Después el redondel
+se parte en 16 tajadas iguales (los cortes se trazan uno detrás de otro) y las
+tajadas se van de a una, una arriba y otra abajo, hasta formar casi un
+rectángulo. De alto mide el radio, 3 m. De largo, media vuelta: la vuelta
+entera mide 3.14 veces lo ancho, y la media, 3.14 veces la mitad: 3.14 × 3 =
+9.42 m. El área es largo por alto, 9.42 × 3 = 28.26 m², que es 3.14 × 3 × 3:
+pi por el radio por el radio. Y al final las tajadas vuelven al redondel: de
+los 36 m² que se pagaron sobraron 7.74. Seis cosas que valen para las demás:
+
+1. ⚠️ **Primero de dónde sale la fórmula, después la fórmula.** Justo debajo,
+   la misión da A = π · r² como «la fórmula de oro». La animación enseña de
+   dónde sale: las mismas dieciséis tajadas, sin que se pierda ni se agregue
+   grama, acomodadas en un rectángulo que se sabe medir. Lo que se memoriza
+   sin saber de dónde sale se olvida al mes.
+2. ⚠️ **El redondel está entero hasta que se parte.** Es la lección de los
+   listones del marco, con otra cara: dieciséis tajadas del mismo verde, una
+   junto a otra, dejan ver sus juntas aunque no lleven borde, y el redondel
+   «entero» ya enseñaba los cortes. Mientras no se ha partido hay un disco
+   entero encima; al partirlo se trazan los cortes y el disco se va. Al final,
+   el disco vuelve encima.
+3. **La media vuelta se explica, no se da.** «La vuelta entera mide 3.14 veces
+   lo ancho» es la definición de pi que trae la propia misión (la relación
+   entre la circunferencia y su diámetro), dicha con palabras de cuarto grado;
+   y la media, 3.14 veces la mitad, que es el radio. Se usa 3.14 porque la
+   prueba de la misión se lo pide al alumno con esas palabras («usa π =
+   3.14»), aunque la teoría diga 3.1416: con 3.14, 28.26 es exacto, «algo más
+   de 28», como dice la historia.
+4. ⚠️ **La cuenta del redondel estaba en 24 de las 30 formas.** La conceptual
+   preguntaba el área del círculo de radio 3 (28.26 cm²): ahora es de radio 6
+   (113.04 cm²), en la misión y en la ficha, con los mismos errores de
+   distractor (pi por el radio, pi por el diámetro, la unidad equivocada) y la
+   respuesta buena en la misma letra. Y la operativa sacaba el círculo de radio
+   3 o de diámetro 6 en cinco generadores: el área, pasar del diámetro al
+   radio, el número que falta (3 · r² = 27), el problema de la pila o la
+   rotonda y el detective del error. Eran 64 ítems en 24 formas.
+   `_fueraDeLaAnimacion` corre el 3 a 10 sin sacar otro número del azar, así
+   que lo demás de cada forma sale igual; y como el 10 no está en la lista de
+   radios, no se repite con otro. Se quedan los de «ordena los círculos por su
+   área», porque piden un orden y no el área.
+5. ⚠️ **El número grande tampoco se parte.** «36 − 28.26 = 7.74» no cabía en
+   el número grande de un teléfono de 360 px, y el «7.74» quedaba solo en el
+   segundo renglón. La sonda no lo veía, porque solo miraba la frase y las
+   palabras; ahora mira también el número grande, en todas las escenas, y las
+   quince pasan. Y el número grande dice lo que sobró, «7.74 m²», y las
+   palabras, de dónde sale: «sobraron: 36 − 28.26».
+6. **La grama es grama en las dos pantallas, y lo que sobra va rayado.** El
+   verde, el cordón y las esquinas llevan su color siempre; las esquinas van
+   rayadas, no solo de otro color, así se distinguen sin distinguir colores y
+   fotocopiadas.
+
+La sonda de esta escena **lo mide todo en el dibujo, sin creerle a un rótulo**.
+La escala sale del cuadrado pedido y de sus dos rótulos de 6 m. La cuadrícula
+tiene que partirlo en 36 cuadritos de un metro, y el redondel, caber justo
+dentro. Antes de partirse, el redondel es un disco, sin tajadas ni cortes, y las
+esquinas van rayadas. Partido, son 16 tajadas de 22.5°, con la punta en el
+centro, que lo cubren entero, y 16 cortes trazados. En la tira son las mismas
+16, ocho con el arco arriba y ocho abajo, una y una y pegadas: de alto miden lo
+que el radio, y los arcos de una fila suman media vuelta (9.43 m medidos; 9.42
+con 3.14), que es lo que dice la cota. El área tiene que ser largo por alto y
+3.14 × 3 × 3, y las tajadas del dibujo suman 28.28 m². Al final, 36 − 28.26 =
+7.74 en el marcador y en el dibujo, y en la frase, «casi ocho». Se comprobó al
+revés con cinco averías plantadas a la vez (la fila de abajo sin subir un radio
+entero, la cota diciendo 9.24, las tajadas a la vista antes de partir el
+redondel, lo que sobró escrito 7.47 y las esquinas solo de otro color), y salió
+roja con las cinco.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6660,7 +6736,9 @@ cuenta entero. Y en `_dev/verifica-animacion-mision.js` se le añade su
 entrada a `ESCENAS`: lo que esa escena afirma, contado sobre el dibujo.
 
 Ninguna función de la escena se llama `pts`: en las misiones, `pts()` es lo que
-da XP, y la sonda estática lo busca por ese nombre. Y una escena con piezas que
+da XP, y la sonda estática lo busca por ese nombre. Una cuenta larga no va en el
+número grande del marcador: ahí va el resultado, y en las palabras, de dónde
+sale. Y una escena con piezas que
 viajan se mira también con fotos a medio viaje, no solo al final de cada paso.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca

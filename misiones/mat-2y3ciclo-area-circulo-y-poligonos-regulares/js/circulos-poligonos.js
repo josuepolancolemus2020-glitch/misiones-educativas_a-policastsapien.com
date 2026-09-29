@@ -410,7 +410,7 @@ const evalTFBank=[
   {q:'Un cuadrado de 5 cm de lado tiene 20 cm² de área.',a:false,k:'tf-cuadrado-5'}
 ];
 const evalMCBank=[
-  {q:'¿Cuál es el área de un círculo de radio 3 cm? (usa π = 3.14)',o:['a) 9.42 cm²','b) 18.84 cm²','c) 28.26 cm²','d) 28.26 cm'],a:2,k:'mc-area-r3'},
+  {q:'¿Cuál es el área de un círculo de radio 6 cm? (usa π = 3.14)',o:['a) 18.84 cm²','b) 37.68 cm²','c) 113.04 cm²','d) 113.04 cm'],a:2,k:'mc-area-r6'},
   {q:'Si el radio es 4 cm, el diámetro es…',o:['a) 8 cm','b) 2 cm','c) 16 cm','d) 4 cm'],a:0,k:'mc-radio-4'},
   {q:'¿Cuántos lados tiene un hexágono regular?',o:['a) 5','b) 7','c) 6','d) 8'],a:2,k:'mc-hexagono'},
   {q:'Un hexágono regular de 5 cm de lado y 4.3 cm de apotema tiene un área de…',o:['a) 30 cm²','b) 129 cm²','c) 21.5 cm²','d) 64.5 cm²'],a:3,k:'mc-hex-area'},
@@ -734,12 +734,21 @@ let _opRnd = Math.random;
 function _opRint(min, max) { return Math.floor(_opRnd() * (max - min + 1)) + min; }
 function _opFmt(n) { return parseFloat(n.toFixed(6)).toString(); }
 
+/* La animación de la historia (js/animacion-redondel.js) mide el redondel
+   del patio: 6 m de lado a lado, radio 3, y 3.14 × 3 × 3 = 28.26 m². Un
+   círculo de radio 3 (o de diámetro 6) en esta prueba es esa misma cuenta, y
+   el que acaba de ver la animación la contesta acordándose. Se corre a radio
+   10 sin sacar otro número del azar: lo demás de cada forma sale igual. Y
+   10 no está en la lista de radios, así que no se repite con otro. */
+function _fueraDeLaAnimacion(r) { return r === 3 ? 10 : r; }
+
 // I. Área del círculo con π ≈ 3.14 (5 × 4 = 20 pts · nivel básico)
-// r entero 2..9; en 2 ítems se da el DIÁMETRO y hay que hallar r = d ÷ 2 primero
-// (el error típico advertido en la misión). A = r² × 314/100 → pauta exacta.
+// r entero 2..9 (el 3 se corre a 10); en 2 ítems se da el DIÁMETRO y hay que
+// hallar r = d ÷ 2 primero (el error típico advertido en la misión).
+// A = r² × 314/100 → pauta exacta.
 function genAreaCircItems() {
   const dPos = _pickF([0, 1, 2, 3, 4], 2, _opRnd);
-  const radios = _pickF([2, 3, 4, 5, 6, 7, 8, 9], 5, _opRnd);
+  const radios = _pickF([2, 3, 4, 5, 6, 7, 8, 9], 5, _opRnd).map(_fueraDeLaAnimacion);
   return radios.map((r, i) => {
     const esD = dPos.indexOf(i) !== -1;
     return { dato: esD ? 'd = ' + (2 * r) + ' cm' : 'r = ' + r + ' cm', esD, r, ans: _opFmt((r * r * 314) / 100) };
@@ -752,8 +761,8 @@ const _opPoligonos = [{ n: 5, nom: 'pentágono' }, { n: 6, nom: 'hexágono' }, {
 function genDatoItems() {
   const tipos = _shuffleF([0, 1, 2, 3, _opRint(0, 3)], _opRnd);
   return tipos.map(t => {
-    if (t === 0) { const r = _opRint(2, 9); return { q: 'd = ' + (2 * r) + ' cm → r = ?', ans: String(r), u: 'cm' }; }
-    if (t === 1) { const r = _opRint(2, 9); return { q: 'r = ' + r + ' cm → d = ?', ans: String(2 * r), u: 'cm' }; }
+    if (t === 0) { const r = _fueraDeLaAnimacion(_opRint(2, 9)); return { q: 'd = ' + (2 * r) + ' cm → r = ?', ans: String(r), u: 'cm' }; }
+    if (t === 1) { const r = _fueraDeLaAnimacion(_opRint(2, 9)); return { q: 'r = ' + r + ' cm → d = ?', ans: String(2 * r), u: 'cm' }; }
     const p = _opPoligonos[_opRint(0, 2)], lado = _opRint(3, 9);
     const nomCap = p.nom.charAt(0).toUpperCase() + p.nom.slice(1);
     if (t === 2) return { q: nomCap + ' regular de lado ' + lado + ' cm → P = ?', ans: String(lado * p.n), u: 'cm' };
@@ -767,7 +776,7 @@ function genDatoItems() {
 function genFaltaItems() {
   const tipos = _shuffleF([0, 0, 1, 2, 3], _opRnd);
   return tipos.map(t => {
-    if (t === 0) { const r = _opRint(2, 7); return { expr: 'A = π · r² → 3 · r² = ' + (3 * r * r), falta: 'r', ans: String(r) }; }
+    if (t === 0) { const r = _fueraDeLaAnimacion(_opRint(2, 7)); return { expr: 'A = π · r² → 3 · r² = ' + (3 * r * r), falta: 'r', ans: String(r) }; }
     if (t === 1) { const a = _opRint(2, 6), P = 2 * _opRint(8, 20); return { expr: 'A = (P · a) / 2 → (P · ' + a + ') / 2 = ' + ((P * a) / 2), falta: 'P', ans: String(P) }; }
     if (t === 2) { const a = _opRint(2, 6), P = 2 * _opRint(8, 20); return { expr: 'A = (P · a) / 2 → (' + P + ' · a) / 2 = ' + ((P * a) / 2), falta: 'a', ans: String(a) }; }
     const r = _opRint(2, 9), L = _opRint(5, 15);
@@ -786,7 +795,7 @@ function genProblemaOpItems() {
   const lado = _opRint(4, 10), apo = _opRint(3, 8), P2 = 6 * lado;
   const ctxH = ['Cada baldosa hexagonal del parque central mide', 'El piso del kiosco hexagonal del parque mide', 'Cada celda del panal gigante que pintaron en el mural mide'][_opRint(0, 2)];
   const p2 = { text: ctxH + ' ' + lado + ' m de lado y ' + apo + ' m de apotema. Con P = lado × 6 y A = (P · a) / 2, ¿cuál es su área?', op: 'P = 6 · ' + lado + ' = ' + P2 + '; (' + P2 + ' · ' + apo + ') / 2', ans: String(3 * lado * apo), u: 'm²' };
-  const rc = _opRint(2, 5), costo = [50, 100][_opRint(0, 1)];
+  const rc = _fueraDeLaAnimacion(_opRint(2, 5)), costo = [50, 100][_opRint(0, 1)];
   const esPila = _opRint(0, 1) === 0;
   const ctxC = esPila ? 'El fondo de la pila circular de la escuela' : 'La rotonda circular del bulevar';
   const accion = esPila ? 'pintar' : 'encementar';
@@ -809,7 +818,7 @@ function genOrdCirc() {
 }
 function genRetoErrCirc() {
   if (_opRint(0, 1) === 0) {
-    const r = _opRint(2, 6);
+    const r = _fueraDeLaAnimacion(_opRint(2, 6));
     return { text: 'Un estudiante calculó el área de un círculo de radio ' + r + ' cm con la fórmula equivocada A = π · d²: hizo 3 · ' + (2 * r) + '² = ' + (3 * 4 * r * r) + ' cm². Usando π ≈ 3 y la fórmula correcta A = π · r², escribe el área correcta.', ans: String(3 * r * r), u: 'cm²' };
   }
   const lado = _opRint(3, 8), apo = _opRint(2, 6), P = 6 * lado;

@@ -28,6 +28,9 @@
   <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
        se tiñe del --pri y del --sec que la misión acaba de declarar. -->
   <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
   <style>
     /* Prueba Operativa: toggle de pestañas, ítems de operación y reto de ordenar */
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -100,6 +103,22 @@
         <div class="tip"><span class="ti">❓</span><div>Un círculo de 6 metros de lado a lado NO ocupa lo
         que el cuadrado que lo encierra: ocupa bastante menos, y cuánto menos se puede calcular exacto. Esa
         cuenta es de lo primero que vas a ver aquí.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: el
+           redondel del patio. El director pidió 36 m² de grama (seis por
+           seis) y el redondel no llega a las esquinas; partido en 16 tajadas,
+           el redondel se acomoda en casi un rectángulo de alto el radio (3 m)
+           y de largo media vuelta (3.14 × 3 = 9.42 m), y su área es largo por
+           alto: 28.26 m². Sobraron 7.74. La mueve el alumno, paso a paso. El
+           aparato es compartido (js/animacion-mision.js) y la escena es de
+           esta misión (js/animacion-redondel.js). La frase de dentro es de
+           reserva: si el aparato no llega a cargar, se lee eso en vez de un
+           hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira cuánta grama cabe en el redondel</h2>
+        <div id="amRedondel">
+          <p>El director pidió 36 m² de grama, seis por seis, pero el redondel no llega a las esquinas del cuadrado. Partido en 16 tajadas iguales, el redondel se acomoda en casi un rectángulo: de alto mide el radio, 3 m, y de largo media vuelta, 3.14 × 3 = 9.42 m. Su área es largo por alto: 9.42 × 3 = 28.26 m². De los 36 que se pagaron, sobraron 7.74.</p>
+        </div>
       </div>
       <div class="card ac-purple">
         <span class="bloom-badge bl-r">🧩 Nivel Bloom: Recordar + Comprender</span>
@@ -698,6 +717,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación del redondel: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-redondel.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
