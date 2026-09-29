@@ -2513,3 +2513,74 @@ body.letra-grande button {
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* La animación de la constancia de Kenia, que va después de la historia
+   (js/animacion-constancia.js).
+
+   El botón que avanza lleva letra blanca sobre el degradado de la misión, y
+   con el teal y el ámbar de siempre la letra se quedaba en 3,3:1 y 2,2:1:
+   va con los dos un tono más oscuros, a más de 5:1. Y en la pantalla oscura
+   la tinta de la animación es el mismo teal aclarado: el --pri-lt de esta
+   misión es un rosa que no es suyo.
+
+   La libreta, las etiquetas que salen de ella y el sello son papel, y se
+   quedan de papel en las dos pantallas, con tinta oscura fija. Los aros van
+   sobre el escenario: teal oscuro en la clara y teal claro en la oscura. Lo
+   que le queda a cualquiera («niña», su recuadro y sus aros) va con raya
+   cortada, y lo que nombra a una sola, con raya entera: se distinguen sin
+   distinguir colores. */
+:root {
+  --am-boton: linear-gradient(135deg, #2a7566, #8f6000);
+  --am-pri-oscuro: #6fd1bd;
+  --am-sec-oscuro: #f0c060;
+  --su-anillo: #2a7566;
+}
+[data-theme="dark"] { --su-anillo: #6fd1bd; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --su-anillo: #6fd1bd; }
+}
+.am-raiz .su-papel { fill: #fffaf0; stroke: #cdbd9c; stroke-width: 1; }
+.am-raiz .su-renglon { fill: none; stroke: #a9c3e0; stroke-width: 0.8; }
+.am-raiz .su-margen { fill: none; stroke: #e39a9a; stroke-width: 1; }
+.am-raiz .su-gris { fill: #56606b; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+.am-raiz .su-tinta { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .su-tinta-azul { fill: #1f4fa3; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .su-caja { fill: none; stroke: #2a7566; stroke-width: 1.8; }
+.am-raiz .su-caja-cualquiera { stroke-dasharray: 3.5 2.5; }
+.am-raiz .su-etiqueta rect { fill: #fffaf0; stroke: #2a7566; stroke-width: 1.6; }
+.am-raiz .su-cualquiera rect { stroke-dasharray: 3.5 2.5; }
+.am-raiz .su-una rect { stroke-width: 2.4; }
+.am-raiz .su-anillo { fill: none; stroke: var(--su-anillo); stroke-width: 1.7; stroke-dasharray: 3.2 2.6; }
+.am-raiz .su-anillo-k { fill: none; stroke: var(--su-anillo); stroke-width: 2.8; }
+/* Lo que le queda a cualquiera se queda cuando aparece el nombre, pero
+   tenue. Tenue con fill-opacity y stroke-opacity, NUNCA con opacity: lo
+   que tiene opacidad por debajo de 1 es lo que ya no está (.am-fuera), y
+   así lo cuenta la sonda. Por eso esta transición lleva también la de
+   stroke-opacity, que la del aparato no trae. */
+.am-raiz .am-escenario svg .su-atenua,
+.am-raiz .am-escenario svg .su-atenua * {
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.75, 0.25, 1) var(--d, 0s),
+    opacity 0.5s ease var(--d, 0s),
+    fill-opacity 0.5s ease var(--d, 0s),
+    stroke-opacity 0.5s ease var(--d, 0s),
+    stroke-dashoffset 0.8s linear var(--d, 0s);
+}
+.am-raiz .su-tenue.su-anillo { stroke-opacity: 0.4; }
+.am-raiz .su-tenue rect { fill-opacity: 0.55; stroke-opacity: 0.45; }
+.am-raiz .su-tenue text { fill-opacity: 0.6; }
+.am-raiz .su-conector { fill: none; stroke: var(--am-pri); stroke-width: 1.5; }
+.am-raiz .su-rotulo-txt { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .su-sello rect { fill: none; stroke: #b3261e; stroke-width: 2; }
+.am-raiz .su-sello text { fill: #b3261e; font-family: 'Fredoka', sans-serif; font-weight: 700; letter-spacing: 1px; }
+.am-raiz .su-piso { fill: none; stroke: var(--border); stroke-width: 1.4; }
+/* La clase de primero, con el uniforme: blusa o camisa blanca y falda o
+   pantalón azul. La blanca lleva su borde, que sobre el fondo claro se
+   perdería. */
+.am-raiz .su-pierna { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+.am-raiz .su-zapato { fill: #2b2b2b; }
+.am-raiz .su-azul { fill: #22346b; }
+.am-raiz .su-blusa { fill: #fdfdfd; stroke: #8795a3; stroke-width: 0.9; stroke-linejoin: round; }
+.am-raiz .su-pelo { fill: #2b1b12; }
+.am-raiz .su-ojo { fill: #2b1b12; }
+.am-raiz .su-boca { fill: none; stroke: #6d3526; stroke-width: 0.9; stroke-linecap: round; }

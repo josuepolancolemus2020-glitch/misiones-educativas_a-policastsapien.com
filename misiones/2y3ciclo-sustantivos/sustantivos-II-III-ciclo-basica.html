@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
   <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
   <style>
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -95,9 +98,26 @@
         <p>Don Ramón caminó una hora hasta la escuela por la constancia de su hija. En la libreta de esa semana
         alguien la había anotado como <strong>«la niña de primero»</strong>, y en primero había varias niñas. Sin
         el nombre no se podía extender nada. Se devolvió con las manos vacías y volvió otro día.</p>
-        <div class="tip"><span class="ti">❓</span><div>«Niña» y «primero» nombran a <strong>cualquiera</strong> de
-        su clase; <strong>Kenia Ramírez</strong> nombra a una sola persona en el mundo. Las dos cosas son
+        <div class="tip"><span class="ti">❓</span><div>«Niña» nombra a <strong>cualquiera</strong> de su clase;
+        <strong>Kenia Ramírez</strong> nombra a una sola y la distingue de las demás. Las dos cosas son
         sustantivos, y lo que las separa es lo primero que vas a aprender aquí.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: la
+           palabra «niña» de la libreta se prueba sobre la clase de primero y
+           les queda a las cinco niñas; el nombre, «Kenia Ramírez», a una sola.
+           Lo que nombra es un sustantivo: «niña» es común y «Kenia Ramírez»
+           son propios. La mueve el alumno, paso a paso. El aparato es
+           compartido (js/animacion-mision.js) y la escena es de esta misión
+           (js/animacion-constancia.js). La frase de dentro es de reserva: si
+           el aparato no llega a cargar, se lee eso en vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira a quién nombra cada palabra</h2>
+        <div id="amConstancia">
+          <p>La palabra «niña» les queda a las cinco niñas de la clase de primero: nombra a cualquiera de
+          ellas, y con ella no se sabe para cuál es la constancia. Su nombre, «Kenia Ramírez», nombra a una
+          sola y la distingue de las otras cuatro. Las dos cosas nombran, así que son sustantivos: «niña» es
+          un sustantivo común, y «Kenia» y «Ramírez» son sustantivos propios.</p>
+        </div>
       </div>
       <div class="card ac-teal">
         <h2>📝 ¿Qué es un Sustantivo?</h2>
@@ -685,6 +705,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<!-- La animación de la constancia: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-constancia.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

@@ -566,7 +566,10 @@ const identifyTaskDB = [
     { s: 'María viajó a Honduras para las vacaciones.', type: 'Sustantivos propios (María, Honduras)' },
     { s: 'El niño dibujó un árbol.', type: 'Sustantivos comunes (niño, árbol)' },
     { s: 'La valentía del soldado fue admirable.', type: 'Sustantivo abstracto (valentía)' },
-    { s: 'La niña canta hermoso.', type: 'Sustantivo común (niña)' },
+    /* Era «La niña canta hermoso», y la animación de la constancia enseña
+       justo eso: que «niña» es un sustantivo común. Con otra palabra la
+       tarea pide lo mismo sin que la respuesta esté arriba. */
+    { s: 'La vecina canta hermoso.', type: 'Sustantivo común (vecina)' },
     { s: 'Compré un ramo de flores.', type: 'Sustantivos comunes (ramo, flores)' },
     { s: 'El enjambre nos asustó.', type: 'Sustantivo colectivo (enjambre)' },
     { s: 'Mi mamá preparó la cena.', type: 'Sustantivos comunes (mamá, cena)' },
