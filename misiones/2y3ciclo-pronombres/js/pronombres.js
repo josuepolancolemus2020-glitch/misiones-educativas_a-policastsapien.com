@@ -887,7 +887,12 @@ const evalMCBank=[
   {q:'En «La maestra que llegó es nueva», «que» se refiere a…',o:['a) nueva','b) llegó','c) la maestra','d) es'],a:2,k:'mc-que-maestra'},
   {q:'¿En cuál oración «aquella» es un pronombre?',o:['a) Aquella casa es grande','b) Aquella niña canta','c) Aquella tarde llovió','d) Aquella es mi casa'],a:3,k:'mc-aquella'},
   {q:'¿Cuál pregunta está bien escrita?',o:['a) ¿Cual es tu nombre?','b) ¿Cuál es tu nombre?','c) ¿cual es tu nombre?','d) Cual es tu nombre?'],a:1,k:'mc-cual'},
-  {q:'«Dígale que lo lleve mañana» no se entiende porque…',o:['a) tiene faltas de ortografía','b) le sobran palabras','c) no tiene verbo','d) falta el contexto: no dice a quién ni qué'],a:3,k:'mc-contexto'},
+  // Preguntaba «“Dígale que lo lleve mañana” no se entiende porque…», que es
+  // la historia de la misión palabra por palabra, y la animación que va
+  // después de ella la contesta: se respondía de memoria. Ahora pide lo que
+  // la animación enseña, aplicado a otra oración: buscar en ella a quién se
+  // refiere «le», con la correcta en la misma letra.
+  {q:'En «Elvin vio a Dania triste en el recreo y le prestó la gorra», «le» se refiere a…',o:['a) Elvin','b) la gorra','c) el recreo','d) Dania'],a:3,k:'mc-le-dania'},
   {q:'«Saludé a mi tía» con un pronombre queda…',o:['a) La saludé','b) Ella saludé','c) Su saludé','d) Saludé la'],a:0,k:'mc-la-saludo'}
 ];
 const evalCPBank=[

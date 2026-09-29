@@ -7495,6 +7495,109 @@ paso 4 diciendo 3, «cantidad» en una frase, el ✓ en el paso 4, las preguntas
 «no» y «hoy» cambiadas, el hueco corrido ocho puntos y una raya que unía «casi»
 con «no»), y salió roja con las ocho.
 
+### La vigesimoquinta: Los Pronombres, y lo que enseñó
+
+La quinta de la Ruta de la Palabra es **Los Pronombres**
+(`misiones/2y3ciclo-pronombres/`, `js/animacion-mensaje.js`). La historia es la
+del mensaje que llegó al grupo de las familias: «Dígale que lo lleve mañana».
+Al día siguiente una familia mandó el cuaderno, otra el dinero de la merienda y
+tres no mandaron nada, porque no supieron si era para ellas. La historia termina
+pidiendo contar cuántas cosas distintas puede decir esa frase. La animación pone
+el mensaje en su globo y, debajo, a los cinco niños de esas familias:
+
+- «le» y «lo» van subrayados con raya cortada: todavía no dicen nada;
+- «le» no dice a quién: de «¿a quién?» sale un hilo a cada uno de los cinco,
+  niñas y niños;
+- «lo» tampoco dice qué: de «¿qué?» sale un hilo al cuaderno y otro al dinero.
+  Con cinco niños y dos cosas ya son diez mensajes, y el marcador lo cuenta:
+  5 × 2;
+- lo que pasó: Kenia llevó un cuaderno, Selvin el dinero, y encima de Marvin,
+  Yeimy y Wilmer queda una duda;
+- el globo crece un renglón y llega la frase de antes, «Marvin olvidó el
+  cuaderno.». Un hilo sube de «le» a «Marvin» y otro de «lo» a «el cuaderno», y
+  debajo de cada pronombre la pregunta se vuelve respuesta. El cuaderno queda
+  encima de Marvin y las cinco familias leen el mismo mensaje;
+- «le» y «lo» son pronombres: toman el lugar de «Marvin» y de «el cuaderno»
+  para no repetir los nombres.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **Lo que el pronombre deja abierto se cuenta, y se dice que es lo menos.**
+   La frase dice «ya son diez», no «son diez»: en el grupo puede haber más
+   familias y hay más cosas que llevar. La sonda multiplica lo que se ve (niños
+   con aro por cosas con hilo) y lo compara con el marcador.
+2. ⚠️ **La historia estaba en la prueba, palabra por palabra.** La selección
+   múltiple preguntaba «“Dígale que lo lleve mañana” no se entiende porque…», y
+   su respuesta, «falta el contexto: no dice a quién ni qué», era la historia
+   contada otra vez; la ficha la traía igual. Ahora pregunta a qué se refiere
+   «le» en otra oración, «Elvin vio a Dania triste en el recreo y le prestó la
+   gorra», con la correcta en la misma letra, en la misión y en la ficha, que
+   sigue en sus siete hojas. «Le» no dice si es hombre o mujer, así que no se
+   contesta por el género: se contesta leyendo a quién le prestó la gorra.
+3. ⚠️ **Nadie se equivocó: el mensaje no decía.** Kenia llevó un cuaderno que no
+   le pidieron y Selvin un dinero que no hacía falta, y en la casa de Marvin,
+   que era a quien le tocaba, no mandaron nada. Nadie lleva una ✗: en el paso 4
+   cambia el mensaje, no las familias.
+4. ⚠️ **En una lección de pronombres, las frases no pueden tener uno en duda.**
+   Al escribirlas, la del paso 3 salió con «en tres casas no supieron si era
+   para ellas», y ya no se sabía si «ellas» eran las casas o las familias. Y la
+   sonda no deja salir ninguna clase de pronombre, ni «antecedente», que son los
+   pareados, ni una palabra de las respuestas de la prueba: «él», «ellas»,
+   «nadie», «mío»… «Dígale» lleva el pronombre pegado y no se separa en dos:
+   pegar el verbo con el pronombre es lo que pide el completar.
+5. ⚠️ **Dos hilos que salen del mismo punto casi juntos se leen como uno.** Con
+   el cuaderno y el dinero debajo de «¿qué?», los dos hilos salían casi
+   paralelos y parecían una sola raya doble; ahora las cosas están a su
+   derecha, una a su altura y la otra más abajo. Y las rayas de los pasos 4 y 5
+   se apagan en grupo al irse, como en Los Adjetivos: recogiéndose, dejaban
+   pedazos colgando. Las dos cosas se vieron mirando las fotos: ninguna sonda las
+   caza.
+6. **La pregunta se contesta en el mismo sitio donde se hizo.** Debajo de cada
+   pronombre va «¿a quién?» o «¿qué?», con raya cortada; con la frase de antes,
+   en ese mismo sitio quedan «a Marvin» y «el cuaderno», con raya entera, y las
+   dos respuestas son palabras de esa frase.
+
+El globo del mensaje y las píldoras son de papel: se quedan como son en las dos
+pantallas, con tinta oscura fija. Lo que va sobre el escenario (los hilos, los
+aros, los nombres) lleva la tinta de la pantalla: teal oscuro en la clara y
+teal claro en la oscura. Nada se dice solo con color: lo que queda abierto va
+con raya cortada y lo que ya se sabe, con raya entera. El botón que avanza lleva
+el mismo `--am-boton` que Los Adverbios, que tiene los mismos colores.
+
+⚠️ **Y la sonda midió mal dos veces antes de servir.** Los nombres de los niños
+van centrados y el lienzo medía su tinta desde la izquierda, así que el nombre
+de Marvin «se salía» de su marco estando dentro: el lienzo mide ahora con el
+mismo `textAlign` que el `text-anchor` de la letra. Y el marcador escribe
+«5 × 2» con los espacios que no se parten (`sinPartir`), que la comparación no
+convertía.
+
+La sonda de esta escena **lee el mensaje palabra por palabra y mide sobre el
+dibujo adónde llega cada hilo**. Comprueba:
+
+- que el globo diga «Dígale que lo lleve mañana.», con «Díga» y «le» pegadas, y
+  que solo «le» y «lo» vayan subrayados: con raya cortada hasta el paso 3 y
+  entera desde el 4;
+- que de «¿a quién?» salga un hilo a cada uno de los cinco niños, cada vez a
+  uno distinto, y que cada uno lleve su aro de raya cortada;
+- que de «¿qué?» salgan dos hilos, uno a cada cosa, con lo que es escrito al
+  lado, y que el marcador multiplique lo que se ve;
+- que en el paso 3 cada cosa quede encima de un niño y una duda encima de cada
+  uno de los otros tres, y que la frase nombre a quien está debajo de cada cosa;
+- que la frase de antes quede justo donde estaba el mensaje, y el mensaje un
+  renglón más abajo, empezando en el mismo sitio;
+- que debajo de cada pronombre la respuesta diga palabras de esa frase, que un
+  hilo suba de cada pronombre a las suyas, y que el cuaderno y el único aro, de
+  raya entera, queden en el niño que ella nombra;
+- que en el paso 5 los dos pronombres bajen a una misma raya y de ella cuelgue
+  «pronombres»;
+- y que no salga ninguna clase de pronombre ni una palabra de la prueba.
+
+Se comprobó al revés con siete averías plantadas a la vez (un hilo de «le» que
+llegaba a un niño que ya tenía el suyo, el cuaderno encima de Selvin con la
+frase diciendo Kenia, el marcador del paso 2 diciendo 8, la respuesta «a
+Kenia», «enclítico» en una frase, la frase de antes cuatro puntos más arriba y
+el hilo de «le» subiendo a «olvidó»), y salió roja con las siete.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7533,7 +7636,10 @@ del sobre hasta su punto, en Los Verbos) no viaja colgado de ella: va fijo en
 el destino y aparece cuando la pieza ya llegó. Lo que sale de un renglón y se
 aparta va en dos capas, una por eje, y baja antes de apartarse: en diagonal pasa
 por encima de la palabra de al lado. Y para decir si un marco rodea una
-palabra, la sonda mide su tinta con `measureText`, no su renglón con `getBBox`.
+palabra, la sonda mide su tinta con `measureText`, no su renglón con `getBBox`;
+si la palabra va centrada, el lienzo mide con el mismo `textAlign`. Dos hilos
+que salen del mismo punto van con ángulos bien distintos: casi juntos, se leen
+como una sola raya.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

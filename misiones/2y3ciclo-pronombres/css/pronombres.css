@@ -2192,3 +2192,70 @@ body.letra-grande .sopa-cell {
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* ── La animación del mensaje del grupo (js/animacion-mensaje.js) ─────
+   El botón que avanza va de teal a mostaza con letra blanca, y con el teal
+   y el mostaza de la misión la letra se quedaba en 3,4:1 y 2,9:1: va con
+   los dos un tono más oscuros, a más de 5:1. El número grande del marcador
+   va en el --pri-lt de la misión en la pantalla oscura, que ya se lee.
+
+   El globo del mensaje es de papel: se queda como es en las dos
+   pantallas, con tinta oscura fija, y lo mismo las píldoras de las
+   preguntas y las respuestas. Lo que va sobre el escenario (los hilos, los
+   aros, los nombres de los niños) lleva la tinta de la pantalla: teal
+   oscuro en la clara y teal claro en la oscura. Y nada se dice solo con
+   color: lo que queda abierto va con raya cortada y lo que ya se sabe, con
+   raya entera. */
+:root {
+  --am-boton: linear-gradient(135deg, #00707c, #8a6500);
+  --pn-linea: #00707c;
+}
+[data-theme="dark"] { --pn-linea: #4fd3e2; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --pn-linea: #4fd3e2; }
+}
+/* El globo del grupo y lo que dice. */
+.am-raiz .pn-globo { fill: #ffffff; stroke: #b9c4cf; stroke-width: 1.2; stroke-linejoin: round; }
+.am-raiz .pn-tinta { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .pn-grupo { fill: var(--dark); fill-opacity: 0.75; font-family: 'Fredoka', sans-serif; font-weight: 500; }
+/* «le» y «lo»: con raya cortada mientras no dicen nada, con raya entera
+   cuando ya dicen; y los hilos que suben a la palabra de la que lo sacan. */
+.am-raiz .pn-hueco { fill: none; stroke: #56606b; stroke-width: 2; stroke-dasharray: 3 2.2; }
+.am-raiz .pn-subraya { fill: none; stroke: #00707c; stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .pn-arco { fill: none; stroke: #00707c; stroke-width: 1.6; stroke-linecap: round; }
+/* Las píldoras: la pregunta con raya cortada, la respuesta y el nombre de
+   la clase con raya entera. El palito va sobre el escenario. */
+.am-raiz .pn-pildora rect { fill: #ffffff; stroke: #56606b; stroke-width: 1.4; stroke-dasharray: 3 2; }
+.am-raiz .pn-sabida rect { stroke: #00707c; stroke-width: 1.7; stroke-dasharray: none; }
+.am-raiz .pn-pildora text { fill: #22324a; font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .pn-palito { fill: none; stroke: var(--pn-linea); stroke-width: 1.4; }
+.am-raiz .pn-conector { fill: none; stroke: var(--pn-linea); stroke-width: 1.6; }
+/* Sobre el escenario: los hilos y los aros de «le», los nombres de los
+   niños y lo que se escribe debajo de cada cosa. */
+.am-raiz .pn-hilo { fill: none; stroke: var(--pn-linea); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.am-raiz .pn-anillo { fill: none; stroke: var(--pn-linea); stroke-width: 1.7; stroke-dasharray: 3.2 2.6; }
+.am-raiz .pn-anillo-uno { fill: none; stroke: var(--pn-linea); stroke-width: 2.6; }
+.am-raiz .pn-nombre { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .pn-nombre-marco { fill: none; stroke: var(--pn-linea); stroke-width: 1.7; }
+.am-raiz .pn-rotulo { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+.am-raiz .pn-duda circle { fill: var(--card); stroke: var(--dark); stroke-opacity: 0.7; stroke-width: 1.4; stroke-dasharray: 3 2; }
+.am-raiz .pn-duda text { fill: var(--dark); font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* El cuaderno, con su espiral, y el billete de la merienda. */
+.am-raiz .pn-cuaderno { fill: #3d6fb6; stroke: #274f86; stroke-width: 1; }
+.am-raiz .pn-cuaderno-etq { fill: #ffffff; }
+.am-raiz .pn-cuaderno-linea { fill: none; stroke: #8fa6c4; stroke-width: 0.9; }
+.am-raiz .pn-espiral { fill: #e8edf2; stroke: #5b6773; stroke-width: 0.9; }
+.am-raiz .pn-billete { fill: #a8d696; stroke: #4f8a3c; stroke-width: 1; }
+.am-raiz .pn-billete-borde { fill: none; stroke: #6ea35a; stroke-width: 0.8; }
+.am-raiz .pn-billete-sello { fill: #d6ecc9; stroke: #4f8a3c; stroke-width: 0.9; }
+.am-raiz .pn-billete-l { fill: #2f5d22; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+/* Los cinco niños, con el uniforme: blusa o camisa blanca y falda o
+   pantalón azul. La blanca lleva su borde, que sobre el fondo claro se
+   perdería. */
+.am-raiz .pn-pierna { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+.am-raiz .pn-zapato { fill: #2b2b2b; }
+.am-raiz .pn-azul { fill: #22346b; }
+.am-raiz .pn-blusa { fill: #fdfdfd; stroke: #8795a3; stroke-width: 0.9; stroke-linejoin: round; }
+.am-raiz .pn-pelo { fill: #2b1b12; }
+.am-raiz .pn-ojo { fill: #2b1b12; }
+.am-raiz .pn-boca { fill: none; stroke: #6d3526; stroke-width: 0.9; stroke-linecap: round; }

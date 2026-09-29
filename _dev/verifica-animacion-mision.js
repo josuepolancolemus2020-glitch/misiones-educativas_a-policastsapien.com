@@ -832,6 +832,79 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Pronombres: el mensaje del grupo de las familias. Se lee el globo
+     (de uno o de dos renglones); cada palabra con su renglón, su caja, su
+     tinta y dónde está su renglón; los subrayados, con qué raya; las
+     píldoras de pregunta y de respuesta con su palito; los hilos de «le» y
+     de «lo», de dónde salen y adónde llegan; los niños con su nombre; los
+     aros, las cosas y las dudas donde quedaron; y la raya de los
+     pronombres. */
+  window.__amExtra.amMensaje = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return { a: aVista(p, a.x, a.y), b: aVista(p, b.x, b.y) }; }
+    var lienzo = document.createElement('canvas').getContext('2d');
+    function tinta(t) {
+      var cs = getComputedStyle(t);
+      lienzo.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      /* Los nombres de los niños van centrados: el lienzo tiene que medir
+         desde el mismo sitio que la letra, o la tinta sale corrida. */
+      lienzo.textAlign = cs.textAnchor === 'middle' ? 'center' : (cs.textAnchor === 'end' ? 'right' : 'left');
+      var m = lienzo.measureText(t.textContent), x0 = +t.getAttribute('x'), y0 = +t.getAttribute('y');
+      var a = aVista(t, x0 - m.actualBoundingBoxLeft, y0 - m.actualBoundingBoxAscent), b = aVista(t, x0 + m.actualBoundingBoxRight, y0 + m.actualBoundingBoxDescent);
+      return { x0: Math.min(a[0], b[0]), y0: Math.min(a[1], b[1]), x1: Math.max(a[0], b[0]), y1: Math.max(a[1], b[1]) };
+    }
+    function pildora(g) {
+      var r = g.querySelector('rect');
+      return { de: g.getAttribute('data-pregunta') || g.getAttribute('data-respuesta') || g.getAttribute('data-rotulo'),
+               dice: g.querySelector('text').textContent, caja: caja(r), raya: raya(r),
+               palito: g.querySelector('path') ? extremos(g.querySelector('path')) : null };
+    }
+    var marco = raiz.querySelector('[data-nombre-marco]');
+    return {
+      globos: todos('[data-globo]').filter(vis).map(function (g) { return { de: +g.getAttribute('data-globo'), caja: caja(g) }; }),
+      palabras: todos('[data-palabra]').filter(vis).map(function (t) {
+        return { renglon: t.getAttribute('data-renglon'), dice: t.textContent, caja: caja(t), tinta: tinta(t),
+                 base: aVista(t, +t.getAttribute('x'), +t.getAttribute('y')) };
+      }),
+      huecos: todos('[data-hueco]').filter(vis).map(function (p) { return { de: p.getAttribute('data-hueco'), caja: caja(p), raya: raya(p) }; }),
+      subrayas: todos('[data-subraya]').filter(vis).map(function (p) { return { de: p.getAttribute('data-subraya'), caja: caja(p), raya: raya(p) }; }),
+      subCtx: todos('[data-subraya-ctx]').filter(vis).map(function (p) { return { de: p.getAttribute('data-subraya-ctx'), caja: caja(p), raya: raya(p) }; }),
+      arcos: todos('[data-arco]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-arco'), a: e.a, b: e.b }; }),
+      preguntas: todos('[data-pregunta]').filter(vis).map(pildora),
+      respuestas: todos('[data-respuesta]').filter(vis).map(pildora),
+      hilos: todos('[data-hilo]').filter(vis).map(function (p) {
+        var e = extremos(p);
+        return { de: p.getAttribute('data-hilo'), a: p.getAttribute('data-a'), ini: e.a, fin: e.b, raya: raya(p) };
+      }),
+      alumnos: todos('[data-alumno]').filter(vis).map(function (g) {
+        var c = g.querySelector('.pn-cabeza'), nom = g.querySelector('[data-nombre-de]');
+        var pies = Math.max.apply(null, [].map.call(g.querySelectorAll('.pn-zapato'), function (z) { return caja(z).y1; }));
+        return { i: +g.getAttribute('data-alumno'), es: g.getAttribute('data-es'), nombre: g.getAttribute('data-nombre'),
+                 c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r'), pies: pies,
+                 rotulo: nom && vis(nom) ? { dice: nom.textContent, caja: caja(nom), tinta: tinta(nom) } : null };
+      }),
+      anillos: todos('[data-anillo], [data-anillo-uno]').filter(vis).map(function (a) {
+        return { uno: a.hasAttribute('data-anillo-uno'), c: aVista(a, +a.getAttribute('cx'), +a.getAttribute('cy')), r: +a.getAttribute('r'), raya: raya(a) };
+      }),
+      cosas: todos('[data-cosa]').filter(vis).map(function (g) { return { de: g.getAttribute('data-cosa'), caja: caja(g.firstElementChild) }; }),
+      rotCosas: todos('[data-rotulo-cosa]').filter(vis).map(function (t) { return { de: t.getAttribute('data-rotulo-cosa'), dice: t.textContent, caja: caja(t) }; }),
+      dudas: todos('[data-duda]').filter(vis).map(function (g) {
+        var c = g.querySelector('circle');
+        return { c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')), r: +c.getAttribute('r'), dice: g.querySelector('text').textContent, raya: raya(c) };
+      }),
+      marcoNombre: marco && vis(marco) ? { caja: caja(marco), raya: raya(marco) } : null,
+      conectores: todos('[data-conector]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-de'), a: e.a, b: e.b }; }),
+      llave: todos('[data-llave]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-llave'), a: e.a, b: e.b }; }),
+      rotulos: todos('[data-rotulo]').filter(vis).map(pildora),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -915,8 +988,235 @@ let escalaRedondel = 0;
 let escalaGallinero = null;
 let raizVerbos = null;
 let keniaAdverbios = null;
+let mensajePron = null;
 
 const ESCENAS = {
+  /* Los Pronombres: el mensaje del grupo de las familias. Se lee el mensaje
+     palabra por palabra y se mide sobre el dibujo adónde llega cada hilo:
+     «le» se prueba en los CINCO niños (un hilo y un aro a cada uno, y cada
+     uno a un niño distinto) y «lo» en las DOS cosas, y el marcador tiene que
+     multiplicar lo que se ve. ⚠️ Lo que pasó en cada casa se lee del dibujo:
+     encima de qué niño quedó cada cosa, y una duda sobre cada uno de los
+     demás; y la frase tiene que nombrar a quien está debajo de cada cosa.
+     ⚠️ Con la frase de antes, esa frase queda justo donde estaba el mensaje
+     y el mensaje, un renglón más abajo; cada respuesta va debajo de su
+     pronombre y dice palabras que están en la frase de antes; un hilo sube
+     de cada pronombre a esas palabras; y el cuaderno queda encima del niño
+     que se llama como dice la frase. Lo que queda abierto va con raya
+     cortada y lo que ya se sabe, con raya entera. ⚠️ Y la prueba no se
+     regala: ninguna clase de pronombre, ni «antecedente», ni una palabra de
+     las respuestas de la prueba ni de la pregunta que cambió. */
+  amMensaje(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/\u00a0/g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ').toLowerCase();
+    const EXACTAS = ['él', 'ella', 'ellas', 'ellos', 'usted', 'ustedes', 'nosotros', 'nadie', 'alguien', 'mío', 'mía', 'tuyo', 'tuya', 'suyo',
+      'aquel', 'aquella', 'esa', 'cuánto', 'dámelo', 'búscala', 'llámame', 'pásamela', 'escríbeme', 'tráemelo', 'saludé', 'compró',
+      'antecedente', 'personal', 'personales', 'determinante', 'voseo', 'vos', 'elvin', 'dania', 'gorra', 'prestó', 'marta', 'juan', 'sofía',
+      'luisa', 'ana', 'abuelo', 'mangos', 'pan', 'tía'];
+    const RAICES = ['tónic', 'átono', 'átona', 'proclític', 'enclític', 'demostrativ', 'posesiv', 'indefinid', 'relativ', 'interrogativ'];
+    const malas = dicho.split(/[^a-záéíóúñü]+/).filter(w => w && (EXACTAS.includes(w) || RAICES.some(z => w.startsWith(z))));
+    r.push([malas.length === 0, `paso ${n}: no sale ninguna clase de pronombre ni una palabra de la prueba`, malas]);
+
+    const dentroDe = (c, k, tol = 0.5) => c.x0 >= k.x0 - tol && c.x1 <= k.x1 + tol && c.y0 >= k.y0 - tol && c.y1 <= k.y1 + tol;
+    const cruza = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+    const medio = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
+    const aCaja = (p, k) => Math.hypot(Math.max(k.x0 - p[0], 0, p[0] - k.x1), Math.max(k.y0 - p[1], 0, p[1] - k.y1));
+    const orden = ws => ws.slice().sort((a, b) => a.caja.x0 - b.caja.x0);
+    const pegada = (a, b) => nb(b.dice) === '.' || (nb(a.dice) === 'Díga' && nb(b.dice) === 'le');
+    const leer = ws => ws.map((w, i) => (i && !pegada(ws[i - 1], w) ? ' ' : '') + nb(w.dice)).join('');
+    const bienPuestas = ws => ws.every((w, i) => {
+      if (!i) return true;
+      const g = w.caja.x0 - ws[i - 1].caja.x1;
+      return pegada(ws[i - 1], w) ? Math.abs(g) <= 1 : g > 2 && g < 7;
+    }) && ws.every(w => Math.abs(w.base[1] - ws[0].base[1]) < 0.5);
+
+    /* El globo: de un renglón hasta el paso 3 y de dos desde el 4. */
+    const dos = n >= 4;
+    const globo = x.globos.length === 1 ? x.globos[0] : null;
+    r.push([!!globo && globo.de === (dos ? 2 : 1), `paso ${n}: el globo es de ${dos ? 'dos renglones' : 'un renglón'}`, x.globos.map(g => g.de)]);
+    if (!globo) return r;
+
+    /* El mensaje, como se escribe: «Díga» y «le» pegadas, que son una sola
+       palabra; un espacio entre las demás y el punto pegado. */
+    const msg = orden(x.palabras.filter(w => w.renglon === 'mensaje'));
+    r.push([leer(msg) === 'Dígale que lo lleve mañana.' && bienPuestas(msg) && msg.every(w => dentroDe(w.tinta, globo.caja)),
+      `paso ${n}: el globo dice «Dígale que lo lleve mañana.», en un renglón y como se escribe`, leer(msg)]);
+    const le = msg.find(w => nb(w.dice) === 'le'), lo = msg.find(w => nb(w.dice) === 'lo');
+    if (!le || !lo) return r;
+    const ctx = orden(x.palabras.filter(w => w.renglon === 'contexto'));
+    if (n === 0) mensajePron = msg[0].base[1];
+    if (dos) {
+      r.push([leer(ctx) === 'Marvin olvidó el cuaderno.' && bienPuestas(ctx) && ctx.every(w => dentroDe(w.tinta, globo.caja)),
+        `paso ${n}: en el mismo globo, antes del mensaje, dice «Marvin olvidó el cuaderno.»`, leer(ctx)]);
+      /* La frase queda donde estaba el mensaje, y el mensaje, un renglón
+         más abajo y empezando en el mismo sitio. */
+      const altoC = ctx.length ? Math.max(...ctx.map(w => w.tinta.y1)) : 0, altoM = Math.min(...msg.map(w => w.tinta.y0));
+      r.push([ctx.length > 0 && mensajePron != null && Math.abs(ctx[0].base[1] - mensajePron) < 0.5 && altoM > altoC + 4 &&
+        msg[0].base[1] - ctx[0].base[1] < 40 && Math.abs(msg[0].caja.x0 - ctx[0].caja.x0) < 0.5,
+        `paso ${n}: la frase quedó donde estaba el mensaje, y el mensaje un renglón más abajo`, ctx.length && [ctx[0].base[1], msg[0].base[1], mensajePron]]);
+    } else {
+      r.push([ctx.length === 0 && mensajePron != null && Math.abs(msg[0].base[1] - mensajePron) < 0.5,
+        `paso ${n}: el mensaje va solo, en su renglón`, [ctx.length, msg[0].base[1]]]);
+    }
+
+    /* «le» y «lo» subrayados: con raya cortada mientras no dicen nada, con
+       raya entera cuando ya dicen. Nada más va subrayado en el mensaje. */
+    const bajo = (s, w) => !!s && !!w && s.caja.x0 >= w.caja.x0 - 0.5 && s.caja.x1 <= w.caja.x1 + 0.5 &&
+      s.caja.x1 - s.caja.x0 >= 0.8 * (w.caja.x1 - w.caja.x0) && s.caja.y0 >= w.tinta.y1 - 0.5 && s.caja.y0 <= w.tinta.y1 + 6;
+    const lineaDe = { le: dos ? x.subrayas.find(s => s.de === 'le') : x.huecos.find(s => s.de === 'le'),
+                      lo: dos ? x.subrayas.find(s => s.de === 'lo') : x.huecos.find(s => s.de === 'lo') };
+    r.push([x.huecos.length + x.subrayas.length === 2 && bajo(lineaDe.le, le) && bajo(lineaDe.lo, lo) &&
+      (dos ? entera(lineaDe.le.raya) && entera(lineaDe.lo.raya) : cortada(lineaDe.le.raya) && cortada(lineaDe.lo.raya)),
+      `paso ${n}: solo «le» y «lo» van subrayados, con raya ${dos ? 'entera: ya dicen' : 'cortada: todavía no dicen'}`,
+      [x.huecos.map(h => h.de), x.subrayas.map(h => h.de)]]);
+
+    /* 4 y 5 · En la frase de antes, «Marvin» y «el cuaderno» subrayados, y
+       un hilo que sube de cada pronombre a la suya. */
+    if (dos) {
+      const pal = t => ctx.find(w => nb(w.dice) === t);
+      const m = pal('Marvin'), el = pal('el'), cu = pal('cuaderno');
+      const sM = x.subCtx.find(s => s.de === 'Marvin'), sC = x.subCtx.find(s => s.de === 'cuaderno');
+      /* Hasta donde acaba la letra: la «o» de «cuaderno» se sale medio punto
+         de su avance, y el subrayado llega hasta el avance. */
+      const bajoDe = (s, a, b) => !!s && !!a && !!b && Math.abs(s.caja.x0 - a.caja.x0) < 1 && Math.abs(s.caja.x1 - b.caja.x1) < 1 &&
+        s.caja.y0 >= a.tinta.y1 - 0.5 && s.caja.y0 <= a.tinta.y1 + 6 && entera(s.raya);
+      r.push([x.subCtx.length === 2 && bajoDe(sM, m, m) && bajoDe(sC, el, cu), `paso ${n}: en la frase de antes van subrayados «Marvin» y «el cuaderno»`, x.subCtx.map(s => s.de)]);
+      const sube = (a, w, s) => !!a && !!w && !!s && a.a[0] >= w.caja.x0 && a.a[0] <= w.caja.x1 && a.a[1] <= w.tinta.y0 + 1.5 && a.a[1] >= w.tinta.y0 - 3 &&
+        a.b[0] >= s.caja.x0 && a.b[0] <= s.caja.x1 && a.b[1] >= s.caja.y0 && a.b[1] <= s.caja.y0 + 4;
+      const aL = x.arcos.find(a => a.de === 'le'), aO = x.arcos.find(a => a.de === 'lo');
+      r.push([x.arcos.length === 2 && sube(aL, le, sM) && sube(aO, lo, sC), `paso ${n}: un hilo sube de «le» a «Marvin» y otro de «lo» a «el cuaderno»`,
+        x.arcos.map(a => [a.de, a.a.map(Math.round), a.b.map(Math.round)])]);
+    } else {
+      r.push([x.subCtx.length === 0 && x.arcos.length === 0, `paso ${n}: sin frase de antes, nada subrayado arriba ni hilos que suban`, [x.subCtx.length, x.arcos.length]]);
+    }
+
+    /* Las preguntas (1 a 3) y las respuestas (4): debajo de su pronombre,
+       centradas, con su palito hasta el subrayado, y sin montarse. */
+    const PREG = { le: '¿a quién?', lo: '¿qué?' }, RESP = { le: 'a Marvin', lo: 'el cuaderno' };
+    const colgada = (q, w, s) => !!q && !!w && !!s && !!q.palito && Math.abs(medio(q.caja)[0] - medio(w.caja)[0]) <= 0.6 && q.caja.y0 > globo.caja.y1 - 0.5 &&
+      Math.abs(q.palito.a[0] - medio(w.caja)[0]) <= 0.6 && q.palito.a[1] >= s.caja.y0 - 0.5 && q.palito.a[1] <= s.caja.y0 + 3 &&
+      Math.abs(q.palito.b[0] - medio(w.caja)[0]) <= 0.6 && Math.abs(q.palito.b[1] - q.caja.y0) <= 0.6;
+    const hayPreg = { le: n >= 1 && n <= 3, lo: n >= 2 && n <= 3 };
+    ['le', 'lo'].forEach(p => {
+      const w = p === 'le' ? le : lo, q = x.preguntas.find(t => t.de === p), a = x.respuestas.find(t => t.de === p);
+      if (hayPreg[p]) {
+        r.push([colgada(q, w, lineaDe[p]) && nb(q.dice) === PREG[p] && cortada(q.raya), `paso ${n}: debajo de «${p}» pregunta «${PREG[p]}», con raya cortada`, q && [q.dice, q.raya]]);
+      } else r.push([!q, `paso ${n}: sin la pregunta de «${p}»`, !!q]);
+      if (n === 4) {
+        const enFrase = leer(ctx).includes(RESP[p].replace(/^a /, ''));
+        r.push([colgada(a, w, lineaDe[p]) && nb(a.dice) === RESP[p] && entera(a.raya) && enFrase,
+          `paso 4: debajo de «${p}» contesta «${RESP[p]}», con raya entera, con palabras de la frase de antes`, a && [a.dice, a.raya]]);
+      } else r.push([!a, `paso ${n}: sin la respuesta de «${p}»`, !!a]);
+    });
+    const pills = x.preguntas.concat(x.respuestas);
+    r.push([!pills.some((q, i) => pills.some((o, j) => j > i && cruza(q.caja, o.caja))) && !pills.some(q => msg.concat(ctx).some(w => cruza(w.tinta, q.caja))),
+      `paso ${n}: las píldoras no se montan entre sí ni sobre el mensaje`, pills.map(q => q.dice)]);
+
+    /* Los niños: cinco, cada uno con su nombre debajo de los pies. */
+    const ninos = x.alumnos;
+    r.push([ninos.length === 5 && ninos.every(k => !!k.rotulo && nb(k.rotulo.dice) === k.nombre && k.rotulo.tinta.y0 > k.pies && Math.abs(medio(k.rotulo.caja)[0] - k.c[0]) <= 0.6) &&
+      ninos.filter(k => k.nombre === 'Marvin').length === 1,
+      `paso ${n}: los cinco niños, cada uno con su nombre debajo`, ninos.map(k => k.nombre)]);
+    if (ninos.length !== 5) return r;
+    const encima = (c, k) => Math.abs(medio(c.caja)[0] - k.c[0]) <= 2 && c.caja.y1 < k.c[1] - k.r - 4 && c.caja.y1 > k.c[1] - k.r - 30;
+    const deQuien = c => ninos.find(k => encima(c, k));
+    const pregLe = x.preguntas.find(t => t.de === 'le'), pregLo = x.preguntas.find(t => t.de === 'lo');
+
+    /* 1 · «le» en los cinco: un hilo de raya cortada desde «¿a quién?» hasta
+       el aro de cada niño, cada uno a uno distinto. */
+    const hLe = x.hilos.filter(h => h.de === 'le'), hLo = x.hilos.filter(h => h.de === 'lo');
+    const anillosLe = x.anillos.filter(a => !a.uno), anillosUno = x.anillos.filter(a => a.uno);
+    const aroDe = a => ninos.find(k => dist(a.c, k.c) <= 1 && a.r > k.r + 2);
+    if (n === 1) {
+      const destinos = hLe.map(h => ninos.find(k => dist(h.fin, [k.c[0], k.c[1] - 13]) <= 2.5));
+      r.push([hLe.length === 5 && !!pregLe && hLe.every(h => cortada(h.raya) && dist(h.ini, [medio(pregLe.caja)[0], pregLe.caja.y1]) <= 1) &&
+        destinos.every(Boolean) && new Set(destinos.map(k => k.i)).size === 5,
+        'paso 1: de «¿a quién?» sale un hilo de raya cortada a cada uno de los cinco niños', destinos.map(k => k && k.nombre)]);
+    } else r.push([hLe.length === 0, `paso ${n}: sin los hilos de «le»`, hLe.length]);
+    if (n === 1 || n === 2) {
+      const con = anillosLe.map(aroDe);
+      r.push([anillosLe.length === 5 && anillosUno.length === 0 && con.every(Boolean) && new Set(con.map(k => k.i)).size === 5 && anillosLe.every(a => cortada(a.raya)),
+        `paso ${n}: un aro de raya cortada alrededor de cada uno de los cinco`, con.map(k => k && k.nombre)]);
+    } else if (dos) {
+      const k = anillosUno.length === 1 ? aroDe(anillosUno[0]) : null;
+      r.push([anillosLe.length === 0 && !!k && k.nombre === nb((ctx[0] || {}).dice) && entera(anillosUno[0].raya),
+        `paso ${n}: un solo aro, de raya entera, alrededor del niño que nombra la frase de antes`, k && k.nombre]);
+      const mk = x.marcoNombre, rk = k && k.rotulo;
+      r.push([!!mk && !!rk && dentroDe(rk.tinta, mk.caja) && entera(mk.raya), `paso ${n}: su nombre, enmarcado`, !!mk]);
+    } else {
+      r.push([x.anillos.length === 0 && !x.marcoNombre, `paso ${n}: sin aros`, x.anillos.length]);
+    }
+    if (!dos) r.push([!x.marcoNombre, `paso ${n}: ningún nombre enmarcado`, !!x.marcoNombre]);
+
+    /* 2 · «lo» en las dos cosas: de «¿qué?» sale un hilo a cada una, y al
+       lado de cada una dice qué es. */
+    const cuaderno = x.cosas.find(c => c.de === 'cuaderno'), dinero = x.cosas.find(c => c.de === 'dinero');
+    if (n === 2) {
+      const destinos = hLo.map(h => x.cosas.find(c => aCaja(h.fin, c.caja) <= 3));
+      const salen = !!pregLo && hLo.every(h => cortada(h.raya) && aCaja(h.ini, pregLo.caja) <= 0.8);
+      r.push([x.cosas.length === 2 && hLo.length === 2 && salen && destinos.every(Boolean) && new Set(destinos.map(c => c.de)).size === 2 &&
+        x.cosas.every(c => !deQuien(c) && c.caja.y1 < Math.min(...ninos.map(k => k.c[1] - k.r)) - 8),
+        'paso 2: de «¿qué?» sale un hilo a cada una de las dos cosas, lejos de los niños', destinos.map(c => c && c.de)]);
+      const ROT = { cuaderno: 'el cuaderno', dinero: 'el dinero' };
+      r.push([x.rotCosas.length === 2 && x.cosas.every(c => { const t = x.rotCosas.find(q => q.de === c.de); return !!t && nb(t.dice) === ROT[c.de] && t.caja.x0 > c.caja.x1 && t.caja.y0 < c.caja.y1 && t.caja.y1 > c.caja.y0; }),
+        'paso 2: al lado de cada cosa dice qué es', x.rotCosas.map(t => t.dice)]);
+      const multiplica = anillosLe.length * hLo.length;
+      r.push([e.cifra === String(multiplica) && nb(e.palabras).includes(anillosLe.length + ' × ' + hLo.length) && e.texto.includes('diez'),
+        'paso 2: el marcador multiplica lo que se ve: niños con aro por cosas con hilo', [e.cifra, e.palabras, multiplica]]);
+    } else {
+      r.push([hLo.length === 0 && x.rotCosas.length === 0, `paso ${n}: sin los hilos de «lo» ni lo que dice cada cosa`, hLo.length]);
+    }
+
+    /* 3 · Lo que pasó en cada casa: cada cosa encima de un niño, una duda
+       encima de cada uno de los demás, y la frase nombra a quien está debajo
+       de cada cosa. 4 y 5 · el cuaderno, encima del niño de la frase. */
+    const dudas = x.dudas.map(d => ({ d, k: ninos.find(k => Math.abs(d.c[0] - k.c[0]) <= 1 && d.c[1] < k.c[1] - k.r) }));
+    if (n === 3) {
+      const kc = cuaderno && deQuien(cuaderno), kd = dinero && deQuien(dinero);
+      const conDuda = dudas.map(q => q.k);
+      const todos = [kc, kd].concat(conDuda).filter(Boolean).map(k => k.i);
+      r.push([!!kc && !!kd && kc !== kd && dudas.length === 3 && conDuda.every(Boolean) && new Set(todos).size === 5 &&
+        x.dudas.every(d => nb(d.dice) === '?' && cortada(d.raya)),
+        'paso 3: una cosa encima de dos niños y una duda encima de cada uno de los otros tres', [kc && kc.nombre, kd && kd.nombre, conDuda.map(k => k && k.nombre)]]);
+      r.push([!!kc && !!kd && e.texto.includes(kc.nombre + ' llevó un cuaderno') && e.texto.includes(kd.nombre + ' el dinero'),
+        'paso 3: la frase nombra a quien está debajo de cada cosa', [kc && kc.nombre, kd && kd.nombre]]);
+      r.push([e.cifra === String(dudas.length) && /no mandaron nada/.test(e.palabras), 'paso 3: el marcador cuenta las casas que no mandaron nada', [e.cifra, dudas.length]]);
+    } else {
+      r.push([x.dudas.length === 0, `paso ${n}: sin dudas`, x.dudas.length]);
+    }
+    if (dos) {
+      const kc = cuaderno && deQuien(cuaderno);
+      r.push([!!kc && kc.nombre === nb((ctx[0] || {}).dice) && !dinero, `paso ${n}: el cuaderno, encima del niño que nombra la frase de antes, y el dinero ya no está`, kc && kc.nombre]);
+    }
+    if (n <= 1) r.push([x.cosas.length === 0, `paso ${n}: todavía no hay cosas`, x.cosas.length]);
+
+    /* 5 · Los dos pronombres bajan a una misma raya, y de ella cuelga su
+       nombre. */
+    if (n === 5) {
+      const cL = x.conectores.find(c => c.de === 'le'), cO = x.conectores.find(c => c.de === 'lo');
+      const sale = (c, w, s) => !!c && !!s && Math.abs(c.a[0] - medio(w.caja)[0]) <= 0.6 && c.a[1] >= s.caja.y0 - 0.5 && c.a[1] <= s.caja.y0 + 3 && c.b[1] > globo.caja.y1;
+      const hz = x.llave.find(q => q.de === ''), baja = x.llave.find(q => q.de === 'baja'), rot = x.rotulos.find(q => q.de === 'pronombres');
+      const ok = x.conectores.length === 2 && sale(cL, le, lineaDe.le) && sale(cO, lo, lineaDe.lo) && !!hz && !!baja && !!rot &&
+        Math.abs(cL.b[1] - hz.a[1]) <= 0.6 && Math.abs(cO.b[1] - hz.b[1]) <= 0.6 && Math.abs(hz.a[0] - cL.b[0]) <= 0.6 && Math.abs(hz.b[0] - cO.b[0]) <= 0.6 &&
+        Math.abs(baja.a[0] - (hz.a[0] + hz.b[0]) / 2) <= 0.6 && Math.abs(baja.b[1] - rot.caja.y0) <= 0.6 && Math.abs(medio(rot.caja)[0] - baja.a[0]) <= 0.6 &&
+        nb(rot.dice) === 'pronombres' && entera(rot.raya);
+      r.push([ok, 'paso 5: «le» y «lo» bajan a una misma raya, y de ella cuelga «pronombres»', [x.conectores.map(c => c.de), !!hz, !!baja, rot && rot.dice]]);
+      r.push([e.cifra === String(x.conectores.length) && /pronombres/.test(e.palabras), 'paso 5: el marcador cuenta los pronombres del mensaje', e.cifra]);
+    } else {
+      r.push([x.conectores.length === 0 && x.llave.length === 0 && x.rotulos.length === 0, `paso ${n}: todavía sin la raya de los pronombres`, x.conectores.length]);
+    }
+
+    /* Lo que dice el marcador en los pasos que no cuentan dibujo. */
+    if (n === 0) r.push([e.cifra === '¿?', 'paso 0: el marcador todavía no dice cuántas', e.cifra]);
+    if (n === 1) r.push([e.cifra === String(anillosLe.length) && e.cifra === String(hLe.length) && /«le»/.test(e.palabras), 'paso 1: el marcador cuenta los niños con aro', e.cifra]);
+    if (n === 4) r.push([e.cifra === '1', 'paso 4: el marcador dice un solo mensaje', e.cifra]);
+    return r;
+  },
   /* Los Verbos: el papel de Marvin. Se lee el papel palabra por palabra
      (qué dice y dónde está cada una) y se mide sobre el dibujo en qué punto
      de la línea del tiempo cayó el sobre, sin creerle a ningún rótulo: el

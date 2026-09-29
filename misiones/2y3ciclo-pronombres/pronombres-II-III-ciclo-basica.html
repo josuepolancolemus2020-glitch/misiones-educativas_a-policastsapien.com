@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
   <style>
     /* ===== Prueba de Pensamiento Crítico (segunda evaluación imprimible) ===== */
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -113,6 +116,24 @@
         de «lo lleve» son pronombres: <strong>el significado se lo pone el contexto</strong>, no ellos. Cuando el
         contexto falta, el mensaje se queda mudo. ¿Cuántas cosas distintas puede querer decir esa frase?
         Cuéntalas antes de seguir.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: el
+           mensaje «Dígale que lo lleve mañana.» en el grupo de las familias,
+           y debajo los cinco niños de esas familias. «Le» se prueba en los
+           cinco y «lo», en el cuaderno y en el dinero de la merienda: ya son
+           diez mensajes. Lo que pasó en cada casa, y el mismo mensaje con la
+           frase de antes, «Marvin olvidó el cuaderno.», que las cinco leen
+           igual. La mueve el alumno, paso a paso. El aparato es compartido
+           (js/animacion-mision.js) y la escena es de esta misión
+           (js/animacion-mensaje.js). La frase de dentro es de reserva: si el
+           aparato no llega a cargar, se lee eso en vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira qué dice el mensaje en cada casa</h2>
+        <div id="amMensaje">
+          <p>«Dígale que lo lleve mañana» llegó a cinco familias. «Le» no dice a quién y «lo» no dice qué: con
+          cinco niños y dos cosas, ya son diez mensajes distintos. Con una frase antes, «Marvin olvidó el
+          cuaderno.», las cinco familias leen el mismo mensaje. «Le» y «lo» son pronombres.</p>
+        </div>
       </div>
       <div class="card ac-teal">
         <h2>👤 ¿Qué es un Pronombre?</h2>
@@ -653,6 +674,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<!-- La animación del mensaje del grupo: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-mensaje.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
