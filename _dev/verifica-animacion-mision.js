@@ -645,6 +645,53 @@ const LEER = `
       dice: todos('.sg-dice').filter(vis).map(function (t) { return { que: t.getAttribute('data-dice'), dice: t.textContent, c: medio(t) }; })
     };
   };
+  /* Los Sustantivos: la constancia de Kenia. De cada alumno se lee dónde
+     está su cabeza, qué es y cómo se llama; de cada etiqueta, dónde quedó,
+     qué dice, con qué raya va y si está tenue; de cada aro, alrededor de
+     quién está; y lo que dice la libreta, renglón por renglón. La raya se lee
+     del estilo: lo que se dibuja con A.trazar lleva un solo guion del largo
+     entero, así que una raya «entera» es la que no tiene guiones o la que
+     tiene uno largo. */
+  window.__amExtra.amConstancia = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    return {
+      alumnos: todos('[data-alumno]').filter(vis).map(function (g) {
+        var c = g.querySelector('.su-cabeza');
+        return { i: +g.getAttribute('data-alumno'), es: g.getAttribute('data-es'), nombre: g.getAttribute('data-nombre') || '',
+                 c: aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')) };
+      }),
+      renglones: todos('[data-renglon]').filter(vis).map(function (t) {
+        return { r: +t.getAttribute('data-renglon'), dice: t.textContent, palabra: t.getAttribute('data-palabra') || '', caja: caja(t) };
+      }),
+      cajas: todos('[data-caja]').filter(function (c) { return c.classList.contains('su-caja-cualquiera') ? vis(c) : trazada(c); })
+        .map(function (c) { return { de: c.getAttribute('data-caja'), caja: caja(c), raya: raya(c) }; }),
+      etiquetas: todos('[data-etiqueta]').filter(vis).map(function (g) {
+        var r = g.querySelector('rect');
+        return { de: g.getAttribute('data-etiqueta'), dice: g.querySelector('text').textContent, caja: caja(r), raya: raya(r),
+                 tenue: parseFloat(getComputedStyle(r).fillOpacity) < 0.9 };
+      }),
+      aros: todos('[data-anillo]').filter(function (a) { return a.classList.contains('su-anillo-k') ? trazada(a) : vis(a); })
+        .map(function (a) {
+          return { de: a.getAttribute('data-anillo'), c: aVista(a, +a.getAttribute('cx'), +a.getAttribute('cy')), raya: raya(a),
+                   tenue: parseFloat(getComputedStyle(a).strokeOpacity) < 0.9 };
+        }),
+      rotulos: todos('[data-rotulo]').filter(vis).map(function (g) {
+        return { de: g.getAttribute('data-rotulo'), dice: g.querySelector('text').textContent, caja: caja(g.querySelector('rect')) };
+      }),
+      hilos: todos('[data-conector]').filter(trazada).map(function (p) {
+        var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L);
+        return { de: p.getAttribute('data-conector'), a: aVista(p, a.x, a.y), b: aVista(p, b.x, b.y) };
+      }),
+      sello: todos('[data-sello]').filter(vis).map(function (g) { return g.querySelector('text').textContent; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -728,6 +775,99 @@ let escalaRedondel = 0;
 let escalaGallinero = null;
 
 const ESCENAS = {
+  /* Los Sustantivos: la constancia de Kenia. Se mide sobre el dibujo sobre
+     quién se posa cada etiqueta (la cabeza más cercana, y por encima de
+     ella), alrededor de quién está cada aro, qué dice la libreta y qué dicen
+     los rótulos; y lo que el marcador cuenta, cuántas niñas nombra «niña» y a
+     cuántas «Kenia Ramírez», tiene que ser lo que se ve. Lo que le queda a
+     cualquiera va con raya cortada y lo que nombra a una sola, con raya
+     entera, y eso también se mide. ⚠️ Y la prueba no se regala: no sale
+     ninguna palabra de sus preguntas, ni la que va en la raya de «como
+     Carlos, empiezan con letra ___», ni «niño», que es el intruso de su
+     pensamiento crítico. */
+  amConstancia(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ');
+    const prohibidas = dicho.match(/Honduras|Cop[aá]n|Tegucigalpa|Lempira|Ul[uú]a|Comayagua|cerro|ciudad|perro|\bmesa\b|monta[ñn]a|Carlos|Mar[ií]a|Pedro|may[uú]scula|\bniños?\b|art[íi]culo|g[ée]nero|n[úu]mero|singular|plural|femenin|masculin/gi);
+    r.push([!prohibidas, `paso ${n}: no sale ninguna palabra de la prueba, ni «mayúscula», ni «niño»`, prohibidas]);
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const dentro = (p, c, t = 3) => p[0] >= c.x0 - t && p[0] <= c.x1 + t && p[1] >= c.y0 - t && p[1] <= c.y1 + t;
+    const kids = x.alumnos;
+    const ninas = kids.filter(k => k.es === 'nina'), ninos = kids.filter(k => k.es === 'nino');
+    const kenia = kids.filter(k => k.nombre === 'Kenia Ramírez');
+    r.push([kids.length === 7 && ninas.length === 5 && ninos.length === 2 && kenia.length === 1 && kenia[0].es === 'nina',
+      `paso ${n}: la clase de primero, con cinco niñas y dos niños, y una de ellas se llama Kenia Ramírez`, [ninas.length, ninos.length, kenia.length]]);
+    if (kids.length !== 7 || kenia.length !== 1) return r;
+    const k0 = kenia[0];
+    /* Sobre quién está algo: la cabeza más cercana, a menos de 3 de lado. */
+    const sobre = cx => { const k = kids.reduce((m, q) => Math.abs(q.c[0] - cx) < Math.abs(m.c[0] - cx) ? q : m, kids[0]); return Math.abs(k.c[0] - cx) < 3 ? k : null; };
+    const medio = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    /* La libreta, renglón por renglón, de izquierda a derecha. */
+    const renglon = k => x.renglones.filter(t => t.r === k).sort((a, b) => a.caja.x0 - b.caja.x0).map(t => nb(t.dice)).join(' ');
+    r.push([renglon(1) === 'Constancia para: la niña de primero', `paso ${n}: la libreta dice «la niña de primero»`, renglon(1)]);
+    const r2 = renglon(2);
+    if (n >= 2) r.push([r2 === 'Kenia Ramírez' && /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+ [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+$/.test(r2), `paso ${n}: su nombre está en la libreta, como se escribe un nombre`, r2]);
+    else r.push([r2 === '', `paso ${n}: todavía no está su nombre en la libreta`, r2]);
+    const wNina = x.renglones.find(t => t.palabra === 'nina'), wKenia = x.renglones.find(t => t.palabra === 'kenia');
+    const etN = x.etiquetas.filter(t => t.de === 'nina'), etK = x.etiquetas.filter(t => t.de === 'kenia');
+    const arN = x.aros.filter(a => a.de === 'nina'), arK = x.aros.filter(a => a.de === 'kenia');
+    if (n === 0) {
+      r.push([etN.length + etK.length + x.aros.length + x.cajas.length === 0 && e.cifra === '¿?',
+        'paso 0: todavía no se prueba ninguna palabra y el marcador no cuenta nada', [etN.length, etK.length, x.aros.length, x.cajas.length, e.cifra]]);
+    } else {
+      /* «Niña» se posa sobre cada una de las cinco niñas, y sobre ningún niño. */
+      const bajo = etN.map(t => sobre(medio(t.caja)[0]));
+      r.push([etN.length === 5 && bajo.every((k, i) => k && k.es === 'nina' && etN[i].caja.y1 < k.c[1] - 9) && new Set(bajo.map(k => k && k.i)).size === 5,
+        `paso ${n}: «niña» se posa encima de cada una de las cinco niñas, y de ningún niño`, bajo.map(k => k && k.es)]);
+      r.push([!!wNina && etN.every(t => nb(t.dice) === nb(wNina.dice) && cortada(t.raya)),
+        `paso ${n}: cada etiqueta dice la palabra de la libreta, con raya cortada`, etN.map(t => [t.dice, t.raya])]);
+      const conAro = arN.map(a => sobre(a.c[0]));
+      r.push([arN.length === 5 && conAro.every((k, i) => k && k.es === 'nina' && Math.abs(arN[i].c[1] - k.c[1]) < 1 && cortada(arN[i].raya)) && new Set(conAro.map(k => k && k.i)).size === 5,
+        `paso ${n}: cada niña a la que le queda «niña» lleva su aro, con raya cortada`, conAro.map(k => k && k.es)]);
+      const cN = x.cajas.find(c => c.de === 'nina');
+      r.push([!!cN && !!wNina && cortada(cN.raya) && dentro([wNina.caja.x0, wNina.caja.y0], cN.caja, 0) && dentro([wNina.caja.x1, wNina.caja.y1], cN.caja, 0),
+        `paso ${n}: en la libreta, «niña» va dentro de su recuadro de raya cortada`, cN && cN.raya]);
+    }
+    if (n === 1) r.push([e.cifra === String(etN.length) && e.cifra === '5' && /cinco/.test(e.texto) && !etN.some(t => t.tenue),
+      'paso 1: el marcador cuenta las etiquetas que se ven: 5, y la frase dice cinco', [e.cifra, etN.length]]);
+    if (n >= 2) {
+      const k = etK.length === 1 ? sobre(medio(etK[0].caja)[0]) : null;
+      const suNina = etN.find(t => sobre(medio(t.caja)[0]) === k0);
+      r.push([etK.length === 1 && k === k0 && !!suNina && etK[0].caja.y1 <= suNina.caja.y0 + 1,
+        `paso ${n}: «Kenia Ramírez» se posa sobre una sola, la que se llama así, y encima de su «niña»`, k && k.i]);
+      r.push([etK.length === 1 && nb(etK[0].dice) === r2 && entera(etK[0].raya), `paso ${n}: la etiqueta dice lo que dice la libreta, con raya entera`, etK[0] && [etK[0].dice, etK[0].raya]]);
+      r.push([arK.length === 1 && sobre(arK[0].c[0]) === k0 && Math.abs(arK[0].c[1] - k0.c[1]) < 1 && entera(arK[0].raya),
+        `paso ${n}: su aro va entero y alrededor de ella`, arK.map(a => a.raya)]);
+      r.push([etN.length === 5 && etN.every(t => t.tenue) && arN.every(a => a.tenue) && !etK[0].tenue,
+        `paso ${n}: lo que le queda a cualquiera sigue ahí, pero tenue`, etN.map(t => t.tenue)]);
+      const cK = x.cajas.find(c => c.de === 'kenia');
+      r.push([!!cK && !!wKenia && entera(cK.raya) && dentro([wKenia.caja.x0, wKenia.caja.y0], cK.caja, 0) && dentro([wKenia.caja.x1, wKenia.caja.y1], cK.caja, 0),
+        `paso ${n}: en la libreta, su nombre va dentro de su recuadro de raya entera`, cK && cK.raya]);
+    } else {
+      r.push([etK.length === 0 && arK.length === 0, `paso ${n}: todavía no hay etiqueta ni aro del nombre`, [etK.length, arK.length]]);
+    }
+    if (n === 2) r.push([e.cifra === String(etK.length) && e.cifra === '1', 'paso 2: el marcador cuenta la etiqueta del nombre: 1', e.cifra]);
+    if (n >= 3) {
+      const rc = x.rotulos.find(t => t.de === 'comun'), rp = x.rotulos.find(t => t.de === 'propio');
+      r.push([x.rotulos.length === 2 && !!rc && !!rp && nb(rc.dice) === 'sustantivo común' && nb(rp.dice) === 'sustantivos propios',
+        `paso ${n}: los dos rótulos, «sustantivo común» y «sustantivos propios» (el nombre y el apellido son dos)`, x.rotulos.map(t => t.dice)]);
+      const hc = x.hilos.find(h => h.de === 'comun'), hp = x.hilos.find(h => h.de === 'propio');
+      r.push([x.hilos.length === 2 && !!hc && !!hp && !!rc && !!rp && !!wNina && !!wKenia &&
+        dentro(hc.a, wNina.caja, 8) && dentro(hc.b, rc.caja, 3) && dentro(hp.a, wKenia.caja, 8) && dentro(hp.b, rp.caja, 3),
+        `paso ${n}: cada rótulo tiene su hilo hasta su palabra de la libreta`, x.hilos.map(h => [h.de, h.a.map(Math.round), h.b.map(Math.round)])]);
+    } else {
+      r.push([x.rotulos.length === 0 && x.hilos.length === 0, `paso ${n}: todavía no hay rótulos`, [x.rotulos.length, x.hilos.length]]);
+    }
+    if (n === 3) r.push([e.cifra === String(x.rotulos.length) && e.cifra === '2', 'paso 3: el marcador cuenta los rótulos: 2', e.cifra]);
+    if (n === 4) r.push([x.sello.length === 1 && nb(x.sello[0]) === 'ENTREGADA' && e.cifra === '✓' && /Kenia Ramírez/.test(e.palabras),
+      'paso 4: la constancia sale: el sello, y el marcador dice para quién', [x.sello, e.cifra, e.palabras]]);
+    else r.push([x.sello.length === 0, `paso ${n}: todavía no hay sello`, x.sello]);
+    return r;
+  },
+
   /* Sólidos Geométricos: el molde de la caja de Kenia. Del molde se mide
      que la tira de los lados sea una tira (misma altura, pegados uno al
      otro, los lados opuestos iguales) y dónde está pegada cada tapa: a qué

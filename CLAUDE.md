@@ -7126,6 +7126,92 @@ regala, así que cada escena tiene su lista de lo que no puede decir: ahora el
 etiqueta y el rectángulo. Se comprobó al revés metiendo cada cosa en una frase
 de su animación, y salió roja con las tres.
 
+### La vigesimoprimera: Los Sustantivos, la primera de la Ruta de la Palabra
+
+Con la Ruta del Número y la de la Forma terminadas, el autor pidió el 29 de
+septiembre de 2026 seguir «con la siguiente misión», y la siguiente es la
+primera de Español: **Los Sustantivos** (`misiones/2y3ciclo-sustantivos/`,
+`js/animacion-constancia.js`). La historia es la de don Ramón, que caminó una
+hora por la constancia de su hija y en la libreta de la semana decía «la niña
+de primero»: en primero había varias niñas, no se pudo extender nada y volvió
+otro día. La animación pone esa libreta encima de la clase de primero:
+
+- la palabra «niña» sale de la libreta y se posa sobre cada una de las cinco
+  niñas, y sobre los dos niños no: nombra a cualquiera de SU clase, no a
+  cualquiera, y con ella no se sabe para quién es la constancia;
+- se escribe «Kenia Ramírez» y se posa sobre una sola;
+- «niña» es un sustantivo común, y «Kenia» y «Ramírez», sustantivos propios;
+- con el nombre en la libreta, la constancia sale ese mismo día.
+
+Seis cosas que valen para las misiones de palabras:
+
+1. ⚠️ **La historia decía una cosa falsa, y se cambió la frase.** Su aviso
+   decía que «Kenia Ramírez» nombra «a una sola persona en el mundo», y eso no
+   lo garantiza ningún nombre: dos personas pueden llamarse igual. Ahora dice
+   que nombra a una sola y la distingue de las demás, que es lo que hace un
+   nombre propio. Y «primero» salió de esa misma frase: decir que nombra «a
+   cualquiera de su clase» no se sostiene. Cuando el cuento y la verdad se
+   pelean, se cambia el cuento.
+2. ⚠️ **En una misión de palabras, «la cuenta» es la palabra.** La prueba no
+   pregunta por «niña» ni por «Kenia», pero el Generador de Tareas pedía decir
+   de qué clase es «niña» en «La niña canta hermoso»: ahora es «La vecina canta
+   hermoso». Y la sonda no deja salir en la animación ninguna palabra de las
+   preguntas (Honduras, Copán, perro, ciudad, mesa…), ni «mayúscula», que es
+   la raya de «Los nombres de personas, como Carlos, empiezan con letra ___»,
+   ni «niño», que es el intruso de su pensamiento crítico. El nombre va escrito
+   con sus mayúsculas, como se escribe, sin decir por qué.
+3. ⚠️ **Kenia se queda con las dos etiquetas.** La de su nombre se posa encima
+   de su «niña», no en su lugar: el nombre propio no le quita la palabra común,
+   le añade lo que la distingue. Si «niña» se le borrara, la pantalla
+   enseñaría que una palabra excluye a la otra.
+4. ⚠️ **«Kenia Ramírez» son DOS sustantivos propios**, el nombre y el
+   apellido. El rótulo dice «sustantivos propios», en plural, la frase nombra
+   los dos, y el marcador cuenta clases («2 · clases: común y propio») y no
+   sustantivos, porque ahí la cuenta saldría mal.
+5. **Lo que le queda a cualquiera va con raya cortada y lo que nombra a una
+   sola, con raya entera**: la etiqueta, el recuadro en la libreta y el aro.
+   Se distinguen sin distinguir colores. Y cuando aparece el nombre, lo de
+   «niña» se queda tenue con `fill-opacity` y `stroke-opacity`, nunca con
+   `opacity`, que para la sonda quiere decir que ya no está. La transición del
+   aparato no trae `stroke-opacity`, así que la escena le pone la suya
+   (`.su-atenua`), con la misma demora de todo lo demás.
+6. **El texto más largo decide el alto de todos.** El aparato iguala las
+   frases al alto de la más larga, así que la del paso 3, con un renglón de
+   más, dejaba un renglón de hueco en los cinco pasos. Se acortó, y también
+   dos rótulos del marcador que ocupaban dos renglones. El botón «📜 Sacar la
+   constancia» se partía en dos a 360 px: ahora es «📜 La constancia». Se vio
+   mirando las capturas, con la sonda en verde.
+
+La libreta, las etiquetas que salen de ella y el sello son papel, y se quedan
+de papel en las dos pantallas, con tinta oscura fija; los aros, que van sobre
+el escenario, llevan el teal de la misión, oscuro en la pantalla clara y claro
+en la oscura. El botón que avanza lleva su `--am-boton`, porque con el teal y
+el ámbar de la misión la letra blanca se quedaba en 3,3:1 y 2,2:1. Y
+`--am-pri-oscuro`, porque el `--pri-lt` de esta misión es un rosa que no es
+suyo.
+
+La sonda de esta escena **mide sobre el dibujo sobre quién se posa cada
+cosa**: la cabeza más cercana a cada etiqueta, y que la etiqueta quede encima.
+Comprueba:
+
+- que la clase tenga cinco niñas y dos niños, y una se llame Kenia Ramírez;
+- que «niña» se pose encima de las cinco niñas, cada una la suya, y de ningún
+  niño, con raya cortada y diciendo lo que dice la libreta;
+- que cada una lleve su aro cortado, y que en la libreta «niña» vaya dentro de
+  su recuadro;
+- que «Kenia Ramírez» se pose sobre la que se llama así, encima de su «niña»,
+  con raya entera, y que su aro vaya entero y alrededor de ella;
+- que lo de «niña» quede tenue cuando aparece el nombre;
+- que el nombre esté en la libreta con sus mayúsculas;
+- que los rótulos digan «sustantivo común» y «sustantivos propios», cada uno
+  con su hilo hasta su palabra;
+- y que el marcador cuente lo que se ve: 5 etiquetas, 1 nombre, 2 rótulos.
+
+Se comprobó al revés con seis averías plantadas a la vez (una etiqueta «niña»
+sobre un niño, el nombre sobre otra niña, el marcador diciendo 4, el rótulo en
+singular, «mayúscula» en una frase y el apellido en minúscula), y salió roja
+con las seis.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
