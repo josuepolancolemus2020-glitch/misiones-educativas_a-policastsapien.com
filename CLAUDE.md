@@ -7298,6 +7298,99 @@ de «lleno» alrededor de un parche, el marcador diciendo 3, «el más viejo» e
 una frase y la etiqueta «grande» con raya cortada), y salió roja con las
 siete.
 
+### La vigesimotercera: Los Verbos, y lo que enseñó
+
+La tercera de la Ruta de la Palabra es **Los Verbos**
+(`misiones/2y3ciclo-verbos/`, `js/animacion-papel.js`). La historia es la de
+Marvin, que le dejó al maestro un papel al que le faltaba una palabra: «Mi mamá
+___ el dinero de la excursión». Nadie supo si el dinero ya había salido, el
+maestro lo apuntó como que no había pagado, y el sábado Marvin se quedó viendo
+salir el bus. La animación pone el papel arriba y, debajo, una línea del tiempo
+con antes, ahora y después:
+
+- con el hueco no se sabe nada: el sobre del dinero espera encima del ahora,
+  con un camino a cada punto y un «?» debajo de cada uno;
+- con «mandó», el sobre cae antes del ahora: «Ya salió.»;
+- con «manda», cambia una letra y cae en el ahora: «Sale ahora.»;
+- con «mandará», cae después: «Va a salir.». Las tres noticias quedan a la
+  vista, cada una en su punto;
+- «mand-» es la raíz, y no cambió en ninguna de las tres: dice qué se hace. La
+  terminación es la desinencia, y aquí dice cuándo.
+
+Seis cosas que valen para las siguientes:
+
+1. ⚠️ **La historia prometía tres noticias, y con «el viernes» eran dos.** El
+   papel decía «Mi mamá ___ el dinero de la excursión el viernes». Con una
+   fecha que viene, el presente habla del futuro, como en «mañana voy»: «lo
+   manda el viernes» y «lo mandará el viernes» le dicen al maestro lo mismo. Se
+   quitó la fecha de la historia, y ahora las tres noticias son de verdad tres,
+   las mismas que la misión enseña justo debajo (ya ocurrió, ocurre ahora, va a
+   ocurrir). Ninguna sonda lo caza: la frase se lee bien y solo es falsa si se
+   piensa en lo que dice. Cuando el cuento y la verdad se pelean, se cambia el
+   cuento.
+2. ⚠️ **La raíz no se mueve nunca.** «Mand» aparece en el paso 1 y se queda
+   quieta hasta el final; lo que sale y entra es la terminación. El verbo va al
+   final del primer renglón para que cambiarle la terminación no corra el resto
+   de la frase. Así se ve que lo que dice cuándo es el final de la palabra,
+   antes de que el paso 4 le ponga nombre.
+3. **Las tres noticias se quedan.** Cada tiempo que se prueba deja arriba de su
+   punto la forma («mandó», «manda», «mandará») y debajo lo que entiende el
+   maestro. Si cada paso borrara el anterior, «tres noticias distintas del
+   mismo papel» sería una frase y no algo que se ve.
+4. ⚠️ **Lo que ata el sobre a su punto aparece cuando el sobre ya llegó.** La
+   raya que baja del sobre a la línea iba colgada de él, y mientras cruzaba
+   apuntaba a un sitio del tiempo que no era ninguno de los tres. Ahora hay una
+   raya fija en cada punto, y sale cuando el sobre ya llegó, de ida y de
+   vuelta; los tres caminos del paso 0, igual. Se vio en las fotos a medio
+   viaje, con la sonda en verde.
+5. ⚠️ **La prueba no se regala.** Dos ejercicios repetían el sujeto del papel
+   en presente: «Mi mamá prepara la cena» en el Generador de Tareas, y «Mi mamá
+   preparan…», que se corrige con «prepara», en pensamiento crítico. Con «Mi
+   mamá manda» a la vista se contestaban por el parecido: ahora son de «Mi
+   tía». Lo que se queda es lo que aplica la terminación a otro verbo (la
+   pregunta de cómo queda «cantar» en pasado con «ella», o pasar «cosecha» a
+   futuro), como en Volumen se quedó lo que aplica la equivalencia a otra
+   cantidad. Y la sonda no deja salir en la animación ninguna palabra de las
+   preguntas, ni persona, ni número, ni modo, ni «ayer», «hoy» o «mañana», que
+   son las pistas de tiempo de la prueba.
+6. **Nada se dice solo con color.** La terminación va subrayada con raya
+   entera y la raíz con raya cortada, en el papel y en las tres formas, y los
+   rótulos «raíz» y «desinencia» llevan el borde con la misma raya que su
+   pieza. El papel y el sobre son papel en las dos pantallas, con tinta oscura
+   fija; la línea del tiempo y lo que se escribe en ella llevan la tinta de la
+   pantalla, y la terminación, el teal de la misión (`--vb-des`), oscuro en la
+   clara y claro en la oscura. El botón que avanza lleva su `--am-boton`,
+   porque con el teal y el mostaza la letra blanca se quedaba en 3,3:1 y 2,3:1.
+
+La sonda de esta escena **lee el papel palabra por palabra y mide en qué punto
+de la línea cayó el sobre**, sin creerle a ningún rótulo. Comprueba:
+
+- que el papel diga «Mi mamá …» y debajo «el dinero de la excursión.», con el
+  hueco de raya cortada en el paso 0 y nada que diga todavía cuál es la
+  palabra;
+- que «mand» esté en el hueco, en el mismo renglón, y no se corra ni un punto
+  de un paso a otro;
+- que la terminación sea una sola, la del paso, pegada a «mand» y subrayada con
+  raya entera, y que la raíz vaya con raya cortada solo en el paso 4;
+- que la línea tenga antes, ahora y después, en ese orden, con la marca del
+  ahora en el del medio;
+- que en el paso 0 el sobre espere encima del ahora, con un camino a cada punto
+  y un «?» debajo de cada uno;
+- que con «mandó» el sobre caiga a la izquierda del ahora, con «manda» en el
+  ahora y con «mandará» a la derecha, con una sola raya hasta su punto;
+- que el marcador diga la terminación del papel y el tiempo del punto donde
+  cayó el sobre, y la frase, la palabra que hay en el papel;
+- que las formas y las noticias se queden, cada una en su punto y en el orden
+  en que se probaron, y que encima del sobre esté la palabra del papel;
+- y que en el paso 4 «raíz» vaya encima de «mand» y «desinencia» al lado de la
+  terminación, cada uno con su hilo y con la raya de su pieza.
+
+Se comprobó al revés con siete averías plantadas a la vez (la raíz corrida
+cinco puntos en el paso 3, el sobre de «manda» cayendo en «después», el
+marcador del paso 1 diciendo «-a», la noticia de después diciendo «Ya salió.»,
+«mañana» en una frase, la raya de la raíz entera y la terminación despegada de
+la raíz), y salió roja con las siete.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -7331,7 +7424,9 @@ un punto) se mueve con su misma demora y su misma curva, y se mide cuadro a
 cuadro que no se despegue: en las fotos, la captura llega tarde y no lo enseña.
 Lo que sale de detrás de otra pieza se dibuja debajo de ella, y lo que se va en
 un paso se apaga, no se destraza: son las dos cosas que en Los Adjetivos solo
-se vieron a medio viaje.
+se vieron a medio viaje. Y lo que ata una pieza que viaja a su destino (la raya
+del sobre hasta su punto, en Los Verbos) no viaja colgado de ella: va fijo en
+el destino y aparece cuando la pieza ya llegó.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

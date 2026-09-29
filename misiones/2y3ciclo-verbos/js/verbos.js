@@ -569,7 +569,10 @@ const identifyTaskDB = [
     { s: 'La niña canta hermoso.', type: 'Verbo cantar' },
     { s: 'Ayer llovió demasiado.', type: 'Verbo llover' },
     { s: 'Ellos juegan fútbol.', type: 'Verbo jugar' },
-    { s: 'Mi mamá prepara la cena.', type: 'Verbo preparar' },
+    /* «Mi tía» y no «Mi mamá»: la animación de arriba deja a la vista «Mi
+       mamá manda», con el mismo sujeto y en presente, y con eso a la vista
+       este verbo se encuentra por el parecido, sin leer la oración. */
+    { s: 'Mi tía prepara la cena.', type: 'Verbo preparar' },
     { s: 'El gato duerme en el sofá.', type: 'Verbo dormir' },
     { s: 'El sol brilla fuerte.', type: 'Verbo brillar' },
     { s: 'Yo escribí un poema.', type: 'Verbo escribir' },
@@ -1265,7 +1268,10 @@ const critConcBank = [
     { bad: 'Tú estudian para el examen de Español.', fix: 'estudias', model: '«Tú» es 2.ª persona del singular: el verbo debe ser «estudias».' },
     { bad: 'Ella dibujamos un paisaje del campo.', fix: 'dibuja', model: '«Ella» es 3.ª persona del singular: el verbo debe ser «dibuja».' },
     { bad: 'Ustedes lee un cuento cada noche.', fix: 'leen', model: '«Ustedes» es plural: el verbo debe ser «leen».' },
-    { bad: 'Mi mamá preparan la cena de la familia.', fix: 'prepara', model: '«Mi mamá» es un solo sujeto (3.ª persona singular): el verbo debe ser «prepara».' },
+    /* «Mi tía», por lo mismo que en el Generador de Tareas: con «Mi mamá
+       manda» en la animación, «Mi mamá prepara» se corrige copiando la
+       forma que está a la vista, no mirando el sujeto. */
+    { bad: 'Mi tía preparan la cena de la familia.', fix: 'prepara', model: '«Mi tía» es un solo sujeto (3.ª persona singular): el verbo debe ser «prepara».' },
     { bad: 'Ellos duerme en el sofá de la sala.', fix: 'duermen', model: '«Ellos» es 3.ª persona del plural: el verbo debe ser «duermen».' },
 ];
 // ── IV. Transformador de oraciones (contexto hondureño; verificación por forma verbal clave)

@@ -25,6 +25,9 @@
      Va con js/teclado-actividades.js, que pone las paradas de tabulador
      y hace que Enter y la barra espaciadora sirvan de algo. -->
 <link rel="stylesheet" href="../../css/teclado-actividades.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
   <!-- Estilos de la Prueba de Pensamiento Crítico (2ª evaluación de la misión) -->
   <style>
     .eval-mode-toggle{display:flex;gap:0.6rem;margin-bottom:1.2rem;flex-wrap:wrap;}
@@ -87,13 +90,37 @@
     <div class="sec active" id="s-aprende" role="tabpanel">
       <div class="card ac-amber" data-situacion>
         <h2>✉️ La razón que nadie entendió</h2>
-        <p>Marvin le dejó un papel al maestro: <strong>«Mi mamá el dinero de la excursión el viernes».</strong>
-        Están todas las palabras menos una, y por eso nadie pudo saber qué pasó: ¿lo <em>manda</em> el viernes,
-        lo <em>mandó</em> el viernes o lo <em>mandará</em> el viernes? El maestro lo apuntó como que no había
+        <!-- El papel decía «… el dinero de la excursión el viernes», y con una
+             fecha que viene el presente habla del futuro, como en «mañana
+             voy»: «lo manda el viernes» y «lo mandará el viernes» le decían al
+             maestro lo mismo, y la historia prometía TRES noticias. Sin la
+             fecha, las tres son de verdad tres (ya salió, sale ahora, va a
+             salir), que es lo que enseña la animación de aquí abajo. -->
+        <p>Marvin le dejó un papel al maestro: <strong>«Mi mamá el dinero de la excursión».</strong>
+        Están todas las palabras menos una, y por eso nadie pudo saber qué pasó: ¿lo <em>mandó</em>,
+        lo <em>manda</em> o lo <em>mandará</em>? El maestro lo apuntó como que no había
         pagado, y el sábado Marvin se quedó viendo salir el bus.</p>
         <div class="tip"><span class="ti">❓</span><div><strong>La palabra que faltaba es un verbo</strong>, y
         fíjate en todo lo que hace: no solo dice la acción, dice <strong>cuándo</strong>. Cámbiale el tiempo a
-        «mandar» en esa frase y verás salir tres noticias distintas del mismo papel.</div></div>
+        «mandar» aquí abajo y verás salir tres noticias distintas del mismo papel.</div></div>
+      </div>
+      <!-- La animación que explica el tema, justo después de la historia: el
+           papel de Marvin con el hueco del verbo, y debajo una línea del
+           tiempo. Con «mandó», el sobre del dinero cae antes de ahora; con
+           «manda», en el ahora, y con «mandará», después. La raíz «mand» no
+           cambia: cambia la terminación, que es la desinencia. La mueve el
+           alumno, paso a paso. El aparato es compartido
+           (js/animacion-mision.js) y la escena es de esta misión
+           (js/animacion-papel.js). La frase de dentro es de reserva: si el
+           aparato no llega a cargar, se lee eso en vez de un hueco. -->
+      <div class="card ac-teal" data-animacion>
+        <h2>👀 Mira qué hace la palabra que faltaba</h2>
+        <div id="amPapel">
+          <p>Con «mandó», el dinero ya salió: pasó antes. Con «manda», sale ahora. Con «mandará», va a
+          salir después. Son tres noticias distintas del mismo papel, y lo único que cambió es el final de
+          la palabra. «Mand-» es la raíz, y no cambia: dice qué se hace. La terminación es la desinencia, y
+          aquí dice cuándo.</p>
+        </div>
       </div>
       <div class="card ac-teal">
         <h2>🏃‍♂️ ¿Qué es un Verbo?</h2>
@@ -652,6 +679,9 @@
   <!-- Registro local de evidencia de aprendizaje (panel: registro.html) -->
   <script src="../../js/metas-presentacion.js"></script>
   <script src="../../js/metas-registro.js"></script>
+<!-- La animación del papel de Marvin: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-papel.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

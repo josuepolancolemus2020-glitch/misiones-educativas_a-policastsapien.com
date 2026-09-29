@@ -736,6 +736,51 @@ const LEER = `
       textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
     };
   };
+  /* Los Verbos: el papel de Marvin. Del papel se lee cada palabra con su
+     caja y su renglón, el hueco y las rayas que subrayan, con su raya; del
+     sobre, dónde quedó; de la línea del tiempo, dónde están sus puntos, su
+     «ahora» y sus rótulos; y lo que se escribió arriba y abajo de cada punto,
+     pieza por pieza. */
+  window.__amExtra.amPapel = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function caja(el) { var b = el.getBBox(), a = aVista(el, b.x, b.y), c = aVista(el, b.x + b.width, b.y + b.height); return { x0: Math.min(a[0], c[0]), y0: Math.min(a[1], c[1]), x1: Math.max(a[0], c[0]), y1: Math.max(a[1], c[1]) }; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function raya(el) { var d = getComputedStyle(el).strokeDasharray; if (!d || d === 'none') return 0; var v = d.split(/[ ,]+/).map(parseFloat).filter(isFinite); return v.length ? Math.max.apply(null, v) : 0; }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return { a: aVista(p, a.x, a.y), b: aVista(p, b.x, b.y) }; }
+    function medio(c) { return [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2]; }
+    function pieza(t) { return t && vis(t) ? { dice: t.textContent, caja: caja(t) } : null; }
+    function subraya(p) { return p && vis(p) ? { caja: caja(p), raya: raya(p) } : null; }
+    var hueco = raiz.querySelector('[data-hueco]'), eje = extremos(raiz.querySelector('[data-eje]'));
+    return {
+      palabras: todos('[data-renglon]').filter(vis).map(function (t) {
+        return { r: +t.getAttribute('data-renglon'), pieza: t.getAttribute('data-pieza') || '', dice: t.textContent, caja: caja(t) };
+      }),
+      hueco: hueco && vis(hueco) ? { caja: caja(hueco), raya: raya(hueco) } : null,
+      rayas: todos('[data-raya]').filter(vis).map(function (p) { return { de: p.getAttribute('data-raya'), caja: caja(p), raya: raya(p) }; }),
+      sobre: caja(raiz.querySelector('[data-sobre-cuerpo]')),
+      caidas: todos('[data-caida]').filter(vis).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-caida'), a: e.a, b: e.b }; }),
+      abanico: todos('[data-abanico]').filter(vis).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-abanico'), a: e.a, b: e.b }; }),
+      preguntas: todos('[data-pregunta]').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(caja(t)) }; }),
+      eje: { x0: Math.min(eje.a[0], eje.b[0]), x1: Math.max(eje.a[0], eje.b[0]), y: eje.a[1] },
+      ahora: extremos(raiz.querySelector('[data-ahora]')).a[0],
+      puntos: todos('[data-punto]').map(function (c) { return aVista(c, +c.getAttribute('cx'), +c.getAttribute('cy')); }),
+      zonas: todos('[data-zona]').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(caja(t)) }; }),
+      formas: todos('[data-forma]').filter(vis).map(function (g) {
+        return { raiz: pieza(g.querySelector('[data-parte="raiz"]')), fin: pieza(g.querySelector('[data-parte="fin"]')),
+                 rayaFin: subraya(g.querySelector('[data-raya-forma="fin"]')), rayaRaiz: subraya(g.querySelector('[data-raya-forma="raiz"]')) };
+      }),
+      noticias: todos('[data-noticia]').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(caja(t)) }; }),
+      rotulos: todos('[data-rotulo]').filter(vis).map(function (g) {
+        var r = g.querySelector('rect');
+        return { de: g.getAttribute('data-rotulo'), dice: g.querySelector('text').textContent, caja: caja(r), raya: raya(r) };
+      }),
+      conectores: todos('[data-conector]').filter(trazada).map(function (p) { var e = extremos(p); return { de: p.getAttribute('data-conector'), a: e.a, b: e.b }; }),
+      textos: todos('text').filter(vis).map(function (t) { return t.textContent; })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -817,8 +862,166 @@ function regla(marcas, eje) {
 /* ── lo propio de cada escena ───────────────────────────────── */
 let escalaRedondel = 0;
 let escalaGallinero = null;
+let raizVerbos = null;
 
 const ESCENAS = {
+  /* Los Verbos: el papel de Marvin. Se lee el papel palabra por palabra
+     (qué dice y dónde está cada una) y se mide sobre el dibujo en qué punto
+     de la línea del tiempo cayó el sobre, sin creerle a ningún rótulo: el
+     pasado tiene que quedar a la IZQUIERDA del «ahora» y el futuro a la
+     DERECHA, y el marcador tiene que nombrar el tiempo del punto donde está
+     el sobre. ⚠️ La raíz no se mueve nunca: «mand» se mide en cada paso y
+     tiene que estar en el mismo sitio; lo que cambia es solo la terminación,
+     que va pegada a ella. ⚠️ Y las tres noticias se quedan: en el paso 3
+     están las tres formas, cada una encima de su punto, y lo que entiende
+     el maestro, debajo. Lo que es la raíz va con raya cortada y lo que es
+     la desinencia, con raya entera. ⚠️ Y la prueba no se regala: no sale
+     ninguna palabra de sus preguntas, ni persona, ni número, ni modo. */
+  amPapel(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    /* Lo que no depende del dibujo, primero: con una pieza mal puesta la
+       sonda deja de medir, y esto no puede quedarse sin mirar por eso. */
+    const dicho = [e.texto, e.cifra, e.palabras].concat(x.textos).map(nb).join(' | ');
+    const prohibidas = dicho.match(/gato|sof[aá]|duerm|durm|dorm|\bcant|\bviv[ie]|\bcom(er|e|es|o|imos|er[aá]n)\b|\bjug|\bjueg|\bcorr|\bbail|feli[zc]|estudi|escrib|\bsalt|\bcasa\b|r[aá]pido|\bviaj|\bbeb|\bni[ñn][oa]s?\b|patio|\ble(o|e|es|en|er|emos|er[aá]n)\b|\bamar\b|temer|subir|vender|perro|ladr|\bmucho\b|\bnad(ar|o)\b|tamales|cop[aá]n|choluteca|mercado|\bfui(mos)?\b|\best[aá]n\b|content|prepar|\bcena\b|\bt[íi]a\b|ojal[aá]|lluev|llov|ma[ñn]ana|\bayer\b|\bhoy\b|viernes|s[aá]bado|persona|singular|plural|sujeto|predicado|infinitivo|conjugaci|regular|copulativ|subjuntivo|imperativo|indicativo|\bmodos?\b|\btuve\b|\btener\b|\bser\b|\bestar\b|parec|parque|carta|abuel|p[aá]jaro|vuel[av]|puerta|cierr|campeonato|profesora|explic|verano|playa|cumplea|leones|rug[ei]|carrera|pel[íi]cula|habitaci|agricultor|cosech|caf[ée]|baleada|cuida|\br[íi]o\b|comunidad|himno|ruinas|pescad|\bvend|ceiba|leyenda|yoro|hermos|poema|cuento|brill|dibuj|[áa]rbol|ciudad|inteligente|cansad|\bnoche\b|\bellas?\b|\bellos\b|nosotros|ustedes|\byo\b|\btú(?=[\s.,;:!?»]|$)/gi);
+    r.push([!prohibidas, `paso ${n}: no sale ninguna palabra de la prueba, ni persona, ni número, ni modo`, prohibidas]);
+    const FINES = ['ó', 'a', 'ará'];
+    /* Qué quiere decir cada tiempo y dónde tiene que caer, escrito aquí
+       aparte y no leído de la escena. */
+    const TIEMPO = { antes: 'pasado', ahora: 'presente', 'después': 'futuro' };
+    const NOTICIA = { antes: '«Ya salió.»', ahora: '«Sale ahora.»', 'después': '«Va a salir.»' };
+    const t = n === 0 ? -1 : Math.min(n, 3) - 1;
+    const cortada = v => v > 0 && v < 8, entera = v => v === 0 || v > 20;
+    const dentro = (p, c, tol = 3) => p[0] >= c.x0 - tol && p[0] <= c.x1 + tol && p[1] >= c.y0 - tol && p[1] <= c.y1 + tol;
+    const medio = c => [(c.x0 + c.x1) / 2, (c.y0 + c.y1) / 2];
+    /* Subrayada: la raya va justo debajo de la palabra y del ancho de ella. */
+    const bajo = (ra, w) => !!ra && !!w && Math.abs(ra.caja.x0 - w.caja.x0) <= 1.5 && Math.abs(ra.caja.x1 - w.caja.x1) <= 2 &&
+      ra.caja.y0 >= w.caja.y1 - 4 && ra.caja.y0 <= w.caja.y1 + 6;
+    /* Pegada: la terminación empieza donde acaba la raíz, en el mismo renglón. */
+    const pegada = (a, b) => !!a && !!b && Math.abs(b.caja.x0 - a.caja.x1) <= 1.5 && Math.abs(b.caja.y1 - a.caja.y1) <= 1.5;
+
+    /* El papel: lo que dice, renglón por renglón. */
+    const r1 = x.palabras.filter(p => p.r === 1), r2 = x.palabras.filter(p => p.r === 2);
+    const mama = r1.find(p => !p.pieza), raizP = r1.find(p => p.pieza === 'raiz'), fines = r1.filter(p => p.pieza === 'fin');
+    r.push([!!mama && nb(mama.dice) === 'Mi mamá' && r2.length === 1 && nb(r2[0].dice) === 'el dinero de la excursión.' &&
+      r2[0].caja.y0 > mama.caja.y1 - 2,
+      `paso ${n}: el papel dice «Mi mamá …» y debajo «el dinero de la excursión.»`, x.palabras.map(p => p.dice)]);
+    if (!mama) return r;
+    if (n === 0) {
+      raizVerbos = null;
+      r.push([!raizP && fines.length === 0 && !!x.hueco && x.hueco.caja.x0 > mama.caja.x1 && x.hueco.caja.y0 < mama.caja.y1 && x.hueco.caja.y1 > mama.caja.y0 &&
+        cortada(x.hueco.raya) && !/mand/i.test(e.texto + e.cifra + e.palabras) && x.formas.length + x.noticias.length === 0,
+        'paso 0: el verbo es un hueco con raya cortada, al lado de «Mi mamá», y nada dice todavía cuál es', [!!raizP, fines.length, !!x.hueco]]);
+    } else {
+      r.push([!x.hueco && !!raizP && nb(raizP.dice) === 'mand' && raizP.caja.x0 > mama.caja.x1 + 2 && Math.abs(raizP.caja.y1 - mama.caja.y1) <= 1.5,
+        `paso ${n}: en el hueco está «mand», en el renglón de «Mi mamá»`, raizP && [raizP.dice, Math.round(raizP.caja.x0)]]);
+      if (raizP) {
+        if (raizVerbos == null) raizVerbos = raizP.caja.x0;
+        r.push([Math.abs(raizP.caja.x0 - raizVerbos) < 0.5, `paso ${n}: la raíz no se movió ni un punto`, [raizVerbos, raizP.caja.x0]]);
+      }
+      const fin = fines[0];
+      r.push([fines.length === 1 && nb(fin.dice) === FINES[t] && pegada(raizP, fin),
+        `paso ${n}: la terminación es «${FINES[t]}», una sola, pegada a «mand»`, fines.map(f => [f.dice, Math.round(f.caja.x0)])]);
+      const rFin = x.rayas.filter(q => q.de === 'fin');
+      r.push([rFin.length === 1 && bajo(rFin[0], fin) && entera(rFin[0].raya), `paso ${n}: la terminación va subrayada con raya entera`, rFin.map(q => q.raya)]);
+      const rRaiz = x.rayas.filter(q => q.de === 'raiz');
+      if (n === 4) r.push([rRaiz.length === 1 && bajo(rRaiz[0], raizP) && cortada(rRaiz[0].raya), 'paso 4: la raíz va subrayada con raya cortada', rRaiz.map(q => q.raya)]);
+      else r.push([rRaiz.length === 0, `paso ${n}: la raíz todavía no se subraya`, rRaiz.length]);
+    }
+    const fin = fines[0];
+
+    /* La línea del tiempo: tres puntos en el eje, el del medio es el
+       «ahora», y cada uno con su rótulo debajo. */
+    const ejeP = x.puntos.slice().sort((a, b) => a[0] - b[0]);
+    const zona = p => { const z = x.zonas.find(q => Math.abs(q.c[0] - p[0]) <= 1.5 && q.c[1] > p[1]); return z ? nb(z.dice) : null; };
+    r.push([ejeP.length === 3 && ejeP.every(p => Math.abs(p[1] - x.eje.y) <= 0.5 && p[0] > x.eje.x0 && p[0] < x.eje.x1) &&
+      Math.abs(ejeP[1][0] - x.ahora) <= 1 && zona(ejeP[0]) === 'antes' && zona(ejeP[1]) === 'ahora' && zona(ejeP[2]) === 'después',
+      `paso ${n}: la línea del tiempo tiene antes, ahora y después, en ese orden, y el ahora lleva su marca`, ejeP.map(zona)]);
+    if (ejeP.length !== 3) return r;
+    /* En qué punto está algo: el más cercano a lo ancho, a menos de 1,5. */
+    const enPunto = cx => { const p = ejeP.reduce((m, q) => Math.abs(q[0] - cx) < Math.abs(m[0] - cx) ? q : m, ejeP[0]); return Math.abs(p[0] - cx) <= 1.5 ? p : null; };
+    const sx = medio(x.sobre)[0], pSobre = enPunto(sx);
+
+    if (n === 0) {
+      r.push([Math.abs(sx - x.ahora) <= 1.5 && x.caidas.length === 0, 'paso 0: el sobre espera encima del ahora, sin caer en ningún tiempo', [Math.round(sx), x.ahora, x.caidas.length]]);
+      const salen = x.abanico.filter(l => Math.abs(l.a[0] - sx) <= 1.5 && Math.abs(l.a[1] - x.sobre.y1) <= 2.5);
+      const llegan = x.abanico.map(l => enPunto(l.b[0])).filter(p => p && x.abanico.some(l => Math.abs(l.b[1] - (p[1] - 5)) <= 2));
+      r.push([x.abanico.length === 3 && salen.length === 3 && new Set(llegan).size === 3,
+        'paso 0: del sobre salen tres caminos, uno a cada punto', x.abanico.map(l => [l.a.map(Math.round), l.b.map(Math.round)])]);
+      const bajoPunto = x.preguntas.map(q => enPunto(q.c[0])).filter(Boolean);
+      r.push([x.preguntas.length === 3 && x.preguntas.every(q => nb(q.dice) === '?') && new Set(bajoPunto).size === 3 &&
+        x.preguntas.every(q => q.c[1] > x.eje.y + 10),
+        'paso 0: debajo de cada punto, un «?»: sin la palabra no se sabe cuál', x.preguntas.map(q => q.c.map(Math.round))]);
+      r.push([e.cifra === '¿?', 'paso 0: el marcador todavía no dice ningún tiempo', e.cifra]);
+    } else {
+      /* El sobre cae en un punto, y ese punto es el del tiempo del verbo. */
+      const z = pSobre && zona(pSobre);
+      r.push([!!z && TIEMPO[z] === ['pasado', 'presente', 'futuro'][t] &&
+        (t === 0 ? sx < x.ahora - 20 : t === 1 ? Math.abs(sx - x.ahora) <= 1.5 : sx > x.ahora + 20),
+        `paso ${n}: con «mand${FINES[t]}», el sobre cae ${['a la izquierda del ahora', 'en el ahora', 'a la derecha del ahora'][t]}`, [Math.round(sx), x.ahora, z]]);
+      const c = x.caidas[0];
+      r.push([x.caidas.length === 1 && !!pSobre && Math.abs(c.a[0] - sx) <= 1.5 && Math.abs(c.a[1] - x.sobre.y1) <= 2.5 &&
+        Math.abs(c.b[0] - pSobre[0]) <= 1.5 && Math.abs(c.b[1] - (pSobre[1] - 5)) <= 2,
+        `paso ${n}: una sola raya baja del sobre hasta su punto`, x.caidas.map(q => [q.a.map(Math.round), q.b.map(Math.round)])]);
+      r.push([x.abanico.length + x.preguntas.length === 0, `paso ${n}: ya no quedan caminos ni «?»`, [x.abanico.length, x.preguntas.length]]);
+      /* El marcador nombra el tiempo del punto donde está el sobre. */
+      if (n <= 3) r.push([e.cifra === '-' + FINES[t] && !!z && nb(e.palabras).startsWith(TIEMPO[z]) && !!fin && e.cifra === '-' + nb(fin.dice),
+        `paso ${n}: el marcador dice la terminación del papel y el tiempo del punto donde cayó el sobre`, [e.cifra, e.palabras, z]]);
+      if (n <= 3) r.push([e.texto.includes('«mand' + FINES[t] + '»'), `paso ${n}: la frase dice la palabra que hay en el papel`, e.texto]);
+    }
+
+    /* Lo que se leyó en cada tiempo se queda: la forma encima de su punto,
+       con la terminación pegada y subrayada, y la noticia debajo. */
+    const hechas = n === 0 ? 0 : Math.min(n, 3);
+    r.push([x.formas.length === hechas && x.noticias.length === hechas, `paso ${n}: quedan ${hechas} forma${hechas === 1 ? '' : 's'} y ${hechas} noticia${hechas === 1 ? '' : 's'}`, [x.formas.length, x.noticias.length]]);
+    const vistas = [];
+    x.formas.forEach(f => {
+      const ok0 = !!f.raiz && !!f.fin && nb(f.raiz.dice) === 'mand' && pegada(f.raiz, f.fin);
+      const w = ok0 ? { x0: f.raiz.caja.x0, x1: f.fin.caja.x1 } : null;
+      const p = w && enPunto((w.x0 + w.x1) / 2);
+      const z = p && zona(p);
+      const k = z ? ['antes', 'ahora', 'después'].indexOf(z) : -1;
+      vistas.push(k);
+      r.push([ok0 && k >= 0 && nb(f.fin.dice) === FINES[k] && f.fin.caja.y1 < x.sobre.y0 + 1 && f.fin.caja.y1 < p[1] &&
+        !!f.rayaFin && bajo(f.rayaFin, f.fin) && entera(f.rayaFin.raya),
+        `paso ${n}: «mand${f.fin ? f.fin.dice : '?'}» va encima de ${z || '¿?'}, con la terminación subrayada entera`, w && [Math.round(w.x0), Math.round(w.x1), z]]);
+      if (n === 4) r.push([!!f.rayaRaiz && bajo(f.rayaRaiz, f.raiz) && cortada(f.rayaRaiz.raya), `paso 4: el «mand» de «mand${f.fin && f.fin.dice}» va subrayado con raya cortada`, f.rayaRaiz && f.rayaRaiz.raya]);
+      else r.push([!f.rayaRaiz, `paso ${n}: la raíz de las formas todavía no se subraya`, !!f.rayaRaiz]);
+    });
+    r.push([new Set(vistas).size === vistas.length && vistas.every(k => k >= 0 && k < hechas),
+      `paso ${n}: cada forma está en su punto, y en el orden en que se probaron`, vistas]);
+    x.noticias.forEach(q => {
+      const p = enPunto(q.c[0]), z = p && zona(p);
+      const zc = z && x.zonas.find(o => nb(o.dice) === z);
+      r.push([!!z && nb(q.dice) === NOTICIA[z] && !!zc && q.c[1] > zc.c[1], `paso ${n}: debajo de ${z || '¿?'} dice ${z ? NOTICIA[z] : '?'}`, [q.dice, z]]);
+    });
+    /* La forma que está encima del sobre es la que dice el papel. */
+    if (n >= 1 && n <= 3 && pSobre && fin) {
+      const f = x.formas.find(q => q.fin && enPunto((q.raiz.caja.x0 + q.fin.caja.x1) / 2) === pSobre);
+      r.push([!!f && nb(f.fin.dice) === nb(fin.dice), `paso ${n}: encima del sobre está la palabra del papel`, f && f.fin.dice]);
+    }
+
+    /* Qué es cada pieza, en el papel. */
+    if (n === 4) {
+      const rr = x.rotulos.find(q => q.de === 'raiz'), rd = x.rotulos.find(q => q.de === 'desinencia');
+      r.push([x.rotulos.length === 2 && !!rr && !!rd && nb(rr.dice) === 'raíz' && nb(rd.dice) === 'desinencia' && cortada(rr.raya) && entera(rd.raya),
+        'paso 4: los dos rótulos, «raíz» con borde cortado y «desinencia» con borde entero', x.rotulos.map(q => [q.dice, q.raya])]);
+      const cr = x.conectores.find(q => q.de === 'raiz'), cd = x.conectores.find(q => q.de === 'desinencia');
+      /* Un extremo en el rótulo y el otro junto a su palabra: el hilo empieza
+         a unos puntos de la letra, para no tocarla. */
+      const une = (h, rot, pal) => !!h && ((dentro(h.a, rot, 2) && dentro(h.b, pal, 5)) || (dentro(h.b, rot, 2) && dentro(h.a, pal, 5)));
+      r.push([x.conectores.length === 2 && !!rr && !!rd && !!raizP && !!fin && une(cr, rr.caja, raizP.caja) && une(cd, rd.caja, fin.caja) &&
+        Math.abs(medio(rr.caja)[0] - medio(raizP.caja)[0]) <= 2 && rr.caja.y1 <= raizP.caja.y0 + 1 &&
+        rd.caja.x0 > fin.caja.x1 && rd.caja.y0 < fin.caja.y1 && rd.caja.y1 > fin.caja.y0,
+        'paso 4: «raíz» va encima de «mand» y «desinencia» al lado de la terminación, cada uno con su hilo', x.conectores.map(q => [q.de, q.a.map(Math.round), q.b.map(Math.round)])]);
+      r.push([e.cifra === nb(raizP ? raizP.dice : '') + '-' && /raíz/.test(e.palabras) && /raíz/.test(e.texto) && /desinencia/.test(e.texto),
+        'paso 4: el marcador dice la raíz del papel, y la frase nombra la raíz y la desinencia', [e.cifra, e.palabras]]);
+    } else {
+      r.push([x.rotulos.length + x.conectores.length === 0, `paso ${n}: todavía no hay rótulos`, [x.rotulos.length, x.conectores.length]]);
+    }
+    return r;
+  },
+
   /* Los Adjetivos: los sacos de doña Nely. Se mide sobre el dibujo sobre qué
      saco se posa cada etiqueta (el más cercano, y por encima de él), qué
      rodea cada aro y hasta dónde llega cada hilo; y lo que el marcador
