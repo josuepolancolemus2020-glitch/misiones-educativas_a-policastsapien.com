@@ -6715,6 +6715,92 @@ entero, la cota diciendo 9.24, las tajadas a la vista antes de partir el
 redondel, lo que sobró escrito 7.47 y las esquinas solo de otro color), y salió
 roja con las cinco.
 
+### La decimosexta: Ángulos: Tipos y Transportador, y lo que enseñó
+
+En **Ángulos: Tipos y Transportador** (`misiones/2ciclo-angulos-basicos/`,
+`js/animacion-transportador.js`) la historia es la rampa de Kenia: a la entrada
+de la escuela le hicieron una rampa y quedó tan parada que ella no la puede
+subir sola en su silla, y todos los días alguien la empuja delante de sus
+compañeros. La historia termina diciendo que lo que quedó mal es el ángulo, y
+que un ángulo no se pone a ojo: se mide con un transportador. La animación es
+la rampa vista de lado, con Kenia al pie. Primero el ángulo: el vértice, donde
+la rampa sale del suelo, y sus dos lados, la rampa y el suelo. Después la vista
+se acerca cinco veces al pie de la rampa y el transportador baja hasta el
+vértice, torcido; se gira hasta que su base quede sobre el suelo; de las dos
+filas de números se sigue la que empieza en el cero que queda bajo la rampa, y
+se cuenta 0, 10, 20 hasta la rampa: mide 20°. En ese mismo sitio la otra fila
+dice 160, y se tacha. Al final la vista se aleja y el transportador queda
+chiquito al pie de la rampa grande. Seis cosas que valen para las demás:
+
+1. ⚠️ **Lo que va debajo decide qué se enseña.** El «Predice» pregunta si 130°
+   es agudo, recto u obtuso, cuál es el complemento de 25° y cuánto mide el
+   tercer ángulo de un triángulo. Son los otros tres temas de la misión, así
+   que la animación no toca ninguno. Enseña a MEDIR, que es lo que pide la
+   historia: no nombra ni un tipo de ángulo, no completa nada hasta 90 ni hasta
+   180, y la cuña de la rampa no dice cuánto miden sus otras dos esquinas. La
+   base del transportador se llama «base» y no «borde recto», porque «recto»
+   es una respuesta del «Predice». La sonda busca esos números y esas palabras
+   en cada paso.
+2. **Los cuatro pasos son los de la ficha**, en su orden: centra, alinea el
+   cero, sigue la escala, lee. La pantalla de la misión enseñaba tres y no
+   decía nada de la doble escala, que es el error de la ficha («así nunca
+   confundirás 60° con 120°») y el que se comete en el examen en papel, con un
+   transportador de verdad en la mano. Aquí se ve: en el mismo sitio una fila
+   dice 20 y la otra 160.
+3. ⚠️ **Lo que no se lee de lejos se acerca, y lo que va encima se mueve con
+   la vista.** Un transportador es chiquito al lado de una rampa, y a ese
+   tamaño sus números no se leen. Por eso la vista se acerca y al final se
+   aleja, y el alejamiento es lo que la historia dice («lo que quedó mal no es
+   el largo»): el ángulo no depende del largo de los lados. La vista y el
+   transportador se mueven con la misma curva y la misma demora. Como la escala
+   de cada uno va en línea recta de un tamaño al otro, la proporción entre los
+   dos es la misma en cada cuadro, y el centro no se despega del vértice ni a
+   medio camino. Se midió cuadro a cuadro: distancia 0 y proporción 5 todo el
+   tiempo. Y las rayas del mundo no engordan cinco veces (`vector-effect`).
+4. ⚠️ **Lo que se marca encima tiene que leerse como lo que es.** La raya que
+   tachaba el 160 iba inclinada como la rampa, que pasa por ahí mismo, y
+   parecía un pedazo de la rampa. Acostada, se leía «−160−». Ahora baja hacia la
+   derecha, al revés de la rampa, y la sonda mide su dirección. Pasó algo
+   parecido con los ceros de las puntas: subidos por el arco se pegaban al 10 y
+   al 170, y ahora van justo encima de la base, como en un transportador de
+   verdad. Las dos cosas se vieron solo mirando las capturas, con la sonda en
+   verde.
+5. ⚠️ **La cuenta de la animación estaba en 4 de las 30 formas.** La sección II
+   de la operativa pide leer ángulos dibujados igual que este, con un lado
+   acostado a la derecha y el otro subiendo, y las formas 2, 21, 23 y 27
+   dibujaban uno de 20°. Ahora es de 30°, porque con el margen de ±5° de esa
+   sección, «20» todavía valdría para uno de 25°. El suplemento de 20° o de
+   160° (las dos filas de este mismo dibujo) se corre un grado: hoy no lo trae
+   ninguna forma, y el resguardo se queda para el día que cambie el generador.
+   Está en `_fueraDeLaRampa`, sin sacar otro número del azar, así que las
+   otras 26 formas salen idénticas. La conceptual y la ficha no preguntaban
+   ninguna de las dos lecturas.
+6. **Nada se dice solo con color.** Los dos lados llevan su rótulo; la fila que
+   se sigue va en letra gruesa, con un anillo en su cero; lo leído se agranda y
+   se encierra; y el 160 se tacha con una raya.
+
+La sonda de esta escena **mide el ángulo de la rampa en el dibujo** (del vértice
+a la punta de arriba, contra el suelo) **y lee el transportador como uno de
+verdad**: las 37 rayas y los 38 números, cada uno a sus grados desde la punta
+derecha de la base, torcido y derecho. Comprueba:
+
+- que el centro esté sobre el vértice desde que llega, que llegue torcido y que
+  después su base quede sobre el suelo;
+- que la fila que se sigue sea entera la de dentro, con su cero bajo la rampa;
+- que lo leído sea el número por donde pasa la rampa y valga lo medido y lo que
+  dice el marcador;
+- que el anillo de la lectura esté donde la rampa cruza el borde;
+- que lo tachado sea el número de la otra fila en ese mismo sitio, y que valga
+  180 menos lo leído;
+- que al final el transportador sea chiquito junto a la rampa y siga centrado
+  y derecho;
+- y que ninguna frase nombre un tipo de ángulo ni lo que pregunta el Predice.
+
+Se comprobó al revés con cinco averías plantadas a la vez (el 20 de la fila de
+dentro corrido a 25°, el transportador corrido 6 px del vértice, el marcador
+diciendo 30°, la raya tachando el 150 y un «90» en una frase), y salió roja con
+las cinco.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6740,6 +6826,9 @@ da XP, y la sonda estática lo busca por ese nombre. Una cuenta larga no va en e
 número grande del marcador: ahí va el resultado, y en las palabras, de dónde
 sale. Y una escena con piezas que
 viajan se mira también con fotos a medio viaje, no solo al final de cada paso.
+Si la escena acerca la vista, lo que tiene que seguir al mundo (un instrumento,
+un punto) se mueve con su misma demora y su misma curva, y se mide cuadro a
+cuadro que no se despegue: en las fotos, la captura llega tarde y no lo enseña.
 
 Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
 del botón que avanza no se lee en su punta: la misión declara en su CSS

@@ -484,6 +484,51 @@ const LEER = `
       pliegue: todos('.bm-pliegue').map(extremos)
     };
   };
+  /* Ángulos: Tipos y Transportador: la rampa de Kenia. Del mundo se leen el
+     suelo y la rampa ya puestos en la vista, con el acercamiento que lleven
+     encima; del transportador, su centro, su base, sus rayas y sus números,
+     también en la vista. Con eso la sonda mide el ángulo de la rampa y lee el
+     transportador sin creerle a ningún rótulo. */
+  window.__amExtra.amRampa = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function linea(el) { return [aVista(el, +el.getAttribute('x1'), +el.getAttribute('y1')), aVista(el, +el.getAttribute('x2'), +el.getAttribute('y2'))]; }
+    function circulo(el) { return aVista(el, +el.getAttribute('cx'), +el.getAttribute('cy')); }
+    function medio(el) { var b = el.getBBox(); return aVista(el, b.x + b.width / 2, b.y + b.height / 2); }
+    function escala(el) { var m = base.multiply(el.getScreenCTM()); return Math.hypot(m.a, m.b); }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function extremos(p) { var L = p.getTotalLength(), a = p.getPointAtLength(0), b = p.getPointAtLength(L); return [aVista(p, a.x, a.y), aVista(p, b.x, b.y)]; }
+    function uno(sel) { return raiz.querySelector(sel); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    var centro = uno('.tr-centro'), vertice = uno('.tr-vertice'), anillo = uno('.tr-anillo'), lectura = uno('.tr-lectura'), tachado = uno('.tr-tachado');
+    return {
+      mundo: escala(uno('.tr-mundo')),
+      suelo: linea(uno('.tr-suelo')),
+      rampa: linea(uno('.tr-rampa')),
+      lados: todos('.tr-lado').filter(vis).map(function (l) { return { suelo: l.classList.contains('tr-lado-suelo'), l: linea(l) }; }),
+      vertice: vis(vertice) ? circulo(vertice) : null,
+      arco: vis(uno('.tr-arco')),
+      pregunta: vis(uno('.tr-pregunta')) ? uno('.tr-pregunta').textContent : null,
+      grados: vis(uno('.tr-grados')) ? uno('.tr-grados').textContent : null,
+      rotulos: todos('.tr-rotulo').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(t) }; }),
+      tp: vis(centro) ? {
+        centro: circulo(centro),
+        escala: escala(centro),
+        base: linea(uno('.tr-base')),
+        marcas: todos('.tr-marca').map(function (m) { var l = linea(m); return { g: +m.getAttribute('data-grados'), a: l[0], b: l[1] }; }),
+        nums: todos('.tr-num').map(function (t) {
+          return { fila: t.getAttribute('data-fila'), valor: +t.getAttribute('data-valor'), dice: t.textContent, c: medio(t),
+            marcada: t.classList.contains('tr-fila'), leido: t.classList.contains('tr-leido'), mal: t.classList.contains('tr-mal'), esc: escala(t) / escala(centro) };
+        }),
+        anillo: vis(anillo) ? circulo(anillo) : null,
+        cuenta: trazada(uno('.tr-cuenta')) ? extremos(uno('.tr-cuenta')) : null,
+        pasos: todos('.tr-paso').filter(vis).map(function (p) { return { g: +p.getAttribute('data-grados'), c: circulo(p) }; }),
+        lectura: vis(lectura) ? circulo(lectura) : null,
+        tachado: vis(tachado) ? { valor: +tachado.getAttribute('data-valor'), l: linea(tachado) } : null
+      } : null
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -785,6 +830,151 @@ const ESCENAS = {
       r.push([!x.listones.length && !x.marco.length, 'paso 5: solo la hoja', [x.listones.length, x.marco.length]]);
     }
     if (n === 0) r.push([nb(e.cifra) === '90°', 'paso 0: el marcador dice 90°, la esquina', e.cifra]);
+    return r;
+  },
+
+  /* Ángulos: Tipos y Transportador: la rampa de Kenia. El ángulo de la
+     rampa se mide en el dibujo (del vértice a la punta de arriba, contra el
+     suelo), y el transportador se lee como se lee uno de verdad: cada raya y
+     cada número a sus grados desde la punta derecha de la base, medidos en
+     la vista. Lo leído tiene que ser el número por donde pasa la rampa, y
+     ese número, el ángulo medido. ⚠️ Y lo que va debajo no se regala: el
+     «Predice» pregunta el tipo de un ángulo de 130°, el complemento de 25° y
+     el tercer ángulo de un triángulo de 50° y 60°. */
+  amRampa(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t = 0.5) => Math.abs(a - b) <= t;
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    /* Los grados se cuentan hacia ARRIBA, como en el transportador: en la
+       vista la y crece hacia abajo. */
+    const rumbo = (a, b) => Math.atan2(-(b[1] - a[1]), b[0] - a[0]) * 180 / Math.PI;
+    const norm = g => { const v = ((g % 360) + 360) % 360; return v > 180 ? v - 360 : v; };
+    const aLinea = (p, [a, b]) => Math.abs((b[0] - a[0]) * (a[1] - p[1]) - (a[0] - p[0]) * (b[1] - a[1])) / dist(a, b);
+    const Z = 5, R = 140, ANG = 20;
+    const angRampa = norm(rumbo(x.rampa[0], x.rampa[1]) - rumbo(x.suelo[0], x.suelo[1]));
+    r.push([cerca(angRampa, ANG, 0.2), `paso ${n}: la rampa sube ${angRampa.toFixed(2)}° sobre el suelo, medidos en el dibujo`, angRampa]);
+    r.push([aLinea(x.rampa[0], x.suelo) < 0.5, `paso ${n}: la rampa sale del suelo`, aLinea(x.rampa[0], x.suelo)]);
+    const lejos = n <= 1 || n === 6;
+    r.push([cerca(x.mundo, lejos ? 1 : Z, 0.01), `paso ${n}: la vista está ${lejos ? 'de lejos' : Z + ' veces más cerca'}`, x.mundo]);
+
+    const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
+    const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
+    const prohibidos = [130, 25, 65, 75, 155, 50, 60, 70, 90];
+    r.push([!numsDichos.some(v => prohibidos.includes(v)) && !/agud|obtus|recto|llano|complement|suplement|triángul/i.test(dicho),
+      `paso ${n}: no nombra ningún tipo de ángulo ni lo que pregunta el Predice`, numsDichos]);
+
+    const cifra = nb(e.cifra);
+    if (n <= 3) {
+      r.push([cifra === '¿?', `paso ${n}: todavía no se ha leído: el marcador dice ¿?`, cifra]);
+      r.push([!numsDichos.includes(ANG), `paso ${n}: la frase no adelanta la medida`, numsDichos]);
+    }
+    if (n <= 1) {
+      r.push([x.arco && x.pregunta === '?' && !x.grados, `paso ${n}: el arco del ángulo, con su pregunta`, [x.arco, x.pregunta, x.grados]]);
+      r.push([!x.tp, `paso ${n}: el transportador todavía no está`, !!x.tp]);
+    }
+    if (n === 0) r.push([!x.vertice && !x.lados.length && !x.rotulos.length, 'paso 0: solo la rampa, sin marcar nada', [x.vertice, x.lados.length, x.rotulos.length]]);
+    if (n === 1) {
+      const ls = x.lados.find(l => l.suelo), lr = x.lados.find(l => !l.suelo);
+      r.push([!!ls && !!lr && !!x.vertice, 'paso 1: los dos lados y el vértice', [!!ls, !!lr, !!x.vertice]]);
+      if (ls && lr && x.vertice) {
+        r.push([dist(x.vertice, x.rampa[0]) < 0.8 && dist(ls.l[0], x.vertice) < 0.8 && dist(lr.l[0], x.vertice) < 0.8,
+          'paso 1: el vértice es donde la rampa sale del suelo, y de ahí salen los dos lados', dist(x.vertice, x.rampa[0])]);
+        r.push([aLinea(ls.l[1], x.suelo) < 0.8 && ls.l[1][0] > x.vertice[0] && dist(lr.l[1], x.rampa[1]) < 1,
+          'paso 1: un lado va por el suelo, bajo la rampa, y el otro por la rampa hasta arriba', [ls.l, lr.l]]);
+        const vt = x.rotulos.filter(q => nb(q.dice) === 'vértice'), la = x.rotulos.filter(q => nb(q.dice) === 'lado');
+        r.push([vt.length === 1 && dist(vt[0].c, x.vertice) < 45, 'paso 1: el rótulo «vértice» está junto al vértice', vt.map(q => dist(q.c, x.vertice))]);
+        r.push([la.length === 2 && la.some(q => aLinea(q.c, ls.l) < 22 && q.c[1] > x.vertice[1]) && la.some(q => aLinea(q.c, lr.l) < 22 && q.c[1] < x.vertice[1]),
+          'paso 1: un rótulo «lado» junto a cada lado', la.map(q => [aLinea(q.c, ls.l), aLinea(q.c, lr.l)])]);
+      }
+    }
+    if (n < 2) return r;
+
+    const t = x.tp;
+    r.push([!!t, `paso ${n}: el transportador está`, !!t]);
+    if (!t) return r;
+    r.push([!!x.vertice && dist(t.centro, x.vertice) < 0.8 && dist(t.centro, x.rampa[0]) < 0.8,
+      `paso ${n}: el centro del transportador está sobre el vértice`, x.vertice && dist(t.centro, x.vertice)]);
+    r.push([cerca(t.escala, n === 6 ? 1 / Z : 1, 0.005), `paso ${n}: el transportador ${n === 6 ? 'se achicó con la vista' : 'está a su tamaño de cerca'}`, t.escala]);
+    /* El marco del transportador: los grados se cuentan desde la punta
+       derecha de la base, la del cero de la fila de dentro. */
+    const derecha = t.base[1];
+    const gradosDe = p => norm(rumbo(t.centro, p) - rumbo(t.centro, derecha));
+    const radio = dist(t.centro, derecha);
+    const torcido = norm(rumbo(t.base[0], t.base[1]) - rumbo(x.suelo[0], x.suelo[1]));
+    if (n === 2) r.push([Math.abs(torcido) >= 10, `paso 2: el transportador llega torcido (${torcido.toFixed(1)}°), y por eso todavía no se lee`, torcido]);
+    else r.push([Math.abs(torcido) < 0.3 && aLinea(t.base[0], x.suelo) < 0.8 && aLinea(t.base[1], x.suelo) < 0.8,
+      `paso ${n}: la base del transportador está encima del suelo`, [torcido, aLinea(t.base[0], x.suelo), aLinea(t.base[1], x.suelo)]]);
+
+    if (n === 2 || n === 3) {
+      /* Un transportador de verdad: cada raya a sus grados; cada número de la
+         fila de dentro, a sus grados desde la derecha, y cada uno de la de
+         fuera, desde la izquierda. Torcido o derecho, da lo mismo. */
+      const k = t.escala;
+      const rayasMal = t.marcas.filter(m => !cerca(gradosDe(m.a), m.g, 0.2) || !cerca(gradosDe(m.b), m.g, 0.3) || !cerca(dist(t.centro, m.a), R * k, 0.6));
+      const cada = (paso, cuantas) => Array.from({ length: cuantas }, (_, i) => i * paso).join(',');
+      r.push([t.marcas.map(m => m.g).sort((a, b) => a - b).join(',') === cada(5, 37) && !rayasMal.length,
+        `paso ${n}: las 37 rayas, cada 5°, cada una a sus grados`, rayasMal.slice(0, 3)]);
+      const dentro = t.nums.filter(q => q.fila === 'dentro'), fuera = t.nums.filter(q => q.fila === 'fuera');
+      const deDiez = l => l.map(q => q.valor).sort((a, b) => a - b).join(',') === cada(10, 19);
+      /* Los de las puntas van justo encima de la base: basta con que estén en
+         su punta y pegados a ella. */
+      const dondeVa = (q, g) => { const real = gradosDe(q.c); return g <= 0 ? real > 0 && real < 6 : g >= 180 ? real > 174 && real < 180 : cerca(real, g, 1.5); };
+      const numsMal = [...dentro.map(q => [q, q.valor]), ...fuera.map(q => [q, 180 - q.valor])]
+        .filter(([q, g]) => !dondeVa(q, g) || nb(q.dice) !== String(q.valor)).map(([q, g]) => [q.fila, q.valor, gradosDe(q.c).toFixed(1), g]);
+      r.push([deDiez(dentro) && deDiez(fuera) && !numsMal.length,
+        `paso ${n}: las dos filas de 0 a 180: la de dentro cuenta desde la derecha y la de fuera, desde la izquierda`, numsMal.slice(0, 3)]);
+      r.push([!t.nums.some(q => q.leido || q.mal || q.marcada) && !t.lectura && !t.tachado && !t.anillo && !t.cuenta,
+        `paso ${n}: todavía no se marca nada en la escala`, null]);
+    }
+    if (n === 4 || n === 5) {
+      const dentro = t.nums.filter(q => q.fila === 'dentro');
+      r.push([dentro.every(q => q.marcada) && !t.nums.some(q => q.fila === 'fuera' && q.marcada),
+        `paso ${n}: la fila que se sigue es la de dentro, entera, y solo ella`, t.nums.filter(q => q.marcada).length]);
+      const cero = dentro.find(q => q.valor === 0);
+      r.push([!!t.anillo && !!cero && dist(t.anillo, cero.c) < 2, `paso ${n}: el anillo está en el cero de esa fila`, t.anillo && cero && dist(t.anillo, cero.c)]);
+      /* «El cero que queda bajo la rampa»: del lado del suelo que es lado del
+         ángulo, y por debajo de la rampa. */
+      const gCero = cero ? norm(rumbo(x.vertice, cero.c) - rumbo(x.suelo[0], x.suelo[1])) : NaN;
+      r.push([gCero > 0 && gCero < angRampa, `paso ${n}: ese cero queda bajo la rampa (a ${gCero.toFixed(1)}° del suelo)`, gCero]);
+      if (n === 4) r.push([cifra === '0°' && !t.nums.some(q => q.leido) && !t.lectura, 'paso 4: el marcador dice 0°, el cero de donde se cuenta, y todavía no se lee', cifra]);
+    }
+    if (n === 5) {
+      /* Lo leído, sacado del DIBUJO: el número de la fila de dentro que está
+         en el rumbo de la rampa. */
+      const dentro = t.nums.filter(q => q.fila === 'dentro');
+      const porDonde = dentro.slice().sort((a, b) => Math.abs(gradosDe(a.c) - angRampa) - Math.abs(gradosDe(b.c) - angRampa))[0];
+      const leidos = t.nums.filter(q => q.leido), l = leidos[0];
+      r.push([leidos.length === 1 && l === porDonde, 'paso 5: lo leído es el número de la fila de dentro por donde pasa la rampa', leidos.map(q => [q.fila, q.valor])]);
+      if (l) r.push([l.valor === Math.round(angRampa) && cifra === `${l.valor}°` && l.esc >= 1.3,
+        `paso 5: lo leído (${l.valor}) es el ángulo medido en el dibujo y lo que dice el marcador, y se ve más grande`, [l.valor, angRampa, cifra, l.esc]]);
+      r.push([!!t.lectura && aLinea(t.lectura, x.rampa) < 1 && cerca(dist(t.centro, t.lectura), R * t.escala, 1.2),
+        'paso 5: el anillo de la lectura está donde la rampa cruza el borde', t.lectura && [aLinea(t.lectura, x.rampa), dist(t.centro, t.lectura)]]);
+      const c = t.cuenta;
+      r.push([!!c && cerca(gradosDe(c[0]), 0, 0.6) && cerca(gradosDe(c[1]), angRampa, 0.6), 'paso 5: la cuenta va del cero hasta la rampa', c && [gradosDe(c[0]), gradosDe(c[1])]]);
+      r.push([t.pasos.map(p => p.g).join(',') === '10,20' && t.pasos.every(p => cerca(gradosDe(p.c), p.g, 0.6)),
+        'paso 5: la cuenta pasa por el 10 y llega al 20', t.pasos.map(p => [p.g, gradosDe(p.c).toFixed(1)])]);
+      /* La otra fila: lo tachado es el número de la de fuera que está en ese
+         mismo sitio, y vale lo que le falta a lo leído para 180. */
+      const tc = t.tachado, mal = t.nums.filter(q => q.mal);
+      const otro = tc && t.nums.find(q => q.fila === 'fuera' && q.valor === tc.valor);
+      const medioT = tc && [(tc.l[0][0] + tc.l[1][0]) / 2, (tc.l[0][1] + tc.l[1][1]) / 2];
+      r.push([!!otro && !!l && tc.valor === 180 - l.valor && cerca(gradosDe(otro.c), angRampa, 1.5) && dist(otro.c, medioT) < 2
+        && mal.length === 1 && mal[0] === otro, 'paso 5: el número de la otra fila, en ese mismo sitio, tachado', otro && [tc.valor, gradosDe(otro.c).toFixed(1)]]);
+      /* La raya que tacha no puede parecer un pedazo de la rampa. */
+      if (tc) {
+        const gT = norm(rumbo(tc.l[0], tc.l[1]) - rumbo(x.suelo[0], x.suelo[1]));
+        r.push([Math.abs(gT - angRampa) > 30 && Math.abs(Math.abs(gT - angRampa) - 180) > 30, `paso 5: la raya que tacha va en otra dirección que la rampa (${gT.toFixed(1)}°)`, gT]);
+      }
+      r.push([/20°/.test(nb(e.texto)) && /\b160\b/.test(nb(e.texto)), 'paso 5: la frase dice las dos lecturas, 20° y 160', e.texto]);
+    }
+    if (n === 6) {
+      const larga = dist(x.rampa[0], x.rampa[1]);
+      r.push([radio < larga / 4, `paso 6: el transportador es chiquito junto a la rampa (radio ${radio.toFixed(1)} contra ${larga.toFixed(1)})`, [radio, larga]]);
+      r.push([Math.abs(torcido) < 0.3, 'paso 6: y sigue derecho sobre el suelo', torcido]);
+      r.push([x.arco && nb(x.grados) === `${Math.round(angRampa)}°` && !x.pregunta, 'paso 6: el arco del ángulo ya dice lo medido', [x.grados, x.pregunta]]);
+      r.push([cifra === `${Math.round(angRampa)}°`, 'paso 6: el marcador dice lo medido', cifra]);
+    }
     return r;
   },
 

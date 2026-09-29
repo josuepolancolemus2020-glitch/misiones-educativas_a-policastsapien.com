@@ -1053,10 +1053,22 @@ function genClasificaOpItems() {
   ];
   return _shuffleF(medidas, _opRnd).map(g => ({ deg: g, ansTipo: _tipoAngulo(g) }));
 }
+/* La animación de la rampa, que va después de la historia, lee 20° en un
+   ángulo dibujado igual que los de la sección II (un lado acostado a la
+   derecha y el otro subiendo), y en ese mismo sitio la otra fila del
+   transportador dice 160. Una forma que pidiera leer un ángulo de 20°, o el
+   suplemento de 20° o de 160°, se contestaría acordándose de la animación y
+   no midiendo. Se corren sin sacar otro número del azar, así que las demás
+   formas salen idénticas: el de 20° pasa a 30° (con el margen de ±5° de la
+   sección, «20» ya no vale ahí) y el suplemento, un grado. */
+function _fueraDeLaRampa(g, que) {
+  if (que === 'leer') return g === 20 ? 30 : g;
+  return g === 20 || g === 160 ? g + 1 : g;
+}
 // II. Lee el transportador (5 × 4 = 20 pts) — dibujos con _svgAngle como el Lab 2
 function genTransportadorItems() {
   const degs = _shuffleF([
-    5 * _opRint(3, 8),    // 15°–40° agudo
+    _fueraDeLaRampa(5 * _opRint(3, 8), 'leer'),    // 15°–40° agudo
     5 * _opRint(9, 17),   // 45°–85° agudo
     90,                   // recto
     5 * _opRint(19, 26),  // 95°–130° obtuso
@@ -1069,7 +1081,7 @@ function genCompSuplItems() {
   const items = [];
   for (let i = 0; i < 5; i++) {
     if (i % 2 === 0) { const a = _opRint(10, 80); items.push({ text: `El complemento de ${a}° es ▢`, ansNum: 90 - a }); }
-    else { const a = _opRint(20, 170); items.push({ text: `El suplemento de ${a}° es ▢`, ansNum: 180 - a }); }
+    else { const a = _fueraDeLaRampa(_opRint(20, 170), 'suplemento'); items.push({ text: `El suplemento de ${a}° es ▢`, ansNum: 180 - a }); }
   }
   return items;
 }

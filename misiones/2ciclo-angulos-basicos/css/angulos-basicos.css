@@ -585,3 +585,82 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* La animación de la rampa de Kenia, que va después de la historia
+   (js/animacion-transportador.js).
+
+   El botón que avanza lleva letra blanca sobre el degradado de la misión, y
+   la punta de --sec (#00838f) la dejaba en 4,5:1 justo: con el teal un tono
+   más oscuro pasa de 5:1, y a la vista es el mismo botón. Es el mismo
+   degradado de Teoría de Números y de Valor Posicional.
+
+   La tierra, el cemento y el transportador llevan su color en las dos
+   pantallas. En la oscura el plástico se oscurece y los números se aclaran:
+   un transportador blanco sobre la tarjeta oscura deslumbra, y sus números
+   oscuros no se leerían. La fila que se sigue va en un azul más oscuro que
+   --pri en la clara y más claro en la oscura, porque sobre el plástico y el
+   cemento el azul de la misión se quedaba en 4,2:1. */
+:root {
+  --am-boton: linear-gradient(135deg, #1565c0, #00796b);
+  --tr-tierra: #c9a27a; --tr-suelo: #7a5634;
+  --tr-cemento: #d4d8dc; --tr-cemento-borde: #8e969e;
+  --tr-pared: #f1e9da; --tr-pared-borde: #cbbfa8; --tr-puerta: #8d5a3b;
+  --tr-silla: #37474f;
+  --tr-plastico: #e3efff; --tr-plastico-borde: #4f78b0; --tr-tinta: #1b2c4a;
+  --tr-fila: #0d47a1; --tr-arco: #c2410c; --tr-rojo: #b71c1c; --tr-punto: #d63031;
+}
+[data-theme="dark"] {
+  --tr-tierra: #5b4332; --tr-suelo: #b08b66;
+  --tr-cemento: #4b525a; --tr-cemento-borde: #8b949d;
+  --tr-pared: #2c3142; --tr-pared-borde: #465068; --tr-puerta: #6d4a33;
+  --tr-silla: #cfd8dc;
+  --tr-plastico: #20375c; --tr-plastico-borde: #8fb2e6; --tr-tinta: #e3edff;
+  --tr-fila: #a8c8ff; --tr-arco: #fb8c5a; --tr-rojo: #ff9e96; --tr-punto: #ff7675;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tr-tierra: #5b4332; --tr-suelo: #b08b66;
+    --tr-cemento: #4b525a; --tr-cemento-borde: #8b949d;
+    --tr-pared: #2c3142; --tr-pared-borde: #465068; --tr-puerta: #6d4a33;
+    --tr-silla: #cfd8dc;
+    --tr-plastico: #20375c; --tr-plastico-borde: #8fb2e6; --tr-tinta: #e3edff;
+    --tr-fila: #a8c8ff; --tr-arco: #fb8c5a; --tr-rojo: #ff9e96; --tr-punto: #ff7675;
+  }
+}
+/* Al acercarse la vista cinco veces, las rayas del mundo no engordan cinco
+   veces: se quedan del grueso de siempre. */
+.am-raiz .tr-mundo * { vector-effect: non-scaling-stroke; }
+.am-raiz .tr-tierra { fill: var(--tr-tierra); }
+.am-raiz .tr-suelo { stroke: var(--tr-suelo); stroke-width: 2; }
+.am-raiz .tr-cemento { fill: var(--tr-cemento); }
+.am-raiz .tr-anden { fill: var(--tr-cemento); stroke: var(--tr-cemento-borde); stroke-width: 1; }
+.am-raiz .tr-rampa { stroke: var(--tr-cemento-borde); stroke-width: 2; stroke-linecap: round; }
+.am-raiz .tr-pared { fill: var(--tr-pared); stroke: var(--tr-pared-borde); stroke-width: 1; }
+.am-raiz .tr-puerta { fill: var(--tr-puerta); }
+.am-raiz .tr-pomo { fill: #f6c453; }
+.am-raiz .tr-silla * { fill: none; stroke: var(--tr-silla); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.am-raiz .tr-silla .tr-lleno { fill: var(--tr-silla); stroke: none; }
+.am-raiz .tr-lado { stroke-width: 3.2; stroke-linecap: round; }
+.am-raiz .tr-lado-suelo { stroke: var(--am-pri); }
+.am-raiz .tr-lado-rampa { stroke: var(--am-sec); }
+.am-raiz .tr-arco { fill: none; stroke: var(--tr-arco); stroke-width: 2.4; }
+.am-raiz .tr-grados { stroke: var(--card, #fff); stroke-width: 3.2px; stroke-linejoin: round; paint-order: stroke; }
+.am-raiz .tr-plastico { fill: var(--tr-plastico); fill-opacity: 0.6; stroke: var(--tr-plastico-borde); stroke-width: 1.3; }
+.am-raiz .tr-marca { stroke: var(--tr-tinta); stroke-width: 1; }
+.am-raiz .tr-base { stroke: var(--tr-tinta); stroke-width: 1.6; }
+.am-raiz .tr-num {
+  fill: var(--tr-tinta); font-family: 'Fredoka', sans-serif; font-weight: 500;
+  stroke: var(--tr-plastico); stroke-width: 2.2px; stroke-linejoin: round; paint-order: stroke;
+}
+.am-raiz .tr-num.tr-fila { fill: var(--tr-fila); font-weight: 700; }
+/* El número de la otra fila, el que NO se lee: rojo y tachado (la raya es
+   la que lo dice sin color). */
+.am-raiz .tr-num.tr-mal { fill: var(--tr-rojo); font-weight: 700; }
+.am-raiz .tr-centro { fill: none; stroke: var(--tr-tinta); stroke-width: 1.4; }
+.am-raiz .tr-centro-raya { stroke: var(--tr-tinta); stroke-width: 1.2; }
+.am-raiz .tr-anillo { fill: none; stroke: var(--tr-fila); stroke-width: 1.8; }
+.am-raiz .tr-cuenta { fill: none; stroke: var(--tr-fila); stroke-width: 2.4; stroke-linecap: round; }
+.am-raiz .tr-paso { fill: var(--tr-fila); }
+.am-raiz .tr-lectura { fill: none; stroke: var(--tr-fila); stroke-width: 2.4; }
+.am-raiz .tr-tachado { stroke: var(--tr-rojo); stroke-width: 2.2; stroke-linecap: round; }
+.am-raiz .tr-vertice { fill: var(--tr-punto); }

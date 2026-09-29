@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,23 @@
     <div class="tip"><span class="ti">❓</span><div>Lo que quedó mal no es el largo ni el ancho: es el
     <strong>ángulo</strong>. Y un ángulo no se pone a ojo: se <strong>mide</strong>, con un
     transportador, antes de mezclar el cemento.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: la
+       rampa de Kenia vista de lado. El ángulo nace en el vértice, donde la
+       rampa sale del suelo; el transportador se centra en el vértice, se
+       gira hasta que su base quede sobre el suelo, se sigue la fila que
+       empieza en el cero bajo la rampa y se lee: 20°. En el mismo sitio la
+       otra fila dice 160. Al final, un transportador chiquito mide la rampa
+       entera, porque el ángulo no depende del largo de los lados. La mueve
+       el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-transportador.js). La frase de dentro es de reserva: si
+       el aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo se mide el ángulo de la rampa</h2>
+    <div id="amRampa">
+      <p>El ángulo de la rampa está en el vértice, donde la rampa sale del suelo. Para medirlo, el centro del transportador va sobre el vértice y su base sobre el suelo. Se sigue la fila de números que empieza en el cero bajo la rampa, y se lee donde pasa la rampa: mide 20°. La otra fila dice 160 en el mismo sitio, porque cuenta desde el otro lado.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -757,6 +777,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la rampa: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-transportador.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
