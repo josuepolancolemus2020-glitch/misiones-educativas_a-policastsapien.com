@@ -1075,13 +1075,16 @@ function _sumaCifras(n) { return String(n).split('').reduce((a, c) => a + parseI
 function _mcmDe(a, b) { let m = a; while (m % b !== 0) m += a; return m; }
 
 /* La historia de la misión, y la animación que va debajo, resuelven la
-   manteca de doña Chepa: la mitad de 3/4 es 3/8 (3/4 ÷ 2, que es 3/4 × 1/2).
-   Esa cuenta no puede caer en la prueba: se contestaría acordándose de la
-   animación, sin hacerla. Cuando el azar la arma, se corre el último número
-   uno más, sin sacar otro del azar, y así el resto de la forma sale igual
-   que antes. (Pasaba en la Forma 14: «3/4 ÷ ▢ = 3/8».) */
+   manteca de doña Chepa: la mitad de 3/4 es 3/8 (3/4 ÷ 2, que es 3/4 × 1/2),
+   y en el camino escriben 6/8 ÷ 2 = 3/8. Esas cuentas no pueden caer en la
+   prueba: se contestarían acordándose de la animación, sin hacerlas. Cuando
+   el azar arma una, se corre el último número uno más, sin sacar otro del
+   azar, y así el resto de la forma sale igual que antes. (Pasaba en la
+   Forma 14: «3/4 ÷ ▢ = 3/8».) */
 function _fueraDeLaHistoria(a, b, c, d) {
-  const esLa = (a === 3 && b === 4 && c === 1 && d === 2) || (a === 1 && b === 2 && c === 3 && d === 4);
+  const mitad = (x, y) => x === 1 && y === 2;
+  const tresCuartos = (x, y) => x * 4 === y * 3;          // 3/4 y 6/8
+  const esLa = (tresCuartos(a, b) && mitad(c, d)) || (mitad(a, b) && tresCuartos(c, d));
   return esLa ? d + 1 : d;
 }
 
