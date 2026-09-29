@@ -377,6 +377,33 @@ const LEER = `
       mal: todos('.mv-mal').map(caja)
     };
   };
+  /* Numeración Maya: la piedra con sus tres signos tallados y la mesa donde
+     se explican. De cada signo se cuentan los puntos, las barras y la
+     concha que tiene tallados, y lo que dice su rótulo; de la mesa, lo que
+     hay a la vista. */
+  window.__amExtra.amPiedra = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel, base) { return [].filter.call((base || raiz).querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function medio(el) { var c = caja(el); return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    return {
+      signos: [].map.call(raiz.querySelectorAll('.ma-signo'), function (g) {
+        var clave = g.getAttribute('data-signo');
+        var val = raiz.querySelector('.ma-valor[data-signo="' + clave + '"]'), marco = raiz.querySelector('.ma-marco[data-signo="' + clave + '"]');
+        return { clave: clave, puntos: todos('.ma-talla-punto', g).length, barras: todos('.ma-talla-barra', g).length, conchas: todos('.ma-talla-concha', g).length,
+                 dice: vis(val) ? val.textContent : '', marcado: vis(marco), y: medio(g).y, yDice: medio(val).y };
+      }),
+      puntos: todos('.ma-punto').map(function (c) { var m = medio(c); return { x: m.x, y: m.y, arriba: !!c.closest('.ma-arriba') }; }),
+      barras: todos('.ma-barra').map(caja),
+      valeBarra: todos('.ma-vale-barra').map(function (t) { var m = medio(t); return { dice: t.textContent, y: m.y }; }),
+      conchas: todos('.ma-concha').map(medio),
+      cero: todos('.ma-cero').map(function (t) { return t.textContent; }),
+      cuentas: todos('.ma-cuenta').map(function (t) { var m = medio(t); return { dice: t.textContent, x: m.x }; }),
+      raya: todos('.ma-nivel-raya').map(medio),
+      pregunta: todos('.ma-pregunta').map(function (t) { var m = medio(t); return { dice: t.textContent, x: m.x, y: m.y }; })
+    };
+  };
   /* Las cuentas de la frase y de las palabras del marcador que el renglón
      parte en dos («315 ÷» arriba y «4.5 = 70» abajo). Se le pregunta al
      navegador: un Range por cuenta, y si sus pedazos caen en dos alturas,
@@ -455,6 +482,79 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Numeración y Calendario Mayas: la piedra con tres signos tallados
+     (cuatro puntos, dos barras y una concha) y la mesa donde se explican.
+     Lo que dice cada signo se cuenta en lo que tiene tallado, y lo que dice
+     el marcador, en lo que hay en la mesa. Y la regla del sistema se mira en
+     cada paso: nunca quedan cinco puntos juntos. ⚠️ El último paso deja en
+     pregunta lo que vale un punto de arriba, porque eso es lo que pregunta el
+     «Predice» de abajo. */
+  amPiedra(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t).replace(/ /g, ' ');
+    const cerca = (a, b, t = 1.5) => Math.abs(a - b) <= t;
+    const valor = s => s.conchas ? 0 : s.puntos + 5 * s.barras;
+
+    /* ── La piedra ── */
+    r.push([x.signos.length === 3 && x.signos.every(s => s.puntos <= 4 && s.barras <= 3 && (!s.conchas || (!s.puntos && !s.barras))),
+      `paso ${n}: la piedra tiene tres signos, y ninguno lleva cinco puntos juntos`, x.signos.map(s => [s.clave, s.puntos, s.barras, s.conchas])]);
+    const dichos = x.signos.filter(s => s.dice);
+    r.push([dichos.every(s => nb(s.dice) === '= ' + valor(s) && cerca(s.yDice, s.y, 6)),
+      `paso ${n}: lo que dice cada signo es lo que tiene tallado`, dichos.map(s => [s.clave, s.dice, valor(s)])]);
+    const leidos = [[], ['a'], ['a'], ['a', 'b'], ['a', 'b', 'c'], ['a', 'b', 'c']][n];
+    r.push([dichos.map(s => s.clave).join() === leidos.join(), `paso ${n}: ya se leyeron ${leidos.length} signos`, dichos.map(s => s.clave)]);
+    const marcado = { 1: 'a', 3: 'b', 4: 'c' }[n] || '';
+    r.push([x.signos.filter(s => s.marcado).map(s => s.clave).join() === marcado, `paso ${n}: está marcado el signo que se lee`, x.signos.filter(s => s.marcado).map(s => s.clave)]);
+
+    /* ── La mesa ── */
+    const abajo = x.puntos.filter(p => !p.arriba);
+    const mesa = x.conchas.length && !abajo.length && !x.barras.length ? 0 : abajo.length + 5 * x.barras.length;
+    r.push([abajo.length <= 4, `paso ${n}: en la mesa nunca quedan cinco puntos juntos`, abajo.length]);
+    if (n === 0) r.push([!x.puntos.length && !x.barras.length && !x.conchas.length && !x.cuentas.length, 'paso 0: la mesa está vacía', [x.puntos.length, x.barras.length, x.conchas.length]]);
+    if (n === 1) {
+      const ps = abajo.slice().sort((a, b) => a.x - b.x), cs = x.cuentas.slice().sort((a, b) => a.x - b.x);
+      r.push([ps.length === 4 && ps.every(p => cerca(p.y, ps[0].y, 0.5)) && cs.length === ps.length && cs.every((c, i) => c.dice === String(i + 1) && cerca(c.x, ps[i].x, 1.5)),
+        `paso 1: ${ps.length} puntos en fila, contados uno por uno`, cs.map(c => c.dice)]);
+      const a = x.signos.find(s => s.clave === 'a');
+      r.push([valor(a) === ps.length, 'paso 1: el primer signo tiene los mismos puntos que la mesa', [valor(a), ps.length]]);
+    }
+    if (n === 2) r.push([x.barras.length === 1 && !x.puntos.length && !x.cuentas.length && x.valeBarra.length === 1 && x.valeBarra[0].dice === '5' && cerca(x.valeBarra[0].y, (x.barras[0].y0 + x.barras[0].y1) / 2, 3),
+      'paso 2: cinco puntos se volvieron una barra, y la barra dice 5', [x.barras.length, x.valeBarra.map(v => v.dice)]]);
+    if (n === 3) {
+      const bs = x.barras.slice().sort((a, b) => a.y0 - b.y0);
+      r.push([bs.length === 2 && !x.puntos.length && cerca((bs[0].x0 + bs[0].x1) / 2, (bs[1].x0 + bs[1].x1) / 2, 1) && bs[0].y1 <= bs[1].y0 &&
+        x.valeBarra.length === 2 && x.valeBarra.every(v => v.dice === '5'),
+        'paso 3: dos barras, una encima de otra, cada una de 5', [bs.length, x.valeBarra.map(v => v.dice)]]);
+      const b = x.signos.find(s => s.clave === 'b');
+      r.push([valor(b) === 5 * bs.length, 'paso 3: el segundo signo tiene las mismas barras que la mesa', [valor(b), 5 * bs.length]]);
+    }
+    if (n === 4) {
+      r.push([x.conchas.length === 1 && !x.puntos.length && !x.barras.length && x.cero.join() === '0', 'paso 4: en la mesa, sola, la concha, y dice 0', [x.conchas.length, x.cero]]);
+      const c = x.signos.find(s => s.clave === 'c');
+      r.push([c.conchas === 1 && valor(c) === 0, 'paso 4: el tercer signo es la concha', [c.conchas, valor(c)]]);
+    }
+    if (n === 5) {
+      const arriba = x.puntos.filter(p => p.arriba), con = x.conchas[0];
+      r.push([arriba.length === 1 && x.puntos.length === 1 && !!con && !x.barras.length && arriba[0].y < con.y && x.raya.length === 1 && x.raya[0].y > arriba[0].y && x.raya[0].y < con.y,
+        'paso 5: un punto arriba, la raya del nivel y la concha abajo', [arriba.length, !!con, x.raya.length]]);
+      r.push([x.pregunta.length === 1 && x.pregunta[0].dice === '?' && cerca(x.pregunta[0].y, arriba[0] ? arriba[0].y : -99, 6) && !x.cero.length && !x.valeBarra.length,
+        'paso 5: lo que vale el punto de arriba queda en pregunta', x.pregunta.map(p => p.dice)]);
+    }
+
+    /* ── El marcador dice lo que hay en la mesa ── */
+    const espera = n === 0 ? '3 signos' : n === 5 ? '?' : String(mesa);
+    r.push([nb(e.cifra) === espera, `paso ${n}: el marcador dice ${e.cifra}, que es lo que hay en la mesa`, [e.cifra, espera]]);
+
+    /* ⚠️ Lo que pregunta el «Predice» de abajo (cómo se escribe el 13, cuánto
+       vale un punto del nivel de arriba y cuántos días tiene el tun) no sale
+       en ningún paso. Tampoco el 19 ni el 20: el más grande de un nivel y el
+       primero del siguiente son la misma pregunta con otra cara. */
+    const todo = [e.texto, e.palabras, e.cifra].concat(x.signos.map(s => s.dice), x.valeBarra.map(v => v.dice), x.cero, x.cuentas.map(c => c.dice), x.pregunta.map(p => p.dice)).map(nb).join(' | ');
+    const regalo = todo.match(/(^|[^\d])(13|18|19|20|360|400)(?![\d])|veinte|\btun\b|uinal|base|cuatro barras|tres barras|barras y tres puntos/i);
+    r.push([!regalo, `paso ${n}: no dice nada de lo que pregunta el «Predice» (el 13, lo que vale un punto de arriba, el tun)`, regalo ? regalo[0] : undefined]);
+    return r;
+  },
+
   /* Multiplicación Vertical: las copias de la guía (7 hojas para cada uno
      de sus 43 alumnos). La cuadrícula se saca de sus propias rayas y cada
      renglón se lee por el cuadro donde cae cada cifra. Las cuentas se

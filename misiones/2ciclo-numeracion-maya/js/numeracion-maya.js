@@ -1095,15 +1095,22 @@ function _mcmDe(a, b) { let m = a; while (m % b !== 0) m += a; return m; }
 // I. Lee, escribe y suma en maya (5 × 4 = 20 pts) — Bloques 1, 2 y 4
 const _MY_TIEMPOS = [['uinal', 'uinales', 20], ['tun', 'tunes', 360], ['katún', 'katunes', 7200]];
 const _MY_NIV = [1, 20, 400];
+/* La animación de la historia (js/animacion-piedra.js) lee en la piedra
+   cuatro puntos, dos barras y una concha, y enseña que dos barras son 10.
+   «Escribe cuánto vale: 2 barras» y «1 barra más 1 barra» son esa misma
+   lectura: el que acaba de ver la animación las contesta acordándose. Se
+   corren al número siguiente sin sacar otro número del azar, así que las
+   demás formas salen iguales. */
+function _fueraDeLaAnimacion(n) { return n === 10 ? 11 : n; }
 function genMultDivItems() {
   const items = [];
-  { const n = _opRint(6, 19);
+  { const n = _fueraDeLaAnimacion(_opRint(6, 19));
     items.push({ text: `Escribe cuánto vale en nuestro sistema: ${_mayaTexto(n)}.`, ansNum: n }); }
   { const arriba = _opRint(1, 9), abajo = _opRint(0, 19);
     items.push({ text: `Un número maya lleva ${_mayaTexto(arriba)} en el segundo nivel y ${_mayaTexto(abajo)} en el primero. ¿Qué número es?`, ansNum: arriba * 20 + abajo }); }
   { const n = _opRint(21, 199); const niv = _mayaNiveles(n);
     items.push({ text: `Para escribir el ${n} en maya, ¿cuántos puntos o barras van en el nivel de ARRIBA? Escribe solo el valor de ese nivel.`, ansNum: niv[1] }); }
-  { const a = _opRint(4, 15), b = _opRint(4, 15);
+  { const a = _opRint(4, 15), b0 = _opRint(4, 15), b = a === 5 && b0 === 5 ? 6 : b0;
     items.push({ text: `Suma en maya y escribe el resultado en nuestro sistema: ${_mayaTexto(a)} más ${_mayaTexto(b)}.`, ansNum: a + b }); }
   { const t = _MY_TIEMPOS[_opRint(0, 2)], k = _opRint(2, 9);
     items.push({ text: `¿Cuántos días son ${k} ${t[1]}?`, ansNum: k * t[2] }); }

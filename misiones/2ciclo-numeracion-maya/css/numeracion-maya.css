@@ -610,3 +610,13 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* La piedra de la animación que va después de la historia
+   (js/animacion-piedra.js): el mismo color de piedra y de talla que el
+   widget «Lee la Estela», para que el alumno la reconozca cuando la vuelva
+   a ver. En la pantalla oscura, al revés, como en el widget. */
+:root { --ma-piedra: #d7ccc8; --ma-piedra-borde: #a1887f; --ma-talla: #4e342e; --ma-cartucho: rgba(78,52,46,0.08); }
+[data-theme="dark"] { --ma-piedra: #3e3a36; --ma-piedra-borde: #5d4037; --ma-talla: #e0d6c8; --ma-cartucho: rgba(224,214,200,0.08); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --ma-piedra: #3e3a36; --ma-piedra-borde: #5d4037; --ma-talla: #e0d6c8; --ma-cartucho: rgba(224,214,200,0.08); }
+}

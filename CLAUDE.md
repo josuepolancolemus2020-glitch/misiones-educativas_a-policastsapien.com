@@ -6488,6 +6488,72 @@ con un Range por cuenta, si sus pedazos caen en dos alturas. Se comprobó al
 revés con el aparato y las frases de antes: salieron rojas las tres escenas que
 tenían una cuenta partida.
 
+### La decimotercera: Numeración y Calendario Mayas, y lo que enseñó
+
+En **Numeración y Calendario Mayas** (`misiones/2ciclo-numeracion-maya/`,
+`js/animacion-piedra.js`) la historia es la de la piedra que casi nadie lee:
+en Copán hay estelas talladas con puntos, barras y conchas, y el visitante que
+no sabe leerlas ve una piedra bonita. La animación es una piedra con tres
+signos tallados (cuatro puntos, dos barras y una concha) y, al lado, una mesa
+donde se leen. El punto vale 1, y el primer signo dice 4. Llega un quinto punto
+y no se queda: los cinco se juntan y se vuelven una barra, que por eso vale 5.
+Otros cinco puntos hacen otra barra, encima de la primera, y dos barras son 10.
+La concha vale 0: dice que ahí no hay nada. Y al final, un punto encima de una
+concha: ahí empieza otro nivel, y cuánto vale ese punto se adivina abajo. Cinco
+cosas que valen para las demás:
+
+1. ⚠️ **Lo que va debajo NO se regala, y aquí manda más que nunca.** El
+   «Predice» pregunta cómo se escribe el 13, cuánto vale un punto del nivel de
+   arriba y cuántos días tiene el tun. La segunda no es un ejemplo: ES el valor
+   posicional de base 20, el corazón de la misión. Por eso la animación no lo
+   enseña: llega hasta la puerta (un punto encima de una concha, con un «?») y
+   le deja la pregunta al alumno. Es la primera escena que termina en una
+   pregunta, y está bien que sea así: el «Predice» está justo debajo, y lo que
+   la escena sí enseña (los tres símbolos y la barra de cinco) es lo que hace
+   falta para pensar esa pregunta en vez de adivinarla. La sonda busca en cada
+   paso el 13, el 19, el 20 y el tun.
+2. ⚠️ **Los ejemplos no pueden ser preguntas de la prueba, y aquí casi todos lo
+   son.** La conceptual y la operativa piden leer casi todos los números del 0
+   al 19 (el 6, el 7, el 8, el 9, el 12, el 13, el 14, el 17, «tres barras y
+   cuatro puntos»…). Los tres signos de la piedra son los que no pregunta:
+   cuatro puntos, dos barras y la concha. Y las dos formas de la operativa que
+   pedían leer «2 barras» solas (la 9 y la 22), más la que sumaba «1 barra más
+   1 barra» (la 25), se corrieron al 11 sin sacar otro número del azar
+   (`_fueraDeLaAnimacion`): las otras 27 formas salen iguales. Y a los números
+   del 6 al 9 que pasan mientras se juntan los segundos cinco puntos no se les
+   pone cuenta: la cuenta de uno de ellos sería una pregunta de la prueba.
+3. **Cinco puntos se vuelven una barra a la vista.** Es la regla que hace corto
+   el sistema, y se ve pasar: llega el quinto, los cinco se aprietan en el
+   centro y queda una barra. Los segundos cinco se juntan encima de la primera,
+   y así se ve también que las barras se apilan.
+4. **La piedra es la del widget de la misión** (Lee la Estela): el mismo color
+   de piedra y la misma talla café, y en la pantalla oscura, lo mismo al revés.
+   Los colores van en `--ma-piedra`, `--ma-talla`… en el CSS de la misión, con
+   los dos selectores con que la misión se pone oscura.
+5. ⚠️ **Una pieza que en el mismo paso aparece y desaparece necesita capas.** El
+   quinto punto llega, se ve y se apaga al volverse barra, todo en un toque; y
+   cada punto, además, se corre al centro. Con una sola capa, la última orden
+   pisa a las otras (la demora es una sola por elemento). Cada punto de la mesa
+   tiene cuatro: dónde está, cuánto se corre, cuándo se enciende y cuándo se
+   apaga.
+
+Y una de la sonda, que vale para cualquier escena: ⚠️ **lo que tiene que estar
+va tenue con `stroke-opacity`, no con `opacity`.** La raya que separa los dos
+niveles salía con la clase `.am-linea`, que la deja al 55 % de opacidad, y la
+sonda cuenta como «no está» todo lo que tiene la opacidad por debajo de 1 (así
+es como `.am-fuera` dice que algo se apagó). La raya se veía y la sonda decía
+que no estaba. Ahora va tenue por el trazo.
+
+La sonda de esta escena **cuenta lo que tiene tallado cada signo** (puntos,
+barras, concha) y lo compara con su rótulo; **cuenta lo que hay en la mesa** y lo
+compara con el marcador; comprueba que los puntos de la mesa estén contados uno
+por uno, que la barra y cada barra digan 5, que dos barras vayan una encima de
+otra, que el signo que se lee esté marcado, y que **nunca queden cinco puntos
+juntos**, ni en la piedra ni en la mesa. Se comprobó al revés con seis averías
+plantadas a la vez (un signo con cinco puntos, otro con tres barras que decía
+10, una cuenta que saltaba del 3 al 5, una barra que decía 6, el marcador
+diciendo 11 y un «20» en lugar del «?»), y salió roja con las seis.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

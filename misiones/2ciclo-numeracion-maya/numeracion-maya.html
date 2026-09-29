@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,22 @@
     <div class="tip"><span class="ti">❓</span><div>Con <strong>tres símbolos</strong> (un punto, una
     barra y una concha) ese pueblo escribía cualquier número, por grande que fuera. Y la concha es un
     <strong>cero</strong>: lo tuvieron aquí mucho antes de que llegara a Europa.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: una
+       piedra con tres signos tallados (cuatro puntos, dos barras y una
+       concha) y una mesa donde se leen. El punto vale 1; cinco puntos se
+       juntan en una barra, que por eso vale 5; dos barras son 10; la concha
+       vale 0. Y termina en la puerta del otro nivel, un punto encima de una
+       concha, SIN decir cuánto vale: eso lo pregunta el «Predice» de abajo.
+       La mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-piedra.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo se lee la piedra</h2>
+    <div id="amPiedra">
+      <p>El punto vale 1: cuatro puntos dicen 4. Cinco puntos no se dejan juntos: se cambian por una barra, y por eso la barra vale 5. Dos barras son 10. La concha vale 0: dice que ahí no hay nada. Y un punto encima de una concha empieza otro nivel: cuánto vale ese punto, lo adivinas abajo.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -774,6 +793,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la piedra: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-piedra.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>
