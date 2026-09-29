@@ -588,6 +588,42 @@ const LEER = `
       pregunta: vis(pregunta) ? { dice: pregunta.textContent, c: medio(pregunta) } : null
     };
   };
+  /* Volumen de Cuerpos: el tanque de mil litros. De cada bloque de cubitos
+     que se ve se leen sus datos (dónde dice que está y cuántos cubitos mide)
+     y las esquinas de sus tres caras, ya puestas en la vista con el
+     movimiento que lleve encima. Del tanque, sus tres aristas medidas; y los
+     rótulos que se ven, con lo que dicen y dónde. */
+  window.__amExtra.amTanque = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function puntos(el) { var out = []; for (var i = 0; i < el.points.length; i++) out.push(aVista(el, el.points[i].x, el.points[i].y)); return out; }
+    function medio(el) { var b = el.getBBox(); return aVista(el, b.x + b.width / 2, b.y + b.height / 2); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function dato(el, k) { return +el.getAttribute('data-' + k); }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function caras(g) {
+      return { frente: puntos(g.querySelector('.tq-frente')), arriba: puntos(g.querySelector('.tq-arriba')), lado: puntos(g.querySelector('.tq-lado')) };
+    }
+    var muestra = raiz.querySelector('.tq-muestra');
+    return {
+      aristas: todos('.tq-arista').map(function (a) {
+        var t = a.getTotalLength(), p = a.getPointAtLength(0), q = a.getPointAtLength(t);
+        return { nombre: a.getAttribute('data-arista'), a: aVista(a, p.x, p.y), b: aVista(a, q.x, q.y), trazada: trazada(a) };
+      }),
+      bloques: todos('.tq-bloque').filter(vis).map(function (g) {
+        var c = caras(g);
+        c.x = dato(g, 'x'); c.y = dato(g, 'y'); c.z = dato(g, 'z'); c.l = dato(g, 'l'); c.h = dato(g, 'h'); c.p = dato(g, 'p');
+        c.contado = g.classList.contains('tq-contado');
+        return c;
+      }),
+      agua: todos('.tq-agua').map(function (p) { return parseFloat(getComputedStyle(p).fillOpacity); }),
+      muestra: vis(muestra) ? caras(muestra) : null,
+      rotulos: todos('text').filter(vis).map(function (t) {
+        return { dice: t.textContent, c: medio(t), clase: t.getAttribute('class') || '', arista: t.getAttribute('data-arista'), capa: t.getAttribute('data-capa') };
+      })
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -671,6 +707,118 @@ let escalaRedondel = 0;
 let escalaGallinero = null;
 
 const ESCENAS = {
+  /* Volumen de Cuerpos: el tanque de mil litros. Las tres aristas del
+     tanque dan la regla: cuánto se corre el dibujo por cada cubito a lo
+     largo, hacia arriba y hacia el fondo. Con ella se mide cada bloque, que
+     esté donde dice y que mida los cubitos que dice; después se cuentan los
+     cubitos que se ven, uno por uno y sin repetir ninguno, y se comparan con
+     el marcador (cada cubito es un litro) y con el rótulo de cada capa.
+     ⚠️ Y lo que va debajo no se regala: el «Predice» pregunta la caja de
+     4 × 3 × 2 y qué le pasa al volumen si se duplica la arista; de eso aquí
+     no sale ni un número. */
+  amTanque(e, n) {
+    const x = e.extra, r = [], N = 10;
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const ar = Object.fromEntries(x.aristas.map(a => [a.nombre, a]));
+    const O = ar.largo && ar.largo.a;
+    r.push([!!(ar.largo && ar.alto && ar.ancho) && dist(ar.alto.a, O) < 0.5 && dist(ar.ancho.a, ar.largo.b) < 0.5,
+      `paso ${n}: las tres aristas del tanque salen de sus esquinas`, Object.keys(ar)]);
+    if (!ar.largo || !ar.alto || !ar.ancho) return r;
+    const paso = (a, b) => [(b[0] - a[0]) / N, (b[1] - a[1]) / N];
+    const ex = paso(ar.largo.a, ar.largo.b), ey = paso(ar.alto.a, ar.alto.b), ez = paso(ar.ancho.a, ar.ancho.b);
+    const P = (i, j, k) => [O[0] + i * ex[0] + j * ey[0] + k * ez[0], O[1] + i * ex[1] + j * ey[1] + k * ez[1]];
+    /* El frente del tanque es un cuadrado: lo largo y lo alto miden lo mismo
+       en el dibujo. El ancho va en diagonal, que es como se dibuja lo hondo. */
+    const largo = Math.hypot(...ex) * N, alto = Math.hypot(...ey) * N;
+    r.push([Math.abs(largo - alto) < 0.5 && Math.abs(ex[1]) < 0.01 && Math.abs(ey[0]) < 0.01 && ez[0] > 0 && ez[1] < 0,
+      `paso ${n}: el frente del tanque es un cuadrado y lo hondo va en diagonal`, [largo.toFixed(1), alto.toFixed(1)]]);
+    /* Cada arista lleva su «1 m» al lado. */
+    const metros = x.rotulos.filter(t => /tq-metro/.test(t.clase));
+    const conMetro = ['largo', 'alto', 'ancho'].every(nom => {
+      const a = ar[nom], m = [(a.a[0] + a.b[0]) / 2, (a.a[1] + a.b[1]) / 2];
+      return metros.some(t => t.arista === nom && nb(t.dice) === '1 m' && dist(t.c, m) < 22);
+    });
+    r.push([conMetro, `paso ${n}: cada arista del tanque dice «1 m»`, metros.map(t => t.dice)]);
+
+    /* Los bloques: cada uno donde dice, del tamaño que dice, cara por cara. */
+    const cerca = (a, b) => dist(a, b) < 0.6;
+    const mal = x.bloques.filter(b => {
+      const f = [P(b.x, b.y, b.z), P(b.x + b.l, b.y, b.z), P(b.x + b.l, b.y + b.h, b.z), P(b.x, b.y + b.h, b.z)];
+      const t = [P(b.x, b.y + b.h, b.z), P(b.x + b.l, b.y + b.h, b.z), P(b.x + b.l, b.y + b.h, b.z + b.p), P(b.x, b.y + b.h, b.z + b.p)];
+      const s = [P(b.x + b.l, b.y, b.z), P(b.x + b.l, b.y, b.z + b.p), P(b.x + b.l, b.y + b.h, b.z + b.p), P(b.x + b.l, b.y + b.h, b.z)];
+      return ![[f, b.frente], [t, b.arriba], [s, b.lado]].every(([esp, real]) => real.length === 4 && esp.every((q, i) => cerca(q, real[i])));
+    });
+    r.push([!mal.length, `paso ${n}: cada bloque está donde dice y mide los cubitos que dice`, mal.slice(0, 2).map(b => [b.x, b.y, b.z, b.l, b.h, b.p])]);
+
+    /* Los cubitos que se ven, uno por uno: ninguno repetido, todos dentro. */
+    const vistos = new Set();
+    let repetidos = 0, fuera = 0;
+    x.bloques.forEach(b => {
+      for (let i = b.x; i < b.x + b.l; i++) for (let j = b.y; j < b.y + b.h; j++) for (let k = b.z; k < b.z + b.p; k++) {
+        const c = i + ',' + j + ',' + k;
+        if (vistos.has(c)) repetidos++;
+        if (i < 0 || j < 0 || k < 0 || i >= N || j >= N || k >= N) fuera++;
+        vistos.add(c);
+      }
+    });
+    const cubitos = [...vistos].map(c => c.split(',').map(Number));
+    const total = cubitos.length;
+    r.push([!repetidos && !fuera, `paso ${n}: ningún cubito se cuenta dos veces ni cae fuera del tanque`, [repetidos, fuera]]);
+    r.push([total === [0, 1, 10, 100, 1000, 1000][n], `paso ${n}: se ven ${total} cubitos`, total]);
+    if (n === 1) r.push([vistos.has('0,0,0'), 'paso 1: el cubito está en la esquina del tanque', [...vistos]]);
+    if (n === 2) r.push([cubitos.every(([i, j, k]) => j === 0 && k === 0), 'paso 2: los 10 van en fila, a lo largo del frente', null]);
+    if (n === 3) r.push([cubitos.every(([i, j, k]) => j === 0), 'paso 3: los 100 cubren el fondo, y nada más', null]);
+
+    /* Un cubito, un litro: el marcador dice lo que se ve. */
+    const cifra = nb(e.cifra);
+    if (n === 0) r.push([cifra === '¿?' && x.agua.length === 3 && x.agua.every(o => o >= 0.4) && !x.muestra,
+      'paso 0: el tanque lleno, sin contar nada', [cifra, x.agua]]);
+    else {
+      const litros = Number(cifra.replace(/[^0-9]/g, ''));
+      r.push([/ L$/.test(cifra) && litros === total && x.agua.every(o => o <= 0.2),
+        `paso ${n}: el marcador dice ${cifra} y se ven ${total} cubitos de un litro`, [cifra, total]]);
+      /* El litro de muestra: el mismo cubito, más grande, con «1 litro» y
+         «10 cm». Que sea el mismo se mide: sus tres caras crecen igual. */
+      const m = x.muestra;
+      const s = m ? (m.frente[1][0] - m.frente[0][0]) / ex[0] : 0;
+      const igual = !!m && s > 1.5 && Math.abs((m.frente[0][1] - m.frente[3][1]) / -ey[1] - s) < 0.05 &&
+        Math.abs((m.arriba[3][0] - m.arriba[0][0]) / ez[0] - s) < 0.05 && Math.abs((m.arriba[3][1] - m.arriba[0][1]) / ez[1] - s) < 0.05;
+      const litro = x.rotulos.some(t => /tq-litro/.test(t.clase) && nb(t.dice) === '1 litro');
+      const diez = x.rotulos.some(t => /tq-diez/.test(t.clase) && nb(t.dice) === '10 cm');
+      r.push([igual && litro && diez, `paso ${n}: el litro de muestra es un cubito igual, más grande, con «1 litro» y «10 cm»`, [s && s.toFixed(2), litro, diez]]);
+    }
+
+    /* Los 100 litros del conserje: el fondo va de otro color en los pasos 3
+       y 4, que es cuando se compara con lo demás, y en ningún otro. */
+    const deColor = n === 3 || n === 4;
+    r.push([x.bloques.every(b => b.contado === (deColor && b.y === 0)),
+      `paso ${n}: el fondo ${deColor ? 'va de otro color, y nada más' : 'no va de otro color'}`, x.bloques.filter(b => b.contado).length]);
+
+    /* Al lado de cada capa llena, lo que se lleva contado hasta ella. */
+    const llenas = [];
+    for (let j = 0; j < N; j++) if (cubitos.filter(c => c[1] === j).length === N * N) llenas.push(j);
+    const cuentas = x.rotulos.filter(t => /tq-cuenta/.test(t.clase));
+    const rotMal = cuentas.filter(t => {
+      const k = +t.capa, hasta = cubitos.filter(c => c[1] <= k).length, junto = P(N, k + 0.5, N);
+      return !llenas.includes(k) || nb(t.dice) !== hasta.toLocaleString('en-US') + ' L' || Math.abs(t.c[1] - junto[1]) > 3 || t.c[0] < junto[0];
+    });
+    const sinRotulo = llenas.filter(j => !cuentas.some(t => +t.capa === j));
+    r.push([!rotMal.length && !sinRotulo.length, `paso ${n}: al lado de cada capa llena, lo que se lleva contado`, [rotMal.map(t => t.dice), sinRotulo]]);
+
+    /* Las tres aristas se marcan al final, y la cuenta entera se dice. */
+    const trazadas = x.aristas.filter(a => a.trazada).map(a => a.nombre).sort().join(',');
+    r.push([trazadas === (n === 5 ? 'alto,ancho,largo' : ''), `paso ${n}: las tres aristas se marcan solo al final`, trazadas]);
+    if (n === 5) r.push([nb(e.texto).includes('10 × 10 × 10 = 1,000') && nb(e.palabras) === '10 × 10 × 10 cubitos',
+      'paso 5: la frase y el marcador dicen la cuenta entera', nb(e.palabras)]);
+
+    /* Lo que va debajo no se regala. */
+    const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
+    const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([![2, 3, 4, 8, 12, 24].some(v => numsDichos.includes(v)) && !/doble|duplic|ocho|cuatro|veces mayor/i.test(dicho),
+      `paso ${n}: no sale un número del Predice ni se habla de duplicar la arista`, numsDichos]);
+    return r;
+  },
   /* Área de Polígonos Regulares: la tapa de hexágono. La escala sale del
      rótulo del lado del hexágono (30 cm); con ella se mide cada tapa y cada
      pedazo: que el hexágono sea regular, que sus 6 pedazos y los 4 del

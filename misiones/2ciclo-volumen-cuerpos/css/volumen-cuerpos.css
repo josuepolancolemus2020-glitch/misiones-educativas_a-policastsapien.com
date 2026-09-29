@@ -653,3 +653,46 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
 [data-theme="dark"] .juego-card{background:var(--card-bg);}
 [data-theme="dark"] .juego-card p{color:var(--dark);}
 [data-theme="dark"] .salto3d{color:var(--dark);}
+
+/* La animación del tanque de mil litros, que va después de la historia
+   (js/animacion-tanque.js).
+
+   El botón que avanza lleva letra blanca sobre el degradado de la misión, y
+   la punta de --sec (#00838f) la dejaba en 4,5:1 justo: con el teal un tono
+   más oscuro pasa de 5:1. Es el mismo degradado de Teoría de Números.
+
+   Los cubitos son agua: azules, con la cara de arriba más clara y la del
+   lado más oscura para que se lean como cubos. Los del fondo, los 100 litros
+   del conserje, van en verde agua mientras se comparan con lo demás. Las
+   rayas entre cubito y cubito van en el tono contrario en cada pantalla. */
+:root {
+  --am-boton: linear-gradient(135deg, #1565c0, #00796b);
+  --tq-frente: #5a9fe0; --tq-arriba: #a9cff3; --tq-lado: #3b7fc0; --tq-raya: #1d4f82;
+  --tq-c-frente: #3aab9e; --tq-c-arriba: #98dbd2; --tq-c-lado: #23867b;
+  --tq-agua: #6fb3ec; --tq-tanque: #5f6b78;
+}
+[data-theme="dark"] {
+  --tq-frente: #2e6da6; --tq-arriba: #4f8fc9; --tq-lado: #21547f; --tq-raya: #c9e4ff;
+  --tq-c-frente: #1f8175; --tq-c-arriba: #3eab9e; --tq-c-lado: #16625a;
+  --tq-agua: #5aa6e6; --tq-tanque: #aab5c0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tq-frente: #2e6da6; --tq-arriba: #4f8fc9; --tq-lado: #21547f; --tq-raya: #c9e4ff;
+    --tq-c-frente: #1f8175; --tq-c-arriba: #3eab9e; --tq-c-lado: #16625a;
+    --tq-agua: #5aa6e6; --tq-tanque: #aab5c0;
+  }
+}
+/* Las rayas no engordan con el cubito de muestra, que va 2.5 veces más
+   grande, ni con el que viaja de la muestra a su esquina. */
+.am-raiz .tq-cara { stroke: var(--tq-raya); stroke-width: 0.8; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.am-raiz .tq-frente { fill: var(--tq-frente); }
+.am-raiz .tq-arriba { fill: var(--tq-arriba); }
+.am-raiz .tq-lado { fill: var(--tq-lado); }
+.am-raiz .tq-contado .tq-frente { fill: var(--tq-c-frente); }
+.am-raiz .tq-contado .tq-arriba { fill: var(--tq-c-arriba); }
+.am-raiz .tq-contado .tq-lado { fill: var(--tq-c-lado); }
+.am-raiz .tq-raya { fill: none; stroke: var(--tq-raya); stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.am-raiz .tq-agua { fill: var(--tq-agua); stroke: none; }
+.am-raiz .tq-tanque { fill: none; stroke: var(--tq-tanque); stroke-width: 1.6; stroke-linejoin: round; }
+.am-raiz .tq-arista { fill: none; stroke: var(--am-sec); stroke-width: 3.6; stroke-linecap: round; }

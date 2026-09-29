@@ -6943,6 +6943,79 @@ el triángulo que se pasa corrido 6 px, el marcador diciendo «6 y 5», «apotem
 en la última frase y la medida que falta llegando a una esquina), y salió roja
 con las seis.
 
+### La decimonovena: Volumen de Cuerpos, y lo que enseñó
+
+En **Volumen de Cuerpos** (`misiones/2ciclo-volumen-cuerpos/`,
+`js/animacion-tanque.js`) la historia es la del tanque de la escuela. Se fue el
+agua y el tanque estaba lleno, un metro de cada lado. El conserje calculó
+«como cien litros» y racionaron dos días con un vaso por niño, cuando había mil:
+alcanzaba para la semana. La animación cuenta esa agua con cubitos de un litro:
+
+- un litro llena justo un cubito de 10 cm de cada lado. El de muestra se queda a
+  un lado, grande, y uno igual sale de él hacia la esquina del tanque;
+- en un metro caben 10 cubitos en fila, porque 10 × 10 cm son 100 cm;
+- diez filas cubren el fondo: 100 cubitos. Los 100 litros del conserje llenan
+  solo el fondo, que queda de otro color;
+- el tanque también mide un metro de alto y le caben 10 capas como esa. Al lado
+  de cada capa va lo que se lleva contado, de 100 L a 1,000 L;
+- diez de largo, diez de ancho y diez de alto: 10 × 10 × 10 = 1,000 litros.
+
+Cuatro cosas que valen para las demás:
+
+1. ⚠️ **Cuando la cuenta de la historia es el dato central de la misión, se
+   separa lo que se regala de lo que se aplica.** Aquí 1 m³ = 1,000 litros es
+   lo que la misión quiere que se recuerde toda la vida, y estaba en la prueba
+   de tres maneras. Se cambió lo que la historia o la animación ya contestan:
+   - el verdadero o falso «un tanque de 1 m³ guarda 100 litros», que es la
+     historia palabra por palabra, pasó a 3 m³ y 300 litros (sigue siendo F),
+     en la misión y en la ficha;
+   - la selección «si un cubo tiene 1,000 cm³, su arista mide…», que es
+     10 × 10 × 10 al revés, pasó a 729 cm³ y 9 cm (sigue siendo la a). Los
+     cubos fáciles ya estaban todos en otras preguntas de la misma prueba;
+   - en la operativa salía en 23 ítems: el cubo de 10 cm, 1 m³ o 1 dm³ que
+     convertir y el tanque de 1 m³ cuyos litros alcanzan tantos días. El 10 se
+     corre al 9, el 1 al 2 y el tanque de 1 m³ al de 4 m³, sin sacar otro
+     número del azar: 13 formas salen iguales y en las otras 17 cambió solo ese
+     ítem;
+   - y el Generador de Tareas podía armar el tanque de 1 × 1 × 1 m. Ahora su
+     tanque es de 1 × 2 m.
+
+   Lo que aplica la equivalencia a otra cantidad se quedó: los litros de 2 m³,
+   la cuarta parte de 1 m³ y «¿cuál no cabe en 1 m³?». Es lo mismo que la
+   tabla en Potencias: ahí lo que se pide es usar lo que se aprendió.
+2. **El «Predice» ya tenía una pregunta contestada por la historia**, la de los
+   litros de un tanque de 1 m³. No es de la animación, que solo enseña por qué.
+   De las otras dos, la caja de 4 × 3 × 2 y la arista que se duplica, aquí no
+   sale ni un número ni la palabra «doble»: se cuenta por capas, que es la
+   idea, con los números de la historia.
+3. **En un dibujo de tres dimensiones, cada bloque dice dónde está.** El tanque
+   va en perspectiva, pintado de atrás hacia adelante y de abajo hacia arriba
+   para que lo de adelante tape lo de atrás. Cada bloque de cubitos lleva en sus
+   datos su esquina y su tamaño, y la sonda los comprueba contra el dibujo: con
+   las tres aristas del tanque saca cuánto se corre el dibujo por cada cubito, a
+   lo largo, hacia arriba y hacia el fondo, y mide cara por cara que cada bloque
+   esté donde dice. Sin eso, contar los cubitos de un dibujo en perspectiva no
+   se puede.
+4. **El litro de muestra es el mismo cubito, más grande, y se mide que lo sea.**
+   Sus tres caras tienen que crecer lo mismo. Con la muestra aplastada, el
+   alumno compararía el cubito del tanque con otra cosa.
+
+La sonda de esta escena **cuenta los cubitos en el dibujo**. Comprueba:
+
+- que el frente del tanque sea un cuadrado y que cada arista diga «1 m»;
+- que cada bloque esté donde dice y mida lo que dice;
+- que ningún cubito se cuente dos veces ni caiga fuera del tanque;
+- que se vean 1, 10, 100 y 1,000 cubitos, en la esquina, en fila, en el fondo y
+  en todo el tanque, y que el marcador diga esos litros;
+- que el fondo vaya de otro color solo mientras se compara;
+- que al lado de cada capa llena vaya lo que se lleva contado hasta ella;
+- y que no salga un número del «Predice» ni se hable de duplicar.
+
+Se comprobó al revés con seis averías plantadas a la vez (el marcador del fondo
+diciendo 10 L, la quinta capa rotulada 400 L, una fila del fondo que no llega,
+la muestra aplastada, «el doble» en una frase y el fondo de otro color hasta el
+final), y salió roja con las seis.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

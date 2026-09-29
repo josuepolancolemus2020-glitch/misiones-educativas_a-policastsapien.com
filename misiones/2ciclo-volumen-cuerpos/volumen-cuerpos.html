@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,21 @@
     <div class="tip"><span class="ti">❓</span><div>No sobró agua: sobró desconocimiento. Un metro por un
     metro por un metro son mil litros exactos, y esa equivalencia se aprende una vez y sirve toda la
     vida. Predice tú primero, aquí abajo.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: el
+       tanque de la escuela, de un metro de cada lado, contado con cubitos de
+       un litro, de 10 cm de cada lado. En un metro caben 10 en fila; diez
+       filas cubren el fondo, 100 cubitos, que son los 100 litros del conserje;
+       y diez capas como esa llenan el tanque: 10 × 10 × 10 = 1,000 litros. La
+       mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-tanque.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cuánta agua cabe en el tanque</h2>
+    <div id="amTanque">
+      <p>Un litro de agua llena justo un cubito de 10 cm de cada lado. En un metro caben 10 cubitos en fila; diez filas cubren el fondo del tanque, 10 × 10 = 100 cubitos, que son los 100 litros del conserje. Pero el tanque también mide un metro de alto y le caben 10 capas como esa: 10 × 10 × 10 = 1,000 litros.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -923,6 +941,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación del tanque: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-tanque.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

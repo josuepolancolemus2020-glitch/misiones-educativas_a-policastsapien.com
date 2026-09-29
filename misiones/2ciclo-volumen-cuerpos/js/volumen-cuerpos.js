@@ -662,7 +662,9 @@ function genUnidadesTask(out,count){
 function genVolRealTask(out,count){
   _instrBlock(out,'🏗️ Problemas de la vida real',['Calcula el volumen y contesta con su unidad.','Si te piden litros, recuerda que 1 dm³ = 1 litro.']);
   const casos=[
-    ['una pila de agua','m',2,1],['un baúl','cm',60,40],['un tanque','m',1,1],['una caja de galletas','cm',20,15]
+    /* El tanque no es de 1 × 1 m: con 1 m de alto sería el de la historia, y
+       sus 1,000 litros los cuenta la animación que va después de ella. */
+    ['una pila de agua','m',2,1],['un baúl','cm',60,40],['un tanque','m',1,2],['una caja de galletas','cm',20,15]
   ];
   for(let i=0;i<count;i++){
     const c=casos[_tgRint(0,casos.length-1)];
@@ -765,7 +767,7 @@ window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResi
 const evalTFBank=[
   {q:'Un cubo de 3 cm de arista tiene 27 cm³ de volumen.',a:true,k:'tf-cubo-3'},
   {q:'Un prisma de 5 × 4 × 2 cm tiene 40 cm³ de volumen.',a:true,k:'tf-prisma-542'},
-  {q:'Un tanque de 1 m³ guarda 100 litros.',a:false,k:'tf-tanque-1'},
+  {q:'Un tanque de 3 m³ guarda 300 litros.',a:false,k:'tf-tanque-3'},
   {q:'Si se duplica la arista de un cubo, su volumen se duplica.',a:false,k:'tf-duplica'},
   {q:'Un prisma de 10 × 3 × 3 m tiene 90 m³ de volumen.',a:true,k:'tf-prisma-1033'},
   {q:'De cm³ a dm³ se divide entre 100.',a:false,k:'tf-cm3-dm3'},
@@ -779,7 +781,7 @@ const evalMCBank=[
   {q:'Un prisma de 6 × 3 × 2 cm tiene un volumen de…',o:['a) 36 cm³','b) 11 cm³','c) 18 cm³','d) 22 cm³'],a:0,k:'mc-prisma-632'},
   {q:'Un cilindro tiene 6 cm de diámetro. Su radio es…',o:['a) 12 cm','b) 3 cm','c) 6 cm','d) 9 cm'],a:1,k:'mc-radio-6'},
   {q:'¿Cuántos litros caben en un tanque de 2 m³?',o:['a) 200','b) 20','c) 2,000','d) 2'],a:2,k:'mc-tanque-2'},
-  {q:'Si un cubo tiene 1,000 cm³ de volumen, su arista mide…',o:['a) 10 cm','b) 100 cm','c) 333 cm','d) 30 cm'],a:0,k:'mc-arista-1000'},
+  {q:'Si un cubo tiene 729 cm³ de volumen, su arista mide…',o:['a) 9 cm','b) 81 cm','c) 243 cm','d) 27 cm'],a:0,k:'mc-arista-729'},
   {q:'¿Cuál de estas cantidades NO cabe en 1 m³?',o:['a) 900 litros','b) 1,200 litros','c) 500 dm³','d) 999 litros'],a:1,k:'mc-no-cabe'},
   {q:'Un cilindro de radio 2 cm y altura 10 cm (usa π = 3.14) tiene un volumen de…',o:['a) 62.8 cm³','b) 40 cm³','c) 125.6 cm³','d) 12.56 cm³'],a:2,k:'mc-cilindro-2-10'},
   {q:'Si se triplica la arista de un cubo, su volumen se hace…',o:['a) tres veces mayor','b) nueve veces mayor','c) 27 veces mayor','d) seis veces mayor'],a:2,k:'mc-triplica'},
@@ -1087,9 +1089,17 @@ function _mcmDe(a, b) { let m = a; while (m % b !== 0) m += a; return m; }
 // I. Calcula el volumen (5 × 4 = 20 pts) — Bloques 1, 2 y 4
 const _VOL_ARISTAS = [2, 3, 4, 5, 6, 7, 8, 10];
 const _VOL_RADIOS = [2, 3, 4, 5, 6, 10];
+/* ⚠️ La cuenta del tanque de la historia no cae en la prueba. La animación
+   que va después de la historia llena el tanque de la escuela, de un metro
+   por lado, con cubitos de un litro: 10 × 10 × 10 = 1,000. Por eso aquí no
+   sale un cubo de 10 cm (sus 1,000 cm³ son esa misma cuenta), ni 1 m³ o
+   1 dm³ que pasar a litros o a dm³: el 10 se corre al 9 y el 1 al 2, sin
+   sacar otro número del azar, así que el resto de cada forma sale igual.
+   Salía en 17 ítems de las treinta formas. */
+function _fueraDelTanque(v) { return v === 10 ? 9 : v === 1 ? 2 : v; }
 function genMultDivItems() {
   const items = [];
-  { const a = _VOL_ARISTAS[_opRint(0, _VOL_ARISTAS.length - 1)];
+  { const a = _fueraDelTanque(_VOL_ARISTAS[_opRint(0, _VOL_ARISTAS.length - 1)]);
     items.push({ text: `Volumen de un cubo de ${a} cm de arista, en cm³:`, ansNum: _volCubo(a) }); }
   { const l = _opRint(2, 12), an = _opRint(2, 9), al = _opRint(2, 9);
     items.push({ text: `Volumen de un prisma de ${l} × ${an} × ${al} cm, en cm³:`, ansNum: _volPrisma(l, an, al) }); }
@@ -1108,10 +1118,10 @@ function genRadarItems() {
   const tipos = _shuffleF([0, 1, 2, 3, 4], _opRnd);
   tipos.forEach(tp => {
     if (tp === 0) {
-      const v = _opRint(1, 9);
+      const v = _fueraDelTanque(_opRint(1, 9));
       items.push({ text: `${v} m³, ¿cuántos dm³ son?`, ansNum: v * 1000 });
     } else if (tp === 1) {
-      const v = _opRint(1, 9);
+      const v = _fueraDelTanque(_opRint(1, 9));
       items.push({ text: `${v} dm³, ¿cuántos litros son?`, ansNum: v });
     } else if (tp === 2) {
       const casos = [['pintar una pared', 'área'], ['llenar un tanque', 'volumen'], ['forrar una caja', 'área'], ['la arena de un camión', 'volumen']];
@@ -1138,7 +1148,7 @@ function genReglaItems() {
       expr = `▢ × ▢ × ▢ = ${_volCubo(a)} cm³`; hint = 'es un cubo: los tres números son iguales'; ansNum = a; }
     else if (f === 1) { const l = _opRint(2, 9), an = _opRint(2, 6), al = _opRint(2, 6);
       expr = `${l} × ${an} × ▢ = ${_volPrisma(l, an, al)} cm³`; hint = 'falta la altura del prisma'; ansNum = al; }
-    else if (f === 2) { const v = _opRint(1, 9);
+    else if (f === 2) { const v = _fueraDelTanque(_opRint(1, 9));
       expr = `${v} m³ = ▢ litros`; hint = 'cada m³ son 1,000 litros'; ansNum = v * 1000; }
     else { const l = _opRint(2, 9), an = _opRint(2, 6), al = _opRint(2, 6);
       expr = `▢ × ${an} × ${al} = ${_volPrisma(l, an, al)} cm³`; hint = 'falta el largo'; ansNum = l; }
@@ -1177,7 +1187,10 @@ function genRetoItems() {
     items.push({ text: `Un compañero calculó el volumen de ${c[0]} y escribió ${c[1]}. Se quedó en el área de una cara. Escribe el volumen correcto, en cm³.`, ansNum: c[2], pts: 5 }); }
   { const a = _RT_DOBLE[_opRint(0, _RT_DOBLE.length - 1)];
     items.push({ text: `Un cubo de ${a} cm de arista tiene ${a * a * a} cm³. Si se duplica la arista, ¿cuántas veces mayor será el volumen? Escribe solo el número.`, ansNum: 8, pts: 5 }); }
-  { const u = _RT_UNI[_opRint(0, _RT_UNI.length - 1)];
+  { let u = _RT_UNI[_opRint(0, _RT_UNI.length - 1)];
+    /* El tanque de 1 m³ es el de la historia, y sus 1,000 litros los cuenta
+       la animación (ver _fueraDelTanque): se corre a 4 m³. */
+    if (u[0] === 1 && u[1] === 'm³') u = [4, 'm³', 4000, 'litros'];
     items.push({ text: `Un tanque guarda ${u[0]} ${u[1]}. Una familia gasta 250 litros al día. ¿Para cuántos días completos le alcanza?`, ansNum: Math.floor(u[2] / 250), just: `${u[2]} litros ÷ 250`, ansShow: `${Math.floor(u[2] / 250)} días (${u[2]} litros entre 250)`, pts: 10 }); }
   return items;
 }
