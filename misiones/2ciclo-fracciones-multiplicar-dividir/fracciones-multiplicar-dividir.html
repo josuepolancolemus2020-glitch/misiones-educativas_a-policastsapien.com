@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,20 @@
     <div class="tip"><span class="ti">❓</span><div>Dividir una fracción entre 2 sí sale, y sale con una
     regla que cabe en un renglón. Adivina primero cuánto es la mitad de 3/4, y fíjate si tu respuesta
     es mayor o menor que 3/4.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia dice que a doña Chepa «3/4 entre 2 no le sale», y aquí se ve
+       por qué y cómo sí sale: con cuartos enteros no hay dos montones
+       iguales, pero cada cuarto se parte en dos, 3/4 son 6/8, y seis octavos
+       se reparten tres y tres. La mueve el alumno, paso a paso. El aparato es
+       compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-manteca.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cómo sí sale la mitad de 3/4</h2>
+    <div id="amManteca">
+      <p>Con cuartos enteros, los 3/4 de taza no se reparten en dos montones iguales: uno se queda con dos cuartos y el otro con uno. Pero cada cuarto se parte en dos, y 3/4 son 6/8, que sí se reparten tres y tres. La mitad de 3/4 es 3/8: el 3 de arriba se queda y el 4 de abajo se multiplica por 2. Y 3/8 es menos que 3/4.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -784,6 +801,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la manteca: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-manteca.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

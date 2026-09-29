@@ -211,6 +211,37 @@ const LEER = `
       marcadorFr: cifra ? [].map.call(cifra.children, function (b) { return b.textContent; }) : null
     };
   };
+  window.__amExtra.amManteca = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function medio(el) { var c = caja(el); return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    /* Una fracción del dibujo se lee de sus dos números, no de un atributo:
+       lo que se comprueba es lo que se ve. */
+    function fr(g) { return g.querySelector('.mt-num').textContent + '/' + g.querySelector('.mt-den').textContent; }
+    return {
+      tazas: [].map.call(raiz.querySelectorAll('.mt-taza'), function (t) {
+        return { x0: +t.getAttribute('data-x0'), x1: +t.getAttribute('data-x1'), fondo: +t.getAttribute('data-fondo'), alto: +t.getAttribute('data-alto') };
+      }),
+      cuartos: todos('.mt-cuarto rect').map(caja),
+      octavos: todos('.mt-octavo rect').map(caja),
+      rayas: todos('.mt-raya').map(function (l) { return { taza: +l.getAttribute('data-taza'), y: medio(l).y }; }),
+      niveles: todos('.mt-nivel').map(function (g) {
+        return { taza: +g.getAttribute('data-taza'), dice: fr(g), y: medio(g.querySelector('.mt-barra')).y, x: medio(g).x, antes: g.classList.contains('mt-antes') };
+      }),
+      antesRaya: todos('.mt-antes-raya').map(caja),
+      cuentas: todos('.mt-cuenta').map(function (t) { var c = medio(t); return { t: t.textContent, x: c.x, y: c.y }; }),
+      nombres: todos('.mt-nombre').map(function (t) { return { t: t.textContent, x: medio(t).x }; }),
+      duda: todos('.mt-duda-taza').map(medio),
+      cuchillos: todos('.mt-cuchillo').length,
+      escrito: todos('.mt-escrito .mt-tok').map(function (t) {
+        var c = medio(t), tipo = t.getAttribute('data-tipo');
+        return { tipo: tipo, t: tipo === 'fr' ? fr(t) : t.textContent, x: c.x, y: c.y };
+      }),
+      notas: todos('.mt-nota').map(function (t) { return t.textContent; })
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -335,6 +366,143 @@ const ESCENAS = {
         'paso 6: cada quinto lleva su 1/5, y los cinco juntos son un entero (5/5)', { cada, panel: x.panel }]);
     } else r.push([x.etiquetas.length === 0, `paso ${n}: sin los 1/5 de cada pedazo`, x.etiquetas.length]);
     if (n <= 2) r.push([!x.panel, `paso ${n}: la fracción escrita todavía no está`, x.panel]);
+    return r;
+  },
+
+  /* Multiplicación y División de Fracciones: la manteca de doña Chepa. La
+     manteca de cada taza se mide sobre el dibujo: cuántos pedazos, de qué
+     alto y apilados desde el fondo. De ahí sale cuánto hay, y se compara
+     con la fracción de al lado, con lo escrito a la derecha (que se vuelve
+     a calcular aquí) y con el marcador. Y entre las dos tazas hay siempre
+     3/4: la manteca no aparece ni desaparece. */
+  amManteca(e, n) {
+    const x = e.extra, r = [];
+    const T = x.tazas, H = T[0].alto;
+    const cerca = (a, b, t = 1.2) => Math.abs(a - b) <= t;
+    const valor = t => { const [a, b] = t.split('/').map(Number); return a / b; };
+    const igual = (a, b) => Math.abs(a - b) < 1e-9;
+    const medioX = p => (p.x0 + p.x1) / 2;
+    const enTaza = (p, c) => medioX(p) > T[c].x0 && medioX(p) < T[c].x1;
+    /* Un octavo que tiene encima la tapa de su cuarto no se ve: se cuenta el cuarto. */
+    const tapado = o => x.cuartos.some(q => medioX(o) > q.x0 && medioX(o) < q.x1 && (o.y0 + o.y1) / 2 > q.y0 && (o.y0 + o.y1) / 2 < q.y1);
+    const sueltos = x.octavos.filter(o => !tapado(o));
+    const piezas = x.cuartos.map(p => Object.assign({ parte: 4 }, p)).concat(sueltos.map(p => Object.assign({ parte: 8 }, p)));
+    r.push([piezas.every(p => enTaza(p, 0) || enTaza(p, 1)), `paso ${n}: toda la manteca está dentro de una taza`, piezas.filter(p => !enTaza(p, 0) && !enTaza(p, 1)).length]);
+    const tazas = [0, 1].map(c => {
+      const ps = piezas.filter(p => enTaza(p, c)).sort((a, b) => b.y1 - a.y1);   // del fondo hacia arriba
+      let techo = T[c].fondo, bien = true;
+      for (const p of ps) {
+        if (!cerca(p.y1, techo) || p.x0 < T[c].x0 - 1 || p.x1 > T[c].x1 + 1 || !cerca(p.y1 - p.y0, H / p.parte)) bien = false;
+        techo = p.y0;
+      }
+      return { ps, bien, techo, hay: (T[c].fondo - techo) / H, cuartos: ps.filter(p => p.parte === 4).length, octavos: ps.filter(p => p.parte === 8).length };
+    });
+    r.push([tazas.every(t => t.bien), `paso ${n}: en cada taza la manteca va apilada desde el fondo, sin huecos, y cada pedazo mide su parte de la taza`,
+      tazas.map(t => [t.cuartos, t.octavos])]);
+    r.push([igual(tazas[0].hay + tazas[1].hay, 3 / 4) || cerca(tazas[0].hay + tazas[1].hay, 0.75, 0.01),
+      `paso ${n}: entre las dos tazas hay 3/4: la manteca no aparece ni desaparece`, tazas.map(t => Math.round(t.hay * 1000) / 1000)]);
+
+    /* Las rayas: en cuartos hasta que se parte, en octavos después, y cada
+       una en su altura. */
+    const partes = n >= 2 ? 8 : 4;
+    const rayasBien = [0, 1].every(c => {
+      const rs = x.rayas.filter(v => v.taza === c);
+      return rs.length === partes - 1 && rs.every(v => { const k = Math.round((T[c].fondo - v.y) / (H / partes)); return k >= 1 && k < partes && cerca(v.y, T[c].fondo - k * H / partes, 0.8); });
+    });
+    r.push([rayasBien, `paso ${n}: cada taza está marcada en ${partes} partes iguales`, [0, 1].map(c => x.rayas.filter(v => v.taza === c).length)]);
+
+    /* La fracción de al lado de cada taza: dice lo que hay, va a la altura
+       de la manteca, y su número de arriba son los pedazos que se ven, del
+       tamaño que dice el de abajo. */
+    for (const c of [0, 1]) {
+      const l = x.niveles.filter(v => v.taza === c && !v.antes), t = tazas[c];
+      if (t.hay < 0.01) { r.push([l.length === 0, `paso ${n}: la taza ${c + 1} está vacía y no dice ninguna fracción`, l.map(v => v.dice)]); continue; }
+      const [a, b] = l.length === 1 ? l[0].dice.split('/').map(Number) : [NaN, NaN];
+      const cuenta = b === 4 ? t.cuartos : t.octavos;
+      r.push([l.length === 1 && cerca(a / b, t.hay, 0.01) && cerca(l[0].y, t.techo, 2.5) && a === cuenta && t.ps.length === cuenta && l[0].x > T[c].x1,
+        `paso ${n}: la taza ${c + 1} dice ${l.map(v => v.dice).join(',') || '—'}: ${cuenta} pedazos de 1/${b}, y la manteca llega justo ahí`, [t.hay, t.cuartos, t.octavos, l]]);
+    }
+
+    /* Lo escrito a la derecha se vuelve a calcular aquí. */
+    const toks = x.escrito.slice().sort((p, q) => Math.abs(p.y - q.y) > 14 ? p.y - q.y : p.x - q.x);
+    const segs = [[]], rels = [];
+    for (const t of toks) {
+      if (t.tipo === 'op' && /[=≠<]/.test(t.t)) { rels.push(t.t); segs.push([]); } else segs[segs.length - 1].push(t);
+    }
+    const hace = s => {
+      if (!s.length || s.some(t => t.tipo === 'duda')) return null;
+      const v = t => t.tipo === 'fr' ? valor(t.t) : +t.t;
+      let a = v(s[0]);
+      for (let i = 1; i < s.length; i += 2) a = s[i].t === '+' ? a + v(s[i + 1]) : s[i].t === '÷' ? a / v(s[i + 1]) : NaN;
+      return a;
+    };
+    const vs = segs.map(hace);
+    const verdad = rels.length > 0 && rels.every((rel, i) => vs[i] === null || vs[i + 1] === null ||
+      (rel === '=' ? igual(vs[i], vs[i + 1]) : rel === '≠' ? !igual(vs[i], vs[i + 1]) : vs[i] < vs[i + 1]));
+    r.push([verdad, `paso ${n}: lo escrito a la derecha es verdad (${toks.map(t => t.t).join(' ')})`, vs]);
+    const frs = toks.filter(t => t.tipo === 'fr').map(t => t.t);
+    const hay = [tazas[0].hay, tazas[1].hay];
+
+    if (n === 0) {
+      r.push([e.cifra === '3/4' && igual(hay[0], 3 / 4) && hay[1] === 0 && frs[0] === '3/4' && toks.some(t => t.tipo === 'duda') && toks.some(t => t.t === '÷') && toks.some(t => t.tipo === 'n' && t.t === '2'),
+        'paso 0: la receta entera tiene 3/4, la media receta está vacía, y lo escrito pregunta 3/4 ÷ 2 = ?', [e.cifra, hay, frs]]);
+      const d = x.duda[0];
+      r.push([x.duda.length === 1 && d.x > T[1].x0 && d.x < T[1].x1, 'paso 0: la pregunta va dentro de la taza vacía', x.duda]);
+    } else r.push([x.duda.length === 0, `paso ${n}: sin la pregunta dentro de la taza`, x.duda.length]);
+    if (n === 1) {
+      const [p, q] = (e.cifra.match(/\d+/g) || []).map(Number);
+      r.push([tazas[0].cuartos === p && tazas[1].cuartos === q && p !== q && tazas[0].octavos + tazas[1].octavos === 0 && frs.length === 2 && igual(valor(frs[0]), hay[0]) && igual(valor(frs[1]), hay[1]),
+        `paso 1: con cuartos enteros: ${p} y ${q}, no son iguales, y lo escrito dice lo mismo`, [e.cifra, tazas.map(t => t.cuartos), frs]]);
+    }
+    if (n === 2) {
+      r.push([e.cifra === '6/8' && tazas[0].octavos === 6 && tazas[0].cuartos === 0 && igual(hay[0], valor(e.cifra)) && frs.join(' ') === '3/4 6/8' && x.cuchillos === 3,
+        'paso 2: el cuchillo parte cada cuarto: seis octavos en la taza, y 3/4 = 6/8', [e.cifra, tazas[0].octavos, frs, x.cuchillos]]);
+    } else r.push([x.cuchillos === 0, `paso ${n}: sin el cuchillo`, x.cuchillos]);
+    if (n >= 3 && n <= 5) {
+      r.push([e.cifra === '3/8' && igual(hay[0], hay[1]) && igual(hay[1], 3 / 8) && tazas[1].octavos === 3,
+        `paso ${n}: tres octavos en cada taza: las dos mitades son iguales, y el marcador dice 3/8`, [e.cifra, hay]]);
+    }
+    if (n === 3 || n === 4) {
+      r.push([igual(vs[vs.length - 1], hay[1]) && toks.some(t => t.t === '÷') && toks.some(t => t.tipo === 'n' && t.t === '2'),
+        `paso ${n}: lo escrito termina en lo que tiene la media receta`, [vs, hay[1]]]);
+    }
+    if (n === 4) {
+      /* La regla: el de arriba se queda y el de abajo va por 2. */
+      const [a1, b1] = frs[0].split('/').map(Number), [a2, b2] = frs[frs.length - 1].split('/').map(Number);
+      r.push([frs[0] === '3/4' && a1 === a2 && b1 * 2 === b2 && x.notas.join('|') === 'se queda|× 2',
+        'paso 4: la regla escrita: el 3 de arriba se queda y el 4 de abajo, por 2, da 8', [frs, x.notas]]);
+      /* Y los tres pedazos de la media receta se cuentan, del fondo hacia arriba. */
+      const ps = tazas[1].ps;
+      const dentro = (t, p) => t.x > p.x0 && t.x < p.x1 && t.y > p.y0 && t.y < p.y1;
+      const leidos = ps.map(p => x.cuentas.filter(t => dentro(t, p)).map(t => t.t).join('')).join(',');
+      r.push([x.cuentas.length === 3 && leidos === '1,2,3', 'paso 4: los tres pedazos de la media receta van contados, 1, 2 y 3, cada número dentro del suyo', leidos]);
+    } else r.push([x.cuentas.length === 0 && x.notas.length === 0, `paso ${n}: sin los números de los pedazos ni las flechas de la regla`, [x.cuentas.length, x.notas]]);
+    if (n === 5) {
+      const antes = x.niveles.filter(v => v.antes), raya = x.antesRaya[0];
+      const yRaya = raya ? (raya.y0 + raya.y1) / 2 : NaN;
+      r.push([antes.length === 1 && antes[0].dice === '3/4' && !!raya && medioX(raya) > T[1].x0 && medioX(raya) < T[1].x1 && cerca(yRaya, T[1].fondo - H * 3 / 4) && cerca(antes[0].y, yRaya, 1.5),
+        'paso 5: la raya cortada marca hasta dónde llegaba 3/4, en la taza de la media receta', [antes.map(v => v.dice), yRaya]]);
+      r.push([cerca((T[1].fondo - tazas[1].techo) * 2, T[1].fondo - yRaya) && frs.join(' ') === '3/8 3/4' && rels.join('') === '<' && e.cifra === '3/8',
+        'paso 5: tres octavos llegan a la mitad de donde llegaban tres cuartos, y lo escrito dice 3/8 < 3/4', [tazas[1].techo, yRaya, frs]]);
+    } else r.push([x.antesRaya.length === 0 && x.niveles.every(v => !v.antes), `paso ${n}: sin la raya de 3/4`, x.antesRaya.length]);
+    if (n === 6) {
+      r.push([e.cifra === '3/4' && hay[1] === 0 && tazas[0].octavos === 6 && igual(hay[0], 3 / 4) && igual(vs[vs.length - 1], hay[0]) && frs.join(' ') === '3/8 3/8 6/8 3/4',
+        'paso 6: las dos mitades juntas vuelven a ser 3/4, y lo escrito lo comprueba (3/8 + 3/8 = 6/8 = 3/4)', [e.cifra, hay, frs]]);
+    }
+
+    /* Los nombres, debajo de su taza. */
+    const esperaN = { 0: 'receta entera|media receta', 1: 'media receta', 2: 'receta entera|media receta', 3: 'la otra mitad|media receta', 4: 'la otra mitad|media receta', 5: 'la otra mitad|media receta', 6: 'receta entera' }[n];
+    const nombres = x.nombres.slice().sort((p, q) => p.x - q.x);
+    r.push([nombres.map(v => v.t).join('|') === esperaN && nombres.every(v => enTaza({ x0: v.x, x1: v.x }, v.t === 'media receta' ? 1 : 0)),
+      `paso ${n}: debajo de cada taza, su nombre (${esperaN})`, nombres.map(v => v.t)]);
+
+    /* ⚠️ Lo que pregunta el «Predice» de abajo (12 × 3/4, cuántos medios
+       caben en 6 tortillas y si 2/3 × 4/5 pide denominador común) no sale
+       en ningún paso: ni se multiplica una fracción por otra, ni se divide
+       entre un medio, ni sale el 12. */
+    const dice = [e.texto, e.palabras, e.cifra].concat(toks.map(t => t.t), x.notas, x.niveles.map(v => v.dice)).join(' | ');
+    const regalo = dice.match(/(^|[^\d\/])(12|9)(?![\d\/])|1\/2|2\/3|4\/5|8\/15|×\s*\d+\/\d+|\d+\/\d+\s*×|denominador común|línea recta|\bmedios\b|tortilla/i);
+    r.push([!regalo, `paso ${n}: no dice nada de lo que pregunta el «Predice» (12 × 3/4, 6 ÷ 1/2, 2/3 × 4/5)`, regalo ? regalo[0] : undefined]);
     return r;
   },
 

@@ -6147,6 +6147,65 @@ plantadas a la vez (el pedazo de Kenia que ya no es la mitad, un corte «igual»
 corrido, tres quintos marcados con el marcador diciendo 2/5 y las etiquetas
 diciendo cuartos) y salió roja con las cuatro.
 
+### La octava: Multiplicación y División de Fracciones, y lo que enseñó
+
+En **Multiplicación y División de Fracciones**
+(`misiones/2ciclo-fracciones-multiplicar-dividir/`, `js/animacion-manteca.js`)
+la historia es doña Chepa, que hizo media receta de tamales y partió todo a la
+mitad menos la manteca: «3/4 entre 2 no me sale». Le echó los 3/4 enteros y se
+perdió la masa de veinte. La animación son dos tazas medidoras. Primero se
+intenta lo que intentó ella, repartir los cuartos enteros en dos montones, y no
+se puede: uno se queda con dos y el otro con uno. Después cada cuarto se parte
+en dos, 3/4 son 6/8, y seis octavos sí se reparten, tres y tres. De ahí sale la
+regla (el 3 de arriba se queda y el 4 de abajo se multiplica por 2), que 3/8 es
+menos que 3/4 aunque el 8 sea más que el 4, y la prueba: las dos mitades juntas
+son 6/8, o sea 3/4. Seis cosas que valen para las demás:
+
+1. ⚠️ **La regla sale de donde se trabó la historia, no se dicta.** Doña
+   Chepa buscaba la mitad de 3, que no sale entera. El dibujo le da la vuelta:
+   no se parte el 3, se parten los pedazos. Con eso la regla llega después de
+   haberla visto, y el alumno sabe por qué el 3 se queda.
+2. ⚠️ **Lo que va debajo decidió qué regla se enseña.** El «Predice» pregunta
+   si 12 × 3/4 es más o menos que 12, cuántos medios caben en 6 tortillas y si
+   2/3 × 4/5 pide denominador común. El camino de siempre (3/4 ÷ 2 = 3/4 × 1/2,
+   en línea recta) contestaba la tercera antes de que el alumno la adivinara.
+   Por eso aquí se divide entre un número natural, que la prueba de la misión
+   pregunta con otros números, y no se multiplica una fracción por otra ni se
+   divide entre un medio. La sonda lo vigila.
+3. ⚠️ **La cuenta de la historia estaba en la prueba operativa, en una de
+   treinta formas.** La Forma 14 pedía «3/4 ÷ ▢ = 3/8». Salió armando las 30
+   con el mismo generador de la misión, que es la única forma de verlo. Ahora
+   `_fueraDeLaHistoria` corre el último número cuando el azar arma esa cuenta,
+   en los cuatro generadores que pueden, sin sacar otro número del azar: las
+   otras 29 formas salen idénticas, y en la 14 solo cambió ese renglón. Y una
+   tarea del Generador de Tareas que era la historia palabra por palabra (media
+   receta de 3/4 de taza) ahora usa 2/3.
+4. **Lo que va encima de un objeto lleva la tinta del objeto.** La taza y la
+   manteca son de su color en las dos pantallas, y las rayas y los números de
+   los pedazos van en tinta oscura fija: el azul de la misión sobre la manteca
+   se leería mal en la pantalla oscura. Lo que va sobre la tarjeta (las
+   fracciones de al lado y lo escrito) lleva los colores de la misión.
+5. **Esta misión escribe las fracciones en línea y no carga
+   `metas-fracciones.js`.** El marcador dice «3/8» en línea, como el resto de
+   la página, y solo el dibujo las apila, que es donde se ve que el 3 se queda
+   y el 4 se hace 8. Cargar el apilador solo para la animación habría apilado
+   todas las fracciones de la página y cambiado la misión entera.
+6. **Un signo pegado a una raya se lee como otra cosa.** El «?» de la taza
+   vacía, junto a la raya de 2/4, se leía «–?», y el corte del cuchillo, que se
+   salía del vidrio, parecía un corte de la taza. Las dos cosas solo se vieron
+   mirando la captura.
+
+La sonda de esta escena **mide la manteca de cada taza sobre el dibujo**
+(cuántos pedazos, de qué alto y apilados desde el fondo) y la compara con la
+fracción de al lado (el número de arriba son los pedazos que se ven y el de
+abajo, su tamaño), con lo escrito a la derecha, que vuelve a calcular, y con el
+marcador. Comprueba además que entre las dos tazas haya siempre 3/4 (la manteca
+no aparece ni desaparece), que las rayas partan la taza en 4 o en 8 partes
+iguales, que los pedazos de la media receta vayan contados 1, 2 y 3, y que 3/8
+llegue a la mitad de la raya de 3/4. Se comprobó al revés con tres averías
+plantadas a la vez (un octavo que no pasa a la media receta, lo escrito diciendo
+3/6 y el marcador del último paso diciendo 3/8), y salió roja con las tres.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6177,6 +6236,12 @@ acordarse.
 Una escena de fracciones escribe la del marcador como texto («1/5») y el aparato
 la apila si la misión carga `js/metas-fracciones.js`; en el dibujo, cada
 fracción va en tres piezas (número, raya, número), nunca en un solo texto.
+
+Y antes de escribir la escena, su cuenta se busca en la prueba: en los bancos de
+la conceptual, en la ficha y en **las treinta formas de la operativa**, que se
+arman con el mismo generador de la misión. El azar de cada forma sale de una
+semilla, así que armarlas todas es la única forma de verlas; mirar la Forma 1
+no dice nada de la 14.
 
 **Antes de publicar una animación:**
 

@@ -599,7 +599,7 @@ function _tgLines(n){ let s=''; for(let i=0;i<n;i++) s+='<div style="border-bott
 function _tgTask(out,i,inner){ const div=document.createElement('div'); div.className='tg-task'; div.innerHTML=`<div class="tg-task-num">${i+1}</div><div class="tg-task-content">${inner}</div>`; out.appendChild(div); }
 const pensamientoTaskDB=[
   {q:'Sin calcular, ¿cuál da más: 24 × 2/3 o 24 ÷ 2/3? Explica por qué.',a:'24 ÷ 2/3. Multiplicar por una fracción menor que 1 encoge (da 16) y dividir entre ella agranda (da 36).'},
-  {q:'Una receta pide 3/4 de taza de azúcar y quieres hacer media receta. ¿Cuánta azúcar usas?',a:'1/2 × 3/4 = 3/8 de taza.'},
+  {q:'Una receta pide 2/3 de taza de azúcar y quieres hacer media receta. ¿Cuánta azúcar usas?',a:'1/2 × 2/3 = 2/6 = 1/3 de taza.'},
   {q:'¿Puede el producto de dos fracciones ser mayor que las dos? Da un ejemplo o explica por qué no.',a:'Sí, si las dos son mayores que 1: 3/2 × 5/2 = 15/4, que es mayor que las dos.'},
   {q:'Un lazo de 6 metros se corta en pedazos de 3/4 de metro. ¿Cuántos pedazos salen?',a:'6 ÷ 3/4 = 6 × 4/3 = 24/3 = 8 pedazos.'},
   {q:'Explica por qué toda fracción multiplicada por su recíproco da 1.',a:'Porque arriba y abajo quedan los mismos factores: 3/4 × 4/3 = 12/12 = 1.'},
@@ -1074,18 +1074,29 @@ function _isTxtMatch(student, accepted) { const z = s => _normTxt(s).replace(/\s
 function _sumaCifras(n) { return String(n).split('').reduce((a, c) => a + parseInt(c, 10), 0); }
 function _mcmDe(a, b) { let m = a; while (m % b !== 0) m += a; return m; }
 
+/* La historia de la misión, y la animación que va debajo, resuelven la
+   manteca de doña Chepa: la mitad de 3/4 es 3/8 (3/4 ÷ 2, que es 3/4 × 1/2).
+   Esa cuenta no puede caer en la prueba: se contestaría acordándose de la
+   animación, sin hacerla. Cuando el azar la arma, se corre el último número
+   uno más, sin sacar otro del azar, y así el resto de la forma sale igual
+   que antes. (Pasaba en la Forma 14: «3/4 ÷ ▢ = 3/8».) */
+function _fueraDeLaHistoria(a, b, c, d) {
+  const esLa = (a === 3 && b === 4 && c === 1 && d === 2) || (a === 1 && b === 2 && c === 3 && d === 4);
+  return esLa ? d + 1 : d;
+}
+
 // I. Multiplicar y dividir fracciones (5 × 4 = 20 pts) — Bloques 1, 2 y 4
 const _FR_DENOM = [2, 3, 4, 5, 6, 8, 9, 10, 12];
 const _FR_UNIT = [2, 3, 4, 5, 6, 8];
 function genMultDivItems() {
   const items = [];
-  { const a=_opRint(1,7), b=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)], c=_opRint(1,7), d=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)];
+  { const a=_opRint(1,7), b=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)], c=_opRint(1,7), d=_fueraDeLaHistoria(a, b, c, _FR_DENOM[_opRint(0,_FR_DENOM.length-1)]);
     items.push({ text: `Multiplica y simplifica: ${a}/${b} × ${c}/${d} =`, ansTxt: _fracAcc(a*c,b*d), ansShow: _fmtFr(a*c,b*d) }); }
   { const a=_opRint(1,7), b=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)], k=_opRint(2,9);
     items.push({ text: `Multiplica la fracción por el número natural: ${k} × ${a}/${b} =`, ansTxt: _fracAcc(a*k,b), ansShow: _fmtFr(a*k,b) }); }
   { const a=_opRint(1,7), b=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)], c=_opRint(1,7), d=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)];
     items.push({ text: `Divide volteando la segunda: ${a}/${b} ÷ ${c}/${d} =`, ansTxt: _fracAcc(a*d,b*c), ansShow: _fmtFr(a*d,b*c) }); }
-  { const a=_opRint(1,7), b=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)], k=_opRint(2,6);
+  { const a=_opRint(1,7), b=_FR_DENOM[_opRint(0,_FR_DENOM.length-1)], k=_fueraDeLaHistoria(a, b, 1, _opRint(2,6));
     items.push({ text: `Divide la fracción entre el número natural: ${a}/${b} ÷ ${k} =`, ansTxt: _fracAcc(a,b*k), ansShow: _fmtFr(a,b*k) }); }
   { const a=_opRint(1,4), b=_FR_UNIT[_opRint(0,_FR_UNIT.length-1)], c=_opRint(1,4), d=_FR_UNIT[_opRint(0,_FR_UNIT.length-1)], e=_opRint(1,3), f=_FR_UNIT[_opRint(0,_FR_UNIT.length-1)];
     items.push({ text: `Multiplica las tres: ${a}/${b} × ${c}/${d} × ${e}/${f} =`, ansTxt: _fracAcc(a*c*e,b*d*f), ansShow: _fmtFr(a*c*e,b*d*f) }); }
@@ -1123,13 +1134,13 @@ function genReglaItems() {
   const forms = _shuffleF([0, 1, 2, 3, _opRint(0, 3)], _opRnd);
   forms.forEach(f => {
     let expr, hint, ansTxt, ansShow;
-    if (f === 0) { const a=_opRint(1,5), b=_opRint(2,9), c=_opRint(1,5), d=_opRint(2,9);
+    if (f === 0) { const a=_opRint(1,5), b=_opRint(2,9), c=_opRint(1,5), d=_fueraDeLaHistoria(a, b, c, _opRint(2,9));
       expr = `${a}/${b} × ▢ = ${a*c}/${b*d}`; hint = 'mira qué le pasó al numerador y al denominador'; ansTxt=[c+'/'+d]; ansShow=`${c}/${d}`; }
     else if (f === 1) { const a=_opRint(2,9), b=Math.max(a+1,_opRint(3,10));
       expr = `${a}/${b} × ▢ = 1`; hint = 'toda fracción por su recíproco da 1'; ansTxt=[b+'/'+a]; ansShow=`${b}/${a}`; }
     else if (f === 2) { const k=_opRint(2,9), b=_opRint(2,9);
       expr = `▢ ÷ 1/${b} = ${k*b}`; hint = `dividir entre 1/${b} multiplica por ${b}`; ansTxt=[String(k), k+'/1']; ansShow=`${k}`; }
-    else { const a=_opRint(1,6), b=_opRint(2,9), k=_opRint(2,6);
+    else { const a=_opRint(1,6), b=_opRint(2,9), k=_fueraDeLaHistoria(a, b, 1, _opRint(2,6));
       expr = `${a}/${b} ÷ ▢ = ${a}/${b*k}`; hint = 'dividir entre un natural agranda el denominador'; ansTxt=[String(k), k+'/1']; ansShow=`${k}`; }
     items.push({ expr, hint, ansTxt, ansShow });
   });
