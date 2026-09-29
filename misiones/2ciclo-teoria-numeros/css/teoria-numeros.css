@@ -547,3 +547,9 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* El botón que avanza en la animación de la historia (css/animacion-mision.css)
+   lleva letra blanca sobre el degradado de la misión, y la punta de --sec
+   (#00897b) la dejaba a 4,32:1. Con el teal un tono más oscuro pasa de 5:1, y
+   a la vista es el mismo botón. */
+:root { --am-boton: linear-gradient(135deg, #1565c0, #00796b); }

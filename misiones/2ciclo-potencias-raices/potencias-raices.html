@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,20 @@
     <div class="tip"><span class="ti">❓</span><div>Ese número sale de una sola operación, la que
     deshace una potencia: la <strong>raíz cuadrada</strong>. 144 baldosas en un cuadrado son 12 por
     fila y 12 por columna, y eso se sabe antes de pegar la primera, no en la tercera.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia dice que las 144 baldosas de doña Nely van 12 por fila y que
+       eso sale de la raíz cuadrada, y aquí se ve: se prueba con 10 por fila,
+       después con 12, se escribe 12², se desarma la trampa de 12 × 2 y se hace
+       al revés, √144 = 12. La mueve el alumno, paso a paso. El aparato es
+       compartido (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-baldosas.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira cuántas van por fila</h2>
+    <div id="amBaldosas">
+      <p>Las 144 baldosas de doña Nely van 12 por fila y en 12 filas, porque 12 × 12 = 144. Eso se escribe 12² y se lee «doce al cuadrado». Al revés, √144 = 12: la raíz cuadrada dice cuántas van por lado. Con 10 por fila no alcanza (10 × 10 = 100), y 12² no es 12 × 2, que serían solo dos filas.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -741,6 +758,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de las baldosas: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-baldosas.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

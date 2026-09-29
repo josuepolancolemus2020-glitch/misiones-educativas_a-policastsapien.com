@@ -548,6 +548,11 @@ window.addEventListener('resize',()=>{ clearTimeout(_sopaResizeTimer); _sopaResi
 // (su `k` no se repite) y ninguna respuesta aparece escrita en otra pregunta,
 // tampoco como opción equivocada: en números la pista se cuela como NÚMERO.
 // Lo comprueba `_dev/verifica-examen-sin-pistas.js`.
+/* ⚠️ Ninguna pregunta usa el piso de 12 por lado ni el 12² − 100. La historia
+   con que abre la misión son 144 baldosas en un cuarto de 12 por lado, y la
+   animación de debajo prueba antes con 10 por fila y deja 44 sobrando: con
+   esos números la pregunta se contestaba acordándose de la historia, no
+   haciendo la cuenta. Van con 18 por lado y con 2² + 2². */
 const evalTFBank=[
   {q:'9² = 81.',a:true,k:'tf-9-cuadrado'},
   {q:'√100 = 50.',a:false,k:'tf-raiz-100'},
@@ -567,7 +572,7 @@ const evalMCBank=[
   {q:'En 10², ¿qué número se multiplica por sí mismo?',o:['a) 2','b) 100','c) 20','d) 10'],a:3,k:'mc-base-10'},
   {q:'¿Cuánto es 4² + √9?',o:['a) 19','b) 22','c) 13','d) 25'],a:0,k:'mc-suma-potencias'},
   {q:'¿Cuánto es 6² − √4?',o:['a) 34','b) 32','c) 36','d) 30'],a:0,k:'mc-resta-potencias'},
-  {q:'¿Cuántas baldosas hay en un piso cuadrado de 12 baldosas por lado?',o:['a) 24','b) 48','c) 144','d) 124'],a:2,k:'mc-baldosas-12'},
+  {q:'¿Cuántas baldosas hay en un piso cuadrado de 18 baldosas por lado?',o:['a) 36','b) 72','c) 324','d) 182'],a:2,k:'mc-baldosas-18'},
   {q:'¿Entre qué números está √50?',o:['a) 6 y 7','b) 7 y 8','c) 5 y 6','d) 8 y 9'],a:1,k:'mc-entre-50'},
   {q:'¿Cuánto es 40²?',o:['a) 80','b) 1,600','c) 402','d) 160'],a:1,k:'mc-40-cuadrado'},
   {q:'¿Qué número elevado al cuadrado da 36?',o:['a) 6','b) 18','c) 12','d) 4'],a:0,k:'mc-raiz-36'}
@@ -580,7 +585,7 @@ const evalCPBank=[
   {q:'Una sala cuadrada tiene 16 baldosas por lado: en total son ___ baldosas.',a:'256',acc:['256'],k:'cp-sala-16'},
   {q:'___² = 289.',a:'17',acc:['17'],k:'cp-raiz-289'},
   {q:'√196 + √196 = ___.',a:'28',acc:['28'],k:'cp-doble-raiz'},
-  {q:'12² − 100 = ___.',a:'44',acc:['44'],k:'cp-12-menos'},
+  {q:'2² + 2² = ___.',a:'8',acc:['8','ocho'],k:'cp-2-mas-2'},
   {q:'0² = ___.',a:'0',acc:['0','cero'],k:'cp-cero'},
   {q:'50² = ___.',a:'2,500',acc:['2,500','2500','2 500','2.500'],k:'cp-50-cuadrado'}
 ];
@@ -900,11 +905,19 @@ function genEsCuadradoItems() {
   return _shuffleF([...chosenSquares, ...nonSquares], _opRnd);
 }
 
+/* ⚠️ Los problemas de la vida real NO usan lado 10 ni 12: la historia de la
+   misión son 144 baldosas en un cuarto de 12 por lado, y la animación de
+   debajo prueba antes con 10 por fila. Con esos lados el problema se contesta
+   acordándose de la historia, no viendo que hay que elevar al cuadrado o sacar
+   la raíz, que es justo lo que pregunta. Se corre al lado siguiente, así las
+   formas que ya salían con otro lado no cambian. */
+function _ladoFueraDeLaHistoria(n) { return n === 10 || n === 12 ? n + 1 : n; }
+
 // IV. Problemas de la vida real (3 × 10 = 30 pts) · nivel avanzado · aplicación en contexto hondureño
 function genProblemaVidaRealItems() {
   const items = [];
   // 1) Mosaico cuadrado de n² baldosas → lado (raíz), como el ejemplo de pensamientoTaskDB
-  const lado1 = _opRint(9, 14);
+  const lado1 = _ladoFueraDeLaHistoria(_opRint(9, 14));
   const totalBaldosas = lado1 * lado1;
   items.push({
     tipo: 'mosaico',
@@ -914,7 +927,7 @@ function genProblemaVidaRealItems() {
     proc: `√${totalBaldosas} = ${lado1} (porque ${lado1}² = ${totalBaldosas})`
   });
   // 2) Cancha/jardín cuadrado de lado L → área L², como el jardín 8² del contenido
-  const lado2 = _opRint(6, 14);
+  const lado2 = _ladoFueraDeLaHistoria(_opRint(6, 14));
   items.push({
     tipo: 'area',
     text: `Una cancha cuadrada de fútbol de sala mide ${lado2} metros de lado. ¿Cuál es su área en metros cuadrados?`,
@@ -923,7 +936,7 @@ function genProblemaVidaRealItems() {
     proc: `${lado2}² = ${lado2} × ${lado2} = ${lado2 * lado2} m²`
   });
   // 3) Costo en lempiras → n² baldosas × precio unitario
-  const lado3 = _opRint(7, 12);
+  const lado3 = _ladoFueraDeLaHistoria(_opRint(7, 12));
   const precio = _pickF([10, 12, 15, 20, 25], 1, _opRnd)[0];
   const nBaldosas = lado3 * lado3;
   items.push({

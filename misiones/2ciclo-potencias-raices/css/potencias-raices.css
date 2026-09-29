@@ -547,3 +547,9 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* El botón que avanza en la animación de la historia (css/animacion-mision.css)
+   lleva letra blanca sobre el degradado de la misión, y con el ámbar de --sec
+   esa letra se leía a 2,15:1 en la punta del botón. Con el ámbar tostado no
+   baja de 5:1 en ningún punto, y el botón sigue siendo violeta y ámbar. */
+:root { --am-boton: linear-gradient(135deg, #7c3aed, #b45309); }

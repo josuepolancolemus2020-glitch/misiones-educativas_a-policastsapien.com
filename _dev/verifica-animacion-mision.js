@@ -14,7 +14,8 @@
    2. Que «Atrás» vuelva, que el último paso empiece otra vez, y que
       Enter y la barra espaciadora avancen sin deslizar la página.
    3. Que con «reducir movimiento» no se mueva nada y sin él sí.
-   4. Que nada se salga del teléfono y que todo botón mida 44 px.
+   4. Que nada se salga del teléfono, que todo botón mida 44 px y que la
+      letra blanca del botón que avanza se lea en todo su degradado.
    5. Que mirarla no dé XP ni llame a fin(), y que no reviente nada
       (ni un error de JavaScript).
 
@@ -151,6 +152,30 @@ const LEER = `
       pruebas: todos('.md-prueba').map(function (t) { return { v: +t.getAttribute('data-v'), x: centro(t).x, texto: t.textContent }; })
     };
   };
+  window.__amExtra.amBaldosas = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    return {
+      sala: caja(raiz.querySelector('.pr-sala')),
+      baldosas: todos('.pr-baldosa').map(function (t) {
+        var c = caja(t);
+        return { f: +t.getAttribute('data-f'), c: +t.getAttribute('data-c'), x0: c.x0, x1: c.x1, y0: c.y0, y1: c.y1 };
+      }),
+      velo: todos('.pr-velo').map(caja),
+      capas: todos('.pr-capa').length,
+      pila: +raiz.querySelector('.pr-pila-n').textContent,
+      pilaQue: raiz.querySelector('.pr-pila-que').textContent,
+      pilaVacia: todos('.pr-pila-vacia').length,
+      corchetes: todos('.pr-corchete').map(function (g) {
+        var c = caja(g.querySelector('path'));
+        return { eje: g.getAttribute('data-eje'), dice: +g.querySelector('text').textContent, x0: c.x0, x1: c.x1, y0: c.y0, y1: c.y1 };
+      }),
+      carteles: todos('.pr-cartel').map(function (g) { return g.querySelector('text').textContent; }),
+      hilos: todos('.pr-hilo').map(function (l) { return l.getAttribute('data-eje'); })
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -202,6 +227,91 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Potencias y Raíces: las 144 baldosas de doña Nely. Se cuentan las del
+     piso una por una (en qué celda cae cada una, sobre el dibujo) y se
+     comparan con la pila, los corchetes, los carteles y el marcador: si la
+     pantalla dice 12 por fila, el piso tiene 12 por fila. */
+  amBaldosas(e, n) {
+    const x = e.extra, r = [];
+    const TOTAL = 144, CELDA = 18;
+    const s = x.sala;
+    const lado = Math.round((s.x1 - s.x0) / CELDA);
+    const medio = t => [(t.x0 + t.x1) / 2, (t.y0 + t.y1) / 2];
+    const enSala = t => { const [cx, cy] = medio(t); return cx > s.x0 && cx < s.x1 && cy > s.y0 && cy < s.y1; };
+    const piso = x.baldosas.filter(enSala);
+    const celda = t => { const [cx, cy] = medio(t); return [Math.floor((cx - s.x0) / CELDA), Math.floor((cy - s.y0) / CELDA)]; };
+    const mal = piso.filter(t => { const [c, f] = celda(t); return c !== t.c || f !== t.f || t.x0 < s.x0 - 0.5 || t.x1 > s.x1 + 0.5 || t.y0 < s.y0 - 0.5 || t.y1 > s.y1 + 0.5; });
+    const celdas = new Set(piso.map(t => celda(t).join(',')));
+    r.push([x.baldosas.length === piso.length && mal.length === 0 && celdas.size === piso.length,
+      `paso ${n}: cada baldosa que se ve cae en su celda, dentro de las paredes, y ninguna encima de otra`,
+      { fuera: x.baldosas.length - piso.length, mal: mal.slice(0, 3).map(t => [t.f, t.c]) }]);
+    const w = piso.length ? Math.max(...piso.map(t => t.c)) + 1 : 0;
+    const h = piso.length ? Math.max(...piso.map(t => t.f)) + 1 : 0;
+    r.push([piso.length === w * h, `paso ${n}: las ${piso.length} del piso forman un rectángulo de ${w} por fila y ${h} filas, sin huecos`, [piso.length, w, h]]);
+    r.push([x.pila + piso.length === TOTAL && x.capas === Math.round(x.pila / 12) && (x.pilaVacia === 1) === (x.pila === 0),
+      `paso ${n}: la pila dice ${x.pila} y en el piso hay ${piso.length}: entre las dos, ${TOTAL}`, [x.pila, piso.length, x.capas]]);
+
+    /* Los corchetes: el de arriba mide lo que va en una fila y el de la
+       izquierda, las filas; los dos empiezan en la esquina del piso. En el
+       paso 6 son las marcas de las paredes y van de lado a lado. */
+    const arriba = x.corchetes.filter(c => c.eje === 'col'), izq = x.corchetes.filter(c => c.eje === 'fila');
+    const esperaC = n === 0 ? null : n === 6 ? [lado, lado] : [w, h];
+    const mide = (c, dice, a0, a1, b0) => c && c.dice === dice && Math.abs((a1 - a0) - dice * CELDA) <= 1.5 && Math.abs(a0 - b0) <= 1.5;
+    if (!esperaC) r.push([x.corchetes.length === 0, `paso ${n}: todavía no hay corchetes`, x.corchetes.length]);
+    else r.push([arriba.length === 1 && izq.length === 1 && mide(arriba[0], esperaC[0], arriba[0].x0, arriba[0].x1, s.x0) && mide(izq[0], esperaC[1], izq[0].y0, izq[0].y1, s.y0),
+      `paso ${n}: el corchete de arriba dice ${esperaC[0]} y el de la izquierda ${esperaC[1]}, y miden eso`, x.corchetes.map(c => [c.eje, c.dice, Math.round(c.eje === 'col' ? c.x1 - c.x0 : c.y1 - c.y0)])]);
+
+    const nb = t => t.replace(/\u00a0/g, ' ');
+    const nums = t => (nb(t).match(/\d+/g) || []).map(Number);
+    const esperaCartel = { 3: 1, 4: 1, 5: 1 }[n] || 0;
+    r.push([x.carteles.length === esperaCartel, `paso ${n}: ${esperaCartel ? 'un cartel con la cuenta' : 'sin cartel'}`, x.carteles]);
+    r.push([(x.hilos.length === (n === 6 ? 2 * (lado - 1) : 0)) && x.hilos.filter(v => v === 'col').length === x.hilos.filter(v => v === 'fila').length,
+      `paso ${n}: los hilos del albañil ${n === 6 ? 'van en cada junta, de pared a pared' : 'no están'}`, x.hilos.length]);
+    if (n !== 5) r.push([x.velo.length === 0, `paso ${n}: ninguna baldosa está a media luz`, x.velo.length]);
+
+    if (n === 0) r.push([+e.cifra === x.pila && x.pila === TOTAL && piso.length === 0 && /144/.test(e.texto),
+      'paso 0: el marcador dice 144, que es lo que hay en la pila, y el piso está vacío', [e.cifra, x.pila]]);
+    if (n === 1) {
+      const [a, b, sobran] = nums(e.palabras);
+      r.push([+e.cifra === piso.length && a * b === piso.length && w === a && h === b && sobran === x.pila && w < lado,
+        `paso 1: ${e.palabras}: ${piso.length} en el piso, ${x.pila} en la pila, y el piso no llega a las paredes`, [e.cifra, w, h, x.pila]]);
+    }
+    if (n === 2) r.push([+e.cifra === piso.length && piso.length === TOTAL && w === lado && h === lado && x.pila === 0 && nums(e.palabras).reduce((p, q) => p * q, 1) === TOTAL,
+      `paso 2: ${e.palabras}: el cuarto entero, ${lado} por ${lado}, y la pila vacía`, [e.cifra, w, h, x.pila]]);
+    if (n === 3) {
+      const m = nb(x.carteles[0] || '').match(/^(\d+)²\s*=\s*(\d+)\s*×\s*(\d+)$/);
+      const base = parseInt(e.cifra, 10);
+      r.push([/²$/.test(e.cifra) && base === w && base === h && !!m && +m[1] === base && +m[2] * +m[3] === piso.length && +m[2] === base && +m[3] === base,
+        `paso 3: ${e.cifra} y el cartel «${x.carteles[0]}»: la base es lo que va por lado, y ${base} × ${base} son las ${piso.length} del piso`, [e.cifra, x.carteles[0], w, h]]);
+    }
+    if (n === 4) {
+      const m = nb(x.carteles[0] || '').match(/^(\d+)\s*×\s*(\d+)\s*=\s*(\d+)$/);
+      r.push([+e.cifra === piso.length && w === lado && h === 2 && !!m && +m[1] * +m[2] === +m[3] && +m[3] === piso.length && +m[1] === w && +m[2] === h,
+        `paso 4: ${x.carteles[0]}: solo ${h} filas de ${w}, y el resto sin usar en la pila`, [e.cifra, w, h, x.pila]]);
+    }
+    if (n === 5) {
+      const m = nb(x.carteles[0] || '').match(/^√(\d+)\s*=\s*(\d+)$/);
+      /* Encendidas: las que el velo no tapa. Tienen que ser justo las de un
+         lado, la fila de arriba, y el velo no puede tapar ni media de ellas. */
+      const v = x.velo[0];
+      const tapada = t => { const [cx, cy] = medio(t); return v && cx > v.x0 && cx < v.x1 && cy > v.y0 && cy < v.y1; };
+      const encendidas = piso.filter(t => !tapada(t));
+      r.push([+e.cifra === w && w === h && piso.length === TOTAL && !!m && +m[1] === piso.length && +m[2] * +m[2] === +m[1] && +m[2] === w,
+        `paso 5: ${x.carteles[0]}: del total del piso sale el lado, ${w}`, [e.cifra, x.carteles[0], w]]);
+      r.push([x.velo.length === 1 && encendidas.length === +e.cifra && encendidas.every(t => t.f === 0 && t.y1 <= v.y0 + 0.5),
+        `paso 5: quedan encendidas las ${e.cifra} de un lado (la fila de arriba) y las demás, a media luz`, encendidas.map(t => t.f).join('')]);
+    }
+    if (n === 6) r.push([+e.cifra === piso.length && h === 1 && w === lado && x.pila === TOTAL - lado,
+      `paso 6: con las marcas puestas, la primera fila entera: ${piso.length}`, [e.cifra, w, h, x.pila]]);
+
+    /* ⚠️ Lo que pregunta el «Predice» de abajo (5², la raíz de 81 y si 50 es
+       cuadrado perfecto) no sale en ningún paso, ni en la frase ni en el dibujo. */
+    const dice = [e.texto, e.palabras, e.cifra, x.pilaQue].concat(x.carteles).map(nb).join(' | ');
+    const regalo = dice.match(/(^|[^\d])(25|81|50|49|64)(?![\d])|5²|9²|√81/);
+    r.push([!regalo, `paso ${n}: no dice nada de lo que pregunta el «Predice» (5², √81, 50)`, regalo ? regalo[0] : undefined]);
+    return r;
+  },
+
   /* Múltiplos: el bus (cada 6 días) y el camión del agua (cada 8) de doña
      Nely. Los días se leen sobre el dibujo con la regla que dan las rayitas
      que se ven; los múltiplos, los comunes y el primero se calculan AQUÍ,
@@ -607,6 +717,18 @@ function frases(t) {
     }, m.id);
     ok(medida.ancho <= 360 && medida.dentro, 'nada se sale del teléfono de 360 px', medida.ancho);
     ok(medida.botones.every(b => b[1] >= 44 && b[2] >= 44), 'todo botón mide por lo menos 44 × 44 px', medida.botones);
+    /* ⚠️ La letra del botón que avanza se lee en TODO su fondo, que es un
+       degradado: con el ámbar de Potencias y Raíces la punta dejaba el
+       rótulo blanco a 2,15:1. Se mide contra cada color del degradado. */
+    const letraBoton = await pag.evaluate(id => {
+      const b = document.getElementById(id).querySelector('.am-sigue'), cs = getComputedStyle(b);
+      const rgb = c => (c.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
+      const lum = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; const [r, g, bl] = rgb(c); return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(bl); };
+      const razon = (a, c) => { const x = lum(a), y = lum(c); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+      const fondos = (cs.backgroundImage.match(/rgba?\([^)]+\)/g) || []).concat(cs.backgroundImage === 'none' ? [cs.backgroundColor] : []);
+      return fondos.map(f => Math.round(razon(cs.color, f) * 100) / 100);
+    }, m.id);
+    ok(letraBoton.length > 0 && Math.min(...letraBoton) >= 4.5, 'la letra del botón que avanza se lee en todo su degradado (4,5:1 o más)', letraBoton);
 
     /* 5 · no regala nada, no sale del sitio, no revienta */
     const fin = await pag.evaluate(() => ({ premios: window.__premios, xp: (document.getElementById('xpPts') || {}).textContent }));

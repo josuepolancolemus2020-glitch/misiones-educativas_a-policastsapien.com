@@ -292,7 +292,11 @@
 }
 .am-raiz .am-sigue {
   flex: 1 1 11rem;
-  background: linear-gradient(135deg, var(--pri, #1565c0), var(--sec, #00838f));
+  /* ⚠️ La letra es blanca, y el fondo es el degradado de la misión SALVO que
+     ella declare otro en --am-boton. Con un --sec claro, como el ámbar de
+     Potencias y Raíces, la punta del botón dejaba el rótulo a 2,15:1. Esa
+     misión pone su propio degradado en su CSS; las demás no tocan nada. */
+  background: var(--am-boton, linear-gradient(135deg, var(--pri, #1565c0), var(--sec, #00838f)));
   color: #fff;
   border: none;
   font-weight: 600;

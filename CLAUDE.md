@@ -6019,6 +6019,72 @@ calcula ELLA, aparte. Se comprobó al revés con tres averías plantadas a la ve
 —una ficha del bus corrida un día, el 16 marcado como bueno y el marcador del
 paso 3 diciendo 48— y salió roja con las tres.
 
+### La sexta: Potencias y Raíces Cuadradas, y lo que enseñó
+
+En **Potencias y Raíces Cuadradas** (`misiones/2ciclo-potencias-raices/`,
+`js/animacion-baldosas.js`) la historia es otra vez doña Nely: le regalaron 144
+baldosas, justas para un cuarto cuadrado, el albañil empezó a ojo y a la tercera
+fila ya iba torcido. La animación es ese cuarto visto desde arriba, con la pila
+de baldosas en el patio. Se prueba con 10 por fila (10 × 10 = 100, sobran 44 y
+el piso no llega a las paredes) y después con 12 (las 44 que sobraban cierran el
+cuadrado). Eso se escribe 12²; la trampa es 12 × 2, que son solo dos filas; y
+al revés √144 = 12 deja encendidas las 12 de un lado. Termina con el albañil
+marcando 12 en cada pared antes de empezar, que es lo que en la historia faltó.
+Cinco cosas que valen para las demás:
+
+1. ⚠️ **La cuenta de la HISTORIA tampoco puede caer en la prueba, y la de esta
+   llevaba publicada.** La selección múltiple preguntaba «¿Cuántas baldosas hay
+   en un piso cuadrado de 12 baldosas por lado?», que es la historia palabra
+   por palabra, y el completar «12² − 100 = ___» es el «sobran 44» del primer
+   intento. Estaban así en la misión y en la ficha, y el problema del mosaico
+   de la prueba operativa salía con 144 baldosas en una forma de cada seis. Se
+   cambiaron por 18 por lado (324) y por 2² + 2² (8), en la misión y en la
+   ficha, y los tres problemas de la vida real de la operativa ya no usan lado
+   10 ni 12 (`_ladoFueraDeLaHistoria`): en las 30 formas eran 31 de sus 90
+   problemas. Se corre al lado siguiente, así el resto de cada forma sale
+   igual. La regla de la quinta se amplía: **se buscan en la prueba la cuenta
+   de la animación Y la de la historia, en la misión, en la ficha y en la
+   operativa.** Lo que se queda es el repaso de la tabla (√144 en la lista de
+   raíces que calcular): ahí lo que se pide es acordarse, y la tabla de Aprende
+   lo enseña igual.
+2. ⚠️ **Lo que se mueve junto se mueve como UNA pieza.** Con las 144 baldosas
+   haciendo cada una su transición al volar a la pila, con la CPU frenada seis
+   veces el dibujo bajaba a 28 cuadros por segundo. Ahora vuela la fila entera
+   (doce grupos), la baldosa solo se mueve cuando de verdad cambia (las dos del
+   final de cada fila en el intento de 10) y el apagado de la raíz es UN velo
+   encima del piso, no 132 baldosas apagándose: 55 cuadros por segundo con la
+   misma CPU. A la fila que sale de la pila se le dejan las baldosas como van a
+   quedar ANTES de que se vea, sin transición: ahí nadie las mira.
+3. ⚠️ **La letra blanca del botón se mide contra TODO su degradado.** El botón
+   que avanza va de --pri a --sec con letra blanca, y el --sec de esta misión
+   es ámbar: la punta dejaba el rótulo a 2,15:1. El aparato acepta ahora
+   `--am-boton`, el degradado que una misión declara en su propio CSS cuando
+   el de siempre no sirve; esta lo lleva de violeta a ámbar tostado (#b45309,
+   5:1). Y la sonda lo mide en todas: así salió que Teoría de Números y Valor
+   Posicional, con su teal #00897b, estaban a 4,32:1 desde su estreno. Llevan
+   el teal un tono más oscuro (#00796b), que a la vista es el mismo botón.
+4. **No hay letra ámbar.** Por lo mismo, el ámbar va solo en las baldosas, que
+   son dibujo: ni una cifra, ni el «+44» que el aparato hace subir al lado del
+   marcador, que sale en --sec.
+5. ⚠️ **Lo que va debajo NO se regala, y ahora lo vigila la sonda.** El
+   «Predice» pregunta cuánto es 5², la raíz de 81 y si 50 es un cuadrado
+   perfecto. La escena solo usa los números de la historia (144 y 12) y el
+   primer intento (10), y la sonda comprueba en cada paso que ni la frase, ni
+   el marcador, ni los carteles digan 25, 81, 50, 49, 64, 5², 9² o √81. Se
+   enseña el concepto (12² es 12 × 12 y no 12 × 2), como en Valor Posicional,
+   y no la respuesta.
+
+La sonda de esta escena **cuenta las baldosas del piso una por una**, sobre el
+dibujo: que cada una caiga en su celda, dentro de las paredes y sin encimarse;
+que formen un rectángulo sin huecos de tantas por fila como dice el corchete de
+arriba y tantas filas como el de la izquierda; que la pila diga lo que queda
+fuera y que entre las dos sumen 144; que cada cartel haga bien su cuenta con
+las baldosas que se ven, y que en la raíz queden encendidas exactamente las 12
+de la fila de arriba. Se comprobó al revés con cuatro averías plantadas a la
+vez (un piso de 10 × 9 con el marcador diciendo 100, el velo tapando la fila
+equivocada, un «5²» en una frase y el botón sin su degradado) y salió roja con
+las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:
@@ -6039,6 +6105,11 @@ sus `pasos`, `construir`, `pintar(n, antes)`, `texto(n)`, `boton(n)`,
 cuenta entero. Y en `_dev/verifica-animacion-mision.js` se le añade su
 entrada a `ESCENAS`: lo que esa escena afirma, contado sobre el dibujo.
 
+Si el `--sec` de la misión es claro (un ámbar, un amarillo), la letra blanca
+del botón que avanza no se lee en su punta: la misión declara en su CSS
+`--am-boton` con un degradado donde sí se lea, como Potencias y Raíces. La
+sonda lo mide, así que no hace falta acordarse.
+
 **Antes de publicar una animación:**
 
 ```
@@ -6056,7 +6127,8 @@ worker. La segunda la recorre paso a paso en un teléfono de 360 px: que cada
 paso diga algo distinto y en frases de 25 palabras o menos, que «Atrás»
 vuelva y el último paso empiece otra vez, que el botón y el dibujo no se
 muevan de un paso a otro, el teclado, «reducir movimiento», los 44 px, que
-en la pantalla oscura el marcador y las cifras se lean, que no dé XP, que no
+la letra del botón que avanza se lea en todo su degradado, que en la
+pantalla oscura el marcador y las cifras se lean, que no dé XP, que no
 pida nada fuera, que no reviente, y lo de su escena. Las dos se comprobaron
 al revés: con la tarjeta movida debajo del «Predice» sale roja la primera, y
 con las filas del millón apagadas, la segunda.
