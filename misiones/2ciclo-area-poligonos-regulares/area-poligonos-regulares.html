@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+  <!-- La animación que explica el tema, justo después de la historia. Va
+       DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+  <link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -75,6 +78,22 @@
     <div class="tip"><span class="ti">❓</span><div>El contorno de un polígono se suma; la superficie
     necesita algo más, una medida que va del centro al lado y que aquí tiene nombre propio. Sin ella no
     hay manera de saber cuánto concreto lleva.</div></div>
+  </div>
+  <!-- La animación que explica el tema, justo después de la historia: la
+       tapa de hexágono de 30 cm por lado. Don Tulio contó la orilla, 6 × 30
+       = 180 cm; por dentro la tapa se parte en 6 triángulos iguales. Una tapa
+       de triángulo de 60 cm por lado tiene la misma orilla, pero por dentro le
+       caben solo 4 de esos triángulos: la orilla no dice cuánto concreto
+       lleva. Termina en la medida que falta, la del centro al lado, que es lo
+       que pregunta el «Predice» de abajo. La mueve el alumno, paso a paso. El
+       aparato es compartido (js/animacion-mision.js) y la escena es de esta
+       misión (js/animacion-tapa.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira por qué la orilla no mide la tapa</h2>
+    <div id="amTapa">
+      <p>La tapa de hexágono tiene 6 lados de 30 cm: su orilla mide 6 × 30 = 180 cm, y por dentro se parte en 6 triángulos iguales. Una tapa de triángulo de 60 cm por lado tiene la misma orilla, 3 × 60 = 180 cm, pero por dentro le caben solo 4 de esos triángulos. La orilla no dice cuánto concreto lleva la tapa.</p>
+    </div>
   </div>
   <div class="card ac-purple">
     <h2>🔮 Predice antes de resolver</h2>
@@ -756,6 +775,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de la tapa: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-tapa.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

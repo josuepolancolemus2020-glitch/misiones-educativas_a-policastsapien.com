@@ -6870,6 +6870,79 @@ Se comprobó al revés con seis averías plantadas a la vez (un tramo de malla d
 antes, la gallina sin salirse, el marcador diciendo 14 y un «20» en una
 frase), y salió roja con las seis.
 
+### La decimoctava: Área de Polígonos Regulares, y lo que enseñó
+
+En **Área de Polígonos Regulares** (`misiones/2ciclo-area-poligonos-regulares/`,
+`js/animacion-tapa.js`) la historia es la de Don Tulio. En el taller de la
+escuela hacen tapas de concreto de hexágono y las cobran por el material. Él
+midió el lado, 30 cm, lo multiplicó por seis y le salió el contorno, no la
+tapa: cobró por una cosa y gastó concreto de otra. La animación es la tapa
+vista desde arriba:
+
+- su orilla, 6 × 30 = 180 cm, es lo que contó Don Tulio y lo que mide el molde
+  de madera;
+- por dentro, la tapa se parte en 6 triángulos iguales, con sus tres lados de
+  30 cm;
+- llega una tapa de triángulo de 60 cm por lado con la misma orilla (3 × 60 =
+  180 cm), pero por dentro le caben solo 4 de esos triángulos. Un triángulo
+  del hexágono se pasa encima del de en medio y cae justo: son iguales;
+- la orilla no dice cuánto concreto lleva la tapa. Falta una medida que va
+  del centro al lado, que aparece en raya cortada con un «?».
+
+Seis cosas que valen para las demás:
+
+1. ⚠️ **Cuando el «Predice» pregunta la fórmula de la misión, la animación no la
+   da.** Pregunta el área de un pentágono con P = 20 y apotema 4, y si la
+   fórmula usa el lado o la apotema: es el corazón de la misión. Por eso aquí
+   no se dice «apotema», no se divide entre 2 y no se calcula ningún área. La
+   animación llega hasta la puerta y termina en la medida que falta, como la
+   de la numeración maya. La sonda busca esas palabras en cada paso.
+2. **Lo que sí enseña es lo que la historia pide, y se prueba contando.** Con
+   la misma orilla de 180 cm, al hexágono le caben 6 triángulos de 30 cm por
+   lado y al triángulo de 60 cm, 4. Es exacto: el hexágono regular se parte
+   desde su centro en 6 triángulos equiláteros de su mismo lado, y el
+   triángulo grande en 4 uniendo los puntos medios. Y cabe en la misma caja:
+   el hexágono de lado 30 y el triángulo de lado 60 tienen el mismo ancho y
+   el mismo alto, así que se ven del mismo tamaño uno junto al otro.
+3. **Contar pedazos solo prueba algo si los pedazos son iguales**, y por eso
+   uno se pasa de una tapa a la otra y cae justo encima. Sin eso, «6 contra
+   4» podrían ser pedazos de distinto tamaño.
+4. **La cuenta no cae en la prueba.** La operativa usa hexágonos y pentágonos
+   de 2 a 10 cm de lado y ningún triángulo, y la conceptual y la ficha no
+   preguntan ni el hexágono de 30 cm ni el triángulo de 60 cm ni los 180 cm.
+5. ⚠️ **Lo que se enciende y lo que viaja van en dos piezas, y esto ya estaba
+   escrito.** El triángulo que se pasa de una tapa a la otra era una sola
+   pieza, y el encendido y el viaje comparten su demora: viajaba mientras
+   todavía estaba apareciendo, y llegaba sin que se le viera salir. Es la
+   regla de las capas de la numeración maya. No lo caza ninguna sonda, porque
+   al final del paso está donde tiene que estar: se vio en los cuadros a medio
+   camino. Ahora se enciende encima del hexágono, se queda un momento y
+   después viaja.
+6. **En una escena no hay ningún `pts(`, aunque sea otra cosa.** La función que
+   armaba los puntos del dibujo se llamaba así, y la sonda leída del archivo
+   la acusó de dar XP: es el nombre de la función del puntaje en todas las
+   misiones, y la sonda no adivina cuál es cuál. Se llama `puntos`.
+
+La sonda de esta escena **mide las dos tapas en el dibujo**. La escala sale del
+rótulo del lado del hexágono. Comprueba:
+
+- que el hexágono sea regular;
+- que las dos orillas midan 180 cm;
+- que los 6 pedazos del hexágono y los 4 del triángulo sean triángulos de
+  30 cm por lado que llenan su tapa, los del hexágono saliendo del centro;
+- que el triángulo que se pasa caiga justo encima de uno de los del
+  triángulo;
+- que la medida que falta vaya del centro a la mitad de un lado y no diga
+  cuánto mide;
+- y que ninguna frase diga «apotema», divida entre 2 o traiga un número del
+  «Predice».
+
+Se comprobó al revés con seis averías plantadas a la vez (el rótulo del lado
+diciendo 32 cm, el triángulo grande dibujado de 64 cm con su rótulo diciendo 60,
+el triángulo que se pasa corrido 6 px, el marcador diciendo «6 y 5», «apotema»
+en la última frase y la medida que falta llegando a una esquina), y salió roja
+con las seis.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

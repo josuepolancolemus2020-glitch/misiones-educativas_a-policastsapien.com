@@ -585,3 +585,30 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* La animación de la tapa de hexágono, que va después de la historia
+   (js/animacion-tapa.js).
+
+   El botón que avanza lleva letra blanca sobre el degradado de la misión, y
+   la punta de --sec (#00838f) la dejaba en 4,5:1 justo: con el teal un tono
+   más oscuro pasa de 5:1. Es el mismo degradado de Teoría de Números.
+
+   El concreto es concreto en las dos pantallas: claro en la clara y oscuro
+   en la oscura, con los cortes siempre en el tono contrario. */
+:root {
+  --am-boton: linear-gradient(135deg, #1565c0, #00796b);
+  --tp-cemento: #d9dde1; --tp-borde: #8e969e; --tp-corte: #4f5a64;
+}
+[data-theme="dark"] { --tp-cemento: #4b525a; --tp-borde: #9aa3ab; --tp-corte: #d0d6dc; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --tp-cemento: #4b525a; --tp-borde: #9aa3ab; --tp-corte: #d0d6dc; }
+}
+.am-raiz .tp-tapa { fill: var(--tp-cemento); stroke: var(--tp-borde); stroke-width: 1.2; }
+.am-raiz .tp-pieza { fill: var(--tp-cemento); stroke: var(--tp-borde); stroke-width: 1; }
+.am-raiz .tp-corte { fill: none; stroke: var(--tp-corte); stroke-width: 1.8; stroke-linecap: round; }
+.am-raiz .tp-orilla { fill: none; stroke: var(--am-sec); stroke-width: 4; stroke-linejoin: round; }
+.am-raiz .tp-fantasma { fill: var(--am-pri); fill-opacity: 0.35; stroke: var(--am-pri); stroke-width: 2; stroke-linejoin: round; }
+/* La medida que falta: la raya cortada del aparato (.am-hueco), del color de
+   la misión y más gruesa. Con las dos clases, porque la hoja del aparato se
+   carga después de esta y, con la misma fuerza, ganaría la suya. */
+.am-raiz .tp-falta.am-hueco { stroke: var(--am-pri); stroke-width: 2.6; }

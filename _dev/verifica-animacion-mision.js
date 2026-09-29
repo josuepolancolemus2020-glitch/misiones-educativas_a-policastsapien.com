@@ -560,6 +560,34 @@ const LEER = `
       } : null
     };
   };
+  /* Área de Polígonos Regulares: la tapa de hexágono. De cada tapa se leen
+     sus vértices y su orilla; de cada pedazo de adentro, sus tres puntas; del
+     triángulo que se pasa, sus puntas; y de la medida que falta, sus dos
+     puntas. Todo ya puesto en la vista, con el movimiento que lleve encima. */
+  window.__amExtra.amTapa = function (raiz) {
+    var vis = window.__amVisible;
+    var svg = raiz.querySelector('svg'), base = svg.getScreenCTM().inverse();
+    function aVista(el, x, y) { var p = svg.createSVGPoint(); p.x = x; p.y = y; var q = p.matrixTransform(base.multiply(el.getScreenCTM())); return [q.x, q.y]; }
+    function puntos(el) { var out = []; for (var i = 0; i < el.points.length; i++) out.push(aVista(el, el.points[i].x, el.points[i].y)); return out; }
+    function linea(el) { return [aVista(el, +el.getAttribute('x1'), +el.getAttribute('y1')), aVista(el, +el.getAttribute('x2'), +el.getAttribute('y2'))]; }
+    function trazada(p) { return !!p && vis(p) && Math.abs(parseFloat(getComputedStyle(p).strokeDashoffset) || 0) < 1; }
+    function medio(el) { var b = el.getBBox(); return aVista(el, b.x + b.width / 2, b.y + b.height / 2); }
+    function todos(sel) { return [].slice.call(raiz.querySelectorAll(sel)); }
+    function tapa(t) {
+      var p = raiz.querySelector('.tp-tapa[data-tapa="' + t + '"]');
+      var o = raiz.querySelector('.tp-orilla[data-tapa="' + t + '"]');
+      return vis(p) ? { vertices: puntos(p), orilla: trazada(o), piezas: todos('.tp-pieza[data-tapa="' + t + '"]').filter(vis).map(puntos) } : null;
+    }
+    var fantasma = raiz.querySelector('.tp-fantasma'), raya = raiz.querySelector('.tp-falta'), pregunta = raiz.querySelector('.tp-pregunta');
+    return {
+      hex: tapa('hex'),
+      tri: tapa('tri'),
+      medidas: todos('.tp-medida').filter(vis).map(function (t) { return { dice: t.textContent, c: medio(t) }; }),
+      fantasma: vis(fantasma) ? puntos(fantasma) : null,
+      falta: vis(raya) ? linea(raya) : null,
+      pregunta: vis(pregunta) ? { dice: pregunta.textContent, c: medio(pregunta) } : null
+    };
+  };
   /* Las cuentas de la frase, de las palabras del marcador y de su número
      grande que el renglón parte en dos («315 ÷» arriba y «4.5 = 70»
      abajo). Se le pregunta al navegador: un Range por cuenta, y si sus
@@ -643,6 +671,89 @@ let escalaRedondel = 0;
 let escalaGallinero = null;
 
 const ESCENAS = {
+  /* Área de Polígonos Regulares: la tapa de hexágono. La escala sale del
+     rótulo del lado del hexágono (30 cm); con ella se mide cada tapa y cada
+     pedazo: que el hexágono sea regular, que sus 6 pedazos y los 4 del
+     triángulo sean triángulos de 30 cm por lado que llenan su tapa, que las
+     dos orillas midan lo mismo y que el triángulo que se pasa caiga justo
+     encima del de en medio. ⚠️ Y lo que va debajo no se regala: el «Predice»
+     pregunta el área de un pentágono con la apotema y si la fórmula usa el
+     lado o la apotema; aquí no se dice «apotema» ni se divide entre 2. */
+  amTapa(e, n) {
+    const x = e.extra, r = [];
+    const nb = t => String(t == null ? '' : t).replace(/ /g, ' ').trim();
+    const cerca = (a, b, t = 0.3) => Math.abs(a - b) <= t;
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const lados = p => p.map((q, i) => dist(q, p[(i + 1) % p.length]));
+    const area = p => Math.abs(p.reduce((s, q, i) => { const w = p[(i + 1) % p.length]; return s + q[0] * w[1] - w[0] * q[1]; }, 0)) / 2;
+    const centro = p => [p.reduce((s, q) => s + q[0], 0) / p.length, p.reduce((s, q) => s + q[1], 0) / p.length];
+    const h = x.hex;
+    r.push([!!h, `paso ${n}: la tapa de hexágono está`, !!h]);
+    if (!h) return r;
+    /* La escala: el rótulo de su lado de abajo dice cuántos centímetros son. */
+    const rotHex = x.medidas.find(m => Math.abs(m.c[0] - centro(h.vertices)[0]) < 20);
+    const cmHex = rotHex ? parseFloat(nb(rotHex.dice)) : NaN;
+    const ladoPx = lados(h.vertices);
+    const S = ladoPx[0] / cmHex;
+    const c = centro(h.vertices);
+    r.push([h.vertices.length === 6 && ladoPx.every(l => cerca(l, ladoPx[0], 0.3)) && h.vertices.every(v => cerca(dist(v, c), ladoPx[0], 0.3)),
+      `paso ${n}: el hexágono es regular: 6 lados iguales y sus vértices a la misma distancia del centro`, ladoPx.map(l => l.toFixed(1))]);
+    r.push([/ cm$/.test(nb(rotHex && rotHex.dice)) && cmHex === 30, `paso ${n}: el lado del hexágono dice 30 cm`, rotHex && rotHex.dice]);
+    const triangulito = p => p.length === 3 && lados(p).every(l => cerca(l / S, cmHex, 0.1));
+
+    const dicho = [e.texto, e.cifra, e.palabras].map(nb).join(' | ');
+    const numsDichos = (dicho.match(/\d+/g) || []).map(Number);
+    r.push([![5, 11, 20, 4 * 10, 80, 24, 25].some(v => numsDichos.includes(v)) && !/apotema|entre 2|÷ ?2|mitad/i.test(dicho),
+      `paso ${n}: no dice «apotema», no divide entre 2 ni sale un número del Predice`, numsDichos]);
+    const cifra = nb(e.cifra);
+
+    if (n === 0) r.push([cifra === '¿?' && !h.orilla && !h.piezas.length && !x.tri, 'paso 0: solo la tapa, sin contar nada', [cifra, h.orilla]]);
+    if (n >= 1) {
+      const orillaCm = ladoPx.reduce((s, l) => s + l, 0) / S;
+      r.push([h.orilla && cerca(orillaCm, 180, 0.3), `paso ${n}: la orilla del hexágono está marcada y mide ${orillaCm.toFixed(1)} cm`, orillaCm]);
+      if (n === 1) r.push([cifra === `${Math.round(orillaCm)} cm` && nb(e.texto).includes('6 × 30 = 180'), 'paso 1: el marcador y la frase dicen la orilla', cifra]);
+    }
+    if (n >= 2) {
+      const p = h.piezas;
+      const suma = p.reduce((s, q) => s + area(q), 0);
+      r.push([p.length === 6 && p.every(triangulito) && p.every(q => q.some(v => dist(v, c) < 0.8)) && cerca(suma, area(h.vertices), 1),
+        `paso ${n}: por dentro, 6 triángulos de 30 cm por lado que salen del centro y llenan la tapa`, [p.length, Math.round(suma), Math.round(area(h.vertices))]]);
+      if (n === 2) r.push([+cifra === p.length && !x.tri, 'paso 2: el marcador dice los triángulos que se cuentan', cifra]);
+    }
+    if (n >= 3) {
+      const t = x.tri;
+      r.push([!!t, `paso ${n}: la tapa de triángulo está`, !!t]);
+      if (t) {
+        const lt = lados(t.vertices), orillaT = lt.reduce((s, l) => s + l, 0) / S;
+        const rotTri = x.medidas.find(m => Math.abs(m.c[0] - centro(t.vertices)[0]) < 20);
+        r.push([t.vertices.length === 3 && lt.every(l => cerca(l / S, 60, 0.15)) && rotTri && nb(rotTri.dice) === '60 cm',
+          `paso ${n}: el triángulo tiene sus tres lados de 60 cm, y lo dice`, lt.map(l => (l / S).toFixed(1))]);
+        r.push([t.orilla && cerca(orillaT, 180, 0.3), `paso ${n}: su orilla mide lo mismo que la del hexágono (${orillaT.toFixed(1)} cm)`, orillaT]);
+        if (n === 3) r.push([cifra === '180 cm' && nb(e.texto).includes('3 × 60 = 180') && !t.piezas.length, 'paso 3: el marcador y la frase dicen la orilla del triángulo', cifra]);
+        if (n >= 4) {
+          const q = t.piezas, suma = q.reduce((s, w) => s + area(w), 0);
+          r.push([q.length === 4 && q.every(triangulito) && cerca(suma, area(t.vertices), 1),
+            `paso ${n}: por dentro, 4 triángulos de 30 cm por lado que llenan la tapa`, [q.length, Math.round(suma), Math.round(area(t.vertices))]]);
+          if (n === 4) {
+            /* El que se pasa cae justo encima de uno de los del triángulo. */
+            const f = x.fantasma;
+            const encima = !!f && q.some(w => w.every(v => f.some(u => dist(u, v) < 0.8)));
+            r.push([encima && triangulito(f), 'paso 4: el triángulo del hexágono cae justo encima de uno del triángulo', f]);
+            r.push([cifra === `${h.piezas.length} y ${q.length}`, 'paso 4: el marcador dice los dos conteos', cifra]);
+          }
+        }
+      }
+    }
+    if (n === 5) {
+      /* La medida que falta: del centro del hexágono a la mitad de un lado,
+         con su «?», y sin ningún número. */
+      const f = x.falta, v = h.vertices;
+      const mitades = v.map((q, i) => [(q[0] + v[(i + 1) % 6][0]) / 2, (q[1] + v[(i + 1) % 6][1]) / 2]);
+      r.push([!!f && dist(f[0], c) < 0.8 && mitades.some(m => dist(f[1], m) < 0.8), 'paso 5: la medida que falta va del centro a la mitad de un lado', f]);
+      r.push([!!x.pregunta && nb(x.pregunta.dice) === '?' && cifra === '¿?', 'paso 5: y no se dice cuánto mide: un «?»', [x.pregunta && x.pregunta.dice, cifra]]);
+    }
+    return r;
+  },
   /* Área del Círculo: el redondel del patio. Todo se mide en el dibujo: la
      escala sale del cuadrado pedido y de sus dos rótulos de 6 m, el radio
      sale de las tajadas, y el largo de la tira es la suma de sus arcos. Las
