@@ -5966,6 +5966,59 @@ pantalla oscura el marcador y cada cifra que se ve midan 4,5:1 o más. Se
 comprobaron al revés: sin `igualar` el botón vuelve a moverse 58 px, y con la
 tinta de antes sale 2,8:1, las dos en rojo en las cuatro.
 
+### La quinta: Múltiplos, Divisores y Primos, y lo que enseñó
+
+En **Múltiplos, Divisores y Primos** (`misiones/2ciclo-multiplos-divisores-primos/`,
+`js/animacion-calendario.js`) la historia es doña Nely: a la aldea el bus sube
+cada 6 días y el camión del agua cada 8, hoy coincidieron, y ella quiere bajar
+al pueblo el día en que vuelvan a coincidir, porque si no paga dos viajes y
+pierde dos días de trabajo. La historia termina pidiendo que se adivine ese día
+«aquí abajo», y la animación es la fila de los días desde hoy: el bus salta de
+6 en 6 por arriba y el camión de 8 en 8 por abajo, y el primer día que está en
+las dos filas es el 24. Después vienen las dos trampas de siempre, sumar
+(6 + 8 = 14, y ese día no sube ninguno) y multiplicar (6 × 8 = 48, que sí es
+de los dos pero es la segunda vez); cómo se hace sin dibujar (de 8 en 8 hasta
+dar con uno de la tabla del 6), y que coinciden cada 24 días: el más pequeño de
+los múltiplos comunes se llama mínimo común múltiplo. Cuatro cosas que valen
+para las demás:
+
+1. ⚠️ **Lo que no cabe no se achica: se acerca.** Con la fila entera hasta el
+   48, un día medía 4,8 px en un teléfono de 360, y del 12 al 14 hay menos que
+   media ficha: la marca del 14 quedaba montada en el borde del 12 del bus y
+   del 16 del camión. Así que hasta el paso 5 la fila llega al día 26, con el
+   día al doble de ancho, y en la trampa del 48 se ALEJA: el 24 se corre a la
+   mitad y el 48 aparece donde él estaba. Lo lejos que queda el 48 se ve, y
+   eso es justo lo que le cuesta a quien multiplica. Es la lección de los
+   mandos de los juegos 3D con otra cara: no se encoge la ficha, se cambia la
+   escala.
+2. ⚠️ **Lo que va debajo NO se regala, otra vez.** El «Predice» pregunta si
+   247 es par, cuántos divisores tiene 12 y si 51 es primo, así que la escena
+   no habla de pares, ni de divisores, ni de primos: solo de los días del bus
+   y del camión.
+3. ⚠️ **La cuenta que la animación resuelve no puede caer en la prueba.** La
+   operativa de esta misión sortea problemas de buses que salen juntos, y uno
+   de sus ocho pares era **6 y 8**: la historia con minutos en vez de días.
+   Con la animación publicada, ese problema se contestaba acordándose del 24.
+   Se cambió por 9 y 12, que también castiga al que multiplica (108, y es 36).
+   Se buscaron los números de las cuatro animaciones anteriores en sus
+   bancos y no estaba ninguno. **Antes de publicar una animación, su cuenta se
+   busca en los bancos de la prueba.**
+4. **Se distinguen sin distinguir colores.** Las fichas del bus son
+   cuadradas y van arriba; las del camión son redondas y van abajo. Y en el
+   paso de «sin dibujar» la fila del bus queda tenue a propósito: la tabla del
+   6 no hace falta escrita, y para la sonda, como para el alumno, ese paso no
+   la tiene.
+
+La sonda de esta escena **lee los días sobre el dibujo** con la regla que dan
+las rayitas que se ven, en las dos escalas: que cada ficha caiga en el día que
+dice, que cada fila sea de 6 en 6 o de 8 en 8 hasta donde llega, que los saltos
+se encadenen desde hoy, que las bandas estén solo hoy y en los días de los dos,
+que el 14 esté vacío, que debajo del 8, del 16 y del 24 diga no, no, sí, y que
+el marcador diga lo que se ve. Los múltiplos, los comunes y el primero los
+calcula ELLA, aparte. Se comprobó al revés con tres averías plantadas a la vez
+—una ficha del bus corrida un día, el 16 marcado como bueno y el marcador del
+paso 3 diciendo 48— y salió roja con las tres.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

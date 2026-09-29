@@ -128,6 +128,29 @@ const LEER = `
       mcd: todos('.tn-mcd').map(function (t) { return { x: centro(t).x, texto: t.textContent }; })
     };
   };
+  window.__amExtra.amCalendario = function (raiz, centro) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    /* Un punto de la curva de un salto, en las medidas del dibujo: donde
+       empieza (0) y donde acaba (su largo). */
+    function punto(p, l) { var q = p.getPointAtLength(l).matrixTransform(p.getScreenCTM()); return (q.x - s.left) / k; }
+    return {
+      dias: todos('.md-dia').map(function (g) { return { v: +g.getAttribute('data-d'), x: centro(g).x }; }),
+      fichas: todos('.md-ficha').map(function (g) {
+        return { fila: g.getAttribute('data-fila'), v: +g.getAttribute('data-v'), x: centro(g.querySelector('rect')).x, dice: g.querySelector('text').textContent };
+      }),
+      saltos: todos('.md-arco').map(function (g) {
+        var p = g.querySelector('.md-camino'), t = g.querySelector('.md-arco-num');
+        return { fila: g.getAttribute('data-fila'), de: +g.getAttribute('data-de'), a: +g.getAttribute('data-a'),
+                 x0: punto(p, 0), x1: punto(p, p.getTotalLength()), dice: t ? t.textContent : '' };
+      }),
+      bandas: todos('.md-banda').map(function (b) { return centro(b).x; }),
+      rotulos: todos('.md-rotulo-banda').map(function (t) { return { x: centro(t).x, texto: t.textContent }; }),
+      hueco: todos('.md-hueco').map(function (g) { return centro(g.querySelector('circle')).x; }),
+      pruebas: todos('.md-prueba').map(function (t) { return { v: +t.getAttribute('data-v'), x: centro(t).x, texto: t.textContent }; })
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -179,6 +202,87 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Múltiplos: el bus (cada 6 días) y el camión del agua (cada 8) de doña
+     Nely. Los días se leen sobre el dibujo con la regla que dan las rayitas
+     que se ven; los múltiplos, los comunes y el primero se calculan AQUÍ,
+     aparte, y se comparan con las fichas, los saltos y las bandas. */
+  amCalendario(e, n) {
+    const x = e.extra, r = [];
+    const BUS = 6, CAM = 8;
+    const dia = regla(x.dias, 'x');
+    const cerca = (p, q) => Math.abs(p - q) <= 0.3;
+    const hasta = Math.max(...x.dias.map(d => d.v));
+    const mult = (m, tope) => { const l = []; for (let v = m; v <= tope; v += m) l.push(v); return l; };
+    const comunes = mult(BUS, hasta).filter(v => v % CAM === 0);
+    const igual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+    const nums = t => (t.match(/\d+/g) || []).map(Number);
+
+    /* Cada ficha cae en la rayita del día que dice. */
+    const mal = x.fichas.filter(c => !cerca(dia(c.x), c.v) || +c.dice !== c.v);
+    r.push([mal.length === 0, `paso ${n}: cada ficha cae en la rayita del día que dice`, mal.map(c => [c.fila, c.v, Math.round(dia(c.x) * 10) / 10])]);
+    const fila = f => x.fichas.filter(c => c.fila === f).sort((a, b) => a.x - b.x).map(c => c.v);
+    /* En el paso 5 la fila del bus queda tenue a propósito («sin dibujar»):
+       para la sonda, como para el alumno, no está. */
+    const esperaBus = n >= 1 && n !== 5 ? mult(BUS, hasta) : [];
+    const esperaCam = n >= 2 ? mult(CAM, hasta) : [];
+    r.push([igual(fila('bus'), esperaBus), `paso ${n}: arriba, los días del bus: de 6 en 6 hasta donde llega la fila (${hasta})`, fila('bus')]);
+    r.push([igual(fila('camion'), esperaCam), `paso ${n}: abajo, los del camión: de 8 en 8`, fila('camion')]);
+
+    /* Los saltos: cada uno va de la rayita en que dice que empieza a la
+       rayita en que dice que acaba, y los de una fila se encadenan desde hoy
+       hasta su última ficha. */
+    const salta = f => x.saltos.filter(s => s.fila === f).sort((a, b) => a.de - b.de);
+    const cadena = (lista, paso, ultima) => lista.length > 0 && lista[0].de === 0 && lista[lista.length - 1].a === ultima &&
+      lista.every((s, i) => s.a - s.de === paso && (i === 0 || s.de === lista[i - 1].a) && cerca(dia(s.x0), s.de) && cerca(dia(s.x1), s.a));
+    const sb = salta('bus'), sc = salta('camion'), sm = salta('comun');
+    const ult = l => l[l.length - 1];
+    if (n >= 1 && n <= 4) r.push([cadena(sb, BUS, ult(esperaBus)) && sb[0].dice === '+6',
+      `paso ${n}: los saltos del bus van de 6 en 6, desde hoy hasta el ${ult(esperaBus)}`, sb.map(s => [s.de, s.a])]);
+    else r.push([sb.length === 0, `paso ${n}: no se ven los saltos del bus`, sb.length]);
+    if (n >= 2 && n <= 5) r.push([cadena(sc, CAM, ult(esperaCam)) && sc[0].dice === '+8',
+      `paso ${n}: los del camión, de 8 en 8, desde hoy hasta el ${ult(esperaCam)}`, sc.map(s => [s.de, s.a])]);
+    else r.push([sc.length === 0, `paso ${n}: no se ven los saltos del camión`, sc.length]);
+
+    /* Las bandas juntan las dos filas en un día que está en las dos (o
+       hoy, que es cuando coincidieron). */
+    const bandas = x.bandas.map(b => Math.round(dia(b) * 10) / 10).sort((a, b) => a - b);
+    const esperaBandas = [0].concat(n >= 3 ? comunes.slice(0, n >= 6 ? 2 : 1) : []);
+    r.push([igual(bandas, esperaBandas), `paso ${n}: las bandas están hoy y en los días de los dos (${esperaBandas.join(', ')})`, bandas]);
+    const sobre = (texto, d) => x.rotulos.some(t => t.texto === texto && cerca(dia(t.x), d));
+
+    if (n === 1) r.push([igual(nums(e.cifra), fila('bus').slice(0, 3)), 'paso 1: el marcador dice los tres primeros días del bus', e.cifra]);
+    if (n === 2) r.push([igual(nums(e.cifra), fila('camion').slice(0, 3)), 'paso 2: el marcador dice los tres primeros días del camión', e.cifra]);
+    if (n === 3) r.push([+e.cifra === comunes[0] && sobre('¡los dos!', comunes[0]),
+      `paso 3: el marcador dice ${e.cifra}, el primer día de las dos filas (${comunes[0]}), y el rótulo va encima`, x.rotulos.map(t => t.texto)]);
+    if (n === 4) {
+      const h = x.hueco[0];
+      const vacio = x.fichas.every(c => !cerca(c.v, BUS + CAM));
+      r.push([x.hueco.length === 1 && cerca(dia(h), BUS + CAM) && +e.cifra === BUS + CAM && vacio && /6 \+ 8/.test(e.palabras),
+        `paso 4: 6 + 8 = ${BUS + CAM}, y en ese día no hay ficha de ninguno`, x.hueco.map(dia)]);
+    } else r.push([x.hueco.length === 0, `paso ${n}: la marca del 14 no está`, x.hueco.length]);
+    if (n === 5) {
+      /* Sin dibujar: se cuenta de 8 en 8 y se para en el primero de la tabla
+         del 6. Lo que marca cada uno se decide aquí, no se lee. */
+      const esperaP = []; for (let v = CAM; ; v += CAM) { esperaP.push(v); if (v % BUS === 0) break; }
+      const pr = x.pruebas.slice().sort((a, b) => a.v - b.v);
+      const bien = pr.every(p => cerca(dia(p.x), p.v) && (p.v % BUS === 0 ? /✓/.test(p.texto) && nums(p.texto).reduce((a, b) => a * b, 1) === p.v : p.texto.trim() === '✗'));
+      r.push([igual(pr.map(p => p.v), esperaP) && bien, `paso 5: debajo del ${esperaP.join(', del ')}: no, no, sí (${BUS} × ${ult(esperaP) / BUS})`, pr.map(p => [p.v, p.texto])]);
+      const partes = e.palabras.split('=').map(t => nums(t).reduce((a, b) => a * b, 1));
+      r.push([+e.cifra === ult(esperaP) && partes.length === 3 && partes.every(v => v === +e.cifra),
+        `paso 5: el marcador dice ${e.cifra} y sus cuentas dan eso (${e.palabras})`, partes]);
+    } else r.push([x.pruebas.length === 0, `paso ${n}: las marcas de «sin dibujar» no están`, x.pruebas.length]);
+    if (n === 6) r.push([+e.cifra === BUS * CAM && comunes.includes(BUS * CAM) && comunes[0] < BUS * CAM && sobre('1.ª vez', comunes[0]) && sobre('2.ª vez', BUS * CAM),
+      `paso 6: 6 × 8 = ${BUS * CAM} es de los dos, pero después del ${comunes[0]}, y los rótulos lo dicen`, x.rotulos.map(t => t.texto)]);
+    if (n === 7) {
+      const dice = nums(e.cifra);
+      r.push([dice.length >= 3 && dice.every((v, i) => v % BUS === 0 && v % CAM === 0 && v === comunes[0] * (i + 1)),
+        `paso 7: ${e.cifra} son de los dos, y van de ${comunes[0]} en ${comunes[0]}`, dice]);
+      r.push([cadena(sm, comunes[0], ult(comunes)) && sm.every(s => s.dice === '+' + comunes[0]),
+        `paso 7: los saltos de los dos van de ${comunes[0]} en ${comunes[0]}, desde hoy`, sm.map(s => [s.de, s.a, s.dice])]);
+    } else r.push([sm.length === 0, `paso ${n}: los saltos de los dos todavía no están`, sm.length]);
+    return r;
+  },
+
   /* Teoría de Números: los 48 cuadernos y los 36 lápices. Se cuenta el
      dibujo pieza por pieza: en qué grupo cayó cada una (el plato más
      cercano) y cuántas se quedaron en la mesa. Los divisores, los comunes y

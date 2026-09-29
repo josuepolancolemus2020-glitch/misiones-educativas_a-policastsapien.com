@@ -79,7 +79,7 @@
   function xCol(v) { return COL0 + PASO_COL * COLUMNAS.indexOf(v); }
   function xGrupo(j, k) { return MARGEN + (j + 0.5) * (ANCHO - 2 * MARGEN) / k; }
 
-  /* Las cuentas van con espacios que no se parten ( ), como en la
+  /* Las cuentas van con espacios que no se parten (\u00a0), como en la
      vara de la pila: «48 ÷ 12 = 4» no puede quedar partida en dos
      renglones. */
   var TEXTOS = [
@@ -90,7 +90,7 @@
     'No hacía falta probar. Los números que reparten 48 sin que sobre nada se llaman sus divisores. Debajo están los de 36.',
     'Los que están en las dos filas reparten las dos cosas: 1, 2, 3, 4, 6 y 12. Son los divisores comunes. El 8 solo está arriba: por eso sobraban lápices.',
     'El mayor de los comunes es el 12. Se llama Máximo Común Divisor: el número más grande que divide a 48 y a 36.',
-    'Doce grupos, cada uno con 4 cuadernos y 3 lápices: 48 ÷ 12 = 4 y 36 ÷ 12 = 3. No sobra nada, y sin media hora de pruebas.'
+    'Doce grupos, cada uno con 4 cuadernos y 3 lápices: 48\u00a0÷\u00a012\u00a0=\u00a04 y 36\u00a0÷\u00a012\u00a0=\u00a03. No sobra nada, y sin media hora de pruebas.'
   ];
 
   var A;

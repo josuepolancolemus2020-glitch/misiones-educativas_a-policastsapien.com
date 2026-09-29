@@ -1129,7 +1129,12 @@ function genReglaItems() {
 const OP_NAMES = ['Ana', 'Luis', 'Marta', 'José', 'Carmen', 'Pedro', 'Sofía', 'Iván'];
 const OP_OBJS = ['mangos', 'tortillas', 'rosquillas', 'naranjas', 'elotes', 'semillas de café'];
 const _VI_RUTAS = [['La Ceiba', 'Tela'], ['Choluteca', 'Danlí'], ['Santa Rosa de Copán', 'Gracias'], ['Juticalpa', 'Catacamas'], ['Comayagua', 'Siguatepeque']];
-const _VI_PARES_MCM = [[4, 6], [6, 8], [4, 10], [6, 9], [8, 12], [5, 6], [6, 10], [4, 14]];
+/* ⚠️ Aquí NO va el par 6 y 8. Es el de la historia de doña Nely (el bus
+   cada 6 días y el camión cada 8), y la animación de arriba lo resuelve
+   entero, trampas incluidas: en el examen, ese problema se contestaba
+   acordándose del 24, no haciendo la cuenta. En su lugar va 9 y 12, que
+   también castiga al que multiplica (9 × 12 = 108, y es 36). */
+const _VI_PARES_MCM = [[4, 6], [9, 12], [4, 10], [6, 9], [8, 12], [5, 6], [6, 10], [4, 14]];
 function genVidaItems() {
   const items = [];
   const orden = _shuffleF([0, 1, 2], _opRnd);
