@@ -27,6 +27,9 @@
 <!-- La sección 🎬 Videos. Va DESPUÉS del CSS de la misión a propósito:
      se tiñe del --pri y del --sec que la misión acaba de declarar. -->
 <link rel="stylesheet" href="../../css/videos-mision.css">
+<!-- La animación que explica el tema, justo después de la historia. Va
+     DESPUÉS del CSS de la misión a propósito: se tiñe de su --pri y su --sec. -->
+<link rel="stylesheet" href="../../css/animacion-mision.css">
 <!-- La estrella se gana: antes del primer toque del alumno no se marca
      ninguna sección, generar una prueba no la da y el XP no se vuelve a
      ganar recargando. VA EN EL <head> a propósito: así envuelve fin()
@@ -76,6 +79,22 @@
     <div class="tip"><span class="ti">❓</span><div>12.50 y 12.05 tienen las mismas cifras y no valen lo
     mismo: después del punto, el <strong>lugar</strong> manda igual que antes del punto. Eso es lo que
     vas a ver aquí.</div></div>
+  </div>
+  <!-- La animación que explica el tema. Va justo DESPUÉS de la situación: la
+       historia es Marvin, que apuntó el maíz (L 12.50) y el frijol (L 12.05)
+       como 12.5 los dos, y aquí se ve por qué eso no da igual. Las mismas
+       cifras caen en la tabla y el 5 queda en dos lugares distintos; cada
+       cuadro es un lempira de cien centavos, y ahí se ve lo que vale el 5 en
+       cada lugar, lo que pasa al quitar cada 0 y cuál precio es mayor. La
+       mueve el alumno, paso a paso. El aparato es compartido
+       (js/animacion-mision.js) y la escena es de esta misión
+       (js/animacion-centavos.js). La frase de dentro es de reserva: si el
+       aparato no llega a cargar, se lee eso en vez de un hueco. -->
+  <div class="card ac-teal" data-animacion>
+    <h2>👀 Mira por qué 12.05 no es 12.5</h2>
+    <div id="amCentavos">
+      <p>12.50 y 12.05 tienen las mismas cifras. En el maíz, el 5 está en las décimas: cinco décimas son cincuenta centavos. En el frijol está en las centésimas: cinco centésimas son cinco centavos. El 0 del final de 12.50 se puede quitar, porque no guarda ningún lugar; el 0 de 12.05, no: sin él, el 5 se corre a las décimas y el frijol se cobra a 12.5, cuarenta y cinco centavos de más por libra.</p>
+    </div>
   </div>
   <div class="card ac-teal">
     <h2>🔢 ¿Qué es un Número Decimal?</h2>
@@ -822,6 +841,9 @@
       siguiente: { id: 's-quiz', texto: '🧠 Ir al Quiz' }
     });
   </script>
+<!-- La animación de los centavos: primero el aparato, después la escena. -->
+<script src="../../js/animacion-mision.js"></script>
+<script src="js/animacion-centavos.js"></script>
 <script src="../../js/barra-secciones.js"></script>
 <script src="../../js/teclado-actividades.js"></script>
 </body>

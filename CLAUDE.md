@@ -6206,6 +6206,69 @@ llegue a la mitad de la raya de 3/4. Se comprobó al revés con tres averías
 plantadas a la vez (un octavo que no pasa a la media receta, lo escrito diciendo
 3/6 y el marcador del último paso diciendo 3/8), y salió roja con las tres.
 
+### La novena: Números Decimales, y lo que enseñó
+
+En **Números Decimales** (`misiones/2y3ciclo-numeros-decimales/`,
+`js/animacion-centavos.js`) la historia es Marvin, que en la pulpería apuntó el
+maíz (L 12.50) y el frijol (L 12.05) como «12.5» los dos, y por cada libra de
+frijol cobró cuarenta y cinco centavos de más. La animación empieza con los dos
+precios grandes, como en el rótulo de la tienda: las mismas cifras. Al ponerlos
+en la tabla, el 12 empata y el 5 cae en dos lugares distintos. Debajo, cada
+cuadro de diez por diez es un lempira: el 5 del maíz son cinco tiras de diez
+(cincuenta centavos) y el del frijol, cinco cuadritos sueltos (cinco centavos).
+Después se hace lo de Marvin: el 0 del frijol se cae de la tabla, el 5 se corre
+a las décimas y aparecen rayados los cuarenta y cinco de más. Al quitar el 0 del
+maíz no se corre nada, y las dos filas quedan iguales: Marvin cobró el frijol al
+precio del maíz. Al final cada 0 vuelve a su lugar y se compara desde la
+izquierda. Seis cosas que valen para las demás:
+
+1. ⚠️ **La diferencia entre dos ceros se enseña por lo que pasa DESPUÉS de
+   quitarlos.** Los dos se ven igual y los dos se quitan igual: salen de la
+   tabla pálidos y con raya cortada. El del frijol guardaba un lugar, y sin él
+   el 5 se corre; el del maíz no guardaba nada, y sin él no se mueve ni una
+   cifra. Esa es la regla del cero, vista y no dictada.
+2. ⚠️ **Agrandar letras que se mueven cuesta cuadros, y se midió.** Los precios
+   del paso 0 van a una vez y media su tamaño y suben a la tabla achicándose.
+   Con la CPU frenada seis veces, ese paso bajaba de 59 a 46 cuadros por
+   segundo, porque cada cuadro redibuja las letras a otro tamaño. Ahora solo
+   viajan las cifras, que son las que hay que seguir con la vista; «maíz»,
+   «frijol» y la L no viajan: los grandes se apagan y los chicos se encienden.
+   Así va a 49, dentro de lo que ya se aceptó en las demás escenas (45 a 60).
+3. **Los nombres de las columnas se miden con la letra de la misión antes de
+   ponerlas.** «Unidades» y «centésimas» son los largos, y 12 es la letra más
+   chica con la que se leen «décimas» y «centésimas», que son lo que se enseña.
+   Las columnas van donde caben sus nombres: la de las decenas y la de las
+   unidades, más juntas; las de después del punto, más separadas.
+4. ⚠️ **El naranja de esta misión no se usa en ninguna letra.** Sobre blanco se
+   lee a 2,9:1, así que va solo en lo que es dibujo: la columna que se ilumina y
+   el rayado de lo cobrado de más. Por eso tampoco hay un «+0.45» saltando al
+   lado del marcador, que el aparato pinta de ese color. Y el botón que avanza
+   lleva su `--am-boton`: con el naranja de siempre, la letra blanca de la punta
+   se quedaba en 2,7:1.
+5. **Lo cobrado de más va rayado, no solo de otro color.** Así se distingue sin
+   distinguir colores y fotocopiado. Y el cuadro es un lempira partido en cien
+   centavos, que es un dato: qué monedas hay en la cartera no se afirma.
+6. **Se busca la cuenta, no los números sueltos.** Se armaron las 30 formas de
+   la prueba operativa con el mismo generador de la misión, y se leyeron la
+   evaluación conceptual y la ficha: ninguna compara 12.50 con 12.05, ni 0.5
+   con 0.05, ni resta los dos precios. Quedan un 0.45 dentro de una lista para
+   ordenar (Forma 9) y un «12.5 ÷ 10» en el completar. Ordenar esa lista y
+   dividir entre 10 no se contestan acordándose de la animación, así que se
+   quedan.
+
+La sonda de esta escena **lee cada precio sobre el dibujo**, mirando en qué
+columna cayó cada ficha (de corrido en el paso 0), con el punto entre las
+unidades y las décimas. **Cuenta los cuadritos por el área de lo pintado**, con
+la cuadrícula sacada de sus propias rayas. Y compara las dos cosas entre sí, con
+los rótulos, con el marcador y con la historia. Lo pintado es lo que vale lo que
+va después del punto. Lo de verdad es el precio de la historia y lo rayado es la
+diferencia. El 5 del maíz son tiras y el del frijol, cuadritos. Cada «=» junta
+dos cifras iguales, y «5 > 0» va en la primera columna donde cambian. Lo que se
+quita es un 0, y sale de la tabla. Se comprobó al revés con cuatro averías
+plantadas a la vez (el 5 del frijol que no se corre, cuatro tiras donde el
+rótulo dice 50, el «5 > 0» en la columna equivocada y tres tiras rayadas donde
+dice 45), y salió roja con las cuatro.
+
 ### Cómo se pone en la misión siguiente
 
 Tres piezas en el HTML, y ninguna toca el aparato:

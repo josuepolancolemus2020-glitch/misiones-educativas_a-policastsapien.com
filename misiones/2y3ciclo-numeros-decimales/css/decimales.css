@@ -510,3 +510,9 @@ body.letra-grande p,body.letra-grande span,body.letra-grande li,body.letra-grand
   .xp-bar .xp-lbl { display: none; }
   .xp-bar .xp-track { flex: 1 1 60px; min-width: 60px; }
 }
+
+/* El botón que avanza en la animación de la historia (css/animacion-mision.css)
+   lleva letra blanca sobre el degradado de la misión, y con el naranja de --sec
+   esa letra se leía a 2,7:1 en la punta del botón. Con el naranja tostado no
+   baja de 4,6:1 en ningún punto, y el botón sigue siendo azul y naranja. */
+:root { --am-boton: linear-gradient(135deg, #1976d2, #b45309); }

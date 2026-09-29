@@ -242,6 +242,35 @@ const LEER = `
       notas: todos('.mt-nota').map(function (t) { return t.textContent; })
     };
   };
+  /* Números Decimales: la tabla y los dos cuadros de cien centavos.
+     La cuadrícula se lee de sus rayas (son lo que se ve), y lo pintado
+     por su caja: el área dice cuántos cuadritos son. */
+  window.__amExtra.amCentavos = function (raiz) {
+    var vis = window.__amVisible;
+    function todos(sel) { return [].filter.call(raiz.querySelectorAll(sel), vis); }
+    var svg = raiz.querySelector('svg'), s = svg.getBoundingClientRect(), k = s.width / svg.viewBox.baseVal.width;
+    function caja(el) { var b = el.getBoundingClientRect(); return { x0: (b.left - s.left) / k, x1: (b.right - s.left) / k, y0: (b.top - s.top) / k, y1: (b.bottom - s.top) / k }; }
+    function medio(el) { var c = caja(el); return { x: (c.x0 + c.x1) / 2, y: (c.y0 + c.y1) / 2 }; }
+    return {
+      cols: todos('.dc-col').map(function (t) { return { col: t.getAttribute('data-col'), t: t.textContent, x: medio(t).x }; }),
+      puntos: todos('.dc-punto').map(function (t) { var c = medio(t); return { fila: +t.getAttribute('data-fila'), x: c.x, y: c.y }; }),
+      fichas: [].map.call(raiz.querySelectorAll('.dc-ficha'), function (g) {
+        var t = g.querySelector('.am-digito'), r = g.querySelector('.am-ficha'), a = g.querySelector('.dc-anillo'), c = medio(t);
+        return { fila: +g.getAttribute('data-fila'), cifra: t.textContent, ve: vis(t), borde: vis(r),
+                 roto: r.classList.contains('am-roto'), raya: getComputedStyle(r).strokeDasharray,
+                 palida: parseFloat(getComputedStyle(t).opacity) < 0.99, x: c.x, y: c.y, anillo: !!a && vis(a) };
+      }),
+      rels: todos('.dc-rel').map(function (t) { var c = medio(t); return { col: t.getAttribute('data-col'), t: t.textContent, x: c.x, y: c.y }; }),
+      tintes: todos('.dc-tinte').map(function (t) { return { col: t.getAttribute('data-col'), x: medio(t).x }; }),
+      banda: todos('.dc-banda').map(function (t) { return t.textContent; }),
+      cuadros: [].filter.call(raiz.querySelectorAll('.dc-cuadro'), vis).map(function (g) {
+        return { grid: g.getAttribute('data-grid'), lineas: g.querySelector('.dc-lineas').getAttribute('d'),
+                 llenos: [].filter.call(g.querySelectorAll('.dc-llenos'), vis).map(function (r) { return Object.assign({ tipo: r.getAttribute('data-tipo') }, caja(r)); }) };
+      }),
+      cuentas: todos('.dc-cuenta').map(function (t) { return { grid: t.getAttribute('data-grid'), t: t.textContent }; }),
+      demas: todos('.dc-demas').map(function (t) { return t.textContent; })
+    };
+  };
   window.__amLeer = function (id) {
     var raiz = document.getElementById(id);
     var svg = raiz.querySelector('svg');
@@ -298,6 +327,167 @@ function regla(marcas, eje) {
 
 /* ── lo propio de cada escena ───────────────────────────────── */
 const ESCENAS = {
+  /* Números Decimales: los centavos de Marvin. Cada precio se lee del
+     dibujo mirando en qué columna cayó cada ficha (o de corrido, en el
+     paso 0); cada cuadro de cien centavos se cuenta por el área de lo
+     pintado; y las dos cosas se comparan entre sí, con el marcador, con
+     los rótulos y con la historia: el maíz a L 12.50 y el frijol a
+     L 12.05. Una tabla que dice 12.5 con el 5 en las centésimas, o un
+     cuadro que pinta 40 donde el rótulo dice 50, salen aquí. */
+  amCentavos(e, n) {
+    const x = e.extra, r = [];
+    const cerca = (a, b, t = 3) => Math.abs(a - b) <= t;
+    const ORDEN = ['D', 'U', 'd', 'c'];
+    const VALE = { D: 1000, U: 100, d: 10, c: 1 };            // en centavos
+    const NOMBRE = { D: 'Decenas', U: 'Unidades', d: 'décimas', c: 'centésimas' };
+    const HISTORIA = [1250, 1205];                            // maíz y frijol, en centavos
+    const precio = c => Math.floor(c / 100) + '.' + String(c % 100).padStart(2, '0');
+    const num = t => +((t.match(/\d+/) || [NaN])[0]);
+
+    /* Las columnas, en su orden y con su nombre. */
+    const tabla = x.cols.length > 0;
+    const colX = {};
+    x.cols.forEach(c => { colX[c.col] = c.x; });
+    if (tabla) {
+      const cs = x.cols.slice().sort((a, b) => a.x - b.x);
+      r.push([cs.length === 4 && cs.every((c, i) => c.col === ORDEN[i] && c.t === NOMBRE[c.col]),
+        `paso ${n}: las columnas de la tabla van en su orden (${cs.map(c => c.t).join(', ')})`, cs.map(c => c.t)]);
+    }
+
+    /* Cada fila, leída del dibujo. */
+    const filas = [0, 1].map(f => {
+      const vivas = x.fichas.filter(p => p.fila === f && p.ve);
+      const punto = x.puntos.find(p => p.fila === f);
+      if (!punto) return { texto: '?', centavos: NaN, bien: false, lugar: null };
+      if (!tabla) {
+        const orden = vivas.slice().sort((a, b) => a.x - b.x);
+        const izq = orden.filter(p => p.x < punto.x).map(p => p.cifra).join('');
+        const der = orden.filter(p => p.x > punto.x).map(p => p.cifra).join('');
+        return { texto: izq + '.' + der, centavos: +izq * 100 + +(der + '00').slice(0, 2), bien: vivas.every(p => !p.borde), lugar: null };
+      }
+      const lugar = {};
+      let bien = vivas.length > 0;
+      for (const p of vivas) {
+        const c = ORDEN.find(col => cerca(colX[col], p.x));
+        if (!c || lugar[c] != null || !p.borde || p.roto) { bien = false; continue; }
+        lugar[c] = +p.cifra;
+      }
+      /* El punto entre las unidades y las décimas, y nada en las centésimas
+         con las décimas vacías: eso sería otro número. */
+      bien = bien && punto.x > colX.U && punto.x < colX.d && (lugar.c == null || lugar.d != null);
+      const texto = ['D', 'U'].map(c => lugar[c] != null ? lugar[c] : '').join('') + '.' +
+        (lugar.d != null ? lugar.d : '') + (lugar.c != null ? lugar.c : '');
+      return { texto, centavos: ORDEN.reduce((a, c) => a + (lugar[c] || 0) * VALE[c], 0), bien, lugar };
+    });
+    r.push([filas.every(p => p.bien), `paso ${n}: cada ficha cae en su lugar y el punto va entre las unidades y las décimas (${filas.map(p => p.texto).join(' y ')})`,
+      filas.map(p => p.lugar || p.texto)]);
+
+    /* Un 0 que se quita se ve quitado: fuera de la tabla, pálido y con raya
+       cortada. Y solo se quitan ceros. */
+    const quitados = x.fichas.filter(p => p.palida);
+    r.push([quitados.every(p => p.cifra === '0' && p.roto && /\d/.test(p.raya) && tabla && p.x > colX.c + 25),
+      `paso ${n}: lo que se quita es un 0, sale de la tabla y va con raya cortada`, quitados.map(p => [p.fila, p.cifra, Math.round(p.x)])]);
+
+    /* Los cuadros de cien centavos: la cuadrícula de sus rayas, y lo pintado
+       contado por su área. */
+    const cuadros = {};
+    for (const c of x.cuadros) {
+      const vs = [...c.lineas.matchAll(/M\s*([\d.]+)\s+([\d.]+)\s*V/g)].map(m => +m[1]).sort((a, b) => a - b);
+      const hs = [...c.lineas.matchAll(/M\s*([\d.]+)\s+([\d.]+)\s*H/g)].map(m => +m[2]).sort((a, b) => a - b);
+      const S = (vs[vs.length - 1] - vs[0]) / 8, gx = vs[0] - S, gy = hs[0] - S;
+      const parejo = vs.length === 9 && hs.length === 9 && vs.every((v, i) => cerca(v, gx + (i + 1) * S, 0.05)) && hs.every((h, i) => cerca(h, gy + (i + 1) * S, 0.05));
+      let alineado = true;
+      const piezas = c.llenos.map(q => {
+        const a = (q.x1 - q.x0) / S, b = (q.y1 - q.y0) / S, i = (q.x0 - gx) / S, j = (q.y0 - gy) / S;
+        if (![a, b, i, j].every(v => cerca(v, Math.round(v), 0.03)) || i < -0.03 || j < -0.03 || i + a > 10.03 || j + b > 10.03) alineado = false;
+        return { tipo: q.tipo, a: Math.round(a), b: Math.round(b), i: Math.round(i), j: Math.round(j), cuadritos: Math.round(a) * Math.round(b) };
+      });
+      const choque = piezas.some((p, k) => piezas.some((q, m) => m > k && p.i < q.i + q.a && q.i < p.i + p.a && p.j < q.j + q.b && q.j < p.j + p.b));
+      const suma = t => piezas.filter(p => !t || p.tipo === t).reduce((a, p) => a + p.cuadritos, 0);
+      cuadros[c.grid] = { piezas, total: suma(), real: suma('real'), demas: suma('demas') };
+      r.push([parejo && alineado && !choque, `paso ${n}: el cuadro del ${c.grid === 'maiz' ? 'maíz' : 'frijol'} es de diez por diez y lo pintado cae en cuadritos enteros, sin encimarse`,
+        { parejo, alineado, choque }]);
+    }
+    const hay = Object.keys(cuadros);
+    if (hay.length) {
+      r.push([x.banda.length === 1 && /\b1 lempira = 100 centavos\b/.test(x.banda[0]), `paso ${n}: el rótulo dice lo que es cada cuadro: 1 lempira = 100 centavos`, x.banda]);
+    } else r.push([x.banda.length === 0 && x.cuentas.length === 0, `paso ${n}: sin cuadros todavía, y sin sus rótulos`, x.banda.concat(x.cuentas.map(t => t.t))]);
+
+    /* Lo pintado es lo que vale lo que va después del punto, y los rótulos
+       dicen eso mismo. */
+    const idx = { maiz: 0, frijol: 1 };
+    for (const g of hay) {
+      const c = cuadros[g], f = filas[idx[g]];
+      const rot = x.cuentas.filter(t => t.grid === g);
+      r.push([c.total === f.centavos % 100 && rot.length === 1 && num(rot[0].t) === c.total && rot[0].t.startsWith(g === 'maiz' ? 'maíz' : 'frijol'),
+        `paso ${n}: el cuadro del ${g === 'maiz' ? 'maíz' : 'frijol'} tiene ${c.total} cuadritos pintados, lo que vale ${f.texto} después del punto, y su rótulo dice ${rot.map(t => t.t).join(',') || '—'}`,
+        [c.total, f.centavos, rot.map(t => t.t)]]);
+      /* Lo real es el precio de verdad; lo de más, rayado, es la diferencia. */
+      r.push([c.real === HISTORIA[idx[g]] % 100 && c.demas === c.total - c.real,
+        `paso ${n}: en el ${g === 'maiz' ? 'maíz' : 'frijol'}, lo pintado de verdad es su precio (${c.real}) y lo de más va rayado (${c.demas})`, [c.real, c.demas]]);
+    }
+    const demas = hay.reduce((a, g) => a + cuadros[g].demas, 0);
+    r.push([demas ? (x.demas.length === 1 && num(x.demas[0]) === demas) : x.demas.length === 0,
+      `paso ${n}: el rótulo de lo cobrado de más dice lo que se ve rayado (${demas})`, x.demas]);
+    /* El 5 del maíz son tiras de diez; el del frijol, cuadritos sueltos. */
+    if (cuadros.maiz) r.push([cuadros.maiz.piezas.filter(p => p.tipo === 'real').every(p => p.a === 1 && p.b === 10), `paso ${n}: el 5 del maíz son tiras de diez (décimas)`, cuadros.maiz.piezas]);
+    if (cuadros.frijol) r.push([cuadros.frijol.piezas.filter(p => p.tipo === 'real').every(p => p.a === 1 && p.b === 1), `paso ${n}: el 5 del frijol son cuadritos sueltos (centésimas)`, cuadros.frijol.piezas.filter(p => p.tipo === 'real')]);
+
+    /* Lo que se compara entre las filas: cada «=» junta dos cifras iguales,
+       y «a > b» va en la primera columna donde cambian. */
+    for (const rel of x.rels) {
+      const c = ORDEN.find(col => cerca(colX[col], rel.x));
+      const a = filas[0].lugar && filas[0].lugar[c], b = filas[1].lugar && filas[1].lugar[c];
+      const bien = rel.t === '=' ? a != null && a === b : rel.t.replace(/\s/g, '') === `${a}>${b}` && a > b;
+      r.push([!!c && bien && rel.y > x.puntos[0].y && rel.y < x.puntos[1].y - 10, `paso ${n}: «${rel.t}» en ${c ? NOMBRE[c] : '—'} es verdad entre las dos filas`, [a, b]]);
+    }
+    const anillos = x.fichas.filter(p => p.anillo);
+    r.push([anillos.every(p => p.cifra === '5'), `paso ${n}: lo que se señala es el 5`, anillos.map(p => [p.fila, p.cifra])]);
+    const lugarDe = (f, cifra) => { const l = filas[f].lugar || {}; return ORDEN.find(c => l[c] === cifra); };
+    const tinte = x.tintes.map(t => t.col);
+
+    if (n === 0) {
+      const iguales = filas.map(f => f.texto.replace('.', '').split('').sort().join(''));
+      r.push([!tabla && filas[0].centavos === HISTORIA[0] && filas[1].centavos === HISTORIA[1] && iguales[0] === iguales[1] && e.cifra === `${filas[0].texto} y ${filas[1].texto}`,
+        'paso 0: los dos precios de la historia, de corrido: las mismas cifras, y el marcador dice los dos', [filas.map(f => f.texto), e.cifra]]);
+    }
+    if (n === 1) {
+      r.push([filas[0].centavos === HISTORIA[0] && filas[1].centavos === HISTORIA[1] && lugarDe(0, 5) === 'd' && lugarDe(1, 5) === 'c' && anillos.length === 2 && e.cifra === `${filas[0].texto} y ${filas[1].texto}`,
+        'paso 1: en la tabla, el 5 del maíz cae en las décimas y el del frijol en las centésimas, y los dos van señalados', [filas.map(f => f.texto), anillos.length]]);
+      r.push([x.rels.map(t => t.t).join(' ') === '= =', 'paso 1: el 12 empata en los dos (dos «=»)', x.rels.map(t => t.t)]);
+    }
+    if (n === 2) {
+      r.push([hay.join() === 'maiz' && tinte.join() === 'd' && anillos.length === 1 && anillos[0].fila === 0 && e.cifra === (cuadros.maiz.total / 100).toFixed(2),
+        'paso 2: se ilumina la columna de las décimas, se señala el 5 del maíz, y el marcador dice lo que pinta su cuadro', [hay, tinte, e.cifra]]);
+    }
+    if (n === 3) {
+      r.push([hay.length === 2 && tinte.join() === 'c' && anillos.length === 1 && anillos[0].fila === 1 && e.cifra === (cuadros.frijol.real / 100).toFixed(2) && cuadros.maiz.total === 10 * cuadros.frijol.total,
+        'paso 3: se ilumina la de las centésimas, se señala el 5 del frijol, y el mismo 5 pinta diez veces menos', [tinte, e.cifra, cuadros.maiz.total, cuadros.frijol.total]]);
+    }
+    if (n === 4) {
+      r.push([filas[0].centavos === HISTORIA[0] && e.cifra === filas[1].texto && lugarDe(1, 5) === 'd' && demas === filas[1].centavos - HISTORIA[1] && e.palabras.includes(String(demas)) && tinte.join() === 'd',
+        `paso 4: el frijol quedó como lo apuntó Marvin (${filas[1].texto}), el 5 en las décimas, y lo de más son ${demas} centavos`, [filas.map(f => f.texto), e.cifra, demas]]);
+    }
+    if (n === 5) {
+      const [a, b] = e.cifra.split('=').map(t => t.trim());
+      r.push([a === precio(HISTORIA[0]) && b === filas[0].texto && filas[0].centavos === HISTORIA[0] && filas[0].texto === filas[1].texto && x.rels.map(t => t.t).join(' ') === '= = =',
+        `paso 5: sin su 0 el maíz sigue valiendo lo mismo (${e.cifra}), y las dos filas quedan iguales`, [filas.map(f => f.texto), e.cifra, x.rels.map(t => t.t)]]);
+    }
+    if (n === 6) {
+      const primera = ORDEN.find(c => filas[0].lugar[c] !== filas[1].lugar[c]);
+      const [a, b] = e.cifra.split('>').map(t => t.trim());
+      r.push([filas[0].centavos === HISTORIA[0] && filas[1].centavos === HISTORIA[1] && a === filas[0].texto && b === filas[1].texto && filas[0].centavos > filas[1].centavos,
+        `paso 6: los dos precios de verdad, y el marcador dice cuál vale más (${e.cifra})`, [filas.map(f => f.texto), e.cifra]]);
+      const rels = x.rels.slice().sort((p, q) => p.x - q.x);
+      const esperado = ORDEN.slice(0, ORDEN.indexOf(primera)).map(() => '=').concat([`${filas[0].lugar[primera]} > ${filas[1].lugar[primera]}`]);
+      r.push([rels.map(t => t.t).join(' | ') === esperado.join(' | ') && tinte.join() === primera,
+        `paso 6: se compara desde la izquierda: empatan hasta ${NOMBRE[primera]}, y ahí decide`, rels.map(t => t.t)]);
+      const dif = cuadros.maiz.total - cuadros.frijol.total;
+      r.push([dif === HISTORIA[0] - HISTORIA[1] && e.palabras.includes(String(dif)), `paso 6: la diferencia (${dif} centavos) es la que se ve en los dos cuadros`, [dif, e.palabras]]);
+    }
+    return r;
+  },
+
   /* Las Fracciones: la sandía de Kenia. Los cortes se miden sobre el
      dibujo (el ángulo de cada raya desde el centro), y de ahí salen los
      pedazos: que el de Kenia sea la mitad del de su hermano y ninguno un
